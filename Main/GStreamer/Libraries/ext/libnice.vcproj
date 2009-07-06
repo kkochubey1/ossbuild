@@ -624,6 +624,18 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath="..\..\Source\ext\libnice\agent\debug.h"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="Header Installer Tool"
+								ModuleName="nice"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
 						RelativePath="..\..\Source\ext\libnice\agent\discovery.h"
 						>
 						<FileConfiguration
@@ -871,6 +883,13 @@
 				<File
 					RelativePath="..\..\Source\ext\libnice\stun\debug.h"
 					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\Source\ext\libnice\stun\md5.h"
