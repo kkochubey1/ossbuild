@@ -5,7 +5,7 @@
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{693CD20A-667F-4441-975D-C62F38BEEBDF}
+AppId={{693CD20A-667F-4441-975D-C62F35BEEBDF}
 AppName=GStreamer WinBuild
 AppVerName=GStreamer WinBuild 0.10.4
 AppPublisher=GStreamer WinBuild Team
