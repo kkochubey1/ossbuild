@@ -28,7 +28,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Files]
 Source: "..\..\Build\Windows\Win32\Release\bin\gstreamer\*.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "..\..\Build\Windows\Win32\Release\bin\gstreamer\*.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
-Source: "..\..\Shared\Build\Windows\Win32\bin\*.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
+Source: "..\..\Shared\Build\Windows\Win32\bin\*.dll"; DestDir: "{app}\bin"; Flags: ignoreversion ; Excludes: "libfaac-0.dll,libfaad-2.dll"
 Source: "..\..\Licenses\*"; DestDir: "{app}\share\licenses"; Flags: ignoreversion
 Source: "..\..\Libraries\ReadMe - GPL.txt"; DestDir: "{app}\share\licenses"; Flags: ignoreversion
 Source: "..\..\Libraries\ReadMe-BSD.txt"; DestDir: "{app}\share\licenses"; Flags: ignoreversion
@@ -40,3 +40,6 @@ Source: "..\..\Shared\Build\Windows\Win32\etc\*"; DestDir: "{app}\etc"; Flags: i
 [Icons]
 Name: "{group}\{cm:UninstallProgram,GStreamer WinBuild}"; Filename: "{uninstallexe}"
 
+[Registry]
+Root: HKCU; Subkey: "Environment"; ValueName: "PATH"; ValueType: string; ValueData: "{code:BinPath|{olddata}}"
+Root: HKCU; Subkey: "Environment"; ValueName: "GST_PLUGIN_PATH"; ValueType: string; ValueData: "{app}\lib\gstreamer-0.10"; Flags: uninsdeletevalue
