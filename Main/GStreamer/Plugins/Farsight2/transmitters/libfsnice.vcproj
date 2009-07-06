@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="gstnice-transmitter"
+	Name="fsnice"
 	ProjectGUID="{460B5301-2747-4E16-BC26-0D67F5A199ED}"
 	RootNamespace="libgstnice-transmitter"
 	Keyword="Win32Proj"
@@ -234,7 +234,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="&quot;$(OutDir)\include\nice&quot;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -286,6 +286,14 @@
 		</Configuration>
 	</Configurations>
 	<References>
+		<ProjectReference
+			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E49}"
+			RelativePathToProject=".\Main\GStreamer\Libraries\libgstreamer.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{6D935778-C3CD-4A93-9434-58CBCF2D85DB}"
+			RelativePathToProject=".\Main\GStreamer\Libraries\ext\libnice.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
