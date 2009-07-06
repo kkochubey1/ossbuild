@@ -1,0 +1,323 @@
+# translation of sk.po to
+# Czech translations of gst-plugins.
+# Copyright (C) 2004 gst-plugins' COPYRIGHT HOLDER
+# This file is put in the public domain.
+# Peter Tuhársky <tuharsky@misbb.sk>, 2007, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gst-plugins-bad 0.10.8.3\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
+"POT-Creation-Date: 2009-06-17 21:54+0100\n"
+"PO-Revision-Date: 2008-11-04 09:39+0100\n"
+"Last-Translator: Peter Tuhársky <tuharsky@misbb.sk>\n"
+"Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-Language: Slovak\n"
+"X-Poedit-Country: SLOVAKIA\n"
+
+msgid "Could not read title information for DVD."
+msgstr "Nepodarilo sa prečítať titulok DVD."
+
+#, c-format
+msgid "Failed to open DVD device '%s'."
+msgstr "Nepodarilo sa otvoriť zariadenie DVD '%s'."
+
+msgid "Failed to set PGC based seeking."
+msgstr ""
+
+msgid "Internal clock error."
+msgstr "Vnútorná chyba časovača."
+
+msgid "Internal data flow error."
+msgstr "Vnútorná chyba prúdu údajov."
+
+msgid "No file name specified for writing."
+msgstr "Nebolo zadané žiadne meno súboru pre zápis."
+
+#, c-format
+msgid "Could not open file \"%s\" for writing."
+msgstr "Nepodarilo sa otvoriť súbor \"%s\" pre zápis."
+
+msgid "Internal data stream error."
+msgstr "Vnútorná chyba prúdu údajov."
+
+#, c-format
+msgid "Could not write to file \"%s\"."
+msgstr "Nepodarilo sa zapísať do súboru \"%s\"."
+
+#, c-format
+msgid "Device \"%s\" does not exist."
+msgstr "Zariadenie \"%s\" neexistuje."
+
+#, c-format
+msgid "Could not open frontend device \"%s\"."
+msgstr "Nepodarilo sa otvoriť ovládacie zariadenie \"%s\"."
+
+#, c-format
+msgid "Could not get settings from frontend device \"%s\"."
+msgstr "Nepodarilo sa získať nastavenia od zariadenia \"%s\"."
+
+#, c-format
+msgid "Could not open file \"%s\" for reading."
+msgstr "Nepodarilo sa otvoriť súbor \"%s\" na čítanie."
+
+msgid "Could not open audio device for mixer control handling."
+msgstr "Nepodarilo sa otvoriť zvukové zariadenie pre obsluhu ovládania mixéra."
+
+msgid ""
+"Could not open audio device for mixer control handling. This version of the "
+"Open Sound System is not supported by this element."
+msgstr ""
+"Nepodarilo sa otvoriť zvukové zariadenie pre obsluhu ovládania mixéra. Táto "
+"verzia Open Sound System nie je podporovaná týmto prvkom."
+
+msgid "Fast"
+msgstr "Rýchla"
+
+msgid "Low"
+msgstr "Nízka"
+
+msgid "Medium"
+msgstr "Stredná"
+
+msgid "High"
+msgstr "Vysoká"
+
+msgid "Very high"
+msgstr "Veľmi vysoká"
+
+msgid "Production"
+msgstr "Produkčná"
+
+msgid "Off"
+msgstr "Vyp"
+
+msgid "On"
+msgstr "Zap"
+
+msgid "Stereo"
+msgstr "Stereo"
+
+msgid "Surround sound"
+msgstr "Surround"
+
+msgid "Input mix"
+msgstr "Vstup mix"
+
+msgid "Front"
+msgstr "Predné"
+
+msgid "Rear"
+msgstr "Zadné"
+
+msgid "Side"
+msgstr "Postranné"
+
+msgid "Center / LFE"
+msgstr "Stredné / LFE"
+
+msgid "Microphone"
+msgstr "Mikrofón"
+
+msgid "Front panel microphone"
+msgstr "Mikrofón predného panelu"
+
+msgid "Input"
+msgstr "Vstup"
+
+msgid "Line-in"
+msgstr "Linkový vstup"
+
+msgid "PCM 1"
+msgstr "PCM 1"
+
+msgid "PCM 2"
+msgstr "PCM 2"
+
+msgid "PCM 3"
+msgstr "PCM 3"
+
+msgid "PCM 4"
+msgstr "PCM 4"
+
+msgid "Green connector"
+msgstr "Zelený konektor"
+
+msgid "Green front panel connector"
+msgstr "Zelený konektor na prednom paneli"
+
+msgid "Pink connector"
+msgstr "Ružový konektor"
+
+msgid "Pink front panel connector"
+msgstr "Ružový konektor na prednom paneli"
+
+msgid "Blue connector"
+msgstr "Modrý konektor"
+
+msgid "Blue front panel connector"
+msgstr "Modrý konektor na prednom paneli"
+
+msgid "Orange connector"
+msgstr "Oranžový konektor"
+
+msgid "Orange front panel connector"
+msgstr "Oranžový konektor na prednom paneli"
+
+msgid "Black connector"
+msgstr "Čierny konektor"
+
+msgid "Black front panel connector"
+msgstr "Čierny konektor na prednom paneli"
+
+msgid "Gray connector"
+msgstr "Šedý konektor"
+
+msgid "Gray front panel connector"
+msgstr "Šedý konektor na prednom paneli"
+
+msgid "White connector"
+msgstr "Biely konektor"
+
+msgid "White front panel connector"
+msgstr "Biely konektor na prednom paneli"
+
+msgid "Red connector"
+msgstr "Červený konektor"
+
+msgid "Red front panel connector"
+msgstr "Červený konektor na prednom paneli"
+
+msgid "Yellow connector"
+msgstr "Žltý konektor"
+
+msgid "Yellow front panel connector"
+msgstr "Žltý konektor na prednom paneli"
+
+msgid "Green connector function"
+msgstr "Funkcia zeleného konektora"
+
+msgid "Green front panel connector function"
+msgstr "Funkcia zeleného konektora na prednom paneli"
+
+msgid "Pink connector function"
+msgstr "Funkcia ružového konektora"
+
+msgid "Pink front panel connector function"
+msgstr "Funkcia ružového konektora na prednom paneli"
+
+msgid "Blue connector function"
+msgstr "Funkcia modrého konektora"
+
+msgid "Blue front panel connector function"
+msgstr "Funkcia modrého konektora na prednom paneli"
+
+msgid "Orange connector function"
+msgstr "Funkcia oranžového konektora"
+
+msgid "Orange front panel connector function"
+msgstr "Funkcia oranžového konektora na prednom paneli"
+
+msgid "Black connector function"
+msgstr "Funkcia čierneho konektora"
+
+msgid "Black front panel connector function"
+msgstr "Funkcia čierneho konektora na prednom paneli"
+
+msgid "Gray connector function"
+msgstr "Funkcia šedého konektora"
+
+msgid "Gray front panel connector function"
+msgstr "Funkcia šedého konektora na prednom paneli"
+
+msgid "White connector function"
+msgstr "Funkcia bieleho konektora"
+
+msgid "White front panel connector function"
+msgstr "Funkcia bieleho konektora na prednom paneli"
+
+msgid "Red connector function"
+msgstr "Funkcia červeného konektora"
+
+msgid "Red front panel connector function"
+msgstr "Funkcia červeného konektora na prednom paneli"
+
+msgid "Yellow connector function"
+msgstr "Funkcia žltého konektora"
+
+msgid "Yellow front panel connector function"
+msgstr "Funkcia žltého konektora na prednom paneli"
+
+msgid "Front panel line-in"
+msgstr "Linkový vstup na prednom paneli"
+
+msgid "Headphones"
+msgstr "Slúchadlá"
+
+msgid "Front panel headphones"
+msgstr "Slúchadlá na prednom paneli"
+
+msgid "PCM"
+msgstr "PCM"
+
+msgid "Virtual mixer input"
+msgstr "Vstup virtuálneho mixéra"
+
+msgid "Virtual mixer output"
+msgstr "Výstup virtuálneho mixéra"
+
+msgid "Virtual mixer channel configuration"
+msgstr "Konfigurácia kanálov virtuálneho mixéra"
+
+msgid ""
+"Could not open audio device for playback. Device is being used by another "
+"application."
+msgstr ""
+"Nepodarilo sa otvoriť zvukové zariadenie v režime prehrávania. Zariadenie už "
+"používa iná aplikácia."
+
+msgid ""
+"Could not open audio device for playback. You don't have permission to open "
+"the device."
+msgstr ""
+"Nepodarilo sa otvoriť zvukové zariadenie v režime prehrávania. Nemáte "
+"oprávnenie na otvorenie tohto zariadenia."
+
+msgid "Could not open audio device for playback."
+msgstr "Nepodarilo sa otvoriť zvukové zariadenie v režime prehrávania."
+
+msgid ""
+"Could not open audio device for playback. This version of the Open Sound "
+"System is not supported by this element."
+msgstr ""
+"Nepodarilo sa otvoriť zvukové zariadenie v režime prehrávania. Túto verziu "
+"Open Sound System nepodporuje tento prvok."
+
+msgid "Playback is not supported by this audio device."
+msgstr "Toto zvukové zariadenie nepodporuje prehrávanie."
+
+msgid "Audio playback error."
+msgstr "Chyba prehrávania zvuku."
+
+msgid "Recording is not supported by this audio device."
+msgstr "Toto zvukové zariadenie nepodporuje záznam."
+
+msgid "Error recording from audio device."
+msgstr "Chyba pri zázname zo zvukového zariadenia."
+
+#~ msgid "Failed to configure TwoLAME encoder. Check your encoding parameters."
+#~ msgstr ""
+#~ "Nepodarilo sa nakonfigurovať TwoLAME enkodér. Skontrolujte parametre "
+#~ "kódovania."
+
+#~ msgid ""
+#~ "The requested bitrate %d kbit/s for property '%s' is not allowed. The "
+#~ "bitrate was changed to %d kbit/s."
+#~ msgstr ""
+#~ "Požadovaná bitová rýchlosť %d kbit/s pre vlastnosť '%s' nie je povolená. "
+#~ "Rýchlosť bola zmenená na %d kbit/s."
