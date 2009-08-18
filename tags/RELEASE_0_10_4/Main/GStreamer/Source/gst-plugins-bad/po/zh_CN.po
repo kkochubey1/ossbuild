@@ -1,0 +1,314 @@
+# Chinese (simplified) translation for gst-plugins-bad.
+# Copyright (C) 2007 Free Software Foundation, Inc.
+# This file is distributed under the same license as the gst-plugins-bad package.
+# Wenzheng Hu <db_lobster@163.com>, 2007.
+# LI Daobing <lidaobing@gmail.com>, 2008.
+# Ji ZhengYu <zhengyuji@gmail.com>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gst-plugins-bad 0.10.9.3\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
+"POT-Creation-Date: 2009-06-17 21:54+0100\n"
+"PO-Revision-Date: 2009-01-14 12:04+0800\n"
+"Last-Translator: Ji ZhengYu <zhengyuji@gmail.com>\n"
+"Language-Team: Chinese (simplified) <translation-team-zh-cn@lists."
+"sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Could not read title information for DVD."
+msgstr "无法读取 DVD 的标头信息。"
+
+#, c-format
+msgid "Failed to open DVD device '%s'."
+msgstr "无法打开 DVD 设备“%s”。"
+
+msgid "Failed to set PGC based seeking."
+msgstr "无法设置基于 PGC 的检索。"
+
+msgid "Internal clock error."
+msgstr "内部时钟错误。"
+
+msgid "Internal data flow error."
+msgstr "内部数据流错误。"
+
+msgid "No file name specified for writing."
+msgstr "未指定写入文件名。"
+
+#, c-format
+msgid "Could not open file \"%s\" for writing."
+msgstr "无法以写方式打开文件“%s”。"
+
+msgid "Internal data stream error."
+msgstr "内部数据流错误。"
+
+#, c-format
+msgid "Could not write to file \"%s\"."
+msgstr "无法写入文件“%s”。"
+
+#, c-format
+msgid "Device \"%s\" does not exist."
+msgstr "不存在设备“%s”。"
+
+#, c-format
+msgid "Could not open frontend device \"%s\"."
+msgstr "无法打开前端设备“%s”。"
+
+#, c-format
+msgid "Could not get settings from frontend device \"%s\"."
+msgstr "无法从前端设备“%s”获取设置。"
+
+#, c-format
+msgid "Could not open file \"%s\" for reading."
+msgstr "无法以读方式打开文件“%s”。"
+
+msgid "Could not open audio device for mixer control handling."
+msgstr "无法打开音频文件进行混音控制操作。"
+
+msgid ""
+"Could not open audio device for mixer control handling. This version of the "
+"Open Sound System is not supported by this element."
+msgstr ""
+"无法打开音频设备进行音量控制操作。此部件不支持开放声音系统(OSS)的版本。"
+
+msgid "Fast"
+msgstr "快"
+
+msgid "Low"
+msgstr "慢"
+
+msgid "Medium"
+msgstr "中等"
+
+msgid "High"
+msgstr "高"
+
+msgid "Very high"
+msgstr "很高"
+
+msgid "Production"
+msgstr "生产商"
+
+msgid "Off"
+msgstr "关"
+
+msgid "On"
+msgstr "开"
+
+msgid "Stereo"
+msgstr "立体声"
+
+msgid "Surround sound"
+msgstr "立体声环绕"
+
+msgid "Input mix"
+msgstr "混音输入"
+
+msgid "Front"
+msgstr "前置声道"
+
+msgid "Rear"
+msgstr "后置声道"
+
+msgid "Side"
+msgstr "左右声道"
+
+msgid "Center / LFE"
+msgstr "中置/低音炮"
+
+msgid "Microphone"
+msgstr "话筒"
+
+msgid "Front panel microphone"
+msgstr "话筒面板"
+
+msgid "Input"
+msgstr "输入"
+
+msgid "Line-in"
+msgstr "线路输入"
+
+msgid "PCM 1"
+msgstr "PCM 1"
+
+msgid "PCM 2"
+msgstr "PCM 2"
+
+msgid "PCM 3"
+msgstr "PCM 3"
+
+msgid "PCM 4"
+msgstr "PCM 4"
+
+msgid "Green connector"
+msgstr "线路输出"
+
+msgid "Green front panel connector"
+msgstr "线路输出面板"
+
+msgid "Pink connector"
+msgstr "话筒输出"
+
+msgid "Pink front panel connector"
+msgstr "话筒输出面板"
+
+msgid "Blue connector"
+msgstr "立体声输入"
+
+msgid "Blue front panel connector"
+msgstr "立体声输入面板"
+
+msgid "Orange connector"
+msgstr "低音炮输出"
+
+msgid "Orange front panel connector"
+msgstr "低音炮输出面板"
+
+msgid "Black connector"
+msgstr "后置声道输出"
+
+msgid "Black front panel connector"
+msgstr "后置声道输出面板"
+
+msgid "Gray connector"
+msgstr "中置声道输出"
+
+msgid "Gray front panel connector"
+msgstr "中置声道输出面板"
+
+msgid "White connector"
+msgstr "左/单声道"
+
+msgid "White front panel connector"
+msgstr "左/单声道面板"
+
+msgid "Red connector"
+msgstr "右声道"
+
+msgid "Red front panel connector"
+msgstr "右声道面板"
+
+#, fuzzy
+msgid "Yellow connector"
+msgstr "Midi 输出/游戏摇杆"
+
+#, fuzzy
+msgid "Yellow front panel connector"
+msgstr "Midi 输出/游戏摇杆面板"
+
+msgid "Green connector function"
+msgstr "线路输出音效"
+
+msgid "Green front panel connector function"
+msgstr "线路输出音效面板"
+
+msgid "Pink connector function"
+msgstr "话筒输出音效"
+
+msgid "Pink front panel connector function"
+msgstr "话筒输出音效面板"
+
+msgid "Blue connector function"
+msgstr "立体声输入音效"
+
+msgid "Blue front panel connector function"
+msgstr "立体声输入音效面板"
+
+msgid "Orange connector function"
+msgstr "低音炮输出音效"
+
+msgid "Orange front panel connector function"
+msgstr "低音炮输出音效面板"
+
+msgid "Black connector function"
+msgstr "后置声道输出音效"
+
+msgid "Black front panel connector function"
+msgstr "后置声道输出音效面板"
+
+msgid "Gray connector function"
+msgstr "中置声道输出音效"
+
+msgid "Gray front panel connector function"
+msgstr "中置声道输出音效面板"
+
+msgid "White connector function"
+msgstr "左/单声道输出音效"
+
+msgid "White front panel connector function"
+msgstr "左/单声道输出音效面板"
+
+msgid "Red connector function"
+msgstr "右声道输出音效"
+
+msgid "Red front panel connector function"
+msgstr "右声道输出音效面板"
+
+#, fuzzy
+msgid "Yellow connector function"
+msgstr "MIDI 输出音效"
+
+#, fuzzy
+msgid "Yellow front panel connector function"
+msgstr "MIDI 输出音效面板"
+
+msgid "Front panel line-in"
+msgstr "线路输入面板"
+
+msgid "Headphones"
+msgstr "头戴式耳机"
+
+msgid "Front panel headphones"
+msgstr "头戴式耳机面板"
+
+msgid "PCM"
+msgstr "PCM"
+
+msgid "Virtual mixer input"
+msgstr "模拟混音输入"
+
+msgid "Virtual mixer output"
+msgstr "模拟混音输出"
+
+msgid "Virtual mixer channel configuration"
+msgstr "模拟混音器设置"
+
+msgid ""
+"Could not open audio device for playback. Device is being used by another "
+"application."
+msgstr "无法打开音频设备播放音频。设备正由另一程序使用。"
+
+msgid ""
+"Could not open audio device for playback. You don't have permission to open "
+"the device."
+msgstr "无法打开音频设备播放音频。您无权打开此设备"
+
+msgid "Could not open audio device for playback."
+msgstr "无法打开音频设备播放音频。"
+
+msgid ""
+"Could not open audio device for playback. This version of the Open Sound "
+"System is not supported by this element."
+msgstr "无法打开音频设备播放音频。此组件不支持开放声音系统(OSS)版本。"
+
+msgid "Playback is not supported by this audio device."
+msgstr "此音频设备不支持音频播放。"
+
+msgid "Audio playback error."
+msgstr "音频播放错误。"
+
+msgid "Recording is not supported by this audio device."
+msgstr "此音频设备不支持录音。"
+
+msgid "Error recording from audio device."
+msgstr "从音频设备录音时发生错误。"
+
+#~ msgid "Failed to configure TwoLAME encoder. Check your encoding parameters."
+#~ msgstr "无法配置 TwoLAME 编码器。请检查您的编码参数。"
+
+#~ msgid ""
+#~ "The requested bitrate %d kbit/s for property '%s' is not allowed. The "
+#~ "bitrate was changed to %d kbit/s."
+#~ msgstr "不允许使用“%2$s”所请求的码率 %1$d kbit/s。码率改为 %3$d kbit/s。"

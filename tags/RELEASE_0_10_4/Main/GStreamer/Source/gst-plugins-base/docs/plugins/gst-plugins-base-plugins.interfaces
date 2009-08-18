@@ -1,0 +1,33 @@
+GstBin GstChildProxy
+GstPipeline GstChildProxy
+GstPlayBaseBin GstChildProxy
+GstPlayBin GstChildProxy
+GstPlayBin2 GstChildProxy
+GstDecodeBin2 GstChildProxy
+GstURIDecodeBin GstChildProxy
+GstDecodeBin GstChildProxy
+GstGioSink GstURIHandler
+GstGnomeVFSSink GstURIHandler
+GstAlsaSink GstPropertyProbe
+GstXvImageSink GstImplementsInterface GstPropertyProbe GstXOverlay GstColorBalance GstNavigation
+GstXImageSink GstImplementsInterface GstXOverlay GstNavigation
+GstAppSink GstURIHandler
+GstGioSrc GstURIHandler
+GstCddaBaseSrc GstURIHandler
+GstCdParanoiaSrc GstURIHandler
+GstAlsaSrc GstImplementsInterface GstMixer GstPropertyProbe
+GstV4lElement GstImplementsInterface GstPropertyProbe GstTuner GstXOverlay GstColorBalance
+GstV4lSrc GstImplementsInterface GstPropertyProbe GstTuner GstXOverlay GstColorBalance
+GstGnomeVFSSrc GstURIHandler
+GstAppSrc GstURIHandler
+GstVorbisEnc GstTagSetter
+GstVorbisTag GstTagSetter
+GstAlsaMixerElement GstImplementsInterface GstMixer GstPropertyProbe
+GstVolume GstImplementsInterface GstMixer
+GTypeModule GTypePlugin
+GIOModule GTypePlugin
+GAppLookupGConf GDesktopAppInfoLookup
+GProxyDrive GDrive
+GProxyMount GMount
+GProxyShadowMount GMount
+GProxyVolume GVolume

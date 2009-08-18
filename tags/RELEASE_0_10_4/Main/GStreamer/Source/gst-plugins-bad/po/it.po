@@ -1,0 +1,327 @@
+# Italian translation for gst-plugins-bad package of GStreamer project.
+# Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 GStreamer core team
+# This file is distributed under the same license as the gst-plugins-bad package.
+#
+# Luca Ferretti <elle.uca@infinito.it>, 2007, 2008, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: gst-plugins-bad 0.10.11.2\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
+"POT-Creation-Date: 2009-06-17 21:54+0100\n"
+"PO-Revision-Date: 2009-05-13 09:14+0200\n"
+"Last-Translator: Luca Ferretti <elle.uca@infinito.it>\n"
+"Language-Team: Italian <tp@lists.linux.it>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Could not read title information for DVD."
+msgstr "Impossibile leggere le informazioni del titolo per il DVD."
+
+#, c-format
+msgid "Failed to open DVD device '%s'."
+msgstr "Apertura del device DVD «%s» non riuscita."
+
+msgid "Failed to set PGC based seeking."
+msgstr "Impostazione del posizionamento basato su PGC non riuscita"
+
+msgid "Internal clock error."
+msgstr "Errore interno del clock."
+
+msgid "Internal data flow error."
+msgstr "Errore interno nel flusso di dati."
+
+msgid "No file name specified for writing."
+msgstr "Nessun nome di file specificato per la scrittura."
+
+#, c-format
+msgid "Could not open file \"%s\" for writing."
+msgstr "Impossibile aprire il file «%s» in scrittura."
+
+msgid "Internal data stream error."
+msgstr "Errore interno nello stream di dati."
+
+#, c-format
+msgid "Could not write to file \"%s\"."
+msgstr "Impossibile scrivere sul file «%s»."
+
+#, c-format
+msgid "Device \"%s\" does not exist."
+msgstr "Il device «%s» non esiste."
+
+#, c-format
+msgid "Could not open frontend device \"%s\"."
+msgstr "Impossibile aprire il device frontend «%s»."
+
+#, c-format
+msgid "Could not get settings from frontend device \"%s\"."
+msgstr "Impossibile ottenere le impostazioni dal device frontend «%s»."
+
+#, c-format
+msgid "Could not open file \"%s\" for reading."
+msgstr "Impossibile aprire il file «%s» in lettura."
+
+msgid "Could not open audio device for mixer control handling."
+msgstr ""
+"Impossibile aprire il device audio per la gestione della regolazione del "
+"mixer."
+
+msgid ""
+"Could not open audio device for mixer control handling. This version of the "
+"Open Sound System is not supported by this element."
+msgstr ""
+"Impossibile aprire il device audio per la gestione della regolazione del "
+"mixer. Questa versione di Open Sound System non è supportata da questo "
+"elemento."
+
+# NdT: questo e i successivi non ho controllato che sono....
+msgid "Fast"
+msgstr "Veloce"
+
+msgid "Low"
+msgstr "Lento"
+
+msgid "Medium"
+msgstr "Medio"
+
+msgid "High"
+msgstr "Alto"
+
+msgid "Very high"
+msgstr "Molto alto"
+
+msgid "Production"
+msgstr "Produzione"
+
+msgid "Off"
+msgstr "Spento"
+
+msgid "On"
+msgstr "Acceso"
+
+msgid "Stereo"
+msgstr "Stereo"
+
+msgid "Surround sound"
+msgstr "Suono surround"
+
+msgid "Input mix"
+msgstr "Mix ingresso"
+
+msgid "Front"
+msgstr "Fronte"
+
+msgid "Rear"
+msgstr "Dietro"
+
+msgid "Side"
+msgstr "Lato"
+
+# NdT: forse questo? --> http://en.wikipedia.org/wiki/Low-frequency_effect
+#
+# o forse Low Frequency Emitter 
+msgid "Center / LFE"
+msgstr "Centro / LFE"
+
+msgid "Microphone"
+msgstr "Microfono"
+
+msgid "Front panel microphone"
+msgstr "Microfono pannello frontale"
+
+msgid "Input"
+msgstr "Input"
+
+msgid "Line-in"
+msgstr "Linea in"
+
+msgid "PCM 1"
+msgstr "PCM 1"
+
+msgid "PCM 2"
+msgstr "PCM 2"
+
+msgid "PCM 3"
+msgstr "PCM 3"
+
+msgid "PCM 4"
+msgstr "PCM 4"
+
+msgid "Green connector"
+msgstr "Connettore verde"
+
+msgid "Green front panel connector"
+msgstr "Connettore verde pannello frontale"
+
+msgid "Pink connector"
+msgstr "Connettore rosa"
+
+msgid "Pink front panel connector"
+msgstr "Connettore rosa pannello frontale"
+
+msgid "Blue connector"
+msgstr "Connettore blu"
+
+msgid "Blue front panel connector"
+msgstr "Connettore blu pannello frontale"
+
+msgid "Orange connector"
+msgstr "Connettore arancione"
+
+msgid "Orange front panel connector"
+msgstr "Connettore arancione pannello frontale"
+
+msgid "Black connector"
+msgstr "Connettore nero"
+
+msgid "Black front panel connector"
+msgstr "Connettore nero pannello frontale"
+
+msgid "Gray connector"
+msgstr "Connettore grigio"
+
+msgid "Gray front panel connector"
+msgstr "Connettore grigio pannello frontale"
+
+msgid "White connector"
+msgstr "Connettore bianco"
+
+msgid "White front panel connector"
+msgstr "Connettore bianco pannello frontale"
+
+msgid "Red connector"
+msgstr "Connettore rosso"
+
+msgid "Red front panel connector"
+msgstr "Connettore rosso pannello frontale"
+
+msgid "Yellow connector"
+msgstr "Connettore giallo"
+
+msgid "Yellow front panel connector"
+msgstr "Connettore giallo pannello frontale"
+
+msgid "Green connector function"
+msgstr "Funzione connettore verde"
+
+msgid "Green front panel connector function"
+msgstr "Funzione connettore verde pannello frontale"
+
+msgid "Pink connector function"
+msgstr "Funzione connettore rosa"
+
+msgid "Pink front panel connector function"
+msgstr "Funzione connettore rosa pannello frontale"
+
+msgid "Blue connector function"
+msgstr "Funzione connettore blu"
+
+msgid "Blue front panel connector function"
+msgstr "Funzione connettore blu pannello frontale"
+
+msgid "Orange connector function"
+msgstr "Funzione connettore arancione"
+
+msgid "Orange front panel connector function"
+msgstr "Funzione connettore arancione pannello frontale"
+
+msgid "Black connector function"
+msgstr "Funzione connettore nero"
+
+msgid "Black front panel connector function"
+msgstr "Funzione connettore nero pannello frontale"
+
+msgid "Gray connector function"
+msgstr "Funzione connettore grigio"
+
+msgid "Gray front panel connector function"
+msgstr "Funzione connettore grigio pannello frontale"
+
+msgid "White connector function"
+msgstr "Funzione connettore bianco"
+
+msgid "White front panel connector function"
+msgstr "Funzione connettore bianco pannello frontale"
+
+msgid "Red connector function"
+msgstr "Funzione connettore rosso"
+
+msgid "Red front panel connector function"
+msgstr "Funzione connettore rosso pannello frontale"
+
+msgid "Yellow connector function"
+msgstr "Funzione connettore giallo"
+
+msgid "Yellow front panel connector function"
+msgstr "Funzione connettore giallo pannello frontale"
+
+msgid "Front panel line-in"
+msgstr "Canale ingresso pannello frontale"
+
+msgid "Headphones"
+msgstr "Cuffie"
+
+msgid "Front panel headphones"
+msgstr "Cuffie pannello frontale"
+
+# http://it.wikipedia.org/wiki/Pulse-Code_Modulation
+msgid "PCM"
+msgstr "PCM"
+
+msgid "Virtual mixer input"
+msgstr "Ingresso mixer virtuale"
+
+msgid "Virtual mixer output"
+msgstr "Uscita mixer virtuale"
+
+msgid "Virtual mixer channel configuration"
+msgstr "Configurazione canale mixer virtuale"
+
+msgid ""
+"Could not open audio device for playback. Device is being used by another "
+"application."
+msgstr ""
+"Impossibile aprire il device audio per la riproduzione. Il dispositivo è "
+"attualmente usato da un'altra applicazione."
+
+msgid ""
+"Could not open audio device for playback. You don't have permission to open "
+"the device."
+msgstr ""
+"Impossibile aprire il device audio per la riproduzione. Permessi non "
+"sufficienti per aprire il dispositivo."
+
+msgid "Could not open audio device for playback."
+msgstr "Impossibile aprire il device audio per la riproduzione."
+
+msgid ""
+"Could not open audio device for playback. This version of the Open Sound "
+"System is not supported by this element."
+msgstr ""
+"Impossibile aprire il device audio per la riproduzione. Questa versione di "
+"Open Sound System non è supportata da questo elemento."
+
+msgid "Playback is not supported by this audio device."
+msgstr "Questo device audio non supporta la riproduzione."
+
+msgid "Audio playback error."
+msgstr "Errore nel riprodurre l'audio."
+
+msgid "Recording is not supported by this audio device."
+msgstr "Questo dispositivo audio non supporta la registrazione."
+
+msgid "Error recording from audio device."
+msgstr "Errore nel registrare dal dispositivo audio."
+
+#~ msgid "Failed to configure TwoLAME encoder. Check your encoding parameters."
+#~ msgstr ""
+#~ "Configurazione dell'encoder TwoLAME non riuscita. Controllare i parametri "
+#~ "dell'encoder."
+
+# NdT: rimosso il richiesto, lo so
+#~ msgid ""
+#~ "The requested bitrate %d kbit/s for property '%s' is not allowed. The "
+#~ "bitrate was changed to %d kbit/s."
+#~ msgstr ""
+#~ "Non sono consentiti %d kbit/s come bitrate per la proprietà «%s». Il "
+#~ "bitrate è stato cambiato a %d kbit/s."
