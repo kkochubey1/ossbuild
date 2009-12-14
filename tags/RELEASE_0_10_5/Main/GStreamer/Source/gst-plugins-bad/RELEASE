@@ -1,0 +1,134 @@
+
+Release notes for GStreamer Bad Plug-ins 0.10.17 "Anny bobany"
+        
+
+
+The GStreamer team is proud to announce a new release
+in the 0.10.x stable series of the
+GStreamer Bad Plug-ins.
+
+
+The 0.10.x series is a stable series targeted at end users.
+It is not API or ABI compatible with the stable 0.8.x series.
+It is, however, parallel installable with the 0.8.x series.
+
+
+
+"That an accusation?"
+
+
+No perfectly groomed moustache or any amount of fine clothing is going to
+cover up the truth - these plug-ins are Bad with a capital B.
+They look fine on the outside, and might even appear to get the job done, but
+at the end of the day they're a black sheep. Without a golden-haired angel
+to watch over them, they'll probably land in an unmarked grave at the final
+showdown.
+
+
+Don't bug us about their quality - exercise your Free Software rights,
+patch up the offender and send us the patch on the fastest steed you can
+steal from the Confederates. Because you see, in this world, there's two
+kinds of people, my friend: those with loaded guns and those who dig.
+You dig.
+
+
+This module contains a set of plug-ins that aren't up to par compared to the
+rest.  They might be close to being good quality, but they're missing something
+- be it a good code review, some documentation, a set of tests, a real live
+maintainer, or some actual wide use.  If the blanks are filled in they might be
+upgraded to become part of either gst-plugins-good or gst-plugins-ugly,
+depending on the other factors.
+If the plug-ins break, you can't complain - instead, you can fix the
+problem and send us a patch, or bribe someone into fixing them for you.
+New contributors can start here for things to work on.
+
+
+Other modules containing plug-ins are:
+
+
+gst-plugins-base
+contains a basic set of well-supported plug-ins
+gst-plugins-good
+contains a set of well-supported plug-ins under our preferred license
+gst-plugins-ugly
+contains a set of well-supported plug-ins, but might pose problems for
+    distributors
+
+
+
+  
+
+Features of this release
+    
+      * Fix DVD playback
+      * New elements: DTMF tone source and detector
+      * ASS subtitle support improvements
+      * Fix compilation on OS/X Snow Leopard
+      * Support DVB 3.3 API
+      * Inputselector fixes
+
+Bugs fixed in this release
+     
+      * 602106 : Bad atom size calculation
+      * 574434 : [camerabin] Changing default video/audio source for Windows
+      * 584361 : gppmux Support for 3gr6
+      * 586929 : [midi] Doesn't handle push
+      * 595161 : [mpegtsdemux] Internal dataflow problem with some streams.
+      * 598552 : faac: Clean up defaults
+      * 598763 : New plugin: aiffmux
+      * 598808 : mpegpsmux: Fix CLFAGS typo and reorder flags
+      * 599050 : [mpegvideoparse] Does not check width/height range
+      * 599469 : resindvd: problems pre-rolling in the absence of audio
+      * 600454 : aacparse detecting aac file as mpegversion=2 instead of 4
+      * 600461 : [zbar] Over-eager detection of barcodes
+      * 600662 : [assrender] Doesn't synchronize subtitle buffers
+      * 600707 : autoconvert depends on function from core 0.10.26
+      * 600724 : celt: fails to build against celt-0.7
+      * 599903 : Scaletempo plugin stops early when playing slowly
+
+Download
+
+You can find source releases of gst-plugins-bad in the download directory:
+http://gstreamer.freedesktop.org/src/gst-plugins-bad/
+
+GStreamer Homepage
+
+More details can be found on the project's website:
+http://gstreamer.freedesktop.org/
+
+Support and Bugs
+
+We use GNOME's bugzilla for bug reports and feature requests:
+http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer
+
+Developers
+
+GStreamer is stored in Git, hosted at git.freedesktop.org, and can be cloned from there.
+Interested developers of the core library, plug-ins, and applications should
+subscribe to the gstreamer-devel list. If there is sufficient interest we
+will create more lists as necessary.
+
+        
+Applications
+  
+Contributors to this release
+    
+      * Bastian Hecht
+      * Chris Hills
+      * David Schleef
+      * Edward Hervey
+      * Gabriel Millaire
+      * Jan Schmidt
+      * Julien Isorce
+      * Michael Smith
+      * Olivier Crête
+      * René Stadler
+      * Robert Swain
+      * Sebastian Dröge
+      * Stefan Kost
+      * Teemu Katajisto
+      * Thiago Santos
+      * Tim-Philipp Müller
+      * Tommi Myöhänen
+      * Wim Taymans
+ 

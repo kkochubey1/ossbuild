@@ -1,0 +1,65 @@
+
+Release notes for GStreamer Python bindings 0.10.17 "Shiny new button"
+        
+
+
+The GStreamer team is proud to announce a new release
+in the 0.10.x stable series of the
+GStreamer Python Bindings.
+
+
+The 0.10.x series is a stable series targeted at end users.
+It is not API or ABI compatible with the stable 0.8.x series.
+It is, however, parallel installable with the 0.8.x series.
+
+
+  
+
+Features of this release
+    
+      * Fix leak in gst_base_sink_get_last_buffer()
+      * Fix linking of pygstminiobject
+      * Add test_audio.py example
+      * Fix deadlocks calling gst_pad_link()
+
+Bugs fixed in this release
+     
+      * 590348 : [audio (and other modules)] can't use pygstminiobject !
+      * 590803 : checks fail in non-English locale
+      * 592447 : memory leak on certain pipelines with appsink
+
+Download
+
+You can find source releases of gst-python in the download directory:
+http://gstreamer.freedesktop.org/src/gst-python/
+
+GStreamer Homepage
+
+More details can be found on the project's website:
+http://gstreamer.freedesktop.org/
+
+Support and Bugs
+
+We use GNOME's bugzilla for bug reports and feature requests:
+http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer
+
+Developers
+
+GStreamer is stored in Git, hosted at git.freedesktop.org, and can be cloned from there.
+Interested developers of the core library, plug-ins, and applications should
+subscribe to the gstreamer-devel list. If there is sufficient interest we
+will create more lists as necessary.
+
+        
+Applications
+  
+Contributors to this release
+    
+      * Alessandro Decina
+      * Christian Schaller
+      * Edward Hervey
+      * Jan Schmidt
+      * Johannes Berg
+      * Marc-Andre Lureau
+      * Sebastian Dröge
+ 

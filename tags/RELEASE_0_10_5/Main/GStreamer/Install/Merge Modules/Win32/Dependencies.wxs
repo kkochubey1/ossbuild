@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<?include $(var.InstallRoot)\Properties.wxi ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Fragment>
+
+		<?define Files="
+			glew32.dll;
+			iconv.dll;
+			libbz2.dll;
+			libcairo-2.dll;
+			libfontconfig-1.dll;
+			libfreetype-6.dll;
+			libgcrypt-11.dll;
+			libgio-2.0-0.dll;
+			libglib-2.0-0.dll;
+			libgmodule-2.0-0.dll;
+			libgnutls-26.dll;
+			libgnutls-extra-26.dll;
+			libgnutls-openssl-26.dll;
+			libgobject-2.0-0.dll;
+			libgpg-error-0.dll;
+			libgthread-2.0-0.dll;
+			libjpeg-7.dll;
+			libmms-0.dll;
+			libmp3lame-0.dll;
+			libneon-27.dll;
+			libogg-0.dll;
+			liboil-0.3-0.dll;
+			libopenjpeg-2.dll;
+			libpango-1.0-0.dll;
+			libpangocairo-1.0-0.dll;
+			libpangoft2-1.0-0.dll;
+			libpangowin32-1.0-0.dll;
+			libpixman-1-0.dll;
+			libpng12-0.dll;
+			libschroedinger-1.0-0.dll;
+			libsoup-2.4-1.dll;
+			libspeex-1.dll;
+			libspeexdsp-1.dll;
+			libtheora-0.dll;
+			libtheoradec-1.dll;
+			libtheoraenc-1.dll;
+			libvorbis-0.dll;
+			libvorbisenc-2.dll;
+			libvorbisfile-3.dll;
+			libwavpack-1.dll;
+			libx264-67.dll;
+			libxml2-2.dll;
+			pthreadGC2.dll;
+			SDL.dll;
+			zlib1.dll
+		" ?>
+		
+		<ComponentGroup Id="LicenseIndependentDependencies">
+			<?foreach file in $(var.Files) ?>
+				<ComponentRef Id="$(ossbuild.createValidID($(var.file)))" />
+			<?endforeach ?>
+		</ComponentGroup>
+		
+		<DirectoryRef Id="MergeRedirectFolder">
+			
+			<?foreach file in $(var.Files) ?>
+				<Component Id="$(ossbuild.createValidID($(var.file)))" Guid="$(ossbuild.stringToGUID($(ossbuild.trim($(var.file)))))">
+					<File Source="$(ossbuild.existsCoalesce($(var.OutputBinDir)\$(ossbuild.trim($(var.file))), $(var.SharedBinDir)\$(ossbuild.trim($(var.file)))))" DefaultLanguage="0" />
+				</Component>
+			<?endforeach ?>
+			
+		</DirectoryRef>
+
+		<?undef Files ?>
+		
+	</Fragment>
+</Wix>
