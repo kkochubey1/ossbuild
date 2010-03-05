@@ -340,7 +340,6 @@
 		<Library resource="libopenjpeg-2.dll" />
 		<Library resource="libpng14-14.dll" />
 		<Library resource="libtiff-3.dll" />
-		<Library resource="libtiffxx-3.dll" />
 		<Library resource="libglib-2.0-0.dll" />
 		<Library resource="libgobject-2.0-0.dll" />
 		<Library resource="libgmodule-2.0-0.dll" />
