@@ -234,8 +234,6 @@
 		<File resource="libgstplaybin.dll" />
 		<File resource="libgstpng.dll" />
 		<File resource="libgstpnm.dll" />
-		<File resource="libgstpython-v2.5.dll" />
-		<File resource="libgstpython-v2.6.dll" />
 		<File resource="libgstqtdemux.dll" />
 		<File resource="libgstqtmux.dll" />
 		<File resource="libgstrawparse.dll" />

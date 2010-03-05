@@ -162,6 +162,7 @@
 				<exclude name="*-lgpl*" />
 				<exclude name="libgstffmpeg.so" />
 				<exclude name="libgstffmpegscale.so" />
+				<exclude name="*python*" />
 			</fileset>
 			<fileset dir="${build.bin.dir}/plugins/" erroronmissingdir="false">
 				<include name="*.dll" />
@@ -169,6 +170,7 @@
 				<exclude name="*-lgpl*" />
 				<exclude name="libgstffmpeg.so" />
 				<exclude name="libgstffmpegscale.so" />
+				<exclude name="*python*" />
 			</fileset>
 		</copy>
 
@@ -305,6 +307,7 @@
 				<exclude name="libgstffmpeg.so" />
 				<exclude name="libgstffmpegscale.so" />
 				<exclude name="*resindvd*" />
+				<exclude name="*python*" />
 				<exclude name="*gstdts*" />
 				<exclude name="*gstfaac*" />
 				<exclude name="*gstfaad*" />
@@ -322,6 +325,7 @@
 				<exclude name="libgstffmpeg.so" />
 				<exclude name="libgstffmpegscale.so" />
 				<exclude name="*resindvd*" />
+				<exclude name="*python*" />
 				<exclude name="*gstdts*" />
 				<exclude name="*gstfaac*" />
 				<exclude name="*gstfaad*" />
