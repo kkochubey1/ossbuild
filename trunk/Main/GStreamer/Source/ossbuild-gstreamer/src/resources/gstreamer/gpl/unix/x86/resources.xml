@@ -2,16 +2,477 @@
 
 <Resources>
 
-	<Extract package="resources.gstreamer.gpl.unix.x86" directory="${tmp}/ossbuild/gstreamer/bin/">
+	<Extract package="resources.gstreamer.gpl.unix.x86" directory="${tmp}/ossbuild/gstreamer/gpl/">
+		<Echo key="res.gst.init" msg="Initializing GStreamer..." />
+
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="LicenseSuffix" value="-gpl" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+
+		<Var name="dirGtkApiVersion" value="2.0" />
+		<Var name="pkgGtkApiVersion" value="2_0" />
+
+		<Var name="dirFarsightApiVersion" value="0.0" />
+		<Var name="pkgFarsightApiVersion" value="0_0" />
+
+		<Echo key="res.gst.dependency.config" msg="Loading dependency configurations..." />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.etc.fonts" directory="${dirPlatform}/etc/fonts/">
+		<Clean />
+
+		<!-- Fontconfig configuration -->
+		<File resource="fonts.conf" />
+		<File resource="fonts.dtd" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.etc.fonts.conf_avail" directory="${dirPlatform}/etc/fonts/conf.avail/">
+		<Clean />
+
+		<!-- Fontconfig configuration -->
+		<File resource="10-autohint.conf" />
+		<File resource="10-no-sub-pixel.conf" />
+		<File resource="10-sub-pixel-bgr.conf" />
+		<File resource="10-sub-pixel-rgb.conf" />
+		<File resource="10-sub-pixel-vbgr.conf" />
+		<File resource="10-sub-pixel-vrgb.conf" />
+		<File resource="10-unhinted.conf" />
+		<File resource="20-fix-globaladvance.conf" />
+		<File resource="20-unhint-small-vera.conf" />
+		<File resource="25-unhint-nonlatin.conf" />
+		<File resource="30-metric-aliases.conf" />
+		<File resource="30-urw-aliases.conf" />
+		<File resource="40-nonlatin.conf" />
+		<File resource="45-latin.conf" />
+		<File resource="49-sansserif.conf" />
+		<File resource="50-user.conf" />
+		<File resource="51-local.conf" />
+		<File resource="60-latin.conf" />
+		<File resource="65-fonts-persian.conf" />
+		<File resource="65-khmer.conf" />
+		<File resource="65-nonlatin.conf" />
+		<File resource="69-unifont.conf" />
+		<File resource="70-no-bitmaps.conf" />
+		<File resource="70-yes-bitmaps.conf" />
+		<File resource="80-delicious.conf" />
+		<File resource="90-synthetic.conf" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.etc.fonts.conf_d" directory="${dirPlatform}/etc/fonts/conf.d/">
+		<Clean />
+
+		<!-- Fontconfig configuration -->
+		<File resource="20-fix-globaladvance.conf" />
+		<File resource="20-unhint-small-vera.conf" />
+		<File resource="30-metric-aliases.conf" />
+		<File resource="30-urw-aliases.conf" />
+		<File resource="40-nonlatin.conf" />
+		<File resource="45-latin.conf" />
+		<File resource="49-sansserif.conf" />
+		<File resource="50-user.conf" />
+		<File resource="51-local.conf" />
+		<File resource="60-latin.conf" />
+		<File resource="65-fonts-persian.conf" />
+		<File resource="65-nonlatin.conf" />
+		<File resource="69-unifont.conf" />
+		<File resource="80-delicious.conf" />
+		<File resource="90-synthetic.conf" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.etc.gconf.schemas" directory="${dirPlatform}/etc/gconf/schemas/">
+		<Clean />
+
+		<!-- GConf configuration -->
+		<File resource="gstreamer-${GstApiVersion}.schemas" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.etc.gtk_${pkgGtkApiVersion}" directory="${dirPlatform}/etc/gtk-${dirGtkApiVersion}/">
+		<Clean />
+
+		<!-- GTK keyboard configuration -->
+		<File resource="im-multipress.conf" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.farsight2_${pkgFarsightApiVersion}" directory="${dirPlatform}/lib/farsight2-${dirFarsightApiVersion}/">
+		<Clean />
+
+		<!-- Farsight/Farsight2 Transmitters -->
+		<File resource="libnice-transmitter.so" />
+		<File resource="libmulticast-transmitter.so" />
+		<File resource="librawudp-transmitter.so" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gtk_${pkgGtkApiVersion}._2_10_0.engines" directory="${dirPlatform}/lib/gtk-${dirGtkApiVersion}/2.10.0/engines/">
+		<Clean />
+
+		<!-- GTK engines -->
+		<File resource="libpixmap.so" />
+		<File resource="libsvg.so" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gtk_${pkgGtkApiVersion}._2_10_0.loaders" directory="${dirPlatform}/lib/gtk-${dirGtkApiVersion}/2.10.0/loaders/">
+		<Clean />
+
+		<!-- GTK loaders -->
+		<File resource="svg_loader.so" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gtk_${pkgGtkApiVersion}._2_10_0.printbackends" directory="${dirPlatform}/lib/gtk-${dirGtkApiVersion}/2.10.0/printbackends/">
+		<Clean />
+
+		<!-- GTK print backends -->
+		<File resource="libprintbackend-file.so" />
+		<File resource="libprintbackend-lpr.so" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gtk_${pkgGtkApiVersion}.modules" directory="${dirPlatform}/lib/gtk-${dirGtkApiVersion}/modules/">
+		<Clean />
+
+		<!-- GTK modules -->
+		<File resource="libgail.so" />
+		<File resource="libferret.so" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<Echo key="res.gst.extract.plugins" msg="Extracting GStreamer plugins..." />
+
+		<Clean />
+
+		<!-- Environment Variables -->
+
+		<EnvVar name="GST_REGISTRY" value="${dirPlatform}/gst-registry.bin" asFile="true" />
+		<EnvVar name="GST_PLUGIN_PATH" value="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/" asFile="true" />
+
+		<!-- LGPL Plugins -->
+
+		<File resource="libfsfunnel.so" />
+		<File resource="libfsmsnconference.so" />
+		<File resource="libfsrtcpfilter.so" />
+		<File resource="libfsrtpconference.so" />
+		<File resource="libfsselector.so" />
+		<File resource="libfsvideoanyrate.so" />
+		<File resource="libgnl.so" />
+		<File resource="libgstaacparse.so" />
+		<File resource="libgstadder.so" />
+		<File resource="libgstadpcmdec.so" />
+		<File resource="libgstaiff.so" />
+		<File resource="libgstalaw.so" />
+		<File resource="libgstalpha.so" />
+		<File resource="libgstalphacolor.so" />
+		<File resource="libgstalsa.so" />
+		<File resource="libgstalsaspdif.so" />
+		<File resource="libgstamrparse.so" />
+		<File resource="libgstannodex.so" />
+		<File resource="libgstapetag.so" />
+		<File resource="libgstapp.so" />
+		<File resource="libgstasf.so" />
+		<File resource="libgstasfmux.so" />
+		<File resource="libgstaudioconvert.so" />
+		<File resource="libgstaudiofx.so" />
+		<File resource="libgstaudiorate.so" />
+		<File resource="libgstaudioresample.so" />
+		<File resource="libgstaudiotestsrc.so" />
+		<File resource="libgstauparse.so" />
+		<File resource="libgstautoconvert.so" />
+		<File resource="libgstautodetect.so" />
+		<File resource="libgstavi.so" />
+		<File resource="libgstbayer.so" />
+		<File resource="libgstbz2.so" />
+		<File resource="libgstcairo.so" />
+		<File resource="libgstcamerabin.so" />
+		<File resource="libgstcdxaparse.so" />
+		<File resource="libgstcelt.so" />
+		<File resource="libgstcoreelements.so" />
+		<File resource="libgstcoreindexers.so" />
+		<File resource="libgstcutter.so" />
+		<File resource="libgstdccp.so" />
+		<File resource="libgstdebug.so" />
+		<File resource="libgstdebugutilsbad.so" />
+		<File resource="libgstdecodebin.so" />
+		<File resource="libgstdecodebin2.so" />
+		<File resource="libgstdeinterlace.so" />
+		<File resource="libgstdtmf.so" />
+		<File resource="libgstdvb.so" />
+		<File resource="libgstdvdlpcmdec.so" />
+		<File resource="libgstdvdspu.so" />
+		<File resource="libgstdvdsub.so" />
+		<File resource="libgstefence.so" />
+		<File resource="libgsteffectv.so" />
+		<File resource="libgstequalizer.so" />
+		<File resource="libgstfbdevsink.so" />
+		<File resource="libgstfestival.so" />
+		<File resource="libgstffmpegcolorspace.so" />
+		<File resource="libgstflv.so" />
+		<File resource="libgstflxdec.so" />
+		<File resource="libgstfreeze.so" />
+		<File resource="libgstfrei0r.so" />
+		<File resource="libgstgamma.so" />
+		<File resource="libgstgdkpixbuf.so" />
+		<File resource="libgstgdp.so" />
+		<File resource="libgstgio.so" />
+		<File resource="libgstgoom.so" />
+		<File resource="libgstgoom2k1.so" />
+		<File resource="libgsth264parse.so" />
+		<File resource="libgsthdvparse.so" />
+		<File resource="libgsticydemux.so" />
+		<File resource="libgstid3demux.so" />
+		<File resource="libgstid3tag.so" />
+		<File resource="libgstiec958.so" />
+		<File resource="libgstinterleave.so" />
+		<File resource="libgstjpeg.so" />
+		<File resource="libgstjrtp.so" />
+		<File resource="libgstlegacyresample.so" />
+		<File resource="libgstlevel.so" />
+		<File resource="libgstliveadder.so" />
+		<File resource="libgstmatroska.so" />
+		<File resource="libgstmms.so" />
+		<File resource="libgstmpeg4videoparse.so" />
+		<File resource="libgstmpegaudioparse.so" />
+		<File resource="libgstmpegdemux.so" />
+		<File resource="libgstmpegpsmux.so" />
+		<File resource="libgstmpegstream.so" />
+		<File resource="libgstmpegtsmux.so" />
+		<File resource="libgstmpegvideoparse.so" />
+		<File resource="libgstmulaw.so" />
+		<File resource="libgstmultifile.so" />
+		<File resource="libgstmultipart.so" />
+		<File resource="libgstmve.so" />
+		<File resource="libgstmxf.so" />
+		<File resource="libgstnavigationtest.so" />
+		<File resource="libgstneonhttpsrc.so" />
+		<File resource="libgstnetsim.so" />
+		<File resource="libgstnsf.so" />
+		<File resource="libgstnuvdemux.so" />
+		<File resource="libgstogg.so" />
+		<File resource="libgstopengl.so" />
+		<File resource="libgstoss4audio.so" />
+		<File resource="libgstossaudio.so" />
+		<File resource="libgstpango.so" />
+		<File resource="libgstpcapparse.so" />
+		<File resource="libgstplaybin.so" />
+		<File resource="libgstpng.so" />
+		<File resource="libgstpnm.so" />
+		<File resource="libgstpulse.so" />
+		<File resource="libgstqtdemux.so" />
+		<File resource="libgstqtmux.so" />
+		<File resource="libgstrawparse.so" />
+		<File resource="libgstreal.so" />
+		<File resource="libgstreplaygain.so" />
+		<File resource="libgstrfbsrc.so" />
+		<File resource="libgstrmdemux.so" />
+		<File resource="libgstrsvg.so" />
+		<File resource="libgstrtp.so" />
+		<File resource="libgstrtpdemux.so" />
+		<File resource="libgstrtpjitterbuffer.so" />
+		<File resource="libgstrtpmanager.so" />
+		<File resource="libgstrtpmux.so" />
+		<File resource="libgstrtppayloads.so" />
+		<File resource="libgstrtsp.so" />
+		<File resource="libgstscaletempoplugin.so" />
+		<File resource="libgstschro.so" />
+		<File resource="libgstsdl.so" />
+		<File resource="libgstsdpelem.so" />
+		<File resource="libgstselector.so" />
+		<File resource="libgstshapewipe.so" />
+		<File resource="libgstsiren.so" />
+		<File resource="libgstsmpte.so" />
+		<File resource="libgstsouphttpsrc.so" />
+		<File resource="libgstspectrum.so" />
+		<File resource="libgstspeed.so" />
+		<File resource="libgstspeex.so" />
+		<File resource="libgststereo.so" />
+		<File resource="libgstsubenc.so" />
+		<File resource="libgstsubparse.so" />
+		<File resource="libgsttcp.so" />
+		<File resource="libgsttheora.so" />
+		<File resource="libgsttta.so" />
+		<File resource="libgsttypefindfunctions.so" />
+		<File resource="libgstudp.so" />
+		<File resource="libgstvalve.so" />
+		<File resource="libgstvcdsrc.so" />
+		<File resource="libgstvideo4linux.so" />
+		<File resource="libgstvideo4linux2.so" />
+		<File resource="libgstvideobalance.so" />
+		<File resource="libgstvideobox.so" />
+		<File resource="libgstvideocrop.so" />
+		<File resource="libgstvideoflip.so" />
+		<File resource="libgstvideomeasure.so" />
+		<File resource="libgstvideomixer.so" />
+		<File resource="libgstvideorate.so" />
+		<File resource="libgstvideoscale.so" />
+		<File resource="libgstvideosignal.so" />
+		<File resource="libgstvideotestsrc.so" />
+		<File resource="libgstvmnc.so" />
+		<File resource="libgstvolume.so" />
+		<File resource="libgstvorbis.so" />
+		<File resource="libgstwavenc.so" />
+		<File resource="libgstwavpack.so" />
+		<File resource="libgstwavparse.so" />
+		<File resource="libgstximagesink.so" />
+		<File resource="libgstximagesrc.so" />
+		<File resource="libgstxvimagesink.so" />
+		<File resource="libgsty4menc.so" />
+
+		<!-- License-Specific Plugins -->
+
+		<File resource="libgstffmpeg${LicenseSuffix}.so" />
+		<File resource="libgstffmpegscale${LicenseSuffix}.so" />
+
+		<!-- GPL Plugins -->
+
+		<File resource="libgstdtsdec.so" />
+		<File resource="libgstfaac.so" />
+		<File resource="libgstfaad.so" />
+		<File resource="libresindvd.so" />
+		<File resource="libgstxvid.so" />
+		<File resource="libgsta52dec.so" />
+		<File resource="libgstdvdread.so" />
+		<File resource="libgstlame.so" />
+		<File resource="libgstmpeg2dec.so" />
+		<File resource="libgstx264.so" />
 
 	</Extract>
 
-	<Extract package="resources.gstreamer.gpl.unix.x86.farsight2" directory="${tmp}/ossbuild/gstreamer/lib/farsight2-0.0/">
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<Echo key="res.gst.load.native.libraries" msg="Loading native libraries..." />
 
-	</Extract>
+		<Clean />
 
-	<Extract package="resources.gstreamer.gpl.unix.x86.plugins" directory="${tmp}/ossbuild/gstreamer/lib/gstreamer-0.10/">
+		<!-- Ensure this directory exists -->
+		<MakeDirectory path="${dirPlatform}/bin/" />
 
+		<!-- Change the working directory while we load native libraries -->
+		<WorkingDirectory path="${dirPlatform}/bin/" />
+
+		<!-- Change path so that our native libraries are found first -->
+		<EnvVar name="PATH" prepend="true" value="${dirPlatform}/bin/" asFile="true" />
+		<EnvVar name="LD_LIBRARY_PATH" prepend="true" value="${dirPlatform}/bin/" asFile="true" />
+
+		<!-- LGPL Dependencies -->
+
+		<Library resource="liboil-0.3.so.0" />
+		<Library resource="libz.so.1" />
+		<Library resource="libbz2.so.1.0" />
+		<!-- <Library resource="libbz2.so.1" /> -->
+		<Library resource="libGLEW.so.1.5" />
+		<Library resource="libexpat.so.1" />
+		<Library resource="libxml2.so.2" />
+		<Library resource="libjpeg.so.8" />
+		<Library resource="libopenjpeg.so.2" />
+		<Library resource="libpng14.so.14" />
+		<Library resource="libtiff.so.3" />
+		<Library resource="libglib-2.0.so.0" />
+		<Library resource="libgobject-2.0.so.0" />
+		<Library resource="libgmodule-2.0.so.0" />
+		<Library resource="libgthread-2.0.so.0" />
+		<Library resource="libgio-2.0.so.0" />
+		<Library resource="libatk-1.0.so.0" />
+		<Library resource="libgpg-error.so.0" />
+		<Library resource="libgcrypt.so.11" />
+		<Library resource="libtasn1.so.3" />
+		<Library resource="libgnutls.so.26" />
+		<Library resource="libgnutls-extra.so.26" />
+		<Library resource="libgnutls-openssl.so.26" />
+		<Library resource="libsoup-2.4.so.1" />
+		<Library resource="libneon.so.27" />
+		<Library resource="libfreetype.so.6" />
+		<Library resource="libfontconfig.so.1" />
+		<Library resource="libpixman-1.so.0" />
+		<Library resource="libcairo.so.2" />
+		<Library resource="libpango-1.0.so.0" />
+		<Library resource="libgdk_pixbuf-2.0.so.0" />
+		<Library resource="libpangoft2-1.0.so.0" />
+		<Library resource="libpangox-1.0.so.0" />
+		<Library resource="libpangocairo-1.0.so.0" />
+		<Library resource="libgdk-x11-2.0.so.0" />
+		<Library resource="libgdk_pixbuf_xlib-2.0.so.0" />
+		<Library resource="libgtk-x11-2.0.so.0" />
+		<Library resource="libgailutil.so.18" />
+		<Library resource="libgtkgl-2.0.so.1" />
+		<Library resource="libcroco-0.6.so.3" />
+		<Library resource="libgsf-1.so.114" />
+		<Library resource="librsvg-2.so.2" />
+		<Library resource="libSDL-1.2.so.0" />
+		<Library resource="libogg.so.0" />
+		<Library resource="libvorbis.so.0" />
+		<Library resource="libvorbisenc.so.2" />
+		<Library resource="libvorbisfile.so.3" />
+		<Library resource="libcelt0.so.0" />
+		<Library resource="libtheora.so.0" />
+		<Library resource="libtheoradec.so.1" />
+		<Library resource="libtheoraenc.so.1" />
+		<Library resource="libmms.so.0" />
+		<Library resource="libspeex.so.1" />
+		<Library resource="libspeexdsp.so.1" />
+		<Library resource="libschroedinger-1.0.so.0" />
+		<Library resource="libnice.so.0" />
+
+		<!-- GPL Dependencies -->
+
+		<Library resource="libmp3lame.so.0" />
+		<Library resource="libx264.so.88" />
+		<Library resource="libxvidcore.so.4" />
+		<Library resource="libwavpack.so.1" />
+		<Library resource="liba52.so.0" />
+		<Library resource="libmpeg2.so.0" />
+		<Library resource="libmpeg2convert.so.0" />
+		<Library resource="libdca.so.0" />
+		<Library resource="libdts.so.0" />
+		<Library resource="libfaac.so.0" />
+		<Library resource="libfaad.so.2" />
+		<Library resource="libdvdread.so.4" />
+		<Library resource="libdvdnav.so.4" />
+		<Library resource="libdvdnavmini.so.4" />
+		<Library resource="libdvdcss.so.2" />
+
+		<!-- License-Specific Dependencies -->
+
+		<Library resource="libavutil${LicenseSuffix}.so.50" />
+		<Library resource="libavcodec${LicenseSuffix}.so.52" />
+		<Library resource="libavformat${LicenseSuffix}.so.52" />
+		<Library resource="libavdevice${LicenseSuffix}.so.52" />
+		<Library resource="libswscale${LicenseSuffix}.so.0" />
+		<Library resource="libavfilter${LicenseSuffix}.so.1" />
+
+		<!-- GStreamer -->
+
+		<Echo key="res.gst.load.gst.libraries" msg="Loading GStreamer libraries..." />
+
+		<Library resource="libgstreamer-${GstApiVersion}.so.0" />
+		<Library resource="libgstinterfaces-${GstApiVersion}.so.0" />
+		<Library resource="libgstcontroller-${GstApiVersion}.so.0" />
+		<Library resource="libgstdataprotocol-${GstApiVersion}.so.0" />
+		<Library resource="libgstsdp-${GstApiVersion}.so.0" />
+		<Library resource="libgstnet-${GstApiVersion}.so.0" />
+		<Library resource="libgstnetbuffer-${GstApiVersion}.so.0" />
+		<Library resource="libgstpbutils-${GstApiVersion}.so.0" />
+		<Library resource="libgstfft-${GstApiVersion}.so.0" />
+		<Library resource="libgstbase-${GstApiVersion}.so.0" />
+		<Library resource="libgstapp-${GstApiVersion}.so.0" />
+		<Library resource="libgstvideo-${GstApiVersion}.so.0" />
+		<Library resource="libgstbasevideo-${GstApiVersion}.so.0" />
+		<Library resource="libgstaudio-${GstApiVersion}.so.0" />
+		<Library resource="libgsttag-${GstApiVersion}.so.0" />
+		<Library resource="libgstriff-${GstApiVersion}.so.0" />
+		<Library resource="libgstrtp-${GstApiVersion}.so.0" />
+		<Library resource="libgstrtsp-${GstApiVersion}.so.0" />
+		<Library resource="libgstcdda-${GstApiVersion}.so.0" />
+		<Library resource="libgstsignalprocessor-${GstApiVersion}.so.0" />
+		<Library resource="libgstphotography-${GstApiVersion}.so.0" />
+		<Library resource="libgstgl-${GstApiVersion}.so.0" />
+		<Library resource="libgstfarsight-${GstApiVersion}.so.0" />
+
+		<!-- Reset the working directory -->
+		<WorkingDirectory path="${cwd}" />
+
+		<Echo key="res.gst.complete" msg="GStreamer initialization complete" />
 	</Extract>
 
 </Resources>

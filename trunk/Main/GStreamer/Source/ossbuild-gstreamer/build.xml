@@ -144,13 +144,17 @@
 				<include name="*.dll" />
 				<include name="*.so.*" />
 				<exclude name="*-lgpl*" />
+				<exclude name="*gstcheck*" />
 				<exclude name="*sharp*" />
+				<exclude name="*tiffxx*" />
 			</fileset>
 			<fileset dir="${build.bin.dir}" erroronmissingdir="false">
 				<include name="*.dll" />
 				<include name="*.so.*" />
 				<exclude name="*-lgpl*" />
+				<exclude name="*gstcheck*" />
 				<exclude name="*sharp*" />
+				<exclude name="*tiffxx*" />
 			</fileset>
 		</copy>
 
@@ -278,7 +282,9 @@
 				<include name="*.dll" />
 				<include name="*.so.*" />
 				<exclude name="*-gpl*" />
+				<exclude name="*gstcheck*" />
 				<exclude name="*sharp*" />
+				<exclude name="*tiffxx*" />
 				<exclude name="*x264*" />
 				<exclude name="*xvidcore*" />
 				<exclude name="*a52*" />
@@ -294,7 +300,9 @@
 				<include name="*.dll" />
 				<include name="*.so.*" />
 				<exclude name="*-gpl*" />
+				<exclude name="*gstcheck*" />
 				<exclude name="*sharp*" />
+				<exclude name="*tiffxx*" />
 			</fileset>
 		</copy>
 
