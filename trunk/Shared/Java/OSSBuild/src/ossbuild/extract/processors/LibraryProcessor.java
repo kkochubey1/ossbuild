@@ -29,25 +29,51 @@ import ossbuild.extract.ResourceUtils;
 	supportsSize = true
 )
 public class LibraryProcessor extends DefaultResourceProcessor {
+	//<editor-fold defaultstate="collapsed" desc="Constants">
+	public static final String
+		  ATTRIBUTE_EXECUTABLE  = "executable"
+	;
+	//</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="Variables">
-	private List<String> systemAttempts = new ArrayList<String>(1);
+	private List<String> systemAttempts = null;
+	private boolean executable = false;
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	public LibraryProcessor() {
 	}
 
+	public LibraryProcessor(boolean Executable, String ResourceName) {
+		this(Executable, false, ResourceName, StringUtil.empty, StringUtil.empty, StringUtil.empty, StringUtil.empty);
+	}
+
 	public LibraryProcessor(boolean IsTransient, String ResourceName, String SubDirectory, String DestName, String Title, String Description) {
+		this(false, IsTransient, ResourceName, SubDirectory, DestName, Title, Description);
+	}
+
+	public LibraryProcessor(boolean Executable, boolean IsTransient, String ResourceName, String SubDirectory, String DestName, String Title, String Description) {
 		super(IsTransient, ResourceName, SubDirectory, DestName, Title, Description);
+		this.executable = Executable;
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Getters">
+	public boolean isExecutable() {
+		return executable;
 	}
 	//</editor-fold>
 	
 	//<editor-fold defaultstate="collapsed" desc="Public Methods">
 	public void addSystemAttempt(String value) {
+		if (systemAttempts == null)
+			systemAttempts = new ArrayList<String>(1);
 		systemAttempts.add(value);
 	}
 
 	public void clearSystemAttempts() {
+		if (systemAttempts == null)
+			return;
 		systemAttempts.clear();
 	}
 	//</editor-fold>
@@ -55,6 +81,7 @@ public class LibraryProcessor extends DefaultResourceProcessor {
 	@Override
 	protected boolean loadSettings(final String fullResourceName, final IResourcePackage pkg, final XPath xpath, final Node node, final IVariableProcessor varproc) throws XPathException {
 		this.size = ResourceUtils.sizeFromResource(fullResourceName);
+		this.executable = boolAttributeValue(varproc, false, node, ATTRIBUTE_EXECUTABLE);
 		
 		NodeList lst;
 		Node childNode;
@@ -71,13 +98,18 @@ public class LibraryProcessor extends DefaultResourceProcessor {
 
 	@Override
 	protected boolean processResource(final String fullResourceName, final IResourcePackage pkg, final IResourceProgressListener progress) {
-		for(String libAttempt : systemAttempts)
-			if (!StringUtil.isNullOrEmpty(libAttempt) && ResourceUtils.attemptSystemLibraryLoad(libAttempt))
-				return true;
+		if (systemAttempts != null && !systemAttempts.isEmpty())
+			for(String libAttempt : systemAttempts)
+				if (!StringUtil.isNullOrEmpty(libAttempt) && ResourceUtils.attemptSystemLibraryLoad(libAttempt))
+					return true;
 
 		final File dest = pkg.filePath(subDirectory, destName);
-		if (ResourceUtils.extractResource(fullResourceName, dest, shouldBeTransient))
-			return ResourceUtils.attemptLibraryLoad(dest.getAbsolutePath());
-		return false;
+		if (!ResourceUtils.extractResource(fullResourceName, dest, shouldBeTransient))
+			return false;
+
+		if (executable && !dest.setExecutable(true))
+			return false;
+		
+		return ResourceUtils.attemptLibraryLoad(dest.getAbsolutePath());
 	}
 }
