@@ -31,12 +31,14 @@
 	</target>
 
 	<target name="-post-jar">
+		<!--
 		<antcall target="-build-platform-jar">
 			<param name="os" value="windows" />
 			<param name="arch" value="x86" />
 			<param name="build.os" value="Windows" />
 			<param name="build.arch" value="Win32" />
 		</antcall>
+		-->
 		<!--
 		<antcall target="-build-platform-jar">
 			<param name="os" value="windows" />
@@ -163,6 +165,7 @@
 			<fileset dir="${shared.lib.dir}/gstreamer-${gst-api-version}/" erroronmissingdir="false">
 				<include name="*.dll" />
 				<include name="*.so" />
+				<include name="*gst-plugin-scanner*" />
 				<exclude name="*-lgpl*" />
 				<exclude name="libgstffmpeg.so" />
 				<exclude name="libgstffmpegscale.so" />
@@ -171,6 +174,7 @@
 			<fileset dir="${build.bin.dir}/plugins/" erroronmissingdir="false">
 				<include name="*.dll" />
 				<include name="*.so" />
+				<include name="*gst-plugin-scanner*" />
 				<exclude name="*-lgpl*" />
 				<exclude name="libgstffmpeg.so" />
 				<exclude name="libgstffmpegscale.so" />
@@ -311,6 +315,7 @@
 			<fileset dir="${shared.lib.dir}/gstreamer-${gst-api-version}/" erroronmissingdir="false">
 				<include name="*.dll" />
 				<include name="*.so" />
+				<include name="*gst-plugin-scanner*" />
 				<exclude name="*-gpl*" />
 				<exclude name="libgstffmpeg.so" />
 				<exclude name="libgstffmpegscale.so" />
@@ -329,6 +334,7 @@
 			<fileset dir="${build.bin.dir}/plugins/" erroronmissingdir="false">
 				<include name="*.dll" />
 				<include name="*.so" />
+				<include name="*gst-plugin-scanner*" />
 				<exclude name="*-gpl*" />
 				<exclude name="libgstffmpeg.so" />
 				<exclude name="libgstffmpegscale.so" />

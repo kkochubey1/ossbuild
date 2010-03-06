@@ -138,6 +138,17 @@ public class Splash extends javax.swing.JDialog {
 				new ResourceProgressListenerAdapter() {
 
 					@Override
+					public void error(final Throwable exception, String message) {
+						SwingUtilities.invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								exception.printStackTrace();
+								JOptionPane.showMessageDialog(Splash.this, "Unable to extract and load GStreamer libraries for this platform or JVM.\n\nError: " + exception.getMessage());
+							}
+						});
+					}
+
+					@Override
 					public void begin(int totalNumberOfResources, int totalNumberOfPackages, long totalNumberOfBytes, long startTime) {
 						SwingUtilities.invokeLater(new Runnable() {
 							@Override
@@ -179,6 +190,15 @@ public class Splash extends javax.swing.JDialog {
 								public void run() {
 									lbl.setText("Loading GStreamer...");
 									progress.setIndeterminate(true);
+								}
+							});
+						} else {
+							SwingUtilities.invokeLater(new Runnable() {
+								@Override
+								public void run() {
+									setVisible(false);
+									dispose();
+									System.exit(1);
 								}
 							});
 						}

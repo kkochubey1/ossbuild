@@ -190,7 +190,9 @@ public class ResourceUtils {
 	}
 
 	public static boolean attemptLibraryLoad(final String libraryPath) {
-		return (com.sun.jna.NativeLibrary.getInstance(libraryPath) != null);
+		System.load(libraryPath);
+		return true;
+		//return (com.sun.jna.NativeLibrary.getInstance(libraryPath) != null);
 	}
 
 	public static boolean attemptSystemLibraryLoad(final String libraryName) {

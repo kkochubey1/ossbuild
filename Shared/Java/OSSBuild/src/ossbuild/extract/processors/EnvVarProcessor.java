@@ -82,7 +82,9 @@ public class EnvVarProcessor extends DefaultResourceProcessor {
 		if (StringUtil.isNullOrEmpty(name))
 			return true;
 
-		final String existingValue = Sys.getEnvironmentVariable(name);
+		String existingValue = Sys.getEnvironmentVariable(name);
+		if (existingValue == null)
+			existingValue = StringUtil.empty;
 
 		String preppedValue;
 		if (!asFile)
