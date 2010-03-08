@@ -156,17 +156,17 @@ GstTagList <span class="symbol">*</span>result<span class="symbol">;</span>
 
 tagsetter <span class="symbol">=</span> <span class="function">GST_TAG_SETTER</span> <span class="symbol">(</span>element<span class="symbol">);</span>
 
-merge_mode <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstTagSetter.html#gst-tag-setter-get-tag-merge-mode">gst_tag_setter_get_tag_merge_mode</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">);</span>
-application_tags <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstTagSetter.html#gst-tag-setter-get-tag-list">gst_tag_setter_get_tag_list</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">);</span>
+merge_mode <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/GstTagSetter.html#gst-tag-setter-get-tag-merge-mode">gst_tag_setter_get_tag_merge_mode</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">);</span>
+application_tags <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/GstTagSetter.html#gst-tag-setter-get-tag-list">gst_tag_setter_get_tag_list</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">);</span>
 event_tags <span class="symbol">= (</span><span class="gtkdoc kwb">const</span> GstTagList <span class="symbol">*)</span> element<span class="symbol">-&gt;</span>event_tags<span class="symbol">;</span>
 
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstInfo.html#GST-LOG-OBJECT:CAPS">GST_LOG_OBJECT</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">,</span> <span class="string">&quot;merging tags, merge mode = %d&quot;</span><span class="symbol">,</span> merge_mode<span class="symbol">);</span>
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstInfo.html#GST-LOG-OBJECT:CAPS">GST_LOG_OBJECT</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">,</span> <span class="string">&quot;event tags: %&quot;</span> GST_PTR_FORMAT<span class="symbol">,</span> event_tags<span class="symbol">);</span>
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstInfo.html#GST-LOG-OBJECT:CAPS">GST_LOG_OBJECT</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">,</span> <span class="string">&quot;set   tags: %&quot;</span> GST_PTR_FORMAT<span class="symbol">,</span> application_tags<span class="symbol">);</span>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-LOG-OBJECT:CAPS">GST_LOG_OBJECT</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">,</span> <span class="string">&quot;merging tags, merge mode = %d&quot;</span><span class="symbol">,</span> merge_mode<span class="symbol">);</span>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-LOG-OBJECT:CAPS">GST_LOG_OBJECT</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">,</span> <span class="string">&quot;event tags: %&quot;</span> GST_PTR_FORMAT<span class="symbol">,</span> event_tags<span class="symbol">);</span>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-LOG-OBJECT:CAPS">GST_LOG_OBJECT</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">,</span> <span class="string">&quot;set   tags: %&quot;</span> GST_PTR_FORMAT<span class="symbol">,</span> application_tags<span class="symbol">);</span>
 
-result <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-list-merge">gst_tag_list_merge</a></span> <span class="symbol">(</span>application_tags<span class="symbol">,</span> event_tags<span class="symbol">,</span> merge_mode<span class="symbol">);</span>
+result <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-list-merge">gst_tag_list_merge</a></span> <span class="symbol">(</span>application_tags<span class="symbol">,</span> event_tags<span class="symbol">,</span> merge_mode<span class="symbol">);</span>
 
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstInfo.html#GST-LOG-OBJECT:CAPS">GST_LOG_OBJECT</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">,</span> <span class="string">&quot;final tags: %&quot;</span> GST_PTR_FORMAT<span class="symbol">,</span> result<span class="symbol">);</span></pre></td>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-LOG-OBJECT:CAPS">GST_LOG_OBJECT</a></span> <span class="symbol">(</span>tagsetter<span class="symbol">,</span> <span class="string">&quot;final tags: %&quot;</span> GST_PTR_FORMAT<span class="symbol">,</span> result<span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>

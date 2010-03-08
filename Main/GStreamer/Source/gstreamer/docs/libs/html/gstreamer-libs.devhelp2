@@ -42,7 +42,7 @@
     <sub name="Index of deprecated API" link="api-index-deprecated.html"/>
   </chapters>
   <functions>
-    <keyword type="" name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#id513214"/>
+    <keyword type="" name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#id561171"/>
     <keyword type="struct" name="GstBaseSrc" link="GstBaseSrc.html#GstBaseSrc-struct"/>
     <keyword type="struct" name="GstBaseSrcClass" link="GstBaseSrc.html#GstBaseSrcClass"/>
     <keyword type="enum" name="enum GstBaseSrcFlags" link="GstBaseSrc.html#GstBaseSrcFlags"/>
@@ -94,8 +94,8 @@
     <keyword type="property" name="The &quot;render-delay&quot; property" link="GstBaseSink.html#GstBaseSink--render-delay"/>
     <keyword type="property" name="The &quot;sync&quot; property" link="GstBaseSink.html#GstBaseSink--sync"/>
     <keyword type="property" name="The &quot;ts-offset&quot; property" link="GstBaseSink.html#GstBaseSink--ts-offset"/>
-    <keyword type="" name="Use Cases" link="GstBaseTransform.html#id588473"/>
-    <keyword type="" name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#id575436"/>
+    <keyword type="" name="Use Cases" link="GstBaseTransform.html#id606369"/>
+    <keyword type="" name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#id613346"/>
     <keyword type="struct" name="GstBaseTransform" link="GstBaseTransform.html#GstBaseTransform-struct"/>
     <keyword type="struct" name="GstBaseTransformClass" link="GstBaseTransform.html#GstBaseTransformClass"/>
     <keyword type="function" name="gst_base_transform_is_passthrough ()" link="GstBaseTransform.html#gst-base-transform-is-passthrough"/>
@@ -311,15 +311,16 @@
     <keyword type="function" name="gst_byte_writer_put_uint32_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint32-le" since="0.10.26"/>
     <keyword type="function" name="gst_byte_writer_put_uint64_be ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint64-be" since="0.10.26"/>
     <keyword type="function" name="gst_byte_writer_put_uint64_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint64-le" since="0.10.26"/>
-    <keyword type="function" name="gst_byte_writer_put_double_be ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-double-be" since="0.10.26"/>
-    <keyword type="function" name="gst_byte_writer_put_double_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-double-le" since="0.10.26"/>
-    <keyword type="function" name="gst_byte_writer_put_float_be ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float-be" since="0.10.26"/>
-    <keyword type="function" name="gst_byte_writer_put_float_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float-le" since="0.10.26"/>
+    <keyword type="function" name="gst_byte_writer_put_float32_be ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float32-be" since="0.10.26"/>
+    <keyword type="function" name="gst_byte_writer_put_float32_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float32-le" since="0.10.26"/>
+    <keyword type="function" name="gst_byte_writer_put_float64_be ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float64-be" since="0.10.26"/>
+    <keyword type="function" name="gst_byte_writer_put_float64_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float64-le" since="0.10.26"/>
     <keyword type="macro" name="gst_byte_writer_put_string()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-string" since="0.10.26"/>
     <keyword type="function" name="gst_byte_writer_put_string_utf16 ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-string-utf16" since="0.10.26"/>
     <keyword type="function" name="gst_byte_writer_put_string_utf32 ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-string-utf32" since="0.10.26"/>
     <keyword type="function" name="gst_byte_writer_put_string_utf8 ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-string-utf8" since="0.10.26"/>
     <keyword type="function" name="gst_byte_writer_put_data ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-data" since="0.10.26"/>
+    <keyword type="function" name="gst_byte_writer_fill ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-fill" since="0.10.26"/>
     <keyword type="struct" name="GstCollectData" link="GstCollectPads.html#GstCollectData"/>
     <keyword type="struct" name="GstCollectPads" link="GstCollectPads.html#GstCollectPads-struct"/>
     <keyword type="function" name="GstCollectPadsFunction ()" link="GstCollectPads.html#GstCollectPadsFunction"/>
@@ -505,7 +506,7 @@
     <keyword type="function" name="gst_check_teardown_src_pad ()" link="gstreamer-libs-GstCheck.html#gst-check-teardown-src-pad"/>
     <keyword type="function" name="gst_check_drop_buffers ()" link="gstreamer-libs-GstCheck.html#gst-check-drop-buffers" since="0.10.18"/>
     <keyword type="function" name="gst_check_caps_equal ()" link="gstreamer-libs-GstCheck.html#gst-check-caps-equal" since="0.10.18"/>
-    <keyword type="function" name="gst_check_element_push_buffer_list ()" link="gstreamer-libs-GstCheck.html#gst-check-element-push-buffer-list"/>
+    <keyword type="function" name="gst_check_element_push_buffer_list ()" link="gstreamer-libs-GstCheck.html#gst-check-element-push-buffer-list" since="0.10.18"/>
     <keyword type="function" name="gst_check_element_push_buffer ()" link="gstreamer-libs-GstCheck.html#gst-check-element-push-buffer" since="0.10.18"/>
     <keyword type="function" name="gst_check_run_suite ()" link="gstreamer-libs-GstCheck.html#gst-check-run-suite"/>
     <keyword type="function" name="gst_buffer_straw_start_pipeline ()" link="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline"/>

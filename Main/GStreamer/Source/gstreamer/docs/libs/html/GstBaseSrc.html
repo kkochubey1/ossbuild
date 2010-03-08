@@ -244,7 +244,7 @@ should install a pad template in its class_init function, like so:
 <p>
 </p>
 <div class="refsect2" title="Controlled shutdown of live sources in applications">
-<a name="id513214"></a><h3>Controlled shutdown of live sources in applications</h3>
+<a name="id561171"></a><h3>Controlled shutdown of live sources in applications</h3>
 <p>
 Applications that record from a live source may want to stop recording
 in a controlled way, so that the recording is stopped, but the data
@@ -601,7 +601,10 @@ for sending NEW_SEGMENT events and for performing seeks.
 </p>
 <p>
 If a format of GST_FORMAT_BYTES is set, the element will be able to
-operate in pull mode if the <code class="function">GstBaseSrc.is_seekable()</code> returns TRUE.</p>
+operate in pull mode if the <code class="function">GstBaseSrc.is_seekable()</code> returns TRUE.
+</p>
+<p>
+This function must only be called in states &lt; <code class="literal">GST_STATE_PAUSED</code>.</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>

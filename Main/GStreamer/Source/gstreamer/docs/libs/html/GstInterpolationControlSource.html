@@ -58,10 +58,10 @@ enum                <a class="link" href="GstInterpolationControlSource.html#Gst
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstInterpolationControlSource.html#gst-interpolation-control-source-set" title="gst_interpolation_control_source_set ()">gst_interpolation_control_source_set</a>
                                                         (<a class="link" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource"><span class="returnvalue">GstInterpolationControlSource</span></a> *self,
                                                          <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp,
-                                                         <a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="returnvalue">GValue</span></a> *value);
+                                                         const <a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="returnvalue">GValue</span></a> *value);
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstInterpolationControlSource.html#gst-interpolation-control-source-set-from-list" title="gst_interpolation_control_source_set_from_list ()">gst_interpolation_control_source_set_from_list</a>
                                                         (<a class="link" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource"><span class="returnvalue">GstInterpolationControlSource</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="returnvalue">GSList</span></a> *timedvalues);
+                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="returnvalue">GSList</span></a> *timedvalues);
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstInterpolationControlSource.html#gst-interpolation-control-source-set-interpolation-mode" title="gst_interpolation_control_source_set_interpolation_mode ()">gst_interpolation_control_source_set_interpolation_mode</a>
                                                         (<a class="link" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource"><span class="returnvalue">GstInterpolationControlSource</span></a> *self,
                                                          <a class="link" href="GstInterpolationControlSource.html#GstInterpolateMode" title="enum GstInterpolateMode"><span class="returnvalue">GstInterpolateMode</span></a> mode);
@@ -181,7 +181,7 @@ This returns a new, unbound <a class="link" href="GstInterpolationControlSource.
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_interpolation_control_source_set
                                                         (<a class="link" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource"><span class="returnvalue">GstInterpolationControlSource</span></a> *self,
                                                          <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp,
-                                                         <a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="returnvalue">GValue</span></a> *value);</pre>
+                                                         const <a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="returnvalue">GValue</span></a> *value);</pre>
 <p>
 Set the value of given controller-handled property at a certain time.</p>
 <div class="variablelist"><table border="0">
@@ -215,7 +215,7 @@ Set the value of given controller-handled property at a certain time.</p>
 <a name="gst-interpolation-control-source-set-from-list"></a><h3>gst_interpolation_control_source_set_from_list ()</h3>
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_interpolation_control_source_set_from_list
                                                         (<a class="link" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource"><span class="returnvalue">GstInterpolationControlSource</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="returnvalue">GSList</span></a> *timedvalues);</pre>
+                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="returnvalue">GSList</span></a> *timedvalues);</pre>
 <p>
 Sets multiple timed values at once.</p>
 <div class="variablelist"><table border="0">

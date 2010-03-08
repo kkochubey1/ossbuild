@@ -78,7 +78,7 @@ the section <GTKDOCLINK HREF="gstreamer-Writing-typefind-functions">
 <p>
 </p>
 <div class="example">
-<a name="id573236"></a><p class="title"><b>Example 17. how to write a simple typefinder</b></p>
+<a name="id417834"></a><p class="title"><b>Example 17. how to write a simple typefinder</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -143,7 +143,7 @@ the section <GTKDOCLINK HREF="gstreamer-Writing-typefind-functions">
   MyTypeFind <span class="symbol">*</span>find <span class="symbol">= (</span>MyTypeFind <span class="symbol">*)</span> data<span class="symbol">;</span>
   <span class="keyword">if</span> <span class="symbol">(</span>probability <span class="symbol">&gt;</span> find<span class="symbol">-&gt;</span>probability<span class="symbol">) {</span>
     find<span class="symbol">-&gt;</span>probability <span class="symbol">=</span> probability<span class="symbol">;</span>
-    <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#gst-caps-replace">gst_caps_replace</a></span> <span class="symbol">(&amp;</span>find<span class="symbol">-&gt;</span>caps<span class="symbol">,</span> caps<span class="symbol">);</span>
+    <span class="function"><a href="../gstreamer-0.10/gstreamer-GstCaps.html#gst-caps-replace">gst_caps_replace</a></span> <span class="symbol">(&amp;</span>find<span class="symbol">-&gt;</span>caps<span class="symbol">,</span> caps<span class="symbol">);</span>
   <span class="symbol">}</span>
 <span class="symbol">}</span>
 <span class="gtkdoc kwb">static</span> GstCaps <span class="symbol">*</span>
@@ -152,11 +152,11 @@ the section <GTKDOCLINK HREF="gstreamer-Writing-typefind-functions">
   GList <span class="symbol">*</span>walk<span class="symbol">, *</span>type_list<span class="symbol">;</span>
   MyTypeFind find <span class="symbol">= {</span>data<span class="symbol">,</span> size<span class="symbol">,</span> <span class="number">0</span><span class="symbol">,</span> NULL<span class="symbol">};</span>
   GstTypeFind gst_find <span class="symbol">= {</span>my_peek<span class="symbol">,</span> my_suggest<span class="symbol">, &amp;</span>find<span class="symbol">, };</span>
-  walk <span class="symbol">=</span> type_list <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstTypeFindFactory.html#gst-type-find-factory-get-list">gst_type_find_factory_get_list</a></span> <span class="symbol">();</span>
+  walk <span class="symbol">=</span> type_list <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/GstTypeFindFactory.html#gst-type-find-factory-get-list">gst_type_find_factory_get_list</a></span> <span class="symbol">();</span>
   <span class="keyword">while</span> <span class="symbol">(</span>walk<span class="symbol">) {</span>
     GstTypeFindFactory <span class="symbol">*</span>factory <span class="symbol">=</span> <span class="function">GST_TYPE_FIND_FACTORY</span> <span class="symbol">(</span>walk<span class="symbol">-&gt;</span>data<span class="symbol">);</span>
     walk <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#g-list-next">g_list_next</a></span> <span class="symbol">(</span>walk<span class="symbol">)</span>
-    <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstTypeFindFactory.html#gst-type-find-factory-call-function">gst_type_find_factory_call_function</a></span> <span class="symbol">(</span>factory<span class="symbol">, &amp;</span>gst_find<span class="symbol">);</span>
+    <span class="function"><a href="../gstreamer-0.10/GstTypeFindFactory.html#gst-type-find-factory-call-function">gst_type_find_factory_call_function</a></span> <span class="symbol">(</span>factory<span class="symbol">, &amp;</span>gst_find<span class="symbol">);</span>
   <span class="symbol">}</span>
   <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#g-list-free">g_list_free</a></span> <span class="symbol">(</span>type_list<span class="symbol">);</span>
   <span class="keyword">return</span> find<span class="symbol">.</span>caps<span class="symbol">;</span>

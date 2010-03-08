@@ -191,8 +191,8 @@ do this:
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html#gst-object-ref">gst_object_ref</a></span> <span class="symbol">(</span><span class="function">GST_OBJECT</span> <span class="symbol">(</span>child_element<span class="symbol">));</span>
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html#gst-object-sink">gst_object_sink</a></span> <span class="symbol">(</span><span class="function">GST_OBJECT</span> <span class="symbol">(</span>child_element<span class="symbol">));</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="../gstreamer-0.10/GstObject.html#gst-object-ref">gst_object_ref</a></span> <span class="symbol">(</span><span class="function">GST_OBJECT</span> <span class="symbol">(</span>child_element<span class="symbol">));</span>
+<span class="function"><a href="../gstreamer-0.10/GstObject.html#gst-object-sink">gst_object_sink</a></span> <span class="symbol">(</span><span class="function">GST_OBJECT</span> <span class="symbol">(</span>child_element<span class="symbol">));</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -216,9 +216,9 @@ the object itself:
 2
 3
 4</pre></td>
-        <td class="listing_code"><pre class="programlisting">element <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="symbol">(</span>factoryname<span class="symbol">,</span> name<span class="symbol">);</span>
+        <td class="listing_code"><pre class="programlisting">element <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="symbol">(</span>factoryname<span class="symbol">,</span> name<span class="symbol">);</span>
 <span class="gtkdoc slc">// element has one floating reference to keep it alive</span>
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstBin.html#gst-bin-add">gst_bin_add</a></span> <span class="symbol">(</span><span class="function">GST_BIN</span> <span class="symbol">(</span>bin<span class="symbol">),</span> element<span class="symbol">);</span>
+<span class="function"><a href="../gstreamer-0.10/GstBin.html#gst-bin-add">gst_bin_add</a></span> <span class="symbol">(</span><span class="function">GST_BIN</span> <span class="symbol">(</span>bin<span class="symbol">),</span> element<span class="symbol">);</span>
 <span class="gtkdoc slc">// element has one non-floating reference owned by the container</span></pre></td>
       </tr>
     </tbody>

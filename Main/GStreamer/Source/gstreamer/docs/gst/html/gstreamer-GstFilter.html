@@ -60,7 +60,7 @@
 <p>
 </p>
 <div class="example">
-<a name="id467704"></a><p class="title"><b>Example 12. Filtering a list</b></p>
+<a name="id368426"></a><p class="title"><b>Example 12. Filtering a list</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -77,10 +77,10 @@
         <td class="listing_code"><pre class="programlisting">GList <span class="symbol">*</span>node<span class="symbol">;</span>
 GstObject <span class="symbol">*</span>result <span class="symbol">=</span> NULL<span class="symbol">;</span>
 
-node <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstFilter.html#gst-filter-run">gst_filter_run</a></span> <span class="symbol">(</span>list<span class="symbol">, (</span>GstFilterFunc<span class="symbol">)</span> my_filter<span class="symbol">,</span> TRUE<span class="symbol">,</span> NULL<span class="symbol">);</span>
+node <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstFilter.html#gst-filter-run">gst_filter_run</a></span> <span class="symbol">(</span>list<span class="symbol">, (</span>GstFilterFunc<span class="symbol">)</span> my_filter<span class="symbol">,</span> TRUE<span class="symbol">,</span> NULL<span class="symbol">);</span>
 <span class="keyword">if</span> <span class="symbol">(</span>node<span class="symbol">) {</span>
   result <span class="symbol">=</span> <span class="function">GST_OBJECT</span> <span class="symbol">(</span>node<span class="symbol">-&gt;</span>data<span class="symbol">);</span>
-  <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html#gst-object-ref">gst_object_ref</a></span> <span class="symbol">(</span>result<span class="symbol">);</span>
+  <span class="function"><a href="../gstreamer-0.10/GstObject.html#gst-object-ref">gst_object_ref</a></span> <span class="symbol">(</span>result<span class="symbol">);</span>
   <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#g-list-free">g_list_free</a></span> <span class="symbol">(</span>node<span class="symbol">);</span>
 <span class="symbol">}</span></pre></td>
       </tr>
