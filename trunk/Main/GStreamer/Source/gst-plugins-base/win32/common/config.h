@@ -23,13 +23,13 @@
 #define DEFAULT_AUDIOSINK "directaudiosink"
 
 /* Default audio source */
-#define DEFAULT_AUDIOSRC "directsoundsrc"
+#undef DEFAULT_AUDIOSRC
 
 /* Default video sink */
 #define DEFAULT_VIDEOSINK "directdrawsink"
 
 /* Default video source */
-#define DEFAULT_VIDEOSRC "dshowvideosrc"
+#undef DEFAULT_VIDEOSRC
 
 /* Default visualizer */
 #define DEFAULT_VISUALIZER "goom"
@@ -42,10 +42,10 @@
 #define GETTEXT_PACKAGE "gst-plugins-base-0.10"
 
 /* The GIO library directory. */
-#define GIO_LIBDIR "./../lib/"
+#undef GIO_LIBDIR
 
 /* The GIO modules directory. */
-#define GIO_MODULE_DIR "./../lib/gio"
+#undef GIO_MODULE_DIR
 
 /* The GnomeVFS modules directory. */
 #undef GNOME_VFS_MODULES_DIR
@@ -186,7 +186,10 @@
 #undef HAVE_INTTYPES_H
 
 /* make use of iso-codes for ISO-639 */
-#define HAVE_ISO_CODES 1
+#undef HAVE_ISO_CODES
+
+/* Define to enable integer vorbis plug-in (used by ivorbisdec). */
+#undef HAVE_IVORBIS
 
 /* Define to 1 if you have the `asound' library (-lasound). */
 #undef HAVE_LIBASOUND
@@ -288,10 +291,10 @@
 #define HOST_CPU "i686"
 
 /* prefix */
-#define ISO_CODES_PREFIX "./../"
+#undef ISO_CODES_PREFIX
 
 /* */
-#define ISO_CODES_VERSION "1.0"
+#undef ISO_CODES_VERSION
 
 /* directory in which the detected libvisual's plugins are located */
 #undef LIBVISUAL_PLUGINSBASEDIR
@@ -319,7 +322,7 @@
 #define PACKAGE_NAME "GStreamer Base Plug-ins"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GStreamer Base Plug-ins 0.10.26"
+#define PACKAGE_STRING "GStreamer Base Plug-ins 0.10.27"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gst-plugins-base"
@@ -328,7 +331,7 @@
 #undef PACKAGE_URL
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.10.26"
+#define PACKAGE_VERSION "0.10.27"
 
 /* directory where plugins are located */
 #ifdef _DEBUG
@@ -356,7 +359,7 @@
 #undef STDC_HEADERS
 
 /* Version number of package */
-#define VERSION "0.10.26"
+#define VERSION "0.10.27"
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

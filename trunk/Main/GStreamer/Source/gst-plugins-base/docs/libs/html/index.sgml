@@ -1,4 +1,5 @@
 <ONLINE href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/">
+<ANCHOR id="compiling" href="gst-plugins-base-libs-0.10/compiling.html">
 <ANCHOR id="gst-plugins-base-libs-appsrc" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsrc.html">
 <ANCHOR id="gst-plugins-base-libs-appsrc.synopsis" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsrc.html#gst-plugins-base-libs-appsrc.synopsis">
 <ANCHOR id="gst-plugins-base-libs-appsrc.description" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsrc.html#gst-plugins-base-libs-appsrc.description">
@@ -41,6 +42,7 @@
 <ANCHOR id="gst-app-sink-get-drop" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsink.html#gst-app-sink-get-drop">
 <ANCHOR id="gst-app-sink-pull-preroll" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsink.html#gst-app-sink-pull-preroll">
 <ANCHOR id="gst-app-sink-pull-buffer" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsink.html#gst-app-sink-pull-buffer">
+<ANCHOR id="gst-app-sink-pull-buffer-list" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsink.html#gst-app-sink-pull-buffer-list">
 <ANCHOR id="GstAppSinkCallbacks" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsink.html#GstAppSinkCallbacks">
 <ANCHOR id="gst-app-sink-set-callbacks" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsink.html#gst-app-sink-set-callbacks">
 <ANCHOR id="gst-plugins-base-libs-appsink.see-also" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsink.html#gst-plugins-base-libs-appsink.see-also">
@@ -71,6 +73,9 @@
 <ANCHOR id="GstAudioClock-struct" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstaudioclock.html#GstAudioClock-struct">
 <ANCHOR id="GstAudioClockGetTimeFunc" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstaudioclock.html#GstAudioClockGetTimeFunc">
 <ANCHOR id="gst-audio-clock-new" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-new">
+<ANCHOR id="gst-audio-clock-adjust" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-adjust">
+<ANCHOR id="gst-audio-clock-get-time" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-get-time">
+<ANCHOR id="gst-audio-clock-reset" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-reset">
 <ANCHOR id="gst-plugins-base-libs-gstaudioclock.see-also" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstaudioclock.html#gst-plugins-base-libs-gstaudioclock.see-also">
 <ANCHOR id="gst-plugins-base-libs-gstaudiofilter" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstaudiofilter.html">
 <ANCHOR id="gst-plugins-base-libs-gstaudiofilter.synopsis" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstaudiofilter.html#gst-plugins-base-libs-gstaudiofilter.synopsis">
@@ -142,11 +147,18 @@
 <ANCHOR id="gst-plugins-base-libs-gstbaseaudiosrc.details" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#gst-plugins-base-libs-gstbaseaudiosrc.details">
 <ANCHOR id="GstBaseAudioSrc-struct" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#GstBaseAudioSrc-struct">
 <ANCHOR id="GstBaseAudioSrcClass" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#GstBaseAudioSrcClass">
+<ANCHOR id="GstBaseAudioSrcSlaveMethod" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#GstBaseAudioSrcSlaveMethod">
+<ANCHOR id="GST-BASE-AUDIO-SRC-SLAVE-RESAMPLE:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#GST-BASE-AUDIO-SRC-SLAVE-RESAMPLE:CAPS">
+<ANCHOR id="GST-BASE-AUDIO-SRC-SLAVE-RETIMESTAMP:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#GST-BASE-AUDIO-SRC-SLAVE-RETIMESTAMP:CAPS">
+<ANCHOR id="GST-BASE-AUDIO-SRC-SLAVE-SKEW:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#GST-BASE-AUDIO-SRC-SLAVE-SKEW:CAPS">
+<ANCHOR id="GST-BASE-AUDIO-SRC-SLAVE-NONE:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#GST-BASE-AUDIO-SRC-SLAVE-NONE:CAPS">
 <ANCHOR id="GST-BASE-AUDIO-SRC-CLOCK:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#GST-BASE-AUDIO-SRC-CLOCK:CAPS">
 <ANCHOR id="GST-BASE-AUDIO-SRC-PAD:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#GST-BASE-AUDIO-SRC-PAD:CAPS">
 <ANCHOR id="gst-base-audio-src-create-ringbuffer" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#gst-base-audio-src-create-ringbuffer">
 <ANCHOR id="gst-base-audio-src-set-provide-clock" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#gst-base-audio-src-set-provide-clock">
 <ANCHOR id="gst-base-audio-src-get-provide-clock" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#gst-base-audio-src-get-provide-clock">
+<ANCHOR id="gst-base-audio-src-get-slave-method" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#gst-base-audio-src-get-slave-method">
+<ANCHOR id="gst-base-audio-src-set-slave-method" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#gst-base-audio-src-set-slave-method">
 <ANCHOR id="gst-plugins-base-libs-gstbaseaudiosrc.property-details" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#gst-plugins-base-libs-gstbaseaudiosrc.property-details">
 <ANCHOR id="GstBaseAudioSrc--actual-buffer-time" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#GstBaseAudioSrc--actual-buffer-time">
 <ANCHOR id="GstBaseAudioSrc--actual-latency-time" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbaseaudiosrc.html#GstBaseAudioSrc--actual-latency-time">
@@ -453,6 +465,14 @@
 <ANCHOR id="GST-NAVIGATION-COMMAND-ACTIVATE:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-COMMAND-ACTIVATE:CAPS">
 <ANCHOR id="GST-NAVIGATION-COMMAND-PREV-ANGLE:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-COMMAND-PREV-ANGLE:CAPS">
 <ANCHOR id="GST-NAVIGATION-COMMAND-NEXT-ANGLE:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-COMMAND-NEXT-ANGLE:CAPS">
+<ANCHOR id="GstNavigationEventType" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GstNavigationEventType">
+<ANCHOR id="GST-NAVIGATION-EVENT-INVALID:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-EVENT-INVALID:CAPS">
+<ANCHOR id="GST-NAVIGATION-EVENT-KEY-PRESS:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-EVENT-KEY-PRESS:CAPS">
+<ANCHOR id="GST-NAVIGATION-EVENT-KEY-RELEASE:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-EVENT-KEY-RELEASE:CAPS">
+<ANCHOR id="GST-NAVIGATION-EVENT-MOUSE-BUTTON-PRESS:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-EVENT-MOUSE-BUTTON-PRESS:CAPS">
+<ANCHOR id="GST-NAVIGATION-EVENT-MOUSE-BUTTON-RELEASE:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-EVENT-MOUSE-BUTTON-RELEASE:CAPS">
+<ANCHOR id="GST-NAVIGATION-EVENT-MOUSE-MOVE:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-EVENT-MOUSE-MOVE:CAPS">
+<ANCHOR id="GST-NAVIGATION-EVENT-COMMAND:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-EVENT-COMMAND:CAPS">
 <ANCHOR id="GstNavigationMessageType" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GstNavigationMessageType">
 <ANCHOR id="GST-NAVIGATION-MESSAGE-INVALID:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-MESSAGE-INVALID:CAPS">
 <ANCHOR id="GST-NAVIGATION-MESSAGE-MOUSE-OVER:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-MESSAGE-MOUSE-OVER:CAPS">
@@ -463,11 +483,16 @@
 <ANCHOR id="gst-navigation-send-key-event" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-send-key-event">
 <ANCHOR id="gst-navigation-send-mouse-event" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-send-mouse-event">
 <ANCHOR id="gst-navigation-send-command" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-send-command">
+<ANCHOR id="gst-navigation-event-parse-command" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-command">
+<ANCHOR id="gst-navigation-event-parse-key-event" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-key-event">
+<ANCHOR id="gst-navigation-event-parse-mouse-button-event" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-mouse-button-event">
+<ANCHOR id="gst-navigation-event-parse-mouse-move-event" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-mouse-move-event">
 <ANCHOR id="gst-navigation-message-get-type" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-get-type">
 <ANCHOR id="gst-navigation-message-new-angles-changed" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-new-angles-changed">
 <ANCHOR id="gst-navigation-message-new-commands-changed" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-new-commands-changed">
 <ANCHOR id="gst-navigation-message-new-mouse-over" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-new-mouse-over">
 <ANCHOR id="gst-navigation-message-parse-mouse-over" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-parse-mouse-over">
+<ANCHOR id="gst-navigation-message-parse-angles-changed" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-parse-angles-changed">
 <ANCHOR id="gst-navigation-query-new-angles" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-query-new-angles">
 <ANCHOR id="gst-navigation-query-get-type" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-query-get-type">
 <ANCHOR id="gst-navigation-query-new-commands" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#gst-navigation-query-new-commands">
@@ -668,6 +693,7 @@
 <ANCHOR id="GST-RIFF-CRAM:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-CRAM:CAPS">
 <ANCHOR id="GST-RIFF-CVID:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-CVID:CAPS">
 <ANCHOR id="GST-RIFF-CYUV:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-CYUV:CAPS">
+<ANCHOR id="GST-RIFF-DIB:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-DIB:CAPS">
 <ANCHOR id="GST-RIFF-DISP:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-DISP:CAPS">
 <ANCHOR id="GST-RIFF-DIV3:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-DIV3:CAPS">
 <ANCHOR id="GST-RIFF-DMB1:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-DMB1:CAPS">
@@ -731,6 +757,7 @@
 <ANCHOR id="GST-RIFF-NONE:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-NONE:CAPS">
 <ANCHOR id="GST-RIFF-PACK:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-PACK:CAPS">
 <ANCHOR id="GST-RIFF-Q1-0:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-Q1-0:CAPS">
+<ANCHOR id="GST-RIFF-RAW:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-RAW:CAPS">
 <ANCHOR id="GST-RIFF-RGB:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-RGB:CAPS">
 <ANCHOR id="GST-RIFF-RIFF-AVI:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-RIFF-AVI:CAPS">
 <ANCHOR id="GST-RIFF-RIFF-CDXA:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-RIFF-CDXA:CAPS">
@@ -739,8 +766,11 @@
 <ANCHOR id="GST-RIFF-RLE8:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-RLE8:CAPS">
 <ANCHOR id="GST-RIFF-RT21:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-RT21:CAPS">
 <ANCHOR id="GST-RIFF-SFMC:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-SFMC:CAPS">
+<ANCHOR id="GST-RIFF-TAG-acid" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-acid">
+<ANCHOR id="GST-RIFF-TAG-AVF0:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-AVF0:CAPS">
 <ANCHOR id="GST-RIFF-TAG-BEXT:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-BEXT:CAPS">
 <ANCHOR id="GST-RIFF-TAG-JUNK:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-JUNK:CAPS">
+<ANCHOR id="GST-RIFF-TAG-JUNQ:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-JUNQ:CAPS">
 <ANCHOR id="GST-RIFF-TAG-LIST:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-LIST:CAPS">
 <ANCHOR id="GST-RIFF-TAG-RIFF:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-RIFF:CAPS">
 <ANCHOR id="GST-RIFF-TAG-RIFX:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-RIFX:CAPS">
@@ -813,6 +843,7 @@
 <ANCHOR id="GST-RIFF-y41p" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-y41p">
 <ANCHOR id="GST-RIFF-yuy2" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-yuy2">
 <ANCHOR id="GST-RIFF-yv12" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#GST-RIFF-yv12">
+<ANCHOR id="gst-riff-acid" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#gst-riff-acid">
 <ANCHOR id="gst-riff-create-audio-caps" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#gst-riff-create-audio-caps">
 <ANCHOR id="gst-riff-create-audio-template-caps" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#gst-riff-create-audio-template-caps">
 <ANCHOR id="gst-riff-create-iavs-caps" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstriff.html#gst-riff-create-iavs-caps">
@@ -849,6 +880,8 @@
 <ANCHOR id="gst-base-rtp-audio-payload-set-sample-options" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-set-sample-options">
 <ANCHOR id="gst-base-rtp-audio-payload-get-adapter" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-get-adapter">
 <ANCHOR id="gst-base-rtp-audio-payload-push" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-push">
+<ANCHOR id="gst-base-rtp-audio-payload-flush" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-flush">
+<ANCHOR id="gst-base-rtp-audio-payload-set-samplebits-options" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-set-samplebits-options">
 <ANCHOR id="gst-plugins-base-libs-gstbasertpaudiopayload.property-details" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-plugins-base-libs-gstbasertpaudiopayload.property-details">
 <ANCHOR id="GstBaseRTPAudioPayload--buffer-list" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload--buffer-list">
 <ANCHOR id="gst-plugins-base-libs-gstbasertpdepayload" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbasertpdepayload.html">
@@ -1348,6 +1381,7 @@
 <ANCHOR id="gst-sdp-message-get-media" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-message-get-media">
 <ANCHOR id="gst-sdp-message-add-media" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-message-add-media">
 <ANCHOR id="gst-sdp-message-dump" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-message-dump">
+<ANCHOR id="gst-sdp-message-as-text" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-message-as-text">
 <ANCHOR id="gst-sdp-media-new" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-new">
 <ANCHOR id="gst-sdp-media-init" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-init">
 <ANCHOR id="gst-sdp-media-uninit" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-uninit">
@@ -1377,6 +1411,7 @@
 <ANCHOR id="gst-sdp-media-get-attribute-val" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-get-attribute-val">
 <ANCHOR id="gst-sdp-media-get-attribute-val-n" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-get-attribute-val-n">
 <ANCHOR id="gst-sdp-media-add-attribute" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-add-attribute">
+<ANCHOR id="gst-sdp-media-as-text" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-as-text">
 <ANCHOR id="gst-plugins-base-libs-gsttag" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttag.html">
 <ANCHOR id="gst-plugins-base-libs-gsttag.synopsis" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttag.html#gst-plugins-base-libs-gsttag.synopsis">
 <ANCHOR id="gst-plugins-base-libs-gsttag.description" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttag.html#gst-plugins-base-libs-gsttag.description">
@@ -1398,6 +1433,7 @@
 <ANCHOR id="gst-tag-register-musicbrainz-tags" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttag.html#gst-tag-register-musicbrainz-tags">
 <ANCHOR id="gst-tag-freeform-string-to-utf8" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttag.html#gst-tag-freeform-string-to-utf8">
 <ANCHOR id="gst-tag-parse-extended-comment" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttag.html#gst-tag-parse-extended-comment">
+<ANCHOR id="gst-tag-image-data-to-image-buffer" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttag.html#gst-tag-image-data-to-image-buffer">
 <ANCHOR id="GstTagImageType" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttag.html#GstTagImageType">
 <ANCHOR id="GST-TAG-IMAGE-TYPE-NONE:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttag.html#GST-TAG-IMAGE-TYPE-NONE:CAPS">
 <ANCHOR id="GST-TAG-IMAGE-TYPE-UNDEFINED:CAPS" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttag.html#GST-TAG-IMAGE-TYPE-UNDEFINED:CAPS">
@@ -1441,6 +1477,7 @@
 <ANCHOR id="gst-tag-from-id3-tag" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttagid3.html#gst-tag-from-id3-tag">
 <ANCHOR id="gst-tag-from-id3-user-tag" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttagid3.html#gst-tag-from-id3-user-tag">
 <ANCHOR id="gst-tag-to-id3-tag" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttagid3.html#gst-tag-to-id3-tag">
+<ANCHOR id="gst-tag-list-add-id3-image" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttagid3.html#gst-tag-list-add-id3-image">
 <ANCHOR id="gst-plugins-base-libs-gsttagid3.see-also" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttagid3.html#gst-plugins-base-libs-gsttagid3.see-also">
 <ANCHOR id="gst-plugins-base-libs-gsttagdemux" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttagdemux.html">
 <ANCHOR id="gst-plugins-base-libs-gsttagdemux.synopsis" href="gst-plugins-base-libs-0.10/gst-plugins-base-libs-gsttagdemux.html#gst-plugins-base-libs-gsttagdemux.synopsis">

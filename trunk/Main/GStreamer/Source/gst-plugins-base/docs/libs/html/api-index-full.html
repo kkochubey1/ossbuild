@@ -92,6 +92,8 @@
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-appsink.html#gst-app-sink-pull-buffer" title="gst_app_sink_pull_buffer ()">gst_app_sink_pull_buffer</a></dt>
 <dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-appsink.html#gst-app-sink-pull-buffer-list" title="gst_app_sink_pull_buffer_list ()">gst_app_sink_pull_buffer_list</a></dt>
+<dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-appsink.html#gst-app-sink-pull-preroll" title="gst_app_sink_pull_preroll ()">gst_app_sink_pull_preroll</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-appsink.html#gst-app-sink-set-callbacks" title="gst_app_sink_set_callbacks ()">gst_app_sink_set_callbacks</a></dt>
@@ -160,7 +162,13 @@
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstmultichannel.html#gst-audio-check-channel-positions" title="gst_audio_check_channel_positions ()">gst_audio_check_channel_positions</a></dt>
 <dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-adjust" title="gst_audio_clock_adjust ()">gst_audio_clock_adjust</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-get-time" title="gst_audio_clock_get_time ()">gst_audio_clock_get_time</a></dt>
+<dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-new" title="gst_audio_clock_new ()">gst_audio_clock_new</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-reset" title="gst_audio_clock_reset ()">gst_audio_clock_reset</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstaudiomixerutils.html#gst-audio-default-registry-mixer-filter" title="gst_audio_default_registry_mixer_filter ()">gst_audio_default_registry_mixer_filter</a></dt>
 <dd></dd>
@@ -231,6 +239,8 @@
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstbaseaudiosrc.html#GstBaseAudioSrcClass" title="GstBaseAudioSrcClass">GstBaseAudioSrcClass</a></dt>
 <dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstbaseaudiosrc.html#GstBaseAudioSrcSlaveMethod" title="enum GstBaseAudioSrcSlaveMethod">GstBaseAudioSrcSlaveMethod</a></dt>
+<dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload-struct" title="GstBaseRTPAudioPayload">GstBaseRTPAudioPayload</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload--buffer-list" title='The "buffer-list" property'>GstBaseRTPAudioPayload:buffer-list</a></dt>
@@ -297,9 +307,15 @@
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstbaseaudiosrc.html#gst-base-audio-src-get-provide-clock" title="gst_base_audio_src_get_provide_clock ()">gst_base_audio_src_get_provide_clock</a></dt>
 <dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstbaseaudiosrc.html#gst-base-audio-src-get-slave-method" title="gst_base_audio_src_get_slave_method ()">gst_base_audio_src_get_slave_method</a></dt>
+<dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstbaseaudiosrc.html#GST-BASE-AUDIO-SRC-PAD:CAPS" title="GST_BASE_AUDIO_SRC_PAD()">GST_BASE_AUDIO_SRC_PAD</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstbaseaudiosrc.html#gst-base-audio-src-set-provide-clock" title="gst_base_audio_src_set_provide_clock ()">gst_base_audio_src_set_provide_clock</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstbaseaudiosrc.html#gst-base-audio-src-set-slave-method" title="gst_base_audio_src_set_slave_method ()">gst_base_audio_src_set_slave_method</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-flush" title="gst_base_rtp_audio_payload_flush ()">gst_base_rtp_audio_payload_flush</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-get-adapter" title="gst_base_rtp_audio_payload_get_adapter ()">gst_base_rtp_audio_payload_get_adapter</a></dt>
 <dd></dd>
@@ -308,6 +324,8 @@
 <dt><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-set-frame-based" title="gst_base_rtp_audio_payload_set_frame_based ()">gst_base_rtp_audio_payload_set_frame_based</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-set-frame-options" title="gst_base_rtp_audio_payload_set_frame_options ()">gst_base_rtp_audio_payload_set_frame_options</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-set-samplebits-options" title="gst_base_rtp_audio_payload_set_samplebits_options ()">gst_base_rtp_audio_payload_set_samplebits_options</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-set-sample-based" title="gst_base_rtp_audio_payload_set_sample_based ()">gst_base_rtp_audio_payload_set_sample_based</a></dt>
 <dd></dd>
@@ -580,6 +598,8 @@
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationCommand" title="enum GstNavigationCommand">GstNavigationCommand</a></dt>
 <dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationEventType" title="enum GstNavigationEventType">GstNavigationEventType</a></dt>
+<dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationInterface" title="GstNavigationInterface">GstNavigationInterface</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationMessageType" title="enum GstNavigationMessageType">GstNavigationMessageType</a></dt>
@@ -600,6 +620,14 @@
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#GST-NAVIGATION-COMMAND-DVD-TITLE-MENU:CAPS" title="GST_NAVIGATION_COMMAND_DVD_TITLE_MENU">GST_NAVIGATION_COMMAND_DVD_TITLE_MENU</a></dt>
 <dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-command" title="gst_navigation_event_parse_command ()">gst_navigation_event_parse_command</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-key-event" title="gst_navigation_event_parse_key_event ()">gst_navigation_event_parse_key_event</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-mouse-button-event" title="gst_navigation_event_parse_mouse_button_event ()">gst_navigation_event_parse_mouse_button_event</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-mouse-move-event" title="gst_navigation_event_parse_mouse_move_event ()">gst_navigation_event_parse_mouse_move_event</a></dt>
+<dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-get-type" title="gst_navigation_message_get_type ()">gst_navigation_message_get_type</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-new-angles-changed" title="gst_navigation_message_new_angles_changed ()">gst_navigation_message_new_angles_changed</a></dt>
@@ -607,6 +635,8 @@
 <dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-new-commands-changed" title="gst_navigation_message_new_commands_changed ()">gst_navigation_message_new_commands_changed</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-new-mouse-over" title="gst_navigation_message_new_mouse_over ()">gst_navigation_message_new_mouse_over</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-parse-angles-changed" title="gst_navigation_message_parse_angles_changed ()">gst_navigation_message_parse_angles_changed</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-parse-mouse-over" title="gst_navigation_message_parse_mouse_over ()">gst_navigation_message_parse_mouse_over</a></dt>
 <dd></dd>
@@ -760,6 +790,8 @@
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-07:CAPS" title="GST_RIFF_07">GST_RIFF_07</a></dt>
 <dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstriff.html#gst-riff-acid" title="gst_riff_acid">gst_riff_acid</a></dt>
+<dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-AURA:CAPS" title="GST_RIFF_AURA">GST_RIFF_AURA</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-azpr" title="GST_RIFF_azpr">GST_RIFF_azpr</a></dt>
@@ -795,6 +827,8 @@
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-CYUV:CAPS" title="GST_RIFF_CYUV">GST_RIFF_CYUV</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-cyuv" title="GST_RIFF_cyuv">GST_RIFF_cyuv</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-DIB:CAPS" title="GST_RIFF_DIB">GST_RIFF_DIB</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-DISP:CAPS" title="GST_RIFF_DISP">GST_RIFF_DISP</a></dt>
 <dd></dd>
@@ -972,6 +1006,8 @@
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-Q1-0:CAPS" title="GST_RIFF_Q1_0">GST_RIFF_Q1_0</a></dt>
 <dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-RAW:CAPS" title="GST_RIFF_RAW">GST_RIFF_RAW</a></dt>
+<dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#gst-riff-read-chunk" title="gst_riff_read_chunk ()">gst_riff_read_chunk</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-rec" title="GST_RIFF_rec">GST_RIFF_rec</a></dt>
@@ -1010,6 +1046,10 @@
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#gst-riff-strh" title="gst_riff_strh">gst_riff_strh</a></dt>
 <dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-acid" title="GST_RIFF_TAG_acid">GST_RIFF_TAG_acid</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-AVF0:CAPS" title="GST_RIFF_TAG_AVF0">GST_RIFF_TAG_AVF0</a></dt>
+<dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-avih" title="GST_RIFF_TAG_avih">GST_RIFF_TAG_avih</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-bext" title="GST_RIFF_TAG_bext">GST_RIFF_TAG_bext</a></dt>
@@ -1029,6 +1069,8 @@
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-idx1" title="GST_RIFF_TAG_idx1">GST_RIFF_TAG_idx1</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-JUNK:CAPS" title="GST_RIFF_TAG_JUNK">GST_RIFF_TAG_JUNK</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-JUNQ:CAPS" title="GST_RIFF_TAG_JUNQ">GST_RIFF_TAG_JUNQ</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstriff.html#GST-RIFF-TAG-LIST:CAPS" title="GST_RIFF_TAG_LIST">GST_RIFF_TAG_LIST</a></dt>
 <dd></dd>
@@ -1657,6 +1699,8 @@
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-add-format" title="gst_sdp_media_add_format ()">gst_sdp_media_add_format</a></dt>
 <dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-as-text" title="gst_sdp_media_as_text ()">gst_sdp_media_as_text</a></dt>
+<dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-attributes-len" title="gst_sdp_media_attributes_len ()">gst_sdp_media_attributes_len</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-bandwidths-len" title="gst_sdp_media_bandwidths_len ()">gst_sdp_media_bandwidths_len</a></dt>
@@ -1720,6 +1764,8 @@
 <dt><a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-message-add-time" title="gst_sdp_message_add_time ()">gst_sdp_message_add_time</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-message-add-zone" title="gst_sdp_message_add_zone ()">gst_sdp_message_add_zone</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-message-as-text" title="gst_sdp_message_as_text ()">gst_sdp_message_as_text</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-message-attributes-len" title="gst_sdp_message_attributes_len ()">gst_sdp_message_attributes_len</a></dt>
 <dd></dd>
@@ -1859,6 +1905,10 @@
 <dt><a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-id3-genre-count" title="gst_tag_id3_genre_count ()">gst_tag_id3_genre_count</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-id3-genre-get" title="gst_tag_id3_genre_get ()">gst_tag_id3_genre_get</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gsttag.html#gst-tag-image-data-to-image-buffer" title="gst_tag_image_data_to_image_buffer ()">gst_tag_image_data_to_image_buffer</a></dt>
+<dd></dd>
+<dt><a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-list-add-id3-image" title="gst_tag_list_add_id3_image ()">gst_tag_list_add_id3_image</a></dt>
 <dd></dd>
 <dt><a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-tag-list-from-vorbiscomment-buffer" title="gst_tag_list_from_vorbiscomment_buffer ()">gst_tag_list_from_vorbiscomment_buffer</a></dt>
 <dd></dd>

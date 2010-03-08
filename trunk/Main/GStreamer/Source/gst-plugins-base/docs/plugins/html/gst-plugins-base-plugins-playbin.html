@@ -120,7 +120,7 @@ volume control
 <p>
 </p>
 <div class="refsect2" title="Usage">
-<a name="id444893"></a><h3>Usage</h3>
+<a name="id482436"></a><h3>Usage</h3>
 <p>
 A playbin element can be created just like any other element using
 <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElementFactory.html#gst-element-factory-make"><code class="function">gst_element_factory_make()</code></a>. The file/URI to play should be set via the <span class="type">"uri"</span>
@@ -168,7 +168,7 @@ the duration or position will have been returned in units of nanoseconds.
 </p>
 <hr>
 <div class="refsect2" title="Advanced Usage: specifying the audio and video sink">
-<a name="id448323"></a><h3>Advanced Usage: specifying the audio and video sink</h3>
+<a name="id486006"></a><h3>Advanced Usage: specifying the audio and video sink</h3>
 <p>
 By default, if no audio sink or video sink has been specified via the
 <a class="link" href="gst-plugins-base-plugins-playbin.html#GstPlayBin--audio-sink" title='The "audio-sink" property'><span class="type">"audio-sink"</span></a> or <a class="link" href="gst-plugins-base-plugins-playbin.html#GstPlayBin--video-sink" title='The "video-sink" property'><span class="type">"video-sink"</span></a> property, playbin will use
@@ -210,7 +210,7 @@ It is also possible to 'suppress' audio and/or video output by using
 </p>
 <hr>
 <div class="refsect2" title="Retrieving Tags and Other Meta Data">
-<a name="id448411"></a><h3>Retrieving Tags and Other Meta Data</h3>
+<a name="id486094"></a><h3>Retrieving Tags and Other Meta Data</h3>
 <p>
 Most of the common meta data (artist, title, etc.) can be retrieved by
 watching for TAG messages on the pipeline's bus (see above).
@@ -244,7 +244,7 @@ not contain all available information (like language-codes).
 </p>
 <hr>
 <div class="refsect2" title="Buffering">
-<a name="id448492"></a><h3>Buffering</h3>
+<a name="id486175"></a><h3>Buffering</h3>
 Playbin handles buffering automatically for the most part, but applications
 need to handle parts of the buffering process as well. Whenever playbin is
 buffering, it will post BUFFERING messages on the bus with a percentage
@@ -289,7 +289,7 @@ of 100 percent is received (if PLAYING is the desired state, that is).
 </p>
 <hr>
 <div class="refsect2" title="Embedding the video window in your application">
-<a name="id448515"></a><h3>Embedding the video window in your application</h3>
+<a name="id486198"></a><h3>Embedding the video window in your application</h3>
 By default, playbin (or rather the video sinks used) will create their own
 window. Applications will usually want to force output to a window of their
 own, however. This can be done using the <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstxoverlay.html#GstXOverlay"><span class="type">GstXOverlay</span></a> interface, which most
@@ -299,7 +299,7 @@ video sinks implement. See the documentation there for more details.
 </p>
 <hr>
 <div class="refsect2" title="Specifying which CD/DVD device to use">
-<a name="id448531"></a><h3>Specifying which CD/DVD device to use</h3>
+<a name="id486214"></a><h3>Specifying which CD/DVD device to use</h3>
 The device to use for CDs/DVDs needs to be set on the source element
 playbin creates before it is opened. The only way to do this at the moment
 is to connect to playbin's "notify::source" signal, which will be emitted
@@ -313,7 +313,7 @@ possible yet.
 </p>
 <hr>
 <div class="refsect2" title="Examples">
-<a name="id448543"></a><h3>Examples</h3>
+<a name="id486226"></a><h3>Examples</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>

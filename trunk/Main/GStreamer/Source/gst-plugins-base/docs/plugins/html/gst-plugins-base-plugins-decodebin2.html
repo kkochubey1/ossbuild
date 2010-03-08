@@ -79,6 +79,7 @@ GstDecodeBin2 implements
   "<a class="link" href="gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--max-size-bytes" title='The "max-size-bytes" property'>max-size-bytes</a>"           <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
   "<a class="link" href="gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--max-size-time" title='The "max-size-time" property'>max-size-time</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write
   "<a class="link" href="gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--use-buffering" title='The "use-buffering" property'>use-buffering</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--post-stream-topology" title='The "post-stream-topology" property'>post-stream-topology</a>"     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Signals">
@@ -180,6 +181,13 @@ The opaque <span class="type">DecodeBin2</span> data structure</p>
 <a name="GstDecodeBin2--use-buffering"></a><h3>The <code class="literal">"use-buffering"</code> property</h3>
 <pre class="programlisting">  "use-buffering"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Emit GST_MESSAGE_BUFFERING based on low-/high-percent thresholds.</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2" title='The "post-stream-topology" property'>
+<a name="GstDecodeBin2--post-stream-topology"></a><h3>The <code class="literal">"post-stream-topology"</code> property</h3>
+<pre class="programlisting">  "post-stream-topology"     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>Post stream-topology messages.</p>
 <p>Default value: FALSE</p>
 </div>
 </div>

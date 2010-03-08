@@ -24,7 +24,7 @@
 
 
 #include <gst/gst.h>
-#include <vorbis/codec.h>
+#include "gstvorbisdeclib.h"
 
 G_BEGIN_DECLS
 
@@ -59,6 +59,7 @@ struct _GstVorbisDec {
   vorbis_block      vb;
 
   gboolean          initialized;
+  guint             width;
 
   /* list of buffers that need timestamps */
   GList            *queued;

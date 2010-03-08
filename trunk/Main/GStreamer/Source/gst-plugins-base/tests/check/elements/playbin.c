@@ -42,10 +42,11 @@ static GType gst_codec_src_get_type (void);
     { g_setenv("USE_DECODEBIN2", "1", TRUE); func(); }   \
     GST_END_TEST;
 
-DEFINE_TEST (test_sink_usage_video_only_stream)
+DEFINE_TEST (test_sink_usage_video_only_stream);
 
 /* make sure the audio sink is not touched for video-only streams */
-     static void test_sink_usage_video_only_stream (void)
+static void
+test_sink_usage_video_only_stream (void)
 {
   GstElement *playbin, *fakevideosink, *fakeaudiosink;
   GstState cur_state, pending_state;
@@ -96,9 +97,10 @@ DEFINE_TEST (test_sink_usage_video_only_stream)
 }
 
 /* this tests async error handling when setting up the subbin */
-DEFINE_TEST (test_suburi_error_unknowntype)
+DEFINE_TEST (test_suburi_error_unknowntype);
 
-     static void test_suburi_error_unknowntype (void)
+static void
+test_suburi_error_unknowntype (void)
 {
   GstElement *playbin, *fakesink;
 
@@ -130,9 +132,10 @@ DEFINE_TEST (test_suburi_error_unknowntype)
   gst_object_unref (playbin);
 }
 
-DEFINE_TEST (test_suburi_error_invalidfile)
+DEFINE_TEST (test_suburi_error_invalidfile);
 
-     static void test_suburi_error_invalidfile (void)
+static void
+test_suburi_error_invalidfile (void)
 {
   GstElement *playbin, *fakesink;
 
@@ -163,9 +166,10 @@ DEFINE_TEST (test_suburi_error_invalidfile)
   gst_object_unref (playbin);
 }
 
-DEFINE_TEST (test_suburi_error_wrongproto)
+DEFINE_TEST (test_suburi_error_wrongproto);
 
-     static void test_suburi_error_wrongproto (void)
+static void
+test_suburi_error_wrongproto (void)
 {
   GstElement *playbin, *fakesink;
 
@@ -222,9 +226,10 @@ create_playbin (const gchar * uri)
   return playbin;
 }
 
-DEFINE_TEST (test_missing_urisource_handler)
+DEFINE_TEST (test_missing_urisource_handler);
 
-     static void test_missing_urisource_handler (void)
+static void
+test_missing_urisource_handler (void)
 {
   GstStructure *s;
   GstMessage *msg;
@@ -273,9 +278,10 @@ DEFINE_TEST (test_missing_urisource_handler)
   gst_object_unref (playbin);
 }
 
-DEFINE_TEST (test_missing_suburisource_handler)
+DEFINE_TEST (test_missing_suburisource_handler);
 
-     static void test_missing_suburisource_handler (void)
+static void
+test_missing_suburisource_handler (void)
 {
   GstStructure *s;
   GstMessage *msg;
@@ -325,14 +331,18 @@ DEFINE_TEST (test_missing_suburisource_handler)
   gst_object_unref (playbin);
 }
 
-DEFINE_TEST (test_missing_primary_decoder)
-     static void test_missing_primary_decoder (void)
+DEFINE_TEST (test_missing_primary_decoder);
+
+static void
+test_missing_primary_decoder (void)
 {
   GstStructure *s;
   GstMessage *msg;
   GstElement *playbin;
   GError *err = NULL;
   GstBus *bus;
+  gchar *use_decodebin2 = getenv ("USE_DECODEBIN2");
+  gboolean decodebin2 = use_decodebin2 != NULL && *use_decodebin2 == '1';
 
   fail_unless (gst_element_register (NULL, "codecsrc", GST_RANK_PRIMARY,
           gst_codec_src_get_type ()));
@@ -364,10 +374,19 @@ DEFINE_TEST (test_missing_primary_decoder)
   /* make sure the error is a STREAM CODEC_NOT_FOUND one */
   gst_message_parse_error (msg, &err, NULL);
   fail_unless (err != NULL);
-  fail_unless (err->domain == GST_STREAM_ERROR, "error has wrong error domain "
-      "%s instead of stream-error-quark", g_quark_to_string (err->domain));
-  fail_unless (err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND, "error has wrong "
-      "code %u instead of GST_STREAM_ERROR_CODEC_NOT_FOUND", err->code);
+  if (decodebin2) {
+    fail_unless (err->domain == GST_CORE_ERROR, "error has wrong error domain "
+        "%s instead of core-error-quark", g_quark_to_string (err->domain));
+    fail_unless (err->code == GST_CORE_ERROR_MISSING_PLUGIN, "error has wrong "
+        "code %u instead of GST_RESOURCE_ERROR_MISSING_PLUGIN", err->code);
+  } else {
+    fail_unless (err->domain == GST_STREAM_ERROR,
+        "error has wrong error domain " "%s instead of stream-error-quark",
+        g_quark_to_string (err->domain));
+    fail_unless (err->code == GST_STREAM_ERROR_CODEC_NOT_FOUND,
+        "error has wrong "
+        "code %u instead of GST_STREAM_ERROR_CODEC_NOT_FOUND", err->code);
+  }
   g_error_free (err);
   gst_message_unref (msg);
   gst_object_unref (bus);
@@ -383,6 +402,7 @@ gst_red_video_src_uri_get_type (void)
 {
   return GST_URI_SRC;
 }
+
 static gchar **
 gst_red_video_src_uri_get_protocols (void)
 {
@@ -492,6 +512,7 @@ gst_codec_src_uri_get_type (void)
 {
   return GST_URI_SRC;
 }
+
 static gchar **
 gst_codec_src_uri_get_protocols (void)
 {
@@ -610,10 +631,7 @@ playbin_suite (void)
   tcase_add_test (tc_chain, test_missing_primary_decoder_decodebin1);
 
   /* and again with decodebin2 */
-  if (0) {
-    /* THIS TEST DOES NOT PASS WITH DECODEBIN2 */
-    tcase_add_test (tc_chain, test_missing_primary_decoder_decodebin2);
-  }
+  tcase_add_test (tc_chain, test_missing_primary_decoder_decodebin2);
   tcase_add_test (tc_chain, test_sink_usage_video_only_stream_decodebin2);
   tcase_add_test (tc_chain, test_suburi_error_wrongproto_decodebin2);
   tcase_add_test (tc_chain, test_suburi_error_invalidfile_decodebin2);

@@ -31,6 +31,8 @@
                   <a href="#gst-plugins-base-plugins-subtitleoverlay.object-hierarchy" class="shortcut">Object Hierarchy</a>
                    | 
                   <a href="#gst-plugins-base-plugins-subtitleoverlay.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+                   | 
+                  <a href="#gst-plugins-base-plugins-subtitleoverlay.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
 <div class="refentry" title="subtitleoverlay">
@@ -63,6 +65,13 @@
 GstSubtitleOverlay implements
  <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstChildProxy.html">GstChildProxy</a>.</p>
 </div>
+<div class="refsect1" title="Properties">
+<a name="gst-plugins-base-plugins-subtitleoverlay.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay--font-desc" title='The "font-desc" property'>font-desc</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay--silent" title='The "silent" property'>silent</a>"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+</pre>
+</div>
 <div class="refsect1" title="Description">
 <a name="gst-plugins-base-plugins-subtitleoverlay.description"></a><h2>Description</h2>
 <p>
@@ -76,7 +85,7 @@ DVD subpicture subtitles.
 <p>
 </p>
 <div class="refsect2" title="Examples">
-<a name="id451971"></a><h3>Examples</h3>
+<a name="id486868"></a><h3>Examples</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -97,6 +106,22 @@ DVD subpicture subtitles.
 <pre class="programlisting">typedef struct _GstSubtitleOverlay GstSubtitleOverlay;</pre>
 <p>
 </p>
+</div>
+</div>
+<div class="refsect1" title="Property Details">
+<a name="gst-plugins-base-plugins-subtitleoverlay.property-details"></a><h2>Property Details</h2>
+<div class="refsect2" title='The "font-desc" property'>
+<a name="GstSubtitleOverlay--font-desc"></a><h3>The <code class="literal">"font-desc"</code> property</h3>
+<pre class="programlisting">  "font-desc"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<p>Pango font description of font to be used for subtitle rendering.</p>
+<p>Default value: NULL</p>
+</div>
+<hr>
+<div class="refsect2" title='The "silent" property'>
+<a name="GstSubtitleOverlay--silent"></a><h3>The <code class="literal">"silent"</code> property</h3>
+<pre class="programlisting">  "silent"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>Whether to show subtitles.</p>
+<p>Default value: FALSE</p>
 </div>
 </div>
 </div>

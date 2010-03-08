@@ -146,6 +146,7 @@ struct _GstPlaySink
   gdouble volume;
   gboolean mute;
   gchar *font_desc;             /* font description */
+  gchar *subtitle_encoding;     /* subtitle encoding */
   guint connection_speed;       /* connection speed in bits/sec (0 = unknown) */
   gint count;
   gboolean volume_changed;      /* volume/mute changed while no audiochain */
@@ -192,6 +193,7 @@ enum
   PROP_MUTE,
   PROP_VOLUME,
   PROP_FONT_DESC,
+  PROP_SUBTITLE_ENCODING,
   PROP_VIS_PLUGIN,
   PROP_LAST
 };
@@ -274,6 +276,13 @@ gst_play_sink_class_init (GstPlaySinkClass * klass)
           "Pango font description of font "
           "to be used for subtitle rendering", NULL,
           G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
+  g_object_class_install_property (gobject_klass, PROP_SUBTITLE_ENCODING,
+      g_param_spec_string ("subtitle-encoding", "subtitle encoding",
+          "Encoding to assume if input subtitles are not in UTF-8 encoding. "
+          "If not set, the GST_SUBTITLE_ENCODING environment variable will "
+          "be checked for an encoding to use. If that is not set either, "
+          "ISO-8859-15 will be assumed.", NULL,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   g_object_class_install_property (gobject_klass, PROP_VIS_PLUGIN,
       g_param_spec_object ("vis-plugin", "Vis plugin",
           "the visualization element to use (NULL = default)",
@@ -323,6 +332,7 @@ gst_play_sink_init (GstPlaySink * playsink)
   playsink->text_sink = NULL;
   playsink->volume = 1.0;
   playsink->font_desc = NULL;
+  playsink->subtitle_encoding = NULL;
   playsink->flags = DEFAULT_FLAGS;
 
   g_static_rec_mutex_init (&playsink->lock);
@@ -398,6 +408,9 @@ gst_play_sink_dispose (GObject * object)
   g_free (playsink->font_desc);
   playsink->font_desc = NULL;
 
+  g_free (playsink->subtitle_encoding);
+  playsink->subtitle_encoding = NULL;
+
   G_OBJECT_CLASS (gst_play_sink_parent_class)->dispose (object);
 }
 
@@ -445,8 +458,11 @@ gst_play_sink_set_sink (GstPlaySink * playsink, GstPlaySinkType type,
   }
   GST_PLAY_SINK_UNLOCK (playsink);
 
-  if (old)
+  if (old) {
+    if (old != sink)
+      gst_element_set_state (old, GST_STATE_NULL);
     gst_object_unref (old);
+  }
 }
 
 GstElement *
@@ -999,10 +1015,19 @@ gen_video_chain (GstPlaySink * playsink, gboolean raw, gboolean async,
      * need a lot of buffers as this consumes a lot of memory and we don't want
      * too little because else we would be context switching too quickly. */
     chain->queue = gst_element_factory_make ("queue", "vqueue");
-    g_object_set (G_OBJECT (chain->queue), "max-size-buffers", 3,
-        "max-size-bytes", 0, "max-size-time", (gint64) 0, NULL);
-    gst_bin_add (bin, chain->queue);
-    head = prev = chain->queue;
+    if (chain->queue == NULL) {
+      post_missing_element_message (playsink, "queue");
+      GST_ELEMENT_WARNING (playsink, CORE, MISSING_PLUGIN,
+          (_("Missing element '%s' - check your GStreamer installation."),
+              "queue"), ("video rendering might be suboptimal"));
+      head = chain->sink;
+      prev = NULL;
+    } else {
+      g_object_set (G_OBJECT (chain->queue), "max-size-buffers", 3,
+          "max-size-bytes", 0, "max-size-time", (gint64) 0, NULL);
+      gst_bin_add (bin, chain->queue);
+      head = prev = chain->queue;
+    }
   } else {
     head = chain->sink;
     prev = NULL;
@@ -1211,10 +1236,17 @@ gen_text_chain (GstPlaySink * playsink)
     if (!(playsink->flags & GST_PLAY_FLAG_NATIVE_VIDEO)) {
       /* make a little queue */
       chain->queue = gst_element_factory_make ("queue", "vqueue");
-      g_object_set (G_OBJECT (chain->queue), "max-size-buffers", 3,
-          "max-size-bytes", 0, "max-size-time", (gint64) 0, NULL);
-      gst_bin_add (bin, chain->queue);
-      videosinkpad = gst_element_get_static_pad (chain->queue, "sink");
+      if (chain->queue == NULL) {
+        post_missing_element_message (playsink, "queue");
+        GST_ELEMENT_WARNING (playsink, CORE, MISSING_PLUGIN,
+            (_("Missing element '%s' - check your GStreamer installation."),
+                "queue"), ("video rendering might be suboptimal"));
+      } else {
+        g_object_set (G_OBJECT (chain->queue), "max-size-buffers", 3,
+            "max-size-bytes", 0, "max-size-time", (gint64) 0, NULL);
+        gst_bin_add (bin, chain->queue);
+        videosinkpad = gst_element_get_static_pad (chain->queue, "sink");
+      }
 
       chain->overlay =
           gst_element_factory_make ("subtitleoverlay", "suboverlay");
@@ -1230,6 +1262,10 @@ gen_text_chain (GstPlaySink * playsink)
         if (playsink->font_desc) {
           g_object_set (G_OBJECT (chain->overlay), "font-desc",
               playsink->font_desc, NULL);
+        }
+        if (playsink->subtitle_encoding) {
+          g_object_set (G_OBJECT (chain->overlay), "subtitle-encoding",
+              playsink->subtitle_encoding, NULL);
         }
 
         gst_element_link_pads (chain->queue, "src", chain->overlay,
@@ -1247,11 +1283,18 @@ gen_text_chain (GstPlaySink * playsink)
      * thing we can do is insert an identity and ghost the src
      * and sink pads. */
     chain->identity = gst_element_factory_make ("identity", "tidentity");
-    g_object_set (chain->identity, "signal-handoffs", FALSE, NULL);
-    g_object_set (chain->identity, "silent", TRUE, NULL);
-    gst_bin_add (bin, chain->identity);
-    srcpad = gst_element_get_static_pad (chain->identity, "src");
-    videosinkpad = gst_element_get_static_pad (chain->identity, "sink");
+    if (chain->identity == NULL) {
+      post_missing_element_message (playsink, "identity");
+      GST_ELEMENT_ERROR (playsink, CORE, MISSING_PLUGIN,
+          (_("Missing element '%s' - check your GStreamer installation."),
+              "identity"), (NULL));
+    } else {
+      g_object_set (chain->identity, "signal-handoffs", FALSE, NULL);
+      g_object_set (chain->identity, "silent", TRUE, NULL);
+      gst_bin_add (bin, chain->identity);
+      srcpad = gst_element_get_static_pad (chain->identity, "src");
+      videosinkpad = gst_element_get_static_pad (chain->identity, "sink");
+    }
   }
 
   /* expose the ghostpads */
@@ -1359,8 +1402,17 @@ gen_audio_chain (GstPlaySink * playsink, gboolean raw, gboolean queue)
      * visualisations */
     GST_DEBUG_OBJECT (playsink, "adding audio queue");
     chain->queue = gst_element_factory_make ("queue", "aqueue");
-    gst_bin_add (bin, chain->queue);
-    prev = head = chain->queue;
+    if (chain->queue == NULL) {
+      post_missing_element_message (playsink, "queue");
+      GST_ELEMENT_WARNING (playsink, CORE, MISSING_PLUGIN,
+          (_("Missing element '%s' - check your GStreamer installation."),
+              "queue"), ("audio playback and visualizations might not work"));
+      head = chain->sink;
+      prev = NULL;
+    } else {
+      gst_bin_add (bin, chain->queue);
+      prev = head = chain->queue;
+    }
   } else {
     head = chain->sink;
     prev = NULL;
@@ -1657,6 +1709,8 @@ gen_vis_chain (GstPlaySink * playsink)
   /* we're queuing raw audio here, we can remove this queue when we can disable
    * async behaviour in the video sink. */
   chain->queue = gst_element_factory_make ("queue", "visqueue");
+  if (chain->queue == NULL)
+    goto no_queue;
   gst_bin_add (bin, chain->queue);
 
   chain->conv = gst_element_factory_make ("audioconvert", "aconv");
@@ -1707,6 +1761,15 @@ gen_vis_chain (GstPlaySink * playsink)
   return chain;
 
   /* ERRORS */
+no_queue:
+  {
+    post_missing_element_message (playsink, "queue");
+    GST_ELEMENT_ERROR (playsink, CORE, MISSING_PLUGIN,
+        (_("Missing element '%s' - check your GStreamer installation."),
+            "queue"), (NULL));
+    free_chain ((GstPlayChain *) chain);
+    return NULL;
+  }
 no_audioconvert:
   {
     post_missing_element_message (playsink, "audioconvert");
@@ -1830,8 +1893,7 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
       add_chain (GST_PLAY_CHAIN (playsink->videochain), TRUE);
       activate_chain (GST_PLAY_CHAIN (playsink->videochain), TRUE);
       /* if we are not part of vis or subtitles, set the ghostpad target */
-      if (!need_vis && !need_text && !playsink->text_pad
-          && !playsink->textchain) {
+      if (!need_vis && !need_text && !playsink->textchain) {
         GST_DEBUG_OBJECT (playsink, "ghosting video sinkpad");
         gst_ghost_pad_set_target (GST_GHOST_PAD_CAST (playsink->video_pad),
             playsink->videochain->sinkpad);
@@ -1873,8 +1935,8 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
     }
     if (playsink->textchain) {
       GST_DEBUG_OBJECT (playsink, "adding text chain");
-      g_object_set (G_OBJECT (playsink->textchain->overlay), "silent", FALSE,
-          NULL);
+      if (playsink->textchain->overlay != NULL)
+        g_object_set (playsink->textchain->overlay, "silent", FALSE, NULL);
       add_chain (GST_PLAY_CHAIN (playsink->textchain), TRUE);
 
       gst_ghost_pad_set_target (GST_GHOST_PAD_CAST (playsink->text_pad),
@@ -2113,6 +2175,41 @@ gst_play_sink_get_font_desc (GstPlaySink * playsink)
   return result;
 }
 
+void
+gst_play_sink_set_subtitle_encoding (GstPlaySink * playsink,
+    const gchar * encoding)
+{
+  GstPlayTextChain *chain;
+
+  GST_PLAY_SINK_LOCK (playsink);
+  chain = (GstPlayTextChain *) playsink->textchain;
+  g_free (playsink->subtitle_encoding);
+  playsink->subtitle_encoding = g_strdup (encoding);
+  if (chain && chain->overlay) {
+    g_object_set (chain->overlay, "subtitle-encoding", encoding, NULL);
+  }
+  GST_PLAY_SINK_UNLOCK (playsink);
+}
+
+gchar *
+gst_play_sink_get_subtitle_encoding (GstPlaySink * playsink)
+{
+  gchar *result = NULL;
+  GstPlayTextChain *chain;
+
+  GST_PLAY_SINK_LOCK (playsink);
+  chain = (GstPlayTextChain *) playsink->textchain;
+  if (chain && chain->overlay) {
+    g_object_get (chain->overlay, "subtitle-encoding", &result, NULL);
+    playsink->subtitle_encoding = g_strdup (result);
+  } else {
+    result = g_strdup (playsink->subtitle_encoding);
+  }
+  GST_PLAY_SINK_UNLOCK (playsink);
+
+  return result;
+}
+
 /**
  * gst_play_sink_get_last_frame:
  * @playsink: a #GstPlaySink
@@ -2189,10 +2286,19 @@ gst_play_sink_request_pad (GstPlaySink * playsink, GstPlaySinkType type)
         /* create tee when needed. This element will feed the audio sink chain
          * and the vis chain. */
         playsink->audio_tee = gst_element_factory_make ("tee", "audiotee");
-        playsink->audio_tee_sink =
-            gst_element_get_static_pad (playsink->audio_tee, "sink");
-        gst_bin_add (GST_BIN_CAST (playsink), playsink->audio_tee);
-        gst_element_set_state (playsink->audio_tee, GST_STATE_PAUSED);
+        if (playsink->audio_tee == NULL) {
+          post_missing_element_message (playsink, "tee");
+          GST_ELEMENT_ERROR (playsink, CORE, MISSING_PLUGIN,
+              (_("Missing element '%s' - check your GStreamer installation."),
+                  "tee"), (NULL));
+          res = NULL;
+          break;
+        } else {
+          playsink->audio_tee_sink =
+              gst_element_get_static_pad (playsink->audio_tee, "sink");
+          gst_bin_add (GST_BIN_CAST (playsink), playsink->audio_tee);
+          gst_element_set_state (playsink->audio_tee, GST_STATE_PAUSED);
+        }
       } else {
         gst_element_set_state (playsink->audio_tee, GST_STATE_PAUSED);
       }
@@ -2594,6 +2700,10 @@ gst_play_sink_set_property (GObject * object, guint prop_id,
     case PROP_FONT_DESC:
       gst_play_sink_set_font_desc (playsink, g_value_get_string (value));
       break;
+    case PROP_SUBTITLE_ENCODING:
+      gst_play_sink_set_subtitle_encoding (playsink,
+          g_value_get_string (value));
+      break;
     case PROP_VIS_PLUGIN:
       gst_play_sink_set_vis_plugin (playsink, g_value_get_object (value));
       break;
@@ -2621,6 +2731,10 @@ gst_play_sink_get_property (GObject * object, guint prop_id,
       break;
     case PROP_FONT_DESC:
       g_value_take_string (value, gst_play_sink_get_font_desc (playsink));
+      break;
+    case PROP_SUBTITLE_ENCODING:
+      g_value_take_string (value,
+          gst_play_sink_get_subtitle_encoding (playsink));
       break;
     case PROP_VIS_PLUGIN:
       g_value_take_object (value, gst_play_sink_get_vis_plugin (playsink));

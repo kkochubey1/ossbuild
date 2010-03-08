@@ -81,6 +81,9 @@
                                                          <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **lang,
                                                          <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **value,
                                                          <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a> fail_if_no_key);
+<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         <a class="link" href="gst-plugins-base-libs-gsttag.html#gst-tag-image-data-to-image-buffer" title="gst_tag_image_data_to_image_buffer ()">gst_tag_image_data_to_image_buffer</a>  (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a> *image_data,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> image_data_len,
+                                                         <a class="link" href="gst-plugins-base-libs-gsttag.html#GstTagImageType" title="enum GstTagImageType"><span class="returnvalue">GstTagImageType</span></a> image_type);
 enum                <a class="link" href="gst-plugins-base-libs-gsttag.html#GstTagImageType" title="enum GstTagImageType">GstTagImageType</a>;
 </pre>
 </div>
@@ -89,7 +92,7 @@ enum                <a class="link" href="gst-plugins-base-libs-gsttag.html#GstT
 <p>
 </p>
 <div class="refsect2">
-<a name="id705760"></a><p>
+<a name="id646362"></a><p>
 Contains additional standardized GStreamer tag definitions for plugins
 and applications, and functions to register them with the GStreamer
 tag system.
@@ -234,6 +237,7 @@ function before using them. Can be called multiple times.</p>
 <p>
 Convenience function to read a string with unknown character encoding. If
 the string is already in UTF-8 encoding, it will be returned right away.
+If not it tries to detect byte-order-mark for UTF-16/32 cases and use that.
 Otherwise, the environment will be searched for a number of environment
 variables (whose names are specified in the NULL-terminated string array
 <em class="parameter"><code>env_vars</code></em>) containing a list of character encodings to try/use. If none
@@ -324,6 +328,68 @@ code in the extended comment string.</p>
 <p class="since">Since 0.10.10</p>
 </div>
 <hr>
+<div class="refsect2" title="gst_tag_image_data_to_image_buffer ()">
+<a name="gst-tag-image-data-to-image-buffer"></a><h3>gst_tag_image_data_to_image_buffer ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         gst_tag_image_data_to_image_buffer  (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a> *image_data,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> image_data_len,
+                                                         <a class="link" href="gst-plugins-base-libs-gsttag.html#GstTagImageType" title="enum GstTagImageType"><span class="returnvalue">GstTagImageType</span></a> image_type);</pre>
+<p>
+Helper function for tag-reading plugins to create a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> suitable to
+add to a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> as an image tag (such as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-IMAGE--CAPS"><span class="type">GST_TAG_IMAGE</span></a> or
+<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-PREVIEW-IMAGE--CAPS"><span class="type">GST_TAG_PREVIEW_IMAGE</span></a>) from the encoded image data and an (optional) image
+type.
+</p>
+<p>
+Background: cover art and other images in tags are usually stored as a
+blob of binary image data, often accompanied by a MIME type or some other
+content type string (e.g. 'png', 'jpeg', 'jpg'). Sometimes there is also an
+'image type' to indicate what kind of image this is (e.g. front cover,
+back cover, artist, etc.). The image data may also be an URI to the image
+rather than the image itself.
+</p>
+<p>
+In GStreamer, image tags are <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a>s containing the raw image
+data, with the buffer caps describing the content type of the image
+(e.g. image/jpeg, image/png, text/uri-list). The buffer caps may contain
+an additional 'image-type' field of <span class="type">GST_TYPE_TAG_IMAGE_TYPE</span> to describe
+the type of image (front cover, back cover etc.). <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-PREVIEW-IMAGE--CAPS"><span class="type">GST_TAG_PREVIEW_IMAGE</span></a>
+tags should not carry an image type, their type is already indicated via
+the special tag name.
+</p>
+<p>
+This function will do various checks and typefind the encoded image
+data (we can't trust the declared mime type).</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image_data</code></em> :</span></p></td>
+<td> the (encoded) image
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image_data_len</code></em> :</span></p></td>
+<td> the length of the encoded image data at <em class="parameter"><code>image_data</code></em>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image_type</code></em> :</span></p></td>
+<td> type of the image, or <a class="link" href="gst-plugins-base-libs-gsttag.html#GST-TAG-IMAGE-TYPE-UNDEFINED:CAPS"><span class="type">GST_TAG_IMAGE_TYPE_UNDEFINED</span></a>. Pass
+    <a class="link" href="gst-plugins-base-libs-gsttag.html#GST-TAG-IMAGE-TYPE-NONE:CAPS"><span class="type">GST_TAG_IMAGE_TYPE_NONE</span></a> if no image type should be set at all (e.g.
+    for preview images)
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> a newly-allocated image buffer for use in tag lists, or NULL
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.20</p>
+</div>
+<hr>
 <div class="refsect2" title="enum GstTagImageType">
 <a name="GstTagImageType"></a><h3>enum GstTagImageType</h3>
 <pre class="programlisting">typedef enum {
@@ -358,7 +424,7 @@ the image buffer's caps structure)</p>
 <tr>
 <td><p><a name="GST-TAG-IMAGE-TYPE-NONE:CAPS"></a><span class="term"><code class="literal">GST_TAG_IMAGE_TYPE_NONE</code></span></p></td>
 <td> No image type. Can be used to
-     tell functions such as <code class="function">gst_tag_image_data_to_image_buffer()</code> that no
+     tell functions such as <a class="link" href="gst-plugins-base-libs-gsttag.html#gst-tag-image-data-to-image-buffer" title="gst_tag_image_data_to_image_buffer ()"><code class="function">gst_tag_image_data_to_image_buffer()</code></a> that no
      image type should be set. (Since: 0.10.20)
 </td>
 </tr>
