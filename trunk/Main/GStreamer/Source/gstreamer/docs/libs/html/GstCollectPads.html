@@ -222,7 +222,9 @@ Structure used by the collect_pads.</p>
 } GstCollectPads;
 </pre>
 <p>
-Collectpads object.</p>
+Collectpads object.
+Note that <em class="parameter"><code>data</code></em> doesn't contain the complete <a class="link" href="GstCollectPads.html#GstCollectData" title="GstCollectData"><span class="type">GstCollectData</span></a> list
+at all times and should not be used for iterating them.</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>

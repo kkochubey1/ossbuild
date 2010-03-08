@@ -1547,7 +1547,7 @@ distdir: $(DISTFILES)
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS) all-local
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(girdir)" "$(DESTDIR)$(typelibsdir)" "$(DESTDIR)$(libgstreamer_@GST_MAJORMINOR@includedir)" "$(DESTDIR)$(libgstreamer_@GST_MAJORMINOR@includedir)"; do \
@@ -1664,7 +1664,7 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 	tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am check check-am clean clean-generic \
+	all all-am all-local check check-am clean clean-generic \
 	clean-libLTLIBRARIES clean-libtool ctags ctags-recursive \
 	distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
@@ -1744,6 +1744,18 @@ gcov: $(libgstreamer_@GST_MAJORMINOR@_la_SOURCES:=.gcov)
 
 @HAVE_INTROSPECTION_TRUE@%.typelib: %.gir $(INTROSPECTION_COMPILER)
 @HAVE_INTROSPECTION_TRUE@	$(INTROSPECTION_COMPILER) --includedir=$(srcdir) --includedir=$(builddir) $(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+
+# try to prevent packaging errors
+check-libexecdir-consistency:
+	if test "${GST_PLUGIN_SCANNER_INSTALLED}" != "${libexecdir}/gstreamer-$(GST_MAJORMINOR)/gst-plugin-scanner"; then \
+	  echo "*** Inconsistent libexecdir! Please use ./configure --libexecdir=/foo/bar"; \
+	  echo "*** to set the libexecdir and not make libexecdir=/foo/bar or the like."; \
+	  echo "*** The same goes for prefix, libdir etc."; \
+	  echo "*** ${GST_PLUGIN_SCANNER_INSTALLED} != ${libexecdir}/gstreamer-$(GST_MAJORMINOR)/gst-plugin-scanner"; \
+	  exit 1; \
+	fi
+
+all-local: check-libexecdir-consistency
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -913,32 +913,40 @@ equal.</p>
                                                          <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *buffer_out,
                                                          <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a> last_flow_return);</pre>
 <p>
-</p>
+Create an <em class="parameter"><code>element</code></em> with the factory with the name and push the buffers in
+<em class="parameter"><code>buffer_in</code></em> to this element. The element should create the buffers equal to
+the buffers in <em class="parameter"><code>buffer_out</code></em>. We only check the caps, size and the data of the
+buffers. This function unrefs the buffers in the two lists.
+The last_flow_return parameter indicates the expected flow return value from
+pushing the final buffer in the list.
+This can be used to set up a test which pushes some buffers and then an
+invalid buffer, when the final buffer is expected to fail, for example.</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>element_name</code></em> :</span></p></td>
-<td>
+<td> name of the element that needs to be created
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer_in</code></em> :</span></p></td>
-<td>
+<td> a list of buffers that needs to be puched to the element
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer_out</code></em> :</span></p></td>
-<td>
+<td> a list of buffers that we expect from the element
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>last_flow_return</code></em> :</span></p></td>
-<td>
+<td> the last buffer push needs to give this GstFlowReturn
 </td>
 </tr>
 </tbody>
 </table></div>
+<p class="since">Since 0.10.18</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_check_element_push_buffer ()">

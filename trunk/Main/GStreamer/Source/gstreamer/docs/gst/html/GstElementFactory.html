@@ -110,7 +110,7 @@ The following code example shows you how to create a GstFileSrc element.
 <p>
 </p>
 <div class="example">
-<a name="id452929"></a><p class="title"><b>Example 9. Using an element factory</b></p>
+<a name="id357606"></a><p class="title"><b>Example 9. Using an element factory</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -132,11 +132,11 @@ The following code example shows you how to create a GstFileSrc element.
 GstElement <span class="symbol">*</span>src<span class="symbol">;</span>
 GstElementFactory <span class="symbol">*</span>srcfactory<span class="symbol">;</span>
 
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-Gst.html#gst-init">gst_init</a></span> <span class="symbol">(&amp;</span>argc<span class="symbol">, &amp;</span>argv<span class="symbol">);</span>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-Gst.html#gst-init">gst_init</a></span> <span class="symbol">(&amp;</span>argc<span class="symbol">, &amp;</span>argv<span class="symbol">);</span>
 
-srcfactory <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElementFactory.html#gst-element-factory-find">gst_element_factory_find</a></span> <span class="symbol">(</span><span class="string">&quot;filesrc&quot;</span><span class="symbol">);</span>
+srcfactory <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/GstElementFactory.html#gst-element-factory-find">gst_element_factory_find</a></span> <span class="symbol">(</span><span class="string">&quot;filesrc&quot;</span><span class="symbol">);</span>
 <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="symbol">(</span>srcfactory <span class="symbol">!=</span> NULL<span class="symbol">);</span>
-src <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElementFactory.html#gst-element-factory-create">gst_element_factory_create</a></span> <span class="symbol">(</span>srcfactory<span class="symbol">,</span> <span class="string">&quot;src&quot;</span><span class="symbol">);</span>
+src <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/GstElementFactory.html#gst-element-factory-create">gst_element_factory_create</a></span> <span class="symbol">(</span>srcfactory<span class="symbol">,</span> <span class="string">&quot;src&quot;</span><span class="symbol">);</span>
 <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Warnings-and-Assertions.html#g-return-if-fail">g_return_if_fail</a></span> <span class="symbol">(</span>src <span class="symbol">!=</span> NULL<span class="symbol">);</span>
 <span class="symbol">...</span></pre></td>
       </tr>

@@ -122,7 +122,7 @@ buffer data.  The following example creates a buffer that can hold a given
 video frame with a given width, height and bits per plane.
 </p>
 <div class="example">
-<a name="id441640"></a><p class="title"><b>Example 3. Creating a buffer for a video frame</b></p>
+<a name="id378971"></a><p class="title"><b>Example 3. Creating a buffer for a video frame</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -140,10 +140,10 @@ video frame with a given width, height and bits per plane.
 gint size<span class="symbol">,</span> width<span class="symbol">,</span> height<span class="symbol">,</span> bpp<span class="symbol">;</span>
 <span class="symbol">...</span>
 size <span class="symbol">=</span> width <span class="symbol">*</span> height <span class="symbol">*</span> bpp<span class="symbol">;</span>
-buffer <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#gst-buffer-new">gst_buffer_new</a></span> <span class="symbol">();</span>
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GST-BUFFER-SIZE:CAPS">GST_BUFFER_SIZE</a></span> <span class="symbol">(</span>buffer<span class="symbol">) =</span> size<span class="symbol">;</span>
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GST-BUFFER-MALLOCDATA:CAPS">GST_BUFFER_MALLOCDATA</a></span> <span class="symbol">(</span>buffer<span class="symbol">) =</span> <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-malloc">g_malloc</a></span> <span class="symbol">(</span>size<span class="symbol">);</span>
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GST-BUFFER-DATA:CAPS">GST_BUFFER_DATA</a></span> <span class="symbol">(</span>buffer<span class="symbol">) =</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GST-BUFFER-MALLOCDATA:CAPS">GST_BUFFER_MALLOCDATA</a></span> <span class="symbol">(</span>buffer<span class="symbol">);</span>
+buffer <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstBuffer.html#gst-buffer-new">gst_buffer_new</a></span> <span class="symbol">();</span>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBuffer.html#GST-BUFFER-SIZE:CAPS">GST_BUFFER_SIZE</a></span> <span class="symbol">(</span>buffer<span class="symbol">) =</span> size<span class="symbol">;</span>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBuffer.html#GST-BUFFER-MALLOCDATA:CAPS">GST_BUFFER_MALLOCDATA</a></span> <span class="symbol">(</span>buffer<span class="symbol">) =</span> <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-malloc">g_malloc</a></span> <span class="symbol">(</span>size<span class="symbol">);</span>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBuffer.html#GST-BUFFER-DATA:CAPS">GST_BUFFER_DATA</a></span> <span class="symbol">(</span>buffer<span class="symbol">) =</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstBuffer.html#GST-BUFFER-MALLOCDATA:CAPS">GST_BUFFER_MALLOCDATA</a></span> <span class="symbol">(</span>buffer<span class="symbol">);</span>
 <span class="symbol">...</span></pre></td>
       </tr>
     </tbody>

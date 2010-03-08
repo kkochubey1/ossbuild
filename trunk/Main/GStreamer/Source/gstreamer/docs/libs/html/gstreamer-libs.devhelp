@@ -42,7 +42,7 @@
     <sub name="Index of deprecated API" link="api-index-deprecated.html"/>
   </chapters>
   <functions>
-    <function name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#id513214"/>
+    <function name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#id561171"/>
     <function name="GstBaseSrc" link="GstBaseSrc.html#GstBaseSrc-struct"/>
     <function name="GstBaseSrcClass" link="GstBaseSrc.html#GstBaseSrcClass"/>
     <function name="enum GstBaseSrcFlags" link="GstBaseSrc.html#GstBaseSrcFlags"/>
@@ -94,8 +94,8 @@
     <function name="The &quot;render-delay&quot; property" link="GstBaseSink.html#GstBaseSink--render-delay"/>
     <function name="The &quot;sync&quot; property" link="GstBaseSink.html#GstBaseSink--sync"/>
     <function name="The &quot;ts-offset&quot; property" link="GstBaseSink.html#GstBaseSink--ts-offset"/>
-    <function name="Use Cases" link="GstBaseTransform.html#id588473"/>
-    <function name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#id575436"/>
+    <function name="Use Cases" link="GstBaseTransform.html#id606369"/>
+    <function name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#id613346"/>
     <function name="GstBaseTransform" link="GstBaseTransform.html#GstBaseTransform-struct"/>
     <function name="GstBaseTransformClass" link="GstBaseTransform.html#GstBaseTransformClass"/>
     <function name="gst_base_transform_is_passthrough ()" link="GstBaseTransform.html#gst-base-transform-is-passthrough"/>
@@ -311,15 +311,16 @@
     <function name="gst_byte_writer_put_uint32_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint32-le"/>
     <function name="gst_byte_writer_put_uint64_be ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint64-be"/>
     <function name="gst_byte_writer_put_uint64_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint64-le"/>
-    <function name="gst_byte_writer_put_double_be ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-double-be"/>
-    <function name="gst_byte_writer_put_double_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-double-le"/>
-    <function name="gst_byte_writer_put_float_be ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float-be"/>
-    <function name="gst_byte_writer_put_float_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float-le"/>
+    <function name="gst_byte_writer_put_float32_be ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float32-be"/>
+    <function name="gst_byte_writer_put_float32_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float32-le"/>
+    <function name="gst_byte_writer_put_float64_be ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float64-be"/>
+    <function name="gst_byte_writer_put_float64_le ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float64-le"/>
     <function name="gst_byte_writer_put_string()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-string"/>
     <function name="gst_byte_writer_put_string_utf16 ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-string-utf16"/>
     <function name="gst_byte_writer_put_string_utf32 ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-string-utf32"/>
     <function name="gst_byte_writer_put_string_utf8 ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-string-utf8"/>
     <function name="gst_byte_writer_put_data ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-data"/>
+    <function name="gst_byte_writer_fill ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-fill"/>
     <function name="GstCollectData" link="GstCollectPads.html#GstCollectData"/>
     <function name="GstCollectPads" link="GstCollectPads.html#GstCollectPads-struct"/>
     <function name="GstCollectPadsFunction ()" link="GstCollectPads.html#GstCollectPadsFunction"/>

@@ -3,7 +3,7 @@ AC_PREREQ(2.52)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, git and prerelease does Werror too
-AC_INIT(GStreamer, 0.10.26,
+AC_INIT(GStreamer, 0.10.27,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gstreamer)
 AG_GST_INIT
@@ -43,7 +43,7 @@ dnl - interfaces added/removed/changed -> increment CURRENT, REVISION = 0
 dnl - interfaces added -> increment AGE
 dnl - interfaces removed -> AGE = 0
 dnl sets GST_LT_LDFLAGS
-AS_LIBTOOL(GST, 23, 0, 23)
+AS_LIBTOOL(GST, 24, 0, 24)
 
 dnl FIXME: this macro doesn't actually work;
 dnl the generated libtool script has no support for the listed tags.
@@ -656,6 +656,7 @@ dnl plugin scanner locations
 AS_AC_EXPAND(GST_PLUGIN_SCANNER_INSTALLED,${libexecdir}/gstreamer-$GST_MAJORMINOR/gst-plugin-scanner)
 AC_DEFINE_UNQUOTED(GST_PLUGIN_SCANNER_INSTALLED,
     "$GST_PLUGIN_SCANNER_INSTALLED", [location of the installed gst-plugin-scanner])
+AC_SUBST(GST_PLUGIN_SCANNER_INSTALLED)
 
 dnl things for our internal libcheck (must be called even if building
 dnl libcheck is disabled because it defines conditionals)
