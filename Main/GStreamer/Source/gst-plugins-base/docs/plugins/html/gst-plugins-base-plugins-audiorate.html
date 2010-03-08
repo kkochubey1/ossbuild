@@ -64,6 +64,7 @@
   "<a class="link" href="gst-plugins-base-plugins-audiorate.html#GstAudioRate--in" title='The "in" property'>in</a>"                       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read
   "<a class="link" href="gst-plugins-base-plugins-audiorate.html#GstAudioRate--out" title='The "out" property'>out</a>"                      <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read
   "<a class="link" href="gst-plugins-base-plugins-audiorate.html#GstAudioRate--silent" title='The "silent" property'>silent</a>"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-audiorate.html#GstAudioRate--tolerance" title='The "tolerance" property'>tolerance</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -93,7 +94,7 @@ Note that property notification will happen from the streaming thread, so
 applications should be prepared for this.
 </p>
 <p>
-If the <span class="type">"tolerance"</span> property is non-zero, and an incoming buffer's
+If the <a class="link" href="gst-plugins-base-plugins-audiorate.html#GstAudioRate--tolerance" title='The "tolerance" property'><span class="type">"tolerance"</span></a> property is non-zero, and an incoming buffer's
 timestamp deviates less than the property indicates from what would make a
 'perfect time', then no samples will be added or dropped.
 Note that the output is still guaranteed to be a perfect stream, which means
@@ -103,7 +104,7 @@ tolerance) to a perfect time.
 <p>
 </p>
 <div class="refsect2" title="Example pipelines">
-<a name="id393029"></a><h3>Example pipelines</h3>
+<a name="id430622"></a><h3>Example pipelines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -162,6 +163,16 @@ Opaque data structure.</p>
 <pre class="programlisting">  "silent"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Don't emit notify for dropped and duplicated frames.</p>
 <p>Default value: TRUE</p>
+</div>
+<hr>
+<div class="refsect2" title='The "tolerance" property'>
+<a name="GstAudioRate--tolerance"></a><h3>The <code class="literal">"tolerance"</code> property</h3>
+<pre class="programlisting">  "tolerance"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
+<p>
+The difference between incoming timestamp and next timestamp must exceed
+the given value for audiorate to add or drop samples.</p>
+<p>Default value: 0</p>
+<p class="since">Since 0.10.26</p>
 </div>
 </div>
 <div class="refsect1" title="See Also">

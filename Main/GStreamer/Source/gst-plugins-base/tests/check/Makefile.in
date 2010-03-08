@@ -42,20 +42,21 @@ check_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	elements/appsink$(EXEEXT) elements/audioconvert$(EXEEXT) \
 	elements/audiorate$(EXEEXT) elements/audioresample$(EXEEXT) \
 	elements/audiotestsrc$(EXEEXT) elements/decodebin$(EXEEXT) \
+	elements/decodebin2$(EXEEXT) \
 	elements/ffmpegcolorspace$(EXEEXT) elements/gdpdepay$(EXEEXT) \
 	elements/gdppay$(EXEEXT) elements/multifdsink$(EXEEXT) \
-	elements/playbin$(EXEEXT) $(am__EXEEXT_8) \
-	elements/videorate$(EXEEXT) elements/videoscale$(EXEEXT) \
-	elements/videotestsrc$(EXEEXT) elements/volume$(EXEEXT) \
-	generic/clock-selection$(EXEEXT) generic/states$(EXEEXT) \
-	gst/typefindfunctions$(EXEEXT) libs/audio$(EXEEXT) \
-	libs/cddabasesrc$(EXEEXT) libs/fft$(EXEEXT) \
-	libs/mixer$(EXEEXT) libs/navigation$(EXEEXT) \
+	elements/playbin$(EXEEXT) elements/playbin2$(EXEEXT) \
+	$(am__EXEEXT_8) elements/videorate$(EXEEXT) \
+	elements/videoscale$(EXEEXT) elements/videotestsrc$(EXEEXT) \
+	elements/volume$(EXEEXT) generic/clock-selection$(EXEEXT) \
+	generic/states$(EXEEXT) gst/typefindfunctions$(EXEEXT) \
+	libs/audio$(EXEEXT) libs/cddabasesrc$(EXEEXT) \
+	libs/fft$(EXEEXT) libs/mixer$(EXEEXT) libs/navigation$(EXEEXT) \
 	libs/netbuffer$(EXEEXT) libs/pbutils$(EXEEXT) \
 	libs/rtp$(EXEEXT) libs/tag$(EXEEXT) libs/video$(EXEEXT) \
 	pipelines/simple-launch-lines$(EXEEXT) \
 	pipelines/streamheader$(EXEEXT) pipelines/basetime$(EXEEXT)
-noinst_PROGRAMS = $(am__EXEEXT_9) elements/playbin2$(EXEEXT)
+noinst_PROGRAMS = $(am__EXEEXT_9)
 subdir = tests/check
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
@@ -174,6 +175,15 @@ elements_decodebin_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 elements_decodebin_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(elements_decodebin_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
+elements_decodebin2_SOURCES = elements/decodebin2.c
+elements_decodebin2_OBJECTS =  \
+	elements_decodebin2-decodebin2.$(OBJEXT)
+elements_decodebin2_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
+elements_decodebin2_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(elements_decodebin2_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 elements_ffmpegcolorspace_SOURCES = elements/ffmpegcolorspace.c
 elements_ffmpegcolorspace_OBJECTS = ffmpegcolorspace.$(OBJEXT)
@@ -443,10 +453,11 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 SOURCES = elements/adder.c elements/alsa.c elements/appsink.c \
 	elements/audioconvert.c elements/audiorate.c \
 	elements/audioresample.c elements/audiotestsrc.c \
-	elements/decodebin.c elements/ffmpegcolorspace.c \
-	elements/gdpdepay.c elements/gdppay.c elements/gnomevfssink.c \
-	elements/libvisual.c elements/multifdsink.c elements/playbin.c \
-	elements/playbin2.c elements/subparse.c elements/textoverlay.c \
+	elements/decodebin.c elements/decodebin2.c \
+	elements/ffmpegcolorspace.c elements/gdpdepay.c \
+	elements/gdppay.c elements/gnomevfssink.c elements/libvisual.c \
+	elements/multifdsink.c elements/playbin.c elements/playbin2.c \
+	elements/subparse.c elements/textoverlay.c \
 	elements/videorate.c elements/videoscale.c \
 	elements/videotestsrc.c elements/volume.c elements/vorbisdec.c \
 	elements/vorbistag.c generic/clock-selection.c \
@@ -460,10 +471,11 @@ SOURCES = elements/adder.c elements/alsa.c elements/appsink.c \
 DIST_SOURCES = elements/adder.c elements/alsa.c elements/appsink.c \
 	elements/audioconvert.c elements/audiorate.c \
 	elements/audioresample.c elements/audiotestsrc.c \
-	elements/decodebin.c elements/ffmpegcolorspace.c \
-	elements/gdpdepay.c elements/gdppay.c elements/gnomevfssink.c \
-	elements/libvisual.c elements/multifdsink.c elements/playbin.c \
-	elements/playbin2.c elements/subparse.c elements/textoverlay.c \
+	elements/decodebin.c elements/decodebin2.c \
+	elements/ffmpegcolorspace.c elements/gdpdepay.c \
+	elements/gdppay.c elements/gnomevfssink.c elements/libvisual.c \
+	elements/multifdsink.c elements/playbin.c elements/playbin2.c \
+	elements/subparse.c elements/textoverlay.c \
 	elements/videorate.c elements/videoscale.c \
 	elements/videotestsrc.c elements/volume.c elements/vorbisdec.c \
 	elements/vorbistag.c generic/clock-selection.c \
@@ -502,6 +514,8 @@ CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
+CXXCPP = @CXXCPP@
+CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFAULT_AUDIOSINK = @DEFAULT_AUDIOSINK@
@@ -520,6 +534,7 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
+ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 F77 = @F77@
 FC = @FC@
@@ -555,6 +570,7 @@ GST_CHECK_LIBS = @GST_CHECK_LIBS@
 GST_CONTROLLER_CFLAGS = @GST_CONTROLLER_CFLAGS@
 GST_CONTROLLER_LIBS = @GST_CONTROLLER_LIBS@
 GST_CURRENT = @GST_CURRENT@
+GST_CXXFLAGS = @GST_CXXFLAGS@
 GST_DISABLE_ALLOC_TRACE = @GST_DISABLE_ALLOC_TRACE@
 GST_DISABLE_GST_DEBUG = @GST_DISABLE_GST_DEBUG@
 GST_DISABLE_LOADSAVE = @GST_DISABLE_LOADSAVE@
@@ -574,6 +590,7 @@ GST_LICENSE = @GST_LICENSE@
 GST_LT_LDFLAGS = @GST_LT_LDFLAGS@
 GST_MAJORMINOR = @GST_MAJORMINOR@
 GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
+GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
@@ -592,6 +609,7 @@ GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAVE_CDPARANOIA = @HAVE_CDPARANOIA@
+HAVE_CXX = @HAVE_CXX@
 HAVE_X = @HAVE_X@
 HAVE_XSHM = @HAVE_XSHM@
 HSTRERROR_LIBS = @HSTRERROR_LIBS@
@@ -608,6 +626,8 @@ INTROSPECTION_GENERATE = @INTROSPECTION_GENERATE@
 INTROSPECTION_GIRDIR = @INTROSPECTION_GIRDIR@
 INTROSPECTION_SCANNER = @INTROSPECTION_SCANNER@
 INTROSPECTION_TYPELIBDIR = @INTROSPECTION_TYPELIBDIR@
+IVORBIS_CFLAGS = @IVORBIS_CFLAGS@
+IVORBIS_LIBS = @IVORBIS_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBICONV = @LIBICONV@
@@ -667,6 +687,8 @@ PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
 Q = @Q@
+QT_CFLAGS = @QT_CFLAGS@
+QT_LIBS = @QT_LIBS@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -700,6 +722,7 @@ abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_CC = @ac_ct_CC@
+ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
@@ -930,6 +953,8 @@ elements_playbin2_LDADD = $(GST_BASE_LIBS) $(LDADD)
 elements_playbin2_CFLAGS = $(GST_BASE_CFLAGS) $(AM_CFLAGS)
 elements_decodebin_LDADD = $(GST_BASE_LIBS) $(LDADD)
 elements_decodebin_CFLAGS = $(GST_BASE_CFLAGS) $(AM_CFLAGS)
+elements_decodebin2_LDADD = $(GST_BASE_LIBS) $(LDADD)
+elements_decodebin2_CFLAGS = $(GST_BASE_CFLAGS) $(AM_CFLAGS)
 elements_subparse_LDADD = $(LDADD)
 elements_subparse_CFLAGS = $(CFLAGS) $(AM_CFLAGS)
 elements_audioresample_CFLAGS = \
@@ -1095,6 +1120,9 @@ elements/audiotestsrc$(EXEEXT): $(elements_audiotestsrc_OBJECTS) $(elements_audi
 elements/decodebin$(EXEEXT): $(elements_decodebin_OBJECTS) $(elements_decodebin_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/decodebin$(EXEEXT)
 	$(elements_decodebin_LINK) $(elements_decodebin_OBJECTS) $(elements_decodebin_LDADD) $(LIBS)
+elements/decodebin2$(EXEEXT): $(elements_decodebin2_OBJECTS) $(elements_decodebin2_DEPENDENCIES) elements/$(am__dirstamp)
+	@rm -f elements/decodebin2$(EXEEXT)
+	$(elements_decodebin2_LINK) $(elements_decodebin2_OBJECTS) $(elements_decodebin2_LDADD) $(LIBS)
 elements/ffmpegcolorspace$(EXEEXT): $(elements_ffmpegcolorspace_OBJECTS) $(elements_ffmpegcolorspace_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/ffmpegcolorspace$(EXEEXT)
 	$(LINK) $(elements_ffmpegcolorspace_OBJECTS) $(elements_ffmpegcolorspace_LDADD) $(LIBS)
@@ -1235,6 +1263,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_audiorate-audiorate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_audioresample-audioresample.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_decodebin-decodebin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_decodebin2-decodebin2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_libvisual-libvisual.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_playbin-playbin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_playbin2-playbin2.Po@am__quote@
@@ -1403,6 +1432,20 @@ elements_decodebin-decodebin.obj: elements/decodebin.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/decodebin.c' object='elements_decodebin-decodebin.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_decodebin_CFLAGS) $(CFLAGS) -c -o elements_decodebin-decodebin.obj `if test -f 'elements/decodebin.c'; then $(CYGPATH_W) 'elements/decodebin.c'; else $(CYGPATH_W) '$(srcdir)/elements/decodebin.c'; fi`
+
+elements_decodebin2-decodebin2.o: elements/decodebin2.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_decodebin2_CFLAGS) $(CFLAGS) -MT elements_decodebin2-decodebin2.o -MD -MP -MF $(DEPDIR)/elements_decodebin2-decodebin2.Tpo -c -o elements_decodebin2-decodebin2.o `test -f 'elements/decodebin2.c' || echo '$(srcdir)/'`elements/decodebin2.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/elements_decodebin2-decodebin2.Tpo $(DEPDIR)/elements_decodebin2-decodebin2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/decodebin2.c' object='elements_decodebin2-decodebin2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_decodebin2_CFLAGS) $(CFLAGS) -c -o elements_decodebin2-decodebin2.o `test -f 'elements/decodebin2.c' || echo '$(srcdir)/'`elements/decodebin2.c
+
+elements_decodebin2-decodebin2.obj: elements/decodebin2.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_decodebin2_CFLAGS) $(CFLAGS) -MT elements_decodebin2-decodebin2.obj -MD -MP -MF $(DEPDIR)/elements_decodebin2-decodebin2.Tpo -c -o elements_decodebin2-decodebin2.obj `if test -f 'elements/decodebin2.c'; then $(CYGPATH_W) 'elements/decodebin2.c'; else $(CYGPATH_W) '$(srcdir)/elements/decodebin2.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/elements_decodebin2-decodebin2.Tpo $(DEPDIR)/elements_decodebin2-decodebin2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/decodebin2.c' object='elements_decodebin2-decodebin2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_decodebin2_CFLAGS) $(CFLAGS) -c -o elements_decodebin2-decodebin2.obj `if test -f 'elements/decodebin2.c'; then $(CYGPATH_W) 'elements/decodebin2.c'; else $(CYGPATH_W) '$(srcdir)/elements/decodebin2.c'; fi`
 
 ffmpegcolorspace.o: elements/ffmpegcolorspace.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ffmpegcolorspace.o -MD -MP -MF $(DEPDIR)/ffmpegcolorspace.Tpo -c -o ffmpegcolorspace.o `test -f 'elements/ffmpegcolorspace.c' || echo '$(srcdir)/'`elements/ffmpegcolorspace.c

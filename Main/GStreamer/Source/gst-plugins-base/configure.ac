@@ -5,7 +5,7 @@ dnl please read gstreamer/docs/random/autotools before changing this file
 dnl initialize autoconf
 dnl releases only do -Wall, git and prerelease does -Werror too
 dnl use a three digit version number for releases, and four for git/prerelease
-AC_INIT(GStreamer Base Plug-ins, 0.10.26,
+AC_INIT(GStreamer Base Plug-ins, 0.10.27,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-base)
 
@@ -44,7 +44,7 @@ dnl - interfaces added/removed/changed -> increment CURRENT, REVISION = 0
 dnl - interfaces added -> increment AGE
 dnl - interfaces removed -> AGE = 0
 dnl sets GST_LT_LDFLAGS
-AS_LIBTOOL(GST, 19, 0, 19)
+AS_LIBTOOL(GST, 19, 1, 19)
 
 dnl FIXME: this macro doesn't actually work;
 dnl the generated libtool script has no support for the listed tags.
@@ -55,7 +55,7 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.26
+GST_REQ=0.10.27
 
 dnl *** autotools stuff ****
 
@@ -127,6 +127,14 @@ dnl *** checks for programs ***
 
 dnl find a compiler
 AC_PROG_CC
+AC_PROG_CXX
+
+dnl determine if c++ is available on this system
+AC_CHECK_PROG(HAVE_CXX, $CXX, yes, no)
+
+dnl determine c++ preprocessor
+dnl FIXME: do we need this ?
+AC_PROG_CXXCPP
 
 dnl check if the compiler supports '-c' and '-o' options
 AM_PROG_CC_C_O
@@ -273,6 +281,17 @@ PKG_CHECK_MODULES(GTK_X11, gtk+-x11-2.0 >= 2.14.0,
     HAVE_GTK_X11=yes, HAVE_GTK_X11=no)
 AM_CONDITIONAL(HAVE_GTK_X11, test "x$HAVE_GTK_X11" = "xyes")
 
+dnl QT is optional and only used in examples
+PKG_CHECK_MODULES(QT, QtGui >= 4.6, [
+  HAVE_QT_GV=yes
+  HAVE_QT=yes
+], [
+  HAVE_QT_GV=no
+  PKG_CHECK_MODULES(QT, QtGui >= 4.0, HAVE_QT=yes, HAVE_QT=no)
+])
+AM_CONDITIONAL(HAVE_QT, test "x$HAVE_QT" = "xyes")
+AM_CONDITIONAL(HAVE_QT_GV, test "x$HAVE_QT_GV" = "xyes")
+
 dnl *** set variables based on configure arguments ***
 
 dnl set license and copyright notice
@@ -285,6 +304,9 @@ AG_GST_SET_PLUGINDIR
 
 dnl define an ERROR_CFLAGS Makefile variable
 AG_GST_SET_ERROR_CFLAGS($GST_GIT)
+
+dnl define an ERROR_CXXFLAGS Makefile variable
+AG_GST_SET_ERROR_CXXFLAGS($GST_GIT)
 
 dnl define correct level for debugging messages
 AG_GST_SET_LEVEL_DEFAULT($GST_GIT)
@@ -584,6 +606,29 @@ AG_GST_CHECK_FEATURE(GNOME_VFS, [GNOME VFS], gnomevfs, [
     )
 ])
 
+dnl *** ivorbis ***
+dnl AM_PATH_IVORBIS only takes two options
+translit(dnm, m, l) AM_CONDITIONAL(USE_IVORBIS, true)
+AG_GST_CHECK_FEATURE(IVORBIS, [integer vorbis plug-in], ivorbisdec, [
+  AG_GST_PKG_CHECK_MODULES(IVORBIS, vorbisidec)
+  if test $HAVE_IVORBIS = no
+  then
+    IVORBIS_LIBS=
+    IVORBIS_CFLAGS=
+    AC_CHECK_LIB(vorbisidec, vorbis_block_init,
+      [IVORBIS_LIBS=-lvorbisidec
+      HAVE_IVORBIS=yes
+      case $host in
+      arm-*-*)
+        IVORBIS_CFLAGS="-D_ARM_ASSEM_ $IVORBIS_CFLAGS"
+      esac
+      ],
+      HAVE_IVORBIS=no)
+    AC_SUBST(IVORBIS_LIBS)
+    AC_SUBST(IVORBIS_CFLAGS)
+  fi
+])
+
 dnl *** libgio ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_GIO, true)
 AG_GST_CHECK_FEATURE(GIO, [GIO library], gio, [
@@ -734,9 +779,12 @@ else
 fi
 AC_SUBST(DEPRECATED_CFLAGS)
 
-dnl every flag in GST_OPTION_CFLAGS can be overridden at make time
+dnl every flag in GST_OPTION_CFLAGS and GST_OPTION_CXXFLAGS can be overridden
+dnl at make time with e.g. make ERROR_CFLAGS=""
 GST_OPTION_CFLAGS="\$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CXXFLAGS="\$(ERROR_CXXFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
 AC_SUBST(GST_OPTION_CFLAGS)
+AC_SUBST(GST_OPTION_CXXFLAGS)
 
 dnl our libraries need to be versioned correctly
 AC_SUBST(GST_LT_LDFLAGS)
@@ -749,8 +797,10 @@ AC_SUBST(GST_PLUGINS_BASE_CFLAGS)
 
 dnl FIXME: do we want to rename to GST_ALL_* ?
 dnl add GST_OPTION_CFLAGS, but overridable
+GST_CXXFLAGS="$GST_CFLAGS \$(GST_OPTION_CXXFLAGS)"
 GST_CFLAGS="$GST_CFLAGS \$(GST_OPTION_CFLAGS)"
 AC_SUBST(GST_CFLAGS)
+AC_SUBST(GST_CXXFLAGS)
 dnl add GCOV libs because libtool strips -fprofile-arcs -ftest-coverage
 GST_LIBS="$GST_LIBS \$(GCOV_LIBS)"
 AC_SUBST(GST_LIBS)
@@ -865,6 +915,7 @@ tests/check/Makefile
 tests/examples/Makefile
 tests/examples/app/Makefile
 tests/examples/dynamic/Makefile
+tests/examples/overlay/Makefile
 tests/examples/seek/Makefile
 tests/examples/volume/Makefile
 tests/examples/snapshot/Makefile

@@ -81,6 +81,11 @@ GstTheoraEnc implements
   "<a class="link" href="gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--quick" title='The "quick" property'>quick</a>"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
   "<a class="link" href="gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--sharpness" title='The "sharpness" property'>sharpness</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
   "<a class="link" href="gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--speed-level" title='The "speed-level" property'>speed-level</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--cap-overflow" title='The "cap-overflow" property'>cap-overflow</a>"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--cap-underflow" title='The "cap-underflow" property'>cap-underflow</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--drop-frames" title='The "drop-frames" property'>drop-frames</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--rate-buffer" title='The "rate-buffer" property'>rate-buffer</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--vp3-compatible" title='The "vp3-compatible" property'>vp3-compatible</a>"           <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -109,7 +114,7 @@ variable bitrate (VBR) stream.
 <p>
 </p>
 <div class="refsect2" title="Example pipeline">
-<a name="id442793"></a><h3>Example pipeline</h3>
+<a name="id498095"></a><h3>Example pipeline</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -272,6 +277,42 @@ Border color to add when sizes not multiple of 16.</p>
 <p>Controls the amount of motion vector searching done while encoding.  This property requires libtheora version &gt;= 1.0.</p>
 <p>Allowed values: [0,2]</p>
 <p>Default value: 1</p>
+</div>
+<hr>
+<div class="refsect2" title='The "cap-overflow" property'>
+<a name="GstTheoraEnc--cap-overflow"></a><h3>The <code class="literal">"cap-overflow"</code> property</h3>
+<pre class="programlisting">  "cap-overflow"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>Enable capping of bit reservoir overflows.  This property requires libtheora version &gt;= 1.1.</p>
+<p>Default value: TRUE</p>
+</div>
+<hr>
+<div class="refsect2" title='The "cap-underflow" property'>
+<a name="GstTheoraEnc--cap-underflow"></a><h3>The <code class="literal">"cap-underflow"</code> property</h3>
+<pre class="programlisting">  "cap-underflow"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>Enable capping of bit reservoir underflows.  This property requires libtheora version &gt;= 1.1.</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2" title='The "drop-frames" property'>
+<a name="GstTheoraEnc--drop-frames"></a><h3>The <code class="literal">"drop-frames"</code> property</h3>
+<pre class="programlisting">  "drop-frames"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>Allow or disallow frame dropping.  This property requires libtheora version &gt;= 1.1.</p>
+<p>Default value: TRUE</p>
+</div>
+<hr>
+<div class="refsect2" title='The "rate-buffer" property'>
+<a name="GstTheoraEnc--rate-buffer"></a><h3>The <code class="literal">"rate-buffer"</code> property</h3>
+<pre class="programlisting">  "rate-buffer"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<p>Sets the size of the rate control buffer, in units of frames.  The default value of 0 instructs the encoder to automatically select an appropriate value.  This property requires libtheora version &gt;= 1.1.</p>
+<p>Allowed values: [0,1000]</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" title='The "vp3-compatible" property'>
+<a name="GstTheoraEnc--vp3-compatible"></a><h3>The <code class="literal">"vp3-compatible"</code> property</h3>
+<pre class="programlisting">  "vp3-compatible"           <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>Disables non-VP3 compatible features.  This property requires libtheora version &gt;= 1.1.</p>
+<p>Default value: FALSE</p>
 </div>
 </div>
 <div class="refsect1" title="See Also">

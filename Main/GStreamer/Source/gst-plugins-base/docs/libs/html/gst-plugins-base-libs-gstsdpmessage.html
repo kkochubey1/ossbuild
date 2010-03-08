@@ -155,6 +155,7 @@ const <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMedia
 <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPResult" title="enum GstSDPResult"><span class="returnvalue">GstSDPResult</span></a>        <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-message-add-media" title="gst_sdp_message_add_media ()">gst_sdp_message_add_media</a>           (<a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMessage" title="GstSDPMessage"><span class="returnvalue">GstSDPMessage</span></a> *msg,
                                                          <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMedia" title="GstSDPMedia"><span class="returnvalue">GstSDPMedia</span></a> *media);
 <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPResult" title="enum GstSDPResult"><span class="returnvalue">GstSDPResult</span></a>        <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-message-dump" title="gst_sdp_message_dump ()">gst_sdp_message_dump</a>                (const <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMessage" title="GstSDPMessage"><span class="returnvalue">GstSDPMessage</span></a> *msg);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*              <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-message-as-text" title="gst_sdp_message_as_text ()">gst_sdp_message_as_text</a>             (const <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMessage" title="GstSDPMessage"><span class="returnvalue">GstSDPMessage</span></a> *msg);
 <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPResult" title="enum GstSDPResult"><span class="returnvalue">GstSDPResult</span></a>        <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-new" title="gst_sdp_media_new ()">gst_sdp_media_new</a>                   (<a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMedia" title="GstSDPMedia"><span class="returnvalue">GstSDPMedia</span></a> **media);
 <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPResult" title="enum GstSDPResult"><span class="returnvalue">GstSDPResult</span></a>        <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-init" title="gst_sdp_media_init ()">gst_sdp_media_init</a>                  (<a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMedia" title="GstSDPMedia"><span class="returnvalue">GstSDPMedia</span></a> *media);
 <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPResult" title="enum GstSDPResult"><span class="returnvalue">GstSDPResult</span></a>        <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-uninit" title="gst_sdp_media_uninit ()">gst_sdp_media_uninit</a>                (<a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMedia" title="GstSDPMedia"><span class="returnvalue">GstSDPMedia</span></a> *media);
@@ -208,6 +209,7 @@ const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span c
 <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPResult" title="enum GstSDPResult"><span class="returnvalue">GstSDPResult</span></a>        <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-add-attribute" title="gst_sdp_media_add_attribute ()">gst_sdp_media_add_attribute</a>         (<a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMedia" title="GstSDPMedia"><span class="returnvalue">GstSDPMedia</span></a> *media,
                                                          const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *key,
                                                          const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *value);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*              <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#gst-sdp-media-as-text" title="gst_sdp_media_as_text ()">gst_sdp_media_as_text</a>               (const <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMedia" title="GstSDPMedia"><span class="returnvalue">GstSDPMedia</span></a> *media);
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -215,7 +217,7 @@ const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span c
 <p>
 </p>
 <div class="refsect2">
-<a name="id718599"></a><p>
+<a name="id659244"></a><p>
 The GstSDPMessage helper functions makes it easy to parse and create SDP
 messages.
 </p>
@@ -1900,6 +1902,28 @@ Dump the parsed contents of <em class="parameter"><code>msg</code></em> to stdou
 </table></div>
 </div>
 <hr>
+<div class="refsect2" title="gst_sdp_message_as_text ()">
+<a name="gst-sdp-message-as-text"></a><h3>gst_sdp_message_as_text ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*              gst_sdp_message_as_text             (const <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMessage" title="GstSDPMessage"><span class="returnvalue">GstSDPMessage</span></a> *msg);</pre>
+<p>
+Convert the contents of <em class="parameter"><code>msg</code></em> to a text string.</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>msg</code></em> :</span></p></td>
+<td> a <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMessage" title="GstSDPMessage"><span class="type">GstSDPMessage</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> A dynamically allocated string representing the SDP description.
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
 <div class="refsect2" title="gst_sdp_media_new ()">
 <a name="gst-sdp-media-new"></a><h3>gst_sdp_media_new ()</h3>
 <pre class="programlisting"><a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPResult" title="enum GstSDPResult"><span class="returnvalue">GstSDPResult</span></a>        gst_sdp_media_new                   (<a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMedia" title="GstSDPMedia"><span class="returnvalue">GstSDPMedia</span></a> **media);</pre>
@@ -2687,6 +2711,28 @@ Add the attribute with <em class="parameter"><code>key</code></em> and <em class
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
 <td> <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GST-SDP-OK:CAPS"><span class="type">GST_SDP_OK</span></a>.
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" title="gst_sdp_media_as_text ()">
+<a name="gst-sdp-media-as-text"></a><h3>gst_sdp_media_as_text ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*              gst_sdp_media_as_text               (const <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMedia" title="GstSDPMedia"><span class="returnvalue">GstSDPMedia</span></a> *media);</pre>
+<p>
+Convert the contents of <em class="parameter"><code>media</code></em> to a text string.</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>media</code></em> :</span></p></td>
+<td> a <a class="link" href="gst-plugins-base-libs-gstsdpmessage.html#GstSDPMedia" title="GstSDPMedia"><span class="type">GstSDPMedia</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> A dynamically allocated string representing the media.
 </td>
 </tr>
 </tbody>

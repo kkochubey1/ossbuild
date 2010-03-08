@@ -185,6 +185,9 @@
 /* make use of iso-codes for ISO-639 */
 #undef HAVE_ISO_CODES
 
+/* Define to enable integer vorbis plug-in (used by ivorbisdec). */
+#undef HAVE_IVORBIS
+
 /* Define to 1 if you have the `asound' library (-lasound). */
 #undef HAVE_LIBASOUND
 

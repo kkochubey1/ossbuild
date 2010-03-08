@@ -1367,15 +1367,16 @@ expose_pad:
   }
 unknown_type:
   {
-    GST_LOG_OBJECT (pad, "Unknown type, firing signal");
-    g_signal_emit (G_OBJECT (dbin),
-        gst_decode_bin_signals[SIGNAL_UNKNOWN_TYPE], 0, pad, caps);
+    GST_LOG_OBJECT (pad, "Unknown type, posting message and firing signal");
 
     chain->deadend = TRUE;
     chain->endcaps = gst_caps_ref (caps);
 
     gst_element_post_message (GST_ELEMENT_CAST (dbin),
         gst_missing_decoder_message_new (GST_ELEMENT_CAST (dbin), caps));
+
+    g_signal_emit (G_OBJECT (dbin),
+        gst_decode_bin_signals[SIGNAL_UNKNOWN_TYPE], 0, pad, caps);
 
     /* Try to expose anything */
     EXPOSE_LOCK (dbin);
@@ -2175,6 +2176,7 @@ gst_decode_chain_free_internal (GstDecodeChain * chain, gboolean hide)
       gst_element_remove_pad (GST_ELEMENT_CAST (chain->dbin),
           GST_PAD_CAST (chain->endpad));
 
+    gst_ghost_pad_set_target (GST_GHOST_PAD_CAST (chain->endpad), NULL);
     chain->endpad->exposed = FALSE;
     if (!hide) {
       gst_object_unref (chain->endpad);

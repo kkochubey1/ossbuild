@@ -66,6 +66,10 @@ const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span c
 const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-from-id3-user-tag" title="gst_tag_from_id3_user_tag ()">gst_tag_from_id3_user_tag</a>           (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *type,
                                                          const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *id3_user_tag);
 const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-to-id3-tag" title="gst_tag_to_id3_tag ()">gst_tag_to_id3_tag</a>                  (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *gst_tag);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-list-add-id3-image" title="gst_tag_list_add_id3_image ()">gst_tag_list_add_id3_image</a>          (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstTagList.html#GstTagList"><span class="returnvalue">GstTagList</span></a> *tag_list,
+                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a> *image_data,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> image_data_len,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> id3_picture_type);
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -73,7 +77,7 @@ const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span c
 <p>
 </p>
 <div class="refsect2">
-<a name="id706217"></a><p>
+<a name="id625345"></a><p>
 Contains various utility functions for plugins to parse or create
 ID3 tags and map ID3v2 identifiers to and from GStreamer identifiers.
 </p>
@@ -213,6 +217,51 @@ Looks up the ID3v2 tag for a GStreamer tag.</p>
 </tr>
 </tbody>
 </table></div>
+</div>
+<hr>
+<div class="refsect2" title="gst_tag_list_add_id3_image ()">
+<a name="gst-tag-list-add-id3-image"></a><h3>gst_tag_list_add_id3_image ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_tag_list_add_id3_image          (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstTagList.html#GstTagList"><span class="returnvalue">GstTagList</span></a> *tag_list,
+                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a> *image_data,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> image_data_len,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> id3_picture_type);</pre>
+<p>
+Adds an image from an ID3 APIC frame (or similar, such as used in FLAC)
+to the given tag list. Also see <a class="link" href="gst-plugins-base-libs-gsttag.html#gst-tag-image-data-to-image-buffer" title="gst_tag_image_data_to_image_buffer ()"><code class="function">gst_tag_image_data_to_image_buffer()</code></a> for
+more information on image tags in GStreamer.</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>tag_list</code></em> :</span></p></td>
+<td> a tag list
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image_data</code></em> :</span></p></td>
+<td> the (encoded) image
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>image_data_len</code></em> :</span></p></td>
+<td> the length of the encoded image data at <em class="parameter"><code>image_data</code></em>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>id3_picture_type</code></em> :</span></p></td>
+<td> picture type as per the ID3 (v2.4.0) specification for
+   the APIC frame (0 = unknown/other)
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the image was processed, otherwise <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a>
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.20</p>
 </div>
 </div>
 <div class="refsect1" title="See Also">

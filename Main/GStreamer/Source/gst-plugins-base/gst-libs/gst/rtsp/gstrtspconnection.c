@@ -946,6 +946,9 @@ add_auth_header (GstRTSPConnection * conn, GstRTSPMessage * message)
       gchar *user_pass64;
       gchar *auth_string;
 
+      if (conn->username == NULL || conn->passwd == NULL)
+        break;
+
       user_pass = g_strdup_printf ("%s:%s", conn->username, conn->passwd);
       user_pass64 = g_base64_encode ((guchar *) user_pass, strlen (user_pass));
       auth_string = g_strdup_printf ("Basic %s", user_pass64);
@@ -967,7 +970,8 @@ add_auth_header (GstRTSPConnection * conn, GstRTSPMessage * message)
       const gchar *method;
 
       /* we need to have some params set */
-      if (conn->auth_params == NULL)
+      if (conn->auth_params == NULL || conn->username == NULL ||
+          conn->passwd == NULL)
         break;
 
       /* we need the realm and nonce */
@@ -1834,22 +1838,31 @@ build_next (GstRTSPBuilder * builder, GstRTSPMessage * message,
   while (TRUE) {
     switch (builder->state) {
       case STATE_START:
+      {
+        guint8 c;
+
         builder->offset = 0;
         res =
             read_bytes (conn, (guint8 *) builder->buffer, &builder->offset, 1);
         if (res != GST_RTSP_OK)
           goto done;
 
+        c = builder->buffer[0];
+
         /* we have 1 bytes now and we can see if this is a data message or
          * not */
-        if (builder->buffer[0] == '$') {
+        if (c == '$') {
           /* data message, prepare for the header */
           builder->state = STATE_DATA_HEADER;
+        } else if (c == '\n' || c == '\r') {
+          /* skip \n and \r */
+          builder->offset = 0;
         } else {
           builder->line = 0;
           builder->state = STATE_READ_LINES;
         }
         break;
+      }
       case STATE_DATA_HEADER:
       {
         res =
@@ -1906,7 +1919,13 @@ build_next (GstRTSPBuilder * builder, GstRTSPMessage * message,
                       GST_RTSP_HDR_X_SESSIONCOOKIE, NULL, 0) != GST_RTSP_OK)) {
             /* there is, prepare to read the body */
             builder->body_len = atol (hdrval);
-            builder->body_data = g_malloc (builder->body_len + 1);
+            builder->body_data = g_try_malloc (builder->body_len + 1);
+            /* we can't do much here, we need the length to know how many bytes
+             * we need to read next and when allocation fails, something is
+             * probably wrong with the length. */
+            if (builder->body_data == NULL)
+              goto invalid_body_len;
+
             builder->body_data[builder->body_len] = '\0';
             builder->offset = 0;
             builder->state = STATE_DATA_BODY;
@@ -1999,6 +2018,13 @@ build_next (GstRTSPBuilder * builder, GstRTSPMessage * message,
   }
 done:
   return res;
+
+  /* ERRORS */
+invalid_body_len:
+  {
+    GST_DEBUG ("could not allocate body");
+    return GST_RTSP_ERROR;
+  }
 }
 
 /**

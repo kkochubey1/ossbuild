@@ -64,6 +64,7 @@ events.</p>
                     <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigation-struct" title="GstNavigation">GstNavigation</a>;
                     <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationInterface" title="GstNavigationInterface">GstNavigationInterface</a>;
 enum                <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationCommand" title="enum GstNavigationCommand">GstNavigationCommand</a>;
+enum                <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationEventType" title="enum GstNavigationEventType">GstNavigationEventType</a>;
 enum                <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationMessageType" title="enum GstNavigationMessageType">GstNavigationMessageType</a>;
 enum                <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationQueryType" title="enum GstNavigationQueryType">GstNavigationQueryType</a>;
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-send-event" title="gst_navigation_send_event ()">gst_navigation_send_event</a>           (<a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigation"><span class="returnvalue">GstNavigation</span></a> *navigation,
@@ -78,6 +79,20 @@ enum                <a class="link" href="gst-plugins-base-libs-gstnavigation.ht
                                                          <span class="returnvalue">double</span> y);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-send-command" title="gst_navigation_send_command ()">gst_navigation_send_command</a>         (<a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigation"><span class="returnvalue">GstNavigation</span></a> *navigation,
                                                          <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationCommand" title="enum GstNavigationCommand"><span class="returnvalue">GstNavigationCommand</span></a> command);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-command" title="gst_navigation_event_parse_command ()">gst_navigation_event_parse_command</a>  (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="returnvalue">GstEvent</span></a> *event,
+                                                         <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationCommand" title="enum GstNavigationCommand"><span class="returnvalue">GstNavigationCommand</span></a> *command);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-key-event" title="gst_navigation_event_parse_key_event ()">gst_navigation_event_parse_key_event</a>
+                                                        (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="returnvalue">GstEvent</span></a> *event,
+                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **key);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-mouse-button-event" title="gst_navigation_event_parse_mouse_button_event ()">gst_navigation_event_parse_mouse_button_event</a>
+                                                        (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="returnvalue">GstEvent</span></a> *event,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a> *button,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *x,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *y);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-mouse-move-event" title="gst_navigation_event_parse_mouse_move_event ()">gst_navigation_event_parse_mouse_move_event</a>
+                                                        (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="returnvalue">GstEvent</span></a> *event,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *x,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *y);
 <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationMessageType" title="enum GstNavigationMessageType"><span class="returnvalue">GstNavigationMessageType</span></a>  <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-get-type" title="gst_navigation_message_get_type ()">gst_navigation_message_get_type</a>
                                                         (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GstMessage"><span class="returnvalue">GstMessage</span></a> *message);
 <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GstMessage"><span class="returnvalue">GstMessage</span></a> *        <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-new-angles-changed" title="gst_navigation_message_new_angles_changed ()">gst_navigation_message_new_angles_changed</a>
@@ -92,6 +107,10 @@ enum                <a class="link" href="gst-plugins-base-libs-gstnavigation.ht
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-parse-mouse-over" title="gst_navigation_message_parse_mouse_over ()">gst_navigation_message_parse_mouse_over</a>
                                                         (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GstMessage"><span class="returnvalue">GstMessage</span></a> *message,
                                                          <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a> *active);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-message-parse-angles-changed" title="gst_navigation_message_parse_angles_changed ()">gst_navigation_message_parse_angles_changed</a>
+                                                        (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GstMessage"><span class="returnvalue">GstMessage</span></a> *message,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *cur_angle,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *n_angles);
 <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstQuery.html#GstQuery"><span class="returnvalue">GstQuery</span></a> *          <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-query-new-angles" title="gst_navigation_query_new_angles ()">gst_navigation_query_new_angles</a>     (void);
 <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationQueryType" title="enum GstNavigationQueryType"><span class="returnvalue">GstNavigationQueryType</span></a>  <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-query-get-type" title="gst_navigation_query_get_type ()">gst_navigation_query_get_type</a>   (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstQuery.html#GstQuery"><span class="returnvalue">GstQuery</span></a> *query);
 <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstQuery.html#GstQuery"><span class="returnvalue">GstQuery</span></a> *          <a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-query-new-commands" title="gst_navigation_query_new_commands ()">gst_navigation_query_new_commands</a>   (void);
@@ -323,6 +342,74 @@ feature.
 <p class="since">Since 0.10.23</p>
 </div>
 <hr>
+<div class="refsect2" title="enum GstNavigationEventType">
+<a name="GstNavigationEventType"></a><h3>enum GstNavigationEventType</h3>
+<pre class="programlisting">typedef enum {
+  GST_NAVIGATION_EVENT_INVALID                    = 0,
+  GST_NAVIGATION_EVENT_KEY_PRESS                  = 1,
+  GST_NAVIGATION_EVENT_KEY_RELEASE                = 2,
+  GST_NAVIGATION_EVENT_MOUSE_BUTTON_PRESS         = 3,
+  GST_NAVIGATION_EVENT_MOUSE_BUTTON_RELEASE       = 4,
+  GST_NAVIGATION_EVENT_MOUSE_MOVE                 = 5,
+  GST_NAVIGATION_EVENT_COMMAND                    = 6
+} GstNavigationEventType;
+</pre>
+<p>
+Enum values for the various events that an element implementing the
+GstNavigation interface might send up the pipeline.</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GST-NAVIGATION-EVENT-INVALID:CAPS"></a><span class="term"><code class="literal">GST_NAVIGATION_EVENT_INVALID</code></span></p></td>
+<td> Returned from
+<code class="function">gst_navigation_event_get_type()</code> when the passed event is not a navigation event.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-NAVIGATION-EVENT-KEY-PRESS:CAPS"></a><span class="term"><code class="literal">GST_NAVIGATION_EVENT_KEY_PRESS</code></span></p></td>
+<td> A key press event. Use
+<a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-key-event" title="gst_navigation_event_parse_key_event ()"><code class="function">gst_navigation_event_parse_key_event()</code></a> to extract the details from the event.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-NAVIGATION-EVENT-KEY-RELEASE:CAPS"></a><span class="term"><code class="literal">GST_NAVIGATION_EVENT_KEY_RELEASE</code></span></p></td>
+<td> A key release event. Use
+<a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-key-event" title="gst_navigation_event_parse_key_event ()"><code class="function">gst_navigation_event_parse_key_event()</code></a> to extract the details from the event.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-NAVIGATION-EVENT-MOUSE-BUTTON-PRESS:CAPS"></a><span class="term"><code class="literal">GST_NAVIGATION_EVENT_MOUSE_BUTTON_PRESS</code></span></p></td>
+<td> A mouse button press event. Use
+<a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-mouse-button-event" title="gst_navigation_event_parse_mouse_button_event ()"><code class="function">gst_navigation_event_parse_mouse_button_event()</code></a> to extract the details from the
+event.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-NAVIGATION-EVENT-MOUSE-BUTTON-RELEASE:CAPS"></a><span class="term"><code class="literal">GST_NAVIGATION_EVENT_MOUSE_BUTTON_RELEASE</code></span></p></td>
+<td> A mouse button release event. Use
+<a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-mouse-button-event" title="gst_navigation_event_parse_mouse_button_event ()"><code class="function">gst_navigation_event_parse_mouse_button_event()</code></a> to extract the details from the
+event.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-NAVIGATION-EVENT-MOUSE-MOVE:CAPS"></a><span class="term"><code class="literal">GST_NAVIGATION_EVENT_MOUSE_MOVE</code></span></p></td>
+<td> A mouse movement event. Use
+<a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-mouse-move-event" title="gst_navigation_event_parse_mouse_move_event ()"><code class="function">gst_navigation_event_parse_mouse_move_event()</code></a> to extract the details from the
+event.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-NAVIGATION-EVENT-COMMAND:CAPS"></a><span class="term"><code class="literal">GST_NAVIGATION_EVENT_COMMAND</code></span></p></td>
+<td> A navigation command event. Use
+<a class="link" href="gst-plugins-base-libs-gstnavigation.html#gst-navigation-event-parse-command" title="gst_navigation_event_parse_command ()"><code class="function">gst_navigation_event_parse_command()</code></a> to extract the details from the event.
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.23</p>
+</div>
+<hr>
 <div class="refsect2" title="enum GstNavigationMessageType">
 <a name="GstNavigationMessageType"></a><h3>enum GstNavigationMessageType</h3>
 <pre class="programlisting">typedef enum {
@@ -504,6 +591,151 @@ Sends the indicated command to the navigation interface.</p>
 <p class="since">Since 0.10.23</p>
 </div>
 <hr>
+<div class="refsect2" title="gst_navigation_event_parse_command ()">
+<a name="gst-navigation-event-parse-command"></a><h3>gst_navigation_event_parse_command ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_navigation_event_parse_command  (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="returnvalue">GstEvent</span></a> *event,
+                                                         <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationCommand" title="enum GstNavigationCommand"><span class="returnvalue">GstNavigationCommand</span></a> *command);</pre>
+<p>
+Inspect a <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigation"><span class="type">GstNavigation</span></a> command event and retrieve the enum value of the
+associated command.</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>event</code></em> :</span></p></td>
+<td> A <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="type">GstEvent</span></a> to inspect.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>command</code></em> :</span></p></td>
+<td> Pointer to GstNavigationCommand to receive the type of the
+navigation event.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.23</p>
+</div>
+<hr>
+<div class="refsect2" title="gst_navigation_event_parse_key_event ()">
+<a name="gst-navigation-event-parse-key-event"></a><h3>gst_navigation_event_parse_key_event ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_navigation_event_parse_key_event
+                                                        (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="returnvalue">GstEvent</span></a> *event,
+                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **key);</pre>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>event</code></em> :</span></p></td>
+<td> A <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="type">GstEvent</span></a> to inspect.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>key</code></em> :</span></p></td>
+<td> A pointer to a location to receive the string identifying the key
+press. The returned string is owned by the event, and valid only until the
+event is unreffed.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.23</p>
+</div>
+<hr>
+<div class="refsect2" title="gst_navigation_event_parse_mouse_button_event ()">
+<a name="gst-navigation-event-parse-mouse-button-event"></a><h3>gst_navigation_event_parse_mouse_button_event ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_navigation_event_parse_mouse_button_event
+                                                        (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="returnvalue">GstEvent</span></a> *event,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a> *button,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *x,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *y);</pre>
+<p>
+Retrieve the details of either a <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigation"><span class="type">GstNavigation</span></a> mouse button press event or
+a mouse button release event. Determine which type the event is using
+<code class="function">gst_navigation_event_get_type()</code> to retrieve the <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationEventType" title="enum GstNavigationEventType"><span class="type">GstNavigationEventType</span></a>.</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>event</code></em> :</span></p></td>
+<td> A <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="type">GstEvent</span></a> to inspect.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>button</code></em> :</span></p></td>
+<td> Pointer to a gint that will receive the button number associated
+with the event.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>x</code></em> :</span></p></td>
+<td> Pointer to a gdouble to receive the x coordinate of the mouse button
+event.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>y</code></em> :</span></p></td>
+<td> Pointer to a gdouble to receive the y coordinate of the mouse button
+event.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.23</p>
+</div>
+<hr>
+<div class="refsect2" title="gst_navigation_event_parse_mouse_move_event ()">
+<a name="gst-navigation-event-parse-mouse-move-event"></a><h3>gst_navigation_event_parse_mouse_move_event ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_navigation_event_parse_mouse_move_event
+                                                        (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="returnvalue">GstEvent</span></a> *event,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *x,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="returnvalue">gdouble</span></a> *y);</pre>
+<p>
+Inspect a <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigation"><span class="type">GstNavigation</span></a> mouse movement event and extract the coordinates
+of the event.</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>event</code></em> :</span></p></td>
+<td> A <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GstEvent"><span class="type">GstEvent</span></a> to inspect.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>x</code></em> :</span></p></td>
+<td> Pointer to a gdouble to receive the x coordinate of the mouse movement.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>y</code></em> :</span></p></td>
+<td> Pointer to a gdouble to receive the y coordinate of the mouse movement.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.23</p>
+</div>
+<hr>
 <div class="refsect2" title="gst_navigation_message_get_type ()">
 <a name="gst-navigation-message-get-type"></a><h3>gst_navigation_message_get_type ()</h3>
 <pre class="programlisting"><a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigationMessageType" title="enum GstNavigationMessageType"><span class="returnvalue">GstNavigationMessageType</span></a>  gst_navigation_message_get_type
@@ -649,6 +881,44 @@ active, it indicates that the mouse is over a clickable area.</p>
 <td><p><span class="term"><em class="parameter"><code>active</code></em> :</span></p></td>
 <td> A pointer to a gboolean to receive the active/inactive state,
 or NULL.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the message could be successfully parsed. <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if not.
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.23</p>
+</div>
+<hr>
+<div class="refsect2" title="gst_navigation_message_parse_angles_changed ()">
+<a name="gst-navigation-message-parse-angles-changed"></a><h3>gst_navigation_message_parse_angles_changed ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_navigation_message_parse_angles_changed
+                                                        (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GstMessage"><span class="returnvalue">GstMessage</span></a> *message,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *cur_angle,
+                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *n_angles);</pre>
+<p>
+Parse a <a class="link" href="gst-plugins-base-libs-gstnavigation.html#GstNavigation"><span class="type">GstNavigation</span></a> message of type GST_NAVIGATION_MESSAGE_ANGLES_CHANGED
+and extract the <em class="parameter"><code>cur_angle</code></em> and <em class="parameter"><code>n_angles</code></em> parameters.</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>message</code></em> :</span></p></td>
+<td> A <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GstMessage"><span class="type">GstMessage</span></a> to inspect.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>cur_angle</code></em> :</span></p></td>
+<td> A pointer to a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> to receive the new current angle number,
+or NULL
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>n_angles</code></em> :</span></p></td>
+<td> A pointer to a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> to receive the new angle count, or NULL.
 </td>
 </tr>
 <tr>

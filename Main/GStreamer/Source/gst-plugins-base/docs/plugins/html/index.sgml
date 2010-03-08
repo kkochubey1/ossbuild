@@ -135,6 +135,7 @@
 <ANCHOR id="GstAudioRate--in" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-audiorate.html#GstAudioRate--in">
 <ANCHOR id="GstAudioRate--out" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-audiorate.html#GstAudioRate--out">
 <ANCHOR id="GstAudioRate--silent" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-audiorate.html#GstAudioRate--silent">
+<ANCHOR id="GstAudioRate--tolerance" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-audiorate.html#GstAudioRate--tolerance">
 <ANCHOR id="gst-plugins-base-plugins-audiorate.see-also" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-audiorate.html#gst-plugins-base-plugins-audiorate.see-also">
 <ANCHOR id="gst-plugins-base-plugins-audioresample" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-audioresample.html">
 <ANCHOR id="gst-plugins-base-plugins-audioresample.synopsis" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-audioresample.html#gst-plugins-base-plugins-audioresample.synopsis">
@@ -242,6 +243,7 @@
 <ANCHOR id="GstDecodeBin2--max-size-bytes" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--max-size-bytes">
 <ANCHOR id="GstDecodeBin2--max-size-time" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--max-size-time">
 <ANCHOR id="GstDecodeBin2--use-buffering" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--use-buffering">
+<ANCHOR id="GstDecodeBin2--post-stream-topology" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--post-stream-topology">
 <ANCHOR id="gst-plugins-base-plugins-decodebin2.signal-details" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#gst-plugins-base-plugins-decodebin2.signal-details">
 <ANCHOR id="GstDecodeBin2-autoplug-continue" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2-autoplug-continue">
 <ANCHOR id="GstDecodeBin2-autoplug-sort" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2-autoplug-sort">
@@ -535,9 +537,13 @@
 <ANCHOR id="GstSubtitleOverlay" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay">
 <ANCHOR id="gst-plugins-base-plugins-subtitleoverlay.object-hierarchy" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#gst-plugins-base-plugins-subtitleoverlay.object-hierarchy">
 <ANCHOR id="gst-plugins-base-plugins-subtitleoverlay.implemented-interfaces" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#gst-plugins-base-plugins-subtitleoverlay.implemented-interfaces">
+<ANCHOR id="gst-plugins-base-plugins-subtitleoverlay.properties" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#gst-plugins-base-plugins-subtitleoverlay.properties">
 <ANCHOR id="gst-plugins-base-plugins-subtitleoverlay.description" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#gst-plugins-base-plugins-subtitleoverlay.description">
 <ANCHOR id="gst-plugins-base-plugins-subtitleoverlay.details" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#gst-plugins-base-plugins-subtitleoverlay.details">
 <ANCHOR id="GstSubtitleOverlay-struct" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay-struct">
+<ANCHOR id="gst-plugins-base-plugins-subtitleoverlay.property-details" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#gst-plugins-base-plugins-subtitleoverlay.property-details">
+<ANCHOR id="GstSubtitleOverlay--font-desc" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay--font-desc">
+<ANCHOR id="GstSubtitleOverlay--silent" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay--silent">
 <ANCHOR id="gst-plugins-base-plugins-tcpclientsrc" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-tcpclientsrc.html">
 <ANCHOR id="gst-plugins-base-plugins-tcpclientsrc.synopsis" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-tcpclientsrc.html#gst-plugins-base-plugins-tcpclientsrc.synopsis">
 <ANCHOR id="GstTCPClientSrc" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-tcpclientsrc.html#GstTCPClientSrc">
@@ -683,6 +689,11 @@
 <ANCHOR id="GstTheoraEnc--quick" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--quick">
 <ANCHOR id="GstTheoraEnc--sharpness" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--sharpness">
 <ANCHOR id="GstTheoraEnc--speed-level" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--speed-level">
+<ANCHOR id="GstTheoraEnc--cap-overflow" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--cap-overflow">
+<ANCHOR id="GstTheoraEnc--cap-underflow" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--cap-underflow">
+<ANCHOR id="GstTheoraEnc--drop-frames" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--drop-frames">
+<ANCHOR id="GstTheoraEnc--rate-buffer" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--rate-buffer">
+<ANCHOR id="GstTheoraEnc--vp3-compatible" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-theoraenc.html#GstTheoraEnc--vp3-compatible">
 <ANCHOR id="gst-plugins-base-plugins-theoraenc.see-also" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-theoraenc.html#gst-plugins-base-plugins-theoraenc.see-also">
 <ANCHOR id="gst-plugins-base-plugins-theoraparse" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-theoraparse.html">
 <ANCHOR id="gst-plugins-base-plugins-theoraparse.synopsis" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-theoraparse.html#gst-plugins-base-plugins-theoraparse.synopsis">
