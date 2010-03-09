@@ -33,6 +33,10 @@
 #define USE_GIO
 #endif
 
+#ifdef _MSV_VER
+#define strncasecmp strnicmp
+#endif
+
 #include <gst/gsttypefind.h>
 #include <gst/gstelement.h>
 #include <gst/gstversion.h>
