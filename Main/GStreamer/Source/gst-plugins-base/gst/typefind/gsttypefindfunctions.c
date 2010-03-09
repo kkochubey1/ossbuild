@@ -33,7 +33,7 @@
 #define USE_GIO
 #endif
 
-#ifdef _MSV_VER
+#ifdef _MSC_VER
 #define strncasecmp strnicmp
 #endif
 
