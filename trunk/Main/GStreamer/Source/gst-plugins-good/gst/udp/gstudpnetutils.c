@@ -173,7 +173,7 @@ gst_udp_set_ttl (int sockfd, int ttl, gboolean is_multicast)
     case AF_INET:
     {
       optname = (is_multicast == TRUE) ? IP_MULTICAST_TTL : IP_TTL;
-      ret = setsockopt (sockfd, IPPROTO_IP, optname, z&ttl, sizeof (ttl));
+      ret = setsockopt (sockfd, IPPROTO_IP, optname, &ttl, sizeof (ttl));
       if (ret < 0)
         return ret;
       break;
