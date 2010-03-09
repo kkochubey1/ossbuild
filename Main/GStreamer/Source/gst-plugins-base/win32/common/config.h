@@ -42,10 +42,10 @@
 #define GETTEXT_PACKAGE "gst-plugins-base-0.10"
 
 /* The GIO library directory. */
-#undef GIO_LIBDIR
+#define GIO_LIBDIR ""
 
 /* The GIO modules directory. */
-#undef GIO_MODULE_DIR
+#define GIO_MODULE_DIR ""
 
 /* The GnomeVFS modules directory. */
 #undef GNOME_VFS_MODULES_DIR
