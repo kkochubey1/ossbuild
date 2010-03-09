@@ -144,12 +144,14 @@ enum
 #define DEFAULT_RETRY            20
 #define DEFAULT_TIMEOUT          5000000
 #define DEFAULT_TCP_TIMEOUT      20000000
-#define DEFAULT_LATENCY_MS       3000
+#define DEFAULT_LATENCY_MS       2000
 #define DEFAULT_CONNECTION_SPEED 0
 #define DEFAULT_NAT_METHOD       GST_RTSP_NAT_DUMMY
 #define DEFAULT_DO_RTCP          TRUE
 #define DEFAULT_PROXY            NULL
 #define DEFAULT_RTP_BLOCKSIZE    0
+#define DEFAULT_USER_ID          NULL
+#define DEFAULT_USER_PW          NULL
 
 enum
 {
@@ -166,6 +168,8 @@ enum
   PROP_DO_RTCP,
   PROP_PROXY,
   PROP_RTP_BLOCKSIZE,
+  PROP_USER_ID,
+  PROP_USER_PW,
   PROP_LAST
 };
 
@@ -220,6 +224,9 @@ static void gst_rtspsrc_uri_handler_init (gpointer g_iface,
 
 static void gst_rtspsrc_sdp_attributes_to_caps (GArray * attributes,
     GstCaps * caps);
+
+static gboolean gst_rtspsrc_set_proxy (GstRTSPSrc * rtsp, const gchar * proxy);
+static void gst_rtspsrc_set_tcp_timeout (GstRTSPSrc * rtspsrc, guint64 timeout);
 
 static GstCaps *gst_rtspsrc_media_to_caps (gint pt, const GstSDPMedia * media);
 
@@ -301,52 +308,52 @@ gst_rtspsrc_class_init (GstRTSPSrcClass * klass)
   g_object_class_install_property (gobject_class, PROP_LOCATION,
       g_param_spec_string ("location", "RTSP Location",
           "Location of the RTSP url to read",
-          DEFAULT_LOCATION, G_PARAM_READWRITE));
+          DEFAULT_LOCATION, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class, PROP_PROTOCOLS,
       g_param_spec_flags ("protocols", "Protocols",
           "Allowed lower transport protocols", GST_TYPE_RTSP_LOWER_TRANS,
-          DEFAULT_PROTOCOLS, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          DEFAULT_PROTOCOLS, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class, PROP_DEBUG,
       g_param_spec_boolean ("debug", "Debug",
           "Dump request and response messages to stdout",
-          DEFAULT_DEBUG, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          DEFAULT_DEBUG, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class, PROP_RETRY,
       g_param_spec_uint ("retry", "Retry",
           "Max number of retries when allocating RTP ports.",
           0, G_MAXUINT16, DEFAULT_RETRY,
-          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class, PROP_TIMEOUT,
       g_param_spec_uint64 ("timeout", "Timeout",
           "Retry TCP transport after UDP timeout microseconds (0 = disabled)",
           0, G_MAXUINT64, DEFAULT_TIMEOUT,
-          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class, PROP_TCP_TIMEOUT,
       g_param_spec_uint64 ("tcp-timeout", "TCP Timeout",
           "Fail after timeout microseconds on TCP connections (0 = disabled)",
           0, G_MAXUINT64, DEFAULT_TCP_TIMEOUT,
-          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class, PROP_LATENCY,
       g_param_spec_uint ("latency", "Buffer latency in ms",
           "Amount of ms to buffer", 0, G_MAXUINT, DEFAULT_LATENCY_MS,
-          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class, PROP_CONNECTION_SPEED,
       g_param_spec_uint ("connection-speed", "Connection Speed",
           "Network connection speed in kbps (0 = unknown)",
           0, G_MAXINT / 1000, DEFAULT_CONNECTION_SPEED,
-          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class, PROP_NAT_METHOD,
       g_param_spec_enum ("nat-method", "NAT Method",
           "Method to use for traversing firewalls and NAT",
           GST_TYPE_RTSP_NAT_METHOD, DEFAULT_NAT_METHOD,
-          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * GstRTSPSrc::do-rtcp
@@ -359,7 +366,7 @@ gst_rtspsrc_class_init (GstRTSPSrcClass * klass)
   g_object_class_install_property (gobject_class, PROP_DO_RTCP,
       g_param_spec_boolean ("do-rtcp", "Do RTCP",
           "Send RTCP packets, disable for old incompatible server.",
-          DEFAULT_DO_RTCP, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          DEFAULT_DO_RTCP, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * GstRTSPSrc::proxy
@@ -372,7 +379,7 @@ gst_rtspsrc_class_init (GstRTSPSrcClass * klass)
   g_object_class_install_property (gobject_class, PROP_PROXY,
       g_param_spec_string ("proxy", "Proxy",
           "Proxy settings for HTTP tunneling. Format: [http://][user:passwd@]host[:port]",
-          DEFAULT_PROXY, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          DEFAULT_PROXY, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
    * GstRTSPSrc::rtp_blocksize
@@ -385,7 +392,17 @@ gst_rtspsrc_class_init (GstRTSPSrcClass * klass)
       g_param_spec_uint ("rtp-blocksize", "RTP Blocksize",
           "RTP package size to suggest to server (0 = disabled)",
           0, 65536, DEFAULT_RTP_BLOCKSIZE,
-          G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_property (gobject_class,
+      PROP_USER_ID,
+      g_param_spec_string ("user-id", "user-id",
+          "RTSP location URI user id for authentication", DEFAULT_USER_ID,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  g_object_class_install_property (gobject_class, PROP_USER_PW,
+      g_param_spec_string ("user-pw", "user-pw",
+          "RTSP location URI user password for authentication", DEFAULT_USER_PW,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   gstelement_class->change_state = gst_rtspsrc_change_state;
 
@@ -407,6 +424,19 @@ gst_rtspsrc_init (GstRTSPSrc * src, GstRTSPSrcClass * g_class)
 
   src->location = g_strdup (DEFAULT_LOCATION);
   src->url = NULL;
+  src->protocols = DEFAULT_PROTOCOLS;
+  src->debug = DEFAULT_DEBUG;
+  src->retry = DEFAULT_RETRY;
+  src->udp_timeout = DEFAULT_TIMEOUT;
+  gst_rtspsrc_set_tcp_timeout (src, DEFAULT_TCP_TIMEOUT);
+  src->latency = DEFAULT_LATENCY_MS;
+  src->connection_speed = DEFAULT_CONNECTION_SPEED;
+  src->nat_method = DEFAULT_NAT_METHOD;
+  src->do_rtcp = DEFAULT_DO_RTCP;
+  gst_rtspsrc_set_proxy (src, DEFAULT_PROXY);
+  src->rtp_blocksize = DEFAULT_RTP_BLOCKSIZE;
+  src->user_id = g_strdup (DEFAULT_USER_ID);
+  src->user_pw = g_strdup (DEFAULT_USER_PW);
 
   /* get a list of all extensions */
   src->extensions = gst_rtsp_ext_list_get ();
@@ -442,6 +472,8 @@ gst_rtspsrc_finalize (GObject * object)
   g_free (rtspsrc->location);
   g_free (rtspsrc->req_location);
   gst_rtsp_url_free (rtspsrc->url);
+  g_free (rtspsrc->user_id);
+  g_free (rtspsrc->user_pw);
 
   /* free locks */
   g_static_rec_mutex_free (rtspsrc->stream_rec_lock);
@@ -510,6 +542,18 @@ gst_rtspsrc_set_proxy (GstRTSPSrc * rtsp, const gchar * proxy)
 }
 
 static void
+gst_rtspsrc_set_tcp_timeout (GstRTSPSrc * rtspsrc, guint64 timeout)
+{
+  rtspsrc->tcp_timeout.tv_sec = timeout / G_USEC_PER_SEC;
+  rtspsrc->tcp_timeout.tv_usec = timeout % G_USEC_PER_SEC;
+
+  if (timeout != 0)
+    rtspsrc->ptcp_timeout = &rtspsrc->tcp_timeout;
+  else
+    rtspsrc->ptcp_timeout = NULL;
+}
+
+static void
 gst_rtspsrc_set_property (GObject * object, guint prop_id, const GValue * value,
     GParamSpec * pspec)
 {
@@ -535,18 +579,8 @@ gst_rtspsrc_set_property (GObject * object, guint prop_id, const GValue * value,
       rtspsrc->udp_timeout = g_value_get_uint64 (value);
       break;
     case PROP_TCP_TIMEOUT:
-    {
-      guint64 timeout = g_value_get_uint64 (value);
-
-      rtspsrc->tcp_timeout.tv_sec = timeout / G_USEC_PER_SEC;
-      rtspsrc->tcp_timeout.tv_usec = timeout % G_USEC_PER_SEC;
-
-      if (timeout != 0)
-        rtspsrc->ptcp_timeout = &rtspsrc->tcp_timeout;
-      else
-        rtspsrc->ptcp_timeout = NULL;
+      gst_rtspsrc_set_tcp_timeout (rtspsrc, g_value_get_uint64 (value));
       break;
-    }
     case PROP_LATENCY:
       rtspsrc->latency = g_value_get_uint (value);
       break;
@@ -564,6 +598,16 @@ gst_rtspsrc_set_property (GObject * object, guint prop_id, const GValue * value,
       break;
     case PROP_RTP_BLOCKSIZE:
       rtspsrc->rtp_blocksize = g_value_get_uint (value);
+      break;
+    case PROP_USER_ID:
+      if (rtspsrc->user_id)
+        g_free (rtspsrc->user_id);
+      rtspsrc->user_id = g_value_dup_string (value);
+      break;
+    case PROP_USER_PW:
+      if (rtspsrc->user_pw)
+        g_free (rtspsrc->user_pw);
+      rtspsrc->user_pw = g_value_dup_string (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -631,6 +675,12 @@ gst_rtspsrc_get_property (GObject * object, guint prop_id, GValue * value,
     }
     case PROP_RTP_BLOCKSIZE:
       g_value_set_uint (value, rtspsrc->rtp_blocksize);
+      break;
+    case PROP_USER_ID:
+      g_value_set_string (value, rtspsrc->user_id);
+      break;
+    case PROP_USER_PW:
+      g_value_set_string (value, rtspsrc->user_pw);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -784,7 +834,11 @@ gst_rtspsrc_create_stream (GstRTSPSrc * src, GstSDPMessage * sdp, gint idx)
   gst_rtspsrc_collect_bandwidth (src, sdp, media, stream);
 
   /* we must have a payload. No payload means we cannot create caps */
-  /* FIXME, handle multiple formats. */
+  /* FIXME, handle multiple formats. The problem here is that we just want to
+   * take the first available format that we can handle but in order to do that
+   * we need to scan for depayloader plugins. Scanning for payloader plugins is
+   * also suboptimal because the user maybe just wants to save the raw stream
+   * and then we don't care. */
   if ((payload = gst_sdp_media_get_format (media, 0))) {
     stream->pt = atoi (payload);
     /* convert caps */
@@ -1173,7 +1227,11 @@ gst_rtspsrc_media_to_caps (gint pt, const GstSDPMedia * media)
         if (valpos) {
           /* we have a '=' and thus a value, remove the '=' with \0 */
           *valpos = '\0';
-          /* value is everything between '=' and ';'. FIXME, strip? */
+          /* value is everything between '=' and ';'. We split the pairs at ;
+           * boundaries so we can take the remainder of the value. Some servers
+           * put spaces around the value which we strip off here. Alternatively
+           * we could strip those spaces in the depayloaders should these spaces
+           * actually carry any meaning in the future. */
           val = g_strstrip (valpos + 1);
         } else {
           /* simple <param>;.. is translated into <param>=1;... */
@@ -1669,6 +1727,7 @@ gst_rtspsrc_handle_internal_src_event (GstPad * pad, GstEvent * event)
     case GST_EVENT_NAVIGATION:
     case GST_EVENT_LATENCY:
     default:
+      gst_event_unref (event);
       res = TRUE;
       break;
   }
@@ -2060,7 +2119,7 @@ gst_rtspsrc_stream_configure_manager (GstRTSPSrc * src, GstRTSPStream * stream,
           src);
       g_signal_connect (src->session, "on-timeout", (GCallback) on_timeout,
           src);
-      /* FIXME: remove this once the rtpjitterbuffer is in -good */
+      /* FIXME: remove this once the rdtmanager is released */
       if (g_signal_lookup ("on-npt-stop", G_OBJECT_TYPE (src->session)) != 0) {
         g_signal_connect (src->session, "on-npt-stop", (GCallback) on_npt_stop,
             src);
@@ -2174,6 +2233,7 @@ gst_rtspsrc_stream_configure_tcp (GstRTSPSrc * src, GstRTSPStream * stream,
       /* if we have a sinkpad for the other channel, create a pad and link to the
        * manager. */
       pad1 = gst_pad_new_from_template (template, "internalsrc1");
+      gst_pad_set_event_function (pad1, gst_rtspsrc_handle_internal_src_event);
       gst_pad_link (pad1, stream->channelpad[1]);
       gst_object_unref (stream->channelpad[1]);
       stream->channelpad[1] = pad1;
@@ -3159,7 +3219,7 @@ gst_rtspsrc_loop_udp (GstRTSPSrc * src)
           goto interrupt;
         case GST_RTSP_ETIMEOUT:
           /* send keep-alive, ignore the result, a warning will be posted. */
-          GST_DEBUG_OBJECT (src, "timout, sending keep-alive");
+          GST_DEBUG_OBJECT (src, "timeout, sending keep-alive");
           gst_rtspsrc_send_keep_alive (src);
           continue;
         case GST_RTSP_EEOF:
@@ -3365,7 +3425,10 @@ pause:
 
     GST_DEBUG_OBJECT (src, "pausing task, reason %s", reason);
     src->running = FALSE;
-    gst_task_pause (src->task);
+    if (src->task) {
+      /* can be NULL when we stopped and unreffed already */
+      gst_task_pause (src->task);
+    }
     if (GST_FLOW_IS_FATAL (ret) || ret == GST_FLOW_NOT_LINKED) {
       if (ret == GST_FLOW_UNEXPECTED) {
         /* perform EOS logic */
@@ -3601,12 +3664,18 @@ gst_rtspsrc_setup_auth (GstRTSPSrc * src, GstRTSPMessage * response)
   url = gst_rtsp_connection_get_url (src->connection);
 
   /* Do we have username and password available? */
-  if (url != NULL && !src->tried_url_auth) {
+  if (url != NULL && !src->tried_url_auth && url->user != NULL
+      && url->passwd != NULL) {
     user = url->user;
     pass = url->passwd;
     src->tried_url_auth = TRUE;
     GST_DEBUG_OBJECT (src,
         "Attempting authentication using credentials from the URL");
+  } else {
+    user = src->user_id;
+    pass = src->user_pw;
+    GST_DEBUG_OBJECT (src,
+        "Attempting authentication using credentials from the properties");
   }
 
   /* FIXME: If the url didn't contain username and password or we tried them
@@ -4272,6 +4341,7 @@ gst_rtspsrc_setup_streams (GstRTSPSrc * src)
     GST_DEBUG_OBJECT (src, "doing setup of stream %p with %s", stream,
         stream->setup_url);
 
+  next_protocol:
     /* first selectable protocol */
     while (protocol_masks[mask] && !(protocols & protocol_masks[mask]))
       mask++;
@@ -4282,10 +4352,18 @@ gst_rtspsrc_setup_streams (GstRTSPSrc * src)
     GST_DEBUG_OBJECT (src, "protocols = 0x%x, protocol mask = 0x%x", protocols,
         protocol_masks[mask]);
     /* create a string with first transport in line */
+    transports = NULL;
     res = gst_rtspsrc_create_transports_string (src,
         protocols & protocol_masks[mask], &transports);
-    if (res < 0)
+    if (res < 0 || transports == NULL)
       goto setup_transport_failed;
+
+    if (strlen (transports) == 0) {
+      g_free (transports);
+      GST_DEBUG_OBJECT (src, "no transports found");
+      mask++;
+      goto next_protocol;
+    }
 
     GST_DEBUG_OBJECT (src, "replace ports in %s", GST_STR_NULL (transports));
 
@@ -4293,8 +4371,10 @@ gst_rtspsrc_setup_streams (GstRTSPSrc * src)
      * allocate UDP ports and other info needed to execute the setup request */
     res = gst_rtspsrc_prepare_transports (stream, &transports,
         retry > 0 ? rtpport : 0, retry > 0 ? rtcpport : 0);
-    if (res < 0)
+    if (res < 0) {
+      g_free (transports);
       goto setup_transport_failed;
+    }
 
     GST_DEBUG_OBJECT (src, "transport is now %s", GST_STR_NULL (transports));
 
@@ -4302,8 +4382,10 @@ gst_rtspsrc_setup_streams (GstRTSPSrc * src)
     res =
         gst_rtsp_message_init_request (&request, GST_RTSP_SETUP,
         stream->setup_url);
-    if (res < 0)
+    if (res < 0) {
+      g_free (transports);
       goto create_request_failed;
+    }
 
     /* select transport, copy is made when adding to header so we can free it. */
     gst_rtsp_message_add_header (&request, GST_RTSP_HDR_TRANSPORT, transports);
@@ -5070,6 +5152,7 @@ gst_rtspsrc_play (GstRTSPSrc * src, GstSegment * segment)
   GstRTSPResult res;
   gchar *hval;
   gfloat fval;
+  gint hval_idx;
 
   GST_RTSP_STATE_LOCK (src);
 
@@ -5134,8 +5217,9 @@ gst_rtspsrc_play (GstRTSPSrc * src, GstSegment * segment)
   /* parse the RTP-Info header field (if ANY) to get the base seqnum and timestamp
    * for the RTP packets. If this is not present, we assume all starts from 0... 
    * This is info for the RTP session manager that we pass to it in caps. */
-  if (gst_rtsp_message_get_header (&response, GST_RTSP_HDR_RTP_INFO,
-          &hval, 0) == GST_RTSP_OK)
+  hval_idx = 0;
+  while (gst_rtsp_message_get_header (&response, GST_RTSP_HDR_RTP_INFO,
+          &hval, hval_idx++) == GST_RTSP_OK)
     gst_rtspsrc_parse_rtpinfo (src, hval);
 
   gst_rtsp_message_unset (&response);

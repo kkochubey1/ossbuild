@@ -68,6 +68,7 @@ enum
 #define DEFAULT_PORT         8000
 #define DEFAULT_PASSWORD     "hackme"
 #define DEFAULT_USERNAME     "source"
+#define DEFAULT_PUBLIC     FALSE
 #define DEFAULT_STREAMNAME   ""
 #define DEFAULT_DESCRIPTION  ""
 #define DEFAULT_GENRE        ""
@@ -89,6 +90,8 @@ static void gst_shout2send_init (GstShout2send * shout2send);
 static void gst_shout2send_finalize (GstShout2send * shout2send);
 
 static gboolean gst_shout2send_event (GstBaseSink * sink, GstEvent * event);
+static gboolean gst_shout2send_unlock (GstBaseSink * basesink);
+static gboolean gst_shout2send_unlock_stop (GstBaseSink * basesink);
 static GstFlowReturn gst_shout2send_render (GstBaseSink * sink,
     GstBuffer * buffer);
 static gboolean gst_shout2send_start (GstBaseSink * basesink);
@@ -202,6 +205,11 @@ gst_shout2send_class_init (GstShout2sendClass * klass)
           G_PARAM_READWRITE));
 
   /* metadata */
+  g_object_class_install_property (G_OBJECT_CLASS (klass), ARG_PUBLIC,
+      g_param_spec_boolean ("public", "public",
+          "If the stream should be listed on the server's stream directory",
+          DEFAULT_PUBLIC, G_PARAM_READWRITE));
+
   g_object_class_install_property (G_OBJECT_CLASS (klass), ARG_STREAMNAME,
       g_param_spec_string ("streamname", "streamname", "name of the stream",
           DEFAULT_STREAMNAME, G_PARAM_READWRITE));
@@ -237,6 +245,9 @@ gst_shout2send_class_init (GstShout2sendClass * klass)
 
   gstbasesink_class->start = GST_DEBUG_FUNCPTR (gst_shout2send_start);
   gstbasesink_class->stop = GST_DEBUG_FUNCPTR (gst_shout2send_stop);
+  gstbasesink_class->unlock = GST_DEBUG_FUNCPTR (gst_shout2send_unlock);
+  gstbasesink_class->unlock_stop =
+      GST_DEBUG_FUNCPTR (gst_shout2send_unlock_stop);
   gstbasesink_class->render = GST_DEBUG_FUNCPTR (gst_shout2send_render);
   gstbasesink_class->event = GST_DEBUG_FUNCPTR (gst_shout2send_event);
 }
@@ -249,6 +260,8 @@ gst_shout2send_init (GstShout2send * shout2send)
   gst_pad_set_setcaps_function (GST_BASE_SINK_PAD (shout2send),
       GST_DEBUG_FUNCPTR (gst_shout2send_setcaps));
 
+  shout2send->timer = gst_poll_new_timer ();
+
   shout2send->ip = g_strdup (DEFAULT_IP);
   shout2send->port = DEFAULT_PORT;
   shout2send->password = g_strdup (DEFAULT_PASSWORD);
@@ -259,6 +272,7 @@ gst_shout2send_init (GstShout2send * shout2send)
   shout2send->mount = g_strdup (DEFAULT_MOUNT);
   shout2send->url = g_strdup (DEFAULT_URL);
   shout2send->protocol = DEFAULT_PROTOCOL;
+  shout2send->ispublic = DEFAULT_PUBLIC;
 
   shout2send->tags = gst_tag_list_new ();
   shout2send->conn = NULL;
@@ -282,6 +296,8 @@ gst_shout2send_finalize (GstShout2send * shout2send)
   g_free (shout2send->url);
 
   gst_tag_list_free (shout2send->tags);
+
+  gst_poll_free (shout2send->timer);
 
   G_OBJECT_CLASS (parent_class)->finalize ((GObject *) (shout2send));
 }
@@ -470,6 +486,12 @@ gst_shout2send_start (GstBaseSink * basesink)
   if (shout_set_password (sink->conn, sink->password) != SHOUTERR_SUCCESS)
     goto set_failed;
 
+  cur_prop = "public";
+  GST_DEBUG_OBJECT (sink, "setting %s: %u", cur_prop, sink->ispublic);
+  if (shout_set_public (sink->conn,
+          (sink->ispublic ? 1 : 0)) != SHOUTERR_SUCCESS)
+    goto set_failed;
+
   cur_prop = "streamname";
   GST_DEBUG_OBJECT (sink, "setting %s: %s", cur_prop, sink->streamname);
   if (shout_set_name (sink->conn, sink->streamname) != SHOUTERR_SUCCESS)
@@ -585,11 +607,39 @@ gst_shout2send_stop (GstBaseSink * basesink)
   return TRUE;
 }
 
+static gboolean
+gst_shout2send_unlock (GstBaseSink * basesink)
+{
+  GstShout2send *sink;
+
+  sink = GST_SHOUT2SEND (basesink);
+
+  GST_DEBUG_OBJECT (basesink, "unlock");
+  gst_poll_set_flushing (sink->timer, TRUE);
+
+  return TRUE;
+}
+
+static gboolean
+gst_shout2send_unlock_stop (GstBaseSink * basesink)
+{
+  GstShout2send *sink;
+
+  sink = GST_SHOUT2SEND (basesink);
+
+  GST_DEBUG_OBJECT (basesink, "unlock_stop");
+  gst_poll_set_flushing (sink->timer, FALSE);
+
+  return TRUE;
+}
+
 static GstFlowReturn
 gst_shout2send_render (GstBaseSink * basesink, GstBuffer * buf)
 {
   GstShout2send *sink;
   glong ret;
+  gint delay;
+  GstFlowReturn fret;
 
   sink = GST_SHOUT2SEND (basesink);
 
@@ -600,9 +650,16 @@ gst_shout2send_render (GstBaseSink * basesink, GstBuffer * buf)
       return GST_FLOW_ERROR;
   }
 
-  /* FIXME: do we want to do syncing here at all? (tpm) */
-  /* GST_LOG_OBJECT (sink, "using libshout to sync"); */
-  shout_sync (sink->conn);
+  delay = shout_delay (sink->conn);
+
+  GST_LOG_OBJECT (sink, "waiting %d msec", delay);
+  if (gst_poll_wait (sink->timer, GST_MSECOND * delay) == -1) {
+    GST_LOG_OBJECT (sink, "unlocked");
+
+    fret = gst_base_sink_wait_preroll (basesink);
+    if (fret != GST_FLOW_OK)
+      return fret;
+  }
 
   GST_LOG_OBJECT (sink, "sending %u bytes of data", GST_BUFFER_SIZE (buf));
   ret = shout_send (sink->conn, GST_BUFFER_DATA (buf), GST_BUFFER_SIZE (buf));
@@ -648,6 +705,9 @@ gst_shout2send_set_property (GObject * object, guint prop_id,
       if (shout2send->username)
         g_free (shout2send->username);
       shout2send->username = g_strdup (g_value_get_string (value));
+      break;
+    case ARG_PUBLIC:
+      shout2send->ispublic = g_value_get_boolean (value);
       break;
     case ARG_STREAMNAME:       /* Name of the stream */
       if (shout2send->streamname)
@@ -703,6 +763,9 @@ gst_shout2send_get_property (GObject * object, guint prop_id,
       break;
     case ARG_USERNAME:
       g_value_set_string (value, shout2send->username);
+      break;
+    case ARG_PUBLIC:
+      g_value_set_boolean (value, shout2send->ispublic);
       break;
     case ARG_STREAMNAME:       /* Name of the stream */
       g_value_set_string (value, shout2send->streamname);

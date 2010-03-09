@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gst-plugins-good 0.10.13.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2009-11-17 00:15+0000\n"
+"POT-Creation-Date: 2010-03-06 00:34+0000\n"
 "PO-Revision-Date: 2009-02-12 14:35+0200\n"
 "Last-Translator: Pavel Maryanov <acid_jack@ukr.net>\n"
 "Language-Team: Russian <gnu@mx.ru>\n"
@@ -21,6 +21,7 @@ msgstr "Не удалось установить соединение с сер�
 msgid "Failed to query sound server capabilities"
 msgstr "Ошибка при запросе возможностей сервера звука"
 
+#. TRANSLATORS: 'song title' by 'artist name'
 #, c-format
 msgid "'%s' by '%s'"
 msgstr ""
@@ -39,11 +40,11 @@ msgstr ""
 "Входящие аудио-данные отсутствуют или недействительны, поток AVI будет "
 "повреждён."
 
-msgid "This file is invalid and cannot be played."
-msgstr "Файл некорректен и не может быть воспроизведён."
-
 msgid "This file contains no playable streams."
 msgstr "Файл не содержит воспроизводимых потоков."
+
+msgid "This file is invalid and cannot be played."
+msgstr "Файл некорректен и не может быть воспроизведён."
 
 msgid "This file is incomplete and cannot be played."
 msgstr "Файл не полон и не может быть воспроизведён."

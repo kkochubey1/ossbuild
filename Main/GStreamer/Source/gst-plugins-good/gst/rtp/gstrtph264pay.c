@@ -1,3 +1,4 @@
+/* ex: set tabstop=2 shiftwidth=2 expandtab: */
 /* GStreamer
  *
  * This library is free software; you can redistribute it and/or
@@ -27,6 +28,7 @@
 #include "gstrtph264pay.h"
 
 
+#define IDR_TYPE_ID  5
 #define SPS_TYPE_ID  7
 #define PPS_TYPE_ID  8
 #define USE_MEMCMP
@@ -91,6 +93,7 @@ gst_h264_scan_mode_get_type (void)
 #define DEFAULT_SPROP_PARAMETER_SETS    NULL
 #define DEFAULT_SCAN_MODE               GST_H264_SCAN_MODE_MULTI_NAL
 #define DEFAULT_BUFFER_LIST             FALSE
+#define DEFAULT_CONFIG_INTERVAL		      0
 
 enum
 {
@@ -99,6 +102,7 @@ enum
   PROP_SPROP_PARAMETER_SETS,
   PROP_SCAN_MODE,
   PROP_BUFFER_LIST,
+  PROP_CONFIG_INTERVAL,
   PROP_LAST
 };
 
@@ -147,8 +151,7 @@ gst_rtp_h264_pay_class_init (GstRtpH264PayClass * klass)
   g_object_class_install_property (G_OBJECT_CLASS (klass),
       PROP_PROFILE_LEVEL_ID, g_param_spec_string ("profile-level-id",
           "profile-level-id",
-          "The base64 profile-level-id to set in out caps (set to NULL to "
-          "extract from stream)",
+          "The base64 profile-level-id to set in the sink caps (deprecated)",
           DEFAULT_PROFILE_LEVEL_ID,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
@@ -172,6 +175,16 @@ gst_rtp_h264_pay_class_init (GstRtpH264PayClass * klass)
           "Use Buffer Lists",
           DEFAULT_BUFFER_LIST, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  g_object_class_install_property (G_OBJECT_CLASS (klass),
+      PROP_CONFIG_INTERVAL,
+      g_param_spec_uint ("config-interval",
+          "SPS PPS Send Interval",
+          "Send SPS and PPS Insertion Interval in seconds (sprop parameter sets "
+          "will be multiplexed in the data stream when detected.) (0 = disabled)",
+          0, 3600, DEFAULT_CONFIG_INTERVAL,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
+      );
+
   gobject_class->finalize = gst_rtp_h264_pay_finalize;
 
   gstbasertppayload_class->set_caps = gst_rtp_h264_pay_setcaps;
@@ -188,8 +201,21 @@ gst_rtp_h264_pay_init (GstRtpH264Pay * rtph264pay, GstRtpH264PayClass * klass)
   rtph264pay->profile = 0;
   rtph264pay->sps = NULL;
   rtph264pay->pps = NULL;
+  rtph264pay->last_spspps = -1;
   rtph264pay->scan_mode = GST_H264_SCAN_MODE_MULTI_NAL;
   rtph264pay->buffer_list = DEFAULT_BUFFER_LIST;
+  rtph264pay->spspps_interval = DEFAULT_CONFIG_INTERVAL;
+}
+
+static void
+gst_rtp_h264_pay_clear_sps_pps (GstRtpH264Pay * rtph264pay)
+{
+  g_list_foreach (rtph264pay->sps, (GFunc) gst_mini_object_unref, NULL);
+  g_list_free (rtph264pay->sps);
+  rtph264pay->sps = NULL;
+  g_list_foreach (rtph264pay->pps, (GFunc) gst_mini_object_unref, NULL);
+  g_list_free (rtph264pay->pps);
+  rtph264pay->pps = NULL;
 }
 
 static void
@@ -201,13 +227,58 @@ gst_rtp_h264_pay_finalize (GObject * object)
 
   g_array_free (rtph264pay->queue, TRUE);
 
-  g_free (rtph264pay->sps);
-  g_free (rtph264pay->pps);
+  gst_rtp_h264_pay_clear_sps_pps (rtph264pay);
 
-  g_free (rtph264pay->profile_level_id);
   g_free (rtph264pay->sprop_parameter_sets);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
+}
+
+/* take the currently configured SPS and PPS lists and set them on the caps as
+ * sprop-parameter-sets */
+static gboolean
+gst_rtp_h264_pay_set_sps_pps (GstBaseRTPPayload * basepayload)
+{
+  GstRtpH264Pay *payloader = GST_RTP_H264_PAY (basepayload);
+  gchar *profile;
+  gchar *set;
+  GList *walk;
+  GString *sprops;
+  guint count;
+  gboolean res;
+
+  sprops = g_string_new ("");
+  count = 0;
+
+  /* build the sprop-parameter-sets */
+  for (walk = payloader->sps; walk; walk = g_list_next (walk)) {
+    GstBuffer *sps_buf = GST_BUFFER_CAST (walk->data);
+
+    set =
+        g_base64_encode (GST_BUFFER_DATA (sps_buf), GST_BUFFER_SIZE (sps_buf));
+    g_string_append_printf (sprops, "%s%s", count ? "," : "", set);
+    g_free (set);
+    count++;
+  }
+  for (walk = payloader->pps; walk; walk = g_list_next (walk)) {
+    GstBuffer *pps_buf = GST_BUFFER_CAST (walk->data);
+
+    set =
+        g_base64_encode (GST_BUFFER_DATA (pps_buf), GST_BUFFER_SIZE (pps_buf));
+    g_string_append_printf (sprops, "%s%s", count ? "," : "", set);
+    g_free (set);
+    count++;
+  }
+
+  /* profile is 24 bit. Force it to respect the limit */
+  profile = g_strdup_printf ("%06x", payloader->profile & 0xffffff);
+  /* combine into output caps */
+  res = gst_basertppayload_set_outcaps (basepayload,
+      "sprop-parameter-sets", G_TYPE_STRING, sprops->str, NULL);
+  g_string_free (sprops, TRUE);
+  g_free (profile);
+
+  return res;
 }
 
 static gboolean
@@ -230,11 +301,8 @@ gst_rtp_h264_pay_setcaps (GstBaseRTPPayload * basepayload, GstCaps * caps)
   /* packetized AVC video has a codec_data */
   if ((value = gst_structure_get_value (str, "codec_data"))) {
     GstBuffer *buffer;
-    GString *sprops;
     guint num_sps, num_pps;
-    gint i, count, nal_size;
-    gint profile;
-    gchar *profile_str;
+    gint i, nal_size;
 
     GST_DEBUG_OBJECT (rtph264pay, "have packetized h264");
     rtph264pay->packetized = TRUE;
@@ -253,8 +321,8 @@ gst_rtp_h264_pay_setcaps (GstBaseRTPPayload * basepayload, GstCaps * caps)
     /* AVCProfileIndication */
     /* profile_compat */
     /* AVCLevelIndication */
-    profile = (data[1] << 16) | (data[2] << 8) | data[3];
-    GST_DEBUG_OBJECT (rtph264pay, "profile %06x", profile);
+    rtph264pay->profile = (data[1] << 16) | (data[2] << 8) | data[3];
+    GST_DEBUG_OBJECT (rtph264pay, "profile %06x", rtph264pay->profile);
 
     /* 6 bits reserved | 2 bits lengthSizeMinusOne */
     /* this is the number of bytes in front of the NAL units to mark their
@@ -269,11 +337,8 @@ gst_rtp_h264_pay_setcaps (GstBaseRTPPayload * basepayload, GstCaps * caps)
     size -= 6;
 
     /* create the sprop-parameter-sets */
-    sprops = g_string_new ("");
-    count = 0;
-
     for (i = 0; i < num_sps; i++) {
-      gchar *set;
+      GstBuffer *sps_buf;
 
       if (size < 2)
         goto avcc_error;
@@ -287,10 +352,10 @@ gst_rtp_h264_pay_setcaps (GstBaseRTPPayload * basepayload, GstCaps * caps)
       if (size < nal_size)
         goto avcc_error;
 
-      set = g_base64_encode (data, nal_size);
-      g_string_append_printf (sprops, "%s%s", count ? "," : "", set);
-      count++;
-      g_free (set);
+      /* make a buffer out of it and add to SPS list */
+      sps_buf = gst_buffer_new_and_alloc (nal_size);
+      memcpy (GST_BUFFER_DATA (sps_buf), data, nal_size);
+      rtph264pay->sps = g_list_append (rtph264pay->sps, sps_buf);
 
       data += nal_size;
       size -= nal_size;
@@ -305,7 +370,7 @@ gst_rtp_h264_pay_setcaps (GstBaseRTPPayload * basepayload, GstCaps * caps)
 
     GST_DEBUG_OBJECT (rtph264pay, "num PPS %u", num_pps);
     for (i = 0; i < num_pps; i++) {
-      gchar *set;
+      GstBuffer *pps_buf;
 
       if (size < 2)
         goto avcc_error;
@@ -319,23 +384,17 @@ gst_rtp_h264_pay_setcaps (GstBaseRTPPayload * basepayload, GstCaps * caps)
       if (size < nal_size)
         goto avcc_error;
 
-      set = g_base64_encode (data, nal_size);
-      g_string_append_printf (sprops, "%s%s", count ? "," : "", set);
-      count++;
-      g_free (set);
+      /* make a buffer out of it and add to PPS list */
+      pps_buf = gst_buffer_new_and_alloc (nal_size);
+      memcpy (GST_BUFFER_DATA (pps_buf), data, nal_size);
+      rtph264pay->pps = g_list_append (rtph264pay->pps, pps_buf);
 
       data += nal_size;
       size -= nal_size;
     }
-    GST_DEBUG_OBJECT (rtph264pay, "sprops %s", sprops->str);
-
-    profile_str = g_strdup_printf ("%06x", profile);
-    gst_basertppayload_set_outcaps (basepayload, "profile-level-id",
-        G_TYPE_STRING, profile_str,
-        "sprop-parameter-sets", G_TYPE_STRING, sprops->str, NULL);
-    g_free (profile_str);
-
-    g_string_free (sprops, TRUE);
+    /* and update the caps with the collected data */
+    if (!gst_rtp_h264_pay_set_sps_pps (basepayload))
+      return FALSE;
   } else {
     GST_DEBUG_OBJECT (rtph264pay, "have bytestream h264");
     rtph264pay->packetized = FALSE;
@@ -401,48 +460,9 @@ next_start_code (guint8 * data, guint size)
   return size;
 }
 
-/* we don't use memcpy but this faster version (around 20%) because we need to
- * perform it on all data. */
-static gboolean
-is_nal_equal (const guint8 * nal1, const guint8 * nal2, guint len)
-{
-  /* if we have a 64-bit processor, we may use guint64 to make 
-   * this go faster. Otherwise with 32 bits, we are already
-   * going faster than byte to byte compare.
-   */
-  guint remainder = len & 0x3;
-  guint num_int = len >> 2;
-  guint32 *pu1 = (guint32 *) nal1, *pu2 = (guint32 *) nal2;
-  guint i;
-
-  /* compare by groups of sizeof(guint32) bytes */
-  for (i = 0; i < num_int; i++) {
-    /* XOR is faster than CMP?... */
-    if (pu1[i] ^ pu2[i])
-      return FALSE;
-  }
-
-  /* check that the remaining bytes are still equal */
-  if (!remainder) {
-    return TRUE;
-  } else if (1 == remainder) {
-    --len;
-    return (nal1[len] == nal2[len]);
-  } else {                      /* 2 or 3 */
-    if (remainder & 1) {        /* -1 if 3 bytes left */
-      --len;
-      if (nal1[len] != nal2[len])
-        return FALSE;
-    }
-    /* last 2 bytes */
-    return ((nal1[len - 1] == nal2[len - 1])    /* -1 */
-        &&(nal1[len - 2] == nal2[len - 2]));    /* -2 */
-  }
-}
-
 static gboolean
 gst_rtp_h264_pay_decode_nal (GstRtpH264Pay * payloader,
-    guint8 * data, guint size)
+    guint8 * data, guint size, GstClockTime timestamp)
 {
   guint8 *sps = NULL, *pps = NULL;
   guint sps_len = 0, pps_len = 0;
@@ -460,7 +480,8 @@ gst_rtp_h264_pay_decode_nal (GstRtpH264Pay * payloader,
   type = header & 0x1f;
 
   /* keep sps & pps separately so that we can update either one 
-   * independently */
+   * independently. We also record the timestamp of the last SPS/PPS so 
+   * that we can insert them at regular intervals and when needed. */
   if (SPS_TYPE_ID == type) {
     /* encode the entire SPS NAL in base64 */
     GST_DEBUG ("Found SPS %x %x %x Len=%u", (header >> 7),
@@ -468,6 +489,9 @@ gst_rtp_h264_pay_decode_nal (GstRtpH264Pay * payloader,
 
     sps = data;
     sps_len = len;
+    /* remember when we last saw SPS */
+    if (timestamp != -1)
+      payloader->last_spspps = timestamp;
   } else if (PPS_TYPE_ID == type) {
     /* encoder the entire PPS NAL in base64 */
     GST_DEBUG ("Found PPS %x %x %x Len = %u",
@@ -475,83 +499,124 @@ gst_rtp_h264_pay_decode_nal (GstRtpH264Pay * payloader,
 
     pps = data;
     pps_len = len;
+    /* remember when we last saw PPS */
+    if (timestamp != -1)
+      payloader->last_spspps = timestamp;
   } else {
     GST_DEBUG ("NAL: %x %x %x Len = %u", (header >> 7),
         (header >> 5) & 3, type, len);
   }
-
 
   /* If we encountered an SPS and/or a PPS, check if it's the
    * same as the one we have. If not, update our version and
    * set updated to TRUE
    */
   if (sps_len > 0) {
-    if ((payloader->sps_len != sps_len)
-        || !is_nal_equal (payloader->sps, sps, sps_len)) {
-      payloader->profile = (sps[1] << 16) + (sps[2] << 8) + sps[3];
+    GstBuffer *sps_buf;
 
-      GST_DEBUG ("Profile level IDC = %06x", payloader->profile);
+    if (payloader->sps != NULL) {
+      sps_buf = GST_BUFFER_CAST (payloader->sps->data);
 
-      if (payloader->sps_len)
-        g_free (payloader->sps);
-
-      payloader->sps = sps_len ? g_new (guint8, sps_len) : NULL;
-      memcpy (payloader->sps, sps, sps_len);
-      payloader->sps_len = sps_len;
+      if ((GST_BUFFER_SIZE (sps_buf) != sps_len)
+          || memcmp (GST_BUFFER_DATA (sps_buf), sps, sps_len)) {
+        /* something changed, update */
+        payloader->profile = (sps[1] << 16) + (sps[2] << 8) + sps[3];
+        GST_DEBUG ("Profile level IDC = %06x", payloader->profile);
+        updated = TRUE;
+      }
+    } else {
+      /* no previous SPS, update */
       updated = TRUE;
+    }
+
+    if (updated) {
+      sps_buf = gst_buffer_new_and_alloc (sps_len);
+      memcpy (GST_BUFFER_DATA (sps_buf), sps, sps_len);
+
+      if (payloader->sps) {
+        /* replace old buffer */
+        gst_buffer_unref (payloader->sps->data);
+        payloader->sps->data = sps_buf;
+      } else {
+        /* add new buffer */
+        payloader->sps = g_list_prepend (payloader->sps, sps_buf);
+      }
     }
   }
 
   if (pps_len > 0) {
-    if ((payloader->pps_len != pps_len)
-        || !is_nal_equal (payloader->pps, pps, pps_len)) {
-      if (payloader->pps_len)
-        g_free (payloader->pps);
+    GstBuffer *pps_buf;
 
-      payloader->pps = pps_len ? g_new (guint8, pps_len) : NULL;
-      memcpy (payloader->pps, pps, pps_len);
-      payloader->pps_len = pps_len;
+    if (payloader->pps != NULL) {
+      pps_buf = GST_BUFFER_CAST (payloader->pps->data);
+
+      if ((GST_BUFFER_SIZE (pps_buf) != pps_len)
+          || memcmp (GST_BUFFER_DATA (pps_buf), pps, pps_len)) {
+        /* something changed, update */
+        updated = TRUE;
+      }
+    } else {
+      /* no previous SPS, update */
       updated = TRUE;
     }
-  }
 
+    if (updated) {
+      pps_buf = gst_buffer_new_and_alloc (pps_len);
+      memcpy (GST_BUFFER_DATA (pps_buf), pps, pps_len);
+
+      if (payloader->pps) {
+        /* replace old buffer */
+        gst_buffer_unref (payloader->pps->data);
+        payloader->pps->data = pps_buf;
+      } else {
+        /* add new buffer */
+        payloader->pps = g_list_prepend (payloader->pps, pps_buf);
+      }
+    }
+  }
   return updated;
 }
 
-static void
-gst_rtp_h264_pay_set_sps_pps (GstBaseRTPPayload * basepayload)
+static GstFlowReturn
+gst_rtp_h264_pay_payload_nal (GstBaseRTPPayload * basepayload, guint8 * data,
+    guint size, GstClockTime timestamp, GstBuffer * buffer_orig);
+
+static GstFlowReturn
+gst_rtp_h264_pay_send_sps_pps (GstBaseRTPPayload * basepayload,
+    GstRtpH264Pay * rtph264pay, GstClockTime timestamp)
 {
-  GstRtpH264Pay *payloader = GST_RTP_H264_PAY (basepayload);
-  gchar *profile;
-  gchar *sps;
-  gchar *pps;
-  gchar *sprops;
+  GstFlowReturn ret = GST_FLOW_OK;
+  GList *walk;
 
-  /* profile is 24 bit. Force it to respect the limit */
-  profile = g_strdup_printf ("%06x", payloader->profile & 0xffffff);
+  for (walk = rtph264pay->sps; walk; walk = g_list_next (walk)) {
+    GstBuffer *sps_buf = GST_BUFFER_CAST (walk->data);
 
-  /* build the sprop-parameter-sets */
-  sps = (payloader->sps_len > 0)
-      ? g_base64_encode (payloader->sps, payloader->sps_len) : NULL;
-  pps = (payloader->pps_len > 0)
-      ? g_base64_encode (payloader->pps, payloader->pps_len) : NULL;
+    GST_DEBUG_OBJECT (rtph264pay, "inserting SPS in the stream");
+    /* resend SPS */
+    ret = gst_rtp_h264_pay_payload_nal (basepayload,
+        GST_BUFFER_DATA (sps_buf), GST_BUFFER_SIZE (sps_buf), timestamp,
+        sps_buf);
+    /* Not critical here; but throw a warning */
+    if (ret != GST_FLOW_OK)
+      GST_WARNING ("Problem pushing SPS");
+  }
+  for (walk = rtph264pay->pps; walk; walk = g_list_next (walk)) {
+    GstBuffer *pps_buf = GST_BUFFER_CAST (walk->data);
 
-  if (sps)
-    sprops = g_strjoin (",", sps, pps, NULL);
-  else
-    sprops = g_strdup (pps);
+    GST_DEBUG_OBJECT (rtph264pay, "inserting PPS in the stream");
+    /* resend PPS */
+    ret = gst_rtp_h264_pay_payload_nal (basepayload,
+        GST_BUFFER_DATA (pps_buf), GST_BUFFER_SIZE (pps_buf), timestamp,
+        pps_buf);
+    /* Not critical here; but throw a warning */
+    if (ret != GST_FLOW_OK)
+      GST_WARNING ("Problem pushing PPS");
+  }
 
-  gst_basertppayload_set_outcaps (basepayload, "profile-level-id",
-      G_TYPE_STRING, profile,
-      "sprop-parameter-sets", G_TYPE_STRING, sprops, NULL);
+  if (timestamp != -1)
+    rtph264pay->last_spspps = timestamp;
 
-  GST_DEBUG ("outcaps udpate: profile=%s, sps=%s, pps=%s",
-      profile, GST_STR_NULL (sps), GST_STR_NULL (pps));
-
-  g_free (sprops);
-  g_free (profile);
-  g_free (sps);
-  g_free (pps);
+  return ret;
 }
 
 static GstFlowReturn
@@ -566,12 +631,48 @@ gst_rtp_h264_pay_payload_nal (GstBaseRTPPayload * basepayload, guint8 * data,
   guint8 *payload;
   GstBufferList *list = NULL;
   GstBufferListIterator *it = NULL;
+  gboolean send_spspps;
 
   rtph264pay = GST_RTP_H264_PAY (basepayload);
   mtu = GST_BASE_RTP_PAYLOAD_MTU (rtph264pay);
 
   nalType = data[0] & 0x1f;
   GST_DEBUG_OBJECT (rtph264pay, "Processing Buffer with NAL TYPE=%d", nalType);
+
+  send_spspps = FALSE;
+
+  /* check if we need to emit an SPS/PPS now */
+  if (nalType == IDR_TYPE_ID && rtph264pay->spspps_interval > 0) {
+    if (rtph264pay->last_spspps != -1) {
+      guint diff;
+
+      /* calculate diff between last SPS/PPS in milliseconds */
+      if (timestamp > rtph264pay->last_spspps)
+        diff = GST_TIME_AS_MSECONDS (timestamp - rtph264pay->last_spspps);
+      else
+        diff = 0;
+
+      GST_DEBUG_OBJECT (rtph264pay, "interval since last SPS/PPS %ums", diff);
+
+      /* bigger than interval, queue SPS/PPS */
+      if (diff >= (rtph264pay->spspps_interval * GST_MSECOND)) {
+        GST_DEBUG_OBJECT (rtph264pay, "time to send SPS/PPS");
+        send_spspps = TRUE;
+      }
+    } else {
+      /* no know previous SPS/PPS time, send now */
+      GST_DEBUG_OBJECT (rtph264pay, "no previous SPS/PPS time, send now");
+      send_spspps = TRUE;
+    }
+  }
+
+  if (send_spspps) {
+    /* we need to send SPS/PPS now first. FIXME, don't use the timestamp for
+     * checking when we need to send SPS/PPS but convert to running_time first. */
+    ret = gst_rtp_h264_pay_send_sps_pps (basepayload, rtph264pay, timestamp);
+    if (ret != GST_FLOW_OK)
+      return ret;
+  }
 
   packet_len = gst_rtp_buffer_calc_packet_len (size, 0, 0);
 
@@ -603,8 +704,13 @@ gst_rtp_h264_pay_payload_nal (GstBaseRTPPayload * basepayload, guint8 * data,
       GstBuffer *paybuf;
 
       /* create another buffer with the payload. */
-      paybuf = gst_buffer_create_sub (buffer_orig, data -
-          GST_BUFFER_DATA (buffer_orig), size);
+      if (buffer_orig)
+        paybuf = gst_buffer_create_sub (buffer_orig, data -
+            GST_BUFFER_DATA (buffer_orig), size);
+      else {
+        paybuf = gst_buffer_new_and_alloc (size);
+        memcpy (GST_BUFFER_DATA (paybuf), data, size);
+      }
 
       list = gst_buffer_list_new ();
       it = gst_buffer_list_iterate (list);
@@ -690,8 +796,13 @@ gst_rtp_h264_pay_payload_nal (GstBaseRTPPayload * basepayload, guint8 * data,
         GstBuffer *paybuf;
 
         /* create another buffer to hold the payload */
-        paybuf = gst_buffer_create_sub (buffer_orig, data -
-            GST_BUFFER_DATA (buffer_orig) + pos, limitedSize);
+        if (buffer_orig)
+          paybuf = gst_buffer_create_sub (buffer_orig, data -
+              GST_BUFFER_DATA (buffer_orig) + pos, limitedSize);
+        else {
+          paybuf = gst_buffer_new_and_alloc (limitedSize);
+          memcpy (GST_BUFFER_DATA (paybuf), data + pos, limitedSize);
+        }
 
         /* create a new group to hold the header and the payload */
         gst_buffer_list_iterator_add_group (it);
@@ -832,25 +943,26 @@ gst_rtp_h264_pay_handle_buffer (GstBaseRTPPayload * basepayload,
       GST_DEBUG_OBJECT (basepayload, "found next start at %u of size %u", next,
           nal_len);
 
-      if (rtph264pay->profile_level_id != NULL &&
-          rtph264pay->sprop_parameter_sets != NULL) {
+      if (rtph264pay->sprop_parameter_sets != NULL) {
+        /* explicitly set profile and sprop, use those */
         if (rtph264pay->update_caps) {
-          gst_basertppayload_set_outcaps (basepayload, "profile-level-id",
-              G_TYPE_STRING, rtph264pay->profile_level_id,
-              "sprop-parameter-sets", G_TYPE_STRING,
-              rtph264pay->sprop_parameter_sets, NULL);
+          if (!gst_basertppayload_set_outcaps (basepayload,
+                  "sprop-parameter-sets", G_TYPE_STRING,
+                  rtph264pay->sprop_parameter_sets, NULL))
+            goto caps_rejected;
+
           rtph264pay->update_caps = FALSE;
 
-          GST_DEBUG
-              ("outcaps udpate: profile-level-id=%s, sprop-parameter-sets=%s",
-              rtph264pay->profile_level_id, rtph264pay->sprop_parameter_sets);
+          GST_DEBUG ("outcaps udpate: sprop-parameter-sets=%s",
+              rtph264pay->sprop_parameter_sets);
         }
       } else {
         /* We know our stream is a valid H264 NAL packet,
          * go parse it for SPS/PPS to enrich the caps */
         /* order: make sure to check nal */
-        update = gst_rtp_h264_pay_decode_nal (rtph264pay, data, nal_len) ||
-            update;
+        update =
+            gst_rtp_h264_pay_decode_nal (rtph264pay, data, nal_len, timestamp)
+            || update;
       }
       /* move to next NAL packet */
       data += nal_len;
@@ -861,7 +973,8 @@ gst_rtp_h264_pay_handle_buffer (GstBaseRTPPayload * basepayload,
 
     /* if has new SPS & PPS, update the output caps */
     if (G_UNLIKELY (update))
-      gst_rtp_h264_pay_set_sps_pps (basepayload);
+      if (!gst_rtp_h264_pay_set_sps_pps (basepayload))
+        goto caps_rejected;
 
     /* second pass to payload and push */
     data = nal_data;
@@ -888,6 +1001,13 @@ gst_rtp_h264_pay_handle_buffer (GstBaseRTPPayload * basepayload,
   gst_buffer_unref (buffer);
 
   return ret;
+
+caps_rejected:
+
+  GST_WARNING_OBJECT (basepayload, "Could not set outcaps");
+  g_array_set_size (nal_queue, 0);
+  gst_buffer_unref (buffer);
+  return GST_FLOW_NOT_NEGOTIATED;
 }
 
 static void
@@ -900,9 +1020,6 @@ gst_rtp_h264_pay_set_property (GObject * object, guint prop_id,
 
   switch (prop_id) {
     case PROP_PROFILE_LEVEL_ID:
-      g_free (rtph264pay->profile_level_id);
-      rtph264pay->profile_level_id = g_value_dup_string (value);
-      rtph264pay->update_caps = TRUE;
       break;
     case PROP_SPROP_PARAMETER_SETS:
       g_free (rtph264pay->sprop_parameter_sets);
@@ -914,6 +1031,9 @@ gst_rtp_h264_pay_set_property (GObject * object, guint prop_id,
       break;
     case PROP_BUFFER_LIST:
       rtph264pay->buffer_list = g_value_get_boolean (value);
+      break;
+    case PROP_CONFIG_INTERVAL:
+      rtph264pay->spspps_interval = g_value_get_uint (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -931,7 +1051,6 @@ gst_rtp_h264_pay_get_property (GObject * object, guint prop_id,
 
   switch (prop_id) {
     case PROP_PROFILE_LEVEL_ID:
-      g_value_set_string (value, rtph264pay->profile_level_id);
       break;
     case PROP_SPROP_PARAMETER_SETS:
       g_value_set_string (value, rtph264pay->sprop_parameter_sets);
@@ -941,6 +1060,9 @@ gst_rtp_h264_pay_get_property (GObject * object, guint prop_id,
       break;
     case PROP_BUFFER_LIST:
       g_value_set_boolean (value, rtph264pay->buffer_list);
+      break;
+    case PROP_CONFIG_INTERVAL:
+      g_value_set_uint (value, rtph264pay->spspps_interval);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

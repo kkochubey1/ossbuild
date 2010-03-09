@@ -23,6 +23,7 @@
 #define __GST_MATROSKA_DEMUX_H__
 
 #include <gst/gst.h>
+#include <gst/base/gstadapter.h>
 
 #include "ebml-read.h"
 #include "matroska-ids.h"
@@ -71,6 +72,7 @@ typedef struct _GstMatroskaDemux {
   /* state */
   GstMatroskaDemuxState    state;
   guint                    level_up;
+  guint64                  seek_block;
 
   /* did we parse cues/tracks/segmentinfo already? */
   gboolean                 index_parsed;
@@ -91,11 +93,19 @@ typedef struct _GstMatroskaDemux {
   /* keeping track of playback position */
   GstSegment               segment;
   gboolean                 segment_running;
+  GstClockTime             last_stop_end;
   gint64                   duration;
 
   GstEvent                *close_segment;
   GstEvent                *new_segment;
   GstTagList              *global_tags;
+
+  /* push based mode usual suspects */
+  guint64                  offset;
+  GstAdapter              *adapter;
+  /* some state saving */
+  GstClockTime             cluster_time;
+  guint64                  cluster_offset;
 } GstMatroskaDemux;
 
 typedef struct _GstMatroskaDemuxClass {

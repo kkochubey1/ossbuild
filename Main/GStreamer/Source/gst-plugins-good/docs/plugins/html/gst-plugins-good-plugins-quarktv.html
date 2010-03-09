@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>quarktv</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.1">
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
 <link rel="home" href="index.html" title="GStreamer Good Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-pulsemixer.html" title="pulsemixer">
 <link rel="next" href="gst-plugins-good-plugins-qtdemux.html" title="qtdemux">
-<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 <link rel="chapter" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="chapter" href="ch02.html" title="gst-plugins-good Plugins">
@@ -25,12 +25,12 @@
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#gst-plugins-good-plugins-quarktv.synopsis" class="shortcut">Top</a>
-                 | 
-                <a href="#gst-plugins-good-plugins-quarktv.description" class="shortcut">Description</a>
-                 | 
-                <a href="#gst-plugins-good-plugins-quarktv.object-hierarchy" class="shortcut">Object Hierarchy</a>
-                 | 
-                <a href="#gst-plugins-good-plugins-quarktv.properties" class="shortcut">Properties</a>
+                   | 
+                  <a href="#gst-plugins-good-plugins-quarktv.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#gst-plugins-good-plugins-quarktv.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#gst-plugins-good-plugins-quarktv.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
 <div class="refentry" title="quarktv">
@@ -44,37 +44,24 @@
 </tr></table></div>
 <div class="refsynopsisdiv" title="Synopsis">
 <a name="gst-plugins-good-plugins-quarktv.synopsis"></a><h2>Synopsis</h2>
-<a name="GstQuarkTV"></a><pre class="synopsis">
-                    <a class="link" href="gst-plugins-good-plugins-quarktv.html#GstQuarkTV-struct" title="GstQuarkTV">GstQuarkTV</a>;
+<a name="GstQuarkTV"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-quarktv.html#GstQuarkTV-struct" title="GstQuarkTV">GstQuarkTV</a>;
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-quarktv.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a
-href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
->GObject</a>
-   +----<a
-href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html"
->GstObject</a>
-         +----<a
-href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"
->GstElement</a>
-               +----<a
-href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseTransform.html"
->GstBaseTransform</a>
-                     +----<a
-href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstvideofilter.html#GstVideoFilter"
->GstVideoFilter</a>
+  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
+         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
+               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseTransform.html">GstBaseTransform</a>
+                     +----<a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstvideofilter.html#GstVideoFilter">GstVideoFilter</a>
                            +----GstQuarkTV
 </pre>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-good-plugins-quarktv.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-good-plugins-quarktv.html#GstQuarkTV--planes" title='The "planes" property'>planes</a>"                   <a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"
->gint</a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-quarktv.html#GstQuarkTV--planes" title='The "planes" property'>planes</a>"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -86,108 +73,19 @@ the last frames randomly.
 <p>
 </p>
 <div class="refsect2" title="Example launch line">
-<a name="id3095250"></a><h3>Example launch line</h3>
-<div class="informalexample"><pre class="programlisting">
-gst-launch -v videotestsrc ! quarktv ! ffmpegcolorspace ! autovideosink
-</pre></div> This pipeline shows the effect of quarktv on a test stream.
+<a name="id648280"></a><h3>Example launch line</h3>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v videotestsrc <span class="symbol">!</span> quarktv <span class="symbol">!</span> ffmpegcolorspace <span class="symbol">!</span> autovideosink</pre></td>
+      </tr>
+    </tbody>
+  </table>
 </div>
-<div class="refsynopsisdiv" title="Synopsis">
-<h2>Synopsis</h2>
-<div class="refsect2" title="Element Information">
-<a name="id3082710"></a><h3>Element Information</h3>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">plugin</span></p></td>
-<td>
-            <a class="link" href="gst-plugins-good-plugins-plugin-effectv.html#plugin-effectv">effectv</a>
-          </td>
-</tr>
-<tr>
-<td><p><span class="term">author</span></p></td>
-<td>FUKUCHI, Kentarou &lt;fukuchi@users.sourceforge.net&gt;</td>
-</tr>
-<tr>
-<td><p><span class="term">class</span></p></td>
-<td>Filter/Effect/Video</td>
-</tr>
-</tbody>
-</table></div>
+ This pipeline shows the effect of quarktv on a test stream.
 </div>
-<hr>
-<div class="refsect2" title="Element Pads">
-<a name="id3054817"></a><h3>Element Pads</h3>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">name</span></p></td>
-<td>src</td>
-</tr>
-<tr>
-<td><p><span class="term">direction</span></p></td>
-<td>source</td>
-</tr>
-<tr>
-<td><p><span class="term">presence</span></p></td>
-<td>always</td>
-</tr>
-<tr>
-<td><p><span class="term">details</span></p></td>
-<td>video/x-raw-rgb, bpp=(int)32, depth=(int)24, endianness=(int)4321, red_mask=(int)16711680, green_mask=(int)65280, blue_mask=(int)255, width=(int)[ 1, 2147483647 ], height=(int)[ 1, 2147483647 ], framerate=(fraction)[ 0/1, 2147483647/1 ]</td>
-</tr>
-<tr>
-<td><p><span class="term"></span></p></td>
-<td> video/x-raw-rgb, bpp=(int)32, depth=(int)24, endianness=(int)4321, red_mask=(int)255, green_mask=(int)65280, blue_mask=(int)16711680, width=(int)[ 1, 2147483647 ], height=(int)[ 1, 2147483647 ], framerate=(fraction)[ 0/1, 2147483647/1 ]</td>
-</tr>
-<tr>
-<td><p><span class="term"></span></p></td>
-<td> video/x-raw-rgb, bpp=(int)32, depth=(int)24, endianness=(int)4321, red_mask=(int)65280, green_mask=(int)16711680, blue_mask=(int)-16777216, width=(int)[ 1, 2147483647 ], height=(int)[ 1, 2147483647 ], framerate=(fraction)[ 0/1, 2147483647/1 ]</td>
-</tr>
-<tr>
-<td><p><span class="term"></span></p></td>
-<td> video/x-raw-rgb, bpp=(int)32, depth=(int)24, endianness=(int)4321, red_mask=(int)-16777216, green_mask=(int)16711680, blue_mask=(int)65280, width=(int)[ 1, 2147483647 ], height=(int)[ 1, 2147483647 ], framerate=(fraction)[ 0/1, 2147483647/1 ]</td>
-</tr>
-</tbody>
-</table></div>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">name</span></p></td>
-<td>sink</td>
-</tr>
-<tr>
-<td><p><span class="term">direction</span></p></td>
-<td>sink</td>
-</tr>
-<tr>
-<td><p><span class="term">presence</span></p></td>
-<td>always</td>
-</tr>
-<tr>
-<td><p><span class="term">details</span></p></td>
-<td>video/x-raw-rgb, bpp=(int)32, depth=(int)24, endianness=(int)4321, red_mask=(int)16711680, green_mask=(int)65280, blue_mask=(int)255, width=(int)[ 1, 2147483647 ], height=(int)[ 1, 2147483647 ], framerate=(fraction)[ 0/1, 2147483647/1 ]</td>
-</tr>
-<tr>
-<td><p><span class="term"></span></p></td>
-<td> video/x-raw-rgb, bpp=(int)32, depth=(int)24, endianness=(int)4321, red_mask=(int)255, green_mask=(int)65280, blue_mask=(int)16711680, width=(int)[ 1, 2147483647 ], height=(int)[ 1, 2147483647 ], framerate=(fraction)[ 0/1, 2147483647/1 ]</td>
-</tr>
-<tr>
-<td><p><span class="term"></span></p></td>
-<td> video/x-raw-rgb, bpp=(int)32, depth=(int)24, endianness=(int)4321, red_mask=(int)65280, green_mask=(int)16711680, blue_mask=(int)-16777216, width=(int)[ 1, 2147483647 ], height=(int)[ 1, 2147483647 ], framerate=(fraction)[ 0/1, 2147483647/1 ]</td>
-</tr>
-<tr>
-<td><p><span class="term"></span></p></td>
-<td> video/x-raw-rgb, bpp=(int)32, depth=(int)24, endianness=(int)4321, red_mask=(int)-16777216, green_mask=(int)16711680, blue_mask=(int)65280, width=(int)[ 1, 2147483647 ], height=(int)[ 1, 2147483647 ], framerate=(fraction)[ 0/1, 2147483647/1 ]</td>
-</tr>
-</tbody>
-</table></div>
-</div>
-</div>
-<p>
-</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-good-plugins-quarktv.details"></a><h2>Details</h2>
@@ -202,9 +100,7 @@ gst-launch -v videotestsrc ! quarktv ! ffmpegcolorspace ! autovideosink
 <a name="gst-plugins-good-plugins-quarktv.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "planes" property'>
 <a name="GstQuarkTV--planes"></a><h3>The <code class="literal">"planes"</code> property</h3>
-<pre class="programlisting">  "planes"                   <a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"
->gint</a>                  : Read / Write</pre>
+<pre class="programlisting">  "planes"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Number of planes.</p>
 <p>Allowed values: [0,64]</p>
 <p>Default value: 16</p>
@@ -213,6 +109,6 @@ href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.11</div>
+          Generated by GTK-Doc V1.13</div>
 </body>
 </html>

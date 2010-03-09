@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gst-plugins-good-0.10.10.3\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2009-11-17 00:15+0000\n"
+"POT-Creation-Date: 2010-03-06 00:34+0000\n"
 "PO-Revision-Date: 2008-10-26 19:09+0100\n"
 "Last-Translator: Michel Bugeja <michelbugeja@rabatmalta.com>\n"
 "Language-Team: Maltese <translation-team-mt@lists.sourceforge.net>\n"
@@ -21,6 +21,7 @@ msgstr "Kuntatt mas-sound server ma ġiex stabbilit"
 msgid "Failed to query sound server capabilities"
 msgstr "Mhux possibli t-tfittxija għall-kapaċita tas-sound server"
 
+#. TRANSLATORS: 'song title' by 'artist name'
 #, c-format
 msgid "'%s' by '%s'"
 msgstr ""
@@ -37,11 +38,11 @@ msgstr "Mhux possibli naqbad mas-server"
 msgid "No or invalid input audio, AVI stream will be corrupt."
 msgstr "Input audio ma nstabx jew mhux validu. AVI stream jista jkun korrott."
 
-msgid "This file is invalid and cannot be played."
-msgstr "Il-fajl mhux validu u ma jistax jindaqq"
-
 msgid "This file contains no playable streams."
 msgstr "Il-fajl ma fiħ l-ebda stream li tista tindaqq."
+
+msgid "This file is invalid and cannot be played."
+msgstr "Il-fajl mhux validu u ma jistax jindaqq"
 
 msgid "This file is incomplete and cannot be played."
 msgstr "Il-fajl mhux komplut u ma jistax jindaqq,"

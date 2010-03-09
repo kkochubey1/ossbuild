@@ -796,9 +796,9 @@ gst_wavpack_parse_pull_buffer (GstWavpackParse * wvparse, gint64 offset,
 
   GstBuffer *buf = NULL;
 
-  if (offset + size >= wvparse->upstream_length) {
+  if (offset + size > wvparse->upstream_length) {
     wvparse->upstream_length = gst_wavpack_parse_get_upstream_length (wvparse);
-    if (offset + size >= wvparse->upstream_length) {
+    if (offset + size > wvparse->upstream_length) {
       GST_DEBUG_OBJECT (wvparse, "EOS: %" G_GINT64_FORMAT " + %u > %"
           G_GINT64_FORMAT, offset, size, wvparse->upstream_length);
       flow_ret = GST_FLOW_UNEXPECTED;
@@ -950,6 +950,7 @@ static GstFlowReturn
 gst_wavpack_parse_push_buffer (GstWavpackParse * wvparse, GstBuffer * buf,
     WavpackHeader * header)
 {
+  GstFlowReturn ret;
   wvparse->current_offset += header->ckSize + 8;
 
   wvparse->segment.last_stop = header->block_index;
@@ -1007,7 +1008,11 @@ gst_wavpack_parse_push_buffer (GstWavpackParse * wvparse, GstBuffer * buf,
   GST_LOG_OBJECT (wvparse, "Pushing buffer with time %" GST_TIME_FORMAT,
       GST_TIME_ARGS (GST_BUFFER_TIMESTAMP (buf)));
 
-  return gst_pad_push (wvparse->srcpad, buf);
+  ret = gst_pad_push (wvparse->srcpad, buf);
+
+  wvparse->segment.last_stop = wvparse->next_block_index;
+
+  return ret;
 }
 
 static guint8 *

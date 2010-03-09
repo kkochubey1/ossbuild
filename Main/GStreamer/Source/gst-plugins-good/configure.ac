@@ -3,9 +3,9 @@ AC_PREREQ(2.52)
 dnl please read gstreamer/docs/random/autotools before changing this file
 
 dnl initialize autoconf
-dnl releases only do -Wall, cvs and prerelease does -Werror too
-dnl use a three digit version number for releases, and four for cvs/pre
-AC_INIT(GStreamer Good Plug-ins, 0.10.17,
+dnl releases only do -Wall, git and prerelease does -Werror too
+dnl use a three digit version number for releases, and four for git/pre
+AC_INIT(GStreamer Good Plug-ins, 0.10.19,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-good)
 
@@ -18,7 +18,7 @@ dnl define PACKAGE_VERSION_* variables
 AS_VERSION
 
 dnl check if this is a release version
-AS_NANO(GST_CVS="no", GST_CVS="yes")
+AS_NANO(GST_GIT="no", GST_GIT="yes")
 
 dnl can autoconf find the source ?
 AC_CONFIG_SRCDIR([gst/law/alaw.c])
@@ -47,8 +47,8 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.25
-GSTPB_REQ=0.10.25
+GST_REQ=0.10.27
+GSTPB_REQ=0.10.27
 
 dnl *** autotools stuff ****
 
@@ -199,7 +199,7 @@ AC_CHECK_TYPE([struct ip_mreqn], [
 dnl *** checks for dependency libraries ***
 
 dnl GLib is required
-AG_GST_GLIB_CHECK([2.16])
+AG_GST_GLIB_CHECK([2.18])
 
 dnl liboil is required
 PKG_CHECK_MODULES(LIBOIL, liboil-0.3 >= 0.3.8, HAVE_LIBOIL=yes, HAVE_LIBOIL=no)
@@ -216,7 +216,7 @@ AG_GST_CHECK_GST_CONTROLLER($GST_MAJORMINOR, [$GST_REQ], yes)
 AG_GST_CHECK_GST_CHECK($GST_MAJORMINOR, [$GST_REQ], no)
 AG_GST_CHECK_GST_PLUGINS_BASE($GST_MAJORMINOR, [$GSTPB_REQ], yes)
 
-GST_TOOLS_DIR=`pkg-config --variable=toolsdir gstreamer-$GST_MAJORMINOR`
+GST_TOOLS_DIR=`$PKG_CONFIG --variable=toolsdir gstreamer-$GST_MAJORMINOR`
 if test -z $GST_TOOLS_DIR; then
   AC_MSG_ERROR([no tools dir defined in GStreamer pkg-config file; core upgrade needed.])
 fi
@@ -267,13 +267,13 @@ dnl set location of plugin directory
 AG_GST_SET_PLUGINDIR
 
 dnl define an ERROR_CFLAGS Makefile variable
-AG_GST_SET_ERROR_CFLAGS($GST_CVS)
+AG_GST_SET_ERROR_CFLAGS($GST_GIT)
 
 dnl define an ERROR_CXXFLAGS Makefile variable
-AG_GST_SET_ERROR_CXXFLAGS($GST_CVS)
+AG_GST_SET_ERROR_CXXFLAGS($GST_GIT)
 
 dnl define correct level for debugging messages
-AG_GST_SET_LEVEL_DEFAULT($GST_CVS)
+AG_GST_SET_LEVEL_DEFAULT($GST_GIT)
 
 dnl used in examples
 AG_GST_DEFAULT_ELEMENTS
@@ -312,6 +312,7 @@ AG_GST_CHECK_PLUGIN(replaygain)
 AG_GST_CHECK_PLUGIN(rtp)
 AG_GST_CHECK_PLUGIN(rtpmanager)
 AG_GST_CHECK_PLUGIN(rtsp)
+AG_GST_CHECK_PLUGIN(shapewipe)
 AG_GST_CHECK_PLUGIN(smpte)
 AG_GST_CHECK_PLUGIN(spectrum)
 AG_GST_CHECK_PLUGIN(udp)
@@ -1006,7 +1007,7 @@ fi
 AC_SUBST(PROFILE_CFLAGS)
 
 if test "x$PACKAGE_VERSION_NANO" = "x1"; then
-  dnl Define _only_ during CVS (not pre-releases or releases)
+  dnl Define _only_ for git (not pre-releases or releases)
   DEPRECATED_CFLAGS="-DGST_DISABLE_DEPRECATED"
 else
   DEPRECATED_CFLAGS=""
@@ -1027,8 +1028,8 @@ dnl FIXME: do we want to rename to GST_ALL_* ?
 dnl prefer internal headers to already installed ones
 dnl also add builddir include for enumtypes and marshal
 dnl add ERROR_CFLAGS, but overridable
+GST_CXXFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CXXFLAGS)"
 GST_CFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CFLAGS)"
-GST_CXXFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CXXFLAGS \$(GST_OPTION_CXXFLAGS)"
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_CXXFLAGS)
 AC_SUBST(GST_LIBS)
@@ -1080,6 +1081,7 @@ gst/replaygain/Makefile
 gst/rtp/Makefile
 gst/rtpmanager/Makefile
 gst/rtsp/Makefile
+gst/shapewipe/Makefile
 gst/smpte/Makefile
 gst/spectrum/Makefile
 gst/udp/Makefile
@@ -1102,7 +1104,6 @@ ext/flac/Makefile
 ext/gconf/Makefile
 ext/gdk_pixbuf/Makefile
 ext/hal/Makefile
-ext/ladspa/Makefile
 ext/libcaca/Makefile
 ext/libpng/Makefile
 ext/pulse/Makefile
@@ -1129,6 +1130,7 @@ tests/examples/audiofx/Makefile
 tests/examples/equalizer/Makefile
 tests/examples/level/Makefile
 tests/examples/rtp/Makefile
+tests/examples/shapewipe/Makefile
 tests/examples/spectrum/Makefile
 tests/examples/v4l2/Makefile
 tests/files/Makefile

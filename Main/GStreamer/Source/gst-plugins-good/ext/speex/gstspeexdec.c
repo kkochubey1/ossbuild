@@ -43,6 +43,7 @@
 #endif
 
 #include "gstspeexdec.h"
+#include <stdlib.h>
 #include <string.h>
 #include <gst/tag/tag.h>
 
@@ -148,7 +149,9 @@ gst_speex_dec_reset (GstSpeexDec * dec)
   dec->frame_size = 0;
   dec->frame_duration = 0;
   dec->mode = NULL;
-  dec->header = NULL;           /* FIXME: free ?! */
+  free (dec->header);
+  dec->header = NULL;
+  speex_bits_destroy (&dec->bits);
   if (dec->state) {
     speex_decoder_destroy (dec->state);
     dec->state = NULL;
@@ -535,6 +538,7 @@ speex_dec_chain_parse_header (GstSpeexDec * dec, GstBuffer * buf)
     dec->callback.callback_id = SPEEX_INBAND_STEREO;
     dec->callback.func = speex_std_stereo_request_handler;
     dec->callback.data = &dec->stereo;
+    dec->stereo = (SpeexStereoState) SPEEX_STEREO_STATE_INIT;
     speex_decoder_ctl (dec->state, SPEEX_SET_HANDLER, &dec->callback);
   }
 

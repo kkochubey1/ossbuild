@@ -4,7 +4,7 @@
  *               2006 Edgard Lima <edgard.lima@indt.org.br>
  *               2009 Texas Instruments, Inc - http://www.ti.com/
  *
- * gstv4l2src.h: BT8x8/V4L2 source element
+ * gstv4l2bufferpool.c V4L2 buffer pool class
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -91,8 +91,9 @@ gst_v4l2_buffer_finalize (GstV4l2Buffer * buffer)
   GST_V4L2_BUFFER_POOL_UNLOCK (pool);
 
   if (!resuscitated) {
-    GST_LOG_OBJECT (pool->v4l2elem, "buffer %p not recovered, unmapping",
-        buffer);
+    GST_LOG_OBJECT (pool->v4l2elem,
+        "buffer %p (data %p, len %u) not recovered, unmapping",
+        buffer, GST_BUFFER_DATA (buffer), buffer->vbuffer.length);
     gst_mini_object_unref (GST_MINI_OBJECT (pool));
     v4l2_munmap ((void *) GST_BUFFER_DATA (buffer), buffer->vbuffer.length);
 

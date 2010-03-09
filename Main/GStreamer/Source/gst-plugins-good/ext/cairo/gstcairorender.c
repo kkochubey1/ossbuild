@@ -264,54 +264,53 @@ gst_cairo_render_setcaps_sink (GstPad * pad, GstCaps * caps)
   return TRUE;
 }
 
-//
-//Modified for OSSBuild
-//
 static GstStaticPadTemplate t_src = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS (
+#if CAIRO_HAS_PDF_SURFACE
         "application/pdf, "
         "width = (int) [ 1, MAX], " "height = (int) [ 1, MAX] "
+#endif
+#if CAIRO_HAS_PDF_SURFACE && (CAIRO_HAS_PS_SURFACE || CAIRO_HAS_SVG_SURFACE || CAIRO_HAS_PNG_FUNCTIONS)
         ";"
+#endif
+#if CAIRO_HAS_PS_SURFACE
         "application/postscript, "
         "width = (int) [ 1, MAX], " "height = (int) [ 1, MAX] "
+#endif
+#if (CAIRO_HAS_PDF_SURFACE || CAIRO_HAS_PS_SURFACE) && (CAIRO_HAS_SVG_SURFACE || CAIRO_HAS_PNG_FUNCTIONS)
         ";"
+#endif
+#if CAIRO_HAS_SVG_SURFACE
         "image/svg+xml, "
         "width = (int) [ 1, MAX], " "height = (int) [ 1, MAX] "
-        ";"
-        "image/png, " "width = (int) [ 1, MAX], " "height = (int) [ 1, MAX] "
-    ));
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
-static GstStaticPadTemplate t_snk = GST_STATIC_PAD_TEMPLATE ("sink",
-    GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS (
-        GST_VIDEO_CAPS_BGRx " ; " GST_VIDEO_CAPS_BGRA " ; "
-        GST_VIDEO_CAPS_YUV ("Y800") " ; "
-        "video/x-raw-gray, "
-        "bpp = 8, "
-        "depth = 8, "
-        "width = " GST_VIDEO_SIZE_RANGE ", "
-        "height = " GST_VIDEO_SIZE_RANGE ", " "framerate = " GST_VIDEO_FPS_RANGE
-        " ; "
-        "image/png, "
-        "width = " GST_VIDEO_SIZE_RANGE ", " "height = " GST_VIDEO_SIZE_RANGE
-    ));
-#else
-static GstStaticPadTemplate t_snk = GST_STATIC_PAD_TEMPLATE ("sink",
-    GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS (
-        GST_VIDEO_CAPS_xRGB " ; " GST_VIDEO_CAPS_ARGB " ; "
-        GST_VIDEO_CAPS_YUV ("Y800") " ; "
-        "video/x-raw-gray, "
-        "bpp = 8, "
-        "depth = 8, "
-        "width = " GST_VIDEO_SIZE_RANGE ", "
-        "height = " GST_VIDEO_SIZE_RANGE ", " "framerate = " GST_VIDEO_FPS_RANGE
-        " ; "
-        "image/png, "
-        "width = " GST_VIDEO_SIZE_RANGE ", " "height = " GST_VIDEO_SIZE_RANGE
-    ));
 #endif
-//
-//End OSSBuild modifications
-//
+#if (CAIRO_HAS_PDF_SURFACE || CAIRO_HAS_PS_SURFACE || CAIRO_HAS_SVG_SURFACE) && CAIRO_HAS_PNG_FUNCTIONS
+        ";"
+#endif
+#if CAIRO_HAS_PNG_FUNCTIONS
+        "image/png, " "width = (int) [ 1, MAX], " "height = (int) [ 1, MAX] "
+#endif
+    ));
+static GstStaticPadTemplate t_snk = GST_STATIC_PAD_TEMPLATE ("sink",
+    GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS (
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+        GST_VIDEO_CAPS_BGRx " ; " GST_VIDEO_CAPS_BGRA " ; "
+#else
+        GST_VIDEO_CAPS_xRGB " ; " GST_VIDEO_CAPS_ARGB " ; "
+#endif
+        GST_VIDEO_CAPS_YUV ("Y800") " ; "
+        "video/x-raw-gray, "
+        "bpp = 8, "
+        "depth = 8, "
+        "width = " GST_VIDEO_SIZE_RANGE ", "
+        "height = " GST_VIDEO_SIZE_RANGE ", " "framerate = " GST_VIDEO_FPS_RANGE
+        " ; "
+#if CAIRO_HAS_PNG_FUNCTIONS
+        "image/png, "
+        "width = " GST_VIDEO_SIZE_RANGE ", " "height = " GST_VIDEO_SIZE_RANGE
+#endif
+    ));
+
 GST_BOILERPLATE (GstCairoRender, gst_cairo_render, GstElement,
     GST_TYPE_ELEMENT);
 
@@ -319,8 +318,7 @@ static void
 gst_cairo_render_init (GstCairoRender * c, GstCairoRenderClass * klass)
 {
   /* The sink */
-  c->snk =
-      gst_pad_new_from_template (gst_static_pad_template_get (&t_snk), "sink");
+  c->snk = gst_pad_new_from_static_template (&t_snk, "sink");
   gst_pad_set_event_function (c->snk, gst_cairo_render_event);
   gst_pad_set_chain_function (c->snk, gst_cairo_render_chain);
   gst_pad_set_setcaps_function (c->snk, gst_cairo_render_setcaps_sink);
@@ -328,8 +326,7 @@ gst_cairo_render_init (GstCairoRender * c, GstCairoRenderClass * klass)
   gst_element_add_pad (GST_ELEMENT (c), c->snk);
 
   /* The source */
-  c->src =
-      gst_pad_new_from_template (gst_static_pad_template_get (&t_src), "src");
+  c->src = gst_pad_new_from_static_template (&t_src, "src");
   gst_pad_use_fixed_caps (c->src);
   gst_element_add_pad (GST_ELEMENT (c), c->src);
 

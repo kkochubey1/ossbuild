@@ -306,6 +306,11 @@ gst_pulsering_context_state_cb (pa_context * c, void *userdata)
   state = pa_context_get_state (c);
   GST_LOG_OBJECT (psink, "got new context state %d", state);
 
+  /* psink can be null when we are shutting down and the ringbuffer is already
+   * unparented */
+  if (psink == NULL)
+    return;
+
   switch (state) {
     case PA_CONTEXT_READY:
     case PA_CONTEXT_TERMINATED:
@@ -566,6 +571,35 @@ gst_pulsering_stream_latency_cb (pa_stream * s, void *userdata)
       info->sink_usec, sink_usec);
 }
 
+static void
+gst_pulsering_stream_suspended_cb (pa_stream * p, void *userdata)
+{
+  GstPulseSink *psink;
+  GstPulseRingBuffer *pbuf;
+
+  pbuf = GST_PULSERING_BUFFER_CAST (userdata);
+  psink = GST_PULSESINK_CAST (GST_OBJECT_PARENT (pbuf));
+
+  if (pa_stream_is_suspended (p))
+    GST_DEBUG_OBJECT (psink, "stream suspended");
+  else
+    GST_DEBUG_OBJECT (psink, "stream resumed");
+}
+
+#if HAVE_PULSE_0_9_11
+static void
+gst_pulsering_stream_started_cb (pa_stream * p, void *userdata)
+{
+  GstPulseSink *psink;
+  GstPulseRingBuffer *pbuf;
+
+  pbuf = GST_PULSERING_BUFFER_CAST (userdata);
+  psink = GST_PULSESINK_CAST (GST_OBJECT_PARENT (pbuf));
+
+  GST_DEBUG_OBJECT (psink, "stream started");
+}
+#endif
+
 #if HAVE_PULSE_0_9_15
 static void
 gst_pulsering_stream_event_cb (pa_stream * p, const char *name,
@@ -662,6 +696,12 @@ gst_pulseringbuffer_acquire (GstRingBuffer * buf, GstRingBufferSpec * spec)
       gst_pulsering_stream_overflow_cb, pbuf);
   pa_stream_set_latency_update_callback (pbuf->stream,
       gst_pulsering_stream_latency_cb, pbuf);
+  pa_stream_set_suspended_callback (pbuf->stream,
+      gst_pulsering_stream_suspended_cb, pbuf);
+#if HAVE_PULSE_0_9_11
+  pa_stream_set_started_callback (pbuf->stream,
+      gst_pulsering_stream_started_cb, pbuf);
+#endif
 #if HAVE_PULSE_0_9_15
   pa_stream_set_event_callback (pbuf->stream,
       gst_pulsering_stream_event_cb, pbuf);
@@ -1556,7 +1596,7 @@ gst_pulsesink_get_time (GstClock * clock, GstBaseAudioSink * sink)
   GstPulseRingBuffer *pbuf;
   pa_usec_t time;
 
-  if (sink->ringbuffer == NULL || sink->ringbuffer->spec.rate == 0)
+  if (!sink->ringbuffer || !sink->ringbuffer->acquired)
     return GST_CLOCK_TIME_NONE;
 
   pbuf = GST_PULSERING_BUFFER_CAST (sink->ringbuffer);
@@ -1865,6 +1905,7 @@ gst_pulsesink_get_mute (GstPulseSink * psink)
   gboolean mute = FALSE;
 
   pa_threaded_mainloop_lock (psink->mainloop);
+  mute = psink->mute;
 
   pbuf = GST_PULSERING_BUFFER_CAST (GST_BASE_AUDIO_SINK (psink)->ringbuffer);
   if (pbuf == NULL || pbuf->stream == NULL)
@@ -1882,8 +1923,6 @@ gst_pulsesink_get_mute (GstPulseSink * psink)
     if (gst_pulsering_is_dead (psink, pbuf))
       goto unlock;
   }
-
-  mute = psink->mute;
 
 unlock:
   if (o)
@@ -2192,8 +2231,8 @@ gst_pulsesink_event (GstBaseSink * sink, GstEvent * event)
         gst_tag_list_get_string (l, GST_TAG_PERFORMER, &artist);
 
       if (title && artist)
-        t = buf =
-            g_strdup_printf (_("'%s' by '%s'"), g_strstrip (title),
+        /* TRANSLATORS: 'song title' by 'artist name' */
+        t = buf = g_strdup_printf (_("'%s' by '%s'"), g_strstrip (title),
             g_strstrip (artist));
       else if (title)
         t = g_strstrip (title);

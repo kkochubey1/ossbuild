@@ -577,6 +577,7 @@
 <ANCHOR id="GstFlacEnc--rice-parameter-search-dist" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-flacenc.html#GstFlacEnc--rice-parameter-search-dist">
 <ANCHOR id="GstFlacEnc--streamable-subset" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-flacenc.html#GstFlacEnc--streamable-subset">
 <ANCHOR id="GstFlacEnc--padding" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-flacenc.html#GstFlacEnc--padding">
+<ANCHOR id="GstFlacEnc--seekpoints" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-flacenc.html#GstFlacEnc--seekpoints">
 <ANCHOR id="gst-plugins-good-plugins-flacenc.see-also" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-flacenc.html#gst-plugins-good-plugins-flacenc.see-also">
 <ANCHOR id="gst-plugins-good-plugins-flactag" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-flactag.html">
 <ANCHOR id="gst-plugins-good-plugins-flactag.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-flactag.html#gst-plugins-good-plugins-flactag.synopsis">
@@ -692,6 +693,7 @@
 <ANCHOR id="GstRtpBin--latency" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--latency">
 <ANCHOR id="GstRtpBin--sdes" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--sdes">
 <ANCHOR id="GstRtpBin--ignore-pt" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--ignore-pt">
+<ANCHOR id="GstRtpBin--autoremove" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--autoremove">
 <ANCHOR id="gst-plugins-good-plugins-gstrtpbin.signal-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#gst-plugins-good-plugins-gstrtpbin.signal-details">
 <ANCHOR id="GstRtpBin-clear-pt-map" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin-clear-pt-map">
 <ANCHOR id="GstRtpBin-get-internal-session" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin-get-internal-session">
@@ -907,6 +909,7 @@
 <ANCHOR id="gst-plugins-good-plugins-matroskamux.property-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-matroskamux.html#gst-plugins-good-plugins-matroskamux.property-details">
 <ANCHOR id="GstMatroskaMux--writing-app" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-matroskamux.html#GstMatroskaMux--writing-app">
 <ANCHOR id="GstMatroskaMux--version" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-matroskamux.html#GstMatroskaMux--version">
+<ANCHOR id="GstMatroskaMux--min-index-interval" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-matroskamux.html#GstMatroskaMux--min-index-interval">
 <ANCHOR id="gst-plugins-good-plugins-matroskademux" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-matroskademux.html">
 <ANCHOR id="gst-plugins-good-plugins-matroskademux.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-matroskademux.html#gst-plugins-good-plugins-matroskademux.synopsis">
 <ANCHOR id="GstMatroskaDemux" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-matroskademux.html#GstMatroskaDemux">
@@ -1311,6 +1314,8 @@
 <ANCHOR id="GstRTSPSrc--do-rtcp" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-rtspsrc.html#GstRTSPSrc--do-rtcp">
 <ANCHOR id="GstRTSPSrc--proxy" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-rtspsrc.html#GstRTSPSrc--proxy">
 <ANCHOR id="GstRTSPSrc--rtp-blocksize" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-rtspsrc.html#GstRTSPSrc--rtp-blocksize">
+<ANCHOR id="GstRTSPSrc--user-id" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-rtspsrc.html#GstRTSPSrc--user-id">
+<ANCHOR id="GstRTSPSrc--user-pw" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-rtspsrc.html#GstRTSPSrc--user-pw">
 <ANCHOR id="gst-plugins-good-plugins-shagadelictv" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shagadelictv.html">
 <ANCHOR id="gst-plugins-good-plugins-shagadelictv.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shagadelictv.html#gst-plugins-good-plugins-shagadelictv.synopsis">
 <ANCHOR id="GstShagadelicTV" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shagadelictv.html#GstShagadelicTV">
@@ -1318,6 +1323,17 @@
 <ANCHOR id="gst-plugins-good-plugins-shagadelictv.description" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shagadelictv.html#gst-plugins-good-plugins-shagadelictv.description">
 <ANCHOR id="gst-plugins-good-plugins-shagadelictv.details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shagadelictv.html#gst-plugins-good-plugins-shagadelictv.details">
 <ANCHOR id="GstShagadelicTV-struct" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shagadelictv.html#GstShagadelicTV-struct">
+<ANCHOR id="gst-plugins-good-plugins-shapewipe" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shapewipe.html">
+<ANCHOR id="gst-plugins-good-plugins-shapewipe.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shapewipe.html#gst-plugins-good-plugins-shapewipe.synopsis">
+<ANCHOR id="GstShapeWipe" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shapewipe.html#GstShapeWipe">
+<ANCHOR id="gst-plugins-good-plugins-shapewipe.object-hierarchy" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shapewipe.html#gst-plugins-good-plugins-shapewipe.object-hierarchy">
+<ANCHOR id="gst-plugins-good-plugins-shapewipe.properties" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shapewipe.html#gst-plugins-good-plugins-shapewipe.properties">
+<ANCHOR id="gst-plugins-good-plugins-shapewipe.description" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shapewipe.html#gst-plugins-good-plugins-shapewipe.description">
+<ANCHOR id="gst-plugins-good-plugins-shapewipe.details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shapewipe.html#gst-plugins-good-plugins-shapewipe.details">
+<ANCHOR id="GstShapeWipe-struct" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shapewipe.html#GstShapeWipe-struct">
+<ANCHOR id="gst-plugins-good-plugins-shapewipe.property-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shapewipe.html#gst-plugins-good-plugins-shapewipe.property-details">
+<ANCHOR id="GstShapeWipe--border" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shapewipe.html#GstShapeWipe--border">
+<ANCHOR id="GstShapeWipe--position" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shapewipe.html#GstShapeWipe--position">
 <ANCHOR id="gst-plugins-good-plugins-smokedec" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-smokedec.html">
 <ANCHOR id="gst-plugins-good-plugins-smokedec.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-smokedec.html#gst-plugins-good-plugins-smokedec.synopsis">
 <ANCHOR id="GstSmokeDec" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-smokedec.html#GstSmokeDec">
@@ -1581,6 +1597,14 @@
 <ANCHOR id="gst-plugins-good-plugins-videoflip.details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#gst-plugins-good-plugins-videoflip.details">
 <ANCHOR id="GstVideoFlip-struct" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#GstVideoFlip-struct">
 <ANCHOR id="GstVideoFlipMethod" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#GstVideoFlipMethod">
+<ANCHOR id="GST-VIDEO-FLIP-METHOD-IDENTITY:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#GST-VIDEO-FLIP-METHOD-IDENTITY:CAPS">
+<ANCHOR id="GST-VIDEO-FLIP-METHOD-90R:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#GST-VIDEO-FLIP-METHOD-90R:CAPS">
+<ANCHOR id="GST-VIDEO-FLIP-METHOD-180:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#GST-VIDEO-FLIP-METHOD-180:CAPS">
+<ANCHOR id="GST-VIDEO-FLIP-METHOD-90L:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#GST-VIDEO-FLIP-METHOD-90L:CAPS">
+<ANCHOR id="GST-VIDEO-FLIP-METHOD-HORIZ:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#GST-VIDEO-FLIP-METHOD-HORIZ:CAPS">
+<ANCHOR id="GST-VIDEO-FLIP-METHOD-VERT:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#GST-VIDEO-FLIP-METHOD-VERT:CAPS">
+<ANCHOR id="GST-VIDEO-FLIP-METHOD-TRANS:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#GST-VIDEO-FLIP-METHOD-TRANS:CAPS">
+<ANCHOR id="GST-VIDEO-FLIP-METHOD-OTHER:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#GST-VIDEO-FLIP-METHOD-OTHER:CAPS">
 <ANCHOR id="gst-plugins-good-plugins-videoflip.property-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#gst-plugins-good-plugins-videoflip.property-details">
 <ANCHOR id="GstVideoFlip--method" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videoflip.html#GstVideoFlip--method">
 <ANCHOR id="gst-plugins-good-plugins-videomixer" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html">
@@ -1593,6 +1617,9 @@
 <ANCHOR id="gst-plugins-good-plugins-videomixer.details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html#gst-plugins-good-plugins-videomixer.details">
 <ANCHOR id="GstVideoMixer-struct" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html#GstVideoMixer-struct">
 <ANCHOR id="GstVideoMixerBackground" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html#GstVideoMixerBackground">
+<ANCHOR id="VIDEO-MIXER-BACKGROUND-CHECKER:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html#VIDEO-MIXER-BACKGROUND-CHECKER:CAPS">
+<ANCHOR id="VIDEO-MIXER-BACKGROUND-BLACK:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html#VIDEO-MIXER-BACKGROUND-BLACK:CAPS">
+<ANCHOR id="VIDEO-MIXER-BACKGROUND-WHITE:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html#VIDEO-MIXER-BACKGROUND-WHITE:CAPS">
 <ANCHOR id="gst-plugins-good-plugins-videomixer.property-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html#gst-plugins-good-plugins-videomixer.property-details">
 <ANCHOR id="GstVideoMixer--background" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html#GstVideoMixer--background">
 <ANCHOR id="gst-plugins-good-plugins-warptv" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-warptv.html">
@@ -1780,6 +1807,8 @@
 <ANCHOR id="plugin-gstrtpmanager" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-plugin-gstrtpmanager.html#plugin-gstrtpmanager">
 <ANCHOR id="gst-plugins-good-plugins-plugin-rtsp" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-plugin-rtsp.html">
 <ANCHOR id="plugin-rtsp" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-plugin-rtsp.html#plugin-rtsp">
+<ANCHOR id="gst-plugins-good-plugins-plugin-shapewipe" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-plugin-shapewipe.html">
+<ANCHOR id="plugin-shapewipe" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-plugin-shapewipe.html#plugin-shapewipe">
 <ANCHOR id="gst-plugins-good-plugins-plugin-shout2send" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-plugin-shout2send.html">
 <ANCHOR id="plugin-shout2send" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-plugin-shout2send.html#plugin-shout2send">
 <ANCHOR id="gst-plugins-good-plugins-plugin-smpte" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-plugin-smpte.html">

@@ -57,6 +57,12 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_GCC_ASM
+#if defined(HAVE_CPU_I386) || defined(HAVE_CPU_X86_64)
+#define BUILD_X86_ASM
+#endif
+#endif
+
 #include <gst/gst.h>
 #include <gst/base/gstcollectpads.h>
 #include <gst/controller/gstcontroller.h>
@@ -94,71 +100,6 @@ static gboolean gst_videomixer_src_event (GstPad * pad, GstEvent * event);
 static gboolean gst_videomixer_sink_event (GstPad * pad, GstEvent * event);
 
 static void gst_videomixer_sort_pads (GstVideoMixer * mix);
-
-/*AYUV function definitions see file: blend_ayuv*/
-void gst_videomixer_blend_ayuv_ayuv (guint8 * src, gint xpos, gint ypos,
-    gint src_width, gint src_height, gdouble src_alpha,
-    guint8 * dest, gint dest_width, gint dest_height);
-void gst_videomixer_fill_ayuv_checker (guint8 * dest, gint width, gint height);
-void gst_videomixer_fill_ayuv_color (guint8 * dest, gint width, gint height,
-    gint colY, gint colU, gint colV);
-/*BGRA/ARGB function definitions see file: blend_bgra*/
-void gst_videomixer_blend_bgra_bgra (guint8 * src, gint xpos, gint ypos,
-    gint src_width, gint src_height, gdouble src_alpha,
-    guint8 * dest, gint dest_width, gint dest_height);
-void gst_videomixer_fill_bgra_checker (guint8 * dest, gint width, gint height);
-void gst_videomixer_fill_bgra_color (guint8 * dest, gint width, gint height,
-    gint colY, gint colU, gint colV);
-void gst_videomixer_blend_argb_argb (guint8 * src, gint xpos, gint ypos,
-    gint src_width, gint src_height, gdouble src_alpha,
-    guint8 * dest, gint dest_width, gint dest_height);
-void gst_videomixer_fill_argb_checker (guint8 * dest, gint width, gint height);
-void gst_videomixer_fill_argb_color (guint8 * dest, gint width, gint height,
-    gint colY, gint colU, gint colV);
-/* RGB function definitions see file: blend_rgb.c */
-void gst_videomixer_blend_rgb_rgb (guint8 * src, gint xpos, gint ypos,
-    gint src_width, gint src_height, gdouble src_alpha,
-    guint8 * dest, gint dest_width, gint dest_height);
-void gst_videomixer_fill_rgb_checker (guint8 * dest, gint width, gint height);
-void gst_videomixer_fill_rgb_color (guint8 * dest, gint width, gint height,
-    gint colY, gint colU, gint colV);
-void gst_videomixer_blend_bgr_bgr (guint8 * src, gint xpos, gint ypos,
-    gint src_width, gint src_height, gdouble src_alpha,
-    guint8 * dest, gint dest_width, gint dest_height);
-void gst_videomixer_fill_bgr_checker (guint8 * dest, gint width, gint height);
-void gst_videomixer_fill_bgr_color (guint8 * dest, gint width, gint height,
-    gint colY, gint colU, gint colV);
-void gst_videomixer_blend_xrgb_xrgb (guint8 * src, gint xpos, gint ypos,
-    gint src_width, gint src_height, gdouble src_alpha,
-    guint8 * dest, gint dest_width, gint dest_height);
-void gst_videomixer_fill_xrgb_checker (guint8 * dest, gint width, gint height);
-void gst_videomixer_fill_xrgb_color (guint8 * dest, gint width, gint height,
-    gint colY, gint colU, gint colV);
-void gst_videomixer_blend_xbgr_xbgr (guint8 * src, gint xpos, gint ypos,
-    gint src_width, gint src_height, gdouble src_alpha,
-    guint8 * dest, gint dest_width, gint dest_height);
-void gst_videomixer_fill_xbgr_checker (guint8 * dest, gint width, gint height);
-void gst_videomixer_fill_xbgr_color (guint8 * dest, gint width, gint height,
-    gint colY, gint colU, gint colV);
-void gst_videomixer_blend_rgbx_rgbx (guint8 * src, gint xpos, gint ypos,
-    gint src_width, gint src_height, gdouble src_alpha,
-    guint8 * dest, gint dest_width, gint dest_height);
-void gst_videomixer_fill_rgbx_checker (guint8 * dest, gint width, gint height);
-void gst_videomixer_fill_rgbx_color (guint8 * dest, gint width, gint height,
-    gint colY, gint colU, gint colV);
-void gst_videomixer_blend_bgrx_bgrx (guint8 * src, gint xpos, gint ypos,
-    gint src_width, gint src_height, gdouble src_alpha,
-    guint8 * dest, gint dest_width, gint dest_height);
-void gst_videomixer_fill_bgrx_checker (guint8 * dest, gint width, gint height);
-void gst_videomixer_fill_bgrx_color (guint8 * dest, gint width, gint height,
-    gint colY, gint colU, gint colV);
-/*I420 function definitions see file: blend_i420.c*/
-void gst_videomixer_blend_i420_i420 (guint8 * src, gint xpos, gint ypos,
-    gint src_width, gint src_height, gdouble src_alpha,
-    guint8 * dest, gint dest_width, gint dest_heighty);
-void gst_videomixer_fill_i420_checker (guint8 * dest, gint width, gint height);
-void gst_videomixer_fill_i420_color (guint8 * dest, gint width, gint height,
-    gint colY, gint colU, gint colV);
 
 #define DEFAULT_PAD_ZORDER 0
 #define DEFAULT_PAD_XPOS   0
@@ -258,6 +199,86 @@ gst_videomixer_pad_set_property (GObject * object, guint prop_id,
 }
 
 static void
+gst_videomixer_update_qos (GstVideoMixer * mix, gdouble proportion,
+    GstClockTimeDiff diff, GstClockTime timestamp)
+{
+  GST_DEBUG_OBJECT (mix,
+      "Updating QoS: proportion %lf, diff %s%" GST_TIME_FORMAT ", timestamp %"
+      GST_TIME_FORMAT, proportion, (diff < 0) ? "-" : "",
+      GST_TIME_ARGS (ABS (diff)), GST_TIME_ARGS (timestamp));
+
+  GST_OBJECT_LOCK (mix);
+  mix->proportion = proportion;
+  if (G_LIKELY (timestamp != GST_CLOCK_TIME_NONE)) {
+    if (G_UNLIKELY (diff > 0))
+      mix->earliest_time =
+          timestamp + 2 * diff + gst_util_uint64_scale_int (GST_SECOND,
+          mix->fps_d, mix->fps_n);
+    else
+      mix->earliest_time = timestamp + diff;
+  } else {
+    mix->earliest_time = GST_CLOCK_TIME_NONE;
+  }
+  GST_OBJECT_UNLOCK (mix);
+}
+
+static void
+gst_videomixer_reset_qos (GstVideoMixer * mix)
+{
+  gst_videomixer_update_qos (mix, 0.5, 0, GST_CLOCK_TIME_NONE);
+}
+
+static void
+gst_videomixer_read_qos (GstVideoMixer * mix, gdouble * proportion,
+    GstClockTime * time)
+{
+  GST_OBJECT_LOCK (mix);
+  *proportion = mix->proportion;
+  *time = mix->earliest_time;
+  GST_OBJECT_UNLOCK (mix);
+}
+
+/* Perform qos calculations before processing the next frame. Returns TRUE if
+ * the frame should be processed, FALSE if the frame can be dropped entirely */
+static gboolean
+gst_videomixer_do_qos (GstVideoMixer * mix, GstClockTime timestamp)
+{
+  GstClockTime qostime, earliest_time;
+  gdouble proportion;
+
+  /* no timestamp, can't do QoS => process frame */
+  if (G_UNLIKELY (!GST_CLOCK_TIME_IS_VALID (timestamp))) {
+    GST_LOG_OBJECT (mix, "invalid timestamp, can't do QoS, process frame");
+    return TRUE;
+  }
+
+  /* get latest QoS observation values */
+  gst_videomixer_read_qos (mix, &proportion, &earliest_time);
+
+  /* skip qos if we have no observation (yet) => process frame */
+  if (G_UNLIKELY (!GST_CLOCK_TIME_IS_VALID (earliest_time))) {
+    GST_LOG_OBJECT (mix, "no observation yet, process frame");
+    return TRUE;
+  }
+
+  /* qos is done on running time */
+  qostime =
+      gst_segment_to_running_time (&mix->segment, GST_FORMAT_TIME, timestamp);
+
+  /* see how our next timestamp relates to the latest qos timestamp */
+  GST_LOG_OBJECT (mix, "qostime %" GST_TIME_FORMAT ", earliest %"
+      GST_TIME_FORMAT, GST_TIME_ARGS (qostime), GST_TIME_ARGS (earliest_time));
+
+  if (qostime != GST_CLOCK_TIME_NONE && qostime <= earliest_time) {
+    GST_DEBUG_OBJECT (mix, "we are late, drop frame");
+    return FALSE;
+  }
+
+  GST_LOG_OBJECT (mix, "process frame");
+  return TRUE;
+}
+
+static void
 gst_videomixer_set_master_geometry (GstVideoMixer * mix)
 {
   GSList *walk;
@@ -292,6 +313,7 @@ gst_videomixer_set_master_geometry (GstVideoMixer * mix)
       || mix->fps_d != fps_d) {
     mix->setcaps = TRUE;
     mix->sendseg = TRUE;
+    gst_videomixer_reset_qos (mix);
     mix->master = master;
     mix->in_width = width;
     mix->in_height = height;
@@ -610,12 +632,16 @@ gst_videomixer_reset (GstVideoMixer * mix)
   mix->fps_n = mix->fps_d = 0;
   mix->setcaps = FALSE;
   mix->sendseg = FALSE;
+
   mix->segment_position = 0;
-  mix->segment_rate = 1.0;
+  gst_segment_init (&mix->segment, GST_FORMAT_TIME);
+
+  gst_videomixer_reset_qos (mix);
 
   mix->fmt = GST_VIDEO_FORMAT_UNKNOWN;
 
   mix->last_ts = 0;
+  mix->last_duration = -1;
 
   /* clean up collect data */
   walk = mix->collect->data;
@@ -627,6 +653,7 @@ gst_videomixer_reset (GstVideoMixer * mix)
   }
 
   mix->next_sinkpad = 0;
+  mix->flush_stop_pending = FALSE;
 }
 
 static void
@@ -921,63 +948,63 @@ gst_videomixer_setcaps (GstPad * pad, GstCaps * caps)
 
   switch (mixer->fmt) {
     case GST_VIDEO_FORMAT_AYUV:
-      mixer->blend = gst_videomixer_blend_ayuv_ayuv;
-      mixer->fill_checker = gst_videomixer_fill_ayuv_checker;
-      mixer->fill_color = gst_videomixer_fill_ayuv_color;
-      ret = TRUE;
-      break;
-    case GST_VIDEO_FORMAT_I420:
-      mixer->blend = gst_videomixer_blend_i420_i420;
-      mixer->fill_checker = gst_videomixer_fill_i420_checker;
-      mixer->fill_color = gst_videomixer_fill_i420_color;
-      ret = TRUE;
-      break;
-    case GST_VIDEO_FORMAT_BGRA:
-      mixer->blend = gst_videomixer_blend_bgra_bgra;
-      mixer->fill_checker = gst_videomixer_fill_bgra_checker;
-      mixer->fill_color = gst_videomixer_fill_bgra_color;
+      mixer->blend = gst_video_mixer_blend_ayuv;
+      mixer->fill_checker = gst_video_mixer_fill_checker_ayuv;
+      mixer->fill_color = gst_video_mixer_fill_color_ayuv;
       ret = TRUE;
       break;
     case GST_VIDEO_FORMAT_ARGB:
-      mixer->blend = gst_videomixer_blend_argb_argb;
-      mixer->fill_checker = gst_videomixer_fill_argb_checker;
-      mixer->fill_color = gst_videomixer_fill_argb_color;
+      mixer->blend = gst_video_mixer_blend_argb;
+      mixer->fill_checker = gst_video_mixer_fill_checker_argb;
+      mixer->fill_color = gst_video_mixer_fill_color_argb;
+      ret = TRUE;
+      break;
+    case GST_VIDEO_FORMAT_BGRA:
+      mixer->blend = gst_video_mixer_blend_bgra;
+      mixer->fill_checker = gst_video_mixer_fill_checker_bgra;
+      mixer->fill_color = gst_video_mixer_fill_color_bgra;
+      ret = TRUE;
+      break;
+    case GST_VIDEO_FORMAT_I420:
+      mixer->blend = gst_video_mixer_blend_i420;
+      mixer->fill_checker = gst_video_mixer_fill_checker_i420;
+      mixer->fill_color = gst_video_mixer_fill_color_i420;
       ret = TRUE;
       break;
     case GST_VIDEO_FORMAT_RGB:
-      mixer->blend = gst_videomixer_blend_rgb_rgb;
-      mixer->fill_checker = gst_videomixer_fill_rgb_checker;
-      mixer->fill_color = gst_videomixer_fill_rgb_color;
+      mixer->blend = gst_video_mixer_blend_rgb;
+      mixer->fill_checker = gst_video_mixer_fill_checker_rgb;
+      mixer->fill_color = gst_video_mixer_fill_color_rgb;
       ret = TRUE;
       break;
     case GST_VIDEO_FORMAT_BGR:
-      mixer->blend = gst_videomixer_blend_bgr_bgr;
-      mixer->fill_checker = gst_videomixer_fill_bgr_checker;
-      mixer->fill_color = gst_videomixer_fill_bgr_color;
+      mixer->blend = gst_video_mixer_blend_bgr;
+      mixer->fill_checker = gst_video_mixer_fill_checker_bgr;
+      mixer->fill_color = gst_video_mixer_fill_color_bgr;
       ret = TRUE;
       break;
     case GST_VIDEO_FORMAT_xRGB:
-      mixer->blend = gst_videomixer_blend_xrgb_xrgb;
-      mixer->fill_checker = gst_videomixer_fill_xrgb_checker;
-      mixer->fill_color = gst_videomixer_fill_xrgb_color;
+      mixer->blend = gst_video_mixer_blend_xrgb;
+      mixer->fill_checker = gst_video_mixer_fill_checker_xrgb;
+      mixer->fill_color = gst_video_mixer_fill_color_xrgb;
       ret = TRUE;
       break;
     case GST_VIDEO_FORMAT_xBGR:
-      mixer->blend = gst_videomixer_blend_xbgr_xbgr;
-      mixer->fill_checker = gst_videomixer_fill_xbgr_checker;
-      mixer->fill_color = gst_videomixer_fill_xbgr_color;
+      mixer->blend = gst_video_mixer_blend_xbgr;
+      mixer->fill_checker = gst_video_mixer_fill_checker_xbgr;
+      mixer->fill_color = gst_video_mixer_fill_color_xbgr;
       ret = TRUE;
       break;
     case GST_VIDEO_FORMAT_RGBx:
-      mixer->blend = gst_videomixer_blend_rgbx_rgbx;
-      mixer->fill_checker = gst_videomixer_fill_rgbx_checker;
-      mixer->fill_color = gst_videomixer_fill_rgbx_color;
+      mixer->blend = gst_video_mixer_blend_rgbx;
+      mixer->fill_checker = gst_video_mixer_fill_checker_rgbx;
+      mixer->fill_color = gst_video_mixer_fill_color_rgbx;
       ret = TRUE;
       break;
     case GST_VIDEO_FORMAT_BGRx:
-      mixer->blend = gst_videomixer_blend_bgrx_bgrx;
-      mixer->fill_checker = gst_videomixer_fill_bgrx_checker;
-      mixer->fill_color = gst_videomixer_fill_bgrx_color;
+      mixer->blend = gst_video_mixer_blend_bgrx;
+      mixer->fill_checker = gst_video_mixer_fill_checker_bgrx;
+      mixer->fill_color = gst_video_mixer_fill_color_bgrx;
       ret = TRUE;
       break;
     default:
@@ -1135,27 +1162,35 @@ gst_videomixer_fill_queues (GstVideoMixer * mix)
 
       GST_LOG_OBJECT (mix, "we need a new buffer");
 
-      buf = gst_collect_pads_pop (mix->collect, data);
+      buf = gst_collect_pads_peek (mix->collect, data);
 
       if (buf) {
         guint64 duration;
 
-        GST_LOG_OBJECT (mix, "we have a buffer !");
-
         mixcol->buffer = buf;
         duration = GST_BUFFER_DURATION (mixcol->buffer);
+
+        GST_LOG_OBJECT (mix, "we have a buffer with duration %" GST_TIME_FORMAT
+            ", queued %" GST_TIME_FORMAT, GST_TIME_ARGS (duration),
+            GST_TIME_ARGS (mixpad->queued));
+
         /* no duration on the buffer, use the framerate */
         if (!GST_CLOCK_TIME_IS_VALID (duration)) {
           if (mixpad->fps_n == 0) {
             duration = GST_CLOCK_TIME_NONE;
           } else {
-            duration = GST_SECOND * mixpad->fps_d / mixpad->fps_n;
+            duration =
+                gst_util_uint64_scale_int (GST_SECOND, mixpad->fps_d,
+                mixpad->fps_n);
           }
         }
         if (GST_CLOCK_TIME_IS_VALID (duration))
           mixpad->queued += duration;
         else if (!mixpad->queued)
           mixpad->queued = GST_CLOCK_TIME_NONE;
+
+        GST_LOG_OBJECT (mix, "now queued: %" GST_TIME_FORMAT,
+            GST_TIME_ARGS (mixpad->queued));
       } else {
         GST_LOG_OBJECT (mix, "pop returned a NULL buffer");
       }
@@ -1189,7 +1224,10 @@ gst_videomixer_fill_queues (GstVideoMixer * mix)
       else
         stop = -1;
 
-      event = gst_event_new_new_segment_full (FALSE, segment->rate, 1.0,
+      gst_segment_set_newsegment (&mix->segment, FALSE, segment->rate,
+          segment->format, start, stop, start + mix->segment_position);
+      event =
+          gst_event_new_new_segment_full (FALSE, segment->rate, 1.0,
           segment->format, start, stop, start + mix->segment_position);
       gst_pad_push_event (mix->srcpad, event);
       mix->sendseg = FALSE;
@@ -1236,21 +1274,6 @@ gst_videomixer_blend_buffers (GstVideoMixer * mix, GstBuffer * outbuf)
       mix->blend (GST_BUFFER_DATA (mixcol->buffer),
           pad->xpos, pad->ypos, pad->in_width, pad->in_height, pad->alpha,
           GST_BUFFER_DATA (outbuf), mix->out_width, mix->out_height);
-
-      if (pad == mix->master) {
-        gint64 running_time;
-
-        running_time =
-            gst_segment_to_running_time (seg, GST_FORMAT_TIME, timestamp);
-
-        /* outgoing buffers need the running_time */
-        GST_BUFFER_TIMESTAMP (outbuf) = running_time;
-        GST_BUFFER_DURATION (outbuf) = GST_BUFFER_DURATION (mixcol->buffer);
-
-        mix->last_ts = running_time;
-        if (GST_BUFFER_DURATION_IS_VALID (outbuf))
-          mix->last_ts += GST_BUFFER_DURATION (outbuf);
-      }
     }
   }
 }
@@ -1262,16 +1285,16 @@ static void
 gst_videomixer_update_queues (GstVideoMixer * mix)
 {
   GSList *walk;
-  guint64 interval;
+  gint64 interval;
 
   interval = mix->master->queued;
   if (interval <= 0) {
     if (mix->fps_n == 0) {
       interval = G_MAXINT64;
     } else {
-      interval = GST_SECOND * mix->fps_d / mix->fps_n;
+      interval = gst_util_uint64_scale_int (GST_SECOND, mix->fps_d, mix->fps_n);
     }
-    GST_LOG_OBJECT (mix, "set interval to %" G_GUINT64_FORMAT " nanoseconds",
+    GST_LOG_OBJECT (mix, "set interval to %" G_GINT64_FORMAT " nanoseconds",
         interval);
   }
 
@@ -1286,7 +1309,16 @@ gst_videomixer_update_queues (GstVideoMixer * mix)
       pad->queued -= interval;
       GST_LOG_OBJECT (pad, "queued now %" G_GINT64_FORMAT, pad->queued);
       if (pad->queued <= 0) {
+        GstBuffer *buffer =
+            gst_collect_pads_pop (mix->collect, &mixcol->collect);
+
         GST_LOG_OBJECT (pad, "unreffing buffer");
+        if (buffer)
+          gst_buffer_unref (buffer);
+        else
+          GST_WARNING_OBJECT (pad,
+              "Buffer was removed by GstCollectPads in the meantime");
+
         gst_buffer_unref (mixcol->buffer);
         mixcol->buffer = NULL;
       }
@@ -1301,12 +1333,19 @@ gst_videomixer_collected (GstCollectPads * pads, GstVideoMixer * mix)
   GstBuffer *outbuf = NULL;
   size_t outsize = 0;
   gboolean eos = FALSE;
+  GstClockTime timestamp = GST_CLOCK_TIME_NONE;
+  GstClockTime duration = GST_CLOCK_TIME_NONE;
 
   g_return_val_if_fail (GST_IS_VIDEO_MIXER (mix), GST_FLOW_ERROR);
 
   /* This must be set, otherwise we have no caps */
   if (G_UNLIKELY (mix->in_width == 0))
     return GST_FLOW_NOT_NEGOTIATED;
+
+  if (g_atomic_int_compare_and_exchange (&mix->flush_stop_pending, TRUE, FALSE)) {
+    GST_DEBUG_OBJECT (mix, "pending flush stop");
+    gst_pad_push_event (mix->srcpad, gst_event_new_flush_stop ());
+  }
 
   GST_LOG_OBJECT (mix, "all pads are collected");
   GST_VIDEO_MIXER_STATE_LOCK (mix);
@@ -1338,20 +1377,44 @@ gst_videomixer_collected (GstCollectPads * pads, GstVideoMixer * mix)
 
     /* Calculating out buffer size from input size */
     gst_pad_set_caps (mix->srcpad, newcaps);
-    outsize =
-        gst_video_format_get_size (mix->fmt, mix->out_width, mix->out_height);
-    ret =
-        gst_pad_alloc_buffer_and_set_caps (mix->srcpad, GST_BUFFER_OFFSET_NONE,
-        outsize, newcaps, &outbuf);
     gst_caps_unref (newcaps);
-  } else {                      /* Otherwise we just allocate a buffer from current caps */
-    /* Calculating out buffer size from input size */
-    outsize =
-        gst_video_format_get_size (mix->fmt, mix->out_width, mix->out_height);
-    ret =
-        gst_pad_alloc_buffer_and_set_caps (mix->srcpad, GST_BUFFER_OFFSET_NONE,
-        outsize, GST_PAD_CAPS (mix->srcpad), &outbuf);
   }
+
+  /* Get timestamp & duration */
+  if (mix->master->mixcol->buffer != NULL) {
+    GstClockTime in_ts;
+    GstSegment *seg;
+    GstVideoMixerCollect *mixcol = mix->master->mixcol;
+
+    seg = &mixcol->collect.segment;
+    in_ts = GST_BUFFER_TIMESTAMP (mixcol->buffer);
+
+    timestamp = gst_segment_to_running_time (seg, GST_FORMAT_TIME, in_ts);
+    duration = GST_BUFFER_DURATION (mixcol->buffer);
+
+    mix->last_ts = timestamp;
+    mix->last_duration = duration;
+  } else {
+    timestamp = mix->last_ts;
+    duration = mix->last_duration;
+  }
+
+  if (GST_CLOCK_TIME_IS_VALID (duration))
+    mix->last_ts += duration;
+
+  if (!gst_videomixer_do_qos (mix, timestamp)) {
+    gst_videomixer_update_queues (mix);
+    GST_VIDEO_MIXER_STATE_UNLOCK (mix);
+    ret = GST_FLOW_OK;
+    goto beach;
+  }
+
+  /* allocate an output buffer */
+  outsize =
+      gst_video_format_get_size (mix->fmt, mix->out_width, mix->out_height);
+  ret =
+      gst_pad_alloc_buffer_and_set_caps (mix->srcpad, GST_BUFFER_OFFSET_NONE,
+      outsize, GST_PAD_CAPS (mix->srcpad), &outbuf);
 
   /* This must be set at this point, otherwise we have no src caps */
   g_assert (mix->blend != NULL);
@@ -1359,6 +1422,9 @@ gst_videomixer_collected (GstCollectPads * pads, GstVideoMixer * mix)
   if (ret != GST_FLOW_OK) {
     goto error;
   }
+
+  GST_BUFFER_TIMESTAMP (outbuf) = timestamp;
+  GST_BUFFER_DURATION (outbuf) = duration;
 
   switch (mix->background) {
     case VIDEO_MIXER_BACKGROUND_CHECKER:
@@ -1446,10 +1512,20 @@ gst_videomixer_src_event (GstPad * pad, GstEvent * event)
   gboolean result;
 
   switch (GST_EVENT_TYPE (event)) {
-    case GST_EVENT_QOS:
-      /* QoS might be tricky */
-      result = FALSE;
+    case GST_EVENT_QOS:{
+      GstClockTimeDiff diff;
+      GstClockTime timestamp;
+      gdouble proportion;
+
+      gst_event_parse_qos (event, &proportion, &diff, &timestamp);
+
+      gst_videomixer_update_qos (mix, proportion, diff, timestamp);
+      gst_event_unref (event);
+
+      /* TODO: The QoS event should be transformed and send upstream */
+      result = TRUE;
       break;
+    }
     case GST_EVENT_SEEK:
     {
       GstSeekFlags flags;
@@ -1478,9 +1554,30 @@ gst_videomixer_src_event (GstPad * pad, GstEvent * event)
       else
         mix->segment_position = 0;
       mix->sendseg = TRUE;
+
+      if (flags & GST_SEEK_FLAG_FLUSH) {
+        gst_collect_pads_set_flushing (mix->collect, FALSE);
+
+        /* we can't send FLUSH_STOP here since upstream could start pushing data
+         * after we unlock mix->collect.
+         * We set flush_stop_pending to TRUE instead and send FLUSH_STOP after
+         * forwarding the seek upstream or from gst_videomixer_collected,
+         * whichever happens first.
+         */
+        mix->flush_stop_pending = TRUE;
+      }
+
       GST_OBJECT_UNLOCK (mix->collect);
+      gst_videomixer_reset_qos (mix);
 
       result = forward_event (mix, event);
+
+      if (g_atomic_int_compare_and_exchange (&mix->flush_stop_pending,
+              TRUE, FALSE)) {
+        GST_DEBUG_OBJECT (mix, "pending flush stop");
+        gst_pad_push_event (mix->srcpad, gst_event_new_flush_stop ());
+      }
+
       break;
     }
     case GST_EVENT_NAVIGATION:
@@ -1500,6 +1597,7 @@ gst_videomixer_src_event (GstPad * pad, GstEvent * event)
 static gboolean
 gst_videomixer_sink_event (GstPad * pad, GstEvent * event)
 {
+  GstVideoMixerPad *vpad = GST_VIDEO_MIXER_PAD (pad);
   GstVideoMixer *videomixer = GST_VIDEO_MIXER (gst_pad_get_parent (pad));
   gboolean ret;
 
@@ -1515,9 +1613,18 @@ gst_videomixer_sink_event (GstPad * pad, GstEvent * event)
        * and downstream (using our source pad, the bastard!).
        */
       videomixer->sendseg = TRUE;
+      videomixer->flush_stop_pending = FALSE;
+      gst_videomixer_reset_qos (videomixer);
+
+      /* Reset pad state after FLUSH_STOP */
+      if (vpad->mixcol->buffer)
+        gst_buffer_unref (vpad->mixcol->buffer);
+      vpad->mixcol->buffer = NULL;
+      vpad->queued = 0;
       break;
     case GST_EVENT_NEWSEGMENT:
       videomixer->sendseg = TRUE;
+      gst_videomixer_reset_qos (videomixer);
       break;
     default:
       break;
@@ -1604,6 +1711,8 @@ plugin_init (GstPlugin * plugin)
 {
   GST_DEBUG_CATEGORY_INIT (gst_videomixer_debug, "videomixer", 0,
       "video mixer");
+
+  gst_video_mixer_init_blend ();
 
   return gst_element_register (plugin, "videomixer", GST_RANK_PRIMARY,
       GST_TYPE_VIDEO_MIXER);

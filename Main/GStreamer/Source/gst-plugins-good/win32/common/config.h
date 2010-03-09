@@ -40,7 +40,7 @@
 #define GST_LICENSE "LGPL"
 
 /* package name in plugins */
-#define GST_PACKAGE_NAME "GStreamer Good Plug-ins prerelease"
+#define GST_PACKAGE_NAME "GStreamer Good Plug-ins source release"
 
 /* package origin */
 #define GST_PACKAGE_ORIGIN "Unknown package origin"
@@ -271,10 +271,7 @@
 #undef HAVE_SHOUT2
 
 /* Define to 1 if you have the `sinh' function. */
-#define HAVE_SINH 1
-
-/* Define to 1 if you have the `cosh' function. */
-#define HAVE_COSH 1
+#undef HAVE_SINH
 
 /* Define to enable soup http client plugin (2.4) (used by souphttpsrc). */
 #undef HAVE_SOUP
@@ -296,6 +293,9 @@
 
 /* Define to enable Sun Audio (used by sunaudio). */
 #undef HAVE_SUNAUDIO
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#undef HAVE_SYS_PARAM_H
 
 /* Define to 1 if you have the <sys/socket.h> header file. */
 #undef HAVE_SYS_SOCKET_H
@@ -359,7 +359,7 @@
 #define PACKAGE_NAME "GStreamer Good Plug-ins"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GStreamer Good Plug-ins 0.10.17"
+#define PACKAGE_STRING "GStreamer Good Plug-ins 0.10.19"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gst-plugins-good"
@@ -368,7 +368,7 @@
 #undef PACKAGE_URL
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.10.17.0"
+#define PACKAGE_VERSION "0.10.19"
 
 /* directory where plugins are located */
 #ifdef _DEBUG
@@ -399,7 +399,7 @@
 #undef STDC_HEADERS
 
 /* Version number of package */
-#define VERSION "0.10.17.0"
+#define VERSION "0.10.19"
 
 /* old wavpack API */
 #undef WAVPACK_OLD_API
