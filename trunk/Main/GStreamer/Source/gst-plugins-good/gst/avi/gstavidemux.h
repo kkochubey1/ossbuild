@@ -129,6 +129,7 @@ typedef enum {
   GST_AVI_DEMUX_START,
   GST_AVI_DEMUX_HEADER,
   GST_AVI_DEMUX_MOVI,
+  GST_AVI_DEMUX_SEEK,
 } GstAviDemuxState;
 
 typedef enum {
@@ -174,13 +175,14 @@ typedef struct _GstAviDemux {
 
   /* some stream info for length */
   gst_riff_avih *avih;
+  GstClockTime   duration;
 
   /* segment in TIME */
   GstSegment     segment;
   gboolean       segment_running;
 
   /* pending tags/events */
-  GstEvent      *seek_event;
+  GstEvent      *seg_event;
   GstTagList	*globaltags;
   gboolean	 got_tags;
 
@@ -188,6 +190,17 @@ typedef struct _GstAviDemux {
   GstIndex      *element_index;
   gint           index_id;
   gboolean       seekable;
+
+  guint64        first_movi_offset;
+  guint64        idx1_offset; /* offset in file of list/chunk after movi */
+  GstEvent      *seek_event;
+
+  gboolean       building_index;
+  guint          odml_stream;
+  guint          odml_subidx;
+  guint64       *odml_subidxs;
+
+  guint64        seek_kf_offset; /* offset of the keyframe to which we want to seek */
 } GstAviDemux;
 
 typedef struct _GstAviDemuxClass {

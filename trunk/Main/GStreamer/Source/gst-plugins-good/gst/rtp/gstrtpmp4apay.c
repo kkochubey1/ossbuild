@@ -43,7 +43,8 @@ static GstStaticPadTemplate gst_rtp_mp4a_pay_sink_template =
 GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("audio/mpeg, mpegversion=(int)4")
+    GST_STATIC_CAPS ("audio/mpeg, mpegversion=(int)4, "
+        "stream-format=(string)raw")
     );
 
 static GstStaticPadTemplate gst_rtp_mp4a_pay_src_template =
@@ -63,10 +64,6 @@ GST_STATIC_PAD_TEMPLATE ("src",
     )
     );
 
-
-static void gst_rtp_mp4a_pay_class_init (GstRtpMP4APayClass * klass);
-static void gst_rtp_mp4a_pay_base_init (GstRtpMP4APayClass * klass);
-static void gst_rtp_mp4a_pay_init (GstRtpMP4APay * rtpmp4apay);
 static void gst_rtp_mp4a_pay_finalize (GObject * object);
 
 static gboolean gst_rtp_mp4a_pay_setcaps (GstBaseRTPPayload * payload,
@@ -74,35 +71,10 @@ static gboolean gst_rtp_mp4a_pay_setcaps (GstBaseRTPPayload * payload,
 static GstFlowReturn gst_rtp_mp4a_pay_handle_buffer (GstBaseRTPPayload *
     payload, GstBuffer * buffer);
 
-static GstBaseRTPPayloadClass *parent_class = NULL;
+GST_BOILERPLATE (GstRtpMP4APay, gst_rtp_mp4a_pay, GstBaseRTPPayload,
+    GST_TYPE_BASE_RTP_PAYLOAD)
 
-static GType
-gst_rtp_mp4a_pay_get_type (void)
-{
-  static GType rtpmp4apay_type = 0;
-
-  if (!rtpmp4apay_type) {
-    static const GTypeInfo rtpmp4apay_info = {
-      sizeof (GstRtpMP4APayClass),
-      (GBaseInitFunc) gst_rtp_mp4a_pay_base_init,
-      NULL,
-      (GClassInitFunc) gst_rtp_mp4a_pay_class_init,
-      NULL,
-      NULL,
-      sizeof (GstRtpMP4APay),
-      0,
-      (GInstanceInitFunc) gst_rtp_mp4a_pay_init,
-    };
-
-    rtpmp4apay_type =
-        g_type_register_static (GST_TYPE_BASE_RTP_PAYLOAD, "GstRtpMP4APay",
-        &rtpmp4apay_info, 0);
-  }
-  return rtpmp4apay_type;
-}
-
-static void
-gst_rtp_mp4a_pay_base_init (GstRtpMP4APayClass * klass)
+     static void gst_rtp_mp4a_pay_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
@@ -123,8 +95,6 @@ gst_rtp_mp4a_pay_class_init (GstRtpMP4APayClass * klass)
   gobject_class = (GObjectClass *) klass;
   gstbasertppayload_class = (GstBaseRTPPayloadClass *) klass;
 
-  parent_class = g_type_class_peek_parent (klass);
-
   gobject_class->finalize = gst_rtp_mp4a_pay_finalize;
 
   gstbasertppayload_class->set_caps = gst_rtp_mp4a_pay_setcaps;
@@ -135,7 +105,7 @@ gst_rtp_mp4a_pay_class_init (GstRtpMP4APayClass * klass)
 }
 
 static void
-gst_rtp_mp4a_pay_init (GstRtpMP4APay * rtpmp4apay)
+gst_rtp_mp4a_pay_init (GstRtpMP4APay * rtpmp4apay, GstRtpMP4APayClass * klass)
 {
   rtpmp4apay->rate = 90000;
   rtpmp4apay->profile = g_strdup ("1");
@@ -277,10 +247,26 @@ gst_rtp_mp4a_pay_setcaps (GstBaseRTPPayload * payload, GstCaps * caps)
   GstStructure *structure;
   const GValue *codec_data;
   gboolean res, framed = TRUE;
+  const gchar *stream_format;
 
   rtpmp4apay = GST_RTP_MP4A_PAY (payload);
 
   structure = gst_caps_get_structure (caps, 0);
+
+  /* this is already handled by the template caps, but it is better
+   * to leave here to have meaningful warning messages when linking
+   * fails */
+  stream_format = gst_structure_get_string (structure, "stream-format");
+  if (stream_format) {
+    if (strcmp (stream_format, "raw") != 0) {
+      GST_WARNING_OBJECT (rtpmp4apay, "AAC's stream-format must be 'raw', "
+          "%s is not supported", stream_format);
+      return FALSE;
+    }
+  } else {
+    GST_WARNING_OBJECT (rtpmp4apay, "AAC's stream-format not specified, "
+        "assuming 'raw'");
+  }
 
   codec_data = gst_structure_get_value (structure, "codec_data");
   if (codec_data) {

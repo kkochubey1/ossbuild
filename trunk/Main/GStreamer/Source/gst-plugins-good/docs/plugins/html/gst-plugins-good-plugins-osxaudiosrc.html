@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>osxaudiosrc</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.1">
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
 <link rel="home" href="index.html" title="GStreamer Good Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-osxaudiosink.html" title="osxaudiosink">
 <link rel="next" href="gst-plugins-good-plugins-osxvideosink.html" title="osxvideosink">
-<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 <link rel="chapter" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="chapter" href="ch02.html" title="gst-plugins-good Plugins">
@@ -25,10 +25,10 @@
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#gst-plugins-good-plugins-osxaudiosrc.synopsis" class="shortcut">Top</a>
-                 | 
-                <a href="#gst-plugins-good-plugins-osxaudiosrc.description" class="shortcut">Description</a>
-                 | 
-                <a href="#gst-plugins-good-plugins-osxaudiosrc.properties" class="shortcut">Properties</a>
+                   | 
+                  <a href="#gst-plugins-good-plugins-osxaudiosrc.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#gst-plugins-good-plugins-osxaudiosrc.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
 <div class="refentry" title="osxaudiosrc">
@@ -42,16 +42,13 @@
 </tr></table></div>
 <div class="refsynopsisdiv" title="Synopsis">
 <a name="gst-plugins-good-plugins-osxaudiosrc.synopsis"></a><h2>Synopsis</h2>
-<pre class="synopsis">
-                    <a class="link" href="gst-plugins-good-plugins-osxaudiosrc.html#GstOsxAudioSrc" title="GstOsxAudioSrc">GstOsxAudioSrc</a>;
+<pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-osxaudiosrc.html#GstOsxAudioSrc" title="GstOsxAudioSrc">GstOsxAudioSrc</a>;
 </pre>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-good-plugins-osxaudiosrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-good-plugins-osxaudiosrc.html#GstOsxAudioSrc--device" title='The "device" property'>device</a>"                   <a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"
->gint</a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-osxaudiosrc.html#GstOsxAudioSrc--device" title='The "device" property'>device</a>"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -62,42 +59,19 @@ This element captures raw audio samples using the CoreAudio api.
 <p>
 </p>
 <div class="refsect2" title="Example launch line">
-<a name="id3077429"></a><h3>Example launch line</h3>
-<div class="informalexample"><pre class="programlisting">
-gst-launch osxaudiosrc ! wavenc ! filesink location=audio.wav
-</pre></div>
+<a name="id618595"></a><h3>Example launch line</h3>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch osxaudiosrc <span class="symbol">!</span> wavenc <span class="symbol">!</span> filesink location<span class="symbol">=</span>audio<span class="symbol">.</span>wav</pre></td>
+      </tr>
+    </tbody>
+  </table>
 </div>
-<div class="refsynopsisdiv" title="Synopsis">
-<h2>Synopsis</h2>
-<div class="refsect2" title="Element Information">
-<a name="id3094067"></a><h3>Element Information</h3>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">plugin</span></p></td>
-<td>
-            <a class="link" href="gst-plugins-good-plugins-plugin-osxaudio.html#plugin-osxaudio">osxaudio</a>
-          </td>
-</tr>
-<tr>
-<td><p><span class="term">author</span></p></td>
-<td>Zaheer Abbas Merali &lt;zaheerabbas at merali dot org&gt;</td>
-</tr>
-<tr>
-<td><p><span class="term">class</span></p></td>
-<td>Source/Audio</td>
-</tr>
-</tbody>
-</table></div>
+
 </div>
-<hr>
-<div class="refsect2" title="Element Pads">
-<a name="id3073232"></a><h3>Element Pads</h3>
-</div>
-</div>
-<p>
-</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-good-plugins-osxaudiosrc.details"></a><h2>Details</h2>
@@ -120,9 +94,7 @@ gst-launch osxaudiosrc ! wavenc ! filesink location=audio.wav
 <a name="gst-plugins-good-plugins-osxaudiosrc.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "device" property'>
 <a name="GstOsxAudioSrc--device"></a><h3>The <code class="literal">"device"</code> property</h3>
-<pre class="programlisting">  "device"                   <a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"
->gint</a>                  : Read / Write</pre>
+<pre class="programlisting">  "device"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Device ID of input device.</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 0</p>
@@ -131,6 +103,6 @@ href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.11</div>
+          Generated by GTK-Doc V1.13</div>
 </body>
 </html>

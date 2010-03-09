@@ -43,7 +43,8 @@ static GstStaticPadTemplate gst_rtp_mp4g_depay_src_template =
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS ("video/mpeg,"
         "mpegversion=(int) 4,"
-        "systemstream=(boolean)false;" "audio/mpeg," "mpegversion=(int) 4")
+        "systemstream=(boolean)false;"
+        "audio/mpeg," "mpegversion=(int) 4, " "stream-format=(string)raw")
     );
 
 static GstStaticPadTemplate gst_rtp_mp4g_depay_sink_template =
@@ -170,8 +171,6 @@ gst_rtp_mp4g_depay_class_init (GstRtpMP4GDepayClass * klass)
   gstelement_class = (GstElementClass *) klass;
   gstbasertpdepayload_class = (GstBaseRTPDepayloadClass *) klass;
 
-  parent_class = g_type_class_peek_parent (klass);
-
   gobject_class->finalize = gst_rtp_mp4g_depay_finalize;
 
   gstelement_class->change_state = gst_rtp_mp4g_depay_change_state;
@@ -244,7 +243,8 @@ gst_rtp_mp4g_depay_setcaps (GstBaseRTPDepayload * depayload, GstCaps * caps)
   if ((str = gst_structure_get_string (structure, "media"))) {
     if (strcmp (str, "audio") == 0) {
       srccaps = gst_caps_new_simple ("audio/mpeg",
-          "mpegversion", G_TYPE_INT, 4, NULL);
+          "mpegversion", G_TYPE_INT, 4, "stream-format", G_TYPE_STRING, "raw",
+          NULL);
     } else if (strcmp (str, "video") == 0) {
       srccaps = gst_caps_new_simple ("video/mpeg",
           "mpegversion", G_TYPE_INT, 4,
@@ -546,8 +546,12 @@ gst_rtp_mp4g_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
                   rtpmp4gdepay->constantDuration);
             }
 
-            /* get the number of packets by dividing with the duration */
-            diff /= rtpmp4gdepay->constantDuration;
+            if (rtpmp4gdepay->constantDuration > 0) {
+              /* get the number of packets by dividing with the duration */
+              diff /= rtpmp4gdepay->constantDuration;
+            } else {
+              diff = 0;
+            }
 
             rtpmp4gdepay->last_AU_index += diff;
             rtpmp4gdepay->prev_AU_index = AU_index;

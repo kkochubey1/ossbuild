@@ -286,13 +286,13 @@ RTPSource*      rtp_session_create_source          (RTPSession *sess);
 /* processing packets from receivers */
 GstFlowReturn   rtp_session_process_rtp            (RTPSession *sess, GstBuffer *buffer,
                                                     GstClockTime current_time,
-						    GstClockTime running_time, guint64 ntpnstime);
+						    GstClockTime running_time);
 GstFlowReturn   rtp_session_process_rtcp           (RTPSession *sess, GstBuffer *buffer,
                                                     GstClockTime current_time);
 
 /* processing packets for sending */
 GstFlowReturn   rtp_session_send_rtp               (RTPSession *sess, gpointer data, gboolean is_list,
-                                                    GstClockTime current_time, guint64 ntpnstime);
+                                                    GstClockTime current_time, GstClockTime running_time);
 
 /* stopping the session */
 GstFlowReturn   rtp_session_schedule_bye           (RTPSession *sess, const gchar *reason,
@@ -301,6 +301,6 @@ GstFlowReturn   rtp_session_schedule_bye           (RTPSession *sess, const gcha
 /* get interval for next RTCP interval */
 GstClockTime    rtp_session_next_timeout           (RTPSession *sess, GstClockTime current_time);
 GstFlowReturn   rtp_session_on_timeout             (RTPSession *sess, GstClockTime current_time,
-                                                    guint64 ntpnstime);
+                                                    guint64 ntpnstime, GstClockTime running_time);
 
 #endif /* __RTP_SESSION_H__ */

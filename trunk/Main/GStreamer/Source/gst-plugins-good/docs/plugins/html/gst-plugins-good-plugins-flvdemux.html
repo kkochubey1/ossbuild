@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>flvdemux</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.1">
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
 <link rel="home" href="index.html" title="GStreamer Good Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-flactag.html" title="flactag">
 <link rel="next" href="gst-plugins-good-plugins-flvmux.html" title="flvmux">
-<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 <link rel="chapter" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="chapter" href="ch02.html" title="gst-plugins-good Plugins">
@@ -25,10 +25,10 @@
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#gst-plugins-good-plugins-flvdemux.synopsis" class="shortcut">Top</a>
-                 | 
-                <a href="#gst-plugins-good-plugins-flvdemux.description" class="shortcut">Description</a>
-                 | 
-                <a href="#gst-plugins-good-plugins-flvdemux.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#gst-plugins-good-plugins-flvdemux.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#gst-plugins-good-plugins-flvdemux.object-hierarchy" class="shortcut">Object Hierarchy</a>
 </td></tr>
 </table>
 <div class="refentry" title="flvdemux">
@@ -42,22 +42,15 @@
 </tr></table></div>
 <div class="refsynopsisdiv" title="Synopsis">
 <a name="gst-plugins-good-plugins-flvdemux.synopsis"></a><h2>Synopsis</h2>
-<a name="GstFLVDemux"></a><pre class="synopsis">
-                    <a class="link" href="gst-plugins-good-plugins-flvdemux.html#GstFLVDemux-struct" title="GstFLVDemux">GstFLVDemux</a>;
+<a name="GstFLVDemux"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-flvdemux.html#GstFLVDemux-struct" title="GstFLVDemux">GstFLVDemux</a>;
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-flvdemux.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a
-href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
->GObject</a>
-   +----<a
-href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html"
->GstObject</a>
-         +----<a
-href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"
->GstElement</a>
+  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
+         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
                +----GstFLVDemux
 </pre>
 </div>
@@ -69,105 +62,19 @@ flvdemux demuxes an FLV file into the different contained streams.
 <p>
 </p>
 <div class="refsect2" title="Example launch line">
-<a name="id3020651"></a><h3>Example launch line</h3>
-<div class="informalexample"><pre class="programlisting">
-gst-launch -v filesrc location=/path/to/flv ! flvdemux ! audioconvert ! autoaudiosink
-</pre></div> This pipeline demuxes an FLV file and outputs the contained raw audio streams.
+<a name="id606482"></a><h3>Example launch line</h3>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v filesrc location<span class="symbol">=/</span>path<span class="symbol">/</span>to<span class="symbol">/</span>flv <span class="symbol">!</span> flvdemux <span class="symbol">!</span> audioconvert <span class="symbol">!</span> autoaudiosink</pre></td>
+      </tr>
+    </tbody>
+  </table>
 </div>
-<div class="refsynopsisdiv" title="Synopsis">
-<h2>Synopsis</h2>
-<div class="refsect2" title="Element Information">
-<a name="id3038675"></a><h3>Element Information</h3>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">plugin</span></p></td>
-<td>
-            <a class="link" href="gst-plugins-good-plugins-plugin-flv.html#plugin-flv">flv</a>
-          </td>
-</tr>
-<tr>
-<td><p><span class="term">author</span></p></td>
-<td>Julien Moutte &lt;julien@moutte.net&gt;</td>
-</tr>
-<tr>
-<td><p><span class="term">class</span></p></td>
-<td>Codec/Demuxer</td>
-</tr>
-</tbody>
-</table></div>
+ This pipeline demuxes an FLV file and outputs the contained raw audio streams.
 </div>
-<hr>
-<div class="refsect2" title="Element Pads">
-<a name="id3034120"></a><h3>Element Pads</h3>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">name</span></p></td>
-<td>video</td>
-</tr>
-<tr>
-<td><p><span class="term">direction</span></p></td>
-<td>source</td>
-</tr>
-<tr>
-<td><p><span class="term">presence</span></p></td>
-<td>sometimes</td>
-</tr>
-<tr>
-<td><p><span class="term">details</span></p></td>
-<td>ANY</td>
-</tr>
-</tbody>
-</table></div>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">name</span></p></td>
-<td>audio</td>
-</tr>
-<tr>
-<td><p><span class="term">direction</span></p></td>
-<td>source</td>
-</tr>
-<tr>
-<td><p><span class="term">presence</span></p></td>
-<td>sometimes</td>
-</tr>
-<tr>
-<td><p><span class="term">details</span></p></td>
-<td>ANY</td>
-</tr>
-</tbody>
-</table></div>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">name</span></p></td>
-<td>sink</td>
-</tr>
-<tr>
-<td><p><span class="term">direction</span></p></td>
-<td>sink</td>
-</tr>
-<tr>
-<td><p><span class="term">presence</span></p></td>
-<td>always</td>
-</tr>
-<tr>
-<td><p><span class="term">details</span></p></td>
-<td>video/x-flv</td>
-</tr>
-</tbody>
-</table></div>
-</div>
-</div>
-<p>
-</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-good-plugins-flvdemux.details"></a><h2>Details</h2>
@@ -181,6 +88,6 @@ gst-launch -v filesrc location=/path/to/flv ! flvdemux ! audioconvert ! autoaudi
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.11</div>
+          Generated by GTK-Doc V1.13</div>
 </body>
 </html>

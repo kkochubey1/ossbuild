@@ -27,6 +27,7 @@
 static GstPad *mysrcpad, *mysinkpad;
 /* we also have a list of src buffers */
 static GList *inbuffers = NULL;
+static gint num_dropped = 0;
 
 #define RTP_CAPS_STRING    \
     "application/x-rtp, "               \
@@ -49,6 +50,16 @@ static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
         "clock-rate = (int) [ 1, 2147483647 ]")
     );
 
+static void
+buffer_dropped (gpointer mem)
+{
+  if (mem) {
+    GST_DEBUG ("dropping buffer: data=%p", mem);
+    g_free (mem);
+    num_dropped++;
+  }
+}
+
 static GstElement *
 setup_jitterbuffer (gint num_buffers)
 {
@@ -56,7 +67,7 @@ setup_jitterbuffer (gint num_buffers)
   GstClock *clock;
   GstBuffer *buffer;
   GstCaps *caps;
-  /* generated with
+  /* a 20 sample audio block (2,5 ms) generated with
    * gst-launch audiotestsrc wave=silence blocksize=40 num-buffers=3 ! 
    *    "audio/x-raw-int,channels=1,rate=8000" ! mulawenc ! rtppcmupay !
    *     fakesink dump=1
@@ -68,7 +79,7 @@ setup_jitterbuffer (gint num_buffers)
   };
   GstClockTime ts = G_GUINT64_CONSTANT (0);
   GstClockTime tso = gst_util_uint64_scale (RTP_FRAME_SIZE, GST_SECOND, 8000);
-  /*guint latency = GST_TIME_AS_MSECONDS (num_buffers*tso); */
+  /*guint latency = GST_TIME_AS_MSECONDS (num_buffers * tso); */
   gint i;
 
   GST_DEBUG ("setup_jitterbuffer");
@@ -96,6 +107,8 @@ setup_jitterbuffer (gint num_buffers)
     gst_buffer_set_caps (buffer, caps);
     GST_BUFFER_TIMESTAMP (buffer) = ts;
     GST_BUFFER_DURATION (buffer) = tso;
+    GST_BUFFER_FREE_FUNC (buffer) = buffer_dropped;
+    GST_DEBUG ("created buffer: %p, data=%p", buffer, GST_BUFFER_DATA (buffer));
 
     if (!i)
       GST_BUFFER_FLAG_SET (buffer, GST_BUFFER_FLAG_DISCONT);
@@ -109,8 +122,26 @@ setup_jitterbuffer (gint num_buffers)
     ts += tso;
   }
   gst_caps_unref (caps);
+  num_dropped = 0;
 
   return jitterbuffer;
+}
+
+static GstStateChangeReturn
+start_jitterbuffer (GstElement * jitterbuffer)
+{
+  GstStateChangeReturn ret;
+  GstClockTime now;
+  GstClock *clock;
+
+  clock = gst_element_get_clock (jitterbuffer);
+  now = gst_clock_get_time (clock);
+  gst_object_unref (clock);
+
+  gst_element_set_base_time (jitterbuffer, now);
+  ret = gst_element_set_state (jitterbuffer, GST_STATE_PLAYING);
+
+  return ret;
 }
 
 static void
@@ -143,6 +174,14 @@ check_jitterbuffer_results (GstElement * jitterbuffer, gint num_buffers)
   guint16 prev_sn = 0, cur_sn;
   guint32 prev_ts = 0, cur_ts;
 
+  /* sleep for twice the latency */
+  g_usleep (400 * 1000);
+
+  GST_INFO ("of %d buffer %d/%d received/dropped", num_buffers,
+      g_list_length (buffers), num_dropped);
+  /* if this fails, not all buffers have been processed */
+  fail_unless_equals_int ((g_list_length (buffers) + num_dropped), num_buffers);
+
   /* check the buffer list */
   fail_unless_equals_int (g_list_length (buffers), num_buffers);
   for (node = buffers; node; node = g_list_next (node)) {
@@ -172,9 +211,8 @@ GST_START_TEST (test_push_forward_seq)
   GList *node;
 
   jitterbuffer = setup_jitterbuffer (num_buffers);
-  fail_unless (gst_element_set_state (jitterbuffer,
-          GST_STATE_PLAYING) == GST_STATE_CHANGE_SUCCESS,
-      "could not set to playing");
+  fail_unless (start_jitterbuffer (jitterbuffer)
+      == GST_STATE_CHANGE_SUCCESS, "could not set to playing");
 
   /* push buffers: 0,1,2, */
   for (node = inbuffers; node; node = g_list_next (node)) {
@@ -191,18 +229,75 @@ GST_START_TEST (test_push_forward_seq)
 
 GST_END_TEST;
 
-#if 0
 GST_START_TEST (test_push_backward_seq)
+{
+  GstElement *jitterbuffer;
+  const guint num_buffers = 4;
+  GstBuffer *buffer;
+  GList *node;
+
+  jitterbuffer = setup_jitterbuffer (num_buffers);
+  fail_unless (start_jitterbuffer (jitterbuffer)
+      == GST_STATE_CHANGE_SUCCESS, "could not set to playing");
+
+  /* push buffers: 0,3,2,1 */
+  buffer = (GstBuffer *) inbuffers->data;
+  fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
+  for (node = g_list_last (inbuffers); node != inbuffers;
+      node = g_list_previous (node)) {
+    buffer = (GstBuffer *) node->data;
+    fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
+  }
+
+  /* check the buffer list */
+  check_jitterbuffer_results (jitterbuffer, num_buffers);
+
+  /* cleanup */
+  cleanup_jitterbuffer (jitterbuffer);
+}
+
+GST_END_TEST;
+
+GST_START_TEST (test_push_unordered)
+{
+  GstElement *jitterbuffer;
+  const guint num_buffers = 4;
+  GstBuffer *buffer;
+
+  jitterbuffer = setup_jitterbuffer (num_buffers);
+  fail_unless (start_jitterbuffer (jitterbuffer)
+      == GST_STATE_CHANGE_SUCCESS, "could not set to playing");
+
+  /* push buffers; 0,2,1,3 */
+  buffer = (GstBuffer *) inbuffers->data;
+  fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
+  buffer = g_list_nth_data (inbuffers, 2);
+  fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
+  buffer = g_list_nth_data (inbuffers, 1);
+  fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
+  buffer = g_list_nth_data (inbuffers, 3);
+  fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
+
+  /* check the buffer list */
+  check_jitterbuffer_results (jitterbuffer, num_buffers);
+
+  /* cleanup */
+  cleanup_jitterbuffer (jitterbuffer);
+}
+
+GST_END_TEST;
+
+GST_START_TEST (test_basetime)
 {
   GstElement *jitterbuffer;
   const guint num_buffers = 3;
   GstBuffer *buffer;
   GList *node;
+  GstClockTime tso = gst_util_uint64_scale (RTP_FRAME_SIZE, GST_SECOND, 8000);
 
   jitterbuffer = setup_jitterbuffer (num_buffers);
-  fail_unless (gst_element_set_state (jitterbuffer,
-          GST_STATE_PLAYING) == GST_STATE_CHANGE_SUCCESS,
-      "could not set to playing");
+  fail_unless (start_jitterbuffer (jitterbuffer)
+      == GST_STATE_CHANGE_SUCCESS, "could not set to playing");
 
   /* push buffers: 2,1,0 */
   for (node = g_list_last (inbuffers); node; node = g_list_previous (node)) {
@@ -210,58 +305,21 @@ GST_START_TEST (test_push_backward_seq)
     fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
   }
 
-  /* attempt to flush the jitterbuffer */
-#if 0
-  gst_pad_push_event (mysrcpad, gst_event_new_eos ());
-  gst_element_set_state (jitterbuffer, GST_STATE_READY);
-  gst_element_get_state (jitterbuffer, NULL, NULL, GST_CLOCK_TIME_NONE);
-#endif
+  /* sleep for twice the latency */
+  g_usleep (400 * 1000);
 
-  /* check the buffer list */
-  check_jitterbuffer_results (jitterbuffer, num_buffers);
+  /* if this fails, not all buffers have been processed */
+  fail_unless_equals_int ((g_list_length (buffers) + num_dropped), num_buffers);
 
-  /* cleanup */
-  cleanup_jitterbuffer (jitterbuffer);
-}
-
-GST_END_TEST;
-
-
-GST_START_TEST (test_push_unordered)
-{
-  GstElement *jitterbuffer;
-  const guint num_buffers = 3;
-  GstBuffer *buffer;
-
-  jitterbuffer = setup_jitterbuffer (num_buffers);
-  fail_unless (gst_element_set_state (jitterbuffer,
-          GST_STATE_PLAYING) == GST_STATE_CHANGE_SUCCESS,
-      "could not set to playing");
-
-  /* push buffers; 0,2,1 */
-  buffer = (GstBuffer *) inbuffers->data;
-  fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
-  buffer = g_list_nth_data (inbuffers, 2);
-  fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
-  buffer = g_list_nth_data (inbuffers, 1);
-  fail_unless (gst_pad_push (mysrcpad, buffer) == GST_FLOW_OK);
-
-  /* attempt to flush the jitterbuffer */
-#if 0
-  gst_pad_push_event (mysrcpad, gst_event_new_eos ());
-  gst_element_set_state (jitterbuffer, GST_STATE_READY);
-  gst_element_get_state (jitterbuffer, NULL, NULL, GST_CLOCK_TIME_NONE);
-#endif
-
-  /* check the buffer list */
-  check_jitterbuffer_results (jitterbuffer, num_buffers);
+  buffer = (GstBuffer *) buffers->data;
+  fail_unless (GST_BUFFER_TIMESTAMP (buffer) != (num_buffers * tso));
 
   /* cleanup */
   cleanup_jitterbuffer (jitterbuffer);
 }
 
 GST_END_TEST;
-#endif
+
 
 static Suite *
 rtpjitterbuffer_suite (void)
@@ -270,15 +328,10 @@ rtpjitterbuffer_suite (void)
   TCase *tc_chain = tcase_create ("general");
 
   suite_add_tcase (s, tc_chain);
-  if (0) {
-    tcase_add_test (tc_chain, test_push_forward_seq);
-  }
-#if 0
-  /* these don't work yet, buffers get dropped or never arrive in the buffers
-   * list */
+  tcase_add_test (tc_chain, test_push_forward_seq);
   tcase_add_test (tc_chain, test_push_backward_seq);
   tcase_add_test (tc_chain, test_push_unordered);
-#endif
+  tcase_add_test (tc_chain, test_basetime);
 
   /* FIXME: test buffer lists */
 

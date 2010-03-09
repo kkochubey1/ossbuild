@@ -120,8 +120,6 @@ gst_rtp_amr_pay_class_init (GstRtpAMRPayClass * klass)
 
   gstbasertppayload_class = (GstBaseRTPPayloadClass *) klass;
 
-  parent_class = g_type_class_peek_parent (klass);
-
   gstbasertppayload_class->set_caps = gst_rtp_amr_pay_setcaps;
   gstbasertppayload_class->handle_buffer = gst_rtp_amr_pay_handle_buffer;
 
@@ -139,6 +137,7 @@ static gboolean
 gst_rtp_amr_pay_setcaps (GstBaseRTPPayload * basepayload, GstCaps * caps)
 {
   GstRtpAMRPay *rtpamrpay;
+  gboolean res;
   const GstStructure *s;
   const gchar *str;
 
@@ -162,7 +161,7 @@ gst_rtp_amr_pay_setcaps (GstBaseRTPPayload * basepayload, GstCaps * caps)
     gst_basertppayload_set_options (basepayload, "audio", TRUE, "AMR-WB",
         16000);
 
-  gst_basertppayload_set_outcaps (basepayload,
+  res = gst_basertppayload_set_outcaps (basepayload,
       "encoding-params", G_TYPE_STRING, "1", "octet-align", G_TYPE_STRING, "1",
       /* don't set the defaults
        *
@@ -172,7 +171,7 @@ gst_rtp_amr_pay_setcaps (GstBaseRTPPayload * basepayload, GstCaps * caps)
        */
       NULL);
 
-  return TRUE;
+  return res;
 
   /* ERRORS */
 wrong_type:

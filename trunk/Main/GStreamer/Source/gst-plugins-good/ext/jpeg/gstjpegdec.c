@@ -1256,9 +1256,12 @@ wrong_size:
   }
 decode_error:
   {
+    gchar err_msg[JMSG_LENGTH_MAX];
+
+    dec->jerr.pub.format_message ((j_common_ptr) (&dec->cinfo), err_msg);
+
     GST_ELEMENT_ERROR (dec, STREAM, DECODE,
-        (_("Failed to decode JPEG image")),
-        ("Error #%u: %s", code, dec->jerr.pub.jpeg_message_table[code]));
+        (_("Failed to decode JPEG image")), ("Error #%u: %s", code, err_msg));
     if (outbuf) {
       gst_buffer_unref (outbuf);
       outbuf = NULL;
@@ -1338,6 +1341,7 @@ gst_jpeg_dec_sink_event (GstPad * pad, GstEvent * event)
     case GST_EVENT_FLUSH_STOP:
       GST_DEBUG_OBJECT (dec, "Aborting decompress");
       jpeg_abort_decompress (&dec->cinfo);
+      gst_segment_init (&dec->segment, GST_FORMAT_UNDEFINED);
       gst_jpeg_dec_reset_qos (dec);
       break;
     case GST_EVENT_NEWSEGMENT:{

@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>halaudiosrc</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.1">
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
 <link rel="home" href="index.html" title="GStreamer Good Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-halaudiosink.html" title="halaudiosink">
 <link rel="next" href="gst-plugins-good-plugins-hdv1394src.html" title="hdv1394src">
-<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 <link rel="chapter" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="chapter" href="ch02.html" title="gst-plugins-good Plugins">
@@ -25,14 +25,14 @@
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#gst-plugins-good-plugins-halaudiosrc.synopsis" class="shortcut">Top</a>
-                 | 
-                <a href="#gst-plugins-good-plugins-halaudiosrc.description" class="shortcut">Description</a>
-                 | 
-                <a href="#gst-plugins-good-plugins-halaudiosrc.object-hierarchy" class="shortcut">Object Hierarchy</a>
-                 | 
-                <a href="#gst-plugins-good-plugins-halaudiosrc.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
-                 | 
-                <a href="#gst-plugins-good-plugins-halaudiosrc.properties" class="shortcut">Properties</a>
+                   | 
+                  <a href="#gst-plugins-good-plugins-halaudiosrc.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#gst-plugins-good-plugins-halaudiosrc.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#gst-plugins-good-plugins-halaudiosrc.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+                   | 
+                  <a href="#gst-plugins-good-plugins-halaudiosrc.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
 <div class="refentry" title="halaudiosrc">
@@ -46,25 +46,16 @@
 </tr></table></div>
 <div class="refsynopsisdiv" title="Synopsis">
 <a name="gst-plugins-good-plugins-halaudiosrc.synopsis"></a><h2>Synopsis</h2>
-<a name="GstHalAudioSrc"></a><pre class="synopsis">
-                    <a class="link" href="gst-plugins-good-plugins-halaudiosrc.html#GstHalAudioSrc-struct" title="GstHalAudioSrc">GstHalAudioSrc</a>;
+<a name="GstHalAudioSrc"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-halaudiosrc.html#GstHalAudioSrc-struct" title="GstHalAudioSrc">GstHalAudioSrc</a>;
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-halaudiosrc.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a
-href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
->GObject</a>
-   +----<a
-href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html"
->GstObject</a>
-         +----<a
-href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"
->GstElement</a>
-               +----<a
-href="/usr/share/gtk-doc/html/gstreamer-0.10/GstBin.html"
->GstBin</a>
+  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
+         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
+               +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstBin.html">GstBin</a>
                      +----GstHalAudioSrc
 </pre>
 </div>
@@ -72,16 +63,12 @@ href="/usr/share/gtk-doc/html/gstreamer-0.10/GstBin.html"
 <a name="gst-plugins-good-plugins-halaudiosrc.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstHalAudioSrc implements
- <a
-href="/usr/share/gtk-doc/html/gstreamer-0.10/GstChildProxy.html"
->GstChildProxy</a>.</p>
+ <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstChildProxy.html">GstChildProxy</a>.</p>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-good-plugins-halaudiosrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-good-plugins-halaudiosrc.html#GstHalAudioSrc--udi" title='The "udi" property'>udi</a>"                      <a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
->gchar</a>*                : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-halaudiosrc.html#GstHalAudioSrc--udi" title='The "udi" property'>udi</a>"                      <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -97,67 +84,31 @@ OSS subdevices. If both are present ALSA is preferred.
 <p>
 </p>
 <div class="refsect2" title="Examples">
-<a name="id3084042"></a><h3>Examples</h3>
-<div class="informalexample"><pre class="programlisting">
-hal-find-by-property --key alsa.type --string capture
-</pre></div> list the UDIs of all your ALSA input devices
-<div class="informalexample"><pre class="programlisting">
-gst-launch -v halaudiosrc udi=/org/freedesktop/Hal/devices/pci_8086_27d8_alsa_capture_0 ! autoaudiosink
-</pre></div> You should now hear yourself with a small delay if you have a microphone
+<a name="id607769"></a><h3>Examples</h3>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting">hal<span class="symbol">-</span>find<span class="symbol">-</span>by<span class="symbol">-</span>property <span class="symbol">--</span>key alsa<span class="symbol">.</span>type <span class="symbol">--</span>string capture</pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+ list the UDIs of all your ALSA input devices
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v halaudiosrc udi<span class="symbol">=/</span>org<span class="symbol">/</span>freedesktop<span class="symbol">/</span>Hal<span class="symbol">/</span>devices<span class="symbol">/</span>pci_8086_27d8_alsa_capture_0 <span class="symbol">!</span> autoaudiosink</pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+ You should now hear yourself with a small delay if you have a microphone
 connected to the specified sound device.
 </div>
-<div class="refsynopsisdiv" title="Synopsis">
-<h2>Synopsis</h2>
-<div class="refsect2" title="Element Information">
-<a name="id3094703"></a><h3>Element Information</h3>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">plugin</span></p></td>
-<td>
-            <a class="link" href="gst-plugins-good-plugins-plugin-halelements.html#plugin-halelements">halelements</a>
-          </td>
-</tr>
-<tr>
-<td><p><span class="term">author</span></p></td>
-<td>Jürg Billeter &lt;j@bitron.ch&gt;</td>
-</tr>
-<tr>
-<td><p><span class="term">class</span></p></td>
-<td>Source/Audio</td>
-</tr>
-</tbody>
-</table></div>
-</div>
-<hr>
-<div class="refsect2" title="Element Pads">
-<a name="id3044801"></a><h3>Element Pads</h3>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">name</span></p></td>
-<td>src</td>
-</tr>
-<tr>
-<td><p><span class="term">direction</span></p></td>
-<td>source</td>
-</tr>
-<tr>
-<td><p><span class="term">presence</span></p></td>
-<td>always</td>
-</tr>
-<tr>
-<td><p><span class="term">details</span></p></td>
-<td>ANY</td>
-</tr>
-</tbody>
-</table></div>
-</div>
-</div>
-<p>
-</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-good-plugins-halaudiosrc.details"></a><h2>Details</h2>
@@ -172,9 +123,7 @@ connected to the specified sound device.
 <a name="gst-plugins-good-plugins-halaudiosrc.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "udi" property'>
 <a name="GstHalAudioSrc--udi"></a><h3>The <code class="literal">"udi"</code> property</h3>
-<pre class="programlisting">  "udi"                      <a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
->gchar</a>*                : Read / Write</pre>
+<pre class="programlisting">  "udi"                      <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>Unique Device Id.</p>
 <p>Default value: NULL</p>
 </div>
@@ -182,6 +131,6 @@ href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.11</div>
+          Generated by GTK-Doc V1.13</div>
 </body>
 </html>

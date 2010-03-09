@@ -75,6 +75,7 @@ struct _GstQTDemux {
   gint state;
 
   gboolean pullbased;
+  gboolean posted_redirect;
 
   /* push based variables */
   guint neededbytes;
@@ -86,6 +87,8 @@ struct _GstQTDemux {
   guint64 offset;
   /* offset of the mdat atom */
   guint64 mdatoffset;
+  guint64 first_mdat;
+  gboolean got_moov;
 
   GstTagList *tag_list;
 
@@ -97,6 +100,9 @@ struct _GstQTDemux {
   /* gst index support */
   GstIndex *element_index;
   gint index_id;
+
+  gint64 requested_seek_time;
+  guint64 seek_offset;
 };
 
 struct _GstQTDemuxClass {

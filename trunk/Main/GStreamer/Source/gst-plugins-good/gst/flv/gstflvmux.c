@@ -544,7 +544,7 @@ gst_flv_mux_push (GstFlvMux * mux, GstBuffer * buffer)
     GstFlvMuxIndexEntry *entry = g_slice_new (GstFlvMuxIndexEntry);
     entry->position = mux->byte_count;
     entry->time =
-        gst_guint64_to_gdouble (GST_BUFFER_TIMESTAMP (buffer)) / GST_MSECOND;
+        gst_guint64_to_gdouble (GST_BUFFER_TIMESTAMP (buffer)) / GST_SECOND;
     mux->index = g_list_prepend (mux->index, entry);
   }
 
@@ -1058,6 +1058,11 @@ gst_flv_mux_write_index (GstFlvMux * mux)
     GST_WRITE_DOUBLE_BE (&data[1], entry->position);
     data += 9;
   }
+  script_tag = gst_buffer_join (script_tag, tmp);
+
+  tmp = gst_buffer_new_and_alloc (3);
+  data = GST_BUFFER_DATA (tmp);
+  GST_WRITE_UINT24_BE (data, 9);        /* finish the ECMA array */
   script_tag = gst_buffer_join (script_tag, tmp);
 
   tmp = gst_buffer_new_and_alloc (4);

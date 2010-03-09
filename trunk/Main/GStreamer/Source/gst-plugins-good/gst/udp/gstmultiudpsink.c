@@ -1,5 +1,6 @@
 /* GStreamer
  * Copyright (C) <2007> Wim Taymans <wim.taymans@gmail.com>
+ * Copyright (C) <2009> Jarkko Palviainen <jarkko.palviainen@sesca.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -81,6 +82,7 @@ enum
  * be configured in the element that does the receive. */
 #define DEFAULT_AUTO_MULTICAST     TRUE
 #define DEFAULT_TTL                64
+#define DEFAULT_TTL_MC             1
 #define DEFAULT_LOOP               TRUE
 #define DEFAULT_QOS_DSCP           -1
 
@@ -95,6 +97,7 @@ enum
   PROP_CLIENTS,
   PROP_AUTO_MULTICAST,
   PROP_TTL,
+  PROP_TTL_MC,
   PROP_LOOP,
   PROP_QOS_DSCP,
   PROP_LAST
@@ -307,9 +310,13 @@ gst_multiudpsink_class_init (GstMultiUDPSinkClass * klass)
           "Automatically join/leave the multicast groups, FALSE means user"
           " has to do it himself", DEFAULT_AUTO_MULTICAST, G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_TTL,
-      g_param_spec_int ("ttl", "Multicast TTL",
-          "Used for setting the multicast TTL parameter",
+      g_param_spec_int ("ttl", "Unicast TTL",
+          "Used for setting the unicast TTL parameter",
           0, 255, DEFAULT_TTL, G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class, PROP_TTL_MC,
+      g_param_spec_int ("ttl-mc", "Multicast TTL",
+          "Used for setting the multicast TTL parameter",
+          0, 255, DEFAULT_TTL_MC, G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_LOOP,
       g_param_spec_boolean ("loop", "Multicast Loopback",
           "Used for setting the multicast loop parameter. TRUE = enable,"
@@ -346,6 +353,7 @@ gst_multiudpsink_init (GstMultiUDPSink * sink)
   sink->externalfd = (sink->sockfd != -1);
   sink->auto_multicast = DEFAULT_AUTO_MULTICAST;
   sink->ttl = DEFAULT_TTL;
+  sink->ttl_mc = DEFAULT_TTL_MC;
   sink->loop = DEFAULT_LOOP;
   sink->qos_dscp = DEFAULT_QOS_DSCP;
 }
@@ -368,6 +376,46 @@ gst_multiudpsink_finalize (GObject * object)
   WSA_CLEANUP (object);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
+}
+
+static gboolean
+socket_error_is_ignorable ()
+{
+#ifdef G_OS_WIN32
+  /* Windows doesn't seem to have an EAGAIN for sockets */
+  return WSAGetLastError () == WSAEINTR;
+#else
+  return errno == EINTR || errno == EAGAIN;
+#endif
+}
+
+static int
+socket_last_error_code ()
+{
+#ifdef G_OS_WIN32
+  return WSAGetLastError ();
+#else
+  return errno;
+#endif
+}
+
+static gchar *
+socket_last_error_message ()
+{
+#ifdef G_OS_WIN32
+  int errorcode = WSAGetLastError ();
+  wchar_t buf[1024];
+  DWORD result =
+      FormatMessage (FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+      NULL, errorcode, 0, (LPSTR) buf, sizeof (buf) / sizeof (wchar_t), NULL);
+  if (FAILED (result)) {
+    return g_strdup ("failed to get error message from system");
+  } else {
+    return g_convert ((gchar *) buf, -1, "UTF-16", "UTF-8", NULL, NULL, NULL);
+  }
+#else
+  return g_strdup (g_strerror (errno));
+#endif
 }
 
 static GstFlowReturn
@@ -412,9 +460,11 @@ gst_multiudpsink_render (GstBaseSink * bsink, GstBuffer * buffer)
       if (ret < 0) {
         /* some error, just warn, it's likely recoverable and we don't want to
          * break streaming. We break so that we stop retrying for this client. */
-        if (errno != EINTR && errno != EAGAIN) {
+        if (!socket_error_is_ignorable ()) {
+          gchar *errormessage = socket_last_error_message ();
           GST_WARNING_OBJECT (sink, "client %p gave error %d (%s)", client,
-              errno, g_strerror (errno));
+              socket_last_error_code (), errormessage);
+          g_free (errormessage);
           break;
         }
       } else {
@@ -493,7 +543,7 @@ gst_multiudpsink_render_list (GstBaseSink * bsink, GstBufferList * list)
         ret = sendmsg (*client->sock, &msg, 0);
 
         if (ret < 0) {
-          if (errno != EINTR && errno != EAGAIN) {
+          if (!socket_error_is_ignorable ()) {
             break;
           }
         } else {
@@ -597,12 +647,16 @@ gst_multiudpsink_setup_qos_dscp (GstMultiUDPSink * sink)
   tos = (sink->qos_dscp & 0x3f) << 2;
 
   if (setsockopt (sink->sock, IPPROTO_IP, IP_TOS, &tos, sizeof (tos)) < 0) {
-    GST_ERROR_OBJECT (sink, "could not set TOS: %s", g_strerror (errno));
+    gchar *errormessage = socket_last_error_message ();
+    GST_ERROR_OBJECT (sink, "could not set TOS: %s", errormessage);
+    g_free (errormessage);
   }
 #ifdef IPV6_TCLASS
   if (setsockopt (sink->sock, IPPROTO_IPV6, IPV6_TCLASS, &tos,
           sizeof (tos)) < 0) {
-    GST_ERROR_OBJECT (sink, "could not set TCLASS: %s", g_strerror (errno));
+    gchar *errormessage = socket_last_error_message ();
+    GST_ERROR_OBJECT (sink, "could not set TCLASS: %s", errormessage);
+    g_free (errormessage);
   }
 #endif
 }
@@ -634,6 +688,9 @@ gst_multiudpsink_set_property (GObject * object, guint prop_id,
       break;
     case PROP_TTL:
       udpsink->ttl = g_value_get_int (value);
+      break;
+    case PROP_TTL_MC:
+      udpsink->ttl_mc = g_value_get_int (value);
       break;
     case PROP_LOOP:
       udpsink->loop = g_value_get_boolean (value);
@@ -682,6 +739,9 @@ gst_multiudpsink_get_property (GObject * object, guint prop_id, GValue * value,
     case PROP_TTL:
       g_value_set_int (value, udpsink->ttl);
       break;
+    case PROP_TTL_MC:
+      g_value_set_int (value, udpsink->ttl_mc);
+      break;
     case PROP_LOOP:
       g_value_set_boolean (value, udpsink->loop);
       break;
@@ -723,30 +783,79 @@ gst_multiudpsink_init_send (GstMultiUDPSink * sink)
   sink->bytes_to_serve = 0;
   sink->bytes_served = 0;
 
-  gst_udp_set_loop_ttl (sink->sock, sink->loop, sink->ttl);
   gst_multiudpsink_setup_qos_dscp (sink);
 
-  /* look for multicast clients and join multicast groups appropriately */
+  /* look for multicast clients and join multicast groups appropriately
+     set also ttl and multicast loopback delivery appropriately  */
   for (clients = sink->clients; clients; clients = g_list_next (clients)) {
     client = (GstUDPClient *) clients->data;
-    if (sink->auto_multicast && gst_udp_is_multicast (&client->theiraddr))
-      gst_udp_join_group (*(client->sock), &client->theiraddr, NULL);
+    if (gst_udp_is_multicast (&client->theiraddr)) {
+      if (sink->auto_multicast) {
+        if (gst_udp_join_group (*(client->sock), &client->theiraddr, NULL)
+            != 0)
+          goto join_group_failed;
+      }
+      if (gst_udp_set_loop (sink->sock, sink->loop) != 0)
+        goto loop_failed;
+      if (gst_udp_set_ttl (sink->sock, sink->ttl_mc, TRUE) != 0)
+        goto ttl_failed;
+    } else {
+      if (gst_udp_set_ttl (sink->sock, sink->ttl, FALSE) != 0)
+        goto ttl_failed;
+    }
   }
   return TRUE;
 
   /* ERRORS */
 no_socket:
   {
+    gchar *errormessage = socket_last_error_message ();
+    int errorcode = socket_last_error_code ();
     GST_ELEMENT_ERROR (sink, RESOURCE, FAILED, (NULL),
-        ("Could not create socket (%d): %s", errno, g_strerror (errno)));
+        ("Could not create socket (%d): %s", errorcode, errormessage));
+    g_free (errormessage);
     return FALSE;
   }
 no_broadcast:
   {
+    gchar *errormessage = socket_last_error_message ();
+    int errorcode = socket_last_error_code ();
     CLOSE_IF_REQUESTED (sink);
     GST_ELEMENT_ERROR (sink, RESOURCE, SETTINGS, (NULL),
-        ("Could not set broadcast socket option (%d): %s", errno,
-            g_strerror (errno)));
+        ("Could not set broadcast socket option (%d): %s",
+            errorcode, errormessage));
+    g_free (errormessage);
+    return FALSE;
+  }
+join_group_failed:
+  {
+    gchar *errormessage = socket_last_error_message ();
+    int errorcode = socket_last_error_code ();
+    CLOSE_IF_REQUESTED (sink);
+    GST_ELEMENT_ERROR (sink, RESOURCE, SETTINGS, (NULL),
+        ("Could not join multicast group (%d): %s", errorcode, errormessage));
+    g_free (errormessage);
+    return FALSE;
+  }
+ttl_failed:
+  {
+    gchar *errormessage = socket_last_error_message ();
+    int errorcode = socket_last_error_code ();
+    CLOSE_IF_REQUESTED (sink);
+    GST_ELEMENT_ERROR (sink, RESOURCE, SETTINGS, (NULL),
+        ("Could not set TTL socket option (%d): %s", errorcode, errormessage));
+    g_free (errormessage);
+    return FALSE;
+  }
+loop_failed:
+  {
+    gchar *errormessage = socket_last_error_message ();
+    int errorcode = socket_last_error_code ();
+    CLOSE_IF_REQUESTED (sink);
+    GST_ELEMENT_ERROR (sink, RESOURCE, SETTINGS, (NULL),
+        ("Could not set loopback socket option (%d): %s",
+            errorcode, errormessage));
+    g_free (errormessage);
     return FALSE;
   }
 }

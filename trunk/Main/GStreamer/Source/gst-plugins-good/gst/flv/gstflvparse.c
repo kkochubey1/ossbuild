@@ -422,18 +422,27 @@ gst_flv_parse_tag_script (GstFLVDemux * demux, GstBuffer * buffer)
 
     if (demux->index && demux->times && demux->filepositions
         && !demux->random_access) {
+      guint num;
+
       /* If an index was found and we're in push mode, insert associations */
-      for (i = 0; i < MIN (demux->times->len, demux->filepositions->len); i++) {
+      num = MIN (demux->times->len, demux->filepositions->len);
+      for (i = 0; i < num; i++) {
+        GstIndexAssociation associations[2];
         guint64 time, fileposition;
 
         time = g_array_index (demux->times, gdouble, i) * GST_SECOND;
         fileposition = g_array_index (demux->filepositions, gdouble, i);
         GST_LOG_OBJECT (demux, "adding association %" GST_TIME_FORMAT "-> %"
             G_GUINT64_FORMAT, GST_TIME_ARGS (time), fileposition);
-        gst_index_add_association (demux->index, demux->index_id,
-            GST_ASSOCIATION_FLAG_KEY_UNIT, GST_FORMAT_TIME, time,
-            GST_FORMAT_BYTES, fileposition, NULL);
+        associations[0].format = GST_FORMAT_TIME;
+        associations[0].value = time;
+        associations[1].format = GST_FORMAT_BYTES;
+        associations[1].value = fileposition;
+
+        gst_index_add_associationv (demux->index, demux->index_id,
+            GST_ASSOCIATION_FLAG_KEY_UNIT, 2, associations);
       }
+      demux->indexed = TRUE;
     }
   }
 
@@ -572,10 +581,16 @@ gst_flv_parse_tag_audio (GstFLVDemux * demux, GstBuffer * buffer)
   /* Combine them */
   pts |= pts_ext << 24;
 
-  if (GST_BUFFER_SIZE (buffer) < 12) {
-    GST_ERROR_OBJECT (demux, "Too small tag size");
+  /* Error out on tags with too small headers */
+  if (GST_BUFFER_SIZE (buffer) < 11) {
+    GST_ERROR_OBJECT (demux, "Too small tag size (%d)",
+        GST_BUFFER_SIZE (buffer));
     return GST_FLOW_ERROR;
   }
+
+  /* Silently skip buffers with no data */
+  if (GST_BUFFER_SIZE (buffer) == 11)
+    return GST_FLOW_OK;
 
   /* Skip the stream id and go directly to the flags */
   flags = GST_READ_UINT8 (data + 7);
@@ -741,16 +756,17 @@ gst_flv_parse_tag_audio (GstFLVDemux * demux, GstBuffer * buffer)
       demux->duration < GST_BUFFER_TIMESTAMP (outbuf))
     demux->duration = GST_BUFFER_TIMESTAMP (outbuf);
 
-  /* Only add audio frames to the index if we have no video 
-   * and if we don't have random access */
-  if (!demux->has_video && demux->index && !demux->random_access) {
-    GST_LOG_OBJECT (demux, "adding association %" GST_TIME_FORMAT "-> %"
-        G_GUINT64_FORMAT, GST_TIME_ARGS (GST_BUFFER_TIMESTAMP (outbuf)),
-        demux->cur_tag_offset);
+  /* Only add audio frames to the index if we have no video, if we don't have
+   * random access and if the index is not yet complete */
+  if (!demux->has_video && demux->index && !demux->random_access
+      && !demux->indexed) {
+    GST_LOG_OBJECT (demux,
+        "adding association %" GST_TIME_FORMAT "-> %" G_GUINT64_FORMAT,
+        GST_TIME_ARGS (GST_BUFFER_TIMESTAMP (outbuf)), demux->cur_tag_offset);
     gst_index_add_association (demux->index, demux->index_id,
-        GST_ASSOCIATION_FLAG_KEY_UNIT,
-        GST_FORMAT_TIME, GST_BUFFER_TIMESTAMP (outbuf),
-        GST_FORMAT_BYTES, demux->cur_tag_offset, NULL);
+        GST_ASSOCIATION_FLAG_KEY_UNIT, GST_FORMAT_TIME,
+        GST_BUFFER_TIMESTAMP (outbuf), GST_FORMAT_BYTES, demux->cur_tag_offset,
+        NULL);
   }
 
   if (G_UNLIKELY (demux->audio_need_discont)) {
@@ -795,8 +811,8 @@ gst_flv_parse_tag_audio (GstFLVDemux * demux, GstBuffer * buffer)
   }
 
   if (G_UNLIKELY (!demux->no_more_pads
-          && GST_CLOCK_DIFF (demux->audio_start,
-              GST_BUFFER_TIMESTAMP (outbuf) > 6 * GST_SECOND))) {
+          && (GST_CLOCK_DIFF (demux->audio_start,
+                  GST_BUFFER_TIMESTAMP (outbuf)) > 6 * GST_SECOND))) {
     GST_DEBUG_OBJECT (demux,
         "Signalling no-more-pads because no video stream was found"
         " after 6 seconds of audio");
@@ -1060,10 +1076,10 @@ gst_flv_parse_tag_video (GstFLVDemux * demux, GstBuffer * buffer)
       }
       case 1:
         /* H.264 NALU packet */
-        GST_LOG_OBJECT (demux, "got a H.264 NALU audio packet");
+        GST_LOG_OBJECT (demux, "got a H.264 NALU video packet");
         break;
       default:
-        GST_WARNING_OBJECT (demux, "invalid AAC packet type %u",
+        GST_WARNING_OBJECT (demux, "invalid video packet type %u",
             avc_packet_type);
     }
   }
@@ -1079,26 +1095,28 @@ gst_flv_parse_tag_video (GstFLVDemux * demux, GstBuffer * buffer)
       demux->duration < GST_BUFFER_TIMESTAMP (outbuf))
     demux->duration = GST_BUFFER_TIMESTAMP (outbuf);
 
-  if (!keyframe) {
-    GST_BUFFER_FLAG_SET (outbuf, GST_BUFFER_FLAG_DELTA_UNIT);
-    if (demux->index && !demux->random_access) {
-      GST_LOG_OBJECT (demux, "adding association %" GST_TIME_FORMAT "-> %"
-          G_GUINT64_FORMAT, GST_TIME_ARGS (GST_BUFFER_TIMESTAMP (outbuf)),
-          demux->cur_tag_offset);
-      gst_index_add_association (demux->index, demux->index_id,
-          GST_ASSOCIATION_FLAG_NONE,
-          GST_FORMAT_TIME, GST_BUFFER_TIMESTAMP (outbuf),
-          GST_FORMAT_BYTES, demux->cur_tag_offset, NULL);
-    }
-  } else {
-    if (demux->index && !demux->random_access) {
-      GST_LOG_OBJECT (demux, "adding association %" GST_TIME_FORMAT "-> %"
-          G_GUINT64_FORMAT, GST_TIME_ARGS (GST_BUFFER_TIMESTAMP (outbuf)),
-          demux->cur_tag_offset);
-      gst_index_add_association (demux->index, demux->index_id,
-          GST_ASSOCIATION_FLAG_KEY_UNIT,
-          GST_FORMAT_TIME, GST_BUFFER_TIMESTAMP (outbuf),
-          GST_FORMAT_BYTES, demux->cur_tag_offset, NULL);
+  if (!demux->indexed) {
+    if (!keyframe) {
+      GST_BUFFER_FLAG_SET (outbuf, GST_BUFFER_FLAG_DELTA_UNIT);
+      if (demux->index && !demux->random_access) {
+        GST_LOG_OBJECT (demux, "adding association %" GST_TIME_FORMAT "-> %"
+            G_GUINT64_FORMAT, GST_TIME_ARGS (GST_BUFFER_TIMESTAMP (outbuf)),
+            demux->cur_tag_offset);
+        gst_index_add_association (demux->index, demux->index_id,
+            GST_ASSOCIATION_FLAG_NONE,
+            GST_FORMAT_TIME, GST_BUFFER_TIMESTAMP (outbuf),
+            GST_FORMAT_BYTES, demux->cur_tag_offset, NULL);
+      }
+    } else {
+      if (demux->index && !demux->random_access) {
+        GST_LOG_OBJECT (demux, "adding association %" GST_TIME_FORMAT "-> %"
+            G_GUINT64_FORMAT, GST_TIME_ARGS (GST_BUFFER_TIMESTAMP (outbuf)),
+            demux->cur_tag_offset);
+        gst_index_add_association (demux->index, demux->index_id,
+            GST_ASSOCIATION_FLAG_KEY_UNIT,
+            GST_FORMAT_TIME, GST_BUFFER_TIMESTAMP (outbuf),
+            GST_FORMAT_BYTES, demux->cur_tag_offset, NULL);
+      }
     }
   }
 
@@ -1146,8 +1164,8 @@ gst_flv_parse_tag_video (GstFLVDemux * demux, GstBuffer * buffer)
   }
 
   if (G_UNLIKELY (!demux->no_more_pads
-          && GST_CLOCK_DIFF (demux->video_start,
-              GST_BUFFER_TIMESTAMP (outbuf) > 6 * GST_SECOND))) {
+          && (GST_CLOCK_DIFF (demux->video_start,
+                  GST_BUFFER_TIMESTAMP (outbuf)) > 6 * GST_SECOND))) {
     GST_DEBUG_OBJECT (demux,
         "Signalling no-more-pads because no audio stream was found"
         " after 6 seconds of video");
@@ -1231,12 +1249,22 @@ gst_flv_parse_tag_timestamp (GstFLVDemux * demux, GstBuffer * buffer,
 
   ret = pts * GST_MSECOND;
 
-  if (demux->index && (type == 9 || (type == 8 && !demux->has_video))) {
-    GST_LOG_OBJECT (demux, "adding association %" GST_TIME_FORMAT "-> %"
-        G_GUINT64_FORMAT, GST_TIME_ARGS (ret), demux->offset);
-    gst_index_add_association (demux->index, demux->index_id,
+  if (demux->index && !demux->indexed && (type == 9 || (type == 8
+              && !demux->has_video))) {
+    GstIndexAssociation associations[2];
+
+    GST_LOG_OBJECT (demux,
+        "adding association %" GST_TIME_FORMAT "-> %" G_GUINT64_FORMAT,
+        GST_TIME_ARGS (ret), demux->offset);
+
+    associations[0].format = GST_FORMAT_TIME;
+    associations[0].value = ret;
+    associations[1].format = GST_FORMAT_BYTES;
+    associations[1].value = demux->offset;
+
+    gst_index_add_associationv (demux->index, demux->index_id,
         (keyframe) ? GST_ASSOCIATION_FLAG_KEY_UNIT : GST_ASSOCIATION_FLAG_NONE,
-        GST_FORMAT_TIME, ret, GST_FORMAT_BYTES, demux->offset, NULL);
+        2, associations);
   }
 
   if (demux->duration == GST_CLOCK_TIME_NONE || demux->duration < ret)

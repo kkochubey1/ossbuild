@@ -21,7 +21,7 @@
  * SECTION:element-gstrtpbin
  * @see_also: gstrtpjitterbuffer, gstrtpsession, gstrtpptdemux, gstrtpssrcdemux
  *
- * RTP bin combines the functions of #GstRtpSession, #GstRtpsSrcDemux,
+ * RTP bin combines the functions of #GstRtpSession, #GstRtpSsrcDemux,
  * #GstRtpJitterBuffer and #GstRtpPtDemux in one element. It allows for multiple
  * RTP sessions that will be synchronized together using RTCP SR packets.
  *
@@ -30,11 +30,11 @@
  *
  * To use #GstRtpBin as an RTP receiver, request a recv_rtp_sink_%%d pad. The session
  * number must be specified in the pad name.
- * Data received on the recv_rtp_sink_%%d pad will be processed in the gstrtpsession
- * manager and after being validated forwarded on #GstRtpsSrcDemux element. Each
+ * Data received on the recv_rtp_sink_%%d pad will be processed in the #GstRtpSession
+ * manager and after being validated forwarded on #GstRtpSsrcDemux element. Each
  * RTP stream is demuxed based on the SSRC and send to a #GstRtpJitterBuffer. After
  * the packets are released from the jitterbuffer, they will be forwarded to a
- * #GstRtpsSrcDemux element. The #GstRtpsSrcDemux element will demux the packets based
+ * #GstRtpSsrcDemux element. The #GstRtpSsrcDemux element will demux the packets based
  * on the payload type and will create a unique pad recv_rtp_src_%%d_%%d_%%d on
  * gstrtpbin with the session number, SSRC and payload type respectively as the pad
  * name.
@@ -130,7 +130,7 @@ GST_DEBUG_CATEGORY_STATIC (gst_rtp_bin_debug);
 /* elementfactory information */
 static const GstElementDetails rtpbin_details = GST_ELEMENT_DETAILS ("RTP Bin",
     "Filter/Network/RTP",
-    "Implement an RTP bin",
+    "Real-Time Transport Protocol bin",
     "Wim Taymans <wim.taymans@gmail.com>");
 
 /* sink pads */
@@ -210,11 +210,10 @@ struct _GstRtpBinPrivate
   /* lock protecting dynamic adding/removing */
   GMutex *dyn_lock;
 
-  /* the time when we went to playing */
-  GstClockTime ntp_ns_base;
-
   /* if we are shutting down or not */
   gint shutdown;
+
+  gboolean autoremove;
 };
 
 /* signals and args */
@@ -243,6 +242,8 @@ enum
 #define DEFAULT_SDES                 NULL
 #define DEFAULT_DO_LOST              FALSE
 #define DEFAULT_IGNORE_PT            FALSE
+#define DEFAULT_AUTOREMOVE           FALSE
+#define DEFAULT_BUFFER_MODE          RTP_JITTER_BUFFER_MODE_SLAVE
 
 enum
 {
@@ -251,6 +252,8 @@ enum
   PROP_SDES,
   PROP_DO_LOST,
   PROP_IGNORE_PT,
+  PROP_AUTOREMOVE,
+  PROP_BUFFER_MODE,
   PROP_LAST
 };
 
@@ -291,6 +294,7 @@ struct _GstRtpBinStream
   gulong buffer_handlesync_sig;
   gulong buffer_ptreq_sig;
   gulong buffer_ntpstop_sig;
+  gint percent;
 
   /* the PT demuxer of the SSRC */
   GstElement *demux;
@@ -446,6 +450,9 @@ on_bye_timeout (GstElement * session, guint32 ssrc, GstRtpBinSession * sess)
 {
   g_signal_emit (sess->bin, gst_rtp_bin_signals[SIGNAL_ON_BYE_TIMEOUT], 0,
       sess->id, ssrc);
+
+  if (sess->bin->priv->autoremove)
+    g_signal_emit_by_name (sess->demux, "clear-ssrc", ssrc, NULL);
 }
 
 static void
@@ -453,6 +460,9 @@ on_timeout (GstElement * session, guint32 ssrc, GstRtpBinSession * sess)
 {
   g_signal_emit (sess->bin, gst_rtp_bin_signals[SIGNAL_ON_TIMEOUT], 0,
       sess->id, ssrc);
+
+  if (sess->bin->priv->autoremove)
+    g_signal_emit_by_name (sess->demux, "clear-ssrc", ssrc, NULL);
 }
 
 static void
@@ -523,8 +533,6 @@ create_session (GstRtpBin * rtpbin, gint id)
       (GDestroyNotify) gst_caps_unref);
   rtpbin->sessions = g_slist_prepend (rtpbin->sessions, sess);
 
-  /* set NTP base or new session */
-  g_object_set (session, "ntp-ns-base", rtpbin->priv->ntp_ns_base, NULL);
   /* configure SDES items */
   GST_OBJECT_LOCK (rtpbin);
   g_object_set (session, "sdes", rtpbin->sdes, NULL);
@@ -1154,6 +1162,7 @@ create_stream (GstRtpBinSession * session, guint32 ssrc)
 
   stream->have_sync = FALSE;
   stream->unix_delta = 0;
+  stream->percent = 100;
   session->streams = g_slist_prepend (session->streams, stream);
 
   /* provide clock_rate to the jitterbuffer when needed */
@@ -1162,9 +1171,13 @@ create_stream (GstRtpBinSession * session, guint32 ssrc)
   stream->buffer_ntpstop_sig = g_signal_connect (buffer, "on-npt-stop",
       (GCallback) on_npt_stop, stream);
 
+  g_object_set_data (G_OBJECT (buffer), "GstRTPBin.session", session);
+  g_object_set_data (G_OBJECT (buffer), "GstRTPBin.stream", stream);
+
   /* configure latency and packet lost */
-  g_object_set (buffer, "latency", rtpbin->latency, NULL);
+  g_object_set (buffer, "latency", rtpbin->latency_ms, NULL);
   g_object_set (buffer, "do-lost", rtpbin->do_lost, NULL);
+  g_object_set (buffer, "mode", rtpbin->buffer_mode, NULL);
 
   if (!rtpbin->ignore_pt)
     gst_bin_add (GST_BIN_CAST (rtpbin), demux);
@@ -1222,7 +1235,7 @@ free_stream (GstRtpBinStream * stream)
   gst_element_set_state (stream->demux, GST_STATE_NULL);
   gst_element_set_state (stream->buffer, GST_STATE_NULL);
 
-  /* now remove this signal, we need this while going to NULL because it to 
+  /* now remove this signal, we need this while going to NULL because it to
    * do some cleanups */
   if (stream->demux)
     g_signal_handler_disconnect (stream->demux, stream->demux_padremoved_sig);
@@ -1512,10 +1525,27 @@ gst_rtp_bin_class_init (GstRtpBinClass * klass)
           "Send an event downstream when a packet is lost", DEFAULT_DO_LOST,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+
+  g_object_class_install_property (gobject_class, PROP_AUTOREMOVE,
+      g_param_spec_boolean ("autoremove", "Auto Remove",
+          "Automatically remove timed out sources", DEFAULT_AUTOREMOVE,
+          G_PARAM_READWRITE));
+
   g_object_class_install_property (gobject_class, PROP_IGNORE_PT,
       g_param_spec_boolean ("ignore_pt", "Ignore PT",
           "Do not demultiplex based on PT values", DEFAULT_IGNORE_PT,
           G_PARAM_READWRITE));
+  /**
+   * GstRtpBin::buffer-mode:
+   *
+   * Control the buffering and timestamping mode used by the jitterbuffer.
+   *
+   * Since: 0.10.17
+   */
+  g_object_class_install_property (gobject_class, PROP_BUFFER_MODE,
+      g_param_spec_enum ("buffer-mode", "Buffer Mode",
+          "Control the buffering algorithm in use", RTP_TYPE_JITTER_BUFFER_MODE,
+          DEFAULT_BUFFER_MODE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   gstelement_class->change_state = GST_DEBUG_FUNCPTR (gst_rtp_bin_change_state);
   gstelement_class->request_new_pad =
@@ -1541,9 +1571,12 @@ gst_rtp_bin_init (GstRtpBin * rtpbin, GstRtpBinClass * klass)
   rtpbin->priv->bin_lock = g_mutex_new ();
   rtpbin->priv->dyn_lock = g_mutex_new ();
 
-  rtpbin->latency = DEFAULT_LATENCY_MS;
+  rtpbin->latency_ms = DEFAULT_LATENCY_MS;
+  rtpbin->latency_ns = DEFAULT_LATENCY_MS * GST_MSECOND;
   rtpbin->do_lost = DEFAULT_DO_LOST;
   rtpbin->ignore_pt = DEFAULT_IGNORE_PT;
+  rtpbin->priv->autoremove = DEFAULT_AUTOREMOVE;
+  rtpbin->buffer_mode = DEFAULT_BUFFER_MODE;
 
   /* some default SDES entries */
   str = g_strdup_printf ("%s@%s", g_get_user_name (), g_get_host_name ());
@@ -1636,9 +1669,10 @@ gst_rtp_bin_set_property (GObject * object, guint prop_id,
   switch (prop_id) {
     case PROP_LATENCY:
       GST_RTP_BIN_LOCK (rtpbin);
-      rtpbin->latency = g_value_get_uint (value);
+      rtpbin->latency_ms = g_value_get_uint (value);
+      rtpbin->latency_ns = rtpbin->latency_ms * GST_MSECOND;
       GST_RTP_BIN_UNLOCK (rtpbin);
-      /* propegate the property down to the jitterbuffer */
+      /* propagate the property down to the jitterbuffer */
       gst_rtp_bin_propagate_property_to_jitterbuffer (rtpbin, "latency", value);
       break;
     case PROP_SDES:
@@ -1652,6 +1686,16 @@ gst_rtp_bin_set_property (GObject * object, guint prop_id,
       break;
     case PROP_IGNORE_PT:
       rtpbin->ignore_pt = g_value_get_boolean (value);
+      break;
+    case PROP_AUTOREMOVE:
+      rtpbin->priv->autoremove = g_value_get_boolean (value);
+      break;
+    case PROP_BUFFER_MODE:
+      GST_RTP_BIN_LOCK (rtpbin);
+      rtpbin->buffer_mode = g_value_get_enum (value);
+      GST_RTP_BIN_UNLOCK (rtpbin);
+      /* propagate the property down to the jitterbuffer */
+      gst_rtp_bin_propagate_property_to_jitterbuffer (rtpbin, "mode", value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1670,7 +1714,7 @@ gst_rtp_bin_get_property (GObject * object, guint prop_id,
   switch (prop_id) {
     case PROP_LATENCY:
       GST_RTP_BIN_LOCK (rtpbin);
-      g_value_set_uint (value, rtpbin->latency);
+      g_value_set_uint (value, rtpbin->latency_ms);
       GST_RTP_BIN_UNLOCK (rtpbin);
       break;
     case PROP_SDES:
@@ -1683,6 +1727,12 @@ gst_rtp_bin_get_property (GObject * object, guint prop_id,
       break;
     case PROP_IGNORE_PT:
       g_value_set_boolean (value, rtpbin->ignore_pt);
+      break;
+    case PROP_AUTOREMOVE:
+      g_value_set_boolean (value, rtpbin->priv->autoremove);
+      break;
+    case PROP_BUFFER_MODE:
+      g_value_set_enum (value, rtpbin->buffer_mode);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1704,27 +1754,166 @@ gst_rtp_bin_handle_message (GstBin * bin, GstMessage * message)
 
       /* we change the structure name and add the session ID to it */
       if (gst_structure_has_name (s, "application/x-rtp-source-sdes")) {
-        GSList *walk;
+        GstRtpBinSession *sess;
 
-        /* find the session, the message source has it */
+        /* find the session we set it as object data */
+        sess = g_object_get_data (G_OBJECT (GST_MESSAGE_SRC (message)),
+            "GstRTPBin.session");
+
+        if (G_LIKELY (sess)) {
+          message = gst_message_make_writable (message);
+          s = gst_message_get_structure (message);
+          gst_structure_set ((GstStructure *) s, "session", G_TYPE_UINT,
+              sess->id, NULL);
+        }
+      }
+      GST_BIN_CLASS (parent_class)->handle_message (bin, message);
+      break;
+    }
+    case GST_MESSAGE_BUFFERING:
+    {
+      gint percent;
+      gint min_percent = 100;
+      GSList *sessions, *streams;
+      GstRtpBinStream *stream;
+      gboolean change = FALSE, active = FALSE;
+      GstClockTime min_out_time;
+
+      gst_message_parse_buffering (message, &percent);
+
+      stream =
+          g_object_get_data (G_OBJECT (GST_MESSAGE_SRC (message)),
+          "GstRTPBin.stream");
+
+      GST_DEBUG_OBJECT (bin, "got percent %d from stream %p", percent, stream);
+
+      /* get the stream */
+      if (G_LIKELY (stream)) {
         GST_RTP_BIN_LOCK (rtpbin);
-        for (walk = rtpbin->sessions; walk; walk = g_slist_next (walk)) {
-          GstRtpBinSession *sess = (GstRtpBinSession *) walk->data;
+        /* fill in the percent */
+        stream->percent = percent;
 
-          /* if we found the session, change message. else we exit the loop and
-           * leave the message unchanged */
-          if (GST_OBJECT_CAST (sess->session) == GST_MESSAGE_SRC (message)) {
-            message = gst_message_make_writable (message);
-            s = gst_message_get_structure (message);
+        /* calculate the min value for all streams */
+        for (sessions = rtpbin->sessions; sessions;
+            sessions = g_slist_next (sessions)) {
+          GstRtpBinSession *session = (GstRtpBinSession *) sessions->data;
 
-            gst_structure_set ((GstStructure *) s, "session", G_TYPE_UINT,
-                sess->id, NULL);
-            break;
+          GST_RTP_SESSION_LOCK (session);
+          for (streams = session->streams; streams;
+              streams = g_slist_next (streams)) {
+            GstRtpBinStream *stream = (GstRtpBinStream *) streams->data;
+
+            GST_DEBUG_OBJECT (bin, "stream %p percent %d", stream,
+                stream->percent);
+
+            /* find min percent */
+            if (min_percent > stream->percent)
+              min_percent = stream->percent;
+          }
+          GST_RTP_SESSION_UNLOCK (session);
+        }
+        GST_DEBUG_OBJECT (bin, "min percent %d", min_percent);
+
+        if (rtpbin->buffering) {
+          if (min_percent == 100) {
+            rtpbin->buffering = FALSE;
+            active = TRUE;
+            change = TRUE;
+          }
+        } else {
+          if (min_percent < 100) {
+            /* pause the streams */
+            rtpbin->buffering = TRUE;
+            active = FALSE;
+            change = TRUE;
           }
         }
         GST_RTP_BIN_UNLOCK (rtpbin);
+
+        gst_message_unref (message);
+
+        /* make a new buffering message with the min value */
+        message =
+            gst_message_new_buffering (GST_OBJECT_CAST (bin), min_percent);
+
+        if (G_UNLIKELY (change)) {
+          GstClock *clock;
+          guint64 running_time = 0;
+          guint64 offset = 0;
+
+          /* figure out the running time when we have a clock */
+          if (G_LIKELY ((clock =
+                      gst_element_get_clock (GST_ELEMENT_CAST (bin))))) {
+            guint64 now, base_time;
+
+            now = gst_clock_get_time (clock);
+            base_time = gst_element_get_base_time (GST_ELEMENT_CAST (bin));
+            running_time = now - base_time;
+          }
+          GST_DEBUG_OBJECT (bin,
+              "running time now %" GST_TIME_FORMAT,
+              GST_TIME_ARGS (running_time));
+
+          GST_RTP_BIN_LOCK (rtpbin);
+
+          /* when we reactivate, calculate the offsets so that all streams have
+           * an output time that is at least as big as the running_time */
+          offset = 0;
+          if (active) {
+            if (running_time > rtpbin->buffer_start) {
+              offset = running_time - rtpbin->buffer_start;
+              if (offset >= rtpbin->latency_ns)
+                offset -= rtpbin->latency_ns;
+              else
+                offset = 0;
+            }
+          }
+
+          /* pause all streams */
+          min_out_time = -1;
+          for (sessions = rtpbin->sessions; sessions;
+              sessions = g_slist_next (sessions)) {
+            GstRtpBinSession *session = (GstRtpBinSession *) sessions->data;
+
+            GST_RTP_SESSION_LOCK (session);
+            for (streams = session->streams; streams;
+                streams = g_slist_next (streams)) {
+              GstRtpBinStream *stream = (GstRtpBinStream *) streams->data;
+              GstElement *element = stream->buffer;
+              guint64 last_out;
+
+              g_signal_emit_by_name (element, "set-active", active, offset,
+                  &last_out);
+
+              if (!active) {
+                g_object_get (element, "percent", &stream->percent, NULL);
+
+                if (last_out == -1)
+                  last_out = 0;
+                if (last_out < min_out_time)
+                  min_out_time = last_out;
+              }
+
+              GST_DEBUG_OBJECT (bin,
+                  "setting %p to %d, offset %" GST_TIME_FORMAT ", last %"
+                  GST_TIME_FORMAT ", percent %d", element, active,
+                  GST_TIME_ARGS (offset), GST_TIME_ARGS (last_out),
+                  stream->percent);
+            }
+            GST_RTP_SESSION_UNLOCK (session);
+          }
+          GST_DEBUG_OBJECT (bin,
+              "min out time %" GST_TIME_FORMAT, GST_TIME_ARGS (min_out_time));
+
+          /* the buffer_start is the min out time of all paused jitterbuffers */
+          if (!active)
+            rtpbin->buffer_start = min_out_time;
+
+          GST_RTP_BIN_UNLOCK (rtpbin);
+        }
       }
-      /* fallthrough to forward the modified message to the parent */
+      GST_BIN_CLASS (parent_class)->handle_message (bin, message);
+      break;
     }
     default:
     {
@@ -1732,30 +1921,6 @@ gst_rtp_bin_handle_message (GstBin * bin, GstMessage * message)
       break;
     }
   }
-}
-
-static void
-calc_ntp_ns_base (GstRtpBin * bin)
-{
-  GstClockTime now;
-  GTimeVal current;
-  GSList *walk;
-
-  /* get the current time and convert it to NTP time in nanoseconds */
-  g_get_current_time (&current);
-  now = GST_TIMEVAL_TO_TIME (current);
-  now += (2208988800LL * GST_SECOND);
-
-  GST_RTP_BIN_LOCK (bin);
-  bin->priv->ntp_ns_base = now;
-  for (walk = bin->sessions; walk; walk = g_slist_next (walk)) {
-    GstRtpBinSession *session = (GstRtpBinSession *) walk->data;
-
-    g_object_set (session->session, "ntp-ns-base", now, NULL);
-  }
-  GST_RTP_BIN_UNLOCK (bin);
-
-  return;
 }
 
 static GstStateChangeReturn
@@ -1774,9 +1939,6 @@ gst_rtp_bin_change_state (GstElement * element, GstStateChange transition)
     case GST_STATE_CHANGE_READY_TO_PAUSED:
       GST_LOG_OBJECT (rtpbin, "clearing shutdown flag");
       g_atomic_int_set (&priv->shutdown, 0);
-      break;
-    case GST_STATE_CHANGE_PAUSED_TO_PLAYING:
-      calc_ntp_ns_base (rtpbin);
       break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
       GST_LOG_OBJECT (rtpbin, "setting shutdown flag");

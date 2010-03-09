@@ -1,5 +1,6 @@
 /* GStreamer
  * Copyright (C) <1999> Erik Walthinsen <omega@cse.ogi.edu>
+ * Copyright (C) <2009> STEricsson <benjamin.gaignard@stericsson.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,13 +22,14 @@
 #define __GST_QTDEMUX_TYPES_H__
 
 #include <gst/gst.h>
+#include <gst/base/gstbytereader.h>
 
-#include "qtatomparser.h"
 #include "qtdemux.h"
 
 G_BEGIN_DECLS
 
-typedef gboolean (*QtDumpFunc) (GstQTDemux * qtdemux, QtAtomParser * data, int depth);
+typedef gboolean (*QtDumpFunc) (GstQTDemux * qtdemux, GstByteReader * data,
+    int depth);
 
 typedef struct _QtNodeType QtNodeType;
 
@@ -36,6 +38,7 @@ typedef struct _QtNodeType QtNodeType;
 #define QT_UINT16(a)  (GST_READ_UINT16_BE(a))
 #define QT_UINT8(a)   (GST_READ_UINT8(a))
 #define QT_FP32(a)    ((GST_READ_UINT32_BE(a))/65536.0)
+#define QT_SFP32(a)   (((gint)(GST_READ_UINT32_BE(a)))/65536.0)
 #define QT_FP16(a)    ((GST_READ_UINT16_BE(a))/256.0)
 #define QT_FOURCC(a)  (GST_READ_UINT32_LE(a))
 #define QT_UINT64(a)  ((((guint64)QT_UINT32(a))<<32)|QT_UINT32(((guint8 *)a)+4))

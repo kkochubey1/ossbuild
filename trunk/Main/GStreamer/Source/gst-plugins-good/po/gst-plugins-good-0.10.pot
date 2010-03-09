@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gst-plugins-good 0.10.17\n"
+"Project-Id-Version: gst-plugins-good 0.10.19\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2009-11-17 00:15+0000\n"
+"POT-Creation-Date: 2010-03-06 00:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,70 +23,73 @@ msgstr ""
 msgid "Failed to query sound server capabilities"
 msgstr ""
 
-#: ext/pulse/pulsesink.c:2196
+#. TRANSLATORS: 'song title' by 'artist name'
+#: ext/pulse/pulsesink.c:2235
 #, c-format
 msgid "'%s' by '%s'"
 msgstr ""
 
-#: ext/flac/gstflacdec.c:1100 ext/libpng/gstpngdec.c:343
-#: ext/libpng/gstpngdec.c:353 ext/libpng/gstpngdec.c:548
-#: ext/wavpack/gstwavpackparse.c:1165 gst/avi/gstavidemux.c:4500
+#: ext/flac/gstflacdec.c:1078 ext/libpng/gstpngdec.c:343
+#: ext/libpng/gstpngdec.c:353 ext/libpng/gstpngdec.c:552
+#: ext/wavpack/gstwavpackparse.c:1170 gst/avi/gstavidemux.c:5070
 msgid "Internal data stream error."
 msgstr ""
 
-#: ext/jpeg/gstjpegdec.c:853 ext/jpeg/gstjpegdec.c:1260
+#: ext/jpeg/gstjpegdec.c:853 ext/jpeg/gstjpegdec.c:1264
 msgid "Failed to decode JPEG image"
 msgstr ""
 
-#: ext/shout2/gstshout2.c:558
+#: ext/shout2/gstshout2.c:580
 msgid "Could not connect to server"
 msgstr ""
 
-#: gst/avi/gstavimux.c:1782
+#: gst/avi/gstavimux.c:1833
 msgid "No or invalid input audio, AVI stream will be corrupt."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:443 gst/qtdemux/qtdemux.c:1555
-#: gst/qtdemux/qtdemux.c:2772 gst/qtdemux/qtdemux.c:2801
-msgid "This file is invalid and cannot be played."
-msgstr ""
-
-#: gst/qtdemux/qtdemux.c:1372 gst/qtdemux/qtdemux.c:2612
+#: gst/qtdemux/qtdemux.c:515 gst/qtdemux/qtdemux.c:519
 msgid "This file contains no playable streams."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:1612
+#: gst/qtdemux/qtdemux.c:533 gst/qtdemux/qtdemux.c:1547
+#: gst/qtdemux/qtdemux.c:1802 gst/qtdemux/qtdemux.c:3110
+#: gst/qtdemux/qtdemux.c:3167
+msgid "This file is invalid and cannot be played."
+msgstr ""
+
+#: gst/qtdemux/qtdemux.c:1859
 msgid "This file is incomplete and cannot be played."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:3429 gst/qtdemux/qtdemux.c:3436
-#: gst/qtdemux/qtdemux.c:4137 gst/qtdemux/qtdemux.c:5141
+#: gst/qtdemux/qtdemux.c:3833 gst/qtdemux/qtdemux.c:3840
+#: gst/qtdemux/qtdemux.c:4308 gst/qtdemux/qtdemux.c:4704
+#: gst/qtdemux/qtdemux.c:4710 gst/qtdemux/qtdemux.c:5976
 msgid "This file is corrupt and cannot be played."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:3617
+#: gst/qtdemux/qtdemux.c:4021
 msgid "The video in this file might not play correctly."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:3708
+#: gst/qtdemux/qtdemux.c:4112
 #, c-format
 msgid "This file contains too many streams. Only playing first %d"
 msgstr ""
 
-#: gst/rtsp/gstrtspsrc.c:4492
+#: gst/rtsp/gstrtspsrc.c:4574
 msgid ""
 "No supported stream was found. You might need to install a GStreamer RTSP "
 "extension plugin for Real media streams."
 msgstr ""
 
-#: gst/rtsp/gstrtspsrc.c:4497
+#: gst/rtsp/gstrtspsrc.c:4579
 msgid ""
 "No supported stream was found. You might need to allow more transport "
 "protocols or may otherwise be missing the right GStreamer RTSP extension "
 "plugin."
 msgstr ""
 
-#: gst/wavparse/gstwavparse.c:2044
+#: gst/wavparse/gstwavparse.c:2045
 msgid "Internal data flow error."
 msgstr ""
 
@@ -244,17 +247,17 @@ msgstr ""
 msgid "AUX 2 Out"
 msgstr ""
 
-#: sys/v4l2/gstv4l2src.c:848
+#: sys/v4l2/gstv4l2src.c:858
 #, c-format
 msgid "Error reading %d bytes from device '%s'."
 msgstr ""
 
-#: sys/v4l2/gstv4l2src.c:874
+#: sys/v4l2/gstv4l2src.c:884
 #, c-format
 msgid "Got unexpected frame size of %u instead of %u."
 msgstr ""
 
-#: sys/v4l2/gstv4l2src.c:892
+#: sys/v4l2/gstv4l2src.c:902
 #, c-format
 msgid "Error reading %d bytes on device '%s'."
 msgstr ""
@@ -311,42 +314,42 @@ msgstr ""
 msgid "Device '%s' is not a output device."
 msgstr ""
 
-#: sys/v4l2/v4l2_calls.c:614
+#: sys/v4l2/v4l2_calls.c:615
 #, c-format
 msgid "Failed to set norm for device '%s'."
 msgstr ""
 
-#: sys/v4l2/v4l2_calls.c:652
+#: sys/v4l2/v4l2_calls.c:653
 #, c-format
 msgid "Failed to get current tuner frequency for device '%s'."
 msgstr ""
 
-#: sys/v4l2/v4l2_calls.c:694
+#: sys/v4l2/v4l2_calls.c:695
 #, c-format
 msgid "Failed to set current tuner frequency for device '%s' to %lu Hz."
 msgstr ""
 
-#: sys/v4l2/v4l2_calls.c:728
+#: sys/v4l2/v4l2_calls.c:729
 #, c-format
 msgid "Failed to get signal strength for device '%s'."
 msgstr ""
 
-#: sys/v4l2/v4l2_calls.c:764
+#: sys/v4l2/v4l2_calls.c:765
 #, c-format
 msgid "Failed to get value for control %d on device '%s'."
 msgstr ""
 
-#: sys/v4l2/v4l2_calls.c:799
+#: sys/v4l2/v4l2_calls.c:800
 #, c-format
 msgid "Failed to set value %d for control %d on device '%s'."
 msgstr ""
 
-#: sys/v4l2/v4l2_calls.c:828
+#: sys/v4l2/v4l2_calls.c:829
 #, c-format
 msgid "Failed to get current input on device '%s'. May be it is a radio device"
 msgstr ""
 
-#: sys/v4l2/v4l2_calls.c:850
+#: sys/v4l2/v4l2_calls.c:851
 #, c-format
 msgid "Failed to set input %d on device %s."
 msgstr ""
@@ -356,31 +359,31 @@ msgstr ""
 msgid "Could not enqueue buffers in device '%s'."
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:191
+#: sys/v4l2/v4l2src_calls.c:198
 #, c-format
 msgid "Failed trying to get video frames from device '%s'."
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:193
+#: sys/v4l2/v4l2src_calls.c:200
 #, c-format
 msgid "Failed after %d tries. device %s. system error: %s"
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:232
+#: sys/v4l2/v4l2src_calls.c:239
 #, c-format
 msgid "Could not get parameters on device '%s'"
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:262
+#: sys/v4l2/v4l2src_calls.c:269
 msgid "Video input device did not accept new frame rate setting."
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:323
+#: sys/v4l2/v4l2src_calls.c:330
 #, c-format
 msgid "Could not map buffers from device '%s'"
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:331
+#: sys/v4l2/v4l2src_calls.c:338
 #, c-format
 msgid "The driver of device '%s' does not support any known capture method."
 msgstr ""
