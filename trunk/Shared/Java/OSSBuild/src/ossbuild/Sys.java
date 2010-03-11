@@ -188,6 +188,22 @@ public final class Sys {
 		return createPlatformPackageResourcePrefix(PackagePrefix, OSFamily) + ResourceName;
 	}
 
+	public static boolean initializeRegistry() {
+		try {
+			return Loader.initializeRegistryReferences();
+		} catch(Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
+	public static boolean initializeSystem() {
+		try {
+			return Loader.initializeSystemLoaders();
+		} catch(Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
 	public static boolean initialize() {
 		try {
 			return Loader.initialize();

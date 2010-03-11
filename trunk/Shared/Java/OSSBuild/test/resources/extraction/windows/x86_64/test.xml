@@ -8,7 +8,7 @@
 	    ${home}   user's home directory
 	    ${tmp}    temp directory
 -->
-<Resources>
+<Resources name="test">
 
 	<Extract package="resources.extraction.windows.x86_64" directory="${tmp}/ossbuild/">
 

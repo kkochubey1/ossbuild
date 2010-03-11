@@ -12,9 +12,9 @@ import static org.junit.Assert.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class LoaderTest {
+public class SystemLoaderTest {
 
-	public LoaderTest() {
+	public SystemLoaderTest() {
 	}
 
 	@BeforeClass
@@ -34,7 +34,7 @@ public class LoaderTest {
 	}
 
 	@Test
-	public void testLoader() {
-		assertTrue(Sys.initialize());
+	public void testSystemLoader() {
+		assertTrue(Sys.initializeSystem());
 	}
 }

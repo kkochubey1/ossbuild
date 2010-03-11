@@ -25,6 +25,7 @@ public abstract class DefaultResourceProcessor implements IResourceProcessor {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Variables">
+	protected boolean loaded = false, processed = false;
 	protected long size = 0L;
 	protected boolean shouldBeTransient;
 	protected String resourceName, subDirectory, destName, title, description;
@@ -44,6 +45,8 @@ public abstract class DefaultResourceProcessor implements IResourceProcessor {
 		this.destName = !StringUtil.isNullOrEmpty(DestName) ? DestName : ResourceName;
 		this.title = !StringUtil.isNullOrEmpty(Title) ? Title : DestName;
 		this.description = Description;
+
+		this.loaded = true;
 	}
 	//</editor-fold>
 
@@ -85,6 +88,16 @@ public abstract class DefaultResourceProcessor implements IResourceProcessor {
 	@Override
 	public String getName() {
 		return resourceName;
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return loaded;
+	}
+
+	@Override
+	public boolean isProcessed() {
+		return processed;
 	}
 	//</editor-fold>
 
@@ -148,6 +161,7 @@ public abstract class DefaultResourceProcessor implements IResourceProcessor {
 		if (loadSettings(pkg.resourcePath(resourceName), pkg, xpath, node, varproc)) {
 			//Ask for the size if settings were successfully loaded
 			size = requestSize();
+			loaded = true;
 			return true;
 		}
 
@@ -156,7 +170,10 @@ public abstract class DefaultResourceProcessor implements IResourceProcessor {
 
 	@Override
 	public boolean process(final String fullResourceName, final IResourcePackage pkg, final IResourceProgressListener progress) {
-		return processResource(fullResourceName, pkg, progress);
+		final boolean ret = processResource(fullResourceName, pkg, progress);
+		if (ret)
+			processed = true;
+		return ret;
 	}
 	//</editor-fold>
 

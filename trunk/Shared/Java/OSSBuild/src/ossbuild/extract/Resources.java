@@ -8,9 +8,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -33,15 +36,66 @@ import static ossbuild.extract.ResourceUtils.*;
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public class Resources {
+	//<editor-fold defaultstate="collapsed" desc="Constants">
+	public static final String
+		  ATTRIBUTE_NAME		= "name"
+	;
+
+	public static final Resources
+		  Empty = new Resources(StringUtil.empty, new IResourcePackage[0])
+	;
+
+	public static final Future CompletedFuture = new Future() {
+		@Override
+		public final boolean cancel(boolean bln) {
+			return true;
+		}
+
+		@Override
+		public final boolean isCancelled() {
+			return false;
+		}
+
+		@Override
+		public final boolean isDone() {
+			return true;
+		}
+
+		@Override
+		public final Object get() throws InterruptedException, ExecutionException {
+			return null;
+		}
+
+		@Override
+		public final Object get(long l, TimeUnit tu) throws InterruptedException, ExecutionException, TimeoutException {
+			return null;
+		}
+	};
+	//</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="Variables">
+	protected Registry.Reference registryReference = null;
+	protected String name;
+	protected boolean loaded = false;
+	protected boolean processed = false;
+	protected final Object lock = new Object();
 	protected long totalResourceSize;
 	protected int totalResourceCount;
 	protected IResourcePackage[] packages;
+	protected String[] references;
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
-	public Resources(IResourcePackage... Packages) {
-		initFromPackages(Packages);
+	public Resources(final IResourcePackage... Packages) {
+		initFromPackages(StringUtil.empty, null, Packages);
+	}
+
+	public Resources(final String Name, final IResourcePackage... Packages) {
+		initFromPackages(Name, null, Packages);
+	}
+
+	public Resources(final String Name, final String[] References, final IResourcePackage... Packages) {
+		initFromPackages(Name, References, Packages);
 	}
 	
 	public Resources(final IVariableProcessor VariableProcessor, final InputStream XMLData) throws XPathException, ParserConfigurationException, SAXException, IOException {
@@ -52,11 +106,13 @@ public class Resources {
 		initFromXML(ProcessorFactory, VariableProcessor, XMLData);
 	}
 
-	protected void initFromPackages(IResourcePackage[] Packages) {
+	protected void initFromPackages(final String Name, final String[] References, final IResourcePackage[] Packages) {
 		if (Packages == null)
 			throw new NullPointerException("Processors cannot be null");
-		
+
+		this.name = Name;
 		this.packages = Packages;
+		this.references = References;
 		
 		initAfter();
 	}
@@ -77,6 +133,7 @@ public class Resources {
 
 	protected void initAfter() {
 		calculateTotals();
+		loaded = true;
 	}
 	//</editor-fold>
 
@@ -119,6 +176,22 @@ public class Resources {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Getters">
+	public String getName() {
+		return name;
+	}
+	
+	public boolean isLoaded() {
+		return loaded;
+	}
+
+	public boolean isProcessed() {
+		return processed;
+	}
+
+	public String[] getReferences() {
+		return references;
+	}
+	
 	public int getTotalPackageCount() {
 		return packages.length;
 	}
@@ -133,6 +206,10 @@ public class Resources {
 	
 	public IResourcePackage[] getPackages() {
 		return packages;
+	}
+
+	public Registry.Reference getRegistryReference() {
+		return registryReference;
 	}
 	//</editor-fold>
 
@@ -193,51 +270,71 @@ public class Resources {
 	}
 	//</editor-fold>
 
+	/* public boolean preprocessEnvVars() {
+		return processEnvVars(packages, IResourceFilter.None);
+	}
+	
+	public boolean preprocessEnvVars(final IResourceFilter filter) {
+		return processEnvVars(packages, filter);
+	} /**/
+
 	public Future extract(final IResourcePackage[] pkgs, final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
-		return executor.submit(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					//<editor-fold defaultstate="collapsed" desc="Make compiler happy">
-					if (false)
-						throw new InterruptedException();
-					//</editor-fold>
+		synchronized(lock) {
+			if (processed)
+				return CompletedFuture;
 
-					//<editor-fold defaultstate="collapsed" desc="Prepare">
-					if (callback != null)
-						callback.prepare(Resources.this);
-					//</editor-fold>
+			return executor.submit(new Runnable() {
+				@Override
+				public void run() {
+					synchronized(lock) {
+						try {
+							//<editor-fold defaultstate="collapsed" desc="Make compiler happy">
+							if (false)
+								throw new InterruptedException();
+							//</editor-fold>
 
-					//Do the real work
-					extractResources(pkgs, filter, progress);
+							//<editor-fold defaultstate="collapsed" desc="Prepare">
+							if (callback != null)
+								callback.prepare(Resources.this);
+							//</editor-fold>
 
-					//<editor-fold defaultstate="collapsed" desc="Completed">
-					if (callback != null)
-						callback.completed(Resources.this);
-					//</editor-fold>
-				} catch(InterruptedException ie) {
-					//<editor-fold defaultstate="collapsed" desc="Cancelled">
-					if (callback != null)
-						callback.cancelled(Resources.this);
-					//</editor-fold>
-				} catch(CancellationException ce) {
-					//<editor-fold defaultstate="collapsed" desc="Cancelled">
-					if (callback != null)
-						callback.cancelled(Resources.this);
-					//</editor-fold>
-				} catch(RejectedExecutionException ree) {
-					//<editor-fold defaultstate="collapsed" desc="Cancelled">
-					if (callback != null)
-						callback.cancelled(Resources.this);
-					//</editor-fold>
-				} catch(Throwable t) {
-					//<editor-fold defaultstate="collapsed" desc="Error">
-					if (callback != null)
-						callback.error(Resources.this);
-					//</editor-fold>
+							if (!processed) {
+								//Do the real work
+								extractResources(pkgs, filter, progress);
+
+								//Mark as processed
+								processed = true;
+							}
+
+							//<editor-fold defaultstate="collapsed" desc="Completed">
+							if (callback != null)
+								callback.completed(Resources.this);
+							//</editor-fold>
+						} catch(InterruptedException ie) {
+							//<editor-fold defaultstate="collapsed" desc="Cancelled">
+							if (callback != null)
+								callback.cancelled(Resources.this);
+							//</editor-fold>
+						} catch(CancellationException ce) {
+							//<editor-fold defaultstate="collapsed" desc="Cancelled">
+							if (callback != null)
+								callback.cancelled(Resources.this);
+							//</editor-fold>
+						} catch(RejectedExecutionException ree) {
+							//<editor-fold defaultstate="collapsed" desc="Cancelled">
+							if (callback != null)
+								callback.cancelled(Resources.this);
+							//</editor-fold>
+						} catch(Throwable t) {
+							//<editor-fold defaultstate="collapsed" desc="Error">
+							if (callback != null)
+								callback.error(Resources.this);
+							//</editor-fold>
+						}
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 	//</editor-fold>
 
@@ -287,6 +384,10 @@ public class Resources {
 	//<editor-fold defaultstate="collapsed" desc="newInstance">
 	public static final Resources newInstance(final IResourcePackage... Packages) {
 		return new Resources(Packages);
+	}
+
+	public static final Resources newInstance(final String Name, final IResourcePackage... Packages) {
+		return new Resources(Name, Packages);
 	}
 
 	public static final Resources newInstance(final String ResourceName) {
@@ -371,6 +472,34 @@ public class Resources {
 		//Get the top-level document element, <Resources />
 		final Element top = document.getDocumentElement();
 
+		//<editor-fold defaultstate="collapsed" desc="Resource name">
+		if ((node = (Node)xpath.evaluate("//Resources", top, XPathConstants.NODE)) != null) {
+			this.name = stringAttributeValue(variableProcessor, StringUtil.empty, node, ATTRIBUTE_NAME);
+
+			if (StringUtil.isNullOrEmpty(name))
+				throw new ResourceException("Invalid resource name. It cannot be empty.");
+
+			this.registryReference = Registry.add(name, this);
+		}
+		//</editor-fold>
+
+		//<editor-fold defaultstate="collapsed" desc="References">
+		//Locate <References><Add /></References> tags
+		if ((lst = (NodeList)xpath.evaluate("//Resources/References/Add", top, XPathConstants.NODESET)) != null && lst.getLength() > 0) {
+			final List<String> refs = new ArrayList<String>(lst.getLength());
+
+			//Iterate over every <Add /> tag
+			for(int i = 0; i < lst.getLength() && (node = lst.item(i)) != null; ++i) {
+				final String refName = stringAttributeValue(variableProcessor, StringUtil.empty, node, ATTRIBUTE_NAME);
+				if (!StringUtil.isNullOrEmpty(refName) && !this.name.equalsIgnoreCase(refName))
+					refs.add(refName);
+			}
+
+			this.references = refs.toArray(new String[refs.size()]);
+		}
+		//</editor-fold>
+
+		//<editor-fold defaultstate="collapsed" desc="Packages">
 		//Locate <Extract /> tags
 		if ((lst = (NodeList)xpath.evaluate("//Resources/Extract", top, XPathConstants.NODESET)) == null || lst.getLength() <= 0)
 			return IResourcePackage.EMPTY;
@@ -382,10 +511,44 @@ public class Resources {
 			if ((pkg = Package.newInstance(processorFactory, variableProcessor, node, xpath, document)) != null)
 				pkgs.add(pkg);
 		}
+		//</editor-fold>
 
 		//Create an array and return it
 		return pkgs.toArray(new IResourcePackage[pkgs.size()]);
 	}
+
+	/*protected boolean processEnvVars(final IResourcePackage[] pkgs, final IResourceFilter filter) {
+		//Please note that this is executed in whatever the caller thread is
+
+		String resourceName;
+		boolean success = true;
+
+		try {
+			for(IResourcePackage pkg : pkgs) {
+				if (pkg == null)
+					continue;
+
+				for(IResourceProcessor p : pkg) {
+					if (p == null || !(p instanceof EnvVarProcessor))
+						continue;
+
+					//Double check that we're allowed to process this resource
+					resourceName = pkg.resourcePath(p.getName());
+					if (filter != null && !filter.filter(pkg, p, resourceName))
+						continue;
+
+					//Here we go!
+					if (!p.isProcessed())
+						success = success && p.process(resourceName, pkg, IResourceProgressListener.None);
+				}
+			}
+		} catch(Throwable t) {
+			success = false;
+			throw new ResourceException("Error while processing environment variables", t);
+		} finally {
+			return success;
+		}
+	} /**/
 
 	protected void extractResources(final IResourcePackage[] pkgs, final IResourceFilter filter, final IResourceProgressListener progress) throws Exception {
 		//Please note that this is executed in a separate thread.
@@ -425,7 +588,8 @@ public class Resources {
 					}
 
 					//Here we go!
-					if (p.process(resourceName, pkg, progress)) {
+					//If this was already processed, then skip the processing again
+					if (p.isProcessed() || p.process(resourceName, pkg, progress)) {
 						totalBytes += p.getSize();
 						title = (p instanceof DefaultResourceProcessor ? ((DefaultResourceProcessor)p).getTitle() : p.getName());
 						if (StringUtil.isNullOrEmpty(title))
