@@ -7,15 +7,15 @@ import static org.junit.Assert.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class TestLoader extends SystemLoader {
+public class TestRegistryReference extends RegistryReference {
 
 	@Override
-	public void load() throws Throwable {
+	public void register() throws Throwable {
 		assertTrue(true);
 	}
 
 	@Override
-	public void unload() throws Throwable {
+	public void unregister() throws Throwable {
 		assertTrue(true);
 	}
 

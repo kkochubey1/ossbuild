@@ -20,6 +20,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import ossbuild.Namespaces;
 import ossbuild.StringUtil;
+import ossbuild.extract.Registry;
+import ossbuild.extract.Resources;
 
 /**
  *
@@ -28,19 +30,25 @@ import ossbuild.StringUtil;
 public class Loader {
 	//<editor-fold defaultstate="collapsed" desc="Constants">
 	public static final String
-		INIT_RESOURCE = "/resources/init.xml"
+		  INIT_RESOURCE = "/resources/init.xml"
 	;
 
 	public static final String
-		ATTRIBUTE_CLASS = "class"
+		  ATTRIBUTE_CLASS = "class"
 	;
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Variables">
-	private static boolean unloaded = true;
-	private static boolean initialized = false;
+	private static boolean read = false;
+	private static boolean systemLoadersUnloaded = true;
+	private static boolean systemLoadersInitialized = false;
+	private static boolean registryReferencesUnloaded = true;
+	private static boolean registryReferencesInitialized = false;
 	private static final Object lock = new Object();
-	private static final List<LoaderInfo> loaders = new ArrayList<LoaderInfo>(2);
+	private static final Object systemLoaderLock = new Object();
+	private static final Object registryReferenceLock = new Object();
+	private static final List<SystemLoaderInfo> systemLoaders = new ArrayList<SystemLoaderInfo>(2);
+	private static final List<RegistryReferenceInfo> registryReferences = new ArrayList<RegistryReferenceInfo>(5);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Getters">
@@ -48,15 +56,41 @@ public class Loader {
 		return lock;
 	}
 
-	public static boolean isInitialized() {
+	public static Object getSystemLoaderLock() {
+		return systemLoaderLock;
+	}
+
+	public static Object getRegistryReferenceLock() {
+		return registryReferenceLock;
+	}
+
+	public static boolean isRead() {
 		synchronized(lock) {
-			return initialized;
+			return read;
 		}
 	}
 
-	public static boolean isUnloaded() {
+	public static boolean areSystemLoadersInitialized() {
+		synchronized(systemLoaderLock) {
+			return systemLoadersInitialized;
+		}
+	}
+
+	public static boolean areSystemLoadersUnloaded() {
+		synchronized(systemLoaderLock) {
+			return systemLoadersUnloaded;
+		}
+	}
+
+	public static boolean areRegistryReferencesInitialized() {
 		synchronized(lock) {
-			return unloaded;
+			return registryReferencesInitialized;
+		}
+	}
+
+	public static boolean areRegistryReferencesUnloaded() {
+		synchronized(lock) {
+			return registryReferencesUnloaded;
 		}
 	}
 	//</editor-fold>
@@ -72,120 +106,290 @@ public class Loader {
 
 	//<editor-fold defaultstate="collapsed" desc="Public Static Methods">
 	public static boolean initialize() throws Throwable {
+		return initialize(true);
+	}
+	
+	public static boolean initialize(final boolean cleanRegistryAfterInitialization) throws Throwable {
 		synchronized(lock) {
-			if (initialized)
-				return true;
-
-			initialized = true;
-			unloaded = false;
-
-			//Ensure that we unload when the application ends
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				@Override
-				public void run() {
-					Loader.unload();
+			synchronized(systemLoaderLock) {
+				synchronized(registryReferenceLock) {
+					final boolean ret = initializeRegistryReferences() && initializeSystemLoaders();
+					if (ret && cleanRegistryAfterInitialization)
+						Registry.clear();
+					return ret;
 				}
-			});
-
-			final String resource = (INIT_RESOURCE.startsWith("/") ? INIT_RESOURCE.substring(1) : INIT_RESOURCE);
-
-			try {
-				final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-				final DocumentBuilder builder = factory.newDocumentBuilder();
-				final XPathFactory xpathFactory = XPathFactory.newInstance();
-				final XPath xpath = xpathFactory.newXPath();
-
-				//Creates a context that always has "ossbuild" as a prefix -- useful for xpath evaluations
-				xpath.setNamespaceContext(Namespaces.createNamespaceContext());
-
-				//Cycle through every file at /resources/init.xml. There can be multiple ones in different
-				//jars - using the class loader's getResources() allows us to access all of them.
-				URL url;
-				Enumeration<URL> e = Thread.currentThread().getContextClassLoader().getResources(resource);
-				while(e.hasMoreElements()) {
-					url = e.nextElement();
-
-					Document document = null;
-					LoaderInfo info = null;
-					InputStream input = null;
-					try {
-						input = url.openStream();
-						document = builder.parse(input);
-					} catch (SAXException ex) {
-						return false;
-					} catch(IOException ie) {
-						return false;
-					} finally {
-						try {
-							if (input != null)
-								input.close();
-						} catch(IOException ie) {
-						}
-					}
-
-					//Collapse whitespace nodes
-					document.normalize();
-
-					//Get the top-level document element, <System />
-					final Element top = document.getDocumentElement();
-					
-					try {
-						Node node;
-						NodeList lst;
-
-						//Locate <Load /> tags
-						if ((lst = (NodeList)xpath.evaluate("//System/Load", top, XPathConstants.NODESET)) == null || lst.getLength() <= 0)
-							continue;
-
-						//Iterate over every <Load /> tag
-						for(int i = 0; i < lst.getLength() && (node = lst.item(i)) != null; ++i) {
-
-							//Examine the individual loader
-							if ((info = readLoader(xpath, document, node)) != null)
-								loaders.add(info);
-						}
-						
-					} catch(XPathException t) {
-						return false;
-					}
+			}
+		}
+	}
+	
+	public static boolean unload() throws Throwable {
+		synchronized(lock) {
+			synchronized(systemLoaderLock) {
+				synchronized(registryReferenceLock) {
+					return unloadSystemLoaders() && unloadRegistryReferences();
 				}
-
-				//If we have a loader, then call its .load() method
-				if (!loaders.isEmpty())
-					for(LoaderInfo info : loaders)
-						if (info != null)
-							info.load();
-
-				return true;
-			} finally {
 			}
 		}
 	}
 
-	public static boolean unload() {
-		synchronized(lock) {
-			if (!initialized)
-				return true;
-			if (unloaded)
-				return true;
-			
-			unloaded = true;
-			initialized = false;
+	//<editor-fold defaultstate="collapsed" desc="System Loaders">
+	public static boolean initializeSystemLoaders() throws Throwable {
+		return initializeSystemLoaders(ISystemLoaderInitializeListener.None);
+	}
 
-			try {
-				for(LoaderInfo info : loaders)
-					if (info != null)
-						info.unload();
-			} catch(Throwable t) {
-				throw new RuntimeException(t);
+	public static boolean initializeSystemLoaders(final ISystemLoaderInitializeListener Listener) throws Throwable {
+		synchronized(lock) {
+			synchronized(systemLoaderLock) {
+				if (systemLoadersInitialized)
+					return true;
+
+				systemLoadersInitialized = true;
+				systemLoadersUnloaded = false;
+
+				//Ensure that we unload when the application ends
+				Runtime.getRuntime().addShutdownHook(new Thread() {
+					@Override
+					public void run() {
+						Loader.unloadSystemLoaders();
+					}
+				});
+
+				if (!read)
+					read();
+
+				if (Listener != null)
+					Listener.beforeAllSystemLoadersInitialized();
+
+				//If we have a loader, then call its .load() method
+				if (!systemLoaders.isEmpty()) {
+					for(SystemLoaderInfo info : systemLoaders) {
+						if (info != null) {
+
+							if (Listener != null && !Listener.beforeSystemLoaderInitialized(info.getInstance()))
+								continue;
+
+							info.load();
+							
+							if (Listener != null)
+								Listener.afterSystemLoaderInitialized(info.getInstance());
+						}
+					}
+				}
+
+				if (Listener != null)
+					Listener.afterAllSystemLoadersInitialized();
+
+				return true;
 			}
-			return true;
+		}
+	}
+
+	public static boolean unloadSystemLoaders() {
+		synchronized(lock) {
+			synchronized(systemLoaderLock) {
+				if (!systemLoadersInitialized)
+					return true;
+				if (systemLoadersUnloaded)
+					return true;
+
+				systemLoadersUnloaded = true;
+				systemLoadersInitialized = false;
+
+				try {
+					for(SystemLoaderInfo info : systemLoaders)
+						if (info != null)
+							info.unload();
+				} catch(Throwable t) {
+					throw new RuntimeException(t);
+				}
+				return true;
+			}
 		}
 	}
 	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="Registry References">
+	public static boolean initializeRegistryReferences() throws Throwable {
+		return initializeRegistryReferences(IRegistryReferenceInitializeListener.None);
+	}
+	
+	public static boolean initializeRegistryReferences(final IRegistryReferenceInitializeListener Listener) throws Throwable {
+		synchronized(lock) {
+			synchronized(registryReferenceLock) {
+				if (registryReferencesInitialized)
+					return true;
+
+				registryReferencesInitialized = true;
+				registryReferencesUnloaded = false;
+
+				//Ensure that we unregister when the application ends
+				Runtime.getRuntime().addShutdownHook(new Thread() {
+					@Override
+					public void run() {
+						Loader.unloadRegistryReferences();
+					}
+				});
+
+				if (!read)
+					read();
+
+				if (Listener != null)
+					Listener.beforeAllRegistryReferencesInitialized();
+
+				//If we have a registery ref, then call its .register() method
+				if (!registryReferences.isEmpty()) {
+					for(RegistryReferenceInfo info : registryReferences) {
+						if (info != null) {
+							
+							if (Listener != null && !Listener.beforeRegistryReferenceInitialized(info.getInstance()))
+								continue;
+
+							info.register();
+							
+							final Resources res = info.createResourceExtractor();
+							if (res != null && res != Resources.Empty)
+								Registry.add(res.getName(), res);
+
+							if (Listener != null)
+								Listener.afterRegistryReferenceInitialized(info.getInstance());
+						}
+					}
+				}
+
+				if (Listener != null)
+					Listener.afterAllRegistryReferencesInitialized();
+
+				return true;
+			}
+		}
+	}
+
+	public static boolean unloadRegistryReferences() {
+		synchronized(lock) {
+			synchronized(registryReferenceLock) {
+				if (!registryReferencesInitialized)
+					return true;
+				if (registryReferencesUnloaded)
+					return true;
+
+				registryReferencesUnloaded = true;
+				registryReferencesInitialized = false;
+
+				try {
+					for(RegistryReferenceInfo info : registryReferences) {
+						if (info != null) {
+							info.unregister();
+						}
+					}
+				} catch(Throwable t) {
+					throw new RuntimeException(t);
+				}
+				return true;
+			}
+		}
+	}
+	//</editor-fold>
+	//</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="The Meat">
-	private static LoaderInfo readLoader(final XPath xpath, final Document document, final Node node) throws XPathException {
+	public static boolean read() throws Throwable {
+		synchronized(lock) {
+			synchronized(systemLoaderLock) {
+				synchronized(registryReferenceLock) {
+					if (read)
+						return true;
+
+					read = true;
+
+					final String resource = (INIT_RESOURCE.startsWith("/") ? INIT_RESOURCE.substring(1) : INIT_RESOURCE);
+
+					try {
+						final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+						final DocumentBuilder builder = factory.newDocumentBuilder();
+						final XPathFactory xpathFactory = XPathFactory.newInstance();
+						final XPath xpath = xpathFactory.newXPath();
+
+						//Creates a context that always has "ossbuild" as a prefix -- useful for xpath evaluations
+						xpath.setNamespaceContext(Namespaces.createNamespaceContext());
+
+						//Cycle through every file at /resources/init.xml. There can be multiple ones in different
+						//jars - using the class loader's getResources() allows us to access all of them.
+						URL url;
+						Enumeration<URL> e = Thread.currentThread().getContextClassLoader().getResources(resource);
+						while(e.hasMoreElements()) {
+							url = e.nextElement();
+
+							Document document = null;
+							SystemLoaderInfo sysLoaderInfo = null;
+							RegistryReferenceInfo regRefInfo = null;
+							InputStream input = null;
+							try {
+								input = url.openStream();
+								document = builder.parse(input);
+							} catch (SAXException ex) {
+								return false;
+							} catch(IOException ie) {
+								return false;
+							} finally {
+								try {
+									if (input != null)
+										input.close();
+								} catch(IOException ie) {
+								}
+							}
+
+							//Collapse whitespace nodes
+							document.normalize();
+
+							//Get the top-level document element, <System />
+							final Element top = document.getDocumentElement();
+
+							try {
+								Node node;
+								NodeList lst;
+
+								//<editor-fold defaultstate="collapsed" desc="System loaders">
+								//Locate <Load /> tags
+								if ((lst = (NodeList)xpath.evaluate("//Init/System/Load", top, XPathConstants.NODESET)) == null || lst.getLength() <= 0)
+									continue;
+
+								//Iterate over every <Load /> tag
+								for(int i = 0; i < lst.getLength() && (node = lst.item(i)) != null; ++i) {
+
+									//Examine the individual loader
+									if ((sysLoaderInfo = readSystemLoader(xpath, document, node)) != null)
+										systemLoaders.add(sysLoaderInfo);
+								}
+								//</editor-fold>
+
+								//<editor-fold defaultstate="collapsed" desc="Registry references">
+								//Locate <Load /> tags
+								if ((lst = (NodeList)xpath.evaluate("//Init/Registry/Reference", top, XPathConstants.NODESET)) == null || lst.getLength() <= 0)
+									continue;
+
+								//Iterate over every <Reference /> tag
+								for(int i = 0; i < lst.getLength() && (node = lst.item(i)) != null; ++i) {
+
+									//Examine the individual registry reference
+									if ((regRefInfo = readRegistryReference(xpath, document, node)) != null)
+										registryReferences.add(regRefInfo);
+								}
+								//</editor-fold>
+
+							} catch(XPathException t) {
+								return false;
+							}
+						}
+
+						return true;
+					} finally {
+					}
+				}
+			}
+		}
+	}
+
+	private static SystemLoaderInfo readSystemLoader(final XPath xpath, final Document document, final Node node) throws XPathException {
 		final String className = valueForAttribute(node, ATTRIBUTE_CLASS).trim();
 		if (StringUtil.isNullOrEmpty(className))
 			return null;
@@ -197,29 +401,160 @@ public class Loader {
 
 			final ISystemLoader instance = (ISystemLoader)cls.newInstance();
 
-			return new LoaderInfo(cls, instance);
+			return new SystemLoaderInfo(cls, instance);
+		} catch(Throwable t) {
+			return null;
+		}
+	}
+
+	private static RegistryReferenceInfo readRegistryReference(final XPath xpath, final Document document, final Node node) throws XPathException {
+		final String className = valueForAttribute(node, ATTRIBUTE_CLASS).trim();
+		if (StringUtil.isNullOrEmpty(className))
+			return null;
+
+		try {
+			final Class cls = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+			if (!IRegistryReference.class.isAssignableFrom(cls))
+				return null;
+
+			final IRegistryReference instance = (IRegistryReference)cls.newInstance();
+
+			return new RegistryReferenceInfo(cls, instance);
 		} catch(Throwable t) {
 			return null;
 		}
 	}
 	//</editor-fold>
 
-	//<editor-fold defaultstate="collapsed" desc="Helper Classes">
-	private static class LoaderInfo {
+	//<editor-fold defaultstate="collapsed" desc="Interfaces">
+	public static interface IRegistryReferenceInitializeListener {
+		//<editor-fold defaultstate="collapsed" desc="Constants">
+		public static final IRegistryReferenceInitializeListener
+			None = null
+		;
+		//</editor-fold>
+
+		boolean beforeAllRegistryReferencesInitialized();
+		void afterAllRegistryReferencesInitialized();
+
+		boolean beforeRegistryReferenceInitialized(final IRegistryReference RegistryReference);
+		void afterRegistryReferenceInitialized(final IRegistryReference RegistryReference);
+	}
+
+	public static interface ISystemLoaderInitializeListener {
+		//<editor-fold defaultstate="collapsed" desc="Constants">
+		public static final ISystemLoaderInitializeListener
+			None = null
+		;
+		//</editor-fold>
+
+		boolean beforeAllSystemLoadersInitialized();
+		void afterAllSystemLoadersInitialized();
+
+		boolean beforeSystemLoaderInitialized(final ISystemLoader SystemLoader);
+		void afterSystemLoaderInitialized(final ISystemLoader SystemLoader);
+	}
+
+	public static interface IInitializeListener extends IRegistryReferenceInitializeListener, ISystemLoaderInitializeListener {
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Adapters">
+	public static abstract class RegistryReferenceInitializeListenerAdapter implements IRegistryReferenceInitializeListener {
+		@Override
+		public boolean beforeAllRegistryReferencesInitialized() {
+			return true;
+		}
+
+		@Override
+		public void afterAllRegistryReferencesInitialized() {
+		}
+
+		@Override
+		public boolean beforeRegistryReferenceInitialized(final IRegistryReference RegistryReference) {
+			return true;
+		}
+
+		@Override
+		public void afterRegistryReferenceInitialized(final IRegistryReference RegistryReference) {
+		}
+	}
+
+	public static abstract class SystemLoaderInitializeListenerAdapter implements ISystemLoaderInitializeListener {
+		@Override
+		public boolean beforeAllSystemLoadersInitialized() {
+			return true;
+		}
+
+		@Override
+		public void afterAllSystemLoadersInitialized() {
+		}
+
+		@Override
+		public boolean beforeSystemLoaderInitialized(final ISystemLoader SystemLoader) {
+			return true;
+		}
+
+		@Override
+		public void afterSystemLoaderInitialized(final ISystemLoader SystemLoader) {
+		}
+	}
+
+	public static abstract class InitializeListenerAdapter implements IInitializeListener {
+		@Override
+		public boolean beforeAllRegistryReferencesInitialized() {
+			return true;
+		}
+
+		@Override
+		public void afterAllRegistryReferencesInitialized() {
+		}
+
+		@Override
+		public boolean beforeAllSystemLoadersInitialized() {
+			return true;
+		}
+
+		@Override
+		public void afterAllSystemLoadersInitialized() {
+		}
+
+		@Override
+		public boolean beforeRegistryReferenceInitialized(final IRegistryReference RegistryReference) {
+			return true;
+		}
+
+		@Override
+		public void afterRegistryReferenceInitialized(final IRegistryReference RegistryReference) {
+		}
+
+		@Override
+		public boolean beforeSystemLoaderInitialized(final ISystemLoader SystemLoader) {
+			return true;
+		}
+
+		@Override
+		public void afterSystemLoaderInitialized(final ISystemLoader SystemLoader) {
+		}
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Classes">
+	private static class SystemLoaderInfo {
 		//<editor-fold defaultstate="collapsed" desc="Variables">
 		private Class loaderCls;
 		private ISystemLoader instance;
 		//</editor-fold>
 
 		//<editor-fold defaultstate="collapsed" desc="Initialization">
-		public LoaderInfo(final Class cls, final ISystemLoader instance) {
+		public SystemLoaderInfo(final Class cls, final ISystemLoader instance) {
 			this.loaderCls = cls;
 			this.instance = instance;
 		}
 		//</editor-fold>
 
 		//<editor-fold defaultstate="collapsed" desc="Getters">
-		public Class getLoaderClass() {
+		public Class getSystemLoaderClass() {
 			return loaderCls;
 		}
 
@@ -237,6 +572,49 @@ public class Loader {
 		public void unload() throws Throwable {
 			if (instance != null)
 				instance.unload();
+		}
+		//</editor-fold>
+	}
+
+	private static class RegistryReferenceInfo {
+		//<editor-fold defaultstate="collapsed" desc="Variables">
+		private Class cls;
+		private IRegistryReference instance;
+		//</editor-fold>
+
+		//<editor-fold defaultstate="collapsed" desc="Initialization">
+		public RegistryReferenceInfo(final Class cls, final IRegistryReference instance) {
+			this.cls = cls;
+			this.instance = instance;
+		}
+		//</editor-fold>
+
+		//<editor-fold defaultstate="collapsed" desc="Getters">
+		public Class getRegistryReferenceClass() {
+			return cls;
+		}
+
+		public IRegistryReference getInstance() {
+			return instance;
+		}
+		//</editor-fold>
+
+		//<editor-fold defaultstate="collapsed" desc="Public Methods">
+		public void register() throws Throwable {
+			if (instance != null)
+				instance.register();
+		}
+
+		public void unregister() throws Throwable {
+			if (instance != null)
+				instance.unregister();
+		}
+
+		public Resources createResourceExtractor() throws Throwable {
+			if (instance != null)
+				return instance.createResourceExtractor();
+			else
+				return Resources.Empty;
 		}
 		//</editor-fold>
 	}

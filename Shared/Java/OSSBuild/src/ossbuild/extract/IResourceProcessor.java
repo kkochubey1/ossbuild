@@ -26,6 +26,9 @@ public interface IResourceProcessor {
 	boolean supportsSize();
 	long getSize();
 	String getName();
+
+	boolean isLoaded();
+	boolean isProcessed();
 	
 	boolean load(final IResourcePackage pkg, final XPath xpath, final Node node, final IVariableProcessor varproc) throws XPathException;
 	boolean process(final String fullResourceName, final IResourcePackage pkg, final IResourceProgressListener progress);

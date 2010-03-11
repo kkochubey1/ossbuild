@@ -62,7 +62,8 @@ public class EchoProcessor extends DefaultResourceProcessor {
 
 	@Override
 	protected boolean processResource(final String fullResourceName, final IResourcePackage pkg, final IResourceProgressListener progress) {
-		progress.reportMessage(this, pkg, StringUtil.isNullOrEmpty(key) ? StringUtil.empty : key, !StringUtil.isNullOrEmpty(msg) ? msg : StringUtil.empty);
+		if (progress != null)
+			progress.reportMessage(this, pkg, StringUtil.isNullOrEmpty(key) ? StringUtil.empty : key, !StringUtil.isNullOrEmpty(msg) ? msg : StringUtil.empty);
 		return true;
 	}
 }

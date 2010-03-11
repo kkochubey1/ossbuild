@@ -167,5 +167,10 @@ public class ResourcesTest {
 
 		assertTrue(Path.combine(Path.tempDirectory, "ossbuild/test/test/test.dll").exists());
 		assertTrue(Path.combine(Path.tempDirectory, "ossbuild/test/test/test2.txt").exists());
+
+		assertEquals("test", r.getName());
+		
+		assertFalse(Registry.isEmpty());
+		assertTrue(Registry.hasReference("test"));
 	}
 }
