@@ -28,6 +28,9 @@
 	<Extract package="${pkgPlatform}.etc.fonts" directory="${dirPlatform}/etc/fonts/">
 		<Clean />
 
+		<!-- Set fontconfig file so we can pick up the font configuration for this platform -->
+		<EnvVar name="FONTCONFIG_FILE" value="${dir}/fonts.conf" asFile="true" />
+
 		<!-- Fontconfig configuration -->
 		<File resource="fonts.conf" />
 		<File resource="fonts.dtd" />
@@ -154,7 +157,7 @@
 		<EnvVar name="GST_REGISTRY" value="${dirPlatform}/gst-registry.bin" asFile="true" prepend="false" append="false" />
 		<EnvVar name="GST_PLUGIN_SCANNER" value="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/gst-plugin-scanner" asFile="true" prepend="false" append="false" />
 
-		<EnvVar name="GST_REGISTRY_FORK" value="no" />
+		<EnvVar name="GST_REGISTRY_FORK" value="yes" />
 		<EnvVar name="GST_REGISTRY_UPDATE" value="yes" />
 
 		<!-- Plugin Scanner -->
