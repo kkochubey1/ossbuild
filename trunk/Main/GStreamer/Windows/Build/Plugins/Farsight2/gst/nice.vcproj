@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="gstnice"
 	ProjectGUID="{01FA3955-8F5D-4950-B81B-6839B5A826C3}"
 	RootNamespace="libgstnice"
@@ -307,27 +307,27 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\..\..\..\Source\ext\libnice\gst\gstnice.c"
+			RelativePath="..\..\..\..\..\Source\nice\gst\gstnice.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\..\..\Source\ext\libnice\gst\gstnice.h"
+			RelativePath="..\..\..\..\..\Source\nice\gst\gstnice.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\..\..\Source\ext\libnice\gst\gstnicesink.c"
+			RelativePath="..\..\..\..\..\Source\nice\gst\gstnicesink.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\..\..\Source\ext\libnice\gst\gstnicesink.h"
+			RelativePath="..\..\..\..\..\Source\nice\gst\gstnicesink.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\..\..\Source\ext\libnice\gst\gstnicesrc.c"
+			RelativePath="..\..\..\..\..\Source\nice\gst\gstnicesrc.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\..\..\Source\ext\libnice\gst\gstnicesrc.h"
+			RelativePath="..\..\..\..\..\Source\nice\gst\gstnicesrc.h"
 			>
 		</File>
 	</Files>
