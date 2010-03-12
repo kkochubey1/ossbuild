@@ -33,10 +33,13 @@
  */
 /* FIXME:
  * - can we avoid plugging the textoverlay?
- * - we should use autovideosink as we are RANK_NONE and would not get plugged
- *   - but then we have to lookup the realsink to be able to set sync
  * - gst-seek 15 "videotestsrc ! fpsdisplaysink" dies when closing gst-seek
- * - if we make ourself RANK_PRIMARY+10 autovideosink asserts
+ *
+ * NOTE:
+ * - if we make ourself RANK_PRIMARY+10 or something that autovideosink would
+ *   select and fpsdisplaysink is set to use autovideosink as its internal sink
+ *   it doesn't work. Reason: autovideosink creates a fpsdisplaysink, that
+ *   creates an autovideosink, that...
  *
  * IDEAS:
  * - do we want to gather min/max fps and show in GST_STATE_CHANGE_READY_TO_NULL
@@ -75,6 +78,7 @@ enum
   ARG_0,
   ARG_SYNC,
   ARG_TEXT_OVERLAY,
+  ARG_VIDEO_SINK,
   /* FILL ME */
 };
 
@@ -102,14 +106,21 @@ fps_display_sink_class_init (GstFPSDisplaySinkClass * klass)
 
   g_object_class_install_property (gobject_klass, ARG_SYNC,
       g_param_spec_boolean ("sync",
-          "Sync", "Sync on the clock", TRUE,
+          "Sync", "Sync on the clock (if the internally used sink doesn't "
+          "have this property it will be ignored", TRUE,
           G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_klass, ARG_TEXT_OVERLAY,
       g_param_spec_boolean ("text-overlay",
           "text-overlay",
-          "Wether to use text-overlay", TRUE,
+          "Whether to use text-overlay", TRUE,
           G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_klass, ARG_VIDEO_SINK,
+      g_param_spec_object ("video-sink",
+          "video-sink",
+          "Video sink to use (Must only be called on NULL state)",
+          GST_TYPE_ELEMENT, G_PARAM_READWRITE));
 
   gstelement_klass->change_state = fps_display_sink_change_state;
 
@@ -164,38 +175,86 @@ on_video_sink_data_flow (GstPad * pad, GstMiniObject * mini_obj,
 }
 
 static void
-fps_display_sink_init (GstFPSDisplaySink * self,
-    GstFPSDisplaySinkClass * g_class)
+update_sub_sync (GstElement * sink, gpointer data)
+{
+  /* Some sinks (like autovideosink) don't have the sync property so
+   * we check it exists before setting it to avoid a warning at
+   * runtime. */
+  if (g_object_class_find_property (G_OBJECT_GET_CLASS (sink), "sync"))
+    g_object_set (sink, "sync", *((gboolean *) data), NULL);
+  else
+    GST_WARNING ("Internal sink doesn't have sync property");
+}
+
+static void
+fps_display_sink_update_sink_sync (GstFPSDisplaySink * self)
+{
+  GstIterator *iterator;
+
+  if (self->video_sink == NULL)
+    return;
+
+  if (GST_IS_BIN (self->video_sink)) {
+    iterator = gst_bin_iterate_sinks (GST_BIN (self->video_sink));
+    gst_iterator_foreach (iterator, (GFunc) update_sub_sync,
+        (void *) &self->sync);
+    gst_iterator_free (iterator);
+  } else
+    update_sub_sync (self->video_sink, (void *) &self->sync);
+
+}
+
+static void
+update_video_sink (GstFPSDisplaySink * self, GstElement * video_sink)
 {
   GstPad *sink_pad;
 
-  self->sync = FALSE;
-  self->use_text_overlay = TRUE;
+  if (self->video_sink) {
 
-  /* create child elements */
-  self->video_sink =
-      gst_element_factory_make ("xvimagesink", "fps-display-video_sink");
-  if (!self->video_sink) {
-    GST_ERROR_OBJECT (self, "element could not be created");
-    return;
+    /* remove pad probe */
+    sink_pad = gst_element_get_static_pad (self->video_sink, "sink");
+    gst_pad_remove_data_probe (sink_pad, self->data_probe_id);
+    gst_object_unref (sink_pad);
+    self->data_probe_id = -1;
+
+    /* remove ghost pad target */
+    gst_ghost_pad_set_target (GST_GHOST_PAD (self->ghost_pad), NULL);
+
+    /* remove old sink */
+    gst_bin_remove (GST_BIN (self), self->video_sink);
+    gst_object_unref (self->video_sink);
   }
 
-  g_object_set (self->video_sink, "sync", self->sync, NULL);
+  /* create child elements */
+  self->video_sink = video_sink;
+
+  if (self->video_sink == NULL)
+    return;
+
+  fps_display_sink_update_sink_sync (self);
 
   /* take a ref before bin takes the ownership */
   gst_object_ref (self->video_sink);
 
   gst_bin_add (GST_BIN (self), self->video_sink);
 
-  /* create ghost pad */
-  self->ghost_pad = gst_ghost_pad_new_no_target ("sink_pad", GST_PAD_SINK);
-  gst_element_add_pad (GST_ELEMENT (self), self->ghost_pad);
-
   /* attach or pad probe */
   sink_pad = gst_element_get_static_pad (self->video_sink, "sink");
-  gst_pad_add_data_probe (sink_pad, G_CALLBACK (on_video_sink_data_flow),
-      (gpointer) self);
+  self->data_probe_id = gst_pad_add_data_probe (sink_pad,
+      G_CALLBACK (on_video_sink_data_flow), (gpointer) self);
   gst_object_unref (sink_pad);
+}
+
+static void
+fps_display_sink_init (GstFPSDisplaySink * self,
+    GstFPSDisplaySinkClass * g_class)
+{
+  self->sync = FALSE;
+  self->use_text_overlay = TRUE;
+  self->video_sink = NULL;
+
+  self->ghost_pad = gst_ghost_pad_new_no_target ("sink", GST_PAD_SINK);
+  gst_element_add_pad (GST_ELEMENT (self), self->ghost_pad);
 
   self->query = gst_query_new_position (GST_FORMAT_TIME);
 }
@@ -256,7 +315,7 @@ fps_display_sink_start (GstFPSDisplaySink * self)
   self->frames_rendered = G_GUINT64_CONSTANT (0);
   self->frames_dropped = G_GUINT64_CONSTANT (0);
 
-  GST_WARNING ("use text-overlay? %d", self->use_text_overlay);
+  GST_DEBUG_OBJECT (self, "Use text-overlay? %d", self->use_text_overlay);
 
   if (self->use_text_overlay) {
     if (!self->text_overlay) {
@@ -345,7 +404,7 @@ fps_display_sink_set_property (GObject * object, guint prop_id,
   switch (prop_id) {
     case ARG_SYNC:
       self->sync = g_value_get_boolean (value);
-      g_object_set (self->video_sink, "sync", self->sync, NULL);
+      fps_display_sink_update_sink_sync (self);
       break;
     case ARG_TEXT_OVERLAY:
       self->use_text_overlay = g_value_get_boolean (value);
@@ -359,6 +418,17 @@ fps_display_sink_set_property (GObject * object, guint prop_id,
           g_object_set (self->text_overlay, "silent", FALSE, NULL);
         }
       }
+      break;
+    case ARG_VIDEO_SINK:
+      /* FIXME should we add a state-lock or a lock around here?
+       * need to check if it is possible that a state change NULL->READY can
+       * happen while this code is executing on a different thread */
+      if (GST_STATE (self) != GST_STATE_NULL) {
+        g_warning ("Can't set video-sink property of fpsdisplaysink if not on "
+            "NULL state");
+        break;
+      }
+      update_video_sink (self, (GstElement *) g_value_get_object (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -379,6 +449,9 @@ fps_display_sink_get_property (GObject * object, guint prop_id,
     case ARG_TEXT_OVERLAY:
       g_value_set_boolean (value, self->use_text_overlay);
       break;
+    case ARG_VIDEO_SINK:
+      g_value_set_object (value, self->video_sink);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -393,7 +466,29 @@ fps_display_sink_change_state (GstElement * element, GstStateChange transition)
 
   switch (transition) {
     case GST_STATE_CHANGE_NULL_TO_READY:
-      fps_display_sink_start (self);
+
+      if (self->video_sink == NULL) {
+        GstElement *video_sink;
+
+        GST_DEBUG_OBJECT (self, "No video sink set, creating autovideosink");
+        video_sink = gst_element_factory_make ("autovideosink",
+            "fps-display-video_sink");
+        update_video_sink (self, video_sink);
+      }
+
+      if (self->video_sink != NULL) {
+        fps_display_sink_start (self);
+      } else {
+        GST_ELEMENT_ERROR (self, LIBRARY, INIT,
+            ("No video sink set and autovideosink is not available"), (NULL));
+        ret = GST_STATE_CHANGE_FAILURE;
+      }
+      break;
+    case GST_STATE_CHANGE_READY_TO_PAUSED:
+    case GST_STATE_CHANGE_PAUSED_TO_PLAYING:
+      /* reinforce our sync to children, as they might have changed
+       * internally */
+      fps_display_sink_update_sink_sync (self);
       break;
     default:
       break;

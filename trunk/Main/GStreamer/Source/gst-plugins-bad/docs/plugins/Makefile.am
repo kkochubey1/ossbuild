@@ -89,14 +89,15 @@ EXAMPLE_CFILES = \
         $(top_srcdir)/ext/directfb/dfb-example.c
 
 EXTRA_HFILES = \
+	$(top_srcdir)/ext/assrender/gstassrender.h \
 	$(top_srcdir)/ext/amrwbenc/gstamrwbenc.h \
 	$(top_srcdir)/ext/celt/gstceltdec.h \
 	$(top_srcdir)/ext/celt/gstceltenc.h \
 	$(top_srcdir)/ext/dc1394/gstdc1394.h \
 	$(top_srcdir)/ext/directfb/dfbvideosink.h \
 	$(top_srcdir)/ext/dts/gstdtsdec.h \
-	$(top_srcdir)/ext/ivorbis/vorbisdec.h \
 	$(top_srcdir)/ext/faac/gstfaac.h \
+	$(top_srcdir)/ext/faad/gstfaad.h \
 	$(top_srcdir)/ext/jack/gstjackaudiosrc.h \
 	$(top_srcdir)/ext/jack/gstjackaudiosink.h \
 	$(top_srcdir)/ext/kate/gstkateenc.h \
@@ -121,12 +122,15 @@ EXTRA_HFILES = \
 	$(top_srcdir)/ext/timidity/gsttimidity.h \
 	$(top_srcdir)/ext/timidity/gstwildmidi.h \
 	$(top_srcdir)/ext/zbar/gstzbar.h \
-	$(top_srcdir)/gst/aacparse/gstaacparse.h \
 	$(top_srcdir)/gst/aiff/aiffparse.h \
 	$(top_srcdir)/gst/aiff/aiffmux.h \
-	$(top_srcdir)/gst/amrparse/gstamrparse.h \
+	$(top_srcdir)/gst/audioparsers/gstaacparse.h \
+	$(top_srcdir)/gst/audioparsers/gstac3parse.h \
+	$(top_srcdir)/gst/audioparsers/gstamrparse.h \
+	$(top_srcdir)/gst/audioparsers/gstflacparse.h \
 	$(top_srcdir)/gst/autoconvert/gstautoconvert.h \
 	$(top_srcdir)/gst/camerabin/gstcamerabin.h \
+	$(top_srcdir)/gst/dataurisrc/gstdataurisrc.h \
 	$(top_srcdir)/gst/dccp/gstdccpclientsink.h \
 	$(top_srcdir)/gst/dccp/gstdccpclientsrc.h \
 	$(top_srcdir)/gst/dccp/gstdccpserversink.h \
@@ -141,6 +145,7 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/festival/gstfestival.h \
 	$(top_srcdir)/gst/legacyresample/gstlegacyresample.h \
 	$(top_srcdir)/gst/liveadder/liveadder.h \
+	$(top_srcdir)/gst/jpegformat/gstjpegparse.h \
 	$(top_srcdir)/gst/mxf/mxfdemux.h \
 	$(top_srcdir)/gst/mxf/mxfmux.h \
 	$(top_srcdir)/gst/nuvdemux/gstnuvdemux.h \
@@ -153,7 +158,6 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/sdp/gstsdpdemux.h \
 	$(top_srcdir)/gst/selector/gstinputselector.h \
 	$(top_srcdir)/gst/selector/gstoutputselector.h \
-	$(top_srcdir)/gst/shapewipe/gstshapewipe.h \
 	$(top_srcdir)/gst/speed/gstspeed.h \
 	$(top_srcdir)/gst/stereo/gststereo.h \
 	$(top_srcdir)/gst/videosignal/gstvideoanalyse.h \

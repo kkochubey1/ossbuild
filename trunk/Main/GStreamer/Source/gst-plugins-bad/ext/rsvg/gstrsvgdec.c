@@ -39,7 +39,7 @@ static GstStaticPadTemplate sink_factory =
 #endif
 
 static GstStaticPadTemplate src_factory =
-    GST_STATIC_PAD_TEMPLATE ("src", GST_PAD_SRC, GST_PAD_ALWAYS,
+GST_STATIC_PAD_TEMPLATE ("src", GST_PAD_SRC, GST_PAD_ALWAYS,
     GST_STATIC_CAPS (GST_RSVG_VIDEO_CAPS));
 
 GST_BOILERPLATE (GstRsvgDec, gst_rsvg_dec, GstElement, GST_TYPE_ELEMENT);

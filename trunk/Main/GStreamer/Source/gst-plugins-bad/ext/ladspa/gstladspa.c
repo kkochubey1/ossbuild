@@ -48,8 +48,6 @@
 #define LADSPA_VERSION "1.0"
 #endif
 
-#define GST_LADSPA_DESCRIPTOR_QDATA g_quark_from_static_string("ladspa-descriptor")
-
 #define GST_LADSPA_DEFAULT_PATH \
   "/usr/lib/ladspa" G_SEARCHPATH_SEPARATOR_S \
   "/usr/local/lib/ladspa" G_SEARCHPATH_SEPARATOR_S \
@@ -60,8 +58,7 @@ static void gst_ladspa_set_property (GObject * object, guint prop_id,
 static void gst_ladspa_get_property (GObject * object, guint prop_id,
     GValue * value, GParamSpec * pspec);
 
-static gboolean gst_ladspa_setup (GstSignalProcessor * sigproc,
-    guint sample_rate);
+static gboolean gst_ladspa_setup (GstSignalProcessor * sigproc, GstCaps * caps);
 static gboolean gst_ladspa_start (GstSignalProcessor * sigproc);
 static void gst_ladspa_stop (GstSignalProcessor * sigproc);
 static void gst_ladspa_cleanup (GstSignalProcessor * sigproc);
@@ -73,6 +70,8 @@ static GstPlugin *ladspa_plugin;
 
 GST_DEBUG_CATEGORY_STATIC (ladspa_debug);
 #define GST_CAT_DEFAULT ladspa_debug
+
+static GQuark descriptor_quark = 0;
 
 
 static void
@@ -92,7 +91,7 @@ gst_ladspa_base_init (gpointer g_class)
   GST_DEBUG ("base_init %p", g_class);
 
   desc = (LADSPA_Descriptor *) g_type_get_qdata (G_OBJECT_CLASS_TYPE (klass),
-      GST_LADSPA_DESCRIPTOR_QDATA);
+      descriptor_quark);
   g_assert (desc);
   klass->descriptor = desc;
 
@@ -437,7 +436,8 @@ gst_ladspa_class_init (GstLADSPAClass * klass, LADSPA_Descriptor * desc)
 {
   GObjectClass *gobject_class;
   GstSignalProcessorClass *gsp_class;
-  gint i;
+  GParamSpec *p;
+  gint i, ix;
 
   GST_DEBUG ("class_init %p", klass);
 
@@ -452,33 +452,25 @@ gst_ladspa_class_init (GstLADSPAClass * klass, LADSPA_Descriptor * desc)
   gsp_class->cleanup = gst_ladspa_cleanup;
   gsp_class->process = gst_ladspa_process;
 
+  /* properties have an offset of 1 */
+  ix = 1;
+
   /* register properties */
 
-  for (i = 0; i < gsp_class->num_control_in; i++) {
-    GParamSpec *p;
-
+  for (i = 0; i < gsp_class->num_control_in; i++, ix++) {
     p = gst_ladspa_class_get_param_spec (klass, klass->control_in_portnums[i]);
-
-    /* properties have an offset of 1 */
-    g_object_class_install_property (G_OBJECT_CLASS (klass), i + 1, p);
+    g_object_class_install_property (gobject_class, ix, p);
   }
 
-  for (i = 0; i < gsp_class->num_control_out; i++) {
-    GParamSpec *p;
-
+  for (i = 0; i < gsp_class->num_control_out; i++, ix++) {
     p = gst_ladspa_class_get_param_spec (klass, klass->control_out_portnums[i]);
-
-    /* properties have an offset of 1, and we already added num_control_in */
-    g_object_class_install_property (G_OBJECT_CLASS (klass),
-        gsp_class->num_control_in + i + 1, p);
+    g_object_class_install_property (gobject_class, ix, p);
   }
 }
 
 static void
 gst_ladspa_init (GstLADSPA * ladspa, GstLADSPAClass * klass)
 {
-  /* whoopee, nothing to do */
-
   ladspa->descriptor = klass->descriptor;
   ladspa->activated = FALSE;
   ladspa->inplace_broken =
@@ -557,13 +549,13 @@ gst_ladspa_get_property (GObject * object, guint prop_id, GValue * value,
 }
 
 static gboolean
-gst_ladspa_setup (GstSignalProcessor * gsp, guint sample_rate)
+gst_ladspa_setup (GstSignalProcessor * gsp, GstCaps * caps)
 {
   GstLADSPA *ladspa;
   GstLADSPAClass *oclass;
   GstSignalProcessorClass *gsp_class;
   LADSPA_Descriptor *desc;
-  int i;
+  gint i;
 
   gsp_class = GST_SIGNAL_PROCESSOR_GET_CLASS (gsp);
   ladspa = (GstLADSPA *) gsp;
@@ -573,11 +565,11 @@ gst_ladspa_setup (GstSignalProcessor * gsp, guint sample_rate)
   g_return_val_if_fail (ladspa->handle == NULL, FALSE);
   g_return_val_if_fail (ladspa->activated == FALSE, FALSE);
 
-  GST_DEBUG_OBJECT (ladspa, "instantiating the plugin at %d Hz", sample_rate);
+  GST_DEBUG_OBJECT (ladspa, "instantiating the plugin at %d Hz",
+      gsp->sample_rate);
 
-  ladspa->handle = desc->instantiate (desc, sample_rate);
-
-  g_return_val_if_fail (ladspa->handle != NULL, FALSE);
+  if (!(ladspa->handle = desc->instantiate (desc, gsp->sample_rate)))
+    goto no_instance;
 
   /* connect the control ports */
   for (i = 0; i < gsp_class->num_control_in; i++)
@@ -588,6 +580,12 @@ gst_ladspa_setup (GstSignalProcessor * gsp, guint sample_rate)
         oclass->control_out_portnums[i], &(gsp->control_out[i]));
 
   return TRUE;
+
+no_instance:
+  {
+    GST_WARNING_OBJECT (gsp, "could not create instance");
+    return FALSE;
+  }
 }
 
 static gboolean
@@ -711,7 +709,7 @@ ladspa_describe_plugin (LADSPA_Descriptor_Function descriptor_function)
         0);
     /* FIXME: not needed anymore when we can add pad templates, etc in class_init
      * as class_data contains the LADSPA_Descriptor too */
-    g_type_set_qdata (type, GST_LADSPA_DESCRIPTOR_QDATA, (gpointer) desc);
+    g_type_set_qdata (type, descriptor_quark, (gpointer) desc);
 
     if (!gst_element_register (ladspa_plugin, type_name, GST_RANK_NONE, type))
       goto next;
@@ -869,6 +867,9 @@ plugin_init (GstPlugin * plugin)
   GST_DEBUG_CATEGORY_INIT (ladspa_debug, "ladspa",
       GST_DEBUG_FG_GREEN | GST_DEBUG_BG_BLACK | GST_DEBUG_BOLD, "LADSPA");
 
+  /* initialize gst controller library */
+  gst_controller_init (NULL, NULL);
+
   gst_plugin_add_dependency_simple (plugin,
       "LADSPA_PATH",
       GST_LADSPA_DEFAULT_PATH, NULL, GST_PLUGIN_DEPENDENCY_FLAG_NONE);
@@ -880,6 +881,7 @@ plugin_init (GstPlugin * plugin)
   parent_class = g_type_class_ref (GST_TYPE_SIGNAL_PROCESSOR);
 
   ladspa_plugin = plugin;
+  descriptor_quark = g_quark_from_static_string ("ladspa-descriptor");
 
   return ladspa_plugin_path_search ();
 }

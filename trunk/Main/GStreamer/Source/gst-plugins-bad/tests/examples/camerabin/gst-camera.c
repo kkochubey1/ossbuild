@@ -33,7 +33,6 @@
 #include <gst/interfaces/xoverlay.h>
 #include <gst/interfaces/colorbalance.h>
 #include <gst/interfaces/photography.h>
-#include <glade/glade-xml.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <gdk/gdkkeysyms.h>
@@ -56,8 +55,8 @@
 
 #define PREVIEW_TIME_MS (2 * 1000)
 #define N_BURST_IMAGES 10
-#define DEFAULT_GLADE_FILE "gst-camera.glade"
-#define SHARED_GLADE_FILE CAMERA_APPS_GLADEDIR"/"DEFAULT_GLADE_FILE
+#define DEFAULT_UI_FILE "gst-camera.ui"
+#define SHARED_UI_FILE CAMERA_APPS_UIDIR"/"DEFAULT_UI_FILE
 
 /* Names of default elements */
 #define CAMERA_APP_VIDEOSRC "v4l2src"
@@ -95,7 +94,7 @@ typedef enum _tag_CaptureState
  * Global Vars
  */
 
-static GladeXML *ui_glade_xml = NULL;
+static GtkBuilder *builder = NULL;
 static GtkWidget *ui_main_window = NULL;
 static GtkWidget *ui_drawing = NULL;
 static GtkWidget *ui_drawing_frame = NULL;
@@ -131,6 +130,8 @@ static gchar *image_post;
 
 static GList *video_caps_list = NULL;
 
+static guint bus_handler_id = 0;
+
 #ifdef HAVE_GST_PHOTO_IFACE_H
 static gchar *iso_speed_labels[] = { "auto", "100", "200", "400" };
 
@@ -160,40 +161,6 @@ static void me_gst_cleanup_element (void);
 static gboolean capture_mode_set_state (CaptureState state);
 static void capture_mode_config_gui (void);
 static gboolean capture_mode_stop (void);
-
-static void on_windowMain_delete_event (GtkWidget * widget, GdkEvent * event,
-    gpointer user_data);
-static void on_buttonShot_clicked (GtkButton * button, gpointer user_data);
-static void on_buttonPause_clicked (GtkButton * button, gpointer user_data);
-static void on_comboboxResolution_changed (GtkComboBox * widget,
-    gpointer user_data);
-static void on_radiobuttonImageCapture_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_radiobuttonVideoCapture_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_rbBntVidEffNone_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_rbBntVidEffEdge_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_rbBntVidEffAging_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_rbBntVidEffDice_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_rbBntVidEffWarp_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_rbBntVidEffShagadelic_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_rbBntVidEffVertigo_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_rbBntVidEffRev_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_rbBntVidEffQuark_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_chkbntMute_toggled (GtkToggleButton * togglebutton,
-    gpointer user_data);
-static void on_chkbtnRawMsg_toggled (GtkToggleButton * togglebutton,
-    gpointer data);
-static void on_hscaleZoom_value_changed (GtkRange * range, gpointer user_data);
 
 static void ui_connect_signals (void);
 static gboolean ui_create (void);
@@ -226,35 +193,13 @@ set_filename (GString * name)
   }
 
   if (datadir == NULL) {
-    // FIXME: maemo
-    //#define DEFAULT_IMAGEDIR "$HOME/MyDocs/.images/"
-    //#define DEFAULT_VIDEODIR "$HOME/MyDocs/.videos/"
     gchar *curdir = g_get_current_dir ();
     g_string_prepend (name, curdir);
     g_free (curdir);
   } else {
     g_string_prepend (name, datadir);
   }
-}
-
-static GstBusSyncReply
-set_xwindow (GstMessage ** message, gpointer data)
-{
-  GstBusSyncReply ret = GST_BUS_PASS;
-  const GstStructure *s = gst_message_get_structure (*message);
-
-  if (!s || !gst_structure_has_name (s, "prepare-xwindow-id")) {
-    goto done;
-  }
-
-  gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (GST_MESSAGE_SRC (*message)),
-      GDK_WINDOW_XWINDOW (ui_drawing->window));
-
-  gst_message_unref (*message);
-  *message = NULL;
-  ret = GST_BUS_DROP;
-done:
-  return ret;
+  GST_INFO ("capture to %s", name->str);
 }
 
 /* Write raw image buffer to file if found from message */
@@ -313,17 +258,33 @@ handle_element_message (GstMessage * msg)
 static GstBusSyncReply
 my_bus_sync_callback (GstBus * bus, GstMessage * message, gpointer data)
 {
-  GstBusSyncReply ret = GST_BUS_PASS;
+  if (GST_MESSAGE_TYPE (message) != GST_MESSAGE_ELEMENT)
+    return GST_BUS_PASS;
 
-  switch (GST_MESSAGE_TYPE (message)) {
-    case GST_MESSAGE_ELEMENT:
-      ret = set_xwindow (&message, data);
-      break;
-    default:
-      /* unhandled message */
-      break;
-  }
-  return ret;
+  if (!gst_structure_has_name (message->structure, "prepare-xwindow-id"))
+    return GST_BUS_PASS;
+
+  /* FIXME: make sure to get XID in main thread */
+  gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (message->src),
+      GDK_WINDOW_XWINDOW (ui_drawing->window));
+
+  gst_message_unref (message);
+  return GST_BUS_DROP;
+}
+
+static void
+print_error_message (GstMessage * msg)
+{
+  GError *err = NULL;
+  gchar *dbg = NULL;
+
+  gst_message_parse_error (msg, &err, &dbg);
+
+  g_printerr ("Camerabin won't start up!\nError: %s\nDebug Info: %s\n",
+      err->message, (dbg) ? dbg : "None");
+
+  g_error_free (err);
+  g_free (dbg);
 }
 
 static gboolean
@@ -341,14 +302,7 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
       break;
     }
     case GST_MESSAGE_ERROR:{
-      GError *err;
-      gchar *debug;
-
-      gst_message_parse_error (message, &err, &debug);
-      g_print ("Error: %s\n", err->message);
-      g_error_free (err);
-      g_free (debug);
-
+      print_error_message (message);
       me_gst_cleanup_element ();
       gtk_main_quit ();
       break;
@@ -362,11 +316,17 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
 
       gst_message_parse_state_changed (message, &old, &new, &pending);
 
+      GST_DEBUG_OBJECT (GST_MESSAGE_SRC (message), "state-change %s -> %s",
+          gst_element_state_get_name (old), gst_element_state_get_name (new));
+
       /* Create/destroy color controls according videosrc state */
       if (GST_MESSAGE_SRC (message) == GST_OBJECT (gst_videosrc)) {
-        if (old == GST_STATE_PAUSED && new == GST_STATE_READY) {
+        GST_INFO_OBJECT (GST_MESSAGE_SRC (message), "state-change %s -> %s",
+            gst_element_state_get_name (old), gst_element_state_get_name (new));
+
+        if (old == GST_STATE_READY && new == GST_STATE_NULL) {
           destroy_color_controls ();
-        } else if (old == GST_STATE_READY && new == GST_STATE_PAUSED) {
+        } else if (old == GST_STATE_NULL && new == GST_STATE_READY) {
           create_color_controls ();
         }
       }
@@ -382,8 +342,8 @@ my_bus_callback (GstBus * bus, GstMessage * message, gpointer data)
             GST_DEBUG_GRAPH_SHOW_NON_DEFAULT_PARAMS, dump_name);
         g_free (dump_name);
       }
-    }
       break;
+    }
     case GST_MESSAGE_ELEMENT:
     {
       handle_element_message (message);
@@ -568,7 +528,7 @@ me_gst_setup_pipeline (const gchar * imagepost, const gchar * videopost)
   preview_caps = gst_caps_from_string (PREVIEW_CAPS);
 
   bus = gst_pipeline_get_bus (GST_PIPELINE (gst_camera_bin));
-  gst_bus_add_watch (bus, my_bus_callback, NULL);
+  bus_handler_id = gst_bus_add_watch (bus, my_bus_callback, NULL);
   gst_bus_set_sync_handler (bus, my_bus_sync_callback, NULL);
   gst_object_unref (bus);
 
@@ -615,19 +575,7 @@ me_gst_setup_pipeline (const gchar * imagepost, const gchar * videopost)
 
   init_view_finder_resolution_combobox ();
 
-  if (GST_STATE_CHANGE_FAILURE ==
-      gst_element_set_state (gst_camera_bin, GST_STATE_PAUSED)) {
-    goto done;
-  } else {
-    gst_element_get_state (gst_camera_bin, NULL, NULL, GST_CLOCK_TIME_NONE);
-  }
-
-  if (GST_STATE_CHANGE_FAILURE ==
-      gst_element_set_state (gst_camera_bin, GST_STATE_PLAYING)) {
-    goto done;
-  } else {
-    gst_element_get_state (gst_camera_bin, NULL, NULL, GST_CLOCK_TIME_NONE);
-  }
+  gst_element_set_state (gst_camera_bin, GST_STATE_PLAYING);
 
 #ifdef HAVE_GST_PHOTO_IFACE_H
   /* Initialize menus to default settings */
@@ -648,12 +596,28 @@ done:
   return FALSE;
 }
 
+static gboolean
+me_gst_setup_default_pipeline (gpointer data)
+{
+  if (!me_gst_setup_pipeline (NULL, NULL)) {
+    gtk_main_quit ();
+  }
+  return FALSE;
+}
+
 static void
 me_gst_cleanup_element ()
 {
   if (gst_camera_bin) {
+    GstBus *bus;
+
     gst_element_set_state (gst_camera_bin, GST_STATE_NULL);
     gst_element_get_state (gst_camera_bin, NULL, NULL, GST_CLOCK_TIME_NONE);
+
+    bus = gst_pipeline_get_bus (GST_PIPELINE (gst_camera_bin));
+    gst_bus_set_sync_handler (bus, NULL, NULL);
+    g_source_remove (bus_handler_id);
+
     gst_object_unref (gst_camera_bin);
     gst_camera_bin = NULL;
 
@@ -768,7 +732,7 @@ done:
   return FALSE;
 }
 
-static void
+void
 on_windowMain_delete_event (GtkWidget * widget, GdkEvent * event, gpointer data)
 {
   capture_mode_set_state (CAP_STATE_IMAGE);
@@ -805,7 +769,7 @@ set_metadata (void)
   g_free (desc_str);
 }
 
-static void
+void
 on_buttonShot_clicked (GtkButton * button, gpointer user_data)
 {
   switch (capture_state) {
@@ -838,7 +802,7 @@ on_buttonShot_clicked (GtkButton * button, gpointer user_data)
   }
 }
 
-static void
+void
 on_buttonPause_clicked (GtkButton * button, gpointer user_data)
 {
   switch (capture_state) {
@@ -868,21 +832,27 @@ on_buttonPause_clicked (GtkButton * button, gpointer user_data)
   }
 }
 
-static gboolean
+void
+on_drawingareaView_realize (GtkWidget * widget, gpointer data)
+{
+#if GTK_CHECK_VERSION (2, 18, 0)
+  gdk_window_ensure_native (widget->window);
+#endif
+}
+
+gboolean
 on_drawingareaView_configure_event (GtkWidget * widget,
     GdkEventConfigure * event, gpointer data)
 {
-  Display *display = GDK_WINDOW_XDISPLAY (GDK_WINDOW (widget->window));
-
-  XMoveResizeWindow (display, GDK_WINDOW_XID (GDK_WINDOW (widget->window)),
+  gdk_window_move_resize (widget->window,
       widget->allocation.x, widget->allocation.y,
       widget->allocation.width, widget->allocation.height);
-  XSync (display, False);
+  gdk_display_sync (gtk_widget_get_display (widget));
 
   return TRUE;
 }
 
-static void
+void
 on_comboboxResolution_changed (GtkComboBox * widget, gpointer user_data)
 {
   GstStructure *st;
@@ -891,8 +861,21 @@ on_comboboxResolution_changed (GtkComboBox * widget, gpointer user_data)
       g_list_nth_data (video_caps_list, gtk_combo_box_get_active (widget));
 
   if (video_caps) {
+    GstState old;
 
-    gst_element_set_state (gst_camera_bin, GST_STATE_READY);
+    gst_element_get_state (gst_camera_bin, &old, NULL, GST_CLOCK_TIME_NONE);
+    GST_DEBUG ("change resolution in %s", gst_element_state_get_name (old));
+
+    if (old != GST_STATE_NULL) {
+      gst_element_set_state (gst_camera_bin, GST_STATE_READY);
+      /* source need to be NULL, otherwise changing the mode fails with device
+       * busy:
+       * - if src goes from NULL->PLAYING it sets new mode anyway
+       * - if src goes form READY->PLAYIN new mode is activated via reverse caps
+       *   negotiation, but then the device is already streaming
+       */
+      gst_element_set_state (gst_videosrc, GST_STATE_NULL);
+    }
 
     st = gst_caps_get_structure (video_caps, 0);
 
@@ -905,11 +888,13 @@ on_comboboxResolution_changed (GtkComboBox * widget, gpointer user_data)
 
     g_object_set (G_OBJECT (gst_camera_bin), "filter-caps", video_caps, NULL);
 
-    gst_element_set_state (gst_camera_bin, GST_STATE_PLAYING);
+    if (old != GST_STATE_NULL) {
+      gst_element_set_state (gst_camera_bin, old);
+    }
   }
 }
 
-static void
+void
 on_radiobuttonImageCapture_toggled (GtkToggleButton * togglebutton,
     gpointer user_data)
 {
@@ -921,7 +906,7 @@ on_radiobuttonImageCapture_toggled (GtkToggleButton * togglebutton,
   }
 }
 
-static void
+void
 on_radiobuttonVideoCapture_toggled (GtkToggleButton * togglebutton,
     gpointer user_data)
 {
@@ -933,7 +918,7 @@ on_radiobuttonVideoCapture_toggled (GtkToggleButton * togglebutton,
   }
 }
 
-static void
+void
 on_rbBntVidEff_toggled (GtkToggleButton * togglebutton, gchar * effect)
 {
   if (gtk_toggle_button_get_active (togglebutton)) {
@@ -949,68 +934,68 @@ on_rbBntVidEff_toggled (GtkToggleButton * togglebutton, gchar * effect)
   }
 }
 
-static void
+void
 on_rbBntVidEffNone_toggled (GtkToggleButton * togglebutton, gpointer data)
 {
   on_rbBntVidEff_toggled (togglebutton, NULL);
 }
 
-static void
+void
 on_rbBntVidEffEdge_toggled (GtkToggleButton * togglebutton, gpointer data)
 {
   on_rbBntVidEff_toggled (togglebutton, "edgetv");
 }
 
-static void
+void
 on_rbBntVidEffAging_toggled (GtkToggleButton * togglebutton, gpointer user_data)
 {
   on_rbBntVidEff_toggled (togglebutton, "agingtv");
 }
 
-static void
+void
 on_rbBntVidEffDice_toggled (GtkToggleButton * togglebutton, gpointer user_data)
 {
   on_rbBntVidEff_toggled (togglebutton, "dicetv");
 }
 
-static void
+void
 on_rbBntVidEffWarp_toggled (GtkToggleButton * togglebutton, gpointer data)
 {
   on_rbBntVidEff_toggled (togglebutton, "warptv");
 }
 
-static void
+void
 on_rbBntVidEffShagadelic_toggled (GtkToggleButton * togglebutton, gpointer data)
 {
   on_rbBntVidEff_toggled (togglebutton, "shagadelictv");
 }
 
-static void
+void
 on_rbBntVidEffVertigo_toggled (GtkToggleButton * togglebutton, gpointer data)
 {
   on_rbBntVidEff_toggled (togglebutton, "vertigotv");
 }
 
-static void
+void
 on_rbBntVidEffRev_toggled (GtkToggleButton * togglebutton, gpointer data)
 {
   on_rbBntVidEff_toggled (togglebutton, "revtv");
 }
 
-static void
+void
 on_rbBntVidEffQuark_toggled (GtkToggleButton * togglebutton, gpointer data)
 {
   on_rbBntVidEff_toggled (togglebutton, "quarktv");
 }
 
-static void
+void
 on_chkbntMute_toggled (GtkToggleButton * togglebutton, gpointer data)
 {
   g_object_set (gst_camera_bin, "mute",
       gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton)), NULL);
 }
 
-static void
+void
 on_chkbtnRawMsg_toggled (GtkToggleButton * togglebutton, gpointer data)
 {
   const gchar *env_var = "CAMSRC_PUBLISH_RAW";
@@ -1021,14 +1006,14 @@ on_chkbtnRawMsg_toggled (GtkToggleButton * togglebutton, gpointer data)
   }
 }
 
-static void
+void
 on_hscaleZoom_value_changed (GtkRange * range, gpointer user_data)
 {
   gint zoom = gtk_range_get_value (range);
   g_object_set (gst_camera_bin, "zoom", zoom, NULL);
 }
 
-static void
+void
 on_color_control_value_changed (GtkRange * range, gpointer user_data)
 {
   GstColorBalance *balance = GST_COLOR_BALANCE (gst_camera_bin);
@@ -1080,62 +1065,7 @@ on_key_pressed (GtkWidget * widget, GdkEventKey * event, gpointer user_data)
 static void
 ui_connect_signals (void)
 {
-  glade_xml_signal_connect (ui_glade_xml, "on_windowMain_delete_event",
-      (GCallback) on_windowMain_delete_event);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_buttonShot_clicked",
-      (GCallback) on_buttonShot_clicked);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_buttonPause_clicked",
-      (GCallback) on_buttonPause_clicked);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_drawingareaView_configure_event",
-      (GCallback) on_drawingareaView_configure_event);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_comboboxResolution_changed",
-      (GCallback) on_comboboxResolution_changed);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_radiobuttonImageCapture_toggled",
-      (GCallback) on_radiobuttonImageCapture_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_radiobuttonVideoCapture_toggled",
-      (GCallback) on_radiobuttonVideoCapture_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_rbBntVidEffNone_toggled",
-      (GCallback) on_rbBntVidEffNone_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_rbBntVidEffEdge_toggled",
-      (GCallback) on_rbBntVidEffEdge_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_rbBntVidEffAging_toggled",
-      (GCallback) on_rbBntVidEffAging_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_rbBntVidEffDice_toggled",
-      (GCallback) on_rbBntVidEffDice_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_rbBntVidEffWarp_toggled",
-      (GCallback) on_rbBntVidEffWarp_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_rbBntVidEffShagadelic_toggled",
-      (GCallback) on_rbBntVidEffShagadelic_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_rbBntVidEffVertigo_toggled",
-      (GCallback) on_rbBntVidEffVertigo_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_rbBntVidEffRev_toggled",
-      (GCallback) on_rbBntVidEffRev_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_rbBntVidEffQuark_toggled",
-      (GCallback) on_rbBntVidEffQuark_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_chkbntMute_toggled",
-      (GCallback) on_chkbntMute_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_chkbtnRawMsg_toggled",
-      (GCallback) on_chkbtnRawMsg_toggled);
-
-  glade_xml_signal_connect (ui_glade_xml, "on_hscaleZoom_value_changed",
-      (GCallback) on_hscaleZoom_value_changed);
+  gtk_builder_connect_signals (builder, NULL);
 
   g_signal_connect (ui_main_window, "key-press-event",
       (GCallback) on_key_pressed, NULL);
@@ -1302,15 +1232,16 @@ destroy_color_controls ()
 {
   GList *widgets, *item;
   GtkWidget *widget = NULL;
+  gpointer user_data = NULL;
 
   widgets = gtk_container_get_children (GTK_CONTAINER (ui_vbox_color_controls));
   for (item = widgets; item; item = g_list_next (item)) {
     widget = GTK_WIDGET (item->data);
+    user_data = g_object_get_data (G_OBJECT (widget), "channel");
     g_signal_handlers_disconnect_by_func (widget, (GFunc) format_value_callback,
-        g_object_get_data (G_OBJECT (widget), "channel"));
+        user_data);
     g_signal_handlers_disconnect_by_func (widget,
-        (GFunc) on_color_control_value_changed,
-        g_object_get_data (G_OBJECT (widget), "channel"));
+        (GFunc) on_color_control_value_changed, user_data);
     gtk_container_remove (GTK_CONTAINER (ui_vbox_color_controls), widget);
   }
   g_list_free (widgets);
@@ -1667,40 +1598,43 @@ fill_capture_menu (GtkMenuItem * parent_item)
 static gboolean
 ui_create (void)
 {
-  gchar *gladefile = DEFAULT_GLADE_FILE;
+  GError *error = NULL;
+  gchar *uifile = DEFAULT_UI_FILE;
 
-  if (!g_file_test (gladefile, G_FILE_TEST_EXISTS)) {
-    gladefile = SHARED_GLADE_FILE;
+  if (!g_file_test (uifile, G_FILE_TEST_EXISTS)) {
+    uifile = SHARED_UI_FILE;
   }
 
-  ui_glade_xml = glade_xml_new (gladefile, NULL, NULL);
-  if (!ui_glade_xml) {
-    fprintf (stderr, "glade_xml_new failed for %s\n", gladefile);
-    fflush (stderr);
+  builder = gtk_builder_new ();
+  if (!gtk_builder_add_from_file (builder, uifile, &error)) {
+    g_warning ("Couldn't load builder file: %s", error->message);
+    g_error_free (error);
     goto done;
   }
 
-  ui_main_window = glade_xml_get_widget (ui_glade_xml, "windowMain");
-  ui_drawing = glade_xml_get_widget (ui_glade_xml, "drawingareaView");
-  ui_drawing_frame = glade_xml_get_widget (ui_glade_xml, "drawingareaFrame");
-  ui_chk_continous = glade_xml_get_widget (ui_glade_xml, "chkbntContinous");
-  ui_chk_rawmsg = glade_xml_get_widget (ui_glade_xml, "chkbtnRawMsg");
-  ui_bnt_shot = GTK_BUTTON (glade_xml_get_widget (ui_glade_xml, "buttonShot"));
-  ui_bnt_pause =
-      GTK_BUTTON (glade_xml_get_widget (ui_glade_xml, "buttonPause"));
+  ui_main_window = GTK_WIDGET (gtk_builder_get_object (builder, "windowMain"));
+  ui_drawing = GTK_WIDGET (gtk_builder_get_object (builder, "drawingareaView"));
+  ui_drawing_frame =
+      GTK_WIDGET (gtk_builder_get_object (builder, "drawingareaFrame"));
+  ui_chk_continous =
+      GTK_WIDGET (gtk_builder_get_object (builder, "chkbntContinous"));
+  ui_chk_rawmsg = GTK_WIDGET (gtk_builder_get_object (builder, "chkbtnRawMsg"));
+  ui_bnt_shot = GTK_BUTTON (gtk_builder_get_object (builder, "buttonShot"));
+  ui_bnt_pause = GTK_BUTTON (gtk_builder_get_object (builder, "buttonPause"));
   ui_cbbox_resolution =
-      GTK_COMBO_BOX (glade_xml_get_widget (ui_glade_xml, "comboboxResolution"));
-  ui_chk_mute = glade_xml_get_widget (ui_glade_xml, "chkbntMute");
-  ui_vbox_color_controls = glade_xml_get_widget (ui_glade_xml,
-      "vboxColorControls");
-  ui_rdbntImageCapture = glade_xml_get_widget (ui_glade_xml,
-      "radiobuttonImageCapture");
-  ui_rdbntVideoCapture = glade_xml_get_widget (ui_glade_xml,
-      "radiobuttonVideoCapture");
+      GTK_COMBO_BOX (gtk_builder_get_object (builder, "comboboxResolution"));
+  ui_chk_mute = GTK_WIDGET (gtk_builder_get_object (builder, "chkbntMute"));
+  ui_vbox_color_controls =
+      GTK_WIDGET (gtk_builder_get_object (builder, "vboxColorControls"));
+  ui_rdbntImageCapture =
+      GTK_WIDGET (gtk_builder_get_object (builder, "radiobuttonImageCapture"));
+  ui_rdbntVideoCapture =
+      GTK_WIDGET (gtk_builder_get_object (builder, "radiobuttonVideoCapture"));
+  ui_menuitem_photography =
+      GTK_WIDGET (gtk_builder_get_object (builder, "menuitemPhotography"));
+  ui_menuitem_capture =
+      GTK_WIDGET (gtk_builder_get_object (builder, "menuitemCapture"));
 
-  ui_menuitem_photography = glade_xml_get_widget (ui_glade_xml,
-      "menuitemPhotography");
-  ui_menuitem_capture = glade_xml_get_widget (ui_glade_xml, "menuitemCapture");
 #ifdef HAVE_GST_PHOTO_IFACE_H
   if (ui_menuitem_photography) {
     fill_photography_menu (GTK_MENU_ITEM (ui_menuitem_photography));
@@ -1749,9 +1683,8 @@ main (int argc, char *argv[])
     goto done;
   }
   /* create pipeline and run */
-  if (me_gst_setup_pipeline (NULL, NULL)) {
-    gtk_main ();
-  }
+  g_idle_add (me_gst_setup_default_pipeline, NULL);
+  gtk_main ();
 
 done:
   me_gst_cleanup_element ();

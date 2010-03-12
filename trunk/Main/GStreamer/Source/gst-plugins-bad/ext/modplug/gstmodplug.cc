@@ -91,10 +91,17 @@ static GstStaticPadTemplate modplug_src_template_factory =
     GST_STATIC_CAPS ("audio/x-raw-int,"
         " endianness = (int) BYTE_ORDER,"
         " signed = (boolean) true,"
+        " width = (int) 32,"
+        " depth = (int) 32,"
+        " rate = (int) { 8000, 11025, 22050, 44100 },"
+        " channels = (int) [ 1, 2 ]; "
+        "audio/x-raw-int,"
+        " endianness = (int) BYTE_ORDER,"
+        " signed = (boolean) true,"
         " width = (int) 16,"
         " depth = (int) 16,"
         " rate = (int) { 8000, 11025, 22050, 44100 },"
-        " channels = (int) 2; "
+        " channels = (int) [ 1, 2 ]; "
         "audio/x-raw-int,"
         " endianness = (int) BYTE_ORDER,"
         " signed = (boolean) false,"
@@ -248,7 +255,7 @@ gst_modplug_init (GstModPlug * modplug, GstModPlugClass * klass)
   modplug->oversamp = DEFAULT_OVERSAMP;
   modplug->noise_reduction = DEFAULT_NOISE_REDUCTION;
 
-  modplug->_16bit = TRUE;
+  modplug->bits = 16;
   modplug->channel = 2;
   modplug->frequency = 44100;
 }
@@ -448,7 +455,6 @@ gst_modplug_load_song (GstModPlug * modplug)
 {
   GstCaps *newcaps, *othercaps;
   GstStructure *structure;
-  gint depth;
 
   GST_DEBUG_OBJECT (modplug, "Setting caps");
 
@@ -467,24 +473,20 @@ gst_modplug_load_song (GstModPlug * modplug)
 
   /* set up modplug to output the negotiated format */
   structure = gst_caps_get_structure (newcaps, 0);
-  gst_structure_get_int (structure, "depth", &depth);
-  modplug->_16bit = (depth == 16);
+  gst_structure_get_int (structure, "depth", &modplug->bits);
   gst_structure_get_int (structure, "channels", &modplug->channel);
   gst_structure_get_int (structure, "rate", &modplug->frequency);
 
   modplug->read_samples = 1152;
-  modplug->read_bytes = modplug->read_samples * modplug->channel * depth / 8;
+  modplug->read_bytes =
+      modplug->read_samples * modplug->channel * modplug->bits / 8;
 
   GST_DEBUG_OBJECT (modplug, "Loading song");
 
   modplug->mSoundFile = new CSoundFile;
 
-  if (modplug->_16bit)
-    modplug->mSoundFile->SetWaveConfig (modplug->frequency, 16,
-        modplug->channel);
-  else
-    modplug->mSoundFile->SetWaveConfig (modplug->frequency, 8,
-        modplug->channel);
+  modplug->mSoundFile->SetWaveConfig (modplug->frequency, modplug->bits,
+      modplug->channel);
 
   modplug->mSoundFile->SetWaveConfigEx (modplug->surround, !modplug->oversamp,
       modplug->reverb, true, modplug->megabass, modplug->noise_reduction, true);

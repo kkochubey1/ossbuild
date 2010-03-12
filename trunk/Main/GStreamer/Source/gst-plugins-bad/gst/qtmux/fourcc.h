@@ -77,6 +77,7 @@ G_BEGIN_DECLS
 #define FOURCC_vmhd     GST_MAKE_FOURCC('v','m','h','d')
 #define FOURCC_smhd     GST_MAKE_FOURCC('s','m','h','d')
 #define FOURCC_gmhd     GST_MAKE_FOURCC('g','m','h','d')
+#define FOURCC_hmhd     GST_MAKE_FOURCC('h','m','h','d')
 #define FOURCC_gmin     GST_MAKE_FOURCC('g','m','i','n')
 #define FOURCC_dinf     GST_MAKE_FOURCC('d','i','n','f')
 #define FOURCC_dref     GST_MAKE_FOURCC('d','r','e','f')
@@ -112,11 +113,13 @@ G_BEGIN_DECLS
 #define FOURCC_ilst     GST_MAKE_FOURCC('i','l','s','t')
 #define FOURCC__nam     GST_MAKE_FOURCC(0xa9,'n','a','m')
 #define FOURCC__ART     GST_MAKE_FOURCC(0xa9,'A','R','T')
+#define FOURCC_aART     GST_MAKE_FOURCC('a','A','R','T')
 #define FOURCC__wrt     GST_MAKE_FOURCC(0xa9,'w','r','t')
 #define FOURCC__grp     GST_MAKE_FOURCC(0xa9,'g','r','p')
 #define FOURCC__alb     GST_MAKE_FOURCC(0xa9,'a','l','b')
 #define FOURCC__day     GST_MAKE_FOURCC(0xa9,'d','a','y')
 #define FOURCC__des     GST_MAKE_FOURCC(0xa9,'d','e','s')
+#define FOURCC__lyr     GST_MAKE_FOURCC(0xa9,'l','y','r')
 #define FOURCC_gnre     GST_MAKE_FOURCC('g','n','r','e')
 #define FOURCC_disc     GST_MAKE_FOURCC('d','i','s','c')
 #define FOURCC_disk     GST_MAKE_FOURCC('d','i','s','k')
@@ -170,6 +173,23 @@ G_BEGIN_DECLS
 #define FOURCC_jpeg     GST_MAKE_FOURCC('j','p','e','g')
 #define FOURCC_mjp2     GST_MAKE_FOURCC('m','j','p','2')
 #define FOURCC_jp2h     GST_MAKE_FOURCC('j','p','2','h')
+#define FOURCC_jp2c     GST_MAKE_FOURCC('j','p','2','c')
+#define FOURCC_gama     GST_MAKE_FOURCC('g','a','m','a')
+#define FOURCC_tvsh     GST_MAKE_FOURCC('t','v','s','h')
+#define FOURCC_tven     GST_MAKE_FOURCC('t','v','e','n')
+#define FOURCC_tvsn     GST_MAKE_FOURCC('t','v','s','n')
+#define FOURCC_tves     GST_MAKE_FOURCC('t','v','e','s')
+#define FOURCC_sonm     GST_MAKE_FOURCC('s','o','n','m')
+#define FOURCC_soal     GST_MAKE_FOURCC('s','o','a','l')
+#define FOURCC_soar     GST_MAKE_FOURCC('s','o','a','r')
+#define FOURCC_soaa     GST_MAKE_FOURCC('s','o','a','a')
+#define FOURCC_soco     GST_MAKE_FOURCC('s','o','c','o')
+#define FOURCC_sosn     GST_MAKE_FOURCC('s','o','s','n')
+
+
+/* SVQ3 fourcc */
+#define FOURCC_SEQH     GST_MAKE_FOURCC('S','E','Q','H')
+#define FOURCC_SMI_     GST_MAKE_FOURCC('S','M','I',' ')
 
 /* Xiph fourcc */
 #define FOURCC_XiTh     GST_MAKE_FOURCC('X','i','T','h')
@@ -190,6 +210,12 @@ G_BEGIN_DECLS
 #define FOURCC_albm     GST_MAKE_FOURCC('a','l','b','m')
 #define FOURCC_loci     GST_MAKE_FOURCC('l','o','c','i')
 #define FOURCC_kywd     GST_MAKE_FOURCC('k','y','w','d')
+#define FOURCC_clsf     GST_MAKE_FOURCC('c','l','s','f')
+
+/* For Microsoft Wave formats embedded in quicktime, the FOURCC is
+   'm', 's', then the 16 bit wave codec id */
+#define MS_WAVE_FOURCC(codecid)  GST_MAKE_FOURCC( \
+        'm', 's', ((codecid)>>8)&0xff, ((codecid)&0xff))
 
 G_END_DECLS
 

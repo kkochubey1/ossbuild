@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>output-selector</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.1">
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
 <link rel="home" href="index.html" title="GStreamer Bad Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="ch01.html" title="gst-plugins-bad Elements">
 <link rel="prev" href="gst-plugins-bad-plugins-nuvdemux.html" title="nuvdemux">
 <link rel="next" href="gst-plugins-bad-plugins-pcapparse.html" title="pcapparse">
-<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 <link rel="chapter" href="ch01.html" title="gst-plugins-bad Elements">
 <link rel="chapter" href="ch02.html" title="gst-plugins-bad Plugins">
@@ -25,12 +25,12 @@
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#gst-plugins-bad-plugins-output-selector.synopsis" class="shortcut">Top</a>
-                 | 
-                <a href="#gst-plugins-bad-plugins-output-selector.description" class="shortcut">Description</a>
-                 | 
-                <a href="#gst-plugins-bad-plugins-output-selector.object-hierarchy" class="shortcut">Object Hierarchy</a>
-                 | 
-                <a href="#gst-plugins-bad-plugins-output-selector.properties" class="shortcut">Properties</a>
+                   | 
+                  <a href="#gst-plugins-bad-plugins-output-selector.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#gst-plugins-bad-plugins-output-selector.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#gst-plugins-bad-plugins-output-selector.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
 <div class="refentry" title="output-selector">
@@ -44,113 +44,29 @@
 </tr></table></div>
 <div class="refsynopsisdiv" title="Synopsis">
 <a name="gst-plugins-bad-plugins-output-selector.synopsis"></a><h2>Synopsis</h2>
-<a name="GstOutputSelector"></a><pre class="synopsis">
-                    <a class="link" href="gst-plugins-bad-plugins-output-selector.html#GstOutputSelector-struct" title="GstOutputSelector">GstOutputSelector</a>;
+<a name="GstOutputSelector"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-bad-plugins-output-selector.html#GstOutputSelector-struct" title="GstOutputSelector">GstOutputSelector</a>;
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-bad-plugins-output-selector.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a
-href="../gobject/gobject-The-Base-Object-Type.html#GObject"
->GObject</a>
-   +----<a
-href="../gstreamer-0.10/GstObject.html"
->GstObject</a>
-         +----<a
-href="../gstreamer-0.10/GstElement.html"
->GstElement</a>
+  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
+         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
                +----GstOutputSelector
 </pre>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-bad-plugins-output-selector.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-bad-plugins-output-selector.html#GstOutputSelector--active-pad" title='The "active-pad" property'>active-pad</a>"               <a
-href="../gstreamer-0.10/GstPad.html"
->GstPad</a>*               : Read / Write
-  "<a class="link" href="gst-plugins-bad-plugins-output-selector.html#GstOutputSelector--resend-latest" title='The "resend-latest" property'>resend-latest</a>"            <a
-href="../glib/glib-Basic-Types.html#gboolean"
->gboolean</a>              : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-output-selector.html#GstOutputSelector--active-pad" title='The "active-pad" property'>active-pad</a>"               <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a>*               : Read / Write
+  "<a class="link" href="gst-plugins-bad-plugins-output-selector.html#GstOutputSelector--resend-latest" title='The "resend-latest" property'>resend-latest</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
 <a name="gst-plugins-bad-plugins-output-selector.description"></a><h2>Description</h2>
 <p>
 Direct input stream to one out of N output pads.</p>
-<div class="refsynopsisdiv" title="Synopsis">
-<h2>Synopsis</h2>
-<div class="refsect2" title="Element Information">
-<a name="id2856807"></a><h3>Element Information</h3>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">plugin</span></p></td>
-<td>
-            <a class="link" href="gst-plugins-bad-plugins-plugin-selector.html#plugin-selector">selector</a>
-          </td>
-</tr>
-<tr>
-<td><p><span class="term">author</span></p></td>
-<td>Stefan Kost &lt;stefan.kost@nokia.com&gt;</td>
-</tr>
-<tr>
-<td><p><span class="term">class</span></p></td>
-<td>Generic</td>
-</tr>
-</tbody>
-</table></div>
-</div>
-<hr>
-<div class="refsect2" title="Element Pads">
-<a name="id2886926"></a><h3>Element Pads</h3>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">name</span></p></td>
-<td>src%d</td>
-</tr>
-<tr>
-<td><p><span class="term">direction</span></p></td>
-<td>source</td>
-</tr>
-<tr>
-<td><p><span class="term">presence</span></p></td>
-<td>request</td>
-</tr>
-<tr>
-<td><p><span class="term">details</span></p></td>
-<td>ANY</td>
-</tr>
-</tbody>
-</table></div>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term">name</span></p></td>
-<td>sink</td>
-</tr>
-<tr>
-<td><p><span class="term">direction</span></p></td>
-<td>sink</td>
-</tr>
-<tr>
-<td><p><span class="term">presence</span></p></td>
-<td>always</td>
-</tr>
-<tr>
-<td><p><span class="term">details</span></p></td>
-<td>ANY</td>
-</tr>
-</tbody>
-</table></div>
-</div>
-</div>
-<p>
-</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-bad-plugins-output-selector.details"></a><h2>Details</h2>
@@ -165,28 +81,24 @@ Direct input stream to one out of N output pads.</p>
 <a name="gst-plugins-bad-plugins-output-selector.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "active-pad" property'>
 <a name="GstOutputSelector--active-pad"></a><h3>The <code class="literal">"active-pad"</code> property</h3>
-<pre class="programlisting">  "active-pad"               <a
-href="../gstreamer-0.10/GstPad.html"
->GstPad</a>*               : Read / Write</pre>
+<pre class="programlisting">  "active-pad"               <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a>*               : Read / Write</pre>
 <p>Currently active src pad.</p>
 </div>
 <hr>
 <div class="refsect2" title='The "resend-latest" property'>
 <a name="GstOutputSelector--resend-latest"></a><h3>The <code class="literal">"resend-latest"</code> property</h3>
-<pre class="programlisting">  "resend-latest"            <a
-href="../glib/glib-Basic-Types.html#gboolean"
->gboolean</a>              : Read / Write</pre>
+<pre class="programlisting">  "resend-latest"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Resend latest buffer after a switch to a new pad.</p>
 <p>Default value: FALSE</p>
 </div>
 </div>
 <div class="refsect1" title="See Also">
 <a name="gst-plugins-bad-plugins-output-selector.see-also"></a><h2>See Also</h2>
-#GstOutputSelector, <a class="link" href="gst-plugins-bad-plugins-input-selector.html#GstInputSelector"><span class="type">GstInputSelector</span></a>
+<a class="link" href="gst-plugins-bad-plugins-output-selector.html#GstOutputSelector"><span class="type">GstOutputSelector</span></a>, <a class="link" href="gst-plugins-bad-plugins-input-selector.html#GstInputSelector"><span class="type">GstInputSelector</span></a>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.11</div>
+          Generated by GTK-Doc V1.13</div>
 </body>
 </html>

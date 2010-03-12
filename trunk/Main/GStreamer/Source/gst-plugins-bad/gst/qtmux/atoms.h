@@ -1,5 +1,5 @@
 /* Quicktime muxer plugin for GStreamer
- * Copyright (C) 2008 Thiago Sousa Santos <thiagoss@embedded.ufcg.edu.br>
+ * Copyright (C) 2008-2010 Thiago Santos <thiagoss@embedded.ufcg.edu.br>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -50,6 +50,46 @@
 #include "properties.h"
 #include "fourcc.h"
 #include "ftypcc.h"
+
+/* helper storage struct */
+#define ATOM_ARRAY(struct_type) \
+struct { \
+  guint size; \
+  guint len; \
+  struct_type *data; \
+}
+
+/* storage helpers */
+
+#define atom_array_init(array, reserve)                                       \
+G_STMT_START {                                                                \
+  (array)->len = 0;                                                           \
+  (array)->size = reserve;                                                    \
+  (array)->data = g_malloc (sizeof (*(array)->data) * reserve);               \
+} G_STMT_END
+
+#define atom_array_append(array, elmt, inc)                                   \
+G_STMT_START {                                                                \
+  g_assert ((array)->data);                                                   \
+  g_assert (inc > 0);                                                         \
+  if (G_UNLIKELY ((array)->len == (array)->size)) {                           \
+    (array)->size += inc;                                                     \
+    (array)->data =                                                           \
+        g_realloc ((array)->data, sizeof (*((array)->data)) * (array)->size); \
+  }                                                                           \
+  (array)->data[(array)->len] = elmt;                                         \
+  (array)->len++;                                                             \
+} G_STMT_END
+
+#define atom_array_get_len(array)                  ((array)->len)
+#define atom_array_index(array, index)             ((array)->data[index])
+
+#define atom_array_clear(array)                                               \
+G_STMT_START {                                                                \
+  (array)->size = (array)->len = 0;                                           \
+  g_free ((array)->data);                                                     \
+  (array)->data = NULL;                                                       \
+} G_STMT_END
 
 /* light-weight context that may influence header atom tree construction */
 typedef enum _AtomsTreeFlavor
@@ -257,18 +297,14 @@ typedef struct _AtomSTTS
 {
   AtomFull header;
 
-  guint n_entries;
-  /* list of STTSEntry */
-  GList *entries;
+  ATOM_ARRAY (STTSEntry) entries;
 } AtomSTTS;
 
 typedef struct _AtomSTSS
 {
   AtomFull header;
 
-  guint n_entries;
-  /* list of sample indexes (guint32) */
-  GList *entries;
+  ATOM_ARRAY (guint32) entries;
 } AtomSTSS;
 
 typedef struct _AtomESDS
@@ -388,8 +424,7 @@ typedef struct _AtomSTSZ
   /* need the size here because when sample_size is constant,
    * the list is empty */
   guint32 table_size;
-  /* list of guint32 */
-  GList *entries;
+  ATOM_ARRAY (guint32) entries;
 } AtomSTSZ;
 
 typedef struct _STSCEntry
@@ -403,9 +438,7 @@ typedef struct _AtomSTSC
 {
   AtomFull header;
 
-  guint n_entries;
-  /* list of STSCEntry */
-  GList *entries;
+  ATOM_ARRAY (STSCEntry) entries;
 } AtomSTSC;
 
 
@@ -417,9 +450,7 @@ typedef struct _AtomSTCO64
 {
   AtomFull header;
 
-  guint n_entries;
-  /* list of guint64 */
-  GList *entries;
+  ATOM_ARRAY (guint64) entries;
 } AtomSTCO64;
 
 typedef struct _CTTSEntry
@@ -433,8 +464,7 @@ typedef struct _AtomCTTS
   AtomFull header;
 
   /* also entry count here */
-  guint n_entries;
-  GList *entries;
+  ATOM_ARRAY (CTTSEntry) entries;
 } AtomCTTS;
 
 typedef struct _AtomSTBL
@@ -465,6 +495,29 @@ typedef struct _AtomMINF
   AtomDINF dinf;
   AtomSTBL stbl;
 } AtomMINF;
+
+typedef struct _EditListEntry
+{
+  /* duration in movie's timescale */
+  guint32 duration;
+  /* start time in media's timescale, -1 for empty */
+  guint32 media_time;
+  guint32 media_rate;  /* fixed point 32 bit */
+} EditListEntry;
+
+typedef struct _AtomELST
+{
+  AtomFull header;
+
+  /* number of entries is implicit */
+  GSList *entries;
+} AtomELST;
+
+typedef struct _AtomEDTS
+{
+  Atom header;
+  AtomELST elst;
+} AtomEDTS;
 
 typedef struct _AtomMDIA
 {
@@ -521,6 +574,7 @@ typedef struct _AtomTRAK
   Atom header;
 
   AtomTKHD tkhd;
+  AtomEDTS *edts;
   AtomMDIA mdia;
 
   /* some helper info for structural conformity checks */
@@ -549,7 +603,6 @@ typedef struct _AtomWAVE
   /* list of AtomInfo */
   GList *extension_atoms;
 } AtomWAVE;
-
 
 /*
  * Function to serialize an atom
@@ -588,7 +641,13 @@ AtomTRAK*  atom_trak_new               (AtomsContext *context);
 void       atom_trak_add_samples       (AtomTRAK * trak, guint32 nsamples, guint32 delta,
                                         guint32 size, guint64 chunk_offset, gboolean sync,
                                         gboolean do_pts, gint64 pts_offset);
+void       atom_trak_add_elst_entry    (AtomTRAK * trak, guint32 duration,
+                                        guint32 media_time, guint32 rate);
 guint32    atom_trak_get_timescale     (AtomTRAK *trak);
+void       atom_stbl_add_samples       (AtomSTBL * stbl, guint32 nsamples,
+                                        guint32 delta, guint32 size,
+                                        guint64 chunk_offset, gboolean sync,
+                                        gboolean do_pts, gint64 pts_offset);
 
 AtomMOOV*  atom_moov_new               (AtomsContext *context);
 void       atom_moov_free              (AtomMOOV *moov);
@@ -599,10 +658,31 @@ void       atom_moov_set_64bits        (AtomMOOV *moov, gboolean large_file);
 void       atom_moov_chunks_add_offset (AtomMOOV *moov, guint32 offset);
 void       atom_moov_add_trak          (AtomMOOV *moov, AtomTRAK *trak);
 
+guint64    atom_mvhd_copy_data         (AtomMVHD * atom, guint8 ** buffer,
+                                        guint64 * size, guint64 * offset);
+void       atom_stco64_chunks_add_offset (AtomSTCO64 * stco64, guint32 offset);
+guint64    atom_trak_copy_data         (AtomTRAK * atom, guint8 ** buffer,
+                                        guint64 * size, guint64 * offset);
+void       atom_stbl_clear             (AtomSTBL * stbl);
+void       atom_stbl_init              (AtomSTBL * stbl);
+guint64    atom_stss_copy_data         (AtomSTSS *atom, guint8 **buffer,
+                                        guint64 *size, guint64* offset);
+guint64    atom_stts_copy_data         (AtomSTTS *atom, guint8 **buffer,
+                                        guint64 *size, guint64* offset);
+guint64    atom_stsc_copy_data         (AtomSTSC *atom, guint8 **buffer,
+                                        guint64 *size, guint64* offset);
+guint64    atom_stsz_copy_data         (AtomSTSZ *atom, guint8 **buffer,
+                                        guint64 *size, guint64* offset);
+guint64    atom_ctts_copy_data         (AtomCTTS *atom, guint8 **buffer,
+                                        guint64 *size, guint64* offset);
+guint64    atom_stco64_copy_data       (AtomSTCO64 *atom, guint8 **buffer,
+                                        guint64 *size, guint64* offset);
+
 /* media sample description related helpers */
 
 typedef struct
 {
+  guint16 version;
   guint32 fourcc;
   guint width;
   guint height;
@@ -634,18 +714,29 @@ typedef struct
 void atom_trak_set_audio_type (AtomTRAK * trak, AtomsContext * context,
                                AudioSampleEntry * entry, guint32 scale,
                                AtomInfo * ext, gint sample_size);
+
 void atom_trak_set_video_type (AtomTRAK * trak, AtomsContext * context,
                                VisualSampleEntry * entry, guint32 rate,
-                               AtomInfo * ext);
+                               GList * ext_atoms_list);
 
 AtomInfo *   build_codec_data_extension  (guint32 fourcc, const GstBuffer * codec_data);
 AtomInfo *   build_mov_aac_extension     (AtomTRAK * trak, const GstBuffer * codec_data);
+AtomInfo *   build_mov_alac_extension    (AtomTRAK * trak, const GstBuffer * codec_data);
 AtomInfo *   build_esds_extension        (AtomTRAK * trak, guint8 object_type,
                                           guint8 stream_type, const GstBuffer * codec_data);
 AtomInfo *   build_jp2h_extension        (AtomTRAK * trak, gint width, gint height,
-                                          guint32 fourcc);
+                                          guint32 fourcc, gint ncomp,
+                                          const GValue * cmap_array,
+                                          const GValue * cdef_array);
+
+AtomInfo *   build_jp2x_extension        (const GstBuffer * prefix);
+AtomInfo *   build_fiel_extension        (gint fields);
 AtomInfo *   build_amr_extension         ();
 AtomInfo *   build_h263_extension        ();
+AtomInfo *   build_gama_atom             (gdouble gamma);
+AtomInfo *   build_SMI_atom              (const GstBuffer *seqh);
+AtomInfo *   build_ima_adpcm_extension   (gint channels, gint rate,
+                                          gint blocksize);
 
 
 /*

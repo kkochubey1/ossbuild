@@ -111,7 +111,7 @@ enum
  */
 
 
-GST_DEBUG_CATEGORY_STATIC (gst_metadata_mux_debug);
+GST_DEBUG_CATEGORY (gst_metadata_mux_debug);
 #define GST_CAT_DEFAULT gst_metadata_mux_debug
 
 #define GOTO_DONE_IF_NULL(ptr) \
@@ -246,7 +246,7 @@ gst_metadata_mux_base_init (gpointer gclass)
 /* *INDENT-OFF* */
   static GstElementDetails element_details = {
     "Metadata muxer",
-    "Muxer/Extracter/Metadata",
+    "Muxer/Formatter/Metadata",
     "Write metadata (EXIF, IPTC and XMP) into a image stream",
     "Edgard Lima <edgard.lima@indt.org.br>"
   };

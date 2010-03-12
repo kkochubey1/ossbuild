@@ -62,6 +62,7 @@
 
 #define H264_CAPS \
   "video/x-h264, " \
+  "stream-format = (string) avc, " \
   COMMON_VIDEO_CAPS
 
 #define MPEG4V_CAPS \
@@ -71,6 +72,11 @@
   COMMON_VIDEO_CAPS "; " \
   "video/x-divx, " \
   "divxversion = (int) 5, "\
+  COMMON_VIDEO_CAPS
+
+#define SVQ_CAPS \
+  "video/x-svq, " \
+  "svqversion = (int) 3, " \
   COMMON_VIDEO_CAPS
 
 #define COMMON_AUDIO_CAPS(c, r) \
@@ -114,6 +120,7 @@
 #define AAC_CAPS \
   "audio/mpeg, " \
   "mpegversion = (int) 4, " \
+  "stream-format = (string) raw, " \
   COMMON_AUDIO_CAPS (8, MAX)
 
 #define AMR_CAPS \
@@ -123,6 +130,16 @@
   "audio/AMR-WB, " \
   "rate = (int) 16000, " \
   "channels = [ 1, 2 ] "
+
+#define ADPCM_CAPS  \
+  "audio/x-adpcm, " \
+  "layout = (string)dvi, " \
+  "block_align = (int)[64, 8096], " \
+  COMMON_AUDIO_CAPS(2, MAX)
+
+#define ALAC_CAPS \
+  "audio/x-alac, " \
+  COMMON_AUDIO_CAPS(2, MAX)
 
 /* FIXME 0.11 - take a look at bugs #580005 and #340375 */
 GstQTMuxFormatProp gst_qt_mux_format_list[] = {
@@ -141,6 +158,7 @@ GstQTMuxFormatProp gst_qt_mux_format_list[] = {
             MPEG4V_CAPS "; "
             H263_CAPS "; "
             H264_CAPS "; "
+            SVQ_CAPS "; "
             "video/x-dv, "
             "systemstream = (boolean) false, "
             COMMON_VIDEO_CAPS "; "
@@ -150,7 +168,9 @@ GstQTMuxFormatProp gst_qt_mux_format_list[] = {
         GST_STATIC_CAPS (PCM_CAPS_FULL "; "
             MP3_CAPS " ; "
             AAC_CAPS " ; "
-            "audio/x-alaw, " COMMON_AUDIO_CAPS (2, MAX) "; " AMR_CAPS)
+            ADPCM_CAPS " ; "
+            "audio/x-alaw, " COMMON_AUDIO_CAPS (2, MAX) "; "
+            AMR_CAPS " ; " ALAC_CAPS)
       }
   ,
   /* ISO 14496-14: mp42 as ISO base media extension
@@ -163,7 +183,7 @@ GstQTMuxFormatProp gst_qt_mux_format_list[] = {
         GST_STATIC_CAPS ("video/quicktime, variant = (string) iso"),
         GST_STATIC_CAPS (MPEG4V_CAPS "; " H264_CAPS ";"
             "video/x-mp4-part," COMMON_VIDEO_CAPS),
-        GST_STATIC_CAPS (MP3_CAPS "; " AAC_CAPS)
+        GST_STATIC_CAPS (MP3_CAPS "; " AAC_CAPS " ; " ALAC_CAPS)
       }
   ,
   /* 3GPP Technical Specification 26.244 V7.3.0
@@ -185,7 +205,8 @@ GstQTMuxFormatProp gst_qt_mux_format_list[] = {
         "MJ2",
         "GstMJ2Mux",
         GST_STATIC_CAPS ("video/mj2"),
-        GST_STATIC_CAPS ("image/x-j2c, " COMMON_VIDEO_CAPS),
+        GST_STATIC_CAPS ("image/x-j2c, " COMMON_VIDEO_CAPS "; "
+            "image/x-jpc, " COMMON_VIDEO_CAPS),
         GST_STATIC_CAPS (PCM_CAPS)
       }
   ,
