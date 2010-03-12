@@ -28,6 +28,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import ossbuild.Namespaces;
 import ossbuild.StringUtil;
+import ossbuild.init.Loader;
 import static ossbuild.extract.ResourceUtils.*;
 
 /**
@@ -74,7 +75,7 @@ public class Resources {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Variables">
-	protected Registry.Reference registryReference = null;
+	protected Reference registryReference = null;
 	protected String name;
 	protected boolean loaded = false;
 	protected boolean processed = false;
@@ -92,6 +93,10 @@ public class Resources {
 
 	public Resources(final String Name, final IResourcePackage... Packages) {
 		initFromPackages(Name, null, Packages);
+	}
+
+	public Resources(final String[] References, final IResourcePackage... Packages) {
+		initFromPackages(StringUtil.empty, References, Packages);
 	}
 
 	public Resources(final String Name, final String[] References, final IResourcePackage... Packages) {
@@ -138,6 +143,19 @@ public class Resources {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Helper Methods">
+	protected static void checkRegistryInitialization() {
+		if (!Loader.areRegistryReferencesInitialized()) {
+			try {
+				Loader.initializeRegistryReferences();
+			} catch(Throwable t) {
+				if (t instanceof ResourceException)
+					throw (ResourceException)t;
+				else
+					throw new ResourceException("Error initializing registry", t);
+			}
+		}
+	}
+
 	protected void calculateTotals() {
 		//Calculate total size and resource count
 		for(IResourcePackage pkg : packages) {
@@ -208,17 +226,26 @@ public class Resources {
 		return packages;
 	}
 
-	public Registry.Reference getRegistryReference() {
+	public Reference getRegistryReference() {
 		return registryReference;
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Public Methods">
 	//<editor-fold defaultstate="collapsed" desc="Overloads">
+	public Future extract() {
+		final ExecutorService svc = createUnprivilegedExecutorService();
+		try {
+			return extract(references, packages, svc, IResourceFilter.None, IResourceProgressListener.None, IResourceCallback.None);
+		} finally {
+			svc.shutdown();
+		}
+	}
+
 	public Future extract(final IResourceCallback callback) {
 		final ExecutorService svc = createUnprivilegedExecutorService();
 		try {
-			return extract(packages, svc, IResourceFilter.None, IResourceProgressListener.None, callback);
+			return extract(references, packages, svc, IResourceFilter.None, IResourceProgressListener.None, callback);
 		} finally {
 			svc.shutdown();
 		}
@@ -227,7 +254,7 @@ public class Resources {
 	public Future extract(final IResourceProgressListener progress) {
 		final ExecutorService svc = createUnprivilegedExecutorService();
 		try {
-			return extract(packages, svc, IResourceFilter.None, progress, IResourceCallback.None);
+			return extract(references, packages, svc, IResourceFilter.None, progress, IResourceCallback.None);
 		} finally {
 			svc.shutdown();
 		}
@@ -236,7 +263,7 @@ public class Resources {
 	public Future extract(final IResourceFilter filter) {
 		final ExecutorService svc = createUnprivilegedExecutorService();
 		try {
-			return extract(packages, svc, filter, IResourceProgressListener.None, IResourceCallback.None);
+			return extract(references, packages, svc, filter, IResourceProgressListener.None, IResourceCallback.None);
 		} finally {
 			svc.shutdown();
 		}
@@ -245,7 +272,7 @@ public class Resources {
 	public Future extract(final IResourceFilter filter, final IResourceCallback callback) {
 		final ExecutorService svc = createUnprivilegedExecutorService();
 		try {
-			return extract(packages, svc, filter, IResourceProgressListener.None, callback);
+			return extract(references, packages, svc, filter, IResourceProgressListener.None, callback);
 		} finally {
 			svc.shutdown();
 		}
@@ -254,7 +281,7 @@ public class Resources {
 	public Future extract(final IResourceProgressListener progress, final IResourceCallback callback) {
 		final ExecutorService svc = createUnprivilegedExecutorService();
 		try {
-			return extract(packages, svc, IResourceFilter.None, progress, callback);
+			return extract(references, packages, svc, IResourceFilter.None, progress, callback);
 		} finally {
 			svc.shutdown();
 		}
@@ -263,10 +290,14 @@ public class Resources {
 	public Future extract(final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
 		final ExecutorService svc = createUnprivilegedExecutorService();
 		try {
-			return extract(packages, svc, filter, progress, callback);
+			return extract(references, packages, svc, filter, progress, callback);
 		} finally {
 			svc.shutdown();
 		}
+	}
+
+	public Future extract(final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
+		return extract(references, packages, executor, filter, progress, callback);
 	}
 	//</editor-fold>
 
@@ -278,7 +309,9 @@ public class Resources {
 		return processEnvVars(packages, filter);
 	} /**/
 
-	public Future extract(final IResourcePackage[] pkgs, final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
+	public Future extract(final String[] refs, final IResourcePackage[] pkgs, final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
+		checkRegistryInitialization();
+
 		synchronized(lock) {
 			if (processed)
 				return CompletedFuture;
@@ -300,7 +333,7 @@ public class Resources {
 
 							if (!processed) {
 								//Do the real work
-								extractResources(pkgs, filter, progress);
+								extractResources(refs, pkgs, filter, progress);
 
 								//Mark as processed
 								processed = true;
@@ -343,7 +376,16 @@ public class Resources {
 	public static final Future extractAll(final IResourcePackage... packages) {
 		final ExecutorService svc = createUnprivilegedExecutorService();
 		try {
-			return newInstance(packages).extract(packages, svc, IResourceFilter.None, IResourceProgressListener.None, IResourceCallback.None);
+			return newInstance((String[])null, packages).extract(svc, IResourceFilter.None, IResourceProgressListener.None, IResourceCallback.None);
+		} finally {
+			svc.shutdown();
+		}
+	}
+
+	public static final Future extractAll(final String[] refs, final IResourcePackage... packages) {
+		final ExecutorService svc = createUnprivilegedExecutorService();
+		try {
+			return newInstance(refs, packages).extract(svc, IResourceFilter.None, IResourceProgressListener.None, IResourceCallback.None);
 		} finally {
 			svc.shutdown();
 		}
@@ -352,7 +394,7 @@ public class Resources {
 	public static final Future extractAll(final IResourceCallback callback, final IResourcePackage... packages) {
 		final ExecutorService svc = createUnprivilegedExecutorService();
 		try {
-			return newInstance(packages).extract(packages, svc, IResourceFilter.None, IResourceProgressListener.None, callback);
+			return newInstance((String[])null, packages).extract(svc, IResourceFilter.None, IResourceProgressListener.None, callback);
 		} finally {
 			svc.shutdown();
 		}
@@ -361,7 +403,7 @@ public class Resources {
 	public static final Future extractAll(final IResourceProgressListener progress, final IResourceCallback callback, final IResourcePackage... packages) {
 		final ExecutorService svc = createUnprivilegedExecutorService();
 		try {
-			return newInstance(packages).extract(packages, svc, IResourceFilter.None, progress, callback);
+			return newInstance((String[])null, packages).extract(svc, IResourceFilter.None, progress, callback);
 		} finally {
 			svc.shutdown();
 		}
@@ -370,14 +412,18 @@ public class Resources {
 	public static final Future extractAll(final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback, final IResourcePackage... packages) {
 		final ExecutorService svc = createUnprivilegedExecutorService();
 		try {
-			return newInstance(packages).extract(packages, svc, filter, progress, callback);
+			return newInstance((String[])null, packages).extract(svc, filter, progress, callback);
 		} finally {
 			svc.shutdown();
 		}
 	}
 
 	public static final Future extractAll(final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback, final IResourcePackage... packages) {
-		return newInstance(packages).extract(packages, executor, filter, progress, callback);
+		return newInstance((String[])null, packages).extract(executor, filter, progress, callback);
+	}
+
+	public static final Future extractAll(final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback, final String[] refs, final IResourcePackage... packages) {
+		return newInstance(refs, packages).extract(executor, filter, progress, callback);
 	}
 	//</editor-fold>
 
@@ -388,6 +434,14 @@ public class Resources {
 
 	public static final Resources newInstance(final String Name, final IResourcePackage... Packages) {
 		return new Resources(Name, Packages);
+	}
+	
+	public static final Resources newInstance(final String[] References, final IResourcePackage... Packages) {
+		return new Resources(References, Packages);
+	}
+
+	public static final Resources newInstance(final String Name, final String[] References, final IResourcePackage... Packages) {
+		return new Resources(Name, References, Packages);
 	}
 
 	public static final Resources newInstance(final String ResourceName) {
@@ -550,7 +604,7 @@ public class Resources {
 		}
 	} /**/
 
-	protected void extractResources(final IResourcePackage[] pkgs, final IResourceFilter filter, final IResourceProgressListener progress) throws Exception {
+	protected void extractResources(final String[] refs, final IResourcePackage[] pkgs, final IResourceFilter filter, final IResourceProgressListener progress) throws Exception {
 		//Please note that this is executed in a separate thread.
 		//It can be cancelled or interrupted at any time.
 
@@ -567,6 +621,15 @@ public class Resources {
 		try {
 			//Notify begin
 			notifyProgressBegin(progress, startTime);
+
+			//Load references
+			if (refs != null && refs.length > 0) {
+				for(String ref : refs) {
+					if (ref.equalsIgnoreCase(name))
+						continue;
+					Registry.loadResources(ref).get();
+				}
+			}
 
 			for(IResourcePackage pkg : pkgs) {
 				if (pkg == null) {

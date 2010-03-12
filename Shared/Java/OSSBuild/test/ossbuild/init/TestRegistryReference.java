@@ -1,7 +1,9 @@
 
 package ossbuild.init;
 
+import ossbuild.Sys;
 import static org.junit.Assert.*;
+import ossbuild.extract.Resources;
 
 /**
  *
@@ -17,6 +19,13 @@ public class TestRegistryReference extends RegistryReference {
 	@Override
 	public void unregister() throws Throwable {
 		assertTrue(true);
+	}
+
+	@Override
+	public Resources createResourceExtractor() {
+		return Resources.newInstance(
+			Sys.createPlatformPackageResourceName("resources.extraction", "test.xml")
+		);
 	}
 
 }

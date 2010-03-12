@@ -106,14 +106,18 @@ public class Loader {
 
 	//<editor-fold defaultstate="collapsed" desc="Public Static Methods">
 	public static boolean initialize() throws Throwable {
-		return initialize(true);
+		return initialize(true, null);
+	}
+
+	public static boolean initialize(final IInitializeListener Listener) throws Throwable {
+		return initialize(true, Listener);
 	}
 	
-	public static boolean initialize(final boolean cleanRegistryAfterInitialization) throws Throwable {
+	public static boolean initialize(final boolean cleanRegistryAfterInitialization, final IInitializeListener Listener) throws Throwable {
 		synchronized(lock) {
 			synchronized(systemLoaderLock) {
 				synchronized(registryReferenceLock) {
-					final boolean ret = initializeRegistryReferences() && initializeSystemLoaders();
+					final boolean ret = initializeRegistryReferences(Listener) && initializeSystemLoaders(Listener);
 					if (ret && cleanRegistryAfterInitialization)
 						Registry.clear();
 					return ret;
@@ -350,29 +354,27 @@ public class Loader {
 
 								//<editor-fold defaultstate="collapsed" desc="System loaders">
 								//Locate <Load /> tags
-								if ((lst = (NodeList)xpath.evaluate("//Init/System/Load", top, XPathConstants.NODESET)) == null || lst.getLength() <= 0)
-									continue;
+								if ((lst = (NodeList)xpath.evaluate("//Init/System/Load", top, XPathConstants.NODESET)) != null && lst.getLength() > 0) {
+									//Iterate over every <Load /> tag
+									for(int i = 0; i < lst.getLength() && (node = lst.item(i)) != null; ++i) {
 
-								//Iterate over every <Load /> tag
-								for(int i = 0; i < lst.getLength() && (node = lst.item(i)) != null; ++i) {
-
-									//Examine the individual loader
-									if ((sysLoaderInfo = readSystemLoader(xpath, document, node)) != null)
-										systemLoaders.add(sysLoaderInfo);
+										//Examine the individual loader
+										if ((sysLoaderInfo = readSystemLoader(xpath, document, node)) != null)
+											systemLoaders.add(sysLoaderInfo);
+									}
 								}
 								//</editor-fold>
 
 								//<editor-fold defaultstate="collapsed" desc="Registry references">
 								//Locate <Load /> tags
-								if ((lst = (NodeList)xpath.evaluate("//Init/Registry/Reference", top, XPathConstants.NODESET)) == null || lst.getLength() <= 0)
-									continue;
+								if ((lst = (NodeList)xpath.evaluate("//Init/Registry/Reference", top, XPathConstants.NODESET)) != null && lst.getLength() > 0) {
+									//Iterate over every <Reference /> tag
+									for(int i = 0; i < lst.getLength() && (node = lst.item(i)) != null; ++i) {
 
-								//Iterate over every <Reference /> tag
-								for(int i = 0; i < lst.getLength() && (node = lst.item(i)) != null; ++i) {
-
-									//Examine the individual registry reference
-									if ((regRefInfo = readRegistryReference(xpath, document, node)) != null)
-										registryReferences.add(regRefInfo);
+										//Examine the individual registry reference
+										if ((regRefInfo = readRegistryReference(xpath, document, node)) != null)
+											registryReferences.add(regRefInfo);
+									}
 								}
 								//</editor-fold>
 
@@ -422,119 +424,6 @@ public class Loader {
 			return new RegistryReferenceInfo(cls, instance);
 		} catch(Throwable t) {
 			return null;
-		}
-	}
-	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="Interfaces">
-	public static interface IRegistryReferenceInitializeListener {
-		//<editor-fold defaultstate="collapsed" desc="Constants">
-		public static final IRegistryReferenceInitializeListener
-			None = null
-		;
-		//</editor-fold>
-
-		boolean beforeAllRegistryReferencesInitialized();
-		void afterAllRegistryReferencesInitialized();
-
-		boolean beforeRegistryReferenceInitialized(final IRegistryReference RegistryReference);
-		void afterRegistryReferenceInitialized(final IRegistryReference RegistryReference);
-	}
-
-	public static interface ISystemLoaderInitializeListener {
-		//<editor-fold defaultstate="collapsed" desc="Constants">
-		public static final ISystemLoaderInitializeListener
-			None = null
-		;
-		//</editor-fold>
-
-		boolean beforeAllSystemLoadersInitialized();
-		void afterAllSystemLoadersInitialized();
-
-		boolean beforeSystemLoaderInitialized(final ISystemLoader SystemLoader);
-		void afterSystemLoaderInitialized(final ISystemLoader SystemLoader);
-	}
-
-	public static interface IInitializeListener extends IRegistryReferenceInitializeListener, ISystemLoaderInitializeListener {
-	}
-	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="Adapters">
-	public static abstract class RegistryReferenceInitializeListenerAdapter implements IRegistryReferenceInitializeListener {
-		@Override
-		public boolean beforeAllRegistryReferencesInitialized() {
-			return true;
-		}
-
-		@Override
-		public void afterAllRegistryReferencesInitialized() {
-		}
-
-		@Override
-		public boolean beforeRegistryReferenceInitialized(final IRegistryReference RegistryReference) {
-			return true;
-		}
-
-		@Override
-		public void afterRegistryReferenceInitialized(final IRegistryReference RegistryReference) {
-		}
-	}
-
-	public static abstract class SystemLoaderInitializeListenerAdapter implements ISystemLoaderInitializeListener {
-		@Override
-		public boolean beforeAllSystemLoadersInitialized() {
-			return true;
-		}
-
-		@Override
-		public void afterAllSystemLoadersInitialized() {
-		}
-
-		@Override
-		public boolean beforeSystemLoaderInitialized(final ISystemLoader SystemLoader) {
-			return true;
-		}
-
-		@Override
-		public void afterSystemLoaderInitialized(final ISystemLoader SystemLoader) {
-		}
-	}
-
-	public static abstract class InitializeListenerAdapter implements IInitializeListener {
-		@Override
-		public boolean beforeAllRegistryReferencesInitialized() {
-			return true;
-		}
-
-		@Override
-		public void afterAllRegistryReferencesInitialized() {
-		}
-
-		@Override
-		public boolean beforeAllSystemLoadersInitialized() {
-			return true;
-		}
-
-		@Override
-		public void afterAllSystemLoadersInitialized() {
-		}
-
-		@Override
-		public boolean beforeRegistryReferenceInitialized(final IRegistryReference RegistryReference) {
-			return true;
-		}
-
-		@Override
-		public void afterRegistryReferenceInitialized(final IRegistryReference RegistryReference) {
-		}
-
-		@Override
-		public boolean beforeSystemLoaderInitialized(final ISystemLoader SystemLoader) {
-			return true;
-		}
-
-		@Override
-		public void afterSystemLoaderInitialized(final ISystemLoader SystemLoader) {
 		}
 	}
 	//</editor-fold>

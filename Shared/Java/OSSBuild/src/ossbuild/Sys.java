@@ -1,6 +1,17 @@
 
 package ossbuild;
 
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import ossbuild.extract.IResourceCallback;
+import ossbuild.extract.IResourceFilter;
+import ossbuild.extract.IResourceProgressListener;
+import ossbuild.extract.Registry;
+import ossbuild.init.IInitializeListener;
+import ossbuild.init.IRegistryReferenceInitializeListener;
+import ossbuild.init.ISystemLoaderInitializeListener;
 import ossbuild.init.Loader;
 
 /**
@@ -36,6 +47,27 @@ public final class Sys {
 
 	public static String getEnvironmentVariable(final String name) {
 		return Env.getEnvironmentVariable(name);
+	}
+
+	public static boolean isRegistryInitialized() {
+		return Registry.isInitialized();
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Helper Methods">
+	private static boolean loadResourcesAndWaitHelper(final Future f) {
+		if (f == null)
+			return false;
+		try {
+			Object o = f.get();
+			return true;
+		} catch(CancellationException t) {
+			return false;
+		} catch(ExecutionException t) {
+			return false;
+		} catch(InterruptedException t) {
+			return false;
+		}
 	}
 	//</editor-fold>
 
@@ -196,9 +228,25 @@ public final class Sys {
 		}
 	}
 
+	public static boolean initializeRegistry(final IRegistryReferenceInitializeListener Listener) {
+		try {
+			return Loader.initializeRegistryReferences(Listener);
+		} catch(Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
 	public static boolean initializeSystem() {
 		try {
 			return Loader.initializeSystemLoaders();
+		} catch(Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
+	public static boolean initializeSystem(final ISystemLoaderInitializeListener Listener) {
+		try {
+			return Loader.initializeSystemLoaders(Listener);
 		} catch(Throwable t) {
 			throw new RuntimeException(t);
 		}
@@ -210,6 +258,66 @@ public final class Sys {
 		} catch(Throwable t) {
 			throw new RuntimeException(t);
 		}
+	}
+
+	public static boolean initialize(final IInitializeListener Listener) {
+		try {
+			return Loader.initialize(Listener);
+		} catch(Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
+	public static boolean initialize(final boolean cleanRegistryAfterInitialization, final IInitializeListener Listener) {
+		try {
+			return Loader.initialize(cleanRegistryAfterInitialization, Listener);
+		} catch(Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
+	public static boolean cleanRegistry() {
+		return Registry.clear();
+	}
+
+	public static Future loadResources(final String registryReferenceName) {
+		return Registry.loadResources(registryReferenceName);
+	}
+
+	public static Future loadResources(final String registryReferenceName, final IResourceCallback callback) {
+		return Registry.loadResources(registryReferenceName, callback);
+	}
+
+	public static Future loadResources(final String registryReferenceName, final IResourceProgressListener progress, final IResourceCallback callback) {
+		return Registry.loadResources(registryReferenceName, progress, callback);
+	}
+
+	public static Future loadResources(final String registryReferenceName, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
+		return Registry.loadResources(registryReferenceName, filter, progress, callback);
+	}
+
+	public static Future loadResources(final String registryReferenceName, final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
+		return Registry.loadResources(registryReferenceName, executor, filter, progress, callback);
+	}
+
+	public static boolean loadResourcesAndWait(final String registryReferenceName) {
+		return loadResourcesAndWaitHelper(loadResources(registryReferenceName));
+	}
+
+	public static boolean loadResourcesAndWait(final String registryReferenceName, final IResourceCallback callback) {
+		return loadResourcesAndWaitHelper(loadResources(registryReferenceName, callback));
+	}
+
+	public static boolean loadResourcesAndWait(final String registryReferenceName, final IResourceProgressListener progress, final IResourceCallback callback) {
+		return loadResourcesAndWaitHelper(loadResources(registryReferenceName, progress, callback));
+	}
+
+	public static boolean loadResourcesAndWait(final String registryReferenceName, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
+		return loadResourcesAndWaitHelper(loadResources(registryReferenceName, filter, progress, callback));
+	}
+
+	public static boolean loadResourcesAndWait(final String registryReferenceName, final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
+		return loadResourcesAndWaitHelper(loadResources(registryReferenceName, executor, filter, progress, callback));
 	}
 	//</editor-fold>
 }
