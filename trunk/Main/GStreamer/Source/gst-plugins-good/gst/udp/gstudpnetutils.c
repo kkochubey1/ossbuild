@@ -166,11 +166,6 @@ gst_udp_set_ttl (int sockfd, int ttl, gboolean is_multicast)
 
   socklen = sizeof (addr);
   if ((ret = getsockname (sockfd, (struct sockaddr *) &addr, &socklen)) < 0) {
-#ifdef G_OS_WIN32
-  /* This error is returned on windows if the socket is not bound */
-  if (WSAGetLastError() == WSAEINVAL)
-	  ret = 0;
-#endif
     return ret;
   }
 
