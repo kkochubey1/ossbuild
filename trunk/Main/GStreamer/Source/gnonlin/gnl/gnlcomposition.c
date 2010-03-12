@@ -1250,6 +1250,7 @@ convert_list_to_tree (GList ** stack, GstClockTime * start,
       if (limit)
         nbsinks--;
     }
+    *stack = tmp;
   }
 
 beach:
@@ -1285,6 +1286,7 @@ get_stack_list (GnlComposition * comp, GstClockTime timestamp,
   GNode *ret = NULL;
   GstClockTime nstart = GST_CLOCK_TIME_NONE;
   GstClockTime nstop = GST_CLOCK_TIME_NONE;
+  GstClockTime first_out_of_stack = GST_CLOCK_TIME_NONE;
   guint32 highest = 0;
 
   GST_DEBUG_OBJECT (comp,
@@ -1313,6 +1315,7 @@ get_stack_list (GnlComposition * comp, GstClockTime timestamp,
       }
     } else {
       GST_LOG_OBJECT (comp, "too far, stopping iteration");
+      first_out_of_stack = object->start;
       break;
     }
   }
@@ -1329,6 +1332,9 @@ get_stack_list (GnlComposition * comp, GstClockTime timestamp,
   /* convert that list to a stack */
   tmp = stack;
   ret = convert_list_to_tree (&tmp, &nstart, &nstop, &highest);
+  if (GST_CLOCK_TIME_IS_VALID (first_out_of_stack)
+      && nstop > first_out_of_stack)
+    nstop = first_out_of_stack;
 
   GST_DEBUG ("nstart:%" GST_TIME_FORMAT ", nstop:%" GST_TIME_FORMAT,
       GST_TIME_ARGS (nstart), GST_TIME_ARGS (nstop));
@@ -2491,7 +2497,7 @@ gnl_composition_add_object (GstBin * bin, GstElement * element)
       GNL_OBJECT_IS_EXPANDABLE (element)) {
     /* It doesn't get added to objects_start and objects_stop. */
     comp->priv->expandables = g_list_prepend (comp->priv->expandables, element);
-    goto chiringuito;
+    goto check_update;
   }
 
   /* add it sorted to the objects list */
@@ -2527,8 +2533,11 @@ gnl_composition_add_object (GstBin * bin, GstElement * element)
       GST_TIME_ARGS (comp->priv->segment_start),
       GST_TIME_ARGS (comp->priv->segment_stop));
 
-  update_required = OBJECT_IN_ACTIVE_SEGMENT (comp, element)
-      || (!comp->priv->current);
+check_update:
+  update_required = OBJECT_IN_ACTIVE_SEGMENT (comp, element) ||
+      (!comp->priv->current) ||
+      (((GnlObject *) element)->priority == G_MAXUINT32) ||
+      GNL_OBJECT_IS_EXPANDABLE (element);
 
   /* We only need the current position if we're going to update */
   if (update_required && comp->priv->can_update)

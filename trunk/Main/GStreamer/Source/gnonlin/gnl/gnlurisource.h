@@ -21,36 +21,37 @@
  */
 
 
-#ifndef __GNL_FILESOURCE_H__
-#define __GNL_FILESOURCE_H__
+#ifndef __GNL_URI_SOURCE_H__
+#define __GNL_URI_SOURCE_H__
 
 #include <gst/gst.h>
-#include "gnlobject.h"
-#include "gnlurisource.h"
+#include "gnlsource.h"
 
 G_BEGIN_DECLS
-#define GNL_TYPE_FILESOURCE \
-  (gnl_filesource_get_type())
-#define GNL_FILESOURCE(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST((obj),GNL_TYPE_FILESOURCE,GnlFileSource))
-#define GNL_FILESOURCE_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST((klass),GNL_TYPE_FILESOURCE,GnlFileSourceClass))
-#define GNL_IS_FILESOURCE(obj) \
-  (G_TYPE_CHECK_INSTANCE_TYPE((obj),GNL_TYPE_FILESOURCE))
-#define GNL_IS_FILESOURCE_CLASS(obj) \
-  (G_TYPE_CHECK_CLASS_TYPE((klass),GNL_TYPE_FILESOURCE))
+#define GNL_TYPE_URI_SOURCE \
+  (gnl_urisource_get_type())
+#define GNL_URI_SOURCE(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST((obj),GNL_TYPE_URI_SOURCE,GnlURIsource))
+#define GNL_URI_SOURCE_CLASS(klass) \
+  (G_TYPE_CHECK_CLASS_CAST((klass),GNL_TYPE_URI_SOURCE,GnlURIsourceClass))
+#define GNL_IS_URI_SOURCE(obj) \
+  (G_TYPE_CHECK_INSTANCE_TYPE((obj),GNL_TYPE_URI_SOURCE))
+#define GNL_IS_URI_SOURCE_CLASS(obj) \
+  (G_TYPE_CHECK_CLASS_TYPE((klass),GNL_TYPE_URI_SOURCE))
 
-struct _GnlFileSource
+struct _GnlURISource
 {
-  GnlURISource parent;
+  GnlSource parent;
+
+  gchar *uri;
 };
 
-struct _GnlFileSourceClass
+struct _GnlURISourceClass
 {
-  GnlURISourceClass parent_class;
+  GnlSourceClass parent_class;
 };
 
-GType gnl_filesource_get_type (void);
+GType gnl_urisource_get_type (void);
 
 G_END_DECLS
-#endif /* __GNL_FILESOURCE_H__ */
+#endif /* __GNL_URI_SOURCE_H__ */

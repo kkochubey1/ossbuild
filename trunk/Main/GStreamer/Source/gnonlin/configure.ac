@@ -3,7 +3,7 @@ AC_PREREQ(2.52)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GNonLin, 0.10.13,
+AC_INIT(GNonLin, 0.10.15,
     http://gnonlin.sourceforge.net/,
     gnonlin)
 
@@ -30,6 +30,11 @@ AM_MAINTAINER_MODE
 dnl sets host_* variables
 AC_CANONICAL_HOST
 
+dnl use pretty build output with automake >= 1.11
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])],
+  [AM_DEFAULT_VERBOSITY=1
+   AC_SUBST(AM_DEFAULT_VERBOSITY)])
+
 dnl our libraries and install dirs use major.minor as a version
 GST_MAJORMINOR=$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR
 dnl we override it here if we need to for the release candidate of new series
@@ -41,7 +46,7 @@ AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
 GST_REQ=0.10.9
-GSTPB_REQ=0.10.4
+GSTPB_REQ=0.10.13
 
 dnl *** autotools stuff ****
 
@@ -128,11 +133,7 @@ AC_SUBST(GST_PREFIX)
 AC_SUBST(GSTPB_PREFIX)
 
 AG_GST_CHECK_GST_CHECK($GST_MAJORMINOR, [$GST_REQ], no)
-
-dnl FIXME: get rid of this by making sure gstreamer-check brings it in
-dnl check for "check", unit testing library/header
-AM_PATH_CHECK(0.9.2, HAVE_CHECK=yes, HAVE_CHECK=no)
-AM_CONDITIONAL(HAVE_CHECK, test "x$HAVE_CHECK" = "xyes")
+AM_CONDITIONAL(HAVE_CHECK, test "x$HAVE_GST_CHECK" = "xyes")
 
 dnl *** set variables based on configure arguments ***
 
@@ -197,8 +198,6 @@ dnl whatevertarget_LIBS and -L flags here affect the rest of the linking
 GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^[_]*gst_plugin_desc\$\$' $GST_ALL_LDFLAGS"
 AC_SUBST(GST_PLUGIN_LDFLAGS)
 
-SHAVE_INIT([common],[enable])
-
 dnl *** output files ***
 
 dnl keep this alphabetic per directory, please
@@ -206,8 +205,6 @@ AC_CONFIG_FILES(
 Makefile
 common/Makefile
 common/m4/Makefile
-common/shave
-common/shave-libtool
 docs/Makefile
 docs/libs/Makefile
 docs/version.entities
