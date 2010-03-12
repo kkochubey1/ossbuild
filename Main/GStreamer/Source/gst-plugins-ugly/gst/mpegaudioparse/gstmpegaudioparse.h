@@ -115,12 +115,15 @@ struct _GstMPEGAudioParse {
   guint vbri_bitrate;
   guint vbri_seek_points;
   guint32 *vbri_seek_table;
+  gboolean vbri_valid;
 
   /* Accurate seeking */
   GList *seek_table;
-  GMutex *pending_accurate_seeks_lock;
+  GMutex *pending_seeks_lock;
   GSList *pending_accurate_seeks;
   gboolean exact_position;
+
+  GSList *pending_nonaccurate_seeks;
 
   /* Track whether we're seekable (in BYTES format, if upstream operates in
    * TIME format, we don't care about seekability and assume upstream handles

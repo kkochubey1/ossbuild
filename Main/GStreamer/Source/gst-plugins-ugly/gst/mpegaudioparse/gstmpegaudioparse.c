@@ -138,24 +138,37 @@ mp3parse_total_time (GstMPEGAudioParse * mp3parse, GstClockTime * total);
 GST_BOILERPLATE (GstMPEGAudioParse, gst_mp3parse, GstElement, GST_TYPE_ELEMENT);
 
 #define GST_TYPE_MP3_CHANNEL_MODE (gst_mp3_channel_mode_get_type())
+
+static const GEnumValue mp3_channel_mode[] = {
+  {MP3_CHANNEL_MODE_UNKNOWN, "Unknown", "unknown"},
+  {MP3_CHANNEL_MODE_MONO, "Mono", "mono"},
+  {MP3_CHANNEL_MODE_DUAL_CHANNEL, "Dual Channel", "dual-channel"},
+  {MP3_CHANNEL_MODE_JOINT_STEREO, "Joint Stereo", "joint-stereo"},
+  {MP3_CHANNEL_MODE_STEREO, "Stereo", "stereo"},
+  {0, NULL, NULL},
+};
+
 static GType
 gst_mp3_channel_mode_get_type (void)
 {
   static GType mp3_channel_mode_type = 0;
-  static GEnumValue mp3_channel_mode[] = {
-    {MP3_CHANNEL_MODE_UNKNOWN, "Unknown", "unknown"},
-    {MP3_CHANNEL_MODE_MONO, "Mono", "mono"},
-    {MP3_CHANNEL_MODE_DUAL_CHANNEL, "Dual Channel", "dual-channel"},
-    {MP3_CHANNEL_MODE_JOINT_STEREO, "Joint Stereo", "joint-stereo"},
-    {MP3_CHANNEL_MODE_STEREO, "Stereo", "stereo"},
-    {0, NULL, NULL},
-  };
 
   if (!mp3_channel_mode_type) {
     mp3_channel_mode_type =
         g_enum_register_static ("GstMp3ChannelMode", mp3_channel_mode);
   }
   return mp3_channel_mode_type;
+}
+
+static const gchar *
+gst_mp3_channel_mode_get_nick (gint mode)
+{
+  guint i;
+  for (i = 0; i < G_N_ELEMENTS (mp3_channel_mode); i++) {
+    if (mp3_channel_mode[i].value == mode)
+      return mp3_channel_mode[i].value_nick;
+  }
+  return NULL;
 }
 
 static const guint mp3types_bitrates[2][3][16] = {
@@ -186,7 +199,6 @@ mp3_type_frame_length_from_header (GstMPEGAudioParse * mp3parse, guint32 header,
   gulong mode, samplerate, bitrate, layer, channels, padding, crc;
   gulong version;
   gint lsf, mpg25;
-  GEnumValue *mode_enum;
 
   if (header & (1 << 20)) {
     lsf = (header & (1 << 19)) ? 0 : 1;
@@ -229,14 +241,11 @@ mp3_type_frame_length_from_header (GstMPEGAudioParse * mp3parse, guint32 header,
       break;
   }
 
-  mode_enum =
-      g_enum_get_value (g_type_class_peek (GST_TYPE_MP3_CHANNEL_MODE), mode);
-
   GST_DEBUG_OBJECT (mp3parse, "Calculated mp3 frame length of %u bytes",
       length);
   GST_DEBUG_OBJECT (mp3parse, "samplerate = %lu, bitrate = %lu, version = %lu, "
       "layer = %lu, channels = %lu, mode = %s", samplerate, bitrate, version,
-      layer, channels, mode_enum->value_nick);
+      layer, channels, gst_mp3_channel_mode_get_nick (mode));
 
   if (put_version)
     *put_version = version;
@@ -379,13 +388,18 @@ gst_mp3parse_reset (GstMPEGAudioParse * mp3parse)
     mp3parse->seek_table = NULL;
   }
 
-  g_mutex_lock (mp3parse->pending_accurate_seeks_lock);
+  g_mutex_lock (mp3parse->pending_seeks_lock);
   if (mp3parse->pending_accurate_seeks) {
     g_slist_foreach (mp3parse->pending_accurate_seeks, (GFunc) g_free, NULL);
     g_slist_free (mp3parse->pending_accurate_seeks);
     mp3parse->pending_accurate_seeks = NULL;
   }
-  g_mutex_unlock (mp3parse->pending_accurate_seeks_lock);
+  if (mp3parse->pending_nonaccurate_seeks) {
+    g_slist_foreach (mp3parse->pending_nonaccurate_seeks, (GFunc) g_free, NULL);
+    g_slist_free (mp3parse->pending_nonaccurate_seeks);
+    mp3parse->pending_nonaccurate_seeks = NULL;
+  }
+  g_mutex_unlock (mp3parse->pending_seeks_lock);
 
   if (mp3parse->pending_segment) {
     GstEvent **eventp = &mp3parse->pending_segment;
@@ -415,7 +429,7 @@ gst_mp3parse_init (GstMPEGAudioParse * mp3parse, GstMPEGAudioParseClass * klass)
   gst_element_add_pad (GST_ELEMENT (mp3parse), mp3parse->srcpad);
 
   mp3parse->adapter = gst_adapter_new ();
-  mp3parse->pending_accurate_seeks_lock = g_mutex_new ();
+  mp3parse->pending_seeks_lock = g_mutex_new ();
 
   gst_mp3parse_reset (mp3parse);
 }
@@ -431,8 +445,8 @@ gst_mp3parse_dispose (GObject * object)
     g_object_unref (mp3parse->adapter);
     mp3parse->adapter = NULL;
   }
-  g_mutex_free (mp3parse->pending_accurate_seeks_lock);
-  mp3parse->pending_accurate_seeks_lock = NULL;
+  g_mutex_free (mp3parse->pending_seeks_lock);
+  mp3parse->pending_seeks_lock = NULL;
 
   g_list_foreach (mp3parse->pending_events, (GFunc) gst_mini_object_unref,
       NULL);
@@ -458,14 +472,14 @@ gst_mp3parse_sink_event (GstPad * pad, GstEvent * event)
       GstFormat format;
       gint64 start, stop, pos;
       gboolean update;
+      MPEGAudioPendingAccurateSeek *seek = NULL;
+      GSList *node;
 
       gst_event_parse_new_segment_full (event, &update, &rate, &applied_rate,
           &format, &start, &stop, &pos);
 
-      g_mutex_lock (mp3parse->pending_accurate_seeks_lock);
+      g_mutex_lock (mp3parse->pending_seeks_lock);
       if (format == GST_FORMAT_BYTES && mp3parse->pending_accurate_seeks) {
-        MPEGAudioPendingAccurateSeek *seek = NULL;
-        GSList *node;
 
         for (node = mp3parse->pending_accurate_seeks; node; node = node->next) {
           MPEGAudioPendingAccurateSeek *tmp = node->data;
@@ -504,7 +518,7 @@ gst_mp3parse_sink_event (GstPad * pad, GstEvent * event)
           mp3parse->pending_accurate_seeks =
               g_slist_delete_link (mp3parse->pending_accurate_seeks, node);
 
-          g_mutex_unlock (mp3parse->pending_accurate_seeks_lock);
+          g_mutex_unlock (mp3parse->pending_seeks_lock);
           res = gst_pad_push_event (mp3parse->srcpad, event);
 
           return res;
@@ -513,7 +527,7 @@ gst_mp3parse_sink_event (GstPad * pad, GstEvent * event)
               "Accurate seek not possible, didn't get an appropiate upstream segment");
         }
       }
-      g_mutex_unlock (mp3parse->pending_accurate_seeks_lock);
+      g_mutex_unlock (mp3parse->pending_seeks_lock);
 
       mp3parse->exact_position = FALSE;
 
@@ -526,6 +540,32 @@ gst_mp3parse_sink_event (GstPad * pad, GstEvent * event)
         if (mp3parse_bytepos_to_time (mp3parse, start, &seg_start, FALSE) &&
             mp3parse_bytepos_to_time (mp3parse, pos, &seg_pos, FALSE)) {
           gst_event_unref (event);
+
+          /* search the pending nonaccurate seeks */
+          g_mutex_lock (mp3parse->pending_seeks_lock);
+          seek = NULL;
+          for (node = mp3parse->pending_nonaccurate_seeks; node;
+              node = node->next) {
+            MPEGAudioPendingAccurateSeek *tmp = node->data;
+
+            if (tmp->upstream_start == pos) {
+              seek = tmp;
+              break;
+            }
+          }
+
+          if (seek) {
+            if (seek->segment.stop == -1) {
+              /* corrent the segment end, because non-accurate seeks might make
+               * our streaming end earlier (see bug #603695) */
+              seg_stop = -1;
+            }
+            g_free (seek);
+            mp3parse->pending_nonaccurate_seeks =
+                g_slist_delete_link (mp3parse->pending_nonaccurate_seeks, node);
+          }
+          g_mutex_unlock (mp3parse->pending_seeks_lock);
+
           event = gst_event_new_new_segment_full (update, rate, applied_rate,
               GST_FORMAT_TIME, seg_start, seg_stop, seg_pos);
           format = GST_FORMAT_TIME;
@@ -550,6 +590,8 @@ gst_mp3parse_sink_event (GstPad * pad, GstEvent * event)
       mp3parse->pending_ts = GST_CLOCK_TIME_NONE;
       mp3parse->tracked_offset = 0;
       mp3parse->sync_offset = 0;
+      /* also clear leftover data if clearing so much state */
+      gst_adapter_clear (mp3parse->adapter);
 
       gst_event_parse_new_segment_full (event, &update, &rate, &applied_rate,
           &format, &start, &stop, &pos);
@@ -758,18 +800,13 @@ gst_mp3parse_emit_frame (GstMPEGAudioParse * mp3parse, guint size,
   }
 
   if (mp3parse->last_posted_channel_mode != mode) {
-    GEnumValue *mode_enum;
-
     if (!taglist) {
       taglist = gst_tag_list_new ();
     }
     mp3parse->last_posted_channel_mode = mode;
 
-    mode_enum =
-        g_enum_get_value (g_type_class_peek (GST_TYPE_MP3_CHANNEL_MODE), mode);
-
     gst_tag_list_add (taglist, GST_TAG_MERGE_REPLACE, GST_TAG_MODE,
-        mode_enum->value_nick, NULL);
+        gst_mp3_channel_mode_get_nick (mode), NULL);
   }
 
   /* if the taglist exists, we need to send it */
@@ -877,6 +914,7 @@ gst_mp3parse_handle_first_frame (GstMPEGAudioParse * mp3parse)
   gint offset;
 
   guint64 avail;
+  gint64 upstream_total_bytes = 0;
   guint32 read_id;
   const guint8 *data;
 
@@ -927,6 +965,9 @@ gst_mp3parse_handle_first_frame (GstMPEGAudioParse * mp3parse)
     return;
   /* The header starts at the provided offset */
   data += offset;
+
+  /* obtain real upstream total bytes */
+  mp3parse_total_bytes (mp3parse, &upstream_total_bytes);
 
   read_id = GST_READ_UINT32_BE (data);
   if (read_id == xing_id || read_id == info_id) {
@@ -988,10 +1029,10 @@ gst_mp3parse_handle_first_frame (GstMPEGAudioParse * mp3parse)
       mp3parse->xing_bytes = 0;
     }
 
-    /* If we know the upstream size and duration, compute the 
+    /* If we know the upstream size and duration, compute the
      * total bitrate, rounded up to the nearest kbit/sec */
-    if (mp3parse_total_time (mp3parse, &total_time) &&
-        mp3parse_total_bytes (mp3parse, &total_bytes)) {
+    if ((total_time = mp3parse->xing_total_time) &&
+        (total_bytes = mp3parse->xing_bytes)) {
       mp3parse->xing_bitrate = gst_util_uint64_scale (total_bytes,
           8 * GST_SECOND, total_time);
       mp3parse->xing_bitrate += 500;
@@ -1060,6 +1101,15 @@ gst_mp3parse_handle_first_frame (GstMPEGAudioParse * mp3parse)
         GST_TIME_FORMAT ", %u bytes, vbr scale %u", mp3parse->xing_frames,
         GST_TIME_ARGS (mp3parse->xing_total_time), mp3parse->xing_bytes,
         mp3parse->xing_vbr_scale);
+
+    /* check for truncated file */
+    if (upstream_total_bytes && mp3parse->xing_bytes &&
+        mp3parse->xing_bytes * 0.8 > upstream_total_bytes) {
+      GST_WARNING_OBJECT (mp3parse, "File appears to have been truncated; "
+          "invalidating Xing header duration and size");
+      mp3parse->xing_flags &= ~XING_BYTES_FLAG;
+      mp3parse->xing_flags &= ~XING_FRAMES_FLAG;
+    }
   } else if (read_id == vbri_id) {
     gint64 total_bytes, total_frames;
     GstClockTime total_time;
@@ -1104,8 +1154,8 @@ gst_mp3parse_handle_first_frame (GstMPEGAudioParse * mp3parse)
 
     /* If we know the upstream size and duration, compute the 
      * total bitrate, rounded up to the nearest kbit/sec */
-    if (mp3parse_total_time (mp3parse, &total_time) &&
-        mp3parse_total_bytes (mp3parse, &total_bytes)) {
+    if ((total_time = mp3parse->vbri_total_time) &&
+        (total_bytes = mp3parse->vbri_bytes)) {
       mp3parse->vbri_bitrate = gst_util_uint64_scale (total_bytes,
           8 * GST_SECOND, total_time);
       mp3parse->vbri_bitrate += 500;
@@ -1179,6 +1229,16 @@ gst_mp3parse_handle_first_frame (GstMPEGAudioParse * mp3parse)
     GST_DEBUG_OBJECT (mp3parse, "VBRI header reported %u frames, time %"
         GST_TIME_FORMAT ", bytes %u", mp3parse->vbri_frames,
         GST_TIME_ARGS (mp3parse->vbri_total_time), mp3parse->vbri_bytes);
+
+    /* check for truncated file */
+    if (upstream_total_bytes && mp3parse->vbri_bytes &&
+        mp3parse->vbri_bytes * 0.8 > upstream_total_bytes) {
+      GST_WARNING_OBJECT (mp3parse, "File appears to have been truncated; "
+          "invalidating VBRI header duration and size");
+      mp3parse->vbri_valid = FALSE;
+    } else {
+      mp3parse->vbri_valid = TRUE;
+    }
   } else {
     GST_DEBUG_OBJECT (mp3parse,
         "Xing, LAME or VBRI header not found in first frame");
@@ -1646,7 +1706,7 @@ mp3parse_total_bytes (GstMPEGAudioParse * mp3parse, gint64 * total)
     return TRUE;
   }
 
-  if (mp3parse->vbri_bytes != 0) {
+  if (mp3parse->vbri_bytes != 0 && mp3parse->vbri_valid) {
     *total = mp3parse->vbri_bytes;
     return TRUE;
   }
@@ -1666,7 +1726,7 @@ mp3parse_total_time (GstMPEGAudioParse * mp3parse, GstClockTime * total)
     return TRUE;
   }
 
-  if (mp3parse->vbri_total_time != 0) {
+  if (mp3parse->vbri_total_time != 0 && mp3parse->vbri_valid) {
     *total = mp3parse->vbri_total_time;
     return TRUE;
   }
@@ -1700,17 +1760,14 @@ mp3parse_time_to_bytepos (GstMPEGAudioParse * mp3parse, GstClockTime ts,
 
   /* If XING seek table exists use this for time->byte conversion */
   if ((mp3parse->xing_flags & XING_TOC_FLAG) &&
-      mp3parse_total_bytes (mp3parse, &total_bytes) &&
-      mp3parse_total_time (mp3parse, &total_time)) {
+      (total_bytes = mp3parse->xing_bytes) &&
+      (total_time = mp3parse->xing_total_time)) {
     gdouble fa, fb, fx;
     gdouble percent =
         CLAMP ((100.0 * gst_util_guint64_to_gdouble (ts)) /
         gst_util_guint64_to_gdouble (total_time), 0.0, 100.0);
     gint index = CLAMP (percent, 0, 99);
 
-    /* xing indicated size is preferred over e.g. truncated file size */
-    if (mp3parse->xing_bytes)
-      total_bytes = mp3parse->xing_bytes;
     fa = mp3parse->xing_seek_table[index];
     if (index < 99)
       fb = mp3parse->xing_seek_table[index + 1];
@@ -1724,15 +1781,11 @@ mp3parse_time_to_bytepos (GstMPEGAudioParse * mp3parse, GstClockTime ts,
     return TRUE;
   }
 
-  if (mp3parse->vbri_seek_table &&
-      mp3parse_total_bytes (mp3parse, &total_bytes) &&
-      mp3parse_total_time (mp3parse, &total_time)) {
+  if (mp3parse->vbri_seek_table && (total_bytes = mp3parse->vbri_bytes) &&
+      (total_time = mp3parse->vbri_total_time)) {
     gint i, j;
     gdouble a, b, fa, fb;
 
-    /* header indicated size is preferred over e.g. truncated file size */
-    if (mp3parse->vbri_bytes)
-      total_bytes = mp3parse->vbri_bytes;
     i = gst_util_uint64_scale (ts, mp3parse->vbri_seek_points - 1, total_time);
     i = CLAMP (i, 0, mp3parse->vbri_seek_points - 1);
 
@@ -1786,15 +1839,12 @@ mp3parse_bytepos_to_time (GstMPEGAudioParse * mp3parse,
 
   /* If XING seek table exists use this for byte->time conversion */
   if (!from_total_time && (mp3parse->xing_flags & XING_TOC_FLAG) &&
-      mp3parse_total_bytes (mp3parse, &total_bytes) &&
-      mp3parse_total_time (mp3parse, &total_time)) {
+      (total_bytes = mp3parse->xing_bytes) &&
+      (total_time = mp3parse->xing_total_time)) {
     gdouble fa, fb, fx;
     gdouble pos;
     gint index;
 
-    /* xing indicated size is preferred over e.g. truncated file size */
-    if (mp3parse->xing_bytes)
-      total_bytes = mp3parse->xing_bytes;
     pos = CLAMP ((bytepos * 256.0) / total_bytes, 0.0, 256.0);
     index = CLAMP (pos, 0, 255);
     fa = mp3parse->xing_seek_table_inverse[index];
@@ -1811,15 +1861,12 @@ mp3parse_bytepos_to_time (GstMPEGAudioParse * mp3parse,
   }
 
   if (!from_total_time && mp3parse->vbri_seek_table &&
-      mp3parse_total_bytes (mp3parse, &total_bytes) &&
-      mp3parse_total_time (mp3parse, &total_time)) {
+      (total_bytes = mp3parse->vbri_bytes) &&
+      (total_time = mp3parse->vbri_total_time)) {
     gint i = 0;
     guint64 sum = 0;
     gdouble a, b, fa, fb;
 
-    /* header indicated size is preferred over e.g. truncated file size */
-    if (mp3parse->vbri_bytes)
-      total_bytes = mp3parse->vbri_bytes;
     do {
       sum += mp3parse->vbri_seek_table[i];
       i++;
@@ -1863,6 +1910,8 @@ mp3parse_handle_seek (GstMPEGAudioParse * mp3parse, GstEvent * event)
   GstSeekType cur_type, stop_type;
   gint64 cur, stop;
   gint64 byte_cur, byte_stop;
+  MPEGAudioPendingAccurateSeek *seek;
+  GstClockTime start;
 
   gst_event_parse_seek (event, &rate, &format, &flags, &cur_type, &cur,
       &stop_type, &stop);
@@ -1882,6 +1931,13 @@ mp3parse_handle_seek (GstMPEGAudioParse * mp3parse, GstEvent * event)
       return TRUE;
   }
 
+  seek = g_new0 (MPEGAudioPendingAccurateSeek, 1);
+
+  seek->segment = mp3parse->segment;
+
+  gst_segment_set_seek (&seek->segment, rate, GST_FORMAT_TIME,
+      flags, cur_type, cur, stop_type, stop, NULL);
+
   /* Handle TIME based seeks by converting to a BYTE position */
 
   /* For accurate seeking get the frame 9 (MPEG1) or 29 (MPEG2) frames
@@ -1893,15 +1949,6 @@ mp3parse_handle_seek (GstMPEGAudioParse * mp3parse, GstEvent * event)
    */
 
   if (flags & GST_SEEK_FLAG_ACCURATE) {
-    MPEGAudioPendingAccurateSeek *seek =
-        g_new0 (MPEGAudioPendingAccurateSeek, 1);
-    GstClockTime start;
-
-    seek->segment = mp3parse->segment;
-
-    gst_segment_set_seek (&seek->segment, rate, GST_FORMAT_TIME,
-        flags, cur_type, cur, stop_type, stop, NULL);
-
     if (!mp3parse->seek_table) {
       byte_cur = 0;
       byte_stop = -1;
@@ -1951,23 +1998,23 @@ mp3parse_handle_seek (GstMPEGAudioParse * mp3parse, GstEvent * event)
     }
     event = gst_event_new_seek (rate, GST_FORMAT_BYTES, flags, cur_type,
         byte_cur, stop_type, byte_stop);
-    g_mutex_lock (mp3parse->pending_accurate_seeks_lock);
+    g_mutex_lock (mp3parse->pending_seeks_lock);
     seek->upstream_start = byte_cur;
     seek->timestamp_start = start;
     mp3parse->pending_accurate_seeks =
         g_slist_prepend (mp3parse->pending_accurate_seeks, seek);
-    g_mutex_unlock (mp3parse->pending_accurate_seeks_lock);
+    g_mutex_unlock (mp3parse->pending_seeks_lock);
     if (gst_pad_push_event (mp3parse->sinkpad, event)) {
       mp3parse->exact_position = TRUE;
       return TRUE;
     } else {
       mp3parse->exact_position = TRUE;
-      g_mutex_lock (mp3parse->pending_accurate_seeks_lock);
+      g_mutex_lock (mp3parse->pending_seeks_lock);
       mp3parse->pending_accurate_seeks =
           g_slist_remove (mp3parse->pending_accurate_seeks, seek);
-      g_mutex_unlock (mp3parse->pending_accurate_seeks_lock);
+      g_mutex_unlock (mp3parse->pending_seeks_lock);
       g_free (seek);
-      return TRUE;
+      return FALSE;
     }
   }
 
@@ -1987,7 +2034,24 @@ mp3parse_handle_seek (GstMPEGAudioParse * mp3parse, GstEvent * event)
   event = gst_event_new_seek (rate, GST_FORMAT_BYTES, flags, cur_type,
       byte_cur, stop_type, byte_stop);
 
-  return gst_pad_push_event (mp3parse->sinkpad, event);
+  GST_LOG_OBJECT (mp3parse, "Storing pending seek");
+  g_mutex_lock (mp3parse->pending_seeks_lock);
+  seek->upstream_start = byte_cur;
+  seek->timestamp_start = cur;
+  mp3parse->pending_nonaccurate_seeks =
+      g_slist_prepend (mp3parse->pending_nonaccurate_seeks, seek);
+  g_mutex_unlock (mp3parse->pending_seeks_lock);
+  if (gst_pad_push_event (mp3parse->sinkpad, event)) {
+    return TRUE;
+  } else {
+    g_mutex_lock (mp3parse->pending_seeks_lock);
+    mp3parse->pending_nonaccurate_seeks =
+        g_slist_remove (mp3parse->pending_nonaccurate_seeks, seek);
+    g_mutex_unlock (mp3parse->pending_seeks_lock);
+    g_free (seek);
+    return FALSE;
+  }
+
 no_pos:
   GST_DEBUG_OBJECT (mp3parse,
       "Could not determine byte position for desired time");

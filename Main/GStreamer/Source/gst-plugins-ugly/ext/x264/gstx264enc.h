@@ -70,6 +70,7 @@ struct _GstX264Enc
   gboolean b_pyramid;
   gboolean weightb;
   guint sps_id;
+  gboolean au_nalu;
   gboolean trellis;
   guint vbv_buf_capacity;
   guint keyint_max;
@@ -98,6 +99,7 @@ struct _GstX264Enc
   gulong buffer_size;
 
   gint i_type;
+  gboolean send_forcekeyunit;
 };
 
 struct _GstX264EncClass

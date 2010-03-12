@@ -324,6 +324,7 @@ rtsp_ext_real_parse_sdp (GstRTSPExtension * ext, GstSDPMessage * sdp,
     ctx->duration = MAX (ctx->duration, intval);
   }
 
+  /* FIXME: use GstByteWriter to write the header */
   /* PROP */
   offset = 0;
   size = 50;
@@ -352,7 +353,7 @@ rtsp_ext_real_parse_sdp (GstRTSPExtension * ext, GstSDPMessage * sdp,
   READ_BUFFER (sdp, "Comment", comment, comment_len);
   READ_BUFFER (sdp, "Copyright", copyright, copyright_len);
 
-  size = 22 + title_len + author_len + comment_len + copyright_len;
+  size = 18 + title_len + author_len + comment_len + copyright_len;
   ENSURE_SIZE (offset + size);
   datap = data + offset;
 
@@ -593,7 +594,9 @@ rtsp_ext_real_parse_sdp (GstRTSPExtension * ext, GstSDPMessage * sdp,
   GST_BUFFER_SIZE (buf) = offset;
 
   /* Set on caps */
+  GST_BUFFER_FLAG_SET (buf, GST_BUFFER_FLAG_IN_CAPS);
   gst_structure_set (props, "config", GST_TYPE_BUFFER, buf, NULL);
+  gst_buffer_unref (buf);
 
   /* Overwrite encoding and media fields */
   gst_structure_set (props, "encoding-name", G_TYPE_STRING, "X-REAL-RDT", NULL);
@@ -667,6 +670,7 @@ reset:
 
 static void gst_rtsp_real_extension_init (gpointer g_iface,
     gpointer iface_data);
+static void gst_rtsp_real_finalize (GObject * obj);
 
 static void
 _do_init (GType rtspreal_type)
@@ -695,6 +699,10 @@ gst_rtsp_real_base_init (gpointer klass)
 static void
 gst_rtsp_real_class_init (GstRTSPRealClass * g_class)
 {
+  GObjectClass *gobject_class = (GObjectClass *) g_class;
+
+  gobject_class->finalize = gst_rtsp_real_finalize;
+
   GST_DEBUG_CATEGORY_INIT (rtspreal_debug, "rtspreal", 0,
       "RealMedia RTSP extension");
 }
@@ -703,6 +711,29 @@ static void
 gst_rtsp_real_init (GstRTSPReal * rtspreal, GstRTSPRealClass * klass)
 {
   rtspreal->isreal = FALSE;
+}
+
+static void
+gst_rtsp_stream_free (GstRTSPRealStream * stream)
+{
+  g_free (stream->stream_name);
+  g_free (stream->mime_type);
+  gst_asm_rule_book_free (stream->rulebook);
+  g_free (stream->type_specific_data);
+
+  g_free (stream);
+}
+
+static void
+gst_rtsp_real_finalize (GObject * obj)
+{
+  GstRTSPReal *r = (GstRTSPReal *) obj;
+
+  g_list_foreach (r->streams, (GFunc) gst_rtsp_stream_free, NULL);
+  g_list_free (r->streams);
+  g_free (r->rules);
+
+  G_OBJECT_CLASS (parent_class)->finalize (obj);
 }
 
 static void

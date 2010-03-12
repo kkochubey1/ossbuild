@@ -972,17 +972,11 @@ handle_slice (GstMpeg2dec * mpeg2dec, const mpeg2_info_t * info)
       GST_TIME_FORMAT,
       (picture->flags & PIC_FLAG_PROGRESSIVE_FRAME ? "prog" : "    "),
       (picture->flags & PIC_FLAG_TOP_FIELD_FIRST ? "tff" : "   "),
-//
-//Modified for OSSBuild
-//
-//#if MPEG2_RELEASE >= MPEG2_VERSION(0,5,0)
+#if MPEG2_RELEASE >= MPEG2_VERSION(0,5,0)
       (picture->flags & PIC_FLAG_REPEAT_FIRST_FIELD ? "rff" : "   "),
-//#else
-//      "unknown rff",
-//#endif
-//
-//End OSSBuild modification
-//
+#else
+      "unknown rff",
+#endif
       (picture->flags & PIC_FLAG_SKIP ? "skip" : "    "),
       (picture->flags & PIC_FLAG_COMPOSITE_DISPLAY ? "composite" : "         "),
       picture->nb_fields, GST_BUFFER_OFFSET (outbuf),
