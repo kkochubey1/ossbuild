@@ -93,7 +93,7 @@
 <p>
 </p>
 <div class="refsect2">
-<a name="id602054"></a><p>
+<a name="id622773"></a><p>
 Provides a base class for RTP depayloaders
 </p>
 </div>
@@ -182,7 +182,8 @@ Push <em class="parameter"><code>out_buf</code></em> to the peer of <em class="p
 </p>
 <p>
 Unlike <a class="link" href="gst-plugins-base-libs-gstbasertpdepayload.html#gst-base-rtp-depayload-push-ts" title="gst_base_rtp_depayload_push_ts ()"><code class="function">gst_base_rtp_depayload_push_ts()</code></a>, this function will not apply
-any timestamp on the outgoing buffer.</p>
+any timestamp on the outgoing buffer. Subclasses should therefore timestamp
+outgoing buffers themselves.</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
@@ -215,9 +216,10 @@ Push <em class="parameter"><code>out_buf</code></em> to the peer of <em class="p
 <em class="parameter"><code>out_buf</code></em>.
 </p>
 <p>
-Unlike <a class="link" href="gst-plugins-base-libs-gstbasertpdepayload.html#gst-base-rtp-depayload-push" title="gst_base_rtp_depayload_push ()"><code class="function">gst_base_rtp_depayload_push()</code></a>, this function will apply <em class="parameter"><code>timestamp</code></em>
-on the outgoing buffer, using the configured clock_rate to convert the
-timestamp to a valid GStreamer clock time.</p>
+Unlike <a class="link" href="gst-plugins-base-libs-gstbasertpdepayload.html#gst-base-rtp-depayload-push" title="gst_base_rtp_depayload_push ()"><code class="function">gst_base_rtp_depayload_push()</code></a>, this function will by default apply
+the last incomming timestamp on the outgoing buffer when it didn't have a
+timestamp already. The set_get_timestamp vmethod can be overwritten to change
+this behaviour (and take, for example, <em class="parameter"><code>timestamp</code></em> into account).</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>

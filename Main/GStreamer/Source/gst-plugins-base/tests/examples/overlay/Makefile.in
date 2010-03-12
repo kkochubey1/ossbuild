@@ -114,7 +114,7 @@ qt_xoverlay_OBJECTS = $(am_qt_xoverlay_OBJECTS)
 qt_xoverlay_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(qt_xoverlay_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am__qtgv_xoverlay_SOURCES_DIST = qtgv-xoverlay.cpp
+am__qtgv_xoverlay_SOURCES_DIST = qtgv-xoverlay.cpp qtgv-xoverlay.h
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@am_qtgv_xoverlay_OBJECTS = qtgv_xoverlay-qtgv-xoverlay.$(OBJEXT)
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@nodist_qtgv_xoverlay_OBJECTS = qtgv_xoverlay-moc_qtgv-xoverlay.$(OBJEXT)
 qtgv_xoverlay_OBJECTS = $(am_qtgv_xoverlay_OBJECTS) \
@@ -454,7 +454,7 @@ EXAMPLES = $(am__append_1) $(am__append_2) $(am__append_3)
 @HAVE_QT_TRUE@@USE_X_TRUE@qt_xoverlay_LDADD = $(GST_LIBS) $(X_LIBS) $(LIBM) $(QT_LIBS) \
 @HAVE_QT_TRUE@@USE_X_TRUE@	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-$(GST_MAJORMINOR).la
 
-@HAVE_QT_GV_TRUE@@USE_X_TRUE@qtgv_xoverlay_SOURCES = qtgv-xoverlay.cpp
+@HAVE_QT_GV_TRUE@@USE_X_TRUE@qtgv_xoverlay_SOURCES = qtgv-xoverlay.cpp qtgv-xoverlay.h
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@qtgv_xoverlay_CXXFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CXXFLAGS) $(X_CFLAGS) $(QT_CFLAGS)
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@qtgv_xoverlay_LDADD = $(GST_LIBS) $(X_LIBS) $(LIBM) $(QT_LIBS) \
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-$(GST_MAJORMINOR).la
@@ -462,7 +462,7 @@ EXAMPLES = $(am__append_1) $(am__append_2) $(am__append_3)
 
 # qt moc support, according to http://qtnode.net/wiki/Qt_with_autotools
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@nodist_qtgv_xoverlay_SOURCES = moc_qtgv-xoverlay.cpp
-@HAVE_QT_GV_TRUE@@USE_X_TRUE@EXTRA_DIST = $(nodist_qtgv_xoverlay_SOURCES:moc_%.cpp=%.h) qtgv-xoverlay.h
+@HAVE_QT_GV_TRUE@@USE_X_TRUE@EXTRA_DIST = $(nodist_qtgv_xoverlay_SOURCES:moc_%.cpp=%.h)
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@CLEANFILES = $(nodist_qtgv_xoverlay_SOURCES)
 all: all-am
 
