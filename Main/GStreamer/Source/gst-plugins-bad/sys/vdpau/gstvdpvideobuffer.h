@@ -40,8 +40,6 @@ struct _GstVdpVideoBuffer {
 
   GstVdpDevice *device;
   VdpVideoSurface surface;
-
-  GSList *refs;
 };
 
 typedef struct
@@ -97,8 +95,15 @@ GType gst_vdp_video_buffer_get_type (void);
 GstVdpVideoBuffer* gst_vdp_video_buffer_new (GstVdpDevice * device, VdpChromaType chroma_type, gint width, gint height);
 void gst_vdp_video_buffer_add_reference (GstVdpVideoBuffer *buffer, GstVdpVideoBuffer *buf);
 
+GstCaps *gst_vdp_video_buffer_get_caps (gboolean filter, VdpChromaType chroma_type);
 GstCaps *gst_vdp_video_buffer_get_allowed_yuv_caps (GstVdpDevice * device);
 GstCaps *gst_vdp_video_buffer_get_allowed_video_caps (GstVdpDevice * device);
+
+gboolean gst_vdp_video_buffer_parse_yuv_caps (GstCaps *yuv_caps, VdpChromaType *chroma_type, gint *width, gint *height);
+
+gboolean gst_vdp_video_buffer_calculate_size (guint32 fourcc, gint width, gint height, guint *size);
+gboolean gst_vdp_video_buffer_download (GstVdpVideoBuffer *inbuf, GstBuffer *outbuf, guint32 fourcc, gint width, gint height);
+gboolean gst_vdp_video_buffer_upload (GstVdpVideoBuffer *video_buf, GstBuffer *src_buf, guint fourcc, gint width, gint height);
 
 #define GST_VDP_VIDEO_CAPS \
   "video/x-vdpau-video, " \

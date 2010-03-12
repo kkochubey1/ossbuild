@@ -3,10 +3,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GStreamer Bad Plugins 0.10 Plugins Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.75.1">
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
 <link rel="home" href="index.html" title="GStreamer Bad Plugins 0.10 Plugins Reference Manual">
 <link rel="next" href="ch01.html" title="gst-plugins-bad Elements">
-<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 <link rel="chapter" href="ch01.html" title="gst-plugins-bad Elements">
 <link rel="chapter" href="ch02.html" title="gst-plugins-bad Plugins">
@@ -18,7 +18,7 @@
 <div>
 <div><table class="navigation" id="top" width="100%" cellpadding="2" cellspacing="0"><tr><th valign="middle"><p class="title">GStreamer Bad Plugins 0.10 Plugins Reference Manual</p></th></tr></table></div>
 <div><p class="releaseinfo">
-      for GStreamer Bad Plugins 0.10 (0.10.17)
+      for GStreamer Bad Plugins 0.10 (0.10.18)
       The latest version of this documentation can be found on-line at
       <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-bad/html/" target="_top">http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-bad/html/</a>.
     </p></div>
@@ -29,7 +29,10 @@
 <dt><span class="chapter"><a href="ch01.html">gst-plugins-bad Elements</a></span></dt>
 <dd><dl>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-aacparse.html">aacparse</a></span><span class="refpurpose"> — Advanced Audio Coding parser</span>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-aacparse.html">aacparse</a></span><span class="refpurpose"> — AAC parser</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-ac3parse.html">ac3parse</a></span><span class="refpurpose"> — AC3 parser</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-aiffparse.html">aiffparse</a></span><span class="refpurpose"> — Parse a .aiff file into raw audio</span>
@@ -38,10 +41,13 @@
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-aiffmux.html">aiffmux</a></span><span class="refpurpose"> — Multiplex raw audio into AIFF</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-amrparse.html">amrparse</a></span><span class="refpurpose"> — Adaptive Multi-Rate audio parser</span>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-amrparse.html">amrparse</a></span><span class="refpurpose"> — AMR parser</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-amrwbenc.html">amrwbenc</a></span><span class="refpurpose"> — Adaptive Multi-Rate Wideband audio encoder</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-assrender.html">assrender</a></span><span class="refpurpose"> — Renders ASS/SSA subtitles with libass</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-autoconvert.html">autoconvert</a></span><span class="refpurpose"> — Selects the right transform element based on the caps</span>
@@ -57,6 +63,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-celtenc.html">celtenc</a></span><span class="refpurpose"> — Encodes audio in Celt format</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-dataurisrc.html">dataurisrc</a></span><span class="refpurpose"> — Handles data: uris</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-dccpclientsink.html">dccpclientsink</a></span><span class="refpurpose"> — Send data as a client over the network via DCCP</span>
@@ -95,7 +104,13 @@
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-faac.html">faac</a></span><span class="refpurpose"> — Free MPEG-2/4 AAC encoder</span>
 </dt>
 <dt>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-faad.html">faad</a></span><span class="refpurpose"> — Free MPEG-2/4 AAC decoder</span>
+</dt>
+<dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-festival.html">festival</a></span><span class="refpurpose"> — Synthesizes plain text into audio</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-flacparse.html">flacparse</a></span><span class="refpurpose"> — Parses audio with the FLAC lossless audio codec</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-fpsdisplaysink.html">fpsdisplaysink</a></span><span class="refpurpose"> — Shows the current frame-rate and drop-rate of the videosink as overlay or text on stdout</span>
@@ -104,13 +119,13 @@
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-input-selector.html">input-selector</a></span><span class="refpurpose"> — N-to-1 input stream selectoring</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-ivorbisdec.html">ivorbisdec</a></span><span class="refpurpose"> — decode raw vorbis streams to integer audio</span>
-</dt>
-<dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-jackaudiosrc.html">jackaudiosrc</a></span><span class="refpurpose"> — Input from Jack</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-jackaudiosink.html">jackaudiosink</a></span><span class="refpurpose"> — Output to Jack</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-jpegparse.html">jpegparse</a></span><span class="refpurpose"> — JPEG parser</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-kateenc.html">kateenc</a></span><span class="refpurpose"> — Encodes Kate streams from text or subpictures</span>
@@ -197,9 +212,6 @@
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-sdpdemux.html">sdpdemux</a></span><span class="refpurpose"> — Receive data over the network via SDP</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-shapewipe.html">shapewipe</a></span><span class="refpurpose"> — Adds a shape wipe transition to a video stream</span>
-</dt>
-<dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-speed.html">speed</a></span><span class="refpurpose"> — Set speed/pitch on audio/raw streams (resampler)</span>
 </dt>
 <dt>
@@ -239,13 +251,10 @@
 <dt><span class="chapter"><a href="ch02.html">gst-plugins-bad Plugins</a></span></dt>
 <dd><dl>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-aacparse.html">aacparse</a></span><span class="refpurpose"> — Advanced Audio Coding Parser</span>
-</dt>
-<dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-aiff.html">aiff</a></span><span class="refpurpose"> — Create and parse Audio Interchange File Format (AIFF) files</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-amrparse.html">amrparse</a></span><span class="refpurpose"> — Adaptive Multi-Rate Parser</span>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-audioparsersbad.html">audioparsersbad</a></span><span class="refpurpose"> — audioparsers</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-autoconvert.html">autoconvert</a></span><span class="refpurpose"> — Selects convertor element based on caps</span>
@@ -258,6 +267,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-amrwbenc.html">amrwbenc</a></span><span class="refpurpose"> — Adaptive Multi-Rate Wide-Band Encoder</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-assrender.html">assrender</a></span><span class="refpurpose"> — ASS/SSA subtitle renderer</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-bayer.html">bayer</a></span><span class="refpurpose"> — Elements to convert Bayer images</span>
@@ -276,6 +288,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-celt.html">celt</a></span><span class="refpurpose"> — CELT plugin library</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-dataurisrc.html">dataurisrc</a></span><span class="refpurpose"> — data: URI source</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-dccp.html">dccp</a></span><span class="refpurpose"> — transfer data over the network via DCCP.</span>
@@ -336,6 +351,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-jack.html">jack</a></span><span class="refpurpose"> — Jack elements</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-jpegformat.html">jpegformat</a></span><span class="refpurpose"> — JPEG interchange format plugin</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-kate.html">kate</a></span><span class="refpurpose"> — Kate plugin</span>
@@ -428,9 +446,6 @@
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-selector.html">selector</a></span><span class="refpurpose"> — input/output stream selector elements</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-shapewipe.html">shapewipe</a></span><span class="refpurpose"> — Shape Wipe transition filter</span>
-</dt>
-<dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-sndfile.html">sndfile</a></span><span class="refpurpose"> — use libsndfile to read and write audio from and to files</span>
 </dt>
 <dt>
@@ -450,9 +465,6 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-timidity.html">timidity</a></span><span class="refpurpose"> — Timidity Plugin</span>
-</dt>
-<dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-tremor.html">tremor</a></span><span class="refpurpose"> — OGG Vorbis Tremor plugins element</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-tta.html">tta</a></span><span class="refpurpose"> — TTA lossless audio format handling</span>
@@ -487,6 +499,6 @@
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.11</div>
+          Generated by GTK-Doc V1.13</div>
 </body>
 </html>

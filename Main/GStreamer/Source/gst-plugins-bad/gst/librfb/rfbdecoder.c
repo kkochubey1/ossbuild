@@ -8,20 +8,24 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#ifndef G_OS_WIN32
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#else
+#include <winsock2.h>
+#endif
 #include <errno.h>
 
 #include "vncauth.h"
 
-#define RFB_GET_UINT32(ptr) GUINT32_FROM_BE (*(guint32 *)(ptr))
-#define RFB_GET_UINT16(ptr) GUINT16_FROM_BE (*(guint16 *)(ptr))
-#define RFB_GET_UINT8(ptr) (*(guint8 *)(ptr))
+#define RFB_GET_UINT32(ptr) GST_READ_UINT32_BE(ptr)
+#define RFB_GET_UINT16(ptr) GST_READ_UINT16_BE(ptr)
+#define RFB_GET_UINT8(ptr) GST_READ_UINT8(ptr)
 
-#define RFB_SET_UINT32(ptr, val) (*(guint32 *)(ptr) = GUINT32_TO_BE (val))
-#define RFB_SET_UINT16(ptr, val) (*(guint16 *)(ptr) = GUINT16_TO_BE (val))
-#define RFB_SET_UINT8(ptr, val) (*(guint8 *)(ptr) = val)
+#define RFB_SET_UINT32(ptr, val) GST_WRITE_UINT32_BE((ptr),(val))
+#define RFB_SET_UINT16(ptr, val) GST_WRITE_UINT16_BE((ptr),(val))
+#define RFB_SET_UINT8(ptr, val) GST_WRITE_UINT8((ptr),(val))
 
 GST_DEBUG_CATEGORY_EXTERN (rfbdecoder_debug);
 #define GST_CAT_DEFAULT rfbdecoder_debug
@@ -112,7 +116,11 @@ rfb_decoder_connect_tcp (RfbDecoder * decoder, gchar * addr, guint port)
 
   sa.sin_family = AF_INET;
   sa.sin_port = htons (port);
+#ifndef G_OS_WIN32
   inet_pton (AF_INET, addr, &sa.sin_addr);
+#else
+  sa.sin_addr.s_addr = inet_addr (addr);
+#endif
   if (connect (decoder->fd, (struct sockaddr *) &sa,
           sizeof (struct sockaddr)) == -1) {
     close (decoder->fd);
@@ -164,7 +172,11 @@ rfb_decoder_read (RfbDecoder * decoder, guint32 len)
   }
 
   while (total < len) {
+#ifndef G_OS_WIN32
     now = recv (decoder->fd, decoder->data + total, len - total, 0);
+#else
+    now = recv (decoder->fd, (char *) decoder->data + total, len - total, 0);
+#endif
     if (now <= 0) {
       GST_WARNING ("rfb read error on socket");
       return NULL;

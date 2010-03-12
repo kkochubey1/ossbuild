@@ -118,6 +118,12 @@ else
  FAAD_DIR=
 endif
 
+if USE_FLITE
+FLITE_DIR=flite
+else
+FLITE_DIR=
+endif
+
 #if USE_G729
 #G729_DIR=g729
 #else
@@ -135,12 +141,6 @@ endif
 # else
 HERMES_DIR=
 # endif
-
-if USE_IVORBIS
- IVORBIS_DIR=ivorbis
-else
- IVORBIS_DIR=
-endif
 
 if USE_JACK
 JACK_DIR=jack
@@ -387,10 +387,10 @@ SUBDIRS=\
 	$(DVDNAV_DIR) \
 	$(FAAC_DIR) \
 	$(FAAD_DIR) \
+	$(FLITE_DIR) \
 	$(GSM_DIR) \
 	$(G729_DIR) \
 	$(HERMES_DIR) \
-	$(IVORBIS_DIR) \
 	$(JACK_DIR) \
 	$(JP2K_DIR) \
 	$(KATE_DIR) \
@@ -442,8 +442,8 @@ DIST_SUBDIRS = \
 	directfb \
 	faac \
 	faad \
+	flite \
 	gsm \
-	ivorbis \
 	ladspa \
 	jack \
 	jp2k \
@@ -475,4 +475,4 @@ DIST_SUBDIRS = \
 	theora \
 	timidity \
 	xvid \
-        	zbar
+	zbar

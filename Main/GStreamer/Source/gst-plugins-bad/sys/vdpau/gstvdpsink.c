@@ -545,10 +545,15 @@ gst_vdp_sink_calculate_par (Display * display)
 static GstCaps *
 gst_vdp_sink_get_allowed_caps (GstVdpDevice * device, GValue * par)
 {
-  GstCaps *caps;
+  GstCaps *templ_caps, *allowed_caps, *caps;
   gint i;
 
-  caps = gst_vdp_output_buffer_get_allowed_caps (device);
+  allowed_caps = gst_vdp_output_buffer_get_allowed_caps (device);
+  templ_caps = gst_static_pad_template_get_caps (&sink_template);
+  caps = gst_caps_intersect (allowed_caps, templ_caps);
+
+  gst_caps_unref (allowed_caps);
+  gst_caps_unref (templ_caps);
 
   if (!par)
     par = gst_vdp_sink_calculate_par (device->display);
@@ -573,6 +578,7 @@ gst_vdp_sink_setup_device (VdpSink * vdp_sink)
     return NULL;
 
   vdp_sink->caps = gst_vdp_sink_get_allowed_caps (device, vdp_sink->par);
+  GST_DEBUG ("runtime calculated caps: %" GST_PTR_FORMAT, vdp_sink->caps);
 
   /* call XSynchronize with the current value of synchronous */
   GST_DEBUG_OBJECT (vdp_sink, "XSynchronize called with %s",
@@ -779,7 +785,6 @@ static GstFlowReturn
 gst_vdp_sink_show_frame (GstBaseSink * bsink, GstBuffer * outbuf)
 {
   VdpSink *vdp_sink = GST_VDP_SINK (bsink);
-  GstVdpOutputBuffer *prev_image = NULL;
   VdpStatus status;
   GstVdpDevice *device;
 
@@ -794,13 +799,24 @@ gst_vdp_sink_show_frame (GstBaseSink * bsink, GstBuffer * outbuf)
     return GST_FLOW_ERROR;
   }
 
-  /* Store a reference to the last image we put, lose the previous one */
-  if (outbuf && vdp_sink->cur_image != outbuf) {
-    if (vdp_sink->cur_image) {
-      prev_image = GST_VDP_OUTPUT_BUFFER (vdp_sink->cur_image);
+  device = vdp_sink->device;
+
+  if (vdp_sink->cur_image) {
+    VdpOutputSurface surface =
+        GST_VDP_OUTPUT_BUFFER (vdp_sink->cur_image)->surface;
+    VdpPresentationQueueStatus queue_status;
+    VdpTime pres_time;
+
+    g_mutex_lock (vdp_sink->x_lock);
+    status =
+        device->vdp_presentation_queue_query_surface_status (vdp_sink->window->
+        queue, surface, &queue_status, &pres_time);
+    g_mutex_unlock (vdp_sink->x_lock);
+
+    if (queue_status == VDP_PRESENTATION_QUEUE_STATUS_QUEUED) {
+      g_mutex_unlock (vdp_sink->flow_lock);
+      return GST_FLOW_OK;
     }
-    GST_LOG_OBJECT (vdp_sink, "reffing %p as our current image", outbuf);
-    vdp_sink->cur_image = gst_buffer_ref (outbuf);
   }
 
   /* Expose sends a NULL image, we take the latest frame */
@@ -817,7 +833,6 @@ gst_vdp_sink_show_frame (GstBaseSink * bsink, GstBuffer * outbuf)
 
   g_mutex_lock (vdp_sink->x_lock);
 
-  device = vdp_sink->device;
   status = device->vdp_presentation_queue_display (vdp_sink->window->queue,
       GST_VDP_OUTPUT_BUFFER (outbuf)->surface, 0, 0, 0);
   if (status != VDP_STATUS_OK) {
@@ -831,24 +846,13 @@ gst_vdp_sink_show_frame (GstBaseSink * bsink, GstBuffer * outbuf)
     return GST_FLOW_ERROR;
   }
 
-  if (prev_image) {
-    VdpTime time;
 
-    /* block till the previous surface has been displayed */
-    status =
-        device->vdp_presentation_queue_block_until_surface_idle (vdp_sink->
-        window->queue, prev_image->surface, &time);
-    if (status != VDP_STATUS_OK) {
-      GST_ELEMENT_ERROR (vdp_sink, RESOURCE, READ,
-          ("Could not display frame"),
-          ("Error returned from vdpau was: %s",
-              device->vdp_get_error_string (status)));
+  if (!vdp_sink->cur_image)
+    vdp_sink->cur_image = gst_buffer_ref (outbuf);
 
-      g_mutex_unlock (vdp_sink->x_lock);
-      g_mutex_unlock (vdp_sink->flow_lock);
-      return GST_FLOW_ERROR;
-    }
-    gst_buffer_unref (GST_BUFFER (prev_image));
+  else if (vdp_sink->cur_image != outbuf) {
+    gst_buffer_unref (vdp_sink->cur_image);
+    vdp_sink->cur_image = gst_buffer_ref (outbuf);
   }
 
   XSync (vdp_sink->device->display, FALSE);

@@ -13,7 +13,7 @@ TESTS_ENVIRONMENT = \
         $(REGISTRY_ENVIRONMENT)                                 \
         GST_PLUGIN_SYSTEM_PATH=					\
         GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/sys:$(top_builddir)/ext:$(top_builddir)/../gst-ffmpeg/ext/ffmpeg:$(top_builddir)/../gst-plugins-good/gst:$(top_builddir)/../gst-plugins-good/sys:$(top_builddir)/../gst-plugins-good/ext:$(top_builddir)/../gst-plugins-ugly/gst:$(top_builddir)/../gst-plugins-ugly/sys:$(top_builddir)/../gst-plugins-ugly/ext:$(GSTPB_PLUGINS_DIR):$(GST_PLUGINS_DIR) \
-        STATE_IGNORE_ELEMENTS="alsaspdifsink apexsink camerabin cdaudio dc1394src dccpclientsrc dccpclientsink dccpserversrc dccpserversink dvbsrc dvbbasebin dfbvideosink festival nassink rsndvdbin sdlaudiosink sdlvideosink vcdsrc rfbsrc vdpauyuvvideo vdpauvideoyuv vdpaumpegdec"
+        STATE_IGNORE_ELEMENTS="alsaspdifsink apexsink camerabin cdaudio dc1394src dccpclientsrc dccpclientsink dccpserversrc dccpserversink dvbsrc dvbbasebin dfbvideosink festival nassink rsndvdbin sdlaudiosink sdlvideosink vcdsrc rfbsrc vdpauyuvvideo vdpauvideoyuv vdpaumpegdec neonhttpsrc"
 
 plugindir = $(libdir)/gstreamer-@GST_MAJORMINOR@
 
@@ -27,10 +27,22 @@ SUPPRESSIONS = $(top_srcdir)/common/gst.supp $(srcdir)/gst-plugins-bad.supp
 
 clean-local: clean-local-check
 
+if USE_ASSRENDER
+check_assrender = elements/assrender
+else
+check_assrender =
+endif
+
 if USE_FAAC
 check_faac = elements/faac
 else
 check_faac =
+endif
+
+if USE_FAAD
+check_faad = elements/faad
+else
+check_faad =
 endif
 
 if USE_METADATA
@@ -101,7 +113,9 @@ noinst_PROGRAMS = \
 
 check_PROGRAMS = \
 	generic/states \
+	$(check_assrender) \
 	$(check_faac)  \
+	$(check_faad)  \
 	$(check_mpeg2enc)  \
 	$(check_mplex)     \
 	$(check_ofa)        \
@@ -112,10 +126,11 @@ check_PROGRAMS = \
 	elements/autoconvert \
 	elements/asfmux \
 	elements/capssetter \
+	elements/dataurisrc \
 	elements/legacyresample \
+	elements/jpegparse \
 	elements/qtmux \
 	elements/selector \
-	elements/shapewipe \
 	elements/mxfdemux \
 	elements/mxfmux \
 	pipelines/mxf \
@@ -150,5 +165,8 @@ elements_kate_LDADD = $(GST_BASE_LIBS) $(LDADD)
 
 elements_rtpmux_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(AM_CFLAGS)
 elements_rtpmux_LDADD = $(GST_BASE_LIBS) $(LDADD) -lgstrtp-0.10
+
+elements_assrender_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(AM_CFLAGS)
+elements_assrender_LDADD = $(GST_BASE_LIBS) $(LDADD) -lgstvideo-0.10 -lgstapp-0.10
 
 EXTRA_DIST = gst-plugins-bad.supp

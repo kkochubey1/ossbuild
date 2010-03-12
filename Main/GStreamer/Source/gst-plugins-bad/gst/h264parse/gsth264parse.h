@@ -66,11 +66,16 @@ struct _GstH264Parse
   GstPad *srcpad;
 
   gboolean split_packetized;
+  gboolean merge;
   guint nal_length_size;
+  guint format;
 
   GstSegment segment;
   gboolean packetized;
   gboolean discont;
+
+  gint width, height;
+  gint fps_num, fps_den;
 
   /* gather/decode queues for reverse playback */
   GList *gather;
@@ -116,6 +121,18 @@ struct _GstH264Parse
 
   /* for debug purpose */ 
   guint32 frame_cnt;
+
+  /* NALU AU */
+  GstAdapter *picture_adapter;
+  gboolean picture_start;
+
+  /* codec data NALUs to be inserted into stream */
+  GSList  *codec_nals;
+  /* SPS and PPS NALUs collected from stream to form codec_data in caps */
+  GstBuffer *sps_nals[MAX_SPS_COUNT];
+  GstBuffer *pps_nals[MAX_PPS_COUNT];
+
+  GstCaps *src_caps;
 };
 
 struct _GstH264ParseClass

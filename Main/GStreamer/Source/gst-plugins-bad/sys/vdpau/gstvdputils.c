@@ -22,102 +22,45 @@
 
 #include "gstvdputils.h"
 
-GstCaps *
-gst_vdp_video_to_yuv_caps (GstCaps * caps, GstVdpDevice * device)
+static void
+gst_vdp_video_remove_pixel_aspect_ratio (GstStructure * structure)
 {
-  GstCaps *new_caps, *allowed_caps, *result;
-  gint i;
-  GstStructure *structure;
+  gint par_n, par_d;
 
-  new_caps = gst_caps_new_empty ();
+  if (gst_structure_get_fraction (structure, "pixel-aspect-ratio", &par_n,
+          &par_d)) {
+    gint width;
 
-  for (i = 0; i < gst_caps_get_size (caps); i++) {
-    gint chroma_type;
-    GSList *fourcc = NULL, *iter;
+    gst_structure_get_int (structure, "width", &width);
+    width = gst_util_uint64_scale_int (width, par_n, par_d);
+    gst_structure_set (structure, "width", G_TYPE_INT, width, NULL);
 
-    structure = gst_caps_get_structure (caps, i);
-
-    if (gst_structure_get_int (structure, "chroma-type", &chroma_type)) {
-      /* calculate fourcc from chroma_type */
-      for (i = 0; i < G_N_ELEMENTS (formats); i++) {
-        if (formats[i].chroma_type == chroma_type) {
-          fourcc = g_slist_append (fourcc, GINT_TO_POINTER (formats[i].fourcc));
-        }
-      }
-    } else {
-      for (i = 0; i < G_N_ELEMENTS (formats); i++) {
-        fourcc = g_slist_append (fourcc, GINT_TO_POINTER (formats[i].fourcc));
-      }
-    }
-
-    for (iter = fourcc; iter; iter = iter->next) {
-      GstStructure *new_struct = gst_structure_copy (structure);
-
-      gst_structure_set_name (new_struct, "video/x-raw-yuv");
-      gst_structure_remove_field (new_struct, "chroma-type");
-      gst_structure_set (new_struct, "format", GST_TYPE_FOURCC,
-          GPOINTER_TO_INT (iter->data), NULL);
-
-      gst_caps_append_structure (new_caps, new_struct);
-    }
-
-    g_slist_free (fourcc);
+    gst_structure_remove_field (structure, "pixel-aspect-ratio");
   }
-  structure = gst_caps_get_structure (caps, 0);
-
-  if (device) {
-    allowed_caps = gst_vdp_video_buffer_get_allowed_yuv_caps (device);
-    result = gst_caps_intersect (new_caps, allowed_caps);
-
-    gst_caps_unref (new_caps);
-    gst_caps_unref (allowed_caps);
-  } else
-    result = new_caps;
-
-  return result;
 }
 
 GstCaps *
-gst_vdp_yuv_to_video_caps (GstCaps * caps, GstVdpDevice * device)
+gst_vdp_yuv_to_output_caps (GstCaps * caps)
 {
-  GstCaps *new_caps, *result;
+  GstCaps *result;
   gint i;
 
-  new_caps = gst_caps_copy (caps);
-  for (i = 0; i < gst_caps_get_size (new_caps); i++) {
-    GstStructure *structure = gst_caps_get_structure (new_caps, i);
-    guint32 fourcc;
+  result = gst_caps_copy (caps);
+  for (i = 0; i < gst_caps_get_size (caps); i++) {
+    GstStructure *structure, *rgb_structure;
 
-    if (gst_structure_get_fourcc (structure, "format", &fourcc)) {
-      gint chroma_type = -1;
+    structure = gst_caps_get_structure (result, i);
+    rgb_structure = gst_structure_copy (structure);
 
-      /* calculate chroma type from fourcc */
-      for (i = 0; i < G_N_ELEMENTS (formats); i++) {
-        if (formats[i].fourcc == fourcc) {
-          chroma_type = formats[i].chroma_type;
-          break;
-        }
-      }
-      gst_structure_remove_field (structure, "format");
-      gst_structure_set (structure, "chroma-type", G_TYPE_INT, chroma_type,
-          NULL);
-    } else
-      gst_structure_set (structure, "chroma-type", GST_TYPE_INT_RANGE, 0, 2,
-          NULL);
+    gst_structure_set_name (structure, "video/x-vdpau-output");
+    gst_structure_remove_field (structure, "format");
+    gst_vdp_video_remove_pixel_aspect_ratio (structure);
 
-    gst_structure_set_name (structure, "video/x-vdpau-video");
+    gst_structure_set_name (rgb_structure, "video/x-raw-rgb");
+    gst_structure_remove_field (rgb_structure, "format");
+    gst_vdp_video_remove_pixel_aspect_ratio (rgb_structure);
+    gst_caps_append_structure (result, rgb_structure);
   }
-
-  if (device) {
-    GstCaps *allowed_caps;
-
-    allowed_caps = gst_vdp_video_buffer_get_allowed_video_caps (device);
-    result = gst_caps_intersect (new_caps, allowed_caps);
-
-    gst_caps_unref (new_caps);
-    gst_caps_unref (allowed_caps);
-  } else
-    result = new_caps;
 
   return result;
 }
@@ -129,23 +72,21 @@ gst_vdp_video_to_output_caps (GstCaps * caps)
   gint i;
 
   result = gst_caps_copy (caps);
-  for (i = 0; i < gst_caps_get_size (result); i++) {
-    GstStructure *structure = gst_caps_get_structure (result, i);
-    gint par_n, par_d;
+  for (i = 0; i < gst_caps_get_size (caps); i++) {
+
+    GstStructure *structure, *rgb_structure;
+
+    structure = gst_caps_get_structure (result, i);
+    rgb_structure = gst_structure_copy (structure);
 
     gst_structure_set_name (structure, "video/x-vdpau-output");
     gst_structure_remove_field (structure, "chroma-type");
+    gst_vdp_video_remove_pixel_aspect_ratio (structure);
 
-    if (gst_structure_get_fraction (structure, "pixel-aspect-ratio", &par_n,
-            &par_d)) {
-      gint width;
-
-      gst_structure_get_int (structure, "width", &width);
-      width = gst_util_uint64_scale_int (width, par_n, par_d);
-      gst_structure_set (structure, "width", G_TYPE_INT, width, NULL);
-
-      gst_structure_remove_field (structure, "pixel-aspect-ratio");
-    }
+    gst_structure_set_name (rgb_structure, "video/x-raw-rgb");
+    gst_structure_remove_field (structure, "chroma-type");
+    gst_vdp_video_remove_pixel_aspect_ratio (rgb_structure);
+    gst_caps_append_structure (result, rgb_structure);
   }
 
   return result;

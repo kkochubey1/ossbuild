@@ -65,6 +65,7 @@ struct _GstAsfPad
   guint32 bitrate;
 
   GstClockTime play_duration;
+  GstClockTime first_ts;
 
   GstBuffer *codec_data;
 
@@ -119,6 +120,7 @@ struct _GstAsfMux
 
   /* payloads still to be sent in a packet */
   guint32 payload_data_size;
+  guint32 payload_parsing_info_size;
   GSList *payloads;
 
   Guid file_id;
@@ -135,6 +137,8 @@ struct _GstAsfMux
   guint32 packet_size;
   guint64 preroll;              /* milisecs */
   gboolean merge_stream_tags;
+
+  GstClockTime first_ts;
 
   /* pads */
   GstPad *srcpad;

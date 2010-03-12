@@ -81,6 +81,7 @@ struct _GstVdpDevice
   VdpOutputSurfaceCreate                          *vdp_output_surface_create;
   VdpOutputSurfaceDestroy                         *vdp_output_surface_destroy;
   VdpOutputSurfaceQueryCapabilities               *vdp_output_surface_query_capabilities;
+  VdpOutputSurfaceGetBitsNative                   *vdp_output_surface_get_bits_native;
 
   VdpPresentationQueueTargetCreateX11             *vdp_presentation_queue_target_create_x11;  
   VdpPresentationQueueCreate                      *vdp_presentation_queue_create;
@@ -88,6 +89,7 @@ struct _GstVdpDevice
   VdpPresentationQueueDisplay                     *vdp_presentation_queue_display;
   VdpPresentationQueueBlockUntilSurfaceIdle       *vdp_presentation_queue_block_until_surface_idle;
   VdpPresentationQueueSetBackgroundColor          *vdp_presentation_queue_set_background_color;
+  VdpPresentationQueueQuerySurfaceStatus          *vdp_presentation_queue_query_surface_status;
 };
 
 GType gst_vdp_device_get_type (void) G_GNUC_CONST;

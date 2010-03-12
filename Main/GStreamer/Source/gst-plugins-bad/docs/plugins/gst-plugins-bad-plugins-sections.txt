@@ -13,6 +13,20 @@ gst_aacparse_get_type
 </SECTION>
 
 <SECTION>
+<FILE>element-ac3parse</FILE>
+<TITLE>ac3parse</TITLE>
+GstAc3Parse
+<SUBSECTION Standard>
+GstAc3ParseClass
+GST_AC3_PARSE
+GST_AC3_PARSE_CLASS
+GST_IS_AC3_PARSE
+GST_IS_AC3_PARSE_CLASS
+GST_TYPE_AC3_PARSE
+gst_ac3_parse_get_type
+</SECTION>
+
+<SECTION>
 <FILE>element-aiffmux</FILE>
 <TITLE>aiffmux</TITLE>
 GstAiffMux
@@ -67,6 +81,20 @@ GST_IS_AMRWBENC
 GST_IS_AMRWBENC_CLASS
 GST_TYPE_AMRWBENC
 gst_amrwbenc_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-assrender</FILE>
+<TITLE>assrender</TITLE>
+GstAssRender
+<SUBSECTION Standard>
+GstAssRenderBlitFunction
+GstAssRenderClass
+GST_ASS_RENDER
+GST_ASS_RENDER_CLASS
+GST_IS_ASS_RENDER
+GST_IS_ASS_RENDER_CLASS
+gst_ass_render_get_type
 </SECTION>
 
 <SECTION>
@@ -153,6 +181,21 @@ GST_IS_CELT_ENC_CLASS
 GST_TYPE_CELT_ENC
 gst_celt_enc_get_type
 </SECTION>
+
+<SECTION>
+<FILE>element-dataurisrc</FILE>
+<TITLE>dataurisrc</TITLE>
+GstDataURISrc
+<SUBSECTION Standard>
+GstDataURISrcClass
+GST_DATA_URI_SRC
+GST_DATA_URI_SRC_CLASS
+GST_IS_DATA_URI_SRC
+GST_IS_DATA_URI_SRC_CLASS
+GST_TYPE_DATA_URI_SRC
+gst_data_uri_src_get_type
+</SECTION>
+
 
 <SECTION>
 <FILE>element-dc1394</FILE>
@@ -376,6 +419,20 @@ gst_faac_get_type
 </SECTION>
 
 <SECTION>
+<FILE>element-faad</FILE>
+<TITLE>faad</TITLE>
+GstFaad
+<SUBSECTION Standard>
+GstFaadClass
+GST_TYPE_FAAD
+GST_FAAD
+GST_IS_FAAD
+GST_FAAD_CLASS
+GST_IS_FAAD_CLASS
+gst_faad_get_type
+</SECTION>
+
+<SECTION>
 <FILE>element-festival</FILE>
 <TITLE>festival</TITLE>
 GstFestival
@@ -391,6 +448,20 @@ gst_festival_get_type
 FESTIVAL_DEFAULT_SERVER_HOST
 FESTIVAL_DEFAULT_SERVER_PORT
 FESTIVAL_DEFAULT_TEXT_MODE
+</SECTION>
+
+<SECTION>
+<FILE>element-flacparse</FILE>
+<TITLE>flacparse</TITLE>
+GstFlacParse
+<SUBSECTION Standard>
+GstFlacParseClass
+GST_FLAC_PARSE
+GST_FLAC_PARSE_CLASS
+GST_IS_FLAC_PARSE
+GST_IS_FLAC_PARSE_CLASS
+GST_TYPE_FLAC_PARSE
+gst_flac_parse_get_type
 </SECTION>
 
 <SECTION>
@@ -428,20 +499,6 @@ GST_INPUT_SELECTOR_WAIT
 </SECTION>
 
 <SECTION>
-<FILE>element-ivorbisdec</FILE>
-<TITLE>ivorbisdec</TITLE>
-GstIVorbisDec
-<SUBSECTION Standard>
-GstIVorbisDecClass
-GST_IVORBIS_DEC
-GST_IVORBIS_DEC_CLASS
-GST_IS_IVORBIS_DEC
-GST_IS_IVORBIS_DEC_CLASS
-GST_TYPE_IVORBIS_DEC
-gst_ivorbis_dec_get_type
-</SECTION>
-
-<SECTION>
 <FILE>element-jackaudiosrc</FILE>
 <TITLE>jackaudiosrc</TITLE>
 GstJackAudioSrc
@@ -469,6 +526,20 @@ GST_IS_JACK_AUDIO_SINK
 GST_IS_JACK_AUDIO_SINK_CLASS
 GST_TYPE_JACK_AUDIO_SINK
 gst_jack_audio_sink_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-jpegparse</FILE>
+<TITLE>jpegparse</TITLE>
+GstJpegParse
+<SUBSECTION Starndard>
+GstJpegParseClass
+GST_JPEG_PARSE
+GST_JPEG_PARSE_CLASS
+GST_IS_JPEG_PARSE
+GST_IS_JPEG_PARSE_CLASS
+GST_TYPE_JPEG_PARSE
+gst_jpeg_parse_get_type
 </SECTION>
 
 <SECTION>
@@ -945,21 +1016,6 @@ GST_IS_SPEED_CLASS
 GST_TYPE_SPEED
 gst_speed_get_type
 </SECTION>
-
-<SECTION>
-<FILE>element-shapewipe</FILE>
-<TITLE>shapewipe</TITLE>
-GstShapeWipe
-<SUBSECTION Standard>
-GstShapeWipeClass
-GST_SHAPE_WIPE
-GST_SHAPE_WIPE_CLASS
-GST_IS_SHAPE_WIPE
-GST_IS_SHAPE_WIPE_CLASS
-GST_TYPE_SHAPE_WIPE
-gst_shape_wipe_get_type
-</SECTION>
-
 
 <SECTION>
 <FILE>element-stereo</FILE>

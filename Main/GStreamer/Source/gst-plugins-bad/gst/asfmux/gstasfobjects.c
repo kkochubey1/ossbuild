@@ -64,7 +64,7 @@ const Guid guids[] = {
  * Returns: The generated GUID
  */
 Guid
-gst_asf_generate_file_id ()
+gst_asf_generate_file_id (void)
 {
   guint32 aux;
   Guid guid;
@@ -168,11 +168,13 @@ gst_asf_get_var_size_field_len (guint8 field_type)
 
 /**
  * gst_asf_file_info_new:
+ *
  * Creates a new #GstAsfFileInfo
+ * 
  * Returns: the created struct
  */
 GstAsfFileInfo *
-gst_asf_file_info_new ()
+gst_asf_file_info_new (void)
 {
   return g_new0 (GstAsfFileInfo, 1);
 }
@@ -180,6 +182,7 @@ gst_asf_file_info_new ()
 /**
  * gst_asf_file_info_reset:
  * @info: the #GstAsfFileInfo to be reset
+ * 
  * resets the data of a #GstFileInfo
  */
 void
@@ -237,7 +240,7 @@ gst_asf_payload_free (AsfPayload * payload)
  * Returns:
  */
 guint64
-gst_asf_get_current_time ()
+gst_asf_get_current_time (void)
 {
   GTimeVal timeval;
   guint64 secs;
@@ -284,7 +287,7 @@ gst_asf_match_guid (const guint8 * data, const Guid * guid)
 void
 gst_asf_put_i32 (guint8 * buf, gint32 data)
 {
-  *(gint32 *) buf = data;
+  GST_WRITE_UINT32_LE (buf, (guint32) data);
 }
 
 /**
@@ -516,7 +519,7 @@ gst_asf_parse_single_payload (GstByteReader * reader, gboolean * has_keyframe)
 
 gboolean
 gst_asf_parse_packet (GstBuffer * buffer, GstAsfPacketInfo * packet,
-    gboolean trust_delta_flag)
+    gboolean trust_delta_flag, guint packet_size)
 {
   GstByteReader *reader;
   gboolean ret = TRUE;
@@ -535,6 +538,11 @@ gst_asf_parse_packet (GstBuffer * buffer, GstAsfPacketInfo * packet,
   guint32 send_time = 0;
   guint16 duration = 0;
   gboolean has_keyframe;
+
+  if (packet_size != 0 && GST_BUFFER_SIZE (buffer) != packet_size) {
+    GST_WARNING ("ASF packets should be aligned with buffers");
+    return FALSE;
+  }
 
   reader = gst_byte_reader_new_from_buffer (buffer);
 
@@ -596,11 +604,30 @@ gst_asf_parse_packet (GstBuffer * buffer, GstAsfPacketInfo * packet,
           padding_len_type, &padd_len))
     goto error;
 
-  if (packet_len_type != ASF_FIELD_TYPE_NONE &&
-      packet_len != GST_BUFFER_SIZE (buffer)) {
-    GST_WARNING ("ASF packets should be aligned with buffers");
-    ret = FALSE;
-    goto end;
+  /* some packet size validation */
+  if (packet_size != 0 && packet_len_type != ASF_FIELD_TYPE_NONE) {
+    if (padding_len_type != ASF_FIELD_TYPE_NONE &&
+        packet_len + padd_len != packet_size) {
+      GST_WARNING ("Packet size (payload=%u + padding=%u) doesn't "
+          "match expected size %u", packet_len, padd_len, packet_size);
+      ret = FALSE;
+    }
+
+    /* Be forgiving if packet_len has the full packet size
+     * as the spec isn't really clear on its meaning.
+     *
+     * I had been taking it as the full packet size (fixed)
+     * until bug #607555, that convinced me that it is more likely
+     * the actual payloaded data size.
+     */
+    if (packet_len == packet_size) {
+      GST_DEBUG ("This packet's length field represents the full "
+          "packet and not the payloaded data length");
+      ret = TRUE;
+    }
+
+    if (!ret)
+      goto end;
   }
 
   GST_LOG ("Getting send time and duration");

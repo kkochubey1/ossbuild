@@ -37,8 +37,14 @@
 /* Define if GSM header in gsm/ subdir */
 #undef GSM_HEADER_IN_SUBDIR
 
+/* Extra platform specific plugin suffix */
+#undef GST_EXTRA_MODULE_SUFFIX
+
 /* Defined if gcov is enabled to force a rebuild due to config.h changing */
 #undef GST_GCOV_ENABLED
+
+/* Defined when registry scanning through fork is unsafe */
+#undef GST_HAVE_UNSAFE_FORK
 
 /* Default errorlevel to use */
 #undef GST_LEVEL_DEFAULT
@@ -199,6 +205,9 @@
 /* FIONREAD ioctl found in sys/ioclt.h */
 #undef HAVE_FIONREAD_IN_SYS_IOCTL
 
+/* Define to enable Flite plugin (used by flite). */
+#undef HAVE_FLITE
+
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
@@ -219,9 +228,6 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define to enable integer vorbis plug-in (used by ivorbisdec). */
-#undef HAVE_IVORBIS
 
 /* Define to enable Jack (used by jack). */
 #undef HAVE_JACK
@@ -307,6 +313,9 @@
 /* Define to enable Open Sound System 4 (used by oss4). */
 #undef HAVE_OSS4
 
+/* Defined if compiling for OSX */
+#undef HAVE_OSX
+
 /* Define to enable OSX video (used by osxvideosrc). */
 #undef HAVE_OSX_VIDEO
 
@@ -358,6 +367,9 @@
 /* Define to 1 if you have the <sys/ioctl.h> header file. */
 #undef HAVE_SYS_IOCTL_H
 
+/* Define to 1 if you have the <sys/param.h> header file. */
+#undef HAVE_SYS_PARAM_H
+
 /* Define to 1 if you have the <sys/socket.h> header file. */
 #undef HAVE_SYS_SOCKET_H
 
@@ -396,6 +408,9 @@
 
 /* Define to enable wildmidi midi soft synth plugin (used by wildmidi). */
 #undef HAVE_WILDMIDI
+
+/* Defined if compiling for Windows */
+#undef HAVE_WIN32
 
 /* Define to 1 if you have the <windows.h> header file. */
 #undef HAVE_WINDOWS_H
@@ -499,3 +514,6 @@
 
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING
+
+/* We need at least WinXP SP2 for __stat64 */
+#undef __MSVCRT_VERSION__

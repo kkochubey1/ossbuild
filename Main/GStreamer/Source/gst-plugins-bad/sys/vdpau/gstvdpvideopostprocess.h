@@ -24,6 +24,7 @@
 #include <gst/gst.h>
 
 #include "gstvdpdevice.h"
+#include "gstvdpvideobuffer.h"
 
 G_BEGIN_DECLS
 
@@ -65,10 +66,22 @@ struct _GstVdpVideoPostProcess
   GstElement element;
 
   GstPad *sinkpad, *srcpad;
+  
+  gboolean native_input;
+  VdpChromaType chroma_type;
+  gint width, height;
+  guint32 fourcc;
 
+  gboolean got_par;
+  gint par_n, par_d;
+  
   gboolean interlaced;
   GstClockTime field_duration;
-  
+
+  GstSegment segment;
+  GstClockTime earliest_time;
+  gboolean discont;
+
   GstVdpDevice *device;
   VdpVideoMixer mixer;
 
@@ -82,6 +95,8 @@ struct _GstVdpVideoPostProcess
   GstVdpDeinterlaceModes mode;
   GstVdpDeinterlaceMethods method;
 
+  /* properties */
+  gchar *display;
   gfloat noise_reduction;
   gfloat sharpening;
   gboolean inverse_telecine;

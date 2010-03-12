@@ -3,7 +3,7 @@ AC_PREREQ(2.52)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GStreamer Bad Plug-ins, 0.10.17,
+AC_INIT(GStreamer Bad Plug-ins, 0.10.18,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-bad)
 
@@ -45,8 +45,8 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.25
-GSTPB_REQ=0.10.25
+GST_REQ=0.10.27
+GSTPB_REQ=0.10.27
 
 dnl *** autotools stuff ****
 
@@ -82,6 +82,7 @@ AG_GST_ARG_ENABLE_EXTERNAL
 AG_GST_ARG_ENABLE_EXPERIMENTAL
 
 dnl *** checks for platform ***
+AG_GST_PLATFORM
 
 dnl * hardware/architecture *
 
@@ -203,16 +204,11 @@ AC_SUBST(GSTPB_PREFIX)
 
 dnl GTK is optional and used in examples
 HAVE_GTK=NO
-PKG_CHECK_MODULES(GTK, gtk+-x11-2.0 >= 2.8.0, HAVE_GTK=yes, HAVE_GTK=no)
+PKG_CHECK_MODULES(GTK, gtk+-x11-2.0 >= 2.12.0, HAVE_GTK=yes, HAVE_GTK=no)
 AM_CONDITIONAL(HAVE_GTK, test "x$HAVE_GTK" = "xyes")
 
-dnl libglade is optional and only used in examples
-HAVE_GLADE=NO
-PKG_CHECK_MODULES(GLADE, libglade-2.0 >= 2.6.0, HAVE_GLADE=yes, HAVE_GLADE=no)
-AC_SUBST(GLADE_LIBS)
-AC_SUBST(GLADE_CFLAGS)
-AC_SUBST(HAVE_GLADE)
-AM_CONDITIONAL(HAVE_GLADE, test "x$HAVE_GLADE" = "xyes")
+dnl Needed for GtkBuilder to autoconnect signals
+PKG_CHECK_MODULES(GMODULE_EXPORT, gmodule-export-2.0, HAVE_GMODULE_EXPORT=yes, HAVE_GMODULE_EXPORT=no)
 
 dnl x11 is optional for librfb
 HAVE_X11=NO
@@ -252,16 +248,17 @@ AG_GST_DEFAULT_ELEMENTS
 dnl *** plug-ins to include ***
 
 dnl these are all the gst plug-ins, compilable without additional libs
-AG_GST_CHECK_PLUGIN(aacparse)
 AG_GST_CHECK_PLUGIN(adpcmdec)
+AG_GST_CHECK_PLUGIN(adpcmenc)
 AG_GST_CHECK_PLUGIN(aiff)
-AG_GST_CHECK_PLUGIN(amrparse)
 AG_GST_CHECK_PLUGIN(asfmux)
+AG_GST_CHECK_PLUGIN(audioparsers)
 AG_GST_CHECK_PLUGIN(autoconvert)
 AG_GST_CHECK_PLUGIN(camerabin)
 AG_GST_CHECK_PLUGIN(legacyresample)
 AG_GST_CHECK_PLUGIN(bayer)
 AG_GST_CHECK_PLUGIN(cdxaparse)
+AG_GST_CHECK_PLUGIN(dataurisrc)
 AG_GST_CHECK_PLUGIN(dccp)
 AG_GST_CHECK_PLUGIN(debugutils)
 AG_GST_CHECK_PLUGIN(dtmf)
@@ -272,6 +269,7 @@ AG_GST_CHECK_PLUGIN(frei0r)
 AG_GST_CHECK_PLUGIN(h264parse)
 AG_GST_CHECK_PLUGIN(hdvparse)
 AG_GST_CHECK_PLUGIN(id3tag)
+AG_GST_CHECK_PLUGIN(jpegformat)
 AG_GST_CHECK_PLUGIN(librfb)
 AG_GST_CHECK_PLUGIN(liveadder)
 AG_GST_CHECK_PLUGIN(mpegdemux)
@@ -292,7 +290,6 @@ AG_GST_CHECK_PLUGIN(rtpmux)
 AG_GST_CHECK_PLUGIN(scaletempo)
 AG_GST_CHECK_PLUGIN(sdp)
 AG_GST_CHECK_PLUGIN(selector)
-AG_GST_CHECK_PLUGIN(shapewipe)
 AG_GST_CHECK_PLUGIN(siren)
 AG_GST_CHECK_PLUGIN(speed)
 AG_GST_CHECK_PLUGIN(subenc)
@@ -339,10 +336,6 @@ if test "x$HAVE_WINSOCK2_H" = "xyes"; then
   XDG_LIBS="$XDG_LIBS -lws2_32"
   AC_SUBST(DCCP_LIBS)
   AC_SUBST(XDG_LIBS)
-fi
-
-if test "x$HAVE_SYS_SOCKET_H" != "xyes"; then
-  AG_GST_DISABLE_PLUGIN(librfb)
 fi
 
 if test "x$HAVE_PTHREAD_H" = "xyes"; then
@@ -441,12 +434,12 @@ dnl *** OS X videosrc ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_OSX_VIDEO, true)
 HAVE_OSX_VIDEO="no"
 AG_GST_CHECK_FEATURE(OSX_VIDEO, [OSX video], osxvideosrc, [
-  AC_CHECK_HEADER(Quicktime/Quicktime.h, HAVE_OSX_VIDEO="yes", HAVE_OSX_VIDEO="no")
+  AC_CHECK_TYPE([SeqGrabComponent], HAVE_OSX_VIDEO="yes", HAVE_OSX_VIDEO="no",
+      [#include <Quicktime/Quicktime.h>])
 ])
 dnl in case header Quicktime/Quicktime.h is found on other platforms
 case "$host" in
   *-*darwin*)
-    dnl do nothing
     ;;
   *)
     HAVE_OSX_VIDEO="no"
@@ -456,7 +449,8 @@ esac
 dnl check for QuickTime
 translit(dnm, m, l) AM_CONDITIONAL(USE_QUICKTIME, true)
 AG_GST_CHECK_FEATURE(QUICKTIME, [QuickTime wrapper], qtwrapper, [
-  AC_CHECK_HEADER(QuickTime/Movies.h, HAVE_QUICKTIME="yes", HAVE_QUICKTIME="no")
+  AC_CHECK_TYPE([SampleReferenceRecord], HAVE_QUICKTIME="yes", HAVE_QUICKTIME="no",
+      [#include <Quicktime/Quicktime.h>])
 ])
 
 dnl check for Video CD
@@ -507,129 +501,19 @@ AG_GST_CHECK_FEATURE(AMRWB, [amrwb library], amrwbenc, [
 dnl *** apexsink ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_APEXSINK, true)
 AG_GST_CHECK_FEATURE(APEXSINK, [AirPort Express Wireless sink], apexsink, [
-
-  HAVE_APEXSINK="yes"
-  # The big search for OpenSSL
-  # copied from openssh's configure.ac
-  AC_ARG_WITH(ssl-dir,
-          [  --with-ssl-dir=PATH     Specify path to OpenSSL installation ],
-          [
-                  if test "x$withval" != "xno" ; then
-                          tryssldir=$withval
-                  fi
-          ]
-  )
-
-  AC_SEARCH_LIBS(socket, [socket])
-  AC_SEARCH_LIBS(gethostbyname, [nsl])
-
-  saved_LIBS="$LIBS"
-  saved_LDFLAGS="$LDFLAGS"
-  saved_CPPFLAGS="$CPPFLAGS"
-  if test "x$prefix" != "xNONE" ; then
-          tryssldir="$tryssldir $prefix"
-  fi
-  AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
-          for ssldir in $tryssldir "" /usr/local/openssl /usr/lib/openssl /usr/local/ssl /usr/lib/ssl /usr/local /usr/athena /usr/pkg /opt /opt/openssl ; do
-                  CPPFLAGS="$saved_CPPFLAGS"
-                  LDFLAGS="$saved_LDFLAGS"
-                  LIBS="$saved_LIBS -lssl -lcrypto"
-
-                  # Skip directories if they don't exist
-                  if test ! -z "$ssldir" -a ! -d "$ssldir" ; then
-                          continue;
-                  fi
-                  if test ! -z "$ssldir" -a "x$ssldir" != "x/usr"; then
-                          # Try to use $ssldir/lib if it exists, otherwise
-                          # $ssldir
-                          if test -d "$ssldir/lib" ; then
-                                  LDFLAGS="-L$ssldir/lib $saved_LDFLAGS"
-                                  if test ! -z "$need_dash_r" ; then
-                                          LDFLAGS="-R$ssldir/lib $LDFLAGS"
-                                  fi
-                          else
-                                  LDFLAGS="-L$ssldir $saved_LDFLAGS"
-                                  if test ! -z "$need_dash_r" ; then
-                                          LDFLAGS="-R$ssldir $LDFLAGS"
-                                  fi
-                          fi
-                          # Try to use $ssldir/include if it exists, otherwise
-                          # $ssldir
-                          if test -d "$ssldir/include" ; then
-                                  CPPFLAGS="-I$ssldir/include $saved_CPPFLAGS"
-                          else
-                                  CPPFLAGS="-I$ssldir $saved_CPPFLAGS"
-                          fi
-                  fi
-
-                  # Basic test to check for compatible version and correct linking
-                  # *does not* test for RSA - that comes later.
-                  AC_TRY_COMPILE(
-                          [
-#include <string.h>
-#include <openssl/rand.h>
-],[
-int main(void)
-{
-        char a[2048];
-        memset(a, 0, sizeof(a));
-        RAND_add(a, sizeof(a), sizeof(a));
-        return(RAND_status() <= 0);
-}
-                          ],
-                          [
-                                  found_crypto=1
-                                  break;
-                          ], []
-                  )
-
-                  if test ! -z "$found_crypto" ; then
-                          break;
-                  fi
-          done
-
-          if test -z "$found_crypto" ; then
-                  HAVE_APEXSINK="no"
-          fi
-          if test -z "$ssldir" ; then
-                  ssldir="(system)"
-          fi
-
-          ac_cv_openssldir=$ssldir
+  PKG_CHECK_MODULES(APEXSINK, [ openssl >= 0.9.5  libcrypto ], [
+    HAVE_APEXSINK="yes"
+    saved_LIBS="$LIBS"
+    LIBS=""
+    AC_SEARCH_LIBS(socket, [socket], [ ], [ APEXSINK="no" ])
+    AC_SEARCH_LIBS(gethostbyname, [nsl], [ ], [ APEXSINK="no" ])
+    APEXSINK_LIBS="$APEXSINK_LIBS $LIBS"
+    LIBS="$saved_LIBS"
+    AC_SUBST(APEXSINK_CFLAGS)
+    AC_SUBST(APEXSINK_LIBS)
+  ], [
+    APEXSINK="no"
   ])
-  if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ;
-   then
-          dnl Need to recover ssldir - test above runs in subshell
-          ssldir=$ac_cv_openssldir
-          if test ! -z "$ssldir" -a "x$ssldir" != "x/usr"; then
-                  # Try to use $ssldir/lib if it exists, otherwise
-                  # $ssldir
-                  if test -d "$ssldir/lib" ; then
-                          APEXSINK_LIBS="-L$ssldir/lib $LDFLAGS"
-                          if test ! -z "$need_dash_r" ; then
-                                  APEXSINK_LIBS="-R$ssldir/lib $LDFLAGS"
-                          fi
-                  else
-                          APEXSINK_LDFLAGS="-L$ssldir $LDFLAGS"
-                          if test ! -z "$need_dash_r" ; then
-                                  APEXSINK_LIBS="-R$ssldir $LDFLAGS"
-                          fi
-                  fi
-                  # Try to use $ssldir/include if it exists, otherwise
-                  # $ssldir
-                  if test -d "$ssldir/include" ; then
-                          APEXSINK_CFLAGS="-I$ssldir/include $CPPFLAGS"
-                  else
-                          APEXSINK_CFLAGS="-I$ssldir $CPPFLAGS"
-                  fi
-          fi
-  fi
-  APEXSINK_LIBS="$APEXSINK_LIBS $LIBS"
-  AC_SUBST(APEXSINK_LIBS)
-  AC_SUBST(APEXSINK_CFLAGS)
-  CPPFLAGS="$saved_CPPFLAGS"
-  LDFLAGS="$saved_LDFLAGS"
-  LIBS="$saved_LIBS"
 ])
 
 dnl *** BZ2 ***
@@ -686,7 +570,7 @@ AG_GST_CHECK_FEATURE(CELT, [celt], celt, [
 dnl *** Cog ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_COG, true)
 AG_GST_CHECK_FEATURE(COG, [Cog plugin], cog, [
-  PKG_CHECK_MODULES(COG, libpng12 orc-0.4 >= 0.4.2.1, HAVE_COG="yes", [
+  PKG_CHECK_MODULES(COG, libpng12 orc-0.4 >= 0.4.3, HAVE_COG="yes", [
     HAVE_COG="no"
     AC_MSG_RESULT(no)
   ])
@@ -703,7 +587,7 @@ dnl *** dc1394  ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_DC1394, true)
 AG_GST_CHECK_FEATURE(DC1394, [libdc1394], dc1394, [
    PKG_CHECK_MODULES(LIBDC1394, libdc1394-2 >= 2.0.0, [
-   	if test -z "`pkg-config --modversion libdc1394-2 | grep 2.0.0-rc`"; then
+   	if test -z "`$PKG_CONFIG --modversion libdc1394-2 | grep 2.0.0-rc`"; then
 		HAVE_DC1394="yes"
 	else
 		HAVE_DC1394="no"
@@ -965,6 +849,16 @@ AG_GST_CHECK_FEATURE(FBDEV, [linux framebuffer], fbdevsink, [
   fi
 ])
 
+dnl *** flite ***
+translit(dnm, m, l) AM_CONDITIONAL(USE_FLITE, true)
+AG_GST_CHECK_FEATURE(FLITE, [Flite plugin], flite, [
+  AG_GST_CHECK_LIBHEADER(FLITE, flite, flite_init, -lm, flite/flite.h,
+    FLITE_LIBS="-lflite -lflite_cmu_us_kal -lflite_usenglish -lflite_cmulex -lm")
+
+  AC_SUBST(FLITE_CFLAGS)
+  AC_SUBST(FLITE_LIBS)
+])
+
 dnl *** gsm ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_GSM, true)
 AG_GST_CHECK_FEATURE(GSM, [GSM library], gsmenc gsmdec, [
@@ -976,25 +870,6 @@ AG_GST_CHECK_FEATURE(GSM, [GSM library], gsmenc gsmdec, [
     fi
   fi
   AC_SUBST(GSM_LIBS)
-])
-
-dnl *** ivorbis ***
-dnl AM_PATH_IVORBIS only takes two options
-translit(dnm, m, l) AM_CONDITIONAL(USE_IVORBIS, true)
-AG_GST_CHECK_FEATURE(IVORBIS, [integer vorbis plug-in], ivorbisdec, [
-  IVORBIS_LIBS=
-  IVORBIS_CFLAGS=
-  AC_CHECK_LIB(vorbisidec, vorbis_block_init,
-    [IVORBIS_LIBS=-lvorbisidec
-     HAVE_IVORBIS=yes
-     case $host in
-     arm-*-*)
-       IVORBIS_CFLAGS="-D_ARM_ASSEM_ $IVORBIS_CFLAGS"
-     esac
-    ],
-    HAVE_IVORBIS=no)
-  AC_SUBST(IVORBIS_LIBS)
-  AC_SUBST(IVORBIS_CFLAGS)
 ])
 
 dnl *** Jack ***
@@ -1553,7 +1428,9 @@ AG_GST_CHECK_FEATURE(ACM, [Windows ACM library], acm, [
       [HAVE_ACM="yes"
        AC_SUBST(ACMENC_CFLAGS)
        AC_SUBST(ACMMP3DEC_CFLAGS)
-      ], [HAVE_ACM="no"])
+      ], [HAVE_ACM="no"],
+      [AC_INCLUDES_DEFAULT
+#include <windows.h>])
 ])
 
 dnl *** vdpau ***
@@ -1637,7 +1514,6 @@ AM_CONDITIONAL(USE_FAAC, false)
 AM_CONDITIONAL(USE_FAAD, false)
 AM_CONDITIONAL(USE_FBDEV, false)
 AM_CONDITIONAL(USE_GSM, false)
-AM_CONDITIONAL(USE_IVORBIS, false)
 AM_CONDITIONAL(USE_JACK, false)
 AM_CONDITIONAL(USE_JP2K, false)
 AM_CONDITIONAL(USE_KATE, false)
@@ -1711,8 +1587,8 @@ dnl FIXME: do we want to rename to GST_ALL_* ?
 dnl prefer internal headers to already installed ones
 dnl also add builddir include for enumtypes and marshal
 dnl add GST_OPTION_CFLAGS, but overridable
+GST_CXXFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CXXFLAGS)"
 GST_CFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CFLAGS)"
-GST_CXXFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CXXFLAGS \$(GST_OPTION_CXXFLAGS)"
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_CXXFLAGS)
 AC_SUBST(GST_LIBS)
@@ -1741,15 +1617,16 @@ common/shave-libtool
 common/m4/Makefile
 gst-plugins-bad.spec
 gst/Makefile
-gst/aacparse/Makefile
 gst/adpcmdec/Makefile
+gst/adpcmenc/Makefile
 gst/aiff/Makefile
-gst/amrparse/Makefile
 gst/asfmux/Makefile
+gst/audioparsers/Makefile
 gst/autoconvert/Makefile
 gst/bayer/Makefile
 gst/camerabin/Makefile
 gst/cdxaparse/Makefile
+gst/dataurisrc/Makefile
 gst/dccp/Makefile
 gst/debugutils/Makefile
 gst/dtmf/Makefile
@@ -1760,6 +1637,7 @@ gst/frei0r/Makefile
 gst/h264parse/Makefile
 gst/hdvparse/Makefile
 gst/id3tag/Makefile
+gst/jpegformat/Makefile
 gst/legacyresample/Makefile
 gst/librfb/Makefile
 gst/liveadder/Makefile
@@ -1782,7 +1660,6 @@ gst/rtpmux/Makefile
 gst/scaletempo/Makefile
 gst/sdp/Makefile
 gst/selector/Makefile
-gst/shapewipe/Makefile
 gst/siren/Makefile
 gst/speed/Makefile
 gst/subenc/Makefile
@@ -1823,7 +1700,6 @@ tests/examples/camerabin/Makefile
 tests/examples/directfb/Makefile
 tests/examples/mxf/Makefile
 tests/examples/scaletempo/Makefile
-tests/examples/shapewipe/Makefile
 tests/examples/switch/Makefile
 tests/icles/Makefile
 ext/alsaspdif/Makefile
@@ -1841,8 +1717,8 @@ ext/divx/Makefile
 ext/dts/Makefile
 ext/faac/Makefile
 ext/faad/Makefile
+ext/flite/Makefile
 ext/gsm/Makefile
-ext/ivorbis/Makefile
 ext/jack/Makefile
 ext/jp2k/Makefile
 ext/kate/Makefile
@@ -1879,6 +1755,9 @@ docs/Makefile
 docs/plugins/Makefile
 docs/plugins/figures/Makefile
 docs/version.entities
+pkgconfig/Makefile
+pkgconfig/gstreamer-plugins-bad.pc
+pkgconfig/gstreamer-plugins-bad-uninstalled.pc
 m4/Makefile
 win32/common/config.h
 )

@@ -21,6 +21,7 @@
 #define __GST_FAAD_H__
 
 #include <gst/gst.h>
+#include <gst/base/gstadapter.h>
 #ifdef FAAD_IS_NEAAC
 #include <neaacdec.h>
 #else
@@ -49,18 +50,16 @@ typedef struct _GstFaad {
   guint      samplerate; /* sample rate of the last MPEG frame    */
   guint      channels;   /* number of channels of the last frame  */
   guint      bps;        /* bytes per sample                      */
+  guchar    *channel_positions;
 
   guint8     fake_codec_data[2];
 
-  GstBuffer *tempbuf;    /* used to keep input leftovers          */
+  GstAdapter *adapter;
 
   /* FAAD object */
   faacDecHandle handle;
   gboolean init;
 
-  /* FAAD channel setup */
-  guchar *channel_positions;
-  gboolean need_channel_setup;
   gboolean packetised; /* We must differentiate between raw and packetised streams */
 
   gint64  prev_ts;     /* timestamp of previous buffer                    */
@@ -69,9 +68,10 @@ typedef struct _GstFaad {
   guint64 sum_dur_out; /* sum of durations of decoded buffers we sent out */
   gint    error_count;
   gboolean discont;
+  gint    sync_flush;
 
   /* segment handling */
-  GstSegment * segment;
+  GstSegment segment;
 
   /* list of raw output buffers for reverse playback */
   GList *queued;

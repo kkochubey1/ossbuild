@@ -205,13 +205,6 @@ mergebw t4, s3, t2
 mergewl d1, t3, t4
 
 
-.function orc_memcpy
-.dest 1 d1 void
-.source 1 s1 void
-
-copyb d1, s1
-
-
 .function orc_addc_convert_u8_s16
 .dest 1 d1
 .source 2 s1 int16_t
@@ -270,8 +263,6 @@ convsuswb d1, t1
 .source 1 s2 uint8_t
 .param 2 p1
 .param 2 p2
-.param 2 p3
-.param 2 p4
 .temp 2 t1
 .temp 2 t2
 .temp 2 t3
@@ -284,8 +275,8 @@ convubw t2, s2
 subw t2, t2, 128
 mullw t4, t2, p2
 addw t3, t3, t4
-addw t3, t3, p3
-shrsw t3, t3, p4
+addw t3, t3, 128
+shrsw t3, t3, 8
 addw t3, t3, t1
 addw t3, t3, t2
 convsuswb d1, t3
@@ -297,8 +288,6 @@ convsuswb d1, t3
 .source 1 s2 uint8_t
 .param 2 p1
 .param 2 p2
-.param 2 p3
-.param 2 p4
 .temp 2 t1
 .temp 2 t2
 .temp 2 t3
@@ -311,8 +300,8 @@ convubw t2, s2
 subw t2, t2, 128
 mullw t4, t2, p2
 addw t3, t3, t4
-addw t3, t3, p3
-shrsw t3, t3, p4
+addw t3, t3, 128
+shrsw t3, t3, 8
 addw t3, t3, t1
 addw t3, t3, t2
 addw t3, t3, t2
@@ -352,8 +341,6 @@ convsuswb d1, t1
 .param 2 p1
 .param 2 p2
 .param 2 p3
-.param 2 p4
-.param 2 p5
 .temp 2 t1
 .temp 2 t2
 .temp 2 t3
@@ -370,8 +357,8 @@ convubw t2, s3
 subw t2, t2, 128
 mullw t2, t2, p3
 addw t3, t3, t2
-addw t3, t3, p4
-shrsw t3, t3, p5
+addw t3, t3, 128
+shrsw t3, t3, 8
 addw t3, t3, t1
 convsuswb d1, t3
 
