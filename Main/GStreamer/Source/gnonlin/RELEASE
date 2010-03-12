@@ -1,5 +1,5 @@
 
-Release notes for GNonLin Non-Linear Editing Plug-ins 0.10.13 "Service of Quality"
+Release notes for GNonLin Non-Linear Editing Plug-ins 0.10.15 "I missed the snow in Barcelona"
         
 
 
@@ -29,13 +29,12 @@ An element for using filters in a GnlComposition
 
 Features of this release
     
-      * Fix QoS event handling
-      * Fix racyness in source pad handlings
-      * GnlOperation: Add signal to know input stream priorities
+      * Many fixes for complex compositions
 
 Bugs fixed in this release
      
-      * 583145 : Seeking on pending pipelines should return True.
+      * 609689 : compositions containing gnloperation videomixer/adder freeze when input is another gnloperation
+      * 609792 : [pitivi] [transitions] black frame flashing in rendered files when using transitions
 
 Download
 
@@ -65,10 +64,7 @@ GNonLin is primarily used by PiTiVi (http://www.pitivi.org/) and Jokosher (http:
   
 Contributors to this release
     
-      * Adam Dingle
       * Alessandro Decina
       * Edward Hervey
-      * Jan Schmidt
-      * Olivier Crête
-      * Stefan Kost
+      * Sebastian Dröge
  

@@ -293,11 +293,11 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Libraries\libgstbase.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F13}"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstvideo.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstvideo.vcproj"
 		/>
 	</References>
 	<Files>
@@ -378,6 +378,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Source\gnonlin\gnl\gnlsource.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Source\gnonlin\gnl\gnlurisource.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Source\gnonlin\gnl\gnlurisource.h"
 				>
 			</File>
 		</Filter>

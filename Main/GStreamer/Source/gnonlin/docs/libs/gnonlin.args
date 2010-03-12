@@ -13,8 +13,8 @@
 <TYPE>gchar*</TYPE>
 <RANGE></RANGE>
 <FLAGS>rw</FLAGS>
-<NICK>File Location</NICK>
-<BLURB>Location of the file to read.</BLURB>
+<NICK>Location</NICK>
+<BLURB>Location of the file to use.</BLURB>
 <DEFAULT>NULL</DEFAULT>
 </ARG>
 
@@ -119,6 +119,16 @@
 </ARG>
 
 <ARG>
+<NAME>GnlObject::expandable</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Expandable</NICK>
+<BLURB>Expand to the full duration of the container composition.</BLURB>
+<DEFAULT>FALSE</DEFAULT>
+</ARG>
+
+<ARG>
 <NAME>GnlComposition::update</NAME>
 <TYPE>gboolean</TYPE>
 <RANGE></RANGE>
@@ -126,5 +136,15 @@
 <NICK>Update</NICK>
 <BLURB>Update the internal pipeline on every modification.</BLURB>
 <DEFAULT>TRUE</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GnlURISource::uri</NAME>
+<TYPE>gchar*</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Uri</NICK>
+<BLURB>URI of the resource to use.</BLURB>
+<DEFAULT>NULL</DEFAULT>
 </ARG>
 

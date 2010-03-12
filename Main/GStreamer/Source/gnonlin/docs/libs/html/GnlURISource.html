@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GnlURISource</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="GNonLin 0.10.15 Reference Manual">
+<link rel="up" href="ch01.html" title="GNonLin Elements">
+<link rel="prev" href="GnlFileSource.html" title="GnlFileSource">
+<link rel="next" href="GnlOperation.html" title="GnlOperation">
+<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="GNonLin Elements">
+<link rel="chapter" href="ch02.html" title="Base Classes">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GnlFileSource.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">GNonLin 0.10.15 Reference Manual</th>
+<td><a accesskey="n" href="GnlOperation.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GnlURISource.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GnlURISource.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GnlURISource.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GnlURISource.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+                   | 
+                  <a href="#GnlURISource.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry" title="GnlURISource">
+<a name="GnlURISource"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GnlURISource.top_of_page"></a>GnlURISource</span></h2>
+<p>GnlURISource — GNonLin File Source</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv" title="Synopsis">
+<a name="GnlURISource.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">                    <a class="link" href="GnlURISource.html#GnlURISource-struct" title="GnlURISource">GnlURISource</a>;
+</pre>
+</div>
+<div class="refsect1" title="Object Hierarchy">
+<a name="GnlURISource.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="../gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="../gstreamer-0.10/GstObject.html">GstObject</a>
+         +----<a href="../gstreamer-0.10/GstElement.html">GstElement</a>
+               +----<a href="../gstreamer-0.10/GstBin.html">GstBin</a>
+                     +----<a class="link" href="GnlObject.html" title="GnlObject">GnlObject</a>
+                           +----<a class="link" href="GnlSource.html" title="GnlSource">GnlSource</a>
+                                 +----GnlURISource
+                                       +----<a class="link" href="GnlFileSource.html" title="GnlFileSource">GnlFileSource</a>
+</pre>
+</div>
+<div class="refsect1" title="Implemented Interfaces">
+<a name="GnlURISource.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
+<p>
+GnlURISource implements
+ <a href="../gstreamer-0.10/GstChildProxy.html">GstChildProxy</a>.</p>
+</div>
+<div class="refsect1" title="Properties">
+<a name="GnlURISource.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "<a class="link" href="GnlURISource.html#GnlURISource--uri" title='The "uri" property'>uri</a>"                      <a href="../glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+</pre>
+</div>
+<div class="refsect1" title="Description">
+<a name="GnlURISource.description"></a><h2>Description</h2>
+<p>
+GnlURISource is a <a class="link" href="GnlSource.html" title="GnlSource"><span class="type">GnlSource</span></a> which reads and decodes the contents
+of a given file. The data in the file is decoded using any available
+GStreamer plugins.</p>
+</div>
+<div class="refsect1" title="Details">
+<a name="GnlURISource.details"></a><h2>Details</h2>
+<div class="refsect2" title="GnlURISource">
+<a name="GnlURISource-struct"></a><h3>GnlURISource</h3>
+<pre class="programlisting">typedef struct _GnlURISource GnlURISource;</pre>
+<p>
+</p>
+</div>
+</div>
+<div class="refsect1" title="Property Details">
+<a name="GnlURISource.property-details"></a><h2>Property Details</h2>
+<div class="refsect2" title='The "uri" property'>
+<a name="GnlURISource--uri"></a><h3>The <code class="literal">"uri"</code> property</h3>
+<pre class="programlisting">  "uri"                      <a href="../glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<p>URI of the resource to use.</p>
+<p>Default value: NULL</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.13</div>
+</body>
+</html>
