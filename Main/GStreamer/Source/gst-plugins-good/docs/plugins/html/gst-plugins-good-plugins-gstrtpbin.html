@@ -75,6 +75,7 @@ GstRtpBin implements
   "<a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--sdes" title='The "sdes" property'>sdes</a>"                     <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a>*         : Read / Write
   "<a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--ignore-pt" title='The "ignore-pt" property'>ignore-pt</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
   "<a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--autoremove" title='The "autoremove" property'>autoremove</a>"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--buffer-mode" title='The "buffer-mode" property'>buffer-mode</a>"              <span class="type">RTPJitterBufferMode</span>   : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Signals">
@@ -146,7 +147,7 @@ signal.
 <p>
 </p>
 <div class="refsect2" title="Example pipelines">
-<a name="id613030"></a><h3>Example pipelines</h3>
+<a name="id576662"></a><h3>Example pipelines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -281,8 +282,15 @@ Last reviewed on 2007-08-30 (0.10.6)</p>
 <div class="refsect2" title='The "autoremove" property'>
 <a name="GstRtpBin--autoremove"></a><h3>The <code class="literal">"autoremove"</code> property</h3>
 <pre class="programlisting">  "autoremove"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
-<p>Automatically removed timed out sources.</p>
+<p>Automatically remove timed out sources.</p>
 <p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2" title='The "buffer-mode" property'>
+<a name="GstRtpBin--buffer-mode"></a><h3>The <code class="literal">"buffer-mode"</code> property</h3>
+<pre class="programlisting">  "buffer-mode"              <span class="type">RTPJitterBufferMode</span>   : Read / Write</pre>
+<p>Control the buffering algorithm in use.</p>
+<p>Default value: Slave receiver to sender clock</p>
 </div>
 </div>
 <div class="refsect1" title="Signal Details">

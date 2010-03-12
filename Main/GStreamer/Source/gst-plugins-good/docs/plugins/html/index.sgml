@@ -694,6 +694,7 @@
 <ANCHOR id="GstRtpBin--sdes" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--sdes">
 <ANCHOR id="GstRtpBin--ignore-pt" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--ignore-pt">
 <ANCHOR id="GstRtpBin--autoremove" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--autoremove">
+<ANCHOR id="GstRtpBin--buffer-mode" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--buffer-mode">
 <ANCHOR id="gst-plugins-good-plugins-gstrtpbin.signal-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#gst-plugins-good-plugins-gstrtpbin.signal-details">
 <ANCHOR id="GstRtpBin-clear-pt-map" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin-clear-pt-map">
 <ANCHOR id="GstRtpBin-get-internal-session" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin-get-internal-session">
@@ -725,11 +726,14 @@
 <ANCHOR id="GstRtpJitterBuffer--drop-on-latency" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer--drop-on-latency">
 <ANCHOR id="GstRtpJitterBuffer--latency" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer--latency">
 <ANCHOR id="GstRtpJitterBuffer--ts-offset" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer--ts-offset">
+<ANCHOR id="GstRtpJitterBuffer--mode" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer--mode">
+<ANCHOR id="GstRtpJitterBuffer--percent" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer--percent">
 <ANCHOR id="gst-plugins-good-plugins-gstrtpjitterbuffer.signal-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpjitterbuffer.html#gst-plugins-good-plugins-gstrtpjitterbuffer.signal-details">
 <ANCHOR id="GstRtpJitterBuffer-clear-pt-map" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer-clear-pt-map">
 <ANCHOR id="GstRtpJitterBuffer-handle-sync" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer-handle-sync">
 <ANCHOR id="GstRtpJitterBuffer-on-npt-stop" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer-on-npt-stop">
 <ANCHOR id="GstRtpJitterBuffer-request-pt-map" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer-request-pt-map">
+<ANCHOR id="GstRtpJitterBuffer-set-active" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer-set-active">
 <ANCHOR id="gst-plugins-good-plugins-gstrtpptdemux" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpptdemux.html">
 <ANCHOR id="gst-plugins-good-plugins-gstrtpptdemux.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpptdemux.html#gst-plugins-good-plugins-gstrtpptdemux.synopsis">
 <ANCHOR id="GstRtpPtDemux" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpptdemux.html#GstRtpPtDemux">
@@ -919,11 +923,9 @@
 <ANCHOR id="GstMatroskaDemux-struct" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-matroskademux.html#GstMatroskaDemux-struct">
 <ANCHOR id="gst-plugins-good-plugins-monoscope" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-monoscope.html">
 <ANCHOR id="gst-plugins-good-plugins-monoscope.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-monoscope.html#gst-plugins-good-plugins-monoscope.synopsis">
-<ANCHOR id="GstMonoscope" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-monoscope.html#GstMonoscope">
-<ANCHOR id="gst-plugins-good-plugins-monoscope.object-hierarchy" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-monoscope.html#gst-plugins-good-plugins-monoscope.object-hierarchy">
 <ANCHOR id="gst-plugins-good-plugins-monoscope.description" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-monoscope.html#gst-plugins-good-plugins-monoscope.description">
 <ANCHOR id="gst-plugins-good-plugins-monoscope.details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-monoscope.html#gst-plugins-good-plugins-monoscope.details">
-<ANCHOR id="GstMonoscope-struct" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-monoscope.html#GstMonoscope-struct">
+<ANCHOR id="GstMonoscope" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-monoscope.html#GstMonoscope">
 <ANCHOR id="gst-plugins-good-plugins-monoscope.see-also" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-monoscope.html#gst-plugins-good-plugins-monoscope.see-also">
 <ANCHOR id="gst-plugins-good-plugins-mulawdec" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-mulawdec.html">
 <ANCHOR id="gst-plugins-good-plugins-mulawdec.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-mulawdec.html#gst-plugins-good-plugins-mulawdec.synopsis">

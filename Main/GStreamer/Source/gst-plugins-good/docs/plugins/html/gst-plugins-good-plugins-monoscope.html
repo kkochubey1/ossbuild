@@ -27,8 +27,6 @@
 <a href="#gst-plugins-good-plugins-monoscope.synopsis" class="shortcut">Top</a>
                    | 
                   <a href="#gst-plugins-good-plugins-monoscope.description" class="shortcut">Description</a>
-                   | 
-                  <a href="#gst-plugins-good-plugins-monoscope.object-hierarchy" class="shortcut">Object Hierarchy</a>
 </td></tr>
 </table>
 <div class="refentry" title="monoscope">
@@ -42,16 +40,7 @@
 </tr></table></div>
 <div class="refsynopsisdiv" title="Synopsis">
 <a name="gst-plugins-good-plugins-monoscope.synopsis"></a><h2>Synopsis</h2>
-<a name="GstMonoscope"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-monoscope.html#GstMonoscope-struct" title="GstMonoscope">GstMonoscope</a>;
-</pre>
-</div>
-<div class="refsect1" title="Object Hierarchy">
-<a name="gst-plugins-good-plugins-monoscope.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----GstMonoscope
+<pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-monoscope.html#GstMonoscope" title="GstMonoscope">GstMonoscope</a>;
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -63,7 +52,7 @@ curve of the audio signal like on an oscilloscope.
 <p>
 </p>
 <div class="refsect2" title="Example launch line">
-<a name="id632022"></a><h3>Example launch line</h3>
+<a name="id617792"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -80,8 +69,39 @@ curve of the audio signal like on an oscilloscope.
 <div class="refsect1" title="Details">
 <a name="gst-plugins-good-plugins-monoscope.details"></a><h2>Details</h2>
 <div class="refsect2" title="GstMonoscope">
-<a name="GstMonoscope-struct"></a><h3>GstMonoscope</h3>
-<pre class="programlisting">typedef struct _GstMonoscope GstMonoscope;</pre>
+<a name="GstMonoscope"></a><h3>GstMonoscope</h3>
+<pre class="programlisting">typedef struct {
+  GstElement element;
+
+  /* pads */
+  GstPad      *sinkpad;
+  GstPad      *srcpad;
+
+  GstAdapter  *adapter;
+
+  guint64      next_ts;             /* expected timestamp of the next frame */
+  guint64      frame_duration;      /* video frame duration    */
+  gint         rate;                /* sample rate             */
+  guint        bps;                 /* bytes per sample        */
+  guint        spf;                 /* samples per video frame */
+
+  GstSegment   segment;
+
+  /* QoS stuff *//* with LOCK */
+  gdouble      proportion;
+  GstClockTime earliest_time;
+
+  /* video state */
+  gint         fps_num;
+  gint         fps_denom;
+  gint         width;
+  gint         height;
+  guint        outsize;
+
+  /* visualisation state */
+  struct monoscope_state *visstate;
+} GstMonoscope;
+</pre>
 <p>
 </p>
 </div>
