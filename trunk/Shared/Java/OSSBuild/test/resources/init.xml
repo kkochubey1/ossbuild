@@ -5,6 +5,6 @@
 		<Load class="ossbuild.init.TestLoader" />
 	</System>
 	<Registry>
-		<Reference name="test" class="ossbuild.init.TestRegistryReference" />
+		<Reference class="ossbuild.init.TestRegistryReference" />
 	</Registry>
 </Init>

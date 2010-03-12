@@ -8,7 +8,8 @@ package ossbuild.extract;
  */
 public class CommonReferences {
 	public static final String
-		  GLib          = "glib"
+		  Base          = "base"
+		, GLib          = "glib"
 		, FFmpeg        = "ffmpeg"
 		, Cairo         = "cairo"
 		, Pango         = "pango"

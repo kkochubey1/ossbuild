@@ -2,6 +2,7 @@
 package ossbuild;
 
 import java.io.File;
+import ossbuild.extract.ResourceUtils;
 
 /**
  *
@@ -52,6 +53,38 @@ public class Path {
 
 	public static File combine(final String parent, final String child) {
 		return new File(parent, child);
+	}
+
+	public static boolean exists(final String path) {
+		return exists(new File(path));
+	}
+
+	public static boolean exists(final File path) {
+		if (path == null)
+			return false;
+		return path.exists();
+	}
+
+	public static boolean delete(final String path) {
+		return delete(new File(path));
+	}
+
+	public static boolean delete(final File path) {
+		if (path == null)
+			return false;
+		
+		try {
+			//True b/c the intent of this function is satisfied -- the directory/file no longer exists!
+			if (!path.exists())
+				return true;
+
+			if (path.isFile())
+				return path.delete();
+			else
+				return ResourceUtils.deleteDirectory(path);
+		} catch(SecurityException se) {
+			return false;
+		}
 	}
 	//</editor-fold>
 }
