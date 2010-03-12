@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="glib">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.glib.unix.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.glib.init" msg="Initializing GLib..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libglib-2.0.so.0"    executable="true" />
+		<Library resource="libgobject-2.0.so.0" executable="true" />
+		<Library resource="libgmodule-2.0.so.0" executable="true" />
+		<Library resource="libgthread-2.0.so.0" executable="true" />
+		<Library resource="libgio-2.0.so.0"     executable="true" />
+	</Extract>
+
+</Resources>
