@@ -30,6 +30,7 @@
 <ANCHOR id="GstAppSrc--size" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-appsrc.html#GstAppSrc--size">
 <ANCHOR id="GstAppSrc--stream-type" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-appsrc.html#GstAppSrc--stream-type">
 <ANCHOR id="GstAppSrc--emit-signals" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-appsrc.html#GstAppSrc--emit-signals">
+<ANCHOR id="GstAppSrc--min-percent" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-appsrc.html#GstAppSrc--min-percent">
 <ANCHOR id="gst-plugins-base-plugins-appsrc.signal-details" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-appsrc.html#gst-plugins-base-plugins-appsrc.signal-details">
 <ANCHOR id="GstAppSrc-end-of-stream" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-appsrc.html#GstAppSrc-end-of-stream">
 <ANCHOR id="GstAppSrc-enough-data" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-appsrc.html#GstAppSrc-enough-data">
@@ -544,6 +545,7 @@
 <ANCHOR id="gst-plugins-base-plugins-subtitleoverlay.property-details" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#gst-plugins-base-plugins-subtitleoverlay.property-details">
 <ANCHOR id="GstSubtitleOverlay--font-desc" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay--font-desc">
 <ANCHOR id="GstSubtitleOverlay--silent" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay--silent">
+<ANCHOR id="GstSubtitleOverlay--subtitle-encoding" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay--subtitle-encoding">
 <ANCHOR id="gst-plugins-base-plugins-tcpclientsrc" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-tcpclientsrc.html">
 <ANCHOR id="gst-plugins-base-plugins-tcpclientsrc.synopsis" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-tcpclientsrc.html#gst-plugins-base-plugins-tcpclientsrc.synopsis">
 <ANCHOR id="GstTCPClientSrc" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-tcpclientsrc.html#GstTCPClientSrc">

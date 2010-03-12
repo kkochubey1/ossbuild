@@ -80,6 +80,7 @@ GstAppSrc implements
   "<a class="link" href="gst-plugins-base-plugins-appsrc.html#GstAppSrc--size" title='The "size" property'>size</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a>                : Read / Write
   "<a class="link" href="gst-plugins-base-plugins-appsrc.html#GstAppSrc--stream-type" title='The "stream-type" property'>stream-type</a>"              <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsrc.html#GstAppStreamType"><span class="type">GstAppStreamType</span></a>      : Read / Write
   "<a class="link" href="gst-plugins-base-plugins-appsrc.html#GstAppSrc--emit-signals" title='The "emit-signals" property'>emit-signals</a>"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-appsrc.html#GstAppSrc--min-percent" title='The "min-percent" property'>min-percent</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Signals">
@@ -185,6 +186,14 @@ GStreamer Plugins Base Libraries documentation.</p>
 <pre class="programlisting">  "emit-signals"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Emit new-preroll and new-buffer signals.</p>
 <p>Default value: TRUE</p>
+</div>
+<hr>
+<div class="refsect2" title='The "min-percent" property'>
+<a name="GstAppSrc--min-percent"></a><h3>The <code class="literal">"min-percent"</code> property</h3>
+<pre class="programlisting">  "min-percent"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<p>Emit need-data when queued bytes drops below this percent of max-bytes.</p>
+<p>Allowed values: &lt;= 100</p>
+<p>Default value: 0</p>
 </div>
 </div>
 <div class="refsect1" title="Signal Details">

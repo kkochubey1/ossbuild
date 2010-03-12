@@ -70,6 +70,7 @@ GstSubtitleOverlay implements
 <pre class="synopsis">
   "<a class="link" href="gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay--font-desc" title='The "font-desc" property'>font-desc</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
   "<a class="link" href="gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay--silent" title='The "silent" property'>silent</a>"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-subtitleoverlay.html#GstSubtitleOverlay--subtitle-encoding" title='The "subtitle-encoding" property'>subtitle-encoding</a>"        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -85,7 +86,7 @@ DVD subpicture subtitles.
 <p>
 </p>
 <div class="refsect2" title="Examples">
-<a name="id486868"></a><h3>Examples</h3>
+<a name="id484086"></a><h3>Examples</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -122,6 +123,13 @@ DVD subpicture subtitles.
 <pre class="programlisting">  "silent"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Whether to show subtitles.</p>
 <p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2" title='The "subtitle-encoding" property'>
+<a name="GstSubtitleOverlay--subtitle-encoding"></a><h3>The <code class="literal">"subtitle-encoding"</code> property</h3>
+<pre class="programlisting">  "subtitle-encoding"        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<p>Encoding to assume if input subtitles are not in UTF-8 encoding. If not set, the GST_SUBTITLE_ENCODING environment variable will be checked for an encoding to use. If that is not set either, ISO-8859-15 will be assumed.</p>
+<p>Default value: NULL</p>
 </div>
 </div>
 </div>
