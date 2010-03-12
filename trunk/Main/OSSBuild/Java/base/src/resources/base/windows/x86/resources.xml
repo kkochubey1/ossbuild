@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="base">
+
+	<References />
+	
+	<Extract package="resources.base.windows.x86" directory="${tmp}/ossbuild/">
+		<Echo key="res.base.init" msg="Initializing base..." />
+
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Echo key="res.base.env" msg="Initializing base environment..." />
+
+		<!-- Ensure this directory exists -->
+		<MakeDirectory path="${dirPlatform}/bin/" />
+
+		<!-- Change the working directory while we load native libraries -->
+		<!--
+		<WorkingDirectory path="${dirPlatform}/bin/" />
+		-->
+
+		<!-- Change path so that our native libraries are found first -->
+		<EnvVar name="PATH" prepend="true" value="${dirPlatform}/bin/" asFile="true" />
+
+		<Echo key="res.base.complete" msg="Base environment initialization complete" />
+	</Extract>
+
+</Resources>
