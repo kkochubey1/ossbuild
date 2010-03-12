@@ -75,6 +75,7 @@ struct _GstMultiUDPSink {
   gint           ttl_mc;
   gboolean       loop;
   gint           qos_dscp;
+  guint16        ss_family;
 };
 
 struct _GstMultiUDPSinkClass {
