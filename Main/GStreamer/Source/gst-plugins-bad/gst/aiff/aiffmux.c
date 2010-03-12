@@ -202,7 +202,7 @@ av_dbl2ext (double d)
   } else if (f != 0.0) {
     ext.exponent[0] = 0x7f;
     ext.exponent[1] = 0xff;
-    if (f != 1 / 0.0)
+    if (f != 1.0)
       ext.mantissa[0] = ~0;
   }
   if (d < 0)
