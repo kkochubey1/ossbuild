@@ -127,7 +127,7 @@ The basic use pattern of an iterator is as follows:
 <p>
 </p>
 <div class="example">
-<a name="id348807"></a><p class="title"><b>Example 13. Using an iterator</b></p>
+<a name="id549375"></a><p class="title"><b>Example 13. Using an iterator</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -157,14 +157,14 @@ The basic use pattern of an iterator is as follows:
         <td class="listing_code"><pre class="programlisting">it <span class="symbol">=</span> <span class="function">_get_iterator</span><span class="symbol">(</span>object<span class="symbol">);</span>
 done <span class="symbol">=</span> FALSE<span class="symbol">;</span>
 <span class="keyword">while</span> <span class="symbol">(!</span>done<span class="symbol">) {</span>
-  <span class="keyword">switch</span> <span class="symbol">(</span><span class="function"><a href="../gstreamer-0.10/gstreamer-GstIterator.html#gst-iterator-next">gst_iterator_next</a></span> <span class="symbol">(</span>it<span class="symbol">, &amp;</span>item<span class="symbol">)) {</span>
+  <span class="keyword">switch</span> <span class="symbol">(</span><span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstIterator.html#gst-iterator-next">gst_iterator_next</a></span> <span class="symbol">(</span>it<span class="symbol">, &amp;</span>item<span class="symbol">)) {</span>
     <span class="keyword">case</span> GST_ITERATOR_OK<span class="symbol">:</span>
       <span class="symbol">...</span> use<span class="symbol">/</span>change item here<span class="symbol">...</span>
-      <span class="function"><a href="../gstreamer-0.10/GstObject.html#gst-object-unref">gst_object_unref</a></span> <span class="symbol">(</span>item<span class="symbol">);</span>
+      <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html#gst-object-unref">gst_object_unref</a></span> <span class="symbol">(</span>item<span class="symbol">);</span>
       <span class="keyword">break</span><span class="symbol">;</span>
     <span class="keyword">case</span> GST_ITERATOR_RESYNC<span class="symbol">:</span>
       <span class="symbol">...</span>rollback changes to items<span class="symbol">...</span>
-      <span class="function"><a href="../gstreamer-0.10/gstreamer-GstIterator.html#gst-iterator-resync">gst_iterator_resync</a></span> <span class="symbol">(</span>it<span class="symbol">);</span>
+      <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstIterator.html#gst-iterator-resync">gst_iterator_resync</a></span> <span class="symbol">(</span>it<span class="symbol">);</span>
       <span class="keyword">break</span><span class="symbol">;</span>
     <span class="keyword">case</span> GST_ITERATOR_ERROR<span class="symbol">:</span>
       <span class="symbol">...</span>wrong parameters were given<span class="symbol">...</span>
@@ -175,7 +175,7 @@ done <span class="symbol">=</span> FALSE<span class="symbol">;</span>
       <span class="keyword">break</span><span class="symbol">;</span>
   <span class="symbol">}</span>
 <span class="symbol">}</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstIterator.html#gst-iterator-free">gst_iterator_free</a></span> <span class="symbol">(</span>it<span class="symbol">);</span></pre></td>
+<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstIterator.html#gst-iterator-free">gst_iterator_free</a></span> <span class="symbol">(</span>it<span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>

@@ -159,7 +159,7 @@ install a pad template in its base_init function, like so:
   GstElementClass <span class="symbol">*</span>gstelement_class <span class="symbol">=</span> <span class="function">GST_ELEMENT_CLASS</span> <span class="symbol">(</span>g_class<span class="symbol">);</span>
 
   <span class="gtkdoc slc">// sinktemplate should be a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPadTemplate.html#GstStaticPadTemplate">GstStaticPadTemplate</a> with direction</span>
-  <span class="gtkdoc slc">// GST_PAD_SINK and name &quot;sink&quot;</span>
+  <span class="gtkdoc slc">// <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GST-PAD-SINK:CAPS">GST_PAD_SINK</a> and name &quot;sink&quot;</span>
   <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html#gst-element-class-add-pad-template">gst_element_class_add_pad_template</a></span> <span class="symbol">(</span>gstelement_class<span class="symbol">,</span>
       <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPadTemplate.html#gst-static-pad-template-get">gst_static_pad_template_get</a></span> <span class="symbol">(&amp;</span>sinktemplate<span class="symbol">));</span>
   <span class="gtkdoc slc">// see <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElementFactory.html#GstElementDetails">GstElementDetails</a></span>
@@ -174,7 +174,7 @@ install a pad template in its base_init function, like so:
 </p>
 <p>
 <a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> will handle the prerolling correctly. This means that it will
-return <span class="type">GST_STATE_CHANGE_ASYNC</span> from a state change to PAUSED until the first
+return <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html#GST-STATE-CHANGE-ASYNC:CAPS"><span class="type">GST_STATE_CHANGE_ASYNC</span></a> from a state change to PAUSED until the first
 buffer arrives in this element. The base class will call the
 <a class="link" href="GstBaseSink.html#GstBaseSinkClass.preroll"><code class="function">GstBaseSinkClass.preroll()</code></a> vmethod with this preroll buffer and will then
 commit the state change to the next asynchronously pending state.
@@ -182,7 +182,7 @@ commit the state change to the next asynchronously pending state.
 <p>
 When the element is set to PLAYING, <a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> will synchronise on the
 clock using the times returned from <a class="link" href="GstBaseSink.html#GstBaseSinkClass.get-times"><code class="function">GstBaseSinkClass.get_times()</code></a>. If this
-function returns <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GST-CLOCK-TIME-NONE--CAPS"><span class="type">GST_CLOCK_TIME_NONE</span></a> for the start time, no synchronisation
+function returns <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GST-CLOCK-TIME-NONE:CAPS"><span class="type">GST_CLOCK_TIME_NONE</span></a> for the start time, no synchronisation
 will be done. Synchronisation can be disabled entirely by setting the object
 <a class="link" href="GstBaseSink.html#GstBaseSink--sync" title='The "sync" property'><span class="type">"sync"</span></a> property to <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a>.
 </p>
@@ -206,7 +206,7 @@ element receives EOS in PAUSED, preroll completes, the event is queued and an
 EOS message is posted when going to PLAYING.
 </p>
 <p>
-<a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> will internally use the <span class="type">GST_EVENT_NEWSEGMENT</span> events to schedule
+<a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> will internally use the <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstEvent.html#GST-EVENT-NEWSEGMENT:CAPS"><span class="type">GST_EVENT_NEWSEGMENT</span></a> events to schedule
 synchronisation and clipping of buffers. Buffers that fall completely outside
 of the current segment are dropped. Buffers that fall partially in the
 segment are rendered (and prerolled). Subclasses should do any subbuffer
@@ -214,7 +214,7 @@ clipping themselves when needed.
 </p>
 <p>
 <a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> will by default report the current playback position in
-<span class="type">GST_FORMAT_TIME</span> based on the current clock time and segment information.
+<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstFormat.html#GST-FORMAT-TIME:CAPS"><span class="type">GST_FORMAT_TIME</span></a> based on the current clock time and segment information.
 If no clock has been set on the element, the query will be forwarded
 upstream.
 </p>
@@ -558,7 +558,7 @@ Since 0.10.22</p>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <span class="type">GST_FLOW_OK</span> if the preroll completed and processing can
+<td> <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GST-FLOW-OK:CAPS"><span class="type">GST_FLOW_OK</span></a> if the preroll completed and processing can
 continue. Any other return value should be returned from the render vmethod.
 </td>
 </tr>
@@ -576,9 +576,9 @@ and call this method before continuing to render the remaining data.
 </p>
 <p>
 This function will block until a state change to PLAYING happens (in which
-case this function returns <span class="type">GST_FLOW_OK</span>) or the processing must be stopped due
+case this function returns <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GST-FLOW-OK:CAPS"><span class="type">GST_FLOW_OK</span></a>) or the processing must be stopped due
 to a state change to READY or a FLUSH event (in which case this function
-returns <span class="type">GST_FLOW_WRONG_STATE</span>).
+returns <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GST-FLOW-WRONG-STATE:CAPS"><span class="type">GST_FLOW_WRONG_STATE</span></a>).
 </p>
 <p>
 This function should only be called with the PREROLL_LOCK held, like in the
@@ -593,7 +593,7 @@ render function.</p>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <span class="type">GST_FLOW_OK</span> if the preroll completed and processing can
+<td> <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GST-FLOW-OK:CAPS"><span class="type">GST_FLOW_OK</span></a> if the preroll completed and processing can
 continue. Any other return value should be returned from the render vmethod.
 </td>
 </tr>
@@ -612,9 +612,9 @@ This function will block until <em class="parameter"><code>time</code></em> is r
 subclasses that use their own internal synchronisation.
 </p>
 <p>
-If <em class="parameter"><code>time</code></em> is not valid, no sycnhronisation is done and <span class="type">GST_CLOCK_BADTIME</span> is
+If <em class="parameter"><code>time</code></em> is not valid, no sycnhronisation is done and <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GST-CLOCK-BADTIME:CAPS"><span class="type">GST_CLOCK_BADTIME</span></a> is
 returned. Likewise, if synchronisation is disabled in the element or there
-is no clock, no synchronisation is done and <span class="type">GST_CLOCK_BADTIME</span> is returned.
+is no clock, no synchronisation is done and <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GST-CLOCK-BADTIME:CAPS"><span class="type">GST_CLOCK_BADTIME</span></a> is returned.
 </p>
 <p>
 This function should only be called with the PREROLL_LOCK held, like when

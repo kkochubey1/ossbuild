@@ -147,7 +147,7 @@ is the libvisual element.
 An element using GstAdapter in its sink pad chain function should ensure that
 when the FLUSH_STOP event is received, that any queued data is cleared using
 <a class="link" href="GstAdapter.html#gst-adapter-clear" title="gst_adapter_clear ()"><code class="function">gst_adapter_clear()</code></a>. Data should also be cleared or processed on EOS and
-when changing state from <span class="type">GST_STATE_PAUSED</span> to <span class="type">GST_STATE_READY</span>.
+when changing state from <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html#GST-STATE-PAUSED:CAPS"><span class="type">GST_STATE_PAUSED</span></a> to <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html#GST-STATE-READY:CAPS"><span class="type">GST_STATE_READY</span></a>.
 </p>
 <p>
 Also check the GST_BUFFER_FLAG_DISCONT flag on the buffer. Some elements might

@@ -192,7 +192,7 @@ The following example shows how to query the duration of a pipeline:
 <p>
 </p>
 <div class="example">
-<a name="id481135"></a><p class="title"><b>Example 16. Query duration on a pipeline</b></p>
+<a name="id681702"></a><p class="title"><b>Example 16. Query duration on a pipeline</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -212,17 +212,17 @@ The following example shows how to query the duration of a pipeline:
 13</pre></td>
         <td class="listing_code"><pre class="programlisting">GstQuery <span class="symbol">*</span>query<span class="symbol">;</span>
 gboolean res<span class="symbol">;</span>
-query <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstQuery.html#gst-query-new-duration">gst_query_new_duration</a></span> <span class="symbol">(</span>GST_FORMAT_TIME<span class="symbol">);</span>
-res <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/GstElement.html#gst-element-query">gst_element_query</a></span> <span class="symbol">(</span>pipeline<span class="symbol">,</span> query<span class="symbol">);</span>
+query <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstQuery.html#gst-query-new-duration">gst_query_new_duration</a></span> <span class="symbol">(</span>GST_FORMAT_TIME<span class="symbol">);</span>
+res <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html#gst-element-query">gst_element_query</a></span> <span class="symbol">(</span>pipeline<span class="symbol">,</span> query<span class="symbol">);</span>
 <span class="keyword">if</span> <span class="symbol">(</span>res<span class="symbol">) {</span>
   gint64 duration<span class="symbol">;</span>
-  <span class="function"><a href="../gstreamer-0.10/gstreamer-GstQuery.html#gst-query-parse-duration">gst_query_parse_duration</a></span> <span class="symbol">(</span>query<span class="symbol">,</span> NULL<span class="symbol">, &amp;</span>duration<span class="symbol">);</span>
-  <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="symbol">(</span><span class="string">&quot;duration = %&quot;</span>GST_TIME_FORMAT<span class="symbol">,</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-TIME-ARGS:CAPS">GST_TIME_ARGS</a></span> <span class="symbol">(</span>duration<span class="symbol">));</span>
+  <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstQuery.html#gst-query-parse-duration">gst_query_parse_duration</a></span> <span class="symbol">(</span>query<span class="symbol">,</span> NULL<span class="symbol">, &amp;</span>duration<span class="symbol">);</span>
+  <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="symbol">(</span><span class="string">&quot;duration = %&quot;</span>GST_TIME_FORMAT<span class="symbol">,</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstInfo.html#GST-TIME-ARGS:CAPS">GST_TIME_ARGS</a></span> <span class="symbol">(</span>duration<span class="symbol">));</span>
 <span class="symbol">}</span>
 <span class="keyword">else</span> <span class="symbol">{</span>
   <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="symbol">(</span><span class="string">&quot;duration query failed...&quot;</span><span class="symbol">);</span>
 <span class="symbol">}</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstQuery.html#gst-query-unref">gst_query_unref</a></span> <span class="symbol">(</span>query<span class="symbol">);</span></pre></td>
+<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstQuery.html#gst-query-unref">gst_query_unref</a></span> <span class="symbol">(</span>query<span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
