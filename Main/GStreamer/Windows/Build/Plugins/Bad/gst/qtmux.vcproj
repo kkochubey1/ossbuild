@@ -293,7 +293,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Libraries\libgstbase.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
 		/>
 	</References>
 	<Files>
@@ -303,6 +303,14 @@
 		</File>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\qtmux\atoms.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\qtmux\atomsrecovery.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\qtmux\atomsrecovery.h"
 			>
 		</File>
 		<File
@@ -322,6 +330,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\qtmux\gstqtmoovrecover.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\qtmux\gstqtmoovrecover.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\qtmux\gstqtmux.c"
 			>
 		</File>
@@ -335,6 +351,10 @@
 		</File>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\qtmux\gstqtmuxmap.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\qtmux\gstqtmuxplugin.c"
 			>
 		</File>
 		<File
