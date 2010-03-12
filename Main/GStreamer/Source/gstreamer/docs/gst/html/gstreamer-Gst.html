@@ -89,7 +89,7 @@ options, as shown in the following example.
 <p>
 </p>
 <div class="example">
-<a name="id353948"></a><p class="title"><b>Example 1. Initializing the gstreamer library</b></p>
+<a name="id554516"></a><p class="title"><b>Example 1. Initializing the gstreamer library</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -105,7 +105,7 @@ options, as shown in the following example.
 <span class="function">main</span> <span class="symbol">(</span><span class="gtkdoc kwb">int</span> argc<span class="symbol">,</span> <span class="gtkdoc kwb">char</span> <span class="symbol">*</span>argv<span class="symbol">[])</span>
 <span class="symbol">{</span>
   <span class="gtkdoc slc">// initialize the GStreamer library</span>
-  <span class="function"><a href="../gstreamer-0.10/gstreamer-Gst.html#gst-init">gst_init</a></span> <span class="symbol">(&amp;</span>argc<span class="symbol">, &amp;</span>argv<span class="symbol">);</span>
+  <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-Gst.html#gst-init">gst_init</a></span> <span class="symbol">(&amp;</span>argc<span class="symbol">, &amp;</span>argv<span class="symbol">);</span>
   <span class="symbol">...</span>
 <span class="symbol">}</span></pre></td>
       </tr>
@@ -125,7 +125,7 @@ You can also use GOption to initialize your own parameters as shown in
 the next code fragment:
 </p>
 <div class="example">
-<a name="id377799"></a><p class="title"><b>Example 2. Initializing own parameters when initializing gstreamer</b></p>
+<a name="id578367"></a><p class="title"><b>Example 2. Initializing own parameters when initializing gstreamer</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -168,9 +168,9 @@ the next code fragment:
    <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Threads.html#g-thread-init">g_thread_init</a></span> <span class="symbol">(</span>NULL<span class="symbol">);</span>
  ctx <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-new">g_option_context_new</a></span> <span class="symbol">(</span><span class="string">&quot;[ADDITIONAL ARGUMENTS]&quot;</span><span class="symbol">);</span>
  <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-add-main-entries">g_option_context_add_main_entries</a></span> <span class="symbol">(</span>ctx<span class="symbol">,</span> options<span class="symbol">,</span> GETTEXT_PACKAGE<span class="symbol">);</span>
- <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-add-group">g_option_context_add_group</a></span> <span class="symbol">(</span>ctx<span class="symbol">,</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-Gst.html#gst-init-get-option-group">gst_init_get_option_group</a></span> <span class="symbol">());</span>
+ <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-add-group">g_option_context_add_group</a></span> <span class="symbol">(</span>ctx<span class="symbol">,</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-Gst.html#gst-init-get-option-group">gst_init_get_option_group</a></span> <span class="symbol">());</span>
  <span class="keyword">if</span> <span class="symbol">(!</span><span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-parse">g_option_context_parse</a></span> <span class="symbol">(</span>ctx<span class="symbol">, &amp;</span>argc<span class="symbol">, &amp;</span>argv<span class="symbol">, &amp;</span>err<span class="symbol">)) {</span>
-   <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="symbol">(</span><span class="string">&quot;Error initializing: %s</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="symbol">,</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-STR-NULL:CAPS">GST_STR_NULL</a></span> <span class="symbol">(</span>err<span class="symbol">-&gt;</span>message<span class="symbol">));</span>
+   <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="symbol">(</span><span class="string">&quot;Error initializing: %s</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="symbol">,</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstInfo.html#GST-STR-NULL:CAPS">GST_STR_NULL</a></span> <span class="symbol">(</span>err<span class="symbol">-&gt;</span>message<span class="symbol">));</span>
    <span class="function">exit</span> <span class="symbol">(</span><span class="number">1</span><span class="symbol">);</span>
  <span class="symbol">}</span>
  <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-free">g_option_context_free</a></span> <span class="symbol">(</span>ctx<span class="symbol">);</span>

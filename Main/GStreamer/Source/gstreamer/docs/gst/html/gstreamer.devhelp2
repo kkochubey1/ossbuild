@@ -66,7 +66,7 @@
     <sub name="Annotation Glossary" link="annotation-glossary.html"/>
   </chapters>
   <functions>
-    <keyword type="" name="Environment variables" link="gst-running.html#id376117"/>
+    <keyword type="" name="Environment variables" link="gst-running.html#id576684"/>
     <keyword type="function" name="gst_init ()" link="gstreamer-Gst.html#gst-init"/>
     <keyword type="function" name="gst_init_check ()" link="gstreamer-Gst.html#gst-init-check"/>
     <keyword type="function" name="gst_init_get_option_group ()" link="gstreamer-Gst.html#gst-init-get-option-group"/>
@@ -78,7 +78,7 @@
     <keyword type="function" name="gst_registry_fork_is_enabled ()" link="gstreamer-Gst.html#gst-registry-fork-is-enabled" since="0.10.10"/>
     <keyword type="function" name="gst_registry_fork_set_enabled ()" link="gstreamer-Gst.html#gst-registry-fork-set-enabled" since="0.10.10"/>
     <keyword type="function" name="gst_update_registry ()" link="gstreamer-Gst.html#gst-update-registry" since="0.10.12"/>
-    <keyword type="" name="Notes" link="GstBin.html#id347676"/>
+    <keyword type="" name="Notes" link="GstBin.html#id548244"/>
     <keyword type="struct" name="GstBin" link="GstBin.html#GstBin-struct"/>
     <keyword type="struct" name="GstBinClass" link="GstBin.html#GstBinClass"/>
     <keyword type="function" name="gst_bin_new ()" link="GstBin.html#gst-bin-new"/>
