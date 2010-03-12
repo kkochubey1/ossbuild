@@ -221,3 +221,9 @@
 #define GST_PACKAGE "Gst-plugins-bad"
 #define PACKAGE "gst-plugins-bad"
 #define GST_ORIGIN "gstreamer.freedesktop.org"
+
+
+#define DEFAULT_VIDEOSRC  "dshowvideosrc"
+#define DEFAULT_VIDEOSINK  "dshowvideosink"
+#define DEFAULT_AUDIOSRC  "directsoundsrc"
+#define DEFAULT_REAL_CODECS_PATH "C:\realcodecs"
