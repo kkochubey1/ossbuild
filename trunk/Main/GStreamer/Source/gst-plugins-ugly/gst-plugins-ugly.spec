@@ -4,7 +4,7 @@
 %define gst_minver  0.10.0
 
 Name: 		%{gstreamer}-plugins-ugly
-Version: 	0.10.13
+Version: 	0.10.14
 Release: 	1.gst
 Summary: 	GStreamer streaming media framework "ugly" plug-ins
 
@@ -112,9 +112,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_datadir}/gtk-doc/html/gst-plugins-ugly-plugins-%{majorminor}/*
 %{_datadir}/gstreamer-%{majorminor}/presets/GstX264Enc.prs
 %{_libdir}/gstreamer-%{majorminor}/libgstx264.so
-#%{_libdir}/gstreamer-%{majorminor}/libgstamrnb.so
-#%{_libdir}/gstreamer-%{majorminor}/libgstamrwbdec.so
-#%{_datadir}/gstreamer-%{majorminor}/presets/GstAmrnbEnc.prs
+%{_libdir}/gstreamer-%{majorminor}/libgstamrnb.so
+%{_libdir}/gstreamer-%{majorminor}/libgstamrwbdec.so
+%{_datadir}/gstreamer-%{majorminor}/presets/GstAmrnbEnc.prs
 %{_libdir}/gstreamer-%{majorminor}/libgstcdio.so
 
 
