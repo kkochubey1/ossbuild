@@ -122,7 +122,8 @@
 				Name="VCLinkerTool"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="video.def"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -252,7 +253,8 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="video.def"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -296,7 +298,16 @@
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F13}"
-			RelativePathToProject=".\Main\GStreamer\Plugins\Base\gst-libs\libgstvideo.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstvideo.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{14A8C4C9-6B1E-4F8A-9FCB-FD010D06E4F4}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Bindings\Python\_gst-2.6.vcproj"
 		/>
 	</References>
 	<Files>
@@ -307,35 +318,27 @@
 				RelativePath="..\..\..\..\Source\gst-python\gst\common.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\pygstminiobject.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Sources Files"
 			>
 			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\pygstminiobject.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\pygstvalue.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Generated\gst-python\video.c"
+				RelativePath="..\..\..\..\Source\gst-python\gst\gst-argtypes.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\..\Source\gst-python\gst\videomodule.c"
 				>
 			</File>
+			<Filter
+				Name="Generated"
+				>
+				<File
+					RelativePath="..\..\..\Generated\gst-python\video.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\..\Plugins\Bad\gst\libgstaiff.vcproj"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

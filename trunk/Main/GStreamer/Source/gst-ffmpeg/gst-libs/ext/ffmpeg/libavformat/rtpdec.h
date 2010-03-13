@@ -69,7 +69,22 @@ void rtp_parse_close(RTPDemuxContext *s);
 
 int rtp_get_local_port(URLContext *h);
 int rtp_set_remote_url(URLContext *h, const char *uri);
+#if (LIBAVFORMAT_VERSION_MAJOR <= 52)
 void rtp_get_file_handles(URLContext *h, int *prtp_fd, int *prtcp_fd);
+#endif
+
+/**
+ * Send a dummy packet on both port pairs to set up the connection
+ * state in potential NAT routers, so that we're able to receive
+ * packets.
+ *
+ * Note, this only works if the NAT router doesn't remap ports. This
+ * isn't a standardized procedure, but it works in many cases in practice.
+ *
+ * The same routine is used with RDT too, even if RDT doesn't use normal
+ * RTP packets otherwise.
+ */
+void rtp_send_punch_packets(URLContext* rtp_handle);
 
 /**
  * some rtp servers assume client is dead if they don't hear from them...
@@ -154,7 +169,6 @@ struct RTPDemuxContext {
 
     /* rtcp sender statistics receive */
     int64_t last_rtcp_ntp_time;    // TODO: move into statistics
-    int64_t first_rtcp_ntp_time;   // TODO: move into statistics
     uint32_t last_rtcp_timestamp;  // TODO: move into statistics
 
     /* rtcp sender statistics */

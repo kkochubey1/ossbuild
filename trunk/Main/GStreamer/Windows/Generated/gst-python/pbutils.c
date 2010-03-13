@@ -25,7 +25,6 @@ GST_DEBUG_CATEGORY_EXTERN (pygst_debug);
 #define Py_ssize_t int
 #endif
 
-#ifdef HAVE_PLUGINS_INSTALL
 static void
 install_plugins_result_handler(GstInstallPluginsReturn result, gpointer user_data)
 {
@@ -63,8 +62,7 @@ install_plugins_result_handler(GstInstallPluginsReturn result, gpointer user_dat
     pyg_gil_state_release(state);
 
 }
-#endif
-#line 68 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 66 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
 
 
 /* ---------- types from other modules ---------- */
@@ -83,7 +81,7 @@ static PyTypeObject *_PyGstMessage_Type;
 /* ---------- forward type declarations ---------- */
 PyTypeObject PyGstInstallPluginsContext_Type;
 
-#line 87 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 85 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
 
 
 
@@ -367,7 +365,7 @@ _wrap_gst_pb_utils_get_element_description(PyObject *self, PyObject *args, PyObj
     return Py_None;
 }
 
-#line 166 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+#line 164 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
 static PyObject *
 _wrap_gst_install_plugins_async(PyGObject *self, PyObject *args)
 {
@@ -461,10 +459,10 @@ _wrap_gst_install_plugins_async(PyGObject *self, PyObject *args)
     py_ret = pyg_enum_from_gtype(GST_TYPE_INSTALL_PLUGINS_RETURN, ret);
     return py_ret;
 }
-#line 465 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 463 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
 
 
-#line 100 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+#line 98 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
 static PyObject *
 _wrap_gst_install_plugins_sync(PyGObject *self, PyObject *args, PyObject *kwargs)
 {
@@ -529,7 +527,7 @@ _wrap_gst_install_plugins_sync(PyGObject *self, PyObject *args, PyObject *kwargs
     py_ret = pyg_enum_from_gtype(GST_TYPE_INSTALL_PLUGINS_RETURN, ret);
     return py_ret;
 }
-#line 533 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 531 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
 
 
 static PyObject *
@@ -950,6 +948,6 @@ pypbutils_register_classes(PyObject *d)
     }
 
 
-#line 954 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 952 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
     pyg_register_boxed(d, "InstallPluginsContext", GST_TYPE_INSTALL_PLUGINS_CONTEXT, &PyGstInstallPluginsContext_Type);
 }

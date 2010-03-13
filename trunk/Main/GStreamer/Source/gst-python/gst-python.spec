@@ -1,10 +1,10 @@
 %define         majorminor      0.10
 %define         gstreamer       gstreamer
 %define		_pygtk		2.6.3
-%define		_gst		0.10.12
+%define		_gst		0.10.18
 
 Name:           %{gstreamer}-python
-Version:        0.10.17
+Version:        0.10.18
 Release:        1
 Summary:        Python bindings for GStreamer.
 

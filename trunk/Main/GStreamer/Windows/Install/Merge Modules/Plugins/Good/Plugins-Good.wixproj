@@ -321,6 +321,13 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\shapewipe.vcproj">
+      <Name>gstshapewipe</Name>
+      <Project>{0bb26e1d-c0b4-469c-8097-91ab95b909f4}</Project>
+      <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Good\sys\libgstdirectsound.vcproj">
       <Name>gstdirectsound</Name>
       <Project>{bc97873b-2b88-4b1b-c627-f70df4f92001}</Project>

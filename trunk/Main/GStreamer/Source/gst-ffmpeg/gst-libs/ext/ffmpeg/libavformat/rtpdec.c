@@ -22,7 +22,7 @@
 /* needed for gethostname() */
 #define _XOPEN_SOURCE 600
 
-#include "libavcodec/bitstream.h"
+#include "libavcodec/get_bits.h"
 #include "avformat.h"
 #include "mpegts.h"
 
@@ -30,7 +30,11 @@
 #include "network.h"
 
 #include "rtpdec.h"
+#include "rtp_asf.h"
 #include "rtp_h264.h"
+#include "rtp_vorbis.h"
+#include "rtpdec_amr.h"
+#include "rtpdec_h263.h"
 
 //#define DEBUG
 
@@ -59,7 +63,15 @@ void av_register_rtp_dynamic_payload_handlers(void)
 {
     ff_register_dynamic_payload_handler(&mp4v_es_handler);
     ff_register_dynamic_payload_handler(&mpeg4_generic_handler);
+    ff_register_dynamic_payload_handler(&ff_amr_nb_dynamic_handler);
+    ff_register_dynamic_payload_handler(&ff_amr_wb_dynamic_handler);
+    ff_register_dynamic_payload_handler(&ff_h263_1998_dynamic_handler);
+    ff_register_dynamic_payload_handler(&ff_h263_2000_dynamic_handler);
     ff_register_dynamic_payload_handler(&ff_h264_dynamic_handler);
+    ff_register_dynamic_payload_handler(&ff_vorbis_dynamic_handler);
+
+    ff_register_dynamic_payload_handler(&ff_ms_rtp_asf_pfv_handler);
+    ff_register_dynamic_payload_handler(&ff_ms_rtp_asf_pfa_handler);
 }
 
 static int rtcp_parse_packet(RTPDemuxContext *s, const unsigned char *buf, int len)
@@ -67,8 +79,6 @@ static int rtcp_parse_packet(RTPDemuxContext *s, const unsigned char *buf, int l
     if (buf[1] != 200)
         return -1;
     s->last_rtcp_ntp_time = AV_RB64(buf + 8);
-    if (s->first_rtcp_ntp_time == AV_NOPTS_VALUE)
-        s->first_rtcp_ntp_time = s->last_rtcp_ntp_time;
     s->last_rtcp_timestamp = AV_RB32(buf + 16);
     return 0;
 }
@@ -261,6 +271,45 @@ int rtp_check_and_send_back_rr(RTPDemuxContext *s, int count)
     return 0;
 }
 
+void rtp_send_punch_packets(URLContext* rtp_handle)
+{
+    ByteIOContext *pb;
+    uint8_t *buf;
+    int len;
+
+    /* Send a small RTP packet */
+    if (url_open_dyn_buf(&pb) < 0)
+        return;
+
+    put_byte(pb, (RTP_VERSION << 6));
+    put_byte(pb, 0); /* Payload type */
+    put_be16(pb, 0); /* Seq */
+    put_be32(pb, 0); /* Timestamp */
+    put_be32(pb, 0); /* SSRC */
+
+    put_flush_packet(pb);
+    len = url_close_dyn_buf(pb, &buf);
+    if ((len > 0) && buf)
+        url_write(rtp_handle, buf, len);
+    av_free(buf);
+
+    /* Send a minimal RTCP RR */
+    if (url_open_dyn_buf(&pb) < 0)
+        return;
+
+    put_byte(pb, (RTP_VERSION << 6));
+    put_byte(pb, 201); /* receiver report */
+    put_be16(pb, 1); /* length in words - 1 */
+    put_be32(pb, 0); /* our own SSRC */
+
+    put_flush_packet(pb);
+    len = url_close_dyn_buf(pb, &buf);
+    if ((len > 0) && buf)
+        url_write(rtp_handle, buf, len);
+    av_free(buf);
+}
+
+
 /**
  * open a new RTP parse context for stream 'st'. 'st' can be NULL for
  * MPEG2TS streams to indicate that they should be demuxed inside the
@@ -276,13 +325,12 @@ RTPDemuxContext *rtp_parse_open(AVFormatContext *s1, AVStream *st, URLContext *r
         return NULL;
     s->payload_type = payload_type;
     s->last_rtcp_ntp_time = AV_NOPTS_VALUE;
-    s->first_rtcp_ntp_time = AV_NOPTS_VALUE;
     s->ic = s1;
     s->st = st;
     s->rtp_payload_data = rtp_payload_data;
     rtp_init_statistics(&s->statistics, 0); // do we know the initial sequence from sdp?
     if (!strcmp(ff_rtp_enc_name(payload_type), "MP2T")) {
-        s->ts = mpegts_parse_open(s->ic);
+        s->ts = ff_mpegts_parse_open(s->ic);
         if (s->ts == NULL) {
             av_free(s);
             return NULL;
@@ -295,6 +343,7 @@ RTPDemuxContext *rtp_parse_open(AVFormatContext *s1, AVStream *st, URLContext *r
         case CODEC_ID_MP2:
         case CODEC_ID_MP3:
         case CODEC_ID_MPEG4:
+        case CODEC_ID_H263:
         case CODEC_ID_H264:
             st->need_parsing = AVSTREAM_PARSE_FULL;
             break;
@@ -379,10 +428,9 @@ static void finalize_packet(RTPDemuxContext *s, AVPacket *pkt, uint32_t timestam
         /* compute pts from timestamp with received ntp_time */
         delta_timestamp = timestamp - s->last_rtcp_timestamp;
         /* convert to the PTS timebase */
-        addend = av_rescale(s->last_rtcp_ntp_time - s->first_rtcp_ntp_time, s->st->time_base.den, (uint64_t)s->st->time_base.num << 32);
+        addend = av_rescale(s->last_rtcp_ntp_time, s->st->time_base.den, (uint64_t)s->st->time_base.num << 32);
         pkt->pts = addend + delta_timestamp;
     }
-    pkt->stream_index = s->st->index;
 }
 
 /**
@@ -415,7 +463,7 @@ int rtp_parse_packet(RTPDemuxContext *s, AVPacket *pkt,
             // TODO: Move to a dynamic packet handler (like above)
             if (s->read_buf_index >= s->read_buf_size)
                 return -1;
-            ret = mpegts_parse_packet(s->ts, pkt, s->buf + s->read_buf_index,
+            ret = ff_mpegts_parse_packet(s->ts, pkt, s->buf + s->read_buf_index,
                                       s->read_buf_size - s->read_buf_index);
             if (ret < 0)
                 return -1;
@@ -464,7 +512,7 @@ int rtp_parse_packet(RTPDemuxContext *s, AVPacket *pkt,
 
     if (!st) {
         /* specific MPEG2TS demux support */
-        ret = mpegts_parse_packet(s->ts, pkt, buf, len);
+        ret = ff_mpegts_parse_packet(s->ts, pkt, buf, len);
         if (ret < 0)
             return -1;
         if (ret < len) {
@@ -473,6 +521,7 @@ int rtp_parse_packet(RTPDemuxContext *s, AVPacket *pkt,
             s->read_buf_index = 0;
             return 1;
         }
+        return 0;
     } else if (s->parse_packet) {
         rv = s->parse_packet(s->ic, s->dynamic_protocol_context,
                              s->st, pkt, &timestamp, buf, len, flags);
@@ -480,6 +529,7 @@ int rtp_parse_packet(RTPDemuxContext *s, AVPacket *pkt,
         // at this point, the RTP header has been stripped;  This is ASSUMING that there is only 1 CSRC, which in't wise.
         switch(st->codec->codec_id) {
         case CODEC_ID_MP2:
+        case CODEC_ID_MP3:
             /* better than nothing: skip mpeg audio RTP header */
             if (len <= 4)
                 return -1;
@@ -536,9 +586,12 @@ int rtp_parse_packet(RTPDemuxContext *s, AVPacket *pkt,
             break;
         }
 
-        // now perform timestamp things....
-        finalize_packet(s, pkt, timestamp);
+        pkt->stream_index = st->index;
     }
+
+    // now perform timestamp things....
+    finalize_packet(s, pkt, timestamp);
+
     return rv;
 }
 
@@ -546,7 +599,7 @@ void rtp_parse_close(RTPDemuxContext *s)
 {
     // TODO: fold this into the protocol specific data fields.
     if (!strcmp(ff_rtp_enc_name(s->payload_type), "MP2T")) {
-        mpegts_parse_close(s->ts);
+        ff_mpegts_parse_close(s->ts);
     }
     av_free(s);
 }

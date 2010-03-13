@@ -9,6 +9,7 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		AdditionalIncludeDirectories="&quot;..\..\..\..\Source\gst-python\gst&quot;;&quot;..\..\..\..\Source\gst-python\win32\common\&quot;"
+		PreprocessorDefinitions="HAVE_STREAM_VOLUME_INTERFACE"
 	/>
 	<Tool
 		Name="VCLinkerTool"
@@ -16,5 +17,6 @@
 		OutputFile="$(OutDir)\lib\python2.5\site-packages\gst-0.10\gst\$(ProjectName).pyd"
 		AdditionalLibraryDirectories="$(OutDir)\lib\plugins\"
 		ProgramDatabaseFile="$(OutDir)\pdb\gstreamer\bindings\python-2.5\$(TargetName).pdb"
+		ImportLibrary="$(OutDir)\lib\python2.5\site-packages\gst-0.10\gst\$(ProjectName).lib"
 	/>
 </VisualStudioPropertySheet>

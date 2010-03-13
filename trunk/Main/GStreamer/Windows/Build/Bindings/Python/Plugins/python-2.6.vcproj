@@ -108,6 +108,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4101;4005"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -123,7 +124,7 @@
 				AdditionalDependencies="libgstaudio.lib Winmm.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -239,6 +240,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4101;4005"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -253,7 +255,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

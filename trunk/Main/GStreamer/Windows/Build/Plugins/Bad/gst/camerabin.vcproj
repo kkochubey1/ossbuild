@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="gstcamerabin"
 	ProjectGUID="{F3A7C701-0ACC-0BB0-CE27-AA0DFFFF0058}"
 	RootNamespace="libgstcamerabin"
@@ -299,10 +299,20 @@
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F02}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstinterfaces.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F3A7C701-0ACC-0BB0-CE27-AA0DFFFF2000}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstphotography.vcproj"
 		/>
 	</References>
@@ -340,6 +350,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\camerabinvideo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\camerabin\gstcamerabin-enum.c"
 				>
 			</File>
 			<File

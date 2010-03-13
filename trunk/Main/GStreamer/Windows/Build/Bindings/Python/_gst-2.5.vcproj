@@ -123,7 +123,8 @@
 				AdditionalDependencies="libgstaudio.lib Winmm.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="_gst.def"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -253,7 +254,8 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="_gst.def"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -297,14 +299,29 @@
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E54}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstnet.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E52}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstcontroller.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E53}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstdataprotocol.vcproj"
 		/>
 	</References>
@@ -337,10 +354,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\Generated\gst-python\gst.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\Source\gst-python\gst\gstmodule.c"
 				>
 			</File>
@@ -360,6 +373,14 @@
 				RelativePath="..\..\..\..\Source\gst-python\gst\pygstvalue.c"
 				>
 			</File>
+			<Filter
+				Name="Generated"
+				>
+				<File
+					RelativePath="..\..\..\Generated\gst-python\gst.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

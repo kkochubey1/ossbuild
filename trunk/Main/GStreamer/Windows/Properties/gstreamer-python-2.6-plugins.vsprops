@@ -16,5 +16,6 @@
 		OutputFile="$(OutDir)\bin\plugins\lib$(Prefix)$(ProjectName)-v$(PythonApiVersion).dll"
 		AdditionalLibraryDirectories="$(OutDir)\lib\plugins\"
 		ProgramDatabaseFile="$(OutDir)\pdb\gstreamer\bindings\python-2.6\$(TargetName).pdb"
+		ImportLibrary="$(OutDir)\lib\plugins\$(ProjectName)-v$(PythonApiVersion).lib"
 	/>
 </VisualStudioPropertySheet>
