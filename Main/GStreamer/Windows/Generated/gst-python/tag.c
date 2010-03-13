@@ -285,6 +285,78 @@ _wrap_gst_tag_register_musicbrainz_tags(PyObject *self)
     return Py_None;
 }
 
+static PyObject *
+_wrap_gst_tag_get_language_name(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "language_code", NULL };
+    char *language_code;
+    const gchar *ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"s:get_language_name", kwlist, &language_code))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_tag_get_language_name(language_code);
+    pyg_end_allow_threads;
+    if (ret)
+        return PyString_FromString(ret);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *
+_wrap_gst_tag_get_language_code_iso_639_1(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "lang_code", NULL };
+    char *lang_code;
+    const gchar *ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"s:get_language_code_iso_639_1", kwlist, &lang_code))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_tag_get_language_code_iso_639_1(lang_code);
+    pyg_end_allow_threads;
+    if (ret)
+        return PyString_FromString(ret);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *
+_wrap_gst_tag_get_language_code_iso_639_2B(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "lang_code", NULL };
+    char *lang_code;
+    const gchar *ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"s:get_language_code_iso_639_2B", kwlist, &lang_code))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_tag_get_language_code_iso_639_2B(lang_code);
+    pyg_end_allow_threads;
+    if (ret)
+        return PyString_FromString(ret);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *
+_wrap_gst_tag_get_language_code_iso_639_2T(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "lang_code", NULL };
+    char *lang_code;
+    const gchar *ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"s:get_language_code_iso_639_2T", kwlist, &lang_code))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_tag_get_language_code_iso_639_2T(lang_code);
+    pyg_end_allow_threads;
+    if (ret)
+        return PyString_FromString(ret);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 const PyMethodDef pytag_functions[] = {
     { "from_vorbis_tag", (PyCFunction)_wrap_gst_tag_from_vorbis_tag, METH_VARARGS|METH_KEYWORDS,
       NULL },
@@ -303,6 +375,14 @@ const PyMethodDef pytag_functions[] = {
     { "to_id3_tag", (PyCFunction)_wrap_gst_tag_to_id3_tag, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "register_musicbrainz_tags", (PyCFunction)_wrap_gst_tag_register_musicbrainz_tags, METH_NOARGS,
+      NULL },
+    { "get_language_name", (PyCFunction)_wrap_gst_tag_get_language_name, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "get_language_code_iso_639_1", (PyCFunction)_wrap_gst_tag_get_language_code_iso_639_1, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "get_language_code_iso_639_2B", (PyCFunction)_wrap_gst_tag_get_language_code_iso_639_2B, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "get_language_code_iso_639_2T", (PyCFunction)_wrap_gst_tag_get_language_code_iso_639_2T, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { NULL, NULL, 0, NULL }
 };
@@ -404,6 +484,6 @@ pytag_register_classes(PyObject *d)
     }
 
 
-#line 408 "..\\..\\..\\Source\\gst-python\\gst\\tag.c"
+#line 488 "..\\..\\..\\Source\\gst-python\\gst\\tag.c"
     pygobject_register_class(d, "GstTagDemux", GST_TYPE_TAG_DEMUX, &PyGstTagDemux_Type, Py_BuildValue("(O)", &PyGstElement_Type));
 }

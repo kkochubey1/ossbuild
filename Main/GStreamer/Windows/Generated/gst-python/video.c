@@ -176,8 +176,26 @@ _wrap_gst_video_format_from_fourcc(PyObject *self, PyObject *args, PyObject *kwa
     return pyg_enum_from_gtype(GST_TYPE_VIDEO_FORMAT, ret);
 }
 
+static PyObject *
+_wrap_gst_video_event_new_still_frame(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "in_still", NULL };
+    int in_still;
+    GstEvent *ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"i:event_new_still_frame", kwlist, &in_still))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_video_event_new_still_frame(in_still);
+    pyg_end_allow_threads;
+    /* pygobject_new handles NULL checking */
+    return pygstminiobject_new((GstMiniObject *)ret);
+}
+
 const PyMethodDef pyvideo_functions[] = {
     { "format_from_fourcc", (PyCFunction)_wrap_gst_video_format_from_fourcc, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "event_new_still_frame", (PyCFunction)_wrap_gst_video_event_new_still_frame, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { NULL, NULL, 0, NULL }
 };
@@ -278,7 +296,7 @@ pyvideo_register_classes(PyObject *d)
     }
 
 
-#line 282 "..\\..\\..\\Source\\gst-python\\gst\\video.c"
+#line 300 "..\\..\\..\\Source\\gst-python\\gst\\video.c"
     pygobject_register_class(d, "GstVideoFilter", GST_TYPE_VIDEO_FILTER, &PyGstVideoFilter_Type, Py_BuildValue("(O)", &PyGstBaseTransform_Type));
     pygobject_register_class(d, "GstVideoSink", GST_TYPE_VIDEO_SINK, &PyGstVideoSink_Type, Py_BuildValue("(O)", &PyGstBaseSink_Type));
 }

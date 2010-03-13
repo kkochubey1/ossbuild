@@ -201,7 +201,7 @@ gst_ff_vid_caps_new (AVCodecContext * context, enum CodecID codec_id,
         "framerate", GST_TYPE_FRACTION,
         context->time_base.den / context->ticks_per_frame,
         context->time_base.num, NULL);
-  } else if (context) {
+  } else {
     /* so we are after restricted caps in this case */
     switch (codec_id) {
       case CODEC_ID_H261:
@@ -321,14 +321,32 @@ gst_ff_aud_caps_new (AVCodecContext * context, enum CodecID codec_id,
   /* fixed, non-probing context */
   if (context != NULL && context->channels != -1) {
     GstAudioChannelPosition *pos;
+    guint64 channel_layout = context->channel_layout;
+
+    if (channel_layout == 0) {
+      const guint64 default_channel_set[] = {
+        0, 0, CH_LAYOUT_SURROUND, CH_LAYOUT_QUAD, CH_LAYOUT_5POINT0,
+        CH_LAYOUT_5POINT1, 0, CH_LAYOUT_7POINT1
+      };
+
+      switch (codec_id) {
+        case CODEC_ID_EAC3:
+        case CODEC_ID_AC3:
+        case CODEC_ID_DTS:
+          if (context->channels > 0
+              && context->channels < G_N_ELEMENTS (default_channel_set))
+            channel_layout = default_channel_set[context->channels - 1];
+          break;
+        default:
+          break;
+      }
+    }
 
     caps = gst_caps_new_simple (mimetype,
         "rate", G_TYPE_INT, context->sample_rate,
         "channels", G_TYPE_INT, context->channels, NULL);
 
-    pos =
-        gst_ff_channel_layout_to_gst (context->channel_layout,
-        context->channels);
+    pos = gst_ff_channel_layout_to_gst (channel_layout, context->channels);
     if (pos != NULL) {
       gst_audio_set_channel_positions (gst_caps_get_structure (caps, 0), pos);
       g_free (pos);
@@ -409,6 +427,10 @@ gst_ff_aud_caps_new (AVCodecContext * context, enum CodecID codec_id,
       case CODEC_ID_AAC:
       case CODEC_ID_DTS:
         maxchannels = 6;
+        break;
+      case CODEC_ID_WMAPRO:
+      case CODEC_ID_TRUEHD:
+        maxchannels = 8;
         break;
       default:
         break;
@@ -618,9 +640,19 @@ gst_ffmpeg_codecid_to_caps (enum CodecID codec_id,
       caps = gst_ff_aud_caps_new (context, codec_id, "audio/x-eac3", NULL);
       break;
 
-    case CODEC_ID_ATRAC3:
+    case CODEC_ID_TRUEHD:
+      caps = gst_ff_aud_caps_new (context, codec_id, "audio/x-true-hd", NULL);
+      break;
+
+    case CODEC_ID_ATRAC1:
       caps =
           gst_ff_aud_caps_new (context, codec_id, "audio/x-vnd.sony.atrac3",
+          NULL);
+      break;
+
+    case CODEC_ID_ATRAC3:
+      caps =
+          gst_ff_aud_caps_new (context, codec_id, "audio/x-vnd.sony.atrac1",
           NULL);
       break;
 
@@ -807,6 +839,18 @@ gst_ffmpeg_codecid_to_caps (enum CodecID codec_id,
       }
     }
       break;
+    case CODEC_ID_WMAPRO:
+    {
+      caps = gst_ff_aud_caps_new (context, codec_id, "audio/x-wma",
+          "wmaversion", G_TYPE_INT, 3, NULL);
+      break;
+    }
+
+    case CODEC_ID_WMAVOICE:
+    {
+      caps = gst_ff_aud_caps_new (context, codec_id, "audio/x-wms", NULL);
+      break;
+    }
 
     case CODEC_ID_MACE3:
     case CODEC_ID_MACE6:
@@ -834,6 +878,11 @@ gst_ffmpeg_codecid_to_caps (enum CodecID codec_id,
 
     case CODEC_ID_H264:
       caps = gst_ff_vid_caps_new (context, codec_id, "video/x-h264", NULL);
+      break;
+
+    case CODEC_ID_INDEO5:
+      caps = gst_ff_vid_caps_new (context, codec_id, "video/x-indeo",
+          "indeoversion", G_TYPE_INT, 5, NULL);
       break;
 
     case CODEC_ID_INDEO3:
@@ -969,7 +1018,7 @@ gst_ffmpeg_codecid_to_caps (enum CodecID codec_id,
       break;
     case CODEC_ID_VC1:
       caps = gst_ff_vid_caps_new (context, codec_id, "video/x-wmv",
-          "wmvversion", G_TYPE_INT, 3, "fourcc", GST_TYPE_FOURCC,
+          "wmvversion", G_TYPE_INT, 3, "format", GST_TYPE_FOURCC,
           GST_MAKE_FOURCC ('W', 'V', 'C', '1'), NULL);
       break;
     case CODEC_ID_QDM2:
@@ -1065,6 +1114,19 @@ gst_ffmpeg_codecid_to_caps (enum CodecID codec_id,
       caps = gst_ff_vid_caps_new (context, codec_id, "video/x-amv", NULL);
       break;
 
+    case CODEC_ID_AASC:
+      caps = gst_ff_vid_caps_new (context, codec_id, "video/x-aasc", NULL);
+      break;
+
+    case CODEC_ID_LOCO:
+      caps = gst_ff_vid_caps_new (context, codec_id, "video/x-loco", NULL);
+      break;
+
+    case CODEC_ID_ZMBV:
+      caps = gst_ff_vid_caps_new (context, codec_id, "video/x-zmbv", NULL);
+      break;
+
+
     case CODEC_ID_WS_VQA:
     case CODEC_ID_IDCIN:
     case CODEC_ID_8BPS:
@@ -1081,15 +1143,12 @@ gst_ffmpeg_codecid_to_caps (enum CodecID codec_id,
     case CODEC_ID_PGMYUV:
     case CODEC_ID_PAM:
     case CODEC_ID_FFVHUFF:
-    case CODEC_ID_LOCO:
     case CODEC_ID_WNV1:
-    case CODEC_ID_AASC:
     case CODEC_ID_MP3ADU:
     case CODEC_ID_MP3ON4:
     case CODEC_ID_WESTWOOD_SND1:
     case CODEC_ID_CSCD:
     case CODEC_ID_MMVIDEO:
-    case CODEC_ID_ZMBV:
     case CODEC_ID_AVS:
     case CODEC_ID_CAVS:
       buildcaps = TRUE;
@@ -1422,6 +1481,9 @@ gst_ffmpeg_codecid_to_caps (enum CodecID codec_id,
         gst_caps_set_simple (caps,
             "samplesize", G_TYPE_INT, context->bits_per_coded_sample, NULL);
       }
+      break;
+    case CODEC_ID_TWINVQ:
+      caps = gst_ff_aud_caps_new (context, codec_id, "audio/x-twin-vq", NULL);
       break;
     default:
       GST_DEBUG ("Unknown codec ID %d, please add mapping here", codec_id);
@@ -2012,6 +2074,7 @@ gst_ffmpeg_caps_with_codectype (enum CodecType type,
   }
 }
 
+#if 0
 static void
 nal_escape (guint8 * dst, guint8 * src, guint size, guint * destsize)
 {
@@ -2098,6 +2161,7 @@ full_copy:
     return;
   }
 }
+#endif
 
 /*
  * caps_with_codecid () transforms a GstCaps for a known codec
@@ -2134,26 +2198,38 @@ gst_ffmpeg_caps_with_codecid (enum CodecID codec_id,
     if (context->extradata)
       av_free (context->extradata);
 
+#if 0
     if (codec_id == CODEC_ID_H264) {
       guint extrasize;
 
       GST_DEBUG ("copy, escaping codec_data %d", size);
       /* ffmpeg h264 expects the codec_data to be escaped, there is no real
        * reason for this but let's just escape it for now. Start by allocating
-       * enough space, x2 is more than enough. */
+       * enough space, x2 is more than enough.
+       *
+       * FIXME, we disabled escaping because some file already contain escaped
+       * codec_data and then we escape twice and fail. It's better to leave it
+       * as is, as that is what most players do. */
       context->extradata =
           av_mallocz (GST_ROUND_UP_16 (size * 2 +
               FF_INPUT_BUFFER_PADDING_SIZE));
       copy_config (context->extradata, data, size, &extrasize);
       GST_DEBUG ("escaped size: %d", extrasize);
       context->extradata_size = extrasize;
-    } else {
+    } else
+#endif
+    {
       /* allocate with enough padding */
       GST_DEBUG ("copy codec_data");
       context->extradata =
           av_mallocz (GST_ROUND_UP_16 (size + FF_INPUT_BUFFER_PADDING_SIZE));
       memcpy (context->extradata, data, size);
       context->extradata_size = size;
+    }
+
+    /* Hack for VC1. Sometimes the first (length) byte is 0 for some files */
+    if (codec_id == CODEC_ID_VC1 && size > 0 && data[0] == 0) {
+      context->extradata[0] = (guint8) size;
     }
 
     GST_DEBUG ("have codec data of size %d", size);
@@ -2319,6 +2395,16 @@ gst_ffmpeg_caps_with_codecid (enum CodecID codec_id,
     default:
       break;
   }
+
+  /* fixup of default settings */
+  switch (codec_id) {
+    case CODEC_ID_QCELP:
+      /* QCELP is always mono, no matter what the caps say */
+      context->channels = 1;
+      break;
+    default:
+      break;
+  }
 }
 
 /* _formatid_to_caps () is meant for muxers/demuxers, it
@@ -2401,7 +2487,7 @@ gst_ffmpeg_formatid_to_caps (const gchar * format_name)
   } else if (!strcmp (format_name, "mpc")) {
     caps = gst_caps_from_string ("audio/x-musepack, streamversion = (int) 7");
   } else if (!strcmp (format_name, "vqf")) {
-    caps = gst_caps_from_string ("audio/x-twinvq");
+    caps = gst_caps_from_string ("audio/x-vqf");
   } else {
     gchar *name;
 
@@ -2716,12 +2802,15 @@ gst_ffmpeg_caps_to_codecid (const GstCaps * caps, AVCodecContext * context)
         {
           guint32 fourcc;
 
-          if (gst_structure_get_fourcc (structure, "fourcc", &fourcc)) {
+          /* WMV3 unless the fourcc exists and says otherwise */
+          id = CODEC_ID_WMV3;
+
+          if (gst_structure_get_fourcc (structure, "format", &fourcc)) {
             if ((fourcc == GST_MAKE_FOURCC ('W', 'V', 'C', '1')) ||
-                (fourcc == GST_MAKE_FOURCC ('W', 'M', 'V', 'A')))
+                (fourcc == GST_MAKE_FOURCC ('W', 'M', 'V', 'A'))) {
               id = CODEC_ID_VC1;
-          } else
-            id = CODEC_ID_WMV3;
+            }
+          }
         }
           break;
       }
@@ -2782,10 +2871,16 @@ gst_ffmpeg_caps_to_codecid (const GstCaps * caps, AVCodecContext * context)
         case 2:
           id = CODEC_ID_WMAV2;
           break;
+        case 3:
+          id = CODEC_ID_WMAPRO;
+          break;
       }
     }
     if (id != CODEC_ID_NONE)
       audio = TRUE;
+  } else if (!strcmp (mimetype, "audio/x-wms")) {
+    id = CODEC_ID_WMAVOICE;
+    audio = TRUE;
   } else if (!strcmp (mimetype, "audio/x-ac3")) {
     id = CODEC_ID_AC3;
     audio = TRUE;
@@ -2879,6 +2974,9 @@ gst_ffmpeg_caps_to_codecid (const GstCaps * caps, AVCodecContext * context)
 
     if (gst_structure_get_int (structure, "indeoversion", &indeoversion)) {
       switch (indeoversion) {
+        case 5:
+          id = CODEC_ID_INDEO5;
+          break;
         case 3:
           id = CODEC_ID_INDEO3;
           break;

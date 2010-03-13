@@ -123,7 +123,8 @@
 				AdditionalDependencies="gstfarsight.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="farsight.def"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -253,7 +254,8 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="farsight.def"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -302,7 +304,16 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Farsight2\gst-libs\libgstfarsight.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstfarsight.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{A01C663D-CFBB-4444-A4C1-7D8F91E76F59}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Bindings\Python\_gst-2.5.vcproj"
 		/>
 	</References>
 	<Files>

@@ -24,9 +24,6 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* We can use the plugins-install methods */
-#undef HAVE_PLUGINS_INSTALL
-
 /* Defined if we have a 2.12 series pygobject */
 #undef HAVE_PYGOBJECT_2_12
 
@@ -60,9 +57,6 @@
 /* Define if valgrind should be used */
 #undef HAVE_VALGRIND
 
-/* We can use the videoorientation interface */
-#undef HAVE_VIDEO_ORIENTATION_INTERFACE
-
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #undef LT_OBJDIR
@@ -84,6 +78,9 @@
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION

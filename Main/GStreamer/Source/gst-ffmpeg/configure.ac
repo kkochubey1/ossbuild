@@ -3,7 +3,7 @@ AC_PREREQ(2.52)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GStreamer FFMpeg, 0.10.9,
+AC_INIT(GStreamer FFMpeg, 0.10.10,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-ffmpeg)
 
@@ -266,6 +266,7 @@ else
                  -I \$(top_srcdir)/gst-libs/ext/ffmpeg/libavutil \
                  -I \$(top_srcdir)/gst-libs/ext/ffmpeg/libavcodec \
 		 -I \$(top_srcdir)/gst-libs/ext/ffmpeg \
+		 -I \$(top_builddir)/gst-libs/ext/ffmpeg \
                  -Wno-deprecated-declarations"
 
   dnl libgstffmpeg.la: libs to statically link to        
@@ -277,6 +278,7 @@ else
                    -I \$(top_srcdir)/gst-libs/ext/ffmpeg/libavutil 	\
                    -I \$(top_srcdir)/gst-libs/ext/ffmpeg/libavcodec 	\
                    -I \$(top_srcdir)/gst-libs/ext/ffmpeg 	\
+		   -I \$(top_builddir)/gst-libs/ext/ffmpeg \
                    -Wno-deprecated-declarations"
 
   dnl libgstpostproc.la: libs to statically link to
@@ -287,6 +289,7 @@ else
   SWSCALE_CFLAGS="-I \$(top_srcdir)/gst-libs/ext/ffmpeg/libswscale	\
                   -I \$(top_srcdir)/gst-libs/ext/ffmpeg/libavutil 	\
                   -I \$(top_srcdir)/gst-libs/ext/ffmpeg 	\
+		   -I \$(top_builddir)/gst-libs/ext/ffmpeg \
                   -Wno-deprecated-declarations"
 
   dnl libgstswscale.la: libs to statically link to
@@ -306,7 +309,10 @@ else
   embffmpeg_configure_args="--prefix=$prefix"
 
   # Enable shared and static so that we get .a files, but with PIC code.
-  embffmpeg_configure_args="$embffmpeg_configure_args --disable-ffserver --disable-ffplay --enable-postproc --enable-gpl --enable-static --enable-shared --disable-encoder=flac --disable-decoder=cavs --disable-protocols --disable-devices --disable-network --disable-vhook"
+  embffmpeg_configure_args="$embffmpeg_configure_args --disable-ffserver --disable-ffplay\
+        --enable-postproc --enable-gpl --enable-static --enable-shared \
+	--disable-encoder=flac --disable-decoder=cavs --disable-protocols --disable-devices\
+	 --disable-network --disable-hwaccels"
 
   # if we are cross-compiling, tell ffmpeg so
   if test "x$cross_compiling" = xyes; then
@@ -334,13 +340,13 @@ else
   dnl checks for extra enable/disable flags
   FFMPEG_OPTS="`$srcdir/gst-libs/ext/ffmpeg/configure --help`"
   # Let's check if we can disable the building of the ffmpeg binary
-  can_disable=`echo "$FFMPEG_OPTS" | grep 'disable-ffmpeg' | wc -l`
-  if test "$can_disable" != "0"; then
+  can_disable=`echo "$FFMPEG_OPTS" | grep 'disable-ffmpeg'`
+  if test "$can_disable" != ""; then
     embffmpeg_configure_args="$embffmpeg_configure_args --disable-ffmpeg"
   fi
   dnl check if libswscale needs enabling explicitly
-  can_enable=`echo "$FFMPEG_OPTS" | grep 'enable-swscale' | wc -l`
-  if test "$can_enable" != "0"; then
+  can_enable=`echo "$FFMPEG_OPTS" | grep 'enable-swscale'`
+  if test "$can_enable" != ""; then
     embffmpeg_configure_args="$embffmpeg_configure_args --enable-swscale"
   fi
 

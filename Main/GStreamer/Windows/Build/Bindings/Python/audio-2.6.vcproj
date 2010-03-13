@@ -123,7 +123,9 @@
 				AdditionalDependencies="gstaudio.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="audio.def"
+				AddModuleNamesToAssembly=""
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -253,7 +255,9 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="audio.def"
+				AddModuleNamesToAssembly=""
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -297,7 +301,21 @@
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F01}"
-			RelativePathToProject=".\Main\GStreamer\Plugins\Base\gst-libs\libgstaudio.vcproj"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstaudio.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{14A8C4C9-6B1E-4F8A-9FCB-FD010D06E4F4}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Bindings\Python\_gst-2.6.vcproj"
 		/>
 	</References>
 	<Files>
@@ -308,26 +326,26 @@
 				RelativePath="..\..\..\..\Source\gst-python\gst\common.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\pygstminiobject.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Sources Files"
 			>
 			<File
-				RelativePath="..\..\..\Generated\gst-python\audio.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\Source\gst-python\gst\audiomodule.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\pygstminiobject.c"
+				RelativePath="..\..\..\..\Source\gst-python\gst\gst-argtypes.c"
 				>
 			</File>
+			<Filter
+				Name="Generated"
+				>
+				<File
+					RelativePath="..\..\..\Generated\gst-python\audio.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

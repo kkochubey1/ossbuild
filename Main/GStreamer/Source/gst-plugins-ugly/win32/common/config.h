@@ -31,7 +31,7 @@
 #define GETTEXT_PACKAGE "gst-plugins-ugly-0.10"
 
 /* macro to use to show function name */
-#undef GST_FUNCTION
+#define GST_FUNCTION ((const char*) (__FUNCTION__))
 
 /* Defined if gcov is enabled to force a rebuild due to config.h changing */
 #undef GST_GCOV_ENABLED

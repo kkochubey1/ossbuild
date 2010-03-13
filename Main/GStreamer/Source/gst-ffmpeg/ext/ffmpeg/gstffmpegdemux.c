@@ -101,12 +101,6 @@ struct _GstFFMpegDemux
   GStaticRecMutex *task_lock;
 };
 
-typedef struct _GstFFMpegDemuxClassParams
-{
-  AVInputFormat *in_plugin;
-  GstCaps *sinkcaps, *videosrccaps, *audiosrccaps;
-} GstFFMpegDemuxClassParams;
-
 typedef struct _GstFFMpegDemuxClass GstFFMpegDemuxClass;
 
 struct _GstFFMpegDemuxClass
@@ -186,20 +180,29 @@ static void
 gst_ffmpegdemux_base_init (GstFFMpegDemuxClass * klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
-  GstFFMpegDemuxClassParams *params;
+  AVInputFormat *in_plugin;
+  gchar *p, *name;
   GstElementDetails details;
+  GstCaps *sinkcaps;
   GstPadTemplate *sinktempl, *audiosrctempl, *videosrctempl;
 
-  params = (GstFFMpegDemuxClassParams *)
+  in_plugin = (AVInputFormat *)
       g_type_get_qdata (G_OBJECT_CLASS_TYPE (klass), GST_FFDEMUX_PARAMS_QDATA);
-  g_assert (params != NULL);
+  g_assert (in_plugin != NULL);
+
+  p = name = g_strdup (in_plugin->name);
+  while (*p) {
+    if (*p == '.' || *p == ',')
+      *p = '_';
+    p++;
+  }
 
   /* construct the element details struct */
   details.longname = g_strdup_printf ("FFmpeg %s demuxer",
-      params->in_plugin->long_name);
+      in_plugin->long_name);
   details.klass = "Codec/Demuxer";
   details.description = g_strdup_printf ("FFmpeg %s demuxer",
-      params->in_plugin->long_name);
+      in_plugin->long_name);
   details.author = "Wim Taymans <wim@fluendo.com>, "
       "Ronald Bultje <rbultje@ronald.bitfreak.net>, "
       "Edward Hervey <bilboed@bilboed.com>";
@@ -208,22 +211,19 @@ gst_ffmpegdemux_base_init (GstFFMpegDemuxClass * klass)
   g_free (details.description);
 
   /* pad templates */
-  gst_caps_ref (params->sinkcaps);
+  sinkcaps = gst_ffmpeg_formatid_to_caps (name);
   sinktempl = gst_pad_template_new ("sink",
-      GST_PAD_SINK, GST_PAD_ALWAYS, params->sinkcaps);
+      GST_PAD_SINK, GST_PAD_ALWAYS, sinkcaps);
   videosrctempl = gst_pad_template_new ("video_%02d",
-      GST_PAD_SRC, GST_PAD_SOMETIMES, params->videosrccaps);
+      GST_PAD_SRC, GST_PAD_SOMETIMES, GST_CAPS_ANY);
   audiosrctempl = gst_pad_template_new ("audio_%02d",
-      GST_PAD_SRC, GST_PAD_SOMETIMES, params->audiosrccaps);
-
-  params->videosrccaps = NULL;
-  params->audiosrccaps = NULL;
+      GST_PAD_SRC, GST_PAD_SOMETIMES, GST_CAPS_ANY);
 
   gst_element_class_add_pad_template (element_class, videosrctempl);
   gst_element_class_add_pad_template (element_class, audiosrctempl);
   gst_element_class_add_pad_template (element_class, sinktempl);
 
-  klass->in_plugin = params->in_plugin;
+  klass->in_plugin = in_plugin;
   klass->videosrctempl = videosrctempl;
   klass->audiosrctempl = audiosrctempl;
   klass->sinktempl = sinktempl;
@@ -1240,13 +1240,13 @@ gst_ffmpegdemux_open (GstFFMpegDemux * demux)
 open_failed:
   {
     GST_ELEMENT_ERROR (demux, LIBRARY, FAILED, (NULL),
-        (gst_ffmpegdemux_averror (res)));
+        ("%s", gst_ffmpegdemux_averror (res)));
     return FALSE;
   }
 no_info:
   {
     GST_ELEMENT_ERROR (demux, LIBRARY, FAILED, (NULL),
-        (gst_ffmpegdemux_averror (res)));
+        ("%s", gst_ffmpegdemux_averror (res)));
     return FALSE;
   }
 }
@@ -1258,10 +1258,10 @@ static void
 gst_ffmpegdemux_type_find (GstTypeFind * tf, gpointer priv)
 {
   guint8 *data;
-  GstFFMpegDemuxClassParams *params = (GstFFMpegDemuxClassParams *) priv;
-  AVInputFormat *in_plugin = params->in_plugin;
+  AVInputFormat *in_plugin = (AVInputFormat *) priv;
   gint res = 0;
   guint64 length;
+  GstCaps *sinkcaps;
 
   /* We want GST_FFMPEG_TYPE_FIND_SIZE bytes, but if the file is shorter than
    * that we'll give it a try... */
@@ -1297,10 +1297,12 @@ gst_ffmpegdemux_type_find (GstTypeFind * tf, gpointer priv)
       if (g_str_has_prefix (in_plugin->name, "mpegts"))
         res = MIN (res, GST_TYPE_FIND_POSSIBLE);
 
-      GST_LOG ("ffmpeg typefinder '%s' suggests %" GST_PTR_FORMAT ", p=%u%%",
-          in_plugin->name, params->sinkcaps, res);
+      sinkcaps = gst_ffmpeg_formatid_to_caps (in_plugin->name);
 
-      gst_type_find_suggest (tf, res, params->sinkcaps);
+      GST_LOG ("ffmpeg typefinder '%s' suggests %" GST_PTR_FORMAT ", p=%u%%",
+          in_plugin->name, sinkcaps, res);
+
+      gst_type_find_suggest (tf, res, sinkcaps);
     }
   }
 }
@@ -1361,7 +1363,7 @@ gst_ffmpegdemux_loop (GstFFMpegDemux * demux)
       "pkt pts:%" GST_TIME_FORMAT
       " / size:%d / stream_index:%d / flags:%d / duration:%" GST_TIME_FORMAT
       " / pos:%" G_GINT64_FORMAT, GST_TIME_ARGS (timestamp), pkt.size,
-      pkt.stream_index, pkt.flags, GST_TIME_ARGS (duration), pkt.pos);
+      pkt.stream_index, pkt.flags, GST_TIME_ARGS (duration), (gint64) pkt.pos);
 
   /* check start_time */
   if (demux->start_time != -1 && demux->start_time > timestamp)
@@ -1456,7 +1458,7 @@ gst_ffmpegdemux_loop (GstFFMpegDemux * demux)
 
 done:
   /* can destroy the packet now */
-  pkt.destruct (&pkt);
+  av_free_packet (&pkt);
 
   return;
 
@@ -1534,7 +1536,7 @@ drop:
     GST_DEBUG_OBJECT (demux, "dropping buffer out of segment, stream eos");
     stream->eos = TRUE;
     if (gst_ffmpegdemux_is_eos (demux)) {
-      pkt.destruct (&pkt);
+      av_free_packet (&pkt);
       GST_DEBUG_OBJECT (demux, "we are eos");
       ret = GST_FLOW_UNEXPECTED;
       goto pause;
@@ -1545,7 +1547,7 @@ drop:
   }
 no_buffer:
   {
-    pkt.destruct (&pkt);
+    av_free_packet (&pkt);
     goto pause;
   }
 }
@@ -1835,7 +1837,6 @@ gst_ffmpegdemux_register (GstPlugin * plugin)
 {
   GType type;
   AVInputFormat *in_plugin;
-  GstFFMpegDemuxClassParams *params;
   gchar **extensions;
   GTypeInfo typeinfo = {
     sizeof (GstFFMpegDemuxClass),
@@ -1856,7 +1857,6 @@ gst_ffmpegdemux_register (GstPlugin * plugin)
   while (in_plugin) {
     gchar *type_name, *typefind_name;
     gchar *p, *name = NULL;
-    GstCaps *sinkcaps, *audiosrccaps, *videosrccaps;
     gint rank;
     gboolean register_typefind_func = TRUE;
 
@@ -1891,7 +1891,8 @@ gst_ffmpegdemux_register (GstPlugin * plugin)
 
     /* these don't do what one would expect or
      * are only partially functional/useful */
-    if (!strcmp (in_plugin->name, "aac") || !strcmp (in_plugin->name, "wv"))
+    if (!strcmp (in_plugin->name, "aac") ||
+        !strcmp (in_plugin->name, "wv") || !strcmp (in_plugin->name, "ass"))
       goto next;
 
     /* Don't use the typefind functions of formats for which we already have
@@ -1971,42 +1972,20 @@ gst_ffmpegdemux_register (GstPlugin * plugin)
       p++;
     }
 
-    /* Try to find the caps that belongs here */
-    sinkcaps = gst_ffmpeg_formatid_to_caps (name);
-    if (!sinkcaps) {
-      GST_DEBUG ("Couldn't get sinkcaps for demuxer '%s', skipping format",
-          in_plugin->name);
-      goto next;
-    }
-    /* This is a bit ugly, but we just take all formats
-     * for the pad template. We'll get an exact match
-     * when we open the stream */
-    audiosrccaps = gst_caps_new_any ();
-    videosrccaps = gst_caps_new_any ();
-
     /* construct the type */
     type_name = g_strdup_printf ("ffdemux_%s", name);
 
     /* if it's already registered, drop it */
     if (g_type_from_name (type_name)) {
-      gst_caps_unref (videosrccaps);
-      gst_caps_unref (audiosrccaps);
       g_free (type_name);
       goto next;
     }
 
     typefind_name = g_strdup_printf ("fftype_%s", name);
 
-    /* create a cache for these properties */
-    params = g_new0 (GstFFMpegDemuxClassParams, 1);
-    params->in_plugin = in_plugin;
-    params->sinkcaps = sinkcaps;
-    params->videosrccaps = videosrccaps;
-    params->audiosrccaps = audiosrccaps;
-
     /* create the type now */
     type = g_type_register_static (GST_TYPE_ELEMENT, type_name, &typeinfo, 0);
-    g_type_set_qdata (type, GST_FFDEMUX_PARAMS_QDATA, (gpointer) params);
+    g_type_set_qdata (type, GST_FFDEMUX_PARAMS_QDATA, (gpointer) in_plugin);
 
     if (in_plugin->extensions)
       extensions = g_strsplit (in_plugin->extensions, " ", 0);
@@ -2016,7 +1995,7 @@ gst_ffmpegdemux_register (GstPlugin * plugin)
     if (!gst_element_register (plugin, type_name, rank, type) ||
         (register_typefind_func == TRUE &&
             !gst_type_find_register (plugin, typefind_name, rank,
-                gst_ffmpegdemux_type_find, extensions, sinkcaps, params,
+                gst_ffmpegdemux_type_find, extensions, NULL, in_plugin,
                 NULL))) {
       g_warning ("Register of type ffdemux_%s failed", name);
       g_free (type_name);

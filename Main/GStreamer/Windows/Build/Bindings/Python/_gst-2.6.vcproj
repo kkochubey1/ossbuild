@@ -123,7 +123,8 @@
 				AdditionalDependencies="libgstaudio.lib Winmm.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="_gst.def"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -253,7 +254,8 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="_gst.def"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -337,10 +339,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\Generated\gst-python\gst.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\Source\gst-python\gst\gstmodule.c"
 				>
 			</File>
@@ -360,6 +358,14 @@
 				RelativePath="..\..\..\..\Source\gst-python\gst\pygstvalue.c"
 				>
 			</File>
+			<Filter
+				Name="Generated"
+				>
+				<File
+					RelativePath="..\..\..\Generated\gst-python\gst.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

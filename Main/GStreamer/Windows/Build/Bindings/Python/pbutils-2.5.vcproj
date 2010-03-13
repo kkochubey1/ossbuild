@@ -123,7 +123,9 @@
 				AdditionalDependencies="gstpbutils.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="pbutils.def"
+				AddModuleNamesToAssembly=""
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -253,7 +255,9 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
-				GenerateDebugInformation="true"
+				ModuleDefinitionFile="pbutils.def"
+				AddModuleNamesToAssembly=""
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -297,7 +301,21 @@
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F08}"
-			RelativePathToProject=".\Main\GStreamer\Plugins\Base\gst-libs\libgstpbutils.vcproj"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstpbutils.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{A01C663D-CFBB-4444-A4C1-7D8F91E76F59}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Bindings\Python\_gst-2.5.vcproj"
 		/>
 	</References>
 	<Files>
@@ -306,10 +324,6 @@
 			>
 			<File
 				RelativePath="..\..\..\..\Source\gst-python\gst\common.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\pygstminiobject.h"
 				>
 			</File>
 		</Filter>
@@ -321,21 +335,17 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\Generated\gst-python\pbutils.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\Source\gst-python\gst\pbutilsmodule.c"
 				>
 			</File>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\pygstminiobject.c"
+			<Filter
+				Name="Generated"
 				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\pygstvalue.c"
-				>
-			</File>
+				<File
+					RelativePath="..\..\..\Generated\gst-python\pbutils.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

@@ -74,6 +74,8 @@ struct _GstFFMpegEnc
   /* other settings are copied over straight,
    * include a context here, rather than copy-and-past it from avcodec.h */
   AVCodecContext config;
+
+  gboolean force_keyframe;
 };
 
 typedef struct _GstFFMpegEncClass GstFFMpegEncClass;
@@ -86,12 +88,6 @@ struct _GstFFMpegEncClass
   GstPadTemplate *srctempl, *sinktempl;
   GstCaps *sinkcaps;
 };
-
-typedef struct
-{
-  AVCodec *in_plugin;
-  GstCaps *srccaps, *sinkcaps;
-} GstFFMpegEncClassParams;
 
 #define GST_TYPE_FFMPEGENC \
   (gst_ffmpegenc_get_type())

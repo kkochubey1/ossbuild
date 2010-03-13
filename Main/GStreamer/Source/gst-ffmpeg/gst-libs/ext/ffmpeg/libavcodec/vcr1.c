@@ -43,8 +43,10 @@ typedef struct VCR1Context{
 
 static int decode_frame(AVCodecContext *avctx,
                         void *data, int *data_size,
-                        const uint8_t *buf, int buf_size)
+                        AVPacket *avpkt)
 {
+    const uint8_t *buf = avpkt->data;
+    int buf_size = avpkt->size;
     VCR1Context * const a = avctx->priv_data;
     AVFrame *picture = data;
     AVFrame * const p= (AVFrame*)&a->picture;
@@ -156,6 +158,15 @@ static av_cold int decode_init(AVCodecContext *avctx){
     return 0;
 }
 
+static av_cold int decode_end(AVCodecContext *avctx){
+    VCR1Context *s = avctx->priv_data;
+
+    if (s->picture.data[0])
+        avctx->release_buffer(avctx, &s->picture);
+
+    return 0;
+}
+
 #if CONFIG_VCR1_ENCODER
 static av_cold int encode_init(AVCodecContext *avctx){
 
@@ -172,7 +183,7 @@ AVCodec vcr1_decoder = {
     sizeof(VCR1Context),
     decode_init,
     NULL,
-    NULL,
+    decode_end,
     decode_frame,
     CODEC_CAP_DR1,
     .long_name = NULL_IF_CONFIG_SMALL("ATI VCR1"),

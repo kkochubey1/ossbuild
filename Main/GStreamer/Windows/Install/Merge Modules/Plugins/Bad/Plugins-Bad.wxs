@@ -7,9 +7,7 @@
 
 		<DirectoryRef Id="MergeRedirectFolder">
 			<OSSBuild:FillDirectory ComponentGroup="PluginsBad" Directory="$(var.GstPluginDir)">
-				<OSSBuild:Filter Include=".*\\[^\\]*.*gstaacparse\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstaiff\.dll" />
-				<OSSBuild:Filter Include=".*\\[^\\]*.*gstamrparse\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstasfmux\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstautoconvert\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstbayer\.dll" />
@@ -52,7 +50,6 @@
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstsdl\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstsdpelem\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstselector\.dll" />
-				<OSSBuild:Filter Include=".*\\[^\\]*.*gstshapewipe\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstsiren\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstspeed\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gststereo\.dll" />

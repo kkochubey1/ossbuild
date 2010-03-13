@@ -28,8 +28,6 @@
 #include <pygobject.h>
 #include <gst/gst.h>
 
-GST_DEBUG_CATEGORY (pygst_debug);
-
 void pyinterfaces_register_classes (PyObject *d);
 void pyinterfaces_add_constants(PyObject *module, const gchar *strip_prefix);
 		

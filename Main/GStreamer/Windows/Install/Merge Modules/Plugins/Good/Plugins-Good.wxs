@@ -47,6 +47,7 @@
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstrtp\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstrtpmanager\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstrtsp\.dll" />
+					<OSSBuild:Filter Include=".*\\[^\\]*.*gstshapewipe\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstsmpte\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstsouphttpsrc\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstspectrum\.dll" />
