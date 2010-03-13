@@ -323,6 +323,24 @@
 			<File
 				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstfdsink.c"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="G_OS_WIN32"
+						DisableSpecificWarnings="4005"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="G_OS_WIN32"
+						DisableSpecificWarnings="4005"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstfdsrc.c"
