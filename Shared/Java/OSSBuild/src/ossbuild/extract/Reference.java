@@ -100,7 +100,8 @@ public final class Reference {
 			throw new MissingResourceReferenceException("An empty reference name is invalid.");
 		final Reference ref = findReference(referenceName, true);
 		if (ref == null)
-			throw new MissingResourceReferenceException("Unable to find " + referenceName + " in the package registry.");
+			return null;
+			//throw new MissingResourceReferenceException("Unable to find " + referenceName + " in the package registry.");
 		return ref.getResources();
 	}
 	//</editor-fold>
@@ -199,7 +200,7 @@ public final class Reference {
 		if (Recursive) {
 			Reference ref;
 			for(Map.Entry<String, Reference> e : references.entrySet())
-				if ((ref = e.getValue().findReference(e.getKey(), Recursive)) != null)
+				if ((ref = e.getValue().findReference(Name, Recursive)) != null)
 					return ref;
 			return null;
 		} else {

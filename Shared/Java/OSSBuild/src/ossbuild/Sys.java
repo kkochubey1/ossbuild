@@ -280,44 +280,44 @@ public final class Sys {
 		return Registry.clear();
 	}
 
-	public static Future loadResources(final String registryReferenceName) {
+	public static Future loadNativeResourcesAsync(final String registryReferenceName) {
 		return Registry.loadResources(registryReferenceName);
 	}
 
-	public static Future loadResources(final String registryReferenceName, final IResourceCallback callback) {
+	public static Future loadNativeResourcesAsync(final String registryReferenceName, final IResourceCallback callback) {
 		return Registry.loadResources(registryReferenceName, callback);
 	}
 
-	public static Future loadResources(final String registryReferenceName, final IResourceProgressListener progress, final IResourceCallback callback) {
+	public static Future loadNativeResourcesAsync(final String registryReferenceName, final IResourceProgressListener progress, final IResourceCallback callback) {
 		return Registry.loadResources(registryReferenceName, progress, callback);
 	}
 
-	public static Future loadResources(final String registryReferenceName, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
+	public static Future loadNativeResourcesAsync(final String registryReferenceName, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
 		return Registry.loadResources(registryReferenceName, filter, progress, callback);
 	}
 
-	public static Future loadResources(final String registryReferenceName, final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
+	public static Future loadNativeResourcesAsync(final String registryReferenceName, final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
 		return Registry.loadResources(registryReferenceName, executor, filter, progress, callback);
 	}
 
-	public static boolean loadResourcesAndWait(final String registryReferenceName) {
-		return loadResourcesAndWaitHelper(loadResources(registryReferenceName));
+	public static boolean loadNativeResources(final String registryReferenceName) {
+		return loadResourcesAndWaitHelper(loadNativeResourcesAsync(registryReferenceName));
 	}
 
-	public static boolean loadResourcesAndWait(final String registryReferenceName, final IResourceCallback callback) {
-		return loadResourcesAndWaitHelper(loadResources(registryReferenceName, callback));
+	public static boolean loadNativeResources(final String registryReferenceName, final IResourceCallback callback) {
+		return loadResourcesAndWaitHelper(loadNativeResourcesAsync(registryReferenceName, callback));
 	}
 
-	public static boolean loadResourcesAndWait(final String registryReferenceName, final IResourceProgressListener progress, final IResourceCallback callback) {
-		return loadResourcesAndWaitHelper(loadResources(registryReferenceName, progress, callback));
+	public static boolean loadNativeResources(final String registryReferenceName, final IResourceProgressListener progress, final IResourceCallback callback) {
+		return loadResourcesAndWaitHelper(loadNativeResourcesAsync(registryReferenceName, progress, callback));
 	}
 
-	public static boolean loadResourcesAndWait(final String registryReferenceName, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
-		return loadResourcesAndWaitHelper(loadResources(registryReferenceName, filter, progress, callback));
+	public static boolean loadNativeResources(final String registryReferenceName, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
+		return loadResourcesAndWaitHelper(loadNativeResourcesAsync(registryReferenceName, filter, progress, callback));
 	}
 
-	public static boolean loadResourcesAndWait(final String registryReferenceName, final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
-		return loadResourcesAndWaitHelper(loadResources(registryReferenceName, executor, filter, progress, callback));
+	public static boolean loadNativeResources(final String registryReferenceName, final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
+		return loadResourcesAndWaitHelper(loadNativeResourcesAsync(registryReferenceName, executor, filter, progress, callback));
 	}
 	//</editor-fold>
 }
