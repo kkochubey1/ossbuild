@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gstreamer">
+
+	<References>
+		<Add name="base" />
+		<Add name="glib" />
+		<Add name="xml" />
+		<Add name="fonts" />
+		<Add name="images" />
+		<Add name="graphics" />
+		<Add name="gst-plugins-base" />
+		<Add name="gst-plugins-good" />
+		<Add name="gst-plugins-bad" />
+		<Add name="gst-plugins-ugly" />
+		<Add name="gst-plugins-gl" />
+		<Add name="gst-ffmpeg" />
+		<Add name="gnonlin" />
+		<Add name="farsight" />
+	</References>
+	
+	<Extract package="resources.gst.unix.x86" directory="${tmp}/ossbuild/">
+		<Echo key="res.gst.init" msg="Initializing GStreamer libraries..." />
+
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<File resource="libgstreamer-${GstApiVersion}.so.0"          executable="true" />
+		<File resource="libgstinterfaces-${GstApiVersion}.so.0"      executable="true" />
+		<File resource="libgstcontroller-${GstApiVersion}.so.0"      executable="true" />
+		<File resource="libgstdataprotocol-${GstApiVersion}.so.0"    executable="true" />
+		<File resource="libgstsdp-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstnet-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstnetbuffer-${GstApiVersion}.so.0"       executable="true" />
+		<File resource="libgstpbutils-${GstApiVersion}.so.0"         executable="true" />
+		<File resource="libgstfft-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstbase-${GstApiVersion}.so.0"            executable="true" />
+		<File resource="libgstapp-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstvideo-${GstApiVersion}.so.0"           executable="true" />
+		<File resource="libgstbasevideo-${GstApiVersion}.so.0"       executable="true" />
+		<File resource="libgstaudio-${GstApiVersion}.so.0"           executable="true" />
+		<File resource="libgsttag-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstriff-${GstApiVersion}.so.0"            executable="true" />
+		<File resource="libgstrtp-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstrtsp-${GstApiVersion}.so.0"            executable="true" />
+		<File resource="libgstcdda-${GstApiVersion}.so.0"            executable="true" />
+		<File resource="libgstsignalprocessor-${GstApiVersion}.so.0" executable="true" />
+		<File resource="libgstphotography-${GstApiVersion}.so.0"     executable="true" />
+		
+		<!--
+		<File resource="libgstgl-${GstApiVersion}.so.0"              executable="true" />
+		<File resource="libgstfarsight-${GstApiVersion}.so.0"        executable="true" />
+		-->
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<!-- Environment Variables -->
+		<EnvVar name="PATH" prepend="true" value="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/" asFile="true" />
+		<EnvVar name="GST_PLUGIN_PATH" value="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/" asFile="true" prepend="false" append="false" />
+		<EnvVar name="GST_PLUGIN_SYSTEM_PATH" value="" prepend="false" append="false" />
+
+		<EnvVar name="GST_REGISTRY" value="${dirPlatform}/gst-registry.bin" asFile="true" prepend="false" append="false" />
+		<EnvVar name="GST_PLUGIN_SCANNER" value="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/gst-plugin-scanner" asFile="true" prepend="false" append="false" />
+
+		<EnvVar name="GST_REGISTRY_FORK" value="yes" />
+		<EnvVar name="GST_REGISTRY_UPDATE" value="yes" />
+	</Extract>
+
+</Resources>

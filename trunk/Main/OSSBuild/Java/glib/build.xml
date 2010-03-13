@@ -7,7 +7,7 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="OSSBuild :: Package :: Base" default="default" basedir=".">
+<project name="OSSBuild :: Resource Package :: GLib" default="default" basedir=".">
     <description>Builds, tests, and runs the project.</description>
     <import file="nbproject/build-impl.xml"/>
 
@@ -78,12 +78,12 @@
 		<mkdir dir="${build.java.platform.share.dir}" />
 
 		<property name="platform.dir" location="${top.deployment.dir}" />
-		<property name="platform.jar.name" value="ossbuild-${project.package.name}-${os}-${arch}.jar" />
+		<property name="platform.jar.name" value="resources-native-${os}-${arch}-${project.package.name}.jar" />
 		<property name="platform.jar" location="${platform.dir}/${platform.jar.name}" />
 
 		<mkdir dir="${platform.dir}" />
 
-		<jar compress="true" destfile="${platform.dir}/ossbuild-${project.package.name}.jar">
+		<jar compress="true" destfile="${platform.dir}/resources-${project.package.name}.jar">
 			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
 		</jar>
 

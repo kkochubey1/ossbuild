@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="graphics">
+
+	<References>
+		<Add name="base" />
+		<Add name="images" />
+		<Add name="xml" />
+		<Add name="fonts" />
+	</References>
+	
+	<Extract package="resources.graphics.unix.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.graphics.init" msg="Initializing graphics..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libpixman-1.so.0"       executable="true" />
+		<Library resource="libcairo.so.2"          executable="true" />
+		<Library resource="libpango-1.0.so.0"      executable="true" />
+		<Library resource="libpangoft2-1.0.so.0"   executable="true" />
+		<Library resource="libpangox-1.0.so.0"     executable="true" />
+		<Library resource="libpangocairo-1.0.so.0" executable="true" />
+	</Extract>
+
+</Resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="images">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.images.windows.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.images.init" msg="Initializing image libraries..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libjpeg-8.dll" />
+		<Library resource="libopenjpeg-2.dll" />
+		<Library resource="libpng14-14.dll" />
+		<Library resource="libtiff-3.dll" />
+	</Extract>
+
+</Resources>

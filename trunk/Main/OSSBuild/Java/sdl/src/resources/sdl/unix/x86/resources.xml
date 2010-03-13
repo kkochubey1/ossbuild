@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="sdl">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.sdl.unix.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.sdl.init" msg="Initializing SDL..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libSDL-1.2.so.0" executable="true" />
+	</Extract>
+
+</Resources>

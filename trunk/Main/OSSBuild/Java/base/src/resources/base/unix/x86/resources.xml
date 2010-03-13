@@ -31,4 +31,17 @@
 		<Echo key="res.base.complete" msg="Base environment initialization complete" />
 	</Extract>
 
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<Echo key="res.base.initlibs" msg="Initializing base libraries..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libz.so.1"       executable="true">
+			<SystemAttempt>z</SystemAttempt>
+		</Library>
+		<Library resource="libbz2.so.1.0"   executable="true">
+			<SystemAttempt>bz2</SystemAttempt>
+		</Library>
+		<Library resource="liboil-0.3.so.0" executable="true" />
+	</Extract>
 </Resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="crypto">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.crypto.windows.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.crypto.init" msg="Initializing cryptographic libraries..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libgpg-error-0.dll" />
+		<Library resource="libgcrypt-11.dll" />
+		<Library resource="libtasn1-3.dll" />
+		<Library resource="libgnutls-26.dll" />
+		<Library resource="libgnutls-extra-26.dll" />
+		<Library resource="libgnutls-openssl-26.dll" />
+	</Extract>
+
+</Resources>

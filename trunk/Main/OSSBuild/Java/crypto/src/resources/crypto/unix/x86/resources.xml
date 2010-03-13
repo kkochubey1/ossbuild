@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="crypto">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.crypto.unix.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.crypto.init" msg="Initializing cryptographic libraries..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libgpg-error.so.0"       executable="true" />
+		<Library resource="libgcrypt.so.11"         executable="true" />
+		<Library resource="libtasn1.so.3"           executable="true" />
+		<Library resource="libgnutls.so.26"         executable="true" />
+		<Library resource="libgnutls-extra.so.26"   executable="true" />
+		<Library resource="libgnutls-openssl.so.26" executable="true" />
+	</Extract>
+
+</Resources>

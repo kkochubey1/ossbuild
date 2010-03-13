@@ -5,10 +5,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import ossbuild.NativeResource;
 import ossbuild.OSFamily;
 import ossbuild.Path;
 import ossbuild.Sys;
-import ossbuild.extract.CommonReferences;
 import static org.junit.Assert.*;
 
 /**
@@ -43,12 +43,12 @@ public class PackageTest {
 		assertTrue(Sys.initializeRegistry());
 
 		assertTrue(Path.delete(Path.combine(Path.tempDirectory, "ossbuild/bin/")));
-		assertTrue(Sys.loadResourcesAndWait(CommonReferences.Base));
+		assertTrue(Sys.loadNativeResources(NativeResource.Base));
 		
 		//Shouldn't matter how many times we call this - it shouldn't do
 		//anything different after its first initialization...
 		for(int i = 0; i < 100; ++i)
-			assertTrue(Sys.loadResourcesAndWait(CommonReferences.Base));
+			assertTrue(Sys.loadNativeResources(NativeResource.Base));
 
 		assertTrue(Path.exists(Path.combine(Path.tempDirectory, "ossbuild/bin/")));
 

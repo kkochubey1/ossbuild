@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gst-plugins-base">
+
+	<References>
+		<Add name="base" />
+		<Add name="glib" />
+		<Add name="xml" />
+		<Add name="fonts" />
+		<Add name="images" />
+		<Add name="graphics" />
+	</References>
+	
+	<Extract package="resources.gstbase.windows.x86" directory="${tmp}/ossbuild/">
+		<Echo key="res.gstbase.init" msg="Initializing GStreamer base libraries..." />
+		
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<File resource="libogg-0.dll" />
+		<File resource="libvorbis-0.dll" />
+		<File resource="libvorbisenc-2.dll" />
+		<File resource="libvorbisfile-3.dll" />
+		<File resource="libtheora-0.dll" />
+		<File resource="libtheoradec-1.dll" />
+		<File resource="libtheoraenc-1.dll" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<File resource="libgstadder.dll" />
+		<File resource="libgstapp.dll" />
+		<File resource="libgstaudioconvert.dll" />
+		<File resource="libgstaudiorate.dll" />
+		<File resource="libgstaudioresample.dll" />
+		<File resource="libgstaudiotestsrc.dll" />
+		<File resource="libgstcoreelements.dll" />
+		<File resource="libgstcoreindexers.dll" />
+		<File resource="libgstdecodebin.dll" />
+		<File resource="libgstdecodebin2.dll" />
+		<File resource="libgstffmpegcolorspace.dll" />
+		<File resource="libgstgdp.dll" />
+		<File resource="libgstgio.dll" />
+		<File resource="libgstogg.dll" />
+		<File resource="libgstpango.dll" />
+		<File resource="libgstplaybin.dll" />
+		<File resource="libgstsubparse.dll" />
+		<File resource="libgsttheora.dll" />
+		<File resource="libgsttypefindfunctions.dll" />
+		<File resource="libgstvideorate.dll" />
+		<File resource="libgstvideoscale.dll" />
+		<File resource="libgstvideotestsrc.dll" />
+		<File resource="libgstvolume.dll" />
+		<File resource="libgstvorbis.dll" />
+	</Extract>
+
+</Resources>

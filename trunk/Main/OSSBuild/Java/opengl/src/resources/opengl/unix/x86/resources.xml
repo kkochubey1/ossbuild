@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="opengl">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.opengl.unix.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.opengl.init" msg="Initializing OpenGL..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libGLEW.so.1.5" executable="true" />
+	</Extract>
+
+</Resources>
