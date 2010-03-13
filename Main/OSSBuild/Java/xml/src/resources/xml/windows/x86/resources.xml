@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="xml">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.xml.windows.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.xml.init" msg="Initializing XML..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libexpat-1.dll" />
+		<Library resource="libxml2-2.dll" />
+	</Extract>
+
+</Resources>

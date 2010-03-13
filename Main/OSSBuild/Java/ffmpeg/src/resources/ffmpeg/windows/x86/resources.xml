@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="ffmpeg">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.ffmpeg.${lic}.windows.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.ffmpeg.init" msg="Initializing FFmpeg..." />
+
+		<Var name="LicenseSuffix" value="-${lic}" />
+
+		<!-- Libraries -->
+
+		<Library resource="avutil${LicenseSuffix}-50.dll" />
+		<Library resource="avcodec${LicenseSuffix}-52.dll" />
+		<Library resource="avformat${LicenseSuffix}-52.dll" />
+		<Library resource="avdevice${LicenseSuffix}-52.dll" />
+		<Library resource="swscale${LicenseSuffix}-0.dll" />
+		<Library resource="avfilter${LicenseSuffix}-1.dll" />
+	</Extract>
+
+</Resources>

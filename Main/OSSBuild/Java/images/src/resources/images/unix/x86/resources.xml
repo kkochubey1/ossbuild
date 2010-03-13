@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="images">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.images.unix.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.images.init" msg="Initializing image libraries..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libjpeg.so.8"     executable="true" />
+		<Library resource="libopenjpeg.so.2" executable="true" />
+		<Library resource="libpng14.so.14"   executable="true" />
+		<Library resource="libtiff.so.3"     executable="true" />
+	</Extract>
+
+</Resources>

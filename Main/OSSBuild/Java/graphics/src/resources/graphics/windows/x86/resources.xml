@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="graphics">
+
+	<References>
+		<Add name="base" />
+		<Add name="images" />
+		<Add name="xml" />
+		<Add name="fonts" />
+	</References>
+	
+	<Extract package="resources.graphics.windows.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.graphics.init" msg="Initializing graphics..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libpixman-1-0.dll" />
+		<Library resource="libcairo-2.dll" />
+		<Library resource="libpango-1.0-0.dll" />
+		<Library resource="libpangoft2-1.0-0.dll" />
+		<Library resource="libpangowin32-1.0-0.dll" />
+		<Library resource="libpangocairo-1.0-0.dll" />
+	</Extract>
+
+</Resources>

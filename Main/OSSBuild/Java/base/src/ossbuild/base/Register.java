@@ -1,6 +1,7 @@
 
 package ossbuild.base;
 
+import ossbuild.NativeResource;
 import ossbuild.StringUtil;
 import ossbuild.Sys;
 import ossbuild.extract.MissingResourceException;
@@ -14,7 +15,7 @@ import ossbuild.init.RegistryReference;
 public final class Register extends RegistryReference {
 	//<editor-fold defaultstate="collapsed" desc="Constants">
 	public static final String
-		  REGISTRY_NAME             = "base"
+		  REGISTRY_NAME             = NativeResource.Base
 	;
 	
 	public static final String

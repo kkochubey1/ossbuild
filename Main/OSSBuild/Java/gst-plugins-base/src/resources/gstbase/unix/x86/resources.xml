@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gst-plugins-base">
+
+	<References>
+		<Add name="base" />
+		<Add name="glib" />
+		<Add name="xml" />
+		<Add name="fonts" />
+		<Add name="images" />
+		<Add name="graphics" />
+	</References>
+	
+	<Extract package="resources.gstbase.unix.x86" directory="${tmp}/ossbuild/">
+		<Echo key="res.gstbase.init" msg="Initializing GStreamer base libraries..." />
+
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<Library resource="libogg.so.0"                                 executable="true" />
+		<Library resource="libvorbis.so.0"                              executable="true" />
+		<Library resource="libvorbisenc.so.2"                           executable="true" />
+		<Library resource="libvorbisfile.so.3"                          executable="true" />
+		<Library resource="libtheora.so.0"                              executable="true" />
+		<Library resource="libtheoradec.so.1"                           executable="true" />
+		<Library resource="libtheoraenc.so.1"                           executable="true" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<File resource="libgstadder.so"                                 executable="true" />
+		<File resource="libgstapp.so"                                   executable="true" />
+		<File resource="libgstaudioconvert.so"                          executable="true" />
+		<File resource="libgstaudiorate.so"                             executable="true" />
+		<File resource="libgstaudioresample.so"                         executable="true" />
+		<File resource="libgstaudiotestsrc.so"                          executable="true" />
+		<File resource="libgstcoreelements.so"                          executable="true" />
+		<File resource="libgstcoreindexers.so"                          executable="true" />
+		<File resource="libgstdecodebin.so"                             executable="true" />
+		<File resource="libgstdecodebin2.so"                            executable="true" />
+		<File resource="libgstffmpegcolorspace.so"                      executable="true" />
+		<File resource="libgstgdp.so"                                   executable="true" />
+		<File resource="libgstgio.so"                                   executable="true" />
+		<File resource="libgstogg.so"                                   executable="true" />
+		<File resource="libgstpango.so"                                 executable="true" />
+		<File resource="libgstplaybin.so"                               executable="true" />
+		<File resource="libgstsubparse.so"                              executable="true" />
+		<File resource="libgsttheora.so"                                executable="true" />
+		<File resource="libgsttypefindfunctions.so"                     executable="true" />
+		<File resource="libgstvideorate.so"                             executable="true" />
+		<File resource="libgstvideoscale.so"                            executable="true" />
+		<File resource="libgstvideotestsrc.so"                          executable="true" />
+		<File resource="libgstvolume.so"                                executable="true" />
+		<File resource="libgstvorbis.so"                                executable="true" />
+
+		<File resource="libgsttcp.so"                                   executable="true" />
+		<File resource="libgstalsa.so"                                  executable="true" />
+		<File resource="libgstalsaspdif.so"                             executable="true" />
+	</Extract>
+
+</Resources>

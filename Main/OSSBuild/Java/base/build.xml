@@ -7,7 +7,7 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="OSSBuild :: Package :: Base" default="default" basedir=".">
+<project name="OSSBuild :: Resource Package :: Base" default="default" basedir=".">
     <description>Builds, tests, and runs the project.</description>
     <import file="nbproject/build-impl.xml"/>
 
@@ -78,7 +78,7 @@
 		<mkdir dir="${build.java.platform.share.dir}" />
 
 		<property name="platform.dir" location="${top.deployment.dir}" />
-		<property name="platform.jar.name" value="ossbuild-${project.package.name}-${os}-${arch}.jar" />
+		<property name="platform.jar.name" value="resources-native-${os}-${arch}-${project.package.name}.jar" />
 		<property name="platform.jar" location="${platform.dir}/${platform.jar.name}" />
 
 		<mkdir dir="${platform.dir}" />
@@ -86,7 +86,7 @@
 		<copy file="${file.reference.jna.jar}" todir="${platform.dir}" />
 		<copy file="${file.reference.ossbuild.jar}" todir="${platform.dir}" />
 
-		<jar compress="true" destfile="${platform.dir}/ossbuild-${project.package.name}.jar">
+		<jar compress="true" destfile="${platform.dir}/resources-${project.package.name}.jar">
 			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
 		</jar>
 
@@ -101,16 +101,19 @@
 			</fileset>
 		</copy>
 
-		<!--
 		<copy todir="${build.java.platform.bin.dir}">
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
-				<exclude name="*" />
-			</fileset>
-			<fileset dir="${build.bin.dir}" erroronmissingdir="false">
-				<exclude name="*" />
+				<include name="z.dll" />
+				<include name="iconv.dll" />
+				<include name="pthreadGC2.dll" />
+				<include name="*oil*.dll" />
+				<include name="*bz2*.dll" />
+
+				<include name="libz.so.*" />
+				<include name="libbz2.so.*.*" />
+				<include name="liboil*.so.*" />
 			</fileset>
 		</copy>
-		-->
 		
 		<jar compress="true" destfile="${platform.jar}" basedir="${build.java.dir}" />
 	</target>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="fonts">
+
+	<References>
+		<Add name="base" />
+		<Add name="xml" />
+	</References>
+	
+	<Extract package="resources.fonts.unix.x86" directory="${tmp}/ossbuild/">
+		<Echo key="res.fonts.init" msg="Initializing font configuration..." />
+
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.etc.fonts" directory="${dirPlatform}/etc/fonts/">
+		<!-- Set fontconfig file so we can pick up the font configuration for this platform -->
+		<EnvVar name="FONTCONFIG_FILE" value="${dir}/fonts.conf" asFile="true" />
+		<EnvVar name="FC_CONFIG_DIR" value="${dir}" asFile="true" />
+
+		<!-- Fontconfig configuration -->
+		<File resource="fonts.conf" />
+		<File resource="fonts.dtd" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.etc.fonts.conf_avail" directory="${dirPlatform}/etc/fonts/conf.avail/">
+		<!-- Fontconfig configuration -->
+		<File resource="10-autohint.conf" />
+		<File resource="10-no-sub-pixel.conf" />
+		<File resource="10-sub-pixel-bgr.conf" />
+		<File resource="10-sub-pixel-rgb.conf" />
+		<File resource="10-sub-pixel-vbgr.conf" />
+		<File resource="10-sub-pixel-vrgb.conf" />
+		<File resource="10-unhinted.conf" />
+		<File resource="20-fix-globaladvance.conf" />
+		<File resource="20-unhint-small-vera.conf" />
+		<File resource="25-unhint-nonlatin.conf" />
+		<File resource="30-metric-aliases.conf" />
+		<File resource="30-urw-aliases.conf" />
+		<File resource="40-nonlatin.conf" />
+		<File resource="45-latin.conf" />
+		<File resource="49-sansserif.conf" />
+		<File resource="50-user.conf" />
+		<File resource="51-local.conf" />
+		<File resource="60-latin.conf" />
+		<File resource="65-fonts-persian.conf" />
+		<File resource="65-khmer.conf" />
+		<File resource="65-nonlatin.conf" />
+		<File resource="69-unifont.conf" />
+		<File resource="70-no-bitmaps.conf" />
+		<File resource="70-yes-bitmaps.conf" />
+		<File resource="80-delicious.conf" />
+		<File resource="90-synthetic.conf" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.etc.fonts.conf_d" directory="${dirPlatform}/etc/fonts/conf.d/">
+		<!-- Fontconfig configuration -->
+		<File resource="20-fix-globaladvance.conf" />
+		<File resource="20-unhint-small-vera.conf" />
+		<File resource="30-metric-aliases.conf" />
+		<File resource="30-urw-aliases.conf" />
+		<File resource="40-nonlatin.conf" />
+		<File resource="45-latin.conf" />
+		<File resource="49-sansserif.conf" />
+		<File resource="50-user.conf" />
+		<File resource="51-local.conf" />
+		<File resource="60-latin.conf" />
+		<File resource="65-fonts-persian.conf" />
+		<File resource="65-nonlatin.conf" />
+		<File resource="69-unifont.conf" />
+		<File resource="80-delicious.conf" />
+		<File resource="90-synthetic.conf" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<Library resource="libfreetype.so.6"   executable="true" />
+		<Library resource="libfontconfig.so.1" executable="true" />
+	</Extract>
+
+</Resources>

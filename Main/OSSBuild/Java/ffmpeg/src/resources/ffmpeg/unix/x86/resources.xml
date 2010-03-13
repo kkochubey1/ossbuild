@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="ffmpeg">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.ffmpeg.${lic}.unix.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.ffmpeg.init" msg="Initializing FFmpeg..." />
+
+		<Var name="LicenseSuffix" value="-${lic}" />
+
+		<!-- Libraries -->
+
+		<Library resource="libavutil${LicenseSuffix}.so.50"   executable="true" />
+		<Library resource="libavcodec${LicenseSuffix}.so.52"  executable="true" />
+		<Library resource="libavformat${LicenseSuffix}.so.52" executable="true" />
+		<Library resource="libavdevice${LicenseSuffix}.so.52" executable="true" />
+		<Library resource="libswscale${LicenseSuffix}.so.0"   executable="true" />
+		<Library resource="libavfilter${LicenseSuffix}.so.1"  executable="true" />
+
+	</Extract>
+
+</Resources>

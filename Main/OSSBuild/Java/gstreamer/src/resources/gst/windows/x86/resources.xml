@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gstreamer">
+
+	<!--
+		We play a bit of magic here by using <File /> instead of <Library />
+		tags in all GStreamer resource packages. This allows us to extract
+		all plugins + associated libraries before they're used and also
+		allows us to use Sys.loadNativeResources() with just one call. It
+		also means we can mix and match plugin jars if they are or aren't
+		on the classpath.
+	-->
+	<References>
+		<Add name="base" />
+		<Add name="glib" />
+		<Add name="xml" />
+		<Add name="fonts" />
+		<Add name="images" />
+		<Add name="graphics" />
+		<Add name="opengl" />
+		<Add name="ffmpeg" />
+		<Add name="crypto" />
+		<Add name="sdl" />
+		<Add name="gst-plugins-base" />
+		<Add name="gst-plugins-good" />
+		<Add name="gst-plugins-bad" />
+		<Add name="gst-plugins-ugly" />
+		<Add name="gst-plugins-gl" />
+		<Add name="gst-ffmpeg" />
+		<Add name="gnonlin" />
+		<Add name="farsight" />
+	</References>
+	
+	<Extract package="resources.gst.windows.x86" directory="${tmp}/ossbuild/">
+		<Echo key="res.gst.init" msg="Initializing GStreamer libraries..." />
+		
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<File resource="libgstreamer-${GstApiVersion}.dll" />
+		<File resource="libgstinterfaces-${GstApiVersion}.dll" />
+		<File resource="libgstcontroller-${GstApiVersion}.dll" />
+		<File resource="libgstdataprotocol-${GstApiVersion}.dll" />
+		<File resource="libgstsdp-${GstApiVersion}.dll" />
+		<File resource="libgstnet-${GstApiVersion}.dll" />
+		<File resource="libgstnetbuffer-${GstApiVersion}.dll" />
+		<File resource="libgstpbutils-${GstApiVersion}.dll" />
+		<File resource="libgstfft-${GstApiVersion}.dll" />
+		<File resource="libgstbase-${GstApiVersion}.dll" />
+		<File resource="libgstapp-${GstApiVersion}.dll" />
+		<File resource="libgstvideo-${GstApiVersion}.dll" />
+		<File resource="libgstbasevideo-${GstApiVersion}.dll" />
+		<File resource="libgstaudio-${GstApiVersion}.dll" />
+		<File resource="libgsttag-${GstApiVersion}.dll" />
+		<File resource="libgstriff-${GstApiVersion}.dll" />
+		<File resource="libgstrtp-${GstApiVersion}.dll" />
+		<File resource="libgstrtsp-${GstApiVersion}.dll" />
+		<File resource="libgstcdda-${GstApiVersion}.dll" />
+		<File resource="libgstsignalprocessor-${GstApiVersion}.dll" />
+		<File resource="libgstphotography-${GstApiVersion}.dll" />
+
+		<!--
+		<File resource="libgstgl-${GstApiVersion}.dll" />
+		<File resource="libgstfarsight-${GstApiVersion}.dll" />
+		-->
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<!-- Environment Variables -->
+		<EnvVar name="GST_REGISTRY" value="${dirPlatform}/gst-registry.bin" asFile="true" />
+		<EnvVar name="GST_PLUGIN_PATH" value="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/" asFile="true" />
+	</Extract>
+
+</Resources>

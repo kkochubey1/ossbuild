@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<project name="OSSBuild :: Resource Package :: Crypto" default="default" basedir=".">
+    <description>Builds, tests, and runs the project.</description>
+    <import file="nbproject/build-impl.xml"/>
+
+	<target name="-post-init">
+		<property name="project.package.name" value="crypto" />
+
+		<property name="top.dir" location="../../../.." />
+		<property name="top.build.dir" location="${top.dir}/Build" />
+		<property name="top.shared.dir" location="${top.dir}/Shared/Build" />
+		<property name="top.deployment.dir" location="${top.dir}/Deployment/Java" />
+
+		<mkdir dir="${top.build.dir}" />
+		<mkdir dir="${top.shared.dir}" />
+		<mkdir dir="${top.deployment.dir}" />
+	</target>
+
+	<target name="-post-jar">
+		<antcall target="-build-platform-jar">
+			<param name="os" value="windows" />
+			<param name="arch" value="x86" />
+			<param name="build.os" value="Windows" />
+			<param name="build.arch" value="Win32" />
+		</antcall>
+		<antcall target="-build-platform-jar">
+			<param name="os" value="unix" />
+			<param name="arch" value="x86" />
+			<param name="build.os" value="Linux" />
+			<param name="build.arch" value="x86" />
+		</antcall>
+	</target>
+
+	<target name="-build-platform-jar">
+		<property name="build.platform.dir" location="${top.build.dir}/${build.os}/${build.arch}/Release" />
+		<property name="build.include.dir" location="${build.platform.dir}/include" />
+		<property name="build.share.dir" location="${build.platform.dir}/share" />
+		<property name="build.java.dir" location="${build.platform.dir}/java" />
+		<property name="build.bin.dir" location="${build.platform.dir}/bin" />
+		<property name="build.lib.dir" location="${build.platform.dir}/lib" />
+		<property name="build.etc.dir" location="${build.platform.dir}/etc" />
+
+		<property name="shared.platform.dir" location="${top.shared.dir}/${build.os}/${build.arch}" />
+		<property name="shared.include.dir" location="${shared.platform.dir}/include" />
+		<property name="shared.share.dir" location="${shared.platform.dir}/share" />
+		<property name="shared.bin.dir" location="${shared.platform.dir}/bin" />
+		<property name="shared.lib.dir" location="${shared.platform.dir}/lib" />
+		<property name="shared.etc.dir" location="${shared.platform.dir}/etc" />
+
+		<property name="src.java.platform.dir" location="${build.classes.dir}/resources/${project.package.name}/${os}/${arch}" />
+		<property name="src.java.platform.bin.dir" location="${src.java.platform.dir}/bin" />
+		<property name="src.java.platform.lib.dir" location="${src.java.platform.dir}/lib" />
+		<property name="src.java.platform.etc.dir" location="${src.java.platform.dir}/etc" />
+		<property name="src.java.platform.share.dir" location="${src.java.platform.dir}/share" />
+
+		<property name="build.java.dir" location="${build.platform.dir}/java/" />
+
+		<property name="build.java.platform.dir" location="${build.java.dir}/resources/${project.package.name}/${os}/${arch}" />
+		<property name="build.java.platform.bin.dir" location="${build.java.platform.dir}/bin" />
+		<property name="build.java.platform.lib.dir" location="${build.java.platform.dir}/lib" />
+		<property name="build.java.platform.etc.dir" location="${build.java.platform.dir}/etc" />
+		<property name="build.java.platform.share.dir" location="${build.java.platform.dir}/share" />
+
+		<delete failonerror="false" quiet="true" dir="${build.java.dir}" />
+
+		<mkdir dir="${build.java.platform.dir}" />
+		<mkdir dir="${build.java.platform.bin.dir}" />
+		<mkdir dir="${build.java.platform.lib.dir}" />
+		<mkdir dir="${build.java.platform.etc.dir}" />
+		<mkdir dir="${build.java.platform.share.dir}" />
+
+		<property name="platform.dir" location="${top.deployment.dir}" />
+		<property name="platform.jar.name" value="resources-native-${os}-${arch}-${project.package.name}.jar" />
+		<property name="platform.jar" location="${platform.dir}/${platform.jar.name}" />
+
+		<mkdir dir="${platform.dir}" />
+
+		<jar compress="true" destfile="${platform.dir}/resources-${project.package.name}.jar">
+			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
+		</jar>
+
+		<antcall target="-platform-jar" />
+	</target>
+
+	<target name="-platform-jar">
+		<!-- Create jar -->
+		<copy todir="${build.java.platform.dir}">
+			<fileset dir="${src.java.platform.dir}" erroronmissingdir="false">
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+
+		<copy todir="${build.java.platform.bin.dir}">
+			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
+				<include name="*gpg-error*.dll" />
+				<include name="*gcrypt*.dll" />
+				<include name="*tasn*.dll" />
+				<include name="*gnutls*.dll" />
+
+				<include name="*gpg-error*.so.*" />
+				<include name="*gcrypt*.so.*" />
+				<include name="*tasn*.so.*" />
+				<include name="*gnutls*.so.*" />
+			</fileset>
+		</copy>
+		
+		<jar compress="true" destfile="${platform.jar}" basedir="${build.java.dir}" />
+	</target>
+
+    <!--
+
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
+
+
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are: 
+
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar-with-manifest:    JAR building (if you are using a manifest)
+      -do-jar-without-manifest: JAR building (if you are not using a manifest)
+      run:                      execution of project 
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
+
+    An example of overriding the target for project execution could look like this:
+
+        <target name="run" depends="OSSBuild-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
+
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
+
+    -->
+</project>

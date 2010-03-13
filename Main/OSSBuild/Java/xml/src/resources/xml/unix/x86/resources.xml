@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="xml">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.xml.unix.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.xml.init" msg="Initializing XML..." />
+
+		<!-- Libraries -->
+
+		<Library resource="libexpat.so.1" executable="true" />
+		<Library resource="libxml2.so.2"  executable="true" />
+	</Extract>
+
+</Resources>

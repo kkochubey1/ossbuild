@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="opengl">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.opengl.windows.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.opengl.init" msg="Initializing OpenGL..." />
+
+		<!-- Libraries -->
+
+		<Library resource="glew32.dll" />
+	</Extract>
+
+</Resources>

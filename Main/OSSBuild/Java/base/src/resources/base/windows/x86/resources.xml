@@ -26,5 +26,17 @@
 
 		<Echo key="res.base.complete" msg="Base environment initialization complete" />
 	</Extract>
+	
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<Echo key="res.base.initlibs" msg="Initializing base libraries..." />
+
+		<!-- Libraries -->
+
+		<Library resource="z.dll" />
+		<Library resource="libbz2.dll" />
+		<Library resource="iconv.dll" />
+		<Library resource="pthreadGC2.dll" />
+		<Library resource="liboil-0.3-0.dll" />
+	</Extract>
 
 </Resources>
