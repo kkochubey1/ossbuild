@@ -46,7 +46,6 @@ class RendererSupport
 {
 public:
   virtual ~RendererSupport() {};
-  virtual ~RendererSupport() {};
   virtual const char *GetName() = 0;
   virtual IBaseFilter *GetFilter() = 0;
   virtual gboolean Configure() = 0;
