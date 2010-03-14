@@ -57,6 +57,13 @@
     <Compile Include="Plugins-Good.wxs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Good\ext\gdkpixbuf.vcproj">
+      <Name>gstgdkpixbuf</Name>
+      <Project>{7955fd29-79e6-49eb-fd1f-653f0ef70d40}</Project>
+      <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Good\ext\libgstcairo.vcproj">
       <Name>gstcairo</Name>
       <Project>{bc97873b-2b88-4b1b-c627-f70df4f92004}</Project>
