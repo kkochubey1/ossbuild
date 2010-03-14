@@ -21,7 +21,7 @@
 #define __DSHOWVIDEOSINK_H__
 
 #include <gst/gst.h>
-#include <gst/base/gstbasesink.h>
+#include <gst/video/gstvideosink.h>
 
 #include "dshowvideofakesrc.h"
 
@@ -46,6 +46,7 @@ class RendererSupport
 {
 public:
   virtual ~RendererSupport() {};
+  virtual ~RendererSupport() {};
   virtual const char *GetName() = 0;
   virtual IBaseFilter *GetFilter() = 0;
   virtual gboolean Configure() = 0;
@@ -58,7 +59,7 @@ public:
 
 struct _GstDshowVideoSink
 {
-  GstBaseSink sink;
+  GstVideoSink sink;
 
   /* Preferred renderer to use: VM9 or VMR */
   char *preferredrenderer;
@@ -87,6 +88,7 @@ struct _GstDshowVideoSink
   HWND window_id;
 
   gboolean connected;
+  gboolean graph_running;
 
   /* If we create our own window, we run it from another thread */
   GThread *window_thread;
@@ -100,7 +102,7 @@ struct _GstDshowVideoSink
 
 struct _GstDshowVideoSinkClass
 {
-  GstBaseSinkClass parent_class;
+  GstVideoSinkClass parent_class;
 };
 
 GType gst_dshowvideosink_get_type (void);
