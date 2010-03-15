@@ -15,5 +15,5 @@ defsdir=${datadir}/gst-python/0.10/defs
 Name: gst-python
 Description: Python bindings for GStreamer
 Requires: pygobject-2.0, gstreamer-0.10
-Version: 0.10.17
+Version: 0.10.18
 Cflags: -I${gstpythonincludedir}

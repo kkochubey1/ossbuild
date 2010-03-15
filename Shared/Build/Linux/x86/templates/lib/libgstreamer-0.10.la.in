@@ -8,7 +8,7 @@
 dlname='libgstreamer-0.10.so.0'
 
 # Names of this library.
-library_names='libgstreamer-0.10.so.0.23.0 libgstreamer-0.10.so.0 libgstreamer-0.10.so'
+library_names='libgstreamer-0.10.so.0.24.1 libgstreamer-0.10.so.0 libgstreamer-0.10.so'
 
 # The name of the static archive.
 old_library=''
@@ -23,9 +23,9 @@ dependency_libs=' -lm -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  -lgobj
 weak_library_names=''
 
 # Version information for libgstreamer-0.10.
-current=23
-age=23
-revision=0
+current=24
+age=24
+revision=1
 
 # Is this an already installed library?
 installed=yes

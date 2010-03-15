@@ -8,7 +8,7 @@
 dlname='libgstinterfaces-0.10.so.0'
 
 # Names of this library.
-library_names='libgstinterfaces-0.10.so.0.19.0 libgstinterfaces-0.10.so.0 libgstinterfaces-0.10.so'
+library_names='libgstinterfaces-0.10.so.0.19.2 libgstinterfaces-0.10.so.0 libgstinterfaces-0.10.so'
 
 # The name of the static archive.
 old_library=''
@@ -25,7 +25,7 @@ weak_library_names=''
 # Version information for libgstinterfaces-0.10.
 current=19
 age=19
-revision=0
+revision=2
 
 # Is this an already installed library?
 installed=yes
