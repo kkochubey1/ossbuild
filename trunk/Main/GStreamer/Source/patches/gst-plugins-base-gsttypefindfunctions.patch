@@ -1,8 +1,8 @@
 Index: gst/typefind/gsttypefindfunctions.c
 ===================================================================
---- gst/typefind/gsttypefindfunctions.c	(revision 526)
+--- gst/typefind/gsttypefindfunctions.c	(revision 535)
 +++ gst/typefind/gsttypefindfunctions.c	(working copy)
-@@ -2481,8 +2481,8 @@
+@@ -2477,8 +2477,8 @@
    }
    /* STM */
    if ((data = gst_type_find_peek (tf, 20, 8)) != NULL) {
