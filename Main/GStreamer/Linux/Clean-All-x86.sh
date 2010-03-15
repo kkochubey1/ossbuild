@@ -26,6 +26,7 @@ rm -rf "$BUILD_DIR"
 echo "Cleaning precompiled shared binaries directory (preserving VCS folders): $SharedOutDir"
 cd "$SharedBinDir/"
 find ./*gst*-${GstApiVersion}* -type f -writable -exec rm -rf {} \;
+find ./*gst*-${GstApiVersion}* -type l -exec rm -f {} \;
 
 cd "$SharedEtcDir/"
 find ./gconf/schemas/*gst*-${GstApiVersion}* -type f -writable -exec rm -rf {} \;
@@ -40,7 +41,9 @@ find ./pkgconfig/*farsight*-${GstApiVersion}*.pc -type f -writable -exec rm -rf 
 find ./python2.6/site-packages/*farsight* -type f -writable -exec rm -rf {} \;
 find ./python2.6/site-packages/*gst* -type f -writable -exec rm -rf {} \;
 find ./python2.6/site-packages/gst-${GstApiVersion}/* -type f -writable -exec rm -rf {} \;
+find ./mono/* -type l -exec rm -f {} \;
 find ./mono/* -type f -writable -exec rm -rf {} \;
+find ./gstreamer-${GstApiVersion}/* -type l -exec rm -f {} \;
 find ./gstreamer-${GstApiVersion}/* -type f -writable -exec rm -rf {} \;
 find ./farsight*-${Farsight2ApiVersion}/* -type f -writable -exec rm -rf {} \;
 

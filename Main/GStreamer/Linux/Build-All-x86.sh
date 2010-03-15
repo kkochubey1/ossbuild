@@ -27,12 +27,12 @@ if [ ! -f "$BinDir/libgstreamer-$GstApiVersion.so.0" ]; then
 
 	make && make install
 	
-	arrange_shared "$BinDir" "libgstnet-$GstApiVersion.so" "0" "0.23.0" "libgstnet-$GstApiVersion.la" "gstreamer-net-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstbase-$GstApiVersion.so" "0" "0.23.0" "libgstbase-$GstApiVersion.la" "gstreamer-base-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstcheck-$GstApiVersion.so" "0" "0.23.0" "libgstcheck-$GstApiVersion.la" "gstreamer-check-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstreamer-$GstApiVersion.so" "0" "0.23.0" "libgstreamer-$GstApiVersion.la" "gstreamer-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstcontroller-$GstApiVersion.so" "0" "0.23.0" "libgstcontroller-$GstApiVersion.la" "gstreamer-controller-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstdataprotocol-$GstApiVersion.so" "0" "0.23.0" "libgstdataprotocol-$GstApiVersion.la" "gstreamer-dataprotocol-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstnet-$GstApiVersion.so" "0" "$GstPluginsCoreLibVersion" "libgstnet-$GstApiVersion.la" "gstreamer-net-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstbase-$GstApiVersion.so" "0" "$GstPluginsCoreLibVersion" "libgstbase-$GstApiVersion.la" "gstreamer-base-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstcheck-$GstApiVersion.so" "0" "$GstPluginsCoreLibVersion" "libgstcheck-$GstApiVersion.la" "gstreamer-check-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstreamer-$GstApiVersion.so" "0" "$GstPluginsCoreLibVersion" "libgstreamer-$GstApiVersion.la" "gstreamer-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstcontroller-$GstApiVersion.so" "0" "$GstPluginsCoreLibVersion" "libgstcontroller-$GstApiVersion.la" "gstreamer-controller-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstdataprotocol-$GstApiVersion.so" "0" "$GstPluginsCoreLibVersion" "libgstdataprotocol-$GstApiVersion.la" "gstreamer-dataprotocol-$GstApiVersion.pc" "$LibDir"
 	
 	move_files_to_dir "$GstPluginBinDir/*.la" "$GstPluginLibDir/"
 	
@@ -52,19 +52,19 @@ if [ ! -f "$BinDir/libgstapp-$GstApiVersion.so.0" ]; then
 
 	make && make install
 
-	arrange_shared "$BinDir" "libgstapp-$GstApiVersion.so" "0" "0.19.0" "libgstapp-$GstApiVersion.la" "gstreamer-app-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstsdp-$GstApiVersion.so" "0" "0.19.0" "libgstsdp-$GstApiVersion.la" "gstreamer-sdp-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgsttag-$GstApiVersion.so" "0" "0.19.0" "libgsttag-$GstApiVersion.la" "gstreamer-tag-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstrtp-$GstApiVersion.so" "0" "0.19.0" "libgstrtp-$GstApiVersion.la" "gstreamer-rtp-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstfft-$GstApiVersion.so" "0" "0.19.0" "libgstfft-$GstApiVersion.la" "gstreamer-fft-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstcdda-$GstApiVersion.so" "0" "0.19.0" "libgstcdda-$GstApiVersion.la" "gstreamer-cdda-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstriff-$GstApiVersion.so" "0" "0.19.0" "libgstriff-$GstApiVersion.la" "gstreamer-riff-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstrtsp-$GstApiVersion.so" "0" "0.19.0" "libgstrtsp-$GstApiVersion.la" "gstreamer-rtsp-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstaudio-$GstApiVersion.so" "0" "0.19.0" "libgstaudio-$GstApiVersion.la" "gstreamer-audio-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstvideo-$GstApiVersion.so" "0" "0.19.0" "libgstvideo-$GstApiVersion.la" "gstreamer-video-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstpbutils-$GstApiVersion.so" "0" "0.19.0" "libgstpbutils-$GstApiVersion.la" "gstreamer-pbutils-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstnetbuffer-$GstApiVersion.so" "0" "0.19.0" "libgstnetbuffer-$GstApiVersion.la" "gstreamer-netbuffer-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstinterfaces-$GstApiVersion.so" "0" "0.19.0" "libgstinterfaces-$GstApiVersion.la" "gstreamer-interfaces-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstapp-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstapp-$GstApiVersion.la" "gstreamer-app-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstsdp-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstsdp-$GstApiVersion.la" "gstreamer-sdp-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgsttag-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgsttag-$GstApiVersion.la" "gstreamer-tag-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstrtp-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstrtp-$GstApiVersion.la" "gstreamer-rtp-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstfft-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstfft-$GstApiVersion.la" "gstreamer-fft-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstcdda-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstcdda-$GstApiVersion.la" "gstreamer-cdda-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstriff-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstriff-$GstApiVersion.la" "gstreamer-riff-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstrtsp-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstrtsp-$GstApiVersion.la" "gstreamer-rtsp-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstaudio-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstaudio-$GstApiVersion.la" "gstreamer-audio-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstvideo-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstvideo-$GstApiVersion.la" "gstreamer-video-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstpbutils-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstpbutils-$GstApiVersion.la" "gstreamer-pbutils-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstnetbuffer-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstnetbuffer-$GstApiVersion.la" "gstreamer-netbuffer-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstinterfaces-$GstApiVersion.so" "0" "$GstPluginsBaseLibVersion" "libgstinterfaces-$GstApiVersion.la" "gstreamer-interfaces-$GstApiVersion.pc" "$LibDir"
 	
 	move_files_to_dir "$GstPluginBinDir/*.la" "$GstPluginLibDir/"
 	
@@ -104,9 +104,9 @@ if [ ! -f "$GstPluginBinDir/libgstsdl.so" -a ! -f "$GstPluginLibDir/libgstsdl.so
 
 	make && make install
 	
-	arrange_shared "$BinDir" "libgstbasevideo-$GstApiVersion.so" "0" "0.0.0" "libgstbasevideo-$GstApiVersion.la" "gstreamer-basevideo-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstphotography-$GstApiVersion.so" "0" "0.0.0" "libgstphotography-$GstApiVersion.la" "gstreamer-photography-$GstApiVersion.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgstsignalprocessor-$GstApiVersion.so" "0" "0.0.0" "libgstsignalprocessor-$GstApiVersion.la" "gstreamer-signalprocessor-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstbasevideo-$GstApiVersion.so" "0" "$GstPluginsBadLibVersion" "libgstbasevideo-$GstApiVersion.la" "gstreamer-basevideo-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstphotography-$GstApiVersion.so" "0" "$GstPluginsBadLibVersion" "libgstphotography-$GstApiVersion.la" "gstreamer-photography-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstsignalprocessor-$GstApiVersion.so" "0" "$GstPluginsBadLibVersion" "libgstsignalprocessor-$GstApiVersion.la" "gstreamer-signalprocessor-$GstApiVersion.pc" "$LibDir"
 	
 	move_files_to_dir "$GstPluginBinDir/*.la" "$GstPluginLibDir/"
 	
@@ -124,7 +124,7 @@ if [ ! -f "$BinDir/libgstgl-$GstApiVersion.so.0" ]; then
 
 	make && make install
 	
-	arrange_shared "$BinDir" "libgstgl-$GstApiVersion.so" "0" "0.0.0" "libgstgl-$GstApiVersion.la" "gstreamer-gl-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstgl-$GstApiVersion.so" "0" "$GstPluginsGlLibVersion" "libgstgl-$GstApiVersion.la" "gstreamer-gl-$GstApiVersion.pc" "$LibDir"
 	
 	move_files_to_dir "$GstPluginBinDir/*.la" "$GstPluginLibDir/"
 fi
@@ -201,7 +201,7 @@ if [ ! -f "$BinDir/libgstfarsight-$GstApiVersion.so.0" ]; then
 
 	make && make install
 
-	arrange_shared "$BinDir" "libgstfarsight-$GstApiVersion.so" "0" "0.3.1" "libgstfarsight-$GstApiVersion.la" "farsight2-$GstApiVersion.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgstfarsight-$GstApiVersion.so" "0" "$GstPluginsFarsightLibVersion" "libgstfarsight-$GstApiVersion.la" "farsight2-$GstApiVersion.pc" "$LibDir"
 
 	remove_files_from_dir "$LibDir/python2.6/site-packages/farsight.la"
 	remove_files_from_dir "$Farsight2BinDir/*.la"
