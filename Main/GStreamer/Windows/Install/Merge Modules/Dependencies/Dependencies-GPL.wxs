@@ -21,7 +21,11 @@
 					<OSSBuild:Filter Include=".*\\[^\\]*.*x264.*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*xvidcore.*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*a52.*\.dll" />
+					<!-- Exclude mpeg2dec until we get it working correctly. For now, allow only FFmpeg decoder. -->
+					<!-- TODO: Fix libmpeg2-0.dll and prevent it from crashing. -->
+					<!--
 					<OSSBuild:Filter Include=".*\\[^\\]*.*mpeg2.*\.dll" />
+					-->
 					<OSSBuild:Filter Include=".*\\[^\\]*.*dca.*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*faac.*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*faad.*\.dll" />

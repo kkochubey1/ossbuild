@@ -14,7 +14,11 @@
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gsta52dec\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstdvdread\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstlame\.dll" />
+					<!-- Exclude mpeg2dec until we get it working correctly. For now, allow only FFmpeg decoder. -->
+					<!-- TODO: Fix libmpeg2-0.dll and prevent it from crashing. -->
+					<!--
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstmpeg2dec\.dll" />
+					-->
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstx264\.dll" />
 				</OSSBuild:FillDirectory>
 			</Directory>
