@@ -33,10 +33,6 @@
 #define USE_GIO
 #endif
 
-#ifdef _MSC_VER
-#define strncasecmp strnicmp
-#endif
-
 #include <gst/gsttypefind.h>
 #include <gst/gstelement.h>
 #include <gst/gstversion.h>
@@ -2481,8 +2477,8 @@ mod_type_find (GstTypeFind * tf, gpointer unused)
   }
   /* STM */
   if ((data = gst_type_find_peek (tf, 20, 8)) != NULL) {
-    if (g_ascii_strncasecmp ((gchar *) data, "!Scream!", 8) == 0 ||
-        g_ascii_strncasecmp ((gchar *) data, "BMOD2STM", 8) == 0) {
+    if (strncasecmp ((gchar *) data, "!Scream!", 8) == 0 ||
+        strncasecmp ((gchar *) data, "BMOD2STM", 8) == 0) {
       guint8 *id, *stmtype;
 
       if ((id = gst_type_find_peek (tf, 28, 1)) == NULL)
