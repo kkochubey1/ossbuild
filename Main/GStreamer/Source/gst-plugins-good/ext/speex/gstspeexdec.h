@@ -53,7 +53,7 @@ struct _GstSpeexDec {
   GstPad                *srcpad;
 
   void                  *state;
-  SpeexStereoState      stereo;
+  SpeexStereoState      *stereo;
 #ifdef SPEEX_1_0
   SpeexMode             *mode;
 #else
@@ -70,7 +70,6 @@ struct _GstSpeexDec {
   guint64               packetno;
 
   GstSegment            segment;    /* STREAM LOCK */
-  gint64                granulepos; /* -1 = needs to be set from current time */
 };
 
 struct _GstSpeexDecClass {
