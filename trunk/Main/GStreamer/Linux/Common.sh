@@ -10,6 +10,13 @@
 
 export GstApiVersion=0.10
 export Farsight2ApiVersion=0.0
+
+export GstPluginsCoreLibVersion=0.24.1
+export GstPluginsBaseLibVersion=0.19.2
+export GstPluginsBadLibVersion=0.0.0
+export GstPluginsGlLibVersion=0.0.0
+export GstPluginsFarsightLibVersion=0.3.1
+
 export PKG_URI="http://code.google.com/p/ossbuild/"
 
 
