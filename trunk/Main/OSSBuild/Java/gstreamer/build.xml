@@ -102,51 +102,31 @@
 		<copy todir="${build.java.platform.bin.dir}">
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
 				<include name="*gstreamer*.so.*" />
-				<include name="*gstinterfaces*.so.*" />
 				<include name="*gstcontroller*.so.*" />
 				<include name="*gstdataprotocol*.so.*" />
-				<include name="*gstsdp*.so.*" />
 				<include name="*gstnet*.so.*" />
-				<include name="*gstnetbuffer*.so.*" />
-				<include name="*gstpbutils*.so.*" />
-				<include name="*gstfft*.so.*" />
 				<include name="*gstbase*.so.*" />
-				<include name="*gstapp*.so.*" />
-				<include name="*gstvideo*.so.*" />
+
+				<!--
 				<include name="*gstbasevideo*.so.*" />
-				<include name="*gstaudio*.so.*" />
-				<include name="*gsttag*.so.*" />
-				<include name="*gstriff*.so.*" />
-				<include name="*gstrtp*.so.*" />
-				<include name="*gstrtsp*.so.*" />
-				<include name="*gstcdda*.so.*" />
 				<include name="*gstsignalprocessor*.so.*" />
 				<include name="*gstphotography*.so.*" />
+				-->
 
 				<exclude name="*gstreamer*sharp*" />
 			</fileset>
 			<fileset dir="${build.bin.dir}" erroronmissingdir="false">
 				<include name="*gstreamer*.dll" />
-				<include name="*gstinterfaces*.dll" />
 				<include name="*gstcontroller*.dll" />
 				<include name="*gstdataprotocol*.dll" />
-				<include name="*gstsdp*.dll" />
 				<include name="*gstnet*.dll" />
-				<include name="*gstnetbuffer*.dll" />
-				<include name="*gstpbutils*.dll" />
-				<include name="*gstfft*.dll" />
 				<include name="*gstbase*.dll" />
-				<include name="*gstapp*.dll" />
-				<include name="*gstvideo*.dll" />
+
+				<!--
 				<include name="*gstbasevideo*.dll" />
-				<include name="*gstaudio*.dll" />
-				<include name="*gsttag*.dll" />
-				<include name="*gstriff*.dll" />
-				<include name="*gstrtp*.dll" />
-				<include name="*gstrtsp*.dll" />
-				<include name="*gstcdda*.dll" />
 				<include name="*gstsignalprocessor*.dll" />
 				<include name="*gstphotography*.dll" />
+				-->
 
 				<exclude name="*gstreamer*sharp*" />
 			</fileset>

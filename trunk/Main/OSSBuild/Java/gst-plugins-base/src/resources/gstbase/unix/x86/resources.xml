@@ -26,44 +26,58 @@
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
-		<Library resource="libogg.so.0"                                 executable="true" />
-		<Library resource="libvorbis.so.0"                              executable="true" />
-		<Library resource="libvorbisenc.so.2"                           executable="true" />
-		<Library resource="libvorbisfile.so.3"                          executable="true" />
-		<Library resource="libtheora.so.0"                              executable="true" />
-		<Library resource="libtheoradec.so.1"                           executable="true" />
-		<Library resource="libtheoraenc.so.1"                           executable="true" />
+		<File resource="libgstinterfaces-${GstApiVersion}.so.0"      executable="true" />
+		<File resource="libgstsdp-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstnetbuffer-${GstApiVersion}.so.0"       executable="true" />
+		<File resource="libgstpbutils-${GstApiVersion}.so.0"         executable="true" />
+		<File resource="libgstfft-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstapp-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstvideo-${GstApiVersion}.so.0"           executable="true" />
+		<File resource="libgstaudio-${GstApiVersion}.so.0"           executable="true" />
+		<File resource="libgsttag-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstriff-${GstApiVersion}.so.0"            executable="true" />
+		<File resource="libgstrtp-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstrtsp-${GstApiVersion}.so.0"            executable="true" />
+		<File resource="libgstcdda-${GstApiVersion}.so.0"            executable="true" />
+
+		<Library resource="libogg.so.0"                              executable="true" />
+		<Library resource="libvorbis.so.0"                           executable="true" />
+		<Library resource="libvorbisenc.so.2"                        executable="true" />
+		<Library resource="libvorbisfile.so.3"                       executable="true" />
+		<Library resource="libtheora.so.0"                           executable="true" />
+		<Library resource="libtheoradec.so.1"                        executable="true" />
+		<Library resource="libtheoraenc.so.1"                        executable="true" />
 	</Extract>
 
 	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
-		<File resource="libgstadder.so"                                 executable="true" />
-		<File resource="libgstapp.so"                                   executable="true" />
-		<File resource="libgstaudioconvert.so"                          executable="true" />
-		<File resource="libgstaudiorate.so"                             executable="true" />
-		<File resource="libgstaudioresample.so"                         executable="true" />
-		<File resource="libgstaudiotestsrc.so"                          executable="true" />
-		<File resource="libgstcoreelements.so"                          executable="true" />
-		<File resource="libgstcoreindexers.so"                          executable="true" />
-		<File resource="libgstdecodebin.so"                             executable="true" />
-		<File resource="libgstdecodebin2.so"                            executable="true" />
-		<File resource="libgstffmpegcolorspace.so"                      executable="true" />
-		<File resource="libgstgdp.so"                                   executable="true" />
-		<File resource="libgstgio.so"                                   executable="true" />
-		<File resource="libgstogg.so"                                   executable="true" />
-		<File resource="libgstpango.so"                                 executable="true" />
-		<File resource="libgstplaybin.so"                               executable="true" />
-		<File resource="libgstsubparse.so"                              executable="true" />
-		<File resource="libgsttheora.so"                                executable="true" />
-		<File resource="libgsttypefindfunctions.so"                     executable="true" />
-		<File resource="libgstvideorate.so"                             executable="true" />
-		<File resource="libgstvideoscale.so"                            executable="true" />
-		<File resource="libgstvideotestsrc.so"                          executable="true" />
-		<File resource="libgstvolume.so"                                executable="true" />
-		<File resource="libgstvorbis.so"                                executable="true" />
+		<File resource="libgstadder.so"                              executable="true" />
+		<File resource="libgstapp.so"                                executable="true" />
+		<File resource="libgstaudioconvert.so"                       executable="true" />
+		<File resource="libgstaudiorate.so"                          executable="true" />
+		<File resource="libgstaudioresample.so"                      executable="true" />
+		<File resource="libgstaudiotestsrc.so"                       executable="true" />
+		<File resource="libgstcoreelements.so"                       executable="true" />
+		<File resource="libgstcoreindexers.so"                       executable="true" />
+		<File resource="libgstdecodebin.so"                          executable="true" />
+		<File resource="libgstdecodebin2.so"                         executable="true" />
+		<File resource="libgstffmpegcolorspace.so"                   executable="true" />
+		<File resource="libgstgdp.so"                                executable="true" />
+		<File resource="libgstgio.so"                                executable="true" />
+		<File resource="libgstogg.so"                                executable="true" />
+		<File resource="libgstpango.so"                              executable="true" />
+		<File resource="libgstplaybin.so"                            executable="true" />
+		<File resource="libgstsubparse.so"                           executable="true" />
+		<File resource="libgsttheora.so"                             executable="true" />
+		<File resource="libgsttypefindfunctions.so"                  executable="true" />
+		<File resource="libgstvideorate.so"                          executable="true" />
+		<File resource="libgstvideoscale.so"                         executable="true" />
+		<File resource="libgstvideotestsrc.so"                       executable="true" />
+		<File resource="libgstvolume.so"                             executable="true" />
+		<File resource="libgstvorbis.so"                             executable="true" />
 
-		<File resource="libgsttcp.so"                                   executable="true" />
-		<File resource="libgstalsa.so"                                  executable="true" />
-		<File resource="libgstalsaspdif.so"                             executable="true" />
+		<File resource="libgsttcp.so"                                executable="true" />
+		<File resource="libgstalsa.so"                               executable="true" />
+		<File resource="libgstalsaspdif.so"                          executable="true" />
 	</Extract>
 
 </Resources>

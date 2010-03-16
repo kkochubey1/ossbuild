@@ -47,27 +47,15 @@
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
 		<File resource="libgstreamer-${GstApiVersion}.dll" />
-		<File resource="libgstinterfaces-${GstApiVersion}.dll" />
 		<File resource="libgstcontroller-${GstApiVersion}.dll" />
 		<File resource="libgstdataprotocol-${GstApiVersion}.dll" />
-		<File resource="libgstsdp-${GstApiVersion}.dll" />
 		<File resource="libgstnet-${GstApiVersion}.dll" />
-		<File resource="libgstnetbuffer-${GstApiVersion}.dll" />
-		<File resource="libgstpbutils-${GstApiVersion}.dll" />
-		<File resource="libgstfft-${GstApiVersion}.dll" />
 		<File resource="libgstbase-${GstApiVersion}.dll" />
-		<File resource="libgstapp-${GstApiVersion}.dll" />
-		<File resource="libgstvideo-${GstApiVersion}.dll" />
+		<!--
 		<File resource="libgstbasevideo-${GstApiVersion}.dll" />
-		<File resource="libgstaudio-${GstApiVersion}.dll" />
-		<File resource="libgsttag-${GstApiVersion}.dll" />
-		<File resource="libgstriff-${GstApiVersion}.dll" />
-		<File resource="libgstrtp-${GstApiVersion}.dll" />
-		<File resource="libgstrtsp-${GstApiVersion}.dll" />
-		<File resource="libgstcdda-${GstApiVersion}.dll" />
 		<File resource="libgstsignalprocessor-${GstApiVersion}.dll" />
 		<File resource="libgstphotography-${GstApiVersion}.dll" />
-
+		-->
 		<!--
 		<File resource="libgstgl-${GstApiVersion}.dll" />
 		<File resource="libgstfarsight-${GstApiVersion}.dll" />

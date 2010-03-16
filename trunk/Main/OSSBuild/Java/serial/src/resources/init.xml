@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Init>
+	<Registry>
+		<Reference class="ossbuild.serial.Register" />
+	</Registry>
+	<System>
+		<Load class="ossbuild.serial.SystemLoader" />
+	</System>
+</Init>
