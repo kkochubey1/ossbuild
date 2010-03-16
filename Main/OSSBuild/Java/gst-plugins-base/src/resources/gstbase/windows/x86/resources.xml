@@ -26,13 +26,27 @@
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
-		<File resource="libogg-0.dll" />
-		<File resource="libvorbis-0.dll" />
-		<File resource="libvorbisenc-2.dll" />
-		<File resource="libvorbisfile-3.dll" />
-		<File resource="libtheora-0.dll" />
-		<File resource="libtheoradec-1.dll" />
-		<File resource="libtheoraenc-1.dll" />
+		<File resource="libgstinterfaces-${GstApiVersion}.dll" />
+		<File resource="libgstsdp-${GstApiVersion}.dll" />
+		<File resource="libgstnetbuffer-${GstApiVersion}.dll" />
+		<File resource="libgstpbutils-${GstApiVersion}.dll" />
+		<File resource="libgstfft-${GstApiVersion}.dll" />
+		<File resource="libgstapp-${GstApiVersion}.dll" />
+		<File resource="libgstvideo-${GstApiVersion}.dll" />
+		<File resource="libgstaudio-${GstApiVersion}.dll" />
+		<File resource="libgsttag-${GstApiVersion}.dll" />
+		<File resource="libgstriff-${GstApiVersion}.dll" />
+		<File resource="libgstrtp-${GstApiVersion}.dll" />
+		<File resource="libgstrtsp-${GstApiVersion}.dll" />
+		<File resource="libgstcdda-${GstApiVersion}.dll" />
+		
+		<Library resource="libogg-0.dll" />
+		<Library resource="libvorbis-0.dll" />
+		<Library resource="libvorbisenc-2.dll" />
+		<Library resource="libvorbisfile-3.dll" />
+		<Library resource="libtheora-0.dll" />
+		<Library resource="libtheoradec-1.dll" />
+		<Library resource="libtheoraenc-1.dll" />
 	</Extract>
 
 	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">

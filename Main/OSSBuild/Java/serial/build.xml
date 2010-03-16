@@ -7,16 +7,14 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="OSSBuild :: Resource Package :: GStreamer :: Base" default="default" basedir=".">
+<project name="OSSBuild :: Resource Package :: Serial" default="default" basedir=".">
     <description>Builds, tests, and runs the project.</description>
     <import file="nbproject/build-impl.xml"/>
 
 	<target name="-post-init">
-		<property name="project.jarpart.name" value="gst-plugins-base" />
-		<property name="project.package.name" value="gstbase" />
+		<property name="project.package.name" value="serial" />
 
-		<property name="gst-api-version" value="0.10" />
-		<property name="pkg-gst-api-version" value="0_10" />
+		<property name="rxtx.dir" location="lib/rxtx" />
 
 		<property name="top.dir" location="../../../.." />
 		<property name="top.build.dir" location="${top.dir}/Build" />
@@ -30,20 +28,52 @@
 
 	<target name="-post-jar">
 		<antcall target="-build-platform-jar">
+			<param name="rxtx.platform.name" value="Windows/i368-mingw32" />
+
 			<param name="os" value="windows" />
 			<param name="arch" value="x86" />
 			<param name="build.os" value="Windows" />
 			<param name="build.arch" value="Win32" />
 		</antcall>
+		<!--
 		<antcall target="-build-platform-jar">
+			<param name="rxtx.platform.name" value="win64" />
+
+			<param name="os" value="windows" />
+			<param name="arch" value="x86_64" />
+			<param name="build.os" value="Windows" />
+			<param name="build.arch" value="x64" />
+		</antcall>
+		-->
+		<antcall target="-build-platform-jar">
+			<param name="rxtx.platform.name" value="Linux\i686-unknown-linux-gnu" />
+
 			<param name="os" value="unix" />
 			<param name="arch" value="x86" />
 			<param name="build.os" value="Linux" />
 			<param name="build.arch" value="x86" />
 		</antcall>
+		<antcall target="-build-platform-jar">
+			<param name="rxtx.platform.name" value="Linux\x86_64-unknown-linux-gnu" />
+
+			<param name="os" value="unix" />
+			<param name="arch" value="x86_64" />
+			<param name="build.os" value="Linux" />
+			<param name="build.arch" value="x86_64" />
+		</antcall>
+		<antcall target="-build-platform-jar">
+			<param name="rxtx.platform.name" value="Mac_OS_X" />
+
+			<param name="os" value="osx" />
+			<param name="arch" value="x86" />
+			<param name="build.os" value="OSX" />
+			<param name="build.arch" value="x86" />
+		</antcall>
 	</target>
 
 	<target name="-build-platform-jar">
+		<property name="rxtx.platform.dir" location="${rxtx.dir}/${rxtx.platform.name}" />
+		
 		<property name="build.platform.dir" location="${top.build.dir}/${build.os}/${build.arch}/Release" />
 		<property name="build.include.dir" location="${build.platform.dir}/include" />
 		<property name="build.share.dir" location="${build.platform.dir}/share" />
@@ -82,12 +112,16 @@
 		<mkdir dir="${build.java.platform.share.dir}" />
 
 		<property name="platform.dir" location="${top.deployment.dir}" />
-		<property name="platform.jar.name" value="resources-native-${os}-${arch}-${project.jarpart.name}.jar" />
+		<property name="platform.jar.name" value="resources-native-${os}-${arch}-${project.package.name}.jar" />
 		<property name="platform.jar" location="${platform.dir}/${platform.jar.name}" />
 
 		<mkdir dir="${platform.dir}" />
 
-		<jar compress="true" destfile="${platform.dir}/resources-${project.jarpart.name}.jar">
+		<!--
+		<unjar src="${file.reference.RXTXcomm.jar}" dest="${build.classes.dir}" />
+		-->
+		
+		<jar compress="true" destfile="${platform.dir}/resources-${project.package.name}.jar">
 			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
 		</jar>
 
@@ -103,109 +137,8 @@
 		</copy>
 
 		<copy todir="${build.java.platform.bin.dir}">
-			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
-				<include name="*gstinterfaces*.so.*" />
-				<include name="*gstsdp*.so.*" />
-				<include name="*gstnetbuffer*.so.*" />
-				<include name="*gstpbutils*.so.*" />
-				<include name="*gstfft*.so.*" />
-				<include name="*gstapp*.so.*" />
-				<include name="*gstvideo*.so.*" />
-				<include name="*gstaudio*.so.*" />
-				<include name="*gsttag*.so.*" />
-				<include name="*gstriff*.so.*" />
-				<include name="*gstrtp*.so.*" />
-				<include name="*gstrtsp*.so.*" />
-				<include name="*gstcdda*.so.*" />
-			</fileset>
-			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
-				<include name="*ogg*.so.*" />
-				<include name="*vorbis*.so.*" />
-				<include name="*theora*.so.*" />
-			</fileset>
-			<fileset dir="${build.bin.dir}" erroronmissingdir="false">
-				<include name="*gstinterfaces*.dll" />
-				<include name="*gstsdp*.dll" />
-				<include name="*gstnetbuffer*.dll" />
-				<include name="*gstpbutils*.dll" />
-				<include name="*gstfft*.dll" />
-				<include name="*gstapp*.dll" />
-				<include name="*gstvideo*.dll" />
-				<include name="*gstaudio*.dll" />
-				<include name="*gsttag*.dll" />
-				<include name="*gstriff*.dll" />
-				<include name="*gstrtp*.dll" />
-				<include name="*gstrtsp*.dll" />
-				<include name="*gstcdda*.dll" />
-			</fileset>
-			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
-				<include name="*ogg*.dll" />
-				<include name="*vorbis*.dll" />
-				<include name="*theora*.dll" />
-			</fileset>
-		</copy>
-
-		<mkdir dir="${build.java.platform.lib.dir}/gstreamer_${pkg-gst-api-version}/" />
-		<copy todir="${build.java.platform.lib.dir}/gstreamer_${pkg-gst-api-version}/">
-			<fileset dir="${shared.lib.dir}/gstreamer-${gst-api-version}/" erroronmissingdir="false">
-				<include name="*gstadder*.*" />
-				<include name="*gstapp*.*" />
-				<include name="*gstaudioconvert*.*" />
-				<include name="*gstaudiorate*.*" />
-				<include name="*gstaudioresample*.*" />
-				<include name="*gstaudiotestsrc*.*" />
-				<include name="*gstcoreelements*.*" />
-				<include name="*gstcoreindexers*.*" />
-				<include name="*gstdecodebin*.*" />
-				<include name="*gstdecodebin2*.*" />
-				<include name="*gstffmpegcolorspace*.*" />
-				<include name="*gstgdp*.*" />
-				<include name="*gstgio*.*" />
-				<include name="*gstogg*.*" />
-				<include name="*gstpango*.*" />
-				<include name="*gstplaybin*.*" />
-				<include name="*gstsubparse*.*" />
-				<include name="*gsttheora*.*" />
-				<include name="*gsttypefindfunctions*.*" />
-				<include name="*gstvideorate*.*" />
-				<include name="*gstvideoscale*.*" />
-				<include name="*gstvideotestsrc*.*" />
-				<include name="*gstvolume*.*" />
-				<include name="*gstvorbis*.*" />
-
-				<include name="*gsttcp*.*" />
-				<include name="*gstalsa*.*" />
-				<include name="*gstalsaspdif*.*" />
-			</fileset>
-			<fileset dir="${build.bin.dir}/plugins/" erroronmissingdir="false">
-				<include name="*gstadder*.*" />
-				<include name="*gstapp*.*" />
-				<include name="*gstaudioconvert*.*" />
-				<include name="*gstaudiorate*.*" />
-				<include name="*gstaudioresample*.*" />
-				<include name="*gstaudiotestsrc*.*" />
-				<include name="*gstcoreelements*.*" />
-				<include name="*gstcoreindexers*.*" />
-				<include name="*gstdecodebin*.*" />
-				<include name="*gstdecodebin2*.*" />
-				<include name="*gstffmpegcolorspace*.*" />
-				<include name="*gstgdp*.*" />
-				<include name="*gstgio*.*" />
-				<include name="*gstogg*.*" />
-				<include name="*gstpango*.*" />
-				<include name="*gstplaybin*.*" />
-				<include name="*gstsubparse*.*" />
-				<include name="*gsttheora*.*" />
-				<include name="*gsttypefindfunctions*.*" />
-				<include name="*gstvideorate*.*" />
-				<include name="*gstvideoscale*.*" />
-				<include name="*gstvideotestsrc*.*" />
-				<include name="*gstvolume*.*" />
-				<include name="*gstvorbis*.*" />
-
-				<include name="*gsttcp*.*" />
-				<include name="*gstalsa*.*" />
-				<include name="*gstalsaspdif*.*" />
+			<fileset dir="${rxtx.platform.dir}" erroronmissingdir="false">
+				<include name="*rxtx*.*" />
 			</fileset>
 		</copy>
 		

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="serial">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.serial.windows.x86.bin" directory="${tmp}/ossbuild/bin/">
+		<Echo key="res.serial.init" msg="Initializing serial port access..." />
+
+		<!-- Libraries -->
+
+		<Library resource="rxtxSerial.dll" />
+		<Library resource="rxtxParallel.dll" />
+	</Extract>
+
+</Resources>
