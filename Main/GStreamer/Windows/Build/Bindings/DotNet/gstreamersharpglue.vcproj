@@ -60,6 +60,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\bin\$(Prefix)$(ProjectName)-$(ApiVersionString).dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile="gstreamersharpglue.def"
 				GenerateDebugInformation="true"
@@ -133,6 +134,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="$(OutDir)\bin\$(Prefix)$(ProjectName)-$(ApiVersionString).dll"
 				LinkIncremental="1"
 				ModuleDefinitionFile="gstreamersharpglue.def"
 				GenerateDebugInformation="true"
@@ -181,7 +183,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstvideo.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstvideo.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-E70DF4F91E57}"
@@ -196,7 +198,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstcdda.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstcdda.vcproj"
 		/>
 	</References>
 	<Files>

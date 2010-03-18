@@ -132,8 +132,8 @@
 			<!-- Creates a copy of the .net bindings locally -->
 			<!-- Note that this must be done in a separate directory from the GAC-installed version -->
 			<Component Id="Bindings_DotNetLocal" Guid="{2F38FD28-50A0-4133-9D66-AF85283AD39C}">
-				<File Id="UnmanagedGlue" Name="libgstreamersharpglue-$(var.GST_VERSION).dll" Source="$(var.GstBinDir)\libgstreamersharpglue-$(var.GST_VERSION).dll" />
-				<File Id="ManagedAssembly" Name="libgstreamer-sharp.dll" Source="$(var.GstBinDir)\libgstreamer-sharp.dll" KeyPath="yes" />
+				<File Id="UnmanagedGlue" Name="gstreamersharpglue-$(var.GST_VERSION).dll" Source="$(var.GstBinDir)\gstreamersharpglue-$(var.GST_VERSION).dll" />
+				<File Id="ManagedAssembly" Name="gstreamer-sharp.dll" Source="$(var.GstBinDir)\gstreamer-sharp.dll" KeyPath="yes" />
 			</Component>
 		</DirectoryRef>
 
