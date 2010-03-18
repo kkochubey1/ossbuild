@@ -1533,7 +1533,8 @@ if [ ! -f "$BinDir/lib${Prefix}mpeg2-0.dll" ]; then
 	unpack_gzip_and_move "libmpeg2.tar.gz" "$PKG_DIR_LIBMPEG2"
 	mkdir_and_move "$IntDir/libmpeg2"
 	
-	$PKG_DIR/configure --disable-sdl --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	CFLAGS="-fno-loop-block -fno-loop-strip-mine -fno-loop-interchange -fno-tree-loop-distribution -fno-tree-loop-im"
+	$PKG_DIR/configure --disable-sdl --disable-static --enable-shared --disable-debug --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
 	make && make install
 	
