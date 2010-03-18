@@ -4,6 +4,7 @@ package ossbuild.extract;
 import java.io.File;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import ossbuild.StringUtil;
 
@@ -144,7 +145,7 @@ public abstract class DefaultResourceProcessor implements IResourceProcessor {
 
 	//<editor-fold defaultstate="collapsed" desc="IResourceProcessor Methods">
 	@Override
-	public boolean load(final IResourcePackage pkg, final XPath xpath, final Node node, final IVariableProcessor varproc) throws XPathException {
+	public boolean load(final IResourcePackage pkg, final XPath xpath, final Node node, final Document document, final IVariableProcessor varproc, final ResourceProcessorFactory factory) throws XPathException {
 		if (node != null) {
 			//Read attribute values in
 			this.resourceName = stringAttributeValue(varproc, StringUtil.empty, node, ATTRIBUTE_RESOURCE_NAME);
@@ -158,7 +159,7 @@ public abstract class DefaultResourceProcessor implements IResourceProcessor {
 		}
 
 		//Let subclasses parse any add'l settings they need
-		if (loadSettings(pkg.resourcePath(resourceName), pkg, xpath, node, varproc)) {
+		if (loadSettings(pkg.resourcePath(resourceName), pkg, xpath, node, document, varproc, factory)) {
 			//Ask for the size if settings were successfully loaded
 			size = requestSize();
 			loaded = true;
@@ -169,8 +170,8 @@ public abstract class DefaultResourceProcessor implements IResourceProcessor {
 	}
 
 	@Override
-	public boolean process(final String fullResourceName, final IResourcePackage pkg, final IResourceProgressListener progress) {
-		final boolean ret = processResource(fullResourceName, pkg, progress);
+	public boolean process(final String fullResourceName, final IResourcePackage pkg, final IResourceFilter filter, final IResourceProgressListener progress) {
+		final boolean ret = processResource(fullResourceName, pkg, filter, progress);
 		if (ret)
 			processed = true;
 		return ret;
@@ -178,6 +179,6 @@ public abstract class DefaultResourceProcessor implements IResourceProcessor {
 	//</editor-fold>
 
 	protected long requestSize() { return size; }
-	protected abstract boolean loadSettings(final String fullResourceName, final IResourcePackage pkg, final XPath xpath, final Node node, final IVariableProcessor varproc) throws XPathException;
-	protected abstract boolean processResource(final String fullResourceName, final IResourcePackage pkg, final IResourceProgressListener progress);
+	protected abstract boolean loadSettings(final String fullResourceName, final IResourcePackage pkg, final XPath xpath, final Node node, final Document document, final IVariableProcessor varproc, final ResourceProcessorFactory factory) throws XPathException;
+	protected abstract boolean processResource(final String fullResourceName, final IResourcePackage pkg, final IResourceFilter filter, final IResourceProgressListener progress);
 }

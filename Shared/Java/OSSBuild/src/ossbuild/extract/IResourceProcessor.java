@@ -3,6 +3,7 @@ package ossbuild.extract;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
@@ -29,7 +30,6 @@ public interface IResourceProcessor {
 
 	boolean isLoaded();
 	boolean isProcessed();
-	
-	boolean load(final IResourcePackage pkg, final XPath xpath, final Node node, final IVariableProcessor varproc) throws XPathException;
-	boolean process(final String fullResourceName, final IResourcePackage pkg, final IResourceProgressListener progress);
+	boolean load(final IResourcePackage pkg, final XPath xpath, final Node node, final Document document, final IVariableProcessor varproc, final ResourceProcessorFactory processorFactory) throws XPathException;
+	boolean process(final String fullResourceName, final IResourcePackage pkg, final IResourceFilter filter, final IResourceProgressListener progress);
 }

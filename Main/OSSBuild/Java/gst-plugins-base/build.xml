@@ -175,7 +175,6 @@
 
 				<include name="*gsttcp*.*" />
 				<include name="*gstalsa*.*" />
-				<include name="*gstalsaspdif*.*" />
 			</fileset>
 			<fileset dir="${build.bin.dir}/plugins/" erroronmissingdir="false">
 				<include name="*gstadder*.*" />
@@ -205,7 +204,6 @@
 
 				<include name="*gsttcp*.*" />
 				<include name="*gstalsa*.*" />
-				<include name="*gstalsaspdif*.*" />
 			</fileset>
 		</copy>
 		

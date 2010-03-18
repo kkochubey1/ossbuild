@@ -40,11 +40,6 @@
 		<File resource="libgstnet-${GstApiVersion}.so.0"             executable="true" />
 		<File resource="libgstbase-${GstApiVersion}.so.0"            executable="true" />
 		<!--
-		<File resource="libgstbasevideo-${GstApiVersion}.so.0"       executable="true" />
-		<File resource="libgstsignalprocessor-${GstApiVersion}.so.0" executable="true" />
-		<File resource="libgstphotography-${GstApiVersion}.so.0"     executable="true" />
-		-->
-		<!--
 		<File resource="libgstgl-${GstApiVersion}.so.0"              executable="true" />
 		<File resource="libgstfarsight-${GstApiVersion}.so.0"        executable="true" />
 		-->

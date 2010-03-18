@@ -14,6 +14,7 @@ public interface IVariableProcessor {
 	boolean removeVariable(final String Name);
 	boolean clearVariables();
 
+	boolean hasVariable(final String Name);
 	String findValue(final String Name);
 	String process(final String Value);
 }

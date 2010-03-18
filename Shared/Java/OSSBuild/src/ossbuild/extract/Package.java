@@ -251,7 +251,7 @@ public class Package implements IResourcePackage {
 		//create a resource processor, and then add it to our list.
 		for(int i = 0; i < lst.getLength() && (childNode = lst.item(i)) != null; ++i) {
 			if ((processor = processorFactory.createProcessor(childNode.getNodeName())) != null) {
-				if (processor.load(this, xpath, childNode, variableProcessor))
+				if (processor.load(this, xpath, childNode, document, variableProcessor, processorFactory))
 					processors.add(processor);
 			}
 		}

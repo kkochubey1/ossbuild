@@ -4,13 +4,16 @@ package ossbuild.extract.processors;
 import java.io.File;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import ossbuild.StringUtil;
 import ossbuild.extract.DefaultResourceProcessor;
+import ossbuild.extract.IResourceFilter;
 import ossbuild.extract.IResourcePackage;
 import ossbuild.extract.IResourceProgressListener;
 import ossbuild.extract.IVariableProcessor;
 import ossbuild.extract.ResourceProcessor;
+import ossbuild.extract.ResourceProcessorFactory;
 import ossbuild.extract.ResourceUtils;
 
 /**
@@ -57,7 +60,7 @@ public class FileProcessor extends DefaultResourceProcessor {
 	//</editor-fold>
 	
 	@Override
-	protected boolean loadSettings(final String fullResourceName, final IResourcePackage pkg, final XPath xpath, final Node node, final IVariableProcessor varproc) throws XPathException {
+	protected boolean loadSettings(final String fullResourceName, final IResourcePackage pkg, final XPath xpath, final Node node, final Document document, final IVariableProcessor varproc, final ResourceProcessorFactory factory) throws XPathException {
 		this.size = ResourceUtils.sizeFromResource(fullResourceName);
 		this.executable = boolAttributeValue(varproc, false, node, ATTRIBUTE_EXECUTABLE);
 		
@@ -65,7 +68,7 @@ public class FileProcessor extends DefaultResourceProcessor {
 	}
 
 	@Override
-	protected boolean processResource(final String fullResourceName, final IResourcePackage pkg, final IResourceProgressListener progress) {
+	protected boolean processResource(final String fullResourceName, final IResourcePackage pkg, final IResourceFilter filter, final IResourceProgressListener progress) {
 		final File dest = pkg.filePath(subDirectory, destName);
 		
 		if (!ResourceUtils.extractResource(fullResourceName, dest, shouldBeTransient))
