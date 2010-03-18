@@ -1,4 +1,4 @@
-#summary Describes official OSSBuild test procedures for ensuring a high quality stable release.
+#summary Official OSSBuild Test Procedures
 #labels Phase-QA
 
 = Introduction =
