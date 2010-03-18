@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gst-plugins-bad">
+
+	<References>
+		<Add name="base" />
+		<Add name="glib" />
+		<Add name="xml" />
+		<Add name="fonts" />
+		<Add name="images" />
+		<Add name="graphics" />
+		<Add name="sdl" />
+	</References>
+	
+	<Extract package="resources.gstbad.${lic}.windows.x86" directory="${tmp}/ossbuild/">
+		<Echo key="res.gstbad.init" msg="Initializing GStreamer plugins..." />
+		
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<File resource="libgstbasevideo-${GstApiVersion}.dll" />
+		<File resource="libgstsignalprocessor-${GstApiVersion}.dll" />
+		<File resource="libgstphotography-${GstApiVersion}.dll" />
+		
+		<Library resource="libcelt-0.dll" />
+		<Library resource="libmms-0.dll" />
+		<Library resource="libschroedinger-1.0-0.dll" />
+		<Library resource="libneon-27.dll" />
+		<!--
+		<Library resource="libcroco-0.6-3.dll" />
+		<Library resource="libgsf-1-114.dll" />
+		<Library resource="libgsf-win32-1-114.dll" />
+		<Library resource="librsvg-2-2.dll" />
+		-->
+
+		<IfDef var="lic" value="gpl">
+			<Library resource="libdca-0.dll" />
+			<Library resource="libfaac-0.dll" />
+			<Library resource="libfaad-2.dll" />
+			<Library resource="xvidcore.dll" />
+			<Library resource="libdvdread-4.dll" />
+			<Library resource="libdvdnav-4.dll" />
+			<Library resource="libdvdnavmini-4.dll" />
+			<Library resource="libdvdcss-2.dll" />
+		</IfDef>
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<File resource="libgstaiff.dll" />
+		<File resource="libgstasfmux.dll" />
+		<File resource="libgstautoconvert.dll" />
+		<File resource="libgstbayer.dll" />
+		<File resource="libgstbz2.dll" />
+		<File resource="libgstcamerabin.dll" />
+		<File resource="libgstcdxaparse.dll" />
+		<File resource="libgstcelt.dll" />
+		<File resource="libgstdirectdraw.dll" />
+		<File resource="libgstdirectsoundsrc.dll" />
+		<File resource="libgstdshowdecwrapper.dll" />
+		<File resource="libgstdshowsrcwrapper.dll" />
+		<File resource="libgstdshowvideosink.dll" />
+		<File resource="libgstdtmf.dll" />
+		<File resource="libgstdvdspu.dll" />
+		<File resource="libgstfreeze.dll" />
+		<File resource="libgstfrei0r.dll" />
+		<File resource="libgsth264parse.dll" />
+		<File resource="libgsthdvparse.dll" />
+		<File resource="libgstlegacyresample.dll" />
+		<File resource="libgstliveadder.dll" />
+		<File resource="libgstmms.dll" />
+		<File resource="libgstmpeg4videoparse.dll" />
+		<File resource="libgstmpegdemux.dll" />
+		<File resource="libgstmpegpsmux.dll" />
+		<File resource="libgstmpegtsmux.dll" />
+		<File resource="libgstmpegvideoparse.dll" />
+		<File resource="libgstmve.dll" />
+		<File resource="libgstmxf.dll" />
+		<File resource="libgstneonhttpsrc.dll" />
+		<File resource="libgstnuvdemux.dll" />
+		<File resource="libgstpcapparse.dll" />
+		<File resource="libgstpnm.dll" />
+		<File resource="libgstqtmux.dll" />
+		<File resource="libgstrawparse.dll" />
+		<File resource="libgstreal.dll" />
+		<File resource="libgstrtpmux.dll" />
+		<File resource="libgstscaletempoplugin.dll" />
+		<File resource="libgstschro.dll" />
+		<File resource="libgstsdl.dll" />
+		<File resource="libgstsdpelem.dll" />
+		<File resource="libgstselector.dll" />
+		<File resource="libgstsiren.dll" />
+		<File resource="libgstspeed.dll" />
+		<File resource="libgststereo.dll" />
+		<File resource="libgstsubenc.dll" />
+		<File resource="libgsttta.dll" />
+		<File resource="libgstvalve.dll" />
+		<File resource="libgstvideomeasure.dll" />
+		<File resource="libgstvideosignal.dll" />
+		<File resource="libgstvmnc.dll" />
+		<File resource="libgstwasapi.dll" />
+		<File resource="libgstwininet.dll" />
+		<File resource="libgstwinks.dll" />
+		<File resource="libgstwinscreencap.dll" />
+		<!--
+		<File resource="libgstrsvg.dll" />
+		-->
+
+		<IfDef var="lic" value="gpl">
+			<File resource="libgstdtsdec.dll" />
+			<File resource="libgstfaac.dll" />
+			<File resource="libgstfaad.dll" />
+			<File resource="libgstxvid.dll" />
+			<File resource="libresindvd.dll" />
+		</IfDef>
+	</Extract>
+
+</Resources>

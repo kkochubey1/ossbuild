@@ -30,12 +30,15 @@
 
 		<File resource="fake.png" subDirectory="." destName="fake2.png" title="" description="" />
 
-		<Library resource="jnidispatch.dll" transient="true" subDirectory="test/test/" destName="test.dll" title="Test library" description="Test description">
-			<SystemAttempt>jnidispatch.dll</SystemAttempt>
-		</Library>
+		<IfNotDef var="some_test_var">
+			<Library resource="jnidispatch.dll" transient="true" subDirectory="test/test/" destName="test.dll" title="Test library" description="Test description">
+				<SystemAttempt>jnidispatch.dll</SystemAttempt>
+			</Library>
+		</IfNotDef>
 
-		<File resource="test.txt" subDirectory="test/test" destName="test2.txt" />
-
+		<IfDef var="saved_pkg">
+			<File resource="test.txt" subDirectory="test/test" destName="test2.txt" />
+		</IfDef>
 	</Extract>
 
 </Resources>

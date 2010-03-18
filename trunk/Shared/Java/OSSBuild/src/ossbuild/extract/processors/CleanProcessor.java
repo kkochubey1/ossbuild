@@ -4,13 +4,16 @@ package ossbuild.extract.processors;
 import java.io.File;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathException;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import ossbuild.StringUtil;
 import ossbuild.extract.DefaultResourceProcessor;
+import ossbuild.extract.IResourceFilter;
 import ossbuild.extract.IResourcePackage;
 import ossbuild.extract.IResourceProgressListener;
 import ossbuild.extract.IVariableProcessor;
 import ossbuild.extract.ResourceProcessor;
+import ossbuild.extract.ResourceProcessorFactory;
 import ossbuild.extract.ResourceUtils;
 
 /**
@@ -53,14 +56,14 @@ public class CleanProcessor extends DefaultResourceProcessor {
 	//</editor-fold>
 	
 	@Override
-	protected boolean loadSettings(final String fullResourceName, final IResourcePackage pkg, final XPath xpath, final Node node, final IVariableProcessor varproc) throws XPathException {
+	protected boolean loadSettings(final String fullResourceName, final IResourcePackage pkg, final XPath xpath, final Node node, final Document document, final IVariableProcessor varproc, final ResourceProcessorFactory factory) throws XPathException {
 		this.directory = stringAttributeValue(varproc, StringUtil.empty, node, ATTRIBUTE_DIRECTORY);
 		
 		return true;
 	}
 
 	@Override
-	protected boolean processResource(final String fullResourceName, final IResourcePackage pkg, final IResourceProgressListener progress) {
+	protected boolean processResource(final String fullResourceName, final IResourcePackage pkg, final IResourceFilter filter, final IResourceProgressListener progress) {
 		final String dir = StringUtil.isNullOrEmpty(directory) || ".".equalsIgnoreCase(directory) ? pkg.getDirectory() : directory;
 		if (StringUtil.isNullOrEmpty(dir))
 			return true;

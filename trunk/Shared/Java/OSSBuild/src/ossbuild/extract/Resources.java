@@ -652,7 +652,7 @@ public class Resources {
 
 					//Here we go!
 					//If this was already processed, then skip the processing again
-					if (p.isProcessed() || p.process(resourceName, pkg, progress)) {
+					if (p.isProcessed() || p.process(resourceName, pkg, filter, progress)) {
 						totalBytes += p.getSize();
 						title = (p instanceof DefaultResourceProcessor ? ((DefaultResourceProcessor)p).getTitle() : p.getName());
 						if (StringUtil.isNullOrEmpty(title))

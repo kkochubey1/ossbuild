@@ -65,6 +65,11 @@ public class DefaultVariableProcessor implements IVariableProcessor {
 	}
 
 	@Override
+	public boolean hasVariable(final String Name) {
+		return (vars != null && !vars.isEmpty() && vars.containsKey(Name));
+	}
+
+	@Override
 	public String findValue(final String Name) {
 		if (vars.isEmpty() || !vars.containsKey(Name))
 			return null;

@@ -77,7 +77,6 @@
 
 		<File resource="libgsttcp.so"                                executable="true" />
 		<File resource="libgstalsa.so"                               executable="true" />
-		<File resource="libgstalsaspdif.so"                          executable="true" />
 	</Extract>
 
 </Resources>

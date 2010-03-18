@@ -9,6 +9,11 @@
 		allows us to use Sys.loadNativeResources() with just one call. It
 		also means we can mix and match plugin jars if they are or aren't
 		on the classpath.
+
+		We take advantage of the fact that non-existent references are
+		silently ignored and use this package to reference any other
+		GStreamer plugin resource packages it happens to find in the
+		classpath.
 	-->
 	<References>
 		<Add name="base" />
@@ -51,11 +56,6 @@
 		<File resource="libgstdataprotocol-${GstApiVersion}.dll" />
 		<File resource="libgstnet-${GstApiVersion}.dll" />
 		<File resource="libgstbase-${GstApiVersion}.dll" />
-		<!--
-		<File resource="libgstbasevideo-${GstApiVersion}.dll" />
-		<File resource="libgstsignalprocessor-${GstApiVersion}.dll" />
-		<File resource="libgstphotography-${GstApiVersion}.dll" />
-		-->
 		<!--
 		<File resource="libgstgl-${GstApiVersion}.dll" />
 		<File resource="libgstfarsight-${GstApiVersion}.dll" />
