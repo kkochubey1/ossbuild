@@ -1,5 +1,5 @@
 
-package ossbuild.gstbad;
+package ossbuild.gstugly;
 
 import ossbuild.StringUtil;
 import ossbuild.Sys;
@@ -16,11 +16,11 @@ import ossbuild.init.RegistryReference;
 public final class Register extends RegistryReference {
 	//<editor-fold defaultstate="collapsed" desc="Constants">
 	public static final String
-		  REGISTRY_NAME             = "gst-plugins-bad"
+		  REGISTRY_NAME             = "gst-plugins-ugly"
 	;
 
 	public static final String
-		  RESOURCE_PKG_PREFIX       = "resources.gstbad"
+		  RESOURCE_PKG_PREFIX       = "resources.gstugly"
 	;
 
 	public static final String

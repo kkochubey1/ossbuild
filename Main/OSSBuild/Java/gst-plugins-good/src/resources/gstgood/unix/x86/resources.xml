@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gst-plugins-good">
+
+	<References>
+		<Add name="base" />
+		<Add name="glib" />
+		<Add name="xml" />
+		<Add name="fonts" />
+		<Add name="images" />
+		<Add name="graphics" />
+		<Add name="crypto" />
+		<Add name="gst-plugins-base" />
+	</References>
+	
+	<Extract package="resources.gstgood.unix.x86" directory="${tmp}/ossbuild/">
+		<Echo key="res.gstgood.init" msg="Initializing GStreamer good plugins..." />
+
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<Library resource="libsoup-2.4.so.1"        executable="true" />
+		<Library resource="libspeex.so.1"           executable="true" />
+		<Library resource="libspeexdsp.so.1"        executable="true" />
+		<Library resource="libwavpack.so.1"         executable="true" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<!-- gst -->
+		<File resource="libgstalpha.so"             executable="true" />
+		<File resource="libgstalphacolor.so"        executable="true" />
+		<File resource="libgstapetag.so"            executable="true" />
+		<File resource="libgstaudiofx.so"           executable="true" />
+		<File resource="libgstauparse.so"           executable="true" />
+		<File resource="libgstautodetect.so"        executable="true" />
+		<File resource="libgstavi.so"               executable="true" />
+		<File resource="libgstcutter.so"            executable="true" />
+		<File resource="libgstdebug.so"             executable="true" />
+		<File resource="libgstnavigationtest.so"    executable="true" />
+		<File resource="libgstdeinterlace.so"       executable="true" />
+		<File resource="libgsteffectv.so"           executable="true" />
+		<File resource="libgstequalizer.so"         executable="true" />
+		<File resource="libgstflv.so"               executable="true" />
+		<File resource="libgstflxdec.so"            executable="true" />
+		<File resource="libgstgoom.so"              executable="true" />
+		<File resource="libgstgoom2k1.so"           executable="true" />
+		<File resource="libgsticydemux.so"          executable="true" />
+		<File resource="libgstid3demux.so"          executable="true" />
+		<File resource="libgstinterleave.so"        executable="true" />
+		<File resource="libgstalaw.so"              executable="true" />
+		<File resource="libgstmulaw.so"             executable="true" />
+		<File resource="libgstlevel.so"             executable="true" />
+		<File resource="libgstmatroska.so"          executable="true" />
+		<File resource="libgstmonoscope.so"         executable="true" />
+		<File resource="libgstmultifile.so"         executable="true" />
+		<File resource="libgstmultipart.so"         executable="true" />
+		<File resource="libgstqtdemux.so"           executable="true" />
+		<File resource="libgstreplaygain.so"        executable="true" />
+		<File resource="libgstrtp.so"               executable="true" />
+		<File resource="libgstrtpmanager.so"        executable="true" />
+		<File resource="libgstrtsp.so"              executable="true" />
+		<File resource="libgstshapewipe.so"         executable="true" />
+		<File resource="libgstsmpte.so"             executable="true" />
+		<File resource="libgstspectrum.so"          executable="true" />
+		<File resource="libgstudp.so"               executable="true" />
+		<File resource="libgstvideobox.so"          executable="true" />
+		<File resource="libgstvideocrop.so"         executable="true" />
+		<File resource="libgstvideoflip.so"         executable="true" />
+		<File resource="libgstvideobalance.so"      executable="true" />
+		<File resource="libgstgamma.so"             executable="true" />
+		<File resource="libgstvideomixer.so"        executable="true" />
+		<File resource="libgstwaveenc.so"           executable="true" />
+		<File resource="libgstwavparse.so"          executable="true" />
+		<File resource="libgsty4menc.so"            executable="true" />
+
+		<!-- ext -->
+		<File resource="libgstannodex.so"           executable="true" />
+		<File resource="libgstpulse.so"             executable="true" />
+		<File resource="libgstcairo.so"             executable="true" />
+		<File resource="libgstjpeg.so"              executable="true" />
+		<File resource="libgstpng.so"               executable="true" />
+		<File resource="libgstsouphttpsrc.so"       executable="true" />
+		<File resource="libgstspeex.so"             executable="true" />
+		<File resource="libgstwavpack.so"           executable="true" />
+
+		<!-- sys -->
+		<File resource="libgstossaudio.so"          executable="true" />
+		<File resource="libgstoss4audio.so"         executable="true" />
+		<File resource="libgstvideo4linux2.so"      executable="true" />
+		<File resource="libgstximagesrc.so"         executable="true" />
+
+		<!-- excluded -->
+		<!--
+		<File resource="libgstgdkpixbuf.so" />
+		-->
+	</Extract>
+
+</Resources>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gst-plugins-ugly">
+
+	<References>
+		<Add name="base" />
+		<Add name="glib" />
+		<Add name="xml" />
+		<Add name="fonts" />
+		<Add name="images" />
+		<Add name="graphics" />
+		<Add name="gst-plugins-base" />
+		<Add name="gst-plugins-bad" />
+	</References>
+	
+	<Extract package="resources.gstugly.${lic}.windows.x86" directory="${tmp}/ossbuild/">
+		<Echo key="res.gstugly.init" msg="Initializing GStreamer ugly plugins..." />
+		
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<IfDef var="lic" value="gpl">
+			<Library resource="liba52-0.dll" />
+			<Library resource="libmp3lame-0.dll" />
+			<Library resource="libmpeg2-0.dll" />
+			<Library resource="libmpeg2convert-0.dll" />
+			<Library resource="libx264-67.dll" />
+		</IfDef>
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<File resource="libgstasf.dll" />
+		<File resource="libgstdvdlpcmdec.dll" />
+		<File resource="libgstdvdsub.dll" />
+		<File resource="libgstiec958.dll" />
+		<File resource="libgstmpegaudioparse.dll" />
+		<File resource="libgstmpegstream.dll" />
+		<File resource="libgstrmdemux.dll" />
+		<File resource="libgstsynaesthesia.dll" />
+
+		<IfDef var="lic" value="gpl">
+			<File resource="libgsta52dec.dll" />
+			<File resource="libgstdvdread.dll" />
+			<File resource="libgstlame.dll" />
+			<File resource="libgstmpeg2dec.dll" />
+			<File resource="libgstx264.dll" />
+		</IfDef>
+	</Extract>
+
+</Resources>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gst-plugins-good">
+
+	<References>
+		<Add name="base" />
+		<Add name="glib" />
+		<Add name="xml" />
+		<Add name="fonts" />
+		<Add name="images" />
+		<Add name="graphics" />
+		<Add name="crypto" />
+		<Add name="gst-plugins-base" />
+	</References>
+	
+	<Extract package="resources.gstgood.windows.x86" directory="${tmp}/ossbuild/">
+		<Echo key="res.gstgood.init" msg="Initializing GStreamer good plugins..." />
+		
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<Library resource="libsoup-2.4-1.dll" />
+		<Library resource="libspeex-1.dll" />
+		<Library resource="libspeexdsp-1.dll" />
+		<Library resource="libwavpack-1.dll" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<!-- gst -->
+		<File resource="libgstalpha.dll" />
+		<File resource="libgstalphacolor.dll" />
+		<File resource="libgstapetag.dll" />
+		<File resource="libgstaudiofx.dll" />
+		<File resource="libgstauparse.dll" />
+		<File resource="libgstautodetect.dll" />
+		<File resource="libgstavi.dll" />
+		<File resource="libgstcutter.dll" />
+		<File resource="libgstdebug.dll" />
+		<File resource="libgstnavigationtest.dll" />
+		<File resource="libgstdeinterlace.dll" />
+		<File resource="libgsteffectv.dll" />
+		<File resource="libgstequalizer.dll" />
+		<File resource="libgstflv.dll" />
+		<File resource="libgstflxdec.dll" />
+		<File resource="libgsticydemux.dll" />
+		<File resource="libgstid3demux.dll" />
+		<File resource="libgstinterleave.dll" />
+		<File resource="libgstalaw.dll" />
+		<File resource="libgstmulaw.dll" />
+		<File resource="libgstlevel.dll" />
+		<File resource="libgstmatroska.dll" />
+		<File resource="libgstmonoscope.dll" />
+		<File resource="libgstmultifile.dll" />
+		<File resource="libgstmultipart.dll" />
+		<File resource="libgstqtdemux.dll" />
+		<File resource="libgstreplaygain.dll" />
+		<File resource="libgstrtp.dll" />
+		<File resource="libgstrtpmanager.dll" />
+		<File resource="libgstrtsp.dll" />
+		<File resource="libgstshapewipe.dll" />
+		<File resource="libgstsmpte.dll" />
+		<File resource="libgstspectrum.dll" />
+		<File resource="libgstudp.dll" />
+		<File resource="libgstvideobox.dll" />
+		<File resource="libgstvideocrop.dll" />
+		<File resource="libgstvideoflip.dll" />
+		<File resource="libgstvideobalance.dll" />
+		<File resource="libgstgamma.dll" />
+		<File resource="libgstvideomixer.dll" />
+		<File resource="libgstwaveenc.dll" />
+		<File resource="libgstwavparse.dll" />
+		<File resource="libgsty4menc.dll" />
+
+		<!-- ext -->
+		<File resource="libgstcairo.dll" />
+		<File resource="libgstjpeg.dll" />
+		<File resource="libgstpng.dll" />
+		<File resource="libgstsouphttpsrc.dll" />
+		<File resource="libgstspeex.dll" />
+		<File resource="libgstwavpack.dll" />
+
+		<!-- sys -->
+		<File resource="libgstwaveformsink.dll" />
+		<File resource="libgstdirectsound.dll" />
+
+		<!-- excluded -->
+		<!--
+		<File resource="libgstgdkpixbuf.dll" />
+		-->
+	</Extract>
+
+</Resources>
