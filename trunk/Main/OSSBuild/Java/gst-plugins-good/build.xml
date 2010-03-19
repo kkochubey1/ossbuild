@@ -7,13 +7,13 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="OSSBuild :: Resource Package :: GStreamer :: Bad" default="default" basedir=".">
+<project name="OSSBuild :: Resource Package :: GStreamer :: Good" default="default" basedir=".">
     <description>Builds, tests, and runs the project.</description>
     <import file="nbproject/build-impl.xml"/>
 
 	<target name="-post-init">
-		<property name="project.jarpart.name" value="gst-plugins-bad" />
-		<property name="project.package.name" value="gstbad" />
+		<property name="project.jarpart.name" value="gst-plugins-good" />
+		<property name="project.package.name" value="gstgood" />
 
 		<property name="gst-api-version" value="0.10" />
 		<property name="pkg-gst-api-version" value="0_10" />
@@ -59,13 +59,13 @@
 		<property name="shared.lib.dir" location="${shared.platform.dir}/lib" />
 		<property name="shared.etc.dir" location="${shared.platform.dir}/etc" />
 
-		<property name="src.java.gpl.platform.dir" location="${build.classes.dir}/resources/${project.package.name}/gpl/${os}/${arch}" />
+		<property name="src.java.gpl.platform.dir" location="${build.classes.dir}/resources/${project.package.name}/${os}/${arch}" />
 		<property name="src.java.gpl.platform.bin.dir" location="${src.java.gpl.platform.dir}/bin" />
 		<property name="src.java.gpl.platform.lib.dir" location="${src.java.gpl.platform.dir}/lib" />
 		<property name="src.java.gpl.platform.etc.dir" location="${src.java.gpl.platform.dir}/etc" />
 		<property name="src.java.gpl.platform.share.dir" location="${src.java.gpl.platform.dir}/share" />
 
-		<property name="src.java.lgpl.platform.dir" location="${build.classes.dir}/resources/${project.package.name}/lgpl/${os}/${arch}" />
+		<property name="src.java.lgpl.platform.dir" location="${build.classes.dir}/resources/${project.package.name}/${os}/${arch}" />
 		<property name="src.java.lgpl.platform.bin.dir" location="${src.java.lgpl.platform.dir}/bin" />
 		<property name="src.java.lgpl.platform.lib.dir" location="${src.java.lgpl.platform.dir}/lib" />
 		<property name="src.java.lgpl.platform.etc.dir" location="${src.java.lgpl.platform.dir}/etc" />
@@ -74,13 +74,13 @@
 		<property name="build.java.gpl.dir" location="${build.platform.dir}/java/gpl" />
 		<property name="build.java.lgpl.dir" location="${build.platform.dir}/java/lgpl" />
 
-		<property name="build.java.gpl.platform.dir" location="${build.java.gpl.dir}/resources/${project.package.name}/gpl/${os}/${arch}" />
+		<property name="build.java.gpl.platform.dir" location="${build.java.gpl.dir}/resources/${project.package.name}/${os}/${arch}" />
 		<property name="build.java.gpl.platform.bin.dir" location="${build.java.gpl.platform.dir}/bin" />
 		<property name="build.java.gpl.platform.lib.dir" location="${build.java.gpl.platform.dir}/lib" />
 		<property name="build.java.gpl.platform.etc.dir" location="${build.java.gpl.platform.dir}/etc" />
 		<property name="build.java.gpl.platform.share.dir" location="${build.java.gpl.platform.dir}/share" />
 
-		<property name="build.java.lgpl.platform.dir" location="${build.java.lgpl.dir}/resources/${project.package.name}/lgpl/${os}/${arch}" />
+		<property name="build.java.lgpl.platform.dir" location="${build.java.lgpl.dir}/resources/${project.package.name}/${os}/${arch}" />
 		<property name="build.java.lgpl.platform.bin.dir" location="${build.java.lgpl.platform.dir}/bin" />
 		<property name="build.java.lgpl.platform.lib.dir" location="${build.java.lgpl.platform.dir}/lib" />
 		<property name="build.java.lgpl.platform.etc.dir" location="${build.java.lgpl.platform.dir}/etc" />
@@ -103,7 +103,7 @@
 
 		<property name="platform.dir" location="${top.deployment.dir}" />
 		<property name="platform.gpl.jar.name" value="resources-native-${os}-${arch}-${project.jarpart.name}-gpl.jar" />
-		<property name="platform.lgpl.jar.name" value="resources-native-${os}-${arch}-${project.jarpart.name}-lgpl.jar" />
+		<property name="platform.lgpl.jar.name" value="resources-native-${os}-${arch}-${project.jarpart.name}.jar" />
 		<property name="platform.lgpl.jar" location="${platform.dir}/${platform.lgpl.jar.name}" />
 		<property name="platform.gpl.jar" location="${platform.dir}/${platform.gpl.jar.name}" />
 
@@ -118,27 +118,7 @@
 
 	<target name="-platform-jar">
 		<antcall target="-platform-lic-jar">
-			<param name="lic" value="gpl" />
-			<param name="add.gpl" value="true" />
-
-			<param name="platform.lic.jar" value="${platform.gpl.jar}" />
-			<param name="platform.lic.build.java.dir" value="${build.java.gpl.dir}" />
-
-			<param name="build.java.platform.dir" value="${build.java.gpl.platform.dir}" />
-			<param name="build.java.platform.bin.dir" value="${build.java.gpl.platform.bin.dir}" />
-			<param name="build.java.platform.lib.dir" value="${build.java.gpl.platform.lib.dir}" />
-			<param name="build.java.platform.etc.dir" value="${build.java.gpl.platform.etc.dir}" />
-			<param name="build.java.platform.share.dir" value="${build.java.gpl.platform.share.dir}" />
-
-			<param name="src.java.platform.dir" value="${src.java.gpl.platform.dir}" />
-			<param name="src.java.platform.bin.dir" value="${src.java.gpl.platform.bin.dir}" />
-			<param name="src.java.platform.lib.dir" value="${src.java.gpl.platform.lib.dir}" />
-			<param name="src.java.platform.etc.dir" value="${src.java.gpl.platform.etc.dir}" />
-			<param name="src.java.platform.share.dir" value="${src.java.gpl.platform.share.dir}" />
-		</antcall>
-
-		<antcall target="-platform-lic-jar">
-			<param name="lic" value="lgpl" />
+			<param name="lic" value="" />
 			<param name="add.gpl" value="false" />
 
 			<param name="platform.lic.jar" value="${platform.lgpl.jar}" />
@@ -167,160 +147,148 @@
 
 		<copy todir="${build.java.platform.bin.dir}">
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
-				<include name="*gstbasevideo*.so.*" />
-				<include name="*gstsignalprocessor*.so.*" />
-				<include name="*gstphotography*.so.*" />
-			</fileset>
-			<fileset dir="${build.bin.dir}" erroronmissingdir="false">
-				<include name="*gstbasevideo*.dll" />
-				<include name="*gstsignalprocessor*.dll" />
-				<include name="*gstphotography*.dll" />
+				<include name="*soup*.so.*" />
+				<include name="*speex*.so.*" />
+				<include name="*wavpack*.so.*" />
 			</fileset>
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
-				<include name="*celt*.so.*" />
-				<include name="*mms*.so.*" />
-				<include name="*schroedinger*.so.*" />
-				<include name="*neon*.so.*" />
-				<!--
-				<include name="*croco*.so.*" />
-				<include name="*gsf*.so.*" />
-				<include name="*rsvg*.so.*" />
-				-->
-			</fileset>
-			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
-				<include name="*celt*.dll" />
-				<include name="*mms*.dll" />
-				<include name="*schroedinger*.dll" />
-				<include name="*neon*.dll" />
-				<!--
-				<include name="*croco*.dll" />
-				<include name="*gsf*.dll" />
-				<include name="*rsvg*.dll" />
-				-->
+				<include name="*soup*.dll" />
+				<include name="*speex*.dll" />
+				<include name="*wavpack*.dll" />
 			</fileset>
 		</copy>
 
 		<mkdir dir="${build.java.platform.lib.dir}/gstreamer_${pkg-gst-api-version}/" />
 		<copy todir="${build.java.platform.lib.dir}/gstreamer_${pkg-gst-api-version}/">
 			<fileset dir="${shared.lib.dir}/gstreamer-${gst-api-version}/" erroronmissingdir="false">
-				<include name="*gstaiff*.*" />
-				<include name="*gstasfmux*.*" />
-				<include name="*gstaudioconvert*.*" />
-				<include name="*gstbayer*.*" />
-				<include name="*gstbz2*.*" />
-				<include name="*gstcamerabin*.*" />
-				<include name="*gstcdxaparse*.*" />
-				<include name="*gstcelt*.*" />
-				<include name="*gstdtmf*.*" />
-				<include name="*gstdvdspu*.*" />
-				<include name="*gstfreeze*.*" />
-				<include name="*gstfrei0r*.*" />
-				<include name="*gsth264parse*.*" />
-				<include name="*gsthdvparse*.*" />
-				<include name="*gstlegacyresample*.*" />
-				<include name="*gstliveadder*.*" />
-				<include name="*gstmms*.*" />
-				<include name="*gstmpeg4videoparse*.*" />
-				<include name="*gstmpegdemux*.*" />
-				<include name="*gstmpegpsmux*.*" />
-				<include name="*gstmpegtsmux*.*" />
-				<include name="*gstmpegvideoparse*.*" />
-				<include name="*gstmve*.*" />
-				<include name="*gstmxf*.*" />
-				<include name="*gstneonhttpsrc*.*" />
-				<include name="*gstnuvdemux*.*" />
-				<include name="*gstpcapparse*.*" />
-				<include name="*gstpnm*.*" />
-				<include name="*gstqtmux*.*" />
-				<include name="*gstrawparse*.*" />
-				<include name="*gstreal*.*" />
-				<include name="*gstrtpmux*.*" />
-				<include name="*gstscaletempoplugin*.*" />
-				<include name="*gstschro*.*" />
-				<include name="*gstsdl*.*" />
-				<include name="*gstsdpelem*.*" />
-				<include name="*gstselector*.*" />
-				<include name="*gstsiren*.*" />
-				<include name="*gstspeed*.*" />
-				<include name="*gststereo*.*" />
-				<include name="*gstsubenc*.*" />
-				<include name="*gsttta*.*" />
-				<include name="*gstvalve*.*" />
-				<include name="*gstvideomeasure*.*" />
-				<include name="*gstvideosignal*.*" />
-				<include name="*gstvmnc*.*" />
-				<include name="*gstadpcmdec*.*" />
-				<include name="*gstalsaspdif*.*" />
-				<include name="*gstautoconvert*.*" />
-				<include name="*gstdccp*.*" />
-				<include name="*gstdebugutilsbad*.*" />
-				<include name="*gstfestival*.*" />
-				<include name="*gstid3tag*.*" />
-				<include name="*gstrfbsrc*.*" />
-				<include name="*gstnsf*.*" />
-				<!--
-				<include name="*gstrsvg*.*" />
-				-->
+				<!-- gst -->
+				<include name="*gstalpha*.*"              />
+				<include name="*gstalphacolor*.*"         />
+				<include name="*gstapetag*.*"             />
+				<include name="*gstaudiofx*.*"            />
+				<include name="*gstauparse*.*"            />
+				<include name="*gstautodetect*.*"         />
+				<include name="*gstavi*.*"                />
+				<include name="*gstcutter*.*"             />
+				<include name="*gstdebug*.*"              />
+				<include name="*gstnavigationtest*.*"     />
+				<include name="*gstdeinterlace*.*"        />
+				<include name="*gsteffectv*.*"            />
+				<include name="*gstequalizer*.*"          />
+				<include name="*gstflv*.*"                />
+				<include name="*gstflxdec*.*"             />
+				<include name="*gstgoom*.*"               />
+				<include name="*gstgoom2k1*.*"            />
+				<include name="*gsticydemux*.*"           />
+				<include name="*gstid3demux*.*"           />
+				<include name="*gstinterleave*.*"         />
+				<include name="*gstalaw*.*"               />
+				<include name="*gstmulaw*.*"              />
+				<include name="*gstlevel*.*"              />
+				<include name="*gstmatroska*.*"           />
+				<include name="*gstmonoscope*.*"          />
+				<include name="*gstmultifile*.*"          />
+				<include name="*gstmultipart*.*"          />
+				<include name="*gstqtdemux*.*"            />
+				<include name="*gstreplaygain*.*"         />
+				<include name="*gstrtp*.*"                />
+				<include name="*gstrtpmanager*.*"         />
+				<include name="*gstrtsp*.*"               />
+				<include name="*gstshapewipe*.*"          />
+				<include name="*gstsmpte*.*"              />
+				<include name="*gstspectrum*.*"           />
+				<include name="*gstudp*.*"                />
+				<include name="*gstvideobox*.*"           />
+				<include name="*gstvideocrop*.*"          />
+				<include name="*gstvideoflip*.*"          />
+				<include name="*gstvideobalance*.*"       />
+				<include name="*gstgamma*.*"              />
+				<include name="*gstvideomixer*.*"         />
+				<include name="*gstwaveenc*.*"            />
+				<include name="*gstwavparse*.*"           />
+				<include name="*gsty4menc*.*"             />
+
+				<!-- ext -->
+				<include name="*gstannodex*.*"            />
+				<include name="*gstpulse*.*"              />
+				<include name="*gstcairo*.*"              />
+				<include name="*gstjpeg*.*"               />
+				<include name="*gstpng*.*"                />
+				<include name="*gstsouphttpsrc*.*"        />
+				<include name="*gstspeex*.*"              />
+				<include name="*gstwavpack*.*"            />
+
+				<!-- sys -->
+				<include name="*gstossaudio*.*"           />
+				<include name="*gstoss4audio*.*"          />
+				<include name="*gstvideo4linux2*.*"       />
+				<include name="*gstximagesrc*.*"          />
+
+				<exclude name="*gstdebugutilsbad*.*"      />
+				<exclude name="*gstrtpdemux*.*"           />
+				<exclude name="*gstrtpjitterbuffer*.*"    />
+				<exclude name="*gstrtpmux*.*"             />
+				<exclude name="*gstrtppayloads*.*"        />
 			</fileset>
 			<fileset dir="${build.bin.dir}/plugins/" erroronmissingdir="false">
-				<include name="*gstaiff*.*" />
-				<include name="*gstasfmux*.*" />
-				<include name="*gstautoconvert*.*" />
-				<include name="*gstbayer*.*" />
-				<include name="*gstbz2*.*" />
-				<include name="*gstcamerabin*.*" />
-				<include name="*gstcdxaparse*.*" />
-				<include name="*gstcelt*.*" />
-				<include name="*gstdirectdraw*.*" />
-				<include name="*gstdirectsoundsrc*.*" />
-				<include name="*gstdshowdecwrapper*.*" />
-				<include name="*gstdshowsrcwrapper*.*" />
-				<include name="*gstdshowvideosink*.*" />
-				<include name="*gstdtmf*.*" />
-				<include name="*gstdvdspu*.*" />
-				<include name="*gstfreeze*.*" />
-				<include name="*gstfrei0r*.*" />
-				<include name="*gsth264parse*.*" />
-				<include name="*gsthdvparse*.*" />
-				<include name="*gstlegacyresample*.*" />
-				<include name="*gstliveadder*.*" />
-				<include name="*gstmms*.*" />
-				<include name="*gstmpeg4videoparse*.*" />
-				<include name="*gstmpegdemux*.*" />
-				<include name="*gstmpegpsmux*.*" />
-				<include name="*gstmpegtsmux*.*" />
-				<include name="*gstmpegvideoparse*.*" />
-				<include name="*gstmve*.*" />
-				<include name="*gstmxf*.*" />
-				<include name="*gstneonhttpsrc*.*" />
-				<include name="*gstnuvdemux*.*" />
-				<include name="*gstpcapparse*.*" />
-				<include name="*gstpnm*.*" />
-				<include name="*gstqtmux*.*" />
-				<include name="*gstrawparse*.*" />
-				<include name="*gstreal*.*" />
-				<include name="*gstrtpmux*.*" />
-				<include name="*gstscaletempoplugin*.*" />
-				<include name="*gstschro*.*" />
-				<include name="*gstsdl*.*" />
-				<include name="*gstsdpelem*.*" />
-				<include name="*gstselector*.*" />
-				<include name="*gstsiren*.*" />
-				<include name="*gstspeed*.*" />
-				<include name="*gststereo*.*" />
-				<include name="*gstsubenc*.*" />
-				<include name="*gsttta*.*" />
-				<include name="*gstvalve*.*" />
-				<include name="*gstvideomeasure*.*" />
-				<include name="*gstvideosignal*.*" />
-				<include name="*gstvmnc*.*" />
-				<include name="*gstwasapi*.*" />
-				<include name="*gstwininet*.*" />
-				<include name="*gstwinks*.*" />
-				<include name="*gstwinscreencap*.*" />
-				<!--
-				<include name="*gstrsvg*.*" />
-				-->
+				<!-- gst -->
+				<include name="*gstalpha*.*" />
+				<include name="*gstalphacolor*.*" />
+				<include name="*gstapetag*.*" />
+				<include name="*gstaudiofx*.*" />
+				<include name="*gstauparse*.*" />
+				<include name="*gstautodetect*.*" />
+				<include name="*gstavi*.*" />
+				<include name="*gstcutter*.*" />
+				<include name="*gstdebug*.*" />
+				<include name="*gstnavigationtest*.*" />
+				<include name="*gstdeinterlace*.*" />
+				<include name="*gsteffectv*.*" />
+				<include name="*gstequalizer*.*" />
+				<include name="*gstflv*.*" />
+				<include name="*gstflxdec*.*" />
+				<include name="*gsticydemux*.*" />
+				<include name="*gstid3demux*.*" />
+				<include name="*gstinterleave*.*" />
+				<include name="*gstalaw*.*" />
+				<include name="*gstmulaw*.*" />
+				<include name="*gstlevel*.*" />
+				<include name="*gstmatroska*.*" />
+				<include name="*gstmonoscope*.*" />
+				<include name="*gstmultifile*.*" />
+				<include name="*gstmultipart*.*" />
+				<include name="*gstqtdemux*.*" />
+				<include name="*gstreplaygain*.*" />
+				<include name="*gstrtp*.*" />
+				<include name="*gstrtpmanager*.*" />
+				<include name="*gstrtsp*.*" />
+				<include name="*gstshapewipe*.*" />
+				<include name="*gstsmpte*.*" />
+				<include name="*gstspectrum*.*" />
+				<include name="*gstudp*.*" />
+				<include name="*gstvideobox*.*" />
+				<include name="*gstvideocrop*.*" />
+				<include name="*gstvideoflip*.*" />
+				<include name="*gstvideobalance*.*" />
+				<include name="*gstgamma*.*" />
+				<include name="*gstvideomixer*.*" />
+				<include name="*gstwaveenc*.*" />
+				<include name="*gstwavparse*.*" />
+				<include name="*gsty4menc*.*" />
+
+				<!-- ext -->
+				<include name="*gstcairo*.*" />
+				<include name="*gstjpeg*.*" />
+				<include name="*gstpng*.*" />
+				<include name="*gstsouphttpsrc*.*" />
+				<include name="*gstspeex*.*" />
+				<include name="*gstwavpack*.*" />
+
+				<!-- sys -->
+				<include name="*gstwaveformsink*.*" />
+				<include name="*gstdirectsound*.*" />
+
+				<exclude name="*gstdirectsoundsrc*.*" />
 			</fileset>
 		</copy>
 		
@@ -333,46 +301,23 @@
 	</target>
 
 	<target name="-add-gpl-only" if="add.gpl.set">
+		<!--
 		<copy todir="${build.java.platform.bin.dir}">
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
-				<include name="*dca*.so.*" />
-				<include name="*dts*.so.*" />
-				<include name="*faac*.so.*" />
-				<include name="*faad*.so.*" />
-				<include name="*xvidcore*.so.*" />
-				<include name="*dvdread*.so.*" />
-				<include name="*dvdnav*.so.*" />
-				<include name="*dvdnavmini*.so.*" />
-				<include name="*dvdcss*.so.*" />
 			</fileset>
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
-				<include name="*dca*.dll" />
-				<include name="*faac*.dll" />
-				<include name="*faad*.dll" />
-				<include name="*xvidcore*.dll" />
-				<include name="*dvdread*.dll" />
-				<include name="*dvdnav*.dll" />
-				<include name="*dvdnavmini*.dll" />
-				<include name="*dvdcss*.dll" />
 			</fileset>
 		</copy>
+		-->
 
+		<!--
 		<copy todir="${build.java.platform.lib.dir}/gstreamer_${pkg-gst-api-version}/">
 			<fileset dir="${shared.lib.dir}/gstreamer-${gst-api-version}/" erroronmissingdir="false">
-				<include name="*gstdtsdec*.*" />
-				<include name="*gstfaac*.*" />
-				<include name="*gstfaad*.*" />
-				<include name="*gstxvid*.*" />
-				<include name="*resindvd*.*" />
 			</fileset>
 			<fileset dir="${build.bin.dir}/plugins/" erroronmissingdir="false">
-				<include name="*gstdtsdec*.*" />
-				<include name="*gstfaac*.*" />
-				<include name="*gstfaad*.*" />
-				<include name="*gstxvid*.*" />
-				<include name="*resindvd*.*" />
 			</fileset>
 		</copy>
+		-->
 	</target>
 
     <!--

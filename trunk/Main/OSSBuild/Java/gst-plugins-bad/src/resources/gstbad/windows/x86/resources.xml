@@ -10,10 +10,11 @@
 		<Add name="images" />
 		<Add name="graphics" />
 		<Add name="sdl" />
+		<Add name="gst-plugins-base" />
 	</References>
 	
 	<Extract package="resources.gstbad.${lic}.windows.x86" directory="${tmp}/ossbuild/">
-		<Echo key="res.gstbad.init" msg="Initializing GStreamer plugins..." />
+		<Echo key="res.gstbad.init" msg="Initializing GStreamer bad plugins..." />
 		
 		<!-- Set variables to hold the platform's base package name and the base directory -->
 		<Var name="pkgPlatform" value="${pkg}" />

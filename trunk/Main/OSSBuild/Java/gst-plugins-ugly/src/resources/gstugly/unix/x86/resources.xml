@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gst-plugins-ugly">
+
+	<References>
+		<Add name="base" />
+		<Add name="glib" />
+		<Add name="xml" />
+		<Add name="fonts" />
+		<Add name="images" />
+		<Add name="graphics" />
+		<Add name="gst-plugins-base" />
+		<Add name="gst-plugins-bad" />
+	</References>
+	
+	<Extract package="resources.gstugly.${lic}.unix.x86" directory="${tmp}/ossbuild/">
+		<Echo key="res.gstugly.init" msg="Initializing GStreamer ugly plugins..." />
+
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<IfDef var="lic" value="gpl">
+			<Library resource="liba52.so.0"             executable="true" />
+			<Library resource="libmp3lame.so.0"         executable="true" />
+			<Library resource="libmpeg2.so.0"           executable="true" />
+			<Library resource="libmpeg2convert.so.0"    executable="true" />
+			<Library resource="libx264.so.88"           executable="true" />
+		</IfDef>
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<File resource="libgstasf.so"                   executable="true" />
+		<File resource="libgstdvdlpcmdec.so"            executable="true" />
+		<File resource="libgstdvdsub.so"                executable="true" />
+		<File resource="libgstiec958.so"                executable="true" />
+		<File resource="libgstmpegaudioparse.so"        executable="true" />
+		<File resource="libgstmpegstream.so"            executable="true" />
+		<File resource="libgstrmdemux.so"               executable="true" />
+
+		<IfDef var="lic" value="gpl">
+			<File resource="libgsta52dec.so"            executable="true" />
+			<File resource="libgstdvdread.so"           executable="true" />
+			<File resource="libgstlame.so"              executable="true" />
+			<File resource="libgstmpeg2dec.so"          executable="true" />
+			<File resource="libgstx264.so"              executable="true" />
+		</IfDef>
+	</Extract>
+
+</Resources>
