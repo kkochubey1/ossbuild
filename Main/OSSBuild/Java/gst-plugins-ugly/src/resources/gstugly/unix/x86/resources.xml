@@ -3,17 +3,11 @@
 <Resources name="gst-plugins-ugly">
 
 	<References>
-		<Add name="base" />
-		<Add name="glib" />
-		<Add name="xml" />
-		<Add name="fonts" />
-		<Add name="images" />
-		<Add name="graphics" />
 		<Add name="gst-plugins-base" />
 		<Add name="gst-plugins-bad" />
 	</References>
 	
-	<Extract package="resources.gstugly.${lic}.unix.x86" directory="${tmp}/ossbuild/">
+	<Extract package="resources.gstugly.${lic}.unix.x86" directory="${nativeResDir}/">
 		<Echo key="res.gstugly.init" msg="Initializing GStreamer ugly plugins..." />
 
 		<!-- Set variables to hold the platform's base package name and the base directory -->

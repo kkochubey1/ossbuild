@@ -4,7 +4,7 @@
 
 	<References />
 	
-	<Extract package="resources.base.windows.x86" directory="${tmp}/ossbuild/">
+	<Extract package="resources.base.windows.x86" directory="${nativeResDir}/">
 		<Echo key="res.base.init" msg="Initializing base..." />
 
 		<!-- Set variables to hold the platform's base package name and the base directory -->

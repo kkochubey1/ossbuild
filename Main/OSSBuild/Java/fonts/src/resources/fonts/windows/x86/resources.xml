@@ -7,7 +7,7 @@
 		<Add name="xml" />
 	</References>
 	
-	<Extract package="resources.fonts.windows.x86" directory="${tmp}/ossbuild/">
+	<Extract package="resources.fonts.windows.x86" directory="${nativeResDir}/">
 		<Echo key="res.fonts.init" msg="Initializing font configuration..." />
 
 		<!-- Set variables to hold the platform's base package name and the base directory -->

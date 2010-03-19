@@ -7,7 +7,7 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="OSSBuild :: Resource Package :: GStreamer :: Good" default="default" basedir=".">
+<project name="OSSBuild :: Resource Package :: GStreamer :: Plugins :: Good" default="default" basedir=".">
     <description>Builds, tests, and runs the project.</description>
     <import file="nbproject/build-impl.xml"/>
 
@@ -59,6 +59,8 @@
 		<property name="shared.lib.dir" location="${shared.platform.dir}/lib" />
 		<property name="shared.etc.dir" location="${shared.platform.dir}/etc" />
 
+		<property name="src.java.platform.dir" location="${build.classes.dir}/resources/${project.package.name}/${os}/${arch}" />
+
 		<property name="src.java.gpl.platform.dir" location="${build.classes.dir}/resources/${project.package.name}/${os}/${arch}" />
 		<property name="src.java.gpl.platform.bin.dir" location="${src.java.gpl.platform.dir}/bin" />
 		<property name="src.java.gpl.platform.lib.dir" location="${src.java.gpl.platform.dir}/lib" />
@@ -108,10 +110,6 @@
 		<property name="platform.gpl.jar" location="${platform.dir}/${platform.gpl.jar.name}" />
 
 		<mkdir dir="${platform.dir}" />
-
-		<jar compress="true" destfile="${platform.dir}/resources-${project.jarpart.name}.jar">
-			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
-		</jar>
 
 		<antcall target="-platform-jar" />
 	</target>
@@ -297,7 +295,9 @@
 		</condition>
 		<antcall target="-add-gpl-only" />
 
-		<jar compress="true" destfile="${platform.lic.jar}" basedir="${platform.lic.build.java.dir}" />
+		<jar compress="true" destfile="${platform.lic.jar}" basedir="${platform.lic.build.java.dir}">
+			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
+		</jar>
 	</target>
 
 	<target name="-add-gpl-only" if="add.gpl.set">

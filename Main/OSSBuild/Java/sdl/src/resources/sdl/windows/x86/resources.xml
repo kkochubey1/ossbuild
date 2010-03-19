@@ -6,7 +6,7 @@
 		<Add name="base" />
 	</References>
 	
-	<Extract package="resources.sdl.windows.x86.bin" directory="${tmp}/ossbuild/bin/">
+	<Extract package="resources.sdl.windows.x86.bin" directory="${nativeResDir}/bin/">
 		<Echo key="res.sdl.init" msg="Initializing SDL..." />
 
 		<!-- Libraries -->

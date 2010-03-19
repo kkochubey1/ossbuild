@@ -42,7 +42,7 @@ public class PackageTest {
 	public void testRegistry() {
 		assertTrue(Sys.initializeRegistry());
 
-		assertTrue(Path.delete(Path.combine(Path.tempDirectory, "ossbuild/bin/")));
+		assertTrue(Path.delete(Path.combine(Path.nativeResourcesDirectory, "bin/")));
 		assertTrue(Sys.loadNativeResources(NativeResource.Base));
 		
 		//Shouldn't matter how many times we call this - it shouldn't do
@@ -50,11 +50,11 @@ public class PackageTest {
 		for(int i = 0; i < 100; ++i)
 			assertTrue(Sys.loadNativeResources(NativeResource.Base));
 
-		assertTrue(Path.exists(Path.combine(Path.tempDirectory, "ossbuild/bin/")));
+		assertTrue(Path.exists(Path.combine(Path.nativeResourcesDirectory, "bin/")));
 
 		final String sysPath = Sys.getEnvironmentVariable("PATH");
 		assertNotNull(sysPath);
-		assertTrue(sysPath.contains(Path.combine(Path.tempDirectory, "ossbuild/bin/").getAbsolutePath()));
+		assertTrue(sysPath.contains(Path.combine(Path.nativeResourcesDirectory, "bin/").getAbsolutePath()));
 		
 		assertTrue(Sys.cleanRegistry());
 	}

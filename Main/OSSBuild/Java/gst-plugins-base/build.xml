@@ -7,7 +7,7 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="OSSBuild :: Resource Package :: GStreamer :: Base" default="default" basedir=".">
+<project name="OSSBuild :: Resource Package :: GStreamer :: Plugins :: Base" default="default" basedir=".">
     <description>Builds, tests, and runs the project.</description>
     <import file="nbproject/build-impl.xml"/>
 
@@ -86,10 +86,6 @@
 		<property name="platform.jar" location="${platform.dir}/${platform.jar.name}" />
 
 		<mkdir dir="${platform.dir}" />
-
-		<jar compress="true" destfile="${platform.dir}/resources-${project.jarpart.name}.jar">
-			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
-		</jar>
 
 		<antcall target="-platform-jar" />
 	</target>
@@ -207,7 +203,9 @@
 			</fileset>
 		</copy>
 		
-		<jar compress="true" destfile="${platform.jar}" basedir="${build.java.dir}" />
+		<jar compress="true" destfile="${platform.jar}" basedir="${build.java.dir}">
+			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
+		</jar>
 	</target>
 
     <!--

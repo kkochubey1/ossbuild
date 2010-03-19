@@ -1,4 +1,4 @@
-package ossbuild.gst;
+package ossbuild.gstffmpeg;
 
 import java.io.File;
 import org.junit.After;
@@ -43,9 +43,14 @@ public class PackageTest {
 	public void testRegistry() {
 		assertTrue(Sys.initializeRegistry());
 
-		final File binDir = Path.combine(Path.tempDirectory, "ossbuild/bin/");
+		final File binDir = Path.combine(Path.nativeResourcesDirectory, "bin/");
+		final File etcDir = Path.combine(Path.nativeResourcesDirectory, "etc/");
+		final File libDir = Path.combine(Path.nativeResourcesDirectory, "lib/");
+		final File gstPluginDir = Path.combine(libDir, "gstreamer-0.10");
 
 		assertTrue(Path.delete(binDir));
+		assertTrue(Path.delete(etcDir));
+		assertTrue(Path.delete(libDir));
 		assertTrue(Sys.loadNativeResources(NativeResource.GStreamer));
 
 		//Shouldn't matter how many times we call this - it shouldn't do
@@ -57,10 +62,10 @@ public class PackageTest {
 
 		switch(Sys.getOSFamily()) {
 			case Unix:
-				assertTrue(Path.exists(Path.combine(binDir, "libgstreamer-0.10.so.0")));
+				assertTrue(Path.exists(Path.combine(gstPluginDir, "libgstffmpegscale-gpl.so")));
 				break;
 			case Windows:
-				assertTrue(Path.exists(Path.combine(binDir, "libgstreamer-0.10.dll")));
+				assertTrue(Path.exists(Path.combine(gstPluginDir, "libgstffmpegscale-gpl.dll")));
 				break;
 			default:
 				assertTrue("Unsupported test platform", false);

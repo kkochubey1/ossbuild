@@ -1,13 +1,8 @@
 package ossbuild.serial;
 
-import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
-import gnu.io.PortInUseException;
 import gnu.io.RXTXVersion;
-import gnu.io.SerialPort;
 import java.io.File;
-import java.util.Enumeration;
-import java.util.HashSet;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,7 +12,6 @@ import ossbuild.NativeResource;
 import ossbuild.OSFamily;
 import ossbuild.Path;
 import ossbuild.Sys;
-import ossbuild.extract.ResourceException;
 import static org.junit.Assert.*;
 
 /**
@@ -51,7 +45,7 @@ public class PackageTest {
 	public void testRegistry() {
 		assertTrue(Sys.initializeRegistry());
 
-		final File binDir = Path.combine(Path.tempDirectory, "ossbuild/bin/");
+		final File binDir = Path.combine(Path.nativeResourcesDirectory, "bin/");
 
 		assertTrue(Path.delete(binDir));
 		assertTrue(Sys.loadNativeResources(NativeResource.Serial));

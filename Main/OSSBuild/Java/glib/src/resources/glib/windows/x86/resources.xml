@@ -6,7 +6,7 @@
 		<Add name="base" />
 	</References>
 	
-	<Extract package="resources.glib.windows.x86.bin" directory="${tmp}/ossbuild/bin/">
+	<Extract package="resources.glib.windows.x86.bin" directory="${nativeResDir}/bin/">
 		<Echo key="res.glib.init" msg="Initializing GLib..." />
 
 		<!-- Libraries -->

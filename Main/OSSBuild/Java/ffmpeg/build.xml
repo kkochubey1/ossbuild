@@ -55,6 +55,8 @@
 		<property name="shared.lib.dir" location="${shared.platform.dir}/lib" />
 		<property name="shared.etc.dir" location="${shared.platform.dir}/etc" />
 
+		<property name="src.java.platform.dir" location="${build.classes.dir}/resources/${project.package.name}/${os}/${arch}" />
+
 		<property name="src.java.gpl.platform.dir" location="${build.classes.dir}/resources/${project.package.name}/gpl/${os}/${arch}" />
 		<property name="src.java.gpl.platform.bin.dir" location="${src.java.gpl.platform.dir}/bin" />
 		<property name="src.java.gpl.platform.lib.dir" location="${src.java.gpl.platform.dir}/lib" />
@@ -105,17 +107,13 @@
 
 		<mkdir dir="${platform.dir}" />
 
-		<jar compress="true" destfile="${platform.dir}/resources-${project.package.name}.jar">
-			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
-		</jar>
-
 		<antcall target="-platform-jar" />
 	</target>
 
 	<target name="-platform-jar">
 		<!-- Create GPL jar -->
 		<copy todir="${build.java.gpl.platform.dir}">
-			<fileset dir="${src.java.gpl.platform.dir}" erroronmissingdir="false">
+			<fileset dir="${src.java.platform.dir}" erroronmissingdir="false">
 				<include name="**/*.xml" />
 			</fileset>
 		</copy>
@@ -138,11 +136,13 @@
 			</fileset>
 		</copy>
 		
-		<jar compress="true" destfile="${platform.gpl.jar}" basedir="${build.java.gpl.dir}" />
+		<jar compress="true" destfile="${platform.gpl.jar}" basedir="${build.java.gpl.dir}">
+			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
+		</jar>
 
 		<!-- Create LGPL jar -->
 		<copy todir="${build.java.lgpl.platform.dir}">
-			<fileset dir="${src.java.lgpl.platform.dir}" erroronmissingdir="false">
+			<fileset dir="${src.java.platform.dir}" erroronmissingdir="false">
 				<include name="**/*.xml" />
 			</fileset>
 		</copy>
@@ -165,7 +165,9 @@
 			</fileset>
 		</copy>
 
-		<jar compress="true" destfile="${platform.lgpl.jar}" basedir="${build.java.lgpl.dir}" />
+		<jar compress="true" destfile="${platform.lgpl.jar}" basedir="${build.java.lgpl.dir}">
+			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
+		</jar>
 	</target>
 
     <!--

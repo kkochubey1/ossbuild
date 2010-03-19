@@ -84,10 +84,6 @@
 
 		<mkdir dir="${platform.dir}" />
 
-		<jar compress="true" destfile="${platform.dir}/resources-${project.jarpart.name}.jar">
-			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
-		</jar>
-
 		<antcall target="-platform-jar" />
 	</target>
 
@@ -98,41 +94,10 @@
 				<include name="**/*.xml" />
 			</fileset>
 		</copy>
-
-		<copy todir="${build.java.platform.bin.dir}">
-			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
-				<include name="*gstreamer*.so.*" />
-				<include name="*gstcontroller*.so.*" />
-				<include name="*gstdataprotocol*.so.*" />
-				<include name="*gstnet*.so.*" />
-				<include name="*gstbase*.so.*" />
-
-				<!--
-				<include name="*gstbasevideo*.so.*" />
-				<include name="*gstsignalprocessor*.so.*" />
-				<include name="*gstphotography*.so.*" />
-				-->
-
-				<exclude name="*gstreamer*sharp*" />
-			</fileset>
-			<fileset dir="${build.bin.dir}" erroronmissingdir="false">
-				<include name="*gstreamer*.dll" />
-				<include name="*gstcontroller*.dll" />
-				<include name="*gstdataprotocol*.dll" />
-				<include name="*gstnet*.dll" />
-				<include name="*gstbase*.dll" />
-
-				<!--
-				<include name="*gstbasevideo*.dll" />
-				<include name="*gstsignalprocessor*.dll" />
-				<include name="*gstphotography*.dll" />
-				-->
-
-				<exclude name="*gstreamer*sharp*" />
-			</fileset>
-		</copy>
 		
-		<jar compress="true" destfile="${platform.jar}" basedir="${build.java.dir}" />
+		<jar compress="true" destfile="${platform.jar}" basedir="${build.java.dir}">
+			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
+		</jar>
 	</target>
 
     <!--
