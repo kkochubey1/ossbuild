@@ -83,10 +83,6 @@
 
 		<mkdir dir="${platform.dir}" />
 
-		<jar compress="true" destfile="${platform.dir}/resources-${project.package.name}.jar">
-			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
-		</jar>
-
 		<antcall target="-platform-jar" />
 	</target>
 
@@ -110,7 +106,9 @@
 			</fileset>
 		</copy>
 		
-		<jar compress="true" destfile="${platform.jar}" basedir="${build.java.dir}" />
+		<jar compress="true" destfile="${platform.jar}" basedir="${build.java.dir}">
+			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
+		</jar>
 	</target>
 
     <!--

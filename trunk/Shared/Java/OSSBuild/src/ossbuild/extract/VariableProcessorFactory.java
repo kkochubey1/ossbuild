@@ -22,17 +22,18 @@ public class VariableProcessorFactory {
 	;
 
 	public static final String
-		  VAR_PID               = "pid"
-		, VAR_CWD               = "cwd"
-		, VAR_TMP               = "tmp"
-		, VAR_HOME              = "home"
-		, VAR_PATH				= "env_PATH"
-		, VAR_PATH_SEP          = "pathSep"
-		, VAR_ORIG_CWD          = "origcwd"
-		, VAR_ORIG_ENV_PATH		= "origenv_PATH"
+		  VAR_PID                   = "pid"
+		, VAR_CWD                   = "cwd"
+		, VAR_TMP                   = "tmp"
+		, VAR_HOME                  = "home"
+		, VAR_PATH				    = "env_PATH"
+		, VAR_PATH_SEP              = "pathSep"
+		, VAR_ORIG_CWD              = "origcwd"
+		, VAR_ORIG_ENV_PATH		    = "origenv_PATH"
 
-		, VAR_DIR               = "dir"
-		, VAR_PKG               = "pkg"
+		, VAR_DIR                   = "dir"
+		, VAR_PKG                   = "pkg"
+		, VAR_NATIVE_RESOURCES_DIR  = "nativeResDir"
 	;
 
 	public static final Pattern
@@ -57,6 +58,8 @@ public class VariableProcessorFactory {
 		saveDefaultVariable(VAR_HOME, Path.homeDirectory);
 		saveDefaultVariable(VAR_PATH, Sys.getPath());
 		saveDefaultVariable(VAR_PATH_SEP, Path.pathSeparator);
+
+		saveDefaultVariable(VAR_NATIVE_RESOURCES_DIR, Path.nativeResourcesDirectory);
 	}
 	//</editor-fold>
 

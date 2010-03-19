@@ -43,9 +43,9 @@ public class PackageTest {
 	public void testRegistry() {
 		assertTrue(Sys.initializeRegistry());
 
-		final File binDir = Path.combine(Path.tempDirectory, "ossbuild/bin/");
-		final File etcDir = Path.combine(Path.tempDirectory, "ossbuild/etc/");
-		final File libDir = Path.combine(Path.tempDirectory, "ossbuild/lib/");
+		final File binDir = Path.combine(Path.nativeResourcesDirectory, "bin/");
+		final File etcDir = Path.combine(Path.nativeResourcesDirectory, "etc/");
+		final File libDir = Path.combine(Path.nativeResourcesDirectory, "lib/");
 
 		assertTrue(Path.delete(binDir));
 		assertTrue(Path.delete(etcDir));

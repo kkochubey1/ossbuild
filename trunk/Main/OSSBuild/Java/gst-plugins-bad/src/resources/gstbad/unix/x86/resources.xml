@@ -3,17 +3,13 @@
 <Resources name="gst-plugins-bad">
 
 	<References>
-		<Add name="base" />
-		<Add name="glib" />
 		<Add name="xml" />
-		<Add name="fonts" />
-		<Add name="images" />
-		<Add name="graphics" />
+		<Add name="crypto" />
 		<Add name="sdl" />
 		<Add name="gst-plugins-base" />
 	</References>
 	
-	<Extract package="resources.gstbad.${lic}.unix.x86" directory="${tmp}/ossbuild/">
+	<Extract package="resources.gstbad.${lic}.unix.x86" directory="${nativeResDir}/">
 		<Echo key="res.gstbad.init" msg="Initializing GStreamer bad plugins..." />
 
 		<!-- Set variables to hold the platform's base package name and the base directory -->

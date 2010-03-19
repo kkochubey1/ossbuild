@@ -13,7 +13,7 @@
 		<Add name="gst-plugins-base" />
 	</References>
 	
-	<Extract package="resources.gstgood.windows.x86" directory="${tmp}/ossbuild/">
+	<Extract package="resources.gstgood.windows.x86" directory="${nativeResDir}/">
 		<Echo key="res.gstgood.init" msg="Initializing GStreamer good plugins..." />
 		
 		<!-- Set variables to hold the platform's base package name and the base directory -->

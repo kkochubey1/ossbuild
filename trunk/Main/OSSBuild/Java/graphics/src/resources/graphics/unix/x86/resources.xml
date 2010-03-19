@@ -4,12 +4,13 @@
 
 	<References>
 		<Add name="base" />
-		<Add name="images" />
 		<Add name="xml" />
+		<Add name="glib" />
+		<Add name="images" />
 		<Add name="fonts" />
 	</References>
 	
-	<Extract package="resources.graphics.unix.x86.bin" directory="${tmp}/ossbuild/bin/">
+	<Extract package="resources.graphics.unix.x86.bin" directory="${nativeResDir}/bin/">
 		<Echo key="res.graphics.init" msg="Initializing graphics..." />
 
 		<!-- Libraries -->

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gst-core">
+
+	<References>
+		<Add name="base" />
+		<Add name="glib" />
+		<Add name="xml" />
+	</References>
+	
+	<Extract package="resources.gstcore.unix.x86" directory="${nativeResDir}/">
+		<Echo key="res.gstcore.init" msg="Initializing GStreamer core libraries..." />
+
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<File resource="libgstreamer-${GstApiVersion}.so.0"          executable="true" />
+		<File resource="libgstcontroller-${GstApiVersion}.so.0"      executable="true" />
+		<File resource="libgstdataprotocol-${GstApiVersion}.so.0"    executable="true" />
+		<File resource="libgstnet-${GstApiVersion}.so.0"             executable="true" />
+		<File resource="libgstbase-${GstApiVersion}.so.0"            executable="true" />
+		<!--
+		<File resource="libgstgl-${GstApiVersion}.so.0"              executable="true" />
+		<File resource="libgstfarsight-${GstApiVersion}.so.0"        executable="true" />
+		-->
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<!-- Environment Variables -->
+		<EnvVar name="PATH" prepend="true" value="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/" asFile="true" />
+		<EnvVar name="GST_PLUGIN_PATH" value="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/" asFile="true" prepend="false" append="false" />
+		<EnvVar name="GST_PLUGIN_SYSTEM_PATH" value="" prepend="false" append="false" />
+
+		<EnvVar name="GST_REGISTRY" value="${dirPlatform}/gst-registry.bin" asFile="true" prepend="false" append="false" />
+		<EnvVar name="GST_PLUGIN_SCANNER" value="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/gst-plugin-scanner" asFile="true" prepend="false" append="false" />
+
+		<EnvVar name="GST_REGISTRY_FORK" value="yes" />
+		<EnvVar name="GST_REGISTRY_UPDATE" value="yes" />
+	</Extract>
+
+</Resources>

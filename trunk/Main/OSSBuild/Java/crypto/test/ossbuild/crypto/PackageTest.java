@@ -43,7 +43,7 @@ public class PackageTest {
 	public void testRegistry() {
 		assertTrue(Sys.initializeRegistry());
 
-		final File binDir = Path.combine(Path.tempDirectory, "ossbuild/bin/");
+		final File binDir = Path.combine(Path.nativeResourcesDirectory, "bin/");
 
 		assertTrue(Path.delete(binDir));
 		assertTrue(Sys.loadNativeResources(NativeResource.Crypto));

@@ -44,11 +44,11 @@ public final class Register extends RegistryReference {
 	static {
 		//Determine the prefix to use based off of what's available
 		//Check if GPL is available first.
-		final String os_gpl = Sys.createPlatformPackageResourcePrefix(RESOURCE_PKG_PREFIX, Sys.getOS());
-		final String osfamily_gpl = Sys.createPlatformPackageResourcePrefix(RESOURCE_PKG_PREFIX, Sys.getOSFamily());
+		final String os_gpl = Sys.createPlatformPackageResourcePrefix(RESOURCE_PKG_PREFIX + ".gpl", Sys.getOS());
+		final String osfamily_gpl = Sys.createPlatformPackageResourcePrefix(RESOURCE_PKG_PREFIX + ".gpl", Sys.getOSFamily());
 
-		final String os_lgpl = Sys.createPlatformPackageResourcePrefix(RESOURCE_PKG_PREFIX, Sys.getOS());
-		final String osfamily_lgpl = Sys.createPlatformPackageResourcePrefix(RESOURCE_PKG_PREFIX, Sys.getOSFamily());
+		final String os_lgpl = Sys.createPlatformPackageResourcePrefix(RESOURCE_PKG_PREFIX + ".lgpl", Sys.getOS());
+		final String osfamily_lgpl = Sys.createPlatformPackageResourcePrefix(RESOURCE_PKG_PREFIX + ".lgpl", Sys.getOSFamily());
 
 		boolean isGPL = false;
 		RESOURCE_DEFINITION_PREFIX = (

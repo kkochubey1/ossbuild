@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gst-ffmpeg">
+
+	<References>
+		<Add name="ffmpeg" />
+		<Add name="gst-plugins-base" />
+	</References>
+	
+	<Extract package="resources.gstffmpeg.${lic}.unix.x86" directory="${nativeResDir}/">
+		<Echo key="res.gstffmpeg.init" msg="Initializing GStreamer FFmpeg plugins..." />
+
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<IfDef var="lic" value="lgpl">
+			<File resource="libgstffmpeg-lgpl.so"       executable="true" />
+			<File resource="libgstffmpegscale-lgpl.so"  executable="true" />
+		</IfDef>
+		<IfDef var="lic" value="gpl">
+			<File resource="libgstffmpeg-gpl.so"        executable="true" />
+			<File resource="libgstffmpegscale-gpl.so"   executable="true" />
+		</IfDef>
+	</Extract>
+
+</Resources>

@@ -11,7 +11,7 @@
 		<Add name="graphics" />
 	</References>
 	
-	<Extract package="resources.gstbase.windows.x86" directory="${tmp}/ossbuild/">
+	<Extract package="resources.gstbase.windows.x86" directory="${nativeResDir}/">
 		<Echo key="res.gstbase.init" msg="Initializing GStreamer base libraries..." />
 		
 		<!-- Set variables to hold the platform's base package name and the base directory -->

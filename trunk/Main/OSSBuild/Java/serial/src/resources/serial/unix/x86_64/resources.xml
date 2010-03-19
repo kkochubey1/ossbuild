@@ -6,7 +6,7 @@
 		<Add name="base" />
 	</References>
 	
-	<Extract package="resources.serial.unix.x86_64.bin" directory="${tmp}/ossbuild/bin/">
+	<Extract package="resources.serial.unix.x86_64.bin" directory="${nativeResDir}/bin/">
 		<Echo key="res.serial.init" msg="Initializing serial port access..." />
 
 		<!-- Libraries -->

@@ -20,10 +20,19 @@ public class Path {
 		, homeDirectory = clean(System.getProperty("user.home"))
 		, workingDirectory = clean(new File(".").getAbsolutePath())
 	;
+	
+	public static final String 
+		  nativeResourcesDirectoryName = "native_java_resources"
+	;
+
+	public static final String
+		  nativeResourcesDirectory
+	;
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	static {
+		nativeResourcesDirectory = Path.combine(tempDirectory, nativeResourcesDirectoryName).getAbsolutePath();
 	}
 	//</editor-fold>
 
