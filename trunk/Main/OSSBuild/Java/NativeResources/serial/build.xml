@@ -16,7 +16,7 @@
 
 		<property name="rxtx.dir" location="lib/rxtx" />
 
-		<property name="top.dir" location="../../../.." />
+		<property name="top.dir" location="../../../../.." />
 		<property name="top.build.dir" location="${top.dir}/Build" />
 		<property name="top.shared.dir" location="${top.dir}/Shared/Build" />
 		<property name="top.deployment.dir" location="${top.dir}/Deployment/Java" />
