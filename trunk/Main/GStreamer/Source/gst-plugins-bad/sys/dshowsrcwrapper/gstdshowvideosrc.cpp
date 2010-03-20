@@ -42,6 +42,7 @@ static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS (GST_VIDEO_CAPS_BGR ";"
         GST_VIDEO_CAPS_YUV ("{ I420 }") ";"
+        GST_VIDEO_CAPS_YUV ("{ YUY2 }") ";"
         "video/x-dv,"
         "systemstream = (boolean) FALSE,"
         "width = (int) [ 1, MAX ],"
@@ -920,7 +921,6 @@ gst_dshowvideosrc_getcaps_from_streamcaps (GstDshowVideoSrc * src, IPin * pin)
       if (video_format != GST_VIDEO_FORMAT_UNKNOWN) {
         mediacaps = gst_dshow_new_video_caps (video_format, NULL,
             pin_mediatype);
-
       } else if (gst_dshow_check_mediatype (pin_mediatype->mediatype,
               MEDIASUBTYPE_dvsd, FORMAT_VideoInfo)) {
         mediacaps =
