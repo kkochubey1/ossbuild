@@ -15,7 +15,7 @@
 		<property name="project.jarpart.name" value="gst-core" />
 		<property name="project.package.name" value="gstcore" />
 
-		<property name="top.dir" location="../../../.." />
+		<property name="top.dir" location="../../../../.." />
 		<property name="top.build.dir" location="${top.dir}/Build" />
 		<property name="top.shared.dir" location="${top.dir}/Shared/Build" />
 		<property name="top.deployment.dir" location="${top.dir}/Deployment/Java" />

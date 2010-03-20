@@ -11,6 +11,90 @@
     <description>Builds, tests, and runs the project.</description>
     <import file="nbproject/build-impl.xml"/>
 
+	<target name="-post-init">
+		<property name="top.dir" location="../../../../.." />
+		<property name="top.build.dir" location="${top.dir}/Build" />
+		<property name="top.shared.dir" location="${top.dir}/Shared/Build" />
+		<property name="top.deployment.dir" location="${top.dir}/Deployment/Java" />
+
+		<mkdir dir="${top.build.dir}" />
+		<mkdir dir="${top.shared.dir}" />
+		<mkdir dir="${top.deployment.dir}" />
+		
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${file.reference.ant-contrib.jar}" />
+		<taskdef name="xmlmerge" classname="ch.elca.el4j.services.xmlmerge.anttask.XmlMergeTask" classpath="${file.reference.xmlmerge.jar}" />
+	</target>
+
+	<target name="-post-jar">
+		<antcall target="-build-platform-archive">
+			<param name="os" value="windows" />
+			<param name="arch" value="x86" />
+			<param name="build.os" value="Windows" />
+			<param name="build.arch" value="Win32" />
+		</antcall>
+		<antcall target="-build-platform-archive">
+			<param name="os" value="unix" />
+			<param name="arch" value="x86" />
+			<param name="build.os" value="Linux" />
+			<param name="build.arch" value="x86" />
+		</antcall>
+	</target>
+
+	<target name="-build-platform-archive">
+		<!-- Create a monolithic package with everything merged -->
+		<property name="build.platform.dir" location="${top.build.dir}/${build.os}/${build.arch}/Release" />
+		<property name="build.java.dir" location="${build.platform.dir}/java/merge" />
+
+		<delete dir="${build.java.dir}" failonerror="false" />
+		
+		<foreach target="-expand" parallel="true" param="expand.file">
+			<param name="expand.file" value="${expand.file}" />
+			<param name="build.java.dir" value="${build.java.dir}" />
+			<param name="build.platform.dir" value="${build.platform.dir}" />
+			<path>
+				<fileset dir="${top.deployment.dir}">
+					<include name="*-${os}-${arch}-*.jar" />
+				</fileset>
+			</path>
+		</foreach>
+
+		<xmlmerge dest="${build.java.dir}/resources/init.xml" conf="empty.properties">
+			<fileset dir="${build.java.dir}/resources/">
+				<include name="init-*.xml"/>
+			</fileset>
+		</xmlmerge>
+
+		<delete failonerror="false">
+			<fileset dir="${build.java.dir}/resources/">
+				<include name="init-*.xml" />
+			</fileset>
+		</delete>
+
+		<jar compress="true" file="${top.deployment.dir}/merged-all-native-resources-${os}-${arch}.jar">
+			<fileset dir="${build.java.dir}">
+				<include name="*" />
+			</fileset>
+		</jar>
+		
+
+		<!-- Create bzipped package of all jars separately -->
+		<tar destfile="${top.deployment.dir}/native-resources.tar">
+			<tarfileset dir="${top.deployment.dir}" erroronmissingdir="true">
+				<include name="*-${os}-${arch}-*.jar" />
+			</tarfileset>
+		</tar>
+		<bzip2 src="${top.deployment.dir}/native-resources.tar" destfile="${top.deployment.dir}/all-native-resources-${os}-${arch}.tar.bz2" />
+		<delete file="${top.deployment.dir}/native-resources.tar" failonerror="false" />
+	</target>
+
+	<target name="-expand">
+		<basename property="expand.name" file="${expand.file}" />
+
+		<unjar src="${expand.file}" dest="${build.java.dir}">
+			<mapper type="glob" from="*init.xml" to="*init-${expand.name}.xml" />
+		</unjar>
+	</target>
+
     <!--
 
     There exist several targets which are by default empty and which can be 
