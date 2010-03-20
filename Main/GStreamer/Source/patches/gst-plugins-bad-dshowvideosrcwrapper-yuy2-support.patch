@@ -1,0 +1,45 @@
+Index: sys/dshowsrcwrapper/gstdshow.cpp
+===================================================================
+--- sys/dshowsrcwrapper/gstdshow.cpp	(revision 549)
++++ sys/dshowsrcwrapper/gstdshow.cpp	(working copy)
+@@ -405,6 +405,9 @@
+   if (gst_dshow_check_mediatype (mediatype, MEDIASUBTYPE_RGB24, FORMAT_VideoInfo))
+     return GST_VIDEO_FORMAT_BGR;
+ 
++  if (gst_dshow_check_mediatype (mediatype, MEDIASUBTYPE_YUY2, FORMAT_VideoInfo))
++    return GST_VIDEO_FORMAT_YUY2;
++
+   return GST_VIDEO_FORMAT_UNKNOWN;
+ }
+ 
+@@ -422,6 +425,10 @@
+       break;
+     case GST_VIDEO_FORMAT_I420:
+       video_caps = gst_caps_from_string (GST_VIDEO_CAPS_YUV ("I420"));
++	  break;
++    case GST_VIDEO_FORMAT_YUY2:
++      video_caps = gst_caps_from_string (GST_VIDEO_CAPS_YUV ("YUY2"));
++      break;
+     default:
+       break;
+   }
+Index: sys/dshowsrcwrapper/gstdshowvideosrc.cpp
+===================================================================
+--- sys/dshowsrcwrapper/gstdshowvideosrc.cpp	(revision 549)
++++ sys/dshowsrcwrapper/gstdshowvideosrc.cpp	(working copy)
+@@ -42,6 +42,7 @@
+     GST_PAD_ALWAYS,
+     GST_STATIC_CAPS (GST_VIDEO_CAPS_BGR ";"
+         GST_VIDEO_CAPS_YUV ("{ I420 }") ";"
++        GST_VIDEO_CAPS_YUV ("{ YUY2 }") ";"
+         "video/x-dv,"
+         "systemstream = (boolean) FALSE,"
+         "width = (int) [ 1, MAX ],"
+@@ -920,7 +921,6 @@
+       if (video_format != GST_VIDEO_FORMAT_UNKNOWN) {
+         mediacaps = gst_dshow_new_video_caps (video_format, NULL,
+             pin_mediatype);
+-
+       } else if (gst_dshow_check_mediatype (pin_mediatype->mediatype,
+               MEDIASUBTYPE_dvsd, FORMAT_VideoInfo)) {
+         mediacaps =
