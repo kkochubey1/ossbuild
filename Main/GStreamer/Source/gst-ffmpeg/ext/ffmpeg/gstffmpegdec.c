@@ -2911,7 +2911,8 @@ gst_ffmpegdec_register (GstPlugin * plugin)
         rank = GST_RANK_NONE;
         break;
       default:
-        rank = GST_RANK_MARGINAL;
+	    /* We still want these plugins choosen first on Windows */
+        rank = GST_RANK_MARGINAL + 1;
         break;
     }
     if (!gst_element_register (plugin, type_name, rank, type)) {
