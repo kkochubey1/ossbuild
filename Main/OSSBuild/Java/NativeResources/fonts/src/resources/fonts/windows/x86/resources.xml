@@ -20,7 +20,6 @@
 		<EnvVar name="FONTCONFIG_FILE" value="${dir}/fonts.conf" asFile="true" />
 		<EnvVar name="FC_CONFIG_DIR" value="${dir}" asFile="true" />
 
-
 		<!-- Fontconfig configuration -->
 		<File resource="fonts.conf" />
 		<File resource="fonts.dtd" />

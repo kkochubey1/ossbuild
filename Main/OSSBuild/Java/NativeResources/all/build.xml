@@ -20,6 +20,12 @@
 		<mkdir dir="${top.build.dir}" />
 		<mkdir dir="${top.shared.dir}" />
 		<mkdir dir="${top.deployment.dir}" />
+
+		<delete failonerror="false">
+			<fileset dir="${top.deployment.dir}">
+				<include name="**/*" />
+			</fileset>
+		</delete>
 	</target>
 
 	<target name="-post-jar">
