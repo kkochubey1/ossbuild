@@ -71,7 +71,7 @@
 
 		<delete dir="${build.java.dir}" failonerror="false" />
 		
-		<foreach target="-expand" parallel="true" param="expand.file">
+		<foreach target="-expand" parallel="false" param="expand.file">
 			<param name="expand.file" value="${expand.file}" />
 			<param name="build.java.dir" value="${build.java.dir}" />
 			<param name="build.platform.dir" value="${build.platform.dir}" />

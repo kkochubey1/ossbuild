@@ -19,6 +19,11 @@
 		<!-- Set variables to hold the platform's base package name and the base directory -->
 		<Var name="pkgPlatform" value="${pkg}" />
 		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
 	</Extract>
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">

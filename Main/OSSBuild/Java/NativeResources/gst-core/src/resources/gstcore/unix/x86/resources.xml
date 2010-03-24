@@ -23,11 +23,11 @@
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
-		<File resource="libgstreamer-${GstApiVersion}.so.0"          executable="true" />
-		<File resource="libgstcontroller-${GstApiVersion}.so.0"      executable="true" />
-		<File resource="libgstdataprotocol-${GstApiVersion}.so.0"    executable="true" />
-		<File resource="libgstnet-${GstApiVersion}.so.0"             executable="true" />
-		<File resource="libgstbase-${GstApiVersion}.so.0"            executable="true" />
+		<Library resource="libgstreamer-${GstApiVersion}.so.0"          executable="true" />
+		<Library resource="libgstcontroller-${GstApiVersion}.so.0"      executable="true" />
+		<Library resource="libgstdataprotocol-${GstApiVersion}.so.0"    executable="true" />
+		<Library resource="libgstnet-${GstApiVersion}.so.0"             executable="true" />
+		<Library resource="libgstbase-${GstApiVersion}.so.0"            executable="true" />
 		<!--
 		<File resource="libgstgl-${GstApiVersion}.so.0"              executable="true" />
 		<File resource="libgstfarsight-${GstApiVersion}.so.0"        executable="true" />

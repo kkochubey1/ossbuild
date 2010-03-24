@@ -26,19 +26,19 @@
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
-		<File resource="libgstinterfaces-${GstApiVersion}.so.0"      executable="true" />
-		<File resource="libgstsdp-${GstApiVersion}.so.0"             executable="true" />
-		<File resource="libgstnetbuffer-${GstApiVersion}.so.0"       executable="true" />
-		<File resource="libgstpbutils-${GstApiVersion}.so.0"         executable="true" />
-		<File resource="libgstfft-${GstApiVersion}.so.0"             executable="true" />
-		<File resource="libgstapp-${GstApiVersion}.so.0"             executable="true" />
-		<File resource="libgstvideo-${GstApiVersion}.so.0"           executable="true" />
-		<File resource="libgstaudio-${GstApiVersion}.so.0"           executable="true" />
-		<File resource="libgsttag-${GstApiVersion}.so.0"             executable="true" />
-		<File resource="libgstriff-${GstApiVersion}.so.0"            executable="true" />
-		<File resource="libgstrtp-${GstApiVersion}.so.0"             executable="true" />
-		<File resource="libgstrtsp-${GstApiVersion}.so.0"            executable="true" />
-		<File resource="libgstcdda-${GstApiVersion}.so.0"            executable="true" />
+		<Library resource="libgstinterfaces-${GstApiVersion}.so.0"      executable="true" />
+		<Library resource="libgstsdp-${GstApiVersion}.so.0"             executable="true" />
+		<Library resource="libgstnetbuffer-${GstApiVersion}.so.0"       executable="true" />
+		<Library resource="libgstpbutils-${GstApiVersion}.so.0"         executable="true" />
+		<Library resource="libgstfft-${GstApiVersion}.so.0"             executable="true" />
+		<Library resource="libgstapp-${GstApiVersion}.so.0"             executable="true" />
+		<Library resource="libgstvideo-${GstApiVersion}.so.0"           executable="true" />
+		<Library resource="libgstaudio-${GstApiVersion}.so.0"           executable="true" />
+		<Library resource="libgsttag-${GstApiVersion}.so.0"             executable="true" />
+		<Library resource="libgstriff-${GstApiVersion}.so.0"            executable="true" />
+		<Library resource="libgstrtp-${GstApiVersion}.so.0"             executable="true" />
+		<Library resource="libgstrtsp-${GstApiVersion}.so.0"            executable="true" />
+		<Library resource="libgstcdda-${GstApiVersion}.so.0"            executable="true" />
 
 		<Library resource="libogg.so.0"                              executable="true" />
 		<Library resource="libvorbis.so.0"                           executable="true" />

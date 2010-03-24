@@ -24,9 +24,9 @@
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
-		<File resource="libgstbasevideo-${GstApiVersion}.so.0"          executable="true" />
-		<File resource="libgstsignalprocessor-${GstApiVersion}.so.0"    executable="true" />
-		<File resource="libgstphotography-${GstApiVersion}.so.0"        executable="true" />
+		<Library resource="libgstbasevideo-${GstApiVersion}.so.0"          executable="true" />
+		<Library resource="libgstsignalprocessor-${GstApiVersion}.so.0"    executable="true" />
+		<Library resource="libgstphotography-${GstApiVersion}.so.0"        executable="true" />
 
 		<Library resource="libcelt0.so.0"                               executable="true" />
 		<Library resource="libmms.so.0"                                 executable="true" />
@@ -40,7 +40,7 @@
 
 		<IfDef var="lic" value="gpl">
 			<Library resource="libdca.so.0"                             executable="true" />
-			<Library resource="libdts.so.0"                             executable="true" />
+			<!-- <Library resource="libdts.so.0"                             executable="true" /> -->
 			<Library resource="libfaac.so.0"                            executable="true" />
 			<Library resource="libfaad.so.2"                            executable="true" />
 			<Library resource="libxvidcore.so.4"                        executable="true" />

@@ -26,19 +26,19 @@
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
-		<File resource="libgstinterfaces-${GstApiVersion}.dll" />
-		<File resource="libgstsdp-${GstApiVersion}.dll" />
-		<File resource="libgstnetbuffer-${GstApiVersion}.dll" />
-		<File resource="libgstpbutils-${GstApiVersion}.dll" />
-		<File resource="libgstfft-${GstApiVersion}.dll" />
-		<File resource="libgstapp-${GstApiVersion}.dll" />
-		<File resource="libgstvideo-${GstApiVersion}.dll" />
-		<File resource="libgstaudio-${GstApiVersion}.dll" />
-		<File resource="libgsttag-${GstApiVersion}.dll" />
-		<File resource="libgstriff-${GstApiVersion}.dll" />
-		<File resource="libgstrtp-${GstApiVersion}.dll" />
-		<File resource="libgstrtsp-${GstApiVersion}.dll" />
-		<File resource="libgstcdda-${GstApiVersion}.dll" />
+		<Library resource="libgstinterfaces-${GstApiVersion}.dll" />
+		<Library resource="libgstsdp-${GstApiVersion}.dll" />
+		<Library resource="libgstnetbuffer-${GstApiVersion}.dll" />
+		<Library resource="libgstpbutils-${GstApiVersion}.dll" />
+		<Library resource="libgstfft-${GstApiVersion}.dll" />
+		<Library resource="libgstapp-${GstApiVersion}.dll" />
+		<Library resource="libgstvideo-${GstApiVersion}.dll" />
+		<Library resource="libgstaudio-${GstApiVersion}.dll" />
+		<Library resource="libgsttag-${GstApiVersion}.dll" />
+		<Library resource="libgstriff-${GstApiVersion}.dll" />
+		<Library resource="libgstrtp-${GstApiVersion}.dll" />
+		<Library resource="libgstrtsp-${GstApiVersion}.dll" />
+		<Library resource="libgstcdda-${GstApiVersion}.dll" />
 		
 		<Library resource="libogg-0.dll" />
 		<Library resource="libvorbis-0.dll" />
