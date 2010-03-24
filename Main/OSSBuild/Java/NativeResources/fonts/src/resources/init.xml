@@ -4,4 +4,7 @@
 	<Registry>
 		<Reference class="ossbuild.fonts.Register" />
 	</Registry>
+	<System>
+		<Load class="ossbuild.fonts.SystemLoader" />
+	</System>
 </Init>

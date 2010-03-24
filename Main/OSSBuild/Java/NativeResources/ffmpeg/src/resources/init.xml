@@ -4,4 +4,7 @@
 	<Registry>
 		<Reference class="ossbuild.ffmpeg.Register" />
 	</Registry>
+	<System>
+		<Load class="ossbuild.ffmpeg.SystemLoader" />
+	</System>
 </Init>

@@ -4,4 +4,7 @@
 	<Registry>
 		<Reference class="ossbuild.glib.Register" />
 	</Registry>
+	<System>
+		<Load class="ossbuild.glib.SystemLoader" />
+	</System>
 </Init>

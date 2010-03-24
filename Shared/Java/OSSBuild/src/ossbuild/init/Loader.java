@@ -112,6 +112,10 @@ public class Loader {
 	public static boolean initialize(final IInitializeListener Listener) throws Throwable {
 		return initialize(true, Listener);
 	}
+
+	public static boolean initialize(final boolean cleanRegistryAfterInitialization) throws Throwable {
+		return initialize(cleanRegistryAfterInitialization, null);
+	}
 	
 	public static boolean initialize(final boolean cleanRegistryAfterInitialization, final IInitializeListener Listener) throws Throwable {
 		synchronized(lock) {
@@ -144,8 +148,25 @@ public class Loader {
 	public static boolean initializeSystemLoaders(final ISystemLoaderInitializeListener Listener) throws Throwable {
 		synchronized(lock) {
 			synchronized(systemLoaderLock) {
-				if (systemLoadersInitialized)
+				if (systemLoadersInitialized) {
+					//<editor-fold defaultstate="collapsed" desc="Call listener methods">
+					if (Listener != null) {
+						if (Listener.beforeAllSystemLoadersInitialized()) {
+							if (!systemLoaders.isEmpty()) {
+								for(SystemLoaderInfo info : systemLoaders) {
+									if (Listener.beforeSystemLoaderInitialized(info.getInstance()))
+										Listener.afterSystemLoaderInitialized(info.getInstance());
+								}
+							}
+							Listener.afterAllSystemLoadersInitialized();
+						}
+					}
+					//</editor-fold>
 					return true;
+				}
+
+				if (!registryReferencesInitialized)
+					throw new IllegalStateException("initializeRegistryReferences() must be called before initializeSystemLoaders()");
 
 				systemLoadersInitialized = true;
 				systemLoadersUnloaded = false;
@@ -220,8 +241,22 @@ public class Loader {
 	public static boolean initializeRegistryReferences(final IRegistryReferenceInitializeListener Listener) throws Throwable {
 		synchronized(lock) {
 			synchronized(registryReferenceLock) {
-				if (registryReferencesInitialized)
+				if (registryReferencesInitialized) {
+					//<editor-fold defaultstate="collapsed" desc="Call listener methods">
+					if (Listener != null) {
+						if (Listener.beforeAllRegistryReferencesInitialized()) {
+							if (!registryReferences.isEmpty()) {
+								for(RegistryReferenceInfo info : registryReferences) {
+									if (Listener.beforeRegistryReferenceInitialized(info.getInstance()))
+										Listener.afterRegistryReferenceInitialized(info.getInstance());
+								}
+							}
+							Listener.afterAllRegistryReferencesInitialized();
+						}
+					}
+					//</editor-fold>
 					return true;
+				}
 
 				registryReferencesInitialized = true;
 				registryReferencesUnloaded = false;

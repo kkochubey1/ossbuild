@@ -4,4 +4,7 @@
 	<Registry>
 		<Reference class="ossbuild.opengl.Register" />
 	</Registry>
+	<System>
+		<Load class="ossbuild.opengl.SystemLoader" />
+	</System>
 </Init>

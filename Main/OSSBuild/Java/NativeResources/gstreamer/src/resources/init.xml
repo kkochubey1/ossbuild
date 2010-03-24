@@ -4,4 +4,7 @@
 	<Registry>
 		<Reference class="ossbuild.gst.Register" />
 	</Registry>
+	<System>
+		<Load class="ossbuild.gst.SystemLoader" />
+	</System>
 </Init>

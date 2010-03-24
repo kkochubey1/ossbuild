@@ -313,8 +313,63 @@ public class Resources {
 		checkRegistryInitialization();
 
 		synchronized(lock) {
-			if (processed)
-				return CompletedFuture;
+			if (processed) {
+				//If we've already processed this resource, then just mimic a
+				//typical extraction process but don't actually do anything.
+				if (progress == null)
+					return CompletedFuture;
+
+				//Extract nothing, but make sure that
+				return executor.submit(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							//<editor-fold defaultstate="collapsed" desc="Make compiler happy">
+							if (false)
+								throw new InterruptedException();
+							//</editor-fold>
+
+							//<editor-fold defaultstate="collapsed" desc="Prepare">
+							if (callback != null)
+								callback.prepare(Resources.this);
+							//</editor-fold>
+
+							if (progress != null) {
+								long startTime = System.currentTimeMillis();
+								notifyProgressBegin(progress, startTime);
+								notifyProgressEnd(progress, true, totalResourceSize, totalResourceCount, packages != null ? packages.length : 0, startTime, startTime);
+							}
+
+							//<editor-fold defaultstate="collapsed" desc="Completed">
+							if (callback != null)
+								callback.completed(Resources.this);
+							//</editor-fold>
+						} catch(InterruptedException ie) {
+							//<editor-fold defaultstate="collapsed" desc="Cancelled">
+							if (callback != null)
+								callback.cancelled(Resources.this);
+							//</editor-fold>
+						} catch(CancellationException ce) {
+							//<editor-fold defaultstate="collapsed" desc="Cancelled">
+							if (callback != null)
+								callback.cancelled(Resources.this);
+							//</editor-fold>
+						} catch(RejectedExecutionException ree) {
+							//<editor-fold defaultstate="collapsed" desc="Cancelled">
+							if (callback != null)
+								callback.cancelled(Resources.this);
+							//</editor-fold>
+						} catch(Throwable t) {
+							//<editor-fold defaultstate="collapsed" desc="Error">
+							if (progress != null)
+								progress.error(t, t.getMessage());
+							if (callback != null)
+								callback.error(Resources.this);
+							//</editor-fold>
+						}
+					}
+				});
+			}
 
 			return executor.submit(new Runnable() {
 				@Override
@@ -571,40 +626,11 @@ public class Resources {
 		return pkgs.toArray(new IResourcePackage[pkgs.size()]);
 	}
 
-	/*protected boolean processEnvVars(final IResourcePackage[] pkgs, final IResourceFilter filter) {
-		//Please note that this is executed in whatever the caller thread is
+	protected void extractResources(final String[] refs, final IResourcePackage[] pkgs, final IResourceFilter filter, final IResourceProgressListener progress) throws Throwable {
+		extractResources(0, refs, pkgs, filter, progress);
+	}
 
-		String resourceName;
-		boolean success = true;
-
-		try {
-			for(IResourcePackage pkg : pkgs) {
-				if (pkg == null)
-					continue;
-
-				for(IResourceProcessor p : pkg) {
-					if (p == null || !(p instanceof EnvVarProcessor))
-						continue;
-
-					//Double check that we're allowed to process this resource
-					resourceName = pkg.resourcePath(p.getName());
-					if (filter != null && !filter.filter(pkg, p, resourceName))
-						continue;
-
-					//Here we go!
-					if (!p.isProcessed())
-						success = success && p.process(resourceName, pkg, IResourceProgressListener.None);
-				}
-			}
-		} catch(Throwable t) {
-			success = false;
-			throw new ResourceException("Error while processing environment variables", t);
-		} finally {
-			return success;
-		}
-	} /**/
-
-	protected void extractResources(final String[] refs, final IResourcePackage[] pkgs, final IResourceFilter filter, final IResourceProgressListener progress) throws Exception {
+	protected void extractResources(final int level, final String[] refs, final IResourcePackage[] pkgs, final IResourceFilter filter, final IResourceProgressListener progress) throws Throwable {
 		//Please note that this is executed in a separate thread.
 		//It can be cancelled or interrupted at any time.
 
@@ -620,14 +646,29 @@ public class Resources {
 
 		try {
 			//Notify begin
-			notifyProgressBegin(progress, startTime);
+			if (level == 0)
+				notifyProgressBegin(progress, startTime);
 
 			//Load references
 			if (refs != null && refs.length > 0) {
 				for(String ref : refs) {
 					if (ref.equalsIgnoreCase(name))
 						continue;
-					Registry.loadResources(ref).get();
+					if (StringUtil.isNullOrEmpty(ref))
+						throw new MissingResourceReferenceException("An empty reference name is invalid.");
+
+					//Attempt to locate this reference
+					final Reference reference = Registry.findReference(ref, true);
+					if (reference == null)
+						continue;
+
+					//Get its associated resource object if it has one
+					final Resources res = reference.getResources();
+					if (res == null || res == this || res.isProcessed())
+						continue;
+
+					//Process on this same thread
+					res.extractResources(level + 1, res.references, res.packages, filter, progress);
 				}
 			}
 
@@ -673,7 +714,9 @@ public class Resources {
 
 		if (exception != null)
 			notifyProgressError(progress, exception, !StringUtil.isNullOrEmpty(exception.getMessage()) ? exception.getMessage() : "Error loading resources");
-		notifyProgressEnd(progress, success, totalBytes, totalResources, totalPkgs, startTime, endTime);
+
+		if (level == 0)
+			notifyProgressEnd(progress, success, totalBytes, totalResources, totalPkgs, startTime, endTime);
 	}
 	//</editor-fold>
 }

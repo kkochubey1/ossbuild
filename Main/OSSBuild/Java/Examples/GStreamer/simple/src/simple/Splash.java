@@ -14,7 +14,6 @@ package simple;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,13 +22,17 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.gstreamer.swing.VideoPlayer;
+import ossbuild.NativeResource;
 import ossbuild.StringUtil;
+import ossbuild.Sys;
 import ossbuild.extract.IResourcePackage;
 import ossbuild.extract.IResourceProcessor;
 import ossbuild.extract.ResourceCallback;
 import ossbuild.extract.ResourceProgressListenerAdapter;
 import ossbuild.extract.Resources;
-import ossbuild.gstreamer.Native;
+import ossbuild.init.ISystemLoaderInitializeListener;
+import ossbuild.init.InitializeListenerAdapter;
+import ossbuild.init.SystemLoaderInitializeListenerAdapter;
 
 /**
  *
@@ -134,9 +137,10 @@ public class Splash extends javax.swing.JDialog {
 	private void init() {
 		
 		try {
-			Native.initialize(
+			Sys.loadNativeResourcesAsync(
+				NativeResource.GStreamer,
+				
 				new ResourceProgressListenerAdapter() {
-
 					@Override
 					public void error(final Throwable exception, String message) {
 						SwingUtilities.invokeLater(new Runnable() {
@@ -188,7 +192,7 @@ public class Splash extends javax.swing.JDialog {
 							SwingUtilities.invokeLater(new Runnable() {
 								@Override
 								public void run() {
-									lbl.setText("Loading GStreamer...");
+									lbl.setText("Initializing system...");
 									progress.setIndeterminate(true);
 								}
 							});
@@ -209,42 +213,49 @@ public class Splash extends javax.swing.JDialog {
 					@Override
 					protected void completed(Resources rsrcs, Object t) {
 						try {
-							//Thread.currentThread().sleep(2000);
+							Sys.initializeSystem(new SystemLoaderInitializeListenerAdapter() {
+								@Override
+								public void afterAllSystemLoadersInitialized() {
+									Sys.cleanRegistry();
 
-							Splash.this.setVisible(false);
-							Splash.this.dispose();
+									//Thread.currentThread().sleep(2000);
 
-							final JFileChooser choose = new JFileChooser();
-							choose.setDialogTitle("Select Media File");
-							choose.setMultiSelectionEnabled(true);
-							final int result = choose.showOpenDialog(Splash.this);
+									Splash.this.setVisible(false);
+									Splash.this.dispose();
 
-							if (result == JFileChooser.CANCEL_OPTION)
-								System.exit(0);
+									final JFileChooser choose = new JFileChooser();
+									choose.setDialogTitle("Select Media File");
+									choose.setMultiSelectionEnabled(true);
+									final int result = choose.showOpenDialog(Splash.this);
 
-							for(int i = 0; i < 1; ++i) {
-								SwingUtilities.invokeLater(new Runnable() {
-									@Override
-									public void run() {
-										final List<URI> playList = new LinkedList<URI>();
-										for (File f : choose.getSelectedFiles())
-											playList.add(f.toURI());
+									if (result == JFileChooser.CANCEL_OPTION)
+										System.exit(0);
 
-										JFrame frame = new JFrame("Swing Test");
+									for(int i = 0; i < 1; ++i) {
+										SwingUtilities.invokeLater(new Runnable() {
+											@Override
+											public void run() {
+												final List<URI> playList = new LinkedList<URI>();
+												for (File f : choose.getSelectedFiles())
+													playList.add(f.toURI());
 
-										final VideoPlayer player = new VideoPlayer(playList.get(0));
-										player.setPreferredSize(new Dimension(640, 480));
-										player.setControlsVisible(true);
-										player.getMediaPlayer().setPlaylist(playList);
-										frame.add(player, BorderLayout.CENTER);
+												JFrame frame = new JFrame("Swing Test");
 
-										player.getMediaPlayer().play();
-										frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-										frame.pack();
-										frame.setVisible(true);
+												final VideoPlayer player = new VideoPlayer(playList.get(0));
+												player.setPreferredSize(new Dimension(640, 480));
+												player.setControlsVisible(true);
+												player.getMediaPlayer().setPlaylist(playList);
+												frame.add(player, BorderLayout.CENTER);
+
+												player.getMediaPlayer().play();
+												frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+												frame.pack();
+												frame.setVisible(true);
+											}
+										});
 									}
-								});
-							}
+								}
+							});
 						} catch (Throwable tr) {
 						}
 					}

@@ -210,35 +210,35 @@ public final class Reference {
 
 	public Future loadResources(final String referenceName) {
 		final Resources res = resourceForRef(referenceName);
-		if (res == null || res.isProcessed())
+		if (res == null)
 			return Resources.CompletedFuture;
 		return res.extract();
 	}
 
 	public Future loadResources(final String referenceName, final IResourceCallback callback) {
 		final Resources res = resourceForRef(referenceName);
-		if (res == null || res.isProcessed())
+		if (res == null)
 			return Resources.CompletedFuture;
 		return res.extract(callback);
 	}
 
 	public Future loadResources(final String referenceName, final IResourceProgressListener progress, final IResourceCallback callback) {
 		final Resources res = resourceForRef(referenceName);
-		if (res == null || res.isProcessed())
+		if (res == null)
 			return Resources.CompletedFuture;
 		return res.extract(progress, callback);
 	}
 
 	public Future loadResources(final String referenceName, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
 		final Resources res = resourceForRef(referenceName);
-		if (res == null || res.isProcessed())
+		if (res == null)
 			return Resources.CompletedFuture;
 		return res.extract(filter, progress, callback);
 	}
 
 	public Future loadResources(final String referenceName, final ExecutorService executor, final IResourceFilter filter, final IResourceProgressListener progress, final IResourceCallback callback) {
 		final Resources res = resourceForRef(referenceName);
-		if (res == null || res.isProcessed())
+		if (res == null)
 			return Resources.CompletedFuture;
 		return res.extract(executor, filter, progress, callback);
 	}
