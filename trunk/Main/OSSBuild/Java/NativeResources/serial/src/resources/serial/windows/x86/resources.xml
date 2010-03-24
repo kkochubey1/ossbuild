@@ -13,6 +13,9 @@
 
 		<Library resource="rxtxSerial.dll" />
 		<Library resource="rxtxParallel.dll" />
+
+		<AddJNASearchPath libraryName="rxtxSerial"   path="${dir}" />
+		<AddJNASearchPath libraryName="rxtxParallel" path="${dir}" />
 	</Extract>
 
 </Resources>

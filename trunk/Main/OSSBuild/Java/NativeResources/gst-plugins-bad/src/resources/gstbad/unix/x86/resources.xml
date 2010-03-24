@@ -24,91 +24,95 @@
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
-		<Library resource="libgstbasevideo-${GstApiVersion}.so.0"          executable="true" />
-		<Library resource="libgstsignalprocessor-${GstApiVersion}.so.0"    executable="true" />
-		<Library resource="libgstphotography-${GstApiVersion}.so.0"        executable="true" />
+		<Library resource="libgstbasevideo-${GstApiVersion}.so.0"           executable="true" />
+		<Library resource="libgstsignalprocessor-${GstApiVersion}.so.0"     executable="true" />
+		<Library resource="libgstphotography-${GstApiVersion}.so.0"         executable="true" />
 
-		<Library resource="libcelt0.so.0"                               executable="true" />
-		<Library resource="libmms.so.0"                                 executable="true" />
-		<Library resource="libschroedinger-1.0.so.0"                    executable="true" />
-		<Library resource="libneon.so.27"                               executable="true" />
+		<AddJNASearchPath libraryName="gstbasevideo-${GstApiVersion}"       path="${dir}" />
+		<AddJNASearchPath libraryName="gstsignalprocessor-${GstApiVersion}" path="${dir}" />
+		<AddJNASearchPath libraryName="gstphotography-${GstApiVersion}"     path="${dir}" />
+
+		<Library resource="libcelt0.so.0"                                   executable="true" />
+		<Library resource="libmms.so.0"                                     executable="true" />
+		<Library resource="libschroedinger-1.0.so.0"                        executable="true" />
+		<Library resource="libneon.so.27"                                   executable="true" />
 		<!--
-		<Library resource="libcroco-0.6.so.3"                           executable="true" />
-		<Library resource="libgsf-1.so.114"                             executable="true" />
-		<Library resource="librsvg-2.so.2"                              executable="true" />
+		<Library resource="libcroco-0.6.so.3"                               executable="true" />
+		<Library resource="libgsf-1.so.114"                                 executable="true" />
+		<Library resource="librsvg-2.so.2"                                  executable="true" />
 		-->
 
 		<IfDef var="lic" value="gpl">
-			<Library resource="libdca.so.0"                             executable="true" />
-			<!-- <Library resource="libdts.so.0"                             executable="true" /> -->
-			<Library resource="libfaac.so.0"                            executable="true" />
-			<Library resource="libfaad.so.2"                            executable="true" />
-			<Library resource="libxvidcore.so.4"                        executable="true" />
-			<Library resource="libdvdread.so.4"                         executable="true" />
-			<Library resource="libdvdnav.so.4"                          executable="true" />
-			<Library resource="libdvdnavmini.so.4"                      executable="true" />
-			<Library resource="libdvdcss.so.2"                          executable="true" />
+			<Library resource="libdca.so.0"                                 executable="true" />
+			<!-- <Library resource="libdts.so.0"                                 executable="true" /> -->
+			<Library resource="libfaac.so.0"                                executable="true" />
+			<Library resource="libfaad.so.2"                                executable="true" />
+			<Library resource="libxvidcore.so.4"                            executable="true" />
+			<Library resource="libdvdread.so.4"                             executable="true" />
+			<Library resource="libdvdnav.so.4"                              executable="true" />
+			<Library resource="libdvdnavmini.so.4"                          executable="true" />
+			<Library resource="libdvdcss.so.2"                              executable="true" />
 		</IfDef>
 	</Extract>
 
 	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
-		<File resource="libgstaiff.so"                                  executable="true" />
-		<File resource="libgstasfmux.so"                                executable="true" />
-		<File resource="libgstaudioconvert.so"                          executable="true" />
-		<File resource="libgstbayer.so"                                 executable="true" />
-		<File resource="libgstbz2.so"                                   executable="true" />
-		<File resource="libgstcamerabin.so"                             executable="true" />
-		<File resource="libgstcdxaparse.so"                             executable="true" />
-		<File resource="libgstcelt.so"                                  executable="true" />
-		<File resource="libgstdtmf.so"                                  executable="true" />
-		<File resource="libgstdvdspu.so"                                executable="true" />
-		<File resource="libgstfreeze.so"                                executable="true" />
-		<File resource="libgstfrei0r.so"                                executable="true" />
-		<File resource="libgsth264parse.so"                             executable="true" />
-		<File resource="libgsthdvparse.so"                              executable="true" />
-		<File resource="libgstlegacyresample.so"                        executable="true" />
-		<File resource="libgstliveadder.so"                             executable="true" />
-		<File resource="libgstmms.so"                                   executable="true" />
-		<File resource="libgstmpeg4videoparse.so"                       executable="true" />
-		<File resource="libgstmpegdemux.so"                             executable="true" />
-		<File resource="libgstmpegpsmux.so"                             executable="true" />
-		<File resource="libgstmpegtsmux.so"                             executable="true" />
-		<File resource="libgstmpegvideoparse.so"                        executable="true" />
-		<File resource="libgstmve.so"                                   executable="true" />
-		<File resource="libgstmxf.so"                                   executable="true" />
-		<File resource="libgstneonhttpsrc.so"                           executable="true" />
-		<File resource="libgstnuvdemux.so"                              executable="true" />
-		<File resource="libgstpcapparse.so"                             executable="true" />
-		<File resource="libgstpnm.so"                                   executable="true" />
-		<File resource="libgstqtmux.so"                                 executable="true" />
-		<File resource="libgstrawparse.so"                              executable="true" />
-		<File resource="libgstreal.so"                                  executable="true" />
-		<File resource="libgstrtpmux.so"                                executable="true" />
-		<File resource="libgstscaletempoplugin.so"                      executable="true" />
-		<File resource="libgstschro.so"                                 executable="true" />
-		<File resource="libgstsdl.so"                                   executable="true" />
-		<File resource="libgstsdpelem.so"                               executable="true" />
-		<File resource="libgstselector.so"                              executable="true" />
-		<File resource="libgstsiren.so"                                 executable="true" />
-		<File resource="libgstspeed.so"                                 executable="true" />
-		<File resource="libgststereo.so"                                executable="true" />
-		<File resource="libgstsubenc.so"                                executable="true" />
-		<File resource="libgsttta.so"                                   executable="true" />
-		<File resource="libgstvalve.so"                                 executable="true" />
-		<File resource="libgstvideomeasure.so"                          executable="true" />
-		<File resource="libgstvideosignal.so"                           executable="true" />
-		<File resource="libgstvmnc.so"                                  executable="true" />
-		<File resource="libgstadpcmdec.so"                              executable="true" />
-		<File resource="libgstalsaspdif.so"                             executable="true" />
-		<File resource="libgstautoconvert.so"                           executable="true" />
-		<File resource="libgstdccp.so"                                  executable="true" />
-		<File resource="libgstdebugutilsbad.so"                         executable="true" />
-		<File resource="libgstfestival.so"                              executable="true" />
-		<File resource="libgstid3tag.so"                                executable="true" />
-		<File resource="libgstrfbsrc.so"                                executable="true" />
-		<File resource="libgstnsf.so"                                   executable="true" />
+		<File resource="libgstaiff.so"                                      executable="true" />
+		<File resource="libgstasfmux.so"                                    executable="true" />
+		<File resource="libgstaudioconvert.so"                              executable="true" />
+		<File resource="libgstbayer.so"                                     executable="true" />
+		<File resource="libgstbz2.so"                                       executable="true" />
+		<File resource="libgstcamerabin.so"                                 executable="true" />
+		<File resource="libgstcdxaparse.so"                                 executable="true" />
+		<File resource="libgstcelt.so"                                      executable="true" />
+		<File resource="libgstdtmf.so"                                      executable="true" />
+		<File resource="libgstdvdspu.so"                                    executable="true" />
+		<File resource="libgstfreeze.so"                                    executable="true" />
+		<File resource="libgstfrei0r.so"                                    executable="true" />
+		<File resource="libgsth264parse.so"                                 executable="true" />
+		<File resource="libgsthdvparse.so"                                  executable="true" />
+		<File resource="libgstlegacyresample.so"                            executable="true" />
+		<File resource="libgstliveadder.so"                                 executable="true" />
+		<File resource="libgstmms.so"                                       executable="true" />
+		<File resource="libgstmpeg4videoparse.so"                           executable="true" />
+		<File resource="libgstmpegdemux.so"                                 executable="true" />
+		<File resource="libgstmpegpsmux.so"                                 executable="true" />
+		<File resource="libgstmpegtsmux.so"                                 executable="true" />
+		<File resource="libgstmpegvideoparse.so"                            executable="true" />
+		<File resource="libgstmve.so"                                       executable="true" />
+		<File resource="libgstmxf.so"                                       executable="true" />
+		<File resource="libgstneonhttpsrc.so"                               executable="true" />
+		<File resource="libgstnuvdemux.so"                                  executable="true" />
+		<File resource="libgstpcapparse.so"                                 executable="true" />
+		<File resource="libgstpnm.so"                                       executable="true" />
+		<File resource="libgstqtmux.so"                                     executable="true" />
+		<File resource="libgstrawparse.so"                                  executable="true" />
+		<File resource="libgstreal.so"                                      executable="true" />
+		<File resource="libgstrtpmux.so"                                    executable="true" />
+		<File resource="libgstscaletempoplugin.so"                          executable="true" />
+		<File resource="libgstschro.so"                                     executable="true" />
+		<File resource="libgstsdl.so"                                       executable="true" />
+		<File resource="libgstsdpelem.so"                                   executable="true" />
+		<File resource="libgstselector.so"                                  executable="true" />
+		<File resource="libgstsiren.so"                                     executable="true" />
+		<File resource="libgstspeed.so"                                     executable="true" />
+		<File resource="libgststereo.so"                                    executable="true" />
+		<File resource="libgstsubenc.so"                                    executable="true" />
+		<File resource="libgsttta.so"                                       executable="true" />
+		<File resource="libgstvalve.so"                                     executable="true" />
+		<File resource="libgstvideomeasure.so"                              executable="true" />
+		<File resource="libgstvideosignal.so"                               executable="true" />
+		<File resource="libgstvmnc.so"                                      executable="true" />
+		<File resource="libgstadpcmdec.so"                                  executable="true" />
+		<File resource="libgstalsaspdif.so"                                 executable="true" />
+		<File resource="libgstautoconvert.so"                               executable="true" />
+		<File resource="libgstdccp.so"                                      executable="true" />
+		<File resource="libgstdebugutilsbad.so"                             executable="true" />
+		<File resource="libgstfestival.so"                                  executable="true" />
+		<File resource="libgstid3tag.so"                                    executable="true" />
+		<File resource="libgstrfbsrc.so"                                    executable="true" />
+		<File resource="libgstnsf.so"                                       executable="true" />
 		<!--
-		<File resource="libgstrsvg.so"                                  executable="true" />
+		<File resource="libgstrsvg.so"                                      executable="true" />
 		-->
 
 		<IfDef var="lic" value="gpl">

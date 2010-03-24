@@ -23,11 +23,18 @@
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
-		<Library resource="libgstreamer-${GstApiVersion}.so.0"          executable="true" />
-		<Library resource="libgstcontroller-${GstApiVersion}.so.0"      executable="true" />
-		<Library resource="libgstdataprotocol-${GstApiVersion}.so.0"    executable="true" />
-		<Library resource="libgstnet-${GstApiVersion}.so.0"             executable="true" />
-		<Library resource="libgstbase-${GstApiVersion}.so.0"            executable="true" />
+		<Library resource="libgstreamer-${GstApiVersion}.so.0"           executable="true" />
+		<Library resource="libgstcontroller-${GstApiVersion}.so.0"       executable="true" />
+		<Library resource="libgstdataprotocol-${GstApiVersion}.so.0"     executable="true" />
+		<Library resource="libgstnet-${GstApiVersion}.so.0"              executable="true" />
+		<Library resource="libgstbase-${GstApiVersion}.so.0"             executable="true" />
+
+		<AddJNASearchPath libraryName="gstreamer-${GstApiVersion}"       path="${dir}" />
+		<AddJNASearchPath libraryName="gstcontroller-${GstApiVersion}"   path="${dir}" />
+		<AddJNASearchPath libraryName="gstdataprotocol-${GstApiVersion}" path="${dir}" />
+		<AddJNASearchPath libraryName="gstnet-${GstApiVersion}"          path="${dir}" />
+		<AddJNASearchPath libraryName="gstbase-${GstApiVersion}"         path="${dir}" />
+
 		<!--
 		<File resource="libgstgl-${GstApiVersion}.so.0"              executable="true" />
 		<File resource="libgstfarsight-${GstApiVersion}.so.0"        executable="true" />

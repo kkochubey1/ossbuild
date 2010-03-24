@@ -36,6 +36,13 @@
 		<Library resource="libgstdataprotocol-${GstApiVersion}.dll" />
 		<Library resource="libgstnet-${GstApiVersion}.dll" />
 		<Library resource="libgstbase-${GstApiVersion}.dll" />
+
+		<AddJNASearchPath libraryName="gstreamer-${GstApiVersion}"       path="${dir}" />
+		<AddJNASearchPath libraryName="gstcontroller-${GstApiVersion}"   path="${dir}" />
+		<AddJNASearchPath libraryName="gstdataprotocol-${GstApiVersion}" path="${dir}" />
+		<AddJNASearchPath libraryName="gstnet-${GstApiVersion}"          path="${dir}" />
+		<AddJNASearchPath libraryName="gstbase-${GstApiVersion}"         path="${dir}" />
+		
 		<!--
 		<File resource="libgstgl-${GstApiVersion}.dll" />
 		<File resource="libgstfarsight-${GstApiVersion}.dll" />

@@ -40,6 +40,20 @@
 		<Library resource="libgstrtsp-${GstApiVersion}.so.0"            executable="true" />
 		<Library resource="libgstcdda-${GstApiVersion}.so.0"            executable="true" />
 
+		<AddJNASearchPath libraryName="gstinterfaces-${GstApiVersion}"  path="${dir}" />
+		<AddJNASearchPath libraryName="gstsdp-${GstApiVersion}"         path="${dir}" />
+		<AddJNASearchPath libraryName="gstnetbuffer-${GstApiVersion}"   path="${dir}" />
+		<AddJNASearchPath libraryName="gstpbutils-${GstApiVersion}"     path="${dir}" />
+		<AddJNASearchPath libraryName="gstfft-${GstApiVersion}"         path="${dir}" />
+		<AddJNASearchPath libraryName="gstapp-${GstApiVersion}"         path="${dir}" />
+		<AddJNASearchPath libraryName="gstvideo-${GstApiVersion}"       path="${dir}" />
+		<AddJNASearchPath libraryName="gstaudio-${GstApiVersion}"       path="${dir}" />
+		<AddJNASearchPath libraryName="gsttag-${GstApiVersion}"         path="${dir}" />
+		<AddJNASearchPath libraryName="gstriff-${GstApiVersion}"        path="${dir}" />
+		<AddJNASearchPath libraryName="gstrtp-${GstApiVersion}"         path="${dir}" />
+		<AddJNASearchPath libraryName="gstrtsp-${GstApiVersion}"        path="${dir}" />
+		<AddJNASearchPath libraryName="gstcdda-${GstApiVersion}"        path="${dir}" />
+
 		<Library resource="libogg.so.0"                              executable="true" />
 		<Library resource="libvorbis.so.0"                           executable="true" />
 		<Library resource="libvorbisenc.so.2"                        executable="true" />

@@ -11,7 +11,9 @@
 
 		<!-- Libraries -->
 
-		<Library resource="librxtxSerial.so" executable="true" />
+		<Library resource="librxtxSerial.so"       executable="true" />
+
+		<AddJNASearchPath libraryName="rxtxSerial" path="${dir}" />
 	</Extract>
 
 </Resources>
