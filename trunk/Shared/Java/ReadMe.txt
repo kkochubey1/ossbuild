@@ -15,3 +15,15 @@ xmlmerge v1.1.1
 ant-contrib v1.0b3
 	http://ant-contrib.sourceforge.net/
 	http://downloads.sourceforge.net/project/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3-bin.zip?use_mirror=cdnetworks-us-2
+
+beanshell v2.0b4
+	http://www.beanshell.org/
+	http://www.beanshell.org/bsh-2.0b4.jar
+
+bsf v3.0 (bean scripting framework)
+	http://jakarta.apache.org/bsf/
+	http://apache.multihomed.net/jakarta/bsf/binaries/bsf-3.0-bin.zip
+
+commons-logging v1.1.1
+	http://commons.apache.org/logging/
+	http://apache.cs.utah.edu/commons/logging/binaries/commons-logging-1.1.1-bin.zip

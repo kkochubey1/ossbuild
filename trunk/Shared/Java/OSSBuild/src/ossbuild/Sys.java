@@ -268,6 +268,14 @@ public final class Sys {
 		}
 	}
 
+	public static boolean initialize(final boolean cleanRegistryAfterInitialization) {
+		try {
+			return Loader.initialize(cleanRegistryAfterInitialization);
+		} catch(Throwable t) {
+			throw new RuntimeException(t);
+		}
+	}
+
 	public static boolean initialize(final boolean cleanRegistryAfterInitialization, final IInitializeListener Listener) {
 		try {
 			return Loader.initialize(cleanRegistryAfterInitialization, Listener);

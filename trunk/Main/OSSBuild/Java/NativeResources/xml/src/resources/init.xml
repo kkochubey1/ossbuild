@@ -4,4 +4,7 @@
 	<Registry>
 		<Reference class="ossbuild.xml.Register" />
 	</Registry>
+	<System>
+		<Load class="ossbuild.xml.SystemLoader" />
+	</System>
 </Init>

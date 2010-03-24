@@ -5,6 +5,8 @@ import java.awt.Toolkit;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import ossbuild.NativeResource;
+import ossbuild.Sys;
 
 public class Main {
 
@@ -12,6 +14,11 @@ public class Main {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
+		//Sys.initialize(false);
+		Sys.initializeRegistry();
+		Sys.loadNativeResources(NativeResource.Base);
+		Sys.loadNativeResources(NativeResource.GLib);
+		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (UnsupportedLookAndFeelException ex) {

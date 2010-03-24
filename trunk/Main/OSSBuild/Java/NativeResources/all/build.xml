@@ -20,9 +20,6 @@
 		<mkdir dir="${top.build.dir}" />
 		<mkdir dir="${top.shared.dir}" />
 		<mkdir dir="${top.deployment.dir}" />
-		
-		<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${file.reference.ant-contrib.jar}" />
-		<taskdef name="xmlmerge" classname="ch.elca.el4j.services.xmlmerge.anttask.XmlMergeTask" classpath="${file.reference.xmlmerge.jar}" />
 	</target>
 
 	<target name="-post-jar">
@@ -38,12 +35,39 @@
 			<param name="build.os" value="Linux" />
 			<param name="build.arch" value="x86" />
 		</antcall>
+
+		<delete failonerror="false">
+			<fileset dir="${top.deployment.dir}">
+				<include name="resources-native-*.jar" />
+				<exclude name="merged-*.jar" />
+			</fileset>
+		</delete>
+
+		<move todir="${top.deployment.dir}">
+			<fileset dir="${top.deployment.dir}">
+				<include name="merged-*.jar" />
+			</fileset>
+			<mapper type="glob" from="merged-*.jar" to="*.jar" />
+		</move>
+
+		<copy file="${file.reference.gstreamer-java.jar}" todir="${top.deployment.dir}" />
 	</target>
 
 	<target name="-build-platform-archive">
+		<antcall target="-build-platform-archive-lic">
+			<param name="lic" value="lgpl" />
+			<param name="exclude.lic" value="gpl" />
+		</antcall>
+		<antcall target="-build-platform-archive-lic">
+			<param name="lic" value="gpl" />
+			<param name="exclude.lic" value="lgpl" />
+		</antcall>
+	</target>
+
+	<target name="-build-platform-archive-lic" depends="-custom-ant-tasks">
 		<!-- Create a monolithic package with everything merged -->
 		<property name="build.platform.dir" location="${top.build.dir}/${build.os}/${build.arch}/Release" />
-		<property name="build.java.dir" location="${build.platform.dir}/java/merge" />
+		<property name="build.java.dir" location="${build.platform.dir}/java/merge/${lic}" />
 
 		<delete dir="${build.java.dir}" failonerror="false" />
 		
@@ -54,15 +78,18 @@
 			<path>
 				<fileset dir="${top.deployment.dir}">
 					<include name="*-${os}-${arch}-*.jar" />
+					<include name="*-${os}-${arch}-*-${lic}.jar" />
+					<exclude name="*-${os}-${arch}-*-${exclude.lic}.jar" />
+					<exclude name="merged-*.jar" />
 				</fileset>
 			</path>
 		</foreach>
 
-		<xmlmerge dest="${build.java.dir}/resources/init.xml" conf="empty.properties">
+		<mergexml dest="${build.java.dir}/resources/init.xml">
 			<fileset dir="${build.java.dir}/resources/">
 				<include name="init-*.xml"/>
 			</fileset>
-		</xmlmerge>
+		</mergexml>
 
 		<delete failonerror="false">
 			<fileset dir="${build.java.dir}/resources/">
@@ -70,20 +97,22 @@
 			</fileset>
 		</delete>
 
-		<jar compress="true" file="${top.deployment.dir}/merged-all-native-resources-${os}-${arch}.jar">
+		<jar compress="true" file="${top.deployment.dir}/merged-native-resources-${os}-${arch}-${lic}.jar">
 			<fileset dir="${build.java.dir}">
-				<include name="*" />
+				<include name="**/*" />
 			</fileset>
 		</jar>
-		
 
 		<!-- Create bzipped package of all jars separately -->
 		<tar destfile="${top.deployment.dir}/native-resources.tar">
 			<tarfileset dir="${top.deployment.dir}" erroronmissingdir="true">
 				<include name="*-${os}-${arch}-*.jar" />
+				<include name="*-${os}-${arch}-*-${lic}.jar" />
+				<exclude name="*-${os}-${arch}-*-${exclude.lic}.jar" />
+				<exclude name="merged-*.jar" />
 			</tarfileset>
 		</tar>
-		<bzip2 src="${top.deployment.dir}/native-resources.tar" destfile="${top.deployment.dir}/all-native-resources-${os}-${arch}.tar.bz2" />
+		<bzip2 src="${top.deployment.dir}/native-resources.tar" destfile="${top.deployment.dir}/native-resources-${os}-${arch}-${lic}.tar.bz2" />
 		<delete file="${top.deployment.dir}/native-resources.tar" failonerror="false" />
 	</target>
 
@@ -93,7 +122,197 @@
 		<unjar src="${expand.file}" dest="${build.java.dir}">
 			<mapper type="glob" from="*init.xml" to="*init-${expand.name}.xml" />
 		</unjar>
+
 	</target>
+
+	<target name="-custom-ant-tasks">
+		<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${file.reference.ant-contrib.jar}" />
+
+		<script language="beanshell">
+			<classpath>
+				<fileset dir="${top.dir}/Shared/Java/">
+					<include name="bsf.jar" />
+					<include name="beanshell.jar" />
+					<include name="commons-logging.jar" />
+				</fileset>
+			</classpath><![CDATA[
+			import java.io.*;
+			import java.util.Vector;
+			import org.apache.tools.ant.Task;
+			import org.apache.tools.ant.types.FileSet;
+			import org.apache.tools.ant.DirectoryScanner;
+			import org.w3c.dom.*;
+			import javax.xml.xpath.*;
+			import javax.xml.parsers.*;
+			import javax.xml.transform.*;
+			import javax.xml.transform.dom.*;
+			import javax.xml.transform.stream.*;
+			import org.xml.sax.SAXException;
+
+			public class MergeXML extends Task {
+				Vector filesets = new Vector();
+				File dest = null;
+
+				public void setDest(String file) {
+					dest = new File(file);
+				}
+
+				public void addFileSet(FileSet c) {
+					if (!filesets.contains(c))
+						filesets.add(c);
+				}
+
+				public void execute() {
+					if (dest == null)
+						return;
+
+					if (dest.exists())
+						dest.delete();
+
+					DirectoryScanner ds;
+					for (FileSet fileset : filesets) {
+						ds = fileset.getDirectoryScanner(getProject());
+						File dir = fileset.getDir();
+						String[] filesInSet = ds.getIncludedFiles();
+						for (String filename : filesInSet) {
+							File file = new File(dir, filename);
+							merge(dest, file, dest);
+						}
+					}
+				}
+
+				private void copyfile(File f1, File f2){
+					try {
+						InputStream in = new FileInputStream(f1);
+						OutputStream out = new FileOutputStream(f2);
+
+						byte[] buf = new byte[1024];
+						int len;
+						while ((len = in.read(buf)) > 0)
+							out.write(buf, 0, len);
+						in.close();
+						out.close();
+					} catch(FileNotFoundException ex){
+					} catch(IOException e){
+					}
+				}
+
+				private void merge(File xmlbase, File xmlmerge, File dest) {
+					if (!xmlbase.exists()) {
+						copyfile(xmlmerge, xmlbase);
+						return;
+					}
+
+					DocumentBuilderFactory factory;
+					DocumentBuilder basebuilder;
+					DocumentBuilder mergebuilder;
+					Transformer transformer;
+					Document basedoc;
+					Document mergedoc;
+					XPath xpath;
+					Node basetopnode;
+					Node basenode;
+					Node baseinitnode;
+					Node baseregistrynode;
+					Node basesystemnode;
+					Node mergetopnode;
+					Node mergenode;
+
+					transformer = TransformerFactory.newInstance().newTransformer();
+					transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+					transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+
+					xpath = XPathFactory.newInstance().newXPath();
+
+					factory = DocumentBuilderFactory.newInstance();
+					factory.setNamespaceAware(true);
+
+					basebuilder = factory.newDocumentBuilder();
+					basedoc = basebuilder.parse(xmlbase);
+					//basedoc.getDocumentElement().normalize();
+					basetopnode = basedoc.getDocumentElement();
+
+					mergebuilder = factory.newDocumentBuilder();
+					mergedoc = mergebuilder.parse(xmlmerge);
+					//mergedoc.getDocumentElement().normalize();
+					mergetopnode = mergedoc.getDocumentElement();
+
+					baseinitnode = (NodeList)xpath.evaluate("//Init", basetopnode, XPathConstants.NODE);
+					baseregistrynode = (NodeList)xpath.evaluate("//Init/Registry", basetopnode, XPathConstants.NODE);
+					basesystemnode = (NodeList)xpath.evaluate("//Init/System", basetopnode, XPathConstants.NODE);
+
+					if (baseinitnode == null) {
+						baseinitnode = basedoc.createElement("Init");
+						basedoc.appendChild(baseinitnode);
+					}
+
+					if (baseregistrynode == null) {
+						baseregistrynode = basedoc.createElement("Registry");
+						baseinitnode.appendChild(baseregistrynode);
+					}
+
+					if (basesystemnode == null) {
+						basesystemnode = basedoc.createElement("System");
+						baseinitnode.appendChild(basesystemnode);
+					}
+
+					mergeNodes(
+						"class",
+						(NodeList)xpath.evaluate("//Init/Registry/Reference", basetopnode, XPathConstants.NODESET),
+						(NodeList)xpath.evaluate("//Init/Registry/Reference", mergetopnode, XPathConstants.NODESET),
+						baseregistrynode,
+						basedoc
+					);
+
+					mergeNodes(
+						"class",
+						(NodeList)xpath.evaluate("//Init/System/Load", basetopnode, XPathConstants.NODESET),
+						(NodeList)xpath.evaluate("//Init/System/Load", mergetopnode, XPathConstants.NODESET),
+						basesystemnode,
+						basedoc
+					);
+
+					//transformer.transform(new DOMSource(basedoc), new StreamResult(System.out));
+
+					StreamResult result = new StreamResult(dest);
+					DOMSource source = new DOMSource(basedoc);
+					transformer.transform(source, result);
+				}
+
+				private void mergeNodes(String attributeForUniqueID, NodeList basenodes, NodeList mergenodes, Node appendNode, Document appendDoc) {
+					if (mergenodes != null && mergenodes.getLength() > 0) {
+						for (int i = 0; i < mergenodes.getLength(); ++i) {
+							mergenode = mergenodes.item(i);
+
+							String className = mergenode.getAttribute("class").toString();
+							if ("".equals(className))
+								continue;
+
+							boolean skip = false;
+							if (basenodes != null && basenodes.getLength() > 0) {
+								for(int j = 0; j < basenodes.getLength(); ++j) {
+									if (className.equals(basenodes.item(j).getAttribute("class").toString())) {
+										skip = true;
+										break;
+									}
+								}
+							}
+
+							if (skip)
+								continue;
+
+							appendNode.appendChild(appendDoc.importNode(mergenodes.item(i), true));
+						}
+					}
+				}
+			}
+
+			project.addTaskDefinition("mergexml", MergeXML.class);
+		]]></script>
+	</target>
+
+	
+
 
     <!--
 

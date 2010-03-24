@@ -4,4 +4,7 @@
 	<Registry>
 		<Reference class="ossbuild.images.Register" />
 	</Registry>
+	<System>
+		<Load class="ossbuild.images.SystemLoader" />
+	</System>
 </Init>
