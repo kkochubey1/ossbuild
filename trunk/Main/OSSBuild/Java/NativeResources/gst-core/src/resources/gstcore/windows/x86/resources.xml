@@ -31,11 +31,11 @@
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
-		<File resource="libgstreamer-${GstApiVersion}.dll" />
-		<File resource="libgstcontroller-${GstApiVersion}.dll" />
-		<File resource="libgstdataprotocol-${GstApiVersion}.dll" />
-		<File resource="libgstnet-${GstApiVersion}.dll" />
-		<File resource="libgstbase-${GstApiVersion}.dll" />
+		<Library resource="libgstreamer-${GstApiVersion}.dll" />
+		<Library resource="libgstcontroller-${GstApiVersion}.dll" />
+		<Library resource="libgstdataprotocol-${GstApiVersion}.dll" />
+		<Library resource="libgstnet-${GstApiVersion}.dll" />
+		<Library resource="libgstbase-${GstApiVersion}.dll" />
 		<!--
 		<File resource="libgstgl-${GstApiVersion}.dll" />
 		<File resource="libgstfarsight-${GstApiVersion}.dll" />

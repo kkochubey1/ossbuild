@@ -24,9 +24,9 @@
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
-		<File resource="libgstbasevideo-${GstApiVersion}.dll" />
-		<File resource="libgstsignalprocessor-${GstApiVersion}.dll" />
-		<File resource="libgstphotography-${GstApiVersion}.dll" />
+		<Library resource="libgstbasevideo-${GstApiVersion}.dll" />
+		<Library resource="libgstsignalprocessor-${GstApiVersion}.dll" />
+		<Library resource="libgstphotography-${GstApiVersion}.dll" />
 		
 		<Library resource="libcelt-0.dll" />
 		<Library resource="libmms-0.dll" />

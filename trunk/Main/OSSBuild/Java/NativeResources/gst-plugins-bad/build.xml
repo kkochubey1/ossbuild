@@ -334,7 +334,7 @@
 		<copy todir="${build.java.platform.bin.dir}">
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
 				<include name="*dca*.so.*" />
-				<include name="*dts*.so.*" />
+				<!-- <include name="*dts*.so.*" /> -->
 				<include name="*faac*.so.*" />
 				<include name="*faad*.so.*" />
 				<include name="*xvidcore*.so.*" />

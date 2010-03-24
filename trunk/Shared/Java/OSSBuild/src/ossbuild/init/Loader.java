@@ -21,6 +21,7 @@ import org.xml.sax.SAXException;
 import ossbuild.Namespaces;
 import ossbuild.StringUtil;
 import ossbuild.extract.Registry;
+import ossbuild.extract.ResourceException;
 import ossbuild.extract.Resources;
 
 /**
@@ -440,7 +441,9 @@ public class Loader {
 
 			return new SystemLoaderInfo(cls, instance);
 		} catch(Throwable t) {
-			return null;
+			if (t instanceof ResourceException)
+				throw (ResourceException)t;
+			throw new ResourceException(t.getMessage(), t);
 		}
 	}
 
@@ -458,7 +461,9 @@ public class Loader {
 
 			return new RegistryReferenceInfo(cls, instance);
 		} catch(Throwable t) {
-			return null;
+			if (t instanceof ResourceException)
+				throw (ResourceException)t;
+			throw new ResourceException(t.getMessage(), t);
 		}
 	}
 	//</editor-fold>

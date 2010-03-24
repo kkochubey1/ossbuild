@@ -27,12 +27,14 @@ import ossbuild.extract.ResourceUtils;
 public class FileProcessor extends DefaultResourceProcessor {
 	//<editor-fold defaultstate="collapsed" desc="Constants">
 	public static final String
-		  ATTRIBUTE_EXECUTABLE  = "executable"
+		  ATTRIBUTE_EXECUTABLE      = "executable"
+		, ATTRIBUTE_IGNORE_MISSING  = "ignoreMissing"
 	;
 	//</editor-fold>
 	
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	private boolean executable = false;
+	private boolean ignoreMissing = false;
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
@@ -63,6 +65,7 @@ public class FileProcessor extends DefaultResourceProcessor {
 	protected boolean loadSettings(final String fullResourceName, final IResourcePackage pkg, final XPath xpath, final Node node, final Document document, final IVariableProcessor varproc, final ResourceProcessorFactory factory) throws XPathException {
 		this.size = ResourceUtils.sizeFromResource(fullResourceName);
 		this.executable = boolAttributeValue(varproc, false, node, ATTRIBUTE_EXECUTABLE);
+		this.ignoreMissing = boolAttributeValue(varproc, false, node, ATTRIBUTE_IGNORE_MISSING);
 		
 		return true;
 	}
@@ -72,7 +75,7 @@ public class FileProcessor extends DefaultResourceProcessor {
 		final File dest = pkg.filePath(subDirectory, destName);
 		
 		if (!ResourceUtils.extractResource(fullResourceName, dest, shouldBeTransient))
-			return false;
+			return ignoreMissing;
 
 		if (executable && !dest.setExecutable(true))
 			return false;
