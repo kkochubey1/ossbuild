@@ -8,6 +8,7 @@ package ossbuild;
 public class NativeResource {
 	public static final String
 		  Base                      = "base"
+		, SWT                       = "swt"
 		, XML                       = "xml"
 		, GLib                      = "glib"
 		, Fonts                     = "fonts"

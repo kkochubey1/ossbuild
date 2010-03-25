@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Init>
+	<Registry>
+		<Reference class="ossbuild.swt.Register" />
+	</Registry>
+	<System>
+		<Load class="ossbuild.swt.SystemLoader" />
+	</System>
+</Init>

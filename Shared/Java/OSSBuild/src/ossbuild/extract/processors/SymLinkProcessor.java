@@ -74,11 +74,11 @@ public class SymLinkProcessor extends DefaultResourceProcessor {
 		if (StringUtil.isNullOrEmpty(tmpFrom) || StringUtil.isNullOrEmpty(tmpTo))
 			return true;
 
-		final File fTo = new File(tmpTo);
-		if (fTo.exists())
+		final File fFrom = new File(tmpFrom);
+		if (fFrom.exists())
 			return true;
 		
-		final File fFrom = new File(tmpFrom);
+		final File fTo = new File(tmpTo);
 
 		return Path.createSymbolicLink(fTo, fFrom);
 	}
