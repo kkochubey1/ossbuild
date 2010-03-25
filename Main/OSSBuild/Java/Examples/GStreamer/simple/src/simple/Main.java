@@ -17,19 +17,23 @@ public class Main {
 		//Sys.initialize(false);
 		Sys.initializeRegistry();
 		Sys.loadNativeResources(NativeResource.Base);
+		Sys.loadNativeResources(NativeResource.XML);
 		Sys.loadNativeResources(NativeResource.GLib);
-		
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (UnsupportedLookAndFeelException ex) {
-		} catch (ClassNotFoundException ex) {
-		} catch (InstantiationException ex) {
-		} catch (IllegalAccessException ex) {
-		}
+		Sys.loadNativeResources(NativeResource.Images);
+		Sys.loadNativeResources(NativeResource.Fonts);
+		Sys.loadNativeResources(NativeResource.Graphics);
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
+				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				} catch (UnsupportedLookAndFeelException ex) {
+				} catch (ClassNotFoundException ex) {
+				} catch (InstantiationException ex) {
+				} catch (IllegalAccessException ex) {
+				}
+				
 				Splash dlg = new Splash(null, true);
 				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 				Dimension labelSize = dlg.getSize();
