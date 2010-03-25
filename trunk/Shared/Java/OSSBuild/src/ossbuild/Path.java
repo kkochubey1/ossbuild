@@ -1,8 +1,11 @@
 
 package ossbuild;
 
+import com.sun.jna.Library;
+import com.sun.jna.Native;
 import java.io.File;
 import ossbuild.extract.ResourceUtils;
+import ossbuild.platform.Win32Library;
 
 /**
  *
@@ -30,9 +33,53 @@ public class Path {
 	;
 	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="JNA Library Declarations">
+	interface PathLibraryWindows extends Win32Library {
+		//<editor-fold defaultstate="collapsed" desc="Constants">
+		public static final String
+			LIB_NAME = ""
+		;
+
+		public static final PathLibraryWindows
+			INSTANCE = null;//(PathLibraryWindows)Native.loadLibrary(LIB_NAME, PathLibraryWindows.class, DEFAULT_OPTIONS)
+		;
+		//</editor-fold>
+	}
+
+	interface PathLibraryUnix extends Library {
+		//<editor-fold defaultstate="collapsed" desc="Constants">
+		public static final String
+			LIB_NAME = "c"
+		;
+
+		public static final PathLibraryUnix
+			INSTANCE = (PathLibraryUnix)Native.loadLibrary(LIB_NAME, PathLibraryUnix.class);
+		;
+		//</editor-fold>
+
+		public int symlink(final String from, final String to);
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Variables">
+	private static Library nativelib;
+	//</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	static {
 		nativeResourcesDirectory = Path.combine(tempDirectory, nativeResourcesDirectoryName).getAbsolutePath();
+
+		switch(OS.getSystemOSFamily()) {
+			case Unix:
+			case Mac:
+				nativelib = PathLibraryUnix.INSTANCE;
+				break;
+			case Windows:
+				nativelib = PathLibraryWindows.INSTANCE;
+				break;
+			default:
+				break;
+		}
 	}
 	//</editor-fold>
 
@@ -94,6 +141,27 @@ public class Path {
 		} catch(SecurityException se) {
 			return false;
 		}
+	}
+
+	public static boolean createSymbolicLink(final File from, final File to) {
+		if (from == null || to == null)
+			return false;
+		return createSymbolicLink(from.getAbsolutePath(), to.getAbsolutePath());
+	}
+	
+	public static boolean createSymbolicLink(final String from, final String to) {
+		if (StringUtil.isNullOrEmpty(from) || StringUtil.isNullOrEmpty(to))
+			throw new IllegalArgumentException("from and to cannot be empty");
+
+		if (nativelib == null)
+			throw new UnsupportedOperationException("Creating symbolic links is unsupported on this platform");
+
+		if (nativelib instanceof PathLibraryUnix)
+			return (PathLibraryUnix.INSTANCE.symlink(from, to) == 0);
+		else if (nativelib instanceof PathLibraryWindows)
+			return false;
+		else
+			throw new UnsatisfiedLinkError("Platform specific library for path manipulation is unavailable");
 	}
 	//</editor-fold>
 }
