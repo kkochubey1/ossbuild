@@ -15,6 +15,9 @@
 		<property name="project.jarpart.name" value="gst-core" />
 		<property name="project.package.name" value="gstcore" />
 
+		<property name="gst-api-version" value="0.10" />
+		<property name="pkg-gst-api-version" value="0_10" />
+
 		<property name="top.dir" location="../../../../.." />
 		<property name="top.build.dir" location="${top.dir}/Build" />
 		<property name="top.shared.dir" location="${top.dir}/Shared/Build" />
@@ -113,6 +116,16 @@
 				<include name="*gstbase*.dll" />
 
 				<exclude name="*gstreamer*sharp*" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${build.java.platform.lib.dir}/gstreamer_${pkg-gst-api-version}/" />
+		<copy todir="${build.java.platform.lib.dir}/gstreamer_${pkg-gst-api-version}/">
+			<fileset dir="${shared.lib.dir}/gstreamer-${gst-api-version}/" erroronmissingdir="false">
+				<include name="*gst-plugin-scanner*" />
+			</fileset>
+			<fileset dir="${build.bin.dir}/plugins/" erroronmissingdir="false">
+				<include name="*gst-plugin-scanner*" />
 			</fileset>
 		</copy>
 		

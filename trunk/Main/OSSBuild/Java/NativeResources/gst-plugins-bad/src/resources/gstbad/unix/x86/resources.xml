@@ -28,6 +28,10 @@
 		<Library resource="libgstsignalprocessor-${GstApiVersion}.so.0"     executable="true" />
 		<Library resource="libgstphotography-${GstApiVersion}.so.0"         executable="true" />
 
+		<SymLink from="${dir}/libgstbasevideo-${GstApiVersion}.so"          to="${dir}/libgstbasevideo-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstsignalprocessor-${GstApiVersion}.so"    to="${dir}/libgstsignalprocessor-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstphotography-${GstApiVersion}.so"        to="${dir}/libgstphotography-${GstApiVersion}.so.0" />
+
 		<AddJNASearchPath libraryName="gstbasevideo-${GstApiVersion}"       path="${dir}" />
 		<AddJNASearchPath libraryName="gstsignalprocessor-${GstApiVersion}" path="${dir}" />
 		<AddJNASearchPath libraryName="gstphotography-${GstApiVersion}"     path="${dir}" />

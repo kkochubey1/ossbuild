@@ -57,7 +57,7 @@ public class Path {
 		;
 		//</editor-fold>
 
-		public int symlink(final String from, final String to);
+		public int symlink(final String to, final String from);
 	}
 	//</editor-fold>
 
@@ -143,13 +143,13 @@ public class Path {
 		}
 	}
 
-	public static boolean createSymbolicLink(final File from, final File to) {
+	public static boolean createSymbolicLink(final File to, final File from) {
 		if (from == null || to == null)
 			return false;
-		return createSymbolicLink(from.getAbsolutePath(), to.getAbsolutePath());
+		return createSymbolicLink(to.getAbsolutePath(), from.getAbsolutePath());
 	}
 	
-	public static boolean createSymbolicLink(final String from, final String to) {
+	public static boolean createSymbolicLink(final String to, final String from) {
 		if (StringUtil.isNullOrEmpty(from) || StringUtil.isNullOrEmpty(to))
 			throw new IllegalArgumentException("from and to cannot be empty");
 
@@ -157,7 +157,7 @@ public class Path {
 			throw new UnsupportedOperationException("Creating symbolic links is unsupported on this platform");
 
 		if (nativelib instanceof PathLibraryUnix)
-			return (PathLibraryUnix.INSTANCE.symlink(from, to) == 0);
+			return (PathLibraryUnix.INSTANCE.symlink(to, from) == 0);
 		else if (nativelib instanceof PathLibraryWindows)
 			return false;
 		else

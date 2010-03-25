@@ -40,6 +40,20 @@
 		<Library resource="libgstrtsp-${GstApiVersion}.so.0"            executable="true" />
 		<Library resource="libgstcdda-${GstApiVersion}.so.0"            executable="true" />
 
+		<SymLink from="${dir}/libgstinterfaces-${GstApiVersion}.so"     to="${dir}/libgstinterfaces-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstsdp-${GstApiVersion}.so"            to="${dir}/libgstsdp-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstnetbuffer-${GstApiVersion}.so"      to="${dir}/libgstnetbuffer-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstpbutils-${GstApiVersion}.so"        to="${dir}/libgstpbutils-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstfft-${GstApiVersion}.so"            to="${dir}/libgstfft-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstapp-${GstApiVersion}.so"            to="${dir}/libgstapp-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstvideo-${GstApiVersion}.so"          to="${dir}/libgstvideo-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstaudio-${GstApiVersion}.so"          to="${dir}/libgstaudio-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgsttag-${GstApiVersion}.so"            to="${dir}/libgsttag-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstriff-${GstApiVersion}.so"           to="${dir}/libgstriff-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstrtp-${GstApiVersion}.so"            to="${dir}/libgstrtp-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstrtsp-${GstApiVersion}.so"           to="${dir}/libgstrtsp-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstcdda-${GstApiVersion}.so"           to="${dir}/libgstcdda-${GstApiVersion}.so.0" />
+
 		<AddJNASearchPath libraryName="gstinterfaces-${GstApiVersion}"  path="${dir}" />
 		<AddJNASearchPath libraryName="gstsdp-${GstApiVersion}"         path="${dir}" />
 		<AddJNASearchPath libraryName="gstnetbuffer-${GstApiVersion}"   path="${dir}" />

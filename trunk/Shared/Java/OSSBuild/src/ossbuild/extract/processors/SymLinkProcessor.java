@@ -75,6 +75,9 @@ public class SymLinkProcessor extends DefaultResourceProcessor {
 			return true;
 
 		final File fTo = new File(tmpTo);
+		if (fTo.exists())
+			return true;
+		
 		final File fFrom = new File(tmpFrom);
 
 		return Path.createSymbolicLink(fTo, fFrom);
