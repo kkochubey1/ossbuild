@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="swt">
+
+	<References>
+		<Add name="base" />
+	</References>
+	
+	<Extract package="resources.swt.osx.x86_64.bin" directory="${nativeResDir}/bin/">
+		<Echo key="res.swt.init" msg="Initializing SWT..." />
+
+		<!-- Libraries -->
+	</Extract>
+
+</Resources>
