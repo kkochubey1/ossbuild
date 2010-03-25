@@ -156,8 +156,8 @@
 /* #undef SDL_VIDEO_DISABLED */
 
 /* Enable various audio drivers */
-/* #undef SDL_AUDIO_DRIVER_ALSA */
-/* #undef SDL_AUDIO_DRIVER_ALSA_DYNAMIC */
+#define SDL_AUDIO_DRIVER_ALSA 1
+#define SDL_AUDIO_DRIVER_ALSA_DYNAMIC "libasound.so.2"
 /* #undef SDL_AUDIO_DRIVER_ARTS */
 /* #undef SDL_AUDIO_DRIVER_ARTS_DYNAMIC */
 /* #undef SDL_AUDIO_DRIVER_BAUDIO */
@@ -169,8 +169,8 @@
 #define SDL_AUDIO_DRIVER_DUMMY 1
 /* #undef SDL_AUDIO_DRIVER_DMEDIA */
 /* #undef SDL_AUDIO_DRIVER_DSOUND */
-/* #undef SDL_AUDIO_DRIVER_PULSE */
-/* #undef SDL_AUDIO_DRIVER_PULSE_DYNAMIC */
+#define SDL_AUDIO_DRIVER_PULSE 1
+#define SDL_AUDIO_DRIVER_PULSE_DYNAMIC "libpulse-simple.so.0"
 /* #undef SDL_AUDIO_DRIVER_ESD */
 /* #undef SDL_AUDIO_DRIVER_ESD_DYNAMIC */
 /* #undef SDL_AUDIO_DRIVER_MINT */

@@ -10,5 +10,5 @@ Requires:
 Requires.private: libavcodec = 52.55.0
 Conflicts:
 Libs: -L${libdir} -lavformat-gpl 
-Libs.private: -lz -lm
+Libs.private: -lz -lm -lasound -lasound -lasound
 Cflags: -I${includedir}

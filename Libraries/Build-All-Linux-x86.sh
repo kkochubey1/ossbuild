@@ -91,15 +91,18 @@ if [ ! -f "$BinDir/libbz2.so.1" ]; then
 	make
 	make -f Makefile-libbz2_so
 	make install PREFIX=$InstallDir
-	
+
 	cp -p libbz2.a "$LibDir/libbz2.a"
-	copy_files_to_dir "libbz2.so.1.0" "$BinDir"
-	arrange_shared "$BinDir" "libbz2.so" "1" "1.0"
+	copy_files_to_dir "libbz2.so.1.0.4" "$BinDir"
+	arrange_shared "$BinDir" "libbz2.so" "1" "1.0.4"
 	
 	make clean
 	remove_files_from_dir "*.so.* bzip2-shared"
 	
 	rm -rf "$LibDir/libbz2.a"
+	
+	cd "$BinDir/"
+	ln -sf libbz2.so.1 libbz2.so.1.0
 fi
 
 #Skip pthreads
@@ -222,11 +225,11 @@ if [ ! -f "$BinDir/libglib-2.0.so.0" ]; then
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$BinDir --includedir=$IncludeDir
 	make && make install
 
-	arrange_shared "$BinDir" "libgio-2.0.so" "0" "0.2200.4" "libgio-2.0.la" "gio-2.0.pc gio-unix-2.0.pc" "$LibDir"
-	arrange_shared "$BinDir" "libglib-2.0.so" "0" "0.2200.4" "libglib-2.0.la" "glib-2.0.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgmodule-2.0.so" "0" "0.2200.4" "libgmodule-2.0.la" "gmodule-2.0.pc gmodule-export-2.0.pc gmodule-no-export-2.0.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgobject-2.0.so" "0" "0.2200.4" "libgobject-2.0.la" "gobject-2.0.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgthread-2.0.so" "0" "0.2200.4" "libgthread-2.0.la" "gthread-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgio-2.0.so" "0" "0.2200.5" "libgio-2.0.la" "gio-2.0.pc gio-unix-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libglib-2.0.so" "0" "0.2200.5" "libglib-2.0.la" "glib-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgmodule-2.0.so" "0" "0.2200.5" "libgmodule-2.0.la" "gmodule-2.0.pc gmodule-export-2.0.pc gmodule-no-export-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgobject-2.0.so" "0" "0.2200.5" "libgobject-2.0.la" "gobject-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgthread-2.0.so" "0" "0.2200.5" "libgthread-2.0.la" "gthread-2.0.pc" "$LibDir"
 	test -d "$LibDir/gio" && rm -rf "$LibDir/gio"
 	test -d "$LibDir/glib-2.0" && rm -rf "$LibDir/glib-2.0"
 	mv "$BinDir/gio" "$LibDir"
