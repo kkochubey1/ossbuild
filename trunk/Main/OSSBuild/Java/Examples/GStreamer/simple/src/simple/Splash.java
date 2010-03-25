@@ -30,8 +30,6 @@ import ossbuild.extract.IResourceProcessor;
 import ossbuild.extract.ResourceCallback;
 import ossbuild.extract.ResourceProgressListenerAdapter;
 import ossbuild.extract.Resources;
-import ossbuild.init.ISystemLoaderInitializeListener;
-import ossbuild.init.InitializeListenerAdapter;
 import ossbuild.init.SystemLoaderInitializeListenerAdapter;
 
 /**
@@ -64,6 +62,7 @@ public class Splash extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Loading...");
+        setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
         setMinimumSize(new java.awt.Dimension(306, 100));
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         setResizable(false);
@@ -77,12 +76,16 @@ public class Splash extends javax.swing.JDialog {
         border.setBorder(javax.swing.BorderFactory.createLineBorder(javax.swing.UIManager.getDefaults().getColor("controlShadow")));
         border.setLayout(new java.awt.GridBagLayout());
 
+        lbl.setFont(new java.awt.Font("DejaVu Sans", 0, 12)); // NOI18N
         lbl.setText("Loading...");
+        lbl.setMaximumSize(new java.awt.Dimension(61, 18));
+        lbl.setMinimumSize(new java.awt.Dimension(61, 18));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 3;
+        gridBagConstraints.ipady = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
         border.add(lbl, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -92,7 +95,7 @@ public class Splash extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(2, 3, 2, 3);
         border.add(progress, gridBagConstraints);
 
-        title.setFont(title.getFont().deriveFont(title.getFont().getSize()+8f));
+        title.setFont(new java.awt.Font("DejaVu Sans", 0, 21)); // NOI18N
         title.setText("OSSBuild GStreamer Example");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -220,21 +223,23 @@ public class Splash extends javax.swing.JDialog {
 
 									//Thread.currentThread().sleep(2000);
 
-									Splash.this.setVisible(false);
-									Splash.this.dispose();
+									SwingUtilities.invokeLater(new Runnable() {
+										@Override
+										public void run() {
+											Splash.this.setVisible(false);
+											Splash.this.dispose();
 
-									final JFileChooser choose = new JFileChooser();
-									choose.setDialogTitle("Select Media File");
-									choose.setMultiSelectionEnabled(true);
-									final int result = choose.showOpenDialog(Splash.this);
+											final JFileChooser choose = new JFileChooser();
+											choose.setDialogTitle("Select Media File");
+											choose.setMultiSelectionEnabled(true);
+											final int result = choose.showOpenDialog(Splash.this);
 
-									if (result == JFileChooser.CANCEL_OPTION)
-										System.exit(0);
+											if (result == JFileChooser.CANCEL_OPTION) {
+												org.gstreamer.Gst.quit();
+												System.exit(0);
+											}
 
-									for(int i = 0; i < 1; ++i) {
-										SwingUtilities.invokeLater(new Runnable() {
-											@Override
-											public void run() {
+											for(int i = 0; i < 1; ++i) {
 												final List<URI> playList = new LinkedList<URI>();
 												for (File f : choose.getSelectedFiles())
 													playList.add(f.toURI());
@@ -252,8 +257,8 @@ public class Splash extends javax.swing.JDialog {
 												frame.pack();
 												frame.setVisible(true);
 											}
-										});
-									}
+										}
+									});
 								}
 							});
 						} catch (Throwable tr) {
