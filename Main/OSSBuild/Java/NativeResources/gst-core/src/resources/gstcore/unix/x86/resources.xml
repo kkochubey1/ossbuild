@@ -29,6 +29,12 @@
 		<Library resource="libgstnet-${GstApiVersion}.so.0"              executable="true" />
 		<Library resource="libgstbase-${GstApiVersion}.so.0"             executable="true" />
 
+		<SymLink from="${dir}/libgstreamer-${GstApiVersion}.so"          to="${dir}/libgstreamer-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstcontroller-${GstApiVersion}.so"      to="${dir}/libgstcontroller-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstdataprotocol-${GstApiVersion}.so"    to="${dir}/libgstdataprotocol-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstnet-${GstApiVersion}.so"             to="${dir}/libgstnet-${GstApiVersion}.so.0" />
+		<SymLink from="${dir}/libgstbase-${GstApiVersion}.so"            to="${dir}/libgstbase-${GstApiVersion}.so.0" />
+
 		<AddJNASearchPath libraryName="gstreamer-${GstApiVersion}"       path="${dir}" />
 		<AddJNASearchPath libraryName="gstcontroller-${GstApiVersion}"   path="${dir}" />
 		<AddJNASearchPath libraryName="gstdataprotocol-${GstApiVersion}" path="${dir}" />
@@ -52,6 +58,8 @@
 
 		<EnvVar name="GST_REGISTRY_FORK" value="yes" />
 		<EnvVar name="GST_REGISTRY_UPDATE" value="yes" />
+
+		<File resource="gst-plugin-scanner"                              executable="true" />
 	</Extract>
 
 </Resources>

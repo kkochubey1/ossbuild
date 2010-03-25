@@ -9,13 +9,28 @@
 	<Extract package="resources.glib.unix.x86.bin" directory="${nativeResDir}/bin/">
 		<Echo key="res.glib.init" msg="Initializing GLib..." />
 
+		<!-- Force GLib to not use slices which was crashing in pthreads for some reason -->
+		<EnvVar name="G_SLICE" value="always-malloc" />
+
 		<!-- Libraries -->
 
-		<Library resource="libglib-2.0.so.0"    executable="true" />
-		<Library resource="libgobject-2.0.so.0" executable="true" />
-		<Library resource="libgmodule-2.0.so.0" executable="true" />
-		<Library resource="libgthread-2.0.so.0" executable="true" />
-		<Library resource="libgio-2.0.so.0"     executable="true" />
+		<Library resource="libglib-2.0.so.0"        executable="true" />
+		<Library resource="libgobject-2.0.so.0"     executable="true" />
+		<Library resource="libgmodule-2.0.so.0"     executable="true" />
+		<Library resource="libgthread-2.0.so.0"     executable="true" />
+		<Library resource="libgio-2.0.so.0"         executable="true" />
+
+		<SymLink from="${dir}/libglib-2.0.so"       to="${dir}/libglib-2.0.so.0" />
+		<SymLink from="${dir}/libgobject-2.0.so"    to="${dir}/libgobject-2.0.so.0" />
+		<SymLink from="${dir}/libgmodule-2.0.so"    to="${dir}/libgmodule-2.0.so.0" />
+		<SymLink from="${dir}/libgthread-2.0.so"    to="${dir}/libgthread-2.0.so.0" />
+		<SymLink from="${dir}/libgio-2.0.so"        to="${dir}/libgio-2.0.so.0" />
+
+		<AddJNASearchPath libraryName="glib-2.0"    path="${dir}" />
+		<AddJNASearchPath libraryName="gobject-2.0" path="${dir}" />
+		<AddJNASearchPath libraryName="gmodule-2.0" path="${dir}" />
+		<AddJNASearchPath libraryName="gthread-2.0" path="${dir}" />
+		<AddJNASearchPath libraryName="gio-2.0"     path="${dir}" />
 	</Extract>
 
 </Resources>

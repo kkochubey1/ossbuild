@@ -11,10 +11,16 @@
 
 		<!-- Libraries -->
 
-		<Library resource="libjpeg.so.8"     executable="true" />
-		<Library resource="libopenjpeg.so.2" executable="true" />
-		<Library resource="libpng14.so.14"   executable="true" />
-		<Library resource="libtiff.so.3"     executable="true" />
+		<Library resource="libjpeg.so.8"      executable="true" />
+		<Library resource="libopenjpeg.so.2"  executable="true" />
+		<Library resource="libpng14.so.14"    executable="true" />
+		<Library resource="libtiff.so.3"      executable="true" />
+
+		<SymLink from="${dir}/libpng14.so"    to="${dir}/libpng14.so.14" />
+		<SymLink from="${dir}/libpng12.so.12" to="${dir}/libpng14.so.14" />
+		<SymLink from="${dir}/libpng12.so"    to="${dir}/libpng14.so.14" />
+		<SymLink from="${dir}/libpng.so"      to="${dir}/libpng14.so.14" />
+		<SymLink from="${dir}/libpng.so.12"   to="${dir}/libpng14.so.14" />
 	</Extract>
 
 </Resources>
