@@ -10,5 +10,5 @@ Requires:
 Requires.private: libavformat = 52.54.0
 Conflicts:
 Libs: -L${libdir} -lavdevice-gpl 
-Libs.private: -lz -lm
+Libs.private: -lz -lm -lasound -lasound -lasound
 Cflags: -I${includedir}
