@@ -10,7 +10,7 @@
 		<Echo key="res.glib.init" msg="Initializing GLib..." />
 
 		<!-- Force GLib to not use slices which was crashing in pthreads for some reason -->
-		<EnvVar name="G_SLICE" value="always-malloc" />
+		<!-- <EnvVar name="G_SLICE" value="always-malloc" /> -->
 
 		<!-- Libraries -->
 
