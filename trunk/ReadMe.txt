@@ -40,10 +40,17 @@ Setup Visual Studio 2008+
 Setup Linux
 -------------------------------------
 
+  Ubuntu 8.04
+    1. sudo apt-get install openjdk-6-jdk git-core subversion perl sed pkg-config build-essential autoconf bison flex libtool tofrodos vim gettext yasm nasm zlib1g-dev mesa-common-dev libglu1-mesa-dev libxmu-dev libx11-dev libxi-dev libcurl4-gnutls-dev libxrender-dev autoconf libxv-dev libasound2-dev v4l-conf libpulse-dev python2.6-dev python-gobject-dev mono-devel
+
   Ubuntu 9.10
 
     1. sudo apt-get install openjdk-6-jdk git-core subversion perl sed pkg-config build-essential autoconf bison flex libtool tofrodos vim gettext yasm nasm zlib1g-dev mesa-common-dev libglu1-mesa-dev libxmu-dev libx11-dev libxi-dev libcurl4-gnutls-dev libxrender-dev autoconf libxv-dev libasound2-dev libv4l-dev libpulse-dev python2.6-dev python-gobject-dev mono-devel
 
+  Debian 5.0.4
+
+    1. /bin/su -
+    2. apt-get install openjdk-6-jdk git-core subversion perl sed pkg-config build-essential autoconf bison flex libtool tofrodos vim gettext yasm nasm zlib1g-dev mesa-common-dev libglu1-mesa-dev libxmu-dev libx11-dev libxi-dev libcurl4-gnutls-dev libxrender-dev autoconf libxv-dev libasound2-dev v4l-conf libpulse-dev mono-tools-devel python-gobject-dev
 
 Acknowledgments
 -------------------------------------
