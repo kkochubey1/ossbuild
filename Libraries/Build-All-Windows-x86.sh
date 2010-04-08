@@ -113,6 +113,21 @@ if [ ! -f "$BinDir/lib${Prefix}oil-0.3-0.dll" ]; then
 	reset_flags
 fi
 
+#orc (oil runtime compiler)
+if [ ! -f "$BinDir/lib${Prefix}orc-0.4-0.dll" ]; then
+	unpack_gzip_and_move "orc.tar.gz" "$PKG_DIR_ORC"
+	mkdir_and_move "$IntDir/orc"
+	
+	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	
+	make && make install
+	
+	$MSLIB /name:lib${Prefix}orc-0.4-0.dll /out:orc-0.4.lib /machine:$MSLibMachine /def:orc/.libs/lib${Prefix}orc-0.4-0.dll.def
+	$MSLIB /name:lib${Prefix}orc-test-0.4-0.dll /out:orc-test-0.4.lib /machine:$MSLibMachine /def:orc-test/.libs/lib${Prefix}orc-test-0.4-0.dll.def
+	$MSLIB /name:lib${Prefix}orc-float-0.4-0.dll /out:orc-float-0.4.lib /machine:$MSLibMachine /def:orc-float/.libs/lib${Prefix}orc-float-0.4-0.dll.def
+	move_files_to_dir "*.exp *.lib" "$LibDir"
+fi
+
 #pthreads
 PthreadsPrefix=lib${Prefix}
 if [ "${Prefix}" = "" ]; then
@@ -174,15 +189,15 @@ if [ "${Prefix}" = "" ]; then
 fi
 #Can't use separate build dir
 if [ ! -f "$BinDir/${ZlibPrefix}z.dll" ]; then 
-	unpack_zip_and_move_windows "zlib.zip" "zlib" "zlib"
+	unpack_bzip2_and_move "zlib.tar.bz2" "$PKG_DIR_ZLIB"
 	mkdir_and_move "$IntDir/zlib"
 	cd "$PKG_DIR"
 	
-	#cp contrib/asm686/match.S ./match.S
-	#make LOC=-DASMV OBJA=match.o -fwin32/Makefile.gcc
-	
 	change_package "${ZlibPrefix}z.dll" "win32" "Makefile.gcc" "SHAREDLIB"
-	make -fwin32/Makefile.gcc ${ZlibPrefix}z.dll
+	
+	cp contrib/asm686/match.S ./match.S
+	make LOC=-DASMV OBJA=match.o -fwin32/Makefile.gcc
+	#make -fwin32/Makefile.gcc ${ZlibPrefix}z.dll
 	INCLUDE_PATH=$IncludeDir LIBRARY_PATH=$BinDir make install -fwin32/Makefile.gcc
 	
 	cp -p ${ZlibPrefix}z.dll "$BinDir"
@@ -290,9 +305,6 @@ if [ ! -f "$BinDir/lib${Prefix}xml2-2.dll" ]; then
 	unpack_gzip_and_move "libxml2.tar.gz" "$PKG_DIR_LIBXML2"
 	mkdir_and_move "$IntDir/libxml2"
 	
-	#cd "$LIBRARIES_DIR/LibXML2/Source/win32"
-	#cscript configure.js iconv=no xml_debug=no static=yes debug=no threads=native zlib=yes vcmanifest=no compiler=mingw "prefix=$InstallDir" "incdir=$IncludeDir" "libdir=$LibDir" "sodir=$BinDir"
-	
 	#Compiling with iconv causes an odd dependency on "in.dll" which I think is an intermediary for iconv.a
 	$PKG_DIR/configure --with-zlib --with-iconv --with-threads=native --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
@@ -380,7 +392,7 @@ if [ ! -f "$BinDir/lib${Prefix}png14-14.dll" ]; then
 	
 	#png functions are not being properly exported
 	cd "$PKG_DIR"
-	change_key "." "Makefile.am" "libpng14_la_LDFLAGS" "-no-undefined\ -export-symbols-regex\ \'\^\(png\|_png\|png_\)\.\*\'\ \\\\"
+	change_key "." "Makefile.am" "libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_LDFLAGS" "-no-undefined\ -export-symbols-regex\ \'\^\(png\|_png\|png_\)\.\*\'\ \\\\"
 	automake
 	
 	cd "$IntDir/libpng"
@@ -430,6 +442,15 @@ if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then
 	
 	$PKG_DIR/configure --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
+	#This errors out when attempting to run glib-genmarshal for the gobject lib.
+	#This is expected and will hopefully be corrected in the future. As a result, 
+	#we run make once to create the proper dll, then copy it in place, and run make 
+	#again.
+	make
+	#glib-genmarshal needs libglib-2.0-0.dll but can't load it b/c it isn't in the path
+	#Setting PATH didn't work
+	cp -p "$IntDir/glib/glib/.libs/libglib-2.0-0.dll" "gobject/.libs/"
+	
 	make && make install
 	
 	#Add in MS build tools again
@@ -727,7 +748,7 @@ fi
 if [ ! -f "$BinDir/lib${Prefix}fontconfig-1.dll" ]; then 
 	unpack_gzip_and_move "fontconfig.tar.gz" "$PKG_DIR_FONTCONFIG"
 	mkdir_and_move "$IntDir/fontconfig"
-	
+
 	$PKG_DIR/configure --disable-debug --disable-static --disable-docs --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
 	make && make install RUN_FC_CACHE_TEST=false
@@ -835,9 +856,9 @@ if [ ! -f "$BinDir/lib${Prefix}gtk-win32-2.0-0.dll" ]; then
 	#Need to get rid of MS build tools b/c the makefile call is linking to the wrong dll
 	reset_path
 	
-	CFLAGS="$CFLAGS -mtune=pentium3 -mthreads"
-	LDFLAGS="$LDFLAGS -luuid -lstrmiids"
-	$PKG_DIR/configure --with-gdktarget=win32 --enable-gdiplus --with-included-loaders --with-included-immodules --without-libjasper --disable-debug --enable-explicit-deps=no --disable-gtk-doc --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	CFLAGS="$CFLAGS -mtune=generic -mthreads -I$IncludeDir/glib-2.0/ -I$IncludeDir/cairo/ -I$IncludeDir/pango-1.0/"
+	LDFLAGS="$LDFLAGS -luuid -lstrmiids -lcairo -lpango-1.0 -lpangocairo-1.0 -lpangoft2-1.0 -lpangowin32-1.0"
+	$PKG_DIR/configure --with-gdktarget=win32 --enable-gdiplus --with-included-loaders --with-included-immodules --without-libjasper --disable-debug --enable-explicit-deps=no --disable-gtk-doc --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir	
 	change_libname_spec
 	
 	#The resource files are using msys/mingw-style paths and windres is having trouble finding the icons
@@ -1346,15 +1367,17 @@ if [ ! -f "$BinDir/${FFmpegPrefix}avcodec${FFmpegSuffix}-52.dll" ]; then
 	
 	#LGPL-compatible version
 	CFLAGS=""
-	CPPFLAGS=""
+	CPPFLAGS="-DETIMEDOUT=10060"
 	LDFLAGS=""
-	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias" --extra-cflags="$IncludeFlags" --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
+	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias" --extra-cflags="$IncludeFlags" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
 	change_key "." "config.mak" "BUILDSUF" "${FFmpegSuffix}"
 	change_key "." "config.mak" "LIBPREF" "${FFmpegPrefix}"
 	change_key "." "config.mak" "SLIBPREF" "${FFmpegPrefix}"
 	#Adds $(SLIBPREF) to lib names when linking
 	change_key "." "common.mak" "FFEXTRALIBS\ \\:" "\$\(addprefix\ -l\$\(SLIBPREF\),\$\(addsuffix\ \$\(BUILDSUF\),\$\(FFLIBS\)\)\)\ \$\(EXTRALIBS\)"
-	make && make install
+	
+	make
+	make install
 	
 	#If it built successfully, then the .lib and .dll files are all in the lib/ folder with 
 	#sym links. We want to take out the sym links and keep just the .lib and .dll files we need 
@@ -1438,9 +1461,10 @@ if [ ! -f "$BinDir/lib${Prefix}nice-0.dll" ]; then
 	unpack_gzip_and_move "libnice.tar.gz" "$PKG_DIR_LIBNICE"
 	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/bind.c-win32.patch"
 	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/rand.c-win32.patch"
+	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/agent.c-win32.patch"
 	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/address.h-win32.patch"
+	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/pseudotcp.c-win32.patch"
 	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/interfaces.c-win32.patch"
-	
 	mkdir_and_move "$IntDir/libnice"
 	
 	CFLAGS="-D_SSIZE_T_ -I$PKG_DIR -I$PKG_DIR/stun -D_WIN32_WINNT=0x0501 -DUSE_GETADDRINFO -DHAVE_GETNAMEINFO -DHAVE_GETSOCKOPT -DHAVE_INET_NTOP -DHAVE_INET_PTON"
@@ -1450,6 +1474,7 @@ if [ ! -f "$BinDir/lib${Prefix}nice-0.dll" ]; then
 	if [ -e "/mingw/lib/libws2_32.la" ]; then 
 		copy_files_to_dir "/mingw/lib/libws2_32.la /mingw/lib/libole32.la /mingw/lib/libiphlpapi.la /mingw/lib/libwsock32.la" "nice"
 	fi
+	
 	make && make install
 	
 	cd "nice/.libs/"
@@ -1702,9 +1727,9 @@ if [ ! -f "$BinDir/${FFmpegPrefix}avcodec-gpl-52.dll" ]; then
 
 	#GPL-compatible version
 	CFLAGS=""
-	CPPFLAGS=""
+	CPPFLAGS="-DETIMEDOUT=10060"
 	LDFLAGS=""
-	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias" --extra-cflags="$IncludeFlags" --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --enable-gpl --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir
+	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias" --extra-cflags="$IncludeFlags" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --enable-gpl --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir
 	change_key "." "config.mak" "BUILDSUF" "-gpl"
 	change_key "." "config.mak" "LIBPREF" "${FFmpegPrefix}"
 	change_key "." "config.mak" "SLIBPREF" "${FFmpegPrefix}"
@@ -1759,6 +1784,7 @@ $rm -rf "$LibDir/gio/"
 $rm -rf "$LibDir/glib-2.0/"
 $rm -rf "$LibDir/mozilla/"
 $rm -rf "$LibDir/pango/"
+$rm -rf "$LibDir/orc/"
 
 #Fix GTK paths
 cd "$EtcDir/gtk-2.0/"

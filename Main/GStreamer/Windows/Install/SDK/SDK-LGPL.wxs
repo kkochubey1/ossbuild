@@ -2,7 +2,7 @@
 
 <?include $(var.InstallRoot)\Properties.wxi ?>
 
-<?define INSTALLED_PRODUCT_NAME="$(var.MANUFACTURER) GStreamer SDK $(var.OSSBUILD_VERSION) (LGPL)" ?>
+<?define INSTALLED_PRODUCT_NAME="GStreamer WinBuilds SDK $(var.OSSBUILD_VERSION) (LGPL)" ?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension" xmlns:OSSBuild="$(ossbuild.namespaceURI())">
 	<Product Version="$(var.OSSBUILD_VERSION)" Name="$(var.INSTALLED_PRODUCT_NAME)" Manufacturer="$(var.MANUFACTURER)" Language="$(var.DEFAULT_LANGUAGE)" Id="$(var.GUID_X86_MSI_SDK_LGPL_PACKAGE)" UpgradeCode="$(var.GUID_X86_MSI_SDK_LGPL_UPGRADE_CODE)">

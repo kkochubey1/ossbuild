@@ -2,7 +2,7 @@
 
 <?include $(var.InstallRoot)\Properties.wxi ?>
 
-<?define INSTALLED_PRODUCT_NAME="$(var.MANUFACTURER) GStreamer $(var.OSSBUILD_VERSION) (GPL)" ?>
+<?define INSTALLED_PRODUCT_NAME="GStreamer WinBuilds $(var.OSSBUILD_VERSION) (GPL)" ?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension" xmlns:OSSBuild="$(ossbuild.namespaceURI())">
 	

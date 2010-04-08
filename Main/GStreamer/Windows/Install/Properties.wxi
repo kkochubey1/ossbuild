@@ -9,7 +9,7 @@
 	
 	<?define GST_ICON="$(var.AppRoot)\Windows\GStreamer.ico"?>
 
-	<?define PRODUCT_NAME="OSSBuild" ?>
+	<?define PRODUCT_NAME="GStreamer WinBuilds" ?>
 	<?define COMPANY_NAME="OSSBuild" ?>
 	<?define MANUFACTURER="OSSBuild" ?>
 	<?define MANUFACTURER_URL="http://code.google.com/p/ossbuild/" ?>

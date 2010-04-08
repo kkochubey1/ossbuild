@@ -10,10 +10,11 @@ SCHRO_BEGIN_DECLS
 
 typedef enum {
   SCHRO_QUANTISER_ENGINE_SIMPLE,
-  SCHRO_QUANTISER_ENGINE_RATE_DISTORTION,
+  SCHRO_QUANTISER_ENGINE_RDO_BIT_ALLOCATION,
+  SCHRO_QUANTISER_ENGINE_CBR,
   SCHRO_QUANTISER_ENGINE_LOSSLESS,
   SCHRO_QUANTISER_ENGINE_LOWDELAY,
-  SCHRO_QUANTISER_ENGINE_CONSTANT_LAMBDA,
+  SCHRO_QUANTISER_ENGINE_RDO_LAMBDA,
   SCHRO_QUANTISER_ENGINE_CONSTANT_ERROR
 } SchroQuantiserEngineEnum;
 
@@ -41,6 +42,10 @@ int schro_encoder_setup_frame_lowdelay (SchroEncoderFrame *frame);
 
 void schro_encoder_handle_gop_lossless (SchroEncoder *encoder, int i);
 int schro_encoder_setup_frame_lossless (SchroEncoderFrame *frame);
+
+void schro_frame_set_wavelet_params (SchroEncoderFrame* frame);
+
+void init_params (SchroEncoderFrame* frame);
 
 #endif
 

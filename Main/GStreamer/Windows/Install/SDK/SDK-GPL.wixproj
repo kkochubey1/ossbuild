@@ -5,7 +5,7 @@
     <ProductVersion>3.5</ProductVersion>
     <ProjectGuid>{deffa04b-9b87-4093-45e0-c28fadede1c1}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>x86-OSSBuild-GStreamer-SDK-GPL</OutputName>
+    <OutputName>GStreamer-WinBuilds-SDK-GPL-x86</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.5\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.5\Wix.targets</WixTargetsPath>

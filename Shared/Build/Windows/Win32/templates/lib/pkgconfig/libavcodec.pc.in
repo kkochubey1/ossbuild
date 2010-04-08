@@ -5,9 +5,9 @@ includedir=@SHARED_BUILD_DIR@/include
 
 Name: libavcodec
 Description: FFmpeg codec library
-Version: 52.55.0
+Version: 52.66.0
 Requires: 
-Requires.private: libavutil = 50.9.0
+Requires.private: libavutil = 50.14.0
 Conflicts:
 Libs: -L${libdir} -lavcodec 
 Libs.private: -lpsapi -lz -lbz2 -lm -lavifil32 -lws2_32 -lavicap32

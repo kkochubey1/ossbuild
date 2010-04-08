@@ -60,7 +60,7 @@ fi
 #Don't actually use this one - use the sys-supplied one.
 #Can't use separate build dir
 if [ ! -f "$BinDir/libz.so.1" ]; then 
-	unpack_zip_and_move_linux "zlib.zip" "zlib" "zlib"
+	unpack_bzip2_and_move "zlib.tar.bz2" "$PKG_DIR_ZLIB"
 	mkdir_and_move "$IntDir/zlib"
 	cd "$PKG_DIR"
 
@@ -116,7 +116,7 @@ if [ ! -f "$BinDir/libGLEW.so.1.5" ]; then
 	make
 	make install GLEW_DEST=$InstallDir
 	
-	arrange_shared "$LibDir" "libGLEW.so" "1.5" "1.5.2"
+	arrange_shared "$LibDir" "libGLEW.so" "1.5" "1.5.3"
 	move_files_to_dir "$LibDir/lib*GLEW*.so*" "$BinDir"
 	chmod uag+x "$BinDir/libGLEW.so.1.5"
 	
@@ -131,7 +131,7 @@ if [ ! -f "$BinDir/libexpat.so.1" ]; then
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$BinDir --includedir=$IncludeDir
 	make && make install
 
-	arrange_shared "$BinDir" "libexpat.so" "1" "1.5.2" "libexpat.la" "" "$LibDir"
+	arrange_shared "$BinDir" "libexpat.so" "2" "2.0.1" "libexpat.la" "" "$LibDir"
 fi
 
 #libxml2
@@ -225,11 +225,11 @@ if [ ! -f "$BinDir/libglib-2.0.so.0" ]; then
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$BinDir --includedir=$IncludeDir
 	make && make install
 
-	arrange_shared "$BinDir" "libgio-2.0.so" "0" "0.2200.5" "libgio-2.0.la" "gio-2.0.pc gio-unix-2.0.pc" "$LibDir"
-	arrange_shared "$BinDir" "libglib-2.0.so" "0" "0.2200.5" "libglib-2.0.la" "glib-2.0.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgmodule-2.0.so" "0" "0.2200.5" "libgmodule-2.0.la" "gmodule-2.0.pc gmodule-export-2.0.pc gmodule-no-export-2.0.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgobject-2.0.so" "0" "0.2200.5" "libgobject-2.0.la" "gobject-2.0.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgthread-2.0.so" "0" "0.2200.5" "libgthread-2.0.la" "gthread-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgio-2.0.so" "0" "0.2400.0" "libgio-2.0.la" "gio-2.0.pc gio-unix-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libglib-2.0.so" "0" "0.2400.0" "libglib-2.0.la" "glib-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgmodule-2.0.so" "0" "0.2400.0" "libgmodule-2.0.la" "gmodule-2.0.pc gmodule-export-2.0.pc gmodule-no-export-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgobject-2.0.so" "0" "0.2400.0" "libgobject-2.0.la" "gobject-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgthread-2.0.so" "0" "0.2400.0" "libgthread-2.0.la" "gthread-2.0.pc" "$LibDir"
 	test -d "$LibDir/gio" && rm -rf "$LibDir/gio"
 	test -d "$LibDir/glib-2.0" && rm -rf "$LibDir/glib-2.0"
 	mv "$BinDir/gio" "$LibDir"
@@ -399,10 +399,10 @@ if [ ! -f "$BinDir/libpango-1.0.so.0" ]; then
 	make && make install
 	reset_flags
 
-	arrange_shared "$BinDir" "libpango-1.0.so" "0" "0.2701.0" "libpango-1.0.la" "pango.pc" "$LibDir"
-	arrange_shared "$BinDir" "libpangox-1.0.so" "0" "0.2701.0" "libpangox-1.0.la" "pangox.pc" "$LibDir"
-	arrange_shared "$BinDir" "libpangoft2-1.0.so" "0" "0.2701.0" "libpangoft2-1.0.la" "pangoft2.pc" "$LibDir"
-	arrange_shared "$BinDir" "libpangocairo-1.0.so" "0" "0.2701.0" "libpangocairo-1.0.la" "pangocairo.pc" "$LibDir"
+	arrange_shared "$BinDir" "libpango-1.0.so" "0" "0.2800.0" "libpango-1.0.la" "pango.pc" "$LibDir"
+	arrange_shared "$BinDir" "libpangox-1.0.so" "0" "0.2800.0" "libpangox-1.0.la" "pangox.pc" "$LibDir"
+	arrange_shared "$BinDir" "libpangoft2-1.0.so" "0" "0.2800.0" "libpangoft2-1.0.la" "pangoft2.pc" "$LibDir"
+	arrange_shared "$BinDir" "libpangocairo-1.0.so" "0" "0.2800.0" "libpangocairo-1.0.la" "pangocairo.pc" "$LibDir"
 	rm -rf "$BinDir/pango/"
 	chmod uag+x "$LibDir/libpangox-1.0.la"
 	chmod uag+x "$LibDir/libpangoft2-1.0.la"
@@ -416,11 +416,11 @@ if [ ! -f "$BinDir/libgdk_pixbuf-2.0.so.0" ]; then
 	$PKG_DIR/configure --with-included-loaders --with-included-immodules --without-libjasper --disable-debug --enable-explicit-deps=no --disable-gtk-doc --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$BinDir --includedir=$IncludeDir
 	make && make install
 
-	arrange_shared "$BinDir" "libgailutil.so" "18" "18.0.1" "libgailutil.la" "gailutil.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgdk_pixbuf-2.0.so" "0" "0.1800.7" "libgdk_pixbuf-2.0.la" "gdk-pixbuf-2.0.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgdk_pixbuf_xlib-2.0.so" "0" "0.1800.7" "libgdk_pixbuf_xlib-2.0.la" "gdk-pixbuf-xlib-2.0.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgdk-x11-2.0.so" "0" "0.1800.7" "libgdk-x11-2.0.la" "gdk-x11-2.0.pc" "$LibDir"
-	arrange_shared "$BinDir" "libgtk-x11-2.0.so" "0" "0.1800.7" "libgtk-x11-2.0.la" "gtk+-x11-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgailutil.so" "20" "20.0.0" "libgailutil.la" "gailutil.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgdk_pixbuf-2.0.so" "0" "0.2000.0" "libgdk_pixbuf-2.0.la" "gdk-pixbuf-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgdk_pixbuf_xlib-2.0.so" "0" "0.2000.0" "libgdk_pixbuf_xlib-2.0.la" "gdk-pixbuf-xlib-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgdk-x11-2.0.so" "0" "0.2000.0" "libgdk-x11-2.0.la" "gdk-x11-2.0.pc" "$LibDir"
+	arrange_shared "$BinDir" "libgtk-x11-2.0.so" "0" "0.2000.0" "libgtk-x11-2.0.la" "gtk+-x11-2.0.pc" "$LibDir"
 	move_files_to_dir "$BinDir/pkgconfig/*gail*.pc" "$LibDir/pkgconfig/"
 	move_files_to_dir "$BinDir/pkgconfig/*gdk*.pc" "$LibDir/pkgconfig/"
 	move_files_to_dir "$BinDir/pkgconfig/*gtk*.pc" "$LibDir/pkgconfig/"
