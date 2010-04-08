@@ -53,7 +53,7 @@ typedef enum _SchroFrameFormat {
 
 #define SCHRO_FRAME_IS_PACKED(format) (((format)>>8) & 0x1)
 
-#define SCHRO_FRAME_CACHE_SIZE 8
+#define SCHRO_FRAME_CACHE_SIZE 32
 
 struct _SchroFrameData {
   SchroFrameFormat format;
@@ -88,6 +88,7 @@ struct _SchroFrame {
   void *virt_priv2;
 
   int extension;
+  int cache_offset[3];
 };
 
 struct _SchroUpsampledFrame {
@@ -103,6 +104,8 @@ SchroFrame * schro_frame_new (void);
 SchroFrame * schro_frame_new_and_alloc (SchroMemoryDomain *domain,
     SchroFrameFormat format, int width, int height);
 SchroFrame * schro_frame_new_from_data_I420 (void *data, int width, int height);
+SchroFrame * schro_frame_new_from_data_Y42B (void *data, int width, int height);
+SchroFrame * schro_frame_new_from_data_Y444 (void *data, int width, int height);
 SchroFrame * schro_frame_new_from_data_YV12 (void *data, int width, int height);
 SchroFrame * schro_frame_new_from_data_YUY2 (void *data, int width, int height);
 SchroFrame * schro_frame_new_from_data_UYVY (void *data, int width, int height);
@@ -167,8 +170,14 @@ void schro_upsampled_frame_get_subdata_prec0 (SchroUpsampledFrame *upframe,
 void schro_upsampled_frame_get_subdata_prec1 (SchroUpsampledFrame *upframe,
     int k, int x, int y, SchroFrameData *fd);
 
+/* it extracts a block of data from a frame, if possible */
+int schro_frame_get_data (SchroFrame* frame, SchroFrameData* fd, int comp
+    , int x, int y);
+
 void schro_frame_get_subdata (SchroFrame *frame, SchroFrameData *fd,
         int comp, int x, int y);
+void schro_frame_get_reference_subdata (SchroFrame* frame, SchroFrameData* fd
+    , int comp, int x, int y);
 
 void schro_frame_split_fields (SchroFrame *dest1, SchroFrame *dest2, SchroFrame *src);
 

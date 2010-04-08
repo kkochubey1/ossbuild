@@ -11,6 +11,10 @@ G_BEGIN_DECLS
 /* enumerations from "gioenums.h" */
 GType g_app_info_create_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_APP_INFO_CREATE_FLAGS (g_app_info_create_flags_get_type ())
+GType g_converter_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_CONVERTER_FLAGS (g_converter_flags_get_type ())
+GType g_converter_result_get_type (void) G_GNUC_CONST;
+#define G_TYPE_CONVERTER_RESULT (g_converter_result_get_type ())
 GType g_data_stream_byte_order_get_type (void) G_GNUC_CONST;
 #define G_TYPE_DATA_STREAM_BYTE_ORDER (g_data_stream_byte_order_get_type ())
 GType g_data_stream_newline_type_get_type (void) G_GNUC_CONST;
@@ -65,6 +69,8 @@ GType g_socket_msg_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_SOCKET_MSG_FLAGS (g_socket_msg_flags_get_type ())
 GType g_socket_protocol_get_type (void) G_GNUC_CONST;
 #define G_TYPE_SOCKET_PROTOCOL (g_socket_protocol_get_type ())
+GType g_zlib_compressor_format_get_type (void) G_GNUC_CONST;
+#define G_TYPE_ZLIB_COMPRESSOR_FORMAT (g_zlib_compressor_format_get_type ())
 G_END_DECLS
 
 #endif /* __GIO_ENUM_TYPES_H__ */

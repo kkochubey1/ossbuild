@@ -35,7 +35,7 @@
 
 #include <stdarg.h>
 
-#define X264_BUILD 88
+#define X264_BUILD 92
 
 /* x264_t:
  *      opaque handler for encoder */
@@ -111,6 +111,7 @@ static const char * const x264_fullrange_names[] = { "off", "on", 0 };
 static const char * const x264_colorprim_names[] = { "", "bt709", "undef", "", "bt470m", "bt470bg", "smpte170m", "smpte240m", "film", 0 };
 static const char * const x264_transfer_names[] = { "", "bt709", "undef", "", "bt470m", "bt470bg", "smpte170m", "smpte240m", "linear", "log100", "log316", 0 };
 static const char * const x264_colmatrix_names[] = { "GBR", "bt709", "undef", "", "fcc", "bt470bg", "smpte170m", "smpte240m", "YCgCo", 0 };
+static const char * const x264_nal_hrd_names[] = { "none", "vbr", "cbr", 0 };
 
 /* Colorspace type
  * legacy only; nothing other than I420 is really supported. */
@@ -148,6 +149,11 @@ static const char * const x264_colmatrix_names[] = { "GBR", "bt709", "undef", ""
 #define X264_THREADS_AUTO 0 /* Automatically select optimal number of threads */
 #define X264_SYNC_LOOKAHEAD_AUTO (-1) /* Automatically select optimal lookahead thread buffer size */
 
+/* HRD */
+#define X264_NAL_HRD_NONE            0
+#define X264_NAL_HRD_VBR             1
+#define X264_NAL_HRD_CBR             2
+
 /* Zones: override ratecontrol or other options for specific sections of the video.
  * See x264_encoder_reconfig() for which options can be changed.
  * If zones overlap, whichever comes later in the list takes precedence. */
@@ -175,6 +181,14 @@ typedef struct x264_param_t
     int         i_csp;  /* CSP of encoded bitstream, only i420 supported */
     int         i_level_idc;
     int         i_frame_total; /* number of frames to encode if known, else 0 */
+
+    /* NAL HRD
+     * Uses Buffering and Picture Timing SEIs to signal HRD
+     * The HRD in H.264 was not designed with VFR in mind.
+     * It is therefore not recommendeded to use NAL HRD with VFR.
+     * Furthermore, reconfiguring the VBV (via x264_encoder_reconfig)
+     * will currently generate invalid HRD. */
+    int         i_nal_hrd;
 
     struct
     {
@@ -252,7 +266,7 @@ typedef struct x264_param_t
         int          i_mv_range_thread; /* minimum space between threads. -1 = auto, based on number of threads. */
         int          i_subpel_refine; /* subpixel motion estimation quality */
         int          b_chroma_me; /* chroma ME for subpel and mode decision in P-frames */
-        int          b_mixed_references; /* allow each mb partition in P-frames to have it's own reference number */
+        int          b_mixed_references; /* allow each mb partition to have its own reference number */
         int          i_trellis;  /* trellis RD quantization */
         int          b_fast_pskip; /* early SKIP detection on P-frames */
         int          b_dct_decimate; /* transform coefficient thresholding on P-frames */
@@ -280,6 +294,7 @@ typedef struct x264_param_t
 
         int         i_bitrate;
         float       f_rf_constant;  /* 1pass VBR, nominal QP */
+        float       f_rf_constant_max;  /* In CRF mode, maximum CRF as caused by VBV */
         float       f_rate_tolerance;
         int         i_vbv_max_bitrate;
         int         i_vbv_buffer_size;
@@ -319,6 +334,20 @@ typedef struct x264_param_t
     int b_dts_compress;         /* DTS compression: this algorithm eliminates negative DTS
                                  * by compressing them to be less than the second PTS.
                                  * Warning: this will change the timebase! */
+
+    int b_tff;
+
+    /* Pulldown:
+     * The correct pic_struct must be passed with each input frame.
+     * The input timebase should be the timebase corresponding to the output framerate. This should be constant.
+     * e.g. for 3:2 pulldown timebase should be 1001/30000
+     * The PTS passed with each frame must be the PTS of the frame after pulldown is applied.
+     * Frame doubling and tripling require b_vfr_input set to zero (see H.264 Table D-1)
+     *
+     * Pulldown changes are not clearly defined in H.264. Therefore, it is the calling app's responsibility to manage this.
+     */
+
+    int b_pic_struct;
 
     /* Slicing parameters */
     int i_slice_max_size;    /* Max size per slice in bytes; includes estimated NAL overhead. */
@@ -397,13 +426,13 @@ int x264_param_parse( x264_param_t *, const char *name, const char *value );
  *      (either can be NULL, which implies no preset or no tune, respectively)
  *
  *      Currently available presets are, ordered from fastest to slowest: */
-static const char * const x264_preset_names[] = { "ultrafast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow", "placebo", 0 };
+static const char * const x264_preset_names[] = { "ultrafast", "superfast", "veryfast", "faster", "fast", "medium", "slow", "slower", "veryslow", "placebo", 0 };
 
 /*      Warning: the speed of these presets scales dramatically.  Ultrafast is a full
  *      100 times faster than placebo!
  *
  *      Currently available tunings are: */
-static const char * const x264_tune_names[] = { "film", "animation", "grain", "psnr", "ssim", "fastdecode", "zerolatency", 0 };
+static const char * const x264_tune_names[] = { "film", "animation", "grain", "stillimage", "psnr", "ssim", "fastdecode", "zerolatency", 0 };
 
 /*      Multiple tunings can be used if separated by a delimiter in ",./-+",
  *      however multiple psy tunings cannot be used.
@@ -436,6 +465,29 @@ int     x264_param_apply_profile( x264_param_t *, const char *profile );
 /****************************************************************************
  * Picture structures and functions
  ****************************************************************************/
+
+enum pic_struct_e
+{
+    PIC_STRUCT_AUTO              = 0, // automatically decide (default)
+    PIC_STRUCT_PROGRESSIVE       = 1, // progressive frame
+    // "TOP" and "BOTTOM" are not supported in x264 (PAFF only)
+    PIC_STRUCT_TOP_BOTTOM        = 4, // top field followed by bottom
+    PIC_STRUCT_BOTTOM_TOP        = 5, // bottom field followed by top
+    PIC_STRUCT_TOP_BOTTOM_TOP    = 6, // top field, bottom field, top field repeated
+    PIC_STRUCT_BOTTOM_TOP_BOTTOM = 7, // bottom field, top field, bottom field repeated
+    PIC_STRUCT_DOUBLE            = 8, // double frame
+    PIC_STRUCT_TRIPLE            = 9, // triple frame
+};
+
+typedef struct
+{
+    double cpb_initial_arrival_time;
+    double cpb_final_arrival_time;
+    double cpb_removal_time;
+
+    double dpb_output_time;
+} x264_hrd_t;
+
 typedef struct
 {
     int     i_csp;       /* Colorspace */
@@ -455,6 +507,9 @@ typedef struct
     int     i_type;
     /* In: force quantizer for > 0 */
     int     i_qpplus1;
+    /* In: pic_struct, for pulldown/doubling/etc...used only if b_pic_timing_sei=1.
+     *     use pic_struct_e for pic_struct inputs */
+    int     i_pic_struct;
     /* Out: whether this frame is a keyframe.  Important when using modes that result in
      * SEI recovery points being used instead of IDR frames. */
     int     b_keyframe;
@@ -472,6 +527,8 @@ typedef struct
     x264_param_t *param;
     /* In: raw data */
     x264_image_t img;
+    /* Out: HRD timing information. Output only when i_nal_hrd is set. */
+    x264_hrd_t hrd_timing;
     /* private user data. libx264 doesn't touch this,
        not even copy it from input to output frames. */
     void *opaque;
@@ -493,8 +550,8 @@ void x264_picture_clean( x264_picture_t *pic );
 
 enum nal_unit_type_e
 {
-    NAL_UNKNOWN = 0,
-    NAL_SLICE   = 1,
+    NAL_UNKNOWN     = 0,
+    NAL_SLICE       = 1,
     NAL_SLICE_DPA   = 2,
     NAL_SLICE_DPB   = 3,
     NAL_SLICE_DPC   = 4,
@@ -503,6 +560,7 @@ enum nal_unit_type_e
     NAL_SPS         = 7,
     NAL_PPS         = 8,
     NAL_AUD         = 9,
+    NAL_FILLER      = 12,
     /* ref_idc == 0 for 6,9,10,11,12 */
 };
 enum nal_priority_e

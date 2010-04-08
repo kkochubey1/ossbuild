@@ -19,7 +19,7 @@ includedir=@SHARED_BUILD_DIR@/include
 Name: GnuTLS
 Description: Transport Security Layer implementation for the GNU system
 URL: http://www.gnu.org/software/gnutls/
-Version: 2.8.5
+Version: 2.8.6
 Libs: -L${libdir} -lgnutls
 Libs.private: -L@SHARED_BUILD_DIR@/lib -lgnutls  -L@SHARED_BUILD_DIR@/lib -ltasn1 -R@SHARED_BUILD_DIR@/lib
 Cflags: -I${includedir}

@@ -4,6 +4,9 @@
 
 #include <schroedinger/schroframe.h>
 #include <schroedinger/schroparams.h>
+#ifdef SCHRO_ENABLE_UNSTABLE_API
+#include <orc/orc.h>
+#endif
 
 SCHRO_BEGIN_DECLS
 
@@ -12,6 +15,7 @@ typedef struct _SchroMotionVectorDC SchroMotionVectorDC;
 typedef struct _SchroMotionField SchroMotionField;
 typedef struct _SchroMotion SchroMotion;
 typedef struct _SchroMotionScan SchroMotionScan;
+typedef struct _SchroMotionFuncs SchroMotionFuncs;
 
 #ifdef SCHRO_ENABLE_UNSTABLE_API
 struct _SchroMotionVector {
@@ -20,7 +24,8 @@ struct _SchroMotionVector {
   unsigned int split : 2;
   unsigned int unused : 3;
   unsigned int scan : 8;
-  unsigned int metric : 16;
+  uint32_t metric;
+  uint32_t chroma_metric;
   union {
     struct {
       int16_t dx[2];
@@ -36,6 +41,14 @@ struct _SchroMotionField {
   int x_num_blocks;
   int y_num_blocks;
   SchroMotionVector *motion_vectors;
+};
+
+struct _SchroMotionFuncs {
+  OrcProgram *block_accumulate;
+  OrcProgram *block_accumulate_scaled;
+  OrcProgram *block_accumulate_dc;
+  OrcProgram *block_accumulate_avg;
+  OrcProgram *block_accumulate_biref;
 };
 
 struct _SchroMotion {
@@ -70,6 +83,9 @@ struct _SchroMotion {
   int height;
   int max_fast_x;
   int max_fast_y;
+
+  schro_bool simple_weight;
+  schro_bool oneref_noscale;
 };
 
 #define SCHRO_MOTION_GET_BLOCK(motion,x,y) \
@@ -80,12 +96,18 @@ SchroMotion * schro_motion_new (SchroParams *params,
 void schro_motion_free (SchroMotion *motion);
 
 int schro_motion_verify (SchroMotion *mf);
-void schro_motion_render_ref (SchroMotion *motion, SchroFrame *dest);
-void schro_motion_render (SchroMotion *motion, SchroFrame *dest);
+void schro_motion_render_ref (SchroMotion *motion, SchroFrame *dest,
+    SchroFrame *addframe, int add, SchroFrame *output_frame);
+void schro_motion_render (SchroMotion *motion, SchroFrame *dest,
+    SchroFrame *addframe, int add, SchroFrame *output_frame);
 void schro_motion_init_obmc_weight (SchroMotion *motion);
 
-void schro_motion_render_fast (SchroMotion *motion, SchroFrame *dest);
+void schro_motion_render_fast (SchroMotion *motion, SchroFrame *dest,
+    SchroFrame *addframe, int add, SchroFrame *output_frame);
 int schro_motion_render_fast_allowed (SchroMotion *motion);
+
+void schro_mf_vector_prediction (SchroMotionField* mf,
+    int x, int y, int *pred_x, int *pred_y, int mode);
 
 void schro_motion_vector_prediction (SchroMotion *motion,
     int x, int y, int *pred_x, int *pred_y, int mode);

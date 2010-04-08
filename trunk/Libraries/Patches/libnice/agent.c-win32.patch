@@ -1,0 +1,10 @@
+--- agent\agent.c	Wed Apr  7 13:54:42 2010
++++ agent\agent.c	Wed Apr  7 13:54:58 2010
+@@ -51,6 +51,7 @@
+ 
+ #ifdef G_OS_WIN32
+ #include <winsock2.h>
++#define EWOULDBLOCK WSAEWOULDBLOCK
+ #else
+ #include <sys/socket.h>
+ #include <netinet/in.h>

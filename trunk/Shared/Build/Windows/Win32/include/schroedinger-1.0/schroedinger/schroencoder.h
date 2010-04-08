@@ -30,6 +30,8 @@ typedef enum {
 typedef enum {
   SCHRO_ENCODER_FRAME_STAGE_NEW = 0,
   SCHRO_ENCODER_FRAME_STAGE_ANALYSE,
+  SCHRO_ENCODER_FRAME_STAGE_SC_DETECT_1,
+  SCHRO_ENCODER_FRAME_STAGE_SC_DETECT_2,
   SCHRO_ENCODER_FRAME_STAGE_HAVE_GOP,
   SCHRO_ENCODER_FRAME_STAGE_HAVE_PARAMS,
   SCHRO_ENCODER_FRAME_STAGE_PREDICT_ROUGH,
@@ -73,6 +75,14 @@ typedef enum {
   SCHRO_ENCODER_GOP_CHAINED_BIREF,
 } SchroEncoderGOPEnum;
 
+typedef enum {
+  SCHRO_ENCODER_PROFILE_AUTO,
+  SCHRO_ENCODER_PROFILE_VC2_LOW_DELAY,
+  SCHRO_ENCODER_PROFILE_VC2_SIMPLE,
+  SCHRO_ENCODER_PROFILE_VC2_MAIN,
+  SCHRO_ENCODER_PROFILE_MAIN
+} SchroEncoderProfile;
+
 #ifdef SCHRO_ENABLE_UNSTABLE_API
 typedef int (*SchroEngineIterateFunc) (SchroEncoder *encoder);
 
@@ -98,6 +108,7 @@ struct _SchroEncoderFrame {
   unsigned int need_upsampling;
   unsigned int need_filtering;
   unsigned int need_average_luma;
+  unsigned int need_mad;
 
   /* bits indicating that a particular analysis has happened.  Mainly
    * for verification */
@@ -107,6 +118,7 @@ struct _SchroEncoderFrame {
   unsigned int have_downsampling;
   unsigned int have_upsampling;
   unsigned int have_average_luma;
+  unsigned int have_mad;
 
   SchroAsyncStage stages[SCHRO_ENCODER_FRAME_STAGE_LAST];
 
@@ -121,6 +133,9 @@ struct _SchroEncoderFrame {
   SchroFrame *downsampled_frames[8];
   SchroUpsampledFrame *reconstructed_frame;
   SchroUpsampledFrame *upsampled_original_frame;
+
+  int sc_mad; /* shot change mean absolute difference */
+  double sc_threshold; /* shot change threshold */
 
   SchroBuffer *sequence_header_buffer;
   SchroList *inserted_buffers;
@@ -161,8 +176,8 @@ struct _SchroEncoderFrame {
 
   int *quant_indices[3][SCHRO_LIMIT_SUBBANDS];
 
-  int quant_index[3][SCHRO_LIMIT_SUBBANDS];
   double est_entropy[3][SCHRO_LIMIT_SUBBANDS][60];
+  double actual_subband_bits[3][SCHRO_LIMIT_SUBBANDS];
   double est_error[3][SCHRO_LIMIT_SUBBANDS][60];
   SchroPack *pack;
   SchroParams params;
@@ -177,6 +192,8 @@ struct _SchroEncoderFrame {
   struct _SchroMotionEst *me;
   struct _SchroRoughME *rme[2];
   struct _SchroPhaseCorr *phasecorr[2];
+  struct _SchroHierBm *hier_bm[2];
+  struct _SchroMe *deep_me;
 
   SchroMotion *motion;
 
@@ -192,7 +209,8 @@ struct _SchroEncoderFrame {
   int hard_limit_bits;
   int allocated_residual_bits;
   int allocated_mc_bits;
-  double base_lambda;
+  double frame_lambda;
+  double frame_me_lambda;
   int estimated_residual_bits;
   int estimated_mc_bits;
 
@@ -201,10 +219,12 @@ struct _SchroEncoderFrame {
   double mc_error;
   double mean_squared_error_luma;
   double mean_squared_error_chroma;
+  double mssim;
 
   double estimated_arith_context_ratio;
 
   double badblock_ratio;
+  double dcblock_ratio;
   double hist_slope;
 };
 
@@ -231,6 +251,8 @@ struct _SchroEncoder {
   int bitrate;
   int max_bitrate;
   int min_bitrate;
+
+  // Buffer model parameters for CBR and (TODO) constrained VBR coding
   int buffer_size;
   int buffer_level;
   double quality;
@@ -241,15 +263,16 @@ struct _SchroEncoder {
   double perceptual_distance;
   int filtering;
   double filter_value;
+  SchroEncoderProfile force_profile;
   int profile;
   int level;
   int open_gop;
   int au_distance;
+  int max_refs;
   schro_bool enable_psnr;
   schro_bool enable_ssim;
   schro_bool enable_md5;
 
-  int ref_distance;
   int transform_depth;
   int intra_wavelet;
   int inter_wavelet;
@@ -267,6 +290,10 @@ struct _SchroEncoder {
   schro_bool enable_multiquant;
   schro_bool enable_dc_multiquant;
   schro_bool enable_global_motion;
+  schro_bool enable_scene_change_detection;
+  schro_bool enable_deep_estimation;
+  schro_bool enable_rdo_cbr;
+  schro_bool enable_chroma_me;
   int horiz_slices;
   int vert_slices;
   int codeblock_size;
@@ -275,21 +302,25 @@ struct _SchroEncoder {
   double magic_subband0_lambda_scale;
   double magic_chroma_lambda_scale;
   double magic_nonref_lambda_scale;
+  double magic_I_lambda_scale;
+  double magic_P_lambda_scale;
+  double magic_B_lambda_scale;
+  double magic_me_lambda_scale;
   double magic_allocation_scale;
+  double magic_inter_cpd_scale;
   double magic_keyframe_weight;
   double magic_scene_change_threshold;
   double magic_inter_p_weight;
   double magic_inter_b_weight;
-  double magic_mc_bailout_limit;
+  double magic_me_bailout_limit;
   double magic_bailout_weight;
   double magic_error_power;
-  double magic_mc_lambda;
   double magic_subgroup_length;
-  double magic_lambda;
   double magic_badblock_multiplier_nonref;
   double magic_badblock_multiplier_ref;
   double magic_block_search_threshold;
   double magic_scan_distance;
+  double magic_diagonal_lambda_scale;
 
   /* hooks */
 
@@ -327,17 +358,35 @@ struct _SchroEncoder {
   double cycles_per_degree_horiz;
   double cycles_per_degree_vert;
 
-  double subband_weights[SCHRO_N_WAVELETS][SCHRO_LIMIT_TRANSFORM_DEPTH][SCHRO_LIMIT_SUBBANDS];
+  double intra_subband_weights[SCHRO_N_WAVELETS][SCHRO_LIMIT_TRANSFORM_DEPTH][SCHRO_LIMIT_SUBBANDS];
+  double inter_subband_weights[SCHRO_N_WAVELETS][SCHRO_LIMIT_TRANSFORM_DEPTH][SCHRO_LIMIT_SUBBANDS];
   SchroHistogramTable intra_hist_tables[60];
 
-  int bits_per_picture;
 
   /* statistics */
 
-  double average_arith_context_ratio_intra;
-  double average_arith_context_ratio_inter;
+  double average_arith_context_ratios_intra[3][SCHRO_LIMIT_SUBBANDS];
+  double average_arith_context_ratios_inter[3][SCHRO_LIMIT_SUBBANDS];
+
+  double frame_stats[21];
 
   /* engine specific stuff */
+
+  int bits_per_picture;
+  int subgroup_position;
+  int I_complexity;
+  int P_complexity;
+  int B_complexity;
+  int B_complexity_sum;
+  long int I_frame_alloc;
+  long int P_frame_alloc;
+  long int B_frame_alloc;
+  long int gop_target;
+
+  // Current qf, from which is derived ...
+  double qf;
+  // lambda to use for intra pictures in CBR mode
+  double intra_cbr_lambda;
 
   int gop_picture;
   int quant_slot;
@@ -355,14 +404,14 @@ typedef enum {
 } SchroEncoderSettingTypeEnum;
 
 struct _SchroEncoderSetting {
-  char *name;
+  const char *name;
   SchroEncoderSettingTypeEnum type;
 
   double min;
   double max;
   double default_value;
 
-  char **enum_list;
+  const char **enum_list;
 };
 
 enum {
@@ -391,6 +440,7 @@ void schro_encoder_free (SchroEncoder *encoder);
 SchroVideoFormat * schro_encoder_get_video_format (SchroEncoder *encoder);
 void schro_encoder_set_video_format (SchroEncoder *encoder,
     SchroVideoFormat *video_format);
+void schro_encoder_set_frame_lambda (SchroEncoderFrame* frame);
 void schro_encoder_end_of_stream (SchroEncoder *encoder);
 int schro_encoder_push_ready (SchroEncoder *encoder);
 void schro_encoder_push_frame (SchroEncoder *encoder, SchroFrame *frame);
@@ -398,7 +448,7 @@ void schro_encoder_push_frame_full (SchroEncoder *encoder, SchroFrame *frame, vo
 void schro_encoder_force_sequence_header (SchroEncoder *encoder);
 
 SchroBuffer * schro_encoder_encode_auxiliary_data (SchroEncoder *encoder,
-    SchroAuxiliaryDataID id, void *data, int size);
+    SchroAuxiliaryDataID id, const void *data, int size);
 void schro_encoder_encode_parse_info (SchroPack *bits, int parse_code);
 void schro_encoder_insert_buffer (SchroEncoder *encoder, SchroBuffer *buffer);
 void schro_encoder_frame_insert_buffer (SchroEncoderFrame *frame, SchroBuffer *buffer);
@@ -417,6 +467,9 @@ const SchroEncoderSetting *schro_encoder_get_setting_info (int i);
 void schro_encoder_setting_set_double (SchroEncoder *encoder, const char *name,
     double d);
 double schro_encoder_setting_get_double (SchroEncoder *encoder, const char *name);
+
+int schro_encoder_get_frame_stats_size (SchroEncoder *encoder);
+void schro_encoder_get_frame_stats (SchroEncoder *encoder, double *dest, int n);
 
 #ifdef SCHRO_ENABLE_UNSTABLE_API
 
@@ -460,7 +513,7 @@ void schro_encoder_output_push (SchroEncoder *encoder,
 SchroEncoderFrame * schro_encoder_frame_new (SchroEncoder *encoder);
 void schro_encoder_frame_ref (SchroEncoderFrame *frame);
 void schro_encoder_frame_unref (SchroEncoderFrame *frame);
-
+int schro_encoder_frame_is_B_frame (SchroEncoderFrame* frame);
 void schro_encoder_encode_lowdelay_transform_data (SchroEncoderFrame *frame);
 void schro_encoder_estimate_entropy (SchroEncoderFrame *frame);
 void schro_encoder_recalculate_allocations (SchroEncoder *encoder);
@@ -469,6 +522,8 @@ void schro_encoder_calculate_test_info (SchroEncoderFrame *frame);
 
 void schro_encoder_init_error_tables (SchroEncoder *encoder);
 
+int schro_encoder_frame_get_quant_index (SchroEncoderFrame *frame, int component,
+    int index, int x, int y);
 void schro_encoder_frame_set_quant_index (SchroEncoderFrame *frame, int component,
     int index, int x, int y, int quant_index);
 

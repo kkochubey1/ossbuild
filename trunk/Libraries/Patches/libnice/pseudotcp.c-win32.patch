@@ -1,0 +1,53 @@
+--- agent\pseudotcp.c	Thu Mar 18 13:56:26 2010
++++ agent\pseudotcp.c	Wed Apr  7 14:09:51 2010
+@@ -64,12 +64,22 @@
+  */
+ 
+ #include <stdlib.h>
+-#include <arpa/inet.h>
+ #include <errno.h>
+ #include <string.h>
++#include <stdint.h>
+ 
+ #include <glib.h>
+ 
++#ifdef G_OS_WIN32
++#include <winsock2.h>
++#define ENOTCONN WSAENOTCONN
++#define ECONNRESET WSAECONNRESET
++#define EWOULDBLOCK WSAEWOULDBLOCK
++#define ECONNABORTED WSAECONNABORTED
++#else
++#include <arpa/inet.h>
++#endif
++
+ #include "pseudotcp.h"
+ 
+ G_DEFINE_TYPE (PseudoTcpSocket, pseudo_tcp_socket, G_TYPE_OBJECT);
+@@ -177,16 +187,16 @@
+ // Helper Functions
+ //////////////////////////////////////////////////////////////////////
+ 
+-static guint32
+-min (guint32 first, guint32 second)
+-{
+-  return (first < second? first:second);
+-}
+-static guint32
+-max (guint32 first, guint32 second)
+-{
+-  return (first > second? first:second);
+-}
++//static guint32
++//min (guint32 first, guint32 second)
++//{
++//  return (first < second? first:second);
++//}
++//static guint32
++//max (guint32 first, guint32 second)
++//{
++//  return (first > second? first:second);
++//}
+ 
+ static guint32
+ bound(guint32 lower, guint32 middle, guint32 upper)
