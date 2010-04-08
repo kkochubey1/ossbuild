@@ -56,6 +56,19 @@ if [ ! -f "$BinDir/liboil-0.3.so.0" ]; then
 	arrange_shared "$BinDir" "liboil-0.3.so" "0" "0.3.0" "liboil-0.3.la" "liboil-0.3.pc" "$LibDir"
 fi
 
+#orc
+if [ ! -f "$BinDir/liborc-0.4.so.0" ]; then
+        unpack_gzip_and_move "orc.tar.gz" "$PKG_DIR_ORC"
+        mkdir_and_move "$IntDir/orc"
+
+        $PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$BinDir --includedir=$IncludeDir
+        make && make install
+
+        arrange_shared "$BinDir" "liborc-0.4.so" "0" "0.4.4" "liborc-0.4.la" "liborc-0.4.pc" "$LibDir"
+        arrange_shared "$BinDir" "liborc-test-0.4.so" "0" "0.4.4" "liborc-test-0.4.la" "liborc-test-0.4.pc" "$LibDir"
+        arrange_shared "$BinDir" "liborc-float-0.4.so" "0" "0.4.4" "liborc-float-0.4.la" "liborc-float-0.4.pc" "$LibDir"
+fi
+
 #zlib
 #Don't actually use this one - use the sys-supplied one.
 #Can't use separate build dir
