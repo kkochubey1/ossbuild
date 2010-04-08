@@ -12,9 +12,9 @@
 		<!-- Libraries -->
 
 		<Library resource="libglib-2.0-0.dll" />
+		<Library resource="libgthread-2.0-0.dll" />
 		<Library resource="libgobject-2.0-0.dll" />
 		<Library resource="libgmodule-2.0-0.dll" />
-		<Library resource="libgthread-2.0-0.dll" />
 		<Library resource="libgio-2.0-0.dll" />
 	</Extract>
 

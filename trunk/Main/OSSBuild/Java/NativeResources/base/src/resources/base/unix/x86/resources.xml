@@ -43,5 +43,8 @@
 			<SystemAttempt>bz2</SystemAttempt>
 		</Library>
 		<Library resource="liboil-0.3.so.0" executable="true" />
+		<Library resource="liborc-0.4.so.0" executable="true" />
+		<Library resource="liborc-test-0.4.so.0" executable="true" />
+		<Library resource="liborc-float-0.4.so.0" executable="true" />
 	</Extract>
 </Resources>

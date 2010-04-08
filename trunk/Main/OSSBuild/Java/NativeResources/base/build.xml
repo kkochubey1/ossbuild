@@ -104,10 +104,12 @@
 				<include name="pthreadGC2.dll" />
 				<include name="*oil*.dll" />
 				<include name="*bz2*.dll" />
+				<include name="liborc*.dll" />
 
 				<include name="libz.so.*" />
 				<include name="libbz2.so.*.*" />
 				<include name="liboil*.so.*" />
+				<include name="liborc*.so.*" />
 			</fileset>
 		</copy>
 		

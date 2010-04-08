@@ -15,9 +15,9 @@
 		<!-- Libraries -->
 
 		<Library resource="libglib-2.0.so.0"        executable="true" />
+		<Library resource="libgthread-2.0.so.0"     executable="true" />
 		<Library resource="libgobject-2.0.so.0"     executable="true" />
 		<Library resource="libgmodule-2.0.so.0"     executable="true" />
-		<Library resource="libgthread-2.0.so.0"     executable="true" />
 		<Library resource="libgio-2.0.so.0"         executable="true" />
 
 		<SymLink from="${dir}/libglib-2.0.so"       to="${dir}/libglib-2.0.so.0" />

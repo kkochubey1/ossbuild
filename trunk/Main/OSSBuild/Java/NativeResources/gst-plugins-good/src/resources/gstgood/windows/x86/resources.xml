@@ -29,8 +29,10 @@
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
 		<!-- Libraries -->
 		<Library resource="libsoup-2.4-1.dll" />
+		<!--
 		<Library resource="libspeex-1.dll" />
 		<Library resource="libspeexdsp-1.dll" />
+		-->
 		<Library resource="libwavpack-1.dll" />
 	</Extract>
 
@@ -85,7 +87,9 @@
 		<File resource="libgstjpeg.dll" />
 		<File resource="libgstpng.dll" />
 		<File resource="libgstsouphttpsrc.dll" />
+		<!--
 		<File resource="libgstspeex.dll" />
+		-->
 		<File resource="libgstwavpack.dll" />
 
 		<!-- sys -->
