@@ -37,6 +37,9 @@
 		<Library resource="iconv.dll" />
 		<Library resource="pthreadGC2.dll" />
 		<Library resource="liboil-0.3-0.dll" />
+		<Library resource="liborc-0.4-0.dll" />
+		<Library resource="liborc-test-0.4-0.dll" />
+		<Library resource="liborc-float-0.4-0.dll" />
 	</Extract>
 
 </Resources>

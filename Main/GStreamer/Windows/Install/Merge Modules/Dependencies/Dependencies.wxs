@@ -28,6 +28,9 @@
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*curl.*\.dll" />
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*tiffxx.*\.dll" />
 
+				<!-- Remove once libspeex doesn't crash -->
+				<OSSBuild:Filter Exclude=".*\\[^\\]*.*speex.*\.dll" />
+
 				<OSSBuild:Filter Include=".*\.dll" />
 			</OSSBuild:FillDirectory>
 		</DirectoryRef>

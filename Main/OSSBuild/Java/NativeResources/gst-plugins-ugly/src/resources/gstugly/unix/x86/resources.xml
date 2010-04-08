@@ -27,7 +27,7 @@
 			<Library resource="libmp3lame.so.0"         executable="true" />
 			<Library resource="libmpeg2.so.0"           executable="true" />
 			<Library resource="libmpeg2convert.so.0"    executable="true" />
-			<Library resource="libx264.so.88"           executable="true" />
+			<Library resource="libx264.so.92"           executable="true" />
 		</IfDef>
 	</Extract>
 
