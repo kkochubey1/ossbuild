@@ -41,7 +41,7 @@ Setup Linux
 -------------------------------------
 
   Ubuntu 8.04
-    1. sudo apt-get install openjdk-6-jdk git-core subversion perl sed pkg-config build-essential autoconf bison flex libtool tofrodos vim gettext yasm nasm zlib1g-dev mesa-common-dev libglu1-mesa-dev libxmu-dev libx11-dev libxi-dev libcurl4-gnutls-dev libxrender-dev autoconf libxv-dev libasound2-dev v4l-conf libpulse-dev python2.6-dev python-gobject-dev mono-devel
+    1. sudo apt-get install openjdk-6-jdk git-core subversion perl sed pkg-config build-essential autoconf bison flex libtool tofrodos vim gettext yasm nasm zlib1g-dev mesa-common-dev libglu1-mesa-dev libxmu-dev libx11-dev libxi-dev libcurl4-gnutls-dev libxrender-dev autoconf libxv-dev libasound2-dev v4l-conf libpulse-dev python-all python-gobject-dev mono-tools-devel
 
   Ubuntu 9.10
 
