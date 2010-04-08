@@ -19,7 +19,7 @@
 # Boston, MA 02111-1307, USA.
 import sys, re, xml.dom.minidom
 pkginstall_configvars = {
-  "bindir"    	: "/home/sysadmin/ossbuild/Build/Linux/x86/Release/bin", "glib-version"  : "2.22.5" # configvars are substituted upon script installation
+  "bindir"    	: "/home/sysadmin/ossbuild/Build/Linux/x86/Release/bin", "glib-version"  : "2.24.0" # configvars are substituted upon script installation
 }
 
 # xml utilities

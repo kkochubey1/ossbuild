@@ -3,7 +3,7 @@
 
 #define LIBRSVG_MAJOR_VERSION (2)
 #define LIBRSVG_MINOR_VERSION (26)
-#define LIBRSVG_MICRO_VERSION (0)
+#define LIBRSVG_MICRO_VERSION (2)
 #define LIBRSVG_VERSION ""
 
 #define LIBRSVG_CHECK_VERSION(major,minor,micro) \

@@ -8,13 +8,13 @@
 dlname='libpangoft2-1.0.so.0'
 
 # Names of this library.
-library_names='libpangoft2-1.0.so.0.2701.0 libpangoft2-1.0.so.0 libpangoft2-1.0.so'
+library_names='libpangoft2-1.0.so.0.2800.0 libpangoft2-1.0.so.0 libpangoft2-1.0.so'
 
 # The name of the static archive.
 old_library=''
 
 # Linker flags that can not go in dependency_libs.
-inherited_linker_flags=''
+inherited_linker_flags=' -pthread'
 
 # Libraries that this one depends upon.
 dependency_libs=''
@@ -23,8 +23,8 @@ dependency_libs=''
 weak_library_names=''
 
 # Version information for libpangoft2-1.0.
-current=2701
-age=2701
+current=2800
+age=2800
 revision=0
 
 # Is this an already installed library?

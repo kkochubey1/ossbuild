@@ -1,7 +1,7 @@
 /**
  * \file dvdcss.h
- * \author Stéphane Borel <stef@via.ecp.fr>
- * \author Samuel Hocevar <sam@zoy.org>
+ * \author StÃ©phane Borel <stef@via.ecp.fr>
+ * \author Sam Hocevar <sam@zoy.org>
  * \brief The \e libdvdcss public header.
  *
  * This header contains the public types and functions that applications
@@ -9,8 +9,8 @@
  */
 
 /*
- * Copyright (C) 1998-2002 VideoLAN
- * $Id: dvdcss.h 152 2004-02-24 15:47:00Z sam $
+ * Copyright (C) 1998-2008 VideoLAN
+ * $Id$
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111, USA.
  */
 
-#ifndef _DVDCSS_DVDCSS_H
+#ifndef DVDCSS_DVDCSS_H
 #ifndef _DOXYGEN_SKIP_ME
-#define _DVDCSS_DVDCSS_H 1
+#define DVDCSS_DVDCSS_H 1
 #endif
 
 #ifdef __cplusplus
@@ -56,29 +56,39 @@ typedef struct dvdcss_s* dvdcss_t;
 #define DVDCSS_SEEK_KEY        (1 << 1)
 
 
+#if defined(LIBDVDCSS_EXPORTS)
+#define LIBDVDCSS_EXPORT __declspec(dllexport) extern
+#elif defined(LIBDVDCSS_IMPORTS)
+#define LIBDVDCSS_EXPORT __declspec(dllimport) extern
+#else
+#define LIBDVDCSS_EXPORT extern
+#endif
+
 /*
  * Our version number. The variable name contains the interface version.
  */
-extern char *        dvdcss_interface_2;
+LIBDVDCSS_EXPORT char *        dvdcss_interface_2;
 
 
 /*
  * Exported prototypes.
  */
-extern dvdcss_t dvdcss_open  ( char *psz_target );
-extern int      dvdcss_close ( dvdcss_t );
-extern int      dvdcss_seek  ( dvdcss_t,
+LIBDVDCSS_EXPORT dvdcss_t dvdcss_open  ( char *psz_target );
+LIBDVDCSS_EXPORT int      dvdcss_close ( dvdcss_t );
+LIBDVDCSS_EXPORT int      dvdcss_seek  ( dvdcss_t,
                                int i_blocks,
                                int i_flags );
-extern int      dvdcss_read  ( dvdcss_t,
+LIBDVDCSS_EXPORT int      dvdcss_read  ( dvdcss_t,
                                void *p_buffer,
                                int i_blocks,
                                int i_flags );
-extern int      dvdcss_readv ( dvdcss_t,
+LIBDVDCSS_EXPORT int      dvdcss_readv ( dvdcss_t,
                                void *p_iovec,
                                int i_blocks,
                                int i_flags );
-extern char *   dvdcss_error ( dvdcss_t );
+LIBDVDCSS_EXPORT char *   dvdcss_error ( dvdcss_t );
+
+LIBDVDCSS_EXPORT int      dvdcss_is_scrambled ( dvdcss_t );
 
 
 /*
@@ -94,4 +104,4 @@ extern char *   dvdcss_error ( dvdcss_t );
 }
 #endif
 
-#endif /* <dvdcss/dvdcss.h> */
+#endif /* DVDCSS_DVDCSS_H  */

@@ -45,7 +45,7 @@ def main():
     
     for o, a in opts:
         if o in ("-v", "--version"):
-            print "rsvg version %s" % ("2.26.0")
+            print "rsvg version %s" % ("2.26.2")
             sys.exit(0)
         elif o in ("--usage"):
             usage()
