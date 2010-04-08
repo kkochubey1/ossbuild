@@ -41,38 +41,8 @@ Setup Linux
 -------------------------------------
 
   Ubuntu 8.04
-    1. sudo apt-get install openjdk-6-jdk git-core subversion perl sed pkg-config build-essential automake autoconf bison flex libtool tofrodos vim gettext yasm nasm zlib1g-dev mesa-common-dev libglu1-mesa-dev libxmu-dev libx11-dev libxi-dev libcurl4-gnutls-dev libxrender-dev autoconf libxv-dev libasound2-dev v4l-conf libpulse-dev python-all python-gobject-dev python-gtk2-dev mono-common
-    2. sudo apt-get remove yasm
-    3. wget http://www.tortall.net/projects/yasm/releases/yasm-0.8.0.tar.gz
-    4. tar xvfz yasm-0.8.0.tar.gz
-    5. cd yasm-0.8.0/
-    6. ./configure --prefix=/usr/local
-    7. make && sudo make install
-    8. sudo apt-get remove libtool
-    9. wget http://ftp.gnu.org/gnu/libtool/libtool-2.2.6b.tar.gz
-   10. tar xzvf libtool-2.2.6b.tar.gz
-   11. cd libtool-2.2.6b/
-   12. ./configure --prefix=/usr/local
-   13. make && sudo make install
-   14. sudo apt-get remove autoconf
-   15. wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.65.tar.gz
-   16. tar xzvf autoconf-2.65.tar.gz
-   17. cd autoconf-2.65/
-   18. ./configure --prefix=/usr/local
-   19. make && sudo make install
-   20. sudo apt-get remove automake
-   21. wget http://ftp.gnu.org/gnu/automake/automake-1.11.1.tar.gz
-   22. tar xzvf automake-1.11.1.tar.gz
-   23. cd automake-1.11.1/
-   24. ./configure --prefix=/usr/local
-   25. make && sudo make install
-   26. echo "/usr/share/aclocal" | sudo tee -a  /usr/local/share/aclocal/dirlist
-   27. wget http://ftp.novell.com/pub/mono/sources/mono/mono-2.6.3.tar.bz2
-   28. tar xf mono-2.6.3.tar.bz2
-   29. cd mono-2.6.3/
-   30. ./configure --with-libgdiplus=no
-   31. make && sudo make install
-   32. sudo ln -sf /usr/local/bin/mono /usr/bin/cli
+    1. sudo su
+    2. ./Shared/Scripts/Init-Ubuntu-8.04.sh
 
   Ubuntu 9.10
 
