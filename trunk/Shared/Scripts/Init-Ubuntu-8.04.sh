@@ -44,6 +44,12 @@ cd yasm-0.8.0/
 ./configure --prefix=/usr/local
 make && make install
 
+wget http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.16/pygobject-2.16.1.tar.gz
+tar xzvf pygobject-2.16.1.tar.gz
+cd pygobject-2.16.1/
+./configure
+make && make install
+
 cd $BUILD_DIR
 wget http://ftp.novell.com/pub/mono/sources/mono/mono-2.6.3.tar.bz2
 tar xf mono-2.6.3.tar.bz2
@@ -51,4 +57,6 @@ cd mono-2.6.3/
 ./configure --with-libgdiplus=no
 make && make install
 sudo ln -sf /usr/local/bin/mono /usr/bin/cli
+
+apt-get remove libpixman-1-dev libcairo2-dev
 

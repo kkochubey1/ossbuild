@@ -421,6 +421,16 @@ if [ ! -f "$BinDir/libpango-1.0.so.0" ]; then
 	rm -rf "$BinDir/pango/"
 	chmod uag+x "$LibDir/libpangox-1.0.la"
 	chmod uag+x "$LibDir/libpangoft2-1.0.la"
+	
+	if [ -f "$BinDir/libpangoxft-1.0.la" ]; then 
+		rm -f "$BinDir/libpangoxft-1.0.la"
+		rm -f "$BinDir/libpangoxft-1.0.so"
+		rm -f "$BinDir/libpangoxft-1.0.so.0"
+		rm -f "$BinDir/libpangoxft-1.0.so.0.2800.0"
+		
+		rm -f "$IncludeDir/pango-1.0/pango/pangoxft-render.h"
+		rm -f "$IncludeDir/pango-1.0/pango/pangoxft.h"
+	fi
 fi
 
 #gtk+
@@ -891,7 +901,7 @@ rm -rf "$BinDir/mozilla"
 rm -rf "$BinDir/python2.5"
 rm -rf "$BinDir/libxml2mod.la"
 rm -rf "$BinDir/libxml2mod.so"
-exit 0
+
 #Fix GTK paths
 cd "$EtcDir/gtk-2.0/"
 sed -e "s:$BinDir:../../lib:g" gdk-pixbuf.loaders > gdk-pixbuf.loaders.temp

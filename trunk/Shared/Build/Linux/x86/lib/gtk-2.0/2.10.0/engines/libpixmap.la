@@ -17,7 +17,7 @@ old_library=''
 inherited_linker_flags=' -pthread'
 
 # Libraries that this one depends upon.
-dependency_libs=' -L/home/sysadmin/ossbuild/Build/Linux/x86/Release/bin -L/home/sysadmin/ossbuild/Shared/Build/Linux/x86/bin -L/home/sysadmin/ossbuild/Build/Linux/x86/Release/lib -L/home/sysadmin/ossbuild/Shared/Build/Linux/x86/lib /home/sysadmin/ossbuild/Build/Linux/x86/Release/bin/libgtk-x11-2.0.la /home/sysadmin/ossbuild/Build/Linux/x86/Release/bin/libgdk-x11-2.0.la -lXext -lXrender /home/sysadmin/ossbuild/Build/Linux/x86/Release/bin/libgdk_pixbuf-2.0.la -lpangocairo-1.0 -lX11 -latk-1.0 -lcairo -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0 -ltiff -ljpeg -lpng14 -lm'
+dependency_libs=' -L/home/sysadmin/ossbuild/Build/Linux/x86/Release/bin -L/home/sysadmin/ossbuild/Shared/Build/Linux/x86/bin -L/home/sysadmin/ossbuild/Build/Linux/x86/Release/lib -L/home/sysadmin/ossbuild/Shared/Build/Linux/x86/lib /home/sysadmin/ossbuild/Build/Linux/x86/Release/bin/libgtk-x11-2.0.la /home/sysadmin/ossbuild/Build/Linux/x86/Release/bin/libgdk-x11-2.0.la -lXext -lXrender -lXinerama -lXcursor /home/sysadmin/ossbuild/Build/Linux/x86/Release/bin/libgdk_pixbuf-2.0.la -lpangocairo-1.0 -lX11 -lXcomposite -lXdamage -lXfixes -latk-1.0 -lcairo -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lfreetype -lfontconfig -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lglib-2.0 -ltiff -ljpeg -lpng14 -lm'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
