@@ -8,7 +8,7 @@
 dlname='libpng14.so.14'
 
 # Names of this library.
-library_names='libpng14.so.14.0.0 libpng14.so.14 libpng14.so'
+library_names='libpng14.so.14.1.0 libpng14.so.14 libpng14.so'
 
 # The name of the static archive.
 old_library=''
@@ -23,8 +23,8 @@ dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  -lz -lm'
 weak_library_names=''
 
 # Version information for libpng14.
-current=14
-age=0
+current=15
+age=1
 revision=0
 
 # Is this an already installed library?

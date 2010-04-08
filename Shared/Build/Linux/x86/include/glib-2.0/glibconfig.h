@@ -103,8 +103,8 @@ typedef unsigned int guintptr;
 #define g_memmove(dest,src,len) G_STMT_START { memmove ((dest), (src), (len)); } G_STMT_END
 
 #define GLIB_MAJOR_VERSION 2
-#define GLIB_MINOR_VERSION 22
-#define GLIB_MICRO_VERSION 5
+#define GLIB_MINOR_VERSION 24
+#define GLIB_MICRO_VERSION 0
 
 #define G_OS_UNIX
 
@@ -184,6 +184,8 @@ union _GSystemThread
   long   dummy_long;
 };
 
+#define G_ATOMIC_OP_MEMORY_BARRIER_NEEDED 1
+
 #define GINT16_TO_LE(val)	((gint16) (val))
 #define GUINT16_TO_LE(val)	((guint16) (val))
 #define GINT16_TO_BE(val)	((gint16) GUINT16_SWAP_LE_BE (val))
@@ -204,6 +206,10 @@ union _GSystemThread
 #define GUINT_TO_LE(val)	((guint) GUINT32_TO_LE (val))
 #define GINT_TO_BE(val)		((gint) GINT32_TO_BE (val))
 #define GUINT_TO_BE(val)	((guint) GUINT32_TO_BE (val))
+#define GSIZE_TO_LE(val)	((gsize) GUINT32_TO_LE (val))
+#define GSSIZE_TO_LE(val)	((gssize) GINT32_TO_LE (val))
+#define GSIZE_TO_BE(val)	((gsize) GUINT32_TO_BE (val))
+#define GSSIZE_TO_BE(val)	((gssize) GINT32_TO_BE (val))
 #define G_BYTE_ORDER G_LITTLE_ENDIAN
 
 #define GLIB_SYSDEF_POLLIN =1

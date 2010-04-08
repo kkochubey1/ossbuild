@@ -100,7 +100,7 @@ if [ ! -f "$GstPluginBinDir/libgstsdl.so" -a ! -f "$GstPluginLibDir/libgstsdl.so
 	mkdir_and_move "$GstIntDir/gst-plugins-bad"
 	
 	CFLAGS="$CFLAGS -I$IncludeDir/SDL -I$SharedIncludeDir/SDL"
-	$GstSrcDir/gst-plugins-bad/configure --enable-sdl --with-package-name='OSSBuild GStreamer Bad Plugins' $GstConfigureDefault
+	$GstSrcDir/gst-plugins-bad/configure --disable-cog --enable-sdl --with-package-name='OSSBuild GStreamer Bad Plugins' $GstConfigureDefault
 
 	make && make install
 	
@@ -109,6 +109,8 @@ if [ ! -f "$GstPluginBinDir/libgstsdl.so" -a ! -f "$GstPluginLibDir/libgstsdl.so
 	arrange_shared "$BinDir" "libgstsignalprocessor-$GstApiVersion.so" "0" "$GstPluginsBadLibVersion" "libgstsignalprocessor-$GstApiVersion.la" "gstreamer-signalprocessor-$GstApiVersion.pc" "$LibDir"
 	
 	move_files_to_dir "$GstPluginBinDir/*.la" "$GstPluginLibDir/"
+	
+	mv "$BinDir/pkgconfig/gstreamer-plugins-bad-$GstApiVersion.pc" "$LibDir/pkgconfig/"
 	
 	cd "$BinDir/"
 	mv gst-camera-perf gst-camera-perf-$GstApiVersion
@@ -145,15 +147,13 @@ do
 	
 		#Patch configure and Makefile.am and regenerate configure
 		cd "$GstSrcDir/gst-ffmpeg/"
-		patch -u -N -d "$GstSrcDir/gst-ffmpeg/" -i "$GstPatchDir/gst-ffmpeg-configure.ac.patch"
-		patch -u -N -d "$GstSrcDir/gst-ffmpeg/ext/" -i "$GstPatchDir/gst-ffmpeg-makefile.am.patch"
 		NOCONFIGURE=yes ./autogen.sh
 
 		cd "$GstIntDir/gst-ffmpeg${FFmpegSuffix}"
 		$GstSrcDir/gst-ffmpeg/configure --with-system-ffmpeg --with-package-name='OSSBuild GStreamer FFmpeg Plugins' $GstConfigureDefault
 
 		make && make install
-	
+
 		move_files_to_dir "$GstPluginBinDir/*.la" "$GstPluginLibDir/"
 		rm -f "$GstPluginLibDir/libgstffmpeg${FFmpegSuffix}.la"
 		rm -f "$GstPluginLibDir/libgstffmpegscale${FFmpegSuffix}.la"
@@ -176,7 +176,7 @@ if [ ! -f "$GstPluginBinDir/libgnl.so" -a ! -f "$GstPluginLibDir/libgnl.so" ]; t
 fi
 
 #GStreamer Python bindings
-if [ ! -f "$LibDir/python2.6/site-packages/gst-$GstApiVersion/gst/_gst.so" ]; then 
+if [ ! -f "$LibDir/python2.5/site-packages/gst-$GstApiVersion/gst/_gst.so" -a ! -f "$LibDir/python2.6/site-packages/gst-$GstApiVersion/gst/_gst.so" ]; then 
 	mkdir_and_move "$GstIntDir/gst-python"
 	$GstSrcDir/gst-python/configure --with-package-name='OSSBuild GStreamer Python Bindings' $GstConfigureDefault
 	
@@ -184,12 +184,21 @@ if [ ! -f "$LibDir/python2.6/site-packages/gst-$GstApiVersion/gst/_gst.so" ]; th
 	
 	move_files_to_dir "$GstPluginBinDir/*.la" "$GstPluginLibDir/"
 	
-	remove_files_from_dir "$LibDir/python2.6/site-packages/*.la"
-	remove_files_from_dir "$LibDir/python2.6/site-packages/gst-$GstApiVersion/gst/*.la"
-	remove_files_from_dir "$LibDir/python2.6/site-packages/gst-$GstApiVersion/gst/*.pyc"
-	remove_files_from_dir "$LibDir/python2.6/site-packages/gst-$GstApiVersion/gst/*.pyo"
-	remove_files_from_dir "$LibDir/python2.6/site-packages/gst-$GstApiVersion/gst/extend/*.pyc"
-	remove_files_from_dir "$LibDir/python2.6/site-packages/gst-$GstApiVersion/gst/extend/*.pyo"
+	PythonVerDir=""
+	if [ -d "$LibDir/python2.5/" ]; then 
+		PythonVerDir="python2.5"
+	fi
+	if [ -d "$LibDir/python2.6/" ]; then 
+		PythonVerDir="python2.6"
+	fi
+	if [ "$PythonVerDir" != "" ]; then
+		remove_files_from_dir "$LibDir/$PythonVer/site-packages/*.la"
+		remove_files_from_dir "$LibDir/$PythonVerDir/site-packages/gst-$GstApiVersion/gst/*.la"
+		remove_files_from_dir "$LibDir/$PythonVerDir/site-packages/gst-$GstApiVersion/gst/*.pyc"
+		remove_files_from_dir "$LibDir/$PythonVerDir/site-packages/gst-$GstApiVersion/gst/*.pyo"
+		remove_files_from_dir "$LibDir/$PythonVerDir/site-packages/gst-$GstApiVersion/gst/extend/*.pyc"
+		remove_files_from_dir "$LibDir/$PythonVerDir/site-packages/gst-$GstApiVersion/gst/extend/*.pyo"
+	fi
 	
 	mv "$BinDir/pkgconfig/gst-python-$GstApiVersion.pc" "$LibDir/pkgconfig/"
 fi
@@ -228,7 +237,7 @@ if [ ! -f "$BinDir/libgstreamersharpglue-$GstApiVersion.so" ]; then
 
 	cd "$GstIntDir/gstreamer-sharp/"
 	$GstSrcDir/gstreamer-sharp/configure --with-package-name='OSSBuild GStreamer-Sharp .NET Bindings' $GstConfigureDefault
-	
+
 	#Technically this is not the GStreamer API version. At the time of writing, it was 0.9.2
 	sed -e "s:@API_VERSION@:$GstApiVersion:g" "$GstSrcDir/gstreamer-sharp/gstreamer-sharp/AssemblyInfo.cs.in" > "$GstSrcDir/gstreamer-sharp/gstreamer-sharp/AssemblyInfo.cs"
 	
@@ -277,11 +286,13 @@ cd "$EtcDir/gconf/" && cp -rupd * "$SharedEtcDir/gconf"
 
 #Shared/lib/
 mkdir -p "$SharedLibDir/mono"
+mkdir -p "$SharedLibDir/python2.5"
 mkdir -p "$SharedLibDir/python2.6"
 mkdir -p "$SharedLibDir/gstreamer-$GstApiVersion"
 mkdir -p "$SharedLibDir/farsight2-$Farsight2ApiVersion"
 cd "$LibDir" 
 cp -rupd "mono" "$SharedLibDir"
+cp -rupd "python2.5" "$SharedLibDir"
 cp -rupd "python2.6" "$SharedLibDir"
 cp -rupd "gstreamer-$GstApiVersion" "$SharedLibDir"
 cp -rupd "farsight2-$Farsight2ApiVersion" "$SharedLibDir"

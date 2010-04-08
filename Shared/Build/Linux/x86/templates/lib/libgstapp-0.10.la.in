@@ -17,7 +17,7 @@ old_library=''
 inherited_linker_flags=' -pthread'
 
 # Libraries that this one depends upon.
-dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  -lgstbase-0.10 -lgstreamer-0.10 -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lrt -lxml2 -lglib-2.0'
+dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  -lgstbase-0.10 -lgstreamer-0.10 -lgobject-2.0 -lgmodule-2.0 -lxml2 -lgthread-2.0 -lrt -lglib-2.0'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''

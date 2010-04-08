@@ -72,12 +72,21 @@ SOFTWARE.
 #include <pixman-version.h>
 
 #ifdef  __cplusplus
-extern "C" {
+#define PIXMAN_BEGIN_DECLS extern "C" {
+#define PIXMAN_END_DECLS }
+#else
+#define PIXMAN_BEGIN_DECLS
+#define PIXMAN_END_DECLS
 #endif
+
+PIXMAN_BEGIN_DECLS
 
 /*
  * Standard integers
  */
+
+#if !defined (PIXMAN_DONT_DEFINE_STDINT)
+
 #if defined (_SVR4) || defined (SVR4) || defined (__OpenBSD__) || defined (_sgi) || defined (__sun) || defined (sun) || defined (__digital__) || defined (__HP_cc)
 #  include <inttypes.h>
 #elif defined (_MSC_VER)
@@ -93,6 +102,8 @@ typedef unsigned __int64 uint64_t;
 #  include <sys/inttypes.h>
 #else
 #  include <stdint.h>
+#endif
+
 #endif
 
 /*
@@ -170,6 +181,7 @@ struct pixman_transform
 
 /* forward declaration (sorry) */
 struct pixman_box16;
+typedef  union pixman_image		pixman_image_t;
 
 void          pixman_transform_init_identity    (struct pixman_transform       *matrix);
 pixman_bool_t pixman_transform_point_3d         (const struct pixman_transform *transform,
@@ -336,9 +348,10 @@ typedef enum
     PIXMAN_OP_HSL_HUE			= 0x3b,
     PIXMAN_OP_HSL_SATURATION		= 0x3c,
     PIXMAN_OP_HSL_COLOR			= 0x3d,
-    PIXMAN_OP_HSL_LUMINOSITY		= 0x3e,
+    PIXMAN_OP_HSL_LUMINOSITY		= 0x3e
 
 #ifdef PIXMAN_USE_INTERNAL_API
+    ,
     PIXMAN_N_OPERATORS,
     PIXMAN_OP_NONE = PIXMAN_N_OPERATORS
 #endif
@@ -401,6 +414,8 @@ pixman_bool_t           pixman_region_init_rects         (pixman_region16_t *reg
 							  int                count);
 void                    pixman_region_init_with_extents  (pixman_region16_t *region,
 							  pixman_box16_t    *extents);
+void                    pixman_region_init_from_image    (pixman_region16_t *region,
+							  pixman_image_t    *image);
 void                    pixman_region_fini               (pixman_region16_t *region);
 
 
@@ -488,6 +503,8 @@ pixman_bool_t           pixman_region32_init_rects         (pixman_region32_t *r
 							    int                count);
 void                    pixman_region32_init_with_extents  (pixman_region32_t *region,
 							    pixman_box32_t    *extents);
+void                    pixman_region32_init_from_image    (pixman_region32_t *region,
+							    pixman_image_t    *image);
 void                    pixman_region32_fini               (pixman_region32_t *region);
 
 
@@ -561,7 +578,6 @@ const char*   pixman_version_string     (void);
 /*
  * Images
  */
-typedef  union pixman_image		pixman_image_t;
 typedef struct pixman_indexed		pixman_indexed_t;
 typedef struct pixman_gradient_stop	pixman_gradient_stop_t;
 
@@ -914,8 +930,6 @@ void           pixman_rasterize_trapezoid  (pixman_image_t            *image,
 					    int                        x_off,
 					    int                        y_off);
 
-#ifdef  __cplusplus
-}
-#endif
+PIXMAN_END_DECLS
 
 #endif /* PIXMAN_H__ */

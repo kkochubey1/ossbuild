@@ -4811,360 +4811,6 @@ class xmlDoc(xmlNode):
         __tmp = xpathContext(_obj=ret)
         return __tmp
 
-class xpathContext:
-    def __init__(self, _obj=None):
-        if _obj != None:self._o = _obj;return
-        self._o = None
-
-    # accessors for xpathContext
-    def contextDoc(self):
-        """Get the doc from an xpathContext """
-        ret = libxml2mod.xmlXPathGetContextDoc(self._o)
-        if ret is None:raise xpathError('xmlXPathGetContextDoc() failed')
-        __tmp = xmlDoc(_obj=ret)
-        return __tmp
-
-    def contextNode(self):
-        """Get the current node from an xpathContext """
-        ret = libxml2mod.xmlXPathGetContextNode(self._o)
-        if ret is None:raise xpathError('xmlXPathGetContextNode() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def contextPosition(self):
-        """Get the current node from an xpathContext """
-        ret = libxml2mod.xmlXPathGetContextPosition(self._o)
-        return ret
-
-    def contextSize(self):
-        """Get the current node from an xpathContext """
-        ret = libxml2mod.xmlXPathGetContextSize(self._o)
-        return ret
-
-    def function(self):
-        """Get the current function name xpathContext """
-        ret = libxml2mod.xmlXPathGetFunction(self._o)
-        return ret
-
-    def functionURI(self):
-        """Get the current function name URI xpathContext """
-        ret = libxml2mod.xmlXPathGetFunctionURI(self._o)
-        return ret
-
-    def setContextDoc(self, doc):
-        """Set the doc of an xpathContext """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        libxml2mod.xmlXPathSetContextDoc(self._o, doc__o)
-
-    def setContextNode(self, node):
-        """Set the current node of an xpathContext """
-        if node is None: node__o = None
-        else: node__o = node._o
-        libxml2mod.xmlXPathSetContextNode(self._o, node__o)
-
-    #
-    # xpathContext functions from module python
-    #
-
-    def registerXPathFunction(self, name, ns_uri, f):
-        """Register a Python written function to the XPath interpreter """
-        ret = libxml2mod.xmlRegisterXPathFunction(self._o, name, ns_uri, f)
-        return ret
-
-    #
-    # xpathContext functions from module xpath
-    #
-
-    def xpathContextSetCache(self, active, value, options):
-        """Creates/frees an object cache on the XPath context. If
-          activates XPath objects (xmlXPathObject) will be cached
-          internally to be reused. @options: 0: This will set the
-          XPath object caching: @value: This will set the maximum
-          number of XPath objects to be cached per slot There are 5
-          slots for: node-set, string, number, boolean, and misc
-          objects. Use <0 for the default number (100). Other values
-           for @options have currently no effect. """
-        ret = libxml2mod.xmlXPathContextSetCache(self._o, active, value, options)
-        return ret
-
-    def xpathEval(self, str):
-        """Evaluate the XPath Location Path in the given context. """
-        ret = libxml2mod.xmlXPathEval(str, self._o)
-        if ret is None:raise xpathError('xmlXPathEval() failed')
-        return xpathObjectRet(ret)
-
-    def xpathEvalExpression(self, str):
-        """Evaluate the XPath expression in the given context. """
-        ret = libxml2mod.xmlXPathEvalExpression(str, self._o)
-        if ret is None:raise xpathError('xmlXPathEvalExpression() failed')
-        return xpathObjectRet(ret)
-
-    def xpathFreeContext(self):
-        """Free up an xmlXPathContext """
-        libxml2mod.xmlXPathFreeContext(self._o)
-
-    #
-    # xpathContext functions from module xpathInternals
-    #
-
-    def xpathNewParserContext(self, str):
-        """Create a new xmlXPathParserContext """
-        ret = libxml2mod.xmlXPathNewParserContext(str, self._o)
-        if ret is None:raise xpathError('xmlXPathNewParserContext() failed')
-        __tmp = xpathParserContext(_obj=ret)
-        return __tmp
-
-    def xpathNsLookup(self, prefix):
-        """Search in the namespace declaration array of the context
-           for the given namespace name associated to the given prefix """
-        ret = libxml2mod.xmlXPathNsLookup(self._o, prefix)
-        return ret
-
-    def xpathRegisterAllFunctions(self):
-        """Registers all default XPath functions in this context """
-        libxml2mod.xmlXPathRegisterAllFunctions(self._o)
-
-    def xpathRegisterNs(self, prefix, ns_uri):
-        """Register a new namespace. If @ns_uri is None it unregisters
-           the namespace """
-        ret = libxml2mod.xmlXPathRegisterNs(self._o, prefix, ns_uri)
-        return ret
-
-    def xpathRegisteredFuncsCleanup(self):
-        """Cleanup the XPath context data associated to registered
-           functions """
-        libxml2mod.xmlXPathRegisteredFuncsCleanup(self._o)
-
-    def xpathRegisteredNsCleanup(self):
-        """Cleanup the XPath context data associated to registered
-           variables """
-        libxml2mod.xmlXPathRegisteredNsCleanup(self._o)
-
-    def xpathRegisteredVariablesCleanup(self):
-        """Cleanup the XPath context data associated to registered
-           variables """
-        libxml2mod.xmlXPathRegisteredVariablesCleanup(self._o)
-
-    def xpathVariableLookup(self, name):
-        """Search in the Variable array of the context for the given
-           variable value. """
-        ret = libxml2mod.xmlXPathVariableLookup(self._o, name)
-        if ret is None:raise xpathError('xmlXPathVariableLookup() failed')
-        return xpathObjectRet(ret)
-
-    def xpathVariableLookupNS(self, name, ns_uri):
-        """Search in the Variable array of the context for the given
-           variable value. """
-        ret = libxml2mod.xmlXPathVariableLookupNS(self._o, name, ns_uri)
-        if ret is None:raise xpathError('xmlXPathVariableLookupNS() failed')
-        return xpathObjectRet(ret)
-
-    #
-    # xpathContext functions from module xpointer
-    #
-
-    def xpointerEval(self, str):
-        """Evaluate the XPath Location Path in the given context. """
-        ret = libxml2mod.xmlXPtrEval(str, self._o)
-        if ret is None:raise treeError('xmlXPtrEval() failed')
-        return xpathObjectRet(ret)
-
-class xmlAttribute(xmlNode):
-    def __init__(self, _obj=None):
-        if type(_obj).__name__ != 'PyCObject':
-            raise TypeError, 'xmlAttribute needs a PyCObject argument'
-        self._o = _obj
-        xmlNode.__init__(self, _obj=_obj)
-
-    def __repr__(self):
-        return "<xmlAttribute (%s) object at 0x%x>" % (self.name, long(pos_id (self)))
-
-class ValidCtxt(ValidCtxtCore):
-    def __init__(self, _obj=None):
-        self._o = _obj
-        ValidCtxtCore.__init__(self, _obj=_obj)
-
-    def __del__(self):
-        if self._o != None:
-            libxml2mod.xmlFreeValidCtxt(self._o)
-        self._o = None
-
-    #
-    # ValidCtxt functions from module valid
-    #
-
-    def validCtxtNormalizeAttributeValue(self, doc, elem, name, value):
-        """Does the validation related extra step of the normalization
-          of attribute values:  If the declared value is not CDATA,
-          then the XML processor must further process the normalized
-          attribute value by discarding any leading and trailing
-          space (#x20) characters, and by replacing sequences of
-          space (#x20) characters by single space (#x20) character. 
-          Also  check VC: Standalone Document Declaration in P32, and
-           update ctxt->valid accordingly """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        if elem is None: elem__o = None
-        else: elem__o = elem._o
-        ret = libxml2mod.xmlValidCtxtNormalizeAttributeValue(self._o, doc__o, elem__o, name, value)
-        return ret
-
-    def validateDocument(self, doc):
-        """Try to validate the document instance  basically it does
-          the all the checks described by the XML Rec i.e. validates
-          the internal and external subset (if present) and validate
-           the document tree. """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        ret = libxml2mod.xmlValidateDocument(self._o, doc__o)
-        return ret
-
-    def validateDocumentFinal(self, doc):
-        """Does the final step for the document validation once all
-          the incremental validation steps have been completed 
-          basically it does the following checks described by the XML
-          Rec  Check all the IDREF/IDREFS attributes definition for
-           validity """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        ret = libxml2mod.xmlValidateDocumentFinal(self._o, doc__o)
-        return ret
-
-    def validateDtd(self, doc, dtd):
-        """Try to validate the document against the dtd instance 
-          Basically it does check all the definitions in the DtD.
-          Note the the internal subset (if present) is de-coupled
-          (i.e. not used), which could give problems if ID or IDREF
-           is present. """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        if dtd is None: dtd__o = None
-        else: dtd__o = dtd._o
-        ret = libxml2mod.xmlValidateDtd(self._o, doc__o, dtd__o)
-        return ret
-
-    def validateDtdFinal(self, doc):
-        """Does the final step for the dtds validation once all the
-          subsets have been parsed  basically it does the following
-          checks described by the XML Rec - check that ENTITY and
-          ENTITIES type attributes default or possible values matches
-          one of the defined entities. - check that NOTATION type
-          attributes default or possible values matches one of the
-           defined notations. """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        ret = libxml2mod.xmlValidateDtdFinal(self._o, doc__o)
-        return ret
-
-    def validateElement(self, doc, elem):
-        """Try to validate the subtree under an element """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        if elem is None: elem__o = None
-        else: elem__o = elem._o
-        ret = libxml2mod.xmlValidateElement(self._o, doc__o, elem__o)
-        return ret
-
-    def validateNotationUse(self, doc, notationName):
-        """Validate that the given name match a notation declaration.
-           - [ VC: Notation Declared ] """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        ret = libxml2mod.xmlValidateNotationUse(self._o, doc__o, notationName)
-        return ret
-
-    def validateOneAttribute(self, doc, elem, attr, value):
-        """Try to validate a single attribute for an element basically
-          it does the following checks as described by the XML-1.0
-          recommendation: - [ VC: Attribute Value Type ] - [ VC:
-          Fixed Attribute Default ] - [ VC: Entity Name ] - [ VC:
-          Name Token ] - [ VC: ID ] - [ VC: IDREF ] - [ VC: Entity
-          Name ] - [ VC: Notation Attributes ]  The ID/IDREF
-           uniqueness and matching are done separately """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        if elem is None: elem__o = None
-        else: elem__o = elem._o
-        if attr is None: attr__o = None
-        else: attr__o = attr._o
-        ret = libxml2mod.xmlValidateOneAttribute(self._o, doc__o, elem__o, attr__o, value)
-        return ret
-
-    def validateOneElement(self, doc, elem):
-        """Try to validate a single element and it's attributes,
-          basically it does the following checks as described by the
-          XML-1.0 recommendation: - [ VC: Element Valid ] - [ VC:
-          Required Attribute ] Then call xmlValidateOneAttribute()
-          for each attribute present.  The ID/IDREF checkings are
-           done separately """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        if elem is None: elem__o = None
-        else: elem__o = elem._o
-        ret = libxml2mod.xmlValidateOneElement(self._o, doc__o, elem__o)
-        return ret
-
-    def validateOneNamespace(self, doc, elem, prefix, ns, value):
-        """Try to validate a single namespace declaration for an
-          element basically it does the following checks as described
-          by the XML-1.0 recommendation: - [ VC: Attribute Value Type
-          ] - [ VC: Fixed Attribute Default ] - [ VC: Entity Name ] -
-          [ VC: Name Token ] - [ VC: ID ] - [ VC: IDREF ] - [ VC:
-          Entity Name ] - [ VC: Notation Attributes ]  The ID/IDREF
-           uniqueness and matching are done separately """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        if elem is None: elem__o = None
-        else: elem__o = elem._o
-        if ns is None: ns__o = None
-        else: ns__o = ns._o
-        ret = libxml2mod.xmlValidateOneNamespace(self._o, doc__o, elem__o, prefix, ns__o, value)
-        return ret
-
-    def validatePopElement(self, doc, elem, qname):
-        """Pop the element end from the validation stack. """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        if elem is None: elem__o = None
-        else: elem__o = elem._o
-        ret = libxml2mod.xmlValidatePopElement(self._o, doc__o, elem__o, qname)
-        return ret
-
-    def validatePushCData(self, data, len):
-        """check the CData parsed for validation in the current stack """
-        ret = libxml2mod.xmlValidatePushCData(self._o, data, len)
-        return ret
-
-    def validatePushElement(self, doc, elem, qname):
-        """Push a new element start on the validation stack. """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        if elem is None: elem__o = None
-        else: elem__o = elem._o
-        ret = libxml2mod.xmlValidatePushElement(self._o, doc__o, elem__o, qname)
-        return ret
-
-    def validateRoot(self, doc):
-        """Try to validate a the root element basically it does the
-          following check as described by the XML-1.0 recommendation:
-          - [ VC: Root Element Type ] it doesn't try to recurse or
-           apply other check to the element """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        ret = libxml2mod.xmlValidateRoot(self._o, doc__o)
-        return ret
-
-class xmlElement(xmlNode):
-    def __init__(self, _obj=None):
-        if type(_obj).__name__ != 'PyCObject':
-            raise TypeError, 'xmlElement needs a PyCObject argument'
-        self._o = _obj
-        xmlNode.__init__(self, _obj=_obj)
-
-    def __repr__(self):
-        return "<xmlElement (%s) object at 0x%x>" % (self.name, long(pos_id (self)))
-
 class xmlAttr(xmlNode):
     def __init__(self, _obj=None):
         if type(_obj).__name__ != 'PyCObject':
@@ -5244,435 +4890,6 @@ class xmlAttr(xmlNode):
         ret = libxml2mod.xmlRemoveRef(doc__o, self._o)
         return ret
 
-class xmlTextReader(xmlTextReaderCore):
-    def __init__(self, _obj=None):
-        self.input = None
-        self._o = _obj
-        xmlTextReaderCore.__init__(self, _obj=_obj)
-
-    def __del__(self):
-        if self._o != None:
-            libxml2mod.xmlFreeTextReader(self._o)
-        self._o = None
-
-    #
-    # xmlTextReader functions from module xmlreader
-    #
-
-    def AttributeCount(self):
-        """Provides the number of attributes of the current node """
-        ret = libxml2mod.xmlTextReaderAttributeCount(self._o)
-        return ret
-
-    def BaseUri(self):
-        """The base URI of the node. """
-        ret = libxml2mod.xmlTextReaderConstBaseUri(self._o)
-        return ret
-
-    def ByteConsumed(self):
-        """This function provides the current index of the parser used
-          by the reader, relative to the start of the current entity.
-          This function actually just wraps a call to
-          xmlBytesConsumed() for the parser context associated with
-           the reader. See xmlBytesConsumed() for more information. """
-        ret = libxml2mod.xmlTextReaderByteConsumed(self._o)
-        return ret
-
-    def Close(self):
-        """This method releases any resources allocated by the current
-          instance changes the state to Closed and close any
-           underlying input. """
-        ret = libxml2mod.xmlTextReaderClose(self._o)
-        return ret
-
-    def CurrentDoc(self):
-        """Hacking interface allowing to get the xmlDocPtr
-          correponding to the current document being accessed by the
-          xmlTextReader. NOTE: as a result of this call, the reader
-          will not destroy the associated XML document and calling
-          xmlFreeDoc() on the result is needed once the reader
-           parsing has finished. """
-        ret = libxml2mod.xmlTextReaderCurrentDoc(self._o)
-        if ret is None:raise treeError('xmlTextReaderCurrentDoc() failed')
-        __tmp = xmlDoc(_obj=ret)
-        return __tmp
-
-    def CurrentNode(self):
-        """Hacking interface allowing to get the xmlNodePtr
-          correponding to the current node being accessed by the
-          xmlTextReader. This is dangerous because the underlying
-           node may be destroyed on the next Reads. """
-        ret = libxml2mod.xmlTextReaderCurrentNode(self._o)
-        if ret is None:raise treeError('xmlTextReaderCurrentNode() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def Depth(self):
-        """The depth of the node in the tree. """
-        ret = libxml2mod.xmlTextReaderDepth(self._o)
-        return ret
-
-    def Encoding(self):
-        """Determine the encoding of the document being read. """
-        ret = libxml2mod.xmlTextReaderConstEncoding(self._o)
-        return ret
-
-    def Expand(self):
-        """Reads the contents of the current node and the full
-          subtree. It then makes the subtree available until the next
-           xmlTextReaderRead() call """
-        ret = libxml2mod.xmlTextReaderExpand(self._o)
-        if ret is None:raise treeError('xmlTextReaderExpand() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def GetAttribute(self, name):
-        """Provides the value of the attribute with the specified
-           qualified name. """
-        ret = libxml2mod.xmlTextReaderGetAttribute(self._o, name)
-        return ret
-
-    def GetAttributeNo(self, no):
-        """Provides the value of the attribute with the specified
-           index relative to the containing element. """
-        ret = libxml2mod.xmlTextReaderGetAttributeNo(self._o, no)
-        return ret
-
-    def GetAttributeNs(self, localName, namespaceURI):
-        """Provides the value of the specified attribute """
-        ret = libxml2mod.xmlTextReaderGetAttributeNs(self._o, localName, namespaceURI)
-        return ret
-
-    def GetParserColumnNumber(self):
-        """Provide the column number of the current parsing point. """
-        ret = libxml2mod.xmlTextReaderGetParserColumnNumber(self._o)
-        return ret
-
-    def GetParserLineNumber(self):
-        """Provide the line number of the current parsing point. """
-        ret = libxml2mod.xmlTextReaderGetParserLineNumber(self._o)
-        return ret
-
-    def GetParserProp(self, prop):
-        """Read the parser internal property. """
-        ret = libxml2mod.xmlTextReaderGetParserProp(self._o, prop)
-        return ret
-
-    def GetRemainder(self):
-        """Method to get the remainder of the buffered XML. this
-          method stops the parser, set its state to End Of File and
-          return the input stream with what is left that the parser
-          did not use.  The implementation is not good, the parser
-          certainly procgressed past what's left in reader->input,
-          and there is an allocation problem. Best would be to
-           rewrite it differently. """
-        ret = libxml2mod.xmlTextReaderGetRemainder(self._o)
-        if ret is None:raise treeError('xmlTextReaderGetRemainder() failed')
-        __tmp = inputBuffer(_obj=ret)
-        return __tmp
-
-    def HasAttributes(self):
-        """Whether the node has attributes. """
-        ret = libxml2mod.xmlTextReaderHasAttributes(self._o)
-        return ret
-
-    def HasValue(self):
-        """Whether the node can have a text value. """
-        ret = libxml2mod.xmlTextReaderHasValue(self._o)
-        return ret
-
-    def IsDefault(self):
-        """Whether an Attribute  node was generated from the default
-           value defined in the DTD or schema. """
-        ret = libxml2mod.xmlTextReaderIsDefault(self._o)
-        return ret
-
-    def IsEmptyElement(self):
-        """Check if the current node is empty """
-        ret = libxml2mod.xmlTextReaderIsEmptyElement(self._o)
-        return ret
-
-    def IsNamespaceDecl(self):
-        """Determine whether the current node is a namespace
-           declaration rather than a regular attribute. """
-        ret = libxml2mod.xmlTextReaderIsNamespaceDecl(self._o)
-        return ret
-
-    def IsValid(self):
-        """Retrieve the validity status from the parser context """
-        ret = libxml2mod.xmlTextReaderIsValid(self._o)
-        return ret
-
-    def LocalName(self):
-        """The local name of the node. """
-        ret = libxml2mod.xmlTextReaderConstLocalName(self._o)
-        return ret
-
-    def LookupNamespace(self, prefix):
-        """Resolves a namespace prefix in the scope of the current
-           element. """
-        ret = libxml2mod.xmlTextReaderLookupNamespace(self._o, prefix)
-        return ret
-
-    def MoveToAttribute(self, name):
-        """Moves the position of the current instance to the attribute
-           with the specified qualified name. """
-        ret = libxml2mod.xmlTextReaderMoveToAttribute(self._o, name)
-        return ret
-
-    def MoveToAttributeNo(self, no):
-        """Moves the position of the current instance to the attribute
-          with the specified index relative to the containing element. """
-        ret = libxml2mod.xmlTextReaderMoveToAttributeNo(self._o, no)
-        return ret
-
-    def MoveToAttributeNs(self, localName, namespaceURI):
-        """Moves the position of the current instance to the attribute
-           with the specified local name and namespace URI. """
-        ret = libxml2mod.xmlTextReaderMoveToAttributeNs(self._o, localName, namespaceURI)
-        return ret
-
-    def MoveToElement(self):
-        """Moves the position of the current instance to the node that
-           contains the current Attribute  node. """
-        ret = libxml2mod.xmlTextReaderMoveToElement(self._o)
-        return ret
-
-    def MoveToFirstAttribute(self):
-        """Moves the position of the current instance to the first
-           attribute associated with the current node. """
-        ret = libxml2mod.xmlTextReaderMoveToFirstAttribute(self._o)
-        return ret
-
-    def MoveToNextAttribute(self):
-        """Moves the position of the current instance to the next
-           attribute associated with the current node. """
-        ret = libxml2mod.xmlTextReaderMoveToNextAttribute(self._o)
-        return ret
-
-    def Name(self):
-        """The qualified name of the node, equal to Prefix :LocalName. """
-        ret = libxml2mod.xmlTextReaderConstName(self._o)
-        return ret
-
-    def NamespaceUri(self):
-        """The URI defining the namespace associated with the node. """
-        ret = libxml2mod.xmlTextReaderConstNamespaceUri(self._o)
-        return ret
-
-    def NewDoc(self, cur, URL, encoding, options):
-        """Setup an xmltextReader to parse an XML in-memory document.
-          The parsing flags @options are a combination of
-          xmlParserOption. This reuses the existing @reader
-           xmlTextReader. """
-        ret = libxml2mod.xmlReaderNewDoc(self._o, cur, URL, encoding, options)
-        return ret
-
-    def NewFd(self, fd, URL, encoding, options):
-        """Setup an xmltextReader to parse an XML from a file
-          descriptor. NOTE that the file descriptor will not be
-          closed when the reader is closed or reset. The parsing
-          flags @options are a combination of xmlParserOption. This
-           reuses the existing @reader xmlTextReader. """
-        ret = libxml2mod.xmlReaderNewFd(self._o, fd, URL, encoding, options)
-        return ret
-
-    def NewFile(self, filename, encoding, options):
-        """parse an XML file from the filesystem or the network. The
-          parsing flags @options are a combination of
-          xmlParserOption. This reuses the existing @reader
-           xmlTextReader. """
-        ret = libxml2mod.xmlReaderNewFile(self._o, filename, encoding, options)
-        return ret
-
-    def NewMemory(self, buffer, size, URL, encoding, options):
-        """Setup an xmltextReader to parse an XML in-memory document.
-          The parsing flags @options are a combination of
-          xmlParserOption. This reuses the existing @reader
-           xmlTextReader. """
-        ret = libxml2mod.xmlReaderNewMemory(self._o, buffer, size, URL, encoding, options)
-        return ret
-
-    def NewWalker(self, doc):
-        """Setup an xmltextReader to parse a preparsed XML document.
-           This reuses the existing @reader xmlTextReader. """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        ret = libxml2mod.xmlReaderNewWalker(self._o, doc__o)
-        return ret
-
-    def Next(self):
-        """Skip to the node following the current one in document
-           order while avoiding the subtree if any. """
-        ret = libxml2mod.xmlTextReaderNext(self._o)
-        return ret
-
-    def NextSibling(self):
-        """Skip to the node following the current one in document
-          order while avoiding the subtree if any. Currently
-           implemented only for Readers built on a document """
-        ret = libxml2mod.xmlTextReaderNextSibling(self._o)
-        return ret
-
-    def NodeType(self):
-        """Get the node type of the current node Reference:
-          http://www.gnu.org/software/dotgnu/pnetlib-doc/System/Xml/Xm
-          lNodeType.html """
-        ret = libxml2mod.xmlTextReaderNodeType(self._o)
-        return ret
-
-    def Normalization(self):
-        """The value indicating whether to normalize white space and
-          attribute values. Since attribute value and end of line
-          normalizations are a MUST in the XML specification only the
-          value true is accepted. The broken bahaviour of accepting
-          out of range character entities like &#0; is of course not
-           supported either. """
-        ret = libxml2mod.xmlTextReaderNormalization(self._o)
-        return ret
-
-    def Prefix(self):
-        """A shorthand reference to the namespace associated with the
-           node. """
-        ret = libxml2mod.xmlTextReaderConstPrefix(self._o)
-        return ret
-
-    def Preserve(self):
-        """This tells the XML Reader to preserve the current node. The
-          caller must also use xmlTextReaderCurrentDoc() to keep an
-           handle on the resulting document once parsing has finished """
-        ret = libxml2mod.xmlTextReaderPreserve(self._o)
-        if ret is None:raise treeError('xmlTextReaderPreserve() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def QuoteChar(self):
-        """The quotation mark character used to enclose the value of
-           an attribute. """
-        ret = libxml2mod.xmlTextReaderQuoteChar(self._o)
-        return ret
-
-    def Read(self):
-        """Moves the position of the current instance to the next node
-           in the stream, exposing its properties. """
-        ret = libxml2mod.xmlTextReaderRead(self._o)
-        return ret
-
-    def ReadAttributeValue(self):
-        """Parses an attribute value into one or more Text and
-           EntityReference nodes. """
-        ret = libxml2mod.xmlTextReaderReadAttributeValue(self._o)
-        return ret
-
-    def ReadInnerXml(self):
-        """Reads the contents of the current node, including child
-           nodes and markup. """
-        ret = libxml2mod.xmlTextReaderReadInnerXml(self._o)
-        return ret
-
-    def ReadOuterXml(self):
-        """Reads the contents of the current node, including child
-           nodes and markup. """
-        ret = libxml2mod.xmlTextReaderReadOuterXml(self._o)
-        return ret
-
-    def ReadState(self):
-        """Gets the read state of the reader. """
-        ret = libxml2mod.xmlTextReaderReadState(self._o)
-        return ret
-
-    def ReadString(self):
-        """Reads the contents of an element or a text node as a string. """
-        ret = libxml2mod.xmlTextReaderReadString(self._o)
-        return ret
-
-    def RelaxNGSetSchema(self, schema):
-        """Use RelaxNG to validate the document as it is processed.
-          Activation is only possible before the first Read(). if
-          @schema is None, then RelaxNG validation is desactivated. @
-          The @schema should not be freed until the reader is
-           deallocated or its use has been deactivated. """
-        if schema is None: schema__o = None
-        else: schema__o = schema._o
-        ret = libxml2mod.xmlTextReaderRelaxNGSetSchema(self._o, schema__o)
-        return ret
-
-    def RelaxNGValidate(self, rng):
-        """Use RelaxNG to validate the document as it is processed.
-          Activation is only possible before the first Read(). if
-           @rng is None, then RelaxNG validation is deactivated. """
-        ret = libxml2mod.xmlTextReaderRelaxNGValidate(self._o, rng)
-        return ret
-
-    def SchemaValidate(self, xsd):
-        """Use W3C XSD schema to validate the document as it is
-          processed. Activation is only possible before the first
-          Read(). If @xsd is None, then XML Schema validation is
-           deactivated. """
-        ret = libxml2mod.xmlTextReaderSchemaValidate(self._o, xsd)
-        return ret
-
-    def SchemaValidateCtxt(self, ctxt, options):
-        """Use W3C XSD schema context to validate the document as it
-          is processed. Activation is only possible before the first
-          Read(). If @ctxt is None, then XML Schema validation is
-           deactivated. """
-        if ctxt is None: ctxt__o = None
-        else: ctxt__o = ctxt._o
-        ret = libxml2mod.xmlTextReaderSchemaValidateCtxt(self._o, ctxt__o, options)
-        return ret
-
-    def SetParserProp(self, prop, value):
-        """Change the parser processing behaviour by changing some of
-          its internal properties. Note that some properties can only
-           be changed before any read has been done. """
-        ret = libxml2mod.xmlTextReaderSetParserProp(self._o, prop, value)
-        return ret
-
-    def SetSchema(self, schema):
-        """Use XSD Schema to validate the document as it is processed.
-          Activation is only possible before the first Read(). if
-          @schema is None, then Schema validation is desactivated. @
-          The @schema should not be freed until the reader is
-           deallocated or its use has been deactivated. """
-        if schema is None: schema__o = None
-        else: schema__o = schema._o
-        ret = libxml2mod.xmlTextReaderSetSchema(self._o, schema__o)
-        return ret
-
-    def Setup(self, input, URL, encoding, options):
-        """Setup an XML reader with new options """
-        if input is None: input__o = None
-        else: input__o = input._o
-        ret = libxml2mod.xmlTextReaderSetup(self._o, input__o, URL, encoding, options)
-        return ret
-
-    def Standalone(self):
-        """Determine the standalone status of the document being read. """
-        ret = libxml2mod.xmlTextReaderStandalone(self._o)
-        return ret
-
-    def String(self, str):
-        """Get an interned string from the reader, allows for example
-           to speedup string name comparisons """
-        ret = libxml2mod.xmlTextReaderConstString(self._o, str)
-        return ret
-
-    def Value(self):
-        """Provides the text value of the node if present """
-        ret = libxml2mod.xmlTextReaderConstValue(self._o)
-        return ret
-
-    def XmlLang(self):
-        """The xml:lang scope within which the node resides. """
-        ret = libxml2mod.xmlTextReaderConstXmlLang(self._o)
-        return ret
-
-    def XmlVersion(self):
-        """Determine the XML version of the document being read. """
-        ret = libxml2mod.xmlTextReaderConstXmlVersion(self._o)
-        return ret
-
 class xmlReg:
     def __init__(self, _obj=None):
         if _obj != None:self._o = _obj;return
@@ -5700,227 +4917,6 @@ class xmlReg:
     def regexpPrint(self, output):
         """Print the content of the compiled regular expression """
         libxml2mod.xmlRegexpPrint(output, self._o)
-
-class catalog:
-    def __init__(self, _obj=None):
-        if _obj != None:self._o = _obj;return
-        self._o = None
-
-    def __del__(self):
-        if self._o != None:
-            libxml2mod.xmlFreeCatalog(self._o)
-        self._o = None
-
-    #
-    # catalog functions from module catalog
-    #
-
-    def add(self, type, orig, replace):
-        """Add an entry in the catalog, it may overwrite existing but
-           different entries. """
-        ret = libxml2mod.xmlACatalogAdd(self._o, type, orig, replace)
-        return ret
-
-    def catalogIsEmpty(self):
-        """Check is a catalog is empty """
-        ret = libxml2mod.xmlCatalogIsEmpty(self._o)
-        return ret
-
-    def convertSGMLCatalog(self):
-        """Convert all the SGML catalog entries as XML ones """
-        ret = libxml2mod.xmlConvertSGMLCatalog(self._o)
-        return ret
-
-    def dump(self, out):
-        """Dump the given catalog to the given file. """
-        libxml2mod.xmlACatalogDump(self._o, out)
-
-    def remove(self, value):
-        """Remove an entry from the catalog """
-        ret = libxml2mod.xmlACatalogRemove(self._o, value)
-        return ret
-
-    def resolve(self, pubID, sysID):
-        """Do a complete resolution lookup of an External Identifier """
-        ret = libxml2mod.xmlACatalogResolve(self._o, pubID, sysID)
-        return ret
-
-    def resolvePublic(self, pubID):
-        """Try to lookup the catalog local reference associated to a
-           public ID in that catalog """
-        ret = libxml2mod.xmlACatalogResolvePublic(self._o, pubID)
-        return ret
-
-    def resolveSystem(self, sysID):
-        """Try to lookup the catalog resource for a system ID """
-        ret = libxml2mod.xmlACatalogResolveSystem(self._o, sysID)
-        return ret
-
-    def resolveURI(self, URI):
-        """Do a complete resolution lookup of an URI """
-        ret = libxml2mod.xmlACatalogResolveURI(self._o, URI)
-        return ret
-
-class xmlEntity(xmlNode):
-    def __init__(self, _obj=None):
-        if type(_obj).__name__ != 'PyCObject':
-            raise TypeError, 'xmlEntity needs a PyCObject argument'
-        self._o = _obj
-        xmlNode.__init__(self, _obj=_obj)
-
-    def __repr__(self):
-        return "<xmlEntity (%s) object at 0x%x>" % (self.name, long(pos_id (self)))
-
-    #
-    # xmlEntity functions from module parserInternals
-    #
-
-    def handleEntity(self, ctxt):
-        """Default handling of defined entities, when should we define
-          a new input stream ? When do we just handle that as a set
-           of chars ?  OBSOLETE: to be removed at some point. """
-        if ctxt is None: ctxt__o = None
-        else: ctxt__o = ctxt._o
-        libxml2mod.xmlHandleEntity(ctxt__o, self._o)
-
-class relaxNgSchema:
-    def __init__(self, _obj=None):
-        if _obj != None:self._o = _obj;return
-        self._o = None
-
-    def __del__(self):
-        if self._o != None:
-            libxml2mod.xmlRelaxNGFree(self._o)
-        self._o = None
-
-    #
-    # relaxNgSchema functions from module relaxng
-    #
-
-    def relaxNGDump(self, output):
-        """Dump a RelaxNG structure back """
-        libxml2mod.xmlRelaxNGDump(output, self._o)
-
-    def relaxNGDumpTree(self, output):
-        """Dump the transformed RelaxNG tree. """
-        libxml2mod.xmlRelaxNGDumpTree(output, self._o)
-
-    def relaxNGNewValidCtxt(self):
-        """Create an XML RelaxNGs validation context based on the
-           given schema """
-        ret = libxml2mod.xmlRelaxNGNewValidCtxt(self._o)
-        if ret is None:raise treeError('xmlRelaxNGNewValidCtxt() failed')
-        __tmp = relaxNgValidCtxt(_obj=ret)
-        __tmp.schema = self
-        return __tmp
-
-    #
-    # relaxNgSchema functions from module xmlreader
-    #
-
-    def RelaxNGSetSchema(self, reader):
-        """Use RelaxNG to validate the document as it is processed.
-          Activation is only possible before the first Read(). if
-          @schema is None, then RelaxNG validation is desactivated. @
-          The @schema should not be freed until the reader is
-           deallocated or its use has been deactivated. """
-        if reader is None: reader__o = None
-        else: reader__o = reader._o
-        ret = libxml2mod.xmlTextReaderRelaxNGSetSchema(reader__o, self._o)
-        return ret
-
-class Schema:
-    def __init__(self, _obj=None):
-        if _obj != None:self._o = _obj;return
-        self._o = None
-
-    def __del__(self):
-        if self._o != None:
-            libxml2mod.xmlSchemaFree(self._o)
-        self._o = None
-
-    #
-    # Schema functions from module xmlreader
-    #
-
-    def SetSchema(self, reader):
-        """Use XSD Schema to validate the document as it is processed.
-          Activation is only possible before the first Read(). if
-          @schema is None, then Schema validation is desactivated. @
-          The @schema should not be freed until the reader is
-           deallocated or its use has been deactivated. """
-        if reader is None: reader__o = None
-        else: reader__o = reader._o
-        ret = libxml2mod.xmlTextReaderSetSchema(reader__o, self._o)
-        return ret
-
-    #
-    # Schema functions from module xmlschemas
-    #
-
-    def schemaDump(self, output):
-        """Dump a Schema structure. """
-        libxml2mod.xmlSchemaDump(output, self._o)
-
-    def schemaNewValidCtxt(self):
-        """Create an XML Schemas validation context based on the given
-           schema. """
-        ret = libxml2mod.xmlSchemaNewValidCtxt(self._o)
-        if ret is None:raise treeError('xmlSchemaNewValidCtxt() failed')
-        __tmp = SchemaValidCtxt(_obj=ret)
-        __tmp.schema = self
-        return __tmp
-
-class Error:
-    def __init__(self, _obj=None):
-        if _obj != None:self._o = _obj;return
-        self._o = None
-
-    # accessors for Error
-    def code(self):
-        """The error code, e.g. an xmlParserError """
-        ret = libxml2mod.xmlErrorGetCode(self._o)
-        return ret
-
-    def domain(self):
-        """What part of the library raised this error """
-        ret = libxml2mod.xmlErrorGetDomain(self._o)
-        return ret
-
-    def file(self):
-        """the filename """
-        ret = libxml2mod.xmlErrorGetFile(self._o)
-        return ret
-
-    def level(self):
-        """how consequent is the error """
-        ret = libxml2mod.xmlErrorGetLevel(self._o)
-        return ret
-
-    def line(self):
-        """the line number if available """
-        ret = libxml2mod.xmlErrorGetLine(self._o)
-        return ret
-
-    def message(self):
-        """human-readable informative error message """
-        ret = libxml2mod.xmlErrorGetMessage(self._o)
-        return ret
-
-    #
-    # Error functions from module xmlerror
-    #
-
-    def copyError(self, to):
-        """Save the original error to the new place. """
-        if to is None: to__o = None
-        else: to__o = to._o
-        ret = libxml2mod.xmlCopyError(self._o, to__o)
-        return ret
-
-    def resetError(self):
-        """Cleanup the error. """
-        libxml2mod.xmlResetError(self._o)
 
 class relaxNgValidCtxt(relaxNgValidCtxtCore):
     def __init__(self, _obj=None):
@@ -5977,579 +4973,6 @@ class relaxNgValidCtxt(relaxNgValidCtxtCore):
         else: elem__o = elem._o
         ret = libxml2mod.xmlRelaxNGValidatePushElement(self._o, doc__o, elem__o)
         return ret
-
-class xpathParserContext:
-    def __init__(self, _obj=None):
-        if _obj != None:self._o = _obj;return
-        self._o = None
-
-    # accessors for xpathParserContext
-    def context(self):
-        """Get the xpathContext from an xpathParserContext """
-        ret = libxml2mod.xmlXPathParserGetContext(self._o)
-        if ret is None:raise xpathError('xmlXPathParserGetContext() failed')
-        __tmp = xpathContext(_obj=ret)
-        return __tmp
-
-    #
-    # xpathParserContext functions from module xpathInternals
-    #
-
-    def xpathAddValues(self):
-        """Implement the add operation on XPath objects: The numeric
-          operators convert their operands to numbers as if by
-           calling the number function. """
-        libxml2mod.xmlXPathAddValues(self._o)
-
-    def xpathBooleanFunction(self, nargs):
-        """Implement the boolean() XPath function boolean
-          boolean(object) The boolean function converts its argument
-          to a boolean as follows: - a number is true if and only if
-          it is neither positive or negative zero nor NaN - a
-          node-set is true if and only if it is non-empty - a string
-           is true if and only if its length is non-zero """
-        libxml2mod.xmlXPathBooleanFunction(self._o, nargs)
-
-    def xpathCeilingFunction(self, nargs):
-        """Implement the ceiling() XPath function number
-          ceiling(number) The ceiling function returns the smallest
-          (closest to negative infinity) number that is not less than
-           the argument and that is an integer. """
-        libxml2mod.xmlXPathCeilingFunction(self._o, nargs)
-
-    def xpathCompareValues(self, inf, strict):
-        """Implement the compare operation on XPath objects: @arg1 <
-          @arg2    (1, 1, ... @arg1 <= @arg2   (1, 0, ... @arg1 >
-          @arg2    (0, 1, ... @arg1 >= @arg2   (0, 0, ...  When
-          neither object to be compared is a node-set and the
-          operator is <=, <, >=, >, then the objects are compared by
-          converted both objects to numbers and comparing the numbers
-          according to IEEE 754. The < comparison will be true if and
-          only if the first number is less than the second number.
-          The <= comparison will be true if and only if the first
-          number is less than or equal to the second number. The >
-          comparison will be true if and only if the first number is
-          greater than the second number. The >= comparison will be
-          true if and only if the first number is greater than or
-           equal to the second number. """
-        ret = libxml2mod.xmlXPathCompareValues(self._o, inf, strict)
-        return ret
-
-    def xpathConcatFunction(self, nargs):
-        """Implement the concat() XPath function string concat(string,
-          string, string*) The concat function returns the
-           concatenation of its arguments. """
-        libxml2mod.xmlXPathConcatFunction(self._o, nargs)
-
-    def xpathContainsFunction(self, nargs):
-        """Implement the contains() XPath function boolean
-          contains(string, string) The contains function returns true
-          if the first argument string contains the second argument
-           string, and otherwise returns false. """
-        libxml2mod.xmlXPathContainsFunction(self._o, nargs)
-
-    def xpathCountFunction(self, nargs):
-        """Implement the count() XPath function number count(node-set) """
-        libxml2mod.xmlXPathCountFunction(self._o, nargs)
-
-    def xpathDivValues(self):
-        """Implement the div operation on XPath objects @arg1 / @arg2:
-          The numeric operators convert their operands to numbers as
-           if by calling the number function. """
-        libxml2mod.xmlXPathDivValues(self._o)
-
-    def xpathEqualValues(self):
-        """Implement the equal operation on XPath objects content:
-           @arg1 == @arg2 """
-        ret = libxml2mod.xmlXPathEqualValues(self._o)
-        return ret
-
-    def xpathErr(self, error):
-        """Handle an XPath error """
-        libxml2mod.xmlXPathErr(self._o, error)
-
-    def xpathEvalExpr(self):
-        """Parse and evaluate an XPath expression in the given
-           context, then push the result on the context stack """
-        libxml2mod.xmlXPathEvalExpr(self._o)
-
-    def xpathFalseFunction(self, nargs):
-        """Implement the false() XPath function boolean false() """
-        libxml2mod.xmlXPathFalseFunction(self._o, nargs)
-
-    def xpathFloorFunction(self, nargs):
-        """Implement the floor() XPath function number floor(number)
-          The floor function returns the largest (closest to positive
-          infinity) number that is not greater than the argument and
-           that is an integer. """
-        libxml2mod.xmlXPathFloorFunction(self._o, nargs)
-
-    def xpathFreeParserContext(self):
-        """Free up an xmlXPathParserContext """
-        libxml2mod.xmlXPathFreeParserContext(self._o)
-
-    def xpathIdFunction(self, nargs):
-        """Implement the id() XPath function node-set id(object) The
-          id function selects elements by their unique ID (see [5.2.1
-          Unique IDs]). When the argument to id is of type node-set,
-          then the result is the union of the result of applying id
-          to the string value of each of the nodes in the argument
-          node-set. When the argument to id is of any other type, the
-          argument is converted to a string as if by a call to the
-          string function; the string is split into a
-          whitespace-separated list of tokens (whitespace is any
-          sequence of characters matching the production S); the
-          result is a node-set containing the elements in the same
-          document as the context node that have a unique ID equal to
-           any of the tokens in the list. """
-        libxml2mod.xmlXPathIdFunction(self._o, nargs)
-
-    def xpathLangFunction(self, nargs):
-        """Implement the lang() XPath function boolean lang(string)
-          The lang function returns true or false depending on
-          whether the language of the context node as specified by
-          xml:lang attributes is the same as or is a sublanguage of
-          the language specified by the argument string. The language
-          of the context node is determined by the value of the
-          xml:lang attribute on the context node, or, if the context
-          node has no xml:lang attribute, by the value of the
-          xml:lang attribute on the nearest ancestor of the context
-          node that has an xml:lang attribute. If there is no such
-           attribute, then lang """
-        libxml2mod.xmlXPathLangFunction(self._o, nargs)
-
-    def xpathLastFunction(self, nargs):
-        """Implement the last() XPath function number last() The last
-          function returns the number of nodes in the context node
-           list. """
-        libxml2mod.xmlXPathLastFunction(self._o, nargs)
-
-    def xpathLocalNameFunction(self, nargs):
-        """Implement the local-name() XPath function string
-          local-name(node-set?) The local-name function returns a
-          string containing the local part of the name of the node in
-          the argument node-set that is first in document order. If
-          the node-set is empty or the first node has no name, an
-          empty string is returned. If the argument is omitted it
-           defaults to the context node. """
-        libxml2mod.xmlXPathLocalNameFunction(self._o, nargs)
-
-    def xpathModValues(self):
-        """Implement the mod operation on XPath objects: @arg1 / @arg2
-          The numeric operators convert their operands to numbers as
-           if by calling the number function. """
-        libxml2mod.xmlXPathModValues(self._o)
-
-    def xpathMultValues(self):
-        """Implement the multiply operation on XPath objects: The
-          numeric operators convert their operands to numbers as if
-           by calling the number function. """
-        libxml2mod.xmlXPathMultValues(self._o)
-
-    def xpathNamespaceURIFunction(self, nargs):
-        """Implement the namespace-uri() XPath function string
-          namespace-uri(node-set?) The namespace-uri function returns
-          a string containing the namespace URI of the expanded name
-          of the node in the argument node-set that is first in
-          document order. If the node-set is empty, the first node
-          has no name, or the expanded name has no namespace URI, an
-          empty string is returned. If the argument is omitted it
-           defaults to the context node. """
-        libxml2mod.xmlXPathNamespaceURIFunction(self._o, nargs)
-
-    def xpathNextAncestor(self, cur):
-        """Traversal function for the "ancestor" direction the
-          ancestor axis contains the ancestors of the context node;
-          the ancestors of the context node consist of the parent of
-          context node and the parent's parent and so on; the nodes
-          are ordered in reverse document order; thus the parent is
-          the first node on the axis, and the parent's parent is the
-           second node on the axis """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextAncestor(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextAncestor() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextAncestorOrSelf(self, cur):
-        """Traversal function for the "ancestor-or-self" direction he
-          ancestor-or-self axis contains the context node and
-          ancestors of the context node in reverse document order;
-          thus the context node is the first node on the axis, and
-          the context node's parent the second; parent here is
-           defined the same as with the parent axis. """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextAncestorOrSelf(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextAncestorOrSelf() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextAttribute(self, cur):
-        """Traversal function for the "attribute" direction TODO:
-           support DTD inherited default attributes """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextAttribute(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextAttribute() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextChild(self, cur):
-        """Traversal function for the "child" direction The child axis
-          contains the children of the context node in document order. """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextChild(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextChild() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextDescendant(self, cur):
-        """Traversal function for the "descendant" direction the
-          descendant axis contains the descendants of the context
-          node in document order; a descendant is a child or a child
-           of a child and so on. """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextDescendant(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextDescendant() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextDescendantOrSelf(self, cur):
-        """Traversal function for the "descendant-or-self" direction
-          the descendant-or-self axis contains the context node and
-          the descendants of the context node in document order; thus
-          the context node is the first node on the axis, and the
-          first child of the context node is the second node on the
-           axis """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextDescendantOrSelf(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextDescendantOrSelf() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextFollowing(self, cur):
-        """Traversal function for the "following" direction The
-          following axis contains all nodes in the same document as
-          the context node that are after the context node in
-          document order, excluding any descendants and excluding
-          attribute nodes and namespace nodes; the nodes are ordered
-           in document order """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextFollowing(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextFollowing() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextFollowingSibling(self, cur):
-        """Traversal function for the "following-sibling" direction
-          The following-sibling axis contains the following siblings
-           of the context node in document order. """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextFollowingSibling(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextFollowingSibling() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextNamespace(self, cur):
-        """Traversal function for the "namespace" direction the
-          namespace axis contains the namespace nodes of the context
-          node; the order of nodes on this axis is
-          implementation-defined; the axis will be empty unless the
-          context node is an element  We keep the XML namespace node
-           at the end of the list. """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextNamespace(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextNamespace() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextParent(self, cur):
-        """Traversal function for the "parent" direction The parent
-          axis contains the parent of the context node, if there is
-           one. """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextParent(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextParent() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextPreceding(self, cur):
-        """Traversal function for the "preceding" direction the
-          preceding axis contains all nodes in the same document as
-          the context node that are before the context node in
-          document order, excluding any ancestors and excluding
-          attribute nodes and namespace nodes; the nodes are ordered
-           in reverse document order """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextPreceding(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextPreceding() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextPrecedingSibling(self, cur):
-        """Traversal function for the "preceding-sibling" direction
-          The preceding-sibling axis contains the preceding siblings
-          of the context node in reverse document order; the first
-          preceding sibling is first on the axis; the sibling
-           preceding that node is the second on the axis and so on. """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextPrecedingSibling(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextPrecedingSibling() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNextSelf(self, cur):
-        """Traversal function for the "self" direction The self axis
-           contains just the context node itself """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlXPathNextSelf(self._o, cur__o)
-        if ret is None:raise xpathError('xmlXPathNextSelf() failed')
-        __tmp = xmlNode(_obj=ret)
-        return __tmp
-
-    def xpathNormalizeFunction(self, nargs):
-        """Implement the normalize-space() XPath function string
-          normalize-space(string?) The normalize-space function
-          returns the argument string with white space normalized by
-          stripping leading and trailing whitespace and replacing
-          sequences of whitespace characters by a single space.
-          Whitespace characters are the same allowed by the S
-          production in XML. If the argument is omitted, it defaults
-          to the context node converted to a string, in other words
-           the value of the context node. """
-        libxml2mod.xmlXPathNormalizeFunction(self._o, nargs)
-
-    def xpathNotEqualValues(self):
-        """Implement the equal operation on XPath objects content:
-           @arg1 == @arg2 """
-        ret = libxml2mod.xmlXPathNotEqualValues(self._o)
-        return ret
-
-    def xpathNotFunction(self, nargs):
-        """Implement the not() XPath function boolean not(boolean) The
-          not function returns true if its argument is false, and
-           false otherwise. """
-        libxml2mod.xmlXPathNotFunction(self._o, nargs)
-
-    def xpathNumberFunction(self, nargs):
-        """Implement the number() XPath function number number(object?) """
-        libxml2mod.xmlXPathNumberFunction(self._o, nargs)
-
-    def xpathParseNCName(self):
-        """parse an XML namespace non qualified name.  [NS 3] NCName
-          ::= (Letter | '_') (NCNameChar)*  [NS 4] NCNameChar ::=
-           Letter | Digit | '.' | '-' | '_' | CombiningChar | Extender """
-        ret = libxml2mod.xmlXPathParseNCName(self._o)
-        return ret
-
-    def xpathParseName(self):
-        """parse an XML name  [4] NameChar ::= Letter | Digit | '.' |
-          '-' | '_' | ':' | CombiningChar | Extender  [5] Name ::=
-           (Letter | '_' | ':') (NameChar)* """
-        ret = libxml2mod.xmlXPathParseName(self._o)
-        return ret
-
-    def xpathPopBoolean(self):
-        """Pops a boolean from the stack, handling conversion if
-           needed. Check error with #xmlXPathCheckError. """
-        ret = libxml2mod.xmlXPathPopBoolean(self._o)
-        return ret
-
-    def xpathPopNumber(self):
-        """Pops a number from the stack, handling conversion if
-           needed. Check error with #xmlXPathCheckError. """
-        ret = libxml2mod.xmlXPathPopNumber(self._o)
-        return ret
-
-    def xpathPopString(self):
-        """Pops a string from the stack, handling conversion if
-           needed. Check error with #xmlXPathCheckError. """
-        ret = libxml2mod.xmlXPathPopString(self._o)
-        return ret
-
-    def xpathPositionFunction(self, nargs):
-        """Implement the position() XPath function number position()
-          The position function returns the position of the context
-          node in the context node list. The first position is 1, and
-           so the last position will be equal to last(). """
-        libxml2mod.xmlXPathPositionFunction(self._o, nargs)
-
-    def xpathRoot(self):
-        """Initialize the context to the root of the document """
-        libxml2mod.xmlXPathRoot(self._o)
-
-    def xpathRoundFunction(self, nargs):
-        """Implement the round() XPath function number round(number)
-          The round function returns the number that is closest to
-          the argument and that is an integer. If there are two such
-           numbers, then the one that is even is returned. """
-        libxml2mod.xmlXPathRoundFunction(self._o, nargs)
-
-    def xpathStartsWithFunction(self, nargs):
-        """Implement the starts-with() XPath function boolean
-          starts-with(string, string) The starts-with function
-          returns true if the first argument string starts with the
-           second argument string, and otherwise returns false. """
-        libxml2mod.xmlXPathStartsWithFunction(self._o, nargs)
-
-    def xpathStringFunction(self, nargs):
-        """Implement the string() XPath function string
-          string(object?) The string function converts an object to a
-          string as follows: - A node-set is converted to a string by
-          returning the value of the node in the node-set that is
-          first in document order. If the node-set is empty, an empty
-          string is returned. - A number is converted to a string as
-          follows + NaN is converted to the string NaN + positive
-          zero is converted to the string 0 + negative zero is
-          converted to the string 0 + positive infinity is converted
-          to the string Infinity + negative infinity is converted to
-          the string -Infinity + if the number is an integer, the
-          number is represented in decimal form as a Number with no
-          decimal point and no leading zeros, preceded by a minus
-          sign (-) if the number is negative + otherwise, the number
-          is represented in decimal form as a Number including a
-          decimal point with at least one digit before the decimal
-          point and at least one digit after the decimal point,
-          preceded by a minus sign (-) if the number is negative;
-          there must be no leading zeros before the decimal point
-          apart possibly from the one required digit immediately
-          before the decimal point; beyond the one required digit
-          after the decimal point there must be as many, but only as
-          many, more digits as are needed to uniquely distinguish the
-          number from all other IEEE 754 numeric values. - The
-          boolean false value is converted to the string false. The
-          boolean true value is converted to the string true.  If the
-          argument is omitted, it defaults to a node-set with the
-           context node as its only member. """
-        libxml2mod.xmlXPathStringFunction(self._o, nargs)
-
-    def xpathStringLengthFunction(self, nargs):
-        """Implement the string-length() XPath function number
-          string-length(string?) The string-length returns the number
-          of characters in the string (see [3.6 Strings]). If the
-          argument is omitted, it defaults to the context node
-          converted to a string, in other words the value of the
-           context node. """
-        libxml2mod.xmlXPathStringLengthFunction(self._o, nargs)
-
-    def xpathSubValues(self):
-        """Implement the subtraction operation on XPath objects: The
-          numeric operators convert their operands to numbers as if
-           by calling the number function. """
-        libxml2mod.xmlXPathSubValues(self._o)
-
-    def xpathSubstringAfterFunction(self, nargs):
-        """Implement the substring-after() XPath function string
-          substring-after(string, string) The substring-after
-          function returns the substring of the first argument string
-          that follows the first occurrence of the second argument
-          string in the first argument string, or the empty stringi
-          if the first argument string does not contain the second
-          argument string. For example,
-          substring-after("1999/04/01","/") returns 04/01, and
-           substring-after("1999/04/01","19") returns 99/04/01. """
-        libxml2mod.xmlXPathSubstringAfterFunction(self._o, nargs)
-
-    def xpathSubstringBeforeFunction(self, nargs):
-        """Implement the substring-before() XPath function string
-          substring-before(string, string) The substring-before
-          function returns the substring of the first argument string
-          that precedes the first occurrence of the second argument
-          string in the first argument string, or the empty string if
-          the first argument string does not contain the second
-          argument string. For example,
-           substring-before("1999/04/01","/") returns 1999. """
-        libxml2mod.xmlXPathSubstringBeforeFunction(self._o, nargs)
-
-    def xpathSubstringFunction(self, nargs):
-        """Implement the substring() XPath function string
-          substring(string, number, number?) The substring function
-          returns the substring of the first argument starting at the
-          position specified in the second argument with length
-          specified in the third argument. For example,
-          substring("12345",2,3) returns "234". If the third argument
-          is not specified, it returns the substring starting at the
-          position specified in the second argument and continuing to
-          the end of the string. For example, substring("12345",2)
-          returns "2345".  More precisely, each character in the
-          string (see [3.6 Strings]) is considered to have a numeric
-          position: the position of the first character is 1, the
-          position of the second character is 2 and so on. The
-          returned substring contains those characters for which the
-          position of the character is greater than or equal to the
-          second argument and, if the third argument is specified,
-          less than the sum of the second and third arguments; the
-          comparisons and addition used for the above follow the
-          standard IEEE 754 rules. Thus: - substring("12345", 1.5,
-          2.6) returns "234" - substring("12345", 0, 3) returns "12"
-          - substring("12345", 0 div 0, 3) returns "" -
-          substring("12345", 1, 0 div 0) returns "" -
-          substring("12345", -42, 1 div 0) returns "12345" -
-           substring("12345", -1 div 0, 1 div 0) returns "" """
-        libxml2mod.xmlXPathSubstringFunction(self._o, nargs)
-
-    def xpathSumFunction(self, nargs):
-        """Implement the sum() XPath function number sum(node-set) The
-          sum function returns the sum of the values of the nodes in
-           the argument node-set. """
-        libxml2mod.xmlXPathSumFunction(self._o, nargs)
-
-    def xpathTranslateFunction(self, nargs):
-        """Implement the translate() XPath function string
-          translate(string, string, string) The translate function
-          returns the first argument string with occurrences of
-          characters in the second argument string replaced by the
-          character at the corresponding position in the third
-          argument string. For example, translate("bar","abc","ABC")
-          returns the string BAr. If there is a character in the
-          second argument string with no character at a corresponding
-          position in the third argument string (because the second
-          argument string is longer than the third argument string),
-          then occurrences of that character in the first argument
-          string are removed. For example,
-           translate("--aaa--","abc-","ABC") """
-        libxml2mod.xmlXPathTranslateFunction(self._o, nargs)
-
-    def xpathTrueFunction(self, nargs):
-        """Implement the true() XPath function boolean true() """
-        libxml2mod.xmlXPathTrueFunction(self._o, nargs)
-
-    def xpathValueFlipSign(self):
-        """Implement the unary - operation on an XPath object The
-          numeric operators convert their operands to numbers as if
-           by calling the number function. """
-        libxml2mod.xmlXPathValueFlipSign(self._o)
-
-    def xpatherror(self, file, line, no):
-        """Formats an error message. """
-        libxml2mod.xmlXPatherror(self._o, file, line, no)
-
-    #
-    # xpathParserContext functions from module xpointer
-    #
-
-    def xpointerEvalRangePredicate(self):
-        """[8]   Predicate ::=   '[' PredicateExpr ']' [9]  
-          PredicateExpr ::=   Expr  Evaluate a predicate as in
-          xmlXPathEvalPredicate() but for a Location Set instead of a
-           node set """
-        libxml2mod.xmlXPtrEvalRangePredicate(self._o)
-
-    def xpointerRangeToFunction(self, nargs):
-        """Implement the range-to() XPointer function """
-        libxml2mod.xmlXPtrRangeToFunction(self._o, nargs)
 
 class parserCtxt(parserCtxtCore):
     def __init__(self, _obj=None):
@@ -7276,6 +5699,804 @@ class xmlDtd(xmlNode):
         __tmp = xmlElement(_obj=ret)
         return __tmp
 
+class relaxNgParserCtxt:
+    def __init__(self, _obj=None):
+        if _obj != None:self._o = _obj;return
+        self._o = None
+
+    def __del__(self):
+        if self._o != None:
+            libxml2mod.xmlRelaxNGFreeParserCtxt(self._o)
+        self._o = None
+
+    #
+    # relaxNgParserCtxt functions from module relaxng
+    #
+
+    def relaxNGParse(self):
+        """parse a schema definition resource and build an internal
+           XML Shema struture which can be used to validate instances. """
+        ret = libxml2mod.xmlRelaxNGParse(self._o)
+        if ret is None:raise parserError('xmlRelaxNGParse() failed')
+        __tmp = relaxNgSchema(_obj=ret)
+        return __tmp
+
+    def relaxParserSetFlag(self, flags):
+        """Semi private function used to pass informations to a parser
+           context which are a combination of xmlRelaxNGParserFlag . """
+        ret = libxml2mod.xmlRelaxParserSetFlag(self._o, flags)
+        return ret
+
+class xpathParserContext:
+    def __init__(self, _obj=None):
+        if _obj != None:self._o = _obj;return
+        self._o = None
+
+    # accessors for xpathParserContext
+    def context(self):
+        """Get the xpathContext from an xpathParserContext """
+        ret = libxml2mod.xmlXPathParserGetContext(self._o)
+        if ret is None:raise xpathError('xmlXPathParserGetContext() failed')
+        __tmp = xpathContext(_obj=ret)
+        return __tmp
+
+    #
+    # xpathParserContext functions from module xpathInternals
+    #
+
+    def xpathAddValues(self):
+        """Implement the add operation on XPath objects: The numeric
+          operators convert their operands to numbers as if by
+           calling the number function. """
+        libxml2mod.xmlXPathAddValues(self._o)
+
+    def xpathBooleanFunction(self, nargs):
+        """Implement the boolean() XPath function boolean
+          boolean(object) The boolean function converts its argument
+          to a boolean as follows: - a number is true if and only if
+          it is neither positive or negative zero nor NaN - a
+          node-set is true if and only if it is non-empty - a string
+           is true if and only if its length is non-zero """
+        libxml2mod.xmlXPathBooleanFunction(self._o, nargs)
+
+    def xpathCeilingFunction(self, nargs):
+        """Implement the ceiling() XPath function number
+          ceiling(number) The ceiling function returns the smallest
+          (closest to negative infinity) number that is not less than
+           the argument and that is an integer. """
+        libxml2mod.xmlXPathCeilingFunction(self._o, nargs)
+
+    def xpathCompareValues(self, inf, strict):
+        """Implement the compare operation on XPath objects: @arg1 <
+          @arg2    (1, 1, ... @arg1 <= @arg2   (1, 0, ... @arg1 >
+          @arg2    (0, 1, ... @arg1 >= @arg2   (0, 0, ...  When
+          neither object to be compared is a node-set and the
+          operator is <=, <, >=, >, then the objects are compared by
+          converted both objects to numbers and comparing the numbers
+          according to IEEE 754. The < comparison will be true if and
+          only if the first number is less than the second number.
+          The <= comparison will be true if and only if the first
+          number is less than or equal to the second number. The >
+          comparison will be true if and only if the first number is
+          greater than the second number. The >= comparison will be
+          true if and only if the first number is greater than or
+           equal to the second number. """
+        ret = libxml2mod.xmlXPathCompareValues(self._o, inf, strict)
+        return ret
+
+    def xpathConcatFunction(self, nargs):
+        """Implement the concat() XPath function string concat(string,
+          string, string*) The concat function returns the
+           concatenation of its arguments. """
+        libxml2mod.xmlXPathConcatFunction(self._o, nargs)
+
+    def xpathContainsFunction(self, nargs):
+        """Implement the contains() XPath function boolean
+          contains(string, string) The contains function returns true
+          if the first argument string contains the second argument
+           string, and otherwise returns false. """
+        libxml2mod.xmlXPathContainsFunction(self._o, nargs)
+
+    def xpathCountFunction(self, nargs):
+        """Implement the count() XPath function number count(node-set) """
+        libxml2mod.xmlXPathCountFunction(self._o, nargs)
+
+    def xpathDivValues(self):
+        """Implement the div operation on XPath objects @arg1 / @arg2:
+          The numeric operators convert their operands to numbers as
+           if by calling the number function. """
+        libxml2mod.xmlXPathDivValues(self._o)
+
+    def xpathEqualValues(self):
+        """Implement the equal operation on XPath objects content:
+           @arg1 == @arg2 """
+        ret = libxml2mod.xmlXPathEqualValues(self._o)
+        return ret
+
+    def xpathErr(self, error):
+        """Handle an XPath error """
+        libxml2mod.xmlXPathErr(self._o, error)
+
+    def xpathEvalExpr(self):
+        """Parse and evaluate an XPath expression in the given
+           context, then push the result on the context stack """
+        libxml2mod.xmlXPathEvalExpr(self._o)
+
+    def xpathFalseFunction(self, nargs):
+        """Implement the false() XPath function boolean false() """
+        libxml2mod.xmlXPathFalseFunction(self._o, nargs)
+
+    def xpathFloorFunction(self, nargs):
+        """Implement the floor() XPath function number floor(number)
+          The floor function returns the largest (closest to positive
+          infinity) number that is not greater than the argument and
+           that is an integer. """
+        libxml2mod.xmlXPathFloorFunction(self._o, nargs)
+
+    def xpathFreeParserContext(self):
+        """Free up an xmlXPathParserContext """
+        libxml2mod.xmlXPathFreeParserContext(self._o)
+
+    def xpathIdFunction(self, nargs):
+        """Implement the id() XPath function node-set id(object) The
+          id function selects elements by their unique ID (see [5.2.1
+          Unique IDs]). When the argument to id is of type node-set,
+          then the result is the union of the result of applying id
+          to the string value of each of the nodes in the argument
+          node-set. When the argument to id is of any other type, the
+          argument is converted to a string as if by a call to the
+          string function; the string is split into a
+          whitespace-separated list of tokens (whitespace is any
+          sequence of characters matching the production S); the
+          result is a node-set containing the elements in the same
+          document as the context node that have a unique ID equal to
+           any of the tokens in the list. """
+        libxml2mod.xmlXPathIdFunction(self._o, nargs)
+
+    def xpathLangFunction(self, nargs):
+        """Implement the lang() XPath function boolean lang(string)
+          The lang function returns true or false depending on
+          whether the language of the context node as specified by
+          xml:lang attributes is the same as or is a sublanguage of
+          the language specified by the argument string. The language
+          of the context node is determined by the value of the
+          xml:lang attribute on the context node, or, if the context
+          node has no xml:lang attribute, by the value of the
+          xml:lang attribute on the nearest ancestor of the context
+          node that has an xml:lang attribute. If there is no such
+           attribute, then lang """
+        libxml2mod.xmlXPathLangFunction(self._o, nargs)
+
+    def xpathLastFunction(self, nargs):
+        """Implement the last() XPath function number last() The last
+          function returns the number of nodes in the context node
+           list. """
+        libxml2mod.xmlXPathLastFunction(self._o, nargs)
+
+    def xpathLocalNameFunction(self, nargs):
+        """Implement the local-name() XPath function string
+          local-name(node-set?) The local-name function returns a
+          string containing the local part of the name of the node in
+          the argument node-set that is first in document order. If
+          the node-set is empty or the first node has no name, an
+          empty string is returned. If the argument is omitted it
+           defaults to the context node. """
+        libxml2mod.xmlXPathLocalNameFunction(self._o, nargs)
+
+    def xpathModValues(self):
+        """Implement the mod operation on XPath objects: @arg1 / @arg2
+          The numeric operators convert their operands to numbers as
+           if by calling the number function. """
+        libxml2mod.xmlXPathModValues(self._o)
+
+    def xpathMultValues(self):
+        """Implement the multiply operation on XPath objects: The
+          numeric operators convert their operands to numbers as if
+           by calling the number function. """
+        libxml2mod.xmlXPathMultValues(self._o)
+
+    def xpathNamespaceURIFunction(self, nargs):
+        """Implement the namespace-uri() XPath function string
+          namespace-uri(node-set?) The namespace-uri function returns
+          a string containing the namespace URI of the expanded name
+          of the node in the argument node-set that is first in
+          document order. If the node-set is empty, the first node
+          has no name, or the expanded name has no namespace URI, an
+          empty string is returned. If the argument is omitted it
+           defaults to the context node. """
+        libxml2mod.xmlXPathNamespaceURIFunction(self._o, nargs)
+
+    def xpathNextAncestor(self, cur):
+        """Traversal function for the "ancestor" direction the
+          ancestor axis contains the ancestors of the context node;
+          the ancestors of the context node consist of the parent of
+          context node and the parent's parent and so on; the nodes
+          are ordered in reverse document order; thus the parent is
+          the first node on the axis, and the parent's parent is the
+           second node on the axis """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextAncestor(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextAncestor() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextAncestorOrSelf(self, cur):
+        """Traversal function for the "ancestor-or-self" direction he
+          ancestor-or-self axis contains the context node and
+          ancestors of the context node in reverse document order;
+          thus the context node is the first node on the axis, and
+          the context node's parent the second; parent here is
+           defined the same as with the parent axis. """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextAncestorOrSelf(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextAncestorOrSelf() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextAttribute(self, cur):
+        """Traversal function for the "attribute" direction TODO:
+           support DTD inherited default attributes """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextAttribute(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextAttribute() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextChild(self, cur):
+        """Traversal function for the "child" direction The child axis
+          contains the children of the context node in document order. """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextChild(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextChild() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextDescendant(self, cur):
+        """Traversal function for the "descendant" direction the
+          descendant axis contains the descendants of the context
+          node in document order; a descendant is a child or a child
+           of a child and so on. """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextDescendant(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextDescendant() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextDescendantOrSelf(self, cur):
+        """Traversal function for the "descendant-or-self" direction
+          the descendant-or-self axis contains the context node and
+          the descendants of the context node in document order; thus
+          the context node is the first node on the axis, and the
+          first child of the context node is the second node on the
+           axis """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextDescendantOrSelf(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextDescendantOrSelf() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextFollowing(self, cur):
+        """Traversal function for the "following" direction The
+          following axis contains all nodes in the same document as
+          the context node that are after the context node in
+          document order, excluding any descendants and excluding
+          attribute nodes and namespace nodes; the nodes are ordered
+           in document order """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextFollowing(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextFollowing() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextFollowingSibling(self, cur):
+        """Traversal function for the "following-sibling" direction
+          The following-sibling axis contains the following siblings
+           of the context node in document order. """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextFollowingSibling(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextFollowingSibling() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextNamespace(self, cur):
+        """Traversal function for the "namespace" direction the
+          namespace axis contains the namespace nodes of the context
+          node; the order of nodes on this axis is
+          implementation-defined; the axis will be empty unless the
+          context node is an element  We keep the XML namespace node
+           at the end of the list. """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextNamespace(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextNamespace() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextParent(self, cur):
+        """Traversal function for the "parent" direction The parent
+          axis contains the parent of the context node, if there is
+           one. """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextParent(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextParent() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextPreceding(self, cur):
+        """Traversal function for the "preceding" direction the
+          preceding axis contains all nodes in the same document as
+          the context node that are before the context node in
+          document order, excluding any ancestors and excluding
+          attribute nodes and namespace nodes; the nodes are ordered
+           in reverse document order """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextPreceding(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextPreceding() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextPrecedingSibling(self, cur):
+        """Traversal function for the "preceding-sibling" direction
+          The preceding-sibling axis contains the preceding siblings
+          of the context node in reverse document order; the first
+          preceding sibling is first on the axis; the sibling
+           preceding that node is the second on the axis and so on. """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextPrecedingSibling(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextPrecedingSibling() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNextSelf(self, cur):
+        """Traversal function for the "self" direction The self axis
+           contains just the context node itself """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlXPathNextSelf(self._o, cur__o)
+        if ret is None:raise xpathError('xmlXPathNextSelf() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def xpathNormalizeFunction(self, nargs):
+        """Implement the normalize-space() XPath function string
+          normalize-space(string?) The normalize-space function
+          returns the argument string with white space normalized by
+          stripping leading and trailing whitespace and replacing
+          sequences of whitespace characters by a single space.
+          Whitespace characters are the same allowed by the S
+          production in XML. If the argument is omitted, it defaults
+          to the context node converted to a string, in other words
+           the value of the context node. """
+        libxml2mod.xmlXPathNormalizeFunction(self._o, nargs)
+
+    def xpathNotEqualValues(self):
+        """Implement the equal operation on XPath objects content:
+           @arg1 == @arg2 """
+        ret = libxml2mod.xmlXPathNotEqualValues(self._o)
+        return ret
+
+    def xpathNotFunction(self, nargs):
+        """Implement the not() XPath function boolean not(boolean) The
+          not function returns true if its argument is false, and
+           false otherwise. """
+        libxml2mod.xmlXPathNotFunction(self._o, nargs)
+
+    def xpathNumberFunction(self, nargs):
+        """Implement the number() XPath function number number(object?) """
+        libxml2mod.xmlXPathNumberFunction(self._o, nargs)
+
+    def xpathParseNCName(self):
+        """parse an XML namespace non qualified name.  [NS 3] NCName
+          ::= (Letter | '_') (NCNameChar)*  [NS 4] NCNameChar ::=
+           Letter | Digit | '.' | '-' | '_' | CombiningChar | Extender """
+        ret = libxml2mod.xmlXPathParseNCName(self._o)
+        return ret
+
+    def xpathParseName(self):
+        """parse an XML name  [4] NameChar ::= Letter | Digit | '.' |
+          '-' | '_' | ':' | CombiningChar | Extender  [5] Name ::=
+           (Letter | '_' | ':') (NameChar)* """
+        ret = libxml2mod.xmlXPathParseName(self._o)
+        return ret
+
+    def xpathPopBoolean(self):
+        """Pops a boolean from the stack, handling conversion if
+           needed. Check error with #xmlXPathCheckError. """
+        ret = libxml2mod.xmlXPathPopBoolean(self._o)
+        return ret
+
+    def xpathPopNumber(self):
+        """Pops a number from the stack, handling conversion if
+           needed. Check error with #xmlXPathCheckError. """
+        ret = libxml2mod.xmlXPathPopNumber(self._o)
+        return ret
+
+    def xpathPopString(self):
+        """Pops a string from the stack, handling conversion if
+           needed. Check error with #xmlXPathCheckError. """
+        ret = libxml2mod.xmlXPathPopString(self._o)
+        return ret
+
+    def xpathPositionFunction(self, nargs):
+        """Implement the position() XPath function number position()
+          The position function returns the position of the context
+          node in the context node list. The first position is 1, and
+           so the last position will be equal to last(). """
+        libxml2mod.xmlXPathPositionFunction(self._o, nargs)
+
+    def xpathRoot(self):
+        """Initialize the context to the root of the document """
+        libxml2mod.xmlXPathRoot(self._o)
+
+    def xpathRoundFunction(self, nargs):
+        """Implement the round() XPath function number round(number)
+          The round function returns the number that is closest to
+          the argument and that is an integer. If there are two such
+           numbers, then the one that is even is returned. """
+        libxml2mod.xmlXPathRoundFunction(self._o, nargs)
+
+    def xpathStartsWithFunction(self, nargs):
+        """Implement the starts-with() XPath function boolean
+          starts-with(string, string) The starts-with function
+          returns true if the first argument string starts with the
+           second argument string, and otherwise returns false. """
+        libxml2mod.xmlXPathStartsWithFunction(self._o, nargs)
+
+    def xpathStringFunction(self, nargs):
+        """Implement the string() XPath function string
+          string(object?) The string function converts an object to a
+          string as follows: - A node-set is converted to a string by
+          returning the value of the node in the node-set that is
+          first in document order. If the node-set is empty, an empty
+          string is returned. - A number is converted to a string as
+          follows + NaN is converted to the string NaN + positive
+          zero is converted to the string 0 + negative zero is
+          converted to the string 0 + positive infinity is converted
+          to the string Infinity + negative infinity is converted to
+          the string -Infinity + if the number is an integer, the
+          number is represented in decimal form as a Number with no
+          decimal point and no leading zeros, preceded by a minus
+          sign (-) if the number is negative + otherwise, the number
+          is represented in decimal form as a Number including a
+          decimal point with at least one digit before the decimal
+          point and at least one digit after the decimal point,
+          preceded by a minus sign (-) if the number is negative;
+          there must be no leading zeros before the decimal point
+          apart possibly from the one required digit immediately
+          before the decimal point; beyond the one required digit
+          after the decimal point there must be as many, but only as
+          many, more digits as are needed to uniquely distinguish the
+          number from all other IEEE 754 numeric values. - The
+          boolean false value is converted to the string false. The
+          boolean true value is converted to the string true.  If the
+          argument is omitted, it defaults to a node-set with the
+           context node as its only member. """
+        libxml2mod.xmlXPathStringFunction(self._o, nargs)
+
+    def xpathStringLengthFunction(self, nargs):
+        """Implement the string-length() XPath function number
+          string-length(string?) The string-length returns the number
+          of characters in the string (see [3.6 Strings]). If the
+          argument is omitted, it defaults to the context node
+          converted to a string, in other words the value of the
+           context node. """
+        libxml2mod.xmlXPathStringLengthFunction(self._o, nargs)
+
+    def xpathSubValues(self):
+        """Implement the subtraction operation on XPath objects: The
+          numeric operators convert their operands to numbers as if
+           by calling the number function. """
+        libxml2mod.xmlXPathSubValues(self._o)
+
+    def xpathSubstringAfterFunction(self, nargs):
+        """Implement the substring-after() XPath function string
+          substring-after(string, string) The substring-after
+          function returns the substring of the first argument string
+          that follows the first occurrence of the second argument
+          string in the first argument string, or the empty stringi
+          if the first argument string does not contain the second
+          argument string. For example,
+          substring-after("1999/04/01","/") returns 04/01, and
+           substring-after("1999/04/01","19") returns 99/04/01. """
+        libxml2mod.xmlXPathSubstringAfterFunction(self._o, nargs)
+
+    def xpathSubstringBeforeFunction(self, nargs):
+        """Implement the substring-before() XPath function string
+          substring-before(string, string) The substring-before
+          function returns the substring of the first argument string
+          that precedes the first occurrence of the second argument
+          string in the first argument string, or the empty string if
+          the first argument string does not contain the second
+          argument string. For example,
+           substring-before("1999/04/01","/") returns 1999. """
+        libxml2mod.xmlXPathSubstringBeforeFunction(self._o, nargs)
+
+    def xpathSubstringFunction(self, nargs):
+        """Implement the substring() XPath function string
+          substring(string, number, number?) The substring function
+          returns the substring of the first argument starting at the
+          position specified in the second argument with length
+          specified in the third argument. For example,
+          substring("12345",2,3) returns "234". If the third argument
+          is not specified, it returns the substring starting at the
+          position specified in the second argument and continuing to
+          the end of the string. For example, substring("12345",2)
+          returns "2345".  More precisely, each character in the
+          string (see [3.6 Strings]) is considered to have a numeric
+          position: the position of the first character is 1, the
+          position of the second character is 2 and so on. The
+          returned substring contains those characters for which the
+          position of the character is greater than or equal to the
+          second argument and, if the third argument is specified,
+          less than the sum of the second and third arguments; the
+          comparisons and addition used for the above follow the
+          standard IEEE 754 rules. Thus: - substring("12345", 1.5,
+          2.6) returns "234" - substring("12345", 0, 3) returns "12"
+          - substring("12345", 0 div 0, 3) returns "" -
+          substring("12345", 1, 0 div 0) returns "" -
+          substring("12345", -42, 1 div 0) returns "12345" -
+           substring("12345", -1 div 0, 1 div 0) returns "" """
+        libxml2mod.xmlXPathSubstringFunction(self._o, nargs)
+
+    def xpathSumFunction(self, nargs):
+        """Implement the sum() XPath function number sum(node-set) The
+          sum function returns the sum of the values of the nodes in
+           the argument node-set. """
+        libxml2mod.xmlXPathSumFunction(self._o, nargs)
+
+    def xpathTranslateFunction(self, nargs):
+        """Implement the translate() XPath function string
+          translate(string, string, string) The translate function
+          returns the first argument string with occurrences of
+          characters in the second argument string replaced by the
+          character at the corresponding position in the third
+          argument string. For example, translate("bar","abc","ABC")
+          returns the string BAr. If there is a character in the
+          second argument string with no character at a corresponding
+          position in the third argument string (because the second
+          argument string is longer than the third argument string),
+          then occurrences of that character in the first argument
+          string are removed. For example,
+           translate("--aaa--","abc-","ABC") """
+        libxml2mod.xmlXPathTranslateFunction(self._o, nargs)
+
+    def xpathTrueFunction(self, nargs):
+        """Implement the true() XPath function boolean true() """
+        libxml2mod.xmlXPathTrueFunction(self._o, nargs)
+
+    def xpathValueFlipSign(self):
+        """Implement the unary - operation on an XPath object The
+          numeric operators convert their operands to numbers as if
+           by calling the number function. """
+        libxml2mod.xmlXPathValueFlipSign(self._o)
+
+    def xpatherror(self, file, line, no):
+        """Formats an error message. """
+        libxml2mod.xmlXPatherror(self._o, file, line, no)
+
+    #
+    # xpathParserContext functions from module xpointer
+    #
+
+    def xpointerEvalRangePredicate(self):
+        """[8]   Predicate ::=   '[' PredicateExpr ']' [9]  
+          PredicateExpr ::=   Expr  Evaluate a predicate as in
+          xmlXPathEvalPredicate() but for a Location Set instead of a
+           node set """
+        libxml2mod.xmlXPtrEvalRangePredicate(self._o)
+
+    def xpointerRangeToFunction(self, nargs):
+        """Implement the range-to() XPointer function """
+        libxml2mod.xmlXPtrRangeToFunction(self._o, nargs)
+
+class SchemaParserCtxt:
+    def __init__(self, _obj=None):
+        if _obj != None:self._o = _obj;return
+        self._o = None
+
+    def __del__(self):
+        if self._o != None:
+            libxml2mod.xmlSchemaFreeParserCtxt(self._o)
+        self._o = None
+
+    #
+    # SchemaParserCtxt functions from module xmlschemas
+    #
+
+    def schemaParse(self):
+        """parse a schema definition resource and build an internal
+           XML Shema struture which can be used to validate instances. """
+        ret = libxml2mod.xmlSchemaParse(self._o)
+        if ret is None:raise parserError('xmlSchemaParse() failed')
+        __tmp = Schema(_obj=ret)
+        return __tmp
+
+class ValidCtxt(ValidCtxtCore):
+    def __init__(self, _obj=None):
+        self._o = _obj
+        ValidCtxtCore.__init__(self, _obj=_obj)
+
+    def __del__(self):
+        if self._o != None:
+            libxml2mod.xmlFreeValidCtxt(self._o)
+        self._o = None
+
+    #
+    # ValidCtxt functions from module valid
+    #
+
+    def validCtxtNormalizeAttributeValue(self, doc, elem, name, value):
+        """Does the validation related extra step of the normalization
+          of attribute values:  If the declared value is not CDATA,
+          then the XML processor must further process the normalized
+          attribute value by discarding any leading and trailing
+          space (#x20) characters, and by replacing sequences of
+          space (#x20) characters by single space (#x20) character. 
+          Also  check VC: Standalone Document Declaration in P32, and
+           update ctxt->valid accordingly """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        if elem is None: elem__o = None
+        else: elem__o = elem._o
+        ret = libxml2mod.xmlValidCtxtNormalizeAttributeValue(self._o, doc__o, elem__o, name, value)
+        return ret
+
+    def validateDocument(self, doc):
+        """Try to validate the document instance  basically it does
+          the all the checks described by the XML Rec i.e. validates
+          the internal and external subset (if present) and validate
+           the document tree. """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        ret = libxml2mod.xmlValidateDocument(self._o, doc__o)
+        return ret
+
+    def validateDocumentFinal(self, doc):
+        """Does the final step for the document validation once all
+          the incremental validation steps have been completed 
+          basically it does the following checks described by the XML
+          Rec  Check all the IDREF/IDREFS attributes definition for
+           validity """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        ret = libxml2mod.xmlValidateDocumentFinal(self._o, doc__o)
+        return ret
+
+    def validateDtd(self, doc, dtd):
+        """Try to validate the document against the dtd instance 
+          Basically it does check all the definitions in the DtD.
+          Note the the internal subset (if present) is de-coupled
+          (i.e. not used), which could give problems if ID or IDREF
+           is present. """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        if dtd is None: dtd__o = None
+        else: dtd__o = dtd._o
+        ret = libxml2mod.xmlValidateDtd(self._o, doc__o, dtd__o)
+        return ret
+
+    def validateDtdFinal(self, doc):
+        """Does the final step for the dtds validation once all the
+          subsets have been parsed  basically it does the following
+          checks described by the XML Rec - check that ENTITY and
+          ENTITIES type attributes default or possible values matches
+          one of the defined entities. - check that NOTATION type
+          attributes default or possible values matches one of the
+           defined notations. """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        ret = libxml2mod.xmlValidateDtdFinal(self._o, doc__o)
+        return ret
+
+    def validateElement(self, doc, elem):
+        """Try to validate the subtree under an element """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        if elem is None: elem__o = None
+        else: elem__o = elem._o
+        ret = libxml2mod.xmlValidateElement(self._o, doc__o, elem__o)
+        return ret
+
+    def validateNotationUse(self, doc, notationName):
+        """Validate that the given name match a notation declaration.
+           - [ VC: Notation Declared ] """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        ret = libxml2mod.xmlValidateNotationUse(self._o, doc__o, notationName)
+        return ret
+
+    def validateOneAttribute(self, doc, elem, attr, value):
+        """Try to validate a single attribute for an element basically
+          it does the following checks as described by the XML-1.0
+          recommendation: - [ VC: Attribute Value Type ] - [ VC:
+          Fixed Attribute Default ] - [ VC: Entity Name ] - [ VC:
+          Name Token ] - [ VC: ID ] - [ VC: IDREF ] - [ VC: Entity
+          Name ] - [ VC: Notation Attributes ]  The ID/IDREF
+           uniqueness and matching are done separately """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        if elem is None: elem__o = None
+        else: elem__o = elem._o
+        if attr is None: attr__o = None
+        else: attr__o = attr._o
+        ret = libxml2mod.xmlValidateOneAttribute(self._o, doc__o, elem__o, attr__o, value)
+        return ret
+
+    def validateOneElement(self, doc, elem):
+        """Try to validate a single element and it's attributes,
+          basically it does the following checks as described by the
+          XML-1.0 recommendation: - [ VC: Element Valid ] - [ VC:
+          Required Attribute ] Then call xmlValidateOneAttribute()
+          for each attribute present.  The ID/IDREF checkings are
+           done separately """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        if elem is None: elem__o = None
+        else: elem__o = elem._o
+        ret = libxml2mod.xmlValidateOneElement(self._o, doc__o, elem__o)
+        return ret
+
+    def validateOneNamespace(self, doc, elem, prefix, ns, value):
+        """Try to validate a single namespace declaration for an
+          element basically it does the following checks as described
+          by the XML-1.0 recommendation: - [ VC: Attribute Value Type
+          ] - [ VC: Fixed Attribute Default ] - [ VC: Entity Name ] -
+          [ VC: Name Token ] - [ VC: ID ] - [ VC: IDREF ] - [ VC:
+          Entity Name ] - [ VC: Notation Attributes ]  The ID/IDREF
+           uniqueness and matching are done separately """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        if elem is None: elem__o = None
+        else: elem__o = elem._o
+        if ns is None: ns__o = None
+        else: ns__o = ns._o
+        ret = libxml2mod.xmlValidateOneNamespace(self._o, doc__o, elem__o, prefix, ns__o, value)
+        return ret
+
+    def validatePopElement(self, doc, elem, qname):
+        """Pop the element end from the validation stack. """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        if elem is None: elem__o = None
+        else: elem__o = elem._o
+        ret = libxml2mod.xmlValidatePopElement(self._o, doc__o, elem__o, qname)
+        return ret
+
+    def validatePushCData(self, data, len):
+        """check the CData parsed for validation in the current stack """
+        ret = libxml2mod.xmlValidatePushCData(self._o, data, len)
+        return ret
+
+    def validatePushElement(self, doc, elem, qname):
+        """Push a new element start on the validation stack. """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        if elem is None: elem__o = None
+        else: elem__o = elem._o
+        ret = libxml2mod.xmlValidatePushElement(self._o, doc__o, elem__o, qname)
+        return ret
+
+    def validateRoot(self, doc):
+        """Try to validate a the root element basically it does the
+          following check as described by the XML-1.0 recommendation:
+          - [ VC: Root Element Type ] it doesn't try to recurse or
+           apply other check to the element """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        ret = libxml2mod.xmlValidateRoot(self._o, doc__o)
+        return ret
+
 class xmlNs(xmlNode):
     def __init__(self, _obj=None):
         if type(_obj).__name__ != 'PyCObject':
@@ -7449,278 +6670,6 @@ class xmlNs(xmlNode):
            semantic. Check if such a node needs to be freed """
         libxml2mod.xmlXPathNodeSetFreeNs(self._o)
 
-class inputBuffer(ioReadWrapper):
-    def __init__(self, _obj=None):
-        self._o = _obj
-        ioReadWrapper.__init__(self, _obj=_obj)
-
-    def __del__(self):
-        if self._o != None:
-            libxml2mod.xmlFreeParserInputBuffer(self._o)
-        self._o = None
-
-    #
-    # inputBuffer functions from module xmlIO
-    #
-
-    def grow(self, len):
-        """Grow up the content of the input buffer, the old data are
-          preserved This routine handle the I18N transcoding to
-          internal UTF-8 This routine is used when operating the
-          parser in normal (pull) mode  TODO: one should be able to
-          remove one extra copy by copying directly onto in->buffer
-           or in->raw """
-        ret = libxml2mod.xmlParserInputBufferGrow(self._o, len)
-        return ret
-
-    def push(self, len, buf):
-        """Push the content of the arry in the input buffer This
-          routine handle the I18N transcoding to internal UTF-8 This
-          is used when operating the parser in progressive (push)
-           mode. """
-        ret = libxml2mod.xmlParserInputBufferPush(self._o, len, buf)
-        return ret
-
-    def read(self, len):
-        """Refresh the content of the input buffer, the old data are
-          considered consumed This routine handle the I18N
-           transcoding to internal UTF-8 """
-        ret = libxml2mod.xmlParserInputBufferRead(self._o, len)
-        return ret
-
-    #
-    # inputBuffer functions from module xmlreader
-    #
-
-    def Setup(self, reader, URL, encoding, options):
-        """Setup an XML reader with new options """
-        if reader is None: reader__o = None
-        else: reader__o = reader._o
-        ret = libxml2mod.xmlTextReaderSetup(reader__o, self._o, URL, encoding, options)
-        return ret
-
-    def newTextReader(self, URI):
-        """Create an xmlTextReader structure fed with @input """
-        ret = libxml2mod.xmlNewTextReader(self._o, URI)
-        if ret is None:raise treeError('xmlNewTextReader() failed')
-        __tmp = xmlTextReader(_obj=ret)
-        __tmp.input = self
-        return __tmp
-
-class relaxNgParserCtxt:
-    def __init__(self, _obj=None):
-        if _obj != None:self._o = _obj;return
-        self._o = None
-
-    def __del__(self):
-        if self._o != None:
-            libxml2mod.xmlRelaxNGFreeParserCtxt(self._o)
-        self._o = None
-
-    #
-    # relaxNgParserCtxt functions from module relaxng
-    #
-
-    def relaxNGParse(self):
-        """parse a schema definition resource and build an internal
-           XML Shema struture which can be used to validate instances. """
-        ret = libxml2mod.xmlRelaxNGParse(self._o)
-        if ret is None:raise parserError('xmlRelaxNGParse() failed')
-        __tmp = relaxNgSchema(_obj=ret)
-        return __tmp
-
-    def relaxParserSetFlag(self, flags):
-        """Semi private function used to pass informations to a parser
-           context which are a combination of xmlRelaxNGParserFlag . """
-        ret = libxml2mod.xmlRelaxParserSetFlag(self._o, flags)
-        return ret
-
-class outputBuffer(ioWriteWrapper):
-    def __init__(self, _obj=None):
-        self._o = _obj
-        ioWriteWrapper.__init__(self, _obj=_obj)
-
-    #
-    # outputBuffer functions from module HTMLtree
-    #
-
-    def htmlDocContentDumpFormatOutput(self, cur, encoding, format):
-        """Dump an HTML document. """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        libxml2mod.htmlDocContentDumpFormatOutput(self._o, cur__o, encoding, format)
-
-    def htmlDocContentDumpOutput(self, cur, encoding):
-        """Dump an HTML document. Formating return/spaces are added. """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        libxml2mod.htmlDocContentDumpOutput(self._o, cur__o, encoding)
-
-    def htmlNodeDumpFormatOutput(self, doc, cur, encoding, format):
-        """Dump an HTML node, recursive behaviour,children are printed
-           too. """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        libxml2mod.htmlNodeDumpFormatOutput(self._o, doc__o, cur__o, encoding, format)
-
-    def htmlNodeDumpOutput(self, doc, cur, encoding):
-        """Dump an HTML node, recursive behaviour,children are printed
-           too, and formatting returns/spaces are added. """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        libxml2mod.htmlNodeDumpOutput(self._o, doc__o, cur__o, encoding)
-
-    #
-    # outputBuffer functions from module tree
-    #
-
-    def nodeDumpOutput(self, doc, cur, level, format, encoding):
-        """Dump an XML node, recursive behaviour, children are printed
-          too. Note that @format = 1 provide node indenting only if
-          xmlIndentTreeOutput = 1 or xmlKeepBlanksDefault(0) was
-           called """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        libxml2mod.xmlNodeDumpOutput(self._o, doc__o, cur__o, level, format, encoding)
-
-    def saveFileTo(self, cur, encoding):
-        """Dump an XML document to an I/O buffer. Warning ! This call
-          xmlOutputBufferClose() on buf which is not available after
-           this call. """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlSaveFileTo(self._o, cur__o, encoding)
-        return ret
-
-    def saveFormatFileTo(self, cur, encoding, format):
-        """Dump an XML document to an I/O buffer. Warning ! This call
-          xmlOutputBufferClose() on buf which is not available after
-           this call. """
-        if cur is None: cur__o = None
-        else: cur__o = cur._o
-        ret = libxml2mod.xmlSaveFormatFileTo(self._o, cur__o, encoding, format)
-        return ret
-
-    #
-    # outputBuffer functions from module xmlIO
-    #
-
-    def write(self, len, buf):
-        """Write the content of the array in the output I/O buffer
-          This routine handle the I18N transcoding from internal
-          UTF-8 The buffer is lossless, i.e. will store in case of
-           partial or delayed writes. """
-        ret = libxml2mod.xmlOutputBufferWrite(self._o, len, buf)
-        return ret
-
-    def writeString(self, str):
-        """Write the content of the string in the output I/O buffer
-          This routine handle the I18N transcoding from internal
-          UTF-8 The buffer is lossless, i.e. will store in case of
-           partial or delayed writes. """
-        ret = libxml2mod.xmlOutputBufferWriteString(self._o, str)
-        return ret
-
-class SchemaParserCtxt:
-    def __init__(self, _obj=None):
-        if _obj != None:self._o = _obj;return
-        self._o = None
-
-    def __del__(self):
-        if self._o != None:
-            libxml2mod.xmlSchemaFreeParserCtxt(self._o)
-        self._o = None
-
-    #
-    # SchemaParserCtxt functions from module xmlschemas
-    #
-
-    def schemaParse(self):
-        """parse a schema definition resource and build an internal
-           XML Shema struture which can be used to validate instances. """
-        ret = libxml2mod.xmlSchemaParse(self._o)
-        if ret is None:raise parserError('xmlSchemaParse() failed')
-        __tmp = Schema(_obj=ret)
-        return __tmp
-
-class SchemaValidCtxt(SchemaValidCtxtCore):
-    def __init__(self, _obj=None):
-        self.schema = None
-        self._o = _obj
-        SchemaValidCtxtCore.__init__(self, _obj=_obj)
-
-    def __del__(self):
-        if self._o != None:
-            libxml2mod.xmlSchemaFreeValidCtxt(self._o)
-        self._o = None
-
-    #
-    # SchemaValidCtxt functions from module xmlreader
-    #
-
-    def SchemaValidateCtxt(self, reader, options):
-        """Use W3C XSD schema context to validate the document as it
-          is processed. Activation is only possible before the first
-          Read(). If @ctxt is None, then XML Schema validation is
-           deactivated. """
-        if reader is None: reader__o = None
-        else: reader__o = reader._o
-        ret = libxml2mod.xmlTextReaderSchemaValidateCtxt(reader__o, self._o, options)
-        return ret
-
-    #
-    # SchemaValidCtxt functions from module xmlschemas
-    #
-
-    def schemaIsValid(self):
-        """Check if any error was detected during validation. """
-        ret = libxml2mod.xmlSchemaIsValid(self._o)
-        return ret
-
-    def schemaSetValidOptions(self, options):
-        """Sets the options to be used during the validation. """
-        ret = libxml2mod.xmlSchemaSetValidOptions(self._o, options)
-        return ret
-
-    def schemaValidCtxtGetOptions(self):
-        """Get the validation context options. """
-        ret = libxml2mod.xmlSchemaValidCtxtGetOptions(self._o)
-        return ret
-
-    def schemaValidCtxtGetParserCtxt(self):
-        """allow access to the parser context of the schema validation
-           context """
-        ret = libxml2mod.xmlSchemaValidCtxtGetParserCtxt(self._o)
-        if ret is None:raise parserError('xmlSchemaValidCtxtGetParserCtxt() failed')
-        __tmp = parserCtxt(_obj=ret)
-        return __tmp
-
-    def schemaValidateDoc(self, doc):
-        """Validate a document tree in memory. """
-        if doc is None: doc__o = None
-        else: doc__o = doc._o
-        ret = libxml2mod.xmlSchemaValidateDoc(self._o, doc__o)
-        return ret
-
-    def schemaValidateFile(self, filename, options):
-        """Do a schemas validation of the given resource, it will use
-           the SAX streamable validation internally. """
-        ret = libxml2mod.xmlSchemaValidateFile(self._o, filename, options)
-        return ret
-
-    def schemaValidateOneElement(self, elem):
-        """Validate a branch of a tree, starting with the given @elem. """
-        if elem is None: elem__o = None
-        else: elem__o = elem._o
-        ret = libxml2mod.xmlSchemaValidateOneElement(self._o, elem__o)
-        return ret
-
 class xmlTextReaderLocator:
     def __init__(self, _obj=None):
         if _obj != None:self._o = _obj;return
@@ -7860,6 +6809,1057 @@ class URI:
     def saveUri(self):
         """Save the URI as an escaped string """
         ret = libxml2mod.xmlSaveUri(self._o)
+        return ret
+
+class xmlAttribute(xmlNode):
+    def __init__(self, _obj=None):
+        if type(_obj).__name__ != 'PyCObject':
+            raise TypeError, 'xmlAttribute needs a PyCObject argument'
+        self._o = _obj
+        xmlNode.__init__(self, _obj=_obj)
+
+    def __repr__(self):
+        return "<xmlAttribute (%s) object at 0x%x>" % (self.name, long(pos_id (self)))
+
+class catalog:
+    def __init__(self, _obj=None):
+        if _obj != None:self._o = _obj;return
+        self._o = None
+
+    def __del__(self):
+        if self._o != None:
+            libxml2mod.xmlFreeCatalog(self._o)
+        self._o = None
+
+    #
+    # catalog functions from module catalog
+    #
+
+    def add(self, type, orig, replace):
+        """Add an entry in the catalog, it may overwrite existing but
+           different entries. """
+        ret = libxml2mod.xmlACatalogAdd(self._o, type, orig, replace)
+        return ret
+
+    def catalogIsEmpty(self):
+        """Check is a catalog is empty """
+        ret = libxml2mod.xmlCatalogIsEmpty(self._o)
+        return ret
+
+    def convertSGMLCatalog(self):
+        """Convert all the SGML catalog entries as XML ones """
+        ret = libxml2mod.xmlConvertSGMLCatalog(self._o)
+        return ret
+
+    def dump(self, out):
+        """Dump the given catalog to the given file. """
+        libxml2mod.xmlACatalogDump(self._o, out)
+
+    def remove(self, value):
+        """Remove an entry from the catalog """
+        ret = libxml2mod.xmlACatalogRemove(self._o, value)
+        return ret
+
+    def resolve(self, pubID, sysID):
+        """Do a complete resolution lookup of an External Identifier """
+        ret = libxml2mod.xmlACatalogResolve(self._o, pubID, sysID)
+        return ret
+
+    def resolvePublic(self, pubID):
+        """Try to lookup the catalog local reference associated to a
+           public ID in that catalog """
+        ret = libxml2mod.xmlACatalogResolvePublic(self._o, pubID)
+        return ret
+
+    def resolveSystem(self, sysID):
+        """Try to lookup the catalog resource for a system ID """
+        ret = libxml2mod.xmlACatalogResolveSystem(self._o, sysID)
+        return ret
+
+    def resolveURI(self, URI):
+        """Do a complete resolution lookup of an URI """
+        ret = libxml2mod.xmlACatalogResolveURI(self._o, URI)
+        return ret
+
+class xpathContext:
+    def __init__(self, _obj=None):
+        if _obj != None:self._o = _obj;return
+        self._o = None
+
+    # accessors for xpathContext
+    def contextDoc(self):
+        """Get the doc from an xpathContext """
+        ret = libxml2mod.xmlXPathGetContextDoc(self._o)
+        if ret is None:raise xpathError('xmlXPathGetContextDoc() failed')
+        __tmp = xmlDoc(_obj=ret)
+        return __tmp
+
+    def contextNode(self):
+        """Get the current node from an xpathContext """
+        ret = libxml2mod.xmlXPathGetContextNode(self._o)
+        if ret is None:raise xpathError('xmlXPathGetContextNode() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def contextPosition(self):
+        """Get the current node from an xpathContext """
+        ret = libxml2mod.xmlXPathGetContextPosition(self._o)
+        return ret
+
+    def contextSize(self):
+        """Get the current node from an xpathContext """
+        ret = libxml2mod.xmlXPathGetContextSize(self._o)
+        return ret
+
+    def function(self):
+        """Get the current function name xpathContext """
+        ret = libxml2mod.xmlXPathGetFunction(self._o)
+        return ret
+
+    def functionURI(self):
+        """Get the current function name URI xpathContext """
+        ret = libxml2mod.xmlXPathGetFunctionURI(self._o)
+        return ret
+
+    def setContextDoc(self, doc):
+        """Set the doc of an xpathContext """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        libxml2mod.xmlXPathSetContextDoc(self._o, doc__o)
+
+    def setContextNode(self, node):
+        """Set the current node of an xpathContext """
+        if node is None: node__o = None
+        else: node__o = node._o
+        libxml2mod.xmlXPathSetContextNode(self._o, node__o)
+
+    #
+    # xpathContext functions from module python
+    #
+
+    def registerXPathFunction(self, name, ns_uri, f):
+        """Register a Python written function to the XPath interpreter """
+        ret = libxml2mod.xmlRegisterXPathFunction(self._o, name, ns_uri, f)
+        return ret
+
+    #
+    # xpathContext functions from module xpath
+    #
+
+    def xpathContextSetCache(self, active, value, options):
+        """Creates/frees an object cache on the XPath context. If
+          activates XPath objects (xmlXPathObject) will be cached
+          internally to be reused. @options: 0: This will set the
+          XPath object caching: @value: This will set the maximum
+          number of XPath objects to be cached per slot There are 5
+          slots for: node-set, string, number, boolean, and misc
+          objects. Use <0 for the default number (100). Other values
+           for @options have currently no effect. """
+        ret = libxml2mod.xmlXPathContextSetCache(self._o, active, value, options)
+        return ret
+
+    def xpathEval(self, str):
+        """Evaluate the XPath Location Path in the given context. """
+        ret = libxml2mod.xmlXPathEval(str, self._o)
+        if ret is None:raise xpathError('xmlXPathEval() failed')
+        return xpathObjectRet(ret)
+
+    def xpathEvalExpression(self, str):
+        """Evaluate the XPath expression in the given context. """
+        ret = libxml2mod.xmlXPathEvalExpression(str, self._o)
+        if ret is None:raise xpathError('xmlXPathEvalExpression() failed')
+        return xpathObjectRet(ret)
+
+    def xpathFreeContext(self):
+        """Free up an xmlXPathContext """
+        libxml2mod.xmlXPathFreeContext(self._o)
+
+    #
+    # xpathContext functions from module xpathInternals
+    #
+
+    def xpathNewParserContext(self, str):
+        """Create a new xmlXPathParserContext """
+        ret = libxml2mod.xmlXPathNewParserContext(str, self._o)
+        if ret is None:raise xpathError('xmlXPathNewParserContext() failed')
+        __tmp = xpathParserContext(_obj=ret)
+        return __tmp
+
+    def xpathNsLookup(self, prefix):
+        """Search in the namespace declaration array of the context
+           for the given namespace name associated to the given prefix """
+        ret = libxml2mod.xmlXPathNsLookup(self._o, prefix)
+        return ret
+
+    def xpathRegisterAllFunctions(self):
+        """Registers all default XPath functions in this context """
+        libxml2mod.xmlXPathRegisterAllFunctions(self._o)
+
+    def xpathRegisterNs(self, prefix, ns_uri):
+        """Register a new namespace. If @ns_uri is None it unregisters
+           the namespace """
+        ret = libxml2mod.xmlXPathRegisterNs(self._o, prefix, ns_uri)
+        return ret
+
+    def xpathRegisteredFuncsCleanup(self):
+        """Cleanup the XPath context data associated to registered
+           functions """
+        libxml2mod.xmlXPathRegisteredFuncsCleanup(self._o)
+
+    def xpathRegisteredNsCleanup(self):
+        """Cleanup the XPath context data associated to registered
+           variables """
+        libxml2mod.xmlXPathRegisteredNsCleanup(self._o)
+
+    def xpathRegisteredVariablesCleanup(self):
+        """Cleanup the XPath context data associated to registered
+           variables """
+        libxml2mod.xmlXPathRegisteredVariablesCleanup(self._o)
+
+    def xpathVariableLookup(self, name):
+        """Search in the Variable array of the context for the given
+           variable value. """
+        ret = libxml2mod.xmlXPathVariableLookup(self._o, name)
+        if ret is None:raise xpathError('xmlXPathVariableLookup() failed')
+        return xpathObjectRet(ret)
+
+    def xpathVariableLookupNS(self, name, ns_uri):
+        """Search in the Variable array of the context for the given
+           variable value. """
+        ret = libxml2mod.xmlXPathVariableLookupNS(self._o, name, ns_uri)
+        if ret is None:raise xpathError('xmlXPathVariableLookupNS() failed')
+        return xpathObjectRet(ret)
+
+    #
+    # xpathContext functions from module xpointer
+    #
+
+    def xpointerEval(self, str):
+        """Evaluate the XPath Location Path in the given context. """
+        ret = libxml2mod.xmlXPtrEval(str, self._o)
+        if ret is None:raise treeError('xmlXPtrEval() failed')
+        return xpathObjectRet(ret)
+
+class xmlElement(xmlNode):
+    def __init__(self, _obj=None):
+        if type(_obj).__name__ != 'PyCObject':
+            raise TypeError, 'xmlElement needs a PyCObject argument'
+        self._o = _obj
+        xmlNode.__init__(self, _obj=_obj)
+
+    def __repr__(self):
+        return "<xmlElement (%s) object at 0x%x>" % (self.name, long(pos_id (self)))
+
+class xmlTextReader(xmlTextReaderCore):
+    def __init__(self, _obj=None):
+        self.input = None
+        self._o = _obj
+        xmlTextReaderCore.__init__(self, _obj=_obj)
+
+    def __del__(self):
+        if self._o != None:
+            libxml2mod.xmlFreeTextReader(self._o)
+        self._o = None
+
+    #
+    # xmlTextReader functions from module xmlreader
+    #
+
+    def AttributeCount(self):
+        """Provides the number of attributes of the current node """
+        ret = libxml2mod.xmlTextReaderAttributeCount(self._o)
+        return ret
+
+    def BaseUri(self):
+        """The base URI of the node. """
+        ret = libxml2mod.xmlTextReaderConstBaseUri(self._o)
+        return ret
+
+    def ByteConsumed(self):
+        """This function provides the current index of the parser used
+          by the reader, relative to the start of the current entity.
+          This function actually just wraps a call to
+          xmlBytesConsumed() for the parser context associated with
+           the reader. See xmlBytesConsumed() for more information. """
+        ret = libxml2mod.xmlTextReaderByteConsumed(self._o)
+        return ret
+
+    def Close(self):
+        """This method releases any resources allocated by the current
+          instance changes the state to Closed and close any
+           underlying input. """
+        ret = libxml2mod.xmlTextReaderClose(self._o)
+        return ret
+
+    def CurrentDoc(self):
+        """Hacking interface allowing to get the xmlDocPtr
+          correponding to the current document being accessed by the
+          xmlTextReader. NOTE: as a result of this call, the reader
+          will not destroy the associated XML document and calling
+          xmlFreeDoc() on the result is needed once the reader
+           parsing has finished. """
+        ret = libxml2mod.xmlTextReaderCurrentDoc(self._o)
+        if ret is None:raise treeError('xmlTextReaderCurrentDoc() failed')
+        __tmp = xmlDoc(_obj=ret)
+        return __tmp
+
+    def CurrentNode(self):
+        """Hacking interface allowing to get the xmlNodePtr
+          correponding to the current node being accessed by the
+          xmlTextReader. This is dangerous because the underlying
+           node may be destroyed on the next Reads. """
+        ret = libxml2mod.xmlTextReaderCurrentNode(self._o)
+        if ret is None:raise treeError('xmlTextReaderCurrentNode() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def Depth(self):
+        """The depth of the node in the tree. """
+        ret = libxml2mod.xmlTextReaderDepth(self._o)
+        return ret
+
+    def Encoding(self):
+        """Determine the encoding of the document being read. """
+        ret = libxml2mod.xmlTextReaderConstEncoding(self._o)
+        return ret
+
+    def Expand(self):
+        """Reads the contents of the current node and the full
+          subtree. It then makes the subtree available until the next
+           xmlTextReaderRead() call """
+        ret = libxml2mod.xmlTextReaderExpand(self._o)
+        if ret is None:raise treeError('xmlTextReaderExpand() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def GetAttribute(self, name):
+        """Provides the value of the attribute with the specified
+           qualified name. """
+        ret = libxml2mod.xmlTextReaderGetAttribute(self._o, name)
+        return ret
+
+    def GetAttributeNo(self, no):
+        """Provides the value of the attribute with the specified
+           index relative to the containing element. """
+        ret = libxml2mod.xmlTextReaderGetAttributeNo(self._o, no)
+        return ret
+
+    def GetAttributeNs(self, localName, namespaceURI):
+        """Provides the value of the specified attribute """
+        ret = libxml2mod.xmlTextReaderGetAttributeNs(self._o, localName, namespaceURI)
+        return ret
+
+    def GetParserColumnNumber(self):
+        """Provide the column number of the current parsing point. """
+        ret = libxml2mod.xmlTextReaderGetParserColumnNumber(self._o)
+        return ret
+
+    def GetParserLineNumber(self):
+        """Provide the line number of the current parsing point. """
+        ret = libxml2mod.xmlTextReaderGetParserLineNumber(self._o)
+        return ret
+
+    def GetParserProp(self, prop):
+        """Read the parser internal property. """
+        ret = libxml2mod.xmlTextReaderGetParserProp(self._o, prop)
+        return ret
+
+    def GetRemainder(self):
+        """Method to get the remainder of the buffered XML. this
+          method stops the parser, set its state to End Of File and
+          return the input stream with what is left that the parser
+          did not use.  The implementation is not good, the parser
+          certainly procgressed past what's left in reader->input,
+          and there is an allocation problem. Best would be to
+           rewrite it differently. """
+        ret = libxml2mod.xmlTextReaderGetRemainder(self._o)
+        if ret is None:raise treeError('xmlTextReaderGetRemainder() failed')
+        __tmp = inputBuffer(_obj=ret)
+        return __tmp
+
+    def HasAttributes(self):
+        """Whether the node has attributes. """
+        ret = libxml2mod.xmlTextReaderHasAttributes(self._o)
+        return ret
+
+    def HasValue(self):
+        """Whether the node can have a text value. """
+        ret = libxml2mod.xmlTextReaderHasValue(self._o)
+        return ret
+
+    def IsDefault(self):
+        """Whether an Attribute  node was generated from the default
+           value defined in the DTD or schema. """
+        ret = libxml2mod.xmlTextReaderIsDefault(self._o)
+        return ret
+
+    def IsEmptyElement(self):
+        """Check if the current node is empty """
+        ret = libxml2mod.xmlTextReaderIsEmptyElement(self._o)
+        return ret
+
+    def IsNamespaceDecl(self):
+        """Determine whether the current node is a namespace
+           declaration rather than a regular attribute. """
+        ret = libxml2mod.xmlTextReaderIsNamespaceDecl(self._o)
+        return ret
+
+    def IsValid(self):
+        """Retrieve the validity status from the parser context """
+        ret = libxml2mod.xmlTextReaderIsValid(self._o)
+        return ret
+
+    def LocalName(self):
+        """The local name of the node. """
+        ret = libxml2mod.xmlTextReaderConstLocalName(self._o)
+        return ret
+
+    def LookupNamespace(self, prefix):
+        """Resolves a namespace prefix in the scope of the current
+           element. """
+        ret = libxml2mod.xmlTextReaderLookupNamespace(self._o, prefix)
+        return ret
+
+    def MoveToAttribute(self, name):
+        """Moves the position of the current instance to the attribute
+           with the specified qualified name. """
+        ret = libxml2mod.xmlTextReaderMoveToAttribute(self._o, name)
+        return ret
+
+    def MoveToAttributeNo(self, no):
+        """Moves the position of the current instance to the attribute
+          with the specified index relative to the containing element. """
+        ret = libxml2mod.xmlTextReaderMoveToAttributeNo(self._o, no)
+        return ret
+
+    def MoveToAttributeNs(self, localName, namespaceURI):
+        """Moves the position of the current instance to the attribute
+           with the specified local name and namespace URI. """
+        ret = libxml2mod.xmlTextReaderMoveToAttributeNs(self._o, localName, namespaceURI)
+        return ret
+
+    def MoveToElement(self):
+        """Moves the position of the current instance to the node that
+           contains the current Attribute  node. """
+        ret = libxml2mod.xmlTextReaderMoveToElement(self._o)
+        return ret
+
+    def MoveToFirstAttribute(self):
+        """Moves the position of the current instance to the first
+           attribute associated with the current node. """
+        ret = libxml2mod.xmlTextReaderMoveToFirstAttribute(self._o)
+        return ret
+
+    def MoveToNextAttribute(self):
+        """Moves the position of the current instance to the next
+           attribute associated with the current node. """
+        ret = libxml2mod.xmlTextReaderMoveToNextAttribute(self._o)
+        return ret
+
+    def Name(self):
+        """The qualified name of the node, equal to Prefix :LocalName. """
+        ret = libxml2mod.xmlTextReaderConstName(self._o)
+        return ret
+
+    def NamespaceUri(self):
+        """The URI defining the namespace associated with the node. """
+        ret = libxml2mod.xmlTextReaderConstNamespaceUri(self._o)
+        return ret
+
+    def NewDoc(self, cur, URL, encoding, options):
+        """Setup an xmltextReader to parse an XML in-memory document.
+          The parsing flags @options are a combination of
+          xmlParserOption. This reuses the existing @reader
+           xmlTextReader. """
+        ret = libxml2mod.xmlReaderNewDoc(self._o, cur, URL, encoding, options)
+        return ret
+
+    def NewFd(self, fd, URL, encoding, options):
+        """Setup an xmltextReader to parse an XML from a file
+          descriptor. NOTE that the file descriptor will not be
+          closed when the reader is closed or reset. The parsing
+          flags @options are a combination of xmlParserOption. This
+           reuses the existing @reader xmlTextReader. """
+        ret = libxml2mod.xmlReaderNewFd(self._o, fd, URL, encoding, options)
+        return ret
+
+    def NewFile(self, filename, encoding, options):
+        """parse an XML file from the filesystem or the network. The
+          parsing flags @options are a combination of
+          xmlParserOption. This reuses the existing @reader
+           xmlTextReader. """
+        ret = libxml2mod.xmlReaderNewFile(self._o, filename, encoding, options)
+        return ret
+
+    def NewMemory(self, buffer, size, URL, encoding, options):
+        """Setup an xmltextReader to parse an XML in-memory document.
+          The parsing flags @options are a combination of
+          xmlParserOption. This reuses the existing @reader
+           xmlTextReader. """
+        ret = libxml2mod.xmlReaderNewMemory(self._o, buffer, size, URL, encoding, options)
+        return ret
+
+    def NewWalker(self, doc):
+        """Setup an xmltextReader to parse a preparsed XML document.
+           This reuses the existing @reader xmlTextReader. """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        ret = libxml2mod.xmlReaderNewWalker(self._o, doc__o)
+        return ret
+
+    def Next(self):
+        """Skip to the node following the current one in document
+           order while avoiding the subtree if any. """
+        ret = libxml2mod.xmlTextReaderNext(self._o)
+        return ret
+
+    def NextSibling(self):
+        """Skip to the node following the current one in document
+          order while avoiding the subtree if any. Currently
+           implemented only for Readers built on a document """
+        ret = libxml2mod.xmlTextReaderNextSibling(self._o)
+        return ret
+
+    def NodeType(self):
+        """Get the node type of the current node Reference:
+          http://www.gnu.org/software/dotgnu/pnetlib-doc/System/Xml/Xm
+          lNodeType.html """
+        ret = libxml2mod.xmlTextReaderNodeType(self._o)
+        return ret
+
+    def Normalization(self):
+        """The value indicating whether to normalize white space and
+          attribute values. Since attribute value and end of line
+          normalizations are a MUST in the XML specification only the
+          value true is accepted. The broken bahaviour of accepting
+          out of range character entities like &#0; is of course not
+           supported either. """
+        ret = libxml2mod.xmlTextReaderNormalization(self._o)
+        return ret
+
+    def Prefix(self):
+        """A shorthand reference to the namespace associated with the
+           node. """
+        ret = libxml2mod.xmlTextReaderConstPrefix(self._o)
+        return ret
+
+    def Preserve(self):
+        """This tells the XML Reader to preserve the current node. The
+          caller must also use xmlTextReaderCurrentDoc() to keep an
+           handle on the resulting document once parsing has finished """
+        ret = libxml2mod.xmlTextReaderPreserve(self._o)
+        if ret is None:raise treeError('xmlTextReaderPreserve() failed')
+        __tmp = xmlNode(_obj=ret)
+        return __tmp
+
+    def QuoteChar(self):
+        """The quotation mark character used to enclose the value of
+           an attribute. """
+        ret = libxml2mod.xmlTextReaderQuoteChar(self._o)
+        return ret
+
+    def Read(self):
+        """Moves the position of the current instance to the next node
+           in the stream, exposing its properties. """
+        ret = libxml2mod.xmlTextReaderRead(self._o)
+        return ret
+
+    def ReadAttributeValue(self):
+        """Parses an attribute value into one or more Text and
+           EntityReference nodes. """
+        ret = libxml2mod.xmlTextReaderReadAttributeValue(self._o)
+        return ret
+
+    def ReadInnerXml(self):
+        """Reads the contents of the current node, including child
+           nodes and markup. """
+        ret = libxml2mod.xmlTextReaderReadInnerXml(self._o)
+        return ret
+
+    def ReadOuterXml(self):
+        """Reads the contents of the current node, including child
+           nodes and markup. """
+        ret = libxml2mod.xmlTextReaderReadOuterXml(self._o)
+        return ret
+
+    def ReadState(self):
+        """Gets the read state of the reader. """
+        ret = libxml2mod.xmlTextReaderReadState(self._o)
+        return ret
+
+    def ReadString(self):
+        """Reads the contents of an element or a text node as a string. """
+        ret = libxml2mod.xmlTextReaderReadString(self._o)
+        return ret
+
+    def RelaxNGSetSchema(self, schema):
+        """Use RelaxNG to validate the document as it is processed.
+          Activation is only possible before the first Read(). if
+          @schema is None, then RelaxNG validation is desactivated. @
+          The @schema should not be freed until the reader is
+           deallocated or its use has been deactivated. """
+        if schema is None: schema__o = None
+        else: schema__o = schema._o
+        ret = libxml2mod.xmlTextReaderRelaxNGSetSchema(self._o, schema__o)
+        return ret
+
+    def RelaxNGValidate(self, rng):
+        """Use RelaxNG to validate the document as it is processed.
+          Activation is only possible before the first Read(). if
+           @rng is None, then RelaxNG validation is deactivated. """
+        ret = libxml2mod.xmlTextReaderRelaxNGValidate(self._o, rng)
+        return ret
+
+    def SchemaValidate(self, xsd):
+        """Use W3C XSD schema to validate the document as it is
+          processed. Activation is only possible before the first
+          Read(). If @xsd is None, then XML Schema validation is
+           deactivated. """
+        ret = libxml2mod.xmlTextReaderSchemaValidate(self._o, xsd)
+        return ret
+
+    def SchemaValidateCtxt(self, ctxt, options):
+        """Use W3C XSD schema context to validate the document as it
+          is processed. Activation is only possible before the first
+          Read(). If @ctxt is None, then XML Schema validation is
+           deactivated. """
+        if ctxt is None: ctxt__o = None
+        else: ctxt__o = ctxt._o
+        ret = libxml2mod.xmlTextReaderSchemaValidateCtxt(self._o, ctxt__o, options)
+        return ret
+
+    def SetParserProp(self, prop, value):
+        """Change the parser processing behaviour by changing some of
+          its internal properties. Note that some properties can only
+           be changed before any read has been done. """
+        ret = libxml2mod.xmlTextReaderSetParserProp(self._o, prop, value)
+        return ret
+
+    def SetSchema(self, schema):
+        """Use XSD Schema to validate the document as it is processed.
+          Activation is only possible before the first Read(). if
+          @schema is None, then Schema validation is desactivated. @
+          The @schema should not be freed until the reader is
+           deallocated or its use has been deactivated. """
+        if schema is None: schema__o = None
+        else: schema__o = schema._o
+        ret = libxml2mod.xmlTextReaderSetSchema(self._o, schema__o)
+        return ret
+
+    def Setup(self, input, URL, encoding, options):
+        """Setup an XML reader with new options """
+        if input is None: input__o = None
+        else: input__o = input._o
+        ret = libxml2mod.xmlTextReaderSetup(self._o, input__o, URL, encoding, options)
+        return ret
+
+    def Standalone(self):
+        """Determine the standalone status of the document being read. """
+        ret = libxml2mod.xmlTextReaderStandalone(self._o)
+        return ret
+
+    def String(self, str):
+        """Get an interned string from the reader, allows for example
+           to speedup string name comparisons """
+        ret = libxml2mod.xmlTextReaderConstString(self._o, str)
+        return ret
+
+    def Value(self):
+        """Provides the text value of the node if present """
+        ret = libxml2mod.xmlTextReaderConstValue(self._o)
+        return ret
+
+    def XmlLang(self):
+        """The xml:lang scope within which the node resides. """
+        ret = libxml2mod.xmlTextReaderConstXmlLang(self._o)
+        return ret
+
+    def XmlVersion(self):
+        """Determine the XML version of the document being read. """
+        ret = libxml2mod.xmlTextReaderConstXmlVersion(self._o)
+        return ret
+
+class xmlEntity(xmlNode):
+    def __init__(self, _obj=None):
+        if type(_obj).__name__ != 'PyCObject':
+            raise TypeError, 'xmlEntity needs a PyCObject argument'
+        self._o = _obj
+        xmlNode.__init__(self, _obj=_obj)
+
+    def __repr__(self):
+        return "<xmlEntity (%s) object at 0x%x>" % (self.name, long(pos_id (self)))
+
+    #
+    # xmlEntity functions from module parserInternals
+    #
+
+    def handleEntity(self, ctxt):
+        """Default handling of defined entities, when should we define
+          a new input stream ? When do we just handle that as a set
+           of chars ?  OBSOLETE: to be removed at some point. """
+        if ctxt is None: ctxt__o = None
+        else: ctxt__o = ctxt._o
+        libxml2mod.xmlHandleEntity(ctxt__o, self._o)
+
+class Schema:
+    def __init__(self, _obj=None):
+        if _obj != None:self._o = _obj;return
+        self._o = None
+
+    def __del__(self):
+        if self._o != None:
+            libxml2mod.xmlSchemaFree(self._o)
+        self._o = None
+
+    #
+    # Schema functions from module xmlreader
+    #
+
+    def SetSchema(self, reader):
+        """Use XSD Schema to validate the document as it is processed.
+          Activation is only possible before the first Read(). if
+          @schema is None, then Schema validation is desactivated. @
+          The @schema should not be freed until the reader is
+           deallocated or its use has been deactivated. """
+        if reader is None: reader__o = None
+        else: reader__o = reader._o
+        ret = libxml2mod.xmlTextReaderSetSchema(reader__o, self._o)
+        return ret
+
+    #
+    # Schema functions from module xmlschemas
+    #
+
+    def schemaDump(self, output):
+        """Dump a Schema structure. """
+        libxml2mod.xmlSchemaDump(output, self._o)
+
+    def schemaNewValidCtxt(self):
+        """Create an XML Schemas validation context based on the given
+           schema. """
+        ret = libxml2mod.xmlSchemaNewValidCtxt(self._o)
+        if ret is None:raise treeError('xmlSchemaNewValidCtxt() failed')
+        __tmp = SchemaValidCtxt(_obj=ret)
+        __tmp.schema = self
+        return __tmp
+
+class Error:
+    def __init__(self, _obj=None):
+        if _obj != None:self._o = _obj;return
+        self._o = None
+
+    # accessors for Error
+    def code(self):
+        """The error code, e.g. an xmlParserError """
+        ret = libxml2mod.xmlErrorGetCode(self._o)
+        return ret
+
+    def domain(self):
+        """What part of the library raised this error """
+        ret = libxml2mod.xmlErrorGetDomain(self._o)
+        return ret
+
+    def file(self):
+        """the filename """
+        ret = libxml2mod.xmlErrorGetFile(self._o)
+        return ret
+
+    def level(self):
+        """how consequent is the error """
+        ret = libxml2mod.xmlErrorGetLevel(self._o)
+        return ret
+
+    def line(self):
+        """the line number if available """
+        ret = libxml2mod.xmlErrorGetLine(self._o)
+        return ret
+
+    def message(self):
+        """human-readable informative error message """
+        ret = libxml2mod.xmlErrorGetMessage(self._o)
+        return ret
+
+    #
+    # Error functions from module xmlerror
+    #
+
+    def copyError(self, to):
+        """Save the original error to the new place. """
+        if to is None: to__o = None
+        else: to__o = to._o
+        ret = libxml2mod.xmlCopyError(self._o, to__o)
+        return ret
+
+    def resetError(self):
+        """Cleanup the error. """
+        libxml2mod.xmlResetError(self._o)
+
+class relaxNgSchema:
+    def __init__(self, _obj=None):
+        if _obj != None:self._o = _obj;return
+        self._o = None
+
+    def __del__(self):
+        if self._o != None:
+            libxml2mod.xmlRelaxNGFree(self._o)
+        self._o = None
+
+    #
+    # relaxNgSchema functions from module relaxng
+    #
+
+    def relaxNGDump(self, output):
+        """Dump a RelaxNG structure back """
+        libxml2mod.xmlRelaxNGDump(output, self._o)
+
+    def relaxNGDumpTree(self, output):
+        """Dump the transformed RelaxNG tree. """
+        libxml2mod.xmlRelaxNGDumpTree(output, self._o)
+
+    def relaxNGNewValidCtxt(self):
+        """Create an XML RelaxNGs validation context based on the
+           given schema """
+        ret = libxml2mod.xmlRelaxNGNewValidCtxt(self._o)
+        if ret is None:raise treeError('xmlRelaxNGNewValidCtxt() failed')
+        __tmp = relaxNgValidCtxt(_obj=ret)
+        __tmp.schema = self
+        return __tmp
+
+    #
+    # relaxNgSchema functions from module xmlreader
+    #
+
+    def RelaxNGSetSchema(self, reader):
+        """Use RelaxNG to validate the document as it is processed.
+          Activation is only possible before the first Read(). if
+          @schema is None, then RelaxNG validation is desactivated. @
+          The @schema should not be freed until the reader is
+           deallocated or its use has been deactivated. """
+        if reader is None: reader__o = None
+        else: reader__o = reader._o
+        ret = libxml2mod.xmlTextReaderRelaxNGSetSchema(reader__o, self._o)
+        return ret
+
+class inputBuffer(ioReadWrapper):
+    def __init__(self, _obj=None):
+        self._o = _obj
+        ioReadWrapper.__init__(self, _obj=_obj)
+
+    def __del__(self):
+        if self._o != None:
+            libxml2mod.xmlFreeParserInputBuffer(self._o)
+        self._o = None
+
+    #
+    # inputBuffer functions from module xmlIO
+    #
+
+    def grow(self, len):
+        """Grow up the content of the input buffer, the old data are
+          preserved This routine handle the I18N transcoding to
+          internal UTF-8 This routine is used when operating the
+          parser in normal (pull) mode  TODO: one should be able to
+          remove one extra copy by copying directly onto in->buffer
+           or in->raw """
+        ret = libxml2mod.xmlParserInputBufferGrow(self._o, len)
+        return ret
+
+    def push(self, len, buf):
+        """Push the content of the arry in the input buffer This
+          routine handle the I18N transcoding to internal UTF-8 This
+          is used when operating the parser in progressive (push)
+           mode. """
+        ret = libxml2mod.xmlParserInputBufferPush(self._o, len, buf)
+        return ret
+
+    def read(self, len):
+        """Refresh the content of the input buffer, the old data are
+          considered consumed This routine handle the I18N
+           transcoding to internal UTF-8 """
+        ret = libxml2mod.xmlParserInputBufferRead(self._o, len)
+        return ret
+
+    #
+    # inputBuffer functions from module xmlreader
+    #
+
+    def Setup(self, reader, URL, encoding, options):
+        """Setup an XML reader with new options """
+        if reader is None: reader__o = None
+        else: reader__o = reader._o
+        ret = libxml2mod.xmlTextReaderSetup(reader__o, self._o, URL, encoding, options)
+        return ret
+
+    def newTextReader(self, URI):
+        """Create an xmlTextReader structure fed with @input """
+        ret = libxml2mod.xmlNewTextReader(self._o, URI)
+        if ret is None:raise treeError('xmlNewTextReader() failed')
+        __tmp = xmlTextReader(_obj=ret)
+        __tmp.input = self
+        return __tmp
+
+class SchemaValidCtxt(SchemaValidCtxtCore):
+    def __init__(self, _obj=None):
+        self.schema = None
+        self._o = _obj
+        SchemaValidCtxtCore.__init__(self, _obj=_obj)
+
+    def __del__(self):
+        if self._o != None:
+            libxml2mod.xmlSchemaFreeValidCtxt(self._o)
+        self._o = None
+
+    #
+    # SchemaValidCtxt functions from module xmlreader
+    #
+
+    def SchemaValidateCtxt(self, reader, options):
+        """Use W3C XSD schema context to validate the document as it
+          is processed. Activation is only possible before the first
+          Read(). If @ctxt is None, then XML Schema validation is
+           deactivated. """
+        if reader is None: reader__o = None
+        else: reader__o = reader._o
+        ret = libxml2mod.xmlTextReaderSchemaValidateCtxt(reader__o, self._o, options)
+        return ret
+
+    #
+    # SchemaValidCtxt functions from module xmlschemas
+    #
+
+    def schemaIsValid(self):
+        """Check if any error was detected during validation. """
+        ret = libxml2mod.xmlSchemaIsValid(self._o)
+        return ret
+
+    def schemaSetValidOptions(self, options):
+        """Sets the options to be used during the validation. """
+        ret = libxml2mod.xmlSchemaSetValidOptions(self._o, options)
+        return ret
+
+    def schemaValidCtxtGetOptions(self):
+        """Get the validation context options. """
+        ret = libxml2mod.xmlSchemaValidCtxtGetOptions(self._o)
+        return ret
+
+    def schemaValidCtxtGetParserCtxt(self):
+        """allow access to the parser context of the schema validation
+           context """
+        ret = libxml2mod.xmlSchemaValidCtxtGetParserCtxt(self._o)
+        if ret is None:raise parserError('xmlSchemaValidCtxtGetParserCtxt() failed')
+        __tmp = parserCtxt(_obj=ret)
+        return __tmp
+
+    def schemaValidateDoc(self, doc):
+        """Validate a document tree in memory. """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        ret = libxml2mod.xmlSchemaValidateDoc(self._o, doc__o)
+        return ret
+
+    def schemaValidateFile(self, filename, options):
+        """Do a schemas validation of the given resource, it will use
+           the SAX streamable validation internally. """
+        ret = libxml2mod.xmlSchemaValidateFile(self._o, filename, options)
+        return ret
+
+    def schemaValidateOneElement(self, elem):
+        """Validate a branch of a tree, starting with the given @elem. """
+        if elem is None: elem__o = None
+        else: elem__o = elem._o
+        ret = libxml2mod.xmlSchemaValidateOneElement(self._o, elem__o)
+        return ret
+
+class outputBuffer(ioWriteWrapper):
+    def __init__(self, _obj=None):
+        self._o = _obj
+        ioWriteWrapper.__init__(self, _obj=_obj)
+
+    #
+    # outputBuffer functions from module HTMLtree
+    #
+
+    def htmlDocContentDumpFormatOutput(self, cur, encoding, format):
+        """Dump an HTML document. """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        libxml2mod.htmlDocContentDumpFormatOutput(self._o, cur__o, encoding, format)
+
+    def htmlDocContentDumpOutput(self, cur, encoding):
+        """Dump an HTML document. Formating return/spaces are added. """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        libxml2mod.htmlDocContentDumpOutput(self._o, cur__o, encoding)
+
+    def htmlNodeDumpFormatOutput(self, doc, cur, encoding, format):
+        """Dump an HTML node, recursive behaviour,children are printed
+           too. """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        libxml2mod.htmlNodeDumpFormatOutput(self._o, doc__o, cur__o, encoding, format)
+
+    def htmlNodeDumpOutput(self, doc, cur, encoding):
+        """Dump an HTML node, recursive behaviour,children are printed
+           too, and formatting returns/spaces are added. """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        libxml2mod.htmlNodeDumpOutput(self._o, doc__o, cur__o, encoding)
+
+    #
+    # outputBuffer functions from module tree
+    #
+
+    def nodeDumpOutput(self, doc, cur, level, format, encoding):
+        """Dump an XML node, recursive behaviour, children are printed
+          too. Note that @format = 1 provide node indenting only if
+          xmlIndentTreeOutput = 1 or xmlKeepBlanksDefault(0) was
+           called """
+        if doc is None: doc__o = None
+        else: doc__o = doc._o
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        libxml2mod.xmlNodeDumpOutput(self._o, doc__o, cur__o, level, format, encoding)
+
+    def saveFileTo(self, cur, encoding):
+        """Dump an XML document to an I/O buffer. Warning ! This call
+          xmlOutputBufferClose() on buf which is not available after
+           this call. """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlSaveFileTo(self._o, cur__o, encoding)
+        return ret
+
+    def saveFormatFileTo(self, cur, encoding, format):
+        """Dump an XML document to an I/O buffer. Warning ! This call
+          xmlOutputBufferClose() on buf which is not available after
+           this call. """
+        if cur is None: cur__o = None
+        else: cur__o = cur._o
+        ret = libxml2mod.xmlSaveFormatFileTo(self._o, cur__o, encoding, format)
+        return ret
+
+    #
+    # outputBuffer functions from module xmlIO
+    #
+
+    def write(self, len, buf):
+        """Write the content of the array in the output I/O buffer
+          This routine handle the I18N transcoding from internal
+          UTF-8 The buffer is lossless, i.e. will store in case of
+           partial or delayed writes. """
+        ret = libxml2mod.xmlOutputBufferWrite(self._o, len, buf)
+        return ret
+
+    def writeString(self, str):
+        """Write the content of the string in the output I/O buffer
+          This routine handle the I18N transcoding from internal
+          UTF-8 The buffer is lossless, i.e. will store in case of
+           partial or delayed writes. """
+        ret = libxml2mod.xmlOutputBufferWriteString(self._o, str)
         return ret
 
 # xlinkShow

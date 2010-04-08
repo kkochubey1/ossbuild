@@ -11,7 +11,7 @@
 
 # Modeled after libxml-config.
 
-version="1.4.0"
+version="1.4.1"
 prefix="/home/sysadmin/ossbuild/Build/Linux/x86/Release"
 exec_prefix="${prefix}"
 libdir="/home/sysadmin/ossbuild/Build/Linux/x86/Release/bin"

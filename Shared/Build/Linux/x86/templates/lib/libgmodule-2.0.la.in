@@ -8,7 +8,7 @@
 dlname='libgmodule-2.0.so.0'
 
 # Names of this library.
-library_names='libgmodule-2.0.so.0.2200.5 libgmodule-2.0.so.0 libgmodule-2.0.so'
+library_names='libgmodule-2.0.so.0.2400.0 libgmodule-2.0.so.0 libgmodule-2.0.so'
 
 # The name of the static archive.
 old_library=''
@@ -23,9 +23,9 @@ dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  -ldl @SHAR
 weak_library_names=''
 
 # Version information for libgmodule-2.0.
-current=2200
-age=2200
-revision=5
+current=2400
+age=2400
+revision=0
 
 # Is this an already installed library?
 installed=yes

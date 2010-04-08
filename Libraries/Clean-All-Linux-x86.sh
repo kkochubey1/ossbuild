@@ -11,7 +11,7 @@ rm -rf "$LIBRARIES_UNPACK_DIR"
 
 echo "Cleaning precompiled shared binaries directory (preserving VCS folders): $SharedOutDir"
 cd "$SharedOutDir"
-find . -type f -writable -exec rm -rf {} \;
+find . -perm /200 -type f -exec rm -rf {} \;
 
 echo "Removing intermediate directory: $BUILD_DIR"
 rm -rf "$BUILD_DIR"

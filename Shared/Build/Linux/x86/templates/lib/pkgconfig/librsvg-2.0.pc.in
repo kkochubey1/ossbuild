@@ -8,7 +8,7 @@ css_supported=true
 
 Name: librsvg
 Description: library that renders svg files
-Version: 2.26.0
+Version: 2.26.2
 Requires: glib-2.0 gdk-pixbuf-2.0 cairo
 Requires.private
 Libs: -L${libdir} -lrsvg-2

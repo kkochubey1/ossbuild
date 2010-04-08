@@ -8,23 +8,23 @@
 dlname='libatk-1.0.so.0'
 
 # Names of this library.
-library_names='libatk-1.0.so.0.2913.1 libatk-1.0.so.0 libatk-1.0.so'
+library_names='libatk-1.0.so.0.3009.1 libatk-1.0.so.0 libatk-1.0.so'
 
 # The name of the static archive.
 old_library=''
 
 # Linker flags that can not go in dependency_libs.
-inherited_linker_flags=''
+inherited_linker_flags=' -pthread'
 
 # Libraries that this one depends upon.
-dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  -lgobject-2.0 -lglib-2.0'
+dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  -lgobject-2.0 -lgthread-2.0 -lrt -lglib-2.0'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
 
 # Version information for libatk-1.0.
-current=2913
-age=2913
+current=3009
+age=3009
 revision=1
 
 # Is this an already installed library?

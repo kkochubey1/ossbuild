@@ -280,6 +280,10 @@ GType gtk_toolbar_child_type_get_type (void) G_GNUC_CONST;
 GType gtk_toolbar_space_style_get_type (void) G_GNUC_CONST;
 #define GTK_TYPE_TOOLBAR_SPACE_STYLE (gtk_toolbar_space_style_get_type ())
 
+/* enumerations from "gtktoolpalette.h" */
+GType gtk_tool_palette_drag_targets_get_type (void) G_GNUC_CONST;
+#define GTK_TYPE_TOOL_PALETTE_DRAG_TARGETS (gtk_tool_palette_drag_targets_get_type ())
+
 /* enumerations from "gtktreemodel.h" */
 GType gtk_tree_model_flags_get_type (void) G_GNUC_CONST;
 #define GTK_TYPE_TREE_MODEL_FLAGS (gtk_tree_model_flags_get_type ())

@@ -73,7 +73,7 @@ while test $# -gt 0; do
        	;;
 
     --libs)
-        LIBS="-lneon  -lz -L/home/sysadmin/ossbuild/Build/Linux/x86/Release/bin -lgnutls   -I/home/sysadmin/ossbuild/Build/Linux/x86/Release/include -I/home/sysadmin/ossbuild/Shared/Build/Linux/x86/include -Wl,-Bsymbolic-functions -lgssapi_krb5 -lkrb5 -lk5crypto -lcom_err -lexpat"
+        LIBS="-lneon  -lz -L/home/sysadmin/ossbuild/Build/Linux/x86/Release/bin -lgnutls   -L/usr/lib -I/home/sysadmin/ossbuild/Build/Linux/x86/Release/include -I/home/sysadmin/ossbuild/Shared/Build/Linux/x86/include -Wl,-Bsymbolic-functions -lgssapi_krb5 -lkrb5 -lk5crypto -lcom_err -lexpat"
 	# Don't add standard library paths
         if test "$prefix" != "/usr"; then
            LIBS="-L${libdir} ${LIBS}"

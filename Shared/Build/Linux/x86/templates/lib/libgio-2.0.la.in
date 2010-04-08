@@ -8,7 +8,7 @@
 dlname='libgio-2.0.so.0'
 
 # Names of this library.
-library_names='libgio-2.0.so.0.2200.5 libgio-2.0.so.0 libgio-2.0.so'
+library_names='libgio-2.0.so.0.2400.0 libgio-2.0.so.0 libgio-2.0.so'
 
 # The name of the static archive.
 old_library=''
@@ -17,15 +17,15 @@ old_library=''
 inherited_linker_flags=''
 
 # Libraries that this one depends upon.
-dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/bin/libgobject-2.0.la @SHARED_BUILD_DIR@/bin/libgmodule-2.0.la -ldl @SHARED_BUILD_DIR@/bin/libglib-2.0.la -lresolv'
+dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/bin/libgobject-2.0.la @SHARED_BUILD_DIR@/bin/libgthread-2.0.la -lpthread -lrt @SHARED_BUILD_DIR@/bin/libgmodule-2.0.la -ldl @SHARED_BUILD_DIR@/bin/libglib-2.0.la -lresolv -lz'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
 
 # Version information for libgio-2.0.
-current=2200
-age=2200
-revision=5
+current=2400
+age=2400
+revision=0
 
 # Is this an already installed library?
 installed=yes
