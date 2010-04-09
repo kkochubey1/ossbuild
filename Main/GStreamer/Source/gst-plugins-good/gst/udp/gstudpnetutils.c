@@ -210,7 +210,7 @@ gst_udp_set_ttl (int sockfd, guint16 ss_family, int ttl, gboolean is_multicast)
 {
   int optname = -1;
   int ret = -1;
-  printf("Sockfd is %d, ss_family is %d, ttl is %d, is_multicast is %d\n",sockfd,ss_family,ttl,is_multicast);
+ 
   switch (ss_family) {
     case AF_INET:
     {
