@@ -26,6 +26,7 @@
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstfrei0r\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gsth264parse\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gsthdvparse\.dll" />
+				<OSSBuild:Filter Include=".*\\[^\\]*.*gstjpegformat\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstlegacyresample\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstliveadder\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstmms\.dll" />

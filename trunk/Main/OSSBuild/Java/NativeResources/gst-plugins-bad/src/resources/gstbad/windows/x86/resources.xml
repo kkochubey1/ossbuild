@@ -75,6 +75,7 @@
 		<File resource="libgstfrei0r.dll" />
 		<File resource="libgsth264parse.dll" />
 		<File resource="libgsthdvparse.dll" />
+		<File resource="libgstjpegformat.dll" />
 		<File resource="libgstlegacyresample.dll" />
 		<File resource="libgstliveadder.dll" />
 		<File resource="libgstmms.dll" />
