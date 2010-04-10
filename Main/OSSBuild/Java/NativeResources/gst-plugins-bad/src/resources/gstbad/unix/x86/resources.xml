@@ -74,6 +74,7 @@
 		<File resource="libgstfrei0r.so"                                    executable="true" />
 		<File resource="libgsth264parse.so"                                 executable="true" />
 		<File resource="libgsthdvparse.so"                                  executable="true" />
+		<File resource="libgstjpegformat.so"                                executable="true" />
 		<File resource="libgstlegacyresample.so"                            executable="true" />
 		<File resource="libgstliveadder.so"                                 executable="true" />
 		<File resource="libgstmms.so"                                       executable="true" />

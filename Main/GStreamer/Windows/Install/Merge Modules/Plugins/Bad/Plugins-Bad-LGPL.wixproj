@@ -119,6 +119,13 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\jpegformat.vcproj">
+      <Name>gstjpegformat</Name>
+      <Project>{3d3854f9-4013-4d19-b722-3446f86e666d}</Project>
+      <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\libgstaiff.vcproj">
       <Name>gstaiff</Name>
       <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff0020}</Project>
