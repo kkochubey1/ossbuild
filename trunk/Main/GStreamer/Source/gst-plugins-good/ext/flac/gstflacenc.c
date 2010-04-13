@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <gstflacenc.h>
+#include "gstflacenc.h"
 #include <gst/audio/audio.h>
 #include <gst/audio/multichannel.h>
 #include <gst/tag/tag.h>
