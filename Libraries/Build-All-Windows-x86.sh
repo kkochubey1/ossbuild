@@ -1067,6 +1067,34 @@ if [ ! -f "$BinDir/lib${Prefix}ogg-0.dll" ]; then
 	update_library_names_windows "lib${Prefix}ogg.dll.a" "libogg.la"
 fi
 
+
+#libflac
+if [ ! -f "$BinDir/lib${Prefix}FLAC-8.dll" ]; then 
+	unpack_gzip_and_move "flac.tar.gz" "$PKG_DIR_FLAC"
+
+	patch -p0 -N	< "$LIBRARIES_PATCH_DIR/flac/flac-size-t-max.patch"
+	
+	mkdir_and_move "$IntDir/flac"	
+	
+	#'make install' tries to install some files from this folder but doesn't create it
+	mkdir -p 'doc/html/api'
+	touch 'doc/html/api/null'
+	
+	#Configure, compile, and install
+	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir --disable-doxygen-docs --disable-cpplibs LDFLAGS="$LDFLAGS -no-undefined -lws2_32" 
+	change_libname_spec
+	make && make install
+	
+	pexports "$BinDir/lib${Prefix}FLAC-8.dll" > in.def
+	sed -e '/LIBRARY lib${Prefix}flac/d' -e 's/DATA//g' in.def > in-mod.def
+	$MSLIB /name:lib${Prefix}FLAC-8.dll /out:flac.lib /machine:$MSLibMachine /def:in-mod.def
+	move_files_to_dir "*.exp *.lib" "$LibDir"
+	
+	update_library_names_windows "lib${Prefix}flac.dll.a" "libflac.la"
+	
+	reset_flags
+fi
+
 #libvorbis
 if [ ! -f "$BinDir/lib${Prefix}vorbis-0.dll" ]; then 
 	unpack_bzip2_and_move "libvorbis.tar.bz2" "$PKG_DIR_LIBVORBIS"
