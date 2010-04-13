@@ -5,6 +5,10 @@
 	Name="Flac"
 	>
 	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(OutDir)\include\FLAC&quot;"
+	/>
+	<Tool
 		Name="VCLinkerTool"
 		AdditionalDependencies="flac.lib"
 	/>
