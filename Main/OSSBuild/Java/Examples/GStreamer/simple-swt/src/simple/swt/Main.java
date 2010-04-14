@@ -176,6 +176,30 @@ public class Main {
 		btnSeekToBeginning.setLayoutData(gd);
 		btnSeekToBeginning.setText("Seek to Beginning");
 
+		final Button btnMute = new Button(shell, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnMute.setLayoutData(gd);
+		btnMute.setText("Mute/Unmute");
+
+		final Button btnVolume0 = new Button(shell, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnVolume0.setLayoutData(gd);
+		btnVolume0.setText("Volume 0%");
+
+		final Button btnVolume50 = new Button(shell, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnVolume50.setLayoutData(gd);
+		btnVolume50.setText("Volume 50%");
+
+		final Button btnVolume100 = new Button(shell, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnVolume100.setLayoutData(gd);
+		btnVolume100.setText("Volume 100%");
+
 		shell.open();
 
 		final String fileName;
@@ -320,6 +344,64 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				mediaComp.saveSnapshot(new File(System.currentTimeMillis() + ".jpg"));
+			}
+		});
+
+		btnMute.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : shell.getChildren()) {
+					if (c instanceof MediaComponent) {
+						((MediaComponent) c).mute();
+					}
+				}
+			}
+		});
+		btnVolume0.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : shell.getChildren()) {
+					if (c instanceof MediaComponent) {
+						((MediaComponent) c).adjustVolume(0);
+					}
+				}
+			}
+		});
+		btnVolume50.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : shell.getChildren()) {
+					if (c instanceof MediaComponent) {
+						((MediaComponent) c).adjustVolume(50);
+					}
+				}
+			}
+		});
+		btnVolume100.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : shell.getChildren()) {
+					if (c instanceof MediaComponent) {
+						((MediaComponent) c).adjustVolume(100);
+					}
+				}
+			}
+		});
+
+		mediaComp.addAudioListener(new MediaComponent.IAudioListener() {
+			@Override
+			public void audioMuted(MediaComponent source) {
+				System.out.println("muted");
+			}
+
+			@Override
+			public void audioUnmuted(MediaComponent source) {
+				System.out.println("unmuted");
+			}
+
+			@Override
+			public void audioVolumeChanged(MediaComponent source, int percent) {
+				System.out.println("volume change: " + percent);
 			}
 		});
 

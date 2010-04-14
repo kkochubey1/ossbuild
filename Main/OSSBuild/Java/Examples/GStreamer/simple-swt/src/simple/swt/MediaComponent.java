@@ -146,6 +146,7 @@ public class MediaComponent extends Canvas {
 
 	protected Pipeline pipeline;
 	protected Element currentVideoSink;
+	protected Element currentAudioVolumeElement;
 	protected CustomXOverlay xoverlay = null;
 	private int fullVideoWidth = 0;
 	private int fullVideoHeight = 0;
@@ -181,6 +182,9 @@ public class MediaComponent extends Canvas {
 
 	private List<IPositionListener> positionListeners;
 	private final Object positionListenerLock = new Object();
+
+	private List<IAudioListener> audioListeners;
+	private final Object audioListenerLock = new Object();
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
@@ -364,6 +368,25 @@ public class MediaComponent extends Canvas {
 			return pipeline.queryDuration(TimeUnit.MILLISECONDS);
 		}
 	}
+
+	public boolean isMuted() {
+		synchronized(lock) {
+			if (pipeline == null || currentAudioVolumeElement == null)
+				return false;
+
+			return (Boolean)currentAudioVolumeElement.get("mute");
+		}
+	}
+
+	public int getVolume() {
+		synchronized(lock) {
+			if (pipeline == null || currentAudioVolumeElement == null)
+				return 100;
+
+			return Math.max(0, Math.min(100, (int)((Double)currentAudioVolumeElement.get("volume") * 100.0D)));
+
+		}
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Helper Methods">
@@ -519,6 +542,12 @@ public class MediaComponent extends Canvas {
 	public static interface IPositionListener {
 		void positionChanged(final MediaComponent source, final int percent, final long position, final long duration);
 	}
+
+	public static interface IAudioListener {
+		void audioMuted(final MediaComponent source);
+		void audioUnmuted(final MediaComponent source);
+		void audioVolumeChanged(final MediaComponent source, final int percent);
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Adapters">
@@ -552,9 +581,23 @@ public class MediaComponent extends Canvas {
 		}
 	}
 
-	public static class PositionListenerAdapter implements IPositionListener {
+	public static abstract class PositionListenerAdapter implements IPositionListener {
 		@Override
 		public void positionChanged(MediaComponent source, final int percent, long position, long duration) {
+		}
+	}
+
+	public static abstract class AudioListenerAdapter implements IAudioListener {
+		@Override
+		public void audioMuted(MediaComponent source) {
+		}
+
+		@Override
+		public void audioUnmuted(MediaComponent source) {
+		}
+
+		@Override
+		public void audioVolumeChanged(MediaComponent source, int percent) {
 		}
 	}
 	//</editor-fold>
@@ -738,6 +781,48 @@ public class MediaComponent extends Canvas {
 		}
 	}
 	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Position">
+	public boolean addAudioListener(final IAudioListener Listener) {
+		if (Listener == null)
+			return false;
+		synchronized(audioListenerLock) {
+			if (audioListeners == null)
+				audioListeners = new CopyOnWriteArrayList<IAudioListener>();
+			return audioListeners.add(Listener);
+		}
+	}
+
+	public boolean removeAudioListener(final IAudioListener Listener) {
+		if (Listener == null)
+			return false;
+		synchronized(audioListenerLock) {
+			if (audioListeners == null || audioListeners.isEmpty())
+				return true;
+
+			return audioListeners.remove(Listener);
+		}
+	}
+
+	public boolean containsAudioListener(final IAudioListener Listener) {
+		if (Listener == null)
+			return false;
+		synchronized(audioListenerLock) {
+			if (audioListeners == null || audioListeners.isEmpty())
+				return true;
+			return audioListeners.contains(Listener);
+		}
+	}
+
+	public boolean clearAudioListeners() {
+		synchronized(audioListenerLock) {
+			if (audioListeners == null || audioListeners.isEmpty())
+				return true;
+			audioListeners.clear();
+			return true;
+		}
+	}
+	//</editor-fold>
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Events">
@@ -795,6 +880,29 @@ public class MediaComponent extends Canvas {
 			return;
 		for(IPositionListener listener : positionListeners)
 			listener.positionChanged(this, percent, position, duration);
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Error">
+	protected void fireAudioMuted() {
+		if (audioListeners == null || audioListeners.isEmpty())
+			return;
+		for(IAudioListener listener : audioListeners)
+			listener.audioMuted(this);
+	}
+
+	protected void fireAudioUnmuted() {
+		if (audioListeners == null || audioListeners.isEmpty())
+			return;
+		for(IAudioListener listener : audioListeners)
+			listener.audioUnmuted(this);
+	}
+
+	protected void fireAudioVolumeChanged(int percent) {
+		if (audioListeners == null || audioListeners.isEmpty())
+			return;
+		for(IAudioListener listener : audioListeners)
+			listener.audioVolumeChanged(this, percent);
 	}
 	//</editor-fold>
 	//</editor-fold>
@@ -934,6 +1042,38 @@ public class MediaComponent extends Canvas {
 	}
 	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="Volume">
+	public boolean mute() {
+		synchronized(lock) {
+			if (pipeline == null || currentAudioVolumeElement == null)
+				return false;
+
+			boolean muted = !isMuted();
+			currentAudioVolumeElement.set("mute", muted);
+			if (muted)
+				fireAudioMuted();
+			else
+				fireAudioUnmuted();
+		}
+		return true;
+	}
+
+	public boolean adjustVolume(int percent) {
+		synchronized(lock) {
+			if (pipeline == null || currentAudioVolumeElement == null)
+				return false;
+
+			int oldVolume = getVolume();
+			int newVolume = Math.max(0, Math.min(100, percent));
+			currentAudioVolumeElement.set("volume", (double)newVolume / 100.0D);
+			if (oldVolume != newVolume)
+				fireAudioVolumeChanged(newVolume);
+		}
+		return true;
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Seek">
 	public boolean seekToBeginning() {
 		synchronized(lock) {
 			if (pipeline == null)
@@ -1022,27 +1162,30 @@ public class MediaComponent extends Canvas {
 	}
 
 	public boolean stepForward() {
-		return false;
-
-//			synchronized(lock) {
-//				if (pipeline == null)
-//					return false;
-//
-//				pipeline.setState(State.PAUSED);
-//				return pipeline.sendEvent(new StepEvent(Format.BUFFERS, 1L, 1.0D, true, false));
-//			}
-	}
-
-	public boolean stepBackward() {
 		synchronized(lock) {
 			if (pipeline == null)
 				return false;
-			return false;
-			//pipeline.setState(State.PAUSED);
-			//return pipeline.sendEvent(new StepEvent(Format.BUFFERS, 1L, 1.0D, true, false));
+
+			State state;
+			if ((state = pipeline.getState(0L)) == State.NULL)
+				return false;
+			
+			if (state == State.PLAYING) {
+				pipeline.setState(State.PAUSED);
+				if (pipeline.getState(2000L, TimeUnit.MILLISECONDS) != State.PAUSED)
+					return false;
+			}
+			
+			return pipeline.sendEvent(new StepEvent(Format.BUFFERS, 1L, 1.0D, true, false));
 		}
 	}
 
+	public boolean stepBackward() {
+		return false;
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Pause">
 	public boolean pause() {
 		synchronized(lock) {
 			if (pipeline == null)
@@ -1054,7 +1197,9 @@ public class MediaComponent extends Canvas {
 		}
 		return true;
 	}
+	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="Continue">
 	public boolean unpause() {
 		synchronized(lock) {
 			if (pipeline == null)
@@ -1070,7 +1215,9 @@ public class MediaComponent extends Canvas {
 		}
 		return true;
 	}
+	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="Stop">
 	public boolean stop() {
 		synchronized(lock) {
 			if (pipeline == null)
@@ -1085,7 +1232,9 @@ public class MediaComponent extends Canvas {
 		this.redraw();
 		return true;
 	}
+	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="Play">
 	public boolean play(File file) {
 		if (file == null)
 			return false;
@@ -1118,6 +1267,7 @@ public class MediaComponent extends Canvas {
 	public boolean play(final boolean buffering, final int fps, final URI uri) {
 		return play(buffering, DEFAULT_REPEAT_COUNT, fps, uri);
 	}
+	//</editor-fold>
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="The Meat">
@@ -1178,12 +1328,16 @@ public class MediaComponent extends Canvas {
 			final Bin audioBin = new Bin("Audio Bin");
 
 			final Element audioQueue = ElementFactory.make("queue", "audioQueue");
+			final Element audioVolume = ElementFactory.make("volume", "audioVolume");
 			final Element audioConvert = ElementFactory.make("audioconvert", "audioConvert");
 			final Element audioResample = ElementFactory.make("audioresample", "audioResample");
+			final Element audioScaleTempo = ElementFactory.make("scaletempo", "audioScaleTempo");
+			final Element audioConvertAfterScaleTempo = ElementFactory.make("audioconvert", "audioConvertAfterScaleTempo");
+			final Element audioResampleAfterScaleTempo = ElementFactory.make("audioresample", "audioResampleAfterScaleTempo");
 			final Element audioSink = ElementFactory.make(audioElement, "sink");
 
-			audioBin.addMany(audioQueue, audioConvert, audioResample, audioSink);
-			Element.linkMany(audioQueue, audioConvert, audioResample, audioSink);
+			audioBin.addMany(audioQueue, audioVolume, audioConvert, audioResample, audioScaleTempo, audioConvertAfterScaleTempo, audioResampleAfterScaleTempo, audioSink);
+			Element.linkMany(audioQueue, audioVolume, audioConvert, audioResample, audioScaleTempo, audioConvertAfterScaleTempo, audioResampleAfterScaleTempo, audioSink);
 			audioBin.addPad(new GhostPad("sink", audioQueue.getStaticPad("sink")));
 			pipeline.add(audioBin);
 			//</editor-fold>
@@ -1334,6 +1488,7 @@ public class MediaComponent extends Canvas {
 							pipeline.dispose();
 							pipeline = null;
 							currentVideoSink = null;
+							currentAudioVolumeElement = null;
 						}
 						display.asyncExec(redrawRunnable);
 						latch.countDown();
@@ -1432,6 +1587,7 @@ public class MediaComponent extends Canvas {
 			currentURI = uri;
 
 			currentVideoSink = videoSink;
+			currentAudioVolumeElement = audioVolume;
 		}
 
 		//Start playing
