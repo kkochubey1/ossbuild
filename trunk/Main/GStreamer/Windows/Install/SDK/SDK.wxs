@@ -75,6 +75,11 @@
 			<ComponentRef Id="GstLibPythonGstSitePackageInstallDirCreate" />
 			<ComponentRef Id="GstLibPythonFarsightSitePackageInstallDirCreate" />
 
+			<ComponentRef Id="GstShareGstPythonInstallDirCreate" />
+			<ComponentRef Id="GstShareGstPythonVerInstallDirCreate" />
+			<ComponentRef Id="GstShareGstPythonVerDefsInstallDirCreate" />
+			<ComponentRef Id="GstShareGstPythonVerExamplesInstallDirCreate" />
+
 			<ComponentRef Id="GstSDKBindingsPythonInstallDirCreate" />
 			
 			<ComponentRef Id="GstSDKBindingsPython_v2_5InstallDirCreate" />
@@ -134,14 +139,6 @@
 							<Component Id="GstEtcInstallDirCreate" Guid="{8BE77597-72AB-4A84-9580-731548680775}">
 								<CreateFolder />
 								<RemoveFolder Id="GstEtcInstallDirRemove" On="uninstall" />
-							</Component>
-						</Directory>
-
-						<!-- C:\Program Files\OSSBuild\v<Version>\share\ -->
-						<Directory Id="GstShareInstallDir" Name="share">
-							<Component Id="GstShareInstallDirCreate" Guid="{19E0DDA4-73A7-4716-A6B2-4B4B38B424B1}">
-								<CreateFolder />
-								<RemoveFolder Id="GstShareInstallDirRemove" On="uninstall" />
 							</Component>
 						</Directory>
 
@@ -216,6 +213,47 @@
 								</Directory>
 							</Directory>
 						</Directory>
+
+						<!-- C:\Program Files\OSSBuild\v<Version>\share\ -->
+						<Directory Id="GstShareInstallDir" Name="share">
+							<Component Id="GstShareInstallDirCreate" Guid="{19E0DDA4-73A7-4716-A6B2-4B4B38B424B1}">
+								<CreateFolder />
+								<RemoveFolder Id="GstShareInstallDirRemove" On="uninstall" />
+							</Component>
+
+							<!-- C:\Program Files\OSSBuild\v<Version>\share\gst-python\ -->
+							<Directory Id="GstShareGstPythonInstallDir" Name="gst-python">
+								<Component Id="GstShareGstPythonInstallDirCreate" Guid="{45D4FDD3-F0D0-4c25-B47C-DDEF5E7B3E7D}">
+									<CreateFolder />
+									<RemoveFolder Id="GstShareGstPythonInstallDirRemove" On="uninstall" />
+								</Component>
+
+								<!-- C:\Program Files\OSSBuild\v<Version>\share\gst-python\0.10\ -->
+								<Directory Id="GstShareGstPythonVerInstallDir" Name="$(var.GST_VERSION)">
+									<Component Id="GstShareGstPythonVerInstallDirCreate" Guid="{6CE59AAC-4F5A-4e5d-963B-D508E834E35C}">
+										<CreateFolder />
+										<RemoveFolder Id="GstShareGstPythonVerInstallDirRemove" On="uninstall" />
+									</Component>
+
+									<!-- C:\Program Files\OSSBuild\v<Version>\share\gst-python\0.10\defs\ -->
+									<Directory Id="GstShareGstPythonVerDefsInstallDir" Name="defs">
+										<Component Id="GstShareGstPythonVerDefsInstallDirCreate" Guid="{79FEC8A3-7205-428a-BE6D-B982083886CA}">
+											<CreateFolder />
+											<RemoveFolder Id="GstShareGstPythonVerDefsInstallDirRemove" On="uninstall" />
+										</Component>
+									</Directory>
+
+									<!-- C:\Program Files\OSSBuild\v<Version>\share\gst-python\0.10\examples\ -->
+									<Directory Id="GstShareGstPythonVerExamplesInstallDir" Name="examples">
+										<Component Id="GstShareGstPythonVerExamplesInstallDirCreate" Guid="{D39E11DB-37BD-4a6e-84B4-15A7954785FB}">
+											<CreateFolder />
+											<RemoveFolder Id="GstShareGstPythonVerExamplesInstallDirRemove" On="uninstall" />
+										</Component>
+									</Directory>
+								</Directory>
+							</Directory>
+						</Directory>
+						
 					</Directory>
 				</Directory>
 
