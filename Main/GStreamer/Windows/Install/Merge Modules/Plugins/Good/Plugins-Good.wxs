@@ -26,6 +26,7 @@
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstdirectsound\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gsteffectv\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstequalizer\.dll" />
+					<OSSBuild:Filter Include=".*\\[^\\]*.*gstflac\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstflv\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstflxdec\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstgamma\.dll" />

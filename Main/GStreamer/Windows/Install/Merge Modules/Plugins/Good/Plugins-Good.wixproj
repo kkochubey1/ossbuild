@@ -57,6 +57,13 @@
     <Compile Include="Plugins-Good.wxs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Good\ext\flac.vcproj">
+      <Name>gstflac</Name>
+      <Project>{4b47a303-1d81-4c32-aa8d-38add0dc2f50}</Project>
+      <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Good\ext\gdkpixbuf.vcproj">
       <Name>gstgdkpixbuf</Name>
       <Project>{7955fd29-79e6-49eb-fd1f-653f0ef70d40}</Project>
