@@ -212,6 +212,7 @@
 				<include name="*gstannodex*.*"            />
 				<include name="*gstpulse*.*"              />
 				<include name="*gstcairo*.*"              />
+				<include name="*gstflac*.*"               />
 				<include name="*gstjpeg*.*"               />
 				<include name="*gstpng*.*"                />
 				<include name="*gstsouphttpsrc*.*"        />
@@ -278,6 +279,7 @@
 
 				<!-- ext -->
 				<include name="*gstcairo*.*" />
+				<include name="*gstflac*.*" />
 				<include name="*gstjpeg*.*" />
 				<include name="*gstpng*.*" />
 				<include name="*gstsouphttpsrc*.*" />
