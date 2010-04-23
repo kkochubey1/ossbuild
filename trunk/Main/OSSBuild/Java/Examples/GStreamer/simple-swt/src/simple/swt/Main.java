@@ -1,6 +1,7 @@
 package simple.swt;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -13,6 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 import org.gstreamer.Bus;
 import org.gstreamer.BusSyncReply;
@@ -38,6 +40,9 @@ public class Main {
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:5");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_EVENT:5");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_CAPS:5");
+		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_ELEMENT_PADS:5");
+		//Sys.setEnvironmentVariable("GST_DEBUG", "*:2,GST_CAPS*:3,decodebin*:4,jpeg*:4");
+		//Sys.setEnvironmentVariable("GST_DEBUG", "typefindfunctions*:4,jpeg*:4");
 		Sys.initialize();
 
 		Button btn;
@@ -90,19 +95,33 @@ public class Main {
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-//		comp = new MediaComponent(shell, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-//
-//		comp = new MediaComponent(shell, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		comp = new MediaComponent(shell, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new MediaComponent(shell, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		final Scale scale = new Scale(shell, SWT.HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		scale.setEnabled(false);
+		scale.setLayoutData(gd);
+		scale.setIncrement(100);
+		scale.setPageIncrement(1000);
 
 		final Button btnBrowse = new Button(shell, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnBrowse.setLayoutData(gd);
 		btnBrowse.setText("Browse...");
+
+		final Button btnPlayMJPEG = new Button(shell, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayMJPEG.setLayoutData(gd);
+		btnPlayMJPEG.setText("Play MJPEG");
 
 		final Button btnPlay = new Button(shell, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -202,14 +221,14 @@ public class Main {
 
 		shell.open();
 
-		final String fileName;
+		final String fileName = "";
 		final FileDialog selFile = new FileDialog(shell, SWT.OPEN);
 		selFile.setFilterNames(new String[]{"All Files (*.*)"});
 		selFile.setFilterExtensions(new String[]{"*.*"});
-		if (StringUtil.isNullOrEmpty(fileName = selFile.open())) {
-			Gst.quit();
-			return;
-		}
+//		if (StringUtil.isNullOrEmpty(fileName = selFile.open())) {
+//			Gst.quit();
+//			return;
+//		}
 
 		final File[] file = new File[] { new File(fileName) };
 		btnBrowse.addSelectionListener(new SelectionAdapter() {
@@ -224,7 +243,18 @@ public class Main {
 				file[0] = new File(fileName);
 				for (Control c : shell.getChildren()) {
 					if (c instanceof MediaComponent) {
-						((MediaComponent) c).play(file[0]);
+						((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, file[0].toURI());
+					}
+				}
+			}
+		});
+		btnPlayMJPEG.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : shell.getChildren()) {
+					if (c instanceof MediaComponent) {
+						//((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
+						((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1");
 					}
 				}
 			}
@@ -234,7 +264,7 @@ public class Main {
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : shell.getChildren()) {
 					if (c instanceof MediaComponent) {
-						((MediaComponent) c).play(false, 0, MediaComponent.DEFAULT_FPS, file[0].toURI());
+						((MediaComponent) c).play(false, 1/*MediaComponent.REPEAT_FOREVER/**/, MediaComponent.DEFAULT_FPS, file[0].toURI());
 					}
 				}
 			}
@@ -405,18 +435,120 @@ public class Main {
 			}
 		});
 
-		mediaComp.addPositionListener(new MediaComponent.IPositionListener() {
+		mediaComp.addMediaEventListener(new MediaComponent.IMediaEventListener() {
 			@Override
-			public void positionChanged(MediaComponent source, int percent, long position, long duration) {
-				System.out.println("percent: " + percent + ", position: " + position + ", duration: " + duration);
+			public void mediaStopped(final MediaComponent source) {
+				System.out.println("STOPPED");
+				display.asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						if (scale.isDisposed())
+							return;
+
+						scale.setEnabled(false);
+						scale.setSelection(0);
+					}
+				});
+			}
+
+			@Override
+			public void mediaPaused(final MediaComponent source) {
+				System.out.println("PAUSED");
+			}
+
+			@Override
+			public void mediaContinued(final MediaComponent source) {
+				System.out.println("CONTINUED");
+				enableScale(source);
+			}
+
+			@Override
+			public void mediaPlayed(final MediaComponent source) {
+				System.out.println("PLAYED: " + source.getRequestedURI().toString());
+				enableScale(source);
+			}
+
+			private void enableScale(final MediaComponent source) {
+				display.asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						if (scale.isDisposed())
+							return;
+
+						scale.setEnabled(!source.isLiveSource() && scale.getMinimum() < scale.getMaximum());
+					}
+				});
 			}
 		});
 
-		for (Control c : shell.getChildren()) {
-			if (c instanceof MediaComponent) {
-				((MediaComponent) c).play(false, 0, MediaComponent.DEFAULT_FPS, file[0].toURI());
+		mediaComp.addPositionListener(new MediaComponent.IPositionListener() {
+			private long lastDuration = 0L;
+			private long lastPosition = 0L;
+
+			@Override
+			public void positionChanged(final MediaComponent source, final int percent, final long position, final long duration) {
+				System.out.println("percent: " + percent + ", position: " + position + ", duration: " + duration);
+				if (position != lastPosition || duration != lastDuration) {
+					display.asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							if (scale.isDisposed())
+								return;
+							
+							if (duration != lastDuration) {
+								lastDuration = duration;
+								if (duration > 0) {
+									int totalSeconds = (int)TimeUnit.MILLISECONDS.toSeconds(duration);
+									
+									scale.setEnabled(true);
+									scale.setMinimum(0);
+									scale.setMaximum(totalSeconds);
+									scale.setIncrement(1);
+									if (totalSeconds < 10) //10 seconds
+										scale.setPageIncrement(1);
+									else if (totalSeconds < 60) //1 minutes
+										scale.setPageIncrement(6);
+									else if (totalSeconds < 600) //10 minutes
+										scale.setPageIncrement(60);
+									else if (totalSeconds < 60 * 60) //1 hour
+										scale.setPageIncrement(60 * 6);
+									else if (totalSeconds < 60 * 60 * 2) //2 hours
+										scale.setPageIncrement(60 * 10);
+									else if (totalSeconds < 60 * 60 * 24) //1 day
+										scale.setPageIncrement(60 * 60);
+									else
+										scale.setPageIncrement(60 * 60 * 4);
+								}
+							}
+							
+							if (position != lastPosition) {
+								lastPosition = position;
+								scale.setSelection((int)TimeUnit.MILLISECONDS.toSeconds(position) + scale.getMinimum());
+							}
+						}
+					});
+				}
 			}
-		}
+		});
+
+		scale.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				final long position = TimeUnit.SECONDS.toNanos(scale.getSelection());
+				for (Control c : shell.getChildren()) {
+					if (c instanceof MediaComponent) {
+						((MediaComponent) c).seek(position);
+					}
+				}
+			}
+		});
+
+//		for (Control c : shell.getChildren()) {
+//			if (c instanceof MediaComponent) {
+//				//((MediaComponent) c).play(false, 0, MediaComponent.DEFAULT_FPS, file[0].toURI());
+//				((MediaComponent)c).play("http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
+//			}
+//		}
 
 		//PlayBin2 playbin = new PlayBin2((String)null);
 		while (!shell.isDisposed()) {

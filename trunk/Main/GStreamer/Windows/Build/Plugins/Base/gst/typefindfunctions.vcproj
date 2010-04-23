@@ -234,6 +234,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
+				InlineFunctionExpansion="2"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..\..\..\..\..\Source\gst-plugins-base\gst\app\"
 				PreprocessorDefinitions="LIBGSTADDER_EXPORTS"
 				RuntimeLibrary="2"
@@ -293,7 +295,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Libraries\libgstnet.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstnet.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E50}"
@@ -302,7 +304,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Libraries\libgstbase.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
 		/>
 	</References>
 	<Files>

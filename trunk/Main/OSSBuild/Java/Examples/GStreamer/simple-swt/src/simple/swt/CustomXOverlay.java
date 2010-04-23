@@ -111,6 +111,14 @@ public class CustomXOverlay {
             throw new GstException("Cannot set window ID, in XOverlay interface: not supported sink element on platform");
         }
     }
+
+	public void setWindowID(long handle) {
+        if (handle == 0L) {
+            GSTXOVERLAY_API.gst_x_overlay_set_xwindow_id(overlay, new NativeLong(0L));
+            return;
+        }
+        GSTXOVERLAY_API.gst_x_overlay_set_xwindow_id(overlay, new NativeLong(handle));
+    }
     
     /**
      * Tell an overlay that it has been exposed. This will redraw the current frame

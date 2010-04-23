@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -16,35 +17,23 @@ import java.nio.IntBuffer;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.ThreadFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.gstreamer.Bin;
 import org.gstreamer.Buffer;
 import org.gstreamer.Bus;
@@ -65,8 +54,8 @@ import org.gstreamer.Pipeline;
 import org.gstreamer.SeekFlags;
 import org.gstreamer.SeekType;
 import org.gstreamer.State;
+import org.gstreamer.StateChangeReturn;
 import org.gstreamer.Structure;
-import org.gstreamer.elements.PlayBin2;
 import org.gstreamer.event.BusSyncHandler;
 import org.gstreamer.lowlevel.GstAPI.GstCallback;
 import org.gstreamer.lowlevel.GstNative;
@@ -125,7 +114,7 @@ public class MediaComponent extends Canvas {
 	;
 
 	private static final long
-		  SEEK_STOP_DURATION = TimeUnit.MILLISECONDS.toNanos(50L)
+		  SEEK_STOP_DURATION = TimeUnit.MILLISECONDS.toNanos(10L)
 	;
 
 	public static final String[] VALID_COLORSPACES = {
@@ -136,9 +125,14 @@ public class MediaComponent extends Canvas {
 	public static final String[] VALID_YUV_FORMATS = {
 		  "YUY2"
 	};
+
+	public static final String[] VALID_DIRECTDRAW_COLORSPACES = {
+		  "video/x-raw-rgb"
+	};
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Variables">
+	protected final long nativeHandle;
 	protected final Object lock = new Object();
 	protected final String videoElement;
 	protected final String audioElement;
@@ -146,28 +140,35 @@ public class MediaComponent extends Canvas {
 
 	protected Pipeline pipeline;
 	protected Element currentVideoSink;
+	protected Element currentAudioSink;
 	protected Element currentAudioVolumeElement;
 	protected CustomXOverlay xoverlay = null;
+
+	private boolean hasAudio = false;
+	private boolean hasVideo = false;
+
 	private int fullVideoWidth = 0;
 	private int fullVideoHeight = 0;
 	protected final Runnable redrawRunnable;
-	private final Runnable seekFinishedRunnable;
+	//private final Runnable seekFinishedRunnable;
 	private final Runnable positionUpdateRunnable;
+	protected final Runnable xoverlayRunnable;
 
 	private float actualFPS;
 
-	private boolean currentBuffering;
+	private boolean currentLiveSource;
 	private int currentRepeatCount;
 	private int currentFPS;
 	private URI currentURI;
 	private int numberOfRepeats;
+	private double currentRate = DEFAULT_RATE;
 
 	protected volatile State currentState = State.NULL;
 	private volatile ScheduledFuture<?> positionTimer = null;
 
 	private AtomicBoolean isSeeking = new AtomicBoolean(false);
-	private long seekingPos = 0L;
-	private double seekingRate = DEFAULT_RATE;
+	//private long seekingPos = 0L;
+	//private double seekingRate = DEFAULT_RATE;
 
 	private CountDownLatch latch = new CountDownLatch(1);
 
@@ -193,8 +194,8 @@ public class MediaComponent extends Canvas {
 		String audioElement;
 		switch (Sys.getOSFamily()) {
 			case Windows:
-				videoElement = "dshowvideosink";
-				//videoElement = "directdrawsink";
+				//videoElement = "dshowvideosink";
+				videoElement = "directdrawsink";
 				audioElement = "autoaudiosink";
 				break;
 			case Unix:
@@ -221,6 +222,7 @@ public class MediaComponent extends Canvas {
 	public MediaComponent(String videoElement, String audioElement, Composite parent, int style) {
 		super(parent, style | SWT.EMBEDDED | SWT.DOUBLE_BUFFERED);
 
+		this.nativeHandle = handle(this);
 		this.display = getDisplay();
 		this.audioElement = audioElement;
 		this.videoElement = videoElement;
@@ -234,25 +236,47 @@ public class MediaComponent extends Canvas {
 			}
 		};
 
-		this.seekFinishedRunnable = new Runnable() {
+		//this.seekFinishedRunnable = new Runnable() {
+		//	@Override
+		//	public void run() {
+		//		seekFinished();
+		//	}
+		//};
+
+		this.positionUpdateRunnable = new Runnable() {
+			private long lastPosition = 0L;
+			private long lastDuration = 0L;
+
 			@Override
 			public void run() {
-				seekFinished();
+				synchronized(lock) {
+					if (pipeline != null) {
+						final long position = pipeline.queryPosition(TimeUnit.MILLISECONDS);
+						final long duration = Math.max(position, pipeline.queryDuration(TimeUnit.MILLISECONDS));
+						final int percent = (duration > 0 ? Math.max(0, Math.min(100, (int)(((double)position / (double)duration) * 100.0D))) : -1);
+						final boolean positionChanged = (position != lastPosition && position >= 0L);
+						final boolean last = (position <= 0L && lastPosition > 0L);
+
+						if (last && positionChanged && !currentLiveSource)
+							firePositionChanged(100, lastDuration, lastDuration);
+						
+						lastPosition = position;
+						lastDuration = duration;
+						if (positionChanged && !currentLiveSource) 
+							firePositionChanged(percent, position, duration);
+					} else {
+						lastPosition = 0L;
+					}
+				}
 			}
 		};
 
-		this.positionUpdateRunnable = new Runnable() {
-			private long lastPosition = 0;
-
+		this.xoverlayRunnable = new Runnable() {
 			@Override
 			public void run() {
-				final long position = pipeline.queryPosition(TimeUnit.MILLISECONDS);
-				final long duration = Math.max(position, pipeline.queryDuration(TimeUnit.MILLISECONDS));
-				final int percent = (duration > 0 ? Math.max(0, Math.min(100, (int)(((double)position / (double)duration) * 100.0D))) : -1);
-				final boolean positionChanged = (position != lastPosition && position >= 0L);
-				lastPosition = position;
-				if (positionChanged)
-					firePositionChanged(percent, position, duration);
+				synchronized(display) {
+					xoverlay.setWindowID(MediaComponent.this);
+				}
 			}
 		};
 
@@ -263,14 +287,19 @@ public class MediaComponent extends Canvas {
 		this.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent ce) {
-				if (xoverlay != null && pipeline != null && (pipeline.getState(0) == State.PLAYING || pipeline.getState(0) == State.PAUSED))
-					xoverlay.expose();
+				expose();
 			}
 		});
 		this.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent de) {
 				stop();
+				if (pipeline != null) {
+					pipeline.setState(State.NULL);
+					if (pipeline.getState(10000L, TimeUnit.MILLISECONDS) == State.NULL)
+						pipeline.dispose();
+					pipeline = null;
+				}
 			}
 		});
 		//</editor-fold>
@@ -317,6 +346,10 @@ public class MediaComponent extends Canvas {
 			final State state = pipeline.getState(0L);
 			return (state == State.PLAYING);
 		}
+	}
+
+	public boolean isLiveSource() {
+		return currentLiveSource;
 	}
 
 	public int getRepeatCount() {
@@ -387,9 +420,43 @@ public class MediaComponent extends Canvas {
 
 		}
 	}
+
+	public boolean hasAudio() {
+		return this.hasAudio;
+	}
+
+	public boolean hasVideo() {
+		return this.hasVideo;
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Helper Methods">
+	//Courtesy gstreamer-java folks, XOverlay class
+	public static long handle(Control comp) {
+		//Style must be embedded
+		if (comp == null || ((comp.getStyle() | SWT.EMBEDDED) == 0))
+			return 0L;
+
+		if (Sys.isOSFamily(OSFamily.Windows)) {
+			return comp.handle;
+		} else {
+			try {
+				Class<? extends Control> compClass = comp.getClass();
+				Field embedHandleField = compClass.getField("embeddedHandle");
+				return embedHandleField.getInt(comp);
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+			}
+		}
+		return 0L;
+	}
+
 	public static IntBuffer convertToRGB(final ByteBuffer bb, final int width, final int height, final String colorspace, final String fourcc) {
 		if (!isValidColorspace(colorspace))
 			return null;
@@ -496,8 +563,8 @@ public class MediaComponent extends Canvas {
 		return false;
 	}
 
-	private static String createColorspaceFilter(int fps) {
-		final String framerate = (fps == DEFAULT_FPS ? null : ", framerate=" + fps + "/1");
+	private static String createColorspaceFilter(final MediaComponent src, final int fps) {
+		final String framerate = (fps == DEFAULT_FPS || src.currentLiveSource ? null : ", framerate=" + fps + "/1");
 		final StringBuilder sb = new StringBuilder(256);
 
 		sb.append("video/x-raw-rgb, bpp=32, depth=24");
@@ -782,7 +849,7 @@ public class MediaComponent extends Canvas {
 	}
 	//</editor-fold>
 
-	//<editor-fold defaultstate="collapsed" desc="Position">
+	//<editor-fold defaultstate="collapsed" desc="Audio">
 	public boolean addAudioListener(final IAudioListener Listener) {
 		if (Listener == null)
 			return false;
@@ -883,7 +950,7 @@ public class MediaComponent extends Canvas {
 	}
 	//</editor-fold>
 
-	//<editor-fold defaultstate="collapsed" desc="Error">
+	//<editor-fold defaultstate="collapsed" desc="Audio">
 	protected void fireAudioMuted() {
 		if (audioListeners == null || audioListeners.isEmpty())
 			return;
@@ -978,9 +1045,6 @@ public class MediaComponent extends Canvas {
 				if (width < 1 || height < 1)
 					return null;
 
-				//Get fourcc
-
-
 				//Convert to RGB using the provided direct buffer
 				final IntBuffer rgb = convertToRGB(buffer.getByteBuffer(), width, height, struct.getName(), struct.hasField("format") ? struct.getFourccString("format") : null);
 				if (rgb == null)
@@ -1042,6 +1106,19 @@ public class MediaComponent extends Canvas {
 	}
 	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="Expose">
+	public boolean expose() {
+		if (isDisposed())
+			return false;
+		State state;
+		if (xoverlay != null && pipeline != null && ((state = pipeline.getState(0)) == State.PLAYING ||state == State.PAUSED)) {
+			xoverlay.expose();
+			return true;
+		}
+		return false;
+	}
+	//</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="Volume">
 	public boolean mute() {
 		synchronized(lock) {
@@ -1079,30 +1156,87 @@ public class MediaComponent extends Canvas {
 			if (pipeline == null)
 				return false;
 
-			State state;
-			if ((state = pipeline.getState(0L)) != State.NULL && state != State.READY) {
-				pipeline.setState(State.READY);
-				if (pipeline.getState(2000L, TimeUnit.MILLISECONDS) != State.READY)
-					return false;
-			}
+			State state = pipeline.getState(0L);
 
+			if (currentLiveSource && state != State.PLAYING)
+				return pipeline.setState(State.PLAYING) == StateChangeReturn.SUCCESS;
+
+			final double rate = currentRate;
+			final boolean forwards = (rate >= 0.0);
+			final long positionNanoSeconds = 0L;
+			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
+			final long stop = (forwards ? -1 : 0);
+
+			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop);
 			pipeline.setState(State.PLAYING);
-			return true;
+
+			return success;
+		}
+	}
+
+	public boolean seekToBeginningAndPause() {
+		synchronized(lock) {
+			if (pipeline == null)
+				return false;
+
+			State state = pipeline.getState(0L);
+
+			if (currentLiveSource && state != State.PLAYING)
+				return pipeline.setState(State.PLAYING) == StateChangeReturn.SUCCESS;
+
+			final double rate = currentRate;
+			final boolean forwards = (rate >= 0.0);
+			final long positionNanoSeconds = 0L;
+			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
+			final long stop = (forwards ? -1 : 0);
+
+			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop);
+			pipeline.setState(State.PAUSED);
+
+			return success;
 		}
 	}
 
 	public boolean adjustPlaybackRate(final double rate) {
+		//TODO: Figure out why playing backwards (rate is negative) isn't working
+		if (rate < 0.0f)
+			return false;
+		
 		if (rate == 0.0f)
 			return pause();
+
 		synchronized(lock) {
-			if (pipeline == null)
+			if (pipeline == null || currentLiveSource)
 				return false;
-			return seek(rate, pipeline.queryPosition(Format.TIME));
+
+			State state;
+			if ((state = pipeline.getState(0L)) == State.NULL)
+				return false;
+
+			if (state == State.PLAYING) {
+				pipeline.setState(State.PAUSED);
+				if ((state = pipeline.getState(2000L, TimeUnit.MILLISECONDS)) != State.PAUSED)
+					return false;
+			}
+
+			final boolean forwards = (rate >= 0.0);
+			final long positionNanoSeconds = pipeline.queryPosition(Format.TIME);
+			//final long stop = (forwards ? positionNanoSeconds + SEEK_STOP_DURATION : Math.max(0, positionNanoSeconds - SEEK_STOP_DURATION));
+			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
+			final long stop = (forwards ? -1 : 0);
+
+			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop);
+			pipeline.setState(State.PLAYING);
+
+			if (success)
+				currentRate = rate;
+			
+			return success;
 		}
 	}
 
 	public boolean seek(final long positionNanoSeconds) {
-		return seek(DEFAULT_RATE, positionNanoSeconds);
+		return seek(currentRate, positionNanoSeconds);
 	}
 
 	public boolean seek(final double rate, final long positionNanoSeconds) {
@@ -1110,57 +1244,36 @@ public class MediaComponent extends Canvas {
 	}
 
 	private boolean segmentSeek(final double rate, final long positionNanoSeconds) {
+		if (rate == 0.0f)
+			return pause();
+
 		synchronized(lock) {
-			if (pipeline == null)
+			if (pipeline == null || currentLiveSource)
 				return false;
 
-			if (pipeline.getState(0L) != State.PAUSED) {
-				pipeline.setState(State.PAUSED);
-				if (pipeline.getState(2000L, TimeUnit.MILLISECONDS) != State.PAUSED)
-					return false;
-			}
+			if (pipeline.getState(0L) == State.NULL)
+				return false;
 
 			final boolean forwards = (rate >= 0.0);
+			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
+			final long stop = (forwards ? -1 : 0);
 
-			isSeeking.set(true);
-			seekingPos = positionNanoSeconds;
-			seekingRate = rate;
+			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop);
+			pipeline.setState(State.PLAYING);
 
-			Gst.getExecutor().execute(new Runnable() {
-				@Override
-				public void run() {
-					synchronized(lock) {
-						if (pipeline == null)
-							return;
+			if (success)
+				currentRate = rate;
 
-						long stop = (forwards ? positionNanoSeconds + SEEK_STOP_DURATION : Math.max(0, positionNanoSeconds - SEEK_STOP_DURATION));
-						pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, forwards ? positionNanoSeconds : stop, SeekType.SET, forwards ? stop : positionNanoSeconds);
-						pipeline.setState(State.PLAYING);
-					}
-				}
-			});
+			return success;
 		}
-		return true;
-	}
-
-	private void segmentDone(final long positionNanoSeconds) {
-		final boolean forwards = (seekingRate >= 0.0);
-		final boolean trickmode = (seekingRate > 1.0 || seekingRate < 1.0);
-
-		Gst.getExecutor().execute(new Runnable() {
-			@Override
-			public void run() {
-				pipeline.seek(seekingRate, Format.TIME, (trickmode ? SEEK_FLAG_SKIP : 0) | SeekFlags.NONE | SeekFlags.FLUSH | SeekFlags.KEY_UNIT, SeekType.SET, forwards ? positionNanoSeconds : 0, SeekType.SET, forwards ? -1 : positionNanoSeconds);
-				pipeline.getState(SEEK_STOP_DURATION, TimeUnit.NANOSECONDS);
-				display.asyncExec(seekFinishedRunnable);
-			}
-		});
 	}
 
 	private void seekFinished() {
 		isSeeking.set(false);
 	}
+	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="Step">
 	public boolean stepForward() {
 		synchronized(lock) {
 			if (pipeline == null)
@@ -1169,13 +1282,17 @@ public class MediaComponent extends Canvas {
 			State state;
 			if ((state = pipeline.getState(0L)) == State.NULL)
 				return false;
-			
-			if (state == State.PLAYING) {
-				pipeline.setState(State.PAUSED);
+
+			if (state != State.PAUSED) {
+				if (state == State.PLAYING) {
+					pause();
+				} else {
+					seekToBeginningAndPause();
+				}
 				if (pipeline.getState(2000L, TimeUnit.MILLISECONDS) != State.PAUSED)
 					return false;
 			}
-			
+
 			return pipeline.sendEvent(new StepEvent(Format.BUFFERS, 1L, 1.0D, true, false));
 		}
 	}
@@ -1208,7 +1325,7 @@ public class MediaComponent extends Canvas {
 			State state;
 			if ((state = pipeline.getState(0L)) == State.PLAYING)
 				return true;
-			if (state != State.PAUSED)
+			if (state != State.PAUSED && !currentLiveSource)
 				return seekToBeginning();
 
 			pipeline.setState(State.PLAYING);
@@ -1238,48 +1355,45 @@ public class MediaComponent extends Canvas {
 	public boolean play(File file) {
 		if (file == null)
 			return false;
-		return play(file.toURI());
-		//return play("http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
+		return play(false, DEFAULT_REPEAT_COUNT, DEFAULT_FPS, file.toURI());
 	}
 
 	public boolean play(String uri) {
-		if (StringUtil.isNullOrEmpty(uri))
-			return false;
-		try {
-			return play(new URI(uri));
-		} catch(URISyntaxException e) {
-			return false;
-		}
+		return play(false, DEFAULT_REPEAT_COUNT, DEFAULT_FPS, uri);
 	}
 
 	public boolean play(final URI uri) {
-		return play(DEFAULT_FPS, uri);
+		return play(false, DEFAULT_REPEAT_COUNT, DEFAULT_FPS, uri);
 	}
 
-	public boolean play(final int fps, final URI uri) {
-		return play(false, fps, uri);
+	public boolean play(final int repeat, final URI uri) {
+		return play(false, repeat, DEFAULT_FPS, uri);
 	}
 
 	public boolean play(final int repeat, final int fps, final URI uri) {
 		return play(false, repeat, fps, uri);
 	}
 
-	public boolean play(final boolean buffering, final int fps, final URI uri) {
-		return play(buffering, DEFAULT_REPEAT_COUNT, fps, uri);
+	public boolean play(final boolean liveSource, final int repeat, final int fps, final String uri) {
+		if (StringUtil.isNullOrEmpty(uri))
+			return false;
+		try {
+			return play(liveSource, repeat, fps, new URI(uri));
+		} catch(URISyntaxException e) {
+			return false;
+		}
 	}
 	//</editor-fold>
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="The Meat">
-	public boolean play(final boolean buffering, final int repeat, final int fps, final URI uri) {
+	public boolean play(final boolean liveSource, final int repeat, final int fps, final URI uri) {
 		if (uri == null)
 			return false;
 
-		final int checked_fps = (fps >= MINIMUM_FPS ? fps : DEFAULT_FPS);
-
 		synchronized(lock) {
 			if (pipeline != null)
-				pipeline.setState(State.NULL);
+				pipeline.setState(State.READY);
 
 			try {
 				if (!latch.await(2000L, TimeUnit.MILLISECONDS))
@@ -1288,312 +1402,353 @@ public class MediaComponent extends Canvas {
 				return false;
 			}
 
-			//gst-launch filesrc/souphttpsrc location=http://.../video.avi ! queue ! decodebin2 use-buffering=false name=dec
-			//    dec. ! [ queue ! audioconvert ! audioresample ! autoaudiosink ]
-			//    dec. ! [ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
-			pipeline = new Pipeline("pipeline");
-			pipeline.setAutoFlushBus(true);
-
-			//<editor-fold defaultstate="collapsed" desc="URI element">
-			final String uriString = uriString(uri);
-			final Pointer ptr = GstURIAPI.GSTURI_API.gst_element_make_from_uri(URIType.SRC, uriString, "uriSrc");
-			if (ptr == null || ptr.equals(Pointer.NULL))
-				return false;
-			final Element urisrc = GstObject.objectFor(ptr, Element.class);
-			if (!"file".equals(uri.getScheme()))
-				urisrc.set("location", uriString);
-			else
-				//The filesrc element needs to be just the path without the scheme ("file://")
-				urisrc.set("location", new File(uri).getAbsolutePath());
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Queue">
-			final Element decodeQueue = ElementFactory.make("queue", "decodeQueue");
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Decodebin2 element">
-			final DecodeBin2 decodebin2 = new DecodeBin2((String) null);
-			//decodebin2.set("max-size-time", 500000000L); //500 milliseconds
-			//decodebin2.set("max-size-bytes", 1024);
-			decodebin2.set("use-buffering", buffering);
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Link elements">
-			pipeline.addMany(urisrc, decodeQueue, decodebin2);
-			Element.linkMany(urisrc, decodeQueue, decodebin2);
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Create audio output">
-			/* create audio output */
-			final Bin audioBin = new Bin("Audio Bin");
-
-			final Element audioQueue = ElementFactory.make("queue", "audioQueue");
-			final Element audioVolume = ElementFactory.make("volume", "audioVolume");
-			final Element audioConvert = ElementFactory.make("audioconvert", "audioConvert");
-			final Element audioResample = ElementFactory.make("audioresample", "audioResample");
-			final Element audioScaleTempo = ElementFactory.make("scaletempo", "audioScaleTempo");
-			final Element audioConvertAfterScaleTempo = ElementFactory.make("audioconvert", "audioConvertAfterScaleTempo");
-			final Element audioResampleAfterScaleTempo = ElementFactory.make("audioresample", "audioResampleAfterScaleTempo");
-			final Element audioSink = ElementFactory.make(audioElement, "sink");
-
-			audioBin.addMany(audioQueue, audioVolume, audioConvert, audioResample, audioScaleTempo, audioConvertAfterScaleTempo, audioResampleAfterScaleTempo, audioSink);
-			Element.linkMany(audioQueue, audioVolume, audioConvert, audioResample, audioScaleTempo, audioConvertAfterScaleTempo, audioResampleAfterScaleTempo, audioSink);
-			audioBin.addPad(new GhostPad("sink", audioQueue.getStaticPad("sink")));
-			pipeline.add(audioBin);
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Create video output">
-			//Create video output
-			final Bin videoBin = new Bin("Video Bin");
-
-			//<editor-fold defaultstate="collapsed" desc="Tee">
-			//final Element teeQueue = ElementFactory.make("queue", "teeQueue");
-			//final Element teeVideo = ElementFactory.make("tee", "videoTee");
-			//videoBin.addMany(teeQueue, teeVideo);
-			//Element.linkMany(teeQueue, teeVideo);
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Video">
-			final Element videoQueue = ElementFactory.make("queue", "videoQueue");
-			final Element videoRate = ElementFactory.make("videorate", "videoRate");
-			videoRate.set("silent", true);
-			final Element videoColorspace = ElementFactory.make("ffmpegcolorspace", "colorspace");
-			final Element videoCapsFilter = ElementFactory.make("capsfilter", "videoCapsFilter");
-			videoCapsFilter.setCaps(Caps.fromString(createColorspaceFilter(checked_fps))); //framerate=25/1 means 25 FPS
-			final Element videoScale = ElementFactory.make("videoscale", "videoScale");
-			final Element videoSink = ElementFactory.make(videoElement, "videoSink");
-			videoBin.addMany(videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
-			Element.linkMany(/*teeVideo,*/ videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Thumbnail">
-			/*
-			//Older attempt by using a tee and getting auto colorspace conversion
-			final Element thumbnailQueue = ElementFactory.make("queue", "thumbnailQueue");
-			final Element thumbnailVideoRate = ElementFactory.make("videorate", "thumbnailVideoRate");
-			thumbnailVideoRate.set("silent", true);
-			final Element thumbnailColorspace = ElementFactory.make("ffmpegcolorspace", "thumbnailColorspace");
-			final Element thumbnailCapsFilter = ElementFactory.make("capsfilter", "thumbnailCapsFilter");
-			//final int rate = (int)Math.ceil((1000.0D / (double)interval) * 1000.0D);
-			thumbnailCapsFilter.setCaps(Caps.fromString("video/x-raw-rgb, bpp=32, depth=24, framerate=5/1")); // 1/60 = once every minute, 25/1 = 25 times a second
-			final AppSink thumbnailAppSink = (AppSink)ElementFactory.make("appsink", "thumbnailAppSink");
-			thumbnailAppSink.set("emit-signals", true);
-			thumbnailAppSink.set("sync", false);
-			thumbnailAppSink.set("async", true);
-			thumbnailAppSink.set("max-buffers", 1);
-			thumbnailAppSink.set("drop", true);
-			thumbnailAppSink.connect(new AppSink.NEW_BUFFER() {
-				private long next = 0L;
-
-				@Override
-				public void newBuffer(Element elem, Pointer userData) {
-					if (System.currentTimeMillis() < next)
-						return;
-
-					next = System.currentTimeMillis() + interval;
-
-					final Buffer buffer = thumbnailAppSink.pullBuffer();
-					final Caps caps = buffer.getCaps();
-					final Structure struct = caps.getStructure(0);
-					final int width = struct.getInteger("width");
-					final int height = struct.getInteger("height");
-					if (width < 1 || height < 1)
-						return;
-
-					//use direct buffer
-					final IntBuffer rgb = buffer.getByteBuffer().asIntBuffer();
-
-					//Do what you need here
-					System.out.println("New frame: " + width + "x" + height);
-
-					//Cleanup ASAP
-					buffer.dispose();
-				}
-			});
-			videoBin.addMany(thumbnailQueue, thumbnailVideoRate, thumbnailColorspace, thumbnailCapsFilter, thumbnailAppSink);
-			Element.linkMany(teeVideo, thumbnailQueue, thumbnailVideoRate, thumbnailColorspace, thumbnailCapsFilter, thumbnailAppSink);
-			/**/
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Configure video sink">
-			//videoSink.set("force-aspect-ratio", true);
-			videoSink.set("show-preroll-frame", true);
-			final Pad videoSinkPad = videoSink.getStaticPad("sink");
-			videoSinkPad.connect("notify::caps", Object.class, null, new GstCallback() {
-				@SuppressWarnings("unused")
-				public boolean callback(Pad pad, Pointer unused, Pointer dynamic) {
-					final Caps caps = pad.getNegotiatedCaps();
-					if (caps == null || caps.isEmpty())
-						return false;
-					final Structure struct = caps.getStructure(0);
-					if (struct == null)
-						return false;
-
-					if (struct.hasField("framerate")) {
-						Fraction framerate = struct.getFraction("framerate");
-						actualFPS = (float)framerate.getNumerator() / (float)framerate.getDenominator();
-					}
-
-					if (struct.hasIntField("width") && struct.hasIntField("height")) {
-						final int width = struct.getInteger("width");
-						final int height = struct.getInteger("height");
-						fullVideoWidth = width;
-						fullVideoHeight = height;
-						fireVideoDimensionsNegotiated(width, height);
-					}
-					return true;
-				}
-			});
-			//</editor-fold>
-
-			videoBin.addPad(new GhostPad("sink", /*teeQueue*/videoQueue.getStaticPad("sink")));
-			pipeline.add(videoBin);
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="XOverlay">
-			xoverlay = CustomXOverlay.wrap(videoSink);
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Configure decodebin">
-			decodebin2.connect(new DecodeBin2.NEW_DECODED_PAD() {
-				@Override
-				public void newDecodedPad(Element elem, Pad pad, boolean last) {
-					/* only link once */
-					if (pad.isLinked())
-						return;
-
-					/* check media type */
-					Caps caps = pad.getCaps();
-					Structure struct = caps.getStructure(0);
-					if (struct.getName().startsWith("audio/")) {
-						//System.out.println("Linking audio pad: " + struct.getName());
-						pad.link(audioBin.getStaticPad("sink"));
-					} else if (struct.getName().startsWith("video/")) {
-						//System.out.println("Linking video pad: " + struct.getName());
-						pad.link(videoBin.getStaticPad("sink"));
-					} else {
-						//System.out.println("Unknown pad [" + struct.getName() + "]");
-					}
-				}
-			});
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Configure bus">
-			final Bus bus = pipeline.getBus();
-			bus.connect(new Bus.STATE_CHANGED() {
-				@Override
-				public void stateChanged(GstObject source, State oldState, State newState, State pendingState) {
-					if (newState == State.NULL && pendingState == State.NULL) {
-						synchronized(lock) {
-							pipeline.dispose();
-							pipeline = null;
-							currentVideoSink = null;
-							currentAudioVolumeElement = null;
-						}
-						display.asyncExec(redrawRunnable);
-						latch.countDown();
-					}
-
-					switch (newState) {
-						case PLAYING:
-							if (currentState == State.NULL || currentState == State.PAUSED) {
-								currentState = State.PLAYING;
-								fireMediaEventStarted();
-							}
-							break;
-						case PAUSED:
-							if (currentState == State.PLAYING) {
-								fireMediaEventPaused();
-								currentState = State.PAUSED;
-							}
-							break;
-						case NULL:
-						case READY:
-							if (currentState == State.PLAYING) {
-								fireMediaEventStopped();
-							}
-							break;
-					}
-				}
-			});
-			bus.connect(new Bus.ERROR() {
-				@Override
-				public void errorMessage(GstObject source, int code, String message) {
-					//System.out.println("Error: code=" + code + " message=" + message);
-					fireHandleError(uri, ErrorType.fromNativeValue(code), code, message);
-				}
-			});
-			bus.connect(new Bus.EOS() {
-				@Override
-				public void endOfStream(GstObject source) {
-					if (currentRepeatCount == REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats++ < currentRepeatCount)) {
-						seekToBeginning();
-						return;
-					}
-					numberOfRepeats = 0;
-					pipeline.setState(State.READY);
-					display.asyncExec(redrawRunnable);
-				}
-			});
-			bus.connect(new Bus.BUFFERING() {
-				@Override
-				public void bufferingData(GstObject source, int percent) {
-					if (buffering) {
-						if (percent < 100) {
-							pipeline.setState(State.PAUSED);
-						} else if (percent >= 100) {
-							pipeline.setState(State.PLAYING);
-						}
-					}
-				}
-			});
-			bus.connect(new Bus.SEGMENT_DONE() {
-				@Override
-				public void segmentDone(GstObject source, Format format, final long position) {
-					display.syncExec(new Runnable() {
-						@Override
-						public void run() {
-							MediaComponent.this.segmentDone(position);
-						}
-					});
-				}
-			});
-			if (!Sys.isOSFamily(OSFamily.Windows)) {
-				bus.setSyncHandler(new BusSyncHandler() {
-					@Override
-					public BusSyncReply syncMessage(Message msg) {
-						Structure s = msg.getStructure();
-						if (s == null || !s.hasName("prepare-xwindow-id"))
-							return BusSyncReply.PASS;
-						 xoverlay.setWindowID(MediaComponent.this);
-						return BusSyncReply.DROP;
-					}
-				});
-			} else {
-				xoverlay.setWindowID(MediaComponent.this);
-			}
-			//</editor-fold>
-
 			//Reset these values
+			hasVideo = false;
+			hasAudio = false;
 			fullVideoWidth = 0;
 			fullVideoHeight = 0;
 			numberOfRepeats = 0;
 			actualFPS = 0.0f;
+			currentVideoSink = null;
+			currentAudioSink = null;
+			currentAudioVolumeElement = null;
 
 			//Save these values
-			currentBuffering = buffering;
+			currentLiveSource = liveSource;
 			currentRepeatCount = repeat;
 			currentFPS = fps;
 			currentURI = uri;
 
-			currentVideoSink = videoSink;
-			currentAudioVolumeElement = audioVolume;
+			currentRate = 1.0D;
+
+			pipeline = createPipeline(uri);
+
+			//Start playing
+			//Attempts to ensure that we're using segment seeks (which signals SEGMENT_DONE) to look for repeats instead of EOS
+			pipeline.seek(1.0D, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, 0L, SeekType.SET, -1L);
+			pipeline.setState(State.PLAYING);
+			return true;
+		}
+	}
+
+	protected Element createVideoSink(String suggestedVideoSink) {
+		final Element videoSink = ElementFactory.make(suggestedVideoSink, "videoSink");
+		videoSink.set("show-preroll-frame", true);
+		videoSink.getStaticPad("sink").connect("notify::caps", Object.class, null, new GstCallback() {
+			@SuppressWarnings("unused")
+			public boolean callback(Pad pad, Pointer unused, Pointer dynamic) {
+				final Caps caps = pad.getNegotiatedCaps();
+				if (caps == null || caps.isEmpty())
+					return false;
+				final Structure struct = caps.getStructure(0);
+				if (struct == null)
+					return false;
+
+				if (struct.hasField("framerate")) {
+					Fraction framerate = struct.getFraction("framerate");
+					actualFPS = (float)framerate.getNumerator() / (float)framerate.getDenominator();
+				}
+
+				if (struct.hasIntField("width") && struct.hasIntField("height")) {
+					final int width = struct.getInteger("width");
+					final int height = struct.getInteger("height");
+					fullVideoWidth = width;
+					fullVideoHeight = height;
+					fireVideoDimensionsNegotiated(width, height);
+				}
+				return true;
+			}
+		});
+		return videoSink;
+	}
+
+	protected Element createAudioSink(String suggestedAudioSink) {
+		return ElementFactory.make(suggestedAudioSink, "audioSink");
+	}
+
+	protected Pad loadAudioBin(final Pipeline newPipeline, final Bin audioBin, final Element uridecodebin, final Pad pad) {
+
+		//[ queue2 ! volume ! audioconvert ! audioresample ! scaletempo ! audioconvert ! audioresample ! autoaudiosink ]
+
+		final Element audioQueue = ElementFactory.make("queue2", "audioQueue");
+		final Element audioVolume = ElementFactory.make("volume", "audioVolume");
+		final Element audioConvert = ElementFactory.make("audioconvert", "audioConvert");
+		final Element audioResample = ElementFactory.make("audioresample", "audioResample");
+		final Element audioScaleTempo = ElementFactory.make("scaletempo", "audioScaleTempo");
+		final Element audioConvertAfterScaleTempo = ElementFactory.make("audioconvert", "audioConvertAfterScaleTempo");
+		final Element audioResampleAfterScaleTempo = ElementFactory.make("audioresample", "audioResampleAfterScaleTempo");
+		final Element audioSink = createAudioSink(audioElement);
+
+		audioBin.addMany(audioQueue, audioVolume, audioConvert, audioResample, audioScaleTempo, audioConvertAfterScaleTempo, audioResampleAfterScaleTempo, audioSink);
+		Element.linkMany(audioQueue, audioVolume, audioConvert, audioResample, audioScaleTempo, audioConvertAfterScaleTempo, audioResampleAfterScaleTempo, audioSink);
+
+		currentAudioSink = audioSink;
+		currentAudioVolumeElement = audioVolume;
+
+		//Element to connect uridecodebin src pad to.
+		return audioQueue.getStaticPad("sink");
+	}
+
+	protected Pad loadVideoBin(final Pipeline newPipeline, final Bin videoBin, final Element uridecodebin, final Pad pad) {
+
+		//[ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
+
+		final int checked_fps = (currentFPS >= MINIMUM_FPS ? currentFPS : DEFAULT_FPS);
+
+		final Element videoQueue;
+		final Element videoRate;
+		final Element videoColorspace;
+		final Element videoCapsFilter;
+		final Element videoScale;
+		final Element videoSink;
+
+		if (!currentLiveSource) {
+			videoQueue = ElementFactory.make("queue2", "videoQueue");
+			videoRate = ElementFactory.make("videorate", "videoRate");
+			videoColorspace = ElementFactory.make("ffmpegcolorspace", "videoColorspace");
+			videoCapsFilter = ElementFactory.make("capsfilter", "videoCapsFilter");
+			videoScale = ElementFactory.make("videoscale", "videoScale");
+			videoSink = createVideoSink(videoElement);
+			
+			videoRate.set("silent", true);
+			videoCapsFilter.setCaps(Caps.fromString(createColorspaceFilter(this, checked_fps))); //framerate=25/1 means 25 FPS
+			
+			videoBin.addMany(videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
+			Element.linkMany(/*teeVideo,*/ videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
+		} else {
+			videoQueue = ElementFactory.make("queue2", "videoQueue");
+			videoRate = null;
+			videoColorspace = ElementFactory.make("ffmpegcolorspace", "videoColorspace");
+			//videoCapsFilter = ElementFactory.make("capsfilter", "videoCapsFilter");
+			//videoScale = ElementFactory.make("videoscale", "videoScale");
+			videoSink = createVideoSink(videoElement);
+			
+			//videoCapsFilter.setCaps(Caps.fromString(createColorspaceFilter(this, checked_fps))); //framerate=25/1 means 25 FPS
+
+			videoBin.addMany(videoQueue, videoColorspace, /*videoCapsFilter, videoScale,*/ videoSink);
+			Element.linkMany(/*teeVideo,*/ videoQueue, videoColorspace, /*videoCapsFilter, videoScale,*/ videoSink);
 		}
 
-		//Start playing
-		pipeline.setState(State.PLAYING);
+		currentVideoSink = videoSink;
+		xoverlay = CustomXOverlay.wrap(videoSink);
+
+		return videoQueue.getStaticPad("sink");
+	}
+
+	protected boolean disposeAudioBin(final Pipeline newPipeline) {
+		final Element existingAudioBin = newPipeline.getElementByName("audioBin");
+
+		if (existingAudioBin == null)
+			return true;
+		
+		existingAudioBin.setState(State.NULL);
+		if (existingAudioBin.getState() == State.NULL) {
+			newPipeline.remove(existingAudioBin);
+			existingAudioBin.dispose();
+		}
+		
+		return true;
+	}
+
+	protected boolean disposeVideoBin(final Pipeline newPipeline) {
+		final Element existingVideoBin = newPipeline.getElementByName("videoBin");
+
+		if (existingVideoBin == null)
+			return true;
+
+		existingVideoBin.setState(State.NULL);
+		if (existingVideoBin.getState() == State.NULL) {
+			newPipeline.remove(existingVideoBin);
+			existingVideoBin.dispose();
+		}
 
 		return true;
+	}
+
+	protected void onPadAdded(final Pipeline newPipeline, final Element element, final Pad pad) {
+		//only link once
+		if (pad.isLinked())
+			return;
+
+		//check media type
+		final Caps caps = pad.getCaps();
+		final Structure struct = caps.getStructure(0);
+		final String padCaps = struct.getName();
+
+		if (StringUtil.isNullOrEmpty(padCaps))
+			return;
+
+		//final Element source = (Element)element.get("source");
+		//if (source != null && source.getName().startsWith("souphttpsrc")) {
+		//	source.set("do-timestamp", true);
+		//	source.set("is_live", true);
+		//	source.set("typefind", true);
+		//}
+
+		if (padCaps.startsWith("audio/")) {
+			disposeAudioBin(newPipeline);
+
+			//Create audio bin
+			final Bin audioBin = new Bin("audioBin");
+			audioBin.addPad(new GhostPad("sink", loadAudioBin(newPipeline, audioBin, element, pad)));
+			newPipeline.add(audioBin);
+			pad.link(audioBin.getStaticPad("sink"));
+
+			hasAudio = true;
+
+			audioBin.setState(State.PLAYING);
+		} else if (padCaps.startsWith("video/")) {
+			disposeVideoBin(newPipeline);
+
+			//Create video bin
+			final Bin videoBin = new Bin("videoBin");
+			videoBin.addPad(new GhostPad("sink", loadVideoBin(newPipeline, videoBin, element, pad)));
+			newPipeline.add(videoBin);
+			pad.link(videoBin.getStaticPad("sink"));
+
+			hasVideo = true;
+
+			videoBin.setState(State.PLAYING);
+		}
+	}
+
+	protected Pipeline createPipeline(final URI uri) {
+		//gst-launch uridecodebin use-buffering=false name=dec location=http://.../video.avi
+		//    dec. ! [ queue ! audioconvert ! audioresample ! autoaudiosink ]
+		//    dec. ! [ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
+		final Pipeline newPipeline = new Pipeline("pipeline");
+
+		//<editor-fold defaultstate="collapsed" desc="Uridecodebin">
+		final Element uridecodebin = ElementFactory.make("uridecodebin", "uridecodebin");
+		uridecodebin.connect(new Element.PAD_ADDED() {
+			@Override
+			public void padAdded(Element elem, Pad pad) {
+				onPadAdded(newPipeline, elem, pad);
+			}
+		});
+		newPipeline.addMany(uridecodebin);
+		//</editor-fold>
+
+		//<editor-fold defaultstate="collapsed" desc="Configure bus">
+		final Bus bus = newPipeline.getBus();
+		bus.connect(new Bus.STATE_CHANGED() {
+			@Override
+			public void stateChanged(GstObject source, State oldState, State newState, State pendingState) {
+				if (source != pipeline)
+					return;
+				
+				if (newState == State.NULL && pendingState == State.NULL) {
+					synchronized(lock) {
+						currentVideoSink = null;
+						currentAudioSink = null;
+						currentAudioVolumeElement = null;
+
+						disposeAudioBin(newPipeline);
+						disposeVideoBin(newPipeline);
+
+						newPipeline.dispose();
+					}
+					display.asyncExec(redrawRunnable);
+					latch.countDown();
+				}
+
+				switch (newState) {
+					case PLAYING:
+						if (currentState == State.NULL || currentState == State.READY || currentState == State.PAUSED) {
+							if (currentState == State.PAUSED)
+								fireMediaEventContinued();
+							else
+								fireMediaEventStarted();
+							currentState = State.PLAYING;
+						}
+						break;
+					case PAUSED:
+						if (currentState == State.PLAYING || currentState == State.READY) {
+							currentState = State.PAUSED;
+							fireMediaEventPaused();
+						}
+						break;
+					case NULL:
+					case READY:
+						if (currentState == State.PLAYING || currentState == State.PAUSED) {
+							currentState = State.READY;
+							fireMediaEventStopped();
+						}
+						break;
+				}
+			}
+		});
+		bus.connect(new Bus.ERROR() {
+			@Override
+			public void errorMessage(GstObject source, int code, String message) {
+				//System.out.println("Error: code=" + code + " message=" + message);
+				fireHandleError(currentURI, ErrorType.fromNativeValue(code), code, message);
+			}
+		});
+		bus.connect(new Bus.SEGMENT_DONE() {
+			@Override
+			public void segmentDone(GstObject source, Format format, long position) {
+				if (currentRepeatCount == REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount)) {
+					++numberOfRepeats;
+					if (!seekToBeginning()) {
+						stop();
+						unpause();
+					}
+					return;
+				}
+				numberOfRepeats = 0;
+				pipeline.setState(State.READY);
+				display.asyncExec(redrawRunnable);
+			}
+		});
+		bus.connect(new Bus.EOS() {
+			@Override
+			public void endOfStream(GstObject source) {
+				if (currentRepeatCount == REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount)) {
+					++numberOfRepeats;
+					if (!seekToBeginning()) {
+						stop();
+						unpause();
+					}
+					return;
+				}
+				numberOfRepeats = 0;
+				pipeline.setState(State.READY);
+				display.asyncExec(redrawRunnable);
+			}
+		});
+		bus.connect(new Bus.BUFFERING() {
+			@Override
+			public void bufferingData(GstObject source, int percent) {
+				if (!currentLiveSource) {
+					if (percent < 100) {
+						pipeline.setState(State.PAUSED);
+					} else if (percent >= 100) {
+						pipeline.setState(State.PLAYING);
+					}
+				}
+			}
+		});
+		bus.setSyncHandler(new BusSyncHandler() {
+			@Override
+			public BusSyncReply syncMessage(Message msg) {
+				Structure s = msg.getStructure();
+				if (s == null || !s.hasName("prepare-xwindow-id"))
+					return BusSyncReply.PASS;
+				xoverlay.setWindowID(MediaComponent.this.nativeHandle);
+				return BusSyncReply.DROP;
+			}
+		});
+		//</editor-fold>
+
+		//<editor-fold defaultstate="collapsed" desc="Properties">
+		uridecodebin.set("use-buffering", false);
+		uridecodebin.set("download", true);
+		uridecodebin.set("buffer-duration", TimeUnit.MILLISECONDS.toNanos(500L));
+		uridecodebin.set("uri", uriString(uri));
+		//</editor-fold>
+		
+		return newPipeline;
 	}
 	//</editor-fold>
 }
