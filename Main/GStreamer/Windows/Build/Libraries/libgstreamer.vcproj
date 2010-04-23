@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="gstreamer"
 	ProjectGUID="{F987873B-2B88-4B1B-B627-F70DF4F91E49}"
 	RootNamespace="libgstreamer"
@@ -292,6 +292,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				ExecutionBucket="23"
+				Optimization="2"
+				InlineFunctionExpansion="2"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="..\..\..\Source\gstreamer\gst\;..\..\..\Source\gstreamer\gst\parse\;&quot;$(OutDir)\include\gstreamer-$(ApiVersionString)\gst\&quot;"
 				PreprocessorDefinitions="NDEBUG;LIBGSTREAMER_EXPORTS"
 				RuntimeLibrary="0"
