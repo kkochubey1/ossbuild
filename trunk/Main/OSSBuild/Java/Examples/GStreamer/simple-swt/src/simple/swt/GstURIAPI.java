@@ -2,7 +2,6 @@
 package simple.swt;
 
 import com.sun.jna.Pointer;
-import org.gstreamer.Element;
 import org.gstreamer.lowlevel.GstNative;
 import org.gstreamer.lowlevel.annotations.CallerOwnsReturn;
 

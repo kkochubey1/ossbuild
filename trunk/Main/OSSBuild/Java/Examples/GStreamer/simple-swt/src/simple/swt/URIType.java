@@ -4,7 +4,7 @@ package simple.swt;
 import org.gstreamer.lowlevel.EnumMapper;
 import org.gstreamer.lowlevel.IntegerEnum;
 
-/**
+ /**
   * The different types of URI direction.
   */
  public enum URIType implements IntegerEnum {

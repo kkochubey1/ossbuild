@@ -17,9 +17,15 @@ import java.nio.IntBuffer;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -34,6 +40,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.gstreamer.AutoPlugSelectResult;
 import org.gstreamer.Bin;
 import org.gstreamer.Buffer;
 import org.gstreamer.Bus;
@@ -87,9 +94,54 @@ public class MediaComponent extends Canvas {
 			super(initializer(gst.ptr_gst_event_new_step(format, amount, rate, flush, intermediate)));
 		}
 	}
+
+	/**
+     * This signal is emitted whenever uridecodebin finds a new stream. It is
+	 * emitted before looking for any elements that can handle that stream.
+     */
+    private static interface AUTOPLUG_CONTINUE {
+        /**
+         *
+         * @param uridecodebin The uridecodebin
+         * @param pad the new pad.
+         * @param caps the caps found.
+         */
+        public boolean autoPlugContinue(Bin uridecodebin, Pad pad, Caps caps);
+    }
+
+	/**
+     * This signal is emitted once uridecodebin has found all the possible
+	 * GstElementFactory that can be used to handle the given caps. For each of
+	 * those factories, this signal is emited.
+     */
+    private static interface AUTOPLUG_SELECT {
+        /**
+         *
+         * @param uridecodebin The uridecodebin
+         * @param pad the new pad.
+         * @param caps the caps found.
+		 * @param factory the factory to use.
+         */
+        public AutoPlugSelectResult autoPlugSelect(Bin uridecodebin, Pad pad, Caps caps, ElementFactory factory);
+    }
+
+	/**
+	 * This signal is emitted when the data for the current uri is played.
+	 */
+	private static interface DRAINED {
+		/**
+         *
+         * @param uridecodebin The uridecodebin
+         */
+        public void drained(Bin uridecodebin);
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Constants">
+	public static final ExecutorService 
+		TASK_EXECUTOR
+	;
+
 	public static final String
 		  DEFAULT_VIDEO_ELEMENT
 		, DEFAULT_AUDIO_ELEMENT
@@ -133,7 +185,7 @@ public class MediaComponent extends Canvas {
 
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	protected final long nativeHandle;
-	protected final Object lock = new Object();
+	protected final Lock lock = new ReentrantLock();
 	protected final String videoElement;
 	protected final String audioElement;
 	protected final Display display;
@@ -209,6 +261,32 @@ public class MediaComponent extends Canvas {
 		}
 		DEFAULT_VIDEO_ELEMENT = videoElement;
 		DEFAULT_AUDIO_ELEMENT = audioElement;
+
+		TASK_EXECUTOR = Executors.newFixedThreadPool(Math.min(2, Math.max(6, Runtime.getRuntime().availableProcessors())), new ThreadFactory() {
+			private final AtomicInteger counter = new AtomicInteger(0);
+			@Override
+			public Thread newThread(final Runnable target) {
+				final int count = counter.incrementAndGet();
+				final Thread t = new Thread(Thread.currentThread().getThreadGroup(), target, "gstreamer media executor " + count);
+				t.setDaemon(true);
+				return t;
+			}
+		});
+
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+			@Override
+			public void run() {
+				if (TASK_EXECUTOR != null) {
+					try {
+						TASK_EXECUTOR.shutdown();
+						TASK_EXECUTOR.awaitTermination(5000L, TimeUnit.MILLISECONDS);
+					} catch(Throwable t) {
+					} finally {
+						TASK_EXECUTOR.shutdownNow();
+					}
+				}
+			}
+		}));
 	}
 
 	public MediaComponent(Composite parent, int style) {
@@ -249,23 +327,27 @@ public class MediaComponent extends Canvas {
 
 			@Override
 			public void run() {
-				synchronized(lock) {
-					if (pipeline != null) {
-						final long position = pipeline.queryPosition(TimeUnit.MILLISECONDS);
-						final long duration = Math.max(position, pipeline.queryDuration(TimeUnit.MILLISECONDS));
-						final int percent = (duration > 0 ? Math.max(0, Math.min(100, (int)(((double)position / (double)duration) * 100.0D))) : -1);
-						final boolean positionChanged = (position != lastPosition && position >= 0L);
-						final boolean last = (position <= 0L && lastPosition > 0L);
+				if (lock.tryLock()) {
+					try {
+						if (pipeline != null) {
+							final long position = pipeline.queryPosition(TimeUnit.MILLISECONDS);
+							final long duration = Math.max(position, pipeline.queryDuration(TimeUnit.MILLISECONDS));
+							final int percent = (duration > 0 ? Math.max(0, Math.min(100, (int)(((double)position / (double)duration) * 100.0D))) : -1);
+							final boolean positionChanged = (position != lastPosition && position >= 0L);
+							final boolean last = (position <= 0L && lastPosition > 0L);
 
-						if (last && positionChanged && !currentLiveSource)
-							firePositionChanged(100, lastDuration, lastDuration);
-						
-						lastPosition = position;
-						lastDuration = duration;
-						if (positionChanged && !currentLiveSource) 
-							firePositionChanged(percent, position, duration);
-					} else {
-						lastPosition = 0L;
+							if (last && positionChanged && !currentLiveSource)
+								firePositionChanged(100, lastDuration, lastDuration);
+
+							lastPosition = position;
+							lastDuration = duration;
+							if (positionChanged && !currentLiveSource)
+								firePositionChanged(percent, position, duration);
+						} else {
+							lastPosition = 0L;
+						}
+					} finally {
+						lock.unlock();
 					}
 				}
 			}
@@ -316,35 +398,47 @@ public class MediaComponent extends Canvas {
 	}
 
 	public boolean hasMedia() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			return (pipeline != null && pipeline.getState(0L) != State.NULL);
+		} finally {
+			lock.unlock();
 		}
 	}
 
 	public boolean isPaused() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return false;
 			final State state = pipeline.getState(0L);
 			return (state == State.PAUSED || state == State.READY);
+		} finally {
+			lock.unlock();
 		}
 	}
 
 	public boolean isStopped() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return true;
 			final State state = pipeline.getState(0L);
 			return (state == State.NULL || state == State.READY);
+		} finally {
+			lock.unlock();
 		}
 	}
 
 	public boolean isPlaying() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return true;
 			final State state = pipeline.getState(0L);
 			return (state == State.PLAYING);
+		} finally {
+			lock.unlock();
 		}
 	}
 
@@ -361,10 +455,13 @@ public class MediaComponent extends Canvas {
 	}
 
 	public float getActualFPS() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return 0.0f;
 			return actualFPS;
+		} finally {
+			lock.unlock();
 		}
 	}
 
@@ -373,51 +470,65 @@ public class MediaComponent extends Canvas {
 	}
 
 	public int getRequestedFPS() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return DEFAULT_FPS;
 			return currentFPS;
+		} finally {
+			lock.unlock();
 		}
 	}
 
 	public long getPosition() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return 0L;
 			final State state = pipeline.getState(0L);
 			if (state != State.PLAYING || state != State.PAUSED)
 				return 0L;
 			return pipeline.queryPosition(TimeUnit.MILLISECONDS);
+		} finally {
+			lock.unlock();
 		}
 	}
 
 	public long getDuration() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return 0L;
 			final State state = pipeline.getState(0L);
 			if (state != State.PLAYING || state != State.PAUSED)
 				return 0L;
 			return pipeline.queryDuration(TimeUnit.MILLISECONDS);
+		} finally {
+			lock.unlock();
 		}
 	}
 
 	public boolean isMuted() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null || currentAudioVolumeElement == null)
 				return false;
 
 			return (Boolean)currentAudioVolumeElement.get("mute");
+		} finally {
+			lock.unlock();
 		}
 	}
 
 	public int getVolume() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null || currentAudioVolumeElement == null)
 				return 100;
 
 			return Math.max(0, Math.min(100, (int)((Double)currentAudioVolumeElement.get("volume") * 100.0D)));
-
+		} finally {
+			lock.unlock();
 		}
 	}
 
@@ -431,6 +542,13 @@ public class MediaComponent extends Canvas {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Helper Methods">
+	public static boolean execute(final Runnable task) {
+		if (TASK_EXECUTOR == null)
+			return false;
+		TASK_EXECUTOR.submit(task);
+		return true;
+	}
+	
 	//Courtesy gstreamer-java folks, XOverlay class
 	public static long handle(Control comp) {
 		//Style must be embedded
@@ -1027,7 +1145,8 @@ public class MediaComponent extends Canvas {
 	public ImageData produceImageDataSnapshotForSWT() {
 		Buffer buffer = null;
 		try {
-			synchronized(lock) {
+			lock.lock();
+			try {
 				if (currentVideoSink == null)
 					return null;
 
@@ -1056,6 +1175,8 @@ public class MediaComponent extends Canvas {
 				imageData.setPixels(0, 0, pixels.length, pixels, 0);
 
 				return imageData;
+			} finally {
+				lock.unlock();
 			}
 		} catch(Throwable t) {
 			return null;
@@ -1068,7 +1189,8 @@ public class MediaComponent extends Canvas {
 	public BufferedImage produceSnapshot() {
 		Buffer buffer = null;
 		try {
-			synchronized(lock) {
+			lock.lock();
+			try {
 				if (currentVideoSink == null)
 					return null;
 
@@ -1096,6 +1218,8 @@ public class MediaComponent extends Canvas {
 				rgb.get(((DataBufferInt)img.getRaster().getDataBuffer()).getData(), 0, rgb.remaining());
 
 				return img;
+			} finally {
+				lock.unlock();
 			}
 		} catch(Throwable t) {
 			return null;
@@ -1121,7 +1245,8 @@ public class MediaComponent extends Canvas {
 
 	//<editor-fold defaultstate="collapsed" desc="Volume">
 	public boolean mute() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null || currentAudioVolumeElement == null)
 				return false;
 
@@ -1131,12 +1256,15 @@ public class MediaComponent extends Canvas {
 				fireAudioMuted();
 			else
 				fireAudioUnmuted();
+		} finally {
+			lock.unlock();
 		}
 		return true;
 	}
 
 	public boolean adjustVolume(int percent) {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null || currentAudioVolumeElement == null)
 				return false;
 
@@ -1145,6 +1273,8 @@ public class MediaComponent extends Canvas {
 			currentAudioVolumeElement.set("volume", (double)newVolume / 100.0D);
 			if (oldVolume != newVolume)
 				fireAudioVolumeChanged(newVolume);
+		} finally {
+			lock.unlock();
 		}
 		return true;
 	}
@@ -1152,7 +1282,8 @@ public class MediaComponent extends Canvas {
 
 	//<editor-fold defaultstate="collapsed" desc="Seek">
 	public boolean seekToBeginning() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return false;
 
@@ -1171,11 +1302,14 @@ public class MediaComponent extends Canvas {
 			pipeline.setState(State.PLAYING);
 
 			return success;
+		} finally {
+			lock.unlock();
 		}
 	}
 
 	public boolean seekToBeginningAndPause() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return false;
 
@@ -1194,6 +1328,8 @@ public class MediaComponent extends Canvas {
 			pipeline.setState(State.PAUSED);
 
 			return success;
+		} finally {
+			lock.unlock();
 		}
 	}
 
@@ -1205,7 +1341,8 @@ public class MediaComponent extends Canvas {
 		if (rate == 0.0f)
 			return pause();
 
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null || currentLiveSource)
 				return false;
 
@@ -1232,6 +1369,8 @@ public class MediaComponent extends Canvas {
 				currentRate = rate;
 			
 			return success;
+		} finally {
+			lock.unlock();
 		}
 	}
 
@@ -1247,7 +1386,8 @@ public class MediaComponent extends Canvas {
 		if (rate == 0.0f)
 			return pause();
 
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null || currentLiveSource)
 				return false;
 
@@ -1265,6 +1405,8 @@ public class MediaComponent extends Canvas {
 				currentRate = rate;
 
 			return success;
+		} finally {
+			lock.unlock();
 		}
 	}
 
@@ -1275,7 +1417,8 @@ public class MediaComponent extends Canvas {
 
 	//<editor-fold defaultstate="collapsed" desc="Step">
 	public boolean stepForward() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return false;
 
@@ -1294,6 +1437,8 @@ public class MediaComponent extends Canvas {
 			}
 
 			return pipeline.sendEvent(new StepEvent(Format.BUFFERS, 1L, 1.0D, true, false));
+		} finally {
+			lock.unlock();
 		}
 	}
 
@@ -1304,13 +1449,16 @@ public class MediaComponent extends Canvas {
 
 	//<editor-fold defaultstate="collapsed" desc="Pause">
 	public boolean pause() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return false;
 			State state;
 			if ((state = pipeline.getState(0L)) == State.PAUSED || state == State.NULL || state == State.READY)
 				return true;
 			pipeline.setState(State.PAUSED);
+		} finally {
+			lock.unlock();
 		}
 		return true;
 	}
@@ -1318,7 +1466,8 @@ public class MediaComponent extends Canvas {
 
 	//<editor-fold defaultstate="collapsed" desc="Continue">
 	public boolean unpause() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return false;
 
@@ -1329,6 +1478,8 @@ public class MediaComponent extends Canvas {
 				return seekToBeginning();
 
 			pipeline.setState(State.PLAYING);
+		} finally {
+			lock.unlock();
 		}
 		return true;
 	}
@@ -1336,7 +1487,8 @@ public class MediaComponent extends Canvas {
 
 	//<editor-fold defaultstate="collapsed" desc="Stop">
 	public boolean stop() {
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline == null)
 				return true;
 
@@ -1345,6 +1497,8 @@ public class MediaComponent extends Canvas {
 				return true;
 
 			pipeline.setState(State.READY);
+		} finally {
+			lock.unlock();
 		}
 		this.redraw();
 		return true;
@@ -1391,16 +1545,10 @@ public class MediaComponent extends Canvas {
 		if (uri == null)
 			return false;
 
-		synchronized(lock) {
+		lock.lock();
+		try {
 			if (pipeline != null)
-				pipeline.setState(State.READY);
-
-			try {
-				if (!latch.await(2000L, TimeUnit.MILLISECONDS))
-					return false;
-			} catch(InterruptedException ie) {
-				return false;
-			}
+				pipeline.setState(State.NULL);
 
 			//Reset these values
 			hasVideo = false;
@@ -1428,6 +1576,8 @@ public class MediaComponent extends Canvas {
 			pipeline.seek(1.0D, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, 0L, SeekType.SET, -1L);
 			pipeline.setState(State.PLAYING);
 			return true;
+		} finally {
+			lock.unlock();
 		}
 	}
 
@@ -1466,7 +1616,7 @@ public class MediaComponent extends Canvas {
 		return ElementFactory.make(suggestedAudioSink, "audioSink");
 	}
 
-	protected Pad loadAudioBin(final Pipeline newPipeline, final Bin audioBin, final Element uridecodebin, final Pad pad) {
+	protected Pad loadAudioBin(final Pipeline newPipeline, final Bin audioBin, final Bin uridecodebin, final Pad pad) {
 
 		//[ queue2 ! volume ! audioconvert ! audioresample ! scaletempo ! audioconvert ! audioresample ! autoaudiosink ]
 
@@ -1489,7 +1639,7 @@ public class MediaComponent extends Canvas {
 		return audioQueue.getStaticPad("sink");
 	}
 
-	protected Pad loadVideoBin(final Pipeline newPipeline, final Bin videoBin, final Element uridecodebin, final Pad pad) {
+	protected Pad loadVideoBin(final Pipeline newPipeline, final Bin videoBin, final Bin uridecodebin, final Pad pad) {
 
 		//[ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
 
@@ -1565,7 +1715,7 @@ public class MediaComponent extends Canvas {
 		return true;
 	}
 
-	protected void onPadAdded(final Pipeline newPipeline, final Element element, final Pad pad) {
+	protected void onPadAdded(final Pipeline newPipeline, final Bin uridecodebin, final Pad pad) {
 		//only link once
 		if (pad.isLinked())
 			return;
@@ -1578,19 +1728,12 @@ public class MediaComponent extends Canvas {
 		if (StringUtil.isNullOrEmpty(padCaps))
 			return;
 
-		//final Element source = (Element)element.get("source");
-		//if (source != null && source.getName().startsWith("souphttpsrc")) {
-		//	source.set("do-timestamp", true);
-		//	source.set("is_live", true);
-		//	source.set("typefind", true);
-		//}
-
 		if (padCaps.startsWith("audio/")) {
 			disposeAudioBin(newPipeline);
 
 			//Create audio bin
 			final Bin audioBin = new Bin("audioBin");
-			audioBin.addPad(new GhostPad("sink", loadAudioBin(newPipeline, audioBin, element, pad)));
+			audioBin.addPad(new GhostPad("sink", loadAudioBin(newPipeline, audioBin, uridecodebin, pad)));
 			newPipeline.add(audioBin);
 			pad.link(audioBin.getStaticPad("sink"));
 
@@ -1602,7 +1745,7 @@ public class MediaComponent extends Canvas {
 
 			//Create video bin
 			final Bin videoBin = new Bin("videoBin");
-			videoBin.addPad(new GhostPad("sink", loadVideoBin(newPipeline, videoBin, element, pad)));
+			videoBin.addPad(new GhostPad("sink", loadVideoBin(newPipeline, videoBin, uridecodebin, pad)));
 			newPipeline.add(videoBin);
 			pad.link(videoBin.getStaticPad("sink"));
 
@@ -1612,44 +1755,107 @@ public class MediaComponent extends Canvas {
 		}
 	}
 
+	protected void onUriDecodeBinElementAdded(final Pipeline newPipeline, final Bin uridecodebin, final Element element) {
+		//<editor-fold defaultstate="collapsed" desc="Validate arguments">
+		//We only care to modify the element if we're using a live source
+		if (!currentLiveSource || element == null)
+			return;
+		final String factoryName = element.getFactory().getName();
+		//</editor-fold>
+
+		if (factoryName.startsWith("souphttpsrc")) {
+			element.set("do-timestamp", true);
+		} else if (factoryName.startsWith("neonhttpsrc")) {
+			element.set("do-timestamp", true);
+		}
+	}
+
+	protected void onDecodeBinElementAdded(final Pipeline newPipeline, final Bin uridecodebin, final Bin decodebin, final Element element) {
+		//<editor-fold defaultstate="collapsed" desc="Validate arguments">
+		//We only care to modify the multipartdemux if we're using a live stream
+		if (!currentLiveSource)
+			return;
+		//Determine if what we're looking at is a multipartdemux element
+		final String factoryName = element.getFactory().getName();
+		if (!"multipartdemux".equalsIgnoreCase(factoryName))
+			return;
+		//</editor-fold>
+
+		try {
+			//Informs multipartdemux elements that it needs to emit the pad added signal as
+			//soon as it links the pads. Otherwise it could be some time before it happens.
+			//This was primarily added to instantly connect to motion jpeg digital cameras
+			//that have a low framerate (e.g. 1 or 2 FPS).
+			//It could be an issue with a "live source" that is emitting multiple streams
+			//via a multipart mux. There's really not much we can do about something like
+			//that in an automatic way -- that is, you'd have to remove this and instead
+			//use a custom pipeline to work w/ low framerate digital cameras.
+			element.set("single-stream", true);
+		} catch(IllegalArgumentException e) {
+		}
+	}
+
 	protected Pipeline createPipeline(final URI uri) {
 		//gst-launch uridecodebin use-buffering=false name=dec location=http://.../video.avi
 		//    dec. ! [ queue ! audioconvert ! audioresample ! autoaudiosink ]
 		//    dec. ! [ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
 		final Pipeline newPipeline = new Pipeline("pipeline");
+		final Bin uridecodebin = (Bin)ElementFactory.make("uridecodebin", "uridecodebin");
+		uridecodebin.set("use-buffering", false);
+		uridecodebin.set("download", true);
+		uridecodebin.set("buffer-duration", TimeUnit.MILLISECONDS.toNanos(500L));
+		uridecodebin.set("uri", uriString(uri));
+		newPipeline.addMany(uridecodebin);
 
+		//<editor-fold defaultstate="collapsed" desc="Signals">
 		//<editor-fold defaultstate="collapsed" desc="Uridecodebin">
-		final Element uridecodebin = ElementFactory.make("uridecodebin", "uridecodebin");
 		uridecodebin.connect(new Element.PAD_ADDED() {
 			@Override
 			public void padAdded(Element elem, Pad pad) {
-				onPadAdded(newPipeline, elem, pad);
+				onPadAdded(newPipeline, uridecodebin, pad);
 			}
 		});
-		newPipeline.addMany(uridecodebin);
+		uridecodebin.connect(new Bin.ELEMENT_ADDED() {
+			@Override
+			public void elementAdded(Bin bin, Element element) {
+				//<editor-fold defaultstate="collapsed" desc="Validate arguments">
+				if (element == null)
+					return;
+				final String factoryName = element.getFactory().getName();
+				if (StringUtil.isNullOrEmpty(factoryName))
+					return;
+				//</editor-fold>
+
+				//<editor-fold defaultstate="collapsed" desc="Connect to decodebin">
+				if (factoryName.startsWith("decodebin")) {
+					final Bin decodebin = (Bin)element;
+					decodebin.connect(new Bin.ELEMENT_ADDED() {
+						@Override
+						public void elementAdded(Bin bin, Element element) {
+							onDecodeBinElementAdded(newPipeline, uridecodebin, decodebin, element);
+						}
+					});
+				}
+				//</editor-fold>
+
+				onUriDecodeBinElementAdded(newPipeline, uridecodebin, element);
+			}
+		});
 		//</editor-fold>
 
-		//<editor-fold defaultstate="collapsed" desc="Configure bus">
+		//<editor-fold defaultstate="collapsed" desc="Bus">
 		final Bus bus = newPipeline.getBus();
 		bus.connect(new Bus.STATE_CHANGED() {
 			@Override
 			public void stateChanged(GstObject source, State oldState, State newState, State pendingState) {
-				if (source != pipeline)
+				if (source != newPipeline)
 					return;
 				
 				if (newState == State.NULL && pendingState == State.NULL) {
-					synchronized(lock) {
-						currentVideoSink = null;
-						currentAudioSink = null;
-						currentAudioVolumeElement = null;
-
-						disposeAudioBin(newPipeline);
-						disposeVideoBin(newPipeline);
-
-						newPipeline.dispose();
-					}
+					disposeAudioBin(newPipeline);
+					disposeVideoBin(newPipeline);
+					newPipeline.dispose();
 					display.asyncExec(redrawRunnable);
-					latch.countDown();
 				}
 
 				switch (newState) {
@@ -1740,12 +1946,6 @@ public class MediaComponent extends Canvas {
 			}
 		});
 		//</editor-fold>
-
-		//<editor-fold defaultstate="collapsed" desc="Properties">
-		uridecodebin.set("use-buffering", false);
-		uridecodebin.set("download", true);
-		uridecodebin.set("buffer-duration", TimeUnit.MILLISECONDS.toNanos(500L));
-		uridecodebin.set("uri", uriString(uri));
 		//</editor-fold>
 		
 		return newPipeline;

@@ -43,6 +43,7 @@ public class Main {
 		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_ELEMENT_PADS:5");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:2,GST_CAPS*:3,decodebin*:4,jpeg*:4");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "typefindfunctions*:4,jpeg*:4");
+		//Sys.setEnvironmentVariable("GST_DEBUG", "*:2,GST_CAPS*:3,decodebin*:4,jpeg*:4,queue*:4,multipart*:4");
 		Sys.initialize();
 
 		Button btn;
@@ -262,9 +263,14 @@ public class Main {
 		btnPlay.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (final Control c : shell.getChildren()) {
 					if (c instanceof MediaComponent) {
-						((MediaComponent) c).play(false, 1/*MediaComponent.REPEAT_FOREVER/**/, MediaComponent.DEFAULT_FPS, file[0].toURI());
+						MediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((MediaComponent) c).play(false, 1/*MediaComponent.REPEAT_FOREVER/**/, MediaComponent.DEFAULT_FPS, file[0].toURI());
+							}
+						});
 					}
 				}
 			}
