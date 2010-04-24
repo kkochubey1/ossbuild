@@ -1763,11 +1763,11 @@ public class MediaComponent extends Canvas {
 		final String factoryName = element.getFactory().getName();
 		//</editor-fold>
 
-		if (factoryName.startsWith("souphttpsrc")) {
-			element.set("do-timestamp", true);
-		} else if (factoryName.startsWith("neonhttpsrc")) {
-			element.set("do-timestamp", true);
-		}
+		//if (factoryName.startsWith("souphttpsrc")) {
+		//	element.set("do-timestamp", true);
+		//} else if (factoryName.startsWith("neonhttpsrc")) {
+		//	element.set("do-timestamp", true);
+		//}
 	}
 
 	protected void onDecodeBinElementAdded(final Pipeline newPipeline, final Bin uridecodebin, final Bin decodebin, final Element element) {
