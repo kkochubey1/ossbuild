@@ -10,14 +10,32 @@
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="MergeRedirectFolder">
-				<OSSBuild:FillDirectory Directory="$(var.GstPythonBinDir_v2_5)">
-					<OSSBuild:Filter Include=".*\\[^\\]*.*_gst\.pyd" />
-					<OSSBuild:Filter Include=".*\\[^\\]*.*audio\.pyd" />
-					<OSSBuild:Filter Include=".*\\[^\\]*.*interfaces\.pyd" />
-					<OSSBuild:Filter Include=".*\\[^\\]*.*pbutils\.pyd" />
-					<OSSBuild:Filter Include=".*\\[^\\]*.*tag\.pyd" />
-					<OSSBuild:Filter Include=".*\\[^\\]*.*video\.pyd" />
-				</OSSBuild:FillDirectory>
+				<Component Id="pygst.py" Guid="{CCD20E33-0830-42fd-98C9-B68D36B7B680}">
+					<File Name="pygst.py" Source="$(var.GstPythonGeneratedDir)\pygst.py" />
+				</Component>
+				
+				<Directory Id="GstVersionDir" Name="gst-$(var.GST_VERSION)">
+					<Directory Id="GstDir" Name="gst">
+						<Component Id="__init__.py" Guid="{686E9127-26DA-4cf9-994C-9A890CA04B28}">
+							<File Name="__init__.py" Source="$(var.GstPythonSrcDir)\gst\__init__.py" />
+						</Component>
+
+						<OSSBuild:FillDirectory Directory="$(var.GstPythonBinDir_v2_5)">
+							<OSSBuild:Filter Include=".*\\[^\\]*.*_gst\.pyd" />
+							<OSSBuild:Filter Include=".*\\[^\\]*.*audio\.pyd" />
+							<OSSBuild:Filter Include=".*\\[^\\]*.*interfaces\.pyd" />
+							<OSSBuild:Filter Include=".*\\[^\\]*.*pbutils\.pyd" />
+							<OSSBuild:Filter Include=".*\\[^\\]*.*tag\.pyd" />
+							<OSSBuild:Filter Include=".*\\[^\\]*.*video\.pyd" />
+						</OSSBuild:FillDirectory>
+
+						<Directory Id="GstExtendDir" Name="extend">
+							<OSSBuild:FillDirectory Directory="$(var.GstPythonSrcDir)\gst\extend\">
+								<OSSBuild:Filter Include=".*\\[^\\]*.*\.py" />
+							</OSSBuild:FillDirectory>
+						</Directory>
+					</Directory>
+				</Directory>
 			</Directory>
 		</Directory>
 

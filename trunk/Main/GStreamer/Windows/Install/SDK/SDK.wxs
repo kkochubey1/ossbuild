@@ -56,6 +56,7 @@
 
 			<ComponentRef Id="GstSDKInstallDirCreate" />
 			<ComponentRef Id="GstSDKBinInstallDirCreate" />
+			<ComponentRef Id="GstSDKShareInstallDirCreate" />
 			<ComponentRef Id="GstSDKBindingsInstallDirCreate" />
 		</ComponentGroup>
 
@@ -69,6 +70,8 @@
 		</ComponentGroup>
 
 		<ComponentGroup Id="GstSDK_Bindings_Python">
+			<ComponentRef Id="GstPythonEnvironmentVariables" />
+			
 			<ComponentRef Id="GstLibSitePackagesInstallDirCreate" />
 			<ComponentRef Id="GstLibSitePackagesGstInstallDirCreate" />
 			<ComponentRef Id="GstLibSitePackagesGstGstInstallDirCreate" />
@@ -83,12 +86,8 @@
 			<ComponentRef Id="GstSDKBindingsPythonInstallDirCreate" />
 			
 			<ComponentRef Id="GstSDKBindingsPython_v2_5InstallDirCreate" />
-			<ComponentRef Id="GstSDKBindingsPython_v2_5PluginInstallDirCreate" />
-			<ComponentRef Id="GstSDKBindingsPython_v2_5FarsightInstallDirCreate" />
 
 			<ComponentRef Id="GstSDKBindingsPython_v2_6InstallDirCreate" />
-			<ComponentRef Id="GstSDKBindingsPython_v2_6PluginInstallDirCreate" />
-			<ComponentRef Id="GstSDKBindingsPython_v2_6FarsightInstallDirCreate" />
 		</ComponentGroup>
 
 		<!-- Attempt to find where our normal install is located -->
@@ -117,6 +116,14 @@
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder" Name="PFiles">
 				<Directory Id="INSTALLDIR" Name=".">
+
+					<!-- Register environment variables -->
+					<Component Id="GstPythonEnvironmentVariables" Guid="{40460E4A-6F41-4937-BF89-B0E730ADFA72}">
+						<CreateFolder />
+						<RemoveFolder Id="TopInstallDirRemove" On="uninstall" />
+						
+						<Environment Id="PythonPath" Action="set" Part="first" Name="PYTHONPATH" Permanent="no" System="yes" Value="[INSTALLDIR]lib\" />
+					</Component>
 					
 					<!-- C:\Program Files\OSSBuild\v<Version>\ -->
 					<Directory Id="GstInstallDir" Name=".">
@@ -305,6 +312,14 @@
 							</Component>
 						</Directory>
 
+						<!-- C:\Program Files\OSSBuild\v<Version>\sdk\share\ -->
+						<Directory Id="GstSDKShareInstallDir" Name="share">
+							<Component Id="GstSDKShareInstallDirCreate" Guid="{F3A72E1A-08C8-45ff-8A3F-1775521D05E4}">
+								<CreateFolder />
+								<RemoveFolder Id="GstSDKShareInstallDirRemove" On="uninstall" />
+							</Component>
+						</Directory>
+
 						<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\ -->
 						<Directory Id="GstSDKBindingsInstallDir" Name="bindings">
 							<Component Id="GstSDKBindingsInstallDirCreate" Guid="{6A8D29F8-BD15-4276-9745-58CF60217EA2}">
@@ -333,22 +348,6 @@
 										<CreateFolder />
 										<RemoveFolder Id="GstSDKBindingsPython_v2_5InstallDirRemove" On="uninstall" />
 									</Component>
-
-									<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.5\farsight -->
-									<Directory Id="GstSDKBindingsPython_v2_5FarsightInstallDir" Name="farsight">
-										<Component Id="GstSDKBindingsPython_v2_5FarsightInstallDirCreate" Guid="{541AC9A7-9EBE-4E51-B43D-48068AE887A6}">
-											<CreateFolder />
-											<RemoveFolder Id="GstSDKBindingsPython_v2_5FarsightInstallDirRemove" On="uninstall" />
-										</Component>
-									</Directory>
-
-									<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.5\plugins -->
-									<Directory Id="GstSDKBindingsPython_v2_5PluginInstallDir" Name="plugins">
-										<Component Id="GstSDKBindingsPython_v2_5PluginInstallDirCreate" Guid="{E815B87C-D37E-4a3e-A32B-F241126A39AE}">
-											<CreateFolder />
-											<RemoveFolder Id="GstSDKBindingsPython_v2_5PluginInstallDirRemove" On="uninstall" />
-										</Component>
-									</Directory>
 								</Directory>
 
 								<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.6\ -->
@@ -357,22 +356,6 @@
 										<CreateFolder />
 										<RemoveFolder Id="GstSDKBindingsPython_v2_6InstallDirRemove" On="uninstall" />
 									</Component>
-
-									<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.6\farsight -->
-									<Directory Id="GstSDKBindingsPython_v2_6FarsightInstallDir" Name="farsight">
-										<Component Id="GstSDKBindingsPython_v2_6FarsightInstallDirCreate" Guid="{4F9BDA32-9EAB-4E98-BEF0-DD7E024E7429}">
-											<CreateFolder />
-											<RemoveFolder Id="GstSDKBindingsPython_v2_6FarsightInstallDirRemove" On="uninstall" />
-										</Component>
-									</Directory>
-
-									<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.6\plugins -->
-									<Directory Id="GstSDKBindingsPython_v2_6PluginInstallDir" Name="plugins">
-										<Component Id="GstSDKBindingsPython_v2_6PluginInstallDirCreate" Guid="{9A02B0A1-2E84-40b5-A0CE-4250A36F02CF}">
-											<CreateFolder />
-											<RemoveFolder Id="GstSDKBindingsPython_v2_6PluginInstallDirRemove" On="uninstall" />
-										</Component>
-									</Directory>
 								</Directory>
 							</Directory>
 						</Directory>
