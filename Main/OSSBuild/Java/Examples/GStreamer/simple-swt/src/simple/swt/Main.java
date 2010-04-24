@@ -254,8 +254,8 @@ public class Main {
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : shell.getChildren()) {
 					if (c instanceof MediaComponent) {
-						//((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
-						((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1");
+						((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
+						//((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1");
 					}
 				}
 			}
