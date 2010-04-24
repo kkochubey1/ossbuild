@@ -36,6 +36,9 @@
 	<?define LicenseDir="$(var.TOP)\Licenses" ?>
 	<?define DeploymentDir="$(var.TOP)\Deployment" ?>
 	
+	<?define GstSrcDir="$(var.TOP)\Main\GStreamer\Source" ?>
+	<?define GstGeneratedDir="$(var.TOP)\Main\GStreamer\Windows\Generated" ?>
+	
 	<?if $(var.Platform) = "x86" ?>
 		<?define PLATFORM_NAME="Win32" ?>
 		<?define OutputBuildDir="$(var.BuildDir)\Windows\Win32\$(var.Configuration)" ?>
@@ -81,6 +84,9 @@
 
 	<?define GstPythonBinDir_v2_5="$(var.PythonBinDir_v2_5)\gst-$(var.GST_VERSION)\gst" ?>
 	<?define GstPythonBinDir_v2_6="$(var.PythonBinDir_v2_6)\gst-$(var.GST_VERSION)\gst" ?>
+
+	<?define GstPythonSrcDir="$(var.GstSrcDir)\gst-python" ?>
+	<?define GstPythonGeneratedDir="$(var.GstGeneratedDir)\gst-python" ?>
 
 	<?define FarsightPythonBinDir_v2_5="$(var.PythonBinDir_v2_5)\farsight" ?>
 	<?define FarsightPythonBinDir_v2_6="$(var.PythonBinDir_v2_6)\farsight" ?>

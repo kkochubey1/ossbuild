@@ -57,6 +57,10 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Farsight-Python-v2.5", "Mai
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Farsight-Python-v2.6", "Main\GStreamer\Windows\Install\Merge Modules\Bindings\Python\Farsight-Python-v2.6.wixproj", "{1E88E7C9-16EA-424F-8EF3-C4E0902F22C6}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Share-Python-v2.5", "Main\GStreamer\Windows\Install\Merge Modules\Bindings\Python\Share-Python-v2.5.wixproj", "{8B56C8F2-22D0-455F-939B-7D3384544098}"
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Share-Python-v2.6", "Main\GStreamer\Windows\Install\Merge Modules\Bindings\Python\Share-Python-v2.6.wixproj", "{75EF713F-BBCC-4A91-B669-9F0A42D107CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release (All)|Win32 = Release (All)|Win32
@@ -220,6 +224,18 @@ Global
 		{1E88E7C9-16EA-424F-8EF3-C4E0902F22C6}.Release (GPL)|Win32.Build.0 = Release|x86
 		{1E88E7C9-16EA-424F-8EF3-C4E0902F22C6}.Release (LGPL)|Win32.ActiveCfg = Release|x86
 		{1E88E7C9-16EA-424F-8EF3-C4E0902F22C6}.Release (LGPL)|Win32.Build.0 = Release|x86
+		{8B56C8F2-22D0-455F-939B-7D3384544098}.Release (All)|Win32.ActiveCfg = Release|x86
+		{8B56C8F2-22D0-455F-939B-7D3384544098}.Release (All)|Win32.Build.0 = Release|x86
+		{8B56C8F2-22D0-455F-939B-7D3384544098}.Release (GPL)|Win32.ActiveCfg = Release|x86
+		{8B56C8F2-22D0-455F-939B-7D3384544098}.Release (GPL)|Win32.Build.0 = Release|x86
+		{8B56C8F2-22D0-455F-939B-7D3384544098}.Release (LGPL)|Win32.ActiveCfg = Release|x86
+		{8B56C8F2-22D0-455F-939B-7D3384544098}.Release (LGPL)|Win32.Build.0 = Release|x86
+		{75EF713F-BBCC-4A91-B669-9F0A42D107CA}.Release (All)|Win32.ActiveCfg = Release|x86
+		{75EF713F-BBCC-4A91-B669-9F0A42D107CA}.Release (All)|Win32.Build.0 = Release|x86
+		{75EF713F-BBCC-4A91-B669-9F0A42D107CA}.Release (GPL)|Win32.ActiveCfg = Release|x86
+		{75EF713F-BBCC-4A91-B669-9F0A42D107CA}.Release (GPL)|Win32.Build.0 = Release|x86
+		{75EF713F-BBCC-4A91-B669-9F0A42D107CA}.Release (LGPL)|Win32.ActiveCfg = Release|x86
+		{75EF713F-BBCC-4A91-B669-9F0A42D107CA}.Release (LGPL)|Win32.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

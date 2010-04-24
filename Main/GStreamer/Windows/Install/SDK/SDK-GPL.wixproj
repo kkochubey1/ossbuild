@@ -75,6 +75,9 @@
     <Compile Include="..\Custom\UI\SimplifiedUI.wxs">
       <Link>Custom\UI\SimplifiedUI.wxs</Link>
     </Compile>
+    <Compile Include="Python.wxs">
+      <Link>Python.wxs</Link>
+    </Compile>
     <Compile Include="SDK-GPL.wxs" />
     <Compile Include="SDK.wxs">
       <Link>SDK.wxs</Link>
@@ -131,6 +134,20 @@
     <ProjectReference Include="..\Merge Modules\Bindings\Python\Plugins-Python-v2.6.wixproj">
       <Name>Plugins-Python-v2.6</Name>
       <Project>{109d5fe2-5553-4ea1-9a12-2e247848d1e2}</Project>
+      <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Merge Modules\Bindings\Python\Share-Python-v2.5.wixproj">
+      <Name>Share-Python-v2.5</Name>
+      <Project>{8b56c8f2-22d0-455f-939b-7d3384544098}</Project>
+      <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Merge Modules\Bindings\Python\Share-Python-v2.6.wixproj">
+      <Name>Share-Python-v2.6</Name>
+      <Project>{75ef713f-bbcc-4a91-b669-9f0a42d107ca}</Project>
       <Private>True</Private>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
