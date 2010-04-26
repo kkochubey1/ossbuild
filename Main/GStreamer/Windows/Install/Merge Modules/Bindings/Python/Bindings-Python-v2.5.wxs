@@ -11,7 +11,7 @@
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="MergeRedirectFolder">
 				<Component Id="pygst.py" Guid="{CCD20E33-0830-42fd-98C9-B68D36B7B680}">
-					<File Name="pygst.py" Source="$(var.GstPythonGeneratedDir)\pygst.py" />
+					<File Name="pygst.py" Source="$(var.GstPythonWindowsBindingsDir)\pygst.py" />
 				</Component>
 				
 				<Directory Id="GstVersionDir" Name="gst-$(var.GST_VERSION)">

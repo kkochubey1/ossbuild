@@ -256,6 +256,7 @@ public class Main {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
 						//((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1");
+						//((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "rtsp://s-0-1.sg.softspb.com:554/test/test.mp4");
 					}
 				}
 			}

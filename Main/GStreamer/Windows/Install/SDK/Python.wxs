@@ -33,7 +33,7 @@
 				<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.5\lib\site-packages\ -->
 				<Directory Id="Python_v2_5SitePackages" Name="site-packages">
 					<Component Id="Python_v2_5SitePackages" Guid="{5FA62EAD-89F5-4f14-9AF2-F4F924EA9F39}">
-						<File Id="Python_v2_5_pygst.py" Source="$(var.GstPythonGeneratedDir)\pygst.py" />
+						<File Id="Python_v2_5_pygst.py" Source="$(var.GstPythonWindowsBindingsDir)\pygst.py" />
 					</Component>
 
 					<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.5\lib\site-packages\gst-0.10\ -->
@@ -138,7 +138,7 @@
 				<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.6\lib\site-packages\ -->
 				<Directory Id="Python_v2_6SitePackages" Name="site-packages">
 					<Component Id="Python_v2_6SitePackages" Guid="{4313FA3F-CC49-4ff6-9D9D-EA493F5F555C}">
-						<File Id="Python_v2_6_pygst.py" Source="$(var.GstPythonGeneratedDir)\pygst.py" />
+						<File Id="Python_v2_6_pygst.py" Source="$(var.GstPythonWindowsBindingsDir)\pygst.py" />
 					</Component>
 
 					<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.6\lib\site-packages\gst-0.10\ -->

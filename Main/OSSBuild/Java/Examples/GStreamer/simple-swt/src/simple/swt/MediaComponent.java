@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.gstreamer.AutoPlugSelectResult;
 import org.gstreamer.Bin;
 import org.gstreamer.Buffer;
 import org.gstreamer.Bus;
@@ -93,47 +92,6 @@ public class MediaComponent extends Canvas {
 			//gst.gst_event_new_custom((19 << 4) | (1 << 0));
 			super(initializer(gst.ptr_gst_event_new_step(format, amount, rate, flush, intermediate)));
 		}
-	}
-
-	/**
-     * This signal is emitted whenever uridecodebin finds a new stream. It is
-	 * emitted before looking for any elements that can handle that stream.
-     */
-    private static interface AUTOPLUG_CONTINUE {
-        /**
-         *
-         * @param uridecodebin The uridecodebin
-         * @param pad the new pad.
-         * @param caps the caps found.
-         */
-        public boolean autoPlugContinue(Bin uridecodebin, Pad pad, Caps caps);
-    }
-
-	/**
-     * This signal is emitted once uridecodebin has found all the possible
-	 * GstElementFactory that can be used to handle the given caps. For each of
-	 * those factories, this signal is emited.
-     */
-    private static interface AUTOPLUG_SELECT {
-        /**
-         *
-         * @param uridecodebin The uridecodebin
-         * @param pad the new pad.
-         * @param caps the caps found.
-		 * @param factory the factory to use.
-         */
-        public AutoPlugSelectResult autoPlugSelect(Bin uridecodebin, Pad pad, Caps caps, ElementFactory factory);
-    }
-
-	/**
-	 * This signal is emitted when the data for the current uri is played.
-	 */
-	private static interface DRAINED {
-		/**
-         *
-         * @param uridecodebin The uridecodebin
-         */
-        public void drained(Bin uridecodebin);
 	}
 	//</editor-fold>
 
