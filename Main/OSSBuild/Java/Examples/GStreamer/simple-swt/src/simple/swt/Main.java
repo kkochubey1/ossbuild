@@ -45,6 +45,7 @@ public class Main {
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:2,GST_CAPS*:3,decodebin*:4,jpeg*:4");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "typefindfunctions*:4,jpeg*:4");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:2,GST_CAPS*:3,decodebin*:4,jpeg*:4,queue*:4,multipart*:4");
+		//Sys.setEnvironmentVariable("GST_DEBUG", "*:2,GST_CAPS*:3,videotestsrc*:4");
 		Sys.initialize();
 
 		Button btn;
@@ -130,6 +131,18 @@ public class Main {
 		//gd.horizontalSpan = 2;
 		btnPlay.setLayoutData(gd);
 		btnPlay.setText("Play Again");
+
+		final Button btnPlayTestSignal = new Button(shell, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayTestSignal.setLayoutData(gd);
+		btnPlayTestSignal.setText("Play Test Signal");
+
+		final Button btnPlayBlackBurst = new Button(shell, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayBlackBurst.setLayoutData(gd);
+		btnPlayBlackBurst.setText("Play Blackburst");
 
 		final Button btnPause = new Button(shell, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -253,12 +266,47 @@ public class Main {
 		btnPlayMJPEG.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (final Control c : shell.getChildren()) {
 					if (c instanceof MediaComponent) {
-						//((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
-						((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1");
-						//((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "rtsp://s-0-1.sg.softspb.com:554/test/test.mp4");
-						//((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://users.design.ucla.edu/~acolubri/test/gstreamer/station-svq1.mov");
+						MediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								//((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
+								((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1");
+								//((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "rtsp://s-0-1.sg.softspb.com:554/test/test.mp4");
+								//((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://users.design.ucla.edu/~acolubri/test/gstreamer/station-svq1.mov");
+							}
+						});
+					}
+				}
+			}
+		});
+		btnPlayBlackBurst.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : shell.getChildren()) {
+					if (c instanceof MediaComponent) {
+						MediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((MediaComponent) c).playBlackBurst();
+							}
+						});
+					}
+				}
+			}
+		});
+		btnPlayTestSignal.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : shell.getChildren()) {
+					if (c instanceof MediaComponent) {
+						MediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((MediaComponent) c).playTestSignal();
+							}
+						});
 					}
 				}
 			}
@@ -281,9 +329,14 @@ public class Main {
 		btnPause.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (final Control c : shell.getChildren()) {
 					if (c instanceof MediaComponent) {
-						((MediaComponent) c).pause();
+						MediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((MediaComponent) c).pause();
+							}
+						});
 					}
 				}
 			}
@@ -291,9 +344,14 @@ public class Main {
 		btnContinue.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (final Control c : shell.getChildren()) {
 					if (c instanceof MediaComponent) {
-						((MediaComponent) c).unpause();
+						MediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((MediaComponent) c).unpause();
+							}
+						});
 					}
 				}
 			}
@@ -301,9 +359,14 @@ public class Main {
 		btnStop.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (final Control c : shell.getChildren()) {
 					if (c instanceof MediaComponent) {
-						((MediaComponent) c).stop();
+						MediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((MediaComponent) c).stop();
+							}
+						});
 					}
 				}
 			}
@@ -484,7 +547,7 @@ public class Main {
 						if (scale.isDisposed())
 							return;
 
-						scale.setEnabled(!source.isLiveSource() && scale.getMinimum() < scale.getMaximum());
+						scale.setEnabled(source.isSeekable() && scale.getMinimum() < scale.getMaximum());
 					}
 				});
 			}
