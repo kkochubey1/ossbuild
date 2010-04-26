@@ -122,7 +122,7 @@
 						<CreateFolder />
 						<RemoveFolder Id="TopInstallDirRemove" On="uninstall" />
 						
-						<Environment Id="PythonPath" Action="set" Part="first" Name="PYTHONPATH" Permanent="no" System="yes" Value="[INSTALLDIR]lib\" />
+						<Environment Id="PythonPath" Action="set" Part="first" Name="PYTHONPATH" Permanent="no" System="yes" Value="[INSTALLDIR]lib\site-packages\" />
 					</Component>
 					
 					<!-- C:\Program Files\OSSBuild\v<Version>\ -->
