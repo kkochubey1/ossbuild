@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -38,7 +37,6 @@ import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.gstreamer.Bin;
 import org.gstreamer.Buffer;
@@ -47,7 +45,6 @@ import org.gstreamer.BusSyncReply;
 import org.gstreamer.Caps;
 import org.gstreamer.Element;
 import org.gstreamer.ElementFactory;
-import org.gstreamer.Event;
 import org.gstreamer.Format;
 import org.gstreamer.Fraction;
 import org.gstreamer.GhostPad;
@@ -63,10 +60,9 @@ import org.gstreamer.State;
 import org.gstreamer.StateChangeReturn;
 import org.gstreamer.Structure;
 import org.gstreamer.event.BusSyncHandler;
+import org.gstreamer.event.StepEvent;
 import org.gstreamer.lowlevel.GstAPI.GstCallback;
-import org.gstreamer.lowlevel.GstNative;
-import org.gstreamer.lowlevel.annotations.Invalidate;
-import ossbuild.OSFamily;
+import org.gstreamer.swt.overlay.SWTOverlay;
 import ossbuild.StringUtil;
 import ossbuild.Sys;
 
@@ -75,27 +71,17 @@ import ossbuild.Sys;
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public class MediaComponent extends Canvas {
-	//<editor-fold defaultstate="collapsed" desc="API">
-	private static class StepEvent extends Event {
-		private static interface API extends com.sun.jna.Library {
-			Pointer gst_event_new_custom(int type, @Invalidate Structure structure);
-			Pointer ptr_gst_event_new_step(Format format, long amount, double rate, boolean flush, boolean intermediate);
-		}
-		private static final API gst = GstNative.load(API.class);
-
-		public StepEvent(Initializer init) {
-			super(init);
-		}
-
-		public StepEvent(Format format, long amount, double rate, boolean flush, boolean intermediate) {
-			//GstStructureAPI.GSTSTRUCTURE_API.
-			//gst.gst_event_new_custom((19 << 4) | (1 << 0));
-			super(initializer(gst.ptr_gst_event_new_step(format, amount, rate, flush, intermediate)));
-		}
-	}
-	//</editor-fold>
-
 	//<editor-fold defaultstate="collapsed" desc="Constants">
+	public static final Scheme[] VALID_SCHEMES = new Scheme[] {
+		  Scheme.HTTP
+		, Scheme.HTTPS
+		, Scheme.File
+		, Scheme.RTP
+		, Scheme.RTSP
+		, Scheme.TCP
+		, Scheme.UDP
+	};
+
 	public static final ExecutorService 
 		TASK_EXECUTOR
 	;
@@ -152,7 +138,7 @@ public class MediaComponent extends Canvas {
 	protected Element currentVideoSink;
 	protected Element currentAudioSink;
 	protected Element currentAudioVolumeElement;
-	protected CustomXOverlay xoverlay = null;
+	protected SWTOverlay xoverlay = null;
 
 	private boolean hasAudio = false;
 	private boolean hasVideo = false;
@@ -258,7 +244,7 @@ public class MediaComponent extends Canvas {
 	public MediaComponent(String videoElement, String audioElement, Composite parent, int style) {
 		super(parent, style | SWT.EMBEDDED | SWT.DOUBLE_BUFFERED);
 
-		this.nativeHandle = handle(this);
+		this.nativeHandle = SWTOverlay.handle(this);
 		this.display = getDisplay();
 		this.audioElement = audioElement;
 		this.videoElement = videoElement;
@@ -346,7 +332,20 @@ public class MediaComponent extends Canvas {
 	}
 	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="Dispose">
+	public void Dispose() {
+	}
+	//</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="Getters">
+	public Lock getMediaLock() {
+		return lock;
+	}
+
+	public Scheme[] getValidSchemes() {
+		return VALID_SCHEMES;
+	}
+	
 	public int getFullVideoWidth() {
 		return fullVideoWidth;
 	}
@@ -507,32 +506,6 @@ public class MediaComponent extends Canvas {
 		return true;
 	}
 	
-	//Courtesy gstreamer-java folks, XOverlay class
-	public static long handle(Control comp) {
-		//Style must be embedded
-		if (comp == null || ((comp.getStyle() | SWT.EMBEDDED) == 0))
-			return 0L;
-
-		if (Sys.isOSFamily(OSFamily.Windows)) {
-			return comp.handle;
-		} else {
-			try {
-				Class<? extends Control> compClass = comp.getClass();
-				Field embedHandleField = compClass.getField("embeddedHandle");
-				return embedHandleField.getInt(comp);
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				e.printStackTrace();
-			} catch (NoSuchFieldException e) {
-				e.printStackTrace();
-			}
-		}
-		return 0L;
-	}
-
 	public static IntBuffer convertToRGB(final ByteBuffer bb, final int width, final int height, final String colorspace, final String fourcc) {
 		if (!isValidColorspace(colorspace))
 			return null;
@@ -1638,7 +1611,7 @@ public class MediaComponent extends Canvas {
 		}
 
 		currentVideoSink = videoSink;
-		xoverlay = CustomXOverlay.wrap(videoSink);
+		xoverlay = SWTOverlay.wrap(videoSink);
 
 		return videoQueue.getStaticPad("sink");
 	}
