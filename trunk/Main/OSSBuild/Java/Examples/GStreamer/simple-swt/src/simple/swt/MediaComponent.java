@@ -18,6 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
@@ -82,7 +83,7 @@ public class MediaComponent extends Canvas {
 		, Scheme.UDP
 	};
 
-	public static final ExecutorService 
+	public static final ScheduledExecutorService
 		TASK_EXECUTOR
 	;
 
@@ -207,7 +208,7 @@ public class MediaComponent extends Canvas {
 		DEFAULT_VIDEO_ELEMENT = videoElement;
 		DEFAULT_AUDIO_ELEMENT = audioElement;
 
-		TASK_EXECUTOR = Executors.newFixedThreadPool(Math.min(2, Math.max(6, Runtime.getRuntime().availableProcessors())), new ThreadFactory() {
+		TASK_EXECUTOR = Executors.newScheduledThreadPool(Math.min(2, Math.max(6, Runtime.getRuntime().availableProcessors())), new ThreadFactory() {
 			private final AtomicInteger counter = new AtomicInteger(0);
 			@Override
 			public Thread newThread(final Runnable target) {
@@ -860,7 +861,7 @@ public class MediaComponent extends Canvas {
 			boolean ret = positionListeners.add(Listener);
 
 			if (ret && startTimer)
-				positionTimer = Gst.getScheduledExecutorService().scheduleAtFixedRate(positionUpdateRunnable, 1, 1, TimeUnit.SECONDS);
+				positionTimer = TASK_EXECUTOR.scheduleAtFixedRate(positionUpdateRunnable, 1, 1, TimeUnit.SECONDS);
 			return ret;
 		}
 	}

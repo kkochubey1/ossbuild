@@ -7,6 +7,9 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -14,13 +17,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 import org.gstreamer.Bus;
 import org.gstreamer.BusSyncReply;
 import org.gstreamer.Element;
 import org.gstreamer.ElementFactory;
-import org.gstreamer.Gst;
 import org.gstreamer.GstObject;
 import org.gstreamer.Message;
 import org.gstreamer.State;
@@ -28,8 +32,18 @@ import org.gstreamer.Structure;
 import org.gstreamer.elements.PlayBin2;
 import org.gstreamer.event.BusSyncHandler;
 import org.gstreamer.swt.overlay.SWTOverlay;
+import ossbuild.NativeResource;
+import ossbuild.Path;
 import ossbuild.StringUtil;
 import ossbuild.Sys;
+import ossbuild.extract.IResourcePackage;
+import ossbuild.extract.IResourceProcessor;
+import ossbuild.extract.ResourceCallback;
+import ossbuild.extract.ResourceProcessorFactory;
+import ossbuild.extract.ResourceProgressListenerAdapter;
+import ossbuild.extract.Resources;
+import ossbuild.extract.processors.FileProcessor;
+import ossbuild.init.SystemLoaderInitializeListenerAdapter;
 
 public class Main {
 
@@ -46,22 +60,187 @@ public class Main {
 		//Sys.setEnvironmentVariable("GST_DEBUG", "typefindfunctions*:4,jpeg*:4");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:2,GST_CAPS*:3,decodebin*:4,jpeg*:4,queue*:4,multipart*:4");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:2,GST_CAPS*:3,videotestsrc*:4");
-		Sys.initialize();
+		Sys.initializeRegistry();
+		Sys.loadNativeResources(NativeResource.Base);
+		Sys.loadNativeResources(NativeResource.XML);
+		Sys.loadNativeResources(NativeResource.GLib);
+		Sys.loadNativeResources(NativeResource.Images);
+		Sys.loadNativeResources(NativeResource.Fonts);
+		Sys.loadNativeResources(NativeResource.Graphics);
+		Sys.loadNativeResources(NativeResource.SWT);
+
+		final Display display = new Display();
+		final Shell shell = new Shell(display, SWT.NONE);
+
+		//Create splash screen
+		final Shell splash = new Shell(shell, SWT.NONE | SWT.ON_TOP);
+		final ProgressBar progress = new ProgressBar(splash, SWT.SMOOTH);
+		final Label title = new Label(splash, SWT.CENTER);
+		final Label label = new Label(splash, SWT.NORMAL);
+		final Rectangle area = display.getPrimaryMonitor().getClientArea();
+		
+		title.setText("OSSBuild GStreamer Example");
+		title.setFont(new Font(display, "DejaVu Sans", 16, SWT.BOLD));
+		title.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
+
+		label.setText("");
+		label.setFont(new Font(display, "DejaVu Sans", 7, SWT.NORMAL));
+		label.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
+		
+		title.setBounds(0, 10, 320, 50);
+		label.setBounds(10, 60, 300, 20);
+		progress.setBounds(10, 90, 300, 12);
+		splash.setBounds((area.width - 320) / 2, (area.height - 240) / 2, 320, 240);
+		splash.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		//splash.setBackgroundImage(new Image(display, Main.class.getResourceAsStream("/resources/media/splash.jpg")));
+		splash.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		splash.open();
+		
+		try {
+			Sys.loadNativeResourcesAsync(
+				NativeResource.GStreamer,
+
+				new ResourceProgressListenerAdapter() {
+					@Override
+					public void error(final Throwable exception, String message) {
+						display.asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								exception.printStackTrace();
+								MessageBox mb = new MessageBox(splash, SWT.ICON_ERROR | SWT.OK);
+								mb.setText("Error Initializing Application");
+								mb.setMessage("Unable to extract and load GStreamer libraries for this platform or JVM.\n\nError: " + exception.getMessage());
+								mb.open();
+							}
+						});
+					}
+
+					@Override
+					public void begin(int totalNumberOfResources, int totalNumberOfPackages, long totalNumberOfBytes, long startTime) {
+						display.asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								progress.setIndeterminate(false);
+							}
+						});
+					}
+
+					@Override
+					public void reportMessage(IResourceProcessor resource, IResourcePackage pkg, final String key, final String message) {
+						display.asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								if (!StringUtil.isNullOrEmpty(message))
+									label.setText(message);
+								else
+									label.setText(" ");
+							}
+						});
+					}
+
+					@Override
+					public void reportResourceComplete(IResourceProcessor resource, IResourcePackage pkg, final int totalNumberOfResources, final int totalNumberOfPackages, final long totalNumberOfBytes, final long numberOfBytesCompleted, final int numberOfResourcesCompleted, final int numberOfPackagesCompleted, final long startTime, final long duration, final String message) {
+						display.asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								double percent = ((double)numberOfResourcesCompleted / (double)totalNumberOfResources);
+								progress.setSelection(progress.getMinimum() + (int)(Math.abs(progress.getMaximum() - progress.getMinimum()) * percent));
+							}
+						});
+					}
+
+					@Override
+					public void end(boolean success, int totalNumberOfResources, int totalNumberOfPackages, long totalNumberOfBytes, long numberOfBytesCompleted, int numberOfResourcesCompleted, int numberOfPackagesCompleted, long startTime, long endTime) {
+						if (success) {
+							display.asyncExec(new Runnable() {
+								@Override
+								public void run() {
+									label.setText("Initializing system...");
+									progress.setIndeterminate(true);
+								}
+							});
+						} else {
+							display.asyncExec(new Runnable() {
+								@Override
+								public void run() {
+									splash.close();
+									splash.dispose();
+									System.exit(1);
+								}
+							});
+						}
+					}
+				},
+
+				new ResourceCallback() {
+					@Override
+					protected void completed(Resources rsrcs, Object t) {
+						try {
+							Sys.initializeSystem(new SystemLoaderInitializeListenerAdapter() {
+								@Override
+								public void afterAllSystemLoadersInitialized() {
+									Sys.cleanRegistry();
+
+									display.asyncExec(new Runnable() {
+										@Override
+										public void run() {
+											splash.close();
+											splash.dispose();
+
+											loadUI(display, shell);
+										}
+									});
+								}
+							});
+						} catch (Throwable tr) {
+						}
+					}
+				}
+			);
+		} catch(Throwable t) {
+			splash.close();
+			splash.dispose();
+			MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+			mb.setText("Error Initializing Application");
+			mb.setMessage("Unable to extract and load GStreamer libraries for this platform or JVM.");
+			mb.open();
+			shell.close();
+			shell.dispose();
+			System.exit(1);
+		}
+
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		display.dispose();
+		System.exit(0);
+	}
+
+	private static void loadUI(final Display display, final Shell topShell) {
+		final Shell dlg = new Shell(topShell, SWT.NORMAL | SWT.SHELL_TRIM);
+
+		dlg.addDisposeListener(new DisposeListener() {
+			@Override
+			public void widgetDisposed(DisposeEvent de) {
+				topShell.close();
+				topShell.dispose();
+			}
+		});
 
 		Button btn;
 		GridData gd;
 		MediaComponent comp;
-		final Display display = new Display();
-		final Shell shell = new Shell(display, SWT.NORMAL | SWT.SHELL_TRIM);
 
 		final GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 
-		shell.setText("OSSBuild GStreamer Examples :: SWT");
-		shell.setLayout(layout);
-		shell.setSize(500, 500);
+		dlg.setText("OSSBuild GStreamer Examples :: SWT");
+		dlg.setLayout(layout);
+		dlg.setSize(500, 500);
 
-		comp = new MediaComponent(shell, SWT.NONE);
+		comp = new MediaComponent(dlg, SWT.NONE);
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 //		final MediaComponent thisComp = comp;
@@ -94,19 +273,19 @@ public class Main {
 //			}
 //		});
 
-		comp = new MediaComponent(shell, SWT.NONE);
+		comp = new MediaComponent(dlg, SWT.NONE);
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		comp = new MediaComponent(shell, SWT.NONE);
+		comp = new MediaComponent(dlg, SWT.NONE);
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		comp = new MediaComponent(shell, SWT.NONE);
+		comp = new MediaComponent(dlg, SWT.NONE);
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		final Scale scale = new Scale(shell, SWT.HORIZONTAL);
+		final Scale scale = new Scale(dlg, SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		scale.setEnabled(false);
@@ -114,130 +293,136 @@ public class Main {
 		scale.setIncrement(100);
 		scale.setPageIncrement(1000);
 
-		final Button btnBrowse = new Button(shell, SWT.NORMAL);
+		final Button btnBrowse = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnBrowse.setLayoutData(gd);
 		btnBrowse.setText("Browse...");
 
-		final Button btnPlayMJPEG = new Button(shell, SWT.NORMAL);
+		final Button btnPlayMJPEG = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnPlayMJPEG.setLayoutData(gd);
 		btnPlayMJPEG.setText("Play MJPEG");
 
-		final Button btnPlay = new Button(shell, SWT.NORMAL);
+		final Button btnPlayExample = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayExample.setLayoutData(gd);
+		btnPlayExample.setText("Play Example");
+
+		final Button btnPlay = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnPlay.setLayoutData(gd);
 		btnPlay.setText("Play Again");
 
-		final Button btnPlayTestSignal = new Button(shell, SWT.NORMAL);
+		final Button btnPlayTestSignal = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnPlayTestSignal.setLayoutData(gd);
 		btnPlayTestSignal.setText("Play Test Signal");
 
-		final Button btnPlayBlackBurst = new Button(shell, SWT.NORMAL);
+		final Button btnPlayBlackBurst = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnPlayBlackBurst.setLayoutData(gd);
 		btnPlayBlackBurst.setText("Play Blackburst");
 
-		final Button btnPause = new Button(shell, SWT.NORMAL);
+		final Button btnPause = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnPause.setLayoutData(gd);
 		btnPause.setText("Pause");
 
-		final Button btnContinue = new Button(shell, SWT.NORMAL);
+		final Button btnContinue = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnContinue.setLayoutData(gd);
 		btnContinue.setText("Continue");
 
-		final Button btnStop = new Button(shell, SWT.NORMAL);
+		final Button btnStop = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnStop.setLayoutData(gd);
 		btnStop.setText("Stop");
 
-		final Button btnRateNormal = new Button(shell, SWT.NORMAL);
+		final Button btnRateNormal = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnRateNormal.setLayoutData(gd);
 		btnRateNormal.setText("Normal Playback Rate");
 
-		final Button btnRateDouble = new Button(shell, SWT.NORMAL);
+		final Button btnRateDouble = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnRateDouble.setLayoutData(gd);
 		btnRateDouble.setText("Double Playback Rate");
 
-		final Button btnRateBackwards = new Button(shell, SWT.NORMAL);
+		final Button btnRateBackwards = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnRateBackwards.setLayoutData(gd);
 		btnRateBackwards.setText("Play Backwards");
 
-		final Button btnRateDoubleBackwards = new Button(shell, SWT.NORMAL);
+		final Button btnRateDoubleBackwards = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnRateDoubleBackwards.setLayoutData(gd);
 		btnRateDoubleBackwards.setText("Double Play Backwards Rate");
 
-		final Button btnStepForward = new Button(shell, SWT.NORMAL);
+		final Button btnStepForward = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnStepForward.setLayoutData(gd);
 		btnStepForward.setText("Step Forward");
 
-		final Button btnStepBackward = new Button(shell, SWT.NORMAL);
+		final Button btnStepBackward = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnStepBackward.setLayoutData(gd);
 		btnStepBackward.setText("Step Backward");
 
-		final Button btnSnapshot = new Button(shell, SWT.NORMAL);
+		final Button btnSnapshot = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnSnapshot.setLayoutData(gd);
 		btnSnapshot.setText("Take Snapshot");
 
-		final Button btnSeekToBeginning = new Button(shell, SWT.NORMAL);
+		final Button btnSeekToBeginning = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnSeekToBeginning.setLayoutData(gd);
 		btnSeekToBeginning.setText("Seek to Beginning");
 
-		final Button btnMute = new Button(shell, SWT.NORMAL);
+		final Button btnMute = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnMute.setLayoutData(gd);
 		btnMute.setText("Mute/Unmute");
 
-		final Button btnVolume0 = new Button(shell, SWT.NORMAL);
+		final Button btnVolume0 = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnVolume0.setLayoutData(gd);
 		btnVolume0.setText("Volume 0%");
 
-		final Button btnVolume50 = new Button(shell, SWT.NORMAL);
+		final Button btnVolume50 = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnVolume50.setLayoutData(gd);
 		btnVolume50.setText("Volume 50%");
 
-		final Button btnVolume100 = new Button(shell, SWT.NORMAL);
+		final Button btnVolume100 = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnVolume100.setLayoutData(gd);
 		btnVolume100.setText("Volume 100%");
 
-		shell.open();
+		dlg.open();
 
 		final String fileName = "";
-		final FileDialog selFile = new FileDialog(shell, SWT.OPEN);
+		final FileDialog selFile = new FileDialog(dlg, SWT.OPEN);
 		selFile.setFilterNames(new String[]{"All Files (*.*)"});
 		selFile.setFilterExtensions(new String[]{"*.*"});
 //		if (StringUtil.isNullOrEmpty(fileName = selFile.open())) {
@@ -250,13 +435,13 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final String fileName;
-				final FileDialog selFile = new FileDialog(shell, SWT.OPEN);
+				final FileDialog selFile = new FileDialog(dlg, SWT.OPEN);
 				selFile.setFilterNames(new String[]{"All Files (*.*)"});
 				selFile.setFilterExtensions(new String[]{"*.*"});
 				if (StringUtil.isNullOrEmpty(fileName = selFile.open()))
 					return;
 				file[0] = new File(fileName);
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, file[0].toURI());
 					}
@@ -266,7 +451,7 @@ public class Main {
 		btnPlayMJPEG.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : shell.getChildren()) {
+				for (final Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						MediaComponent.execute(new Runnable() {
 							@Override
@@ -281,10 +466,32 @@ public class Main {
 				}
 			}
 		});
+		btnPlayExample.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					//Extract resource
+					Resources.extractAll(ossbuild.extract.Package.newInstance("resources.media", Path.nativeResourcesDirectory, new FileProcessor(false, "example.mov"))).get();
+				} catch(Throwable t) {
+				}
+
+				file[0] = Path.combine(Path.nativeResourcesDirectory, "example.mov");
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof MediaComponent) {
+						MediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, file[0].toURI());
+							}
+						});
+					}
+				}
+			}
+		});
 		btnPlayBlackBurst.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : shell.getChildren()) {
+				for (final Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						MediaComponent.execute(new Runnable() {
 							@Override
@@ -299,7 +506,7 @@ public class Main {
 		btnPlayTestSignal.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : shell.getChildren()) {
+				for (final Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						MediaComponent.execute(new Runnable() {
 							@Override
@@ -314,7 +521,7 @@ public class Main {
 		btnPlay.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : shell.getChildren()) {
+				for (final Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						MediaComponent.execute(new Runnable() {
 							@Override
@@ -329,7 +536,7 @@ public class Main {
 		btnPause.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : shell.getChildren()) {
+				for (final Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						MediaComponent.execute(new Runnable() {
 							@Override
@@ -344,7 +551,7 @@ public class Main {
 		btnContinue.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : shell.getChildren()) {
+				for (final Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						MediaComponent.execute(new Runnable() {
 							@Override
@@ -359,7 +566,7 @@ public class Main {
 		btnStop.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : shell.getChildren()) {
+				for (final Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						MediaComponent.execute(new Runnable() {
 							@Override
@@ -374,7 +581,7 @@ public class Main {
 		btnRateNormal.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).adjustPlaybackRate(1.0D);
 					}
@@ -384,7 +591,7 @@ public class Main {
 		btnRateDouble.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).adjustPlaybackRate(2.0D);
 					}
@@ -394,7 +601,7 @@ public class Main {
 		btnRateBackwards.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).adjustPlaybackRate(-1.0D);
 					}
@@ -404,7 +611,7 @@ public class Main {
 		btnRateDoubleBackwards.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).adjustPlaybackRate(-2.0D);
 					}
@@ -414,7 +621,7 @@ public class Main {
 		btnStepForward.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).stepForward();
 					}
@@ -424,7 +631,7 @@ public class Main {
 		btnStepBackward.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).stepBackward();
 					}
@@ -434,7 +641,7 @@ public class Main {
 		btnSeekToBeginning.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).seekToBeginning();
 					}
@@ -452,7 +659,7 @@ public class Main {
 		btnMute.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).mute();
 					}
@@ -462,7 +669,7 @@ public class Main {
 		btnVolume0.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).adjustVolume(0);
 					}
@@ -472,7 +679,7 @@ public class Main {
 		btnVolume50.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).adjustVolume(50);
 					}
@@ -482,7 +689,7 @@ public class Main {
 		btnVolume100.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).adjustVolume(100);
 					}
@@ -566,12 +773,12 @@ public class Main {
 						public void run() {
 							if (scale.isDisposed())
 								return;
-							
+
 							if (duration != lastDuration) {
 								lastDuration = duration;
 								if (duration > 0) {
 									int totalSeconds = (int)TimeUnit.MILLISECONDS.toSeconds(duration);
-									
+
 									scale.setEnabled(true);
 									scale.setMinimum(0);
 									scale.setMaximum(totalSeconds);
@@ -592,7 +799,7 @@ public class Main {
 										scale.setPageIncrement(60 * 60 * 4);
 								}
 							}
-							
+
 							if (position != lastPosition) {
 								lastPosition = position;
 								scale.setSelection((int)TimeUnit.MILLISECONDS.toSeconds(position) + scale.getMinimum());
@@ -607,30 +814,13 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final long position = TimeUnit.SECONDS.toNanos(scale.getSelection());
-				for (Control c : shell.getChildren()) {
+				for (Control c : dlg.getChildren()) {
 					if (c instanceof MediaComponent) {
 						((MediaComponent) c).seek(position);
 					}
 				}
 			}
 		});
-
-//		for (Control c : shell.getChildren()) {
-//			if (c instanceof MediaComponent) {
-//				//((MediaComponent) c).play(false, 0, MediaComponent.DEFAULT_FPS, file[0].toURI());
-//				((MediaComponent)c).play("http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
-//			}
-//		}
-
-		//PlayBin2 playbin = new PlayBin2((String)null);
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		display.dispose();
-
-		Gst.quit();
 	}
 
 	public static class MediaComponentPlayBin2 extends Composite {
