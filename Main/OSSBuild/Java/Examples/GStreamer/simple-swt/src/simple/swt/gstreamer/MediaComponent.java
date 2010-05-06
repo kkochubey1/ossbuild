@@ -141,6 +141,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 	private boolean hasAudio = false;
 	private boolean hasVideo = false;
+	private boolean hasMultipartDemux = false;
 	private int videoWidth = 0;
 	private int videoHeight = 0;
 	private float actualFPS;
@@ -151,6 +152,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	private boolean maintainAspectRatio = true;
 	private double currentRate = DEFAULT_RATE;
 	private long bufferSize = DEFAULT_BUFFER_SIZE;
+	private long lastPosition = 0L;
+	private long lastDuration = 0L;
 	private MediaType mediaType = MediaType.Unknown;
 	private ImageData singleImage = null;
 	private int volume = 100;
@@ -223,36 +226,9 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			}
 		};
 		this.positionUpdateRunnable = new Runnable() {
-			private long lastPosition = 0L;
-			private long lastDuration = 0L;
-
 			@Override
 			public void run() {
-				if (!emitPositionUpdates)
-					return;
-				if (lock.tryLock()) {
-					try {
-						if (pipeline != null) {
-							final long position = pipeline.queryPosition(TimeUnit.MILLISECONDS);
-							final long duration = Math.max(position, pipeline.queryDuration(TimeUnit.MILLISECONDS));
-							final int percent = (duration > 0 ? Math.max(0, Math.min(100, (int)(((double)position / (double)duration) * 100.0D))) : -1);
-							final boolean positionChanged = (position != lastPosition && position >= 0L);
-							final boolean last = (position <= 0L && lastPosition > 0L);
-
-							if (last && positionChanged && !currentLiveSource)
-								firePositionChanged(100, lastDuration, lastDuration);
-
-							lastPosition = position;
-							lastDuration = duration;
-							if (positionChanged && !currentLiveSource)
-								firePositionChanged(percent, position, duration);
-						} else {
-							lastPosition = 0L;
-						}
-					} finally {
-						lock.unlock();
-					}
-				}
+				onPositionUpdate();
 			}
 		};
 		this.xoverlayRunnable = new Runnable() {
@@ -376,7 +352,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 	@Override
 	public boolean isSeekable() {
-		return !currentLiveSource && emitPositionUpdates && mediaType != MediaType.Image && mediaType != MediaType.Unknown;
+		return !currentLiveSource && emitPositionUpdates && !hasMultipartDemux && mediaType != MediaType.Image && mediaType != MediaType.Unknown;
 	}
 
 	@Override
@@ -480,8 +456,6 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	public IMediaRequest getMediaRequest() {
 		lock.lock();
 		try {
-			if (pipeline == null)
-				return null;
 			return mediaRequest;
 		} finally {
 			lock.unlock();
@@ -1101,16 +1075,20 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		try {
 			if (isLiveSource())
 				return true;
-			return (changeState(State.READY, new Runnable() {
-						@Override
-						public void run() {
-							changeState(State.PLAYING);
+			if (!seek(currentRate, 0L)) {
+				return (changeState(State.READY, new Runnable() {
+							@Override
+							public void run() {
+								onPositionUpdate();
+								changeState(State.PLAYING);
+							}
 						}
-					}
-				)
-				!=
-				StateChangeReturn.FAILURE
-			);
+					)
+					!=
+					StateChangeReturn.FAILURE
+				);
+			}
+			return true;
 		} finally {
 			lock.unlock();
 		}
@@ -1124,6 +1102,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			return (changeState(State.READY, new Runnable() {
 						@Override
 						public void run() {
+							onPositionUpdate();
 							changeState(State.PAUSED);
 						}
 					}
@@ -1225,8 +1204,10 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop);
 			changeState(State.PLAYING);
 
-			if (success)
+			if (success) {
 				currentRate = rate;
+				onPositionUpdate();
+			}
 
 			return success;
 		} finally {
@@ -1348,6 +1329,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 				newPipeline.setState(State.NULL);
 			} while(newPipeline.getState() != State.NULL);
 			cleanup(newPipeline);
+			newPipeline.dispose();
+			pipeline = null;
 			asyncRedraw();
 		}
 	}
@@ -1432,120 +1415,96 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		//    dec. ! [ queue ! audioconvert ! audioresample ! autoaudiosink ]
 		//    dec. ! [ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
 
-		final boolean firstTime = (pipeline == null);
-		final Pipeline newPipeline = (!firstTime ? pipeline : new Pipeline("pipeline"));
-		final Bin existingbin = (Bin)newPipeline.getElementByName("uridecodebin");
-		final boolean recreateBin = (existingbin == null);
-		final Bin uridecodebin = (!recreateBin ? existingbin : (Bin)ElementFactory.make("uridecodebin", "uridecodebin"));
+		final Pipeline newPipeline = new Pipeline("pipeline");
+		final Bin uridecodebin = (Bin)ElementFactory.make("uridecodebin", "uridecodebin");
 		
 		uridecodebin.set("use-buffering", false);
 		uridecodebin.set("download", false);
 		uridecodebin.set("buffer-duration", TimeUnit.MILLISECONDS.toNanos(500L));
 		uridecodebin.set("uri", uriString(newRequest.getURI()));
 
-		if (recreateBin) {
-			newPipeline.add(uridecodebin);
+		newPipeline.add(uridecodebin);
 
-			//<editor-fold defaultstate="collapsed" desc="UriDecodeBin Signals">
-			uridecodebin.connect(new Element.PAD_ADDED() {
-				@Override
-				public void padAdded(Element elem, Pad pad) {
-					onPadAdded(newRequest, newPipeline, uridecodebin, pad);
-				}
-			});
-			uridecodebin.connect(new Bin.ELEMENT_ADDED() {
-				@Override
-				public void elementAdded(Bin bin, Element element) {
-					//<editor-fold defaultstate="collapsed" desc="Validate arguments">
-					if (element == null)
-						return;
-					final String factoryName = element.getFactory().getName();
-					if (StringUtil.isNullOrEmpty(factoryName))
-						return;
-					//</editor-fold>
+		//<editor-fold defaultstate="collapsed" desc="UriDecodeBin Signals">
+		uridecodebin.connect(new Element.PAD_ADDED() {
+			@Override
+			public void padAdded(Element elem, Pad pad) {
+				onPadAdded(newRequest, newPipeline, uridecodebin, pad);
+			}
+		});
+		uridecodebin.connect(new Bin.ELEMENT_ADDED() {
+			@Override
+			public void elementAdded(Bin bin, Element element) {
+				//<editor-fold defaultstate="collapsed" desc="Validate arguments">
+				if (element == null)
+					return;
+				final String factoryName = element.getFactory().getName();
+				if (StringUtil.isNullOrEmpty(factoryName))
+					return;
+				//</editor-fold>
 
-					//<editor-fold defaultstate="collapsed" desc="Connect to decodebin">
-					if (factoryName.startsWith("decodebin")) {
-						final Bin decodebin = (Bin)element;
-						decodebin.connect(new Bin.ELEMENT_ADDED() {
-							@Override
-							public void elementAdded(Bin bin, Element element) {
-								onDecodeBinElementAdded(newPipeline, uridecodebin, decodebin, element);
-							}
-						});
-					}
-					//</editor-fold>
-
-					onUriDecodeBinElementAdded(newPipeline, uridecodebin, element);
-				}
-			});
-			//</editor-fold>
-		}
-
-		if (firstTime) {
-			//<editor-fold defaultstate="collapsed" desc="Bus Signals">
-			final Bus bus = newPipeline.getBus();
-			bus.connect(new Bus.STATE_CHANGED() {
-				@Override
-				public void stateChanged(GstObject source, State oldState, State newState, State pendingState) {
-					if (source != newPipeline)
-						return;
-					onStateChanged(newPipeline, uridecodebin, oldState, newState, pendingState);
-				}
-			});
-			bus.connect(new Bus.ERROR() {
-				@Override
-				public void errorMessage(GstObject source, int code, String message) {
-					resetPipeline(newPipeline);
-					fireHandleError(newRequest, ErrorType.fromNativeValue(code), code, message);
-				}
-			});
-			bus.connect(new Bus.SEGMENT_DONE() {
-				@Override
-				public void segmentDone(GstObject source, Format format, long position) {
-					if (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount)) {
-						++numberOfRepeats;
-						if (!seekToBeginning()) {
-							stop();
-							unpause();
+				//<editor-fold defaultstate="collapsed" desc="Connect to decodebin">
+				if (factoryName.startsWith("decodebin")) {
+					final Bin decodebin = (Bin)element;
+					decodebin.connect(new Bin.ELEMENT_ADDED() {
+						@Override
+						public void elementAdded(Bin bin, Element element) {
+							onDecodeBinElementAdded(newPipeline, uridecodebin, decodebin, element);
 						}
-						return;
-					}
-					numberOfRepeats = 0;
-					pipeline.setState(State.READY);
-					display.asyncExec(redrawRunnable);
+					});
 				}
-			});
-			bus.connect(new Bus.EOS() {
-				@Override
-				public void endOfStream(GstObject source) {
-					onEOS(newPipeline);
-				}
-			});
-			bus.connect(new Bus.BUFFERING() {
-				@Override
-				public void bufferingData(GstObject source, int percent) {
-					if (!currentLiveSource) {
-						if (percent < 100) {
-							pipeline.setState(State.PAUSED);
-						} else if (percent >= 100) {
-							pipeline.setState(State.PLAYING);
-						}
-					}
-				}
-			});
-			bus.setSyncHandler(new BusSyncHandler() {
-				@Override
-				public BusSyncReply syncMessage(Message msg) {
-					Structure s = msg.getStructure();
-					if (s == null || !s.hasName("prepare-xwindow-id"))
-						return BusSyncReply.PASS;
-					xoverlay.setWindowID(nativeHandle);
-					return BusSyncReply.DROP;
-				}
-			});
-			//</editor-fold>
-		}
+				//</editor-fold>
+
+				onUriDecodeBinElementAdded(newPipeline, uridecodebin, element);
+			}
+		});
+		//</editor-fold>
+
+		//<editor-fold defaultstate="collapsed" desc="Bus Signals">
+		final Bus bus = newPipeline.getBus();
+		bus.connect(new Bus.STATE_CHANGED() {
+			@Override
+			public void stateChanged(GstObject source, State oldState, State newState, State pendingState) {
+				if (source != newPipeline)
+					return;
+				onStateChanged(newPipeline, uridecodebin, oldState, newState, pendingState);
+			}
+		});
+		bus.connect(new Bus.ERROR() {
+			@Override
+			public void errorMessage(GstObject source, int code, String message) {
+				onError(newRequest, newPipeline, code, message);
+			}
+		});
+		bus.connect(new Bus.SEGMENT_DONE() {
+			@Override
+			public void segmentDone(GstObject source, Format format, long position) {
+				onSegmentDone(newPipeline);
+			}
+		});
+		bus.connect(new Bus.EOS() {
+			@Override
+			public void endOfStream(GstObject source) {
+				onEOS(newPipeline);
+			}
+		});
+		bus.connect(new Bus.BUFFERING() {
+			@Override
+			public void bufferingData(GstObject source, int percent) {
+				onBuffering(newPipeline, percent);
+			}
+		});
+		bus.setSyncHandler(new BusSyncHandler() {
+			@Override
+			public BusSyncReply syncMessage(Message msg) {
+				Structure s = msg.getStructure();
+				if (s == null || !s.hasName("prepare-xwindow-id"))
+					return BusSyncReply.PASS;
+				xoverlay.setWindowID(nativeHandle);
+				return BusSyncReply.DROP;
+			}
+		});
+		//</editor-fold>
 
 		return newPipeline;
 	}
@@ -1703,9 +1662,6 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 	protected void onDecodeBinElementAdded(final Pipeline newPipeline, final Bin uridecodebin, final Bin decodebin, final Element element) {
 		//<editor-fold defaultstate="collapsed" desc="Validate arguments">
-		//We only care to modify the multipartdemux if we're using a live stream
-		if (!currentLiveSource)
-			return;
 		//Determine if what we're looking at is a multipartdemux element
 		final String factoryName = element.getFactory().getName();
 		if (!"multipartdemux".equalsIgnoreCase(factoryName))
@@ -1713,6 +1669,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		//</editor-fold>
 
 		try {
+			hasMultipartDemux = true;
+			
 			//Informs multipartdemux elements that it needs to emit the pad added signal as
 			//soon as it links the pads. Otherwise it could be some time before it happens.
 			//This was primarily added to instantly connect to motion jpeg digital cameras
@@ -1752,7 +1710,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			newPipeline.add(audioBin);
 			pad.link(audioBin.getStaticPad("sink"));
 
-			audioBin.setState(State.PAUSED);
+			audioBin.setState(State.PLAYING);
 		} else if (padCaps.startsWith("video/")) {
 			disposeVideoBin(newPipeline);
 			
@@ -1766,7 +1724,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			newPipeline.add(videoBin);
 			pad.link(videoBin.getStaticPad("sink"));
 
-			videoBin.setState(State.PAUSED);
+			videoBin.setState(State.PLAYING);
 		}
 	}
 
@@ -1804,8 +1762,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		switch (newState) {
 			case PLAYING:
 				if (currentState == State.NULL || currentState == State.READY || currentState == State.PAUSED) {
-					fireMediaEventPlayed();
 					currentState = State.PLAYING;
+					fireMediaEventPlayed();
 				}
 				break;
 			case PAUSED:
@@ -1839,6 +1797,20 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		//</editor-fold>
 	}
 
+	protected void onBuffering(final Pipeline newPipeline, int percent) {
+		if (!currentLiveSource) {
+			if (percent < 100) {
+				changeState(newPipeline, State.PAUSED);
+			} else if (percent >= 100) {
+				changeState(newPipeline, State.PLAYING);
+			}
+		}
+	}
+	
+	protected void onSegmentDone(final Pipeline newPipeline) {
+		onEOS(newPipeline);
+	}
+	
 	protected void onEOS(final Pipeline newPipeline) {
 		if (mediaType != MediaType.Image && (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount))) {
 			++numberOfRepeats;
@@ -1851,6 +1823,42 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		numberOfRepeats = 0;
 		changeState(newPipeline, (mediaType != MediaType.Image ? State.READY : State.PAUSED));
 		asyncRedraw();
+	}
+
+	protected void onPositionUpdate() {
+		if (!emitPositionUpdates)
+			return;
+		if (lock.tryLock()) {
+			try {
+				if (pipeline != null) {
+					if (!isSeekable())
+						return;
+
+					final long position = pipeline.queryPosition(TimeUnit.MILLISECONDS);
+					final long duration = Math.max(position, pipeline.queryDuration(TimeUnit.MILLISECONDS));
+					final int percent = (duration > 0 ? Math.max(0, Math.min(100, (int)(((double)position / (double)duration) * 100.0D))) : -1);
+					final boolean positionChanged = (position != lastPosition && position >= 0L);
+					final boolean last = (position <= 0L && lastPosition > 0L);
+
+					if (last && positionChanged && !currentLiveSource)
+						firePositionChanged(100, lastDuration, lastDuration);
+
+					lastPosition = position;
+					lastDuration = duration;
+					if (positionChanged && !currentLiveSource)
+						firePositionChanged(percent, position, duration);
+				} else {
+					lastPosition = 0L;
+				}
+			} finally {
+				lock.unlock();
+			}
+		}
+	}
+
+	protected void onError(final IMediaRequest newRequest, final Pipeline newPipeline, int code, String message) {
+		resetPipeline(newPipeline);
+		fireHandleError(newRequest, ErrorType.fromNativeValue(code), code, message);
 	}
 	//</editor-fold>
 
@@ -1875,6 +1883,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			//Reset these values
 			hasVideo = false;
 			hasAudio = false;
+			hasMultipartDemux = false;
 			videoWidth = 0;
 			videoHeight = 0;
 			numberOfRepeats = 0;
@@ -1889,10 +1898,10 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			//Save these values
 			currentLiveSource = false;
 			currentRepeatCount = 0;
-			//currentRate = 1.0D;
+			currentRate = 1.0D;
 			mediaRequest = newRequest;
 
-			fireMediaEventPlayRequested();
+			fireMediaEventPlayRequested(newRequest);
 
 			final float checked_fps = (newRequest.getFPS() >= IMediaRequest.MINIMUM_FPS ? newRequest.getFPS() : IMediaRequest.DEFAULT_FPS);
 
@@ -1935,24 +1944,19 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			bus.connect(new Bus.ERROR() {
 				@Override
 				public void errorMessage(GstObject source, int code, String message) {
-					//System.out.println("Error: code=" + code + " message=" + message);
-					fireHandleError(mediaRequest, ErrorType.fromNativeValue(code), code, message);
+					onError(newRequest, newPipeline, code, message);
 				}
 			});
 			bus.connect(new Bus.SEGMENT_DONE() {
 				@Override
 				public void segmentDone(GstObject source, Format format, long position) {
-					numberOfRepeats = 0;
-					pipeline.setState(State.READY);
-					display.asyncExec(redrawRunnable);
+					onSegmentDone(newPipeline);
 				}
 			});
 			bus.connect(new Bus.EOS() {
 				@Override
 				public void endOfStream(GstObject source) {
-					numberOfRepeats = 0;
-					pipeline.setState(State.READY);
-					display.asyncExec(redrawRunnable);
+					onEOS(newPipeline);
 				}
 			});
 			bus.setSyncHandler(new BusSyncHandler() {
@@ -2000,6 +2004,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			//Reset these values
 			hasVideo = false;
 			hasAudio = false;
+			hasMultipartDemux = false;
 			videoWidth = 0;
 			videoHeight = 0;
 			numberOfRepeats = 0;
@@ -2016,22 +2021,25 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			currentRepeatCount = request.getRepeatCount();
 			maintainAspectRatio = request.isAspectRatioMaintained();
 
-			//currentRate = 1.0D;
+			currentRate = 1.0D;
 			emitPositionUpdates = true;
 			
-			fireMediaEventPlayRequested();
+			fireMediaEventPlayRequested(request);
 
-			pipeline = createPipeline(request);
+			final Pipeline newPipeline = createPipeline(request);
+			pipeline = newPipeline;
 
 			//Start playing
 			//Attempts to ensure that we're using segment seeks (which signals SEGMENT_DONE) to look for repeats instead of EOS
 			//pipeline.seek(1.0D, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, 0L, SeekType.SET, -1L);
-			changeState(pipeline, State.PAUSED, new Runnable() {
+			changeState(newPipeline, State.PAUSED, new Runnable() {
 				@Override
 				public void run() {
 					asyncRedraw();
-					adjustPlaybackRate(currentRate);
-					changeState(pipeline, State.PLAYING);
+					//Seek using segments so we have a more graceful transition b/t plays
+					if (isSeekable())
+						seek(currentRate, 0L);
+					changeState(newPipeline, State.PLAYING);
 				}
 			});
 			return true;

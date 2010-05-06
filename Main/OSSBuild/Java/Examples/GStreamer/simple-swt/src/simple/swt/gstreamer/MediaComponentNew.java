@@ -1122,7 +1122,7 @@ public abstract class MediaComponentNew extends SWTMediaComponent {
 			currentRate = 1.0D;
 			mediaRequest = newRequest;
 
-			fireMediaEventPlayRequested();
+			fireMediaEventPlayRequested(newRequest);
 
 			final float checked_fps = (newRequest.getFPS() >= IMediaRequest.MINIMUM_FPS ? newRequest.getFPS() : IMediaRequest.DEFAULT_FPS);
 			final Pipeline newPipeline = new Pipeline("pipeline");
@@ -1267,7 +1267,7 @@ public abstract class MediaComponentNew extends SWTMediaComponent {
 			currentRate = 1.0D;
 			emitPositionUpdates = true;
 			
-			fireMediaEventPlayRequested();
+			fireMediaEventPlayRequested(request);
 
 			pipeline = createPipeline(request);
 
