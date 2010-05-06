@@ -1,5 +1,5 @@
 
-package simple.swt;
+package simple.swt.gstreamer;
 
 /**
  *

@@ -1,23 +1,24 @@
 
-package simple.swt;
+package simple.media;
 
 import ossbuild.StringUtil;
 
+
 /**
- *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public enum Scheme {
-	  Unknown   ("Unknown",                            ""     )
+	  Unknown ("Unknown",                            ""     )
 
-	, File      ("Local File",                         "file" )
-	, Jar       ("Java Jar File",                      "jar"  )
-	, HTTP      ("HyperText Transfer Protocol",        "http" )
-	, HTTPS     ("Secure HyperText Transfer Protocol", "https")
-	, RTP       ("Real Time Protocol",                 "rtp"  )
-	, RTSP      ("Real Time Streaming Protocol",       "rtsp" )
-	, UDP       ("UDP",                                "udp"  )
-	, TCP       ("Transport Control Protocol",         "tcp"  )
+	, File    ("Local File",                         "file" )
+	, Jar     ("Java Jar File",                      "jar"  )
+	, HTTP    ("HyperText Transfer Protocol",        "http" )
+	, HTTPS   ("Secure HyperText Transfer Protocol", "https")
+	, RTP     ("Real Time Protocol",                 "rtp"  )
+	, RTSP    ("Real Time Streaming Protocol",       "rtsp" )
+	, UDP     ("UDP",                                "udp"  )
+	, TCP     ("Transport Control Protocol",         "tcp"  )
+	, Local   ("Local Source",                       "local")
 	;
 
 	//<editor-fold defaultstate="collapsed" desc="Variables">
@@ -26,7 +27,7 @@ public enum Scheme {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
-	Scheme(final String title, final String... validPrefixes) {
+	private Scheme(final String title, final String... validPrefixes) {
 		this.title = title;
 		this.validPrefixes = validPrefixes;
 	}

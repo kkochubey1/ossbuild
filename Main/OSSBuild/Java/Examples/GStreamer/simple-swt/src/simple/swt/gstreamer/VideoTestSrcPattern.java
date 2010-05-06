@@ -1,5 +1,5 @@
 
-package simple.swt;
+package simple.swt.gstreamer;
 
 import org.gstreamer.lowlevel.EnumMapper;
 import org.gstreamer.lowlevel.IntegerEnum;

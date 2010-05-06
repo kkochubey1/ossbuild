@@ -2,18 +2,20 @@ package simple.swt;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -21,17 +23,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
-import org.gstreamer.Bus;
-import org.gstreamer.BusSyncReply;
-import org.gstreamer.Element;
-import org.gstreamer.ElementFactory;
-import org.gstreamer.GstObject;
-import org.gstreamer.Message;
-import org.gstreamer.State;
-import org.gstreamer.Structure;
-import org.gstreamer.elements.PlayBin2;
-import org.gstreamer.event.BusSyncHandler;
-import org.gstreamer.swt.overlay.SWTOverlay;
 import ossbuild.NativeResource;
 import ossbuild.Path;
 import ossbuild.StringUtil;
@@ -39,11 +30,16 @@ import ossbuild.Sys;
 import ossbuild.extract.IResourcePackage;
 import ossbuild.extract.IResourceProcessor;
 import ossbuild.extract.ResourceCallback;
-import ossbuild.extract.ResourceProcessorFactory;
 import ossbuild.extract.ResourceProgressListenerAdapter;
 import ossbuild.extract.Resources;
 import ossbuild.extract.processors.FileProcessor;
 import ossbuild.init.SystemLoaderInitializeListenerAdapter;
+import simple.media.IMediaPlayer;
+import simple.media.IMediaRequest;
+import simple.media.events.IAudioListener;
+import simple.media.events.IMediaEventListener;
+import simple.media.events.IPositionListener;
+import simple.swt.gstreamer.GstMediaComponent;
 
 public class Main {
 
@@ -51,6 +47,12 @@ public class Main {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
+		ConsoleHandler handler = new ConsoleHandler();
+		Logger logger = Logger.getLogger(org.gstreamer.lowlevel.NativeObject.class.getName());
+		handler.setLevel(Level.SEVERE);
+		logger.setLevel(Level.SEVERE);
+		logger.addHandler(handler);
+		
 		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_STATES:5");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:5");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_EVENT:5");
@@ -231,16 +233,16 @@ public class Main {
 
 		Button btn;
 		GridData gd;
-		MediaComponent comp;
+		GstMediaComponent comp;
 
 		final GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 
 		dlg.setText("OSSBuild GStreamer Examples :: SWT");
 		dlg.setLayout(layout);
-		dlg.setSize(500, 500);
+		dlg.setSize(700, 700);
 
-		comp = new MediaComponent(dlg, SWT.NONE);
+		comp = new GstMediaComponent(dlg, SWT.NONE);
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 //		final MediaComponent thisComp = comp;
@@ -273,17 +275,17 @@ public class Main {
 //			}
 //		});
 
-		comp = new MediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		comp = new MediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		comp = new MediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		final Scale scale = new Scale(dlg, SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -298,6 +300,12 @@ public class Main {
 		//gd.horizontalSpan = 2;
 		btnBrowse.setLayoutData(gd);
 		btnBrowse.setText("Browse...");
+
+		final Button btnPlayImage = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayImage.setLayoutData(gd);
+		btnPlayImage.setText("Play Image");
 
 		final Button btnPlayMJPEG = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -419,6 +427,12 @@ public class Main {
 		btnVolume100.setLayoutData(gd);
 		btnVolume100.setText("Volume 100%");
 
+		final Button btnGarbageCollect = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnGarbageCollect.setLayoutData(gd);
+		btnGarbageCollect.setText("Garbage Collect");
+
 		dlg.open();
 
 		final String fileName = "";
@@ -442,8 +456,8 @@ public class Main {
 					return;
 				file[0] = new File(fileName);
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, file[0].toURI());
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).play(false, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
 					}
 				}
 			}
@@ -452,14 +466,39 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (final Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						MediaComponent.execute(new Runnable() {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
 							@Override
 							public void run() {
-								//((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
-								((MediaComponent) c).play(true, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1");
-								//((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "rtsp://s-0-1.sg.softspb.com:554/test/test.mp4");
-								//((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, "http://users.design.ucla.edu/~acolubri/test/gstreamer/station-svq1.mov");
+								//((MediaComponent) c).play(true, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
+								((GstMediaComponent) c).play(true, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1");
+								//((MediaComponent) c).play(false, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, "rtsp://s-0-1.sg.softspb.com:554/test/test.mp4");
+								//((MediaComponent) c).play(false, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, "http://users.design.ucla.edu/~acolubri/test/gstreamer/station-svq1.mov");
+							}
+						});
+					}
+				}
+			}
+		});
+		btnPlayImage.addSelectionListener(new SelectionAdapter() {
+			int index = 0;
+			String[] images = new String[] {
+				  "http://arsdictum.com/images/madonastann.jpg"
+				, "http://yeinjee.com/travel/wp-content/uploads/2007/08/paris-notre-dame-top.jpg"
+				, "http://upload.wikimedia.org/wikipedia/commons/7/7a/Basketball.png"
+				, "http://www.google.com/intl/en_ALL/images/srpr/logo1w.png"
+			};
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, IMediaRequest.DEFAULT_FPS, images[index]);
+								if (++index >= images.length)
+									index = 0;
 							}
 						});
 					}
@@ -477,11 +516,11 @@ public class Main {
 
 				file[0] = Path.combine(Path.nativeResourcesDirectory, "example.mov");
 				for (final Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						MediaComponent.execute(new Runnable() {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
 							@Override
 							public void run() {
-								((MediaComponent) c).play(false, MediaComponent.DEFAULT_REPEAT_COUNT, MediaComponent.DEFAULT_FPS, file[0].toURI());
+								((GstMediaComponent) c).play(false, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
 							}
 						});
 					}
@@ -492,11 +531,11 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (final Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						MediaComponent.execute(new Runnable() {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
 							@Override
 							public void run() {
-								((MediaComponent) c).playBlackBurst();
+								((GstMediaComponent) c).playBlackBurst();
 							}
 						});
 					}
@@ -507,11 +546,11 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (final Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						MediaComponent.execute(new Runnable() {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
 							@Override
 							public void run() {
-								((MediaComponent) c).playTestSignal();
+								((GstMediaComponent) c).playTestSignal();
 							}
 						});
 					}
@@ -522,11 +561,11 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (final Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						MediaComponent.execute(new Runnable() {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
 							@Override
 							public void run() {
-								((MediaComponent) c).play(false, 1/*MediaComponent.REPEAT_FOREVER/**/, MediaComponent.DEFAULT_FPS, file[0].toURI());
+								((GstMediaComponent) c).play(false, 1/*IMediaRequest.REPEAT_FOREVER/**/, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
 							}
 						});
 					}
@@ -537,11 +576,11 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (final Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						MediaComponent.execute(new Runnable() {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
 							@Override
 							public void run() {
-								((MediaComponent) c).pause();
+								((GstMediaComponent) c).pause();
 							}
 						});
 					}
@@ -552,11 +591,11 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (final Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						MediaComponent.execute(new Runnable() {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
 							@Override
 							public void run() {
-								((MediaComponent) c).unpause();
+								((GstMediaComponent) c).unpause();
 							}
 						});
 					}
@@ -567,11 +606,11 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (final Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						MediaComponent.execute(new Runnable() {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
 							@Override
 							public void run() {
-								((MediaComponent) c).stop();
+								((GstMediaComponent) c).stop();
 							}
 						});
 					}
@@ -582,8 +621,8 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).adjustPlaybackRate(1.0D);
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustPlaybackRate(1.0D);
 					}
 				}
 			}
@@ -592,8 +631,8 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).adjustPlaybackRate(2.0D);
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustPlaybackRate(2.0D);
 					}
 				}
 			}
@@ -602,8 +641,8 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).adjustPlaybackRate(-1.0D);
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustPlaybackRate(-1.0D);
 					}
 				}
 			}
@@ -612,8 +651,8 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).adjustPlaybackRate(-2.0D);
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustPlaybackRate(-2.0D);
 					}
 				}
 			}
@@ -622,8 +661,8 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).stepForward();
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).stepForward();
 					}
 				}
 			}
@@ -632,8 +671,8 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).stepBackward();
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).stepBackward();
 					}
 				}
 			}
@@ -642,13 +681,13 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).seekToBeginning();
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).seekToBeginning();
 					}
 				}
 			}
 		});
-		final MediaComponent mediaComp = comp;
+		final GstMediaComponent mediaComp = comp;
 		btnSnapshot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -660,8 +699,8 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).mute();
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).mute();
 					}
 				}
 			}
@@ -670,8 +709,8 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).adjustVolume(0);
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustVolume(0);
 					}
 				}
 			}
@@ -680,8 +719,8 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).adjustVolume(50);
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustVolume(50);
 					}
 				}
 			}
@@ -690,33 +729,39 @@ public class Main {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).adjustVolume(100);
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustVolume(100);
 					}
 				}
 			}
 		});
-
-		mediaComp.addAudioListener(new MediaComponent.IAudioListener() {
+		btnGarbageCollect.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void audioMuted(MediaComponent source) {
+			public void widgetSelected(SelectionEvent e) {
+				System.gc();
+			}
+		});
+
+		mediaComp.addAudioListener(new IAudioListener() {
+			@Override
+			public void audioMuted(IMediaPlayer source) {
 				System.out.println("muted");
 			}
 
 			@Override
-			public void audioUnmuted(MediaComponent source) {
+			public void audioUnmuted(IMediaPlayer source) {
 				System.out.println("unmuted");
 			}
 
 			@Override
-			public void audioVolumeChanged(MediaComponent source, int percent) {
+			public void audioVolumeChanged(IMediaPlayer source, int percent) {
 				System.out.println("volume change: " + percent);
 			}
 		});
 
-		mediaComp.addMediaEventListener(new MediaComponent.IMediaEventListener() {
+		mediaComp.addMediaEventListener(new IMediaEventListener() {
 			@Override
-			public void mediaStopped(final MediaComponent source) {
+			public void mediaStopped(final IMediaPlayer source) {
 				System.out.println("STOPPED");
 				display.asyncExec(new Runnable() {
 					@Override
@@ -731,23 +776,27 @@ public class Main {
 			}
 
 			@Override
-			public void mediaPaused(final MediaComponent source) {
+			public void mediaPaused(final IMediaPlayer source) {
 				System.out.println("PAUSED");
 			}
 
 			@Override
-			public void mediaContinued(final MediaComponent source) {
+			public void mediaContinued(final IMediaPlayer source) {
 				System.out.println("CONTINUED");
 				enableScale(source);
 			}
 
 			@Override
-			public void mediaPlayed(final MediaComponent source) {
-				System.out.println("PLAYED: " + source.getRequestedURI().toString());
+			public void mediaPlayRequested(final IMediaPlayer source) {
+			}
+
+			@Override
+			public void mediaPlayed(final IMediaPlayer source) {
+				System.out.println("PLAYED: " + source.getMediaRequest().getURI().toString());
 				enableScale(source);
 			}
 
-			private void enableScale(final MediaComponent source) {
+			private void enableScale(final IMediaPlayer source) {
 				display.asyncExec(new Runnable() {
 					@Override
 					public void run() {
@@ -760,12 +809,12 @@ public class Main {
 			}
 		});
 
-		mediaComp.addPositionListener(new MediaComponent.IPositionListener() {
+		mediaComp.addPositionListener(new IPositionListener() {
 			private long lastDuration = 0L;
 			private long lastPosition = 0L;
 
 			@Override
-			public void positionChanged(final MediaComponent source, final int percent, final long position, final long duration) {
+			public void positionChanged(final IMediaPlayer source, final int percent, final long position, final long duration) {
 				System.out.println("percent: " + percent + ", position: " + position + ", duration: " + duration);
 				if (position != lastPosition || duration != lastDuration) {
 					display.asyncExec(new Runnable() {
@@ -815,143 +864,11 @@ public class Main {
 			public void widgetSelected(SelectionEvent e) {
 				final long position = TimeUnit.SECONDS.toNanos(scale.getSelection());
 				for (Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponent) {
-						((MediaComponent) c).seek(position);
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).seek(position);
 					}
 				}
 			}
 		});
-	}
-
-	public static class MediaComponentPlayBin2 extends Composite {
-		//<editor-fold defaultstate="collapsed" desc="Variables">
-
-		private PlayBin2 playbin;
-		private Element videoSink;
-		private boolean buffering = false;
-		//</editor-fold>
-
-		//<editor-fold defaultstate="collapsed" desc="Initialization">
-		public MediaComponentPlayBin2(Composite parent, int style) {
-			super(parent, style | SWT.EMBEDDED);
-
-			final Display display = getDisplay();
-
-			//<editor-fold defaultstate="collapsed" desc="Determine video sink">
-			String videoElement;
-			switch (Sys.getOSFamily()) {
-				case Windows:
-					//videoElement = "dshowvideosink";
-					videoElement = "directdrawsink";
-					break;
-				case Unix:
-					videoElement = "xvimagesink"; //gconfaudiosink and gconfvideosink?
-					break;
-				default:
-					videoElement = "xvimagesink";
-					break;
-			}
-			videoSink = ElementFactory.make(videoElement, "video sink");
-			//videoSink.set("force-aspect-ratio", true);
-			//videoSink.set("renderer", "VMR9");
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Create playbin">
-			playbin = new PlayBin2((String) null);
-			playbin.setVideoSink(videoSink);
-			//playbin.set("mute", true);
-			//playbin.set("buffer-duration", 1000L); //1000 nanoseconds
-			//playbin.set("buffer-size", 0);
-			//playbin.set("buffer-duration", 0L);
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Prepare XOverlay support">
-			final SWTOverlay overlay = SWTOverlay.wrap(videoSink);
-			final Runnable handleXOverlay = new Runnable() {
-
-				@Override
-				public void run() {
-					overlay.setWindowID(MediaComponentPlayBin2.this);
-				}
-			};
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="Connect bus messages">
-			final Bus bus = playbin.getBus();
-			bus.connect(new Bus.EOS() {
-
-				@Override
-				public void endOfStream(GstObject go) {
-					playbin.setState(State.NULL);
-				}
-			});
-			bus.connect(new Bus.ERROR() {
-
-				@Override
-				public void errorMessage(GstObject go, int i, String string) {
-					playbin.setState(State.NULL);
-				}
-			});
-			bus.connect(new Bus.BUFFERING() {
-
-				@Override
-				public void bufferingData(GstObject source, int percent) {
-					if (buffering) {
-						if (percent < 100) {
-							playbin.setState(State.PAUSED);
-						} else if (percent >= 100) {
-							playbin.setState(State.PLAYING);
-						}
-					}
-					System.out.println(playbin.getState());
-				}
-			});
-			bus.setSyncHandler(new BusSyncHandler() {
-
-				@Override
-				public BusSyncReply syncMessage(Message msg) {
-					Structure s = msg.getStructure();
-					if (s == null || !s.hasName("prepare-xwindow-id")) {
-						return BusSyncReply.PASS;
-					}
-					display.syncExec(handleXOverlay);
-					return BusSyncReply.DROP;
-				}
-			});
-			//bus.
-			//</editor-fold>
-
-			//<editor-fold defaultstate="collapsed" desc="SWT Events">
-			this.addDisposeListener(new DisposeListener() {
-
-				@Override
-				public void widgetDisposed(DisposeEvent de) {
-					stop();
-				}
-			});
-			//</editor-fold>
-		}
-		//</editor-fold>
-
-		public void stop() {
-			if (playbin.getState() != State.NULL) {
-				playbin.setState(State.NULL);
-			}
-			this.redraw();
-		}
-
-		public void playFile(final File File) {
-			if (playbin.getState() != State.NULL) {
-				playbin.setState(State.NULL);
-			}
-			try {
-				playbin.setInputFile(File);
-				//playbin.setURI(new URI("http://mirrorblender.top-ix.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_stereo.ogg"));
-				//playbin.setURI(new URI("http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb"));
-				playbin.setState(State.PLAYING);
-			} catch (Throwable t) {
-				playbin.setState(State.NULL);
-			}
-		}
 	}
 }

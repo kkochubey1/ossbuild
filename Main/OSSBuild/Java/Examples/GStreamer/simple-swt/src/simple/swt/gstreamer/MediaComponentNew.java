@@ -1,6 +1,11 @@
 
-package simple.swt;
+package simple.swt.gstreamer;
 
+import simple.media.MediaType;
+import simple.media.MediaRequestType;
+import simple.media.MediaRequest;
+import simple.media.Scheme;
+import simple.media.IMediaRequest;
 import com.sun.jna.Pointer;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -9,21 +14,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.eclipse.swt.SWT;
@@ -36,7 +33,6 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.gstreamer.Bin;
@@ -49,7 +45,6 @@ import org.gstreamer.ElementFactory;
 import org.gstreamer.Format;
 import org.gstreamer.Fraction;
 import org.gstreamer.GhostPad;
-import org.gstreamer.Gst;
 import org.gstreamer.GstObject;
 import org.gstreamer.Message;
 import org.gstreamer.MiniObject;
@@ -71,7 +66,7 @@ import ossbuild.Sys;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class MediaComponent extends Canvas {
+public abstract class MediaComponentNew extends SWTMediaComponent {
 	//<editor-fold defaultstate="collapsed" desc="Constants">
 	public static final Scheme[] VALID_SCHEMES = new Scheme[] {
 		  Scheme.HTTP
@@ -83,23 +78,9 @@ public class MediaComponent extends Canvas {
 		, Scheme.UDP
 	};
 
-	public static final ScheduledExecutorService
-		TASK_EXECUTOR
-	;
-
 	public static final String
 		  DEFAULT_VIDEO_ELEMENT
 		, DEFAULT_AUDIO_ELEMENT
-	;
-
-	public static final int
-		  DEFAULT_FPS = -1
-		, MINIMUM_FPS = 1
-	;
-
-	public static final int
-		  DEFAULT_REPEAT_COUNT = 0
-		, REPEAT_FOREVER = -1
 	;
 
 	public static final double
@@ -148,7 +129,6 @@ public class MediaComponent extends Canvas {
 	private int fullVideoHeight = 0;
 	protected final Runnable redrawRunnable;
 	//private final Runnable seekFinishedRunnable;
-	private final Runnable positionUpdateRunnable;
 	protected final Runnable xoverlayRunnable;
 
 	private float actualFPS;
@@ -156,34 +136,22 @@ public class MediaComponent extends Canvas {
 	private boolean emitPositionUpdates = true;
 	private boolean currentLiveSource;
 	private int currentRepeatCount;
-	private int currentFPS;
-	private URI currentURI;
 	private int numberOfRepeats;
+	private boolean maintainAspectRatio = true;
 	private double currentRate = DEFAULT_RATE;
+	private long bufferSize = DEFAULT_BUFFER_SIZE;
+	private MediaType mediaType = MediaType.Unknown;
+
+	protected IMediaRequest mediaRequest = null;
 
 	protected volatile State currentState = State.NULL;
-	private volatile ScheduledFuture<?> positionTimer = null;
 
 	private AtomicBoolean isSeeking = new AtomicBoolean(false);
 	//private long seekingPos = 0L;
 	//private double seekingRate = DEFAULT_RATE;
 
-	private CountDownLatch latch = new CountDownLatch(1);
-
-	private List<IMediaEventListener> mediaEventListeners;
-	private final Object mediaEventListenerLock = new Object();
-
-	private List<IVideoCapsListener> videoCapsListeners;
-	private final Object videoCapsListenerLock = new Object();
-
 	private List<IErrorListener> errorListeners;
 	private final Object errorListenerLock = new Object();
-
-	private List<IPositionListener> positionListeners;
-	private final Object positionListenerLock = new Object();
-
-	private List<IAudioListener> audioListeners;
-	private final Object audioListenerLock = new Object();
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
@@ -207,43 +175,17 @@ public class MediaComponent extends Canvas {
 		}
 		DEFAULT_VIDEO_ELEMENT = videoElement;
 		DEFAULT_AUDIO_ELEMENT = audioElement;
-
-		TASK_EXECUTOR = Executors.newScheduledThreadPool(Math.min(2, Math.max(6, Runtime.getRuntime().availableProcessors())), new ThreadFactory() {
-			private final AtomicInteger counter = new AtomicInteger(0);
-			@Override
-			public Thread newThread(final Runnable target) {
-				final int count = counter.incrementAndGet();
-				final Thread t = new Thread(Thread.currentThread().getThreadGroup(), target, "gstreamer media executor " + count);
-				t.setDaemon(true);
-				return t;
-			}
-		});
-
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				if (TASK_EXECUTOR != null) {
-					try {
-						TASK_EXECUTOR.shutdown();
-						TASK_EXECUTOR.awaitTermination(5000L, TimeUnit.MILLISECONDS);
-					} catch(Throwable t) {
-					} finally {
-						TASK_EXECUTOR.shutdownNow();
-					}
-				}
-			}
-		}));
 	}
 
-	public MediaComponent(Composite parent, int style) {
+	public MediaComponentNew(Composite parent, int style) {
 		this(DEFAULT_VIDEO_ELEMENT, DEFAULT_AUDIO_ELEMENT, parent, style);
 	}
 
-	public MediaComponent(String videoElement, Composite parent, int style) {
+	public MediaComponentNew(String videoElement, Composite parent, int style) {
 		this(videoElement, DEFAULT_AUDIO_ELEMENT, parent, style);
 	}
 
-	public MediaComponent(String videoElement, String audioElement, Composite parent, int style) {
+	public MediaComponentNew(String videoElement, String audioElement, Composite parent, int style) {
 		super(parent, style | SWT.EMBEDDED | SWT.DOUBLE_BUFFERED);
 
 		this.nativeHandle = SWTOverlay.handle(this);
@@ -259,13 +201,6 @@ public class MediaComponent extends Canvas {
 					redraw();
 			}
 		};
-
-		//this.seekFinishedRunnable = new Runnable() {
-		//	@Override
-		//	public void run() {
-		//		seekFinished();
-		//	}
-		//};
 
 		this.positionUpdateRunnable = new Runnable() {
 			private long lastPosition = 0L;
@@ -305,13 +240,10 @@ public class MediaComponent extends Canvas {
 			@Override
 			public void run() {
 				synchronized(display) {
-					xoverlay.setWindowID(MediaComponent.this);
+					xoverlay.setWindowID(MediaComponentNew.this);
 				}
 			}
 		};
-
-		//Ensure that we're at 0 so the first call to play can proceed immediately
-		latch.countDown();
 
 		//<editor-fold defaultstate="collapsed" desc="SWT Events">
 		this.addControlListener(new ControlAdapter() {
@@ -350,15 +282,15 @@ public class MediaComponent extends Canvas {
 		return VALID_SCHEMES;
 	}
 	
-	public int getFullVideoWidth() {
+	public int getVideoWidth() {
 		return fullVideoWidth;
 	}
 
-	public int getFullVideoHeight() {
+	public int getVideoHeight() {
 		return fullVideoHeight;
 	}
 
-	public boolean hasMedia() {
+	public boolean isMediaAvailable() {
 		lock.lock();
 		try {
 			return (pipeline != null && pipeline.getState(0L) != State.NULL);
@@ -416,30 +348,15 @@ public class MediaComponent extends Canvas {
 	}
 
 	public boolean isRepeatingForever() {
-		return currentRepeatCount == REPEAT_FOREVER;
+		return currentRepeatCount == IMediaRequest.REPEAT_FOREVER;
 	}
 
-	public float getActualFPS() {
+	public float getVideoFPS() {
 		lock.lock();
 		try {
 			if (pipeline == null)
 				return 0.0f;
 			return actualFPS;
-		} finally {
-			lock.unlock();
-		}
-	}
-
-	public URI getRequestedURI() {
-		return currentURI;
-	}
-
-	public int getRequestedFPS() {
-		lock.lock();
-		try {
-			if (pipeline == null)
-				return DEFAULT_FPS;
-			return currentFPS;
 		} finally {
 			lock.unlock();
 		}
@@ -497,23 +414,43 @@ public class MediaComponent extends Canvas {
 		}
 	}
 
-	public boolean hasAudio() {
+	public boolean isAudioAvailable() {
 		return this.hasAudio;
 	}
 
-	public boolean hasVideo() {
+	public boolean isVideoAvailable() {
 		return this.hasVideo;
+	}
+
+	public long getBufferSize() {
+		return bufferSize;
+	}
+
+	public boolean isAspectRatioMaintained() {
+		return maintainAspectRatio;
+	}
+
+	public IMediaRequest getMediaRequest() {
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return null;
+			return mediaRequest;
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	public MediaType getMediaType() {
+		return mediaType;
+	}
+
+	public void setBufferSize(long size) {
+		this.bufferSize = size;
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Helper Methods">
-	public static boolean execute(final Runnable task) {
-		if (TASK_EXECUTOR == null)
-			return false;
-		TASK_EXECUTOR.submit(task);
-		return true;
-	}
-	
 	public static IntBuffer convertToRGB(final ByteBuffer bb, final int width, final int height, final String colorspace, final String fourcc) {
 		if (!isValidColorspace(colorspace))
 			return null;
@@ -620,8 +557,8 @@ public class MediaComponent extends Canvas {
 		return false;
 	}
 
-	private static String createColorspaceFilter(final MediaComponent src, final int fps) {
-		final String framerate = (fps == DEFAULT_FPS || src.currentLiveSource ? null : ", framerate=" + fps + "/1");
+	private static String createColorspaceFilter(final MediaComponentNew src, final float fps) {
+		final String framerate = (fps == IMediaRequest.DEFAULT_FPS || src.currentLiveSource ? null : ", framerate=" + (int)fps + "/1");
 		final StringBuilder sb = new StringBuilder(256);
 
 		sb.append("video/x-raw-rgb, bpp=32, depth=24");
@@ -648,126 +585,20 @@ public class MediaComponent extends Canvas {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Interfaces">
-	public static interface IVideoCapsListener {
-		void videoDimensionsNegotiated(final MediaComponent source, final int videoWidth, final int videoHeight);
-	}
-
 	public static interface IErrorListener {
-		void handleError(final MediaComponent source, final URI uri, final ErrorType errorType, final int code, final String message);
-	}
-
-	public static interface IMediaEventListener {
-		void mediaPaused(final MediaComponent source);
-		void mediaContinued(final MediaComponent source);
-		void mediaStopped(final MediaComponent source);
-		void mediaPlayed(final MediaComponent source);
-	}
-
-	public static interface IPositionListener {
-		void positionChanged(final MediaComponent source, final int percent, final long position, final long duration);
-	}
-
-	public static interface IAudioListener {
-		void audioMuted(final MediaComponent source);
-		void audioUnmuted(final MediaComponent source);
-		void audioVolumeChanged(final MediaComponent source, final int percent);
+		void handleError(final MediaComponentNew source, final IMediaRequest request, final ErrorType errorType, final int code, final String message);
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Adapters">
-	public static abstract class VideoCapsListenerAdapter implements IVideoCapsListener {
-		@Override
-		public void videoDimensionsNegotiated(final MediaComponent source, int videoWidth, int videoHeight) {
-		}
-	}
-
 	public static abstract class ErrorListenerAdapter implements IErrorListener {
 		@Override
-		public void handleError(final MediaComponent source, URI uri, ErrorType errorType, int code, String message) {
-		}
-	}
-
-	public static abstract class MediaEventListenerAdapter implements IMediaEventListener {
-		@Override
-		public void mediaPaused(MediaComponent source) {
-		}
-
-		@Override
-		public void mediaContinued(MediaComponent source) {
-		}
-
-		@Override
-		public void mediaStopped(MediaComponent source) {
-		}
-
-		@Override
-		public void mediaPlayed(MediaComponent source) {
-		}
-	}
-
-	public static abstract class PositionListenerAdapter implements IPositionListener {
-		@Override
-		public void positionChanged(MediaComponent source, final int percent, long position, long duration) {
-		}
-	}
-
-	public static abstract class AudioListenerAdapter implements IAudioListener {
-		@Override
-		public void audioMuted(MediaComponent source) {
-		}
-
-		@Override
-		public void audioUnmuted(MediaComponent source) {
-		}
-
-		@Override
-		public void audioVolumeChanged(MediaComponent source, int percent) {
+		public void handleError(final MediaComponentNew source, final IMediaRequest request, ErrorType errorType, int code, String message) {
 		}
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Listeners">
-	//<editor-fold defaultstate="collapsed" desc="VideoCaps">
-	public boolean addVideoCapsListener(final IVideoCapsListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(videoCapsListenerLock) {
-			if (videoCapsListeners == null)
-				videoCapsListeners = new CopyOnWriteArrayList<IVideoCapsListener>();
-			return videoCapsListeners.add(Listener);
-		}
-	}
-
-	public boolean removeVideoCapsListener(final IVideoCapsListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(videoCapsListenerLock) {
-			if (videoCapsListeners == null || videoCapsListeners.isEmpty())
-				return true;
-			return videoCapsListeners.remove(Listener);
-		}
-	}
-
-	public boolean containsVideoCapsListener(final IVideoCapsListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(videoCapsListenerLock) {
-			if (videoCapsListeners == null || videoCapsListeners.isEmpty())
-				return true;
-			return videoCapsListeners.contains(Listener);
-		}
-	}
-
-	public boolean clearVideoCapsListeners() {
-		synchronized(videoCapsListenerLock) {
-			if (videoCapsListeners == null || videoCapsListeners.isEmpty())
-				return true;
-			videoCapsListeners.clear();
-			return true;
-		}
-	}
-	//</editor-fold>
-
 	//<editor-fold defaultstate="collapsed" desc="Error">
 	public boolean addErrorListener(final IErrorListener Listener) {
 		if (Listener == null)
@@ -808,225 +639,15 @@ public class MediaComponent extends Canvas {
 		}
 	}
 	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="MediaEvent">
-	public boolean addMediaEventListener(final IMediaEventListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(mediaEventListenerLock) {
-			if (mediaEventListeners == null)
-				mediaEventListeners = new CopyOnWriteArrayList<IMediaEventListener>();
-			return mediaEventListeners.add(Listener);
-		}
-	}
-
-	public boolean removeMediaEventListener(final IMediaEventListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(mediaEventListenerLock) {
-			if (mediaEventListeners == null || mediaEventListeners.isEmpty())
-				return true;
-			return mediaEventListeners.remove(Listener);
-		}
-	}
-
-	public boolean containsMediaEventListener(final IMediaEventListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(mediaEventListenerLock) {
-			if (mediaEventListeners == null || mediaEventListeners.isEmpty())
-				return true;
-			return mediaEventListeners.contains(Listener);
-		}
-	}
-
-	public boolean clearMediaEventListeners() {
-		synchronized(mediaEventListenerLock) {
-			if (mediaEventListeners == null || mediaEventListeners.isEmpty())
-				return true;
-			mediaEventListeners.clear();
-			return true;
-		}
-	}
-	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="Position">
-	public boolean addPositionListener(final IPositionListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(positionListenerLock) {
-			if (positionListeners == null)
-				positionListeners = new CopyOnWriteArrayList<IPositionListener>();
-			boolean startTimer = positionListeners.isEmpty();
-			boolean ret = positionListeners.add(Listener);
-
-			if (ret && startTimer)
-				positionTimer = TASK_EXECUTOR.scheduleAtFixedRate(positionUpdateRunnable, 1, 1, TimeUnit.SECONDS);
-			return ret;
-		}
-	}
-
-	public boolean removePositionListener(final IPositionListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(positionListenerLock) {
-			if (positionListeners == null || positionListeners.isEmpty())
-				return true;
-
-			boolean ret = positionListeners.remove(Listener);
-			if (ret && positionTimer != null) {
-				positionTimer.cancel(true);
-				positionTimer = null;
-			}
-			return ret;
-		}
-	}
-
-	public boolean containsPositionListener(final IPositionListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(positionListenerLock) {
-			if (positionListeners == null || positionListeners.isEmpty())
-				return true;
-			return positionListeners.contains(Listener);
-		}
-	}
-
-	public boolean clearPositionListeners() {
-		synchronized(positionListenerLock) {
-			if (positionListeners == null || positionListeners.isEmpty())
-				return true;
-			positionListeners.clear();
-			if (positionTimer != null) {
-				positionTimer.cancel(true);
-				positionTimer = null;
-			}
-			return true;
-		}
-	}
-	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="Audio">
-	public boolean addAudioListener(final IAudioListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(audioListenerLock) {
-			if (audioListeners == null)
-				audioListeners = new CopyOnWriteArrayList<IAudioListener>();
-			return audioListeners.add(Listener);
-		}
-	}
-
-	public boolean removeAudioListener(final IAudioListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(audioListenerLock) {
-			if (audioListeners == null || audioListeners.isEmpty())
-				return true;
-
-			return audioListeners.remove(Listener);
-		}
-	}
-
-	public boolean containsAudioListener(final IAudioListener Listener) {
-		if (Listener == null)
-			return false;
-		synchronized(audioListenerLock) {
-			if (audioListeners == null || audioListeners.isEmpty())
-				return true;
-			return audioListeners.contains(Listener);
-		}
-	}
-
-	public boolean clearAudioListeners() {
-		synchronized(audioListenerLock) {
-			if (audioListeners == null || audioListeners.isEmpty())
-				return true;
-			audioListeners.clear();
-			return true;
-		}
-	}
-	//</editor-fold>
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Events">
-	//<editor-fold defaultstate="collapsed" desc="VideoCaps">
-	protected void fireVideoDimensionsNegotiated(final int videoWidth, final int videoHeight) {
-		if (videoCapsListeners == null || videoCapsListeners.isEmpty())
-			return;
-		for(IVideoCapsListener listener : videoCapsListeners)
-			listener.videoDimensionsNegotiated(this, videoWidth, videoHeight);
-	}
-	//</editor-fold>
-
 	//<editor-fold defaultstate="collapsed" desc="Error">
-	protected void fireHandleError(final URI uri, final ErrorType errorType, final int code, final String message) {
+	protected void fireHandleError(final IMediaRequest request, final ErrorType errorType, final int code, final String message) {
 		if (errorListeners == null || errorListeners.isEmpty())
 			return;
 		for(IErrorListener listener : errorListeners)
-			listener.handleError(this, uri, errorType, code, message);
-	}
-	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="MediaEvent">
-	protected void fireMediaEventPaused() {
-		if (mediaEventListeners == null || mediaEventListeners.isEmpty())
-			return;
-		for(IMediaEventListener listener : mediaEventListeners)
-			listener.mediaPaused(this);
-	}
-
-	protected void fireMediaEventContinued() {
-		if (mediaEventListeners == null || mediaEventListeners.isEmpty())
-			return;
-		for(IMediaEventListener listener : mediaEventListeners)
-			listener.mediaContinued(this);
-	}
-
-	protected void fireMediaEventStopped() {
-		if (mediaEventListeners == null || mediaEventListeners.isEmpty())
-			return;
-		for(IMediaEventListener listener : mediaEventListeners)
-			listener.mediaStopped(this);
-	}
-
-	protected void fireMediaEventStarted() {
-		if (mediaEventListeners == null || mediaEventListeners.isEmpty())
-			return;
-		for(IMediaEventListener listener : mediaEventListeners)
-			listener.mediaPlayed(this);
-	}
-	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="Position">
-	protected void firePositionChanged(final int percent, final long position, final long duration) {
-		if (positionListeners == null || positionListeners.isEmpty())
-			return;
-		for(IPositionListener listener : positionListeners)
-			listener.positionChanged(this, percent, position, duration);
-	}
-	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="Audio">
-	protected void fireAudioMuted() {
-		if (audioListeners == null || audioListeners.isEmpty())
-			return;
-		for(IAudioListener listener : audioListeners)
-			listener.audioMuted(this);
-	}
-
-	protected void fireAudioUnmuted() {
-		if (audioListeners == null || audioListeners.isEmpty())
-			return;
-		for(IAudioListener listener : audioListeners)
-			listener.audioUnmuted(this);
-	}
-
-	protected void fireAudioVolumeChanged(int percent) {
-		if (audioListeners == null || audioListeners.isEmpty())
-			return;
-		for(IAudioListener listener : audioListeners)
-			listener.audioVolumeChanged(this, percent);
+			listener.handleError(this, request, errorType, code, message);
 	}
 	//</editor-fold>
 	//</editor-fold>
@@ -1040,7 +661,7 @@ public class MediaComponent extends Canvas {
 		FileOutputStream fos = null;
 		try {
 
-			final ImageData data = produceImageDataSnapshotForSWT();
+			final ImageData data = swtImageDataSnapshot();
 			if (data == null)
 				return false;
 
@@ -1063,7 +684,7 @@ public class MediaComponent extends Canvas {
 		if (Output == null)
 			return false;
 
-		final ImageData data = produceImageDataSnapshotForSWT();
+		final ImageData data = swtImageDataSnapshot();
 		if (data == null)
 			return false;
 
@@ -1073,15 +694,15 @@ public class MediaComponent extends Canvas {
 		return true;
 	}
 
-	public Image produceSnapshotForSWT() {
-		final ImageData data = produceImageDataSnapshotForSWT();
+	public Image swtSnapshot() {
+		final ImageData data = swtImageDataSnapshot();
 		if (data == null)
 			return null;
 		//Caller will be responsible for disposing this image
 		return new Image(display, data);
 	}
 
-	public ImageData produceImageDataSnapshotForSWT() {
+	public ImageData swtImageDataSnapshot() {
 		Buffer buffer = null;
 		try {
 			lock.lock();
@@ -1125,7 +746,7 @@ public class MediaComponent extends Canvas {
 		}
 	}
 
-	public BufferedImage produceSnapshot() {
+	public BufferedImage snapshot() {
 		Buffer buffer = null;
 		try {
 			lock.lock();
@@ -1417,6 +1038,7 @@ public class MediaComponent extends Canvas {
 				return seekToBeginning();
 
 			pipeline.setState(State.PLAYING);
+			fireMediaEventContinued();
 		} finally {
 			lock.unlock();
 		}
@@ -1446,53 +1068,40 @@ public class MediaComponent extends Canvas {
 
 	//<editor-fold defaultstate="collapsed" desc="Play">
 	public boolean playBlackBurst() {
-		return playPattern(VideoTestSrcPattern.BLACK);
+		return playBlackBurst(StringUtil.empty);
+	}
+
+	public boolean playBlackBurst(String title) {
+		return playPattern(title, VideoTestSrcPattern.BLACK);
 	}
 
 	public boolean playTestSignal() {
-		return playPattern(VideoTestSrcPattern.SMPTE);
+		return playTestSignal(StringUtil.empty);
 	}
 
-	public boolean play(File file) {
-		if (file == null)
-			return false;
-		return play(false, DEFAULT_REPEAT_COUNT, DEFAULT_FPS, file.toURI());
-	}
-
-	public boolean play(String uri) {
-		return play(false, DEFAULT_REPEAT_COUNT, DEFAULT_FPS, uri);
-	}
-
-	public boolean play(final URI uri) {
-		return play(false, DEFAULT_REPEAT_COUNT, DEFAULT_FPS, uri);
-	}
-
-	public boolean play(final int repeat, final URI uri) {
-		return play(false, repeat, DEFAULT_FPS, uri);
-	}
-
-	public boolean play(final int repeat, final int fps, final URI uri) {
-		return play(false, repeat, fps, uri);
-	}
-
-	public boolean play(final boolean liveSource, final int repeat, final int fps, final String uri) {
-		if (StringUtil.isNullOrEmpty(uri))
-			return false;
-		try {
-			return play(liveSource, repeat, fps, new URI(uri));
-		} catch(URISyntaxException e) {
-			return false;
-		}
+	public boolean playTestSignal(String title) {
+		return playPattern(title, VideoTestSrcPattern.SMPTE);
 	}
 	//</editor-fold>
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="The Meat">
-	public boolean playPattern(final VideoTestSrcPattern pattern) {
+	public boolean playPattern(final String title, final VideoTestSrcPattern pattern) {
 		lock.lock();
 		try {
 			if (pipeline != null)
 				pipeline.setState(State.NULL);
+
+			final IMediaRequest newRequest = new MediaRequest(
+				MediaRequestType.TestVideo,
+				!StringUtil.isNullOrEmpty(title) ? title : pattern.name(),
+				false,
+				true, 
+				IMediaRequest.REPEAT_NONE,
+				15.0f,
+				Scheme.Local,
+				new URI("local", "pattern", "/", pattern.name())
+			);
 
 			//Reset these values
 			hasVideo = false;
@@ -1504,16 +1113,18 @@ public class MediaComponent extends Canvas {
 			currentVideoSink = null;
 			currentAudioSink = null;
 			currentAudioVolumeElement = null;
+			maintainAspectRatio = true;
+			mediaType = MediaType.Video;
 
 			//Save these values
 			currentLiveSource = false;
 			currentRepeatCount = 0;
-			currentFPS = 15;
-			currentURI = null;
-
 			currentRate = 1.0D;
+			mediaRequest = newRequest;
 
-			final int checked_fps = (currentFPS >= MINIMUM_FPS ? currentFPS : DEFAULT_FPS);
+			fireMediaEventPlayRequested();
+
+			final float checked_fps = (newRequest.getFPS() >= IMediaRequest.MINIMUM_FPS ? newRequest.getFPS() : IMediaRequest.DEFAULT_FPS);
 			final Pipeline newPipeline = new Pipeline("pipeline");
 			final Element videoTestSrc = ElementFactory.make("videotestsrc", "videoTestSrc");
 			final Element videoQueue = ElementFactory.make("queue2", "videoQueue");
@@ -1550,10 +1161,7 @@ public class MediaComponent extends Canvas {
 					switch (newState) {
 						case PLAYING:
 							if (currentState == State.NULL || currentState == State.READY || currentState == State.PAUSED) {
-								if (currentState == State.PAUSED)
-									fireMediaEventContinued();
-								else
-									fireMediaEventStarted();
+								fireMediaEventPlayed();
 								currentState = State.PLAYING;
 							}
 							break;
@@ -1577,7 +1185,7 @@ public class MediaComponent extends Canvas {
 				@Override
 				public void errorMessage(GstObject source, int code, String message) {
 					//System.out.println("Error: code=" + code + " message=" + message);
-					fireHandleError(currentURI, ErrorType.fromNativeValue(code), code, message);
+					fireHandleError(mediaRequest, ErrorType.fromNativeValue(code), code, message);
 				}
 			});
 			bus.connect(new Bus.SEGMENT_DONE() {
@@ -1602,7 +1210,7 @@ public class MediaComponent extends Canvas {
 					Structure s = msg.getStructure();
 					if (s == null || !s.hasName("prepare-xwindow-id"))
 						return BusSyncReply.PASS;
-					xoverlay.setWindowID(MediaComponent.this.nativeHandle);
+					xoverlay.setWindowID(MediaComponentNew.this.nativeHandle);
 					return BusSyncReply.DROP;
 				}
 			});
@@ -1625,10 +1233,14 @@ public class MediaComponent extends Canvas {
 		}
 	}
 	
-	public boolean play(final boolean liveSource, final int repeat, final int fps, final URI uri) {
-		if (uri == null)
+	public boolean play(final IMediaRequest request) {
+		if (request == null)
 			return false;
 
+		final URI uri = request.getURI();
+		if (uri == null)
+			return false;
+		
 		lock.lock();
 		try {
 			if (pipeline != null)
@@ -1644,17 +1256,20 @@ public class MediaComponent extends Canvas {
 			currentVideoSink = null;
 			currentAudioSink = null;
 			currentAudioVolumeElement = null;
+			mediaType = MediaType.Unknown;
 
 			//Save these values
-			currentLiveSource = liveSource;
-			currentRepeatCount = repeat;
-			currentFPS = fps;
-			currentURI = uri;
+			mediaRequest = request;
+			currentLiveSource = request.isLiveSource();
+			currentRepeatCount = request.getRepeatCount();
+			maintainAspectRatio = request.isAspectRatioMaintained();
 
 			currentRate = 1.0D;
 			emitPositionUpdates = true;
+			
+			fireMediaEventPlayRequested();
 
-			pipeline = createPipeline(uri);
+			pipeline = createPipeline(request);
 
 			//Start playing
 			//Attempts to ensure that we're using segment seeks (which signals SEGMENT_DONE) to look for repeats instead of EOS
@@ -1701,7 +1316,7 @@ public class MediaComponent extends Canvas {
 		return ElementFactory.make(suggestedAudioSink, "audioSink");
 	}
 
-	protected Pad createAudioBin(final Pipeline newPipeline, final Bin audioBin, final Bin uridecodebin, final Pad pad) {
+	protected Pad createAudioBin(final IMediaRequest newRequest, final Pipeline newPipeline, final Bin audioBin, final Bin uridecodebin, final Pad pad) {
 
 		//[ queue2 ! volume ! audioconvert ! audioresample ! scaletempo ! audioconvert ! audioresample ! autoaudiosink ]
 
@@ -1724,11 +1339,11 @@ public class MediaComponent extends Canvas {
 		return audioQueue.getStaticPad("sink");
 	}
 
-	protected Pad createVideoBin(final Pipeline newPipeline, final Bin videoBin, final Bin uridecodebin, final Pad pad) {
+	protected Pad createVideoBin(final IMediaRequest newRequest, final Pipeline newPipeline, final Bin videoBin, final Bin uridecodebin, final Pad pad) {
 
 		//[ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
 
-		final int checked_fps = (currentFPS >= MINIMUM_FPS ? currentFPS : DEFAULT_FPS);
+		final float checked_fps = (newRequest.getFPS() >= IMediaRequest.MINIMUM_FPS ? newRequest.getFPS() : IMediaRequest.DEFAULT_FPS);
 
 		final Element videoQueue;
 		final Element videoRate;
@@ -1800,7 +1415,7 @@ public class MediaComponent extends Canvas {
 		return true;
 	}
 
-	protected void onPadAdded(final Pipeline newPipeline, final Bin uridecodebin, final Pad pad) {
+	protected void onPadAdded(final IMediaRequest newRequest, final Pipeline newPipeline, final Bin uridecodebin, final Pad pad) {
 		//only link once
 		if (pad.isLinked())
 			return;
@@ -1818,11 +1433,13 @@ public class MediaComponent extends Canvas {
 
 			//Create audio bin
 			final Bin audioBin = new Bin("audioBin");
-			audioBin.addPad(new GhostPad("sink", createAudioBin(newPipeline, audioBin, uridecodebin, pad)));
+			audioBin.addPad(new GhostPad("sink", createAudioBin(newRequest, newPipeline, audioBin, uridecodebin, pad)));
 			newPipeline.add(audioBin);
 			pad.link(audioBin.getStaticPad("sink"));
 
 			hasAudio = true;
+			if (mediaType == mediaType.Unknown)
+				mediaType = MediaType.Audio;
 
 			audioBin.setState(State.PLAYING);
 		} else if (padCaps.startsWith("video/")) {
@@ -1830,11 +1447,14 @@ public class MediaComponent extends Canvas {
 
 			//Create video bin
 			final Bin videoBin = new Bin("videoBin");
-			videoBin.addPad(new GhostPad("sink", createVideoBin(newPipeline, videoBin, uridecodebin, pad)));
+			videoBin.addPad(new GhostPad("sink", createVideoBin(newRequest, newPipeline, videoBin, uridecodebin, pad)));
 			newPipeline.add(videoBin);
 			pad.link(videoBin.getStaticPad("sink"));
 
 			hasVideo = true;
+
+			if (mediaType == mediaType.Unknown)
+				mediaType = MediaType.Video;
 
 			videoBin.setState(State.PLAYING);
 		}
@@ -1848,11 +1468,15 @@ public class MediaComponent extends Canvas {
 		final String factoryName = element.getFactory().getName();
 		//</editor-fold>
 
-		//if (factoryName.startsWith("souphttpsrc")) {
-		//	element.set("do-timestamp", true);
-		//} else if (factoryName.startsWith("neonhttpsrc")) {
-		//	element.set("do-timestamp", true);
-		//}
+		if (factoryName.startsWith("souphttpsrc")) {
+			//element.set("do-timestamp", true);
+			element.set("blocksize", bufferSize);
+		} else if (factoryName.startsWith("neonhttpsrc")) {
+			//element.set("do-timestamp", true);
+			element.set("blocksize", bufferSize);
+		} else if (factoryName.startsWith("wininetsrc")) {
+			element.set("blocksize", bufferSize);
+		}
 	}
 
 	protected void onDecodeBinElementAdded(final Pipeline newPipeline, final Bin uridecodebin, final Bin decodebin, final Element element) {
@@ -1880,16 +1504,16 @@ public class MediaComponent extends Canvas {
 		}
 	}
 
-	protected Pipeline createPipeline(final URI uri) {
+	protected Pipeline createPipeline(final IMediaRequest newRequest) {
 		//gst-launch uridecodebin use-buffering=false name=dec location=http://.../video.avi
 		//    dec. ! [ queue ! audioconvert ! audioresample ! autoaudiosink ]
 		//    dec. ! [ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
 		final Pipeline newPipeline = new Pipeline("pipeline");
 		final Bin uridecodebin = (Bin)ElementFactory.make("uridecodebin", "uridecodebin");
-		uridecodebin.set("use-buffering", false);
-		uridecodebin.set("download", true);
+		uridecodebin.set("use-buffering", true);
+		//uridecodebin.set("download", true);
 		uridecodebin.set("buffer-duration", TimeUnit.MILLISECONDS.toNanos(500L));
-		uridecodebin.set("uri", uriString(uri));
+		uridecodebin.set("uri", uriString(newRequest.getURI()));
 		newPipeline.addMany(uridecodebin);
 
 		//<editor-fold defaultstate="collapsed" desc="Signals">
@@ -1897,7 +1521,7 @@ public class MediaComponent extends Canvas {
 		uridecodebin.connect(new Element.PAD_ADDED() {
 			@Override
 			public void padAdded(Element elem, Pad pad) {
-				onPadAdded(newPipeline, uridecodebin, pad);
+				onPadAdded(newRequest, newPipeline, uridecodebin, pad);
 			}
 		});
 		uridecodebin.connect(new Bin.ELEMENT_ADDED() {
@@ -1946,10 +1570,7 @@ public class MediaComponent extends Canvas {
 				switch (newState) {
 					case PLAYING:
 						if (currentState == State.NULL || currentState == State.READY || currentState == State.PAUSED) {
-							if (currentState == State.PAUSED)
-								fireMediaEventContinued();
-							else
-								fireMediaEventStarted();
+							fireMediaEventPlayed();
 							currentState = State.PLAYING;
 						}
 						break;
@@ -1973,13 +1594,13 @@ public class MediaComponent extends Canvas {
 			@Override
 			public void errorMessage(GstObject source, int code, String message) {
 				//System.out.println("Error: code=" + code + " message=" + message);
-				fireHandleError(currentURI, ErrorType.fromNativeValue(code), code, message);
+				fireHandleError(newRequest, ErrorType.fromNativeValue(code), code, message);
 			}
 		});
 		bus.connect(new Bus.SEGMENT_DONE() {
 			@Override
 			public void segmentDone(GstObject source, Format format, long position) {
-				if (currentRepeatCount == REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount)) {
+				if (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount)) {
 					++numberOfRepeats;
 					if (!seekToBeginning()) {
 						stop();
@@ -1995,7 +1616,7 @@ public class MediaComponent extends Canvas {
 		bus.connect(new Bus.EOS() {
 			@Override
 			public void endOfStream(GstObject source) {
-				if (currentRepeatCount == REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount)) {
+				if (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount)) {
 					++numberOfRepeats;
 					if (!seekToBeginning()) {
 						stop();
@@ -2026,7 +1647,7 @@ public class MediaComponent extends Canvas {
 				Structure s = msg.getStructure();
 				if (s == null || !s.hasName("prepare-xwindow-id"))
 					return BusSyncReply.PASS;
-				xoverlay.setWindowID(MediaComponent.this.nativeHandle);
+				xoverlay.setWindowID(MediaComponentNew.this.nativeHandle);
 				return BusSyncReply.DROP;
 			}
 		});
