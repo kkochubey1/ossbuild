@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import simple.media.IMediaRequest;
 import simple.media.events.IAudioListener;
 import simple.media.events.IMediaEventListener;
 import simple.media.events.IPositionListener;
@@ -333,11 +334,11 @@ public abstract class SWTMediaComponent extends Canvas implements IMediaPlayer {
 			listener.mediaStopped(this);
 	}
 
-	protected void fireMediaEventPlayRequested() {
+	protected void fireMediaEventPlayRequested(final IMediaRequest request) {
 		if (mediaEventListeners == null || mediaEventListeners.isEmpty())
 			return;
 		for(IMediaEventListener listener : mediaEventListeners)
-			listener.mediaPlayRequested(this);
+			listener.mediaPlayRequested(this, request);
 	}
 
 	protected void fireMediaEventPlayed() {

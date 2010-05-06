@@ -1,6 +1,7 @@
 package simple.media.events;
 
 import simple.media.IMediaPlayer;
+import simple.media.IMediaRequest;
 
 public abstract class MediaEventListenerAdapter implements IMediaEventListener {
 	@Override
@@ -16,7 +17,7 @@ public abstract class MediaEventListenerAdapter implements IMediaEventListener {
 	}
 
 	@Override
-	public void mediaPlayRequested(IMediaPlayer source) {
+	public void mediaPlayRequested(IMediaPlayer source, IMediaRequest request) {
 	}
 
 	@Override

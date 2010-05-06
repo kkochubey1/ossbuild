@@ -884,7 +884,7 @@ gst_directdraw_sink_show_frame (GstBaseSink * bsink, GstBuffer * buf)
   }
 
   if (buf == NULL) {
-    GST_ERROR_OBJECT (ddrawsink, "No buffer to render.");
+    /*GST_ERROR_OBJECT (ddrawsink, "No buffer to render.");*/
     return GST_FLOW_ERROR;
   } else if (!ddrawsink->video_window) {
     GST_WARNING_OBJECT (ddrawsink, "No video window to render to.");

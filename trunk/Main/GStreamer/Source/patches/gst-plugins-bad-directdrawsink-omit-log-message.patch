@@ -1,0 +1,13 @@
+Index: sys/directdraw/gstdirectdrawsink.c
+===================================================================
+--- sys/directdraw/gstdirectdrawsink.c	(revision 605)
++++ sys/directdraw/gstdirectdrawsink.c	(working copy)
+@@ -884,7 +884,7 @@
+   }
+ 
+   if (buf == NULL) {
+-    GST_ERROR_OBJECT (ddrawsink, "No buffer to render.");
++    /*GST_ERROR_OBJECT (ddrawsink, "No buffer to render.");*/
+     return GST_FLOW_ERROR;
+   } else if (!ddrawsink->video_window) {
+     GST_WARNING_OBJECT (ddrawsink, "No video window to render to.");

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -245,35 +244,8 @@ public class Main {
 		comp = new GstMediaComponent(dlg, SWT.NONE);
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-//		final MediaComponent thisComp = comp;
-//		comp.addVideoCapsListener(new MediaComponent.VideoCapsListenerAdapter() {
-//			@Override
-//			public void videoDimensionsNegotiated(int videoWidth, int videoHeight) {
-//				display.syncExec(new Runnable() {
-//					@Override
-//					public void run() {
-//						final Point sz = thisComp.getSize();
-//
-//						final int height = sz.y;
-//						final int width = sz.x;
-//						final int videoHeight = thisComp.getFullVideoHeight();
-//						final int videoWidth = thisComp.getFullVideoWidth();
-//						final int scaledHeight;
-//						final int scaledWidth;
-//						if (videoWidth > videoHeight) {
-//							scaledWidth = (int)(((double)height / (double)videoHeight) * videoWidth);
-//							scaledHeight = height;
-//						} else {
-//							scaledWidth = width;
-//							scaledHeight = (int)(((double)width / (double)videoWidth) * videoWidth);
-//						}
-//						thisComp.setSize(scaledWidth, scaledHeight);
-//						//shell.setLayout(null);
-//						//shell.layout();
-//					}
-//				});
-//			}
-//		});
+
+		final GstMediaComponent mediaComp = comp;
 
 		comp = new GstMediaComponent(dlg, SWT.NONE);
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
@@ -319,11 +291,23 @@ public class Main {
 		btnPlayExample.setLayoutData(gd);
 		btnPlayExample.setText("Play Example");
 
+		final Button btnPlayExampleMJPG = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayExampleMJPG.setLayoutData(gd);
+		btnPlayExampleMJPG.setText("Play Example MJPG");
+
 		final Button btnPlay = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnPlay.setLayoutData(gd);
 		btnPlay.setText("Play Again");
+
+		final Button btnPlayForever = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayForever.setLayoutData(gd);
+		btnPlayForever.setText("Play Again Forever");
 
 		final Button btnPlayTestSignal = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -467,8 +451,8 @@ public class Main {
 			String[] uri = new String[] {
 				  "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1"
 				, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb"
-				, "http://www.google.com/test/"
-				, "http://www.asfjasflasf.com/"
+				//, "http://www.google.com/test/"
+				//, "http://www.asfjasflasf.com/"
 				//, "http://samples.mplayerhq.hu/mov/RQ004F14.MOV"
 				//, "http://users.design.ucla.edu/~acolubri/test/gstreamer/station-svq1.mov"
 				//, "rtsp://s-0-1.sg.softspb.com:554/test/test.mp4"
@@ -537,6 +521,28 @@ public class Main {
 				}
 			}
 		});
+		btnPlayExampleMJPG.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					//Extract resource
+					Resources.extractAll(ossbuild.extract.Package.newInstance("resources.media", Path.nativeResourcesDirectory, new FileProcessor(false, "example.mjpg"))).get();
+				} catch(Throwable t) {
+				}
+
+				file[0] = Path.combine(Path.nativeResourcesDirectory, "example.mjpg");
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, 2.0f, file[0].toURI().toString());
+							}
+						});
+					}
+				}
+			}
+		});
 		btnPlayBlackBurst.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -576,6 +582,21 @@ public class Main {
 							@Override
 							public void run() {
 								((GstMediaComponent) c).play(false, 1/*IMediaRequest.REPEAT_FOREVER/**/, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
+							}
+						});
+					}
+				}
+			}
+		});
+		btnPlayForever.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
 							}
 						});
 					}
@@ -697,14 +718,12 @@ public class Main {
 				}
 			}
 		});
-		final GstMediaComponent mediaComp = comp;
 		btnSnapshot.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				mediaComp.saveSnapshot(new File(System.currentTimeMillis() + ".jpg"));
 			}
 		});
-
 		btnMute.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -797,7 +816,8 @@ public class Main {
 			}
 
 			@Override
-			public void mediaPlayRequested(final IMediaPlayer source) {
+			public void mediaPlayRequested(final IMediaPlayer source, final IMediaRequest request) {
+				System.out.println("PLAY REQUESTED: " + source.getMediaRequest().getURI().toString());
 			}
 
 			@Override
