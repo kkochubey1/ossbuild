@@ -275,17 +275,17 @@ public class Main {
 //			}
 //		});
 
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-//
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-//
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		final Scale scale = new Scale(dlg, SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -463,6 +463,17 @@ public class Main {
 			}
 		});
 		btnPlayMJPEG.addSelectionListener(new SelectionAdapter() {
+			int index = 0;
+			String[] uri = new String[] {
+				  "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1"
+				, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb"
+				, "http://www.google.com/test/"
+				, "http://www.asfjasflasf.com/"
+				//, "http://samples.mplayerhq.hu/mov/RQ004F14.MOV"
+				//, "http://users.design.ucla.edu/~acolubri/test/gstreamer/station-svq1.mov"
+				//, "rtsp://s-0-1.sg.softspb.com:554/test/test.mp4"
+			};
+
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (final Control c : dlg.getChildren()) {
@@ -470,10 +481,9 @@ public class Main {
 						GstMediaComponent.execute(new Runnable() {
 							@Override
 							public void run() {
-								//((MediaComponent) c).play(true, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb");
-								((GstMediaComponent) c).play(true, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1");
-								//((MediaComponent) c).play(false, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, "rtsp://s-0-1.sg.softspb.com:554/test/test.mp4");
-								//((MediaComponent) c).play(false, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, "http://users.design.ucla.edu/~acolubri/test/gstreamer/station-svq1.mov");
+								((GstMediaComponent) c).play(true, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, uri[index]);
+								if (++index >= uri.length)
+									index = 0;
 							}
 						});
 					}

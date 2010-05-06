@@ -65,9 +65,7 @@ import org.gstreamer.Structure;
 import org.gstreamer.elements.FakeSink;
 import org.gstreamer.event.BusSyncHandler;
 import org.gstreamer.event.StepEvent;
-import org.gstreamer.lowlevel.GObjectAPI;
 import org.gstreamer.lowlevel.GstAPI.GstCallback;
-import org.gstreamer.lowlevel.GstObjectAPI;
 import org.gstreamer.swt.overlay.SWTOverlay;
 import ossbuild.StringUtil;
 import ossbuild.Sys;
@@ -174,8 +172,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		String audioElement;
 		switch (Sys.getOSFamily()) {
 			case Windows:
-				videoElement = "dshowvideosink";
-				//videoElement = "directdrawsink";
+				//videoElement = "dshowvideosink";
+				videoElement = "directdrawsink";
 				audioElement = "autoaudiosink";
 				break;
 			case Unix:
@@ -378,7 +376,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 	@Override
 	public boolean isSeekable() {
-		return !currentLiveSource && emitPositionUpdates;
+		return !currentLiveSource && emitPositionUpdates && mediaType != MediaType.Image && mediaType != MediaType.Unknown;
 	}
 
 	@Override
@@ -1199,7 +1197,41 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	}
 
 	private boolean segmentSeek(final double rate, final long positionNanoSeconds) {
-		return true;
+		if (rate == 0.0f)
+			return pause();
+
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return false;
+
+			if (isLiveSource())
+				return false;
+			
+			State state = currentState();
+
+			switch(state) {
+				case PLAYING:
+				case PAUSED:
+					break;
+				default:
+					return false;
+			}
+
+			final boolean forwards = (rate >= 0.0);
+			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
+			final long stop = (forwards ? -1 : 0);
+
+			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop);
+			changeState(State.PLAYING);
+
+			if (success)
+				currentRate = rate;
+
+			return success;
+		} finally {
+			lock.unlock();
+		}
 	}
 	//</editor-fold>
 
@@ -1310,6 +1342,16 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 	//<editor-fold defaultstate="collapsed" desc="The Meat">
 	//<editor-fold defaultstate="collapsed" desc="Cleanup">
+	protected void resetPipeline(final Pipeline newPipeline) {
+		if (newPipeline != null) {
+			do {
+				newPipeline.setState(State.NULL);
+			} while(newPipeline.getState() != State.NULL);
+			cleanup(newPipeline);
+			asyncRedraw();
+		}
+	}
+	
 	protected void cleanup(final Pipeline newPipeline) {
 		//Remove any pending actions for this pipeline
 		clearAllStateActions(newPipeline);
@@ -1397,7 +1439,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		final Bin uridecodebin = (!recreateBin ? existingbin : (Bin)ElementFactory.make("uridecodebin", "uridecodebin"));
 		
 		uridecodebin.set("use-buffering", false);
-		uridecodebin.set("download", true);
+		uridecodebin.set("download", false);
 		uridecodebin.set("buffer-duration", TimeUnit.MILLISECONDS.toNanos(500L));
 		uridecodebin.set("uri", uriString(newRequest.getURI()));
 
@@ -1454,7 +1496,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			bus.connect(new Bus.ERROR() {
 				@Override
 				public void errorMessage(GstObject source, int code, String message) {
-					//System.out.println("Error: code=" + code + " message=" + message);
+					resetPipeline(newPipeline);
 					fireHandleError(newRequest, ErrorType.fromNativeValue(code), code, message);
 				}
 			});
@@ -1817,12 +1859,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	public boolean playPattern(final String title, final VideoTestSrcPattern pattern) {
 		lock.lock();
 		try {
-			if (pipeline != null) {
-				do {
-					pipeline.setState(State.NULL);
-				} while(pipeline.getState() != State.NULL);
-				cleanup(pipeline);
-			}
+			resetPipeline(pipeline);
 
 			final IMediaRequest newRequest = new MediaRequest(
 				MediaRequestType.TestVideo,
@@ -1958,12 +1995,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		
 		lock.lock();
 		try {
-			if (pipeline != null) {
-				do {
-					pipeline.setState(State.NULL);
-				} while(pipeline.getState() != State.NULL);
-				cleanup(pipeline);
-			}
+			resetPipeline(pipeline);
 
 			//Reset these values
 			hasVideo = false;
@@ -1997,6 +2029,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			changeState(pipeline, State.PAUSED, new Runnable() {
 				@Override
 				public void run() {
+					asyncRedraw();
 					adjustPlaybackRate(currentRate);
 					changeState(pipeline, State.PLAYING);
 				}
