@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+# Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstreamer", "Main\GStreamer\Windows\Build\Libraries\libgstreamer.vcproj", "{F987873B-2B88-4B1B-B627-F70DF4F91E49}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstbase", "Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj", "{F987873B-2B88-4B1B-B627-F70DF4F91E50}"
@@ -561,8 +561,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstcoreindexers", "Main\GStreamer\Windows\Build\Plugins\coreindexers.vcproj", "{398A8D3F-2B88-E469-B627-17A044F91EF1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstalphacolor", "Main\GStreamer\Windows\Build\Plugins\Good\gst\alphacolor.vcproj", "{5BC4473B-EF01-4B1B-B627-F70DF4F92F20}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstapp", "Main\GStreamer\Windows\Build\Plugins\Base\gst\app.vcproj", "{84325BDA-81FC-4CEE-B771-612EECB9ACDB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstasf", "Main\GStreamer\Windows\Build\Plugins\Ugly\gst\asf.vcproj", "{F3A7C701-0ACC-0BB0-CE27-AA0DFFFF0002}"
 EndProject
@@ -1689,12 +1687,6 @@ Global
 		{5BC4473B-EF01-4B1B-B627-F70DF4F92F20}.Release (GPL)|Win32.Build.0 = Release|Win32
 		{5BC4473B-EF01-4B1B-B627-F70DF4F92F20}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
 		{5BC4473B-EF01-4B1B-B627-F70DF4F92F20}.Release (LGPL)|Win32.Build.0 = Release|Win32
-		{84325BDA-81FC-4CEE-B771-612EECB9ACDB}.Release (All)|Win32.ActiveCfg = Release|Win32
-		{84325BDA-81FC-4CEE-B771-612EECB9ACDB}.Release (All)|Win32.Build.0 = Release|Win32
-		{84325BDA-81FC-4CEE-B771-612EECB9ACDB}.Release (GPL)|Win32.ActiveCfg = Release|Win32
-		{84325BDA-81FC-4CEE-B771-612EECB9ACDB}.Release (GPL)|Win32.Build.0 = Release|Win32
-		{84325BDA-81FC-4CEE-B771-612EECB9ACDB}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
-		{84325BDA-81FC-4CEE-B771-612EECB9ACDB}.Release (LGPL)|Win32.Build.0 = Release|Win32
 		{F3A7C701-0ACC-0BB0-CE27-AA0DFFFF0002}.Release (All)|Win32.ActiveCfg = Release|Win32
 		{F3A7C701-0ACC-0BB0-CE27-AA0DFFFF0002}.Release (All)|Win32.Build.0 = Release|Win32
 		{F3A7C701-0ACC-0BB0-CE27-AA0DFFFF0002}.Release (GPL)|Win32.ActiveCfg = Release|Win32
