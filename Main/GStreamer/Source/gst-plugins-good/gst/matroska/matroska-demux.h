@@ -94,7 +94,6 @@ typedef struct _GstMatroskaDemux {
   GstSegment               segment;
   gboolean                 segment_running;
   GstClockTime             last_stop_end;
-  gint64                   duration;
 
   GstEvent                *close_segment;
   GstEvent                *new_segment;
@@ -106,6 +105,12 @@ typedef struct _GstMatroskaDemux {
   /* some state saving */
   GstClockTime             cluster_time;
   guint64                  cluster_offset;
+
+  /* reverse playback */
+  GArray                  *seek_index;
+  gint                     seek_entry;
+  gint64                   from_offset;
+  gint64                   to_offset;
 } GstMatroskaDemux;
 
 typedef struct _GstMatroskaDemuxClass {

@@ -53,13 +53,6 @@
 
 #include <gst/gst-i18n-plugin.h>
 
-/* elementfactory information */
-static const GstElementDetails gst_alsasink_details =
-GST_ELEMENT_DETAILS ("Audio sink (ALSA)",
-    "Sink/Audio",
-    "Output to a sound card via ALSA",
-    "Wim Taymans <wim@fluendo.com>");
-
 #define DEFAULT_DEVICE		"default"
 #define DEFAULT_DEVICE_NAME	""
 #define SPDIF_PERIOD_SIZE 1536
@@ -172,7 +165,9 @@ gst_alsasink_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &gst_alsasink_details);
+  gst_element_class_set_details_simple (element_class,
+      "Audio sink (ALSA)", "Sink/Audio",
+      "Output to a sound card via ALSA", "Wim Taymans <wim@fluendo.com>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&alsasink_sink_factory));
@@ -481,7 +476,8 @@ no_channels:
           g_strdup_printf (_
           ("Could not open device for playback in %d-channel mode."),
           alsa->channels);
-    GST_ELEMENT_ERROR (alsa, RESOURCE, SETTINGS, (msg), (snd_strerror (err)));
+    GST_ELEMENT_ERROR (alsa, RESOURCE, SETTINGS, ("%s", msg),
+        ("%s", snd_strerror (err)));
     g_free (msg);
     snd_pcm_hw_params_free (params);
     return err;
@@ -769,52 +765,27 @@ static gboolean
 gst_alsasink_unprepare (GstAudioSink * asink)
 {
   GstAlsaSink *alsa;
-  gint err;
 
   alsa = GST_ALSA_SINK (asink);
 
-  CHECK (snd_pcm_drop (alsa->handle), drop);
-
-  CHECK (snd_pcm_hw_free (alsa->handle), hw_free);
+  snd_pcm_drop (alsa->handle);
+  snd_pcm_hw_free (alsa->handle);
 
   return TRUE;
-
-  /* ERRORS */
-drop:
-  {
-    GST_ELEMENT_ERROR (alsa, RESOURCE, SETTINGS, (NULL),
-        ("Could not drop samples: %s", snd_strerror (err)));
-    return FALSE;
-  }
-hw_free:
-  {
-    GST_ELEMENT_ERROR (alsa, RESOURCE, SETTINGS, (NULL),
-        ("Could not free hw params: %s", snd_strerror (err)));
-    return FALSE;
-  }
 }
 
 static gboolean
 gst_alsasink_close (GstAudioSink * asink)
 {
   GstAlsaSink *alsa = GST_ALSA_SINK (asink);
-  gint err;
 
   if (alsa->handle) {
-    CHECK (snd_pcm_close (alsa->handle), close_error);
+    snd_pcm_close (alsa->handle);
     alsa->handle = NULL;
   }
   gst_caps_replace (&alsa->cached_caps, NULL);
 
   return TRUE;
-
-  /* ERRORS */
-close_error:
-  {
-    GST_ELEMENT_ERROR (alsa, RESOURCE, CLOSE, (NULL),
-        ("Playback close error: %s", snd_strerror (err)));
-    return FALSE;
-  }
 }
 
 

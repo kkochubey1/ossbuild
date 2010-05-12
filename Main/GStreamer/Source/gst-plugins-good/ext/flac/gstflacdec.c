@@ -120,7 +120,6 @@ static GstFlowReturn gst_flac_dec_chain (GstPad * pad, GstBuffer * buf);
 
 static void gst_flac_dec_reset_decoders (GstFlacDec * flacdec);
 static void gst_flac_dec_setup_decoder (GstFlacDec * flacdec);
-static void gst_flac_dec_setup_decoder (GstFlacDec * flacdec);
 
 static FLAC__StreamDecoderReadStatus
 gst_flac_dec_read_seekable (const FLAC__StreamDecoder * decoder,
@@ -421,8 +420,7 @@ gst_flac_dec_scan_got_frame (GstFlacDec * flacdec, guint8 * data, guint size,
   GST_LOG_OBJECT (flacdec,
       "got sync, bs=%x,sr=%x,ca=%x,ss=%x,pb=%x", bs, sr, ca, ss, pb);
 
-  if (sr == 0x0F || sr == 0x01 || sr == 0x02 || sr == 0x03 ||
-      ca >= 0x0B || ss == 0x03 || ss == 0x07) {
+  if (sr == 0x0F || ca >= 0x0B || ss == 0x03 || ss == 0x07) {
     return FALSE;
   }
 
@@ -438,6 +436,10 @@ gst_flac_dec_scan_got_frame (GstFlacDec * flacdec, guint8 * data, guint size,
   else if (sr == 0x0D || sr == 0x0E)
     sr_from_end = 16;
 
+  /* FIXME: This is can be 36 bit if variable block size is used,
+   * fortunately not encoder supports this yet and we check for that
+   * above.
+   */
   val = (guint32) g_utf8_get_char_validated ((gchar *) data + 4, -1);
 
   if (val == (guint32) - 1 || val == (guint32) - 2) {
@@ -448,16 +450,22 @@ gst_flac_dec_scan_got_frame (GstFlacDec * flacdec, guint8 * data, guint size,
   headerlen = 4 + g_unichar_to_utf8 ((gunichar) val, NULL) +
       (bs_from_end / 8) + (sr_from_end / 8);
 
-  if (gst_flac_calculate_crc8 (data, headerlen) != data[headerlen])
+  if (gst_flac_calculate_crc8 (data, headerlen) != data[headerlen]) {
+    GST_LOG_OBJECT (flacdec, "invalid checksum");
     return FALSE;
+  }
 
   if (flacdec->min_blocksize == flacdec->max_blocksize) {
     *last_sample_num = (val + 1) * flacdec->min_blocksize;
   } else {
-    *last_sample_num = val;     /* FIXME: + length of last block in samples */
+    *last_sample_num = 0;       /* FIXME: + length of last block in samples */
   }
 
-  if (flacdec->sample_rate > 0) {
+  /* FIXME: only valid for fixed block size streams */
+  GST_DEBUG_OBJECT (flacdec, "frame number: %" G_GINT64_FORMAT,
+      *last_sample_num);
+
+  if (flacdec->sample_rate > 0 && *last_sample_num != 0) {
     GST_DEBUG_OBJECT (flacdec, "last sample %" G_GINT64_FORMAT " = %"
         GST_TIME_FORMAT, *last_sample_num,
         GST_TIME_ARGS (*last_sample_num * GST_SECOND / flacdec->sample_rate));
@@ -472,13 +480,18 @@ static void
 gst_flac_dec_scan_for_last_block (GstFlacDec * flacdec, gint64 * samples)
 {
   GstFormat format = GST_FORMAT_BYTES;
-
   gint64 file_size, offset;
 
   GST_INFO_OBJECT (flacdec, "total number of samples unknown, scanning file");
 
   if (!gst_pad_query_peer_duration (flacdec->sinkpad, &format, &file_size)) {
     GST_WARNING_OBJECT (flacdec, "failed to query upstream size!");
+    return;
+  }
+
+  if (flacdec->min_blocksize != flacdec->max_blocksize) {
+    GST_WARNING_OBJECT (flacdec, "scanning for last sample only works "
+        "for FLAC files with constant blocksize");
     return;
   }
 
@@ -560,16 +573,29 @@ gst_flac_dec_metadata_cb (const FLAC__StreamDecoder * decoder,
   switch (metadata->type) {
     case FLAC__METADATA_TYPE_STREAMINFO:{
       gint64 samples;
+      guint depth;
 
       samples = metadata->data.stream_info.total_samples;
 
       flacdec->min_blocksize = metadata->data.stream_info.min_blocksize;
       flacdec->max_blocksize = metadata->data.stream_info.max_blocksize;
       flacdec->sample_rate = metadata->data.stream_info.sample_rate;
-      flacdec->depth = metadata->data.stream_info.bits_per_sample;
+      flacdec->depth = depth = metadata->data.stream_info.bits_per_sample;
+      flacdec->channels = metadata->data.stream_info.channels;
+
+      if (depth < 9)
+        flacdec->width = 8;
+      else if (depth < 17)
+        flacdec->width = 16;
+      else
+        flacdec->width = 32;
 
       GST_DEBUG_OBJECT (flacdec, "blocksize: min=%u, max=%u",
           flacdec->min_blocksize, flacdec->max_blocksize);
+      GST_DEBUG_OBJECT (flacdec, "sample rate: %u, channels: %u",
+          flacdec->sample_rate, flacdec->channels);
+      GST_DEBUG_OBJECT (flacdec, "depth: %u, width: %u", flacdec->depth,
+          flacdec->width);
 
       /* Only scan for last block in pull-mode, since it uses pull_range() */
       if (samples == 0 && !flacdec->streaming) {
@@ -793,6 +819,7 @@ gst_flac_dec_write (GstFlacDec * flacdec, const FLAC__Frame * frame,
   GstBuffer *outbuf;
   guint depth = frame->header.bits_per_sample;
   guint width;
+  guint sample_rate = frame->header.sample_rate;
   guint channels = frame->header.channels;
   guint samples = frame->header.blocksize;
   guint j, i;
@@ -847,6 +874,16 @@ gst_flac_dec_write (GstFlacDec * flacdec, const FLAC__Frame * frame,
       goto done;
   }
 
+  if (sample_rate == 0) {
+    if (flacdec->sample_rate != 0) {
+      sample_rate = flacdec->sample_rate;
+    } else {
+      GST_ERROR_OBJECT (flacdec, "unknown sample rate");
+      ret = GST_FLOW_ERROR;
+      goto done;
+    }
+  }
+
   if (!GST_PAD_CAPS (flacdec->srcpad)) {
     GstCaps *caps;
 
@@ -870,7 +907,7 @@ gst_flac_dec_write (GstFlacDec * flacdec, const FLAC__Frame * frame,
     flacdec->depth = depth;
     flacdec->width = width;
     flacdec->channels = channels;
-    flacdec->sample_rate = frame->header.sample_rate;
+    flacdec->sample_rate = sample_rate;
 
     gst_pad_set_caps (flacdec->srcpad, caps);
     gst_caps_unref (caps);

@@ -8,11 +8,8 @@
 <link rel="up" href="ch01.html" title="gst-plugins-base Elements">
 <link rel="prev" href="gst-plugins-base-plugins-playbin.html" title="playbin">
 <link rel="next" href="gst-plugins-base-plugins-subtitleoverlay.html" title="subtitleoverlay">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-base Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-base Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-base Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -160,10 +157,8 @@ volume control with mute option
 </ul></div>
 <p>
 </p>
-<p>
-</p>
 <div class="refsect2" title="Usage">
-<a name="id492363"></a><h3>Usage</h3>
+<a name="id419379"></a><h3>Usage</h3>
 <p>
 A playbin element can be created just like any other element using
 <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElementFactory.html#gst-element-factory-make"><code class="function">gst_element_factory_make()</code></a>. The file/URI to play should be set via the <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2--uri" title='The "uri" property'><span class="type">"uri"</span></a>
@@ -207,11 +202,9 @@ setting the format passed to GST_FORMAT_TIME. If the query was successful,
 the duration or position will have been returned in units of nanoseconds.
 </p>
 </div>
-<p>
-</p>
 <hr>
 <div class="refsect2" title="Advanced Usage: specifying the audio and video sink">
-<a name="id492498"></a><h3>Advanced Usage: specifying the audio and video sink</h3>
+<a name="id419514"></a><h3>Advanced Usage: specifying the audio and video sink</h3>
 <p>
 By default, if no audio sink or video sink has been specified via the
 <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2--audio-sink" title='The "audio-sink" property'><span class="type">"audio-sink"</span></a> or <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2--video-sink" title='The "video-sink" property'><span class="type">"video-sink"</span></a> property, playbin will use the autoaudiosink
@@ -248,11 +241,9 @@ It is also possible to 'suppress' audio and/or video output by using
 "handoff" signal, which, nota bene, is fired from the streaming thread!).
 </p>
 </div>
-<p>
-</p>
 <hr>
 <div class="refsect2" title="Retrieving Tags and Other Meta Data">
-<a name="id492587"></a><h3>Retrieving Tags and Other Meta Data</h3>
+<a name="id419603"></a><h3>Retrieving Tags and Other Meta Data</h3>
 <p>
 Most of the common meta data (artist, title, etc.) can be retrieved by
 watching for TAG messages on the pipeline's bus (see above).
@@ -263,11 +254,9 @@ streams or samplerate/number of channels of audio streams can be obtained
 from the negotiated caps on the sink pads of the sinks.
 </p>
 </div>
-<p>
-</p>
 <hr>
 <div class="refsect2" title="Buffering">
-<a name="id492604"></a><h3>Buffering</h3>
+<a name="id419620"></a><h3>Buffering</h3>
 Playbin handles buffering automatically for the most part, but applications
 need to handle parts of the buffering process as well. Whenever playbin is
 buffering, it will post BUFFERING messages on the bus with a percentage
@@ -289,7 +278,7 @@ way. Here is how to extract the percentage information from the message
 7
 8
 9</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">switch</span> <span class="symbol">(</span><span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-TYPE--CAPS">GST_MESSAGE_TYPE</a></span> <span class="symbol">(</span>msg<span class="symbol">)) {</span>
+        <td class="listing_code"><pre class="programlisting"><span class="keyword">switch</span> <span class="symbol">(</span><span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-TYPE:CAPS">GST_MESSAGE_TYPE</a></span> <span class="symbol">(</span>msg<span class="symbol">)) {</span>
   <span class="keyword">case</span> GST_MESSAGE_BUFFERING<span class="symbol">: {</span>
     gint percent <span class="symbol">=</span> <span class="number">0</span><span class="symbol">;</span>
     <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#gst-message-parse-buffering">gst_message_parse_buffering</a></span> <span class="symbol">(</span>msg<span class="symbol">, &amp;</span>percent<span class="symbol">);</span>
@@ -308,21 +297,17 @@ a BUFFERING message is received with a buffer percent value &lt; 100 and set
 the pipeline back to PLAYING state when a BUFFERING message with a value
 of 100 percent is received (if PLAYING is the desired state, that is).
 </div>
-<p>
-</p>
 <hr>
 <div class="refsect2" title="Embedding the video window in your application">
-<a name="id492627"></a><h3>Embedding the video window in your application</h3>
+<a name="id419643"></a><h3>Embedding the video window in your application</h3>
 By default, playbin (or rather the video sinks used) will create their own
 window. Applications will usually want to force output to a window of their
 own, however. This can be done using the <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstxoverlay.html#GstXOverlay"><span class="type">GstXOverlay</span></a> interface, which most
 video sinks implement. See the documentation there for more details.
 </div>
-<p>
-</p>
 <hr>
 <div class="refsect2" title="Specifying which CD/DVD device to use">
-<a name="id492644"></a><h3>Specifying which CD/DVD device to use</h3>
+<a name="id419660"></a><h3>Specifying which CD/DVD device to use</h3>
 The device to use for CDs/DVDs needs to be set on the source element
 playbin creates before it is opened. The only way to do this at the moment
 is to connect to playbin's "notify::source" signal, which will be emitted
@@ -332,11 +317,9 @@ property and set it appropriately. In future ways might be added to specify
 the device as part of the URI, but at the time of writing this is not
 possible yet.
 </div>
-<p>
-</p>
 <hr>
 <div class="refsect2" title="Handling redirects">
-<a name="id492656"></a><h3>Handling redirects</h3>
+<a name="id419672"></a><h3>Handling redirects</h3>
 <p>
 Some elements may post 'redirect' messages on the bus to tell the
 application to open another location. These are element messages containing
@@ -345,11 +328,9 @@ type. The new location may be a relative or an absolute URI. Examples
 for such redirects can be found in many quicktime movie trailers.
 </p>
 </div>
-<p>
-</p>
 <hr>
 <div class="refsect2" title="Examples">
-<a name="id492670"></a><h3>Examples</h3>
+<a name="id419686"></a><h3>Examples</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -397,7 +378,8 @@ the drive is detected automatically by the plugin).
 <a name="GstPlayBin2-struct"></a><h3>struct GstPlayBin2</h3>
 <pre class="programlisting">struct GstPlayBin2;</pre>
 <p>
-playbin element structure</p>
+playbin element structure
+</p>
 </div>
 <hr>
 <div class="refsect2" title="enum GstPlayFlags">
@@ -415,57 +397,58 @@ playbin element structure</p>
 } GstPlayFlags;
 </pre>
 <p>
-Extra flags to configure the behaviour of the sinks.</p>
+Extra flags to configure the behaviour of the sinks.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="GST-PLAY-FLAG-VIDEO:CAPS"></a><span class="term"><code class="literal">GST_PLAY_FLAG_VIDEO</code></span></p></td>
-<td> Enable rendering of the video stream
+<td>Enable rendering of the video stream
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-PLAY-FLAG-AUDIO:CAPS"></a><span class="term"><code class="literal">GST_PLAY_FLAG_AUDIO</code></span></p></td>
-<td> Enable rendering of the audio stream
+<td>Enable rendering of the audio stream
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-PLAY-FLAG-TEXT:CAPS"></a><span class="term"><code class="literal">GST_PLAY_FLAG_TEXT</code></span></p></td>
-<td> Enable rendering of subtitles
+<td>Enable rendering of subtitles
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-PLAY-FLAG-VIS:CAPS"></a><span class="term"><code class="literal">GST_PLAY_FLAG_VIS</code></span></p></td>
-<td> Enable rendering of visualisations when there is
+<td>Enable rendering of visualisations when there is
       no video stream.
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-PLAY-FLAG-SOFT-VOLUME:CAPS"></a><span class="term"><code class="literal">GST_PLAY_FLAG_SOFT_VOLUME</code></span></p></td>
-<td> Use software volume
+<td>Use software volume
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-PLAY-FLAG-NATIVE-AUDIO:CAPS"></a><span class="term"><code class="literal">GST_PLAY_FLAG_NATIVE_AUDIO</code></span></p></td>
-<td> only allow native audio formats, this omits
+<td>only allow native audio formats, this omits
   configuration of audioconvert and audioresample.
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-PLAY-FLAG-NATIVE-VIDEO:CAPS"></a><span class="term"><code class="literal">GST_PLAY_FLAG_NATIVE_VIDEO</code></span></p></td>
-<td> only allow native video formats, this omits
+<td>only allow native video formats, this omits
   configuration of ffmpegcolorspace and videoscale.
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-PLAY-FLAG-DOWNLOAD:CAPS"></a><span class="term"><code class="literal">GST_PLAY_FLAG_DOWNLOAD</code></span></p></td>
-<td> enable progressice download buffering for selected
+<td>enable progressice download buffering for selected
   formats.
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-PLAY-FLAG-BUFFERING:CAPS"></a><span class="term"><code class="literal">GST_PLAY_FLAG_BUFFERING</code></span></p></td>
-<td> enable buffering of the demuxed or parsed data.
+<td>enable buffering of the demuxed or parsed data.
 </td>
 </tr>
 </tbody>
@@ -493,7 +476,8 @@ Extra flags to configure the behaviour of the sinks.</p>
 <pre class="programlisting">  "current-audio"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>
 Get or set the currently playing audio stream. By default the first audio
-stream with data is played.</p>
+stream with data is played.
+</p>
 <p>Allowed values: &gt;= G_MAXULONG</p>
 <p>Default value: -1</p>
 </div>
@@ -503,7 +487,8 @@ stream with data is played.</p>
 <pre class="programlisting">  "current-text"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>
 Get or set the currently playing subtitle stream. By default the first
-subtitle stream with data is played.</p>
+subtitle stream with data is played.
+</p>
 <p>Allowed values: &gt;= G_MAXULONG</p>
 <p>Default value: -1</p>
 </div>
@@ -513,7 +498,8 @@ subtitle stream with data is played.</p>
 <pre class="programlisting">  "current-video"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>
 Get or set the currently playing video stream. By default the first video
-stream with data is played.</p>
+stream with data is played.
+</p>
 <p>Allowed values: &gt;= G_MAXULONG</p>
 <p>Default value: -1</p>
 </div>
@@ -522,7 +508,8 @@ stream with data is played.</p>
 <a name="GstPlayBin2--flags"></a><h3>The <code class="literal">"flags"</code> property</h3>
 <pre class="programlisting">  "flags"                    <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayFlags" title="enum GstPlayFlags"><span class="type">GstPlayFlags</span></a>          : Read / Write</pre>
 <p>
-Control the behaviour of playbin.</p>
+Control the behaviour of playbin.
+</p>
 <p>Default value: Render the video stream|Render the audio stream|Render subtitles|Use software volume</p>
 </div>
 <hr>
@@ -531,14 +518,16 @@ Control the behaviour of playbin.</p>
 <pre class="programlisting">  "frame"                    <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a>*            : Read</pre>
 <p>
 Get the currently rendered or prerolled frame in the sink.
-The <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> on the buffer will describe the format of the buffer.</p>
+The <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> on the buffer will describe the format of the buffer.
+</p>
 </div>
 <hr>
 <div class="refsect2" title='The "n-audio" property'>
 <a name="GstPlayBin2--n-audio"></a><h3>The <code class="literal">"n-audio"</code> property</h3>
 <pre class="programlisting">  "n-audio"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read</pre>
 <p>
-Get the total number of available audio streams.</p>
+Get the total number of available audio streams.
+</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 0</p>
 </div>
@@ -547,7 +536,8 @@ Get the total number of available audio streams.</p>
 <a name="GstPlayBin2--n-text"></a><h3>The <code class="literal">"n-text"</code> property</h3>
 <pre class="programlisting">  "n-text"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read</pre>
 <p>
-Get the total number of available subtitle streams.</p>
+Get the total number of available subtitle streams.
+</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 0</p>
 </div>
@@ -556,7 +546,8 @@ Get the total number of available subtitle streams.</p>
 <a name="GstPlayBin2--n-video"></a><h3>The <code class="literal">"n-video"</code> property</h3>
 <pre class="programlisting">  "n-video"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read</pre>
 <p>
-Get the total number of available video streams.</p>
+Get the total number of available video streams.
+</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 0</p>
 </div>
@@ -586,7 +577,8 @@ Get the total number of available video streams.</p>
 <pre class="programlisting">  "suburi"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>
 Set the next subtitle URI that playbin will play. This property can be
-set from the about-to-finish signal to queue the next subtitle media file.</p>
+set from the about-to-finish signal to queue the next subtitle media file.
+</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
@@ -595,7 +587,8 @@ set from the about-to-finish signal to queue the next subtitle media file.</p>
 <pre class="programlisting">  "uri"                      <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>
 Set the next URI that playbin will play. This property can be set from the
-about-to-finish signal to queue the next media file.</p>
+about-to-finish signal to queue the next media file.
+</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
@@ -616,7 +609,8 @@ about-to-finish signal to queue the next media file.</p>
 <pre class="programlisting">  "volume"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write</pre>
 <p>
 Get or set the current audio stream volume. 1.0 means 100%,
-0.0 means mute. This uses a linear volume scale.</p>
+0.0 means mute. This uses a linear volume scale.
+</p>
 <p>Allowed values: [0,10]</p>
 <p>Default value: 1</p>
 </div>
@@ -664,13 +658,14 @@ Get or set the current audio stream volume. 1.0 means 100%,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>     user_data)      : Run Last</pre>
 <p>
 This signal is emitted when the current uri is about to finish. You can
-set the uri and suburi to make sure that playback continues.</p>
+set the uri and suburi to make sure that playback continues.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
@@ -688,13 +683,14 @@ set the uri and suburi to make sure that playback continues.</p>
 <p>
 This signal is emitted whenever the number or order of the audio
 streams has changed. The application will most likely want to select
-a new audio stream.</p>
+a new audio stream.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
@@ -712,18 +708,19 @@ a new audio stream.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>     user_data)      : Run Last / Action</pre>
 <p>
 Action signal to retrieve the tags of a specific audio stream number.
-This information can be used to select a stream.</p>
+This information can be used to select a stream.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stream</code></em> :</span></p></td>
-<td> an audio stream number
+<td>an audio stream number
 </td>
 </tr>
 <tr>
@@ -747,18 +744,19 @@ exist.
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>     user_data)      : Run Last / Action</pre>
 <p>
 Action signal to retrieve the tags of a specific text stream number.
-This information can be used to select a stream.</p>
+This information can be used to select a stream.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stream</code></em> :</span></p></td>
-<td> a text stream number
+<td>a text stream number
 </td>
 </tr>
 <tr>
@@ -782,18 +780,19 @@ exist.
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>     user_data)      : Run Last / Action</pre>
 <p>
 Action signal to retrieve the tags of a specific video stream number.
-This information can be used to select a stream.</p>
+This information can be used to select a stream.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stream</code></em> :</span></p></td>
-<td> a video stream number
+<td>a video stream number
 </td>
 </tr>
 <tr>
@@ -817,13 +816,14 @@ exist.
 <p>
 This signal is emitted whenever the number or order of the text
 streams has changed. The application will most likely want to select
-a new text stream.</p>
+a new text stream.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
@@ -841,13 +841,14 @@ a new text stream.</p>
 <p>
 This signal is emitted whenever the number or order of the video
 streams has changed. The application will most likely want to select
-a new video stream.</p>
+a new video stream.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
@@ -867,18 +868,19 @@ a new video stream.</p>
 Action signal to retrieve the currently playing video frame in the format
 specified by <em class="parameter"><code>caps</code></em>.
 If <em class="parameter"><code>caps</code></em> is <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, no conversion will be performed and this function is
-equivalent to the <span class="type">"frame"</span> property.</p>
+equivalent to the <span class="type">"frame"</span> property.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>caps</code></em> :</span></p></td>
-<td> the target format of the frame
+<td>the target format of the frame
 </td>
 </tr>
 <tr>
@@ -906,18 +908,19 @@ conversion failed.
 Action signal to retrieve the stream-selector sinkpad for a specific
 audio stream.
 This pad can be used for notifications of caps changes, stream-specific
-queries, etc.</p>
+queries, etc.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stream</code></em> :</span></p></td>
-<td> an audio stream number
+<td>an audio stream number
 </td>
 </tr>
 <tr>
@@ -942,18 +945,19 @@ queries, etc.</p>
 Action signal to retrieve the stream-selector sinkpad for a specific
 text stream.
 This pad can be used for notifications of caps changes, stream-specific
-queries, etc.</p>
+queries, etc.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stream</code></em> :</span></p></td>
-<td> a text stream number
+<td>a text stream number
 </td>
 </tr>
 <tr>
@@ -978,18 +982,19 @@ queries, etc.</p>
 Action signal to retrieve the stream-selector sinkpad for a specific
 video stream.
 This pad can be used for notifications of caps changes, stream-specific
-queries, etc.</p>
+queries, etc.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stream</code></em> :</span></p></td>
-<td> a video stream number
+<td>a video stream number
 </td>
 </tr>
 <tr>
@@ -1012,18 +1017,19 @@ queries, etc.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>     user_data)      : Run Last</pre>
 <p>
 This signal is emitted whenever the tags of an audio stream have changed.
-The application will most likely want to get the new tags.</p>
+The application will most likely want to get the new tags.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stream</code></em> :</span></p></td>
-<td> stream index with changed tags
+<td>stream index with changed tags
 </td>
 </tr>
 <tr>
@@ -1042,18 +1048,19 @@ The application will most likely want to get the new tags.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>     user_data)      : Run Last</pre>
 <p>
 This signal is emitted whenever the tags of a text stream have changed.
-The application will most likely want to get the new tags.</p>
+The application will most likely want to get the new tags.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stream</code></em> :</span></p></td>
-<td> stream index with changed tags
+<td>stream index with changed tags
 </td>
 </tr>
 <tr>
@@ -1072,18 +1079,19 @@ The application will most likely want to get the new tags.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>     user_data)      : Run Last</pre>
 <p>
 This signal is emitted whenever the tags of a video stream have changed.
-The application will most likely want to get the new tags.</p>
+The application will most likely want to get the new tags.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>playbin</code></em> :</span></p></td>
-<td> a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
+<td>a <a class="link" href="gst-plugins-base-plugins-playbin2.html#GstPlayBin2"><span class="type">GstPlayBin2</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stream</code></em> :</span></p></td>
-<td> stream index with changed tags
+<td>stream index with changed tags
 </td>
 </tr>
 <tr>
@@ -1098,6 +1106,6 @@ The application will most likely want to get the new tags.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

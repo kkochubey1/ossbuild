@@ -314,8 +314,6 @@ gst_tag_demux_dispose (GObject * object)
 static gboolean
 gst_tag_demux_add_srcpad (GstTagDemux * tagdemux, GstCaps * new_caps)
 {
-  GstPad *srcpad = NULL;
-
   if (tagdemux->priv->src_caps == NULL ||
       !gst_caps_is_equal (new_caps, tagdemux->priv->src_caps)) {
 
@@ -332,7 +330,7 @@ gst_tag_demux_add_srcpad (GstTagDemux * tagdemux, GstCaps * new_caps)
   }
 
   if (tagdemux->priv->srcpad == NULL) {
-    srcpad = tagdemux->priv->srcpad =
+    tagdemux->priv->srcpad =
         gst_pad_new_from_template (gst_element_class_get_pad_template
         (GST_ELEMENT_GET_CLASS (tagdemux), "src"), "src");
     g_return_val_if_fail (tagdemux->priv->srcpad != NULL, FALSE);
@@ -756,8 +754,12 @@ gst_tag_demux_sink_event (GstPad * pad, GstEvent * event)
       ret = TRUE;
       break;
     }
+    case GST_EVENT_FLUSH_STOP:
+    case GST_EVENT_FLUSH_START:
+      ret = gst_pad_event_default (pad, event);
+      break;
     default:
-      if (demux->priv->need_newseg) {
+      if (demux->priv->need_newseg && GST_EVENT_IS_SERIALIZED (event)) {
         /* Cache all events if we have a pending segment, so they don't get
          * lost (esp. tag events) */
         GST_INFO_OBJECT (demux, "caching event: %" GST_PTR_FORMAT, event);

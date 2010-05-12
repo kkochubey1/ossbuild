@@ -30,7 +30,7 @@
 #define GST_PACKAGE_NAME "GStreamer OpengGL Plug-ins GIT/prerelease"
 
 /* package origin */
-#define GST_PACKAGE_ORIGIN "Unknown package origin"
+#define GST_PACKAGE_ORIGIN "OSSBuild"
 
 /* Define if the host CPU is an Alpha */
 #undef HAVE_CPU_ALPHA

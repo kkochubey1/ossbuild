@@ -8,11 +8,8 @@
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-goom2k1.html" title="goom2k1">
 <link rel="next" href="gst-plugins-good-plugins-gstrtpjitterbuffer.html" title="gstrtpjitterbuffer">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-good Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-good Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-good Base Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -110,33 +107,33 @@ RTP sessions that will be synchronized together using RTCP SR packets.
 functionality that is activated, similar to the <a class="link" href="gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession"><span class="type">GstRtpSession</span></a> element.
 </p>
 <p>
-To use <a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin"><span class="type">GstRtpBin</span></a> as an RTP receiver, request a recv_rtp_sink_%<code class="literal">d</code> pad. The session
+To use <a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin"><span class="type">GstRtpBin</span></a> as an RTP receiver, request a recv_rtp_sink_%d pad. The session
 number must be specified in the pad name.
-Data received on the recv_rtp_sink_%<code class="literal">d</code> pad will be processed in the <a class="link" href="gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession"><span class="type">GstRtpSession</span></a>
+Data received on the recv_rtp_sink_%d pad will be processed in the <a class="link" href="gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession"><span class="type">GstRtpSession</span></a>
 manager and after being validated forwarded on <a class="link" href="gst-plugins-good-plugins-gstrtpssrcdemux.html#GstRtpSsrcDemux"><span class="type">GstRtpSsrcDemux</span></a> element. Each
 RTP stream is demuxed based on the SSRC and send to a <a class="link" href="gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer"><span class="type">GstRtpJitterBuffer</span></a>. After
 the packets are released from the jitterbuffer, they will be forwarded to a
 <a class="link" href="gst-plugins-good-plugins-gstrtpssrcdemux.html#GstRtpSsrcDemux"><span class="type">GstRtpSsrcDemux</span></a> element. The <a class="link" href="gst-plugins-good-plugins-gstrtpssrcdemux.html#GstRtpSsrcDemux"><span class="type">GstRtpSsrcDemux</span></a> element will demux the packets based
-on the payload type and will create a unique pad recv_rtp_src_%<code class="literal">d_</code>%<code class="literal">d_</code>%<code class="literal">d</code> on
+on the payload type and will create a unique pad recv_rtp_src_%d_%d_%d on
 gstrtpbin with the session number, SSRC and payload type respectively as the pad
 name.
 </p>
 <p>
-To also use <a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin"><span class="type">GstRtpBin</span></a> as an RTCP receiver, request a recv_rtcp_sink_%<code class="literal">d</code> pad. The
+To also use <a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin"><span class="type">GstRtpBin</span></a> as an RTCP receiver, request a recv_rtcp_sink_%d pad. The
 session number must be specified in the pad name.
 </p>
 <p>
 If you want the session manager to generate and send RTCP packets, request
-the send_rtcp_src_%<code class="literal">d</code> pad with the session number in the pad name. Packet pushed
+the send_rtcp_src_%d pad with the session number in the pad name. Packet pushed
 on this pad contain SR/RR RTCP reports that should be sent to all participants
 in the session.
 </p>
 <p>
-To use <a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin"><span class="type">GstRtpBin</span></a> as a sender, request a send_rtp_sink_%<code class="literal">d</code> pad, which will
-automatically create a send_rtp_src_%<code class="literal">d</code> pad. If the session number is not provided,
+To use <a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin"><span class="type">GstRtpBin</span></a> as a sender, request a send_rtp_sink_%d pad, which will
+automatically create a send_rtp_src_%d pad. If the session number is not provided,
 the pad from the lowest available session will be returned. The session manager will modify the
 SSRC in the RTP packets to its own SSRC and wil forward the packets on the
-send_rtp_src_%<code class="literal">d</code> pad after updating its internal state.
+send_rtp_src_%d pad after updating its internal state.
 </p>
 <p>
 The session manager needs the clock-rate of the payload types it is handling
@@ -144,10 +141,8 @@ and will signal the <a class="link" href="gst-plugins-good-plugins-gstrtpsession
 mapping. One can clear the cached values with the <a class="link" href="gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession-clear-pt-map" title='The "clear-pt-map" signal'><span class="type">"clear-pt-map"</span></a>
 signal.
 </p>
-<p>
-</p>
 <div class="refsect2" title="Example pipelines">
-<a name="id576662"></a><h3>Example pipelines</h3>
+<a name="id418231"></a><h3>Example pipelines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -237,9 +232,8 @@ Send RTCP reports for session 0 on port 5005 and RTCP reports for session 1
 on port 5007.
 </div>
 <p>
+Last reviewed on 2007-08-30 (0.10.6)
 </p>
-<p>
-Last reviewed on 2007-08-30 (0.10.6)</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-good-plugins-gstrtpbin.details"></a><h2>Details</h2>
@@ -301,13 +295,14 @@ Last reviewed on 2007-08-30 (0.10.6)</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last / Action</pre>
 <p>
 Clear all previously cached pt-mapping obtained with
-<a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin-request-pt-map" title='The "request-pt-map" signal'><span class="type">"request-pt-map"</span></a>.</p>
+<a class="link" href="gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin-request-pt-map" title='The "request-pt-map" signal'><span class="type">"request-pt-map"</span></a>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
@@ -324,18 +319,19 @@ Clear all previously cached pt-mapping obtained with
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      id,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last / Action</pre>
 <p>
-Request the internal RTPSession object as <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> in session <em class="parameter"><code>id</code></em>.</p>
+Request the internal RTPSession object as <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> in session <em class="parameter"><code>id</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>id</code></em> :</span></p></td>
-<td> the session id
+<td>the session id
 </td>
 </tr>
 <tr>
@@ -353,23 +349,24 @@ Request the internal RTPSession object as <a href="/usr/share/gtk-doc/html/gobje
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      ssrc,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Notify of an SSRC that became inactive because of a BYE packet.</p>
+Notify of an SSRC that became inactive because of a BYE packet.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>ssrc</code></em> :</span></p></td>
-<td> the SSRC
+<td>the SSRC
 </td>
 </tr>
 <tr>
@@ -387,23 +384,24 @@ Notify of an SSRC that became inactive because of a BYE packet.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      ssrc,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Notify of an SSRC that has timed out because of BYE</p>
+Notify of an SSRC that has timed out because of BYE
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>ssrc</code></em> :</span></p></td>
-<td> the SSRC
+<td>the SSRC
 </td>
 </tr>
 <tr>
@@ -421,23 +419,24 @@ Notify of an SSRC that has timed out because of BYE</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      ssrc,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Notify of a new SSRC that entered <em class="parameter"><code>session</code></em>.</p>
+Notify of a new SSRC that entered <em class="parameter"><code>session</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>ssrc</code></em> :</span></p></td>
-<td> the SSRC
+<td>the SSRC
 </td>
 </tr>
 <tr>
@@ -455,23 +454,24 @@ Notify of a new SSRC that entered <em class="parameter"><code>session</code></em
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      ssrc,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Notify that SSRC sender has sent data up to the configured NPT stop time.</p>
+Notify that SSRC sender has sent data up to the configured NPT stop time.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>ssrc</code></em> :</span></p></td>
-<td> the SSRC
+<td>the SSRC
 </td>
 </tr>
 <tr>
@@ -489,23 +489,24 @@ Notify that SSRC sender has sent data up to the configured NPT stop time.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      ssrc,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Notify of a sender SSRC that has timed out and became a receiver</p>
+Notify of a sender SSRC that has timed out and became a receiver
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>ssrc</code></em> :</span></p></td>
-<td> the SSRC
+<td>the SSRC
 </td>
 </tr>
 <tr>
@@ -523,23 +524,24 @@ Notify of a sender SSRC that has timed out and became a receiver</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      ssrc,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Notify of a SSRC that is active, i.e., sending RTCP.</p>
+Notify of a SSRC that is active, i.e., sending RTCP.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>ssrc</code></em> :</span></p></td>
-<td> the SSRC
+<td>the SSRC
 </td>
 </tr>
 <tr>
@@ -557,23 +559,24 @@ Notify of a SSRC that is active, i.e., sending RTCP.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      ssrc,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Notify when we have an SSRC collision</p>
+Notify when we have an SSRC collision
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>ssrc</code></em> :</span></p></td>
-<td> the SSRC
+<td>the SSRC
 </td>
 </tr>
 <tr>
@@ -591,23 +594,24 @@ Notify when we have an SSRC collision</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      ssrc,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Notify of a SSRC that is active, i.e., sending RTCP.</p>
+Notify of a SSRC that is active, i.e., sending RTCP.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>ssrc</code></em> :</span></p></td>
-<td> the SSRC
+<td>the SSRC
 </td>
 </tr>
 <tr>
@@ -625,23 +629,24 @@ Notify of a SSRC that is active, i.e., sending RTCP.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      ssrc,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Notify of a new SSRC that became validated.</p>
+Notify of a new SSRC that became validated.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>ssrc</code></em> :</span></p></td>
-<td> the SSRC
+<td>the SSRC
 </td>
 </tr>
 <tr>
@@ -659,23 +664,24 @@ Notify of a new SSRC that became validated.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      ssrc,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Notify of an SSRC that has timed out</p>
+Notify of an SSRC that has timed out
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>ssrc</code></em> :</span></p></td>
-<td> the SSRC
+<td>the SSRC
 </td>
 </tr>
 <tr>
@@ -693,23 +699,24 @@ Notify of an SSRC that has timed out</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      pt,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Request the payload type as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> for <em class="parameter"><code>pt</code></em> in <em class="parameter"><code>session</code></em>.</p>
+Request the payload type as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> for <em class="parameter"><code>pt</code></em> in <em class="parameter"><code>session</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pt</code></em> :</span></p></td>
-<td> the pt
+<td>the pt
 </td>
 </tr>
 <tr>
@@ -726,13 +733,14 @@ Request the payload type as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstr
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last / Action</pre>
 <p>
 Reset all currently configured lip-sync parameters and require new SR
-packets for all streams before lip-sync is attempted again.</p>
+packets for all streams before lip-sync is attempted again.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
@@ -750,23 +758,24 @@ packets for all streams before lip-sync is attempted again.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>      pt,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Signal that the current payload type changed to <em class="parameter"><code>pt</code></em> in <em class="parameter"><code>session</code></em>.</p>
+Signal that the current payload type changed to <em class="parameter"><code>pt</code></em> in <em class="parameter"><code>session</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rtpbin</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>session</code></em> :</span></p></td>
-<td> the session
+<td>the session
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pt</code></em> :</span></p></td>
-<td> the pt
+<td>the pt
 </td>
 </tr>
 <tr>
@@ -785,6 +794,6 @@ gstrtpjitterbuffer, gstrtpsession, gstrtpptdemux, gstrtpssrcdemux
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

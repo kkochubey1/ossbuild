@@ -72,8 +72,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/freetype2.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/freetype2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-alsa.m4 \
 	$(top_srcdir)/m4/gst-fionread.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -142,24 +141,40 @@ nodist_libgstinterfaces_@GST_MAJORMINOR@_la_OBJECTS =  \
 libgstinterfaces_@GST_MAJORMINOR@_la_OBJECTS =  \
 	$(am_libgstinterfaces_@GST_MAJORMINOR@_la_OBJECTS) \
 	$(nodist_libgstinterfaces_@GST_MAJORMINOR@_la_OBJECTS)
-libgstinterfaces_@GST_MAJORMINOR@_la_LINK = $(LIBTOOL) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) \
-	$(libgstinterfaces_@GST_MAJORMINOR@_la_LDFLAGS) $(LDFLAGS) -o \
-	$@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstinterfaces_@GST_MAJORMINOR@_la_LINK = $(LIBTOOL) $(AM_V_lt) \
+	--tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) \
+	$(CFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstinterfaces_@GST_MAJORMINOR@_la_SOURCES) \
 	$(nodist_libgstinterfaces_@GST_MAJORMINOR@_la_SOURCES)
 DIST_SOURCES = $(libgstinterfaces_@GST_MAJORMINOR@_la_SOURCES)
@@ -174,7 +189,7 @@ ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUDIORESAMPLE_FORMAT_AUTO = @AUDIORESAMPLE_FORMAT_AUTO@
@@ -214,8 +229,6 @@ EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FT2_CFLAGS = @FT2_CFLAGS@
@@ -325,7 +338,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -333,7 +345,6 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
@@ -364,7 +375,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 QT_CFLAGS = @QT_CFLAGS@
 QT_LIBS = @QT_LIBS@
 RANLIB = @RANLIB@
@@ -375,7 +385,6 @@ STRIP = @STRIP@
 THEORA_CFLAGS = @THEORA_CFLAGS@
 THEORA_LIBS = @THEORA_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
@@ -384,6 +393,8 @@ VORBISENC_LIBS = @VORBISENC_LIBS@
 VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -447,7 +458,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -609,7 +619,7 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstinterfaces-@GST_MAJORMINOR@.la: $(libgstinterfaces_@GST_MAJORMINOR@_la_OBJECTS) $(libgstinterfaces_@GST_MAJORMINOR@_la_DEPENDENCIES) 
-	$(libgstinterfaces_@GST_MAJORMINOR@_la_LINK) -rpath $(libdir) $(libgstinterfaces_@GST_MAJORMINOR@_la_OBJECTS) $(libgstinterfaces_@GST_MAJORMINOR@_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstinterfaces_@GST_MAJORMINOR@_la_LINK) -rpath $(libdir) $(libgstinterfaces_@GST_MAJORMINOR@_la_OBJECTS) $(libgstinterfaces_@GST_MAJORMINOR@_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -634,130 +644,148 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.lo: colorbalance.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.lo `test -f 'colorbalance.c' || echo '$(srcdir)/'`colorbalance.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.lo `test -f 'colorbalance.c' || echo '$(srcdir)/'`colorbalance.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='colorbalance.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.lo `test -f 'colorbalance.c' || echo '$(srcdir)/'`colorbalance.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-colorbalance.lo `test -f 'colorbalance.c' || echo '$(srcdir)/'`colorbalance.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.lo: colorbalancechannel.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.lo `test -f 'colorbalancechannel.c' || echo '$(srcdir)/'`colorbalancechannel.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.lo `test -f 'colorbalancechannel.c' || echo '$(srcdir)/'`colorbalancechannel.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='colorbalancechannel.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.lo `test -f 'colorbalancechannel.c' || echo '$(srcdir)/'`colorbalancechannel.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-colorbalancechannel.lo `test -f 'colorbalancechannel.c' || echo '$(srcdir)/'`colorbalancechannel.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-mixer.lo: mixer.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-mixer.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixer.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixer.lo `test -f 'mixer.c' || echo '$(srcdir)/'`mixer.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixer.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixer.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-mixer.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixer.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixer.lo `test -f 'mixer.c' || echo '$(srcdir)/'`mixer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixer.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixer.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mixer.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-mixer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixer.lo `test -f 'mixer.c' || echo '$(srcdir)/'`mixer.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixer.lo `test -f 'mixer.c' || echo '$(srcdir)/'`mixer.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.lo: mixeroptions.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.lo `test -f 'mixeroptions.c' || echo '$(srcdir)/'`mixeroptions.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.lo `test -f 'mixeroptions.c' || echo '$(srcdir)/'`mixeroptions.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mixeroptions.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.lo `test -f 'mixeroptions.c' || echo '$(srcdir)/'`mixeroptions.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixeroptions.lo `test -f 'mixeroptions.c' || echo '$(srcdir)/'`mixeroptions.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.lo: mixertrack.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.lo `test -f 'mixertrack.c' || echo '$(srcdir)/'`mixertrack.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.lo `test -f 'mixertrack.c' || echo '$(srcdir)/'`mixertrack.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mixertrack.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.lo `test -f 'mixertrack.c' || echo '$(srcdir)/'`mixertrack.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-mixertrack.lo `test -f 'mixertrack.c' || echo '$(srcdir)/'`mixertrack.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-navigation.lo: navigation.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-navigation.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-navigation.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-navigation.lo `test -f 'navigation.c' || echo '$(srcdir)/'`navigation.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-navigation.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-navigation.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-navigation.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-navigation.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-navigation.lo `test -f 'navigation.c' || echo '$(srcdir)/'`navigation.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-navigation.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-navigation.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='navigation.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-navigation.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-navigation.lo `test -f 'navigation.c' || echo '$(srcdir)/'`navigation.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-navigation.lo `test -f 'navigation.c' || echo '$(srcdir)/'`navigation.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.lo: propertyprobe.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.lo `test -f 'propertyprobe.c' || echo '$(srcdir)/'`propertyprobe.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.lo `test -f 'propertyprobe.c' || echo '$(srcdir)/'`propertyprobe.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='propertyprobe.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.lo `test -f 'propertyprobe.c' || echo '$(srcdir)/'`propertyprobe.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-propertyprobe.lo `test -f 'propertyprobe.c' || echo '$(srcdir)/'`propertyprobe.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.lo: streamvolume.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.lo `test -f 'streamvolume.c' || echo '$(srcdir)/'`streamvolume.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.lo `test -f 'streamvolume.c' || echo '$(srcdir)/'`streamvolume.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='streamvolume.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.lo `test -f 'streamvolume.c' || echo '$(srcdir)/'`streamvolume.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-streamvolume.lo `test -f 'streamvolume.c' || echo '$(srcdir)/'`streamvolume.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-tuner.lo: tuner.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-tuner.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tuner.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tuner.lo `test -f 'tuner.c' || echo '$(srcdir)/'`tuner.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tuner.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tuner.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-tuner.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tuner.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tuner.lo `test -f 'tuner.c' || echo '$(srcdir)/'`tuner.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tuner.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tuner.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tuner.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-tuner.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tuner.lo `test -f 'tuner.c' || echo '$(srcdir)/'`tuner.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tuner.lo `test -f 'tuner.c' || echo '$(srcdir)/'`tuner.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.lo: tunernorm.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.lo `test -f 'tunernorm.c' || echo '$(srcdir)/'`tunernorm.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.lo `test -f 'tunernorm.c' || echo '$(srcdir)/'`tunernorm.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tunernorm.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.lo `test -f 'tunernorm.c' || echo '$(srcdir)/'`tunernorm.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tunernorm.lo `test -f 'tunernorm.c' || echo '$(srcdir)/'`tunernorm.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.lo: tunerchannel.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.lo `test -f 'tunerchannel.c' || echo '$(srcdir)/'`tunerchannel.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.lo `test -f 'tunerchannel.c' || echo '$(srcdir)/'`tunerchannel.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tunerchannel.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.lo `test -f 'tunerchannel.c' || echo '$(srcdir)/'`tunerchannel.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-tunerchannel.lo `test -f 'tunerchannel.c' || echo '$(srcdir)/'`tunerchannel.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.lo: videoorientation.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.lo `test -f 'videoorientation.c' || echo '$(srcdir)/'`videoorientation.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.lo `test -f 'videoorientation.c' || echo '$(srcdir)/'`videoorientation.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='videoorientation.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.lo `test -f 'videoorientation.c' || echo '$(srcdir)/'`videoorientation.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-videoorientation.lo `test -f 'videoorientation.c' || echo '$(srcdir)/'`videoorientation.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.lo: xoverlay.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.lo `test -f 'xoverlay.c' || echo '$(srcdir)/'`xoverlay.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.lo `test -f 'xoverlay.c' || echo '$(srcdir)/'`xoverlay.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xoverlay.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.lo `test -f 'xoverlay.c' || echo '$(srcdir)/'`xoverlay.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-xoverlay.lo `test -f 'xoverlay.c' || echo '$(srcdir)/'`xoverlay.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.lo: interfaces-marshal.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.lo `test -f 'interfaces-marshal.c' || echo '$(srcdir)/'`interfaces-marshal.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.lo `test -f 'interfaces-marshal.c' || echo '$(srcdir)/'`interfaces-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='interfaces-marshal.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.lo `test -f 'interfaces-marshal.c' || echo '$(srcdir)/'`interfaces-marshal.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-marshal.lo `test -f 'interfaces-marshal.c' || echo '$(srcdir)/'`interfaces-marshal.c
 
 libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.lo: interfaces-enumtypes.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.lo `test -f 'interfaces-enumtypes.c' || echo '$(srcdir)/'`interfaces-enumtypes.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.lo -MD -MP -MF $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.Tpo -c -o libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.lo `test -f 'interfaces-enumtypes.c' || echo '$(srcdir)/'`interfaces-enumtypes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.Tpo $(DEPDIR)/libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='interfaces-enumtypes.c' object='libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.lo `test -f 'interfaces-enumtypes.c' || echo '$(srcdir)/'`interfaces-enumtypes.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstinterfaces_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstinterfaces_@GST_MAJORMINOR@_la-interfaces-enumtypes.lo `test -f 'interfaces-enumtypes.c' || echo '$(srcdir)/'`interfaces-enumtypes.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1065,16 +1093,16 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 
 # these are all the rules generating the relevant files
 $(glib_gen_basename)-marshal.h: $(glib_gen_basename)-marshal.list
-	glib-genmarshal --header --prefix=$(glib_gen_prefix)_marshal $^ > $(glib_gen_basename)-marshal.h.tmp
+	$(AM_V_GEN)glib-genmarshal --header --prefix=$(glib_gen_prefix)_marshal $^ > $(glib_gen_basename)-marshal.h.tmp && \
 	mv $(glib_gen_basename)-marshal.h.tmp $(glib_gen_basename)-marshal.h
 
 $(glib_gen_basename)-marshal.c: $(glib_gen_basename)-marshal.list
-	echo "#include \"$(glib_gen_basename)-marshal.h\"" >> $(glib_gen_basename)-marshal.c.tmp
-	glib-genmarshal --body --prefix=$(glib_gen_prefix)_marshal $^ >> $(glib_gen_basename)-marshal.c.tmp
+	$(AM_V_GEN)echo "#include \"$(glib_gen_basename)-marshal.h\"" >> $(glib_gen_basename)-marshal.c.tmp && \
+	glib-genmarshal --body --prefix=$(glib_gen_prefix)_marshal $^ >> $(glib_gen_basename)-marshal.c.tmp && \
 	mv $(glib_gen_basename)-marshal.c.tmp $(glib_gen_basename)-marshal.c
 
 $(glib_gen_basename)-enumtypes.h: $(glib_enum_headers)
-	glib-mkenums \
+	$(AM_V_GEN)glib-mkenums \
 	--fhead "#ifndef __$(glib_enum_define)_ENUM_TYPES_H__\n#define __$(glib_enum_define)_ENUM_TYPES_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
 	--fprod "\n/* enumerations from \"@filename@\" */\n" \
 	--vhead "GType @enum_name@_get_type (void);\n#define GST_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n"         \
@@ -1083,7 +1111,7 @@ $(glib_gen_basename)-enumtypes.h: $(glib_enum_headers)
 
 $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 	@if test "x$(glib_enum_headers)" == "x"; then echo "ERROR: glib_enum_headers is empty, please fix Makefile"; exit 1; fi
-	glib-mkenums \
+	$(AM_V_GEN)glib-mkenums \
 	--fhead "#include \"$(glib_gen_basename)-enumtypes.h\"\n$(enum_headers)" \
 	--fprod "\n/* enumerations from \"@filename@\" */" \
 	--vhead "GType\n@enum_name@_get_type (void)\n{\n  static volatile gsize g_define_type_id__volatile = 0;\n  if (g_once_init_enter (&g_define_type_id__volatile)) {\n    static const G@Type@Value values[] = {"     \
@@ -1094,21 +1122,21 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 # a hack rule to make sure .Plo files exist because they get include'd
 # from Makefile's
 .deps/%-marshal.Plo:
-	touch $@
+	@touch $@
 
 .deps/%-enumtypes.Plo:
-	touch $@
+	@touch $@
 
 @HAVE_INTROSPECTION_TRUE@GstInterfaces-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstinterfaces-@GST_MAJORMINOR@.la
-@HAVE_INTROSPECTION_TRUE@	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstInterfaces \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
 @HAVE_INTROSPECTION_TRUE@		$(gir_cincludes) \
 @HAVE_INTROSPECTION_TRUE@		-I$(top_srcdir)/gst-libs \
 @HAVE_INTROSPECTION_TRUE@		-I$(top_builddir)/gst-libs \
-@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=libdir gstreamer-0.10`/gst \
-@HAVE_INTROSPECTION_TRUE@		--library=gstinterfaces-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
+@HAVE_INTROSPECTION_TRUE@		--library=libgstinterfaces-0.10.la \
 @HAVE_INTROSPECTION_TRUE@		--include=Gst-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
 @HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
@@ -1117,7 +1145,11 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)
 
 @HAVE_INTROSPECTION_TRUE@%.typelib: %.gir $(INTROSPECTION_COMPILER)
-@HAVE_INTROSPECTION_TRUE@	$(INTROSPECTION_COMPILER) --includedir=$(srcdir) --includedir=$(builddir) --includedir=`$(PKG_CONFIG) --variable=libdir gstreamer-0.10`/gst $(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)$(INTROSPECTION_COMPILER) \
+@HAVE_INTROSPECTION_TRUE@		--includedir=$(srcdir) \
+@HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir) \
+@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
+@HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

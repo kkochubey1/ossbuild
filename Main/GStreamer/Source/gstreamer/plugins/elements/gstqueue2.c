@@ -145,16 +145,16 @@ enum
                       queue->cur_level.time, \
                       queue->max_level.time, \
                       (guint64) (QUEUE_IS_USING_TEMP_FILE(queue) ? \
-                        queue->writing_pos - queue->max_reading_pos : \
+                        queue->current->writing_pos - queue->current->max_reading_pos : \
                         queue->queue->length))
 
 #define GST_QUEUE2_MUTEX_LOCK(q) G_STMT_START {                          \
   g_mutex_lock (q->qlock);                                              \
 } G_STMT_END
 
-#define GST_QUEUE2_MUTEX_LOCK_CHECK(q,label) G_STMT_START {              \
-  GST_QUEUE2_MUTEX_LOCK (q);                                             \
-  if (q->srcresult != GST_FLOW_OK)                                      \
+#define GST_QUEUE2_MUTEX_LOCK_CHECK(q,res,label) G_STMT_START {         \
+  GST_QUEUE2_MUTEX_LOCK (q);                                            \
+  if (res != GST_FLOW_OK)                                               \
     goto label;                                                         \
 } G_STMT_END
 
@@ -162,24 +162,24 @@ enum
   g_mutex_unlock (q->qlock);                                            \
 } G_STMT_END
 
-#define GST_QUEUE2_WAIT_DEL_CHECK(q, label) G_STMT_START {               \
+#define GST_QUEUE2_WAIT_DEL_CHECK(q, res, label) G_STMT_START {         \
   STATUS (queue, q->sinkpad, "wait for DEL");                           \
   q->waiting_del = TRUE;                                                \
   g_cond_wait (q->item_del, queue->qlock);                              \
   q->waiting_del = FALSE;                                               \
-  if (q->srcresult != GST_FLOW_OK) {                                    \
+  if (res != GST_FLOW_OK) {                                             \
     STATUS (queue, q->srcpad, "received DEL wakeup");                   \
     goto label;                                                         \
   }                                                                     \
   STATUS (queue, q->sinkpad, "received DEL");                           \
 } G_STMT_END
 
-#define GST_QUEUE2_WAIT_ADD_CHECK(q, label) G_STMT_START {               \
+#define GST_QUEUE2_WAIT_ADD_CHECK(q, res, label) G_STMT_START {         \
   STATUS (queue, q->srcpad, "wait for ADD");                            \
   q->waiting_add = TRUE;                                                \
   g_cond_wait (q->item_add, q->qlock);                                  \
   q->waiting_add = FALSE;                                               \
-  if (q->srcresult != GST_FLOW_OK) {                                    \
+  if (res != GST_FLOW_OK) {                                             \
     STATUS (queue, q->srcpad, "received ADD wakeup");                   \
     goto label;                                                         \
   }                                                                     \
@@ -225,6 +225,8 @@ static gboolean gst_queue2_handle_sink_event (GstPad * pad, GstEvent * event);
 
 static gboolean gst_queue2_handle_src_event (GstPad * pad, GstEvent * event);
 static gboolean gst_queue2_handle_src_query (GstPad * pad, GstQuery * query);
+static gboolean gst_queue2_handle_query (GstElement * element,
+    GstQuery * query);
 
 static GstCaps *gst_queue2_getcaps (GstPad * pad);
 static gboolean gst_queue2_acceptcaps (GstPad * pad, GstCaps * caps);
@@ -347,6 +349,7 @@ gst_queue2_class_init (GstQueue2Class * klass)
   gobject_class->finalize = gst_queue2_finalize;
 
   gstelement_class->change_state = GST_DEBUG_FUNCPTR (gst_queue2_change_state);
+  gstelement_class->query = GST_DEBUG_FUNCPTR (gst_queue2_handle_query);
 }
 
 static void
@@ -403,6 +406,7 @@ gst_queue2_init (GstQueue2 * queue, GstQueue2Class * g_class)
   gst_segment_init (&queue->src_segment, GST_FORMAT_TIME);
 
   queue->srcresult = GST_FLOW_WRONG_STATE;
+  queue->sinkresult = GST_FLOW_WRONG_STATE;
   queue->is_eos = FALSE;
   queue->in_timer = g_timer_new ();
   queue->out_timer = g_timer_new ();
@@ -450,6 +454,108 @@ gst_queue2_finalize (GObject * object)
   g_free (queue->temp_location);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
+}
+
+static void
+debug_ranges (GstQueue2 * queue)
+{
+  GstQueue2Range *walk;
+
+  for (walk = queue->ranges; walk; walk = walk->next) {
+    GST_DEBUG_OBJECT (queue, "range %" G_GUINT64_FORMAT "-%" G_GUINT64_FORMAT,
+        walk->offset, walk->writing_pos);
+  }
+}
+
+/* clear all the downloaded ranges */
+static void
+clean_ranges (GstQueue2 * queue)
+{
+  GST_DEBUG_OBJECT (queue, "clean queue ranges");
+
+  g_slice_free_chain (GstQueue2Range, queue->ranges, next);
+  queue->ranges = NULL;
+  queue->current = NULL;
+}
+
+/* find a range that contains @offset or NULL when nothing does */
+static GstQueue2Range *
+find_range (GstQueue2 * queue, guint64 offset, guint64 length)
+{
+  GstQueue2Range *range = NULL;
+  GstQueue2Range *walk;
+
+  /* first do a quick check for the current range */
+  for (walk = queue->ranges; walk; walk = walk->next) {
+    if (offset >= walk->offset && offset <= walk->writing_pos) {
+      /* we can reuse an existing range */
+      range = walk;
+      break;
+    }
+  }
+  return range;
+}
+
+/* make a new range for @offset or reuse an existing range */
+static GstQueue2Range *
+add_range (GstQueue2 * queue, guint64 offset)
+{
+  GstQueue2Range *range, *prev, *next;
+
+  GST_DEBUG_OBJECT (queue, "find range for %" G_GUINT64_FORMAT, offset);
+
+  if ((range = find_range (queue, offset, 0))) {
+    GST_DEBUG_OBJECT (queue,
+        "reusing range %" G_GUINT64_FORMAT "-%" G_GUINT64_FORMAT, range->offset,
+        range->writing_pos);
+    range->writing_pos = offset;
+  } else {
+    GST_DEBUG_OBJECT (queue,
+        "new range %" G_GUINT64_FORMAT "-%" G_GUINT64_FORMAT, offset, offset);
+
+    range = g_slice_new0 (GstQueue2Range);
+    range->offset = offset;
+    range->writing_pos = offset;
+    range->reading_pos = offset;
+    range->max_reading_pos = offset;
+
+    /* insert sorted */
+    prev = NULL;
+    next = queue->ranges;
+    while (next) {
+      if (next->offset > offset) {
+        /* insert before next */
+        GST_DEBUG_OBJECT (queue,
+            "insert before range %p, offset %" G_GUINT64_FORMAT, next,
+            next->offset);
+        break;
+      }
+      /* try next */
+      prev = next;
+      next = next->next;
+    }
+    range->next = next;
+    if (prev)
+      prev->next = range;
+    else
+      queue->ranges = range;
+  }
+  debug_ranges (queue);
+
+  return range;
+}
+
+
+/* clear and init the download ranges for offset 0 */
+static void
+init_ranges (GstQueue2 * queue)
+{
+  GST_DEBUG_OBJECT (queue, "init queue ranges");
+
+  /* get rid of all the current ranges */
+  clean_ranges (queue);
+  /* make a range for offset 0 */
+  queue->current = add_range (queue, 0);
 }
 
 static gboolean
@@ -644,6 +750,8 @@ update_buffering (GstQueue2 * queue)
     if (percent > 100)
       percent = 100;
 
+    queue->buffering_percent = percent;
+
     if (QUEUE_IS_USING_TEMP_FILE (queue)) {
       GstFormat fmt = GST_FORMAT_BYTES;
       gint64 duration;
@@ -653,7 +761,7 @@ update_buffering (GstQueue2 * queue)
         if (gst_pad_query_peer_duration (queue->sinkpad, &fmt, &duration))
           buffering_left =
               (gdouble) ((duration -
-                  queue->writing_pos) * 1000) / queue->byte_in_rate;
+                  queue->current->writing_pos) * 1000) / queue->byte_in_rate;
       } else {
         buffering_left = G_MAXINT64;
       }
@@ -780,48 +888,180 @@ update_out_rates (GstQueue2 * queue)
 }
 
 static void
+update_cur_level (GstQueue2 * queue, GstQueue2Range * range)
+{
+  guint64 max_reading_pos, writing_pos;
+
+  writing_pos = range->writing_pos;
+  max_reading_pos = range->max_reading_pos;
+
+  if (writing_pos > max_reading_pos)
+    queue->cur_level.bytes = writing_pos - max_reading_pos;
+  else
+    queue->cur_level.bytes = 0;
+}
+
+static gboolean
 gst_queue2_write_buffer_to_file (GstQueue2 * queue, GstBuffer * buffer)
 {
   guint size;
   guint8 *data;
-  int ret;
+  guint64 writing_pos, max_reading_pos;
+  GstQueue2Range *next;
+
+  writing_pos = queue->current->writing_pos;
+  max_reading_pos = queue->current->max_reading_pos;
 
 #ifdef HAVE_FSEEKO
-  fseeko (queue->temp_file, (off_t) queue->writing_pos, SEEK_SET);
+  fseeko (queue->temp_file, (off_t) writing_pos, SEEK_SET);
 #elif defined (G_OS_UNIX) || defined (G_OS_WIN32)
-  lseek (fileno (queue->temp_file), (off_t) queue->writing_pos, SEEK_SET);
+  lseek (fileno (queue->temp_file), (off_t) writing_pos, SEEK_SET);
 #else
-  fseek (queue->temp_file, queue->writing_pos, SEEK_SET);
+  fseek (queue->temp_file, writing_pos, SEEK_SET);
 #endif
 
   data = GST_BUFFER_DATA (buffer);
   size = GST_BUFFER_SIZE (buffer);
 
-  ret = fwrite (data, 1, size, queue->temp_file);
-  if (ret < size) {
-    /* FIXME do something useful here */
-    GST_ERROR_OBJECT (queue, "fwrite returned error");
-  }
-  queue->writing_pos += size;
+  if (fwrite (data, size, 1, queue->temp_file) != 1)
+    goto handle_error;
 
-  if (queue->writing_pos > queue->max_reading_pos)
-    queue->cur_level.bytes = queue->writing_pos - queue->max_reading_pos;
+  writing_pos += size;
+
+  GST_INFO_OBJECT (queue,
+      "writing %" G_GUINT64_FORMAT ", max_reading %" G_GUINT64_FORMAT,
+      writing_pos, max_reading_pos);
+
+  if (writing_pos > max_reading_pos)
+    queue->cur_level.bytes = writing_pos - max_reading_pos;
   else
     queue->cur_level.bytes = 0;
+
+  /* try to merge with next range */
+  while ((next = queue->current->next)) {
+    GST_INFO_OBJECT (queue,
+        "checking merge with next range %" G_GUINT64_FORMAT " < %"
+        G_GUINT64_FORMAT, writing_pos, next->offset);
+    if (writing_pos < next->offset)
+      break;
+
+    GST_DEBUG_OBJECT (queue, "merging ranges %" G_GUINT64_FORMAT,
+        next->writing_pos);
+    /* we ran over the offset of the next group */
+    queue->current->writing_pos = writing_pos = next->writing_pos;
+
+    /* remove the group */
+    queue->current->next = next->next;
+    g_slice_free (GstQueue2Range, next);
+
+    debug_ranges (queue);
+  }
+  queue->current->writing_pos = writing_pos;
+
+  return TRUE;
+
+  /* ERRORS */
+handle_error:
+  {
+    switch (errno) {
+      case ENOSPC:{
+        GST_ELEMENT_ERROR (queue, RESOURCE, NO_SPACE_LEFT, (NULL), (NULL));
+        break;
+      }
+      default:{
+        GST_ELEMENT_ERROR (queue, RESOURCE, WRITE,
+            (_("Error while writing to download file.")),
+            ("%s", g_strerror (errno)));
+      }
+    }
+    return FALSE;
+  }
+}
+
+static void
+update_cur_pos (GstQueue2 * queue, GstQueue2Range * range, guint64 pos)
+{
+  guint64 reading_pos, max_reading_pos;
+
+  reading_pos = pos;
+  max_reading_pos = range->max_reading_pos;
+
+  max_reading_pos = MAX (max_reading_pos, reading_pos);
+
+  range->max_reading_pos = max_reading_pos;
+
+  update_cur_level (queue, range);
+}
+
+static gboolean
+perform_seek_to_offset (GstQueue2 * queue, guint64 offset)
+{
+  GstEvent *event;
+  gboolean res;
+
+  GST_DEBUG_OBJECT (queue, "Seeking to %" G_GUINT64_FORMAT, offset);
+
+  event =
+      gst_event_new_seek (1.0, GST_FORMAT_BYTES,
+      GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE, GST_SEEK_TYPE_SET, offset,
+      GST_SEEK_TYPE_NONE, -1);
+
+  GST_QUEUE2_MUTEX_UNLOCK (queue);
+  res = gst_pad_push_event (queue->sinkpad, event);
+  GST_QUEUE2_MUTEX_LOCK (queue);
+
+  if (res) {
+    queue->current = add_range (queue, offset);
+    /* update the stats for this range */
+    update_cur_level (queue, queue->current);
+  }
+  return res;
 }
 
 /* see if there is enough data in the file to read a full buffer */
 static gboolean
 gst_queue2_have_data (GstQueue2 * queue, guint64 offset, guint length)
 {
-  GST_DEBUG_OBJECT (queue,
-      "offset %" G_GUINT64_FORMAT ", len %u, write %" G_GUINT64_FORMAT, offset,
-      length, queue->writing_pos);
-  if (queue->is_eos)
-    return TRUE;
+  GstQueue2Range *range;
 
-  if (offset + length < queue->writing_pos)
-    return TRUE;
+  GST_DEBUG_OBJECT (queue, "looking for offset %" G_GUINT64_FORMAT ", len %u",
+      offset, length);
+
+  if ((range = find_range (queue, offset, length))) {
+    if (queue->current != range) {
+      GST_DEBUG_OBJECT (queue, "switching ranges, do seek to range position");
+      perform_seek_to_offset (queue, range->writing_pos);
+    }
+
+    /* update the current reading position in the range */
+    update_cur_pos (queue, queue->current, offset + length);
+
+    /* we have a range for offset */
+    GST_DEBUG_OBJECT (queue,
+        "we have a range %p, offset %" G_GUINT64_FORMAT ", writing_pos %"
+        G_GUINT64_FORMAT, range, range->offset, range->writing_pos);
+
+    if (queue->is_eos)
+      return TRUE;
+
+    if (offset + length < range->writing_pos)
+      return TRUE;
+
+  } else {
+    GST_INFO_OBJECT (queue, "not found in any range");
+    /* we don't have the range, see how far away we are, FIXME, find a good
+     * threshold based on the incomming rate. */
+    if (queue->current) {
+      if (offset < queue->current->writing_pos + 200000) {
+        update_cur_pos (queue, queue->current, offset + length);
+        GST_INFO_OBJECT (queue, "wait for data");
+        return FALSE;
+      }
+    }
+
+    /* too far away, do a seek */
+    perform_seek_to_offset (queue, offset);
+  }
 
   return FALSE;
 }
@@ -836,7 +1076,7 @@ gst_queue2_create_read (GstQueue2 * queue, guint64 offset, guint length,
   /* check if we have enough data at @offset. If there is not enough data, we
    * block and wait. */
   while (!gst_queue2_have_data (queue, offset, length)) {
-    GST_QUEUE2_WAIT_ADD_CHECK (queue, out_flushing);
+    GST_QUEUE2_WAIT_ADD_CHECK (queue, queue->srcresult, out_flushing);
   }
 
 #ifdef HAVE_FSEEKO
@@ -873,14 +1113,6 @@ gst_queue2_create_read (GstQueue2 * queue, guint64 offset, guint length,
   GST_BUFFER_OFFSET_END (buf) = offset + length;
 
   *buffer = buf;
-
-  queue->reading_pos = offset + length;
-  queue->max_reading_pos = MAX (queue->max_reading_pos, queue->reading_pos);
-
-  if (queue->writing_pos > queue->max_reading_pos)
-    queue->cur_level.bytes = queue->writing_pos - queue->max_reading_pos;
-  else
-    queue->cur_level.bytes = 0;
 
   return GST_FLOW_OK;
 
@@ -921,9 +1153,12 @@ gst_queue2_read_item_from_file (GstQueue2 * queue)
   } else {
     GstFlowReturn ret;
     GstBuffer *buffer;
+    guint64 reading_pos;
+
+    reading_pos = queue->current->reading_pos;
 
     ret =
-        gst_queue2_create_read (queue, queue->reading_pos, DEFAULT_BUFFER_SIZE,
+        gst_queue2_create_read (queue, reading_pos, DEFAULT_BUFFER_SIZE,
         &buffer);
     switch (ret) {
       case GST_FLOW_OK:
@@ -945,6 +1180,9 @@ gst_queue2_open_temp_location_file (GstQueue2 * queue)
 {
   gint fd = -1;
   gchar *name = NULL;
+
+  if (queue->temp_file)
+    goto already_opened;
 
   GST_DEBUG_OBJECT (queue, "opening temp file %s", queue->temp_template);
 
@@ -982,14 +1220,18 @@ gst_queue2_open_temp_location_file (GstQueue2 * queue)
     if (queue->temp_file == NULL)
       goto open_failed;
   }
+  GST_DEBUG_OBJECT (queue, "opened temp file %s", queue->temp_template);
 
-  queue->writing_pos = 0;
-  queue->reading_pos = 0;
-  queue->max_reading_pos = 0;
+  init_ranges (queue);
 
   return TRUE;
 
   /* ERRORS */
+already_opened:
+  {
+    GST_DEBUG_OBJECT (queue, "temp file was already open");
+    return TRUE;
+  }
 no_directory:
   {
     GST_ELEMENT_ERROR (queue, RESOURCE, NOT_FOUND,
@@ -1031,6 +1273,7 @@ gst_queue2_close_temp_location_file (GstQueue2 * queue)
     remove (queue->temp_location);
 
   queue->temp_file = NULL;
+  clean_ranges (queue);
 }
 
 static void
@@ -1043,9 +1286,7 @@ gst_queue2_flush_temp_file (GstQueue2 * queue)
 
   queue->temp_file = g_freopen (queue->temp_location, "wb+", queue->temp_file);
 
-  queue->writing_pos = 0;
-  queue->reading_pos = 0;
-  queue->max_reading_pos = 0;
+  init_ranges (queue);
 }
 
 static void
@@ -1086,8 +1327,10 @@ gst_queue2_locked_enqueue (GstQueue2 * queue, gpointer item)
     size = GST_BUFFER_SIZE (buffer);
 
     /* add buffer to the statistics */
-    queue->cur_level.buffers++;
-    queue->cur_level.bytes += size;
+    if (!QUEUE_IS_USING_TEMP_FILE (queue)) {
+      queue->cur_level.buffers++;
+      queue->cur_level.bytes += size;
+    }
     queue->bytes_in += size;
 
     /* apply new buffer to segment stats */
@@ -1108,6 +1351,7 @@ gst_queue2_locked_enqueue (GstQueue2 * queue, gpointer item)
       case GST_EVENT_EOS:
         /* Zero the thresholds, this makes sure the queue is completely
          * filled and we can read all data from the queue. */
+        GST_DEBUG_OBJECT (queue, "we have EOS");
         queue->is_eos = TRUE;
         break;
       case GST_EVENT_NEWSEGMENT:
@@ -1190,9 +1434,12 @@ gst_queue2_locked_dequeue (GstQueue2 * queue)
     GST_CAT_LOG_OBJECT (queue_dataflow, queue,
         "retrieved buffer %p from queue", buffer);
 
-    queue->cur_level.buffers--;
-    queue->cur_level.bytes -= size;
+    if (!QUEUE_IS_USING_TEMP_FILE (queue)) {
+      queue->cur_level.buffers--;
+      queue->cur_level.bytes -= size;
+    }
     queue->bytes_out += size;
+
     apply_buffer (queue, buffer, &queue->src_segment);
     /* update the byterate stats */
     update_out_rates (queue);
@@ -1245,45 +1492,58 @@ gst_queue2_handle_sink_event (GstPad * pad, GstEvent * event)
     case GST_EVENT_FLUSH_START:
     {
       GST_CAT_LOG_OBJECT (queue_dataflow, queue, "received flush start event");
-      /* forward event */
-      gst_pad_push_event (queue->srcpad, event);
+      if (!QUEUE_IS_USING_TEMP_FILE (queue)) {
+        /* forward event */
+        gst_pad_push_event (queue->srcpad, event);
 
-      /* now unblock the chain function */
-      GST_QUEUE2_MUTEX_LOCK (queue);
-      queue->srcresult = GST_FLOW_WRONG_STATE;
-      /* unblock the loop and chain functions */
-      g_cond_signal (queue->item_add);
-      g_cond_signal (queue->item_del);
-      GST_QUEUE2_MUTEX_UNLOCK (queue);
+        /* now unblock the chain function */
+        GST_QUEUE2_MUTEX_LOCK (queue);
+        queue->srcresult = GST_FLOW_WRONG_STATE;
+        queue->sinkresult = GST_FLOW_WRONG_STATE;
+        /* unblock the loop and chain functions */
+        GST_QUEUE2_SIGNAL_ADD (queue);
+        GST_QUEUE2_SIGNAL_DEL (queue);
+        GST_QUEUE2_MUTEX_UNLOCK (queue);
 
-      /* make sure it pauses, this should happen since we sent
-       * flush_start downstream. */
-      gst_pad_pause_task (queue->srcpad);
-      GST_CAT_LOG_OBJECT (queue_dataflow, queue, "loop stopped");
+        /* make sure it pauses, this should happen since we sent
+         * flush_start downstream. */
+        gst_pad_pause_task (queue->srcpad);
+        GST_CAT_LOG_OBJECT (queue_dataflow, queue, "loop stopped");
+      }
       goto done;
     }
     case GST_EVENT_FLUSH_STOP:
     {
       GST_CAT_LOG_OBJECT (queue_dataflow, queue, "received flush stop event");
-      /* forward event */
-      gst_pad_push_event (queue->srcpad, event);
 
-      GST_QUEUE2_MUTEX_LOCK (queue);
-      gst_queue2_locked_flush (queue);
-      queue->srcresult = GST_FLOW_OK;
-      queue->is_eos = FALSE;
-      queue->unexpected = FALSE;
-      /* reset rate counters */
-      reset_rate_timer (queue);
-      gst_pad_start_task (queue->srcpad, (GstTaskFunction) gst_queue2_loop,
-          queue->srcpad);
-      GST_QUEUE2_MUTEX_UNLOCK (queue);
+      if (!QUEUE_IS_USING_TEMP_FILE (queue)) {
+        /* forward event */
+        gst_pad_push_event (queue->srcpad, event);
+
+        GST_QUEUE2_MUTEX_LOCK (queue);
+        gst_queue2_locked_flush (queue);
+        queue->srcresult = GST_FLOW_OK;
+        queue->sinkresult = GST_FLOW_OK;
+        queue->is_eos = FALSE;
+        queue->unexpected = FALSE;
+        /* reset rate counters */
+        reset_rate_timer (queue);
+        gst_pad_start_task (queue->srcpad, (GstTaskFunction) gst_queue2_loop,
+            queue->srcpad);
+        GST_QUEUE2_MUTEX_UNLOCK (queue);
+      } else {
+        GST_QUEUE2_MUTEX_LOCK (queue);
+        queue->segment_event_received = FALSE;
+        queue->is_eos = FALSE;
+        queue->unexpected = FALSE;
+        GST_QUEUE2_MUTEX_UNLOCK (queue);
+      }
       goto done;
     }
     default:
       if (GST_EVENT_IS_SERIALIZED (event)) {
         /* serialized events go in the queue */
-        GST_QUEUE2_MUTEX_LOCK_CHECK (queue, out_flushing);
+        GST_QUEUE2_MUTEX_LOCK_CHECK (queue, queue->sinkresult, out_flushing);
         /* refuse more events on EOS */
         if (queue->is_eos)
           goto out_eos;
@@ -1323,7 +1583,7 @@ gst_queue2_is_empty (GstQueue2 * queue)
     return FALSE;
 
   if (QUEUE_IS_USING_TEMP_FILE (queue)) {
-    return queue->writing_pos == queue->max_reading_pos;
+    return queue->current->writing_pos == queue->current->max_reading_pos;
   } else {
     if (queue->queue->length == 0)
       return TRUE;
@@ -1378,7 +1638,7 @@ gst_queue2_chain (GstPad * pad, GstBuffer * buffer)
       GST_TIME_ARGS (GST_BUFFER_DURATION (buffer)));
 
   /* we have to lock the queue since we span threads */
-  GST_QUEUE2_MUTEX_LOCK_CHECK (queue, out_flushing);
+  GST_QUEUE2_MUTEX_LOCK_CHECK (queue, queue->sinkresult, out_flushing);
   /* when we received EOS, we refuse more data */
   if (queue->is_eos)
     goto out_eos;
@@ -1400,7 +1660,7 @@ gst_queue2_chain (GstPad * pad, GstBuffer * buffer)
         "queue is full, waiting for free space");
     do {
       /* Wait for space to be available, we could be unlocked because of a flush. */
-      GST_QUEUE2_WAIT_DEL_CHECK (queue, out_flushing);
+      GST_QUEUE2_WAIT_DEL_CHECK (queue, queue->sinkresult, out_flushing);
     }
     while (gst_queue2_is_filled (queue));
 
@@ -1418,7 +1678,7 @@ gst_queue2_chain (GstPad * pad, GstBuffer * buffer)
   /* special conditions */
 out_flushing:
   {
-    GstFlowReturn ret = queue->srcresult;
+    GstFlowReturn ret = queue->sinkresult;
 
     GST_CAT_LOG_OBJECT (queue_dataflow, queue,
         "exit because task paused, reason: %s", gst_flow_get_name (ret));
@@ -1476,7 +1736,7 @@ next:
     result = gst_pad_push (queue->srcpad, buffer);
 
     /* need to check for srcresult here as well */
-    GST_QUEUE2_MUTEX_LOCK_CHECK (queue, out_flushing);
+    GST_QUEUE2_MUTEX_LOCK_CHECK (queue, queue->srcresult, out_flushing);
     if (result == GST_FLOW_UNEXPECTED) {
       GST_CAT_LOG_OBJECT (queue_dataflow, queue,
           "got UNEXPECTED from downstream");
@@ -1521,7 +1781,7 @@ next:
 
     gst_pad_push_event (queue->srcpad, event);
 
-    GST_QUEUE2_MUTEX_LOCK_CHECK (queue, out_flushing);
+    GST_QUEUE2_MUTEX_LOCK_CHECK (queue, queue->srcresult, out_flushing);
     /* if we're EOS, return UNEXPECTED so that the task pauses. */
     if (type == GST_EVENT_EOS) {
       GST_CAT_LOG_OBJECT (queue_dataflow, queue,
@@ -1556,7 +1816,7 @@ gst_queue2_loop (GstPad * pad)
   queue = GST_QUEUE2 (GST_PAD_PARENT (pad));
 
   /* have to lock for thread-safety */
-  GST_QUEUE2_MUTEX_LOCK_CHECK (queue, out_flushing);
+  GST_QUEUE2_MUTEX_LOCK_CHECK (queue, queue->srcresult, out_flushing);
 
   if (gst_queue2_is_empty (queue)) {
     gboolean started;
@@ -1570,7 +1830,7 @@ gst_queue2_loop (GstPad * pad)
         "queue is empty, waiting for new data");
     do {
       /* Wait for data to be available, we could be unlocked because of a flush. */
-      GST_QUEUE2_WAIT_ADD_CHECK (queue, out_flushing);
+      GST_QUEUE2_WAIT_ADD_CHECK (queue, queue->srcresult, out_flushing);
     }
     while (gst_queue2_is_empty (queue));
 
@@ -1580,6 +1840,7 @@ gst_queue2_loop (GstPad * pad)
   }
   ret = gst_queue2_push_one (queue);
   queue->srcresult = ret;
+  queue->sinkresult = ret;
   if (ret != GST_FLOW_OK)
     goto out_flushing;
 
@@ -1622,13 +1883,44 @@ gst_queue2_handle_src_event (GstPad * pad, GstEvent * event)
       event, GST_EVENT_TYPE_NAME (event));
 #endif
 
-  if (!QUEUE_IS_USING_TEMP_FILE (queue)) {
-    /* just forward upstream */
-    res = gst_pad_push_event (queue->sinkpad, event);
-  } else {
-    /* when using a temp file, we unblock the pending read */
-    res = TRUE;
-    gst_event_unref (event);
+  switch (GST_EVENT_TYPE (event)) {
+    case GST_EVENT_FLUSH_START:
+      if (!QUEUE_IS_USING_TEMP_FILE (queue)) {
+        /* just forward upstream */
+        res = gst_pad_push_event (queue->sinkpad, event);
+      } else {
+        /* now unblock the getrange function */
+        GST_QUEUE2_MUTEX_LOCK (queue);
+        GST_DEBUG_OBJECT (queue, "flushing");
+        queue->srcresult = GST_FLOW_WRONG_STATE;
+        GST_QUEUE2_SIGNAL_ADD (queue);
+        GST_QUEUE2_MUTEX_UNLOCK (queue);
+
+        /* when using a temp file, we eat the event */
+        res = TRUE;
+        gst_event_unref (event);
+      }
+      break;
+    case GST_EVENT_FLUSH_STOP:
+      if (!QUEUE_IS_USING_TEMP_FILE (queue)) {
+        /* just forward upstream */
+        res = gst_pad_push_event (queue->sinkpad, event);
+      } else {
+        /* now unblock the getrange function */
+        GST_QUEUE2_MUTEX_LOCK (queue);
+        queue->srcresult = GST_FLOW_OK;
+        if (queue->current)
+          queue->current->max_reading_pos = 0;
+        GST_QUEUE2_MUTEX_UNLOCK (queue);
+
+        /* when using a temp file, we eat the event */
+        res = TRUE;
+        gst_event_unref (event);
+      }
+      break;
+    default:
+      res = gst_pad_push_event (queue->sinkpad, event);
+      break;
   }
 
   return res;
@@ -1706,43 +1998,79 @@ gst_queue2_handle_src_query (GstPad * pad, GstQuery * query)
         GST_DEBUG_OBJECT (queue, "buffering forwarded to peer");
       } else {
         gint64 start, stop;
+        guint64 writing_pos;
+        gint percent;
+        gint64 estimated_total, buffering_left;
+        GstFormat peer_fmt;
+        gint64 duration;
+        gboolean peer_res, is_buffering, is_eos;
+        gdouble byte_in_rate, byte_out_rate;
+
+        /* we need a current download region */
+        if (queue->current == NULL)
+          return FALSE;
+
+        writing_pos = queue->current->writing_pos;
+        byte_in_rate = queue->byte_in_rate;
+        byte_out_rate = queue->byte_out_rate;
+        is_buffering = queue->is_buffering;
+        is_eos = queue->is_eos;
+        percent = queue->buffering_percent;
+
+        if (is_eos) {
+          /* we're EOS, we know the duration in bytes now */
+          peer_res = TRUE;
+          duration = writing_pos;
+        } else {
+          /* get duration of upstream in bytes */
+          peer_fmt = GST_FORMAT_BYTES;
+          peer_res = gst_pad_query_peer_duration (queue->sinkpad, &peer_fmt,
+              &duration);
+        }
+
+        /* calculate remaining and total download time */
+        if (peer_res && byte_in_rate > 0.0) {
+          estimated_total = (duration * 1000) / byte_in_rate;
+          buffering_left = ((duration - writing_pos) * 1000) / byte_in_rate;
+        } else {
+          estimated_total = -1;
+          buffering_left = -1;
+        }
+        GST_DEBUG_OBJECT (queue, "estimated %" G_GINT64_FORMAT ", left %"
+            G_GINT64_FORMAT, estimated_total, buffering_left);
 
         gst_query_parse_buffering_range (query, &format, NULL, NULL, NULL);
 
         switch (format) {
           case GST_FORMAT_PERCENT:
-          {
-            gint64 duration;
-            GstFormat peer_fmt;
-
-            peer_fmt = GST_FORMAT_BYTES;
-
-            if (!gst_pad_query_peer_duration (queue->sinkpad, &peer_fmt,
-                    &duration))
+            /* we need duration */
+            if (!peer_res)
               goto peer_failed;
 
             GST_DEBUG_OBJECT (queue, "duration %" G_GINT64_FORMAT ", writing %"
-                G_GINT64_FORMAT, duration, queue->writing_pos);
+                G_GINT64_FORMAT, duration, writing_pos);
 
             start = 0;
             /* get our available data relative to the duration */
             if (duration != -1)
-              stop = GST_FORMAT_PERCENT_MAX * queue->writing_pos / duration;
+              stop = GST_FORMAT_PERCENT_MAX * writing_pos / duration;
             else
               stop = -1;
             break;
-          }
           case GST_FORMAT_BYTES:
             start = 0;
-            stop = queue->writing_pos;
+            stop = writing_pos;
             break;
           default:
             start = -1;
             stop = -1;
             break;
         }
-        gst_query_set_buffering_percent (query, queue->is_buffering, 100);
-        gst_query_set_buffering_range (query, format, start, stop, -1);
+        gst_query_set_buffering_percent (query, is_buffering, percent);
+        gst_query_set_buffering_range (query, format, start, stop,
+            estimated_total);
+        gst_query_set_buffering_stats (query, GST_BUFFERING_DOWNLOAD,
+            byte_in_rate, byte_out_rate, buffering_left);
       }
       break;
     }
@@ -1763,6 +2091,13 @@ peer_failed:
   }
 }
 
+static gboolean
+gst_queue2_handle_query (GstElement * element, GstQuery * query)
+{
+  /* simply forward to the srcpad query function */
+  return gst_queue2_handle_src_query (GST_QUEUE2_CAST (element)->srcpad, query);
+}
+
 static GstFlowReturn
 gst_queue2_get_range (GstPad * pad, guint64 offset, guint length,
     GstBuffer ** buffer)
@@ -1772,9 +2107,9 @@ gst_queue2_get_range (GstPad * pad, guint64 offset, guint length,
 
   queue = GST_QUEUE2_CAST (gst_pad_get_parent (pad));
 
-  GST_QUEUE2_MUTEX_LOCK_CHECK (queue, out_flushing);
+  GST_QUEUE2_MUTEX_LOCK_CHECK (queue, queue->srcresult, out_flushing);
   length = (length == -1) ? DEFAULT_BUFFER_SIZE : length;
-  offset = (offset == -1) ? queue->reading_pos : offset;
+  offset = (offset == -1) ? queue->current->reading_pos : offset;
 
   /* function will block when the range is not yet available */
   ret = gst_queue2_create_read (queue, offset, length, buffer);
@@ -1787,9 +2122,11 @@ gst_queue2_get_range (GstPad * pad, guint64 offset, guint length,
   /* ERRORS */
 out_flushing:
   {
+    ret = queue->srcresult;
+
     GST_DEBUG_OBJECT (queue, "we are flushing");
     GST_QUEUE2_MUTEX_UNLOCK (queue);
-    return GST_FLOW_WRONG_STATE;
+    return ret;
   }
 }
 
@@ -1822,6 +2159,7 @@ gst_queue2_sink_activate_push (GstPad * pad, gboolean active)
     GST_QUEUE2_MUTEX_LOCK (queue);
     GST_DEBUG_OBJECT (queue, "activating push mode");
     queue->srcresult = GST_FLOW_OK;
+    queue->sinkresult = GST_FLOW_OK;
     queue->is_eos = FALSE;
     queue->unexpected = FALSE;
     reset_rate_timer (queue);
@@ -1831,6 +2169,7 @@ gst_queue2_sink_activate_push (GstPad * pad, gboolean active)
     GST_QUEUE2_MUTEX_LOCK (queue);
     GST_DEBUG_OBJECT (queue, "deactivating push mode");
     queue->srcresult = GST_FLOW_WRONG_STATE;
+    queue->sinkresult = GST_FLOW_WRONG_STATE;
     gst_queue2_locked_flush (queue);
     GST_QUEUE2_MUTEX_UNLOCK (queue);
   }
@@ -1854,6 +2193,7 @@ gst_queue2_src_activate_push (GstPad * pad, gboolean active)
     GST_QUEUE2_MUTEX_LOCK (queue);
     GST_DEBUG_OBJECT (queue, "activating push mode");
     queue->srcresult = GST_FLOW_OK;
+    queue->sinkresult = GST_FLOW_OK;
     queue->is_eos = FALSE;
     queue->unexpected = FALSE;
     result = gst_pad_start_task (pad, (GstTaskFunction) gst_queue2_loop, pad);
@@ -1863,8 +2203,9 @@ gst_queue2_src_activate_push (GstPad * pad, gboolean active)
     GST_QUEUE2_MUTEX_LOCK (queue);
     GST_DEBUG_OBJECT (queue, "deactivating push mode");
     queue->srcresult = GST_FLOW_WRONG_STATE;
+    queue->sinkresult = GST_FLOW_WRONG_STATE;
     /* the item add signal will unblock */
-    g_cond_signal (queue->item_add);
+    GST_QUEUE2_SIGNAL_ADD (queue);
     GST_QUEUE2_MUTEX_UNLOCK (queue);
 
     /* step 2, make sure streaming finishes */
@@ -1887,12 +2228,15 @@ gst_queue2_src_activate_pull (GstPad * pad, gboolean active)
 
   if (active) {
     if (QUEUE_IS_USING_TEMP_FILE (queue)) {
+      /* open the temp file now */
+      result = gst_queue2_open_temp_location_file (queue);
+
       GST_QUEUE2_MUTEX_LOCK (queue);
       GST_DEBUG_OBJECT (queue, "activating pull mode");
       queue->srcresult = GST_FLOW_OK;
+      queue->sinkresult = GST_FLOW_OK;
       queue->is_eos = FALSE;
       queue->unexpected = FALSE;
-      result = TRUE;
       GST_QUEUE2_MUTEX_UNLOCK (queue);
     } else {
       GST_QUEUE2_MUTEX_LOCK (queue);
@@ -1900,6 +2244,7 @@ gst_queue2_src_activate_pull (GstPad * pad, gboolean active)
       /* this is not allowed, we cannot operate in pull mode without a temp
        * file. */
       queue->srcresult = GST_FLOW_WRONG_STATE;
+      queue->sinkresult = GST_FLOW_WRONG_STATE;
       result = FALSE;
       GST_QUEUE2_MUTEX_UNLOCK (queue);
     }
@@ -1907,8 +2252,9 @@ gst_queue2_src_activate_pull (GstPad * pad, gboolean active)
     GST_QUEUE2_MUTEX_LOCK (queue);
     GST_DEBUG_OBJECT (queue, "deactivating pull mode");
     queue->srcresult = GST_FLOW_WRONG_STATE;
+    queue->sinkresult = GST_FLOW_WRONG_STATE;
     /* this will unlock getrange */
-    g_cond_signal (queue->item_add);
+    GST_QUEUE2_SIGNAL_ADD (queue);
     result = TRUE;
     GST_QUEUE2_MUTEX_UNLOCK (queue);
   }
@@ -1968,14 +2314,14 @@ gst_queue2_change_state (GstElement * element, GstStateChange transition)
  * the _chain function, it might have more room now
  * to store the buffer/event in the queue */
 #define QUEUE_CAPACITY_CHANGE(q)\
-  g_cond_signal (queue->item_del);
+  GST_QUEUE2_SIGNAL_DEL (queue);
 
 /* Changing the minimum required fill level must
  * wake up the _loop function as it might now
  * be able to preceed.
  */
 #define QUEUE_THRESHOLD_CHANGE(q)\
-  g_cond_signal (queue->item_add);
+  GST_QUEUE2_SIGNAL_ADD (queue);
 
 static void
 gst_queue2_set_temp_template (GstQueue2 * queue, const gchar * template)

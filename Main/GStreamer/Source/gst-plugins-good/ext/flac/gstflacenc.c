@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "gstflacenc.h"
+#include <gstflacenc.h>
 #include <gst/audio/audio.h>
 #include <gst/audio/multichannel.h>
 #include <gst/tag/tag.h>
@@ -232,7 +232,7 @@ static const GstFlacEncParams flacenc_params[] = {
 #define DEFAULT_SEEKPOINTS 0
 
 #define GST_TYPE_FLAC_ENC_QUALITY (gst_flac_enc_quality_get_type ())
-GType
+static GType
 gst_flac_enc_quality_get_type (void)
 {
   static GType qtype = 0;

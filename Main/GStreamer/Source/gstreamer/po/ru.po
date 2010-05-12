@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.21.3\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2009-02-12 14:17+0200\n"
 "Last-Translator: Pavel Maryanov <acid_jack@ukr.net>\n"
 "Language-Team: Russian <gnu@mx.ru>\n"
@@ -89,18 +89,6 @@ msgstr "Показать параметры GStreamer"
 
 msgid "Unknown option"
 msgstr "Неизвестный параметр"
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "ОШИБКА: из элемента %s: %s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"Дополнительная отладочная информация:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "Обнаружена ошибка в библиотеке ядра GStreamer."
@@ -630,6 +618,35 @@ msgstr ""
 "производство данных, в метрах согласно системе координат WGS84 (0 на среднем "
 "уровне моря)"
 
+#, fuzzy
+msgid "geo location country"
+msgstr "геогр. долгота"
+
+#, fuzzy
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+"описательное название местности, в которой производилась запись или "
+"производство данных"
+
+#, fuzzy
+msgid "geo location city"
+msgstr "геогр. широта"
+
+#, fuzzy
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+"описательное название местности, в которой производилась запись или "
+"производство данных"
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "геогр. высота"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr ""
@@ -683,8 +700,29 @@ msgid ""
 "of a concerto. It is a higher level than a track, but lower than an album"
 msgstr ""
 
+#, fuzzy
+msgid "user rating"
+msgstr "длительность"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "ОШИБКА: из элемента %s: %s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"Дополнительная отладочная информация:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -804,6 +842,10 @@ msgstr "Файл «%s» является сокетом."
 
 msgid "Failed after iterations as requested."
 msgstr "Сбой после итераций, согласно запросу."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Ошибка записи в файл «%s»."
 
 msgid "No Temp directory specified."
 msgstr ""

@@ -5,7 +5,7 @@
 %define 	_libxml2	2.4.9
 
 Name: 		%{gstreamer}
-Version: 	0.10.28
+Version: 	0.10.29
 Release: 	1
 Summary: 	GStreamer streaming media framework runtime
 

@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gst-plugins-base 0.10.25.2\n"
+"Project-Id-Version: gst-plugins-base 0.10.28.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 20:33+0000\n"
-"PO-Revision-Date: 2010-02-09 22:34+1030\n"
+"POT-Creation-Date: 2010-04-28 02:08+0100\n"
+"PO-Revision-Date: 2010-04-27 22:51+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -182,6 +182,10 @@ msgid "The autovideosink element is missing."
 msgstr "Thiếu phần tử autovideosink."
 
 #, c-format
+msgid "Configured videosink %s is not working."
+msgstr "Phần tử videosink %s đã cấu hình mà không hoạt động."
+
+#, c-format
 msgid "Both autovideosink and %s elements are not working."
 msgstr "Cả hai phần tử autovideosink và %s không hoạt động."
 
@@ -202,14 +206,19 @@ msgid "The autoaudiosink element is missing."
 msgstr "Thiếu phần tử autoaudiosink."
 
 #, c-format
+msgid "Configured audiosink %s is not working."
+msgstr "Phần tử audiosink %s đã cấu hình mà không hoạt động."
+
+#, c-format
 msgid "Both autoaudiosink and %s elements are not working."
 msgstr "Cả hai phần tử autoaudiosink và %s không hoạt động."
 
 msgid "The autoaudiosink element is not working."
 msgstr "Phần tử autoaudiosink không hoạt động."
 
-msgid "Can't play a text file without video."
-msgstr "Không thể phát tập tin văn bản mà không có ảnh động."
+msgid "Can't play a text file without video or visualizations."
+msgstr ""
+"Không thể phát tập tin văn bản mà không có ảnh động hay cách thức hiển thị."
 
 #, c-format
 msgid "No decoder available for type '%s'."
@@ -474,12 +483,3 @@ msgstr "Thiết bị « %s » đang được dùng."
 #, c-format
 msgid "Could not open device \"%s\" for reading and writing."
 msgstr "Không thể mở thiết bị « %s » để đọc và ghi."
-
-#~ msgid "Could not create \"decodebin2\" element."
-#~ msgstr "Không thể tạo phần tử « decodebin2 »."
-
-#~ msgid "Could not create \"queue2\" element."
-#~ msgstr "Không thể tạo phần tử « queue2 »."
-
-#~ msgid "Could not create \"typefind\" element."
-#~ msgstr "Không thể tạo phần tử « typefind »."

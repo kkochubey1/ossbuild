@@ -60,6 +60,7 @@
 #include "gst_private.h"
 
 #include "gstelement.h"
+#include "gstelementdetails.h"
 #include "gstinfo.h"
 #include "gsturi.h"
 #include "gstregistry.h"
@@ -69,10 +70,7 @@
 GST_DEBUG_CATEGORY_STATIC (element_factory_debug);
 #define GST_CAT_DEFAULT element_factory_debug
 
-static void gst_element_factory_class_init (GstElementFactoryClass * klass);
-static void gst_element_factory_init (GstElementFactory * factory);
 static void gst_element_factory_finalize (GObject * object);
-void __gst_element_details_clear (GstElementDetails * dp);
 static void gst_element_factory_cleanup (GstElementFactory * factory);
 
 static GstPluginFeatureClass *parent_class = NULL;
@@ -150,45 +148,6 @@ gst_element_factory_find (const gchar * name)
   return NULL;
 }
 
-void
-__gst_element_details_clear (GstElementDetails * dp)
-{
-  g_free (dp->longname);
-  g_free (dp->klass);
-  g_free (dp->description);
-  g_free (dp->author);
-  memset (dp, 0, sizeof (GstElementDetails));
-}
-
-#define VALIDATE_SET(__dest, __src, __entry)                            \
-G_STMT_START {                                                          \
-  if (g_utf8_validate (__src->__entry, -1, NULL)) {                     \
-    __dest->__entry = g_strdup (__src->__entry);                        \
-  } else {                                                              \
-    g_warning ("Invalid UTF-8 in " G_STRINGIFY (__entry) ": %s",        \
-        __src->__entry);                                                \
-    __dest->__entry = g_strdup ("[ERROR: invalid UTF-8]");              \
-  }                                                                     \
-} G_STMT_END
-
-void
-__gst_element_details_set (GstElementDetails * dest,
-    const GstElementDetails * src)
-{
-  VALIDATE_SET (dest, src, longname);
-  VALIDATE_SET (dest, src, klass);
-  VALIDATE_SET (dest, src, description);
-  VALIDATE_SET (dest, src, author);
-}
-
-void
-__gst_element_details_copy (GstElementDetails * dest,
-    const GstElementDetails * src)
-{
-  __gst_element_details_clear (dest);
-  __gst_element_details_set (dest, src);
-}
-
 static void
 gst_element_factory_cleanup (GstElementFactory * factory)
 {
@@ -218,7 +177,7 @@ gst_element_factory_cleanup (GstElementFactory * factory)
       g_ptr_array_free (caps->structs, TRUE);
       caps->refcount = 0;
     }
-    g_free (templ);
+    g_slice_free (GstStaticPadTemplate, templ);
   }
   g_list_free (factory->staticpadtemplates);
   factory->staticpadtemplates = NULL;
@@ -300,10 +259,11 @@ gst_element_register (GstPlugin * plugin, const gchar * name, guint rank,
     GstPadTemplate *templ = item->data;
     GstStaticPadTemplate *newt;
 
-    newt = g_new0 (GstStaticPadTemplate, 1);
+    newt = g_slice_new (GstStaticPadTemplate);
     newt->name_template = g_intern_string (templ->name_template);
     newt->direction = templ->direction;
     newt->presence = templ->presence;
+    newt->static_caps.caps.refcount = 0;
     newt->static_caps.string = gst_caps_to_string (templ->caps);
     factory->staticpadtemplates =
         g_list_append (factory->staticpadtemplates, newt);

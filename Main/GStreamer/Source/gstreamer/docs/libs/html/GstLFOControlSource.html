@@ -8,17 +8,8 @@
 <link rel="up" href="gstreamer-control.html" title="GStreamer Dynamic Parameter Control">
 <link rel="prev" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource">
 <link rel="next" href="gstreamer-libs-GstControllerGObject.html" title="GstControllerGObject">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="part" href="gstreamer-libs.html" title="Part I. GStreamer Libraries">
-<link rel="chapter" href="gstreamer-base.html" title="GStreamer Base and Utillity Classes">
-<link rel="chapter" href="gstreamer-control.html" title="GStreamer Dynamic Parameter Control">
-<link rel="chapter" href="gstreamer-dataprotocol.html" title="GStreamer Data Protocol">
-<link rel="chapter" href="gstreamer-net.html" title="GStreamer Network Classes">
-<link rel="chapter" href="gstreamer-check.html" title="GStreamer Check Unit Testing">
-<link rel="chapter" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -55,7 +46,7 @@
 
                     <a class="link" href="GstLFOControlSource.html#GstLFOControlSource-struct" title="GstLFOControlSource">GstLFOControlSource</a>;
 enum                <a class="link" href="GstLFOControlSource.html#GstLFOWaveform" title="enum GstLFOWaveform">GstLFOWaveform</a>;
-<a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="returnvalue">GstLFOControlSource</span></a> * <a class="link" href="GstLFOControlSource.html#gst-lfo-control-source-new" title="gst_lfo_control_source_new ()">gst_lfo_control_source_new</a>        (void);
+<a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="returnvalue">GstLFOControlSource</span></a> * <a class="link" href="GstLFOControlSource.html#gst-lfo-control-source-new" title="gst_lfo_control_source_new ()">gst_lfo_control_source_new</a>        (<em class="parameter"><code><span class="type">void</span></code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
@@ -88,7 +79,8 @@ bind it to a <a href="/usr/share/gtk-doc/html/gobject/gobject-GParamSpec.html#GP
 gst_lfo_control_source_set_waveform.
 </p>
 <p>
-All functions are MT-safe.</p>
+All functions are MT-safe.
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="GstLFOControlSource.details"></a><h2>Details</h2>
@@ -96,7 +88,8 @@ All functions are MT-safe.</p>
 <a name="GstLFOControlSource-struct"></a><h3>GstLFOControlSource</h3>
 <pre class="programlisting">typedef struct _GstLFOControlSource GstLFOControlSource;</pre>
 <p>
-The instance structure of <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a>.</p>
+The instance structure of <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a>.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="enum GstLFOWaveform">
@@ -111,33 +104,34 @@ The instance structure of <a class="link" href="GstControlSource.html" title="Gs
 } GstLFOWaveform;
 </pre>
 <p>
-The various waveform modes available.</p>
+The various waveform modes available.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="GST-LFO-WAVEFORM-SINE:CAPS"></a><span class="term"><code class="literal">GST_LFO_WAVEFORM_SINE</code></span></p></td>
-<td> sine waveform
+<td>sine waveform
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-LFO-WAVEFORM-SQUARE:CAPS"></a><span class="term"><code class="literal">GST_LFO_WAVEFORM_SQUARE</code></span></p></td>
-<td> square waveform
+<td>square waveform
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-LFO-WAVEFORM-SAW:CAPS"></a><span class="term"><code class="literal">GST_LFO_WAVEFORM_SAW</code></span></p></td>
-<td> saw waveform
+<td>saw waveform
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-LFO-WAVEFORM-REVERSE-SAW:CAPS"></a><span class="term"><code class="literal">GST_LFO_WAVEFORM_REVERSE_SAW</code></span></p></td>
-<td> reverse saw waveform
+<td>reverse saw waveform
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-LFO-WAVEFORM-TRIANGLE:CAPS"></a><span class="term"><code class="literal">GST_LFO_WAVEFORM_TRIANGLE</code></span></p></td>
-<td> triangle waveform
+<td>triangle waveform
 </td>
 </tr>
 </tbody>
@@ -146,9 +140,10 @@ The various waveform modes available.</p>
 <hr>
 <div class="refsect2" title="gst_lfo_control_source_new ()">
 <a name="gst-lfo-control-source-new"></a><h3>gst_lfo_control_source_new ()</h3>
-<pre class="programlisting"><a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="returnvalue">GstLFOControlSource</span></a> * gst_lfo_control_source_new        (void);</pre>
+<pre class="programlisting"><a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="returnvalue">GstLFOControlSource</span></a> * gst_lfo_control_source_new        (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
-This returns a new, unbound <a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="type">GstLFOControlSource</span></a>.</p>
+This returns a new, unbound <a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="type">GstLFOControlSource</span></a>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
@@ -169,7 +164,8 @@ Specifies the amplitude for the waveform of this <a class="link" href="GstLFOCon
 </p>
 <p>
 It should be given as a <a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> with a type that can be transformed
-to the type of the bound property.</p>
+to the type of the bound property.
+</p>
 </div>
 <hr>
 <div class="refsect2" title='The "frequency" property'>
@@ -178,7 +174,8 @@ to the type of the bound property.</p>
 <p>
 Specifies the frequency that should be used for the waveform
 of this <a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="type">GstLFOControlSource</span></a>. It should be large enough
-so that the period is longer than one nanosecond.</p>
+so that the period is longer than one nanosecond.
+</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 1</p>
 </div>
@@ -191,7 +188,8 @@ Specifies the offset for the waveform of this <a class="link" href="GstLFOContro
 </p>
 <p>
 It should be given as a <a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> with a type that can be transformed
-to the type of the bound property.</p>
+to the type of the bound property.
+</p>
 </div>
 <hr>
 <div class="refsect2" title='The "timeshift" property'>
@@ -203,7 +201,8 @@ of this <a class="link" href="GstLFOControlSource.html" title="GstLFOControlSour
 </p>
 <p>
 To get a n nanosecond shift to the left use
-"(GST_SECOND / frequency) - n".</p>
+"(GST_SECOND / frequency) - n".
+</p>
 <p>Default value: 0</p>
 </div>
 <hr>
@@ -211,13 +210,14 @@ To get a n nanosecond shift to the left use
 <a name="GstLFOControlSource--waveform"></a><h3>The <code class="literal">"waveform"</code> property</h3>
 <pre class="programlisting">  "waveform"                 <a class="link" href="GstLFOControlSource.html#GstLFOWaveform" title="enum GstLFOWaveform"><span class="type">GstLFOWaveform</span></a>        : Read / Write</pre>
 <p>
-Specifies the waveform that should be used for this <a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="type">GstLFOControlSource</span></a>.</p>
+Specifies the waveform that should be used for this <a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="type">GstLFOControlSource</span></a>.
+</p>
 <p>Default value: Sine waveform (default)</p>
 </div>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

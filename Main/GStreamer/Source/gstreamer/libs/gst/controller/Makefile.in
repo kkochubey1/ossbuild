@@ -41,8 +41,7 @@ subdir = libs/gst/controller
 DIST_COMMON = $(libgstcontroller_@GST_MAJORMINOR@_include_HEADERS) \
 	$(noinst_HEADERS) $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
-	$(top_srcdir)/common/m4/as-ac-expand.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/as-auto-alt.m4 \
 	$(top_srcdir)/common/m4/as-compiler-flag.m4 \
 	$(top_srcdir)/common/m4/as-docbook.m4 \
@@ -51,7 +50,6 @@ am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
 	$(top_srcdir)/common/m4/as-scrub-include.m4 \
 	$(top_srcdir)/common/m4/as-version.m4 \
 	$(top_srcdir)/common/m4/ax_create_stdint_h.m4 \
-	$(top_srcdir)/common/m4/gettext.m4 \
 	$(top_srcdir)/common/m4/gst-arch.m4 \
 	$(top_srcdir)/common/m4/gst-args.m4 \
 	$(top_srcdir)/common/m4/gst-check.m4 \
@@ -68,21 +66,16 @@ am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/iconv.m4 \
-	$(top_srcdir)/common/m4/intlmacosx.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/lib-ld.m4 \
-	$(top_srcdir)/common/m4/lib-link.m4 \
-	$(top_srcdir)/common/m4/lib-prefix.m4 \
-	$(top_srcdir)/common/m4/libtool.m4 \
-	$(top_srcdir)/common/m4/ltoptions.m4 \
-	$(top_srcdir)/common/m4/ltsugar.m4 \
-	$(top_srcdir)/common/m4/ltversion.m4 \
-	$(top_srcdir)/common/m4/lt~obsolete.m4 \
-	$(top_srcdir)/common/m4/nls.m4 $(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/po.m4 \
-	$(top_srcdir)/common/m4/progtest.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/check-checks.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -127,24 +120,40 @@ am_libgstcontroller_@GST_MAJORMINOR@_la_OBJECTS =  \
 	libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.lo
 libgstcontroller_@GST_MAJORMINOR@_la_OBJECTS =  \
 	$(am_libgstcontroller_@GST_MAJORMINOR@_la_OBJECTS)
-libgstcontroller_@GST_MAJORMINOR@_la_LINK = $(LIBTOOL) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) \
-	$(libgstcontroller_@GST_MAJORMINOR@_la_LDFLAGS) $(LDFLAGS) -o \
-	$@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstcontroller_@GST_MAJORMINOR@_la_LINK = $(LIBTOOL) $(AM_V_lt) \
+	--tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) \
+	$(CFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstcontroller_@GST_MAJORMINOR@_la_SOURCES)
 DIST_SOURCES = $(libgstcontroller_@GST_MAJORMINOR@_la_SOURCES)
 DATA = $(gir_DATA) $(typelibs_DATA)
@@ -156,7 +165,7 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -178,7 +187,6 @@ CHECK_MINOR_VERSION = @CHECK_MINOR_VERSION@
 CHECK_VERSION = @CHECK_VERSION@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIR = @DATADIR@
@@ -196,8 +204,6 @@ EGREP = @EGREP@
 ENABLE_SUBUNIT = @ENABLE_SUBUNIT@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLEX_PATH = @FLEX_PATH@
@@ -302,7 +308,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -310,7 +315,6 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OTOOL = @OTOOL@
@@ -338,18 +342,17 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -410,7 +413,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -520,7 +522,7 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstcontroller-@GST_MAJORMINOR@.la: $(libgstcontroller_@GST_MAJORMINOR@_la_OBJECTS) $(libgstcontroller_@GST_MAJORMINOR@_la_DEPENDENCIES) 
-	$(libgstcontroller_@GST_MAJORMINOR@_la_LINK) -rpath $(libdir) $(libgstcontroller_@GST_MAJORMINOR@_la_OBJECTS) $(libgstcontroller_@GST_MAJORMINOR@_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstcontroller_@GST_MAJORMINOR@_la_LINK) -rpath $(libdir) $(libgstcontroller_@GST_MAJORMINOR@_la_OBJECTS) $(libgstcontroller_@GST_MAJORMINOR@_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -537,74 +539,84 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-lib.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstcontroller_@GST_MAJORMINOR@_la-lib.lo: lib.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-lib.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-lib.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-lib.lo `test -f 'lib.c' || echo '$(srcdir)/'`lib.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-lib.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-lib.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-lib.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-lib.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-lib.lo `test -f 'lib.c' || echo '$(srcdir)/'`lib.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-lib.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-lib.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lib.c' object='libgstcontroller_@GST_MAJORMINOR@_la-lib.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-lib.lo `test -f 'lib.c' || echo '$(srcdir)/'`lib.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-lib.lo `test -f 'lib.c' || echo '$(srcdir)/'`lib.c
 
 libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.lo: gstcontroller.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.lo `test -f 'gstcontroller.c' || echo '$(srcdir)/'`gstcontroller.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.lo `test -f 'gstcontroller.c' || echo '$(srcdir)/'`gstcontroller.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstcontroller.c' object='libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.lo `test -f 'gstcontroller.c' || echo '$(srcdir)/'`gstcontroller.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstcontroller.lo `test -f 'gstcontroller.c' || echo '$(srcdir)/'`gstcontroller.c
 
 libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.lo: gstinterpolation.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.lo `test -f 'gstinterpolation.c' || echo '$(srcdir)/'`gstinterpolation.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.lo `test -f 'gstinterpolation.c' || echo '$(srcdir)/'`gstinterpolation.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstinterpolation.c' object='libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.lo `test -f 'gstinterpolation.c' || echo '$(srcdir)/'`gstinterpolation.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolation.lo `test -f 'gstinterpolation.c' || echo '$(srcdir)/'`gstinterpolation.c
 
 libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.lo: gsthelper.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.lo `test -f 'gsthelper.c' || echo '$(srcdir)/'`gsthelper.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.lo `test -f 'gsthelper.c' || echo '$(srcdir)/'`gsthelper.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gsthelper.c' object='libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.lo `test -f 'gsthelper.c' || echo '$(srcdir)/'`gsthelper.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gsthelper.lo `test -f 'gsthelper.c' || echo '$(srcdir)/'`gsthelper.c
 
 libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.lo: gstcontrolsource.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.lo `test -f 'gstcontrolsource.c' || echo '$(srcdir)/'`gstcontrolsource.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.lo `test -f 'gstcontrolsource.c' || echo '$(srcdir)/'`gstcontrolsource.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstcontrolsource.c' object='libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.lo `test -f 'gstcontrolsource.c' || echo '$(srcdir)/'`gstcontrolsource.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstcontrolsource.lo `test -f 'gstcontrolsource.c' || echo '$(srcdir)/'`gstcontrolsource.c
 
 libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.lo: gstinterpolationcontrolsource.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.lo `test -f 'gstinterpolationcontrolsource.c' || echo '$(srcdir)/'`gstinterpolationcontrolsource.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.lo `test -f 'gstinterpolationcontrolsource.c' || echo '$(srcdir)/'`gstinterpolationcontrolsource.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstinterpolationcontrolsource.c' object='libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.lo `test -f 'gstinterpolationcontrolsource.c' || echo '$(srcdir)/'`gstinterpolationcontrolsource.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstinterpolationcontrolsource.lo `test -f 'gstinterpolationcontrolsource.c' || echo '$(srcdir)/'`gstinterpolationcontrolsource.c
 
 libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.lo: gstlfocontrolsource.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.lo `test -f 'gstlfocontrolsource.c' || echo '$(srcdir)/'`gstlfocontrolsource.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.lo -MD -MP -MF $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.Tpo -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.lo `test -f 'gstlfocontrolsource.c' || echo '$(srcdir)/'`gstlfocontrolsource.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.Tpo $(DEPDIR)/libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstlfocontrolsource.c' object='libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.lo `test -f 'gstlfocontrolsource.c' || echo '$(srcdir)/'`gstlfocontrolsource.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcontroller_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcontroller_@GST_MAJORMINOR@_la-gstlfocontrolsource.lo `test -f 'gstlfocontrolsource.c' || echo '$(srcdir)/'`gstlfocontrolsource.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -890,14 +902,14 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 gcov: $(libgstcontroller_@GST_MAJORMINOR@_la_SOURCES:=.gcov)
 
 @HAVE_INTROSPECTION_TRUE@GstController-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstcontroller-@GST_MAJORMINOR@.la
-@HAVE_INTROSPECTION_TRUE@	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(top_builddir)/pkgconfig:$(PKG_CONFIG_PATH)" \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstController \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
 @HAVE_INTROSPECTION_TRUE@		-I$(top_srcdir) \
 @HAVE_INTROSPECTION_TRUE@		$(gir_cincludes) \
 @HAVE_INTROSPECTION_TRUE@		--add-include-path=$(top_builddir)/gst \
-@HAVE_INTROSPECTION_TRUE@		--library=gstcontroller-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--library=libgstcontroller-0.10.la \
 @HAVE_INTROSPECTION_TRUE@		--include=Gst-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
 @HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
@@ -906,7 +918,7 @@ gcov: $(libgstcontroller_@GST_MAJORMINOR@_la_SOURCES:=.gcov)
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)
 
 @HAVE_INTROSPECTION_TRUE@%.typelib: %.gir $(INTROSPECTION_COMPILER)
-@HAVE_INTROSPECTION_TRUE@	$(INTROSPECTION_COMPILER) --includedir=$(srcdir) --includedir=$(builddir) --includedir=$(top_builddir)/gst $(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)$(INTROSPECTION_COMPILER) --includedir=$(srcdir) --includedir=$(builddir) --includedir=$(top_builddir)/gst $(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

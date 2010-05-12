@@ -64,8 +64,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/freetype2.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/freetype2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-alsa.m4 \
 	$(top_srcdir)/m4/gst-fionread.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -98,7 +97,10 @@ am__DEPENDENCIES_1 =
 @HAVE_GTK_X11_TRUE@@USE_X_TRUE@	$(am__DEPENDENCIES_1) \
 @HAVE_GTK_X11_TRUE@@USE_X_TRUE@	$(am__DEPENDENCIES_1) \
 @HAVE_GTK_X11_TRUE@@USE_X_TRUE@	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-$(GST_MAJORMINOR).la
-gtk_xoverlay_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+gtk_xoverlay_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(gtk_xoverlay_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am__qt_xoverlay_SOURCES_DIST = qt-xoverlay.cpp
@@ -111,7 +113,7 @@ qt_xoverlay_OBJECTS = $(am_qt_xoverlay_OBJECTS)
 @HAVE_QT_TRUE@@USE_X_TRUE@	$(am__DEPENDENCIES_1) \
 @HAVE_QT_TRUE@@USE_X_TRUE@	$(am__DEPENDENCIES_1) \
 @HAVE_QT_TRUE@@USE_X_TRUE@	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-$(GST_MAJORMINOR).la
-qt_xoverlay_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+qt_xoverlay_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(qt_xoverlay_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am__qtgv_xoverlay_SOURCES_DIST = qtgv-xoverlay.cpp qtgv-xoverlay.h
@@ -125,31 +127,52 @@ qtgv_xoverlay_OBJECTS = $(am_qtgv_xoverlay_OBJECTS) \
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@	$(am__DEPENDENCIES_1) \
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@	$(am__DEPENDENCIES_1) \
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-$(GST_MAJORMINOR).la
-qtgv_xoverlay_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(qtgv_xoverlay_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+qtgv_xoverlay_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
+	$(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_$(V))
+am__v_CXX_ = $(am__v_CXX_$(AM_DEFAULT_VERBOSITY))
+am__v_CXX_0 = @echo "  CXX   " $@;
 CXXLD = $(CXX)
-CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CXXLD = $(am__v_CXXLD_$(V))
+am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CXXLD_0 = @echo "  CXXLD " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(gtk_xoverlay_SOURCES) $(qt_xoverlay_SOURCES) \
 	$(qtgv_xoverlay_SOURCES) $(nodist_qtgv_xoverlay_SOURCES)
 DIST_SOURCES = $(am__gtk_xoverlay_SOURCES_DIST) \
@@ -163,7 +186,7 @@ ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUDIORESAMPLE_FORMAT_AUTO = @AUDIORESAMPLE_FORMAT_AUTO@
@@ -203,8 +226,6 @@ EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FT2_CFLAGS = @FT2_CFLAGS@
@@ -314,7 +335,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -322,7 +342,6 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
@@ -353,7 +372,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 QT_CFLAGS = @QT_CFLAGS@
 QT_LIBS = @QT_LIBS@
 RANLIB = @RANLIB@
@@ -364,7 +382,6 @@ STRIP = @STRIP@
 THEORA_CFLAGS = @THEORA_CFLAGS@
 THEORA_LIBS = @THEORA_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
@@ -373,6 +390,8 @@ VORBISENC_LIBS = @VORBISENC_LIBS@
 VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -436,7 +455,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -445,17 +463,17 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXAMPLES = $(am__append_1) $(am__append_2) $(am__append_3)
 @HAVE_GTK_X11_TRUE@@USE_X_TRUE@gtk_xoverlay_SOURCES = gtk-xoverlay.c
-@HAVE_GTK_X11_TRUE@@USE_X_TRUE@gtk_xoverlay_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) $(X_CFLAGS) $(GTK_CFLAGS)
+@HAVE_GTK_X11_TRUE@@USE_X_TRUE@gtk_xoverlay_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS) $(X_CFLAGS) $(GTK_CFLAGS)
 @HAVE_GTK_X11_TRUE@@USE_X_TRUE@gtk_xoverlay_LDADD = $(GST_LIBS) $(X_LIBS) $(LIBM) $(GTK_LIBS) \
 @HAVE_GTK_X11_TRUE@@USE_X_TRUE@	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-$(GST_MAJORMINOR).la
 
 @HAVE_QT_TRUE@@USE_X_TRUE@qt_xoverlay_SOURCES = qt-xoverlay.cpp
-@HAVE_QT_TRUE@@USE_X_TRUE@qt_xoverlay_CXXFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CXXFLAGS) $(X_CFLAGS) $(QT_CFLAGS)
+@HAVE_QT_TRUE@@USE_X_TRUE@qt_xoverlay_CXXFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CXXFLAGS) $(X_CFLAGS) $(QT_CFLAGS)
 @HAVE_QT_TRUE@@USE_X_TRUE@qt_xoverlay_LDADD = $(GST_LIBS) $(X_LIBS) $(LIBM) $(QT_LIBS) \
 @HAVE_QT_TRUE@@USE_X_TRUE@	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-$(GST_MAJORMINOR).la
 
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@qtgv_xoverlay_SOURCES = qtgv-xoverlay.cpp qtgv-xoverlay.h
-@HAVE_QT_GV_TRUE@@USE_X_TRUE@qtgv_xoverlay_CXXFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CXXFLAGS) $(X_CFLAGS) $(QT_CFLAGS)
+@HAVE_QT_GV_TRUE@@USE_X_TRUE@qtgv_xoverlay_CXXFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CXXFLAGS) $(X_CFLAGS) $(QT_CFLAGS)
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@qtgv_xoverlay_LDADD = $(GST_LIBS) $(X_LIBS) $(LIBM) $(QT_LIBS) \
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-$(GST_MAJORMINOR).la
 
@@ -509,13 +527,13 @@ clean-noinstPROGRAMS:
 	rm -f $$list
 gtk-xoverlay$(EXEEXT): $(gtk_xoverlay_OBJECTS) $(gtk_xoverlay_DEPENDENCIES) 
 	@rm -f gtk-xoverlay$(EXEEXT)
-	$(gtk_xoverlay_LINK) $(gtk_xoverlay_OBJECTS) $(gtk_xoverlay_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(gtk_xoverlay_LINK) $(gtk_xoverlay_OBJECTS) $(gtk_xoverlay_LDADD) $(LIBS)
 qt-xoverlay$(EXEEXT): $(qt_xoverlay_OBJECTS) $(qt_xoverlay_DEPENDENCIES) 
 	@rm -f qt-xoverlay$(EXEEXT)
-	$(qt_xoverlay_LINK) $(qt_xoverlay_OBJECTS) $(qt_xoverlay_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(qt_xoverlay_LINK) $(qt_xoverlay_OBJECTS) $(qt_xoverlay_LDADD) $(LIBS)
 qtgv-xoverlay$(EXEEXT): $(qtgv_xoverlay_OBJECTS) $(qtgv_xoverlay_DEPENDENCIES) 
 	@rm -f qtgv-xoverlay$(EXEEXT)
-	$(qtgv_xoverlay_LINK) $(qtgv_xoverlay_OBJECTS) $(qtgv_xoverlay_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(qtgv_xoverlay_LINK) $(qtgv_xoverlay_OBJECTS) $(qtgv_xoverlay_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -529,99 +547,113 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 gtk_xoverlay-gtk-xoverlay.o: gtk-xoverlay.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gtk_xoverlay_CFLAGS) $(CFLAGS) -MT gtk_xoverlay-gtk-xoverlay.o -MD -MP -MF $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Tpo -c -o gtk_xoverlay-gtk-xoverlay.o `test -f 'gtk-xoverlay.c' || echo '$(srcdir)/'`gtk-xoverlay.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Tpo $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gtk_xoverlay_CFLAGS) $(CFLAGS) -MT gtk_xoverlay-gtk-xoverlay.o -MD -MP -MF $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Tpo -c -o gtk_xoverlay-gtk-xoverlay.o `test -f 'gtk-xoverlay.c' || echo '$(srcdir)/'`gtk-xoverlay.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Tpo $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gtk-xoverlay.c' object='gtk_xoverlay-gtk-xoverlay.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gtk_xoverlay_CFLAGS) $(CFLAGS) -c -o gtk_xoverlay-gtk-xoverlay.o `test -f 'gtk-xoverlay.c' || echo '$(srcdir)/'`gtk-xoverlay.c
 
 gtk_xoverlay-gtk-xoverlay.obj: gtk-xoverlay.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gtk_xoverlay_CFLAGS) $(CFLAGS) -MT gtk_xoverlay-gtk-xoverlay.obj -MD -MP -MF $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Tpo -c -o gtk_xoverlay-gtk-xoverlay.obj `if test -f 'gtk-xoverlay.c'; then $(CYGPATH_W) 'gtk-xoverlay.c'; else $(CYGPATH_W) '$(srcdir)/gtk-xoverlay.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Tpo $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gtk_xoverlay_CFLAGS) $(CFLAGS) -MT gtk_xoverlay-gtk-xoverlay.obj -MD -MP -MF $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Tpo -c -o gtk_xoverlay-gtk-xoverlay.obj `if test -f 'gtk-xoverlay.c'; then $(CYGPATH_W) 'gtk-xoverlay.c'; else $(CYGPATH_W) '$(srcdir)/gtk-xoverlay.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Tpo $(DEPDIR)/gtk_xoverlay-gtk-xoverlay.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gtk-xoverlay.c' object='gtk_xoverlay-gtk-xoverlay.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gtk_xoverlay_CFLAGS) $(CFLAGS) -c -o gtk_xoverlay-gtk-xoverlay.obj `if test -f 'gtk-xoverlay.c'; then $(CYGPATH_W) 'gtk-xoverlay.c'; else $(CYGPATH_W) '$(srcdir)/gtk-xoverlay.c'; fi`
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
 qt_xoverlay-qt-xoverlay.o: qt-xoverlay.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qt_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qt_xoverlay-qt-xoverlay.o -MD -MP -MF $(DEPDIR)/qt_xoverlay-qt-xoverlay.Tpo -c -o qt_xoverlay-qt-xoverlay.o `test -f 'qt-xoverlay.cpp' || echo '$(srcdir)/'`qt-xoverlay.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/qt_xoverlay-qt-xoverlay.Tpo $(DEPDIR)/qt_xoverlay-qt-xoverlay.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qt_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qt_xoverlay-qt-xoverlay.o -MD -MP -MF $(DEPDIR)/qt_xoverlay-qt-xoverlay.Tpo -c -o qt_xoverlay-qt-xoverlay.o `test -f 'qt-xoverlay.cpp' || echo '$(srcdir)/'`qt-xoverlay.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qt_xoverlay-qt-xoverlay.Tpo $(DEPDIR)/qt_xoverlay-qt-xoverlay.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='qt-xoverlay.cpp' object='qt_xoverlay-qt-xoverlay.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qt_xoverlay_CXXFLAGS) $(CXXFLAGS) -c -o qt_xoverlay-qt-xoverlay.o `test -f 'qt-xoverlay.cpp' || echo '$(srcdir)/'`qt-xoverlay.cpp
 
 qt_xoverlay-qt-xoverlay.obj: qt-xoverlay.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qt_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qt_xoverlay-qt-xoverlay.obj -MD -MP -MF $(DEPDIR)/qt_xoverlay-qt-xoverlay.Tpo -c -o qt_xoverlay-qt-xoverlay.obj `if test -f 'qt-xoverlay.cpp'; then $(CYGPATH_W) 'qt-xoverlay.cpp'; else $(CYGPATH_W) '$(srcdir)/qt-xoverlay.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/qt_xoverlay-qt-xoverlay.Tpo $(DEPDIR)/qt_xoverlay-qt-xoverlay.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qt_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qt_xoverlay-qt-xoverlay.obj -MD -MP -MF $(DEPDIR)/qt_xoverlay-qt-xoverlay.Tpo -c -o qt_xoverlay-qt-xoverlay.obj `if test -f 'qt-xoverlay.cpp'; then $(CYGPATH_W) 'qt-xoverlay.cpp'; else $(CYGPATH_W) '$(srcdir)/qt-xoverlay.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qt_xoverlay-qt-xoverlay.Tpo $(DEPDIR)/qt_xoverlay-qt-xoverlay.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='qt-xoverlay.cpp' object='qt_xoverlay-qt-xoverlay.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qt_xoverlay_CXXFLAGS) $(CXXFLAGS) -c -o qt_xoverlay-qt-xoverlay.obj `if test -f 'qt-xoverlay.cpp'; then $(CYGPATH_W) 'qt-xoverlay.cpp'; else $(CYGPATH_W) '$(srcdir)/qt-xoverlay.cpp'; fi`
 
 qtgv_xoverlay-qtgv-xoverlay.o: qtgv-xoverlay.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qtgv_xoverlay-qtgv-xoverlay.o -MD -MP -MF $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Tpo -c -o qtgv_xoverlay-qtgv-xoverlay.o `test -f 'qtgv-xoverlay.cpp' || echo '$(srcdir)/'`qtgv-xoverlay.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Tpo $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qtgv_xoverlay-qtgv-xoverlay.o -MD -MP -MF $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Tpo -c -o qtgv_xoverlay-qtgv-xoverlay.o `test -f 'qtgv-xoverlay.cpp' || echo '$(srcdir)/'`qtgv-xoverlay.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Tpo $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='qtgv-xoverlay.cpp' object='qtgv_xoverlay-qtgv-xoverlay.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -c -o qtgv_xoverlay-qtgv-xoverlay.o `test -f 'qtgv-xoverlay.cpp' || echo '$(srcdir)/'`qtgv-xoverlay.cpp
 
 qtgv_xoverlay-qtgv-xoverlay.obj: qtgv-xoverlay.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qtgv_xoverlay-qtgv-xoverlay.obj -MD -MP -MF $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Tpo -c -o qtgv_xoverlay-qtgv-xoverlay.obj `if test -f 'qtgv-xoverlay.cpp'; then $(CYGPATH_W) 'qtgv-xoverlay.cpp'; else $(CYGPATH_W) '$(srcdir)/qtgv-xoverlay.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Tpo $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qtgv_xoverlay-qtgv-xoverlay.obj -MD -MP -MF $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Tpo -c -o qtgv_xoverlay-qtgv-xoverlay.obj `if test -f 'qtgv-xoverlay.cpp'; then $(CYGPATH_W) 'qtgv-xoverlay.cpp'; else $(CYGPATH_W) '$(srcdir)/qtgv-xoverlay.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Tpo $(DEPDIR)/qtgv_xoverlay-qtgv-xoverlay.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='qtgv-xoverlay.cpp' object='qtgv_xoverlay-qtgv-xoverlay.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -c -o qtgv_xoverlay-qtgv-xoverlay.obj `if test -f 'qtgv-xoverlay.cpp'; then $(CYGPATH_W) 'qtgv-xoverlay.cpp'; else $(CYGPATH_W) '$(srcdir)/qtgv-xoverlay.cpp'; fi`
 
 qtgv_xoverlay-moc_qtgv-xoverlay.o: moc_qtgv-xoverlay.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qtgv_xoverlay-moc_qtgv-xoverlay.o -MD -MP -MF $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Tpo -c -o qtgv_xoverlay-moc_qtgv-xoverlay.o `test -f 'moc_qtgv-xoverlay.cpp' || echo '$(srcdir)/'`moc_qtgv-xoverlay.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Tpo $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qtgv_xoverlay-moc_qtgv-xoverlay.o -MD -MP -MF $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Tpo -c -o qtgv_xoverlay-moc_qtgv-xoverlay.o `test -f 'moc_qtgv-xoverlay.cpp' || echo '$(srcdir)/'`moc_qtgv-xoverlay.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Tpo $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='moc_qtgv-xoverlay.cpp' object='qtgv_xoverlay-moc_qtgv-xoverlay.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -c -o qtgv_xoverlay-moc_qtgv-xoverlay.o `test -f 'moc_qtgv-xoverlay.cpp' || echo '$(srcdir)/'`moc_qtgv-xoverlay.cpp
 
 qtgv_xoverlay-moc_qtgv-xoverlay.obj: moc_qtgv-xoverlay.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qtgv_xoverlay-moc_qtgv-xoverlay.obj -MD -MP -MF $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Tpo -c -o qtgv_xoverlay-moc_qtgv-xoverlay.obj `if test -f 'moc_qtgv-xoverlay.cpp'; then $(CYGPATH_W) 'moc_qtgv-xoverlay.cpp'; else $(CYGPATH_W) '$(srcdir)/moc_qtgv-xoverlay.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Tpo $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -MT qtgv_xoverlay-moc_qtgv-xoverlay.obj -MD -MP -MF $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Tpo -c -o qtgv_xoverlay-moc_qtgv-xoverlay.obj `if test -f 'moc_qtgv-xoverlay.cpp'; then $(CYGPATH_W) 'moc_qtgv-xoverlay.cpp'; else $(CYGPATH_W) '$(srcdir)/moc_qtgv-xoverlay.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Tpo $(DEPDIR)/qtgv_xoverlay-moc_qtgv-xoverlay.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='moc_qtgv-xoverlay.cpp' object='qtgv_xoverlay-moc_qtgv-xoverlay.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(qtgv_xoverlay_CXXFLAGS) $(CXXFLAGS) -c -o qtgv_xoverlay-moc_qtgv-xoverlay.obj `if test -f 'moc_qtgv-xoverlay.cpp'; then $(CYGPATH_W) 'moc_qtgv-xoverlay.cpp'; else $(CYGPATH_W) '$(srcdir)/moc_qtgv-xoverlay.cpp'; fi`
@@ -832,7 +864,7 @@ uninstall-am:
 
 
 @HAVE_QT_GV_TRUE@@USE_X_TRUE@moc_%.cpp:%.h
-@HAVE_QT_GV_TRUE@@USE_X_TRUE@	moc $< -o $@
+@HAVE_QT_GV_TRUE@@USE_X_TRUE@	$(AM_V_GEN)moc $< -o $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -87,7 +87,7 @@ static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
 /* Copy of glib's g_open due to win32 libc/cross-DLL brokenness: we can't
  * use the 'file descriptor' opened in glib (and returned from this function)
  * in this library, as they may have unrelated C runtimes. */
-int
+static int
 gst_open (const gchar * filename, int flags, int mode)
 {
 #ifdef G_OS_WIN32
@@ -1117,7 +1117,7 @@ gst_file_src_uri_get_type (void)
 static gchar **
 gst_file_src_uri_get_protocols (void)
 {
-  static gchar *protocols[] = { "file", NULL };
+  static gchar *protocols[] = { (char *) "file", NULL };
 
   return protocols;
 }

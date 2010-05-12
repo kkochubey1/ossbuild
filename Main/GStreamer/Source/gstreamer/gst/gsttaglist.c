@@ -282,6 +282,18 @@ _gst_tag_initialize (void)
       G_TYPE_DOUBLE, _("geo location elevation"),
       _("geo elevation of where the media has been recorded or produced in "
           "meters according to WGS84 (zero is average sea level)"), NULL);
+  gst_tag_register (GST_TAG_GEO_LOCATION_COUNTRY, GST_TAG_FLAG_META,
+      G_TYPE_STRING, _("geo location country"),
+      _("country (english name) where the media has been recorded "
+          "or produced"), NULL);
+  gst_tag_register (GST_TAG_GEO_LOCATION_CITY, GST_TAG_FLAG_META,
+      G_TYPE_STRING, _("geo location city"),
+      _("city (english name) where the media has been recorded "
+          "or produced"), NULL);
+  gst_tag_register (GST_TAG_GEO_LOCATION_SUBLOCATION, GST_TAG_FLAG_META,
+      G_TYPE_STRING, _("geo location sublocation"),
+      _("a location whithin a city where the media has been produced "
+          "or created (e.g. the neighborhood)"), NULL);
   gst_tag_register (GST_TAG_SHOW_NAME, GST_TAG_FLAG_META, G_TYPE_STRING,
       /* TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here */
       _("show name"),
@@ -311,6 +323,10 @@ _gst_tag_initialize (void)
       _("Groups related media that spans multiple tracks, like the different "
           "pieces of a concerto. It is a higher level than a track, "
           "but lower than an album"), NULL);
+  gst_tag_register (GST_TAG_USER_RATING, GST_TAG_FLAG_META, G_TYPE_UINT,
+      _("user rating"),
+      _("Rating attributed by a user. The higher the rank, "
+          "the more the user likes this media"), NULL);
 }
 
 /**
@@ -423,7 +439,7 @@ gst_tag_register (const gchar * name, GstTagFlag flag, GType type,
     return;
   }
 
-  info = g_new (GstTagInfo, 1);
+  info = g_slice_new (GstTagInfo);
   info->flag = flag;
   info->type = type;
   info->nick = g_strdup (nick);
@@ -945,8 +961,12 @@ gst_tag_list_add_valist (GstTagList * list, GstTagMergeMode mode,
       g_warning ("unknown tag '%s'", tag);
       return;
     }
+#if GLIB_CHECK_VERSION(2,23,3)
+    G_VALUE_COLLECT_INIT (&value, info->type, var_args, 0, &error);
+#else
     g_value_init (&value, info->type);
     G_VALUE_COLLECT (&value, var_args, 0, &error);
+#endif
     if (error) {
       g_warning ("%s: %s", G_STRLOC, error);
       g_free (error);

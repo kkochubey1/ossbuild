@@ -114,6 +114,7 @@ EXTRA_HFILES = \
 	$(top_srcdir)/ext/wavpack/gstwavpackdec.h \
 	$(top_srcdir)/ext/wavpack/gstwavpackenc.h \
 	$(top_srcdir)/ext/wavpack/gstwavpackparse.h \
+	$(top_srcdir)/gst/alpha/gstalpha.h \
 	$(top_srcdir)/gst/alpha/gstalphacolor.h \
 	$(top_srcdir)/gst/apetag/gstapedemux.h \
 	$(top_srcdir)/gst/audiofx/audioamplify.h \
@@ -128,6 +129,7 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/audiofx/audiowsincband.h \
 	$(top_srcdir)/gst/audiofx/audiowsinclimit.h \
 	$(top_srcdir)/gst/audiofx/audiofirfilter.h \
+	$(top_srcdir)/gst/auparse/gstauparse.h \
 	$(top_srcdir)/gst/autodetect/gstautoaudiosink.h \
 	$(top_srcdir)/gst/autodetect/gstautoaudiosrc.h \
 	$(top_srcdir)/gst/autodetect/gstautovideosink.h \
@@ -157,6 +159,7 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/equalizer/gstiirequalizernbands.h \
 	$(top_srcdir)/gst/flv/gstflvdemux.h \
 	$(top_srcdir)/gst/flv/gstflvmux.h \
+	$(top_srcdir)/gst/flx/gstflxdec.h \
 	$(top_srcdir)/gst/goom/gstgoom.h \
 	$(top_srcdir)/gst/goom2k1/gstgoom.h \
 	$(top_srcdir)/gst/law/alaw-decode.h \
@@ -179,6 +182,7 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/replaygain/gstrganalysis.h \
 	$(top_srcdir)/gst/replaygain/gstrglimiter.h \
 	$(top_srcdir)/gst/replaygain/gstrgvolume.h \
+	$(top_srcdir)/gst/rtp/gstrtpj2kpay.h \
 	$(top_srcdir)/gst/rtp/gstrtpjpegpay.h \
 	$(top_srcdir)/gst/rtpmanager/gstrtpbin.h \
 	$(top_srcdir)/gst/rtpmanager/gstrtpjitterbuffer.h \
@@ -191,7 +195,6 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/smpte/gstsmpte.h \
 	$(top_srcdir)/gst/smpte/gstsmptealpha.h \
 	$(top_srcdir)/gst/spectrum/gstspectrum.h \
-	$(top_srcdir)/gst/udp/gstdynudpsink.h \
 	$(top_srcdir)/gst/udp/gstmultiudpsink.h \
 	$(top_srcdir)/gst/udp/gstudpsrc.h \
 	$(top_srcdir)/gst/udp/gstudpsink.h \
@@ -214,6 +217,7 @@ EXTRA_HFILES = \
 	$(top_srcdir)/sys/osxaudio/gstosxaudiosink.h \
 	$(top_srcdir)/sys/osxvideo/osxvideosink.h \
 	$(top_srcdir)/sys/v4l2/gstv4l2src.h \
+	$(top_srcdir)/sys/v4l2/gstv4l2sink.h \
 	$(top_srcdir)/sys/waveform/gstwaveformsink.h \
 	$(top_srcdir)/sys/ximage/gstximagesrc.h
 

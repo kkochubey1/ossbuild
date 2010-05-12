@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="gstplaybin"
 	ProjectGUID="{AB87873B-2B88-4B1B-B627-F70DF4F91F20}"
 	RootNamespace="libgstplaybin"
@@ -294,7 +294,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstpbutils.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstpbutils.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E49}"
@@ -302,11 +302,11 @@
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F02}"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstinterfaces.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstinterfaces.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F13}"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstvideo.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstvideo.vcproj"
 		/>
 	</References>
 	<Files>
@@ -323,6 +323,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstplay-enum.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstplayback.h"
 				>
 			</File>
 			<File

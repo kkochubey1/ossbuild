@@ -228,7 +228,7 @@ overflow:
 
 /* track list */
 GHashTable *
-gst_cmml_track_list_new ()
+gst_cmml_track_list_new (void)
 {
   return g_hash_table_new (g_str_hash, g_str_equal);
 }
@@ -385,28 +385,4 @@ gst_cmml_track_list_get_track_last_clip (GHashTable * tracks,
     res = g_list_last (track->clips);
 
   return res ? GST_CMML_TAG_CLIP (res->data) : NULL;
-}
-
-void
-gst_cmml_track_list_set_data (GHashTable * tracks,
-    const gchar * track_name, gpointer data)
-{
-  GstCmmlTrack *track;
-
-  g_return_if_fail (track_name != NULL);
-
-  track = g_hash_table_lookup (tracks, track_name);
-  if (track)
-    track->user_data = data;
-}
-
-gpointer
-gst_cmml_track_get_data (GHashTable * tracks, const gchar * track_name)
-{
-  GstCmmlTrack *track;
-
-  g_return_val_if_fail (track_name != NULL, NULL);
-
-  track = g_hash_table_lookup (tracks, track_name);
-  return track ? track->user_data : NULL;
 }

@@ -66,6 +66,7 @@ enum
   PROP_NUM_SOURCES,
   PROP_NUM_ACTIVE_SOURCES,
   PROP_SOURCES,
+  PROP_FAVOR_NEW,
   PROP_LAST
 };
 
@@ -307,6 +308,12 @@ rtp_session_class_init (RTPSessionClass * klass)
           "An array of all known sources in the session",
           G_TYPE_VALUE_ARRAY, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
+  g_object_class_install_property (gobject_class, PROP_FAVOR_NEW,
+      g_param_spec_boolean ("favor-new", "Favor new sources",
+          "Resolve SSRC conflict in favor of new sources", FALSE,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+
   klass->get_source_by_ssrc =
       GST_DEBUG_FUNCPTR (rtp_session_get_source_by_ssrc);
 
@@ -368,9 +375,6 @@ rtp_session_finalize (GObject * object)
   g_mutex_free (sess->lock);
   for (i = 0; i < 32; i++)
     g_hash_table_destroy (sess->ssrcs[i]);
-
-  g_list_foreach (sess->conflicting_addresses, (GFunc) g_free, NULL);
-  g_list_free (sess->conflicting_addresses);
 
   g_free (sess->bye_reason);
 
@@ -434,6 +438,9 @@ rtp_session_set_property (GObject * object, guint prop_id,
     case PROP_SDES:
       rtp_session_set_sdes_struct (sess, g_value_get_boxed (value));
       break;
+    case PROP_FAVOR_NEW:
+      sess->favor_new = g_value_get_boolean (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -475,6 +482,9 @@ rtp_session_get_property (GObject * object, guint prop_id,
       break;
     case PROP_SOURCES:
       g_value_take_boxed (value, rtp_session_create_sources (sess));
+      break;
+    case PROP_FAVOR_NEW:
+      g_value_set_boolean (value, sess->favor_new);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -972,44 +982,6 @@ static RTPSourceCallbacks callbacks = {
   (RTPSourceClockRate) source_clock_rate,
 };
 
-/**
- * find_add_conflicting_addresses:
- * @sess: The session to check in
- * @arrival: The arrival stats for the buffer
- *
- * Checks if an address which has a conflict is already known,
- *  otherwise remembers it to prevent loops.
- *
- * Returns: TRUE if it was a known conflict, FALSE otherwise
- */
-
-static gboolean
-find_add_conflicting_addresses (RTPSession * sess, RTPArrivalStats * arrival)
-{
-  GList *item;
-  RTPConflictingAddress *new_conflict;
-
-  for (item = g_list_first (sess->conflicting_addresses);
-      item; item = g_list_next (item)) {
-    RTPConflictingAddress *known_conflict = item->data;
-
-    if (gst_netaddress_equal (&arrival->address, &known_conflict->address)) {
-      known_conflict->time = arrival->current_time;
-      return TRUE;
-    }
-  }
-
-  new_conflict = g_new0 (RTPConflictingAddress, 1);
-
-  memcpy (&new_conflict->address, &arrival->address, sizeof (GstNetAddress));
-  new_conflict->time = arrival->current_time;
-
-  sess->conflicting_addresses = g_list_prepend (sess->conflicting_addresses,
-      new_conflict);
-
-  return FALSE;
-}
-
 static gboolean
 check_collision (RTPSession * sess, RTPSource * source,
     RTPArrivalStats * arrival, gboolean rtp)
@@ -1019,33 +991,70 @@ check_collision (RTPSession * sess, RTPSource * source,
     return FALSE;
 
   if (sess->source != source) {
+    GstNetAddress *from;
+    gboolean have_from;
+
     /* This is not our local source, but lets check if two remote
      * source collide
      */
+
     if (rtp) {
-      if (source->have_rtp_from) {
-        if (gst_netaddress_equal (&source->rtp_from, &arrival->address))
-          /* Address is the same */
-          return FALSE;
-      } else {
-        /* We don't already have a from address for RTP, just set it */
-        rtp_source_set_rtp_from (source, &arrival->address);
+      from = &source->rtp_from;
+      have_from = source->have_rtp_from;
+    } else {
+      from = &source->rtcp_from;
+      have_from = source->have_rtcp_from;
+    }
+
+    if (have_from) {
+      if (gst_netaddress_equal (from, &arrival->address)) {
+        /* Address is the same */
         return FALSE;
+      } else {
+        GST_LOG ("we have a third-party collision or loop ssrc:%x",
+            rtp_source_get_ssrc (source));
+        if (sess->favor_new) {
+          if (rtp_source_find_conflicting_address (source,
+                  &arrival->address, arrival->current_time)) {
+            gchar buf1[40];
+            gst_netaddress_to_string (&arrival->address, buf1, 40);
+            GST_LOG ("Known conflict on %x for %s, dropping packet",
+                rtp_source_get_ssrc (source), buf1);
+            return TRUE;
+          } else {
+            gchar buf1[40], buf2[40];
+
+            /* Current address is not a known conflict, lets assume this is
+             * a new source. Save old address in possible conflict list
+             */
+            rtp_source_add_conflicting_address (source, from,
+                arrival->current_time);
+
+            gst_netaddress_to_string (from, buf1, 40);
+            gst_netaddress_to_string (&arrival->address, buf2, 40);
+            GST_DEBUG ("New conflict for ssrc %x, replacing %s with %s,"
+                " saving old as known conflict",
+                rtp_source_get_ssrc (source), buf1, buf2);
+
+            if (rtp)
+              rtp_source_set_rtp_from (source, &arrival->address);
+            else
+              rtp_source_set_rtcp_from (source, &arrival->address);
+            return FALSE;
+          }
+        } else {
+          /* Don't need to save old addresses, we ignore new sources */
+          return TRUE;
+        }
       }
     } else {
-      if (source->have_rtcp_from) {
-        if (gst_netaddress_equal (&source->rtcp_from, &arrival->address))
-          /* Address is the same */
-          return FALSE;
-      } else {
-        /* We don't already have a from address for RTCP, just set it */
+      /* We don't already have a from address for RTP, just set it */
+      if (rtp)
+        rtp_source_set_rtp_from (source, &arrival->address);
+      else
         rtp_source_set_rtcp_from (source, &arrival->address);
-        return FALSE;
-      }
+      return FALSE;
     }
-    /* We received RTP or RTCP from this source before but the network address
-     * changed. In this case, we have third-party collision or loop */
-    GST_DEBUG ("we have a third-party collision or loop");
 
     /* FIXME: Log 3rd party collision somehow
      * Maybe should be done in upper layer, only the SDES can tell us
@@ -1054,13 +1063,17 @@ check_collision (RTPSession * sess, RTPSource * source,
   } else {
     /* This is sending with our ssrc, is it an address we already know */
 
-    if (find_add_conflicting_addresses (sess, arrival)) {
+    if (rtp_source_find_conflicting_address (source, &arrival->address,
+            arrival->current_time)) {
       /* Its a known conflict, its probably a loop, not a collision
        * lets just drop the incoming packet
        */
       GST_DEBUG ("Our packets are being looped back to us, dropping");
     } else {
       /* Its a new collision, lets change our SSRC */
+
+      rtp_source_add_conflicting_address (source, &arrival->address,
+          arrival->current_time);
 
       GST_DEBUG ("Collision for SSRC %x", rtp_source_get_ssrc (source));
       on_ssrc_collision (sess, source);
@@ -2466,7 +2479,6 @@ rtp_session_on_timeout (RTPSession * sess, GstClockTime current_time,
     guint64 ntpnstime, GstClockTime running_time)
 {
   GstFlowReturn result = GST_FLOW_OK;
-  GList *item;
   ReportData data;
   RTPSource *own;
   gboolean notify = FALSE;
@@ -2526,21 +2538,9 @@ rtp_session_on_timeout (RTPSession * sess, GstClockTime current_time,
   }
 
   /* check for outdated collisions */
-  GST_DEBUG ("checking collision list");
-  item = g_list_first (sess->conflicting_addresses);
-  while (item) {
-    RTPConflictingAddress *known_conflict = item->data;
-    GList *next_item = g_list_next (item);
-
-    if (known_conflict->time < current_time - (data.interval *
-            RTCP_INTERVAL_COLLISION_TIMEOUT)) {
-      sess->conflicting_addresses =
-          g_list_delete_link (sess->conflicting_addresses, item);
-      GST_DEBUG ("collision %p timed out", known_conflict);
-      g_free (known_conflict);
-    }
-    item = next_item;
-  }
+  GST_DEBUG ("Timing out collisions");
+  rtp_source_timeout (sess->source, current_time,
+      data.interval * RTCP_INTERVAL_COLLISION_TIMEOUT);
 
   if (sess->change_ssrc) {
     GST_DEBUG ("need to change our SSRC (%08x)", own->ssrc);

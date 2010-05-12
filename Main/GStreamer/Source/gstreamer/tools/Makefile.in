@@ -44,8 +44,7 @@ subdir = tools
 DIST_COMMON = README $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
-	$(top_srcdir)/common/m4/as-ac-expand.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/as-auto-alt.m4 \
 	$(top_srcdir)/common/m4/as-compiler-flag.m4 \
 	$(top_srcdir)/common/m4/as-docbook.m4 \
@@ -54,7 +53,6 @@ am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
 	$(top_srcdir)/common/m4/as-scrub-include.m4 \
 	$(top_srcdir)/common/m4/as-version.m4 \
 	$(top_srcdir)/common/m4/ax_create_stdint_h.m4 \
-	$(top_srcdir)/common/m4/gettext.m4 \
 	$(top_srcdir)/common/m4/gst-arch.m4 \
 	$(top_srcdir)/common/m4/gst-args.m4 \
 	$(top_srcdir)/common/m4/gst-check.m4 \
@@ -71,21 +69,16 @@ am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/iconv.m4 \
-	$(top_srcdir)/common/m4/intlmacosx.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/lib-ld.m4 \
-	$(top_srcdir)/common/m4/lib-link.m4 \
-	$(top_srcdir)/common/m4/lib-prefix.m4 \
-	$(top_srcdir)/common/m4/libtool.m4 \
-	$(top_srcdir)/common/m4/ltoptions.m4 \
-	$(top_srcdir)/common/m4/ltsugar.m4 \
-	$(top_srcdir)/common/m4/ltversion.m4 \
-	$(top_srcdir)/common/m4/lt~obsolete.m4 \
-	$(top_srcdir)/common/m4/nls.m4 $(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/po.m4 \
-	$(top_srcdir)/common/m4/progtest.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/check-checks.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -110,6 +103,9 @@ gst_feedback_OBJECTS = $(am_gst_feedback_OBJECTS)
 gst_feedback_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 gst_feedback_DEPENDENCIES = $(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
 am_gst_inspect_OBJECTS = gst-run.$(OBJEXT)
 gst_inspect_OBJECTS = $(am_gst_inspect_OBJECTS)
 gst_inspect_LDADD = $(LDADD)
@@ -118,12 +114,11 @@ am_gst_inspect_@GST_MAJORMINOR@_OBJECTS =  \
 	gst_inspect_@GST_MAJORMINOR@-gst-inspect.$(OBJEXT)
 gst_inspect_@GST_MAJORMINOR@_OBJECTS =  \
 	$(am_gst_inspect_@GST_MAJORMINOR@_OBJECTS)
-gst_inspect_@GST_MAJORMINOR@_LDADD = $(LDADD)
 gst_inspect_@GST_MAJORMINOR@_DEPENDENCIES = $(am__DEPENDENCIES_1)
-gst_inspect_@GST_MAJORMINOR@_LINK = $(LIBTOOL) --tag=CC \
+gst_inspect_@GST_MAJORMINOR@_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(gst_inspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) \
-	$(gst_inspect_@GST_MAJORMINOR@_LDFLAGS) $(LDFLAGS) -o $@
+	$(gst_inspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am__gst_launch_SOURCES_DIST = gst-run.c
 @GST_DISABLE_PARSE_FALSE@am_gst_launch_OBJECTS = gst-run.$(OBJEXT)
 gst_launch_OBJECTS = $(am_gst_launch_OBJECTS)
@@ -133,12 +128,12 @@ am__gst_launch_@GST_MAJORMINOR@_SOURCES_DIST = gst-launch.c tools.h
 @GST_DISABLE_PARSE_FALSE@am_gst_launch_@GST_MAJORMINOR@_OBJECTS = gst_launch_@GST_MAJORMINOR@-gst-launch.$(OBJEXT)
 gst_launch_@GST_MAJORMINOR@_OBJECTS =  \
 	$(am_gst_launch_@GST_MAJORMINOR@_OBJECTS)
-gst_launch_@GST_MAJORMINOR@_LDADD = $(LDADD)
-gst_launch_@GST_MAJORMINOR@_DEPENDENCIES = $(am__DEPENDENCIES_1)
-gst_launch_@GST_MAJORMINOR@_LINK = $(LIBTOOL) --tag=CC \
+@GST_DISABLE_PARSE_FALSE@gst_launch_@GST_MAJORMINOR@_DEPENDENCIES =  \
+@GST_DISABLE_PARSE_FALSE@	$(am__DEPENDENCIES_1)
+gst_launch_@GST_MAJORMINOR@_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(gst_launch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) \
-	$(gst_launch_@GST_MAJORMINOR@_LDFLAGS) $(LDFLAGS) -o $@
+	$(gst_launch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am_gst_typefind_OBJECTS = gst-run.$(OBJEXT)
 gst_typefind_OBJECTS = $(am_gst_typefind_OBJECTS)
 gst_typefind_LDADD = $(LDADD)
@@ -147,12 +142,11 @@ am_gst_typefind_@GST_MAJORMINOR@_OBJECTS =  \
 	gst_typefind_@GST_MAJORMINOR@-gst-typefind.$(OBJEXT)
 gst_typefind_@GST_MAJORMINOR@_OBJECTS =  \
 	$(am_gst_typefind_@GST_MAJORMINOR@_OBJECTS)
-gst_typefind_@GST_MAJORMINOR@_LDADD = $(LDADD)
 gst_typefind_@GST_MAJORMINOR@_DEPENDENCIES = $(am__DEPENDENCIES_1)
-gst_typefind_@GST_MAJORMINOR@_LINK = $(LIBTOOL) --tag=CC \
+gst_typefind_@GST_MAJORMINOR@_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(gst_typefind_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) \
-	$(gst_typefind_@GST_MAJORMINOR@_LDFLAGS) $(LDFLAGS) -o $@
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_gst_xmlinspect_OBJECTS = gst-run.$(OBJEXT)
 gst_xmlinspect_OBJECTS = $(am_gst_xmlinspect_OBJECTS)
 gst_xmlinspect_LDADD = $(LDADD)
@@ -161,12 +155,11 @@ am_gst_xmlinspect_@GST_MAJORMINOR@_OBJECTS =  \
 	gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.$(OBJEXT)
 gst_xmlinspect_@GST_MAJORMINOR@_OBJECTS =  \
 	$(am_gst_xmlinspect_@GST_MAJORMINOR@_OBJECTS)
-gst_xmlinspect_@GST_MAJORMINOR@_LDADD = $(LDADD)
 gst_xmlinspect_@GST_MAJORMINOR@_DEPENDENCIES = $(am__DEPENDENCIES_1)
-gst_xmlinspect_@GST_MAJORMINOR@_LINK = $(LIBTOOL) --tag=CC \
+gst_xmlinspect_@GST_MAJORMINOR@_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(gst_xmlinspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) \
-	$(gst_xmlinspect_@GST_MAJORMINOR@_LDFLAGS) $(LDFLAGS) -o $@
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 am__gst_xmllaunch_SOURCES_DIST = gst-run.c
 @GST_DISABLE_LOADSAVE_FALSE@am_gst_xmllaunch_OBJECTS =  \
 @GST_DISABLE_LOADSAVE_FALSE@	gst-run.$(OBJEXT)
@@ -177,12 +170,12 @@ am__gst_xmllaunch_@GST_MAJORMINOR@_SOURCES_DIST = gst-launch.c tools.h
 @GST_DISABLE_LOADSAVE_FALSE@am_gst_xmllaunch_@GST_MAJORMINOR@_OBJECTS = gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.$(OBJEXT)
 gst_xmllaunch_@GST_MAJORMINOR@_OBJECTS =  \
 	$(am_gst_xmllaunch_@GST_MAJORMINOR@_OBJECTS)
-gst_xmllaunch_@GST_MAJORMINOR@_LDADD = $(LDADD)
-gst_xmllaunch_@GST_MAJORMINOR@_DEPENDENCIES = $(am__DEPENDENCIES_1)
-gst_xmllaunch_@GST_MAJORMINOR@_LINK = $(LIBTOOL) --tag=CC \
+@GST_DISABLE_LOADSAVE_FALSE@gst_xmllaunch_@GST_MAJORMINOR@_DEPENDENCIES =  \
+@GST_DISABLE_LOADSAVE_FALSE@	$(am__DEPENDENCIES_1)
+gst_xmllaunch_@GST_MAJORMINOR@_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(gst_xmllaunch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) \
-	$(gst_xmllaunch_@GST_MAJORMINOR@_LDFLAGS) $(LDFLAGS) -o $@
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -211,13 +204,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(gst_feedback_SOURCES) $(gst_inspect_SOURCES) \
 	$(gst_inspect_@GST_MAJORMINOR@_SOURCES) $(gst_launch_SOURCES) \
 	$(gst_launch_@GST_MAJORMINOR@_SOURCES) $(gst_typefind_SOURCES) \
@@ -246,7 +252,7 @@ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -268,7 +274,6 @@ CHECK_MINOR_VERSION = @CHECK_MINOR_VERSION@
 CHECK_VERSION = @CHECK_VERSION@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIR = @DATADIR@
@@ -286,8 +291,6 @@ EGREP = @EGREP@
 ENABLE_SUBUNIT = @ENABLE_SUBUNIT@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLEX_PATH = @FLEX_PATH@
@@ -392,7 +395,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -400,7 +402,6 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OTOOL = @OTOOL@
@@ -428,18 +429,17 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -500,7 +500,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -533,19 +532,19 @@ bin_SCRIPTS = gst-feedback-@GST_MAJORMINOR@
 # make sure each versioned tool has the right source file and flags
 @GST_DISABLE_LOADSAVE_FALSE@gst_xmllaunch_@GST_MAJORMINOR@_SOURCES = gst-launch.c tools.h
 @GST_DISABLE_LOADSAVE_FALSE@gst_xmllaunch_@GST_MAJORMINOR@_CFLAGS = $(GST_OBJ_CFLAGS)
-@GST_DISABLE_LOADSAVE_FALSE@gst_xmllaunch_@GST_MAJORMINOR@_LDFLAGS = $(GST_OBJ_LIBS)
+@GST_DISABLE_LOADSAVE_FALSE@gst_xmllaunch_@GST_MAJORMINOR@_LDADD = $(GST_OBJ_LIBS)
 @GST_DISABLE_PARSE_FALSE@gst_launch_@GST_MAJORMINOR@_SOURCES = gst-launch.c tools.h
 @GST_DISABLE_PARSE_FALSE@gst_launch_@GST_MAJORMINOR@_CFLAGS = $(GST_OBJ_CFLAGS)
-@GST_DISABLE_PARSE_FALSE@gst_launch_@GST_MAJORMINOR@_LDFLAGS = $(GST_OBJ_LIBS)
+@GST_DISABLE_PARSE_FALSE@gst_launch_@GST_MAJORMINOR@_LDADD = $(GST_OBJ_LIBS)
 gst_inspect_@GST_MAJORMINOR@_SOURCES = gst-inspect.c tools.h
 gst_inspect_@GST_MAJORMINOR@_CFLAGS = $(GST_OBJ_CFLAGS)
-gst_inspect_@GST_MAJORMINOR@_LDFLAGS = $(GST_OBJ_LIBS)
+gst_inspect_@GST_MAJORMINOR@_LDADD = $(GST_OBJ_LIBS)
 gst_typefind_@GST_MAJORMINOR@_SOURCES = gst-typefind.c tools.h
 gst_typefind_@GST_MAJORMINOR@_CFLAGS = $(GST_OBJ_CFLAGS)
-gst_typefind_@GST_MAJORMINOR@_LDFLAGS = $(GST_OBJ_LIBS)
+gst_typefind_@GST_MAJORMINOR@_LDADD = $(GST_OBJ_LIBS)
 gst_xmlinspect_@GST_MAJORMINOR@_SOURCES = gst-xmlinspect.c tools.h
 gst_xmlinspect_@GST_MAJORMINOR@_CFLAGS = $(GST_OBJ_CFLAGS)
-gst_xmlinspect_@GST_MAJORMINOR@_LDFLAGS = $(GST_OBJ_LIBS)
+gst_xmlinspect_@GST_MAJORMINOR@_LDADD = $(GST_OBJ_LIBS)
 
 # make sure each unversioned tool comes from gst-run.c
 @GST_DISABLE_LOADSAVE_FALSE@gst_xmllaunch_SOURCES = gst-run.c
@@ -673,37 +672,37 @@ clean-binPROGRAMS:
 	rm -f $$list
 gst-feedback$(EXEEXT): $(gst_feedback_OBJECTS) $(gst_feedback_DEPENDENCIES) 
 	@rm -f gst-feedback$(EXEEXT)
-	$(LINK) $(gst_feedback_OBJECTS) $(gst_feedback_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(gst_feedback_OBJECTS) $(gst_feedback_LDADD) $(LIBS)
 gst-inspect$(EXEEXT): $(gst_inspect_OBJECTS) $(gst_inspect_DEPENDENCIES) 
 	@rm -f gst-inspect$(EXEEXT)
-	$(LINK) $(gst_inspect_OBJECTS) $(gst_inspect_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(gst_inspect_OBJECTS) $(gst_inspect_LDADD) $(LIBS)
 gst-inspect-@GST_MAJORMINOR@$(EXEEXT): $(gst_inspect_@GST_MAJORMINOR@_OBJECTS) $(gst_inspect_@GST_MAJORMINOR@_DEPENDENCIES) 
 	@rm -f gst-inspect-@GST_MAJORMINOR@$(EXEEXT)
-	$(gst_inspect_@GST_MAJORMINOR@_LINK) $(gst_inspect_@GST_MAJORMINOR@_OBJECTS) $(gst_inspect_@GST_MAJORMINOR@_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(gst_inspect_@GST_MAJORMINOR@_LINK) $(gst_inspect_@GST_MAJORMINOR@_OBJECTS) $(gst_inspect_@GST_MAJORMINOR@_LDADD) $(LIBS)
 gst-launch$(EXEEXT): $(gst_launch_OBJECTS) $(gst_launch_DEPENDENCIES) 
 	@rm -f gst-launch$(EXEEXT)
-	$(LINK) $(gst_launch_OBJECTS) $(gst_launch_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(gst_launch_OBJECTS) $(gst_launch_LDADD) $(LIBS)
 gst-launch-@GST_MAJORMINOR@$(EXEEXT): $(gst_launch_@GST_MAJORMINOR@_OBJECTS) $(gst_launch_@GST_MAJORMINOR@_DEPENDENCIES) 
 	@rm -f gst-launch-@GST_MAJORMINOR@$(EXEEXT)
-	$(gst_launch_@GST_MAJORMINOR@_LINK) $(gst_launch_@GST_MAJORMINOR@_OBJECTS) $(gst_launch_@GST_MAJORMINOR@_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(gst_launch_@GST_MAJORMINOR@_LINK) $(gst_launch_@GST_MAJORMINOR@_OBJECTS) $(gst_launch_@GST_MAJORMINOR@_LDADD) $(LIBS)
 gst-typefind$(EXEEXT): $(gst_typefind_OBJECTS) $(gst_typefind_DEPENDENCIES) 
 	@rm -f gst-typefind$(EXEEXT)
-	$(LINK) $(gst_typefind_OBJECTS) $(gst_typefind_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(gst_typefind_OBJECTS) $(gst_typefind_LDADD) $(LIBS)
 gst-typefind-@GST_MAJORMINOR@$(EXEEXT): $(gst_typefind_@GST_MAJORMINOR@_OBJECTS) $(gst_typefind_@GST_MAJORMINOR@_DEPENDENCIES) 
 	@rm -f gst-typefind-@GST_MAJORMINOR@$(EXEEXT)
-	$(gst_typefind_@GST_MAJORMINOR@_LINK) $(gst_typefind_@GST_MAJORMINOR@_OBJECTS) $(gst_typefind_@GST_MAJORMINOR@_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(gst_typefind_@GST_MAJORMINOR@_LINK) $(gst_typefind_@GST_MAJORMINOR@_OBJECTS) $(gst_typefind_@GST_MAJORMINOR@_LDADD) $(LIBS)
 gst-xmlinspect$(EXEEXT): $(gst_xmlinspect_OBJECTS) $(gst_xmlinspect_DEPENDENCIES) 
 	@rm -f gst-xmlinspect$(EXEEXT)
-	$(LINK) $(gst_xmlinspect_OBJECTS) $(gst_xmlinspect_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(gst_xmlinspect_OBJECTS) $(gst_xmlinspect_LDADD) $(LIBS)
 gst-xmlinspect-@GST_MAJORMINOR@$(EXEEXT): $(gst_xmlinspect_@GST_MAJORMINOR@_OBJECTS) $(gst_xmlinspect_@GST_MAJORMINOR@_DEPENDENCIES) 
 	@rm -f gst-xmlinspect-@GST_MAJORMINOR@$(EXEEXT)
-	$(gst_xmlinspect_@GST_MAJORMINOR@_LINK) $(gst_xmlinspect_@GST_MAJORMINOR@_OBJECTS) $(gst_xmlinspect_@GST_MAJORMINOR@_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(gst_xmlinspect_@GST_MAJORMINOR@_LINK) $(gst_xmlinspect_@GST_MAJORMINOR@_OBJECTS) $(gst_xmlinspect_@GST_MAJORMINOR@_LDADD) $(LIBS)
 gst-xmllaunch$(EXEEXT): $(gst_xmllaunch_OBJECTS) $(gst_xmllaunch_DEPENDENCIES) 
 	@rm -f gst-xmllaunch$(EXEEXT)
-	$(LINK) $(gst_xmllaunch_OBJECTS) $(gst_xmllaunch_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(gst_xmllaunch_OBJECTS) $(gst_xmllaunch_LDADD) $(LIBS)
 gst-xmllaunch-@GST_MAJORMINOR@$(EXEEXT): $(gst_xmllaunch_@GST_MAJORMINOR@_OBJECTS) $(gst_xmllaunch_@GST_MAJORMINOR@_DEPENDENCIES) 
 	@rm -f gst-xmllaunch-@GST_MAJORMINOR@$(EXEEXT)
-	$(gst_xmllaunch_@GST_MAJORMINOR@_LINK) $(gst_xmllaunch_@GST_MAJORMINOR@_OBJECTS) $(gst_xmllaunch_@GST_MAJORMINOR@_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(gst_xmllaunch_@GST_MAJORMINOR@_LINK) $(gst_xmllaunch_@GST_MAJORMINOR@_OBJECTS) $(gst_xmllaunch_@GST_MAJORMINOR@_LDADD) $(LIBS)
 install-binSCRIPTS: $(bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -753,92 +752,105 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 gst_inspect_@GST_MAJORMINOR@-gst-inspect.o: gst-inspect.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_inspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_inspect_@GST_MAJORMINOR@-gst-inspect.o -MD -MP -MF $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Tpo -c -o gst_inspect_@GST_MAJORMINOR@-gst-inspect.o `test -f 'gst-inspect.c' || echo '$(srcdir)/'`gst-inspect.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Tpo $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_inspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_inspect_@GST_MAJORMINOR@-gst-inspect.o -MD -MP -MF $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Tpo -c -o gst_inspect_@GST_MAJORMINOR@-gst-inspect.o `test -f 'gst-inspect.c' || echo '$(srcdir)/'`gst-inspect.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Tpo $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-inspect.c' object='gst_inspect_@GST_MAJORMINOR@-gst-inspect.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_inspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -c -o gst_inspect_@GST_MAJORMINOR@-gst-inspect.o `test -f 'gst-inspect.c' || echo '$(srcdir)/'`gst-inspect.c
 
 gst_inspect_@GST_MAJORMINOR@-gst-inspect.obj: gst-inspect.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_inspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_inspect_@GST_MAJORMINOR@-gst-inspect.obj -MD -MP -MF $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Tpo -c -o gst_inspect_@GST_MAJORMINOR@-gst-inspect.obj `if test -f 'gst-inspect.c'; then $(CYGPATH_W) 'gst-inspect.c'; else $(CYGPATH_W) '$(srcdir)/gst-inspect.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Tpo $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_inspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_inspect_@GST_MAJORMINOR@-gst-inspect.obj -MD -MP -MF $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Tpo -c -o gst_inspect_@GST_MAJORMINOR@-gst-inspect.obj `if test -f 'gst-inspect.c'; then $(CYGPATH_W) 'gst-inspect.c'; else $(CYGPATH_W) '$(srcdir)/gst-inspect.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Tpo $(DEPDIR)/gst_inspect_@GST_MAJORMINOR@-gst-inspect.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-inspect.c' object='gst_inspect_@GST_MAJORMINOR@-gst-inspect.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_inspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -c -o gst_inspect_@GST_MAJORMINOR@-gst-inspect.obj `if test -f 'gst-inspect.c'; then $(CYGPATH_W) 'gst-inspect.c'; else $(CYGPATH_W) '$(srcdir)/gst-inspect.c'; fi`
 
 gst_launch_@GST_MAJORMINOR@-gst-launch.o: gst-launch.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_launch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_launch_@GST_MAJORMINOR@-gst-launch.o -MD -MP -MF $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Tpo -c -o gst_launch_@GST_MAJORMINOR@-gst-launch.o `test -f 'gst-launch.c' || echo '$(srcdir)/'`gst-launch.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Tpo $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_launch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_launch_@GST_MAJORMINOR@-gst-launch.o -MD -MP -MF $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Tpo -c -o gst_launch_@GST_MAJORMINOR@-gst-launch.o `test -f 'gst-launch.c' || echo '$(srcdir)/'`gst-launch.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Tpo $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-launch.c' object='gst_launch_@GST_MAJORMINOR@-gst-launch.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_launch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -c -o gst_launch_@GST_MAJORMINOR@-gst-launch.o `test -f 'gst-launch.c' || echo '$(srcdir)/'`gst-launch.c
 
 gst_launch_@GST_MAJORMINOR@-gst-launch.obj: gst-launch.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_launch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_launch_@GST_MAJORMINOR@-gst-launch.obj -MD -MP -MF $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Tpo -c -o gst_launch_@GST_MAJORMINOR@-gst-launch.obj `if test -f 'gst-launch.c'; then $(CYGPATH_W) 'gst-launch.c'; else $(CYGPATH_W) '$(srcdir)/gst-launch.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Tpo $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_launch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_launch_@GST_MAJORMINOR@-gst-launch.obj -MD -MP -MF $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Tpo -c -o gst_launch_@GST_MAJORMINOR@-gst-launch.obj `if test -f 'gst-launch.c'; then $(CYGPATH_W) 'gst-launch.c'; else $(CYGPATH_W) '$(srcdir)/gst-launch.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Tpo $(DEPDIR)/gst_launch_@GST_MAJORMINOR@-gst-launch.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-launch.c' object='gst_launch_@GST_MAJORMINOR@-gst-launch.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_launch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -c -o gst_launch_@GST_MAJORMINOR@-gst-launch.obj `if test -f 'gst-launch.c'; then $(CYGPATH_W) 'gst-launch.c'; else $(CYGPATH_W) '$(srcdir)/gst-launch.c'; fi`
 
 gst_typefind_@GST_MAJORMINOR@-gst-typefind.o: gst-typefind.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_typefind_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_typefind_@GST_MAJORMINOR@-gst-typefind.o -MD -MP -MF $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Tpo -c -o gst_typefind_@GST_MAJORMINOR@-gst-typefind.o `test -f 'gst-typefind.c' || echo '$(srcdir)/'`gst-typefind.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Tpo $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_typefind_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_typefind_@GST_MAJORMINOR@-gst-typefind.o -MD -MP -MF $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Tpo -c -o gst_typefind_@GST_MAJORMINOR@-gst-typefind.o `test -f 'gst-typefind.c' || echo '$(srcdir)/'`gst-typefind.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Tpo $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-typefind.c' object='gst_typefind_@GST_MAJORMINOR@-gst-typefind.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_typefind_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -c -o gst_typefind_@GST_MAJORMINOR@-gst-typefind.o `test -f 'gst-typefind.c' || echo '$(srcdir)/'`gst-typefind.c
 
 gst_typefind_@GST_MAJORMINOR@-gst-typefind.obj: gst-typefind.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_typefind_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_typefind_@GST_MAJORMINOR@-gst-typefind.obj -MD -MP -MF $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Tpo -c -o gst_typefind_@GST_MAJORMINOR@-gst-typefind.obj `if test -f 'gst-typefind.c'; then $(CYGPATH_W) 'gst-typefind.c'; else $(CYGPATH_W) '$(srcdir)/gst-typefind.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Tpo $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_typefind_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_typefind_@GST_MAJORMINOR@-gst-typefind.obj -MD -MP -MF $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Tpo -c -o gst_typefind_@GST_MAJORMINOR@-gst-typefind.obj `if test -f 'gst-typefind.c'; then $(CYGPATH_W) 'gst-typefind.c'; else $(CYGPATH_W) '$(srcdir)/gst-typefind.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Tpo $(DEPDIR)/gst_typefind_@GST_MAJORMINOR@-gst-typefind.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-typefind.c' object='gst_typefind_@GST_MAJORMINOR@-gst-typefind.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_typefind_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -c -o gst_typefind_@GST_MAJORMINOR@-gst-typefind.obj `if test -f 'gst-typefind.c'; then $(CYGPATH_W) 'gst-typefind.c'; else $(CYGPATH_W) '$(srcdir)/gst-typefind.c'; fi`
 
 gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.o: gst-xmlinspect.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmlinspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.o -MD -MP -MF $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Tpo -c -o gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.o `test -f 'gst-xmlinspect.c' || echo '$(srcdir)/'`gst-xmlinspect.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Tpo $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmlinspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.o -MD -MP -MF $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Tpo -c -o gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.o `test -f 'gst-xmlinspect.c' || echo '$(srcdir)/'`gst-xmlinspect.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Tpo $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-xmlinspect.c' object='gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmlinspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -c -o gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.o `test -f 'gst-xmlinspect.c' || echo '$(srcdir)/'`gst-xmlinspect.c
 
 gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.obj: gst-xmlinspect.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmlinspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.obj -MD -MP -MF $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Tpo -c -o gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.obj `if test -f 'gst-xmlinspect.c'; then $(CYGPATH_W) 'gst-xmlinspect.c'; else $(CYGPATH_W) '$(srcdir)/gst-xmlinspect.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Tpo $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmlinspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.obj -MD -MP -MF $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Tpo -c -o gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.obj `if test -f 'gst-xmlinspect.c'; then $(CYGPATH_W) 'gst-xmlinspect.c'; else $(CYGPATH_W) '$(srcdir)/gst-xmlinspect.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Tpo $(DEPDIR)/gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-xmlinspect.c' object='gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmlinspect_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -c -o gst_xmlinspect_@GST_MAJORMINOR@-gst-xmlinspect.obj `if test -f 'gst-xmlinspect.c'; then $(CYGPATH_W) 'gst-xmlinspect.c'; else $(CYGPATH_W) '$(srcdir)/gst-xmlinspect.c'; fi`
 
 gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.o: gst-launch.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmllaunch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.o -MD -MP -MF $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Tpo -c -o gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.o `test -f 'gst-launch.c' || echo '$(srcdir)/'`gst-launch.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Tpo $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmllaunch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.o -MD -MP -MF $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Tpo -c -o gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.o `test -f 'gst-launch.c' || echo '$(srcdir)/'`gst-launch.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Tpo $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-launch.c' object='gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmllaunch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -c -o gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.o `test -f 'gst-launch.c' || echo '$(srcdir)/'`gst-launch.c
 
 gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.obj: gst-launch.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmllaunch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.obj -MD -MP -MF $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Tpo -c -o gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.obj `if test -f 'gst-launch.c'; then $(CYGPATH_W) 'gst-launch.c'; else $(CYGPATH_W) '$(srcdir)/gst-launch.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Tpo $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmllaunch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -MT gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.obj -MD -MP -MF $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Tpo -c -o gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.obj `if test -f 'gst-launch.c'; then $(CYGPATH_W) 'gst-launch.c'; else $(CYGPATH_W) '$(srcdir)/gst-launch.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Tpo $(DEPDIR)/gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-launch.c' object='gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gst_xmllaunch_@GST_MAJORMINOR@_CFLAGS) $(CFLAGS) -c -o gst_xmllaunch_@GST_MAJORMINOR@-gst-launch.obj `if test -f 'gst-launch.c'; then $(CYGPATH_W) 'gst-launch.c'; else $(CYGPATH_W) '$(srcdir)/gst-launch.c'; fi`
@@ -1106,11 +1118,11 @@ uninstall-man: uninstall-man1
 
 
 gst-feedback-@GST_MAJORMINOR@: gst-feedback-m.m
-	cp $(srcdir)/gst-feedback-m.m $@
+	$(AM_V_GEN)cp $(srcdir)/gst-feedback-m.m $@ && \
 	chmod +x $@
 
 %-@GST_MAJORMINOR@.1: %.1.in
-	sed \
+	$(AM_V_GEN)sed \
 		-e s,gst-feedback,gst-feedback-@GST_MAJORMINOR@,g \
 		-e s,gst-inspect,gst-inspect-@GST_MAJORMINOR@,g \
 		-e s,gst-launch,gst-launch-@GST_MAJORMINOR@,g \

@@ -27,7 +27,7 @@
  * to force to caps containing a framerate. Otherwise image decoders send EOS
  * after the first picture.
  *
- * File names are created by replacing "%%d" with the index using printf().
+ * File names are created by replacing "\%d" with the index using printf().
  *
  * <refsect2>
  * <title>Example launch line</title>
@@ -69,12 +69,6 @@ GST_STATIC_PAD_TEMPLATE ("src",
 GST_DEBUG_CATEGORY_STATIC (gst_multi_file_src_debug);
 #define GST_CAT_DEFAULT gst_multi_file_src_debug
 
-static const GstElementDetails gst_multi_file_src_details =
-GST_ELEMENT_DETAILS ("Multi-File Source",
-    "Source/File",
-    "Read a sequentially named set of files into buffers",
-    "David Schleef <ds@schleef.org>");
-
 enum
 {
   ARG_0,
@@ -100,7 +94,10 @@ gst_multi_file_src_base_init (gpointer g_class)
 
   gst_element_class_add_pad_template (gstelement_class,
       gst_static_pad_template_get (&gst_multi_file_src_pad_template));
-  gst_element_class_set_details (gstelement_class, &gst_multi_file_src_details);
+  gst_element_class_set_details_simple (gstelement_class, "Multi-File Source",
+      "Source/File",
+      "Read a sequentially named set of files into buffers",
+      "David Schleef <ds@schleef.org>");
 }
 
 static void

@@ -47,8 +47,6 @@
 #define GST_DEINTERLACE_METHOD_GREEDY_H_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GST_TYPE_DEINTERLACE_METHOD_GREEDY_H, GstDeinterlaceMethodGreedyHClass))
 #define GST_DEINTERLACE_METHOD_GREEDY_H_CAST(obj)	((GstDeinterlaceMethodGreedyH*)(obj))
 
-GType gst_deinterlace_method_greedy_h_get_type (void);
-
 typedef struct
 {
   GstDeinterlaceMethod parent;
@@ -63,7 +61,7 @@ typedef struct
       uint8_t * L1, uint8_t * L3, uint8_t * L2P, uint8_t * Dest, int size);
 } GstDeinterlaceMethodGreedyHClass;
 
-void
+static void
 greedyDScaler_C (GstDeinterlaceMethodGreedyH * self, uint8_t * L1, uint8_t * L2,
     uint8_t * L3, uint8_t * L2P, uint8_t * Dest, int size)
 {

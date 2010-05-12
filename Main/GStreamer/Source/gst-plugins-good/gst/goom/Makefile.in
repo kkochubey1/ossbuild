@@ -60,8 +60,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/aalib.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
 	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -128,22 +127,39 @@ am_libgstgoom_la_OBJECTS = libgstgoom_la-gstgoom.lo \
 	libgstgoom_la-goom_core.lo libgstgoom_la-graphic.lo \
 	$(am__objects_2)
 libgstgoom_la_OBJECTS = $(am_libgstgoom_la_OBJECTS)
-libgstgoom_la_LINK = $(LIBTOOL) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libgstgoom_la_CFLAGS) \
-	$(CFLAGS) $(libgstgoom_la_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstgoom_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(libgstgoom_la_CFLAGS) $(CFLAGS) \
+	$(libgstgoom_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstgoom_la_SOURCES)
 DIST_SOURCES = $(am__libgstgoom_la_SOURCES_DIST)
 ETAGS = etags
@@ -155,7 +171,7 @@ AALIB_LIBS = @AALIB_LIBS@
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ANNODEX_CFLAGS = @ANNODEX_CFLAGS@
 ANNODEX_LIBS = @ANNODEX_LIBS@
 AR = @AR@
@@ -206,8 +222,6 @@ ESD_CFLAGS = @ESD_CFLAGS@
 ESD_CONFIG = @ESD_CONFIG@
 ESD_LIBS = @ESD_LIBS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLAC_CFLAGS = @FLAC_CFLAGS@
@@ -315,7 +329,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -364,7 +377,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RAW1394_CFLAGS = @RAW1394_CFLAGS@
 RAW1394_LIBS = @RAW1394_LIBS@
@@ -382,11 +394,12 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_CXXFLAGS = @TAGLIB_CXXFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WAVPACK_CFLAGS = @WAVPACK_CFLAGS@
 WAVPACK_LIBS = @WAVPACK_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -458,7 +471,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -566,7 +578,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstgoom.la: $(libgstgoom_la_OBJECTS) $(libgstgoom_la_DEPENDENCIES) 
-	$(libgstgoom_la_LINK) -rpath $(plugindir) $(libgstgoom_la_OBJECTS) $(libgstgoom_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstgoom_la_LINK) -rpath $(plugindir) $(libgstgoom_la_OBJECTS) $(libgstgoom_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -595,158 +607,180 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstgoom_la-xmmx.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstgoom_la-gstgoom.lo: gstgoom.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-gstgoom.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-gstgoom.Tpo -c -o libgstgoom_la-gstgoom.lo `test -f 'gstgoom.c' || echo '$(srcdir)/'`gstgoom.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-gstgoom.Tpo $(DEPDIR)/libgstgoom_la-gstgoom.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-gstgoom.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-gstgoom.Tpo -c -o libgstgoom_la-gstgoom.lo `test -f 'gstgoom.c' || echo '$(srcdir)/'`gstgoom.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-gstgoom.Tpo $(DEPDIR)/libgstgoom_la-gstgoom.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstgoom.c' object='libgstgoom_la-gstgoom.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-gstgoom.lo `test -f 'gstgoom.c' || echo '$(srcdir)/'`gstgoom.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-gstgoom.lo `test -f 'gstgoom.c' || echo '$(srcdir)/'`gstgoom.c
 
 libgstgoom_la-drawmethods.lo: drawmethods.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-drawmethods.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-drawmethods.Tpo -c -o libgstgoom_la-drawmethods.lo `test -f 'drawmethods.c' || echo '$(srcdir)/'`drawmethods.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-drawmethods.Tpo $(DEPDIR)/libgstgoom_la-drawmethods.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-drawmethods.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-drawmethods.Tpo -c -o libgstgoom_la-drawmethods.lo `test -f 'drawmethods.c' || echo '$(srcdir)/'`drawmethods.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-drawmethods.Tpo $(DEPDIR)/libgstgoom_la-drawmethods.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='drawmethods.c' object='libgstgoom_la-drawmethods.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-drawmethods.lo `test -f 'drawmethods.c' || echo '$(srcdir)/'`drawmethods.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-drawmethods.lo `test -f 'drawmethods.c' || echo '$(srcdir)/'`drawmethods.c
 
 libgstgoom_la-sound_tester.lo: sound_tester.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-sound_tester.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-sound_tester.Tpo -c -o libgstgoom_la-sound_tester.lo `test -f 'sound_tester.c' || echo '$(srcdir)/'`sound_tester.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-sound_tester.Tpo $(DEPDIR)/libgstgoom_la-sound_tester.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-sound_tester.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-sound_tester.Tpo -c -o libgstgoom_la-sound_tester.lo `test -f 'sound_tester.c' || echo '$(srcdir)/'`sound_tester.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-sound_tester.Tpo $(DEPDIR)/libgstgoom_la-sound_tester.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sound_tester.c' object='libgstgoom_la-sound_tester.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-sound_tester.lo `test -f 'sound_tester.c' || echo '$(srcdir)/'`sound_tester.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-sound_tester.lo `test -f 'sound_tester.c' || echo '$(srcdir)/'`sound_tester.c
 
 libgstgoom_la-mathtools.lo: mathtools.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-mathtools.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-mathtools.Tpo -c -o libgstgoom_la-mathtools.lo `test -f 'mathtools.c' || echo '$(srcdir)/'`mathtools.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-mathtools.Tpo $(DEPDIR)/libgstgoom_la-mathtools.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-mathtools.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-mathtools.Tpo -c -o libgstgoom_la-mathtools.lo `test -f 'mathtools.c' || echo '$(srcdir)/'`mathtools.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-mathtools.Tpo $(DEPDIR)/libgstgoom_la-mathtools.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mathtools.c' object='libgstgoom_la-mathtools.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-mathtools.lo `test -f 'mathtools.c' || echo '$(srcdir)/'`mathtools.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-mathtools.lo `test -f 'mathtools.c' || echo '$(srcdir)/'`mathtools.c
 
 libgstgoom_la-lines.lo: lines.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-lines.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-lines.Tpo -c -o libgstgoom_la-lines.lo `test -f 'lines.c' || echo '$(srcdir)/'`lines.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-lines.Tpo $(DEPDIR)/libgstgoom_la-lines.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-lines.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-lines.Tpo -c -o libgstgoom_la-lines.lo `test -f 'lines.c' || echo '$(srcdir)/'`lines.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-lines.Tpo $(DEPDIR)/libgstgoom_la-lines.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lines.c' object='libgstgoom_la-lines.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-lines.lo `test -f 'lines.c' || echo '$(srcdir)/'`lines.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-lines.lo `test -f 'lines.c' || echo '$(srcdir)/'`lines.c
 
 libgstgoom_la-ifs.lo: ifs.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-ifs.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-ifs.Tpo -c -o libgstgoom_la-ifs.lo `test -f 'ifs.c' || echo '$(srcdir)/'`ifs.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-ifs.Tpo $(DEPDIR)/libgstgoom_la-ifs.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-ifs.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-ifs.Tpo -c -o libgstgoom_la-ifs.lo `test -f 'ifs.c' || echo '$(srcdir)/'`ifs.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-ifs.Tpo $(DEPDIR)/libgstgoom_la-ifs.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ifs.c' object='libgstgoom_la-ifs.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-ifs.lo `test -f 'ifs.c' || echo '$(srcdir)/'`ifs.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-ifs.lo `test -f 'ifs.c' || echo '$(srcdir)/'`ifs.c
 
 libgstgoom_la-surf3d.lo: surf3d.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-surf3d.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-surf3d.Tpo -c -o libgstgoom_la-surf3d.lo `test -f 'surf3d.c' || echo '$(srcdir)/'`surf3d.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-surf3d.Tpo $(DEPDIR)/libgstgoom_la-surf3d.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-surf3d.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-surf3d.Tpo -c -o libgstgoom_la-surf3d.lo `test -f 'surf3d.c' || echo '$(srcdir)/'`surf3d.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-surf3d.Tpo $(DEPDIR)/libgstgoom_la-surf3d.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='surf3d.c' object='libgstgoom_la-surf3d.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-surf3d.lo `test -f 'surf3d.c' || echo '$(srcdir)/'`surf3d.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-surf3d.lo `test -f 'surf3d.c' || echo '$(srcdir)/'`surf3d.c
 
 libgstgoom_la-tentacle3d.lo: tentacle3d.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-tentacle3d.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-tentacle3d.Tpo -c -o libgstgoom_la-tentacle3d.lo `test -f 'tentacle3d.c' || echo '$(srcdir)/'`tentacle3d.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-tentacle3d.Tpo $(DEPDIR)/libgstgoom_la-tentacle3d.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-tentacle3d.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-tentacle3d.Tpo -c -o libgstgoom_la-tentacle3d.lo `test -f 'tentacle3d.c' || echo '$(srcdir)/'`tentacle3d.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-tentacle3d.Tpo $(DEPDIR)/libgstgoom_la-tentacle3d.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tentacle3d.c' object='libgstgoom_la-tentacle3d.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-tentacle3d.lo `test -f 'tentacle3d.c' || echo '$(srcdir)/'`tentacle3d.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-tentacle3d.lo `test -f 'tentacle3d.c' || echo '$(srcdir)/'`tentacle3d.c
 
 libgstgoom_la-v3d.lo: v3d.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-v3d.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-v3d.Tpo -c -o libgstgoom_la-v3d.lo `test -f 'v3d.c' || echo '$(srcdir)/'`v3d.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-v3d.Tpo $(DEPDIR)/libgstgoom_la-v3d.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-v3d.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-v3d.Tpo -c -o libgstgoom_la-v3d.lo `test -f 'v3d.c' || echo '$(srcdir)/'`v3d.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-v3d.Tpo $(DEPDIR)/libgstgoom_la-v3d.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='v3d.c' object='libgstgoom_la-v3d.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-v3d.lo `test -f 'v3d.c' || echo '$(srcdir)/'`v3d.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-v3d.lo `test -f 'v3d.c' || echo '$(srcdir)/'`v3d.c
 
 libgstgoom_la-convolve_fx.lo: convolve_fx.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-convolve_fx.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-convolve_fx.Tpo -c -o libgstgoom_la-convolve_fx.lo `test -f 'convolve_fx.c' || echo '$(srcdir)/'`convolve_fx.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-convolve_fx.Tpo $(DEPDIR)/libgstgoom_la-convolve_fx.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-convolve_fx.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-convolve_fx.Tpo -c -o libgstgoom_la-convolve_fx.lo `test -f 'convolve_fx.c' || echo '$(srcdir)/'`convolve_fx.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-convolve_fx.Tpo $(DEPDIR)/libgstgoom_la-convolve_fx.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='convolve_fx.c' object='libgstgoom_la-convolve_fx.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-convolve_fx.lo `test -f 'convolve_fx.c' || echo '$(srcdir)/'`convolve_fx.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-convolve_fx.lo `test -f 'convolve_fx.c' || echo '$(srcdir)/'`convolve_fx.c
 
 libgstgoom_la-flying_stars_fx.lo: flying_stars_fx.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-flying_stars_fx.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-flying_stars_fx.Tpo -c -o libgstgoom_la-flying_stars_fx.lo `test -f 'flying_stars_fx.c' || echo '$(srcdir)/'`flying_stars_fx.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-flying_stars_fx.Tpo $(DEPDIR)/libgstgoom_la-flying_stars_fx.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-flying_stars_fx.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-flying_stars_fx.Tpo -c -o libgstgoom_la-flying_stars_fx.lo `test -f 'flying_stars_fx.c' || echo '$(srcdir)/'`flying_stars_fx.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-flying_stars_fx.Tpo $(DEPDIR)/libgstgoom_la-flying_stars_fx.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='flying_stars_fx.c' object='libgstgoom_la-flying_stars_fx.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-flying_stars_fx.lo `test -f 'flying_stars_fx.c' || echo '$(srcdir)/'`flying_stars_fx.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-flying_stars_fx.lo `test -f 'flying_stars_fx.c' || echo '$(srcdir)/'`flying_stars_fx.c
 
 libgstgoom_la-plugin_info.lo: plugin_info.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-plugin_info.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-plugin_info.Tpo -c -o libgstgoom_la-plugin_info.lo `test -f 'plugin_info.c' || echo '$(srcdir)/'`plugin_info.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-plugin_info.Tpo $(DEPDIR)/libgstgoom_la-plugin_info.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-plugin_info.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-plugin_info.Tpo -c -o libgstgoom_la-plugin_info.lo `test -f 'plugin_info.c' || echo '$(srcdir)/'`plugin_info.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-plugin_info.Tpo $(DEPDIR)/libgstgoom_la-plugin_info.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='plugin_info.c' object='libgstgoom_la-plugin_info.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-plugin_info.lo `test -f 'plugin_info.c' || echo '$(srcdir)/'`plugin_info.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-plugin_info.lo `test -f 'plugin_info.c' || echo '$(srcdir)/'`plugin_info.c
 
 libgstgoom_la-goom_tools.lo: goom_tools.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-goom_tools.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-goom_tools.Tpo -c -o libgstgoom_la-goom_tools.lo `test -f 'goom_tools.c' || echo '$(srcdir)/'`goom_tools.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-goom_tools.Tpo $(DEPDIR)/libgstgoom_la-goom_tools.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-goom_tools.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-goom_tools.Tpo -c -o libgstgoom_la-goom_tools.lo `test -f 'goom_tools.c' || echo '$(srcdir)/'`goom_tools.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-goom_tools.Tpo $(DEPDIR)/libgstgoom_la-goom_tools.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='goom_tools.c' object='libgstgoom_la-goom_tools.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-goom_tools.lo `test -f 'goom_tools.c' || echo '$(srcdir)/'`goom_tools.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-goom_tools.lo `test -f 'goom_tools.c' || echo '$(srcdir)/'`goom_tools.c
 
 libgstgoom_la-config_param.lo: config_param.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-config_param.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-config_param.Tpo -c -o libgstgoom_la-config_param.lo `test -f 'config_param.c' || echo '$(srcdir)/'`config_param.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-config_param.Tpo $(DEPDIR)/libgstgoom_la-config_param.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-config_param.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-config_param.Tpo -c -o libgstgoom_la-config_param.lo `test -f 'config_param.c' || echo '$(srcdir)/'`config_param.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-config_param.Tpo $(DEPDIR)/libgstgoom_la-config_param.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='config_param.c' object='libgstgoom_la-config_param.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-config_param.lo `test -f 'config_param.c' || echo '$(srcdir)/'`config_param.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-config_param.lo `test -f 'config_param.c' || echo '$(srcdir)/'`config_param.c
 
 libgstgoom_la-filters.lo: filters.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-filters.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-filters.Tpo -c -o libgstgoom_la-filters.lo `test -f 'filters.c' || echo '$(srcdir)/'`filters.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-filters.Tpo $(DEPDIR)/libgstgoom_la-filters.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-filters.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-filters.Tpo -c -o libgstgoom_la-filters.lo `test -f 'filters.c' || echo '$(srcdir)/'`filters.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-filters.Tpo $(DEPDIR)/libgstgoom_la-filters.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='filters.c' object='libgstgoom_la-filters.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-filters.lo `test -f 'filters.c' || echo '$(srcdir)/'`filters.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-filters.lo `test -f 'filters.c' || echo '$(srcdir)/'`filters.c
 
 libgstgoom_la-goom_core.lo: goom_core.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-goom_core.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-goom_core.Tpo -c -o libgstgoom_la-goom_core.lo `test -f 'goom_core.c' || echo '$(srcdir)/'`goom_core.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-goom_core.Tpo $(DEPDIR)/libgstgoom_la-goom_core.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-goom_core.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-goom_core.Tpo -c -o libgstgoom_la-goom_core.lo `test -f 'goom_core.c' || echo '$(srcdir)/'`goom_core.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-goom_core.Tpo $(DEPDIR)/libgstgoom_la-goom_core.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='goom_core.c' object='libgstgoom_la-goom_core.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-goom_core.lo `test -f 'goom_core.c' || echo '$(srcdir)/'`goom_core.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-goom_core.lo `test -f 'goom_core.c' || echo '$(srcdir)/'`goom_core.c
 
 libgstgoom_la-graphic.lo: graphic.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-graphic.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-graphic.Tpo -c -o libgstgoom_la-graphic.lo `test -f 'graphic.c' || echo '$(srcdir)/'`graphic.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-graphic.Tpo $(DEPDIR)/libgstgoom_la-graphic.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-graphic.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-graphic.Tpo -c -o libgstgoom_la-graphic.lo `test -f 'graphic.c' || echo '$(srcdir)/'`graphic.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-graphic.Tpo $(DEPDIR)/libgstgoom_la-graphic.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='graphic.c' object='libgstgoom_la-graphic.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-graphic.lo `test -f 'graphic.c' || echo '$(srcdir)/'`graphic.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-graphic.lo `test -f 'graphic.c' || echo '$(srcdir)/'`graphic.c
 
 libgstgoom_la-mmx.lo: mmx.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-mmx.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-mmx.Tpo -c -o libgstgoom_la-mmx.lo `test -f 'mmx.c' || echo '$(srcdir)/'`mmx.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-mmx.Tpo $(DEPDIR)/libgstgoom_la-mmx.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-mmx.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-mmx.Tpo -c -o libgstgoom_la-mmx.lo `test -f 'mmx.c' || echo '$(srcdir)/'`mmx.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-mmx.Tpo $(DEPDIR)/libgstgoom_la-mmx.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mmx.c' object='libgstgoom_la-mmx.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-mmx.lo `test -f 'mmx.c' || echo '$(srcdir)/'`mmx.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-mmx.lo `test -f 'mmx.c' || echo '$(srcdir)/'`mmx.c
 
 libgstgoom_la-xmmx.lo: xmmx.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-xmmx.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-xmmx.Tpo -c -o libgstgoom_la-xmmx.lo `test -f 'xmmx.c' || echo '$(srcdir)/'`xmmx.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstgoom_la-xmmx.Tpo $(DEPDIR)/libgstgoom_la-xmmx.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -MT libgstgoom_la-xmmx.lo -MD -MP -MF $(DEPDIR)/libgstgoom_la-xmmx.Tpo -c -o libgstgoom_la-xmmx.lo `test -f 'xmmx.c' || echo '$(srcdir)/'`xmmx.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgoom_la-xmmx.Tpo $(DEPDIR)/libgstgoom_la-xmmx.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xmmx.c' object='libgstgoom_la-xmmx.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-xmmx.lo `test -f 'xmmx.c' || echo '$(srcdir)/'`xmmx.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgoom_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgoom_la_CFLAGS) $(CFLAGS) -c -o libgstgoom_la-xmmx.lo `test -f 'xmmx.c' || echo '$(srcdir)/'`xmmx.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

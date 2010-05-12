@@ -8,11 +8,8 @@
 <link rel="up" href="ch01.html" title="gst-plugins-base Elements">
 <link rel="prev" href="gst-plugins-base-plugins-clockoverlay.html" title="clockoverlay">
 <link rel="next" href="gst-plugins-base-plugins-decodebin2.html" title="decodebin2">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-base Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-base Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-base Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -91,7 +88,8 @@ decoders and demuxers via auto-plugging.
 <p>
 When using decodebin in your application, connect a signal handler to
 <a class="link" href="gst-plugins-base-plugins-decodebin.html#GstDecodeBin-new-decoded-pad" title='The "new-decoded-pad" signal'><span class="type">"new-decoded-pad"</span></a> and connect your sinks from within the
-callback function.</p>
+callback function.
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-base-plugins-decodebin.details"></a><h2>Details</h2>
@@ -99,7 +97,8 @@ callback function.</p>
 <a name="GstDecodeBin-struct"></a><h3>struct GstDecodeBin</h3>
 <pre class="programlisting">struct GstDecodeBin;</pre>
 <p>
-Auto-plugging decoder element structure</p>
+Auto-plugging decoder element structure
+</p>
 </div>
 </div>
 <div class="refsect1" title="Property Details">
@@ -127,23 +126,25 @@ Auto-plugging decoder element structure</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>      user_data)      : Run Last</pre>
 <p>
 This signal gets emitted as soon as a new pad of the same type as one of
-the valid 'raw' types is added.</p>
+the valid 'raw' types is added.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bin</code></em> :</span></p></td>
-<td> The decodebin
+<td>The decodebin
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td> The newly created pad
+<td>The newly created pad
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>islast</code></em> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><span class="type">TRUE</span></a> if this is the last pad to be added. Deprecated.
+<td>
+<a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><span class="type">TRUE</span></a> if this is the last pad to be added. Deprecated.
 </td>
 </tr>
 <tr>
@@ -160,18 +161,19 @@ the valid 'raw' types is added.</p>
                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a>       *pad,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>      user_data)      : Run Last</pre>
 <p>
-This signal is emitted when a 'final' caps pad has been removed.</p>
+This signal is emitted when a 'final' caps pad has been removed.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bin</code></em> :</span></p></td>
-<td> The decodebin
+<td>The decodebin
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td> The pad that was removed
+<td>The pad that was removed
 </td>
 </tr>
 <tr>
@@ -190,24 +192,25 @@ This signal is emitted when a 'final' caps pad has been removed.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>      user_data)      : Run Last</pre>
 <p>
 This signal is emitted when a pad for which there is no further possible
-decoding is added to the decodebin.</p>
+decoding is added to the decodebin.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bin</code></em> :</span></p></td>
-<td> The decodebin
+<td>The decodebin
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td> The new pad containing caps that cannot be resolved to a 'final'
+<td>The new pad containing caps that cannot be resolved to a 'final'
       stream type.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>caps</code></em> :</span></p></td>
-<td> The <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> of the pad that cannot be resolved.
+<td>The <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> of the pad that cannot be resolved.
 </td>
 </tr>
 <tr>
@@ -221,6 +224,6 @@ decoding is added to the decodebin.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

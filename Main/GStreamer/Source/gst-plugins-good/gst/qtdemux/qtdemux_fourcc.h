@@ -120,6 +120,8 @@ G_BEGIN_DECLS
 #define FOURCC_soco     GST_MAKE_FOURCC('s','o','c','o')
 #define FOURCC_sosn     GST_MAKE_FOURCC('s','o','s','n')
 #define FOURCC_____     GST_MAKE_FOURCC('-','-','-','-')
+#define FOURCC_mean     GST_MAKE_FOURCC('m','e','a','n')
+#define FOURCC_name     GST_MAKE_FOURCC('n','a','m','e')
 #define FOURCC_free     GST_MAKE_FOURCC('f','r','e','e')
 #define FOURCC_data     GST_MAKE_FOURCC('d','a','t','a')
 #define FOURCC_SVQ3     GST_MAKE_FOURCC('S','V','Q','3')
@@ -134,6 +136,7 @@ G_BEGIN_DECLS
 #define FOURCC_drmi     GST_MAKE_FOURCC('d','r','m','i')
 #define FOURCC_avc1     GST_MAKE_FOURCC('a','v','c','1')
 #define FOURCC_avcC     GST_MAKE_FOURCC('a','v','c','C')
+#define FOURCC_btrt     GST_MAKE_FOURCC('b','t','r','t')
 #define FOURCC_VP31     GST_MAKE_FOURCC('V','P','3','1')
 #define FOURCC_rle_     GST_MAKE_FOURCC('r','l','e',' ')
 #define FOURCC_MAC6     GST_MAKE_FOURCC('M','A','C','6')
@@ -200,6 +203,8 @@ G_BEGIN_DECLS
 #define FOURCC_tCtH     GST_MAKE_FOURCC('t','C','t','H')
 #define FOURCC_tCt_     GST_MAKE_FOURCC('t','C','t','#')
 #define FOURCC_tCtC     GST_MAKE_FOURCC('t','C','t','C')
+
+#define FOURCC_XMP_     GST_MAKE_FOURCC('X','M','P','_')
 
 G_END_DECLS
 

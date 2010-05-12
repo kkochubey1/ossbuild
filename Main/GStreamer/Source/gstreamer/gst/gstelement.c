@@ -82,6 +82,7 @@
 #include <gobject/gvaluecollector.h>
 
 #include "gstelement.h"
+#include "gstelementdetails.h"
 #include "gstenumtypes.h"
 #include "gstbus.h"
 #include "gstmarshal.h"
@@ -107,10 +108,6 @@ enum
   ARG_0
       /* FILL ME */
 };
-
-extern void __gst_element_details_clear (GstElementDetails * dp);
-extern void __gst_element_details_copy (GstElementDetails * dest,
-    const GstElementDetails * src);
 
 static void gst_element_class_init (GstElementClass * klass);
 static void gst_element_init (GstElement * element);
@@ -287,36 +284,10 @@ gst_element_init (GstElement * element)
   GST_STATE_PENDING (element) = GST_STATE_VOID_PENDING;
   GST_STATE_RETURN (element) = GST_STATE_CHANGE_SUCCESS;
 
-  element->state_lock = g_new0 (GStaticRecMutex, 1);
+  /* FIXME 0.11: Store this directly in the instance struct */
+  element->state_lock = g_slice_new (GStaticRecMutex);
   g_static_rec_mutex_init (element->state_lock);
   element->state_cond = g_cond_new ();
-}
-
-/**
- * gst_element_default_error:
- * @object: a #GObject that signalled the error.
- * @orig: the #GstObject that initiated the error.
- * @error: the GError.
- * @debug: an additional debug information string, or %NULL.
- *
- * A default error signal callback to attach to an element.
- * The user data passed to the g_signal_connect is ignored.
- *
- * The default handler will simply print the error string using g_print.
- *
- * MT safe.
- */
-void
-gst_element_default_error (GObject * object, GstObject * source, GError * error,
-    gchar * debug)
-{
-  gchar *name = gst_object_get_path_string (source);
-
-  g_print (_("ERROR: from element %s: %s\n"), name, error->message);
-  if (debug)
-    g_print (_("Additional debug info:\n%s\n"), debug);
-
-  g_free (name);
 }
 
 /**
@@ -1098,6 +1069,9 @@ gst_element_get_request_pad (GstElement * element, const gchar * name)
  * depending on the type of the pad.
  */
 #ifndef GST_REMOVE_DEPRECATED
+#ifdef GST_DISABLE_DEPRECATED
+GstPad *gst_element_get_pad (GstElement * element, const gchar * name);
+#endif
 GstPad *
 gst_element_get_pad (GstElement * element, const gchar * name)
 {
@@ -1234,7 +1208,15 @@ gst_element_class_add_pad_template (GstElementClass * klass,
  * <note>This function is for use in _base_init functions only.</note>
  *
  * The @details are copied.
+ *
+ * Deprecated: Use gst_element_class_set_details_simple() instead.
  */
+#ifndef GST_REMOVE_DEPRECATED
+#ifdef GST_DISABLE_DEPRECATED
+void
+gst_element_class_set_details (GstElementClass * klass,
+    const GstElementDetails * details);
+#endif
 void
 gst_element_class_set_details (GstElementClass * klass,
     const GstElementDetails * details)
@@ -1244,6 +1226,7 @@ gst_element_class_set_details (GstElementClass * klass,
 
   __gst_element_details_copy (&klass->details, details);
 }
+#endif
 
 /**
  * gst_element_class_set_details_simple:
@@ -2912,7 +2895,7 @@ gst_element_finalize (GObject * object)
   element->state_cond = NULL;
   GST_STATE_UNLOCK (element);
   g_static_rec_mutex_free (element->state_lock);
-  g_free (element->state_lock);
+  g_slice_free (GStaticRecMutex, element->state_lock);
   element->state_lock = NULL;
 
   GST_CAT_INFO_OBJECT (GST_CAT_REFCOUNTING, element, "finalize parent");
@@ -2966,7 +2949,7 @@ gst_element_save_thyself (GstObject * object, xmlNodePtr parent)
       xmlNodePtr param;
       char *contents;
 
-      g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (spec));
+      g_value_init (&value, spec->value_type);
 
       g_object_get_property (G_OBJECT (element), spec->name, &value);
       param = xmlNewChild (parent, NULL, (xmlChar *) "param", NULL);

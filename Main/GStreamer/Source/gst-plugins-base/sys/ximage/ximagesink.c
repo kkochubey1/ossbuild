@@ -131,16 +131,8 @@ MotifWmHints, MwmHints;
 static void gst_ximagesink_reset (GstXImageSink * ximagesink);
 static void gst_ximagesink_ximage_destroy (GstXImageSink * ximagesink,
     GstXImageBuffer * ximage);
-static void gst_ximagesink_xwindow_update_geometry (GstXImageSink * ximagesink,
-    GstXWindow * xwindow);
+static void gst_ximagesink_xwindow_update_geometry (GstXImageSink * ximagesink);
 static void gst_ximagesink_expose (GstXOverlay * overlay);
-
-/* ElementFactory information */
-static const GstElementDetails gst_ximagesink_details =
-GST_ELEMENT_DETAILS ("Video sink",
-    "Sink/Video",
-    "A standard X based videosink",
-    "Julien Moutte <julien@moutte.net>");
 
 static GstStaticPadTemplate gst_ximagesink_sink_template_factory =
 GST_STATIC_PAD_TEMPLATE ("sink",
@@ -719,8 +711,6 @@ gst_ximagesink_ximage_put (GstXImageSink * ximagesink, GstXImageBuffer * ximage)
     }
   }
 
-  gst_ximagesink_xwindow_update_geometry (ximagesink, ximagesink->xwindow);
-
   src.w = ximage->width;
   src.h = ximage->height;
   dst.w = ximagesink->xwindow->width;
@@ -927,16 +917,18 @@ gst_ximagesink_xwindow_destroy (GstXImageSink * ximagesink,
 }
 
 static void
-gst_ximagesink_xwindow_update_geometry (GstXImageSink * ximagesink,
-    GstXWindow * xwindow)
+gst_ximagesink_xwindow_update_geometry (GstXImageSink * ximagesink)
 {
   XWindowAttributes attr;
 
-  g_return_if_fail (xwindow != NULL);
   g_return_if_fail (GST_IS_XIMAGESINK (ximagesink));
 
   /* Update the window geometry */
   g_mutex_lock (ximagesink->x_lock);
+  if (G_UNLIKELY (ximagesink->xwindow == NULL)) {
+    g_mutex_unlock (ximagesink->x_lock);
+    return;
+  }
 
   XGetWindowAttributes (ximagesink->xcontext->disp,
       ximagesink->xwindow->win, &attr);
@@ -1079,6 +1071,9 @@ gst_ximagesink_handle_xevents (GstXImageSink * ximagesink)
         exposed = TRUE;
         break;
       case ConfigureNotify:
+        g_mutex_unlock (ximagesink->x_lock);
+        gst_ximagesink_xwindow_update_geometry (ximagesink);
+        g_mutex_lock (ximagesink->x_lock);
         configured = TRUE;
         break;
       default:
@@ -1805,7 +1800,6 @@ gst_ximagesink_buffer_alloc (GstBaseSink * bsink, guint64 offset, guint size,
   }
 
   /* What is our geometry */
-  gst_ximagesink_xwindow_update_geometry (ximagesink, ximagesink->xwindow);
   dst.w = ximagesink->xwindow->width;
   dst.h = ximagesink->xwindow->height;
 
@@ -1870,6 +1864,7 @@ gst_ximagesink_buffer_alloc (GstBaseSink * bsink, guint64 offset, guint size,
           desired_caps);
       /* we alloc a buffer with the original incomming caps already in the
        * width and height variables */
+      gst_caps_unref (desired_caps);
     }
   }
 
@@ -2061,6 +2056,7 @@ gst_ximagesink_expose (GstXOverlay * overlay)
 {
   GstXImageSink *ximagesink = GST_XIMAGESINK (overlay);
 
+  gst_ximagesink_xwindow_update_geometry (ximagesink);
   gst_ximagesink_ximage_put (ximagesink, NULL);
 }
 
@@ -2319,7 +2315,9 @@ gst_ximagesink_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &gst_ximagesink_details);
+  gst_element_class_set_details_simple (element_class,
+      "Video sink", "Sink/Video",
+      "A standard X based videosink", "Julien Moutte <julien@moutte.net>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_ximagesink_sink_template_factory));

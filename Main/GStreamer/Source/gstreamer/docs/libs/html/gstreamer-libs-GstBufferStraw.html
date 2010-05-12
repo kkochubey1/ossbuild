@@ -8,17 +8,8 @@
 <link rel="up" href="gstreamer-check.html" title="GStreamer Check Unit Testing">
 <link rel="prev" href="gstreamer-libs-GstCheck.html" title="GstCheck">
 <link rel="next" href="gstreamer-libs-GstStreamConsistency.html" title="GstStreamConsistency">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="part" href="gstreamer-libs.html" title="Part I. GStreamer Libraries">
-<link rel="chapter" href="gstreamer-base.html" title="GStreamer Base and Utillity Classes">
-<link rel="chapter" href="gstreamer-control.html" title="GStreamer Dynamic Parameter Control">
-<link rel="chapter" href="gstreamer-dataprotocol.html" title="GStreamer Data Protocol">
-<link rel="chapter" href="gstreamer-net.html" title="GStreamer Network Classes">
-<link rel="chapter" href="gstreamer-check.html" title="GStreamer Check Unit Testing">
-<link rel="chapter" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -49,26 +40,27 @@
 <pre class="synopsis">
 #include &lt;gst/check/gstbufferstraw.h&gt;
 
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()">gst_buffer_straw_start_pipeline</a>     (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="returnvalue">GstElement</span></a> *bin,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *pad);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-get-buffer" title="gst_buffer_straw_get_buffer ()">gst_buffer_straw_get_buffer</a>         (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="returnvalue">GstElement</span></a> *bin,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *pad);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-stop-pipeline" title="gst_buffer_straw_stop_pipeline ()">gst_buffer_straw_stop_pipeline</a>      (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="returnvalue">GstElement</span></a> *bin,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *pad);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()">gst_buffer_straw_start_pipeline</a>     (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *bin</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);
+<a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-get-buffer" title="gst_buffer_straw_get_buffer ()">gst_buffer_straw_get_buffer</a>         (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *bin</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-stop-pipeline" title="gst_buffer_straw_stop_pipeline ()">gst_buffer_straw_stop_pipeline</a>      (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *bin</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Description">
 <a name="gstreamer-libs-GstBufferStraw.description"></a><h2>Description</h2>
 <p>
 These macros and functions are for internal use of the unit tests found
-inside the 'check' directories of various GStreamer packages.</p>
+inside the 'check' directories of various GStreamer packages.
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gstreamer-libs-GstBufferStraw.details"></a><h2>Details</h2>
 <div class="refsect2" title="gst_buffer_straw_start_pipeline ()">
 <a name="gst-buffer-straw-start-pipeline"></a><h3>gst_buffer_straw_start_pipeline ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_buffer_straw_start_pipeline     (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="returnvalue">GstElement</span></a> *bin,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *pad);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_buffer_straw_start_pipeline     (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *bin</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);</pre>
 <p>
 Sets up a pipeline for buffer sucking. This will allow you to call
 <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-get-buffer" title="gst_buffer_straw_get_buffer ()"><code class="function">gst_buffer_straw_get_buffer()</code></a> to access buffers as they pass over <em class="parameter"><code>pad</code></em>.
@@ -87,18 +79,19 @@ call <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-s
 <p>
 Note that you may not start two buffer straws at the same time. This function
 is intended for unit tests, not general API use. In fact it calls fail_if
-from libcheck, so you cannot use it outside unit tests.</p>
+from libcheck, so you cannot use it outside unit tests.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bin</code></em> :</span></p></td>
-<td> the pipeline to run
+<td>the pipeline to run
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td> a pad on an element in <em class="parameter"><code>bin</code></em>
+<td>a pad on an element in <em class="parameter"><code>bin</code></em>
 </td>
 </tr>
 </tbody>
@@ -107,8 +100,8 @@ from libcheck, so you cannot use it outside unit tests.</p>
 <hr>
 <div class="refsect2" title="gst_buffer_straw_get_buffer ()">
 <a name="gst-buffer-straw-get-buffer"></a><h3>gst_buffer_straw_get_buffer ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         gst_buffer_straw_get_buffer         (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="returnvalue">GstElement</span></a> *bin,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *pad);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         gst_buffer_straw_get_buffer         (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *bin</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);</pre>
 <p>
 Get one buffer from <em class="parameter"><code>pad</code></em>. Implemented via buffer probes. This function will
 block until the pipeline passes a buffer over <em class="parameter"><code>pad</code></em>, so for robust behavior
@@ -117,18 +110,19 @@ buffer never arrives.
 </p>
 <p>
 You must have previously called <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()"><code class="function">gst_buffer_straw_start_pipeline()</code></a> on
-<em class="parameter"><code>pipeline</code></em> and <em class="parameter"><code>pad</code></em>.</p>
+<em class="parameter"><code>pipeline</code></em> and <em class="parameter"><code>pad</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bin</code></em> :</span></p></td>
-<td> the pipeline previously started via <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()"><code class="function">gst_buffer_straw_start_pipeline()</code></a>
+<td>the pipeline previously started via <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()"><code class="function">gst_buffer_straw_start_pipeline()</code></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td> the pad previously passed to <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()"><code class="function">gst_buffer_straw_start_pipeline()</code></a>
+<td>the pad previously passed to <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()"><code class="function">gst_buffer_straw_start_pipeline()</code></a>
 </td>
 </tr>
 <tr>
@@ -142,26 +136,27 @@ You must have previously called <a class="link" href="gstreamer-libs-GstBufferSt
 <hr>
 <div class="refsect2" title="gst_buffer_straw_stop_pipeline ()">
 <a name="gst-buffer-straw-stop-pipeline"></a><h3>gst_buffer_straw_stop_pipeline ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_buffer_straw_stop_pipeline      (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="returnvalue">GstElement</span></a> *bin,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *pad);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_buffer_straw_stop_pipeline      (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *bin</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);</pre>
 <p>
 Set <em class="parameter"><code>bin</code></em> to <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html#GST-STATE-NULL:CAPS"><span class="type">GST_STATE_NULL</span></a> and release resource allocated in
 <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()"><code class="function">gst_buffer_straw_start_pipeline()</code></a>.
 </p>
 <p>
 You must have previously called <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()"><code class="function">gst_buffer_straw_start_pipeline()</code></a> on
-<em class="parameter"><code>pipeline</code></em> and <em class="parameter"><code>pad</code></em>.</p>
+<em class="parameter"><code>pipeline</code></em> and <em class="parameter"><code>pad</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bin</code></em> :</span></p></td>
-<td> the pipeline previously started via <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()"><code class="function">gst_buffer_straw_start_pipeline()</code></a>
+<td>the pipeline previously started via <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()"><code class="function">gst_buffer_straw_start_pipeline()</code></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td> the pad previously passed to <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()"><code class="function">gst_buffer_straw_start_pipeline()</code></a>
+<td>the pad previously passed to <a class="link" href="gstreamer-libs-GstBufferStraw.html#gst-buffer-straw-start-pipeline" title="gst_buffer_straw_start_pipeline ()"><code class="function">gst_buffer_straw_start_pipeline()</code></a>
 </td>
 </tr>
 </tbody>
@@ -171,6 +166,6 @@ You must have previously called <a class="link" href="gstreamer-libs-GstBufferSt
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

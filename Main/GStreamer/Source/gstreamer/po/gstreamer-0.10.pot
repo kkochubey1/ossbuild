@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gstreamer 0.10.28\n"
+"Project-Id-Version: gstreamer 0.10.29\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,101 +16,89 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: gst/gst.c:309
+#: gst/gst.c:310
 msgid "Print the GStreamer version"
 msgstr ""
 
-#: gst/gst.c:311
+#: gst/gst.c:312
 msgid "Make all warnings fatal"
 msgstr ""
 
-#: gst/gst.c:315
+#: gst/gst.c:316
 msgid "Print available debug categories and exit"
 msgstr ""
 
-#: gst/gst.c:319
+#: gst/gst.c:320
 msgid ""
 "Default debug level from 1 (only error) to 5 (anything) or 0 for no output"
 msgstr ""
 
-#: gst/gst.c:321
+#: gst/gst.c:322
 msgid "LEVEL"
 msgstr ""
 
-#: gst/gst.c:323
+#: gst/gst.c:324
 msgid ""
 "Comma-separated list of category_name:level pairs to set specific levels for "
 "the individual categories. Example: GST_AUTOPLUG:5,GST_ELEMENT_*:3"
 msgstr ""
 
-#: gst/gst.c:326
+#: gst/gst.c:327
 msgid "LIST"
 msgstr ""
 
-#: gst/gst.c:328
+#: gst/gst.c:329
 msgid "Disable colored debugging output"
 msgstr ""
 
-#: gst/gst.c:331
+#: gst/gst.c:332
 msgid "Disable debugging"
 msgstr ""
 
-#: gst/gst.c:335
+#: gst/gst.c:336
 msgid "Enable verbose plugin loading diagnostics"
 msgstr ""
 
-#: gst/gst.c:339
+#: gst/gst.c:340
 msgid "Colon-separated paths containing plugins"
 msgstr ""
 
-#: gst/gst.c:339
+#: gst/gst.c:340
 msgid "PATHS"
 msgstr ""
 
-#: gst/gst.c:342
+#: gst/gst.c:343
 msgid ""
 "Comma-separated list of plugins to preload in addition to the list stored in "
 "environment variable GST_PLUGIN_PATH"
 msgstr ""
 
-#: gst/gst.c:344
+#: gst/gst.c:345
 msgid "PLUGINS"
 msgstr ""
 
-#: gst/gst.c:347
+#: gst/gst.c:348
 msgid "Disable trapping of segmentation faults during plugin loading"
 msgstr ""
 
-#: gst/gst.c:352
+#: gst/gst.c:353
 msgid "Disable updating the registry"
 msgstr ""
 
-#: gst/gst.c:357
+#: gst/gst.c:358
 msgid "Disable spawning a helper process while scanning the registry"
 msgstr ""
 
-#: gst/gst.c:388
+#: gst/gst.c:389
 msgid "GStreamer Options"
 msgstr ""
 
-#: gst/gst.c:389
+#: gst/gst.c:390
 msgid "Show GStreamer Options"
 msgstr ""
 
-#: gst/gst.c:947
+#: gst/gst.c:948
 msgid "Unknown option"
-msgstr ""
-
-#: gst/gstelement.c:315 gst/gstutils.c:2367
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr ""
-
-#: gst/gstelement.c:317 gst/gstutils.c:2369 tools/gst-launch.c:525
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
 msgstr ""
 
 #: gst/gsterror.c:139
@@ -302,7 +290,7 @@ msgstr ""
 msgid "No standard error message for domain %s and code %d."
 msgstr ""
 
-#: gst/gstpipeline.c:530
+#: gst/gstpipeline.c:528
 msgid "Selected clock cannot be used in pipeline."
 msgstr ""
 
@@ -771,146 +759,194 @@ msgid ""
 "according to WGS84 (zero is average sea level)"
 msgstr ""
 
-#. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
+#: gst/gsttaglist.c:286
+msgid "geo location country"
+msgstr ""
+
 #: gst/gsttaglist.c:287
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+
+#: gst/gsttaglist.c:290
+msgid "geo location city"
+msgstr ""
+
+#: gst/gsttaglist.c:291
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+
+#: gst/gsttaglist.c:294
+msgid "geo location sublocation"
+msgstr ""
+
+#: gst/gsttaglist.c:295
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
+#. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
+#: gst/gsttaglist.c:299
 msgid "show name"
 msgstr ""
 
-#: gst/gsttaglist.c:288
+#: gst/gsttaglist.c:300
 msgid "Name of the tv/podcast/series show the media is from"
 msgstr ""
 
 #. TRANSLATORS: 'show sortname' = 'TV/radio/podcast show name as used for sorting purposes' here
-#: gst/gsttaglist.c:292
+#: gst/gsttaglist.c:304
 msgid "show sortname"
 msgstr ""
 
-#: gst/gsttaglist.c:293
+#: gst/gsttaglist.c:305
 msgid ""
 "Name of the tv/podcast/series show the media is from, for sorting purposes"
 msgstr ""
 
-#: gst/gsttaglist.c:296
+#: gst/gsttaglist.c:308
 msgid "episode number"
 msgstr ""
 
-#: gst/gsttaglist.c:297
+#: gst/gsttaglist.c:309
 msgid "The episode number in the season the media is part of"
 msgstr ""
 
-#: gst/gsttaglist.c:300
+#: gst/gsttaglist.c:312
 msgid "season number"
 msgstr ""
 
-#: gst/gsttaglist.c:301
+#: gst/gsttaglist.c:313
 msgid "The season number of the show the media is part of"
 msgstr ""
 
-#: gst/gsttaglist.c:304
+#: gst/gsttaglist.c:316
 msgid "lyrics"
 msgstr ""
 
-#: gst/gsttaglist.c:304
+#: gst/gsttaglist.c:316
 msgid "The lyrics of the media, commonly used for songs"
 msgstr ""
 
-#: gst/gsttaglist.c:307
+#: gst/gsttaglist.c:319
 msgid "composer sortname"
 msgstr ""
 
-#: gst/gsttaglist.c:308
+#: gst/gsttaglist.c:320
 msgid "person(s) who composed the recording, for sorting purposes"
 msgstr ""
 
-#: gst/gsttaglist.c:310
+#: gst/gsttaglist.c:322
 msgid "grouping"
 msgstr ""
 
-#: gst/gsttaglist.c:311
+#: gst/gsttaglist.c:323
 msgid ""
 "Groups related media that spans multiple tracks, like the different pieces "
 "of a concerto. It is a higher level than a track, but lower than an album"
 msgstr ""
 
-#: gst/gsttaglist.c:352
+#: gst/gsttaglist.c:327
+msgid "user rating"
+msgstr ""
+
+#: gst/gsttaglist.c:328
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
+#: gst/gsttaglist.c:368
 msgid ", "
 msgstr ""
 
-#: gst/parse/grammar.y:219
+#: gst/gstutils.c:2367
 #, c-format
-msgid "specified empty bin \"%s\", not allowed"
+msgid "ERROR: from element %s: %s\n"
+msgstr ""
+
+#: gst/gstutils.c:2369 tools/gst-launch.c:525
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
 msgstr ""
 
 #: gst/parse/grammar.y:229
 #, c-format
+msgid "specified empty bin \"%s\", not allowed"
+msgstr ""
+
+#: gst/parse/grammar.y:238
+#, c-format
 msgid "no bin \"%s\", skipping"
 msgstr ""
 
-#: gst/parse/grammar.y:393
+#: gst/parse/grammar.y:447
 #, c-format
 msgid "no property \"%s\" in element \"%s\""
 msgstr ""
 
-#: gst/parse/grammar.y:408
+#: gst/parse/grammar.y:462
 #, c-format
 msgid "could not set property \"%s\" in element \"%s\" to \"%s\""
 msgstr ""
 
-#: gst/parse/grammar.y:556
+#: gst/parse/grammar.y:613
 #, c-format
 msgid "could not link %s to %s"
 msgstr ""
 
-#: gst/parse/grammar.y:604
+#: gst/parse/grammar.y:661
 #, c-format
 msgid "no element \"%s\""
 msgstr ""
 
-#: gst/parse/grammar.y:656
+#: gst/parse/grammar.y:713
 #, c-format
 msgid "could not parse caps \"%s\""
 msgstr ""
 
-#: gst/parse/grammar.y:678 gst/parse/grammar.y:726 gst/parse/grammar.y:742
-#: gst/parse/grammar.y:805
+#: gst/parse/grammar.y:735 gst/parse/grammar.y:783 gst/parse/grammar.y:799
+#: gst/parse/grammar.y:862
 msgid "link without source element"
 msgstr ""
 
-#: gst/parse/grammar.y:684 gst/parse/grammar.y:723 gst/parse/grammar.y:814
+#: gst/parse/grammar.y:741 gst/parse/grammar.y:780 gst/parse/grammar.y:871
 msgid "link without sink element"
 msgstr ""
 
-#: gst/parse/grammar.y:760
+#: gst/parse/grammar.y:817
 #, c-format
 msgid "no source element for URI \"%s\""
 msgstr ""
 
-#: gst/parse/grammar.y:770
+#: gst/parse/grammar.y:827
 #, c-format
 msgid "no element to link URI \"%s\" to"
 msgstr ""
 
-#: gst/parse/grammar.y:778
+#: gst/parse/grammar.y:835
 #, c-format
 msgid "no sink element for URI \"%s\""
 msgstr ""
 
-#: gst/parse/grammar.y:785
+#: gst/parse/grammar.y:842
 #, c-format
 msgid "could not link sink element for URI \"%s\""
 msgstr ""
 
-#: gst/parse/grammar.y:799
+#: gst/parse/grammar.y:856
 msgid "empty pipeline not allowed"
 msgstr ""
 
-#: libs/gst/base/gstbasesrc.c:2145
+#: libs/gst/base/gstbasesrc.c:2180
 msgid "Internal clock error."
 msgstr ""
 
-#: libs/gst/base/gstbasesrc.c:2506 libs/gst/base/gstbasesrc.c:2517
-#: libs/gst/base/gstbasesink.c:3842 plugins/elements/gstqueue.c:1210
-#: plugins/elements/gstqueue2.c:1605
+#: libs/gst/base/gstbasesrc.c:2542 libs/gst/base/gstbasesrc.c:2553
+#: libs/gst/base/gstbasesink.c:3869 plugins/elements/gstqueue.c:1210
+#: plugins/elements/gstqueue2.c:1866
 msgid "Internal data flow error."
 msgstr ""
 
@@ -918,11 +954,11 @@ msgstr ""
 msgid "A lot of buffers are being dropped."
 msgstr ""
 
-#: libs/gst/base/gstbasesink.c:3315
+#: libs/gst/base/gstbasesink.c:3342
 msgid "Internal data flow problem."
 msgstr ""
 
-#: libs/gst/base/gstbasesink.c:3831
+#: libs/gst/base/gstbasesink.c:3858
 msgid "Internal data stream error."
 msgstr ""
 
@@ -964,7 +1000,7 @@ msgstr ""
 msgid "No file name specified for reading."
 msgstr ""
 
-#: plugins/elements/gstfilesrc.c:1059 plugins/elements/gstqueue2.c:1010
+#: plugins/elements/gstfilesrc.c:1059 plugins/elements/gstqueue2.c:1252
 #, c-format
 msgid "Could not open file \"%s\" for reading."
 msgstr ""
@@ -988,11 +1024,15 @@ msgstr ""
 msgid "Failed after iterations as requested."
 msgstr ""
 
-#: plugins/elements/gstqueue2.c:996
+#: plugins/elements/gstqueue2.c:973
+msgid "Error while writing to download file."
+msgstr ""
+
+#: plugins/elements/gstqueue2.c:1238
 msgid "No Temp directory specified."
 msgstr ""
 
-#: plugins/elements/gstqueue2.c:1002
+#: plugins/elements/gstqueue2.c:1244
 #, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr ""
@@ -1022,7 +1062,7 @@ msgid "force caps without doing a typefind"
 msgstr ""
 
 #: plugins/elements/gsttypefindelement.c:559
-#: plugins/elements/gsttypefindelement.c:939
+#: plugins/elements/gsttypefindelement.c:940
 msgid "Stream contains no data."
 msgstr ""
 

@@ -8,15 +8,8 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="next" href="GstBin.html" title="GstBin">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="gstreamer.html" title="GStreamer Overview">
-<link rel="chapter" href="libgstreamer.html" title="GStreamer Core Library">
-<link rel="chapter" href="gstreamer-support.html" title="GStreamer Core Support">
-<link rel="chapter" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
-<link rel="glossary" href="annotation-glossary.html" title="Annotation Glossary">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -48,23 +41,23 @@
 <pre class="synopsis">
 #include &lt;gst/gst.h&gt;
 
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-Gst.html#gst-init" title="gst_init ()">gst_init</a>                            (<span class="returnvalue">int</span> *argc,
-                                                         <span class="returnvalue">char</span> **argv[]);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-Gst.html#gst-init-check" title="gst_init_check ()">gst_init_check</a>                      (<span class="returnvalue">int</span> *argc,
-                                                         <span class="returnvalue">char</span> **argv[],
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="returnvalue">GError</span></a> **err);
-<a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#GOptionGroup"><span class="returnvalue">GOptionGroup</span></a> *      <a class="link" href="gstreamer-Gst.html#gst-init-get-option-group" title="gst_init_get_option_group ()">gst_init_get_option_group</a>           (void);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-Gst.html#gst-deinit" title="gst_deinit ()">gst_deinit</a>                          (void);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-Gst.html#gst-version" title="gst_version ()">gst_version</a>                         (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *major,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *minor,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *micro,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *nano);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             <a class="link" href="gstreamer-Gst.html#gst-version-string" title="gst_version_string ()">gst_version_string</a>                  (void);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-Gst.html#gst-segtrap-is-enabled" title="gst_segtrap_is_enabled ()">gst_segtrap_is_enabled</a>              (void);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-Gst.html#gst-segtrap-set-enabled" title="gst_segtrap_set_enabled ()">gst_segtrap_set_enabled</a>             (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a> enabled);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-Gst.html#gst-registry-fork-is-enabled" title="gst_registry_fork_is_enabled ()">gst_registry_fork_is_enabled</a>        (void);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-Gst.html#gst-registry-fork-set-enabled" title="gst_registry_fork_set_enabled ()">gst_registry_fork_set_enabled</a>       (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a> enabled);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-Gst.html#gst-update-registry" title="gst_update_registry ()">gst_update_registry</a>                 (void);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-Gst.html#gst-init" title="gst_init ()">gst_init</a>                            (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
+                                                         <em class="parameter"><code><span class="type">char</span> **argv[]</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-Gst.html#gst-init-check" title="gst_init_check ()">gst_init_check</a>                      (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
+                                                         <em class="parameter"><code><span class="type">char</span> **argv[]</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **err</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#GOptionGroup"><span class="returnvalue">GOptionGroup</span></a> *      <a class="link" href="gstreamer-Gst.html#gst-init-get-option-group" title="gst_init_get_option_group ()">gst_init_get_option_group</a>           (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-Gst.html#gst-deinit" title="gst_deinit ()">gst_deinit</a>                          (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-Gst.html#gst-version" title="gst_version ()">gst_version</a>                         (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *major</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *minor</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *micro</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *nano</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             <a class="link" href="gstreamer-Gst.html#gst-version-string" title="gst_version_string ()">gst_version_string</a>                  (<em class="parameter"><code><span class="type">void</span></code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-Gst.html#gst-segtrap-is-enabled" title="gst_segtrap_is_enabled ()">gst_segtrap_is_enabled</a>              (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-Gst.html#gst-segtrap-set-enabled" title="gst_segtrap_set_enabled ()">gst_segtrap_set_enabled</a>             (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> enabled</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-Gst.html#gst-registry-fork-is-enabled" title="gst_registry_fork_is_enabled ()">gst_registry_fork_is_enabled</a>        (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-Gst.html#gst-registry-fork-set-enabled" title="gst_registry_fork_set_enabled ()">gst_registry_fork_set_enabled</a>       (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> enabled</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-Gst.html#gst-update-registry" title="gst_update_registry ()">gst_update_registry</a>                 (<em class="parameter"><code><span class="type">void</span></code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -89,7 +82,7 @@ options, as shown in the following example.
 <p>
 </p>
 <div class="example">
-<a name="id554516"></a><p class="title"><b>Example 1. Initializing the gstreamer library</b></p>
+<a name="id412640"></a><p class="title"><b>Example 1. Initializing the gstreamer library</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -105,7 +98,7 @@ options, as shown in the following example.
 <span class="function">main</span> <span class="symbol">(</span><span class="gtkdoc kwb">int</span> argc<span class="symbol">,</span> <span class="gtkdoc kwb">char</span> <span class="symbol">*</span>argv<span class="symbol">[])</span>
 <span class="symbol">{</span>
   <span class="gtkdoc slc">// initialize the GStreamer library</span>
-  <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-Gst.html#gst-init">gst_init</a></span> <span class="symbol">(&amp;</span>argc<span class="symbol">, &amp;</span>argv<span class="symbol">);</span>
+  <span class="function"><a href="../gstreamer-0.10/gstreamer-Gst.html#gst-init">gst_init</a></span> <span class="symbol">(&amp;</span>argc<span class="symbol">, &amp;</span>argv<span class="symbol">);</span>
   <span class="symbol">...</span>
 <span class="symbol">}</span></pre></td>
       </tr>
@@ -125,7 +118,7 @@ You can also use GOption to initialize your own parameters as shown in
 the next code fragment:
 </p>
 <div class="example">
-<a name="id578367"></a><p class="title"><b>Example 2. Initializing own parameters when initializing gstreamer</b></p>
+<a name="id389478"></a><p class="title"><b>Example 2. Initializing own parameters when initializing gstreamer</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -168,9 +161,9 @@ the next code fragment:
    <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Threads.html#g-thread-init">g_thread_init</a></span> <span class="symbol">(</span>NULL<span class="symbol">);</span>
  ctx <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-new">g_option_context_new</a></span> <span class="symbol">(</span><span class="string">&quot;[ADDITIONAL ARGUMENTS]&quot;</span><span class="symbol">);</span>
  <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-add-main-entries">g_option_context_add_main_entries</a></span> <span class="symbol">(</span>ctx<span class="symbol">,</span> options<span class="symbol">,</span> GETTEXT_PACKAGE<span class="symbol">);</span>
- <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-add-group">g_option_context_add_group</a></span> <span class="symbol">(</span>ctx<span class="symbol">,</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-Gst.html#gst-init-get-option-group">gst_init_get_option_group</a></span> <span class="symbol">());</span>
+ <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-add-group">g_option_context_add_group</a></span> <span class="symbol">(</span>ctx<span class="symbol">,</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-Gst.html#gst-init-get-option-group">gst_init_get_option_group</a></span> <span class="symbol">());</span>
  <span class="keyword">if</span> <span class="symbol">(!</span><span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-parse">g_option_context_parse</a></span> <span class="symbol">(</span>ctx<span class="symbol">, &amp;</span>argc<span class="symbol">, &amp;</span>argv<span class="symbol">, &amp;</span>err<span class="symbol">)) {</span>
-   <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="symbol">(</span><span class="string">&quot;Error initializing: %s</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="symbol">,</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstInfo.html#GST-STR-NULL:CAPS">GST_STR_NULL</a></span> <span class="symbol">(</span>err<span class="symbol">-&gt;</span>message<span class="symbol">));</span>
+   <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="symbol">(</span><span class="string">&quot;Error initializing: %s</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="symbol">,</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-STR-NULL:CAPS">GST_STR_NULL</a></span> <span class="symbol">(</span>err<span class="symbol">-&gt;</span>message<span class="symbol">));</span>
    <span class="function">exit</span> <span class="symbol">(</span><span class="number">1</span><span class="symbol">);</span>
  <span class="symbol">}</span>
  <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#g-option-context-free">g_option_context_free</a></span> <span class="symbol">(</span>ctx<span class="symbol">);</span>
@@ -195,14 +188,15 @@ by <span class="application">GStreamer</span>. It is mostly used in unit tests
 to check for leaks.
 </p>
 <p>
-Last reviewed on 2006-08-11 (0.10.10)</p>
+Last reviewed on 2006-08-11 (0.10.10)
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gstreamer-Gst.details"></a><h2>Details</h2>
 <div class="refsect2" title="gst_init ()">
 <a name="gst-init"></a><h3>gst_init ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_init                            (<span class="returnvalue">int</span> *argc,
-                                                         <span class="returnvalue">char</span> **argv[]);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_init                            (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
+                                                         <em class="parameter"><code><span class="type">char</span> **argv[]</code></em>);</pre>
 <p>
 Initializes the GStreamer library, setting up internal path lists,
 registering built-in elements, and loading standard plugins.
@@ -236,7 +230,8 @@ use <a class="link" href="gstreamer-Gst.html#gst-init-check" title="gst_init_che
 WARNING: This function does not work in the same way as corresponding
 functions in other glib-style libraries, such as <a href="/usr/share/gtk-doc/html/gtk/gtk-General.html#gtk-init"><code class="function">gtk_init()</code></a>.  In
 particular, unknown command line options cause this function to
-abort program execution.</p>
+abort program execution.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
@@ -254,9 +249,9 @@ abort program execution.</p>
 <hr>
 <div class="refsect2" title="gst_init_check ()">
 <a name="gst-init-check"></a><h3>gst_init_check ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_init_check                      (<span class="returnvalue">int</span> *argc,
-                                                         <span class="returnvalue">char</span> **argv[],
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="returnvalue">GError</span></a> **err);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_init_check                      (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
+                                                         <em class="parameter"><code><span class="type">char</span> **argv[]</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **err</code></em>);</pre>
 <p>
 Initializes the GStreamer library, setting up internal path lists,
 registering built-in elements, and loading standard plugins.
@@ -269,7 +264,8 @@ use <a class="link" href="gstreamer-Gst.html#gst-init" title="gst_init ()"><code
 <p>
 This function should be called before calling any other GLib functions. If
 this is not an option, your program must initialise the GLib thread system
-using <a href="/usr/share/gtk-doc/html/glib/glib-Threads.html#g-thread-init"><code class="function">g_thread_init()</code></a> before any other GLib functions are called.</p>
+using <a href="/usr/share/gtk-doc/html/glib/glib-Threads.html#g-thread-init"><code class="function">g_thread_init()</code></a> before any other GLib functions are called.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
@@ -283,7 +279,7 @@ using <a href="/usr/share/gtk-doc/html/glib/glib-Threads.html#g-thread-init"><co
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>err</code></em> :</span></p></td>
-<td> pointer to a <a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> to which a message will be posted on error
+<td>pointer to a <a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> to which a message will be posted on error
 </td>
 </tr>
 <tr>
@@ -297,7 +293,7 @@ using <a href="/usr/share/gtk-doc/html/glib/glib-Threads.html#g-thread-init"><co
 <hr>
 <div class="refsect2" title="gst_init_get_option_group ()">
 <a name="gst-init-get-option-group"></a><h3>gst_init_get_option_group ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#GOptionGroup"><span class="returnvalue">GOptionGroup</span></a> *      gst_init_get_option_group           (void);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#GOptionGroup"><span class="returnvalue">GOptionGroup</span></a> *      gst_init_get_option_group           (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 Returns a <a href="/usr/share/gtk-doc/html/glib/glib-Commandline-option-parser.html#GOptionGroup"><span class="type">GOptionGroup</span></a> with GStreamer's argument specifications. The
 group is set up to use standard GOption callbacks, so when using this
@@ -311,7 +307,8 @@ libraries that use GOption (see <a href="/usr/share/gtk-doc/html/glib/glib-Comma
 <p>
 If you use this function, you should make sure you initialise the GLib
 threading system as one of the very first things in your program
-(see the example at the beginning of this section).</p>
+(see the example at the beginning of this section).
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
@@ -324,7 +321,7 @@ threading system as one of the very first things in your program
 <hr>
 <div class="refsect2" title="gst_deinit ()">
 <a name="gst-deinit"></a><h3>gst_deinit ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_deinit                          (void);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_deinit                          (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 Clean up any resources created by GStreamer in <a class="link" href="gstreamer-Gst.html#gst-init" title="gst_init ()"><code class="function">gst_init()</code></a>.
 </p>
@@ -335,38 +332,40 @@ This function is therefore mostly used by testsuites and other memory
 profiling tools.
 </p>
 <p>
-After this call GStreamer (including this method) should not be used anymore.</p>
+After this call GStreamer (including this method) should not be used anymore.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_version ()">
 <a name="gst-version"></a><h3>gst_version ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_version                         (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *major,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *minor,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *micro,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> *nano);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_version                         (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *major</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *minor</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *micro</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *nano</code></em>);</pre>
 <p>
-Gets the version number of the GStreamer library.</p>
+Gets the version number of the GStreamer library.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>major</code></em> :</span></p></td>
-<td> pointer to a guint to store the major version number
+<td>pointer to a guint to store the major version number
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>minor</code></em> :</span></p></td>
-<td> pointer to a guint to store the minor version number
+<td>pointer to a guint to store the minor version number
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>micro</code></em> :</span></p></td>
-<td> pointer to a guint to store the micro version number
+<td>pointer to a guint to store the micro version number
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>nano</code></em> :</span></p></td>
-<td>  pointer to a guint to store the nano version number
+<td>pointer to a guint to store the nano version number
 </td>
 </tr>
 </tbody>
@@ -375,10 +374,11 @@ Gets the version number of the GStreamer library.</p>
 <hr>
 <div class="refsect2" title="gst_version_string ()">
 <a name="gst-version-string"></a><h3>gst_version_string ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             gst_version_string                  (void);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             gst_version_string                  (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 This function returns a string that is useful for describing this version
-of GStreamer to the outside world: user agent strings, logging, ...</p>
+of GStreamer to the outside world: user agent strings, logging, ...
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
@@ -391,7 +391,7 @@ of GStreamer to the outside world: user agent strings, logging, ...</p>
 <hr>
 <div class="refsect2" title="gst_segtrap_is_enabled ()">
 <a name="gst-segtrap-is-enabled"></a><h3>gst_segtrap_is_enabled ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_segtrap_is_enabled              (void);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_segtrap_is_enabled              (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 Some functions in the GStreamer core might install a custom SIGSEGV handler
 to better catch and report errors to the application. Currently this feature
@@ -400,7 +400,8 @@ is enabled by default when loading plugins.
 <p>
 Applications might want to disable this behaviour with the
 <a class="link" href="gstreamer-Gst.html#gst-segtrap-set-enabled" title="gst_segtrap_set_enabled ()"><code class="function">gst_segtrap_set_enabled()</code></a> function. This is typically done if the application
-wants to install its own handler without GStreamer interfering.</p>
+wants to install its own handler without GStreamer interfering.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
@@ -415,15 +416,16 @@ wants to install its own handler without GStreamer interfering.</p>
 <hr>
 <div class="refsect2" title="gst_segtrap_set_enabled ()">
 <a name="gst-segtrap-set-enabled"></a><h3>gst_segtrap_set_enabled ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_segtrap_set_enabled             (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a> enabled);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_segtrap_set_enabled             (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> enabled</code></em>);</pre>
 <p>
 Applications might want to disable/enable the SIGSEGV handling of
-the GStreamer core. See <a class="link" href="gstreamer-Gst.html#gst-segtrap-is-enabled" title="gst_segtrap_is_enabled ()"><code class="function">gst_segtrap_is_enabled()</code></a> for more information.</p>
+the GStreamer core. See <a class="link" href="gstreamer-Gst.html#gst-segtrap-is-enabled" title="gst_segtrap_is_enabled ()"><code class="function">gst_segtrap_is_enabled()</code></a> for more information.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>enabled</code></em> :</span></p></td>
-<td> whether a custom SIGSEGV handler should be installed.
+<td>whether a custom SIGSEGV handler should be installed.
 </td>
 </tr></tbody>
 </table></div>
@@ -432,7 +434,7 @@ the GStreamer core. See <a class="link" href="gstreamer-Gst.html#gst-segtrap-is-
 <hr>
 <div class="refsect2" title="gst_registry_fork_is_enabled ()">
 <a name="gst-registry-fork-is-enabled"></a><h3>gst_registry_fork_is_enabled ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_registry_fork_is_enabled        (void);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_registry_fork_is_enabled        (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 By default GStreamer will perform scanning and rebuilding of the
 registry file using a helper child process.
@@ -440,7 +442,8 @@ registry file using a helper child process.
 <p>
 Applications might want to disable this behaviour with the
 <a class="link" href="gstreamer-Gst.html#gst-registry-fork-set-enabled" title="gst_registry_fork_set_enabled ()"><code class="function">gst_registry_fork_set_enabled()</code></a> function, in which case new plugins
-are scanned (and loaded) into the application process.</p>
+are scanned (and loaded) into the application process.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
@@ -456,16 +459,17 @@ rebuilding the registry.
 <hr>
 <div class="refsect2" title="gst_registry_fork_set_enabled ()">
 <a name="gst-registry-fork-set-enabled"></a><h3>gst_registry_fork_set_enabled ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_registry_fork_set_enabled       (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a> enabled);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_registry_fork_set_enabled       (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> enabled</code></em>);</pre>
 <p>
 Applications might want to disable/enable spawning of a child helper process
 when rebuilding the registry. See <a class="link" href="gstreamer-Gst.html#gst-registry-fork-is-enabled" title="gst_registry_fork_is_enabled ()"><code class="function">gst_registry_fork_is_enabled()</code></a> for more
-information.</p>
+information.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>enabled</code></em> :</span></p></td>
-<td> whether rebuilding the registry can use a temporary child helper process.
+<td>whether rebuilding the registry can use a temporary child helper process.
 </td>
 </tr></tbody>
 </table></div>
@@ -474,7 +478,7 @@ information.</p>
 <hr>
 <div class="refsect2" title="gst_update_registry ()">
 <a name="gst-update-registry"></a><h3>gst_update_registry ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_update_registry                 (void);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_update_registry                 (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 Forces GStreamer to re-scan its plugin paths and update the default
 plugin registry.
@@ -494,7 +498,8 @@ any elements or access the GStreamer registry while the update is in
 progress.
 </p>
 <p>
-Note that this function may block for a significant amount of time.</p>
+Note that this function may block for a significant amount of time.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
@@ -511,6 +516,6 @@ Note that this function may block for a significant amount of time.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

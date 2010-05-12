@@ -39,27 +39,27 @@ bin_SCRIPTS = gst-feedback-@GST_MAJORMINOR@
 if !GST_DISABLE_LOADSAVE
 gst_xmllaunch_@GST_MAJORMINOR@_SOURCES = gst-launch.c tools.h
 gst_xmllaunch_@GST_MAJORMINOR@_CFLAGS = $(GST_OBJ_CFLAGS)
-gst_xmllaunch_@GST_MAJORMINOR@_LDFLAGS = $(GST_OBJ_LIBS)
+gst_xmllaunch_@GST_MAJORMINOR@_LDADD = $(GST_OBJ_LIBS)
 endif
 
 if !GST_DISABLE_PARSE
 gst_launch_@GST_MAJORMINOR@_SOURCES = gst-launch.c tools.h
 gst_launch_@GST_MAJORMINOR@_CFLAGS = $(GST_OBJ_CFLAGS)
-gst_launch_@GST_MAJORMINOR@_LDFLAGS = $(GST_OBJ_LIBS)
+gst_launch_@GST_MAJORMINOR@_LDADD = $(GST_OBJ_LIBS)
 endif
 
 gst_inspect_@GST_MAJORMINOR@_SOURCES = gst-inspect.c tools.h
 gst_inspect_@GST_MAJORMINOR@_CFLAGS = $(GST_OBJ_CFLAGS)
-gst_inspect_@GST_MAJORMINOR@_LDFLAGS = $(GST_OBJ_LIBS)
+gst_inspect_@GST_MAJORMINOR@_LDADD = $(GST_OBJ_LIBS)
 gst_typefind_@GST_MAJORMINOR@_SOURCES = gst-typefind.c tools.h
 gst_typefind_@GST_MAJORMINOR@_CFLAGS = $(GST_OBJ_CFLAGS)
-gst_typefind_@GST_MAJORMINOR@_LDFLAGS = $(GST_OBJ_LIBS)
+gst_typefind_@GST_MAJORMINOR@_LDADD = $(GST_OBJ_LIBS)
 gst_xmlinspect_@GST_MAJORMINOR@_SOURCES = gst-xmlinspect.c tools.h
 gst_xmlinspect_@GST_MAJORMINOR@_CFLAGS = $(GST_OBJ_CFLAGS)
-gst_xmlinspect_@GST_MAJORMINOR@_LDFLAGS = $(GST_OBJ_LIBS)
+gst_xmlinspect_@GST_MAJORMINOR@_LDADD = $(GST_OBJ_LIBS)
 
 gst-feedback-@GST_MAJORMINOR@: gst-feedback-m.m
-	cp $(srcdir)/gst-feedback-m.m $@
+	$(AM_V_GEN)cp $(srcdir)/gst-feedback-m.m $@ && \
 	chmod +x $@
 
 # make sure each unversioned tool comes from gst-run.c
@@ -126,7 +126,7 @@ EXTRA_DIST = \
 	gst-plot-timeline.py
 
 %-@GST_MAJORMINOR@.1: %.1.in
-	sed \
+	$(AM_V_GEN)sed \
 		-e s,gst-feedback,gst-feedback-@GST_MAJORMINOR@,g \
 		-e s,gst-inspect,gst-inspect-@GST_MAJORMINOR@,g \
 		-e s,gst-launch,gst-launch-@GST_MAJORMINOR@,g \

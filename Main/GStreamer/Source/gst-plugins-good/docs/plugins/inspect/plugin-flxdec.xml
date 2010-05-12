@@ -3,7 +3,7 @@
   <description>FLC/FLI/FLX video decoder</description>
   <filename>../../gst/flx/.libs/libgstflxdec.so</filename>
   <basename>libgstflxdec.so</basename>
-  <version>0.10.21</version>
+  <version>0.10.22</version>
   <license>LGPL</license>
   <source>gst-plugins-good</source>
   <package>GStreamer Good Plug-ins source release</package>
@@ -11,7 +11,7 @@
   <elements>
     <element>
       <name>flxdec</name>
-      <longname>FLX audio decoder</longname>
+      <longname>FLX video decoder</longname>
       <class>Codec/Decoder/Video</class>
       <description>FLC/FLI/FLX video decoder</description>
       <author>Sepp Wijnands &lt;mrrazz@garbage-coderz.net&gt;, Zeeshan Ali &lt;zeenix@gmail.com&gt;</author>

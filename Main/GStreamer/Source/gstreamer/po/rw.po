@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.8.8\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2005-04-04 10:55-0700\n"
 "Last-Translator: Steven Michael Murphy <murf@e-tools.com>\n"
 "Language-Team: Kinyarwanda <translation-team-rw@lists.sourceforge.net>\n"
@@ -132,16 +132,6 @@ msgstr "i Verisiyo"
 
 msgid "Unknown option"
 msgstr ""
-
-#, fuzzy, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "Bivuye Ikigize:"
-
-#, fuzzy, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr "Kosora amakosa Ibisobanuro"
 
 #, fuzzy
 msgid "GStreamer encountered a general core library error."
@@ -787,6 +777,29 @@ msgid ""
 "according to WGS84 (zero is average sea level)"
 msgstr ""
 
+#, fuzzy
+msgid "geo location country"
+msgstr "Inturo"
+
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+
+#, fuzzy
+msgid "geo location city"
+msgstr "Inturo"
+
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "Inturo"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr ""
@@ -837,8 +850,28 @@ msgid ""
 "of a concerto. It is a higher level than a track, but lower than an album"
 msgstr ""
 
+# officecfg/registry\schema\org\openoffice\Office\Writer.xcs:....AgendaType.Duration.text
+#, fuzzy
+msgid "user rating"
+msgstr "Igihe- ngombwa"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, fuzzy, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "Bivuye Ikigize:"
+
+#, fuzzy, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr "Kosora amakosa Ibisobanuro"
 
 #, fuzzy, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -962,6 +995,10 @@ msgstr "Idosiye ni a"
 #, fuzzy
 msgid "Failed after iterations as requested."
 msgstr "Nyuma Amasubiramo Nka"
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Kuri IDOSIYE"
 
 msgid "No Temp directory specified."
 msgstr ""

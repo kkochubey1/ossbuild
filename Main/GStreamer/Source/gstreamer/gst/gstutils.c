@@ -139,7 +139,7 @@ gst_util_set_object_arg (GObject * object, const gchar * name,
   if (!pspec)
     return;
 
-  value_type = G_PARAM_SPEC_VALUE_TYPE (pspec);
+  value_type = pspec->value_type;
 
   GST_DEBUG ("pspec->flags is %d, pspec->value_type is %s",
       pspec->flags, g_type_name (value_type));
@@ -211,7 +211,7 @@ static inline void
 gst_util_uint64_mul_uint64 (GstUInt64 * c1, GstUInt64 * c0, guint64 arg1,
     guint64 arg2)
 {
-  __asm__ __volatile__ ("mul %3":"=a" (c0->ll), "=d" (c1->ll)
+  __asm__ __volatile__ ("mulq %3":"=a" (c0->ll), "=d" (c1->ll)
       :"a" (arg1), "g" (arg2)
       );
 }
@@ -803,7 +803,7 @@ gst_print_element_args (GString * buf, gint indent, GstElement * element)
     spec = *walk;
 
     if (spec->flags & G_PARAM_READABLE) {
-      g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (spec));
+      g_value_init (&value, spec->value_type);
       g_object_get_property (G_OBJECT (element), spec->name, &value);
       str = g_strdup_value_contents (&value);
       g_value_unset (&value);
@@ -993,7 +993,7 @@ gst_element_get_pad_from_template (GstElement * element, GstPadTemplate * templ)
   return ret;
 }
 
-/**
+/*
  * gst_element_request_compatible_pad:
  * @element: a #GstElement.
  * @templ: the #GstPadTemplate to which the new pad should be able to link.
@@ -1003,7 +1003,7 @@ gst_element_get_pad_from_template (GstElement * element, GstPadTemplate * templ)
  *
  * Returns: a #GstPad, or %NULL if one could not be found or created.
  */
-GstPad *
+static GstPad *
 gst_element_request_compatible_pad (GstElement * element,
     GstPadTemplate * templ)
 {
@@ -2620,6 +2620,9 @@ gst_buffer_join (GstBuffer * buf1, GstBuffer * buf2)
  * control.
  */
 #ifndef GST_REMOVE_DEPRECATED
+#ifdef GST_DISABLE_DEPRECATED
+void gst_buffer_stamp (GstBuffer * dest, const GstBuffer * src);
+#endif
 void
 gst_buffer_stamp (GstBuffer * dest, const GstBuffer * src)
 {
@@ -2753,10 +2756,10 @@ typedef struct
 {
   GstPad *orig;
   GstCaps *caps;
-} LinkData;
+} SetCapsFoldData;
 
 static gboolean
-setcaps_fold_func (GstPad * pad, GValue * ret, LinkData * data)
+setcaps_fold_func (GstPad * pad, GValue * ret, SetCapsFoldData * data)
 {
   gboolean success = TRUE;
 
@@ -2787,7 +2790,7 @@ gst_pad_proxy_setcaps (GstPad * pad, GstCaps * caps)
   GstIterator *iter;
   GstIteratorResult res;
   GValue ret = { 0, };
-  LinkData data;
+  SetCapsFoldData data;
 
   g_return_val_if_fail (GST_IS_PAD (pad), FALSE);
   g_return_val_if_fail (caps != NULL, FALSE);
@@ -2810,12 +2813,27 @@ gst_pad_proxy_setcaps (GstPad * pad, GstCaps * caps)
   data.orig = pad;
   data.caps = caps;
 
-  res = gst_iterator_fold (iter, (GstIteratorFoldFunction) setcaps_fold_func,
-      &ret, &data);
-  gst_iterator_free (iter);
+  while (1) {
+    res = gst_iterator_fold (iter, (GstIteratorFoldFunction) setcaps_fold_func,
+        &ret, &data);
 
-  if (res != GST_ITERATOR_DONE)
-    goto pads_changed;
+    switch (res) {
+      case GST_ITERATOR_RESYNC:
+        /* reset return value */
+        g_value_set_boolean (&ret, TRUE);
+        gst_iterator_resync (iter);
+        break;
+      case GST_ITERATOR_DONE:
+        /* all pads iterated, return collected value */
+        goto done;
+      default:
+        /* iterator returned _ERROR or premature end with _OK,
+         * mark an error and exit */
+        goto error;
+    }
+  }
+done:
+  gst_iterator_free (iter);
 
   gst_object_unref (element);
 
@@ -2823,10 +2841,11 @@ gst_pad_proxy_setcaps (GstPad * pad, GstCaps * caps)
   return g_value_get_boolean (&ret);
 
   /* ERRORS */
-pads_changed:
+error:
   {
-    g_warning ("Pad list changed during proxy_pad_link for element %s",
+    g_warning ("Pad list return error on element %s",
         GST_ELEMENT_NAME (element));
+    gst_iterator_free (iter);
     gst_object_unref (element);
     return FALSE;
   }
@@ -3044,6 +3063,9 @@ gst_pad_query_peer_convert (GstPad * pad, GstFormat src_format, gint64 src_val,
  *
  */
 #ifndef GST_REMOVE_DEPRECATED
+#ifdef GST_DISABLE_DEPRECATED
+void gst_atomic_int_set (gint * atomic_int, gint value);
+#endif
 void
 gst_atomic_int_set (gint * atomic_int, gint value)
 {
@@ -3526,6 +3548,9 @@ gst_bin_find_unlinked_pad (GstBin * bin, GstPadDirection direction)
  * Deprecated: use gst_bin_find_unlinked_pad() instead.
  */
 #ifndef GST_REMOVE_DEPRECATED
+#ifdef GST_DISABLE_DEPRECATED
+GstPad *gst_bin_find_unconnected_pad (GstBin * bin, GstPadDirection direction);
+#endif
 GstPad *
 gst_bin_find_unconnected_pad (GstBin * bin, GstPadDirection direction)
 {

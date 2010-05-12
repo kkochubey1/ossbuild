@@ -470,6 +470,8 @@ gst_riff_create_video_caps (guint32 codec_fcc,
     case GST_MAKE_FOURCC ('V', 'I', 'D', 'M'):
     case GST_MAKE_FOURCC ('M', '4', 'T', '3'):
     case GST_MAKE_FOURCC ('G', 'E', 'O', 'X'):
+    case GST_MAKE_FOURCC ('M', 'P', '4', 'V'):
+    case GST_MAKE_FOURCC ('m', 'p', '4', 'v'):
       caps = gst_caps_new_simple ("video/mpeg",
           "mpegversion", G_TYPE_INT, 4, NULL);
       if (codec_name)
@@ -802,9 +804,18 @@ gst_riff_create_video_caps (guint32 codec_fcc,
     case GST_MAKE_FOURCC ('V', 'P', '6', '0'):
     case GST_MAKE_FOURCC ('v', 'p', '6', '1'):
     case GST_MAKE_FOURCC ('V', 'P', '6', '1'):
+    case GST_MAKE_FOURCC ('V', 'p', '6', '2'):
+    case GST_MAKE_FOURCC ('V', 'P', '6', '2'):
       caps = gst_caps_new_simple ("video/x-vp6", NULL);
       if (codec_name)
         *codec_name = g_strdup ("On2 VP6");
+      break;
+
+    case GST_MAKE_FOURCC ('v', 'p', '7', '0'):
+    case GST_MAKE_FOURCC ('V', 'P', '7', '0'):
+      caps = gst_caps_new_simple ("video/x-vp7", NULL);
+      if (codec_name)
+        *codec_name = g_strdup ("On2 VP7");
       break;
 
     case GST_MAKE_FOURCC ('L', 'M', '2', '0'):
@@ -1772,6 +1783,7 @@ gst_riff_create_video_template_caps (void)
     GST_MAKE_FOURCC ('K', 'M', 'V', 'C'),
     GST_MAKE_FOURCC ('V', 'P', '5', '0'),
     GST_MAKE_FOURCC ('V', 'P', '6', '0'),
+    GST_MAKE_FOURCC ('V', 'P', '7', '0'),
     GST_MAKE_FOURCC ('L', 'M', '2', '0'),
     GST_MAKE_FOURCC ('R', 'P', 'Z', 'A'),
     GST_MAKE_FOURCC ('T', 'H', 'E', 'O'),

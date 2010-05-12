@@ -41,9 +41,6 @@ G_BEGIN_DECLS
 #define GST_IS_SPEEX_ENC_CLASS(klass) \
   (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_SPEEX_ENC))
 
-#define MAX_FRAME_SIZE 2000*2
-#define MAX_FRAME_BYTES 2000
-
 typedef enum
 {
   GST_SPEEX_ENC_MODE_AUTO,
@@ -67,7 +64,7 @@ struct _GstSpeexEnc {
 
   SpeexBits             bits;
   SpeexHeader           header;
-#if SPEEX_1_0
+#ifdef SPEEX_1_0
   SpeexMode             *speex_mode;
 #else
   const SpeexMode       *speex_mode;

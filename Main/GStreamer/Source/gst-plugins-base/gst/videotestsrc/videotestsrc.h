@@ -58,15 +58,15 @@ struct paintinfo_struct
   const struct vts_color_struct_rgb *rgb_color;
   const struct vts_color_struct_yuv *yuv_color;
   const struct vts_color_struct_gray *gray_color;
-  //const struct vts_color_struct *color;
+  /*  const struct vts_color_struct *color; */
   void (*paint_hline) (paintinfo * p, int x, int y, int w);
 };
 
 struct fourcc_list_struct
 {
   int type;
-  char *fourcc;
-  char *name;
+  const char *fourcc;
+  const char *name;
   int bitspp;
   void (*paint_setup) (paintinfo * p, unsigned char *dest);
   void (*paint_hline) (paintinfo * p, int x, int y, int w);
@@ -115,6 +115,8 @@ void    gst_video_test_src_circular     (GstVideoTestSrc * v,
 void    gst_video_test_src_zoneplate    (GstVideoTestSrc * v,
 		                         unsigned char *dest, int w, int h);
 void    gst_video_test_src_gamut        (GstVideoTestSrc * v,
+		                         unsigned char *dest, int w, int h);
+void    gst_video_test_src_chromazoneplate (GstVideoTestSrc * v,
 		                         unsigned char *dest, int w, int h);
 extern struct fourcc_list_struct fourcc_list[];
 extern int n_fourccs;

@@ -70,10 +70,6 @@ static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
 GST_BOILERPLATE (GstRgLimiter, gst_rg_limiter, GstBaseTransform,
     GST_TYPE_BASE_TRANSFORM);
 
-static void gst_rg_limiter_class_init (GstRgLimiterClass * klass);
-static void gst_rg_limiter_init (GstRgLimiter * filter,
-    GstRgLimiterClass * gclass);
-
 static void gst_rg_limiter_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
 static void gst_rg_limiter_get_property (GObject * object, guint prop_id,
@@ -81,13 +77,6 @@ static void gst_rg_limiter_get_property (GObject * object, guint prop_id,
 
 static GstFlowReturn gst_rg_limiter_transform_ip (GstBaseTransform * base,
     GstBuffer * buf);
-
-static const GstElementDetails element_details = {
-  "ReplayGain limiter",
-  "Filter/Effect/Audio",
-  "Apply signal compression to raw audio data",
-  "Ren\xc3\xa9 Stadler <mail@renestadler.de>"
-};
 
 static void
 gst_rg_limiter_base_init (gpointer g_class)
@@ -98,7 +87,10 @@ gst_rg_limiter_base_init (gpointer g_class)
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "ReplayGain limiter",
+      "Filter/Effect/Audio",
+      "Apply signal compression to raw audio data",
+      "Ren\xc3\xa9 Stadler <mail@renestadler.de>");
 
   GST_DEBUG_CATEGORY_INIT (gst_rg_limiter_debug, "rglimiter", 0,
       "ReplayGain limiter element");

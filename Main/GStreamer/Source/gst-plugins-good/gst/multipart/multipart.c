@@ -23,8 +23,8 @@
 
 #include <gst/gst.h>
 
-extern gboolean gst_multipart_demux_plugin_init (GstPlugin * plugin);
-extern gboolean gst_multipart_mux_plugin_init (GstPlugin * plugin);
+#include "multipartdemux.h"
+#include "multipartmux.h"
 
 static gboolean
 plugin_init (GstPlugin * plugin)

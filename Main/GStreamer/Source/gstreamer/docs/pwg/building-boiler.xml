@@ -98,13 +98,13 @@ Resolving deltas: 100% (240/240), done.
       Note that capitalization is important for the name of the plugin. Under
       some operating systems, capitalization is also important when specifying
       directory names. For example, the following commands create the
-      ExampleFilter plugin based on the plugin template and put the output files
+      MyFilter plugin based on the plugin template and put the output files
       in the <filename class="directory">gst-template/gst-plugin/src</filename>
       directory:
     </para>
     <screen>
 <prompt>shell $ </prompt><userinput>cd gst-template/gst-plugin/src</userinput>
-<prompt>shell $ </prompt><userinput>../tools/make_element ExampleFilter</userinput>
+<prompt>shell $ </prompt><userinput>../tools/make_element MyFilter</userinput>
     </screen>
     <para>
       The last command creates two files:
@@ -116,6 +116,22 @@ Resolving deltas: 100% (240/240), done.
         It is recommended that you create a copy of the <filename
 	class="directory">gst-plugin</filename>
 	directory before continuing.
+      </para>
+    </note>
+    <para>
+      Now one needs to adjust the <filename>Makefile.am</filename> to use the
+      new filenames and run <filename>autogen.sh</filename> to bootstrap the
+      build environment. After that the project can be built using the well
+      known <userinput>make &amp;&amp; sudo make install</userinput>. 
+    </para>
+    <note>
+      <para>
+        Be aware that by default <filename>autogen.sh</filename> and 
+        <filename>configure</filename> would choose <filename class="directory">/usr/local</filename>
+        as a default location. One would need to add
+        <filename class="directory">/usr/local/lib/gstreamer-0.10</filename>
+        to <symbol>GST_PLUGIN_PATH</symbol> in order to make the new plugin
+        show up in gstreamer.
       </para>
     </note>
   </sect1>

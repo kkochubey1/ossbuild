@@ -790,6 +790,7 @@ gst_x_overlay_got_xwindow_id
 gst_x_overlay_prepare_xwindow_id
 gst_x_overlay_expose
 gst_x_overlay_handle_events
+gst_x_overlay_set_render_rectangle
 <SUBSECTION Standard>
 GST_TYPE_X_OVERLAY
 GST_X_OVERLAY
@@ -1361,6 +1362,7 @@ gst_rtp_buffer_list_set_timestamp
 <FILE>gstrtspdefs</FILE>
 <INCLUDE>gst/rtsp/gstrtspdefs.h</INCLUDE>
 GST_RTSP_CHECK
+GstRTSPEvent
 GstRTSPResult
 GstRTSPFamily
 GstRTSPState
@@ -1385,6 +1387,7 @@ gst_rtsp_find_method
 <INCLUDE>gst/rtsp/gstrtsptransport.h</INCLUDE>
 GstRTSPTransMode
 GstRTSPProfile
+GstRTSPRange
 GstRTSPLowerTrans
 GstRTSPTransport
 gst_rtsp_transport_new
@@ -1449,6 +1452,14 @@ gst_rtsp_watch_unref
 gst_rtsp_watch_attach
 gst_rtsp_watch_reset
 gst_rtsp_watch_queue_message
+</SECTION>
+
+<SECTION>
+<FILE>gstrtspextension</FILE>
+<INCLUDE>gst/rtsp/gstrtspextension.h</INCLUDE>
+GstRTSPExtensionInterface
+<SUBSECTION Standard>
+gst_rtsp_extension_get_type
 </SECTION>
 
 <SECTION>
@@ -1663,6 +1674,14 @@ gst_tag_list_add_id3_image
 </SECTION>
 
 <SECTION>
+<FILE>gsttagxmp</FILE>
+<INCLUDE>gst/tag/tag.h</INCLUDE>
+gst_tag_list_from_xmp_buffer
+gst_tag_list_to_xmp_buffer
+<SUBSECTION Standard>
+</SECTION>
+
+<SECTION>
 <FILE>gsttagdemux</FILE>
 <INCLUDE>gst/tag/gsttagdemux.h</INCLUDE>
 GstTagDemux
@@ -1797,6 +1816,8 @@ GST_VIDEO_CAPS_YUV
 GST_VIDEO_CAPS_xBGR
 GST_VIDEO_CAPS_xRGB
 GST_VIDEO_CAPS_xRGB_HOST_ENDIAN
+GST_VIDEO_CAPS_GRAY8
+GST_VIDEO_CAPS_GRAY16
 GST_VIDEO_FPS_RANGE
 GST_VIDEO_GREEN_MASK_15
 GST_VIDEO_GREEN_MASK_15_INT
@@ -1825,6 +1846,7 @@ gst_video_format_get_row_stride
 gst_video_format_get_size
 gst_video_format_has_alpha
 gst_video_format_is_rgb
+gst_video_format_is_gray
 gst_video_format_is_yuv
 gst_video_format_to_fourcc
 gst_video_format_from_fourcc
@@ -1832,6 +1854,8 @@ gst_video_format_parse_caps
 gst_video_format_parse_caps_interlaced
 gst_video_parse_caps_framerate
 gst_video_parse_caps_pixel_aspect_ratio
+gst_video_parse_caps_color_matrix
+gst_video_parse_caps_chroma_site
 </SECTION>
 
 <SECTION>

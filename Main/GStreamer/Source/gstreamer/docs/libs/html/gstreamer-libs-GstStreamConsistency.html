@@ -8,17 +8,8 @@
 <link rel="up" href="gstreamer-check.html" title="GStreamer Check Unit Testing">
 <link rel="prev" href="gstreamer-libs-GstBufferStraw.html" title="GstBufferStraw">
 <link rel="next" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="part" href="gstreamer-libs.html" title="Part I. GStreamer Libraries">
-<link rel="chapter" href="gstreamer-base.html" title="GStreamer Base and Utillity Classes">
-<link rel="chapter" href="gstreamer-control.html" title="GStreamer Dynamic Parameter Control">
-<link rel="chapter" href="gstreamer-dataprotocol.html" title="GStreamer Data Protocol">
-<link rel="chapter" href="gstreamer-net.html" title="GStreamer Network Classes">
-<link rel="chapter" href="gstreamer-check.html" title="GStreamer Check Unit Testing">
-<link rel="chapter" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -50,16 +41,17 @@
 #include &lt;gst/check/gstconsistencychecker.h&gt;
 
                     <a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency">GstStreamConsistency</a>;
-<a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> * <a class="link" href="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-new" title="gst_consistency_checker_new ()">gst_consistency_checker_new</a>      (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *pad);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-reset" title="gst_consistency_checker_reset ()">gst_consistency_checker_reset</a>       (<a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> *consist);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-free" title="gst_consistency_checker_free ()">gst_consistency_checker_free</a>        (<a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> *consist);
+<a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> * <a class="link" href="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-new" title="gst_consistency_checker_new ()">gst_consistency_checker_new</a>      (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-reset" title="gst_consistency_checker_reset ()">gst_consistency_checker_reset</a>       (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="type">GstStreamConsistency</span></a> *consist</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-free" title="gst_consistency_checker_free ()">gst_consistency_checker_free</a>        (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="type">GstStreamConsistency</span></a> *consist</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Description">
 <a name="gstreamer-libs-GstStreamConsistency.description"></a><h2>Description</h2>
 <p>
 These macros and functions are for internal use of the unit tests found
-inside the 'check' directories of various GStreamer packages.</p>
+inside the 'check' directories of various GStreamer packages.
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gstreamer-libs-GstStreamConsistency.details"></a><h2>Details</h2>
@@ -67,25 +59,27 @@ inside the 'check' directories of various GStreamer packages.</p>
 <a name="GstStreamConsistency"></a><h3>GstStreamConsistency</h3>
 <pre class="programlisting">typedef struct _GstStreamConsistency GstStreamConsistency;</pre>
 <p>
-Opaque consistency checker handle.</p>
+Opaque consistency checker handle.
+</p>
 <p class="since">Since 0.10.24</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_consistency_checker_new ()">
 <a name="gst-consistency-checker-new"></a><h3>gst_consistency_checker_new ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> * gst_consistency_checker_new      (<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *pad);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> * gst_consistency_checker_new      (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);</pre>
 <p>
 Sets up a data probe on the given pad which will raise assertions if the
 data flow is inconsistent.
 </p>
 <p>
-Currently only works for source pads.</p>
+Currently only works for source pads.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td> The <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> on which the dataflow will be checked.
+<td>The <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> on which the dataflow will be checked.
 </td>
 </tr>
 <tr>
@@ -101,14 +95,15 @@ Currently only works for source pads.</p>
 <hr>
 <div class="refsect2" title="gst_consistency_checker_reset ()">
 <a name="gst-consistency-checker-reset"></a><h3>gst_consistency_checker_reset ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_consistency_checker_reset       (<a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> *consist);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_consistency_checker_reset       (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="type">GstStreamConsistency</span></a> *consist</code></em>);</pre>
 <p>
-Reset the stream checker's internal variables.</p>
+Reset the stream checker's internal variables.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>consist</code></em> :</span></p></td>
-<td> The <a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="type">GstStreamConsistency</span></a> to reset.
+<td>The <a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="type">GstStreamConsistency</span></a> to reset.
 </td>
 </tr></tbody>
 </table></div>
@@ -117,14 +112,15 @@ Reset the stream checker's internal variables.</p>
 <hr>
 <div class="refsect2" title="gst_consistency_checker_free ()">
 <a name="gst-consistency-checker-free"></a><h3>gst_consistency_checker_free ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_consistency_checker_free        (<a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> *consist);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_consistency_checker_free        (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="type">GstStreamConsistency</span></a> *consist</code></em>);</pre>
 <p>
-Frees the allocated data and probe associated with <em class="parameter"><code>consist</code></em>.</p>
+Frees the allocated data and probe associated with <em class="parameter"><code>consist</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>consist</code></em> :</span></p></td>
-<td> The <a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="type">GstStreamConsistency</span></a> to free.
+<td>The <a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="type">GstStreamConsistency</span></a> to free.
 </td>
 </tr></tbody>
 </table></div>
@@ -134,6 +130,6 @@ Frees the allocated data and probe associated with <em class="parameter"><code>c
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

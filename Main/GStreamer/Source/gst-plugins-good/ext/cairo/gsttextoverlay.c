@@ -54,12 +54,6 @@
 GST_DEBUG_CATEGORY_EXTERN (cairo_debug);
 #define GST_CAT_DEFAULT cairo_debug
 
-static const GstElementDetails cairo_text_overlay_details =
-GST_ELEMENT_DETAILS ("Text overlay",
-    "Filter/Editor/Video",
-    "Adds text strings on top of a video buffer",
-    "David Schleef <ds@schleef.org>");
-
 enum
 {
   ARG_0,
@@ -141,7 +135,10 @@ gst_text_overlay_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&text_sink_template_factory));
 
-  gst_element_class_set_details (element_class, &cairo_text_overlay_details);
+  gst_element_class_set_details_simple (element_class, "Text overlay",
+      "Filter/Editor/Video",
+      "Adds text strings on top of a video buffer",
+      "David Schleef <ds@schleef.org>");
 }
 
 static void
@@ -665,41 +662,46 @@ gst_text_overlay_shade_y (GstCairoTextOverlay * overlay, guchar * dest,
 
 static inline void
 gst_text_overlay_blit_1 (GstCairoTextOverlay * overlay, guchar * dest,
-    guchar * text_image, gint val, guint dest_stride)
+    guchar * text_image, gint val, guint dest_stride, gint y0)
 {
   gint i, j;
   gint x, a, y;
-  gint y0 = 0;
+  gint y1;
 
   y = val;
+  y0 = MIN (y0, overlay->height);
+  y1 = MIN (y0 + overlay->font_height, overlay->height);
 
-  for (i = 0; i < overlay->font_height; i++) {
+  for (i = y0; i < y1; i++) {
     for (j = 0; j < overlay->width; j++) {
-      x = dest[(i + y0) * dest_stride + j];
-      a = text_image[4 * (i * overlay->width + j) + 1];
-      dest[(i + y0) * dest_stride + j] = (y * a + x * (255 - a)) / 255;
+      x = dest[i * dest_stride + j];
+      a = text_image[4 * ((i - y0) * overlay->width + j) + 1];
+      dest[i * dest_stride + j] = (y * a + x * (255 - a)) / 255;
     }
   }
 }
 
 static inline void
 gst_text_overlay_blit_sub2x2 (GstCairoTextOverlay * overlay, guchar * dest,
-    guchar * text_image, gint val, guint dest_stride)
+    guchar * text_image, gint val, guint dest_stride, gint y0)
 {
   gint i, j;
   gint x, a, y;
-  gint y0 = 0;
+  gint y1;
+
+  y0 = MIN (y0, overlay->height);
+  y1 = MIN (y0 + overlay->font_height, overlay->height);
 
   y = val;
 
-  for (i = 0; i < overlay->font_height; i += 2) {
+  for (i = y0; i < y1; i += 2) {
     for (j = 0; j < overlay->width; j += 2) {
-      x = dest[(i / 2 + y0) * dest_stride + j / 2];
-      a = (text_image[4 * (i * overlay->width + j) + 1] +
-          text_image[4 * (i * overlay->width + j + 1) + 1] +
-          text_image[4 * ((i + 1) * overlay->width + j) + 1] +
-          text_image[4 * ((i + 1) * overlay->width + j + 1) + 1] + 2) / 4;
-      dest[(i / 2 + y0) * dest_stride + j / 2] = (y * a + x * (255 - a)) / 255;
+      x = dest[(i / 2) * dest_stride + j / 2];
+      a = (text_image[4 * ((i - y0) * overlay->width + j) + 1] +
+          text_image[4 * ((i - y0) * overlay->width + j + 1) + 1] +
+          text_image[4 * ((i - y0 + 1) * overlay->width + j) + 1] +
+          text_image[4 * ((i - y0 + 1) * overlay->width + j + 1) + 1] + 2) / 4;
+      dest[(i / 2) * dest_stride + j / 2] = (y * a + x * (255 - a)) / 255;
     }
   }
 }
@@ -745,25 +747,25 @@ gst_text_overlay_push_frame (GstCairoTextOverlay * overlay,
 
   /* blit outline text on video image */
   gst_text_overlay_blit_1 (overlay,
-      y + (ypos / 1) * I420_Y_ROWSTRIDE (overlay->width),
-      overlay->text_outline_image, 0, I420_Y_ROWSTRIDE (overlay->width));
+      y,
+      overlay->text_outline_image, 0, I420_Y_ROWSTRIDE (overlay->width), ypos);
   gst_text_overlay_blit_sub2x2 (overlay,
-      u + (ypos / 2) * I420_U_ROWSTRIDE (overlay->width),
-      overlay->text_outline_image, 128, I420_U_ROWSTRIDE (overlay->width));
-  gst_text_overlay_blit_sub2x2 (overlay,
-      v + (ypos / 2) * I420_V_ROWSTRIDE (overlay->width),
-      overlay->text_outline_image, 128, I420_V_ROWSTRIDE (overlay->width));
+      u,
+      overlay->text_outline_image, 128, I420_U_ROWSTRIDE (overlay->width),
+      ypos);
+  gst_text_overlay_blit_sub2x2 (overlay, v, overlay->text_outline_image, 128,
+      I420_V_ROWSTRIDE (overlay->width), ypos);
 
   /* blit text on video image */
   gst_text_overlay_blit_1 (overlay,
-      y + (ypos / 1) * I420_Y_ROWSTRIDE (overlay->width),
-      overlay->text_fill_image, 255, I420_Y_ROWSTRIDE (overlay->width));
+      y,
+      overlay->text_fill_image, 255, I420_Y_ROWSTRIDE (overlay->width), ypos);
   gst_text_overlay_blit_sub2x2 (overlay,
-      u + (ypos / 2) * I420_U_ROWSTRIDE (overlay->width),
-      overlay->text_fill_image, 128, I420_U_ROWSTRIDE (overlay->width));
+      u,
+      overlay->text_fill_image, 128, I420_U_ROWSTRIDE (overlay->width), ypos);
   gst_text_overlay_blit_sub2x2 (overlay,
-      v + (ypos / 2) * I420_V_ROWSTRIDE (overlay->width),
-      overlay->text_fill_image, 128, I420_V_ROWSTRIDE (overlay->width));
+      v,
+      overlay->text_fill_image, 128, I420_V_ROWSTRIDE (overlay->width), ypos);
 
   return gst_pad_push (overlay->srcpad, video_frame);
 }

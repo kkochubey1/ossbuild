@@ -40,6 +40,14 @@
 GST_DEBUG_CATEGORY_STATIC (seek_debug);
 #define GST_CAT_DEFAULT (seek_debug)
 
+#if !GTK_CHECK_VERSION (2, 17, 7)
+static void
+gtk_widget_get_allocation (GtkWidget * w, GtkAllocation * a)
+{
+  *a = w->allocation;
+}
+#endif
+
 /* configuration */
 
 //#define SOURCE "filesrc"
@@ -147,7 +155,7 @@ typedef struct
 dyn_link;
 
 static GstElement *
-gst_element_factory_make_or_warn (gchar * type, gchar * name)
+gst_element_factory_make_or_warn (const gchar * type, const gchar * name)
 {
   GstElement *element = gst_element_factory_make (type, name);
 
@@ -965,7 +973,7 @@ make_parselaunch_pipeline (const gchar * description)
 
 typedef struct
 {
-  gchar *name;
+  const gchar *name;
   GstElement *(*func) (const gchar * location);
 }
 Pipeline;
@@ -1164,15 +1172,25 @@ update_fill (gpointer data)
 
       query = gst_query_new_buffering (GST_FORMAT_PERCENT);
       if (gst_element_query (element, query)) {
-        gint64 start, stop;
+        gint64 start, stop, buffering_total;
         GstFormat format;
         gdouble fill;
         gboolean busy;
         gint percent;
+        GstBufferingMode mode;
+        gint avg_in, avg_out;
+        gint64 buffering_left;
 
         gst_query_parse_buffering_percent (query, &busy, &percent);
-        gst_query_parse_buffering_range (query, &format, &start, &stop, NULL);
+        gst_query_parse_buffering_range (query, &format, &start, &stop,
+            &buffering_total);
+        gst_query_parse_buffering_stats (query, &mode, &avg_in, &avg_out,
+            &buffering_left);
 
+        /* note that we could start the playback when buffering_left < remaining
+         * playback time */
+        GST_DEBUG ("buffering total %" G_GINT64_FORMAT " ms, left %"
+            G_GINT64_FORMAT " ms", buffering_total, buffering_left);
         GST_DEBUG ("start %" G_GINT64_FORMAT ", stop %" G_GINT64_FORMAT,
             start, stop);
 
@@ -2429,8 +2447,13 @@ static gboolean
 handle_expose_cb (GtkWidget * widget, GdkEventExpose * event, gpointer data)
 {
   if (state < GST_STATE_PAUSED) {
-    gdk_draw_rectangle (widget->window, widget->style->black_gc, TRUE,
-        0, 0, widget->allocation.width, widget->allocation.height);
+    GtkAllocation allocation;
+    GdkWindow *window = gtk_widget_get_window (widget);
+    GtkStyle *style = gtk_widget_get_style (widget);
+
+    gtk_widget_get_allocation (widget, &allocation);
+    gdk_draw_rectangle (window, style->black_gc, TRUE, 0, 0,
+        allocation.width, allocation.height);
   }
   return FALSE;
 }
@@ -2439,15 +2462,23 @@ static void
 realize_cb (GtkWidget * widget, gpointer data)
 {
 #if GTK_CHECK_VERSION(2,18,0)
-  /* This is here just for pedagogical purposes, GDK_WINDOW_XID will call it
-   * as well */
-  if (!gdk_window_ensure_native (widget->window))
-    g_error ("Couldn't create native window needed for GstXOverlay!");
+  {
+    GdkWindow *window = gtk_widget_get_window (widget);
+
+    /* This is here just for pedagogical purposes, GDK_WINDOW_XID will call it
+     * as well */
+    if (!gdk_window_ensure_native (window))
+      g_error ("Couldn't create native window needed for GstXOverlay!");
+  }
 #endif
 
 #ifdef HAVE_X
-  embed_xid = GDK_WINDOW_XID (video_window->window);
-  g_print ("Window realize: video window XID = %lu\n", embed_xid);
+  {
+    GdkWindow *window = gtk_widget_get_window (video_window);
+
+    embed_xid = GDK_WINDOW_XID (window);
+    g_print ("Window realize: video window XID = %lu\n", embed_xid);
+  }
 #endif
 }
 
@@ -2921,8 +2952,10 @@ main (int argc, char **argv)
    * asks for the XID of the window to render onto */
   gtk_widget_realize (window);
 
+#ifdef HAVE_X
   /* we should have the XID now */
   g_assert (embed_xid != 0);
+#endif
 
   if (verbose) {
     g_signal_connect (pipeline, "deep_notify",

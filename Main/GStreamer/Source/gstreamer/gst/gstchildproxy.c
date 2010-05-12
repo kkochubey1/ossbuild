@@ -281,7 +281,7 @@ gst_child_proxy_get_valist (GstObject * object,
     if (!gst_child_proxy_lookup (object, name, &target, &pspec))
       goto not_found;
 
-    g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+    g_value_init (&value, pspec->value_type);
     g_object_get_property (G_OBJECT (target), pspec->name, &value);
     gst_object_unref (target);
 
@@ -388,8 +388,13 @@ gst_child_proxy_set_valist (GstObject * object,
     if (!gst_child_proxy_lookup (object, name, &target, &pspec))
       goto not_found;
 
+#if GLIB_CHECK_VERSION(2,23,3)
+    G_VALUE_COLLECT_INIT (&value, pspec->value_type, var_args,
+        G_VALUE_NOCOPY_CONTENTS, &error);
+#else
     g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
     G_VALUE_COLLECT (&value, var_args, G_VALUE_NOCOPY_CONTENTS, &error);
+#endif
     if (error)
       goto cant_copy;
 

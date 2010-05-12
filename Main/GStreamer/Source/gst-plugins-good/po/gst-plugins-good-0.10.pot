@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gst-plugins-good 0.10.21\n"
+"Project-Id-Version: gst-plugins-good 0.10.22\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-09 00:23+0000\n"
+"POT-Creation-Date: 2010-04-28 02:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,81 +15,81 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ext/esd/esdsink.c:256 ext/esd/esdsink.c:361
+#: ext/esd/esdsink.c:252 ext/esd/esdsink.c:357
 msgid "Could not establish connection to sound server"
 msgstr ""
 
-#: ext/esd/esdsink.c:263
+#: ext/esd/esdsink.c:259
 msgid "Failed to query sound server capabilities"
 msgstr ""
 
 #. TRANSLATORS: 'song title' by 'artist name'
-#: ext/pulse/pulsesink.c:2235
+#: ext/pulse/pulsesink.c:2237
 #, c-format
 msgid "'%s' by '%s'"
 msgstr ""
 
-#: ext/flac/gstflacdec.c:1080 ext/libpng/gstpngdec.c:343
-#: ext/libpng/gstpngdec.c:353 ext/libpng/gstpngdec.c:552
-#: ext/wavpack/gstwavpackparse.c:1170 gst/avi/gstavidemux.c:5070
+#: ext/flac/gstflacdec.c:1117 ext/libpng/gstpngdec.c:340
+#: ext/libpng/gstpngdec.c:350 ext/libpng/gstpngdec.c:549
+#: ext/wavpack/gstwavpackparse.c:1170 gst/avi/gstavidemux.c:5110
 msgid "Internal data stream error."
 msgstr ""
 
-#: ext/jpeg/gstjpegdec.c:853 ext/jpeg/gstjpegdec.c:1264
+#: ext/jpeg/gstjpegdec.c:850 ext/jpeg/gstjpegdec.c:1264
 msgid "Failed to decode JPEG image"
 msgstr ""
 
-#: ext/shout2/gstshout2.c:580
+#: ext/shout2/gstshout2.c:576
 msgid "Could not connect to server"
 msgstr ""
 
-#: gst/avi/gstavimux.c:1833
+#: gst/avi/gstavimux.c:1846
 msgid "No or invalid input audio, AVI stream will be corrupt."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:515 gst/qtdemux/qtdemux.c:519
+#: gst/qtdemux/qtdemux.c:513 gst/qtdemux/qtdemux.c:517
 msgid "This file contains no playable streams."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:533 gst/qtdemux/qtdemux.c:1547
-#: gst/qtdemux/qtdemux.c:1802 gst/qtdemux/qtdemux.c:3110
-#: gst/qtdemux/qtdemux.c:3167
+#: gst/qtdemux/qtdemux.c:531 gst/qtdemux/qtdemux.c:1545
+#: gst/qtdemux/qtdemux.c:1800 gst/qtdemux/qtdemux.c:3108
+#: gst/qtdemux/qtdemux.c:3165
 msgid "This file is invalid and cannot be played."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:1859
+#: gst/qtdemux/qtdemux.c:1857
 msgid "This file is incomplete and cannot be played."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:3833 gst/qtdemux/qtdemux.c:3840
-#: gst/qtdemux/qtdemux.c:4308 gst/qtdemux/qtdemux.c:4704
-#: gst/qtdemux/qtdemux.c:4710 gst/qtdemux/qtdemux.c:5976
+#: gst/qtdemux/qtdemux.c:3831 gst/qtdemux/qtdemux.c:3838
+#: gst/qtdemux/qtdemux.c:4306 gst/qtdemux/qtdemux.c:4704
+#: gst/qtdemux/qtdemux.c:4710 gst/qtdemux/qtdemux.c:6123
 msgid "This file is corrupt and cannot be played."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:4021
+#: gst/qtdemux/qtdemux.c:4019
 msgid "The video in this file might not play correctly."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:4112
+#: gst/qtdemux/qtdemux.c:4110
 #, c-format
 msgid "This file contains too many streams. Only playing first %d"
 msgstr ""
 
-#: gst/rtsp/gstrtspsrc.c:4586
+#: gst/rtsp/gstrtspsrc.c:4654
 msgid ""
 "No supported stream was found. You might need to install a GStreamer RTSP "
 "extension plugin for Real media streams."
 msgstr ""
 
-#: gst/rtsp/gstrtspsrc.c:4591
+#: gst/rtsp/gstrtspsrc.c:4659
 msgid ""
 "No supported stream was found. You might need to allow more transport "
 "protocols or may otherwise be missing the right GStreamer RTSP extension "
 "plugin."
 msgstr ""
 
-#: gst/wavparse/gstwavparse.c:2045
+#: gst/wavparse/gstwavparse.c:2042
 msgid "Internal data flow error."
 msgstr ""
 
@@ -193,29 +193,29 @@ msgstr ""
 msgid "Monitor"
 msgstr ""
 
-#: sys/oss/gstosssink.c:402
+#: sys/oss/gstosssink.c:398
 msgid ""
 "Could not open audio device for playback. Device is being used by another "
 "application."
 msgstr ""
 
-#: sys/oss/gstosssink.c:409
+#: sys/oss/gstosssink.c:405
 msgid ""
 "Could not open audio device for playback. You don't have permission to open "
 "the device."
 msgstr ""
 
-#: sys/oss/gstosssink.c:417
+#: sys/oss/gstosssink.c:413
 msgid "Could not open audio device for playback."
 msgstr ""
 
-#: sys/oss/gstosssrc.c:373
+#: sys/oss/gstosssrc.c:370
 msgid ""
 "Could not open audio device for recording. You don't have permission to open "
 "the device."
 msgstr ""
 
-#: sys/oss/gstosssrc.c:381
+#: sys/oss/gstosssrc.c:378
 msgid "Could not open audio device for recording."
 msgstr ""
 
@@ -247,17 +247,17 @@ msgstr ""
 msgid "AUX 2 Out"
 msgstr ""
 
-#: sys/v4l2/gstv4l2src.c:858
+#: sys/v4l2/gstv4l2src.c:855
 #, c-format
 msgid "Error reading %d bytes from device '%s'."
 msgstr ""
 
-#: sys/v4l2/gstv4l2src.c:884
+#: sys/v4l2/gstv4l2src.c:881
 #, c-format
 msgid "Got unexpected frame size of %u instead of %u."
 msgstr ""
 
-#: sys/v4l2/gstv4l2src.c:902
+#: sys/v4l2/gstv4l2src.c:899
 #, c-format
 msgid "Error reading %d bytes on device '%s'."
 msgstr ""
@@ -354,44 +354,44 @@ msgstr ""
 msgid "Failed to set input %d on device %s."
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:82
+#: sys/v4l2/v4l2src_calls.c:81
 #, c-format
 msgid "Could not enqueue buffers in device '%s'."
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:198
+#: sys/v4l2/v4l2src_calls.c:197
 #, c-format
 msgid "Failed trying to get video frames from device '%s'."
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:200
+#: sys/v4l2/v4l2src_calls.c:199
 #, c-format
 msgid "Failed after %d tries. device %s. system error: %s"
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:239
+#: sys/v4l2/v4l2src_calls.c:238
 #, c-format
 msgid "Could not get parameters on device '%s'"
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:269
+#: sys/v4l2/v4l2src_calls.c:268
 msgid "Video input device did not accept new frame rate setting."
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:330
+#: sys/v4l2/v4l2src_calls.c:329
 #, c-format
 msgid "Could not map buffers from device '%s'"
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:338
+#: sys/v4l2/v4l2src_calls.c:337
 #, c-format
 msgid "The driver of device '%s' does not support any known capture method."
 msgstr ""
 
-#: sys/ximage/gstximagesrc.c:719
+#: sys/ximage/gstximagesrc.c:710
 msgid "Changing resolution at runtime is not yet supported."
 msgstr ""
 
-#: sys/ximage/gstximagesrc.c:733
+#: sys/ximage/gstximagesrc.c:724
 msgid "Cannot operate without a clock"
 msgstr ""

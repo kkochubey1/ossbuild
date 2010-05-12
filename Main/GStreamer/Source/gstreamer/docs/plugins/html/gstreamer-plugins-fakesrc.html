@@ -8,10 +8,8 @@
 <link rel="up" href="ch01.html" title="gstreamer Elements">
 <link rel="prev" href="gstreamer-plugins-capsfilter.html" title="capsfilter">
 <link rel="next" href="gstreamer-plugins-fakesink.html" title="fakesink">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gstreamer Elements">
-<link rel="chapter" href="ch02.html" title="gstreamer Plugins">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -100,10 +98,8 @@ a wide range of buffers and can operate in various scheduling modes.
 It is mostly used as a testing element, one trivial example for testing
 basic <span class="application">GStreamer</span> core functionality is:
 </p>
-<p>
-</p>
 <div class="refsect2" title="Example launch line">
-<a name="id496415"></a><h3>Example launch line</h3>
+<a name="id469996"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -118,9 +114,8 @@ basic <span class="application">GStreamer</span> core functionality is:
 sends an EOS.
 </div>
 <p>
+Last reviewed on 2008-06-20 (0.10.21)
 </p>
-<p>
-Last reviewed on 2008-06-20 (0.10.21)</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gstreamer-plugins-fakesrc.details"></a><h2>Details</h2>
@@ -128,7 +123,8 @@ Last reviewed on 2008-06-20 (0.10.21)</p>
 <a name="GstFakeSrc-struct"></a><h3>GstFakeSrc</h3>
 <pre class="programlisting">typedef struct _GstFakeSrc GstFakeSrc;</pre>
 <p>
-Opaque <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrc"><span class="type">GstFakeSrc</span></a> data structure.</p>
+Opaque <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrc"><span class="type">GstFakeSrc</span></a> data structure.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="enum GstFakeSrcDataType">
@@ -139,18 +135,19 @@ Opaque <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrc"><span cl
 } GstFakeSrcDataType;
 </pre>
 <p>
-The different ways buffers are allocated.</p>
+The different ways buffers are allocated.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="FAKE-SRC-DATA-ALLOCATE:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_DATA_ALLOCATE</code></span></p></td>
-<td> allocate buffers
+<td>allocate buffers
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-DATA-SUBBUFFER:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_DATA_SUBBUFFER</code></span></p></td>
-<td> subbuffer each buffer
+<td>subbuffer each buffer
 </td>
 </tr>
 </tbody>
@@ -168,33 +165,34 @@ The different ways buffers are allocated.</p>
 } GstFakeSrcFillType;
 </pre>
 <p>
-The different ways of filling the buffers.</p>
+The different ways of filling the buffers.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="FAKE-SRC-FILLTYPE-NOTHING:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_FILLTYPE_NOTHING</code></span></p></td>
-<td> do not fill buffers 
+<td>do not fill buffers 
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-FILLTYPE-ZERO:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_FILLTYPE_ZERO</code></span></p></td>
-<td> fill buffers with 0
+<td>fill buffers with 0
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-FILLTYPE-RANDOM:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_FILLTYPE_RANDOM</code></span></p></td>
-<td> fill buffers with random bytes
+<td>fill buffers with random bytes
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-FILLTYPE-PATTERN:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_FILLTYPE_PATTERN</code></span></p></td>
-<td> fill buffers with a pattern
+<td>fill buffers with a pattern
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-FILLTYPE-PATTERN-CONT:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_FILLTYPE_PATTERN_CONT</code></span></p></td>
-<td> fill buffers with a continuous pattern
+<td>fill buffers with a continuous pattern
 </td>
 </tr>
 </tbody>
@@ -215,48 +213,49 @@ The different ways of filling the buffers.</p>
 } GstFakeSrcOutputType;
 </pre>
 <p>
-The different output types. Unused currently.</p>
+The different output types. Unused currently.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="FAKE-SRC-FIRST-LAST-LOOP:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_FIRST_LAST_LOOP</code></span></p></td>
-<td> first pad then last pad
+<td>first pad then last pad
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-LAST-FIRST-LOOP:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_LAST_FIRST_LOOP</code></span></p></td>
-<td> last pad then first pad
+<td>last pad then first pad
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-PING-PONG:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_PING_PONG</code></span></p></td>
-<td> ping pong between pads
+<td>ping pong between pads
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-ORDERED-RANDOM:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_ORDERED_RANDOM</code></span></p></td>
-<td> ordered random pad
+<td>ordered random pad
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-RANDOM:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_RANDOM</code></span></p></td>
-<td> random pad
+<td>random pad
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-PATTERN-LOOP:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_PATTERN_LOOP</code></span></p></td>
-<td> loop between pads in a particular pattern
+<td>loop between pads in a particular pattern
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-PING-PONG-PATTERN:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_PING_PONG_PATTERN</code></span></p></td>
-<td> ping pong based on a pattern
+<td>ping pong based on a pattern
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-GET-ALWAYS-SUCEEDS:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_GET_ALWAYS_SUCEEDS</code></span></p></td>
-<td> a get always succeeds on a pad
+<td>a get always succeeds on a pad
 </td>
 </tr>
 </tbody>
@@ -272,23 +271,24 @@ The different output types. Unused currently.</p>
 } GstFakeSrcSizeType;
 </pre>
 <p>
-The different size of the allocated buffers.</p>
+The different size of the allocated buffers.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="FAKE-SRC-SIZETYPE-EMPTY:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_SIZETYPE_EMPTY</code></span></p></td>
-<td> create empty buffers
+<td>create empty buffers
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-SIZETYPE-FIXED:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_SIZETYPE_FIXED</code></span></p></td>
-<td> fixed buffer size (sizemax sized)
+<td>fixed buffer size (sizemax sized)
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SRC-SIZETYPE-RANDOM:CAPS"></a><span class="term"><code class="literal">FAKE_SRC_SIZETYPE_RANDOM</code></span></p></td>
-<td> random buffer size (sizemin &lt;= size &lt;= sizemax)
+<td>random buffer size (sizemin &lt;= size &lt;= sizemax)
 </td>
 </tr>
 </tbody>
@@ -417,7 +417,8 @@ The different size of the allocated buffers.</p>
 <a name="GstFakeSrc--format"></a><h3>The <code class="literal">"format"</code> property</h3>
 <pre class="programlisting">  "format"                   <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstFormat.html#GstFormat"><span class="type">GstFormat</span></a>             : Read / Write</pre>
 <p>
-Set the format of the newsegment events to produce.</p>
+Set the format of the newsegment events to produce.
+</p>
 <p>Default value: GST_FORMAT_BYTES</p>
 <p class="since">Since 0.10.20</p>
 </div>
@@ -431,23 +432,24 @@ Set the format of the newsegment events to produce.</p>
                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a>     *pad,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)      : Run Last</pre>
 <p>
-This signal gets emitted before sending the buffer.</p>
+This signal gets emitted before sending the buffer.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fakesrc</code></em> :</span></p></td>
-<td> the fakesrc instance
+<td>the fakesrc instance
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td> the buffer that will be pushed
+<td>the buffer that will be pushed
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td> the pad that will sent it
+<td>the pad that will sent it
 </td>
 </tr>
 <tr>
@@ -465,6 +467,6 @@ This signal gets emitted before sending the buffer.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

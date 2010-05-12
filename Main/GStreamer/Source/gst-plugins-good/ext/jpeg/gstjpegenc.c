@@ -36,20 +36,13 @@
 #include <string.h>
 
 #include "gstjpegenc.h"
+#include "gstjpeg.h"
 #include <gst/video/video.h>
 
 /* experimental */
 /* setting smoothig seems to have no effect in libjepeg
 #define ENABLE_SMOOTHING 1
 */
-/*#define ENABLE_COLORSPACE_RGB 1 */
-
-/* elementfactory information */
-static const GstElementDetails gst_jpegenc_details =
-GST_ELEMENT_DETAILS ("JPEG image encoder",
-    "Codec/Encoder/Image",
-    "Encode images in JPEG format",
-    "Wim Taymans <wim.taymans@tvd.be>");
 
 GST_DEBUG_CATEGORY_STATIC (jpegenc_debug);
 #define GST_CAT_DEFAULT jpegenc_debug
@@ -87,9 +80,6 @@ enum
   PROP_SMOOTHING,
   PROP_IDCT_METHOD
 };
-
-extern GType gst_idct_method_get_type (void);
-#define GST_TYPE_IDCT_METHOD (gst_idct_method_get_type())
 
 static void gst_jpegenc_base_init (gpointer g_class);
 static void gst_jpegenc_class_init (GstJpegEnc * klass);
@@ -162,7 +152,9 @@ gst_jpegenc_base_init (gpointer g_class)
       gst_static_pad_template_get (&gst_jpegenc_sink_pad_template));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_jpegenc_src_pad_template));
-  gst_element_class_set_details (element_class, &gst_jpegenc_details);
+  gst_element_class_set_details_simple (element_class, "JPEG image encoder",
+      "Codec/Encoder/Image",
+      "Encode images in JPEG format", "Wim Taymans <wim.taymans@tvd.be>");
 }
 
 static void
@@ -189,7 +181,7 @@ gst_jpegenc_class_init (GstJpegEnc * klass)
       g_param_spec_int ("quality", "Quality", "Quality of encoding",
           0, 100, JPEG_DEFAULT_QUALITY, G_PARAM_READWRITE));
 
-#if ENABLE_SMOOTHING
+#ifdef ENABLE_SMOOTHING
   /* disabled, since it doesn't seem to work */
   g_object_class_install_property (gobject_class, PROP_SMOOTHING,
       g_param_spec_int ("smoothing", "Smoothing", "Smoothing factor",
@@ -282,10 +274,7 @@ gst_jpegenc_init (GstJpegEnc * jpegenc)
 
   jpegenc->srcpad =
       gst_pad_new_from_static_template (&gst_jpegenc_src_pad_template, "src");
-  gst_pad_set_getcaps_function (jpegenc->sinkpad,
-      GST_DEBUG_FUNCPTR (gst_jpegenc_getcaps));
-  /*gst_pad_set_setcaps_function (jpegenc->sinkpad, gst_jpegenc_setcaps); */
-  gst_pad_use_fixed_caps (jpegenc->sinkpad);
+  gst_pad_use_fixed_caps (jpegenc->srcpad);
   gst_element_add_pad (GST_ELEMENT (jpegenc), jpegenc->srcpad);
 
   /* reset the initial video state */
@@ -325,38 +314,30 @@ static GstCaps *
 gst_jpegenc_getcaps (GstPad * pad)
 {
   GstJpegEnc *jpegenc = GST_JPEGENC (gst_pad_get_parent (pad));
-  GstPad *otherpad;
   GstCaps *caps;
-  const char *name;
   int i;
   GstStructure *structure = NULL;
 
   /* we want to proxy properties like width, height and framerate from the
      other end of the element */
-  otherpad = (pad == jpegenc->srcpad) ? jpegenc->sinkpad : jpegenc->srcpad;
 
-  caps = gst_pad_peer_get_caps (otherpad);
-  if (caps == NULL)
+  caps = gst_pad_get_allowed_caps (jpegenc->srcpad);
+
+  if (caps == NULL) {
     caps = gst_caps_copy (gst_pad_get_pad_template_caps (pad));
-  else
-    caps = gst_caps_make_writable (caps);
-
-  if (pad == jpegenc->srcpad) {
-    name = "image/jpeg";
+  } else if (gst_caps_is_any (caps)) {
+    gst_caps_unref (caps);
+    caps = gst_caps_copy (gst_pad_get_pad_template_caps (pad));
   } else {
-    name = "video/x-raw-yuv";
+    caps = gst_caps_make_writable (caps);
   }
 
   for (i = 0; i < gst_caps_get_size (caps); i++) {
     structure = gst_caps_get_structure (caps, i);
 
-    gst_structure_set_name (structure, name);
-    gst_structure_remove_field (structure, "format");
-    /* ... but for the sink pad, we only do I420 anyway, so add that */
-    if (pad == jpegenc->sinkpad) {
-      gst_structure_set (structure, "format", GST_TYPE_FOURCC,
-          GST_STR_FOURCC ("I420"), NULL);
-    }
+    gst_structure_set_name (structure, "video/x-raw-yuv");
+    gst_structure_set (structure, "format", GST_TYPE_FOURCC,
+        GST_STR_FOURCC ("I420"), NULL);
   }
   gst_object_unref (jpegenc);
 
@@ -366,40 +347,32 @@ gst_jpegenc_getcaps (GstPad * pad)
 static gboolean
 gst_jpegenc_setcaps (GstPad * pad, GstCaps * caps)
 {
-  GstJpegEnc *jpegenc = GST_JPEGENC (gst_pad_get_parent (pad));
-  GstStructure *structure;
-  GstCaps *othercaps;
-  GstPad *otherpad;
-  gboolean ret;
+  GstJpegEnc *jpegenc;
   const GValue *framerate;
+  GstStructure *structure;
+  GstCaps *pcaps;
+  gboolean ret;
 
-  otherpad = (pad == jpegenc->srcpad) ? jpegenc->sinkpad : jpegenc->srcpad;
+  jpegenc = GST_JPEGENC (gst_pad_get_parent (pad));
 
   structure = gst_caps_get_structure (caps, 0);
   framerate = gst_structure_get_value (structure, "framerate");
   gst_structure_get_int (structure, "width", &jpegenc->width);
   gst_structure_get_int (structure, "height", &jpegenc->height);
 
-  othercaps = gst_caps_copy (gst_pad_get_pad_template_caps (otherpad));
-  if (framerate) {
-    gst_caps_set_simple (othercaps,
-        "width", G_TYPE_INT, jpegenc->width,
-        "height", G_TYPE_INT, jpegenc->height,
-        "framerate", GST_TYPE_FRACTION,
-        gst_value_get_fraction_numerator (framerate),
-        gst_value_get_fraction_denominator (framerate), NULL);
-  } else {
-    gst_caps_set_simple (othercaps,
-        "width", G_TYPE_INT, jpegenc->width,
-        "height", G_TYPE_INT, jpegenc->height, NULL);
-  }
+  pcaps = gst_caps_new_simple ("image/jpeg",
+      "width", G_TYPE_INT, jpegenc->width,
+      "height", G_TYPE_INT, jpegenc->height, NULL);
+  structure = gst_caps_get_structure (pcaps, 0);
+  if (framerate)
+    gst_structure_set_value (structure, "framerate", framerate);
 
-  ret = gst_pad_set_caps (jpegenc->srcpad, othercaps);
-  gst_caps_unref (othercaps);
+  ret = gst_pad_set_caps (jpegenc->srcpad, pcaps);
 
   if (ret)
     gst_jpegenc_resync (jpegenc);
 
+  gst_caps_unref (pcaps);
   gst_object_unref (jpegenc);
 
   return ret;
@@ -418,7 +391,7 @@ gst_jpegenc_resync (GstJpegEnc * jpegenc)
 
   GST_DEBUG_OBJECT (jpegenc, "width %d, height %d", width, height);
 
-#if ENABLE_COLORSPACE_RGB
+#ifdef ENABLE_COLORSPACE_RGB
   switch (jpegenc->format) {
     case GST_COLORSPACE_RGB24:
       jpegenc->bufsize = jpegenc->width * jpegenc->height * 3;
@@ -452,7 +425,7 @@ gst_jpegenc_resync (GstJpegEnc * jpegenc)
       }
 
       GST_DEBUG_OBJECT (jpegenc, "setting format done");
-#if ENABLE_COLORSPACE_RGB
+#ifdef ENABLE_COLORSPACE_RGB
       break;
     default:
       printf ("gst_jpegenc_resync: unsupported colorspace, using RGB\n");
@@ -583,7 +556,7 @@ gst_jpegenc_set_property (GObject * object, guint prop_id,
     case PROP_QUALITY:
       jpegenc->quality = g_value_get_int (value);
       break;
-#if ENABLE_SMOOTHING
+#ifdef ENABLE_SMOOTHING
     case PROP_SMOOTHING:
       jpegenc->smoothing = g_value_get_int (value);
       break;
@@ -611,7 +584,7 @@ gst_jpegenc_get_property (GObject * object, guint prop_id, GValue * value,
     case PROP_QUALITY:
       g_value_set_int (value, jpegenc->quality);
       break;
-#if ENABLE_SMOOTHING
+#ifdef ENABLE_SMOOTHING
     case PROP_SMOOTHING:
       g_value_set_int (value, jpegenc->smoothing);
       break;

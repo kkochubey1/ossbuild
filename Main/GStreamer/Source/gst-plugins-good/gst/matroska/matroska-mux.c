@@ -69,6 +69,9 @@ enum
 #define  DEFAULT_WRITING_APP             "GStreamer Matroska muxer"
 #define  DEFAULT_MIN_INDEX_INTERVAL      0
 
+/* WAVEFORMATEX is gst_riff_strf_auds + an extra guint16 extension size */
+#define WAVEFORMATEX_SIZE  (2 + sizeof (gst_riff_strf_auds))
+
 static GstStaticPadTemplate src_templ = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
@@ -199,6 +202,7 @@ G_LOCK_DEFINE_STATIC (used_uids);
 
 static void gst_matroska_mux_add_interfaces (GType type);
 
+GType gst_matroska_mux_get_type (void);
 GST_BOILERPLATE_FULL (GstMatroskaMux, gst_matroska_mux, GstElement,
     GST_TYPE_ELEMENT, gst_matroska_mux_add_interfaces);
 
@@ -740,8 +744,8 @@ skip_details:
       || !strcmp (mimetype, "video/x-h263")
       || !strcmp (mimetype, "video/x-msmpeg")
       || !strcmp (mimetype, "video/x-wmv")) {
-    BITMAPINFOHEADER *bih;
-    gint size = sizeof (BITMAPINFOHEADER);
+    gst_riff_strf_vids *bih;
+    gint size = sizeof (gst_riff_strf_vids);
     guint32 fourcc = 0;
 
     if (!strcmp (mimetype, "video/x-xvid"))
@@ -801,22 +805,22 @@ skip_details:
     if (!fourcc)
       goto refuse_caps;
 
-    bih = g_new0 (BITMAPINFOHEADER, 1);
-    GST_WRITE_UINT32_LE (&bih->bi_size, size);
-    GST_WRITE_UINT32_LE (&bih->bi_width, videocontext->pixel_width);
-    GST_WRITE_UINT32_LE (&bih->bi_height, videocontext->pixel_height);
-    GST_WRITE_UINT32_LE (&bih->bi_compression, fourcc);
-    GST_WRITE_UINT16_LE (&bih->bi_planes, (guint16) 1);
-    GST_WRITE_UINT16_LE (&bih->bi_bit_count, (guint16) 24);
-    GST_WRITE_UINT32_LE (&bih->bi_size_image, videocontext->pixel_width *
+    bih = g_new0 (gst_riff_strf_vids, 1);
+    GST_WRITE_UINT32_LE (&bih->size, size);
+    GST_WRITE_UINT32_LE (&bih->width, videocontext->pixel_width);
+    GST_WRITE_UINT32_LE (&bih->height, videocontext->pixel_height);
+    GST_WRITE_UINT32_LE (&bih->compression, fourcc);
+    GST_WRITE_UINT16_LE (&bih->planes, (guint16) 1);
+    GST_WRITE_UINT16_LE (&bih->bit_cnt, (guint16) 24);
+    GST_WRITE_UINT32_LE (&bih->image_size, videocontext->pixel_width *
         videocontext->pixel_height * 3);
 
     /* process codec private/initialization data, if any */
     if (codec_buf) {
       size += GST_BUFFER_SIZE (codec_buf);
       bih = g_realloc (bih, size);
-      GST_WRITE_UINT32_LE (&bih->bi_size, size);
-      memcpy ((guint8 *) bih + sizeof (BITMAPINFOHEADER),
+      GST_WRITE_UINT32_LE (&bih->size, size);
+      memcpy ((guint8 *) bih + sizeof (gst_riff_strf_vids),
           GST_BUFFER_DATA (codec_buf), GST_BUFFER_SIZE (codec_buf));
     }
 
@@ -1277,10 +1281,10 @@ speex_streamheader_to_codecdata (const GValue * streamheader,
   return TRUE;
 }
 
-static gchar *
+static const gchar *
 aac_codec_data_to_codec_id (const GstBuffer * buf)
 {
-  gchar *result;
+  const gchar *result;
   gint profile;
 
   /* default to MAIN */
@@ -2079,8 +2083,8 @@ gst_matroska_mux_write_simple_tag (const GstTagList * list, const gchar * tag,
   /* TODO: more sensible tag mappings */
   struct
   {
-    gchar *matroska_tagname;
-    gchar *gstreamer_tagname;
+    const gchar *matroska_tagname;
+    const gchar *gstreamer_tagname;
   }
   tag_conv[] = {
     {
@@ -2343,7 +2347,7 @@ gst_matroska_mux_best_pad (GstMatroskaMux * mux, gboolean * popped)
  * 
  * Returns: New buffer.
  */
-GstBuffer *
+static GstBuffer *
 gst_matroska_mux_create_buffer_header (GstMatroskaTrackContext * track,
     gint16 relative_timestamp, int flags)
 {

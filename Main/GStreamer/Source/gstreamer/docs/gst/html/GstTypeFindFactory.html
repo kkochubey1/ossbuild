@@ -8,15 +8,8 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="gstreamer-GstTypeFind.html" title="GstTypeFind">
 <link rel="next" href="gstreamer-GstUriHandler.html" title="GstUriHandler">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="gstreamer.html" title="GStreamer Overview">
-<link rel="chapter" href="libgstreamer.html" title="GStreamer Core Library">
-<link rel="chapter" href="gstreamer-support.html" title="GStreamer Core Support">
-<link rel="chapter" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
-<link rel="glossary" href="annotation-glossary.html" title="Annotation Glossary">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -50,12 +43,12 @@
 #include &lt;gst/gst.h&gt;
 
                     <a class="link" href="GstTypeFindFactory.html#GstTypeFindFactory-struct" title="GstTypeFindFactory">GstTypeFindFactory</a>;
-<a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-get-list" title="gst_type_find_factory_get_list ()">gst_type_find_factory_get_list</a>      (void);
+<a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-get-list" title="gst_type_find_factory_get_list ()">gst_type_find_factory_get_list</a>      (<em class="parameter"><code><span class="type">void</span></code></em>);
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **            <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-get-extensions" title="gst_type_find_factory_get_extensions ()">gst_type_find_factory_get_extensions</a>
-                                                        (<a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="returnvalue">GstTypeFindFactory</span></a> *factory);
-<a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-get-caps" title="gst_type_find_factory_get_caps ()">gst_type_find_factory_get_caps</a>      (<a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="returnvalue">GstTypeFindFactory</span></a> *factory);
-<span class="returnvalue">void</span>                <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-call-function" title="gst_type_find_factory_call_function ()">gst_type_find_factory_call_function</a> (<a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="returnvalue">GstTypeFindFactory</span></a> *factory,
-                                                         <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="GstTypeFind"><span class="returnvalue">GstTypeFind</span></a> *find);
+                                                        (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>);
+<a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-get-caps" title="gst_type_find_factory_get_caps ()">gst_type_find_factory_get_caps</a>      (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-call-function" title="gst_type_find_factory_call_function ()">gst_type_find_factory_call_function</a> (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="GstTypeFind"><span class="type">GstTypeFind</span></a> *find</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
@@ -78,7 +71,7 @@ the section <GTKDOCLINK HREF="gstreamer-Writing-typefind-functions">
 <p>
 </p>
 <div class="example">
-<a name="id618401"></a><p class="title"><b>Example 17. how to write a simple typefinder</b></p>
+<a name="id571892"></a><p class="title"><b>Example 17. how to write a simple typefinder</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -143,7 +136,7 @@ the section <GTKDOCLINK HREF="gstreamer-Writing-typefind-functions">
   MyTypeFind <span class="symbol">*</span>find <span class="symbol">= (</span>MyTypeFind <span class="symbol">*)</span> data<span class="symbol">;</span>
   <span class="keyword">if</span> <span class="symbol">(</span>probability <span class="symbol">&gt;</span> find<span class="symbol">-&gt;</span>probability<span class="symbol">) {</span>
     find<span class="symbol">-&gt;</span>probability <span class="symbol">=</span> probability<span class="symbol">;</span>
-    <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#gst-caps-replace">gst_caps_replace</a></span> <span class="symbol">(&amp;</span>find<span class="symbol">-&gt;</span>caps<span class="symbol">,</span> caps<span class="symbol">);</span>
+    <span class="function"><a href="../gstreamer-0.10/gstreamer-GstCaps.html#gst-caps-replace">gst_caps_replace</a></span> <span class="symbol">(&amp;</span>find<span class="symbol">-&gt;</span>caps<span class="symbol">,</span> caps<span class="symbol">);</span>
   <span class="symbol">}</span>
 <span class="symbol">}</span>
 <span class="gtkdoc kwb">static</span> GstCaps <span class="symbol">*</span>
@@ -152,11 +145,11 @@ the section <GTKDOCLINK HREF="gstreamer-Writing-typefind-functions">
   GList <span class="symbol">*</span>walk<span class="symbol">, *</span>type_list<span class="symbol">;</span>
   MyTypeFind find <span class="symbol">= {</span>data<span class="symbol">,</span> size<span class="symbol">,</span> <span class="number">0</span><span class="symbol">,</span> NULL<span class="symbol">};</span>
   GstTypeFind gst_find <span class="symbol">= {</span>my_peek<span class="symbol">,</span> my_suggest<span class="symbol">, &amp;</span>find<span class="symbol">, };</span>
-  walk <span class="symbol">=</span> type_list <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstTypeFindFactory.html#gst-type-find-factory-get-list">gst_type_find_factory_get_list</a></span> <span class="symbol">();</span>
+  walk <span class="symbol">=</span> type_list <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/GstTypeFindFactory.html#gst-type-find-factory-get-list">gst_type_find_factory_get_list</a></span> <span class="symbol">();</span>
   <span class="keyword">while</span> <span class="symbol">(</span>walk<span class="symbol">) {</span>
     GstTypeFindFactory <span class="symbol">*</span>factory <span class="symbol">=</span> <span class="function">GST_TYPE_FIND_FACTORY</span> <span class="symbol">(</span>walk<span class="symbol">-&gt;</span>data<span class="symbol">);</span>
     walk <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#g-list-next">g_list_next</a></span> <span class="symbol">(</span>walk<span class="symbol">)</span>
-    <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstTypeFindFactory.html#gst-type-find-factory-call-function">gst_type_find_factory_call_function</a></span> <span class="symbol">(</span>factory<span class="symbol">, &amp;</span>gst_find<span class="symbol">);</span>
+    <span class="function"><a href="../gstreamer-0.10/GstTypeFindFactory.html#gst-type-find-factory-call-function">gst_type_find_factory_call_function</a></span> <span class="symbol">(</span>factory<span class="symbol">, &amp;</span>gst_find<span class="symbol">);</span>
   <span class="symbol">}</span>
   <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#g-list-free">g_list_free</a></span> <span class="symbol">(</span>type_list<span class="symbol">);</span>
   <span class="keyword">return</span> find<span class="symbol">.</span>caps<span class="symbol">;</span>
@@ -175,7 +168,8 @@ identifies the given data. You can get quite a bit more complicated than
 that though.
 </p>
 <p>
-Last reviewed on 2005-11-09 (0.9.4)</p>
+Last reviewed on 2005-11-09 (0.9.4)
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="GstTypeFindFactory.details"></a><h2>Details</h2>
@@ -183,19 +177,21 @@ Last reviewed on 2005-11-09 (0.9.4)</p>
 <a name="GstTypeFindFactory-struct"></a><h3>GstTypeFindFactory</h3>
 <pre class="programlisting">typedef struct _GstTypeFindFactory GstTypeFindFactory;</pre>
 <p>
-Object that stores information about a typefind function.</p>
+Object that stores information about a typefind function.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_type_find_factory_get_list ()">
 <a name="gst-type-find-factory-get-list"></a><h3>gst_type_find_factory_get_list ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             gst_type_find_factory_get_list      (void);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             gst_type_find_factory_get_list      (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 Gets the list of all registered typefind factories. You must free the
 list using gst_plugin_feature_list_free.
 </p>
 <p>
 The returned factories are sorted by highest rank first, and then by
-factory name. (behaviour change since 0.10.26)</p>
+factory name. (behaviour change since 0.10.26)
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
@@ -209,18 +205,19 @@ factory name. (behaviour change since 0.10.26)</p>
 <div class="refsect2" title="gst_type_find_factory_get_extensions ()">
 <a name="gst-type-find-factory-get-extensions"></a><h3>gst_type_find_factory_get_extensions ()</h3>
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **            gst_type_find_factory_get_extensions
-                                                        (<a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="returnvalue">GstTypeFindFactory</span></a> *factory);</pre>
+                                                        (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>);</pre>
 <p>
 Gets the extensions associated with a <a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a>. The returned
 array should not be changed. If you need to change stuff in it, you should
 copy it using <a href="/usr/share/gtk-doc/html/glib/glib-String-Utility-Functions.html#g-strdupv"><code class="function">g_strdupv()</code></a>.  This function may return NULL to indicate
-a 0-length list.</p>
+a 0-length list.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>factory</code></em> :</span></p></td>
-<td> A <a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a>
+<td>A <a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a>
 </td>
 </tr>
 <tr>
@@ -234,15 +231,16 @@ a 0-length list.</p>
 <hr>
 <div class="refsect2" title="gst_type_find_factory_get_caps ()">
 <a name="gst-type-find-factory-get-caps"></a><h3>gst_type_find_factory_get_caps ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_type_find_factory_get_caps      (<a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="returnvalue">GstTypeFindFactory</span></a> *factory);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_type_find_factory_get_caps      (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>);</pre>
 <p>
-Gets the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> associated with a typefind factory.</p>
+Gets the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> associated with a typefind factory.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>factory</code></em> :</span></p></td>
-<td> A <a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a>
+<td>A <a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a>
 </td>
 </tr>
 <tr>
@@ -256,21 +254,22 @@ Gets the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><
 <hr>
 <div class="refsect2" title="gst_type_find_factory_call_function ()">
 <a name="gst-type-find-factory-call-function"></a><h3>gst_type_find_factory_call_function ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_type_find_factory_call_function (<a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="returnvalue">GstTypeFindFactory</span></a> *factory,
-                                                         <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="GstTypeFind"><span class="returnvalue">GstTypeFind</span></a> *find);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_type_find_factory_call_function (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="GstTypeFind"><span class="type">GstTypeFind</span></a> *find</code></em>);</pre>
 <p>
-Calls the <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFindFunction" title="GstTypeFindFunction ()"><span class="type">GstTypeFindFunction</span></a> associated with this factory.</p>
+Calls the <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFindFunction" title="GstTypeFindFunction ()"><span class="type">GstTypeFindFunction</span></a> associated with this factory.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>factory</code></em> :</span></p></td>
-<td> A <a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a>
+<td>A <a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>find</code></em> :</span></p></td>
-<td> A properly setup <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="GstTypeFind"><span class="type">GstTypeFind</span></a> entry. The get_data and suggest_type
+<td>A properly setup <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="GstTypeFind"><span class="type">GstTypeFind</span></a> entry. The get_data and suggest_type
        members must be set.
 </td>
 </tr>
@@ -281,6 +280,6 @@ Calls the <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFindFunction" 
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

@@ -1,4 +1,3 @@
-<ONLINE href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/">
 <ANCHOR id="gst-building" href="gstreamer-0.10/gst-building.html">
 <ANCHOR id="gst-running" href="gstreamer-0.10/gst-running.html">
 <ANCHOR id="gstreamer-Gst" href="gstreamer-0.10/gstreamer-Gst.html">
@@ -887,6 +886,7 @@
 <ANCHOR id="GST-MESSAGE-ASYNC-DONE:CAPS" href="gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-ASYNC-DONE:CAPS">
 <ANCHOR id="GST-MESSAGE-REQUEST-STATE:CAPS" href="gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-REQUEST-STATE:CAPS">
 <ANCHOR id="GST-MESSAGE-STEP-START:CAPS" href="gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-STEP-START:CAPS">
+<ANCHOR id="GST-MESSAGE-QOS:CAPS" href="gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-QOS:CAPS">
 <ANCHOR id="GST-MESSAGE-ANY:CAPS" href="gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-ANY:CAPS">
 <ANCHOR id="GST-MESSAGE-SRC:CAPS" href="gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-SRC:CAPS">
 <ANCHOR id="GST-MESSAGE-SRC-NAME:CAPS" href="gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-SRC-NAME:CAPS">
@@ -944,6 +944,12 @@
 <ANCHOR id="gst-message-new-async-done" href="gstreamer-0.10/gstreamer-GstMessage.html#gst-message-new-async-done">
 <ANCHOR id="gst-message-new-step-start" href="gstreamer-0.10/gstreamer-GstMessage.html#gst-message-new-step-start">
 <ANCHOR id="gst-message-parse-step-start" href="gstreamer-0.10/gstreamer-GstMessage.html#gst-message-parse-step-start">
+<ANCHOR id="gst-message-new-qos" href="gstreamer-0.10/gstreamer-GstMessage.html#gst-message-new-qos">
+<ANCHOR id="gst-message-set-qos-values" href="gstreamer-0.10/gstreamer-GstMessage.html#gst-message-set-qos-values">
+<ANCHOR id="gst-message-set-qos-stats" href="gstreamer-0.10/gstreamer-GstMessage.html#gst-message-set-qos-stats">
+<ANCHOR id="gst-message-parse-qos" href="gstreamer-0.10/gstreamer-GstMessage.html#gst-message-parse-qos">
+<ANCHOR id="gst-message-parse-qos-values" href="gstreamer-0.10/gstreamer-GstMessage.html#gst-message-parse-qos-values">
+<ANCHOR id="gst-message-parse-qos-stats" href="gstreamer-0.10/gstreamer-GstMessage.html#gst-message-parse-qos-stats">
 <ANCHOR id="GstStructureChangeType" href="gstreamer-0.10/gstreamer-GstMessage.html#GstStructureChangeType">
 <ANCHOR id="GST-STRUCTURE-CHANGE-TYPE-PAD-LINK:CAPS" href="gstreamer-0.10/gstreamer-GstMessage.html#GST-STRUCTURE-CHANGE-TYPE-PAD-LINK:CAPS">
 <ANCHOR id="GST-STRUCTURE-CHANGE-TYPE-PAD-UNLINK:CAPS" href="gstreamer-0.10/gstreamer-GstMessage.html#GST-STRUCTURE-CHANGE-TYPE-PAD-UNLINK:CAPS">
@@ -1083,6 +1089,8 @@
 <ANCHOR id="GST-PAD-LINK-FAILED:CAPS" href="gstreamer-0.10/GstPad.html#GST-PAD-LINK-FAILED:CAPS">
 <ANCHOR id="GST-PAD-LINK-SUCCESSFUL:CAPS" href="gstreamer-0.10/GstPad.html#GST-PAD-LINK-SUCCESSFUL:CAPS">
 <ANCHOR id="GstFlowReturn" href="gstreamer-0.10/GstPad.html#GstFlowReturn">
+<ANCHOR id="GST-FLOW-CUSTOM-SUCCESS-2:CAPS" href="gstreamer-0.10/GstPad.html#GST-FLOW-CUSTOM-SUCCESS-2:CAPS">
+<ANCHOR id="GST-FLOW-CUSTOM-SUCCESS-1:CAPS" href="gstreamer-0.10/GstPad.html#GST-FLOW-CUSTOM-SUCCESS-1:CAPS">
 <ANCHOR id="GST-FLOW-CUSTOM-SUCCESS:CAPS" href="gstreamer-0.10/GstPad.html#GST-FLOW-CUSTOM-SUCCESS:CAPS">
 <ANCHOR id="GST-FLOW-RESEND:CAPS" href="gstreamer-0.10/GstPad.html#GST-FLOW-RESEND:CAPS">
 <ANCHOR id="GST-FLOW-OK:CAPS" href="gstreamer-0.10/GstPad.html#GST-FLOW-OK:CAPS">
@@ -1093,6 +1101,8 @@
 <ANCHOR id="GST-FLOW-ERROR:CAPS" href="gstreamer-0.10/GstPad.html#GST-FLOW-ERROR:CAPS">
 <ANCHOR id="GST-FLOW-NOT-SUPPORTED:CAPS" href="gstreamer-0.10/GstPad.html#GST-FLOW-NOT-SUPPORTED:CAPS">
 <ANCHOR id="GST-FLOW-CUSTOM-ERROR:CAPS" href="gstreamer-0.10/GstPad.html#GST-FLOW-CUSTOM-ERROR:CAPS">
+<ANCHOR id="GST-FLOW-CUSTOM-ERROR-1:CAPS" href="gstreamer-0.10/GstPad.html#GST-FLOW-CUSTOM-ERROR-1:CAPS">
+<ANCHOR id="GST-FLOW-CUSTOM-ERROR-2:CAPS" href="gstreamer-0.10/GstPad.html#GST-FLOW-CUSTOM-ERROR-2:CAPS">
 <ANCHOR id="GstActivateMode" href="gstreamer-0.10/GstPad.html#GstActivateMode">
 <ANCHOR id="GST-ACTIVATE-NONE:CAPS" href="gstreamer-0.10/GstPad.html#GST-ACTIVATE-NONE:CAPS">
 <ANCHOR id="GST-ACTIVATE-PUSH:CAPS" href="gstreamer-0.10/GstPad.html#GST-ACTIVATE-PUSH:CAPS">
@@ -1543,8 +1553,6 @@
 <ANCHOR id="gst-registry-lookup-feature" href="gstreamer-0.10/GstRegistry.html#gst-registry-lookup-feature">
 <ANCHOR id="gst-registry-add-path" href="gstreamer-0.10/GstRegistry.html#gst-registry-add-path">
 <ANCHOR id="gst-registry-scan-path" href="gstreamer-0.10/GstRegistry.html#gst-registry-scan-path">
-<ANCHOR id="gst-registry-binary-read-cache" href="gstreamer-0.10/GstRegistry.html#gst-registry-binary-read-cache">
-<ANCHOR id="gst-registry-binary-write-cache" href="gstreamer-0.10/GstRegistry.html#gst-registry-binary-write-cache">
 <ANCHOR id="gst-registry-lookup" href="gstreamer-0.10/GstRegistry.html#gst-registry-lookup">
 <ANCHOR id="gst-registry-remove-feature" href="gstreamer-0.10/GstRegistry.html#gst-registry-remove-feature">
 <ANCHOR id="gst-registry-add-feature" href="gstreamer-0.10/GstRegistry.html#gst-registry-add-feature">
@@ -1735,6 +1743,9 @@
 <ANCHOR id="GST-TAG-GEO-LOCATION-LATITUDE:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-LATITUDE:CAPS">
 <ANCHOR id="GST-TAG-GEO-LOCATION-LONGITUDE:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-LONGITUDE:CAPS">
 <ANCHOR id="GST-TAG-GEO-LOCATION-ELEVATION:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-ELEVATION:CAPS">
+<ANCHOR id="GST-TAG-GEO-LOCATION-CITY:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-CITY:CAPS">
+<ANCHOR id="GST-TAG-GEO-LOCATION-COUNTRY:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-COUNTRY:CAPS">
+<ANCHOR id="GST-TAG-GEO-LOCATION-SUBLOCATION:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-SUBLOCATION:CAPS">
 <ANCHOR id="GST-TAG-SHOW-NAME:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-SHOW-NAME:CAPS">
 <ANCHOR id="GST-TAG-SHOW-SORTNAME:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-SHOW-SORTNAME:CAPS">
 <ANCHOR id="GST-TAG-SHOW-EPISODE-NUMBER:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-SHOW-EPISODE-NUMBER:CAPS">
@@ -1742,6 +1753,7 @@
 <ANCHOR id="GST-TAG-LYRICS:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-LYRICS:CAPS">
 <ANCHOR id="GST-TAG-COMPOSER-SORTNAME:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-COMPOSER-SORTNAME:CAPS">
 <ANCHOR id="GST-TAG-GROUPING:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GROUPING:CAPS">
+<ANCHOR id="GST-TAG-USER-RATING:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-USER-RATING:CAPS">
 <ANCHOR id="gst-tag-register" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-register">
 <ANCHOR id="gst-tag-merge-use-first" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-merge-use-first">
 <ANCHOR id="gst-tag-merge-strings-with-comma" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-merge-strings-with-comma">

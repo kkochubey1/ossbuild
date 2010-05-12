@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/aalib.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
 	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -113,14 +112,17 @@ am_libgstdebug_la_OBJECTS = libgstdebug_la-gstdebug.lo \
 	libgstdebug_la-progressreport.lo libgstdebug_la-tests.lo \
 	libgstdebug_la-testplugin.lo
 libgstdebug_la_OBJECTS = $(am_libgstdebug_la_OBJECTS)
-libgstdebug_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstdebug_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstdebug_la_CFLAGS) $(CFLAGS) \
 	$(libgstdebug_la_LDFLAGS) $(LDFLAGS) -o $@
 libgstefence_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_libgstefence_la_OBJECTS = libgstefence_la-efence.lo
 libgstefence_la_OBJECTS = $(am_libgstefence_la_OBJECTS)
-libgstefence_la_LINK = $(LIBTOOL) --tag=CC \
+libgstefence_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstefence_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstefence_la_CFLAGS) $(CFLAGS) \
 	$(libgstefence_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -132,7 +134,7 @@ am_libgstnavigationtest_la_OBJECTS =  \
 	libgstnavigationtest_la-gstnavigationtest.lo
 libgstnavigationtest_la_OBJECTS =  \
 	$(am_libgstnavigationtest_la_OBJECTS)
-libgstnavigationtest_la_LINK = $(LIBTOOL) --tag=CC \
+libgstnavigationtest_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstnavigationtest_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(libgstnavigationtest_la_CFLAGS) \
 	$(CFLAGS) $(libgstnavigationtest_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -142,13 +144,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstdebug_la_SOURCES) $(libgstefence_la_SOURCES) \
 	$(libgstnavigationtest_la_SOURCES)
 DIST_SOURCES = $(libgstdebug_la_SOURCES) $(libgstefence_la_SOURCES) \
@@ -163,7 +178,7 @@ AALIB_LIBS = @AALIB_LIBS@
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ANNODEX_CFLAGS = @ANNODEX_CFLAGS@
 ANNODEX_LIBS = @ANNODEX_LIBS@
 AR = @AR@
@@ -214,8 +229,6 @@ ESD_CFLAGS = @ESD_CFLAGS@
 ESD_CONFIG = @ESD_CONFIG@
 ESD_LIBS = @ESD_LIBS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLAC_CFLAGS = @FLAC_CFLAGS@
@@ -323,7 +336,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -372,7 +384,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RAW1394_CFLAGS = @RAW1394_CFLAGS@
 RAW1394_LIBS = @RAW1394_LIBS@
@@ -390,11 +401,12 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_CXXFLAGS = @TAGLIB_CXXFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WAVPACK_CFLAGS = @WAVPACK_CFLAGS@
 WAVPACK_LIBS = @WAVPACK_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -466,7 +478,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -582,11 +593,11 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstdebug.la: $(libgstdebug_la_OBJECTS) $(libgstdebug_la_DEPENDENCIES) 
-	$(libgstdebug_la_LINK) -rpath $(plugindir) $(libgstdebug_la_OBJECTS) $(libgstdebug_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstdebug_la_LINK) -rpath $(plugindir) $(libgstdebug_la_OBJECTS) $(libgstdebug_la_LIBADD) $(LIBS)
 libgstefence.la: $(libgstefence_la_OBJECTS) $(libgstefence_la_DEPENDENCIES) 
-	$(libgstefence_la_LINK) $(am_libgstefence_la_rpath) $(libgstefence_la_OBJECTS) $(libgstefence_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstefence_la_LINK) $(am_libgstefence_la_rpath) $(libgstefence_la_OBJECTS) $(libgstefence_la_LIBADD) $(LIBS)
 libgstnavigationtest.la: $(libgstnavigationtest_la_OBJECTS) $(libgstnavigationtest_la_DEPENDENCIES) 
-	$(libgstnavigationtest_la_LINK) -rpath $(plugindir) $(libgstnavigationtest_la_OBJECTS) $(libgstnavigationtest_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstnavigationtest_la_LINK) -rpath $(plugindir) $(libgstnavigationtest_la_OBJECTS) $(libgstnavigationtest_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -607,102 +618,116 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstnavigationtest_la-gstnavigationtest.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstdebug_la-gstdebug.lo: gstdebug.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-gstdebug.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-gstdebug.Tpo -c -o libgstdebug_la-gstdebug.lo `test -f 'gstdebug.c' || echo '$(srcdir)/'`gstdebug.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdebug_la-gstdebug.Tpo $(DEPDIR)/libgstdebug_la-gstdebug.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-gstdebug.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-gstdebug.Tpo -c -o libgstdebug_la-gstdebug.lo `test -f 'gstdebug.c' || echo '$(srcdir)/'`gstdebug.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebug_la-gstdebug.Tpo $(DEPDIR)/libgstdebug_la-gstdebug.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstdebug.c' object='libgstdebug_la-gstdebug.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-gstdebug.lo `test -f 'gstdebug.c' || echo '$(srcdir)/'`gstdebug.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-gstdebug.lo `test -f 'gstdebug.c' || echo '$(srcdir)/'`gstdebug.c
 
 libgstdebug_la-breakmydata.lo: breakmydata.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-breakmydata.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-breakmydata.Tpo -c -o libgstdebug_la-breakmydata.lo `test -f 'breakmydata.c' || echo '$(srcdir)/'`breakmydata.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdebug_la-breakmydata.Tpo $(DEPDIR)/libgstdebug_la-breakmydata.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-breakmydata.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-breakmydata.Tpo -c -o libgstdebug_la-breakmydata.lo `test -f 'breakmydata.c' || echo '$(srcdir)/'`breakmydata.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebug_la-breakmydata.Tpo $(DEPDIR)/libgstdebug_la-breakmydata.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='breakmydata.c' object='libgstdebug_la-breakmydata.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-breakmydata.lo `test -f 'breakmydata.c' || echo '$(srcdir)/'`breakmydata.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-breakmydata.lo `test -f 'breakmydata.c' || echo '$(srcdir)/'`breakmydata.c
 
 libgstdebug_la-gstnavseek.lo: gstnavseek.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-gstnavseek.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-gstnavseek.Tpo -c -o libgstdebug_la-gstnavseek.lo `test -f 'gstnavseek.c' || echo '$(srcdir)/'`gstnavseek.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdebug_la-gstnavseek.Tpo $(DEPDIR)/libgstdebug_la-gstnavseek.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-gstnavseek.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-gstnavseek.Tpo -c -o libgstdebug_la-gstnavseek.lo `test -f 'gstnavseek.c' || echo '$(srcdir)/'`gstnavseek.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebug_la-gstnavseek.Tpo $(DEPDIR)/libgstdebug_la-gstnavseek.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstnavseek.c' object='libgstdebug_la-gstnavseek.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-gstnavseek.lo `test -f 'gstnavseek.c' || echo '$(srcdir)/'`gstnavseek.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-gstnavseek.lo `test -f 'gstnavseek.c' || echo '$(srcdir)/'`gstnavseek.c
 
 libgstdebug_la-gstpushfilesrc.lo: gstpushfilesrc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-gstpushfilesrc.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-gstpushfilesrc.Tpo -c -o libgstdebug_la-gstpushfilesrc.lo `test -f 'gstpushfilesrc.c' || echo '$(srcdir)/'`gstpushfilesrc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdebug_la-gstpushfilesrc.Tpo $(DEPDIR)/libgstdebug_la-gstpushfilesrc.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-gstpushfilesrc.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-gstpushfilesrc.Tpo -c -o libgstdebug_la-gstpushfilesrc.lo `test -f 'gstpushfilesrc.c' || echo '$(srcdir)/'`gstpushfilesrc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebug_la-gstpushfilesrc.Tpo $(DEPDIR)/libgstdebug_la-gstpushfilesrc.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstpushfilesrc.c' object='libgstdebug_la-gstpushfilesrc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-gstpushfilesrc.lo `test -f 'gstpushfilesrc.c' || echo '$(srcdir)/'`gstpushfilesrc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-gstpushfilesrc.lo `test -f 'gstpushfilesrc.c' || echo '$(srcdir)/'`gstpushfilesrc.c
 
 libgstdebug_la-gsttaginject.lo: gsttaginject.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-gsttaginject.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-gsttaginject.Tpo -c -o libgstdebug_la-gsttaginject.lo `test -f 'gsttaginject.c' || echo '$(srcdir)/'`gsttaginject.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdebug_la-gsttaginject.Tpo $(DEPDIR)/libgstdebug_la-gsttaginject.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-gsttaginject.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-gsttaginject.Tpo -c -o libgstdebug_la-gsttaginject.lo `test -f 'gsttaginject.c' || echo '$(srcdir)/'`gsttaginject.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebug_la-gsttaginject.Tpo $(DEPDIR)/libgstdebug_la-gsttaginject.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gsttaginject.c' object='libgstdebug_la-gsttaginject.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-gsttaginject.lo `test -f 'gsttaginject.c' || echo '$(srcdir)/'`gsttaginject.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-gsttaginject.lo `test -f 'gsttaginject.c' || echo '$(srcdir)/'`gsttaginject.c
 
 libgstdebug_la-rndbuffersize.lo: rndbuffersize.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-rndbuffersize.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-rndbuffersize.Tpo -c -o libgstdebug_la-rndbuffersize.lo `test -f 'rndbuffersize.c' || echo '$(srcdir)/'`rndbuffersize.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdebug_la-rndbuffersize.Tpo $(DEPDIR)/libgstdebug_la-rndbuffersize.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-rndbuffersize.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-rndbuffersize.Tpo -c -o libgstdebug_la-rndbuffersize.lo `test -f 'rndbuffersize.c' || echo '$(srcdir)/'`rndbuffersize.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebug_la-rndbuffersize.Tpo $(DEPDIR)/libgstdebug_la-rndbuffersize.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rndbuffersize.c' object='libgstdebug_la-rndbuffersize.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-rndbuffersize.lo `test -f 'rndbuffersize.c' || echo '$(srcdir)/'`rndbuffersize.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-rndbuffersize.lo `test -f 'rndbuffersize.c' || echo '$(srcdir)/'`rndbuffersize.c
 
 libgstdebug_la-progressreport.lo: progressreport.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-progressreport.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-progressreport.Tpo -c -o libgstdebug_la-progressreport.lo `test -f 'progressreport.c' || echo '$(srcdir)/'`progressreport.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdebug_la-progressreport.Tpo $(DEPDIR)/libgstdebug_la-progressreport.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-progressreport.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-progressreport.Tpo -c -o libgstdebug_la-progressreport.lo `test -f 'progressreport.c' || echo '$(srcdir)/'`progressreport.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebug_la-progressreport.Tpo $(DEPDIR)/libgstdebug_la-progressreport.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='progressreport.c' object='libgstdebug_la-progressreport.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-progressreport.lo `test -f 'progressreport.c' || echo '$(srcdir)/'`progressreport.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-progressreport.lo `test -f 'progressreport.c' || echo '$(srcdir)/'`progressreport.c
 
 libgstdebug_la-tests.lo: tests.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-tests.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-tests.Tpo -c -o libgstdebug_la-tests.lo `test -f 'tests.c' || echo '$(srcdir)/'`tests.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdebug_la-tests.Tpo $(DEPDIR)/libgstdebug_la-tests.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-tests.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-tests.Tpo -c -o libgstdebug_la-tests.lo `test -f 'tests.c' || echo '$(srcdir)/'`tests.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebug_la-tests.Tpo $(DEPDIR)/libgstdebug_la-tests.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tests.c' object='libgstdebug_la-tests.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-tests.lo `test -f 'tests.c' || echo '$(srcdir)/'`tests.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-tests.lo `test -f 'tests.c' || echo '$(srcdir)/'`tests.c
 
 libgstdebug_la-testplugin.lo: testplugin.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-testplugin.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-testplugin.Tpo -c -o libgstdebug_la-testplugin.lo `test -f 'testplugin.c' || echo '$(srcdir)/'`testplugin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdebug_la-testplugin.Tpo $(DEPDIR)/libgstdebug_la-testplugin.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -MT libgstdebug_la-testplugin.lo -MD -MP -MF $(DEPDIR)/libgstdebug_la-testplugin.Tpo -c -o libgstdebug_la-testplugin.lo `test -f 'testplugin.c' || echo '$(srcdir)/'`testplugin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdebug_la-testplugin.Tpo $(DEPDIR)/libgstdebug_la-testplugin.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='testplugin.c' object='libgstdebug_la-testplugin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-testplugin.lo `test -f 'testplugin.c' || echo '$(srcdir)/'`testplugin.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdebug_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdebug_la_CFLAGS) $(CFLAGS) -c -o libgstdebug_la-testplugin.lo `test -f 'testplugin.c' || echo '$(srcdir)/'`testplugin.c
 
 libgstefence_la-efence.lo: efence.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstefence_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstefence_la_CFLAGS) $(CFLAGS) -MT libgstefence_la-efence.lo -MD -MP -MF $(DEPDIR)/libgstefence_la-efence.Tpo -c -o libgstefence_la-efence.lo `test -f 'efence.c' || echo '$(srcdir)/'`efence.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstefence_la-efence.Tpo $(DEPDIR)/libgstefence_la-efence.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstefence_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstefence_la_CFLAGS) $(CFLAGS) -MT libgstefence_la-efence.lo -MD -MP -MF $(DEPDIR)/libgstefence_la-efence.Tpo -c -o libgstefence_la-efence.lo `test -f 'efence.c' || echo '$(srcdir)/'`efence.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstefence_la-efence.Tpo $(DEPDIR)/libgstefence_la-efence.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='efence.c' object='libgstefence_la-efence.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstefence_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstefence_la_CFLAGS) $(CFLAGS) -c -o libgstefence_la-efence.lo `test -f 'efence.c' || echo '$(srcdir)/'`efence.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstefence_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstefence_la_CFLAGS) $(CFLAGS) -c -o libgstefence_la-efence.lo `test -f 'efence.c' || echo '$(srcdir)/'`efence.c
 
 libgstnavigationtest_la-gstnavigationtest.lo: gstnavigationtest.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstnavigationtest_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnavigationtest_la_CFLAGS) $(CFLAGS) -MT libgstnavigationtest_la-gstnavigationtest.lo -MD -MP -MF $(DEPDIR)/libgstnavigationtest_la-gstnavigationtest.Tpo -c -o libgstnavigationtest_la-gstnavigationtest.lo `test -f 'gstnavigationtest.c' || echo '$(srcdir)/'`gstnavigationtest.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstnavigationtest_la-gstnavigationtest.Tpo $(DEPDIR)/libgstnavigationtest_la-gstnavigationtest.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnavigationtest_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnavigationtest_la_CFLAGS) $(CFLAGS) -MT libgstnavigationtest_la-gstnavigationtest.lo -MD -MP -MF $(DEPDIR)/libgstnavigationtest_la-gstnavigationtest.Tpo -c -o libgstnavigationtest_la-gstnavigationtest.lo `test -f 'gstnavigationtest.c' || echo '$(srcdir)/'`gstnavigationtest.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstnavigationtest_la-gstnavigationtest.Tpo $(DEPDIR)/libgstnavigationtest_la-gstnavigationtest.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstnavigationtest.c' object='libgstnavigationtest_la-gstnavigationtest.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstnavigationtest_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnavigationtest_la_CFLAGS) $(CFLAGS) -c -o libgstnavigationtest_la-gstnavigationtest.lo `test -f 'gstnavigationtest.c' || echo '$(srcdir)/'`gstnavigationtest.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnavigationtest_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnavigationtest_la_CFLAGS) $(CFLAGS) -c -o libgstnavigationtest_la-gstnavigationtest.lo `test -f 'gstnavigationtest.c' || echo '$(srcdir)/'`gstnavigationtest.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

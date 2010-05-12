@@ -25,7 +25,10 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <memory.h>
+
+#include <gst/gst.h>
 
 #include "gstudpnetutils.h"
 
@@ -77,27 +80,18 @@ gst_udp_get_sockaddr_length (struct sockaddr_storage *addr)
   }
 }
 
-gst_udp_get_addr (const char *hostname, int port, struct sockaddr_storage *addr,
-    int sock_family)
+int
+gst_udp_get_addr (const char *hostname, int port, struct sockaddr_storage *addr)
 {
   struct addrinfo hints, *res = NULL, *nres;
   char service[NI_MAXSERV];
   int ret;
 
   memset (&hints, 0, sizeof (hints));
-  hints.ai_family = sock_family;
+  hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_DGRAM;
   g_snprintf (service, sizeof (service) - 1, "%d", port);
   service[sizeof (service) - 1] = '\0';
-  
-  /* Create v4-mapped addresses if we have a v6 socket but a v4 address */
-  if (sock_family == AF_INET6) {
-    hints.ai_flags = AI_V4MAPPED;
-    /* Linux (glibc < 2.8, at least) has a broken implementation of AI_V4MAPPED
-     * which only works if you also pass AI_ALL.
-     */
-    hints.ai_flags = hints.ai_flags | AI_ALL;
-  }
 
   if ((ret = getaddrinfo (hostname, (port == -1) ? NULL : service, &hints,
               &res)) < 0) {
@@ -106,55 +100,10 @@ gst_udp_get_addr (const char *hostname, int port, struct sockaddr_storage *addr,
 
   nres = res;
   while (nres) {
-    if (sock_family == AF_UNSPEC &&
-        (nres->ai_family == AF_INET || nres->ai_family == AF_INET6))
-      break;
-    else if (nres->ai_family == sock_family)
-       break;
+    if (nres->ai_family == AF_INET || nres->ai_family == AF_INET6)
       break;
     nres = nres->ai_next;
   }
-#ifndef G_OS_WIN32
-  /* If we didn't accept any of the results, but we have a v4 address when
-     looking for a v6 address, try it again as a v4mapped address.
-     This can happen if we look up a hostname (rather than an IP); we get a
-     V4 address only - we can then look up THAT address as a v4-mapped address,
-     and will hopefully get a v4mapped address. As an example, looking up
-     'localhost' returns only a v4 address, but we require a v6 address.
-   */
-  if (!nres && res && res->ai_family == AF_INET && sock_family == AF_INET6) {
-    char addrbuf[INET_ADDRSTRLEN];
-    const char *addr;
-
-    memset (&hints, 0, sizeof (hints));
-    hints.ai_family = AF_INET6;
-    hints.ai_socktype = SOCK_DGRAM;
-    hints.ai_flags = AI_V4MAPPED | AI_ALL;
-
-    addr = inet_ntop (AF_INET,
-        &((struct sockaddr_in *) (res->ai_addr))->sin_addr,
-        addrbuf, sizeof (addrbuf));
-    if (!addr)
-      goto beach;
-
-    /* free the old one, try the new one again */
-    freeaddrinfo (res);
-    res = NULL;
-
-    if ((ret = getaddrinfo (addr, (port == -1) ? NULL : service, &hints,
-                &res)) < 0) {
-      goto beach;
-    }
-
-    nres = res;
-    while (nres) {
-      if (nres->ai_family == AF_INET6)
-        break;
-      nres = nres->ai_next;
-    }
-  }
-#endif
-
 
   if (nres) {
     memcpy (addr, nres->ai_addr, nres->ai_addrlen);
@@ -162,10 +111,8 @@ gst_udp_get_addr (const char *hostname, int port, struct sockaddr_storage *addr,
     ret = EAI_ADDRFAMILY;
   }
 
-
+  freeaddrinfo (res);
 beach:
-  if (res)
-    freeaddrinfo (res);
   return ret;
 }
 
@@ -210,7 +157,7 @@ gst_udp_set_ttl (int sockfd, guint16 ss_family, int ttl, gboolean is_multicast)
 {
   int optname = -1;
   int ret = -1;
- 
+
   switch (ss_family) {
     case AF_INET:
     {
@@ -393,4 +340,115 @@ gst_udp_is_multicast (struct sockaddr_storage *addr)
   }
 
   return ret;
+}
+
+void
+gst_udp_uri_init (GstUDPUri * uri, const gchar * host, gint port)
+{
+  uri->host = NULL;
+  uri->port = -1;
+  gst_udp_uri_update (uri, host, port);
+}
+
+int
+gst_udp_uri_update (GstUDPUri * uri, const gchar * host, gint port)
+{
+  if (host) {
+    g_free (uri->host);
+    uri->host = g_strdup (host);
+    if (strchr (host, ':'))
+      uri->is_ipv6 = TRUE;
+    else
+      uri->is_ipv6 = FALSE;
+  }
+  if (port != -1)
+    uri->port = port;
+
+  return 0;
+}
+
+int
+gst_udp_parse_uri (const gchar * uristr, GstUDPUri * uri)
+{
+  gchar *protocol;
+  gchar *location, *location_end;
+  gchar *colptr;
+
+  protocol = gst_uri_get_protocol (uristr);
+  if (strcmp (protocol, "udp") != 0)
+    goto wrong_protocol;
+  g_free (protocol);
+
+  location = gst_uri_get_location (uristr);
+  if (!location)
+    return FALSE;
+
+  GST_DEBUG ("got location '%s'", location);
+
+  if (location[0] == '[') {
+    GST_DEBUG ("parse IPV6 address '%s'", location);
+    location_end = strchr (location, ']');
+    if (location_end == NULL)
+      goto wrong_address;
+
+    uri->is_ipv6 = TRUE;
+    g_free (uri->host);
+    uri->host = g_strndup (location + 1, location_end - location - 1);
+    colptr = strrchr (location_end, ':');
+  } else {
+    GST_DEBUG ("parse IPV4 address '%s'", location);
+    uri->is_ipv6 = FALSE;
+    colptr = strrchr (location, ':');
+
+    g_free (uri->host);
+    if (colptr != NULL) {
+      uri->host = g_strndup (location, colptr - location);
+    } else {
+      uri->host = g_strdup (location);
+    }
+  }
+  GST_DEBUG ("host set to '%s'", uri->host);
+
+  if (colptr != NULL) {
+    uri->port = atoi (colptr + 1);
+  }
+  g_free (location);
+
+  return 0;
+
+  /* ERRORS */
+wrong_protocol:
+  {
+    GST_ERROR ("error parsing uri %s: wrong protocol (%s != udp)", uristr,
+        protocol);
+    g_free (protocol);
+    return -1;
+  }
+wrong_address:
+  {
+    GST_ERROR ("error parsing uri %s", uristr);
+    g_free (location);
+    return -1;
+  }
+}
+
+gchar *
+gst_udp_uri_string (GstUDPUri * uri)
+{
+  gchar *result;
+
+  if (uri->is_ipv6) {
+    result = g_strdup_printf ("udp://[%s]:%d", uri->host, uri->port);
+  } else {
+    result = g_strdup_printf ("udp://%s:%d", uri->host, uri->port);
+  }
+  return result;
+}
+
+void
+gst_udp_uri_free (GstUDPUri * uri)
+{
+  g_free (uri->host);
+  uri->host = NULL;
+  uri->port = -1;
 }

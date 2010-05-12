@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.25.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2010-02-01 15:04+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -87,18 +87,6 @@ msgstr "A GStreamer beállításainak megjelenítése"
 
 msgid "Unknown option"
 msgstr "Ismeretlen beállítás"
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "HIBA: a következő elemtől: %s: %s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"További hibakeresési információk:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "A GStreamer általános magkönyvtárhibát tapasztalt."
@@ -623,6 +611,35 @@ msgstr ""
 "azon hely földrajzi magassága, ahol a média felvételre vagy előállításra "
 "került méterben, a WGS84-nek megfelelően (nulla az átlagos tengerszinten)"
 
+#, fuzzy
+msgid "geo location country"
+msgstr "földrajzi hely hosszúsága"
+
+#, fuzzy
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+"emberek által olvasható leíró jellegű hely, ahol a média felvételre vagy "
+"előállításra került"
+
+#, fuzzy
+msgid "geo location city"
+msgstr "földrajzi hely szélessége"
+
+#, fuzzy
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+"emberek által olvasható leíró jellegű hely, ahol a média felvételre vagy "
+"előállításra került"
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "földrajzi hely magassága"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr "műsornév"
@@ -673,8 +690,29 @@ msgstr ""
 "Több számot átfogó média csoportosítása, például egy koncert különböző "
 "darabjai. Magasabb szintű a számnál, de alacsonyabb az albumnál"
 
+#, fuzzy
+msgid "user rating"
+msgstr "időtartam"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "HIBA: a következő elemtől: %s: %s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"További hibakeresési információk:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -794,6 +832,10 @@ msgstr "A(z) „%s” fájl egy foglalat."
 
 msgid "Failed after iterations as requested."
 msgstr "Ismétlések után kérésére meghiúsult."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Hiba a(z) „%s” fájl írása közben."
 
 msgid "No Temp directory specified."
 msgstr "Nincs megadva ideiglenes könyvtár."

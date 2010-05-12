@@ -8,15 +8,8 @@
 <link rel="up" href="gstreamer-support.html" title="GStreamer Core Support">
 <link rel="prev" href="gstreamer-GstInfo.html" title="GstInfo">
 <link rel="next" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="gstreamer.html" title="GStreamer Overview">
-<link rel="chapter" href="libgstreamer.html" title="GStreamer Core Library">
-<link rel="chapter" href="gstreamer-support.html" title="GStreamer Core Support">
-<link rel="chapter" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
-<link rel="glossary" href="annotation-glossary.html" title="Annotation Glossary">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -48,32 +41,37 @@
 #include &lt;gst/gst.h&gt;
 
                     <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace">GstTrace</a>;
-<a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a>*           <a class="link" href="gstreamer-GstTrace.html#gst-trace-new" title="gst_trace_new ()">gst_trace_new</a>                       (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *filename,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a> size);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-trace-destroy" title="gst_trace_destroy ()">gst_trace_destroy</a>                   (<a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a> *trace);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-trace-flush" title="gst_trace_flush ()">gst_trace_flush</a>                     (<a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a> *trace);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-trace-text-flush" title="gst_trace_text_flush ()">gst_trace_text_flush</a>                (<a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a> *trace);
-#define             <a class="link" href="gstreamer-GstTrace.html#gst-trace-add-entry" title="gst_trace_add_entry()">gst_trace_add_entry</a>                 (trace,seq,data,msg)
+<a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a>*           <a class="link" href="gstreamer-GstTrace.html#gst-trace-new" title="gst_trace_new ()">gst_trace_new</a>                       (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *filename</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> size</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-trace-destroy" title="gst_trace_destroy ()">gst_trace_destroy</a>                   (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> *trace</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-trace-flush" title="gst_trace_flush ()">gst_trace_flush</a>                     (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> *trace</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-trace-text-flush" title="gst_trace_text_flush ()">gst_trace_text_flush</a>                (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> *trace</code></em>);
+#define             <a class="link" href="gstreamer-GstTrace.html#gst-trace-add-entry" title="gst_trace_add_entry()">gst_trace_add_entry</a>                 (trace,
+                                                         seq,
+                                                         data,
+                                                         msg)
 #define             <a class="link" href="gstreamer-GstTrace.html#gst-trace-get-size" title="gst_trace_get_size()">gst_trace_get_size</a>                  (trace)
 #define             <a class="link" href="gstreamer-GstTrace.html#gst-trace-get-offset" title="gst_trace_get_offset()">gst_trace_get_offset</a>                (trace)
 #define             <a class="link" href="gstreamer-GstTrace.html#gst-trace-get-remaining" title="gst_trace_get_remaining()">gst_trace_get_remaining</a>             (trace)
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-trace-set-default" title="gst_trace_set_default ()">gst_trace_set_default</a>               (<a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a> *trace);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-trace-read-tsc" title="gst_trace_read_tsc ()">gst_trace_read_tsc</a>                  (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="returnvalue">gint64</span></a> *dst);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-trace-set-default" title="gst_trace_set_default ()">gst_trace_set_default</a>               (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> *trace</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-trace-read-tsc" title="gst_trace_read_tsc ()">gst_trace_read_tsc</a>                  (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dst</code></em>);
 enum                <a class="link" href="gstreamer-GstTrace.html#GstAllocTraceFlags" title="enum GstAllocTraceFlags">GstAllocTraceFlags</a>;
                     <a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace">GstAllocTrace</a>;
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-available" title="gst_alloc_trace_available ()">gst_alloc_trace_available</a>           (void);
-const <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*        <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-list" title="gst_alloc_trace_list ()">gst_alloc_trace_list</a>                (void);
-<span class="returnvalue">int</span>                 <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-live-all" title="gst_alloc_trace_live_all ()">gst_alloc_trace_live_all</a>            (void);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-print-all" title="gst_alloc_trace_print_all ()">gst_alloc_trace_print_all</a>           (void);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-set-flags-all" title="gst_alloc_trace_set_flags_all ()">gst_alloc_trace_set_flags_all</a>       (<a class="link" href="gstreamer-GstTrace.html#GstAllocTraceFlags" title="enum GstAllocTraceFlags"><span class="returnvalue">GstAllocTraceFlags</span></a> flags);
-<a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="returnvalue">GstAllocTrace</span></a>*      <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-get" title="gst_alloc_trace_get ()">gst_alloc_trace_get</a>                 (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-print" title="gst_alloc_trace_print ()">gst_alloc_trace_print</a>               (const <a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="returnvalue">GstAllocTrace</span></a> *trace);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-print-live" title="gst_alloc_trace_print_live ()">gst_alloc_trace_print_live</a>          (void);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-set-flags" title="gst_alloc_trace_set_flags ()">gst_alloc_trace_set_flags</a>           (<a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="returnvalue">GstAllocTrace</span></a> *trace,
-                                                         <a class="link" href="gstreamer-GstTrace.html#GstAllocTraceFlags" title="enum GstAllocTraceFlags"><span class="returnvalue">GstAllocTraceFlags</span></a> flags);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-available" title="gst_alloc_trace_available ()">gst_alloc_trace_available</a>           (<em class="parameter"><code><span class="type">void</span></code></em>);
+const <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*        <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-list" title="gst_alloc_trace_list ()">gst_alloc_trace_list</a>                (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">int</span>                 <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-live-all" title="gst_alloc_trace_live_all ()">gst_alloc_trace_live_all</a>            (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-print-all" title="gst_alloc_trace_print_all ()">gst_alloc_trace_print_all</a>           (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-set-flags-all" title="gst_alloc_trace_set_flags_all ()">gst_alloc_trace_set_flags_all</a>       (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstAllocTraceFlags" title="enum GstAllocTraceFlags"><span class="type">GstAllocTraceFlags</span></a> flags</code></em>);
+<a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="returnvalue">GstAllocTrace</span></a>*      <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-get" title="gst_alloc_trace_get ()">gst_alloc_trace_get</a>                 (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-print" title="gst_alloc_trace_print ()">gst_alloc_trace_print</a>               (<em class="parameter"><code>const <a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="type">GstAllocTrace</span></a> *trace</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-print-live" title="gst_alloc_trace_print_live ()">gst_alloc_trace_print_live</a>          (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-set-flags" title="gst_alloc_trace_set_flags ()">gst_alloc_trace_set_flags</a>           (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="type">GstAllocTrace</span></a> *trace</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstAllocTraceFlags" title="enum GstAllocTraceFlags"><span class="type">GstAllocTraceFlags</span></a> flags</code></em>);
 #define             <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-register" title="gst_alloc_trace_register()">gst_alloc_trace_register</a>            (name)
-#define             <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-new" title="gst_alloc_trace_new()">gst_alloc_trace_new</a>                 (trace, mem)
-#define             <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-free" title="gst_alloc_trace_free()">gst_alloc_trace_free</a>                (trace, mem)
+#define             <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-new" title="gst_alloc_trace_new()">gst_alloc_trace_new</a>                 (trace,
+                                                         mem)
+#define             <a class="link" href="gstreamer-GstTrace.html#gst-alloc-trace-free" title="gst_alloc_trace_free()">gst_alloc_trace_free</a>                (trace,
+                                                         mem)
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -86,7 +84,7 @@ it when it's freed.
 <p>
 </p>
 <div class="example">
-<a name="id715716"></a><p class="title"><b>Example 18. Tracing object instances</b></p>
+<a name="id543764"></a><p class="title"><b>Example 18. Tracing object instances</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -100,13 +98,13 @@ it when it's freed.
 7
 8</pre></td>
         <td class="listing_code"><pre class="programlisting"><span class="gtkdoc slc">// trace un-freed object instances</span>
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstTrace.html#gst-alloc-trace-set-flags-all">gst_alloc_trace_set_flags_all</a></span> <span class="symbol">(</span>GST_ALLOC_TRACE_LIVE<span class="symbol">);</span>
-<span class="keyword">if</span> <span class="symbol">(!</span><span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstTrace.html#gst-alloc-trace-available">gst_alloc_trace_available</a></span> <span class="symbol">()) {</span>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-GstTrace.html#gst-alloc-trace-set-flags-all">gst_alloc_trace_set_flags_all</a></span> <span class="symbol">(</span>GST_ALLOC_TRACE_LIVE<span class="symbol">);</span>
+<span class="keyword">if</span> <span class="symbol">(!</span><span class="function"><a href="../gstreamer-0.10/gstreamer-GstTrace.html#gst-alloc-trace-available">gst_alloc_trace_available</a></span> <span class="symbol">()) {</span>
   <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Message-Logging.html#g-warning">g_warning</a></span> <span class="symbol">(</span><span class="string">&quot;Trace not available (recompile with trace enabled).&quot;</span><span class="symbol">);</span>
 <span class="symbol">}</span>
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstTrace.html#gst-alloc-trace-print-live">gst_alloc_trace_print_live</a></span> <span class="symbol">();</span>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-GstTrace.html#gst-alloc-trace-print-live">gst_alloc_trace_print_live</a></span> <span class="symbol">();</span>
 <span class="gtkdoc slc">// do something here</span>
-<span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstTrace.html#gst-alloc-trace-print-live">gst_alloc_trace_print_live</a></span> <span class="symbol">();</span></pre></td>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-GstTrace.html#gst-alloc-trace-print-live">gst_alloc_trace_print_live</a></span> <span class="symbol">();</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -116,7 +114,8 @@ it when it's freed.
 <p><br class="example-break">
 </p>
 <p>
-Last reviewed on 2005-11-21 (0.9.5)</p>
+Last reviewed on 2005-11-21 (0.9.5)
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gstreamer-GstTrace.details"></a><h2>Details</h2>
@@ -126,27 +125,29 @@ Last reviewed on 2005-11-21 (0.9.5)</p>
 } GstTrace;
 </pre>
 <p>
-Opaque <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> structure.</p>
+Opaque <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> structure.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_trace_new ()">
 <a name="gst-trace-new"></a><h3>gst_trace_new ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a>*           gst_trace_new                       (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *filename,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a> size);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a>*           gst_trace_new                       (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *filename</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> size</code></em>);</pre>
 <p>
 Create a ringbuffer of <em class="parameter"><code>size</code></em> in the file with <em class="parameter"><code>filename</code></em> to 
-store trace results in.</p>
+store trace results in.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>filename</code></em> :</span></p></td>
-<td> a filename
+<td>a filename
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td> the max size of the file
+<td>the max size of the file
 </td>
 </tr>
 <tr>
@@ -160,14 +161,15 @@ store trace results in.</p>
 <hr>
 <div class="refsect2" title="gst_trace_destroy ()">
 <a name="gst-trace-destroy"></a><h3>gst_trace_destroy ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_trace_destroy                   (<a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a> *trace);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_trace_destroy                   (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> *trace</code></em>);</pre>
 <p>
-Flush an close the previously allocated <em class="parameter"><code>trace</code></em>.</p>
+Flush an close the previously allocated <em class="parameter"><code>trace</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> the <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> to destroy
+<td>the <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> to destroy
 </td>
 </tr></tbody>
 </table></div>
@@ -175,16 +177,17 @@ Flush an close the previously allocated <em class="parameter"><code>trace</code>
 <hr>
 <div class="refsect2" title="gst_trace_flush ()">
 <a name="gst-trace-flush"></a><h3>gst_trace_flush ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_trace_flush                     (<a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a> *trace);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_trace_flush                     (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> *trace</code></em>);</pre>
 <p>
 Flush any pending trace entries in <em class="parameter"><code>trace</code></em> to the trace file.
 <em class="parameter"><code>trace</code></em> can be NULL in which case the default <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> will be
-flushed.</p>
+flushed.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> the <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> to flush.
+<td>the <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> to flush.
 </td>
 </tr></tbody>
 </table></div>
@@ -192,17 +195,18 @@ flushed.</p>
 <hr>
 <div class="refsect2" title="gst_trace_text_flush ()">
 <a name="gst-trace-text-flush"></a><h3>gst_trace_text_flush ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_trace_text_flush                (<a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a> *trace);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_trace_text_flush                (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> *trace</code></em>);</pre>
 <p>
 Flush any pending trace entries in <em class="parameter"><code>trace</code></em> to the trace file, 
 formatted as a text line with timestamp and sequence numbers.
 <em class="parameter"><code>trace</code></em> can be NULL in which case the default <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> will be
-flushed.</p>
+flushed.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> the <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> to flush.
+<td>the <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> to flush.
 </td>
 </tr></tbody>
 </table></div>
@@ -213,28 +217,29 @@ flushed.</p>
 <pre class="programlisting">#define             gst_trace_add_entry(trace,seq,data,msg)</pre>
 <p>
 Add an entry to <em class="parameter"><code>trace</code></em> with sequence number <em class="parameter"><code>seq</code></em>, <em class="parameter"><code>data</code></em> and <em class="parameter"><code>msg</code></em>.
-If <em class="parameter"><code>trace</code></em> is NULL, the entry will be added to the default <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a>.</p>
+If <em class="parameter"><code>trace</code></em> is NULL, the entry will be added to the default <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> a <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a>
+<td>a <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>seq</code></em> :</span></p></td>
-<td> a sequence number
+<td>a sequence number
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td> the data to trace
+<td>the data to trace
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>msg</code></em> :</span></p></td>
-<td> the trace message
+<td>the trace message
 </td>
 </tr>
 </tbody>
@@ -246,12 +251,13 @@ If <em class="parameter"><code>trace</code></em> is NULL, the entry will be adde
 <pre class="programlisting">#define 	gst_trace_get_size(trace) 	((trace)-&gt;bufsize)
 </pre>
 <p>
-Retrieve the buffer size of <em class="parameter"><code>trace</code></em>.</p>
+Retrieve the buffer size of <em class="parameter"><code>trace</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> a <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a>
+<td>a <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a>
 </td>
 </tr></tbody>
 </table></div>
@@ -262,12 +268,13 @@ Retrieve the buffer size of <em class="parameter"><code>trace</code></em>.</p>
 <pre class="programlisting">#define 	gst_trace_get_offset(trace) 	((trace)-&gt;bufoffset)
 </pre>
 <p>
-Retrieve the current buffer offset of <em class="parameter"><code>trace</code></em>.</p>
+Retrieve the current buffer offset of <em class="parameter"><code>trace</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> a <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a>
+<td>a <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a>
 </td>
 </tr></tbody>
 </table></div>
@@ -278,12 +285,13 @@ Retrieve the current buffer offset of <em class="parameter"><code>trace</code></
 <pre class="programlisting">#define 	gst_trace_get_remaining(trace) 	((trace)-&gt;bufsize - (trace)-&gt;bufoffset)
 </pre>
 <p>
-Retrieve the remaining size in the <em class="parameter"><code>trace</code></em> buffer.</p>
+Retrieve the remaining size in the <em class="parameter"><code>trace</code></em> buffer.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> a <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a>
+<td>a <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a>
 </td>
 </tr></tbody>
 </table></div>
@@ -291,14 +299,15 @@ Retrieve the remaining size in the <em class="parameter"><code>trace</code></em>
 <hr>
 <div class="refsect2" title="gst_trace_set_default ()">
 <a name="gst-trace-set-default"></a><h3>gst_trace_set_default ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_trace_set_default               (<a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="returnvalue">GstTrace</span></a> *trace);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_trace_set_default               (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> *trace</code></em>);</pre>
 <p>
-Set the default <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> to <em class="parameter"><code>trace</code></em>.</p>
+Set the default <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> to <em class="parameter"><code>trace</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> the <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> to set as the default.
+<td>the <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="GstTrace"><span class="type">GstTrace</span></a> to set as the default.
 </td>
 </tr></tbody>
 </table></div>
@@ -306,15 +315,16 @@ Set the default <a class="link" href="gstreamer-GstTrace.html#GstTrace" title="G
 <hr>
 <div class="refsect2" title="gst_trace_read_tsc ()">
 <a name="gst-trace-read-tsc"></a><h3>gst_trace_read_tsc ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_trace_read_tsc                  (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="returnvalue">gint64</span></a> *dst);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_trace_read_tsc                  (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dst</code></em>);</pre>
 <p>
 Read a platform independent timer value that can be used in
-benchmarks.</p>
+benchmarks.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>dst</code></em> :</span></p></td>
-<td> pointer to hold the result.
+<td>pointer to hold the result.
 </td>
 </tr></tbody>
 </table></div>
@@ -328,18 +338,19 @@ benchmarks.</p>
 } GstAllocTraceFlags;
 </pre>
 <p>
-Flags indicating which tracing feature to enable.</p>
+Flags indicating which tracing feature to enable.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="GST-ALLOC-TRACE-LIVE:CAPS"></a><span class="term"><code class="literal">GST_ALLOC_TRACE_LIVE</code></span></p></td>
-<td> Trace number of non-freed memory
+<td>Trace number of non-freed memory
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-ALLOC-TRACE-MEM-LIVE:CAPS"></a><span class="term"><code class="literal">GST_ALLOC_TRACE_MEM_LIVE</code></span></p></td>
-<td> trace pointers of unfreed memory
+<td>trace pointers of unfreed memory
 </td>
 </tr>
 </tbody>
@@ -357,28 +368,29 @@ Flags indicating which tracing feature to enable.</p>
 } GstAllocTrace;
 </pre>
 <p>
-The main tracing object</p>
+The main tracing object
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstAllocTrace.name"></a>name</code></em>;</span></p></td>
-<td> The name of the tracing object
+<td>The name of the tracing object
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstAllocTrace.flags"></a>flags</code></em>;</span></p></td>
-<td> Flags for this object
+<td>Flags for this object
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstAllocTrace.live"></a>live</code></em>;</span></p></td>
-<td> counter for live memory
+<td>counter for live memory
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="type">GSList</span></a> *<em class="structfield"><code><a name="GstAllocTrace.mem-live"></a>mem_live</code></em>;</span></p></td>
-<td> list with pointers to unfreed memory
+<td>list with pointers to unfreed memory
 </td>
 </tr>
 </tbody>
@@ -387,9 +399,10 @@ The main tracing object</p>
 <hr>
 <div class="refsect2" title="gst_alloc_trace_available ()">
 <a name="gst-alloc-trace-available"></a><h3>gst_alloc_trace_available ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_alloc_trace_available           (void);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_alloc_trace_available           (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
-Check if alloc tracing was compiled into the core</p>
+Check if alloc tracing was compiled into the core
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
@@ -403,9 +416,10 @@ tracing enabled.
 <hr>
 <div class="refsect2" title="gst_alloc_trace_list ()">
 <a name="gst-alloc-trace-list"></a><h3>gst_alloc_trace_list ()</h3>
-<pre class="programlisting">const <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*        gst_alloc_trace_list                (void);</pre>
+<pre class="programlisting">const <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*        gst_alloc_trace_list                (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
-Get a list of all registered alloc trace objects.</p>
+Get a list of all registered alloc trace objects.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
@@ -418,9 +432,10 @@ Get a list of all registered alloc trace objects.</p>
 <hr>
 <div class="refsect2" title="gst_alloc_trace_live_all ()">
 <a name="gst-alloc-trace-live-all"></a><h3>gst_alloc_trace_live_all ()</h3>
-<pre class="programlisting"><span class="returnvalue">int</span>                 gst_alloc_trace_live_all            (void);</pre>
+<pre class="programlisting"><span class="returnvalue">int</span>                 gst_alloc_trace_live_all            (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
-Get the total number of live registered alloc trace objects.</p>
+Get the total number of live registered alloc trace objects.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
@@ -433,22 +448,24 @@ Get the total number of live registered alloc trace objects.</p>
 <hr>
 <div class="refsect2" title="gst_alloc_trace_print_all ()">
 <a name="gst-alloc-trace-print-all"></a><h3>gst_alloc_trace_print_all ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_alloc_trace_print_all           (void);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_alloc_trace_print_all           (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
-Print the status of all registered alloc trace objects.</p>
+Print the status of all registered alloc trace objects.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_alloc_trace_set_flags_all ()">
 <a name="gst-alloc-trace-set-flags-all"></a><h3>gst_alloc_trace_set_flags_all ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_alloc_trace_set_flags_all       (<a class="link" href="gstreamer-GstTrace.html#GstAllocTraceFlags" title="enum GstAllocTraceFlags"><span class="returnvalue">GstAllocTraceFlags</span></a> flags);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_alloc_trace_set_flags_all       (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstAllocTraceFlags" title="enum GstAllocTraceFlags"><span class="type">GstAllocTraceFlags</span></a> flags</code></em>);</pre>
 <p>
 Enable the specified options on all registered alloc trace
-objects.</p>
+objects.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>flags</code></em> :</span></p></td>
-<td> the options to enable
+<td>the options to enable
 </td>
 </tr></tbody>
 </table></div>
@@ -456,15 +473,16 @@ objects.</p>
 <hr>
 <div class="refsect2" title="gst_alloc_trace_get ()">
 <a name="gst-alloc-trace-get"></a><h3>gst_alloc_trace_get ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="returnvalue">GstAllocTrace</span></a>*      gst_alloc_trace_get                 (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="returnvalue">GstAllocTrace</span></a>*      gst_alloc_trace_get                 (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>
-Get the named alloc trace object.</p>
+Get the named alloc trace object.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
-<td> the name of the alloc trace object
+<td>the name of the alloc trace object
 </td>
 </tr>
 <tr>
@@ -479,14 +497,15 @@ no alloc tracer was registered with that name.
 <hr>
 <div class="refsect2" title="gst_alloc_trace_print ()">
 <a name="gst-alloc-trace-print"></a><h3>gst_alloc_trace_print ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_alloc_trace_print               (const <a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="returnvalue">GstAllocTrace</span></a> *trace);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_alloc_trace_print               (<em class="parameter"><code>const <a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="type">GstAllocTrace</span></a> *trace</code></em>);</pre>
 <p>
-Print the status of the given GstAllocTrace.</p>
+Print the status of the given GstAllocTrace.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> the GstAllocTrace to print
+<td>the GstAllocTrace to print
 </td>
 </tr></tbody>
 </table></div>
@@ -494,29 +513,31 @@ Print the status of the given GstAllocTrace.</p>
 <hr>
 <div class="refsect2" title="gst_alloc_trace_print_live ()">
 <a name="gst-alloc-trace-print-live"></a><h3>gst_alloc_trace_print_live ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_alloc_trace_print_live          (void);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_alloc_trace_print_live          (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 Print the status of all registered alloc trace objects, ignoring those
-without live objects.</p>
+without live objects.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_alloc_trace_set_flags ()">
 <a name="gst-alloc-trace-set-flags"></a><h3>gst_alloc_trace_set_flags ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_alloc_trace_set_flags           (<a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="returnvalue">GstAllocTrace</span></a> *trace,
-                                                         <a class="link" href="gstreamer-GstTrace.html#GstAllocTraceFlags" title="enum GstAllocTraceFlags"><span class="returnvalue">GstAllocTraceFlags</span></a> flags);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_alloc_trace_set_flags           (<em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstAllocTrace" title="GstAllocTrace"><span class="type">GstAllocTrace</span></a> *trace</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstTrace.html#GstAllocTraceFlags" title="enum GstAllocTraceFlags"><span class="type">GstAllocTraceFlags</span></a> flags</code></em>);</pre>
 <p>
-Enable the given features on the given GstAllocTrace object.</p>
+Enable the given features on the given GstAllocTrace object.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> the GstAllocTrace
+<td>the GstAllocTrace
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flags</code></em> :</span></p></td>
-<td> flags to set
+<td>flags to set
 </td>
 </tr>
 </tbody>
@@ -527,12 +548,13 @@ Enable the given features on the given GstAllocTrace object.</p>
 <a name="gst-alloc-trace-register"></a><h3>gst_alloc_trace_register()</h3>
 <pre class="programlisting">#define             gst_alloc_trace_register(name)</pre>
 <p>
-Register a new alloc tracer with the given name</p>
+Register a new alloc tracer with the given name
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
-<td> The name of the tracer object
+<td>The name of the tracer object
 </td>
 </tr></tbody>
 </table></div>
@@ -542,18 +564,19 @@ Register a new alloc tracer with the given name</p>
 <a name="gst-alloc-trace-new"></a><h3>gst_alloc_trace_new()</h3>
 <pre class="programlisting">#define             gst_alloc_trace_new(trace, mem)</pre>
 <p>
-Use the tracer to trace a new memory allocation</p>
+Use the tracer to trace a new memory allocation
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> The tracer to use
+<td>The tracer to use
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>mem</code></em> :</span></p></td>
-<td> The memory allocated
+<td>The memory allocated
 </td>
 </tr>
 </tbody>
@@ -564,18 +587,19 @@ Use the tracer to trace a new memory allocation</p>
 <a name="gst-alloc-trace-free"></a><h3>gst_alloc_trace_free()</h3>
 <pre class="programlisting">#define             gst_alloc_trace_free(trace, mem)</pre>
 <p>
-Trace a memory free operation</p>
+Trace a memory free operation
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>trace</code></em> :</span></p></td>
-<td> The tracer to use
+<td>The tracer to use
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>mem</code></em> :</span></p></td>
-<td> The memory that is freed
+<td>The memory that is freed
 </td>
 </tr>
 </tbody>
@@ -585,6 +609,6 @@ Trace a memory free operation</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

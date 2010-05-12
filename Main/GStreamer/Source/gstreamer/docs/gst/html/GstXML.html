@@ -8,15 +8,8 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="gstreamer-GstVersion.html" title="GstVersion">
 <link rel="next" href="gstreamer-support.html" title="GStreamer Core Support">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="gstreamer.html" title="GStreamer Overview">
-<link rel="chapter" href="libgstreamer.html" title="GStreamer Core Library">
-<link rel="chapter" href="gstreamer-support.html" title="GStreamer Core Support">
-<link rel="chapter" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
-<link rel="glossary" href="annotation-glossary.html" title="Annotation Glossary">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -52,25 +45,25 @@
 #include &lt;gst/gst.h&gt;
 
                     <a class="link" href="GstXML.html#GstXML-struct" title="GstXML">GstXML</a>;
-<span class="returnvalue">xmlDocPtr</span>           <a class="link" href="GstXML.html#gst-xml-write" title="gst_xml_write ()">gst_xml_write</a>                       (<a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a> *element);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="GstXML.html#gst-xml-write-file" title="gst_xml_write_file ()">gst_xml_write_file</a>                  (<a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a> *element,
-                                                         <span class="returnvalue">FILE</span> *out);
-<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a>*             <a class="link" href="GstXML.html#gst-xml-new" title="gst_xml_new ()">gst_xml_new</a>                         (void);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstXML.html#gst-xml-parse-doc" title="gst_xml_parse_doc ()">gst_xml_parse_doc</a>                   (<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a> *xml,
-                                                         <span class="returnvalue">xmlDocPtr</span> doc,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *root);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstXML.html#gst-xml-parse-file" title="gst_xml_parse_file ()">gst_xml_parse_file</a>                  (<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a> *xml,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *fname,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *root);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstXML.html#gst-xml-parse-memory" title="gst_xml_parse_memory ()">gst_xml_parse_memory</a>                (<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a> *xml,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *buffer,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> size,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *root);
-<a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a>*         <a class="link" href="GstXML.html#gst-xml-get-element" title="gst_xml_get_element ()">gst_xml_get_element</a>                 (<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a> *xml,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *name);
-<a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*              <a class="link" href="GstXML.html#gst-xml-get-topelements" title="gst_xml_get_topelements ()">gst_xml_get_topelements</a>             (<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a> *xml);
-<a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a>*         <a class="link" href="GstXML.html#gst-xml-make-element" title="gst_xml_make_element ()">gst_xml_make_element</a>                (<span class="returnvalue">xmlNodePtr</span> cur,
-                                                         <a class="link" href="GstObject.html" title="GstObject"><span class="returnvalue">GstObject</span></a> *parent);
+<span class="returnvalue">xmlDocPtr</span>           <a class="link" href="GstXML.html#gst-xml-write" title="gst_xml_write ()">gst_xml_write</a>                       (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="GstXML.html#gst-xml-write-file" title="gst_xml_write_file ()">gst_xml_write_file</a>                  (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><span class="type">FILE</span> *out</code></em>);
+<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a>*             <a class="link" href="GstXML.html#gst-xml-new" title="gst_xml_new ()">gst_xml_new</a>                         (<em class="parameter"><code><span class="type">void</span></code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstXML.html#gst-xml-parse-doc" title="gst_xml_parse_doc ()">gst_xml_parse_doc</a>                   (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>,
+                                                         <em class="parameter"><code><span class="type">xmlDocPtr</span> doc</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *root</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstXML.html#gst-xml-parse-file" title="gst_xml_parse_file ()">gst_xml_parse_file</a>                  (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *fname</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *root</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstXML.html#gst-xml-parse-memory" title="gst_xml_parse_memory ()">gst_xml_parse_memory</a>                (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *buffer</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> size</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *root</code></em>);
+<a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a>*         <a class="link" href="GstXML.html#gst-xml-get-element" title="gst_xml_get_element ()">gst_xml_get_element</a>                 (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *name</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*              <a class="link" href="GstXML.html#gst-xml-get-topelements" title="gst_xml_get_topelements ()">gst_xml_get_topelements</a>             (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>);
+<a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a>*         <a class="link" href="GstXML.html#gst-xml-make-element" title="gst_xml_make_element ()">gst_xml_make_element</a>                (<em class="parameter"><code><span class="type">xmlNodePtr</span> cur</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstObject.html" title="GstObject"><span class="type">GstObject</span></a> *parent</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
@@ -98,7 +91,8 @@ graph.
 </p>
 <p>
 <a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> implementations need to override the <a class="link" href="GstObject.html#GstObjectClass.save-thyself"><code class="function">GstObjectClass.save_thyself()</code></a>
-and <a class="link" href="GstObject.html#GstObjectClass.restore-thyself"><code class="function">GstObjectClass.restore_thyself()</code></a> virtual functions of <a class="link" href="GstObject.html" title="GstObject"><span class="type">GstObject</span></a>.</p>
+and <a class="link" href="GstObject.html#GstObjectClass.restore-thyself"><code class="function">GstObjectClass.restore_thyself()</code></a> virtual functions of <a class="link" href="GstObject.html" title="GstObject"><span class="type">GstObject</span></a>.
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="GstXML.details"></a><h2>Details</h2>
@@ -111,18 +105,19 @@ and <a class="link" href="GstObject.html#GstObjectClass.restore-thyself"><code c
 } GstXML;
 </pre>
 <p>
-XML parser object</p>
+XML parser object
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *<em class="structfield"><code><a name="GstXML-struct.topelements"></a>topelements</code></em>;</span></p></td>
-<td> list of element nodes
+<td>list of element nodes
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="type">xmlNsPtr</span> <em class="structfield"><code><a name="GstXML-struct.ns"></a>ns</code></em>;</span></p></td>
-<td> name space
+<td>name space
 </td>
 </tr>
 </tbody>
@@ -131,15 +126,16 @@ XML parser object</p>
 <hr>
 <div class="refsect2" title="gst_xml_write ()">
 <a name="gst-xml-write"></a><h3>gst_xml_write ()</h3>
-<pre class="programlisting"><span class="returnvalue">xmlDocPtr</span>           gst_xml_write                       (<a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a> *element);</pre>
+<pre class="programlisting"><span class="returnvalue">xmlDocPtr</span>           gst_xml_write                       (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
 <p>
-Converts the given element into an XML presentation.</p>
+Converts the given element into an XML presentation.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>element</code></em> :</span></p></td>
-<td> The element to write out
+<td>The element to write out
 </td>
 </tr>
 <tr>
@@ -153,22 +149,23 @@ Converts the given element into an XML presentation.</p>
 <hr>
 <div class="refsect2" title="gst_xml_write_file ()">
 <a name="gst-xml-write-file"></a><h3>gst_xml_write_file ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_xml_write_file                  (<a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a> *element,
-                                                         <span class="returnvalue">FILE</span> *out);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_xml_write_file                  (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><span class="type">FILE</span> *out</code></em>);</pre>
 <p>
 Converts the given element into XML and writes the formatted XML to an open
-file.</p>
+file.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>element</code></em> :</span></p></td>
-<td> The element to write out
+<td>The element to write out
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>out</code></em> :</span></p></td>
-<td> an open file, like stdout
+<td>an open file, like stdout
 </td>
 </tr>
 <tr>
@@ -182,9 +179,10 @@ file.</p>
 <hr>
 <div class="refsect2" title="gst_xml_new ()">
 <a name="gst-xml-new"></a><h3>gst_xml_new ()</h3>
-<pre class="programlisting"><a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a>*             gst_xml_new                         (void);</pre>
+<pre class="programlisting"><a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a>*             gst_xml_new                         (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
-Create a new GstXML parser object.</p>
+Create a new GstXML parser object.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
@@ -197,28 +195,29 @@ Create a new GstXML parser object.</p>
 <hr>
 <div class="refsect2" title="gst_xml_parse_doc ()">
 <a name="gst-xml-parse-doc"></a><h3>gst_xml_parse_doc ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_xml_parse_doc                   (<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a> *xml,
-                                                         <span class="returnvalue">xmlDocPtr</span> doc,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *root);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_xml_parse_doc                   (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>,
+                                                         <em class="parameter"><code><span class="type">xmlDocPtr</span> doc</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *root</code></em>);</pre>
 <p>
 Fills the GstXML object with the elements from the
-xmlDocPtr.</p>
+xmlDocPtr.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>xml</code></em> :</span></p></td>
-<td> a pointer to a GstXML object
+<td>a pointer to a GstXML object
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>doc</code></em> :</span></p></td>
-<td> a pointer to an xml document to parse
+<td>a pointer to an xml document to parse
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>root</code></em> :</span></p></td>
-<td> The name of the root object to build
+<td>The name of the root object to build
 </td>
 </tr>
 <tr>
@@ -232,9 +231,9 @@ xmlDocPtr.</p>
 <hr>
 <div class="refsect2" title="gst_xml_parse_file ()">
 <a name="gst-xml-parse-file"></a><h3>gst_xml_parse_file ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_xml_parse_file                  (<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a> *xml,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *fname,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *root);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_xml_parse_file                  (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *fname</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *root</code></em>);</pre>
 <p>
 Fills the GstXML object with the corresponding elements from
 the XML file fname. Optionally it will only build the element from
@@ -244,23 +243,24 @@ but not the pipeline it is embedded in.
 </p>
 <p>
 Pass "-" as fname to read from stdin. You can also pass a URI
-of any format that libxml supports, including http.</p>
+of any format that libxml supports, including http.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>xml</code></em> :</span></p></td>
-<td> a pointer to a GstXML object
+<td>a pointer to a GstXML object
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fname</code></em> :</span></p></td>
-<td> The filename with the xml description
+<td>The filename with the xml description
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>root</code></em> :</span></p></td>
-<td> The name of the root object to build
+<td>The name of the root object to build
 </td>
 </tr>
 <tr>
@@ -274,34 +274,35 @@ of any format that libxml supports, including http.</p>
 <hr>
 <div class="refsect2" title="gst_xml_parse_memory ()">
 <a name="gst-xml-parse-memory"></a><h3>gst_xml_parse_memory ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_xml_parse_memory                (<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a> *xml,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *buffer,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a> size,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *root);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_xml_parse_memory                (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *buffer</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> size</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *root</code></em>);</pre>
 <p>
 Fills the GstXML object with the corresponding elements from
-an in memory XML buffer.</p>
+an in memory XML buffer.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>xml</code></em> :</span></p></td>
-<td> a pointer to a GstXML object
+<td>a pointer to a GstXML object
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td> a pointer to the in memory XML buffer
+<td>a pointer to the in memory XML buffer
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td> the size of the buffer
+<td>the size of the buffer
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>root</code></em> :</span></p></td>
-<td> the name of the root objects to build
+<td>the name of the root objects to build
 </td>
 </tr>
 <tr>
@@ -315,23 +316,24 @@ an in memory XML buffer.</p>
 <hr>
 <div class="refsect2" title="gst_xml_get_element ()">
 <a name="gst-xml-get-element"></a><h3>gst_xml_get_element ()</h3>
-<pre class="programlisting"><a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a>*         gst_xml_get_element                 (<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a> *xml,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="returnvalue">guchar</span></a> *name);</pre>
+<pre class="programlisting"><a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a>*         gst_xml_get_element                 (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *name</code></em>);</pre>
 <p>
 This function is used to get a pointer to the GstElement corresponding
 to name in the pipeline description. You would use this if you have
-to do anything to the element after loading.</p>
+to do anything to the element after loading.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>xml</code></em> :</span></p></td>
-<td> The GstXML to get the element from
+<td>The GstXML to get the element from
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
-<td> The name of element to retrieve
+<td>The name of element to retrieve
 </td>
 </tr>
 <tr>
@@ -345,15 +347,16 @@ to do anything to the element after loading.</p>
 <hr>
 <div class="refsect2" title="gst_xml_get_topelements ()">
 <a name="gst-xml-get-topelements"></a><h3>gst_xml_get_topelements ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*              gst_xml_get_topelements             (<a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a> *xml);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*              gst_xml_get_topelements             (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>);</pre>
 <p>
-Retrieve a list of toplevel elements.</p>
+Retrieve a list of toplevel elements.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>xml</code></em> :</span></p></td>
-<td> The GstXML to get the elements from
+<td>The GstXML to get the elements from
 </td>
 </tr>
 <tr>
@@ -370,21 +373,22 @@ reference using <a class="link" href="GstObject.html#gst-object-ref" title="gst_
 <hr>
 <div class="refsect2" title="gst_xml_make_element ()">
 <a name="gst-xml-make-element"></a><h3>gst_xml_make_element ()</h3>
-<pre class="programlisting"><a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a>*         gst_xml_make_element                (<span class="returnvalue">xmlNodePtr</span> cur,
-                                                         <a class="link" href="GstObject.html" title="GstObject"><span class="returnvalue">GstObject</span></a> *parent);</pre>
+<pre class="programlisting"><a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a>*         gst_xml_make_element                (<em class="parameter"><code><span class="type">xmlNodePtr</span> cur</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstObject.html" title="GstObject"><span class="type">GstObject</span></a> *parent</code></em>);</pre>
 <p>
-Load the element from the XML description</p>
+Load the element from the XML description
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>cur</code></em> :</span></p></td>
-<td> the xml node
+<td>the xml node
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>parent</code></em> :</span></p></td>
-<td> the parent of this object when it's loaded
+<td>the parent of this object when it's loaded
 </td>
 </tr>
 <tr>
@@ -405,23 +409,24 @@ Load the element from the XML description</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   xml_node,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last</pre>
 <p>
-Signals that a new object has been deserialized.</p>
+Signals that a new object has been deserialized.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>xml</code></em> :</span></p></td>
-<td> the xml persistence instance
+<td>the xml persistence instance
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>object</code></em> :</span></p></td>
-<td> the object that has been loaded
+<td>the object that has been loaded
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>xml_node</code></em> :</span></p></td>
-<td> the related xml_node pointer to the document tree
+<td>the related xml_node pointer to the document tree
 </td>
 </tr>
 <tr>
@@ -435,6 +440,6 @@ Signals that a new object has been deserialized.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

@@ -114,7 +114,7 @@ _gst_query_initialize (void)
 
   while (standards->nick) {
     standards->quark = g_quark_from_static_string (standards->nick);
-    g_hash_table_insert (_nick_to_query, standards->nick, standards);
+    g_hash_table_insert (_nick_to_query, (gpointer) standards->nick, standards);
     g_hash_table_insert (_query_type_to_nick,
         GINT_TO_POINTER (standards->value), standards);
 
@@ -238,14 +238,14 @@ gst_query_type_register (const gchar * nick, const gchar * description)
   if (lookup != GST_QUERY_NONE)
     return lookup;
 
-  query = g_new0 (GstQueryTypeDefinition, 1);
+  query = g_slice_new (GstQueryTypeDefinition);
   query->value = _n_values;
   query->nick = g_strdup (nick);
   query->description = g_strdup (description);
   query->quark = g_quark_from_static_string (query->nick);
 
   g_static_mutex_lock (&mutex);
-  g_hash_table_insert (_nick_to_query, query->nick, query);
+  g_hash_table_insert (_nick_to_query, (gpointer) query->nick, query);
   g_hash_table_insert (_query_type_to_nick, GINT_TO_POINTER (query->value),
       query);
   _gst_queries = g_list_append (_gst_queries, query);

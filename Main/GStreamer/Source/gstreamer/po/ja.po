@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.20.3\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2008-10-16 19:57+0900\n"
 "Last-Translator: Makoto Kato <makoto.kt@gmail.com>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -82,18 +82,6 @@ msgstr "GStreamer オプションを表示する"
 
 msgid "Unknown option"
 msgstr "不明なオプション"
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr ""
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"追加のデバッグ情報:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr ""
@@ -604,6 +592,27 @@ msgid ""
 "according to WGS84 (zero is average sea level)"
 msgstr ""
 
+msgid "geo location country"
+msgstr ""
+
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+
+#, fuzzy
+msgid "geo location city"
+msgstr "場所"
+
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+
+msgid "geo location sublocation"
+msgstr ""
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr ""
@@ -656,8 +665,29 @@ msgid ""
 "of a concerto. It is a higher level than a track, but lower than an album"
 msgstr ""
 
+#, fuzzy
+msgid "user rating"
+msgstr "演奏時間"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr ""
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"追加のデバッグ情報:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -775,6 +805,10 @@ msgstr "ファイル \"%s\" はソケットです"
 
 msgid "Failed after iterations as requested."
 msgstr ""
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "ファイル \"%s\" の書き込み中にエラーが発生しました"
 
 msgid "No Temp directory specified."
 msgstr ""

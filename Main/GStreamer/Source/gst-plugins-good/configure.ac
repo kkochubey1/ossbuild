@@ -5,7 +5,7 @@ dnl please read gstreamer/docs/random/autotools before changing this file
 dnl initialize autoconf
 dnl releases only do -Wall, git and prerelease does -Werror too
 dnl use a three digit version number for releases, and four for git/pre
-AC_INIT(GStreamer Good Plug-ins, 0.10.21,
+AC_INIT(GStreamer Good Plug-ins, 0.10.22,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-good)
 
@@ -32,6 +32,11 @@ AM_MAINTAINER_MODE
 dnl sets host_* variables
 AC_CANONICAL_HOST
 
+dnl use pretty build output with automake >= 1.11
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])],
+  [AM_DEFAULT_VERBOSITY=1
+   AC_SUBST(AM_DEFAULT_VERBOSITY)])
+
 dnl our libraries and install dirs use major.minor as a version
 GST_MAJORMINOR=$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR
 dnl we override it here if we need to for the release candidate of new series
@@ -47,8 +52,8 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.27
-GSTPB_REQ=0.10.27
+GST_REQ=0.10.29
+GSTPB_REQ=0.10.29
 
 dnl *** autotools stuff ****
 
@@ -267,10 +272,19 @@ dnl set location of plugin directory
 AG_GST_SET_PLUGINDIR
 
 dnl define an ERROR_CFLAGS Makefile variable
-AG_GST_SET_ERROR_CFLAGS($GST_GIT)
+dnl -Wundef: too many broken headers
+dnl -Waggregate-return: causes problems with ObjC code like in osxvideosink
+AG_GST_SET_ERROR_CFLAGS($GST_GIT, [
+        -Wmissing-declarations -Wmissing-prototypes -Wredundant-decls
+        -Wwrite-strings -Wold-style-definition
+        -Winit-self -Wmissing-include-dirs -Waddress -Wno-multichar
+        -Wnested-externs ])
 
 dnl define an ERROR_CXXFLAGS Makefile variable
-AG_GST_SET_ERROR_CXXFLAGS($GST_GIT)
+AG_GST_SET_ERROR_CXXFLAGS($GST_GIT, [
+        -Wmissing-declarations -Wredundant-decls
+        -Wwrite-strings
+        -Winit-self -Wmissing-include-dirs -Waddress -Wno-multichar ])
 
 dnl define correct level for debugging messages
 AG_GST_SET_LEVEL_DEFAULT($GST_GIT)
@@ -750,7 +764,7 @@ AG_GST_CHECK_FEATURE(LIBDV, [libdv DV demuxer/decoder], dv, [
 dnl *** libpng ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_LIBPNG, true)
 AG_GST_CHECK_FEATURE(LIBPNG, [Portable Network Graphics library], png, [
-  AG_GST_PKG_CHECK_MODULES(LIBPNG, libpng12)
+  AG_GST_PKG_CHECK_MODULES(LIBPNG, libpng >= 1.2)
 ])
 
 dnl *** pulseaudio ***
@@ -1016,8 +1030,8 @@ AC_SUBST(DEPRECATED_CFLAGS)
 
 dnl every flag in GST_OPTION_CFLAGS and GST_OPTION_CXXFLAGS can be overridden
 dnl at make time with e.g. make ERROR_CFLAGS=""
-GST_OPTION_CFLAGS="\$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
-GST_OPTION_CXXFLAGS="\$(ERROR_CXXFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CFLAGS="\$(WARNING_CFLAGS) \$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CXXFLAGS="\$(WARNING_CXXFLAGS) \$(ERROR_CXXFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
 AC_SUBST(GST_OPTION_CFLAGS)
 AC_SUBST(GST_OPTION_CXXFLAGS)
 
@@ -1028,8 +1042,8 @@ dnl FIXME: do we want to rename to GST_ALL_* ?
 dnl prefer internal headers to already installed ones
 dnl also add builddir include for enumtypes and marshal
 dnl add ERROR_CFLAGS, but overridable
-GST_CXXFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CXXFLAGS)"
-GST_CFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CFLAGS)"
+GST_CXXFLAGS="-I\$(top_srcdir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CXXFLAGS)"
+GST_CFLAGS="-I\$(top_srcdir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CFLAGS)"
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_CXXFLAGS)
 AC_SUBST(GST_LIBS)
@@ -1044,14 +1058,11 @@ dnl whatevertarget_LIBS and -L flags here affect the rest of the linking
 GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^[_]*gst_plugin_desc\$\$' $GST_ALL_LDFLAGS"
 AC_SUBST(GST_PLUGIN_LDFLAGS)
 
-SHAVE_INIT([common],[enable])
 dnl *** output files ***
 
 dnl keep this alphabetic per directory, please
 AC_CONFIG_FILES(
 Makefile
-common/shave
-common/shave-libtool
 gst/Makefile
 gst/alpha/Makefile
 gst/apetag/Makefile

@@ -3,7 +3,7 @@
   <description>transfer data via RTSP</description>
   <filename>../../gst/rtsp/.libs/libgstrtsp.so</filename>
   <basename>libgstrtsp.so</basename>
-  <version>0.10.21</version>
+  <version>0.10.22</version>
   <license>LGPL</license>
   <source>gst-plugins-good</source>
   <package>GStreamer Good Plug-ins source release</package>
@@ -47,9 +47,7 @@
       <longname>RTSP packet receiver</longname>
       <class>Source/Network</class>
       <description>Receive data over the network via RTSP (RFC 2326)</description>
-      <author>Wim Taymans &lt;wim@fluendo.com&gt;
-    Thijs Vermeir &lt;thijs.vermeir@barco.com&gt;
-    Lutz Mueller &lt;lutz@topfrose.de&gt;</author>
+      <author>Wim Taymans &lt;wim@fluendo.com&gt;, Thijs Vermeir &lt;thijs.vermeir@barco.com&gt;, Lutz Mueller &lt;lutz@topfrose.de&gt;</author>
       <pads>
         <caps>
           <name>stream%d</name>

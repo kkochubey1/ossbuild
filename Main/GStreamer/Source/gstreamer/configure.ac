@@ -1,9 +1,9 @@
-AC_PREREQ(2.52)
+AC_PREREQ(2.60)
 
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, git and prerelease does Werror too
-AC_INIT(GStreamer, 0.10.28,
+AC_INIT(GStreamer, 0.10.29,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gstreamer)
 AG_GST_INIT
@@ -29,6 +29,11 @@ AM_MAINTAINER_MODE
 dnl sets host_* variables
 AC_CANONICAL_HOST
 
+dnl use pretty build output with automake >= 1.11
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])],
+  [AM_DEFAULT_VERBOSITY=1
+   AC_SUBST(AM_DEFAULT_VERBOSITY)])
+
 dnl our libraries and install dirs use major.minor as a version
 GST_MAJORMINOR=$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR
 dnl we override it here for release candidates for a new series
@@ -43,7 +48,7 @@ dnl - interfaces added/removed/changed -> increment CURRENT, REVISION = 0
 dnl - interfaces added -> increment AGE
 dnl - interfaces removed -> AGE = 0
 dnl sets GST_LT_LDFLAGS
-AS_LIBTOOL(GST, 24, 1, 24)
+AS_LIBTOOL(GST, 25, 0, 25)
 
 dnl FIXME: this macro doesn't actually work;
 dnl the generated libtool script has no support for the listed tags.
@@ -59,7 +64,7 @@ dnl allow for different autotools
 AS_AUTOTOOLS_ALTERNATE
 
 dnl Add parameters for aclocal (keep in sync with Makefile.am)
-AC_SUBST(ACLOCAL_AMFLAGS, "-I common/m4 -I .")
+AC_SUBST(ACLOCAL_AMFLAGS, "-I m4 -I common/m4")
 
 dnl set up gettext
 dnl the version check needs to stay here because autopoint greps for it
@@ -276,6 +281,9 @@ dnl check for pthreads
 AC_CHECK_HEADERS([pthread.h], HAVE_PTHREAD_H=yes)
 AM_CONDITIONAL(HAVE_PTHREAD_H, test "x$HAVE_PTHREAD_H" = "xyes")
 
+dnl check for sys/prctl for setting thread name on Linux
+AC_CHECK_HEADERS([sys/prctl.h], HAVE_SYS_PRCTL_H=yes)
+
 dnl Check for valgrind.h
 dnl separate from HAVE_VALGRIND because you can have the program, but not
 dnl the dev package
@@ -312,13 +320,14 @@ dnl *** checks for structures ***
 dnl *** checks for compiler characteristics ***
 
 dnl check if the compiler supports __uint128_t (gcc)
+dnl Actually check for 128-bit division, since that's what we use
+dnl uint128_t for.
 AC_CACHE_CHECK(for __uint128_t, gst_cv_uint128_t,
-    AC_TRY_COMPILE([ ], [
-      unsigned long long v1 = 1024ULL;
-      unsigned long long v2 = 0x8000000000000000ULL;
-      __uint128_t u = ((__uint128_t)v1)*((__uint128_t)v2);
-
-      return 0;
+    AC_TRY_LINK([ ], [
+      static __uint128_t v1 = 100;
+      static __uint128_t v2 = 10;
+      static __uint128_t u;
+      u = v1 / v2;
     ], [
       gst_cv_uint128_t=yes
     ], [
@@ -327,21 +336,6 @@ AC_CACHE_CHECK(for __uint128_t, gst_cv_uint128_t,
 )
 if test x$gst_cv_uint128_t = xyes; then
   AC_DEFINE(HAVE_UINT128_T, 1, [Have __uint128_t type])
-fi
-
-OPT_CFLAGS=
-dnl Check for some compiler flags that optimize our code.
-if test "x$GCC" = xyes; then
-  AS_COMPILER_FLAG(-fno-common, OPT_CFLAGS="$OPT_CFLAGS -fno-common")
-fi
-
-dnl FIXME: decide what kind of flag this is, maybe it's not an optimization
-dnl flag
-dnl check if we should use -Wa,-mregnames on PowerPC, so we can use
-dnl symbolic register names in inline asm
-if test x$HAVE_CPU_PPC = xyes ; then
-  AS_COMPILER_FLAG(["-Wa,-mregnames"],
-    [OPT_CFLAGS="$OPT_CFLAGS -Wa,-mregnames"])
 fi
 
 dnl *** checks for library functions ***
@@ -395,6 +389,10 @@ dnl check for mmap()
 AC_FUNC_MMAP
 AM_CONDITIONAL(HAVE_MMAP, test "x$ac_cv_func_mmap_fixed_mapped" = "xyes")
 
+dnl check for posix_memalign(), getpagesize()
+AC_CHECK_FUNCS([posix_memalign])
+AC_CHECK_FUNCS([getpagesize])
+
 dnl Check for POSIX timers
 AC_CHECK_FUNCS(clock_gettime, [], [
   AC_CHECK_LIB(rt, clock_gettime, [
@@ -413,7 +411,6 @@ AC_CACHE_CHECK(for posix timers, gst_cv_posix_timers,
 #if !defined(_POSIX_TIMERS) || _POSIX_TIMERS < 0 || !defined(CLOCK_REALTIME)
 #error Either _POSIX_TIMERS or CLOCK_REALTIME not defined
 #endif
-      return 0;
     ], [
       gst_cv_posix_timers=yes
     ], [
@@ -440,7 +437,6 @@ AC_CACHE_CHECK(for monotonic clock, gst_cv_monotonic_clock,
 #if !defined(_POSIX_MONOTONIC_CLOCK) || _POSIX_MONOTONIC_CLOCK < 0 || !defined(CLOCK_MONOTONIC)
 #error Either _POSIX_MONOTONIC_CLOCK or CLOCK_MONOTONIC not defined
 #endif
-      return 0;
     ], [
       gst_cv_monotonic_clock=yes
     ], [
@@ -551,6 +547,24 @@ dnl bit of a misnomer, but keep the conditional named like this so we don't
 dnl have to change too much elsewhere
 AM_CONDITIONAL(HAVE_CHECK, test "x$BUILD_CHECK" = "xyes")
 
+dnl configure the desired buffer alignment
+AC_ARG_WITH([buffer-alignment],
+  AS_HELP_STRING([--with-buffer-alignment],[8,N,malloc,pagesize (default is 32)]),
+  [
+    if test "x$withval" = "xyes"
+    then
+      AC_DEFINE(BUFFER_ALIGNMENT, 32, [Buffer alignment to use])
+    else
+      case "${withval}" in
+        malloc) AC_DEFINE(BUFFER_ALIGNMENT_MALLOC, 1, [Buffer alignment by malloc default]) ;;
+        pagesize)  AC_DEFINE(BUFFER_ALIGNMENT_PAGESIZE, 1, [Buffer alignment by pagesize]) ;;
+        *)   AC_DEFINE_UNQUOTED(BUFFER_ALIGNMENT, ${withval}, [Buffer alignment to use]) ;;
+      esac
+    fi
+  ], [
+    AC_DEFINE(BUFFER_ALIGNMENT_MALLOC, 1, [Buffer alignment by malloc default]) 
+  ]
+)
 
 dnl *** set variables based on configure arguments
 
@@ -573,7 +587,7 @@ GST_PKG_DEPS="glib-2.0, gobject-2.0, gmodule-no-export-2.0, gthread-2.0"
 AC_SUBST(GST_PKG_DEPS)
 
 dnl define an ERROR_CFLAGS Makefile variable
-AG_GST_SET_ERROR_CFLAGS($GST_GIT)
+AG_GST_SET_ERROR_CFLAGS($GST_GIT, [-Wmissing-declarations -Wmissing-prototypes -Wredundant-decls -Wundef -Wwrite-strings -Wformat-nonliteral -Wformat-security -Wold-style-definition -Winit-self -Wmissing-include-dirs -Waddress -Waggregate-return -Wno-multichar -Wnested-externs])
 
 dnl define correct level for debugging messages
 AG_GST_SET_LEVEL_DEFAULT($GST_GIT)
@@ -608,7 +622,7 @@ AC_SUBST(DEPRECATED_CFLAGS)
 
 dnl every flag in GST_OPTION_CFLAGS can be overridden at make time via e.g.
 dnl make DEPRECATED_CFLAGS=''
-GST_OPTION_CFLAGS="\$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CFLAGS="\$(WARNING_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
 AC_SUBST(GST_OPTION_CFLAGS)
 
 dnl GST_ALL_*
@@ -619,7 +633,7 @@ dnl - src and build dirs need to be added because every piece that gets built
 dnl   will need the GStreamer source and generated headers
 dnl LIBS: XML doesn't need to be added because we don't explicitly use symbols
 dnl       from LibXML except for in the core library
-GST_ALL_CFLAGS="-I\$(top_srcdir)/libs -I\$(top_srcdir) -I\$(top_builddir)/libs -I\$(top_builddir) $GLIB_CFLAGS $XML_CFLAGS \$(GST_OPTION_CFLAGS) -DG_THREADS_MANDATORY"
+GST_ALL_CFLAGS="-I\$(top_srcdir)/libs -I\$(top_srcdir) -I\$(top_builddir)/libs -I\$(top_builddir) $GLIB_CFLAGS $XML_CFLAGS \$(GST_OPTION_CFLAGS) \$(ERROR_CFLAGS) -DG_THREADS_MANDATORY"
 
 dnl FIXME: check if LTLIBINTL is needed everywhere
 dnl I presume it is given that it contains the symbols that _() stuff maps to
@@ -662,12 +676,8 @@ dnl things for our internal libcheck (must be called even if building
 dnl libcheck is disabled because it defines conditionals)
 AG_GST_CHECK_CHECKS()
 
-SHAVE_INIT([common],[enable])
-
 AC_CONFIG_FILES(
 Makefile
-common/shave
-common/shave-libtool
 gst/Makefile
 gst/gstconfig.h
 gst/gstversion.h
@@ -717,6 +727,7 @@ docs/pwg/Makefile
 docs/slides/Makefile
 docs/xsl/Makefile
 docs/version.entities
+m4/Makefile
 pkgconfig/Makefile
 stamp.h
 pkgconfig/gstreamer.pc
@@ -758,6 +769,7 @@ sed \
     -e 's/.* HAVE_WIN32$/#define HAVE_WIN32 1/' \
     -e 's/.* HAVE_WINSOCK2_H$/#define HAVE_WINSOCK2_H 1/' \
     -e 's/.* HOST_CPU$/#define HOST_CPU "i686"/' \
+    -e 's/.* BUFFER_ALIGNMENT_MALLOC/#define BUFFER_ALIGNMENT_MALLOC 1/' \
     -e 's/.* LIBDIR$/#ifdef _DEBUG\n#  define LIBDIR PREFIX "\\\\debug\\\\lib"\n#else\n#  define LIBDIR PREFIX "\\\\lib"\n#endif/' \
     -e 's/.* LOCALEDIR$/#define LOCALEDIR PREFIX "\\\\share\\\\locale"/' \
     -e 's/.* PACKAGE$/#define PACKAGE "gstreamer"/' \
@@ -790,7 +802,7 @@ Configuration
 	Version                    : ${VERSION}
 	Source code location       : ${srcdir}
 	Prefix                     : ${prefix}
-	Compiler                   : ${SHAVE_SAVED_CC}
+	Compiler                   : ${CC}
 	Package name               : ${GST_PACKAGE_NAME}
 	Package origin             : ${GST_PACKAGE_ORIGIN}
 

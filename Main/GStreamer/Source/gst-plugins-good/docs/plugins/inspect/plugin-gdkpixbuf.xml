@@ -3,7 +3,7 @@
   <description>GdkPixbuf-based image decoder, scaler and sink</description>
   <filename>../../ext/gdk_pixbuf/.libs/libgstgdkpixbuf.so</filename>
   <basename>libgstgdkpixbuf.so</basename>
-  <version>0.10.21</version>
+  <version>0.10.22</version>
   <license>LGPL</license>
   <source>gst-plugins-good</source>
   <package>GStreamer Good Plug-ins source release</package>
@@ -35,9 +35,7 @@
       <longname>GdkPixbuf image scaler</longname>
       <class>Filter/Effect/Video</class>
       <description>Resizes video</description>
-      <author>Jan Schmidt &lt;thaytan@mad.scientist.com&gt;
-    Wim Taymans &lt;wim.taymans@chello.be&gt;
-    Renato Filho &lt;renato.filho@indt.org.br&gt;</author>
+      <author>Jan Schmidt &lt;thaytan@mad.scientist.com&gt;, Wim Taymans &lt;wim.taymans@chello.be&gt;, Renato Filho &lt;renato.filho@indt.org.br&gt;</author>
       <pads>
         <caps>
           <name>sink</name>

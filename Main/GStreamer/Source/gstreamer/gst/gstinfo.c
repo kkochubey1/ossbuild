@@ -218,7 +218,7 @@ static int _gst_info_printf_extension_ptr (FILE * stream,
     const struct printf_info *info, const void *const *args);
 static int _gst_info_printf_extension_segment (FILE * stream,
     const struct printf_info *info, const void *const *args);
-#if HAVE_REGISTER_PRINTF_SPECIFIER
+#ifdef HAVE_REGISTER_PRINTF_SPECIFIER
 static int _gst_info_printf_extension_arginfo (const struct printf_info *info,
     size_t n, int *argtypes, int *size);
 #else
@@ -315,7 +315,7 @@ _gst_debug_init (void)
   _priv_gst_info_start_time = gst_util_get_timestamp ();
 
 #ifdef HAVE_PRINTF_EXTENSION
-#if HAVE_REGISTER_PRINTF_SPECIFIER
+#ifdef HAVE_REGISTER_PRINTF_SPECIFIER
   register_printf_specifier (GST_PTR_FORMAT[0], _gst_info_printf_extension_ptr,
       _gst_info_printf_extension_arginfo);
   register_printf_specifier (GST_SEGMENT_FORMAT[0],
@@ -641,6 +641,24 @@ gst_debug_print_object (gpointer ptr)
       }
     }
   }
+  if (GST_IS_EVENT (object)) {
+    GstEvent *event = GST_EVENT_CAST (object);
+    gchar *s, *ret;
+
+    if (event->structure) {
+      s = gst_info_structure_to_string (event->structure);
+    } else {
+      s = g_strdup ("(NULL)");
+    }
+
+    ret = g_strdup_printf ("%s event from '%s' at time %"
+        GST_TIME_FORMAT ": %s",
+        GST_EVENT_TYPE_NAME (event), (event->src != NULL) ?
+        GST_OBJECT_NAME (event->src) : "(NULL)",
+        GST_TIME_ARGS (event->timestamp), s);
+    g_free (s);
+    return ret;
+  }
 
   return g_strdup_printf ("%p", ptr);
 }
@@ -866,7 +884,6 @@ gst_debug_log_default (GstDebugCategory * category, GstDebugLevel level,
   gint pid;
   GstClockTime elapsed;
   gchar *obj = NULL;
-  gboolean free_obj = TRUE;
   gboolean is_colored;
 
   if (level > gst_debug_category_get_threshold (category))
@@ -881,15 +898,14 @@ gst_debug_log_default (GstDebugCategory * category, GstDebugLevel level,
   if (object) {
     obj = gst_debug_print_object (object);
   } else {
-    obj = "\0";
-    free_obj = FALSE;
+    obj = g_strdup ("");
   }
 
   if (is_colored) {
 #ifndef G_OS_WIN32
     /* colors, non-windows */
     gchar *color = NULL;
-    gchar *clear;
+    const gchar *clear;
     gchar pidcolor[10];
     const gchar *levelcolor;
 
@@ -947,8 +963,7 @@ gst_debug_log_default (GstDebugCategory * category, GstDebugLevel level,
 #undef PRINT_FMT
   }
 
-  if (free_obj)
-    g_free (obj);
+  g_free (obj);
 }
 
 /**
@@ -1001,7 +1016,7 @@ gst_debug_add_log_function (GstLogFunction func, gpointer data)
 
   g_return_if_fail (func != NULL);
 
-  entry = g_new (LogFuncEntry, 1);
+  entry = g_slice_new (LogFuncEntry);
   entry->func = func;
   entry->user_data = data;
   /* FIXME: we leak the old list here - other threads might access it right now
@@ -1051,7 +1066,7 @@ gst_debug_remove_with_compare_func (GCompareFunc func, gpointer data)
       new = g_slist_copy (new);
       continue;
     }
-    g_free (found->data);
+    g_slice_free (LogFuncEntry, found->data);
     new = g_slist_delete_link (new, found);
     removals++;
   }
@@ -1257,7 +1272,7 @@ gst_debug_set_threshold_for_name (const gchar * name, GstDebugLevel level)
   g_return_if_fail (name != NULL);
 
   pat = g_pattern_spec_new (name);
-  entry = g_new (LevelNameEntry, 1);
+  entry = g_slice_new (LevelNameEntry);
   entry->pat = pat;
   entry->level = level;
   g_static_mutex_lock (&__level_name_mutex);
@@ -1292,7 +1307,7 @@ gst_debug_unset_threshold_for_name (const gchar * name)
     if (g_pattern_spec_equal (entry->pat, pat)) {
       __level_name = g_slist_remove_link (__level_name, walk);
       g_pattern_spec_free (entry->pat);
-      g_free (entry);
+      g_slice_free (LevelNameEntry, entry);
       g_slist_free_1 (walk);
       walk = __level_name;
     }
@@ -1310,7 +1325,7 @@ _gst_debug_category_new (const gchar * name, guint color,
 
   g_return_val_if_fail (name != NULL, NULL);
 
-  cat = g_new (GstDebugCategory, 1);
+  cat = g_slice_new (GstDebugCategory);
   cat->name = g_strdup (name);
   cat->color = color;
   if (description != NULL) {
@@ -1348,7 +1363,7 @@ gst_debug_category_free (GstDebugCategory * category)
 
   g_free ((gpointer) category->name);
   g_free ((gpointer) category->description);
-  g_free (category);
+  g_slice_free (GstDebugCategory, category);
 }
 
 /**
@@ -1493,12 +1508,9 @@ _gst_debug_get_category (const gchar * name)
 static GHashTable *__gst_function_pointers;     /* NULL */
 static GStaticMutex __dbg_functions_mutex = G_STATIC_MUTEX_INIT;
 
-const gchar *
-_gst_debug_nameof_funcptr (GstDebugFuncPtr ptr)
-    G_GNUC_NO_INSTRUMENT;
-
 /* This function MUST NOT return NULL */
-     const gchar *_gst_debug_nameof_funcptr (GstDebugFuncPtr func)
+const gchar *
+_gst_debug_nameof_funcptr (GstDebugFuncPtr func)
 {
   gchar *ptrname;
 
@@ -1592,7 +1604,7 @@ _gst_info_printf_extension_segment (FILE * stream,
   return len;
 }
 
-#if HAVE_REGISTER_PRINTF_SPECIFIER
+#ifdef HAVE_REGISTER_PRINTF_SPECIFIER
 static int
 _gst_info_printf_extension_arginfo (const struct printf_info *info, size_t n,
     int *argtypes, int *size)
@@ -1604,7 +1616,7 @@ _gst_info_printf_extension_arginfo (const struct printf_info *info, size_t n,
 {
   if (n > 0) {
     argtypes[0] = PA_POINTER;
-#if HAVE_REGISTER_PRINTF_SPECIFIER
+#ifdef HAVE_REGISTER_PRINTF_SPECIFIER
     *size = sizeof (gpointer);
 #endif
   }
@@ -1679,13 +1691,13 @@ _gst_debug_category_new (const gchar * name, guint color,
 }
 
 void
-_gst_debug_register_funcptr (gpointer func, const gchar * ptrname)
+_gst_debug_register_funcptr (GstDebugFuncPtr func, const gchar * ptrname)
 {
 }
 
 /* This function MUST NOT return NULL */
 const gchar *
-_gst_debug_nameof_funcptr (gpointer func)
+_gst_debug_nameof_funcptr (GstDebugFuncPtr func)
 {
   return "(NULL)";
 }

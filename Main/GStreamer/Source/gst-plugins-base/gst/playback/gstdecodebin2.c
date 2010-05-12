@@ -89,6 +89,7 @@
 
 #include "gstplay-marshal.h"
 #include "gstplay-enum.h"
+#include "gstplayback.h"
 #include "gstfactorylists.h"
 #include "gstrawcaps.h"
 
@@ -251,13 +252,6 @@ enum
 
 static GstBinClass *parent_class;
 static guint gst_decode_bin_signals[LAST_SIGNAL] = { 0 };
-
-static const GstElementDetails gst_decode_bin_details =
-GST_ELEMENT_DETAILS ("Decoder Bin",
-    "Generic/Bin/Decoder",
-    "Autoplug and decode to raw media",
-    "Edward Hervey <edward.hervey@collabora.co.uk>, "
-    "Sebastian Dröge <sebastian.droege@collabora.co.uk>");
 
 static GstStaticCaps default_raw_caps = GST_STATIC_CAPS (DEFAULT_RAW_CAPS);
 
@@ -465,6 +459,7 @@ struct _GstDecodePad
   gboolean drained;             /* an EOS has been seen on the pad */
 };
 
+GType gst_decode_pad_get_type (void);
 G_DEFINE_TYPE (GstDecodePad, gst_decode_pad, GST_TYPE_GHOST_PAD);
 #define GST_TYPE_DECODE_PAD (gst_decode_pad_get_type ())
 #define GST_DECODE_PAD(obj) (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_DECODE_PAD,GstDecodePad))
@@ -850,7 +845,11 @@ gst_decode_bin_class_init (GstDecodeBinClass * klass)
   gst_element_class_add_pad_template (gstelement_klass,
       gst_static_pad_template_get (&decoder_bin_src_template));
 
-  gst_element_class_set_details (gstelement_klass, &gst_decode_bin_details);
+  gst_element_class_set_details_simple (gstelement_klass,
+      "Decoder Bin", "Generic/Bin/Decoder",
+      "Autoplug and decode to raw media",
+      "Edward Hervey <edward.hervey@collabora.co.uk>, "
+      "Sebastian Dröge <sebastian.droege@collabora.co.uk>");
 
   gstelement_klass->change_state =
       GST_DEBUG_FUNCPTR (gst_decode_bin_change_state);
@@ -2603,7 +2602,7 @@ static void
 gst_decode_chain_handle_eos (GstDecodeChain * eos_chain)
 {
   GstDecodeBin *dbin = eos_chain->dbin;
-  GstDecodeGroup *group = eos_chain->parent;
+  GstDecodeGroup *group;
   GstDecodeChain *chain = eos_chain;
   gboolean drained;
 

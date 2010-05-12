@@ -1,11 +1,11 @@
-AC_PREREQ(2.52)
+AC_PREREQ(2.60)
 
 dnl please read gstreamer/docs/random/autotools before changing this file
 
 dnl initialize autoconf
 dnl releases only do -Wall, git and prerelease does -Werror too
 dnl use a three digit version number for releases, and four for git/prerelease
-AC_INIT(GStreamer Base Plug-ins, 0.10.28,
+AC_INIT(GStreamer Base Plug-ins, 0.10.29,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-base)
 
@@ -32,6 +32,11 @@ AM_MAINTAINER_MODE
 dnl sets host_* variables
 AC_CANONICAL_HOST
 
+dnl use pretty build output with automake >= 1.11
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])],
+  [AM_DEFAULT_VERBOSITY=1
+   AC_SUBST(AM_DEFAULT_VERBOSITY)])
+
 dnl our libraries and install dirs use major.minor as a version
 GST_MAJORMINOR=$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR
 dnl we override it here if we need to for the release candidate of new series
@@ -44,7 +49,7 @@ dnl - interfaces added/removed/changed -> increment CURRENT, REVISION = 0
 dnl - interfaces added -> increment AGE
 dnl - interfaces removed -> AGE = 0
 dnl sets GST_LT_LDFLAGS
-AS_LIBTOOL(GST, 19, 2, 19)
+AS_LIBTOOL(GST, 20, 0, 20)
 
 dnl FIXME: this macro doesn't actually work;
 dnl the generated libtool script has no support for the listed tags.
@@ -55,7 +60,7 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.28
+GST_REQ=0.10.29
 
 dnl *** autotools stuff ****
 
@@ -292,6 +297,23 @@ PKG_CHECK_MODULES(QT, QtGui >= 4.6, [
 AM_CONDITIONAL(HAVE_QT, test "x$HAVE_QT" = "xyes")
 AM_CONDITIONAL(HAVE_QT_GV, test "x$HAVE_QT_GV" = "xyes")
 
+dnl chck for linux headers needed by the joystick seek example
+AC_COMPILE_IFELSE(
+[
+  AC_LANG_PROGRAM([
+    #include <linux/input.h>
+    #include <linux/joystick.h>
+  ],[
+    struct js_event js;
+    js.type = JS_EVENT_AXIS;
+  ])
+], [
+  HAVE_LINUX_JOYSTICK_HEADERS="yes"
+], [
+  HAVE_LINUX_JOYSTICK_HEADERS="no"
+])
+AM_CONDITIONAL(HAVE_LINUX_JOYSTICK_HEADERS, test "x$HAVE_LINUX_JOYSTICK_HEADERS" = "xyes")
+
 dnl *** set variables based on configure arguments ***
 
 dnl set license and copyright notice
@@ -303,10 +325,19 @@ dnl set location of plugin directory
 AG_GST_SET_PLUGINDIR
 
 dnl define an ERROR_CFLAGS Makefile variable
-AG_GST_SET_ERROR_CFLAGS($GST_GIT)
+dnl -Wformat-nonliteral - see ext/pango/gstclockoverlay.c and http://gcc.gnu.org/bugzilla/show_bug.cgi?id=39438
+AG_GST_SET_ERROR_CFLAGS($GST_GIT, [
+    -Wmissing-declarations -Wmissing-prototypes -Wredundant-decls -Wundef
+    -Wwrite-strings -Wformat-nonliteral -Wformat-security
+    -Winit-self -Wmissing-include-dirs -Waddress -Waggregate-return
+    -Wno-multichar -Wnested-externs ])
 
 dnl define an ERROR_CXXFLAGS Makefile variable
-AG_GST_SET_ERROR_CXXFLAGS($GST_GIT)
+AG_GST_SET_ERROR_CXXFLAGS($GST_GIT, [
+    -Wmissing-declarations -Wredundant-decls -Wundef
+    -Wwrite-strings -Wformat-nonliteral -Wformat-security
+    -Winit-self -Wmissing-include-dirs -Waddress -Waggregate-return
+    -Wno-multichar])
 
 dnl define correct level for debugging messages
 AG_GST_SET_LEVEL_DEFAULT($GST_GIT)
@@ -356,6 +387,7 @@ AG_GST_CHECK_PLUGIN(videoscale)
 AG_GST_CHECK_PLUGIN(volume)
 
 dnl check for gstreamer core features (subsystems)
+dnl FIXME: this assumes srcdir == builddir for uninstalled setups
 GST_CONFIGPATH=`$PKG_CONFIG --variable=includedir gstreamer-0.10`"/gst/gstconfig.h"
 AG_GST_PARSE_SUBSYSTEM_DISABLES($GST_CONFIGPATH)
 AM_CONDITIONAL(USE_XML, test $GST_DISABLE_XML != "1")
@@ -581,7 +613,8 @@ AG_GST_CHECK_FEATURE(CDPARANOIA, [CDParanoia], cdparanoia, [
     AC_CHECK_LIB(cdda_paranoia,
                  paranoia_cachemodel_size,
                  : ,
-                 HAVE_CDPARANOIA=no)
+                 HAVE_CDPARANOIA=no,
+		 [-lcdda_interface])
   fi
 
   AC_SUBST(CDPARANOIA_LIBS)
@@ -781,8 +814,8 @@ AC_SUBST(DEPRECATED_CFLAGS)
 
 dnl every flag in GST_OPTION_CFLAGS and GST_OPTION_CXXFLAGS can be overridden
 dnl at make time with e.g. make ERROR_CFLAGS=""
-GST_OPTION_CFLAGS="\$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
-GST_OPTION_CXXFLAGS="\$(ERROR_CXXFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CFLAGS="\$(WARNING_CFLAGS) \$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CXXFLAGS="\$(WARNING_CXXFLAGS) \$(ERROR_CXXFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
 AC_SUBST(GST_OPTION_CFLAGS)
 AC_SUBST(GST_OPTION_CXXFLAGS)
 
@@ -822,14 +855,10 @@ dnl whatevertarget_LIBS and -L flags here affect the rest of the linking
 GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^[_]*gst_plugin_desc\$\$' $GST_ALL_LDFLAGS"
 AC_SUBST(GST_PLUGIN_LDFLAGS)
 
-SHAVE_INIT([common],[enable])
-
 dnl *** output files ***
 
 AC_CONFIG_FILES(
 Makefile
-common/shave
-common/shave-libtool
 gst-plugins-base.spec
 gst/Makefile
 gst/adder/Makefile

@@ -125,8 +125,6 @@ struct _GstPipelinePrivate
 };
 
 
-static void gst_pipeline_base_init (gpointer g_class);
-
 static void gst_pipeline_dispose (GObject * object);
 static void gst_pipeline_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
@@ -606,6 +604,10 @@ gst_pipeline_get_bus (GstPipeline * pipeline)
  * gst_element_set_start_time(). 
  */
 #ifndef GST_REMOVE_DEPRECATED
+#ifdef GST_DISABLE_DEPRECATED
+void
+gst_pipeline_set_new_stream_time (GstPipeline * pipeline, GstClockTime time);
+#endif
 void
 gst_pipeline_set_new_stream_time (GstPipeline * pipeline, GstClockTime time)
 {
@@ -639,6 +641,9 @@ gst_pipeline_set_new_stream_time (GstPipeline * pipeline, GstClockTime time)
  * gst_element_get_start_time(). 
  */
 #ifndef GST_REMOVE_DEPRECATED
+#ifdef GST_DISABLE_DEPRECATED
+GstClockTime gst_pipeline_get_last_stream_time (GstPipeline * pipeline);
+#endif
 GstClockTime
 gst_pipeline_get_last_stream_time (GstPipeline * pipeline)
 {

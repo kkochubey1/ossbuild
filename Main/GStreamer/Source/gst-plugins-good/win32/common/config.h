@@ -43,7 +43,7 @@
 #define GST_PACKAGE_NAME "GStreamer Good Plug-ins source release"
 
 /* package origin */
-#define GST_PACKAGE_ORIGIN "Unknown package origin"
+#define GST_PACKAGE_ORIGIN "OSSBuild"
 
 /* struct v4l2_buffer missing */
 #undef GST_V4L2_MISSING_BUFDECL
@@ -359,7 +359,7 @@
 #define PACKAGE_NAME "GStreamer Good Plug-ins"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GStreamer Good Plug-ins 0.10.21"
+#define PACKAGE_STRING "GStreamer Good Plug-ins 0.10.22"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gst-plugins-good"
@@ -368,7 +368,7 @@
 #undef PACKAGE_URL
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.10.21"
+#define PACKAGE_VERSION "0.10.22"
 
 /* directory where plugins are located */
 #ifdef _DEBUG
@@ -399,7 +399,7 @@
 #undef STDC_HEADERS
 
 /* Version number of package */
-#define VERSION "0.10.21"
+#define VERSION "0.10.22"
 
 /* old wavpack API */
 #undef WAVPACK_OLD_API

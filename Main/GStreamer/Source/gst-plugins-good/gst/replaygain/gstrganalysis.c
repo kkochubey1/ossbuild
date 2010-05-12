@@ -86,13 +86,6 @@
 GST_DEBUG_CATEGORY_STATIC (gst_rg_analysis_debug);
 #define GST_CAT_DEFAULT gst_rg_analysis_debug
 
-static const GstElementDetails rganalysis_details = {
-  "ReplayGain analysis",
-  "Filter/Analyzer/Audio",
-  "Perform the ReplayGain analysis",
-  "Ren\xc3\xa9 Stadler <mail@renestadler.de>"
-};
-
 /* Default property value. */
 #define FORCED_DEFAULT TRUE
 #define DEFAULT_MESSAGE FALSE
@@ -135,10 +128,6 @@ static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
 GST_BOILERPLATE (GstRgAnalysis, gst_rg_analysis, GstBaseTransform,
     GST_TYPE_BASE_TRANSFORM);
 
-static void gst_rg_analysis_class_init (GstRgAnalysisClass * klass);
-static void gst_rg_analysis_init (GstRgAnalysis * filter,
-    GstRgAnalysisClass * gclass);
-
 static void gst_rg_analysis_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
 static void gst_rg_analysis_get_property (GObject * object, guint prop_id,
@@ -170,7 +159,10 @@ gst_rg_analysis_base_init (gpointer g_class)
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &rganalysis_details);
+  gst_element_class_set_details_simple (element_class, "ReplayGain analysis",
+      "Filter/Analyzer/Audio",
+      "Perform the ReplayGain analysis",
+      "Ren\xc3\xa9 Stadler <mail@renestadler.de>");
 
   GST_DEBUG_CATEGORY_INIT (gst_rg_analysis_debug, "rganalysis", 0,
       "ReplayGain analysis element");

@@ -8,11 +8,8 @@
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-gstrtpbin.html" title="gstrtpbin">
 <link rel="next" href="gst-plugins-good-plugins-gstrtpptdemux.html" title="gstrtpptdemux">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-good Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-good Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-good Base Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -100,10 +97,8 @@ To clear the previous pt-map use the <a class="link" href="gst-plugins-good-plug
 <p>
 This element will automatically be used inside gstrtpbin.
 </p>
-<p>
-</p>
 <div class="refsect2" title="Example pipelines">
-<a name="id569181"></a><h3>Example pipelines</h3>
+<a name="id468806"></a><h3>Example pipelines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -119,9 +114,8 @@ inserted into the pipeline to smooth out network jitter and to reorder the
 out-of-order RTP packets.
 </div>
 <p>
+Last reviewed on 2007-05-28 (0.10.5)
 </p>
-<p>
-Last reviewed on 2007-05-28 (0.10.5)</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-good-plugins-gstrtpjitterbuffer.details"></a><h2>Details</h2>
@@ -129,7 +123,8 @@ Last reviewed on 2007-05-28 (0.10.5)</p>
 <a name="GstRtpJitterBuffer-struct"></a><h3>GstRtpJitterBuffer</h3>
 <pre class="programlisting">typedef struct _GstRtpJitterBuffer GstRtpJitterBuffer;</pre>
 <p>
-Opaque jitterbuffer structure.</p>
+Opaque jitterbuffer structure.
+</p>
 </div>
 </div>
 <div class="refsect1" title="Property Details">
@@ -185,13 +180,14 @@ Opaque jitterbuffer structure.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>            user_data)      : Run Last / Action</pre>
 <p>
 Invalidate the clock-rate as obtained with the
-<a class="link" href="gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer-request-pt-map" title='The "request-pt-map" signal'><span class="type">"request-pt-map"</span></a> signal.</p>
+<a class="link" href="gst-plugins-good-plugins-gstrtpjitterbuffer.html#GstRtpJitterBuffer-request-pt-map" title='The "request-pt-map" signal'><span class="type">"request-pt-map"</span></a> signal.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
@@ -208,18 +204,19 @@ Invalidate the clock-rate as obtained with the
                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a>       *struct,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>            user_data)      : Run Last</pre>
 <p>
-Be notified of new sync values.</p>
+Be notified of new sync values.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>struct</code></em> :</span></p></td>
-<td> a GstStructure containing sync values.
+<td>a GstStructure containing sync values.
 </td>
 </tr>
 <tr>
@@ -236,13 +233,14 @@ Be notified of new sync values.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>            user_data)      : Run Last</pre>
 <p>
 Signal that the jitterbufer has pushed the RTP packet that corresponds to
-the npt-stop position.</p>
+the npt-stop position.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
@@ -259,18 +257,19 @@ the npt-stop position.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>               pt,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>            user_data)      : Run Last</pre>
 <p>
-Request the payload type as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> for <em class="parameter"><code>pt</code></em>.</p>
+Request the payload type as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> for <em class="parameter"><code>pt</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pt</code></em> :</span></p></td>
-<td> the pt
+<td>the pt
 </td>
 </tr>
 <tr>
@@ -289,13 +288,14 @@ Request the payload type as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstr
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>            user_data)      : Run Last / Action</pre>
 <p>
 Start pushing out packets with the given base time. This signal is only
-useful in buffering mode.</p>
+useful in buffering mode.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
@@ -315,6 +315,6 @@ useful in buffering mode.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

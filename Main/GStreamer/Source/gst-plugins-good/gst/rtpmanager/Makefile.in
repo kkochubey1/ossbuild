@@ -70,8 +70,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/aalib.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
 	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -128,7 +127,10 @@ am__objects_1 = libgstrtpmanager_la-gstrtpbin-marshal.lo
 nodist_libgstrtpmanager_la_OBJECTS = $(am__objects_1)
 libgstrtpmanager_la_OBJECTS = $(am_libgstrtpmanager_la_OBJECTS) \
 	$(nodist_libgstrtpmanager_la_OBJECTS)
-libgstrtpmanager_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstrtpmanager_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) \
 	$(libgstrtpmanager_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -138,13 +140,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstrtpmanager_la_SOURCES) \
 	$(nodist_libgstrtpmanager_la_SOURCES)
 DIST_SOURCES = $(libgstrtpmanager_la_SOURCES)
@@ -158,7 +173,7 @@ AALIB_LIBS = @AALIB_LIBS@
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ANNODEX_CFLAGS = @ANNODEX_CFLAGS@
 ANNODEX_LIBS = @ANNODEX_LIBS@
 AR = @AR@
@@ -209,8 +224,6 @@ ESD_CFLAGS = @ESD_CFLAGS@
 ESD_CONFIG = @ESD_CONFIG@
 ESD_LIBS = @ESD_LIBS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLAC_CFLAGS = @FLAC_CFLAGS@
@@ -318,7 +331,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -367,7 +379,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RAW1394_CFLAGS = @RAW1394_CFLAGS@
 RAW1394_LIBS = @RAW1394_LIBS@
@@ -385,11 +396,12 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_CXXFLAGS = @TAGLIB_CXXFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WAVPACK_CFLAGS = @WAVPACK_CFLAGS@
 WAVPACK_LIBS = @WAVPACK_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -461,7 +473,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -501,7 +512,7 @@ noinst_HEADERS = gstrtpbin.h \
 		 gstrtpsession.h
 
 libgstrtpmanager_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) \
-	$(ERROR_CFLAGS)
+	$(WARNING_CFLAGS) $(ERROR_CFLAGS)
 
 libgstrtpmanager_la_LIBADD = $(GST_PLUGINS_BASE_LIBS) \
 	-lgstnetbuffer-@GST_MAJORMINOR@ -lgstrtp-@GST_MAJORMINOR@ \
@@ -578,7 +589,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstrtpmanager.la: $(libgstrtpmanager_la_OBJECTS) $(libgstrtpmanager_la_DEPENDENCIES) 
-	$(libgstrtpmanager_la_LINK) -rpath $(plugindir) $(libgstrtpmanager_la_OBJECTS) $(libgstrtpmanager_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstrtpmanager_la_LINK) -rpath $(plugindir) $(libgstrtpmanager_la_OBJECTS) $(libgstrtpmanager_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -599,102 +610,116 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtpmanager_la-rtpstats.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstrtpmanager_la-gstrtpmanager.lo: gstrtpmanager.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpmanager.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpmanager.Tpo -c -o libgstrtpmanager_la-gstrtpmanager.lo `test -f 'gstrtpmanager.c' || echo '$(srcdir)/'`gstrtpmanager.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpmanager.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpmanager.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpmanager.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpmanager.Tpo -c -o libgstrtpmanager_la-gstrtpmanager.lo `test -f 'gstrtpmanager.c' || echo '$(srcdir)/'`gstrtpmanager.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpmanager.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpmanager.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpmanager.c' object='libgstrtpmanager_la-gstrtpmanager.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpmanager.lo `test -f 'gstrtpmanager.c' || echo '$(srcdir)/'`gstrtpmanager.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpmanager.lo `test -f 'gstrtpmanager.c' || echo '$(srcdir)/'`gstrtpmanager.c
 
 libgstrtpmanager_la-gstrtpbin.lo: gstrtpbin.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpbin.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpbin.Tpo -c -o libgstrtpmanager_la-gstrtpbin.lo `test -f 'gstrtpbin.c' || echo '$(srcdir)/'`gstrtpbin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpbin.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpbin.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpbin.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpbin.Tpo -c -o libgstrtpmanager_la-gstrtpbin.lo `test -f 'gstrtpbin.c' || echo '$(srcdir)/'`gstrtpbin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpbin.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpbin.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpbin.c' object='libgstrtpmanager_la-gstrtpbin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpbin.lo `test -f 'gstrtpbin.c' || echo '$(srcdir)/'`gstrtpbin.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpbin.lo `test -f 'gstrtpbin.c' || echo '$(srcdir)/'`gstrtpbin.c
 
 libgstrtpmanager_la-gstrtpjitterbuffer.lo: gstrtpjitterbuffer.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpjitterbuffer.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpjitterbuffer.Tpo -c -o libgstrtpmanager_la-gstrtpjitterbuffer.lo `test -f 'gstrtpjitterbuffer.c' || echo '$(srcdir)/'`gstrtpjitterbuffer.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpjitterbuffer.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpjitterbuffer.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpjitterbuffer.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpjitterbuffer.Tpo -c -o libgstrtpmanager_la-gstrtpjitterbuffer.lo `test -f 'gstrtpjitterbuffer.c' || echo '$(srcdir)/'`gstrtpjitterbuffer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpjitterbuffer.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpjitterbuffer.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpjitterbuffer.c' object='libgstrtpmanager_la-gstrtpjitterbuffer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpjitterbuffer.lo `test -f 'gstrtpjitterbuffer.c' || echo '$(srcdir)/'`gstrtpjitterbuffer.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpjitterbuffer.lo `test -f 'gstrtpjitterbuffer.c' || echo '$(srcdir)/'`gstrtpjitterbuffer.c
 
 libgstrtpmanager_la-gstrtpptdemux.lo: gstrtpptdemux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpptdemux.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpptdemux.Tpo -c -o libgstrtpmanager_la-gstrtpptdemux.lo `test -f 'gstrtpptdemux.c' || echo '$(srcdir)/'`gstrtpptdemux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpptdemux.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpptdemux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpptdemux.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpptdemux.Tpo -c -o libgstrtpmanager_la-gstrtpptdemux.lo `test -f 'gstrtpptdemux.c' || echo '$(srcdir)/'`gstrtpptdemux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpptdemux.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpptdemux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpptdemux.c' object='libgstrtpmanager_la-gstrtpptdemux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpptdemux.lo `test -f 'gstrtpptdemux.c' || echo '$(srcdir)/'`gstrtpptdemux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpptdemux.lo `test -f 'gstrtpptdemux.c' || echo '$(srcdir)/'`gstrtpptdemux.c
 
 libgstrtpmanager_la-gstrtpssrcdemux.lo: gstrtpssrcdemux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpssrcdemux.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpssrcdemux.Tpo -c -o libgstrtpmanager_la-gstrtpssrcdemux.lo `test -f 'gstrtpssrcdemux.c' || echo '$(srcdir)/'`gstrtpssrcdemux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpssrcdemux.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpssrcdemux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpssrcdemux.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpssrcdemux.Tpo -c -o libgstrtpmanager_la-gstrtpssrcdemux.lo `test -f 'gstrtpssrcdemux.c' || echo '$(srcdir)/'`gstrtpssrcdemux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpssrcdemux.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpssrcdemux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpssrcdemux.c' object='libgstrtpmanager_la-gstrtpssrcdemux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpssrcdemux.lo `test -f 'gstrtpssrcdemux.c' || echo '$(srcdir)/'`gstrtpssrcdemux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpssrcdemux.lo `test -f 'gstrtpssrcdemux.c' || echo '$(srcdir)/'`gstrtpssrcdemux.c
 
 libgstrtpmanager_la-rtpjitterbuffer.lo: rtpjitterbuffer.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-rtpjitterbuffer.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-rtpjitterbuffer.Tpo -c -o libgstrtpmanager_la-rtpjitterbuffer.lo `test -f 'rtpjitterbuffer.c' || echo '$(srcdir)/'`rtpjitterbuffer.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtpmanager_la-rtpjitterbuffer.Tpo $(DEPDIR)/libgstrtpmanager_la-rtpjitterbuffer.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-rtpjitterbuffer.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-rtpjitterbuffer.Tpo -c -o libgstrtpmanager_la-rtpjitterbuffer.lo `test -f 'rtpjitterbuffer.c' || echo '$(srcdir)/'`rtpjitterbuffer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtpmanager_la-rtpjitterbuffer.Tpo $(DEPDIR)/libgstrtpmanager_la-rtpjitterbuffer.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rtpjitterbuffer.c' object='libgstrtpmanager_la-rtpjitterbuffer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-rtpjitterbuffer.lo `test -f 'rtpjitterbuffer.c' || echo '$(srcdir)/'`rtpjitterbuffer.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-rtpjitterbuffer.lo `test -f 'rtpjitterbuffer.c' || echo '$(srcdir)/'`rtpjitterbuffer.c
 
 libgstrtpmanager_la-rtpsession.lo: rtpsession.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-rtpsession.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-rtpsession.Tpo -c -o libgstrtpmanager_la-rtpsession.lo `test -f 'rtpsession.c' || echo '$(srcdir)/'`rtpsession.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtpmanager_la-rtpsession.Tpo $(DEPDIR)/libgstrtpmanager_la-rtpsession.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-rtpsession.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-rtpsession.Tpo -c -o libgstrtpmanager_la-rtpsession.lo `test -f 'rtpsession.c' || echo '$(srcdir)/'`rtpsession.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtpmanager_la-rtpsession.Tpo $(DEPDIR)/libgstrtpmanager_la-rtpsession.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rtpsession.c' object='libgstrtpmanager_la-rtpsession.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-rtpsession.lo `test -f 'rtpsession.c' || echo '$(srcdir)/'`rtpsession.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-rtpsession.lo `test -f 'rtpsession.c' || echo '$(srcdir)/'`rtpsession.c
 
 libgstrtpmanager_la-rtpsource.lo: rtpsource.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-rtpsource.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-rtpsource.Tpo -c -o libgstrtpmanager_la-rtpsource.lo `test -f 'rtpsource.c' || echo '$(srcdir)/'`rtpsource.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtpmanager_la-rtpsource.Tpo $(DEPDIR)/libgstrtpmanager_la-rtpsource.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-rtpsource.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-rtpsource.Tpo -c -o libgstrtpmanager_la-rtpsource.lo `test -f 'rtpsource.c' || echo '$(srcdir)/'`rtpsource.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtpmanager_la-rtpsource.Tpo $(DEPDIR)/libgstrtpmanager_la-rtpsource.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rtpsource.c' object='libgstrtpmanager_la-rtpsource.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-rtpsource.lo `test -f 'rtpsource.c' || echo '$(srcdir)/'`rtpsource.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-rtpsource.lo `test -f 'rtpsource.c' || echo '$(srcdir)/'`rtpsource.c
 
 libgstrtpmanager_la-rtpstats.lo: rtpstats.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-rtpstats.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-rtpstats.Tpo -c -o libgstrtpmanager_la-rtpstats.lo `test -f 'rtpstats.c' || echo '$(srcdir)/'`rtpstats.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtpmanager_la-rtpstats.Tpo $(DEPDIR)/libgstrtpmanager_la-rtpstats.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-rtpstats.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-rtpstats.Tpo -c -o libgstrtpmanager_la-rtpstats.lo `test -f 'rtpstats.c' || echo '$(srcdir)/'`rtpstats.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtpmanager_la-rtpstats.Tpo $(DEPDIR)/libgstrtpmanager_la-rtpstats.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rtpstats.c' object='libgstrtpmanager_la-rtpstats.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-rtpstats.lo `test -f 'rtpstats.c' || echo '$(srcdir)/'`rtpstats.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-rtpstats.lo `test -f 'rtpstats.c' || echo '$(srcdir)/'`rtpstats.c
 
 libgstrtpmanager_la-gstrtpsession.lo: gstrtpsession.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpsession.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpsession.Tpo -c -o libgstrtpmanager_la-gstrtpsession.lo `test -f 'gstrtpsession.c' || echo '$(srcdir)/'`gstrtpsession.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpsession.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpsession.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpsession.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpsession.Tpo -c -o libgstrtpmanager_la-gstrtpsession.lo `test -f 'gstrtpsession.c' || echo '$(srcdir)/'`gstrtpsession.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpsession.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpsession.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpsession.c' object='libgstrtpmanager_la-gstrtpsession.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpsession.lo `test -f 'gstrtpsession.c' || echo '$(srcdir)/'`gstrtpsession.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpsession.lo `test -f 'gstrtpsession.c' || echo '$(srcdir)/'`gstrtpsession.c
 
 libgstrtpmanager_la-gstrtpbin-marshal.lo: gstrtpbin-marshal.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpbin-marshal.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpbin-marshal.Tpo -c -o libgstrtpmanager_la-gstrtpbin-marshal.lo `test -f 'gstrtpbin-marshal.c' || echo '$(srcdir)/'`gstrtpbin-marshal.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpbin-marshal.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpbin-marshal.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -MT libgstrtpmanager_la-gstrtpbin-marshal.lo -MD -MP -MF $(DEPDIR)/libgstrtpmanager_la-gstrtpbin-marshal.Tpo -c -o libgstrtpmanager_la-gstrtpbin-marshal.lo `test -f 'gstrtpbin-marshal.c' || echo '$(srcdir)/'`gstrtpbin-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtpmanager_la-gstrtpbin-marshal.Tpo $(DEPDIR)/libgstrtpmanager_la-gstrtpbin-marshal.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtpbin-marshal.c' object='libgstrtpmanager_la-gstrtpbin-marshal.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpbin-marshal.lo `test -f 'gstrtpbin-marshal.c' || echo '$(srcdir)/'`gstrtpbin-marshal.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstrtpmanager_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtpmanager_la_CFLAGS) $(CFLAGS) -c -o libgstrtpmanager_la-gstrtpbin-marshal.lo `test -f 'gstrtpbin-marshal.c' || echo '$(srcdir)/'`gstrtpbin-marshal.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -910,16 +935,16 @@ uninstall-am: uninstall-pluginLTLIBRARIES
 
 # these are all the rules generating the relevant files
 $(glib_gen_basename)-marshal.h: $(glib_gen_basename)-marshal.list
-	glib-genmarshal --header --prefix=$(glib_gen_prefix)_marshal $^ > $(glib_gen_basename)-marshal.h.tmp
+	$(AM_V_GEN)glib-genmarshal --header --prefix=$(glib_gen_prefix)_marshal $^ > $(glib_gen_basename)-marshal.h.tmp && \
 	mv $(glib_gen_basename)-marshal.h.tmp $(glib_gen_basename)-marshal.h
 
 $(glib_gen_basename)-marshal.c: $(glib_gen_basename)-marshal.list
-	echo "#include \"$(glib_gen_basename)-marshal.h\"" >> $(glib_gen_basename)-marshal.c.tmp
-	glib-genmarshal --body --prefix=$(glib_gen_prefix)_marshal $^ >> $(glib_gen_basename)-marshal.c.tmp
+	$(AM_V_GEN)echo "#include \"$(glib_gen_basename)-marshal.h\"" >> $(glib_gen_basename)-marshal.c.tmp && \
+	glib-genmarshal --body --prefix=$(glib_gen_prefix)_marshal $^ >> $(glib_gen_basename)-marshal.c.tmp && \
 	mv $(glib_gen_basename)-marshal.c.tmp $(glib_gen_basename)-marshal.c
 
 $(glib_gen_basename)-enumtypes.h: $(glib_enum_headers)
-	glib-mkenums \
+	$(AM_V_GEN)glib-mkenums \
 	--fhead "#ifndef __$(glib_enum_define)_ENUM_TYPES_H__\n#define __$(glib_enum_define)_ENUM_TYPES_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
 	--fprod "\n/* enumerations from \"@filename@\" */\n" \
 	--vhead "GType @enum_name@_get_type (void);\n#define GST_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n"         \
@@ -928,7 +953,7 @@ $(glib_gen_basename)-enumtypes.h: $(glib_enum_headers)
 
 $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 	@if test "x$(glib_enum_headers)" == "x"; then echo "ERROR: glib_enum_headers is empty, please fix Makefile"; exit 1; fi
-	glib-mkenums \
+	$(AM_V_GEN)glib-mkenums \
 	--fhead "#include \"$(glib_gen_basename)-enumtypes.h\"\n$(enum_headers)" \
 	--fprod "\n/* enumerations from \"@filename@\" */" \
 	--vhead "GType\n@enum_name@_get_type (void)\n{\n  static volatile gsize g_define_type_id__volatile = 0;\n  if (g_once_init_enter (&g_define_type_id__volatile)) {\n    static const G@Type@Value values[] = {"     \
@@ -939,10 +964,10 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 # a hack rule to make sure .Plo files exist because they get include'd
 # from Makefile's
 .deps/%-marshal.Plo:
-	touch $@
+	@touch $@
 
 .deps/%-enumtypes.Plo:
-	touch $@
+	@touch $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -8,26 +8,8 @@
 <link rel="up" href="gstreamer-audio.html" title="Audio Library">
 <link rel="prev" href="gst-plugins-base-libs-gstaudioclock.html" title="gstaudioclock">
 <link rel="next" href="gst-plugins-base-libs-gstaudiomixerutils.html" title="gstaudiomixerutils">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="part" href="gstreamer-plugins-base.html" title="Part I. GStreamer Base Plugins Libraries">
-<link rel="chapter" href="gstreamer-app.html" title="App Library">
-<link rel="chapter" href="gstreamer-audio.html" title="Audio Library">
-<link rel="chapter" href="gstreamer-cdda.html" title="CDDA Library">
-<link rel="chapter" href="gstreamer-ffft.html" title="FFT Library">
-<link rel="chapter" href="gstreamer-floatcast.html" title="FloatCast Library">
-<link rel="chapter" href="gstreamer-interfaces.html" title="Interfaces Library">
-<link rel="chapter" href="gstreamer-netbuffer.html" title="Network Buffer Library">
-<link rel="chapter" href="gstreamer-riff.html" title="Riff Media Library">
-<link rel="chapter" href="gstreamer-rtp.html" title="RTP Library">
-<link rel="chapter" href="gstreamer-rtsp.html" title="RTSP Library">
-<link rel="chapter" href="gstreamer-sdp.html" title="SDP Library">
-<link rel="chapter" href="gstreamer-tag.html" title="Tag Support Library">
-<link rel="chapter" href="gstreamer-base-utils.html" title="Base Utils Library">
-<link rel="chapter" href="gstreamer-video.html" title="Video Library">
-<link rel="part" href="gstreamer-libs-hierarchy.html" title="Part II. Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -63,8 +45,8 @@
                     <a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilter-struct" title="GstAudioFilter">GstAudioFilter</a>;
                     <a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilterClass" title="GstAudioFilterClass">GstAudioFilterClass</a>;
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#gst-audio-filter-class-add-pad-templates" title="gst_audio_filter_class_add_pad_templates ()">gst_audio_filter_class_add_pad_templates</a>
-                                                        (<a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilterClass" title="GstAudioFilterClass"><span class="returnvalue">GstAudioFilterClass</span></a> *klass,
-                                                         const <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *allowed_caps);
+                                                        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilterClass" title="GstAudioFilterClass"><span class="type">GstAudioFilterClass</span></a> *klass</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *allowed_caps</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
@@ -97,7 +79,8 @@ Derived classes should override the <a class="link" href="gst-plugins-base-libs-
 virtual functions in their class_init function.
 </p>
 <p>
-Last reviewed on 2007-02-03 (0.10.11.1)</p>
+Last reviewed on 2007-02-03 (0.10.11.1)
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-base-libs-gstaudiofilter.details"></a><h2>Details</h2>
@@ -105,7 +88,8 @@ Last reviewed on 2007-02-03 (0.10.11.1)</p>
 <a name="GstAudioFilter-struct"></a><h3>GstAudioFilter</h3>
 <pre class="programlisting">typedef struct _GstAudioFilter GstAudioFilter;</pre>
 <p>
-Base class for audio filters with the same format for input and output.</p>
+Base class for audio filters with the same format for input and output.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody></tbody>
@@ -125,18 +109,19 @@ Base class for audio filters with the same format for input and output.</p>
 <p>
 In addition to the <em class="parameter"><code>setup</code></em> virtual function, you should also override the
 GstBaseTransform::transform and/or GstBaseTransform::transform_ip virtual
-function.</p>
+function.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseTransform.html#GstBaseTransformClass"><span class="type">GstBaseTransformClass</span></a> <em class="structfield"><code><a name="GstAudioFilterClass.basetransformclass"></a>basetransformclass</code></em>;</span></p></td>
-<td> parent class
+<td>parent class
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstAudioFilterClass.setup"></a>setup</code></em> ()</span></p></td>
-<td> virtual function called whenever the format changes
+<td>virtual function called whenever the format changes
 </td>
 </tr>
 </tbody>
@@ -147,25 +132,26 @@ function.</p>
 <div class="refsect2" title="gst_audio_filter_class_add_pad_templates ()">
 <a name="gst-audio-filter-class-add-pad-templates"></a><h3>gst_audio_filter_class_add_pad_templates ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_audio_filter_class_add_pad_templates
-                                                        (<a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilterClass" title="GstAudioFilterClass"><span class="returnvalue">GstAudioFilterClass</span></a> *klass,
-                                                         const <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a> *allowed_caps);</pre>
+                                                        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilterClass" title="GstAudioFilterClass"><span class="type">GstAudioFilterClass</span></a> *klass</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *allowed_caps</code></em>);</pre>
 <p>
 Convenience function to add pad templates to this element class, with
 <em class="parameter"><code>allowed_caps</code></em> as the caps that can be handled.
 </p>
 <p>
-This function is usually used from within a GObject base_init function.</p>
+This function is usually used from within a GObject base_init function.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>klass</code></em> :</span></p></td>
-<td> an <a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilterClass" title="GstAudioFilterClass"><span class="type">GstAudioFilterClass</span></a>
+<td>an <a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilterClass" title="GstAudioFilterClass"><span class="type">GstAudioFilterClass</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>allowed_caps</code></em> :</span></p></td>
-<td> what formats the filter can handle, as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>
+<td>what formats the filter can handle, as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>
 </td>
 </tr>
 </tbody>
@@ -176,6 +162,6 @@ This function is usually used from within a GObject base_init function.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

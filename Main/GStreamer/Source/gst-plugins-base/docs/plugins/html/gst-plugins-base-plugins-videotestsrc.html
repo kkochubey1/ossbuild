@@ -8,11 +8,8 @@
 <link rel="up" href="ch01.html" title="gst-plugins-base Elements">
 <link rel="prev" href="gst-plugins-base-plugins-videoscale.html" title="videoscale">
 <link rel="next" href="gst-plugins-base-plugins-volume.html" title="volume">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-base Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-base Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-base Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -89,10 +86,8 @@ The videotestsrc element is used to produce test video data in a wide variaty
 of formats. The video test data produced can be controlled with the "pattern"
 property.
 </p>
-<p>
-</p>
 <div class="refsect2" title="Example launch line">
-<a name="id506017"></a><h3>Example launch line</h3>
+<a name="id426691"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -112,7 +107,8 @@ property.
 <a name="GstVideoTestSrc-struct"></a><h3>GstVideoTestSrc</h3>
 <pre class="programlisting">typedef struct _GstVideoTestSrc GstVideoTestSrc;</pre>
 <p>
-Opaque data structure.</p>
+Opaque data structure.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="enum GstVideoTestSrcPattern">
@@ -133,7 +129,8 @@ Opaque data structure.</p>
   GST_VIDEO_TEST_SRC_BLINK,
   GST_VIDEO_TEST_SRC_SMPTE75,
   GST_VIDEO_TEST_SRC_ZONE_PLATE,
-  GST_VIDEO_TEST_SRC_GAMUT
+  GST_VIDEO_TEST_SRC_GAMUT,
+  GST_VIDEO_TEST_SRC_CHROMA_ZONE_PLATE
 } GstVideoTestSrcPattern;
 </pre>
 <p>
@@ -147,88 +144,103 @@ After conversion to RGB, the out-of-gamut colors should be converted
 to the same value as their in-gamut neighbors.  If the checkerboard
 pattern is still visible after conversion, this indicates a faulty
 conversion.  Image manipulation, such as adjusting contrast or
-brightness, can also cause the pattern to be visible.</p>
+brightness, can also cause the pattern to be visible.
+</p>
+<p>
+The Zone Plate pattern is based on BBC R&amp;D Report 1978/23, and can
+be used to test spatial frequency response of a system.  This
+pattern generator is controlled by the xoffset and yoffset parameters
+and also by all the parameters starting with 'k'.  The default
+parameters produce a grey pattern.  Try 'videotestsrc
+pattern=zone-plate kx2=20 ky2=20 kt=1' to produce something
+interesting.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-SMPTE:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_SMPTE</code></span></p></td>
-<td> A standard SMPTE test pattern
+<td>A standard SMPTE test pattern
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-SNOW:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_SNOW</code></span></p></td>
-<td> Random noise
+<td>Random noise
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-BLACK:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_BLACK</code></span></p></td>
-<td> A black image
+<td>A black image
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-WHITE:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_WHITE</code></span></p></td>
-<td> A white image
+<td>A white image
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-RED:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_RED</code></span></p></td>
-<td> A red image
+<td>A red image
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-GREEN:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_GREEN</code></span></p></td>
-<td> A green image
+<td>A green image
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-BLUE:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_BLUE</code></span></p></td>
-<td> A blue image
+<td>A blue image
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-CHECKERS1:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_CHECKERS1</code></span></p></td>
-<td> Checkers pattern (1px)
+<td>Checkers pattern (1px)
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-CHECKERS2:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_CHECKERS2</code></span></p></td>
-<td> Checkers pattern (2px)
+<td>Checkers pattern (2px)
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-CHECKERS4:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_CHECKERS4</code></span></p></td>
-<td> Checkers pattern (4px)
+<td>Checkers pattern (4px)
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-CHECKERS8:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_CHECKERS8</code></span></p></td>
-<td> Checkers pattern (8px)
+<td>Checkers pattern (8px)
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-CIRCULAR:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_CIRCULAR</code></span></p></td>
-<td> Circular pattern
+<td>Circular pattern
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-BLINK:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_BLINK</code></span></p></td>
-<td> Alternate between black and white
+<td>Alternate between black and white
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-SMPTE75:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_SMPTE75</code></span></p></td>
-<td> SMPTE test pattern (75% color bars)
+<td>SMPTE test pattern (75% color bars)
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-ZONE-PLATE:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_ZONE_PLATE</code></span></p></td>
-<td> Zone plate
+<td>Zone plate
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-GAMUT:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_GAMUT</code></span></p></td>
-<td> Gamut checking pattern
+<td>Gamut checking pattern
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VIDEO-TEST-SRC-CHROMA-ZONE-PLATE:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_CHROMA_ZONE_PLATE</code></span></p></td>
+<td>Chroma zone plate
 </td>
 </tr>
 </tbody>
@@ -243,18 +255,19 @@ brightness, can also cause the pattern to be visible.</p>
 } GstVideoTestSrcColorSpec;
 </pre>
 <p>
-The color specification to use.</p>
+The color specification to use.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-BT601:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_BT601</code></span></p></td>
-<td> ITU-R Rec. BT.601/BT.470 (SD)
+<td>ITU-R Rec. BT.601/BT.470 (SD)
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-VIDEO-TEST-SRC-BT709:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_TEST_SRC_BT709</code></span></p></td>
-<td> ITU-R Rec. BT.709 (HD)
+<td>ITU-R Rec. BT.709 (HD)
 </td>
 </tr>
 </tbody>
@@ -385,6 +398,6 @@ The color specification to use.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

@@ -8,11 +8,8 @@
 <link rel="up" href="ch01.html" title="gst-plugins-base Elements">
 <link rel="prev" href="gst-plugins-base-plugins-adder.html" title="adder">
 <link rel="next" href="gst-plugins-base-plugins-appsink.html" title="appsink">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-base Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-base Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-base Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -103,7 +100,8 @@ external API functions.
 <p>
 For the documentation of the API, please see the
 <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-appsrc.html">libgstapp</a> section in the
-GStreamer Plugins Base Libraries documentation.</p>
+GStreamer Plugins Base Libraries documentation.
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-base-plugins-appsrc.details"></a><h2>Details</h2>
@@ -203,13 +201,14 @@ GStreamer Plugins Base Libraries documentation.</p>
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       user_function                      (<a class="link" href="gst-plugins-base-plugins-appsrc.html#GstAppSrc"><span class="type">GstAppSrc</span></a> *appsrc,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>   user_data)      : Run Last / Action</pre>
 <p>
-Notify <em class="parameter"><code>appsrc</code></em> that no more buffer are available.</p>
+Notify <em class="parameter"><code>appsrc</code></em> that no more buffer are available.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td> the appsrc
+<td>the appsrc
 </td>
 </tr>
 <tr>
@@ -227,13 +226,14 @@ Notify <em class="parameter"><code>appsrc</code></em> that no more buffer are av
 <p>
 Signal that the source has enough data. It is recommended that the
 application stops calling push-buffer until the need-data signal is
-emited again to avoid excessive buffer queueing.</p>
+emited again to avoid excessive buffer queueing.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td> the appsrc element that emited the signal
+<td>the appsrc element that emited the signal
 </td>
 </tr>
 <tr>
@@ -259,18 +259,19 @@ pushed into <em class="parameter"><code>appsrc</code></em>.
 </p>
 <p>
 You can call push-buffer multiple times until the enough-data signal is
-fired.</p>
+fired.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td> the appsrc element that emited the signal
+<td>the appsrc element that emited the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>length</code></em> :</span></p></td>
-<td> the amount of bytes needed.
+<td>the amount of bytes needed.
 </td>
 </tr>
 <tr>
@@ -293,18 +294,19 @@ buffer so the buffer needs to be unreffed after calling this function.
 </p>
 <p>
 When the block property is TRUE, this function can block until free space
-becomes available in the queue.</p>
+becomes available in the queue.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td> the appsrc
+<td>the appsrc
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td> a buffer to push
+<td>a buffer to push
 </td>
 </tr>
 <tr>
@@ -323,18 +325,19 @@ becomes available in the queue.</p>
 <p>
 Seek to the given offset. The next push-buffer should produce buffers from
 the new <em class="parameter"><code>offset</code></em>.
-This callback is only called for seekable stream types.</p>
+This callback is only called for seekable stream types.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>appsrc</code></em> :</span></p></td>
-<td> the appsrc element that emited the signal
+<td>the appsrc element that emited the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>offset</code></em> :</span></p></td>
-<td> the offset to seek to
+<td>the offset to seek to
 </td>
 </tr>
 <tr>
@@ -353,6 +356,6 @@ This callback is only called for seekable stream types.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

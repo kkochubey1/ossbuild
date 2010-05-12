@@ -63,8 +63,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/freetype2.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/freetype2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-alsa.m4 \
 	$(top_srcdir)/m4/gst-fionread.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -85,54 +84,75 @@ CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_appsink_src_OBJECTS = appsink_src-appsink-src.$(OBJEXT)
 appsink_src_OBJECTS = $(am_appsink_src_OBJECTS)
-appsink_src_LDADD = $(LDADD)
-appsink_src_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+am__DEPENDENCIES_1 =
+appsink_src_DEPENDENCIES = $(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+appsink_src_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(appsink_src_CFLAGS) \
-	$(CFLAGS) $(appsink_src_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_appsrc_ra_OBJECTS = appsrc_ra-appsrc-ra.$(OBJEXT)
 appsrc_ra_OBJECTS = $(am_appsrc_ra_OBJECTS)
-appsrc_ra_LDADD = $(LDADD)
-appsrc_ra_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+appsrc_ra_DEPENDENCIES = $(am__DEPENDENCIES_1)
+appsrc_ra_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(appsrc_ra_CFLAGS) \
-	$(CFLAGS) $(appsrc_ra_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_appsrc_seekable_OBJECTS =  \
 	appsrc_seekable-appsrc-seekable.$(OBJEXT)
 appsrc_seekable_OBJECTS = $(am_appsrc_seekable_OBJECTS)
-appsrc_seekable_LDADD = $(LDADD)
-appsrc_seekable_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(appsrc_seekable_CFLAGS) \
-	$(CFLAGS) $(appsrc_seekable_LDFLAGS) $(LDFLAGS) -o $@
+appsrc_seekable_DEPENDENCIES = $(am__DEPENDENCIES_1)
+appsrc_seekable_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(appsrc_seekable_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
 am_appsrc_stream_OBJECTS = appsrc_stream-appsrc-stream.$(OBJEXT)
 appsrc_stream_OBJECTS = $(am_appsrc_stream_OBJECTS)
-appsrc_stream_LDADD = $(LDADD)
-appsrc_stream_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+appsrc_stream_DEPENDENCIES = $(am__DEPENDENCIES_1)
+appsrc_stream_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(appsrc_stream_CFLAGS) \
-	$(CFLAGS) $(appsrc_stream_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_appsrc_stream2_OBJECTS = appsrc_stream2-appsrc-stream2.$(OBJEXT)
 appsrc_stream2_OBJECTS = $(am_appsrc_stream2_OBJECTS)
-appsrc_stream2_LDADD = $(LDADD)
-appsrc_stream2_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(appsrc_stream2_CFLAGS) \
-	$(CFLAGS) $(appsrc_stream2_LDFLAGS) $(LDFLAGS) -o $@
+appsrc_stream2_DEPENDENCIES = $(am__DEPENDENCIES_1)
+appsrc_stream2_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(appsrc_stream2_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
+	$@
 am_appsrc_ex_OBJECTS = appsrc_ex-appsrc_ex.$(OBJEXT)
 appsrc_ex_OBJECTS = $(am_appsrc_ex_OBJECTS)
-appsrc_ex_LDADD = $(LDADD)
-appsrc_ex_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+appsrc_ex_DEPENDENCIES = $(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+appsrc_ex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(appsrc_ex_CFLAGS) \
-	$(CFLAGS) $(appsrc_ex_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(appsink_src_SOURCES) $(appsrc_ra_SOURCES) \
 	$(appsrc_seekable_SOURCES) $(appsrc_stream_SOURCES) \
 	$(appsrc_stream2_SOURCES) $(appsrc_ex_SOURCES)
@@ -147,7 +167,7 @@ ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUDIORESAMPLE_FORMAT_AUTO = @AUDIORESAMPLE_FORMAT_AUTO@
@@ -187,8 +207,6 @@ EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FT2_CFLAGS = @FT2_CFLAGS@
@@ -298,7 +316,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -306,7 +323,6 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
@@ -337,7 +353,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 QT_CFLAGS = @QT_CFLAGS@
 QT_LIBS = @QT_LIBS@
 RANLIB = @RANLIB@
@@ -348,7 +363,6 @@ STRIP = @STRIP@
 THEORA_CFLAGS = @THEORA_CFLAGS@
 THEORA_LIBS = @THEORA_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
@@ -357,6 +371,8 @@ VORBISENC_LIBS = @VORBISENC_LIBS@
 VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -420,7 +436,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -428,26 +443,26 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 appsrc_ex_SOURCES = appsrc_ex.c
-appsrc_ex_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
-appsrc_ex_LDFLAGS = \
-    $(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
-    $(GST_LIBS)
+appsrc_ex_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
+appsrc_ex_LDADD = \
+	$(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
+	$(GST_BASE_LIBS) $(GST_LIBS)
 
 appsrc_stream_SOURCES = appsrc-stream.c
-appsrc_stream_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
-appsrc_stream_LDFLAGS = $(GST_LIBS)
+appsrc_stream_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
+appsrc_stream_LDADD = $(GST_LIBS)
 appsrc_stream2_SOURCES = appsrc-stream2.c
-appsrc_stream2_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
-appsrc_stream2_LDFLAGS = $(GST_LIBS)
+appsrc_stream2_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
+appsrc_stream2_LDADD = $(GST_LIBS)
 appsrc_ra_SOURCES = appsrc-ra.c
-appsrc_ra_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
-appsrc_ra_LDFLAGS = $(GST_LIBS)
+appsrc_ra_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
+appsrc_ra_LDADD = $(GST_LIBS)
 appsrc_seekable_SOURCES = appsrc-seekable.c
-appsrc_seekable_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
-appsrc_seekable_LDFLAGS = $(GST_LIBS)
+appsrc_seekable_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
+appsrc_seekable_LDADD = $(GST_LIBS)
 appsink_src_SOURCES = appsink-src.c
-appsink_src_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
-appsink_src_LDFLAGS = \
+appsink_src_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
+appsink_src_LDADD = \
     $(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
     $(GST_LIBS)
 
@@ -496,22 +511,22 @@ clean-noinstPROGRAMS:
 	rm -f $$list
 appsink-src$(EXEEXT): $(appsink_src_OBJECTS) $(appsink_src_DEPENDENCIES) 
 	@rm -f appsink-src$(EXEEXT)
-	$(appsink_src_LINK) $(appsink_src_OBJECTS) $(appsink_src_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(appsink_src_LINK) $(appsink_src_OBJECTS) $(appsink_src_LDADD) $(LIBS)
 appsrc-ra$(EXEEXT): $(appsrc_ra_OBJECTS) $(appsrc_ra_DEPENDENCIES) 
 	@rm -f appsrc-ra$(EXEEXT)
-	$(appsrc_ra_LINK) $(appsrc_ra_OBJECTS) $(appsrc_ra_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(appsrc_ra_LINK) $(appsrc_ra_OBJECTS) $(appsrc_ra_LDADD) $(LIBS)
 appsrc-seekable$(EXEEXT): $(appsrc_seekable_OBJECTS) $(appsrc_seekable_DEPENDENCIES) 
 	@rm -f appsrc-seekable$(EXEEXT)
-	$(appsrc_seekable_LINK) $(appsrc_seekable_OBJECTS) $(appsrc_seekable_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(appsrc_seekable_LINK) $(appsrc_seekable_OBJECTS) $(appsrc_seekable_LDADD) $(LIBS)
 appsrc-stream$(EXEEXT): $(appsrc_stream_OBJECTS) $(appsrc_stream_DEPENDENCIES) 
 	@rm -f appsrc-stream$(EXEEXT)
-	$(appsrc_stream_LINK) $(appsrc_stream_OBJECTS) $(appsrc_stream_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(appsrc_stream_LINK) $(appsrc_stream_OBJECTS) $(appsrc_stream_LDADD) $(LIBS)
 appsrc-stream2$(EXEEXT): $(appsrc_stream2_OBJECTS) $(appsrc_stream2_DEPENDENCIES) 
 	@rm -f appsrc-stream2$(EXEEXT)
-	$(appsrc_stream2_LINK) $(appsrc_stream2_OBJECTS) $(appsrc_stream2_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(appsrc_stream2_LINK) $(appsrc_stream2_OBJECTS) $(appsrc_stream2_LDADD) $(LIBS)
 appsrc_ex$(EXEEXT): $(appsrc_ex_OBJECTS) $(appsrc_ex_DEPENDENCIES) 
 	@rm -f appsrc_ex$(EXEEXT)
-	$(appsrc_ex_LINK) $(appsrc_ex_OBJECTS) $(appsrc_ex_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(appsrc_ex_LINK) $(appsrc_ex_OBJECTS) $(appsrc_ex_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -527,106 +542,121 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/appsrc_stream2-appsrc-stream2.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 appsink_src-appsink-src.o: appsink-src.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsink_src_CFLAGS) $(CFLAGS) -MT appsink_src-appsink-src.o -MD -MP -MF $(DEPDIR)/appsink_src-appsink-src.Tpo -c -o appsink_src-appsink-src.o `test -f 'appsink-src.c' || echo '$(srcdir)/'`appsink-src.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsink_src-appsink-src.Tpo $(DEPDIR)/appsink_src-appsink-src.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsink_src_CFLAGS) $(CFLAGS) -MT appsink_src-appsink-src.o -MD -MP -MF $(DEPDIR)/appsink_src-appsink-src.Tpo -c -o appsink_src-appsink-src.o `test -f 'appsink-src.c' || echo '$(srcdir)/'`appsink-src.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsink_src-appsink-src.Tpo $(DEPDIR)/appsink_src-appsink-src.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsink-src.c' object='appsink_src-appsink-src.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsink_src_CFLAGS) $(CFLAGS) -c -o appsink_src-appsink-src.o `test -f 'appsink-src.c' || echo '$(srcdir)/'`appsink-src.c
 
 appsink_src-appsink-src.obj: appsink-src.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsink_src_CFLAGS) $(CFLAGS) -MT appsink_src-appsink-src.obj -MD -MP -MF $(DEPDIR)/appsink_src-appsink-src.Tpo -c -o appsink_src-appsink-src.obj `if test -f 'appsink-src.c'; then $(CYGPATH_W) 'appsink-src.c'; else $(CYGPATH_W) '$(srcdir)/appsink-src.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsink_src-appsink-src.Tpo $(DEPDIR)/appsink_src-appsink-src.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsink_src_CFLAGS) $(CFLAGS) -MT appsink_src-appsink-src.obj -MD -MP -MF $(DEPDIR)/appsink_src-appsink-src.Tpo -c -o appsink_src-appsink-src.obj `if test -f 'appsink-src.c'; then $(CYGPATH_W) 'appsink-src.c'; else $(CYGPATH_W) '$(srcdir)/appsink-src.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsink_src-appsink-src.Tpo $(DEPDIR)/appsink_src-appsink-src.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsink-src.c' object='appsink_src-appsink-src.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsink_src_CFLAGS) $(CFLAGS) -c -o appsink_src-appsink-src.obj `if test -f 'appsink-src.c'; then $(CYGPATH_W) 'appsink-src.c'; else $(CYGPATH_W) '$(srcdir)/appsink-src.c'; fi`
 
 appsrc_ra-appsrc-ra.o: appsrc-ra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ra_CFLAGS) $(CFLAGS) -MT appsrc_ra-appsrc-ra.o -MD -MP -MF $(DEPDIR)/appsrc_ra-appsrc-ra.Tpo -c -o appsrc_ra-appsrc-ra.o `test -f 'appsrc-ra.c' || echo '$(srcdir)/'`appsrc-ra.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsrc_ra-appsrc-ra.Tpo $(DEPDIR)/appsrc_ra-appsrc-ra.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ra_CFLAGS) $(CFLAGS) -MT appsrc_ra-appsrc-ra.o -MD -MP -MF $(DEPDIR)/appsrc_ra-appsrc-ra.Tpo -c -o appsrc_ra-appsrc-ra.o `test -f 'appsrc-ra.c' || echo '$(srcdir)/'`appsrc-ra.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsrc_ra-appsrc-ra.Tpo $(DEPDIR)/appsrc_ra-appsrc-ra.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsrc-ra.c' object='appsrc_ra-appsrc-ra.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ra_CFLAGS) $(CFLAGS) -c -o appsrc_ra-appsrc-ra.o `test -f 'appsrc-ra.c' || echo '$(srcdir)/'`appsrc-ra.c
 
 appsrc_ra-appsrc-ra.obj: appsrc-ra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ra_CFLAGS) $(CFLAGS) -MT appsrc_ra-appsrc-ra.obj -MD -MP -MF $(DEPDIR)/appsrc_ra-appsrc-ra.Tpo -c -o appsrc_ra-appsrc-ra.obj `if test -f 'appsrc-ra.c'; then $(CYGPATH_W) 'appsrc-ra.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-ra.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsrc_ra-appsrc-ra.Tpo $(DEPDIR)/appsrc_ra-appsrc-ra.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ra_CFLAGS) $(CFLAGS) -MT appsrc_ra-appsrc-ra.obj -MD -MP -MF $(DEPDIR)/appsrc_ra-appsrc-ra.Tpo -c -o appsrc_ra-appsrc-ra.obj `if test -f 'appsrc-ra.c'; then $(CYGPATH_W) 'appsrc-ra.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-ra.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsrc_ra-appsrc-ra.Tpo $(DEPDIR)/appsrc_ra-appsrc-ra.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsrc-ra.c' object='appsrc_ra-appsrc-ra.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ra_CFLAGS) $(CFLAGS) -c -o appsrc_ra-appsrc-ra.obj `if test -f 'appsrc-ra.c'; then $(CYGPATH_W) 'appsrc-ra.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-ra.c'; fi`
 
 appsrc_seekable-appsrc-seekable.o: appsrc-seekable.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_seekable_CFLAGS) $(CFLAGS) -MT appsrc_seekable-appsrc-seekable.o -MD -MP -MF $(DEPDIR)/appsrc_seekable-appsrc-seekable.Tpo -c -o appsrc_seekable-appsrc-seekable.o `test -f 'appsrc-seekable.c' || echo '$(srcdir)/'`appsrc-seekable.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsrc_seekable-appsrc-seekable.Tpo $(DEPDIR)/appsrc_seekable-appsrc-seekable.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_seekable_CFLAGS) $(CFLAGS) -MT appsrc_seekable-appsrc-seekable.o -MD -MP -MF $(DEPDIR)/appsrc_seekable-appsrc-seekable.Tpo -c -o appsrc_seekable-appsrc-seekable.o `test -f 'appsrc-seekable.c' || echo '$(srcdir)/'`appsrc-seekable.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsrc_seekable-appsrc-seekable.Tpo $(DEPDIR)/appsrc_seekable-appsrc-seekable.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsrc-seekable.c' object='appsrc_seekable-appsrc-seekable.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_seekable_CFLAGS) $(CFLAGS) -c -o appsrc_seekable-appsrc-seekable.o `test -f 'appsrc-seekable.c' || echo '$(srcdir)/'`appsrc-seekable.c
 
 appsrc_seekable-appsrc-seekable.obj: appsrc-seekable.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_seekable_CFLAGS) $(CFLAGS) -MT appsrc_seekable-appsrc-seekable.obj -MD -MP -MF $(DEPDIR)/appsrc_seekable-appsrc-seekable.Tpo -c -o appsrc_seekable-appsrc-seekable.obj `if test -f 'appsrc-seekable.c'; then $(CYGPATH_W) 'appsrc-seekable.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-seekable.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsrc_seekable-appsrc-seekable.Tpo $(DEPDIR)/appsrc_seekable-appsrc-seekable.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_seekable_CFLAGS) $(CFLAGS) -MT appsrc_seekable-appsrc-seekable.obj -MD -MP -MF $(DEPDIR)/appsrc_seekable-appsrc-seekable.Tpo -c -o appsrc_seekable-appsrc-seekable.obj `if test -f 'appsrc-seekable.c'; then $(CYGPATH_W) 'appsrc-seekable.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-seekable.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsrc_seekable-appsrc-seekable.Tpo $(DEPDIR)/appsrc_seekable-appsrc-seekable.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsrc-seekable.c' object='appsrc_seekable-appsrc-seekable.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_seekable_CFLAGS) $(CFLAGS) -c -o appsrc_seekable-appsrc-seekable.obj `if test -f 'appsrc-seekable.c'; then $(CYGPATH_W) 'appsrc-seekable.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-seekable.c'; fi`
 
 appsrc_stream-appsrc-stream.o: appsrc-stream.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream_CFLAGS) $(CFLAGS) -MT appsrc_stream-appsrc-stream.o -MD -MP -MF $(DEPDIR)/appsrc_stream-appsrc-stream.Tpo -c -o appsrc_stream-appsrc-stream.o `test -f 'appsrc-stream.c' || echo '$(srcdir)/'`appsrc-stream.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsrc_stream-appsrc-stream.Tpo $(DEPDIR)/appsrc_stream-appsrc-stream.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream_CFLAGS) $(CFLAGS) -MT appsrc_stream-appsrc-stream.o -MD -MP -MF $(DEPDIR)/appsrc_stream-appsrc-stream.Tpo -c -o appsrc_stream-appsrc-stream.o `test -f 'appsrc-stream.c' || echo '$(srcdir)/'`appsrc-stream.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsrc_stream-appsrc-stream.Tpo $(DEPDIR)/appsrc_stream-appsrc-stream.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsrc-stream.c' object='appsrc_stream-appsrc-stream.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream_CFLAGS) $(CFLAGS) -c -o appsrc_stream-appsrc-stream.o `test -f 'appsrc-stream.c' || echo '$(srcdir)/'`appsrc-stream.c
 
 appsrc_stream-appsrc-stream.obj: appsrc-stream.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream_CFLAGS) $(CFLAGS) -MT appsrc_stream-appsrc-stream.obj -MD -MP -MF $(DEPDIR)/appsrc_stream-appsrc-stream.Tpo -c -o appsrc_stream-appsrc-stream.obj `if test -f 'appsrc-stream.c'; then $(CYGPATH_W) 'appsrc-stream.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-stream.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsrc_stream-appsrc-stream.Tpo $(DEPDIR)/appsrc_stream-appsrc-stream.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream_CFLAGS) $(CFLAGS) -MT appsrc_stream-appsrc-stream.obj -MD -MP -MF $(DEPDIR)/appsrc_stream-appsrc-stream.Tpo -c -o appsrc_stream-appsrc-stream.obj `if test -f 'appsrc-stream.c'; then $(CYGPATH_W) 'appsrc-stream.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-stream.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsrc_stream-appsrc-stream.Tpo $(DEPDIR)/appsrc_stream-appsrc-stream.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsrc-stream.c' object='appsrc_stream-appsrc-stream.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream_CFLAGS) $(CFLAGS) -c -o appsrc_stream-appsrc-stream.obj `if test -f 'appsrc-stream.c'; then $(CYGPATH_W) 'appsrc-stream.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-stream.c'; fi`
 
 appsrc_stream2-appsrc-stream2.o: appsrc-stream2.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream2_CFLAGS) $(CFLAGS) -MT appsrc_stream2-appsrc-stream2.o -MD -MP -MF $(DEPDIR)/appsrc_stream2-appsrc-stream2.Tpo -c -o appsrc_stream2-appsrc-stream2.o `test -f 'appsrc-stream2.c' || echo '$(srcdir)/'`appsrc-stream2.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsrc_stream2-appsrc-stream2.Tpo $(DEPDIR)/appsrc_stream2-appsrc-stream2.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream2_CFLAGS) $(CFLAGS) -MT appsrc_stream2-appsrc-stream2.o -MD -MP -MF $(DEPDIR)/appsrc_stream2-appsrc-stream2.Tpo -c -o appsrc_stream2-appsrc-stream2.o `test -f 'appsrc-stream2.c' || echo '$(srcdir)/'`appsrc-stream2.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsrc_stream2-appsrc-stream2.Tpo $(DEPDIR)/appsrc_stream2-appsrc-stream2.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsrc-stream2.c' object='appsrc_stream2-appsrc-stream2.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream2_CFLAGS) $(CFLAGS) -c -o appsrc_stream2-appsrc-stream2.o `test -f 'appsrc-stream2.c' || echo '$(srcdir)/'`appsrc-stream2.c
 
 appsrc_stream2-appsrc-stream2.obj: appsrc-stream2.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream2_CFLAGS) $(CFLAGS) -MT appsrc_stream2-appsrc-stream2.obj -MD -MP -MF $(DEPDIR)/appsrc_stream2-appsrc-stream2.Tpo -c -o appsrc_stream2-appsrc-stream2.obj `if test -f 'appsrc-stream2.c'; then $(CYGPATH_W) 'appsrc-stream2.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-stream2.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsrc_stream2-appsrc-stream2.Tpo $(DEPDIR)/appsrc_stream2-appsrc-stream2.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream2_CFLAGS) $(CFLAGS) -MT appsrc_stream2-appsrc-stream2.obj -MD -MP -MF $(DEPDIR)/appsrc_stream2-appsrc-stream2.Tpo -c -o appsrc_stream2-appsrc-stream2.obj `if test -f 'appsrc-stream2.c'; then $(CYGPATH_W) 'appsrc-stream2.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-stream2.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsrc_stream2-appsrc-stream2.Tpo $(DEPDIR)/appsrc_stream2-appsrc-stream2.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsrc-stream2.c' object='appsrc_stream2-appsrc-stream2.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_stream2_CFLAGS) $(CFLAGS) -c -o appsrc_stream2-appsrc-stream2.obj `if test -f 'appsrc-stream2.c'; then $(CYGPATH_W) 'appsrc-stream2.c'; else $(CYGPATH_W) '$(srcdir)/appsrc-stream2.c'; fi`
 
 appsrc_ex-appsrc_ex.o: appsrc_ex.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ex_CFLAGS) $(CFLAGS) -MT appsrc_ex-appsrc_ex.o -MD -MP -MF $(DEPDIR)/appsrc_ex-appsrc_ex.Tpo -c -o appsrc_ex-appsrc_ex.o `test -f 'appsrc_ex.c' || echo '$(srcdir)/'`appsrc_ex.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsrc_ex-appsrc_ex.Tpo $(DEPDIR)/appsrc_ex-appsrc_ex.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ex_CFLAGS) $(CFLAGS) -MT appsrc_ex-appsrc_ex.o -MD -MP -MF $(DEPDIR)/appsrc_ex-appsrc_ex.Tpo -c -o appsrc_ex-appsrc_ex.o `test -f 'appsrc_ex.c' || echo '$(srcdir)/'`appsrc_ex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsrc_ex-appsrc_ex.Tpo $(DEPDIR)/appsrc_ex-appsrc_ex.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsrc_ex.c' object='appsrc_ex-appsrc_ex.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ex_CFLAGS) $(CFLAGS) -c -o appsrc_ex-appsrc_ex.o `test -f 'appsrc_ex.c' || echo '$(srcdir)/'`appsrc_ex.c
 
 appsrc_ex-appsrc_ex.obj: appsrc_ex.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ex_CFLAGS) $(CFLAGS) -MT appsrc_ex-appsrc_ex.obj -MD -MP -MF $(DEPDIR)/appsrc_ex-appsrc_ex.Tpo -c -o appsrc_ex-appsrc_ex.obj `if test -f 'appsrc_ex.c'; then $(CYGPATH_W) 'appsrc_ex.c'; else $(CYGPATH_W) '$(srcdir)/appsrc_ex.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/appsrc_ex-appsrc_ex.Tpo $(DEPDIR)/appsrc_ex-appsrc_ex.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ex_CFLAGS) $(CFLAGS) -MT appsrc_ex-appsrc_ex.obj -MD -MP -MF $(DEPDIR)/appsrc_ex-appsrc_ex.Tpo -c -o appsrc_ex-appsrc_ex.obj `if test -f 'appsrc_ex.c'; then $(CYGPATH_W) 'appsrc_ex.c'; else $(CYGPATH_W) '$(srcdir)/appsrc_ex.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/appsrc_ex-appsrc_ex.Tpo $(DEPDIR)/appsrc_ex-appsrc_ex.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='appsrc_ex.c' object='appsrc_ex-appsrc_ex.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(appsrc_ex_CFLAGS) $(CFLAGS) -c -o appsrc_ex-appsrc_ex.obj `if test -f 'appsrc_ex.c'; then $(CYGPATH_W) 'appsrc_ex.c'; else $(CYGPATH_W) '$(srcdir)/appsrc_ex.c'; fi`

@@ -49,13 +49,6 @@
 
 #include <string.h>
 
-static const GstElementDetails gst_icydemux_details =
-GST_ELEMENT_DETAILS ("ICY tag demuxer",
-    "Codec/Demuxer/Metadata",
-    "Read and output ICY tags while demuxing the contents",
-    "Jan Schmidt <thaytan@mad.scientist.com>\n"
-    "Michael Smith <msmith@fluendo.com>");
-
 #define ICY_TYPE_FIND_MAX_SIZE (40*1024)
 
 GST_DEBUG_CATEGORY_STATIC (icydemux_debug);
@@ -126,7 +119,11 @@ gst_icydemux_base_init (GstICYDemuxClass * klass)
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &gst_icydemux_details);
+  gst_element_class_set_details_simple (element_class, "ICY tag demuxer",
+      "Codec/Demuxer/Metadata",
+      "Read and output ICY tags while demuxing the contents",
+      "Jan Schmidt <thaytan@mad.scientist.com>, "
+      "Michael Smith <msmith@fluendo.com>");
 }
 
 static void
@@ -183,6 +180,11 @@ gst_icydemux_reset (GstICYDemux * icydemux)
     gst_buffer_unref (icydemux->typefind_buf);
     icydemux->typefind_buf = NULL;
   }
+
+  if (icydemux->content_type) {
+    g_free (icydemux->content_type);
+    icydemux->content_type = NULL;
+  }
 }
 
 static void
@@ -209,16 +211,20 @@ gst_icydemux_sink_setcaps (GstPad * pad, GstCaps * caps)
 {
   GstICYDemux *icydemux = GST_ICYDEMUX (GST_PAD_PARENT (pad));
   GstStructure *structure = gst_caps_get_structure (caps, 0);
+  const gchar *tmp;
 
   if (!gst_structure_get_int (structure, "metadata-interval",
           &icydemux->meta_interval))
     return FALSE;
-  else {
-    /* We have a meta interval, so initialise the rest */
-    icydemux->remaining = icydemux->meta_interval;
-    icydemux->meta_remaining = 0;
-    return TRUE;
-  }
+
+  /* If incoming caps have the HTTP Content-Type, copy that over */
+  if ((tmp = gst_structure_get_string (structure, "content-type")))
+    icydemux->content_type = g_strdup (tmp);
+
+  /* We have a meta interval, so initialise the rest */
+  icydemux->remaining = icydemux->meta_interval;
+  icydemux->meta_remaining = 0;
+  return TRUE;
 }
 
 static void
@@ -402,8 +408,21 @@ gst_icydemux_typefind_or_forward (GstICYDemux * icydemux, GstBuffer * buf)
 {
   if (icydemux->typefinding) {
     GstBuffer *tf_buf;
-    GstCaps *caps;
+    GstCaps *caps = NULL;
     GstTypeFindProbability prob;
+
+    /* If we have a content-type from upstream, let's see if we can shortcut
+     * typefinding */
+    if (G_UNLIKELY (icydemux->content_type)) {
+      if (!g_ascii_strcasecmp (icydemux->content_type, "video/nsv")) {
+        GST_DEBUG ("We have a NSV stream");
+        caps = gst_caps_new_simple ("video/x-nsv", NULL);
+      } else {
+        GST_DEBUG ("Upstream Content-Type isn't supported");
+        g_free (icydemux->content_type);
+        icydemux->content_type = NULL;
+      }
+    }
 
     if (icydemux->typefind_buf) {
       icydemux->typefind_buf = gst_buffer_join (icydemux->typefind_buf, buf);
@@ -411,21 +430,24 @@ gst_icydemux_typefind_or_forward (GstICYDemux * icydemux, GstBuffer * buf)
       icydemux->typefind_buf = buf;
     }
 
-    caps = gst_type_find_helper_for_buffer (GST_OBJECT (icydemux),
-        icydemux->typefind_buf, &prob);
-
+    /* Only typefind if we haven't already got some caps */
     if (caps == NULL) {
-      if (GST_BUFFER_SIZE (icydemux->typefind_buf) < ICY_TYPE_FIND_MAX_SIZE) {
-        /* Just break for more data */
-        return GST_FLOW_OK;
-      }
+      caps = gst_type_find_helper_for_buffer (GST_OBJECT (icydemux),
+          icydemux->typefind_buf, &prob);
 
-      /* We failed typefind */
-      GST_ELEMENT_ERROR (icydemux, STREAM, TYPE_NOT_FOUND, (NULL),
-          ("No caps found for contents within an ICY stream"));
-      gst_buffer_unref (icydemux->typefind_buf);
-      icydemux->typefind_buf = NULL;
-      return GST_FLOW_ERROR;
+      if (caps == NULL) {
+        if (GST_BUFFER_SIZE (icydemux->typefind_buf) < ICY_TYPE_FIND_MAX_SIZE) {
+          /* Just break for more data */
+          return GST_FLOW_OK;
+        }
+
+        /* We failed typefind */
+        GST_ELEMENT_ERROR (icydemux, STREAM, TYPE_NOT_FOUND, (NULL),
+            ("No caps found for contents within an ICY stream"));
+        gst_buffer_unref (icydemux->typefind_buf);
+        icydemux->typefind_buf = NULL;
+        return GST_FLOW_ERROR;
+      }
     }
 
     if (!gst_icydemux_add_srcpad (icydemux, caps)) {
@@ -553,7 +575,7 @@ done:
 
   return ret;
 
-/* ERRORS */
+  /* ERRORS */
 not_negotiated:
   {
     GST_WARNING_OBJECT (icydemux, "meta_interval not set, buffer probably had "

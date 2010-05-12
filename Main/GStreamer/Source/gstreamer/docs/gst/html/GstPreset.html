@@ -8,15 +8,8 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="gstreamer-GstPoll.html" title="GstPoll">
 <link rel="next" href="gstreamer-GstQuery.html" title="GstQuery">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="gstreamer.html" title="GStreamer Overview">
-<link rel="chapter" href="libgstreamer.html" title="GStreamer Core Library">
-<link rel="chapter" href="gstreamer-support.html" title="GStreamer Core Support">
-<link rel="chapter" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
-<link rel="glossary" href="annotation-glossary.html" title="Annotation Glossary">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -51,25 +44,25 @@
 
                     <a class="link" href="GstPreset.html#GstPreset-struct" title="GstPreset">GstPreset</a>;
                     <a class="link" href="GstPreset.html#GstPresetInterface" title="GstPresetInterface">GstPresetInterface</a>;
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>**             <a class="link" href="GstPreset.html#gst-preset-get-preset-names" title="gst_preset_get_preset_names ()">gst_preset_get_preset_names</a>         (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>**             <a class="link" href="GstPreset.html#gst-preset-get-property-names" title="gst_preset_get_property_names ()">gst_preset_get_property_names</a>       (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-load-preset" title="gst_preset_load_preset ()">gst_preset_load_preset</a>              (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-save-preset" title="gst_preset_save_preset ()">gst_preset_save_preset</a>              (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-rename-preset" title="gst_preset_rename_preset ()">gst_preset_rename_preset</a>            (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *old_name,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *new_name);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-delete-preset" title="gst_preset_delete_preset ()">gst_preset_delete_preset</a>            (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-set-meta" title="gst_preset_set_meta ()">gst_preset_set_meta</a>                 (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *tag,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *value);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-get-meta" title="gst_preset_get_meta ()">gst_preset_get_meta</a>                 (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *tag,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **value);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>**             <a class="link" href="GstPreset.html#gst-preset-get-preset-names" title="gst_preset_get_preset_names ()">gst_preset_get_preset_names</a>         (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>**             <a class="link" href="GstPreset.html#gst-preset-get-property-names" title="gst_preset_get_property_names ()">gst_preset_get_property_names</a>       (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-load-preset" title="gst_preset_load_preset ()">gst_preset_load_preset</a>              (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-save-preset" title="gst_preset_save_preset ()">gst_preset_save_preset</a>              (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-rename-preset" title="gst_preset_rename_preset ()">gst_preset_rename_preset</a>            (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *old_name</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *new_name</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-delete-preset" title="gst_preset_delete_preset ()">gst_preset_delete_preset</a>            (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-set-meta" title="gst_preset_set_meta ()">gst_preset_set_meta</a>                 (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *value</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPreset.html#gst-preset-get-meta" title="gst_preset_get_meta ()">gst_preset_get_meta</a>                 (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **value</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
@@ -94,7 +87,8 @@ The interface comes with a default implementation that serves most plugins.
 Wrapper plugins will override most methods to implement support for the
 native preset format of those wrapped plugins.
 One method that is useful to be overridden is <a class="link" href="GstPreset.html#gst-preset-get-property-names" title="gst_preset_get_property_names ()"><code class="function">gst_preset_get_property_names()</code></a>.
-With that one can control which properties are saved and in which order.</p>
+With that one can control which properties are saved and in which order.
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="GstPreset.details"></a><h2>Details</h2>
@@ -102,7 +96,8 @@ With that one can control which properties are saved and in which order.</p>
 <a name="GstPreset-struct"></a><h3>GstPreset</h3>
 <pre class="programlisting">typedef struct _GstPreset GstPreset;</pre>
 <p>
-Opaque <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> data structure.</p>
+Opaque <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> data structure.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="GstPresetInterface">
@@ -128,53 +123,54 @@ Opaque <a class="link" href="GstPreset.html" title="GstPreset"><span class="type
 } GstPresetInterface;
 </pre>
 <p>
-<a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> interface.</p>
+<a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> interface.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><a href="/usr/share/gtk-doc/html/gobject/gobject-Type-Information.html#GTypeInterface"><span class="type">GTypeInterface</span></a> <em class="structfield"><code><a name="GstPresetInterface.parent"></a>parent</code></em>;</span></p></td>
-<td> parent interface type.
+<td>parent interface type.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstPresetInterface.get-preset-names"></a>get_preset_names</code></em> ()</span></p></td>
-<td> virtual method to get list of presets
+<td>virtual method to get list of presets
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstPresetInterface.get-property-names"></a>get_property_names</code></em> ()</span></p></td>
-<td> virtual methods to get properties that are persistent
+<td>virtual methods to get properties that are persistent
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstPresetInterface.load-preset"></a>load_preset</code></em> ()</span></p></td>
-<td> virtual methods to load a preset into properties
+<td>virtual methods to load a preset into properties
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstPresetInterface.save-preset"></a>save_preset</code></em> ()</span></p></td>
-<td> virtual methods to save properties into a preset
+<td>virtual methods to save properties into a preset
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstPresetInterface.rename-preset"></a>rename_preset</code></em> ()</span></p></td>
-<td> virtual methods to rename a preset
+<td>virtual methods to rename a preset
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstPresetInterface.delete-preset"></a>delete_preset</code></em> ()</span></p></td>
-<td> virtual methods to remove a preset
+<td>virtual methods to remove a preset
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstPresetInterface.set-meta"></a>set_meta</code></em> ()</span></p></td>
-<td> virtual methods to set textual meta data to a preset
+<td>virtual methods to set textual meta data to a preset
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstPresetInterface.get-meta"></a>get_meta</code></em> ()</span></p></td>
-<td> virtual methods to get textual meta data from a preset
+<td>virtual methods to get textual meta data from a preset
 </td>
 </tr>
 </tbody>
@@ -183,15 +179,16 @@ Opaque <a class="link" href="GstPreset.html" title="GstPreset"><span class="type
 <hr>
 <div class="refsect2" title="gst_preset_get_preset_names ()">
 <a name="gst-preset-get-preset-names"></a><h3>gst_preset_get_preset_names ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>**             gst_preset_get_preset_names         (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>**             gst_preset_get_preset_names         (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>);</pre>
 <p>
-Get a copy of preset names as a NULL terminated string array.</p>
+Get a copy of preset names as a NULL terminated string array.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>preset</code></em> :</span></p></td>
-<td> a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
+<td>a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
 </td>
 </tr>
 <tr>
@@ -207,15 +204,16 @@ Get a copy of preset names as a NULL terminated string array.</p>
 <hr>
 <div class="refsect2" title="gst_preset_get_property_names ()">
 <a name="gst-preset-get-property-names"></a><h3>gst_preset_get_property_names ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>**             gst_preset_get_property_names       (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>**             gst_preset_get_property_names       (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>);</pre>
 <p>
-Get a the names of the GObject properties that can be used for presets.</p>
+Get a the names of the GObject properties that can be used for presets.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>preset</code></em> :</span></p></td>
-<td> a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
+<td>a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
 </td>
 </tr>
 <tr>
@@ -231,21 +229,22 @@ Get a the names of the GObject properties that can be used for presets.</p>
 <hr>
 <div class="refsect2" title="gst_preset_load_preset ()">
 <a name="gst-preset-load-preset"></a><h3>gst_preset_load_preset ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_load_preset              (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_load_preset              (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>
-Load the given preset.</p>
+Load the given preset.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>preset</code></em> :</span></p></td>
-<td> a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
+<td>a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
-<td> preset name to load
+<td>preset name to load
 </td>
 </tr>
 <tr>
@@ -261,22 +260,23 @@ Load the given preset.</p>
 <hr>
 <div class="refsect2" title="gst_preset_save_preset ()">
 <a name="gst-preset-save-preset"></a><h3>gst_preset_save_preset ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_save_preset              (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_save_preset              (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>
 Save the current object settings as a preset under the given name. If there
-is already a preset by this <em class="parameter"><code>name</code></em> it will be overwritten.</p>
+is already a preset by this <em class="parameter"><code>name</code></em> it will be overwritten.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>preset</code></em> :</span></p></td>
-<td> a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
+<td>a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
-<td> preset name to save
+<td>preset name to save
 </td>
 </tr>
 <tr>
@@ -292,28 +292,29 @@ is already a preset by this <em class="parameter"><code>name</code></em> it will
 <hr>
 <div class="refsect2" title="gst_preset_rename_preset ()">
 <a name="gst-preset-rename-preset"></a><h3>gst_preset_rename_preset ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_rename_preset            (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *old_name,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *new_name);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_rename_preset            (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *old_name</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *new_name</code></em>);</pre>
 <p>
 Renames a preset. If there is already a preset by the <em class="parameter"><code>new_name</code></em> it will be
-overwritten.</p>
+overwritten.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>preset</code></em> :</span></p></td>
-<td> a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
+<td>a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>old_name</code></em> :</span></p></td>
-<td> current preset name
+<td>current preset name
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>new_name</code></em> :</span></p></td>
-<td> new preset name
+<td>new preset name
 </td>
 </tr>
 <tr>
@@ -329,21 +330,22 @@ overwritten.</p>
 <hr>
 <div class="refsect2" title="gst_preset_delete_preset ()">
 <a name="gst-preset-delete-preset"></a><h3>gst_preset_delete_preset ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_delete_preset            (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_delete_preset            (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>
-Delete the given preset.</p>
+Delete the given preset.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>preset</code></em> :</span></p></td>
-<td> a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
+<td>a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
-<td> preset name to remove
+<td>preset name to remove
 </td>
 </tr>
 <tr>
@@ -359,35 +361,36 @@ Delete the given preset.</p>
 <hr>
 <div class="refsect2" title="gst_preset_set_meta ()">
 <a name="gst-preset-set-meta"></a><h3>gst_preset_set_meta ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_set_meta                 (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *tag,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *value);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_set_meta                 (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *value</code></em>);</pre>
 <p>
 Sets a new <em class="parameter"><code>value</code></em> for an existing meta data item or adds a new item. Meta
 data <em class="parameter"><code>tag</code></em> names can be something like e.g. "comment". Supplying <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> for the
-<em class="parameter"><code>value</code></em> will unset an existing value.</p>
+<em class="parameter"><code>value</code></em> will unset an existing value.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>preset</code></em> :</span></p></td>
-<td> a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
+<td>a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
-<td> preset name
+<td>preset name
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>tag</code></em> :</span></p></td>
-<td> meta data item name
+<td>meta data item name
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>value</code></em> :</span></p></td>
-<td> new value
+<td>new value
 </td>
 </tr>
 <tr>
@@ -403,34 +406,35 @@ data <em class="parameter"><code>tag</code></em> names can be something like e.g
 <hr>
 <div class="refsect2" title="gst_preset_get_meta ()">
 <a name="gst-preset-get-meta"></a><h3>gst_preset_get_meta ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_get_meta                 (<a class="link" href="GstPreset.html" title="GstPreset"><span class="returnvalue">GstPreset</span></a> *preset,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *name,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *tag,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **value);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_preset_get_meta                 (<em class="parameter"><code><a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a> *preset</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **value</code></em>);</pre>
 <p>
 Gets the <em class="parameter"><code>value</code></em> for an existing meta data <em class="parameter"><code>tag</code></em>. Meta data <em class="parameter"><code>tag</code></em> names can be
-something like e.g. "comment". Returned values need to be released when done.</p>
+something like e.g. "comment". Returned values need to be released when done.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>preset</code></em> :</span></p></td>
-<td> a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
+<td>a <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> that implements <a class="link" href="GstPreset.html" title="GstPreset"><span class="type">GstPreset</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
-<td> preset name
+<td>preset name
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>tag</code></em> :</span></p></td>
-<td> meta data item name
+<td>meta data item name
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>value</code></em> :</span></p></td>
-<td> value
+<td>value
 </td>
 </tr>
 <tr>
@@ -448,6 +452,6 @@ or no value for the given <em class="parameter"><code>tag</code></em>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

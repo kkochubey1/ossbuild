@@ -517,9 +517,12 @@ gst_structure_set_valist (GstStructure * structure,
       g_warning ("Don't use G_TYPE_DATE, use GST_TYPE_DATE instead\n");
       type = GST_TYPE_DATE;
     }
-
+#if GLIB_CHECK_VERSION(2,23,3)
+    G_VALUE_COLLECT_INIT (&field.value, type, varargs, 0, &err);
+#else
     g_value_init (&field.value, type);
     G_VALUE_COLLECT (&field.value, varargs, 0, &err);
+#endif
     if (G_UNLIKELY (err)) {
       g_critical ("%s", err);
       return;
@@ -587,9 +590,12 @@ gst_structure_id_set_valist (GstStructure * structure,
       g_warning ("Don't use G_TYPE_DATE, use GST_TYPE_DATE instead\n");
       type = GST_TYPE_DATE;
     }
-
+#ifndef G_VALUE_COLLECT_INIT
     g_value_init (&field.value, type);
     G_VALUE_COLLECT (&field.value, varargs, 0, &err);
+#else
+    G_VALUE_COLLECT_INIT (&field.value, type, varargs, 0, &err);
+#endif
     if (G_UNLIKELY (err)) {
       g_critical ("%s", err);
       return;
@@ -1075,7 +1081,7 @@ gst_structure_has_field (const GstStructure * structure,
  *
  * Returns: TRUE if the structure contains a field with the given name and type
  *
- * Since: 0.10.16
+ * Since: 0.10.26
  */
 gboolean
 gst_structure_id_has_field_typed (const GstStructure * structure,
@@ -1488,7 +1494,7 @@ gst_structure_get_fraction (const GstStructure * structure,
 
 typedef struct _GstStructureAbbreviation
 {
-  gchar *type_name;
+  const gchar *type_name;
   GType type;
 }
 GstStructureAbbreviation;
@@ -1499,14 +1505,19 @@ static GstStructureAbbreviation *
 gst_structure_get_abbrs (gint * n_abbrs)
 {
   static GstStructureAbbreviation *abbrs = NULL;
-  static gint num = 0;
+  static volatile gsize num = 0;
 
-  if (abbrs == NULL) {
+  if (g_once_init_enter (&num)) {
     /* dynamically generate the array */
+    gsize _num;
     GstStructureAbbreviation dyn_abbrs[] = {
       {"int", G_TYPE_INT}
       ,
       {"i", G_TYPE_INT}
+      ,
+      {"uint", G_TYPE_UINT}
+      ,
+      {"u", G_TYPE_UINT}
       ,
       {"float", G_TYPE_FLOAT}
       ,
@@ -1538,10 +1549,11 @@ gst_structure_get_abbrs (gint * n_abbrs)
       ,
       {"structure", GST_TYPE_STRUCTURE}
     };
-    num = G_N_ELEMENTS (dyn_abbrs);
+    _num = G_N_ELEMENTS (dyn_abbrs);
     /* permanently allocate and copy the array now */
-    abbrs = g_new0 (GstStructureAbbreviation, num);
-    memcpy (abbrs, dyn_abbrs, sizeof (GstStructureAbbreviation) * num);
+    abbrs = g_new0 (GstStructureAbbreviation, _num);
+    memcpy (abbrs, dyn_abbrs, sizeof (GstStructureAbbreviation) * _num);
+    g_once_init_leave (&num, _num);
   }
   *n_abbrs = num;
 
@@ -2071,7 +2083,7 @@ gst_structure_from_string (const gchar * string, gchar ** end)
 
   name = r;
   if (G_UNLIKELY (!gst_structure_parse_string (r, &w, &r, TRUE))) {
-    GST_WARNING ("Failed to parse structure string");
+    GST_WARNING ("Failed to parse structure string '%s'", string);
     goto error;
   }
 
