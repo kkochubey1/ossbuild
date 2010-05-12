@@ -49,12 +49,6 @@
 #define GST_CAT_DEFAULT gst_audio_panorama_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
 
-static const GstElementDetails element_details =
-GST_ELEMENT_DETAILS ("Stereo positioning",
-    "Filter/Effect/Audio",
-    "Positions audio streams in the stereo panorama",
-    "Stefan Kost <ensonic@users.sf.net>");
-
 /* Filter signals and args */
 enum
 {
@@ -194,7 +188,10 @@ gst_audio_panorama_base_init (gpointer klass)
       gst_static_pad_template_get (&src_template));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_template));
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "Stereo positioning",
+      "Filter/Effect/Audio",
+      "Positions audio streams in the stereo panorama",
+      "Stefan Kost <ensonic@users.sf.net>");
 }
 
 static void
@@ -537,22 +534,27 @@ gst_audio_panorama_transform_m2s_int_simple (GstAudioPanorama * filter,
     gint16 * idata, gint16 * odata, guint num_samples)
 {
   guint i;
-  gdouble val;
+  gdouble pan;
   glong lval, rval;
 
-  for (i = 0; i < num_samples; i++) {
-    val = (gdouble) * idata++;
+  if (filter->panorama > 0.0) {
+    pan = 1.0 - filter->panorama;
+    for (i = 0; i < num_samples; i++) {
+      rval = *idata++;
+      lval = (glong) ((gdouble) rval * pan);
 
-    if (filter->panorama > 0.0) {
-      lval = (glong) (val * (1.0 - filter->panorama));
-      rval = (glong) val;
-    } else {
-      lval = (glong) val;
-      rval = (glong) (val * (1.0 + filter->panorama));
+      *odata++ = (gint16) CLAMP (lval, G_MININT16, G_MAXINT16);
+      *odata++ = (gint16) rval;
     }
+  } else {
+    pan = 1.0 + filter->panorama;
+    for (i = 0; i < num_samples; i++) {
+      lval = *idata++;
+      rval = (glong) ((gdouble) lval * pan);
 
-    *odata++ = (gint16) CLAMP (lval, G_MININT16, G_MAXINT16);
-    *odata++ = (gint16) CLAMP (rval, G_MININT16, G_MAXINT16);
+      *odata++ = (gint16) lval;
+      *odata++ = (gint16) CLAMP (rval, G_MININT16, G_MAXINT16);
+    }
   }
 }
 
@@ -562,22 +564,32 @@ gst_audio_panorama_transform_s2s_int_simple (GstAudioPanorama * filter,
 {
   guint i;
   glong lval, rval;
-  gdouble lival, rival;
+  gdouble lival, rival, pan;
 
-  for (i = 0; i < num_samples; i++) {
-    lival = (gdouble) * idata++;
-    rival = (gdouble) * idata++;
+  if (filter->panorama > 0.0) {
+    pan = 1.0 - filter->panorama;
+    for (i = 0; i < num_samples; i++) {
+      lival = (gdouble) * idata++;
+      rival = (gdouble) * idata++;
 
-    if (filter->panorama > 0.0) {
-      lval = (glong) (lival * (1.0 - filter->panorama));
+      lval = (glong) (lival * pan);
       rval = (glong) rival;
-    } else {
-      lval = (glong) lival;
-      rval = (glong) (rival * (1.0 + filter->panorama));
-    }
 
-    *odata++ = (gint16) CLAMP (lval, G_MININT16, G_MAXINT16);
-    *odata++ = (gint16) CLAMP (rval, G_MININT16, G_MAXINT16);
+      *odata++ = (gint16) CLAMP (lval, G_MININT16, G_MAXINT16);
+      *odata++ = (gint16) rval;
+    }
+  } else {
+    pan = 1.0 + filter->panorama;
+    for (i = 0; i < num_samples; i++) {
+      lival = (gdouble) * idata++;
+      rival = (gdouble) * idata++;
+
+      lval = (glong) lival;
+      rval = (glong) (rival * pan);
+
+      *odata++ = (gint16) lval;
+      *odata++ = (gint16) CLAMP (rval, G_MININT16, G_MAXINT16);
+    }
   }
 }
 
@@ -586,18 +598,23 @@ gst_audio_panorama_transform_m2s_float_simple (GstAudioPanorama * filter,
     gfloat * idata, gfloat * odata, guint num_samples)
 {
   guint i;
-  gfloat val;
+  gfloat val, pan;
 
+  if (filter->panorama > 0.0) {
+    pan = 1.0 - filter->panorama;
+    for (i = 0; i < num_samples; i++) {
+      val = *idata++;
 
-  for (i = 0; i < num_samples; i++) {
-    val = *idata++;
-
-    if (filter->panorama > 0.0) {
-      *odata++ = val * (1.0 - filter->panorama);
+      *odata++ = val * pan;
       *odata++ = val;
-    } else {
+    }
+  } else {
+    pan = 1.0 + filter->panorama;
+    for (i = 0; i < num_samples; i++) {
+      val = *idata++;
+
       *odata++ = val;
-      *odata++ = val * (1.0 + filter->panorama);
+      *odata++ = val * pan;
     }
   }
 }
@@ -607,18 +624,25 @@ gst_audio_panorama_transform_s2s_float_simple (GstAudioPanorama * filter,
     gfloat * idata, gfloat * odata, guint num_samples)
 {
   guint i;
-  gfloat lival, rival;
+  gfloat lival, rival, pan;
 
-  for (i = 0; i < num_samples; i++) {
-    lival = *idata++;
-    rival = *idata++;
+  if (filter->panorama > 0.0) {
+    pan = 1.0 - filter->panorama;
+    for (i = 0; i < num_samples; i++) {
+      lival = *idata++;
+      rival = *idata++;
 
-    if (filter->panorama > 0.0) {
-      *odata++ = lival * (1.0 - filter->panorama);
+      *odata++ = lival * pan;
       *odata++ = rival;
-    } else {
+    }
+  } else {
+    pan = 1.0 + filter->panorama;
+    for (i = 0; i < num_samples; i++) {
+      lival = *idata++;
+      rival = *idata++;
+
       *odata++ = lival;
-      *odata++ = rival * (1.0 + filter->panorama);
+      *odata++ = rival * pan;
     }
   }
 }
@@ -631,9 +655,17 @@ gst_audio_panorama_transform (GstBaseTransform * base, GstBuffer * inbuf,
 {
   GstAudioPanorama *filter = GST_AUDIO_PANORAMA (base);
   guint num_samples = GST_BUFFER_SIZE (outbuf) / (2 * filter->width);
+  GstClockTime timestamp, stream_time;
 
-  if (GST_CLOCK_TIME_IS_VALID (GST_BUFFER_TIMESTAMP (outbuf)))
-    gst_object_sync_values (G_OBJECT (filter), GST_BUFFER_TIMESTAMP (outbuf));
+  timestamp = GST_BUFFER_TIMESTAMP (inbuf);
+  stream_time =
+      gst_segment_to_stream_time (&base->segment, GST_FORMAT_TIME, timestamp);
+
+  GST_DEBUG_OBJECT (filter, "sync to %" GST_TIME_FORMAT,
+      GST_TIME_ARGS (timestamp));
+
+  if (GST_CLOCK_TIME_IS_VALID (stream_time))
+    gst_object_sync_values (G_OBJECT (filter), stream_time);
 
   if (G_UNLIKELY (GST_BUFFER_FLAG_IS_SET (inbuf, GST_BUFFER_FLAG_GAP))) {
     GST_BUFFER_FLAG_SET (outbuf, GST_BUFFER_FLAG_GAP);

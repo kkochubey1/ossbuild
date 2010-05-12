@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gstreamer 0.10.25.2\n"
+"Project-Id-Version: gstreamer 0.10.28.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
-"PO-Revision-Date: 2010-02-09 23:00+0930\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
+"PO-Revision-Date: 2010-04-27 22:59+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -88,18 +88,6 @@ msgstr "Hiện Tùy chọn GStreamer"
 
 msgid "Unknown option"
 msgstr "Tùy chọn lạ"
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "LỖI: từ yếu tố %s: %s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"Thông tin gỡ lỗi thêm:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "Trình GStreamer mới gặp một lỗi thư viện lõi chung."
@@ -618,6 +606,30 @@ msgstr ""
 "độ cao định vị địa lý ở đó nhạc/phím đã được thu hay tạo, theo mét tùy theo "
 "WSG84 (mặt biển trung bình là số không)"
 
+msgid "geo location country"
+msgstr "vị trí địa lý của quốc gia"
+
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+"quốc gia (tên tiếng Anh, v.d. « Vietnam ») ở đó nhạc/phím đã được thu hay tạo"
+
+msgid "geo location city"
+msgstr "vị trí địa lý của thành phố"
+
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+"thành phố (tên tiếng Anh, v.d. « Hanoi ») ở đó nhạc/phím đã được thu hay tạo"
+
+msgid "geo location sublocation"
+msgstr "vị trí phụ địa lý"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+"một vùng bên trong thành phố ở đó phương tiện đã được tạo hay sản xuất (v.d. "
+"hàng xóm)"
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr "hiện tên"
@@ -670,8 +682,30 @@ msgstr ""
 "các phần khác nhau của một côngxectô). Cấp này cao hơn rãnh còn thấp hơn tập "
 "nhạc."
 
+msgid "user rating"
+msgstr "đánh giá do người dùng"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+"Đánh giá bởi người dùng. Càng cao điểm càng nhiều người dùng thích nhạc/phim "
+"này"
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "LỖI: từ yếu tố %s: %s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"Thông tin gỡ lỗi thêm:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -797,6 +831,9 @@ msgstr "Tập tin « %s » là ổ cắm."
 
 msgid "Failed after iterations as requested."
 msgstr "Lỗi sau số lần lặp lại được chọn."
+
+msgid "Error while writing to download file."
+msgstr "Gặp lỗi khi ghi vào tập tin tải về."
 
 msgid "No Temp directory specified."
 msgstr "Chưa xác định thư mục tạm thời."

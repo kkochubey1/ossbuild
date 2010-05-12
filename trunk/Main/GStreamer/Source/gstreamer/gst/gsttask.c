@@ -34,7 +34,7 @@
  * is typically done when the demuxer can perform random access on the upstream
  * peer element for improved performance.
  *
- * Although convenience functions exist on #GstPad to start/pause/stop tasks, it 
+ * Although convenience functions exist on #GstPad to start/pause/stop tasks, it
  * might sometimes be needed to create a #GstTask manually if it is not related to
  * a #GstPad.
  *
@@ -60,13 +60,24 @@
  * application. The application can receive messages from the #GstBus in its
  * mainloop.
  *
- * Last reviewed on 2006-02-13 (0.10.4)
+ * For debugging perposes, the task will configure its object name as the thread
+ * name on Linux. Please note that the object name should be configured before the
+ * task is started; changing the object name after the task has been started, has
+ * no effect on the thread name.
+ *
+ * Last reviewed on 2010-03-15 (0.10.29)
  */
 
 #include "gst_private.h"
 
 #include "gstinfo.h"
 #include "gsttask.h"
+
+#include <stdio.h>
+
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#endif
 
 GST_DEBUG_CATEGORY_STATIC (task_debug);
 #define GST_CAT_DEFAULT (task_debug)
@@ -92,8 +103,6 @@ struct _GstTaskPrivate
   GstTaskPool *pool_id;
 };
 
-static void gst_task_class_init (GstTaskClass * klass);
-static void gst_task_init (GstTask * task);
 static void gst_task_finalize (GObject * object);
 
 static void gst_task_func (GstTask * task);
@@ -179,6 +188,27 @@ gst_task_finalize (GObject * object)
   G_OBJECT_CLASS (gst_task_parent_class)->finalize (object);
 }
 
+/* should be called with the object LOCK */
+static void
+gst_task_configure_name (GstTask * task)
+{
+#ifdef HAVE_SYS_PRCTL_H
+  const gchar *name;
+  gchar thread_name[17] = { 0, };
+
+  name = GST_OBJECT_NAME (task);
+
+  /* set the thread name to something easily identifiable */
+  if (!snprintf (thread_name, 17, "%s", GST_STR_NULL (name))) {
+    GST_DEBUG_OBJECT (task, "Could not create thread name for '%s'", name);
+  } else {
+    GST_DEBUG_OBJECT (task, "Setting thread name to '%s'", thread_name);
+    if (prctl (PR_SET_NAME, (unsigned long int) thread_name, 0, 0, 0))
+      GST_DEBUG_OBJECT (task, "Failed to set thread name");
+  }
+#endif
+}
+
 static void
 gst_task_func (GstTask * task)
 {
@@ -214,6 +244,9 @@ gst_task_func (GstTask * task)
   /* locking order is TASK_LOCK, LOCK */
   g_static_rec_mutex_lock (lock);
   GST_OBJECT_LOCK (task);
+  /* configure the thread name now */
+  gst_task_configure_name (task);
+
   while (G_LIKELY (task->state != GST_TASK_STOPPED)) {
     while (G_UNLIKELY (task->state == GST_TASK_PAUSED)) {
       gint t;
@@ -259,8 +292,8 @@ exit:
     g_thread_set_priority (tself, G_THREAD_PRIORITY_NORMAL);
   }
   /* now we allow messing with the lock again by setting the running flag to
-   * FALSE. Together with the SIGNAL this is the sign for the _join() to 
-   * complete. 
+   * FALSE. Together with the SIGNAL this is the sign for the _join() to
+   * complete.
    * Note that we still have not dropped the final ref on the task. We could
    * check here if there is a pending join() going on and drop the last ref
    * before releasing the lock as we can be sure that a ref is held by the
@@ -711,7 +744,7 @@ gst_task_pause (GstTask * task)
  * The task will automatically be stopped with this call.
  *
  * This function cannot be called from within a task function as this
- * would cause a deadlock. The function will detect this and print a 
+ * would cause a deadlock. The function will detect this and print a
  * g_warning.
  *
  * Returns: %TRUE if the task could be joined.

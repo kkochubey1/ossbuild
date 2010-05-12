@@ -30,12 +30,6 @@
 #include <gst/video/video.h>
 #include <gst/gst-i18n-plugin.h>
 
-static const GstElementDetails gst_pngdec_details =
-GST_ELEMENT_DETAILS ("PNG image decoder",
-    "Codec/Decoder/Image",
-    "Decode a png video frame to a raw image",
-    "Wim Taymans <wim@fluendo.com>");
-
 GST_DEBUG_CATEGORY_STATIC (pngdec_debug);
 #define GST_CAT_DEFAULT pngdec_debug
 
@@ -111,7 +105,10 @@ gst_pngdec_base_init (gpointer g_class)
       gst_static_pad_template_get (&gst_pngdec_src_pad_template));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_pngdec_sink_pad_template));
-  gst_element_class_set_details (element_class, &gst_pngdec_details);
+  gst_element_class_set_details_simple (element_class, "PNG image decoder",
+      "Codec/Decoder/Image",
+      "Decode a png video frame to a raw image",
+      "Wim Taymans <wim@fluendo.com>");
 }
 
 static void
@@ -189,7 +186,7 @@ user_info_callback (png_structp png_ptr, png_infop info)
   size_t buffer_size;
   GstBuffer *buffer = NULL;
 
-  pngdec = GST_PNGDEC (png_ptr->io_ptr);
+  pngdec = GST_PNGDEC (png_get_io_ptr (png_ptr));
 
   GST_LOG ("info ready");
 
@@ -228,7 +225,7 @@ user_endrow_callback (png_structp png_ptr, png_bytep new_row,
 {
   GstPngDec *pngdec = NULL;
 
-  pngdec = GST_PNGDEC (png_ptr->io_ptr);
+  pngdec = GST_PNGDEC (png_get_io_ptr (png_ptr));
 
   /* FIXME: implement interlaced pictures */
 
@@ -275,7 +272,7 @@ user_end_callback (png_structp png_ptr, png_infop info)
 {
   GstPngDec *pngdec = NULL;
 
-  pngdec = GST_PNGDEC (png_ptr->io_ptr);
+  pngdec = GST_PNGDEC (png_get_io_ptr (png_ptr));
 
   GST_LOG_OBJECT (pngdec, "and we are done reading this image");
 
@@ -310,7 +307,7 @@ user_read_data (png_structp png_ptr, png_bytep data, png_size_t length)
   GstFlowReturn ret = GST_FLOW_OK;
   guint size;
 
-  pngdec = GST_PNGDEC (png_ptr->io_ptr);
+  pngdec = GST_PNGDEC (png_get_io_ptr (png_ptr));
 
   GST_LOG ("reading %" G_GSIZE_FORMAT " bytes of data at offset %d", length,
       pngdec->offset);

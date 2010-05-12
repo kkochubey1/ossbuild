@@ -887,6 +887,7 @@ gst_message_type_get_type (void)
     {C_FLAGS (GST_MESSAGE_REQUEST_STATE), "GST_MESSAGE_REQUEST_STATE",
         "request-state"},
     {C_FLAGS (GST_MESSAGE_STEP_START), "GST_MESSAGE_STEP_START", "step-start"},
+    {C_FLAGS (GST_MESSAGE_QOS), "GST_MESSAGE_QOS", "qos"},
     {C_FLAGS (GST_MESSAGE_ANY), "GST_MESSAGE_ANY", "any"},
     {0, NULL, NULL}
   };
@@ -1000,6 +1001,10 @@ gst_flow_return_get_type (void)
 {
   static gsize id = 0;
   static const GEnumValue values[] = {
+    {C_ENUM (GST_FLOW_CUSTOM_SUCCESS_2), "GST_FLOW_CUSTOM_SUCCESS_2",
+        "custom-success-2"},
+    {C_ENUM (GST_FLOW_CUSTOM_SUCCESS_1), "GST_FLOW_CUSTOM_SUCCESS_1",
+        "custom-success-1"},
     {C_ENUM (GST_FLOW_CUSTOM_SUCCESS), "GST_FLOW_CUSTOM_SUCCESS",
         "custom-success"},
     {C_ENUM (GST_FLOW_RESEND), "GST_FLOW_RESEND", "resend"},
@@ -1013,6 +1018,10 @@ gst_flow_return_get_type (void)
     {C_ENUM (GST_FLOW_NOT_SUPPORTED), "GST_FLOW_NOT_SUPPORTED",
         "not-supported"},
     {C_ENUM (GST_FLOW_CUSTOM_ERROR), "GST_FLOW_CUSTOM_ERROR", "custom-error"},
+    {C_ENUM (GST_FLOW_CUSTOM_ERROR_1), "GST_FLOW_CUSTOM_ERROR_1",
+        "custom-error-1"},
+    {C_ENUM (GST_FLOW_CUSTOM_ERROR_2), "GST_FLOW_CUSTOM_ERROR_2",
+        "custom-error-2"},
     {0, NULL, NULL}
   };
 

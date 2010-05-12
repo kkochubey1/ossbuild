@@ -1167,6 +1167,12 @@ gst_message_parse_async_start
 gst_message_new_async_done
 gst_message_new_step_start
 gst_message_parse_step_start
+gst_message_new_qos
+gst_message_set_qos_values
+gst_message_set_qos_stats
+gst_message_parse_qos
+gst_message_parse_qos_values
+gst_message_parse_qos_stats
 
 GstStructureChangeType
 gst_message_new_structure_change
@@ -1962,8 +1968,6 @@ gst_registry_find_feature
 gst_registry_lookup_feature
 gst_registry_add_path
 gst_registry_scan_path
-gst_registry_binary_read_cache
-gst_registry_binary_write_cache
 gst_registry_lookup
 gst_registry_remove_feature
 gst_registry_add_feature
@@ -2176,6 +2180,9 @@ GST_TAG_GEO_LOCATION_NAME
 GST_TAG_GEO_LOCATION_LATITUDE
 GST_TAG_GEO_LOCATION_LONGITUDE
 GST_TAG_GEO_LOCATION_ELEVATION
+GST_TAG_GEO_LOCATION_CITY
+GST_TAG_GEO_LOCATION_COUNTRY
+GST_TAG_GEO_LOCATION_SUBLOCATION
 GST_TAG_SHOW_NAME
 GST_TAG_SHOW_SORTNAME
 GST_TAG_SHOW_EPISODE_NUMBER
@@ -2183,6 +2190,7 @@ GST_TAG_SHOW_SEASON_NUMBER
 GST_TAG_LYRICS
 GST_TAG_COMPOSER_SORTNAME
 GST_TAG_GROUPING
+GST_TAG_USER_RATING
 
 gst_tag_register
 gst_tag_merge_use_first

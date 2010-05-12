@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gst-plugins-base 0.10.21.3\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 20:33+0000\n"
+"POT-Creation-Date: 2010-04-28 02:08+0100\n"
 "PO-Revision-Date: 2009-01-14 12:41+0800\n"
 "Last-Translator: Ji ZhengYu <zhengyuji@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -177,6 +177,10 @@ msgstr "autovideosink 和 xvimagesink 组件都缺少。"
 msgid "The autovideosink element is missing."
 msgstr "autovideosink 和 xvimagesink 组件都缺少。"
 
+#, c-format
+msgid "Configured videosink %s is not working."
+msgstr ""
+
 #, fuzzy, c-format
 msgid "Both autovideosink and %s elements are not working."
 msgstr "autovideosink 和 xvimagesink 组件都缺少。"
@@ -199,6 +203,10 @@ msgstr "autovideosink 和 alsasink 组件都缺少。"
 msgid "The autoaudiosink element is missing."
 msgstr "autovideosink 和 alsasink 组件都缺少。"
 
+#, c-format
+msgid "Configured audiosink %s is not working."
+msgstr ""
+
 #, fuzzy, c-format
 msgid "Both autoaudiosink and %s elements are not working."
 msgstr "autovideosink 和 alsasink 组件都缺少。"
@@ -207,7 +215,8 @@ msgstr "autovideosink 和 alsasink 组件都缺少。"
 msgid "The autoaudiosink element is not working."
 msgstr "autovideosink 和 alsasink 组件都缺少。"
 
-msgid "Can't play a text file without video."
+#, fuzzy
+msgid "Can't play a text file without video or visualizations."
 msgstr "无法播放不带视频的文本文件。"
 
 #, c-format

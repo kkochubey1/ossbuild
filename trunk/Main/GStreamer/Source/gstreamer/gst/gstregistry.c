@@ -114,11 +114,7 @@
 
 #include "gst-i18n-lib.h"
 
-/* needed for fast retrieval of element and typefind factory lists */
-extern GType gst_type_find_factory_get_type (void);
-#define GST_TYPE_TYPE_FIND_FACTORY                 (gst_type_find_factory_get_type())
-extern GType gst_element_factory_get_type (void);
-#define GST_TYPE_ELEMENT_FACTORY                 (gst_element_factory_get_type())
+#include "gst.h"
 
 #ifdef G_OS_WIN32
 #include <windows.h>
@@ -1003,10 +999,10 @@ gst_registry_scan_plugin_file (GstRegistryScanContext * context,
   gboolean changed = FALSE;
   GstPlugin *newplugin = NULL;
 
-  #ifdef G_OS_WIN32
-    /* Disable external plugin loader on Windows until it is ported properly. */
-    context->helper_state = REGISTRY_SCAN_HELPER_DISABLED;
-  #endif
+#ifdef G_OS_WIN32
+  /* Disable external plugin loader on Windows until it is ported properly. */
+  context->helper_state = REGISTRY_SCAN_HELPER_DISABLED;
+#endif
 
 
   /* Have a plugin to load - see if the scan-helper needs starting */
@@ -1260,7 +1256,7 @@ gst_registry_get_feature_list_by_plugin (GstRegistry * registry,
 
 /* Unref and delete the default registry */
 void
-_priv_gst_registry_cleanup ()
+_priv_gst_registry_cleanup (void)
 {
   GstRegistry *registry;
 

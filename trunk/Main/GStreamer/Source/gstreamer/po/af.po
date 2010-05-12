@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.9.7\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2005-12-05 11:45+0200\n"
 "Last-Translator: Petri Jooste <rkwjpj@puk.ac.za>\n"
 "Language-Team: Afrikaans <i18n@af.org.za>\n"
@@ -85,18 +85,6 @@ msgstr "Wys GStreamer opsies"
 
 msgid "Unknown option"
 msgstr "Onbekende opsie"
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "FOUT: vanaf element %s: %s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"Addisionele ontfout-inligting:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "GStreamer het 'n fout teëgekom in die algemene kernbiblioteek."
@@ -626,6 +614,29 @@ msgid ""
 "according to WGS84 (zero is average sea level)"
 msgstr ""
 
+#, fuzzy
+msgid "geo location country"
+msgstr "ligging"
+
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+
+#, fuzzy
+msgid "geo location city"
+msgstr "ligging"
+
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "ligging"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr ""
@@ -677,8 +688,29 @@ msgid ""
 "of a concerto. It is a higher level than a track, but lower than an album"
 msgstr ""
 
+#, fuzzy
+msgid "user rating"
+msgstr "duur"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "FOUT: vanaf element %s: %s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"Addisionele ontfout-inligting:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -798,6 +830,10 @@ msgstr "Lêer \"%s\" is 'n sok."
 
 msgid "Failed after iterations as requested."
 msgstr "Mislukking na die vasgestelde aantal probeerslae."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Fout tydens skryf na lêer \"%s\"."
 
 msgid "No Temp directory specified."
 msgstr ""

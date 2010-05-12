@@ -915,6 +915,33 @@ Check your system clock])
 fi
 AC_MSG_RESULT(yes)])
 
+# Copyright (C) 2009  Free Software Foundation, Inc.
+#
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# serial 1
+
+# AM_SILENT_RULES([DEFAULT])
+# --------------------------
+# Enable less verbose build rules; with the default set to DEFAULT
+# (`yes' being less verbose, `no' or empty being verbose).
+AC_DEFUN([AM_SILENT_RULES],
+[AC_ARG_ENABLE([silent-rules],
+[  --enable-silent-rules          less verbose build output (undo: `make V=1')
+  --disable-silent-rules         verbose build output (undo: `make V=0')])
+case $enable_silent_rules in
+yes) AM_DEFAULT_VERBOSITY=0;;
+no)  AM_DEFAULT_VERBOSITY=1;;
+*)   AM_DEFAULT_VERBOSITY=m4_if([$1], [yes], [0], [1]);;
+esac
+AC_SUBST([AM_DEFAULT_VERBOSITY])dnl
+AM_BACKSLASH='\'
+AC_SUBST([AM_BACKSLASH])dnl
+_AM_SUBST_NOTMAKE([AM_BACKSLASH])dnl
+])
+
 # Copyright (C) 2001, 2003, 2005  Free Software Foundation, Inc.
 #
 # This file is free software; the Free Software Foundation
@@ -1058,7 +1085,6 @@ AC_SUBST([am__tar])
 AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
-m4_include([check-checks.m4])
 m4_include([common/m4/as-ac-expand.m4])
 m4_include([common/m4/as-auto-alt.m4])
 m4_include([common/m4/as-compiler-flag.m4])
@@ -1068,7 +1094,6 @@ m4_include([common/m4/as-python.m4])
 m4_include([common/m4/as-scrub-include.m4])
 m4_include([common/m4/as-version.m4])
 m4_include([common/m4/ax_create_stdint_h.m4])
-m4_include([common/m4/gettext.m4])
 m4_include([common/m4/gst-arch.m4])
 m4_include([common/m4/gst-args.m4])
 m4_include([common/m4/gst-check.m4])
@@ -1085,19 +1110,20 @@ m4_include([common/m4/gst-plugin-docs.m4])
 m4_include([common/m4/gst-plugindir.m4])
 m4_include([common/m4/gst.m4])
 m4_include([common/m4/gtk-doc.m4])
-m4_include([common/m4/iconv.m4])
-m4_include([common/m4/intlmacosx.m4])
 m4_include([common/m4/introspection.m4])
-m4_include([common/m4/lib-ld.m4])
-m4_include([common/m4/lib-link.m4])
-m4_include([common/m4/lib-prefix.m4])
-m4_include([common/m4/libtool.m4])
-m4_include([common/m4/ltoptions.m4])
-m4_include([common/m4/ltsugar.m4])
-m4_include([common/m4/ltversion.m4])
-m4_include([common/m4/lt~obsolete.m4])
-m4_include([common/m4/nls.m4])
 m4_include([common/m4/pkg.m4])
-m4_include([common/m4/po.m4])
-m4_include([common/m4/progtest.m4])
-m4_include([common/m4/shave.m4])
+m4_include([m4/check-checks.m4])
+m4_include([m4/gettext.m4])
+m4_include([m4/iconv.m4])
+m4_include([m4/intlmacosx.m4])
+m4_include([m4/lib-ld.m4])
+m4_include([m4/lib-link.m4])
+m4_include([m4/lib-prefix.m4])
+m4_include([m4/libtool.m4])
+m4_include([m4/ltoptions.m4])
+m4_include([m4/ltsugar.m4])
+m4_include([m4/ltversion.m4])
+m4_include([m4/lt~obsolete.m4])
+m4_include([m4/nls.m4])
+m4_include([m4/po.m4])
+m4_include([m4/progtest.m4])

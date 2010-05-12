@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.8.8\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2005-04-27 14:55+0800\n"
 "Last-Translator: Abel Cheung <abelcheung@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -86,18 +86,6 @@ msgstr "顯示 GStreamer 版本"
 
 msgid "Unknown option"
 msgstr ""
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "錯誤：來自 %s 元件：%s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"額外偵錯資訊：\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "GStreamer 主要函式庫發生一般性的錯誤。"
@@ -627,6 +615,29 @@ msgid ""
 "according to WGS84 (zero is average sea level)"
 msgstr ""
 
+#, fuzzy
+msgid "geo location country"
+msgstr "位置"
+
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+
+#, fuzzy
+msgid "geo location city"
+msgstr "位置"
+
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "位置"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr ""
@@ -677,8 +688,29 @@ msgid ""
 "of a concerto. It is a higher level than a track, but lower than an album"
 msgstr ""
 
+#, fuzzy
+msgid "user rating"
+msgstr "時間長度"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ""
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "錯誤：來自 %s 元件：%s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"額外偵錯資訊：\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -796,6 +828,10 @@ msgstr "“%s” 是一個 socket。"
 
 msgid "Failed after iterations as requested."
 msgstr ""
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "當寫入內容至檔案 “%s” 時發生錯誤。"
 
 msgid "No Temp directory specified."
 msgstr ""

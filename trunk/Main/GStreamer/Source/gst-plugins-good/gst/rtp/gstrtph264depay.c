@@ -45,13 +45,6 @@ enum
 /* 3 zero bytes syncword */
 static const guint8 sync_bytes[] = { 0, 0, 0, 1 };
 
-/* elementfactory information */
-static const GstElementDetails gst_rtp_h264depay_details =
-GST_ELEMENT_DETAILS ("RTP H264 depayloader",
-    "Codec/Depayloader/Network",
-    "Extracts H264 video from RTP packets (RFC 3984)",
-    "Wim Taymans <wim.taymans@gmail.com>");
-
 static GstStaticPadTemplate gst_rtp_h264_depay_src_template =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
@@ -113,7 +106,10 @@ gst_rtp_h264_depay_base_init (gpointer klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_rtp_h264_depay_sink_template));
 
-  gst_element_class_set_details (element_class, &gst_rtp_h264depay_details);
+  gst_element_class_set_details_simple (element_class, "RTP H264 depayloader",
+      "Codec/Depayloader/Network",
+      "Extracts H264 video from RTP packets (RFC 3984)",
+      "Wim Taymans <wim.taymans@gmail.com>");
 }
 
 static void
@@ -292,9 +288,8 @@ gst_rtp_h264_depay_setcaps (GstBaseRTPDepayload * depayload, GstCaps * caps)
     guint len, num_sps, num_pps;
     gint i;
     guint8 *data;
-    guint32 profile_id;
 
-    if (ps == NULL || profile == NULL)
+    if (ps == NULL)
       goto incomplete_caps;
 
     params = g_strsplit (ps, ",", 0);
@@ -334,16 +329,31 @@ gst_rtp_h264_depay_setcaps (GstBaseRTPDepayload * depayload, GstCaps * caps)
     }
     g_strfreev (params);
 
+    if (num_sps == 0 || (GST_READ_UINT16_BE (sps[0]) < 3) || num_pps == 0) {
+      g_strfreev ((gchar **) pps);
+      g_strfreev ((gchar **) sps);
+      goto incomplete_caps;
+    }
+
     codec_data = gst_buffer_new_and_alloc (len);
     data = GST_BUFFER_DATA (codec_data);
 
     /* 8 bits version == 1 */
     *data++ = 1;
-    /* hex: AVCProfileIndication:8 | profile_compat:8 | AVCLevelIndication:8 */
-    sscanf (profile, "%6x", &profile_id);
-    *data++ = (profile_id >> 16) & 0xff;
-    *data++ = (profile_id >> 8) & 0xff;
-    *data++ = profile_id & 0xff;
+    if (profile) {
+      guint32 profile_id;
+
+      /* hex: AVCProfileIndication:8 | profile_compat:8 | AVCLevelIndication:8 */
+      sscanf (profile, "%6x", &profile_id);
+      *data++ = (profile_id >> 16) & 0xff;
+      *data++ = (profile_id >> 8) & 0xff;
+      *data++ = profile_id & 0xff;
+    } else {
+      /* extract from SPS */
+      *data++ = sps[0][3];
+      *data++ = sps[0][4];
+      *data++ = sps[0][5];
+    }
     /* 6 bits reserved | 2 bits lengthSizeMinusOn */
     *data++ = 0xff;
     /* 3 bits reserved | 5 bits numOfSequenceParameterSets */
@@ -563,7 +573,8 @@ gst_rtp_h264_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
             outbuf = gst_rtp_h264_depay_push_nal (rtph264depay, outbuf, ts);
             if (outbuf) {
               gst_buffer_set_caps (outbuf, GST_PAD_CAPS (depayload->srcpad));
-              gst_base_rtp_depayload_push_ts (depayload, ts, outbuf);
+              /* already timestamped this buffer, baseclass need not bother */
+              gst_base_rtp_depayload_push (depayload, outbuf);
             }
           }
 
@@ -577,6 +588,7 @@ gst_rtp_h264_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
           gst_buffer_set_caps (outbuf, GST_PAD_CAPS (depayload->srcpad));
           return outbuf;
         }
+        break;
       }
       case 26:
         /* MTAP16    Multi-time aggregation packet      5.7.2 */

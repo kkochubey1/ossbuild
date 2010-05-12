@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.26.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2010-02-21 15:19+0100\n"
 "Last-Translator: Freek de Kruijf <f.de.kruijf@gmail.com>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -94,18 +94,6 @@ msgstr "Toon de GStreamer-opties"
 
 msgid "Unknown option"
 msgstr "Onbekende optie"
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "FOUT: van element %s: %s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"Extra debug-informatie:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "GStreamer kreeg een algemene fout van de kernbibliotheek."
@@ -630,6 +618,35 @@ msgstr ""
 "hoogte van de geografische locatie van waar het medium is opgenomen of "
 "geproduceerd in meters volgens WGS84 (nul op gemiddeld zeeniveau)"
 
+#, fuzzy
+msgid "geo location country"
+msgstr "breedtegraad van de geografische locatie"
+
+#, fuzzy
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+"leesbare beschrijving van de locatie waar het medium is opgenomen of "
+"geproduceerd"
+
+#, fuzzy
+msgid "geo location city"
+msgstr "lengtegraad van de geografische locatie"
+
+#, fuzzy
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+"leesbare beschrijving van de locatie waar het medium is opgenomen of "
+"geproduceerd"
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "hoogte van de geografische locatie"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr "naam tonen"
@@ -681,8 +698,29 @@ msgstr ""
 "verschillende delen van een concert. Het is een hoger niveau dan een track, "
 "maat lager dan een album"
 
+#, fuzzy
+msgid "user rating"
+msgstr "duur"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "FOUT: van element %s: %s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"Extra debug-informatie:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -803,6 +841,10 @@ msgstr "Bestand \"%s\" is een socket."
 
 msgid "Failed after iterations as requested."
 msgstr "Mislukt na iteraties zoals gevraagd."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Fout bij het schrijven naar bestand \"%s\"."
 
 msgid "No Temp directory specified."
 msgstr "Geen tijdelijke map opgegeven."

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.12\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2007-03-28 00:09+0200\n"
 "Last-Translator: Mogens Jaeger <mogens@jaeger.tf>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -89,18 +89,6 @@ msgstr "Vis Gstreamer indstillinger"
 
 msgid "Unknown option"
 msgstr "Ukendt indstilling"
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "FEJL: fra element %s: %s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"Yderligere fejlsøgningsinformation:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "GStreamer opdagede en generel fejl i kernebiblioteket."
@@ -624,6 +612,29 @@ msgid ""
 "according to WGS84 (zero is average sea level)"
 msgstr ""
 
+#, fuzzy
+msgid "geo location country"
+msgstr "sted"
+
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+
+#, fuzzy
+msgid "geo location city"
+msgstr "sted"
+
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "sted"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr ""
@@ -675,8 +686,29 @@ msgid ""
 "of a concerto. It is a higher level than a track, but lower than an album"
 msgstr ""
 
+#, fuzzy
+msgid "user rating"
+msgstr "varighed"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "FEJL: fra element %s: %s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"Yderligere fejlsøgningsinformation:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -796,6 +828,10 @@ msgstr "Filen \"%s\" er en sokkel."
 
 msgid "Failed after iterations as requested."
 msgstr "Fejlede efter iterationer som forespurgt."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Fejl under skrivning til filen \"%s\"."
 
 msgid "No Temp directory specified."
 msgstr ""

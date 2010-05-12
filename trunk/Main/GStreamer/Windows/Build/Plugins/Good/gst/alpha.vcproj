@@ -300,7 +300,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstvideo.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstvideo.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E50}"
@@ -324,6 +324,10 @@
 	<Files>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\alpha\gstalpha.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\alpha\gstalpha.h"
 			>
 		</File>
 	</Files>

@@ -132,10 +132,11 @@ libgstreamer_@GST_MAJORMINOR@_la_LIBADD =		\
 	$(GST_PARSE_LA)					\
 	$(GST_ALL_LIBS)					\
 	$(WIN32_LIBS)					\
-	$(XML_LIBS)
+	$(XML_LIBS)					\
+	$(LIBM)
 
 libgstreamer_@GST_MAJORMINOR@_la_LDFLAGS =		\
-	$(GST_LIB_LDFLAGS) $(GST_ALL_LDFLAGS) $(GST_LT_LDFLAGS) $(LIBM)
+	$(GST_LIB_LDFLAGS) $(GST_ALL_LDFLAGS) $(GST_LT_LDFLAGS)
 
 libgstreamer_@GST_MAJORMINOR@includedir = $(includedir)/gstreamer-@GST_MAJORMINOR@/gst
 
@@ -202,6 +203,7 @@ noinst_HEADERS = 		\
 	glib-compat-private.h	\
 	gst-i18n-lib.h		\
 	gst-i18n-app.h		\
+	gstelementdetails.h	\
 	gstpluginloader.h	\
 	gstquark.h		\
 	gstregistrybinary.h     \
@@ -209,18 +211,18 @@ noinst_HEADERS = 		\
 	gst_private.h
 
 gstmarshal.h: gstmarshal.list
-	glib-genmarshal --header --prefix=gst_marshal $(srcdir)/gstmarshal.list > gstmarshal.h.tmp
+	$(AM_V_GEN)glib-genmarshal --header --prefix=gst_marshal $(srcdir)/gstmarshal.list > gstmarshal.h.tmp && \
 	mv gstmarshal.h.tmp gstmarshal.h
 
 gstmarshal.c: gstmarshal.list gst_private.h
-	echo "#include \"gst_private.h\"" > gstmarshal.c.tmp
-	echo "#include \"glib-object.h\"" >> gstmarshal.c.tmp
-	echo "#include \"gstmarshal.h\"" >> gstmarshal.c.tmp
-	glib-genmarshal --body --prefix=gst_marshal $(srcdir)/gstmarshal.list >> gstmarshal.c.tmp
+	$(AM_V_GEN)echo "#include \"gst_private.h\"" > gstmarshal.c.tmp && \
+	echo "#include \"glib-object.h\"" >> gstmarshal.c.tmp && \
+	echo "#include \"gstmarshal.h\"" >> gstmarshal.c.tmp && \
+	glib-genmarshal --body --prefix=gst_marshal $(srcdir)/gstmarshal.list >> gstmarshal.c.tmp && \
 	mv gstmarshal.c.tmp gstmarshal.c
 
 gstenumtypes.h: $(gst_headers)
-	glib-mkenums \
+	$(AM_V_GEN)glib-mkenums \
 	--fhead "#ifndef __GST_ENUM_TYPES_H__\n#define __GST_ENUM_TYPES_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
 	--fprod "\n/* enumerations from \"@filename@\" */\n" \
 	--vhead "GType @enum_name@_get_type (void);\n#define GST_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n"         \
@@ -228,7 +230,7 @@ gstenumtypes.h: $(gst_headers)
 	$^ > gstenumtypes.h
 
 gstenumtypes.c: $(gst_headers)
-	glib-mkenums \
+	$(AM_V_GEN)glib-mkenums \
 	--fhead "#include \"gst_private.h\"\n#include <gst/gst.h>\n#define C_ENUM(v) ((gint) v)\n#define C_FLAGS(v) ((guint) v)\n " \
 	--fprod "\n/* enumerations from \"@filename@\" */" \
 	--vhead "GType\n@enum_name@_get_type (void)\n{\n  static gsize id = 0;\n  static const G@Type@Value values[] = {"     \
@@ -248,13 +250,13 @@ gir_headers=$(patsubst %,$(srcdir)/%, $(libgstreamer_@GST_MAJORMINOR@include_HEA
 gir_sources=$(patsubst %,$(srcdir)/%, $(libgstreamer_@GST_MAJORMINOR@_la_SOURCES))
 
 Gst-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstreamer-@GST_MAJORMINOR@.la
-	$(INTROSPECTION_SCANNER) -v --namespace Gst \
+	$(AM_V_GEN)$(INTROSPECTION_SCANNER) -v --namespace Gst \
 		--nsversion=@GST_MAJORMINOR@ \
 		-I$(top_srcdir) \
 		-I$(top_builddir) \
 		-DIN_GOBJECT_INTROSPECTION=1 \
 		--c-include='gst/gst.h' \
-		--library=gstreamer-0.10 \
+		--library=libgstreamer-0.10.la \
 		--include=GLib-2.0 \
 		--include=GObject-2.0 \
 		--include=GModule-2.0 \
@@ -279,14 +281,14 @@ typelibsdir = $(libdir)/girepository-1.0/
 typelibs_DATA = $(BUILT_GIRSOURCES:.gir=.typelib)
 
 %.typelib: %.gir $(INTROSPECTION_COMPILER)
-	$(INTROSPECTION_COMPILER) --includedir=$(srcdir) --includedir=$(builddir) $(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+	$(AM_V_GEN)$(INTROSPECTION_COMPILER) --includedir=$(srcdir) --includedir=$(builddir) $(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
 
 CLEANFILES += $(BUILT_GIRSOURCES) $(typelibs_DATA)
 endif
 
 # try to prevent packaging errors
 check-libexecdir-consistency:
-	if test "${GST_PLUGIN_SCANNER_INSTALLED}" != "${libexecdir}/gstreamer-$(GST_MAJORMINOR)/gst-plugin-scanner"; then \
+	@if test "${GST_PLUGIN_SCANNER_INSTALLED}" != "${libexecdir}/gstreamer-$(GST_MAJORMINOR)/gst-plugin-scanner"; then \
 	  echo "*** Inconsistent libexecdir! Please use ./configure --libexecdir=/foo/bar"; \
 	  echo "*** to set the libexecdir and not make libexecdir=/foo/bar or the like."; \
 	  echo "*** The same goes for prefix, libdir etc."; \

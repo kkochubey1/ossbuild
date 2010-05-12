@@ -49,12 +49,6 @@
 #define GST_CAT_DEFAULT gst_audio_karaoke_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
 
-static const GstElementDetails element_details =
-GST_ELEMENT_DETAILS ("AudioKaraoke",
-    "Filter/Effect/Audio",
-    "Removes voice from sound",
-    "Wim Taymans <wim.taymans@gmail.com>");
-
 /* Filter signals and args */
 enum
 {
@@ -120,7 +114,9 @@ gst_audio_karaoke_base_init (gpointer klass)
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
   GstCaps *caps;
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "AudioKaraoke",
+      "Filter/Effect/Audio",
+      "Removes voice from sound", "Wim Taymans <wim.taymans@gmail.com>");
 
   caps = gst_caps_from_string (ALLOWED_CAPS);
   gst_audio_filter_class_add_pad_templates (GST_AUDIO_FILTER_CLASS (klass),
@@ -341,11 +337,21 @@ static GstFlowReturn
 gst_audio_karaoke_transform_ip (GstBaseTransform * base, GstBuffer * buf)
 {
   GstAudioKaraoke *filter = GST_AUDIO_KARAOKE (base);
-  guint num_samples =
-      GST_BUFFER_SIZE (buf) / (GST_AUDIO_FILTER (filter)->format.width / 8);
+  guint num_samples;
+  GstClockTime timestamp, stream_time;
 
-  if (GST_CLOCK_TIME_IS_VALID (GST_BUFFER_TIMESTAMP (buf)))
-    gst_object_sync_values (G_OBJECT (filter), GST_BUFFER_TIMESTAMP (buf));
+  timestamp = GST_BUFFER_TIMESTAMP (buf);
+  stream_time =
+      gst_segment_to_stream_time (&base->segment, GST_FORMAT_TIME, timestamp);
+
+  GST_DEBUG_OBJECT (filter, "sync to %" GST_TIME_FORMAT,
+      GST_TIME_ARGS (timestamp));
+
+  if (GST_CLOCK_TIME_IS_VALID (stream_time))
+    gst_object_sync_values (G_OBJECT (filter), stream_time);
+
+  num_samples =
+      GST_BUFFER_SIZE (buf) / (GST_AUDIO_FILTER (filter)->format.width / 8);
 
   if (gst_base_transform_is_passthrough (base) ||
       G_UNLIKELY (GST_BUFFER_FLAG_IS_SET (buf, GST_BUFFER_FLAG_GAP)))

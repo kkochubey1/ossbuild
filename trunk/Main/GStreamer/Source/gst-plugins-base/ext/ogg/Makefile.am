@@ -8,19 +8,23 @@ libgstogg_la_SOURCES = \
 	gstoggaviparse.c \
 	gstoggparse.c \
 	gstoggstream.c \
-	gstoggstream.h \
 	dirac_parse.c \
-	dirac_parse.h \
 	vorbis_parse.c
 
 noinst_HEADERS = \
-	gstoggdemux.h gstoggmux.h
+	gstogg.h \
+	gstoggdemux.h \
+	gstoggmux.h \
+	gstoggstream.h \
+	dirac_parse.h \
+	vorbis_parse.h
 
-libgstogg_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) $(OGG_CFLAGS) 
+libgstogg_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS) $(OGG_CFLAGS)
 libgstogg_la_LIBADD = \
 	$(top_builddir)/gst-libs/gst/riff/libgstriff-$(GST_MAJORMINOR).la \
 	$(top_builddir)/gst-libs/gst/tag/libgsttag-$(GST_MAJORMINOR).la \
 	$(GST_BASE_LIBS) \
+	$(GST_LIBS) \
 	$(OGG_LIBS)
 libgstogg_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 libgstogg_la_LIBTOOLFLAGS = --tag=disable-static

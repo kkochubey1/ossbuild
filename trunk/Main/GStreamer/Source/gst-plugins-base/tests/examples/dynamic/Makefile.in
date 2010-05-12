@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/freetype2.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/freetype2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-alsa.m4 \
 	$(top_srcdir)/m4/gst-fionread.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -84,47 +83,64 @@ CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_addstream_OBJECTS = addstream-addstream.$(OBJEXT)
 addstream_OBJECTS = $(am_addstream_OBJECTS)
-addstream_LDADD = $(LDADD)
-addstream_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+am__DEPENDENCIES_1 =
+addstream_DEPENDENCIES = $(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+addstream_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(addstream_CFLAGS) \
-	$(CFLAGS) $(addstream_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_codec_select_OBJECTS = codec_select-codec-select.$(OBJEXT)
 codec_select_OBJECTS = $(am_codec_select_OBJECTS)
-codec_select_LDADD = $(LDADD)
-codec_select_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+codec_select_DEPENDENCIES = $(am__DEPENDENCIES_1)
+codec_select_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(codec_select_CFLAGS) \
-	$(CFLAGS) $(codec_select_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_sprinkle_OBJECTS = sprinkle-sprinkle.$(OBJEXT)
 sprinkle_OBJECTS = $(am_sprinkle_OBJECTS)
-sprinkle_LDADD = $(LDADD)
-sprinkle_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(sprinkle_CFLAGS) $(CFLAGS) \
-	$(sprinkle_LDFLAGS) $(LDFLAGS) -o $@
+sprinkle_DEPENDENCIES = $(am__DEPENDENCIES_1)
+sprinkle_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(sprinkle_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_sprinkle2_OBJECTS = sprinkle2-sprinkle2.$(OBJEXT)
 sprinkle2_OBJECTS = $(am_sprinkle2_OBJECTS)
-sprinkle2_LDADD = $(LDADD)
-sprinkle2_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+sprinkle2_DEPENDENCIES = $(am__DEPENDENCIES_1)
+sprinkle2_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(sprinkle2_CFLAGS) \
-	$(CFLAGS) $(sprinkle2_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_sprinkle3_OBJECTS = sprinkle3-sprinkle3.$(OBJEXT)
 sprinkle3_OBJECTS = $(am_sprinkle3_OBJECTS)
-sprinkle3_LDADD = $(LDADD)
-sprinkle3_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+sprinkle3_DEPENDENCIES = $(am__DEPENDENCIES_1)
+sprinkle3_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(sprinkle3_CFLAGS) \
-	$(CFLAGS) $(sprinkle3_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(addstream_SOURCES) $(codec_select_SOURCES) \
 	$(sprinkle_SOURCES) $(sprinkle2_SOURCES) $(sprinkle3_SOURCES)
 DIST_SOURCES = $(addstream_SOURCES) $(codec_select_SOURCES) \
@@ -137,7 +153,7 @@ ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUDIORESAMPLE_FORMAT_AUTO = @AUDIORESAMPLE_FORMAT_AUTO@
@@ -177,8 +193,6 @@ EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FT2_CFLAGS = @FT2_CFLAGS@
@@ -288,7 +302,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -296,7 +309,6 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
@@ -327,7 +339,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 QT_CFLAGS = @QT_CFLAGS@
 QT_LIBS = @QT_LIBS@
 RANLIB = @RANLIB@
@@ -338,7 +349,6 @@ STRIP = @STRIP@
 THEORA_CFLAGS = @THEORA_CFLAGS@
 THEORA_LIBS = @THEORA_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
@@ -347,6 +357,8 @@ VORBISENC_LIBS = @VORBISENC_LIBS@
 VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -410,7 +422,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -419,19 +430,19 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 addstream_SOURCES = addstream.c 
 addstream_CFLAGS = $(GST_CFLAGS) -D_GNU_SOURCE
-addstream_LDFLAGS = $(GST_LIBS)
+addstream_LDADD = $(GST_LIBS)
 codec_select_SOURCES = codec-select.c 
 codec_select_CFLAGS = $(GST_CFLAGS) -D_GNU_SOURCE
-codec_select_LDFLAGS = $(GST_LIBS)
+codec_select_LDADD = $(GST_LIBS)
 sprinkle_SOURCES = sprinkle.c 
 sprinkle_CFLAGS = $(GST_CFLAGS) -D_GNU_SOURCE
-sprinkle_LDFLAGS = $(GST_LIBS)
+sprinkle_LDADD = $(GST_LIBS)
 sprinkle2_SOURCES = sprinkle2.c 
 sprinkle2_CFLAGS = $(GST_CFLAGS) -D_GNU_SOURCE
-sprinkle2_LDFLAGS = $(GST_LIBS)
+sprinkle2_LDADD = $(GST_LIBS)
 sprinkle3_SOURCES = sprinkle3.c 
 sprinkle3_CFLAGS = $(GST_CFLAGS) -D_GNU_SOURCE
-sprinkle3_LDFLAGS = $(GST_LIBS)
+sprinkle3_LDADD = $(GST_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -477,19 +488,19 @@ clean-noinstPROGRAMS:
 	rm -f $$list
 addstream$(EXEEXT): $(addstream_OBJECTS) $(addstream_DEPENDENCIES) 
 	@rm -f addstream$(EXEEXT)
-	$(addstream_LINK) $(addstream_OBJECTS) $(addstream_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(addstream_LINK) $(addstream_OBJECTS) $(addstream_LDADD) $(LIBS)
 codec-select$(EXEEXT): $(codec_select_OBJECTS) $(codec_select_DEPENDENCIES) 
 	@rm -f codec-select$(EXEEXT)
-	$(codec_select_LINK) $(codec_select_OBJECTS) $(codec_select_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(codec_select_LINK) $(codec_select_OBJECTS) $(codec_select_LDADD) $(LIBS)
 sprinkle$(EXEEXT): $(sprinkle_OBJECTS) $(sprinkle_DEPENDENCIES) 
 	@rm -f sprinkle$(EXEEXT)
-	$(sprinkle_LINK) $(sprinkle_OBJECTS) $(sprinkle_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(sprinkle_LINK) $(sprinkle_OBJECTS) $(sprinkle_LDADD) $(LIBS)
 sprinkle2$(EXEEXT): $(sprinkle2_OBJECTS) $(sprinkle2_DEPENDENCIES) 
 	@rm -f sprinkle2$(EXEEXT)
-	$(sprinkle2_LINK) $(sprinkle2_OBJECTS) $(sprinkle2_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(sprinkle2_LINK) $(sprinkle2_OBJECTS) $(sprinkle2_LDADD) $(LIBS)
 sprinkle3$(EXEEXT): $(sprinkle3_OBJECTS) $(sprinkle3_DEPENDENCIES) 
 	@rm -f sprinkle3$(EXEEXT)
-	$(sprinkle3_LINK) $(sprinkle3_OBJECTS) $(sprinkle3_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(sprinkle3_LINK) $(sprinkle3_OBJECTS) $(sprinkle3_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -504,92 +515,105 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sprinkle3-sprinkle3.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 addstream-addstream.o: addstream.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(addstream_CFLAGS) $(CFLAGS) -MT addstream-addstream.o -MD -MP -MF $(DEPDIR)/addstream-addstream.Tpo -c -o addstream-addstream.o `test -f 'addstream.c' || echo '$(srcdir)/'`addstream.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/addstream-addstream.Tpo $(DEPDIR)/addstream-addstream.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(addstream_CFLAGS) $(CFLAGS) -MT addstream-addstream.o -MD -MP -MF $(DEPDIR)/addstream-addstream.Tpo -c -o addstream-addstream.o `test -f 'addstream.c' || echo '$(srcdir)/'`addstream.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/addstream-addstream.Tpo $(DEPDIR)/addstream-addstream.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='addstream.c' object='addstream-addstream.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(addstream_CFLAGS) $(CFLAGS) -c -o addstream-addstream.o `test -f 'addstream.c' || echo '$(srcdir)/'`addstream.c
 
 addstream-addstream.obj: addstream.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(addstream_CFLAGS) $(CFLAGS) -MT addstream-addstream.obj -MD -MP -MF $(DEPDIR)/addstream-addstream.Tpo -c -o addstream-addstream.obj `if test -f 'addstream.c'; then $(CYGPATH_W) 'addstream.c'; else $(CYGPATH_W) '$(srcdir)/addstream.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/addstream-addstream.Tpo $(DEPDIR)/addstream-addstream.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(addstream_CFLAGS) $(CFLAGS) -MT addstream-addstream.obj -MD -MP -MF $(DEPDIR)/addstream-addstream.Tpo -c -o addstream-addstream.obj `if test -f 'addstream.c'; then $(CYGPATH_W) 'addstream.c'; else $(CYGPATH_W) '$(srcdir)/addstream.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/addstream-addstream.Tpo $(DEPDIR)/addstream-addstream.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='addstream.c' object='addstream-addstream.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(addstream_CFLAGS) $(CFLAGS) -c -o addstream-addstream.obj `if test -f 'addstream.c'; then $(CYGPATH_W) 'addstream.c'; else $(CYGPATH_W) '$(srcdir)/addstream.c'; fi`
 
 codec_select-codec-select.o: codec-select.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(codec_select_CFLAGS) $(CFLAGS) -MT codec_select-codec-select.o -MD -MP -MF $(DEPDIR)/codec_select-codec-select.Tpo -c -o codec_select-codec-select.o `test -f 'codec-select.c' || echo '$(srcdir)/'`codec-select.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/codec_select-codec-select.Tpo $(DEPDIR)/codec_select-codec-select.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(codec_select_CFLAGS) $(CFLAGS) -MT codec_select-codec-select.o -MD -MP -MF $(DEPDIR)/codec_select-codec-select.Tpo -c -o codec_select-codec-select.o `test -f 'codec-select.c' || echo '$(srcdir)/'`codec-select.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/codec_select-codec-select.Tpo $(DEPDIR)/codec_select-codec-select.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='codec-select.c' object='codec_select-codec-select.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(codec_select_CFLAGS) $(CFLAGS) -c -o codec_select-codec-select.o `test -f 'codec-select.c' || echo '$(srcdir)/'`codec-select.c
 
 codec_select-codec-select.obj: codec-select.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(codec_select_CFLAGS) $(CFLAGS) -MT codec_select-codec-select.obj -MD -MP -MF $(DEPDIR)/codec_select-codec-select.Tpo -c -o codec_select-codec-select.obj `if test -f 'codec-select.c'; then $(CYGPATH_W) 'codec-select.c'; else $(CYGPATH_W) '$(srcdir)/codec-select.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/codec_select-codec-select.Tpo $(DEPDIR)/codec_select-codec-select.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(codec_select_CFLAGS) $(CFLAGS) -MT codec_select-codec-select.obj -MD -MP -MF $(DEPDIR)/codec_select-codec-select.Tpo -c -o codec_select-codec-select.obj `if test -f 'codec-select.c'; then $(CYGPATH_W) 'codec-select.c'; else $(CYGPATH_W) '$(srcdir)/codec-select.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/codec_select-codec-select.Tpo $(DEPDIR)/codec_select-codec-select.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='codec-select.c' object='codec_select-codec-select.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(codec_select_CFLAGS) $(CFLAGS) -c -o codec_select-codec-select.obj `if test -f 'codec-select.c'; then $(CYGPATH_W) 'codec-select.c'; else $(CYGPATH_W) '$(srcdir)/codec-select.c'; fi`
 
 sprinkle-sprinkle.o: sprinkle.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle_CFLAGS) $(CFLAGS) -MT sprinkle-sprinkle.o -MD -MP -MF $(DEPDIR)/sprinkle-sprinkle.Tpo -c -o sprinkle-sprinkle.o `test -f 'sprinkle.c' || echo '$(srcdir)/'`sprinkle.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sprinkle-sprinkle.Tpo $(DEPDIR)/sprinkle-sprinkle.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle_CFLAGS) $(CFLAGS) -MT sprinkle-sprinkle.o -MD -MP -MF $(DEPDIR)/sprinkle-sprinkle.Tpo -c -o sprinkle-sprinkle.o `test -f 'sprinkle.c' || echo '$(srcdir)/'`sprinkle.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sprinkle-sprinkle.Tpo $(DEPDIR)/sprinkle-sprinkle.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sprinkle.c' object='sprinkle-sprinkle.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle_CFLAGS) $(CFLAGS) -c -o sprinkle-sprinkle.o `test -f 'sprinkle.c' || echo '$(srcdir)/'`sprinkle.c
 
 sprinkle-sprinkle.obj: sprinkle.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle_CFLAGS) $(CFLAGS) -MT sprinkle-sprinkle.obj -MD -MP -MF $(DEPDIR)/sprinkle-sprinkle.Tpo -c -o sprinkle-sprinkle.obj `if test -f 'sprinkle.c'; then $(CYGPATH_W) 'sprinkle.c'; else $(CYGPATH_W) '$(srcdir)/sprinkle.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sprinkle-sprinkle.Tpo $(DEPDIR)/sprinkle-sprinkle.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle_CFLAGS) $(CFLAGS) -MT sprinkle-sprinkle.obj -MD -MP -MF $(DEPDIR)/sprinkle-sprinkle.Tpo -c -o sprinkle-sprinkle.obj `if test -f 'sprinkle.c'; then $(CYGPATH_W) 'sprinkle.c'; else $(CYGPATH_W) '$(srcdir)/sprinkle.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sprinkle-sprinkle.Tpo $(DEPDIR)/sprinkle-sprinkle.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sprinkle.c' object='sprinkle-sprinkle.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle_CFLAGS) $(CFLAGS) -c -o sprinkle-sprinkle.obj `if test -f 'sprinkle.c'; then $(CYGPATH_W) 'sprinkle.c'; else $(CYGPATH_W) '$(srcdir)/sprinkle.c'; fi`
 
 sprinkle2-sprinkle2.o: sprinkle2.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle2_CFLAGS) $(CFLAGS) -MT sprinkle2-sprinkle2.o -MD -MP -MF $(DEPDIR)/sprinkle2-sprinkle2.Tpo -c -o sprinkle2-sprinkle2.o `test -f 'sprinkle2.c' || echo '$(srcdir)/'`sprinkle2.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sprinkle2-sprinkle2.Tpo $(DEPDIR)/sprinkle2-sprinkle2.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle2_CFLAGS) $(CFLAGS) -MT sprinkle2-sprinkle2.o -MD -MP -MF $(DEPDIR)/sprinkle2-sprinkle2.Tpo -c -o sprinkle2-sprinkle2.o `test -f 'sprinkle2.c' || echo '$(srcdir)/'`sprinkle2.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sprinkle2-sprinkle2.Tpo $(DEPDIR)/sprinkle2-sprinkle2.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sprinkle2.c' object='sprinkle2-sprinkle2.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle2_CFLAGS) $(CFLAGS) -c -o sprinkle2-sprinkle2.o `test -f 'sprinkle2.c' || echo '$(srcdir)/'`sprinkle2.c
 
 sprinkle2-sprinkle2.obj: sprinkle2.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle2_CFLAGS) $(CFLAGS) -MT sprinkle2-sprinkle2.obj -MD -MP -MF $(DEPDIR)/sprinkle2-sprinkle2.Tpo -c -o sprinkle2-sprinkle2.obj `if test -f 'sprinkle2.c'; then $(CYGPATH_W) 'sprinkle2.c'; else $(CYGPATH_W) '$(srcdir)/sprinkle2.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sprinkle2-sprinkle2.Tpo $(DEPDIR)/sprinkle2-sprinkle2.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle2_CFLAGS) $(CFLAGS) -MT sprinkle2-sprinkle2.obj -MD -MP -MF $(DEPDIR)/sprinkle2-sprinkle2.Tpo -c -o sprinkle2-sprinkle2.obj `if test -f 'sprinkle2.c'; then $(CYGPATH_W) 'sprinkle2.c'; else $(CYGPATH_W) '$(srcdir)/sprinkle2.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sprinkle2-sprinkle2.Tpo $(DEPDIR)/sprinkle2-sprinkle2.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sprinkle2.c' object='sprinkle2-sprinkle2.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle2_CFLAGS) $(CFLAGS) -c -o sprinkle2-sprinkle2.obj `if test -f 'sprinkle2.c'; then $(CYGPATH_W) 'sprinkle2.c'; else $(CYGPATH_W) '$(srcdir)/sprinkle2.c'; fi`
 
 sprinkle3-sprinkle3.o: sprinkle3.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle3_CFLAGS) $(CFLAGS) -MT sprinkle3-sprinkle3.o -MD -MP -MF $(DEPDIR)/sprinkle3-sprinkle3.Tpo -c -o sprinkle3-sprinkle3.o `test -f 'sprinkle3.c' || echo '$(srcdir)/'`sprinkle3.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sprinkle3-sprinkle3.Tpo $(DEPDIR)/sprinkle3-sprinkle3.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle3_CFLAGS) $(CFLAGS) -MT sprinkle3-sprinkle3.o -MD -MP -MF $(DEPDIR)/sprinkle3-sprinkle3.Tpo -c -o sprinkle3-sprinkle3.o `test -f 'sprinkle3.c' || echo '$(srcdir)/'`sprinkle3.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sprinkle3-sprinkle3.Tpo $(DEPDIR)/sprinkle3-sprinkle3.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sprinkle3.c' object='sprinkle3-sprinkle3.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle3_CFLAGS) $(CFLAGS) -c -o sprinkle3-sprinkle3.o `test -f 'sprinkle3.c' || echo '$(srcdir)/'`sprinkle3.c
 
 sprinkle3-sprinkle3.obj: sprinkle3.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle3_CFLAGS) $(CFLAGS) -MT sprinkle3-sprinkle3.obj -MD -MP -MF $(DEPDIR)/sprinkle3-sprinkle3.Tpo -c -o sprinkle3-sprinkle3.obj `if test -f 'sprinkle3.c'; then $(CYGPATH_W) 'sprinkle3.c'; else $(CYGPATH_W) '$(srcdir)/sprinkle3.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sprinkle3-sprinkle3.Tpo $(DEPDIR)/sprinkle3-sprinkle3.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle3_CFLAGS) $(CFLAGS) -MT sprinkle3-sprinkle3.obj -MD -MP -MF $(DEPDIR)/sprinkle3-sprinkle3.Tpo -c -o sprinkle3-sprinkle3.obj `if test -f 'sprinkle3.c'; then $(CYGPATH_W) 'sprinkle3.c'; else $(CYGPATH_W) '$(srcdir)/sprinkle3.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sprinkle3-sprinkle3.Tpo $(DEPDIR)/sprinkle3-sprinkle3.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sprinkle3.c' object='sprinkle3-sprinkle3.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(sprinkle3_CFLAGS) $(CFLAGS) -c -o sprinkle3-sprinkle3.obj `if test -f 'sprinkle3.c'; then $(CYGPATH_W) 'sprinkle3.c'; else $(CYGPATH_W) '$(srcdir)/sprinkle3.c'; fi`

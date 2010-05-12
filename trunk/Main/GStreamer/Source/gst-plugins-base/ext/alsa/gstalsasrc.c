@@ -51,13 +51,6 @@
 
 #include <gst/gst-i18n-plugin.h>
 
-/* elementfactory information */
-static const GstElementDetails gst_alsasrc_details =
-GST_ELEMENT_DETAILS ("Audio source (ALSA)",
-    "Source/Audio",
-    "Read from a sound card via ALSA",
-    "Wim Taymans <wim@fluendo.com>");
-
 #define DEFAULT_PROP_DEVICE		"default"
 #define DEFAULT_PROP_DEVICE_NAME	""
 
@@ -191,7 +184,9 @@ gst_alsasrc_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &gst_alsasrc_details);
+  gst_element_class_set_details_simple (element_class,
+      "Audio source (ALSA)", "Source/Audio",
+      "Read from a sound card via ALSA", "Wim Taymans <wim@fluendo.com>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&alsasrc_src_factory));
@@ -418,7 +413,8 @@ no_channels:
           g_strdup_printf (_
           ("Could not open device for recording in %d-channel mode"),
           alsa->channels);
-    GST_ELEMENT_ERROR (alsa, RESOURCE, SETTINGS, (msg), (snd_strerror (err)));
+    GST_ELEMENT_ERROR (alsa, RESOURCE, SETTINGS, ("%s", msg),
+        ("%s", snd_strerror (err)));
     g_free (msg);
     snd_pcm_hw_params_free (params);
     return err;
@@ -698,37 +694,14 @@ static gboolean
 gst_alsasrc_unprepare (GstAudioSrc * asrc)
 {
   GstAlsaSrc *alsa;
-  gint err;
 
   alsa = GST_ALSA_SRC (asrc);
 
-  CHECK (snd_pcm_drop (alsa->handle), drop);
-
-  CHECK (snd_pcm_hw_free (alsa->handle), hw_free);
-
-  CHECK (snd_pcm_nonblock (alsa->handle, 1), non_block);
+  snd_pcm_drop (alsa->handle);
+  snd_pcm_hw_free (alsa->handle);
+  snd_pcm_nonblock (alsa->handle, 1);
 
   return TRUE;
-
-  /* ERRORS */
-drop:
-  {
-    GST_ELEMENT_ERROR (alsa, RESOURCE, SETTINGS, (NULL),
-        ("Could not drop samples: %s", snd_strerror (err)));
-    return FALSE;
-  }
-hw_free:
-  {
-    GST_ELEMENT_ERROR (alsa, RESOURCE, SETTINGS, (NULL),
-        ("Could not free hw params: %s", snd_strerror (err)));
-    return FALSE;
-  }
-non_block:
-  {
-    GST_ELEMENT_ERROR (alsa, RESOURCE, SETTINGS, (NULL),
-        ("Could not set device to nonblocking: %s", snd_strerror (err)));
-    return FALSE;
-  }
 }
 
 static gboolean

@@ -108,7 +108,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.24.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2009-09-17 23:20+0200\n"
 "Last-Translator: Luca Ferretti <elle.uca@infinito.it>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -204,18 +204,6 @@ msgstr "Mostra le opzioni di GStreamer"
 
 msgid "Unknown option"
 msgstr "Opzione sconosciuta"
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "ERRORE: dall'elemento %s: %s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"Informazioni di debug aggiuntive:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "GStreamer ha incontrato un errore generale delle librerie di base."
@@ -759,6 +747,35 @@ msgstr ""
 "stato registrato o prodotto, in metri secondo lo standard WGS84 (zero è il "
 "livello medio del mare)"
 
+#, fuzzy
+msgid "geo location country"
+msgstr "longitudine geog. località"
+
+#, fuzzy
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+"la descrizione comprensibile della località in cui il contenuto multimediale "
+"è stato registrato o prodotto"
+
+#, fuzzy
+msgid "geo location city"
+msgstr "latitudine geog. località"
+
+#, fuzzy
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+"la descrizione comprensibile della località in cui il contenuto multimediale "
+"è stato registrato o prodotto"
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "elevazione geog. località"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr ""
@@ -813,8 +830,29 @@ msgid ""
 "of a concerto. It is a higher level than a track, but lower than an album"
 msgstr ""
 
+#, fuzzy
+msgid "user rating"
+msgstr "durata"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "ERRORE: dall'elemento %s: %s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"Informazioni di debug aggiuntive:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -940,6 +978,10 @@ msgstr "Il file «%s» è un socket."
 
 msgid "Failed after iterations as requested."
 msgstr "Fallito dopo le iterazioni come richiesto."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Errore durante la scrittura sul file «%s»."
 
 msgid "No Temp directory specified."
 msgstr ""

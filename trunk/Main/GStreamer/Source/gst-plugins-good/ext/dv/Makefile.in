@@ -64,8 +64,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/aalib.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
 	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -107,19 +106,23 @@ am__installdirs = "$(DESTDIR)$(plugindir)"
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libgstdv_la_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_libgstdv_la_OBJECTS = libgstdv_la-gstdv.lo libgstdv_la-gstdvdec.lo \
 	libgstdv_la-gstdvdemux.lo
 libgstdv_la_OBJECTS = $(am_libgstdv_la_OBJECTS)
-libgstdv_la_LINK = $(LIBTOOL) --tag=CC $(libgstdv_la_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libgstdv_la_CFLAGS) \
-	$(CFLAGS) $(libgstdv_la_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstdv_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(libgstdv_la_CFLAGS) $(CFLAGS) $(libgstdv_la_LDFLAGS) \
+	$(LDFLAGS) -o $@
 PROGRAMS = $(noinst_PROGRAMS)
 am_smpte_test_OBJECTS = smpte_test-smpte_test.$(OBJEXT) \
 	smpte_test-gstsmptetimecode.$(OBJEXT)
 smpte_test_OBJECTS = $(am_smpte_test_OBJECTS)
 smpte_test_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-smpte_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+smpte_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(smpte_test_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -128,13 +131,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstdv_la_SOURCES) $(smpte_test_SOURCES)
 DIST_SOURCES = $(libgstdv_la_SOURCES) $(smpte_test_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -147,7 +163,7 @@ AALIB_LIBS = @AALIB_LIBS@
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ANNODEX_CFLAGS = @ANNODEX_CFLAGS@
 ANNODEX_LIBS = @ANNODEX_LIBS@
 AR = @AR@
@@ -198,8 +214,6 @@ ESD_CFLAGS = @ESD_CFLAGS@
 ESD_CONFIG = @ESD_CONFIG@
 ESD_LIBS = @ESD_LIBS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLAC_CFLAGS = @FLAC_CFLAGS@
@@ -307,7 +321,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -356,7 +369,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RAW1394_CFLAGS = @RAW1394_CFLAGS@
 RAW1394_LIBS = @RAW1394_LIBS@
@@ -374,11 +386,12 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_CXXFLAGS = @TAGLIB_CXXFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WAVPACK_CFLAGS = @WAVPACK_CFLAGS@
 WAVPACK_LIBS = @WAVPACK_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -450,7 +463,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -459,10 +471,10 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 plugin_LTLIBRARIES = libgstdv.la
 libgstdv_la_SOURCES = gstdv.c gstdvdec.c gstdvdemux.c
-libgstdv_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) $(LIBDV_CFLAGS)
+libgstdv_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS) $(LIBDV_CFLAGS)
 libgstdv_la_LIBADD = \
 	$(GST_PLUGINS_BASE_LIBS) -lgstaudio-$(GST_MAJORMINOR) \
-	 $(GST_BASE_LIBS) $(LIBDV_LIBS)
+	 $(GST_BASE_LIBS) $(GST_LIBS) $(LIBDV_LIBS)
 
 libgstdv_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 libgstdv_la_LIBTOOLFLAGS = --tag=disable-static
@@ -537,7 +549,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstdv.la: $(libgstdv_la_OBJECTS) $(libgstdv_la_DEPENDENCIES) 
-	$(libgstdv_la_LINK) -rpath $(plugindir) $(libgstdv_la_OBJECTS) $(libgstdv_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstdv_la_LINK) -rpath $(plugindir) $(libgstdv_la_OBJECTS) $(libgstdv_la_LIBADD) $(LIBS)
 
 clean-noinstPROGRAMS:
 	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
@@ -549,7 +561,7 @@ clean-noinstPROGRAMS:
 	rm -f $$list
 smpte_test$(EXEEXT): $(smpte_test_OBJECTS) $(smpte_test_DEPENDENCIES) 
 	@rm -f smpte_test$(EXEEXT)
-	$(smpte_test_LINK) $(smpte_test_OBJECTS) $(smpte_test_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(smpte_test_LINK) $(smpte_test_OBJECTS) $(smpte_test_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -564,71 +576,81 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smpte_test-smpte_test.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstdv_la-gstdv.lo: gstdv.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -MT libgstdv_la-gstdv.lo -MD -MP -MF $(DEPDIR)/libgstdv_la-gstdv.Tpo -c -o libgstdv_la-gstdv.lo `test -f 'gstdv.c' || echo '$(srcdir)/'`gstdv.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdv_la-gstdv.Tpo $(DEPDIR)/libgstdv_la-gstdv.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -MT libgstdv_la-gstdv.lo -MD -MP -MF $(DEPDIR)/libgstdv_la-gstdv.Tpo -c -o libgstdv_la-gstdv.lo `test -f 'gstdv.c' || echo '$(srcdir)/'`gstdv.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdv_la-gstdv.Tpo $(DEPDIR)/libgstdv_la-gstdv.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstdv.c' object='libgstdv_la-gstdv.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -c -o libgstdv_la-gstdv.lo `test -f 'gstdv.c' || echo '$(srcdir)/'`gstdv.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -c -o libgstdv_la-gstdv.lo `test -f 'gstdv.c' || echo '$(srcdir)/'`gstdv.c
 
 libgstdv_la-gstdvdec.lo: gstdvdec.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -MT libgstdv_la-gstdvdec.lo -MD -MP -MF $(DEPDIR)/libgstdv_la-gstdvdec.Tpo -c -o libgstdv_la-gstdvdec.lo `test -f 'gstdvdec.c' || echo '$(srcdir)/'`gstdvdec.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdv_la-gstdvdec.Tpo $(DEPDIR)/libgstdv_la-gstdvdec.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -MT libgstdv_la-gstdvdec.lo -MD -MP -MF $(DEPDIR)/libgstdv_la-gstdvdec.Tpo -c -o libgstdv_la-gstdvdec.lo `test -f 'gstdvdec.c' || echo '$(srcdir)/'`gstdvdec.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdv_la-gstdvdec.Tpo $(DEPDIR)/libgstdv_la-gstdvdec.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstdvdec.c' object='libgstdv_la-gstdvdec.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -c -o libgstdv_la-gstdvdec.lo `test -f 'gstdvdec.c' || echo '$(srcdir)/'`gstdvdec.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -c -o libgstdv_la-gstdvdec.lo `test -f 'gstdvdec.c' || echo '$(srcdir)/'`gstdvdec.c
 
 libgstdv_la-gstdvdemux.lo: gstdvdemux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -MT libgstdv_la-gstdvdemux.lo -MD -MP -MF $(DEPDIR)/libgstdv_la-gstdvdemux.Tpo -c -o libgstdv_la-gstdvdemux.lo `test -f 'gstdvdemux.c' || echo '$(srcdir)/'`gstdvdemux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdv_la-gstdvdemux.Tpo $(DEPDIR)/libgstdv_la-gstdvdemux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -MT libgstdv_la-gstdvdemux.lo -MD -MP -MF $(DEPDIR)/libgstdv_la-gstdvdemux.Tpo -c -o libgstdv_la-gstdvdemux.lo `test -f 'gstdvdemux.c' || echo '$(srcdir)/'`gstdvdemux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdv_la-gstdvdemux.Tpo $(DEPDIR)/libgstdv_la-gstdvdemux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstdvdemux.c' object='libgstdv_la-gstdvdemux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -c -o libgstdv_la-gstdvdemux.lo `test -f 'gstdvdemux.c' || echo '$(srcdir)/'`gstdvdemux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdv_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdv_la_CFLAGS) $(CFLAGS) -c -o libgstdv_la-gstdvdemux.lo `test -f 'gstdvdemux.c' || echo '$(srcdir)/'`gstdvdemux.c
 
 smpte_test-smpte_test.o: smpte_test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -MT smpte_test-smpte_test.o -MD -MP -MF $(DEPDIR)/smpte_test-smpte_test.Tpo -c -o smpte_test-smpte_test.o `test -f 'smpte_test.c' || echo '$(srcdir)/'`smpte_test.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/smpte_test-smpte_test.Tpo $(DEPDIR)/smpte_test-smpte_test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -MT smpte_test-smpte_test.o -MD -MP -MF $(DEPDIR)/smpte_test-smpte_test.Tpo -c -o smpte_test-smpte_test.o `test -f 'smpte_test.c' || echo '$(srcdir)/'`smpte_test.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smpte_test-smpte_test.Tpo $(DEPDIR)/smpte_test-smpte_test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='smpte_test.c' object='smpte_test-smpte_test.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -c -o smpte_test-smpte_test.o `test -f 'smpte_test.c' || echo '$(srcdir)/'`smpte_test.c
 
 smpte_test-smpte_test.obj: smpte_test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -MT smpte_test-smpte_test.obj -MD -MP -MF $(DEPDIR)/smpte_test-smpte_test.Tpo -c -o smpte_test-smpte_test.obj `if test -f 'smpte_test.c'; then $(CYGPATH_W) 'smpte_test.c'; else $(CYGPATH_W) '$(srcdir)/smpte_test.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/smpte_test-smpte_test.Tpo $(DEPDIR)/smpte_test-smpte_test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -MT smpte_test-smpte_test.obj -MD -MP -MF $(DEPDIR)/smpte_test-smpte_test.Tpo -c -o smpte_test-smpte_test.obj `if test -f 'smpte_test.c'; then $(CYGPATH_W) 'smpte_test.c'; else $(CYGPATH_W) '$(srcdir)/smpte_test.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smpte_test-smpte_test.Tpo $(DEPDIR)/smpte_test-smpte_test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='smpte_test.c' object='smpte_test-smpte_test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -c -o smpte_test-smpte_test.obj `if test -f 'smpte_test.c'; then $(CYGPATH_W) 'smpte_test.c'; else $(CYGPATH_W) '$(srcdir)/smpte_test.c'; fi`
 
 smpte_test-gstsmptetimecode.o: gstsmptetimecode.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -MT smpte_test-gstsmptetimecode.o -MD -MP -MF $(DEPDIR)/smpte_test-gstsmptetimecode.Tpo -c -o smpte_test-gstsmptetimecode.o `test -f 'gstsmptetimecode.c' || echo '$(srcdir)/'`gstsmptetimecode.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/smpte_test-gstsmptetimecode.Tpo $(DEPDIR)/smpte_test-gstsmptetimecode.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -MT smpte_test-gstsmptetimecode.o -MD -MP -MF $(DEPDIR)/smpte_test-gstsmptetimecode.Tpo -c -o smpte_test-gstsmptetimecode.o `test -f 'gstsmptetimecode.c' || echo '$(srcdir)/'`gstsmptetimecode.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smpte_test-gstsmptetimecode.Tpo $(DEPDIR)/smpte_test-gstsmptetimecode.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstsmptetimecode.c' object='smpte_test-gstsmptetimecode.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -c -o smpte_test-gstsmptetimecode.o `test -f 'gstsmptetimecode.c' || echo '$(srcdir)/'`gstsmptetimecode.c
 
 smpte_test-gstsmptetimecode.obj: gstsmptetimecode.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -MT smpte_test-gstsmptetimecode.obj -MD -MP -MF $(DEPDIR)/smpte_test-gstsmptetimecode.Tpo -c -o smpte_test-gstsmptetimecode.obj `if test -f 'gstsmptetimecode.c'; then $(CYGPATH_W) 'gstsmptetimecode.c'; else $(CYGPATH_W) '$(srcdir)/gstsmptetimecode.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/smpte_test-gstsmptetimecode.Tpo $(DEPDIR)/smpte_test-gstsmptetimecode.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -MT smpte_test-gstsmptetimecode.obj -MD -MP -MF $(DEPDIR)/smpte_test-gstsmptetimecode.Tpo -c -o smpte_test-gstsmptetimecode.obj `if test -f 'gstsmptetimecode.c'; then $(CYGPATH_W) 'gstsmptetimecode.c'; else $(CYGPATH_W) '$(srcdir)/gstsmptetimecode.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smpte_test-gstsmptetimecode.Tpo $(DEPDIR)/smpte_test-gstsmptetimecode.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstsmptetimecode.c' object='smpte_test-gstsmptetimecode.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(smpte_test_CFLAGS) $(CFLAGS) -c -o smpte_test-gstsmptetimecode.obj `if test -f 'gstsmptetimecode.c'; then $(CYGPATH_W) 'gstsmptetimecode.c'; else $(CYGPATH_W) '$(srcdir)/gstsmptetimecode.c'; fi`

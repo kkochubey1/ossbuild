@@ -105,7 +105,7 @@ done:
 
 GST_START_TEST (test_rtp_payloaders)
 {
-  gchar *s;
+  const gchar *s;
 
   /* FIXME: going to playing would be nice, but thet leads to lot of failure */
   GstState target_state = GST_STATE_PAUSED;
@@ -223,7 +223,7 @@ GST_START_TEST (test_rtp_payloaders)
 GST_END_TEST
 GST_START_TEST (test_video_encoders_decoders)
 {
-  gchar *s;
+  const gchar *s;
   GstState target_state = GST_STATE_PLAYING;
 
   /* no is-live on the source because we actually want to preroll since
@@ -249,7 +249,8 @@ GST_START_TEST (test_video_encoders_decoders)
 
 GST_END_TEST
 #endif /* #ifndef GST_DISABLE_PARSE */
-    Suite * simple_launch_lines_suite (void)
+static Suite *
+simple_launch_lines_suite (void)
 {
   Suite *s = suite_create ("Pipelines");
   TCase *tc_chain = tcase_create ("linear");

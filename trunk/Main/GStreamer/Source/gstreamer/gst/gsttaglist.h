@@ -150,10 +150,14 @@ typedef enum {
  *
  * Opaque #GstTagList data structure.
  */
+#ifdef _FOOL_GTK_DOC_
+typedef struct _GstTagList GstTagList;
+#else
 #ifdef IN_GOBJECT_INTROSPECTION
 typedef struct _GstTagList GstTagList;
 #else
 typedef GstStructure GstTagList;
+#endif
 #endif
 
 #define GST_TAG_LIST(x)       ((GstTagList *) (x))
@@ -422,7 +426,7 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  */
 #define GST_TAG_ALBUM_SORTNAME         "album-sortname"
 /**
- * GST_TAG_ALBUM_ARTIST
+ * GST_TAG_ALBUM_ARTIST:
  *
  * The artist of the entire album, as it should be displayed.
  *
@@ -430,7 +434,7 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  */
 #define GST_TAG_ALBUM_ARTIST           "album-artist"
 /**
- * GST_TAG_ALBUM_ARTIST_SORTNAME
+ * GST_TAG_ALBUM_ARTIST_SORTNAME:
  *
  * The artist of the entire album, as it should be sorted.
  *
@@ -791,7 +795,35 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  */
 #define GST_TAG_GEO_LOCATION_ELEVATION               "geo-location-elevation"
 /**
- * GST_TAG_SHOW_NAME
+ * GST_TAG_GEO_LOCATION_COUNTRY:
+ *
+ * The country (english name) where the media has been produced (string).
+ *
+ * Since: 0.10.29
+ */
+#define GST_TAG_GEO_LOCATION_COUNTRY                 "geo-location-country"
+/**
+ * GST_TAG_GEO_LOCATION_CITY:
+ *
+ * The city (english name) where the media has been produced (string).
+ *
+ * Since: 0.10.29
+ */
+#define GST_TAG_GEO_LOCATION_CITY                    "geo-location-city"
+/**
+ * GST_TAG_GEO_LOCATION_SUBLOCATION:
+ *
+ * A location 'smaller' than GST_TAG_GEO_LOCATION_CITY that specifies better
+ * where the media has been produced. (e.g. the neighborhood) (string).
+ *
+ * This tag has been added as this is how it is handled/named in XMP's
+ * Iptc4xmpcore schema.
+ *
+ * Since: 0.10.29
+ */
+#define GST_TAG_GEO_LOCATION_SUBLOCATION             "geo-location-sublocation"
+/**
+ * GST_TAG_SHOW_NAME:
  *
  * Name of the show, used for displaying (string)
  *
@@ -799,7 +831,7 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  */
 #define GST_TAG_SHOW_NAME                         "show-name"
 /**
- * GST_TAG_SHOW_SORTNAME
+ * GST_TAG_SHOW_SORTNAME:
  *
  * Name of the show, used for sorting (string)
  *
@@ -807,7 +839,7 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  */
 #define GST_TAG_SHOW_SORTNAME                     "show-sortname"
 /**
- * GST_TAG_SHOW_EPISODE_NUMBER
+ * GST_TAG_SHOW_EPISODE_NUMBER:
  *
  * Number of the episode within a season/show (unsigned integer)
  *
@@ -815,7 +847,7 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  */
 #define GST_TAG_SHOW_EPISODE_NUMBER               "show-episode-number"
 /**
- * GST_TAG_SHOW_SEASON_NUMBER
+ * GST_TAG_SHOW_SEASON_NUMBER:
  *
  * Number of the season of a show/series (unsigned integer)
  *
@@ -823,7 +855,7 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  */
 #define GST_TAG_SHOW_SEASON_NUMBER                "show-season-number"
 /**
- * GST_TAG_LYRICS
+ * GST_TAG_LYRICS:
  *
  * The lyrics of the media (string)
  *
@@ -831,7 +863,7 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  */
 #define GST_TAG_LYRICS                            "lyrics"
 /**
- * GST_TAG_COMPOSER_SORTNAME
+ * GST_TAG_COMPOSER_SORTNAME:
  *
  * The composer's name, used for sorting (string)
  *
@@ -839,7 +871,7 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  */
 #define GST_TAG_COMPOSER_SORTNAME                 "composer-sortname"
 /**
- * GST_TAG_GROUPING
+ * GST_TAG_GROUPING:
  *
  * Groups together media that are related and spans multiple tracks. An
  * example are multiple pieces of a concerto. (string)
@@ -847,6 +879,16 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  * Since: 0.10.26
  */
 #define GST_TAG_GROUPING                          "grouping"
+/**
+ * GST_TAG_USER_RATING:
+ *
+ * Rating attributed by a person (likely the application user).
+ * The higher the value, the more the user likes this media
+ * (unsigned int from 0 to 100)
+ *
+ * Since: 0.10.29
+ */
+#define GST_TAG_USER_RATING                       "user-rating"
 
 G_END_DECLS
 

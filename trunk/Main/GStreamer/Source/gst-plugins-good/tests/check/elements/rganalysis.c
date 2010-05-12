@@ -61,8 +61,6 @@
 
 #include <gst/check/gstcheck.h>
 
-GList *buffers = NULL;
-
 /* For ease of programming we use globals to keep refs for our floating src and
  * sink pads we create; otherwise we always have to do get_pad, get_peer, and
  * then remove references in every test function */
@@ -149,8 +147,8 @@ static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
     GST_STATIC_CAPS (RG_ANALYSIS_CAPS_TEMPLATE_STRING)
     );
 
-GstElement *
-setup_rganalysis ()
+static GstElement *
+setup_rganalysis (void)
 {
   GstElement *analysis;
   GstBus *bus;
@@ -170,7 +168,7 @@ setup_rganalysis ()
   return analysis;
 }
 
-void
+static void
 cleanup_rganalysis (GstElement * element)
 {
   GST_DEBUG ("cleanup_rganalysis");
@@ -1764,7 +1762,7 @@ MAKE_GAIN_TEST_INT16_STEREO (32000, 8);
 MAKE_GAIN_TEST_INT16_STEREO (44100, 8);
 MAKE_GAIN_TEST_INT16_STEREO (48000, 8);
 
-Suite *
+static Suite *
 rganalysis_suite (void)
 {
   Suite *s = suite_create ("rganalysis");

@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer-0.10.24.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2009-11-05 01:18-0300\n"
 "Last-Translator: Fabrício Godoy <skarllot@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -100,18 +100,6 @@ msgstr "Exibir opções do GStreamer"
 
 msgid "Unknown option"
 msgstr "Opção desconhecida"
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "ERRO: do elemento %s: %s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"Informação adicional de depuração:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "O GStreamer encontrou um erro geral na biblioteca principal."
@@ -638,6 +626,33 @@ msgstr ""
 "elevação geográfica de onde a mídia foi gravada ou produzida em metros de "
 "acordo com WGS84 (zero é a média do nível do mar)"
 
+#, fuzzy
+msgid "geo location country"
+msgstr "longitude da localização geográfica"
+
+#, fuzzy
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+"descrição legível da localização de onde a mídia foi gravada ou produzida"
+
+#, fuzzy
+msgid "geo location city"
+msgstr "latitude da localização geográfica"
+
+#, fuzzy
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+"descrição legível da localização de onde a mídia foi gravada ou produzida"
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "elevação da localização geográfica"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr ""
@@ -691,8 +706,29 @@ msgid ""
 "of a concerto. It is a higher level than a track, but lower than an album"
 msgstr ""
 
+#, fuzzy
+msgid "user rating"
+msgstr "duração"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "ERRO: do elemento %s: %s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"Informação adicional de depuração:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -814,6 +850,10 @@ msgstr "O arquivo \"%s\" é um soquete."
 
 msgid "Failed after iterations as requested."
 msgstr "Falha após as interações requeridas."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Erro ao escrever no arquivo \"%s\"."
 
 msgid "No Temp directory specified."
 msgstr ""

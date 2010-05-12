@@ -89,12 +89,6 @@
 GST_DEBUG_CATEGORY_STATIC (souphttpsrc_debug);
 #define GST_CAT_DEFAULT souphttpsrc_debug
 
-static const GstElementDetails gst_soup_http_src_details =
-GST_ELEMENT_DETAILS ("HTTP client source",
-    "Source/Network",
-    "Receive data as a client over the network via HTTP using SOUP",
-    "Wouter Cloetens <wouter@mind.be>");
-
 static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
@@ -126,8 +120,6 @@ enum
 
 static void gst_soup_http_src_uri_handler_init (gpointer g_iface,
     gpointer iface_data);
-static void gst_soup_http_src_init (GstSoupHTTPSrc * src,
-    GstSoupHTTPSrcClass * g_class);
 static void gst_soup_http_src_finalize (GObject * gobject);
 
 static void gst_soup_http_src_set_property (GObject * object, guint prop_id,
@@ -203,7 +195,10 @@ gst_soup_http_src_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&srctemplate));
 
-  gst_element_class_set_details (element_class, &gst_soup_http_src_details);
+  gst_element_class_set_details_simple (element_class, "HTTP client source",
+      "Source/Network",
+      "Receive data as a client over the network via HTTP using SOUP",
+      "Wouter Cloetens <wouter@mind.be>");
 }
 
 static void
@@ -497,7 +492,7 @@ gst_soup_http_src_get_property (GObject * object, guint prop_id,
       break;
     case PROP_PROXY:
       if (src->proxy == NULL)
-        g_value_set_string (value, "");
+        g_value_set_static_string (value, "");
       else {
         char *proxy = soup_uri_to_string (src->proxy, FALSE);
 
@@ -779,7 +774,8 @@ gst_soup_http_src_got_headers_cb (SoupMessage * msg, GstSoupHTTPSrc * src)
       src->src_caps = gst_caps_new_simple ("application/x-icy",
           "metadata-interval", G_TYPE_INT, icy_metaint, NULL);
     }
-  } else if ((value =
+  }
+  if ((value =
           soup_message_headers_get_content_type (msg->response_headers,
               &params)) != NULL) {
     GST_DEBUG_OBJECT (src, "Content-Type: %s", value);
@@ -806,6 +802,11 @@ gst_soup_http_src_got_headers_cb (SoupMessage * msg, GstSoupHTTPSrc * src)
           "depth", G_TYPE_INT, 16,
           "signed", G_TYPE_BOOLEAN, TRUE,
           "endianness", G_TYPE_INT, G_BIG_ENDIAN, NULL);
+    } else {
+      /* Set the Content-Type field on the caps */
+      if (src->src_caps)
+        gst_caps_set_simple (src->src_caps, "content-type", G_TYPE_STRING,
+            value, NULL);
     }
   }
 
@@ -1004,13 +1005,15 @@ gst_soup_http_src_got_chunk_cb (SoupMessage * msg, SoupBuffer * chunk,
 
   /* Extract the GstBuffer from the SoupBuffer and set its fields. */
   *src->outbuf = GST_BUFFER_CAST (soup_buffer_get_owner (chunk));
-  gst_buffer_ref (*src->outbuf);
+
   GST_BUFFER_SIZE (*src->outbuf) = chunk->length;
   GST_BUFFER_OFFSET (*src->outbuf) = basesrc->segment.last_stop;
 
   gst_buffer_set_caps (*src->outbuf,
       (src->src_caps) ? src->src_caps :
       GST_PAD_CAPS (GST_BASE_SRC_PAD (basesrc)));
+
+  gst_buffer_ref (*src->outbuf);
 
   new_position = src->read_position + chunk->length;
   if (G_LIKELY (src->request_position == src->read_position))
@@ -1398,8 +1401,8 @@ gst_soup_http_src_uri_get_type (void)
 static gchar **
 gst_soup_http_src_uri_get_protocols (void)
 {
-  static gchar *protocols[] = { "http", "https", NULL };
-  return protocols;
+  static const gchar *protocols[] = { "http", "https", NULL };
+  return (gchar **) protocols;
 }
 
 static const gchar *

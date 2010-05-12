@@ -10,7 +10,10 @@ TESTS_ENVIRONMENT = \
 	$(REGISTRY_ENVIRONMENT)					\
 	GST_PLUGIN_SYSTEM_PATH=					\
 	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/ext:$(top_builddir)/sys:$(GSTPB_PLUGINS_DIR):$(GST_PLUGINS_DIR)			\
-	STATE_IGNORE_ELEMENTS="aasink autoaudiosrc autoaudiosink autovideosrc autovideosink cacasink cairotextoverlay gconfaudiosrc gconfvideosrc gconfaudiosink gconfvideosink halaudiosrc halaudiosink v4l2src osssrc osssink pulsesink pulsesrc pulsemixer"
+	STATE_IGNORE_ELEMENTS="aasink autoaudiosrc autoaudiosink autovideosrc autovideosink \
+		cacasink cairotextoverlay gconfaudiosrc gconfvideosrc gconfaudiosink gconfvideosink \
+		halaudiosrc halaudiosink v4l2src osssrc osssink pulsesink pulsesrc pulsemixer \
+		osxaudiosink osxaudiosrc osxvideosrc osxvideosink"
 
 # fake device drivers: we could run hardware element tests against dummy drivers
 # v4l2: vivo (part of normal kernel)
@@ -48,6 +51,12 @@ if USE_GDK_PIXBUF
 check_gdkpixbuf = elements/gdkpixbufsink
 else
 check_gdkpixbuf = 
+endif
+
+if USE_JPEG
+check_jpeg = elements/jpegenc
+else
+check_jpeg =
 endif
 
 if USE_SOUP
@@ -126,6 +135,7 @@ check_PROGRAMS = \
 	pipelines/effectv \
 	$(check_flac) \
 	$(check_gdkpixbuf) \
+        $(check_jpeg) \
 	$(check_soup) \
 	$(check_sunaudio) \
 	$(check_taglib) \
@@ -180,7 +190,7 @@ elements_interleave_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstaudio-$(GST_MAJORMINOR
 elements_level_LDADD = $(LDADD) $(LIBM)
 
 elements_rtpbin_buffer_list_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) \
-	$(ERROR_CFLAGS) $(GST_CHECK_CFLAGS)
+	$(WARNING_CFLAGS) $(ERROR_CFLAGS) $(GST_CHECK_CFLAGS)
 elements_rtpbin_buffer_list_LDADD = $(GST_PLUGINS_BASE_LIBS) \
              -lgstnetbuffer-@GST_MAJORMINOR@ -lgstrtp-@GST_MAJORMINOR@ \
              $(GST_BASE_LIBS) $(GST_LIBS_LIBS) $(GST_CHECK_LIBS)

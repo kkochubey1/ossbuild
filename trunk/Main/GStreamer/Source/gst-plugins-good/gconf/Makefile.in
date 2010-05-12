@@ -61,8 +61,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/aalib.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
 	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -79,6 +78,12 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES = gstreamer.schemas
 CONFIG_CLEAN_VPATH_FILES =
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 SOURCES =
 DIST_SOURCES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -111,7 +116,7 @@ AALIB_LIBS = @AALIB_LIBS@
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ANNODEX_CFLAGS = @ANNODEX_CFLAGS@
 ANNODEX_LIBS = @ANNODEX_LIBS@
 AR = @AR@
@@ -162,8 +167,6 @@ ESD_CFLAGS = @ESD_CFLAGS@
 ESD_CONFIG = @ESD_CONFIG@
 ESD_LIBS = @ESD_LIBS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLAC_CFLAGS = @FLAC_CFLAGS@
@@ -271,7 +274,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -320,7 +322,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RAW1394_CFLAGS = @RAW1394_CFLAGS@
 RAW1394_LIBS = @RAW1394_LIBS@
@@ -338,11 +339,12 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_CXXFLAGS = @TAGLIB_CXXFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WAVPACK_CFLAGS = @WAVPACK_CFLAGS@
 WAVPACK_LIBS = @WAVPACK_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -414,7 +416,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -643,7 +644,7 @@ gstreamer-@GST_MAJORMINOR@.schemas: gstreamer.schemas
 
 @GCONF_SCHEMAS_INSTALL_TRUE@install-data-local:
 @GCONF_SCHEMAS_INSTALL_TRUE@	@GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) \
-@GCONF_SCHEMAS_INSTALL_TRUE@		--makefile-install-rule $(srcdir)/$(schema_DATA) || \
+@GCONF_SCHEMAS_INSTALL_TRUE@		--makefile-install-rule $(builddir)/$(schema_DATA) || \
 @GCONF_SCHEMAS_INSTALL_TRUE@		(echo ;\
 @GCONF_SCHEMAS_INSTALL_TRUE@		echo "*****************************************************"; \
 @GCONF_SCHEMAS_INSTALL_TRUE@		echo "Installation of schemas failed, install them manually"; \

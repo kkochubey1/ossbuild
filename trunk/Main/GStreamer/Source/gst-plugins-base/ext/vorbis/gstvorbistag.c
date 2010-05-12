@@ -60,10 +60,6 @@
 GST_DEBUG_CATEGORY_EXTERN (vorbisparse_debug);
 #define GST_CAT_DEFAULT vorbisparse_debug
 
-static void gst_vorbis_tag_base_init (gpointer g_class);
-static void gst_vorbis_tag_class_init (GstVorbisTagClass * klass);
-static void gst_vorbis_tag_init (GstVorbisTag * tagger,
-    GstVorbisTagClass * g_class);
 static GstFlowReturn gst_vorbis_tag_parse_packet (GstVorbisParse * parse,
     GstBuffer * buffer);
 
@@ -81,20 +77,15 @@ static GstFlowReturn gst_vorbis_tag_parse_packet (GstVorbisParse * parse,
 GST_BOILERPLATE_FULL (GstVorbisTag, gst_vorbis_tag, GstVorbisParse,
     GST_TYPE_VORBIS_PARSE, _do_init);
 
-static GstElementDetails vorbis_tag_details = {
-  "VorbisTag",
-  "Formatter/Metadata",
-  "Retags vorbis streams",
-  "James Livingston <doclivingston@gmail.com>"
-};
-
 
 static void
 gst_vorbis_tag_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &vorbis_tag_details);
+  gst_element_class_set_details_simple (element_class,
+      "VorbisTag", "Formatter/Metadata",
+      "Retags vorbis streams", "James Livingston <doclivingston@gmail.com>");
 }
 
 static void

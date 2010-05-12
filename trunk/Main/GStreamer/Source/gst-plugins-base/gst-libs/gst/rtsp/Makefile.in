@@ -73,8 +73,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/freetype2.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/freetype2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-alsa.m4 \
 	$(top_srcdir)/m4/gst-fionread.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -135,7 +134,10 @@ nodist_libgstrtsp_@GST_MAJORMINOR@_la_OBJECTS = $(am__objects_1)
 libgstrtsp_@GST_MAJORMINOR@_la_OBJECTS =  \
 	$(am_libgstrtsp_@GST_MAJORMINOR@_la_OBJECTS) \
 	$(nodist_libgstrtsp_@GST_MAJORMINOR@_la_OBJECTS)
-libgstrtsp_@GST_MAJORMINOR@_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstrtsp_@GST_MAJORMINOR@_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) \
 	$(libgstrtsp_@GST_MAJORMINOR@_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -145,13 +147,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstrtsp_@GST_MAJORMINOR@_la_SOURCES) \
 	$(nodist_libgstrtsp_@GST_MAJORMINOR@_la_SOURCES)
 DIST_SOURCES = $(libgstrtsp_@GST_MAJORMINOR@_la_SOURCES)
@@ -166,7 +181,7 @@ ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUDIORESAMPLE_FORMAT_AUTO = @AUDIORESAMPLE_FORMAT_AUTO@
@@ -206,8 +221,6 @@ EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FT2_CFLAGS = @FT2_CFLAGS@
@@ -317,7 +330,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -325,7 +337,6 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
@@ -356,7 +367,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 QT_CFLAGS = @QT_CFLAGS@
 QT_LIBS = @QT_LIBS@
 RANLIB = @RANLIB@
@@ -367,7 +377,6 @@ STRIP = @STRIP@
 THEORA_CFLAGS = @THEORA_CFLAGS@
 THEORA_LIBS = @THEORA_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
@@ -376,6 +385,8 @@ VORBISENC_LIBS = @VORBISENC_LIBS@
 VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -439,7 +450,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -575,7 +585,7 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstrtsp-@GST_MAJORMINOR@.la: $(libgstrtsp_@GST_MAJORMINOR@_la_OBJECTS) $(libgstrtsp_@GST_MAJORMINOR@_la_DEPENDENCIES) 
-	$(libgstrtsp_@GST_MAJORMINOR@_la_LINK) -rpath $(libdir) $(libgstrtsp_@GST_MAJORMINOR@_la_OBJECTS) $(libgstrtsp_@GST_MAJORMINOR@_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstrtsp_@GST_MAJORMINOR@_la_LINK) -rpath $(libdir) $(libgstrtsp_@GST_MAJORMINOR@_la_OBJECTS) $(libgstrtsp_@GST_MAJORMINOR@_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -595,95 +605,108 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.lo: gstrtspbase64.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.lo `test -f 'gstrtspbase64.c' || echo '$(srcdir)/'`gstrtspbase64.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.lo `test -f 'gstrtspbase64.c' || echo '$(srcdir)/'`gstrtspbase64.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtspbase64.c' object='libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.lo `test -f 'gstrtspbase64.c' || echo '$(srcdir)/'`gstrtspbase64.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspbase64.lo `test -f 'gstrtspbase64.c' || echo '$(srcdir)/'`gstrtspbase64.c
 
 libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.lo: gstrtsptransport.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.lo `test -f 'gstrtsptransport.c' || echo '$(srcdir)/'`gstrtsptransport.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.lo `test -f 'gstrtsptransport.c' || echo '$(srcdir)/'`gstrtsptransport.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtsptransport.c' object='libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.lo `test -f 'gstrtsptransport.c' || echo '$(srcdir)/'`gstrtsptransport.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsptransport.lo `test -f 'gstrtsptransport.c' || echo '$(srcdir)/'`gstrtsptransport.c
 
 libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.lo: gstrtspurl.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.lo `test -f 'gstrtspurl.c' || echo '$(srcdir)/'`gstrtspurl.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.lo `test -f 'gstrtspurl.c' || echo '$(srcdir)/'`gstrtspurl.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtspurl.c' object='libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.lo `test -f 'gstrtspurl.c' || echo '$(srcdir)/'`gstrtspurl.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspurl.lo `test -f 'gstrtspurl.c' || echo '$(srcdir)/'`gstrtspurl.c
 
 libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.lo: gstrtspmessage.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.lo `test -f 'gstrtspmessage.c' || echo '$(srcdir)/'`gstrtspmessage.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.lo `test -f 'gstrtspmessage.c' || echo '$(srcdir)/'`gstrtspmessage.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtspmessage.c' object='libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.lo `test -f 'gstrtspmessage.c' || echo '$(srcdir)/'`gstrtspmessage.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspmessage.lo `test -f 'gstrtspmessage.c' || echo '$(srcdir)/'`gstrtspmessage.c
 
 libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.lo: gstrtspconnection.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.lo `test -f 'gstrtspconnection.c' || echo '$(srcdir)/'`gstrtspconnection.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.lo `test -f 'gstrtspconnection.c' || echo '$(srcdir)/'`gstrtspconnection.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtspconnection.c' object='libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.lo `test -f 'gstrtspconnection.c' || echo '$(srcdir)/'`gstrtspconnection.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspconnection.lo `test -f 'gstrtspconnection.c' || echo '$(srcdir)/'`gstrtspconnection.c
 
 libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.lo: gstrtspdefs.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.lo `test -f 'gstrtspdefs.c' || echo '$(srcdir)/'`gstrtspdefs.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.lo `test -f 'gstrtspdefs.c' || echo '$(srcdir)/'`gstrtspdefs.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtspdefs.c' object='libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.lo `test -f 'gstrtspdefs.c' || echo '$(srcdir)/'`gstrtspdefs.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspdefs.lo `test -f 'gstrtspdefs.c' || echo '$(srcdir)/'`gstrtspdefs.c
 
 libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.lo: gstrtspextension.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.lo `test -f 'gstrtspextension.c' || echo '$(srcdir)/'`gstrtspextension.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.lo `test -f 'gstrtspextension.c' || echo '$(srcdir)/'`gstrtspextension.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtspextension.c' object='libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.lo `test -f 'gstrtspextension.c' || echo '$(srcdir)/'`gstrtspextension.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtspextension.lo `test -f 'gstrtspextension.c' || echo '$(srcdir)/'`gstrtspextension.c
 
 libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.lo: gstrtsprange.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.lo `test -f 'gstrtsprange.c' || echo '$(srcdir)/'`gstrtsprange.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.lo `test -f 'gstrtsprange.c' || echo '$(srcdir)/'`gstrtsprange.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtsprange.c' object='libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.lo `test -f 'gstrtsprange.c' || echo '$(srcdir)/'`gstrtsprange.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsprange.lo `test -f 'gstrtsprange.c' || echo '$(srcdir)/'`gstrtsprange.c
 
 libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.lo: gstrtsp-marshal.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.lo `test -f 'gstrtsp-marshal.c' || echo '$(srcdir)/'`gstrtsp-marshal.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.lo `test -f 'gstrtsp-marshal.c' || echo '$(srcdir)/'`gstrtsp-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtsp-marshal.c' object='libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.lo `test -f 'gstrtsp-marshal.c' || echo '$(srcdir)/'`gstrtsp-marshal.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-marshal.lo `test -f 'gstrtsp-marshal.c' || echo '$(srcdir)/'`gstrtsp-marshal.c
 
 libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.lo: gstrtsp-enumtypes.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.lo `test -f 'gstrtsp-enumtypes.c' || echo '$(srcdir)/'`gstrtsp-enumtypes.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.lo -MD -MP -MF $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.Tpo -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.lo `test -f 'gstrtsp-enumtypes.c' || echo '$(srcdir)/'`gstrtsp-enumtypes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.Tpo $(DEPDIR)/libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstrtsp-enumtypes.c' object='libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.lo `test -f 'gstrtsp-enumtypes.c' || echo '$(srcdir)/'`gstrtsp-enumtypes.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstrtsp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstrtsp_@GST_MAJORMINOR@_la-gstrtsp-enumtypes.lo `test -f 'gstrtsp-enumtypes.c' || echo '$(srcdir)/'`gstrtsp-enumtypes.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -988,16 +1011,16 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 
 # these are all the rules generating the relevant files
 $(glib_gen_basename)-marshal.h: $(glib_gen_basename)-marshal.list
-	glib-genmarshal --header --prefix=$(glib_gen_prefix)_marshal $^ > $(glib_gen_basename)-marshal.h.tmp
+	$(AM_V_GEN)glib-genmarshal --header --prefix=$(glib_gen_prefix)_marshal $^ > $(glib_gen_basename)-marshal.h.tmp && \
 	mv $(glib_gen_basename)-marshal.h.tmp $(glib_gen_basename)-marshal.h
 
 $(glib_gen_basename)-marshal.c: $(glib_gen_basename)-marshal.list
-	echo "#include \"$(glib_gen_basename)-marshal.h\"" >> $(glib_gen_basename)-marshal.c.tmp
-	glib-genmarshal --body --prefix=$(glib_gen_prefix)_marshal $^ >> $(glib_gen_basename)-marshal.c.tmp
+	$(AM_V_GEN)echo "#include \"$(glib_gen_basename)-marshal.h\"" >> $(glib_gen_basename)-marshal.c.tmp && \
+	glib-genmarshal --body --prefix=$(glib_gen_prefix)_marshal $^ >> $(glib_gen_basename)-marshal.c.tmp && \
 	mv $(glib_gen_basename)-marshal.c.tmp $(glib_gen_basename)-marshal.c
 
 $(glib_gen_basename)-enumtypes.h: $(glib_enum_headers)
-	glib-mkenums \
+	$(AM_V_GEN)glib-mkenums \
 	--fhead "#ifndef __$(glib_enum_define)_ENUM_TYPES_H__\n#define __$(glib_enum_define)_ENUM_TYPES_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
 	--fprod "\n/* enumerations from \"@filename@\" */\n" \
 	--vhead "GType @enum_name@_get_type (void);\n#define GST_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n"         \
@@ -1006,7 +1029,7 @@ $(glib_gen_basename)-enumtypes.h: $(glib_enum_headers)
 
 $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 	@if test "x$(glib_enum_headers)" == "x"; then echo "ERROR: glib_enum_headers is empty, please fix Makefile"; exit 1; fi
-	glib-mkenums \
+	$(AM_V_GEN)glib-mkenums \
 	--fhead "#include \"$(glib_gen_basename)-enumtypes.h\"\n$(enum_headers)" \
 	--fprod "\n/* enumerations from \"@filename@\" */" \
 	--vhead "GType\n@enum_name@_get_type (void)\n{\n  static volatile gsize g_define_type_id__volatile = 0;\n  if (g_once_init_enter (&g_define_type_id__volatile)) {\n    static const G@Type@Value values[] = {"     \
@@ -1017,22 +1040,22 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 # a hack rule to make sure .Plo files exist because they get include'd
 # from Makefile's
 .deps/%-marshal.Plo:
-	touch $@
+	@touch $@
 
 .deps/%-enumtypes.Plo:
-	touch $@
+	@touch $@
 
 @HAVE_INTROSPECTION_TRUE@GstRtsp-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstrtsp-@GST_MAJORMINOR@.la
-@HAVE_INTROSPECTION_TRUE@	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstRtsp \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
 @HAVE_INTROSPECTION_TRUE@		$(gir_cincludes) \
 @HAVE_INTROSPECTION_TRUE@		-I$(top_builddir)/gst-libs \
 @HAVE_INTROSPECTION_TRUE@		-I$(top_srcdir)/gst-libs \
-@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=libdir gstreamer-0.10`/gst \
 @HAVE_INTROSPECTION_TRUE@		--add-include-path=$(builddir)/../sdp \
-@HAVE_INTROSPECTION_TRUE@		--library=gstrtsp-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
+@HAVE_INTROSPECTION_TRUE@		--library=libgstrtsp-0.10.la \
 @HAVE_INTROSPECTION_TRUE@		--include=Gst-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--include=GstSdp-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
@@ -1043,7 +1066,12 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)
 
 @HAVE_INTROSPECTION_TRUE@%.typelib: %.gir $(INTROSPECTION_COMPILER)
-@HAVE_INTROSPECTION_TRUE@	$(INTROSPECTION_COMPILER) --includedir=$(srcdir) --includedir=$(builddir) --includedir=`$(PKG_CONFIG) --variable=libdir gstreamer-0.10`/gst --includedir=$(builddir)/../sdp $(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)$(INTROSPECTION_COMPILER) \
+@HAVE_INTROSPECTION_TRUE@		--includedir=$(srcdir) \
+@HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir) \
+@HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir)/../sdp \
+@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
+@HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

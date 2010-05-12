@@ -8,11 +8,8 @@
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-gstrtpjitterbuffer.html" title="gstrtpjitterbuffer">
 <link rel="next" href="gst-plugins-good-plugins-gstrtpsession.html" title="gstrtpsession">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-good Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-good Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-good Base Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -83,10 +80,8 @@ The element will try to set complete and unique application/x-rtp caps on the
 outgoing buffers and pads based on the result of the
 <a class="link" href="gst-plugins-good-plugins-gstrtpptdemux.html#GstRtpPtDemux-request-pt-map" title='The "request-pt-map" signal'><span class="type">"request-pt-map"</span></a> signal.
 </p>
-<p>
-</p>
 <div class="refsect2" title="Example pipelines">
-<a name="id619689"></a><h3>Example pipelines</h3>
+<a name="id408913"></a><h3>Example pipelines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -101,9 +96,8 @@ outgoing buffers and pads based on the result of the
 payload type to fakesink, discarding the other payload types.
 </div>
 <p>
+Last reviewed on 2007-05-28 (0.10.5)
 </p>
-<p>
-Last reviewed on 2007-05-28 (0.10.5)</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-good-plugins-gstrtpptdemux.details"></a><h2>Details</h2>
@@ -122,13 +116,14 @@ Last reviewed on 2007-05-28 (0.10.5)</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last / Action</pre>
 <p>
 The application can call this signal to instruct the element to discard the
-currently cached payload type map.</p>
+currently cached payload type map.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>demux</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
@@ -146,23 +141,24 @@ currently cached payload type map.</p>
                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a>        *pad,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last</pre>
 <p>
-Emited when a new payload type pad has been created in <em class="parameter"><code>demux</code></em>.</p>
+Emited when a new payload type pad has been created in <em class="parameter"><code>demux</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>demux</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pt</code></em> :</span></p></td>
-<td> the payload type
+<td>the payload type
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td> the pad with the new payload
+<td>the pad with the new payload
 </td>
 </tr>
 <tr>
@@ -179,18 +175,19 @@ Emited when a new payload type pad has been created in <em class="parameter"><co
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>          pt,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last</pre>
 <p>
-Emited when the payload type changed.</p>
+Emited when the payload type changed.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>demux</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pt</code></em> :</span></p></td>
-<td> the new payload type
+<td>the new payload type
 </td>
 </tr>
 <tr>
@@ -207,18 +204,19 @@ Emited when the payload type changed.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>          pt,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last</pre>
 <p>
-Request the payload type as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> for <em class="parameter"><code>pt</code></em>.</p>
+Request the payload type as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> for <em class="parameter"><code>pt</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>demux</code></em> :</span></p></td>
-<td> the object which received the signal
+<td>the object which received the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pt</code></em> :</span></p></td>
-<td> the payload type
+<td>the payload type
 </td>
 </tr>
 <tr>
@@ -232,6 +230,6 @@ Request the payload type as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstr
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

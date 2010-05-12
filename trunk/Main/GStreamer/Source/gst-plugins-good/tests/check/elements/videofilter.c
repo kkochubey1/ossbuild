@@ -25,7 +25,6 @@
 
 #include <gst/check/gstcheck.h>
 
-GList *buffers = NULL;
 gboolean have_eos = FALSE;
 
 /* For ease of programming we use globals to keep refs for our floating
@@ -53,7 +52,7 @@ static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
     );
 
 /* takes over reference for outcaps */
-GstElement *
+static GstElement *
 setup_filter (const gchar * name, const gchar * prop, va_list var_args)
 {
   GstElement *element;
@@ -69,7 +68,7 @@ setup_filter (const gchar * name, const gchar * prop, va_list var_args)
   return element;
 }
 
-void
+static void
 cleanup_filter (GstElement * filter)
 {
   GST_DEBUG ("cleanup_element");
@@ -163,8 +162,8 @@ GST_START_TEST (test_gamma)
 GST_END_TEST;
 
 
-Suite *
-videobalance_suite ()
+static Suite *
+videobalance_suite (void)
 {
   Suite *s = suite_create ("videobalance");
   TCase *tc_chain = tcase_create ("general");
@@ -175,8 +174,8 @@ videobalance_suite ()
   return s;
 }
 
-Suite *
-videoflip_suite ()
+static Suite *
+videoflip_suite (void)
 {
   Suite *s = suite_create ("videoflip");
   TCase *tc_chain = tcase_create ("general");
@@ -187,8 +186,8 @@ videoflip_suite ()
   return s;
 }
 
-Suite *
-gamma_suite ()
+static Suite *
+gamma_suite (void)
 {
   Suite *s = suite_create ("gamma");
   TCase *tc_chain = tcase_create ("general");

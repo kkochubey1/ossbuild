@@ -21,11 +21,7 @@
 #include <gst/gstversion.h>
 #include <gst/gstplugin.h>
 
-extern gboolean gst_mem_index_plugin_init (GstPlugin * plugin);
-
-#ifndef GST_DISABLE_LOADSAVE
-extern gboolean gst_file_index_plugin_init (GstPlugin * plugin);
-#endif
+#include "gstindexers.h"
 
 static gboolean
 plugin_init (GstPlugin * plugin)

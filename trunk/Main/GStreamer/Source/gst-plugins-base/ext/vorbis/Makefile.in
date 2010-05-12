@@ -64,8 +64,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/freetype2.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/freetype2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-alsa.m4 \
 	$(top_srcdir)/m4/gst-fionread.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -118,7 +117,10 @@ am__libgstivorbisdec_la_SOURCES_DIST = gstivorbisdec.c gstvorbisdec.c \
 @USE_IVORBIS_TRUE@	libgstivorbisdec_la-gstvorbisdeclib.lo \
 @USE_IVORBIS_TRUE@	libgstivorbisdec_la-gstvorbiscommon.lo
 libgstivorbisdec_la_OBJECTS = $(am_libgstivorbisdec_la_OBJECTS)
-libgstivorbisdec_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstivorbisdec_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) \
 	$(libgstivorbisdec_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -139,7 +141,7 @@ am__libgstvorbis_la_SOURCES_DIST = gstvorbis.c gstvorbisdec.c \
 @USE_VORBIS_TRUE@	libgstvorbis_la-gstvorbistag.lo \
 @USE_VORBIS_TRUE@	libgstvorbis_la-gstvorbiscommon.lo
 libgstvorbis_la_OBJECTS = $(am_libgstvorbis_la_OBJECTS)
-libgstvorbis_la_LINK = $(LIBTOOL) --tag=CC \
+libgstvorbis_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstvorbis_la_CFLAGS) $(CFLAGS) \
 	$(libgstvorbis_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -150,13 +152,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstivorbisdec_la_SOURCES) $(libgstvorbis_la_SOURCES)
 DIST_SOURCES = $(am__libgstivorbisdec_la_SOURCES_DIST) \
 	$(am__libgstvorbis_la_SOURCES_DIST)
@@ -169,7 +184,7 @@ ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUDIORESAMPLE_FORMAT_AUTO = @AUDIORESAMPLE_FORMAT_AUTO@
@@ -209,8 +224,6 @@ EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FT2_CFLAGS = @FT2_CFLAGS@
@@ -320,7 +333,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -328,7 +340,6 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
@@ -359,7 +370,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 QT_CFLAGS = @QT_CFLAGS@
 QT_LIBS = @QT_LIBS@
 RANLIB = @RANLIB@
@@ -370,7 +380,6 @@ STRIP = @STRIP@
 THEORA_CFLAGS = @THEORA_CFLAGS@
 THEORA_LIBS = @THEORA_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
@@ -379,6 +388,8 @@ VORBISENC_LIBS = @VORBISENC_LIBS@
 VORBISFILE_LIBS = @VORBISFILE_LIBS@
 VORBIS_CFLAGS = @VORBIS_CFLAGS@
 VORBIS_LIBS = @VORBIS_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -442,7 +453,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -553,9 +563,9 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstivorbisdec.la: $(libgstivorbisdec_la_OBJECTS) $(libgstivorbisdec_la_DEPENDENCIES) 
-	$(libgstivorbisdec_la_LINK) $(am_libgstivorbisdec_la_rpath) $(libgstivorbisdec_la_OBJECTS) $(libgstivorbisdec_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstivorbisdec_la_LINK) $(am_libgstivorbisdec_la_rpath) $(libgstivorbisdec_la_OBJECTS) $(libgstivorbisdec_la_LIBADD) $(LIBS)
 libgstvorbis.la: $(libgstvorbis_la_OBJECTS) $(libgstvorbis_la_DEPENDENCIES) 
-	$(libgstvorbis_la_LINK) $(am_libgstvorbis_la_rpath) $(libgstvorbis_la_OBJECTS) $(libgstvorbis_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstvorbis_la_LINK) $(am_libgstvorbis_la_rpath) $(libgstvorbis_la_OBJECTS) $(libgstvorbis_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -576,102 +586,116 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvorbis_la-gstvorbistag.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstivorbisdec_la-gstivorbisdec.lo: gstivorbisdec.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -MT libgstivorbisdec_la-gstivorbisdec.lo -MD -MP -MF $(DEPDIR)/libgstivorbisdec_la-gstivorbisdec.Tpo -c -o libgstivorbisdec_la-gstivorbisdec.lo `test -f 'gstivorbisdec.c' || echo '$(srcdir)/'`gstivorbisdec.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstivorbisdec_la-gstivorbisdec.Tpo $(DEPDIR)/libgstivorbisdec_la-gstivorbisdec.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -MT libgstivorbisdec_la-gstivorbisdec.lo -MD -MP -MF $(DEPDIR)/libgstivorbisdec_la-gstivorbisdec.Tpo -c -o libgstivorbisdec_la-gstivorbisdec.lo `test -f 'gstivorbisdec.c' || echo '$(srcdir)/'`gstivorbisdec.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstivorbisdec_la-gstivorbisdec.Tpo $(DEPDIR)/libgstivorbisdec_la-gstivorbisdec.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstivorbisdec.c' object='libgstivorbisdec_la-gstivorbisdec.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -c -o libgstivorbisdec_la-gstivorbisdec.lo `test -f 'gstivorbisdec.c' || echo '$(srcdir)/'`gstivorbisdec.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -c -o libgstivorbisdec_la-gstivorbisdec.lo `test -f 'gstivorbisdec.c' || echo '$(srcdir)/'`gstivorbisdec.c
 
 libgstivorbisdec_la-gstvorbisdec.lo: gstvorbisdec.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -MT libgstivorbisdec_la-gstvorbisdec.lo -MD -MP -MF $(DEPDIR)/libgstivorbisdec_la-gstvorbisdec.Tpo -c -o libgstivorbisdec_la-gstvorbisdec.lo `test -f 'gstvorbisdec.c' || echo '$(srcdir)/'`gstvorbisdec.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstivorbisdec_la-gstvorbisdec.Tpo $(DEPDIR)/libgstivorbisdec_la-gstvorbisdec.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -MT libgstivorbisdec_la-gstvorbisdec.lo -MD -MP -MF $(DEPDIR)/libgstivorbisdec_la-gstvorbisdec.Tpo -c -o libgstivorbisdec_la-gstvorbisdec.lo `test -f 'gstvorbisdec.c' || echo '$(srcdir)/'`gstvorbisdec.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstivorbisdec_la-gstvorbisdec.Tpo $(DEPDIR)/libgstivorbisdec_la-gstvorbisdec.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvorbisdec.c' object='libgstivorbisdec_la-gstvorbisdec.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -c -o libgstivorbisdec_la-gstvorbisdec.lo `test -f 'gstvorbisdec.c' || echo '$(srcdir)/'`gstvorbisdec.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -c -o libgstivorbisdec_la-gstvorbisdec.lo `test -f 'gstvorbisdec.c' || echo '$(srcdir)/'`gstvorbisdec.c
 
 libgstivorbisdec_la-gstvorbisdeclib.lo: gstvorbisdeclib.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -MT libgstivorbisdec_la-gstvorbisdeclib.lo -MD -MP -MF $(DEPDIR)/libgstivorbisdec_la-gstvorbisdeclib.Tpo -c -o libgstivorbisdec_la-gstvorbisdeclib.lo `test -f 'gstvorbisdeclib.c' || echo '$(srcdir)/'`gstvorbisdeclib.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstivorbisdec_la-gstvorbisdeclib.Tpo $(DEPDIR)/libgstivorbisdec_la-gstvorbisdeclib.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -MT libgstivorbisdec_la-gstvorbisdeclib.lo -MD -MP -MF $(DEPDIR)/libgstivorbisdec_la-gstvorbisdeclib.Tpo -c -o libgstivorbisdec_la-gstvorbisdeclib.lo `test -f 'gstvorbisdeclib.c' || echo '$(srcdir)/'`gstvorbisdeclib.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstivorbisdec_la-gstvorbisdeclib.Tpo $(DEPDIR)/libgstivorbisdec_la-gstvorbisdeclib.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvorbisdeclib.c' object='libgstivorbisdec_la-gstvorbisdeclib.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -c -o libgstivorbisdec_la-gstvorbisdeclib.lo `test -f 'gstvorbisdeclib.c' || echo '$(srcdir)/'`gstvorbisdeclib.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -c -o libgstivorbisdec_la-gstvorbisdeclib.lo `test -f 'gstvorbisdeclib.c' || echo '$(srcdir)/'`gstvorbisdeclib.c
 
 libgstivorbisdec_la-gstvorbiscommon.lo: gstvorbiscommon.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -MT libgstivorbisdec_la-gstvorbiscommon.lo -MD -MP -MF $(DEPDIR)/libgstivorbisdec_la-gstvorbiscommon.Tpo -c -o libgstivorbisdec_la-gstvorbiscommon.lo `test -f 'gstvorbiscommon.c' || echo '$(srcdir)/'`gstvorbiscommon.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstivorbisdec_la-gstvorbiscommon.Tpo $(DEPDIR)/libgstivorbisdec_la-gstvorbiscommon.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -MT libgstivorbisdec_la-gstvorbiscommon.lo -MD -MP -MF $(DEPDIR)/libgstivorbisdec_la-gstvorbiscommon.Tpo -c -o libgstivorbisdec_la-gstvorbiscommon.lo `test -f 'gstvorbiscommon.c' || echo '$(srcdir)/'`gstvorbiscommon.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstivorbisdec_la-gstvorbiscommon.Tpo $(DEPDIR)/libgstivorbisdec_la-gstvorbiscommon.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvorbiscommon.c' object='libgstivorbisdec_la-gstvorbiscommon.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -c -o libgstivorbisdec_la-gstvorbiscommon.lo `test -f 'gstvorbiscommon.c' || echo '$(srcdir)/'`gstvorbiscommon.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstivorbisdec_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstivorbisdec_la_CFLAGS) $(CFLAGS) -c -o libgstivorbisdec_la-gstvorbiscommon.lo `test -f 'gstvorbiscommon.c' || echo '$(srcdir)/'`gstvorbiscommon.c
 
 libgstvorbis_la-gstvorbis.lo: gstvorbis.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbis.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbis.Tpo -c -o libgstvorbis_la-gstvorbis.lo `test -f 'gstvorbis.c' || echo '$(srcdir)/'`gstvorbis.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbis.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbis.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbis.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbis.Tpo -c -o libgstvorbis_la-gstvorbis.lo `test -f 'gstvorbis.c' || echo '$(srcdir)/'`gstvorbis.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbis.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbis.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvorbis.c' object='libgstvorbis_la-gstvorbis.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbis.lo `test -f 'gstvorbis.c' || echo '$(srcdir)/'`gstvorbis.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbis.lo `test -f 'gstvorbis.c' || echo '$(srcdir)/'`gstvorbis.c
 
 libgstvorbis_la-gstvorbisdec.lo: gstvorbisdec.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbisdec.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbisdec.Tpo -c -o libgstvorbis_la-gstvorbisdec.lo `test -f 'gstvorbisdec.c' || echo '$(srcdir)/'`gstvorbisdec.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbisdec.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbisdec.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbisdec.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbisdec.Tpo -c -o libgstvorbis_la-gstvorbisdec.lo `test -f 'gstvorbisdec.c' || echo '$(srcdir)/'`gstvorbisdec.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbisdec.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbisdec.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvorbisdec.c' object='libgstvorbis_la-gstvorbisdec.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbisdec.lo `test -f 'gstvorbisdec.c' || echo '$(srcdir)/'`gstvorbisdec.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbisdec.lo `test -f 'gstvorbisdec.c' || echo '$(srcdir)/'`gstvorbisdec.c
 
 libgstvorbis_la-gstvorbisdeclib.lo: gstvorbisdeclib.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbisdeclib.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbisdeclib.Tpo -c -o libgstvorbis_la-gstvorbisdeclib.lo `test -f 'gstvorbisdeclib.c' || echo '$(srcdir)/'`gstvorbisdeclib.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbisdeclib.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbisdeclib.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbisdeclib.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbisdeclib.Tpo -c -o libgstvorbis_la-gstvorbisdeclib.lo `test -f 'gstvorbisdeclib.c' || echo '$(srcdir)/'`gstvorbisdeclib.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbisdeclib.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbisdeclib.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvorbisdeclib.c' object='libgstvorbis_la-gstvorbisdeclib.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbisdeclib.lo `test -f 'gstvorbisdeclib.c' || echo '$(srcdir)/'`gstvorbisdeclib.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbisdeclib.lo `test -f 'gstvorbisdeclib.c' || echo '$(srcdir)/'`gstvorbisdeclib.c
 
 libgstvorbis_la-gstvorbisenc.lo: gstvorbisenc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbisenc.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbisenc.Tpo -c -o libgstvorbis_la-gstvorbisenc.lo `test -f 'gstvorbisenc.c' || echo '$(srcdir)/'`gstvorbisenc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbisenc.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbisenc.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbisenc.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbisenc.Tpo -c -o libgstvorbis_la-gstvorbisenc.lo `test -f 'gstvorbisenc.c' || echo '$(srcdir)/'`gstvorbisenc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbisenc.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbisenc.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvorbisenc.c' object='libgstvorbis_la-gstvorbisenc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbisenc.lo `test -f 'gstvorbisenc.c' || echo '$(srcdir)/'`gstvorbisenc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbisenc.lo `test -f 'gstvorbisenc.c' || echo '$(srcdir)/'`gstvorbisenc.c
 
 libgstvorbis_la-gstvorbisparse.lo: gstvorbisparse.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbisparse.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbisparse.Tpo -c -o libgstvorbis_la-gstvorbisparse.lo `test -f 'gstvorbisparse.c' || echo '$(srcdir)/'`gstvorbisparse.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbisparse.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbisparse.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbisparse.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbisparse.Tpo -c -o libgstvorbis_la-gstvorbisparse.lo `test -f 'gstvorbisparse.c' || echo '$(srcdir)/'`gstvorbisparse.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbisparse.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbisparse.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvorbisparse.c' object='libgstvorbis_la-gstvorbisparse.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbisparse.lo `test -f 'gstvorbisparse.c' || echo '$(srcdir)/'`gstvorbisparse.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbisparse.lo `test -f 'gstvorbisparse.c' || echo '$(srcdir)/'`gstvorbisparse.c
 
 libgstvorbis_la-gstvorbistag.lo: gstvorbistag.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbistag.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbistag.Tpo -c -o libgstvorbis_la-gstvorbistag.lo `test -f 'gstvorbistag.c' || echo '$(srcdir)/'`gstvorbistag.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbistag.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbistag.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbistag.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbistag.Tpo -c -o libgstvorbis_la-gstvorbistag.lo `test -f 'gstvorbistag.c' || echo '$(srcdir)/'`gstvorbistag.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbistag.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbistag.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvorbistag.c' object='libgstvorbis_la-gstvorbistag.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbistag.lo `test -f 'gstvorbistag.c' || echo '$(srcdir)/'`gstvorbistag.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbistag.lo `test -f 'gstvorbistag.c' || echo '$(srcdir)/'`gstvorbistag.c
 
 libgstvorbis_la-gstvorbiscommon.lo: gstvorbiscommon.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbiscommon.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbiscommon.Tpo -c -o libgstvorbis_la-gstvorbiscommon.lo `test -f 'gstvorbiscommon.c' || echo '$(srcdir)/'`gstvorbiscommon.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbiscommon.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbiscommon.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -MT libgstvorbis_la-gstvorbiscommon.lo -MD -MP -MF $(DEPDIR)/libgstvorbis_la-gstvorbiscommon.Tpo -c -o libgstvorbis_la-gstvorbiscommon.lo `test -f 'gstvorbiscommon.c' || echo '$(srcdir)/'`gstvorbiscommon.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvorbis_la-gstvorbiscommon.Tpo $(DEPDIR)/libgstvorbis_la-gstvorbiscommon.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvorbiscommon.c' object='libgstvorbis_la-gstvorbiscommon.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbiscommon.lo `test -f 'gstvorbiscommon.c' || echo '$(srcdir)/'`gstvorbiscommon.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvorbis_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvorbis_la_CFLAGS) $(CFLAGS) -c -o libgstvorbis_la-gstvorbiscommon.lo `test -f 'gstvorbiscommon.c' || echo '$(srcdir)/'`gstvorbiscommon.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

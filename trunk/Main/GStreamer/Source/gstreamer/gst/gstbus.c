@@ -88,8 +88,6 @@ enum
   LAST_SIGNAL
 };
 
-static void gst_bus_class_init (GstBusClass * klass);
-static void gst_bus_init (GstBus * bus);
 static void gst_bus_dispose (GObject * object);
 
 static void gst_bus_set_main_context (GstBus * bus, GMainContext * ctx);
@@ -944,7 +942,7 @@ poll_func (GstBus * bus, GstMessage * message, GstBusPollData * poll_data)
   type = GST_MESSAGE_TYPE (message);
 
   if (type & poll_data->events) {
-    g_return_if_fail (poll_data->message == NULL);
+    g_assert (poll_data->message == NULL);
     /* keep ref to message */
     poll_data->message = gst_message_ref (message);
     GST_DEBUG ("mainloop %p quit", poll_data->loop);
@@ -971,7 +969,7 @@ poll_destroy (GstBusPollData * poll_data, gpointer unused)
   poll_data->source_running = FALSE;
   if (!poll_data->timeout_id) {
     g_main_loop_unref (poll_data->loop);
-    g_free (poll_data);
+    g_slice_free (GstBusPollData, poll_data);
   }
 }
 
@@ -981,7 +979,7 @@ poll_destroy_timeout (GstBusPollData * poll_data)
   poll_data->timeout_id = 0;
   if (!poll_data->source_running) {
     g_main_loop_unref (poll_data->loop);
-    g_free (poll_data);
+    g_slice_free (GstBusPollData, poll_data);
   }
 }
 
@@ -1036,7 +1034,7 @@ gst_bus_poll (GstBus * bus, GstMessageType events, GstClockTimeDiff timeout)
   GstMessage *ret;
   gulong id;
 
-  poll_data = g_new0 (GstBusPollData, 1);
+  poll_data = g_slice_new (GstBusPollData);
   poll_data->source_running = TRUE;
   poll_data->loop = g_main_loop_new (NULL, FALSE);
   poll_data->events = events;

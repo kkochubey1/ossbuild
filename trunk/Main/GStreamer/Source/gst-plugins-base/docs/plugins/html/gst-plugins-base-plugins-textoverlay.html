@@ -8,11 +8,8 @@
 <link rel="up" href="ch01.html" title="gst-plugins-base Elements">
 <link rel="prev" href="gst-plugins-base-plugins-tcpserversink.html" title="tcpserversink">
 <link rel="next" href="gst-plugins-base-plugins-textrender.html" title="textrender">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-base Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-base Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-base Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -97,10 +94,8 @@ honouring and matching the buffer timestamps of both input streams.
 The text can contain newline characters and text wrapping is enabled by
 default.
 </p>
-<p>
-</p>
 <div class="refsect2" title="Example launch lines">
-<a name="id498561"></a><h3>Example launch lines</h3>
+<a name="id425289"></a><h3>Example launch lines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -150,12 +145,12 @@ in a text editor:
         <td class="listing_code"><pre class="programlisting"><span class="number">1</span>
 <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">03</span><span class="symbol">,</span><span class="number">000</span> <span class="symbol">--&gt;</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">05</span><span class="symbol">,</span><span class="number">000</span>
 Hello? <span class="symbol">(</span><span class="number">3</span><span class="symbol">-</span><span class="number">5</span>s<span class="symbol">)</span>
-
+ 
 <span class="number">2</span>
 <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">08</span><span class="symbol">,</span><span class="number">000</span> <span class="symbol">--&gt;</span> <span class="number">00</span><span class="symbol">:</span><span class="number">00</span><span class="symbol">:</span><span class="number">13</span><span class="symbol">,</span><span class="number">000</span>
 Yes<span class="symbol">,</span> <span class="keyword">this</span> is a subtitle<span class="symbol">.</span> Don<span class="string">'t</span>
 <span class="string">you like it? (8-13s)</span>
-<span class="string"></span>
+<span class="string"> </span>
 <span class="string">3</span>
 <span class="string">00:00:18,826 --&gt; 00:01:02,886</span>
 <span class="string">Uh? What are you talking about?</span>
@@ -175,7 +170,8 @@ Yes<span class="symbol">,</span> <span class="keyword">this</span> is a subtitle
 <a name="GstTextOverlay-struct"></a><h3>GstTextOverlay</h3>
 <pre class="programlisting">typedef struct _GstTextOverlay GstTextOverlay;</pre>
 <p>
-Opaque textoverlay object structure</p>
+Opaque textoverlay object structure
+</p>
 </div>
 <hr>
 <div class="refsect2" title="enum GstTextOverlayVAlign">
@@ -187,23 +183,24 @@ Opaque textoverlay object structure</p>
 } GstTextOverlayVAlign;
 </pre>
 <p>
-Vertical alignment of the text.</p>
+Vertical alignment of the text.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="GST-TEXT-OVERLAY-VALIGN-BASELINE:CAPS"></a><span class="term"><code class="literal">GST_TEXT_OVERLAY_VALIGN_BASELINE</code></span></p></td>
-<td> draw text on the baseline
+<td>draw text on the baseline
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-TEXT-OVERLAY-VALIGN-BOTTOM:CAPS"></a><span class="term"><code class="literal">GST_TEXT_OVERLAY_VALIGN_BOTTOM</code></span></p></td>
-<td> draw text on the bottom
+<td>draw text on the bottom
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-TEXT-OVERLAY-VALIGN-TOP:CAPS"></a><span class="term"><code class="literal">GST_TEXT_OVERLAY_VALIGN_TOP</code></span></p></td>
-<td> draw test on top
+<td>draw test on top
 </td>
 </tr>
 </tbody>
@@ -219,23 +216,24 @@ Vertical alignment of the text.</p>
 } GstTextOverlayHAlign;
 </pre>
 <p>
-Horizontal alignment of the text.</p>
+Horizontal alignment of the text.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="GST-TEXT-OVERLAY-HALIGN-LEFT:CAPS"></a><span class="term"><code class="literal">GST_TEXT_OVERLAY_HALIGN_LEFT</code></span></p></td>
-<td> align text left
+<td>align text left
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-TEXT-OVERLAY-HALIGN-CENTER:CAPS"></a><span class="term"><code class="literal">GST_TEXT_OVERLAY_HALIGN_CENTER</code></span></p></td>
-<td> align text center
+<td>align text center
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-TEXT-OVERLAY-HALIGN-RIGHT:CAPS"></a><span class="term"><code class="literal">GST_TEXT_OVERLAY_HALIGN_RIGHT</code></span></p></td>
-<td> align text right
+<td>align text right
 </td>
 </tr>
 </tbody>
@@ -252,28 +250,29 @@ Horizontal alignment of the text.</p>
 } GstTextOverlayWrapMode;
 </pre>
 <p>
-Whether to wrap the text and if so how.</p>
+Whether to wrap the text and if so how.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="GST-TEXT-OVERLAY-WRAP-MODE-NONE:CAPS"></a><span class="term"><code class="literal">GST_TEXT_OVERLAY_WRAP_MODE_NONE</code></span></p></td>
-<td> no wrapping
+<td>no wrapping
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-TEXT-OVERLAY-WRAP-MODE-WORD:CAPS"></a><span class="term"><code class="literal">GST_TEXT_OVERLAY_WRAP_MODE_WORD</code></span></p></td>
-<td> do word wrapping
+<td>do word wrapping
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-TEXT-OVERLAY-WRAP-MODE-CHAR:CAPS"></a><span class="term"><code class="literal">GST_TEXT_OVERLAY_WRAP_MODE_CHAR</code></span></p></td>
-<td> do char wrapping
+<td>do char wrapping
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-TEXT-OVERLAY-WRAP-MODE-WORD-CHAR:CAPS"></a><span class="term"><code class="literal">GST_TEXT_OVERLAY_WRAP_MODE_WORD_CHAR</code></span></p></td>
-<td> do word and char wrapping
+<td>do word and char wrapping
 </td>
 </tr>
 </tbody>
@@ -372,7 +371,8 @@ Whether to wrap the text and if so how.</p>
 <a name="GstTextOverlay--line-alignment"></a><h3>The <code class="literal">"line-alignment"</code> property</h3>
 <pre class="programlisting">  "line-alignment"           <span class="type">GstTextOverlayLineAlign</span>  : Read / Write</pre>
 <p>
-Alignment of text lines relative to each other (for multi-line text)</p>
+Alignment of text lines relative to each other (for multi-line text)
+</p>
 <p>Default value: center</p>
 <p class="since">Since 0.10.15</p>
 </div>
@@ -382,7 +382,8 @@ Alignment of text lines relative to each other (for multi-line text)</p>
 <pre class="programlisting">  "silent"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>
 If set, no text is rendered. Useful to switch off text rendering
-temporarily without removing the textoverlay element from the pipeline.</p>
+temporarily without removing the textoverlay element from the pipeline.
+</p>
 <p>Default value: FALSE</p>
 <p class="since">Since 0.10.15</p>
 </div>
@@ -393,7 +394,8 @@ temporarily without removing the textoverlay element from the pipeline.</p>
 <p>
 If set, the video will block until a subtitle is received on the text pad.
 If video and subtitles are sent in sync, like from the same demuxer, this
-property should be set.</p>
+property should be set.
+</p>
 <p>Default value: TRUE</p>
 <p class="since">Since 0.10.20</p>
 </div>
@@ -419,6 +421,6 @@ property should be set.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

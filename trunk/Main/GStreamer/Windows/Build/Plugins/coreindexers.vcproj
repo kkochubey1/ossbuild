@@ -304,6 +304,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\Source\gstreamer\plugins\indexers\gstindexers.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\Source\gstreamer\plugins\indexers\gstmemindex.c"
 			>
 		</File>

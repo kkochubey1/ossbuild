@@ -20,6 +20,12 @@
 # include this snippet to add a common release: target by using
 # include $(top_srcdir)/common/release.mak
 
+# checks for left-over files in the (usually uninstalled) tree, ie. for
+# stuff that best be deleted to avoid problems like having old plugin binaries
+# lying around.
+#
+# set CRUFT_FILES and/or CRUFT_DIRS in your Makefile.am when you include this
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -43,15 +49,15 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(srcdir)/gst-element-check.m4.in $(srcdir)/gstreamer.spec.in \
 	$(srcdir)/stamp.h.in $(top_srcdir)/common/coverage/lcov.mak \
-	$(top_srcdir)/common/po.mak $(top_srcdir)/common/release.mak \
+	$(top_srcdir)/common/cruft.mak $(top_srcdir)/common/po.mak \
+	$(top_srcdir)/common/release.mak \
 	$(top_srcdir)/common/win32.mak $(top_srcdir)/configure \
 	ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS TODO compile \
 	config.guess config.rpath config.sub depcomp install-sh \
 	ltmain.sh missing
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
-	$(top_srcdir)/common/m4/as-ac-expand.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/as-auto-alt.m4 \
 	$(top_srcdir)/common/m4/as-compiler-flag.m4 \
 	$(top_srcdir)/common/m4/as-docbook.m4 \
@@ -60,7 +66,6 @@ am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
 	$(top_srcdir)/common/m4/as-scrub-include.m4 \
 	$(top_srcdir)/common/m4/as-version.m4 \
 	$(top_srcdir)/common/m4/ax_create_stdint_h.m4 \
-	$(top_srcdir)/common/m4/gettext.m4 \
 	$(top_srcdir)/common/m4/gst-arch.m4 \
 	$(top_srcdir)/common/m4/gst-args.m4 \
 	$(top_srcdir)/common/m4/gst-check.m4 \
@@ -77,21 +82,16 @@ am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/iconv.m4 \
-	$(top_srcdir)/common/m4/intlmacosx.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/lib-ld.m4 \
-	$(top_srcdir)/common/m4/lib-link.m4 \
-	$(top_srcdir)/common/m4/lib-prefix.m4 \
-	$(top_srcdir)/common/m4/libtool.m4 \
-	$(top_srcdir)/common/m4/ltoptions.m4 \
-	$(top_srcdir)/common/m4/ltsugar.m4 \
-	$(top_srcdir)/common/m4/ltversion.m4 \
-	$(top_srcdir)/common/m4/lt~obsolete.m4 \
-	$(top_srcdir)/common/m4/nls.m4 $(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/po.m4 \
-	$(top_srcdir)/common/m4/progtest.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/check-checks.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -100,6 +100,12 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = stamp.h gst-element-check.m4 gstreamer.spec
 CONFIG_CLEAN_VPATH_FILES =
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -178,9 +184,9 @@ distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 
 # note: keep in sync with configure.ac
-ACLOCAL_AMFLAGS = -I common/m4 -I .
+ACLOCAL_AMFLAGS = -I m4 -I common/m4
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -202,7 +208,6 @@ CHECK_MINOR_VERSION = @CHECK_MINOR_VERSION@
 CHECK_VERSION = @CHECK_VERSION@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIR = @DATADIR@
@@ -220,8 +225,6 @@ EGREP = @EGREP@
 ENABLE_SUBUNIT = @ENABLE_SUBUNIT@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLEX_PATH = @FLEX_PATH@
@@ -326,7 +329,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -334,7 +336,6 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OTOOL = @OTOOL@
@@ -362,18 +363,17 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -434,7 +434,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -448,6 +447,7 @@ SUBDIRS = pkgconfig \
 	gst libs plugins tools tests \
 	docs \
 	po \
+	m4 \
 	common
 
 
@@ -456,6 +456,7 @@ DIST_SUBDIRS = pkgconfig \
 	gst libs plugins tools tests \
 	docs \
 	po \
+	m4 \
 	common
 
 
@@ -473,7 +474,6 @@ win32crlf = $(shell find $(top_srcdir)/win32 -name '*.dsw' -o -name '*.dsp')
 # include before EXTRA_DIST for win32 assignment
 EXTRA_DIST = \
 	gstreamer.spec gstreamer.spec.in \
-	check-checks.m4 \
 	gst-element-check.m4.in \
 	configure.ac autogen.sh depcomp \
 	MAINTAINERS ABOUT-NLS RELEASE gstreamer.doap \
@@ -490,13 +490,53 @@ AUTOMAKE_OPTIONS = dist-bzip2
 # Do not run the check-exports test in case any option which causes the API to
 # change has been used
 @GST_DISABLE_GST_DEBUG_FALSE@@GST_DISABLE_LOADSAVE_FALSE@@GST_DISABLE_REGISTRY_FALSE@@GST_DISABLE_TRACE_FALSE@CHECK_EXPORTS = check-exports
+
+# cruft: plugins that have been merged or moved or renamed
+CRUFT_FILES = \
+	$(top_builddir)/common/shave \
+	$(top_builddir)/common/shave-libtool \
+	$(top_builddir)/common/m4/codeset.m4 \
+	$(top_builddir)/common/m4/gettext.m4 \
+	$(top_builddir)/common/m4/glibc2.m4 \
+	$(top_builddir)/common/m4/glibc21.m4 \
+	$(top_builddir)/common/m4/iconv.m4 \
+	$(top_builddir)/common/m4/intdiv0.m4 \
+	$(top_builddir)/common/m4/intl.m4 \
+	$(top_builddir)/common/m4/intldir.m4 \
+	$(top_builddir)/common/m4/intlmacosx.m4 \
+	$(top_builddir)/common/m4/intmax.m4 \
+	$(top_builddir)/common/m4/inttypes-pri.m4 \
+	$(top_builddir)/common/m4/inttypes_h.m4 \
+	$(top_builddir)/common/m4/lcmessage.m4 \
+	$(top_builddir)/common/m4/lib-ld.m4 \
+	$(top_builddir)/common/m4/lib-link.m4 \
+	$(top_builddir)/common/m4/lib-prefix.m4 \
+	$(top_builddir)/common/m4/libtool.m4 \
+	$(top_builddir)/common/m4/lock.m4 \
+	$(top_builddir)/common/m4/longlong.m4 \
+	$(top_builddir)/common/m4/ltoptions.m4 \
+	$(top_builddir)/common/m4/ltsugar.m4 \
+	$(top_builddir)/common/m4/ltversion.m4 \
+	$(top_builddir)/common/m4/lt~obsolete.m4 \
+	$(top_builddir)/common/m4/nls.m4 \
+	$(top_builddir)/common/m4/po.m4 \
+	$(top_builddir)/common/m4/printf-posix.m4 \
+	$(top_builddir)/common/m4/progtest.m4 \
+	$(top_builddir)/common/m4/size_max.m4 \
+	$(top_builddir)/common/m4/stdint_h.m4 \
+	$(top_builddir)/common/m4/uintmax_t.m4 \
+	$(top_builddir)/common/m4/visibility.m4 \
+	$(top_builddir)/common/m4/wchar_t.m4 \
+	$(top_builddir)/common/m4/wint_t.m4 \
+	$(top_builddir)/common/m4/xsize.m4
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/win32.mak $(top_srcdir)/common/release.mak $(top_srcdir)/common/po.mak $(top_srcdir)/common/coverage/lcov.mak $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/win32.mak $(top_srcdir)/common/release.mak $(top_srcdir)/common/po.mak $(top_srcdir)/common/coverage/lcov.mak $(top_srcdir)/common/cruft.mak $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1022,11 +1062,6 @@ uninstall-am: uninstall-aclocalDATA
 	uninstall-am
 
 
-all-local: gst-element-check-@GST_MAJORMINOR@.m4
-
-gst-element-check-@GST_MAJORMINOR@.m4: gst-element-check.m4
-	cp gst-element-check.m4 gst-element-check-@GST_MAJORMINOR@.m4
-
 win32-debug:
 	@echo; \
 	echo win32     = $(win32); \
@@ -1052,7 +1087,7 @@ win32-check-crlf:
 # (don't care about other unixes for now, it's enough if it works on one of
 # the linux build bots; we assume .so )
 check-exports:
-	fail=0 ; \
+	@fail=0 ; \
 	for l in $(win32defs); do \
 	  libbase=`basename "$$l" ".def"`; \
 	  libso=`find "$(top_builddir)" -name "$$libbase-@GST_MAJORMINOR@.so" | grep -v /_build/ | head -n1`; \
@@ -1074,7 +1109,7 @@ check-exports:
 
 # complain about nonportable 64-bit printf format strings (%lld, %llu etc.)
 check-nonportable-int64-print-format:
-	fail=0 ; \
+	@fail=0 ; \
 	loc=`find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]'`; \
 	if test "x$$loc" != "x"; then \
 	  echo "Please fix the following print format strings:" ; \
@@ -1165,7 +1200,7 @@ win32-update:
 		$(top_srcdir)/win32/common/config.h
 
 check-enum-gettypes: $(top_builddir)/gst/gstenumtypes.h
-	echo 'Checking if all enum and flag _get_type() funcs are inited in gst_init()';                         \
+	@echo 'Checking if all enum and flag _get_type() funcs are inited in gst_init()';                        \
 	FUNCS=`grep '_get_type (' gst/gstenumtypes.h | sed -e 's/^.*gst_/gst_/' -e 's/_get_type.*$$/_get_type/'`;\
 	MISSING_FUNCS='';                                                                                        \
 	for f in $$FUNCS; do                                                                                     \
@@ -1235,6 +1270,61 @@ lcov:
 @GST_GCOV_ENABLED_FALSE@	echo "Need to reconfigure with --enable-gcov"
 
 check: $(CHECK_EXPORTS) check-enum-gettypes
+
+gst-element-check-@GST_MAJORMINOR@.m4: gst-element-check.m4
+	$(AM_V_GEN)cp gst-element-check.m4 gst-element-check-@GST_MAJORMINOR@.m4
+
+check-cruft:
+	@cruft_files=""; cruft_dirs=""; \
+	for f in $(CRUFT_FILES); do \
+	  if test -e $$f; then \
+	    cruft_files="$$cruft_files $$f"; \
+	  fi \
+	done; \
+	for d in $(CRUFT_DIRS); do \
+	  if test -e $$d; then \
+	    cruft_dirs="$$cruft_dirs $$d"; \
+	  fi \
+	done; \
+	if test "x$$cruft_files$$cruft_dirs" != x; then \
+	  echo; \
+	  echo "**** CRUFT ALERT *****"; \
+	  echo; \
+	  echo "The following files and directories may not be needed any "; \
+	  echo "longer (usually because a plugin has been merged into     "; \
+	  echo "another plugin, moved to a different module, or been      "; \
+	  echo "renamed), and you probably want to clean them up if you   "; \
+	  echo "don't have local changes:                                 "; \
+	  echo; \
+	  for f in $$cruft_files; do echo "file $$f"; done; \
+	  echo; \
+	  for d in $$cruft_dirs; do echo "directory $$d"; done; \
+	  echo; \
+	  echo "'make clean-cruft' will remove these for you."; \
+	  echo; \
+	fi
+
+clean-cruft-dirs:
+	@for d in $(CRUFT_DIRS); do \
+	  if test -e $$d; then \
+	    rm -r "$$d" && echo "Removed directory $$d"; \
+	  fi \
+	done
+
+clean-cruft-files:
+	@for f in $(CRUFT_FILES); do \
+	  if test -e $$f; then \
+	    rm "$$f" && echo "Removed file $$f"; \
+	  fi \
+	done
+
+clean-cruft: clean-cruft-dirs clean-cruft-files
+
+# also might want to add this to your Makefile.am:
+#
+# all-local: check-cruft
+
+all-local: gst-element-check-@GST_MAJORMINOR@.m4 check-cruft
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

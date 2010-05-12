@@ -152,12 +152,6 @@ granulepos_to_timestamp (GstTheoraEnc * theoraenc, ogg_int64_t granulepos)
       theoraenc->info.fps_numerator);
 }
 
-static const GstElementDetails theora_enc_details =
-GST_ELEMENT_DETAILS ("Theora video encoder",
-    "Codec/Encoder/Video",
-    "encode raw YUV video to a theora stream",
-    "Wim Taymans <wim@fluendo.com>");
-
 static GstStaticPadTemplate theora_enc_sink_factory =
 GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
@@ -213,7 +207,10 @@ gst_theora_enc_base_init (gpointer g_class)
       gst_static_pad_template_get (&theora_enc_src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&theora_enc_sink_factory));
-  gst_element_class_set_details (element_class, &theora_enc_details);
+  gst_element_class_set_details_simple (element_class,
+      "Theora video encoder", "Codec/Encoder/Video",
+      "encode raw YUV video to a theora stream",
+      "Wim Taymans <wim@fluendo.com>");
 }
 
 static void
@@ -436,7 +433,7 @@ theora_enc_get_supported_formats (void)
   struct
   {
     th_pixel_fmt pixelformat;
-    char *fourcc;
+    const char *fourcc;
   } formats[] = {
     {
     TH_PF_420, "I420"}, {
@@ -613,7 +610,7 @@ theora_buffer_from_packet (GstTheoraEnc * enc, ogg_packet * packet,
 
   /* the second most significant bit of the first data byte is cleared
    * for keyframes */
-  if ((packet->packet[0] & 0x40) == 0) {
+  if (packet->bytes > 0 && (packet->packet[0] & 0x40) == 0) {
     GST_BUFFER_FLAG_UNSET (buf, GST_BUFFER_FLAG_DELTA_UNIT);
   } else {
     GST_BUFFER_FLAG_SET (buf, GST_BUFFER_FLAG_DELTA_UNIT);

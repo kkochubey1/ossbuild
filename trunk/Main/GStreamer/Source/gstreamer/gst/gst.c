@@ -240,7 +240,7 @@ parse_debug_list (const gchar * list)
   gchar **split;
   gchar **walk;
 
-  g_return_if_fail (list != NULL);
+  g_assert (list);
 
   split = g_strsplit (list, ",", 0);
 
@@ -271,6 +271,7 @@ parse_debug_list (const gchar * list)
 #endif
 
 #ifdef G_OS_WIN32
+BOOL WINAPI DllMain (HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved);
 BOOL WINAPI
 DllMain (HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
@@ -528,7 +529,7 @@ prepare_for_load_plugin_func (gpointer data, gpointer user_data)
 
 #ifndef GST_DISABLE_OPTION_PARSING
 static void
-split_and_iterate (const gchar * stringlist, gchar * separator,
+split_and_iterate (const gchar * stringlist, const gchar * separator,
     GFunc iterator, gpointer user_data)
 {
   gchar **strings;
@@ -957,7 +958,7 @@ parse_goption_arg (const gchar * opt,
 {
   static const struct
   {
-    gchar *opt;
+    const gchar *opt;
     int val;
   } options[] = {
     {
@@ -1148,7 +1149,7 @@ gst_version (guint * major, guint * minor, guint * micro, guint * nano)
  */
 
 gchar *
-gst_version_string ()
+gst_version_string (void)
 {
   guint major, minor, micro, nano;
 

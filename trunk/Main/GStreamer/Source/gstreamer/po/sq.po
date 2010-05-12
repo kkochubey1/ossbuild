@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.8.4\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2004-08-07 23:46+0200\n"
 "Last-Translator: Laurent Dhima <laurenti@alblinux.net>\n"
 "Language-Team: Albanian <begraj@hotmail.com>\n"
@@ -89,18 +89,6 @@ msgstr "Printo versionin e GStreamer"
 
 msgid "Unknown option"
 msgstr ""
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "GABIM: nga elementi %s: %s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"Informacione shtesë të debug:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "GStreamer ndeshi në një gabim të përgjithshëm të librarisë bazë."
@@ -640,6 +628,29 @@ msgid ""
 "according to WGS84 (zero is average sea level)"
 msgstr ""
 
+#, fuzzy
+msgid "geo location country"
+msgstr "pozicioni"
+
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+
+#, fuzzy
+msgid "geo location city"
+msgstr "pozicioni"
+
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "pozicioni"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr ""
@@ -691,8 +702,29 @@ msgid ""
 "of a concerto. It is a higher level than a track, but lower than an album"
 msgstr ""
 
+#, fuzzy
+msgid "user rating"
+msgstr "kohëzgjatja"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "GABIM: nga elementi %s: %s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"Informacione shtesë të debug:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -810,6 +842,10 @@ msgstr "File \"%s\" është një socket."
 
 msgid "Failed after iterations as requested."
 msgstr "Dështoi mbas përsëritjeve sikurse të kërkuara."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Gabim gjatë shkrimit tek file \"%s\"."
 
 msgid "No Temp directory specified."
 msgstr ""

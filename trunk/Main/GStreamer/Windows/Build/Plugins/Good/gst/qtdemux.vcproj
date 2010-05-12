@@ -360,6 +360,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\qtdemux\qtdemux_lang.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\qtdemux\qtdemux_lang.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\qtdemux\qtdemux_types.c"
 			>
 		</File>

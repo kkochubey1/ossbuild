@@ -20,6 +20,7 @@
     <title>gst-plugins-good Elements</title>
     <xi:include href="xml/element-aasink.xml" />
     <xi:include href="xml/element-agingtv.xml" />
+    <xi:include href="xml/element-alpha.xml" />
     <xi:include href="xml/element-alphacolor.xml" />
     <xi:include href="xml/element-alawdec.xml" />
     <xi:include href="xml/element-alawenc.xml" />
@@ -38,6 +39,7 @@
     <xi:include href="xml/element-audioinvert.xml" />
     <xi:include href="xml/element-audiopanorama.xml" />
     <xi:include href="xml/element-audiokaraoke.xml" />
+    <xi:include href="xml/element-auparse.xml" />
     <xi:include href="xml/element-autoaudiosink.xml" />
     <xi:include href="xml/element-autoaudiosrc.xml" />
     <xi:include href="xml/element-autovideosink.xml" />
@@ -69,6 +71,7 @@
     <xi:include href="xml/element-flactag.xml" />
     <xi:include href="xml/element-flvdemux.xml" />
     <xi:include href="xml/element-flvmux.xml" />
+    <xi:include href="xml/element-flxdec.xml" />
     <xi:include href="xml/element-gamma.xml" />
     <xi:include href="xml/element-gconfaudiosrc.xml" />
     <xi:include href="xml/element-gconfaudiosink.xml" />
@@ -124,6 +127,7 @@
     <xi:include href="xml/element-rgvolume.xml" />
     <xi:include href="xml/element-rippletv.xml" />
     <xi:include href="xml/element-rtpdec.xml" />
+    <xi:include href="xml/element-rtpj2kpay.xml" />
     <xi:include href="xml/element-rtpjpegpay.xml" />
     <xi:include href="xml/element-rtspsrc.xml" />
     <xi:include href="xml/element-shagadelictv.xml" />
@@ -141,6 +145,7 @@
     <xi:include href="xml/element-udpsrc.xml" />
     <xi:include href="xml/element-udpsink.xml" />
     <xi:include href="xml/element-v4l2src.xml" />
+    <xi:include href="xml/element-v4l2sink.xml" />
     <xi:include href="xml/element-vertigotv.xml" />
     <xi:include href="xml/element-videobalance.xml" />
     <xi:include href="xml/element-videobox.xml" />

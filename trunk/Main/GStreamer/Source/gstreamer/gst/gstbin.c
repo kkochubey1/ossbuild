@@ -84,7 +84,8 @@
  *     cached duration values so that the next duration query will perform
  *     a full duration recalculation. The duration change is posted to the
  *     application so that it can refetch the new duration with a duration
- *     query.
+ *     query. Note that these messages can be posted before the bin is
+ *     prerolled, in which case the duration query might fail.
  *     </para></listitem>
  *   </varlistentry>
  *   <varlistentry>
@@ -1097,6 +1098,7 @@ no_state_recalc:
   g_free (elem_name);
 
   g_signal_emit (bin, gst_bin_signals[ELEMENT_ADDED], 0, element);
+  gst_child_proxy_child_added ((GstObject *) bin, (GstObject *) element);
 
   return TRUE;
 
@@ -1386,6 +1388,7 @@ no_state_recalc:
   GST_OBJECT_UNLOCK (element);
 
   g_signal_emit (bin, gst_bin_signals[ELEMENT_REMOVED], 0, element);
+  gst_child_proxy_child_removed ((GstObject *) bin, (GstObject *) element);
 
   /* element is really out of our control now */
   gst_object_unref (element);
@@ -2443,17 +2446,22 @@ restart:
             /* Only fail if the child is still inside
              * this bin. It might've been removed already
              * because of the error by the bin subclass
-             * to ignore the error.
-             */
+             * to ignore the error.  */
             parent = gst_object_get_parent (GST_OBJECT_CAST (child));
             if (parent == GST_OBJECT_CAST (element)) {
+              /* element is still in bin, really error now */
               gst_object_unref (child);
               gst_object_unref (parent);
               goto done;
             }
+            /* child removed from bin, let the resync code redo the state
+             * change */
+            GST_CAT_INFO_OBJECT (GST_CAT_STATES, element,
+                "child '%s' was removed from the bin",
+                GST_ELEMENT_NAME (child));
+
             if (parent)
               gst_object_unref (parent);
-            gst_object_unref (child);
 
             break;
           }
@@ -2659,7 +2667,7 @@ gst_bin_continue_func (BinContinueData * data)
   GST_STATE_UNLOCK (bin);
   GST_DEBUG_OBJECT (bin, "state continue done");
   gst_object_unref (bin);
-  g_free (data);
+  g_slice_free (BinContinueData, data);
   return;
 
 interrupted:
@@ -2668,7 +2676,7 @@ interrupted:
     GST_STATE_UNLOCK (bin);
     GST_DEBUG_OBJECT (bin, "state continue aborted due to intervening change");
     gst_object_unref (bin);
-    g_free (data);
+    g_slice_free (BinContinueData, data);
     return;
   }
 }
@@ -2861,7 +2869,7 @@ bin_handle_async_done (GstBin * bin, GstStateChangeReturn ret,
         "continue state change, pending %s",
         gst_element_state_get_name (pending));
 
-    cont = g_new0 (BinContinueData, 1);
+    cont = g_slice_new (BinContinueData);
 
     /* ref to the bin */
     cont->bin = gst_object_ref (bin);
@@ -3581,7 +3589,7 @@ GstElement *
 gst_bin_get_by_name (GstBin * bin, const gchar * name)
 {
   GstIterator *children;
-  GstIterator *result;
+  gpointer result;
 
   g_return_val_if_fail (GST_IS_BIN (bin), NULL);
 

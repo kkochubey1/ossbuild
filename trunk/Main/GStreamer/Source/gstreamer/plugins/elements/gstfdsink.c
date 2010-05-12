@@ -36,7 +36,6 @@
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif
-#include "gst/gst_private.h"
 
 #include "../../gst/gst-i18n-lib.h"
 
@@ -602,7 +601,7 @@ gst_fd_sink_uri_get_type (void)
 static gchar **
 gst_fd_sink_uri_get_protocols (void)
 {
-  static gchar *protocols[] = { "fd", NULL };
+  static gchar *protocols[] = { (char *) "fd", NULL };
 
   return protocols;
 }

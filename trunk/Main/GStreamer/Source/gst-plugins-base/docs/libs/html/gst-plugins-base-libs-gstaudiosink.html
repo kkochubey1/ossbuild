@@ -8,26 +8,8 @@
 <link rel="up" href="gstreamer-audio.html" title="Audio Library">
 <link rel="prev" href="gst-plugins-base-libs-gstaudiomixerutils.html" title="gstaudiomixerutils">
 <link rel="next" href="gst-plugins-base-libs-gstaudiosrc.html" title="gstaudiosrc">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="part" href="gstreamer-plugins-base.html" title="Part I. GStreamer Base Plugins Libraries">
-<link rel="chapter" href="gstreamer-app.html" title="App Library">
-<link rel="chapter" href="gstreamer-audio.html" title="Audio Library">
-<link rel="chapter" href="gstreamer-cdda.html" title="CDDA Library">
-<link rel="chapter" href="gstreamer-ffft.html" title="FFT Library">
-<link rel="chapter" href="gstreamer-floatcast.html" title="FloatCast Library">
-<link rel="chapter" href="gstreamer-interfaces.html" title="Interfaces Library">
-<link rel="chapter" href="gstreamer-netbuffer.html" title="Network Buffer Library">
-<link rel="chapter" href="gstreamer-riff.html" title="Riff Media Library">
-<link rel="chapter" href="gstreamer-rtp.html" title="RTP Library">
-<link rel="chapter" href="gstreamer-rtsp.html" title="RTSP Library">
-<link rel="chapter" href="gstreamer-sdp.html" title="SDP Library">
-<link rel="chapter" href="gstreamer-tag.html" title="Tag Support Library">
-<link rel="chapter" href="gstreamer-base-utils.html" title="Base Utils Library">
-<link rel="chapter" href="gstreamer-video.html" title="Video Library">
-<link rel="part" href="gstreamer-libs-hierarchy.html" title="Part II. Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -125,7 +107,8 @@ together with <a class="link" href="gst-plugins-base-libs-gstbaseaudiosink.html#
 <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> that uses threads.
 </p>
 <p>
-Last reviewed on 2006-09-27 (0.10.12)</p>
+Last reviewed on 2006-09-27 (0.10.12)
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-base-libs-gstaudiosink.details"></a><h2>Details</h2>
@@ -133,7 +116,8 @@ Last reviewed on 2006-09-27 (0.10.12)</p>
 <a name="GstAudioSink-struct"></a><h3>GstAudioSink</h3>
 <pre class="programlisting">typedef struct _GstAudioSink GstAudioSink;</pre>
 <p>
-Opaque <a class="link" href="gst-plugins-base-libs-gstaudiosink.html#GstAudioSink"><span class="type">GstAudioSink</span></a>.</p>
+Opaque <a class="link" href="gst-plugins-base-libs-gstaudiosink.html#GstAudioSink"><span class="type">GstAudioSink</span></a>.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="GstAudioSinkClass">
@@ -162,50 +146,51 @@ Opaque <a class="link" href="gst-plugins-base-libs-gstaudiosink.html#GstAudioSin
 } GstAudioSinkClass;
 </pre>
 <p>
-<a class="link" href="gst-plugins-base-libs-gstaudiosink.html#GstAudioSink"><span class="type">GstAudioSink</span></a> class. Override the vmethods to implement functionality.</p>
+<a class="link" href="gst-plugins-base-libs-gstaudiosink.html#GstAudioSink"><span class="type">GstAudioSink</span></a> class. Override the vmethods to implement functionality.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><a class="link" href="gst-plugins-base-libs-gstbaseaudiosink.html#GstBaseAudioSinkClass" title="GstBaseAudioSinkClass"><span class="type">GstBaseAudioSinkClass</span></a> <em class="structfield"><code><a name="GstAudioSinkClass.parent-class"></a>parent_class</code></em>;</span></p></td>
-<td> the parent class structure.
+<td>the parent class structure.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstAudioSinkClass.open"></a>open</code></em> ()</span></p></td>
-<td> Open the device. No configuration needs to be done at this point.
+<td>Open the device. No configuration needs to be done at this point.
        This function is also used to check if the device is available.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstAudioSinkClass.prepare"></a>prepare</code></em> ()</span></p></td>
-<td> Prepare the device to operate with the specified parameters.
+<td>Prepare the device to operate with the specified parameters.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstAudioSinkClass.unprepare"></a>unprepare</code></em> ()</span></p></td>
-<td> Undo operations done in prepare.
+<td>Undo operations done in prepare.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstAudioSinkClass.close"></a>close</code></em> ()</span></p></td>
-<td> Close the device.
+<td>Close the device.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstAudioSinkClass.write"></a>write</code></em> ()</span></p></td>
-<td> Write data to the device.
+<td>Write data to the device.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstAudioSinkClass.delay"></a>delay</code></em> ()</span></p></td>
-<td> Return how many samples are still in the device. This is used to
+<td>Return how many samples are still in the device. This is used to
         drive the synchronisation.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstAudioSinkClass.reset"></a>reset</code></em> ()</span></p></td>
-<td> Returns as quickly as possible from a write and flush any pending
+<td>Returns as quickly as possible from a write and flush any pending
         samples from the device.
 </td>
 </tr>
@@ -220,6 +205,6 @@ Opaque <a class="link" href="gst-plugins-base-libs-gstaudiosink.html#GstAudioSin
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

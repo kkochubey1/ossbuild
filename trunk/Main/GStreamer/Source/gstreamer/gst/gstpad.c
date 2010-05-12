@@ -375,7 +375,8 @@ gst_pad_init (GstPad * pad)
   pad->preroll_lock = g_mutex_new ();
   pad->preroll_cond = g_cond_new ();
 
-  pad->stream_rec_lock = g_new (GStaticRecMutex, 1);
+  /* FIXME 0.11: Store this directly in the instance struct */
+  pad->stream_rec_lock = g_slice_new (GStaticRecMutex);
   g_static_rec_mutex_init (pad->stream_rec_lock);
 
   pad->block_cond = g_cond_new ();
@@ -430,7 +431,7 @@ gst_pad_finalize (GObject * object)
 
   if (pad->stream_rec_lock) {
     g_static_rec_mutex_free (pad->stream_rec_lock);
-    g_free (pad->stream_rec_lock);
+    g_slice_free (GStaticRecMutex, pad->stream_rec_lock);
     pad->stream_rec_lock = NULL;
   }
   if (pad->preroll_lock) {
@@ -1471,6 +1472,11 @@ gst_pad_set_iterate_internal_links_function (GstPad * pad,
  * Deprecated: Use the thread-safe gst_pad_set_iterate_internal_links_function()
  */
 #ifndef GST_REMOVE_DEPRECATED
+#ifdef GST_DISABLE_DEPRECATED
+void
+gst_pad_set_internal_link_function (GstPad * pad,
+    GstPadIntLinkFunction intlink);
+#endif
 void
 gst_pad_set_internal_link_function (GstPad * pad, GstPadIntLinkFunction intlink)
 {
@@ -3126,7 +3132,7 @@ static void
 int_link_iter_data_free (IntLinkIterData * data)
 {
   g_list_free (data->list);
-  g_free (data);
+  g_slice_free (IntLinkIterData, data);
 }
 #endif
 
@@ -3180,7 +3186,7 @@ gst_pad_iterate_internal_links_default (GstPad * pad)
      * INTLINKFUNC() returned a different list but then this would only work if
      * two concurrent iterators were used and the last iterator would still be
      * thread-unsafe. Just don't use this method anymore. */
-    data = g_new0 (IntLinkIterData, 1);
+    data = g_slice_new (IntLinkIterData);
     data->list = GST_PAD_INTLINKFUNC (pad) (pad);
     data->cookie = 0;
 
@@ -3387,6 +3393,9 @@ no_parent:
  * gst_pad_iterate_internal_links() instead.
  */
 #ifndef GST_REMOVE_DEPRECATED
+#ifdef GST_DISABLE_DEPRECATED
+GList *gst_pad_get_internal_links (GstPad * pad);
+#endif
 GList *
 gst_pad_get_internal_links (GstPad * pad)
 {
@@ -5135,6 +5144,20 @@ do_stream_status (GstPad * pad, GstStreamStatusType type,
     if (GST_IS_ELEMENT (parent)) {
       GstMessage *message;
       GValue value = { 0 };
+
+      if (type == GST_STREAM_STATUS_TYPE_ENTER) {
+        gchar *tname, *ename, *pname;
+
+        /* create a good task name */
+        ename = gst_element_get_name (parent);
+        pname = gst_pad_get_name (pad);
+        tname = g_strdup_printf ("%s:%s", ename, pname);
+        g_free (ename);
+        g_free (pname);
+
+        gst_object_set_name (GST_OBJECT_CAST (task), tname);
+        g_free (tname);
+      }
 
       message = gst_message_new_stream_status (GST_OBJECT_CAST (pad),
           type, parent);

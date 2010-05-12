@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/aalib.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
 	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -87,8 +86,11 @@ firfilter_example_OBJECTS =  \
 am__DEPENDENCIES_1 =
 firfilter_example_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-firfilter_example_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+firfilter_example_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(firfilter_example_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 iirfilter_example_SOURCES = iirfilter-example.c
@@ -96,8 +98,8 @@ iirfilter_example_OBJECTS =  \
 	iirfilter_example-iirfilter-example.$(OBJEXT)
 iirfilter_example_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
-iirfilter_example_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) \
+iirfilter_example_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(iirfilter_example_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -106,13 +108,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = firfilter-example.c iirfilter-example.c
 DIST_SOURCES = firfilter-example.c iirfilter-example.c
 ETAGS = etags
@@ -124,7 +139,7 @@ AALIB_LIBS = @AALIB_LIBS@
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ANNODEX_CFLAGS = @ANNODEX_CFLAGS@
 ANNODEX_LIBS = @ANNODEX_LIBS@
 AR = @AR@
@@ -175,8 +190,6 @@ ESD_CFLAGS = @ESD_CFLAGS@
 ESD_CONFIG = @ESD_CONFIG@
 ESD_LIBS = @ESD_LIBS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLAC_CFLAGS = @FLAC_CFLAGS@
@@ -284,7 +297,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -333,7 +345,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RAW1394_CFLAGS = @RAW1394_CFLAGS@
 RAW1394_LIBS = @RAW1394_LIBS@
@@ -351,11 +362,12 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_CXXFLAGS = @TAGLIB_CXXFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WAVPACK_CFLAGS = @WAVPACK_CFLAGS@
 WAVPACK_LIBS = @WAVPACK_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -427,7 +439,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -483,10 +494,10 @@ clean-noinstPROGRAMS:
 	rm -f $$list
 firfilter-example$(EXEEXT): $(firfilter_example_OBJECTS) $(firfilter_example_DEPENDENCIES) 
 	@rm -f firfilter-example$(EXEEXT)
-	$(firfilter_example_LINK) $(firfilter_example_OBJECTS) $(firfilter_example_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(firfilter_example_LINK) $(firfilter_example_OBJECTS) $(firfilter_example_LDADD) $(LIBS)
 iirfilter-example$(EXEEXT): $(iirfilter_example_OBJECTS) $(iirfilter_example_DEPENDENCIES) 
 	@rm -f iirfilter-example$(EXEEXT)
-	$(iirfilter_example_LINK) $(iirfilter_example_OBJECTS) $(iirfilter_example_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(iirfilter_example_LINK) $(iirfilter_example_OBJECTS) $(iirfilter_example_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -498,50 +509,57 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iirfilter_example-iirfilter-example.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 firfilter_example-firfilter-example.o: firfilter-example.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(firfilter_example_CFLAGS) $(CFLAGS) -MT firfilter_example-firfilter-example.o -MD -MP -MF $(DEPDIR)/firfilter_example-firfilter-example.Tpo -c -o firfilter_example-firfilter-example.o `test -f 'firfilter-example.c' || echo '$(srcdir)/'`firfilter-example.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/firfilter_example-firfilter-example.Tpo $(DEPDIR)/firfilter_example-firfilter-example.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(firfilter_example_CFLAGS) $(CFLAGS) -MT firfilter_example-firfilter-example.o -MD -MP -MF $(DEPDIR)/firfilter_example-firfilter-example.Tpo -c -o firfilter_example-firfilter-example.o `test -f 'firfilter-example.c' || echo '$(srcdir)/'`firfilter-example.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/firfilter_example-firfilter-example.Tpo $(DEPDIR)/firfilter_example-firfilter-example.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='firfilter-example.c' object='firfilter_example-firfilter-example.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(firfilter_example_CFLAGS) $(CFLAGS) -c -o firfilter_example-firfilter-example.o `test -f 'firfilter-example.c' || echo '$(srcdir)/'`firfilter-example.c
 
 firfilter_example-firfilter-example.obj: firfilter-example.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(firfilter_example_CFLAGS) $(CFLAGS) -MT firfilter_example-firfilter-example.obj -MD -MP -MF $(DEPDIR)/firfilter_example-firfilter-example.Tpo -c -o firfilter_example-firfilter-example.obj `if test -f 'firfilter-example.c'; then $(CYGPATH_W) 'firfilter-example.c'; else $(CYGPATH_W) '$(srcdir)/firfilter-example.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/firfilter_example-firfilter-example.Tpo $(DEPDIR)/firfilter_example-firfilter-example.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(firfilter_example_CFLAGS) $(CFLAGS) -MT firfilter_example-firfilter-example.obj -MD -MP -MF $(DEPDIR)/firfilter_example-firfilter-example.Tpo -c -o firfilter_example-firfilter-example.obj `if test -f 'firfilter-example.c'; then $(CYGPATH_W) 'firfilter-example.c'; else $(CYGPATH_W) '$(srcdir)/firfilter-example.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/firfilter_example-firfilter-example.Tpo $(DEPDIR)/firfilter_example-firfilter-example.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='firfilter-example.c' object='firfilter_example-firfilter-example.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(firfilter_example_CFLAGS) $(CFLAGS) -c -o firfilter_example-firfilter-example.obj `if test -f 'firfilter-example.c'; then $(CYGPATH_W) 'firfilter-example.c'; else $(CYGPATH_W) '$(srcdir)/firfilter-example.c'; fi`
 
 iirfilter_example-iirfilter-example.o: iirfilter-example.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(iirfilter_example_CFLAGS) $(CFLAGS) -MT iirfilter_example-iirfilter-example.o -MD -MP -MF $(DEPDIR)/iirfilter_example-iirfilter-example.Tpo -c -o iirfilter_example-iirfilter-example.o `test -f 'iirfilter-example.c' || echo '$(srcdir)/'`iirfilter-example.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/iirfilter_example-iirfilter-example.Tpo $(DEPDIR)/iirfilter_example-iirfilter-example.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(iirfilter_example_CFLAGS) $(CFLAGS) -MT iirfilter_example-iirfilter-example.o -MD -MP -MF $(DEPDIR)/iirfilter_example-iirfilter-example.Tpo -c -o iirfilter_example-iirfilter-example.o `test -f 'iirfilter-example.c' || echo '$(srcdir)/'`iirfilter-example.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/iirfilter_example-iirfilter-example.Tpo $(DEPDIR)/iirfilter_example-iirfilter-example.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='iirfilter-example.c' object='iirfilter_example-iirfilter-example.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(iirfilter_example_CFLAGS) $(CFLAGS) -c -o iirfilter_example-iirfilter-example.o `test -f 'iirfilter-example.c' || echo '$(srcdir)/'`iirfilter-example.c
 
 iirfilter_example-iirfilter-example.obj: iirfilter-example.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(iirfilter_example_CFLAGS) $(CFLAGS) -MT iirfilter_example-iirfilter-example.obj -MD -MP -MF $(DEPDIR)/iirfilter_example-iirfilter-example.Tpo -c -o iirfilter_example-iirfilter-example.obj `if test -f 'iirfilter-example.c'; then $(CYGPATH_W) 'iirfilter-example.c'; else $(CYGPATH_W) '$(srcdir)/iirfilter-example.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/iirfilter_example-iirfilter-example.Tpo $(DEPDIR)/iirfilter_example-iirfilter-example.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(iirfilter_example_CFLAGS) $(CFLAGS) -MT iirfilter_example-iirfilter-example.obj -MD -MP -MF $(DEPDIR)/iirfilter_example-iirfilter-example.Tpo -c -o iirfilter_example-iirfilter-example.obj `if test -f 'iirfilter-example.c'; then $(CYGPATH_W) 'iirfilter-example.c'; else $(CYGPATH_W) '$(srcdir)/iirfilter-example.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/iirfilter_example-iirfilter-example.Tpo $(DEPDIR)/iirfilter_example-iirfilter-example.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='iirfilter-example.c' object='iirfilter_example-iirfilter-example.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(iirfilter_example_CFLAGS) $(CFLAGS) -c -o iirfilter_example-iirfilter-example.obj `if test -f 'iirfilter-example.c'; then $(CYGPATH_W) 'iirfilter-example.c'; else $(CYGPATH_W) '$(srcdir)/iirfilter-example.c'; fi`

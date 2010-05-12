@@ -8,15 +8,8 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="GstTypeFindFactory.html" title="GstTypeFindFactory">
 <link rel="next" href="gstreamer-GstUtils.html" title="GstUtils">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="gstreamer.html" title="GStreamer Overview">
-<link rel="chapter" href="libgstreamer.html" title="GStreamer Core Library">
-<link rel="chapter" href="gstreamer-support.html" title="GStreamer Core Support">
-<link rel="chapter" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
-<link rel="glossary" href="annotation-glossary.html" title="Annotation Glossary">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -55,26 +48,26 @@
                     <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandlerInterface" title="GstURIHandlerInterface">GstURIHandlerInterface</a>;
 enum                <a class="link" href="gstreamer-GstUriHandler.html#GstURIType" title="enum GstURIType">GstURIType</a>;
 #define             <a class="link" href="gstreamer-GstUriHandler.html#GST-URI-TYPE-IS-VALID:CAPS" title="GST_URI_TYPE_IS_VALID()">GST_URI_TYPE_IS_VALID</a>               (type)
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-protocol-is-valid" title="gst_uri_protocol_is_valid ()">gst_uri_protocol_is_valid</a>           (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *protocol);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-protocol-is-supported" title="gst_uri_protocol_is_supported ()">gst_uri_protocol_is_supported</a>       (const <a class="link" href="gstreamer-GstUriHandler.html#GstURIType" title="enum GstURIType"><span class="returnvalue">GstURIType</span></a> type,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *protocol);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-is-valid" title="gst_uri_is_valid ()">gst_uri_is_valid</a>                    (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-has-protocol" title="gst_uri_has_protocol ()">gst_uri_has_protocol</a>                (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *protocol);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-get-protocol" title="gst_uri_get_protocol ()">gst_uri_get_protocol</a>                (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-get-location" title="gst_uri_get_location ()">gst_uri_get_location</a>                (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-construct" title="gst_uri_construct ()">gst_uri_construct</a>                   (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *protocol,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *location);
-<a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a> *        <a class="link" href="gstreamer-GstUriHandler.html#gst-element-make-from-uri" title="gst_element_make_from_uri ()">gst_element_make_from_uri</a>           (const <a class="link" href="gstreamer-GstUriHandler.html#GstURIType" title="enum GstURIType"><span class="returnvalue">GstURIType</span></a> type,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *elementname);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-handler-get-uri-type" title="gst_uri_handler_get_uri_type ()">gst_uri_handler_get_uri_type</a>        (<a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="returnvalue">GstURIHandler</span></a> *handler);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-handler-get-protocols" title="gst_uri_handler_get_protocols ()">gst_uri_handler_get_protocols</a>       (<a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="returnvalue">GstURIHandler</span></a> *handler);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-handler-get-uri" title="gst_uri_handler_get_uri ()">gst_uri_handler_get_uri</a>             (<a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="returnvalue">GstURIHandler</span></a> *handler);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-handler-set-uri" title="gst_uri_handler_set_uri ()">gst_uri_handler_set_uri</a>             (<a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="returnvalue">GstURIHandler</span></a> *handler,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-handler-new-uri" title="gst_uri_handler_new_uri ()">gst_uri_handler_new_uri</a>             (<a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="returnvalue">GstURIHandler</span></a> *handler,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-protocol-is-valid" title="gst_uri_protocol_is_valid ()">gst_uri_protocol_is_valid</a>           (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *protocol</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-protocol-is-supported" title="gst_uri_protocol_is_supported ()">gst_uri_protocol_is_supported</a>       (<em class="parameter"><code>const <a class="link" href="gstreamer-GstUriHandler.html#GstURIType" title="enum GstURIType"><span class="type">GstURIType</span></a> type</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *protocol</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-is-valid" title="gst_uri_is_valid ()">gst_uri_is_valid</a>                    (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-has-protocol" title="gst_uri_has_protocol ()">gst_uri_has_protocol</a>                (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *protocol</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-get-protocol" title="gst_uri_get_protocol ()">gst_uri_get_protocol</a>                (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-get-location" title="gst_uri_get_location ()">gst_uri_get_location</a>                (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-construct" title="gst_uri_construct ()">gst_uri_construct</a>                   (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *protocol</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *location</code></em>);
+<a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a> *        <a class="link" href="gstreamer-GstUriHandler.html#gst-element-make-from-uri" title="gst_element_make_from_uri ()">gst_element_make_from_uri</a>           (<em class="parameter"><code>const <a class="link" href="gstreamer-GstUriHandler.html#GstURIType" title="enum GstURIType"><span class="type">GstURIType</span></a> type</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *elementname</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-handler-get-uri-type" title="gst_uri_handler_get_uri_type ()">gst_uri_handler_get_uri_type</a>        (<em class="parameter"><code><a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> *handler</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-handler-get-protocols" title="gst_uri_handler_get_protocols ()">gst_uri_handler_get_protocols</a>       (<em class="parameter"><code><a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> *handler</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-handler-get-uri" title="gst_uri_handler_get_uri ()">gst_uri_handler_get_uri</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> *handler</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-handler-set-uri" title="gst_uri_handler_set_uri ()">gst_uri_handler_set_uri</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> *handler</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstUriHandler.html#gst-uri-handler-new-uri" title="gst_uri_handler_new_uri ()">gst_uri_handler_new_uri</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> *handler</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
@@ -105,7 +98,8 @@ that handles the given URI for reading or writing
 Source and Sink plugins should implement this interface when possible.
 </p>
 <p>
-Last reviewed on 2005-11-09 (0.9.4)</p>
+Last reviewed on 2005-11-09 (0.9.4)
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gstreamer-GstUriHandler.details"></a><h2>Details</h2>
@@ -113,7 +107,8 @@ Last reviewed on 2005-11-09 (0.9.4)</p>
 <a name="GstURIHandler-struct"></a><h3>GstURIHandler</h3>
 <pre class="programlisting">typedef struct _GstURIHandler GstURIHandler;</pre>
 <p>
-Opaque <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> structure.</p>
+Opaque <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> structure.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="GstURIHandlerInterface">
@@ -135,44 +130,45 @@ Opaque <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span c
 } GstURIHandlerInterface;
 </pre>
 <p>
-Any <a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> using this interface should implement these methods.</p>
+Any <a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> using this interface should implement these methods.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><a href="/usr/share/gtk-doc/html/gobject/gobject-Type-Information.html#GTypeInterface"><span class="type">GTypeInterface</span></a> <em class="structfield"><code><a name="GstURIHandlerInterface.parent"></a>parent</code></em>;</span></p></td>
-<td> The parent interface type
+<td>The parent interface type
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstURIHandlerInterface.get-type"></a>get_type</code></em> ()</span></p></td>
-<td> Method to tell whether the element handles source or sink URI.
+<td>Method to tell whether the element handles source or sink URI.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstURIHandlerInterface.get-protocols"></a>get_protocols</code></em> ()</span></p></td>
-<td> Method to return the list of protocols handled by the element.
+<td>Method to return the list of protocols handled by the element.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstURIHandlerInterface.get-uri"></a>get_uri</code></em> ()</span></p></td>
-<td> Method to return the URI currently handled by the element.
+<td>Method to return the URI currently handled by the element.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstURIHandlerInterface.set-uri"></a>set_uri</code></em> ()</span></p></td>
-<td> Method to set a new URI.
+<td>Method to set a new URI.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstURIHandlerInterface.get-type-full"></a>get_type_full</code></em> ()</span></p></td>
-<td> Variant of get_type which takes a GType argument. This is 
+<td>Variant of get_type which takes a GType argument. This is 
  for use by bindings that need to pass context when creating a URI Handler.  *  If implemented, get_type will be used in preference to get_type_full. Since: 0.10.15.
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstURIHandlerInterface.get-protocols-full"></a>get_protocols_full</code></em> ()</span></p></td>
-<td> Variant of get_type which takes a GType argument. 
+<td>Variant of get_type which takes a GType argument. 
 This is for use by bindings that need to pass context when creating a URI 
 Handler. If implemented, get_protocols will be used in preference to 
 get_protocols_full. Since: 0.10.15.
@@ -191,23 +187,24 @@ get_protocols_full. Since: 0.10.15.
 } GstURIType;
 </pre>
 <p>
-The different types of URI direction.</p>
+The different types of URI direction.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="GST-URI-UNKNOWN:CAPS"></a><span class="term"><code class="literal">GST_URI_UNKNOWN</code></span></p></td>
-<td> The URI direction is unknown
+<td>The URI direction is unknown
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-URI-SINK:CAPS"></a><span class="term"><code class="literal">GST_URI_SINK</code></span></p></td>
-<td> The URI is a consumer.
+<td>The URI is a consumer.
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-URI-SRC:CAPS"></a><span class="term"><code class="literal">GST_URI_SRC</code></span></p></td>
-<td> The URI is a producer.
+<td>The URI is a producer.
 </td>
 </tr>
 </tbody>
@@ -219,12 +216,13 @@ The different types of URI direction.</p>
 <pre class="programlisting">#define GST_URI_TYPE_IS_VALID(type) ((type) == GST_URI_SRC || (type) == GST_URI_SINK)
 </pre>
 <p>
-Tests if the type direction is valid.</p>
+Tests if the type direction is valid.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>type</code></em> :</span></p></td>
-<td> A <a class="link" href="gstreamer-GstUriHandler.html#GstURIType" title="enum GstURIType"><span class="type">GstURIType</span></a>
+<td>A <a class="link" href="gstreamer-GstUriHandler.html#GstURIType" title="enum GstURIType"><span class="type">GstURIType</span></a>
 </td>
 </tr></tbody>
 </table></div>
@@ -232,17 +230,18 @@ Tests if the type direction is valid.</p>
 <hr>
 <div class="refsect2" title="gst_uri_protocol_is_valid ()">
 <a name="gst-uri-protocol-is-valid"></a><h3>gst_uri_protocol_is_valid ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_uri_protocol_is_valid           (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *protocol);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_uri_protocol_is_valid           (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *protocol</code></em>);</pre>
 <p>
 Tests if the given string is a valid protocol identifier. Protocols
 must consist of alphanumeric characters, '+', '-' and '.' and must
-start with a alphabetic character. See RFC 3986 Section 3.1.</p>
+start with a alphabetic character. See RFC 3986 Section 3.1.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>protocol</code></em> :</span></p></td>
-<td> A string
+<td>A string
 </td>
 </tr>
 <tr>
@@ -256,23 +255,24 @@ start with a alphabetic character. See RFC 3986 Section 3.1.</p>
 <hr>
 <div class="refsect2" title="gst_uri_protocol_is_supported ()">
 <a name="gst-uri-protocol-is-supported"></a><h3>gst_uri_protocol_is_supported ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_uri_protocol_is_supported       (const <a class="link" href="gstreamer-GstUriHandler.html#GstURIType" title="enum GstURIType"><span class="returnvalue">GstURIType</span></a> type,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *protocol);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_uri_protocol_is_supported       (<em class="parameter"><code>const <a class="link" href="gstreamer-GstUriHandler.html#GstURIType" title="enum GstURIType"><span class="type">GstURIType</span></a> type</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *protocol</code></em>);</pre>
 <p>
 Checks if an element exists that supports the given URI protocol. Note
 that a positive return value does not imply that a subsequent call to
-<a class="link" href="gstreamer-GstUriHandler.html#gst-element-make-from-uri" title="gst_element_make_from_uri ()"><code class="function">gst_element_make_from_uri()</code></a> is guaranteed to work.</p>
+<a class="link" href="gstreamer-GstUriHandler.html#gst-element-make-from-uri" title="gst_element_make_from_uri ()"><code class="function">gst_element_make_from_uri()</code></a> is guaranteed to work.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>type</code></em> :</span></p></td>
-<td> Whether to check for a source or a sink
+<td>Whether to check for a source or a sink
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>protocol</code></em> :</span></p></td>
-<td> Protocol that should be checked for (e.g. "http" or "smb")
+<td>Protocol that should be checked for (e.g. "http" or "smb")
 </td>
 </tr>
 <tr>
@@ -288,16 +288,17 @@ that a positive return value does not imply that a subsequent call to
 <hr>
 <div class="refsect2" title="gst_uri_is_valid ()">
 <a name="gst-uri-is-valid"></a><h3>gst_uri_is_valid ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_uri_is_valid                    (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_uri_is_valid                    (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);</pre>
 <p>
 Tests if the given string is a valid URI identifier. URIs start with a valid
-scheme followed by ":" and maybe a string identifying the location.</p>
+scheme followed by ":" and maybe a string identifying the location.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
-<td> A URI string
+<td>A URI string
 </td>
 </tr>
 <tr>
@@ -311,21 +312,22 @@ scheme followed by ":" and maybe a string identifying the location.</p>
 <hr>
 <div class="refsect2" title="gst_uri_has_protocol ()">
 <a name="gst-uri-has-protocol"></a><h3>gst_uri_has_protocol ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_uri_has_protocol                (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *protocol);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_uri_has_protocol                (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *protocol</code></em>);</pre>
 <p>
-Checks if the protocol of a given valid URI matches <em class="parameter"><code>protocol</code></em>.</p>
+Checks if the protocol of a given valid URI matches <em class="parameter"><code>protocol</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
-<td> an URI string
+<td>an URI string
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>protocol</code></em> :</span></p></td>
-<td> a protocol string (e.g. "http")
+<td>a protocol string (e.g. "http")
 </td>
 </tr>
 <tr>
@@ -341,16 +343,17 @@ Checks if the protocol of a given valid URI matches <em class="parameter"><code>
 <hr>
 <div class="refsect2" title="gst_uri_get_protocol ()">
 <a name="gst-uri-get-protocol"></a><h3>gst_uri_get_protocol ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             gst_uri_get_protocol                (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             gst_uri_get_protocol                (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);</pre>
 <p>
 Extracts the protocol out of a given valid URI. The returned string must be
-freed using <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a>.</p>
+freed using <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
-<td> A URI string
+<td>A URI string
 </td>
 </tr>
 <tr>
@@ -364,18 +367,19 @@ freed using <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-
 <hr>
 <div class="refsect2" title="gst_uri_get_location ()">
 <a name="gst-uri-get-location"></a><h3>gst_uri_get_location ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             gst_uri_get_location                (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             gst_uri_get_location                (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);</pre>
 <p>
 Extracts the location out of a given valid URI, ie. the protocol and "://"
 are stripped from the URI, which means that the location returned includes
 the hostname if one is specified. The returned string must be freed using
-<a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a>.</p>
+<a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
-<td> A URI string
+<td>A URI string
 </td>
 </tr>
 <tr>
@@ -390,21 +394,22 @@ the URI does not contain a location, an empty string is returned.
 <hr>
 <div class="refsect2" title="gst_uri_construct ()">
 <a name="gst-uri-construct"></a><h3>gst_uri_construct ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             gst_uri_construct                   (const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *protocol,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *location);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             gst_uri_construct                   (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *protocol</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *location</code></em>);</pre>
 <p>
-Constructs a URI for a given valid protocol and location.</p>
+Constructs a URI for a given valid protocol and location.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>protocol</code></em> :</span></p></td>
-<td> Protocol for URI
+<td>Protocol for URI
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>location</code></em> :</span></p></td>
-<td> Location for URI
+<td>Location for URI
 </td>
 </tr>
 <tr>
@@ -419,27 +424,28 @@ is not valid, or the given location is NULL.
 <hr>
 <div class="refsect2" title="gst_element_make_from_uri ()">
 <a name="gst-element-make-from-uri"></a><h3>gst_element_make_from_uri ()</h3>
-<pre class="programlisting"><a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a> *        gst_element_make_from_uri           (const <a class="link" href="gstreamer-GstUriHandler.html#GstURIType" title="enum GstURIType"><span class="returnvalue">GstURIType</span></a> type,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *elementname);</pre>
+<pre class="programlisting"><a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a> *        gst_element_make_from_uri           (<em class="parameter"><code>const <a class="link" href="gstreamer-GstUriHandler.html#GstURIType" title="enum GstURIType"><span class="type">GstURIType</span></a> type</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *elementname</code></em>);</pre>
 <p>
-Creates an element for handling the given URI.</p>
+Creates an element for handling the given URI.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>type</code></em> :</span></p></td>
-<td> Whether to create a source or a sink
+<td>Whether to create a source or a sink
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
-<td> URI to create an element for
+<td>URI to create an element for
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>elementname</code></em> :</span></p></td>
-<td> Name of created element, can be NULL.
+<td>Name of created element, can be NULL.
 </td>
 </tr>
 <tr>
@@ -453,15 +459,16 @@ Creates an element for handling the given URI.</p>
 <hr>
 <div class="refsect2" title="gst_uri_handler_get_uri_type ()">
 <a name="gst-uri-handler-get-uri-type"></a><h3>gst_uri_handler_get_uri_type ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_uri_handler_get_uri_type        (<a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="returnvalue">GstURIHandler</span></a> *handler);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_uri_handler_get_uri_type        (<em class="parameter"><code><a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> *handler</code></em>);</pre>
 <p>
-Gets the type of the given URI handler</p>
+Gets the type of the given URI handler
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>handler</code></em> :</span></p></td>
-<td> A <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a>.
+<td>A <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a>.
 </td>
 </tr>
 <tr>
@@ -476,16 +483,17 @@ Returns <a class="link" href="gstreamer-GstUriHandler.html#GST-URI-UNKNOWN:CAPS"
 <hr>
 <div class="refsect2" title="gst_uri_handler_get_protocols ()">
 <a name="gst-uri-handler-get-protocols"></a><h3>gst_uri_handler_get_protocols ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **            gst_uri_handler_get_protocols       (<a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="returnvalue">GstURIHandler</span></a> *handler);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **            gst_uri_handler_get_protocols       (<em class="parameter"><code><a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> *handler</code></em>);</pre>
 <p>
 Gets the list of protocols supported by <em class="parameter"><code>handler</code></em>. This list may not be
-modified.</p>
+modified.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>handler</code></em> :</span></p></td>
-<td> A <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a>.
+<td>A <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a>.
 </td>
 </tr>
 <tr>
@@ -501,15 +509,16 @@ doesn't support any protocols.
 <hr>
 <div class="refsect2" title="gst_uri_handler_get_uri ()">
 <a name="gst-uri-handler-get-uri"></a><h3>gst_uri_handler_get_uri ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             gst_uri_handler_get_uri             (<a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="returnvalue">GstURIHandler</span></a> *handler);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             gst_uri_handler_get_uri             (<em class="parameter"><code><a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> *handler</code></em>);</pre>
 <p>
-Gets the currently handled URI.</p>
+Gets the currently handled URI.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>handler</code></em> :</span></p></td>
-<td> A <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a>
+<td>A <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a>
 </td>
 </tr>
 <tr>
@@ -525,21 +534,22 @@ string must not be modified or freed.
 <hr>
 <div class="refsect2" title="gst_uri_handler_set_uri ()">
 <a name="gst-uri-handler-set-uri"></a><h3>gst_uri_handler_set_uri ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_uri_handler_set_uri             (<a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="returnvalue">GstURIHandler</span></a> *handler,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_uri_handler_set_uri             (<em class="parameter"><code><a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> *handler</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);</pre>
 <p>
-Tries to set the URI of the given handler.</p>
+Tries to set the URI of the given handler.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>handler</code></em> :</span></p></td>
-<td> A <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a>
+<td>A <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
-<td> URI to set
+<td>URI to set
 </td>
 </tr>
 <tr>
@@ -553,22 +563,23 @@ Tries to set the URI of the given handler.</p>
 <hr>
 <div class="refsect2" title="gst_uri_handler_new_uri ()">
 <a name="gst-uri-handler-new-uri"></a><h3>gst_uri_handler_new_uri ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_uri_handler_new_uri             (<a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="returnvalue">GstURIHandler</span></a> *handler,
-                                                         const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *uri);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_uri_handler_new_uri             (<em class="parameter"><code><a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> *handler</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);</pre>
 <p>
 Emits the new-uri signal for a given handler, when that handler has a new URI.
-This function should only be called by URI handlers themselves.</p>
+This function should only be called by URI handlers themselves.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>handler</code></em> :</span></p></td>
-<td> A <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a>
+<td>A <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
-<td> new URI or NULL if it was unset
+<td>new URI or NULL if it was unset
 </td>
 </tr>
 </tbody>
@@ -583,18 +594,19 @@ This function should only be called by URI handlers themselves.</p>
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>         *uri,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last</pre>
 <p>
-The URI of the given <em class="parameter"><code>handler</code></em> has changed.</p>
+The URI of the given <em class="parameter"><code>handler</code></em> has changed.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>handler</code></em> :</span></p></td>
-<td> The <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> which emitted the signal
+<td>The <a class="link" href="gstreamer-GstUriHandler.html#GstURIHandler"><span class="type">GstURIHandler</span></a> which emitted the signal
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
-<td> The new URI, or NULL if the URI was removed
+<td>The new URI, or NULL if the URI was removed
 </td>
 </tr>
 <tr>
@@ -608,6 +620,6 @@ The URI of the given <em class="parameter"><code>handler</code></em> has changed
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

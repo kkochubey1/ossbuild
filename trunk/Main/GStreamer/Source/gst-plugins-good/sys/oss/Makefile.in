@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/aalib.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
 	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -105,7 +104,7 @@ am__installdirs = "$(DESTDIR)$(plugindir)"
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libgstossaudio_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_libgstossaudio_la_OBJECTS = libgstossaudio_la-gstossaudio.lo \
 	libgstossaudio_la-gstosshelper.lo \
 	libgstossaudio_la-gstossmixer.lo \
@@ -113,7 +112,10 @@ am_libgstossaudio_la_OBJECTS = libgstossaudio_la-gstossaudio.lo \
 	libgstossaudio_la-gstossmixertrack.lo \
 	libgstossaudio_la-gstosssink.lo libgstossaudio_la-gstosssrc.lo
 libgstossaudio_la_OBJECTS = $(am_libgstossaudio_la_OBJECTS)
-libgstossaudio_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstossaudio_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstossaudio_la_CFLAGS) $(CFLAGS) \
 	$(libgstossaudio_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -123,13 +125,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstossaudio_la_SOURCES)
 DIST_SOURCES = $(libgstossaudio_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -142,7 +157,7 @@ AALIB_LIBS = @AALIB_LIBS@
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ANNODEX_CFLAGS = @ANNODEX_CFLAGS@
 ANNODEX_LIBS = @ANNODEX_LIBS@
 AR = @AR@
@@ -193,8 +208,6 @@ ESD_CFLAGS = @ESD_CFLAGS@
 ESD_CONFIG = @ESD_CONFIG@
 ESD_LIBS = @ESD_LIBS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLAC_CFLAGS = @FLAC_CFLAGS@
@@ -302,7 +315,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -351,7 +363,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RAW1394_CFLAGS = @RAW1394_CFLAGS@
 RAW1394_LIBS = @RAW1394_LIBS@
@@ -369,11 +380,12 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_CXXFLAGS = @TAGLIB_CXXFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WAVPACK_CFLAGS = @WAVPACK_CFLAGS@
 WAVPACK_LIBS = @WAVPACK_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -445,7 +457,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -461,11 +472,12 @@ libgstossaudio_la_SOURCES = gstossaudio.c	 \
 			    gstosssink.c	 \
 			    gstosssrc.c
 
-libgstossaudio_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
+libgstossaudio_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
 libgstossaudio_la_LIBADD = \
 	$(GST_PLUGINS_BASE_LIBS) \
         -lgstinterfaces-$(GST_MAJORMINOR) \
 	-lgstaudio-$(GST_MAJORMINOR) \
+	$(GST_BASE_LIBS) \
 	$(GST_LIBS)
 
 libgstossaudio_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS) 
@@ -545,7 +557,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstossaudio.la: $(libgstossaudio_la_OBJECTS) $(libgstossaudio_la_DEPENDENCIES) 
-	$(libgstossaudio_la_LINK) -rpath $(plugindir) $(libgstossaudio_la_OBJECTS) $(libgstossaudio_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstossaudio_la_LINK) -rpath $(plugindir) $(libgstossaudio_la_OBJECTS) $(libgstossaudio_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -562,74 +574,84 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstossaudio_la-gstosssrc.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstossaudio_la-gstossaudio.lo: gstossaudio.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstossaudio.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstossaudio.Tpo -c -o libgstossaudio_la-gstossaudio.lo `test -f 'gstossaudio.c' || echo '$(srcdir)/'`gstossaudio.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstossaudio_la-gstossaudio.Tpo $(DEPDIR)/libgstossaudio_la-gstossaudio.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstossaudio.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstossaudio.Tpo -c -o libgstossaudio_la-gstossaudio.lo `test -f 'gstossaudio.c' || echo '$(srcdir)/'`gstossaudio.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstossaudio_la-gstossaudio.Tpo $(DEPDIR)/libgstossaudio_la-gstossaudio.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstossaudio.c' object='libgstossaudio_la-gstossaudio.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstossaudio.lo `test -f 'gstossaudio.c' || echo '$(srcdir)/'`gstossaudio.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstossaudio.lo `test -f 'gstossaudio.c' || echo '$(srcdir)/'`gstossaudio.c
 
 libgstossaudio_la-gstosshelper.lo: gstosshelper.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstosshelper.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstosshelper.Tpo -c -o libgstossaudio_la-gstosshelper.lo `test -f 'gstosshelper.c' || echo '$(srcdir)/'`gstosshelper.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstossaudio_la-gstosshelper.Tpo $(DEPDIR)/libgstossaudio_la-gstosshelper.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstosshelper.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstosshelper.Tpo -c -o libgstossaudio_la-gstosshelper.lo `test -f 'gstosshelper.c' || echo '$(srcdir)/'`gstosshelper.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstossaudio_la-gstosshelper.Tpo $(DEPDIR)/libgstossaudio_la-gstosshelper.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstosshelper.c' object='libgstossaudio_la-gstosshelper.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstosshelper.lo `test -f 'gstosshelper.c' || echo '$(srcdir)/'`gstosshelper.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstosshelper.lo `test -f 'gstosshelper.c' || echo '$(srcdir)/'`gstosshelper.c
 
 libgstossaudio_la-gstossmixer.lo: gstossmixer.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstossmixer.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstossmixer.Tpo -c -o libgstossaudio_la-gstossmixer.lo `test -f 'gstossmixer.c' || echo '$(srcdir)/'`gstossmixer.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstossaudio_la-gstossmixer.Tpo $(DEPDIR)/libgstossaudio_la-gstossmixer.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstossmixer.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstossmixer.Tpo -c -o libgstossaudio_la-gstossmixer.lo `test -f 'gstossmixer.c' || echo '$(srcdir)/'`gstossmixer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstossaudio_la-gstossmixer.Tpo $(DEPDIR)/libgstossaudio_la-gstossmixer.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstossmixer.c' object='libgstossaudio_la-gstossmixer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstossmixer.lo `test -f 'gstossmixer.c' || echo '$(srcdir)/'`gstossmixer.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstossmixer.lo `test -f 'gstossmixer.c' || echo '$(srcdir)/'`gstossmixer.c
 
 libgstossaudio_la-gstossmixerelement.lo: gstossmixerelement.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstossmixerelement.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstossmixerelement.Tpo -c -o libgstossaudio_la-gstossmixerelement.lo `test -f 'gstossmixerelement.c' || echo '$(srcdir)/'`gstossmixerelement.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstossaudio_la-gstossmixerelement.Tpo $(DEPDIR)/libgstossaudio_la-gstossmixerelement.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstossmixerelement.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstossmixerelement.Tpo -c -o libgstossaudio_la-gstossmixerelement.lo `test -f 'gstossmixerelement.c' || echo '$(srcdir)/'`gstossmixerelement.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstossaudio_la-gstossmixerelement.Tpo $(DEPDIR)/libgstossaudio_la-gstossmixerelement.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstossmixerelement.c' object='libgstossaudio_la-gstossmixerelement.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstossmixerelement.lo `test -f 'gstossmixerelement.c' || echo '$(srcdir)/'`gstossmixerelement.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstossmixerelement.lo `test -f 'gstossmixerelement.c' || echo '$(srcdir)/'`gstossmixerelement.c
 
 libgstossaudio_la-gstossmixertrack.lo: gstossmixertrack.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstossmixertrack.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstossmixertrack.Tpo -c -o libgstossaudio_la-gstossmixertrack.lo `test -f 'gstossmixertrack.c' || echo '$(srcdir)/'`gstossmixertrack.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstossaudio_la-gstossmixertrack.Tpo $(DEPDIR)/libgstossaudio_la-gstossmixertrack.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstossmixertrack.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstossmixertrack.Tpo -c -o libgstossaudio_la-gstossmixertrack.lo `test -f 'gstossmixertrack.c' || echo '$(srcdir)/'`gstossmixertrack.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstossaudio_la-gstossmixertrack.Tpo $(DEPDIR)/libgstossaudio_la-gstossmixertrack.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstossmixertrack.c' object='libgstossaudio_la-gstossmixertrack.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstossmixertrack.lo `test -f 'gstossmixertrack.c' || echo '$(srcdir)/'`gstossmixertrack.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstossmixertrack.lo `test -f 'gstossmixertrack.c' || echo '$(srcdir)/'`gstossmixertrack.c
 
 libgstossaudio_la-gstosssink.lo: gstosssink.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstosssink.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstosssink.Tpo -c -o libgstossaudio_la-gstosssink.lo `test -f 'gstosssink.c' || echo '$(srcdir)/'`gstosssink.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstossaudio_la-gstosssink.Tpo $(DEPDIR)/libgstossaudio_la-gstosssink.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstosssink.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstosssink.Tpo -c -o libgstossaudio_la-gstosssink.lo `test -f 'gstosssink.c' || echo '$(srcdir)/'`gstosssink.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstossaudio_la-gstosssink.Tpo $(DEPDIR)/libgstossaudio_la-gstosssink.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstosssink.c' object='libgstossaudio_la-gstosssink.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstosssink.lo `test -f 'gstosssink.c' || echo '$(srcdir)/'`gstosssink.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstosssink.lo `test -f 'gstosssink.c' || echo '$(srcdir)/'`gstosssink.c
 
 libgstossaudio_la-gstosssrc.lo: gstosssrc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstosssrc.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstosssrc.Tpo -c -o libgstossaudio_la-gstosssrc.lo `test -f 'gstosssrc.c' || echo '$(srcdir)/'`gstosssrc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstossaudio_la-gstosssrc.Tpo $(DEPDIR)/libgstossaudio_la-gstosssrc.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -MT libgstossaudio_la-gstosssrc.lo -MD -MP -MF $(DEPDIR)/libgstossaudio_la-gstosssrc.Tpo -c -o libgstossaudio_la-gstosssrc.lo `test -f 'gstosssrc.c' || echo '$(srcdir)/'`gstosssrc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstossaudio_la-gstosssrc.Tpo $(DEPDIR)/libgstossaudio_la-gstosssrc.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstosssrc.c' object='libgstossaudio_la-gstosssrc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstosssrc.lo `test -f 'gstosssrc.c' || echo '$(srcdir)/'`gstosssrc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstossaudio_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstossaudio_la_CFLAGS) $(CFLAGS) -c -o libgstossaudio_la-gstosssrc.lo `test -f 'gstosssrc.c' || echo '$(srcdir)/'`gstosssrc.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

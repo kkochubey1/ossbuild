@@ -41,8 +41,7 @@ subdir = libs/gst/check
 DIST_COMMON = $(libgstcheck_@GST_MAJORMINOR@include_HEADERS) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
-	$(top_srcdir)/common/m4/as-ac-expand.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/as-auto-alt.m4 \
 	$(top_srcdir)/common/m4/as-compiler-flag.m4 \
 	$(top_srcdir)/common/m4/as-docbook.m4 \
@@ -51,7 +50,6 @@ am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
 	$(top_srcdir)/common/m4/as-scrub-include.m4 \
 	$(top_srcdir)/common/m4/as-version.m4 \
 	$(top_srcdir)/common/m4/ax_create_stdint_h.m4 \
-	$(top_srcdir)/common/m4/gettext.m4 \
 	$(top_srcdir)/common/m4/gst-arch.m4 \
 	$(top_srcdir)/common/m4/gst-args.m4 \
 	$(top_srcdir)/common/m4/gst-check.m4 \
@@ -68,21 +66,16 @@ am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/iconv.m4 \
-	$(top_srcdir)/common/m4/intlmacosx.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/lib-ld.m4 \
-	$(top_srcdir)/common/m4/lib-link.m4 \
-	$(top_srcdir)/common/m4/lib-prefix.m4 \
-	$(top_srcdir)/common/m4/libtool.m4 \
-	$(top_srcdir)/common/m4/ltoptions.m4 \
-	$(top_srcdir)/common/m4/ltsugar.m4 \
-	$(top_srcdir)/common/m4/ltversion.m4 \
-	$(top_srcdir)/common/m4/lt~obsolete.m4 \
-	$(top_srcdir)/common/m4/nls.m4 $(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/po.m4 \
-	$(top_srcdir)/common/m4/progtest.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/check-checks.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -112,6 +105,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(girdir)" \
 	"$(DESTDIR)$(typelibsdir)" \
+	"$(DESTDIR)$(libgstcheck_@GST_MAJORMINOR@includedir)" \
 	"$(DESTDIR)$(libgstcheck_@GST_MAJORMINOR@includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
@@ -121,7 +115,10 @@ am_libgstcheck_@GST_MAJORMINOR@_la_OBJECTS =  \
 	libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.lo
 libgstcheck_@GST_MAJORMINOR@_la_OBJECTS =  \
 	$(am_libgstcheck_@GST_MAJORMINOR@_la_OBJECTS)
-libgstcheck_@GST_MAJORMINOR@_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstcheck_@GST_MAJORMINOR@_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) \
 	$(libgstcheck_@GST_MAJORMINOR@_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -131,13 +128,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstcheck_@GST_MAJORMINOR@_la_SOURCES)
 DIST_SOURCES = $(libgstcheck_@GST_MAJORMINOR@_la_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -148,7 +158,8 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	installcheck-recursive installdirs-recursive pdf-recursive \
 	ps-recursive uninstall-recursive
 DATA = $(gir_DATA) $(typelibs_DATA)
-HEADERS = $(libgstcheck_@GST_MAJORMINOR@include_HEADERS)
+HEADERS = $(libgstcheck_@GST_MAJORMINOR@include_HEADERS) \
+	$(nodist_libgstcheck_@GST_MAJORMINOR@include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -186,7 +197,7 @@ am__relativize = \
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -208,7 +219,6 @@ CHECK_MINOR_VERSION = @CHECK_MINOR_VERSION@
 CHECK_VERSION = @CHECK_VERSION@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIR = @DATADIR@
@@ -226,8 +236,6 @@ EGREP = @EGREP@
 ENABLE_SUBUNIT = @ENABLE_SUBUNIT@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLEX_PATH = @FLEX_PATH@
@@ -332,7 +340,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -340,7 +347,6 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OTOOL = @OTOOL@
@@ -368,18 +374,17 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -440,7 +445,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -476,10 +480,12 @@ libgstcheck_@GST_MAJORMINOR@includedir = \
 	$(includedir)/gstreamer-@GST_MAJORMINOR@/gst/check
 
 libgstcheck_@GST_MAJORMINOR@include_HEADERS = \
-	internal-check.h			\
 	gstbufferstraw.h			\
 	gstcheck.h				\
 	gstconsistencychecker.h
+
+nodist_libgstcheck_@GST_MAJORMINOR@include_HEADERS = \
+	internal-check.h	
 
 CLEANFILES = *.gcno *.gcda *.gcov internal-check.h $(SYMBOLS_FILE) \
 	$(am__append_1)
@@ -534,9 +540,13 @@ LIBGSTCHECK_EXPORTED_SYMBOLS = \
 # It is there for purpose. (Bug #602093)
 CHECK_SYMS = `$(SED) -n -e 's/^..*CK_EXPORT[ ]\{1,\}\([_0-9ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]\{1,\}\)..*$$/\1/p' @top_srcdir@/libs/gst/check/libcheck/check.h.in`
 @HAVE_INTROSPECTION_TRUE@BUILT_GIRSOURCES = GstCheck-@GST_MAJORMINOR@.gir
-@HAVE_INTROSPECTION_TRUE@gir_headers = $(patsubst %,$(srcdir)/%, $(libgstcheck_@GST_MAJORMINOR@include_HEADERS))
+@HAVE_INTROSPECTION_TRUE@gir_headers = $(patsubst %,$(srcdir)/%, $(libgstcheck_@GST_MAJORMINOR@include_HEADERS)) \
+@HAVE_INTROSPECTION_TRUE@    $(patsubst %,$(builddir)/%, $(nodist_libgstcheck_@GST_MAJORMINOR@include_HEADERS))
+
 @HAVE_INTROSPECTION_TRUE@gir_sources = $(patsubst %,$(srcdir)/%, $(libgstcheck_@GST_MAJORMINOR@_la_SOURCES))
-@HAVE_INTROSPECTION_TRUE@gir_cincludes = $(patsubst %,--c-include='gst/check/%',$(libgstcheck_@GST_MAJORMINOR@include_HEADERS))
+@HAVE_INTROSPECTION_TRUE@gir_cincludes = $(patsubst %,--c-include='gst/check/%',$(libgstcheck_@GST_MAJORMINOR@include_HEADERS)) \
+@HAVE_INTROSPECTION_TRUE@    $(patsubst %,--c-include='gst/check/%',$(nodist_libgstcheck_@GST_MAJORMINOR@include_HEADERS))
+
 
 # INTROSPECTION_GIRDIR/INTROSPECTION_TYPELIBDIR aren't the right place to
 # install anything - we need to install inside our prefix.
@@ -611,7 +621,7 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstcheck-@GST_MAJORMINOR@.la: $(libgstcheck_@GST_MAJORMINOR@_la_OBJECTS) $(libgstcheck_@GST_MAJORMINOR@_la_DEPENDENCIES) 
-	$(libgstcheck_@GST_MAJORMINOR@_la_LINK) -rpath $(libdir) $(libgstcheck_@GST_MAJORMINOR@_la_OBJECTS) $(libgstcheck_@GST_MAJORMINOR@_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstcheck_@GST_MAJORMINOR@_la_LINK) -rpath $(libdir) $(libgstcheck_@GST_MAJORMINOR@_la_OBJECTS) $(libgstcheck_@GST_MAJORMINOR@_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -624,46 +634,52 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.lo: gstbufferstraw.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.lo -MD -MP -MF $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.Tpo -c -o libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.lo `test -f 'gstbufferstraw.c' || echo '$(srcdir)/'`gstbufferstraw.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.Tpo $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.lo -MD -MP -MF $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.Tpo -c -o libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.lo `test -f 'gstbufferstraw.c' || echo '$(srcdir)/'`gstbufferstraw.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.Tpo $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstbufferstraw.c' object='libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.lo `test -f 'gstbufferstraw.c' || echo '$(srcdir)/'`gstbufferstraw.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcheck_@GST_MAJORMINOR@_la-gstbufferstraw.lo `test -f 'gstbufferstraw.c' || echo '$(srcdir)/'`gstbufferstraw.c
 
 libgstcheck_@GST_MAJORMINOR@_la-gstcheck.lo: gstcheck.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcheck_@GST_MAJORMINOR@_la-gstcheck.lo -MD -MP -MF $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstcheck.Tpo -c -o libgstcheck_@GST_MAJORMINOR@_la-gstcheck.lo `test -f 'gstcheck.c' || echo '$(srcdir)/'`gstcheck.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstcheck.Tpo $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstcheck.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcheck_@GST_MAJORMINOR@_la-gstcheck.lo -MD -MP -MF $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstcheck.Tpo -c -o libgstcheck_@GST_MAJORMINOR@_la-gstcheck.lo `test -f 'gstcheck.c' || echo '$(srcdir)/'`gstcheck.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstcheck.Tpo $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstcheck.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstcheck.c' object='libgstcheck_@GST_MAJORMINOR@_la-gstcheck.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcheck_@GST_MAJORMINOR@_la-gstcheck.lo `test -f 'gstcheck.c' || echo '$(srcdir)/'`gstcheck.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcheck_@GST_MAJORMINOR@_la-gstcheck.lo `test -f 'gstcheck.c' || echo '$(srcdir)/'`gstcheck.c
 
 libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.lo: gstconsistencychecker.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.lo -MD -MP -MF $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.Tpo -c -o libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.lo `test -f 'gstconsistencychecker.c' || echo '$(srcdir)/'`gstconsistencychecker.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.Tpo $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.lo -MD -MP -MF $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.Tpo -c -o libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.lo `test -f 'gstconsistencychecker.c' || echo '$(srcdir)/'`gstconsistencychecker.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.Tpo $(DEPDIR)/libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstconsistencychecker.c' object='libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.lo `test -f 'gstconsistencychecker.c' || echo '$(srcdir)/'`gstconsistencychecker.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcheck_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstcheck_@GST_MAJORMINOR@_la-gstconsistencychecker.lo `test -f 'gstconsistencychecker.c' || echo '$(srcdir)/'`gstconsistencychecker.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -726,6 +742,26 @@ install-libgstcheck_@GST_MAJORMINOR@includeHEADERS: $(libgstcheck_@GST_MAJORMINO
 uninstall-libgstcheck_@GST_MAJORMINOR@includeHEADERS:
 	@$(NORMAL_UNINSTALL)
 	@list='$(libgstcheck_@GST_MAJORMINOR@include_HEADERS)'; test -n "$(libgstcheck_@GST_MAJORMINOR@includedir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(libgstcheck_@GST_MAJORMINOR@includedir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(libgstcheck_@GST_MAJORMINOR@includedir)" && rm -f $$files
+install-nodist_libgstcheck_@GST_MAJORMINOR@includeHEADERS: $(nodist_libgstcheck_@GST_MAJORMINOR@include_HEADERS)
+	@$(NORMAL_INSTALL)
+	test -z "$(libgstcheck_@GST_MAJORMINOR@includedir)" || $(MKDIR_P) "$(DESTDIR)$(libgstcheck_@GST_MAJORMINOR@includedir)"
+	@list='$(nodist_libgstcheck_@GST_MAJORMINOR@include_HEADERS)'; test -n "$(libgstcheck_@GST_MAJORMINOR@includedir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(libgstcheck_@GST_MAJORMINOR@includedir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(libgstcheck_@GST_MAJORMINOR@includedir)" || exit $$?; \
+	done
+
+uninstall-nodist_libgstcheck_@GST_MAJORMINOR@includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(nodist_libgstcheck_@GST_MAJORMINOR@include_HEADERS)'; test -n "$(libgstcheck_@GST_MAJORMINOR@includedir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(libgstcheck_@GST_MAJORMINOR@includedir)' && rm -f" $$files ")"; \
@@ -930,7 +966,7 @@ check: $(BUILT_SOURCES)
 all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(girdir)" "$(DESTDIR)$(typelibsdir)" "$(DESTDIR)$(libgstcheck_@GST_MAJORMINOR@includedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(girdir)" "$(DESTDIR)$(typelibsdir)" "$(DESTDIR)$(libgstcheck_@GST_MAJORMINOR@includedir)" "$(DESTDIR)$(libgstcheck_@GST_MAJORMINOR@includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: $(BUILT_SOURCES)
@@ -986,6 +1022,7 @@ info-am:
 
 install-data-am: install-girDATA \
 	install-libgstcheck_@GST_MAJORMINOR@includeHEADERS \
+	install-nodist_libgstcheck_@GST_MAJORMINOR@includeHEADERS \
 	install-typelibsDATA
 
 install-dvi: install-dvi-recursive
@@ -1034,6 +1071,7 @@ ps-am:
 
 uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 	uninstall-libgstcheck_@GST_MAJORMINOR@includeHEADERS \
+	uninstall-nodist_libgstcheck_@GST_MAJORMINOR@includeHEADERS \
 	uninstall-typelibsDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all check \
@@ -1050,6 +1088,7 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 	install-exec-am install-girDATA install-html install-html-am \
 	install-info install-info-am install-libLTLIBRARIES \
 	install-libgstcheck_@GST_MAJORMINOR@includeHEADERS install-man \
+	install-nodist_libgstcheck_@GST_MAJORMINOR@includeHEADERS \
 	install-pdf install-pdf-am install-ps install-ps-am \
 	install-strip install-typelibsDATA installcheck \
 	installcheck-am installdirs installdirs-am maintainer-clean \
@@ -1058,36 +1097,37 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 	tags tags-recursive uninstall uninstall-am uninstall-girDATA \
 	uninstall-libLTLIBRARIES \
 	uninstall-libgstcheck_@GST_MAJORMINOR@includeHEADERS \
+	uninstall-nodist_libgstcheck_@GST_MAJORMINOR@includeHEADERS \
 	uninstall-typelibsDATA
 
 
 internal-check.h: $(top_builddir)/libs/gst/check/libcheck/check.h
-	cp $(top_builddir)/libs/gst/check/libcheck/check.h internal-check.h
+	$(AM_V_GEN)cp $(top_builddir)/libs/gst/check/libcheck/check.h internal-check.h
 
 %.c.gcov: .libs/libgstcheck_@GST_MAJORMINOR@_la-%.gcda %.c
 	$(GCOV) -b -f -o $^ > $@.out
 
 gcov: $(libgstcheck_@GST_MAJORMINOR@_la_SOURCES:=.gcov)
 print-check-symbols:
-	for s in $(CHECK_SYMS); do \
+	@for s in $(CHECK_SYMS); do \
 	  echo $$s; \
 	done;
 
 $(SYMBOLS_FILE):
-	rm -f $(SYMBOLS_FILE) 2>/dev/null; \
+	$(AM_V_GEN)rm -f $(SYMBOLS_FILE) 2>/dev/null; \
 	for s in $(LIBGSTCHECK_EXPORTED_SYMBOLS) $(CHECK_SYMS); do \
 	  echo $$s >> $(SYMBOLS_FILE); \
 	done
 
 @HAVE_INTROSPECTION_TRUE@GstCheck-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstcheck-@GST_MAJORMINOR@.la
-@HAVE_INTROSPECTION_TRUE@	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(top_builddir)/pkgconfig:$(PKG_CONFIG_PATH)" \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstCheck \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
 @HAVE_INTROSPECTION_TRUE@		-I$(top_srcdir) \
 @HAVE_INTROSPECTION_TRUE@		$(gir_cincludes) \
 @HAVE_INTROSPECTION_TRUE@		--add-include-path=$(top_builddir)/gst \
-@HAVE_INTROSPECTION_TRUE@		--library=gstcheck-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--library=libgstcheck-0.10.la \
 @HAVE_INTROSPECTION_TRUE@		--include=Gst-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
 @HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
@@ -1096,7 +1136,7 @@ $(SYMBOLS_FILE):
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)
 
 @HAVE_INTROSPECTION_TRUE@%.typelib: %.gir $(INTROSPECTION_COMPILER)
-@HAVE_INTROSPECTION_TRUE@	$(INTROSPECTION_COMPILER) --includedir=$(srcdir) --includedir=$(builddir) --includedir=$(top_builddir)/gst $(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)$(INTROSPECTION_COMPILER) --includedir=$(srcdir) --includedir=$(builddir) --includedir=$(top_builddir)/gst $(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

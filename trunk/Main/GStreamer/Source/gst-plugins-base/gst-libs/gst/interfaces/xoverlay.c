@@ -441,6 +441,8 @@ gst_x_overlay_expose (GstXOverlay * overlay)
  * events are not propagated in the window hierarchy if a client is listening
  * for them. This method allows you to disable events handling completely
  * from the XOverlay.
+ *
+ * Since: 0.10.12
  */
 void
 gst_x_overlay_handle_events (GstXOverlay * overlay, gboolean handle_events)
@@ -455,4 +457,47 @@ gst_x_overlay_handle_events (GstXOverlay * overlay, gboolean handle_events)
   if (klass->handle_events) {
     klass->handle_events (overlay, handle_events);
   }
+}
+
+/**
+ * gst_x_overlay_set_render_rectangle:
+ * @overlay: a #GstXOverlay
+ * @x: the horizontal offset of the render area inside the window
+ * @y: the vertical offset of the render area inside the window
+ * @width: the width of the render area inside the window
+ * @height: the height of the render area inside the window
+ *
+ * Configure a subregion as a video target within the window set by
+ * gst_x_overlay_set_xwindow_id(). If this is not used or not supported
+ * the video will fill the area of the window set as the overlay to 100%.
+ * By specifying the rectangle, the video can be overlayed to a specific region
+ * of that window only. After setting the new rectangle one should call
+ * gst_x_overlay_expose() to force a redraw. To unset the region pass -1 for
+ * the @x, @y, @width, and @height parameters.
+ *
+ * This method is needed for non fullscreen video overlay in UI toolkits that
+ * do not support subwindows.
+ *
+ * Returns: %FALSE if not supported by the sink.
+ *
+ * Since: 0.10.29
+ */
+gboolean
+gst_x_overlay_set_render_rectangle (GstXOverlay * overlay,
+    gint x, gint y, gint width, gint height)
+{
+  GstXOverlayClass *klass;
+
+  g_return_val_if_fail (overlay != NULL, FALSE);
+  g_return_val_if_fail (GST_IS_X_OVERLAY (overlay), FALSE);
+  g_return_val_if_fail ((x == -1 && y == -1 && width == -1 && height == -1) ||
+      (x >= 0 && y >= 0 && width > 0 && height > 0), FALSE);
+
+  klass = GST_X_OVERLAY_GET_CLASS (overlay);
+
+  if (klass->set_render_rectangle) {
+    klass->set_render_rectangle (overlay, x, y, width, height);
+    return TRUE;
+  }
+  return FALSE;
 }

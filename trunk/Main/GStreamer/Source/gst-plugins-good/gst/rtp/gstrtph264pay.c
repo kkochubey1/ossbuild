@@ -42,13 +42,6 @@ GST_DEBUG_CATEGORY_STATIC (rtph264pay_debug);
  * RFC 3984
  */
 
-/* elementfactory information */
-static const GstElementDetails gst_rtp_h264pay_details =
-GST_ELEMENT_DETAILS ("RTP H264 payloader",
-    "Codec/Payloader/Network",
-    "Payload-encode H264 video into RTP packets (RFC 3984)",
-    "Laurent Glayal <spglegle@yahoo.fr>");
-
 static GstStaticPadTemplate gst_rtp_h264_pay_sink_template =
 GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
@@ -133,7 +126,10 @@ gst_rtp_h264_pay_base_init (gpointer klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_rtp_h264_pay_sink_template));
 
-  gst_element_class_set_details (element_class, &gst_rtp_h264pay_details);
+  gst_element_class_set_details_simple (element_class, "RTP H264 payloader",
+      "Codec/Payloader/Network",
+      "Payload-encode H264 video into RTP packets (RFC 3984)",
+      "Laurent Glayal <spglegle@yahoo.fr>");
 }
 
 static void
@@ -644,18 +640,24 @@ gst_rtp_h264_pay_payload_nal (GstBaseRTPPayload * basepayload, guint8 * data,
   /* check if we need to emit an SPS/PPS now */
   if (nalType == IDR_TYPE_ID && rtph264pay->spspps_interval > 0) {
     if (rtph264pay->last_spspps != -1) {
-      guint diff;
+      guint64 diff;
+
+      GST_LOG_OBJECT (rtph264pay,
+          "now %" GST_TIME_FORMAT ", last SPS/PPS %" GST_TIME_FORMAT,
+          GST_TIME_ARGS (timestamp), GST_TIME_ARGS (rtph264pay->last_spspps));
 
       /* calculate diff between last SPS/PPS in milliseconds */
       if (timestamp > rtph264pay->last_spspps)
-        diff = GST_TIME_AS_MSECONDS (timestamp - rtph264pay->last_spspps);
+        diff = timestamp - rtph264pay->last_spspps;
       else
         diff = 0;
 
-      GST_DEBUG_OBJECT (rtph264pay, "interval since last SPS/PPS %ums", diff);
+      GST_DEBUG_OBJECT (rtph264pay,
+          "interval since last SPS/PPS %" GST_TIME_FORMAT,
+          GST_TIME_ARGS (diff));
 
       /* bigger than interval, queue SPS/PPS */
-      if (diff >= (rtph264pay->spspps_interval * GST_MSECOND)) {
+      if (GST_TIME_AS_SECONDS (diff) >= rtph264pay->spspps_interval) {
         GST_DEBUG_OBJECT (rtph264pay, "time to send SPS/PPS");
         send_spspps = TRUE;
       }

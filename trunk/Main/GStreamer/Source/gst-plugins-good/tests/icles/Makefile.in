@@ -63,8 +63,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/aalib.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
 	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -91,59 +90,78 @@ gdkpixbufsink_test_OBJECTS = $(am_gdkpixbufsink_test_OBJECTS)
 am__DEPENDENCIES_1 =
 @HAVE_GTK_TRUE@gdkpixbufsink_test_DEPENDENCIES =  \
 @HAVE_GTK_TRUE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-gdkpixbufsink_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(gdkpixbufsink_test_CFLAGS) $(CFLAGS) \
-	$(gdkpixbufsink_test_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+gdkpixbufsink_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(gdkpixbufsink_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am__v4l2src_test_SOURCES_DIST = v4l2src-test.c
 @USE_GST_V4L2_TRUE@am_v4l2src_test_OBJECTS =  \
 @USE_GST_V4L2_TRUE@	v4l2src_test-v4l2src-test.$(OBJEXT)
 v4l2src_test_OBJECTS = $(am_v4l2src_test_OBJECTS)
 @USE_GST_V4L2_TRUE@v4l2src_test_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 @USE_GST_V4L2_TRUE@	$(am__DEPENDENCIES_1)
-v4l2src_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+v4l2src_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(v4l2src_test_CFLAGS) \
-	$(CFLAGS) $(v4l2src_test_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_videobox_test_OBJECTS = videobox_test-videobox-test.$(OBJEXT)
 videobox_test_OBJECTS = $(am_videobox_test_OBJECTS)
 videobox_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
-videobox_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+videobox_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(videobox_test_CFLAGS) \
-	$(CFLAGS) $(videobox_test_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_videocrop_test_OBJECTS = videocrop_test-videocrop-test.$(OBJEXT)
 videocrop_test_OBJECTS = $(am_videocrop_test_OBJECTS)
 videocrop_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
-videocrop_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(videocrop_test_CFLAGS) \
-	$(CFLAGS) $(videocrop_test_LDFLAGS) $(LDFLAGS) -o $@
+videocrop_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(videocrop_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
+	$@
 am_videocrop2_test_OBJECTS =  \
 	videocrop2_test-videocrop2-test.$(OBJEXT)
 videocrop2_test_OBJECTS = $(am_videocrop2_test_OBJECTS)
 videocrop2_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
-videocrop2_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(videocrop2_test_CFLAGS) \
-	$(CFLAGS) $(videocrop2_test_LDFLAGS) $(LDFLAGS) -o $@
+videocrop2_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(videocrop2_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
 am__ximagesrc_test_SOURCES_DIST = ximagesrc-test.c
 @USE_X_TRUE@am_ximagesrc_test_OBJECTS =  \
 @USE_X_TRUE@	ximagesrc_test-ximagesrc-test.$(OBJEXT)
 ximagesrc_test_OBJECTS = $(am_ximagesrc_test_OBJECTS)
-ximagesrc_test_LDADD = $(LDADD)
-ximagesrc_test_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(ximagesrc_test_CFLAGS) \
-	$(CFLAGS) $(ximagesrc_test_LDFLAGS) $(LDFLAGS) -o $@
+@USE_X_TRUE@ximagesrc_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
+ximagesrc_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(ximagesrc_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
+	$@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(gdkpixbufsink_test_SOURCES) $(v4l2src_test_SOURCES) \
 	$(videobox_test_SOURCES) $(videocrop_test_SOURCES) \
 	$(videocrop2_test_SOURCES) $(ximagesrc_test_SOURCES)
@@ -160,7 +178,7 @@ AALIB_LIBS = @AALIB_LIBS@
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ANNODEX_CFLAGS = @ANNODEX_CFLAGS@
 ANNODEX_LIBS = @ANNODEX_LIBS@
 AR = @AR@
@@ -211,8 +229,6 @@ ESD_CFLAGS = @ESD_CFLAGS@
 ESD_CONFIG = @ESD_CONFIG@
 ESD_LIBS = @ESD_LIBS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLAC_CFLAGS = @FLAC_CFLAGS@
@@ -320,7 +336,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -369,7 +384,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RAW1394_CFLAGS = @RAW1394_CFLAGS@
 RAW1394_LIBS = @RAW1394_LIBS@
@@ -387,11 +401,12 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_CXXFLAGS = @TAGLIB_CXXFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WAVPACK_CFLAGS = @WAVPACK_CFLAGS@
 WAVPACK_LIBS = @WAVPACK_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -463,7 +478,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -473,32 +487,27 @@ top_srcdir = @top_srcdir@
 @HAVE_GTK_FALSE@GTK_TESTS = 
 @HAVE_GTK_TRUE@GTK_TESTS = gdkpixbufsink-test
 @HAVE_GTK_TRUE@gdkpixbufsink_test_SOURCES = gdkpixbufsink-test.c
-@HAVE_GTK_TRUE@gdkpixbufsink_test_CFLAGS = $(GTK_CFLAGS) $(GST_CFLAGS)
-@HAVE_GTK_TRUE@gdkpixbufsink_test_LDADD = $(GTK_LIBS) $(GST_LIBS)
-@HAVE_GTK_TRUE@gdkpixbufsink_test_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
+@HAVE_GTK_TRUE@gdkpixbufsink_test_CFLAGS = $(GST_CFLAGS) $(GTK_CFLAGS)
+@HAVE_GTK_TRUE@gdkpixbufsink_test_LDADD = $(GST_LIBS) $(GTK_LIBS)
 @USE_GST_V4L2_FALSE@V4L2_TESTS = 
 @USE_GST_V4L2_TRUE@V4L2_TESTS = v4l2src-test
 @USE_GST_V4L2_TRUE@v4l2src_test_SOURCES = v4l2src-test.c
 @USE_GST_V4L2_TRUE@v4l2src_test_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
 @USE_GST_V4L2_TRUE@v4l2src_test_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstinterfaces-$(GST_MAJORMINOR) $(GST_LIBS)
-@USE_GST_V4L2_TRUE@v4l2src_test_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 @USE_X_FALSE@X_TESTS = 
 @USE_X_TRUE@X_TESTS = ximagesrc-test
 @USE_X_TRUE@ximagesrc_test_SOURCES = ximagesrc-test.c
 @USE_X_TRUE@ximagesrc_test_CFLAGS = $(GST_CFLAGS)
-@USE_X_TRUE@ximagesrc_test_LDFLAGS = $(GST_LIBS)
+@USE_X_TRUE@ximagesrc_test_LDADD = $(GST_LIBS)
 videocrop_test_SOURCES = videocrop-test.c
 videocrop_test_CFLAGS = $(GST_CFLAGS)
 videocrop_test_LDADD = $(GST_LIBS)
-videocrop_test_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 videobox_test_SOURCES = videobox-test.c
 videobox_test_CFLAGS = $(GST_CFLAGS)
 videobox_test_LDADD = $(GST_LIBS)
-videobox_test_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 videocrop2_test_SOURCES = videocrop2-test.c
 videocrop2_test_CFLAGS = $(GST_CFLAGS)
 videocrop2_test_LDADD = $(GST_LIBS)
-videocrop2_test_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -544,22 +553,22 @@ clean-noinstPROGRAMS:
 	rm -f $$list
 gdkpixbufsink-test$(EXEEXT): $(gdkpixbufsink_test_OBJECTS) $(gdkpixbufsink_test_DEPENDENCIES) 
 	@rm -f gdkpixbufsink-test$(EXEEXT)
-	$(gdkpixbufsink_test_LINK) $(gdkpixbufsink_test_OBJECTS) $(gdkpixbufsink_test_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(gdkpixbufsink_test_LINK) $(gdkpixbufsink_test_OBJECTS) $(gdkpixbufsink_test_LDADD) $(LIBS)
 v4l2src-test$(EXEEXT): $(v4l2src_test_OBJECTS) $(v4l2src_test_DEPENDENCIES) 
 	@rm -f v4l2src-test$(EXEEXT)
-	$(v4l2src_test_LINK) $(v4l2src_test_OBJECTS) $(v4l2src_test_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(v4l2src_test_LINK) $(v4l2src_test_OBJECTS) $(v4l2src_test_LDADD) $(LIBS)
 videobox-test$(EXEEXT): $(videobox_test_OBJECTS) $(videobox_test_DEPENDENCIES) 
 	@rm -f videobox-test$(EXEEXT)
-	$(videobox_test_LINK) $(videobox_test_OBJECTS) $(videobox_test_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(videobox_test_LINK) $(videobox_test_OBJECTS) $(videobox_test_LDADD) $(LIBS)
 videocrop-test$(EXEEXT): $(videocrop_test_OBJECTS) $(videocrop_test_DEPENDENCIES) 
 	@rm -f videocrop-test$(EXEEXT)
-	$(videocrop_test_LINK) $(videocrop_test_OBJECTS) $(videocrop_test_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(videocrop_test_LINK) $(videocrop_test_OBJECTS) $(videocrop_test_LDADD) $(LIBS)
 videocrop2-test$(EXEEXT): $(videocrop2_test_OBJECTS) $(videocrop2_test_DEPENDENCIES) 
 	@rm -f videocrop2-test$(EXEEXT)
-	$(videocrop2_test_LINK) $(videocrop2_test_OBJECTS) $(videocrop2_test_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(videocrop2_test_LINK) $(videocrop2_test_OBJECTS) $(videocrop2_test_LDADD) $(LIBS)
 ximagesrc-test$(EXEEXT): $(ximagesrc_test_OBJECTS) $(ximagesrc_test_DEPENDENCIES) 
 	@rm -f ximagesrc-test$(EXEEXT)
-	$(ximagesrc_test_LINK) $(ximagesrc_test_OBJECTS) $(ximagesrc_test_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(ximagesrc_test_LINK) $(ximagesrc_test_OBJECTS) $(ximagesrc_test_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -575,106 +584,121 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ximagesrc_test-ximagesrc-test.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 gdkpixbufsink_test-gdkpixbufsink-test.o: gdkpixbufsink-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gdkpixbufsink_test_CFLAGS) $(CFLAGS) -MT gdkpixbufsink_test-gdkpixbufsink-test.o -MD -MP -MF $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Tpo -c -o gdkpixbufsink_test-gdkpixbufsink-test.o `test -f 'gdkpixbufsink-test.c' || echo '$(srcdir)/'`gdkpixbufsink-test.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Tpo $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gdkpixbufsink_test_CFLAGS) $(CFLAGS) -MT gdkpixbufsink_test-gdkpixbufsink-test.o -MD -MP -MF $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Tpo -c -o gdkpixbufsink_test-gdkpixbufsink-test.o `test -f 'gdkpixbufsink-test.c' || echo '$(srcdir)/'`gdkpixbufsink-test.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Tpo $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gdkpixbufsink-test.c' object='gdkpixbufsink_test-gdkpixbufsink-test.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gdkpixbufsink_test_CFLAGS) $(CFLAGS) -c -o gdkpixbufsink_test-gdkpixbufsink-test.o `test -f 'gdkpixbufsink-test.c' || echo '$(srcdir)/'`gdkpixbufsink-test.c
 
 gdkpixbufsink_test-gdkpixbufsink-test.obj: gdkpixbufsink-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gdkpixbufsink_test_CFLAGS) $(CFLAGS) -MT gdkpixbufsink_test-gdkpixbufsink-test.obj -MD -MP -MF $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Tpo -c -o gdkpixbufsink_test-gdkpixbufsink-test.obj `if test -f 'gdkpixbufsink-test.c'; then $(CYGPATH_W) 'gdkpixbufsink-test.c'; else $(CYGPATH_W) '$(srcdir)/gdkpixbufsink-test.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Tpo $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gdkpixbufsink_test_CFLAGS) $(CFLAGS) -MT gdkpixbufsink_test-gdkpixbufsink-test.obj -MD -MP -MF $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Tpo -c -o gdkpixbufsink_test-gdkpixbufsink-test.obj `if test -f 'gdkpixbufsink-test.c'; then $(CYGPATH_W) 'gdkpixbufsink-test.c'; else $(CYGPATH_W) '$(srcdir)/gdkpixbufsink-test.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Tpo $(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gdkpixbufsink-test.c' object='gdkpixbufsink_test-gdkpixbufsink-test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gdkpixbufsink_test_CFLAGS) $(CFLAGS) -c -o gdkpixbufsink_test-gdkpixbufsink-test.obj `if test -f 'gdkpixbufsink-test.c'; then $(CYGPATH_W) 'gdkpixbufsink-test.c'; else $(CYGPATH_W) '$(srcdir)/gdkpixbufsink-test.c'; fi`
 
 v4l2src_test-v4l2src-test.o: v4l2src-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(v4l2src_test_CFLAGS) $(CFLAGS) -MT v4l2src_test-v4l2src-test.o -MD -MP -MF $(DEPDIR)/v4l2src_test-v4l2src-test.Tpo -c -o v4l2src_test-v4l2src-test.o `test -f 'v4l2src-test.c' || echo '$(srcdir)/'`v4l2src-test.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/v4l2src_test-v4l2src-test.Tpo $(DEPDIR)/v4l2src_test-v4l2src-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(v4l2src_test_CFLAGS) $(CFLAGS) -MT v4l2src_test-v4l2src-test.o -MD -MP -MF $(DEPDIR)/v4l2src_test-v4l2src-test.Tpo -c -o v4l2src_test-v4l2src-test.o `test -f 'v4l2src-test.c' || echo '$(srcdir)/'`v4l2src-test.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/v4l2src_test-v4l2src-test.Tpo $(DEPDIR)/v4l2src_test-v4l2src-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='v4l2src-test.c' object='v4l2src_test-v4l2src-test.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(v4l2src_test_CFLAGS) $(CFLAGS) -c -o v4l2src_test-v4l2src-test.o `test -f 'v4l2src-test.c' || echo '$(srcdir)/'`v4l2src-test.c
 
 v4l2src_test-v4l2src-test.obj: v4l2src-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(v4l2src_test_CFLAGS) $(CFLAGS) -MT v4l2src_test-v4l2src-test.obj -MD -MP -MF $(DEPDIR)/v4l2src_test-v4l2src-test.Tpo -c -o v4l2src_test-v4l2src-test.obj `if test -f 'v4l2src-test.c'; then $(CYGPATH_W) 'v4l2src-test.c'; else $(CYGPATH_W) '$(srcdir)/v4l2src-test.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/v4l2src_test-v4l2src-test.Tpo $(DEPDIR)/v4l2src_test-v4l2src-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(v4l2src_test_CFLAGS) $(CFLAGS) -MT v4l2src_test-v4l2src-test.obj -MD -MP -MF $(DEPDIR)/v4l2src_test-v4l2src-test.Tpo -c -o v4l2src_test-v4l2src-test.obj `if test -f 'v4l2src-test.c'; then $(CYGPATH_W) 'v4l2src-test.c'; else $(CYGPATH_W) '$(srcdir)/v4l2src-test.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/v4l2src_test-v4l2src-test.Tpo $(DEPDIR)/v4l2src_test-v4l2src-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='v4l2src-test.c' object='v4l2src_test-v4l2src-test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(v4l2src_test_CFLAGS) $(CFLAGS) -c -o v4l2src_test-v4l2src-test.obj `if test -f 'v4l2src-test.c'; then $(CYGPATH_W) 'v4l2src-test.c'; else $(CYGPATH_W) '$(srcdir)/v4l2src-test.c'; fi`
 
 videobox_test-videobox-test.o: videobox-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videobox_test_CFLAGS) $(CFLAGS) -MT videobox_test-videobox-test.o -MD -MP -MF $(DEPDIR)/videobox_test-videobox-test.Tpo -c -o videobox_test-videobox-test.o `test -f 'videobox-test.c' || echo '$(srcdir)/'`videobox-test.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/videobox_test-videobox-test.Tpo $(DEPDIR)/videobox_test-videobox-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videobox_test_CFLAGS) $(CFLAGS) -MT videobox_test-videobox-test.o -MD -MP -MF $(DEPDIR)/videobox_test-videobox-test.Tpo -c -o videobox_test-videobox-test.o `test -f 'videobox-test.c' || echo '$(srcdir)/'`videobox-test.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/videobox_test-videobox-test.Tpo $(DEPDIR)/videobox_test-videobox-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='videobox-test.c' object='videobox_test-videobox-test.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videobox_test_CFLAGS) $(CFLAGS) -c -o videobox_test-videobox-test.o `test -f 'videobox-test.c' || echo '$(srcdir)/'`videobox-test.c
 
 videobox_test-videobox-test.obj: videobox-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videobox_test_CFLAGS) $(CFLAGS) -MT videobox_test-videobox-test.obj -MD -MP -MF $(DEPDIR)/videobox_test-videobox-test.Tpo -c -o videobox_test-videobox-test.obj `if test -f 'videobox-test.c'; then $(CYGPATH_W) 'videobox-test.c'; else $(CYGPATH_W) '$(srcdir)/videobox-test.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/videobox_test-videobox-test.Tpo $(DEPDIR)/videobox_test-videobox-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videobox_test_CFLAGS) $(CFLAGS) -MT videobox_test-videobox-test.obj -MD -MP -MF $(DEPDIR)/videobox_test-videobox-test.Tpo -c -o videobox_test-videobox-test.obj `if test -f 'videobox-test.c'; then $(CYGPATH_W) 'videobox-test.c'; else $(CYGPATH_W) '$(srcdir)/videobox-test.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/videobox_test-videobox-test.Tpo $(DEPDIR)/videobox_test-videobox-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='videobox-test.c' object='videobox_test-videobox-test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videobox_test_CFLAGS) $(CFLAGS) -c -o videobox_test-videobox-test.obj `if test -f 'videobox-test.c'; then $(CYGPATH_W) 'videobox-test.c'; else $(CYGPATH_W) '$(srcdir)/videobox-test.c'; fi`
 
 videocrop_test-videocrop-test.o: videocrop-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop_test_CFLAGS) $(CFLAGS) -MT videocrop_test-videocrop-test.o -MD -MP -MF $(DEPDIR)/videocrop_test-videocrop-test.Tpo -c -o videocrop_test-videocrop-test.o `test -f 'videocrop-test.c' || echo '$(srcdir)/'`videocrop-test.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/videocrop_test-videocrop-test.Tpo $(DEPDIR)/videocrop_test-videocrop-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop_test_CFLAGS) $(CFLAGS) -MT videocrop_test-videocrop-test.o -MD -MP -MF $(DEPDIR)/videocrop_test-videocrop-test.Tpo -c -o videocrop_test-videocrop-test.o `test -f 'videocrop-test.c' || echo '$(srcdir)/'`videocrop-test.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/videocrop_test-videocrop-test.Tpo $(DEPDIR)/videocrop_test-videocrop-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='videocrop-test.c' object='videocrop_test-videocrop-test.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop_test_CFLAGS) $(CFLAGS) -c -o videocrop_test-videocrop-test.o `test -f 'videocrop-test.c' || echo '$(srcdir)/'`videocrop-test.c
 
 videocrop_test-videocrop-test.obj: videocrop-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop_test_CFLAGS) $(CFLAGS) -MT videocrop_test-videocrop-test.obj -MD -MP -MF $(DEPDIR)/videocrop_test-videocrop-test.Tpo -c -o videocrop_test-videocrop-test.obj `if test -f 'videocrop-test.c'; then $(CYGPATH_W) 'videocrop-test.c'; else $(CYGPATH_W) '$(srcdir)/videocrop-test.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/videocrop_test-videocrop-test.Tpo $(DEPDIR)/videocrop_test-videocrop-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop_test_CFLAGS) $(CFLAGS) -MT videocrop_test-videocrop-test.obj -MD -MP -MF $(DEPDIR)/videocrop_test-videocrop-test.Tpo -c -o videocrop_test-videocrop-test.obj `if test -f 'videocrop-test.c'; then $(CYGPATH_W) 'videocrop-test.c'; else $(CYGPATH_W) '$(srcdir)/videocrop-test.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/videocrop_test-videocrop-test.Tpo $(DEPDIR)/videocrop_test-videocrop-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='videocrop-test.c' object='videocrop_test-videocrop-test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop_test_CFLAGS) $(CFLAGS) -c -o videocrop_test-videocrop-test.obj `if test -f 'videocrop-test.c'; then $(CYGPATH_W) 'videocrop-test.c'; else $(CYGPATH_W) '$(srcdir)/videocrop-test.c'; fi`
 
 videocrop2_test-videocrop2-test.o: videocrop2-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop2_test_CFLAGS) $(CFLAGS) -MT videocrop2_test-videocrop2-test.o -MD -MP -MF $(DEPDIR)/videocrop2_test-videocrop2-test.Tpo -c -o videocrop2_test-videocrop2-test.o `test -f 'videocrop2-test.c' || echo '$(srcdir)/'`videocrop2-test.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/videocrop2_test-videocrop2-test.Tpo $(DEPDIR)/videocrop2_test-videocrop2-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop2_test_CFLAGS) $(CFLAGS) -MT videocrop2_test-videocrop2-test.o -MD -MP -MF $(DEPDIR)/videocrop2_test-videocrop2-test.Tpo -c -o videocrop2_test-videocrop2-test.o `test -f 'videocrop2-test.c' || echo '$(srcdir)/'`videocrop2-test.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/videocrop2_test-videocrop2-test.Tpo $(DEPDIR)/videocrop2_test-videocrop2-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='videocrop2-test.c' object='videocrop2_test-videocrop2-test.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop2_test_CFLAGS) $(CFLAGS) -c -o videocrop2_test-videocrop2-test.o `test -f 'videocrop2-test.c' || echo '$(srcdir)/'`videocrop2-test.c
 
 videocrop2_test-videocrop2-test.obj: videocrop2-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop2_test_CFLAGS) $(CFLAGS) -MT videocrop2_test-videocrop2-test.obj -MD -MP -MF $(DEPDIR)/videocrop2_test-videocrop2-test.Tpo -c -o videocrop2_test-videocrop2-test.obj `if test -f 'videocrop2-test.c'; then $(CYGPATH_W) 'videocrop2-test.c'; else $(CYGPATH_W) '$(srcdir)/videocrop2-test.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/videocrop2_test-videocrop2-test.Tpo $(DEPDIR)/videocrop2_test-videocrop2-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop2_test_CFLAGS) $(CFLAGS) -MT videocrop2_test-videocrop2-test.obj -MD -MP -MF $(DEPDIR)/videocrop2_test-videocrop2-test.Tpo -c -o videocrop2_test-videocrop2-test.obj `if test -f 'videocrop2-test.c'; then $(CYGPATH_W) 'videocrop2-test.c'; else $(CYGPATH_W) '$(srcdir)/videocrop2-test.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/videocrop2_test-videocrop2-test.Tpo $(DEPDIR)/videocrop2_test-videocrop2-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='videocrop2-test.c' object='videocrop2_test-videocrop2-test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(videocrop2_test_CFLAGS) $(CFLAGS) -c -o videocrop2_test-videocrop2-test.obj `if test -f 'videocrop2-test.c'; then $(CYGPATH_W) 'videocrop2-test.c'; else $(CYGPATH_W) '$(srcdir)/videocrop2-test.c'; fi`
 
 ximagesrc_test-ximagesrc-test.o: ximagesrc-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ximagesrc_test_CFLAGS) $(CFLAGS) -MT ximagesrc_test-ximagesrc-test.o -MD -MP -MF $(DEPDIR)/ximagesrc_test-ximagesrc-test.Tpo -c -o ximagesrc_test-ximagesrc-test.o `test -f 'ximagesrc-test.c' || echo '$(srcdir)/'`ximagesrc-test.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ximagesrc_test-ximagesrc-test.Tpo $(DEPDIR)/ximagesrc_test-ximagesrc-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ximagesrc_test_CFLAGS) $(CFLAGS) -MT ximagesrc_test-ximagesrc-test.o -MD -MP -MF $(DEPDIR)/ximagesrc_test-ximagesrc-test.Tpo -c -o ximagesrc_test-ximagesrc-test.o `test -f 'ximagesrc-test.c' || echo '$(srcdir)/'`ximagesrc-test.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ximagesrc_test-ximagesrc-test.Tpo $(DEPDIR)/ximagesrc_test-ximagesrc-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ximagesrc-test.c' object='ximagesrc_test-ximagesrc-test.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ximagesrc_test_CFLAGS) $(CFLAGS) -c -o ximagesrc_test-ximagesrc-test.o `test -f 'ximagesrc-test.c' || echo '$(srcdir)/'`ximagesrc-test.c
 
 ximagesrc_test-ximagesrc-test.obj: ximagesrc-test.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ximagesrc_test_CFLAGS) $(CFLAGS) -MT ximagesrc_test-ximagesrc-test.obj -MD -MP -MF $(DEPDIR)/ximagesrc_test-ximagesrc-test.Tpo -c -o ximagesrc_test-ximagesrc-test.obj `if test -f 'ximagesrc-test.c'; then $(CYGPATH_W) 'ximagesrc-test.c'; else $(CYGPATH_W) '$(srcdir)/ximagesrc-test.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ximagesrc_test-ximagesrc-test.Tpo $(DEPDIR)/ximagesrc_test-ximagesrc-test.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ximagesrc_test_CFLAGS) $(CFLAGS) -MT ximagesrc_test-ximagesrc-test.obj -MD -MP -MF $(DEPDIR)/ximagesrc_test-ximagesrc-test.Tpo -c -o ximagesrc_test-ximagesrc-test.obj `if test -f 'ximagesrc-test.c'; then $(CYGPATH_W) 'ximagesrc-test.c'; else $(CYGPATH_W) '$(srcdir)/ximagesrc-test.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ximagesrc_test-ximagesrc-test.Tpo $(DEPDIR)/ximagesrc_test-ximagesrc-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ximagesrc-test.c' object='ximagesrc_test-ximagesrc-test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ximagesrc_test_CFLAGS) $(CFLAGS) -c -o ximagesrc_test-ximagesrc-test.obj `if test -f 'ximagesrc-test.c'; then $(CYGPATH_W) 'ximagesrc-test.c'; else $(CYGPATH_W) '$(srcdir)/ximagesrc-test.c'; fi`

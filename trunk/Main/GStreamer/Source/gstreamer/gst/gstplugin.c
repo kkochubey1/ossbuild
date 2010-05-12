@@ -105,7 +105,6 @@ static GstPlugin *gst_plugin_register_func (GstPlugin * plugin,
     const GstPluginDesc * desc, gpointer user_data);
 static void gst_plugin_desc_copy (GstPluginDesc * dest,
     const GstPluginDesc * src);
-static void gst_plugin_desc_free (GstPluginDesc * desc);
 
 static void gst_plugin_ext_dep_free (GstPluginDep * dep);
 
@@ -133,7 +132,6 @@ gst_plugin_finalize (GObject * object)
   }
   g_free (plugin->filename);
   g_free (plugin->basename);
-  gst_plugin_desc_free (&plugin->desc);
 
   g_list_foreach (plugin->priv->deps, (GFunc) gst_plugin_ext_dep_free, NULL);
   g_list_free (plugin->priv->deps);
@@ -165,6 +163,9 @@ gst_plugin_error_quark (void)
 }
 
 #ifndef GST_REMOVE_DEPRECATED
+#ifdef GST_DISABLE_DEPRECATED
+void _gst_plugin_register_static (GstPluginDesc * desc);
+#endif
 /* this function can be called in the GCC constructor extension, before
  * the _gst_plugin_initialize() was called. In that case, we store the
  * plugin description in a list to initialize it when we open the main
@@ -224,7 +225,7 @@ _gst_plugin_register_static (GstPluginDesc * desc)
  */
 gboolean
 gst_plugin_register_static (gint major_version, gint minor_version,
-    const gchar * name, gchar * description, GstPluginInitFunc init_func,
+    const gchar * name, const gchar * description, GstPluginInitFunc init_func,
     const gchar * version, const gchar * license, const gchar * source,
     const gchar * package, const gchar * origin)
 {
@@ -291,7 +292,7 @@ gst_plugin_register_static (gint major_version, gint minor_version,
  */
 gboolean
 gst_plugin_register_static_full (gint major_version, gint minor_version,
-    const gchar * name, gchar * description,
+    const gchar * name, const gchar * description,
     GstPluginInitFullFunc init_full_func, const gchar * version,
     const gchar * license, const gchar * source, const gchar * package,
     const gchar * origin, gpointer user_data)
@@ -411,18 +412,22 @@ gst_plugin_register_func (GstPlugin * plugin, const GstPluginDesc * desc,
 
   gst_plugin_desc_copy (&plugin->desc, desc);
 
+  /* make resident so we're really sure it never gets unloaded again.
+   * Theoretically this is not needed, but practically it doesn't hurt.
+   * And we're rather safe than sorry. */
+  if (plugin->module)
+    g_module_make_resident (plugin->module);
+
   if (user_data) {
     if (!(((GstPluginInitFullFunc) (desc->plugin_init)) (plugin, user_data))) {
       if (GST_CAT_DEFAULT)
         GST_WARNING ("plugin \"%s\" failed to initialise", plugin->filename);
-      plugin->module = NULL;
       return NULL;
     }
   } else {
     if (!((desc->plugin_init) (plugin))) {
       if (GST_CAT_DEFAULT)
         GST_WARNING ("plugin \"%s\" failed to initialise", plugin->filename);
-      plugin->module = NULL;
       return NULL;
     }
   }
@@ -512,8 +517,6 @@ _gst_plugin_fault_handler_setup (void)
 {
 }
 #endif /* HAVE_SIGACTION */
-
-static void _gst_plugin_fault_handler_setup ();
 
 static GStaticMutex gst_plugin_loading_mutex = G_STATIC_MUTEX_INIT;
 
@@ -625,9 +628,6 @@ gst_plugin_load_file (const gchar * filename, GError ** error)
     CHECK_PLUGIN_DESC_FIELD (plugin->orig_desc, source, filename);
     CHECK_PLUGIN_DESC_FIELD (plugin->orig_desc, package, filename);
     CHECK_PLUGIN_DESC_FIELD (plugin->orig_desc, origin, filename);
-  } else {
-    /* this is overwritten by gst_plugin_register_func() */
-    g_free (plugin->desc.description);
   }
 
   GST_LOG ("Plugin %p for file \"%s\" prepared, calling entry function...",
@@ -650,7 +650,6 @@ gst_plugin_load_file (const gchar * filename, GError ** error)
         GST_PLUGIN_ERROR_MODULE,
         "File \"%s\" appears to be a GStreamer plugin, but it failed to initialize",
         filename);
-    g_module_close (module);
     goto return_error;
   }
 
@@ -682,22 +681,13 @@ gst_plugin_desc_copy (GstPluginDesc * dest, const GstPluginDesc * src)
   dest->major_version = src->major_version;
   dest->minor_version = src->minor_version;
   dest->name = g_intern_string (src->name);
-  /* maybe intern the description too, just for convenience? */
-  dest->description = g_strdup (src->description);
+  dest->description = g_intern_string (src->description);
   dest->plugin_init = src->plugin_init;
   dest->version = g_intern_string (src->version);
   dest->license = g_intern_string (src->license);
   dest->source = g_intern_string (src->source);
   dest->package = g_intern_string (src->package);
   dest->origin = g_intern_string (src->origin);
-}
-
-/* unused */
-static void
-gst_plugin_desc_free (GstPluginDesc * desc)
-{
-  g_free (desc->description);
-  memset (desc, 0, sizeof (GstPluginDesc));
 }
 
 /**
@@ -867,7 +857,7 @@ gst_plugin_is_loaded (GstPlugin * plugin)
  * @plugin: a plugin
  *
  * Gets the plugin specific data cache. If it is %NULL there is no cached data
- * stored. This is the case when the registry is getting rebuild.
+ * stored. This is the case when the registry is getting rebuilt.
  *
  * Returns: The cached data as a #GstStructure or %NULL.
  *
@@ -889,7 +879,7 @@ gst_plugin_get_cache_data (GstPlugin * plugin)
  * Adds plugin specific data to cache. Passes the ownership of the structure to
  * the @plugin.
  *
- * The cache is flushed every time the registry is rebuild.
+ * The cache is flushed every time the registry is rebuilt.
  *
  * Since: 0.10.24
  */
@@ -1541,7 +1531,7 @@ gst_plugin_ext_dep_free (GstPluginDep * dep)
   g_strfreev (dep->env_vars);
   g_strfreev (dep->paths);
   g_strfreev (dep->names);
-  g_free (dep);
+  g_slice_free (GstPluginDep, dep);
 }
 
 static gboolean
@@ -1622,7 +1612,7 @@ gst_plugin_add_dependency (GstPlugin * plugin, const gchar ** env_vars,
     }
   }
 
-  dep = g_new0 (GstPluginDep, 1);
+  dep = g_slice_new (GstPluginDep);
 
   dep->env_vars = g_strdupv ((gchar **) env_vars);
   dep->paths = g_strdupv ((gchar **) paths);

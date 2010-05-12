@@ -26,16 +26,18 @@ libgstcheck_@GST_MAJORMINOR@_la_LDFLAGS = \
 libgstcheck_@GST_MAJORMINOR@includedir =		\
 	$(includedir)/gstreamer-@GST_MAJORMINOR@/gst/check
 
-libgstcheck_@GST_MAJORMINOR@include_HEADERS =	\
-	internal-check.h			\
+libgstcheck_@GST_MAJORMINOR@include_HEADERS =	 \
 	gstbufferstraw.h			\
 	gstcheck.h				\
 	gstconsistencychecker.h
 
+nodist_libgstcheck_@GST_MAJORMINOR@include_HEADERS =	\
+	internal-check.h	
+
 CLEANFILES = *.gcno *.gcda *.gcov internal-check.h $(SYMBOLS_FILE)
 
 internal-check.h: $(top_builddir)/libs/gst/check/libcheck/check.h
-	cp $(top_builddir)/libs/gst/check/libcheck/check.h internal-check.h
+	$(AM_V_GEN)cp $(top_builddir)/libs/gst/check/libcheck/check.h internal-check.h
 
 %.c.gcov: .libs/libgstcheck_@GST_MAJORMINOR@_la-%.gcda %.c
 	$(GCOV) -b -f -o $^ > $@.out
@@ -93,12 +95,12 @@ LIBGSTCHECK_EXPORTED_SYMBOLS = \
 # It is there for purpose. (Bug #602093)
 CHECK_SYMS=`$(SED) -n -e 's/^..*CK_EXPORT[ ]\{1,\}\([_0-9ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz]\{1,\}\)..*$$/\1/p' @top_srcdir@/libs/gst/check/libcheck/check.h.in`
 print-check-symbols:
-	for s in $(CHECK_SYMS); do \
+	@for s in $(CHECK_SYMS); do \
 	  echo $$s; \
 	done;
 
 $(SYMBOLS_FILE):
-	rm -f $(SYMBOLS_FILE) 2>/dev/null; \
+	$(AM_V_GEN)rm -f $(SYMBOLS_FILE) 2>/dev/null; \
 	for s in $(LIBGSTCHECK_EXPORTED_SYMBOLS) $(CHECK_SYMS); do \
 	  echo $$s >> $(SYMBOLS_FILE); \
 	done
@@ -106,19 +108,21 @@ $(SYMBOLS_FILE):
 if HAVE_INTROSPECTION
 BUILT_GIRSOURCES = GstCheck-@GST_MAJORMINOR@.gir
 
-gir_headers=$(patsubst %,$(srcdir)/%, $(libgstcheck_@GST_MAJORMINOR@include_HEADERS))
+gir_headers=$(patsubst %,$(srcdir)/%, $(libgstcheck_@GST_MAJORMINOR@include_HEADERS)) \
+    $(patsubst %,$(builddir)/%, $(nodist_libgstcheck_@GST_MAJORMINOR@include_HEADERS))
 gir_sources=$(patsubst %,$(srcdir)/%, $(libgstcheck_@GST_MAJORMINOR@_la_SOURCES))
-gir_cincludes=$(patsubst %,--c-include='gst/check/%',$(libgstcheck_@GST_MAJORMINOR@include_HEADERS))
+gir_cincludes=$(patsubst %,--c-include='gst/check/%',$(libgstcheck_@GST_MAJORMINOR@include_HEADERS)) \
+    $(patsubst %,--c-include='gst/check/%',$(nodist_libgstcheck_@GST_MAJORMINOR@include_HEADERS))
 
 GstCheck-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstcheck-@GST_MAJORMINOR@.la
-	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
+	$(AM_V_GEN)PKG_CONFIG_PATH="$(top_builddir)/pkgconfig:$(PKG_CONFIG_PATH)" \
 		$(INTROSPECTION_SCANNER) -v --namespace GstCheck \
 		--nsversion=@GST_MAJORMINOR@ \
 		--strip-prefix=Gst \
 		-I$(top_srcdir) \
 		$(gir_cincludes) \
 		--add-include-path=$(top_builddir)/gst \
-		--library=gstcheck-0.10 \
+		--library=libgstcheck-0.10.la \
 		--include=Gst-0.10 \
 		--libtool="$(top_builddir)/libtool" \
 		--pkg gstreamer-0.10 \
@@ -136,7 +140,7 @@ typelibsdir = $(libdir)/girepository-1.0/
 typelibs_DATA = $(BUILT_GIRSOURCES:.gir=.typelib)
 
 %.typelib: %.gir $(INTROSPECTION_COMPILER)
-	$(INTROSPECTION_COMPILER) --includedir=$(srcdir) --includedir=$(builddir) --includedir=$(top_builddir)/gst $(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+	$(AM_V_GEN)$(INTROSPECTION_COMPILER) --includedir=$(srcdir) --includedir=$(builddir) --includedir=$(top_builddir)/gst $(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
 
 CLEANFILES += $(BUILT_GIRSOURCES) $(typelibs_DATA)
 endif

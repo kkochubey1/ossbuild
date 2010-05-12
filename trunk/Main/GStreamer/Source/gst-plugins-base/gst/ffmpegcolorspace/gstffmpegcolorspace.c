@@ -43,14 +43,6 @@ GST_DEBUG_CATEGORY (ffmpegcolorspace_debug);
 #define GST_CAT_DEFAULT ffmpegcolorspace_debug
 GST_DEBUG_CATEGORY (ffmpegcolorspace_performance);
 
-/* elementfactory information */
-static const GstElementDetails ffmpegcsp_details =
-GST_ELEMENT_DETAILS ("FFMPEG Colorspace converter",
-    "Filter/Converter/Video",
-    "Converts video from one colorspace to another",
-    "GStreamer maintainers <gstreamer-devel@lists.sourceforge.net>");
-
-
 /* Stereo signals and args */
 enum
 {
@@ -384,7 +376,10 @@ gst_ffmpegcsp_base_init (GstFFMpegCspClass * klass)
 
   gst_element_class_add_pad_template (element_class, srctempl);
   gst_element_class_add_pad_template (element_class, sinktempl);
-  gst_element_class_set_details (element_class, &ffmpegcsp_details);
+  gst_element_class_set_details_simple (element_class,
+      "FFMPEG Colorspace converter", "Filter/Converter/Video",
+      "Converts video from one colorspace to another",
+      "GStreamer maintainers <gstreamer-devel@lists.sourceforge.net>");
 }
 
 static void
@@ -547,14 +542,16 @@ not_supported:
   }
 }
 
-gboolean
-gst_ffmpegcolorspace_register (GstPlugin * plugin)
+static gboolean
+plugin_init (GstPlugin * plugin)
 {
   GstCaps *caps;
 
   GST_DEBUG_CATEGORY_INIT (ffmpegcolorspace_debug, "ffmpegcolorspace", 0,
       "FFMPEG-based colorspace converter");
   GST_DEBUG_CATEGORY_GET (ffmpegcolorspace_performance, "GST_PERFORMANCE");
+
+  avcodec_init ();
 
   /* template caps */
   caps = gst_ffmpegcsp_codectype_to_caps (CODEC_TYPE_VIDEO, NULL);
@@ -569,3 +566,9 @@ gst_ffmpegcolorspace_register (GstPlugin * plugin)
   return gst_element_register (plugin, "ffmpegcolorspace",
       GST_RANK_NONE, GST_TYPE_FFMPEGCSP);
 }
+
+GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,
+    GST_VERSION_MINOR,
+    "ffmpegcolorspace",
+    "colorspace conversion copied from FFMpeg " FFMPEG_VERSION,
+    plugin_init, VERSION, "LGPL", "FFMpeg", "http://ffmpeg.sourceforge.net/")

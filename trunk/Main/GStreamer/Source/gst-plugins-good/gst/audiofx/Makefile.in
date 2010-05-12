@@ -64,8 +64,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/aalib.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
 	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -125,7 +124,10 @@ am_libgstaudiofx_la_OBJECTS = libgstaudiofx_la-audiofx.lo \
 	libgstaudiofx_la-audiofirfilter.lo \
 	libgstaudiofx_la-audioecho.lo
 libgstaudiofx_la_OBJECTS = $(am_libgstaudiofx_la_OBJECTS)
-libgstaudiofx_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstaudiofx_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) \
 	$(libgstaudiofx_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -135,13 +137,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstaudiofx_la_SOURCES)
 DIST_SOURCES = $(libgstaudiofx_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -154,7 +169,7 @@ AALIB_LIBS = @AALIB_LIBS@
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ANNODEX_CFLAGS = @ANNODEX_CFLAGS@
 ANNODEX_LIBS = @ANNODEX_LIBS@
 AR = @AR@
@@ -205,8 +220,6 @@ ESD_CFLAGS = @ESD_CFLAGS@
 ESD_CONFIG = @ESD_CONFIG@
 ESD_LIBS = @ESD_LIBS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLAC_CFLAGS = @FLAC_CFLAGS@
@@ -314,7 +327,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -363,7 +375,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RAW1394_CFLAGS = @RAW1394_CFLAGS@
 RAW1394_LIBS = @RAW1394_LIBS@
@@ -381,11 +392,12 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_CXXFLAGS = @TAGLIB_CXXFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WAVPACK_CFLAGS = @WAVPACK_CFLAGS@
 WAVPACK_LIBS = @WAVPACK_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -457,7 +469,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -584,7 +595,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstaudiofx.la: $(libgstaudiofx_la_OBJECTS) $(libgstaudiofx_la_DEPENDENCIES) 
-	$(libgstaudiofx_la_LINK) -rpath $(plugindir) $(libgstaudiofx_la_OBJECTS) $(libgstaudiofx_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstaudiofx_la_LINK) -rpath $(plugindir) $(libgstaudiofx_la_OBJECTS) $(libgstaudiofx_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -609,130 +620,148 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstaudiofx_la-audiowsinclimit.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstaudiofx_la-audiofx.lo: audiofx.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiofx.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiofx.Tpo -c -o libgstaudiofx_la-audiofx.lo `test -f 'audiofx.c' || echo '$(srcdir)/'`audiofx.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiofx.Tpo $(DEPDIR)/libgstaudiofx_la-audiofx.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiofx.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiofx.Tpo -c -o libgstaudiofx_la-audiofx.lo `test -f 'audiofx.c' || echo '$(srcdir)/'`audiofx.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiofx.Tpo $(DEPDIR)/libgstaudiofx_la-audiofx.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiofx.c' object='libgstaudiofx_la-audiofx.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiofx.lo `test -f 'audiofx.c' || echo '$(srcdir)/'`audiofx.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiofx.lo `test -f 'audiofx.c' || echo '$(srcdir)/'`audiofx.c
 
 libgstaudiofx_la-audiopanorama.lo: audiopanorama.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiopanorama.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiopanorama.Tpo -c -o libgstaudiofx_la-audiopanorama.lo `test -f 'audiopanorama.c' || echo '$(srcdir)/'`audiopanorama.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiopanorama.Tpo $(DEPDIR)/libgstaudiofx_la-audiopanorama.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiopanorama.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiopanorama.Tpo -c -o libgstaudiofx_la-audiopanorama.lo `test -f 'audiopanorama.c' || echo '$(srcdir)/'`audiopanorama.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiopanorama.Tpo $(DEPDIR)/libgstaudiofx_la-audiopanorama.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiopanorama.c' object='libgstaudiofx_la-audiopanorama.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiopanorama.lo `test -f 'audiopanorama.c' || echo '$(srcdir)/'`audiopanorama.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiopanorama.lo `test -f 'audiopanorama.c' || echo '$(srcdir)/'`audiopanorama.c
 
 libgstaudiofx_la-audioinvert.lo: audioinvert.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audioinvert.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audioinvert.Tpo -c -o libgstaudiofx_la-audioinvert.lo `test -f 'audioinvert.c' || echo '$(srcdir)/'`audioinvert.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audioinvert.Tpo $(DEPDIR)/libgstaudiofx_la-audioinvert.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audioinvert.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audioinvert.Tpo -c -o libgstaudiofx_la-audioinvert.lo `test -f 'audioinvert.c' || echo '$(srcdir)/'`audioinvert.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audioinvert.Tpo $(DEPDIR)/libgstaudiofx_la-audioinvert.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audioinvert.c' object='libgstaudiofx_la-audioinvert.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audioinvert.lo `test -f 'audioinvert.c' || echo '$(srcdir)/'`audioinvert.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audioinvert.lo `test -f 'audioinvert.c' || echo '$(srcdir)/'`audioinvert.c
 
 libgstaudiofx_la-audioamplify.lo: audioamplify.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audioamplify.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audioamplify.Tpo -c -o libgstaudiofx_la-audioamplify.lo `test -f 'audioamplify.c' || echo '$(srcdir)/'`audioamplify.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audioamplify.Tpo $(DEPDIR)/libgstaudiofx_la-audioamplify.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audioamplify.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audioamplify.Tpo -c -o libgstaudiofx_la-audioamplify.lo `test -f 'audioamplify.c' || echo '$(srcdir)/'`audioamplify.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audioamplify.Tpo $(DEPDIR)/libgstaudiofx_la-audioamplify.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audioamplify.c' object='libgstaudiofx_la-audioamplify.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audioamplify.lo `test -f 'audioamplify.c' || echo '$(srcdir)/'`audioamplify.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audioamplify.lo `test -f 'audioamplify.c' || echo '$(srcdir)/'`audioamplify.c
 
 libgstaudiofx_la-audiodynamic.lo: audiodynamic.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiodynamic.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiodynamic.Tpo -c -o libgstaudiofx_la-audiodynamic.lo `test -f 'audiodynamic.c' || echo '$(srcdir)/'`audiodynamic.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiodynamic.Tpo $(DEPDIR)/libgstaudiofx_la-audiodynamic.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiodynamic.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiodynamic.Tpo -c -o libgstaudiofx_la-audiodynamic.lo `test -f 'audiodynamic.c' || echo '$(srcdir)/'`audiodynamic.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiodynamic.Tpo $(DEPDIR)/libgstaudiofx_la-audiodynamic.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiodynamic.c' object='libgstaudiofx_la-audiodynamic.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiodynamic.lo `test -f 'audiodynamic.c' || echo '$(srcdir)/'`audiodynamic.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiodynamic.lo `test -f 'audiodynamic.c' || echo '$(srcdir)/'`audiodynamic.c
 
 libgstaudiofx_la-audiokaraoke.lo: audiokaraoke.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiokaraoke.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiokaraoke.Tpo -c -o libgstaudiofx_la-audiokaraoke.lo `test -f 'audiokaraoke.c' || echo '$(srcdir)/'`audiokaraoke.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiokaraoke.Tpo $(DEPDIR)/libgstaudiofx_la-audiokaraoke.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiokaraoke.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiokaraoke.Tpo -c -o libgstaudiofx_la-audiokaraoke.lo `test -f 'audiokaraoke.c' || echo '$(srcdir)/'`audiokaraoke.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiokaraoke.Tpo $(DEPDIR)/libgstaudiofx_la-audiokaraoke.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiokaraoke.c' object='libgstaudiofx_la-audiokaraoke.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiokaraoke.lo `test -f 'audiokaraoke.c' || echo '$(srcdir)/'`audiokaraoke.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiokaraoke.lo `test -f 'audiokaraoke.c' || echo '$(srcdir)/'`audiokaraoke.c
 
 libgstaudiofx_la-audiofxbaseiirfilter.lo: audiofxbaseiirfilter.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiofxbaseiirfilter.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiofxbaseiirfilter.Tpo -c -o libgstaudiofx_la-audiofxbaseiirfilter.lo `test -f 'audiofxbaseiirfilter.c' || echo '$(srcdir)/'`audiofxbaseiirfilter.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiofxbaseiirfilter.Tpo $(DEPDIR)/libgstaudiofx_la-audiofxbaseiirfilter.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiofxbaseiirfilter.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiofxbaseiirfilter.Tpo -c -o libgstaudiofx_la-audiofxbaseiirfilter.lo `test -f 'audiofxbaseiirfilter.c' || echo '$(srcdir)/'`audiofxbaseiirfilter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiofxbaseiirfilter.Tpo $(DEPDIR)/libgstaudiofx_la-audiofxbaseiirfilter.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiofxbaseiirfilter.c' object='libgstaudiofx_la-audiofxbaseiirfilter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiofxbaseiirfilter.lo `test -f 'audiofxbaseiirfilter.c' || echo '$(srcdir)/'`audiofxbaseiirfilter.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiofxbaseiirfilter.lo `test -f 'audiofxbaseiirfilter.c' || echo '$(srcdir)/'`audiofxbaseiirfilter.c
 
 libgstaudiofx_la-audiocheblimit.lo: audiocheblimit.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiocheblimit.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiocheblimit.Tpo -c -o libgstaudiofx_la-audiocheblimit.lo `test -f 'audiocheblimit.c' || echo '$(srcdir)/'`audiocheblimit.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiocheblimit.Tpo $(DEPDIR)/libgstaudiofx_la-audiocheblimit.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiocheblimit.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiocheblimit.Tpo -c -o libgstaudiofx_la-audiocheblimit.lo `test -f 'audiocheblimit.c' || echo '$(srcdir)/'`audiocheblimit.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiocheblimit.Tpo $(DEPDIR)/libgstaudiofx_la-audiocheblimit.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiocheblimit.c' object='libgstaudiofx_la-audiocheblimit.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiocheblimit.lo `test -f 'audiocheblimit.c' || echo '$(srcdir)/'`audiocheblimit.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiocheblimit.lo `test -f 'audiocheblimit.c' || echo '$(srcdir)/'`audiocheblimit.c
 
 libgstaudiofx_la-audiochebband.lo: audiochebband.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiochebband.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiochebband.Tpo -c -o libgstaudiofx_la-audiochebband.lo `test -f 'audiochebband.c' || echo '$(srcdir)/'`audiochebband.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiochebband.Tpo $(DEPDIR)/libgstaudiofx_la-audiochebband.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiochebband.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiochebband.Tpo -c -o libgstaudiofx_la-audiochebband.lo `test -f 'audiochebband.c' || echo '$(srcdir)/'`audiochebband.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiochebband.Tpo $(DEPDIR)/libgstaudiofx_la-audiochebband.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiochebband.c' object='libgstaudiofx_la-audiochebband.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiochebband.lo `test -f 'audiochebband.c' || echo '$(srcdir)/'`audiochebband.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiochebband.lo `test -f 'audiochebband.c' || echo '$(srcdir)/'`audiochebband.c
 
 libgstaudiofx_la-audioiirfilter.lo: audioiirfilter.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audioiirfilter.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audioiirfilter.Tpo -c -o libgstaudiofx_la-audioiirfilter.lo `test -f 'audioiirfilter.c' || echo '$(srcdir)/'`audioiirfilter.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audioiirfilter.Tpo $(DEPDIR)/libgstaudiofx_la-audioiirfilter.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audioiirfilter.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audioiirfilter.Tpo -c -o libgstaudiofx_la-audioiirfilter.lo `test -f 'audioiirfilter.c' || echo '$(srcdir)/'`audioiirfilter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audioiirfilter.Tpo $(DEPDIR)/libgstaudiofx_la-audioiirfilter.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audioiirfilter.c' object='libgstaudiofx_la-audioiirfilter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audioiirfilter.lo `test -f 'audioiirfilter.c' || echo '$(srcdir)/'`audioiirfilter.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audioiirfilter.lo `test -f 'audioiirfilter.c' || echo '$(srcdir)/'`audioiirfilter.c
 
 libgstaudiofx_la-audiofxbasefirfilter.lo: audiofxbasefirfilter.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiofxbasefirfilter.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiofxbasefirfilter.Tpo -c -o libgstaudiofx_la-audiofxbasefirfilter.lo `test -f 'audiofxbasefirfilter.c' || echo '$(srcdir)/'`audiofxbasefirfilter.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiofxbasefirfilter.Tpo $(DEPDIR)/libgstaudiofx_la-audiofxbasefirfilter.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiofxbasefirfilter.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiofxbasefirfilter.Tpo -c -o libgstaudiofx_la-audiofxbasefirfilter.lo `test -f 'audiofxbasefirfilter.c' || echo '$(srcdir)/'`audiofxbasefirfilter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiofxbasefirfilter.Tpo $(DEPDIR)/libgstaudiofx_la-audiofxbasefirfilter.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiofxbasefirfilter.c' object='libgstaudiofx_la-audiofxbasefirfilter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiofxbasefirfilter.lo `test -f 'audiofxbasefirfilter.c' || echo '$(srcdir)/'`audiofxbasefirfilter.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiofxbasefirfilter.lo `test -f 'audiofxbasefirfilter.c' || echo '$(srcdir)/'`audiofxbasefirfilter.c
 
 libgstaudiofx_la-audiowsincband.lo: audiowsincband.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiowsincband.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiowsincband.Tpo -c -o libgstaudiofx_la-audiowsincband.lo `test -f 'audiowsincband.c' || echo '$(srcdir)/'`audiowsincband.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiowsincband.Tpo $(DEPDIR)/libgstaudiofx_la-audiowsincband.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiowsincband.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiowsincband.Tpo -c -o libgstaudiofx_la-audiowsincband.lo `test -f 'audiowsincband.c' || echo '$(srcdir)/'`audiowsincband.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiowsincband.Tpo $(DEPDIR)/libgstaudiofx_la-audiowsincband.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiowsincband.c' object='libgstaudiofx_la-audiowsincband.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiowsincband.lo `test -f 'audiowsincband.c' || echo '$(srcdir)/'`audiowsincband.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiowsincband.lo `test -f 'audiowsincband.c' || echo '$(srcdir)/'`audiowsincband.c
 
 libgstaudiofx_la-audiowsinclimit.lo: audiowsinclimit.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiowsinclimit.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiowsinclimit.Tpo -c -o libgstaudiofx_la-audiowsinclimit.lo `test -f 'audiowsinclimit.c' || echo '$(srcdir)/'`audiowsinclimit.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiowsinclimit.Tpo $(DEPDIR)/libgstaudiofx_la-audiowsinclimit.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiowsinclimit.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiowsinclimit.Tpo -c -o libgstaudiofx_la-audiowsinclimit.lo `test -f 'audiowsinclimit.c' || echo '$(srcdir)/'`audiowsinclimit.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiowsinclimit.Tpo $(DEPDIR)/libgstaudiofx_la-audiowsinclimit.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiowsinclimit.c' object='libgstaudiofx_la-audiowsinclimit.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiowsinclimit.lo `test -f 'audiowsinclimit.c' || echo '$(srcdir)/'`audiowsinclimit.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiowsinclimit.lo `test -f 'audiowsinclimit.c' || echo '$(srcdir)/'`audiowsinclimit.c
 
 libgstaudiofx_la-audiofirfilter.lo: audiofirfilter.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiofirfilter.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiofirfilter.Tpo -c -o libgstaudiofx_la-audiofirfilter.lo `test -f 'audiofirfilter.c' || echo '$(srcdir)/'`audiofirfilter.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiofirfilter.Tpo $(DEPDIR)/libgstaudiofx_la-audiofirfilter.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audiofirfilter.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audiofirfilter.Tpo -c -o libgstaudiofx_la-audiofirfilter.lo `test -f 'audiofirfilter.c' || echo '$(srcdir)/'`audiofirfilter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audiofirfilter.Tpo $(DEPDIR)/libgstaudiofx_la-audiofirfilter.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiofirfilter.c' object='libgstaudiofx_la-audiofirfilter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiofirfilter.lo `test -f 'audiofirfilter.c' || echo '$(srcdir)/'`audiofirfilter.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audiofirfilter.lo `test -f 'audiofirfilter.c' || echo '$(srcdir)/'`audiofirfilter.c
 
 libgstaudiofx_la-audioecho.lo: audioecho.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audioecho.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audioecho.Tpo -c -o libgstaudiofx_la-audioecho.lo `test -f 'audioecho.c' || echo '$(srcdir)/'`audioecho.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstaudiofx_la-audioecho.Tpo $(DEPDIR)/libgstaudiofx_la-audioecho.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -MT libgstaudiofx_la-audioecho.lo -MD -MP -MF $(DEPDIR)/libgstaudiofx_la-audioecho.Tpo -c -o libgstaudiofx_la-audioecho.lo `test -f 'audioecho.c' || echo '$(srcdir)/'`audioecho.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstaudiofx_la-audioecho.Tpo $(DEPDIR)/libgstaudiofx_la-audioecho.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audioecho.c' object='libgstaudiofx_la-audioecho.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audioecho.lo `test -f 'audioecho.c' || echo '$(srcdir)/'`audioecho.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstaudiofx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstaudiofx_la_CFLAGS) $(CFLAGS) -c -o libgstaudiofx_la-audioecho.lo `test -f 'audioecho.c' || echo '$(srcdir)/'`audioecho.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -31,7 +31,8 @@
 
 #include <string.h>
 #include "gstwavenc.h"
-#include "riff.h"
+
+#include <gst/riff/riff-media.h>
 
 GST_DEBUG_CATEGORY_STATIC (wavenc_debug);
 #define GST_CAT_DEFAULT wavenc_debug
@@ -66,12 +67,6 @@ struct wave_header
   struct common_struct common;
   struct chunk_struct data;
 };
-
-static const GstElementDetails gst_wavenc_details =
-GST_ELEMENT_DETAILS ("WAV audio muxer",
-    "Codec/Muxer/Audio",
-    "Encode raw audio into WAV",
-    "Iain Holmes <iain@prettypeople.org>");
 
 /* FIXME: mono doesn't produce correct files it seems, at least mplayer xruns */
 /* Max. of two channels, more channels need WAVFORMATEX with
@@ -152,7 +147,9 @@ gst_wavenc_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &gst_wavenc_details);
+  gst_element_class_set_details_simple (element_class, "WAV audio muxer",
+      "Codec/Muxer/Audio",
+      "Encode raw audio into WAV", "Iain Holmes <iain@prettypeople.org>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_factory));
@@ -307,7 +304,7 @@ gst_wavenc_sink_setcaps (GstPad * pad, GstCaps * caps)
       GST_WARNING_OBJECT (wavenc, "caps incomplete");
       goto fail;
     }
-    wavenc->format = GST_RIFF_WAVE_FORMAT_FLOAT;
+    wavenc->format = GST_RIFF_WAVE_FORMAT_IEEE_FLOAT;
     wavenc->width = width;
   } else if (strcmp (name, "audio/x-alaw") == 0) {
     wavenc->format = GST_RIFF_WAVE_FORMAT_ALAW;

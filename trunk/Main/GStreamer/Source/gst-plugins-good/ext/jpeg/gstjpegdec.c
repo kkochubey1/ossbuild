@@ -38,20 +38,18 @@
 #include <string.h>
 
 #include "gstjpegdec.h"
+#include "gstjpeg.h"
 #include <gst/video/video.h>
 #include "gst/gst-i18n-plugin.h"
 #include <jerror.h>
-
-static const GstElementDetails gst_jpeg_dec_details =
-GST_ELEMENT_DETAILS ("JPEG image decoder",
-    "Codec/Decoder/Image",
-    "Decode images from JPEG format",
-    "Wim Taymans <wim@fluendo.com>");
 
 #define MIN_WIDTH  16
 #define MAX_WIDTH  65535
 #define MIN_HEIGHT 8
 #define MAX_HEIGHT 65535
+
+#define CINFO_GET_JPEGDEC(cinfo_ptr) \
+        (((struct GstJpegDecSourceMgr*)((cinfo_ptr)->src))->dec)
 
 #define JPEG_DEFAULT_IDCT_METHOD	JDCT_FASTEST
 
@@ -60,9 +58,6 @@ enum
   PROP_0,
   PROP_IDCT_METHOD
 };
-
-extern GType gst_idct_method_get_type (void);
-#define GST_TYPE_IDCT_METHOD (gst_idct_method_get_type())
 
 static GstStaticPadTemplate gst_jpeg_dec_src_pad_template =
 GST_STATIC_PAD_TEMPLATE ("src",
@@ -166,7 +161,9 @@ gst_jpeg_dec_base_init (gpointer g_class)
       gst_static_pad_template_get (&gst_jpeg_dec_src_pad_template));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_jpeg_dec_sink_pad_template));
-  gst_element_class_set_details (element_class, &gst_jpeg_dec_details);
+  gst_element_class_set_details_simple (element_class, "JPEG image decoder",
+      "Codec/Decoder/Image",
+      "Decode images from JPEG format", "Wim Taymans <wim@fluendo.com>");
 }
 
 static void
@@ -1034,6 +1031,9 @@ gst_jpeg_dec_chain (GstPad * pad, GstBuffer * buf)
   GST_LOG_OBJECT (dec, "num_components=%d", dec->cinfo.num_components);
   GST_LOG_OBJECT (dec, "jpeg_color_space=%d", dec->cinfo.jpeg_color_space);
 
+  if (dec->cinfo.num_components > 3)
+    goto components_not_supported;
+
 #ifndef GST_DISABLE_GST_DEBUG
   {
     gint i;
@@ -1298,6 +1298,13 @@ drop_buffer:
     gst_buffer_unref (outbuf);
     ret = GST_FLOW_OK;
     goto exit;
+  }
+components_not_supported:
+  {
+    GST_ELEMENT_ERROR (dec, STREAM, DECODE, (NULL),
+        ("more components than supported: %d > 3", dec->cinfo.num_components));
+    ret = GST_FLOW_ERROR;
+    goto done;
   }
 }
 

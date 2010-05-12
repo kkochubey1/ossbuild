@@ -165,6 +165,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <gst/gst_private.h>
+
 #include "gstbasesrc.h"
 #include "gsttypefindhelper.h"
 #include <gst/gstmarshal.h>
@@ -218,6 +220,7 @@ struct _GstBaseSrcPrivate
   /* two segments to be sent in the streaming thread with STREAM_LOCK */
   GstEvent *close_segment;
   GstEvent *start_segment;
+  gboolean newsegment_pending;
 
   /* if EOS is pending (atomic) */
   gint pending_eos;
@@ -237,6 +240,11 @@ struct _GstBaseSrcPrivate
 
   /* pending tags to be pushed in the data stream */
   GList *pending_tags;
+
+  /* QoS *//* with LOCK */
+  gboolean qos_enabled;
+  gdouble proportion;
+  GstClockTime earliest_time;
 };
 
 static GstElementClass *parent_class = NULL;
@@ -739,7 +747,7 @@ gst_base_src_new_seamless_segment (GstBaseSrc * src, gint64 start, gint64 stop,
       GST_TIME_ARGS (stop), GST_TIME_ARGS (position));
 
   GST_OBJECT_LOCK (src);
-  if (src->data.ABI.running) {
+  if (src->data.ABI.running && !src->priv->newsegment_pending) {
     if (src->priv->close_segment)
       gst_event_unref (src->priv->close_segment);
     src->priv->close_segment =
@@ -1450,6 +1458,7 @@ gst_base_src_perform_seek (GstBaseSrc * src, GstEvent * event, gboolean unlock)
           seeksegment.start, seeksegment.last_stop, seeksegment.time);
     }
     gst_event_set_seqnum (src->priv->start_segment, seqnum);
+    src->priv->newsegment_pending = TRUE;
   }
 
   src->priv->discont = TRUE;
@@ -1659,6 +1668,21 @@ gst_base_src_seekable (GstBaseSrc * src)
     return FALSE;
 }
 
+static void
+gst_base_src_update_qos (GstBaseSrc * src,
+    gdouble proportion, GstClockTimeDiff diff, GstClockTime timestamp)
+{
+  GST_CAT_DEBUG_OBJECT (GST_CAT_QOS, src,
+      "qos: proportion: %lf, diff %" G_GINT64_FORMAT ", timestamp %"
+      GST_TIME_FORMAT, proportion, diff, GST_TIME_ARGS (timestamp));
+
+  GST_OBJECT_LOCK (src);
+  src->priv->proportion = proportion;
+  src->priv->earliest_time = timestamp + diff;
+  GST_OBJECT_UNLOCK (src);
+}
+
+
 static gboolean
 gst_base_src_default_event (GstBaseSrc * src, GstEvent * event)
 {
@@ -1680,6 +1704,17 @@ gst_base_src_default_event (GstBaseSrc * src, GstEvent * event)
     case GST_EVENT_FLUSH_STOP:
       result = gst_base_src_set_flushing (src, FALSE, TRUE, TRUE, NULL);
       break;
+    case GST_EVENT_QOS:
+    {
+      gdouble proportion;
+      GstClockTimeDiff diff;
+      GstClockTime timestamp;
+
+      gst_event_parse_qos (event, &proportion, &diff, &timestamp);
+      gst_base_src_update_qos (src, proportion, diff, timestamp);
+      result = TRUE;
+      break;
+    }
     default:
       result = TRUE;
       break;
@@ -2351,6 +2386,7 @@ gst_base_src_loop (GstPad * pad)
     gst_pad_push_event (pad, src->priv->start_segment);
     src->priv->start_segment = NULL;
   }
+  src->priv->newsegment_pending = FALSE;
 
   GST_OBJECT_LOCK (src);
   /* take the tags */
@@ -2643,6 +2679,7 @@ gst_base_src_start (GstBaseSrc * basesrc)
   GST_OBJECT_UNLOCK (basesrc);
 
   basesrc->data.ABI.running = FALSE;
+  basesrc->priv->newsegment_pending = FALSE;
 
   bclass = GST_BASE_SRC_GET_CLASS (basesrc);
   if (bclass->start)

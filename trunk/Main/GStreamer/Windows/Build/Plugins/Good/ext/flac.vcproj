@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="gstflac"
 	ProjectGUID="{4B47A303-1D81-4C32-AA8D-38ADD0DC2F50}"
 	RootNamespace="libgstflac"
@@ -101,7 +101,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="&quot;..\..\..\..\..\Source\gst-plugins-good\ext\flac&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -233,7 +233,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="&quot;..\..\..\..\..\Source\gst-plugins-good\ext\flac&quot;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"

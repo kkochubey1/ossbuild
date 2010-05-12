@@ -66,7 +66,7 @@
     <sub name="Annotation Glossary" link="annotation-glossary.html"/>
   </chapters>
   <functions>
-    <function name="Environment variables" link="gst-running.html#id576684"/>
+    <function name="Environment variables" link="gst-running.html#id419766"/>
     <function name="gst_init ()" link="gstreamer-Gst.html#gst-init"/>
     <function name="gst_init_check ()" link="gstreamer-Gst.html#gst-init-check"/>
     <function name="gst_init_get_option_group ()" link="gstreamer-Gst.html#gst-init-get-option-group"/>
@@ -78,7 +78,7 @@
     <function name="gst_registry_fork_is_enabled ()" link="gstreamer-Gst.html#gst-registry-fork-is-enabled"/>
     <function name="gst_registry_fork_set_enabled ()" link="gstreamer-Gst.html#gst-registry-fork-set-enabled"/>
     <function name="gst_update_registry ()" link="gstreamer-Gst.html#gst-update-registry"/>
-    <function name="Notes" link="GstBin.html#id548244"/>
+    <function name="Notes" link="GstBin.html#id417003"/>
     <function name="GstBin" link="GstBin.html#GstBin-struct"/>
     <function name="GstBinClass" link="GstBin.html#GstBinClass"/>
     <function name="gst_bin_new ()" link="GstBin.html#gst-bin-new"/>
@@ -681,6 +681,12 @@
     <function name="gst_message_new_async_done ()" link="gstreamer-GstMessage.html#gst-message-new-async-done"/>
     <function name="gst_message_new_step_start ()" link="gstreamer-GstMessage.html#gst-message-new-step-start"/>
     <function name="gst_message_parse_step_start ()" link="gstreamer-GstMessage.html#gst-message-parse-step-start"/>
+    <function name="gst_message_new_qos ()" link="gstreamer-GstMessage.html#gst-message-new-qos"/>
+    <function name="gst_message_set_qos_values ()" link="gstreamer-GstMessage.html#gst-message-set-qos-values"/>
+    <function name="gst_message_set_qos_stats ()" link="gstreamer-GstMessage.html#gst-message-set-qos-stats"/>
+    <function name="gst_message_parse_qos ()" link="gstreamer-GstMessage.html#gst-message-parse-qos"/>
+    <function name="gst_message_parse_qos_values ()" link="gstreamer-GstMessage.html#gst-message-parse-qos-values"/>
+    <function name="gst_message_parse_qos_stats ()" link="gstreamer-GstMessage.html#gst-message-parse-qos-stats"/>
     <function name="enum GstStructureChangeType" link="gstreamer-GstMessage.html#GstStructureChangeType"/>
     <function name="gst_message_new_structure_change ()" link="gstreamer-GstMessage.html#gst-message-new-structure-change"/>
     <function name="gst_message_parse_structure_change ()" link="gstreamer-GstMessage.html#gst-message-parse-structure-change"/>
@@ -1107,19 +1113,17 @@
     <function name="gst_registry_lookup_feature ()" link="GstRegistry.html#gst-registry-lookup-feature"/>
     <function name="gst_registry_add_path ()" link="GstRegistry.html#gst-registry-add-path"/>
     <function name="gst_registry_scan_path ()" link="GstRegistry.html#gst-registry-scan-path"/>
-    <function name="gst_registry_binary_read_cache ()" link="GstRegistry.html#gst-registry-binary-read-cache"/>
-    <function name="gst_registry_binary_write_cache ()" link="GstRegistry.html#gst-registry-binary-write-cache"/>
     <function name="gst_registry_lookup ()" link="GstRegistry.html#gst-registry-lookup"/>
     <function name="gst_registry_remove_feature ()" link="GstRegistry.html#gst-registry-remove-feature"/>
     <function name="gst_registry_add_feature ()" link="GstRegistry.html#gst-registry-add-feature"/>
     <function name="gst_default_registry_check_feature_version ()" link="GstRegistry.html#gst-default-registry-check-feature-version"/>
-    <function name="gst_default_registry_get_path_list()" link="GstRegistry.html#gst-default-registry-get-path-list"/>
+    <function name="gst_default_registry_get_path_list" link="GstRegistry.html#gst-default-registry-get-path-list"/>
     <function name="gst_default_registry_add_plugin()" link="GstRegistry.html#gst-default-registry-add-plugin"/>
     <function name="gst_default_registry_add_path()" link="GstRegistry.html#gst-default-registry-add-path"/>
     <function name="gst_default_registry_find_plugin()" link="GstRegistry.html#gst-default-registry-find-plugin"/>
     <function name="gst_default_registry_find_feature()" link="GstRegistry.html#gst-default-registry-find-feature"/>
-    <function name="gst_default_registry_get_plugin_list()" link="GstRegistry.html#gst-default-registry-get-plugin-list"/>
-    <function name="gst_default_registry_get_feature_list_cookie()" link="GstRegistry.html#gst-default-registry-get-feature-list-cookie"/>
+    <function name="gst_default_registry_get_plugin_list" link="GstRegistry.html#gst-default-registry-get-plugin-list"/>
+    <function name="gst_default_registry_get_feature_list_cookie" link="GstRegistry.html#gst-default-registry-get-feature-list-cookie"/>
     <function name="gst_default_registry_feature_filter()" link="GstRegistry.html#gst-default-registry-feature-filter"/>
     <function name="The &quot;feature-added&quot; signal" link="GstRegistry.html#GstRegistry-feature-added"/>
     <function name="The &quot;plugin-added&quot; signal" link="GstRegistry.html#GstRegistry-plugin-added"/>
@@ -1260,6 +1264,9 @@
     <function name="GST_TAG_GEO_LOCATION_LATITUDE" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-LATITUDE:CAPS"/>
     <function name="GST_TAG_GEO_LOCATION_LONGITUDE" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-LONGITUDE:CAPS"/>
     <function name="GST_TAG_GEO_LOCATION_ELEVATION" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-ELEVATION:CAPS"/>
+    <function name="GST_TAG_GEO_LOCATION_CITY" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-CITY:CAPS"/>
+    <function name="GST_TAG_GEO_LOCATION_COUNTRY" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-COUNTRY:CAPS"/>
+    <function name="GST_TAG_GEO_LOCATION_SUBLOCATION" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-SUBLOCATION:CAPS"/>
     <function name="GST_TAG_SHOW_NAME" link="gstreamer-GstTagList.html#GST-TAG-SHOW-NAME:CAPS"/>
     <function name="GST_TAG_SHOW_SORTNAME" link="gstreamer-GstTagList.html#GST-TAG-SHOW-SORTNAME:CAPS"/>
     <function name="GST_TAG_SHOW_EPISODE_NUMBER" link="gstreamer-GstTagList.html#GST-TAG-SHOW-EPISODE-NUMBER:CAPS"/>
@@ -1267,6 +1274,7 @@
     <function name="GST_TAG_LYRICS" link="gstreamer-GstTagList.html#GST-TAG-LYRICS:CAPS"/>
     <function name="GST_TAG_COMPOSER_SORTNAME" link="gstreamer-GstTagList.html#GST-TAG-COMPOSER-SORTNAME:CAPS"/>
     <function name="GST_TAG_GROUPING" link="gstreamer-GstTagList.html#GST-TAG-GROUPING:CAPS"/>
+    <function name="GST_TAG_USER_RATING" link="gstreamer-GstTagList.html#GST-TAG-USER-RATING:CAPS"/>
     <function name="gst_tag_register ()" link="gstreamer-GstTagList.html#gst-tag-register"/>
     <function name="gst_tag_merge_use_first ()" link="gstreamer-GstTagList.html#gst-tag-merge-use-first"/>
     <function name="gst_tag_merge_strings_with_comma ()" link="gstreamer-GstTagList.html#gst-tag-merge-strings-with-comma"/>

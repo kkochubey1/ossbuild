@@ -92,8 +92,6 @@ static GstBus *bus;
 
 static GstFlowReturn flow;
 
-GList *buffers;
-
 static GList *current_buf;
 
 static gint64 granulerate;
@@ -138,7 +136,7 @@ buffer_unref (void *buffer, void *user_data)
 }
 
 static void
-setup_cmmldec ()
+setup_cmmldec (void)
 {
   GST_DEBUG ("setup_cmmldec");
   cmmldec = gst_check_setup_element ("cmmldec");
@@ -160,7 +158,7 @@ setup_cmmldec ()
 }
 
 static void
-teardown_cmmldec ()
+teardown_cmmldec (void)
 {
   g_list_foreach (buffers, buffer_unref, NULL);
   g_list_free (buffers);
@@ -240,7 +238,7 @@ cmml_tag_message_pop (GstBus * bus, const gchar * tag)
 }
 
 static void
-check_headers ()
+check_headers (void)
 {
   GObject *head_tag;
 
@@ -580,8 +578,8 @@ GST_START_TEST (test_sink_query_convert)
 
 GST_END_TEST;
 
-Suite *
-cmmldec_suite ()
+static Suite *
+cmmldec_suite (void)
 {
   Suite *s = suite_create ("cmmldec");
 

@@ -254,7 +254,6 @@ typedef void (*GstLogFunction)  (GstDebugCategory * category,
                                  GstDebugMessage  * message,
                                  gpointer           data);
 
-#ifndef GST_DISABLE_GST_DEBUG
 
 /* FIXME 0.11: move this into private headers */
 void            _gst_debug_init (void);
@@ -294,6 +293,32 @@ void            gst_debug_log_valist     (GstDebugCategory * category,
                                           const gchar      * format,
                                           va_list            args) G_GNUC_NO_INSTRUMENT;
 
+/* do not use this function, use the GST_DEBUG_CATEGORY_INIT macro */
+GstDebugCategory *_gst_debug_category_new (const gchar * name,
+                                           guint         color,
+                                           const gchar * description);
+/* do not use this function, use the GST_DEBUG_CATEGORY_GET macro */
+GstDebugCategory *_gst_debug_get_category (const gchar *name);
+
+
+/* do not use this function, use the GST_CAT_MEMDUMP_* macros */
+void _gst_debug_dump_mem (GstDebugCategory * cat, const gchar * file,
+    const gchar * func, gint line, GObject * obj, const gchar * msg,
+    const guint8 * data, guint length);
+
+/* we define this to avoid a compiler warning regarding a cast from a function
+ * pointer to a void pointer
+ * (see https://bugzilla.gnome.org/show_bug.cgi?id=309253)
+ */
+typedef	void (* GstDebugFuncPtr)	(void);
+
+/* do no use these functions, use the GST_DEBUG*_FUNCPTR macros */
+void	_gst_debug_register_funcptr	(GstDebugFuncPtr	func,
+					 const gchar *		ptrname);
+G_CONST_RETURN gchar *
+	_gst_debug_nameof_funcptr	(GstDebugFuncPtr	func) G_GNUC_NO_INSTRUMENT;
+
+
 const gchar   * gst_debug_message_get    (GstDebugMessage  * message);
 
 void            gst_debug_log_default    (GstDebugCategory * category,
@@ -319,11 +344,31 @@ gboolean        gst_debug_is_active   (void);
 void            gst_debug_set_colored (gboolean colored);
 gboolean        gst_debug_is_colored  (void);
 
-void            gst_debug_set_default_threshold	    (GstDebugLevel level);
-GstDebugLevel   gst_debug_get_default_threshold	    (void);
-void            gst_debug_set_threshold_for_name    (const gchar * name,
-                                                     GstDebugLevel level);
-void            gst_debug_unset_threshold_for_name  (const gchar * name);
+void            gst_debug_set_default_threshold      (GstDebugLevel level);
+GstDebugLevel   gst_debug_get_default_threshold      (void);
+void            gst_debug_set_threshold_for_name     (const gchar * name,
+                                                      GstDebugLevel level);
+void            gst_debug_unset_threshold_for_name   (const gchar * name);
+
+
+void            gst_debug_category_free              (GstDebugCategory *	category);
+void	            gst_debug_category_set_threshold     (GstDebugCategory *	category,
+                                                      GstDebugLevel		level);
+void            gst_debug_category_reset_threshold   (GstDebugCategory *	category);
+GstDebugLevel   gst_debug_category_get_threshold     (GstDebugCategory *	category);
+G_CONST_RETURN gchar *
+	            gst_debug_category_get_name          (GstDebugCategory *	category);
+guint           gst_debug_category_get_color         (GstDebugCategory *	category);
+G_CONST_RETURN gchar *
+                gst_debug_category_get_description   (GstDebugCategory *	category);
+GSList *        gst_debug_get_all_categories	(void);
+
+
+gchar * gst_debug_construct_term_color (guint colorinfo);
+gint    gst_debug_construct_win_color  (guint colorinfo);
+
+
+#ifndef GST_DISABLE_GST_DEBUG
 
 /**
  * GST_DEBUG_CATEGORY:
@@ -351,10 +396,6 @@ void            gst_debug_unset_threshold_for_name  (const gchar * name);
  */
 #define GST_DEBUG_CATEGORY_STATIC(cat) static GstDebugCategory *cat = NULL
 
-/* do not use this function, use the GST_DEBUG_CATEGORY_INIT macro below */
-GstDebugCategory *_gst_debug_category_new (const gchar * name,
-                                           guint         color,
-                                           const gchar * description);
 /**
  * GST_DEBUG_CATEGORY_INIT:
  * @cat: the category to initialize.
@@ -395,23 +436,6 @@ GstDebugCategory *_gst_debug_category_new (const gchar * name,
     cat = _gst_debug_category_new (name,color,description);		\
 }G_STMT_END
 
-void	gst_debug_category_free		(GstDebugCategory *	category);
-void	gst_debug_category_set_threshold (GstDebugCategory *	category,
-					 GstDebugLevel		level);
-void	gst_debug_category_reset_threshold(GstDebugCategory *	category);
-GstDebugLevel
-	gst_debug_category_get_threshold (GstDebugCategory *	category);
-G_CONST_RETURN gchar *
-	gst_debug_category_get_name	(GstDebugCategory *	category);
-guint	gst_debug_category_get_color	(GstDebugCategory *	category);
-G_CONST_RETURN gchar *
-	gst_debug_category_get_description (GstDebugCategory *	category);
-GSList *
-        gst_debug_get_all_categories	(void);
-
-/* do not use this function, use the GST_DEBUG_CATEGORY_GET macro below */
-GstDebugCategory *_gst_debug_get_category (const gchar *name);
-
 /**
  * GST_DEBUG_CATEGORY_GET:
  * @cat: the category to initialize.
@@ -444,11 +468,6 @@ GstDebugCategory *_gst_debug_get_category (const gchar *name);
   cat = _gst_debug_get_category (name);			\
 }G_STMT_END
 #endif
-
-
-gchar * gst_debug_construct_term_color	(guint colorinfo);
-gint    gst_debug_construct_win_color (guint colorinfo);
-
 
 /**
  * GST_CAT_DEFAULT:
@@ -512,11 +531,6 @@ GST_CAT_LEVEL_LOG (GstDebugCategory * cat, GstDebugLevel level,
 }
 #endif
 #endif /* G_HAVE_ISO_VARARGS */
-
-/* private helper function */
-void _gst_debug_dump_mem (GstDebugCategory * cat, const gchar * file,
-    const gchar * func, gint line, GObject * obj, const gchar * msg,
-    const guint8 * data, guint length);
 
 /* This one doesn't have varargs in the macro, so it's different than all the
  * other macros and hence in a separate block right here. Docs chunks are
@@ -1094,12 +1108,6 @@ GST_FIXME (const char *format, ...)
 
 /********** function pointer stuff **********/
 
-typedef	void (* GstDebugFuncPtr)	(void);
-void	_gst_debug_register_funcptr	(GstDebugFuncPtr	func,
-					 const gchar *		ptrname);
-G_CONST_RETURN gchar *
-	_gst_debug_nameof_funcptr	(GstDebugFuncPtr	func);
-
 /**
  * GST_DEBUG_REGISTER_FUNCPTR:
  * @ptr: pointer to the function to register
@@ -1160,8 +1168,6 @@ G_CONST_RETURN gchar *
 #define gst_debug_level_get_name(level)				("NONE")
 #define gst_debug_message_get(message)  			("")
 #define gst_debug_add_log_function(func,data)		G_STMT_START{ }G_STMT_END
-guint gst_debug_remove_log_function (GstLogFunction func);
-guint gst_debug_remove_log_function_by_data (gpointer data);
 #define gst_debug_set_active(active)			G_STMT_START{ }G_STMT_END
 #define gst_debug_is_active()				(FALSE)
 #define gst_debug_set_colored(colored)			G_STMT_START{ }G_STMT_END
@@ -1171,13 +1177,12 @@ guint gst_debug_remove_log_function_by_data (gpointer data);
 #define gst_debug_set_threshold_for_name(name,level)	G_STMT_START{ }G_STMT_END
 #define gst_debug_unset_threshold_for_name(name)	G_STMT_START{ }G_STMT_END
 
-#define GST_DEBUG_CATEGORY(var)				void _gst_dummy_declaration (void)
-#define GST_DEBUG_CATEGORY_EXTERN(var)			void _gst_dummy_declaration (void)
-#if !defined(G_HAVE_GNUC_VARARGS) && !defined(G_HAVE_ISO_VARARGS)
-#define GST_DEBUG_CATEGORY_STATIC(var)			static GstDebugCategory *var = NULL
-#else
-#define GST_DEBUG_CATEGORY_STATIC(var)			void _gst_dummy_declaration (void)
-#endif
+/* we are using dummy function prototypes here to eat ';' as these macros are
+ * used outside of functions */
+#define GST_DEBUG_CATEGORY(var)				void _gst_debug_dummy_##var (void)
+#define GST_DEBUG_CATEGORY_EXTERN(var)			void _gst_debug_dummy_extern_##var (void)
+#define GST_DEBUG_CATEGORY_STATIC(var)			void _gst_debug_dummy_static_##var (void)
+
 #define GST_DEBUG_CATEGORY_INIT(var,name,color,desc)	G_STMT_START{ }G_STMT_END
 #define GST_DEBUG_CATEGORY_GET(var,name)		G_STMT_START{ }G_STMT_END
 #define gst_debug_category_free(category)		G_STMT_START{ }G_STMT_END

@@ -63,8 +63,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/aalib.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
 	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -84,36 +83,58 @@ CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
 am_demo_audiotest_OBJECTS = demo_audiotest-demo-audiotest.$(OBJEXT)
 demo_audiotest_OBJECTS = $(am_demo_audiotest_OBJECTS)
-demo_audiotest_LDADD = $(LDADD)
-demo_audiotest_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(demo_audiotest_CFLAGS) \
-	$(CFLAGS) $(demo_audiotest_LDFLAGS) $(LDFLAGS) -o $@
+am__DEPENDENCIES_1 =
+demo_audiotest_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+demo_audiotest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(demo_audiotest_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
+	$@
 am_demo_osssrc_OBJECTS = demo_osssrc-demo-osssrc.$(OBJEXT)
 demo_osssrc_OBJECTS = $(am_demo_osssrc_OBJECTS)
-demo_osssrc_LDADD = $(LDADD)
-demo_osssrc_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+demo_osssrc_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+demo_osssrc_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(demo_osssrc_CFLAGS) \
-	$(CFLAGS) $(demo_osssrc_LDFLAGS) $(LDFLAGS) -o $@
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_spectrum_example_OBJECTS =  \
 	spectrum_example-spectrum-example.$(OBJEXT)
 spectrum_example_OBJECTS = $(am_spectrum_example_OBJECTS)
-spectrum_example_LDADD = $(LDADD)
-spectrum_example_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(spectrum_example_CFLAGS) \
-	$(CFLAGS) $(spectrum_example_LDFLAGS) $(LDFLAGS) -o $@
+spectrum_example_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+spectrum_example_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(spectrum_example_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(demo_audiotest_SOURCES) $(demo_osssrc_SOURCES) \
 	$(spectrum_example_SOURCES)
 DIST_SOURCES = $(demo_audiotest_SOURCES) $(demo_osssrc_SOURCES) \
@@ -127,7 +148,7 @@ AALIB_LIBS = @AALIB_LIBS@
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ANNODEX_CFLAGS = @ANNODEX_CFLAGS@
 ANNODEX_LIBS = @ANNODEX_LIBS@
 AR = @AR@
@@ -178,8 +199,6 @@ ESD_CFLAGS = @ESD_CFLAGS@
 ESD_CONFIG = @ESD_CONFIG@
 ESD_LIBS = @ESD_LIBS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLAC_CFLAGS = @FLAC_CFLAGS@
@@ -287,7 +306,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -336,7 +354,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RAW1394_CFLAGS = @RAW1394_CFLAGS@
 RAW1394_LIBS = @RAW1394_LIBS@
@@ -354,11 +371,12 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_CXXFLAGS = @TAGLIB_CXXFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WAVPACK_CFLAGS = @WAVPACK_CFLAGS@
 WAVPACK_LIBS = @WAVPACK_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -430,7 +448,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -439,13 +456,13 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 demo_osssrc_SOURCES = demo-osssrc.c
 demo_osssrc_CFLAGS = $(GST_BASE_CFLAGS) $(GST_CFLAGS) $(GTK_CFLAGS)
-demo_osssrc_LDFLAGS = $(GST_BASE_LIBS) $(GST_LIBS) $(GTK_LIBS)
+demo_osssrc_LDADD = $(GST_BASE_LIBS) $(GST_LIBS) $(GTK_LIBS)
 demo_audiotest_SOURCES = demo-audiotest.c
 demo_audiotest_CFLAGS = $(GST_BASE_CFLAGS) $(GST_CFLAGS) $(GTK_CFLAGS)
-demo_audiotest_LDFLAGS = $(GST_BASE_LIBS) $(GST_LIBS) $(GTK_LIBS)
+demo_audiotest_LDADD = $(GST_BASE_LIBS) $(GST_LIBS) $(GTK_LIBS)
 spectrum_example_SOURCES = spectrum-example.c
 spectrum_example_CFLAGS = $(GST_BASE_CFLAGS) $(GST_CFLAGS) $(GTK_CFLAGS)
-spectrum_example_LDFLAGS = $(GST_BASE_LIBS) $(GST_LIBS) $(GTK_LIBS)
+spectrum_example_LDADD = $(GST_BASE_LIBS) $(GST_LIBS) $(GTK_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -491,13 +508,13 @@ clean-noinstPROGRAMS:
 	rm -f $$list
 demo-audiotest$(EXEEXT): $(demo_audiotest_OBJECTS) $(demo_audiotest_DEPENDENCIES) 
 	@rm -f demo-audiotest$(EXEEXT)
-	$(demo_audiotest_LINK) $(demo_audiotest_OBJECTS) $(demo_audiotest_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(demo_audiotest_LINK) $(demo_audiotest_OBJECTS) $(demo_audiotest_LDADD) $(LIBS)
 demo-osssrc$(EXEEXT): $(demo_osssrc_OBJECTS) $(demo_osssrc_DEPENDENCIES) 
 	@rm -f demo-osssrc$(EXEEXT)
-	$(demo_osssrc_LINK) $(demo_osssrc_OBJECTS) $(demo_osssrc_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(demo_osssrc_LINK) $(demo_osssrc_OBJECTS) $(demo_osssrc_LDADD) $(LIBS)
 spectrum-example$(EXEEXT): $(spectrum_example_OBJECTS) $(spectrum_example_DEPENDENCIES) 
 	@rm -f spectrum-example$(EXEEXT)
-	$(spectrum_example_LINK) $(spectrum_example_OBJECTS) $(spectrum_example_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(spectrum_example_LINK) $(spectrum_example_OBJECTS) $(spectrum_example_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -510,64 +527,73 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spectrum_example-spectrum-example.Po@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 demo_audiotest-demo-audiotest.o: demo-audiotest.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_audiotest_CFLAGS) $(CFLAGS) -MT demo_audiotest-demo-audiotest.o -MD -MP -MF $(DEPDIR)/demo_audiotest-demo-audiotest.Tpo -c -o demo_audiotest-demo-audiotest.o `test -f 'demo-audiotest.c' || echo '$(srcdir)/'`demo-audiotest.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/demo_audiotest-demo-audiotest.Tpo $(DEPDIR)/demo_audiotest-demo-audiotest.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_audiotest_CFLAGS) $(CFLAGS) -MT demo_audiotest-demo-audiotest.o -MD -MP -MF $(DEPDIR)/demo_audiotest-demo-audiotest.Tpo -c -o demo_audiotest-demo-audiotest.o `test -f 'demo-audiotest.c' || echo '$(srcdir)/'`demo-audiotest.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/demo_audiotest-demo-audiotest.Tpo $(DEPDIR)/demo_audiotest-demo-audiotest.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='demo-audiotest.c' object='demo_audiotest-demo-audiotest.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_audiotest_CFLAGS) $(CFLAGS) -c -o demo_audiotest-demo-audiotest.o `test -f 'demo-audiotest.c' || echo '$(srcdir)/'`demo-audiotest.c
 
 demo_audiotest-demo-audiotest.obj: demo-audiotest.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_audiotest_CFLAGS) $(CFLAGS) -MT demo_audiotest-demo-audiotest.obj -MD -MP -MF $(DEPDIR)/demo_audiotest-demo-audiotest.Tpo -c -o demo_audiotest-demo-audiotest.obj `if test -f 'demo-audiotest.c'; then $(CYGPATH_W) 'demo-audiotest.c'; else $(CYGPATH_W) '$(srcdir)/demo-audiotest.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/demo_audiotest-demo-audiotest.Tpo $(DEPDIR)/demo_audiotest-demo-audiotest.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_audiotest_CFLAGS) $(CFLAGS) -MT demo_audiotest-demo-audiotest.obj -MD -MP -MF $(DEPDIR)/demo_audiotest-demo-audiotest.Tpo -c -o demo_audiotest-demo-audiotest.obj `if test -f 'demo-audiotest.c'; then $(CYGPATH_W) 'demo-audiotest.c'; else $(CYGPATH_W) '$(srcdir)/demo-audiotest.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/demo_audiotest-demo-audiotest.Tpo $(DEPDIR)/demo_audiotest-demo-audiotest.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='demo-audiotest.c' object='demo_audiotest-demo-audiotest.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_audiotest_CFLAGS) $(CFLAGS) -c -o demo_audiotest-demo-audiotest.obj `if test -f 'demo-audiotest.c'; then $(CYGPATH_W) 'demo-audiotest.c'; else $(CYGPATH_W) '$(srcdir)/demo-audiotest.c'; fi`
 
 demo_osssrc-demo-osssrc.o: demo-osssrc.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_osssrc_CFLAGS) $(CFLAGS) -MT demo_osssrc-demo-osssrc.o -MD -MP -MF $(DEPDIR)/demo_osssrc-demo-osssrc.Tpo -c -o demo_osssrc-demo-osssrc.o `test -f 'demo-osssrc.c' || echo '$(srcdir)/'`demo-osssrc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/demo_osssrc-demo-osssrc.Tpo $(DEPDIR)/demo_osssrc-demo-osssrc.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_osssrc_CFLAGS) $(CFLAGS) -MT demo_osssrc-demo-osssrc.o -MD -MP -MF $(DEPDIR)/demo_osssrc-demo-osssrc.Tpo -c -o demo_osssrc-demo-osssrc.o `test -f 'demo-osssrc.c' || echo '$(srcdir)/'`demo-osssrc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/demo_osssrc-demo-osssrc.Tpo $(DEPDIR)/demo_osssrc-demo-osssrc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='demo-osssrc.c' object='demo_osssrc-demo-osssrc.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_osssrc_CFLAGS) $(CFLAGS) -c -o demo_osssrc-demo-osssrc.o `test -f 'demo-osssrc.c' || echo '$(srcdir)/'`demo-osssrc.c
 
 demo_osssrc-demo-osssrc.obj: demo-osssrc.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_osssrc_CFLAGS) $(CFLAGS) -MT demo_osssrc-demo-osssrc.obj -MD -MP -MF $(DEPDIR)/demo_osssrc-demo-osssrc.Tpo -c -o demo_osssrc-demo-osssrc.obj `if test -f 'demo-osssrc.c'; then $(CYGPATH_W) 'demo-osssrc.c'; else $(CYGPATH_W) '$(srcdir)/demo-osssrc.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/demo_osssrc-demo-osssrc.Tpo $(DEPDIR)/demo_osssrc-demo-osssrc.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_osssrc_CFLAGS) $(CFLAGS) -MT demo_osssrc-demo-osssrc.obj -MD -MP -MF $(DEPDIR)/demo_osssrc-demo-osssrc.Tpo -c -o demo_osssrc-demo-osssrc.obj `if test -f 'demo-osssrc.c'; then $(CYGPATH_W) 'demo-osssrc.c'; else $(CYGPATH_W) '$(srcdir)/demo-osssrc.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/demo_osssrc-demo-osssrc.Tpo $(DEPDIR)/demo_osssrc-demo-osssrc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='demo-osssrc.c' object='demo_osssrc-demo-osssrc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(demo_osssrc_CFLAGS) $(CFLAGS) -c -o demo_osssrc-demo-osssrc.obj `if test -f 'demo-osssrc.c'; then $(CYGPATH_W) 'demo-osssrc.c'; else $(CYGPATH_W) '$(srcdir)/demo-osssrc.c'; fi`
 
 spectrum_example-spectrum-example.o: spectrum-example.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spectrum_example_CFLAGS) $(CFLAGS) -MT spectrum_example-spectrum-example.o -MD -MP -MF $(DEPDIR)/spectrum_example-spectrum-example.Tpo -c -o spectrum_example-spectrum-example.o `test -f 'spectrum-example.c' || echo '$(srcdir)/'`spectrum-example.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/spectrum_example-spectrum-example.Tpo $(DEPDIR)/spectrum_example-spectrum-example.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spectrum_example_CFLAGS) $(CFLAGS) -MT spectrum_example-spectrum-example.o -MD -MP -MF $(DEPDIR)/spectrum_example-spectrum-example.Tpo -c -o spectrum_example-spectrum-example.o `test -f 'spectrum-example.c' || echo '$(srcdir)/'`spectrum-example.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spectrum_example-spectrum-example.Tpo $(DEPDIR)/spectrum_example-spectrum-example.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='spectrum-example.c' object='spectrum_example-spectrum-example.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spectrum_example_CFLAGS) $(CFLAGS) -c -o spectrum_example-spectrum-example.o `test -f 'spectrum-example.c' || echo '$(srcdir)/'`spectrum-example.c
 
 spectrum_example-spectrum-example.obj: spectrum-example.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spectrum_example_CFLAGS) $(CFLAGS) -MT spectrum_example-spectrum-example.obj -MD -MP -MF $(DEPDIR)/spectrum_example-spectrum-example.Tpo -c -o spectrum_example-spectrum-example.obj `if test -f 'spectrum-example.c'; then $(CYGPATH_W) 'spectrum-example.c'; else $(CYGPATH_W) '$(srcdir)/spectrum-example.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/spectrum_example-spectrum-example.Tpo $(DEPDIR)/spectrum_example-spectrum-example.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spectrum_example_CFLAGS) $(CFLAGS) -MT spectrum_example-spectrum-example.obj -MD -MP -MF $(DEPDIR)/spectrum_example-spectrum-example.Tpo -c -o spectrum_example-spectrum-example.obj `if test -f 'spectrum-example.c'; then $(CYGPATH_W) 'spectrum-example.c'; else $(CYGPATH_W) '$(srcdir)/spectrum-example.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/spectrum_example-spectrum-example.Tpo $(DEPDIR)/spectrum_example-spectrum-example.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='spectrum-example.c' object='spectrum_example-spectrum-example.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(spectrum_example_CFLAGS) $(CFLAGS) -c -o spectrum_example-spectrum-example.obj `if test -f 'spectrum-example.c'; then $(CYGPATH_W) 'spectrum-example.c'; else $(CYGPATH_W) '$(srcdir)/spectrum-example.c'; fi`

@@ -53,6 +53,9 @@ G_BEGIN_DECLS
  * @GST_VIDEO_FORMAT_v216: packed 4:2:2 16-bit YUV, Y0-U0-Y1-V1 order (Since: 0.10.24)
  * @GST_VIDEO_FORMAT_NV12: planar 4:2:0 YUV with interleaved UV plane (Since: 0.10.26)
  * @GST_VIDEO_FORMAT_NV21: planar 4:2:0 YUV with interleaved VU plane (Since: 0.10.26)
+ * @GST_VIDEO_FORMAT_GRAY8: 8-bit grayscale (Since: 0.10.29)
+ * @GST_VIDEO_FORMAT_GRAY16_BE: 16-bit grayscale, most significant byte first (Since: 0.10.29)
+ * @GST_VIDEO_FORMAT_GRAY16_LE: 16-bit grayscale, least significant byte first (Since: 0.10.29)
  *
  * Enum value describing the most common video formats.
  */
@@ -80,7 +83,10 @@ typedef enum {
   GST_VIDEO_FORMAT_v210,
   GST_VIDEO_FORMAT_v216,
   GST_VIDEO_FORMAT_NV12,
-  GST_VIDEO_FORMAT_NV21
+  GST_VIDEO_FORMAT_NV21,
+  GST_VIDEO_FORMAT_GRAY8,
+  GST_VIDEO_FORMAT_GRAY16_BE,
+  GST_VIDEO_FORMAT_GRAY16_LE
 } GstVideoFormat;
 
 #define GST_VIDEO_BYTE1_MASK_32  "0xFF000000"
@@ -234,9 +240,49 @@ typedef enum {
             "height = " GST_VIDEO_SIZE_RANGE ", "                       \
             "framerate = " GST_VIDEO_FPS_RANGE
 
+/**
+ * GST_VIDEO_CAPS_YUV:
+ * @fourcc: YUV fourcc format that describes the pixel layout, as string
+ *     (e.g. "I420", "YV12", "YUY2", "AYUV", etc.)
+ *
+ * Generic caps string for YUV video, for use in pad templates.
+ */
 #define GST_VIDEO_CAPS_YUV(fourcc)                                      \
         "video/x-raw-yuv, "                                             \
         "format = (fourcc) " fourcc ", "                                \
+        "width = " GST_VIDEO_SIZE_RANGE ", "                            \
+        "height = " GST_VIDEO_SIZE_RANGE ", "                           \
+        "framerate = " GST_VIDEO_FPS_RANGE
+
+/**
+ * GST_VIDEO_CAPS_GRAY8:
+ *
+ * Generic caps string for 8-bit grayscale video, for use in pad templates.
+ *
+ * Since: 0.10.29
+ */
+#define GST_VIDEO_CAPS_GRAY8                                            \
+        "video/x-raw-gray, "                                            \
+        "bpp = (int) 8, "                                               \
+        "depth = (int) 8, "                                             \
+        "width = " GST_VIDEO_SIZE_RANGE ", "                            \
+        "height = " GST_VIDEO_SIZE_RANGE ", "                           \
+        "framerate = " GST_VIDEO_FPS_RANGE
+
+/**
+ * GST_VIDEO_CAPS_GRAY16:
+ * @endianness: endianness as string, ie. either "1234", "4321", "BIG_ENDIAN"
+ *     or "LITTLE_ENDIAN"
+ *
+ * Generic caps string for 16-bit grayscale video, for use in pad templates.
+ *
+ * Since: 0.10.29
+ */
+#define GST_VIDEO_CAPS_GRAY16(endianness)                               \
+        "video/x-raw-gray, "                                            \
+        "bpp = (int) 16, "                                              \
+        "depth = (int) 16, "                                            \
+        "endianness = (int) " endianness ", "                           \
         "width = " GST_VIDEO_SIZE_RANGE ", "                            \
         "height = " GST_VIDEO_SIZE_RANGE ", "                           \
         "framerate = " GST_VIDEO_FPS_RANGE
@@ -291,6 +337,8 @@ gboolean gst_video_parse_caps_framerate (GstCaps *caps,
     int *fps_n, int *fps_d);
 gboolean gst_video_parse_caps_pixel_aspect_ratio (GstCaps *caps,
     int *par_n, int *par_d);
+const char *gst_video_parse_caps_color_matrix (GstCaps * caps);
+const char *gst_video_parse_caps_chroma_site (GstCaps * caps);
 GstCaps * gst_video_format_new_caps (GstVideoFormat format,
     int width, int height, int framerate_n, int framerate_d,
     int par_n, int par_d);
@@ -301,6 +349,7 @@ GstVideoFormat gst_video_format_from_fourcc (guint32 fourcc);
 guint32 gst_video_format_to_fourcc (GstVideoFormat format);
 gboolean gst_video_format_is_rgb (GstVideoFormat format);
 gboolean gst_video_format_is_yuv (GstVideoFormat format);
+gboolean gst_video_format_is_gray (GstVideoFormat format);
 gboolean gst_video_format_has_alpha (GstVideoFormat format);
 int gst_video_format_get_row_stride (GstVideoFormat format, int component,
     int width);

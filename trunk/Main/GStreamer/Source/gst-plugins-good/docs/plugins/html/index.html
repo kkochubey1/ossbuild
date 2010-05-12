@@ -6,11 +6,8 @@
 <meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
 <link rel="home" href="index.html" title="GStreamer Good Plugins 0.10 Plugins Reference Manual">
 <link rel="next" href="ch01.html" title="gst-plugins-good Elements">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-good Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-good Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-good Base Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <div class="book" title="GStreamer Good Plugins 0.10 Plugins Reference Manual">
@@ -18,7 +15,7 @@
 <div>
 <div><table class="navigation" id="top" width="100%" cellpadding="2" cellspacing="0"><tr><th valign="middle"><p class="title">GStreamer Good Plugins 0.10 Plugins Reference Manual</p></th></tr></table></div>
 <div><p class="releaseinfo">
-      for GStreamer Good Plugins 0.10 (0.10.19)
+      for GStreamer Good Plugins 0.10 (0.10.22)
       The latest version of this documentation can be found on-line at
       <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-good/html/" target="_top">http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-good/html/</a>.
     </p></div>
@@ -35,7 +32,10 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-agingtv.html">agingtv</a></span><span class="refpurpose"> — AgingTV adds age to video input using scratches and dust</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-good-plugins-alphacolor.html">alphacolor</a></span><span class="refpurpose"> — RGBA to AYUV colorspace conversion preserving the alpha channel</span>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-alpha.html">alpha</a></span><span class="refpurpose"> — Adds an alpha channel to video - uniform or via chroma-keying</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-alphacolor.html">alphacolor</a></span><span class="refpurpose"> — ARGB from/to AYUV colorspace conversion preserving the alpha channel</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-alawdec.html">alawdec</a></span><span class="refpurpose"> — Convert 8bit A law to 16bit PCM</span>
@@ -87,6 +87,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-audiokaraoke.html">audiokaraoke</a></span><span class="refpurpose"> — Removes voice from sound</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-auparse.html">auparse</a></span><span class="refpurpose"> — Parse an .au file into raw audio</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-autoaudiosink.html">autoaudiosink</a></span><span class="refpurpose"> — Wrapper audio sink for automatically detected audio sink</span>
@@ -180,6 +183,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-flvmux.html">flvmux</a></span><span class="refpurpose"> — Muxes video/audio streams into a FLV stream</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-flxdec.html">flxdec</a></span><span class="refpurpose"> — FLC/FLI/FLX video decoder</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-gamma.html">gamma</a></span><span class="refpurpose"> — Adjusts gamma on a video stream</span>
@@ -347,6 +353,9 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-rtpdec.html">rtpdec</a></span><span class="refpurpose"> — Accepts raw RTP and RTCP packets and sends them forward</span>
 </dt>
 <dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-rtpj2kpay.html">rtpj2kpay</a></span><span class="refpurpose"> — Payload-encodes JPEG 2000 pictures into RTP packets (RFC 5371)</span>
+</dt>
+<dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-rtpjpegpay.html">rtpjpegpay</a></span><span class="refpurpose"> — Payload-encodes JPEG pictures into RTP packets (RFC 2435)</span>
 </dt>
 <dt>
@@ -396,6 +405,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-v4l2src.html">v4l2src</a></span><span class="refpurpose"> — Reads frames from a video4linux2 (BT8x8) device</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-v4l2sink.html">v4l2sink</a></span><span class="refpurpose"> — Displays frames on a video4linux2 device</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-vertigotv.html">vertigotv</a></span><span class="refpurpose"> — A loopback alpha blending effector with rotating and scaling</span>
@@ -458,7 +470,7 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-alpha.html">alpha</a></span><span class="refpurpose"> — adds an alpha channel to video - constant or via chroma-keying</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-alphacolor.html">alphacolor</a></span><span class="refpurpose"> — RGBA to AYUV colorspace conversion preserving the alpha channel</span>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-alphacolor.html">alphacolor</a></span><span class="refpurpose"> — RGBA from/to AYUV colorspace conversion preserving the alpha channel</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-annodex.html">annodex</a></span><span class="refpurpose"> — annodex stream manipulation (info about annodex: http://www.annodex.net)</span>
@@ -675,6 +687,6 @@
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

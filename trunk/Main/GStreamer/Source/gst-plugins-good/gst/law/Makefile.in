@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/aalib.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
 	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -108,15 +107,19 @@ libgstalaw_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_libgstalaw_la_OBJECTS = libgstalaw_la-alaw-encode.lo \
 	libgstalaw_la-alaw-decode.lo libgstalaw_la-alaw.lo
 libgstalaw_la_OBJECTS = $(am_libgstalaw_la_OBJECTS)
-libgstalaw_la_LINK = $(LIBTOOL) --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libgstalaw_la_CFLAGS) \
-	$(CFLAGS) $(libgstalaw_la_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstalaw_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(libgstalaw_la_CFLAGS) $(CFLAGS) \
+	$(libgstalaw_la_LDFLAGS) $(LDFLAGS) -o $@
 libgstmulaw_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_libgstmulaw_la_OBJECTS = libgstmulaw_la-mulaw-encode.lo \
 	libgstmulaw_la-mulaw-conversion.lo \
 	libgstmulaw_la-mulaw-decode.lo libgstmulaw_la-mulaw.lo
 libgstmulaw_la_OBJECTS = $(am_libgstmulaw_la_OBJECTS)
-libgstmulaw_la_LINK = $(LIBTOOL) --tag=CC \
+libgstmulaw_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstmulaw_la_CFLAGS) $(CFLAGS) \
 	$(libgstmulaw_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -126,13 +129,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstalaw_la_SOURCES) $(libgstmulaw_la_SOURCES)
 DIST_SOURCES = $(libgstalaw_la_SOURCES) $(libgstmulaw_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -145,7 +161,7 @@ AALIB_LIBS = @AALIB_LIBS@
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ANNODEX_CFLAGS = @ANNODEX_CFLAGS@
 ANNODEX_LIBS = @ANNODEX_LIBS@
 AR = @AR@
@@ -196,8 +212,6 @@ ESD_CFLAGS = @ESD_CFLAGS@
 ESD_CONFIG = @ESD_CONFIG@
 ESD_LIBS = @ESD_LIBS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLAC_CFLAGS = @FLAC_CFLAGS@
@@ -305,7 +319,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -354,7 +367,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RAW1394_CFLAGS = @RAW1394_CFLAGS@
 RAW1394_LIBS = @RAW1394_LIBS@
@@ -372,11 +384,12 @@ TAGLIB_CFLAGS = @TAGLIB_CFLAGS@
 TAGLIB_CXXFLAGS = @TAGLIB_CXXFLAGS@
 TAGLIB_LIBS = @TAGLIB_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WAVPACK_CFLAGS = @WAVPACK_CFLAGS@
 WAVPACK_LIBS = @WAVPACK_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -448,7 +461,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -533,9 +545,9 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstalaw.la: $(libgstalaw_la_OBJECTS) $(libgstalaw_la_DEPENDENCIES) 
-	$(libgstalaw_la_LINK) -rpath $(plugindir) $(libgstalaw_la_OBJECTS) $(libgstalaw_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstalaw_la_LINK) -rpath $(plugindir) $(libgstalaw_la_OBJECTS) $(libgstalaw_la_LIBADD) $(LIBS)
 libgstmulaw.la: $(libgstmulaw_la_OBJECTS) $(libgstmulaw_la_DEPENDENCIES) 
-	$(libgstmulaw_la_LINK) -rpath $(plugindir) $(libgstmulaw_la_OBJECTS) $(libgstmulaw_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstmulaw_la_LINK) -rpath $(plugindir) $(libgstmulaw_la_OBJECTS) $(libgstmulaw_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -552,74 +564,84 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstmulaw_la-mulaw.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstalaw_la-alaw-encode.lo: alaw-encode.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -MT libgstalaw_la-alaw-encode.lo -MD -MP -MF $(DEPDIR)/libgstalaw_la-alaw-encode.Tpo -c -o libgstalaw_la-alaw-encode.lo `test -f 'alaw-encode.c' || echo '$(srcdir)/'`alaw-encode.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstalaw_la-alaw-encode.Tpo $(DEPDIR)/libgstalaw_la-alaw-encode.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -MT libgstalaw_la-alaw-encode.lo -MD -MP -MF $(DEPDIR)/libgstalaw_la-alaw-encode.Tpo -c -o libgstalaw_la-alaw-encode.lo `test -f 'alaw-encode.c' || echo '$(srcdir)/'`alaw-encode.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstalaw_la-alaw-encode.Tpo $(DEPDIR)/libgstalaw_la-alaw-encode.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='alaw-encode.c' object='libgstalaw_la-alaw-encode.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -c -o libgstalaw_la-alaw-encode.lo `test -f 'alaw-encode.c' || echo '$(srcdir)/'`alaw-encode.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -c -o libgstalaw_la-alaw-encode.lo `test -f 'alaw-encode.c' || echo '$(srcdir)/'`alaw-encode.c
 
 libgstalaw_la-alaw-decode.lo: alaw-decode.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -MT libgstalaw_la-alaw-decode.lo -MD -MP -MF $(DEPDIR)/libgstalaw_la-alaw-decode.Tpo -c -o libgstalaw_la-alaw-decode.lo `test -f 'alaw-decode.c' || echo '$(srcdir)/'`alaw-decode.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstalaw_la-alaw-decode.Tpo $(DEPDIR)/libgstalaw_la-alaw-decode.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -MT libgstalaw_la-alaw-decode.lo -MD -MP -MF $(DEPDIR)/libgstalaw_la-alaw-decode.Tpo -c -o libgstalaw_la-alaw-decode.lo `test -f 'alaw-decode.c' || echo '$(srcdir)/'`alaw-decode.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstalaw_la-alaw-decode.Tpo $(DEPDIR)/libgstalaw_la-alaw-decode.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='alaw-decode.c' object='libgstalaw_la-alaw-decode.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -c -o libgstalaw_la-alaw-decode.lo `test -f 'alaw-decode.c' || echo '$(srcdir)/'`alaw-decode.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -c -o libgstalaw_la-alaw-decode.lo `test -f 'alaw-decode.c' || echo '$(srcdir)/'`alaw-decode.c
 
 libgstalaw_la-alaw.lo: alaw.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -MT libgstalaw_la-alaw.lo -MD -MP -MF $(DEPDIR)/libgstalaw_la-alaw.Tpo -c -o libgstalaw_la-alaw.lo `test -f 'alaw.c' || echo '$(srcdir)/'`alaw.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstalaw_la-alaw.Tpo $(DEPDIR)/libgstalaw_la-alaw.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -MT libgstalaw_la-alaw.lo -MD -MP -MF $(DEPDIR)/libgstalaw_la-alaw.Tpo -c -o libgstalaw_la-alaw.lo `test -f 'alaw.c' || echo '$(srcdir)/'`alaw.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstalaw_la-alaw.Tpo $(DEPDIR)/libgstalaw_la-alaw.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='alaw.c' object='libgstalaw_la-alaw.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -c -o libgstalaw_la-alaw.lo `test -f 'alaw.c' || echo '$(srcdir)/'`alaw.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstalaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstalaw_la_CFLAGS) $(CFLAGS) -c -o libgstalaw_la-alaw.lo `test -f 'alaw.c' || echo '$(srcdir)/'`alaw.c
 
 libgstmulaw_la-mulaw-encode.lo: mulaw-encode.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -MT libgstmulaw_la-mulaw-encode.lo -MD -MP -MF $(DEPDIR)/libgstmulaw_la-mulaw-encode.Tpo -c -o libgstmulaw_la-mulaw-encode.lo `test -f 'mulaw-encode.c' || echo '$(srcdir)/'`mulaw-encode.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmulaw_la-mulaw-encode.Tpo $(DEPDIR)/libgstmulaw_la-mulaw-encode.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -MT libgstmulaw_la-mulaw-encode.lo -MD -MP -MF $(DEPDIR)/libgstmulaw_la-mulaw-encode.Tpo -c -o libgstmulaw_la-mulaw-encode.lo `test -f 'mulaw-encode.c' || echo '$(srcdir)/'`mulaw-encode.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmulaw_la-mulaw-encode.Tpo $(DEPDIR)/libgstmulaw_la-mulaw-encode.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mulaw-encode.c' object='libgstmulaw_la-mulaw-encode.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -c -o libgstmulaw_la-mulaw-encode.lo `test -f 'mulaw-encode.c' || echo '$(srcdir)/'`mulaw-encode.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -c -o libgstmulaw_la-mulaw-encode.lo `test -f 'mulaw-encode.c' || echo '$(srcdir)/'`mulaw-encode.c
 
 libgstmulaw_la-mulaw-conversion.lo: mulaw-conversion.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -MT libgstmulaw_la-mulaw-conversion.lo -MD -MP -MF $(DEPDIR)/libgstmulaw_la-mulaw-conversion.Tpo -c -o libgstmulaw_la-mulaw-conversion.lo `test -f 'mulaw-conversion.c' || echo '$(srcdir)/'`mulaw-conversion.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmulaw_la-mulaw-conversion.Tpo $(DEPDIR)/libgstmulaw_la-mulaw-conversion.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -MT libgstmulaw_la-mulaw-conversion.lo -MD -MP -MF $(DEPDIR)/libgstmulaw_la-mulaw-conversion.Tpo -c -o libgstmulaw_la-mulaw-conversion.lo `test -f 'mulaw-conversion.c' || echo '$(srcdir)/'`mulaw-conversion.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmulaw_la-mulaw-conversion.Tpo $(DEPDIR)/libgstmulaw_la-mulaw-conversion.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mulaw-conversion.c' object='libgstmulaw_la-mulaw-conversion.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -c -o libgstmulaw_la-mulaw-conversion.lo `test -f 'mulaw-conversion.c' || echo '$(srcdir)/'`mulaw-conversion.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -c -o libgstmulaw_la-mulaw-conversion.lo `test -f 'mulaw-conversion.c' || echo '$(srcdir)/'`mulaw-conversion.c
 
 libgstmulaw_la-mulaw-decode.lo: mulaw-decode.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -MT libgstmulaw_la-mulaw-decode.lo -MD -MP -MF $(DEPDIR)/libgstmulaw_la-mulaw-decode.Tpo -c -o libgstmulaw_la-mulaw-decode.lo `test -f 'mulaw-decode.c' || echo '$(srcdir)/'`mulaw-decode.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmulaw_la-mulaw-decode.Tpo $(DEPDIR)/libgstmulaw_la-mulaw-decode.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -MT libgstmulaw_la-mulaw-decode.lo -MD -MP -MF $(DEPDIR)/libgstmulaw_la-mulaw-decode.Tpo -c -o libgstmulaw_la-mulaw-decode.lo `test -f 'mulaw-decode.c' || echo '$(srcdir)/'`mulaw-decode.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmulaw_la-mulaw-decode.Tpo $(DEPDIR)/libgstmulaw_la-mulaw-decode.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mulaw-decode.c' object='libgstmulaw_la-mulaw-decode.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -c -o libgstmulaw_la-mulaw-decode.lo `test -f 'mulaw-decode.c' || echo '$(srcdir)/'`mulaw-decode.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -c -o libgstmulaw_la-mulaw-decode.lo `test -f 'mulaw-decode.c' || echo '$(srcdir)/'`mulaw-decode.c
 
 libgstmulaw_la-mulaw.lo: mulaw.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -MT libgstmulaw_la-mulaw.lo -MD -MP -MF $(DEPDIR)/libgstmulaw_la-mulaw.Tpo -c -o libgstmulaw_la-mulaw.lo `test -f 'mulaw.c' || echo '$(srcdir)/'`mulaw.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmulaw_la-mulaw.Tpo $(DEPDIR)/libgstmulaw_la-mulaw.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -MT libgstmulaw_la-mulaw.lo -MD -MP -MF $(DEPDIR)/libgstmulaw_la-mulaw.Tpo -c -o libgstmulaw_la-mulaw.lo `test -f 'mulaw.c' || echo '$(srcdir)/'`mulaw.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmulaw_la-mulaw.Tpo $(DEPDIR)/libgstmulaw_la-mulaw.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mulaw.c' object='libgstmulaw_la-mulaw.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -c -o libgstmulaw_la-mulaw.lo `test -f 'mulaw.c' || echo '$(srcdir)/'`mulaw.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmulaw_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmulaw_la_CFLAGS) $(CFLAGS) -c -o libgstmulaw_la-mulaw.lo `test -f 'mulaw.c' || echo '$(srcdir)/'`mulaw.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

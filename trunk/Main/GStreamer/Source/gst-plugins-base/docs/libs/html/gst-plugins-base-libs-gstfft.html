@@ -8,26 +8,8 @@
 <link rel="up" href="gstreamer-ffft.html" title="FFT Library">
 <link rel="prev" href="gstreamer-ffft.html" title="FFT Library">
 <link rel="next" href="gst-plugins-base-libs-gstffts16.html" title="gstffts16">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="part" href="gstreamer-plugins-base.html" title="Part I. GStreamer Base Plugins Libraries">
-<link rel="chapter" href="gstreamer-app.html" title="App Library">
-<link rel="chapter" href="gstreamer-audio.html" title="Audio Library">
-<link rel="chapter" href="gstreamer-cdda.html" title="CDDA Library">
-<link rel="chapter" href="gstreamer-ffft.html" title="FFT Library">
-<link rel="chapter" href="gstreamer-floatcast.html" title="FloatCast Library">
-<link rel="chapter" href="gstreamer-interfaces.html" title="Interfaces Library">
-<link rel="chapter" href="gstreamer-netbuffer.html" title="Network Buffer Library">
-<link rel="chapter" href="gstreamer-riff.html" title="Riff Media Library">
-<link rel="chapter" href="gstreamer-rtp.html" title="RTP Library">
-<link rel="chapter" href="gstreamer-rtsp.html" title="RTSP Library">
-<link rel="chapter" href="gstreamer-sdp.html" title="SDP Library">
-<link rel="chapter" href="gstreamer-tag.html" title="Tag Support Library">
-<link rel="chapter" href="gstreamer-base-utils.html" title="Base Utils Library">
-<link rel="chapter" href="gstreamer-video.html" title="Video Library">
-<link rel="part" href="gstreamer-libs-hierarchy.html" title="Part II. Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -59,14 +41,15 @@
 #include &lt;gst/fft/gstfft.h&gt;
 
 enum                <a class="link" href="gst-plugins-base-libs-gstfft.html#GstFFTWindow" title="enum GstFFTWindow">GstFFTWindow</a>;
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="gst-plugins-base-libs-gstfft.html#gst-fft-next-fast-length" title="gst_fft_next_fast_length ()">gst_fft_next_fast_length</a>            (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a> n);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="gst-plugins-base-libs-gstfft.html#gst-fft-next-fast-length" title="gst_fft_next_fast_length ()">gst_fft_next_fast_length</a>            (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> n</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Description">
 <a name="gst-plugins-base-libs-gstfft.description"></a><h2>Description</h2>
 <p>
 This library includes general definitions and functions, useful for
-all typed FFT classes.</p>
+all typed FFT classes.
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gst-plugins-base-libs-gstfft.details"></a><h2>Details</h2>
@@ -82,33 +65,34 @@ all typed FFT classes.</p>
 } GstFFTWindow;
 </pre>
 <p>
-The various window functions available.</p>
+The various window functions available.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="GST-FFT-WINDOW-RECTANGULAR:CAPS"></a><span class="term"><code class="literal">GST_FFT_WINDOW_RECTANGULAR</code></span></p></td>
-<td> Rectangular window
+<td>Rectangular window
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-FFT-WINDOW-HAMMING:CAPS"></a><span class="term"><code class="literal">GST_FFT_WINDOW_HAMMING</code></span></p></td>
-<td> Hamming window
+<td>Hamming window
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-FFT-WINDOW-HANN:CAPS"></a><span class="term"><code class="literal">GST_FFT_WINDOW_HANN</code></span></p></td>
-<td> Hann (sometimes also called Hanning) window
+<td>Hann (sometimes also called Hanning) window
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-FFT-WINDOW-BARTLETT:CAPS"></a><span class="term"><code class="literal">GST_FFT_WINDOW_BARTLETT</code></span></p></td>
-<td> Bartlett window
+<td>Bartlett window
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-FFT-WINDOW-BLACKMAN:CAPS"></a><span class="term"><code class="literal">GST_FFT_WINDOW_BLACKMAN</code></span></p></td>
-<td> Blackman window
+<td>Blackman window
 </td>
 </tr>
 </tbody>
@@ -117,17 +101,18 @@ The various window functions available.</p>
 <hr>
 <div class="refsect2" title="gst_fft_next_fast_length ()">
 <a name="gst-fft-next-fast-length"></a><h3>gst_fft_next_fast_length ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_fft_next_fast_length            (<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a> n);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_fft_next_fast_length            (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> n</code></em>);</pre>
 <p>
 Returns the next number to <em class="parameter"><code>n</code></em> that is entirely a product
 of 2, 3 and 5. Using this as the <em class="parameter"><code>len</code></em> parameter for
-the different GstFFT types will provide the best performance.</p>
+the different GstFFT types will provide the best performance.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>n</code></em> :</span></p></td>
-<td> Number for which the next fast length should be returned
+<td>Number for which the next fast length should be returned
 </td>
 </tr>
 <tr>
@@ -143,6 +128,6 @@ the different GstFFT types will provide the best performance.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

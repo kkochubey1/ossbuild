@@ -282,7 +282,7 @@ gst_v4l2_probe_get_values (GstPropertyProbe * probe,
 }
 
 #define GST_TYPE_V4L2_DEVICE_FLAGS (gst_v4l2_device_get_type ())
-GType
+static GType
 gst_v4l2_device_get_type (void)
 {
   static GType v4l2_device_type = 0;
@@ -331,7 +331,7 @@ gst_v4l2_object_install_properties_helper (GObjectClass * gobject_class,
 GstV4l2Object *
 gst_v4l2_object_new (GstElement * element,
     enum v4l2_buf_type type,
-    char *default_device,
+    const char *default_device,
     GstV4l2GetInOutFunction get_in_out_func,
     GstV4l2SetInOutFunction set_in_out_func,
     GstV4l2UpdateFpsFunction update_fps_func)

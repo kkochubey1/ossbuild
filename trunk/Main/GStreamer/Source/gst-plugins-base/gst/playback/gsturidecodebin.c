@@ -134,12 +134,6 @@ static GstStaticCaps default_raw_caps = GST_STATIC_CAPS (DEFAULT_RAW_CAPS);
 GST_DEBUG_CATEGORY_STATIC (gst_uri_decode_bin_debug);
 #define GST_CAT_DEFAULT gst_uri_decode_bin_debug
 
-static const GstElementDetails gst_uri_decode_bin_details =
-GST_ELEMENT_DETAILS ("URI Decoder",
-    "Generic/Bin/Decoder",
-    "Autoplug and decode an URI to raw media",
-    "Wim Taymans <wim.taymans@gmail.com>");
-
 /* signals */
 enum
 {
@@ -179,6 +173,7 @@ enum
 
 static guint gst_uri_decode_bin_signals[LAST_SIGNAL] = { 0 };
 
+GType gst_uri_decode_bin_get_type (void);
 GST_BOILERPLATE (GstURIDecodeBin, gst_uri_decode_bin, GstBin, GST_TYPE_BIN);
 
 static void remove_decoders (GstURIDecodeBin * bin, gboolean force);
@@ -202,7 +197,10 @@ gst_uri_decode_bin_base_init (gpointer g_class)
 
   gst_element_class_add_pad_template (gstelement_class,
       gst_static_pad_template_get (&srctemplate));
-  gst_element_class_set_details (gstelement_class, &gst_uri_decode_bin_details);
+  gst_element_class_set_details_simple (gstelement_class,
+      "URI Decoder", "Generic/Bin/Decoder",
+      "Autoplug and decode an URI to raw media",
+      "Wim Taymans <wim.taymans@gmail.com>");
 }
 
 static gboolean
@@ -890,7 +888,7 @@ static const gchar *no_media_mimes[] = {
 
 /* media types we can download */
 static const gchar *download_media[] = {
-  "video/quicktime", "video/x-flv", NULL
+  "video/quicktime", "video/x-flv", "video/x-msvideo", NULL
 };
 
 #define IS_STREAM_URI(uri)          (array_has_uri_value (stream_uris, uri))
@@ -1384,7 +1382,7 @@ make_decoder (GstURIDecodeBin * decoder)
     }
   }
 
-  g_object_set_data (G_OBJECT (decodebin), "pending", "1");
+  g_object_set_data (G_OBJECT (decodebin), "pending", GINT_TO_POINTER (1));
   g_object_set (decodebin, "subtitle-encoding", decoder->encoding, NULL);
   decoder->pending++;
   GST_LOG_OBJECT (decoder, "have %d pending dynamic objects", decoder->pending);
@@ -1704,7 +1702,8 @@ setup_source (GstURIDecodeBin * decoder)
     decoder->src_nmp_sig_id =
         g_signal_connect (decoder->source, "no-more-pads",
         G_CALLBACK (source_no_more_pads), decoder);
-    g_object_set_data (G_OBJECT (decoder->source), "pending", "1");
+    g_object_set_data (G_OBJECT (decoder->source), "pending",
+        GINT_TO_POINTER (1));
     decoder->pending++;
   } else {
     if (decoder->is_stream) {

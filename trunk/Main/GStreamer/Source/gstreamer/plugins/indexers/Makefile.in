@@ -15,6 +15,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -35,10 +36,10 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = plugins/indexers
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
-	$(top_srcdir)/common/m4/as-ac-expand.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/as-auto-alt.m4 \
 	$(top_srcdir)/common/m4/as-compiler-flag.m4 \
 	$(top_srcdir)/common/m4/as-docbook.m4 \
@@ -47,7 +48,6 @@ am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
 	$(top_srcdir)/common/m4/as-scrub-include.m4 \
 	$(top_srcdir)/common/m4/as-version.m4 \
 	$(top_srcdir)/common/m4/ax_create_stdint_h.m4 \
-	$(top_srcdir)/common/m4/gettext.m4 \
 	$(top_srcdir)/common/m4/gst-arch.m4 \
 	$(top_srcdir)/common/m4/gst-args.m4 \
 	$(top_srcdir)/common/m4/gst-check.m4 \
@@ -64,21 +64,16 @@ am__aclocal_m4_deps = $(top_srcdir)/check-checks.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/iconv.m4 \
-	$(top_srcdir)/common/m4/intlmacosx.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/lib-ld.m4 \
-	$(top_srcdir)/common/m4/lib-link.m4 \
-	$(top_srcdir)/common/m4/lib-prefix.m4 \
-	$(top_srcdir)/common/m4/libtool.m4 \
-	$(top_srcdir)/common/m4/ltoptions.m4 \
-	$(top_srcdir)/common/m4/ltsugar.m4 \
-	$(top_srcdir)/common/m4/ltversion.m4 \
-	$(top_srcdir)/common/m4/lt~obsolete.m4 \
-	$(top_srcdir)/common/m4/nls.m4 $(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/po.m4 \
-	$(top_srcdir)/common/m4/progtest.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/check-checks.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -117,7 +112,10 @@ am_libgstcoreindexers_la_OBJECTS =  \
 	libgstcoreindexers_la-gstindexers.lo \
 	libgstcoreindexers_la-gstmemindex.lo $(am__objects_1)
 libgstcoreindexers_la_OBJECTS = $(am_libgstcoreindexers_la_OBJECTS)
-libgstcoreindexers_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstcoreindexers_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) \
 	$(libgstcoreindexers_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -127,22 +125,36 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstcoreindexers_la_SOURCES)
 DIST_SOURCES = $(am__libgstcoreindexers_la_SOURCES_DIST)
+HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -164,7 +176,6 @@ CHECK_MINOR_VERSION = @CHECK_MINOR_VERSION@
 CHECK_VERSION = @CHECK_VERSION@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIR = @DATADIR@
@@ -182,8 +193,6 @@ EGREP = @EGREP@
 ENABLE_SUBUNIT = @ENABLE_SUBUNIT@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLEX_PATH = @FLEX_PATH@
@@ -288,7 +297,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
@@ -296,7 +304,6 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OTOOL = @OTOOL@
@@ -324,18 +331,17 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 WIN32_LIBS = @WIN32_LIBS@
 XGETTEXT = @XGETTEXT@
 XGETTEXT_015 = @XGETTEXT_015@
@@ -396,7 +402,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -412,6 +417,9 @@ plugin_LTLIBRARIES = libgstcoreindexers.la
 @GST_DISABLE_LOADSAVE_FALSE@@HAVE_MMAP_TRUE@GST_FILEINDEX_LIBS = $(XML_LIBS)
 @GST_DISABLE_LOADSAVE_TRUE@@HAVE_MMAP_TRUE@GST_FILEINDEX_LIBS = 
 @HAVE_MMAP_FALSE@GST_FILEINDEX_LIBS = 
+noinst_HEADERS = \
+	gstindexers.h
+
 libgstcoreindexers_la_DEPENDENCIES = $(top_builddir)/gst/libgstreamer-@GST_MAJORMINOR@.la
 libgstcoreindexers_la_SOURCES = gstindexers.c gstmemindex.c $(GST_LOADSAVE_SRC)
 libgstcoreindexers_la_CFLAGS = $(GST_OBJ_CFLAGS)
@@ -484,7 +492,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstcoreindexers.la: $(libgstcoreindexers_la_OBJECTS) $(libgstcoreindexers_la_DEPENDENCIES) 
-	$(libgstcoreindexers_la_LINK) -rpath $(plugindir) $(libgstcoreindexers_la_OBJECTS) $(libgstcoreindexers_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstcoreindexers_la_LINK) -rpath $(plugindir) $(libgstcoreindexers_la_OBJECTS) $(libgstcoreindexers_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -497,46 +505,52 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreindexers_la-gstmemindex.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstcoreindexers_la-gstindexers.lo: gstindexers.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -MT libgstcoreindexers_la-gstindexers.lo -MD -MP -MF $(DEPDIR)/libgstcoreindexers_la-gstindexers.Tpo -c -o libgstcoreindexers_la-gstindexers.lo `test -f 'gstindexers.c' || echo '$(srcdir)/'`gstindexers.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcoreindexers_la-gstindexers.Tpo $(DEPDIR)/libgstcoreindexers_la-gstindexers.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -MT libgstcoreindexers_la-gstindexers.lo -MD -MP -MF $(DEPDIR)/libgstcoreindexers_la-gstindexers.Tpo -c -o libgstcoreindexers_la-gstindexers.lo `test -f 'gstindexers.c' || echo '$(srcdir)/'`gstindexers.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcoreindexers_la-gstindexers.Tpo $(DEPDIR)/libgstcoreindexers_la-gstindexers.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstindexers.c' object='libgstcoreindexers_la-gstindexers.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -c -o libgstcoreindexers_la-gstindexers.lo `test -f 'gstindexers.c' || echo '$(srcdir)/'`gstindexers.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -c -o libgstcoreindexers_la-gstindexers.lo `test -f 'gstindexers.c' || echo '$(srcdir)/'`gstindexers.c
 
 libgstcoreindexers_la-gstmemindex.lo: gstmemindex.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -MT libgstcoreindexers_la-gstmemindex.lo -MD -MP -MF $(DEPDIR)/libgstcoreindexers_la-gstmemindex.Tpo -c -o libgstcoreindexers_la-gstmemindex.lo `test -f 'gstmemindex.c' || echo '$(srcdir)/'`gstmemindex.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcoreindexers_la-gstmemindex.Tpo $(DEPDIR)/libgstcoreindexers_la-gstmemindex.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -MT libgstcoreindexers_la-gstmemindex.lo -MD -MP -MF $(DEPDIR)/libgstcoreindexers_la-gstmemindex.Tpo -c -o libgstcoreindexers_la-gstmemindex.lo `test -f 'gstmemindex.c' || echo '$(srcdir)/'`gstmemindex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcoreindexers_la-gstmemindex.Tpo $(DEPDIR)/libgstcoreindexers_la-gstmemindex.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmemindex.c' object='libgstcoreindexers_la-gstmemindex.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -c -o libgstcoreindexers_la-gstmemindex.lo `test -f 'gstmemindex.c' || echo '$(srcdir)/'`gstmemindex.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -c -o libgstcoreindexers_la-gstmemindex.lo `test -f 'gstmemindex.c' || echo '$(srcdir)/'`gstmemindex.c
 
 libgstcoreindexers_la-gstfileindex.lo: gstfileindex.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -MT libgstcoreindexers_la-gstfileindex.lo -MD -MP -MF $(DEPDIR)/libgstcoreindexers_la-gstfileindex.Tpo -c -o libgstcoreindexers_la-gstfileindex.lo `test -f 'gstfileindex.c' || echo '$(srcdir)/'`gstfileindex.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcoreindexers_la-gstfileindex.Tpo $(DEPDIR)/libgstcoreindexers_la-gstfileindex.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -MT libgstcoreindexers_la-gstfileindex.lo -MD -MP -MF $(DEPDIR)/libgstcoreindexers_la-gstfileindex.Tpo -c -o libgstcoreindexers_la-gstfileindex.lo `test -f 'gstfileindex.c' || echo '$(srcdir)/'`gstfileindex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcoreindexers_la-gstfileindex.Tpo $(DEPDIR)/libgstcoreindexers_la-gstfileindex.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstfileindex.c' object='libgstcoreindexers_la-gstfileindex.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -c -o libgstcoreindexers_la-gstfileindex.lo `test -f 'gstfileindex.c' || echo '$(srcdir)/'`gstfileindex.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreindexers_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreindexers_la_CFLAGS) $(CFLAGS) -c -o libgstcoreindexers_la-gstfileindex.lo `test -f 'gstfileindex.c' || echo '$(srcdir)/'`gstfileindex.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -628,7 +642,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(plugindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \

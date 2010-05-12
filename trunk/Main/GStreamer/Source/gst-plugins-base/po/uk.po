@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gst-plugins-base 0.10.14\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 20:33+0000\n"
+"POT-Creation-Date: 2010-04-28 02:08+0100\n"
 "PO-Revision-Date: 2007-09-07 15:40+0200\n"
 "Last-Translator: Maxim V. Dziumanenko <dziumanenko@gmail.com>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -186,6 +186,10 @@ msgid "The autovideosink element is missing."
 msgstr "Відсутні елементи autovideosink та xvimagesink."
 
 #, fuzzy, c-format
+msgid "Configured videosink %s is not working."
+msgstr "Відсутні елементи autovideosink та xvimagesink."
+
+#, fuzzy, c-format
 msgid "Both autovideosink and %s elements are not working."
 msgstr "Відсутні елементи autovideosink та xvimagesink."
 
@@ -208,6 +212,10 @@ msgid "The autoaudiosink element is missing."
 msgstr "Відсутні елементи autoaudiosink та alsasink."
 
 #, fuzzy, c-format
+msgid "Configured audiosink %s is not working."
+msgstr "Відсутні елементи autoaudiosink та alsasink."
+
+#, fuzzy, c-format
 msgid "Both autoaudiosink and %s elements are not working."
 msgstr "Відсутні елементи autoaudiosink та alsasink."
 
@@ -215,7 +223,7 @@ msgstr "Відсутні елементи autoaudiosink та alsasink."
 msgid "The autoaudiosink element is not working."
 msgstr "Відсутні елементи autoaudiosink та alsasink."
 
-msgid "Can't play a text file without video."
+msgid "Can't play a text file without video or visualizations."
 msgstr ""
 
 #, c-format

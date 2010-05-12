@@ -133,8 +133,6 @@ typedef struct _GstSignalObject GstSignalObject;
 typedef struct _GstSignalObjectClass GstSignalObjectClass;
 
 static GType gst_signal_object_get_type (void);
-static void gst_signal_object_class_init (GstSignalObjectClass * klass);
-static void gst_signal_object_init (GstSignalObject * object);
 
 #ifndef GST_DISABLE_LOADSAVE
 static guint gst_signal_object_signals[SO_LAST_SIGNAL] = { 0 };
@@ -243,7 +241,8 @@ gst_object_class_init (GstObjectClass * klass)
       G_TYPE_PARAM);
 
   klass->path_string_separator = "/";
-  klass->lock = g_new0 (GStaticRecMutex, 1);
+  /* FIXME 0.11: Store this directly in the class struct */
+  klass->lock = g_slice_new (GStaticRecMutex);
   g_static_rec_mutex_init (klass->lock);
 
   klass->signal_object = g_object_newv (gst_signal_object_get_type (), 0, NULL);
@@ -503,7 +502,8 @@ gst_object_dispatch_properties_changed (GObject * object,
 {
   GstObject *gst_object, *parent, *old_parent;
   guint i;
-  gchar *name, *debug_name;
+  gchar *name;
+  const gchar *debug_name;
 
   /* do the standard dispatching */
   parent_class->dispatch_properties_changed (object, n_pspecs, pspecs);
@@ -561,7 +561,7 @@ gst_object_default_deep_notify (GObject * object, GstObject * orig,
         return;
       excluded_props++;
     }
-    g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+    g_value_init (&value, pspec->value_type);
     g_object_get_property (G_OBJECT (orig), pspec->name, &value);
 
     /* FIXME: handle flags */
@@ -1077,7 +1077,7 @@ gst_object_get_path_string (GstObject * object)
   gchar *prevpath, *path;
   const gchar *typename;
   gchar *component;
-  gchar *separator;
+  const gchar *separator;
 
   /* ref object before adding to list */
   gst_object_ref (object);

@@ -309,6 +309,14 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\typefind\gstaacutil.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\typefind\gstaacutil.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\typefind\gsttypefindfunctions.c"
 			>
 		</File>

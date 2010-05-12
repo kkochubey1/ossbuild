@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.25.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2010-01-28 21:10+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -88,18 +88,6 @@ msgstr "Visa GStreamer-alternativ"
 
 msgid "Unknown option"
 msgstr "Okänt alternativ"
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "FEL: från element %s: %s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"Ytterligare felsökningsinformation:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "GStreamer stötte på ett allmänt fel i kärnbibliotek."
@@ -632,6 +620,35 @@ msgstr ""
 "höjd i meter för geografisk plats där mediet har spelats in eller "
 "producerats enligt WGS84 (noll för genomsnittlig havsnivå)"
 
+#, fuzzy
+msgid "geo location country"
+msgstr "longitud för geografisk plats"
+
+#, fuzzy
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+"mänskligt läslig beskrivande plats för var mediet har spelats in eller "
+"producerats"
+
+#, fuzzy
+msgid "geo location city"
+msgstr "latitud för geografisk plats"
+
+#, fuzzy
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+"mänskligt läslig beskrivande plats för var mediet har spelats in eller "
+"producerats"
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "höjd för geografisk plats"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr "visningsnamn"
@@ -683,8 +700,29 @@ msgstr ""
 "Grupprelaterade media som spänner över flera spår, såsom olika delar av en "
 "konsert. Det är en högre nivå än ett spår, men lägre än ett album"
 
+#, fuzzy
+msgid "user rating"
+msgstr "varaktighet"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "FEL: från element %s: %s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"Ytterligare felsökningsinformation:\n"
+"%s\n"
 
 # Osäker.
 #, c-format
@@ -806,6 +844,10 @@ msgstr "Filen \"%s\" är ett uttag."
 
 msgid "Failed after iterations as requested."
 msgstr "Misslyckades efter iterationer som begärt."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Fel vid skrivning till filen \"%s\"."
 
 msgid "No Temp directory specified."
 msgstr "Ingen temporärkatalog angiven."

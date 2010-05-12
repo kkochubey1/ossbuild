@@ -25,7 +25,6 @@
 
 #include <gst/check/gstcheck.h>
 
-GList *buffers = NULL;
 gboolean have_eos = FALSE;
 
 /* For ease of programming we use globals to keep refs for our floating
@@ -64,8 +63,8 @@ static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
     );
 
 /* takes over reference for outcaps */
-GstElement *
-setup_level ()
+static GstElement *
+setup_level (void)
 {
   GstElement *level;
 
@@ -79,7 +78,7 @@ setup_level ()
   return level;
 }
 
-void
+static void
 cleanup_level (GstElement * level)
 {
   GST_DEBUG ("cleanup_level");
@@ -153,7 +152,7 @@ GST_START_TEST (test_int16)
 
   /* block wave of half amplitude has -5.94 dB for rms, peak and decay */
   for (i = 0; i < 2; ++i) {
-    gchar *fields[3] = { "rms", "peak", "decay" };
+    const gchar *fields[3] = { "rms", "peak", "decay" };
     for (j = 0; j < 3; ++j) {
       list = gst_structure_get_value (structure, fields[j]);
       value = gst_value_list_get_value (list, i);
@@ -201,7 +200,7 @@ GST_START_TEST (test_int16_panned)
   const GValue *list, *value;
   GstClockTime endtime;
   gdouble dB;
-  gchar *fields[3] = { "rms", "peak", "decay" };
+  const gchar *fields[3] = { "rms", "peak", "decay" };
 
   level = setup_level ();
   g_object_set (level, "message", TRUE, "interval", GST_SECOND / 10, NULL);
@@ -258,7 +257,7 @@ GST_START_TEST (test_int16_panned)
     GST_DEBUG ("%s[0] is %lf", fields[j], dB);
 #ifdef HAVE_ISINF
     fail_unless (isinf (dB));
-#elif HAVE_FPCLASS
+#elif defined (HAVE_FPCLASS)
     fail_unless (fpclass (dB) == FP_NINF);
 #endif
   }
@@ -296,7 +295,7 @@ GST_START_TEST (test_int16_panned)
 
 GST_END_TEST;
 
-Suite *
+static Suite *
 level_suite (void)
 {
   Suite *s = suite_create ("level");

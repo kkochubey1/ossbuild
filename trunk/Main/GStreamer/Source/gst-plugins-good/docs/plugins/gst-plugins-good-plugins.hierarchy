@@ -92,14 +92,14 @@ GObject
           GstVideoBalance
           GstGamma
           GstSMPTEAlpha
+          GstAlpha
+          GstAlphaColor
         GstVideoBox
         GstBreakMyData
         GstNavSeek
         GstProgressReport
         GstTagInject
         GstLevel
-        GstAlpha
-        GstAlphaColor
         GstAudioFilter
           GstIirEqualizer
             GstIirEqualizerNBands
@@ -237,7 +237,7 @@ GObject
       GstInterleave
       GstDeinterleave
       GstWavParse
-      GstFLVDemux
+      GstFlvDemux
       GstFlvMux
       GstICYDemux
       GstVideoMixer

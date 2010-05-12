@@ -37,8 +37,8 @@ autogen_options $@
 
 printf "+ check for build tools"
 if test ! -z "$NOCHECK"; then echo ": skipped version checks"; else  echo; fi
-version_check "autoconf" "$AUTOCONF autoconf autoconf259 autoconf257 autoconf-2.54 autoconf-2.53 autoconf253 autoconf-2.52 autoconf252" \
-              "ftp://ftp.gnu.org/pub/gnu/autoconf/" 2 52 || DIE=1
+version_check "autoconf" "$AUTOCONF autoconf autoconf270 autoconf269 autoconf268 autoconf267 autoconf266 autoconf265 autoconf264 autoconf263 autoconf262 autoconf261 autoconf260" \
+              "ftp://ftp.gnu.org/pub/gnu/autoconf/" 2 60 || DIE=1
 version_check "automake" "$AUTOMAKE automake automake-1.11 automake-1.10 automake-1.9 automake19 automake-1.8 automake18 automake-1.7 automake17 automake-1.6 automake16" \
               "ftp://ftp.gnu.org/pub/gnu/automake/" 1 7 || DIE=1
 version_check "autopoint" "autopoint" \
@@ -82,7 +82,7 @@ patch -p0 < common/gettext.patch
 if test -f acinclude.m4; then rm acinclude.m4; fi
 
 tool_run "$libtoolize" "--copy --force"
-tool_run "$aclocal" "-I common/m4 -I . $ACLOCAL_FLAGS"
+tool_run "$aclocal" "-I m4 -I common/m4 $ACLOCAL_FLAGS"
 tool_run "$autoheader"
 
 # touch the stamp-h.in build stamp so we don't re-run autoheader in maintainer mode -- wingo

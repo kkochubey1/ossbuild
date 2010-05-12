@@ -24,7 +24,6 @@
 
 #include <math.h>
 
-GList *buffers = NULL;
 GList *events = NULL;
 
 /* For ease of programming we use globals to keep refs for our floating src and
@@ -60,8 +59,8 @@ event_func (GstPad * pad, GstEvent * event)
   return TRUE;
 }
 
-GstElement *
-setup_rgvolume ()
+static GstElement *
+setup_rgvolume (void)
 {
   GstElement *element;
 
@@ -79,7 +78,7 @@ setup_rgvolume ()
   return element;
 }
 
-void
+static void
 cleanup_rgvolume (GstElement * element)
 {
   GST_DEBUG ("cleanup_rgvolume");
@@ -535,7 +534,7 @@ GST_START_TEST (test_reference_level)
 
 GST_END_TEST;
 
-Suite *
+static Suite *
 rgvolume_suite (void)
 {
   Suite *s = suite_create ("rgvolume");

@@ -27,7 +27,7 @@
  *
  * Write incoming data to a series of sequentially-named files.
  *
- * The filename property should contain a string with a %d placeholder that will
+ * The filename property should contain a string with a \%d placeholder that will
  * be substituted with the index for each filename.
  *
  * If the #GstMultiFileSink:post-messages property is #TRUE, it sends an application
@@ -95,8 +95,8 @@
  * </listitem>
  * </itemizedlist>
  *
- * <title>Example launch line</title>
  * <refsect2>
+ * <title>Example launch line</title>
  * |[
  * gst-launch audiotestsrc ! multifilesink
  * gst-launch videotestsrc ! multifilesink post-messages=true filename="frame%d"
@@ -120,12 +120,6 @@ static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE ("sink",
 
 GST_DEBUG_CATEGORY_STATIC (gst_multi_file_sink_debug);
 #define GST_CAT_DEFAULT gst_multi_file_sink_debug
-
-static const GstElementDetails gst_multi_file_sink_details =
-GST_ELEMENT_DETAILS ("Multi-File Sink",
-    "Sink/File",
-    "Write buffers to a sequentially named set of files",
-    "David Schleef <ds@schleef.org>");
 
 #define DEFAULT_LOCATION "%05d"
 #define DEFAULT_INDEX 0
@@ -162,6 +156,8 @@ gst_multi_file_sink_next_get_type (void)
     {GST_MULTI_FILE_SINK_NEXT_BUFFER, "New file for each buffer", "buffer"},
     {GST_MULTI_FILE_SINK_NEXT_DISCONT, "New file after each discontinuity",
         "discont"},
+    {GST_MULTI_FILE_SINK_NEXT_KEY_FRAME, "New file at each key frame "
+          "(Useful for MPEG-TS segmenting)", "key-frame"},
     {0, NULL, NULL}
   };
 
@@ -186,8 +182,10 @@ gst_multi_file_sink_base_init (gpointer g_class)
 
   gst_element_class_add_pad_template (gstelement_class,
       gst_static_pad_template_get (&sinktemplate));
-  gst_element_class_set_details (gstelement_class,
-      &gst_multi_file_sink_details);
+  gst_element_class_set_details_simple (gstelement_class, "Multi-File Sink",
+      "Sink/File",
+      "Write buffers to a sequentially named set of files",
+      "David Schleef <ds@schleef.org>");
 }
 
 static void
@@ -248,6 +246,8 @@ gst_multi_file_sink_init (GstMultiFileSink * multifilesink,
   multifilesink->post_messages = DEFAULT_POST_MESSAGES;
 
   gst_base_sink_set_sync (GST_BASE_SINK (multifilesink), FALSE);
+
+  multifilesink->next_segment = GST_CLOCK_TIME_NONE;
 }
 
 static void
@@ -416,6 +416,47 @@ gst_multi_file_sink_render (GstBaseSink * sink, GstBuffer * buffer)
           g_free (filename);
           multifilesink->index++;
         }
+      }
+
+      if (multifilesink->file == NULL) {
+        filename = g_strdup_printf (multifilesink->filename,
+            multifilesink->index);
+        multifilesink->file = g_fopen (filename, "wb");
+        g_free (filename);
+
+        if (multifilesink->file == NULL)
+          goto stdio_write_error;
+      }
+
+      ret = fwrite (GST_BUFFER_DATA (buffer), GST_BUFFER_SIZE (buffer), 1,
+          multifilesink->file);
+      if (ret != 1)
+        goto stdio_write_error;
+
+      break;
+    case GST_MULTI_FILE_SINK_NEXT_KEY_FRAME:
+      if (multifilesink->next_segment == GST_CLOCK_TIME_NONE) {
+        if (GST_BUFFER_TIMESTAMP_IS_VALID (buffer)) {
+          multifilesink->next_segment = GST_BUFFER_TIMESTAMP (buffer) +
+              10 * GST_SECOND;
+        }
+      }
+
+      if (GST_BUFFER_TIMESTAMP_IS_VALID (buffer) &&
+          GST_BUFFER_TIMESTAMP (buffer) >= multifilesink->next_segment &&
+          !GST_BUFFER_FLAG_IS_SET (buffer, GST_BUFFER_FLAG_DELTA_UNIT)) {
+        if (multifilesink->file) {
+          fclose (multifilesink->file);
+          multifilesink->file = NULL;
+
+          filename = g_strdup_printf (multifilesink->filename,
+              multifilesink->index);
+          gst_multi_file_sink_post_message (multifilesink, buffer, filename);
+          g_free (filename);
+          multifilesink->index++;
+        }
+
+        multifilesink->next_segment += 10 * GST_SECOND;
       }
 
       if (multifilesink->file == NULL) {

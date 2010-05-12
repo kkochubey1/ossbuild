@@ -105,15 +105,6 @@
 GST_DEBUG_CATEGORY_STATIC (rtspsrc_debug);
 #define GST_CAT_DEFAULT (rtspsrc_debug)
 
-/* elementfactory information */
-static const GstElementDetails gst_rtspsrc_details =
-GST_ELEMENT_DETAILS ("RTSP packet receiver",
-    "Source/Network",
-    "Receive data over the network via RTSP (RFC 2326)",
-    "Wim Taymans <wim@fluendo.com>\n"
-    "Thijs Vermeir <thijs.vermeir@barco.com>\n"
-    "Lutz Mueller <lutz@topfrose.de>");
-
 static GstStaticPadTemplate rtptemplate = GST_STATIC_PAD_TEMPLATE ("stream%d",
     GST_PAD_SRC,
     GST_PAD_SOMETIMES,
@@ -138,6 +129,25 @@ enum
   LAST_SIGNAL
 };
 
+#define GST_TYPE_RTSP_SRC_BUFFER_MODE (gst_rtsp_src_buffer_mode_get_type())
+static GType
+gst_rtsp_src_buffer_mode_get_type (void)
+{
+  static GType buffer_mode_type = 0;
+  static const GEnumValue buffer_modes[] = {
+    {0, "Only use RTP timestamps", "none"},
+    {1, "Slave receiver to sender clock", "slave"},
+    {2, "Do low/high watermark buffering", "buffer"},
+    {0, NULL, NULL},
+  };
+
+  if (!buffer_mode_type) {
+    buffer_mode_type =
+        g_enum_register_static ("GstRTSPSrcBufferMode", buffer_modes);
+  }
+  return buffer_mode_type;
+}
+
 #define DEFAULT_LOCATION         NULL
 #define DEFAULT_PROTOCOLS        GST_RTSP_LOWER_TRANS_UDP | GST_RTSP_LOWER_TRANS_UDP_MCAST | GST_RTSP_LOWER_TRANS_TCP
 #define DEFAULT_DEBUG            FALSE
@@ -152,6 +162,7 @@ enum
 #define DEFAULT_RTP_BLOCKSIZE    0
 #define DEFAULT_USER_ID          NULL
 #define DEFAULT_USER_PW          NULL
+#define DEFAULT_BUFFER_MODE      1
 
 enum
 {
@@ -170,28 +181,9 @@ enum
   PROP_RTP_BLOCKSIZE,
   PROP_USER_ID,
   PROP_USER_PW,
+  PROP_BUFFER_MODE,
   PROP_LAST
 };
-
-#define GST_TYPE_RTSP_LOWER_TRANS (gst_rtsp_lower_trans_get_type())
-static GType
-gst_rtsp_lower_trans_get_type (void)
-{
-  static GType rtsp_lower_trans_type = 0;
-  static const GFlagsValue rtsp_lower_trans[] = {
-    {GST_RTSP_LOWER_TRANS_UDP, "UDP Unicast Mode", "udp-unicast"},
-    {GST_RTSP_LOWER_TRANS_UDP_MCAST, "UDP Multicast Mode", "udp-multicast"},
-    {GST_RTSP_LOWER_TRANS_TCP, "TCP interleaved mode", "tcp"},
-    {GST_RTSP_LOWER_TRANS_HTTP, "HTTP tunneled mode", "http"},
-    {0, NULL, NULL},
-  };
-
-  if (!rtsp_lower_trans_type) {
-    rtsp_lower_trans_type =
-        g_flags_register_static ("GstRTSPLowerTrans", rtsp_lower_trans);
-  }
-  return rtsp_lower_trans_type;
-}
 
 #define GST_TYPE_RTSP_NAT_METHOD (gst_rtsp_nat_method_get_type())
 static GType
@@ -211,7 +203,6 @@ gst_rtsp_nat_method_get_type (void)
   return rtsp_nat_method_type;
 }
 
-static void gst_rtspsrc_base_init (gpointer g_class);
 static void gst_rtspsrc_finalize (GObject * object);
 
 static void gst_rtspsrc_set_property (GObject * object, guint prop_id,
@@ -241,7 +232,7 @@ static GstRTSPResult gst_rtspsrc_send_cb (GstRTSPExtension * ext,
 
 static gboolean gst_rtspsrc_open (GstRTSPSrc * src);
 static gboolean gst_rtspsrc_play (GstRTSPSrc * src, GstSegment * segment);
-static gboolean gst_rtspsrc_pause (GstRTSPSrc * src);
+static gboolean gst_rtspsrc_pause (GstRTSPSrc * src, gboolean idle);
 static gboolean gst_rtspsrc_close (GstRTSPSrc * src);
 
 static gboolean gst_rtspsrc_uri_set_uri (GstURIHandler * handler,
@@ -286,7 +277,12 @@ gst_rtspsrc_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&rtptemplate));
 
-  gst_element_class_set_details (element_class, &gst_rtspsrc_details);
+  gst_element_class_set_details_simple (element_class, "RTSP packet receiver",
+      "Source/Network",
+      "Receive data over the network via RTSP (RFC 2326)",
+      "Wim Taymans <wim@fluendo.com>, "
+      "Thijs Vermeir <thijs.vermeir@barco.com>, "
+      "Lutz Mueller <lutz@topfrose.de>");
 }
 
 static void
@@ -404,6 +400,19 @@ gst_rtspsrc_class_init (GstRTSPSrcClass * klass)
           "RTSP location URI user password for authentication", DEFAULT_USER_PW,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  /**
+   * GstRTSPSrc::buffer-mode:
+   *
+   * Control the buffering and timestamping mode used by the jitterbuffer.
+   *
+   * Since: 0.10.22
+   */
+  g_object_class_install_property (gobject_class, PROP_BUFFER_MODE,
+      g_param_spec_enum ("buffer-mode", "Buffer Mode",
+          "Control the buffering algorithm in use",
+          GST_TYPE_RTSP_SRC_BUFFER_MODE, DEFAULT_BUFFER_MODE,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
   gstelement_class->change_state = gst_rtspsrc_change_state;
 
   gstbin_class->handle_message = gst_rtspsrc_handle_message;
@@ -437,6 +446,7 @@ gst_rtspsrc_init (GstRTSPSrc * src, GstRTSPSrcClass * g_class)
   src->rtp_blocksize = DEFAULT_RTP_BLOCKSIZE;
   src->user_id = g_strdup (DEFAULT_USER_ID);
   src->user_pw = g_strdup (DEFAULT_USER_PW);
+  src->buffer_mode = DEFAULT_BUFFER_MODE;
 
   /* get a list of all extensions */
   src->extensions = gst_rtsp_ext_list_get ();
@@ -609,6 +619,9 @@ gst_rtspsrc_set_property (GObject * object, guint prop_id, const GValue * value,
         g_free (rtspsrc->user_pw);
       rtspsrc->user_pw = g_value_dup_string (value);
       break;
+    case PROP_BUFFER_MODE:
+      rtspsrc->buffer_mode = g_value_get_enum (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -682,6 +695,9 @@ gst_rtspsrc_get_property (GObject * object, guint prop_id, GValue * value,
     case PROP_USER_PW:
       g_value_set_string (value, rtspsrc->user_pw);
       break;
+    case PROP_BUFFER_MODE:
+      g_value_set_enum (value, rtspsrc->buffer_mode);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -745,7 +761,7 @@ find_stream_by_setup (GstRTSPStream * stream, gconstpointer a)
   return -1;
 }
 
-GstRTSPStream *
+static GstRTSPStream *
 find_stream (GstRTSPSrc * src, gconstpointer data, gconstpointer func)
 {
   GList *lstream;
@@ -804,6 +820,52 @@ gst_rtspsrc_collect_bandwidth (GstRTSPSrc * src, const GstSDPMessage * sdp,
     stream->rs_bandwidth = -1;
 }
 
+static void
+gst_rtspsrc_do_stream_connection (GstRTSPSrc * src, GstRTSPStream * stream,
+    const GstSDPConnection * conn)
+{
+  if (conn->nettype == NULL || strcmp (conn->nettype, "IN") != 0)
+    return;
+
+  if (conn->addrtype == NULL)
+    return;
+
+  /* check for IPV6 */
+  if (strcmp (conn->addrtype, "IP4") == 0)
+    stream->is_ipv6 = FALSE;
+  else if (strcmp (conn->addrtype, "IP6") == 0)
+    stream->is_ipv6 = TRUE;
+  else
+    return;
+
+  /* FIXME check for multicast */
+}
+
+/* Go over the connections for a stream.
+ * - If we are dealing with IPV6, we will setup IPV6 sockets for sending and
+ *   receiving.
+ * - If we are dealing with a localhost address, we disable multicast
+ */
+static void
+gst_rtspsrc_collect_connections (GstRTSPSrc * src, const GstSDPMessage * sdp,
+    const GstSDPMedia * media, GstRTSPStream * stream)
+{
+  const GstSDPConnection *conn;
+  guint i, len;
+
+  /* first look in the media specific section */
+  len = gst_sdp_media_connections_len (media);
+  for (i = 0; i < len; i++) {
+    conn = gst_sdp_media_get_connection (media, i);
+
+    gst_rtspsrc_do_stream_connection (src, stream, conn);
+  }
+  /* then look in the message specific section */
+  if ((conn = gst_sdp_message_get_connection (sdp))) {
+    gst_rtspsrc_do_stream_connection (src, stream, conn);
+  }
+}
+
 static GstRTSPStream *
 gst_rtspsrc_create_stream (GstRTSPSrc * src, GstSDPMessage * sdp, gint idx)
 {
@@ -830,8 +892,12 @@ gst_rtspsrc_create_stream (GstRTSPSrc * src, GstSDPMessage * sdp, gint idx)
   stream->seqbase = -1;
   stream->timebase = -1;
 
-  /* collect bandwidth information for this steam */
+  /* collect bandwidth information for this steam. FIXME, configure in the RTP
+   * session manager to scale RTCP. */
   gst_rtspsrc_collect_bandwidth (src, sdp, media, stream);
+
+  /* collect connection info */
+  gst_rtspsrc_collect_connections (src, sdp, media, stream);
 
   /* we must have a payload. No payload means we cannot create caps */
   /* FIXME, handle multiple formats. The problem here is that we just want to
@@ -1220,7 +1286,7 @@ gst_rtspsrc_media_to_caps (gint pt, const GstSDPMedia * media)
       pairs = g_strsplit (p, ";", 0);
       for (i = 0; pairs[i]; i++) {
         gchar *valpos;
-        gchar *val, *key;
+        const gchar *val, *key;
 
         /* the key may not have a '=', the value can have other '='s */
         valpos = strstr (pairs[i], "=");
@@ -1272,6 +1338,7 @@ gst_rtspsrc_alloc_udp_ports (GstRTSPStream * stream,
   GstElement *udpsrc0, *udpsrc1;
   gint tmp_rtp, tmp_rtcp;
   guint count;
+  const gchar *host;
 
   src = stream->parent;
 
@@ -1282,10 +1349,15 @@ gst_rtspsrc_alloc_udp_ports (GstRTSPStream * stream,
   /* Start with random port */
   tmp_rtp = 0;
 
+  if (stream->is_ipv6)
+    host = "udp://[::0]";
+  else
+    host = "udp://0.0.0.0";
+
   /* try to allocate 2 UDP ports, the RTP port should be an even
    * number and the RTCP port should be the next (uneven) port */
 again:
-  udpsrc0 = gst_element_make_from_uri (GST_URI_SRC, "udp://0.0.0.0", NULL);
+  udpsrc0 = gst_element_make_from_uri (GST_URI_SRC, host, NULL);
   if (udpsrc0 == NULL)
     goto no_udp_protocol;
   g_object_set (G_OBJECT (udpsrc0), "port", tmp_rtp, NULL);
@@ -1330,7 +1402,7 @@ again:
   }
 
   /* allocate port+1 for RTCP now */
-  udpsrc1 = gst_element_make_from_uri (GST_URI_SRC, "udp://0.0.0.0", NULL);
+  udpsrc1 = gst_element_make_from_uri (GST_URI_SRC, host, NULL);
   if (udpsrc1 == NULL)
     goto no_udp_rtcp_protocol;
 
@@ -1590,7 +1662,7 @@ gst_rtspsrc_perform_seek (GstRTSPSrc * src, GstEvent * event)
 
   /* if we were playing, pause first */
   if (playing)
-    gst_rtspsrc_pause (src);
+    gst_rtspsrc_pause (src, FALSE);
 
   gst_rtspsrc_do_seek (src, &seeksegment);
 
@@ -2077,6 +2149,7 @@ gst_rtspsrc_stream_configure_manager (GstRTSPSrc * src, GstRTSPStream * stream,
 
     /* configure the manager */
     if (src->session == NULL) {
+      GObjectClass *klass;
       GstState target;
 
       if (!(src->session = gst_element_factory_make (manager, NULL))) {
@@ -2103,6 +2176,10 @@ gst_rtspsrc_stream_configure_manager (GstRTSPSrc * src, GstRTSPStream * stream,
         goto start_session_failure;
 
       g_object_set (src->session, "latency", src->latency, NULL);
+
+      klass = G_OBJECT_GET_CLASS (G_OBJECT (src->session));
+      if (g_object_class_find_property (klass, "buffer-mode"))
+        g_object_set (src->session, "buffer-mode", src->buffer_mode, NULL);
 
       /* connect to signals if we did not already do so */
       GST_DEBUG_OBJECT (src, "connect to signals on session manager, stream %p",
@@ -2273,17 +2350,24 @@ static gboolean
 gst_rtspsrc_stream_configure_mcast (GstRTSPSrc * src, GstRTSPStream * stream,
     GstRTSPTransport * transport, GstPad ** outpad)
 {
-  gchar *uri;
+  gchar *uri, *destination;
+  gint min, max;
 
   GST_DEBUG_OBJECT (src, "creating UDP sources for multicast");
 
   /* we can remove the allocated UDP ports now */
   gst_rtspsrc_stream_free_udp (stream);
 
-  /* creating UDP source */
-  if (transport->port.min != -1) {
-    uri = g_strdup_printf ("udp://%s:%d", transport->destination,
-        transport->port.min);
+  /* we need a destination now */
+  if (!(destination = transport->destination))
+    goto no_destination;
+
+  min = transport->port.min;
+  max = transport->port.max;
+
+  /* creating UDP source for RTP */
+  if (min != -1) {
+    uri = g_strdup_printf ("udp://%s:%d", destination, min);
     stream->udpsrc[0] = gst_element_make_from_uri (GST_URI_SRC, uri, NULL);
     g_free (uri);
     if (stream->udpsrc[0] == NULL)
@@ -2297,10 +2381,9 @@ gst_rtspsrc_stream_configure_mcast (GstRTSPSrc * src, GstRTSPStream * stream,
     gst_element_set_state (stream->udpsrc[0], GST_STATE_PAUSED);
   }
 
-  /* creating another UDP source */
-  if (transport->port.max != -1) {
-    uri = g_strdup_printf ("udp://%s:%d", transport->destination,
-        transport->port.max);
+  /* creating another UDP source for RTCP */
+  if (max != -1) {
+    uri = g_strdup_printf ("udp://%s:%d", destination, max);
     stream->udpsrc[1] = gst_element_make_from_uri (GST_URI_SRC, uri, NULL);
     g_free (uri);
     if (stream->udpsrc[1] == NULL)
@@ -2318,6 +2401,11 @@ gst_rtspsrc_stream_configure_mcast (GstRTSPSrc * src, GstRTSPStream * stream,
 no_element:
   {
     GST_DEBUG_OBJECT (src, "no UDP source element found");
+    return FALSE;
+  }
+no_destination:
+  {
+    GST_DEBUG_OBJECT (src, "no destination found");
     return FALSE;
   }
 }
@@ -2952,25 +3040,16 @@ gst_rtspsrc_loop_interleaved (GstRTSPSrc * src)
       GST_DEBUG_OBJECT (src, "timout, sending keep-alive");
       /* send keep-alive, ignore the result, a warning will be posted. */
       gst_rtspsrc_send_keep_alive (src);
+      /* get new timeout */
+      gst_rtsp_connection_next_timeout (src->connection, &tv_timeout);
     }
 
-    GST_DEBUG_OBJECT (src, "doing receive");
+    GST_DEBUG_OBJECT (src, "doing receive with timeout %ld seconds, %ld usec",
+        tv_timeout.tv_sec, tv_timeout.tv_usec);
 
-    /* We need to check if playback has been paused while we have been
-     * doing something else in our own GstTask (e.g. pushing buffer). There
-     * is a slight chance that we have just received data buffer when PAUSE
-     * state change happens (in another thread). In this case we well be
-     * totally ignorant of that unless we explicitly check it here. */
-    GST_RTSP_STATE_LOCK (src);
-    if (src->state == GST_RTSP_STATE_READY) {
-      /* We are looping in a paused mode */
-      GST_RTSP_STATE_UNLOCK (src);
-      goto already_paused;
-    }
     /* protect the connection with the connection lock so that we can see when
      * we are finished doing server communication */
     res = gst_rtspsrc_connection_receive (src, &message, src->ptcp_timeout);
-    GST_RTSP_STATE_UNLOCK (src);
 
     switch (res) {
       case GST_RTSP_OK:
@@ -2980,8 +3059,10 @@ gst_rtspsrc_loop_interleaved (GstRTSPSrc * src)
         /* we got interrupted this means we need to stop */
         goto interrupt;
       case GST_RTSP_ETIMEOUT:
-        /* no reply, go EOS */
-        goto timeout;
+        /* no reply, send keep alive */
+        GST_DEBUG_OBJECT (src, "timeout, sending keep-alive");
+        gst_rtspsrc_send_keep_alive (src);
+        continue;
       case GST_RTSP_EEOF:
         /* go EOS when the server closed the connection */
         goto server_eof;
@@ -3131,14 +3212,6 @@ unknown_stream:
     gst_rtsp_message_unset (&message);
     return GST_FLOW_OK;
   }
-timeout:
-  {
-    GST_DEBUG_OBJECT (src, "we got a timeout");
-    GST_ELEMENT_WARNING (src, RESOURCE, READ, (NULL),
-        ("Timeout while waiting for server message."));
-    gst_rtsp_message_unset (&message);
-    return GST_FLOW_UNEXPECTED;
-  }
 server_eof:
   {
     GST_DEBUG_OBJECT (src, "we got an eof from the server");
@@ -3154,11 +3227,6 @@ interrupt:
     GST_DEBUG_OBJECT (src, "got interrupted: stop connection flush");
     /* unset flushing so we can do something else */
     gst_rtsp_connection_flush (src->connection, FALSE);
-    return GST_FLOW_WRONG_STATE;
-  }
-already_paused:
-  {
-    GST_DEBUG_OBJECT (src, "got interrupted: playback already paused");
     return GST_FLOW_WRONG_STATE;
   }
 receive_error:
@@ -3305,7 +3373,7 @@ gst_rtspsrc_loop_udp (GstRTSPSrc * src)
   src->cur_protocols = GST_RTSP_LOWER_TRANS_TCP;
 
   /* pause to prepare for a restart */
-  gst_rtspsrc_pause (src);
+  gst_rtspsrc_pause (src, FALSE);
 
   if (src->task) {
     /* stop task, we cannot join as this would deadlock, the task will stop when
@@ -3465,7 +3533,7 @@ pause:
 }
 
 #ifndef GST_DISABLE_GST_DEBUG
-const gchar *
+static const gchar *
 gst_rtsp_auth_method_to_string (GstRTSPAuthMethod method)
 {
   gint index = 0;
@@ -5176,6 +5244,19 @@ gst_rtspsrc_play (GstRTSPSrc * src, GstSegment * segment)
   if (src->state == GST_RTSP_STATE_PLAYING)
     goto was_playing;
 
+  if (!src->connection || !src->connected)
+    goto done;
+
+  /* waiting for connection idle, we were flushing so any attempt at doing data
+   * transfer will result in pausing the tasks. */
+  GST_DEBUG_OBJECT (src, "wait for connection idle");
+  GST_RTSP_CONN_LOCK (src);
+  GST_DEBUG_OBJECT (src, "connection is idle now");
+  GST_RTSP_CONN_UNLOCK (src);
+
+  GST_DEBUG_OBJECT (src, "stop connection flush");
+  gst_rtsp_connection_flush (src->connection, FALSE);
+
   /* do play */
   res =
       gst_rtsp_message_init_request (&request, GST_RTSP_PLAY,
@@ -5286,7 +5367,7 @@ send_error:
 }
 
 static gboolean
-gst_rtspsrc_pause (GstRTSPSrc * src)
+gst_rtspsrc_pause (GstRTSPSrc * src, gboolean idle)
 {
   GstRTSPMessage request = { 0 };
   GstRTSPMessage response = { 0 };
@@ -5324,6 +5405,13 @@ gst_rtspsrc_pause (GstRTSPSrc * src)
 
   gst_rtsp_message_unset (&request);
   gst_rtsp_message_unset (&response);
+
+  if (idle && src->task) {
+    GST_DEBUG_OBJECT (src, "starting idle task again");
+    src->base_time = -1;
+    gst_rtspsrc_loop_send_cmd (src, CMD_WAIT, FALSE);
+    gst_task_start (src->task);
+  }
 
 no_connection:
   src->state = GST_RTSP_STATE_READY;
@@ -5461,14 +5549,14 @@ gst_rtspsrc_change_state (GstElement * element, GstStateChange transition)
       break;
     case GST_STATE_CHANGE_PAUSED_TO_PLAYING:
       GST_DEBUG_OBJECT (rtspsrc, "PAUSED->PLAYING: stop connection flush");
-      gst_rtsp_connection_flush (rtspsrc->connection, FALSE);
+      gst_rtspsrc_loop_send_cmd (rtspsrc, CMD_STOP, TRUE);
       /* send some dummy packets before we chain up to the parent to activate
        * the receive in the udp sources */
       gst_rtspsrc_send_dummy_packets (rtspsrc);
       break;
     case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
     case GST_STATE_CHANGE_PAUSED_TO_READY:
-      GST_DEBUG_OBJECT (rtspsrc, "shutdown: sending stop command");
+      GST_DEBUG_OBJECT (rtspsrc, "state change: sending stop command");
       gst_rtspsrc_loop_send_cmd (rtspsrc, CMD_STOP, TRUE);
       break;
     default:
@@ -5485,7 +5573,8 @@ gst_rtspsrc_change_state (GstElement * element, GstStateChange transition)
       gst_rtspsrc_play (rtspsrc, &rtspsrc->segment);
       break;
     case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
-      gst_rtspsrc_pause (rtspsrc);
+      /* send pause request and keep the idle task around */
+      gst_rtspsrc_pause (rtspsrc, TRUE);
       ret = GST_STATE_CHANGE_NO_PREROLL;
       break;
     case GST_STATE_CHANGE_READY_TO_PAUSED:
@@ -5521,9 +5610,9 @@ gst_rtspsrc_uri_get_type (void)
 static gchar **
 gst_rtspsrc_uri_get_protocols (void)
 {
-  static gchar *protocols[] = { "rtsp", "rtspu", "rtspt", "rtsph", NULL };
+  static const gchar *protocols[] = { "rtsp", "rtspu", "rtspt", "rtsph", NULL };
 
-  return protocols;
+  return (gchar **) protocols;
 }
 
 static const gchar *

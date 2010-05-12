@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.9.7\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2006-01-18 22:26+0200\n"
 "Last-Translator: Ales Nyakhaychyk <nab@mail.by>\n"
 "Language-Team: Belarusian <i18n@mova.org>\n"
@@ -83,18 +83,6 @@ msgstr ""
 
 msgid "Unknown option"
 msgstr ""
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr ""
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"Дадатковая адладачная інфармацыя:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr ""
@@ -603,6 +591,26 @@ msgid ""
 "according to WGS84 (zero is average sea level)"
 msgstr ""
 
+msgid "geo location country"
+msgstr ""
+
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+
+msgid "geo location city"
+msgstr ""
+
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+
+msgid "geo location sublocation"
+msgstr ""
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr ""
@@ -653,8 +661,28 @@ msgid ""
 "of a concerto. It is a higher level than a track, but lower than an album"
 msgstr ""
 
+msgid "user rating"
+msgstr ""
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ""
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr ""
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"Дадатковая адладачная інфармацыя:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -771,6 +799,9 @@ msgid "File \"%s\" is a socket."
 msgstr ""
 
 msgid "Failed after iterations as requested."
+msgstr ""
+
+msgid "Error while writing to download file."
 msgstr ""
 
 msgid "No Temp directory specified."

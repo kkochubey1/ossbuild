@@ -30,14 +30,14 @@ then
 fi
 
 
-CONFIGURE_DEF_OPT='--enable-maintainer-mode --enable-gtk-doc --enable-plugin-docs'
+CONFIGURE_DEF_OPT='--enable-maintainer-mode --enable-gtk-doc'
 
 autogen_options $@
 
 printf "+ check for build tools"
 if test ! -z "$NOCHECK"; then echo " skipped"; else  echo; fi
-version_check "autoconf" "$AUTOCONF autoconf autoconf259 autoconf257 autoconf-2.54 autoconf-2.53 autoconf-2.52" \
-              "ftp://ftp.gnu.org/pub/gnu/autoconf/" 2 52 || DIE=1
+version_check "autoconf" "$AUTOCONF autoconf autoconf270 autoconf269 autoconf268 autoconf267 autoconf266 autoconf265 autoconf264 autoconf263 autoconf262 autoconf261 autoconf260" \
+              "ftp://ftp.gnu.org/pub/gnu/autoconf/" 2 60 || DIE=1
 version_check "automake" "$AUTOMAKE automake automake-1.11 automake-1.10 automake-1.9 automake19 automake-1.7 automake-1.6 automake-1.5" \
               "ftp://ftp.gnu.org/pub/gnu/automake/" 1 7 || DIE=1
 version_check "autopoint" "autopoint" \

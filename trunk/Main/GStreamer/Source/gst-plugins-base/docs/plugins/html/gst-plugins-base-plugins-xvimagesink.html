@@ -8,11 +8,8 @@
 <link rel="up" href="ch01.html" title="gst-plugins-base Elements">
 <link rel="prev" href="gst-plugins-base-plugins-ximagesink.html" title="ximagesink">
 <link rel="next" href="ch02.html" title="gst-plugins-base Plugins">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-base Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-base Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-base Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -98,10 +95,8 @@ application through the XOverlay interface and will then render video frames
 in this drawable. If no Window ID was provided by the application, the
 element will create its own internal window and render into it.
 </p>
-<p>
-</p>
 <div class="refsect2" title="Scaling">
-<a name="id510870"></a><h3>Scaling</h3>
+<a name="id438238"></a><h3>Scaling</h3>
 <p>
 The XVideo extension, when it's available, handles hardware accelerated
 scaling of video frames. This means that the element will just accept
@@ -111,11 +106,9 @@ property it is possible to enforce scaling with a constant aspect ratio,
 which means drawing black borders around the video frame.
 </p>
 </div>
-<p>
-</p>
 <hr>
 <div class="refsect2" title="Events">
-<a name="id510891"></a><h3>Events</h3>
+<a name="id438259"></a><h3>Events</h3>
 <p>
 XvImageSink creates a thread to handle events coming from the drawable. There
 are several kind of events that can be grouped in 2 big categories: input
@@ -128,11 +121,9 @@ paused, it will receive expose events from the drawable and draw the latest
 frame with correct borders/aspect-ratio.
 </p>
 </div>
-<p>
-</p>
 <hr>
 <div class="refsect2" title="Pixel aspect ratio">
-<a name="id510908"></a><h3>Pixel aspect ratio</h3>
+<a name="id438276"></a><h3>Pixel aspect ratio</h3>
 <p>
 When changing state to GST_STATE_READY, XvImageSink will open a connection to
 the display specified in the <a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--display" title='The "display" property'><span class="type">"display"</span></a> property or the
@@ -146,11 +137,9 @@ then possible to enforce a specific pixel aspect ratio using the
 <a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--pixel-aspect-ratio" title='The "pixel-aspect-ratio" property'><span class="type">"pixel-aspect-ratio"</span></a> property.
 </p>
 </div>
-<p>
-</p>
 <hr>
 <div class="refsect2" title="Examples">
-<a name="id510938"></a><h3>Examples</h3>
+<a name="id438306"></a><h3>Examples</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -232,7 +221,8 @@ some characters for your shell like '\(fraction\)'.
 <a name="GstXvImageSink-struct"></a><h3>GstXvImageSink</h3>
 <pre class="programlisting">typedef struct _GstXvImageSink GstXvImageSink;</pre>
 <p>
-The <a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink"><span class="type">GstXvImageSink</span></a> data structure.</p>
+The <a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink"><span class="type">GstXvImageSink</span></a> data structure.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody></tbody>
@@ -326,7 +316,8 @@ The <a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSi
 <a name="GstXvImageSink--double-buffer"></a><h3>The <code class="literal">"double-buffer"</code> property</h3>
 <pre class="programlisting">  "double-buffer"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>
-Whether to double-buffer the output.</p>
+Whether to double-buffer the output.
+</p>
 <p>Default value: TRUE</p>
 <p class="since">Since 0.10.14</p>
 </div>
@@ -336,7 +327,8 @@ Whether to double-buffer the output.</p>
 <pre class="programlisting">  "handle-expose"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>
 When enabled, the current frame will always be drawn in response to X
-Expose.</p>
+Expose.
+</p>
 <p>Default value: TRUE</p>
 <p class="since">Since 0.10.14</p>
 </div>
@@ -345,7 +337,8 @@ Expose.</p>
 <a name="GstXvImageSink--autopaint-colorkey"></a><h3>The <code class="literal">"autopaint-colorkey"</code> property</h3>
 <pre class="programlisting">  "autopaint-colorkey"       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>
-Whether to autofill overlay with colorkey</p>
+Whether to autofill overlay with colorkey
+</p>
 <p>Default value: TRUE</p>
 <p class="since">Since 0.10.21</p>
 </div>
@@ -354,7 +347,8 @@ Whether to autofill overlay with colorkey</p>
 <a name="GstXvImageSink--colorkey"></a><h3>The <code class="literal">"colorkey"</code> property</h3>
 <pre class="programlisting">  "colorkey"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>
-Color to use for the overlay mask.</p>
+Color to use for the overlay mask.
+</p>
 <p>Default value: 0</p>
 <p class="since">Since 0.10.21</p>
 </div>
@@ -364,7 +358,8 @@ Color to use for the overlay mask.</p>
 <pre class="programlisting">  "draw-borders"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>
 Draw black borders when using GstXvImageSink:force-aspect-ratio to fill
-unused parts of the video area.</p>
+unused parts of the video area.
+</p>
 <p>Default value: TRUE</p>
 <p class="since">Since 0.10.21</p>
 </div>
@@ -372,6 +367,6 @@ unused parts of the video area.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

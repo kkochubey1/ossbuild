@@ -8,17 +8,8 @@
 <link rel="up" href="gstreamer-control.html" title="GStreamer Dynamic Parameter Control">
 <link rel="prev" href="gstreamer-control.html" title="GStreamer Dynamic Parameter Control">
 <link rel="next" href="GstControlSource.html" title="GstControlSource">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="part" href="gstreamer-libs.html" title="Part I. GStreamer Libraries">
-<link rel="chapter" href="gstreamer-base.html" title="GStreamer Base and Utillity Classes">
-<link rel="chapter" href="gstreamer-control.html" title="GStreamer Dynamic Parameter Control">
-<link rel="chapter" href="gstreamer-dataprotocol.html" title="GStreamer Data Protocol">
-<link rel="chapter" href="gstreamer-net.html" title="GStreamer Network Classes">
-<link rel="chapter" href="gstreamer-check.html" title="GStreamer Check Unit Testing">
-<link rel="chapter" href="gstreamer-hierarchy.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
-<link rel="index" href="api-index-deprecated.html" title="Index of deprecated API">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -54,63 +45,63 @@
 #include &lt;gst/controller/gstcontroller.h&gt;
 
                     <a class="link" href="GstController.html#GstController-struct" title="GstController">GstController</a>;
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-init" title="gst_controller_init ()">gst_controller_init</a>                 (<span class="returnvalue">int</span> *argc,
-                                                         <span class="returnvalue">char</span> ***argv);
-<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     <a class="link" href="GstController.html#gst-controller-new" title="gst_controller_new ()">gst_controller_new</a>                  (<a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="returnvalue">GObject</span></a> *object,
-                                                         ...);
-<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     <a class="link" href="GstController.html#gst-controller-new-list" title="gst_controller_new_list ()">gst_controller_new_list</a>             (<a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="returnvalue">GObject</span></a> *object,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *list);
-<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     <a class="link" href="GstController.html#gst-controller-new-valist" title="gst_controller_new_valist ()">gst_controller_new_valist</a>           (<a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="returnvalue">GObject</span></a> *object,
-                                                         <span class="returnvalue">va_list</span> var_args);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-remove-properties" title="gst_controller_remove_properties ()">gst_controller_remove_properties</a>    (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         ...);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-init" title="gst_controller_init ()">gst_controller_init</a>                 (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
+                                                         <em class="parameter"><code><span class="type">char</span> ***argv</code></em>);
+<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     <a class="link" href="GstController.html#gst-controller-new" title="gst_controller_new ()">gst_controller_new</a>                  (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> *object</code></em>,
+                                                         <em class="parameter"><code>...</code></em>);
+<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     <a class="link" href="GstController.html#gst-controller-new-list" title="gst_controller_new_list ()">gst_controller_new_list</a>             (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> *object</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *list</code></em>);
+<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     <a class="link" href="GstController.html#gst-controller-new-valist" title="gst_controller_new_valist ()">gst_controller_new_valist</a>           (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> *object</code></em>,
+                                                         <em class="parameter"><code><span class="type">va_list</span> var_args</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-remove-properties" title="gst_controller_remove_properties ()">gst_controller_remove_properties</a>    (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>...</code></em>);
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-remove-properties-list" title="gst_controller_remove_properties_list ()">gst_controller_remove_properties_list</a>
-                                                        (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *list);
+                                                        (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *list</code></em>);
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-remove-properties-valist" title="gst_controller_remove_properties_valist ()">gst_controller_remove_properties_valist</a>
-                                                        (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <span class="returnvalue">va_list</span> var_args);
-<span class="returnvalue">void</span>                <a class="link" href="GstController.html#gst-controller-set-disabled" title="gst_controller_set_disabled ()">gst_controller_set_disabled</a>         (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a> disabled);
+                                                        (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><span class="type">va_list</span> var_args</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstController.html#gst-controller-set-disabled" title="gst_controller_set_disabled ()">gst_controller_set_disabled</a>         (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> disabled</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstController.html#gst-controller-set-property-disabled" title="gst_controller_set_property_disabled ()">gst_controller_set_property_disabled</a>
-                                                        (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a> disabled);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        <a class="link" href="GstController.html#gst-controller-suggest-next-sync" title="gst_controller_suggest_next_sync ()">gst_controller_suggest_next_sync</a>    (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-sync-values" title="gst_controller_sync_values ()">gst_controller_sync_values</a>          (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp);
-<a class="link" href="GstControlSource.html" title="GstControlSource"><span class="returnvalue">GstControlSource</span></a> *  <a class="link" href="GstController.html#gst-controller-get-control-source" title="gst_controller_get_control_source ()">gst_controller_get_control_source</a>   (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-set-control-source" title="gst_controller_set_control_source ()">gst_controller_set_control_source</a>   (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="returnvalue">GstControlSource</span></a> *csource);
-<a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="returnvalue">GValue</span></a> *            <a class="link" href="GstController.html#gst-controller-get" title="gst_controller_get ()">gst_controller_get</a>                  (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-get-value-arrays" title="gst_controller_get_value_arrays ()">gst_controller_get_value_arrays</a>     (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="returnvalue">GSList</span></a> *value_arrays);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-get-value-array" title="gst_controller_get_value_array ()">gst_controller_get_value_array</a>      (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp,
-                                                         <a class="link" href="GstControlSource.html#GstValueArray" title="GstValueArray"><span class="returnvalue">GstValueArray</span></a> *value_array);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-set" title="gst_controller_set ()">gst_controller_set</a>                  (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp,
-                                                         <a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="returnvalue">GValue</span></a> *value);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-set-from-list" title="gst_controller_set_from_list ()">gst_controller_set_from_list</a>        (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="returnvalue">GSList</span></a> *timedvalues);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-unset" title="gst_controller_unset ()">gst_controller_unset</a>                (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-unset-all" title="gst_controller_unset_all ()">gst_controller_unset_all</a>            (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name);
-const <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *       <a class="link" href="GstController.html#gst-controller-get-all" title="gst_controller_get_all ()">gst_controller_get_all</a>              (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name);
+                                                        (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> disabled</code></em>);
+<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        <a class="link" href="GstController.html#gst-controller-suggest-next-sync" title="gst_controller_suggest_next_sync ()">gst_controller_suggest_next_sync</a>    (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-sync-values" title="gst_controller_sync_values ()">gst_controller_sync_values</a>          (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);
+<a class="link" href="GstControlSource.html" title="GstControlSource"><span class="returnvalue">GstControlSource</span></a> *  <a class="link" href="GstController.html#gst-controller-get-control-source" title="gst_controller_get_control_source ()">gst_controller_get_control_source</a>   (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-set-control-source" title="gst_controller_set_control_source ()">gst_controller_set_control_source</a>   (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a> *csource</code></em>);
+<a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="returnvalue">GValue</span></a> *            <a class="link" href="GstController.html#gst-controller-get" title="gst_controller_get ()">gst_controller_get</a>                  (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-get-value-arrays" title="gst_controller_get_value_arrays ()">gst_controller_get_value_arrays</a>     (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="type">GSList</span></a> *value_arrays</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-get-value-array" title="gst_controller_get_value_array ()">gst_controller_get_value_array</a>      (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstControlSource.html#GstValueArray" title="GstValueArray"><span class="type">GstValueArray</span></a> *value_array</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-set" title="gst_controller_set ()">gst_controller_set</a>                  (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> *value</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-set-from-list" title="gst_controller_set_from_list ()">gst_controller_set_from_list</a>        (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="type">GSList</span></a> *timedvalues</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-unset" title="gst_controller_unset ()">gst_controller_unset</a>                (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-unset-all" title="gst_controller_unset_all ()">gst_controller_unset_all</a>            (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>);
+const <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *       <a class="link" href="GstController.html#gst-controller-get-all" title="gst_controller_get_all ()">gst_controller_get_all</a>              (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>);
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstController.html#gst-controller-set-interpolation-mode" title="gst_controller_set_interpolation_mode ()">gst_controller_set_interpolation_mode</a>
-                                                        (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a class="link" href="GstInterpolationControlSource.html#GstInterpolateMode" title="enum GstInterpolateMode"><span class="returnvalue">GstInterpolateMode</span></a> mode);
+                                                        (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstInterpolationControlSource.html#GstInterpolateMode" title="enum GstInterpolateMode"><span class="type">GstInterpolateMode</span></a> mode</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
@@ -176,6 +167,8 @@ Again its not a lot to change.
     start your pipeline
   </p></li>
 </ol></div>
+<p>
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="GstController.details"></a><h2>Details</h2>
@@ -183,27 +176,29 @@ Again its not a lot to change.
 <a name="GstController-struct"></a><h3>GstController</h3>
 <pre class="programlisting">typedef struct _GstController GstController;</pre>
 <p>
-The instance structure of GstController</p>
+The instance structure of GstController
+</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_controller_init ()">
 <a name="gst-controller-init"></a><h3>gst_controller_init ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_init                 (<span class="returnvalue">int</span> *argc,
-                                                         <span class="returnvalue">char</span> ***argv);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_init                 (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
+                                                         <em class="parameter"><code><span class="type">char</span> ***argv</code></em>);</pre>
 <p>
 Initializes the use of the controller library. Suggested to be called right
-after <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-Gst.html#gst-init"><code class="function">gst_init()</code></a>.</p>
+after <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-Gst.html#gst-init"><code class="function">gst_init()</code></a>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>argc</code></em> :</span></p></td>
-<td> pointer to the commandline argument count
+<td>pointer to the commandline argument count
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>argv</code></em> :</span></p></td>
-<td> pointer to the commandline argument values
+<td>pointer to the commandline argument values
 </td>
 </tr>
 <tr>
@@ -217,21 +212,23 @@ after <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-Gst.html#gst-ini
 <hr>
 <div class="refsect2" title="gst_controller_new ()">
 <a name="gst-controller-new"></a><h3>gst_controller_new ()</h3>
-<pre class="programlisting"><a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     gst_controller_new                  (<a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="returnvalue">GObject</span></a> *object,
-                                                         ...);</pre>
+<pre class="programlisting"><a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     gst_controller_new                  (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> *object</code></em>,
+                                                         <em class="parameter"><code>...</code></em>);</pre>
 <p>
-Creates a new GstController for the given object's properties</p>
+Creates a new GstController for the given object's properties
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>object</code></em> :</span></p></td>
-<td> the object of which some properties should be controlled
+<td>the object of which some properties should be controlled
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>...</code></em> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> terminated list of property names that should be controlled
+<td>
+<a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> terminated list of property names that should be controlled
 </td>
 </tr>
 <tr>
@@ -245,21 +242,22 @@ Creates a new GstController for the given object's properties</p>
 <hr>
 <div class="refsect2" title="gst_controller_new_list ()">
 <a name="gst-controller-new-list"></a><h3>gst_controller_new_list ()</h3>
-<pre class="programlisting"><a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     gst_controller_new_list             (<a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="returnvalue">GObject</span></a> *object,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *list);</pre>
+<pre class="programlisting"><a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     gst_controller_new_list             (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> *object</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *list</code></em>);</pre>
 <p>
-Creates a new GstController for the given object's properties</p>
+Creates a new GstController for the given object's properties
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>object</code></em> :</span></p></td>
-<td> the object of which some properties should be controlled
+<td>the object of which some properties should be controlled
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>list</code></em> :</span></p></td>
-<td> list of property names that should be controlled
+<td>list of property names that should be controlled
 </td>
 </tr>
 <tr>
@@ -273,21 +271,23 @@ Creates a new GstController for the given object's properties</p>
 <hr>
 <div class="refsect2" title="gst_controller_new_valist ()">
 <a name="gst-controller-new-valist"></a><h3>gst_controller_new_valist ()</h3>
-<pre class="programlisting"><a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     gst_controller_new_valist           (<a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="returnvalue">GObject</span></a> *object,
-                                                         <span class="returnvalue">va_list</span> var_args);</pre>
+<pre class="programlisting"><a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *     gst_controller_new_valist           (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> *object</code></em>,
+                                                         <em class="parameter"><code><span class="type">va_list</span> var_args</code></em>);</pre>
 <p>
-Creates a new GstController for the given object's properties</p>
+Creates a new GstController for the given object's properties
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>object</code></em> :</span></p></td>
-<td> the object of which some properties should be controlled
+<td>the object of which some properties should be controlled
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>var_args</code></em> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> terminated list of property names that should be controlled
+<td>
+<a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> terminated list of property names that should be controlled
 </td>
 </tr>
 <tr>
@@ -301,21 +301,23 @@ Creates a new GstController for the given object's properties</p>
 <hr>
 <div class="refsect2" title="gst_controller_remove_properties ()">
 <a name="gst-controller-remove-properties"></a><h3>gst_controller_remove_properties ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_remove_properties    (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         ...);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_remove_properties    (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>...</code></em>);</pre>
 <p>
-Removes the given object properties from the controller</p>
+Removes the given object properties from the controller
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller object from which some properties should be removed
+<td>the controller object from which some properties should be removed
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>...</code></em> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> terminated list of property names that should be removed
+<td>
+<a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> terminated list of property names that should be removed
 </td>
 </tr>
 <tr>
@@ -330,21 +332,23 @@ Removes the given object properties from the controller</p>
 <div class="refsect2" title="gst_controller_remove_properties_list ()">
 <a name="gst-controller-remove-properties-list"></a><h3>gst_controller_remove_properties_list ()</h3>
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_remove_properties_list
-                                                        (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *list);</pre>
+                                                        (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *list</code></em>);</pre>
 <p>
-Removes the given object properties from the controller</p>
+Removes the given object properties from the controller
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller object from which some properties should be removed
+<td>the controller object from which some properties should be removed
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>list</code></em> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of property names that should be removed
+<td>
+<a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of property names that should be removed
 </td>
 </tr>
 <tr>
@@ -359,21 +363,23 @@ Removes the given object properties from the controller</p>
 <div class="refsect2" title="gst_controller_remove_properties_valist ()">
 <a name="gst-controller-remove-properties-valist"></a><h3>gst_controller_remove_properties_valist ()</h3>
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_remove_properties_valist
-                                                        (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <span class="returnvalue">va_list</span> var_args);</pre>
+                                                        (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><span class="type">va_list</span> var_args</code></em>);</pre>
 <p>
-Removes the given object properties from the controller</p>
+Removes the given object properties from the controller
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller object from which some properties should be removed
+<td>the controller object from which some properties should be removed
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>var_args</code></em> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> terminated list of property names that should be removed
+<td>
+<a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> terminated list of property names that should be removed
 </td>
 </tr>
 <tr>
@@ -387,22 +393,23 @@ Removes the given object properties from the controller</p>
 <hr>
 <div class="refsect2" title="gst_controller_set_disabled ()">
 <a name="gst-controller-set-disabled"></a><h3>gst_controller_set_disabled ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_controller_set_disabled         (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a> disabled);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_controller_set_disabled         (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> disabled</code></em>);</pre>
 <p>
 This function is used to disable all properties of the <a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a>
-for some time, i.e. <a class="link" href="GstController.html#gst-controller-sync-values" title="gst_controller_sync_values ()"><code class="function">gst_controller_sync_values()</code></a> will do nothing.</p>
+for some time, i.e. <a class="link" href="GstController.html#gst-controller-sync-values" title="gst_controller_sync_values ()"><code class="function">gst_controller_sync_values()</code></a> will do nothing.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the <a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> which should be disabled
+<td>the <a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> which should be disabled
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>disabled</code></em> :</span></p></td>
-<td> boolean that specifies whether to disable the controller
+<td>boolean that specifies whether to disable the controller
 or not.
 </td>
 </tr>
@@ -414,29 +421,30 @@ or not.
 <div class="refsect2" title="gst_controller_set_property_disabled ()">
 <a name="gst-controller-set-property-disabled"></a><h3>gst_controller_set_property_disabled ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_controller_set_property_disabled
-                                                        (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a> disabled);</pre>
+                                                        (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> disabled</code></em>);</pre>
 <p>
 This function is used to disable the <a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> on a property for
 some time, i.e. <a class="link" href="GstController.html#gst-controller-sync-values" title="gst_controller_sync_values ()"><code class="function">gst_controller_sync_values()</code></a> will do nothing for the
-property.</p>
+property.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the <a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> which should be disabled
+<td>the <a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> which should be disabled
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>property_name</code></em> :</span></p></td>
-<td> property to disable
+<td>property to disable
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>disabled</code></em> :</span></p></td>
-<td> boolean that specifies whether to disable the controller
+<td>boolean that specifies whether to disable the controller
 or not.
 </td>
 </tr>
@@ -447,16 +455,17 @@ or not.
 <hr>
 <div class="refsect2" title="gst_controller_suggest_next_sync ()">
 <a name="gst-controller-suggest-next-sync"></a><h3>gst_controller_suggest_next_sync ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        gst_controller_suggest_next_sync    (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        gst_controller_suggest_next_sync    (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>);</pre>
 <p>
 Returns a suggestion for timestamps where buffers should be split
-to get best controller results.</p>
+to get best controller results.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller that handles the values
+<td>the controller that handles the values
 </td>
 </tr>
 <tr>
@@ -473,26 +482,27 @@ if no control-rate was set.
 <hr>
 <div class="refsect2" title="gst_controller_sync_values ()">
 <a name="gst-controller-sync-values"></a><h3>gst_controller_sync_values ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_sync_values          (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_sync_values          (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);</pre>
 <p>
 Sets the properties of the element, according to the controller that (maybe)
 handles them and for the given timestamp.
 </p>
 <p>
 If this function fails, it is most likely the application developers fault.
-Most probably the control sources are not setup correctly.</p>
+Most probably the control sources are not setup correctly.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller that handles the values
+<td>the controller that handles the values
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timestamp</code></em> :</span></p></td>
-<td> the time that should be processed
+<td>the time that should be processed
 </td>
 </tr>
 <tr>
@@ -507,22 +517,23 @@ properties, <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALS
 <hr>
 <div class="refsect2" title="gst_controller_get_control_source ()">
 <a name="gst-controller-get-control-source"></a><h3>gst_controller_get_control_source ()</h3>
-<pre class="programlisting"><a class="link" href="GstControlSource.html" title="GstControlSource"><span class="returnvalue">GstControlSource</span></a> *  gst_controller_get_control_source   (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name);</pre>
+<pre class="programlisting"><a class="link" href="GstControlSource.html" title="GstControlSource"><span class="returnvalue">GstControlSource</span></a> *  gst_controller_get_control_source   (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>);</pre>
 <p>
 Gets the corresponding <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a> for the property. This should be unreferenced
-again after use.</p>
+again after use.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller object
+<td>the controller object
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>property_name</code></em> :</span></p></td>
-<td> name of the property for which the <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a> should be get
+<td>name of the property for which the <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a> should be get
 </td>
 </tr>
 <tr>
@@ -539,28 +550,29 @@ controlled by this controller or no <a class="link" href="GstControlSource.html"
 <hr>
 <div class="refsect2" title="gst_controller_set_control_source ()">
 <a name="gst-controller-set-control-source"></a><h3>gst_controller_set_control_source ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_set_control_source   (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="returnvalue">GstControlSource</span></a> *csource);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_set_control_source   (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a> *csource</code></em>);</pre>
 <p>
 Sets the <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a> for <em class="parameter"><code>property_name</code></em>. If there already was a <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a>
-for this property it will be unreferenced.</p>
+for this property it will be unreferenced.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller object
+<td>the controller object
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>property_name</code></em> :</span></p></td>
-<td> name of the property for which the <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a> should be set
+<td>name of the property for which the <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a> should be set
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>csource</code></em> :</span></p></td>
-<td> the <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a> that should be used for the property
+<td>the <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a> that should be used for the property
 </td>
 </tr>
 <tr>
@@ -577,28 +589,29 @@ couldn't be bound to the property, <a href="/usr/share/gtk-doc/html/glib/glib-St
 <hr>
 <div class="refsect2" title="gst_controller_get ()">
 <a name="gst-controller-get"></a><h3>gst_controller_get ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="returnvalue">GValue</span></a> *            gst_controller_get                  (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="returnvalue">GValue</span></a> *            gst_controller_get                  (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);</pre>
 <p>
 Gets the value for the given controller-handled property at the requested
-time.</p>
+time.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller object which handles the properties
+<td>the controller object which handles the properties
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>property_name</code></em> :</span></p></td>
-<td> the name of the property to get
+<td>the name of the property to get
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timestamp</code></em> :</span></p></td>
-<td> the time the control-change should be read from
+<td>the time the control-change should be read from
 </td>
 </tr>
 <tr>
@@ -613,9 +626,9 @@ property isn't handled by the controller
 <hr>
 <div class="refsect2" title="gst_controller_get_value_arrays ()">
 <a name="gst-controller-get-value-arrays"></a><h3>gst_controller_get_value_arrays ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_get_value_arrays     (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="returnvalue">GSList</span></a> *value_arrays);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_get_value_arrays     (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="type">GSList</span></a> *value_arrays</code></em>);</pre>
 <p>
 Function to be able to get an array of values for one or more given element
 properties.
@@ -634,22 +647,24 @@ The types of the values in the array are the same as the property's type.
 <h3 class="title">Note</h3>
 <p>This doesn't modify the controlled GObject properties!</p>
 </div>
+<p>
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller that handles the values
+<td>the controller that handles the values
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timestamp</code></em> :</span></p></td>
-<td> the time that should be processed
+<td>the time that should be processed
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>value_arrays</code></em> :</span></p></td>
-<td> list to return the control-values in
+<td>list to return the control-values in
 </td>
 </tr>
 <tr>
@@ -663,9 +678,9 @@ The types of the values in the array are the same as the property's type.
 <hr>
 <div class="refsect2" title="gst_controller_get_value_array ()">
 <a name="gst-controller-get-value-array"></a><h3>gst_controller_get_value_array ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_get_value_array      (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp,
-                                                         <a class="link" href="GstControlSource.html#GstValueArray" title="GstValueArray"><span class="returnvalue">GstValueArray</span></a> *value_array);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_get_value_array      (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstControlSource.html#GstValueArray" title="GstValueArray"><span class="type">GstValueArray</span></a> *value_array</code></em>);</pre>
 <p>
 Function to be able to get an array of values for one element property.
 </p>
@@ -683,22 +698,24 @@ The type of the values in the array is the same as the property's type.
 <h3 class="title">Note</h3>
 <p>This doesn't modify the controlled GObject property!</p>
 </div>
+<p>
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller that handles the values
+<td>the controller that handles the values
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timestamp</code></em> :</span></p></td>
-<td> the time that should be processed
+<td>the time that should be processed
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>value_array</code></em> :</span></p></td>
-<td> array to put control-values in
+<td>array to put control-values in
 </td>
 </tr>
 <tr>
@@ -712,38 +729,39 @@ The type of the values in the array is the same as the property's type.
 <hr>
 <div class="refsect2" title="gst_controller_set ()">
 <a name="gst-controller-set"></a><h3>gst_controller_set ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_set                  (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp,
-                                                         <a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="returnvalue">GValue</span></a> *value);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_set                  (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> *value</code></em>);</pre>
 <div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Warning</h3>
 <p><code class="literal">gst_controller_set</code> is deprecated and should not be used in newly-written code. Use <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a>, for example <a class="link" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource"><span class="type">GstInterpolationControlSource</span></a>
 directly.</p>
 </div>
 <p>
-Set the value of given controller-handled property at a certain time.</p>
+Set the value of given controller-handled property at a certain time.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller object which handles the properties
+<td>the controller object which handles the properties
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>property_name</code></em> :</span></p></td>
-<td> the name of the property to set
+<td>the name of the property to set
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timestamp</code></em> :</span></p></td>
-<td> the time the control-change is schedules for
+<td>the time the control-change is schedules for
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>value</code></em> :</span></p></td>
-<td> the control-value
+<td>the control-value
 </td>
 </tr>
 <tr>
@@ -757,32 +775,33 @@ Set the value of given controller-handled property at a certain time.</p>
 <hr>
 <div class="refsect2" title="gst_controller_set_from_list ()">
 <a name="gst-controller-set-from-list"></a><h3>gst_controller_set_from_list ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_set_from_list        (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="returnvalue">GSList</span></a> *timedvalues);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_set_from_list        (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Singly-Linked-Lists.html#GSList"><span class="type">GSList</span></a> *timedvalues</code></em>);</pre>
 <div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Warning</h3>
 <p><code class="literal">gst_controller_set_from_list</code> is deprecated and should not be used in newly-written code. Use <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a>, for example <a class="link" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource"><span class="type">GstInterpolationControlSource</span></a>
 directly.</p>
 </div>
 <p>
-Sets multiple timed values at once.</p>
+Sets multiple timed values at once.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller object which handles the properties
+<td>the controller object which handles the properties
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>property_name</code></em> :</span></p></td>
-<td> the name of the property to set
+<td>the name of the property to set
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timedvalues</code></em> :</span></p></td>
-<td> a list with <a class="link" href="GstControlSource.html#GstTimedValue" title="GstTimedValue"><span class="type">GstTimedValue</span></a> items
+<td>a list with <a class="link" href="GstControlSource.html#GstTimedValue" title="GstTimedValue"><span class="type">GstTimedValue</span></a> items
 </td>
 </tr>
 <tr>
@@ -796,9 +815,9 @@ Sets multiple timed values at once.</p>
 <hr>
 <div class="refsect2" title="gst_controller_unset ()">
 <a name="gst-controller-unset"></a><h3>gst_controller_unset ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_unset                (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a> timestamp);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_unset                (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);</pre>
 <div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Warning</h3>
 <p><code class="literal">gst_controller_unset</code> is deprecated and should not be used in newly-written code. Use <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a>, for example <a class="link" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource"><span class="type">GstInterpolationControlSource</span></a>
@@ -806,23 +825,24 @@ directly.</p>
 </div>
 <p>
 Used to remove the value of given controller-handled property at a certain
-time.</p>
+time.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller object which handles the properties
+<td>the controller object which handles the properties
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>property_name</code></em> :</span></p></td>
-<td> the name of the property to unset
+<td>the name of the property to unset
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timestamp</code></em> :</span></p></td>
-<td> the time the control-change should be removed from
+<td>the time the control-change should be removed from
 </td>
 </tr>
 <tr>
@@ -836,26 +856,27 @@ time.</p>
 <hr>
 <div class="refsect2" title="gst_controller_unset_all ()">
 <a name="gst-controller-unset-all"></a><h3>gst_controller_unset_all ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_unset_all            (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_unset_all            (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>);</pre>
 <div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Warning</h3>
 <p><code class="literal">gst_controller_unset_all</code> is deprecated and should not be used in newly-written code. Use <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a>, for example <a class="link" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource"><span class="type">GstInterpolationControlSource</span></a>
 directly.</p>
 </div>
 <p>
-Used to remove all time-stamped values of given controller-handled property</p>
+Used to remove all time-stamped values of given controller-handled property
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller object which handles the properties
+<td>the controller object which handles the properties
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>property_name</code></em> :</span></p></td>
-<td> the name of the property to unset
+<td>the name of the property to unset
 </td>
 </tr>
 <tr>
@@ -871,8 +892,8 @@ by controller), <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#
 <hr>
 <div class="refsect2" title="gst_controller_get_all ()">
 <a name="gst-controller-get-all"></a><h3>gst_controller_get_all ()</h3>
-<pre class="programlisting">const <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *       gst_controller_get_all              (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name);</pre>
+<pre class="programlisting">const <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *       gst_controller_get_all              (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>);</pre>
 <div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Warning</h3>
 <p><code class="literal">gst_controller_get_all</code> is deprecated and should not be used in newly-written code. Use <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a>, for example <a class="link" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource"><span class="type">GstInterpolationControlSource</span></a>
@@ -888,17 +909,19 @@ Free the list after done with it.
 <h3 class="title">Note</h3>
 <p>This doesn't modify the controlled GObject property!</p>
 </div>
+<p>
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller to get the list from
+<td>the controller to get the list from
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>property_name</code></em> :</span></p></td>
-<td> the name of the property to get the list for
+<td>the name of the property to get the list for
 </td>
 </tr>
 <tr>
@@ -913,9 +936,9 @@ Free the list after done with it.
 <div class="refsect2" title="gst_controller_set_interpolation_mode ()">
 <a name="gst-controller-set-interpolation-mode"></a><h3>gst_controller_set_interpolation_mode ()</h3>
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_controller_set_interpolation_mode
-                                                        (<a class="link" href="GstController.html" title="GstController"><span class="returnvalue">GstController</span></a> *self,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *property_name,
-                                                         <a class="link" href="GstInterpolationControlSource.html#GstInterpolateMode" title="enum GstInterpolateMode"><span class="returnvalue">GstInterpolateMode</span></a> mode);</pre>
+                                                        (<em class="parameter"><code><a class="link" href="GstController.html" title="GstController"><span class="type">GstController</span></a> *self</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *property_name</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstInterpolationControlSource.html#GstInterpolateMode" title="enum GstInterpolateMode"><span class="type">GstInterpolateMode</span></a> mode</code></em>);</pre>
 <div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Warning</h3>
 <p><code class="literal">gst_controller_set_interpolation_mode</code> is deprecated and should not be used in newly-written code. Use <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a>, for example <a class="link" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource"><span class="type">GstInterpolationControlSource</span></a>
@@ -931,22 +954,24 @@ Sets the given interpolation mode on the given property.
 <p>User interpolation is not yet available and quadratic interpolation
 is deprecated and maps to cubic interpolation.</p>
 </div>
+<p>
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>self</code></em> :</span></p></td>
-<td> the controller object
+<td>the controller object
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>property_name</code></em> :</span></p></td>
-<td> the name of the property for which to change the interpolation
+<td>the name of the property for which to change the interpolation
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>mode</code></em> :</span></p></td>
-<td> interpolation mode
+<td>interpolation mode
 </td>
 </tr>
 <tr>
@@ -971,6 +996,6 @@ is deprecated and maps to cubic interpolation.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

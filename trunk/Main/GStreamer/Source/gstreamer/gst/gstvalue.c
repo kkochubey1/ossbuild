@@ -3685,6 +3685,7 @@ static gboolean
 gst_value_deserialize_fraction (GValue * dest, const gchar * s)
 {
   gint num, den;
+  int num_chars;
 
   if (G_UNLIKELY (s == NULL))
     return FALSE;
@@ -3692,19 +3693,20 @@ gst_value_deserialize_fraction (GValue * dest, const gchar * s)
   if (G_UNLIKELY (dest == NULL || !GST_VALUE_HOLDS_FRACTION (dest)))
     return FALSE;
 
-  if (sscanf (s, "%d/%d", &num, &den) == 2) {
+  if (sscanf (s, "%d/%d%n", &num, &den, &num_chars) >= 2) {
+    if (s[num_chars] != 0)
+      return FALSE;
     gst_value_set_fraction (dest, num, den);
     return TRUE;
-  }
-  if (g_ascii_strcasecmp (s, "1/max") == 0) {
+  } else if (g_ascii_strcasecmp (s, "1/max") == 0) {
     gst_value_set_fraction (dest, 1, G_MAXINT);
     return TRUE;
-  }
-  if (sscanf (s, "%d", &num) == 1) {
+  } else if (sscanf (s, "%d%n", &num, &num_chars) >= 1) {
+    if (s[num_chars] != 0)
+      return FALSE;
     gst_value_set_fraction (dest, num, 1);
     return TRUE;
-  }
-  if (g_ascii_strcasecmp (s, "min") == 0) {
+  } else if (g_ascii_strcasecmp (s, "min") == 0) {
     gst_value_set_fraction (dest, -G_MAXINT, 1);
     return TRUE;
   } else if (g_ascii_strcasecmp (s, "max") == 0) {
@@ -3984,9 +3986,9 @@ static const GTypeValueTable _gst_fourcc_value_table = {
   NULL,
   gst_value_copy_fourcc,
   NULL,
-  "i",
+  (char *) "i",
   gst_value_collect_fourcc,
-  "p",
+  (char *) "p",
   gst_value_lcopy_fourcc
 };
 
@@ -3997,9 +3999,9 @@ static const GTypeValueTable _gst_int_range_value_table = {
   NULL,
   gst_value_copy_int_range,
   NULL,
-  "ii",
+  (char *) "ii",
   gst_value_collect_int_range,
-  "pp",
+  (char *) "pp",
   gst_value_lcopy_int_range
 };
 
@@ -4010,9 +4012,9 @@ static const GTypeValueTable _gst_double_range_value_table = {
   NULL,
   gst_value_copy_double_range,
   NULL,
-  "dd",
+  (char *) "dd",
   gst_value_collect_double_range,
-  "pp",
+  (char *) "pp",
   gst_value_lcopy_double_range
 };
 
@@ -4023,9 +4025,9 @@ static const GTypeValueTable _gst_fraction_range_value_table = {
   gst_value_free_fraction_range,
   gst_value_copy_fraction_range,
   NULL,
-  "iiii",
+  (char *) "iiii",
   gst_value_collect_fraction_range,
-  "pppp",
+  (char *) "pppp",
   gst_value_lcopy_fraction_range
 };
 
@@ -4036,9 +4038,9 @@ static const GTypeValueTable _gst_value_list_value_table = {
   gst_value_free_list_or_array,
   gst_value_copy_list_or_array,
   gst_value_list_or_array_peek_pointer,
-  "p",
+  (char *) "p",
   gst_value_collect_list_or_array,
-  "p",
+  (char *) "p",
   gst_value_lcopy_list_or_array
 };
 
@@ -4049,9 +4051,9 @@ static const GTypeValueTable _gst_value_array_value_table = {
   gst_value_free_list_or_array,
   gst_value_copy_list_or_array,
   gst_value_list_or_array_peek_pointer,
-  "p",
+  (char *) "p",
   gst_value_collect_list_or_array,
-  "p",
+  (char *) "p",
   gst_value_lcopy_list_or_array
 };
 
@@ -4062,9 +4064,9 @@ static const GTypeValueTable _gst_fraction_value_table = {
   NULL,
   gst_value_copy_fraction,
   NULL,
-  "ii",
+  (char *) "ii",
   gst_value_collect_fraction,
-  "pp",
+  (char *) "pp",
   gst_value_lcopy_fraction
 };
 

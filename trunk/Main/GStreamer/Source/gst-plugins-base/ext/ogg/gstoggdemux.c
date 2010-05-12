@@ -45,12 +45,6 @@
 
 #include "gstoggdemux.h"
 
-static const GstElementDetails gst_ogg_demux_details =
-GST_ELEMENT_DETAILS ("Ogg demuxer",
-    "Codec/Demuxer",
-    "demux ogg streams (info about ogg: http://xiph.org)",
-    "Wim Taymans <wim@fluendo.com>");
-
 #define CHUNKSIZE (8500)        /* this is out of vorbisfile */
 #define SKELETON_FISHEAD_SIZE 64
 #define SKELETON_FISBONE_MIN_SIZE 52
@@ -116,8 +110,6 @@ static gboolean gst_ogg_demux_perform_seek (GstOggDemux * ogg,
 static gboolean gst_ogg_demux_receive_event (GstElement * element,
     GstEvent * event);
 
-static void gst_ogg_pad_class_init (GstOggPadClass * klass);
-static void gst_ogg_pad_init (GstOggPad * pad);
 static void gst_ogg_pad_dispose (GObject * object);
 static void gst_ogg_pad_finalize (GObject * object);
 
@@ -132,6 +124,7 @@ static GstFlowReturn gst_ogg_demux_combine_flows (GstOggDemux * ogg,
     GstOggPad * pad, GstFlowReturn ret);
 static void gst_ogg_demux_sync_streams (GstOggDemux * ogg);
 
+GType gst_ogg_pad_get_type (void);
 G_DEFINE_TYPE (GstOggPad, gst_ogg_pad, GST_TYPE_PAD);
 
 static void
@@ -610,9 +603,11 @@ gst_ogg_demux_chain_peer (GstOggPad * pad, ogg_packet * packet,
     }
   }
 
-  /* check for invalid buffer sizes */
-  if (G_UNLIKELY (offset + trim >= packet->bytes))
-    goto empty_packet;
+  if (pad->map.is_ogm_text) {
+    /* check for invalid buffer sizes */
+    if (G_UNLIKELY (offset + trim >= packet->bytes))
+      goto empty_packet;
+  }
 
   ret =
       gst_pad_alloc_buffer_and_set_caps (GST_PAD_CAST (pad),
@@ -1201,7 +1196,10 @@ gst_ogg_demux_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &gst_ogg_demux_details);
+  gst_element_class_set_details_simple (element_class,
+      "Ogg demuxer", "Codec/Demuxer",
+      "demux ogg streams (info about ogg: http://xiph.org)",
+      "Wim Taymans <wim@fluendo.com>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&ogg_demux_sink_template_factory));
@@ -3305,7 +3303,7 @@ gst_ogg_demux_plugin_init (GstPlugin * plugin)
   GST_DEBUG_CATEGORY_INIT (gst_ogg_demux_setup_debug, "oggdemux_setup", 0,
       "ogg demuxer setup stage when parsing pipeline");
 
-#if ENABLE_NLS
+#ifdef ENABLE_NLS
   GST_DEBUG ("binding text domain %s to locale dir %s", GETTEXT_PACKAGE,
       LOCALEDIR);
   bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);

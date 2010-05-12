@@ -8,10 +8,8 @@
 <link rel="up" href="ch01.html" title="gstreamer Elements">
 <link rel="prev" href="gstreamer-plugins-fakesrc.html" title="fakesrc">
 <link rel="next" href="gstreamer-plugins-fdsink.html" title="fdsink">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gstreamer Elements">
-<link rel="chapter" href="ch02.html" title="gstreamer Plugins">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -82,7 +80,8 @@ enum                <a class="link" href="gstreamer-plugins-fakesink.html#GstFak
 <div class="refsect1" title="Description">
 <a name="gstreamer-plugins-fakesink.description"></a><h2>Description</h2>
 <p>
-Dummy sink that swallows everything.</p>
+Dummy sink that swallows everything.
+</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="gstreamer-plugins-fakesink.details"></a><h2>Details</h2>
@@ -90,7 +89,8 @@ Dummy sink that swallows everything.</p>
 <a name="GstFakeSink-struct"></a><h3>GstFakeSink</h3>
 <pre class="programlisting">typedef struct _GstFakeSink GstFakeSink;</pre>
 <p>
-The opaque <a class="link" href="gstreamer-plugins-fakesink.html#GstFakeSink"><span class="type">GstFakeSink</span></a> data structure.</p>
+The opaque <a class="link" href="gstreamer-plugins-fakesink.html#GstFakeSink"><span class="type">GstFakeSink</span></a> data structure.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="enum GstFakeSinkStateError">
@@ -106,43 +106,44 @@ The opaque <a class="link" href="gstreamer-plugins-fakesink.html#GstFakeSink"><s
 } GstFakeSinkStateError;
 </pre>
 <p>
-Possible state change errors for the state-error property.</p>
+Possible state change errors for the state-error property.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><a name="FAKE-SINK-STATE-ERROR-NONE:CAPS"></a><span class="term"><code class="literal">FAKE_SINK_STATE_ERROR_NONE</code></span></p></td>
-<td> no error
+<td>no error
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SINK-STATE-ERROR-NULL-READY:CAPS"></a><span class="term"><code class="literal">FAKE_SINK_STATE_ERROR_NULL_READY</code></span></p></td>
-<td> cause the NULL to READY state change to fail
+<td>cause the NULL to READY state change to fail
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SINK-STATE-ERROR-READY-PAUSED:CAPS"></a><span class="term"><code class="literal">FAKE_SINK_STATE_ERROR_READY_PAUSED</code></span></p></td>
-<td> cause the READY to PAUSED state change to fail:
+<td>cause the READY to PAUSED state change to fail:
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SINK-STATE-ERROR-PAUSED-PLAYING:CAPS"></a><span class="term"><code class="literal">FAKE_SINK_STATE_ERROR_PAUSED_PLAYING</code></span></p></td>
-<td> cause the PAUSED to PLAYING state change to fail:
+<td>cause the PAUSED to PLAYING state change to fail:
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SINK-STATE-ERROR-PLAYING-PAUSED:CAPS"></a><span class="term"><code class="literal">FAKE_SINK_STATE_ERROR_PLAYING_PAUSED</code></span></p></td>
-<td> cause the PLAYING to PAUSED state change to fail:
+<td>cause the PLAYING to PAUSED state change to fail:
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SINK-STATE-ERROR-PAUSED-READY:CAPS"></a><span class="term"><code class="literal">FAKE_SINK_STATE_ERROR_PAUSED_READY</code></span></p></td>
-<td> cause the PAUSED to READY state change to fail:
+<td>cause the PAUSED to READY state change to fail:
 </td>
 </tr>
 <tr>
 <td><p><a name="FAKE-SINK-STATE-ERROR-READY-NULL:CAPS"></a><span class="term"><code class="literal">FAKE_SINK_STATE_ERROR_READY_NULL</code></span></p></td>
-<td> cause the READY to NULL state change to fail:
+<td>cause the READY to NULL state change to fail:
 </td>
 </tr>
 </tbody>
@@ -217,23 +218,24 @@ Possible state change errors for the state-error property.</p>
                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a>      *pad,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>     user_data)      : Run Last</pre>
 <p>
-This signal gets emitted before unreffing the buffer.</p>
+This signal gets emitted before unreffing the buffer.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fakesink</code></em> :</span></p></td>
-<td> the fakesink instance
+<td>the fakesink instance
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td> the buffer that just has been received
+<td>the buffer that just has been received
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td> the pad that received it
+<td>the pad that received it
 </td>
 </tr>
 <tr>
@@ -251,23 +253,24 @@ This signal gets emitted before unreffing the buffer.</p>
                                                         <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a>      *pad,
                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>     user_data)      : Run Last</pre>
 <p>
-This signal gets emitted before unreffing the buffer.</p>
+This signal gets emitted before unreffing the buffer.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fakesink</code></em> :</span></p></td>
-<td> the fakesink instance
+<td>the fakesink instance
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td> the buffer that just has been received
+<td>the buffer that just has been received
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td> the pad that received it
+<td>the pad that received it
 </td>
 </tr>
 <tr>
@@ -286,6 +289,6 @@ This signal gets emitted before unreffing the buffer.</p>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

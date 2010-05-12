@@ -749,6 +749,247 @@ GST_START_TEST (test_language_utils)
 
 GST_END_TEST;
 
+GST_START_TEST (test_xmp_formatting)
+{
+  GstTagList *list;
+  GstBuffer *buf;
+  const gchar *text;
+  guint len;
+
+  /* test data */
+  list = gst_tag_list_new_full (GST_TAG_TITLE, "test title",
+      GST_TAG_DESCRIPTION, "test decription",
+      GST_TAG_KEYWORDS, "keyword1", GST_TAG_KEYWORDS, "keyword2", NULL);
+
+  buf = gst_tag_list_to_xmp_buffer (list, FALSE);
+  fail_unless (buf != NULL);
+
+  text = (const gchar *) GST_BUFFER_DATA (buf);
+  len = GST_BUFFER_SIZE (buf);
+
+  /* check the content */
+  fail_unless (g_strrstr_len (text, len, "<?xpacket begin") == text);
+  fail_unless (g_strrstr_len (text, len, ">test title<") != NULL);
+  fail_unless (g_strrstr_len (text, len, ">test decription<") != NULL);
+  fail_unless (g_strrstr_len (text, len, ">keyword1<") != NULL);
+  fail_unless (g_strrstr_len (text, len, ">keyword2<") != NULL);
+  fail_unless (g_strrstr_len (text, len, "<?xpacket end") != NULL);
+
+  gst_buffer_unref (buf);
+  gst_tag_list_free (list);
+}
+
+GST_END_TEST;
+
+
+GST_START_TEST (test_xmp_parsing)
+{
+  GstTagList *list;
+  GstBuffer *buf;
+  guint i, result_size;
+  gchar *text;
+  const gchar *xmp_header =
+      "<?xpacket begin=\"\xEF\xBB\xBF\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>"
+      "<x:xmpmeta xmlns:x=\"adobe:ns:meta/\" x:xmptk=\"GStreamer\">"
+      "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">";
+  const gchar *xmp_footer =
+      "</rdf:RDF>" "</x:xmpmeta>" "<?xpacket end=\"r\"?>\n";
+  struct
+  {
+    const gchar *xmp_data;
+    gint result_size;
+    gint result_test;
+  } test_data[] = {
+    {
+    "", -1, -1}, {
+    "<rdf:Description rdf:about=\"\" />", 0, -1}, {
+    "<rdf:Description rdf:about=\"\"></rdf:Description>", 0, -1}, {
+    "<rdf:Description    rdf:about=\"\"    ></rdf:Description>", 0, -1}, {
+    "<rdf:Description rdf:about=\"\"><dc:description>test</dc:description></rdf:Description>",
+          1, 0}, {
+    "<rdf:Description rdf:about=\"\" dc:description=\"test\"></rdf:Description>",
+          1, 0}, {
+    NULL, -1, -1}
+  };
+
+  /* test data */
+  buf = gst_buffer_new ();
+
+  i = 0;
+  while (test_data[i].xmp_data) {
+    GST_DEBUG ("trying test-data %u", i);
+
+    text = g_strconcat (xmp_header, test_data[i].xmp_data, xmp_footer, NULL);
+    GST_BUFFER_DATA (buf) = (guint8 *) text;
+    GST_BUFFER_SIZE (buf) = strlen (text) + 1;
+
+
+    list = gst_tag_list_from_xmp_buffer (buf);
+    if (test_data[i].result_size >= 0) {
+      fail_unless (list != NULL);
+
+      result_size = gst_structure_n_fields ((GstStructure *) list);
+      fail_unless (result_size == test_data[i].result_size);
+
+      /* check the taglist content */
+      switch (test_data[i].result_test) {
+        case 0:
+          ASSERT_TAG_LIST_HAS_STRING (list, "description", "test");
+          break;
+        default:
+          break;
+      }
+    }
+    if (list)
+      gst_tag_list_free (list);
+
+    g_free (text);
+    i++;
+  }
+
+  gst_buffer_unref (buf);
+}
+
+GST_END_TEST;
+
+static void
+tag_list_equals (GstTagList * taglist, GstTagList * taglist2)
+{
+  const gchar *name_sent, *name_recv;
+  const GValue *value_sent, *value_recv;
+  gboolean found;
+  gint comparison;
+  gint n_recv;
+  gint n_sent;
+  gint i, j;
+
+  /* verify tags */
+  fail_unless (taglist2 != NULL);
+  n_recv = gst_structure_n_fields (taglist2);
+  n_sent = gst_structure_n_fields (taglist);
+  fail_unless (n_recv == n_sent);
+
+  /* FIXME: compare taglist values */
+  for (i = 0; i < n_sent; i++) {
+    name_sent = gst_structure_nth_field_name (taglist, i);
+    value_sent = gst_structure_get_value (taglist, name_sent);
+    found = FALSE;
+    for (j = 0; j < n_recv; j++) {
+      name_recv = gst_structure_nth_field_name (taglist2, j);
+      if (!strcmp (name_sent, name_recv)) {
+        value_recv = gst_structure_get_value (taglist2, name_recv);
+        comparison = gst_value_compare (value_sent, value_recv);
+        if (comparison != GST_VALUE_EQUAL) {
+          gchar *vs = g_strdup_value_contents (value_sent);
+          gchar *vr = g_strdup_value_contents (value_recv);
+          GST_DEBUG ("sent = %s:'%s', recv = %s:'%s'",
+              G_VALUE_TYPE_NAME (value_sent), vs,
+              G_VALUE_TYPE_NAME (value_recv), vr);
+          g_free (vs);
+          g_free (vr);
+        }
+        fail_unless (comparison == GST_VALUE_EQUAL,
+            "tag item %s has been received with different type or value",
+            name_sent);
+        found = TRUE;
+        break;
+      }
+    }
+    fail_unless (found, "tag item %s is lost", name_sent);
+  }
+}
+
+static void
+do_xmp_tag_serialization_deserialization (const gchar * gsttag, GValue * value)
+{
+  GstTagList *taglist = gst_tag_list_new ();
+  GstTagList *taglist2;
+  GstBuffer *buf;
+
+  gst_tag_list_add_value (taglist, GST_TAG_MERGE_REPLACE, gsttag, value);
+
+  buf = gst_tag_list_to_xmp_buffer (taglist, TRUE);
+  taglist2 = gst_tag_list_from_xmp_buffer (buf);
+
+  tag_list_equals (taglist, taglist2);
+
+  gst_buffer_unref (buf);
+  gst_tag_list_free (taglist);
+  gst_tag_list_free (taglist2);
+}
+
+GST_START_TEST (test_xmp_tags_serialization_deserialization)
+{
+  GValue value = { 0 };
+  GDate *date;
+
+  g_value_init (&value, G_TYPE_STRING);
+  g_value_set_static_string (&value, "my string");
+  do_xmp_tag_serialization_deserialization (GST_TAG_ARTIST, &value);
+  do_xmp_tag_serialization_deserialization (GST_TAG_COPYRIGHT, &value);
+  do_xmp_tag_serialization_deserialization (GST_TAG_DESCRIPTION, &value);
+  do_xmp_tag_serialization_deserialization (GST_TAG_KEYWORDS, &value);
+  do_xmp_tag_serialization_deserialization (GST_TAG_TITLE, &value);
+  do_xmp_tag_serialization_deserialization (GST_TAG_VIDEO_CODEC, &value);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_COUNTRY,
+      &value);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_CITY, &value);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_SUBLOCATION,
+      &value);
+
+  g_value_unset (&value);
+  g_value_init (&value, G_TYPE_DOUBLE);
+
+  g_value_set_double (&value, 0.0);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_LATITUDE,
+      &value);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_LONGITUDE,
+      &value);
+  g_value_set_double (&value, 10.5);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_LATITUDE,
+      &value);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_LONGITUDE,
+      &value);
+  g_value_set_double (&value, -32.375);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_LATITUDE,
+      &value);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_LONGITUDE,
+      &value);
+
+  g_value_set_double (&value, 0);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_ELEVATION,
+      &value);
+  g_value_set_double (&value, 100);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_ELEVATION,
+      &value);
+  g_value_set_double (&value, 500.25);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_ELEVATION,
+      &value);
+  g_value_set_double (&value, -12.75);
+  do_xmp_tag_serialization_deserialization (GST_TAG_GEO_LOCATION_ELEVATION,
+      &value);
+  g_value_unset (&value);
+
+  g_value_init (&value, GST_TYPE_DATE);
+  date = g_date_new_dmy (22, 3, 2010);
+  gst_value_set_date (&value, date);
+  g_date_free (date);
+  do_xmp_tag_serialization_deserialization (GST_TAG_DATE, &value);
+  g_value_unset (&value);
+
+  g_value_init (&value, G_TYPE_UINT);
+  g_value_set_uint (&value, 0);
+  do_xmp_tag_serialization_deserialization (GST_TAG_USER_RATING, &value);
+  g_value_set_uint (&value, 100);
+  do_xmp_tag_serialization_deserialization (GST_TAG_USER_RATING, &value);
+  g_value_set_uint (&value, 22);
+  do_xmp_tag_serialization_deserialization (GST_TAG_USER_RATING, &value);
+  g_value_unset (&value);
+}
+
+GST_END_TEST;
+
+
 static Suite *
 tag_suite (void)
 {
@@ -762,6 +1003,9 @@ tag_suite (void)
   tcase_add_test (tc_chain, test_id3_tags);
   tcase_add_test (tc_chain, test_id3v1_utf8_tag);
   tcase_add_test (tc_chain, test_language_utils);
+  tcase_add_test (tc_chain, test_xmp_formatting);
+  tcase_add_test (tc_chain, test_xmp_parsing);
+  tcase_add_test (tc_chain, test_xmp_tags_serialization_deserialization);
   return s;
 }
 

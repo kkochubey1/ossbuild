@@ -6,6 +6,15 @@
 /* poll doesn't work on devices */
 #undef BROKEN_POLL
 
+/* Buffer alignment to use */
+#undef BUFFER_ALIGNMENT
+
+/* Buffer alignment by malloc default */
+#undef BUFFER_ALIGNMENT_MALLOC
+
+/* Buffer alignment by pagesize */
+#undef BUFFER_ALIGNMENT_PAGESIZE
+
 /* Define to 1 if translation of program messages to the user's native
    language is requested. */
 #undef ENABLE_NLS
@@ -184,6 +193,9 @@
 /* Define to 1 if you have the `poll' function. */
 #undef HAVE_POLL
 
+/* Define to 1 if you have the `posix_memalign' function. */
+#undef HAVE_POSIX_MEMALIGN
+
 /* Have posix timers */
 #undef HAVE_POSIX_TIMERS
 
@@ -234,6 +246,9 @@
 
 /* Define to 1 if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
+
+/* Define to 1 if you have the <sys/prctl.h> header file. */
+#undef HAVE_SYS_PRCTL_H
 
 /* Define to 1 if you have the <sys/socket.h> header file. */
 #undef HAVE_SYS_SOCKET_H

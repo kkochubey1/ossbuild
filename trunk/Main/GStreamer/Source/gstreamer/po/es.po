@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.26.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-03-08 17:49+0000\n"
+"POT-Creation-Date: 2010-04-27 19:51+0100\n"
 "PO-Revision-Date: 2010-02-25 08:12+0100\n"
 "Last-Translator: Jorge González González <aloriel@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -89,18 +89,6 @@ msgstr "Mostrar las opciones de GStreamer"
 
 msgid "Unknown option"
 msgstr "Opción desconocida"
-
-#, c-format
-msgid "ERROR: from element %s: %s\n"
-msgstr "ERROR: del elemento %s: %s\n"
-
-#, c-format
-msgid ""
-"Additional debug info:\n"
-"%s\n"
-msgstr ""
-"Información adicional de depuración:\n"
-"%s\n"
 
 msgid "GStreamer encountered a general core library error."
 msgstr "GStreamer encontró un error general en el núcleo de la biblioteca."
@@ -629,6 +617,35 @@ msgstr ""
 "elevación geográfica donde se ha grabado o producido el medio, en metros de "
 "acuerdo con WGS84 (cero es el nivel medio del mar)"
 
+#, fuzzy
+msgid "geo location country"
+msgstr "longitud de la geolocalización"
+
+#, fuzzy
+msgid "country (english name) where the media has been recorded or produced"
+msgstr ""
+"descripción de la ubicación entendible por humanos de dónde se ha grabado o "
+"producido el medio"
+
+#, fuzzy
+msgid "geo location city"
+msgstr "latitud de la geolocalización"
+
+#, fuzzy
+msgid "city (english name) where the media has been recorded or produced"
+msgstr ""
+"descripción de la ubicación entendible por humanos de dónde se ha grabado o "
+"producido el medio"
+
+#, fuzzy
+msgid "geo location sublocation"
+msgstr "elevación de la geolocalización"
+
+msgid ""
+"a location whithin a city where the media has been produced or created (e.g. "
+"the neighborhood)"
+msgstr ""
+
 #. TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here
 msgid "show name"
 msgstr "nombre del programa"
@@ -680,8 +697,29 @@ msgstr ""
 "partes de un concierto. Es un nivel más alto que el de una pista, pero más "
 "bajo que el de un álbum."
 
+#, fuzzy
+msgid "user rating"
+msgstr "duracio"
+
+msgid ""
+"Rating attributed by a user. The higher the rank, the more the user likes "
+"this media"
+msgstr ""
+
 msgid ", "
 msgstr ", "
+
+#, c-format
+msgid "ERROR: from element %s: %s\n"
+msgstr "ERROR: del elemento %s: %s\n"
+
+#, c-format
+msgid ""
+"Additional debug info:\n"
+"%s\n"
+msgstr ""
+"Información adicional de depuración:\n"
+"%s\n"
 
 #, c-format
 msgid "specified empty bin \"%s\", not allowed"
@@ -802,6 +840,10 @@ msgstr "El archivo «%s» es un socket."
 
 msgid "Failed after iterations as requested."
 msgstr "Falló después de las iteraciones, como se pidió."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Error al escribir al archivo «%s»."
 
 msgid "No Temp directory specified."
 msgstr "No se especificó un directorio temporal."
