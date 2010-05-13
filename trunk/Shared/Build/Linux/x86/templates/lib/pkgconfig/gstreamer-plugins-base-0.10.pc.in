@@ -7,7 +7,7 @@ pluginsdir=@SHARED_BUILD_DIR@/bin/gstreamer-0.10
 Name: GStreamer Base Plugins Libraries
 Description: Streaming media framework, base plugins libraries
 Requires: gstreamer-0.10 
-Version: 0.10.28
+Version: 0.10.29
 Libs: -L${libdir}
 Cflags: -I${includedir}
 

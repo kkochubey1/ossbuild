@@ -2,10 +2,14 @@ prefix=@SHARED_BUILD_DIR@
 exec_prefix=${prefix}
 libdir=@SHARED_BUILD_DIR@/bin
 includedir=@SHARED_BUILD_DIR@/include/gstreamer-0.10
+datarootdir=${prefix}/share
+datadir=${datarootdir}
+girdir=${datadir}/gir-1.0
+typelibdir=${libdir}/girepository-1.0
 
 Name: GStreamer base classes
 Description: Base classes for GStreamer elements
 Requires: gstreamer-0.10
-Version: 0.10.28
+Version: 0.10.29
 Libs: -L${libdir} -lgstbase-0.10
 Cflags: -I${includedir}

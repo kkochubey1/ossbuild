@@ -8,7 +8,7 @@
 dlname='libgsttag-0.10.so.0'
 
 # Names of this library.
-library_names='libgsttag-0.10.so.0.19.2 libgsttag-0.10.so.0 libgsttag-0.10.so'
+library_names='libgsttag-0.10.so.0.20.0 libgsttag-0.10.so.0 libgsttag-0.10.so'
 
 # The name of the static archive.
 old_library=''
@@ -23,9 +23,9 @@ dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  -lgstbase-
 weak_library_names=''
 
 # Version information for libgsttag-0.10.
-current=19
-age=19
-revision=2
+current=20
+age=20
+revision=0
 
 # Is this an already installed library?
 installed=yes

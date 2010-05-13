@@ -93,8 +93,11 @@ typedef enum {
   GST_RTSP_LOWER_TRANS_HTTP      = (1 << 4)
 } GstRTSPLowerTrans;
 
+#define GST_TYPE_RTSP_LOWER_TRANS (gst_rtsp_lower_trans_get_type())
+GType gst_rtsp_lower_trans_get_type (void);
+
 /**
- * RTSPRange:
+ * GstRTSPRange:
  * @min: minimum value of the range
  * @max: maximum value of the range
  *

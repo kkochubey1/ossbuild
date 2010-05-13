@@ -35,8 +35,8 @@ void		gst_util_set_value_from_string	(GValue *value, const gchar *value_str);
 void		gst_util_set_object_arg		(GObject *object, const gchar *name, const gchar *value);
 void		gst_util_dump_mem		(const guchar *mem, guint size);
 
-guint64         gst_util_gdouble_to_guint64     (gdouble value)  G_GNUC_PURE;
-gdouble         gst_util_guint64_to_gdouble     (guint64 value)  G_GNUC_PURE;
+guint64         gst_util_gdouble_to_guint64     (gdouble value)  G_GNUC_CONST;
+gdouble         gst_util_guint64_to_gdouble     (guint64 value)  G_GNUC_CONST;
 
 /**
  * gst_guint64_to_gdouble:
@@ -63,13 +63,13 @@ gdouble         gst_util_guint64_to_gdouble     (guint64 value)  G_GNUC_PURE;
 #define         gst_guint64_to_gdouble(value)   ((gdouble) (value))
 #endif
 
-guint64		gst_util_uint64_scale		(guint64 val, guint64 num, guint64 denom) G_GNUC_PURE;
-guint64		gst_util_uint64_scale_round	(guint64 val, guint64 num, guint64 denom) G_GNUC_PURE;
-guint64		gst_util_uint64_scale_ceil	(guint64 val, guint64 num, guint64 denom) G_GNUC_PURE;
+guint64		gst_util_uint64_scale		(guint64 val, guint64 num, guint64 denom) G_GNUC_CONST;
+guint64		gst_util_uint64_scale_round	(guint64 val, guint64 num, guint64 denom) G_GNUC_CONST;
+guint64		gst_util_uint64_scale_ceil	(guint64 val, guint64 num, guint64 denom) G_GNUC_CONST;
 
-guint64         gst_util_uint64_scale_int       (guint64 val, gint num, gint denom) G_GNUC_PURE;
-guint64         gst_util_uint64_scale_int_round (guint64 val, gint num, gint denom) G_GNUC_PURE;
-guint64         gst_util_uint64_scale_int_ceil  (guint64 val, gint num, gint denom) G_GNUC_PURE;
+guint64         gst_util_uint64_scale_int       (guint64 val, gint num, gint denom) G_GNUC_CONST;
+guint64         gst_util_uint64_scale_int_round (guint64 val, gint num, gint denom) G_GNUC_CONST;
+guint64         gst_util_uint64_scale_int_ceil  (guint64 val, gint num, gint denom) G_GNUC_CONST;
 
 guint32         gst_util_seqnum_next            (void);
 gint32          gst_util_seqnum_compare         (guint32 s1, guint32 s2);
@@ -130,8 +130,6 @@ type_as_function ## _class_init_trampoline (gpointer g_class,		\
       g_type_class_peek_parent (g_class);				\
   type_as_function ## _class_init ((type ## Class *)g_class);		\
 }									\
-									\
-GType type_as_function ## _get_type (void);				\
 									\
 GType									\
 type_as_function ## _get_type (void)					\
@@ -1181,8 +1179,8 @@ gboolean gst_util_fraction_add (gint a_n, gint a_d, gint b_n, gint b_d, gint *re
  * are unfortunately not possible. The implementation of
  * these functions is in gstevent.c.
  */
-GstEvent*       gst_event_new_sink_message      (struct _GstMessage *msg);
-void            gst_event_parse_sink_message    (GstEvent *event, struct _GstMessage **msg);
+GstEvent*       gst_event_new_sink_message      (GstMessage *msg);
+void            gst_event_parse_sink_message    (GstEvent *event, GstMessage **msg);
 
 
 G_END_DECLS
