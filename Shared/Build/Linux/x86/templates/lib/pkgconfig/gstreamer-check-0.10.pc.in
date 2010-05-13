@@ -2,10 +2,14 @@ prefix=@SHARED_BUILD_DIR@
 exec_prefix=${prefix}
 libdir=@SHARED_BUILD_DIR@/bin
 includedir=@SHARED_BUILD_DIR@/include/gstreamer-0.10
+datarootdir=${prefix}/share
+datadir=${datarootdir}
+girdir=${datadir}/gir-1.0
+typelibdir=${libdir}/girepository-1.0
 
 Name: GStreamer check unit testing
 Description: Unit testing helper library for GStreamer modules
 Requires: gstreamer-0.10
-Version: 0.10.28
+Version: 0.10.29
 Libs: -L${libdir} -lgstcheck-0.10 -lm
 Cflags: -I${includedir}

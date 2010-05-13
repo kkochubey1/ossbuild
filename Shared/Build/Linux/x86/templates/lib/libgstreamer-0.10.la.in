@@ -8,7 +8,7 @@
 dlname='libgstreamer-0.10.so.0'
 
 # Names of this library.
-library_names='libgstreamer-0.10.so.0.24.1 libgstreamer-0.10.so.0 libgstreamer-0.10.so'
+library_names='libgstreamer-0.10.so.0.25.0 libgstreamer-0.10.so.0 libgstreamer-0.10.so'
 
 # The name of the static archive.
 old_library=''
@@ -17,15 +17,15 @@ old_library=''
 inherited_linker_flags=' -pthread'
 
 # Libraries that this one depends upon.
-dependency_libs=' -lm -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  -lgobject-2.0 -lgthread-2.0 -lgmodule-2.0 -lglib-2.0 -lxml2 -lrt -ldl'
+dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  -lgobject-2.0 -lgthread-2.0 -lgmodule-2.0 -lglib-2.0 -lxml2 -lm -lrt -ldl'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
 
 # Version information for libgstreamer-0.10.
-current=24
-age=24
-revision=1
+current=25
+age=25
+revision=0
 
 # Is this an already installed library?
 installed=yes

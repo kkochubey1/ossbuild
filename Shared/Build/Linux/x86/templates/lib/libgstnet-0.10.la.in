@@ -8,7 +8,7 @@
 dlname='libgstnet-0.10.so.0'
 
 # Names of this library.
-library_names='libgstnet-0.10.so.0.24.1 libgstnet-0.10.so.0 libgstnet-0.10.so'
+library_names='libgstnet-0.10.so.0.25.0 libgstnet-0.10.so.0 libgstnet-0.10.so'
 
 # The name of the static archive.
 old_library=''
@@ -17,15 +17,15 @@ old_library=''
 inherited_linker_flags=' -pthread'
 
 # Libraries that this one depends upon.
-dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/bin/libgstreamer-0.10.la -lm -lxml2 -lgobject-2.0 -lgthread-2.0 -lgmodule-2.0 -lglib-2.0 -lrt -ldl'
+dependency_libs=' -L@SHARED_BUILD_DIR@/bin  -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/bin/libgstreamer-0.10.la -lxml2 -lm -lgobject-2.0 -lgthread-2.0 -lgmodule-2.0 -lglib-2.0 -lrt -ldl'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
 
 # Version information for libgstnet-0.10.
-current=24
-age=24
-revision=1
+current=25
+age=25
+revision=0
 
 # Is this an already installed library?
 installed=yes
