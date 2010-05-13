@@ -171,6 +171,9 @@
 
 				<include name="*gsttcp*.*" />
 				<include name="*gstalsa*.*" />
+				<include name="*gstximagesink*.*" />
+				<include name="*gstxvimagesink*.*" />
+				<include name="*gstvideo4linux.*" />
 			</fileset>
 			<fileset dir="${build.bin.dir}/plugins/" erroronmissingdir="false">
 				<include name="*gstadder*.*" />
@@ -200,6 +203,9 @@
 
 				<include name="*gsttcp*.*" />
 				<include name="*gstalsa*.*" />
+				<include name="*gstximagesink*.*" />
+				<include name="*gstxvimagesink*.*" />
+				<include name="*gstvideo4linux.*" />
 			</fileset>
 		</copy>
 		

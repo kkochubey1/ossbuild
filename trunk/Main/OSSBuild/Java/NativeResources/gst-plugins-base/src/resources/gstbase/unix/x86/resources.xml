@@ -105,6 +105,9 @@
 
 		<File resource="libgsttcp.so"                                executable="true" />
 		<File resource="libgstalsa.so"                               executable="true" />
+		<File resource="libgstximagesink.so"                         executable="true" />
+		<File resource="libgstxvimagesink.so"                        executable="true" />
+		<File resource="libgstvideo4linux.so"                        executable="true" />
 	</Extract>
 
 </Resources>
