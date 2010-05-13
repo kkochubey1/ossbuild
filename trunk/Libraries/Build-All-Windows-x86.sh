@@ -202,9 +202,7 @@ if [ ! -f "$BinDir/${ZlibPrefix}z.dll" ]; then
 	INCLUDE_PATH=$IncludeDir LIBRARY_PATH=$BinDir make install -fwin32/Makefile.gcc
 	
 	cp -p ${ZlibPrefix}z.dll "$BinDir"
-	make clean -fwin32/Makefile.gcc
-	
-	mv "$BinDir/libzdll.a" "$LibDir/libz.dll.a"
+	cp -p "libzdll.a" "$LibDir/libz.dll.a"
 	rm -f "$BinDir/libz.a"
 	
 	$MSLIB /name:${ZlibPrefix}z.dll /out:z.lib /machine:$MSLibMachine /def:win32/zlib.def
@@ -441,18 +439,23 @@ if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then
 	#Need to get rid of MS build tools b/c the makefile call is incorrectly passing it msys-style paths.
 	reset_path
 	
-	$PKG_DIR/configure --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	lt_cv_deplibs_check_method='pass_all' \
+	CC='gcc -mtune=pentium3 -mthreads' \
+	LDFLAGS="$LDFLAGS -Wl,--enable-auto-image-base" \
+	CFLAGS="$CFLAGS -O2" \
+	$PKG_DIR/configure --enable-shared --enable-silent-rules --disable-gtk-doc --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
+	
 	#This errors out when attempting to run glib-genmarshal for the gobject lib.
 	#This is expected and will hopefully be corrected in the future. As a result, 
 	#we run make once to create the proper dll, then copy it in place, and run make 
 	#again.
-	make
+	make -j3 
 	#glib-genmarshal needs libglib-2.0-0.dll but can't load it b/c it isn't in the path
 	#Setting PATH didn't work
 	cp -p "$IntDir/glib/glib/.libs/libglib-2.0-0.dll" "gobject/.libs/"
 	
-	make && make install
+	make -j3 install
 	
 	#Add in MS build tools again
 	setup_ms_build_env_path
@@ -485,6 +488,8 @@ if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then
 	update_library_names_windows "lib${Prefix}gmodule-2.0.dll.a" "libgmodule-2.0.la"
 	update_library_names_windows "lib${Prefix}gobject-2.0.dll.a" "libgobject-2.0.la"
 	update_library_names_windows "lib${Prefix}gthread-2.0.dll.a" "libgthread-2.0.la"
+	
+	reset_flags
 fi
 
 #atk
@@ -1301,6 +1306,7 @@ if [ ! -f "$BinDir/lib${Prefix}speex-1.dll" ]; then
 	unpack_gzip_and_move "speex.tar.gz" "$PKG_DIR_LIBSPEEX"
 	mkdir_and_move "$IntDir/libspeex"
 	
+	CC='gcc -mtune=pentium3 -mthreads' \
 	$PKG_DIR/configure --enable-sse --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
 	make && make install
@@ -1326,6 +1332,8 @@ if [ ! -f "$BinDir/lib${Prefix}speex-1.dll" ]; then
 	
 	update_library_names_windows "lib${Prefix}speex.dll.a" "libspeex.la"
 	update_library_names_windows "lib${Prefix}speexdsp.dll.a" "libspeexdsp.la"
+	
+	reset_flags
 fi
 
 #libschroedinger (dirac support)
@@ -1597,7 +1605,7 @@ if [ ! -f "$BinDir/lib${Prefix}mpeg2-0.dll" ]; then
 	$MSLIB /name:lib${Prefix}mpeg2-0.dll /out:mpeg2.lib /machine:$MSLibMachine /def:in-mod.def
 	
 	pexports "$BinDir/lib${Prefix}mpeg2convert-0.dll" | sed "s/^_//" > in-convert.def
-	sed '/LIBRARY lib${Prefix}mpeg2convert-0.dll/d' in.def > in-convert-mod.def
+	sed '/LIBRARY lib${Prefix}mpeg2convert-0.dll/d' in-convert.def > in-convert-mod.def
 	$MSLIB /name:lib${Prefix}mpeg2convert-0.dll /out:mpeg2convert.lib /machine:$MSLibMachine /def:in-convert-mod.def
 	
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
