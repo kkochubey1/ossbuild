@@ -7,7 +7,7 @@ Name: libavdevice
 Description: FFmpeg device handling library
 Version: 52.2.0
 Requires: 
-Requires.private: libavformat = 52.61.0
+Requires.private: libavformat = 52.62.0
 Conflicts:
 Libs: -L${libdir} -lavdevice 
 Libs.private: -lpsapi -lz -lbz2 -lm -lavifil32 -lws2_32 -lavicap32

@@ -25,7 +25,7 @@ weak_library_names=''
 # Version information for libtasn1.
 current=4
 age=1
-revision=8
+revision=9
 
 # Is this an already installed library?
 installed=yes

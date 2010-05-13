@@ -23,8 +23,8 @@ dependency_libs=' -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/lib/libz.la'
 weak_library_names=''
 
 # Version information for libpng14.
-current=15
-age=1
+current=16
+age=2
 revision=0
 
 # Is this an already installed library?

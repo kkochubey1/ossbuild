@@ -216,6 +216,8 @@
   (:gpg-err-not-operational 176)
   (:gpg-err-no-passphrase 177)
   (:gpg-err-no-pin 178)
+  (:gpg-err-not-enabled 179)
+  (:gpg-err-no-engine 180)
   (:gpg-err-unfinished 199)
   (:gpg-err-buffer-too-short 200)
   (:gpg-err-sexp-inv-len-spec 201)

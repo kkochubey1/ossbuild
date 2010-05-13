@@ -14,7 +14,7 @@ library_names='libgobject-2.0.dll.a'
 old_library=''
 
 # Linker flags that can not go in dependency_libs.
-inherited_linker_flags=''
+inherited_linker_flags=' -mthreads'
 
 # Libraries that this one depends upon.
 dependency_libs=' -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/lib/libgthread-2.0.la @SHARED_BUILD_DIR@/lib/libglib-2.0.la /mingw/i686-pc-mingw32/lib/./libws2_32.la /mingw/i686-pc-mingw32/lib/./libole32.la @SHARED_BUILD_DIR@/lib/libintl.la'
@@ -25,7 +25,7 @@ weak_library_names=''
 # Version information for libgobject-2.0.
 current=2400
 age=2400
-revision=0
+revision=1
 
 # Is this an already installed library?
 installed=yes

@@ -247,17 +247,17 @@ public class Main {
 
 		final GstMediaComponent mediaComp = comp;
 
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		final Scale scale = new Scale(dlg, SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
