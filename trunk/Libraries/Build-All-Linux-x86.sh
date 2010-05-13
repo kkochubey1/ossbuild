@@ -387,10 +387,10 @@ if [ ! -f "$BinDir/libpixman-1.so.0" ]; then
 	unpack_gzip_and_move "pixman.tar.gz" "$PKG_DIR_PIXMAN"
 	mkdir_and_move "$IntDir/pixman"
 	
-	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$BinDir --includedir=$IncludeDir
+	$PKG_DIR/configure --disable-gtk --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$BinDir --includedir=$IncludeDir
 	make && make install
 
-	arrange_shared "$BinDir" "libpixman-1.so" "0" "0.18.0" "libpixman-1.la" "pixman-1.pc" "$LibDir"
+	arrange_shared "$BinDir" "libpixman-1.so" "0" "0.18.2" "libpixman-1.la" "pixman-1.pc" "$LibDir"
 fi
 
 #cairo

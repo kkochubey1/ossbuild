@@ -35,7 +35,7 @@ libsoup         -       2.30.0          -       http://ftp.gnome.org/pub/GNOME/s
 libneon         -       0.29.3          -       http://www.webdav.org/neon/neon-0.29.3.tar.gz
 freetype        -       2.3.12          -       http://download.savannah.gnu.org/releases-noredirect/freetype/freetype-2.3.12.tar.bz2
 fontconfig      -       2.8.0           -       http://fontconfig.org/release/fontconfig-2.8.0.tar.gz
-pixman          -       0.18.0          -       http://cairographics.org/releases/pixman-0.18.0.tar.gz
+pixman          -       0.18.2          -       http://cairographics.org/releases/pixman-0.18.2.tar.gz
 cairo           -       1.8.10          -       http://cairographics.org/releases/cairo-1.8.10.tar.gz
 pango           -       1.28.0          -       http://ftp.gnome.org/pub/GNOME/sources/pango/1.28/pango-1.28.0.tar.bz2
 gtk+            -       2.20.0          -       http://ftp.gnome.org/pub/gnome/sources/gtk+/2.20/gtk+-2.20.0.tar.bz2
