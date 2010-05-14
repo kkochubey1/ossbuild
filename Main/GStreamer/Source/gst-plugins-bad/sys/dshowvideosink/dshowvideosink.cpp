@@ -24,6 +24,7 @@
 #include "dshowvideosink.h"
 #include "dshowvideofakesrc.h"
 
+#include <glib.h>
 #include <gst/interfaces/xoverlay.h>
 
 #include "windows.h"
@@ -215,6 +216,7 @@ gst_dshowvideosink_clear (GstDshowVideoSink *sink)
 
   sink->connected = FALSE;
   sink->graph_running = FALSE;
+  g_mutex_free (sink->lock);
 }
 
 static void
@@ -232,6 +234,8 @@ gst_dshowvideosink_init (GstDshowVideoSink * sink, GstDshowVideoSinkClass * klas
   /* 20ms is more than enough, 80-130ms is noticable */
   gst_base_sink_set_max_lateness (GST_BASE_SINK (sink), 20 * GST_MSECOND);
   gst_base_sink_set_qos_enabled (GST_BASE_SINK (sink), TRUE);
+
+  sink->lock = g_mutex_new();
 }
 
 static void
@@ -876,10 +880,12 @@ gst_dshowvideosink_change_state (GstElement * element, GstStateChange transition
     case GST_STATE_CHANGE_READY_TO_PAUSED:
       break;
     case GST_STATE_CHANGE_PAUSED_TO_PLAYING:
+      GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink);
       ret = gst_dshowvideosink_start_graph (sink);
       if (ret == GST_STATE_CHANGE_FAILURE)
         return ret;
       sink->graph_running = TRUE;
+	  GST_DSHOWVIDEOSINK_GRAPH_UNLOCK(sink);
       break;
   }
 
@@ -887,16 +893,20 @@ gst_dshowvideosink_change_state (GstElement * element, GstStateChange transition
 
   switch (transition) {
     case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
+      GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink);
       rettmp = gst_dshowvideosink_pause_graph (sink);
       if (rettmp == GST_STATE_CHANGE_FAILURE)
         ret = rettmp;
       sink->graph_running = FALSE;
+      GST_DSHOWVIDEOSINK_GRAPH_UNLOCK(sink);
       break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
+      GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink);
       rettmp = gst_dshowvideosink_stop_graph (sink);
       if (rettmp == GST_STATE_CHANGE_FAILURE)
         ret = rettmp;
       sink->graph_running = FALSE;
+	  GST_DSHOWVIDEOSINK_GRAPH_UNLOCK(sink);
       break;
     case GST_STATE_CHANGE_READY_TO_NULL:
       gst_dshowvideosink_clear (sink);
@@ -1385,6 +1395,7 @@ gst_dshowvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
   }
 
   GST_DEBUG_OBJECT (sink, "Pushing buffer through fakesrc->renderer");
+  GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink);
   if (!sink->graph_running){
     retst = gst_dshowvideosink_start_graph(sink);
     if (retst == GST_STATE_CHANGE_FAILURE)
@@ -1396,6 +1407,7 @@ gst_dshowvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
     if (retst == GST_STATE_CHANGE_FAILURE)
       return GST_FLOW_WRONG_STATE;
   }
+  GST_DSHOWVIDEOSINK_GRAPH_UNLOCK(sink);
   GST_DEBUG_OBJECT (sink, "Done pushing buffer through fakesrc->renderer: %s", gst_flow_get_name(ret));
 
   return ret;
