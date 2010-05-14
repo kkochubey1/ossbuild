@@ -9,7 +9,7 @@ LGPL Packages
 -------------------------------------
 
 proxy-libintl   -       20090911        -       http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/proxy-libintl-dev_20090911_win32.zip
-iconv           -       20090213        -       http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/win-iconv-dev_tml-20090213_win32.zip
+iconv           -       0.0.1	        -       http://win-iconv.googlecode.com/files/win-iconv-0.0.1.tar.bz2
 dlfcn-win32     -       r11             -       http://dlfcn-win32.googlecode.com/files/dlfcn-win32-r11.tar.bz2
 liboil          -       0.3.17          -       http://liboil.freedesktop.org/download/liboil-0.3.17.tar.gz
 orc             -       0.4.4           -       http://code.entropywave.com/download/orc/orc-0.4.4.tar.gz
