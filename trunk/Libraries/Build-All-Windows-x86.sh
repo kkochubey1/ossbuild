@@ -162,25 +162,19 @@ fi
 #win-iconv
 if [ ! -f "$BinDir/${IconvPrefix}iconv.dll" ]; then 
 	unpack_bzip2_and_move "win-iconv.tar.bz2" "$PKG_DIR_WIN_ICONV"
-	mkdir_and_move "$IntDir/win-iconv"
-	copy_files_to_dir "$LIBRARIES_DIR/Source/Win-Iconv/*.c $LIBRARIES_DIR/Source/Win-Iconv/*.h" .
 	
-	gcc -I"$IncludeDir" -O2 -DUSE_LIBICONV_DLL -o win_iconv.o -c win_iconv.c
-	ar crv libiconv.a win_iconv.o 
-	cp -p "$LIBRARIES_PATCH_DIR/iconv/win32/iconv.dll" .
+	make iconv.dll
+	make libiconv.a
 	mv "iconv.dll" "${IconvPrefix}iconv.dll"
-	cp -p iconv.h "$IncludeDir"
 	
-	pexports "${IconvPrefix}iconv.dll" > "in.def"
-	sed -e '/LIBRARY iconv.dll/d' -e 's/DATA//g' in.def > in-mod.def
-	
-	$MSLIB /name:${IconvPrefix}iconv.dll /out:iconv.lib /machine:$MSLibMachine /def:in-mod.def
+	$MSLIB /name:${IconvPrefix}iconv.dll /out:iconv.lib /machine:$MSLibMachine /def:iconv.def
 	move_files_to_dir "*.dll" "$BinDir"
 	move_files_to_dir "*.exp *.lib" "$LibDir"
-	
+	move_files_to_dir "*.h" "$IncludeDir"
 	copy_files_to_dir "*.a" "$LibDir"
 	
 	generate_libtool_la_windows "libiconv.la" "" "libiconv.a"
+	make clean
 fi
 
 #zlib
