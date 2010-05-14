@@ -99,13 +99,15 @@ struct _GstX264Enc
   gulong buffer_size;
 
   gint i_type;
-  gboolean send_forcekeyunit;
+  GstEvent *forcekeyunit_event;
 };
 
 struct _GstX264EncClass
 {
   GstElementClass parent_class;
 };
+
+GType gst_x264_enc_get_type (void);
 
 G_END_DECLS
 
