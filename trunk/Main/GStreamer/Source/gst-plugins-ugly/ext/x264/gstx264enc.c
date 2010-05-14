@@ -407,7 +407,7 @@ gst_x264_enc_class_init (GstX264EncClass * klass)
           "Interlaced material", ARG_INTERLACED_DEFAULT, G_PARAM_READWRITE));
 }
 
-void
+static void
 gst_x264_enc_log_callback (gpointer private, gint level, const char *format,
     va_list args)
 {
@@ -517,7 +517,9 @@ gst_x264_enc_reset (GstX264Enc * encoder)
 
   GST_OBJECT_LOCK (encoder);
   encoder->i_type = X264_TYPE_AUTO;
-  encoder->send_forcekeyunit = FALSE;
+  if (encoder->forcekeyunit_event)
+    gst_event_unref (encoder->forcekeyunit_event);
+  encoder->forcekeyunit_event = NULL;
   GST_OBJECT_UNLOCK (encoder);
 }
 
@@ -716,6 +718,7 @@ gst_x264_enc_header_buf (GstX264Enc * encoder)
 #endif
   guint8 *buffer, *sps;
   gulong buffer_size;
+  gint sei_ni = 2, sps_ni = 0, pps_ni = 1;
 
   if (G_UNLIKELY (encoder->x264enc == NULL))
     return NULL;
@@ -729,35 +732,44 @@ gst_x264_enc_header_buf (GstX264Enc * encoder)
     return NULL;
   }
 
+  /* old x264 returns SEI, SPS and PPS, newer one has SEI last */
+  if (i_nal == 3 && nal[sps_ni].i_type != 7) {
+    sei_ni = 0;
+    sps_ni = 1;
+    pps_ni = 2;
+  }
+
   /* x264 is expected to return an SEI (some identification info),
-   * followed by an SPS and PPS */
-  if (i_nal != 3 || nal[1].i_type != 7 || nal[2].i_type != 8 ||
-      nal[1].i_payload < 4 || nal[2].i_payload < 1) {
+   * and SPS and PPS */
+  if (i_nal != 3 || nal[sps_ni].i_type != 7 || nal[pps_ni].i_type != 8 ||
+      nal[sps_ni].i_payload < 4 || nal[pps_ni].i_payload < 1) {
     GST_ELEMENT_ERROR (encoder, STREAM, ENCODE, (NULL),
         ("Unexpected x264 header."));
     return NULL;
   }
 
-  GST_MEMDUMP ("SEI", nal[0].p_payload, nal[0].i_payload);
-  GST_MEMDUMP ("SPS", nal[1].p_payload, nal[1].i_payload);
-  GST_MEMDUMP ("PPS", nal[2].p_payload, nal[2].i_payload);
+  GST_MEMDUMP ("SEI", nal[sei_ni].p_payload, nal[sei_ni].i_payload);
+  GST_MEMDUMP ("SPS", nal[sps_ni].p_payload, nal[sps_ni].i_payload);
+  GST_MEMDUMP ("PPS", nal[pps_ni].p_payload, nal[pps_ni].i_payload);
 
   /* nal payloads with emulation_prevention_three_byte, and some header data */
-  buffer_size = (nal[1].i_payload + nal[2].i_payload) * 4 + 100;
+  buffer_size = (nal[sps_ni].i_payload + nal[pps_ni].i_payload) * 4 + 100;
   buffer = g_malloc (buffer_size);
 
   /* old style API: nal's are not encapsulated, and have no sync/size prefix,
    * new style API: nal's are encapsulated, and have 4-byte size prefix */
 #ifndef X264_ENC_NALS
-  sps = nal[1].p_payload;
+  sps = nal[sps_ni].p_payload;
 #else
-  sps = nal[1].p_payload + 4;
+  sps = nal[sps_ni].p_payload + 4;
+  /* skip NAL unit type */
+  sps++;
 #endif
 
   buffer[0] = 1;                /* AVC Decoder Configuration Record ver. 1 */
-  buffer[1] = sps[1];           /* profile_idc                             */
-  buffer[2] = sps[2];           /* profile_compability                     */
-  buffer[3] = sps[3];           /* level_idc                               */
+  buffer[1] = sps[0];           /* profile_idc                             */
+  buffer[2] = sps[1];           /* profile_compability                     */
+  buffer[3] = sps[2];           /* level_idc                               */
   buffer[4] = 0xfc | (4 - 1);   /* nal_length_size_minus1                  */
 
   i_size = 5;
@@ -766,10 +778,10 @@ gst_x264_enc_header_buf (GstX264Enc * encoder)
 
 #ifndef X264_ENC_NALS
   i_data = buffer_size - i_size - 2;
-  nal_size = x264_nal_encode (buffer + i_size + 2, &i_data, 0, &nal[1]);
+  nal_size = x264_nal_encode (buffer + i_size + 2, &i_data, 0, &nal[sps_ni]);
 #else
-  nal_size = nal[1].i_payload - 4;
-  memcpy (buffer + i_size + 2, nal[1].p_payload + 4, nal_size);
+  nal_size = nal[sps_ni].i_payload - 4;
+  memcpy (buffer + i_size + 2, nal[sps_ni].p_payload + 4, nal_size);
 #endif
   GST_WRITE_UINT16_BE (buffer + i_size, nal_size);
   i_size += nal_size + 2;
@@ -778,10 +790,10 @@ gst_x264_enc_header_buf (GstX264Enc * encoder)
 
 #ifndef X264_ENC_NALS
   i_data = buffer_size - i_size - 2;
-  nal_size = x264_nal_encode (buffer + i_size + 2, &i_data, 0, &nal[2]);
+  nal_size = x264_nal_encode (buffer + i_size + 2, &i_data, 0, &nal[pps_ni]);
 #else
-  nal_size = nal[2].i_payload - 4;
-  memcpy (buffer + i_size + 2, nal[2].p_payload + 4, nal_size);
+  nal_size = nal[pps_ni].i_payload - 4;
+  memcpy (buffer + i_size + 2, nal[pps_ni].p_payload + 4, nal_size);
 #endif
   GST_WRITE_UINT16_BE (buffer + i_size, nal_size);
   i_size += nal_size + 2;
@@ -809,7 +821,9 @@ gst_x264_enc_set_src_caps (GstX264Enc * encoder, GstPad * pad, GstCaps * caps)
   outcaps = gst_caps_new_simple ("video/x-h264",
       "width", G_TYPE_INT, encoder->width,
       "height", G_TYPE_INT, encoder->height,
-      "framerate", GST_TYPE_FRACTION, encoder->fps_num, encoder->fps_den, NULL);
+      "framerate", GST_TYPE_FRACTION, encoder->fps_num, encoder->fps_den,
+      "pixel-aspect-ratio", GST_TYPE_FRACTION, encoder->par_num,
+      encoder->par_den, NULL);
 
   structure = gst_caps_get_structure (outcaps, 0);
 
@@ -913,7 +927,9 @@ gst_x264_enc_src_event (GstPad * pad, GstEvent * event)
         /* Set I frame request */
         GST_OBJECT_LOCK (encoder);
         encoder->i_type = X264_TYPE_I;
-        encoder->send_forcekeyunit = TRUE;
+        encoder->forcekeyunit_event = gst_event_copy (event);
+        GST_EVENT_TYPE (encoder->forcekeyunit_event) =
+            GST_EVENT_CUSTOM_DOWNSTREAM;
         GST_OBJECT_UNLOCK (encoder);
         forward = FALSE;
         gst_event_unref (event);
@@ -1045,7 +1061,7 @@ gst_x264_enc_encode_frame (GstX264Enc * encoder, x264_picture_t * pic_in,
   GstClockTime timestamp;
   GstClockTime duration;
   guint8 *data;
-  gboolean send_forcekeyunit;
+  GstEvent *forcekeyunit_event = NULL;
 
   if (G_UNLIKELY (encoder->x264enc == NULL))
     return GST_FLOW_NOT_NEGOTIATED;
@@ -1125,15 +1141,14 @@ gst_x264_enc_encode_frame (GstX264Enc * encoder, x264_picture_t * pic_in,
   }
 
   GST_OBJECT_LOCK (encoder);
-  send_forcekeyunit = encoder->send_forcekeyunit;
-  encoder->send_forcekeyunit = FALSE;
+  forcekeyunit_event = encoder->forcekeyunit_event;
+  encoder->forcekeyunit_event = NULL;
   GST_OBJECT_UNLOCK (encoder);
-  if (send_forcekeyunit)
-    gst_pad_push_event (encoder->srcpad,
-        gst_event_new_custom (GST_EVENT_CUSTOM_DOWNSTREAM,
-            gst_structure_new ("GstForceKeyUnit",
-                "timestamp", G_TYPE_UINT64, GST_BUFFER_TIMESTAMP (out_buf),
-                NULL)));
+  if (forcekeyunit_event) {
+    gst_structure_set (forcekeyunit_event->structure,
+        "timestamp", G_TYPE_UINT64, GST_BUFFER_TIMESTAMP (out_buf), NULL);
+    gst_pad_push_event (encoder->srcpad, forcekeyunit_event);
+  }
 
   return gst_pad_push (encoder->srcpad, out_buf);
 }
