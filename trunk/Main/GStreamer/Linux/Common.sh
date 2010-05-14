@@ -37,7 +37,7 @@ export GstIntDir=$IntDir
 
 export GstPluginBinDir=$BinDir/gstreamer-$GstApiVersion
 export GstPluginLibDir=$LibDir/gstreamer-$GstApiVersion
-export GST_PLUGIN_PATH=$GstPluginBinDir
+export GST_PLUGIN_PATH=$GstPluginBinDir:$GstPluginLibDir
 
 mkdir -p $GstPluginBinDir
 mkdir -p $GstPluginLibDir
@@ -54,6 +54,10 @@ export GST_PATH="$BinDir:$SharedBinDir:$GstPluginBinDir:$PATH"
 export GST_LD_LIBRARY_PATH="$BinDir:$SharedBinDir:$GstPluginBinDir:$LD_LIBRARY_PATH"
 export LD_LIBRARY_PATH=$GST_LD_LIBRARY_PATH
 export PATH=$GST_PATH
+
+#Setup fontconfig paths
+export FONTCONFIG_FILE=$SharedEtcDir/fonts/fonts.conf
+export FC_CONFIG_DIR=$SharedEtcDir/fonts
 
 #Default configure options
 export GstConfigureDefault=" --with-package-origin=$PKG_URI --disable-debug --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$BinDir --includedir=$IncludeDir "
