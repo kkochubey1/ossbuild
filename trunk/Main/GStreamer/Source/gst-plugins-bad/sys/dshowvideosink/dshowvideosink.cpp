@@ -24,7 +24,6 @@
 #include "dshowvideosink.h"
 #include "dshowvideofakesrc.h"
 
-#include <glib.h>
 #include <gst/interfaces/xoverlay.h>
 
 #include "windows.h"
@@ -216,7 +215,9 @@ gst_dshowvideosink_clear (GstDshowVideoSink *sink)
 
   sink->connected = FALSE;
   sink->graph_running = FALSE;
-  g_mutex_free (sink->lock);
+  if (sink->lock)
+	g_mutex_free (sink->lock);
+  sink->lock = g_mutex_new();
 }
 
 static void
@@ -234,8 +235,6 @@ gst_dshowvideosink_init (GstDshowVideoSink * sink, GstDshowVideoSinkClass * klas
   /* 20ms is more than enough, 80-130ms is noticable */
   gst_base_sink_set_max_lateness (GST_BASE_SINK (sink), 20 * GST_MSECOND);
   gst_base_sink_set_qos_enabled (GST_BASE_SINK (sink), TRUE);
-
-  sink->lock = g_mutex_new();
 }
 
 static void
@@ -250,6 +249,8 @@ gst_dshowvideosink_finalize (GObject * gobject)
     CoUninitialize ();
     sink->comInitialized = FALSE;
   }
+
+  g_mutex_free (sink->lock);
 
   G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
