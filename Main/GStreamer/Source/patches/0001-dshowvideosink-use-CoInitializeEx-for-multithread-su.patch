@@ -1,0 +1,34 @@
+From efb78cad84a84c187d1fc9a2d60caeb86332b743 Mon Sep 17 00:00:00 2001
+From: Andoni Morales Alastruey <ylatuya@gmail.com>
+Date: Mon, 17 May 2010 20:58:20 +0200
+Subject: [PATCH] dshowvideosink: use CoInitializeEx for multithread support
+
+---
+ sys/dshowvideosink/dshowvideosink.cpp |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sys/dshowvideosink/dshowvideosink.cpp b/sys/dshowvideosink/dshowvideosink.cpp
+index ab9aecd..a12aede 100644
+--- a/sys/dshowvideosink/dshowvideosink.cpp
++++ b/sys/dshowvideosink/dshowvideosink.cpp
+@@ -215,7 +215,7 @@ gst_dshowvideosink_init (GstDshowVideoSink * sink, GstDshowVideoSinkClass * klas
+ 
+   gst_dshowvideosink_clear (sink);
+ 
+-  hr = CoInitialize (0);
++  hr = CoInitializeEx (0, COINIT_MULTITHREADED);
+   if (SUCCEEDED(hr))
+     sink->comInitialized = TRUE;
+ 
+@@ -1207,7 +1207,7 @@ gst_dshowvideosink_build_filtergraph (GstDshowVideoSink *sink)
+   HRESULT hres;
+   gboolean comInit = FALSE;
+   
+-  hres = CoInitialize(0);
++  hres = CoInitializeEx (0, COINIT_MULTITHREADED);
+   if (SUCCEEDED (hres))
+     comInit = TRUE;
+ 
+-- 
+1.6.4.msysgit.0
+
