@@ -227,7 +227,7 @@ gst_dshowvideosink_init (GstDshowVideoSink * sink, GstDshowVideoSinkClass * klas
 
   gst_dshowvideosink_clear (sink);
 
-  hr = CoInitialize (0);
+  hr = CoInitializeEx (0, COINIT_MULTITHREADED);
   if (SUCCEEDED(hr))
     sink->comInitialized = TRUE;
 
@@ -1217,7 +1217,7 @@ gst_dshowvideosink_build_filtergraph (GstDshowVideoSink *sink)
   HRESULT hres;
   gboolean comInit = FALSE;
   
-  hres = CoInitialize(0);
+  hres = CoInitializeEx (0, COINIT_MULTITHREADED);
   if (SUCCEEDED (hres))
     comInit = TRUE;
 
