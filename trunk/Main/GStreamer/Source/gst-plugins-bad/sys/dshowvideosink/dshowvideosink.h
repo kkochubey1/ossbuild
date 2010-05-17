@@ -89,6 +89,9 @@ struct _GstDshowVideoSink
 
   /* The video window set through GstXOverlay */
   HWND window_id;
+  
+  /* If we created the window, it needs to be closed in ::stop() */
+  gboolean is_new_window;
 
   gboolean connected;
   gboolean graph_running;
