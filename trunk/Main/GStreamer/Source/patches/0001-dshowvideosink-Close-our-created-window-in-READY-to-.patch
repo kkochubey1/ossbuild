@@ -1,0 +1,70 @@
+From 5b8db04e95872eead2ea25a0d3aa31080029e65a Mon Sep 17 00:00:00 2001
+From: Andoni Morales Alastruey <ylatuya@gmail.com>
+Date: Mon, 17 May 2010 22:57:43 +0200
+Subject: [PATCH] [dshowvideosink] Close our created window in READY to NULL state change
+
+---
+ sys/dshowvideosink/dshowvideosink.cpp |   11 +++++++++++
+ sys/dshowvideosink/dshowvideosink.h   |    3 +++
+ 2 files changed, 14 insertions(+), 0 deletions(-)
+
+diff --git a/sys/dshowvideosink/dshowvideosink.cpp b/sys/dshowvideosink/dshowvideosink.cpp
+index a12aede..4513e31 100644
+--- a/sys/dshowvideosink/dshowvideosink.cpp
++++ b/sys/dshowvideosink/dshowvideosink.cpp
+@@ -204,6 +204,7 @@ gst_dshowvideosink_clear (GstDshowVideoSink *sink)
+ 
+   sink->window_closed = FALSE;
+   sink->window_id = NULL;
++  sink->is_new_window = FALSE;
+ 
+   sink->connected = FALSE;
+ }
+@@ -564,6 +565,8 @@ gst_dshowvideosink_window_thread (GstDshowVideoSink * sink)
+     return NULL;
+   }
+ 
++  sink->is_new_window = TRUE;
++
+   SetWindowLongPtr (video_window, GWLP_USERDATA, (LONG)sink);
+ 
+   sink->window_id = video_window;
+@@ -657,6 +660,7 @@ static void gst_dshowvideosink_set_window_for_renderer (GstDshowVideoSink *sink)
+     GST_WARNING_OBJECT (sink, "Failed to set HWND %x on renderer", sink->window_id);
+     return;
+   }
++  sink->is_new_window = FALSE;
+ 
+   /* This tells the renderer where the window is located, needed to 
+    * start drawing in the right place.  */
+@@ -1335,6 +1339,13 @@ gst_dshowvideosink_stop (GstBaseSink * bsink)
+     GST_WARNING_OBJECT (sink, "Cannot destroy filter graph; it doesn't exist");
+     return TRUE;
+   }
++  
++  if (sink->is_new_window) {
++    SendMessage (sink->window_id, WM_CLOSE, NULL, NULL);
++    while (!sink->window_closed);
++    sink->is_new_window = FALSE;
++  }
++
+ 
+   /* Release the renderer */
+   if (sink->renderersupport) {
+diff --git a/sys/dshowvideosink/dshowvideosink.h b/sys/dshowvideosink/dshowvideosink.h
+index 9c9d073..faf43a2 100644
+--- a/sys/dshowvideosink/dshowvideosink.h
++++ b/sys/dshowvideosink/dshowvideosink.h
+@@ -85,6 +85,9 @@ struct _GstDshowVideoSink
+ 
+   /* The video window set through GstXOverlay */
+   HWND window_id;
++  
++  /* If we created the window, it needs to be closed in ::stop() */
++  gboolean is_new_window;
+ 
+   gboolean connected;
+ 
+-- 
+1.6.4.msysgit.0
+
