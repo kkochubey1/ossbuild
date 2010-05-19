@@ -9,7 +9,7 @@ import static ossbuild.gst.api.GStreamer.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class Message extends GObject {
+public class Message extends BaseGObject {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	private MessageType msgType;
 	private ossbuild.gst.api.GstMessage msg;

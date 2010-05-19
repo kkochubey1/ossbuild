@@ -14,7 +14,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import ossbuild.Sys;
 import ossbuild.gst.api.GStreamer;
+import ossbuild.gst.api.GTypeConverters;
 import ossbuild.gst.callbacks.IBusSyncHandler;
+import ossbuild.gst.elements.VideoTestSrcPattern;
 import static org.junit.Assert.*;
 
 /**
@@ -65,7 +67,7 @@ public class Platform {
 	}
 	//</editor-fold>
 
-	@Test
+	//@Test
 	public void testPipeline() throws InterruptedException {
 		assertTrue(true);
 		
@@ -81,7 +83,7 @@ public class Platform {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testBin() throws InterruptedException {
 		assertTrue(true);
 
@@ -97,7 +99,7 @@ public class Platform {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testBus() throws InterruptedException {
 		assertTrue(true);
 
@@ -155,6 +157,10 @@ public class Platform {
 			
 			assertNotNull(videotestsrc.getName());
 			assertEquals("myvideotestsrc", videotestsrc.getName());
+
+			VideoTestSrcPattern o = videotestsrc.get("pattern", GTypeConverters.VIDEO_TEST_SRC_PATTERN);
+			assertTrue(videotestsrc.get("is-live") != null);
+			
 
 			p.addAndLinkMany(videotestsrc, ffmpegcolorspace, videosink);
 

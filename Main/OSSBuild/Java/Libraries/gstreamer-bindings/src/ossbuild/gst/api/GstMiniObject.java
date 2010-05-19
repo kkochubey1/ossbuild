@@ -18,7 +18,7 @@ public class GstMiniObject extends Structure {
 	public GstMiniObject() {
 	}
 
-	public GstMiniObject(GTypeInstance instance) {
+	public GstMiniObject(GstMiniObject instance) {
 		this(instance.getPointer());
 	}
 
@@ -29,20 +29,20 @@ public class GstMiniObject extends Structure {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="ByValue/ByReference">
-	public static class ByValue extends GstMessage implements com.sun.jna.Structure.ByValue {
+	public static class ByValue extends GstMiniObject implements com.sun.jna.Structure.ByValue {
 		public ByValue() {
 		}
 
-		public ByValue(GTypeInstance instance) {
+		public ByValue(GstMiniObject instance) {
 			super(instance.getPointer());
 		}
 	}
 
-	public static class ByReference extends GstMessage implements com.sun.jna.Structure.ByReference {
+	public static class ByReference extends GstMiniObject implements com.sun.jna.Structure.ByReference {
 		public ByReference() {
 		}
 
-		public ByReference(GTypeInstance instance) {
+		public ByReference(GstMiniObject instance) {
 			super(instance.getPointer());
 		}
 	}

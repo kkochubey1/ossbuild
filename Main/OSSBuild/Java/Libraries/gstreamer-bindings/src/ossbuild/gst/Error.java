@@ -10,7 +10,7 @@ import static ossbuild.gst.api.GStreamer.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class Error extends GObject {
+public class Error extends BaseGObject {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	private GError err;
 	//</editor-fold>

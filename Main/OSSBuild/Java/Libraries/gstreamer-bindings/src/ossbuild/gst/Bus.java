@@ -12,7 +12,7 @@ import static ossbuild.gst.api.GStreamer.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class Bus extends GObject implements IBus {
+public class Bus extends BaseGObject implements IBus {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	private ICallback syncHandler;
 	//</editor-fold>

@@ -9,6 +9,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import ossbuild.StringUtil;
+import ossbuild.gst.api.GParamSpec;
+import ossbuild.gst.api.GType;
+import ossbuild.gst.api.GValue;
+import ossbuild.gst.api.IGTypeConverter;
+import ossbuild.gst.api.Utils;
 import static ossbuild.gst.api.GLib.*;
 import static ossbuild.gst.api.GObject.*;
 import static ossbuild.gst.api.GStreamer.*;
@@ -18,7 +23,7 @@ import static ossbuild.gst.api.GStreamerInterfaces.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class Element extends GObject implements IElement {
+public class Element extends BaseGObject implements IElement {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	private Integer factoryRank;
 	private String factoryName, factoryClass;
@@ -40,9 +45,25 @@ public class Element extends GObject implements IElement {
 		this.ptr = ptr;
 		this.managed = false;
 	}
+
+	Element(Pointer ptr, boolean casting) {
+		super();
+		this.ptr = ptr;
+		this.managed = casting;
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Getters">
+	@Override
+	public <T extends Object> T get(String propertyName) {
+		return propertyValue(this, propertyName);
+	}
+
+	@Override
+	public <T extends Object> T get(String propertyName, IGTypeConverter customConverter) {
+		return propertyValue(this, propertyName, customConverter);
+	}
+
 	@Override
 	public boolean hasParent() {
 		return parentExists(this);
@@ -233,19 +254,111 @@ public class Element extends GObject implements IElement {
 	}
 
 	public static boolean propertyExists(IElement element, String name) {
-		return (findProperty(element, name) != Pointer.NULL);
+		return (findPropertySpec(element, name) != Pointer.NULL);
 	}
 
-	static Pointer findProperty(IElement src, String name) {
+	public static Pointer findPropertySpec(IElement src, String name) {
 		if (src == null)
 			return Pointer.NULL;
-		return findProperty(src.getPointer().getPointer(0L), name);
+		return Utils.findPropertySpec(src.getPointer().getPointer(0L), name);
 	}
 
-	static Pointer findProperty(Pointer gobjectClassPtr, String name) {
-		if (gobjectClassPtr == null || gobjectClassPtr == Pointer.NULL)
-			return Pointer.NULL;
-		return g_object_class_find_property(gobjectClassPtr, name);
+	public static <T extends Object> T propertyValue(IElement element, String name) {
+		return propertyValue(element, name, null);
+	}
+
+	public static <T extends Object> T propertyValue(IElement element, String name, IGTypeConverter customConverter) {
+		if (element == null)
+			return null;
+
+		Pointer pElement = element.getPointer();
+		Pointer pPropertySpec = findPropertySpec(element, name);
+		if (pPropertySpec == null || pPropertySpec == Pointer.NULL)
+			return null;
+
+		GParamSpec propertySpec = new GParamSpec(pPropertySpec);
+		NativeLong propertyValueType = propertySpec.value_type;
+		GType propType = GType.fromNative(propertyValueType);
+		if (propType == GType.Invalid)
+			return null;
+		
+		GValue propValue = new GValue();
+		Pointer pPropValue = propValue.getPointer();
+
+		g_value_init(pPropValue, propertyValueType);
+		g_object_get_property(pElement, name, pPropValue);
+		
+		final Object value;
+
+		if (customConverter == null) {
+			switch(propType) {
+				case Int:
+					value = g_value_get_int(pPropValue);
+					break;
+				case UInt:
+					value = g_value_get_uint(pPropValue);
+					break;
+				case Char:
+					value = Integer.valueOf(g_value_get_char(pPropValue));
+					break;
+				case UChar:
+					value = Integer.valueOf(g_value_get_uchar(pPropValue));
+					break;
+				case Long:
+					value = g_value_get_long(pPropValue).longValue();
+					break;
+				case ULong:
+					value = g_value_get_ulong(pPropValue).longValue();
+					break;
+				case Int64:
+					value = g_value_get_int64(pPropValue);
+					break;
+				case UInt64:
+					value = g_value_get_uint64(pPropValue);
+					break;
+				case Boolean:
+					value = g_value_get_boolean(pPropValue);
+					break;
+				case Float:
+					value = g_value_get_float(pPropValue);
+					break;
+				case Double:
+					value = g_value_get_double(pPropValue);
+					break;
+				case String:
+					value = g_value_get_string(pPropValue);
+					break;
+				case Object:
+					value = new GObject(g_value_dup_object(pPropValue));
+					break;
+				case User:
+					IGTypeConverter converter = GType.customConverter(propertyValueType);
+					if (converter != null)
+						value = converter.convertFromProperty(pElement, pPropertySpec, pPropValue, propertyValueType, propertySpec, propValue);
+					else
+						value = null;
+					break;
+				default:
+					if (g_value_type_transformable(propType.asNativeLong(), GType.Object.asNativeLong()))
+						value = new GObject(g_value_dup_object(pPropValue));
+					else if (g_value_type_transformable(propType.asNativeLong(), GType.Int.asNativeLong()))
+						value = g_value_get_int(Utils.transformGValue(propValue, GType.Int).getPointer());
+					else if (g_value_type_transformable(propType.asNativeLong(), GType.Int64.asNativeLong()))
+						value = g_value_get_int(Utils.transformGValue(propValue, GType.Int64).getPointer());
+					else
+						value = null;
+					break;
+			}
+		} else {
+			value = customConverter.convertFromProperty(pElement, pPropertySpec, pPropValue, propertyValueType, propertySpec, propValue);
+		}
+		g_value_unset(pPropValue);
+		
+		return (T)value;
+	}
+
+	static void setProperty(Pointer property, Object value) {
+		
 	}
 	//</editor-fold>
 }

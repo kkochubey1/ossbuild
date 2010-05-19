@@ -5,6 +5,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import java.util.concurrent.TimeUnit;
 import ossbuild.StringUtil;
+import ossbuild.gst.api.IGTypeConverter;
 import ossbuild.gst.callbacks.IBusSyncHandler;
 import static ossbuild.gst.api.GLib.*;
 import static ossbuild.gst.api.GObject.*;
@@ -14,7 +15,7 @@ import static ossbuild.gst.api.GStreamer.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class Pipeline extends GObject implements IPipeline, IBin, IElement {
+public class Pipeline extends BaseGObject implements IPipeline, IBin, IElement {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	private Bus bus;
 	private Integer factoryRank;
@@ -40,12 +41,29 @@ public class Pipeline extends GObject implements IPipeline, IBin, IElement {
 		init();
 	}
 
+	Pipeline(Pointer ptr, boolean casting) {
+		super();
+		this.ptr = ptr;
+		this.managed = casting;
+		init();
+	}
+
 	void init() {
 		this.bus = Bus.from(gst_pipeline_get_bus(ptr));
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Getters">
+	@Override
+	public <T extends Object> T get(String propertyName) {
+		return Element.propertyValue(this, propertyName);
+	}
+
+	@Override
+	public <T extends Object> T get(String propertyName, IGTypeConverter customConverter) {
+		return Element.propertyValue(this, propertyName, customConverter);
+	}
+	
 	@Override
 	public boolean hasParent() {
 		return Element.parentExists(this);
