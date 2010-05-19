@@ -96,6 +96,9 @@ public class GStreamer extends Library {
 		if (!gst_init_check(argc, argv, null))
 			return false;
 
+		//Add GType converters
+		GTypeConverters.initialize();
+
 		//Create a glib main context and loop
 		context = g_main_context_new();
 		contextLoop = g_main_loop_new(context, false);
@@ -158,7 +161,7 @@ public class GStreamer extends Library {
 
 	//<editor-fold defaultstate="collapsed" desc="GstObject">
 	public static native void gst_object_ref(Pointer obj);
-    public static native void gst_object_unref(Pointer obj);
+	public static native void gst_object_unref(Pointer obj);
 
 	public static native Pointer gst_object_get_name(Pointer obj);
 	public static native Pointer gst_object_get_parent(Pointer obj);
@@ -179,7 +182,7 @@ public class GStreamer extends Library {
 
 	//<editor-fold defaultstate="collapsed" desc="GstElement">
 	public static native int gst_element_set_state(Pointer elem, int state);
-    public static native int gst_element_get_state(Pointer elem, IntByReference state, IntByReference pending, long timeout);
+	public static native int gst_element_get_state(Pointer elem, IntByReference state, IntByReference pending, long timeout);
 
 	public static native boolean gst_element_link(Pointer elem1, Pointer elem2);
 
@@ -206,7 +209,7 @@ public class GStreamer extends Library {
 	//<editor-fold defaultstate="collapsed" desc="GstBus">
 	public static native Pointer gst_bus_new();
 	public static native NativeLong gst_bus_add_watch(Pointer bus, Callback func, Pointer user_data);
-    public static native void gst_bus_set_sync_handler(Pointer bus, Callback func, Pointer user_data);
+	public static native void gst_bus_set_sync_handler(Pointer bus, Callback func, Pointer user_data);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstMessage">
@@ -214,22 +217,22 @@ public class GStreamer extends Library {
 	//public static native void gst_message_unref(Pointer msg);
 
 	public static native void gst_message_parse_state_changed(Pointer msg, IntByReference old, IntByReference current, IntByReference pending);
-    public static native void gst_message_parse_tag(Pointer msg, PointerByReference tagList);
-    public static native void gst_message_parse_clock_provide(Pointer msg, PointerByReference clock, IntByReference ready);
-    public static native void gst_message_parse_new_clock(Pointer msg, PointerByReference clock);
-    public static native void gst_message_parse_error(Pointer msg, PointerByReference err, PointerByReference debug);
-    public static native void gst_message_parse_warning(Pointer msg, PointerByReference err, PointerByReference debug);
-    public static native void gst_message_parse_info(Pointer msg, PointerByReference err, PointerByReference debug);
-    public static native void gst_message_parse_buffering(Pointer msg, IntByReference percent);
-    public static native void gst_message_parse_segment_start(Pointer message, IntByReference /*Format*/ format, LongByReference position);
-    public static native void gst_message_parse_segment_done(Pointer message, IntByReference /*Format*/ format, LongByReference position);
-    public static native void gst_message_parse_duration(Pointer message, IntByReference /*Format*/ format, LongByReference duration);
-    public static native void gst_message_parse_async_start(Pointer message, IntByReference /* boolean */ new_base_time);
+	public static native void gst_message_parse_tag(Pointer msg, PointerByReference tagList);
+	public static native void gst_message_parse_clock_provide(Pointer msg, PointerByReference clock, IntByReference ready);
+	public static native void gst_message_parse_new_clock(Pointer msg, PointerByReference clock);
+	public static native void gst_message_parse_error(Pointer msg, PointerByReference err, PointerByReference debug);
+	public static native void gst_message_parse_warning(Pointer msg, PointerByReference err, PointerByReference debug);
+	public static native void gst_message_parse_info(Pointer msg, PointerByReference err, PointerByReference debug);
+	public static native void gst_message_parse_buffering(Pointer msg, IntByReference percent);
+	public static native void gst_message_parse_segment_start(Pointer message, IntByReference /*Format*/ format, LongByReference position);
+	public static native void gst_message_parse_segment_done(Pointer message, IntByReference /*Format*/ format, LongByReference position);
+	public static native void gst_message_parse_duration(Pointer message, IntByReference /*Format*/ format, LongByReference duration);
+	public static native void gst_message_parse_async_start(Pointer message, IntByReference /* boolean */ new_base_time);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstMiniObject">
 	public static native void gst_mini_object_ref(Pointer ptr);
-    public static native void gst_mini_object_unref(Pointer ptr);
+	public static native void gst_mini_object_unref(Pointer ptr);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstStructure">

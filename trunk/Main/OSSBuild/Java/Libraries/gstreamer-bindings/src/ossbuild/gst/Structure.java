@@ -12,7 +12,7 @@ import static ossbuild.gst.api.GStreamer.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class Structure extends GObject {
+public class Structure extends BaseGObject {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	private GType gType;
 	private GstStructure struct;

@@ -2,12 +2,16 @@
 package ossbuild.gst;
 
 import java.util.concurrent.TimeUnit;
+import ossbuild.gst.api.IGTypeConverter;
 
 /**
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public interface IElement extends INativeObject, IDisposable {
+	<T extends Object> T get(String propertyName);
+	<T extends Object> T get(String propertyName, IGTypeConverter converter);
+
 	String getName();
 	boolean hasParent();
 	

@@ -2,108 +2,45 @@
 package ossbuild.gst;
 
 import com.sun.jna.Pointer;
-import ossbuild.gst.api.GStreamer;
+import static ossbuild.gst.api.GObject.*;
 
 /**
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public abstract class GObject implements INativeObject, IDisposable {
-	//<editor-fold defaultstate="collapsed" desc="Variables">
-	boolean managed = true;
-	boolean disposed = false;
-	Pointer ptr = Pointer.NULL;
-	//</editor-fold>
-
+public class GObject extends BaseGObject {
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
-	static {
-		GStreamer.initialize();
-	}
-
-	protected GObject() {
-	}
-
-	protected GObject(Pointer ptr) {
+	public GObject(Pointer ptr) {
+		super();
 		this.ptr = ptr;
-	}
-	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="Getters">
-	@Override
-	public final Pointer getPointer() {
-		return ptr;
-	}
-
-	@Override
-	public final boolean isManaged() {
-		return managed;
+		this.managed = true;
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Dispose">
 	@Override
-	public final boolean isDisposed() {
-		return disposed;
-	}
-
-	@Override
-	protected final void finalize() throws Throwable {
-		super.finalize();
-		dispose();
-	}
-
-	@Override
-	public synchronized final void dispose() {
-		if (disposed)
-			return;
-		disposed = true;
-		disposeObject();
-	}
-
 	protected void disposeObject() {
+		if (ptr == Pointer.NULL)
+			return;
+		if (managed)
+			g_object_unref(ptr);
 	}
 	//</editor-fold>
 
-	//<editor-fold defaultstate="collapsed" desc="Equals">
-	@Override
-	public int hashCode() {
-		int hash = 7;
-		hash = 17 * hash + (this.ptr != null ? this.ptr.hashCode() : 0);
-		return hash;
+	//<editor-fold defaultstate="collapsed" desc="Casts">
+	public IElement asElement() {
+		g_object_ref(ptr);
+		return new Element(ptr, true);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null)
-			return (ptr == Pointer.NULL);
-		if (obj instanceof GObject)
-			return equals((GObject)obj);
-		return super.equals(obj);
+	public IBin asBin() {
+		g_object_ref(ptr);
+		return new Bin(ptr, true);
 	}
 
-	@Override
-	public boolean equals(INativeObject obj) {
-		if (obj == null)
-			return (ptr == Pointer.NULL);
-		return equals(obj.getPointer());
-	}
-
-	public boolean equals(GObject obj) {
-		if (obj == null)
-			return (ptr == Pointer.NULL);
-		return equals(obj.ptr);
-	}
-
-	@Override
-	public boolean equals(Pointer objPtr) {
-		if (ptr != Pointer.NULL && (objPtr == null || objPtr == Pointer.NULL))
-			return false;
-		else if (ptr == Pointer.NULL && (objPtr == null || objPtr == Pointer.NULL))
-			return true;
-		else if (ptr == Pointer.NULL && (objPtr != null && objPtr != Pointer.NULL))
-			return false;
-		else
-			return ptr.equals(objPtr);
+	public IPipeline asPipeline() {
+		g_object_ref(ptr);
+		return new Pipeline(ptr, true);
 	}
 	//</editor-fold>
 }

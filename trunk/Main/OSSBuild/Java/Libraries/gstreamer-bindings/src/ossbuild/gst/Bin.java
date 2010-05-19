@@ -2,12 +2,10 @@
 package ossbuild.gst;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 import java.util.concurrent.TimeUnit;
 import ossbuild.StringUtil;
-import ossbuild.gst.api.Utils;
+import ossbuild.gst.api.IGTypeConverter;
 import static ossbuild.gst.api.GLib.*;
 import static ossbuild.gst.api.GObject.*;
 import static ossbuild.gst.api.GStreamer.*;
@@ -16,7 +14,7 @@ import static ossbuild.gst.api.GStreamer.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class Bin extends GObject implements IBin, IElement {
+public class Bin extends BaseGObject implements IBin, IElement {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	private Integer factoryRank;
 	private String factoryName, factoryClass;
@@ -37,9 +35,24 @@ public class Bin extends GObject implements IBin, IElement {
 		this.ptr = ptr;
 		this.managed = false;
 	}
+
+	Bin(Pointer ptr, boolean casting) {
+		this.ptr = ptr;
+		this.managed = casting;
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Getters">
+	@Override
+	public <T extends Object> T get(String propertyName) {
+		return Element.propertyValue(this, propertyName);
+	}
+
+	@Override
+	public <T extends Object> T get(String propertyName, IGTypeConverter customConverter) {
+		return Element.propertyValue(this, propertyName, customConverter);
+	}
+
 	@Override
 	public boolean hasParent() {
 		return Element.parentExists(this);
