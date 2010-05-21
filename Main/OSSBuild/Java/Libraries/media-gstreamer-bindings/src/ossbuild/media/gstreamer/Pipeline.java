@@ -91,5 +91,9 @@ public class Pipeline extends Bin implements IPipeline {
 	public static IPipeline make(String factoryName, String elementName) {
 		return new Pipeline(factoryName, elementName);
 	}
+
+	public static IPipeline from(Pointer pElement) {
+		return new Pipeline(pElement);
+	}
 	//</editor-fold>
 }

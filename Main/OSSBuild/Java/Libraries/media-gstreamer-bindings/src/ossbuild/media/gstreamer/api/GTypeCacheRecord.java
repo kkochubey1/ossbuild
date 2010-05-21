@@ -9,14 +9,14 @@ import ossbuild.media.gstreamer.INativeObject;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class DefaultGTypeCacheRecord implements IGTypeCacheRecord {
+public class GTypeCacheRecord implements IGTypeCacheRecord {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	private Class<? extends INativeObject> cls;
 	private Constructor<? extends INativeObject> constructor;
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
-	public DefaultGTypeCacheRecord(Class<? extends INativeObject> cls) {
+	public GTypeCacheRecord(Class<? extends INativeObject> cls) {
 		init(cls);
 	}
 

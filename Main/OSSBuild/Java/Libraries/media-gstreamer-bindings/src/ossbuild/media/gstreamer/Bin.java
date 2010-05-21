@@ -66,5 +66,9 @@ public class Bin extends BaseGstBin {
 	public static IBin make(String factoryName, String elementName) {
 		return new Bin(factoryName, elementName);
 	}
+
+	public static IBin from(Pointer pElement) {
+		return new Bin(pElement);
+	}
 	//</editor-fold>
 }

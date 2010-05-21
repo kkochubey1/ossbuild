@@ -29,11 +29,11 @@ public class GTypeCache {
 		put(gst_tuner_norm_get_type(),              null /*TunerNorm.class*/);
 
 		//GstObject types
-		put(gst_element_get_type(),                 new DefaultGTypeCacheRecord(Element.class));
+		put(gst_element_get_type(),                 new GTypeCacheRecord(Element.class));
 		put(gst_clock_get_type(),                   null /*Clock.class*/);
 		put(gst_date_get_type(),                    null /*GDate.class*/);
-		put(gst_pipeline_get_type(),                new DefaultGTypeCacheRecord(Pipeline.class));
-		put(gst_bus_get_type(),                     new DefaultGTypeCacheRecord(Bus.class));
+		put(gst_pipeline_get_type(),                new GTypeCacheRecord(Pipeline.class));
+		put(gst_bus_get_type(),                     new GTypeCacheRecord(Bus.class));
 		put(gst_pad_get_type(),                     null /*Pad.class*/);
 		put(gst_pad_template_get_type(),            null /*PadTemplate.class*/);
 		put(gst_ghost_pad_get_type(),               null /*GhostPad.class*/);
@@ -44,7 +44,7 @@ public class GTypeCache {
 		//GstMiniObject types
 		put(gst_buffer_get_type(),                  null /*Buffer.class*/);
 		put(gst_event_get_type(),                   null /*Event.class*/);
-		put(gst_message_get_type(),                 new DefaultGTypeCacheRecord(Message.class));
+		put(gst_message_get_type(),                 new GTypeCacheRecord(Message.class));
 		put(gst_query_get_type(),                   null /*Query.class*/);
 
 		//Element types
@@ -52,7 +52,7 @@ public class GTypeCache {
 		put(gst_base_src_get_type(),                null /*BaseSrc.class*/);
 		put(gst_type_find_get_type(),               null /*TypeFind.class*/);
 		put(gst_element_factory_get_type(),	        null /*ElementFactory.class*/);
-		put(gst_bin_get_type(),                     new DefaultGTypeCacheRecord(Bin.class));
+		put(gst_bin_get_type(),                     new GTypeCacheRecord(Bin.class));
 	}};
 
 	public static NativeLong gtypeForClass(Class<? extends INativeObject> cls) {

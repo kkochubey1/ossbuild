@@ -84,7 +84,7 @@ public class GStreamer extends Library {
 	}
 
 	public static synchronized boolean initialize(String programName, String[] args) {
-		if (initialized.compareAndSet(true, true))
+		if (!initialized.compareAndSet(false, true))
 			return true;
 
 		//Add the program name to the beginning of the array
@@ -101,6 +101,9 @@ public class GStreamer extends Library {
 
 		//Fill GType cache
 		GTypeCache.initialize();
+
+		//Read signal annotations ahead of time
+		SignalCache.initialize();
 
 		//Create a glib main context and loop
 		context = g_main_context_new();
@@ -137,8 +140,11 @@ public class GStreamer extends Library {
 		if (contextLoop == null || contextLoop == Pointer.NULL)
 			return true;
 
-		g_main_loop_quit(contextLoop);
-		g_main_context_release(context);
+		//TODO: Fix this - it causes a crash for some reason
+		//if (g_main_loop_is_running(contextLoop)) {
+		//	g_main_loop_quit(contextLoop);
+		//	g_main_context_release(context);
+		//}
 
 		contextLoop = null;
 		context = null;
@@ -152,6 +158,17 @@ public class GStreamer extends Library {
 		if (contextLoop == null)
 			return null;
 		return g_signal_connect_data(ptr, signal, callback, Pointer.NULL, null, 0);
+	}
+
+	public static boolean disconnectSignal(Pointer ptr, NativeLong handler_id) {
+		if (ptr == null || ptr == Pointer.NULL)
+			return false;
+		if (handler_id == null || handler_id.intValue() == 0)
+			return false;
+		
+		if (g_signal_handler_is_connected(ptr, handler_id))
+			g_signal_handler_disconnect(ptr, handler_id);
+		return true;
 	}
 	//</editor-fold>
 
