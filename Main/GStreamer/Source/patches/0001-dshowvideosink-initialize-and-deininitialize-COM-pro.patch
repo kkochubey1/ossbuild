@@ -1,0 +1,159 @@
+From 637f09124718d2513329fded864d4124262fe922 Mon Sep 17 00:00:00 2001
+From: Andoni Morales Alastruey <ylatuya@gmail.com>
+Date: Tue, 18 May 2010 23:53:54 +0200
+Subject: [PATCH] dshowvideosink: initialize and deininitialize COM properly using a MTA
+
+Initialize COM in a multi threaded apartement using a separate thread
+to be able to uninitializa it properly.
+---
+ sys/dshowvideosink/dshowvideosink.cpp |   74 +++++++++++++++++++++++++--------
+ sys/dshowvideosink/dshowvideosink.h   |    3 +
+ 2 files changed, 60 insertions(+), 17 deletions(-)
+
+diff --git a/sys/dshowvideosink/dshowvideosink.cpp b/sys/dshowvideosink/dshowvideosink.cpp
+index ab9aecd..8365093 100644
+--- a/sys/dshowvideosink/dshowvideosink.cpp
++++ b/sys/dshowvideosink/dshowvideosink.cpp
+@@ -80,6 +80,9 @@ static gboolean gst_dshowvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps
+ static GstCaps *gst_dshowvideosink_get_caps (GstBaseSink * bsink);
+ static GstFlowReturn gst_dshowvideosink_render (GstBaseSink *sink, GstBuffer *buffer);
+ 
++/* COM initialization/uninitialization thread */
++static void gst_dshowvideosink_com_thread (GstDshowVideoSink * sink);
++
+ /* GstXOverlay methods */
+ static void gst_dshowvideosink_set_window_id (GstXOverlay * overlay, ULONG window_id);
+ 
+@@ -211,13 +214,20 @@ gst_dshowvideosink_clear (GstDshowVideoSink *sink)
+ static void
+ gst_dshowvideosink_init (GstDshowVideoSink * sink, GstDshowVideoSinkClass * klass)
+ {
+-  HRESULT hr;
+-
+   gst_dshowvideosink_clear (sink);
+ 
+-  hr = CoInitialize (0);
+-  if (SUCCEEDED(hr))
+-    sink->comInitialized = TRUE;
++  sink->com_lock = g_mutex_new();
++  sink->com_initialized = g_cond_new();
++  sink->com_uninitialize = g_cond_new();
++
++  /* create the COM thread */
++  g_thread_create ((GThreadFunc)gst_dshowvideosink_com_thread,
++      sink, FALSE, NULL);
++
++  /* wait until the COM thread signals that COM has been initialized */
++  g_mutex_lock (sink->com_lock);
++  g_cond_wait (sink->com_initialized, sink->com_lock);
++  g_mutex_unlock (sink->com_lock);
+ 
+   /* TODO: Copied from GstVideoSink; should we use that as base class? */
+   /* 20ms is more than enough, 80-130ms is noticable */
+@@ -233,9 +243,10 @@ gst_dshowvideosink_finalize (GObject * gobject)
+   if (sink->preferredrenderer)
+     g_free (sink->preferredrenderer);
+ 
++  /* signal the COM thread that it sould uninitialize COM */
+   if (sink->comInitialized) {
+-    CoUninitialize ();
+-    sink->comInitialized = FALSE;
++    g_cond_signal (sink->com_uninitialize);
++    while (sink->comInitialized);
+   }
+ 
+   G_OBJECT_CLASS (parent_class)->finalize (gobject);
+@@ -288,6 +299,38 @@ gst_dshowvideosink_get_property (GObject * object, guint prop_id,
+   }
+ }
+ 
++static void
++gst_dshowvideosink_com_thread (GstDshowVideoSink * sink)
++{
++  HRESULT res;
++
++  /* Initialize COM with a MTA for this process. This thread will
++   * be the first one to enter the apartement and the last one to leave
++   * it, unitializing COM properly */
++
++  res = CoInitializeEx (0, COINIT_MULTITHREADED);
++  if (res == S_FALSE)
++    GST_WARNING_OBJECT (sink, "COM has been already initialized in the same process");
++  else if (res == RPC_E_CHANGED_MODE)
++    GST_WARNING_OBJECT (sink, "The concurrency model of COM has changed.");
++  else
++    GST_INFO_OBJECT (sink, "COM intialized succesfully");
++
++  sink->comInitialized = TRUE;
++
++  /* Signal other threads waiting on this condition that COM was initialized */
++  g_cond_signal (sink->com_initialized);
++
++  /* Wait until the unitialize condition is met to leave the COM apartement */
++  g_mutex_lock (sink->com_lock);
++  g_cond_wait (sink->com_uninitialize, sink->com_lock);
++  g_mutex_lock (sink->com_lock);
++
++  CoUninitialize ();
++  GST_INFO_OBJECT (sink, "COM unintialized succesfully");
++  sink->comInitialized = FALSE;
++}
++
+ static GstCaps *
+ gst_dshowvideosink_get_caps (GstBaseSink * basesink)
+ {
+@@ -1205,11 +1248,13 @@ static gboolean
+ gst_dshowvideosink_build_filtergraph (GstDshowVideoSink *sink)
+ {
+   HRESULT hres;
+-  gboolean comInit = FALSE;
+-  
+-  hres = CoInitialize(0);
+-  if (SUCCEEDED (hres))
+-    comInit = TRUE;
++
++  /* wait until COM has been initialized */
++  if (!sink->comInitialized){
++    g_mutex_lock (sink->com_lock);
++    g_cond_wait (sink->com_initialized, sink->com_lock);
++    g_mutex_unlock (sink->com_lock);
++  }
+ 
+   /* Build our DirectShow FilterGraph, looking like: 
+    *
+@@ -1261,8 +1306,6 @@ gst_dshowvideosink_build_filtergraph (GstDshowVideoSink *sink)
+     goto error;
+   }
+ 
+-  if (comInit)
+-    CoUninitialize();
+   return TRUE;
+ 
+ error:
+@@ -1281,9 +1324,6 @@ error:
+     sink->filter_media_event = NULL;
+   }
+ 
+-  if (comInit)
+-    CoUninitialize();
+-
+   return FALSE;
+ }
+ 
+diff --git a/sys/dshowvideosink/dshowvideosink.h b/sys/dshowvideosink/dshowvideosink.h
+index 9c9d073..8fa4d5a 100644
+--- a/sys/dshowvideosink/dshowvideosink.h
++++ b/sys/dshowvideosink/dshowvideosink.h
+@@ -96,6 +96,9 @@ struct _GstDshowVideoSink
+   WNDPROC prevWndProc;
+ 
+   gboolean comInitialized;
++  GMutex   *com_lock;
++  GCond    *com_initialized;
++  GCond    *com_uninitialize;
+ };
+ 
+ struct _GstDshowVideoSinkClass
+-- 
+1.6.4.msysgit.0
+
