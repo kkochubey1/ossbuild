@@ -33,12 +33,12 @@ import ossbuild.extract.ResourceProgressListenerAdapter;
 import ossbuild.extract.Resources;
 import ossbuild.extract.processors.FileProcessor;
 import ossbuild.init.SystemLoaderInitializeListenerAdapter;
-import simple.media.IMediaPlayer;
-import simple.media.IMediaRequest;
-import simple.media.events.IAudioListener;
-import simple.media.events.IMediaEventListener;
-import simple.media.events.IPositionListener;
-import simple.swt.gstreamer.GstMediaComponent;
+import ossbuild.media.IMediaPlayer;
+import ossbuild.media.IMediaRequest;
+import ossbuild.media.events.IAudioListener;
+import ossbuild.media.events.IMediaEventListener;
+import ossbuild.media.events.IPositionListener;
+import ossbuild.media.gstreamer.swt.GstMediaComponent;
 
 public class Main {
 

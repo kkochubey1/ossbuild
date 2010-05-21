@@ -1,0 +1,38 @@
+
+package ossbuild.media.gstreamer.api;
+
+import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
+import ossbuild.media.gstreamer.elements.VideoTestSrcPattern;
+import static ossbuild.media.gstreamer.api.GObject.*;
+
+/**
+ *
+ * @author David Hoyt <dhoyt@hoytsoft.org>
+ */
+public class GTypeConverters {
+	//<editor-fold defaultstate="collapsed" desc="Converters">
+	public static final IGTypeConverter VIDEO_TEST_SRC_PATTERN = new IGTypeConverter() {
+		@Override
+		public boolean convertToProperty(Pointer pObject, Pointer pParamSpec, Pointer pPropValue, NativeLong propertyType, GParamSpec paramSpec, GValue propValue, Object value) {
+			if (value instanceof VideoTestSrcPattern)
+				g_value_set_enum(pPropValue, ((VideoTestSrcPattern)value).getNativeValue());
+			else if (value instanceof Number)
+				g_value_set_enum(pPropValue, ((Number)value).intValue());
+			else
+				return false;
+			return true;
+		}
+
+		@Override
+		public Object convertFromProperty(Pointer pObject, Pointer pParamSpec, Pointer pPropValue, NativeLong propertyType, GParamSpec paramSpec, GValue propValue) {
+			return VideoTestSrcPattern.fromNative(g_value_get_enum(pPropValue));
+		}
+	};
+	//</editor-fold>
+
+	public static void initialize() {
+		//Some of these can't be added easily b/c their gtype value is set at runtime
+		//GType.addCustomConverter(VideoTestSrcPattern.GTYPE, VIDEO_TEST_SRC_PATTERN);
+	}
+}
