@@ -41,6 +41,9 @@ G_BEGIN_DECLS
 typedef struct _GstDshowVideoSink GstDshowVideoSink;
 typedef struct _GstDshowVideoSinkClass GstDshowVideoSinkClass;
 
+#define GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink)	g_mutex_lock (GST_DSHOWVIDEOSINK (sink)->graph_lock)
+#define GST_DSHOWVIDEOSINK_GRAPH_UNLOCK(clock) g_mutex_unlock (GST_DSHOWVIDEOSINK (sink)->graph_lock)
+
 /* Renderer-specific support classes */
 class RendererSupport
 {
@@ -98,6 +101,9 @@ struct _GstDshowVideoSink
 
   /* If we use an app-supplied window, we need to hook its WNDPROC */
   WNDPROC prevWndProc;
+
+  /* Lock for transitions */
+  GMutex *graph_lock;
 
   gboolean comInitialized;
   GMutex   *com_lock;

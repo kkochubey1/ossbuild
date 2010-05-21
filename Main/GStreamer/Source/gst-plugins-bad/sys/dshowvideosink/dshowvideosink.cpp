@@ -225,6 +225,7 @@ gst_dshowvideosink_init (GstDshowVideoSink * sink, GstDshowVideoSinkClass * klas
 {
   gst_dshowvideosink_clear (sink);
 
+  sink->graph_lock = g_mutex_new();
   sink->com_lock = g_mutex_new();
   sink->com_initialized = g_cond_new();
   sink->com_uninitialize = g_cond_new();
@@ -257,6 +258,8 @@ gst_dshowvideosink_finalize (GObject * gobject)
     g_cond_signal (sink->com_uninitialize);
     while (sink->comInitialized);
   }
+
+  g_mutex_free (sink->graph_lock);
 
   G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
@@ -933,16 +936,20 @@ gst_dshowvideosink_change_state (GstElement * element, GstStateChange transition
 
   switch (transition) {
     case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
+      GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink);
       rettmp = gst_dshowvideosink_pause_graph (sink);
       if (rettmp == GST_STATE_CHANGE_FAILURE)
         ret = rettmp;
       sink->graph_running = FALSE;
+      GST_DSHOWVIDEOSINK_GRAPH_UNLOCK(sink);
       break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
+      GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink);
       rettmp = gst_dshowvideosink_stop_graph (sink);
       if (rettmp == GST_STATE_CHANGE_FAILURE)
         ret = rettmp;
       sink->graph_running = FALSE;
+      GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink);
       break;
     case GST_STATE_CHANGE_READY_TO_NULL:
       gst_dshowvideosink_clear (sink);
@@ -1435,6 +1442,7 @@ gst_dshowvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
   }
 
   GST_DEBUG_OBJECT (sink, "Pushing buffer through fakesrc->renderer");
+  GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink);
   if (!sink->graph_running){
     retst = gst_dshowvideosink_start_graph(sink);
     if (retst == GST_STATE_CHANGE_FAILURE)
@@ -1446,6 +1454,7 @@ gst_dshowvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
     if (retst == GST_STATE_CHANGE_FAILURE)
       return GST_FLOW_WRONG_STATE;
   }
+  GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink);
   GST_DEBUG_OBJECT (sink, "Done pushing buffer through fakesrc->renderer: %s", gst_flow_get_name(ret));
 
   return ret;
