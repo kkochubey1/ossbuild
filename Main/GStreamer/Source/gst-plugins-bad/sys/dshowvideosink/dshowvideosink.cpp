@@ -214,6 +214,7 @@ gst_dshowvideosink_clear (GstDshowVideoSink *sink)
 
   sink->window_closed = FALSE;
   sink->window_id = NULL;
+  sink->is_new_window = FALSE;
 
   sink->connected = FALSE;
   sink->graph_running = FALSE;
@@ -615,6 +616,8 @@ gst_dshowvideosink_window_thread (GstDshowVideoSink * sink)
     return NULL;
   }
 
+  sink->is_new_window = TRUE;
+
   SetWindowLongPtr (video_window, GWLP_USERDATA, (LONG)sink);
 
   sink->window_id = video_window;
@@ -708,6 +711,7 @@ static void gst_dshowvideosink_set_window_for_renderer (GstDshowVideoSink *sink)
     GST_WARNING_OBJECT (sink, "Failed to set HWND %x on renderer", sink->window_id);
     return;
   }
+  sink->is_new_window = FALSE;
 
   /* This tells the renderer where the window is located, needed to 
    * start drawing in the right place.  */
@@ -1384,6 +1388,13 @@ gst_dshowvideosink_stop (GstBaseSink * bsink)
     GST_WARNING_OBJECT (sink, "Cannot destroy filter graph; it doesn't exist");
     return TRUE;
   }
+  
+  if (sink->is_new_window) {
+    SendMessage (sink->window_id, WM_CLOSE, NULL, NULL);
+    while (!sink->window_closed);
+    sink->is_new_window = FALSE;
+  }
+
 
   /* Release the renderer */
   if (sink->renderersupport) {
