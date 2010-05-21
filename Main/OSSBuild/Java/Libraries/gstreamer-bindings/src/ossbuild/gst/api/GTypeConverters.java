@@ -14,6 +14,17 @@ public class GTypeConverters {
 	//<editor-fold defaultstate="collapsed" desc="Converters">
 	public static final IGTypeConverter VIDEO_TEST_SRC_PATTERN = new IGTypeConverter() {
 		@Override
+		public boolean convertToProperty(Pointer pObject, Pointer pParamSpec, Pointer pPropValue, NativeLong propertyType, GParamSpec paramSpec, GValue propValue, Object value) {
+			if (value instanceof VideoTestSrcPattern)
+				g_value_set_enum(pPropValue, ((VideoTestSrcPattern)value).getNativeValue());
+			else if (value instanceof Number)
+				g_value_set_enum(pPropValue, ((Number)value).intValue());
+			else
+				return false;
+			return true;
+		}
+
+		@Override
 		public Object convertFromProperty(Pointer pObject, Pointer pParamSpec, Pointer pPropValue, NativeLong propertyType, GParamSpec paramSpec, GValue propValue) {
 			return VideoTestSrcPattern.fromNative(g_value_get_enum(pPropValue));
 		}

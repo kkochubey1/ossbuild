@@ -3,6 +3,7 @@ package ossbuild.gst;
 
 import com.sun.jna.Pointer;
 import ossbuild.gst.api.GStreamer;
+import static ossbuild.gst.api.GObject.*;
 
 /**
  *
@@ -104,6 +105,41 @@ public abstract class BaseGObject implements INativeObject, IDisposable {
 			return false;
 		else
 			return ptr.equals(objPtr);
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Ref/Unref">
+	@Override
+	public void ref() {
+		g_object_ref(ptr);
+	}
+
+	public void ref(int times) {
+		for (int i = 0; i < times; ++i)
+			g_object_ref(ptr);
+	}
+
+	@Override
+	public void unref() {
+		g_object_unref(ptr);
+	}
+
+	public void unref(int times) {
+		for (int i = 0; i < times; ++i)
+			g_object_unref(ptr);
+	}
+
+	@Override
+	public int refCount() {
+		//It's one pointer off from this one b/c a GObject struct looks like:
+		//struct _GObject
+		//{
+		//    GTypeInstance  g_type_instance; <-- Contains 1 pointer to the class
+		//
+		//    volatile guint ref_count;
+		//    GData         *qdata;
+		//};
+		return ptr.getInt(Pointer.SIZE);
 	}
 	//</editor-fold>
 }

@@ -10,30 +10,30 @@ import java.util.Map;
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public enum GType {
-	  Invalid   ( 0)
+	  Invalid           ( 0)
 
-	, None      ( 1)
-	, Interface ( 2)
-	, Char      ( 3)
-	, UChar     ( 4)
-	, Boolean   ( 5)
-	, Int       ( 6)
-	, UInt      ( 7)
-	, Long      ( 8)
-	, ULong     ( 9)
-	, Int64     (10)
-	, UInt64    (11)
-	, Enum      (12)
-	, Flags     (13)
-	, Float     (14)
-	, Double    (15)
-	, String    (16)
-	, Pointer   (17)
-	, Boxed     (18)
-	, Param     (19)
-	, Object    (20)
+	, None              ( 1)
+	, Interface         ( 2)
+	, Char              ( 3)
+	, UChar             ( 4)
+	, Boolean           ( 5)
+	, Int               ( 6)
+	, UInt              ( 7)
+	, Long              ( 8)
+	, ULong             ( 9)
+	, Int64             (10)
+	, UInt64            (11)
+	, Enum              (12)
+	, Flags             (13)
+	, Float             (14)
+	, Double            (15)
+	, String            (16)
+	, Pointer           (17)
+	, Boxed             (18)
+	, Param             (19)
+	, Object            (20)
 
-	, User      (-1)
+	, RuntimeInstance   (-1)
 	;
 
 	//<editor-fold defaultstate="collapsed" desc="Constants">
@@ -62,6 +62,17 @@ public enum GType {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Getters">
+	public boolean isGLibSystemType() {
+		switch(this) {
+			case Invalid:
+			case None:
+			case RuntimeInstance:
+				return false;
+			default:
+				return true;
+		}
+	}
+	
 	public long getNativeValue() {
 		return nativeValue;
 	}
@@ -141,7 +152,7 @@ public enum GType {
 		//Attempt to skip directly to the GType in question
 		int val = G_TYPE_UNMAKE_FUNDAMENTAL(nativeValue);
 		if (val < 0 || val > values().length)
-			return User;
+			return RuntimeInstance;
 		return values()[val];
 	}
 	//</editor-fold>

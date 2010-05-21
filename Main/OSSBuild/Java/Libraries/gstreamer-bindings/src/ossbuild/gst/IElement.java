@@ -8,7 +8,9 @@ import ossbuild.gst.api.IGTypeConverter;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public interface IElement extends INativeObject, IDisposable {
+public interface IElement extends INativeObject {
+	boolean set(String name, Object value);
+	boolean set(String name, Object value, IGTypeConverter customConverter);
 	<T extends Object> T get(String propertyName);
 	<T extends Object> T get(String propertyName, IGTypeConverter converter);
 

@@ -52,8 +52,8 @@ public class GStreamerInterfaces extends Library {
 
 	//<editor-fold defaultstate="collapsed" desc="API">
 	//<editor-fold defaultstate="collapsed" desc="Implements">
-	public static native Pointer gst_implements_interface_check(Pointer from, int /*GType*/ type);
-	public static native boolean gst_element_implements_interface(Pointer element, int /*GType*/ iface_type);
+	//public static native Pointer gst_implements_interface_check(Pointer from, NativeLong /*GType*/ type);
+	//public static native boolean gst_element_implements_interface(Pointer element, NativeLong /*GType*/ iface_type);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="XOverlay">
@@ -64,6 +64,18 @@ public class GStreamerInterfaces extends Library {
 	public static native void gst_x_overlay_prepare_xwindow_id(Pointer overlay);
 	public static native void gst_x_overlay_expose(Pointer overlay);
 	public static native void gst_x_overlay_handle_events(Pointer overlay, boolean handle_events);
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Types">
+	public static native NativeLong /*GType*/ gst_mixer_get_type();
+	public static native NativeLong /*GType*/ gst_mixer_track_get_type();
+
+	public static native NativeLong /*GType*/ gst_tuner_get_type();
+	public static native NativeLong /*GType*/ gst_tuner_channel_get_type();
+	public static native NativeLong /*GType*/ gst_tuner_norm_get_type();
+
+	public static native NativeLong /*GType*/ gst_color_balance_get_type();
+	public static native NativeLong /*GType*/ gst_color_balance_channel_get_type();
 	//</editor-fold>
 	//</editor-fold>
 }
