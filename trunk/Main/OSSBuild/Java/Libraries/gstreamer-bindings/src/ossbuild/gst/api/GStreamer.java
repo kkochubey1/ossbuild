@@ -99,6 +99,9 @@ public class GStreamer extends Library {
 		//Add GType converters
 		GTypeConverters.initialize();
 
+		//Fill GType cache
+		GTypeCache.initialize();
+
 		//Create a glib main context and loop
 		context = g_main_context_new();
 		contextLoop = g_main_loop_new(context, false);
@@ -162,6 +165,8 @@ public class GStreamer extends Library {
 	//<editor-fold defaultstate="collapsed" desc="GstObject">
 	public static native void gst_object_ref(Pointer obj);
 	public static native void gst_object_unref(Pointer obj);
+	public static native void gst_object_sink(Pointer object);
+	public static native void gst_object_ref_sink(Pointer object);
 
 	public static native Pointer gst_object_get_name(Pointer obj);
 	public static native Pointer gst_object_get_parent(Pointer obj);
@@ -269,6 +274,46 @@ public class GStreamer extends Library {
 	public static native Pointer gst_structure_get_value (Pointer structure, String fieldname);
 	//Direct mapping does not support varargs
 	//public static native void gst_structure_set(Pointer structure, String fieldname, PointerByReference /*Object...*/ args);
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Types">
+	public static native NativeLong gst_bin_get_type();
+	public static native NativeLong gst_buffer_get_type();
+	public static native NativeLong gst_bus_get_type();
+	public static native NativeLong gst_caps_get_type();
+	public static native NativeLong gst_child_proxy_get_type();
+	public static native NativeLong gst_clock_get_type();
+	public static native NativeLong gst_date_get_type();
+	public static native NativeLong gst_element_get_type();
+	public static native NativeLong gst_element_factory_get_type();
+	public static native NativeLong gst_event_get_type();
+	public static native NativeLong gst_g_error_get_type();
+	public static native NativeLong gst_ghost_pad_get_type();
+	public static native NativeLong gst_index_get_type();
+	public static native NativeLong gst_index_entry_get_type();
+	public static native NativeLong gst_index_factory_get_type();
+	public static native NativeLong gst_message_get_type();
+	public static native NativeLong gst_mini_object_get_type();
+	public static native NativeLong gst_object_get_type();
+	public static native NativeLong gst_pad_get_type();
+	public static native NativeLong gst_pad_template_get_type();
+	public static native NativeLong gst_pipeline_get_type();
+	public static native NativeLong gst_plugin_get_type();
+	public static native NativeLong gst_plugin_feature_get_type();
+	public static native NativeLong gst_query_get_type();
+	public static native NativeLong gst_registry_get_type();
+	public static native NativeLong gst_segment_get_type();
+	public static native NativeLong gst_static_pad_template_get_type();
+	public static native NativeLong gst_static_caps_get_type();
+	public static native NativeLong gst_system_clock_get_type();
+	public static native NativeLong gst_structure_get_type();
+	public static native NativeLong gst_tag_get_type(String tag);
+	public static native NativeLong gst_tag_list_get_type();
+	public static native NativeLong gst_tag_setter_get_type();
+	public static native NativeLong gst_task_get_type();
+	public static native NativeLong gst_type_find_get_type();
+	public static native NativeLong gst_type_find_factory_get_type();
+	public static native NativeLong gst_uri_handler_get_type();
 	//</editor-fold>
 	//</editor-fold>
 }

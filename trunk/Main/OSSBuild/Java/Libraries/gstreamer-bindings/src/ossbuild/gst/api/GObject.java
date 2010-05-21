@@ -2,7 +2,6 @@
 package ossbuild.gst.api;
 
 import com.sun.jna.Callback;
-import com.sun.jna.Function;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
@@ -123,6 +122,11 @@ public class GObject extends Library {
 	//<editor-fold defaultstate="collapsed" desc="Properties">
 	public static native void g_object_set_property(Pointer /*GObject*/ obj, String property, Pointer /*GValue*/ value);
 	public static native void g_object_get_property(Pointer /*GObject*/ obj, String property, Pointer /*GValue*/ value);
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Types">
+	public static native NativeLong /*GType*/ g_type_parent(NativeLong /*GType*/ type);
+	public static native int g_type_depth(NativeLong /*GType*/ type);
 	//</editor-fold>
 	//</editor-fold>
 }

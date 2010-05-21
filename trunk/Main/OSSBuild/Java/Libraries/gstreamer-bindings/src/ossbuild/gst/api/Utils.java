@@ -3,6 +3,7 @@ package ossbuild.gst.api;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import java.io.File;
 import java.net.URI;
 import ossbuild.StringUtil;
 import ossbuild.gst.INativeObject;
@@ -55,6 +56,16 @@ public class Utils {
 
 	public static Object getGValue(Pointer g_value_ptr, NativeLong type) {
 		return getGValue(g_value_ptr, GType.fromNative(type));
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="transformGValue">
+	public static GValue transformGValue(GValue src, GType dstType) {
+		return transformGValue(src.getPointer(), dstType);
+	}
+
+	public static boolean transformGValue(Object data, GType type, GValue dst) {
+		return transformGValue(data, type, dst.getPointer());
 	}
 	//</editor-fold>
 	//</editor-fold>
@@ -148,6 +159,14 @@ public class Utils {
 		throw new IllegalArgumentException("Expected double value, not " + value.getClass());
     }
 
+	public static String toGstURI(File file) {
+		if (file == null)
+			return StringUtil.empty;
+
+		String path = file.getAbsolutePath();
+		return "file://" + ((!path.startsWith("/") ? "/" + path : path).replace("\\", "/"));
+	}
+
 	public static String toGstURI(URI uri) {
 		if (uri == null)
 			return StringUtil.empty;
@@ -178,10 +197,10 @@ public class Utils {
 				g_value_set_uint(g_value_ptr, intValue(data));
 				break;
 			case Char:
-				g_value_set_char(g_value_ptr, (byte) intValue(data));
+				g_value_set_char(g_value_ptr, (byte)intValue(data));
 				break;
 			case UChar:
-				g_value_set_uchar(g_value_ptr, (byte) intValue(data));
+				g_value_set_uchar(g_value_ptr, (byte)intValue(data));
 				break;
 			case Long:
 				g_value_set_long(g_value_ptr, new NativeLong(longValue(data)));
@@ -203,6 +222,14 @@ public class Utils {
 				break;
 			case Double:
 				g_value_set_double(g_value_ptr, doubleValue(data));
+				break;
+			case Enum:
+				g_value_set_enum(g_value_ptr, intValue(data));
+				break;
+			case Object:
+				if (!(data instanceof INativeObject))
+					return false;
+				g_value_set_object(g_value_ptr, ((INativeObject)data).getPointer());
 				break;
 			default:
 				return false;
@@ -243,17 +270,22 @@ public class Utils {
 		}
 	}
 
-	public static GValue transformGValue(GValue src, GType dstType) {
+	public static GValue transformGValue(Pointer src, GType dstType) {
 		GValue dst = new GValue();
 		g_value_init(dst.getPointer(), dstType.asNativeLong());
-		g_value_transform(src.getPointer(), dst.getPointer());
+		g_value_transform(src, dst.getPointer());
+		//TODO: Is there a memory leak here when calling this from Element.set()?
+		//Should we be using g_value_unset(src.getPointer())?
 		return dst;
-    }
+	}
 
-    public static void transformGValue(Object data, GType type, GValue dst) {
+	public static boolean transformGValue(Object data, GType type, Pointer dst) {
 		GValue src = new GValue();
-		g_value_init(src.getPointer(), type.asNativeLong());
-		setGValue(src, type, data);
-		g_value_transform(src.getPointer(), dst.getPointer());
-    }
+		Pointer pSrc = src.getPointer();
+		g_value_init(pSrc, type.asNativeLong());
+		setGValue(pSrc, type, data);
+		boolean ret = g_value_transform(pSrc, dst);
+		g_value_unset(pSrc);
+		return ret;
+	}
 }

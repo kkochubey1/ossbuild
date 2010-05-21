@@ -21,9 +21,6 @@ public enum VideoTestSrcPattern {
 	;
 
 	//<editor-fold defaultstate="collapsed" desc="Constants">
-	public static final long
-		GTYPE = 408940768L
-	;
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Variables">

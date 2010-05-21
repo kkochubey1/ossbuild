@@ -6,13 +6,17 @@ package ossbuild.gst;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import java.io.File;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import ossbuild.Path;
 import ossbuild.Sys;
+import ossbuild.extract.Resources;
+import ossbuild.extract.processors.FileProcessor;
 import ossbuild.gst.api.GStreamer;
 import ossbuild.gst.api.GTypeConverters;
 import ossbuild.gst.callbacks.IBusSyncHandler;
@@ -31,6 +35,8 @@ public class Platform {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Init Test Platform">
+	private static File EXAMPLE_VIDEO;
+
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		Sys.setEnvironmentVariable("G_SLICE", "always-malloc");
@@ -39,6 +45,14 @@ public class Platform {
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:3");
 		Sys.initialize();
 		//GStreamer.initialize("unit-test");
+
+		try {
+			//Extract resource
+			Resources.extractAll(ossbuild.extract.Package.newInstance("ossbuild.gst", Path.nativeResourcesDirectory, new FileProcessor(false, "example.mov"))).get();
+		} catch(Throwable t) {
+		}
+
+		EXAMPLE_VIDEO = Path.combine(Path.nativeResourcesDirectory, "example.mov");
 	}
 
 	@AfterClass
@@ -66,6 +80,22 @@ public class Platform {
 			System.gc();
 	}
 	//</editor-fold>
+
+	//@Test
+	public void testElement() throws InterruptedException {
+		assertTrue(true);
+
+		for(int i = 0; i < 20000; ++i) {
+			IElement elem = Element.make("fakesink");
+			elem.dispose();
+			assertTrue(elem.isDisposed());
+
+			if ((i % 1000) == 0 && i > 0) {
+				gc();
+				System.out.println("Completed " + i + " iterations...");
+			}
+		}
+	}
 
 	//@Test
 	public void testPipeline() throws InterruptedException {
@@ -124,7 +154,51 @@ public class Platform {
 		}
 	}
 
-	@Test
+	//@Test
+	public void testPipelineElementsWithExplicitDispose() throws InterruptedException {
+		assertTrue(true);
+
+		for(int i = 0; i < 20000; ++i) {
+			IPipeline p = new Pipeline("unit-test-pipeline");
+			IElement fakesrc = Element.make("fakesrc", "fakesrc");
+			IElement fakesink = Element.make("fakesink", "fakesink");
+
+			p.addAndLinkMany(fakesrc, fakesink);
+
+			fakesrc.dispose();
+			p.dispose();
+			fakesink.dispose();
+
+			if ((i % 1000) == 0 && i > 0) {
+				gc();
+				System.out.println("Completed " + i + " iterations...");
+			}
+		}
+	}
+
+	//@Test
+	public void testPipelineElementsDisposeOnFinalize() throws InterruptedException {
+		assertTrue(true);
+
+		for(int i = 0; i < 20000; ++i) {
+			IPipeline p = new Pipeline("unit-test-pipeline");
+			IElement videotestsrc = Element.make("videotestsrc", "videotestsrc");
+			IElement fakesink = Element.make("fakesink", "fakesink");
+
+			p.addAndLinkMany(videotestsrc, fakesink);
+
+			assertFalse((Boolean)videotestsrc.get("is-live"));
+
+			p.dispose();
+
+			if ((i % 1000) == 0 && i > 0) {
+				gc();
+				System.out.println("Completed " + i + " iterations...");
+			}
+		}
+	}
+
+	//@Test
 	public void testSimpleStateChange() throws InterruptedException {
 		assertTrue(true);
 
@@ -158,7 +232,11 @@ public class Platform {
 			assertNotNull(videotestsrc.getName());
 			assertEquals("myvideotestsrc", videotestsrc.getName());
 
-			VideoTestSrcPattern o = videotestsrc.get("pattern", GTypeConverters.VIDEO_TEST_SRC_PATTERN);
+			VideoTestSrcPattern pattern;
+			for(int j = 0; j < 2000; ++j) {
+				videotestsrc.set("pattern", VideoTestSrcPattern.Circular.getNativeValue());
+				pattern = videotestsrc.get("pattern", GTypeConverters.VIDEO_TEST_SRC_PATTERN);
+			}
 			assertTrue(videotestsrc.get("is-live") != null);
 			
 
@@ -174,8 +252,38 @@ public class Platform {
 				}
 			}
 			p.dispose();
+			videotestsrc.dispose();
+			ffmpegcolorspace.dispose();
+			videosink.dispose();
 			assertTrue(p.isDisposed());
 			
+			gc();
+		}
+	}
+
+	@Test
+	public void testPlaybin() throws InterruptedException {
+		assertTrue(true);
+
+		for(int i = 0; i < 4; ++i) {
+			IPipeline playbin = Pipeline.make("playbin2", "playbin");
+			IBin bin = Bin.make("uridecodebin", "uridecodebin");
+			IElement videosink = playbin.get("video-sink");
+			IElement myvideosink = Element.make("directdrawsink", "myvideosink");
+
+			playbin.set("video-sink", myvideosink);
+
+			bin.set("uri", EXAMPLE_VIDEO);
+			playbin.set("uri", EXAMPLE_VIDEO);
+			
+			playbin.changeState(State.Playing);
+			playbin.requestState(-1L);
+			videosink = playbin.get("video-sink");
+
+			assertNotNull(videosink);
+			Thread.sleep(5000L);
+			playbin.changeState(State.Null);
+
 			gc();
 		}
 	}
