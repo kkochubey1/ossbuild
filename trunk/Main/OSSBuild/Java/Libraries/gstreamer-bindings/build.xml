@@ -7,9 +7,25 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="gstreamer-bindings" default="default" basedir=".">
-    <description>Builds, tests, and runs the project gstreamer-bindings.</description>
-    <import file="nbproject/build-impl.xml"/>
+<project name="OSSBuild :: Media :: GStreamer :: Bindings" default="default" basedir=".">
+	<description>Builds, tests, and runs the project.</description>
+	<import file="nbproject/build-impl.xml"/>
+
+	<target name="-post-init">
+		<property name="top.dir" location="../../../../.." />
+		<property name="top.build.dir" location="${top.dir}/Build" />
+		<property name="top.shared.dir" location="${top.dir}/Shared/Build" />
+		<property name="top.deployment.dir" location="${top.dir}/Deployment/Java" />
+
+		<mkdir dir="${top.build.dir}" />
+		<mkdir dir="${top.shared.dir}" />
+		<mkdir dir="${top.deployment.dir}" />
+	</target>
+
+	<target name="-post-jar">
+		<copy file="${dist.jar}" todir="${top.deployment.dir}" />
+	</target>
+
     <!--
 
     There exist several targets which are by default empty and which can be 
@@ -59,7 +75,7 @@
 
     An example of overriding the target for project execution could look like this:
 
-        <target name="run" depends="gstreamer-bindings-impl.jar">
+        <target name="run" depends="OSSBuild_::_GStreamer_::_Bindings-impl.jar">
             <exec dir="bin" executable="launcher.exe">
                 <arg file="${dist.jar}"/>
             </exec>
