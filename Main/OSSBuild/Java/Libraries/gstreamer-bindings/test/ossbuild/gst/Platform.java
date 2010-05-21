@@ -261,7 +261,19 @@ public class Platform {
 		}
 	}
 
-	@Test
+	//@Test
+	public void testElementInOut() throws InterruptedException {
+		IPipeline playbin = Pipeline.make("playbin2", "playbin");
+		IElement myvideosink = Element.make("directdrawsink", "myvideosink");
+		playbin.set("video-sink", myvideosink);
+		myvideosink.dispose();
+		for(int i = 0; i < 50000; ++i) {
+			playbin.set("video-sink", playbin.get("video-sink"));
+		}
+		playbin.dispose();
+	}
+
+	//@Test
 	public void testPlaybin() throws InterruptedException {
 		assertTrue(true);
 
