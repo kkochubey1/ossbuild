@@ -1455,7 +1455,7 @@ public class MediaComponentOld extends Canvas {
 
 	//<editor-fold defaultstate="collapsed" desc="Play">
 	public boolean playBlackBurst() {
-		return playPattern(VideoTestSrcPattern.BLACK);
+		return playPattern(VideoTestSrcPattern.Black);
 	}
 
 	public boolean playTestSignal() {
@@ -1535,7 +1535,7 @@ public class MediaComponentOld extends Canvas {
 			videoRate.set("silent", true);
 			videoCapsFilter.setCaps(Caps.fromString(createColorspaceFilter(this, checked_fps))); //framerate=25/1 means 25 FPS
 
-			videoTestSrc.set("pattern", (long)pattern.intValue());
+			videoTestSrc.set("pattern", (long)pattern.getNativeValue());
 
 			newPipeline.addMany(videoTestSrc, videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
 			Element.linkMany(videoTestSrc, videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);

@@ -1,8 +1,14 @@
 
 package ossbuild.media.gstreamer;
 
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import ossbuild.media.gstreamer.api.Callbacks;
 import ossbuild.media.gstreamer.api.GStreamer;
+import ossbuild.media.gstreamer.api.ISignal;
+import ossbuild.media.gstreamer.api.ISignalConnectResponse;
+import ossbuild.media.gstreamer.api.SignalCache;
+import ossbuild.media.gstreamer.api.SignalConnectResponse;
 import static ossbuild.media.gstreamer.api.GObject.*;
 
 /**
@@ -140,6 +146,41 @@ public abstract class BaseGObject implements INativeObject, IDisposable {
 		//    GData         *qdata;
 		//};
 		return ptr.getInt(Pointer.SIZE);
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Signals">
+	public ISignalConnectResponse connect(ISignal signal) {
+		if (signal == null)
+			return null;
+		
+		String signalName = SignalCache.findSignalName(signal);
+		if (signalName == null)
+			return null;
+
+
+		NativeLong handlerID = GStreamer.connectSignal(ptr, signalName, signal);
+		if (handlerID == null || handlerID.intValue() == 0)
+			return null;
+
+		try {
+			Callbacks.register(ptr, signal);
+		} catch(Throwable t) {
+			GStreamer.disconnectSignal(ptr, handlerID);
+			return null;
+		}
+
+		return new SignalConnectResponse(signal, signalName, ptr, handlerID);
+	}
+
+	public boolean disconnect(ISignalConnectResponse response) {
+		if (response == null)
+			return false;
+
+		if (!Callbacks.unregister(response.getInstance(), response.getSignal()))
+			return false;
+
+		return GStreamer.disconnectSignal(response.getInstance(), response.getHandlerID());
 	}
 	//</editor-fold>
 }

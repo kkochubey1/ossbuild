@@ -66,6 +66,7 @@ public class GObject extends Library {
 	//<editor-fold defaultstate="collapsed" desc="Signals">
 	public static native NativeLong g_signal_connect_data(Pointer instance, String signal, Callback callback, Pointer data, Callback destroy_data, int connect_flags);
     public static native void g_signal_handler_disconnect(Pointer instance, NativeLong id);
+	public static native boolean g_signal_handler_is_connected(Pointer /*gpointer*/ instance, NativeLong /*gulong*/ handler_id);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Value">

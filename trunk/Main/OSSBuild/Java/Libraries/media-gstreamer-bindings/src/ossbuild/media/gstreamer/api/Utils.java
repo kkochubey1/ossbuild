@@ -4,6 +4,7 @@ package ossbuild.media.gstreamer.api;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.net.URI;
 import ossbuild.StringUtil;
 import ossbuild.media.gstreamer.INativeObject;
@@ -69,6 +70,25 @@ public class Utils {
 	}
 	//</editor-fold>
 	//</editor-fold>
+
+	@SuppressWarnings("unchecked")
+	public static <T> T findAnnotation(Class<?> cls, Class<? extends Annotation> annotation) {
+		if (cls == null || annotation == null)
+			return null;
+
+		while(cls != null) {
+			for(Annotation a : cls.getDeclaredAnnotations())
+				if (annotation.isAssignableFrom(a.getClass()))
+					return (T)a;
+			Annotation a = null;
+			for(Class icls : cls.getInterfaces())
+				if ((a = findAnnotation(icls, annotation)) != null)
+					return (T)a;
+			cls = cls.getSuperclass();
+		}
+
+		return null;
+	}
 
 	public static Pointer[] createEmptyPointerArray() {
 		return new Pointer[] { null };

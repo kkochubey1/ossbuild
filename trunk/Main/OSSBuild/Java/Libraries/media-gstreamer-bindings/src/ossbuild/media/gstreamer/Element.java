@@ -38,5 +38,9 @@ public class Element extends BaseGstObject implements IElement {
 	public static IElement make(String factoryName, String elementName) {
 		return new Element(factoryName, elementName);
 	}
+
+	public static IElement from(Pointer pElement) {
+		return new Element(pElement);
+	}
 	//</editor-fold>
 }

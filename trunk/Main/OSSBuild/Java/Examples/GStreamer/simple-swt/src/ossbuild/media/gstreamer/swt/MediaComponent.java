@@ -1308,7 +1308,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 	@Override
 	public boolean playBlackBurst(String title) {
-		return playPattern(title, VideoTestSrcPattern.BLACK);
+		return playPattern(title, VideoTestSrcPattern.Black);
 	}
 
 	@Override
@@ -1909,7 +1909,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 			final Pipeline newPipeline = new Pipeline("pipeline");
 			final Element videoTestSrc = ElementFactory.make("videotestsrc", "videoTestSrc");
-			videoTestSrc.set("pattern", (long)pattern.intValue());
+			videoTestSrc.set("pattern", (long)pattern.getNativeValue());
 
 			final Bin videoBin = new Bin("videoBin");
 			final Element videoQueue = ElementFactory.make("queue2", "videoQueue");
