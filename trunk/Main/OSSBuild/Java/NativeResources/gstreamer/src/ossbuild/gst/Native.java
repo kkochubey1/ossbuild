@@ -31,11 +31,11 @@ public class Native {
 			Sys.loadNativeResources(NativeResource.GStreamer);
 
 			System.setProperty("apple.awt.graphics.UseQuartz", "false");
-			org.gstreamer.Gst.init(
-				"OSSBuild Application",
-				new String[] {
-				}
-			);
+			//org.gstreamer.Gst.init(
+			//	"OSSBuild Application",
+			//	new String[] {
+			//	}
+			//);
 		}
 	}
 }

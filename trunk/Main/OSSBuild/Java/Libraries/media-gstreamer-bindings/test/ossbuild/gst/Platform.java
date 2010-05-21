@@ -4,6 +4,17 @@
  */
 package ossbuild.gst;
 
+import ossbuild.media.gstreamer.IElement;
+import ossbuild.media.gstreamer.BusSyncReply;
+import ossbuild.media.gstreamer.Element;
+import ossbuild.media.gstreamer.Bus;
+import ossbuild.media.gstreamer.Message;
+import ossbuild.media.gstreamer.IPipeline;
+import ossbuild.media.gstreamer.IBin;
+import ossbuild.media.gstreamer.State;
+import ossbuild.media.gstreamer.Bin;
+import ossbuild.media.gstreamer.Pipeline;
+import ossbuild.media.gstreamer.IBus;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import java.io.File;
@@ -17,10 +28,10 @@ import ossbuild.Path;
 import ossbuild.Sys;
 import ossbuild.extract.Resources;
 import ossbuild.extract.processors.FileProcessor;
-import ossbuild.gst.api.GStreamer;
-import ossbuild.gst.api.GTypeConverters;
-import ossbuild.gst.callbacks.IBusSyncHandler;
-import ossbuild.gst.elements.VideoTestSrcPattern;
+import ossbuild.media.gstreamer.api.GStreamer;
+import ossbuild.media.gstreamer.api.GTypeConverters;
+import ossbuild.media.gstreamer.callbacks.IBusSyncHandler;
+import ossbuild.media.gstreamer.elements.VideoTestSrcPattern;
 import static org.junit.Assert.*;
 
 /**
