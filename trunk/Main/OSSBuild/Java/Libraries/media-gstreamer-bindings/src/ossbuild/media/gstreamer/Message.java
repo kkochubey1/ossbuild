@@ -57,11 +57,13 @@ public class Message extends BaseGObject {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Ref Counting">
+	@Override
 	public void ref() {
 		if (ptr != Pointer.NULL)
 			gst_mini_object_ref(ptr);
 	}
 	
+	@Override
 	public void unref() {
 		if (ptr != Pointer.NULL)
 			gst_mini_object_unref(ptr);

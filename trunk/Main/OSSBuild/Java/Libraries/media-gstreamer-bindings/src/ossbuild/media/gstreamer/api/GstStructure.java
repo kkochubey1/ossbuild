@@ -1,6 +1,7 @@
 
 package ossbuild.media.gstreamer.api;
 
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
@@ -9,7 +10,7 @@ import com.sun.jna.Structure;
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public class GstStructure extends Structure {
-	public int type;
+	public NativeLong type;
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	public GstStructure() {

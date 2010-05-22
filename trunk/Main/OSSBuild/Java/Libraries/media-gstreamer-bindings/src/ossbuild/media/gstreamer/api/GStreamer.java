@@ -269,6 +269,7 @@ public class GStreamer extends Library {
 	//Direct mapping does not support varargs
 	//public static native void gst_structure_remove_fields(Pointer structure, PointerByReference /*String...*/ fieldNames);
 	public static native void gst_structure_remove_all_fields(Pointer structure);
+	public static native void gst_structure_free(Pointer /*GstStructure*/ structure);
 
 	public static native String gst_structure_get_name(Pointer structure);
 	public static native void gst_structure_set_name(Pointer structure, String name);
@@ -291,6 +292,47 @@ public class GStreamer extends Library {
 	public static native Pointer gst_structure_get_value (Pointer structure, String fieldname);
 	//Direct mapping does not support varargs
 	//public static native void gst_structure_set(Pointer structure, String fieldname, PointerByReference /*Object...*/ args);
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="GstCaps">
+	public static native Pointer /*GstCaps*/ gst_caps_new_empty();
+	public static native Pointer /*GstCaps*/ gst_caps_new_any();
+
+	public static native Pointer gst_caps_ref(Pointer /*GstCaps*/ caps);
+	public static native void gst_caps_unref(Pointer /*GstCaps*/ caps);
+	public static native Pointer /*GstCaps*/ gst_caps_copy(Pointer /*GstCaps*/ caps);
+	public static native Pointer /*GstCaps*/ gst_caps_from_string(String string);
+	public static native Pointer /*GstCaps*/ gst_caps_make_writable(Pointer /*GstCaps*/ caps);
+
+	/* manipulation */
+	public static native void gst_caps_append(Pointer /*GstCaps*/ caps1, Pointer /*GstCaps*/ caps2);
+	public static native void gst_caps_merge(Pointer /*GstCaps*/ caps1, Pointer /*GstCaps*/ caps2);
+	public static native void gst_caps_append_structure(Pointer /*GstCaps*/ caps, Pointer /*GstStructure*/ structure);
+	public static native void gst_caps_remove_structure(Pointer /*GstCaps*/ caps, int idx);
+	public static native void gst_caps_merge_structure(Pointer /*GstCaps*/ caps, Pointer /*GstStructure*/ structure);
+	public static native int gst_caps_get_size(Pointer /*GstCaps*/ caps);
+	public static native Pointer /*GstStructure*/ gst_caps_get_structure(Pointer /*GstCaps*/ caps, int index);
+	public static native Pointer /*GstCaps*/ gst_caps_copy_nth(Pointer /*GstCaps*/ caps, int nth);
+	public static native void gst_caps_truncate(Pointer /*GstCaps*/ caps);
+	public static native void gst_caps_set_value(Pointer /*GstCaps*/ caps, String field, Pointer /*GValue*/ value);
+	//public static native void gst_caps_set_simple(Pointer /*GstCaps*/ caps, String field, Object... values);
+
+	/* operations */
+	public static native Pointer /*GstCaps*/ gst_caps_intersect(Pointer /*GstCaps*/ caps1, Pointer /*GstCaps*/ caps2);
+	public static native Pointer /*GstCaps*/ gst_caps_subtract(Pointer /*GstCaps*/ minuend, Pointer /*GstCaps*/ subtrahend);
+	public static native Pointer /*GstCaps*/ gst_caps_union(Pointer /*GstCaps*/ caps1, Pointer /*GstCaps*/ caps2);
+	public static native Pointer /*GstCaps*/ gst_caps_normalize(Pointer /*GstCaps*/ caps);
+	public static native boolean gst_caps_do_simplify(Pointer /*GstCaps*/ caps);
+	public static native String gst_caps_to_string(Pointer /*GstCaps*/ caps);
+
+	/* tests */
+	public static native boolean gst_caps_is_any(Pointer /*GstCaps*/ caps);
+	public static native boolean gst_caps_is_empty(Pointer /*GstCaps*/ caps);
+	public static native boolean gst_caps_is_fixed(Pointer /*GstCaps*/ caps);
+	public static native boolean gst_caps_is_always_compatible(Pointer /*GstCaps*/ caps1,  Pointer /*GstCaps*/ caps2);
+	public static native boolean gst_caps_is_subset(Pointer /*GstCaps*/ subset,  Pointer /*GstCaps*/ superset);
+	public static native boolean gst_caps_is_equal(Pointer /*GstCaps*/ caps1,  Pointer /*GstCaps*/ caps2);
+	public static native boolean gst_caps_is_equal_fixed(Pointer /*GstCaps*/ caps1,  Pointer /*GstCaps*/ caps2);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Types">
@@ -331,6 +373,21 @@ public class GStreamer extends Library {
 	public static native NativeLong gst_type_find_get_type();
 	public static native NativeLong gst_type_find_factory_get_type();
 	public static native NativeLong gst_uri_handler_get_type();
+	public static native NativeLong gst_fourcc_get_type();
+	public static native NativeLong gst_int_range_get_type();
+	public static native NativeLong gst_double_range_get_type();
+	public static native NativeLong gst_fraction_range_get_type();
+	public static native NativeLong gst_value_list_get_type();
+	public static native NativeLong gst_fraction_get_type();
+
+	public static native int gst_value_get_fraction_numerator(Pointer /*GValue*/  value);
+	public static native int gst_value_get_fraction_denominator(Pointer /*GValue*/ value);
+	public static native Pointer /*GValue*/ gst_value_get_fraction_range_min(Pointer /*GValue*/ value);
+	public static native Pointer /*GValue*/ gst_value_get_fraction_range_max(Pointer /*GValue*/ value);
+	public static native double gst_value_get_double_range_min(Pointer /*GValue*/ value);
+	public static native double gst_value_get_double_range_max(Pointer /*GValue*/ value);
+	public static native int gst_value_get_int_range_min(Pointer /*GValue*/ value);
+	public static native int gst_value_get_int_range_max(Pointer /*GValue*/ value);
 	//</editor-fold>
 	//</editor-fold>
 }
