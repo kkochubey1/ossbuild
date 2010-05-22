@@ -28,6 +28,8 @@ import ossbuild.Path;
 import ossbuild.Sys;
 import ossbuild.extract.Resources;
 import ossbuild.extract.processors.FileProcessor;
+import ossbuild.media.gstreamer.Caps;
+import ossbuild.media.gstreamer.Structure;
 import ossbuild.media.gstreamer.api.GStreamer;
 import ossbuild.media.gstreamer.api.GTypeConverters;
 import ossbuild.media.gstreamer.callbacks.IBusSyncHandler;
@@ -98,6 +100,7 @@ public class Platform {
 
 		for(int i = 0; i < 20000; ++i) {
 			IElement elem = Element.make("fakesink");
+			//System.out.println(elem.getPointer());
 			elem.dispose();
 			assertTrue(elem.isDisposed());
 
@@ -282,6 +285,43 @@ public class Platform {
 			playbin.set("video-sink", playbin.get("video-sink"));
 		}
 		playbin.dispose();
+	}
+
+	@Test
+	public void testStructure() throws InterruptedException {
+		System.out.println("Generating lots of structure objects...");
+		for(int i = 0; i < 5; ++i) {
+			for(int j = 0; j < 20000; ++j) {
+				Structure s = Structure.newEmpty("blah");
+				assertNotNull(s);
+				assertNotNull(s.getPointer());
+				s.dispose();
+			}
+			gc();
+		}
+
+		Caps c = Caps.from("video/x-raw-rgb,framerate=10/1,bpp=32;video/x-raw-yuv,framerate=20/4");
+		assertNotNull(c);
+	}
+
+	//@Test
+	public void testCaps() throws InterruptedException {
+		System.out.println("Generating lots of caps objects...");
+		for(int i = 0; i < 5; ++i) {
+			for(int j = 0; j < 20000; ++j) {
+				Caps c = Caps.newAny();
+				assertTrue(c.isAny());
+				c.dispose();
+
+				c = Caps.newEmpty();
+				assertTrue(c.isEmpty());
+				c.dispose();
+			}
+			gc();
+		}
+
+		Caps c = Caps.from("video/x-raw-rgb,framerate=10/1,bpp=32;video/x-raw-yuv,framerate=20/4");
+		assertNotNull(c);
 	}
 
 	//@Test
