@@ -18,6 +18,7 @@ import ossbuild.media.gstreamer.IBus;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import java.io.File;
+import java.util.ListIterator;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -29,6 +30,10 @@ import ossbuild.Sys;
 import ossbuild.extract.Resources;
 import ossbuild.extract.processors.FileProcessor;
 import ossbuild.media.gstreamer.Caps;
+import ossbuild.media.gstreamer.DoubleRange;
+import ossbuild.media.gstreamer.Fraction;
+import ossbuild.media.gstreamer.FractionRange;
+import ossbuild.media.gstreamer.IntRange;
 import ossbuild.media.gstreamer.Structure;
 import ossbuild.media.gstreamer.api.GStreamer;
 import ossbuild.media.gstreamer.api.GTypeConverters;
@@ -287,7 +292,7 @@ public class Platform {
 		playbin.dispose();
 	}
 
-	@Test
+	//@Test
 	public void testStructure() throws InterruptedException {
 		System.out.println("Generating lots of structure objects...");
 		for(int i = 0; i < 5; ++i) {
@@ -295,17 +300,84 @@ public class Platform {
 				Structure s = Structure.newEmpty("blah");
 				assertNotNull(s);
 				assertNotNull(s.getPointer());
+
+				assertFalse(s.fieldExists("random-test-field"));
+
+				s.saveName("video/x-raw-int");
+				assertEquals("video/x-raw-int", s.name());
+				
+				s.saveFieldAsInt("test-int-field", 54321);
+				assertEquals(54321, s.fieldAsInt("test-int-field"));
+
+				s.saveFieldAsFourCCString("test-fourcc-field", "YUYV");
+				assertEquals("YUYV", s.fieldAsFourCCString("test-fourcc-field"));
+
+				s.saveFieldAsDouble("test-double-field", 12345.12345);
+				assertEquals(12345.12345, s.fieldAsDouble("test-double-field"), 0.00001D);
+
+				//We expect it to simplify the fraction b/c 10 can be 
+				//divided by 2 evenly so that 10/2 == 5/1.
+				s.saveFieldAsFraction("test-fraction-field", 10, 2);
+				Fraction f = s.fieldAsFraction("test-fraction-field");
+				assertEquals(5, f.getNumerator());
+				assertEquals(1, f.getDenominator());
+
+				s.saveFieldAsIntRange("test-int-range-field", 300, 5000);
+				IntRange ir = s.fieldAsIntRange("test-int-range-field");
+				assertEquals(300, ir.getMinimum());
+				assertEquals(5000, ir.getMaximum());
+
+				s.saveFieldAsDoubleRange("test-double-range-field", 300.0D, 5000.0D);
+				DoubleRange dr = s.fieldAsDoubleRange("test-double-range-field");
+				assertEquals(300.0D, dr.getMinimum(), 0.001D);
+				assertEquals(5000.0D, dr.getMaximum(), 0.001D);
+
+				s.saveFieldAsFractionRange("test-fraction-range-field", 5, 1, 10, 1);
+				FractionRange fr = s.fieldAsFractionRange("test-fraction-range-field");
+				assertEquals( 5, fr.getMinimum().getNumerator());
+				assertEquals( 1, fr.getMinimum().getDenominator());
+				assertEquals(10, fr.getMaximum().getNumerator());
+				assertEquals( 1, fr.getMaximum().getDenominator());
+
 				s.dispose();
 			}
 			gc();
 		}
-
-		Caps c = Caps.from("video/x-raw-rgb,framerate=10/1,bpp=32;video/x-raw-yuv,framerate=20/4");
-		assertNotNull(c);
 	}
 
-	//@Test
+	@Test
 	public void testCaps() throws InterruptedException {
+		Caps caps = Caps.from("video/x-raw-rgb,framerate=10/1,bpp=32;video/x-raw-yuv,framerate=20/4");
+		assertEquals(2, caps.size());
+		int index = 0;
+		for(Structure s : caps) {
+			if (index == 1) {
+				assertEquals("video/x-raw-yuv", s.name());
+				assertEquals(5, s.fieldAsFraction("framerate").getNumerator());
+			}
+			++index;
+		}
+
+		Structure s;
+		ListIterator<Structure> iter = caps.listIterator();
+		iter.next();
+		s = iter.next();
+		assertNotNull(s);
+		assertEquals("video/x-raw-yuv", s.name());
+		assertEquals(5, s.fieldAsFraction("framerate").getNumerator());
+
+		s = iter.previous();
+		assertNotNull(s);
+		assertEquals("video/x-raw-rgb", s.name());
+		assertEquals(10, s.fieldAsFraction("framerate").getNumerator());
+
+		s = iter.next();
+		assertNotNull(s);
+		assertEquals("video/x-raw-yuv", s.name());
+		assertEquals(5, s.fieldAsFraction("framerate").getNumerator());
+
+		assertNotNull(caps);
+
 		System.out.println("Generating lots of caps objects...");
 		for(int i = 0; i < 5; ++i) {
 			for(int j = 0; j < 20000; ++j) {

@@ -289,7 +289,8 @@ public class GStreamer extends Library {
 	public static native String gst_structure_get_string(Pointer structure, String fieldname);
 	public static native boolean gst_structure_get_enum(Pointer structure, String fieldname, int /*GType*/ gtype_enumtype, IntByReference value);
 	public static native boolean gst_structure_get_fraction(Pointer structure, String fieldname, IntByReference value_numerator, IntByReference value_denominator);
-	public static native Pointer gst_structure_get_value (Pointer structure, String fieldname);
+	public static native Pointer /*GValue*/ gst_structure_get_value (Pointer structure, String fieldname);
+	public static native void gst_structure_set_value(Pointer structure, String fieldname, Pointer /*GValue*/ value);
 	//Direct mapping does not support varargs
 	//public static native void gst_structure_set(Pointer structure, String fieldname, PointerByReference /*Object...*/ args);
 	//</editor-fold>
@@ -333,6 +334,20 @@ public class GStreamer extends Library {
 	public static native boolean gst_caps_is_subset(Pointer /*GstCaps*/ subset,  Pointer /*GstCaps*/ superset);
 	public static native boolean gst_caps_is_equal(Pointer /*GstCaps*/ caps1,  Pointer /*GstCaps*/ caps2);
 	public static native boolean gst_caps_is_equal_fixed(Pointer /*GstCaps*/ caps1,  Pointer /*GstCaps*/ caps2);
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="GstValue">
+	public static native void gst_value_set_fourcc(Pointer /*GValue*/ value, int fourcc);
+	
+	public static native void gst_value_set_int_range(Pointer /*GValue*/ value, int start, int end);
+	public static native void gst_value_set_double_range(Pointer /*GValue*/ value, double start, double end);
+	public static native void gst_value_set_fraction(Pointer /*GValue*/ value, int numerator, int denominator);
+	public static native void gst_value_set_fraction_range_full(Pointer /*GValue*/ value, int numerator_start, int denominator_start, int numerator_end, int denominator_end);
+
+	public static native void gst_value_set_caps(Pointer /*GValue*/ value, Pointer /*GstCaps*/ caps);
+	public static native Pointer /*GstCaps*/ gst_value_get_caps(Pointer /*GValue*/ value);
+
+	public static native Pointer /*GstMiniObject*/ gst_value_get_mini_object(Pointer /*GValue*/ value);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Types">

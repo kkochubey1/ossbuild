@@ -27,4 +27,11 @@ public class Fraction {
 		return denominator;
 	}
 	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="ToString">
+	@Override
+	public String toString() {
+		return numerator + "/" + denominator;
+	}
+	//</editor-fold>
 }
