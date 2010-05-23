@@ -2,6 +2,10 @@
 package ossbuild.media.gstreamer;
 
 import com.sun.jna.Pointer;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import ossbuild.media.gstreamer.api.ISignal;
 import ossbuild.media.gstreamer.api.ISignalConnectResponse;
 import static ossbuild.media.gstreamer.api.GStreamer.*;
@@ -10,7 +14,7 @@ import static ossbuild.media.gstreamer.api.GStreamer.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class Caps extends BaseGObject {
+public class Caps extends BaseGObject implements List<Structure> {
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	public Caps() {
 		this(false);
@@ -88,6 +92,7 @@ public class Caps extends BaseGObject {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Public Methods">
+	@Override
 	public int size() {
 		return gst_caps_get_size(ptr);
 	}
@@ -120,8 +125,11 @@ public class Caps extends BaseGObject {
 		gst_caps_append(ptr, caps.getPointer());
 	}
 
-	public void appendStructure(Structure struct) {
-		gst_caps_append_structure(ptr, struct.getPointer());
+	public void appendStructure(Structure structure) {
+		synchronized(structure) {
+			gst_caps_append_structure(ptr, structure.getPointer());
+			structure.takeOwnership();
+		}
 	}
 
 	public void removeStructure(int index) {
@@ -133,11 +141,14 @@ public class Caps extends BaseGObject {
 	}
 
 	public void mergeStructure(Structure structure) {
-		gst_caps_merge_structure(ptr, structure.getPointer());
+		synchronized(structure) {
+			gst_caps_merge_structure(ptr, structure.getPointer());
+			structure.takeOwnership();
+		}
 	}
 
-	public Caps makeWritable() {
-		return new Caps(gst_caps_make_writable(ptr));
+	public void makeWritable() {
+		this.ptr = gst_caps_make_writable(ptr);
 	}
 
 	public Structure structureAt(int index) {
@@ -211,6 +222,250 @@ public class Caps extends BaseGObject {
 	public boolean disconnect(ISignalConnectResponse response) {
 		throw new RuntimeException("Invalid operation for this class");
 	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="List Operations">
+	//<editor-fold defaultstate="collapsed" desc="StructureIterator">
+	private class StructureIterator implements ListIterator<Structure> {
+		int index = -1;
+
+		public StructureIterator() {
+			this(-1);
+		}
+
+		public StructureIterator(int startingIndex) {
+			index = Math.max(0, Math.min(size(), startingIndex)) - 1;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return (index >= 0 && index < size());
+		}
+
+		@Override
+		public Structure next() {
+			index = Math.min(size() - 1, Math.max(index, -1) + 1);
+			return structureAt(index);
+		}
+
+		@Override
+		public boolean hasPrevious() {
+			return (index > 0 && index < size());
+		}
+
+		@Override
+		public Structure previous() {
+			index = Math.max(-1, Math.min(index, size() - 1) - 1);
+			if (index < 0)
+				return null;
+			return structureAt(index);
+		}
+
+		@Override
+		public int nextIndex() {
+			return Math.min(index + 1, size());
+		}
+
+		@Override
+		public int previousIndex() {
+			return Math.max(-1, index - 1);
+		}
+
+		@Override
+		public void remove() {
+			removeStructure(index);
+		}
+
+		@Override
+		public void set(Structure e) {
+			throw new UnsupportedOperationException("Not supported");
+		}
+
+		@Override
+		public void add(Structure e) {
+			appendStructure(e);
+		}
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="toArray">
+	@Override
+	public Object[] toArray() {
+		Structure[] arr = new Structure[size()];
+		for(int i = 0; i < arr.length; ++i)
+			arr[i] = structureAt(i);
+		return arr;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T[] toArray(T[] a) {
+		return (T[])toArray();
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="contains">
+	@Override
+	public boolean contains(Object o) {
+		return (indexOf(o) >= 0);
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="get">
+	@Override
+	public Structure get(int index) {
+		if (index < 0 || index > size())
+			throw new IndexOutOfBoundsException();
+		return structureAt(index);
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="add/remove">
+	@Override
+	public boolean add(Structure structure) {
+		appendStructure(structure);
+		return true;
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		int index = indexOf(o);
+		if (index < 0 || index > size())
+			return false;
+
+		removeStructure(index);
+		return true;
+	}
+
+	@Override
+	public Structure remove(int index) {
+		if (index < 0 || index > size())
+			return null;
+		Structure s = structureAt(index);
+		removeStructure(index);
+		return s;
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends Structure> c) {
+		boolean changed = false;
+		for(Structure s : c) {
+			if (s != null && !contains(s)) {
+				appendStructure(s);
+				changed = true;
+			}
+		}
+		return changed;
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		int index = -1;
+		boolean changed = false;
+		for(Object o : c) {
+			if (o != null && (index = indexOf(o)) >= 0) {
+				removeStructure(index);
+				changed = true;
+			}
+		}
+		return changed;
+	}
+
+	@Override
+	public void clear() {
+		while(size() > 0)
+			removeStructure(0);
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="indexOf">
+	@Override
+	public int indexOf(Object o) {
+		if (o == null || !(o instanceof Structure))
+			return -1;
+
+		Structure s = (Structure)o;
+		Pointer pOf = s.getPointer();
+		if (pOf == null || pOf == Pointer.NULL)
+			return -1;
+
+		Pointer p;
+		int size = size();
+		for(int i = 0; i < size; ++i)
+			if ((p = gst_caps_get_structure(ptr, i)) != null && p != Pointer.NULL && p.equals(pOf))
+				return i;
+		return -1;
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		if (o == null || !(o instanceof Structure))
+			return -1;
+
+		Structure s = (Structure)o;
+		Pointer pOf = s.getPointer();
+		if (pOf == null || pOf == Pointer.NULL)
+			return -1;
+
+		int index = -1;
+		Pointer p;
+		int size = size();
+		for(int i = 0; i < size; ++i)
+			if ((p = gst_caps_get_structure(ptr, i)) != null && p != Pointer.NULL && p.equals(pOf))
+				index = i;
+		
+		return index;
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="iterator">
+	@Override
+	public Iterator<Structure> iterator() {
+		return new StructureIterator();
+	}
+
+	@Override
+	public ListIterator<Structure> listIterator() {
+		return new StructureIterator();
+	}
+
+	@Override
+	public ListIterator<Structure> listIterator(int index) {
+		return new StructureIterator(index);
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Unsupported Operations">
+	@Override
+	public Structure set(int index, Structure element) {
+		throw new UnsupportedOperationException("Not supported");
+	}
+
+	@Override
+	public void add(int index, Structure element) {
+		throw new UnsupportedOperationException("Not supported");
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		throw new UnsupportedOperationException("Not supported");
+	}
+
+	@Override
+	public List<Structure> subList(int fromIndex, int toIndex) {
+		throw new UnsupportedOperationException("Not supported");
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends Structure> c) {
+		throw new UnsupportedOperationException("Not supported");
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		throw new UnsupportedOperationException("Not supported");
+	}
+	//</editor-fold>
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Public Static Methods">

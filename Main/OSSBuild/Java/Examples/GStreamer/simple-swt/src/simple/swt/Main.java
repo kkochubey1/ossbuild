@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
+import org.gstreamer.Gst;
 import ossbuild.NativeResource;
 import ossbuild.Path;
 import ossbuild.StringUtil;
@@ -181,6 +182,7 @@ public class Main {
 								@Override
 								public void afterAllSystemLoadersInitialized() {
 									Sys.cleanRegistry();
+									Gst.init();
 
 									display.asyncExec(new Runnable() {
 										@Override

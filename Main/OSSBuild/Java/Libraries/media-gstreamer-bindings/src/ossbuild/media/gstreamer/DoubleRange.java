@@ -27,52 +27,35 @@ import static ossbuild.media.gstreamer.api.GStreamer.*;
  * @author kotyo
  *
  */
-public class Range {
+public class DoubleRange {
+	//<editor-fold defaultstate="collapsed" desc="Variables">
 	private Pointer /*GValue*/ ptr;
+	//</editor-fold>
 
-	Range(GValue value) {
+	//<editor-fold defaultstate="collapsed" desc="Initialization">
+	DoubleRange(GValue value) {
 		this(value.getPointer());
 	}
 
-	Range(Pointer ptr) {
+	DoubleRange(Pointer ptr) {
 		this.ptr = ptr;
 	}
+	//</editor-fold>
 
-	public Fraction minimumFraction() {
-		Pointer frMin = gst_value_get_fraction_range_min(ptr);
-		int num = gst_value_get_fraction_numerator(frMin);
-		int denom = gst_value_get_fraction_denominator(frMin);
-		return new Fraction(num, denom);
-	}
-
-	public Fraction maximumFraction() {
-		Pointer frMax = gst_value_get_fraction_range_max(ptr);
-		int num = gst_value_get_fraction_numerator(frMax);
-		int denom = gst_value_get_fraction_denominator(frMax);
-		return new Fraction(num, denom);
-	}
-
-	public int getMinimum() {
-		return getMinimumAsInt();
-	}
-
-	public int getMaximum() {
-		return getMaximumAsInt();
-	}
-
-	public double getMinimumAsDouble() {
+	//<editor-fold defaultstate="collapsed" desc="Getters">
+	public double getMinimum() {
 		return gst_value_get_double_range_min(ptr);
 	}
 
-	public double getMaximumAsDouble() {
+	public double getMaximum() {
 		return gst_value_get_double_range_max(ptr);
 	}
+	//</editor-fold>
 
-	public int getMinimumAsInt() {
-		return gst_value_get_int_range_min(ptr);
+	//<editor-fold defaultstate="collapsed" desc="ToString">
+	@Override
+	public String toString() {
+		return "[ " + getMinimum() + ", " + getMaximum() + " ]";
 	}
-
-	public int getMaximumAsInt() {
-		return gst_value_get_int_range_max(ptr);
-	}
+	//</editor-fold>
 }
