@@ -13,7 +13,7 @@ import static ossbuild.media.gstreamer.api.GStreamer.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public abstract class BaseGstBin extends BaseGstObject implements IBin {
+abstract class BaseGstBin extends BaseGstElement implements IBin {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	protected Integer factoryRank;
 	protected String factoryName, factoryClass;

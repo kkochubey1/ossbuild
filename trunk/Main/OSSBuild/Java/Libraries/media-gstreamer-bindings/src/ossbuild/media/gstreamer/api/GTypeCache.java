@@ -3,7 +3,6 @@ package ossbuild.media.gstreamer.api;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 import ossbuild.media.gstreamer.Bin;
@@ -11,6 +10,7 @@ import ossbuild.media.gstreamer.Bus;
 import ossbuild.media.gstreamer.Element;
 import ossbuild.media.gstreamer.INativeObject;
 import ossbuild.media.gstreamer.Message;
+import ossbuild.media.gstreamer.PadTemplate;
 import ossbuild.media.gstreamer.Pipeline;
 import static ossbuild.media.gstreamer.api.GStreamer.*;
 import static ossbuild.media.gstreamer.api.GStreamerBase.*;
@@ -35,7 +35,7 @@ public class GTypeCache {
 		put(gst_pipeline_get_type(),                new GTypeCacheRecord(Pipeline.class));
 		put(gst_bus_get_type(),                     new GTypeCacheRecord(Bus.class));
 		put(gst_pad_get_type(),                     null /*Pad.class*/);
-		put(gst_pad_template_get_type(),            null /*PadTemplate.class*/);
+		put(gst_pad_template_get_type(),            new GTypeCacheRecord(PadTemplate.class));
 		put(gst_ghost_pad_get_type(),               null /*GhostPad.class*/);
 		put(gst_plugin_get_type(),                  null /*Plugin.class*/);
 		put(gst_plugin_feature_get_type(),          null /*PluginFeature.class*/);

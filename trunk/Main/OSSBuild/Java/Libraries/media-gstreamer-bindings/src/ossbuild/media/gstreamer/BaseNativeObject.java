@@ -9,7 +9,7 @@ import static ossbuild.media.gstreamer.api.GObject.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public abstract class BaseNativeObject implements INativeObject, IDisposable {
+abstract class BaseNativeObject implements INativeObject, IDisposable {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	boolean managed = true;
 	boolean disposed = false;

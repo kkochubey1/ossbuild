@@ -25,6 +25,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import ossbuild.OSFamily;
 import ossbuild.Path;
 import ossbuild.Sys;
 import ossbuild.extract.Resources;
@@ -34,6 +35,8 @@ import ossbuild.media.gstreamer.DoubleRange;
 import ossbuild.media.gstreamer.Fraction;
 import ossbuild.media.gstreamer.FractionRange;
 import ossbuild.media.gstreamer.IntRange;
+import ossbuild.media.gstreamer.PadDirection;
+import ossbuild.media.gstreamer.PadTemplate;
 import ossbuild.media.gstreamer.Structure;
 import ossbuild.media.gstreamer.api.GStreamer;
 import ossbuild.media.gstreamer.api.GTypeConverters;
@@ -246,7 +249,9 @@ public class Platform {
 
 			IElement videotestsrc = Element.make("videotestsrc", "myvideotestsrc");
 			IElement ffmpegcolorspace = Element.make("ffmpegcolorspace", "ffmpegcolorspace");
-			IElement videosink = Element.make("autovideosink", "autovideosink");
+			//IElement videosink = Element.make(Sys.isOSFamily(OSFamily.Windows) ? "directdrawsink" : "autovideosink", "autovideosink");
+			//Directdrawsink leaks!!
+			IElement videosink = Element.make("fakesink", "fakesink");
 			
 			assertNotNull(videotestsrc.getName());
 			assertEquals("myvideotestsrc", videotestsrc.getName());
@@ -258,10 +263,9 @@ public class Platform {
 			}
 			assertTrue(videotestsrc.get("is-live") != null);
 			
-
 			p.addAndLinkMany(videotestsrc, ffmpegcolorspace, videosink);
 
-			for(int j = 0; j < 50; ++j) {
+			for(int j = 0; j < 500; ++j) {
 				p.changeState(State.Playing);
 				p.changeState(State.Null);
 
@@ -345,7 +349,7 @@ public class Platform {
 		}
 	}
 
-	@Test
+	//@Test
 	public void testCaps() throws InterruptedException {
 		Caps caps = Caps.from("video/x-raw-rgb,framerate=10/1,bpp=32;video/x-raw-yuv,framerate=20/4");
 		assertEquals(2, caps.size());
@@ -382,7 +386,7 @@ public class Platform {
 		for(int i = 0; i < 5; ++i) {
 			for(int j = 0; j < 20000; ++j) {
 				Caps c = Caps.newAny();
-				assertTrue(c.isAny());
+				assertTrue(c.isAnyCaps());
 				c.dispose();
 
 				c = Caps.newEmpty();
@@ -394,6 +398,21 @@ public class Platform {
 
 		Caps c = Caps.from("video/x-raw-rgb,framerate=10/1,bpp=32;video/x-raw-yuv,framerate=20/4");
 		assertNotNull(c);
+	}
+
+	@Test
+	public void testPads() throws InterruptedException {
+		for(int i = 0; i < 50000; ++i) {
+			PadTemplate pt = PadTemplate.make("test", PadDirection.Src, Caps.from("video/x-raw-yuv"));
+			pt.dispose();
+
+			if ((i % 1000) == 0 && i > 0) {
+				gc();
+				System.out.println("Completed " + (i + 1) + " iterations...");
+			}
+		}
+
+		
 	}
 
 	//@Test

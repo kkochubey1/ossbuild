@@ -526,7 +526,8 @@ public class MediaComponentNew extends SWTMediaComponent {
 		return newPipeline;
 	}
 	//</editor-fold>
-	
+
+	//<editor-fold defaultstate="collapsed" desc="Play">
 	public boolean play(IMediaRequest request) {
 		if (request == null)
 			return false;
@@ -553,6 +554,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 			lock.unlock();
 		}
 	}
+	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Paint">
 	protected void paintImage(GC g, ImageData imgData) {

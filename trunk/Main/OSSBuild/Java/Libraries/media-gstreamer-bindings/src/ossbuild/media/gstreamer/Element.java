@@ -8,7 +8,7 @@ import static ossbuild.media.gstreamer.api.GStreamer.*;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class Element extends BaseGstObject implements IElement {
+public class Element extends BaseGstElement {
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	public Element(String factoryName) {
 		super(factoryName);
@@ -23,8 +23,10 @@ public class Element extends BaseGstObject implements IElement {
 	}
 
 	@Override
-	protected Pointer createNativeObject(String factoryName, String elementName) {
-		Pointer p = gst_element_factory_make(factoryName, elementName);
+	protected Pointer createNativeObject(Object... arguments) {
+		String elementFactoryName = (String)arguments[0];
+		String elementName = (String)arguments[1];
+		Pointer p = gst_element_factory_make(elementFactoryName, elementName);
 		gst_object_ref_sink(p);
 		return p;
 	}
