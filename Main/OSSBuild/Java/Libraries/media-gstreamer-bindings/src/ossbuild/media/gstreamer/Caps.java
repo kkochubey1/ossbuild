@@ -15,6 +15,10 @@ import static ossbuild.media.gstreamer.api.GStreamer.*;
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public class Caps extends BaseGObject implements List<Structure> {
+	//<editor-fold defaultstate="collapsed" desc="Variables">
+	boolean ownedByParent = false;
+	//</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	public Caps() {
 		this(false);
@@ -23,21 +27,25 @@ public class Caps extends BaseGObject implements List<Structure> {
 	public Caps(boolean any) {
 		super(!any ? gst_caps_new_empty() : gst_caps_new_any());
 		this.managed = true;
+		this.ownedByParent = false;
 	}
 
 	public Caps(String caps) {
 		super(gst_caps_from_string(caps));
 		this.managed = true;
+		this.ownedByParent = false;
 	}
 
 	public Caps(Caps caps) {
 		super(gst_caps_copy(caps.getPointer()));
 		this.managed = true;
+		this.ownedByParent = false;
 	}
 
 	Caps(Pointer ptr) {
 		super(ptr);
 		this.managed = false;
+		this.ownedByParent = true;
 		ref();
 	}
 	//</editor-fold>
@@ -48,29 +56,23 @@ public class Caps extends BaseGObject implements List<Structure> {
 		if (ptr == Pointer.NULL)
 			return;
 
-		unref();
+		synchronized(this) {
+			if (!ownedByParent)
+				unref();
+		}
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Getters/Setters">
-	public void set(String field, Object value) {
-		//Utils.setGValue();
-		//gst_caps_set_value();
-	}
-
-	public void setInteger(String field, Integer value) {
-		//gst_caps_set_simple(this, field, value, null);
-	}
-
-	public boolean isAny() {
+	public boolean isAnyCaps() {
 		return gst_caps_is_any(ptr);
 	}
 
-	public boolean isEmpty() {
+	public boolean isEmptyCaps() {
 		return gst_caps_is_empty(ptr);
 	}
 
-	public boolean isFixed() {
+	public boolean isFixedCaps() {
 		return gst_caps_is_fixed(ptr);
 	}
 
@@ -92,11 +94,6 @@ public class Caps extends BaseGObject implements List<Structure> {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Public Methods">
-	@Override
-	public int size() {
-		return gst_caps_get_size(ptr);
-	}
-
 	public Caps copy() {
 		return new Caps(gst_caps_copy(ptr));
 	}
@@ -313,6 +310,16 @@ public class Caps extends BaseGObject implements List<Structure> {
 
 	//<editor-fold defaultstate="collapsed" desc="get">
 	@Override
+	public boolean isEmpty() {
+		return (size() <= 0);
+	}
+
+	@Override
+	public int size() {
+		return gst_caps_get_size(ptr);
+	}
+
+	@Override
 	public Structure get(int index) {
 		if (index < 0 || index > size())
 			throw new IndexOutOfBoundsException();
@@ -466,6 +473,26 @@ public class Caps extends BaseGObject implements List<Structure> {
 		throw new UnsupportedOperationException("Not supported");
 	}
 	//</editor-fold>
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Package Methods">
+	Object ownershipLock() {
+		return this;
+	}
+	
+	void takeOwnership() {
+		synchronized(this) {
+			//See disposeObject() documentation
+			ownedByParent = true;
+		}
+	}
+
+	void releaseOwnership() {
+		synchronized(this) {
+			//See disposeObject() documentation
+			ownedByParent = false;
+		}
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Public Static Methods">

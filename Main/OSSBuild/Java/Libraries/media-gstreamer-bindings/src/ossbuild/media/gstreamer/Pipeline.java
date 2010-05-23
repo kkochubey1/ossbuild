@@ -42,8 +42,10 @@ public class Pipeline extends Bin implements IPipeline {
 	}
 
 	@Override
-	protected Pointer createNativeObject(String factoryName, String elementName) {
-		Pointer p = (!StringUtil.isNullOrEmpty(factoryName) ? gst_element_factory_make(factoryName, elementName) : gst_pipeline_new(elementName));
+	protected Pointer createNativeObject(Object... arguments) {
+		String elementFactoryName = (String)arguments[0];
+		String elementName = (String)arguments[1];
+		Pointer p = (!StringUtil.isNullOrEmpty(elementFactoryName) ? gst_element_factory_make(elementFactoryName, elementName) : gst_pipeline_new(elementName));
 		gst_object_ref_sink(p);
 		return p;
 	}

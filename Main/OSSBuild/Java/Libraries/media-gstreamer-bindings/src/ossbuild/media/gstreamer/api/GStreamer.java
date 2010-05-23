@@ -350,6 +350,17 @@ public class GStreamer extends Library {
 	public static native Pointer /*GstMiniObject*/ gst_value_get_mini_object(Pointer /*GValue*/ value);
 	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="GstPadTemplate">
+	public static native Pointer /*GstPadTemplate*/ gst_pad_template_new(String name_template, int /*GstPadDirection*/ direction, int /*GstPadPresence*/ presence, Pointer /*GstCaps*/ caps);
+	public static native Pointer /*GstPadTemplate*/ gst_static_pad_template_get(Pointer /*GstStaticPadTemplate*/ pad_template);
+	public static native Pointer /*GstCaps*/ gst_static_pad_template_get_caps(Pointer /*GstStaticPadTemplate*/ template);
+	public static native Pointer /*GstCaps*/ gst_pad_template_get_caps(Pointer /*GstPadTemplate*/ template);
+	public static native void gst_pad_template_pad_created(Pointer /*GstPadTemplate*/ templ, Pointer /*GstPad*/ pad);
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="GstPad">
+	//</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="Types">
 	public static native NativeLong gst_bin_get_type();
 	public static native NativeLong gst_buffer_get_type();
