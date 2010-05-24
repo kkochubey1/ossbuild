@@ -3,8 +3,10 @@ package ossbuild.media.gstreamer;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.PointerByReference;
 import java.io.File;
 import java.net.URI;
+import ossbuild.StringUtil;
 import ossbuild.media.gstreamer.api.Callbacks;
 import ossbuild.media.gstreamer.api.GParamSpec;
 import ossbuild.media.gstreamer.api.GStreamer;
@@ -93,7 +95,14 @@ abstract class BaseGObject extends BaseNativeObject implements IGObject {
 		if (signalName == null)
 			return null;
 
+		return connect(signalName, signal);
+	}
 
+	@Override
+	public ISignalConnectResponse connect(String signalName, ISignal signal) {
+		if (StringUtil.isNullOrEmpty(signalName))
+			return null;
+		
 		NativeLong handlerID = GStreamer.connectSignal(ptr, signalName, signal);
 		if (handlerID == null || handlerID.intValue() == 0)
 			return null;
@@ -121,8 +130,8 @@ abstract class BaseGObject extends BaseNativeObject implements IGObject {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Public Static Methods">
-	public static boolean propertyExists(IGObject element, String name) {
-		return (findPropertySpec(element, name) != Pointer.NULL);
+	public static boolean propertyExists(IGObject obj, String name) {
+		return (findPropertySpec(obj, name) != Pointer.NULL);
 	}
 
 	public static Pointer findPropertySpec(IGObject src, String name) {
@@ -132,17 +141,17 @@ abstract class BaseGObject extends BaseNativeObject implements IGObject {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T findPropertyValue(IGObject element, String name) {
-		return (T)findPropertyValue(element, name, null);
+	public static <T> T findPropertyValue(IGObject obj, String name) {
+		return (T)findPropertyValue(obj, name, null);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T extends Object> T findPropertyValue(IGObject element, String name, IGTypeConverter customConverter) {
-		if (element == null)
+	public static <T extends Object> T findPropertyValue(IGObject obj, String name, IGTypeConverter customConverter) {
+		if (obj == null)
 			return null;
 
-		Pointer pElement = element.getPointer();
-		Pointer pPropertySpec = findPropertySpec(element, name);
+		Pointer pObj = obj.getPointer();
+		Pointer pPropertySpec = findPropertySpec(obj, name);
 		if (pPropertySpec == null || pPropertySpec == Pointer.NULL)
 			return null;
 
@@ -156,7 +165,7 @@ abstract class BaseGObject extends BaseNativeObject implements IGObject {
 		Pointer pPropValue = propValue.getPointer();
 
 		g_value_init(pPropValue, propertyValueType);
-		g_object_get_property(pElement, name, pPropValue);
+		g_object_get_property(pObj, name, pPropValue);
 
 		final Object value;
 
@@ -219,7 +228,7 @@ abstract class BaseGObject extends BaseNativeObject implements IGObject {
 						} else if (propType == GType.RuntimeInstance) {
 							IGTypeConverter converter = GType.customConverter(propertyValueType);
 							if (converter != null) {
-								value = converter.convertFromProperty(pElement, pPropertySpec, pPropValue, propertyValueType, propertySpec, propValue);
+								value = converter.convertFromProperty(pObj, pPropertySpec, pPropValue, propertyValueType, propertySpec, propValue);
 							} else {
 								//Attempt to locate and create an object from the type cache
 								if (g_value_type_transformable(propertyValueType, GType.Object.asNativeLong())) {
@@ -240,7 +249,19 @@ abstract class BaseGObject extends BaseNativeObject implements IGObject {
 										value = null;
 									}
 								} else {
-									value = null;
+									//Used by Buffer, for example, when you have a video sink with "last-buffer" property
+									if (GTypeCache.containsGType(propertyValueType)) {
+										try {
+											value = GTypeCache.instantiateForGType(propertyValueType, pPropValue);
+										} catch(Throwable t) {
+											if (t instanceof RuntimeException)
+												throw (RuntimeException)t;
+											else
+												throw new RuntimeException(t);
+										}
+									} else {
+										value = null;
+									}
 								}
 							}
 						} else {
@@ -249,7 +270,7 @@ abstract class BaseGObject extends BaseNativeObject implements IGObject {
 						break;
 				}
 			} else {
-				value = customConverter.convertFromProperty(pElement, pPropertySpec, pPropValue, propertyValueType, propertySpec, propValue);
+				value = customConverter.convertFromProperty(pObj, pPropertySpec, pPropValue, propertyValueType, propertySpec, propValue);
 			}
 		} finally {
 			g_value_unset(pPropValue);

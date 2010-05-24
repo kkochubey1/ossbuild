@@ -6,6 +6,7 @@ import com.sun.jna.Pointer;
 import java.util.HashMap;
 import java.util.Map;
 import ossbuild.media.gstreamer.Bin;
+import ossbuild.media.gstreamer.Buffer;
 import ossbuild.media.gstreamer.Bus;
 import ossbuild.media.gstreamer.Element;
 import ossbuild.media.gstreamer.INativeObject;
@@ -42,7 +43,7 @@ public class GTypeCache {
 		put(gst_registry_get_type(),                null /*Registry.class*/);
 
 		//GstMiniObject types
-		put(gst_buffer_get_type(),                  null /*Buffer.class*/);
+		put(gst_buffer_get_type(),                  new Buffer.GTypeCacheRecord());
 		put(gst_event_get_type(),                   null /*Event.class*/);
 		put(gst_message_get_type(),                 new GTypeCacheRecord(Message.class));
 		put(gst_query_get_type(),                   null /*Query.class*/);
@@ -54,6 +55,10 @@ public class GTypeCache {
 		put(gst_element_factory_get_type(),	        null /*ElementFactory.class*/);
 		put(gst_bin_get_type(),                     new GTypeCacheRecord(Bin.class));
 	}};
+
+	public static boolean containsGType(NativeLong gtype) {
+		return cache.containsKey(gtype);
+	}
 
 	public static NativeLong gtypeForClass(Class<? extends INativeObject> cls) {
 		if (cls == null)

@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2010 David Hoyt <dhoyt@hoytsoft.org>
+ * Copyright (C) 2009 Levente Farkas
+ * Copyright (C) 2007, 2008 Wayne Meissner
+ *
+ * This file contains code from the gstreamer-java project.
+ *
+ * This code is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License version 3 only, as
+ * published by the Free Software Foundation.
+ *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * version 3 for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with this work.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package ossbuild.media.gstreamer.api;
 
@@ -255,6 +274,9 @@ public class GStreamer extends Library {
 	//<editor-fold defaultstate="collapsed" desc="GstMiniObject">
 	public static native void gst_mini_object_ref(Pointer ptr);
 	public static native void gst_mini_object_unref(Pointer ptr);
+
+	public static native boolean gst_mini_object_is_writable(Pointer /*GstMiniObject*/ mini_object);
+	public static native Pointer /*GstMiniObject*/ gst_mini_object_make_writable(Pointer /*GstMiniObject*/ mini_object);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstStructure">
@@ -348,6 +370,7 @@ public class GStreamer extends Library {
 	public static native Pointer /*GstCaps*/ gst_value_get_caps(Pointer /*GValue*/ value);
 
 	public static native Pointer /*GstMiniObject*/ gst_value_get_mini_object(Pointer /*GValue*/ value);
+	public static native void gst_value_set_mini_object(Pointer /*GValue*/ value, Pointer /*GstMiniObject*/ mini_object);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstPadTemplate">
@@ -359,6 +382,28 @@ public class GStreamer extends Library {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstPad">
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="GstBuffer">
+	public static native Pointer /*GstBuffer*/ gst_buffer_new();
+	public static native Pointer /*GstBuffer*/ gst_buffer_new_and_alloc(int size);
+	public static native Pointer /*GstBuffer*/ gst_buffer_try_new_and_alloc(int size);
+	public static native boolean gst_buffer_is_metadata_writable(Pointer /*GstBuffer*/ buf);
+	public static native Pointer /*GstBuffer*/ gst_buffer_make_metadata_writable(Pointer /*GstBuffer*/ buf);
+
+	/* creating a subbuffer */
+	public static native Pointer /*GstBuffer*/ gst_buffer_create_sub(Pointer /*GstBuffer*/ parent, int offset, int size);
+
+	public static native Pointer /*GstCaps*/ gst_buffer_get_caps(Pointer /*GstBuffer*/ buffer);
+	public static native void gst_buffer_set_caps(Pointer /*GstBuffer*/ buffer, Pointer /*GstCaps*/ caps);
+
+	/* span two buffers intelligently */
+	public static native boolean gst_buffer_is_span_fast(Pointer /*GstBuffer*/ buf1, Pointer /*GstBuffer*/ buf2);
+	public static native Pointer /*GstBuffer*/ gst_buffer_span(Pointer /*GstBuffer*/ buf1, int offset, Pointer /*GstBuffer*/ buf2, int len);
+
+	/* buffer functions from gstutils.h */
+	public static native Pointer /*GstBuffer*/ gst_buffer_merge(Pointer /*GstBuffer*/ buf1, Pointer /*GstBuffer*/ buf2);
+	public static native Pointer /*GstBuffer*/ gst_buffer_join(Pointer /*GstBuffer*/ buf1, Pointer /*GstBuffer*/ buf2);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Types">

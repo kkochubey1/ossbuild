@@ -16,5 +16,6 @@ public interface IGObject extends INativeObject {
 	<T extends Object> T get(String propertyName, IGTypeConverter converter);
 	
 	ISignalConnectResponse connect(ISignal signal);
+	ISignalConnectResponse connect(String signalName, ISignal signal);
 	boolean disconnect(ISignalConnectResponse response);
 }

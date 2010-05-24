@@ -162,19 +162,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 	private static final long
 		  SEEK_STOP_DURATION = TimeUnit.MILLISECONDS.toNanos(10L)
 	;
-
-	public static final String[] VALID_COLORSPACES = {
-		  "video/x-raw-rgb"
-		, "video/x-raw-yuv"
-	};
-
-	public static final String[] VALID_YUV_FORMATS = {
-		  "YUY2"
-	};
-
-	public static final String[] VALID_DIRECTDRAW_COLORSPACES = {
-		  "video/x-raw-rgb"
-	};
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Variables">

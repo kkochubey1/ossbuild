@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2010 David Hoyt <dhoyt@hoytsoft.org>
+ * Copyright (C) 2009 Levente Farkas
+ * Copyright (C) 2007 Wayne Meissner
+ * Copyright (C) <2003> David A. Schleef <ds@schleef.org>
+ *
+ * This file contains code from the gstreamer-java project.
+ *
+ * This code is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License version 3 only, as
+ * published by the Free Software Foundation.
+ *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * version 3 for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with this work.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package ossbuild.media.gstreamer;
 
@@ -12,7 +32,6 @@ import static ossbuild.media.gstreamer.api.GStreamer.*;
 
 /**
  *
- * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public class Caps extends BaseGObject implements List<Structure> {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
@@ -90,6 +109,10 @@ public class Caps extends BaseGObject implements List<Structure> {
 
 	public boolean isAlwaysCompatible(Caps other) {
 		return gst_caps_is_always_compatible(ptr, other.getPointer());
+	}
+
+	public boolean containsStructures() {
+		return (size() > 0);
 	}
 	//</editor-fold>
 
@@ -311,7 +334,7 @@ public class Caps extends BaseGObject implements List<Structure> {
 	//<editor-fold defaultstate="collapsed" desc="get">
 	@Override
 	public boolean isEmpty() {
-		return (size() <= 0);
+		return !containsStructures();
 	}
 
 	@Override
@@ -506,6 +529,10 @@ public class Caps extends BaseGObject implements List<Structure> {
 
 	public static Caps from(String caps) {
 		return new Caps(caps);
+	}
+
+	public static Caps from(Pointer p) {
+		return new Caps(p);
 	}
 	//</editor-fold>
 }

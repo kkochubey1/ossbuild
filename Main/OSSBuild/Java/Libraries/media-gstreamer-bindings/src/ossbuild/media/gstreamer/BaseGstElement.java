@@ -34,10 +34,8 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 	}
 
 	BaseGstElement(Pointer ptr) {
-		super();
-		this.ptr = ptr;
+		super(ptr);
 		this.managed = false;
-		ref();
 	}
 	//</editor-fold>
 
