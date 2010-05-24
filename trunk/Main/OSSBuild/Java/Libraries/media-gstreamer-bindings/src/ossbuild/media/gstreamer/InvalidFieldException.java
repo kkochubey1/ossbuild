@@ -2,7 +2,6 @@ package ossbuild.media.gstreamer;
 
 /**
  *
- * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public class InvalidFieldException extends GStreamerException {
 	public InvalidFieldException() {

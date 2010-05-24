@@ -11,6 +11,5 @@ import ossbuild.media.gstreamer.INativeObject;
  */
 public interface IGTypeCacheRecord {
 	Class<? extends INativeObject> getJavaClass();
-	Constructor<? extends INativeObject> getJavaConstructor();
 	INativeObject instantiateFromPointer(Pointer ptr);
 }

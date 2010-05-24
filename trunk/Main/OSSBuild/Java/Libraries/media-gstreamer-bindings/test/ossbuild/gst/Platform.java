@@ -18,6 +18,7 @@ import ossbuild.media.gstreamer.IBus;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import java.io.File;
+import java.nio.IntBuffer;
 import java.util.ListIterator;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
@@ -30,7 +31,9 @@ import ossbuild.Path;
 import ossbuild.Sys;
 import ossbuild.extract.Resources;
 import ossbuild.extract.processors.FileProcessor;
+import ossbuild.media.gstreamer.Buffer;
 import ossbuild.media.gstreamer.Caps;
+import ossbuild.media.gstreamer.Colorspace;
 import ossbuild.media.gstreamer.DoubleRange;
 import ossbuild.media.gstreamer.Fraction;
 import ossbuild.media.gstreamer.FractionRange;
@@ -100,6 +103,15 @@ public class Platform {
 		for(int i = 0; i < times; ++i)
 			System.gc();
 	}
+
+	protected String videoSinkForOS() {
+		switch(Sys.getOSFamily()) {
+			case Windows:
+				return "directdrawsink";
+			default:
+				return "xvimagesink";
+		}
+	}
 	//</editor-fold>
 
 	//@Test
@@ -161,6 +173,7 @@ public class Platform {
 			b.syncHandler(new IBusSyncHandler() {
 				@Override
 				public BusSyncReply handle(Bus bus, Message msg, Pointer src, Pointer data) {
+					msg.dispose();
 					return BusSyncReply.Drop;
 				}
 			});
@@ -291,7 +304,10 @@ public class Platform {
 		playbin.set("video-sink", myvideosink);
 		myvideosink.dispose();
 		for(int i = 0; i < 50000; ++i) {
-			playbin.set("video-sink", playbin.get("video-sink"));
+			IElement originalVideoSink = playbin.get("video-sink");
+			assertNotNull(originalVideoSink);
+
+			assertTrue(playbin.set("video-sink", originalVideoSink));
 		}
 		playbin.dispose();
 	}
@@ -400,7 +416,7 @@ public class Platform {
 		assertNotNull(c);
 	}
 
-	@Test
+	//@Test
 	public void testPads() throws InterruptedException {
 		for(int i = 0; i < 50000; ++i) {
 			PadTemplate pt = PadTemplate.make("test", PadDirection.Src, Caps.from("video/x-raw-yuv"));
@@ -413,6 +429,36 @@ public class Platform {
 		}
 
 		
+	}
+
+	@Test
+	public void testSnapshot() throws Throwable {
+		IPipeline p = new Pipeline("unit-test-pipeline");
+		IElement videotestsrc = Element.make("videotestsrc", "videotestsrc");
+		IElement ffmpegcolorspace = Element.make("ffmpegcolorspace", "ffmpegcolorspace");
+		IElement videosink = Element.make(videoSinkForOS(), "videosink");
+
+		p.addAndLinkMany(videotestsrc, ffmpegcolorspace, videosink);
+
+		p.changeState(State.Playing);
+		Thread.sleep(1000L);
+
+		for(int i = 0; i < 20000; ++i) {
+			Buffer b = videosink.get("last-buffer", GTypeConverters.BUFFER);
+			assertNotNull(b);
+			b.dispose();
+		}
+
+		Buffer b = videosink.get("last-buffer");
+		assertNotNull(b);
+
+		IntBuffer bb = Colorspace.createRGBFrame(b);
+		assertNotNull(bb);
+
+		b.dispose();
+		p.changeState(State.Null);
+
+		p.dispose();
 	}
 
 	//@Test

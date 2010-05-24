@@ -3,8 +3,10 @@ package ossbuild.media.gstreamer.api;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import ossbuild.media.gstreamer.Buffer;
 import ossbuild.media.gstreamer.elements.VideoTestSrcPattern;
 import static ossbuild.media.gstreamer.api.GObject.*;
+import static ossbuild.media.gstreamer.api.GStreamer.*;
 
 /**
  *
@@ -27,6 +29,21 @@ public class GTypeConverters {
 		@Override
 		public Object convertFromProperty(Pointer pObject, Pointer pParamSpec, Pointer pPropValue, NativeLong propertyType, GParamSpec paramSpec, GValue propValue) {
 			return VideoTestSrcPattern.fromNative(g_value_get_enum(pPropValue));
+		}
+	};
+
+	public static final IGTypeConverter BUFFER = new IGTypeConverter() {
+		@Override
+		public boolean convertToProperty(Pointer pObject, Pointer pParamSpec, Pointer pPropValue, NativeLong propertyType, GParamSpec paramSpec, GValue propValue, Object value) {
+			if (!(value instanceof Buffer))
+				return false;
+			gst_value_set_mini_object(pPropValue, ((Buffer)value).getPointer());
+			return true;
+		}
+
+		@Override
+		public Object convertFromProperty(Pointer pObject, Pointer pParamSpec, Pointer pPropValue, NativeLong propertyType, GParamSpec paramSpec, GValue propValue) {
+			return Buffer.from(gst_value_get_mini_object(pPropValue));
 		}
 	};
 	//</editor-fold>

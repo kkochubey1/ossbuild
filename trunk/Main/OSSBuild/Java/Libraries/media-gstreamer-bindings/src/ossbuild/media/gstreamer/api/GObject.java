@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2010 David Hoyt <dhoyt@hoytsoft.org>
+ * Copyright (C) 2009 Levente Farkas
+ * Copyright (C) 2007, 2008 Wayne Meissner
+ *
+ * This file contains code from the gstreamer-java project.
+ *
+ * This code is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License version 3 only, as
+ * published by the Free Software Foundation.
+ *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * version 3 for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with this work.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package ossbuild.media.gstreamer.api;
 
@@ -100,6 +119,8 @@ public class GObject extends Library {
     public static native void g_value_set_string(Pointer /*GValue*/ value, String v_string);
     public static native void g_value_set_static_string (Pointer /*GValue*/ value, String v_string);
     public static native String g_value_get_string(Pointer /*GValue*/ value);
+	public static native void g_value_set_pointer(Pointer /*GValue*/ value, Pointer v_pointer);
+    public static native Pointer g_value_get_pointer(Pointer /*GValue*/ value);
     public static native boolean g_value_type_compatible(NativeLong /*GType*/ src_type, NativeLong /*GType*/ dest_type);
     public static native boolean g_value_type_transformable(NativeLong /*GType*/ src_type, NativeLong /*GType*/ dest_type);
 	public static native boolean g_value_transform(Pointer /*GValue*/ src_value, Pointer /*GValue*/ dest_value);
@@ -128,6 +149,8 @@ public class GObject extends Library {
 	//<editor-fold defaultstate="collapsed" desc="Types">
 	public static native NativeLong /*GType*/ g_type_parent(NativeLong /*GType*/ type);
 	public static native int g_type_depth(NativeLong /*GType*/ type);
+
+	public static native Pointer /*GTypeInstance*/ g_type_check_instance_cast(Pointer /*GTypeInstance*/ instance, NativeLong /*GType*/ iface_type);
 	//</editor-fold>
 	//</editor-fold>
 }

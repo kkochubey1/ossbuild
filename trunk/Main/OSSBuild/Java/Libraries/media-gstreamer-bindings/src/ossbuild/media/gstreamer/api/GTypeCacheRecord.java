@@ -37,7 +37,6 @@ public class GTypeCacheRecord implements IGTypeCacheRecord {
 		return cls;
 	}
 
-	@Override
 	public Constructor<? extends INativeObject> getJavaConstructor() {
 		return constructor;
 	}

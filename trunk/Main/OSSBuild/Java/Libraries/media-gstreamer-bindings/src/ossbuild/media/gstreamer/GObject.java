@@ -2,7 +2,6 @@
 package ossbuild.media.gstreamer;
 
 import com.sun.jna.Pointer;
-import static ossbuild.media.gstreamer.api.GObject.*;
 
 /**
  *
