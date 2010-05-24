@@ -949,7 +949,7 @@ gst_dshowvideosink_change_state (GstElement * element, GstStateChange transition
       if (rettmp == GST_STATE_CHANGE_FAILURE)
         ret = rettmp;
       sink->graph_running = FALSE;
-      GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink);
+      GST_DSHOWVIDEOSINK_GRAPH_UNLOCK(sink);
       break;
     case GST_STATE_CHANGE_READY_TO_NULL:
       gst_dshowvideosink_clear (sink);
@@ -1454,7 +1454,7 @@ gst_dshowvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
     if (retst == GST_STATE_CHANGE_FAILURE)
       return GST_FLOW_WRONG_STATE;
   }
-  GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink);
+  GST_DSHOWVIDEOSINK_GRAPH_UNLOCK(sink);
   GST_DEBUG_OBJECT (sink, "Done pushing buffer through fakesrc->renderer: %s", gst_flow_get_name(ret));
 
   return ret;
