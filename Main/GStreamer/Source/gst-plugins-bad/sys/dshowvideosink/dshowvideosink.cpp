@@ -336,7 +336,7 @@ gst_dshowvideosink_com_thread (GstDshowVideoSink * sink)
   /* Wait until the unitialize condition is met to leave the COM apartement */
   g_mutex_lock (sink->com_lock);
   g_cond_wait (sink->com_uninitialize, sink->com_lock);
-  g_mutex_lock (sink->com_lock);
+  g_mutex_unlock (sink->com_lock);
 
   CoUninitialize ();
   GST_INFO_OBJECT (sink, "COM unintialized succesfully");
