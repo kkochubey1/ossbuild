@@ -260,6 +260,9 @@ gst_dshowvideosink_finalize (GObject * gobject)
   }
 
   g_mutex_free (sink->graph_lock);
+  g_mutex_free (sink->com_lock);
+  g_cond_free (sink->com_initialized);
+  g_cond_free (sink->com_uninitialize);
 
   G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
