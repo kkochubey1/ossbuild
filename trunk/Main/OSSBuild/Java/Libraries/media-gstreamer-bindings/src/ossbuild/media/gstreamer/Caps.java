@@ -67,6 +67,14 @@ public class Caps extends BaseGObject implements List<Structure> {
 		this.ownedByParent = true;
 		ref();
 	}
+
+	Caps(Pointer ptr, boolean incRef) {
+		super(ptr);
+		this.managed = false;
+		this.ownedByParent = true;
+		if (incRef)
+			ref();
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Dispose">
@@ -533,6 +541,10 @@ public class Caps extends BaseGObject implements List<Structure> {
 
 	public static Caps from(Pointer p) {
 		return new Caps(p);
+	}
+
+	public static Caps from(Pointer p, boolean incRef) {
+		return new Caps(p, incRef);
 	}
 	//</editor-fold>
 }

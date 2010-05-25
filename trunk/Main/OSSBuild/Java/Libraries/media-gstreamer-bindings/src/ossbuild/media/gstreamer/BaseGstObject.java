@@ -20,6 +20,13 @@ abstract class BaseGstObject extends BaseGObject implements IGObject {
 		this.managed = false;
 		ref();
 	}
+
+	BaseGstObject(Pointer ptr, boolean incRef) {
+		super(ptr);
+		this.managed = false;
+		if (incRef)
+			ref();
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Dispose">

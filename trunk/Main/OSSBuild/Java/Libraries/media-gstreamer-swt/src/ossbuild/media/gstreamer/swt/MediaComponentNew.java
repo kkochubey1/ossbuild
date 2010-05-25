@@ -8,7 +8,11 @@ package ossbuild.media.gstreamer.swt;
 import com.sun.jna.Pointer;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
+import java.nio.IntBuffer;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +26,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -44,6 +50,8 @@ import ossbuild.media.MediaRequestType;
 import ossbuild.media.MediaType;
 import ossbuild.media.Scheme;
 import ossbuild.media.gstreamer.Bin;
+import ossbuild.media.gstreamer.Buffer;
+import ossbuild.media.gstreamer.Colorspace;
 import ossbuild.media.gstreamer.Element;
 import ossbuild.media.gstreamer.ErrorType;
 import ossbuild.media.gstreamer.IBin;
@@ -52,6 +60,7 @@ import ossbuild.media.gstreamer.IPipeline;
 import ossbuild.media.gstreamer.Pipeline;
 import ossbuild.media.gstreamer.State;
 import ossbuild.media.gstreamer.api.GStreamer;
+import ossbuild.media.gstreamer.api.GTypeConverters;
 import ossbuild.media.gstreamer.api.Utils;
 import ossbuild.media.gstreamer.signals.IElementAdded;
 import ossbuild.media.gstreamer.signals.IPadAdded;
@@ -169,6 +178,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 	private ImageData singleImage = null;
 	protected final Display display;
 
+	protected IElement currentVideoSink;
 	protected IPipeline pipeline;
 
 	protected final Runnable redrawRunnable;
@@ -351,6 +361,127 @@ public class MediaComponentNew extends SWTMediaComponent {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Public Methods">
+	//<editor-fold defaultstate="collapsed" desc="Snapshots">
+	public boolean saveSnapshot(final File File) {
+		if (File == null)
+			return false;
+
+		FileOutputStream fos = null;
+		try {
+
+			final ImageData data = swtImageDataSnapshot();
+			if (data == null)
+				return false;
+
+			final ImageLoader loader = new ImageLoader();
+			loader.data = new ImageData[] { data };
+
+			fos = new FileOutputStream(File);
+			loader.save(fos, SWT.IMAGE_JPEG);
+			return true;
+		} catch(Throwable t) {
+			return false;
+		} finally {
+			if (fos != null) {
+				try { fos.close(); } catch(IOException ie) { }
+			}
+		}
+	}
+
+	public boolean saveSnapshot(final OutputStream Output) {
+		if (Output == null)
+			return false;
+
+		final ImageData data = swtImageDataSnapshot();
+		if (data == null)
+			return false;
+
+		final ImageLoader loader = new ImageLoader();
+		loader.data = new ImageData[] { data };
+		loader.save(Output, SWT.IMAGE_JPEG);
+		return true;
+	}
+
+	public Image swtSnapshot() {
+		final ImageData data = swtImageDataSnapshot();
+		if (data == null)
+			return null;
+		//Caller will be responsible for disposing this image
+		return new Image(display, data);
+	}
+
+	public ImageData swtImageDataSnapshot() {
+		Buffer buffer = null;
+		try {
+			lock.lock();
+			try {
+				if (currentVideoSink == null || !currentVideoSink.hasProperty("last-buffer"))
+					return null;
+
+				buffer = currentVideoSink.get("last-buffer", GTypeConverters.BUFFER);
+				if (buffer == null)
+					return null;
+
+				return swtImageDataSnapshot(buffer);
+			} finally {
+				lock.unlock();
+			}
+		} catch(Throwable t) {
+			return null;
+		} finally {
+			if (buffer != null)
+				buffer.dispose();
+		}
+	}
+
+	public ImageData swtImageDataSnapshot(Buffer buffer) {
+		try {
+			//Convert to RGB using the provided direct buffer
+			final Colorspace.Frame frame = Colorspace.createRGBFrame(buffer);
+			if (frame == null)
+				return null;
+
+			final IntBuffer rgb = frame.getBuffer();
+			if (rgb == null)
+				return null;
+
+			int[] pixels = new int[rgb.remaining()];
+			ImageData imageData = new ImageData(frame.getWidth(), frame.getHeight(), 24, new PaletteData(0x00FF0000, 0x0000FF00, 0x000000FF));
+			rgb.get(pixels, 0, rgb.remaining());
+			imageData.setPixels(0, 0, pixels.length, pixels, 0);
+
+			return imageData;
+		} catch(Throwable t) {
+			return null;
+		} finally {
+		}
+	}
+
+	@Override
+	public BufferedImage snapshot() {
+		Buffer buffer = null;
+		try {
+			lock.lock();
+			try {
+				if (currentVideoSink == null || !currentVideoSink.hasProperty("last-buffer"))
+					return null;
+
+				buffer = currentVideoSink.get("last-buffer", GTypeConverters.BUFFER);
+				if (buffer == null)
+					return null;
+
+				return Colorspace.createBufferedImage(buffer);
+			} finally {
+				lock.unlock();
+			}
+		} catch(Throwable t) {
+			return null;
+		} finally {
+			if (buffer != null)
+				buffer.dispose();
+		}
+	}
+	//</editor-fold>
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="The Meat">
@@ -660,10 +791,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 	}
 
 	public void setBufferSize(long size) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public BufferedImage snapshot() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

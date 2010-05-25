@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package ossbuild.gst;
 
 import ossbuild.media.gstreamer.IElement;
@@ -11,15 +8,19 @@ import ossbuild.media.gstreamer.Bus;
 import ossbuild.media.gstreamer.Message;
 import ossbuild.media.gstreamer.IPipeline;
 import ossbuild.media.gstreamer.IBin;
+import ossbuild.media.gstreamer.Pad;
 import ossbuild.media.gstreamer.State;
 import ossbuild.media.gstreamer.Bin;
 import ossbuild.media.gstreamer.Pipeline;
 import ossbuild.media.gstreamer.IBus;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.IntBuffer;
 import java.util.ListIterator;
+import java.util.concurrent.TimeUnit;
+import javax.imageio.ImageIO;
 import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -34,7 +35,9 @@ import ossbuild.extract.processors.FileProcessor;
 import ossbuild.media.gstreamer.Buffer;
 import ossbuild.media.gstreamer.Caps;
 import ossbuild.media.gstreamer.Colorspace;
+import ossbuild.media.gstreamer.DebugGraphDetails;
 import ossbuild.media.gstreamer.DoubleRange;
+import ossbuild.media.gstreamer.Format;
 import ossbuild.media.gstreamer.Fraction;
 import ossbuild.media.gstreamer.FractionRange;
 import ossbuild.media.gstreamer.IntRange;
@@ -45,6 +48,7 @@ import ossbuild.media.gstreamer.api.GStreamer;
 import ossbuild.media.gstreamer.api.GTypeConverters;
 import ossbuild.media.gstreamer.callbacks.IBusSyncHandler;
 import ossbuild.media.gstreamer.elements.VideoTestSrcPattern;
+import ossbuild.media.gstreamer.events.StepEvent;
 import static org.junit.Assert.*;
 
 /**
@@ -107,7 +111,8 @@ public class Platform {
 	protected String videoSinkForOS() {
 		switch(Sys.getOSFamily()) {
 			case Windows:
-				return "directdrawsink";
+				//return "directdrawsink";
+				return "dshowvideosink";
 			default:
 				return "xvimagesink";
 		}
@@ -118,14 +123,46 @@ public class Platform {
 	public void testElement() throws InterruptedException {
 		assertTrue(true);
 
-		for(int i = 0; i < 20000; ++i) {
+		for(int i = 0; i < 300; ++i) {
 			IElement elem = Element.make("fakesink");
+			//elem.setCaps(Caps.from("video/x-raw-rgb"));
+			long base = elem.getBaseTime();
+			long start = elem.getStartTime();
+			assertEquals(0L, base);
+			assertEquals(0L, start);
 			//System.out.println(elem.getPointer());
 			elem.dispose();
 			assertTrue(elem.isDisposed());
 
-			if ((i % 1000) == 0 && i > 0) {
-				gc();
+			IPipeline pipeline = Pipeline.make("unit-test-pipeline");
+			IElement videotestsrc = Element.make("videotestsrc", "videotestsrc");
+			IElement ffmpegcolorspace = Element.make("ffmpegcolorspace", "ffmpegcolorspace");
+			IElement videosink = Element.make(videoSinkForOS(), "videosink");
+			pipeline.addAndLinkMany(videotestsrc, ffmpegcolorspace, videosink);
+
+			pipeline.changeState(State.Playing);
+			Thread.sleep(500L);
+
+			final boolean[] visited = new boolean[1];
+
+			visited[0] = false;
+			videotestsrc.visitSrcPads(new IElement.IPadVisitor() {
+				@Override
+				public boolean visit(IElement src, Pad pad) {
+					visited[0] = (pad != null && pad.getCaps() != null);
+					return true;
+				}
+			});
+			assertTrue(visited[0]);
+
+			base = pipeline.getBaseTime();
+			start = pipeline.getStartTime();
+
+			pipeline.changeState(State.Null);
+
+			gc();
+
+			if ((i % 10) == 0 && i > 0) {
 				System.out.println("Completed " + i + " iterations...");
 			}
 		}
@@ -153,6 +190,11 @@ public class Platform {
 
 		for(int i = 0; i < 20000; ++i) {
 			IBin b = new Bin("unit-test-bin");
+			IElement videotestsrc = Element.make("videotestsrc", "videotestsrc");
+
+			b.addAndLinkMany(videotestsrc);
+
+			videotestsrc.dispose();
 			b.dispose();
 			assertTrue(b.isDisposed());
 
@@ -428,10 +470,9 @@ public class Platform {
 			}
 		}
 
-		
 	}
 
-	@Test
+	//@Test
 	public void testSnapshot() throws Throwable {
 		IPipeline p = new Pipeline("unit-test-pipeline");
 		IElement videotestsrc = Element.make("videotestsrc", "videotestsrc");
@@ -452,13 +493,25 @@ public class Platform {
 		Buffer b = videosink.get("last-buffer");
 		assertNotNull(b);
 
-		IntBuffer bb = Colorspace.createRGBFrame(b);
-		assertNotNull(bb);
+		BufferedImage img = Colorspace.createBufferedImage(b);
+		assertNotNull(img);
+
+		assertTrue(ImageIO.write(img, "JPEG", new File("test.jpg")));
+		assertNotNull(ImageIO.read(new File("test.jpg")));
+		assertTrue(new File("test.jpg").delete());
 
 		b.dispose();
 		p.changeState(State.Null);
 
 		p.dispose();
+	}
+
+	//@Test
+	public void testEvents() throws InterruptedException {
+		for(int i = 0; i < 200000; ++i) {
+			StepEvent evt = StepEvent.from(Format.Time, TimeUnit.SECONDS.toNanos(1L), 1.0D, true, false);
+			evt.dispose();
+		}
 	}
 
 	//@Test

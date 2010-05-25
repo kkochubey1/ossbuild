@@ -10,6 +10,7 @@ import ossbuild.media.gstreamer.api.ISignalConnectResponse;
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public interface IGObject extends INativeObject {
+	boolean hasProperty(String name);
 	boolean set(String name, Object value);
 	boolean set(String name, Object value, IGTypeConverter customConverter);
 	<T extends Object> T get(String propertyName);

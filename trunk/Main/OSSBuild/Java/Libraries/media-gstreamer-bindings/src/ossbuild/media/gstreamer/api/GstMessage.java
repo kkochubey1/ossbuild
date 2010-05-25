@@ -40,8 +40,8 @@ public class GstMessage extends Structure {
 	public GstMessage() {
 	}
 
-	public GstMessage(GstMessage msg) {
-		this(msg.getPointer());
+	public GstMessage(GstMessage instance) {
+		this(instance.getPointer());
 	}
 
 	public GstMessage(Pointer ptr) {
@@ -55,8 +55,8 @@ public class GstMessage extends Structure {
 		public ByValue() {
 		}
 
-		public ByValue(GstMessage msg) {
-			super(msg.getPointer());
+		public ByValue(GstMessage instance) {
+			super(instance.getPointer());
 		}
 	}
 
@@ -64,8 +64,8 @@ public class GstMessage extends Structure {
 		public ByReference() {
 		}
 
-		public ByReference(GstMessage msg) {
-			super(msg.getPointer());
+		public ByReference(GstMessage instance) {
+			super(instance.getPointer());
 		}
 	}
 	//</editor-fold>

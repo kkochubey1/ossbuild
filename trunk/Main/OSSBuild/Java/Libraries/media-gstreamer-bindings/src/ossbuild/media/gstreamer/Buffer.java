@@ -54,11 +54,19 @@ public class Buffer extends BaseGstMiniObject {
 		this.managed = true;
 	}
 
-	Buffer(Pointer ptr) {
+	protected Buffer(Pointer ptr) {
 		super(ptr);
 		this.nativeBuffer = new GstBuffer(ptr);
 		this.managed = false;
 		ref();
+	}
+
+	protected Buffer(Pointer ptr, boolean incRef) {
+		super(ptr);
+		this.nativeBuffer = new GstBuffer(ptr);
+		this.managed = false;
+		if (incRef)
+			ref();
 	}
 	//</editor-fold>
 
@@ -161,6 +169,10 @@ public class Buffer extends BaseGstMiniObject {
 	//<editor-fold defaultstate="collapsed" desc="Public Static Methods">
 	public static Buffer from(Pointer ptr) {
 		return new Buffer(ptr);
+	}
+
+	public static Buffer from(Pointer ptr, boolean incRef) {
+		return new Buffer(ptr, incRef);
 	}
 	//</editor-fold>
 
