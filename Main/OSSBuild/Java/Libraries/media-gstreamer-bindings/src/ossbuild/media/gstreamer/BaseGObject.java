@@ -3,7 +3,6 @@ package ossbuild.media.gstreamer;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
 import java.io.File;
 import java.net.URI;
 import ossbuild.StringUtil;
@@ -82,6 +81,11 @@ abstract class BaseGObject extends BaseNativeObject implements IGObject {
 	@Override
 	public boolean set(String propertyName, Object value, IGTypeConverter customConverter) {
 		return savePropertyValue(this, propertyName, value, customConverter);
+	}
+
+	@Override
+	public boolean hasProperty(String name) {
+		return propertyExists(this, name);
 	}
 	//</editor-fold>
 

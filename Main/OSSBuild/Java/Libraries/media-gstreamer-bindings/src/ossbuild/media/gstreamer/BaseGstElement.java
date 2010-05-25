@@ -4,6 +4,7 @@ package ossbuild.media.gstreamer;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,6 +36,11 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 
 	BaseGstElement(Pointer ptr) {
 		super(ptr);
+		this.managed = false;
+	}
+
+	BaseGstElement(Pointer ptr, boolean incRef) {
+		super(ptr, incRef);
 		this.managed = false;
 	}
 	//</editor-fold>
@@ -87,6 +93,32 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 			return factoryClass;
 		return (factoryClass = factoryClass(this));
 	}
+
+	@Override
+	public boolean setCaps(Caps caps) {
+		//TODO: Check for memory leaks
+		boolean ret = false;
+		synchronized(caps.ownershipLock()) {
+			caps.takeOwnership();
+			try {
+				ret = set("caps", caps);
+			} finally {
+				if (!ret)
+					caps.releaseOwnership();
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public long getBaseTime() {
+		return gst_element_get_base_time(ptr).longValue();
+	}
+
+	@Override
+	public long getStartTime() {
+		return gst_element_get_start_time(ptr).longValue();
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="ToString">
@@ -118,6 +150,172 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 	@Override
 	public StateChangeReturn changeState(State state) {
 		return StateChangeReturn.fromNative(gst_element_set_state(ptr, state.nativeValue));
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Public Methods">
+	@Override
+	public Pad staticPad(String name) {
+		Pointer p = gst_element_get_static_pad(ptr, name);
+		if (p == null || p == Pointer.NULL)
+			return null;
+		return Pad.from(p, false);
+	}
+
+	@Override
+	public boolean addPad(Pad pad) {
+		//TODO: Check for memory leaks
+		if (pad == null)
+			return false;
+		
+		boolean ret = false;
+		synchronized(pad.ownershipLock()) {
+			pad.takeOwnership();
+			try {
+				ret = gst_element_add_pad(ptr, pad.getPointer());
+			} finally {
+				if (!ret)
+					pad.releaseOwnership();
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public boolean removePad(Pad pad) {
+		//TODO: Check for memory leaks
+		if (pad == null)
+			return false;
+		return gst_element_remove_pad(ptr, pad.getPointer());
+	}
+
+	@Override
+	public boolean postMessage(Message msg) {
+		//TODO: Check for memory leaks
+		if (msg == null)
+			return false;
+		msg.ref();
+		boolean ret = gst_element_post_message(ptr, msg.getPointer());
+		if (!ret)
+			msg.unref();
+		return ret;
+	}
+
+	@Override
+	public void visitPads(IPadVisitor visitor) {
+		if (visitor == null)
+			return;
+		Pointer pIterator = gst_element_iterate_pads(ptr);
+		if (pIterator == null || pIterator == Pointer.NULL)
+			return;
+		
+		boolean done = false;
+		PointerByReference ref = new PointerByReference();
+		while(!done) {
+			//This will increase the ref counter -- so we need to create an object
+			//that doesn't increase the ref counter when it's built so on dispose(),
+			//the ref count will be zero.
+			switch(IteratorResult.fromNative(gst_iterator_next(pIterator, ref))) {
+				case OK:
+					//Passing false here tells pad to not increase the ref count
+					//when building a new pad from the pointer.
+					Pad pad = Pad.from(ref.getValue(), false);
+					boolean ret = visitor.visit(this, pad);
+					pad.dispose();
+					done = !ret;
+					break;
+				case Resync:
+					gst_iterator_resync(pIterator);
+					break;
+				case Error:
+				case Done:
+				case Unknown:
+					done = true;
+					break;
+				default:
+					done = true;
+					break;
+			}
+		}
+		gst_iterator_free(pIterator);
+	}
+
+	@Override
+	public void visitSrcPads(IPadVisitor visitor) {
+		if (visitor == null)
+			return;
+		Pointer pIterator = gst_element_iterate_src_pads(ptr);
+		if (pIterator == null || pIterator == Pointer.NULL)
+			return;
+
+		boolean done = false;
+		PointerByReference ref = new PointerByReference();
+		while(!done) {
+			//This will increase the ref counter -- so we need to create an object
+			//that doesn't increase the ref counter when it's built so on dispose(),
+			//the ref count will be zero.
+			switch(IteratorResult.fromNative(gst_iterator_next(pIterator, ref))) {
+				case OK:
+					//Passing false here tells pad to not increase the ref count
+					//when building a new pad from the pointer.
+					Pad pad = Pad.from(ref.getValue(), false);
+					boolean ret = visitor.visit(this, pad);
+					pad.dispose();
+					done = !ret;
+					break;
+				case Resync:
+					gst_iterator_resync(pIterator);
+					break;
+				case Error:
+				case Done:
+				case Unknown:
+					done = true;
+					break;
+				default:
+					done = true;
+					break;
+			}
+		}
+		gst_iterator_free(pIterator);
+	}
+
+	@Override
+	public void visitSinkPads(IPadVisitor visitor) {
+		if (visitor == null)
+			return;
+		Pointer pIterator = gst_element_iterate_sink_pads(ptr);
+		if (pIterator == null || pIterator == Pointer.NULL)
+			return;
+
+		boolean done = false;
+		PointerByReference ref = new PointerByReference();
+		while(!done) {
+			//This will increase the ref counter -- so we need to create an object
+			//that doesn't increase the ref counter when it's built so on dispose(),
+			//the ref count will be zero.
+			switch(IteratorResult.fromNative(gst_iterator_next(pIterator, ref))) {
+				case OK:
+					//Passing false here tells pad to not increase the ref count
+					//when building a new pad from the pointer.
+					Pad pad = Pad.from(ref.getValue(), false);
+					boolean ret = visitor.visit(this, pad);
+					pad.dispose();
+					done = !ret;
+					break;
+				case Resync:
+					gst_iterator_resync(pIterator);
+					break;
+				case Error:
+				case Done:
+				case Unknown:
+					done = true;
+					break;
+				default:
+					done = true;
+					break;
+			}
+		}
+		gst_iterator_free(pIterator);
 	}
 	//</editor-fold>
 
@@ -185,6 +383,13 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 		return gst_element_link(element1.getPointer(), element2.getPointer());
 	}
 
+	public static boolean unlink(IElement element1, IElement element2) {
+		if (element1 == null || element2 == null)
+			return false;
+		gst_element_unlink(element1.getPointer(), element2.getPointer());
+		return true;
+	}
+
 	public static boolean linkMany(IElement...elements) {
 		if (elements == null || elements.length <= 0)
 			return true;
@@ -203,6 +408,40 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 		}
 
 		return ret;
+	}
+
+	public static boolean unlinkMany(IElement...elements) {
+		if (elements == null || elements.length <= 0)
+			return true;
+
+		Pointer curr = null;
+		Pointer last = null;
+		for(int i = elements.length - 1; i >= 0; --i) {
+			if (elements[i] == null)
+				continue;
+
+			curr = elements[i].getPointer();
+			if (last != null)
+				gst_element_unlink(last, curr);
+			last = curr;
+		}
+
+		return true;
+	}
+
+	public static boolean linkPads(IElement src, String srcPadName, IElement dest, String destPadName) {
+		return gst_element_link_pads(src.getPointer(), srcPadName, dest.getPointer(), destPadName);
+	}
+
+	public static boolean linkPadsFiltered(IElement src, String srcPadName, IElement dest, String destPadName, Caps caps) {
+		return gst_element_link_pads_filtered(src.getPointer(), srcPadName, dest.getPointer(), destPadName, caps.getPointer());
+	}
+
+	public static boolean unlinkPads(IElement src, String srcPadName, IElement dest, String destPadName) {
+		if (src == null || dest == null)
+			return false;
+		gst_element_unlink_pads(src.getPointer(), srcPadName, dest.getPointer(), destPadName);
+		return true;
 	}
 
 	public static boolean xoverlayWindowID(IElement src, long window) {

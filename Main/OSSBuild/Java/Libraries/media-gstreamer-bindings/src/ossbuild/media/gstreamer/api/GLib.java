@@ -97,5 +97,9 @@ public class GLib extends Library {
 	public static native boolean g_main_context_is_owner(Pointer context);
 	public static native boolean g_main_context_wait(Pointer context);
 	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Misc">
+	public static native String g_get_application_name();
+	//</editor-fold>
 	//</editor-fold>
 }

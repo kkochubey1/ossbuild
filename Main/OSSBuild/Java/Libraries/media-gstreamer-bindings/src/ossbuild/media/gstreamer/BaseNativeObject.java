@@ -11,9 +11,9 @@ import static ossbuild.media.gstreamer.api.GObject.*;
  */
 abstract class BaseNativeObject implements INativeObject, IDisposable {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
-	boolean managed = true;
-	boolean disposed = false;
-	Pointer ptr = Pointer.NULL;
+	protected boolean managed = true;
+	protected boolean disposed = false;
+	protected Pointer ptr = Pointer.NULL;
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">

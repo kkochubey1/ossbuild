@@ -2,6 +2,7 @@
 package ossbuild.media.gstreamer;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -27,8 +28,41 @@ public class Colorspace {
 	};
 	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="Classes">
+	public static class Frame {
+		//<editor-fold defaultstate="collapsed" desc="Variables">
+		private IntBuffer buffer;
+		private int width;
+		private int height;
+		//</editor-fold>
+
+		//<editor-fold defaultstate="collapsed" desc="Initialization">
+		private Frame(int width, int height, IntBuffer buffer) {
+			this.width = width;
+			this.height = height;
+			this.buffer = buffer;
+		}
+		//</editor-fold>
+
+		//<editor-fold defaultstate="collapsed" desc="Getters">
+		public int getWidth() {
+			return width;
+		}
+
+		public int getHeight() {
+			return height;
+		}
+
+		public IntBuffer getBuffer() {
+			return buffer;
+		}
+		//</editor-fold>
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Public Static Methods">
 	public static IntBuffer convertToRGB(final ByteBuffer bb, final int width, final int height, final String colorspace, final String fourcc) {
-		if (!isValidColorspace(colorspace))
+		if (!isKnownColorspace(colorspace))
 			return null;
 
 		if (isRGBColorspace(colorspace)) {
@@ -115,7 +149,7 @@ public class Colorspace {
 		return VALID_COLORSPACES[1].equalsIgnoreCase(colorspace);
 	}
 
-	public static boolean isValidYUVFormat(final String yuvFormat) {
+	public static boolean isKnownYUVFormat(final String yuvFormat) {
 		if (StringUtil.isNullOrEmpty(yuvFormat))
 			return false;
 		for(String cs : VALID_YUV_FORMATS)
@@ -124,7 +158,7 @@ public class Colorspace {
 		return false;
 	}
 
-	public static boolean isValidColorspace(final String colorspace) {
+	public static boolean isKnownColorspace(final String colorspace) {
 		if (StringUtil.isNullOrEmpty(colorspace))
 			return false;
 		for(String cs : VALID_COLORSPACES)
@@ -133,7 +167,7 @@ public class Colorspace {
 		return false;
 	}
 
-	public static String createColorspaceFilter(final boolean includeFramerate, final float fps) {
+	public static String createKnownColorspaceFilter(final boolean includeFramerate, final float fps) {
 		final String framerate = (includeFramerate ? null : ", framerate=" + (int)fps + "/1");
 		final StringBuilder sb = new StringBuilder(256);
 
@@ -148,7 +182,7 @@ public class Colorspace {
 		return sb.toString();
 	}
 
-	public static IntBuffer createRGBFrame(final Buffer buffer) {
+	public static Frame createRGBFrame(final Buffer buffer) {
 		if (buffer == null)
 			return null;
 
@@ -167,10 +201,32 @@ public class Colorspace {
 				return null;
 
 			//Convert to RGB using the provided direct buffer
-			return convertToRGB(buffer.asByteBuffer(), width, height, struct.name(), struct.fieldExists("format") ? struct.fieldAsFourCCString("format") : null);
+			return new Frame(width, height, convertToRGB(buffer.asByteBuffer(), width, height, struct.name(), struct.fieldExists("format") ? struct.fieldAsFourCCString("format") : null));
 		} catch(Throwable t) {
 			return null;
 		} finally {
 		}
 	}
+
+	public static BufferedImage createBufferedImage(final Buffer buffer) {
+		return createBufferedImage(createRGBFrame(buffer));
+	}
+
+	public static BufferedImage createBufferedImage(final Frame frame) {
+		if (frame == null)
+			return null;
+
+		try {
+
+			final BufferedImage img = new BufferedImage(frame.width, frame.height, BufferedImage.TYPE_INT_RGB);
+			img.setAccelerationPriority(0.001f);
+			frame.buffer.get(((DataBufferInt)img.getRaster().getDataBuffer()).getData(), 0, frame.buffer.remaining());
+
+			return img;
+		} catch(Throwable t) {
+			return null;
+		} finally {
+		}
+	}
+	//</editor-fold>
 }

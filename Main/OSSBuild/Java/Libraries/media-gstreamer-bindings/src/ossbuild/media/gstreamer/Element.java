@@ -18,8 +18,12 @@ public class Element extends BaseGstElement {
 		super(factoryName, elementName);
 	}
 
-	Element(Pointer ptr) {
+	protected Element(Pointer ptr) {
 		super(ptr);
+	}
+
+	protected Element(Pointer ptr, boolean incRef) {
+		super(ptr, incRef);
 	}
 
 	@Override
@@ -43,6 +47,10 @@ public class Element extends BaseGstElement {
 
 	public static IElement from(Pointer pElement) {
 		return new Element(pElement);
+	}
+
+	public static IElement from(Pointer pElement, boolean incRef) {
+		return new Element(pElement, incRef);
 	}
 	//</editor-fold>
 }

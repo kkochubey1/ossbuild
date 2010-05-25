@@ -29,8 +29,10 @@ import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
+import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 import ossbuild.StringUtil;
+import ossbuild.Sys;
 import static ossbuild.media.gstreamer.api.GLib.*;
 import static ossbuild.media.gstreamer.api.GObject.*;
 
@@ -108,6 +110,9 @@ public class GStreamer extends Library {
 
 		//Add the program name to the beginning of the array
 		args = Utils.joinBefore(args, !StringUtil.isNullOrEmpty(programName) ? programName : StringUtil.empty);
+
+		if (StringUtil.isNullOrEmpty(Sys.getEnvironmentVariable("GST_DEBUG_DUMP_DOT_DIR")))
+			Sys.setEnvironmentVariable("GST_DEBUG_DUMP_DOT_DIR", new File(".").getAbsolutePath());
 
 		//Initialize GStreamer
 		IntByReference argc = new IntByReference(args.length);
@@ -226,8 +231,25 @@ public class GStreamer extends Library {
 	public static native int gst_element_get_state(Pointer elem, IntByReference state, IntByReference pending, long timeout);
 
 	public static native boolean gst_element_link(Pointer elem1, Pointer elem2);
+	public static native void gst_element_unlink(Pointer elem1, Pointer elem2);
 
 	public static native Pointer gst_element_get_factory(Pointer element);
+	public static native Pointer /*GstPad*/ gst_element_get_static_pad(Pointer /*GstElement*/ element, String name);
+	public static native boolean gst_element_add_pad(Pointer /*GstElement*/ elem, Pointer /*GstPad*/ pad);
+	public static native boolean gst_element_remove_pad(Pointer /*GstElement*/ elem, Pointer /*GstPad*/ pad);
+	
+	public static native boolean gst_element_link_pads(Pointer /*GstElement*/ src, String srcpadname, Pointer /*GstElement*/ dest, String destpadname);
+	public static native void gst_element_unlink_pads(Pointer /*GstElement*/ src, String srcpadname, Pointer /*GstElement*/ dest, String destpadname);
+	public static native boolean gst_element_link_pads_filtered(Pointer /*GstElement*/ src, String srcpadname, Pointer /*GstElement*/ dest, String destpadname, Pointer /*GstCaps*/ filter);
+
+	public static native Pointer /*GstIterator*/ gst_element_iterate_pads(Pointer /*GstElement*/ element);
+	public static native Pointer /*GstIterator*/ gst_element_iterate_src_pads(Pointer /*GstElement*/ element);
+	public static native Pointer /*GstIterator*/ gst_element_iterate_sink_pads(Pointer /*GstElement*/ element);
+
+	public static native boolean gst_element_post_message(Pointer /*GstElement*/ element, Pointer /*GstMessage*/ message);
+
+	public static native NativeLong gst_element_get_base_time(Pointer /*GstElement*/ element);
+	public static native NativeLong gst_element_get_start_time(Pointer /*GstElement*/ element);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstBin">
@@ -240,6 +262,12 @@ public class GStreamer extends Library {
 	//public static native void gst_bin_remove_many(Pointer bin, Pointer /*GstElement...*/ elements);
 	public static native Pointer gst_bin_get_by_name(Pointer bin, String name);
 	public static native Pointer gst_bin_get_by_name_recurse_up(Pointer bin, String name);
+
+	public static native Pointer /*GstElement*/ gst_bin_iterate_elements(Pointer /*GstBin*/ bin);
+	public static native Pointer /*GstElement*/ gst_bin_iterate_sorted(Pointer /*GstBin*/ bin);
+	public static native Pointer /*GstElement*/ gst_bin_iterate_recurse(Pointer /*GstBin*/ bin);
+	public static native Pointer /*GstElement*/ gst_bin_iterate_sinks(Pointer /*GstBin*/ bin);
+	public static native Pointer /*GstElement*/ gst_bin_iterate_sources(Pointer /*GstBin*/ bin);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstPipeline">
@@ -382,6 +410,61 @@ public class GStreamer extends Library {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstPad">
+	public static native Pointer /*GstPad*/ gst_pad_new(String name, int /*GstPadDirection*/ direction);
+	public static native Pointer /*GstPad*/ gst_pad_new_from_template(Pointer /*GstPadTemplate*/ templ, String name);
+
+	//public static native String gst_pad_get_name(Pointer /*GstPad*/ pad);
+	
+	public static native int /*GstPadLinkReturn*/ gst_pad_link(Pointer /*GstPad*/ src, Pointer /*GstPad*/ sink);
+	public static native boolean gst_pad_unlink(Pointer /*GstPad*/ src, Pointer /*GstPad*/ sink);
+	public static native boolean gst_pad_is_linked(Pointer /*GstPad*/ pad);
+	public static native Pointer /*GstPad*/ gst_pad_get_peer(Pointer /*GstPad*/ pad);
+	public static native int /*GstPadDirection*/ gst_pad_get_direction(Pointer /*GstPad*/ pad);
+
+	/* pad functions from gstutils.h */
+	public static native boolean gst_pad_can_link(Pointer /*GstPad*/ srcpad, Pointer /*GstPad*/ sinkpad);
+
+	public static native void gst_pad_use_fixed_caps(Pointer /*GstPad*/ pad);
+	public static native Pointer /*GstCaps*/ gst_pad_get_fixed_caps_func(Pointer /*GstPad*/ pad);
+	public static native Pointer /*GstCaps*/ gst_pad_proxy_getcaps(Pointer /*GstPad*/ pad);
+	public static native boolean gst_pad_proxy_setcaps(Pointer /*GstPad*/ pad, Pointer /*GstCaps*/ caps);
+	public static native Pointer /*GstElement*/ gst_pad_get_parent_element(Pointer /*GstPad*/ pad);
+
+
+	public static native boolean gst_pad_set_active(Pointer /*GstPad*/ pad, boolean active);
+	public static native boolean gst_pad_is_active(Pointer /*GstPad*/ pad);
+	public static native boolean gst_pad_activate_pull(Pointer /*GstPad*/ pad, boolean active);
+	public static native boolean gst_pad_activate_push(Pointer /*GstPad*/ pad, boolean active);
+	public static native boolean gst_pad_set_blocked(Pointer /*GstPad*/ pad, boolean blocked);
+	public static native boolean gst_pad_is_blocked(Pointer /*GstPad*/ pad);
+	public static native boolean gst_pad_is_blocking(Pointer /*GstPad*/ pad);
+	/* get_pad_template returns a non-refcounted PadTemplate */
+	public static native Pointer /*GstPadTemplate*/ gst_pad_get_pad_template(Pointer /*GstPad*/ pad);
+	//public static native boolean gst_pad_set_blocked_async(Pointer /*GstPad*/ pad, boolean blocked, PadBlockCallback callback, Pointer userData);
+
+	/* capsnego function for connected/unconnected pads */
+	public static native Pointer /*GstCaps*/ gst_pad_get_caps(Pointer /*GstPad*/  pad);
+	public static native void gst_pad_fixate_caps(Pointer /*GstPad*/ pad, Pointer /*GstCaps*/ caps);
+	public static native boolean gst_pad_accept_caps(Pointer /*GstPad*/ pad, Pointer /*GstCaps*/ caps);
+	public static native boolean gst_pad_set_caps(Pointer /*GstPad*/ pad, Pointer /*GstCaps*/ caps);
+	public static native Pointer /*GstCaps*/ gst_pad_peer_get_caps(Pointer /*GstPad*/ pad);
+	public static native boolean gst_pad_peer_accept_caps(Pointer /*GstPad*/ pad, Pointer /*GstCaps*/ caps);
+
+	/* capsnego for connected pads */
+	public static native Pointer /*GstCaps*/ gst_pad_get_allowed_caps(Pointer /*GstPad*/ pad);
+	public static native Pointer /*GstCaps*/ gst_pad_get_negotiated_caps(Pointer /*GstPad*/ pad);
+
+	/* data passing functions to peer */
+	public static native int /*GstFlowReturn*/ gst_pad_push(Pointer /*GstPad*/ pad, Pointer /*GstBuffer*/ buffer);
+	public static native boolean gst_pad_check_pull_range(Pointer /*GstPad*/ pad);
+	public static native int /*GstFlowReturn*/ gst_pad_pull_range(Pointer /*GstPad*/ pad, /* guint64 */ long offset, /* guint */ int size, PointerByReference buffer);
+	public static native boolean gst_pad_push_event(Pointer /*GstPad*/ pad, Pointer /*GstEvent*/ event);
+	public static native boolean gst_pad_event_default(Pointer /*GstPad*/ pad, Pointer /*GstEvent*/ event);
+	
+	/* data passing functions on pad */
+	public static native int /*GstFlowReturn*/ gst_pad_chain(Pointer /*GstPad*/ pad, Pointer /*GstBuffer*/ buffer);
+	public static native int /*GstFlowReturn*/ gst_pad_get_range(Pointer /*GstPad*/ pad, /* guint64 */ long offset, /* guint */ int size, PointerByReference buffer);
+	public static native boolean gst_pad_send_event(Pointer /*GstPad*/ pad, Pointer /*GstEvent*/ event);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstBuffer">
@@ -404,6 +487,37 @@ public class GStreamer extends Library {
 	/* buffer functions from gstutils.h */
 	public static native Pointer /*GstBuffer*/ gst_buffer_merge(Pointer /*GstBuffer*/ buf1, Pointer /*GstBuffer*/ buf2);
 	public static native Pointer /*GstBuffer*/ gst_buffer_join(Pointer /*GstBuffer*/ buf1, Pointer /*GstBuffer*/ buf2);
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="GstEvent">
+	public static native Pointer /*GstStructure*/ gst_event_get_structure(Pointer /*GstEvent*/ event);
+	//These are inlined away -- need to use casting to do the same thing
+	//public static native Pointer /*GstEvent*/ gst_event_ref(Pointer /*GstEvent*/ event);
+	//public static native void gst_event_unref(Pointer /*GstEvent*/ event);
+
+	public static native Pointer /*GstEvent*/ gst_event_new_step(int /*GstFormat*/ format, long /*guint64*/ amount, double /*gdouble*/ rate, int /*gboolean*/ flush, int /*gboolean*/ intermediate);
+	public static native void gst_event_parse_step(Pointer /*GstEvent*/ event, IntByReference /*GstFormat*/ format, LongByReference /*guint64*/ amount, DoubleByReference /*gdouble*/ rate, IntByReference /*gboolean*/ flush, IntByReference /*gboolean**/ intermediate);
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="GstIterator">
+	public static native void gst_iterator_free(Pointer iter);
+	public static native int /*GstIteratorResult*/ gst_iterator_next(Pointer iter, PointerByReference next);
+	public static native void gst_iterator_resync(Pointer iter);
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="GstGhostPad">
+	public static native Pointer /*GstGhostPad*/ gst_ghost_pad_new_from_template(String name, Pointer /*GstPad*/ target, Pointer /*GstPadTemplate*/ templ);
+	public static native Pointer /*GstGhostPad*/ gst_ghost_pad_new_no_target_from_template(String name, Pointer /*GstPadTemplate*/ templ);
+	public static native Pointer /*GstGhostPad*/ gst_ghost_pad_new(String name, Pointer /*GstPad*/ target);
+	public static native Pointer /*GstGhostPad*/ gst_ghost_pad_new_no_target(String name, int direction);
+
+	public static native Pointer /*GstPad*/ gst_ghost_pad_get_target(Pointer /*GstGhostPad*/ gpad);
+	public static native boolean gst_ghost_pad_set_target(Pointer /*GstGhostPad*/ gpad, Pointer /*GstPad*/ newtarget);
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="GstDebug">
+	public static native void _gst_debug_bin_to_dot_file (Pointer /*GstBin*/ bin, int details, String file_name);
+	public static native void _gst_debug_bin_to_dot_file_with_ts (Pointer /*GstBin*/ bin, int details, String file_name);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Types">
