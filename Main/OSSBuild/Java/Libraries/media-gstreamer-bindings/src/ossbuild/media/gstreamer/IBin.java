@@ -8,12 +8,18 @@ import java.io.File;
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public interface IBin extends IElement {
+	IBin binFromName(String name);
+	IBin binFromNameRecurseUp(String name);
 	IElement elementFromName(String name);
 	IElement elementFromNameRecurseUp(String name);
 
 	boolean add(IElement element);
 	boolean addMany(IElement... elements);
 	boolean addAndLinkMany(IElement... elements);
+
+	boolean remove(IElement element);
+	boolean removeMany(IElement... elements);
+	boolean unlinkAndRemoveMany(IElement... elements);
 
 	void visitElements(IElementVisitor visitor);
 	void visitElementsSorted(IElementVisitor visitor);

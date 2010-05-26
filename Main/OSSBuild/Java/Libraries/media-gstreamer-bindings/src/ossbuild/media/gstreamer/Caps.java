@@ -546,5 +546,12 @@ public class Caps extends BaseGObject implements List<Structure> {
 	public static Caps from(Pointer p, boolean incRef) {
 		return new Caps(p, incRef);
 	}
+
+	public static Caps from(Pointer p, boolean incRef, boolean unref) {
+		Caps obj = new Caps(p, incRef);
+		if (unref)
+			obj.unref();
+		return obj;
+	}
 	//</editor-fold>
 }

@@ -197,6 +197,17 @@ public class GStreamer extends Library {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="API">
+	//<editor-fold defaultstate="collapsed" desc="Constants">
+	public static final int
+		  GST_SEEK_FLAG_NONE        = 0
+		, GST_SEEK_FLAG_FLUSH       = (1 << 0)
+		, GST_SEEK_FLAG_ACCURATE    = (1 << 1)
+		, GST_SEEK_FLAG_KEY_UNIT    = (1 << 2)
+		, GST_SEEK_FLAG_SEGMENT     = (1 << 3)
+		, GST_SEEK_FLAG_SKIP        = (1 << 4)
+	;
+	//</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="Gst">
 	public static native boolean gst_init(IntByReference argc, PointerByReference argv);
 	public static native boolean gst_init_check(IntByReference argc, PointerByReference argv, PointerByReference err);
@@ -250,6 +261,11 @@ public class GStreamer extends Library {
 
 	public static native NativeLong gst_element_get_base_time(Pointer /*GstElement*/ element);
 	public static native NativeLong gst_element_get_start_time(Pointer /*GstElement*/ element);
+
+	public static native boolean gst_element_query_position(Pointer /*GstElement*/ elem, IntByReference /*GstFormat**/ fmt, LongByReference /*GstClockTime*/ pos);
+	public static native boolean gst_element_query_duration(Pointer /*GstElement*/ elem, IntByReference /*GstFormat**/ fmt, LongByReference /*GstClockTime*/ dur);
+	public static native boolean gst_element_seek(Pointer /*GstElement*/ elem, double /*gdouble*/ rate, int /*GstFormat*/ format, int /*GstSeekFlags*/ flags, int /*GstSeekType*/ cur_type, long cur, int /*GstSeekType*/ stop_type, long stop);
+	public static native boolean gst_element_seek_simple(Pointer /*GstElement*/ elem, int /*GstFormat*/ format, int /*GstSeekFlags*/ flags, long pos);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstBin">
@@ -284,6 +300,8 @@ public class GStreamer extends Library {
 	//<editor-fold defaultstate="collapsed" desc="GstMessage">
 	//public static native Pointer gst_message_ref(Pointer msg);
 	//public static native void gst_message_unref(Pointer msg);
+
+	public static native Pointer /*GstStructure*/ gst_message_get_structure(Pointer /*GstMessage*/ message);
 
 	public static native void gst_message_parse_state_changed(Pointer msg, IntByReference old, IntByReference current, IntByReference pending);
 	public static native void gst_message_parse_tag(Pointer msg, PointerByReference tagList);
@@ -399,6 +417,15 @@ public class GStreamer extends Library {
 
 	public static native Pointer /*GstMiniObject*/ gst_value_get_mini_object(Pointer /*GValue*/ value);
 	public static native void gst_value_set_mini_object(Pointer /*GValue*/ value, Pointer /*GstMiniObject*/ mini_object);
+
+	public static native int gst_value_get_fraction_numerator(Pointer /*GValue*/  value);
+	public static native int gst_value_get_fraction_denominator(Pointer /*GValue*/ value);
+	public static native Pointer /*GValue*/ gst_value_get_fraction_range_min(Pointer /*GValue*/ value);
+	public static native Pointer /*GValue*/ gst_value_get_fraction_range_max(Pointer /*GValue*/ value);
+	public static native double gst_value_get_double_range_min(Pointer /*GValue*/ value);
+	public static native double gst_value_get_double_range_max(Pointer /*GValue*/ value);
+	public static native int gst_value_get_int_range_min(Pointer /*GValue*/ value);
+	public static native int gst_value_get_int_range_max(Pointer /*GValue*/ value);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstPadTemplate">
@@ -520,6 +547,13 @@ public class GStreamer extends Library {
 	public static native void _gst_debug_bin_to_dot_file_with_ts (Pointer /*GstBin*/ bin, int details, String file_name);
 	//</editor-fold>
 
+	//<editor-fold defaultstate="collapsed" desc="GstInterface">
+	public static native NativeLong /*GType*/ gst_implements_interface_get_type();
+	public static native Pointer /*gpointer*/ gst_implements_interface_cast(Pointer /*gpointer*/ from, NativeLong /*GType*/ type);
+	public static native Pointer /*gpointer*/ gst_implements_interface_check(Pointer /*gpointer*/ from, NativeLong /*GType*/ type);
+	public static native boolean gst_element_implements_interface(Pointer /*GstElement*/ element, NativeLong /*GType*/ iface_type);
+	//</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="Types">
 	public static native NativeLong gst_bin_get_type();
 	public static native NativeLong gst_buffer_get_type();
@@ -564,15 +598,6 @@ public class GStreamer extends Library {
 	public static native NativeLong gst_fraction_range_get_type();
 	public static native NativeLong gst_value_list_get_type();
 	public static native NativeLong gst_fraction_get_type();
-
-	public static native int gst_value_get_fraction_numerator(Pointer /*GValue*/  value);
-	public static native int gst_value_get_fraction_denominator(Pointer /*GValue*/ value);
-	public static native Pointer /*GValue*/ gst_value_get_fraction_range_min(Pointer /*GValue*/ value);
-	public static native Pointer /*GValue*/ gst_value_get_fraction_range_max(Pointer /*GValue*/ value);
-	public static native double gst_value_get_double_range_min(Pointer /*GValue*/ value);
-	public static native double gst_value_get_double_range_max(Pointer /*GValue*/ value);
-	public static native int gst_value_get_int_range_min(Pointer /*GValue*/ value);
-	public static native int gst_value_get_int_range_max(Pointer /*GValue*/ value);
 	//</editor-fold>
 	//</editor-fold>
 }

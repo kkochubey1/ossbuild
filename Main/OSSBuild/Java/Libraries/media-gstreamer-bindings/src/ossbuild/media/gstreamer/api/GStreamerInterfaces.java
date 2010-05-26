@@ -56,7 +56,9 @@ public class GStreamerInterfaces extends Library {
 		for (int i = 0; i < DEFAULT_LIBRARY_NAME_FORMATS.length; ++i) {
 			try {
 				Native.register(String.format(DEFAULT_LIBRARY_NAME_FORMATS[i], LIBRARY_NAME));
-			} catch (UnsatisfiedLinkError ex) {
+			} catch(IllegalArgumentException e) {
+				throw e;
+			} catch (Throwable t) {
 				continue;
 			}
 			return;
@@ -70,22 +72,17 @@ public class GStreamerInterfaces extends Library {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="API">
-	//<editor-fold defaultstate="collapsed" desc="Implements">
-	//public static native Pointer gst_implements_interface_check(Pointer from, NativeLong /*GType*/ type);
-	//public static native boolean gst_element_implements_interface(Pointer element, NativeLong /*GType*/ iface_type);
-	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="XOverlay">
-	public static native int /*GType*/ gst_x_overlay_get_type();
-	public static native void gst_x_overlay_set_xwindow_id(Pointer overlay, NativeLong xwindow_id);
-	public static native void gst_x_overlay_set_xwindow_id(Pointer overlay, Pointer xwindow_id);
-	public static native void gst_x_overlay_got_xwindow_id(Pointer overlay, NativeLong xwindow_id);
-	public static native void gst_x_overlay_prepare_xwindow_id(Pointer overlay);
-	public static native void gst_x_overlay_expose(Pointer overlay);
-	public static native void gst_x_overlay_handle_events(Pointer overlay, boolean handle_events);
+	//<editor-fold defaultstate="collapsed" desc="GstXOverlay">
+	public static native void gst_x_overlay_set_xwindow_id(Pointer /*GstXOverlay*/ overlay, NativeLong xwindow_id);
+	public static native void gst_x_overlay_set_xwindow_id(Pointer /*GstXOverlay*/ overlay, Pointer xwindow_id);
+	public static native void gst_x_overlay_expose(Pointer /*GstXOverlay*/ overlay);
+	public static native void gst_x_overlay_handle_events(Pointer /*GstXOverlay*/ overlay, boolean handle_events);
+	public static native boolean gst_x_overlay_set_render_rectangle(Pointer /*GstXOverlay*/ overlay, int x, int y, int width, int height);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Types">
+	public static native NativeLong /*GType*/ gst_x_overlay_get_type();
+	
 	public static native NativeLong /*GType*/ gst_mixer_get_type();
 	public static native NativeLong /*GType*/ gst_mixer_track_get_type();
 

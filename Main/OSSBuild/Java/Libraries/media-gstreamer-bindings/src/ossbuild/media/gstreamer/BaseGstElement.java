@@ -159,7 +159,7 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 		Pointer p = gst_element_get_static_pad(ptr, name);
 		if (p == null || p == Pointer.NULL)
 			return null;
-		return Pad.from(p, false);
+		return Pad.from(p, false, true);
 	}
 
 	@Override
@@ -221,7 +221,7 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 					//when building a new pad from the pointer.
 					Pad pad = Pad.from(ref.getValue(), false);
 					boolean ret = visitor.visit(this, pad);
-					pad.dispose();
+					pad.unref();
 					done = !ret;
 					break;
 				case Resync:
@@ -260,7 +260,7 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 					//when building a new pad from the pointer.
 					Pad pad = Pad.from(ref.getValue(), false);
 					boolean ret = visitor.visit(this, pad);
-					pad.dispose();
+					pad.unref();
 					done = !ret;
 					break;
 				case Resync:
@@ -299,7 +299,7 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 					//when building a new pad from the pointer.
 					Pad pad = Pad.from(ref.getValue(), false);
 					boolean ret = visitor.visit(this, pad);
-					pad.dispose();
+					pad.unref();
 					done = !ret;
 					break;
 				case Resync:

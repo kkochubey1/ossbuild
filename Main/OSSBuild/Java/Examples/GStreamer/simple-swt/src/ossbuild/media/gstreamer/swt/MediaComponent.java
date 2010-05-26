@@ -177,8 +177,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		String audioElement;
 		switch (Sys.getOSFamily()) {
 			case Windows:
-				//videoElement = "dshowvideosink";
-				videoElement = "directdrawsink";
+				videoElement = "dshowvideosink";
+				//videoElement = "directdrawsink";
 				audioElement = "autoaudiosink";
 				break;
 			case Unix:
@@ -1833,8 +1833,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		if (lock.tryLock()) {
 			try {
 				if (pipeline != null) {
-					if (!isSeekable())
-						return;
+					//if (!isSeekable())
+					//	return;
 
 					final long position = pipeline.queryPosition(TimeUnit.MILLISECONDS);
 					final long duration = Math.max(position, pipeline.queryDuration(TimeUnit.MILLISECONDS));

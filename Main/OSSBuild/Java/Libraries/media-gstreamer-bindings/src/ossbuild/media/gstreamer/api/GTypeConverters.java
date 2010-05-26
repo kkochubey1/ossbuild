@@ -4,6 +4,7 @@ package ossbuild.media.gstreamer.api;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import ossbuild.media.gstreamer.Buffer;
+import ossbuild.media.gstreamer.Caps;
 import ossbuild.media.gstreamer.elements.VideoTestSrcPattern;
 import static ossbuild.media.gstreamer.api.GObject.*;
 import static ossbuild.media.gstreamer.api.GStreamer.*;
@@ -46,10 +47,26 @@ public class GTypeConverters {
 			return Buffer.from(gst_value_get_mini_object(pPropValue));
 		}
 	};
+
+	public static final IGTypeConverter CAPS = new IGTypeConverter() {
+		@Override
+		public boolean convertToProperty(Pointer pObject, Pointer pParamSpec, Pointer pPropValue, NativeLong propertyType, GParamSpec paramSpec, GValue propValue, Object value) {
+			if (!(value instanceof Caps))
+				return false;
+			gst_value_set_caps(pPropValue, ((Caps)value).getPointer());
+			return true;
+		}
+
+		@Override
+		public Object convertFromProperty(Pointer pObject, Pointer pParamSpec, Pointer pPropValue, NativeLong propertyType, GParamSpec paramSpec, GValue propValue) {
+			return Caps.from(gst_value_get_caps(pPropValue), false, false);
+		}
+	};
 	//</editor-fold>
 
 	public static void initialize() {
 		//Some of these can't be added easily b/c their gtype value is set at runtime
 		//GType.addCustomConverter(VideoTestSrcPattern.GTYPE, VIDEO_TEST_SRC_PATTERN);
+		GType.addCustomConverter(gst_caps_get_type(), CAPS);
 	}
 }
