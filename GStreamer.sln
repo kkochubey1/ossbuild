@@ -849,6 +849,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{19987483
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pipeline-start-stop", "Main\GStreamer\Windows\Build\Tests\pipeline-start-stop.vcproj", "{C987873B-2B88-0C1B-B627-27FD04F91144}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "videotestsrc-start-stop", "Main\GStreamer\Windows\Build\Tests\videotestsrc-start-stop.vcproj", "{D987A73B-2C88-FC11-B627-27FD04F91104}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release (All)|Win32 = Release (All)|Win32
@@ -2341,6 +2343,9 @@ Global
 		{C987873B-2B88-0C1B-B627-27FD04F91144}.Release (All)|Win32.ActiveCfg = Release|Win32
 		{C987873B-2B88-0C1B-B627-27FD04F91144}.Release (GPL)|Win32.ActiveCfg = Release|Win32
 		{C987873B-2B88-0C1B-B627-27FD04F91144}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
+		{D987A73B-2C88-FC11-B627-27FD04F91104}.Release (All)|Win32.ActiveCfg = Release|Win32
+		{D987A73B-2C88-FC11-B627-27FD04F91104}.Release (GPL)|Win32.ActiveCfg = Release|Win32
+		{D987A73B-2C88-FC11-B627-27FD04F91104}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2663,5 +2668,6 @@ Global
 		{B6DE0D66-8DE9-4AD8-A9BA-C025B01ABEC2} = {09DA24A3-B57A-4FA2-A2FA-41C0B84C50B8}
 		{1B0A8CBA-415D-4885-B567-71B5DCB2921A} = {E212FB60-8023-4B77-9A05-E8EB5ED547F7}
 		{C987873B-2B88-0C1B-B627-27FD04F91144} = {19987483-5CBC-4EF3-8CF7-C2AF906F8A62}
+		{D987A73B-2C88-FC11-B627-27FD04F91104} = {19987483-5CBC-4EF3-8CF7-C2AF906F8A62}
 	EndGlobalSection
 EndGlobal
