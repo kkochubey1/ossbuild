@@ -2,6 +2,7 @@
 package ossbuild.media.gstreamer.api;
 
 import com.sun.jna.Pointer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,19 @@ public class Callbacks {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Public Static Methods">
+	public static Object lock() {
+		return lock;
+	}
+
+	public static Set<ICallback> forPointer(Pointer ptr) {
+		if (!callbacks.containsKey(ptr))
+			return null;
+		Set<ICallback> set = callbacks.get(ptr);
+		if (set == null || set.size() <= 0)
+			return null;
+		return Collections.unmodifiableSet(set);
+	}
+
 	public static boolean register(Pointer ptr, ICallback callback) {
 		if (ptr == null || ptr == Pointer.NULL || callback == null)
 			return false;

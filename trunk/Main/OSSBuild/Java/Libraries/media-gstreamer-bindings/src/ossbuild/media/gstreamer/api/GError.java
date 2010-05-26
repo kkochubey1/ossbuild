@@ -27,12 +27,13 @@ import com.sun.jna.Structure;
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public class GError extends Structure {
-	public int domain; /* GQuark */
-	public int code;
-	public String message;
+	public volatile int domain; /* GQuark */
+	public volatile int code;
+	public volatile String message;
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	public GError() {
+		clear();
 	}
 
 	public GError(GError instance) {
@@ -41,7 +42,16 @@ public class GError extends Structure {
 
 	public GError(Pointer ptr) {
 		useMemory(ptr, 0);
-		read();
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Getters">
+	public int getCode() {
+		return (Integer)readField("code");
+	}
+	
+	public String getMessage() {
+		return (String)readField("message");
 	}
 	//</editor-fold>
 

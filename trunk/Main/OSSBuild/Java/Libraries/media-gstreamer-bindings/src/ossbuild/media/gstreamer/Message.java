@@ -33,6 +33,13 @@ public class Message extends BaseGstMiniObject {
 	public MessageType getMessageType() {
 		return msgType;
 	}
+
+	public Structure getStructure() {
+		Pointer p = gst_message_get_structure(ptr);
+		if (p == null || p == Pointer.NULL)
+			return null;
+		return Structure.from(p);
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="ToString">

@@ -77,7 +77,7 @@ public class Pad extends BaseGstObject {
 		Pointer p = gst_pad_get_caps(ptr);
 		if (p == null || p == Pointer.NULL)
 			return null;
-		return Caps.from(p, false);
+		return Caps.from(p, false, false);
 	}
 
 	public boolean setCaps(Caps caps) {
@@ -96,21 +96,21 @@ public class Pad extends BaseGstObject {
 		Pointer p = gst_pad_get_allowed_caps(ptr);
 		if (p == null || p == Pointer.NULL)
 			return null;
-		return Caps.from(p, false);
+		return Caps.from(p, false, false);
 	}
 
 	public Caps getNegotiatedCaps() {
 		Pointer p = gst_pad_get_negotiated_caps(ptr);
 		if (p == null || p == Pointer.NULL)
 			return null;
-		return Caps.from(p, false);
+		return Caps.from(p, false, false);
 	}
 
 	public Pad getPeer() {
 		Pointer p = gst_pad_get_peer(ptr);
 		if (p == null || p == Pointer.NULL)
 			return null;
-		return Pad.from(p, false);
+		return Pad.from(p, false, true);
 	}
 
 	public boolean isLinked() {
@@ -276,6 +276,13 @@ public class Pad extends BaseGstObject {
 
 	public static Pad from(Pointer p, boolean incRef) {
 		return new Pad(p, incRef);
+	}
+
+	public static Pad from(Pointer p, boolean incRef, boolean unref) {
+		Pad pad = new Pad(p, incRef);
+		if (unref)
+			pad.unref();
+		return pad;
 	}
 	//</editor-fold>
 }

@@ -7,6 +7,6 @@ import ossbuild.media.gstreamer.callbacks.IBusSyncHandler;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public interface IBus extends INativeObject, IDisposable {
+public interface IBus extends IGObject {
 	void syncHandler(final IBusSyncHandler handler);
 }

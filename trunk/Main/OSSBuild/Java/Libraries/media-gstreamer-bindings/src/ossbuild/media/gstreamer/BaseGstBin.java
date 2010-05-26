@@ -87,6 +87,22 @@ abstract class BaseGstBin extends BaseGstElement implements IBin {
 	}
 
 	@Override
+	public IBin binFromName(String name) {
+		Pointer p = gst_bin_get_by_name(ptr, name);
+		if (p == null || p == Pointer.NULL)
+			return null;
+		return Bin.from(p);
+	}
+
+	@Override
+	public IBin binFromNameRecurseUp(String name) {
+		Pointer p = gst_bin_get_by_name_recurse_up(ptr, name);
+		if (p == null || p == Pointer.NULL)
+			return null;
+		return Bin.from(p);
+	}
+
+	@Override
 	public IElement elementFromName(String name) {
 		Pointer p = gst_bin_get_by_name(ptr, name);
 		if (p == null || p == Pointer.NULL)
@@ -133,6 +149,31 @@ abstract class BaseGstBin extends BaseGstElement implements IBin {
 	}
 
 	@Override
+	public boolean remove(IElement element) {
+		return gst_bin_remove(ptr, element.getPointer());
+	}
+
+	@Override
+	public boolean removeMany(IElement... elements) {
+		if (elements == null || elements.length <= 0)
+			return true;
+		for(int i = elements.length - 1; i >= 0 ; --i) {
+			if (elements[i] != null) {
+				if (!gst_bin_remove(ptr, elements[i].getPointer()))
+					return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean unlinkAndRemoveMany(IElement... elements) {
+		if (!unlinkMany(elements))
+			return false;
+		return removeMany(elements);
+	}
+
+	@Override
 	public void visitElements(IElementVisitor visitor) {
 		if (visitor == null)
 			return;
@@ -149,11 +190,11 @@ abstract class BaseGstBin extends BaseGstElement implements IBin {
 			//the ref count will be zero.
 			switch(IteratorResult.fromNative(gst_iterator_next(pIterator, ref))) {
 				case OK:
-					//Passing false here tells pad to not increase the ref count
-					//when building a new pad from the pointer.
-					IElement element = Element.from(ref.getValue(), false);
+					//Passing true here tells it to increase the ref count
+					//when building a new element from the pointer.
+					IElement element = Element.from(ref.getValue(), true);
 					boolean ret = visitor.visit(this, element);
-					element.dispose();
+					element.unref();
 					done = !ret;
 					break;
 				case Resync:
@@ -189,11 +230,11 @@ abstract class BaseGstBin extends BaseGstElement implements IBin {
 			//the ref count will be zero.
 			switch(IteratorResult.fromNative(gst_iterator_next(pIterator, ref))) {
 				case OK:
-					//Passing false here tells pad to not increase the ref count
-					//when building a new pad from the pointer.
-					IElement element = Element.from(ref.getValue(), false);
+					//Passing true here tells it to increase the ref count
+					//when building a new element from the pointer.
+					IElement element = Element.from(ref.getValue(), true);
 					boolean ret = visitor.visit(this, element);
-					element.dispose();
+					element.unref();
 					done = !ret;
 					break;
 				case Resync:
@@ -229,11 +270,11 @@ abstract class BaseGstBin extends BaseGstElement implements IBin {
 			//the ref count will be zero.
 			switch(IteratorResult.fromNative(gst_iterator_next(pIterator, ref))) {
 				case OK:
-					//Passing false here tells pad to not increase the ref count
-					//when building a new pad from the pointer.
-					IElement element = Element.from(ref.getValue(), false);
+					//Passing true here tells it to increase the ref count
+					//when building a new element from the pointer.
+					IElement element = Element.from(ref.getValue(), true);
 					boolean ret = visitor.visit(this, element);
-					element.dispose();
+					element.unref();
 					done = !ret;
 					break;
 				case Resync:
@@ -269,11 +310,11 @@ abstract class BaseGstBin extends BaseGstElement implements IBin {
 			//the ref count will be zero.
 			switch(IteratorResult.fromNative(gst_iterator_next(pIterator, ref))) {
 				case OK:
-					//Passing false here tells pad to not increase the ref count
-					//when building a new pad from the pointer.
-					IElement element = Element.from(ref.getValue(), false);
+					//Passing true here tells it to increase the ref count
+					//when building a new element from the pointer.
+					IElement element = Element.from(ref.getValue(), true);
 					boolean ret = visitor.visit(this, element);
-					element.dispose();
+					element.unref();
 					done = !ret;
 					break;
 				case Resync:
@@ -309,11 +350,11 @@ abstract class BaseGstBin extends BaseGstElement implements IBin {
 			//the ref count will be zero.
 			switch(IteratorResult.fromNative(gst_iterator_next(pIterator, ref))) {
 				case OK:
-					//Passing false here tells pad to not increase the ref count
-					//when building a new pad from the pointer.
-					IElement element = Element.from(ref.getValue(), false);
+					//Passing true here tells it to increase the ref count
+					//when building a new element from the pointer.
+					IElement element = Element.from(ref.getValue(), true);
 					boolean ret = visitor.visit(this, element);
-					element.dispose();
+					element.unref();
 					done = !ret;
 					break;
 				case Resync:

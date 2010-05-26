@@ -8,9 +8,12 @@ import java.util.Map;
 import ossbuild.media.gstreamer.Bin;
 import ossbuild.media.gstreamer.Buffer;
 import ossbuild.media.gstreamer.Bus;
+import ossbuild.media.gstreamer.Caps;
 import ossbuild.media.gstreamer.Element;
+import ossbuild.media.gstreamer.GhostPad;
 import ossbuild.media.gstreamer.INativeObject;
 import ossbuild.media.gstreamer.Message;
+import ossbuild.media.gstreamer.Pad;
 import ossbuild.media.gstreamer.PadTemplate;
 import ossbuild.media.gstreamer.Pipeline;
 import static ossbuild.media.gstreamer.api.GStreamer.*;
@@ -35,12 +38,13 @@ public class GTypeCache {
 		put(gst_date_get_type(),                    null /*GDate.class*/);
 		put(gst_pipeline_get_type(),                new GTypeCacheRecord(Pipeline.class));
 		put(gst_bus_get_type(),                     new GTypeCacheRecord(Bus.class));
-		put(gst_pad_get_type(),                     null /*Pad.class*/);
+		put(gst_pad_get_type(),                     new GTypeCacheRecord(Pad.class));
 		put(gst_pad_template_get_type(),            new GTypeCacheRecord(PadTemplate.class));
-		put(gst_ghost_pad_get_type(),               null /*GhostPad.class*/);
+		put(gst_ghost_pad_get_type(),               new GTypeCacheRecord(GhostPad.class));
 		put(gst_plugin_get_type(),                  null /*Plugin.class*/);
 		put(gst_plugin_feature_get_type(),          null /*PluginFeature.class*/);
 		put(gst_registry_get_type(),                null /*Registry.class*/);
+		put(gst_caps_get_type(),                    new GTypeCacheRecord(Caps.class));
 
 		//GstMiniObject types
 		put(gst_buffer_get_type(),                  new Buffer.GTypeCacheRecord());

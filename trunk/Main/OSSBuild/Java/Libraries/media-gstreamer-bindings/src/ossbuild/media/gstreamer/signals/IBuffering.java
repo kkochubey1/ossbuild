@@ -9,7 +9,7 @@ import ossbuild.media.gstreamer.api.Signal;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-@Signal(name="notify", detail="caps") /*notify::caps*/
-public interface INotifyCaps extends ISignal {
-	boolean notifyCaps(Pointer pPad, Pointer pUnused, Pointer pDynamic);
+@Signal(name="buffering")
+public interface IBuffering extends ISignal {
+	void buffering(Pointer pSrc, int percent);
 }

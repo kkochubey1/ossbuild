@@ -8,7 +8,6 @@ import ossbuild.media.gstreamer.Bus;
 import ossbuild.media.gstreamer.Message;
 import ossbuild.media.gstreamer.IPipeline;
 import ossbuild.media.gstreamer.IBin;
-import ossbuild.media.gstreamer.Pad;
 import ossbuild.media.gstreamer.State;
 import ossbuild.media.gstreamer.Bin;
 import ossbuild.media.gstreamer.Pipeline;
@@ -17,7 +16,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.nio.IntBuffer;
 import java.util.ListIterator;
 import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
@@ -27,15 +25,14 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ossbuild.OSFamily;
 import ossbuild.Path;
+import ossbuild.StringUtil;
 import ossbuild.Sys;
 import ossbuild.extract.Resources;
 import ossbuild.extract.processors.FileProcessor;
 import ossbuild.media.gstreamer.Buffer;
 import ossbuild.media.gstreamer.Caps;
 import ossbuild.media.gstreamer.Colorspace;
-import ossbuild.media.gstreamer.DebugGraphDetails;
 import ossbuild.media.gstreamer.DoubleRange;
 import ossbuild.media.gstreamer.Format;
 import ossbuild.media.gstreamer.Fraction;
@@ -71,6 +68,7 @@ public class Platform {
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:1,GST_REGISTRY*:1");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_REFCOUNTING*:3");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:3");
+		Sys.setEnvironmentVariable("GST_DEBUG", "dshowvideosink:3");
 		Sys.initialize();
 		//GStreamer.initialize("unit-test");
 
@@ -137,19 +135,31 @@ public class Platform {
 			IPipeline pipeline = Pipeline.make("unit-test-pipeline");
 			IElement videotestsrc = Element.make("videotestsrc", "videotestsrc");
 			IElement ffmpegcolorspace = Element.make("ffmpegcolorspace", "ffmpegcolorspace");
-			IElement videosink = Element.make(videoSinkForOS(), "videosink");
+			IElement videosink = Element.make("fakesink", "videosink");
+			//IElement videosink = Element.make(videoSinkForOS(), "videosink");
+
+			//System.out.println("videotestsrc: " + videotestsrc.getPointer());
+			//System.out.println("pipeline: " + pipeline.getPointer());
+			
 			pipeline.addAndLinkMany(videotestsrc, ffmpegcolorspace, videosink);
 
 			pipeline.changeState(State.Playing);
-			Thread.sleep(500L);
+			Thread.sleep(50L);
 
 			final boolean[] visited = new boolean[1];
 
 			visited[0] = false;
-			videotestsrc.visitSrcPads(new IElement.IPadVisitor() {
+			//videotestsrc.visitSrcPads(new IElement.IPadVisitor() {
+			//	@Override
+			//	public boolean visit(IElement src, Pad pad) {
+			//		visited[0] = (pad != null && pad.getCaps() != null);
+			//		return true;
+			//	}
+			//});
+			pipeline.visitElements(new IBin.IElementVisitor() {
 				@Override
-				public boolean visit(IElement src, Pad pad) {
-					visited[0] = (pad != null && pad.getCaps() != null);
+				public boolean visit(IBin src, IElement element) {
+					visited[0] = (element != null && !StringUtil.isNullOrEmpty(element.getName()));
 					return true;
 				}
 			});
@@ -159,6 +169,13 @@ public class Platform {
 			start = pipeline.getStartTime();
 
 			pipeline.changeState(State.Null);
+
+			pipeline.unlinkAndRemoveMany(videotestsrc, ffmpegcolorspace, videosink);
+
+			videotestsrc.dispose();
+			ffmpegcolorspace.dispose();
+			videosink.dispose();
+			pipeline.dispose();
 
 			gc();
 
@@ -484,7 +501,7 @@ public class Platform {
 		p.changeState(State.Playing);
 		Thread.sleep(1000L);
 
-		for(int i = 0; i < 20000; ++i) {
+		for(int i = 0; i < 200000; ++i) {
 			Buffer b = videosink.get("last-buffer", GTypeConverters.BUFFER);
 			assertNotNull(b);
 			b.dispose();
@@ -522,7 +539,8 @@ public class Platform {
 			IPipeline playbin = Pipeline.make("playbin2", "playbin");
 			IBin bin = Bin.make("uridecodebin", "uridecodebin");
 			IElement videosink = playbin.get("video-sink");
-			IElement myvideosink = Element.make("directdrawsink", "myvideosink");
+			IElement myvideosink = Element.make("fakesink", "myvideosink");
+			//IElement myvideosink = Element.make(videoSinkForOS(), "myvideosink");
 
 			playbin.set("video-sink", myvideosink);
 

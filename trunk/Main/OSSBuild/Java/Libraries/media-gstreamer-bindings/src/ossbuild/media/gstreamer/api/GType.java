@@ -115,7 +115,7 @@ public enum GType {
 	}
 
 	public static boolean addCustomConverter(NativeLong nativeValue, IGTypeConverter converter) {
-		return addCustomConverter(nativeValue, converter);
+		return addCustomConverter(nativeValue.longValue(), converter);
 	}
 
 	public static boolean addCustomConverter(long nativeValue, IGTypeConverter converter) {
