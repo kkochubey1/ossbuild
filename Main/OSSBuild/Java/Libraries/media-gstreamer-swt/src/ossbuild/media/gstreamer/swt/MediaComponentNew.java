@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
@@ -54,10 +55,12 @@ import ossbuild.extract.Resources;
 import ossbuild.extract.processors.FileProcessor;
 import ossbuild.media.IMediaPlayer;
 import ossbuild.media.IMediaRequest;
-import ossbuild.media.MediaRequest;
 import ossbuild.media.MediaRequestType;
 import ossbuild.media.MediaType;
 import ossbuild.media.Scheme;
+import ossbuild.media.events.IAudioListener;
+import ossbuild.media.events.IMediaEventListener;
+import ossbuild.media.events.IPositionListener;
 import ossbuild.media.gstreamer.Bin;
 import ossbuild.media.gstreamer.Buffer;
 import ossbuild.media.gstreamer.Bus;
@@ -76,6 +79,8 @@ import ossbuild.media.gstreamer.IPipeline;
 import ossbuild.media.gstreamer.Message;
 import ossbuild.media.gstreamer.Pad;
 import ossbuild.media.gstreamer.Pipeline;
+import ossbuild.media.gstreamer.SeekFlags;
+import ossbuild.media.gstreamer.SeekType;
 import ossbuild.media.gstreamer.State;
 import ossbuild.media.gstreamer.StateChangeReturn;
 import ossbuild.media.gstreamer.Structure;
@@ -83,6 +88,7 @@ import ossbuild.media.gstreamer.api.GStreamer;
 import ossbuild.media.gstreamer.api.GTypeConverters;
 import ossbuild.media.gstreamer.api.Utils;
 import ossbuild.media.gstreamer.callbacks.IBusSyncHandler;
+import ossbuild.media.gstreamer.events.StepEvent;
 import ossbuild.media.gstreamer.signals.IBuffering;
 import ossbuild.media.gstreamer.signals.IElementAdded;
 import ossbuild.media.gstreamer.signals.IEndOfStream;
@@ -99,6 +105,8 @@ import ossbuild.media.gstreamer.signals.IStateChanged;
  */
 public class MediaComponentNew extends SWTMediaComponent {
 	public static void main(String[] args) {
+		Sys.setEnvironmentVariable("GST_DEBUG", "GST_REFCOUNTING:3");
+		
 		Sys.initialize();
 		GStreamer.initialize();
 
@@ -115,13 +123,25 @@ public class MediaComponentNew extends SWTMediaComponent {
 		dlg.setLayout(layout);
 		dlg.setSize(700, 700);
 
-		MediaComponentNew comp;
+		GstMediaComponent comp;
 
-		comp = new MediaComponentNew(dlg, SWT.NONE);
+		comp = new GstMediaComponent(dlg, SWT.NONE);
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		final MediaComponentNew mediaComp = comp;
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		final GstMediaComponent mediaComp = comp;
 
 		final Scale scale = new Scale(dlg, SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -131,11 +151,155 @@ public class MediaComponentNew extends SWTMediaComponent {
 		scale.setIncrement(100);
 		scale.setPageIncrement(1000);
 
+		final Button btnBrowse = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnBrowse.setLayoutData(gd);
+		btnBrowse.setText("Browse...");
+
+		final Button btnPlayImage = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayImage.setLayoutData(gd);
+		btnPlayImage.setText("Play Image");
+
+		final Button btnPlayMJPEG = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayMJPEG.setLayoutData(gd);
+		btnPlayMJPEG.setText("Play MJPEG");
+
 		final Button btnPlayExample = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
 		btnPlayExample.setLayoutData(gd);
 		btnPlayExample.setText("Play Example");
+
+		final Button btnPlayExampleMJPG = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayExampleMJPG.setLayoutData(gd);
+		btnPlayExampleMJPG.setText("Play Example MJPG");
+
+		final Button btnPlay = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlay.setLayoutData(gd);
+		btnPlay.setText("Play Again");
+
+		final Button btnPlayForever = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayForever.setLayoutData(gd);
+		btnPlayForever.setText("Play Again Forever");
+
+		final Button btnPlayTestSignal = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayTestSignal.setLayoutData(gd);
+		btnPlayTestSignal.setText("Play Test Signal");
+
+		final Button btnPlayBlackBurst = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayBlackBurst.setLayoutData(gd);
+		btnPlayBlackBurst.setText("Play Blackburst");
+
+		final Button btnPause = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPause.setLayoutData(gd);
+		btnPause.setText("Pause");
+
+		final Button btnContinue = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnContinue.setLayoutData(gd);
+		btnContinue.setText("Continue");
+
+		final Button btnStop = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnStop.setLayoutData(gd);
+		btnStop.setText("Stop");
+
+		final Button btnRateNormal = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnRateNormal.setLayoutData(gd);
+		btnRateNormal.setText("Normal Playback Rate");
+
+		final Button btnRateDouble = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnRateDouble.setLayoutData(gd);
+		btnRateDouble.setText("Double Playback Rate");
+
+		final Button btnRateBackwards = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnRateBackwards.setLayoutData(gd);
+		btnRateBackwards.setText("Play Backwards");
+
+		final Button btnRateDoubleBackwards = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnRateDoubleBackwards.setLayoutData(gd);
+		btnRateDoubleBackwards.setText("Double Play Backwards Rate");
+
+		final Button btnStepForward = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnStepForward.setLayoutData(gd);
+		btnStepForward.setText("Step Forward");
+
+		final Button btnStepBackward = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnStepBackward.setLayoutData(gd);
+		btnStepBackward.setText("Step Backward");
+
+		final Button btnSnapshot = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnSnapshot.setLayoutData(gd);
+		btnSnapshot.setText("Take Snapshot");
+
+		final Button btnSeekToBeginning = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnSeekToBeginning.setLayoutData(gd);
+		btnSeekToBeginning.setText("Seek to Beginning");
+
+		final Button btnMute = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnMute.setLayoutData(gd);
+		btnMute.setText("Mute/Unmute");
+
+		final Button btnVolume0 = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnVolume0.setLayoutData(gd);
+		btnVolume0.setText("Volume 0%");
+
+		final Button btnVolume50 = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnVolume50.setLayoutData(gd);
+		btnVolume50.setText("Volume 50%");
+
+		final Button btnVolume100 = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnVolume100.setLayoutData(gd);
+		btnVolume100.setText("Volume 100%");
+
+		final Button btnGarbageCollect = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnGarbageCollect.setLayoutData(gd);
+		btnGarbageCollect.setText("Garbage Collect");
 
 		dlg.open();
 
@@ -143,9 +307,82 @@ public class MediaComponentNew extends SWTMediaComponent {
 		final FileDialog selFile = new FileDialog(dlg, SWT.OPEN);
 		selFile.setFilterNames(new String[]{"All Files (*.*)"});
 		selFile.setFilterExtensions(new String[]{"*.*"});
-		
-		final File[] file = new File[] { new File(fileName) };
+//		if (StringUtil.isNullOrEmpty(fileName = selFile.open())) {
+//			Gst.quit();
+//			return;
+//		}
 
+		final File[] file = new File[] { new File(fileName) };
+		btnBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				final String fileName;
+				final FileDialog selFile = new FileDialog(dlg, SWT.OPEN);
+				selFile.setFilterNames(new String[]{"All Files (*.*)"});
+				selFile.setFilterExtensions(new String[]{"*.*"});
+				if (StringUtil.isNullOrEmpty(fileName = selFile.open()))
+					return;
+				file[0] = new File(fileName);
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).play(false, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
+					}
+				}
+			}
+		});
+		btnPlayMJPEG.addSelectionListener(new SelectionAdapter() {
+			int index = 0;
+			String[] uri = new String[] {
+				  "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1"
+				, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb"
+				//, "http://www.google.com/test/"
+				//, "http://www.asfjasflasf.com/"
+				//, "http://samples.mplayerhq.hu/mov/RQ004F14.MOV"
+				//, "http://users.design.ucla.edu/~acolubri/test/gstreamer/station-svq1.mov"
+				//, "rtsp://s-0-1.sg.softspb.com:554/test/test.mp4"
+			};
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).play(true, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, uri[index]);
+								if (++index >= uri.length)
+									index = 0;
+							}
+						});
+					}
+				}
+			}
+		});
+		btnPlayImage.addSelectionListener(new SelectionAdapter() {
+			int index = 0;
+			String[] images = new String[] {
+				  "http://arsdictum.com/images/madonastann.jpg"
+				, "http://yeinjee.com/travel/wp-content/uploads/2007/08/paris-notre-dame-top.jpg"
+				, "http://upload.wikimedia.org/wikipedia/commons/7/7a/Basketball.png"
+				, "http://www.google.com/intl/en_ALL/images/srpr/logo1w.png"
+			};
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, IMediaRequest.DEFAULT_FPS, images[index]);
+								if (++index >= images.length)
+									index = 0;
+							}
+						});
+					}
+				}
+			}
+		});
 		btnPlayExample.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -156,16 +393,416 @@ public class MediaComponentNew extends SWTMediaComponent {
 				}
 
 				file[0] = Path.combine(Path.nativeResourcesDirectory, "example.mov");
-
-				gc();
-				
 				for (final Control c : dlg.getChildren()) {
-					if (c instanceof MediaComponentNew) {
-						((MediaComponentNew)c).play(new MediaRequest(MediaRequestType.Video, "Title", false, true, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, Scheme.File, file[0].toURI()));
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).play(false, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
+							}
+						});
 					}
 				}
 			}
 		});
+		btnPlayExampleMJPG.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					//Extract resource
+					Resources.extractAll(ossbuild.extract.Package.newInstance("resources.media", Path.nativeResourcesDirectory, new FileProcessor(false, "example.mjpg"))).get();
+				} catch(Throwable t) {
+				}
+
+				file[0] = Path.combine(Path.nativeResourcesDirectory, "example.mjpg");
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, 2.0f, file[0].toURI().toString());
+							}
+						});
+					}
+				}
+			}
+		});
+		btnPlayBlackBurst.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).playBlackBurst();
+							}
+						});
+					}
+				}
+			}
+		});
+		btnPlayTestSignal.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).playTestSignal();
+							}
+						});
+					}
+				}
+			}
+		});
+		btnPlay.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).play(false, 1/*IMediaRequest.REPEAT_FOREVER/**/, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
+							}
+						});
+					}
+				}
+			}
+		});
+		btnPlayForever.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
+							}
+						});
+					}
+				}
+			}
+		});
+		btnPause.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).pause();
+							}
+						});
+					}
+				}
+			}
+		});
+		btnContinue.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).unpause();
+							}
+						});
+					}
+				}
+			}
+		});
+		btnStop.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).stop();
+							}
+						});
+					}
+				}
+			}
+		});
+		btnRateNormal.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustPlaybackRate(1.0D);
+					}
+				}
+			}
+		});
+		btnRateDouble.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustPlaybackRate(2.0D);
+					}
+				}
+			}
+		});
+		btnRateBackwards.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustPlaybackRate(-1.0D);
+					}
+				}
+			}
+		});
+		btnRateDoubleBackwards.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustPlaybackRate(-2.0D);
+					}
+				}
+			}
+		});
+		btnStepForward.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).stepForward();
+					}
+				}
+			}
+		});
+		btnStepBackward.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).stepBackward();
+					}
+				}
+			}
+		});
+		btnSeekToBeginning.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).seekToBeginning();
+					}
+				}
+			}
+		});
+		btnSnapshot.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				mediaComp.saveSnapshot(new File(System.currentTimeMillis() + ".jpg"));
+			}
+		});
+		btnMute.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).mute();
+					}
+				}
+			}
+		});
+		btnVolume0.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustVolume(0);
+					}
+				}
+			}
+		});
+		btnVolume50.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustVolume(50);
+					}
+				}
+			}
+		});
+		btnVolume100.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).adjustVolume(100);
+					}
+				}
+			}
+		});
+		btnGarbageCollect.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.gc();
+			}
+		});
+
+		mediaComp.addAudioListener(new IAudioListener() {
+			@Override
+			public void audioMuted(IMediaPlayer source) {
+				System.out.println("muted");
+			}
+
+			@Override
+			public void audioUnmuted(IMediaPlayer source) {
+				System.out.println("unmuted");
+			}
+
+			@Override
+			public void audioVolumeChanged(IMediaPlayer source, int percent) {
+				System.out.println("volume change: " + percent);
+			}
+		});
+
+		mediaComp.addMediaEventListener(new IMediaEventListener() {
+			@Override
+			public void mediaStopped(final IMediaPlayer source) {
+				System.out.println("STOPPED");
+				display.asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						if (scale.isDisposed())
+							return;
+
+						scale.setEnabled(false);
+						scale.setSelection(0);
+					}
+				});
+			}
+
+			@Override
+			public void mediaPaused(final IMediaPlayer source) {
+				System.out.println("PAUSED");
+			}
+
+			@Override
+			public void mediaContinued(final IMediaPlayer source) {
+				System.out.println("CONTINUED");
+				enableScale(source);
+			}
+
+			@Override
+			public void mediaPlayRequested(final IMediaPlayer source, final IMediaRequest request) {
+				System.out.println("PLAY REQUESTED: " + source.getMediaRequest().getURI().toString());
+			}
+
+			@Override
+			public void mediaPlayed(final IMediaPlayer source) {
+				System.out.println("PLAYED: " + source.getMediaRequest().getURI().toString());
+				enableScale(source);
+			}
+
+			private void enableScale(final IMediaPlayer source) {
+				display.asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						if (scale.isDisposed())
+							return;
+
+						scale.setEnabled(source.isSeekable() && scale.getMinimum() < scale.getMaximum());
+					}
+				});
+			}
+		});
+
+		mediaComp.addPositionListener(new IPositionListener() {
+			private long lastDuration = 0L;
+			private long lastPosition = 0L;
+
+			@Override
+			public void positionChanged(final IMediaPlayer source, final int percent, final long position, final long duration) {
+				System.out.println("percent: " + percent + ", position: " + position + ", duration: " + duration);
+				if (position != lastPosition || duration != lastDuration) {
+					display.asyncExec(new Runnable() {
+						@Override
+						public void run() {
+							if (scale.isDisposed())
+								return;
+
+							if (duration != lastDuration) {
+								lastDuration = duration;
+								if (duration > 0) {
+									int totalSeconds = (int)TimeUnit.MILLISECONDS.toSeconds(duration);
+
+									scale.setEnabled(true);
+									scale.setMinimum(0);
+									scale.setMaximum(totalSeconds);
+									scale.setIncrement(1);
+									if (totalSeconds < 10) //10 seconds
+										scale.setPageIncrement(1);
+									else if (totalSeconds < 60) //1 minutes
+										scale.setPageIncrement(6);
+									else if (totalSeconds < 600) //10 minutes
+										scale.setPageIncrement(60);
+									else if (totalSeconds < 60 * 60) //1 hour
+										scale.setPageIncrement(60 * 6);
+									else if (totalSeconds < 60 * 60 * 2) //2 hours
+										scale.setPageIncrement(60 * 10);
+									else if (totalSeconds < 60 * 60 * 24) //1 day
+										scale.setPageIncrement(60 * 60);
+									else
+										scale.setPageIncrement(60 * 60 * 4);
+								}
+							}
+
+							if (position != lastPosition) {
+								lastPosition = position;
+								scale.setSelection((int)TimeUnit.MILLISECONDS.toSeconds(position) + scale.getMinimum());
+							}
+						}
+					});
+				}
+			}
+		});
+
+		scale.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				final long position = TimeUnit.SECONDS.toNanos(scale.getSelection());
+				for (Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						((GstMediaComponent) c).seek(position);
+					}
+				}
+			}
+		});
+
+		Thread t = new Thread(new Runnable() {
+			public void run() {
+				try {
+					while(true) {
+						display.asyncExec(new Runnable() {
+							public void run() {
+								btnPlayExample.notifyListeners(SWT.Selection, new Event());
+							}
+						});
+						Thread.sleep(3000L);
+					}
+				} catch(Throwable t) {
+				}
+			}
+		});
+		t.setDaemon(true);
+		t.setName("test click thread");
+		t.start();
 
 		while (!dlg.isDisposed()) {
 			if (!display.readAndDispatch()) {
@@ -263,8 +900,8 @@ public class MediaComponentNew extends SWTMediaComponent {
 		switch (Sys.getOSFamily()) {
 			case Windows:
 				//videoElement = "dshowvideosink";
-				//videoElement = "directdrawsink";
-				videoElement = "fakesink";
+				videoElement = "directdrawsink";
+				//videoElement = "fakesink";
 				audioElement = "autoaudiosink";
 				break;
 			case Unix:
@@ -352,6 +989,16 @@ public class MediaComponentNew extends SWTMediaComponent {
 
 	protected void init() {
 	}
+
+	@Override
+	protected void componentInitialize() {
+		//throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	protected Runnable createPositionUpdater() {
+		return positionUpdateRunnable;
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Dispose">
@@ -360,6 +1007,200 @@ public class MediaComponentNew extends SWTMediaComponent {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Getters">
+	@Override
+	public Lock getMediaLock() {
+		return lock;
+	}
+
+	@Override
+	public Scheme[] getValidSchemes() {
+		return VALID_SCHEMES;
+	}
+
+	@Override
+	public int getVideoWidth() {
+		return videoWidth;
+	}
+
+	@Override
+	public int getVideoHeight() {
+		return videoHeight;
+	}
+
+	@Override
+	public boolean isMediaAvailable() {
+		lock.lock();
+		try {
+			return (currentState(0L) != State.Null);
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public boolean isPaused() {
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return false;
+			final State state = currentState(0L);
+			return (state == State.Paused || state == State.Ready);
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public boolean isStopped() {
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return true;
+			final State state = currentState(0L);
+			return (state == State.Null || state == State.Ready);
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public boolean isPlaying() {
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return true;
+			final State state = currentState(0L);
+			return (state == State.Playing);
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	public boolean isLiveSource() {
+		return currentLiveSource;
+	}
+
+	@Override
+	public boolean isSeekable() {
+		return !currentLiveSource && emitPositionUpdates && !hasMultipartDemux && mediaType != MediaType.Image && mediaType != MediaType.Unknown;
+	}
+
+	@Override
+	public int getRepeatCount() {
+		return currentRepeatCount;
+	}
+
+	public boolean isRepeatingForever() {
+		return currentRepeatCount == IMediaRequest.REPEAT_FOREVER;
+	}
+
+	@Override
+	public float getVideoFPS() {
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return 0.0f;
+			return actualFPS;
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public long getPosition() {
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return 0L;
+			final State state = currentState(0L);
+			if (state != State.Playing || state != State.Paused)
+				return 0L;
+			return pipeline.queryPosition(TimeUnit.MILLISECONDS);
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public long getDuration() {
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return 0L;
+			final State state = currentState(0L);
+			if (state != State.Playing || state != State.Paused)
+				return 0L;
+			return pipeline.queryDuration(TimeUnit.MILLISECONDS);
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public boolean isMuted() {
+		lock.lock();
+		try {
+			if (pipeline == null || currentAudioVolumeElement == null)
+				return false;
+
+			return (Boolean)currentAudioVolumeElement.get("mute");
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public int getVolume() {
+		lock.lock();
+		try {
+			if (pipeline == null || currentAudioVolumeElement == null)
+				return 100;
+
+			return Math.max(0, Math.min(100, (int)((Double)currentAudioVolumeElement.get("volume") * 100.0D)));
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public boolean isAudioAvailable() {
+		return this.hasAudio;
+	}
+
+	@Override
+	public boolean isVideoAvailable() {
+		return this.hasVideo;
+	}
+
+	@Override
+	public long getBufferSize() {
+		return bufferSize;
+	}
+
+	@Override
+	public boolean isAspectRatioMaintained() {
+		return maintainAspectRatio;
+	}
+
+	@Override
+	public IMediaRequest getMediaRequest() {
+		lock.lock();
+		try {
+			return mediaRequest;
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public MediaType getMediaType() {
+		return mediaType;
+	}
+
+	@Override
+	public void setBufferSize(long size) {
+		this.bufferSize = size;
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Helper Methods">
@@ -421,7 +1262,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 				}
 				if (isImage(factoryClass)) {
 					imageFound[0] = true;
-					return false;
+					return true;
 				}
 				return true;
 			}
@@ -745,24 +1586,324 @@ public class MediaComponentNew extends SWTMediaComponent {
 		}
 	}
 	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Expose">
+	public boolean expose() {
+		if (isDisposed())
+			return false;
+		if (mediaType == MediaType.Image)
+			return true;
+
+		State state;
+		lock.lock();
+		try {
+			if (xoverlay != null && pipeline != null && ((state = currentState()) == State.Playing || state == State.Paused)) {
+				xoverlay.expose();
+				return true;
+			}
+			return false;
+		} finally {
+			lock.unlock();
+		}
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Volume">
+	@Override
+	public boolean mute() {
+		lock.lock();
+		try {
+			if (pipeline == null || currentAudioVolumeElement == null)
+				return false;
+
+			boolean shouldMute = !isMuted();
+			currentAudioVolumeElement.set("mute", (muted = shouldMute));
+			if (shouldMute)
+				fireAudioMuted();
+			else
+				fireAudioUnmuted();
+		} finally {
+			lock.unlock();
+		}
+		return true;
+	}
+
+	@Override
+	public boolean adjustVolume(int percent) {
+		lock.lock();
+		try {
+			if (pipeline == null || currentAudioVolumeElement == null)
+				return false;
+
+			int oldVolume = getVolume();
+			int newVolume = Math.max(0, Math.min(100, percent));
+			currentAudioVolumeElement.set("volume", (double)(volume = newVolume) / 100.0D);
+			if (oldVolume != newVolume)
+				fireAudioVolumeChanged(newVolume);
+		} finally {
+			lock.unlock();
+		}
+		return true;
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Seek">
+	@Override
+	public boolean seekToBeginning() {
+		lock.lock();
+		try {
+			if (isLiveSource())
+				return true;
+			if (!seek(currentRate, 0L)) {
+				return (changeState(State.Ready, new Runnable() {
+							@Override
+							public void run() {
+								onPositionUpdate();
+								changeState(State.Playing);
+							}
+						}
+					)
+					!=
+					StateChangeReturn.Failure
+				);
+			}
+			return true;
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	public boolean seekToBeginningAndPause() {
+		lock.lock();
+		try {
+			if (isLiveSource())
+				return pause();
+			return (changeState(State.Ready, new Runnable() {
+						@Override
+						public void run() {
+							onPositionUpdate();
+							changeState(State.Paused);
+						}
+					}
+				)
+				!=
+				StateChangeReturn.Failure
+			);
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public boolean adjustPlaybackRate(final double rate) {
+		return false;
+//		//TODO: Figure out why playing backwards (rate is negative) isn't working
+//
+//		if (rate < 0.0f)
+//			return false;
+//
+//		if (rate == 0.0f)
+//			return pause();
+//
+//		lock.lock();
+//		try {
+//			if (isLiveSource())
+//				return false;
+//
+//			final Segment segment = pipeline.querySegment();
+//			if (segment != null && rate == segment.getRate())
+//				return true;
+//
+//			State state = currentState();
+//
+//			switch(state) {
+//				case PLAYING:
+//					changeState(State.PAUSED, new Runnable() {
+//						@Override
+//						public void run() {
+//							adjustPlaybackRate(rate);
+//						}
+//					});
+//					return true;
+//				case PAUSED:
+//					break;
+//				default:
+//					return false;
+//			}
+//
+//			final boolean forwards = (rate >= 0.0);
+//			final long positionNanoSeconds = pipeline.queryPosition(Format.TIME);
+//			//final long stop = (forwards ? positionNanoSeconds + SEEK_STOP_DURATION : Math.max(0, positionNanoSeconds - SEEK_STOP_DURATION));
+//			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
+//			final long stop = (forwards ? -1 : 0);
+//
+//			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop) && changeState(State.PLAYING) != StateChangeReturn.FAILURE;
+//			if (success)
+//				currentRate = rate;
+//
+//			return success;
+//		} finally {
+//			lock.unlock();
+//		}
+	}
+
+	public boolean seek(final long positionNanoSeconds) {
+		return seek(currentRate, positionNanoSeconds);
+	}
+
+	public boolean seek(final double rate, final long positionNanoSeconds) {
+		return segmentSeek(rate, positionNanoSeconds);
+	}
+
+	private boolean segmentSeek(final double rate, final long positionNanoSeconds) {
+		if (rate == 0.0f)
+			return pause();
+
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return false;
+
+			if (isLiveSource())
+				return false;
+
+			State state = currentState();
+
+			switch(state) {
+				case Playing:
+				case Paused:
+					break;
+				default:
+					return false;
+			}
+
+			final boolean forwards = (rate >= 0.0);
+			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
+			final long stop = (forwards ? -1 : 0);
+
+			final boolean success = pipeline.seek(rate, Format.Time, SeekFlags.toNative(SeekFlags.Flush, SeekFlags.Segment), SeekType.Set, begin, SeekType.Set, stop);
+			changeState(State.Playing);
+
+			if (success) {
+				currentRate = rate;
+				onPositionUpdate();
+			}
+
+			return success;
+		} finally {
+			lock.unlock();
+		}
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Step">
+	@Override
+	public boolean stepForward() {
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return false;
+			final State state = currentState();
+			if (state != State.Paused) {
+				changeState(pipeline, State.Paused, new Runnable() {
+					@Override
+					public void run() {
+						StepEvent evt = new StepEvent(Format.Buffers, 1L, 1.0D, true, false);
+						pipeline.sendEvent(evt);
+						evt.dispose();
+					}
+				});
+				return true;
+			}
+			StepEvent evt = new StepEvent(Format.Buffers, 1L, 1.0D, true, false);
+			boolean ret = pipeline.sendEvent(evt);
+			evt.dispose();
+			return ret;
+		} finally {
+			lock.unlock();
+		}
+	}
+
+	@Override
+	public boolean stepBackward() {
+		return false;
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Pause">
+	@Override
+	public boolean pause() {
+		lock.lock();
+		try {
+			if (currentState() == State.Paused)
+				return true;
+			return changeState(State.Paused) != StateChangeReturn.Failure;
+		} finally {
+			lock.unlock();
+		}
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Continue">
+	@Override
+	public boolean unpause() {
+		lock.lock();
+		try {
+			return (
+				changeState(State.Playing, 2000L,
+					new Runnable() {
+						@Override
+						public void run() {
+							adjustPlaybackRate(currentRate);
+						}
+					}
+				)
+				!=
+				StateChangeReturn.Failure
+			);
+		} finally {
+			lock.unlock();
+		}
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Stop">
+	@Override
+	public boolean stop() {
+		lock.lock();
+		try {
+			resetPipeline(pipeline);
+			singleImage = null;
+			asyncRedraw();
+			return true;
+		} finally {
+			lock.unlock();
+		}
+	}
+	//</editor-fold>
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="The Meat">
 	//<editor-fold defaultstate="collapsed" desc="Cleanup">
 	protected void resetPipeline(final IPipeline newPipeline) {
 		if (newPipeline != null) {
-			do {
-				newPipeline.changeState(State.Null);
-			} while(newPipeline.requestState() != State.Null);
-			cleanup(newPipeline);
-			System.out.println(newPipeline.refCount());
-			newPipeline.dispose();
-			System.out.println(newPipeline.refCount());
-			//while(newPipeline.refCount() >= 1)
-			//	newPipeline.unref();
-			System.out.println(newPipeline.refCount());
-			pipeline = null;
-			asyncRedraw();
+			ui(new Runnable() {
+				@Override
+				public void run() {
+					do {
+						newPipeline.changeState(State.Null);
+					} while(newPipeline.requestState() != State.Null);
+					//cleanup(newPipeline);
+					System.out.println(newPipeline.refCount());
+					newPipeline.dispose();
+					System.out.println(newPipeline.refCount());
+					//while(newPipeline.refCount() >= 1)
+					//	newPipeline.unref();
+					System.out.println(newPipeline.refCount());
+					pipeline = null;
+					asyncRedraw();
+				}
+			});
 		}
 	}
 
@@ -1168,8 +2309,8 @@ public class MediaComponentNew extends SWTMediaComponent {
 		final String padCaps = struct.name();
 
 		if (StringUtil.isNullOrEmpty(padCaps)) {
-			caps.dispose();
 			struct.dispose();
+			caps.dispose();
 			return;
 		}
 
@@ -1182,11 +2323,19 @@ public class MediaComponentNew extends SWTMediaComponent {
 
 			//Create audio bin
 			final IBin audioBin = Bin.make("audioBin");
-			audioBin.addPad(new GhostPad("sink", createAudioBin(mediaType, newRequest, newPipeline, audioBin, uridecodebin, pad)));
+			final Pad audioPad = createAudioBin(mediaType, newRequest, newPipeline, audioBin, uridecodebin, pad);
+			final GhostPad audioGhostPad = GhostPad.from("audioGhostPadSink", audioPad);
+
+			audioBin.addPad(audioGhostPad);
 			newPipeline.add(audioBin);
-			pad.link(audioBin.staticPad("sink"));
+			pad.link(audioGhostPad);
 
 			audioBin.changeState(State.Playing);
+
+			audioGhostPad.dispose();
+			audioPad.dispose();
+			audioBin.dispose();
+
 		} else if (padCaps.startsWith("video/")) {
 			disposeVideoBin(newPipeline);
 
@@ -1196,12 +2345,37 @@ public class MediaComponentNew extends SWTMediaComponent {
 
 			//Create video bin
 			final IBin videoBin = Bin.make("videoBin");
-			videoBin.addPad(new GhostPad("sink", createVideoBin(mediaType, newRequest, newPipeline, videoBin, uridecodebin, pad)));
+			final Pad videoPad = createVideoBin(mediaType, newRequest, newPipeline, videoBin, uridecodebin, pad);
+			final GhostPad videoGhostPad = GhostPad.from("videoGhostPadSink", videoPad);
+
+			System.out.println("onPadAdded, videoBin: " + videoBin.refCount());
+			System.out.println("onPadAdded, videoPad: " + videoPad.refCount());
+			System.out.println("onPadAdded, videoGhostPad: " + videoGhostPad.refCount());
+			
+			videoBin.addPad(videoGhostPad);
 			newPipeline.add(videoBin);
-			pad.link(videoBin.staticPad("sink"));
+			pad.link(videoGhostPad);
+
+			System.out.println("onPadAdded, videoBin: " + videoBin.refCount());
+			System.out.println("onPadAdded, videoPad: " + videoPad.refCount());
+			System.out.println("onPadAdded, videoGhostPad: " + videoGhostPad.refCount());
 
 			videoBin.changeState(State.Playing);
+
+			//videoPad.unref();
+			//videoGhostPad.unref();
+			
+			videoGhostPad.dispose();
+			videoPad.dispose();
+			videoBin.dispose();
+
+			System.out.println("onPadAdded, videoBin: " + videoBin.refCount());
+			System.out.println("onPadAdded, videoPad: " + videoPad.refCount());
+			System.out.println("onPadAdded, videoGhostPad: " + videoGhostPad.refCount());
 		}
+
+		struct.dispose();
+		caps.dispose();
 
 		System.out.println("onPadAdded: " + newPipeline.refCount());
 	}
@@ -1308,10 +2482,15 @@ public class MediaComponentNew extends SWTMediaComponent {
 	protected void onEOS(final IPipeline newPipeline) {
 		if (mediaType != MediaType.Image && (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount))) {
 			++numberOfRepeats;
-			if (!seekToBeginning()) {
-				stop();
-				unpause();
-			}
+			display.asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					if (!seekToBeginning()) {
+						changeState(State.Ready);
+						changeState(State.Playing);
+					}
+				}
+			});
 			return;
 		}
 		numberOfRepeats = 0;
@@ -1360,7 +2539,8 @@ public class MediaComponentNew extends SWTMediaComponent {
 	}
 
 	protected void onError(final IMediaRequest newRequest, final IPipeline newPipeline, int code, String message) {
-		resetPipeline(newPipeline);
+		newPipeline.dispose();
+		asyncRedraw();
 		fireHandleError(newRequest, ErrorType.fromNativeValue(code), code, message);
 	}
 
@@ -1447,145 +2627,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="TBD">
-	@Override
-	protected void componentInitialize() {
-		//throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	protected Runnable createPositionUpdater() {
-		//throw new UnsupportedOperationException("Not supported yet.");
-		return null;
-	}
-
-	public boolean expose() {
-		return false;
-	}
-
-	public Object getMediaLock() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public Scheme[] getValidSchemes() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public MediaType getMediaType() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public int getVideoWidth() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public int getVideoHeight() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public float getVideoFPS() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean isMediaAvailable() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean isVideoAvailable() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean isAudioAvailable() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean isSeekable() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean isPaused() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean isStopped() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean isPlaying() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public int getRepeatCount() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public long getPosition() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public long getDuration() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean isMuted() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public int getVolume() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public long getBufferSize() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean isAspectRatioMaintained() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public IMediaRequest getMediaRequest() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public void setBufferSize(long size) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean mute() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean adjustVolume(int percent) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean seekToBeginning() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean adjustPlaybackRate(double rate) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean stop() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean pause() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean unpause() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean stepForward() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean stepBackward() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
 	public boolean playBlackBurst() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

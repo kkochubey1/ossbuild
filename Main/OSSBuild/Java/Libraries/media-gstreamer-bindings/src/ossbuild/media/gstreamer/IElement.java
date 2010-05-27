@@ -25,6 +25,8 @@ public interface IElement extends IGObject {
 	long getBaseTime();
 	long getStartTime();
 
+	boolean sendEvent(Event ev);
+
 	Pad staticPad(String name);
 	boolean addPad(Pad pad);
 	boolean removePad(Pad pad);

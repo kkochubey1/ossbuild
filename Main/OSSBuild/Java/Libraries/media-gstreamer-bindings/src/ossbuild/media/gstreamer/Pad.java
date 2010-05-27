@@ -195,7 +195,13 @@ public class Pad extends BaseGstObject {
 	}
 
 	public PadLinkReturn link(Pad pad) {
-		return PadLinkReturn.fromNative(gst_pad_link(ptr, pad.getPointer()));
+		synchronized(pad.ownershipLock()) {
+			pad.takeOwnership();
+			PadLinkReturn ret = PadLinkReturn.fromNative(gst_pad_link(ptr, pad.getPointer()));
+			if (ret != PadLinkReturn.OK)
+				pad.releaseOwnership();
+			return ret;
+		}
 	}
 
 	public boolean unlink(Pad pad) {

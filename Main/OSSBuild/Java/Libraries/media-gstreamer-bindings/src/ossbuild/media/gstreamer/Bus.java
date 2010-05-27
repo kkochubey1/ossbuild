@@ -175,12 +175,12 @@ public class Bus extends BaseGObject implements IBus {
 
 			gst_message_parse_error(msg.getPointer(), refErr, refDebug);
 
-			Pointer pErr = refErr.getPointer();
-			Pointer pDebug = refDebug.getPointer();
+			Pointer pErr = refErr.getValue();
+			Pointer pDebug = refDebug.getValue();
 
 			try {
-				GError err = new GError(pErr);
 				String errDebug = pDebug.getString(0L);
+				GError err = new GError(pErr);
 				int errCode = err.getCode();
 				String errMsg = err.getMessage();
 				

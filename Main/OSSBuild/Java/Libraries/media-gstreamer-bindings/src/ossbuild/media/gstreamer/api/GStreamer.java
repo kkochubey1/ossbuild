@@ -524,6 +524,8 @@ public class GStreamer extends Library {
 
 	public static native Pointer /*GstEvent*/ gst_event_new_step(int /*GstFormat*/ format, long /*guint64*/ amount, double /*gdouble*/ rate, int /*gboolean*/ flush, int /*gboolean*/ intermediate);
 	public static native void gst_event_parse_step(Pointer /*GstEvent*/ event, IntByReference /*GstFormat*/ format, LongByReference /*guint64*/ amount, DoubleByReference /*gdouble*/ rate, IntByReference /*gboolean*/ flush, IntByReference /*gboolean**/ intermediate);
+
+	public static native boolean gst_element_send_event(Pointer /*GstElement*/ element, Pointer /*GstEvent*/ event);
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="GstIterator">

@@ -155,6 +155,17 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 
 	//<editor-fold defaultstate="collapsed" desc="Public Methods">
 	@Override
+	public boolean sendEvent(Event ev) {
+		if (ev == null)
+			return false;
+		ev.ref();
+		boolean ret = gst_element_send_event(ptr, ev.getPointer());
+		if (!ret)
+			ev.unref();
+		return ret;
+	}
+
+	@Override
 	public Pad staticPad(String name) {
 		Pointer p = gst_element_get_static_pad(ptr, name);
 		if (p == null || p == Pointer.NULL)
