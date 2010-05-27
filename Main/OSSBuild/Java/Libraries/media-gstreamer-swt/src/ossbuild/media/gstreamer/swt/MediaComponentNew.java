@@ -89,6 +89,7 @@ import ossbuild.media.gstreamer.api.GTypeConverters;
 import ossbuild.media.gstreamer.api.Utils;
 import ossbuild.media.gstreamer.callbacks.IBusSyncHandler;
 import ossbuild.media.gstreamer.events.StepEvent;
+import ossbuild.media.gstreamer.signals.IAboutToFinish;
 import ossbuild.media.gstreamer.signals.IBuffering;
 import ossbuild.media.gstreamer.signals.IElementAdded;
 import ossbuild.media.gstreamer.signals.IEndOfStream;
@@ -106,6 +107,7 @@ import ossbuild.media.gstreamer.signals.IStateChanged;
 public class MediaComponentNew extends SWTMediaComponent {
 	public static void main(String[] args) {
 		Sys.setEnvironmentVariable("GST_DEBUG", "GST_REFCOUNTING:3");
+		//Sys.setEnvironmentVariable("GST_DEBUG", "playbin*:4");
 		
 		Sys.initialize();
 		GStreamer.initialize();
@@ -129,10 +131,10 @@ public class MediaComponentNew extends SWTMediaComponent {
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-//
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 //		comp = new GstMediaComponent(dlg, SWT.NONE);
 //		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 //		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -802,7 +804,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 		});
 		t.setDaemon(true);
 		t.setName("test click thread");
-		t.start();
+		//t.start();
 
 		while (!dlg.isDisposed()) {
 			if (!display.readAndDispatch()) {
@@ -1140,10 +1142,10 @@ public class MediaComponentNew extends SWTMediaComponent {
 	public boolean isMuted() {
 		lock.lock();
 		try {
-			if (pipeline == null || currentAudioVolumeElement == null)
+			if (pipeline == null)
 				return false;
 
-			return (Boolean)currentAudioVolumeElement.get("mute");
+			return (Boolean)pipeline.get("mute");
 		} finally {
 			lock.unlock();
 		}
@@ -1153,10 +1155,10 @@ public class MediaComponentNew extends SWTMediaComponent {
 	public int getVolume() {
 		lock.lock();
 		try {
-			if (pipeline == null || currentAudioVolumeElement == null)
+			if (pipeline == null)
 				return 100;
 
-			return Math.max(0, Math.min(100, (int)((Double)currentAudioVolumeElement.get("volume") * 100.0D)));
+			return Math.max(0, Math.min(100, (int)((Double)pipeline.get("volume") * 100.0D)));
 		} finally {
 			lock.unlock();
 		}
@@ -1164,12 +1166,30 @@ public class MediaComponentNew extends SWTMediaComponent {
 
 	@Override
 	public boolean isAudioAvailable() {
-		return this.hasAudio;
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return false;
+
+			int numAudioStreams = (Integer)pipeline.get("n-audio");
+			return (numAudioStreams > 0);
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	@Override
 	public boolean isVideoAvailable() {
-		return this.hasVideo;
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return false;
+
+			int numVideoStreams = (Integer)pipeline.get("n-video");
+			return (numVideoStreams > 0);
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	@Override
@@ -1613,11 +1633,13 @@ public class MediaComponentNew extends SWTMediaComponent {
 	public boolean mute() {
 		lock.lock();
 		try {
-			if (pipeline == null || currentAudioVolumeElement == null)
+			if (pipeline == null)
 				return false;
 
 			boolean shouldMute = !isMuted();
-			currentAudioVolumeElement.set("mute", (muted = shouldMute));
+			pipeline.set("mute", (muted = shouldMute));
+			if (!shouldMute)
+				adjustVolume(volume);
 			if (shouldMute)
 				fireAudioMuted();
 			else
@@ -1632,12 +1654,12 @@ public class MediaComponentNew extends SWTMediaComponent {
 	public boolean adjustVolume(int percent) {
 		lock.lock();
 		try {
-			if (pipeline == null || currentAudioVolumeElement == null)
+			if (pipeline == null)
 				return false;
 
 			int oldVolume = getVolume();
 			int newVolume = Math.max(0, Math.min(100, percent));
-			currentAudioVolumeElement.set("volume", (double)(volume = newVolume) / 100.0D);
+			pipeline.set("volume", (double)(volume = newVolume) / 100.0D);
 			if (oldVolume != newVolume)
 				fireAudioVolumeChanged(newVolume);
 		} finally {
@@ -1872,7 +1894,11 @@ public class MediaComponentNew extends SWTMediaComponent {
 	public boolean stop() {
 		lock.lock();
 		try {
-			resetPipeline(pipeline);
+			if (pipeline == null)
+				return true;
+			pipeline.changeState(State.Null);
+			pipeline.dispose();
+			pipeline = null;
 			singleImage = null;
 			asyncRedraw();
 			return true;
@@ -1887,19 +1913,16 @@ public class MediaComponentNew extends SWTMediaComponent {
 	//<editor-fold defaultstate="collapsed" desc="Cleanup">
 	protected void resetPipeline(final IPipeline newPipeline) {
 		if (newPipeline != null) {
-			ui(new Runnable() {
+			display.asyncExec(new Runnable() {
 				@Override
 				public void run() {
 					do {
 						newPipeline.changeState(State.Null);
 					} while(newPipeline.requestState() != State.Null);
 					//cleanup(newPipeline);
-					System.out.println(newPipeline.refCount());
 					newPipeline.dispose();
-					System.out.println(newPipeline.refCount());
 					//while(newPipeline.refCount() >= 1)
 					//	newPipeline.unref();
-					System.out.println(newPipeline.refCount());
 					pipeline = null;
 					asyncRedraw();
 				}
@@ -1999,10 +2022,8 @@ public class MediaComponentNew extends SWTMediaComponent {
 		//    dec. ! [ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
 
 		final IPipeline newPipeline = Pipeline.make("pipeline");
-		System.out.println("createPipeline: " + newPipeline.refCount());
 
 		final IBin uridecodebin = Bin.make("uridecodebin", "uridecodebin");
-		System.out.println("createPipeline: " + newPipeline.refCount());
 
 		uridecodebin.set("use-buffering", false);
 		uridecodebin.set("download", false);
@@ -2010,8 +2031,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 		uridecodebin.set("uri", Utils.toGstURI(newRequest.getURI()));
 
 		newPipeline.add(uridecodebin);
-
-		System.out.println("createPipeline: " + newPipeline.refCount());
 
 		//<editor-fold defaultstate="collapsed" desc="UriDecodeBin Signals">
 		uridecodebin.connect(new IPadAdded() {
@@ -2023,7 +2042,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 		});
 		uridecodebin.connect(new IElementAdded() {
 			public void elementAdded(Pointer pBin, Pointer pElement) {
-				System.out.println("uridecodebin::elementAdded: " + newPipeline.refCount());
 				//<editor-fold defaultstate="collapsed" desc="Validate arguments">
 				if (pElement == null)
 					return;
@@ -2055,7 +2073,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 
 				onUriDecodeBinElementAdded(newPipeline, uridecodebin, element);
 				element.dispose();
-				System.out.println("uridecodebin::elementAdded: " + newPipeline.refCount());
 			}
 		});
 		//</editor-fold>
@@ -2102,7 +2119,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 		});
 		//</editor-fold>
 
-		System.out.println("createPipeline: " + newPipeline.refCount());
 		return newPipeline;
 	}
 
@@ -2194,8 +2210,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 		final IElement videoScale;
 		final IElement videoSink;
 
-		System.out.println("createVideoBin: " + newPipeline.refCount());
-
 		if (newMediaType != MediaType.Image) {
 			if (!currentLiveSource) {
 				videoQueue = Element.make("queue2", "videoQueue");
@@ -2248,8 +2262,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 			insertPaintListener();
 		}
 
-		System.out.println("createVideoBin: " + newPipeline.refCount());
-
 		return videoQueue.staticPad("sink");
 	}
 	//</editor-fold>
@@ -2301,8 +2313,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 		if (pad.isLinked())
 			return;
 
-		System.out.println("onPadAdded: " + newPipeline.refCount());
-
 		//check media type
 		final Caps caps = pad.getCaps();
 		final Structure struct = caps.structureAt(0);
@@ -2348,17 +2358,9 @@ public class MediaComponentNew extends SWTMediaComponent {
 			final Pad videoPad = createVideoBin(mediaType, newRequest, newPipeline, videoBin, uridecodebin, pad);
 			final GhostPad videoGhostPad = GhostPad.from("videoGhostPadSink", videoPad);
 
-			System.out.println("onPadAdded, videoBin: " + videoBin.refCount());
-			System.out.println("onPadAdded, videoPad: " + videoPad.refCount());
-			System.out.println("onPadAdded, videoGhostPad: " + videoGhostPad.refCount());
-			
 			videoBin.addPad(videoGhostPad);
 			newPipeline.add(videoBin);
 			pad.link(videoGhostPad);
-
-			System.out.println("onPadAdded, videoBin: " + videoBin.refCount());
-			System.out.println("onPadAdded, videoPad: " + videoPad.refCount());
-			System.out.println("onPadAdded, videoGhostPad: " + videoGhostPad.refCount());
 
 			videoBin.changeState(State.Playing);
 
@@ -2368,16 +2370,10 @@ public class MediaComponentNew extends SWTMediaComponent {
 			videoGhostPad.dispose();
 			videoPad.dispose();
 			videoBin.dispose();
-
-			System.out.println("onPadAdded, videoBin: " + videoBin.refCount());
-			System.out.println("onPadAdded, videoPad: " + videoPad.refCount());
-			System.out.println("onPadAdded, videoGhostPad: " + videoGhostPad.refCount());
 		}
 
 		struct.dispose();
 		caps.dispose();
-
-		System.out.println("onPadAdded: " + newPipeline.refCount());
 	}
 
 	protected void onImageSinkHandoff(final IPipeline newPipeline, final Buffer buffer) {
@@ -2386,11 +2382,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 	}
 
 	protected boolean onNotifyCaps(final IPipeline newPipeline, final Pad pad) {
-		System.out.println("onNotifyCaps: " + newPipeline.refCount());
-
 		final Caps caps = pad.getNegotiatedCaps();
-
-		System.out.println("onNotifyCaps: " + newPipeline.refCount());
 
 		if (caps == null)
 			return false;
@@ -2420,7 +2412,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 		struct.dispose();
 		caps.dispose();
 
-		System.out.println("onNotifyCaps: " + newPipeline.refCount());
 		return true;
 	}
 	
@@ -2480,14 +2471,18 @@ public class MediaComponentNew extends SWTMediaComponent {
 	}
 
 	protected void onEOS(final IPipeline newPipeline) {
-		if (mediaType != MediaType.Image && (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount))) {
+		if (mediaType != MediaType.Image && mediaRequest != null && (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount))) {
 			++numberOfRepeats;
 			display.asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					if (!seekToBeginning()) {
-						changeState(State.Ready);
-						changeState(State.Playing);
+					lock.lock();
+					try {
+						int repeatCount = numberOfRepeats;
+						play(mediaRequest);
+						numberOfRepeats = repeatCount;
+					} finally {
+						lock.unlock();
 					}
 				}
 			});
@@ -2497,10 +2492,12 @@ public class MediaComponentNew extends SWTMediaComponent {
 		display.asyncExec(new Runnable() {
 			@Override
 			public void run() {
-				if (mediaType == MediaType.Image)
-					changeState(State.Paused);
-				else
-					resetPipeline(newPipeline);
+				if (newPipeline != null) {
+					if (mediaType == MediaType.Image)
+						newPipeline.changeState(State.Paused);
+					else
+						newPipeline.changeState(State.Null);
+				}
 				if (!isDisposed())
 					redraw();
 			}
@@ -2539,24 +2536,26 @@ public class MediaComponentNew extends SWTMediaComponent {
 	}
 
 	protected void onError(final IMediaRequest newRequest, final IPipeline newPipeline, int code, String message) {
-		newPipeline.dispose();
-		asyncRedraw();
+		display.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				changeState(State.Null);
+			}
+		});
 		fireHandleError(newRequest, ErrorType.fromNativeValue(code), code, message);
 	}
 
 	protected BusSyncReply onBusSyncHandler(final Message msg) {
-		System.out.println("onBusSyncHandler: " + pipeline.refCount());
 		Structure s = msg.getStructure();
 		if (s == null || !s. nameEquals("prepare-xwindow-id"))
 			return BusSyncReply.Pass;
 		xoverlay.setWindowID(nativeHandle);
-		System.out.println("onBusSyncHandler: " + pipeline.refCount());
 		return BusSyncReply.Drop;
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Play">
-	public boolean play(IMediaRequest request) {
+	public boolean play(final IMediaRequest request) {
 		if (request == null)
 			return false;
 
@@ -2566,7 +2565,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 
 		lock.lock();
 		try {
-			resetPipeline(pipeline);
+			stop();
 
 			//Reset these values
 			hasVideo = false;
@@ -2593,13 +2592,138 @@ public class MediaComponentNew extends SWTMediaComponent {
 
 			fireMediaEventPlayRequested(request);
 
-			final IPipeline newPipeline = createPipeline(request);
+			final IPipeline newPipeline = Pipeline.make("playbin2", "pipeline");
+			final IBin videoBin = Bin.make("videoBin");
+			final IElement videoQueue = Element.make("queue2", "videoQueue");
+			final IElement videoSink = Element.make("directdrawsink", "videoSink");
+
+			//Clear all elements
+			videoBin.visitElements(new IBin.IElementVisitor() {
+				public boolean visit(IBin bin, IElement element) {
+					bin.unlinkAndRemoveMany(element);
+					return true;
+				}
+			});
+
+			if (!currentLiveSource) {
+				final float checked_fps = (request.getFPS() >= IMediaRequest.MINIMUM_FPS ? request.getFPS() : IMediaRequest.DEFAULT_FPS);
+				final String capsFramerateFilter = Colorspace.createKnownColorspaceFilter(checked_fps == IMediaRequest.DEFAULT_FPS || currentLiveSource, checked_fps);
+				
+				final IElement videoRate = Element.make("videorate", "videoRate");
+				final IElement videoCapsFilter = Element.make("capsfilter", "videoCaps");
+				final Caps videoCaps = Caps.from(capsFramerateFilter);
+				videoCapsFilter.setCaps(videoCaps);
+
+				videoBin.addAndLinkMany(videoQueue, videoRate, videoCapsFilter, videoSink);
+				
+				final Pad videoBinPad = videoQueue.staticPad("sink");
+				final GhostPad videoBinGhostPad = GhostPad.from("videoBinGhostPad", videoBinPad);
+				videoBin.addPad(videoBinGhostPad);
+
+				videoBinGhostPad.dispose();
+				videoBinPad.dispose();
+				videoRate.dispose();
+				videoCapsFilter.dispose();
+				videoCaps.dispose();
+				videoSink.dispose();
+				videoQueue.dispose();
+			} else {
+				videoBin.addAndLinkMany(videoQueue, videoSink);
+
+				final Pad videoBinPad = videoQueue.staticPad("sink");
+				final GhostPad videoBinGhostPad = GhostPad.from("videoBinGhostPad", videoBinPad);
+				videoBin.addPad(videoBinGhostPad);
+
+				videoBinGhostPad.dispose();
+				videoBinPad.dispose();
+				videoSink.dispose();
+				videoQueue.dispose();
+			}
+
+			newPipeline.set("video-sink", videoBin);
+			videoBin.dispose();
+
+			newPipeline.set("uri", uri);
+			newPipeline.set("mute", muted);
+			newPipeline.set("volume", Math.max(0, Math.min(100, volume)) / 100.0D);
+
+			IBus bus = newPipeline.getBus();
+			newPipeline.busSyncHandler(new IBusSyncHandler() {
+				public BusSyncReply handle(Bus bus, Message msg, Pointer src, Pointer data) {
+					return onBusSyncHandler(msg);
+				}
+			});
+			bus.connect(new ISegmentDone() {
+				public void segmentDone(Pointer pSrc, Format format, long position) {
+					onSegmentDone(newPipeline);
+				}
+			});
+			bus.connect(new IEndOfStream() {
+				@Override
+				public void endOfStream(Pointer pSrc) {
+					onEOS(newPipeline);
+				}
+			});
+			newPipeline.connect(new IElementAdded() {
+				@Override
+				public void elementAdded(Pointer pBin, Pointer pElement) {
+					IElement element = Element.from(pElement);
+					if ("uridecodebin".equalsIgnoreCase(element.getFactoryName())) {
+						element.connect(new IElementAdded() {
+							@Override
+							public void elementAdded(Pointer pBin, Pointer pElement) {
+								IBin bin = Bin.from(pBin);
+								IElement element = Element.from(pElement);
+
+								onUriDecodeBinElementAdded(newPipeline, bin, element);
+
+								String factoryName = element.getFactoryName();
+								if (factoryName.startsWith("decodebin")) {
+									element.connect(new IElementAdded() {
+										@Override
+										public void elementAdded(Pointer pBin, Pointer pElement) {
+											IBin bin = Bin.from(pBin);
+											IElement element = Element.from(pElement);
+
+											onDecodeBinElementAdded(newPipeline, null, bin, element);
+
+											element.dispose();
+											bin.dispose();
+										}
+									});
+								}
+								element.dispose();
+								bin.dispose();
+							}
+						});
+					}
+					element.dispose();
+				}
+			});
+			newPipeline.connect(new IAboutToFinish() {
+				@Override
+				public void aboutToFinish(Pointer pPlaybin, Pointer pUserData) {
+					IPipeline playbin = Pipeline.from(pPlaybin);
+					if (mediaType != MediaType.Image && (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount))) {
+						++numberOfRepeats;
+						playbin.set("uri", uri);
+						return;
+					}
+					numberOfRepeats = 0;
+					if (mediaType == MediaType.Image)
+						playbin.changeState(State.Paused);
+					else
+						playbin.changeState(State.Null);
+					display.asyncExec(redrawRunnable);
+					playbin.dispose();
+				}
+			});
+			xoverlay = SWTOverlay.wrap(videoSink);
 			pipeline = newPipeline;
 
 			//Start playing
-			changeState(newPipeline, State.Playing);
+			newPipeline.changeState(State.Playing);
 
-			System.out.println("play: " + newPipeline.refCount());
 			return true;
 		} catch(Throwable t) {
 			t.printStackTrace();

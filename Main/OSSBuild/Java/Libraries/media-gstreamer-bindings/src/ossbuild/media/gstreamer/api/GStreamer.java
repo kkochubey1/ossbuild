@@ -301,6 +301,8 @@ public class GStreamer extends Library {
 	//public static native Pointer gst_message_ref(Pointer msg);
 	//public static native void gst_message_unref(Pointer msg);
 
+	public static native Pointer /*GstMessage*/ gst_message_new_state_changed(Pointer /*GstObject*/ src, int /*GstState*/ oldstate, int /*GstState*/ newstate, int /*GstState*/ pending);
+
 	public static native Pointer /*GstStructure*/ gst_message_get_structure(Pointer /*GstMessage*/ message);
 
 	public static native void gst_message_parse_state_changed(Pointer msg, IntByReference old, IntByReference current, IntByReference pending);

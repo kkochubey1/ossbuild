@@ -171,8 +171,7 @@ public class Colorspace {
 		final String framerate = (includeFramerate ? null : ", framerate=" + (int)fps + "/1");
 		final StringBuilder sb = new StringBuilder(256);
 
-		sb.append(";video/x-raw-rgb, bpp=32, depth=24");
-		for(int i = 1; i < VALID_COLORSPACES.length; ++i) {
+		for(int i = 0; i < VALID_COLORSPACES.length; ++i) {
 			sb.append(';');
 			sb.append(VALID_COLORSPACES[i]);
 			if (framerate != null)
