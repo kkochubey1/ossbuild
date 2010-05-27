@@ -213,6 +213,21 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 	}
 
 	@Override
+	public boolean postMessage(Pointer msg) {
+		return gst_element_post_message(ptr, msg);
+	}
+
+	@Override
+	public boolean postStateChangeMessage(State state) {
+		return postStateChangeMessage(state, state, State.VoidPending);
+	}
+
+	@Override
+	public boolean postStateChangeMessage(State oldState, State newState, State pending) {
+		return gst_element_post_message(ptr, gst_message_new_state_changed(ptr, oldState.getNativeValue(), newState.getNativeValue(), pending.getNativeValue()));
+	}
+
+	@Override
 	public void visitPads(IPadVisitor visitor) {
 		if (visitor == null)
 			return;

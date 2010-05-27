@@ -1,6 +1,7 @@
 
 package ossbuild.media.gstreamer;
 
+import com.sun.jna.Pointer;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,6 +32,9 @@ public interface IElement extends IGObject {
 	boolean addPad(Pad pad);
 	boolean removePad(Pad pad);
 	boolean postMessage(Message msg);
+	boolean postMessage(Pointer msg);
+	boolean postStateChangeMessage(State state);
+	boolean postStateChangeMessage(State oldState, State newState, State pending);
 
 	void visitPads(IPadVisitor visitor);
 	void visitSrcPads(IPadVisitor visitor);
