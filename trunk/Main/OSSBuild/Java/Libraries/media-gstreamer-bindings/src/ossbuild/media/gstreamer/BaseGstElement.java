@@ -22,6 +22,7 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	protected Integer factoryRank;
 	protected String factoryName, factoryClass;
+	boolean ownedByParent = false;
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
@@ -32,16 +33,19 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 	public BaseGstElement(String factoryName, String elementName) {
 		super(factoryName, elementName);
 		this.managed = true;
+		this.ownedByParent = false;
 	}
 
 	BaseGstElement(Pointer ptr) {
 		super(ptr);
 		this.managed = false;
+		this.ownedByParent = true;
 	}
 
 	BaseGstElement(Pointer ptr, boolean incRef) {
 		super(ptr, incRef);
 		this.managed = false;
+		this.ownedByParent = true;
 	}
 	//</editor-fold>
 
@@ -51,7 +55,10 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 		if (ptr == Pointer.NULL)
 			return;
 
-		unref();
+		synchronized(this) {
+			if (!ownedByParent)
+				unref();
+		}
 	}
 	//</editor-fold>
 
@@ -150,6 +157,26 @@ abstract class BaseGstElement extends BaseGstObject implements IElement {
 	@Override
 	public StateChangeReturn changeState(State state) {
 		return StateChangeReturn.fromNative(gst_element_set_state(ptr, state.nativeValue));
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Package Methods">
+	Object ownershipLock() {
+		return this;
+	}
+
+	void takeOwnership() {
+		synchronized(this) {
+			//See disposeObject() documentation
+			ownedByParent = true;
+		}
+	}
+
+	void releaseOwnership() {
+		synchronized(this) {
+			//See disposeObject() documentation
+			ownedByParent = false;
+		}
 	}
 	//</editor-fold>
 

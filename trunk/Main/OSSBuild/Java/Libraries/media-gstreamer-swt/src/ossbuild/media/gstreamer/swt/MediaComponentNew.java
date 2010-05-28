@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
+import org.gstreamer.Gst;
 import ossbuild.Path;
 import ossbuild.StringUtil;
 import ossbuild.Sys;
@@ -66,7 +67,7 @@ import ossbuild.media.gstreamer.Buffer;
 import ossbuild.media.gstreamer.Bus;
 import ossbuild.media.gstreamer.BusSyncReply;
 import ossbuild.media.gstreamer.Caps;
-import ossbuild.media.gstreamer.Colorspace;
+import ossbuild.media.gstreamer.Colorspace2;
 import ossbuild.media.gstreamer.Element;
 import ossbuild.media.gstreamer.ErrorType;
 import ossbuild.media.gstreamer.Format;
@@ -84,7 +85,6 @@ import ossbuild.media.gstreamer.SeekType;
 import ossbuild.media.gstreamer.State;
 import ossbuild.media.gstreamer.StateChangeReturn;
 import ossbuild.media.gstreamer.Structure;
-import ossbuild.media.gstreamer.api.GStreamer;
 import ossbuild.media.gstreamer.api.GTypeConverters;
 import ossbuild.media.gstreamer.api.Utils;
 import ossbuild.media.gstreamer.callbacks.IBusSyncHandler;
@@ -104,13 +104,14 @@ import ossbuild.media.gstreamer.signals.IStateChanged;
  *
  * @author David
  */
-public class MediaComponentNew extends SWTMediaComponent {
+public class MediaComponentNew2 extends SWTMediaComponent {
 	public static void main(String[] args) {
 		Sys.setEnvironmentVariable("GST_DEBUG", "GST_REFCOUNTING:3");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "playbin*:4");
 		
 		Sys.initialize();
-		GStreamer.initialize();
+		Gst.init("test", new String[] { "--gst-disable-segtrap" });
+		//GStreamer.initialize();
 
 		final Display display = new Display();
 		final Shell dlg = new Shell(display, SWT.NORMAL | SWT.SHELL_TRIM);
@@ -919,15 +920,15 @@ public class MediaComponentNew extends SWTMediaComponent {
 		DEFAULT_AUDIO_ELEMENT = audioElement;
 	}
 
-	public MediaComponentNew(Composite parent, int style) {
+	public MediaComponentNew2(Composite parent, int style) {
 		this(DEFAULT_VIDEO_ELEMENT, DEFAULT_AUDIO_ELEMENT, parent, style);
 	}
 
-	public MediaComponentNew(String videoElement, Composite parent, int style) {
+	public MediaComponentNew2(String videoElement, Composite parent, int style) {
 		this(videoElement, DEFAULT_AUDIO_ELEMENT, parent, style);
 	}
 
-	public MediaComponentNew(String videoElement, String audioElement, Composite parent, int style) {
+	public MediaComponentNew2(String videoElement, String audioElement, Composite parent, int style) {
 		super(parent, style | SWT.EMBEDDED | SWT.DOUBLE_BUFFERED);
 
 		this.nativeHandle = SWTOverlay.handle(this);
@@ -962,7 +963,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 			@Override
 			public void run() {
 				synchronized(display) {
-					xoverlay.setWindowID(MediaComponentNew.this);
+					xoverlay.setWindowID(MediaComponentNew2.this);
 				}
 			}
 		};
@@ -1561,7 +1562,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 	public ImageData swtImageDataSnapshot(Buffer buffer) {
 		try {
 			//Convert to RGB using the provided direct buffer
-			final Colorspace.Frame frame = Colorspace.createRGBFrame(buffer);
+			final Colorspace2.Frame frame = Colorspace2.createRGBFrame(buffer);
 			if (frame == null)
 				return null;
 
@@ -1594,7 +1595,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 				if (buffer == null)
 					return null;
 
-				return Colorspace.createBufferedImage(buffer);
+				return Colorspace2.createBufferedImage(buffer);
 			} finally {
 				lock.unlock();
 			}
@@ -2220,7 +2221,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 				videoSink = createVideoSink(newMediaType, newRequest, newPipeline, videoElement);
 
 				videoRate.set("silent", true);
-				videoCapsFilter.setCaps(Caps.from(Colorspace.createKnownColorspaceFilter(checked_fps == IMediaRequest.DEFAULT_FPS || currentLiveSource, checked_fps))); //framerate=25/1 means 25 FPS
+				videoCapsFilter.setCaps(Caps.from(Colorspace2.createKnownColorspaceFilter(checked_fps == IMediaRequest.DEFAULT_FPS || currentLiveSource, checked_fps))); //framerate=25/1 means 25 FPS
 
 				videoBin.addAndLinkMany(videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
 			} else {
@@ -2595,7 +2596,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 			final IPipeline newPipeline = Pipeline.make("playbin2", "pipeline");
 			final IBin videoBin = Bin.make("videoBin");
 			final IElement videoQueue = Element.make("queue2", "videoQueue");
-			final IElement videoSink = Element.make("directdrawsink", "videoSink");
+			final IElement videoSink = Element.make(videoElement, "videoSink");
 
 			//Clear all elements
 			videoBin.visitElements(new IBin.IElementVisitor() {
@@ -2607,7 +2608,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 
 			if (!currentLiveSource) {
 				final float checked_fps = (request.getFPS() >= IMediaRequest.MINIMUM_FPS ? request.getFPS() : IMediaRequest.DEFAULT_FPS);
-				final String capsFramerateFilter = Colorspace.createKnownColorspaceFilter(checked_fps == IMediaRequest.DEFAULT_FPS || currentLiveSource, checked_fps);
+				final String capsFramerateFilter = Colorspace2.createKnownColorspaceFilter(checked_fps == IMediaRequest.DEFAULT_FPS || currentLiveSource, checked_fps);
 				
 				final IElement videoRate = Element.make("videorate", "videoRate");
 				final IElement videoCapsFilter = Element.make("capsfilter", "videoCaps");
@@ -2620,13 +2621,13 @@ public class MediaComponentNew extends SWTMediaComponent {
 				final GhostPad videoBinGhostPad = GhostPad.from("videoBinGhostPad", videoBinPad);
 				videoBin.addPad(videoBinGhostPad);
 
-				videoBinGhostPad.dispose();
-				videoBinPad.dispose();
-				videoRate.dispose();
-				videoCapsFilter.dispose();
-				videoCaps.dispose();
-				videoSink.dispose();
-				videoQueue.dispose();
+				//videoBinGhostPad.dispose();
+				//videoBinPad.dispose();
+				//videoRate.dispose();
+				//videoCapsFilter.dispose();
+				//videoCaps.dispose();
+				//videoSink.dispose();
+				//videoQueue.dispose();
 			} else {
 				videoBin.addAndLinkMany(videoQueue, videoSink);
 

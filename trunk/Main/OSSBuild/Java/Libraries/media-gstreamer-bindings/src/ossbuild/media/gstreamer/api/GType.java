@@ -121,8 +121,8 @@ public enum GType {
 	public static boolean addCustomConverter(long nativeValue, IGTypeConverter converter) {
 		if (converter == null)
 			return false;
-		if (G_TYPE_UNMAKE_FUNDAMENTAL(nativeValue) < G_TYPE_RESERVED_USER_FIRST)
-			throw new IllegalArgumentException("Cannot add a custom converter for a GType that is below the reserved glib list");
+		//if (G_TYPE_UNMAKE_FUNDAMENTAL(nativeValue) < G_TYPE_RESERVED_USER_FIRST)
+		//	throw new IllegalArgumentException("Cannot add a custom converter for a GType that is below the reserved glib list");
 		
 		if (converters == null)
 			converters = new HashMap<Long, IGTypeConverter>(1, 1.0f);
