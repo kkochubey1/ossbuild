@@ -52,6 +52,7 @@ test_thread (App* app)
 		gst_element_set_state (app->pipeline, GST_STATE_NULL);
 	}
 	g_print ("Test complete\n");
+	gst_object_unref (app->pipeline);
 	g_main_loop_quit(app->loop);
 }
 
