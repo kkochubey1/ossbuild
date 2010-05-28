@@ -109,6 +109,7 @@ struct _GstDshowVideoSink
   GMutex   *com_lock;
   GCond    *com_initialized;
   GCond    *com_uninitialize;
+  GCond    *com_uninitialized;
 };
 
 struct _GstDshowVideoSinkClass

@@ -229,6 +229,7 @@ gst_dshowvideosink_init (GstDshowVideoSink * sink, GstDshowVideoSinkClass * klas
   sink->com_lock = g_mutex_new();
   sink->com_initialized = g_cond_new();
   sink->com_uninitialize = g_cond_new();
+  sink->com_uninitialized = g_cond_new();
 
   /* create the COM thread */
   g_thread_create ((GThreadFunc)gst_dshowvideosink_com_thread,
@@ -255,14 +256,17 @@ gst_dshowvideosink_finalize (GObject * gobject)
 
   /* signal the COM thread that it sould uninitialize COM */
   if (sink->comInitialized) {
-    g_cond_signal (sink->com_uninitialize);
-    while (sink->comInitialized);
+    g_mutex_lock (sink->com_lock);
+	g_cond_signal (sink->com_uninitialize);
+	g_cond_wait (sink->com_uninitialized, sink->com_lock);
+	g_mutex_unlock (sink->com_lock);
   }
 
   g_mutex_free (sink->graph_lock);
   g_mutex_free (sink->com_lock);
   g_cond_free (sink->com_initialized);
   g_cond_free (sink->com_uninitialize);
+  g_cond_free (sink->com_uninitialized);
 
   G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
@@ -338,12 +342,13 @@ gst_dshowvideosink_com_thread (GstDshowVideoSink * sink)
 
   /* Wait until the unitialize condition is met to leave the COM apartement */
   g_mutex_lock (sink->com_lock);
-  g_cond_wait (sink->com_uninitialize, sink->com_lock);
-  g_mutex_unlock (sink->com_lock);
+  g_cond_wait (sink->com_uninitialize, sink->com_lock);  
 
   CoUninitialize ();
   GST_INFO_OBJECT (sink, "COM unintialized succesfully");
   sink->comInitialized = FALSE;
+  g_cond_signal (sink->com_uninitialized);
+  g_mutex_unlock (sink->com_lock);
 }
 
 static GstCaps *
