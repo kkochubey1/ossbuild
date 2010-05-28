@@ -534,6 +534,7 @@ WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CLOSE:
       sink->renderersupport->DestroyWindow ();
       sink->window_closed = TRUE;
+	  PostQuitMessage(WM_QUIT);
       return 0;
   }
 
