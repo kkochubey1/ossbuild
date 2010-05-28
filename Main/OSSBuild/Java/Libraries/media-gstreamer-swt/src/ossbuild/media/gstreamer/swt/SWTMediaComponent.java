@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import ossbuild.media.IMediaPlayer;
 import ossbuild.media.IMediaRequest;
 import ossbuild.media.Scheme;
@@ -77,7 +78,7 @@ public abstract class SWTMediaComponent extends Canvas implements IMediaPlayer {
 	}
 
 	public SWTMediaComponent(final Composite parent, final int style) {
-		super(parent, style | SWT.EMBEDDED);
+		super(parent, style);
 		init();
 	}
 

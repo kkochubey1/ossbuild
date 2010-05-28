@@ -120,13 +120,15 @@ abstract class BaseGstBin extends BaseGstElement implements IBin {
 
 	@Override
 	public boolean add(IElement element) {
-		element.ref();
-		if (gst_bin_add(ptr, element.getPointer())) {
-			//gst_object_ref(ptr);
-			return true;
+		BaseGstElement elem = (BaseGstElement)element;
+		synchronized(elem.ownershipLock()) {
+			elem.takeOwnership();
+			if (!gst_bin_add(ptr, element.getPointer())) {
+				elem.releaseOwnership();
+				return false;
+			}
 		}
-		element.unref();
-		return false;
+		return true;
 	}
 
 	@Override
@@ -135,12 +137,8 @@ abstract class BaseGstBin extends BaseGstElement implements IBin {
 			return true;
 		for(int i = 0; i < elements.length; ++i) {
 			if (elements[i] != null) {
-				elements[i].ref();
-				if (!gst_bin_add(ptr, elements[i].getPointer())) {
-					elements[i].unref();
+				if (!add(elements[i]))
 					return false;
-				}
-				//gst_object_ref(ptr);
 			}
 		}
 		return true;

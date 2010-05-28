@@ -6,6 +6,9 @@ import java.awt.image.DataBufferInt;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import org.gstreamer.Buffer;
+import org.gstreamer.Caps;
+import org.gstreamer.Structure;
 import ossbuild.StringUtil;
 
 /**
@@ -26,6 +29,10 @@ public class Colorspace {
 	public static final String[] VALID_DIRECTDRAW_COLORSPACES = {
 		  "video/x-raw-rgb"
 	};
+
+	public static final String
+		  CAPS_IMAGE_COLORSPACE_DEPTH = "video/x-raw-rgb, bpp=32, depth=24"
+	;
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Classes">
@@ -187,20 +194,20 @@ public class Colorspace {
 
 		try {
 			final Caps caps = buffer.getCaps();
-			if (caps == null || !caps.containsStructures())
+			if (caps == null || caps.size() <= 0)
 				return null;
 
-			final Structure struct = caps.structureAt(0);
-			if (struct == null || !struct.fieldExists("width") || !struct.fieldExists("height"))
+			final Structure struct = caps.getStructure(0);
+			if (struct == null || !struct.hasIntField("width") || !struct.hasIntField("height"))
 				return null;
 			
-			final int width = struct.fieldAsInt("width");
-			final int height = struct.fieldAsInt("height");
+			final int width = struct.getInteger("width");
+			final int height = struct.getInteger("height");
 			if (width < 1 || height < 1)
 				return null;
 
 			//Convert to RGB using the provided direct buffer
-			return new Frame(width, height, convertToRGB(buffer.asByteBuffer(), width, height, struct.name(), struct.fieldExists("format") ? struct.fieldAsFourCCString("format") : null));
+			return new Frame(width, height, convertToRGB(buffer.getByteBuffer(), width, height, struct.getName(), struct.hasField("format") ? struct.getFourccString("format") : null));
 		} catch(Throwable t) {
 			return null;
 		} finally {
