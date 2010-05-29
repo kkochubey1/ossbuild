@@ -6,9 +6,9 @@
 		<Add name="base" />
 		<Add name="glib" />
 		<Add name="xml" />
-		<Add name="fonts" />
+		<!-- <Add name="fonts" /> -->
 		<Add name="images" />
-		<Add name="graphics" />
+		<!-- <Add name="graphics" /> -->
 	</References>
 	
 	<Extract package="resources.gstbase.windows.x86" directory="${nativeResDir}/">
@@ -78,7 +78,7 @@
 		<File resource="libgstgdp.dll" />
 		<File resource="libgstgio.dll" />
 		<File resource="libgstogg.dll" />
-		<File resource="libgstpango.dll" />
+		<!-- <File resource="libgstpango.dll" /> -->
 		<File resource="libgstplaybin.dll" />
 		<File resource="libgstsubparse.dll" />
 		<File resource="libgsttheora.dll" />

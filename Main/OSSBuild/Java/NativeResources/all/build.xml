@@ -87,6 +87,15 @@
 					<include name="*-${os}-${arch}-*-${lic}.jar" />
 					<exclude name="*-${os}-${arch}-*-${exclude.lic}.jar" />
 					<exclude name="merged-*.jar" />
+					<!-- 
+						Exclude fonts/graphics out of monolithic pkg so it uses the 
+						system-supplied libraries. This ensures that theming is 
+						consistent. Otherwise fontconfig won't know how or where 
+						to get its settings and will instead use our generic ones which 
+						99% of the time don't look right or won't match the system theme.
+					-->
+					<exclude name="*-${os}-${arch}-fonts.jar" />
+					<exclude name="*-${os}-${arch}-graphics.jar" />
 				</fileset>
 			</path>
 		</foreach>
