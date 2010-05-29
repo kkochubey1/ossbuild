@@ -787,7 +787,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		Caps caps = Caps.fromString(Colorspace.CAPS_IMAGE_COLORSPACE_DEPTH);
 		GSIGNAL_API.g_signal_emit(pipeline, signalID, null, caps, refBuffer);
 		Buffer buffer = MiniObject.objectFor(refBuffer.getValue(), Buffer.class, false);
-		System.out.println(buffer.getCaps());
+		//System.out.println(buffer.getCaps());
 		caps.dispose();
 		return buffer;
 	}
