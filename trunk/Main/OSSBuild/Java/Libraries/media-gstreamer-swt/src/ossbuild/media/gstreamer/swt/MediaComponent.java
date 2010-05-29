@@ -2148,7 +2148,6 @@ public abstract class MediaComponent extends SWTMediaComponent {
 					if (factory == null)
 						return;
 					String factoryName = factory.getName();
-					factory.dispose();
 					//</editor-fold>
 
 					if ("uridecodebin".equalsIgnoreCase(factoryName)) {
@@ -2209,7 +2208,6 @@ public abstract class MediaComponent extends SWTMediaComponent {
 								if (factory == null)
 									return;
 								String factoryName = factory.getName();
-								factory.dispose();
 								//</editor-fold>
 
 								onUriDecodeBinElementAdded(newPipeline, bin, element);
