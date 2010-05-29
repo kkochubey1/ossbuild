@@ -180,14 +180,15 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		String audioElement;
 		switch (Sys.getOSFamily()) {
 			case Windows:
+				//videoElement = "autovideosink";
 				videoElement = "dshowvideosink";
 				//videoElement = "directdrawsink";
 				audioElement = "autoaudiosink";
 				break;
 			case Unix:
 				//videoElement = "xvimagesink"; //gconfaudiosink and gconfvideosink?
-				videoElement = "autovideosink";
-				//videoElement = "ximagesink";
+				//videoElement = "autovideosink";
+				videoElement = "ximagesink";
 				//videoElement = "glimagesink";
 				//audioElement = "autoaudiosink";
 				audioElement = "alsasink";
@@ -722,7 +723,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		acceleratedVideoCanvas.setVisible(false);
 		layout();
 		imgCanvas.redraw();
-		System.out.println("SHOWING IMAGE");
+		//System.out.println("SHOWING IMAGE");
 	}
 
 	protected void showVideoCanvas() {
@@ -745,7 +746,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		layout();
 		acceleratedVideoCanvas.redraw();
 		videoCanvas.redraw();
-		System.out.println("SHOWING VIDEO: " + (acceleratedVideo ? "accelerated" : "unaccelerated"));
+		//System.out.println("SHOWING VIDEO: " + (acceleratedVideo ? "accelerated" : "unaccelerated"));
 	}
 
 	protected void showNone() {
@@ -767,7 +768,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		imgCanvas.setVisible(false);
 		layout();
 		redraw();
-		System.out.println("SHOWING NONE");
+		//System.out.println("SHOWING NONE");
 	}
 
 	protected Buffer playbinFrame(Pipeline pipeline) {
