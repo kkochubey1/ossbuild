@@ -6,15 +6,13 @@ import ossbuild.media.MediaType;
 import ossbuild.media.Scheme;
 import ossbuild.media.IMediaRequest;
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.PointerByReference;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +21,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.eclipse.swt.SWT;
@@ -39,11 +36,9 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.gstreamer.Bin;
 import org.gstreamer.Buffer;
 import org.gstreamer.Bus;
@@ -71,16 +66,19 @@ import org.gstreamer.elements.FakeSink;
 import org.gstreamer.elements.PlayBin2;
 import org.gstreamer.event.BusSyncHandler;
 import org.gstreamer.event.StepEvent;
-import org.gstreamer.lowlevel.GstAPI.GstCallback;
+import org.gstreamer.lowlevel.GType;
+import org.gstreamer.lowlevel.GstTypes;
 import org.gstreamer.swt.overlay.SWTOverlay;
 import ossbuild.OSFamily;
 import ossbuild.StringUtil;
 import ossbuild.Sys;
+import ossbuild.media.IMediaPlayer;
 import ossbuild.media.MediaRequest;
 import ossbuild.media.MediaRequestType;
 import ossbuild.media.gstreamer.Colorspace;
 import ossbuild.media.gstreamer.ErrorType;
 import ossbuild.media.gstreamer.elements.VideoTestSrcPattern;
+import static org.gstreamer.lowlevel.GSignalAPI.GSIGNAL_API;
 
 /**
  *
@@ -105,6 +103,10 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 	public static final double
 		  DEFAULT_RATE = 1.0D
+	;
+
+	public static final boolean
+		  DEFAULT_VIDEO_ACCELERATED = false
 	;
 
 	public static final int
@@ -136,16 +138,10 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	protected final Lock lock = new ReentrantLock();
 	protected final String videoElement;
 	protected final String audioElement;
-	protected final Display display;
 
 	protected Pipeline pipeline;
-	protected Element currentVideoSink;
-	protected Element currentAudioSink;
-	protected Element currentAudioVolumeElement;
 	protected SWTOverlay xoverlay = null;
 
-	private boolean hasAudio = false;
-	private boolean hasVideo = false;
 	private boolean hasMultipartDemux = false;
 	private int videoWidth = 0;
 	private int videoHeight = 0;
@@ -155,31 +151,44 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	private int currentRepeatCount;
 	private int numberOfRepeats;
 	private boolean maintainAspectRatio = true;
-	private double currentRate = DEFAULT_RATE;
+	protected double currentRate = DEFAULT_RATE;
 	private long bufferSize = DEFAULT_BUFFER_SIZE;
 	private long lastPosition = 0L;
 	private long lastDuration = 0L;
-	private MediaType mediaType = MediaType.Unknown;
-	private ImageData singleImage = null;
-	private int volume = 100;
-	private boolean muted = false;
+	protected MediaType mediaType = MediaType.Unknown;
+	protected ImageData singleImage = null;
+	protected int volume = 100;
+	protected boolean muted = false;
 	protected IMediaRequest mediaRequest = null;
 	protected volatile State currentState = State.NULL;
 
 	private Canvas imgCanvas;
 	private Canvas videoCanvas;
+	private Canvas acceleratedVideoCanvas;
 	private StackLayout layout;
+	protected final Display display;
+	private ImageData currentFrame = null;
 
-	private AtomicBoolean isSeeking = new AtomicBoolean(false);
-	//private long seekingPos = 0L;
-	//private double seekingRate = DEFAULT_RATE;
+	protected boolean acceleratedVideo = DEFAULT_VIDEO_ACCELERATED;
 
 	private List<IErrorListener> errorListeners;
 	private final Object errorListenerLock = new Object();
+
+	//Do not lazy load b/c we're checking it with each frame we draw, so we want
+	//everything to be as fast as possible.
+	private List<IUnacceleratedPaintListener> unacceleratedPaintListeners = new CopyOnWriteArrayList<IUnacceleratedPaintListener>();
+	private IUnacceleratedPaintListener[] fastUnacceleratedPaintListeners = new IUnacceleratedPaintListener[0];
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	static {
+		//Sets a MS-Windows specific AWT property that prevents heavyweight components 
+		//from erasing their background.
+		try {
+			System.setProperty("sun.awt.noerasebackground", "true");
+		} catch(Throwable t) {
+		}
+
 		Gst.init("test", new String[] { "--gst-disable-segtrap" });
 		
 		String videoElement;
@@ -216,26 +225,31 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	}
 
 	public MediaComponent(String videoElement, String audioElement, Composite parent, int style) {
-		super(parent, style | SWT.DOUBLE_BUFFERED);
+		super(parent, style | SWT.NO_BACKGROUND | swtDoubleBufferStyle());
 
-		this.imgCanvas = new Canvas(this, SWT.DOUBLE_BUFFERED);
-		this.videoCanvas = new Canvas(this, SWT.EMBEDDED | SWT.DOUBLE_BUFFERED);
-		this.nativeHandle = SWTOverlay.handle(videoCanvas);
+		this.imgCanvas = new Canvas(this, SWT.NO_FOCUS | SWT.NO_BACKGROUND | swtDoubleBufferStyle());
+		this.videoCanvas = new Canvas(this, SWT.NO_FOCUS | swtDoubleBufferStyle());
+		this.acceleratedVideoCanvas = new Canvas(this, SWT.EMBEDDED | SWT.NO_FOCUS | SWT.NO_BACKGROUND | swtDoubleBufferStyle());
+		this.nativeHandle = SWTOverlay.handle(acceleratedVideoCanvas);
 		this.display = getDisplay();
+
 		this.audioElement = !StringUtil.isNullOrEmpty(videoElement) ? audioElement : DEFAULT_AUDIO_ELEMENT;
 		this.videoElement = !StringUtil.isNullOrEmpty(videoElement) ? videoElement : DEFAULT_VIDEO_ELEMENT;
 
-		//Setup SWT layout
-		this.setLayout((layout = new StackLayout()));
-		layout.marginHeight = layout.marginWidth = 0;
-		layout.topControl = imgCanvas;
+		this.positionUpdateRunnable = new Runnable() {
+			@Override
+			public void run() {
+				onPositionUpdate();
+			}
+		};
 
+		//<editor-fold defaultstate="collapsed" desc="Paint">
 		//When showing video, use expose() methods. When showing images, draw the
 		//image using SWT.
-		videoCanvas.addPaintListener(new PaintListener() {
+		acceleratedVideoCanvas.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
-				if (layout.topControl != videoCanvas || !videoCanvas.isVisible())
+				if (layout.topControl != acceleratedVideoCanvas || !acceleratedVideoCanvas.isVisible())
 					return;
 				expose();
 			}
@@ -248,18 +262,19 @@ public abstract class MediaComponent extends SWTMediaComponent {
 				paintImage(e.gc, singleImage);
 			}
 		});
-
-		this.positionUpdateRunnable = new Runnable() {
+		videoCanvas.addPaintListener(new PaintListener() {
 			@Override
-			public void run() {
-				onPositionUpdate();
+			public void paintControl(PaintEvent e) {
+				if (layout.topControl != videoCanvas || !videoCanvas.isVisible())
+					return;
+				paintUnacceleratedVideo(e.gc, videoCanvas.getBounds(), currentFrame);
 			}
-		};
+		});
+		//</editor-fold>
 
 		//<editor-fold defaultstate="collapsed" desc="SWT">
 		//this.setLayout(new FillLayout());
 		this.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		imgCanvas.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		this.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent ce) {
@@ -280,7 +295,14 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		});
 		//</editor-fold>
 
-		showImageCanvas();
+		//<editor-fold defaultstate="collapsed" desc="Layout">
+		//Setup SWT layout
+		this.setLayout((layout = new StackLayout()));
+		layout.marginHeight = layout.marginWidth = 0;
+		layout.topControl = imgCanvas;
+		//</editor-fold>
+		
+		showVideoCanvas();
 		init();
 	}
 
@@ -293,7 +315,15 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	}
 	//</editor-fold>
 
-	//<editor-fold defaultstate="collapsed" desc="Getters">
+	//<editor-fold defaultstate="collapsed" desc="Getters/Setters">
+	public boolean isVideoAccelerated() {
+		return acceleratedVideo;
+	}
+
+	public void setVideoAccelerated(boolean value) {
+		this.acceleratedVideo = value;
+	}
+
 	@Override
 	public Lock getMediaLock() {
 		return lock;
@@ -318,7 +348,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	public boolean isMediaAvailable() {
 		lock.lock();
 		try {
-			return (pipeline != null && pipeline.getState(0L) != State.NULL);
+			return (currentState(0L) != State.NULL);
 		} finally {
 			lock.unlock();
 		}
@@ -330,7 +360,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		try {
 			if (pipeline == null)
 				return false;
-			final State state = pipeline.getState(0L);
+			final State state = currentState(0L);
 			return (state == State.PAUSED || state == State.READY);
 		} finally {
 			lock.unlock();
@@ -343,7 +373,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		try {
 			if (pipeline == null)
 				return true;
-			final State state = pipeline.getState(0L);
+			final State state = currentState(0L);
 			return (state == State.NULL || state == State.READY);
 		} finally {
 			lock.unlock();
@@ -356,7 +386,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		try {
 			if (pipeline == null)
 				return true;
-			final State state = pipeline.getState(0L);
+			final State state = currentState(0L);
 			return (state == State.PLAYING);
 		} finally {
 			lock.unlock();
@@ -399,7 +429,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		try {
 			if (pipeline == null)
 				return 0L;
-			final State state = pipeline.getState(0L);
+			final State state = currentState(0L);
 			if (state != State.PLAYING || state != State.PAUSED)
 				return 0L;
 			return pipeline.queryPosition(TimeUnit.MILLISECONDS);
@@ -414,7 +444,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		try {
 			if (pipeline == null)
 				return 0L;
-			final State state = pipeline.getState(0L);
+			final State state = currentState(0L);
 			if (state != State.PLAYING || state != State.PAUSED)
 				return 0L;
 			return pipeline.queryDuration(TimeUnit.MILLISECONDS);
@@ -427,10 +457,10 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	public boolean isMuted() {
 		lock.lock();
 		try {
-			if (pipeline == null || currentAudioVolumeElement == null)
+			if (pipeline == null)
 				return false;
 
-			return (Boolean)currentAudioVolumeElement.get("mute");
+			return (Boolean)pipeline.get("mute");
 		} finally {
 			lock.unlock();
 		}
@@ -440,10 +470,10 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	public int getVolume() {
 		lock.lock();
 		try {
-			if (pipeline == null || currentAudioVolumeElement == null)
+			if (pipeline == null)
 				return 100;
 
-			return Math.max(0, Math.min(100, (int)((Double)currentAudioVolumeElement.get("volume") * 100.0D)));
+			return Math.max(0, Math.min(100, (int)((Double)pipeline.get("volume") * 100.0D)));
 		} finally {
 			lock.unlock();
 		}
@@ -451,12 +481,30 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 	@Override
 	public boolean isAudioAvailable() {
-		return this.hasAudio;
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return false;
+
+			int numAudioStreams = (Integer)pipeline.get("n-audio");
+			return (numAudioStreams > 0);
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	@Override
 	public boolean isVideoAvailable() {
-		return this.hasVideo;
+		lock.lock();
+		try {
+			if (pipeline == null)
+				return false;
+
+			int numVideoStreams = (Integer)pipeline.get("n-video");
+			return (numVideoStreams > 0);
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	@Override
@@ -491,125 +539,13 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Helper Methods">
-	public static IntBuffer convertToRGB(final ByteBuffer bb, final int width, final int height, final String colorspace, final String fourcc) {
-		if (!isValidColorspace(colorspace))
-			return null;
-
-		if (isRGBColorspace(colorspace)) {
-			return bb.asIntBuffer();
-		} else if(isYUVColorspace(colorspace)) {
-			if ("YUY2".equalsIgnoreCase(fourcc) || "YUYV".equalsIgnoreCase(fourcc) || "YUNV".equalsIgnoreCase(fourcc) || "V422".equalsIgnoreCase(fourcc))
-				return yuyv2rgb(bb, width, height);
-			else
-				return null;
-		} else {
-			return null;
-		}
-	}
-
-	public static IntBuffer yuyv2rgb(final ByteBuffer bb, final int width, final int height) {
-		//Courtesy jcam
-		//    http://www.stenza.org/packages/jcam.tgz
-
-		final ByteBuffer destbb = ByteBuffer.allocate(4 * width * height);
-		destbb.order(ByteOrder.BIG_ENDIAN);
-		bb.order(ByteOrder.BIG_ENDIAN);
-
-		int y1, u, y2, v;
-		int cb, cr, cg;
-		int r, g, b;
-
-		int halfWidth = width / 2;
-		int sstride = width*2;
-		int dstride = width*4;
-
-		int isrcindex, idestindex;
-
-		for (int i = 0; i < height; ++i) {
-			for (int j = 0; j < halfWidth; ++j) {
-				isrcindex = i * sstride + 4*j;
-				idestindex = i * dstride + 8*j;
-
-				y1 = bb.get(isrcindex + 0)&0xff;
-				u  = bb.get(isrcindex + 1)&0xff;
-				y2 = bb.get(isrcindex + 2)&0xff;
-				v  = bb.get(isrcindex + 3)&0xff;
-
-				cb = ((u-128) * 454) >> 8;
-				cr = ((v-128) * 359) >> 8;
-				cg = ((v-128) * 183 + (u-128) * 88) >> 8;
-
-				r = y1 + cr;
-				b = y1 + cb;
-				g = y1 - cg;
-
-				destbb.put(idestindex + 0, (byte)0);
-				destbb.put(idestindex + 1, (byte)Math.max(0, Math.min(255, r)));
-				destbb.put(idestindex + 2, (byte)Math.max(0, Math.min(255, g)));
-				destbb.put(idestindex + 3, (byte)Math.max(0, Math.min(255, b)));
-
-				r = y2 + cr;
-				b = y2 + cb;
-				g = y2 - cg;
-
-				destbb.put(idestindex + 4, (byte)0);
-				destbb.put(idestindex + 5, (byte)Math.max(0, Math.min(255, r)));
-				destbb.put(idestindex + 6, (byte)Math.max(0, Math.min(255, g)));
-				destbb.put(idestindex + 7, (byte)Math.max(0, Math.min(255, b)));
-			}
-		}
-
-		//destbb.flip();
-		return destbb.asIntBuffer();
-	}
-
-	public static byte clamp(int min, int max, int value) {
-		if (value < min)
-			return (byte)min;
-		if (value > max)
-			return (byte)max;
-		return (byte)(value);
-	}
-
-	public static boolean isRGBColorspace(final String colorspace) {
-		return VALID_COLORSPACES[0].equalsIgnoreCase(colorspace);
-	}
-
-	public static boolean isYUVColorspace(final String colorspace) {
-		return VALID_COLORSPACES[1].equalsIgnoreCase(colorspace);
-	}
-
-	public static boolean isValidYUVFormat(final String yuvFormat) {
-		if (StringUtil.isNullOrEmpty(yuvFormat))
-			return false;
-		for(String cs : VALID_YUV_FORMATS)
-			if (cs.equalsIgnoreCase(yuvFormat))
-				return true;
-		return false;
-	}
-
-	public static boolean isValidColorspace(final String colorspace) {
-		if (StringUtil.isNullOrEmpty(colorspace))
-			return false;
-		for(String cs : VALID_COLORSPACES)
-			if (cs.equalsIgnoreCase(colorspace))
-				return true;
-		return false;
-	}
-
-	private static String createColorspaceFilter(final MediaComponent src, final float fps) {
-		final String framerate = (fps == IMediaRequest.DEFAULT_FPS || src.currentLiveSource ? null : ", framerate=" + (int)fps + "/1");
-		final StringBuilder sb = new StringBuilder(256);
-
-		sb.append(";video/x-raw-rgb, bpp=32, depth=24");
-		for(int i = 1; i < VALID_COLORSPACES.length; ++i) {
-			sb.append(';');
-			sb.append(VALID_COLORSPACES[i]);
-			if (framerate != null)
-				sb.append(framerate);
-		}
-		sb.deleteCharAt(0);
-		return sb.toString();
+	private static int swtDoubleBufferStyle() {
+		//Macs force double buffering, so using SWT double buffering on top of that would
+		//be triple buffering and an unnecessary performance hit.
+		if (!Sys.isOSFamily(OSFamily.Mac))
+			return SWT.DOUBLE_BUFFERED;
+		else
+			return 0;
 	}
 
 	private static String uriString(URI uri) {
@@ -792,6 +728,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		layout.topControl = imgCanvas;
 		imgCanvas.setVisible(true);
 		videoCanvas.setVisible(false);
+		acceleratedVideoCanvas.setVisible(false);
 		layout();
 	}
 
@@ -808,8 +745,9 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		}
 		//</editor-fold>
 
-		layout.topControl = videoCanvas;
-		videoCanvas.setVisible(true);
+		layout.topControl = (acceleratedVideo ? acceleratedVideoCanvas : videoCanvas);
+		acceleratedVideoCanvas.setVisible(acceleratedVideo);
+		videoCanvas.setVisible(!acceleratedVideo);
 		imgCanvas.setVisible(false);
 		layout();
 	}
@@ -828,9 +766,31 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		//</editor-fold>
 
 		layout.topControl = null;
+		acceleratedVideoCanvas.setVisible(false);
 		videoCanvas.setVisible(false);
 		imgCanvas.setVisible(false);
 		layout();
+	}
+
+	protected Buffer playbinFrame(Pipeline pipeline) {
+		if (!(pipeline instanceof PlayBin2))
+			return null;
+
+		//Pointer ptr = pipeline.getPointer("frame");
+		//Buffer buffer = MiniObject.objectFor(ptr, Buffer.class, false);
+
+		GType playbin2_gtype = GstTypes.getGType(pipeline.getNativeAddress());
+		int signalID = GSIGNAL_API.g_signal_lookup("convert-frame", playbin2_gtype);
+		if (signalID == 0)
+			return null;
+
+		PointerByReference refBuffer = new PointerByReference();
+		Caps caps = Caps.fromString(Colorspace.CAPS_IMAGE_COLORSPACE_DEPTH);
+		GSIGNAL_API.g_signal_emit(pipeline, signalID, null, caps, refBuffer);
+		Buffer buffer = MiniObject.objectFor(refBuffer.getValue(), Buffer.class, false);
+		System.out.println(buffer.getCaps());
+		caps.dispose();
+		return buffer;
 	}
 	//</editor-fold>
 
@@ -838,12 +798,42 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	public static interface IErrorListener {
 		void handleError(final MediaComponent source, final IMediaRequest request, final ErrorType errorType, final int code, final String message);
 	}
+
+	public static interface IUnacceleratedPaintListener {
+		void paintNoVideo(IMediaPlayer src, GC g, Rectangle bounds);
+		boolean paintBeforeVideo(IMediaPlayer src, GC g, Rectangle bounds, ImageData frame);
+		void paintAfterVideo(IMediaPlayer src, GC g, Rectangle bounds);
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Adapters">
+	private static abstract class HandoffAdapter implements Element.HANDOFF, FakeSink.PREROLL_HANDOFF {
+		public void handoff(Element element, Buffer buffer, Pad pad) {
+			handle(buffer);
+		}
+
+		public void prerollHandoff(FakeSink fakesink, Buffer buffer, Pad pad, Pointer user_data) {
+			handle(buffer);
+		}
+
+		protected abstract void handle(Buffer buffer);
+	}
+
 	public static abstract class ErrorListenerAdapter implements IErrorListener {
 		@Override
 		public void handleError(final MediaComponent source, final IMediaRequest request, ErrorType errorType, int code, String message) {
+		}
+	}
+
+	public static abstract class UnacceleratedPaintListenerAdapter implements IUnacceleratedPaintListener {
+		public void paintNoVideo(IMediaPlayer src, GC g, Rectangle bounds) {
+		}
+
+		public boolean paintBeforeVideo(IMediaPlayer src, GC g, Rectangle bounds, ImageData frame) {
+			return true;
+		}
+
+		public void paintAfterVideo(IMediaPlayer src, GC g, Rectangle bounds) {
 		}
 	}
 	//</editor-fold>
@@ -889,6 +879,42 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		}
 	}
 	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="UnacceleratedPaintListener">
+	public boolean addUnacceleratedPaintListener(final IUnacceleratedPaintListener Listener) {
+		if (Listener == null)
+			return false;
+		boolean ret = unacceleratedPaintListeners.add(Listener);
+		if (ret)
+			recreateUnacceleratedPaintListenerFastList();
+		return ret;
+	}
+
+	public boolean removeUnacceleratedPaintListener(final IUnacceleratedPaintListener Listener) {
+		if (Listener == null)
+			return false;
+		boolean ret = unacceleratedPaintListeners.remove(Listener);
+		if (ret)
+			recreateUnacceleratedPaintListenerFastList();
+		return ret;
+	}
+
+	public boolean containsUnacceleratedPaintListener(final IUnacceleratedPaintListener Listener) {
+		if (Listener == null)
+			return false;
+		return unacceleratedPaintListeners.contains(Listener);
+	}
+
+	public boolean clearUnacceleratedPaintListeners() {
+		unacceleratedPaintListeners.clear();
+		recreateUnacceleratedPaintListenerFastList();
+		return true;
+	}
+
+	protected void recreateUnacceleratedPaintListenerFastList() {
+		fastUnacceleratedPaintListeners = unacceleratedPaintListeners.toArray(new IUnacceleratedPaintListener[unacceleratedPaintListeners.size()]);
+	}
+	//</editor-fold>
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Events">
@@ -898,6 +924,25 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			return;
 		for(IErrorListener listener : errorListeners)
 			listener.handleError(this, request, errorType, code, message);
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="UnacceleratedPaintListener">
+	protected void fireUnacceleratedPaintNoVideo(GC g, Rectangle bounds) {
+		for(int i =  0; i < fastUnacceleratedPaintListeners.length; ++i)
+			fastUnacceleratedPaintListeners[i].paintNoVideo(mediaPlayer, g, bounds);
+	}
+
+	protected boolean fireUnacceleratedPaintBeforeVideo(GC g, Rectangle bounds, ImageData frame) {
+		for(int i =  0; i < fastUnacceleratedPaintListeners.length; ++i)
+			if (!fastUnacceleratedPaintListeners[i].paintBeforeVideo(mediaPlayer, g, bounds, frame))
+				return false;
+		return true;
+	}
+
+	protected void fireUnacceleratedPaintAfterVideo(GC g, Rectangle bounds) {
+		for(int i =  0; i < fastUnacceleratedPaintListeners.length; ++i)
+			fastUnacceleratedPaintListeners[i].paintAfterVideo(mediaPlayer, g, bounds);
 	}
 	//</editor-fold>
 	//</editor-fold>
@@ -957,15 +1002,15 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		try {
 			lock.lock();
 			try {
-				if (currentVideoSink == null)
+				if (pipeline == null)
 					return null;
 
-				final Pointer ptr = currentVideoSink.getPointer("last-buffer");
-				if (ptr == null)
+				buffer = playbinFrame(pipeline);
+				if (buffer == null) {
+					if (currentFrame != null)
+						return currentFrame;
 					return null;
-				buffer = MiniObject.objectFor(ptr, Buffer.class, false);
-				if (buffer == null)
-					return null;
+				}
 
 				return swtImageDataSnapshot(buffer);
 			} finally {
@@ -980,23 +1025,18 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	}
 
 	public ImageData swtImageDataSnapshot(Buffer buffer) {
-		if (buffer == null)
-			return null;
 		try {
-			final Caps caps = buffer.getCaps();
-			final Structure struct = caps.getStructure(0);
-			final int width = struct.getInteger("width");
-			final int height = struct.getInteger("height");
-			if (width < 1 || height < 1)
+			//Convert to RGB using the provided direct buffer
+			final Colorspace.Frame frame = Colorspace.createRGBFrame(buffer);
+			if (frame == null)
 				return null;
 
-			//Convert to RGB using the provided direct buffer
-			final IntBuffer rgb = convertToRGB(buffer.getByteBuffer(), width, height, struct.getName(), struct.hasField("format") ? struct.getFourccString("format") : null);
+			final IntBuffer rgb = frame.getBuffer();
 			if (rgb == null)
 				return null;
 
 			int[] pixels = new int[rgb.remaining()];
-			ImageData imageData = new ImageData(width, height, 24, new PaletteData(0x00FF0000, 0x0000FF00, 0x000000FF));
+			ImageData imageData = new ImageData(frame.getWidth(), frame.getHeight(), 24, new PaletteData(0x00FF0000, 0x0000FF00, 0x000000FF));
 			rgb.get(pixels, 0, rgb.remaining());
 			imageData.setPixels(0, 0, pixels.length, pixels, 0);
 
@@ -1013,33 +1053,14 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		try {
 			lock.lock();
 			try {
-				if (currentVideoSink == null)
+				if (pipeline == null)
 					return null;
 
-				final Pointer ptr = currentVideoSink.getPointer("last-buffer");
-				if (ptr == null)
-					return null;
-				buffer = MiniObject.objectFor(ptr, Buffer.class, false);
+				buffer = playbinFrame(pipeline);
 				if (buffer == null)
 					return null;
 
-				final Caps caps = buffer.getCaps();
-				final Structure struct = caps.getStructure(0);
-				final int width = struct.getInteger("width");
-				final int height = struct.getInteger("height");
-				if (width < 1 || height < 1)
-					return null;
-
-				//Convert to RGB using the provided direct buffer
-				final IntBuffer rgb = convertToRGB(buffer.getByteBuffer(), width, height, struct.getName(), struct.hasField("format") ? struct.getFourccString("format") : null);
-				if (rgb == null)
-					return null;
-
-				final BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-				img.setAccelerationPriority(0.001f);
-				rgb.get(((DataBufferInt)img.getRaster().getDataBuffer()).getData(), 0, rgb.remaining());
-
-				return img;
+				return Colorspace.createBufferedImage(buffer);
 			} finally {
 				lock.unlock();
 			}
@@ -1077,9 +1098,16 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		State state;
 		lock.lock();
 		try {
-			if (xoverlay != null && pipeline != null && ((state = currentState()) == State.PLAYING || state == State.PAUSED)) {
-				xoverlay.expose();
-				return true;
+			if (pipeline != null && ((state = currentState()) == State.PLAYING || state == State.PAUSED)) {
+				if (xoverlay != null && layout.topControl == acceleratedVideoCanvas) {
+					xoverlay.expose();
+					return true;
+				} else {
+					videoCanvas.redraw();
+					return true;
+				}
+			} else {
+				videoCanvas.redraw();
 			}
 			return false;
 		} finally {
@@ -1093,11 +1121,13 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	public boolean mute() {
 		lock.lock();
 		try {
-			if (pipeline == null || currentAudioVolumeElement == null)
+			if (pipeline == null)
 				return false;
 
 			boolean shouldMute = !isMuted();
-			currentAudioVolumeElement.set("mute", (muted = shouldMute));
+			pipeline.set("mute", (muted = shouldMute));
+			if (!shouldMute)
+				adjustVolume(volume);
 			if (shouldMute)
 				fireAudioMuted();
 			else
@@ -1112,12 +1142,12 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	public boolean adjustVolume(int percent) {
 		lock.lock();
 		try {
-			if (pipeline == null || currentAudioVolumeElement == null)
+			if (pipeline == null)
 				return false;
 
 			int oldVolume = getVolume();
 			int newVolume = Math.max(0, Math.min(100, percent));
-			currentAudioVolumeElement.set("volume", (double)(volume = newVolume) / 100.0D);
+			pipeline.set("volume", (double)(volume = newVolume) / 100.0D);
 			if (oldVolume != newVolume)
 				fireAudioVolumeChanged(newVolume);
 		} finally {
@@ -1261,7 +1291,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			final long stop = (forwards ? -1 : 0);
 
 			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop);
-			changeState(State.PLAYING);
+			//changeState(State.PLAYING);
 
 			if (success) {
 				currentRate = rate;
@@ -1287,12 +1317,17 @@ public abstract class MediaComponent extends SWTMediaComponent {
 				changeState(pipeline, State.PAUSED, new Runnable() {
 					@Override
 					public void run() {
-						pipeline.sendEvent(new StepEvent(Format.BUFFERS, 1L, 1.0D, true, false));
+						StepEvent evt = new StepEvent(Format.BUFFERS, 1L, 1.0D, true, false);
+						pipeline.sendEvent(evt);
+						evt.dispose();
 					}
 				});
 				return true;
 			}
-			return pipeline.sendEvent(new StepEvent(Format.BUFFERS, 1L, 1.0D, true, false));
+			StepEvent evt = new StepEvent(Format.BUFFERS, 1L, 1.0D, true, false);
+			boolean ret = pipeline.sendEvent(evt);
+			evt.dispose();
+			return ret;
 		} finally {
 			lock.unlock();
 		}
@@ -1393,13 +1428,15 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		pipeline = null;
 		mediaType = MediaType.Unknown;
 		singleImage = null;
+		currentFrame = null;
 		expose();
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Create">
-	protected Element createImageSink(final MediaType newMediaType, final IMediaRequest newRequest, final Pipeline newPipeline, final String suggestedVideoSink) {
+	protected Element createImageSink(final MediaType newMediaType, final IMediaRequest newRequest, final Pipeline newPipeline, final String suggestedVideoSink, final boolean useHardwareAcceleration) {
 		final FakeSink imageSink = new FakeSink("videoSink");
+		imageSink.set("num-buffers", 1);
 		imageSink.set("signal-handoffs", true);
 		imageSink.getStaticPad("sink").connect("notify::caps", new Closure() {
 			public boolean invoke(Pad pad, Pointer unused, Pointer dynamic) {
@@ -1421,20 +1458,249 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		return imageSink;
 	}
 
-	protected Element createVideoSink(final MediaType newMediaType, final IMediaRequest newRequest, final Pipeline newPipeline, final String suggestedVideoSink) {
-		final Element videoSink = ElementFactory.make(suggestedVideoSink, "videoSink");
-		videoSink.set("show-preroll-frame", true);
-		videoSink.getStaticPad("sink").connect("notify::caps", new Closure() {
-			@SuppressWarnings("unused")
-			public boolean invoke(Pad pad, Pointer unused, Pointer dynamic) {
-				return onNotifyCaps(newPipeline, pad);
-			}
-		});
-		return videoSink;
+	protected Element createVideoSink(final MediaType newMediaType, final IMediaRequest newRequest, final Pipeline newPipeline, final String suggestedVideoSink, final boolean useHardwareAcceleration) {
+		if (!useHardwareAcceleration) {
+			//Create a bin
+			Bin videoSinkBin = new Bin("videoSink");
+			FakeSink fakesink = new FakeSink("videoSinkBin_fakesink");
+			Element ffmpegcolorspace = ElementFactory.make("ffmpegcolorspace", "videoSinkBin_ffmpegcolorspace");
+			final Element capsfilter = ElementFactory.make("capsfilter", "videoSinkBin_capsfilter");
+			final Caps caps = Caps.fromString(Colorspace.CAPS_IMAGE_COLORSPACE_DEPTH);
+			capsfilter.setCaps(caps);
+
+			Pad sinkPad;
+			(sinkPad = fakesink.getStaticPad("sink")).connect("notify::caps", new Closure() {
+				@SuppressWarnings("unused")
+				public boolean invoke(Pad pad, Pointer unused, Pointer dynamic) {
+					return onNotifyCaps(newPipeline, pad);
+				}
+			});
+			sinkPad.dispose();
+
+			HandoffAdapter handoffs = new HandoffAdapter() {
+				private int[] pixels = new int[0];
+				private boolean updatePending = false;
+				private Lock bufferLock = new ReentrantLock();
+
+				private final Runnable update = new Runnable() {
+					@Override
+					public void run() {
+						bufferLock.lock();
+						try {
+							if (!isDisposed()) {
+								videoCanvas.redraw();
+							}
+							updatePending = false;
+						} finally {
+							bufferLock.unlock();
+						}
+					}
+				};
+
+				@Override
+				public void handle(Buffer buffer) {
+					Caps caps = buffer.getCaps();
+					Structure struct = caps.getStructure(0);
+					int width = struct.getInteger("width");
+					int height = struct.getInteger("height");
+
+					cycle: {
+						if (width >= 0 && height >= 0) {
+							if (!bufferLock.tryLock())
+								break cycle;
+							if (updatePending) {
+								bufferLock.unlock();
+								break cycle;
+							}
+							try {
+								IntBuffer rgb = buffer.getByteBuffer().asIntBuffer();
+								int size = rgb.remaining();
+								if (size != pixels.length)
+									pixels = new int[size];
+
+								ImageData imageData = new ImageData(width, height, 24, new PaletteData(0x00FF0000, 0x0000FF00, 0x000000FF));
+								rgb.get(pixels, 0, size);
+								imageData.setPixels(0, 0, size, pixels, 0);
+								
+								currentFrame = imageData;
+								updatePending = true;
+							} finally {
+								bufferLock.unlock();
+							}
+							if (!isDisposed())
+								display.asyncExec(update);
+						}
+					}
+
+					//Cleanup
+					buffer.dispose();
+					struct.dispose();
+					caps.dispose();
+				}
+			};
+
+			fakesink.set("sync", true);
+			fakesink.set("signal-handoffs", true);
+			fakesink.connect((Element.HANDOFF)handoffs);
+			fakesink.connect((FakeSink.PREROLL_HANDOFF)handoffs);
+
+			videoSinkBin.addMany(ffmpegcolorspace, capsfilter, fakesink);
+			Element.linkMany(ffmpegcolorspace, capsfilter, fakesink);
+
+			final Pad videoSinkBinPad = ffmpegcolorspace.getStaticPad("sink");
+			final GhostPad videoSinkBinGhostPad = new GhostPad("videoSinkBin_ghostpad", videoSinkBinPad);
+			videoSinkBin.addPad(videoSinkBinGhostPad);
+
+			capsfilter.dispose();
+			caps.dispose();
+			ffmpegcolorspace.dispose();
+			//fakesink.dispose();
+
+			return videoSinkBin;
+		} else {
+			Element videoSink = ElementFactory.make(suggestedVideoSink, "videoSink");
+			videoSink.set("force-aspect-ratio", false);
+			videoSink.set("show-preroll-frame", true);
+
+			Pad sinkPad;
+			(sinkPad = videoSink.getStaticPad("sink")).connect("notify::caps", new Closure() {
+				@SuppressWarnings("unused")
+				public boolean invoke(Pad pad, Pointer unused, Pointer dynamic) {
+					return onNotifyCaps(newPipeline, pad);
+				}
+			});
+			sinkPad.dispose();
+
+			return videoSink;
+		}
 	}
 
-	protected Element createAudioSink(final MediaType newMediaType, final IMediaRequest newRequest, final Pipeline newPipeline, final String suggestedAudioSink) {
+	protected Element createAudioSink(final MediaType newMediaType, final IMediaRequest newRequest, final Pipeline newPipeline, final String suggestedAudioSink, final boolean useHardwareAcceleration) {
 		return ElementFactory.make(suggestedAudioSink, "audioSink");
+	}
+
+	protected Bin createAudioBin(final IMediaRequest newRequest, final Pipeline newPipeline, final String suggestedAudioSink, final boolean useHardwareAcceleration) {
+		final Bin audioBin = new Bin("audioBin");
+		final Element audioQueue = ElementFactory.make("queue2", "audioQueue");
+		final Element audioVolume = ElementFactory.make("volume", "audioVolume");
+		final Element audioConvert = ElementFactory.make("audioconvert", "audioConvert");
+		final Element audioResample = ElementFactory.make("audioresample", "audioResample");
+		final Element audioScaleTempo = ElementFactory.make("scaletempo", "audioScaleTempo");
+		final Element audioConvertAfterScaleTempo = ElementFactory.make("audioconvert", "audioConvertAfterScaleTempo");
+		final Element audioResampleAfterScaleTempo = ElementFactory.make("audioresample", "audioResampleAfterScaleTempo");
+		final Element audioSink = createAudioSink(MediaType.Unknown, newRequest, newPipeline, suggestedAudioSink, useHardwareAcceleration);
+
+		audioBin.addMany(audioQueue, audioVolume, audioConvert, audioResample, audioScaleTempo, audioConvertAfterScaleTempo, audioResampleAfterScaleTempo, audioSink);
+		Element.linkMany(audioQueue, audioVolume, audioConvert, audioResample, audioScaleTempo, audioConvertAfterScaleTempo, audioResampleAfterScaleTempo, audioSink);
+
+		final Pad audioBinPad = audioQueue.getStaticPad("sink");
+		final GhostPad audioBinGhostPad = new GhostPad("audioBinGhostPad", audioBinPad);
+		audioBin.addPad(audioBinGhostPad);
+
+		audioBinGhostPad.dispose();
+		audioBinPad.dispose();
+		audioSink.dispose();
+		audioResampleAfterScaleTempo.dispose();
+		audioConvertAfterScaleTempo.dispose();
+		audioScaleTempo.dispose();
+		audioResample.dispose();
+		audioConvert.dispose();
+		audioVolume.dispose();
+		audioQueue.dispose();
+
+		return audioBin;
+	}
+
+	protected Bin createVideoBin(final IMediaRequest newRequest, final Pipeline newPipeline, final String suggestedVideoSink, final boolean useHardwareAcceleration) {
+		//For now, ignore useHardwareAcceleration -- everything will be done through SWT
+		final Bin videoBin = new Bin("videoBin");
+		final Element videoSink = createVideoSink(MediaType.Unknown, newRequest, newPipeline, suggestedVideoSink, useHardwareAcceleration);
+
+		if (!currentLiveSource) {
+			final float checked_fps = (newRequest.getFPS() >= IMediaRequest.MINIMUM_FPS ? newRequest.getFPS() : IMediaRequest.DEFAULT_FPS);
+			final boolean hasFramerate = (checked_fps == IMediaRequest.DEFAULT_FPS || currentLiveSource);
+
+			final String capsFramerateFilter = Colorspace.createKnownColorspaceFilter(hasFramerate, checked_fps);
+
+			final Element videoRate = ElementFactory.make("videorate", "videoRate");
+			final Element videoScale = ElementFactory.make("videoscale", "videoScale");
+			final Element videoColorSpace = ElementFactory.make("ffmpegcolorspace", "videoColorSpace");
+			final Element videoCapsFilter = ElementFactory.make("capsfilter", "videoCaps");
+			final Caps videoCaps = Caps.fromString(capsFramerateFilter);
+			videoCapsFilter.setCaps(videoCaps);
+
+			videoScale.set("method", 2L /*4Tap*/);
+
+			videoBin.addMany(videoColorSpace, videoRate, videoScale, videoCapsFilter, videoSink);
+			Element.linkMany(videoColorSpace, videoRate, videoScale, videoCapsFilter, videoSink);
+
+			final Pad videoBinPad = videoColorSpace.getStaticPad("sink");
+			final GhostPad videoBinGhostPad = new GhostPad("videoBinGhostPad", videoBinPad);
+			videoBin.addPad(videoBinGhostPad);
+
+			videoBinGhostPad.dispose();
+			videoBinPad.dispose();
+			videoColorSpace.dispose();
+			videoScale.dispose();
+			videoRate.dispose();
+			videoCapsFilter.dispose();
+
+			//videoCaps.dispose();
+		} else {
+			final Element videoColorSpace = ElementFactory.make("ffmpegcolorspace", "videoColorSpace");
+			final Element videoScale = ElementFactory.make("videoscale", "videoScale");
+
+			videoScale.set("method", 2L /*4Tap*/);
+
+			videoBin.addMany(videoColorSpace, videoScale, videoSink);
+			Element.linkMany(videoColorSpace, videoScale, videoSink);
+
+			final Pad videoBinPad = videoColorSpace.getStaticPad("sink");
+			final GhostPad videoBinGhostPad = new GhostPad("videoBinGhostPad", videoBinPad);
+			videoBin.addPad(videoBinGhostPad);
+
+			videoBinGhostPad.dispose();
+			videoBinPad.dispose();
+			videoColorSpace.dispose();
+			videoScale.dispose();
+		}
+
+		xoverlay = null;
+
+		if (useHardwareAcceleration) {
+			try {
+				xoverlay = SWTOverlay.wrap(videoSink);
+			} catch(IllegalArgumentException e) {
+			}
+		}
+
+		//videoSink.dispose();
+		return videoBin;
+	}
+
+	protected Bin createImageBin(final IMediaRequest newRequest, final Pipeline newPipeline, final String suggestedVideoSink, final boolean useHardwareAcceleration) {
+		final Bin imageBin = new Bin("imageBin");
+		final Element imageSink = createImageSink(mediaType, newRequest, newPipeline, suggestedVideoSink, useHardwareAcceleration);
+		final Element imageColorSpace = ElementFactory.make("ffmpegcolorspace", "imageColorSpace");
+		final Element imageCapsFilter = ElementFactory.make("capsfilter", "imageCaps");
+		final Caps imageCaps = Caps.fromString(Colorspace.CAPS_IMAGE_COLORSPACE_DEPTH);
+		imageCapsFilter.setCaps(imageCaps);
+
+		imageBin.addMany(imageColorSpace, imageCapsFilter, imageSink);
+		Element.linkMany(imageColorSpace, imageCapsFilter, imageSink);
+
+		final Pad imageBinPad = imageColorSpace.getStaticPad("sink");
+		final GhostPad imageBinGhostPad = new GhostPad("imageBinGhostPad", imageBinPad);
+		imageBin.addPad(imageBinGhostPad);
+
+		imageBinGhostPad.dispose();
+		imageBinPad.dispose();
+		//imageCaps.dispose();
+		imageColorSpace.dispose();
+		imageCapsFilter.dispose();
+		imageSink.dispose();
+
+		return imageBin;
 	}
 	//</editor-fold>
 
@@ -1539,7 +1805,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 		//<editor-fold defaultstate="collapsed" desc="Run all actions for this state change">
 		Queue<Runnable> actions = actionsForState(newPipeline, newState);
-		if (!actions.isEmpty()) {
+		if (actions != null && !actions.isEmpty()) {
 			Runnable r;
 			while((r = actions.poll()) != null) {
 				try {
@@ -1572,7 +1838,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 					//	return;
 
 					final long position = pipeline.queryPosition(TimeUnit.MILLISECONDS);
-					final long duration = Math.max(position, pipeline.queryDuration(TimeUnit.MILLISECONDS));
+					final long duration = pipeline.queryDuration(TimeUnit.MILLISECONDS);
 					final int percent = (duration > 0 ? Math.max(0, Math.min(100, (int)(((double)position / (double)duration) * 100.0D))) : -1);
 					final boolean positionChanged = (position != lastPosition && position >= 0L);
 					final boolean last = (position <= 0L && lastPosition > 0L);
@@ -1597,6 +1863,54 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		resetPipeline(newPipeline);
 		fireHandleError(newRequest, ErrorType.fromNativeValue(code), code, message);
 	}
+
+	protected void onEOS(GstObject src) {
+		if (pipeline == null || !pipeline.equals(src))
+			return;
+		if (mediaType != MediaType.Image && (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount))) {
+			++numberOfRepeats;
+			if (numberOfRepeats == Integer.MAX_VALUE)
+				numberOfRepeats = 1;
+
+			Gst.invokeLater(new Runnable() {
+				public void run() {
+					lock.lock();
+					try {
+						if (pipeline == null)
+							return;
+
+						State state = pipeline.getState(0L);
+						pipeline.setState(State.READY);
+						//pipeline.set("uri", mediaRequest.getURI());
+						if (state != State.PAUSED)
+							pipeline.setState(State.PLAYING);
+						else
+							pipeline.setState(State.PAUSED);
+					} finally {
+						lock.unlock();
+					}
+				}
+			});
+			return;
+		}
+		numberOfRepeats = 0;
+		Gst.invokeLater(new Runnable() {
+			public void run() {
+				lock.lock();
+				try {
+					if (pipeline == null)
+						return;
+					
+					if (mediaType != MediaType.Image)
+						pipeline.setState(State.NULL);
+					else
+						pipeline.setState(State.PAUSED);
+				} finally {
+					lock.unlock();
+				}
+			}
+		});
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Play">
@@ -1604,7 +1918,11 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	public boolean playPattern(final String title, final VideoTestSrcPattern pattern) {
 		lock.lock();
 		try {
-			resetPipeline(pipeline);
+			if (pipeline != null) {
+				pipeline.setState(State.NULL);
+				pipeline.dispose();
+				pipeline = null;
+			}
 
 			final IMediaRequest newRequest = new MediaRequest(
 				MediaRequestType.TestVideo,
@@ -1618,16 +1936,11 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			);
 
 			//Reset these values
-			hasVideo = false;
-			hasAudio = false;
 			hasMultipartDemux = false;
 			videoWidth = 0;
 			videoHeight = 0;
 			numberOfRepeats = 0;
 			actualFPS = 0.0f;
-			currentVideoSink = null;
-			currentAudioSink = null;
-			currentAudioVolumeElement = null;
 			maintainAspectRatio = true;
 			mediaType = MediaType.Video;
 
@@ -1640,39 +1953,42 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			fireMediaEventPlayRequested(newRequest);
 
 			final float checked_fps = (newRequest.getFPS() >= IMediaRequest.MINIMUM_FPS ? newRequest.getFPS() : IMediaRequest.DEFAULT_FPS);
+			final boolean hasFramerate = (checked_fps == IMediaRequest.DEFAULT_FPS || currentLiveSource);
 
 			final Pipeline newPipeline = new Pipeline("pipeline");
 			final Element videoTestSrc = ElementFactory.make("videotestsrc", "videoTestSrc");
 			videoTestSrc.set("pattern", (long)pattern.getNativeValue());
 
-			final Bin videoBin = new Bin("videoBin");
 			final Element videoQueue = ElementFactory.make("queue2", "videoQueue");
 			final Element videoRate = ElementFactory.make("videorate", "videoRate");
 			final Element videoColorspace = ElementFactory.make("ffmpegcolorspace", "videoColorspace");
 			final Element videoCapsFilter = ElementFactory.make("capsfilter", "videoCapsFilter");
 			final Element videoScale = ElementFactory.make("videoscale", "videoScale");
-			final Element videoSink = createVideoSink(mediaType, newRequest, newPipeline, videoElement);
+			final Element videoSink = createVideoSink(mediaType, newRequest, newPipeline, videoElement, acceleratedVideo);
+			final Caps videoCaps = Caps.fromString(Colorspace.createKnownColorspaceFilter(hasFramerate, checked_fps, 640, 480));
 
 			videoRate.set("silent", true);
-			videoCapsFilter.setCaps(Caps.fromString(createColorspaceFilter(this, checked_fps))); //framerate=25/1 means 25 FPS
+			videoCapsFilter.setCaps(videoCaps);
 
-			videoBin.addMany(videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
-			Element.linkMany(videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
+			newPipeline.addMany(videoTestSrc, videoQueue, videoRate, videoScale, videoCapsFilter, videoColorspace, videoSink);
+			Element.linkMany(videoTestSrc, videoQueue, videoRate, videoScale, videoCapsFilter, videoColorspace, videoSink);
 
-			videoBin.addPad(new GhostPad("sink", videoQueue.getStaticPad("sink")));
-			videoTestSrc.getStaticPad("src").link(videoBin.getStaticPad("sink"));
-			videoBin.setState(State.PLAYING);
-			
-			newPipeline.addMany(videoTestSrc, videoBin);
-			Element.linkMany(videoTestSrc, videoBin);
-			
-			//<editor-fold defaultstate="collapsed" desc="Signals">
-			//<editor-fold defaultstate="collapsed" desc="Bus">
 			final Bus bus = newPipeline.getBus();
+			bus.setSyncHandler(new BusSyncHandler() {
+				@Override
+				public BusSyncReply syncMessage(Message msg) {
+					Structure s = msg.getStructure();
+					if (s == null || !s.hasName("prepare-xwindow-id"))
+						return BusSyncReply.PASS;
+					if (xoverlay != null)
+						xoverlay.setWindowID(nativeHandle);
+					return BusSyncReply.DROP;
+				}
+			});
 			bus.connect(new Bus.STATE_CHANGED() {
 				@Override
 				public void stateChanged(GstObject source, State oldState, State newState, State pendingState) {
-					if (source != newPipeline)
+					if (source == null || !source.equals(newPipeline))
 						return;
 					onStateChanged(newPipeline, null, oldState, newState, pendingState);
 				}
@@ -1695,26 +2011,29 @@ public abstract class MediaComponent extends SWTMediaComponent {
 					//onEOS(newPipeline);
 				}
 			});
-			bus.setSyncHandler(new BusSyncHandler() {
-				@Override
-				public BusSyncReply syncMessage(Message msg) {
-					Structure s = msg.getStructure();
-					if (s == null || !s.hasName("prepare-xwindow-id"))
-						return BusSyncReply.PASS;
-					xoverlay.setWindowID(MediaComponent.this.nativeHandle);
-					return BusSyncReply.DROP;
-				}
-			});
-			//</editor-fold>
-			//</editor-fold>
 
+			xoverlay = null;
 			pipeline = newPipeline;
-			currentVideoSink = videoSink;
-			xoverlay = SWTOverlay.wrap(videoSink);
 			emitPositionUpdates = false;
+			if (acceleratedVideo) {
+				try {
+					xoverlay = SWTOverlay.wrap(videoSink);
+				} catch(Throwable t) {
+				}
+			}
+
+			videoTestSrc.dispose();
+			videoQueue.dispose();
+			videoRate.dispose();
+			videoScale.dispose();
+			videoCapsFilter.dispose();
+			videoColorspace.dispose();
+			videoSink.dispose();
+			videoCaps.dispose();
 
 			//Start playing
-			changeState(pipeline, State.PLAYING);
+			showVideoCanvas();
+			newPipeline.setState(State.PLAYING);
 			return true;
 		} catch(Throwable t) {
 			return false;
@@ -1742,16 +2061,11 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			}
 
 			//Reset these values
-			hasVideo = false;
-			hasAudio = false;
 			hasMultipartDemux = false;
 			videoWidth = 0;
 			videoHeight = 0;
 			numberOfRepeats = 0;
 			actualFPS = 0.0f;
-			currentVideoSink = null;
-			currentAudioSink = null;
-			currentAudioVolumeElement = null;
 			mediaType = MediaType.Unknown;
 
 			//Save these values
@@ -1766,68 +2080,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			fireMediaEventPlayRequested(request);
 
 			final Pipeline newPipeline = new PlayBin2("pipeline");
-			final Bin videoBin = new Bin("videoBin");
-			final Element audioSink = createAudioSink(MediaType.Unknown, request, newPipeline, audioElement);
-			final Element videoSink = createVideoSink(MediaType.Unknown, request, newPipeline, videoElement);
-			final Element videoQueue = ElementFactory.make("queue2", "videoQueue");
 
-			videoSink.set("force-aspect-ratio", false);
-			videoSink.set("show-preroll-frame", true);
-
-			List<Element> videoBinElements = videoBin.getElements();
-			if (!videoBinElements.isEmpty()) {
-				Element[] arrVideoBinElements = videoBinElements.toArray(new Element[videoBinElements.size()]);
-				Element.unlinkMany(arrVideoBinElements);
-				videoBin.removeMany(arrVideoBinElements);
-			}
-
-			if (!currentLiveSource) {
-				final float checked_fps = (request.getFPS() >= IMediaRequest.MINIMUM_FPS ? request.getFPS() : IMediaRequest.DEFAULT_FPS);
-				final String capsFramerateFilter = Colorspace.createKnownColorspaceFilter(checked_fps == IMediaRequest.DEFAULT_FPS || currentLiveSource, checked_fps);
-
-				final Element videoRate = ElementFactory.make("videorate", "videoRate");
-				final Element videoScale = ElementFactory.make("videoscale", "videoScale");
-				final Element videoCapsFilter = ElementFactory.make("capsfilter", "videoCaps");
-				final Caps videoCaps = Caps.fromString(capsFramerateFilter);
-				videoCapsFilter.setCaps(videoCaps);
-
-				videoScale.set("method", 2L /*4Tap*/);
-
-				videoBin.addMany(videoQueue, videoRate, videoScale, videoCapsFilter, videoSink);
-				Element.linkMany(videoQueue, videoRate, videoScale, videoCapsFilter, videoSink);
-
-				final Pad videoBinPad = videoQueue.getStaticPad("sink");
-				final GhostPad videoBinGhostPad = new GhostPad("videoBinGhostPad", videoBinPad);
-				videoBin.addPad(videoBinGhostPad);
-
-				videoBinGhostPad.dispose();
-				videoBinPad.dispose();
-				videoScale.dispose();
-				videoRate.dispose();
-				videoCapsFilter.dispose();
-				videoCaps.dispose();
-			} else {
-				final Element videoScale = ElementFactory.make("videoscale", "videoScale");
-
-				videoScale.set("method", 2L /*4Tap*/);
-
-				videoBin.addMany(videoQueue, videoScale, videoSink);
-				Element.linkMany(videoQueue, videoScale, videoSink);
-
-				final Pad videoBinPad = videoQueue.getStaticPad("sink");
-				final GhostPad videoBinGhostPad = new GhostPad("videoBinGhostPad", videoBinPad);
-				videoBin.addPad(videoBinGhostPad);
-
-				videoBinGhostPad.dispose();
-				videoBinPad.dispose();
-				videoScale.dispose();
-			}
-
-			newPipeline.setAutoFlushBus(false);
-			newPipeline.set("audio-sink", audioSink);
-			newPipeline.set("video-sink", videoBin);
-			videoBin.dispose();
-
+			newPipeline.setAutoFlushBus(true);
 			newPipeline.set("uri", uri);
 			newPipeline.set("mute", muted);
 			newPipeline.set("volume", Math.max(0, Math.min(100, volume)) / 100.0D);
@@ -1839,7 +2093,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 					Structure s = msg.getStructure();
 					if (s == null || !s.hasName("prepare-xwindow-id"))
 						return BusSyncReply.PASS;
-					xoverlay.setWindowID(nativeHandle);
+					if (xoverlay != null)
+						xoverlay.setWindowID(nativeHandle);
 					return BusSyncReply.DROP;
 				}
 			});
@@ -1855,6 +2110,24 @@ public abstract class MediaComponent extends SWTMediaComponent {
 					if (source != newPipeline)
 						return;
 					onStateChanged(newPipeline, null, old, current, pending);
+				}
+			});
+			bus.connect(new Bus.BUFFERING() {
+				@Override
+				public void bufferingData(GstObject source, int percent) {
+					onBuffering(newPipeline, percent);
+				}
+			});
+			bus.connect(new Bus.SEGMENT_DONE() {
+				@Override
+				public void segmentDone(GstObject source, Format format, long position) {
+					onEOS(source);
+				}
+			});
+			bus.connect(new Bus.EOS() {
+				@Override
+				public void endOfStream(GstObject source) {
+					onEOS(source);
 				}
 			});
 			newPipeline.connect(new Bin.ELEMENT_ADDED() {
@@ -1881,40 +2154,39 @@ public abstract class MediaComponent extends SWTMediaComponent {
 								final Structure struct = caps.getStructure(0);
 								final String padCaps = struct.getName();
 								if (!StringUtil.isNullOrEmpty(padCaps)) {
-									showVideoCanvas();
+									//
 									
 									if (padCaps.startsWith("audio/")) {
 										if (mediaType == MediaType.Unknown && mediaType != MediaType.Video)
 											mediaType = MediaType.Audio;
+
+										final Bin audioBin = createAudioBin(request, newPipeline, audioElement, false);
+										newPipeline.set("audio-sink", audioBin);
+										audioBin.dispose();
+
+										if (mediaType == MediaType.Audio)
+											showNone();
+
 									} else if (padCaps.startsWith("video/")) {
 										if (mediaType == MediaType.Unknown || mediaType == MediaType.Audio)
 											mediaType = (!determineIfSingleImage((Bin)element) ? MediaType.Video : MediaType.Image);
+
 										if (mediaType == MediaType.Image) {
-											//Replace the video-sink with a bin that forces an rgb-colorspace filter and
-											//then grabs the image from a fakesink at handoff.
-											
-											final Bin imageBin = new Bin("imageBin");
-											final Element imageSink = createImageSink(mediaType, request, newPipeline, videoElement);
-											final Element imageCapsFilter = ElementFactory.make("capsfilter", "videoCaps");
-											final Caps imageCaps = Caps.fromString(Colorspace.CAPS_IMAGE_COLORSPACE_DEPTH);
-											imageCapsFilter.setCaps(imageCaps);
-
-											imageBin.addMany(imageCapsFilter, imageSink);
-											Element.linkMany(imageCapsFilter, imageSink);
-
-											final Pad imageBinPad = imageCapsFilter.getStaticPad("sink");
-											final GhostPad imageBinGhostPad = new GhostPad("imageBinGhostPad", imageBinPad);
-											imageBin.addPad(imageBinGhostPad);
-
+											//Use a bin that forces an rgb-colorspace filter and then grabs the image from
+											//a fakesink at handoff.
+											final Bin imageBin = createImageBin(request, newPipeline, videoElement, false);
 											newPipeline.set("video-sink", imageBin);
-
-											imageBinGhostPad.dispose();
-											imageBinPad.dispose();
-											imageCaps.dispose();
-											imageCapsFilter.dispose();
-											imageSink.dispose();
 											imageBin.dispose();
+
+											showImageCanvas();
+										} else {
+											final Bin videoBin = createVideoBin(request, newPipeline, videoElement, acceleratedVideo);
+											newPipeline.set("video-sink", videoBin);
+											videoBin.dispose();
+
+											showVideoCanvas();
 										}
+
 									}
 								}
 							}
@@ -1954,38 +2226,14 @@ public abstract class MediaComponent extends SWTMediaComponent {
 					//bin.dispose();
 				}
 			});
-			newPipeline.connect("about-to-finish", new Closure() {
-				public void invoke(PlayBin2 playbin, Pointer user_data) {
-					if (mediaType != MediaType.Image && (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount))) {
-						++numberOfRepeats;
-						playbin.set("uri", uri);
-						return;
-					}
-					numberOfRepeats = 0;
-					display.asyncExec(new Runnable() {
-						public void run() {
-							if (mediaType != MediaType.Image)
-								newPipeline.setState(State.NULL);
-							else
-								newPipeline.setState(State.PAUSED);
-							if (!isDisposed())
-								redraw();
-						}
-					});
-				}
-			});
-
-			xoverlay = SWTOverlay.wrap(videoSink);
+			
 			pipeline = newPipeline;
-
-			videoSink.dispose();
-			videoQueue.dispose();
 
 			newPipeline.setState(State.PLAYING);
 			
 			return true;
 		} catch(Throwable t) {
-			t.printStackTrace();
+			//t.printStackTrace();
 			return false;
 		} finally {
 			lock.unlock();
@@ -2008,6 +2256,30 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		Image img = new Image(display, imgData);
 		g.drawImage(img, 0, 0, imgData.width, imgData.height, 0, 0, r.width, r.height);
 		img.dispose();
+	}
+
+	protected void paintUnacceleratedVideo(GC g, Rectangle bounds, ImageData frame) {
+		if (frame == null) {
+			g.setBackground(getBackground());
+			g.fillRectangle(bounds);
+
+			fireUnacceleratedPaintNoVideo(g, bounds);
+			return;
+		}
+
+		if (!fireUnacceleratedPaintBeforeVideo(g, bounds, frame))
+			return;
+
+		g.setAntialias(SWT.ON);
+		g.setInterpolation(SWT.HIGH);
+		g.setAdvanced(false);
+		
+		frame = frame.scaledTo(bounds.width, bounds.height);
+		Image img = new Image(g.getDevice(), frame);
+		g.drawImage(img, 0, 0, bounds.width, bounds.height, 0, 0, bounds.width, bounds.height);
+		img.dispose();
+
+		fireUnacceleratedPaintAfterVideo(g, bounds);
 	}
 	//</editor-fold>
 	//</editor-fold>

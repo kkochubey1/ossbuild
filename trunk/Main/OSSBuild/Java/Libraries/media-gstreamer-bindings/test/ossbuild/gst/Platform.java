@@ -32,7 +32,7 @@ import ossbuild.extract.Resources;
 import ossbuild.extract.processors.FileProcessor;
 import ossbuild.media.gstreamer.Buffer;
 import ossbuild.media.gstreamer.Caps;
-import ossbuild.media.gstreamer.Colorspace;
+import ossbuild.media.gstreamer.Colorspace2;
 import ossbuild.media.gstreamer.DoubleRange;
 import ossbuild.media.gstreamer.Format;
 import ossbuild.media.gstreamer.Fraction;
@@ -510,7 +510,7 @@ public class Platform {
 		Buffer b = videosink.get("last-buffer");
 		assertNotNull(b);
 
-		BufferedImage img = Colorspace.createBufferedImage(b);
+		BufferedImage img = Colorspace2.createBufferedImage(b);
 		assertNotNull(img);
 
 		assertTrue(ImageIO.write(img, "JPEG", new File("test.jpg")));
