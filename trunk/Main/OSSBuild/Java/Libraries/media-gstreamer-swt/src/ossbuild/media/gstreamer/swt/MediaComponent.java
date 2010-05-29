@@ -106,7 +106,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	;
 
 	public static final boolean
-		  DEFAULT_VIDEO_ACCELERATED = false
+		  DEFAULT_VIDEO_ACCELERATED = true
 	;
 
 	public static final int
@@ -116,19 +116,6 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	private static final long
 		  SEEK_STOP_DURATION = TimeUnit.MILLISECONDS.toNanos(10L)
 	;
-
-	public static final String[] VALID_COLORSPACES = {
-		  "video/x-raw-rgb"
-		, "video/x-raw-yuv"
-	};
-
-	public static final String[] VALID_YUV_FORMATS = {
-		  "YUY2"
-	};
-
-	public static final String[] VALID_DIRECTDRAW_COLORSPACES = {
-		  "video/x-raw-rgb"
-	};
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Variables">
@@ -189,8 +176,6 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		} catch(Throwable t) {
 		}
 
-		Gst.init("test", new String[] { "--gst-disable-segtrap" });
-		
 		String videoElement;
 		String audioElement;
 		switch (Sys.getOSFamily()) {
@@ -208,7 +193,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 				//audioElement = "gconfaudiosink";
 				break;
 			default:
-				videoElement = "xvimagesink";
+				videoElement = "ximagesink";
 				audioElement = "autoaudiosink";
 				break;
 		}
@@ -227,9 +212,9 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	public MediaComponent(String videoElement, String audioElement, Composite parent, int style) {
 		super(parent, style | SWT.NO_BACKGROUND | swtDoubleBufferStyle());
 
-		this.imgCanvas = new Canvas(this, SWT.NO_FOCUS | SWT.NO_BACKGROUND | swtDoubleBufferStyle());
+		this.imgCanvas = new Canvas(this, SWT.NO_FOCUS | swtDoubleBufferStyle());
 		this.videoCanvas = new Canvas(this, SWT.NO_FOCUS | swtDoubleBufferStyle());
-		this.acceleratedVideoCanvas = new Canvas(this, SWT.EMBEDDED | SWT.NO_FOCUS | SWT.NO_BACKGROUND | swtDoubleBufferStyle());
+		this.acceleratedVideoCanvas = new Canvas(this, SWT.EMBEDDED | SWT.NO_FOCUS | swtDoubleBufferStyle());
 		this.nativeHandle = SWTOverlay.handle(acceleratedVideoCanvas);
 		this.display = getDisplay();
 
@@ -251,6 +236,11 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			public void paintControl(PaintEvent e) {
 				if (layout.topControl != acceleratedVideoCanvas || !acceleratedVideoCanvas.isVisible())
 					return;
+				State state;
+				if (pipeline == null || (state = pipeline.getState(0L)) == State.NULL || state == State.READY) {
+					e.gc.setBackground(getBackground());
+					e.gc.fillRectangle(acceleratedVideoCanvas.getBounds());
+				}
 				expose();
 			}
 		});
@@ -730,6 +720,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		videoCanvas.setVisible(false);
 		acceleratedVideoCanvas.setVisible(false);
 		layout();
+		imgCanvas.redraw();
 	}
 
 	protected void showVideoCanvas() {
@@ -750,6 +741,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		videoCanvas.setVisible(!acceleratedVideo);
 		imgCanvas.setVisible(false);
 		layout();
+		acceleratedVideoCanvas.redraw();
+		videoCanvas.redraw();
 	}
 
 	protected void showNone() {
@@ -1385,7 +1378,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 				return false;
 
 			resetPipeline(pipeline);
-			showNone();
+			showVideoCanvas();
 			return true;
 		} finally {
 			lock.unlock();
@@ -1665,9 +1658,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			videoScale.dispose();
 		}
 
-		xoverlay = null;
-
-		if (useHardwareAcceleration) {
+		if (useHardwareAcceleration && xoverlay == null) {
 			try {
 				xoverlay = SWTOverlay.wrap(videoSink);
 			} catch(IllegalArgumentException e) {
@@ -1879,6 +1870,9 @@ public abstract class MediaComponent extends SWTMediaComponent {
 						if (pipeline == null)
 							return;
 
+						if (seekToBeginning())
+							return;
+						
 						State state = pipeline.getState(0L);
 						pipeline.setState(State.READY);
 						//pipeline.set("uri", mediaRequest.getURI());
@@ -1901,10 +1895,13 @@ public abstract class MediaComponent extends SWTMediaComponent {
 					if (pipeline == null)
 						return;
 					
-					if (mediaType != MediaType.Image)
+					if (mediaType != MediaType.Image) {
 						pipeline.setState(State.NULL);
-					else
+						showVideoCanvas();
+					} else {
 						pipeline.setState(State.PAUSED);
+						showImageCanvas();
+					}
 				} finally {
 					lock.unlock();
 				}
@@ -2061,6 +2058,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			}
 
 			//Reset these values
+			xoverlay = null;
 			hasMultipartDemux = false;
 			videoWidth = 0;
 			videoHeight = 0;
