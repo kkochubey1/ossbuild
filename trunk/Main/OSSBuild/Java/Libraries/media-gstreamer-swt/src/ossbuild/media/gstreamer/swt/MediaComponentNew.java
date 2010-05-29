@@ -109,7 +109,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_REFCOUNTING:3");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "playbin*:4");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_SIGNAL:4");
-		Sys.setEnvironmentVariable("GST_DEBUG", "ximagesink*:4");
+		//Sys.setEnvironmentVariable("GST_DEBUG", "ximagesink*:4");
 		
 		Sys.initialize();
 		Gst.init("test", new String[] { "--gst-disable-segtrap" });
@@ -134,17 +134,17 @@ public class MediaComponentNew extends SWTMediaComponent {
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-//
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		final GstMediaComponent mediaComp = comp;
 

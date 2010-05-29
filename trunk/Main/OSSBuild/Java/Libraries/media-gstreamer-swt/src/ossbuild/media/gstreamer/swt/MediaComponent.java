@@ -186,7 +186,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 				break;
 			case Unix:
 				//videoElement = "xvimagesink"; //gconfaudiosink and gconfvideosink?
-				videoElement = "ximagesink";
+				videoElement = "autovideosink";
+				//videoElement = "ximagesink";
 				//videoElement = "glimagesink";
 				//audioElement = "autoaudiosink";
 				audioElement = "alsasink";
@@ -210,7 +211,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 	}
 
 	public MediaComponent(String videoElement, String audioElement, Composite parent, int style) {
-		super(parent, style | SWT.NO_BACKGROUND | swtDoubleBufferStyle());
+		super(parent, style | swtDoubleBufferStyle());
 
 		this.imgCanvas = new Canvas(this, SWT.NO_FOCUS | swtDoubleBufferStyle());
 		this.videoCanvas = new Canvas(this, SWT.NO_FOCUS | swtDoubleBufferStyle());
@@ -292,7 +293,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		layout.topControl = imgCanvas;
 		//</editor-fold>
 		
-		showVideoCanvas();
+		showNone();
 		init();
 	}
 
@@ -721,6 +722,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		acceleratedVideoCanvas.setVisible(false);
 		layout();
 		imgCanvas.redraw();
+		System.out.println("SHOWING IMAGE");
 	}
 
 	protected void showVideoCanvas() {
@@ -743,6 +745,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		layout();
 		acceleratedVideoCanvas.redraw();
 		videoCanvas.redraw();
+		System.out.println("SHOWING VIDEO: " + (acceleratedVideo ? "accelerated" : "unaccelerated"));
 	}
 
 	protected void showNone() {
@@ -763,6 +766,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		videoCanvas.setVisible(false);
 		imgCanvas.setVisible(false);
 		layout();
+		redraw();
+		System.out.println("SHOWING NONE");
 	}
 
 	protected Buffer playbinFrame(Pipeline pipeline) {
@@ -1378,7 +1383,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 				return false;
 
 			resetPipeline(pipeline);
-			showVideoCanvas();
+			showNone();
 			return true;
 		} finally {
 			lock.unlock();
@@ -1552,8 +1557,12 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			return videoSinkBin;
 		} else {
 			Element videoSink = ElementFactory.make(suggestedVideoSink, "videoSink");
-			videoSink.set("force-aspect-ratio", false);
-			videoSink.set("show-preroll-frame", true);
+			try {
+				//It's possible that the video sink doesn't have this property
+				videoSink.set("force-aspect-ratio", false);
+				videoSink.set("show-preroll-frame", true);
+			} catch(Throwable t) {
+			}
 
 			Pad sinkPad;
 			(sinkPad = videoSink.getStaticPad("sink")).connect("notify::caps", new Closure() {
@@ -1967,8 +1976,8 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			videoRate.set("silent", true);
 			videoCapsFilter.setCaps(videoCaps);
 
-			newPipeline.addMany(videoTestSrc, videoQueue, videoRate, videoScale, videoCapsFilter, videoColorspace, videoSink);
-			Element.linkMany(videoTestSrc, videoQueue, videoRate, videoScale, videoCapsFilter, videoColorspace, videoSink);
+			newPipeline.addMany(videoTestSrc, videoQueue, videoColorspace, videoRate, videoCapsFilter, videoScale, videoSink);
+			Element.linkMany(videoTestSrc, videoQueue, videoColorspace, videoRate, videoCapsFilter, videoScale, videoSink);
 
 			final Bus bus = newPipeline.getBus();
 			bus.setSyncHandler(new BusSyncHandler() {
