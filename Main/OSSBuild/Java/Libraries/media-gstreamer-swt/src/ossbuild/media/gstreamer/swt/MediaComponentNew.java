@@ -104,10 +104,12 @@ import ossbuild.media.gstreamer.signals.IStateChanged;
  *
  * @author David
  */
-public class MediaComponentNew2 extends SWTMediaComponent {
+public class MediaComponentNew extends SWTMediaComponent {
 	public static void main(String[] args) {
-		Sys.setEnvironmentVariable("GST_DEBUG", "GST_REFCOUNTING:3");
+		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_REFCOUNTING:3");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "playbin*:4");
+		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_SIGNAL:4");
+		Sys.setEnvironmentVariable("GST_DEBUG", "ximagesink*:4");
 		
 		Sys.initialize();
 		Gst.init("test", new String[] { "--gst-disable-segtrap" });
@@ -132,9 +134,9 @@ public class MediaComponentNew2 extends SWTMediaComponent {
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 //		comp = new GstMediaComponent(dlg, SWT.NONE);
 //		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
@@ -920,15 +922,15 @@ public class MediaComponentNew2 extends SWTMediaComponent {
 		DEFAULT_AUDIO_ELEMENT = audioElement;
 	}
 
-	public MediaComponentNew2(Composite parent, int style) {
+	public MediaComponentNew(Composite parent, int style) {
 		this(DEFAULT_VIDEO_ELEMENT, DEFAULT_AUDIO_ELEMENT, parent, style);
 	}
 
-	public MediaComponentNew2(String videoElement, Composite parent, int style) {
+	public MediaComponentNew(String videoElement, Composite parent, int style) {
 		this(videoElement, DEFAULT_AUDIO_ELEMENT, parent, style);
 	}
 
-	public MediaComponentNew2(String videoElement, String audioElement, Composite parent, int style) {
+	public MediaComponentNew(String videoElement, String audioElement, Composite parent, int style) {
 		super(parent, style | SWT.EMBEDDED | SWT.DOUBLE_BUFFERED);
 
 		this.nativeHandle = SWTOverlay.handle(this);
@@ -963,7 +965,7 @@ public class MediaComponentNew2 extends SWTMediaComponent {
 			@Override
 			public void run() {
 				synchronized(display) {
-					xoverlay.setWindowID(MediaComponentNew2.this);
+					xoverlay.setWindowID(MediaComponentNew.this);
 				}
 			}
 		};

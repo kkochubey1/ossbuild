@@ -31,7 +31,7 @@ public class Colorspace {
 	};
 
 	public static final String
-		  CAPS_IMAGE_COLORSPACE_DEPTH = "video/x-raw-rgb, bpp=32, depth=24"
+		  CAPS_IMAGE_COLORSPACE_DEPTH = "video/x-raw-rgb,bpp=32,depth=24";//,red_mask=" + 0x00FF0000 + ",green_mask=" + 0x0000FF00 + ",blue_mask=" + 0x000000FF
 	;
 	//</editor-fold>
 
@@ -175,14 +175,27 @@ public class Colorspace {
 	}
 
 	public static String createKnownColorspaceFilter(final boolean includeFramerate, final float fps) {
+		return createKnownColorspaceFilter(includeFramerate, fps, 0, 0);
+	}
+	public static String createKnownColorspaceFilter(final boolean includeFramerate, final float fps, final int width, final int height) {
 		final String framerate = (includeFramerate ? null : ", framerate=" + (int)fps + "/1");
+		final String dimensions = (width <= 0 || height <= 0 ? null : ",width=" + width + ",height=" + height);
 		final StringBuilder sb = new StringBuilder(256);
 
+		sb.append(';');
+		sb.append(CAPS_IMAGE_COLORSPACE_DEPTH);
+		if (framerate != null)
+			sb.append(framerate);
+		if (dimensions != null)
+			sb.append(dimensions);
+		
 		for(int i = 0; i < VALID_COLORSPACES.length; ++i) {
 			sb.append(';');
 			sb.append(VALID_COLORSPACES[i]);
 			if (framerate != null)
 				sb.append(framerate);
+			if (dimensions != null)
+				sb.append(dimensions);
 		}
 		sb.deleteCharAt(0);
 		return sb.toString();
