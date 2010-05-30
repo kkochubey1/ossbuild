@@ -176,31 +176,32 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		} catch(Throwable t) {
 		}
 
-		String videoElement;
 		String audioElement;
+		String videoElement;
 		switch (Sys.getOSFamily()) {
 			case Windows:
-				//videoElement = "autovideosink";
-				videoElement = "dshowvideosink";
-				//videoElement = "directdrawsink";
 				audioElement = "autoaudiosink";
+				//videoElement = "autovideosink";
+				//videoElement = "glimagesink";
+				//videoElement = "directdrawsink";
+				videoElement = "dshowvideosink";
 				break;
 			case Unix:
-				//videoElement = "xvimagesink"; //gconfaudiosink and gconfvideosink?
-				//videoElement = "autovideosink";
-				videoElement = "ximagesink";
-				//videoElement = "glimagesink";
 				//audioElement = "autoaudiosink";
-				audioElement = "alsasink";
 				//audioElement = "gconfaudiosink";
+				audioElement = "alsasink";
+				//videoElement = "autovideosink";
+				//videoElement = "glimagesink";
+				//videoElement = "xvimagesink"; //gconfaudiosink and gconfvideosink?
+				videoElement = "ximagesink";
 				break;
 			default:
-				videoElement = "ximagesink";
 				audioElement = "autoaudiosink";
+				videoElement = "ximagesink";
 				break;
 		}
-		DEFAULT_VIDEO_ELEMENT = videoElement;
 		DEFAULT_AUDIO_ELEMENT = audioElement;
+		DEFAULT_VIDEO_ELEMENT = videoElement;
 	}
 
 	public MediaComponent(Composite parent, int style) {
