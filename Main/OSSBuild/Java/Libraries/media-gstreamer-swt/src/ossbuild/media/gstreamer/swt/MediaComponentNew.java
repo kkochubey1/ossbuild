@@ -110,6 +110,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 		//Sys.setEnvironmentVariable("GST_DEBUG", "playbin*:4");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_SIGNAL:4");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "ximagesink*:4");
+		//Sys.setEnvironmentVariable("GST_DEBUG", "*:3");
 		
 		Sys.initialize();
 		Gst.init("test", new String[] { "--gst-disable-segtrap" });

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="gst-plugins-gl">
+
+	<References>
+		<Add name="base" />
+		<Add name="glib" />
+		<Add name="xml" />
+		<Add name="images" />
+		<Add name="opengl" />
+		<Add name="gst-core" />
+		<Add name="gst-plugins-base" />
+	</References>
+
+	<Extract package="resources.gstgl.unix.x86" directory="${nativeResDir}/">
+		<Echo key="res.gstgl.init" msg="Initializing GStreamer OpenGL plugins..." />
+
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="GstApiVersion" value="0.10" />
+
+		<Var name="dirGstApiVersion" value="0.10" />
+		<Var name="pkgGstApiVersion" value="0_10" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<Library resource="libgstgl-${GstApiVersion}.so.0"     executable="true" />
+
+		<SymLink from="${dir}/libgstgl-${GstApiVersion}.so"    to="${dir}/libgstgl-${GstApiVersion}.so.0" />
+
+		<AddJNASearchPath libraryName="gstgl-${GstApiVersion}" path="${dir}" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
+		<File resource="libgstopengl.so"                       executable="true" />
+	</Extract>
+
+</Resources>
