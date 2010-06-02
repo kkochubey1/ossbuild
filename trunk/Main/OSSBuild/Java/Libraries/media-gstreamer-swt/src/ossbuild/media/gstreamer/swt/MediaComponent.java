@@ -244,7 +244,15 @@ public abstract class MediaComponent extends SWTMediaComponent {
 					e.gc.setBackground(getBackground());
 					e.gc.fillRectangle(acceleratedVideoCanvas.getBounds());
 				}
-				expose();
+				
+				boolean locked = lock.tryLock();
+				try {
+					if (locked)
+						expose();
+				} finally {
+					if (locked)
+						lock.unlock();
+				}
 			}
 		});
 		imgCanvas.addPaintListener(new PaintListener() {
