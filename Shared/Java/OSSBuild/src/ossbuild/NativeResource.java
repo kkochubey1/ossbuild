@@ -19,6 +19,7 @@ public class NativeResource {
 		, OpenGL                    = "opengl"
 		, Crypto                    = "crypto"
 		, Serial                    = "serial"
+		, LWJGL                     = "lwjgl"
 
 		, GStreamer                 = "gstreamer"
 		//, GStreamerPluginsBase      = "gst-plugins-base"

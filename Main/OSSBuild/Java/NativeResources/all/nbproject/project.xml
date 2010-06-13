@@ -129,6 +129,14 @@
                 <id>jar</id>
             </reference>
             <reference>
+                <foreign-project>OSSBuild____Resource_Package____LWJGL</foreign-project>
+                <artifact-type>jar</artifact-type>
+                <script>build.xml</script>
+                <target>jar</target>
+                <clean-target>clean</clean-target>
+                <id>jar</id>
+            </reference>
+            <reference>
                 <foreign-project>OSSBuild____Resource_Package____OpenGL</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="lwjgl">
+
+	<References>
+		<Add name="base" />
+		<Add name="opengl" />
+	</References>
+	
+	<Extract package="resources.lwjgl.unix.x86_64.bin" directory="${nativeResDir}/bin/">
+		<Echo key="res.lwjgl.init" msg="Initializing LWJGL..." />
+
+		<SystemProperty key="org.lwjgl.librarypath" value="${dir}" />
+		<SystemProperty key="net.java.games.input.librarypath" value="${dir}" />
+
+		<!-- Libraries -->
+
+		<Library resource="libopenal64.so" executable="true" />
+		<Library resource="libjinput-linux64.so" executable="true" />
+		<Library resource="liblwjgl64.so" executable="true" />
+	</Extract>
+
+</Resources>
