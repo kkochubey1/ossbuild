@@ -16,6 +16,7 @@
 	<Load class="ossbuild.extract.processors.SymLinkProcessor" />
 	<Load class="ossbuild.extract.processors.IfNotDefProcessor" />
 	<Load class="ossbuild.extract.processors.MakeDirectoryProcessor" />
+	<Load class="ossbuild.extract.processors.SystemPropertyProcessor" />
 	<Load class="ossbuild.extract.processors.WorkingDirectoryProcessor" />
 	<Load class="ossbuild.extract.processors.AddJNASearchPathProcessor" />
 </ResourceProcessors>

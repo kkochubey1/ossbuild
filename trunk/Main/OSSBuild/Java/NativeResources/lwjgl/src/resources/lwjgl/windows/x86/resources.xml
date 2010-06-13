@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="lwjgl">
+
+	<References>
+		<Add name="base" />
+		<Add name="opengl" />
+	</References>
+	
+	<Extract package="resources.lwjgl.windows.x86.bin" directory="${nativeResDir}/bin/">
+		<Echo key="res.lwjgl.init" msg="Initializing LWJGL..." />
+
+		<SystemProperty key="org.lwjgl.librarypath" value="${dir}" />
+		<SystemProperty key="net.java.games.input.librarypath" value="${dir}" />
+
+		<!-- Libraries -->
+
+		<Library resource="OpenAL32.dll" />
+		<Library resource="jinput-raw.dll" />
+		<Library resource="jinput-dx8.dll" />
+		<Library resource="lwjgl.dll" />
+	</Extract>
+
+</Resources>
