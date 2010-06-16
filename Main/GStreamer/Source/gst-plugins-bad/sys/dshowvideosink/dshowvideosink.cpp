@@ -257,16 +257,17 @@ gst_dshowvideosink_finalize (GObject * gobject)
   /* signal the COM thread that it sould uninitialize COM */
   if (sink->comInitialized) {
     g_mutex_lock (sink->com_lock);
-	g_cond_signal (sink->com_uninitialize);
-	g_cond_wait (sink->com_uninitialized, sink->com_lock);
-	g_mutex_unlock (sink->com_lock);
+    g_cond_signal (sink->com_uninitialize);
+    g_cond_wait (sink->com_uninitialized, sink->com_lock);
+    g_mutex_unlock (sink->com_lock);
   }
 
-  g_mutex_free (sink->graph_lock);
   g_mutex_free (sink->com_lock);
   g_cond_free (sink->com_initialized);
   g_cond_free (sink->com_uninitialize);
   g_cond_free (sink->com_uninitialized);
+
+  g_mutex_free (sink->graph_lock);
 
   G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
@@ -342,7 +343,7 @@ gst_dshowvideosink_com_thread (GstDshowVideoSink * sink)
 
   /* Wait until the unitialize condition is met to leave the COM apartement */
   g_mutex_lock (sink->com_lock);
-  g_cond_wait (sink->com_uninitialize, sink->com_lock);  
+  g_cond_wait (sink->com_uninitialize, sink->com_lock);
 
   CoUninitialize ();
   GST_INFO_OBJECT (sink, "COM unintialized succesfully");
@@ -539,7 +540,7 @@ WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CLOSE:
       sink->renderersupport->DestroyWindow ();
       sink->window_closed = TRUE;
-	  PostQuitMessage(WM_QUIT);
+      PostQuitMessage (WM_QUIT);
       return 0;
   }
 
