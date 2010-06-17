@@ -19,6 +19,12 @@ set MINGW_GET_DEFAULTS=%TMPDIR%\var\lib\mingw-get\data\defaults.xml
 set GCCURL=http://komisar.gin.by/mingw/cross-mingw.gcc450.generic.20100612.7z
 set GCCDIR=cross-mingw.gcc450.generic.20100612
 
+set PKG_MSYS_CORE=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/msys-1.0.14-1/msysCORE-1.0.14-1-msys-1.0.14-bin.tar.lzma?use_mirror=softlayer
+set PKG_MSYS_RXVT=http://downloads.sourceforge.net/project/mingw/MSYS/rxvt/rxvt-2.7.2-3/rxvt-2.7.2-3-msys-1.0.14-bin.tar.lzma?use_mirror=voxel
+set PKG_MSYS_BASH=http://downloads.sourceforge.net/project/mingw/MSYS/bash/bash-3.1.17-3/bash-3.1.17-3-msys-1.0.13-bin.tar.lzma?use_mirror=hivelocity
+set PKG_MSYS_REGEX=http://downloads.sourceforge.net/project/mingw/MSYS/regex/regex-1.20090805-2/libregex-1.20090805-2-msys-1.0.13-dll-1.tar.lzma?use_mirror=iweb
+set PKG_MSYS_TERMCAP_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/termcap/termcap-0.20050421_1-2/libtermcap-0.20050421_1-2-msys-1.0.13-dll-0.tar.lzma?use_mirror=iweb
+
 set PATH=%TMPDIR%\bin;%TOOLSDIR%;%PATH%
 
 mkdir "%TMPDIR%"
@@ -82,6 +88,30 @@ if "%UNTAR%" == "1" (
 	cd "%GCCDIR%"
 	xcopy /Y /K /H /E ".\*" "%MINGWDIR%"
 	cd ..
+
+	wget --no-check-certificate -O msysCore.tar.lzma "%PKG_MSYS_CORE%"
+	7za -y x msysCore.tar.lzma
+	7za -y "-o%MSYSDIR%" x msysCore.tar
+	
+	wget --no-check-certificate -O rxvt.tar.lzma "%PKG_MSYS_RXVT%"
+	7za -y x rxvt.tar.lzma
+	7za -y "-o%MSYSDIR%" x rxvt.tar
+	
+	wget --no-check-certificate -O bash.tar.lzma "%PKG_MSYS_BASH%"
+	7za -y x bash.tar.lzma
+	7za -y "-o%MSYSDIR%" x bash.tar
+	
+	wget --no-check-certificate -O regex.tar.lzma "%PKG_MSYS_REGEX%"
+	7za -y x regex.tar.lzma
+	7za -y "-o%MSYSDIR%" x regex.tar
+	
+	wget --no-check-certificate -O termcap.tar.lzma "%PKG_MSYS_TERMCAP_DLL%"
+	7za -y x termcap.tar.lzma
+	7za -y "-o%MSYSDIR%" x termcap.tar
+	
+	
+	
+	
 	
 	cd "%MSYSDIR%"
 )
