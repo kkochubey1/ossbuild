@@ -1,11 +1,21 @@
+
+
 Requirements
 -------------------------------------
 
   Windows Build
 
-    1. Visual Studio 2008 or later
-    2. Windows Installer XML (WiX) 3.5 or later (http://wix.sourceforge.net/releases/3.5.1329.0/Wix35.msi)
-    3. Perl 5.10+
+    1. MSys/MinGW
+       a. Run "init msys.bat" in the Tools/ directory to automatically setup a build environment for all the dependencies.
+       b. Double click on the "msys.bat" shortcut in the top level directory to open a shell.
+       c. To build dependencies, from the shell:
+              cd <OSSBuild Home>
+              cd Libraries/
+              ./Clean-All-Windows-x86.sh
+              ./Build-All-Windows-x86.sh
+    2. Visual Studio 2008 or later
+    3. Windows Installer XML (WiX) 3.5 or later (http://wix.sourceforge.net/releases/3.5.1329.0/Wix35.msi)
+    4. Perl 5.10+
        a. Recommended ActiveState Perl (http://www.activestate.com/downloads/) on Windows
           1. Download the LibXML package 
              a. Load the perl package manager ("ppm" command)
@@ -14,17 +24,20 @@ Requirements
              d. Select "OK"
              e. Scroll down the list and right click on "XML-LibXML" and "XML-LibXML-Common" both and select install
              f. Select File > Run Marked Actions
-    4. DirectX SDK (November 2008 or later)
+    5. DirectX SDK (November 2008 or later)
        a. Download from http://www.microsoft.com/downloads/info.aspx?na=90&p=&SrcDisplayLang=en&SrcCategoryId=&SrcFamilyId=5493f76a-6d37-478d-ba17-28b1cca4865a&u=http%3a%2f%2fdownload.microsoft.com%2fdownload%2f5%2f8%2f2%2f58223f79-689d-47ae-bdd0-056116ee8d16%2fDXSDK_Nov08.exe
-    5. Python 2.6
+    6. Python 2.6
        a. Download from http://www.python.org/download/releases/2.6/
        b. Install to C:\Python26
-    6. PyGobject (2.14)
+    7. PyGobject (2.14)
        a. Download from http://ftp.gnome.org/pub/GNOME/binaries/win32/pygobject/2.14/
+    
 
   Linux Build
 
     1. See directions for your individual distribution below.
+
+
 
 
 Setup Visual Studio 2008+
@@ -36,6 +49,8 @@ Setup Visual Studio 2008+
     2. Expand "Projects and Solutions" and select "VC++ Project Settings"
     3. In "Rule File Search Paths", add the top-level directory for this code (e.g. C:\OSSBuild\)
        a. If needed, separate other search paths with a semicolon (;).
+
+
 
 Setup Linux
 -------------------------------------
@@ -52,6 +67,8 @@ Setup Linux
 
     1. /bin/su -
     2. apt-get install openjdk-6-jdk git-core subversion perl sed pkg-config build-essential autoconf bison flex libtool tofrodos vim gettext yasm nasm zlib1g-dev mesa-common-dev libglu1-mesa-dev libxmu-dev libx11-dev libxi-dev libcurl4-gnutls-dev libxrender-dev autoconf libxv-dev libasound2-dev v4l-conf libpulse-dev mono-tools-devel python-gobject-dev
+
+
 
 Acknowledgments
 -------------------------------------

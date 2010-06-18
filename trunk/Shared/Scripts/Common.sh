@@ -26,7 +26,7 @@ common_startup() {
 
 	#Gather some important variables
 	export CURR_DIR=`pwd`
-	export ROOT=$( (cd -P "$TOP" && pwd) )
+	export ROOT=$( (cd "$TOP" && pwd) )
 	
 	export MAIN_DIR=$ROOT/Main
 	export BUILD_DIR=$ROOT/Build
