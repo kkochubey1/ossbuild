@@ -124,7 +124,6 @@ if [ ! -f "$BinDir/lib${Prefix}orc-0.4-0.dll" ]; then
 	
 	$MSLIB /name:lib${Prefix}orc-0.4-0.dll /out:orc-0.4.lib /machine:$MSLibMachine /def:orc/.libs/lib${Prefix}orc-0.4-0.dll.def
 	$MSLIB /name:lib${Prefix}orc-test-0.4-0.dll /out:orc-test-0.4.lib /machine:$MSLibMachine /def:orc-test/.libs/lib${Prefix}orc-test-0.4-0.dll.def
-	$MSLIB /name:lib${Prefix}orc-float-0.4-0.dll /out:orc-float-0.4.lib /machine:$MSLibMachine /def:orc-float/.libs/lib${Prefix}orc-float-0.4-0.dll.def
 	move_files_to_dir "*.exp *.lib" "$LibDir"
 fi
 
@@ -135,7 +134,7 @@ if [ "${Prefix}" = "" ]; then
 fi
 if [ ! -f "$BinDir/${PthreadsPrefix}pthreadGC2.dll" ]; then 
 	unpack_gzip_and_move "pthreads-w32.tar.gz" "$PKG_DIR_PTHREADS"
-	patch -u -N -i "$LIBRARIES_PATCH_DIR/pthreads-w32/sched.h.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/pthreads-w32/sched.h.patch"
 	mkdir_and_move "$IntDir/pthreads"
 	
 	cd "$PKG_DIR"
@@ -423,10 +422,29 @@ if [ ! -f "$BinDir/lib${Prefix}tiff-3.dll" ]; then
 	reset_flags
 fi
 
+#libvpx
+if [ ! -f "$LibDir/libvpx.a" ]; then 
+	unpack_bzip2_and_move "libvpx.tar.bz2" "$PKG_DIR_LIBVPX"
+	mkdir_and_move "$IntDir/libvpx"
+	
+	#Configure, compile, and install
+	#--enable-shared isn't available for windows yet
+	$PKG_DIR/configure --enable-vp8 --enable-psnr --enable-runtime-cpu-detect --prefix=$InstallDir --libdir=$LibDir
+	make
+	make install
+	
+	cp "$LibDir/libvpx.a" "$LibDir/vpx.lib"
+	strip --strip-unneeded "$LibDir/vpx.lib"
+	
+	generate_libtool_la_windows "libvpx.la" "" "libvpx.a"
+	
+	reset_flags
+fi
+
 #glib
 if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then 
 	unpack_bzip2_and_move "glib.tar.bz2" "$PKG_DIR_GLIB"
-	patch -u -N -i "$LIBRARIES_PATCH_DIR/glib/run-markup-tests.sh.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/glib/run-markup-tests.sh.patch"
 	
 	mkdir_and_move "$IntDir/glib"
 	
@@ -1490,12 +1508,12 @@ fi
 #libnice
 if [ ! -f "$BinDir/lib${Prefix}nice-0.dll" ]; then 
 	unpack_gzip_and_move "libnice.tar.gz" "$PKG_DIR_LIBNICE"
-	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/bind.c-win32.patch"
-	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/rand.c-win32.patch"
-	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/agent.c-win32.patch"
-	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/address.h-win32.patch"
-	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/pseudotcp.c-win32.patch"
-	patch -u -N -i "$LIBRARIES_PATCH_DIR/libnice/interfaces.c-win32.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/bind.c-win32.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/rand.c-win32.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/agent.c-win32.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/address.h-win32.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/pseudotcp.c-win32.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/interfaces.c-win32.patch"
 	mkdir_and_move "$IntDir/libnice"
 	
 	CFLAGS="-D_SSIZE_T_ -I$PKG_DIR -I$PKG_DIR/stun -D_WIN32_WINNT=0x0501 -DUSE_GETADDRINFO -DHAVE_GETNAMEINFO -DHAVE_GETSOCKOPT -DHAVE_INET_NTOP -DHAVE_INET_PTON"

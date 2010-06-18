@@ -13,14 +13,17 @@ set DIR=%~dp0.
 set CURRDIR=%CD%
 set TOPDIR=%DIR%\..
 set TMPDIR=%DIR%\tmp
-set MSYSDIR=%TOPDIR%\MSys
-set MINGWDIR=%MSYSDIR%\mingw
 set TOOLSDIR=%DIR%
+set PATCHESDIR=%TOOLSDIR%\patches
+set MSYSDIR=%TOOLSDIR%\msys
+set MINGWDIR=%MSYSDIR%\mingw
 set DEST_MSYS_DIR=%MSYSDIR%
 set MINGW_GET_DEFAULTS=%TMPDIR%\var\lib\mingw-get\data\defaults.xml
 
-set GCCDIR=cross-mingw.gcc450.generic.20100612
-set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc450.generic.20100612.7z
+rem set GCCDIR=cross-mingw.gcc450.generic.20100612
+rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc450.generic.20100612.7z
+set GCCDIR=cross-mingw.gcc451.generic.20100615.1
+set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.1.7z
 
 set MINGW_GET=http://downloads.sourceforge.net/project/mingw/Automated MinGW Installer/mingw-get/mingw-get-0.1-mingw32-alpha-2-bin.tar.gz?use_mirror=softlayer
 
@@ -78,6 +81,8 @@ set PKG_MSYS_MAKE_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/make/m
 set PKG_MSYS_LOCATE_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/findutils/findutils-4.4.2-2/locate-4.4.2-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_FINDUTILS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/findutils/findutils-4.4.2-2/findutils-4.4.2-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_MKTEMP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/mktemp/mktemp-1.6-2/mktemp-1.6-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_GAWK_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/gawk/gawk-3.1.7-2/gawk-3.1.7-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_LIBGCC_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/libgcc-4.5.0-1-mingw32-dll-1.tar.lzma?use_mirror=iweb
 
 set PKG_MINGW_BASICBSDTAR_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/Utilities/basic bsdtar/basic-bsdtar-2.8.3-1/basic-bsdtar-2.8.3-1-mingw32-bin.tar.lzma?use_mirror=iweb
 set PKG_MINGW_AUTOCONF_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/autoconf2.5/autoconf2.5-2.64-1/autoconf2.5-2.64-1-mingw32-bin.tar.lzma?use_mirror=voxel
@@ -87,13 +92,24 @@ set PKG_MINGW_AUTOMAKEWRAPPER_BIN=http://downloads.sourceforge.net/project/mingw
 set PKG_MINGW_LTDL_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libtool/libtool-2.2.7a-1/libltdl-2.2.7a-1-mingw32-dll-7.tar.lzma?use_mirror=voxel
 set PKG_MINGW_LIBTOOL_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/libtool/libtool-2.2.7a-1/libtool-2.2.7a-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_PEXPORTS_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/pexports/pexports-0.44-1/pexports-0.44-1-mingw32-bin.tar.lzma?use_mirror=voxel
+set PKG_MINGW_GETTEXT_DEV=http://downloads.sourceforge.net/project/mingw/MinGW/gettext/gettext-0.17-1/gettext-0.17-1-mingw32-dev.tar.lzma?use_mirror=iweb
+set PKG_MINGW_LIBGETTEXTPO_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/gettext/gettext-0.17-1/libgettextpo-0.17-1-mingw32-dll-0.tar.lzma?use_mirror=iweb
+set PKG_MINGW_INTL_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/gettext/gettext-0.17-1/libintl-0.17-1-mingw32-dll-8.tar.lzma?use_mirror=iweb
+set PKG_MINGW_LIBASPRINTF_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/gettext/gettext-0.17-1/libasprintf-0.17-1-mingw32-dll-0.tar.lzma?use_mirror=softlayer
+set PKG_MINGW_GETTEXT_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/gettext/gettext-0.17-1/gettext-0.17-1-mingw32-bin.tar.lzma?use_mirror=iweb
+set PKG_MINGW_LIBCHARSET_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libiconv/libiconv-1.13.1-1/libcharset-1.13.1-1-mingw32-dll-1.tar.lzma?use_mirror=iweb
+set PKG_MINGW_LIBICONV_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libiconv/libiconv-1.13.1-1/libiconv-1.13.1-1-mingw32-dll-2.tar.lzma?use_mirror=iweb
+set PKG_MINGW_LIBICONV_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/libiconv/libiconv-1.13.1-1/libiconv-1.13.1-1-mingw32-bin.tar.lzma?use_mirror=iweb
 set PKG_MINGW_MAKE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/make/make-3.81-20090914-mingw32/make-3.81-20090914-mingw32-bin.tar.gz?use_mirror=voxel
+set PKG_MINGW_GLIB_DLL=http://ftp.gnome.org/pub/gnome/binaries/win32/glib/2.24/glib_2.24.0-2_win32.zip
+set PKG_MINGW_PKGCONFIG_BIN=http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/pkg-config_0.23-3_win32.zip
 
 set PATH=%TMPDIR%\bin;%TOOLSDIR%;%PATH%
 
 mkdir "%TMPDIR%"
 cd /d "%TMPDIR%"
 
+rem Clean existing msys dir if we have one
 if exist "%DEST_MSYS_DIR%" rmdir /S /Q "%DEST_MSYS_DIR%"
 mkdir "%DEST_MSYS_DIR%"
 
@@ -200,6 +216,8 @@ if "%DOWNLOAD%" == "1" (
 	call :download msys-locate-bin "%PKG_MSYS_LOCATE_BIN%"
 	call :download msys-findutils-bin "%PKG_MSYS_FINDUTILS_BIN%"
 	call :download msys-mktemp-bin "%PKG_MSYS_MKTEMP_BIN%"
+	call :download msys-gawk-bin "%PKG_MSYS_GAWK_BIN%"
+	call :download msys-libgcc-dll "%PKG_MSYS_LIBGCC_DLL%"
 	
 	call :download mingw-basicbsdtar-bin "%PKG_MINGW_BASICBSDTAR_BIN%"
 	call :download mingw-autoconf-bin "%PKG_MINGW_AUTOCONF_BIN%"
@@ -209,7 +227,17 @@ if "%DOWNLOAD%" == "1" (
 	call :download mingw-ltdl-bin "%PKG_MINGW_LTDL_DLL%"
 	call :download mingw-libtool-bin "%PKG_MINGW_LIBTOOL_BIN%"
 	call :download mingw-pexports-bin "%PKG_MINGW_PEXPORTS_BIN%"
+	call :download mingw-gettext-dev "%PKG_MINGW_GETTEXT_DEV%"
 	call :download mingw-make-bin "%PKG_MINGW_MAKE_BIN%"
+	call :download mingw-glib-dll "%PKG_MINGW_GLIB_DLL%"
+	call :download mingw-pkg-config-bin "%PKG_MINGW_PKGCONFIG_BIN%"
+	call :download mingw-gettextpo-dll "%PKG_MINGW_LIBGETTEXTPO_DLL%"
+	call :download mingw-intl-dll "%PKG_MINGW_INTL_DLL%"
+	call :download mingw-libasprintf-dll "%PKG_MINGW_LIBASPRINTF_DLL%"
+	call :download mingw-gettext-bin "%PKG_MINGW_GETTEXT_BIN%"
+	call :download mingw-libcharset-dll "%PKG_MINGW_LIBCHARSET_DLL%"
+	call :download mingw-libiconv-dll "%PKG_MINGW_LIBICONV_DLL%"
+	call :download mingw-libiconv-bin "%PKG_MINGW_LIBICONV_BIN%"
 )
 
 if "%UNTAR%" == "1" (
@@ -278,6 +306,8 @@ if "%UNTAR%" == "1" (
 	call :extract msys-locate-bin %MSYSDIR%
 	call :extract msys-findutils-bin %MSYSDIR%
 	call :extract msys-mktemp-bin %MSYSDIR%
+	call :extract msys-gawk-bin %MSYSDIR%
+	call :extract msys-libgcc-dll %MSYSDIR%
 	
 	call :extract mingw-basicbsdtar-bin %MINGWDIR%
 	call :extract mingw-autoconf-bin %MINGWDIR%
@@ -287,12 +317,27 @@ if "%UNTAR%" == "1" (
 	call :extract mingw-ltdl-bin %MINGWDIR%
 	call :extract mingw-libtool-bin %MINGWDIR%
 	call :extract mingw-pexports-bin %MINGWDIR%
+	call :extract mingw-gettext-dev %MINGWDIR%
+	call :extract mingw-gettextpo-dll %MINGWDIR%
+	call :extract mingw-intl-dll %MINGWDIR%
+	call :extract mingw-libasprintf-dll %MINGWDIR%
+	call :extract mingw-gettext-bin %MINGWDIR%
+	call :extract mingw-libcharset-dll %MINGWDIR%
+	call :extract mingw-libiconv-dll %MINGWDIR%
+	call :extract mingw-libiconv-bin %MINGWDIR%
 	
 	rem .tar.gz requires custom handling
 	move mingw-make-bin.tar.lzma mingw-make-bin.tar.gz
 	7za -y x mingw-make-bin.tar.gz
 	7za -y "-o%MINGWDIR%" x make-3.81-20090914-mingw32-bin.tar
 	del make-3.81-20090914-mingw32-bin.tar
+	
+	rem .zip requires custom handling
+	move mingw-glib-dll.tar.lzma mingw-glib-dll.zip
+	7za -y "-o%MINGWDIR%" x mingw-glib-dll.zip
+	
+	move mingw-pkg-config-bin.tar.lzma mingw-pkg-config-bin.zip
+	7za -y "-o%MINGWDIR%" x mingw-pkg-config-bin.zip
 	
 	cd /d "%MSYSDIR%"
 )
@@ -357,6 +402,8 @@ if "%CLEAN%" == "1" (
 	call :clean msys-locate-bin
 	call :clean msys-findutils-bin
 	call :clean msys-mktemp-bin
+	call :clean msys-gawk-bin
+	call :clean msys-libgcc-dll
 	
 	call :clean mingw-basicbsdtar-bin
 	call :clean mingw-autoconf-bin
@@ -366,9 +413,23 @@ if "%CLEAN%" == "1" (
 	call :clean mingw-ltdl-bin
 	call :clean mingw-libtool-bin
 	call :clean mingw-pexports-bin
+	call :clean mingw-gettext-dev
+	call :clean mingw-gettextpo-dll
+	call :clean mingw-intl-dll
+	call :clean mingw-libasprintf-dll
+	call :clean mingw-gettext-bin
+	call :clean mingw-libcharset-dll
+	call :clean mingw-libiconv-dll
+	call :clean mingw-libiconv-bin
 	call :clean mingw-make-bin
 	
 	del mingw-make-bin.tar.gz
+	del mingw-glib-dll.zip
+	del mingw-pkg-config-bin.zip
+	
+	rem Clean gettext libs and includes that we don't want hanging around
+	"%TOOLSDIR%\rm" -rf "%MSYSDIR%\lib\lib*"
+	"%TOOLSDIR%\rm" -rf "%MSYSDIR%\include\*"
 	
 	rem Remove temp directory
 	cd /d "%TOPDIR%"
@@ -377,6 +438,10 @@ if "%CLEAN%" == "1" (
 	cd /d "%MSYSDIR%"
 )
 
+rem Apply patches
+copy /Y "%PATCHESDIR%\msys\mingw\i686-pc-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-pc-mingw32\include\ws2tcpip.h"
+
+rem Move to known directory
 cd /d "%MSYSDIR%"
 
 rem Make a shortcut to our shell
