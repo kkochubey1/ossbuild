@@ -120,7 +120,7 @@ if [ ! -f "$BinDir/lib${Prefix}orc-0.4-0.dll" ]; then
 	
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	
-	make && make install
+	make -j3 && make install
 	
 	$MSLIB /name:lib${Prefix}orc-0.4-0.dll /out:orc-0.4.lib /machine:$MSLibMachine /def:orc/.libs/lib${Prefix}orc-0.4-0.dll.def
 	$MSLIB /name:lib${Prefix}orc-test-0.4-0.dll /out:orc-test-0.4.lib /machine:$MSLibMachine /def:orc-test/.libs/lib${Prefix}orc-test-0.4-0.dll.def
@@ -257,7 +257,7 @@ if [ ! -f "$BinDir/${GlewPrefix}glew32.dll" ]; then
 	cd "$PKG_DIR"
 	change_package "${GlewPrefix}\$(NAME).dll" "config" "Makefile.mingw" "LIB.SONAME"
 	change_package "${GlewPrefix}\$(NAME).dll" "config" "Makefile.mingw" "LIB.SHARED"
-	make
+	make -j3
 	
 	cd "lib"
 	strip "libglew32.dll.a"
@@ -284,7 +284,7 @@ if [ ! -f "$BinDir/lib${Prefix}expat-1.dll" ]; then
 	
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	update_library_names_windows "lib${Prefix}expat.dll.a" "libexpat.la"
 	
 	copy_files_to_dir "$PKG_DIR/lib/libexpat.def" "$IntDir/expat"
@@ -311,7 +311,7 @@ if [ ! -f "$BinDir/lib${Prefix}xml2-2.dll" ]; then
 	#Build forgets to reference testapi.c correctly
 	cp $PKG_DIR/testapi.c .
 	
-	make && make install
+	make -j3 && make install
 	
 	update_library_names_windows "lib${Prefix}xml2.dll.a" "libxml2.la"
 	
@@ -344,7 +344,7 @@ if [ ! -f "$BinDir/lib${Prefix}jpeg-8.dll" ]; then
 	#Configure, compile, and install
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make
+	make -j3
 	make install
 	
 	pexports "$BinDir/lib${Prefix}jpeg-8.dll" > in.def
@@ -390,7 +390,7 @@ if [ ! -f "$BinDir/lib${Prefix}png14-14.dll" ]; then
 	cd "$IntDir/libpng"
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	pexports "$BinDir/lib${Prefix}png14-14.dll" > in.def
 	sed -e '/LIBRARY lib${Prefix}png14-14.dll/d' -e '/DATA/d' in.def > in-mod.def
@@ -410,7 +410,7 @@ if [ ! -f "$BinDir/lib${Prefix}tiff-3.dll" ]; then
 	#Configure, compile, and install
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	cp -p "$PKG_DIR/libtiff/libtiff.def" .
 	$MSLIB /name:lib${Prefix}tiff-3.dll /out:tiff.lib /machine:$MSLibMachine /def:libtiff.def
@@ -430,7 +430,7 @@ if [ ! -f "$LibDir/libvpx.a" ]; then
 	#Configure, compile, and install
 	#--enable-shared isn't available for windows yet
 	$PKG_DIR/configure --enable-vp8 --enable-psnr --enable-runtime-cpu-detect --prefix=$InstallDir --libdir=$LibDir
-	make
+	make -j3
 	make install
 	
 	cp "$LibDir/libvpx.a" "$LibDir/vpx.lib"
@@ -445,6 +445,8 @@ fi
 if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then 
 	unpack_bzip2_and_move "glib.tar.bz2" "$PKG_DIR_GLIB"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/glib/run-markup-tests.sh.patch"
+	#TODO: This patch was committed to git already. Next version shouldn't need it.
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/glib/gnullapplication.c.patch"
 	
 	mkdir_and_move "$IntDir/glib"
 	
@@ -462,7 +464,7 @@ if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then
 	#This is expected and will hopefully be corrected in the future. As a result, 
 	#we run make once to create the proper dll, then copy it in place, and run make 
 	#again.
-	make -j3 
+	make -j3
 	#glib-genmarshal needs libglib-2.0-0.dll but can't load it b/c it isn't in the path
 	#Setting PATH didn't work
 	cp -p "$IntDir/glib/glib/.libs/libglib-2.0-0.dll" "gobject/.libs/"
@@ -516,9 +518,9 @@ if [ ! -f "$BinDir/lib${Prefix}atk-1.0-0.dll" ]; then
 	#Configure, compile, and install
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make
+	make -j3
 	cp -p atk/atk.def $PKG_DIR/atk/
-	make
+	make -j3
 	make install
 	
 	#Add in MS build tools again
@@ -589,7 +591,7 @@ if [ ! -f "$BinDir/lib${Prefix}gcrypt-11.dll" ]; then
 	
 	reset_flags
 	
-	make && make install
+	make -j3 && make install
 	
 	$MSLIB /name:lib${Prefix}gcrypt-11.dll /out:gcrypt.lib /machine:$MSLibMachine /def:src/.libs/lib${Prefix}gcrypt-11.dll.def
 	
@@ -614,7 +616,7 @@ if [ ! -f "$BinDir/lib${Prefix}tasn1-3.dll" ]; then
 	
 	reset_flags
 	
-	make && make install
+	make -j3 && make install
 
 	pexports "$BinDir/lib${Prefix}tasn1-3.dll" > in.def
 	sed -e "/LIBRARY lib${Prefix}tasn1-3.dll/d" -e '/DATA/d' in.def > in-mod.def
@@ -638,7 +640,7 @@ if [ ! -f "$BinDir/lib${Prefix}gnutls-26.dll" ]; then
 	CPPFLAGS="-I$PKG_DIR/lib/includes -I$IntDir/gnutls/lib/includes"
 	#LDFLAGS="-Wl,-static-libstdc++"
 	
-	$PKG_DIR/configure --disable-cxx --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	$PKG_DIR/configure --disable-guile --disable-cxx --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
 	change_libname_spec "${Prefix}" "${DefaultSuffix}" "lib"
 	change_libname_spec "${Prefix}" "${DefaultSuffix}" "libextra"
@@ -676,7 +678,7 @@ if [ ! -f "$BinDir/lib${Prefix}curl-4.dll" ]; then
 		cp -p /mingw/lib/libws2_32.la "tests/libtest"
 		cp -p /mingw/lib/libws2_32.la "."
 	fi
-	make && make install
+	make -j3 && make install
 	
 	reset_flags
 	
@@ -700,6 +702,7 @@ if [ ! -f "$BinDir/lib${Prefix}soup-2.4-1.dll" ]; then
 	#Proceed normally
 	
 	cd "$IntDir/libsoup"
+	CPPFLAGS="$CPPFLAGS -DIN_LIBXML"
 	$PKG_DIR/configure --disable-silent-rules --enable-ssl --enable-debug=no --disable-more-warnings --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
 	
@@ -709,7 +712,8 @@ if [ ! -f "$BinDir/lib${Prefix}soup-2.4-1.dll" ]; then
 		copy_files_to_dir "/mingw/lib/libws2_32.la /mingw/lib/libole32.la /mingw/lib/libshlwapi.la /mingw/lib/libdnsapi.la" "tests"
 		copy_files_to_dir "/mingw/lib/libws2_32.la /mingw/lib/libole32.la /mingw/lib/libshlwapi.la /mingw/lib/libdnsapi.la" "."
 	fi
-	make && make install
+	make -j3 
+	make install
 
 	cd "libsoup/.libs"
 	pexports "$BinDir/lib${Prefix}soup-2.4-1.dll" > in.def
@@ -735,7 +739,7 @@ if [ ! -f "$BinDir/lib${Prefix}neon-27.dll" ]; then
 		copy_files_to_dir "/mingw/lib/libws2_32.la" "src"
 		copy_files_to_dir "/mingw/lib/libws2_32.la" "test"
 	fi
-	make && make install
+	make -j3 && make install
 
 	cd "src/.libs"
 	pexports "$BinDir/lib${Prefix}neon-27.dll" | sed "s/^_//" > in.def
@@ -755,7 +759,7 @@ if [ ! -f "$BinDir/lib${Prefix}freetype-6.dll" ]; then
 	
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	cp -p .libs/lib${Prefix}freetype.dll.a "$LibDir/freetype.lib"
 	
@@ -769,7 +773,7 @@ if [ ! -f "$BinDir/lib${Prefix}fontconfig-1.dll" ]; then
 
 	$PKG_DIR/configure --disable-debug --disable-static --disable-docs --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install RUN_FC_CACHE_TEST=false
+	make -j3 && make install RUN_FC_CACHE_TEST=false
 
 	cp -p "fontconfig.pc" "$LibDir/pkgconfig/"
 	
@@ -795,7 +799,7 @@ if [ ! -f "$BinDir/lib${Prefix}pixman-1-0.dll" ]; then
 	
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	cd "$LIBRARIES_PATCH_DIR/pixman/"
 	$MSLIB /name:lib${Prefix}pixman-1-0.dll /out:pixman.lib /machine:$MSLibMachine /def:pixman.def
@@ -812,7 +816,7 @@ if [ ! -f "$BinDir/lib${Prefix}cairo-2.dll" ]; then
 	CFLAGS="$CFLAGS -D CAIRO_HAS_WIN32_SURFACE -D CAIRO_HAS_WIN32_FONT -Wl,-lpthreadGC2"
 	$PKG_DIR/configure --enable-xlib=auto --enable-xlib-xrender=auto --enable-png=yes --enable-ft=yes --enable-pdf=yes --enable-svg=yes --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	cd src/.libs/
 	
@@ -844,7 +848,7 @@ if [ ! -f "$BinDir/lib${Prefix}pango-1.0-0.dll" ]; then
 		copy_files_to_dir "/mingw/lib/libws2_32.la /mingw/lib/libole32.la /mingw/lib/libgdi32.la /mingw/lib/libmsimg32.la" "pango"
 		copy_files_to_dir "/mingw/lib/libws2_32.la /mingw/lib/libole32.la /mingw/lib/libgdi32.la /mingw/lib/libmsimg32.la" "tests"
 	fi
-	make && make install
+	make -j3 && make install
 	
 	#Add in MS build tools again
 	setup_ms_build_env_path
@@ -887,7 +891,7 @@ if [ ! -f "$BinDir/lib${Prefix}gtk-win32-2.0-0.dll" ]; then
 	change_key "." "Makefile" "WINDRES" "true"
 	cd ../../../
 	
-	make
+	make -j3
 	make install
 	
 	#Add in MS build tools again
@@ -958,7 +962,7 @@ if [ -e "$PERL_BIN_DIR" ]; then
 
 		$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 		change_libname_spec
-		make && make install
+		make -j3 && make install
 		
 		cd src/.libs
 		$MSLIB /name:lib${Prefix}croco-0.6-3.dll /out:croco-0.6.lib /machine:$MSLibMachine /def:lib${Prefix}croco-0.6-3.dll.def
@@ -1004,7 +1008,7 @@ if [ -e "$PERL_BIN_DIR" ]; then
 		
 		$PKG_DIR/configure --without-python --disable-gtk-doc --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 		change_libname_spec
-		make && make install
+		make -j3 && make install
 		
 		cd gsf/.libs/
 		$MSLIB /name:lib${Prefix}gsf-1-114.dll /out:gsf-1.lib /machine:$MSLibMachine /def:lib${Prefix}gsf-1-114.dll.def
@@ -1029,7 +1033,7 @@ if [ -e "$PERL_BIN_DIR" ]; then
 		
 		$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 		change_libname_spec
-		make && make install
+		make -j3 && make install
 		
 		cd .libs/
 		$MSLIB /name:lib${Prefix}rsvg-2-2.dll /out:rsvg-2.lib /machine:$MSLibMachine /def:lib${Prefix}rsvg-2-2.dll.def
@@ -1050,7 +1054,7 @@ if [ ! -f "$BinDir/${SDLPrefix}SDL.dll" ]; then
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir 
 	#Required b/c SDL removes the "lib" portion from the name. This reinserts it.
 	change_libname_spec "${SDLPrefix}"
-	make && make install
+	make -j3 && make install
 	
 	cp $PKG_DIR/include/SDL_config.h.default $IncludeDir/SDL/SDL_config.h
 	cp $PKG_DIR/include/SDL_config_win32.h $IncludeDir/SDL
@@ -1076,7 +1080,7 @@ if [ ! -f "$BinDir/lib${Prefix}ogg-0.dll" ]; then
 	
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	copy_files_to_dir "$PKG_DIR/win32/ogg.def" .
 	$MSLIB /name:lib${Prefix}ogg-0.dll /out:ogg.lib /machine:$MSLibMachine /def:ogg.def
@@ -1101,7 +1105,7 @@ if [ ! -f "$BinDir/lib${Prefix}FLAC-8.dll" ]; then
 	#Configure, compile, and install
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir --disable-doxygen-docs --disable-cpplibs LDFLAGS="$LDFLAGS -no-undefined -lws2_32" 
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	pexports "$BinDir/lib${Prefix}FLAC-8.dll" > in.def
 	sed -e '/LIBRARY lib${Prefix}flac/d' -e 's/DATA//g' in.def > in-mod.def
@@ -1121,7 +1125,7 @@ if [ ! -f "$BinDir/lib${Prefix}vorbis-0.dll" ]; then
 	LDFLAGS="$LDFLAGS -logg"
 	$PKG_DIR/configure --with-ogg-libraries=$LibDir --with-ogg-includes=$IncludeDir --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	update_library_names_windows "lib${Prefix}vorbis.dll.a" "libvorbis.la"
 	
@@ -1236,12 +1240,12 @@ if [ ! -f "$BinDir/lib${Prefix}theora-0.dll" ]; then
 	
 	$PKG_DIR/configure --with-vorbis=$BinDir --with-vorbis-libraries=$LibDir --with-vorbis-includes=$IncludeDir --with-ogg=$BinDir --with-ogg-libraries=$LibDir --with-ogg-includes=$IncludeDir --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
-	copy_files_to_dir "$LIBRARIES_PATCH_DIR/theora/win32/*def" .
+	copy_files_to_dir "$LIBRARIES_PATCH_DIR/theora/*def" .
 	copy_files_to_dir "lib/.libs/*.def" .
-	flip -d lib${Prefix}theora.def
-	sed -e '/LIBRARY	lib${Prefix}theora/d' lib${Prefix}theora.def > libtheora-mod.def
+	flip -d libtheora.def
+	sed -e '/LIBRARY	libtheora/d' libtheora.def > libtheora-mod.def
 	$MSLIB /name:lib${Prefix}theora-0.dll /out:theora.lib /machine:$MSLibMachine /def:libtheora-mod.def
 	$MSLIB /name:lib${Prefix}theoradec-1.dll /out:theoradec.lib /machine:$MSLibMachine /def:lib${Prefix}theoradec-1.dll.def
 	$MSLIB /name:lib${Prefix}theoraenc-1.dll /out:theoraenc.lib /machine:$MSLibMachine /def:lib${Prefix}theoraenc-1.dll.def
@@ -1286,13 +1290,13 @@ if [ ! -f "$BinDir/lib${Prefix}x264-67.dll" ]; then
 	CFLAGS=""
 	CPPFLAGS=""
 	LDFLAGS=""
-	./configure --disable-mp4-output --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	./configure --disable-gpac --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_key "." "config.mak" "SONAME" "lib${Prefix}x264-67.dll"
 	change_key "." "config.mak" "IMPLIBNAME" "lib${Prefix}x264.dll.a"
 	
 	#Download example y4m for use in profiling and selecting the best CPU instruction set
 	wget http://samples.mplayerhq.hu/yuv4mpeg2/example.y4m.bz2
-	bzip2 -d -f "example.y4m.bz2"
+	bunzip2 -d -f "example.y4m.bz2"
 	
 	#Build using the profiler
 	make fprofiled VIDS="example.y4m"
@@ -1356,7 +1360,7 @@ if [ ! -f "$BinDir/lib${Prefix}schroedinger-1.0-0.dll" ]; then
 	#LDFLAGS="-lstdc++_s"
 	$PKG_DIR/configure --with-thread=auto --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	cd "schroedinger/.libs"
 	$MSLIB /name:lib${Prefix}schroedinger-1.0-0.dll /out:schroedinger-1.0.lib /machine:$MSLibMachine /def:lib${Prefix}schroedinger-1.0-0.dll.def
@@ -1418,14 +1422,14 @@ if [ ! -f "$BinDir/${FFmpegPrefix}avcodec${FFmpegSuffix}-52.dll" ]; then
 	CFLAGS=""
 	CPPFLAGS="-DETIMEDOUT=10060"
 	LDFLAGS=""
-	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias" --extra-cflags="$IncludeFlags" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
+	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-libvpx --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
 	change_key "." "config.mak" "BUILDSUF" "${FFmpegSuffix}"
 	change_key "." "config.mak" "LIBPREF" "${FFmpegPrefix}"
 	change_key "." "config.mak" "SLIBPREF" "${FFmpegPrefix}"
 	#Adds $(SLIBPREF) to lib names when linking
 	change_key "." "common.mak" "FFEXTRALIBS\ \\:" "\$\(addprefix\ -l\$\(SLIBPREF\),\$\(addsuffix\ \$\(BUILDSUF\),\$\(FFLIBS\)\)\)\ \$\(EXTRALIBS\)"
 	
-	make
+	make -j3
 	make install
 	
 	#If it built successfully, then the .lib and .dll files are all in the lib/ folder with 
@@ -1524,7 +1528,7 @@ if [ ! -f "$BinDir/lib${Prefix}nice-0.dll" ]; then
 		copy_files_to_dir "/mingw/lib/libws2_32.la /mingw/lib/libole32.la /mingw/lib/libiphlpapi.la /mingw/lib/libwsock32.la" "nice"
 	fi
 	
-	make && make install
+	make -j3 && make install
 	
 	cd "nice/.libs/"
 	
@@ -1551,7 +1555,7 @@ if [ ! -f "$BinDir/${XvidPrefix}xvidcore.dll" ]; then
 	change_key "." "platform.inc" "STATIC_LIB" "${XvidPrefix}xvidcore\.\$\(STATIC_EXTENSION\)"
 	change_key "." "platform.inc" "SHARED_LIB" "${XvidPrefix}xvidcore\.\$\(SHARED_EXTENSION\)"
 	change_key "." "platform.inc" "PRE_SHARED_LIB" "${XvidPrefix}xvidcore\.\$\(SHARED_EXTENSION\)"
-	make && make install
+	make -j3 && make install
 
 	mv "$LibDir/${XvidPrefix}xvidcore.dll" "$BinDir"
 	mv "$PKG_DIR/build/generic/=build/${XvidPrefix}xvidcore.dll.a" "$LibDir/libxvidcore.dll.a"
@@ -1571,7 +1575,7 @@ if [ ! -f "$BinDir/lib${Prefix}wavpack-1.dll" ]; then
 	
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	cd src/.libs	
 	$MSLIB /name:lib${Prefix}wavpack-1.dll /out:wavpack.lib /machine:$MSLibMachine /def:lib${Prefix}wavpack-1.dll.def
@@ -1592,7 +1596,7 @@ if [ ! -f "$BinDir/lib${Prefix}a52-0.dll" ]; then
 	 
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	pexports "$BinDir/lib${Prefix}a52-0.dll" | sed "s/^_//" > in.def
 	sed '/LIBRARY lib${Prefix}a52-0.dll/d' in.def > in-mod.def
@@ -1610,7 +1614,7 @@ if [ ! -f "$BinDir/lib${Prefix}mpeg2-0.dll" ]; then
 	CFLAGS="-fno-loop-block -fno-loop-strip-mine -fno-loop-interchange -fno-tree-loop-distribution -fno-tree-loop-im"
 	$PKG_DIR/configure --disable-sdl --disable-static --enable-shared --disable-debug --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	pexports "$BinDir/lib${Prefix}mpeg2-0.dll" | sed "s/^_//" > in.def
 	sed '/LIBRARY lib${Prefix}mpeg2-0.dll/d' in.def > in-mod.def
@@ -1635,7 +1639,7 @@ if [ ! -f "$BinDir/lib${Prefix}dca-0.dll" ]; then
 	
 	$PKG_DIR/configure --enable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	#Install dies b/c it can't find "libdca.a" (it instead finds lib${Prefix}dca.a)
 	#So copy it and run install again
@@ -1660,7 +1664,7 @@ if [ ! -f "$BinDir/lib${Prefix}faac-0.dll" ]; then
 	 
 	$PKG_DIR/configure --without-mp4v2 --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir LDFLAGS="$LDFLAGS -no-undefined" 
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 		
 	cd $PKG_DIR/libfaac
 	pexports "$BinDir/lib${Prefix}faac-0.dll" | sed "s/^_//" > in.def
@@ -1682,7 +1686,7 @@ if [ ! -f "$BinDir/lib${Prefix}faad-2.dll" ]; then
 	
 	$PKG_DIR/configure --without-mp4v2 --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir LDFLAGS="$LDFLAGS -no-undefined" 
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 	
 	cd $PKG_DIR/libfaad
 	pexports "$BinDir/lib${Prefix}faad-2.dll" | sed "s/^_//" > in.def
@@ -1714,7 +1718,7 @@ if [ ! -f "$BinDir/lib${Prefix}dvdread-4.dll" ]; then
 	 
 	sh $PKG_DIR/autogen.sh --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir LDFLAGS="$LDFLAGS"
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 
 	cp -f "$LIBRARIES_PATCH_DIR/dvdread/dvd_reader.h" "$IncludeDir/dvdread"/ 
 
@@ -1734,7 +1738,7 @@ if [ ! -f "$BinDir/lib${Prefix}dvdnav-4.dll" ]; then
 	 
 	sh $PKG_DIR/autogen.sh --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir LDFLAGS="$LDFLAGS -ldvdread"
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 
 	cd src/.libs
 	
@@ -1755,7 +1759,7 @@ if [ ! -f "$BinDir/lib${Prefix}dvdcss-2.dll" ]; then
 	 
 	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir 
 	change_libname_spec
-	make && make install
+	make -j3 && make install
 
 	cd src/.libs
 	pexports "$BinDir/lib${Prefix}dvdcss-2.dll" | sed "s/^_//" > in.def
@@ -1778,13 +1782,13 @@ if [ ! -f "$BinDir/${FFmpegPrefix}avcodec-gpl-52.dll" ]; then
 	CFLAGS=""
 	CPPFLAGS="-DETIMEDOUT=10060"
 	LDFLAGS=""
-	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias" --extra-cflags="$IncludeFlags" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --enable-gpl --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir
+	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-libvpx --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --enable-gpl --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir
 	change_key "." "config.mak" "BUILDSUF" "-gpl"
 	change_key "." "config.mak" "LIBPREF" "${FFmpegPrefix}"
 	change_key "." "config.mak" "SLIBPREF" "${FFmpegPrefix}"
 	#Adds $(SLIBPREF) to lib names when linking
 	change_key "." "common.mak" "FFEXTRALIBS\ \\:" "\$\(addprefix\ -l\$\(SLIBPREF\),\$\(addsuffix\ \$\(BUILDSUF\),\$\(FFLIBS\)\)\)\ \$\(EXTRALIBS\)"
-	make
+	make -j3
 
 	reset_flags 
 	

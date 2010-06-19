@@ -23,7 +23,7 @@ libjpeg         -       8.0.0b          -       http://www.ijg.org/files/jpegsrc
 openjpeg        -       1.3.0           -       http://www.openjpeg.org/openjpeg_v1_3.tar.gz
 libpng          -       1.4.2           -       http://downloads.sourceforge.net/project/libpng/01-libpng-master/1.4.2/libpng-1.4.2.tar.gz?use_mirror=cdnetworks-us-2
 libtiff         -       3.9.4           -       http://ftp.remotesensing.org/pub/libtiff/tiff-3.9.4.tar.gz
-glib            -       2.24.1          -       http://ftp.gnome.org/pub/gnome/sources/glib/2.24/glib-2.24.1.tar.bz2
+glib            -       2.25.9          -       http://ftp.gnome.org/pub/gnome/sources/glib/2.25/glib-2.25.9.tar.bz2
 atk             -       1.30.0          -       http://ftp.gnome.org/pub/gnome/sources/atk/1.30/atk-1.30.0.tar.bz2
 openssl         -       0.9.8j          -       http://www.openssl.org/source/openssl-0.9.8j.tar.gz
 libgpg-error    -       1.8.0           -       http://mirror.tje.me.uk/pub/mirrors/ftp.gnupg.org/libgpg-error/libgpg-error-1.8.tar.bz2
@@ -55,9 +55,10 @@ x264            -       20100617        -       http://download.videolan.org/pub
 libspeex        -       1.2rc1          -       http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
 libschrodinger  -       1.0.9           -       http://diracvideo.org/download/schroedinger/schroedinger-1.0.9.tar.gz
 mp3lame         -       3.98.4          -       http://downloads.sourceforge.net/project/lame/lame/3.98.4/lame-3.98.4.tar.gz?use_mirror=voxel
-ffmpeg          -       0.6.0           -       http://ffmpeg.org/releases/ffmpeg-export-snapshot.tar.bz2 [Updated 06-17-2010]
+ffmpeg          -       0.6.0           -       http://ffmpeg.org/releases/ffmpeg-export-snapshot.tar.bz2 [Updated 06-18-2010]
 libnice         -       0.0.12          -       http://nice.freedesktop.org/releases/libnice-0.0.12.tar.gz
 sqlite          -       3.6.23.1        -       http://www.sqlite.org/sqlite-amalgamation-3.6.23.1.tar.gz
+libvdpau        -       0.4.0           -       http://cgit.freedesktop.org/~aplattner/libvdpau/snapshot/libvdpau-0.4.tar.bz2
 
 
 BSD Packages
