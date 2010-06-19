@@ -22,8 +22,10 @@ set MINGW_GET_DEFAULTS=%TMPDIR%\var\lib\mingw-get\data\defaults.xml
 
 rem set GCCDIR=cross-mingw.gcc450.generic.20100612
 rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc450.generic.20100612.7z
-set GCCDIR=cross-mingw.gcc451.generic.20100615.1
-set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.1.7z
+rem set GCCDIR=cross-mingw.gcc451.generic.20100615.1
+rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.1.7z
+set GCCDIR=cross-mingw.gcc451.generic.20100615
+set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.7z
 
 set MINGW_GET=http://downloads.sourceforge.net/project/mingw/Automated MinGW Installer/mingw-get/mingw-get-0.1-mingw32-alpha-2-bin.tar.gz?use_mirror=softlayer
 
@@ -83,6 +85,7 @@ set PKG_MSYS_FINDUTILS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/f
 set PKG_MSYS_MKTEMP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/mktemp/mktemp-1.6-2/mktemp-1.6-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
 set PKG_MSYS_GAWK_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/gawk/gawk-3.1.7-2/gawk-3.1.7-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
 set PKG_MSYS_LIBGCC_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/libgcc-4.5.0-1-mingw32-dll-1.tar.lzma?use_mirror=iweb
+set PKG_MSYS_FLIP_BIN=https://ccrma.stanford.edu/~craig/utility/flip/flip.exe
 
 set PKG_MINGW_BASICBSDTAR_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/Utilities/basic bsdtar/basic-bsdtar-2.8.3-1/basic-bsdtar-2.8.3-1-mingw32-bin.tar.lzma?use_mirror=iweb
 set PKG_MINGW_AUTOCONF_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/autoconf2.5/autoconf2.5-2.64-1/autoconf2.5-2.64-1-mingw32-bin.tar.lzma?use_mirror=voxel
@@ -158,8 +161,10 @@ echo ^<!-- --^>    ^</profile^>                                                 
 
 rem mingw-get install gcc
 
-cd "%MSYSDIR%"
+cd /d "%MSYSDIR%"
 if "%DOWNLOAD%" == "1" (
+	cd /d "%TMPDIR%"
+	
 	call :download mingw-gcc-bin %GCC%
 	
 	call :download msys-core-bin "%PKG_MSYS_CORE_BIN%"
@@ -218,6 +223,7 @@ if "%DOWNLOAD%" == "1" (
 	call :download msys-mktemp-bin "%PKG_MSYS_MKTEMP_BIN%"
 	call :download msys-gawk-bin "%PKG_MSYS_GAWK_BIN%"
 	call :download msys-libgcc-dll "%PKG_MSYS_LIBGCC_DLL%"
+	call :download msys-flip-bin "%PKG_MSYS_FLIP_BIN%"
 	
 	call :download mingw-basicbsdtar-bin "%PKG_MINGW_BASICBSDTAR_BIN%"
 	call :download mingw-autoconf-bin "%PKG_MINGW_AUTOCONF_BIN%"
@@ -238,6 +244,11 @@ if "%DOWNLOAD%" == "1" (
 	call :download mingw-libcharset-dll "%PKG_MINGW_LIBCHARSET_DLL%"
 	call :download mingw-libiconv-dll "%PKG_MINGW_LIBICONV_DLL%"
 	call :download mingw-libiconv-bin "%PKG_MINGW_LIBICONV_BIN%"
+	
+	rem Download DXVA2 for use by FFmpeg AVHWAccel API
+	wget --no-check-certificate -O dxva2api.h "http://downloads.videolan.org/pub/videolan/testing/contrib/dxva2api.h"
+	
+	cd /d "%MSYSDIR%"
 )
 
 if "%UNTAR%" == "1" (
@@ -309,6 +320,9 @@ if "%UNTAR%" == "1" (
 	call :extract msys-gawk-bin %MSYSDIR%
 	call :extract msys-libgcc-dll %MSYSDIR%
 	
+	rem It's a straight up executable from a website
+	move msys-flip-bin.tar.lzma "%MSYSDIR%\bin\flip.exe"
+	
 	call :extract mingw-basicbsdtar-bin %MINGWDIR%
 	call :extract mingw-autoconf-bin %MINGWDIR%
 	call :extract mingw-autoconfwrapper-bin %MINGWDIR%
@@ -326,6 +340,10 @@ if "%UNTAR%" == "1" (
 	call :extract mingw-libiconv-dll %MINGWDIR%
 	call :extract mingw-libiconv-bin %MINGWDIR%
 	
+	rem Copy these headers so FFmpeg can pick up hardware-accelerated decoding through DirectX
+	copy dxva2api.h "%MINGWDIR%\i686-pc-mingw32\include\dxva2api.h"
+	copy dxva2api.h "%MINGWDIR%\x86_64-pc-mingw32\include\dxva2api.h"
+	
 	rem .tar.gz requires custom handling
 	move mingw-make-bin.tar.lzma mingw-make-bin.tar.gz
 	7za -y x mingw-make-bin.tar.gz
@@ -338,6 +356,30 @@ if "%UNTAR%" == "1" (
 	
 	move mingw-pkg-config-bin.tar.lzma mingw-pkg-config-bin.zip
 	7za -y "-o%MINGWDIR%" x mingw-pkg-config-bin.zip
+	
+	cd /d "%MINGWDIR%\bin\"
+	copy addr2line.exe i686-pc-mingw32-addr2line.exe
+	copy ar.exe i686-pc-mingw32-ar.exe
+	copy as.exe i686-pc-mingw32-as.exe
+	copy "c++filt.exe" "i686-pc-mingw32-c++filt.exe"
+	copy cpp.exe i686-pc-mingw32-cpp.exe
+	copy dlltool.exe i686-pc-mingw32-dlltool.exe
+	copy dllwrap.exe i686-pc-mingw32-dllwrap.exe
+	copy elfedit.exe i686-pc-mingw32-elfedit.exe
+	copy gccbug i686-pc-mingw32-gccbug
+	copy gcov.exe i686-pc-mingw32-gcov.exe
+	copy gprof.exe i686-pc-mingw32-gprof.exe
+	copy ld.exe i686-pc-mingw32-ld.exe
+	copy nm.exe i686-pc-mingw32-nm.exe
+	copy objcopy.exe i686-pc-mingw32-objcopy.exe
+	copy objdump.exe i686-pc-mingw32-objdump.exe
+	copy ranlib.exe i686-pc-mingw32-ranlib.exe
+	copy readelf.exe i686-pc-mingw32-readelf.exe
+	copy size.exe i686-pc-mingw32-size.exe
+	copy strings.exe i686-pc-mingw32-strings.exe
+	copy strip.exe i686-pc-mingw32-strip.exe
+	copy windmc.exe i686-pc-mingw32-windmc.exe
+	copy windres.exe i686-pc-mingw32-windres.exe
 	
 	cd /d "%MSYSDIR%"
 )
@@ -423,6 +465,8 @@ if "%CLEAN%" == "1" (
 	call :clean mingw-libiconv-bin
 	call :clean mingw-make-bin
 	
+	del dxva2api.h
+	
 	del mingw-make-bin.tar.gz
 	del mingw-glib-dll.zip
 	del mingw-pkg-config-bin.zip
@@ -438,11 +482,11 @@ if "%CLEAN%" == "1" (
 	cd /d "%MSYSDIR%"
 )
 
-rem Apply patches
-copy /Y "%PATCHESDIR%\msys\mingw\i686-pc-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-pc-mingw32\include\ws2tcpip.h"
-
 rem Move to known directory
 cd /d "%MSYSDIR%"
+
+rem Apply patches
+copy /Y "%PATCHESDIR%\msys\mingw\i686-pc-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-pc-mingw32\include\ws2tcpip.h"
 
 rem Make a shortcut to our shell
 "%TOOLSDIR%\mklink" "%TOPDIR%\msys.bat.lnk" "/q" "%DEST_MSYS_DIR%\msys.bat"
