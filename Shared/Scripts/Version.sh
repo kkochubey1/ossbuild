@@ -7,6 +7,7 @@ export PKG_VER_LIBOIL=0.3.17
 export PKG_VER_ORC=0.4.5
 export PKG_VER_PTHREADS=2-8-0
 export PKG_VER_WIN_ICONV=0.0.1
+export PKG_VER_LIBICONV=1.13.1
 export PKG_VER_ZLIB=1.2.5
 export PKG_VER_BZIP2=1.0.5
 export PKG_VER_GLEW=1.5.4
@@ -73,6 +74,7 @@ export PKG_VER_PYGOBJECT=2.21.1
 
 export PKG_DIR_GMP=gmp-$PKG_VER_GMP
 export PKG_DIR_MPFR=mpfr-$PKG_VER_MPFR
+export PKG_DIR_LIBICONV=libiconv-$PKG_VER_LIBICONV
 export PKG_DIR_ZLIB=zlib-$PKG_VER_ZLIB
 export PKG_DIR_GLEW=glew-$PKG_VER_GLEW
 export PKG_DIR_LIBMMS=LibMms

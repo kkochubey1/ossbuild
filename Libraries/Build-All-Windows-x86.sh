@@ -154,27 +154,45 @@ if [ ! -f "$BinDir/${PthreadsPrefix}pthreadGC2.dll" ]; then
 	generate_libtool_la_windows "libpthreadGC2.la" "${PthreadsPrefix}pthreadGC2.dll" "libpthreadGC2.dll.a"
 fi
 
-IconvPrefix=lib${Prefix}
-if [ "${Prefix}" = "" ]; then
-	IconvPrefix=""
-fi
-#win-iconv
-if [ ! -f "$BinDir/${IconvPrefix}iconv.dll" ]; then 
-	unpack_bzip2_and_move "win-iconv.tar.bz2" "$PKG_DIR_WIN_ICONV"
+#libiconv
+if [ ! -f "$BinDir/libiconv-2.dll" ]; then
+	unpack_gzip_and_move "libiconv.tar.gz" "$PKG_DIR_LIBICONV"
+	mkdir_and_move "$IntDir/libiconv"
 	
-	make iconv.dll
-	make libiconv.a
-	mv "iconv.dll" "${IconvPrefix}iconv.dll"
+	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir	
+	make -j3 && make install
+
+	pexports "$BinDir/libiconv-2.dll" > libiconv.def
+	sed -e '/LIBRARY libiconv/d' -e 's/DATA//g' libiconv.def > libiconv-mod.def
+	$MSLIB /name:libiconv-2.dll /out:iconv.lib /machine:$MSLibMachine /def:libiconv-mod.def
 	
-	$MSLIB /name:${IconvPrefix}iconv.dll /out:iconv.lib /machine:$MSLibMachine /def:iconv.def
-	move_files_to_dir "*.dll" "$BinDir"
+	pexports "$BinDir/libcharset-1.dll" > libcharset.def
+	sed -e '/LIBRARY libcharset/d' -e 's/DATA//g' libcharset.def > libcharset-mod.def
+	$MSLIB /name:libcharset-1.dll /out:charset.lib /machine:$MSLibMachine /def:libcharset-mod.def
 	move_files_to_dir "*.exp *.lib" "$LibDir"
-	move_files_to_dir "*.h" "$IncludeDir"
-	copy_files_to_dir "*.a" "$LibDir"
-	
-	generate_libtool_la_windows "libiconv.la" "" "libiconv.a"
-	make clean
 fi
+
+# IconvPrefix=lib${Prefix}
+# if [ "${Prefix}" = "" ]; then
+	# IconvPrefix=""
+# fi
+#win-iconv
+# if [ ! -f "$BinDir/${IconvPrefix}iconv.dll" ]; then 
+	# unpack_bzip2_and_move "win-iconv.tar.bz2" "$PKG_DIR_WIN_ICONV"
+	
+	# make iconv.dll
+	# make libiconv.a
+	# mv "iconv.dll" "${IconvPrefix}iconv.dll"
+	
+	# $MSLIB /name:${IconvPrefix}iconv.dll /out:iconv.lib /machine:$MSLibMachine /def:iconv.def
+	# move_files_to_dir "*.dll" "$BinDir"
+	# move_files_to_dir "*.exp *.lib" "$LibDir"
+	# move_files_to_dir "*.h" "$IncludeDir"
+	# copy_files_to_dir "*.a" "$LibDir"
+	
+	# generate_libtool_la_windows "libiconv.la" "" "libiconv.a"
+	# make clean
+# fi
 
 #zlib
 ZlibPrefix=lib${Prefix}
@@ -960,9 +978,12 @@ if [ -e "$PERL_BIN_DIR" ]; then
 		cd "$PKG_DIR/"
 		change_key "src" "Makefile.in" "libcroco_0_6_la_LDFLAGS" "-version-info\ @LIBCROCO_VERSION_INFO@\ -export-symbols-regex\ \'\^\(cr_)\.\*\'\ \\\\"
 
+		CPPFLAGS="$CPPFLAGS -DIN_LIBXML"
 		$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 		change_libname_spec
 		make -j3 && make install
+	
+		reset_flags
 		
 		cd src/.libs
 		$MSLIB /name:lib${Prefix}croco-0.6-3.dll /out:croco-0.6.lib /machine:$MSLibMachine /def:lib${Prefix}croco-0.6-3.dll.def
@@ -976,7 +997,7 @@ if [ -e "$PERL_BIN_DIR" ]; then
 		cp -p lib${Prefix}croco-0.6-3.dll ../../csslint/.libs/
 		cp -p "$BinDir/lib${Prefix}xml2-2.dll" .
 		cp -p "$BinDir/lib${Prefix}glib-2.0-0.dll" .
-		cp -p "$BinDir/${IconvPrefix}iconv.dll" .
+		cp -p "$BinDir/${IconvPrefix}iconv*.dll" .
 		cp -p "$BinDir/${ZlibPrefix}z.dll" .
 		cd ../../
 		
@@ -984,7 +1005,7 @@ if [ -e "$PERL_BIN_DIR" ]; then
 		cp -p ../../csslint/.libs/lib${Prefix}croco-0.6-3.dll .
 		cp -p "$BinDir/lib${Prefix}xml2-2.dll" .
 		cp -p "$BinDir/lib${Prefix}glib-2.0-0.dll" .
-		cp -p "$BinDir/${IconvPrefix}iconv.dll" .
+		cp -p "$BinDir/${IconvPrefix}iconv*.dll" .
 		cp -p "$BinDir/${ZlibPrefix}z.dll" .
 		cd ../
 	fi
@@ -1006,9 +1027,12 @@ if [ -e "$PERL_BIN_DIR" ]; then
 		unpack_bzip2_and_move "libgsf.tar.bz2" "$PKG_DIR_LIBGSF"
 		mkdir_and_move "$IntDir/libgsf"
 		
+		CPPFLAGS="$CPPFLAGS -DIN_LIBXML"
 		$PKG_DIR/configure --without-python --disable-gtk-doc --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 		change_libname_spec
 		make -j3 && make install
+	
+		reset_flags
 		
 		cd gsf/.libs/
 		$MSLIB /name:lib${Prefix}gsf-1-114.dll /out:gsf-1.lib /machine:$MSLibMachine /def:lib${Prefix}gsf-1-114.dll.def
@@ -1240,6 +1264,7 @@ if [ ! -f "$BinDir/lib${Prefix}theora-0.dll" ]; then
 	
 	$PKG_DIR/configure --with-vorbis=$BinDir --with-vorbis-libraries=$LibDir --with-vorbis-includes=$IncludeDir --with-ogg=$BinDir --with-ogg-libraries=$LibDir --with-ogg-includes=$IncludeDir --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
+	make -j3 && make install
 	make -j3 && make install
 	
 	copy_files_to_dir "$LIBRARIES_PATCH_DIR/theora/*def" .

@@ -20,12 +20,12 @@ set MINGWDIR=%MSYSDIR%\mingw
 set DEST_MSYS_DIR=%MSYSDIR%
 set MINGW_GET_DEFAULTS=%TMPDIR%\var\lib\mingw-get\data\defaults.xml
 
-rem set GCCDIR=cross-mingw.gcc450.generic.20100612
-rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc450.generic.20100612.7z
+set GCCDIR=cross-mingw.gcc450.generic.20100612
+set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc450.generic.20100612.7z
 rem set GCCDIR=cross-mingw.gcc451.generic.20100615.1
 rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.1.7z
-set GCCDIR=cross-mingw.gcc451.generic.20100615
-set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.7z
+rem set GCCDIR=cross-mingw.gcc451.generic.20100615
+rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.7z
 
 set MINGW_GET=http://downloads.sourceforge.net/project/mingw/Automated MinGW Installer/mingw-get/mingw-get-0.1-mingw32-alpha-2-bin.tar.gz?use_mirror=softlayer
 
