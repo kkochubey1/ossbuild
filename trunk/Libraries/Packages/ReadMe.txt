@@ -14,6 +14,7 @@ dlfcn-win32     -       r11             -       http://dlfcn-win32.googlecode.co
 liboil          -       0.3.17          -       http://liboil.freedesktop.org/download/liboil-0.3.17.tar.gz
 orc             -       0.4.5           -       http://code.entropywave.com/download/orc/orc-0.4.5.tar.gz
 pthreads        -       2.8.0           -       http://mirrors.kernel.org/sources.redhat.com/pthreads-win32/pthreads-w32-2-8-0-release.tar.gz
+libiconv        -       1.13.1          -       http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.13.1.tar.gz
 zlib            -       1.2.5           -       http://zlib.net/zlib-1.2.5.tar.bz2
 bz2             -       1.0.5           -       http://www.bzip.org/1.0.5/bzip2-1.0.5.tar.gz
 glew            -       1.5.4           -       http://downloads.sourceforge.net/project/glew/glew/1.5.4/glew-1.5.4.tgz?use_mirror=cdnetworks-us-2
