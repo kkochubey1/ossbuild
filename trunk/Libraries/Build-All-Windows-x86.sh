@@ -866,6 +866,7 @@ if [ ! -f "$BinDir/lib${Prefix}pango-1.0-0.dll" ]; then
 		copy_files_to_dir "/mingw/lib/libws2_32.la /mingw/lib/libole32.la /mingw/lib/libgdi32.la /mingw/lib/libmsimg32.la" "pango"
 		copy_files_to_dir "/mingw/lib/libws2_32.la /mingw/lib/libole32.la /mingw/lib/libgdi32.la /mingw/lib/libmsimg32.la" "tests"
 	fi
+	
 	make -j3 && make install
 	
 	#Add in MS build tools again
@@ -969,7 +970,7 @@ if [ ! -f "$BinDir/lib${Prefix}gtkgl-2.0-1.dll" ]; then
 	update_library_names_windows "lib${Prefix}gtkgl-2.0.dll.a" "libgtkgl-2.0.la"
 fi
 
-if [ -e "$PERL_BIN_DIR" ]; then 
+#if [ -e "$PERL_BIN_DIR" ]; then 
 	#libcroco
 	if [ ! -f "$BinDir/lib${Prefix}croco-0.6-3.dll" ]; then 
 		unpack_bzip2_and_move "libcroco.tar.bz2" "$PKG_DIR_LIBCROCO"
@@ -1057,6 +1058,7 @@ if [ -e "$PERL_BIN_DIR" ]; then
 		
 		$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 		change_libname_spec
+		
 		make -j3 && make install
 		
 		cd .libs/
@@ -1064,7 +1066,7 @@ if [ -e "$PERL_BIN_DIR" ]; then
 		move_files_to_dir "*.exp *.lib" "$LibDir/"
 		cd ../
 	fi
-fi
+#fi
 
 #sdl
 SDLPrefix=lib${Prefix}
@@ -1095,6 +1097,23 @@ if [ ! -f "$BinDir/${SDLPrefix}SDL.dll" ]; then
 	mv "lib${SDLPrefix}SDL.dll.a" "libSDL.dll.a"
 	update_library_names_windows "libSDL.dll.a" "libSDL.la"
 	change_key "." "libSDL.la" "library_names" "\'libSDL.dll.a\'"
+fi
+
+#SDL_ttf
+if [ ! -f "$BinDir/SDL_ttf.dll" ]; then 
+	unpack_gzip_and_move "sdl_ttf.tar.gz" "$PKG_DIR_SDLTTF"
+	mkdir_and_move "$IntDir/sdl_ttf"
+	
+	$PKG_DIR/configure --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	change_libname_spec
+	make -j3 && make install
+	
+	cd .libs/
+	pexports "$BinDir/SDL_ttf.dll" | sed "s/^_//" > in.def
+	sed -e '/LIBRARY SDL_ttf.dll/d' in.def > in-mod.def
+	$MSLIB /name:SDL_ttf.dll /out:sdl_ttf.lib /machine:$MSLibMachine /def:in-mod.def
+	move_files_to_dir "*.exp *.lib" "$LibDir/"
+	cd ..
 fi
 
 #libogg
@@ -1264,8 +1283,10 @@ if [ ! -f "$BinDir/lib${Prefix}theora-0.dll" ]; then
 	
 	$PKG_DIR/configure --with-vorbis=$BinDir --with-vorbis-libraries=$LibDir --with-vorbis-includes=$IncludeDir --with-ogg=$BinDir --with-ogg-libraries=$LibDir --with-ogg-includes=$IncludeDir --disable-static --enable-shared --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make -j3 && make install
-	make -j3 && make install
+	make 
+	make install
+	make
+	make install
 	
 	copy_files_to_dir "$LIBRARIES_PATCH_DIR/theora/*def" .
 	copy_files_to_dir "lib/.libs/*.def" .
@@ -1305,7 +1326,7 @@ if [ ! -f "$BinDir/lib${Prefix}mms-0.dll" ]; then
 fi
 
 #x264
-if [ ! -f "$BinDir/lib${Prefix}x264-67.dll" ]; then 
+if [ ! -f "$BinDir/lib${Prefix}x264-98.dll" ]; then 
 	unpack_bzip2_and_move "x264.tar.bz2" "$PKG_DIR_X264"
 	mkdir_and_move "$IntDir/x264"
 	
@@ -1314,17 +1335,20 @@ if [ ! -f "$BinDir/lib${Prefix}x264-67.dll" ]; then
 	cd "$PKG_DIR/"
 	CFLAGS=""
 	CPPFLAGS=""
-	LDFLAGS=""
+	LDFLAGS="-Wl,--exclude-libs,libpthreadGC2.dll.a -Wl,--exclude-libs,pthreadGC2.lib"
+	ORIG_LDFLAGS="$ORIG_LDFLAGS -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias"
 	./configure --disable-gpac --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
-	change_key "." "config.mak" "SONAME" "lib${Prefix}x264-67.dll"
-	change_key "." "config.mak" "IMPLIBNAME" "lib${Prefix}x264.dll.a"
+	#change_key "." "config.mak" "SONAME" "lib${Prefix}x264-98.dll"
+	#change_key "." "config.mak" "IMPLIBNAME" "lib${Prefix}x264.dll.a"
 	
 	#Download example y4m for use in profiling and selecting the best CPU instruction set
 	wget http://samples.mplayerhq.hu/yuv4mpeg2/example.y4m.bz2
 	bunzip2 -d -f "example.y4m.bz2"
 	
 	#Build using the profiler
-	make fprofiled VIDS="example.y4m"
+	#Disabled with gcc 4.5.0 until bug is fixed for misaligned SSE when -fprofile-generate is used
+	#make fprofiled VIDS="example.y4m"
+	make
 	make install
 	
 	reset_flags
@@ -1334,9 +1358,9 @@ if [ ! -f "$BinDir/lib${Prefix}x264-67.dll" ]; then
 
 	cd "$IntDir/x264"
 	rm -rf "$LibDir/libx264.a"
-	pexports "$BinDir/lib${Prefix}x264-67.dll" | sed "s/^_//" > in.def
+	pexports "$BinDir/lib${Prefix}x264-98.dll" | sed "s/^_//" > in.def
 	sed -e 's/DATA//g' in.def > in-mod.def
-	$MSLIB /name:lib${Prefix}x264-67.dll /out:x264.lib /machine:$MSLibMachine /def:in-mod.def
+	$MSLIB /name:lib${Prefix}x264-98.dll /out:x264.lib /machine:$MSLibMachine /def:in-mod.def
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
 	
 	update_library_names_windows "lib${Prefix}x264.dll.a" "libx264.la"
@@ -1447,7 +1471,7 @@ if [ ! -f "$BinDir/${FFmpegPrefix}avcodec${FFmpegSuffix}-52.dll" ]; then
 	CFLAGS=""
 	CPPFLAGS="-DETIMEDOUT=10060"
 	LDFLAGS=""
-	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-libvpx --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
+	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
 	change_key "." "config.mak" "BUILDSUF" "${FFmpegSuffix}"
 	change_key "." "config.mak" "LIBPREF" "${FFmpegPrefix}"
 	change_key "." "config.mak" "SLIBPREF" "${FFmpegPrefix}"
@@ -1807,7 +1831,7 @@ if [ ! -f "$BinDir/${FFmpegPrefix}avcodec-gpl-52.dll" ]; then
 	CFLAGS=""
 	CPPFLAGS="-DETIMEDOUT=10060"
 	LDFLAGS=""
-	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-libvpx --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --enable-gpl --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir
+	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --enable-gpl --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir
 	change_key "." "config.mak" "BUILDSUF" "-gpl"
 	change_key "." "config.mak" "LIBPREF" "${FFmpegPrefix}"
 	change_key "." "config.mak" "SLIBPREF" "${FFmpegPrefix}"

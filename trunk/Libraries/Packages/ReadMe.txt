@@ -13,7 +13,7 @@ iconv           -       0.0.1	        -       http://win-iconv.googlecode.com/fi
 dlfcn-win32     -       r11             -       http://dlfcn-win32.googlecode.com/files/dlfcn-win32-r11.tar.bz2
 liboil          -       0.3.17          -       http://liboil.freedesktop.org/download/liboil-0.3.17.tar.gz
 orc             -       0.4.5           -       http://code.entropywave.com/download/orc/orc-0.4.5.tar.gz
-pthreads        -       2.8.0           -       http://mirrors.kernel.org/sources.redhat.com/pthreads-win32/pthreads-w32-2-8-0-release.tar.gz
+pthreads        -       2.9.0           -       CVS (for now), eventually http://mirrors.kernel.org/sources.redhat.com/pthreads-win32/pthreads-w32-2-9-0-release.tar.gz
 libiconv        -       1.13.1          -       http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.13.1.tar.gz
 zlib            -       1.2.5           -       http://zlib.net/zlib-1.2.5.tar.bz2
 bz2             -       1.0.5           -       http://www.bzip.org/1.0.5/bzip2-1.0.5.tar.gz
@@ -46,6 +46,7 @@ intltool        -       0.40.6          -       http://ftp.se.debian.org/pub/gno
 libgsf          -       1.14.18         -       http://ftp.gnome.org/pub/gnome/sources/libgsf/1.14/libgsf-1.14.18.tar.bz2
 librsvg         -       2.26.3          -       http://ftp.gnome.org/pub/GNOME/sources/librsvg/2.26/librsvg-2.26.3.tar.bz2
 libsdl          -       1.2.14          -       http://www.libsdl.org/release/SDL-1.2.14.tar.gz
+sdlttf          -       2.0.9           -       http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.9.tar.gz
 libogg          -       1.2.0           -       http://downloads.xiph.org/releases/ogg/libogg-1.2.0.tar.gz
 libvorbis       -       1.3.1           -       http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.1.tar.bz2
 libcelt         -       0.7.1           -       http://downloads.xiph.org/releases/celt/celt-0.7.1.tar.gz
@@ -56,7 +57,7 @@ x264            -       20100617        -       http://download.videolan.org/pub
 libspeex        -       1.2rc1          -       http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
 libschrodinger  -       1.0.9           -       http://diracvideo.org/download/schroedinger/schroedinger-1.0.9.tar.gz
 mp3lame         -       3.98.4          -       http://downloads.sourceforge.net/project/lame/lame/3.98.4/lame-3.98.4.tar.gz?use_mirror=voxel
-ffmpeg          -       0.6.0           -       http://ffmpeg.org/releases/ffmpeg-export-snapshot.tar.bz2 [Updated 06-18-2010]
+ffmpeg          -       0.6.0           -       http://ffmpeg.org/releases/ffmpeg-export-snapshot.tar.bz2 [Updated 06-22-2010, r31528]
 libnice         -       0.0.12          -       http://nice.freedesktop.org/releases/libnice-0.0.12.tar.gz
 sqlite          -       3.6.23.1        -       http://www.sqlite.org/sqlite-amalgamation-3.6.23.1.tar.gz
 libvdpau        -       0.4.0           -       http://cgit.freedesktop.org/~aplattner/libvdpau/snapshot/libvdpau-0.4.tar.bz2

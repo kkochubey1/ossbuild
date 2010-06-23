@@ -20,12 +20,18 @@ set MINGWDIR=%MSYSDIR%\mingw
 set DEST_MSYS_DIR=%MSYSDIR%
 set MINGW_GET_DEFAULTS=%TMPDIR%\var\lib\mingw-get\data\defaults.xml
 
-set GCCDIR=cross-mingw.gcc450.generic.20100612
-set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc450.generic.20100612.7z
+set GCCDIR=cross-mingw.gcc444.generic.20100612
+set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc444.generic.20100612.7z
+rem set GCCDIR=cross-mingw.gcc450.generic.20100612
+rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc450.generic.20100612.7z
 rem set GCCDIR=cross-mingw.gcc451.generic.20100615.1
 rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.1.7z
 rem set GCCDIR=cross-mingw.gcc451.generic.20100615
 rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.7z
+
+set PKG_MSYSGIT_BIN=http://msysgit.googlecode.com/files/PortableGit-1.7.1-preview20100612.7z
+
+set PKG_STRAWBERRY_PERL_BIN=http://strawberryperl.com/download/strawberry-perl-5.12.0.1.zip
 
 set MINGW_GET=http://downloads.sourceforge.net/project/mingw/Automated MinGW Installer/mingw-get/mingw-get-0.1-mingw32-alpha-2-bin.tar.gz?use_mirror=softlayer
 
@@ -90,6 +96,7 @@ set PKG_MSYS_FLIP_BIN=https://ccrma.stanford.edu/~craig/utility/flip/flip.exe
 set PKG_MINGW_BASICBSDTAR_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/Utilities/basic bsdtar/basic-bsdtar-2.8.3-1/basic-bsdtar-2.8.3-1-mingw32-bin.tar.lzma?use_mirror=iweb
 set PKG_MINGW_AUTOCONF_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/autoconf2.5/autoconf2.5-2.64-1/autoconf2.5-2.64-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_AUTOCONFWRAPPER_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/wrapper/autoconf-7-1/autoconf-7-1-mingw32-bin.tar.lzma?use_mirror=iweb
+set PKG_MINGW_AUTOMAKE_1_4_BIN=http://sourceforge.net/projects/mingw/files/MinGW/automake/automake1.4/automake1.4-1.4p6-1/automake1.4-1.4p6-1-mingw32-bin.tar.lzma/download
 set PKG_MINGW_AUTOMAKE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/automake/automake1.11/automake1.11-1.11-1/automake1.11-1.11-1-mingw32-bin.tar.lzma?use_mirror=softlayer
 set PKG_MINGW_AUTOMAKEWRAPPER_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/automake/wrapper/automake-4-1/automake-4-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_LTDL_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libtool/libtool-2.2.7a-1/libltdl-2.2.7a-1-mingw32-dll-7.tar.lzma?use_mirror=voxel
@@ -202,7 +209,7 @@ if "%DOWNLOAD%" == "1" (
 	call :download msys-sed-bin "%PKG_MSYS_SED_BIN%"
 	call :download msys-bison-bin "%PKG_MSYS_BISON_BIN%"
 	call :download msys-flex-bin "%PKG_MSYS_FLEX_BIN%"
-	call :download msys-perl-bin "%PKG_MSYS_PERL_BIN%"
+	rem call :download msys-perl-bin "%PKG_MSYS_PERL_BIN%"
 	call :download msys-rebase-bin "%PKG_MSYS_REBASE_BIN%"
 	call :download msys-crypt-dll "%PKG_MSYS_CRYPT_DLL%"
 	call :download msys-crypt-bin "%PKG_MSYS_CRYPT_BIN%"
@@ -228,6 +235,7 @@ if "%DOWNLOAD%" == "1" (
 	call :download mingw-basicbsdtar-bin "%PKG_MINGW_BASICBSDTAR_BIN%"
 	call :download mingw-autoconf-bin "%PKG_MINGW_AUTOCONF_BIN%"
 	call :download mingw-autoconfwrapper-bin "%PKG_MINGW_AUTOCONFWRAPPER_BIN%"
+	call :download mingw-automake-1_4-bin "%PKG_MINGW_AUTOMAKE_1_4_BIN%"
 	call :download mingw-automake-bin "%PKG_MINGW_AUTOMAKE_BIN%"
 	call :download mingw-automakewrapper-bin "%PKG_MINGW_AUTOMAKEWRAPPER_BIN%"
 	call :download mingw-ltdl-bin "%PKG_MINGW_LTDL_DLL%"
@@ -248,11 +256,37 @@ if "%DOWNLOAD%" == "1" (
 	rem Download DXVA2 for use by FFmpeg AVHWAccel API
 	wget --no-check-certificate -O dxva2api.h "http://downloads.videolan.org/pub/videolan/testing/contrib/dxva2api.h"
 	
+	rem Get strawberry perl
+	rem wget --no-check-certificate -O perl.zip "%PKG_STRAWBERRY_PERL_BIN%"
+	
+	rem Get msysGit which has a newer version of perl
+	wget --no-check-certificate -O git.7z "%PKG_MSYSGIT_BIN%"
+	
 	cd /d "%MSYSDIR%"
 )
 
 if "%UNTAR%" == "1" (
 	cd /d "%TMPDIR%"
+	
+	rem Don't use strawberry perl b/c msys git has a newer 
+	rem version of perl available plus it gives us git commands.
+	rem cd /d "%TMPDIR%"
+	rem 7z -y "-operl\" x perl.zip
+	rem cd /d "perl\"
+	rem mkdir "%DEST_MSYS_DIR%\perl"
+	rem mkdir "%DEST_MSYS_DIR%\perl\bin"
+	rem copy relocation.pl "%DEST_MSYS_DIR%"
+	rem xcopy /Y /K /H /E "c\bin\*.dll" "%DEST_MSYS_DIR%\perl\bin\"
+	rem xcopy /Y /K /H /E "perl\*" "%DEST_MSYS_DIR%\perl\"
+	rem cd ..
+	rem cd /d "%DEST_MSYS_DIR%"
+	rem perl\bin\perl.exe relocation.pl
+	rem del relocation.pl
+	rem "%TOOLSDIR%\rm" -rf "%TMPDIR%\perl\"
+	rem cd /d "%TMPDIR%"
+	
+	rem Get git commands + newer version of perl
+	7za -y "-o%MSYSDIR%" x git.7z
 	
 	rem This file isn't in the typical msys/mingw structure, so we have to 
 	rem treat it very differently.
@@ -298,7 +332,7 @@ if "%UNTAR%" == "1" (
 	call :extract msys-sed-bin %MSYSDIR%
 	call :extract msys-bison-bin %MSYSDIR%
 	call :extract msys-flex-bin %MSYSDIR%
-	call :extract msys-perl-bin %MSYSDIR%
+	rem call :extract msys-perl-bin %MSYSDIR%
 	call :extract msys-rebase-bin %MSYSDIR%
 	call :extract msys-crypt-dll %MSYSDIR%
 	call :extract msys-crypt-bin %MSYSDIR%
@@ -326,6 +360,7 @@ if "%UNTAR%" == "1" (
 	call :extract mingw-basicbsdtar-bin %MINGWDIR%
 	call :extract mingw-autoconf-bin %MINGWDIR%
 	call :extract mingw-autoconfwrapper-bin %MINGWDIR%
+	call :extract mingw-automake-1_4-bin %MINGWDIR%
 	call :extract mingw-automake-bin %MINGWDIR%
 	call :extract mingw-automakewrapper-bin %MINGWDIR%
 	call :extract mingw-ltdl-bin %MINGWDIR%
@@ -425,7 +460,7 @@ if "%CLEAN%" == "1" (
 	call :clean msys-sed-bin
 	call :clean msys-bison-bin
 	call :clean msys-flex-bin
-	call :clean msys-perl-bin
+	rem call :clean msys-perl-bin
 	call :clean msys-rebase-bin
 	call :clean msys-crypt-dll
 	call :clean msys-crypt-bin
@@ -450,6 +485,7 @@ if "%CLEAN%" == "1" (
 	call :clean mingw-basicbsdtar-bin
 	call :clean mingw-autoconf-bin
 	call :clean mingw-autoconfwrapper-bin
+	call :clean mingw-automake-1_4-bin
 	call :clean mingw-automake-bin
 	call :clean mingw-automakewrapper-bin
 	call :clean mingw-ltdl-bin
@@ -464,6 +500,10 @@ if "%CLEAN%" == "1" (
 	call :clean mingw-libiconv-dll
 	call :clean mingw-libiconv-bin
 	call :clean mingw-make-bin
+	
+	del git.7z
+	
+	rem del perl.zip
 	
 	del dxva2api.h
 	
