@@ -323,6 +323,13 @@ create_shared() {
 	create_templates
 }
 
+create_wrapper_windows() {
+	mywrapper=$1
+	myargs=$2
+	echo "#!/bin/bash" > $mywrapper
+	echo "${mywrapper}.exe ${myargs} \"\$@\"" >> $mywrapper
+}
+
 create_cross_compiler_path_windows() {
 	if [ "$HostTriplet" != "" ]; then
 		export PATH=/mingw/$HostTriplet/bin:$PATH

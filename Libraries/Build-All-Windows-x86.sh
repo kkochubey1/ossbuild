@@ -21,14 +21,14 @@ if [ ! -d "$PERL_BIN_DIR" ]; then
 fi
 
 #Global flags
-CFLAGS="$CFLAGS -mms-bitfields -pipe -D_WIN32_WINNT=0x0501 -Dsocklen_t=int "
-CPPFLAGS="$CPPFLAGS -DMINGW32 -D__MINGW32__"
+CFLAGS="$CFLAGS -m32 -mms-bitfields -pipe -D_WIN32_WINNT=0x0501 -Dsocklen_t=int "
+CPPFLAGS="$CPPFLAGS -DMINGW64 -D__MINGW64__ -DMINGW32 -D__MINGW32__"
 LDFLAGS="-Wl,--enable-auto-image-base -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc-v2 -Wl,--kill-at "
 CXXFLAGS="${CFLAGS}"
 
 #Call common startup routines to load a bunch of variables we'll need
 . $TOP/Shared/Scripts/Common.sh
-common_startup "Windows" "Win32" "Release" "x86" "i686-w64-mingw32" "i686-w64-mingw32"
+common_startup "Windows" "Win32" "Release" "x86" "" ""
 
 #Select which MS CRT we want to build against (e.g. msvcr90.dll)
 . $ROOT/Shared/Scripts/CRT-x86.sh
@@ -55,6 +55,13 @@ setup_ms_build_env_path
 
 #No prefix from here out
 clear_prefix
+
+#Ensure that gcc outputs 32-bit
+gcc="$gcc -m32"
+windres="$windres --target=pe-i386"
+create_wrapper_windows "/mingw/bin/windres" "--target=pe-i386"
+create_wrapper_windows "/mingw/bin/gcc" "-m32"
+create_wrapper_windows "/mingw/bin/g++" "-m32"
 
 #Not using dwarf2 yet
 ###gcc_dw2
@@ -144,11 +151,12 @@ fi
 if [ ! -f "$BinDir/${PthreadsPrefix}pthreadGC2.dll" ]; then 
 	unpack_gzip_and_move "pthreads-w32.tar.gz" "$PKG_DIR_PTHREADS"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/pthreads-w32/sched.h.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/pthreads-w32/pthreads-detach.patch"
 	mkdir_and_move "$IntDir/pthreads"
 
 	cd "$PKG_DIR"
 	change_package "${PthreadsPrefix}pthreadGC\$(DLL_VER).dll" "." "GNUmakefile" "GC_DLL"
-	make CROSS=${Build}- PTW32_FLAGS=-D_TIMESPEC_DEFINED GC-inlined
+	make "CC=${gcc}" "RC=${windres}" "CROSS=${BuildTripletDash}" "PTW32_FLAGS=-D_TIMESPEC_DEFINED" GC-inlined
 	$MSLIB /name:${PthreadsPrefix}pthreadGC2.dll /out:pthreadGC2.lib /machine:$MSLibMachine /def:pthread.def
 	cp -p pthreadGC2.lib libpthreadGC2.dll.a
 	copy_files_to_dir "*.exp *.lib *.a" "$LibDir"
@@ -168,7 +176,7 @@ if [ ! -f "$BinDir/libiconv-2.dll" ]; then
 	unpack_gzip_and_move "libiconv.tar.gz" "$PKG_DIR_LIBICONV"
 	mkdir_and_move "$IntDir/libiconv"
 	
-	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir	
+	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	make -j3 && make install
 
 	pexports "$BinDir/libiconv-2.dll" > libiconv.def
@@ -217,7 +225,7 @@ if [ ! -f "$BinDir/${ZlibPrefix}z.dll" ]; then
 	change_package "${ZlibPrefix}z.dll" "win32" "Makefile.gcc" "SHAREDLIB"
 
 	cp contrib/asm686/match.S ./match.S
-	make LOC=-DASMV OBJA=match.o PREFIX=${Build}- -fwin32/Makefile.gcc
+	make "CC=${gcc}" "RC=${windres}" "CROSS=${BuildTripletDash}" LOC=-DASMV OBJA=match.o -fwin32/Makefile.gcc
 	#make -fwin32/Makefile.gcc ${ZlibPrefix}z.dll
 	INCLUDE_PATH=$IncludeDir LIBRARY_PATH=$BinDir make install -fwin32/Makefile.gcc
 	
@@ -258,7 +266,7 @@ if [ ! -f "$BinDir/lib${Prefix}bz2.dll" ]; then
 	$dlltool --dllname lib${Prefix}bz2.dll -d in-mod.def -l libbz2.dll.a
 	cp -p libbz2.dll.a "$LibDir/"
 	
-	make CC=$gcc AR=$ar RANLIB=$ranlib
+	make "CC=$gcc" "AR=$ar" "RANLIB=$ranlib" "CFLAGS=$CFLAGS -O2 -D_FILE_OFFSET_BITS=64"
 	make install PREFIX=$InstallDir
 	remove_files_from_dir "*.exe"
 	remove_files_from_dir "*.so.*"
@@ -284,7 +292,7 @@ if [ ! -f "$BinDir/${GlewPrefix}glew32.dll" ]; then
 	cd "$PKG_DIR"
 	change_package "${GlewPrefix}\$(NAME).dll" "config" "Makefile.mingw" "LIB.SONAME"
 	change_package "${GlewPrefix}\$(NAME).dll" "config" "Makefile.mingw" "LIB.SHARED"
-	make CC=$gcc LD=$gcc AR=$ar -j3
+	make "CC=$gcc" "LD=$gcc" "AR=$ar" -j3
 	
 	cd "lib"
 	strip "libglew32.dll.a"
@@ -410,7 +418,7 @@ if [ ! -f "$BinDir/lib${Prefix}openjpeg-2.dll" ]; then
 	cp "$LIBRARIES_PATCH_DIR/openjpeg/Makefile" .
 	
 	change_package "${Prefix}openjpeg" "." "Makefile" "TARGET"
-	make install CC=$gcc AR=$ar LDFLAGS="-lm" PREFIX=$InstallDir
+	make install "CC=$gcc" "AR=$ar" LDFLAGS="-lm" PREFIX=$InstallDir
 	make clean
 	
 	cd "$IntDir/openjpeg"
@@ -473,7 +481,7 @@ if [ ! -f "$LibDir/libvpx.a" ]; then
 	
 	#Configure, compile, and install
 	#--enable-shared isn't available for windows yet
-	CC=$gcc LD=$gcc $PKG_DIR/configure --enable-vp8 --enable-psnr --enable-runtime-cpu-detect --prefix=$InstallDir --libdir=$LibDir
+	CC="$gcc" LD="$gcc" $PKG_DIR/configure --target=x86-win32-gcc --enable-vp8 --enable-psnr --enable-runtime-cpu-detect --prefix=$InstallDir --libdir=$LibDir
 	make -j3
 	make install
 	
@@ -1193,6 +1201,7 @@ if [ ! -f "$BinDir/lib${Prefix}FLAC-8.dll" ]; then
 	unpack_gzip_and_move "flac.tar.gz" "$PKG_DIR_FLAC"
 
 	patch -p0 -N	< "$LIBRARIES_PATCH_DIR/flac/flac-size-t-max.patch"
+	patch -p0 -N	< "$LIBRARIES_PATCH_DIR/flac/flac-win32.patch"
 	
 	mkdir_and_move "$IntDir/flac"	
 	
@@ -1204,7 +1213,6 @@ if [ ! -f "$BinDir/lib${Prefix}FLAC-8.dll" ]; then
 	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir --disable-doxygen-docs --disable-cpplibs LDFLAGS="$LDFLAGS -no-undefined -lws2_32" 
 	change_libname_spec
 	make
-exit 0
 	make install
 	
 	pexports "$BinDir/lib${Prefix}FLAC-8.dll" > in.def
@@ -1332,7 +1340,7 @@ if [ ! -f "$BinDir/lib${Prefix}celt-0.dll" ]; then
 	
 	update_library_names_windows "lib${Prefix}celt0.dll.a" "libcelt0.la"
 fi
-exit 0
+
 #libtheora
 if [ ! -f "$BinDir/lib${Prefix}theora-0.dll" ]; then 
 	unpack_bzip2_and_move "libtheora.tar.bz2" "$PKG_DIR_LIBTHEORA"
