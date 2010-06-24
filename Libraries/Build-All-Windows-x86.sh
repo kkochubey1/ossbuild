@@ -257,15 +257,13 @@ if [ ! -f "$BinDir/lib${Prefix}bz2.dll" ]; then
 	$gcc -DDLL_EXPORT -Wall -Winline -O2 -D_FILE_OFFSET_BITS=64 -c bzlib.c
 	rm -f libbz2.a
 	$ar cq libbz2.a blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o
-	$gcc -shared -o lib${Prefix}bz2.dll blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o
-	
+	$gcc -Wl,--out-implib=libbz2.dll.a -Wl,--export-all-symbols -Wl,--enable-auto-import -shared -o lib${Prefix}bz2.dll blocksort.o huffman.o crctable.o randtable.o compress.o decompress.o bzlib.o
 	
 	cp -p libbz2.a "$LibDir/libbz2.a"
 	cp -p lib${Prefix}bz2.dll "$BinDir/"
 	
 	pexports lib${Prefix}bz2.dll > "in.def"
 	sed -e 's/DATA//g' in.def > in-mod.def
-	$dlltool --dllname lib${Prefix}bz2.dll -d in-mod.def -l libbz2.dll.a
 	cp -p libbz2.dll.a "$LibDir/"
 	
 	make "CC=$gcc" "AR=$ar" "RANLIB=$ranlib" "CFLAGS=$CFLAGS -O2 -D_FILE_OFFSET_BITS=64"
