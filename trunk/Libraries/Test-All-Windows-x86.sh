@@ -62,6 +62,8 @@ fi
 unpack_gzip_and_move "pthreads-w32.tar.gz" "$PKG_DIR_PTHREADS"
 cp -p -r "$PKG_QUEUE_USER_APC_EX" "$PKG_DIR"
 cp -p "$BinDir/${PthreadsPrefix}pthreadGC2.dll" "$PKG_DIR\pthreadGC2.dll"
+cp -p "libpthreadGC2.a" "libpthread.a"
+cp -p "libpthreadGC2.a" "libpthreads.a"
 cd tests
 make GC
 #

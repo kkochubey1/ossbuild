@@ -8,6 +8,9 @@ that they are accessible through most firewalls.
 LGPL Packages
 -------------------------------------
 
+gnome-common    -       2.28.0          -       http://ftp.gnome.org/pub/GNOME/sources/gnome-common/2.28/gnome-common-2.28.0.tar.bz2
+docbook         -       1.75.2          -       http://downloads.sourceforge.net/project/docbook/docbook-xsl/1.75.2/docbook-xsl-1.75.2.tar.bz2?use_mirror=cdnetworks-us-1
+gtk-doc         -       1.15.0          -       http://ftp.gnome.org/pub/GNOME/sources/gtk-doc/1.15/gtk-doc-1.15.tar.bz2
 proxy-libintl   -       20090911        -       http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/proxy-libintl-dev_20090911_win32.zip
 iconv           -       0.0.1	        -       http://win-iconv.googlecode.com/files/win-iconv-0.0.1.tar.bz2
 dlfcn-win32     -       r11             -       http://dlfcn-win32.googlecode.com/files/dlfcn-win32-r11.tar.bz2
@@ -20,6 +23,7 @@ bz2             -       1.0.5           -       http://www.bzip.org/1.0.5/bzip2-
 glew            -       1.5.4           -       http://downloads.sourceforge.net/project/glew/glew/1.5.4/glew-1.5.4.tgz?use_mirror=cdnetworks-us-2
 expat           -       2.0.1           -       http://sourceforge.net/projects/expat/files/expat/2.0.1/expat-2.0.1.tar.gz/download
 libxml2         -       2.7.7           -       http://xmlsoft.org/sources/libxml2-2.7.7.tar.gz
+libxslt         -       1.1.26          -       http://xmlsoft.org/sources/libxslt-1.1.26.tar.gz
 libjpeg         -       8.0.0b          -       http://www.ijg.org/files/jpegsrc.v8b.tar.gz
 openjpeg        -       1.3.0           -       http://www.openjpeg.org/openjpeg_v1_3.tar.gz
 libpng          -       1.4.2           -       http://downloads.sourceforge.net/project/libpng/01-libpng-master/1.4.2/libpng-1.4.2.tar.gz?use_mirror=cdnetworks-us-2
@@ -30,7 +34,7 @@ openssl         -       0.9.8j          -       http://www.openssl.org/source/op
 libgpg-error    -       1.8.0           -       http://mirror.tje.me.uk/pub/mirrors/ftp.gnupg.org/libgpg-error/libgpg-error-1.8.tar.bz2
 libtasn1        -       2.7.0           -       http://ftp.gnu.org/gnu/libtasn1/libtasn1-2.7.tar.gz
 libgcrypt       -       1.4.5           -       http://mirror.tje.me.uk/pub/mirrors/ftp.gnupg.org/libgcrypt/libgcrypt-1.4.5.tar.bz2
-gnutls          -       2.8.6           -       http://ftp.gnu.org/gnu/gnutls/gnutls-2.8.6.tar.bz2
+gnutls          -       2.9.12          -       http://alpha.gnu.org/gnu/gnutls/gnutls-2.9.12.tar.bz2
 curl            -       7.19.7          -       http://curl.haxx.se/download/curl-7.19.7.tar.bz2
 libsoup         -       2.31.2          -       http://ftp.gnome.org/pub/GNOME/sources/libsoup/2.31/libsoup-2.31.2.tar.bz2
 libneon         -       0.29.3          -       http://www.webdav.org/neon/neon-0.29.3.tar.gz
@@ -42,6 +46,8 @@ pango           -       1.28.1          -       http://ftp.gnome.org/pub/GNOME/s
 gtk+            -       2.21.2          -       http://ftp.gnome.org/pub/gnome/sources/gtk+/2.21/gtk+-2.21.2.tar.bz2
 gtkglarea       -       2.0.1           -       http://ftp.gnome.org/pub/gnome/sources/gtkglarea/2.0/gtkglarea-2.0.1.tar.bz2
 libcroco        -       0.6.2           -       http://ftp.gnome.org/pub/GNOME/sources/libcroco/0.6/libcroco-0.6.2.tar.bz2
+perl make-maker -       6.56.0          -       http://search.cpan.org/CPAN/authors/id/M/MS/MSCHWERN/ExtUtils-MakeMaker-6.56.tar.gz
+perl xml-parser -       2.36.0          -       http://search.cpan.org/CPAN/authors/id/M/MS/MSERGEANT/XML-Parser-2.36.tar.gz
 intltool        -       0.40.6          -       http://ftp.se.debian.org/pub/gnome/sources/intltool/0.40/intltool-0.40.6.tar.bz2
 libgsf          -       1.14.18         -       http://ftp.gnome.org/pub/gnome/sources/libgsf/1.14/libgsf-1.14.18.tar.bz2
 librsvg         -       2.26.3          -       http://ftp.gnome.org/pub/GNOME/sources/librsvg/2.26/librsvg-2.26.3.tar.bz2

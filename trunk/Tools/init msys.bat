@@ -20,17 +20,35 @@ set MINGWDIR=%MSYSDIR%\mingw
 set DEST_MSYS_DIR=%MSYSDIR%
 set MINGW_GET_DEFAULTS=%TMPDIR%\var\lib\mingw-get\data\defaults.xml
 
-set GCCDIR=cross-mingw.gcc444.generic.20100612
-set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc444.generic.20100612.7z
+rem set GCCDIR=cross-mingw.gcc444.generic.20100612
+rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc444.generic.20100612.7z
 rem set GCCDIR=cross-mingw.gcc450.generic.20100612
 rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc450.generic.20100612.7z
-rem set GCCDIR=cross-mingw.gcc451.generic.20100615.1
-rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.1.7z
 rem set GCCDIR=cross-mingw.gcc451.generic.20100615
 rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.7z
+rem set GCCDIR=cross-mingw.gcc451.generic.20100615.1
+rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.1.7z
+
+rem set PKG_MINGW_W64_GCC_X86_BIN=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win32/Automated Builds/mingw-w32-1.0-bin_i686-mingw_20100618.zip?use_mirror=iweb
+rem set PKG_MINGW_W64_GCC_X86_64_BIN=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win64/Automated Builds/mingw-w64-bin_i686-mingw_20100619.zip?use_mirror=iweb
+
+set PKG_TDM_GCC_X86_CORE=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm-1 SJLJ/gcc-4.5.0-tdm-1-core.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GNU-Binutils/binutils-2.20.1/binutils-2.20.1-2-mingw32-bin.tar.gz?use_mirror=voxel
+set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/MinGW-RT/mingwrt-3.18/mingwrt-3.18-mingw32-dev.tar.gz?use_mirror=voxel
+set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/MinGW-RT/mingwrt-3.18/mingwrt-3.18-mingw32-dll.tar.gz?use_mirror=voxel
+set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/Win32-API/w32api-3.14/w32api-3.14-mingw32-dev.tar.gz?use_mirror=iweb
+set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm-1 SJLJ/gcc-4.5.0-tdm-1-c++.tar.lzma?use_mirror=softlayer
+set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm-1 SJLJ/gcc-4.5.0-tdm-1-objc.tar.lzma?use_mirror=voxel
+
+set PKG_TDM_GCC_X86_64_=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm64-1/gcc-4.5.0-tdm64-1-core.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_X86_64_=http://downloads.sourceforge.net/project/tdm-gcc/GNU binutils/binutils-2.20.51-tdm64-20100322.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_X86_64_=http://downloads.sourceforge.net/project/tdm-gcc/MinGW-w64 runtime/GCC 4.5 series/mingw64-runtime-tdm64-gcc45-svn2455.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_X86_64_=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm64-1/gcc-4.5.0-tdm64-1-c++.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_X86_64_=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm64-1/gcc-4.5.0-tdm64-1-objc.tar.lzma?use_mirror=voxel
 
 set PKG_MSYSGIT_BIN=http://msysgit.googlecode.com/files/PortableGit-1.7.1-preview20100612.7z
 
+set PKG_ACTIVESTATE_PERL_BIN=http://downloads.activestate.com/ActivePerl/releases/5.10.1.1007/ActivePerl-5.10.1.1007-MSWin32-x86-291969.zip
 set PKG_STRAWBERRY_PERL_BIN=http://strawberryperl.com/download/strawberry-perl-5.12.0.1.zip
 
 set MINGW_GET=http://downloads.sourceforge.net/project/mingw/Automated MinGW Installer/mingw-get/mingw-get-0.1-mingw32-alpha-2-bin.tar.gz?use_mirror=softlayer
@@ -111,6 +129,22 @@ set PKG_MINGW_LIBCHARSET_DLL=http://downloads.sourceforge.net/project/mingw/MinG
 set PKG_MINGW_LIBICONV_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libiconv/libiconv-1.13.1-1/libiconv-1.13.1-1-mingw32-dll-2.tar.lzma?use_mirror=iweb
 set PKG_MINGW_LIBICONV_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/libiconv/libiconv-1.13.1-1/libiconv-1.13.1-1-mingw32-bin.tar.lzma?use_mirror=iweb
 set PKG_MINGW_MAKE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/make/make-3.81-20090914-mingw32/make-3.81-20090914-mingw32-bin.tar.gz?use_mirror=voxel
+set PKG_MINGW_GCC_CORE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/gcc-core-4.5.0-1-mingw32-bin.tar.lzma?use_mirror=voxel
+set PKG_MINGW_GCC_CPP_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/gcc-c++-4.5.0-1-mingw32-bin.tar.lzma?use_mirror=iweb
+set PKG_MINGW_GCC_OBJC_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/gcc-objc-4.5.0-1-mingw32-bin.tar.lzma?use_mirror=voxel
+set PKG_MINGW_LIBGNAT_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/libgnat-4.5.0-1-mingw32-dll-4.5.tar.lzma?use_mirror=voxel
+set PKG_MINGW_LIBGOMP_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/libgomp-4.5.0-1-mingw32-dll-1.tar.lzma?use_mirror=softlayer
+set PKG_MINGW_LIBGCC_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/libgcc-4.5.0-1-mingw32-dll-1.tar.lzma?use_mirror=voxel
+set PKG_MINGW_LIBSTDCPP_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/libstdc++-4.5.0-1-mingw32-dll-6.tar.lzma?use_mirror=softlayer
+set PKG_MINGW_LIBOBJC_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/libobjc-4.5.0-1-mingw32-dll-2.tar.lzma?use_mirror=voxel
+set PKG_MINGW_LIBSSP_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/libssp-4.5.0-1-mingw32-dll-0.tar.lzma?use_mirror=voxel
+set PKG_MINGW_BINUTILS_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GNU-Binutils/binutils-2.20.51/binutils-2.20.51-1-mingw32-bin.tar.lzma?use_mirror=voxel
+set PKG_MINGW_W32API_DEV=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/Win32-API/w32api-3.14/w32api-3.14-mingw32-dev.tar.gz?use_mirror=softlayer
+set PKG_MINGW_LIBGMP_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/gmp/gmp-5.0.1-1/libgmp-5.0.1-1-mingw32-dll-10.tar.lzma?use_mirror=voxel
+set PKG_MINGW_LIBMPFR_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/mpfr/mpfr-2.4.1-1/libmpfr-2.4.1-1-mingw32-dll-1.tar.lzma?use_mirror=voxel
+set PKG_MINGW_PTHREADS_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/pthreads-w32/pthreads-w32-2.8.0-3/libpthread-2.8.0-3-mingw32-dll-2.tar.lzma?use_mirror=voxel
+set PKG_MINGW_LIBMPC_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/mpc/mpc-0.8.1-1/libmpc-0.8.1-1-mingw32-dll-2.tar.lzma?use_mirror=softlayer
+set PKG_MINGW_MINGWRT_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/MinGW-RT/mingwrt-3.18/mingwrt-3.18-mingw32-dll.tar.gz?use_mirror=voxel
 set PKG_MINGW_GLIB_DLL=http://ftp.gnome.org/pub/gnome/binaries/win32/glib/2.24/glib_2.24.0-2_win32.zip
 set PKG_MINGW_PKGCONFIG_BIN=http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/pkg-config_0.23-3_win32.zip
 
@@ -172,7 +206,7 @@ cd /d "%MSYSDIR%"
 if "%DOWNLOAD%" == "1" (
 	cd /d "%TMPDIR%"
 	
-	call :download mingw-gcc-bin %GCC%
+	REM call :download mingw-gcc-bin %GCC%
 	
 	call :download msys-core-bin "%PKG_MSYS_CORE_BIN%"
 	call :download msys-rxvt-bin "%PKG_MSYS_RXVT_BIN%"
@@ -252,6 +286,22 @@ if "%DOWNLOAD%" == "1" (
 	call :download mingw-libcharset-dll "%PKG_MINGW_LIBCHARSET_DLL%"
 	call :download mingw-libiconv-dll "%PKG_MINGW_LIBICONV_DLL%"
 	call :download mingw-libiconv-bin "%PKG_MINGW_LIBICONV_BIN%"
+	REM call :download mingw-gcc-core-bin "%PKG_MINGW_GCC_CORE_BIN%"
+	REM call :download mingw-gcc-cpp-bin "%PKG_MINGW_GCC_CPP_BIN%"
+	REM call :download mingw-gcc-objc-bin "%PKG_MINGW_GCC_OBJC_BIN%"
+	REM call :download mingw-libgnat-dll "%PKG_MINGW_LIBGNAT_DLL%"
+	REM call :download mingw-libgomp-dll "%PKG_MINGW_LIBGOMP_DLL%"
+	REM call :download mingw-libgcc-dll "%PKG_MINGW_LIBGCC_DLL%"
+	REM call :download mingw-libstdcpp-dll "%PKG_MINGW_LIBSTDCPP_DLL%"
+	REM call :download mingw-libobjc-dll "%PKG_MINGW_LIBOBJC_DLL%"
+	REM call :download mingw-libssp-dll "%PKG_MINGW_LIBSSP_DLL%"
+	REM call :download mingw-binutils-bin "%PKG_MINGW_BINUTILS_BIN%"
+	REM call :download mingw-w32api-dev "%PKG_MINGW_W32API_DEV%"
+	REM call :download mingw-libgmp-dll "%PKG_MINGW_LIBGMP_DLL%"
+	REM call :download mingw-libmpfr-dll "%PKG_MINGW_LIBMPFR_DLL%"
+	REM call :download mingw-pthreads-dll "%PKG_MINGW_PTHREADS_DLL%"
+	REM call :download mingw-libmpc-dll "%PKG_MINGW_LIBMPC_DLL%"
+	REM call :download mingw-mingwrt-dll "%PKG_MINGW_MINGWRT_DLL%"
 	
 	rem Download DXVA2 for use by FFmpeg AVHWAccel API
 	wget --no-check-certificate -O dxva2api.h "http://downloads.videolan.org/pub/videolan/testing/contrib/dxva2api.h"
@@ -261,6 +311,13 @@ if "%DOWNLOAD%" == "1" (
 	
 	rem Get msysGit which has a newer version of perl
 	wget --no-check-certificate -O git.7z "%PKG_MSYSGIT_BIN%"
+	
+	rem Get activestate perl
+	wget --no-check-certificate -O perl.zip "%PKG_ACTIVESTATE_PERL_BIN%"
+	
+	rem Get MinGW-w64 gcc
+	wget --no-check-certificate -O gcc-x86.zip "%PKG_MINGW_W64_GCC_X86_BIN%"
+	wget --no-check-certificate -O gcc-x86_64.zip "%PKG_MINGW_W64_GCC_X86_64_BIN%"
 	
 	cd /d "%MSYSDIR%"
 )
@@ -288,13 +345,17 @@ if "%UNTAR%" == "1" (
 	rem Get git commands + newer version of perl
 	7za -y "-o%MSYSDIR%" x git.7z
 	
+	rem Install activestate perl
+	7za -y "-o%TMPDIR%" x perl.zip
+	call Installer.bat
+	
 	rem This file isn't in the typical msys/mingw structure, so we have to 
 	rem treat it very differently.
-	move mingw-gcc-bin.tar.lzma mingw-gcc-bin.7z
-	7z -y x mingw-gcc-bin.7z
-	cd "%GCCDIR%"
-	xcopy /Y /K /H /E ".\*" "%MINGWDIR%"
-	cd ..
+	REM move mingw-gcc-bin.tar.lzma mingw-gcc-bin.7z
+	REM 7z -y x mingw-gcc-bin.7z
+	REM cd "%GCCDIR%"
+	REM xcopy /Y /K /H /E ".\*" "%MINGWDIR%"
+	REM cd ..
 	
 	call :extract msys-core-bin %MSYSDIR%
 	call :extract msys-rxvt-bin %MSYSDIR%
@@ -374,6 +435,22 @@ if "%UNTAR%" == "1" (
 	call :extract mingw-libcharset-dll %MINGWDIR%
 	call :extract mingw-libiconv-dll %MINGWDIR%
 	call :extract mingw-libiconv-bin %MINGWDIR%
+	REM call :extract mingw-gcc-core-bin %MINGWDIR%
+	REM call :extract mingw-gcc-cpp-bin %MINGWDIR%
+	REM call :extract mingw-gcc-objc-bin %MINGWDIR%
+	REM call :extract mingw-libgnat-dll %MINGWDIR%
+	REM call :extract mingw-libgomp-dll %MINGWDIR%
+	REM call :extract mingw-libgcc-dll %MINGWDIR%
+	REM call :extract mingw-libstdcpp-dll %MINGWDIR%
+	REM call :extract mingw-libobjc-dll %MINGWDIR%
+	REM call :extract mingw-libssp-dll %MINGWDIR%
+	REM call :extract mingw-binutils-bin %MINGWDIR%
+	REM call :extract mingw-w32api-dev %MINGWDIR%
+	REM call :extract mingw-libgmp-dll %MINGWDIR%
+	REM call :extract mingw-libmpfr-dll %MINGWDIR%
+	REM call :extract mingw-pthreads-dll %MINGWDIR%
+	REM call :extract mingw-libmpc-dll %MINGWDIR%
+	REM call :extract mingw-mingwrt-dll %MINGWDIR%
 	
 	rem Copy these headers so FFmpeg can pick up hardware-accelerated decoding through DirectX
 	copy dxva2api.h "%MINGWDIR%\i686-pc-mingw32\include\dxva2api.h"
@@ -392,29 +469,32 @@ if "%UNTAR%" == "1" (
 	move mingw-pkg-config-bin.tar.lzma mingw-pkg-config-bin.zip
 	7za -y "-o%MINGWDIR%" x mingw-pkg-config-bin.zip
 	
-	cd /d "%MINGWDIR%\bin\"
-	copy addr2line.exe i686-pc-mingw32-addr2line.exe
-	copy ar.exe i686-pc-mingw32-ar.exe
-	copy as.exe i686-pc-mingw32-as.exe
-	copy "c++filt.exe" "i686-pc-mingw32-c++filt.exe"
-	copy cpp.exe i686-pc-mingw32-cpp.exe
-	copy dlltool.exe i686-pc-mingw32-dlltool.exe
-	copy dllwrap.exe i686-pc-mingw32-dllwrap.exe
-	copy elfedit.exe i686-pc-mingw32-elfedit.exe
-	copy gccbug i686-pc-mingw32-gccbug
-	copy gcov.exe i686-pc-mingw32-gcov.exe
-	copy gprof.exe i686-pc-mingw32-gprof.exe
-	copy ld.exe i686-pc-mingw32-ld.exe
-	copy nm.exe i686-pc-mingw32-nm.exe
-	copy objcopy.exe i686-pc-mingw32-objcopy.exe
-	copy objdump.exe i686-pc-mingw32-objdump.exe
-	copy ranlib.exe i686-pc-mingw32-ranlib.exe
-	copy readelf.exe i686-pc-mingw32-readelf.exe
-	copy size.exe i686-pc-mingw32-size.exe
-	copy strings.exe i686-pc-mingw32-strings.exe
-	copy strip.exe i686-pc-mingw32-strip.exe
-	copy windmc.exe i686-pc-mingw32-windmc.exe
-	copy windres.exe i686-pc-mingw32-windres.exe
+	7za -y "-o%MINGWDIR%" x gcc-x86.zip
+	7za -y "-o%MINGWDIR%" x gcc-x86_64.zip
+	
+	REM cd /d "%MINGWDIR%\bin\"
+	REM copy addr2line.exe i686-pc-mingw32-addr2line.exe
+	REM copy ar.exe i686-pc-mingw32-ar.exe
+	REM copy as.exe i686-pc-mingw32-as.exe
+	REM copy "c++filt.exe" "i686-pc-mingw32-c++filt.exe"
+	REM copy cpp.exe i686-pc-mingw32-cpp.exe
+	REM copy dlltool.exe i686-pc-mingw32-dlltool.exe
+	REM copy dllwrap.exe i686-pc-mingw32-dllwrap.exe
+	REM copy elfedit.exe i686-pc-mingw32-elfedit.exe
+	REM copy gccbug i686-pc-mingw32-gccbug
+	REM copy gcov.exe i686-pc-mingw32-gcov.exe
+	REM copy gprof.exe i686-pc-mingw32-gprof.exe
+	REM copy ld.exe i686-pc-mingw32-ld.exe
+	REM copy nm.exe i686-pc-mingw32-nm.exe
+	REM copy objcopy.exe i686-pc-mingw32-objcopy.exe
+	REM copy objdump.exe i686-pc-mingw32-objdump.exe
+	REM copy ranlib.exe i686-pc-mingw32-ranlib.exe
+	REM copy readelf.exe i686-pc-mingw32-readelf.exe
+	REM copy size.exe i686-pc-mingw32-size.exe
+	REM copy strings.exe i686-pc-mingw32-strings.exe
+	REM copy strip.exe i686-pc-mingw32-strip.exe
+	REM copy windmc.exe i686-pc-mingw32-windmc.exe
+	REM copy windres.exe i686-pc-mingw32-windres.exe
 	
 	cd /d "%MSYSDIR%"
 )
@@ -422,7 +502,7 @@ if "%UNTAR%" == "1" (
 if "%CLEAN%" == "1" (
 	cd /d "%TMPDIR%"
 	
-	del mingw-gcc-bin.7z
+	REM del mingw-gcc-bin.7z
 	
 	call :clean msys-core-bin
 	call :clean msys-rxvt-bin
@@ -500,6 +580,25 @@ if "%CLEAN%" == "1" (
 	call :clean mingw-libiconv-dll
 	call :clean mingw-libiconv-bin
 	call :clean mingw-make-bin
+	REM call :clean mingw-gcc-core-bin
+	REM call :clean mingw-gcc-cpp-bin
+	REM call :clean mingw-gcc-objc-bin
+	REM call :clean mingw-libgnat-dll
+	REM call :clean mingw-libgomp-dll
+	REM call :clean mingw-libgcc-dll
+	REM call :clean mingw-libstdcpp-dll
+	REM call :clean mingw-libobjc-dll
+	REM call :clean mingw-libssp-dll
+	REM call :clean mingw-binutils-bin
+	REM call :clean mingw-w32api-dev
+	REM call :clean mingw-libgmp-dll
+	REM call :clean mingw-libmpfr-dll
+	REM call :clean mingw-pthreads-dll
+	REM call :clean mingw-libmpc-dll
+	REM call :clean mingw-mingwrt-dll
+	
+	del gcc-x86.zip
+	del gcc-x86_64.zip
 	
 	del git.7z
 	
@@ -526,7 +625,13 @@ rem Move to known directory
 cd /d "%MSYSDIR%"
 
 rem Apply patches
-copy /Y "%PATCHESDIR%\msys\mingw\i686-pc-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-pc-mingw32\include\ws2tcpip.h"
+REM copy /Y "%PATCHESDIR%\msys\mingw\i686-pc-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-pc-mingw32\include\ws2tcpip.h"
+REM copy /Y "%PATCHESDIR%\msys\mingw\include\ws2tcpip.h" "%MINGWDIR%\include\ws2tcpip.h"
+copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\wincrypt.h" "%MINGWDIR%\i686-w64-mingw32\include\wincrypt.h"
+copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-w64-mingw32\include\ws2tcpip.h"
+copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\gl.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\gl.h"
+copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glu.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glu.h"
+copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glext.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glext.h"
 
 rem Make a shortcut to our shell
 "%TOOLSDIR%\mklink" "%TOPDIR%\msys.bat.lnk" "/q" "%DEST_MSYS_DIR%\msys.bat"

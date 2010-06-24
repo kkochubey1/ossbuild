@@ -1,0 +1,10 @@
+--- libextra/gnutls_openssl.c	Wed Jun 23 01:25:51 2010
++++ libextra/gnutls_openssl-mod.c	Wed Jun 23 01:20:18 2010
+@@ -34,6 +34,7 @@
+ /* Gnulib re-defines shutdown on mingw.  We only use it as a variable
+    name, so restore the original name. */
+ #undef shutdown
++#undef X509_NAME
+ 
+ /* XXX: See lib/gnutls_int.h. */
+ #define GNUTLS_POINTER_TO_INT(_) ((int) GNUTLS_POINTER_TO_INT_CAST (_))
