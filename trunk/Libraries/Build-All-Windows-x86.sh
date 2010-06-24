@@ -62,6 +62,8 @@ windres="$windres --target=pe-i386"
 create_wrapper_windows "/mingw/bin/windres" "--target=pe-i386"
 create_wrapper_windows "/mingw/bin/gcc" "-m32"
 create_wrapper_windows "/mingw/bin/g++" "-m32"
+create_wrapper_windows "/mingw/bin/c++" "--32"
+create_wrapper_windows "/mingw/bin/cpp" "-m32"
 
 #Not using dwarf2 yet
 ###gcc_dw2
@@ -830,17 +832,21 @@ if [ ! -f "$BinDir/lib${Prefix}fontconfig-1.dll" ]; then
 	unpack_gzip_and_move "fontconfig.tar.gz" "$PKG_DIR_FONTCONFIG"
 	mkdir_and_move "$IntDir/fontconfig"
 
+	reset_path
+	
 	$PKG_DIR/configure --disable-static --disable-docs --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
 	make -j3 && make install RUN_FC_CACHE_TEST=false
+	
+	setup_ms_build_env_path
 
 	cp -p "fontconfig.pc" "$LibDir/pkgconfig/"
 	
-	cd "src/.libs"
+	cd "$IntDir/fontconfig/src/.libs"
 	
 	sed -e '/LIBRARY/d' lib${Prefix}fontconfig-1.dll.def > in-mod.def
-	$dlltool --dllname lib${Prefix}fontconfig-1.dll -d "in-mod.def" -l lib${Prefix}fontconfig.dll.a
-	cp -p "lib${Prefix}fontconfig.dll.a" "$LibDir/"
+#	$dlltool --dllname lib${Prefix}fontconfig-1.dll -d "in-mod.def" -l lib${Prefix}fontconfig.dll.a
+#	cp -p "lib${Prefix}fontconfig.dll.a" "$LibDir/"
 	$MSLIB /name:lib${Prefix}fontconfig-1.dll /out:fontconfig.lib /machine:$MSLibMachine /def:in-mod.def
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
 	
@@ -875,13 +881,13 @@ if [ ! -f "$BinDir/lib${Prefix}cairo-2.dll" ]; then
 	CFLAGS="$CFLAGS -D CAIRO_HAS_WIN32_SURFACE -D CAIRO_HAS_WIN32_FONT -Wl,-lpthreadGC2"
 	ax_cv_c_float_words_bigendian=no $PKG_DIR/configure --enable-xlib=auto --enable-xlib-xrender=auto --enable-png=yes --enable-ft=yes --enable-pdf=yes --enable-svg=yes --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	make -j3 && make install
+	make && make install
 	
-	cd src/.libs/
+	cd "$IntDir/cairo/src/.libs/"
 	
 	sed -e '/LIBRARY/d' lib${Prefix}cairo-2.dll.def > in-mod.def
-	$dlltool --dllname lib${Prefix}cairo-2.dll -d "in-mod.def" -l lib${Prefix}cairo.dll.a
-	cp -p "lib${Prefix}cairo.dll.a" "$LibDir/"
+	#$dlltool --dllname lib${Prefix}cairo-2.dll -d "in-mod.def" -l lib${Prefix}cairo.dll.a
+	#cp -p "lib${Prefix}cairo.dll.a" "$LibDir/"
 	$MSLIB /name:lib${Prefix}cairo-2.dll /out:cairo.lib /machine:$MSLibMachine /def:in-mod.def
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
 	
@@ -923,7 +929,7 @@ if [ ! -f "$BinDir/lib${Prefix}pango-1.0-0.dll" ]; then
 		rm -f "$LibDir/libpangowin32-1.0.lib"
 	fi
 
-	Add in MS build tools again
+	#Add in MS build tools again
 	setup_ms_build_env_path
 
 	cd "$IntDir/pango/pango/.libs/"
