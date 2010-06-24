@@ -57,6 +57,11 @@ common_startup() {
 	export SHARED_MSVC_PROPERTIES_DIR=$SHARED_MSVC_DIR/Properties
 	
 	export PATH=$PATH:$TOOLS_DIR
+	
+	#Check if perl is installed on Windows
+	if [ -d "/perl" ]; then 
+		export PATH=$PATH:/perl/bin:/perl/site/bin
+	fi
 
 	#If we called this function with arguments, then be sure to use those
 	if [ "$1" != "" ]; then
