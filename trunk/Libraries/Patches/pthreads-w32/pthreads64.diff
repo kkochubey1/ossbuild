@@ -1,0 +1,320 @@
+Index: GNUmakefile
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/GNUmakefile,v
+retrieving revision 1.41
+diff -u -r1.41 GNUmakefile
+--- GNUmakefile	30 Apr 2006 10:22:33 -0000	1.41
++++ GNUmakefile	25 Jan 2009 13:39:00 -0000
+@@ -62,8 +62,8 @@
+ DOPT	= $(CLEANUP) -g -O0
+ XOPT	=
+ 
+-RCFLAGS		= --include-dir=.
+-LFLAGS		= -lwsock32
++RCFLAGS		= --use-temp-file --include-dir=.
++LFLAGS		= -lws2_32
+ 
+ # ----------------------------------------------------------------------
+ # The library can be built with some alternative behaviour to
+Index: Makefile
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/Makefile,v
+retrieving revision 1.42
+diff -u -r1.42 Makefile
+--- Makefile	6 Jan 2007 13:44:40 -0000	1.42
++++ Makefile	8 Sep 2008 13:50:04 -0000
+@@ -27,7 +27,7 @@
+ OPTIM	= /O2 /Ob2
+ OPTIMD	=
+ 
+-CFLAGS	= /W3 /MD /nologo /I. /D_WIN32_WINNT=0x400 /DHAVE_CONFIG_H
++CFLAGS	= /W3 /nologo /I. /D_WIN32_WINNT=0x400 /DHAVE_CONFIG_H
+ CFLAGSD	= /Zi $(CFLAGS)
+ 
+ 
+@@ -395,50 +395,50 @@
+ 	@ nmake clean VC-inlined-debug
+ 
+ VCE:
+-	@ nmake /nologo EHFLAGS="$(OPTIM) $(VCEFLAGS)" CLEANUP=__CLEANUP_CXX pthreadVCE$(DLL_VER).dll
++	@ nmake /nologo EHFLAGS="$(OPTIM) /MD $(VCEFLAGS)" CLEANUP=__CLEANUP_CXX pthreadVCE$(DLL_VER).dll
+ 
+ VCE-debug:
+-	@ nmake /nologo EHFLAGS="$(OPTIMD) $(VCEFLAGSD)" CLEANUP=__CLEANUP_CXX pthreadVCE$(DLL_VERD).dll
++	@ nmake /nologo EHFLAGS="$(OPTIMD) /MDd $(VCEFLAGSD)" CLEANUP=__CLEANUP_CXX pthreadVCE$(DLL_VERD).dll
+ 
+ VSE:
+-	@ nmake /nologo EHFLAGS="$(OPTIM) $(VSEFLAGS)" CLEANUP=__CLEANUP_SEH pthreadVSE$(DLL_VER).dll
++	@ nmake /nologo EHFLAGS="$(OPTIM) /MD $(VSEFLAGS)" CLEANUP=__CLEANUP_SEH pthreadVSE$(DLL_VER).dll
+ 
+ VSE-debug:
+-	@ nmake /nologo EHFLAGS="$(OPTIMD) $(VSEFLAGSD)" CLEANUP=__CLEANUP_SEH pthreadVSE$(DLL_VERD).dll
++	@ nmake /nologo EHFLAGS="$(OPTIMD) /MDd $(VSEFLAGSD)" CLEANUP=__CLEANUP_SEH pthreadVSE$(DLL_VERD).dll
+ 
+ VC:
+-	@ nmake /nologo EHFLAGS="$(OPTIM) $(VCFLAGS)" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VER).dll
++	@ nmake /nologo EHFLAGS="$(OPTIM) /MD $(VCFLAGS)" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VER).dll
+ 
+ VC-debug:
+-	@ nmake /nologo EHFLAGS="$(OPTIMD) $(VCFLAGSD)" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VERD).dll
++	@ nmake /nologo EHFLAGS="$(OPTIMD) /MDd $(VCFLAGSD)" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VERD).dll
+ 
+ #
+ # The so-called inlined DLL is just a single translation unit with
+ # inlining optimisation turned on.
+ #
+ VCE-inlined:
+-	@ nmake /nologo EHFLAGS="$(OPTIM) $(VCEFLAGS) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_CXX pthreadVCE$(DLL_VER).stamp
++	@ nmake /nologo EHFLAGS="$(OPTIM) /MD $(VCEFLAGS) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_CXX pthreadVCE$(DLL_VER).stamp
+ 
+ VCE-inlined-debug:
+-	@ nmake /nologo EHFLAGS="$(OPTIMD) $(VCEFLAGSD) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_CXX pthreadVCE$(DLL_VERD).stamp
++	@ nmake /nologo EHFLAGS="$(OPTIMD) /MDd $(VCEFLAGSD) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_CXX pthreadVCE$(DLL_VERD).stamp
+ 
+ VSE-inlined:
+-	@ nmake /nologo EHFLAGS="$(OPTIM) $(VSEFLAGS) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_SEH pthreadVSE$(DLL_VER).stamp
++	@ nmake /nologo EHFLAGS="$(OPTIM) /MD $(VSEFLAGS) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_SEH pthreadVSE$(DLL_VER).stamp
+ 
+ VSE-inlined-debug:
+-	@ nmake /nologo EHFLAGS="$(OPTIMD) $(VSEFLAGSD) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_SEH pthreadVSE$(DLL_VERD).stamp
++	@ nmake /nologo EHFLAGS="$(OPTIMD) /MDd $(VSEFLAGSD) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_SEH pthreadVSE$(DLL_VERD).stamp
+ 
+ VC-inlined:
+-	@ nmake /nologo EHFLAGS="$(OPTIM) $(VCFLAGS) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VER).stamp
++	@ nmake /nologo EHFLAGS="$(OPTIM) /MD $(VCFLAGS) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VER).stamp
+ 
+ VC-inlined-debug:
+-	nmake /nologo EHFLAGS="$(OPTIMD) $(VCFLAGSD) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VERD).stamp
++	nmake /nologo EHFLAGS="$(OPTIMD) /MDd $(VCFLAGSD) /DPTW32_BUILD_INLINED" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VERD).stamp
+ 
+ VC-static:
+-	@ nmake /nologo EHFLAGS="$(OPTIM) $(VCFLAGS) /DPTW32_BUILD_INLINED /DPTW32_STATIC_LIB" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VER).static
++	@ nmake /nologo EHFLAGS="$(OPTIM) /MT $(VCFLAGS) /DPTW32_BUILD_INLINED /DPTW32_STATIC_LIB" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VER).static
+ 
+ VC-static-debug:
+-	@ nmake /nologo EHFLAGS="$(OPTIMD) $(VCFLAGSD) /DPTW32_BUILD_INLINED /DPTW32_STATIC_LIB" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VERD).static
++	@ nmake /nologo EHFLAGS="$(OPTIMD) /MTd $(VCFLAGSD) /DPTW32_BUILD_INLINED /DPTW32_STATIC_LIB" CLEANUP=__CLEANUP_C pthreadVC$(DLL_VERD).static
+ 
+ realclean: clean
+ 	if exist pthread*.dll del pthread*.dll
+Index: config.h
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/config.h,v
+retrieving revision 1.16
+diff -u -r1.16 config.h
+--- config.h	15 May 2007 13:46:42 -0000	1.16
++++ config.h	28 Dec 2008 21:20:38 -0000
+@@ -116,6 +116,9 @@
+ 
+ #ifdef __MINGW32__
+ #define HAVE_MODE_T
++#ifdef _WIN64
++#define HAVE_STRUCT_TIMESPEC
++#endif
+ #endif
+ 
+ #ifdef __BORLANDC__
+Index: create.c
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/create.c,v
+retrieving revision 1.64
+diff -u -r1.64 create.c
+--- create.c	6 Jan 2007 13:44:40 -0000	1.64
++++ create.c	28 Dec 2008 21:20:52 -0000
+@@ -90,7 +90,7 @@
+   int result = EAGAIN;
+   int run = PTW32_TRUE;
+   ThreadParms *parms = NULL;
+-  long stackSize;
++  size_t stackSize;
+   int priority;
+   pthread_t self;
+ 
+Index: implement.h
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/implement.h,v
+retrieving revision 1.119
+diff -u -r1.119 implement.h
+--- implement.h	6 Jan 2007 13:44:40 -0000	1.119
++++ implement.h	25 Jan 2009 12:53:14 -0000
+@@ -331,9 +331,9 @@
+ {
+   struct ptw32_mcs_node_t_ **lock;        /* ptr to tail of queue */
+   struct ptw32_mcs_node_t_  *next;        /* ptr to successor in queue */
+-  LONG                       readyFlag;   /* set after lock is released by
++  LONG_PTR                   readyFlag;   /* set after lock is released by
+                                              predecessor */
+-  LONG                       nextFlag;    /* set after 'next' ptr is set by
++  LONG_PTR                   nextFlag;    /* set after 'next' ptr is set by
+                                              successor */
+ };
+ 
+Index: pthread.h
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/pthread.h,v
+retrieving revision 1.138
+diff -u -r1.138 pthread.h
+--- pthread.h	22 Nov 2007 14:14:58 -0000	1.138
++++ pthread.h	28 Dec 2008 21:21:10 -0000
+@@ -248,6 +248,9 @@
+ #  if defined(_UWIN) || defined(__MINGW32__)
+ #    define HAVE_MODE_T
+ #  endif
++#  if defined(__MINGW32__) && defined(_WIN64)
++#    define HAVE_STRUCT_TIMESPEC 1
++#  endif
+ #endif
+ 
+ /*
+Index: pthread_cancel.c
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/pthread_cancel.c,v
+retrieving revision 1.11
+diff -u -r1.11 pthread_cancel.c
+--- pthread_cancel.c	5 Jan 2007 01:19:56 -0000	1.11
++++ pthread_cancel.c	28 Dec 2008 21:21:20 -0000
+@@ -47,7 +47,7 @@
+ }
+ 
+ static void CALLBACK
+-ptw32_cancel_callback (DWORD unused)
++ptw32_cancel_callback (DWORD_PTR unused)
+ {
+   ptw32_throw (PTW32_EPS_CANCEL);
+ 
+Index: ptw32_InterlockedCompareExchange.c
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/ptw32_InterlockedCompareExchange.c,v
+retrieving revision 1.13
+diff -u -r1.13 ptw32_InterlockedCompareExchange.c
+--- ptw32_InterlockedCompareExchange.c	5 Jan 2007 01:19:56 -0000	1.13
++++ ptw32_InterlockedCompareExchange.c	28 Dec 2008 21:23:46 -0000
+@@ -134,6 +134,7 @@
+ #endif
+ 
+ #else
++#error ERROR [__FILE__, line __LINE__]: Unsupported platform or compiler!
+ 
+   /*
+    * If execution gets to here then we're running on a currently
+@@ -269,6 +270,7 @@
+ #endif
+ 
+ #else
++#error ERROR [__FILE__, line __LINE__]: Unsupported platform or compiler!
+ 
+   /*
+    * If execution gets to here then we're running on a currently
+Index: ptw32_MCS_lock.c
+===================================================================
+RCS file: /cvs/pthreads-win32/pthreads/ptw32_MCS_lock.c,v
+retrieving revision 1.4
+diff -u -r1.4 ptw32_MCS_lock.c
+--- ptw32_MCS_lock.c	6 Jan 2007 13:44:40 -0000	1.4
++++ ptw32_MCS_lock.c	25 Jan 2009 12:56:36 -0000
+@@ -99,12 +99,19 @@
+  * set flag to -1 otherwise. Note that -1 cannot be a valid handle value.
+  */
+ INLINE void 
+-ptw32_mcs_flag_set (LONG * flag)
++ptw32_mcs_flag_set (LONG_PTR * flag)
+ {
++#ifdef _WIN64
++  HANDLE e = (HANDLE)InterlockedCompareExchange64(
++						(PLONGLONG)flag,
++						(LONGLONG)-1,
++						(LONGLONG)0);
++#else
+   HANDLE e = (HANDLE)PTW32_INTERLOCKED_COMPARE_EXCHANGE(
+ 						(PTW32_INTERLOCKED_LPLONG)flag,
+ 						(PTW32_INTERLOCKED_LONG)-1,
+ 						(PTW32_INTERLOCKED_LONG)0);
++#endif
+   if ((HANDLE)0 != e)
+     {
+       /* another thread has already stored an event handle in the flag */
+@@ -119,18 +126,29 @@
+  * set, and proceed without creating an event otherwise.
+  */
+ INLINE void 
+-ptw32_mcs_flag_wait (LONG * flag)
++ptw32_mcs_flag_wait (LONG_PTR * flag)
+ {
++#ifdef _WIN64
++  if (0 == InterlockedExchangeAdd64((PLONGLONG)flag, 0)) /* MBR fence */
++#else
+   if (0 == InterlockedExchangeAdd((LPLONG)flag, 0)) /* MBR fence */
++#endif
+     {
+       /* the flag is not set. create event. */
+ 
+       HANDLE e = CreateEvent(NULL, PTW32_FALSE, PTW32_FALSE, NULL);
+ 
++#ifdef _WIN64
++      if (0 == InterlockedCompareExchange64(
++			                  (PLONGLONG)flag,
++			                  (LONGLONG)e,
++			                  (LONGLONG)0))
++#else
+       if (0 == PTW32_INTERLOCKED_COMPARE_EXCHANGE(
+ 			                  (PTW32_INTERLOCKED_LPLONG)flag,
+ 			                  (PTW32_INTERLOCKED_LONG)e,
+ 			                  (PTW32_INTERLOCKED_LONG)0))
++#endif
+ 	{
+ 	  /* stored handle in the flag. wait on it now. */
+ 	  WaitForSingleObject(e, INFINITE);
+@@ -159,8 +177,13 @@
+   node->next = 0; /* initially, no successor */
+   
+   /* queue for the lock */
++#ifdef _WIN64
++  pred = (ptw32_mcs_local_node_t *)InterlockedExchange64((PLONGLONG)lock,
++						              (LONGLONG)node);
++#else
+   pred = (ptw32_mcs_local_node_t *)PTW32_INTERLOCKED_EXCHANGE((LPLONG)lock,
+ 						              (LONG)node);
++#endif
+ 
+   if (0 != pred)
+     {
+@@ -184,16 +207,26 @@
+ {
+   ptw32_mcs_lock_t *lock = node->lock;
+   ptw32_mcs_local_node_t *next = (ptw32_mcs_local_node_t *)
++#ifdef _WIN64
++    InterlockedExchangeAdd64((PLONGLONG)&node->next, 0); /* MBR fence */
++#else
+     InterlockedExchangeAdd((LPLONG)&node->next, 0); /* MBR fence */
++#endif
+ 
+   if (0 == next)
+     {
+       /* no known successor */
+ 
+       if (node == (ptw32_mcs_local_node_t *)
++#ifdef _WIN64
++	  InterlockedCompareExchange64((PLONGLONG)lock,
++					     (LONGLONG)0,
++					     (LONGLONG)node))
++#else
+ 	  PTW32_INTERLOCKED_COMPARE_EXCHANGE((PTW32_INTERLOCKED_LPLONG)lock,
+ 					     (PTW32_INTERLOCKED_LONG)0,
+ 					     (PTW32_INTERLOCKED_LONG)node))
++#endif
+ 	{
+ 	  /* no successor, lock is free now */
+ 	  return;
+@@ -202,7 +235,11 @@
+       /* wait for successor */
+       ptw32_mcs_flag_wait(&node->nextFlag);
+       next = (ptw32_mcs_local_node_t *)
++#ifdef _WIN64
++	InterlockedExchangeAdd64((PLONGLONG)&node->next, 0); /* MBR fence */
++#else
+ 	InterlockedExchangeAdd((LPLONG)&node->next, 0); /* MBR fence */
++#endif
+     }
+ 
+   /* pass the lock */
+

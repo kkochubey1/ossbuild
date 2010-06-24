@@ -32,22 +32,23 @@ rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.1.7z
 rem set PKG_MINGW_W64_GCC_X86_BIN=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win32/Automated Builds/mingw-w32-1.0-bin_i686-mingw_20100618.zip?use_mirror=iweb
 rem set PKG_MINGW_W64_GCC_X86_64_BIN=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win64/Automated Builds/mingw-w64-bin_i686-mingw_20100619.zip?use_mirror=iweb
 
-set PKG_TDM_GCC_X86_CORE=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm-1 SJLJ/gcc-4.5.0-tdm-1-core.tar.lzma?use_mirror=voxel
-set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GNU-Binutils/binutils-2.20.1/binutils-2.20.1-2-mingw32-bin.tar.gz?use_mirror=voxel
-set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/MinGW-RT/mingwrt-3.18/mingwrt-3.18-mingw32-dev.tar.gz?use_mirror=voxel
-set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/MinGW-RT/mingwrt-3.18/mingwrt-3.18-mingw32-dll.tar.gz?use_mirror=voxel
-set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/Win32-API/w32api-3.14/w32api-3.14-mingw32-dev.tar.gz?use_mirror=iweb
-set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm-1 SJLJ/gcc-4.5.0-tdm-1-c++.tar.lzma?use_mirror=softlayer
-set PKG_TDM_GCC_X86_=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm-1 SJLJ/gcc-4.5.0-tdm-1-objc.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_MINGW_CORE_BIN=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm-1 SJLJ/gcc-4.5.0-tdm-1-core.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_MINGW_BINUTILS_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GNU-Binutils/binutils-2.20.1/binutils-2.20.1-2-mingw32-bin.tar.gz?use_mirror=voxel
+set PKG_TDM_GCC_MINGW_MINGWRT_DEV=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/MinGW-RT/mingwrt-3.18/mingwrt-3.18-mingw32-dev.tar.gz?use_mirror=voxel
+set PKG_TDM_GCC_MINGW_MINGWRT_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/MinGW-RT/mingwrt-3.18/mingwrt-3.18-mingw32-dll.tar.gz?use_mirror=voxel
+set PKG_TDM_GCC_MINGW_W32API_DEV=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/Win32-API/w32api-3.14/w32api-3.14-mingw32-dev.tar.gz?use_mirror=iweb
+set PKG_TDM_GCC_MINGW_CPP_BIN=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm-1 SJLJ/gcc-4.5.0-tdm-1-c++.tar.lzma?use_mirror=softlayer
+set PKG_TDM_GCC_MINGW_OBJC_BIN=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm-1 SJLJ/gcc-4.5.0-tdm-1-objc.tar.lzma?use_mirror=voxel
 
-set PKG_TDM_GCC_X86_64_=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm64-1/gcc-4.5.0-tdm64-1-core.tar.lzma?use_mirror=voxel
-set PKG_TDM_GCC_X86_64_=http://downloads.sourceforge.net/project/tdm-gcc/GNU binutils/binutils-2.20.51-tdm64-20100322.tar.lzma?use_mirror=voxel
-set PKG_TDM_GCC_X86_64_=http://downloads.sourceforge.net/project/tdm-gcc/MinGW-w64 runtime/GCC 4.5 series/mingw64-runtime-tdm64-gcc45-svn2455.tar.lzma?use_mirror=voxel
-set PKG_TDM_GCC_X86_64_=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm64-1/gcc-4.5.0-tdm64-1-c++.tar.lzma?use_mirror=voxel
-set PKG_TDM_GCC_X86_64_=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm64-1/gcc-4.5.0-tdm64-1-objc.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_MINGW64_CORE_BIN=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm64-1/gcc-4.5.0-tdm64-1-core.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_MINGW64_BINUTILS_BIN=http://downloads.sourceforge.net/project/tdm-gcc/GNU binutils/binutils-2.20.51-tdm64-20100322.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_MINGW64_MINGWRT_RUNTIME=http://downloads.sourceforge.net/project/tdm-gcc/MinGW-w64 runtime/GCC 4.5 series/mingw64-runtime-tdm64-gcc45-svn2455.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_MINGW64_CPP_BIN=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm64-1/gcc-4.5.0-tdm64-1-c++.tar.lzma?use_mirror=voxel
+set PKG_TDM_GCC_MINGW64_OBJC_BIN=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm64-1/gcc-4.5.0-tdm64-1-objc.tar.lzma?use_mirror=voxel
 
 set PKG_MSYSGIT_BIN=http://msysgit.googlecode.com/files/PortableGit-1.7.1-preview20100612.7z
 
+set PKG_ACTIVESTATE_PERL_DIR=ActivePerl-5.10.1.1007-MSWin32-x86-291969
 set PKG_ACTIVESTATE_PERL_BIN=http://downloads.activestate.com/ActivePerl/releases/5.10.1.1007/ActivePerl-5.10.1.1007-MSWin32-x86-291969.zip
 set PKG_STRAWBERRY_PERL_BIN=http://strawberryperl.com/download/strawberry-perl-5.12.0.1.zip
 
@@ -316,8 +317,24 @@ if "%DOWNLOAD%" == "1" (
 	wget --no-check-certificate -O perl.zip "%PKG_ACTIVESTATE_PERL_BIN%"
 	
 	rem Get MinGW-w64 gcc
-	wget --no-check-certificate -O gcc-x86.zip "%PKG_MINGW_W64_GCC_X86_BIN%"
-	wget --no-check-certificate -O gcc-x86_64.zip "%PKG_MINGW_W64_GCC_X86_64_BIN%"
+	REM wget --no-check-certificate -O gcc-x86.zip "%PKG_MINGW_W64_GCC_X86_BIN%"
+	REM wget --no-check-certificate -O gcc-x86_64.zip "%PKG_MINGW_W64_GCC_X86_64_BIN%"
+	
+	rem Get TDM gcc (mingw version)
+	REM call :download tdm-gcc-mingw-core-bin "%PKG_TDM_GCC_MINGW_CORE_BIN%"
+	REM call :download tdm-gcc-mingw-binutils-bin "%PKG_TDM_GCC_MINGW_BINUTILS_BIN%"
+	REM call :download tdm-gcc-mingw-mingwrt-dev "%PKG_TDM_GCC_MINGW_MINGWRT_DEV%"
+	REM call :download tdm-gcc-mingw-mingwrt-dll "%PKG_TDM_GCC_MINGW_MINGWRT_DLL%"
+	REM call :download tdm-gcc-mingw-w32api-dev "%PKG_TDM_GCC_MINGW_W32API_DEV%"
+	REM call :download tdm-gcc-mingw-cpp-bin "%PKG_TDM_GCC_MINGW_CPP_BIN%"
+	REM call :download tdm-gcc-mingw-objc-bin "%PKG_TDM_GCC_MINGW_OBJC_BIN%"
+	
+	rem Get TDM gcc (mingw-w64 version)
+	call :download tdm-gcc-mingw64-core-bin "%PKG_TDM_GCC_MINGW64_CORE_BIN%"
+	call :download tdm-gcc-mingw64-binutils-bin "%PKG_TDM_GCC_MINGW64_BINUTILS_BIN%"
+	call :download tdm-gcc-mingw64-mingwrt-runtime "%PKG_TDM_GCC_MINGW64_MINGWRT_RUNTIME%"
+	call :download tdm-gcc-mingw64-cpp-bin "%PKG_TDM_GCC_MINGW64_CPP_BIN%"
+	call :download tdm-gcc-mingw64-objc-bin "%PKG_TDM_GCC_MINGW64_OBJC_BIN%"
 	
 	cd /d "%MSYSDIR%"
 )
@@ -347,7 +364,9 @@ if "%UNTAR%" == "1" (
 	
 	rem Install activestate perl
 	7za -y "-o%TMPDIR%" x perl.zip
+	cd /d "%PKG_ACTIVESTATE_PERL_DIR%"
 	call Installer.bat
+	cd /d "%TMPDIR%"
 	
 	rem This file isn't in the typical msys/mingw structure, so we have to 
 	rem treat it very differently.
@@ -469,8 +488,24 @@ if "%UNTAR%" == "1" (
 	move mingw-pkg-config-bin.tar.lzma mingw-pkg-config-bin.zip
 	7za -y "-o%MINGWDIR%" x mingw-pkg-config-bin.zip
 	
-	7za -y "-o%MINGWDIR%" x gcc-x86.zip
-	7za -y "-o%MINGWDIR%" x gcc-x86_64.zip
+	rem TDM gcc (mingw version)
+	REM call :extract tdm-gcc-mingw-core-bin %MINGWDIR%
+	REM call :extract tdm-gcc-mingw-binutils-bin %MINGWDIR%
+	REM call :extract tdm-gcc-mingw-mingwrt-dev %MINGWDIR%
+	REM call :extract tdm-gcc-mingw-mingwrt-dll %MINGWDIR%
+	REM call :extract tdm-gcc-mingw-w32api-dev %MINGWDIR%
+	REM call :extract tdm-gcc-mingw-cpp-bin %MINGWDIR%
+	REM call :extract tdm-gcc-mingw-objc-bin %MINGWDIR%
+	
+	rem TDM gcc (mingw-w64 version)
+	call :extract tdm-gcc-mingw64-core-bin %MINGWDIR%
+	call :extract tdm-gcc-mingw64-binutils-bin %MINGWDIR%
+	call :extract tdm-gcc-mingw64-mingwrt-runtime %MINGWDIR%
+	call :extract tdm-gcc-mingw64-cpp-bin %MINGWDIR%
+	call :extract tdm-gcc-mingw64-objc-bin %MINGWDIR%
+	
+	REM 7za -y "-o%MINGWDIR%" x gcc-x86.zip
+	REM 7za -y "-o%MINGWDIR%" x gcc-x86_64.zip
 	
 	REM cd /d "%MINGWDIR%\bin\"
 	REM copy addr2line.exe i686-pc-mingw32-addr2line.exe
@@ -597,8 +632,24 @@ if "%CLEAN%" == "1" (
 	REM call :clean mingw-libmpc-dll
 	REM call :clean mingw-mingwrt-dll
 	
-	del gcc-x86.zip
-	del gcc-x86_64.zip
+	rem TDM gcc (mingw version)
+	REM call :clean tdm-gcc-mingw-core-bin
+	REM call :clean tdm-gcc-mingw-binutils-bin
+	REM call :clean tdm-gcc-mingw-mingwrt-dev
+	REM call :clean tdm-gcc-mingw-mingwrt-dll
+	REM call :clean tdm-gcc-mingw-w32api-dev
+	REM call :clean tdm-gcc-mingw-cpp-bin
+	REM call :clean tdm-gcc-mingw-objc-bin
+	
+	rem TDM gcc (mingw-w64 version)
+	call :clean tdm-gcc-mingw64-core-bin
+	call :clean tdm-gcc-mingw64-binutils-bin
+	call :clean tdm-gcc-mingw64-mingwrt-runtime
+	call :clean tdm-gcc-mingw64-cpp-bin
+	call :clean tdm-gcc-mingw64-objc-bin
+	
+	REM del gcc-x86.zip
+	REM del gcc-x86_64.zip
 	
 	del git.7z
 	
@@ -627,11 +678,16 @@ cd /d "%MSYSDIR%"
 rem Apply patches
 REM copy /Y "%PATCHESDIR%\msys\mingw\i686-pc-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-pc-mingw32\include\ws2tcpip.h"
 REM copy /Y "%PATCHESDIR%\msys\mingw\include\ws2tcpip.h" "%MINGWDIR%\include\ws2tcpip.h"
-copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\wincrypt.h" "%MINGWDIR%\i686-w64-mingw32\include\wincrypt.h"
-copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-w64-mingw32\include\ws2tcpip.h"
-copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\gl.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\gl.h"
-copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glu.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glu.h"
-copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glext.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glext.h"
+REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\wincrypt.h" "%MINGWDIR%\i686-w64-mingw32\include\wincrypt.h"
+REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-w64-mingw32\include\ws2tcpip.h"
+REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\gl.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\gl.h"
+REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glu.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glu.h"
+REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glext.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glext.h"
+copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\wincrypt.h" "%MINGWDIR%\x86_64-w64-mingw32\include\wincrypt.h"
+copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\ws2tcpip.h" "%MINGWDIR%\x86_64-w64-mingw32\include\ws2tcpip.h"
+copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\GL\gl.h" "%MINGWDIR%\x86_64-w64-mingw32\include\GL\gl.h"
+copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\GL\glu.h" "%MINGWDIR%\x86_64-w64-mingw32\include\GL\glu.h"
+copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\GL\glext.h" "%MINGWDIR%\x86_64-w64-mingw32\include\GL\glext.h"
 
 rem Make a shortcut to our shell
 "%TOOLSDIR%\mklink" "%TOPDIR%\msys.bat.lnk" "/q" "%DEST_MSYS_DIR%\msys.bat"
