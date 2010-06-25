@@ -7,8 +7,8 @@ Name: libavfilter
 Description: FFmpeg video filtering library
 Version: 1.20.0
 Requires: 
-Requires.private: libavutil = 50.15.2
+Requires.private: libavutil = 50.19.0
 Conflicts:
 Libs: -L${libdir} -lavfilter 
-Libs.private: -lpsapi -lz -lbz2 -lm -lavifil32 -lws2_32 -lavicap32
+Libs.private: -lpsapi -lz -lbz2 -lpthreadGC2 -lm -lavifil32 -lws2_32 -lavicap32
 Cflags: -I${includedir}

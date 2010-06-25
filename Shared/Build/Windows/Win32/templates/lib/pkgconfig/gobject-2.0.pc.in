@@ -6,6 +6,6 @@ includedir=@SHARED_BUILD_DIR@/include
 Name: GObject
 Description: GLib Type, Object, Parameter and Signal Library
 Requires: glib-2.0,gthread-2.0
-Version: 2.24.1
+Version: 2.25.10
 Libs: -L${libdir} -lgobject-2.0
 Cflags:

@@ -179,6 +179,24 @@ G_BEGIN_DECLS
  * The fundamental type for #GObject.
  */
 #define G_TYPE_OBJECT			G_TYPE_MAKE_FUNDAMENTAL (20)
+/**
+ * G_TYPE_VARIANT:
+ *
+ * The fundamental type corresponding to #GVariant.
+ *
+ * All floating #GVariant instances passed through the #GType system are
+ * consumed.
+ * 
+ * Note that callbacks in closures, and signal handlers
+ * for signals of return type %G_TYPE_VARIANT, must never return floating
+ * variants.
+ *
+ * Note: GLib 2.24 did include a boxed type with this name. It was replaced
+ * with this fundamental type in 2.26.
+ *
+ * Since: 2.26
+ */
+#define	G_TYPE_VARIANT                  G_TYPE_MAKE_FUNDAMENTAL (21)
 
 
 /* Reserved fundamental type numbers to create new fundamental
@@ -208,7 +226,7 @@ G_BEGIN_DECLS
  * First fundamental type number to create a new fundamental type id with
  * G_TYPE_MAKE_FUNDAMENTAL() reserved for GLib.
  */
-#define G_TYPE_RESERVED_GLIB_FIRST	(21)
+#define G_TYPE_RESERVED_GLIB_FIRST	(22)
 /**
  * G_TYPE_RESERVED_GLIB_LAST:
  * 

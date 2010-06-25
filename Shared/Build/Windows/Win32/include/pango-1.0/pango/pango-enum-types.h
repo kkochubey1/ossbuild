@@ -1,5 +1,5 @@
 
-/* Generated data (by glib-mkenums) */
+
 
 #ifndef __PANGO_ENUM_TYPES_H__
 #define __PANGO_ENUM_TYPES_H__
@@ -56,5 +56,5 @@ G_END_DECLS
 
 #endif /* __PANGO_ENUM_TYPES_H__ */
 
-/* Generated data ends here */
+
 

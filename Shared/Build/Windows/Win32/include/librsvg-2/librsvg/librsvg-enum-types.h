@@ -1,5 +1,5 @@
 
-/* Generated data (by glib-mkenums) */
+
 
 #ifndef __LIBRSVG_ENUM_TYPES_H__
 #define __LIBRSVG_ENUM_TYPES_H__
@@ -14,5 +14,5 @@ G_END_DECLS
 
 #endif /* __LIBRSVG_ENUM_TYPES_H__ */
 
-/* Generated data ends here */
+
 

@@ -35,7 +35,7 @@
 
 #include <stdarg.h>
 
-#define X264_BUILD 92
+#define X264_BUILD 98
 
 /* x264_t:
  *      opaque handler for encoder */
@@ -66,6 +66,8 @@ typedef struct x264_t x264_t;
 #define X264_CPU_ARMV6          0x020000
 #define X264_CPU_NEON           0x040000  /* ARM NEON */
 #define X264_CPU_FAST_NEON_MRC  0x080000  /* Transfer from NEON to ARM register is fast (Cortex-A9) */
+#define X264_CPU_SLOW_CTZ       0x100000  /* BSR/BSF x86 instructions are really slow on some CPUs */
+#define X264_CPU_SLOW_ATOM      0x200000  /* The Atom just sucks */
 
 /* Analyse flags
  */
@@ -101,6 +103,7 @@ typedef struct x264_t x264_t;
 #define X264_B_PYRAMID_NONE          0
 #define X264_B_PYRAMID_STRICT        1
 #define X264_B_PYRAMID_NORMAL        2
+#define X264_KEYINT_MIN_AUTO         0
 
 static const char * const x264_direct_pred_names[] = { "none", "spatial", "temporal", "auto", 0 };
 static const char * const x264_motion_est_names[] = { "dia", "hex", "umh", "esa", "tesa", 0 };
@@ -206,9 +209,6 @@ typedef struct x264_param_t
         int         i_colmatrix;
         int         i_chroma_loc;    /* both top & bottom */
     } vui;
-
-    int         i_fps_num;
-    int         i_fps_den;
 
     /* Bitstream parameters */
     int         i_frame_reference;  /* Maximum number of reference frames */
@@ -329,8 +329,10 @@ typedef struct x264_param_t
                                  * otherwise place size (4 bytes) before NAL units. */
     int i_sps_id;               /* SPS and PPS id number */
     int b_vfr_input;            /* VFR input */
-    int i_timebase_num;         /* Timebase numerator */
-    int i_timebase_den;         /* Timebase denominator */
+    uint32_t i_fps_num;
+    uint32_t i_fps_den;
+    uint32_t i_timebase_num;    /* Timebase numerator */
+    uint32_t i_timebase_den;    /* Timebase denominator */
     int b_dts_compress;         /* DTS compression: this algorithm eliminates negative DTS
                                  * by compressing them to be less than the second PTS.
                                  * Warning: this will change the timebase! */
@@ -348,6 +350,14 @@ typedef struct x264_param_t
      */
 
     int b_pic_struct;
+
+    /* Fake Interlaced.
+     *
+     * Used only when b_interlaced=0. Setting this flag makes it possible to flag the stream as PAFF interlaced yet
+     * encode all frames progessively. It is useful for encoding 25p and 30p Blu-Ray streams.
+     */
+
+    int b_fake_interlaced;
 
     /* Slicing parameters */
     int i_slice_max_size;    /* Max size per slice in bytes; includes estimated NAL overhead. */
@@ -436,7 +446,7 @@ static const char * const x264_tune_names[] = { "film", "animation", "grain", "s
 
 /*      Multiple tunings can be used if separated by a delimiter in ",./-+",
  *      however multiple psy tunings cannot be used.
- *      film, animation, grain, psnr, and ssim are psy tunings.
+ *      film, animation, grain, stillimage, psnr, and ssim are psy tunings.
  *
  *      returns 0 on success, negative on failure (e.g. invalid preset/tune name). */
 int     x264_param_default_preset( x264_param_t *, const char *preset, const char *tune );
@@ -498,6 +508,22 @@ typedef struct
 
 typedef struct
 {
+    /* In: an array of quantizer offsets to be applied to this image during encoding.
+     *     These are added on top of the decisions made by x264.
+     *     Offsets can be fractional; they are added before QPs are rounded to integer.
+     *     Adaptive quantization must be enabled to use this feature.  Behavior if quant
+     *     offsets differ between encoding passes is undefined.
+     *
+     *     Array contains one offset per macroblock, in raster scan order.  In interlaced
+     *     mode, top-field MBs and bottom-field MBs are interleaved at the row level. */
+    float *quant_offsets;
+    /* In: optional callback to free quant_offsets when used.
+     *     Useful if one wants to use a different quant_offset array for each frame. */
+    void (*quant_offsets_free)( void* );
+} x264_image_properties_t;
+
+typedef struct
+{
     /* In: force picture type (if not auto)
      *     If x264 encoding parameters are violated in the forcing of picture types,
      *     x264 will correct the input picture type and log a warning.
@@ -527,12 +553,19 @@ typedef struct
     x264_param_t *param;
     /* In: raw data */
     x264_image_t img;
+    /* In: optional information to modify encoder decisions for this frame */
+    x264_image_properties_t prop;
     /* Out: HRD timing information. Output only when i_nal_hrd is set. */
     x264_hrd_t hrd_timing;
     /* private user data. libx264 doesn't touch this,
        not even copy it from input to output frames. */
     void *opaque;
 } x264_picture_t;
+
+/* x264_picture_init:
+ *  initialize an x264_picture_t.  Needs to be done if the calling application
+ *  allocates its own x264_picture_t as opposed to using x264_picture_alloc. */
+void x264_picture_init( x264_picture_t *pic );
 
 /* x264_picture_alloc:
  *  alloc data for a picture. You must call x264_picture_clean on it.
@@ -639,5 +672,13 @@ void    x264_encoder_close  ( x264_t * );
  *      return the number of currently delayed (buffered) frames
  *      this should be used at the end of the stream, to know when you have all the encoded frames. */
 int     x264_encoder_delayed_frames( x264_t * );
+/* x264_encoder_intra_refresh:
+ *      If an intra refresh is not in progress, begin one with the next P-frame.
+ *      If an intra refresh is in progress, begin one as soon as the current one finishes.
+ *      Requires that b_intra_refresh be set.
+ *      Useful for interactive streaming where the client can tell the server that packet loss has
+ *      occurred.  In this case, keyint can be set to an extremely high value so that intra refreshes
+ *      only occur when calling x264_encoder_intra_refresh. */
+void    x264_encoder_intra_refresh( x264_t * );
 
 #endif

@@ -1,10 +1,10 @@
 #! /bin/sh
 
-prefix=/D/OSSBuild/Build/Windows/Win32/Release
+prefix=/E/Work/OSSBuild/Build/Windows/Win32/Release
 exec_prefix=${prefix}
 exec_prefix_set=no
-includedir=/D/OSSBuild/Build/Windows/Win32/Release/include
-libdir=/D/OSSBuild/Build/Windows/Win32/Release/lib
+includedir=/E/Work/OSSBuild/Build/Windows/Win32/Release/include
+libdir=/E/Work/OSSBuild/Build/Windows/Win32/Release/lib
 
 usage()
 {
@@ -68,11 +68,11 @@ while test $# -gt 0; do
 	;;
 
     --cflags)
-	echo -I/D/OSSBuild/Build/Windows/Win32/Release/include/libcroco-0.6 -mms-bitfields -Id:/OSSBuild/Build/Windows/Win32/Release/include/glib-2.0 -Id:/OSSBuild/Build/Windows/Win32/Release/lib/glib-2.0/include   -Id:/OSSBuild/Build/Windows/Win32/Release/include/libxml2  
+	echo -I/E/Work/OSSBuild/Build/Windows/Win32/Release/include/libcroco-0.6 -mms-bitfields -Ie:/Work/OSSBuild/Build/Windows/Win32/Release/include/glib-2.0 -Ie:/Work/OSSBuild/Build/Windows/Win32/Release/lib/glib-2.0/include   -Ie:/Work/OSSBuild/Build/Windows/Win32/Release/include/libxml2  
        	;;
 
     --libs)
-	echo -L/D/OSSBuild/Build/Windows/Win32/Release/lib -lcroco-0.6 -Ld:/OSSBuild/Build/Windows/Win32/Release/lib -lglib-2.0 -lintl   -Ld:/OSSBuild/Build/Windows/Win32/Release/lib -lxml2  
+	echo -L/E/Work/OSSBuild/Build/Windows/Win32/Release/lib -lcroco-0.6 -Le:/Work/OSSBuild/Build/Windows/Win32/Release/lib -lglib-2.0 -lintl   -Le:/Work/OSSBuild/Build/Windows/Win32/Release/lib -lxml2  
        	;;
 
     *)

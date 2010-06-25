@@ -1,8 +1,8 @@
 # GdkPixbuf Image Loader Modules file
 # Automatically generated file, do not edit
-# Created by gdk-pixbuf-query-loaders.exe from gtk+-2.21.0
+# Created by gdk-pixbuf-query-loaders.exe from gtk+-2.21.2
 #
-# LoaderDir = d:\OSSBuild\Build\Windows\Win32\Release/lib/gtk-2.0/2.10.0/loaders
+# LoaderDir = e:\Work\OSSBuild\Build\Windows\Win32\Release/lib/gtk-2.0/2.10.0/loaders
 #
 "../lib/gtk-2.0/2.10.0/loaders/svg_loader.dll"
 "svg" 2 "gtk20" "Scalable Vector Graphics" "LGPL"

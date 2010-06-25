@@ -43,8 +43,13 @@ typedef struct _GConverter                    GConverter;
 typedef struct _GConverterInputStream         GConverterInputStream;
 typedef struct _GConverterOutputStream        GConverterOutputStream;
 typedef struct _GDataInputStream              GDataInputStream;
+typedef struct _GSimplePermission             GSimplePermission;
 typedef struct _GZlibCompressor               GZlibCompressor;
 typedef struct _GZlibDecompressor             GZlibDecompressor;
+
+typedef struct _GSettingsBackend              GSettingsBackend;
+typedef struct _GSettings                     GSettings;
+typedef struct _GPermission                   GPermission;
 
 /**
  * GDrive:
@@ -333,6 +338,25 @@ struct _GOutputVector {
   gsize size;
 };
 
+typedef struct _GCredentials                  GCredentials;
+typedef struct _GUnixCredentialsMessage       GUnixCredentialsMessage;
+typedef struct _GUnixFDList                   GUnixFDList;
+typedef struct _GDBusMessage                  GDBusMessage;
+typedef struct _GDBusConnection               GDBusConnection;
+typedef struct _GDBusProxy                    GDBusProxy;
+typedef struct _GDBusMethodInvocation         GDBusMethodInvocation;
+typedef struct _GDBusServer                   GDBusServer;
+typedef struct _GDBusAuthObserver             GDBusAuthObserver;
+typedef struct _GDBusErrorEntry               GDBusErrorEntry;
+typedef struct _GDBusInterfaceVTable          GDBusInterfaceVTable;
+typedef struct _GDBusSubtreeVTable            GDBusSubtreeVTable;
+typedef struct _GDBusAnnotationInfo           GDBusAnnotationInfo;
+typedef struct _GDBusArgInfo                  GDBusArgInfo;
+typedef struct _GDBusMethodInfo               GDBusMethodInfo;
+typedef struct _GDBusSignalInfo               GDBusSignalInfo;
+typedef struct _GDBusPropertyInfo             GDBusPropertyInfo;
+typedef struct _GDBusInterfaceInfo            GDBusInterfaceInfo;
+typedef struct _GDBusNodeInfo                 GDBusNodeInfo;
 
 G_END_DECLS
 
