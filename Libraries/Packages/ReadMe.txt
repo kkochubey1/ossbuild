@@ -28,7 +28,7 @@ libjpeg         -       8.0.0b          -       http://www.ijg.org/files/jpegsrc
 openjpeg        -       1.3.0           -       http://www.openjpeg.org/openjpeg_v1_3.tar.gz
 libpng          -       1.4.2           -       http://downloads.sourceforge.net/project/libpng/01-libpng-master/1.4.2/libpng-1.4.2.tar.gz?use_mirror=cdnetworks-us-2
 libtiff         -       3.9.4           -       http://ftp.remotesensing.org/pub/libtiff/tiff-3.9.4.tar.gz
-glib            -       2.25.9          -       http://ftp.gnome.org/pub/gnome/sources/glib/2.25/glib-2.25.9.tar.bz2
+glib            -       2.25.10         -       http://ftp.gnome.org/pub/GNOME/sources/glib/2.25/glib-2.25.10.tar.bz2
 atk             -       1.30.0          -       http://ftp.gnome.org/pub/gnome/sources/atk/1.30/atk-1.30.0.tar.bz2
 openssl         -       0.9.8j          -       http://www.openssl.org/source/openssl-0.9.8j.tar.gz
 libgpg-error    -       1.8.0           -       http://mirror.tje.me.uk/pub/mirrors/ftp.gnupg.org/libgpg-error/libgpg-error-1.8.tar.bz2
@@ -36,7 +36,7 @@ libtasn1        -       2.7.0           -       http://ftp.gnu.org/gnu/libtasn1/
 libgcrypt       -       1.4.5           -       http://mirror.tje.me.uk/pub/mirrors/ftp.gnupg.org/libgcrypt/libgcrypt-1.4.5.tar.bz2
 gnutls          -       2.9.12          -       http://alpha.gnu.org/gnu/gnutls/gnutls-2.9.12.tar.bz2
 curl            -       7.19.7          -       http://curl.haxx.se/download/curl-7.19.7.tar.bz2
-libsoup         -       2.31.2          -       http://ftp.gnome.org/pub/GNOME/sources/libsoup/2.31/libsoup-2.31.2.tar.bz2
+libsoup         -       2.30.2          -       http://ftp.gnome.org/pub/GNOME/sources/libsoup/2.30/libsoup-2.30.2.news
 libneon         -       0.29.3          -       http://www.webdav.org/neon/neon-0.29.3.tar.gz
 freetype        -       2.3.12          -       http://download.savannah.gnu.org/releases-noredirect/freetype/freetype-2.3.12.tar.bz2
 fontconfig      -       2.8.0           -       http://fontconfig.org/release/fontconfig-2.8.0.tar.gz

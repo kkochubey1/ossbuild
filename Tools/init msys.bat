@@ -472,9 +472,10 @@ if "%UNTAR%" == "1" (
 	REM call :extract mingw-mingwrt-dll %MINGWDIR%
 	
 	rem Copy these headers so FFmpeg can pick up hardware-accelerated decoding through DirectX
-	copy dxva2api.h "%MINGWDIR%\i686-pc-mingw32\include\dxva2api.h"
-	copy dxva2api.h "%MINGWDIR%\x86_64-pc-mingw32\include\dxva2api.h"
-	copy dxva2api.h "%MINGWDIR%\x86_64-w64-mingw32\include\dxva2api.h"
+	rem Not ready yet in mingw-w64, works for mingw32
+	REM copy "%TMPDIR%\dxva2api.h" "%MINGWDIR%\i686-pc-mingw32\include\dxva2api.h"
+	REM copy "%TMPDIR%\dxva2api.h" "%MINGWDIR%\x86_64-pc-mingw32\include\dxva2api.h"
+	REM copy "%TMPDIR%\dxva2api.h" "%MINGWDIR%\x86_64-w64-mingw32\include\dxva2api.h"
 	
 	rem .tar.gz requires custom handling
 	move mingw-make-bin.tar.lzma mingw-make-bin.tar.gz
@@ -685,6 +686,7 @@ REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\gl.h" "%MINGWDI
 REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glu.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glu.h"
 REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glext.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glext.h"
 copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\_mingw_mac.h" "%MINGWDIR%\x86_64-w64-mingw32\include\_mingw_mac.h"
+copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\iphlpapi.h" "%MINGWDIR%\x86_64-w64-mingw32\include\iphlpapi.h"
 copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\wincrypt.h" "%MINGWDIR%\x86_64-w64-mingw32\include\wincrypt.h"
 copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\ws2tcpip.h" "%MINGWDIR%\x86_64-w64-mingw32\include\ws2tcpip.h"
 copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\d3d9.h" "%MINGWDIR%\x86_64-w64-mingw32\include\d3d9.h"
