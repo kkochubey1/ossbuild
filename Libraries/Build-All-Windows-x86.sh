@@ -107,6 +107,27 @@ ORIG_LDFLAGS="$ORIG_LDFLAGS -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias
 reset_flags
 
 
+#fribidi
+if [ ! -f "$BinDir/.dll" ]; then
+	unpack_gzip_and_move "fribidi.tar.gz" "$PKG_DIR_FRIBIDI"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/fribidi/fribidi.patch"
+	mkdir_and_move "$IntDir/fribidi"
+	
+	cd "$PKG_DIR/"
+	./bootstrap
+	
+	cd "$IntDir/fribidi"
+	$PKG_DIR/configure --with-glib=no --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	change_key "lib/" "Makefile" "am__append_1" ""
+	make && make install
+
+	sed -e '/LIBRARY libfribidi/d' -e 's/DATA//g' .libs/libfribidi-0.dll.def > in-mod.def
+	$MSLIB /name:libfribidi-0.dll /out:fribidi.lib /machine:$MSLibMachine /def:in-mod.def
+	move_files_to_dir "*.exp *.lib" "$LibDir"
+	
+	reset_flags
+fi
+
 #liboil
 if [ ! -f "$BinDir/lib${Prefix}oil-0.3-0.dll" ]; then
 	unpack_gzip_and_move "liboil.tar.gz" "$PKG_DIR_LIBOIL"

@@ -13,6 +13,7 @@ docbook         -       1.75.2          -       http://downloads.sourceforge.net
 gtk-doc         -       1.15.0          -       http://ftp.gnome.org/pub/GNOME/sources/gtk-doc/1.15/gtk-doc-1.15.tar.bz2
 proxy-libintl   -       20090911        -       http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/proxy-libintl-dev_20090911_win32.zip
 iconv           -       0.0.1	        -       http://win-iconv.googlecode.com/files/win-iconv-0.0.1.tar.bz2
+fribidi         -       0.19.2          -       http://fribidi.org/download/fribidi-0.19.2.tar.gz
 dlfcn-win32     -       r11             -       http://dlfcn-win32.googlecode.com/files/dlfcn-win32-r11.tar.bz2
 liboil          -       0.3.17          -       http://liboil.freedesktop.org/download/liboil-0.3.17.tar.gz
 orc             -       0.4.5           -       http://code.entropywave.com/download/orc/orc-0.4.5.tar.gz
