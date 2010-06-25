@@ -323,6 +323,22 @@ create_shared() {
 	create_templates
 }
 
+create_whoami_windows() {
+	if [ -d "/mingw/bin/" ]; then
+		myfile=/mingw/bin/whoami
+		echo "#!/bin/bash" > $myfile
+		echo "echo 'OSSBuild Team'" >> $myfile
+	fi
+}
+
+create_hostname_windows() {
+	if [ -d "/mingw/bin/" ]; then
+		myfile=/mingw/bin/hostname
+		echo "#!/bin/bash" > $myfile
+		echo "echo 'ossbuild.hoytsoft.org'" >> $myfile
+	fi
+}
+
 create_wrapper_windows() {
 	mywrapper=$1
 	myargs=$2

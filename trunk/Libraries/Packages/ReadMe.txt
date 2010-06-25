@@ -63,7 +63,7 @@ x264            -       20100617        -       http://download.videolan.org/pub
 libspeex        -       1.2rc1          -       http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
 libschrodinger  -       1.0.9           -       http://diracvideo.org/download/schroedinger/schroedinger-1.0.9.tar.gz
 mp3lame         -       3.98.4          -       http://downloads.sourceforge.net/project/lame/lame/3.98.4/lame-3.98.4.tar.gz?use_mirror=voxel
-ffmpeg          -       0.6.0           -       http://ffmpeg.org/releases/ffmpeg-export-snapshot.tar.bz2 [Updated 06-22-2010, r31528]
+ffmpeg          -       0.6.0           -       http://ffmpeg.org/releases/ffmpeg-export-snapshot.tar.bz2 [Updated 06-24-2010]
 libnice         -       0.0.12          -       http://nice.freedesktop.org/releases/libnice-0.0.12.tar.gz
 sqlite          -       3.6.23.1        -       http://www.sqlite.org/sqlite-amalgamation-3.6.23.1.tar.gz
 libvdpau        -       0.4.0           -       http://cgit.freedesktop.org/~aplattner/libvdpau/snapshot/libvdpau-0.4.tar.bz2

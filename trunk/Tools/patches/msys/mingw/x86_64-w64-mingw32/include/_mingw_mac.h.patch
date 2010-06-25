@@ -1,0 +1,11 @@
+--- mingw/x86_64-w64-mingw32/include/_mingw_mac.h	Sat May 29 11:29:22 2010
++++ mingw/x86_64-w64-mingw32/include/_mingw_mac.h	Thu Jun 24 16:29:01 2010
+@@ -20,7 +20,7 @@
+    and the __mingwthr_key_dtor() function from the MinGW
+    CRT in its private gthr-win32.h header. */
+ #define __MINGW32_MAJOR_VERSION 3
+-#define __MINGW32_MINOR_VERSION 11
++#define __MINGW32_MINOR_VERSION 15
+ 
+ #ifdef _WIN64
+ /* MS does not prefix symbols by underscores for 64-bit.  */
