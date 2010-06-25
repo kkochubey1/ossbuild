@@ -1,0 +1,13 @@
+--- agent/address.c	Fri Jun 25 03:15:33 2010
++++ agent/address.c	Fri Jun 25 03:12:37 2010
+@@ -260,6 +260,10 @@
+   }
+ }
+ 
++#ifndef IN6_ARE_ADDR_EQUAL
++#define IN6_ARE_ADDR_EQUAL(a,b) \
++   (memcmp(&(a)->s6_addr[0], &(b)->s6_addr[0], sizeof(struct in6_addr)) == 0)
++#endif
+ 
+ NICEAPI_EXPORT gboolean
+ nice_address_equal (const NiceAddress *a, const NiceAddress *b)

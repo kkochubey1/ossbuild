@@ -503,8 +503,6 @@ fi
 if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then 
 	unpack_bzip2_and_move "glib.tar.bz2" "$PKG_DIR_GLIB"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/glib/run-markup-tests.sh.patch"
-	#TODO: This patch was committed to git already. Next version shouldn't need it.
-	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/glib/gnullapplication.c.patch"
 	
 	mkdir_and_move "$IntDir/glib"
 	
@@ -1543,7 +1541,7 @@ if [ ! -f "$BinDir/${FFmpegPrefix}avcodec${FFmpegSuffix}-52.dll" ]; then
 	CFLAGS=""
 	CPPFLAGS="-DETIMEDOUT=10060 -D_TIMESPEC_DEFINED"
 	LDFLAGS=""
-	$PKG_DIR/configure --cc="$gcc" --ld="$gcc" --enable-pthreads --arch=x86 --target-os=mingw32 --enable-cross-compile --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
+	$PKG_DIR/configure --cc="$gcc" --ld="$gcc" --arch=x86 --target-os=mingw32 --enable-cross-compile --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
 	change_key "." "config.mak" "BUILDSUF" "${FFmpegSuffix}"
 	change_key "." "config.mak" "LIBPREF" "${FFmpegPrefix}"
 	change_key "." "config.mak" "SLIBPREF" "${FFmpegPrefix}"
@@ -1636,12 +1634,13 @@ if [ ! -f "$BinDir/lib${Prefix}nice-0.dll" ]; then
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/bind.c-win32.patch"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/rand.c-win32.patch"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/agent.c-win32.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/address.c-win32.patch"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/address.h-win32.patch"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/pseudotcp.c-win32.patch"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/interfaces.c-win32.patch"
 	mkdir_and_move "$IntDir/libnice"
-	
-	CFLAGS="-D_SSIZE_T_ -I$PKG_DIR -I$PKG_DIR/stun -D_WIN32_WINNT=0x0501 -DUSE_GETADDRINFO -DHAVE_GETNAMEINFO -DHAVE_GETSOCKOPT -DHAVE_INET_NTOP -DHAVE_INET_PTON"
+
+	CFLAGS="-D_SSIZE_T_ -D_SSIZE_T_DEFINED -I$PKG_DIR -I$PKG_DIR/stun -D_WIN32_WINNT=0x0501 -DUSE_GETADDRINFO -DHAVE_GETNAMEINFO -DHAVE_GETSOCKOPT -DHAVE_INET_NTOP -DHAVE_INET_PTON"
 	LDFLAGS="$LDFLAGS -lwsock32 -lws2_32 -liphlpapi -no-undefined -mno-cygwin -fno-common -fno-strict-aliasing -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias"
 	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
@@ -1710,7 +1709,8 @@ fi
 #a52dec
 if [ ! -f "$BinDir/lib${Prefix}a52-0.dll" ]; then 
 	unpack_gzip_and_move "a52.tar.gz" "$PKG_DIR_A52DEC"
-	
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/liba52/liba52-fixed.diff"
+
 	./bootstrap
 	
 	mkdir_and_move "$IntDir/a52dec"
@@ -1756,6 +1756,8 @@ fi
 #libdca
 if [ ! -f "$BinDir/lib${Prefix}dca-0.dll" ]; then 
 	unpack_bzip2_and_move "libdca.tar.bz2" "$PKG_DIR_LIBDCA"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libdca/libdca-llvm-gcc.patch"
+
 	mkdir_and_move "$IntDir/libdca"
 	
 	$PKG_DIR/configure --enable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
@@ -1835,9 +1837,10 @@ fi
 #dvdread
 if [ ! -f "$BinDir/lib${Prefix}dvdread-4.dll" ]; then 
 	unpack_bzip2_and_move "libdvdread.tar.bz2" "$PKG_DIR_LIBDVDREAD"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/dvdread/libdvdread-win32.patch"
 	mkdir_and_move "$IntDir/libdvdread"
 	 
-	sh $PKG_DIR/autogen.sh --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir LDFLAGS="$LDFLAGS"
+	ac_cv_header_dlfcn_h=no sh $PKG_DIR/autogen.sh --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir LDFLAGS="$LDFLAGS"
 	change_libname_spec
 	make -j3 && make install
 
@@ -1855,6 +1858,7 @@ fi
 #dvdnav
 if [ ! -f "$BinDir/lib${Prefix}dvdnav-4.dll" ]; then 
 	unpack_bzip2_and_move "libdvdnav.tar.bz2" "$PKG_DIR_LIBDVDNAV"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libdvdnav/libdvdnav.patch"
 	mkdir_and_move "$IntDir/libdvdnav"
 	 
 	sh $PKG_DIR/autogen.sh --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir LDFLAGS="$LDFLAGS -ldvdread"
@@ -1901,9 +1905,9 @@ if [ ! -f "$BinDir/${FFmpegPrefix}avcodec-gpl-52.dll" ]; then
 
 	#GPL-compatible version
 	CFLAGS=""
-	CPPFLAGS="-DETIMEDOUT=10060"
+	CPPFLAGS="-DETIMEDOUT=10060 -D_TIMESPEC_DEFINED"
 	LDFLAGS=""
-	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --enable-gpl --host=$Host --build=$Build --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir
+	$PKG_DIR/configure --cc="$gcc" --ld="$gcc" --arch=x86 --target-os=mingw32 --enable-cross-compile --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --enable-gpl --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir
 	change_key "." "config.mak" "BUILDSUF" "-gpl"
 	change_key "." "config.mak" "LIBPREF" "${FFmpegPrefix}"
 	change_key "." "config.mak" "SLIBPREF" "${FFmpegPrefix}"
@@ -1952,7 +1956,7 @@ if [ ! -f "$BinDir/${FFmpegPrefix}avcodec-gpl-52.dll" ]; then
 	#Copy some other dlls for testing
 	copy_files_to_dir "$BinDir/*.dll" "."
 fi
-
+exit 0
 #Cleanup
 $rm -rf "$LibDir/gio/"
 $rm -rf "$LibDir/glib-2.0/"

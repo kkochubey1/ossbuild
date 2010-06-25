@@ -18,10 +18,10 @@ Index: src/dvd_reader.c
  
  #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__bsdi__) || defined(__DARWIN__)
  #define SYS_BSD 1
-Index: src/dvdread/ifo_types.h
+Index: src/ifo_types.h
 ===================================================================
---- src/dvdread/ifo_types.h	(révision 1188)
-+++ src/dvdread/ifo_types.h	(copie de travail)
+--- src/ifo_types.h	(révision 1188)
++++ src/ifo_types.h	(copie de travail)
 @@ -32,7 +32,7 @@
  
  #if defined(__GNUC__)
