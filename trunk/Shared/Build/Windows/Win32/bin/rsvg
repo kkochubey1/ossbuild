@@ -67,7 +67,7 @@ def main():
         help()
         sys.exit(1)
 
-    return os.system("%s %s -o %s %s" % (shellEscape(os.path.join("/D/OSSBuild/Build/Windows/Win32/Release", "bin", "rsvg-convert")), command_str, shellEscape(args[1]), shellEscape(args[0])))
+    return os.system("%s %s -o %s %s" % (shellEscape(os.path.join("/E/Work/OSSBuild/Build/Windows/Win32/Release", "bin", "rsvg-convert")), command_str, shellEscape(args[1]), shellEscape(args[0])))
 
 if __name__ == "__main__":
     main()

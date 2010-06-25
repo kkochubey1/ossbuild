@@ -1956,7 +1956,7 @@ if [ ! -f "$BinDir/${FFmpegPrefix}avcodec-gpl-52.dll" ]; then
 	#Copy some other dlls for testing
 	copy_files_to_dir "$BinDir/*.dll" "."
 fi
-exit 0
+
 #Cleanup
 $rm -rf "$LibDir/gio/"
 $rm -rf "$LibDir/glib-2.0/"

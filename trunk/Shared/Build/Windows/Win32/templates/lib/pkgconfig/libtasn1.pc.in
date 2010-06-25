@@ -26,6 +26,6 @@ includedir=@SHARED_BUILD_DIR@/include
 Name: libtasn1
 Description: Library for ASN.1 and DER manipulation
 URL: http://www.gnu.org/software/libtasn1/
-Version: 2.6
+Version: 2.7
 Libs: -L${libdir} -ltasn1
 Cflags: -I${includedir}

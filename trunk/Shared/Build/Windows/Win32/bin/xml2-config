@@ -1,9 +1,9 @@
 #! /bin/sh
 
-prefix=/D/OSSBuild/Build/Windows/Win32/Release
+prefix=/E/Work/OSSBuild/Build/Windows/Win32/Release
 exec_prefix=${prefix}
-includedir=/D/OSSBuild/Build/Windows/Win32/Release/include
-libdir=/D/OSSBuild/Build/Windows/Win32/Release/lib
+includedir=/E/Work/OSSBuild/Build/Windows/Win32/Release/include
+libdir=/E/Work/OSSBuild/Build/Windows/Win32/Release/lib
 
 usage()
 {
@@ -58,7 +58,7 @@ while test $# -gt 0; do
       ;;
 
     --version)
-	echo 2.7.6
+	echo 2.7.7
 	exit 0
 	;;
 
@@ -78,7 +78,7 @@ while test $# -gt 0; do
         ;;
 
     --modules)
-       	echo 0
+       	echo 1
        	;;
 
     --libs)

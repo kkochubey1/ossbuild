@@ -71,6 +71,40 @@ GType g_socket_protocol_get_type (void) G_GNUC_CONST;
 #define G_TYPE_SOCKET_PROTOCOL (g_socket_protocol_get_type ())
 GType g_zlib_compressor_format_get_type (void) G_GNUC_CONST;
 #define G_TYPE_ZLIB_COMPRESSOR_FORMAT (g_zlib_compressor_format_get_type ())
+GType g_unix_socket_address_type_get_type (void) G_GNUC_CONST;
+#define G_TYPE_UNIX_SOCKET_ADDRESS_TYPE (g_unix_socket_address_type_get_type ())
+GType g_bus_type_get_type (void) G_GNUC_CONST;
+#define G_TYPE_BUS_TYPE (g_bus_type_get_type ())
+GType g_bus_name_owner_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_BUS_NAME_OWNER_FLAGS (g_bus_name_owner_flags_get_type ())
+GType g_bus_name_watcher_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_BUS_NAME_WATCHER_FLAGS (g_bus_name_watcher_flags_get_type ())
+GType g_dbus_proxy_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_PROXY_FLAGS (g_dbus_proxy_flags_get_type ())
+GType g_dbus_error_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_ERROR (g_dbus_error_get_type ())
+GType g_dbus_connection_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_CONNECTION_FLAGS (g_dbus_connection_flags_get_type ())
+GType g_dbus_capability_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_CAPABILITY_FLAGS (g_dbus_capability_flags_get_type ())
+GType g_dbus_call_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_CALL_FLAGS (g_dbus_call_flags_get_type ())
+GType g_dbus_message_type_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_MESSAGE_TYPE (g_dbus_message_type_get_type ())
+GType g_dbus_message_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_MESSAGE_FLAGS (g_dbus_message_flags_get_type ())
+GType g_dbus_message_header_field_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_MESSAGE_HEADER_FIELD (g_dbus_message_header_field_get_type ())
+GType g_dbus_property_info_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_PROPERTY_INFO_FLAGS (g_dbus_property_info_flags_get_type ())
+GType g_dbus_subtree_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_SUBTREE_FLAGS (g_dbus_subtree_flags_get_type ())
+GType g_dbus_server_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_SERVER_FLAGS (g_dbus_server_flags_get_type ())
+
+/* enumerations from "gsettings.h" */
+GType g_settings_bind_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_SETTINGS_BIND_FLAGS (g_settings_bind_flags_get_type ())
 G_END_DECLS
 
 #endif /* __GIO_ENUM_TYPES_H__ */

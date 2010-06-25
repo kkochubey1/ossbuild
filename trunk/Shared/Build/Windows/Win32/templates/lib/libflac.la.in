@@ -14,7 +14,7 @@ library_names='libFLAC.dll.a'
 old_library=''
 
 # Libraries that this one depends upon.
-dependency_libs=' -L@SHARED_BUILD_DIR@/lib  /mingw/i686-pc-mingw32/lib/./libm.la /mingw/i686-pc-mingw32/lib/./libws2_32.la @SHARED_BUILD_DIR@/lib/libogg.la'
+dependency_libs=' -L@SHARED_BUILD_DIR@/lib  -lm -lws2_32 @SHARED_BUILD_DIR@/lib/libogg.la'
 
 # Version information for libFLAC.
 current=10

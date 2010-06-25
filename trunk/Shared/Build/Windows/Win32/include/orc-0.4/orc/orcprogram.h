@@ -29,12 +29,13 @@ typedef void (*OrcExecutorFunc)(OrcExecutor *ex);
 #define ORC_N_VARIABLES 64
 #define ORC_N_ARRAYS 12
 #define ORC_N_REGISTERS 20
-#define ORC_N_FIXUPS 20
+#define ORC_N_FIXUPS 40
 #define ORC_N_CONSTANTS 20
-#define ORC_N_LABELS 20
+#define ORC_N_LABELS 40
 
 #define ORC_GP_REG_BASE 32
 #define ORC_VEC_REG_BASE 64
+#define ORC_REG_INVALID 0
 
 #define ORC_STATIC_OPCODE_N_SRC 4
 #define ORC_STATIC_OPCODE_N_DEST 2
@@ -79,6 +80,10 @@ enum {
 
 enum {
   ORC_TARGET_ALTIVEC_ALTIVEC = (1<<0)
+};
+
+enum {
+  ORC_TARGET_NEON_CLEAN_COMPILE = (1<<0)
 };
 
 typedef enum {
@@ -145,6 +150,7 @@ enum {
   ORC_CONST_SPLAT_B,
   ORC_CONST_SPLAT_W,
   ORC_CONST_SPLAT_L,
+  ORC_CONST_FULL
 };
 
 enum {
@@ -379,8 +385,12 @@ struct _OrcCompiler {
   int exec_reg;
   int gp_tmpreg;
 
+  int insn_index;
   int need_mask_regs;
   int unroll_shift;
+
+  int alloc_loop_counter;
+  int loop_counter;
 };
 
 #define ORC_SRC_ARG(p,i,n) ((p)->vars[(i)->src_args[(n)]].alloc)
@@ -506,6 +516,8 @@ void orc_sse_init (void);
 void orc_arm_init (void);
 void orc_powerpc_init (void);
 void orc_c_init (void);
+void orc_neon_init (void);
+void orc_c64x_init (void);
 void orc_c64x_c_init (void);
 
 OrcCompileResult orc_program_compile (OrcProgram *p);

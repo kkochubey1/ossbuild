@@ -1,5 +1,6 @@
 # Process this file with autoconf to produce a pkg-config metadata file.
-# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2008 Free Software Foundation
+# Copyright (C) 2002, 2003, 2004, 2005, 2006, 2008, 2010 Free Software
+# Foundation, Inc.
 # Author: Simon Josefsson
 # 
 # This file is free software; as a special exception the author gives
@@ -19,7 +20,7 @@ Name: GnuTLS-extra
 Description: Additional add-ons for GnuTLS licensed under GPL
 URL: http://www.gnu.org/software/gnutls/
 Requires: gnutls
-Version: 2.8.6
+Version: 2.9.12
 Libs: -L${libdir} -lgnutls-extra
 Libs.private: -L@SHARED_BUILD_DIR@/lib -lgnutls-extra  
 Cflags: -I${includedir}
