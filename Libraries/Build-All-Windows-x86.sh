@@ -51,6 +51,10 @@ setup_ms_build_env_path
 #Create symbolic link for gcc etc.
 #create_cross_compiler_path_windows
 
+#Ensure that whoami and hostname provide helpful values
+create_whoami_windows
+create_hostname_windows
+
 #clear_flags
 
 #No prefix from here out
@@ -58,8 +62,10 @@ clear_prefix
 
 #Ensure that gcc outputs 32-bit
 gcc="$gcc -m32"
+dlltool="$dlltool -m i386 -f--32"
 windres="$windres --target=pe-i386"
 create_wrapper_windows "/mingw/bin/windres" "--target=pe-i386"
+create_wrapper_windows "/mingw/bin/dlltool" "-m i386 -f--32"
 create_wrapper_windows "/mingw/bin/gcc" "-m32"
 create_wrapper_windows "/mingw/bin/g++" "-m32"
 create_wrapper_windows "/mingw/bin/c++" "--32"
@@ -506,7 +512,7 @@ if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then
 	reset_path
 	
 	lt_cv_deplibs_check_method='pass_all' \
-	CC="$gcc -mtune=pentium3 -mthreads" \
+	CC="$gcc -mtune=i686 -mthreads" \
 	LDFLAGS="$LDFLAGS -Wl,--enable-auto-image-base" \
 	CFLAGS="$CFLAGS -O2" \
 	$PKG_DIR/configure --enable-shared --enable-silent-rules --disable-gtk-doc --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
@@ -1203,10 +1209,8 @@ fi
 #libflac
 if [ ! -f "$BinDir/lib${Prefix}FLAC-8.dll" ]; then 
 	unpack_gzip_and_move "flac.tar.gz" "$PKG_DIR_FLAC"
-
-	patch -p0 -N	< "$LIBRARIES_PATCH_DIR/flac/flac-size-t-max.patch"
-	patch -p0 -N	< "$LIBRARIES_PATCH_DIR/flac/flac-win32.patch"
-	
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/flac/flac-win32.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/flac/flac-size-t-max.patch"
 	mkdir_and_move "$IntDir/flac"	
 	
 	#'make install' tries to install some files from this folder but doesn't create it
@@ -1415,9 +1419,8 @@ if [ ! -f "$BinDir/lib${Prefix}x264-98.dll" ]; then
 	bunzip2 -d -f "example.y4m.bz2"
 	
 	#Build using the profiler
-	#Disabled with gcc 4.5.0 until bug is fixed for misaligned SSE when -fprofile-generate is used
-	#make fprofiled VIDS="example.y4m"
-	make
+	make fprofiled VIDS="example.y4m"
+	#make
 	make install
 	
 	reset_flags
@@ -1538,9 +1541,9 @@ if [ ! -f "$BinDir/${FFmpegPrefix}avcodec${FFmpegSuffix}-52.dll" ]; then
 	
 	#LGPL-compatible version
 	CFLAGS=""
-	CPPFLAGS="-DETIMEDOUT=10060"
+	CPPFLAGS="-DETIMEDOUT=10060 -D_TIMESPEC_DEFINED"
 	LDFLAGS=""
-	$PKG_DIR/configure --cc=$gcc --ld=$gcc --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
+	$PKG_DIR/configure --cc="$gcc" --ld="$gcc" --enable-pthreads --arch=x86 --target-os=mingw32 --enable-cross-compile --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --disable-gprof --enable-runtime-cpudetect --enable-avfilter-lavf --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
 	change_key "." "config.mak" "BUILDSUF" "${FFmpegSuffix}"
 	change_key "." "config.mak" "LIBPREF" "${FFmpegPrefix}"
 	change_key "." "config.mak" "SLIBPREF" "${FFmpegPrefix}"
