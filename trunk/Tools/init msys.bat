@@ -116,6 +116,7 @@ set PKG_MINGW_BASICBSDTAR_BIN=http://downloads.sourceforge.net/project/mingw/Min
 set PKG_MINGW_AUTOCONF_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/autoconf2.5/autoconf2.5-2.64-1/autoconf2.5-2.64-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_AUTOCONFWRAPPER_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/wrapper/autoconf-7-1/autoconf-7-1-mingw32-bin.tar.lzma?use_mirror=iweb
 set PKG_MINGW_AUTOMAKE_1_4_BIN=http://sourceforge.net/projects/mingw/files/MinGW/automake/automake1.4/automake1.4-1.4p6-1/automake1.4-1.4p6-1-mingw32-bin.tar.lzma/download
+set PKG_MINGW_AUTOMAKE_1_10_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/automake/automake1.10/automake1.10-1.10.2-1/automake1.10-1.10.2-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_AUTOMAKE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/automake/automake1.11/automake1.11-1.11-1/automake1.11-1.11-1-mingw32-bin.tar.lzma?use_mirror=softlayer
 set PKG_MINGW_AUTOMAKEWRAPPER_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/automake/wrapper/automake-4-1/automake-4-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_LTDL_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libtool/libtool-2.2.7a-1/libltdl-2.2.7a-1-mingw32-dll-7.tar.lzma?use_mirror=voxel
@@ -271,6 +272,7 @@ if "%DOWNLOAD%" == "1" (
 	call :download mingw-autoconf-bin "%PKG_MINGW_AUTOCONF_BIN%"
 	call :download mingw-autoconfwrapper-bin "%PKG_MINGW_AUTOCONFWRAPPER_BIN%"
 	call :download mingw-automake-1_4-bin "%PKG_MINGW_AUTOMAKE_1_4_BIN%"
+	call :download mingw-automake-1_10-bin "%PKG_MINGW_AUTOMAKE_1_10_BIN%"
 	call :download mingw-automake-bin "%PKG_MINGW_AUTOMAKE_BIN%"
 	call :download mingw-automakewrapper-bin "%PKG_MINGW_AUTOMAKEWRAPPER_BIN%"
 	call :download mingw-ltdl-bin "%PKG_MINGW_LTDL_DLL%"
@@ -441,6 +443,7 @@ if "%UNTAR%" == "1" (
 	call :extract mingw-autoconf-bin %MINGWDIR%
 	call :extract mingw-autoconfwrapper-bin %MINGWDIR%
 	call :extract mingw-automake-1_4-bin %MINGWDIR%
+	call :extract mingw-automake-1_10-bin %MINGWDIR%
 	call :extract mingw-automake-bin %MINGWDIR%
 	call :extract mingw-automakewrapper-bin %MINGWDIR%
 	call :extract mingw-ltdl-bin %MINGWDIR%
@@ -603,6 +606,7 @@ if "%CLEAN%" == "1" (
 	call :clean mingw-autoconf-bin
 	call :clean mingw-autoconfwrapper-bin
 	call :clean mingw-automake-1_4-bin
+	call :clean mingw-automake-1_10-bin
 	call :clean mingw-automake-bin
 	call :clean mingw-automakewrapper-bin
 	call :clean mingw-ltdl-bin
