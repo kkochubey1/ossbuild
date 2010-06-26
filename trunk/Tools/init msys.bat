@@ -693,6 +693,7 @@ copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\_mingw_mac.h" "%MING
 copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\iphlpapi.h" "%MINGWDIR%\x86_64-w64-mingw32\include\iphlpapi.h"
 copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\wincrypt.h" "%MINGWDIR%\x86_64-w64-mingw32\include\wincrypt.h"
 copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\ws2tcpip.h" "%MINGWDIR%\x86_64-w64-mingw32\include\ws2tcpip.h"
+copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\winnt.h" "%MINGWDIR%\x86_64-w64-mingw32\include\winnt.h"
 copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\d3d9.h" "%MINGWDIR%\x86_64-w64-mingw32\include\d3d9.h"
 copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\d3d9caps.h" "%MINGWDIR%\x86_64-w64-mingw32\include\d3d9caps.h"
 copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\d3d9types.h" "%MINGWDIR%\x86_64-w64-mingw32\include\d3d9types.h"

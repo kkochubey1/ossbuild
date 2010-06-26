@@ -1,0 +1,12 @@
+--- mingw/x86_64-w64-mingw32/include/winnt.h	Fri Jun 25 14:33:35 2010
++++ mingw/x86_64-w64-mingw32/include/winnt.h	Fri Jun 25 14:33:26 2010
+@@ -5831,7 +5831,8 @@
+ #define SEF_DEFAULT_GROUP_FROM_PARENT 0x40
+ 
+     typedef enum _HEAP_INFORMATION_CLASS {
+-      HeapCompatibilityInformation
++      HeapCompatibilityInformation,
++	  HeapEnableTerminationOnCorruption
+     } HEAP_INFORMATION_CLASS;
+ 
+     NTSYSAPI DWORD NTAPI RtlSetHeapInformation(PVOID HeapHandle,HEAP_INFORMATION_CLASS HeapInformationClass,PVOID HeapInformation,SIZE_T HeapInformationLength);
