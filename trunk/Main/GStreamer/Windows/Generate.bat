@@ -61,6 +61,7 @@ mkdir "%DESTDIR%" 2> NUL
 :start
 cd /d "%DIR%"
 
+
 rem gstreamer/win32/common/gstconfig.h
 echo "Copying gstconfig.h"
 copy "%SRC_GSTREAMER_DIR%\win32\common\gstconfig.h" "%GEN_GSTREAMER_DIR%\gst\gstconfig.h"
@@ -92,21 +93,21 @@ rem gst-plugins-base/gst-libs/gst/app
 %GEN_MARSHAL_BAT% __gst_app_marshal "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\app\gstapp-marshal.list" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\app\gstapp-marshal.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\app\gstapp-marshal.c"
 
 rem gst-plugins-base/gst-libs/gst/audio
-%MK_ENUMS_BAT% AUDIO "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\audio" "%BUILDDIR%\Plugins\Base\gst-libs\audio.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\audio\audio-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\audio\audio-enumtypes.c"
+%MK_ENUMS_BAT% AUDIO "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\audio" "%BUILDDIR%\Libraries\audio.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\audio\audio-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\audio\audio-enumtypes.c"
 
 rem gst-plugins-base/gst-libs/gst/interfaces
-%MK_ENUMS_BAT% INTERFACES "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\interfaces" "%BUILDDIR%\Plugins\Base\gst-libs\interfaces.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\interfaces\interfaces-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\interfaces\interfaces-enumtypes.c"
+%MK_ENUMS_BAT% INTERFACES "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\interfaces" "%BUILDDIR%\Libraries\interfaces.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\interfaces\interfaces-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\interfaces\interfaces-enumtypes.c"
 %GEN_MARSHAL_BAT% gst_interfaces_marshal "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\interfaces\interfaces-marshal.list" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\interfaces\interfaces-marshal.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\interfaces\interfaces-marshal.c"
 
 rem gst-plugins-base/gst-libs/gst/pbutils
-%MK_ENUMS_BAT% INSTALL "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils" "%BUILDDIR%\Plugins\Base\gst-libs\pbutils.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-enumtypes.c"
+%MK_ENUMS_BAT% INSTALL "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils" "%BUILDDIR%\Libraries\pbutils.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-enumtypes.c"
 
 rem gst-plugins-base/gst-libs/gst/rtsp
-%MK_ENUMS_BAT% RTSP "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp" "%BUILDDIR%\Plugins\Base\gst-libs\rtsp.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-enumtypes.c"
+%MK_ENUMS_BAT% RTSP "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp" "%BUILDDIR%\Libraries\rtsp.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-enumtypes.c"
 %GEN_MARSHAL_BAT% gst_rtsp_marshal "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-marshal.list" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-marshal.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-marshal.c"
 
 rem gst-plugins-base/gst-libs/gst/video
-%MK_ENUMS_BAT% VIDEO "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video" "%BUILDDIR%\Plugins\Base\gst-libs\video.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video\video-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video\video-enumtypes.c"
+%MK_ENUMS_BAT% VIDEO "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video" "%BUILDDIR%\Libraries\video.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video\video-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video\video-enumtypes.c"
 
 
 rem gst-plugins-good/gst/udp
@@ -117,7 +118,7 @@ rem gst-plugins-good/gst/rtpmanager
 %GEN_MARSHAL_BAT% gst_rtp_bin_marshal "%SRC_GST_PLUGINS_GOOD_DIR%\gst\rtpmanager\gstrtpbin-marshal.list" "%GEN_GST_PLUGINS_GOOD_DIR%\gst\rtpmanager\gstrtpbin-marshal.h" "%GEN_GST_PLUGINS_GOOD_DIR%\gst\rtpmanager\gstrtpbin-marshal.c"
 
 rem gst-plugins-bad/gst-libs/gst/interfaces
-%MK_ENUMS_BAT% PHOTOGRAPHY "%SRC_GST_PLUGINS_BAD_DIR%\gst-libs\gst\interfaces" "%BUILDDIR%\Plugins\Bad\gst-libs\photography.mkenum.lst.txt" "%GEN_GST_PLUGINS_BAD_DIR%\gst-libs\gst\interfaces\photography-enumtypes.h" "%GEN_GST_PLUGINS_BAD_DIR%\gst-libs\gst\interfaces\photography-enumtypes.c"
+%MK_ENUMS_BAT% PHOTOGRAPHY "%SRC_GST_PLUGINS_BAD_DIR%\gst-libs\gst\interfaces" "%BUILDDIR%\Libraries\photography.mkenum.lst.txt" "%GEN_GST_PLUGINS_BAD_DIR%\gst-libs\gst\interfaces\photography-enumtypes.h" "%GEN_GST_PLUGINS_BAD_DIR%\gst-libs\gst\interfaces\photography-enumtypes.c"
 
 rem gst-plugins-bad/gst/camerabin
 %GEN_MARSHAL_BAT% __gst_camerabin_marshal "%SRC_GST_PLUGINS_BAD_DIR%\gst\camerabin\gstcamerabin-marshal.list" "%GEN_GST_PLUGINS_BAD_DIR%\gst\camerabin\gstcamerabin-marshal.h" "%GEN_GST_PLUGINS_BAD_DIR%\gst\camerabin\gstcamerabin-marshal.c"
@@ -132,8 +133,8 @@ rem farsight2/gst/fsrtpconference
 
 rem farsight2/gst-libs/farsight
 echo "%PLUGINS_FARSIGHT2_DIR%\gst-libs\farsight-mkenum.list.txt" 
-%MK_ENUMS_FS_PREFIX_BAT% FS "%SRC_FARSIGHT2_DIR%\gst-libs\gst\farsight" "%PLUGINS_FARSIGHT2_DIR%\gst-libs\farsight-mkenum.list.txt" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-enum-types.h" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-enum-types.c"
-%GEN_MARSHAL_BAT% _fs_marshal "%PLUGINS_FARSIGHT2_DIR%\gst-libs\fs-marshal.list" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-marshal.h" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-marshal.c"
+%MK_ENUMS_FS_PREFIX_BAT% FS "%SRC_FARSIGHT2_DIR%\gst-libs\gst\farsight" "%BUILDDIR%\Libraries\farsight-mkenum.list.txt" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-enum-types.h" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-enum-types.c"
+%GEN_MARSHAL_BAT% _fs_marshal "%BUILDDIR%\Libraries\fs-marshal.list" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-marshal.h" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-marshal.c"
 
 
 rem farsight2/transmitters/rawup
@@ -149,7 +150,7 @@ sed.exe -e "s/'@GST_MAJORMINOR@'/\"0.10\"/g" -e "s/_pygst_dir = '@PYGSTDIR@'//g"
 rem Copying python generated files
 echo "Copying %BUILDDIR%\Bindings\Python\gstversion.override %SRC_GST_PYTHON_DIR%\gst"
 copy "%BUILDDIR%\Bindings\Python\gstversion.override" "%SRC_GST_PYTHON_DIR%\gst"
- 
+
 rem gst-python/gst/gst
 %GEN_PYTHON_BAT% "%SRC_GST_PYTHON_DIR%" "%GEN_GST_PYTHON_DIR%" gst
 
