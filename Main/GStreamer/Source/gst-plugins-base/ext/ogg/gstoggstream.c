@@ -56,10 +56,12 @@ typedef gboolean (*GstOggMapIsHeaderPacketFunc) (GstOggStream * pad,
 typedef gint64 (*GstOggMapPacketDurationFunc) (GstOggStream * pad,
     ogg_packet * packet);
 
-
+typedef gint64 (*GstOggMapGranuleposToKeyGranuleFunc) (GstOggStream * pad,
+    gint64 granulepos);
 
 #define SKELETON_FISBONE_MIN_SIZE  52
-
+#define SKELETON_FISHEAD_3_3_MIN_SIZE 112
+#define SKELETON_FISHEAD_4_0_MIN_SIZE 80
 
 struct _GstOggMap
 {
@@ -73,9 +75,10 @@ struct _GstOggMap
   GstOggMapIsKeyFrameFunc is_key_frame_func;
   GstOggMapIsHeaderPacketFunc is_header_func;
   GstOggMapPacketDurationFunc packet_duration_func;
+  GstOggMapGranuleposToKeyGranuleFunc granulepos_to_key_granule_func;
 };
 
-static const GstOggMap mappers[18];
+static const GstOggMap mappers[17];
 
 GstClockTime
 gst_ogg_stream_get_packet_start_time (GstOggStream * pad, ogg_packet * packet)
@@ -143,6 +146,9 @@ gst_ogg_stream_granulepos_to_granule (GstOggStream * pad, gint64 granulepos)
 gint64
 gst_ogg_stream_granulepos_to_key_granule (GstOggStream * pad, gint64 granulepos)
 {
+  if (mappers[pad->map].granulepos_to_key_granule_func)
+    return mappers[pad->map].granulepos_to_key_granule_func (pad, granulepos);
+
   if (granulepos == -1 || granulepos == 0) {
     return granulepos;
   }
@@ -206,9 +212,6 @@ gst_ogg_stream_get_packet_duration (GstOggStream * pad, ogg_packet * packet)
 
   return mappers[pad->map].packet_duration_func (pad, packet);
 }
-
-
-
 
 /* some generic functions */
 
@@ -303,6 +306,9 @@ setup_theora_mapper (GstOggStream * pad, ogg_packet * packet)
 
   pad->n_header_packets = 3;
   pad->frame_size = 1;
+
+  pad->bitrate = GST_READ_UINT24_BE (data + 37);
+  GST_LOG ("bit rate: %d", pad->bitrate);
 
   if (pad->granulerate_n == 0 || pad->granulerate_d == 0) {
     GST_WARNING ("frame rate %d/%d", pad->granulerate_n, pad->granulerate_d);
@@ -460,6 +466,142 @@ granule_to_granulepos_dirac (GstOggStream * pad, gint64 granule,
   return -1;
 }
 
+static gint64
+granulepos_to_key_granule_dirac (GstOggStream * pad, gint64 gp)
+{
+  gint64 pt;
+  int dist_h;
+  int dist_l;
+  int dist;
+  int delay;
+  gint64 dt;
+
+  if (gp == -1 || gp == 0)
+    return gp;
+
+  pt = ((gp >> 22) + (gp & OGG_DIRAC_GRANULE_LOW_MASK)) >> 9;
+  dist_h = (gp >> 22) & 0xff;
+  dist_l = gp & 0xff;
+  dist = (dist_h << 8) | dist_l;
+  delay = (gp >> 9) & 0x1fff;
+  dt = pt - delay;
+
+  return dt - 2 * dist + 4;
+}
+
+/* VP8 */
+
+static gboolean
+setup_vp8_mapper (GstOggStream * pad, ogg_packet * packet)
+{
+  gint width, height, par_n, par_d, fps_n, fps_d;
+
+  if (packet->bytes < 26) {
+    GST_DEBUG ("Failed to parse VP8 BOS page");
+    return FALSE;
+  }
+
+  width = GST_READ_UINT16_BE (packet->packet + 8);
+  height = GST_READ_UINT16_BE (packet->packet + 10);
+  par_n = GST_READ_UINT24_BE (packet->packet + 12);
+  par_d = GST_READ_UINT24_BE (packet->packet + 15);
+  fps_n = GST_READ_UINT32_BE (packet->packet + 18);
+  fps_d = GST_READ_UINT32_BE (packet->packet + 22);
+
+  pad->is_vp8 = TRUE;
+  pad->granulerate_n = fps_n;
+  pad->granulerate_d = fps_d;
+  pad->n_header_packets = 2;
+  pad->frame_size = 1;
+
+  pad->caps = gst_caps_new_simple ("video/x-vp8",
+      "width", G_TYPE_INT, width,
+      "height", G_TYPE_INT, height,
+      "pixel-aspect-ratio", GST_TYPE_FRACTION,
+      par_n, par_d, "framerate", GST_TYPE_FRACTION, fps_n, fps_d, NULL);
+
+  return TRUE;
+}
+
+static gboolean
+is_keyframe_vp8 (GstOggStream * pad, gint64 granulepos)
+{
+  guint64 gpos = granulepos;
+
+  if (granulepos == -1)
+    return FALSE;
+
+  /* Get rid of flags */
+  gpos >>= 3;
+
+  return ((gpos & 0x07ffffff) == 0);
+}
+
+static gint64
+granulepos_to_granule_vp8 (GstOggStream * pad, gint64 gpos)
+{
+  guint64 gp = (guint64) gpos;
+  guint32 pt;
+  guint32 dist;
+
+  pt = (gp >> 32);
+  dist = (gp >> 3) & 0x07ffffff;
+
+  GST_DEBUG ("pt %u, dist %u", pt, dist);
+
+  return pt;
+}
+
+static gint64
+granule_to_granulepos_vp8 (GstOggStream * pad, gint64 granule,
+    gint64 keyframe_granule)
+{
+  /* FIXME: This requires to look into the content of the packets
+   * because the simple granule counter doesn't know about invisible
+   * frames...
+   */
+  return -1;
+}
+
+/* Check if this packet contains an invisible frame or not */
+static gint64
+packet_duration_vp8 (GstOggStream * pad, ogg_packet * packet)
+{
+  guint32 hdr;
+
+  if (packet->bytes < 3)
+    return 0;
+
+  hdr = GST_READ_UINT24_LE (packet->packet);
+
+  return (((hdr >> 4) & 1) != 0) ? 1 : 0;
+}
+
+static gint64
+granulepos_to_key_granule_vp8 (GstOggStream * pad, gint64 granulepos)
+{
+  guint64 gp = granulepos;
+  guint64 pts = (gp >> 32);
+  guint32 dist = (gp >> 3) & 0x07ffffff;
+
+  if (granulepos == -1 || granulepos == 0)
+    return granulepos;
+
+  if (dist > pts)
+    return 0;
+
+  return pts - dist;
+}
+
+static gboolean
+is_header_vp8 (GstOggStream * pad, ogg_packet * packet)
+{
+  if (packet->bytes >= 5 && packet->packet[0] == 0x4F &&
+      packet->packet[1] == 0x56 && packet->packet[2] == 0x50 &&
+      packet->packet[3] == 0x38 && packet->packet[4] == 0x30)
+    return TRUE;
+  return FALSE;
+}
 
 /* vorbis */
 
@@ -477,6 +619,10 @@ setup_vorbis_mapper (GstOggStream * pad, ogg_packet * packet)
   pad->granuleshift = 0;
   pad->last_size = 0;
   GST_LOG ("sample rate: %d", pad->granulerate_n);
+
+  data += 8;
+  pad->bitrate = GST_READ_UINT32_LE (data);
+  GST_LOG ("bit rate: %d", pad->bitrate);
 
   pad->n_header_packets = 3;
 
@@ -546,8 +692,11 @@ setup_speex_mapper (GstOggStream * pad, ogg_packet * packet)
 
   data += 4 + 4 + 4;
   chans = GST_READ_UINT32_LE (data);
+  data += 4;
+  pad->bitrate = GST_READ_UINT32_LE (data);
 
   GST_LOG ("sample rate: %d, channels: %u", pad->granulerate_n, chans);
+  GST_LOG ("bit rate: %d", pad->bitrate);
 
   pad->n_header_packets = GST_READ_UINT32_LE (packet->packet + 68) + 2;
   pad->frame_size = GST_READ_UINT32_LE (packet->packet + 64) *
@@ -679,11 +828,15 @@ setup_fishead_mapper (GstOggStream * pad, ogg_packet * packet)
   guint8 *data;
   gint64 prestime_n, prestime_d;
   gint64 basetime_n, basetime_d;
-  gint64 basetime;
 
   data = packet->packet;
 
-  data += 8 + 2 + 2;            /* header + major/minor version */
+  data += 8;                    /* header */
+
+  pad->skeleton_major = GST_READ_UINT16_LE (data);
+  data += 2;
+  pad->skeleton_minor = GST_READ_UINT16_LE (data);
+  data += 2;
 
   prestime_n = (gint64) GST_READ_UINT64_LE (data);
   data += 8;
@@ -696,14 +849,340 @@ setup_fishead_mapper (GstOggStream * pad, ogg_packet * packet)
 
   /* FIXME: we don't use basetime anywhere in the demuxer! */
   if (basetime_d != 0)
-    basetime = gst_util_uint64_scale (GST_SECOND, basetime_n, basetime_d);
+    pad->basetime = gst_util_uint64_scale (GST_SECOND, basetime_n, basetime_d);
   else
-    basetime = -1;
+    pad->basetime = -1;
 
-  GST_INFO ("skeleton fishead parsed (basetime: %" GST_TIME_FORMAT ")",
-      GST_TIME_ARGS (basetime));
+  if (prestime_d != 0)
+    pad->prestime = gst_util_uint64_scale (GST_SECOND, prestime_n, prestime_d);
+  else
+    pad->prestime = -1;
+
+  /* Ogg Skeleton 3.3+ streams provide additional information in the header */
+  if (packet->bytes >= SKELETON_FISHEAD_3_3_MIN_SIZE && pad->skeleton_major == 3
+      && pad->skeleton_minor > 0) {
+    gint64 firstsampletime_n, firstsampletime_d;
+    gint64 lastsampletime_n, lastsampletime_d;
+    gint64 firstsampletime, lastsampletime;
+    guint64 segment_length, content_offset;
+
+    firstsampletime_n = GST_READ_UINT64_LE (data + 64);
+    firstsampletime_d = GST_READ_UINT64_LE (data + 72);
+    lastsampletime_n = GST_READ_UINT64_LE (data + 80);
+    lastsampletime_d = GST_READ_UINT64_LE (data + 88);
+    segment_length = GST_READ_UINT64_LE (data + 96);
+    content_offset = GST_READ_UINT64_LE (data + 104);
+
+    GST_INFO ("firstsampletime %" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT,
+        firstsampletime_n, firstsampletime_d);
+    GST_INFO ("lastsampletime %" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT,
+        lastsampletime_n, lastsampletime_d);
+    GST_INFO ("segment length %" G_GUINT64_FORMAT, segment_length);
+    GST_INFO ("content offset %" G_GUINT64_FORMAT, content_offset);
+
+    if (firstsampletime_d > 0)
+      firstsampletime = gst_util_uint64_scale (GST_SECOND,
+          firstsampletime_n, firstsampletime_d);
+    else
+      firstsampletime = 0;
+
+    if (lastsampletime_d > 0)
+      lastsampletime = gst_util_uint64_scale (GST_SECOND,
+          lastsampletime_n, lastsampletime_d);
+    else
+      lastsampletime = 0;
+
+    if (lastsampletime > firstsampletime)
+      pad->total_time = lastsampletime - firstsampletime;
+    else
+      pad->total_time = -1;
+
+    GST_INFO ("skeleton fishead parsed total: %" GST_TIME_FORMAT,
+        GST_TIME_ARGS (pad->total_time));
+  } else if (packet->bytes >= SKELETON_FISHEAD_4_0_MIN_SIZE
+      && pad->skeleton_major == 4) {
+    guint64 segment_length, content_offset;
+
+    segment_length = GST_READ_UINT64_LE (data + 64);
+    content_offset = GST_READ_UINT64_LE (data + 72);
+
+    GST_INFO ("segment length %" G_GUINT64_FORMAT, segment_length);
+    GST_INFO ("content offset %" G_GUINT64_FORMAT, content_offset);
+  } else {
+    pad->total_time = -1;
+  }
+
+  GST_INFO ("skeleton fishead %u.%u parsed (basetime: %" GST_TIME_FORMAT
+      ", prestime: %" GST_TIME_FORMAT ")", pad->skeleton_major,
+      pad->skeleton_minor, GST_TIME_ARGS (pad->basetime),
+      GST_TIME_ARGS (pad->prestime));
 
   pad->is_skeleton = TRUE;
+
+  return TRUE;
+}
+
+gboolean
+gst_ogg_map_parse_fisbone (GstOggStream * pad, const guint8 * data, guint size,
+    guint32 * serialno, GstOggSkeleton * type)
+{
+  GstOggSkeleton stype;
+  guint serial_offset;
+
+  if (size < SKELETON_FISBONE_MIN_SIZE) {
+    GST_WARNING ("small fisbone packet of size %d, ignoring", size);
+    return FALSE;
+  }
+
+  if (memcmp (data, "fisbone\0", 8) == 0) {
+    GST_INFO ("got fisbone packet");
+    stype = GST_OGG_SKELETON_FISBONE;
+    serial_offset = 12;
+  } else if (memcmp (data, "index\0", 6) == 0) {
+    GST_INFO ("got index packet");
+    stype = GST_OGG_SKELETON_INDEX;
+    serial_offset = 6;
+  } else {
+    GST_WARNING ("unknown skeleton packet %10.10s", data);
+    return FALSE;
+  }
+
+  if (serialno)
+    *serialno = GST_READ_UINT32_LE (data + serial_offset);
+
+  if (type)
+    *type = stype;
+
+  return TRUE;
+}
+
+gboolean
+gst_ogg_map_add_fisbone (GstOggStream * pad, GstOggStream * skel_pad,
+    const guint8 * data, guint size, GstClockTime * p_start_time)
+{
+  GstClockTime start_time;
+  gint64 start_granule;
+
+  if (pad->have_fisbone) {
+    GST_DEBUG ("already have fisbone, ignoring second one");
+    return FALSE;
+  }
+
+  /* skip "fisbone\0" + headers offset + serialno + num headers */
+  data += 8 + 4 + 4 + 4;
+
+  pad->have_fisbone = TRUE;
+
+  /* we just overwrite whatever was set before by the format-specific setup */
+  pad->granulerate_n = GST_READ_UINT64_LE (data);
+  pad->granulerate_d = GST_READ_UINT64_LE (data + 8);
+
+  start_granule = GST_READ_UINT64_LE (data + 16);
+  pad->preroll = GST_READ_UINT32_LE (data + 24);
+  pad->granuleshift = GST_READ_UINT8 (data + 28);
+
+  start_time = granulepos_to_granule_default (pad, start_granule);
+
+  GST_INFO ("skeleton fisbone parsed "
+      "(start time: %" GST_TIME_FORMAT
+      " granulerate_n: %d granulerate_d: %d "
+      " preroll: %" G_GUINT32_FORMAT " granuleshift: %d)",
+      GST_TIME_ARGS (start_time),
+      pad->granulerate_n, pad->granulerate_d, pad->preroll, pad->granuleshift);
+
+  if (p_start_time)
+    *p_start_time = start_time;
+
+  return TRUE;
+}
+
+static gboolean
+read_vlc (const guint8 ** data, guint * size, guint64 * result)
+{
+  gint shift = 0;
+  guint8 byte;
+
+  *result = 0;
+
+  do {
+    if (G_UNLIKELY (*size < 1))
+      return FALSE;
+
+    byte = **data;
+    *result |= ((byte & 0x7f) << shift);
+    shift += 7;
+
+    (*data)++;
+    (*size)--;
+  } while ((byte & 0x80) != 0x80);
+
+  return TRUE;
+}
+
+gboolean
+gst_ogg_map_add_index (GstOggStream * pad, GstOggStream * skel_pad,
+    const guint8 * data, guint size)
+{
+  guint64 i, n_keypoints, isize;
+  guint64 offset, timestamp;
+  guint64 offset_d, timestamp_d;
+
+  if (pad->index) {
+    GST_DEBUG ("already have index, ignoring second one");
+    return TRUE;
+  }
+
+  if ((skel_pad->skeleton_major == 3 && size < 26) ||
+      (skel_pad->skeleton_major == 4 && size < 62)) {
+    GST_WARNING ("small index packet of size %u, ignoring", size);
+    return FALSE;
+  }
+
+  /* skip "index\0" + serialno */
+  data += 6 + 4;
+  size -= 6 + 4;
+
+  n_keypoints = GST_READ_UINT64_LE (data);
+
+  data += 8;
+  size -= 8;
+
+  pad->kp_denom = GST_READ_UINT64_LE (data);
+  if (pad->kp_denom == 0)
+    pad->kp_denom = 1;
+
+  data += 8;
+  size -= 8;
+
+  if (skel_pad->skeleton_major == 4) {
+    gint64 firstsampletime_n;
+    gint64 lastsampletime_n;
+    gint64 firstsampletime, lastsampletime;
+
+    firstsampletime_n = GST_READ_UINT64_LE (data + 0);
+    lastsampletime_n = GST_READ_UINT64_LE (data + 8);
+
+    GST_INFO ("firstsampletime %" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT,
+        firstsampletime_n, pad->kp_denom);
+    GST_INFO ("lastsampletime %" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT,
+        lastsampletime_n, pad->kp_denom);
+
+    firstsampletime = gst_util_uint64_scale (GST_SECOND,
+        firstsampletime_n, pad->kp_denom);
+    lastsampletime = gst_util_uint64_scale (GST_SECOND,
+        lastsampletime_n, pad->kp_denom);
+
+    if (lastsampletime > firstsampletime)
+      pad->total_time = lastsampletime - firstsampletime;
+    else
+      pad->total_time = -1;
+
+    GST_INFO ("skeleton index parsed total: %" GST_TIME_FORMAT,
+        GST_TIME_ARGS (pad->total_time));
+
+    data += 16;
+    size -= 16;
+  }
+
+  GST_INFO ("skeleton index has %" G_GUINT64_FORMAT " keypoints, denom: %"
+      G_GINT64_FORMAT, n_keypoints, pad->kp_denom);
+
+  pad->index = g_try_new (GstOggIndex, n_keypoints);
+  if (!pad->index)
+    return FALSE;
+
+  isize = 0;
+  offset = 0;
+  timestamp = 0;
+
+  for (i = 0; i < n_keypoints; i++) {
+    /* read deltas */
+    if (!read_vlc (&data, &size, &offset_d))
+      break;
+    if (!read_vlc (&data, &size, &timestamp_d))
+      break;
+
+    offset += offset_d;
+    timestamp += timestamp_d;
+
+    pad->index[i].offset = offset;
+    pad->index[i].timestamp = timestamp;
+    isize++;
+
+    GST_INFO ("offset %" G_GUINT64_FORMAT " time %" G_GUINT64_FORMAT, offset,
+        timestamp);
+  }
+  if (isize != n_keypoints) {
+    GST_WARNING ("truncated index, expected %" G_GUINT64_FORMAT ", found %"
+        G_GUINT64_FORMAT, n_keypoints, isize);
+  }
+  pad->n_index = isize;
+  /* try to use the index to estimate the bitrate */
+  if (isize > 2) {
+    guint64 so, eo, st, et, b, t;
+
+    /* get start and end offset and timestamps */
+    so = pad->index[0].offset;
+    st = pad->index[0].timestamp;
+    eo = pad->index[isize - 1].offset;
+    et = pad->index[isize - 1].timestamp;
+
+    b = eo - so;
+    t = et - st;
+
+    GST_DEBUG ("bytes/time %" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT, b, t);
+
+    /* this is the total stream bitrate according to this index */
+    pad->idx_bitrate = gst_util_uint64_scale (8 * b, pad->kp_denom, t);
+
+    GST_DEBUG ("bitrate %" G_GUINT64_FORMAT, pad->idx_bitrate);
+  }
+
+  return TRUE;
+}
+
+static gint
+gst_ogg_index_compare (const GstOggIndex * index, const guint64 * ts,
+    gpointer user_data)
+{
+  if (index->timestamp < *ts)
+    return -1;
+  else if (index->timestamp > *ts)
+    return 1;
+  else
+    return 0;
+}
+
+gboolean
+gst_ogg_map_search_index (GstOggStream * pad, gboolean before,
+    guint64 * timestamp, guint64 * offset)
+{
+  guint64 n_index;
+  guint64 ts;
+  GstOggIndex *best;
+
+  n_index = pad->n_index;
+  if (n_index == 0 || pad->index == NULL)
+    return FALSE;
+
+  ts = gst_util_uint64_scale (*timestamp, pad->kp_denom, GST_SECOND);
+  GST_INFO ("timestamp %" G_GUINT64_FORMAT, ts);
+
+  best =
+      gst_util_array_binary_search (pad->index, n_index, sizeof (GstOggIndex),
+      (GCompareDataFunc) gst_ogg_index_compare, GST_SEARCH_MODE_BEFORE, &ts,
+      NULL);
+
+  if (best == NULL)
+    return FALSE;
+
+  GST_INFO ("found at index %u", (guint) (best - pad->index));
+
+  if (offset)
+    *offset = best->offset;
+  if (timestamp)
+    *timestamp =
+        gst_util_uint64_scale (best->timestamp, GST_SECOND, pad->kp_denom);
 
   return TRUE;
 }
@@ -1087,7 +1566,8 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_default,
     is_keyframe_theora,
     is_header_theora,
-    packet_duration_constant
+    packet_duration_constant,
+    NULL
   },
   {
     "\001vorbis", 7, 22,
@@ -1097,7 +1577,8 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_default,
     is_keyframe_true,
     is_header_vorbis,
-    packet_duration_vorbis
+    packet_duration_vorbis,
+    NULL
   },
   {
     "Speex", 5, 80,
@@ -1107,7 +1588,8 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_default,
     is_keyframe_true,
     is_header_count,
-    packet_duration_constant
+    packet_duration_constant,
+    NULL
   },
   {
     "PCM     ", 8, 0,
@@ -1117,6 +1599,7 @@ static const GstOggMap mappers[] = {
     NULL,
     NULL,
     is_header_count,
+    NULL,
     NULL
   },
   {
@@ -1127,6 +1610,7 @@ static const GstOggMap mappers[] = {
     NULL,
     NULL,
     is_header_count,
+    NULL,
     NULL
   },
   {
@@ -1137,6 +1621,7 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_default,
     NULL,
     is_header_count,
+    NULL,
     NULL
   },
   {
@@ -1147,6 +1632,7 @@ static const GstOggMap mappers[] = {
     NULL,
     NULL,
     is_header_true,
+    NULL,
     NULL
   },
   {
@@ -1157,7 +1643,8 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_default,
     is_keyframe_true,
     is_header_fLaC,
-    packet_duration_flac
+    packet_duration_flac,
+    NULL
   },
   {
     "\177FLAC", 5, 36,
@@ -1167,7 +1654,8 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_default,
     is_keyframe_true,
     is_header_flac,
-    packet_duration_flac
+    packet_duration_flac,
+    NULL
   },
   {
     "AnxData", 7, 0,
@@ -1177,6 +1665,7 @@ static const GstOggMap mappers[] = {
     NULL,
     NULL,
     NULL,
+    NULL
   },
   {
     "CELT    ", 8, 0,
@@ -1186,7 +1675,8 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_default,
     NULL,
     is_header_count,
-    packet_duration_constant
+    packet_duration_constant,
+    NULL
   },
   {
     "\200kate\0\0\0", 8, 0,
@@ -1196,6 +1686,7 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_default,
     NULL,
     is_header_count,
+    NULL,
     NULL
   },
   {
@@ -1206,7 +1697,19 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_dirac,
     is_keyframe_dirac,
     is_header_count,
-    packet_duration_constant
+    packet_duration_constant,
+    granulepos_to_key_granule_dirac
+  },
+  {
+    "OVP80\1\1", 7, 4,
+    "video/x-vp8",
+    setup_vp8_mapper,
+    granulepos_to_granule_vp8,
+    granule_to_granulepos_vp8,
+    is_keyframe_vp8,
+    is_header_vp8,
+    packet_duration_vp8,
+    granulepos_to_key_granule_vp8
   },
   {
     "\001audio\0\0\0", 9, 53,
@@ -1216,7 +1719,8 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_default,
     is_keyframe_true,
     is_header_ogm,
-    packet_duration_ogm
+    packet_duration_ogm,
+    NULL
   },
   {
     "\001video\0\0\0", 9, 53,
@@ -1226,7 +1730,8 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_default,
     NULL,
     is_header_ogm,
-    packet_duration_constant
+    packet_duration_constant,
+    NULL
   },
   {
     "\001text\0\0\0", 9, 9,
@@ -1236,7 +1741,8 @@ static const GstOggMap mappers[] = {
     granule_to_granulepos_default,
     is_keyframe_true,
     is_header_ogm,
-    packet_duration_ogm
+    packet_duration_ogm,
+    NULL
   }
 };
 /* *INDENT-ON* */

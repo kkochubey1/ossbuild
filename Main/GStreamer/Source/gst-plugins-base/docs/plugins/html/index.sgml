@@ -1,3 +1,4 @@
+<ONLINE href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base/html/">
 <ANCHOR id="gst-plugins-base-plugins-adder" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-adder.html">
 <ANCHOR id="gst-plugins-base-plugins-adder.synopsis" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-adder.html#gst-plugins-base-plugins-adder.synopsis">
 <ANCHOR id="GstAdder" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-adder.html#GstAdder">
@@ -244,6 +245,7 @@
 <ANCHOR id="GstDecodeBin2--max-size-time" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--max-size-time">
 <ANCHOR id="GstDecodeBin2--use-buffering" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--use-buffering">
 <ANCHOR id="GstDecodeBin2--post-stream-topology" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--post-stream-topology">
+<ANCHOR id="GstDecodeBin2--expose-all-streams" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2--expose-all-streams">
 <ANCHOR id="gst-plugins-base-plugins-decodebin2.signal-details" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#gst-plugins-base-plugins-decodebin2.signal-details">
 <ANCHOR id="GstDecodeBin2-autoplug-continue" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2-autoplug-continue">
 <ANCHOR id="GstDecodeBin2-autoplug-sort" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-decodebin2.html#GstDecodeBin2-autoplug-sort">
@@ -493,6 +495,7 @@
 <ANCHOR id="GST-PLAY-FLAG-NATIVE-VIDEO:CAPS" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GST-PLAY-FLAG-NATIVE-VIDEO:CAPS">
 <ANCHOR id="GST-PLAY-FLAG-DOWNLOAD:CAPS" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GST-PLAY-FLAG-DOWNLOAD:CAPS">
 <ANCHOR id="GST-PLAY-FLAG-BUFFERING:CAPS" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GST-PLAY-FLAG-BUFFERING:CAPS">
+<ANCHOR id="GST-PLAY-FLAG-DEINTERLACE:CAPS" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GST-PLAY-FLAG-DEINTERLACE:CAPS">
 <ANCHOR id="gst-plugins-base-plugins-playbin2.property-details" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#gst-plugins-base-plugins-playbin2.property-details">
 <ANCHOR id="GstPlayBin2--audio-sink" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GstPlayBin2--audio-sink">
 <ANCHOR id="GstPlayBin2--connection-speed" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GstPlayBin2--connection-speed">
@@ -517,6 +520,7 @@
 <ANCHOR id="GstPlayBin2--buffer-size" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GstPlayBin2--buffer-size">
 <ANCHOR id="GstPlayBin2--text-sink" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GstPlayBin2--text-sink">
 <ANCHOR id="GstPlayBin2--subpic-sink" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GstPlayBin2--subpic-sink">
+<ANCHOR id="GstPlayBin2--av-offset" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GstPlayBin2--av-offset">
 <ANCHOR id="gst-plugins-base-plugins-playbin2.signal-details" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#gst-plugins-base-plugins-playbin2.signal-details">
 <ANCHOR id="GstPlayBin2-about-to-finish" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GstPlayBin2-about-to-finish">
 <ANCHOR id="GstPlayBin2-audio-changed" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-playbin2.html#GstPlayBin2-audio-changed">
@@ -739,6 +743,7 @@
 <ANCHOR id="GstURIDecodeBin--buffer-size" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-uridecodebin.html#GstURIDecodeBin--buffer-size">
 <ANCHOR id="GstURIDecodeBin--download" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-uridecodebin.html#GstURIDecodeBin--download">
 <ANCHOR id="GstURIDecodeBin--use-buffering" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-uridecodebin.html#GstURIDecodeBin--use-buffering">
+<ANCHOR id="GstURIDecodeBin--expose-all-streams" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-uridecodebin.html#GstURIDecodeBin--expose-all-streams">
 <ANCHOR id="gst-plugins-base-plugins-uridecodebin.signal-details" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-uridecodebin.html#gst-plugins-base-plugins-uridecodebin.signal-details">
 <ANCHOR id="GstURIDecodeBin-autoplug-continue" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-uridecodebin.html#GstURIDecodeBin-autoplug-continue">
 <ANCHOR id="GstURIDecodeBin-autoplug-factories" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-uridecodebin.html#GstURIDecodeBin-autoplug-factories">
@@ -937,8 +942,6 @@
 <ANCHOR id="plugin-cdparanoia" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-plugin-cdparanoia.html#plugin-cdparanoia">
 <ANCHOR id="gst-plugins-base-plugins-plugin-decodebin" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-plugin-decodebin.html">
 <ANCHOR id="plugin-decodebin" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-plugin-decodebin.html#plugin-decodebin">
-<ANCHOR id="gst-plugins-base-plugins-plugin-decodebin2" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-plugin-decodebin2.html">
-<ANCHOR id="plugin-decodebin2" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-plugin-decodebin2.html#plugin-decodebin2">
 <ANCHOR id="gst-plugins-base-plugins-plugin-ffmpegcolorspace" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-plugin-ffmpegcolorspace.html">
 <ANCHOR id="plugin-ffmpegcolorspace" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-plugin-ffmpegcolorspace.html#plugin-ffmpegcolorspace">
 <ANCHOR id="gst-plugins-base-plugins-plugin-gdp" href="gst-plugins-base-plugins-0.10/gst-plugins-base-plugins-plugin-gdp.html">

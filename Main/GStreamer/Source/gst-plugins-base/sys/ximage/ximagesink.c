@@ -1294,6 +1294,8 @@ gst_ximagesink_xcontext_get (GstXImageSink * ximagesink)
     g_mutex_unlock (ximagesink->x_lock);
     g_free (xcontext->par);
     g_free (xcontext);
+    GST_ELEMENT_ERROR (ximagesink, RESOURCE, WRITE,
+        ("Could not get supported pixmap formats"), (NULL));
     return NULL;
   }
 
@@ -1394,6 +1396,9 @@ gst_ximagesink_xcontext_clear (GstXImageSink * ximagesink)
   g_free (ximagesink->par);
   ximagesink->par = NULL;
 
+  if (xcontext->last_caps)
+    gst_caps_replace (&xcontext->last_caps, NULL);
+
   g_mutex_lock (ximagesink->x_lock);
 
   XCloseDisplay (xcontext->disp);
@@ -1460,7 +1465,6 @@ gst_ximagesink_setcaps (GstBaseSink * bsink, GstCaps * caps)
   GstXImageSink *ximagesink;
   gboolean ret = TRUE;
   GstStructure *structure;
-  GstCaps *intersection;
   const GValue *par;
   gint new_width, new_height;
   const GValue *fps;
@@ -1475,15 +1479,8 @@ gst_ximagesink_setcaps (GstBaseSink * bsink, GstCaps * caps)
       GST_PTR_FORMAT, ximagesink->xcontext->caps, caps);
 
   /* We intersect those caps with our template to make sure they are correct */
-  intersection = gst_caps_intersect (ximagesink->xcontext->caps, caps);
-  GST_DEBUG_OBJECT (ximagesink, "intersection returned %" GST_PTR_FORMAT,
-      intersection);
-  if (gst_caps_is_empty (intersection)) {
-    gst_caps_unref (intersection);
-    return FALSE;
-  }
-
-  gst_caps_unref (intersection);
+  if (!gst_caps_can_intersect (ximagesink->xcontext->caps, caps))
+    goto incompatible_caps;
 
   structure = gst_caps_get_structure (caps, 0);
 
@@ -1554,6 +1551,11 @@ gst_ximagesink_setcaps (GstBaseSink * bsink, GstCaps * caps)
   return TRUE;
 
   /* ERRORS */
+incompatible_caps:
+  {
+    GST_ERROR_OBJECT (ximagesink, "caps incompatible");
+    return FALSE;
+  }
 wrong_aspect:
   {
     GST_INFO_OBJECT (ximagesink, "pixel aspect ratio does not match");
@@ -1658,6 +1660,11 @@ gst_ximagesink_show_frame (GstVideoSink * vsink, GstBuffer * buf)
   g_return_val_if_fail (buf != NULL, GST_FLOW_ERROR);
 
   ximagesink = GST_XIMAGESINK (vsink);
+
+  /* This shouldn't really happen because state changes will fail
+   * if the xcontext can't be allocated */
+  if (!ximagesink->xcontext)
+    return GST_FLOW_ERROR;
 
   /* If this buffer has been allocated using our buffer management we simply
      put the ximage which is in the PRIVATE pointer */
@@ -1766,8 +1773,14 @@ gst_ximagesink_buffer_alloc (GstBaseSink * bsink, guint64 offset, guint size,
   gboolean alloc_unref = FALSE;
   gint width, height;
   GstVideoRectangle dst, src, result;
+  gboolean caps_accepted = FALSE;
 
   ximagesink = GST_XIMAGESINK (bsink);
+
+  /* This shouldn't really happen because state changes will fail
+   * if the xcontext can't be allocated */
+  if (!ximagesink->xcontext)
+    return GST_FLOW_ERROR;
 
   GST_LOG_OBJECT (ximagesink,
       "a buffer of %d bytes was requested with caps %" GST_PTR_FORMAT
@@ -1847,10 +1860,22 @@ gst_ximagesink_buffer_alloc (GstBaseSink * bsink, guint64 offset, guint size,
           GST_TYPE_FRACTION, nom, den, NULL);
     }
 
+
     /* see if peer accepts our new suggestion, if there is no peer, this 
      * function returns true. */
-    if (gst_pad_peer_accept_caps (GST_VIDEO_SINK_PAD (ximagesink),
-            desired_caps)) {
+    if (!ximagesink->xcontext->last_caps ||
+        !gst_caps_is_equal (desired_caps, ximagesink->xcontext->last_caps)) {
+      caps_accepted =
+          gst_pad_peer_accept_caps (GST_VIDEO_SINK_PAD (ximagesink),
+          desired_caps);
+
+      /* Suggestion failed, prevent future attempts for the same caps
+       * to fail as well. */
+      if (!caps_accepted)
+        gst_caps_replace (&ximagesink->xcontext->last_caps, desired_caps);
+    }
+
+    if (caps_accepted) {
       /* we will not alloc a buffer of the new suggested caps. Make sure
        * we also unref this new caps after we set it on the buffer. */
       alloc_caps = desired_caps;
@@ -2405,24 +2430,16 @@ gst_ximagesink_get_type (void)
       (GClassInitFunc) gst_ximagesink_class_init,
       NULL,
       NULL,
-      sizeof (GstXImageSink),
-      0,
-      (GInstanceInitFunc) gst_ximagesink_init,
+      sizeof (GstXImageSink), 0, (GInstanceInitFunc) gst_ximagesink_init,
     };
     static const GInterfaceInfo iface_info = {
-      (GInterfaceInitFunc) gst_ximagesink_interface_init,
-      NULL,
-      NULL,
+      (GInterfaceInitFunc) gst_ximagesink_interface_init, NULL, NULL,
     };
     static const GInterfaceInfo navigation_info = {
-      (GInterfaceInitFunc) gst_ximagesink_navigation_init,
-      NULL,
-      NULL,
+      (GInterfaceInitFunc) gst_ximagesink_navigation_init, NULL, NULL,
     };
     static const GInterfaceInfo overlay_info = {
-      (GInterfaceInitFunc) gst_ximagesink_xoverlay_init,
-      NULL,
-      NULL,
+      (GInterfaceInitFunc) gst_ximagesink_xoverlay_init, NULL, NULL,
     };
 
     ximagesink_type = g_type_register_static (GST_TYPE_VIDEO_SINK,

@@ -41,7 +41,6 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <liboil/liboil.h>
 
 GST_DEBUG_CATEGORY_STATIC (video_test_src_debug);
 #define GST_CAT_DEFAULT video_test_src_debug
@@ -297,6 +296,16 @@ gst_video_test_src_src_fixate (GstPad * pad, GstCaps * caps)
   gst_structure_fixate_field_nearest_int (structure, "width", 320);
   gst_structure_fixate_field_nearest_int (structure, "height", 240);
   gst_structure_fixate_field_nearest_fraction (structure, "framerate", 30, 1);
+  if (gst_structure_has_field (structure, "pixel-aspect-ratio"))
+    gst_structure_fixate_field_nearest_fraction (structure,
+        "pixel-aspect-ratio", 1, 1);
+  if (gst_structure_has_field (structure, "color-matrix"))
+    gst_structure_fixate_field_string (structure, "color-matrix", "sdtv");
+  if (gst_structure_has_field (structure, "chroma-site"))
+    gst_structure_fixate_field_string (structure, "chroma-site", "mpeg2");
+
+  if (gst_structure_has_field (structure, "interlaced"))
+    gst_structure_fixate_field_boolean (structure, "interlaced", FALSE);
 }
 
 static void
@@ -858,8 +867,6 @@ gst_video_test_src_start (GstBaseSrc * basesrc)
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
-  oil_init ();
-
   GST_DEBUG_CATEGORY_INIT (video_test_src_debug, "videotestsrc", 0,
       "Video Test Source");
 

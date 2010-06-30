@@ -49,7 +49,7 @@
 #include <gst/controller/gstcontroller.h>
 #include <gst/audio/audio.h>
 #include <gst/audio/gstaudiofilter.h>
-#include <liboil/liboil.h>
+#include "gstvolumeorc.h"
 
 #include "gstvolume.h"
 
@@ -497,15 +497,20 @@ gst_volume_init (GstVolume * self, GstVolumeClass * g_class)
   gst_base_transform_set_gap_aware (GST_BASE_TRANSFORM (self), TRUE);
 }
 
+#define USE_ORC
+
 static void
 volume_process_double (GstVolume * self, gpointer bytes, guint n_bytes)
 {
   gdouble *data = (gdouble *) bytes;
   guint num_samples = n_bytes / sizeof (gdouble);
+  int i;
 
   gdouble vol = self->current_volume;
 
-  oil_scalarmultiply_f64_ns (data, data, &vol, num_samples);
+  for (i = 0; i < num_samples; i++) {
+    data[i] *= vol;
+  }
 }
 
 static void
@@ -531,17 +536,15 @@ volume_process_float (GstVolume * self, gpointer bytes, guint n_bytes)
   gfloat *data = (gfloat *) bytes;
   guint num_samples = n_bytes / sizeof (gfloat);
 
-#if 0
-  guint i;
-
+#ifndef broken
+  int i;
   for (i = 0; i < num_samples; i++) {
-    *data++ *= self->real_vol_f;
+    *data++ *= self->current_volume;
   }
-  /* time "gst-launch 2>/dev/null audiotestsrc wave=7 num-buffers=10000 ! audio/x-raw-float !
-   * volume volume=1.5 ! fakesink" goes from 0m0.850s -> 0m0.717s with liboil
-   */
+#else
+  /* FIXME compiler doesn't set the float parameter correctly */
+  orc_scalarmultiply_f32_ns (data, data, self->current_volume, num_samples);
 #endif
-  oil_scalarmultiply_f32_ns (data, data, &self->current_volume, num_samples);
 }
 
 static void
@@ -707,8 +710,12 @@ volume_process_int16 (GstVolume * self, gpointer bytes, guint n_bytes)
   gint16 *data = (gint16 *) bytes;
   guint num_samples = n_bytes / sizeof (gint16);
 
+#ifndef USE_ORC
   guint i;
   gint val;
+
+  /* hard coded in volume.orc */
+  g_assert (VOLUME_UNITY_INT16_BIT_SHIFT == 13);
 
   for (i = 0; i < num_samples; i++) {
     /* we use bitshifting instead of dividing by UNITY_INT for speed */
@@ -717,28 +724,39 @@ volume_process_int16 (GstVolume * self, gpointer bytes, guint n_bytes)
         (gint16) ((self->current_vol_i16 *
             val) >> VOLUME_UNITY_INT16_BIT_SHIFT);
   }
+#else
+  /* FIXME */
+  orc_process_int16 (data, self->current_vol_i16, num_samples);
+#endif
 }
 
 static void
 volume_process_int16_clamp (GstVolume * self, gpointer bytes, guint n_bytes)
 {
   gint16 *data = (gint16 *) bytes;
-  guint i, num_samples;
-  gint val;
+  guint num_samples = n_bytes / sizeof (gint16);
 
-  num_samples = n_bytes / sizeof (gint16);
+#ifndef USE_ORC
+  int i;
+
+  /* hard coded in volume.orc */
+  g_assert (VOLUME_UNITY_INT16_BIT_SHIFT == 13);
 
   /* FIXME: oil_scalarmultiply_s16_ns ?
    * https://bugs.freedesktop.org/show_bug.cgi?id=7060
    */
   for (i = 0; i < num_samples; i++) {
     /* we use bitshifting instead of dividing by UNITY_INT for speed */
-    val = (gint) * data;
+    int val = (gint) * data;
     *data++ =
         (gint16) CLAMP ((self->current_vol_i16 *
             val) >> VOLUME_UNITY_INT16_BIT_SHIFT, VOLUME_MIN_INT16,
         VOLUME_MAX_INT16);
   }
+#else
+  /* FIXME */
+  orc_process_int16_clamp (data, self->current_vol_i16, num_samples);
+#endif
 }
 
 static void
@@ -764,34 +782,49 @@ volume_process_int8 (GstVolume * self, gpointer bytes, guint n_bytes)
 {
   gint8 *data = (gint8 *) bytes;
   guint num_samples = n_bytes / sizeof (gint8);
-  guint i;
-  gint val;
+
+#ifndef USE_ORC
+  int i;
 
   for (i = 0; i < num_samples; i++) {
     /* we use bitshifting instead of dividing by UNITY_INT for speed */
-    val = (gint) * data;
+    int val = (gint) * data;
     *data++ =
         (gint8) ((self->current_vol_i8 * val) >> VOLUME_UNITY_INT8_BIT_SHIFT);
   }
+#else
+  /* FIXME */
+  /* hard coded in volume.orc */
+  g_assert (VOLUME_UNITY_INT8_BIT_SHIFT == 5);
+
+  orc_process_int8 (data, self->current_vol_i8, num_samples);
+#endif
 }
 
 static void
 volume_process_int8_clamp (GstVolume * self, gpointer bytes, guint n_bytes)
 {
   gint8 *data = (gint8 *) bytes;
-  guint i, num_samples;
-  gint val;
+  guint num_samples = n_bytes / sizeof (gint8);
 
-  num_samples = n_bytes / sizeof (gint8);
+#ifndef USE_ORC
+  int i;
+
+  /* hard coded in volume.orc */
+  g_assert (VOLUME_UNITY_INT8_BIT_SHIFT == 5);
 
   for (i = 0; i < num_samples; i++) {
     /* we use bitshifting instead of dividing by UNITY_INT for speed */
-    val = (gint) * data;
+    int val = (gint) * data;
     *data++ =
         (gint8) CLAMP ((self->current_vol_i8 *
             val) >> VOLUME_UNITY_INT8_BIT_SHIFT, VOLUME_MIN_INT8,
         VOLUME_MAX_INT8);
   }
+#else
+  /* FIXME */
+  orc_process_int8_clamp (data, self->current_vol_i8, num_samples);
+#endif
 }
 
 static void
@@ -1053,8 +1086,6 @@ volume_get_property (GObject * object, guint prop_id, GValue * value,
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
-  oil_init ();
-
   /* initialize gst controller library */
   gst_controller_init (NULL, NULL);
 

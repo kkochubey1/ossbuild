@@ -28,6 +28,7 @@
 #include <gst/pbutils/pbutils.h>
 
 #include "gstplaysink.h"
+#include "gstscreenshot.h"
 
 GST_DEBUG_CATEGORY_STATIC (gst_play_sink_debug);
 #define GST_CAT_DEFAULT gst_play_sink_debug
@@ -61,7 +62,16 @@ typedef struct
   gboolean sink_volume;         /* if the volume was provided by the sink */
   GstElement *mute;             /* element with the mute property */
   GstElement *sink;
+  GstElement *ts_offset;
 } GstPlayAudioChain;
+
+typedef struct
+{
+  GstPlayChain chain;
+  GstPad *sinkpad, *srcpad;
+  GstElement *conv;
+  GstElement *deinterlace;
+} GstPlayVideoDeinterlaceChain;
 
 typedef struct
 {
@@ -72,6 +82,7 @@ typedef struct
   GstElement *scale;
   GstElement *sink;
   gboolean async;
+  GstElement *ts_offset;
 } GstPlayVideoChain;
 
 typedef struct
@@ -104,8 +115,15 @@ typedef struct
 } GstPlayTextChain;
 
 #define GST_PLAY_SINK_GET_LOCK(playsink) (&((GstPlaySink *)playsink)->lock)
-#define GST_PLAY_SINK_LOCK(playsink)     g_static_rec_mutex_lock (GST_PLAY_SINK_GET_LOCK (playsink))
-#define GST_PLAY_SINK_UNLOCK(playsink)   g_static_rec_mutex_unlock (GST_PLAY_SINK_GET_LOCK (playsink))
+#define GST_PLAY_SINK_LOCK(playsink)     G_STMT_START { \
+  GST_LOG_OBJECT (playsink, "locking from thread %p", g_thread_self ()); \
+  g_static_rec_mutex_lock (GST_PLAY_SINK_GET_LOCK (playsink)); \
+  GST_LOG_OBJECT (playsink, "locked from thread %p", g_thread_self ()); \
+} G_STMT_END
+#define GST_PLAY_SINK_UNLOCK(playsink)   G_STMT_START { \
+  GST_LOG_OBJECT (playsink, "unlocking from thread %p", g_thread_self ()); \
+  g_static_rec_mutex_unlock (GST_PLAY_SINK_GET_LOCK (playsink)); \
+} G_STMT_END
 
 struct _GstPlaySink
 {
@@ -120,6 +138,7 @@ struct _GstPlaySink
 
   /* chains */
   GstPlayAudioChain *audiochain;
+  GstPlayVideoDeinterlaceChain *videodeinterlacechain;
   GstPlayVideoChain *videochain;
   GstPlayVisChain *vischain;
   GstPlayTextChain *textchain;
@@ -151,6 +170,7 @@ struct _GstPlaySink
   gint count;
   gboolean volume_changed;      /* volume/mute changed while no audiochain */
   gboolean mute_changed;        /* ... has been created yet */
+  gint64 av_offset;
 };
 
 struct _GstPlaySinkClass
@@ -158,6 +178,8 @@ struct _GstPlaySinkClass
   GstBinClass parent_class;
 
     gboolean (*reconfigure) (GstPlaySink * playsink);
+
+  GstBuffer *(*convert_frame) (GstPlaySink * playsink, GstCaps * caps);
 };
 
 static GstStaticPadTemplate audiorawtemplate =
@@ -195,6 +217,8 @@ enum
   PROP_FONT_DESC,
   PROP_SUBTITLE_ENCODING,
   PROP_VIS_PLUGIN,
+  PROP_FRAME,
+  PROP_AV_OFFSET,
   PROP_LAST
 };
 
@@ -221,6 +245,13 @@ static GstStateChangeReturn gst_play_sink_change_state (GstElement * element,
     GstStateChange transition);
 
 static void gst_play_sink_handle_message (GstBin * bin, GstMessage * message);
+
+static void notify_volume_cb (GObject * object, GParamSpec * pspec,
+    GstPlaySink * playsink);
+static void notify_mute_cb (GObject * object, GParamSpec * pspec,
+    GstPlaySink * playsink);
+
+static void update_av_offset (GstPlaySink * playsink);
 
 /* static guint gst_play_sink_signals[LAST_SIGNAL] = { 0 }; */
 
@@ -285,11 +316,58 @@ gst_play_sink_class_init (GstPlaySinkClass * klass)
       g_param_spec_object ("vis-plugin", "Vis plugin",
           "the visualization element to use (NULL = default)",
           GST_TYPE_ELEMENT, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * GstPlaySink:frame:
+   *
+   * Get the currently rendered or prerolled frame in the video sink.
+   * The #GstCaps on the buffer will describe the format of the buffer.
+   *
+   * Since: 0.10.30
+   */
+  g_object_class_install_property (gobject_klass, PROP_FRAME,
+      gst_param_spec_mini_object ("frame", "Frame",
+          "The last frame (NULL = no video available)",
+          GST_TYPE_BUFFER, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+  /**
+   * GstPlaySink:av-offset:
+   *
+   * Control the synchronisation offset between the audio and video streams.
+   * Positive values make the audio ahead of the video and negative values make
+   * the audio go behind the video.
+   *
+   * Since: 0.10.30
+   */
+  g_object_class_install_property (gobject_klass, PROP_AV_OFFSET,
+      g_param_spec_int64 ("av-offset", "AV Offset",
+          "The synchronisation offset between audio and video in nanoseconds",
+          G_MININT64, G_MAXINT64, 0,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_signal_new ("reconfigure", G_TYPE_FROM_CLASS (klass),
       G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION, G_STRUCT_OFFSET (GstPlaySinkClass,
           reconfigure), NULL, NULL, gst_marshal_BOOLEAN__VOID, G_TYPE_BOOLEAN,
       0, G_TYPE_NONE);
+  /**
+   * GstPlaySink::convert-frame
+   * @playsink: a #GstPlaySink
+   * @caps: the target format of the frame
+   *
+   * Action signal to retrieve the currently playing video frame in the format
+   * specified by @caps.
+   * If @caps is %NULL, no conversion will be performed and this function is
+   * equivalent to the #GstPlaySink::frame property.
+   *
+   * Returns: a #GstBuffer of the current video frame converted to #caps.
+   * The caps on the buffer will describe the final layout of the buffer data.
+   * %NULL is returned when no current buffer can be retrieved or when the
+   * conversion failed.
+   *
+   * Since: 0.10.30
+   */
+  g_signal_new ("convert-frame", G_TYPE_FROM_CLASS (klass),
+      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+      G_STRUCT_OFFSET (GstPlaySinkClass, convert_frame), NULL, NULL,
+      gst_play_marshal_BUFFER__BOXED, GST_TYPE_BUFFER, 1, GST_TYPE_CAPS);
 
   gst_element_class_add_pad_template (gstelement_klass,
       gst_static_pad_template_get (&audiorawtemplate));
@@ -318,6 +396,7 @@ gst_play_sink_class_init (GstPlaySinkClass * klass)
       GST_DEBUG_FUNCPTR (gst_play_sink_handle_message);
 
   klass->reconfigure = GST_DEBUG_FUNCPTR (gst_play_sink_reconfigure);
+  klass->convert_frame = GST_DEBUG_FUNCPTR (gst_play_sink_convert_frame);
 }
 
 static void
@@ -335,6 +414,19 @@ gst_play_sink_init (GstPlaySink * playsink)
 
   g_static_rec_mutex_init (&playsink->lock);
   GST_OBJECT_FLAG_SET (playsink, GST_ELEMENT_IS_SINK);
+}
+
+static void
+disconnect_chain (GstPlayAudioChain * chain, GstPlaySink * playsink)
+{
+  if (chain) {
+    if (chain->volume)
+      g_signal_handlers_disconnect_by_func (chain->volume, notify_volume_cb,
+          playsink);
+    if (chain->mute)
+      g_signal_handlers_disconnect_by_func (chain->mute, notify_mute_cb,
+          playsink);
+  }
 }
 
 static void
@@ -375,6 +467,8 @@ gst_play_sink_dispose (GObject * object)
     playsink->text_sink = NULL;
   }
 
+  free_chain ((GstPlayChain *) playsink->videodeinterlacechain);
+  playsink->videodeinterlacechain = NULL;
   free_chain ((GstPlayChain *) playsink->videochain);
   playsink->videochain = NULL;
   free_chain ((GstPlayChain *) playsink->audiochain);
@@ -947,6 +1041,99 @@ try_element (GstPlaySink * playsink, GstElement * element, gboolean unref)
  *  +------------------------------------------------------------+
  *
  */
+static GstPlayVideoDeinterlaceChain *
+gen_video_deinterlace_chain (GstPlaySink * playsink)
+{
+  GstPlayVideoDeinterlaceChain *chain;
+  GstBin *bin;
+  GstPad *pad;
+  GstElement *head = NULL, *prev = NULL;
+
+  chain = g_new0 (GstPlayVideoDeinterlaceChain, 1);
+  chain->chain.playsink = playsink;
+
+  GST_DEBUG_OBJECT (playsink, "making video deinterlace chain %p", chain);
+
+  /* create a bin to hold objects, as we create them we add them to this bin so
+   * that when something goes wrong we only need to unref the bin */
+  chain->chain.bin = gst_bin_new ("vdbin");
+  bin = GST_BIN_CAST (chain->chain.bin);
+  gst_object_ref_sink (bin);
+
+  GST_DEBUG_OBJECT (playsink, "creating ffmpegcolorspace");
+  chain->conv = gst_element_factory_make ("ffmpegcolorspace", "vdconv");
+  if (chain->conv == NULL) {
+    post_missing_element_message (playsink, "ffmpegcolorspace");
+    GST_ELEMENT_WARNING (playsink, CORE, MISSING_PLUGIN,
+        (_("Missing element '%s' - check your GStreamer installation."),
+            "ffmpegcolorspace"), ("video rendering might fail"));
+  } else {
+    gst_bin_add (bin, chain->conv);
+    head = chain->conv;
+    prev = chain->conv;
+  }
+
+  GST_DEBUG_OBJECT (playsink, "creating deinterlace");
+  chain->deinterlace = gst_element_factory_make ("deinterlace", "deinterlace");
+  if (chain->deinterlace == NULL) {
+    post_missing_element_message (playsink, "deinterlace");
+    GST_ELEMENT_WARNING (playsink, CORE, MISSING_PLUGIN,
+        (_("Missing element '%s' - check your GStreamer installation."),
+            "deinterlace"), ("deinterlacing won't work"));
+  } else {
+    gst_bin_add (bin, chain->deinterlace);
+    if (prev) {
+      if (!gst_element_link_pads (prev, "src", chain->deinterlace, "sink"))
+        goto link_failed;
+    } else {
+      head = chain->deinterlace;
+    }
+    prev = chain->deinterlace;
+  }
+
+  if (head) {
+    pad = gst_element_get_static_pad (head, "sink");
+    chain->sinkpad = gst_ghost_pad_new ("sink", pad);
+    gst_object_unref (pad);
+  } else {
+    chain->sinkpad = gst_ghost_pad_new_no_target ("sink", GST_PAD_SINK);
+  }
+
+  if (prev) {
+    pad = gst_element_get_static_pad (prev, "src");
+    chain->srcpad = gst_ghost_pad_new ("src", pad);
+    gst_object_unref (pad);
+  } else {
+    chain->srcpad = gst_ghost_pad_new ("src", chain->sinkpad);
+  }
+
+  gst_element_add_pad (chain->chain.bin, chain->sinkpad);
+  gst_element_add_pad (chain->chain.bin, chain->srcpad);
+
+  return chain;
+
+link_failed:
+  {
+    GST_ELEMENT_ERROR (playsink, CORE, PAD,
+        (NULL), ("Failed to configure the video deinterlace chain."));
+    free_chain ((GstPlayChain *) chain);
+    return NULL;
+  }
+}
+
+/* make the element (bin) that contains the elements needed to perform
+ * video display.
+ *
+ *  +------------------------------------------------------------+
+ *  | vbin                                                       |
+ *  |      +-------+   +----------+   +----------+   +---------+ |
+ *  |      | queue |   |colorspace|   |videoscale|   |videosink| |
+ *  |   +-sink    src-sink       src-sink       src-sink       | |
+ *  |   |  +-------+   +----------+   +----------+   +---------+ |
+ * sink-+                                                        |
+ *  +------------------------------------------------------------+
+ *
+ */
 static GstPlayVideoChain *
 gen_video_chain (GstPlaySink * playsink, gboolean raw, gboolean async,
     gboolean queue)
@@ -999,6 +1186,11 @@ gen_video_chain (GstPlaySink * playsink, gboolean raw, gboolean async,
     GST_DEBUG_OBJECT (playsink, "no async property on the sink");
     chain->async = TRUE;
   }
+
+  /* find ts-offset element */
+  chain->ts_offset =
+      gst_play_sink_find_property_sinks (playsink, chain->sink, "ts-offset",
+      G_TYPE_INT64);
 
   /* create a bin to hold objects, as we create them we add them to this bin so
    * that when something goes wrong we only need to unref the bin */
@@ -1144,6 +1336,11 @@ setup_video_chain (GstPlaySink * playsink, gboolean raw, gboolean async,
   ret = gst_element_set_state (chain->sink, GST_STATE_READY);
   if (ret == GST_STATE_CHANGE_FAILURE)
     return FALSE;
+
+  /* find ts-offset element */
+  chain->ts_offset =
+      gst_play_sink_find_property_sinks (playsink, chain->sink, "ts-offset",
+      G_TYPE_INT64);
 
   /* if we can disable async behaviour of the sink, we can avoid adding a
    * queue for the audio chain. */
@@ -1420,6 +1617,11 @@ gen_audio_chain (GstPlaySink * playsink, gboolean raw, gboolean queue)
     prev = NULL;
   }
 
+  /* find ts-offset element */
+  chain->ts_offset =
+      gst_play_sink_find_property_sinks (playsink, chain->sink, "ts-offset",
+      G_TYPE_INT64);
+
   /* check if the sink, or something within the sink, has the volume property.
    * If it does we don't need to add a volume element.  */
   elem =
@@ -1623,6 +1825,11 @@ setup_audio_chain (GstPlaySink * playsink, gboolean raw, gboolean queue)
   if (ret == GST_STATE_CHANGE_FAILURE)
     return FALSE;
 
+  /* find ts-offset element */
+  chain->ts_offset =
+      gst_play_sink_find_property_sinks (playsink, chain->sink, "ts-offset",
+      G_TYPE_INT64);
+
   /* check if the sink, or something within the sink, has the volume property.
    * If it does we don't need to add a volume element.  */
   elem =
@@ -1658,13 +1865,7 @@ setup_audio_chain (GstPlaySink * playsink, gboolean raw, gboolean queue)
     if (!raw) {
       GST_LOG_OBJECT (playsink, "non-raw format, can't do soft volume control");
 
-      if (chain->volume)
-        g_signal_handlers_disconnect_by_func (chain->volume, notify_volume_cb,
-            playsink);
-      if (chain->mute)
-        g_signal_handlers_disconnect_by_func (chain->mute, notify_mute_cb,
-            playsink);
-
+      disconnect_chain (chain, playsink);
       chain->volume = NULL;
       chain->mute = NULL;
     } else {
@@ -1820,12 +2021,12 @@ gboolean
 gst_play_sink_reconfigure (GstPlaySink * playsink)
 {
   GstPlayFlags flags;
-  gboolean need_audio, need_video, need_vis, need_text;
+  gboolean need_audio, need_video, need_deinterlace, need_vis, need_text;
 
   GST_DEBUG_OBJECT (playsink, "reconfiguring");
 
   /* assume we need nothing */
-  need_audio = need_video = need_vis = need_text = FALSE;
+  need_audio = need_video = need_deinterlace = need_vis = need_text = FALSE;
 
   GST_PLAY_SINK_LOCK (playsink);
   GST_OBJECT_LOCK (playsink);
@@ -1843,6 +2044,12 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
           || (flags & GST_PLAY_FLAG_NATIVE_VIDEO)) && playsink->video_pad) {
     /* we have video and we are requested to show it */
     need_video = TRUE;
+
+    /* we only deinterlace if native video is not requested and
+     * we have raw video */
+    if ((flags & GST_PLAY_FLAG_DEINTERLACE)
+        && !(flags & GST_PLAY_FLAG_NATIVE_VIDEO) && playsink->video_pad_raw)
+      need_deinterlace = TRUE;
   }
 
   if (playsink->audio_pad) {
@@ -1864,7 +2071,7 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
   if (need_text && !need_video) {
     if (playsink->video_pad) {
       need_video = TRUE;
-    } else if (!need_audio) {
+    } else if (need_audio) {
       GST_ELEMENT_WARNING (playsink, STREAM, FORMAT,
           (_("Can't play a text file without video or visualizations.")),
           ("Have text pad but no video pad or visualizations"));
@@ -1873,7 +2080,7 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
       GST_ELEMENT_ERROR (playsink, STREAM, FORMAT,
           (_("Can't play a text file without video or visualizations.")),
           ("Have text pad but no video pad or visualizations"));
-      GST_PLAY_SINK_LOCK (playsink);
+      GST_PLAY_SINK_UNLOCK (playsink);
       return FALSE;
     }
   }
@@ -1897,6 +2104,23 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
     GST_DEBUG_OBJECT (playsink, "adding video, raw %d",
         playsink->video_pad_raw);
 
+    if (need_deinterlace) {
+      if (!playsink->videodeinterlacechain)
+        playsink->videodeinterlacechain =
+            gen_video_deinterlace_chain (playsink);
+
+      GST_DEBUG_OBJECT (playsink, "adding video deinterlace chain");
+
+      if (playsink->videodeinterlacechain) {
+        GST_DEBUG_OBJECT (playsink, "setting up deinterlacing chain");
+
+        add_chain (GST_PLAY_CHAIN (playsink->videodeinterlacechain), TRUE);
+        activate_chain (GST_PLAY_CHAIN (playsink->videodeinterlacechain), TRUE);
+        gst_ghost_pad_set_target (GST_GHOST_PAD_CAST (playsink->video_pad),
+            playsink->videodeinterlacechain->sinkpad);
+      }
+    }
+
     if (playsink->videochain) {
       /* try to reactivate the chain */
       if (!setup_video_chain (playsink, raw, async, queue)) {
@@ -1910,15 +2134,21 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
     if (!playsink->videochain) {
       playsink->videochain = gen_video_chain (playsink, raw, async, queue);
     }
+
     if (playsink->videochain) {
       GST_DEBUG_OBJECT (playsink, "adding video chain");
       add_chain (GST_PLAY_CHAIN (playsink->videochain), TRUE);
       activate_chain (GST_PLAY_CHAIN (playsink->videochain), TRUE);
       /* if we are not part of vis or subtitles, set the ghostpad target */
-      if (!need_vis && !need_text && !playsink->textchain) {
+      if (!need_vis && !need_text && (!playsink->textchain
+              || !playsink->text_pad)) {
         GST_DEBUG_OBJECT (playsink, "ghosting video sinkpad");
-        gst_ghost_pad_set_target (GST_GHOST_PAD_CAST (playsink->video_pad),
-            playsink->videochain->sinkpad);
+        if (need_deinterlace)
+          gst_pad_link (playsink->videodeinterlacechain->srcpad,
+              playsink->videochain->sinkpad);
+        else
+          gst_ghost_pad_set_target (GST_GHOST_PAD_CAST (playsink->video_pad),
+              playsink->videochain->sinkpad);
       }
     }
   } else {
@@ -1944,7 +2174,14 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
       }
       add_chain (GST_PLAY_CHAIN (playsink->videochain), FALSE);
       activate_chain (GST_PLAY_CHAIN (playsink->videochain), FALSE);
+      playsink->videochain->ts_offset = NULL;
     }
+
+    if (playsink->videodeinterlacechain) {
+      add_chain (GST_PLAY_CHAIN (playsink->videodeinterlacechain), FALSE);
+      activate_chain (GST_PLAY_CHAIN (playsink->videodeinterlacechain), FALSE);
+    }
+
     if (playsink->video_pad)
       gst_ghost_pad_set_target (GST_GHOST_PAD_CAST (playsink->video_pad), NULL);
   }
@@ -1980,8 +2217,10 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
         }
         add_chain (GST_PLAY_CHAIN (playsink->audiochain), FALSE);
         activate_chain (GST_PLAY_CHAIN (playsink->audiochain), FALSE);
+        disconnect_chain (playsink->audiochain, playsink);
         playsink->audiochain->volume = NULL;
         playsink->audiochain->mute = NULL;
+        playsink->audiochain->ts_offset = NULL;
         free_chain ((GstPlayChain *) playsink->audiochain);
         playsink->audiochain = NULL;
         playsink->volume_changed = playsink->mute_changed = FALSE;
@@ -2016,8 +2255,10 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
         playsink->audio_tee_asrc = NULL;
       }
       if (playsink->audiochain->sink_volume) {
+        disconnect_chain (playsink->audiochain, playsink);
         playsink->audiochain->volume = NULL;
         playsink->audiochain->mute = NULL;
+        playsink->audiochain->ts_offset = NULL;
       }
       add_chain (GST_PLAY_CHAIN (playsink->audiochain), FALSE);
       activate_chain (GST_PLAY_CHAIN (playsink->audiochain), FALSE);
@@ -2086,8 +2327,12 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
         gst_pad_link (srcpad, playsink->textchain->videosinkpad);
         gst_object_unref (srcpad);
       } else {
-        gst_ghost_pad_set_target (GST_GHOST_PAD_CAST (playsink->video_pad),
-            playsink->textchain->videosinkpad);
+        if (need_deinterlace)
+          gst_pad_link (playsink->videodeinterlacechain->srcpad,
+              playsink->textchain->videosinkpad);
+        else
+          gst_ghost_pad_set_target (GST_GHOST_PAD_CAST (playsink->video_pad),
+              playsink->textchain->videosinkpad);
       }
       gst_pad_link (playsink->textchain->srcpad, playsink->videochain->sinkpad);
 
@@ -2115,7 +2360,7 @@ gst_play_sink_reconfigure (GstPlaySink * playsink)
     if (playsink->text_pad && !playsink->textchain)
       gst_ghost_pad_set_target (GST_GHOST_PAD_CAST (playsink->text_pad), NULL);
   }
-
+  update_av_offset (playsink);
   do_async_done (playsink);
   GST_PLAY_SINK_UNLOCK (playsink);
 
@@ -2236,6 +2481,46 @@ gst_play_sink_get_subtitle_encoding (GstPlaySink * playsink)
   return result;
 }
 
+static void
+update_av_offset (GstPlaySink * playsink)
+{
+  gint64 av_offset;
+  GstPlayAudioChain *achain;
+  GstPlayVideoChain *vchain;
+
+  av_offset = playsink->av_offset;
+  achain = (GstPlayAudioChain *) playsink->audiochain;
+  vchain = (GstPlayVideoChain *) playsink->videochain;
+
+  if (achain && vchain && achain->ts_offset && vchain->ts_offset) {
+    g_object_set (achain->ts_offset, "ts-offset", MAX (0, -av_offset), NULL);
+    g_object_set (vchain->ts_offset, "ts-offset", MAX (0, av_offset), NULL);
+  } else {
+    GST_LOG_OBJECT (playsink, "no ts_offset elements");
+  }
+}
+
+void
+gst_play_sink_set_av_offset (GstPlaySink * playsink, gint64 av_offset)
+{
+  GST_PLAY_SINK_LOCK (playsink);
+  playsink->av_offset = av_offset;
+  update_av_offset (playsink);
+  GST_PLAY_SINK_UNLOCK (playsink);
+}
+
+gint64
+gst_play_sink_get_av_offset (GstPlaySink * playsink)
+{
+  gint64 result;
+
+  GST_PLAY_SINK_LOCK (playsink);
+  result = playsink->av_offset;
+  GST_PLAY_SINK_UNLOCK (playsink);
+
+  return result;
+}
+
 /**
  * gst_play_sink_get_last_frame:
  * @playsink: a #GstPlaySink
@@ -2276,6 +2561,35 @@ gst_play_sink_get_last_frame (GstPlaySink * playsink)
   }
   GST_PLAY_SINK_UNLOCK (playsink);
 
+  return result;
+}
+
+/**
+ * gst_play_sink_convert_frame:
+ * @playsink: a #GstPlaySink
+ * @caps: a #GstCaps
+ *
+ * Get the last displayed frame from @playsink. If caps is %NULL, the video will
+ * be in the native format of the sink element and the caps on the buffer
+ * describe the format of the frame. If @caps is not %NULL, the video
+ * frame will be converted to the format of the caps.
+ *
+ * Returns: a #GstBuffer with the frame data or %NULL when no video frame is
+ * available or when the conversion failed.
+ */
+GstBuffer *
+gst_play_sink_convert_frame (GstPlaySink * playsink, GstCaps * caps)
+{
+  GstBuffer *result;
+
+  result = gst_play_sink_get_last_frame (playsink);
+  if (result != NULL && caps != NULL) {
+    GstBuffer *temp;
+
+    temp = gst_play_frame_conv_convert (result, caps);
+    gst_buffer_unref (result);
+    result = temp;
+  }
   return result;
 }
 
@@ -2627,8 +2941,10 @@ gst_play_sink_change_state (GstElement * element, GstStateChange transition)
       if (playsink->audiochain && playsink->audiochain->sink_volume) {
         /* remove our links to the mute and volume elements when they were
          * provided by a sink */
+        disconnect_chain (playsink->audiochain, playsink);
         playsink->audiochain->volume = NULL;
         playsink->audiochain->mute = NULL;
+        playsink->audiochain->ts_offset = NULL;
       }
       ret = GST_STATE_CHANGE_SUCCESS;
       break;
@@ -2673,6 +2989,11 @@ gst_play_sink_change_state (GstElement * element, GstStateChange transition)
     case GST_STATE_CHANGE_PAUSED_TO_READY:
     case GST_STATE_CHANGE_READY_TO_NULL:
       /* remove sinks we added */
+      if (playsink->videodeinterlacechain) {
+        activate_chain (GST_PLAY_CHAIN (playsink->videodeinterlacechain),
+            FALSE);
+        add_chain (GST_PLAY_CHAIN (playsink->videodeinterlacechain), FALSE);
+      }
       if (playsink->videochain) {
         activate_chain (GST_PLAY_CHAIN (playsink->videochain), FALSE);
         add_chain (GST_PLAY_CHAIN (playsink->videochain), FALSE);
@@ -2731,6 +3052,9 @@ gst_play_sink_set_property (GObject * object, guint prop_id,
     case PROP_VIS_PLUGIN:
       gst_play_sink_set_vis_plugin (playsink, g_value_get_object (value));
       break;
+    case PROP_AV_OFFSET:
+      gst_play_sink_set_av_offset (playsink, g_value_get_int64 (value));
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, spec);
       break;
@@ -2762,6 +3086,12 @@ gst_play_sink_get_property (GObject * object, guint prop_id,
       break;
     case PROP_VIS_PLUGIN:
       g_value_take_object (value, gst_play_sink_get_vis_plugin (playsink));
+      break;
+    case PROP_FRAME:
+      gst_value_take_buffer (value, gst_play_sink_get_last_frame (playsink));
+      break;
+    case PROP_AV_OFFSET:
+      g_value_set_int64 (value, gst_play_sink_get_av_offset (playsink));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, spec);

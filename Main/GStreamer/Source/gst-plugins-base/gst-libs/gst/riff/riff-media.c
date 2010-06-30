@@ -811,11 +811,24 @@ gst_riff_create_video_caps (guint32 codec_fcc,
         *codec_name = g_strdup ("On2 VP6");
       break;
 
+    case GST_MAKE_FOURCC ('V', 'P', '6', 'F'):
+    case GST_MAKE_FOURCC ('v', 'p', '6', 'f'):
+      caps = gst_caps_new_simple ("video/x-vp6-flash", NULL);
+      if (codec_name)
+        *codec_name = g_strdup ("On2 VP6");
+      break;
+
     case GST_MAKE_FOURCC ('v', 'p', '7', '0'):
     case GST_MAKE_FOURCC ('V', 'P', '7', '0'):
       caps = gst_caps_new_simple ("video/x-vp7", NULL);
       if (codec_name)
         *codec_name = g_strdup ("On2 VP7");
+      break;
+
+    case GST_MAKE_FOURCC ('V', 'P', '8', '0'):
+      caps = gst_caps_new_simple ("video/x-vp8", NULL);
+      if (codec_name)
+        *codec_name = g_strdup ("On2 VP8");
       break;
 
     case GST_MAKE_FOURCC ('L', 'M', '2', '0'):
@@ -859,8 +872,8 @@ gst_riff_create_video_caps (guint32 codec_fcc,
         "height", G_TYPE_INT, strf->height, NULL);
   } else {
     gst_caps_set_simple (caps,
-        "width", GST_TYPE_INT_RANGE, 16, 4096,
-        "height", GST_TYPE_INT_RANGE, 16, 4096, NULL);
+        "width", GST_TYPE_INT_RANGE, 1, G_MAXINT,
+        "height", GST_TYPE_INT_RANGE, 1, G_MAXINT, NULL);
   }
 
   /* extradata */
@@ -1783,7 +1796,9 @@ gst_riff_create_video_template_caps (void)
     GST_MAKE_FOURCC ('K', 'M', 'V', 'C'),
     GST_MAKE_FOURCC ('V', 'P', '5', '0'),
     GST_MAKE_FOURCC ('V', 'P', '6', '0'),
+    GST_MAKE_FOURCC ('V', 'P', '6', 'F'),
     GST_MAKE_FOURCC ('V', 'P', '7', '0'),
+    GST_MAKE_FOURCC ('V', 'P', '8', '0'),
     GST_MAKE_FOURCC ('L', 'M', '2', '0'),
     GST_MAKE_FOURCC ('R', 'P', 'Z', 'A'),
     GST_MAKE_FOURCC ('T', 'H', 'E', 'O'),

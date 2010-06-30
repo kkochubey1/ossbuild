@@ -5,14 +5,14 @@ dnl please read gstreamer/docs/random/autotools before changing this file
 dnl initialize autoconf
 dnl releases only do -Wall, git and prerelease does -Werror too
 dnl use a three digit version number for releases, and four for git/prerelease
-AC_INIT(GStreamer Base Plug-ins, 0.10.29,
+AC_INIT(GStreamer Base Plug-ins, 0.10.29.3,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-base)
 
 AG_GST_INIT
 
 dnl initialize automake
-AM_INIT_AUTOMAKE([-Wno-portability])
+AM_INIT_AUTOMAKE([-Wno-portability 1.10])
 
 dnl define PACKAGE_VERSION_* variables
 AS_VERSION
@@ -60,7 +60,7 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.29
+GST_REQ=0.10.29.1
 
 dnl *** autotools stuff ****
 
@@ -216,10 +216,6 @@ dnl *** checks for functions ***
 AC_CHECK_FUNCS([localtime_r gmtime_r])
 
 dnl *** checks for math functions ***
-LIBS_SAVE=$LIBS
-LIBS="$LIBS $LIBM"
-AC_CHECK_FUNCS(cbrt)
-LIBS=$LIBS_SAVE
 
 dnl *** checks for types/defines ***
 
@@ -254,13 +250,9 @@ AC_CHECK_FUNC(gethostbyname,,[AC_CHECK_LIB(nsl,gethostbyname)])
 dnl *** checks for dependency libraries ***
 
 dnl GLib is required
-AG_GST_GLIB_CHECK([2.18])
+AG_GST_GLIB_CHECK([2.20])
 
-dnl liboil is required
-PKG_CHECK_MODULES(LIBOIL, liboil-0.3 >= 0.3.14, HAVE_LIBOIL=yes, HAVE_LIBOIL=no)
-if test "x$HAVE_LIBOIL" != "xyes"; then
-  AC_ERROR([liboil-0.3.14 or later is required])
-fi
+ORC_CHECK([0.4.5])
 
 dnl checks for gstreamer
 dnl uninstalled is selected preferentially -- see pkg-config(1)
@@ -278,12 +270,13 @@ AC_SUBST(GLIB_PREFIX)
 AC_SUBST(GST_PREFIX)
 
 dnl GTK is optional and only used in examples
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.14.0, HAVE_GTK=yes, HAVE_GTK=no)
+PKG_CHECK_MODULES(GTK, gtk+-3.0, HAVE_GTK=yes,
+    [PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.14.0, HAVE_GTK=yes, HAVE_GTK=no)])
 AM_CONDITIONAL(HAVE_GTK, test "x$HAVE_GTK" = "xyes")
 
 dnl some examples need gtk+-x11
-PKG_CHECK_MODULES(GTK_X11, gtk+-x11-2.0 >= 2.14.0,
-    HAVE_GTK_X11=yes, HAVE_GTK_X11=no)
+PKG_CHECK_MODULES(GTK_X11, gtk+-x11-3.0, HAVE_GTK_X11=yes,
+    [PKG_CHECK_MODULES(GTK_X11, gtk+-x11-2.0 >= 2.14.0, HAVE_GTK_X11=yes, HAVE_GTK_X11=no)])
 AM_CONDITIONAL(HAVE_GTK_X11, test "x$HAVE_GTK_X11" = "xyes")
 
 dnl QT is optional and only used in examples
@@ -294,6 +287,12 @@ PKG_CHECK_MODULES(QT, QtGui >= 4.6, [
   HAVE_QT_GV=no
   PKG_CHECK_MODULES(QT, QtGui >= 4.0, HAVE_QT=yes, HAVE_QT=no)
 ])
+if test "x$HAVE_QT" = "xyes"; then
+  AC_MSG_CHECKING([Qt moc])
+  QT4_MOC=`$PKG_CONFIG --variable=moc_location QtGui`
+  AC_MSG_RESULT($QT4_MOC)
+  AC_SUBST(QT4_MOC)
+fi
 AM_CONDITIONAL(HAVE_QT, test "x$HAVE_QT" = "xyes")
 AM_CONDITIONAL(HAVE_QT_GV, test "x$HAVE_QT_GV" = "xyes")
 
@@ -364,7 +363,6 @@ case $ac_cv_audioresample_format in
     AC_DEFINE(AUDIORESAMPLE_FORMAT_AUTO,1,[The implementation that should be used for integer audio resampling witll be benchmarked at runtime])
     AC_SUBST(AUDIORESAMPLE_FORMAT_AUTO)
 esac
-AM_CONDITIONAL(AUDIORESAMPLE_NEEDS_LIBOIL, test "$ac_cv_audioresample_format" = "auto")
 
 dnl *** plug-ins to include ***
 
@@ -586,38 +584,43 @@ AG_GST_CHECK_FEATURE(ALSA, [ALSA], alsa, [
 ])
 
 dnl *** CDParanoia ***
+dnl Note: upstream has a pkg-config file only in post-10.2 SVN so far
 translit(dnm, m, l) AM_CONDITIONAL(USE_CDPARANOIA, true)
 AG_GST_CHECK_FEATURE(CDPARANOIA, [CDParanoia], cdparanoia, [
-  AG_GST_CHECK_LIBHEADER(CDPARANOIA, cdda_interface, 
-                      cdda_open, -lm, 
-                      cdda_interface.h, 
-                      CDPARANOIA_LIBS="-lcdda_interface -lcdda_paranoia"
-                      HEADER_DIR="no"
-                      FOUND_CDPARANOIA="yes")
-  if test "x$FOUND_CDPARANOIA" != "xyes";
-  then
+  PKG_CHECK_MODULES(CDPARANOIA, cdparanoia-3 >= 10.2, [
+    HAVE_CDPARANOIA="yes"
+  ], [
     AG_GST_CHECK_LIBHEADER(CDPARANOIA, cdda_interface, 
                         cdda_open, -lm, 
-                        cdda/cdda_interface.h, 
+                        cdda_interface.h, 
                         CDPARANOIA_LIBS="-lcdda_interface -lcdda_paranoia"
-                        HEADER_DIR="yes"
+                        HEADER_DIR="no"
                         FOUND_CDPARANOIA="yes")
-  fi
-  if test "x$HEADER_DIR" = "xyes";
-  then
-    AC_DEFINE_UNQUOTED(CDPARANOIA_HEADERS_IN_DIR, ,
-                       defined if cdda headers are in a cdda/ directory)
-  fi
-  if test "x$FOUND_CDPARANOIA" = "xyes";
-  then
-    AC_CHECK_LIB(cdda_paranoia,
-                 paranoia_cachemodel_size,
-                 : ,
-                 HAVE_CDPARANOIA=no,
-		 [-lcdda_interface])
-  fi
+    if test "x$FOUND_CDPARANOIA" != "xyes";
+    then
+      AG_GST_CHECK_LIBHEADER(CDPARANOIA, cdda_interface, 
+                          cdda_open, -lm, 
+                          cdda/cdda_interface.h, 
+                          CDPARANOIA_LIBS="-lcdda_interface -lcdda_paranoia"
+                          HEADER_DIR="yes"
+                          FOUND_CDPARANOIA="yes")
+    fi
+    if test "x$HEADER_DIR" = "xyes";
+    then
+      AC_DEFINE_UNQUOTED(CDPARANOIA_HEADERS_IN_DIR, ,
+                         defined if cdda headers are in a cdda/ directory)
+    fi
+    if test "x$FOUND_CDPARANOIA" = "xyes";
+    then
+      AC_CHECK_LIB(cdda_paranoia,
+                   paranoia_cachemodel_size,
+                   : ,
+                   HAVE_CDPARANOIA=no,
+  		 [-lcdda_interface])
+    fi
 
-  AC_SUBST(CDPARANOIA_LIBS)
+    AC_SUBST(CDPARANOIA_LIBS)
+  ])
 ])
 dnl FIXME : add second check somehow if that is necessary
 dnl AC_CHECK_LIB(cdda_paranoia, paranoia_init, : , HAVE_CDPARANOIA=no, -lcdda_interface )
@@ -689,11 +692,11 @@ AG_GST_CHECK_FEATURE(LIBVISUAL, [libvisual visualization library], libvisual, [
   if test $HAVE_LIBVISUAL = no
   then
     AG_GST_PKG_CHECK_MODULES(LIBVISUAL, libvisual = 0.2.0)
-    if test x$HAVE_LIBVISUAL == xyes; then
+    if test x$HAVE_LIBVISUAL = xyes; then
       LIBVIS_PLUGINSDIR="`$PKG_CONFIG --variable=pluginsbasedir libvisual-0.2`"
     fi
   else
-    if test x$HAVE_LIBVISUAL == xyes; then
+    if test x$HAVE_LIBVISUAL = xyes; then
       LIBVIS_PLUGINSDIR="`$PKG_CONFIG --variable=pluginsbasedir libvisual-0.4`"
     fi
   fi
@@ -774,6 +777,7 @@ AM_CONDITIONAL(USE_OGG, false)
 AM_CONDITIONAL(USE_PANGO, false)
 AM_CONDITIONAL(USE_THEORA, false)
 AM_CONDITIONAL(USE_VORBIS, false)
+AM_CONDITIONAL(USE_IVORBIS, false)
 
 fi dnl of EXT plugins
 
@@ -830,8 +834,8 @@ AC_SUBST(GST_PLUGINS_BASE_CFLAGS)
 
 dnl FIXME: do we want to rename to GST_ALL_* ?
 dnl add GST_OPTION_CFLAGS, but overridable
-GST_CXXFLAGS="$GST_CFLAGS \$(GST_OPTION_CXXFLAGS)"
-GST_CFLAGS="$GST_CFLAGS \$(GST_OPTION_CFLAGS)"
+GST_CXXFLAGS="$GLIB_CFLAGS $GST_CFLAGS $GLIB_EXTRA_CFLAGS \$(GST_OPTION_CXXFLAGS)"
+GST_CFLAGS="$GLIB_CFLAGS $GST_CFLAGS $GLIB_EXTRA_CFLAGS \$(GST_OPTION_CFLAGS)"
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_CXXFLAGS)
 dnl add GCOV libs because libtool strips -fprofile-arcs -ftest-coverage
@@ -950,6 +954,7 @@ tests/examples/volume/Makefile
 tests/examples/snapshot/Makefile
 tests/examples/gio/Makefile
 tests/examples/v4l/Makefile
+tests/files/Makefile
 tests/icles/Makefile
 docs/Makefile
 docs/design/Makefile
@@ -1010,3 +1015,5 @@ sed \
 AC_OUTPUT
 
 AG_GST_OUTPUT_PLUGINS
+ORC_OUTPUT
+

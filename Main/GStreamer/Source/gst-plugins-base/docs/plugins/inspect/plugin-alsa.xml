@@ -3,10 +3,10 @@
   <description>ALSA plugin library</description>
   <filename>../../ext/alsa/.libs/libgstalsa.so</filename>
   <basename>libgstalsa.so</basename>
-  <version>0.10.29</version>
+  <version>0.10.29.3</version>
   <license>LGPL</license>
   <source>gst-plugins-base</source>
-  <package>GStreamer Base Plug-ins source release</package>
+  <package>GStreamer Base Plug-ins prerelease</package>
   <origin>Unknown package origin</origin>
   <elements>
     <element>
@@ -16,7 +16,6 @@
       <description>Control sound input and output levels with ALSA</description>
       <author>Leif Johnson &lt;leif@ambient.2y.net&gt;</author>
       <pads>
-    
       </pads>
     </element>
     <element>

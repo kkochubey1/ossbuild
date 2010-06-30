@@ -31,6 +31,9 @@
 /* Default visualizer */
 #undef DEFAULT_VISUALIZER
 
+/* Disable Orc */
+#undef DISABLE_ORC
+
 /* Define to 1 if translation of program messages to the user's native
    language is requested. */
 #undef ENABLE_NLS
@@ -73,9 +76,6 @@
 
 /* Define to enable ALSA (used by alsa). */
 #undef HAVE_ALSA
-
-/* Define to 1 if you have the `cbrt' function. */
-#undef HAVE_CBRT
 
 /* Define to enable CDParanoia (used by cdparanoia). */
 #undef HAVE_CDPARANOIA
@@ -220,6 +220,9 @@
 
 /* Define to enable Xiph Ogg library (used by ogg). */
 #undef HAVE_OGG
+
+/* Use Orc */
+#undef HAVE_ORC
 
 /* Define to enable Pango font rendering (used by pango). */
 #undef HAVE_PANGO

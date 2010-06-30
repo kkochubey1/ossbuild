@@ -400,7 +400,8 @@ gst_app_src_class_init (GstAppSrcClass * klass)
    */
   g_object_class_install_property (gobject_class, PROP_EMIT_SIGNALS,
       g_param_spec_boolean ("emit-signals", "Emit signals",
-          "Emit new-preroll and new-buffer signals", DEFAULT_PROP_EMIT_SIGNALS,
+          "Emit need-data, enough-data and seek-data signals",
+          DEFAULT_PROP_EMIT_SIGNALS,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
@@ -888,7 +889,7 @@ gst_app_src_do_seek (GstBaseSrc * src, GstSegment * segment)
 static gboolean
 gst_app_src_emit_seek (GstAppSrc * appsrc, guint64 offset)
 {
-  gboolean res;
+  gboolean res = FALSE;
   gboolean emit;
   GstAppSrcPrivate *priv = appsrc->priv;
 
@@ -939,8 +940,10 @@ gst_app_src_create (GstBaseSrc * bsrc, guint64 offset, guint size,
   GstAppSrc *appsrc = GST_APP_SRC_CAST (bsrc);
   GstAppSrcPrivate *priv = appsrc->priv;
   GstFlowReturn ret;
+  GstCaps *caps;
 
   GST_OBJECT_LOCK (appsrc);
+  caps = priv->caps ? gst_caps_ref (priv->caps) : NULL;
   if (G_UNLIKELY (priv->size != bsrc->segment.duration &&
           bsrc->segment.format == GST_FORMAT_BYTES)) {
     GST_DEBUG_OBJECT (appsrc,
@@ -994,7 +997,7 @@ gst_app_src_create (GstBaseSrc * bsrc, guint64 offset, guint size,
       if (priv->stream_type == GST_APP_STREAM_TYPE_RANDOM_ACCESS)
         priv->offset += buf_size;
       *buf = gst_buffer_make_metadata_writable (*buf);
-      gst_buffer_set_caps (*buf, priv->caps);
+      gst_buffer_set_caps (*buf, caps);
 
       /* signal that we removed an item */
       g_cond_broadcast (priv->cond);
@@ -1034,7 +1037,8 @@ gst_app_src_create (GstBaseSrc * bsrc, guint64 offset, guint size,
     g_cond_wait (priv->cond, priv->mutex);
   }
   g_mutex_unlock (priv->mutex);
-
+  if (caps)
+    gst_caps_unref (caps);
   return ret;
 
   /* ERRORS */
@@ -1042,17 +1046,23 @@ flushing:
   {
     GST_DEBUG_OBJECT (appsrc, "we are flushing");
     g_mutex_unlock (priv->mutex);
+    if (caps)
+      gst_caps_unref (caps);
     return GST_FLOW_WRONG_STATE;
   }
 eos:
   {
     GST_DEBUG_OBJECT (appsrc, "we are EOS");
     g_mutex_unlock (priv->mutex);
+    if (caps)
+      gst_caps_unref (caps);
     return GST_FLOW_UNEXPECTED;
   }
 seek_error:
   {
     g_mutex_unlock (priv->mutex);
+    if (caps)
+      gst_caps_unref (caps);
     GST_ELEMENT_ERROR (appsrc, RESOURCE, READ, ("failed to seek"),
         GST_ERROR_SYSTEM);
     return GST_FLOW_ERROR;

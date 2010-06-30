@@ -50,10 +50,10 @@
 #include <gst/audio/audio.h>
 #include <gst/base/gstbasetransform.h>
 
-#if defined AUDIORESAMPLE_FORMAT_AUTO
-#define OIL_ENABLE_UNSTABLE_API
-#include <liboil/liboilprofile.h>
-#include <liboil/liboil.h>
+#ifndef DISABLE_ORC
+#include <orc/orc.h>
+#include <orc-test/orctest.h>
+#include <orc-test/orcprofile.h>
 #endif
 
 GST_DEBUG_CATEGORY (audio_resample_debug);
@@ -1339,7 +1339,9 @@ gst_audio_resample_get_property (GObject * object, guint prop_id,
   }
 }
 
-#if defined AUDIORESAMPLE_FORMAT_AUTO
+/* FIXME: should have a benchmark fallback for the case where orc is disabled */
+#if defined(AUDIORESAMPLE_FORMAT_AUTO) && !defined(DISABLE_ORC)
+
 #define BENCHMARK_SIZE 512
 
 static gboolean
@@ -1391,13 +1393,13 @@ _benchmark_int_int (SpeexResamplerState * st)
 static gboolean
 _benchmark_integer_resampling (void)
 {
-  OilProfile a, b;
+  OrcProfile a, b;
   gdouble av, bv;
   SpeexResamplerState *sta, *stb;
   int i;
 
-  oil_profile_init (&a);
-  oil_profile_init (&b);
+  orc_profile_init (&a);
+  orc_profile_init (&b);
 
   sta = resample_float_resampler_init (1, 48000, 24000, 4, NULL);
   if (sta == NULL) {
@@ -1414,23 +1416,23 @@ _benchmark_integer_resampling (void)
 
   /* Benchmark */
   for (i = 0; i < 10; i++) {
-    oil_profile_start (&a);
+    orc_profile_start (&a);
     if (!_benchmark_int_float (sta))
       goto error;
-    oil_profile_stop (&a);
+    orc_profile_stop (&a);
   }
 
   /* Benchmark */
   for (i = 0; i < 10; i++) {
-    oil_profile_start (&b);
+    orc_profile_start (&b);
     if (!_benchmark_int_int (stb))
       goto error;
-    oil_profile_stop (&b);
+    orc_profile_stop (&b);
   }
 
   /* Handle results */
-  oil_profile_get_ave_std (&a, &av, NULL);
-  oil_profile_get_ave_std (&b, &bv, NULL);
+  orc_profile_get_ave_std (&a, &av, NULL);
+  orc_profile_get_ave_std (&b, &bv, NULL);
 
   /* Remember benchmark result in global variable */
   gst_audio_resample_use_int = (av > bv);
@@ -1450,18 +1452,24 @@ error:
 
   return FALSE;
 }
-#endif
+#endif /* defined(AUDIORESAMPLE_FORMAT_AUTO) && !defined(DISABLE_ORC) */
 
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
   GST_DEBUG_CATEGORY_INIT (audio_resample_debug, "audioresample", 0,
       "audio resampling element");
-#if defined AUDIORESAMPLE_FORMAT_AUTO
-  oil_init ();
 
+#if defined(AUDIORESAMPLE_FORMAT_AUTO) && !defined(DISABLE_ORC)
   if (!_benchmark_integer_resampling ())
     return FALSE;
+#else
+  GST_WARNING ("Orc disabled, can't benchmark int vs. float resampler");
+  {
+    GST_DEBUG_CATEGORY_STATIC (GST_CAT_PERFORMANCE);
+    GST_DEBUG_CATEGORY_GET (GST_CAT_PERFORMANCE, "GST_PERFORMANCE");
+    GST_CAT_WARNING (GST_CAT_PERFORMANCE, "orc disabled, no benchmarking done");
+  }
 #endif
 
   if (!gst_element_register (plugin, "audioresample", GST_RANK_PRIMARY,
