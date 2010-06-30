@@ -70,13 +70,12 @@ static void gst_capsfilter_dispose (GObject * object);
 
 static GstCaps *gst_capsfilter_transform_caps (GstBaseTransform * base,
     GstPadDirection direction, GstCaps * caps);
+static gboolean gst_capsfilter_accept_caps (GstBaseTransform * base,
+    GstPadDirection direction, GstCaps * caps);
 static GstFlowReturn gst_capsfilter_transform_ip (GstBaseTransform * base,
     GstBuffer * buf);
 static GstFlowReturn gst_capsfilter_prepare_buf (GstBaseTransform * trans,
     GstBuffer * input, gint size, GstCaps * caps, GstBuffer ** buf);
-static gboolean gst_capsfilter_transform_size (GstBaseTransform * trans,
-    GstPadDirection direction, GstCaps * caps, guint size,
-    GstCaps * othercaps, guint * othersize);
 
 static void
 gst_capsfilter_base_init (gpointer g_class)
@@ -116,10 +115,9 @@ gst_capsfilter_class_init (GstCapsFilterClass * klass)
   trans_class->transform_caps =
       GST_DEBUG_FUNCPTR (gst_capsfilter_transform_caps);
   trans_class->transform_ip = GST_DEBUG_FUNCPTR (gst_capsfilter_transform_ip);
+  trans_class->accept_caps = GST_DEBUG_FUNCPTR (gst_capsfilter_accept_caps);
   trans_class->prepare_output_buffer =
       GST_DEBUG_FUNCPTR (gst_capsfilter_prepare_buf);
-  trans_class->transform_size =
-      GST_DEBUG_FUNCPTR (gst_capsfilter_transform_size);
 }
 
 static void
@@ -269,15 +267,32 @@ gst_capsfilter_transform_caps (GstBaseTransform * base,
 }
 
 static gboolean
-gst_capsfilter_transform_size (GstBaseTransform * trans,
-    GstPadDirection direction, GstCaps * caps, guint size,
-    GstCaps * othercaps, guint * othersize)
+gst_capsfilter_accept_caps (GstBaseTransform * base,
+    GstPadDirection direction, GstCaps * caps)
 {
-  /* return the same size */
-  *othersize = size;
-  return TRUE;
-}
+  GstCapsFilter *capsfilter = GST_CAPSFILTER (base);
+  GstCaps *filter_caps;
+  gboolean ret;
 
+  GST_OBJECT_LOCK (capsfilter);
+  filter_caps = gst_caps_ref (capsfilter->filter_caps);
+  GST_OBJECT_UNLOCK (capsfilter);
+
+  ret = gst_caps_can_intersect (caps, filter_caps);
+  GST_DEBUG_OBJECT (capsfilter, "can intersect: %d", ret);
+  if (ret) {
+    /* if we can intersect, see if the other end also accepts */
+    if (direction == GST_PAD_SRC)
+      ret = gst_pad_peer_accept_caps (GST_BASE_TRANSFORM_SINK_PAD (base), caps);
+    else
+      ret = gst_pad_peer_accept_caps (GST_BASE_TRANSFORM_SRC_PAD (base), caps);
+    GST_DEBUG_OBJECT (capsfilter, "peer accept: %d", ret);
+  }
+
+  gst_caps_unref (filter_caps);
+
+  return ret;
+}
 
 static GstFlowReturn
 gst_capsfilter_transform_ip (GstBaseTransform * base, GstBuffer * buf)

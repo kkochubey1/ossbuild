@@ -125,6 +125,9 @@ struct _GstAdapterPrivate
 {
   GstClockTime timestamp;
   guint64 distance;
+
+  guint scan_offset;
+  GSList *scan_entry;
 };
 
 #define _do_init(thing) \
@@ -215,6 +218,8 @@ gst_adapter_clear (GstAdapter * adapter)
   adapter->assembled_len = 0;
   adapter->priv->timestamp = GST_CLOCK_TIME_NONE;
   adapter->priv->distance = 0;
+  adapter->priv->scan_offset = 0;
+  adapter->priv->scan_entry = NULL;
 }
 
 static inline void
@@ -241,7 +246,13 @@ copy_into_unchecked (GstAdapter * adapter, guint8 * dest, guint skip,
   guint bsize, csize;
 
   /* first step, do skipping */
-  g = adapter->buflist;
+  /* we might well be copying where we were scanning */
+  if (adapter->priv->scan_entry && (adapter->priv->scan_offset <= skip)) {
+    g = adapter->priv->scan_entry;
+    skip -= adapter->priv->scan_offset;
+  } else {
+    g = adapter->buflist;
+  }
   buf = g->data;
   bsize = GST_BUFFER_SIZE (buf);
   while (G_UNLIKELY (skip >= bsize)) {
@@ -321,6 +332,7 @@ gst_adapter_try_to_merge_up (GstAdapter * adapter, guint size)
 {
   GstBuffer *cur, *head;
   GSList *g;
+  gboolean ret = FALSE;
 
   g = adapter->buflist;
   if (g == NULL)
@@ -336,7 +348,7 @@ gst_adapter_try_to_merge_up (GstAdapter * adapter, guint size)
   while (g != NULL && GST_BUFFER_SIZE (head) < size) {
     cur = g->data;
     if (!gst_buffer_is_span_fast (head, cur))
-      return TRUE;
+      return ret;
 
     /* Merge the head buffer and the next in line */
     GST_LOG_OBJECT (adapter,
@@ -344,14 +356,21 @@ gst_adapter_try_to_merge_up (GstAdapter * adapter, guint size)
         GST_BUFFER_SIZE (head), GST_BUFFER_SIZE (cur), size);
 
     head = gst_buffer_join (head, cur);
+    ret = TRUE;
 
     /* Delete the front list item, and store our new buffer in the 2nd list
      * item */
     adapter->buflist = g_slist_delete_link (adapter->buflist, adapter->buflist);
     g->data = head;
+
+    /* invalidate scan position */
+    adapter->priv->scan_offset = 0;
+    adapter->priv->scan_entry = NULL;
+
+    g = g_slist_next (g);
   }
 
-  return FALSE;
+  return ret;
 }
 
 /**
@@ -510,6 +529,9 @@ gst_adapter_flush_unchecked (GstAdapter * adapter, guint flush)
   /* account for the remaining bytes */
   adapter->skip = flush;
   adapter->priv->distance += flush;
+  /* invalidate scan position */
+  priv->scan_offset = 0;
+  priv->scan_entry = NULL;
 }
 
 void
@@ -738,6 +760,111 @@ gst_adapter_prev_timestamp (GstAdapter * adapter, guint64 * distance)
 }
 
 /**
+ * gst_adapter_masked_scan_uint32_peek:
+ * @adapter: a #GstAdapter
+ * @mask: mask to apply to data before matching against @pattern
+ * @pattern: pattern to match (after mask is applied)
+ * @offset: offset into the adapter data from which to start scanning, returns
+ *          the last scanned position.
+ * @size: number of bytes to scan from offset
+ * @value: pointer to uint32 to return matching data
+ *
+ * Scan for pattern @pattern with applied mask @mask in the adapter data,
+ * starting from offset @offset.  If a match is found, the value that matched
+ * is returned through @value, otherwise @value is left untouched.
+ *
+ * The bytes in @pattern and @mask are interpreted left-to-right, regardless
+ * of endianness.  All four bytes of the pattern must be present in the
+ * adapter for it to match, even if the first or last bytes are masked out.
+ *
+ * It is an error to call this function without making sure that there is
+ * enough data (offset+size bytes) in the adapter.
+ *
+ * Returns: offset of the first match, or -1 if no match was found.
+ *
+ * Since: 0.10.30
+ */
+guint
+gst_adapter_masked_scan_uint32_peek (GstAdapter * adapter, guint32 mask,
+    guint32 pattern, guint offset, guint size, guint32 * value)
+{
+  GSList *g;
+  guint skip, bsize, i;
+  guint32 state;
+  guint8 *bdata;
+  GstBuffer *buf;
+
+  g_return_val_if_fail (size > 0, -1);
+  g_return_val_if_fail (offset + size <= adapter->size, -1);
+
+  /* we can't find the pattern with less than 4 bytes */
+  if (G_UNLIKELY (size < 4))
+    return -1;
+
+  skip = offset + adapter->skip;
+
+  /* first step, do skipping and position on the first buffer */
+  /* optimistically assume scanning continues sequentially */
+  if (adapter->priv->scan_entry && (adapter->priv->scan_offset <= skip)) {
+    g = adapter->priv->scan_entry;
+    skip -= adapter->priv->scan_offset;
+  } else {
+    g = adapter->buflist;
+    adapter->priv->scan_offset = 0;
+    adapter->priv->scan_entry = NULL;
+  }
+  buf = g->data;
+  bsize = GST_BUFFER_SIZE (buf);
+  while (G_UNLIKELY (skip >= bsize)) {
+    skip -= bsize;
+    g = g_slist_next (g);
+    adapter->priv->scan_offset += bsize;
+    adapter->priv->scan_entry = g;
+    buf = g->data;
+    bsize = GST_BUFFER_SIZE (buf);
+  }
+  /* get the data now */
+  bsize -= skip;
+  bdata = GST_BUFFER_DATA (buf) + skip;
+  skip = 0;
+
+  /* set the state to something that does not match */
+  state = ~pattern;
+
+  /* now find data */
+  do {
+    bsize = MIN (bsize, size);
+    for (i = 0; i < bsize; i++) {
+      state = ((state << 8) | bdata[i]);
+      if (G_UNLIKELY ((state & mask) == pattern)) {
+        /* we have a match but we need to have skipped at
+         * least 4 bytes to fill the state. */
+        if (G_LIKELY (skip + i >= 3)) {
+          if (G_LIKELY (value))
+            *value = state;
+          return offset + skip + i - 3;
+        }
+      }
+    }
+    size -= bsize;
+    if (size == 0)
+      break;
+
+    /* nothing found yet, go to next buffer */
+    skip += bsize;
+    g = g_slist_next (g);
+    adapter->priv->scan_offset += GST_BUFFER_SIZE (buf);
+    adapter->priv->scan_entry = g;
+    buf = g->data;
+    bsize = GST_BUFFER_SIZE (buf);
+    bdata = GST_BUFFER_DATA (buf);
+  } while (TRUE);
+
+  /* nothing found */
+  return -1;
+}
+
+/**
  * gst_adapter_masked_scan_uint32:
  * @adapter: a #GstAdapter
  * @mask: mask to apply to data before matching against @pattern
@@ -755,6 +882,9 @@ gst_adapter_prev_timestamp (GstAdapter * adapter, guint64 * distance)
  *
  * It is an error to call this function without making sure that there is
  * enough data (offset+size bytes) in the adapter.
+ *
+ * This function calls gst_adapter_masked_scan_uint32_peek() passing NULL
+ * for value.
  *
  * Returns: offset of the first match, or -1 if no match was found.
  *
@@ -784,63 +914,6 @@ guint
 gst_adapter_masked_scan_uint32 (GstAdapter * adapter, guint32 mask,
     guint32 pattern, guint offset, guint size)
 {
-  GSList *g;
-  guint skip, bsize, i;
-  guint32 state;
-  guint8 *bdata;
-  GstBuffer *buf;
-
-  g_return_val_if_fail (size > 0, -1);
-  g_return_val_if_fail (offset + size <= adapter->size, -1);
-
-  /* we can't find the pattern with less than 4 bytes */
-  if (G_UNLIKELY (size < 4))
-    return -1;
-
-  skip = offset + adapter->skip;
-
-  /* first step, do skipping and position on the first buffer */
-  g = adapter->buflist;
-  buf = g->data;
-  bsize = GST_BUFFER_SIZE (buf);
-  while (G_UNLIKELY (skip >= bsize)) {
-    skip -= bsize;
-    g = g_slist_next (g);
-    buf = g->data;
-    bsize = GST_BUFFER_SIZE (buf);
-  }
-  /* get the data now */
-  bsize -= skip;
-  bdata = GST_BUFFER_DATA (buf) + skip;
-  skip = 0;
-
-  /* set the state to something that does not match */
-  state = ~pattern;
-
-  /* now find data */
-  do {
-    bsize = MIN (bsize, size);
-    for (i = 0; i < bsize; i++) {
-      state = ((state << 8) | bdata[i]);
-      if (G_UNLIKELY ((state & mask) == pattern)) {
-        /* we have a match but we need to have skipped at
-         * least 4 bytes to fill the state. */
-        if (G_LIKELY (skip + i >= 3))
-          return offset + skip + i - 3;
-      }
-    }
-    size -= bsize;
-    if (size == 0)
-      break;
-
-    /* nothing found yet, go to next buffer */
-    skip += bsize;
-    g = g_slist_next (g);
-    buf = g->data;
-    bsize = GST_BUFFER_SIZE (buf);
-    bdata = GST_BUFFER_DATA (buf);
-  } while (TRUE);
-
-  /* nothing found */
-  return -1;
+  return gst_adapter_masked_scan_uint32_peek (adapter, mask, pattern, offset,
+      size, NULL);
 }

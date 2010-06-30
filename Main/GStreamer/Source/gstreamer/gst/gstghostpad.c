@@ -77,7 +77,10 @@ static GstPad *gst_proxy_pad_get_target (GstPad * pad);
 static void gst_proxy_pad_dispose (GObject * object);
 static void gst_proxy_pad_finalize (GObject * object);
 
-#ifndef GST_DISABLE_LOADSAVE
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_REMOVE_DEPRECATED)
+#ifdef GST_DISABLE_DEPRECATED
+#include <libxml/parser.h>
+#endif
 static xmlNodePtr gst_proxy_pad_save_thyself (GstObject * object,
     xmlNodePtr parent);
 #endif
@@ -381,12 +384,14 @@ gst_proxy_pad_class_init (GstProxyPadClass * klass)
   gobject_class->dispose = gst_proxy_pad_dispose;
   gobject_class->finalize = gst_proxy_pad_finalize;
 
-#ifndef GST_DISABLE_LOADSAVE
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_REMOVE_DEPRECATED)
   {
     GstObjectClass *gstobject_class = (GstObjectClass *) klass;
 
     gstobject_class->save_thyself =
-        GST_DEBUG_FUNCPTR (gst_proxy_pad_save_thyself);
+        ((gpointer (*)(GstObject * object,
+                gpointer self)) *
+        GST_DEBUG_FUNCPTR (gst_proxy_pad_save_thyself));
   }
 #endif
   /* Register common function pointer descriptions */
@@ -457,7 +462,7 @@ gst_proxy_pad_init (GstProxyPad * ppad)
   gst_pad_set_unlink_function (pad, gst_proxy_pad_do_unlink);
 }
 
-#ifndef GST_DISABLE_LOADSAVE
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_REMOVE_DEPRECATED)
 /**
  * gst_proxy_pad_save_thyself:
  * @pad: a ghost #GstPad to save.
@@ -1226,13 +1231,15 @@ gst_ghost_pad_set_target (GstGhostPad * gpad, GstPad * newtarget)
           G_CALLBACK (on_src_target_notify), NULL);
     }
 
-    /* and link to internal pad */
+    /* and link to internal pad without any checks */
     GST_DEBUG_OBJECT (gpad, "connecting internal pad to target");
 
     if (GST_PAD_IS_SRC (internal))
-      lret = gst_pad_link (internal, newtarget);
+      lret =
+          gst_pad_link_full (internal, newtarget, GST_PAD_LINK_CHECK_NOTHING);
     else
-      lret = gst_pad_link (newtarget, internal);
+      lret =
+          gst_pad_link_full (newtarget, internal, GST_PAD_LINK_CHECK_NOTHING);
 
     if (lret != GST_PAD_LINK_OK)
       goto link_failed;

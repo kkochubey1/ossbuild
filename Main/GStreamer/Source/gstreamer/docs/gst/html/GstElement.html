@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="gstreamer-gstconfig.html" title="gstconfig">
 <link rel="next" href="GstElementFactory.html" title="GstElementFactory">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -144,6 +144,11 @@ enum                <a class="link" href="GstElement.html#GstStateChangeReturn" 
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link-pads-full" title="gst_element_link_pads_full ()">gst_element_link_pads_full</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstPad.html#GstPadLinkCheck" title="enum GstPadLinkCheck"><span class="type">GstPadLinkCheck</span></a> flags</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-unlink-pads" title="gst_element_unlink_pads ()">gst_element_unlink_pads</a>             (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
@@ -2202,6 +2207,59 @@ or NULL for any pad.
 </table></div>
 </div>
 <hr>
+<div class="refsect2" title="gst_element_link_pads_full ()">
+<a name="gst-element-link-pads-full"></a><h3>gst_element_link_pads_full ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link_pads_full          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstPad.html#GstPadLinkCheck" title="enum GstPadLinkCheck"><span class="type">GstPadLinkCheck</span></a> flags</code></em>);</pre>
+<p>
+Links the two named pads of the source and destination elements.
+Side effect is that if one of the pads has no parent, it becomes a
+child of the parent of the other element.  If they have different
+parents, the link fails.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>src</code></em> :</span></p></td>
+<td>a <a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> containing the source pad.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>srcpadname</code></em> :</span></p></td>
+<td>the name of the <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> in source element or NULL for any pad.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>dest</code></em> :</span></p></td>
+<td>the <a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> containing the destination pad.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>destpadname</code></em> :</span></p></td>
+<td>the name of the <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> in destination element,
+or NULL for any pad.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>flags</code></em> :</span></p></td>
+<td>the <a class="link" href="GstPad.html#GstPadLinkCheck" title="enum GstPadLinkCheck"><span class="type">GstPadLinkCheck</span></a> to be performed when linking pads.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> TRUE if the pads could be linked, FALSE otherwise.
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
+</div>
+<hr>
 <div class="refsect2" title="gst_element_unlink_pads ()">
 <a name="gst-element-unlink-pads"></a><h3>gst_element_unlink_pads ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_element_unlink_pads             (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
@@ -2643,15 +2701,26 @@ Sets the name of the element, getting rid of the old name if there was one.
 <pre class="programlisting">#define                 gst_element_get_name(elem)      gst_object_get_name(GST_OBJECT_CAST(elem))
 </pre>
 <p>
-Gets the name of the element.
+Returns a copy of the name of <em class="parameter"><code>elem</code></em>.
+Caller should <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> the return value after usage.
+For a nameless element, this returns NULL, which you can safely <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a>
+as well.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
-<tbody><tr>
+<tbody>
+<tr>
 <td><p><span class="term"><em class="parameter"><code>elem</code></em> :</span></p></td>
-<td>a <a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> to set the name of.
+<td>a <a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> to get the name of <em class="parameter"><code>elem</code></em>.
 </td>
-</tr></tbody>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> the name of <em class="parameter"><code>elem</code></em>. <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> after usage. MT safe. 
+
+</td>
+</tr>
+</tbody>
 </table></div>
 </div>
 <hr>
@@ -2927,12 +2996,14 @@ element to playing, the preroll will complete and playback will start.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>state</code></em> :</span></p></td>
-<td> a pointer to <a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> to hold the state. Can be <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.. <acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>. </td>
+<td> a pointer to <a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> to hold the state. Can be <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
+</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pending</code></em> :</span></p></td>
 <td> a pointer to <a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> to hold the pending state.
-                 Can be <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.. <acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>. </td>
+                 Can be <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
+</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timeout</code></em> :</span></p></td>
@@ -3604,11 +3675,13 @@ Queries an element for the total stream duration.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
 <td> a pointer to the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> asked for.
-         On return contains the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> used.. <acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>. </td>
+         On return contains the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> used. <span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>]</span>
+</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>duration</code></em> :</span></p></td>
-<td> A location in which to store the total duration, or NULL.. <acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>. </td>
+<td> A location in which to store the total duration, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
+</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
@@ -3878,6 +3951,6 @@ a <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</s
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

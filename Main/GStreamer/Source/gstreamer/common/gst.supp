@@ -66,9 +66,6 @@
    fun:dl_main
    fun:_dl_sysdep_start
    fun:_dl_start
-   obj:/lib64/ld-2.*.so
-   obj:*
-   obj:*
 }
 
 {
@@ -4040,5 +4037,12 @@
    fun:*alloc
    ...
    fun:g_type_add_interface_static
+}
+
+{
+   <leak in dash on debian sid>
+   Memcheck:Leak
+   fun:*alloc
+   obj:*/dash
 }
 

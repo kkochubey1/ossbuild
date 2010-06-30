@@ -36,7 +36,7 @@
  * but the "default registry" is the only object that has any meaning to the
  * core.
  *
- * The registry.xml file is actually a cache of plugin information. This is
+ * The registry file is actually a cache of plugin information. This is
  * unlike versions prior to 0.10, where the registry file was the primary source
  * of plugin information, and was created by the gst-register command.
  *
@@ -45,13 +45,33 @@
  * or wants to search for a feature that satisfies given criteria, the primary
  * means of doing so is to load every plugin and look at the resulting
  * information that is gathered in the default registry. Clearly, this is a time
- * consuming process, so we cache information in the registry.xml file.
+ * consuming process, so we cache information in the registry file. The format
+ * and location of the cache file is internal to gstreamer. 
  *
- * On startup, plugins are searched for in the plugin search path. This path can
- * be set directly using the GST_PLUGIN_PATH environment variable. The registry
- * file is loaded from ~/.gstreamer-$GST_MAJORMINOR/registry-$ARCH.xml or the
- * file listed in the GST_REGISTRY env var. The only reason to change the
- * registry location is for testing.
+ * On startup, plugins are searched for in the plugin search path. The following
+ * locations are checked in this order:
+ * <itemizedlist>
+ *   <listitem>
+ *     <para>location from --gst-plugin-path commandline option.</para>
+ *   </listitem>
+ *   <listitem>
+ *     <para>the GST_PLUGIN_PATH environment variable.</para>
+ *   </listitem>
+ *   <listitem>
+ *     <para>the GST_PLUGIN_SYSTEM_PATH environment variable.</para>
+ *   </listitem>
+ *   <listitem>
+ *     <para>default locations (if GST_PLUGIN_SYSTEM_PATH is not set). Those
+ *       default locations are:
+ *       <filename>~/.gstreamer-$GST_MAJORMINOR/plugins/</filename>
+ *       and <filename>$prefix/libs/gstreamer-$GST_MAJORMINOR/</filename>.
+ *     </para>
+ *   </listitem>
+ * </itemizedlist>
+ * The registry cache file is loaded from
+ * <filename>~/.gstreamer-$GST_MAJORMINOR/registry-$ARCH.bin</filename> or the
+ * file listed in the GST_REGISTRY env var. One reason to change the registry
+ * location is for testing.
  *
  * For each plugin that is found in the plugin search path, there could be 3
  * possibilities for cached information:
@@ -1053,6 +1073,25 @@ gst_registry_scan_plugin_file (GstRegistryScanContext * context,
 }
 
 static gboolean
+is_blacklisted_hidden_directory (const gchar * dirent)
+{
+  if (G_LIKELY (dirent[0] != '.'))
+    return FALSE;
+
+  /* skip the .debug directory, these contain elf files that are not
+   * useful or worse, can crash dlopen () */
+  if (strcmp (dirent, ".debug") == 0)
+    return TRUE;
+
+  /* can also skip .git and .deps dirs, those won't contain useful files.
+   * This speeds up scanning a bit in uninstalled setups. */
+  if (strcmp (dirent, ".git") == 0 || strcmp (dirent, ".deps") == 0)
+    return TRUE;
+
+  return FALSE;
+}
+
+static gboolean
 gst_registry_scan_path_level (GstRegistryScanContext * context,
     const gchar * path, int level)
 {
@@ -1078,12 +1117,8 @@ gst_registry_scan_path_level (GstRegistryScanContext * context,
     }
 
     if (file_status.st_mode & S_IFDIR) {
-      /* skip the .debug directory, these contain elf files that are not
-       * useful or worse, can crash dlopen (). do a quick check for the . first
-       * and then call the compare functions. */
-      if (G_UNLIKELY (dirent[0] == '.' && (g_str_equal (dirent, ".debug")
-                  || g_str_equal (dirent, ".git")))) {
-        GST_LOG_OBJECT (context->registry, "ignoring .debug or .git directory");
+      if (G_UNLIKELY (is_blacklisted_hidden_directory (dirent))) {
+        GST_LOG_OBJECT (context->registry, "ignoring %s directory", dirent);
         g_free (filename);
         continue;
       }

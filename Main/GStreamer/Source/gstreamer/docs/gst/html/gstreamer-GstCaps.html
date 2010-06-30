@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="GstBus.html" title="GstBus">
 <link rel="next" href="GstChildProxy.html" title="GstChildProxy">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -74,6 +74,8 @@ enum                <a class="link" href="gstreamer-GstCaps.html#GstCapsFlags" t
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstStructure.html#GstStructure" title="GstStructure"><span class="type">GstStructure</span></a> *structure</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstCaps.html#gst-caps-remove-structure" title="gst_caps_remove_structure ()">gst_caps_remove_structure</a>           (<em class="parameter"><code><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> idx</code></em>);
+<a class="link" href="gstreamer-GstStructure.html#GstStructure" title="GstStructure"><span class="returnvalue">GstStructure</span></a> *      <a class="link" href="gstreamer-GstCaps.html#gst-caps-steal-structure" title="gst_caps_steal_structure ()">gst_caps_steal_structure</a>            (<em class="parameter"><code><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> index</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstCaps.html#gst-caps-merge-structure" title="gst_caps_merge_structure ()">gst_caps_merge_structure</a>            (<em class="parameter"><code><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstStructure.html#GstStructure" title="GstStructure"><span class="type">GstStructure</span></a> *structure</code></em>);
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gstreamer-GstCaps.html#gst-caps-get-size" title="gst_caps_get_size ()">gst_caps_get_size</a>                   (<em class="parameter"><code>const <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);
@@ -149,7 +151,7 @@ A <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span cl
 <p>
 </p>
 <div class="example">
-<a name="id452282"></a><p class="title"><b>Example 7. Creating caps</b></p>
+<a name="id606959"></a><p class="title"><b>Example 7. Creating caps</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -738,6 +740,38 @@ contained in <em class="parameter"><code>caps</code></em>.
 </tr>
 </tbody>
 </table></div>
+</div>
+<hr>
+<div class="refsect2" title="gst_caps_steal_structure ()">
+<a name="gst-caps-steal-structure"></a><h3>gst_caps_steal_structure ()</h3>
+<pre class="programlisting"><a class="link" href="gstreamer-GstStructure.html#GstStructure" title="GstStructure"><span class="returnvalue">GstStructure</span></a> *      gst_caps_steal_structure            (<em class="parameter"><code><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> index</code></em>);</pre>
+<p>
+Retrieves the stucture with the given index from the list of structures
+contained in <em class="parameter"><code>caps</code></em>. The caller becomes the owner of the returned structure.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>caps</code></em> :</span></p></td>
+<td>the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> to retrieve from
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>index</code></em> :</span></p></td>
+<td>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> a pointer to the <a class="link" href="gstreamer-GstStructure.html#GstStructure" title="GstStructure"><span class="type">GstStructure</span></a> corresponding to <em class="parameter"><code>index</code></em>.
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_caps_merge_structure ()">
@@ -1576,6 +1610,6 @@ structures' values when the refcount reaches 0.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

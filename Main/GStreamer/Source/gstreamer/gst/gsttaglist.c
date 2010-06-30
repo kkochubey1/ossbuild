@@ -294,6 +294,22 @@ _gst_tag_initialize (void)
       G_TYPE_STRING, _("geo location sublocation"),
       _("a location whithin a city where the media has been produced "
           "or created (e.g. the neighborhood)"), NULL);
+  gst_tag_register (GST_TAG_GEO_LOCATION_MOVEMENT_SPEED, GST_TAG_FLAG_META,
+      G_TYPE_DOUBLE, _("geo location movement speed"),
+      _("movement speed of the capturing device while performing the capture "
+          "in m/s"), NULL);
+  gst_tag_register (GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION, GST_TAG_FLAG_META,
+      G_TYPE_DOUBLE, _("geo location movement direction"),
+      _("indicates the movement direction of the device performing the capture"
+          " of a media. It is represented as degrees in floating point "
+          "representation, 0 means the geographic north, and increases "
+          "clockwise"), NULL);
+  gst_tag_register (GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION, GST_TAG_FLAG_META,
+      G_TYPE_DOUBLE, _("geo location capture direction"),
+      _("indicates the direction the device is pointing to when capturing "
+          " a media. It is represented as degrees in floating point "
+          " representation, 0 means the geographic north, and increases "
+          "clockwise"), NULL);
   gst_tag_register (GST_TAG_SHOW_NAME, GST_TAG_FLAG_META, G_TYPE_STRING,
       /* TRANSLATORS: 'show name' = 'TV/radio/podcast show name' here */
       _("show name"),
@@ -327,6 +343,15 @@ _gst_tag_initialize (void)
       _("user rating"),
       _("Rating attributed by a user. The higher the rank, "
           "the more the user likes this media"), NULL);
+  gst_tag_register (GST_TAG_DEVICE_MANUFACTURER, GST_TAG_FLAG_META,
+      G_TYPE_STRING, _("device manufacturer"),
+      _("Manufacturer of the device used to create this media"), NULL);
+  gst_tag_register (GST_TAG_DEVICE_MODEL, GST_TAG_FLAG_META, G_TYPE_STRING,
+      _("device model"),
+      _("Model of the device used to create this media"), NULL);
+  gst_tag_register (GST_TAG_IMAGE_ORIENTATION, GST_TAG_FLAG_META, G_TYPE_STRING,
+      _("image orientation"),
+      _("How the image should be rotated or flipped before display"), NULL);
 }
 
 /**
@@ -1578,6 +1603,44 @@ TAG_MERGE_FUNCS (pointer, gpointer, (*value != NULL))
  *              given list.
  */
 TAG_MERGE_FUNCS (string, gchar *, (*value != NULL && **value != '\0'))
+
+/*
+ *FIXME 0.11: Instead of _peek (non-copy) and _get (copy), we could have
+ *            _get (non-copy) and _dup (copy) for strings, seems more
+ *            widely used
+ */
+/**
+ * gst_tag_list_peek_string_index:
+ * @list: a #GstTagList to get the tag from
+ * @tag: tag to read out
+ * @index: number of entry to read out
+ * @value: location for the result
+ *
+ * Peeks at the value that is at the given index for the given tag in the given
+ * list.
+ *
+ * The resulting string in @value will be in UTF-8 encoding and doesn't need
+ * to be freed by the caller. The returned string is also guaranteed to
+ * be non-NULL and non-empty.
+ *
+ * Returns: TRUE, if a value was set, FALSE if the tag didn't exist in the
+ *              given list.
+ */
+gboolean
+gst_tag_list_peek_string_index (const GstTagList * list,
+    const gchar * tag, guint index, const gchar ** value)
+{
+  const GValue *v;
+
+  g_return_val_if_fail (GST_IS_TAG_LIST (list), FALSE);
+  g_return_val_if_fail (tag != NULL, FALSE);
+  g_return_val_if_fail (value != NULL, FALSE);
+
+  if ((v = gst_tag_list_get_value_index (list, tag, index)) == NULL)
+    return FALSE;
+  *value = g_value_get_string (v);
+  return *value != NULL && **value != '\0';
+}
 
 /**
  * gst_tag_list_get_date:

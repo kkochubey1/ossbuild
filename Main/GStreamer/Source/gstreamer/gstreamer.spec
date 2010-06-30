@@ -1,12 +1,12 @@
 %define		gstreamer	gstreamer
 %define		majorminor	0.10
 
-%define 	_glib2		2.18
+%define 	_glib2		2.20
 %define 	_libxml2	2.4.9
 
 Name: 		%{gstreamer}
-Version: 	0.10.29
-Release: 	1
+Version: 	0.10.29.3
+Release: 	0.20100629.180134
 Summary: 	GStreamer streaming media framework runtime
 
 Group: 		Applications/Multimedia

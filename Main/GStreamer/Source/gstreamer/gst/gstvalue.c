@@ -308,6 +308,7 @@ gst_value_list_append_value (GValue * value, const GValue * append_value)
   GValue val = { 0, };
 
   g_return_if_fail (GST_VALUE_HOLDS_LIST (value));
+  g_return_if_fail (G_IS_VALUE (append_value));
 
   gst_value_init_and_copy (&val, append_value);
   g_array_append_vals ((GArray *) value->data[0].v_pointer, &val, 1);
@@ -326,6 +327,7 @@ gst_value_list_prepend_value (GValue * value, const GValue * prepend_value)
   GValue val = { 0, };
 
   g_return_if_fail (GST_VALUE_HOLDS_LIST (value));
+  g_return_if_fail (G_IS_VALUE (prepend_value));
 
   gst_value_init_and_copy (&val, prepend_value);
   g_array_prepend_vals ((GArray *) value->data[0].v_pointer, &val, 1);
@@ -430,6 +432,7 @@ gst_value_array_append_value (GValue * value, const GValue * append_value)
   GValue val = { 0, };
 
   g_return_if_fail (GST_VALUE_HOLDS_ARRAY (value));
+  g_return_if_fail (G_IS_VALUE (append_value));
 
   gst_value_init_and_copy (&val, append_value);
   g_array_append_vals ((GArray *) value->data[0].v_pointer, &val, 1);
@@ -448,6 +451,7 @@ gst_value_array_prepend_value (GValue * value, const GValue * prepend_value)
   GValue val = { 0, };
 
   g_return_if_fail (GST_VALUE_HOLDS_ARRAY (value));
+  g_return_if_fail (G_IS_VALUE (prepend_value));
 
   gst_value_init_and_copy (&val, prepend_value);
   g_array_prepend_vals ((GArray *) value->data[0].v_pointer, &val, 1);
@@ -502,7 +506,7 @@ gst_value_transform_array_string (const GValue * src_value, GValue * dest_value)
 }
 
 /* Do an unordered compare of the contents of a list */
-static int
+static gint
 gst_value_compare_list (const GValue * value1, const GValue * value2)
 {
   guint i, j;
@@ -557,7 +561,7 @@ gst_value_compare_list (const GValue * value1, const GValue * value2)
 }
 
 /* Perform an ordered comparison of the contents of an array */
-static int
+static gint
 gst_value_compare_array (const GValue * value1, const GValue * value2)
 {
   guint i;
@@ -682,11 +686,17 @@ gst_value_transform_fourcc_string (const GValue * src_value,
     GValue * dest_value)
 {
   guint32 fourcc = src_value->data[0].v_int;
+  gchar fourcc_char[4];
 
-  if (g_ascii_isprint ((fourcc >> 0) & 0xff) &&
-      g_ascii_isprint ((fourcc >> 8) & 0xff) &&
-      g_ascii_isprint ((fourcc >> 16) & 0xff) &&
-      g_ascii_isprint ((fourcc >> 24) & 0xff)) {
+  fourcc_char[0] = (fourcc >> 0) & 0xff;
+  fourcc_char[1] = (fourcc >> 8) & 0xff;
+  fourcc_char[2] = (fourcc >> 16) & 0xff;
+  fourcc_char[3] = (fourcc >> 24) & 0xff;
+
+  if ((g_ascii_isalnum (fourcc_char[0]) || fourcc_char[0] == ' ') &&
+      (g_ascii_isalnum (fourcc_char[1]) || fourcc_char[1] == ' ') &&
+      (g_ascii_isalnum (fourcc_char[2]) || fourcc_char[2] == ' ') &&
+      (g_ascii_isalnum (fourcc_char[3]) || fourcc_char[3] == ' ')) {
     dest_value->data[0].v_pointer =
         g_strdup_printf ("%" GST_FOURCC_FORMAT, GST_FOURCC_ARGS (fourcc));
   } else {
@@ -706,11 +716,17 @@ static gchar *
 gst_value_serialize_fourcc (const GValue * value)
 {
   guint32 fourcc = value->data[0].v_int;
+  gchar fourcc_char[4];
 
-  if (g_ascii_isalnum ((fourcc >> 0) & 0xff) &&
-      g_ascii_isalnum ((fourcc >> 8) & 0xff) &&
-      g_ascii_isalnum ((fourcc >> 16) & 0xff) &&
-      g_ascii_isalnum ((fourcc >> 24) & 0xff)) {
+  fourcc_char[0] = (fourcc >> 0) & 0xff;
+  fourcc_char[1] = (fourcc >> 8) & 0xff;
+  fourcc_char[2] = (fourcc >> 16) & 0xff;
+  fourcc_char[3] = (fourcc >> 24) & 0xff;
+
+  if ((g_ascii_isalnum (fourcc_char[0]) || fourcc_char[0] == ' ') &&
+      (g_ascii_isalnum (fourcc_char[1]) || fourcc_char[1] == ' ') &&
+      (g_ascii_isalnum (fourcc_char[2]) || fourcc_char[2] == ' ') &&
+      (g_ascii_isalnum (fourcc_char[3]) || fourcc_char[3] == ' ')) {
     return g_strdup_printf ("%" GST_FOURCC_FORMAT, GST_FOURCC_ARGS (fourcc));
   } else {
     return g_strdup_printf ("0x%08x", fourcc);
@@ -718,14 +734,24 @@ gst_value_serialize_fourcc (const GValue * value)
 }
 
 static gboolean
-gst_value_deserialize_fourcc (GValue * dest, const char *s)
+gst_value_deserialize_fourcc (GValue * dest, const gchar * s)
 {
   gboolean ret = FALSE;
   guint32 fourcc = 0;
-  char *end;
+  gchar *end;
+  gint l = strlen (s);
 
-  if (strlen (s) == 4) {
+  if (l == 4) {
     fourcc = GST_MAKE_FOURCC (s[0], s[1], s[2], s[3]);
+    ret = TRUE;
+  } else if (l == 3) {
+    fourcc = GST_MAKE_FOURCC (s[0], s[1], s[2], ' ');
+    ret = TRUE;
+  } else if (l == 2) {
+    fourcc = GST_MAKE_FOURCC (s[0], s[1], ' ', ' ');
+    ret = TRUE;
+  } else if (l == 1) {
+    fourcc = GST_MAKE_FOURCC (s[0], ' ', ' ', ' ');
     ret = TRUE;
   } else if (g_ascii_isdigit (*s)) {
     fourcc = strtoul (s, &end, 0);
@@ -760,6 +786,13 @@ static gchar *
 gst_value_collect_int_range (GValue * value, guint n_collect_values,
     GTypeCValue * collect_values, guint collect_flags)
 {
+  if (n_collect_values != 2)
+    return g_strdup_printf ("not enough value locations for `%s' passed",
+        G_VALUE_TYPE_NAME (value));
+  if (collect_values[0].v_int >= collect_values[1].v_int)
+    return g_strdup_printf ("range start is not smaller than end for `%s'",
+        G_VALUE_TYPE_NAME (value));
+
   value->data[0].v_int = collect_values[0].v_int;
   value->data[1].v_int = collect_values[1].v_int;
 
@@ -889,6 +922,13 @@ static gchar *
 gst_value_collect_double_range (GValue * value, guint n_collect_values,
     GTypeCValue * collect_values, guint collect_flags)
 {
+  if (n_collect_values != 2)
+    return g_strdup_printf ("not enough value locations for `%s' passed",
+        G_VALUE_TYPE_NAME (value));
+  if (collect_values[0].v_double >= collect_values[1].v_double)
+    return g_strdup_printf ("range start is not smaller than end for `%s'",
+        G_VALUE_TYPE_NAME (value));
+
   value->data[0].v_double = collect_values[0].v_double;
   value->data[1].v_double = collect_values[1].v_double;
 
@@ -927,6 +967,7 @@ void
 gst_value_set_double_range (GValue * value, gdouble start, gdouble end)
 {
   g_return_if_fail (GST_VALUE_HOLDS_DOUBLE_RANGE (value));
+  g_return_if_fail (start < end);
 
   value->data[0].v_double = start;
   value->data[1].v_double = end;
@@ -968,7 +1009,7 @@ static void
 gst_value_transform_double_range_string (const GValue * src_value,
     GValue * dest_value)
 {
-  char s1[G_ASCII_DTOSTR_BUF_SIZE], s2[G_ASCII_DTOSTR_BUF_SIZE];
+  gchar s1[G_ASCII_DTOSTR_BUF_SIZE], s2[G_ASCII_DTOSTR_BUF_SIZE];
 
   dest_value->data[0].v_pointer = g_strdup_printf ("[%s,%s]",
       g_ascii_dtostr (s1, G_ASCII_DTOSTR_BUF_SIZE,
@@ -989,8 +1030,8 @@ gst_value_compare_double_range (const GValue * value1, const GValue * value2)
 static gchar *
 gst_value_serialize_double_range (const GValue * value)
 {
-  char d1[G_ASCII_DTOSTR_BUF_SIZE];
-  char d2[G_ASCII_DTOSTR_BUF_SIZE];
+  gchar d1[G_ASCII_DTOSTR_BUF_SIZE];
+  gchar d2[G_ASCII_DTOSTR_BUF_SIZE];
 
   g_ascii_dtostr (d1, G_ASCII_DTOSTR_BUF_SIZE, value->data[0].v_double);
   g_ascii_dtostr (d2, G_ASCII_DTOSTR_BUF_SIZE, value->data[1].v_double);
@@ -1059,6 +1100,19 @@ gst_value_collect_fraction_range (GValue * value, guint n_collect_values,
   if (n_collect_values != 4)
     return g_strdup_printf ("not enough value locations for `%s' passed",
         G_VALUE_TYPE_NAME (value));
+  if (collect_values[1].v_int == 0)
+    return g_strdup_printf ("passed '0' as first denominator for `%s'",
+        G_VALUE_TYPE_NAME (value));
+  if (collect_values[3].v_int == 0)
+    return g_strdup_printf ("passed '0' as second denominator for `%s'",
+        G_VALUE_TYPE_NAME (value));
+  if ((((gdouble) collect_values[0].v_int) /
+          ((gdouble) collect_values[1].v_int)) >=
+      (((gdouble) collect_values[2].v_int) /
+          ((gdouble) collect_values[3].v_int)))
+    return g_strdup_printf ("range start is not smaller than end for `%s'",
+        G_VALUE_TYPE_NAME (value));
+
   if (vals == NULL) {
     gst_value_init_fraction_range (value);
     vals = value->data[0].v_pointer;
@@ -1076,8 +1130,8 @@ static gchar *
 gst_value_lcopy_fraction_range (const GValue * value, guint n_collect_values,
     GTypeCValue * collect_values, guint collect_flags)
 {
-  int i;
-  int *dest_values[4];
+  gint i;
+  gint *dest_values[4];
   GValue *vals = (GValue *) value->data[0].v_pointer;
 
   if (G_UNLIKELY (n_collect_values != 4))
@@ -1119,6 +1173,11 @@ gst_value_set_fraction_range (GValue * value, const GValue * start,
   GValue *vals;
 
   g_return_if_fail (GST_VALUE_HOLDS_FRACTION_RANGE (value));
+  g_return_if_fail (GST_VALUE_HOLDS_FRACTION (start));
+  g_return_if_fail (GST_VALUE_HOLDS_FRACTION (end));
+  g_return_if_fail (((gdouble) start->data[0].v_int) /
+      ((gdouble) start->data[1].v_int) <
+      ((gdouble) end->data[0].v_int) / ((gdouble) end->data[1].v_int));
 
   vals = (GValue *) value->data[0].v_pointer;
   if (vals == NULL) {
@@ -1148,6 +1207,13 @@ gst_value_set_fraction_range_full (GValue * value,
   GValue start = { 0 };
   GValue end = { 0 };
 
+  g_return_if_fail (value != NULL);
+  g_return_if_fail (denominator_start != 0);
+  g_return_if_fail (denominator_end != 0);
+  g_return_if_fail (((gdouble) numerator_start) /
+      ((gdouble) denominator_start) <
+      ((gdouble) numerator_end) / ((gdouble) denominator_end));
+
   g_value_init (&start, GST_TYPE_FRACTION);
   g_value_init (&end, GST_TYPE_FRACTION);
 
@@ -1172,7 +1238,7 @@ gst_value_get_fraction_range_min (const GValue * value)
 {
   GValue *vals;
 
-  g_return_val_if_fail (GST_VALUE_HOLDS_FRACTION_RANGE (value), FALSE);
+  g_return_val_if_fail (GST_VALUE_HOLDS_FRACTION_RANGE (value), NULL);
 
   vals = (GValue *) value->data[0].v_pointer;
   if (vals != NULL) {
@@ -1195,7 +1261,7 @@ gst_value_get_fraction_range_max (const GValue * value)
 {
   GValue *vals;
 
-  g_return_val_if_fail (GST_VALUE_HOLDS_FRACTION_RANGE (value), FALSE);
+  g_return_val_if_fail (GST_VALUE_HOLDS_FRACTION_RANGE (value), NULL);
 
   vals = (GValue *) value->data[0].v_pointer;
   if (vals != NULL) {
@@ -1205,7 +1271,7 @@ gst_value_get_fraction_range_max (const GValue * value)
   return NULL;
 }
 
-static char *
+static gchar *
 gst_value_serialize_fraction_range (const GValue * value)
 {
   GValue *vals = (GValue *) value->data[0].v_pointer;
@@ -1281,7 +1347,9 @@ gst_value_deserialize_fraction_range (GValue * dest, const gchar * s)
 void
 gst_value_set_caps (GValue * value, const GstCaps * caps)
 {
+  g_return_if_fail (G_IS_VALUE (value));
   g_return_if_fail (G_VALUE_TYPE (value) == GST_TYPE_CAPS);
+  g_return_if_fail (caps == NULL || GST_IS_CAPS (caps));
 
   g_value_set_boxed (value, caps);
 }
@@ -1297,12 +1365,13 @@ gst_value_set_caps (GValue * value, const GstCaps * caps)
 const GstCaps *
 gst_value_get_caps (const GValue * value)
 {
+  g_return_val_if_fail (G_IS_VALUE (value), NULL);
   g_return_val_if_fail (G_VALUE_TYPE (value) == GST_TYPE_CAPS, NULL);
 
   return (GstCaps *) g_value_get_boxed (value);
 }
 
-static char *
+static gchar *
 gst_value_serialize_caps (const GValue * value)
 {
   GstCaps *caps = g_value_get_boxed (value);
@@ -1340,7 +1409,9 @@ gst_value_deserialize_caps (GValue * dest, const gchar * s)
 void
 gst_value_set_structure (GValue * value, const GstStructure * structure)
 {
+  g_return_if_fail (G_IS_VALUE (value));
   g_return_if_fail (G_VALUE_TYPE (value) == GST_TYPE_STRUCTURE);
+  g_return_if_fail (structure == NULL || GST_IS_STRUCTURE (structure));
 
   g_value_set_boxed (value, structure);
 }
@@ -1358,12 +1429,13 @@ gst_value_set_structure (GValue * value, const GstStructure * structure)
 const GstStructure *
 gst_value_get_structure (const GValue * value)
 {
+  g_return_val_if_fail (G_IS_VALUE (value), NULL);
   g_return_val_if_fail (G_VALUE_TYPE (value) == GST_TYPE_STRUCTURE, NULL);
 
   return (GstStructure *) g_value_get_boxed (value);
 }
 
-static char *
+static gchar *
 gst_value_serialize_structure (const GValue * value)
 {
   GstStructure *structure = g_value_get_boxed (value);
@@ -1399,7 +1471,7 @@ gst_value_deserialize_structure (GValue * dest, const gchar * s)
  * GstBuffer *
  *************/
 
-static int
+static gint
 gst_value_compare_buffer (const GValue * value1, const GValue * value2)
 {
   GstBuffer *buf1 = GST_BUFFER (gst_value_get_mini_object (value1));
@@ -1418,13 +1490,13 @@ gst_value_compare_buffer (const GValue * value1, const GValue * value2)
   return GST_VALUE_UNORDERED;
 }
 
-static char *
+static gchar *
 gst_value_serialize_buffer (const GValue * value)
 {
   guint8 *data;
-  int i;
-  int size;
-  char *string;
+  gint i;
+  gint size;
+  gchar *string;
   GstBuffer *buffer;
 
   buffer = gst_value_get_buffer (value);
@@ -1447,10 +1519,10 @@ static gboolean
 gst_value_deserialize_buffer (GValue * dest, const gchar * s)
 {
   GstBuffer *buffer;
-  int len;
-  char ts[3];
+  gint len;
+  gchar ts[3];
   guint8 *data;
-  int i;
+  gint i;
 
   len = strlen (s);
   if (len & 1)
@@ -1490,7 +1562,7 @@ wrong_char:
  * boolean *
  ***********/
 
-static int
+static gint
 gst_value_compare_boolean (const GValue * value1, const GValue * value2)
 {
   if ((value1->data[0].v_int != 0) == (value2->data[0].v_int != 0))
@@ -1498,7 +1570,7 @@ gst_value_compare_boolean (const GValue * value1, const GValue * value2)
   return GST_VALUE_UNORDERED;
 }
 
-static char *
+static gchar *
 gst_value_serialize_boolean (const GValue * value)
 {
   if (value->data[0].v_int) {
@@ -1541,7 +1613,7 @@ gst_value_compare_ ## _type                                             \
   return GST_VALUE_EQUAL;                                               \
 }                                                                       \
                                                                         \
-static char *                                                           \
+static gchar *                                                          \
 gst_value_serialize_ ## _type (const GValue * value)                    \
 {                                                                       \
   GValue val = { 0, };                                                  \
@@ -1561,7 +1633,7 @@ gst_value_deserialize_int_helper (gint64 * to, const gchar * s,
     gint64 min, gint64 max, gint size)
 {
   gboolean ret = FALSE;
-  char *end;
+  gchar *end;
   gint64 mask = -1;
 
   errno = 0;
@@ -1638,7 +1710,7 @@ static gboolean                                                         \
 gst_value_deserialize_ ## _type (GValue * dest, const gchar *s)         \
 {                                                                       \
   gint64 x;                                                             \
-  char *end;                                                            \
+  gchar *end;                                                           \
   gboolean ret = FALSE;                                                 \
                                                                         \
   errno = 0;                                                            \
@@ -1702,7 +1774,7 @@ CREATE_USERIALIZATION (ulong, ULONG);
 /**********
  * double *
  **********/
-static int
+static gint
 gst_value_compare_double (const GValue * value1, const GValue * value2)
 {
   if (value1->data[0].v_double > value2->data[0].v_double)
@@ -1714,10 +1786,10 @@ gst_value_compare_double (const GValue * value1, const GValue * value2)
   return GST_VALUE_UNORDERED;
 }
 
-static char *
+static gchar *
 gst_value_serialize_double (const GValue * value)
 {
-  char d[G_ASCII_DTOSTR_BUF_SIZE];
+  gchar d[G_ASCII_DTOSTR_BUF_SIZE];
 
   g_ascii_dtostr (d, G_ASCII_DTOSTR_BUF_SIZE, value->data[0].v_double);
   return g_strdup (d);
@@ -1726,9 +1798,9 @@ gst_value_serialize_double (const GValue * value)
 static gboolean
 gst_value_deserialize_double (GValue * dest, const gchar * s)
 {
-  double x;
+  gdouble x;
   gboolean ret = FALSE;
-  char *end;
+  gchar *end;
 
   x = g_ascii_strtod (s, &end);
   if (*end == 0) {
@@ -1776,9 +1848,9 @@ gst_value_serialize_float (const GValue * value)
 static gboolean
 gst_value_deserialize_float (GValue * dest, const gchar * s)
 {
-  double x;
+  gdouble x;
   gboolean ret = FALSE;
-  char *end;
+  gchar *end;
 
   x = g_ascii_strtod (s, &end);
   if (*end == 0) {
@@ -1812,7 +1884,7 @@ gst_value_compare_string (const GValue * value1, const GValue * value2)
     if (value1->data[0].v_pointer != value2->data[0].v_pointer)
       return GST_VALUE_UNORDERED;
   } else {
-    int x = strcmp (value1->data[0].v_pointer, value2->data[0].v_pointer);
+    gint x = strcmp (value1->data[0].v_pointer, value2->data[0].v_pointer);
 
     if (x < 0)
       return GST_VALUE_LESS_THAN;
@@ -1823,10 +1895,10 @@ gst_value_compare_string (const GValue * value1, const GValue * value2)
   return GST_VALUE_EQUAL;
 }
 
-static int
+static gint
 gst_string_measure_wrapping (const gchar * s)
 {
-  int len;
+  gint len;
   gboolean wrap = FALSE;
 
   if (G_UNLIKELY (s == NULL))
@@ -1856,7 +1928,7 @@ gst_string_measure_wrapping (const gchar * s)
 }
 
 static gchar *
-gst_string_wrap_inner (const gchar * s, int len)
+gst_string_wrap_inner (const gchar * s, gint len)
 {
   gchar *d, *e;
 
@@ -1887,7 +1959,7 @@ gst_string_wrap_inner (const gchar * s, int len)
 static gchar *
 gst_string_wrap (const gchar * s)
 {
-  int len = gst_string_measure_wrapping (s);
+  gint len = gst_string_measure_wrapping (s);
 
   if (G_LIKELY (len < 0))
     return g_strdup (s);
@@ -1900,7 +1972,7 @@ static gchar *
 gst_string_take_and_wrap (gchar * s)
 {
   gchar *out;
-  int len = gst_string_measure_wrapping (s);
+  gint len = gst_string_measure_wrapping (s);
 
   if (G_LIKELY (len < 0))
     return s;
@@ -2411,7 +2483,7 @@ static gboolean
 gst_value_intersect_fraction_fraction_range (GValue * dest, const GValue * src1,
     const GValue * src2)
 {
-  int res1, res2;
+  gint res1, res2;
   GValue *vals;
   GstValueCompareFunc compare;
 
@@ -2440,7 +2512,7 @@ gst_value_intersect_fraction_range_fraction_range (GValue * dest,
 {
   GValue *min;
   GValue *max;
-  int res;
+  gint res;
   GValue *vals1, *vals2;
   GstValueCompareFunc compare;
 
@@ -2491,9 +2563,9 @@ static gboolean
 gst_value_subtract_int_int_range (GValue * dest, const GValue * minuend,
     const GValue * subtrahend)
 {
-  int min = gst_value_get_int_range_min (subtrahend);
-  int max = gst_value_get_int_range_max (subtrahend);
-  int val = g_value_get_int (minuend);
+  gint min = gst_value_get_int_range_min (subtrahend);
+  gint max = gst_value_get_int_range_max (subtrahend);
+  gint val = g_value_get_int (minuend);
 
   /* subtracting a range from an int only works if the int is not in the
    * range */
@@ -2779,7 +2851,7 @@ gst_value_subtract_fraction_range_fraction_range (GValue * dest,
   const GValue *max2 = gst_value_get_fraction_range_max (minuend);
   const GValue *max1 = gst_value_get_fraction_range_min (subtrahend);
   const GValue *min2 = gst_value_get_fraction_range_max (subtrahend);
-  int cmp1, cmp2;
+  gint cmp1, cmp2;
   GValue v1 = { 0, };
   GValue v2 = { 0, };
   GValue *pv1, *pv2;            /* yeah, hungarian! */
@@ -2890,6 +2962,9 @@ gst_value_get_compare_func (const GValue * value1)
 gboolean
 gst_value_can_compare (const GValue * value1, const GValue * value2)
 {
+  g_return_val_if_fail (G_IS_VALUE (value1), FALSE);
+  g_return_val_if_fail (G_IS_VALUE (value2), FALSE);
+
   if (G_VALUE_TYPE (value1) != G_VALUE_TYPE (value2))
     return FALSE;
 
@@ -2913,6 +2988,9 @@ gint
 gst_value_compare (const GValue * value1, const GValue * value2)
 {
   GstValueCompareFunc compare;
+
+  g_return_val_if_fail (G_IS_VALUE (value1), GST_VALUE_LESS_THAN);
+  g_return_val_if_fail (G_IS_VALUE (value2), GST_VALUE_GREATER_THAN);
 
   if (G_VALUE_TYPE (value1) != G_VALUE_TYPE (value2))
     return GST_VALUE_UNORDERED;
@@ -2975,6 +3053,9 @@ gst_value_can_union (const GValue * value1, const GValue * value2)
   GstValueUnionInfo *union_info;
   guint i, len;
 
+  g_return_val_if_fail (G_IS_VALUE (value1), FALSE);
+  g_return_val_if_fail (G_IS_VALUE (value2), FALSE);
+
   len = gst_value_union_funcs->len;
 
   for (i = 0; i < len; i++) {
@@ -3006,6 +3087,10 @@ gst_value_union (GValue * dest, const GValue * value1, const GValue * value2)
 {
   GstValueUnionInfo *union_info;
   guint i, len;
+
+  g_return_val_if_fail (dest != NULL, FALSE);
+  g_return_val_if_fail (G_IS_VALUE (value1), FALSE);
+  g_return_val_if_fail (G_IS_VALUE (value2), FALSE);
 
   len = gst_value_union_funcs->len;
 
@@ -3075,6 +3160,9 @@ gst_value_can_intersect (const GValue * value1, const GValue * value2)
   guint i, len;
   GType ltype, type1, type2;
 
+  g_return_val_if_fail (G_IS_VALUE (value1), FALSE);
+  g_return_val_if_fail (G_IS_VALUE (value2), FALSE);
+
   ltype = gst_value_list_get_type ();
 
   /* special cases */
@@ -3123,6 +3211,10 @@ gst_value_intersect (GValue * dest, const GValue * value1,
   GstValueIntersectInfo *intersect_info;
   guint i, len;
   GType ltype, type1, type2;
+
+  g_return_val_if_fail (dest != NULL, FALSE);
+  g_return_val_if_fail (G_IS_VALUE (value1), FALSE);
+  g_return_val_if_fail (G_IS_VALUE (value2), FALSE);
 
   ltype = gst_value_list_get_type ();
 
@@ -3203,6 +3295,10 @@ gst_value_subtract (GValue * dest, const GValue * minuend,
   guint i, len;
   GType ltype, mtype, stype;
 
+  g_return_val_if_fail (dest != NULL, FALSE);
+  g_return_val_if_fail (G_IS_VALUE (minuend), FALSE);
+  g_return_val_if_fail (G_IS_VALUE (subtrahend), FALSE);
+
   ltype = gst_value_list_get_type ();
 
   /* special cases first */
@@ -3259,6 +3355,9 @@ gst_value_can_subtract (const GValue * minuend, const GValue * subtrahend)
   GstValueSubtractInfo *info;
   guint i, len;
   GType ltype, mtype, stype;
+
+  g_return_val_if_fail (G_IS_VALUE (minuend), FALSE);
+  g_return_val_if_fail (G_IS_VALUE (subtrahend), FALSE);
 
   ltype = gst_value_list_get_type ();
 
@@ -3321,6 +3420,8 @@ gst_value_register (const GstValueTable * table)
 {
   GstValueTable *found;
 
+  g_return_if_fail (table != NULL);
+
   g_array_append_val (gst_value_table, *table);
 
   found = gst_value_hash_lookup_type (table->type);
@@ -3343,6 +3444,9 @@ gst_value_register (const GstValueTable * table)
 void
 gst_value_init_and_copy (GValue * dest, const GValue * src)
 {
+  g_return_if_fail (G_IS_VALUE (src));
+  g_return_if_fail (dest != NULL);
+
   g_value_init (dest, G_VALUE_TYPE (src));
   g_value_copy (src, dest);
 }
@@ -3362,7 +3466,7 @@ gst_value_serialize (const GValue * value)
   guint i, len;
   GValue s_val = { 0 };
   GstValueTable *table, *best;
-  char *s;
+  gchar *s;
   GType type;
 
   g_return_val_if_fail (G_IS_VALUE (value), NULL);
@@ -3451,7 +3555,11 @@ gst_value_deserialize (GValue * dest, const gchar * src)
 gboolean
 gst_value_is_fixed (const GValue * value)
 {
-  GType type = G_VALUE_TYPE (value);
+  GType type;
+
+  g_return_val_if_fail (G_IS_VALUE (value), FALSE);
+
+  type = G_VALUE_TYPE (value);
 
   /* the most common types are just basic plain glib types */
   if (type <= G_TYPE_MAKE_FUNDAMENTAL (G_TYPE_RESERVED_GLIB_LAST)) {
@@ -3497,6 +3605,23 @@ static gchar *
 gst_value_collect_fraction (GValue * value, guint n_collect_values,
     GTypeCValue * collect_values, guint collect_flags)
 {
+  if (n_collect_values != 2)
+    return g_strdup_printf ("not enough value locations for `%s' passed",
+        G_VALUE_TYPE_NAME (value));
+  if (collect_values[1].v_int == 0)
+    return g_strdup_printf ("passed '0' as denominator for `%s'",
+        G_VALUE_TYPE_NAME (value));
+  if (collect_values[0].v_int < -G_MAXINT)
+    return
+        g_strdup_printf
+        ("passed value smaller than -G_MAXINT as numerator for `%s'",
+        G_VALUE_TYPE_NAME (value));
+  if (collect_values[1].v_int < -G_MAXINT)
+    return
+        g_strdup_printf
+        ("passed value smaller than -G_MAXINT as denominator for `%s'",
+        G_VALUE_TYPE_NAME (value));
+
   gst_value_set_fraction (value,
       collect_values[0].v_int, collect_values[1].v_int);
 
@@ -3612,6 +3737,7 @@ gst_value_fraction_multiply (GValue * product, const GValue * factor1,
   gint n1, n2, d1, d2;
   gint res_n, res_d;
 
+  g_return_val_if_fail (product != NULL, FALSE);
   g_return_val_if_fail (GST_VALUE_HOLDS_FRACTION (factor1), FALSE);
   g_return_val_if_fail (GST_VALUE_HOLDS_FRACTION (factor2), FALSE);
 
@@ -3645,6 +3771,7 @@ gst_value_fraction_subtract (GValue * dest,
   gint n1, n2, d1, d2;
   gint res_n, res_d;
 
+  g_return_val_if_fail (dest != NULL, FALSE);
   g_return_val_if_fail (GST_VALUE_HOLDS_FRACTION (minuend), FALSE);
   g_return_val_if_fail (GST_VALUE_HOLDS_FRACTION (subtrahend), FALSE);
 
@@ -3685,7 +3812,7 @@ static gboolean
 gst_value_deserialize_fraction (GValue * dest, const gchar * s)
 {
   gint num, den;
-  int num_chars;
+  gint num_chars;
 
   if (G_UNLIKELY (s == NULL))
     return FALSE;
@@ -3696,6 +3823,9 @@ gst_value_deserialize_fraction (GValue * dest, const gchar * s)
   if (sscanf (s, "%d/%d%n", &num, &den, &num_chars) >= 2) {
     if (s[num_chars] != 0)
       return FALSE;
+    if (den == 0)
+      return FALSE;
+
     gst_value_set_fraction (dest, num, den);
     return TRUE;
   } else if (g_ascii_strcasecmp (s, "1/max") == 0) {
@@ -3904,7 +4034,7 @@ gst_value_serialize_date (const GValue * val)
 }
 
 static gboolean
-gst_value_deserialize_date (GValue * dest, const char *s)
+gst_value_deserialize_date (GValue * dest, const gchar * s)
 {
   guint year, month, day;
 

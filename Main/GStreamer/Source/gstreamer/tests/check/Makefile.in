@@ -46,8 +46,8 @@ check_PROGRAMS = gst/gstabi$(EXEEXT) gst/gstbuffer$(EXEEXT) \
 	gst/gstpoll$(EXEEXT) gst/gstsegment$(EXEEXT) \
 	gst/gstsystemclock$(EXEEXT) gst/gststructure$(EXEEXT) \
 	gst/gsttag$(EXEEXT) gst/gsttagsetter$(EXEEXT) \
-	gst/gsttask$(EXEEXT) gst/gstvalue$(EXEEXT) $(am__EXEEXT_1) \
-	generic/states$(EXEEXT) $(am__EXEEXT_2) $(am__EXEEXT_3) \
+	gst/gsttask$(EXEEXT) gst/gstvalue$(EXEEXT) \
+	generic/states$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
 	libs/libsabi$(EXEEXT) libs/gdp$(EXEEXT) libs/adapter$(EXEEXT) \
 	libs/bitreader$(EXEEXT) libs/bytereader$(EXEEXT) \
 	libs/bytewriter$(EXEEXT) libs/gstnetclientclock$(EXEEXT) \
@@ -97,13 +97,12 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-@GST_DISABLE_LOADSAVE_FALSE@am__EXEEXT_1 = gst/gstxml$(EXEEXT)
-@GST_DISABLE_PARSE_FALSE@am__EXEEXT_2 = pipelines/simple-launch-lines$(EXEEXT) \
+@GST_DISABLE_PARSE_FALSE@am__EXEEXT_1 = pipelines/simple-launch-lines$(EXEEXT) \
 @GST_DISABLE_PARSE_FALSE@	pipelines/cleanup$(EXEEXT) \
 @GST_DISABLE_PARSE_FALSE@	pipelines/parse-launch$(EXEEXT)
-@GST_DISABLE_PARSE_TRUE@am__EXEEXT_2 =  \
+@GST_DISABLE_PARSE_TRUE@am__EXEEXT_1 =  \
 @GST_DISABLE_PARSE_TRUE@	pipelines/parse-disabled$(EXEEXT)
-@GST_DISABLE_REGISTRY_FALSE@am__EXEEXT_3 = gst/gst$(EXEEXT) \
+@GST_DISABLE_REGISTRY_FALSE@am__EXEEXT_2 = gst/gst$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstbin$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstchildproxy$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstelement$(EXEEXT) \
@@ -429,12 +428,6 @@ gst_gstvalue_LDADD = $(LDADD)
 gst_gstvalue_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
 	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
 	$(am__DEPENDENCIES_1)
-gst_gstxml_SOURCES = gst/gstxml.c
-gst_gstxml_OBJECTS = gstxml.$(OBJEXT)
-gst_gstxml_LDADD = $(LDADD)
-gst_gstxml_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
-	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
-	$(am__DEPENDENCIES_1)
 libs_adapter_SOURCES = libs/adapter.c
 libs_adapter_OBJECTS = adapter.$(OBJEXT)
 libs_adapter_LDADD = $(LDADD)
@@ -587,15 +580,14 @@ SOURCES = elements/capsfilter.c elements/fakesink.c elements/fakesrc.c \
 	gst/gstpreset.c gst/gstquery.c gst/gstregistry.c \
 	gst/gstsegment.c gst/gststructure.c gst/gstsystemclock.c \
 	gst/gsttag.c gst/gsttagsetter.c gst/gsttask.c gst/gsturi.c \
-	gst/gstutils.c gst/gstvalue.c gst/gstxml.c libs/adapter.c \
-	libs/basesrc.c libs/bitreader.c libs/bytereader.c \
-	libs/bytewriter.c libs/collectpads.c libs/controller.c \
-	$(libs_gdp_SOURCES) libs/gstnetclientclock.c \
-	libs/gstnettimeprovider.c libs/libsabi.c libs/transform1.c \
-	libs/typefindhelper.c pipelines/cleanup.c \
-	pipelines/parse-disabled.c pipelines/parse-launch.c \
-	pipelines/queue-error.c pipelines/simple-launch-lines.c \
-	pipelines/stress.c
+	gst/gstutils.c gst/gstvalue.c libs/adapter.c libs/basesrc.c \
+	libs/bitreader.c libs/bytereader.c libs/bytewriter.c \
+	libs/collectpads.c libs/controller.c $(libs_gdp_SOURCES) \
+	libs/gstnetclientclock.c libs/gstnettimeprovider.c \
+	libs/libsabi.c libs/transform1.c libs/typefindhelper.c \
+	pipelines/cleanup.c pipelines/parse-disabled.c \
+	pipelines/parse-launch.c pipelines/queue-error.c \
+	pipelines/simple-launch-lines.c pipelines/stress.c
 DIST_SOURCES = elements/capsfilter.c elements/fakesink.c \
 	elements/fakesrc.c elements/fdsrc.c elements/filesink.c \
 	elements/filesrc.c elements/identity.c elements/multiqueue.c \
@@ -610,15 +602,14 @@ DIST_SOURCES = elements/capsfilter.c elements/fakesink.c \
 	gst/gstpoll.c gst/gstpreset.c gst/gstquery.c gst/gstregistry.c \
 	gst/gstsegment.c gst/gststructure.c gst/gstsystemclock.c \
 	gst/gsttag.c gst/gsttagsetter.c gst/gsttask.c gst/gsturi.c \
-	gst/gstutils.c gst/gstvalue.c gst/gstxml.c libs/adapter.c \
-	libs/basesrc.c libs/bitreader.c libs/bytereader.c \
-	libs/bytewriter.c libs/collectpads.c libs/controller.c \
-	$(libs_gdp_SOURCES) libs/gstnetclientclock.c \
-	libs/gstnettimeprovider.c libs/libsabi.c libs/transform1.c \
-	libs/typefindhelper.c pipelines/cleanup.c \
-	pipelines/parse-disabled.c pipelines/parse-launch.c \
-	pipelines/queue-error.c pipelines/simple-launch-lines.c \
-	pipelines/stress.c
+	gst/gstutils.c gst/gstvalue.c libs/adapter.c libs/basesrc.c \
+	libs/bitreader.c libs/bytereader.c libs/bytewriter.c \
+	libs/collectpads.c libs/controller.c $(libs_gdp_SOURCES) \
+	libs/gstnetclientclock.c libs/gstnettimeprovider.c \
+	libs/libsabi.c libs/transform1.c libs/typefindhelper.c \
+	pipelines/cleanup.c pipelines/parse-disabled.c \
+	pipelines/parse-launch.c pipelines/queue-error.c \
+	pipelines/simple-launch-lines.c pipelines/stress.c
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -905,8 +896,6 @@ CLEANFILES = core core.* test-registry.* *.gcno *.gcda
 SUPPRESSIONS = $(top_srcdir)/common/gst.supp
 @GST_DISABLE_PARSE_FALSE@PARSE_CHECKS = pipelines/simple-launch-lines pipelines/cleanup pipelines/parse-launch
 @GST_DISABLE_PARSE_TRUE@PARSE_CHECKS = pipelines/parse-disabled
-@GST_DISABLE_LOADSAVE_FALSE@LOADSAVE_CHECKS = gst/gstxml
-@GST_DISABLE_LOADSAVE_TRUE@LOADSAVE_CHECKS = 
 @GST_DISABLE_REGISTRY_FALSE@REGISTRY_CHECKS = \
 @GST_DISABLE_REGISTRY_FALSE@	gst/gst					\
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstbin				\
@@ -1231,9 +1220,6 @@ gst/gstutils$(EXEEXT): $(gst_gstutils_OBJECTS) $(gst_gstutils_DEPENDENCIES) gst/
 gst/gstvalue$(EXEEXT): $(gst_gstvalue_OBJECTS) $(gst_gstvalue_DEPENDENCIES) gst/$(am__dirstamp)
 	@rm -f gst/gstvalue$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(gst_gstvalue_OBJECTS) $(gst_gstvalue_LDADD) $(LIBS)
-gst/gstxml$(EXEEXT): $(gst_gstxml_OBJECTS) $(gst_gstxml_DEPENDENCIES) gst/$(am__dirstamp)
-	@rm -f gst/gstxml$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(gst_gstxml_OBJECTS) $(gst_gstxml_LDADD) $(LIBS)
 libs/$(am__dirstamp):
 	@$(MKDIR_P) libs
 	@: > libs/$(am__dirstamp)
@@ -1355,7 +1341,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gsturi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstutils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstvalue.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstxml.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/identity.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_gdp-gdp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libsabi.Po@am__quote@
@@ -2147,22 +2132,6 @@ gstvalue.obj: gst/gstvalue.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst/gstvalue.c' object='gstvalue.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gstvalue.obj `if test -f 'gst/gstvalue.c'; then $(CYGPATH_W) 'gst/gstvalue.c'; else $(CYGPATH_W) '$(srcdir)/gst/gstvalue.c'; fi`
-
-gstxml.o: gst/gstxml.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gstxml.o -MD -MP -MF $(DEPDIR)/gstxml.Tpo -c -o gstxml.o `test -f 'gst/gstxml.c' || echo '$(srcdir)/'`gst/gstxml.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gstxml.Tpo $(DEPDIR)/gstxml.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst/gstxml.c' object='gstxml.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gstxml.o `test -f 'gst/gstxml.c' || echo '$(srcdir)/'`gst/gstxml.c
-
-gstxml.obj: gst/gstxml.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gstxml.obj -MD -MP -MF $(DEPDIR)/gstxml.Tpo -c -o gstxml.obj `if test -f 'gst/gstxml.c'; then $(CYGPATH_W) 'gst/gstxml.c'; else $(CYGPATH_W) '$(srcdir)/gst/gstxml.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gstxml.Tpo $(DEPDIR)/gstxml.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst/gstxml.c' object='gstxml.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gstxml.obj `if test -f 'gst/gstxml.c'; then $(CYGPATH_W) 'gst/gstxml.c'; else $(CYGPATH_W) '$(srcdir)/gst/gstxml.c'; fi`
 
 adapter.o: libs/adapter.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT adapter.o -MD -MP -MF $(DEPDIR)/adapter.Tpo -c -o adapter.o `test -f 'libs/adapter.c' || echo '$(srcdir)/'`libs/adapter.c

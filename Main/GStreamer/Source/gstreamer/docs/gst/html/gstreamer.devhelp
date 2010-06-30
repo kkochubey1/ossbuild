@@ -66,7 +66,7 @@
     <sub name="Annotation Glossary" link="annotation-glossary.html"/>
   </chapters>
   <functions>
-    <function name="Environment variables" link="gst-running.html#id419766"/>
+    <function name="Environment variables" link="gst-running.html#id566639"/>
     <function name="gst_init ()" link="gstreamer-Gst.html#gst-init"/>
     <function name="gst_init_check ()" link="gstreamer-Gst.html#gst-init-check"/>
     <function name="gst_init_get_option_group ()" link="gstreamer-Gst.html#gst-init-get-option-group"/>
@@ -78,7 +78,7 @@
     <function name="gst_registry_fork_is_enabled ()" link="gstreamer-Gst.html#gst-registry-fork-is-enabled"/>
     <function name="gst_registry_fork_set_enabled ()" link="gstreamer-Gst.html#gst-registry-fork-set-enabled"/>
     <function name="gst_update_registry ()" link="gstreamer-Gst.html#gst-update-registry"/>
-    <function name="Notes" link="GstBin.html#id417003"/>
+    <function name="Notes" link="GstBin.html#id555028"/>
     <function name="GstBin" link="GstBin.html#GstBin-struct"/>
     <function name="GstBinClass" link="GstBin.html#GstBinClass"/>
     <function name="gst_bin_new ()" link="GstBin.html#gst-bin-new"/>
@@ -229,6 +229,7 @@
     <function name="gst_caps_merge ()" link="gstreamer-GstCaps.html#gst-caps-merge"/>
     <function name="gst_caps_append_structure ()" link="gstreamer-GstCaps.html#gst-caps-append-structure"/>
     <function name="gst_caps_remove_structure ()" link="gstreamer-GstCaps.html#gst-caps-remove-structure"/>
+    <function name="gst_caps_steal_structure ()" link="gstreamer-GstCaps.html#gst-caps-steal-structure"/>
     <function name="gst_caps_merge_structure ()" link="gstreamer-GstCaps.html#gst-caps-merge-structure"/>
     <function name="gst_caps_get_size ()" link="gstreamer-GstCaps.html#gst-caps-get-size"/>
     <function name="gst_caps_get_structure ()" link="gstreamer-GstCaps.html#gst-caps-get-structure"/>
@@ -393,6 +394,7 @@
     <function name="gst_element_link_many ()" link="GstElement.html#gst-element-link-many"/>
     <function name="gst_element_unlink_many ()" link="GstElement.html#gst-element-unlink-many"/>
     <function name="gst_element_link_pads ()" link="GstElement.html#gst-element-link-pads"/>
+    <function name="gst_element_link_pads_full ()" link="GstElement.html#gst-element-link-pads-full"/>
     <function name="gst_element_unlink_pads ()" link="GstElement.html#gst-element-unlink-pads"/>
     <function name="gst_element_link_pads_filtered ()" link="GstElement.html#gst-element-link-pads-filtered"/>
     <function name="gst_element_link_filtered ()" link="GstElement.html#gst-element-link-filtered"/>
@@ -773,6 +775,8 @@
     <function name="enum GstPadLinkReturn" link="GstPad.html#GstPadLinkReturn"/>
     <function name="GST_PAD_LINK_FAILED()" link="GstPad.html#GST-PAD-LINK-FAILED:CAPS"/>
     <function name="GST_PAD_LINK_SUCCESSFUL()" link="GstPad.html#GST-PAD-LINK-SUCCESSFUL:CAPS"/>
+    <function name="enum GstPadLinkCheck" link="GstPad.html#GstPadLinkCheck"/>
+    <function name="GST_PAD_LINK_CHECK_DEFAULT" link="GstPad.html#GST-PAD-LINK-CHECK-DEFAULT:CAPS"/>
     <function name="enum GstFlowReturn" link="GstPad.html#GstFlowReturn"/>
     <function name="enum GstActivateMode" link="GstPad.html#GstActivateMode"/>
     <function name="gst_pad_get_name()" link="GstPad.html#gst-pad-get-name"/>
@@ -781,6 +785,7 @@
     <function name="gst_pad_get_parent_element ()" link="GstPad.html#gst-pad-get-parent-element"/>
     <function name="gst_pad_get_pad_template ()" link="GstPad.html#gst-pad-get-pad-template"/>
     <function name="gst_pad_link ()" link="GstPad.html#gst-pad-link"/>
+    <function name="gst_pad_link_full ()" link="GstPad.html#gst-pad-link-full"/>
     <function name="gst_pad_unlink ()" link="GstPad.html#gst-pad-unlink"/>
     <function name="gst_pad_is_linked ()" link="GstPad.html#gst-pad-is-linked"/>
     <function name="gst_pad_can_link ()" link="GstPad.html#gst-pad-can-link"/>
@@ -1198,6 +1203,7 @@
     <function name="gst_structure_fixate_field_nearest_double ()" link="gstreamer-GstStructure.html#gst-structure-fixate-field-nearest-double"/>
     <function name="gst_structure_fixate_field_nearest_fraction ()" link="gstreamer-GstStructure.html#gst-structure-fixate-field-nearest-fraction"/>
     <function name="gst_structure_fixate_field_boolean ()" link="gstreamer-GstStructure.html#gst-structure-fixate-field-boolean"/>
+    <function name="gst_structure_fixate_field_string ()" link="gstreamer-GstStructure.html#gst-structure-fixate-field-string"/>
     <function name="enum GstClockType" link="GstSystemClock.html#GstClockType"/>
     <function name="GstSystemClock" link="GstSystemClock.html#GstSystemClock-struct"/>
     <function name="gst_system_clock_obtain ()" link="GstSystemClock.html#gst-system-clock-obtain"/>
@@ -1267,6 +1273,9 @@
     <function name="GST_TAG_GEO_LOCATION_CITY" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-CITY:CAPS"/>
     <function name="GST_TAG_GEO_LOCATION_COUNTRY" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-COUNTRY:CAPS"/>
     <function name="GST_TAG_GEO_LOCATION_SUBLOCATION" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-SUBLOCATION:CAPS"/>
+    <function name="GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-MOVEMENT-DIRECTION:CAPS"/>
+    <function name="GST_TAG_GEO_LOCATION_MOVEMENT_SPEED" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-MOVEMENT-SPEED:CAPS"/>
+    <function name="GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION" link="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-CAPTURE-DIRECTION:CAPS"/>
     <function name="GST_TAG_SHOW_NAME" link="gstreamer-GstTagList.html#GST-TAG-SHOW-NAME:CAPS"/>
     <function name="GST_TAG_SHOW_SORTNAME" link="gstreamer-GstTagList.html#GST-TAG-SHOW-SORTNAME:CAPS"/>
     <function name="GST_TAG_SHOW_EPISODE_NUMBER" link="gstreamer-GstTagList.html#GST-TAG-SHOW-EPISODE-NUMBER:CAPS"/>
@@ -1275,6 +1284,9 @@
     <function name="GST_TAG_COMPOSER_SORTNAME" link="gstreamer-GstTagList.html#GST-TAG-COMPOSER-SORTNAME:CAPS"/>
     <function name="GST_TAG_GROUPING" link="gstreamer-GstTagList.html#GST-TAG-GROUPING:CAPS"/>
     <function name="GST_TAG_USER_RATING" link="gstreamer-GstTagList.html#GST-TAG-USER-RATING:CAPS"/>
+    <function name="GST_TAG_DEVICE_MANUFACTURER" link="gstreamer-GstTagList.html#GST-TAG-DEVICE-MANUFACTURER:CAPS"/>
+    <function name="GST_TAG_DEVICE_MODEL" link="gstreamer-GstTagList.html#GST-TAG-DEVICE-MODEL:CAPS"/>
+    <function name="GST_TAG_IMAGE_ORIENTATION" link="gstreamer-GstTagList.html#GST-TAG-IMAGE-ORIENTATION:CAPS"/>
     <function name="gst_tag_register ()" link="gstreamer-GstTagList.html#gst-tag-register"/>
     <function name="gst_tag_merge_use_first ()" link="gstreamer-GstTagList.html#gst-tag-merge-use-first"/>
     <function name="gst_tag_merge_strings_with_comma ()" link="gstreamer-GstTagList.html#gst-tag-merge-strings-with-comma"/>
@@ -1327,6 +1339,7 @@
     <function name="gst_tag_list_get_double_index ()" link="gstreamer-GstTagList.html#gst-tag-list-get-double-index"/>
     <function name="gst_tag_list_get_string ()" link="gstreamer-GstTagList.html#gst-tag-list-get-string"/>
     <function name="gst_tag_list_get_string_index ()" link="gstreamer-GstTagList.html#gst-tag-list-get-string-index"/>
+    <function name="gst_tag_list_peek_string_index ()" link="gstreamer-GstTagList.html#gst-tag-list-peek-string-index"/>
     <function name="gst_tag_list_get_pointer ()" link="gstreamer-GstTagList.html#gst-tag-list-get-pointer"/>
     <function name="gst_tag_list_get_pointer_index ()" link="gstreamer-GstTagList.html#gst-tag-list-get-pointer-index"/>
     <function name="gst_tag_list_get_date ()" link="gstreamer-GstTagList.html#gst-tag-list-get-date"/>
@@ -1636,6 +1649,7 @@
     <function name="GST_CAT_DEBUG_OBJECT()" link="gstreamer-GstInfo.html#GST-CAT-DEBUG-OBJECT:CAPS"/>
     <function name="GST_CAT_LOG_OBJECT()" link="gstreamer-GstInfo.html#GST-CAT-LOG-OBJECT:CAPS"/>
     <function name="GST_CAT_FIXME_OBJECT()" link="gstreamer-GstInfo.html#GST-CAT-FIXME-OBJECT:CAPS"/>
+    <function name="GST_CAT_TRACE_OBJECT()" link="gstreamer-GstInfo.html#GST-CAT-TRACE-OBJECT:CAPS"/>
     <function name="GST_CAT_MEMDUMP_OBJECT()" link="gstreamer-GstInfo.html#GST-CAT-MEMDUMP-OBJECT:CAPS"/>
     <function name="GST_CAT_ERROR()" link="gstreamer-GstInfo.html#GST-CAT-ERROR:CAPS"/>
     <function name="GST_CAT_WARNING()" link="gstreamer-GstInfo.html#GST-CAT-WARNING:CAPS"/>
@@ -1643,6 +1657,7 @@
     <function name="GST_CAT_DEBUG()" link="gstreamer-GstInfo.html#GST-CAT-DEBUG:CAPS"/>
     <function name="GST_CAT_LOG()" link="gstreamer-GstInfo.html#GST-CAT-LOG:CAPS"/>
     <function name="GST_CAT_FIXME()" link="gstreamer-GstInfo.html#GST-CAT-FIXME:CAPS"/>
+    <function name="GST_CAT_TRACE()" link="gstreamer-GstInfo.html#GST-CAT-TRACE:CAPS"/>
     <function name="GST_CAT_MEMDUMP()" link="gstreamer-GstInfo.html#GST-CAT-MEMDUMP:CAPS"/>
     <function name="GST_ERROR_OBJECT()" link="gstreamer-GstInfo.html#GST-ERROR-OBJECT:CAPS"/>
     <function name="GST_WARNING_OBJECT()" link="gstreamer-GstInfo.html#GST-WARNING-OBJECT:CAPS"/>
@@ -1650,6 +1665,7 @@
     <function name="GST_DEBUG_OBJECT()" link="gstreamer-GstInfo.html#GST-DEBUG-OBJECT:CAPS"/>
     <function name="GST_LOG_OBJECT()" link="gstreamer-GstInfo.html#GST-LOG-OBJECT:CAPS"/>
     <function name="GST_FIXME_OBJECT()" link="gstreamer-GstInfo.html#GST-FIXME-OBJECT:CAPS"/>
+    <function name="GST_TRACE_OBJECT()" link="gstreamer-GstInfo.html#GST-TRACE-OBJECT:CAPS"/>
     <function name="GST_MEMDUMP_OBJECT()" link="gstreamer-GstInfo.html#GST-MEMDUMP-OBJECT:CAPS"/>
     <function name="GST_ERROR()" link="gstreamer-GstInfo.html#GST-ERROR:CAPS"/>
     <function name="GST_WARNING()" link="gstreamer-GstInfo.html#GST-WARNING:CAPS"/>
@@ -1657,6 +1673,7 @@
     <function name="GST_DEBUG()" link="gstreamer-GstInfo.html#GST-DEBUG:CAPS"/>
     <function name="GST_LOG()" link="gstreamer-GstInfo.html#GST-LOG:CAPS"/>
     <function name="GST_FIXME()" link="gstreamer-GstInfo.html#GST-FIXME:CAPS"/>
+    <function name="GST_TRACE()" link="gstreamer-GstInfo.html#GST-TRACE:CAPS"/>
     <function name="GST_MEMDUMP()" link="gstreamer-GstInfo.html#GST-MEMDUMP:CAPS"/>
     <function name="GST_DEBUG_REGISTER_FUNCPTR()" link="gstreamer-GstInfo.html#GST-DEBUG-REGISTER-FUNCPTR:CAPS"/>
     <function name="GST_DEBUG_FUNCPTR()" link="gstreamer-GstInfo.html#GST-DEBUG-FUNCPTR:CAPS"/>

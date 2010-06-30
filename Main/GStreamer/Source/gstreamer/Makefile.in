@@ -530,6 +530,9 @@ CRUFT_FILES = \
 	$(top_builddir)/common/m4/wint_t.m4 \
 	$(top_builddir)/common/m4/xsize.m4
 
+CRUFT_DIRS = \
+	$(top_builddir)/tests/examples/xml
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -1107,13 +1110,13 @@ check-exports:
 	fi; \
 	exit $$fail
 
-# complain about nonportable 64-bit printf format strings (%lld, %llu etc.)
-check-nonportable-int64-print-format:
+# complain about nonportable printf format strings (%lld, %llu, %zu etc.)
+check-nonportable-print-format:
 	@fail=0 ; \
-	loc=`find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]'`; \
+	loc=`find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]' -e '%[0-9]*z[udx]'`; \
 	if test "x$$loc" != "x"; then \
 	  echo "Please fix the following print format strings:" ; \
-	  find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]'; \
+	  find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]' -e '%[0-9]*z[udx]'; \
 	  fail=1; \
 	fi; \
 	exit $$fail
@@ -1192,10 +1195,12 @@ download-po: $(top_srcdir)/common/download-translations
 # FIXME: this target should be run every time we do "make release"
 # find a way of automating that
 win32-update:
-	for f in gstversion.h gstenumtypes.c gstenumtypes.h; do \
+	for f in gstversion.h gstenumtypes.c gstenumtypes.h gstmarshal.c gstmarshal.h; do \
 		cp $(top_builddir)/gst/$$f win32/common; done
 	$(top_srcdir)/tools/gst-indent win32/common/gstenumtypes.c
 	$(top_srcdir)/tools/gst-indent win32/common/gstenumtypes.c
+	$(top_srcdir)/tools/gst-indent win32/common/gstmarshal.c
+	$(top_srcdir)/tools/gst-indent win32/common/gstmarshal.c
 	cp $(top_builddir)/win32/common/config.h-new \
 		$(top_srcdir)/win32/common/config.h
 

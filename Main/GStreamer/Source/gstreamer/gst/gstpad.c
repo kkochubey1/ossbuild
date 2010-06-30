@@ -118,8 +118,12 @@ static void gst_pad_set_pad_template (GstPad * pad, GstPadTemplate * templ);
 static gboolean gst_pad_activate_default (GstPad * pad);
 static gboolean gst_pad_acceptcaps_default (GstPad * pad, GstCaps * caps);
 
-#ifndef GST_DISABLE_LOADSAVE
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_REMOVE_DEPRECATED)
+#ifdef GST_DISABLE_DEPRECATED
+#include <libxml/parser.h>
+#endif
 static xmlNodePtr gst_pad_save_thyself (GstObject * object, xmlNodePtr parent);
+void gst_pad_load_and_link (xmlNodePtr self, GstObject * parent);
 #endif
 
 /* Some deprecated stuff that we need inside here for
@@ -322,8 +326,10 @@ gst_pad_class_init (GstPadClass * klass)
           "The GstPadTemplate of this pad", GST_TYPE_PAD_TEMPLATE,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
-#ifndef GST_DISABLE_LOADSAVE
-  gstobject_class->save_thyself = GST_DEBUG_FUNCPTR (gst_pad_save_thyself);
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_REMOVE_DEPRECATED)
+  gstobject_class->save_thyself =
+      ((gpointer (*)(GstObject * object,
+              gpointer self)) * GST_DEBUG_FUNCPTR (gst_pad_save_thyself));
 #endif
   gstobject_class->path_string_separator = ".";
 
@@ -1577,7 +1583,7 @@ gst_pad_set_getcaps_function (GstPad * pad, GstPadGetCapsFunction getcaps)
  * Sets the given acceptcaps function for the pad.  The acceptcaps function
  * will be called to check if the pad can accept the given caps. Setting the
  * acceptcaps function to NULL restores the default behaviour of allowing
- * any caps that matches the caps from gst_pad_get_caps.
+ * any caps that matches the caps from gst_pad_get_caps().
  */
 void
 gst_pad_set_acceptcaps_function (GstPad * pad,
@@ -1775,14 +1781,28 @@ gst_pad_is_linked (GstPad * pad)
  * pads
  */
 static gboolean
-gst_pad_link_check_compatible_unlocked (GstPad * src, GstPad * sink)
+gst_pad_link_check_compatible_unlocked (GstPad * src, GstPad * sink,
+    GstPadLinkCheck flags)
 {
-  GstCaps *srccaps;
-  GstCaps *sinkcaps;
+  GstCaps *srccaps = NULL;
+  GstCaps *sinkcaps = NULL;
   gboolean compatible = FALSE;
 
-  srccaps = gst_pad_get_caps_unlocked (src);
-  sinkcaps = gst_pad_get_caps_unlocked (sink);
+  if (!(flags & (GST_PAD_LINK_CHECK_CAPS | GST_PAD_LINK_CHECK_TEMPLATE_CAPS)))
+    return TRUE;
+
+  /* Doing the expensive caps checking takes priority over only checking the template caps */
+  if (flags & GST_PAD_LINK_CHECK_CAPS) {
+    srccaps = gst_pad_get_caps_unlocked (src);
+    sinkcaps = gst_pad_get_caps_unlocked (sink);
+  } else {
+    if (GST_PAD_PAD_TEMPLATE (src))
+      srccaps =
+          gst_caps_ref (GST_PAD_TEMPLATE_CAPS (GST_PAD_PAD_TEMPLATE (src)));
+    if (GST_PAD_PAD_TEMPLATE (sink))
+      sinkcaps =
+          gst_caps_ref (GST_PAD_TEMPLATE_CAPS (GST_PAD_PAD_TEMPLATE (sink)));
+  }
 
   GST_CAT_DEBUG (GST_CAT_CAPS, "src caps %" GST_PTR_FORMAT, srccaps);
   GST_CAT_DEBUG (GST_CAT_CAPS, "sink caps %" GST_PTR_FORMAT, sinkcaps);
@@ -1880,7 +1900,7 @@ wrong_grandparents:
 /* call with the two pads unlocked, when this function returns GST_PAD_LINK_OK,
  * the two pads will be locked in the srcpad, sinkpad order. */
 static GstPadLinkReturn
-gst_pad_link_prepare (GstPad * srcpad, GstPad * sinkpad)
+gst_pad_link_prepare (GstPad * srcpad, GstPad * sinkpad, GstPadLinkCheck flags)
 {
   GST_CAT_INFO (GST_CAT_PADS, "trying to link %s:%s and %s:%s",
       GST_DEBUG_PAD_NAME (srcpad), GST_DEBUG_PAD_NAME (sinkpad));
@@ -1897,11 +1917,12 @@ gst_pad_link_prepare (GstPad * srcpad, GstPad * sinkpad)
 
   /* check hierarchy, pads can only be linked if the grandparents
    * are the same. */
-  if (!gst_pad_link_check_hierarchy (srcpad, sinkpad))
+  if ((flags & GST_PAD_LINK_CHECK_HIERARCHY)
+      && !gst_pad_link_check_hierarchy (srcpad, sinkpad))
     goto wrong_hierarchy;
 
   /* check pad caps for non-empty intersection */
-  if (!gst_pad_link_check_compatible_unlocked (srcpad, sinkpad))
+  if (!gst_pad_link_check_compatible_unlocked (srcpad, sinkpad, flags))
     goto no_format;
 
   /* FIXME check pad scheduling for non-empty intersection */
@@ -1970,7 +1991,7 @@ gst_pad_can_link (GstPad * srcpad, GstPad * sinkpad)
   /* gst_pad_link_prepare does everything for us, we only release the locks
    * on the pads that it gets us. If this function returns !OK the locks are not
    * taken anymore. */
-  result = gst_pad_link_prepare (srcpad, sinkpad);
+  result = gst_pad_link_prepare (srcpad, sinkpad, GST_PAD_LINK_CHECK_DEFAULT);
   if (result != GST_PAD_LINK_OK)
     goto done;
 
@@ -1982,19 +2003,28 @@ done:
 }
 
 /**
- * gst_pad_link:
+ * gst_pad_link_full:
  * @srcpad: the source #GstPad to link.
  * @sinkpad: the sink #GstPad to link.
+ * @flags: the checks to validate when linking
  *
  * Links the source pad and the sink pad.
+ *
+ * This variant of #gst_pad_link provides a more granular control on the
+ * checks being done when linking. While providing some considerable speedups
+ * the caller of this method must be aware that wrong usage of those flags
+ * can cause severe issues. Refer to the documentation of #GstPadLinkCheck
+ * for more information.
  *
  * Returns: A result code indicating if the connection worked or
  *          what went wrong.
  *
+ * Since: 0.10.30
+ *
  * MT Safe.
  */
 GstPadLinkReturn
-gst_pad_link (GstPad * srcpad, GstPad * sinkpad)
+gst_pad_link_full (GstPad * srcpad, GstPad * sinkpad, GstPadLinkCheck flags)
 {
   GstPadLinkReturn result;
   GstElement *parent;
@@ -2018,7 +2048,7 @@ gst_pad_link (GstPad * srcpad, GstPad * sinkpad)
   }
 
   /* prepare will also lock the two pads */
-  result = gst_pad_link_prepare (srcpad, sinkpad);
+  result = gst_pad_link_prepare (srcpad, sinkpad, flags);
 
   if (result != GST_PAD_LINK_OK)
     goto done;
@@ -2077,6 +2107,24 @@ done:
   }
 
   return result;
+}
+
+/**
+ * gst_pad_link:
+ * @srcpad: the source #GstPad to link.
+ * @sinkpad: the sink #GstPad to link.
+ *
+ * Links the source pad and the sink pad.
+ *
+ * Returns: A result code indicating if the connection worked or
+ *          what went wrong.
+ *
+ * MT Safe.
+ */
+GstPadLinkReturn
+gst_pad_link (GstPad * srcpad, GstPad * sinkpad)
+{
+  return gst_pad_link_full (srcpad, sinkpad, GST_PAD_LINK_CHECK_DEFAULT);
 }
 
 static void
@@ -2416,12 +2464,16 @@ void
 gst_pad_fixate_caps (GstPad * pad, GstCaps * caps)
 {
   GstPadFixateCapsFunction fixatefunc;
-  guint len;
+  GstStructure *s;
 
   g_return_if_fail (GST_IS_PAD (pad));
   g_return_if_fail (caps != NULL);
+  g_return_if_fail (!gst_caps_is_empty (caps));
+  /* FIXME-0.11: do not allow fixating any-caps
+   * g_return_if_fail (!gst_caps_is_any (caps));
+   */
 
-  if (gst_caps_is_fixed (caps))
+  if (gst_caps_is_fixed (caps) || gst_caps_is_any (caps))
     return;
 
   fixatefunc = GST_PAD_FIXATECAPSFUNC (pad);
@@ -2430,16 +2482,9 @@ gst_pad_fixate_caps (GstPad * pad, GstCaps * caps)
   }
 
   /* default fixation */
-  len = gst_caps_get_size (caps);
-  if (len > 0) {
-    GstStructure *s = gst_caps_get_structure (caps, 0);
-
-    gst_structure_foreach (s, gst_pad_default_fixate, s);
-  }
-
-  if (len > 1) {
-    gst_caps_truncate (caps);
-  }
+  gst_caps_truncate (caps);
+  s = gst_caps_get_structure (caps, 0);
+  gst_structure_foreach (s, gst_pad_default_fixate, s);
 }
 
 /* Default accept caps implementation just checks against
@@ -3269,9 +3314,9 @@ gst_pad_iterate_internal_links (GstPad * pad)
 
 #ifndef GST_REMOVE_DEPRECATED
 static void
-add_unref_pad_to_list (GstPad * pad, GList * list)
+add_unref_pad_to_list (GstPad * pad, GList ** list)
 {
-  list = g_list_prepend (list, pad);
+  *list = g_list_prepend (*list, pad);
   gst_object_unref (pad);
 }
 #endif
@@ -3321,7 +3366,7 @@ gst_pad_get_internal_links_default (GstPad * pad)
     /* loop over the iterator and put all elements into a list, we also
      * immediatly unref them, which is bad. */
     do {
-      ires = gst_iterator_foreach (it, (GFunc) add_unref_pad_to_list, res);
+      ires = gst_iterator_foreach (it, (GFunc) add_unref_pad_to_list, &res);
       switch (ires) {
         case GST_ITERATOR_OK:
         case GST_ITERATOR_DONE:
@@ -3720,7 +3765,7 @@ gst_pad_query_default (GstPad * pad, GstQuery * query)
   }
 }
 
-#ifndef GST_DISABLE_LOADSAVE
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_REMOVE_DEPRECATED)
 /* FIXME: why isn't this on a GstElement ? */
 /**
  * gst_pad_load_and_link:
@@ -4587,7 +4632,7 @@ not_connected:
  * @buffer: a pointer to hold the #GstBuffer, returns #GST_FLOW_ERROR if %NULL.
  *
  * When @pad is flushing this function returns #GST_FLOW_WRONG_STATE
- * immediatly.
+ * immediatly and @buffer is %NULL.
  *
  * Calls the getrange function of @pad, see #GstPadGetRangeFunction for a
  * description of a getrange function. If @pad has no getrange function
@@ -4688,8 +4733,9 @@ dropping:
 get_range_failed:
   {
     *buffer = NULL;
-    GST_CAT_WARNING_OBJECT (GST_CAT_SCHEDULING, pad,
-        "getrange failed %s", gst_flow_get_name (ret));
+    GST_CAT_LEVEL_LOG (GST_CAT_SCHEDULING,
+        (ret >= GST_FLOW_UNEXPECTED) ? GST_LEVEL_INFO : GST_LEVEL_WARNING,
+        pad, "getrange failed, flow: %s", gst_flow_get_name (ret));
     return ret;
   }
 not_negotiated:

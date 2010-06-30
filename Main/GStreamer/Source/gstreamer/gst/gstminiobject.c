@@ -71,7 +71,7 @@ gst_mini_object_get_type (void)
   static GType _gst_mini_object_type = 0;
 
   if (G_UNLIKELY (_gst_mini_object_type == 0)) {
-    GTypeValueTable value_table = {
+    static const GTypeValueTable value_table = {
       gst_value_mini_object_init,
       gst_value_mini_object_free,
       gst_value_mini_object_copy,
@@ -81,7 +81,7 @@ gst_mini_object_get_type (void)
       (char *) "p",
       gst_value_mini_object_lcopy
     };
-    GTypeInfo mini_object_info = {
+    static const GTypeInfo mini_object_info = {
       sizeof (GstMiniObjectClass),
 #if 0
       gst_mini_object_base_init,
@@ -95,14 +95,12 @@ gst_mini_object_get_type (void)
       sizeof (GstMiniObject),
       0,
       (GInstanceInitFunc) gst_mini_object_init,
-      NULL
+      &value_table
     };
     static const GTypeFundamentalInfo mini_object_fundamental_info = {
       (G_TYPE_FLAG_CLASSED | G_TYPE_FLAG_INSTANTIATABLE |
           G_TYPE_FLAG_DERIVABLE | G_TYPE_FLAG_DEEP_DERIVABLE)
     };
-
-    mini_object_info.value_table = &value_table;
 
     _gst_mini_object_type = g_type_fundamental_next ();
     g_type_register_fundamental (_gst_mini_object_type, "GstMiniObject",
@@ -311,8 +309,7 @@ gst_mini_object_ref (GstMiniObject * mini_object)
 #ifdef DEBUG_REFCOUNT
   g_return_val_if_fail (GST_IS_MINI_OBJECT (mini_object), NULL);
 
-  GST_CAT_LOG (GST_CAT_REFCOUNTING, "%p ref %d->%d",
-      mini_object,
+  GST_CAT_TRACE (GST_CAT_REFCOUNTING, "%p ref %d->%d", mini_object,
       GST_MINI_OBJECT_REFCOUNT_VALUE (mini_object),
       GST_MINI_OBJECT_REFCOUNT_VALUE (mini_object) + 1);
 #endif
@@ -361,7 +358,7 @@ gst_mini_object_unref (GstMiniObject * mini_object)
 #ifdef DEBUG_REFCOUNT
   g_return_if_fail (GST_IS_MINI_OBJECT (mini_object));
 
-  GST_CAT_LOG (GST_CAT_REFCOUNTING, "%p unref %d->%d",
+  GST_CAT_TRACE (GST_CAT_REFCOUNTING, "%p unref %d->%d",
       mini_object,
       GST_MINI_OBJECT_REFCOUNT_VALUE (mini_object),
       GST_MINI_OBJECT_REFCOUNT_VALUE (mini_object) - 1);
@@ -389,7 +386,7 @@ gst_mini_object_replace (GstMiniObject ** olddata, GstMiniObject * newdata)
   g_return_if_fail (olddata != NULL);
 
 #ifdef DEBUG_REFCOUNT
-  GST_CAT_LOG (GST_CAT_REFCOUNTING, "replace %p (%d) with %p (%d)",
+  GST_CAT_TRACE (GST_CAT_REFCOUNTING, "replace %p (%d) with %p (%d)",
       *olddata, *olddata ? (*olddata)->refcount : 0,
       newdata, newdata ? newdata->refcount : 0);
 #endif

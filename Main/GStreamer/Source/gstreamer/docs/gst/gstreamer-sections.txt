@@ -288,6 +288,7 @@ gst_caps_append
 gst_caps_merge
 gst_caps_append_structure
 gst_caps_remove_structure
+gst_caps_steal_structure
 gst_caps_merge_structure
 gst_caps_get_size
 gst_caps_get_structure
@@ -529,6 +530,7 @@ gst_element_unlink
 gst_element_link_many
 gst_element_unlink_many
 gst_element_link_pads
+gst_element_link_pads_full
 gst_element_unlink_pads
 gst_element_link_pads_filtered
 gst_element_link_filtered
@@ -995,6 +997,7 @@ GST_CAT_INFO_OBJECT
 GST_CAT_DEBUG_OBJECT
 GST_CAT_LOG_OBJECT
 GST_CAT_FIXME_OBJECT
+GST_CAT_TRACE_OBJECT
 GST_CAT_MEMDUMP_OBJECT
 GST_CAT_ERROR
 GST_CAT_WARNING
@@ -1002,6 +1005,7 @@ GST_CAT_INFO
 GST_CAT_DEBUG
 GST_CAT_LOG
 GST_CAT_FIXME
+GST_CAT_TRACE
 GST_CAT_MEMDUMP
 GST_ERROR_OBJECT
 GST_WARNING_OBJECT
@@ -1009,6 +1013,7 @@ GST_INFO_OBJECT
 GST_DEBUG_OBJECT
 GST_LOG_OBJECT
 GST_FIXME_OBJECT
+GST_TRACE_OBJECT
 GST_MEMDUMP_OBJECT
 GST_ERROR
 GST_WARNING
@@ -1016,6 +1021,7 @@ GST_INFO
 GST_DEBUG
 GST_LOG
 GST_FIXME
+GST_TRACE
 GST_MEMDUMP
 GST_DEBUG_REGISTER_FUNCPTR
 GST_DEBUG_FUNCPTR
@@ -1338,6 +1344,8 @@ GstPadFlags
 GstPadLinkReturn
 GST_PAD_LINK_FAILED
 GST_PAD_LINK_SUCCESSFUL
+GstPadLinkCheck
+GST_PAD_LINK_CHECK_DEFAULT
 GstFlowReturn
 GstActivateMode
 
@@ -1349,6 +1357,7 @@ gst_pad_get_parent_element
 gst_pad_get_pad_template
 
 gst_pad_link
+gst_pad_link_full
 gst_pad_unlink
 gst_pad_is_linked
 gst_pad_can_link
@@ -1519,6 +1528,7 @@ GST_TYPE_PAD
 GST_TYPE_PAD_DIRECTION
 GST_TYPE_PAD_FLAGS
 GST_TYPE_PAD_LINK_RETURN
+GST_TYPE_PAD_LINK_CHECK
 GST_TYPE_PAD_PRESENCE
 GST_TYPE_FLOW_RETURN
 GST_TYPE_ACTIVATE_MODE
@@ -1528,6 +1538,7 @@ gst_pad_get_type
 gst_pad_direction_get_type
 gst_pad_flags_get_type
 gst_pad_link_return_get_type
+gst_pad_link_check_get_type
 gst_pad_presence_get_type
 gst_flow_return_get_type
 gst_activate_mode_get_type
@@ -2085,6 +2096,7 @@ gst_structure_fixate_field_nearest_int
 gst_structure_fixate_field_nearest_double
 gst_structure_fixate_field_nearest_fraction
 gst_structure_fixate_field_boolean
+gst_structure_fixate_field_string
 <SUBSECTION Standard>
 GST_STRUCTURE
 GST_IS_STRUCTURE
@@ -2183,6 +2195,9 @@ GST_TAG_GEO_LOCATION_ELEVATION
 GST_TAG_GEO_LOCATION_CITY
 GST_TAG_GEO_LOCATION_COUNTRY
 GST_TAG_GEO_LOCATION_SUBLOCATION
+GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION
+GST_TAG_GEO_LOCATION_MOVEMENT_SPEED
+GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION
 GST_TAG_SHOW_NAME
 GST_TAG_SHOW_SORTNAME
 GST_TAG_SHOW_EPISODE_NUMBER
@@ -2191,6 +2206,9 @@ GST_TAG_LYRICS
 GST_TAG_COMPOSER_SORTNAME
 GST_TAG_GROUPING
 GST_TAG_USER_RATING
+GST_TAG_DEVICE_MANUFACTURER
+GST_TAG_DEVICE_MODEL
+GST_TAG_IMAGE_ORIENTATION
 
 gst_tag_register
 gst_tag_merge_use_first
@@ -2244,6 +2262,7 @@ gst_tag_list_get_double
 gst_tag_list_get_double_index
 gst_tag_list_get_string
 gst_tag_list_get_string_index
+gst_tag_list_peek_string_index
 gst_tag_list_get_pointer
 gst_tag_list_get_pointer_index
 gst_tag_list_get_date

@@ -3,13 +3,13 @@ AC_PREREQ(2.60)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, git and prerelease does Werror too
-AC_INIT(GStreamer, 0.10.29,
+AC_INIT(GStreamer, 0.10.29.3,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gstreamer)
 AG_GST_INIT
 
 dnl initialize automake (we require GNU make)
-AM_INIT_AUTOMAKE([-Wno-portability])
+AM_INIT_AUTOMAKE([-Wno-portability 1.10])
 
 dnl define PACKAGE_VERSION_* variables
 AS_VERSION
@@ -500,7 +500,7 @@ LIBS="$save_libs"
 dnl *** checks for dependency libraries ***
 
 dnl GLib
-GLIB_REQ=2.18
+GLIB_REQ=2.20
 
 AG_GST_GLIB_CHECK([$GLIB_REQ])
 
@@ -633,7 +633,7 @@ dnl - src and build dirs need to be added because every piece that gets built
 dnl   will need the GStreamer source and generated headers
 dnl LIBS: XML doesn't need to be added because we don't explicitly use symbols
 dnl       from LibXML except for in the core library
-GST_ALL_CFLAGS="-I\$(top_srcdir)/libs -I\$(top_srcdir) -I\$(top_builddir)/libs -I\$(top_builddir) $GLIB_CFLAGS $XML_CFLAGS \$(GST_OPTION_CFLAGS) \$(ERROR_CFLAGS) -DG_THREADS_MANDATORY"
+GST_ALL_CFLAGS="-I\$(top_srcdir)/libs -I\$(top_srcdir) -I\$(top_builddir)/libs -I\$(top_builddir) $GLIB_CFLAGS $GLIB_EXTRA_CFLAGS $XML_CFLAGS \$(GST_OPTION_CFLAGS) \$(ERROR_CFLAGS)"
 
 dnl FIXME: check if LTLIBINTL is needed everywhere
 dnl I presume it is given that it contains the symbols that _() stuff maps to
@@ -711,7 +711,6 @@ tests/examples/metadata/Makefile
 tests/examples/queue/Makefile
 tests/examples/streams/Makefile
 tests/examples/typefind/Makefile
-tests/examples/xml/Makefile
 tools/Makefile
 common/Makefile
 common/m4/Makefile

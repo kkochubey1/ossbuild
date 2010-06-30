@@ -321,6 +321,8 @@ static GstFlowReturn gst_base_transform_chain (GstPad * pad,
     GstBuffer * buffer);
 static GstCaps *gst_base_transform_getcaps (GstPad * pad);
 static gboolean gst_base_transform_acceptcaps (GstPad * pad, GstCaps * caps);
+static gboolean gst_base_transform_acceptcaps_default (GstBaseTransform * trans,
+    GstPadDirection direction, GstCaps * caps);
 static gboolean gst_base_transform_setcaps (GstPad * pad, GstCaps * caps);
 static GstFlowReturn gst_base_transform_buffer_alloc (GstPad * pad,
     guint64 offset, guint size, GstCaps * caps, GstBuffer ** buf);
@@ -368,6 +370,8 @@ gst_base_transform_class_init (GstBaseTransformClass * klass)
   klass->passthrough_on_same_caps = FALSE;
   klass->event = GST_DEBUG_FUNCPTR (gst_base_transform_sink_eventfunc);
   klass->src_event = GST_DEBUG_FUNCPTR (gst_base_transform_src_eventfunc);
+  klass->accept_caps =
+      GST_DEBUG_FUNCPTR (gst_base_transform_acceptcaps_default);
 }
 
 static void
@@ -544,6 +548,11 @@ gst_base_transform_transform_size (GstBaseTransform * trans,
     /* if there is a custom transform function, use this */
     ret = klass->transform_size (trans, direction, caps, size, othercaps,
         othersize);
+  } else if (klass->get_unit_size == NULL) {
+    /* if there is no transform_size and no unit_size, it means the
+     * element does not modify the size of a buffer */
+    *othersize = size;
+    ret = TRUE;
   } else {
     /* there is no transform_size function, we have to use the unit_size
      * functions. This method assumes there is a fixed unit_size associated with
@@ -700,6 +709,11 @@ gst_base_transform_configure_caps (GstBaseTransform * trans, GstCaps * in,
     ret = klass->set_caps (trans, in, out);
   }
 
+  GST_OBJECT_LOCK (trans);
+  /* make sure we reevaluate how the buffer_alloc works wrt to proxy allocating
+   * the buffer. */
+  trans->priv->suggest_pending = TRUE;
+  GST_OBJECT_UNLOCK (trans);
   trans->negotiated = ret;
 
   return ret;
@@ -880,8 +894,6 @@ gst_base_transform_find_transform (GstBaseTransform * trans, GstPad * pad,
   /* third attempt at fixation, call the fixate vmethod and
    * ultimately call the pad fixate function. */
   if (!is_fixed) {
-    GstCaps *temp;
-
     GST_DEBUG_OBJECT (trans,
         "trying to fixate %" GST_PTR_FORMAT " on pad %s:%s",
         othercaps, GST_DEBUG_PAD_NAME (otherpad));
@@ -891,9 +903,7 @@ gst_base_transform_find_transform (GstBaseTransform * trans, GstPad * pad,
 
     /* FIXME: when fixating using the vmethod, it might make sense to fixate
      * each of the caps; but Wim doesn't see a use case for that yet */
-    temp = gst_caps_copy_nth (othercaps, 0);
-    gst_caps_unref (othercaps);
-    othercaps = temp;
+    gst_caps_truncate (othercaps);
     peer_checked = FALSE;
 
     if (klass->fixate_caps) {
@@ -983,16 +993,14 @@ error_cleanup:
 }
 
 static gboolean
-gst_base_transform_acceptcaps (GstPad * pad, GstCaps * caps)
+gst_base_transform_acceptcaps_default (GstBaseTransform * trans,
+    GstPadDirection direction, GstCaps * caps)
 {
-  GstBaseTransform *trans;
 #if 0
   GstPad *otherpad;
   GstCaps *othercaps = NULL;
 #endif
   gboolean ret = TRUE;
-
-  trans = GST_BASE_TRANSFORM (gst_pad_get_parent (pad));
 
 #if 0
   otherpad = (pad == trans->srcpad) ? trans->sinkpad : trans->srcpad;
@@ -1004,16 +1012,20 @@ gst_base_transform_acceptcaps (GstPad * pad, GstCaps * caps)
   {
     GstCaps *allowed;
 
-    GST_DEBUG_OBJECT (pad, "non fixed accept caps %" GST_PTR_FORMAT, caps);
+    GST_DEBUG_OBJECT (trans, "non fixed accept caps %" GST_PTR_FORMAT, caps);
 
     /* get all the formats we can handle on this pad */
-    allowed = gst_pad_get_caps_reffed (pad);
+    if (direction == GST_PAD_SRC)
+      allowed = gst_pad_get_caps_reffed (trans->srcpad);
+    else
+      allowed = gst_pad_get_caps_reffed (trans->sinkpad);
+
     if (!allowed) {
-      GST_DEBUG_OBJECT (pad, "gst_pad_get_caps() failed");
+      GST_DEBUG_OBJECT (trans, "gst_pad_get_caps() failed");
       goto no_transform_possible;
     }
 
-    GST_DEBUG_OBJECT (pad, "allowed caps %" GST_PTR_FORMAT, allowed);
+    GST_DEBUG_OBJECT (trans, "allowed caps %" GST_PTR_FORMAT, allowed);
 
     /* intersect with the requested format */
     ret = gst_caps_can_intersect (allowed, caps);
@@ -1042,7 +1054,6 @@ done:
   if (othercaps)
     gst_caps_unref (othercaps);
 #endif
-  gst_object_unref (trans);
 
   return ret;
 
@@ -1055,6 +1066,24 @@ no_transform_possible:
     ret = FALSE;
     goto done;
   }
+}
+
+static gboolean
+gst_base_transform_acceptcaps (GstPad * pad, GstCaps * caps)
+{
+  gboolean ret = TRUE;
+  GstBaseTransform *trans;
+  GstBaseTransformClass *bclass;
+
+  trans = GST_BASE_TRANSFORM (gst_pad_get_parent (pad));
+  bclass = GST_BASE_TRANSFORM_GET_CLASS (trans);
+
+  if (bclass->accept_caps)
+    ret = bclass->accept_caps (trans, GST_PAD_DIRECTION (pad), caps);
+
+  gst_object_unref (trans);
+
+  return ret;
 }
 
 /* called when new caps arrive on the sink or source pad,

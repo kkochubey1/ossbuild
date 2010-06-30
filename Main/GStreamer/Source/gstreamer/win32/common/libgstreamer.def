@@ -178,6 +178,7 @@ EXPORTS
 	gst_caps_set_simple
 	gst_caps_set_simple_valist
 	gst_caps_set_value
+	gst_caps_steal_structure
 	gst_caps_subtract
 	gst_caps_to_string
 	gst_caps_truncate
@@ -314,6 +315,7 @@ EXPORTS
 	gst_element_link_many
 	gst_element_link_pads
 	gst_element_link_pads_filtered
+	gst_element_link_pads_full
 	gst_element_lost_state
 	gst_element_lost_state_full
 	gst_element_make_from_uri
@@ -614,6 +616,8 @@ EXPORTS
 	gst_pad_iterate_internal_links
 	gst_pad_iterate_internal_links_default
 	gst_pad_link
+	gst_pad_link_check_get_type
+	gst_pad_link_full
 	gst_pad_link_return_get_type
 	gst_pad_load_and_link
 	gst_pad_new
@@ -884,6 +888,7 @@ EXPORTS
 	gst_structure_fixate_field_nearest_double
 	gst_structure_fixate_field_nearest_fraction
 	gst_structure_fixate_field_nearest_int
+	gst_structure_fixate_field_string
 	gst_structure_foreach
 	gst_structure_free
 	gst_structure_from_string
@@ -989,6 +994,7 @@ EXPORTS
 	gst_tag_list_new
 	gst_tag_list_new_full
 	gst_tag_list_new_full_valist
+	gst_tag_list_peek_string_index
 	gst_tag_list_remove_tag
 	gst_tag_merge_mode_get_type
 	gst_tag_merge_strings_with_comma

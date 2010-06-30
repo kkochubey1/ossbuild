@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="GstObject.html" title="GstObject">
 <link rel="next" href="GstPadTemplate.html" title="GstPadTemplate">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -53,6 +53,8 @@ enum                <a class="link" href="GstPad.html#GstPadFlags" title="enum G
 enum                <a class="link" href="GstPad.html#GstPadLinkReturn" title="enum GstPadLinkReturn">GstPadLinkReturn</a>;
 #define             <a class="link" href="GstPad.html#GST-PAD-LINK-FAILED:CAPS" title="GST_PAD_LINK_FAILED()">GST_PAD_LINK_FAILED</a>                 (ret)
 #define             <a class="link" href="GstPad.html#GST-PAD-LINK-SUCCESSFUL:CAPS" title="GST_PAD_LINK_SUCCESSFUL()">GST_PAD_LINK_SUCCESSFUL</a>             (ret)
+enum                <a class="link" href="GstPad.html#GstPadLinkCheck" title="enum GstPadLinkCheck">GstPadLinkCheck</a>;
+#define             <a class="link" href="GstPad.html#GST-PAD-LINK-CHECK-DEFAULT:CAPS" title="GST_PAD_LINK_CHECK_DEFAULT">GST_PAD_LINK_CHECK_DEFAULT</a>
 enum                <a class="link" href="GstPad.html#GstFlowReturn" title="enum GstFlowReturn">GstFlowReturn</a>;
 enum                <a class="link" href="GstPad.html#GstActivateMode" title="enum GstActivateMode">GstActivateMode</a>;
 
@@ -63,6 +65,9 @@ enum                <a class="link" href="GstPad.html#GstActivateMode" title="en
 <a class="link" href="GstPadTemplate.html" title="GstPadTemplate"><span class="returnvalue">GstPadTemplate</span></a>*     <a class="link" href="GstPad.html#gst-pad-get-pad-template" title="gst_pad_get_pad_template ()">gst_pad_get_pad_template</a>            (<em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *pad</code></em>);
 <a class="link" href="GstPad.html#GstPadLinkReturn" title="enum GstPadLinkReturn"><span class="returnvalue">GstPadLinkReturn</span></a>    <a class="link" href="GstPad.html#gst-pad-link" title="gst_pad_link ()">gst_pad_link</a>                        (<em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *srcpad</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *sinkpad</code></em>);
+<a class="link" href="GstPad.html#GstPadLinkReturn" title="enum GstPadLinkReturn"><span class="returnvalue">GstPadLinkReturn</span></a>    <a class="link" href="GstPad.html#gst-pad-link-full" title="gst_pad_link_full ()">gst_pad_link_full</a>                   (<em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *srcpad</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *sinkpad</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstPad.html#GstPadLinkCheck" title="enum GstPadLinkCheck"><span class="type">GstPadLinkCheck</span></a> flags</code></em>);
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPad.html#gst-pad-unlink" title="gst_pad_unlink ()">gst_pad_unlink</a>                      (<em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *srcpad</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *sinkpad</code></em>);
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstPad.html#gst-pad-is-linked" title="gst_pad_is_linked ()">gst_pad_is_linked</a>                   (<em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *pad</code></em>);
@@ -822,6 +827,63 @@ link step.
 </table></div>
 </div>
 <hr>
+<div class="refsect2" title="enum GstPadLinkCheck">
+<a name="GstPadLinkCheck"></a><h3>enum GstPadLinkCheck</h3>
+<pre class="programlisting">typedef enum {
+  GST_PAD_LINK_CHECK_NOTHING       = 0,
+  GST_PAD_LINK_CHECK_HIERARCHY     = 1 &lt;&lt; 0,
+  GST_PAD_LINK_CHECK_TEMPLATE_CAPS = 1 &lt;&lt; 1,
+  GST_PAD_LINK_CHECK_CAPS          = 1 &lt;&lt; 2,
+} GstPadLinkCheck;
+</pre>
+<p>
+The amount of check to be done when linking pads.
+</p>
+<p>
+Warning: Only use these flags if you are 100% certain you know the link will
+not fail because of hierarchy/caps failures. If uncertain, use the default
+checks (<a class="link" href="GstPad.html#GST-PAD-LINK-CHECK-DEFAULT:CAPS" title="GST_PAD_LINK_CHECK_DEFAULT"><span class="type">GST_PAD_LINK_CHECK_DEFAULT</span></a>) or the regular methods.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><a name="GST-PAD-LINK-CHECK-NOTHING:CAPS"></a><span class="term"><code class="literal">GST_PAD_LINK_CHECK_NOTHING</code></span></p></td>
+<td>Don't check hierarchy or caps compatibility.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-PAD-LINK-CHECK-HIERARCHY:CAPS"></a><span class="term"><code class="literal">GST_PAD_LINK_CHECK_HIERARCHY</code></span></p></td>
+<td>Check the pads have same parents/grandparents.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-PAD-LINK-CHECK-TEMPLATE-CAPS"></a><span class="term"><code class="literal">GST_PAD_LINK_CHECK_TEMPLATE_CAPS</code></span></p></td>
+<td>Check if the pads are compatible by using their
+template caps.
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-PAD-LINK-CHECK-CAPS"></a><span class="term"><code class="literal">GST_PAD_LINK_CHECK_CAPS</code></span></p></td>
+<td>Check if the pads are compatible by comparing the caps
+returned by <a class="link" href="GstPad.html#gst-pad-get-caps" title="gst_pad_get_caps ()"><span class="type">gst_pad_get_caps</span></a>.
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
+</div>
+<hr>
+<div class="refsect2" title="GST_PAD_LINK_CHECK_DEFAULT">
+<a name="GST-PAD-LINK-CHECK-DEFAULT:CAPS"></a><h3>GST_PAD_LINK_CHECK_DEFAULT</h3>
+<pre class="programlisting">#define GST_PAD_LINK_CHECK_DEFAULT (GST_PAD_LINK_CHECK_HIERARCHY | GST_PAD_LINK_CHECK_CAPS)
+</pre>
+<p>
+The default checks done when linking pads (i.e. the ones used by <a class="link" href="GstPad.html#gst-pad-link" title="gst_pad_link ()"><span class="type">gst_pad_link</span></a>.
+</p>
+<p class="since">Since 0.10.30</p>
+</div>
+<hr>
 <div class="refsect2" title="enum GstFlowReturn">
 <a name="GstFlowReturn"></a><h3>enum GstFlowReturn</h3>
 <pre class="programlisting">typedef enum {
@@ -1130,6 +1192,51 @@ MT Safe.
 </tr>
 </tbody>
 </table></div>
+</div>
+<hr>
+<div class="refsect2" title="gst_pad_link_full ()">
+<a name="gst-pad-link-full"></a><h3>gst_pad_link_full ()</h3>
+<pre class="programlisting"><a class="link" href="GstPad.html#GstPadLinkReturn" title="enum GstPadLinkReturn"><span class="returnvalue">GstPadLinkReturn</span></a>    gst_pad_link_full                   (<em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *srcpad</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *sinkpad</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstPad.html#GstPadLinkCheck" title="enum GstPadLinkCheck"><span class="type">GstPadLinkCheck</span></a> flags</code></em>);</pre>
+<p>
+Links the source pad and the sink pad.
+</p>
+<p>
+This variant of <a class="link" href="GstPad.html#gst-pad-link" title="gst_pad_link ()"><span class="type">gst_pad_link</span></a> provides a more granular control on the
+checks being done when linking. While providing some considerable speedups
+the caller of this method must be aware that wrong usage of those flags
+can cause severe issues. Refer to the documentation of <a class="link" href="GstPad.html#GstPadLinkCheck" title="enum GstPadLinkCheck"><span class="type">GstPadLinkCheck</span></a>
+for more information.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>srcpad</code></em> :</span></p></td>
+<td>the source <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> to link.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>sinkpad</code></em> :</span></p></td>
+<td>the sink <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> to link.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>flags</code></em> :</span></p></td>
+<td>the checks to validate when linking
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> A result code indicating if the connection worked or
+         what went wrong.
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_pad_unlink ()">
@@ -2642,7 +2749,7 @@ if a pad can support random access.
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="type">GstBuffer</span></a> **buffer</code></em>);</pre>
 <p>
 When <em class="parameter"><code>pad</code></em> is flushing this function returns <a class="link" href="GstPad.html#GST-FLOW-WRONG-STATE:CAPS"><span class="type">GST_FLOW_WRONG_STATE</span></a>
-immediatly.
+immediatly and <em class="parameter"><code>buffer</code></em> is <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.
 </p>
 <p>
 Calls the getrange function of <em class="parameter"><code>pad</code></em>, see <a class="link" href="GstPad.html#GstPadGetRangeFunction" title="GstPadGetRangeFunction ()"><span class="type">GstPadGetRangeFunction</span></a> for a
@@ -2742,8 +2849,9 @@ Any <em class="parameter"><code>offset</code></em> larger or equal than the leng
 contain a valid buffer.
 </p>
 <p>
-The buffer size of <em class="parameter"><code>buffer</code></em> might be smaller than <em class="parameter"><code>length</code></em> when <em class="parameter"><code>offset</code></em> is near
-the end of the stream.
+The buffer size of <em class="parameter"><code>buffer</code></em> will only be smaller than <em class="parameter"><code>length</code></em> when <em class="parameter"><code>offset</code></em> is
+near the end of the stream. In all other cases, the size of <em class="parameter"><code>buffer</code></em> must be
+exactly the requested size.
 </p>
 <p>
 It is allowed to call this function with a 0 <em class="parameter"><code>length</code></em> and valid <em class="parameter"><code>offset</code></em>, in
@@ -2784,7 +2892,8 @@ of <em class="parameter"><code>offset</code></em>.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a class="link" href="GstPad.html#GST-FLOW-OK:CAPS"><span class="type">GST_FLOW_OK</span></a> for success
+<td> <a class="link" href="GstPad.html#GST-FLOW-OK:CAPS"><span class="type">GST_FLOW_OK</span></a> for success and a valid buffer in <em class="parameter"><code>buffer</code></em>. Any other
+return value leaves <em class="parameter"><code>buffer</code></em> undefined.
 </td>
 </tr>
 </tbody>
@@ -2988,7 +3097,7 @@ Check if the given pad accepts the caps.
 Sets the given acceptcaps function for the pad.  The acceptcaps function
 will be called to check if the pad can accept the given caps. Setting the
 acceptcaps function to NULL restores the default behaviour of allowing
-any caps that matches the caps from gst_pad_get_caps.
+any caps that matches the caps from <a class="link" href="GstPad.html#gst-pad-get-caps" title="gst_pad_get_caps ()"><code class="function">gst_pad_get_caps()</code></a>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -4018,11 +4127,13 @@ Queries a pad for the stream position.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
 <td> a pointer to the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> asked for.
-         On return contains the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> used.. <acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>. </td>
+         On return contains the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> used. <span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>]</span>
+</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>cur</code></em> :</span></p></td>
-<td> A location in which to store the current position, or NULL.. <acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>. </td>
+<td> A location in which to store the current position, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
+</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
@@ -4557,8 +4668,7 @@ The signature of the internal pad link function.
 <td> a newly allocated <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of pads that are linked to the given pad on
 the inside of the parent element.
 
-The caller must call <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#g-list-free"><code class="function">g_list_free()</code></a> on it after use.
-
+The caller must call <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#g-list-free"><code class="function">g_list_free()</code></a> on it after use. <span class="annotation">[<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> Gst.Pad][<acronym title="Free data container after the code is done."><span class="acronym">transfer container</span></acronym> Gst.Pad]</span>
 </td>
 </tr>
 </tbody>
@@ -5350,6 +5460,6 @@ Signals that a pad has been unlinked from the peer pad.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

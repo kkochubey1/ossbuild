@@ -1136,7 +1136,7 @@ gst_element_get_compatible_pad (GstElement * element, GstPad * pad,
           gboolean compatible;
 
           /* Now check if the two pads' caps are compatible */
-          temp = gst_pad_get_caps (pad);
+          temp = gst_pad_get_caps_reffed (pad);
           if (caps) {
             intersection = gst_caps_intersect (temp, caps);
             gst_caps_unref (temp);
@@ -1144,7 +1144,7 @@ gst_element_get_compatible_pad (GstElement * element, GstPad * pad,
             intersection = temp;
           }
 
-          temp = gst_pad_get_caps (current);
+          temp = gst_pad_get_caps_reffed (current);
           compatible = gst_caps_can_intersect (temp, intersection);
           gst_caps_unref (temp);
           gst_caps_unref (intersection);
@@ -1190,7 +1190,7 @@ gst_element_get_compatible_pad (GstElement * element, GstPad * pad,
   /* try to create a new one */
   /* requesting is a little crazy, we need a template. Let's create one */
   /* FIXME: why not gst_pad_get_pad_template (pad); */
-  templcaps = gst_pad_get_caps (pad);
+  templcaps = gst_pad_get_caps_reffed (pad);
 
   templ = gst_pad_template_new ((gchar *) GST_PAD_NAME (pad),
       GST_PAD_DIRECTION (pad), GST_PAD_ALWAYS, templcaps);
@@ -1532,7 +1532,7 @@ cleanup_fail:
 }
 
 static gboolean
-pad_link_maybe_ghosting (GstPad * src, GstPad * sink)
+pad_link_maybe_ghosting (GstPad * src, GstPad * sink, GstPadLinkCheck flags)
 {
   GSList *pads_created = NULL;
   gboolean ret;
@@ -1540,7 +1540,7 @@ pad_link_maybe_ghosting (GstPad * src, GstPad * sink)
   if (!prepare_link_maybe_ghosting (&src, &sink, &pads_created)) {
     ret = FALSE;
   } else {
-    ret = (gst_pad_link (src, sink) == GST_PAD_LINK_OK);
+    ret = (gst_pad_link_full (src, sink, flags) == GST_PAD_LINK_OK);
   }
 
   if (!ret) {
@@ -1552,12 +1552,13 @@ pad_link_maybe_ghosting (GstPad * src, GstPad * sink)
 }
 
 /**
- * gst_element_link_pads:
+ * gst_element_link_pads_full:
  * @src: a #GstElement containing the source pad.
  * @srcpadname: the name of the #GstPad in source element or NULL for any pad.
  * @dest: the #GstElement containing the destination pad.
  * @destpadname: the name of the #GstPad in destination element,
  * or NULL for any pad.
+ * @flags: the #GstPadLinkCheck to be performed when linking pads.
  *
  * Links the two named pads of the source and destination elements.
  * Side effect is that if one of the pads has no parent, it becomes a
@@ -1565,10 +1566,12 @@ pad_link_maybe_ghosting (GstPad * src, GstPad * sink)
  * parents, the link fails.
  *
  * Returns: TRUE if the pads could be linked, FALSE otherwise.
+ *
+ * Since: 0.10.30
  */
 gboolean
-gst_element_link_pads (GstElement * src, const gchar * srcpadname,
-    GstElement * dest, const gchar * destpadname)
+gst_element_link_pads_full (GstElement * src, const gchar * srcpadname,
+    GstElement * dest, const gchar * destpadname, GstPadLinkCheck flags)
 {
   const GList *srcpads, *destpads, *srctempls, *desttempls, *l;
   GstPad *srcpad, *destpad;
@@ -1656,7 +1659,7 @@ gst_element_link_pads (GstElement * src, const gchar * srcpadname,
     gboolean result;
 
     /* two explicitly specified pads */
-    result = pad_link_maybe_ghosting (srcpad, destpad);
+    result = pad_link_maybe_ghosting (srcpad, destpad, flags);
 
     gst_object_unref (srcpad);
     gst_object_unref (destpad);
@@ -1683,7 +1686,7 @@ gst_element_link_pads (GstElement * src, const gchar * srcpadname,
           temp = gst_element_get_compatible_pad (dest, srcpad, NULL);
         }
 
-        if (temp && pad_link_maybe_ghosting (srcpad, temp)) {
+        if (temp && pad_link_maybe_ghosting (srcpad, temp, flags)) {
           GST_CAT_DEBUG (GST_CAT_ELEMENT_PADS, "linked pad %s:%s to pad %s:%s",
               GST_DEBUG_PAD_NAME (srcpad), GST_DEBUG_PAD_NAME (temp));
           if (destpad)
@@ -1728,7 +1731,7 @@ gst_element_link_pads (GstElement * src, const gchar * srcpadname,
           (GST_PAD_PEER (destpad) == NULL)) {
         GstPad *temp = gst_element_get_compatible_pad (src, destpad, NULL);
 
-        if (temp && pad_link_maybe_ghosting (temp, destpad)) {
+        if (temp && pad_link_maybe_ghosting (temp, destpad, flags)) {
           GST_CAT_DEBUG (GST_CAT_ELEMENT_PADS, "linked pad %s:%s to pad %s:%s",
               GST_DEBUG_PAD_NAME (temp), GST_DEBUG_PAD_NAME (destpad));
           gst_object_unref (temp);
@@ -1784,7 +1787,7 @@ gst_element_link_pads (GstElement * src, const gchar * srcpadname,
               destpad =
                   gst_element_get_request_pad (dest, desttempl->name_template);
               if (srcpad && destpad
-                  && pad_link_maybe_ghosting (srcpad, destpad)) {
+                  && pad_link_maybe_ghosting (srcpad, destpad, flags)) {
                 GST_CAT_DEBUG (GST_CAT_ELEMENT_PADS,
                     "linked pad %s:%s to pad %s:%s",
                     GST_DEBUG_PAD_NAME (srcpad), GST_DEBUG_PAD_NAME (destpad));
@@ -1808,6 +1811,29 @@ gst_element_link_pads (GstElement * src, const gchar * srcpadname,
   GST_CAT_DEBUG (GST_CAT_ELEMENT_PADS, "no link possible from %s to %s",
       GST_ELEMENT_NAME (src), GST_ELEMENT_NAME (dest));
   return FALSE;
+}
+
+/**
+ * gst_element_link_pads:
+ * @src: a #GstElement containing the source pad.
+ * @srcpadname: the name of the #GstPad in source element or NULL for any pad.
+ * @dest: the #GstElement containing the destination pad.
+ * @destpadname: the name of the #GstPad in destination element,
+ * or NULL for any pad.
+ *
+ * Links the two named pads of the source and destination elements.
+ * Side effect is that if one of the pads has no parent, it becomes a
+ * child of the parent of the other element.  If they have different
+ * parents, the link fails.
+ *
+ * Returns: TRUE if the pads could be linked, FALSE otherwise.
+ */
+gboolean
+gst_element_link_pads (GstElement * src, const gchar * srcpadname,
+    GstElement * dest, const gchar * destpadname)
+{
+  return gst_element_link_pads_full (src, srcpadname, dest, destpadname,
+      GST_PAD_LINK_CHECK_DEFAULT);
 }
 
 /**
@@ -2445,6 +2471,8 @@ gst_element_populate_std_props (GObjectClass * klass, const gchar * prop_name,
   static GQuark offset_id;
   static GQuark silent_id;
   static GQuark touch_id;
+
+  flags |= G_PARAM_STATIC_STRINGS;
 
   if (!fd_id) {
     fd_id = g_quark_from_static_string ("fd");
@@ -4026,18 +4054,34 @@ gst_util_fraction_multiply (gint a_n, gint a_d, gint b_n, gint b_d,
   g_return_val_if_fail (a_d != 0, FALSE);
   g_return_val_if_fail (b_d != 0, FALSE);
 
+  gcd = gst_util_greatest_common_divisor (a_n, a_d);
+  a_n /= gcd;
+  a_d /= gcd;
+
+  gcd = gst_util_greatest_common_divisor (b_n, b_d);
+  b_n /= gcd;
+  b_d /= gcd;
+
   gcd = gst_util_greatest_common_divisor (a_n, b_d);
   a_n /= gcd;
   b_d /= gcd;
+
   gcd = gst_util_greatest_common_divisor (a_d, b_n);
   a_d /= gcd;
   b_n /= gcd;
 
-  g_return_val_if_fail (a_n == 0 || G_MAXINT / ABS (a_n) >= ABS (b_n), FALSE);
-  g_return_val_if_fail (G_MAXINT / ABS (a_d) >= ABS (b_d), FALSE);
+  /* This would result in overflow */
+  if (a_n != 0 && G_MAXINT / ABS (a_n) < ABS (b_n))
+    return FALSE;
+  if (G_MAXINT / ABS (a_d) < ABS (b_d))
+    return FALSE;
 
   *res_n = a_n * b_n;
   *res_d = a_d * b_d;
+
+  gcd = gst_util_greatest_common_divisor (*res_n, *res_d);
+  *res_n /= gcd;
+  *res_d /= gcd;
 
   return TRUE;
 }
@@ -4069,6 +4113,14 @@ gst_util_fraction_add (gint a_n, gint a_d, gint b_n, gint b_d, gint * res_n,
   g_return_val_if_fail (a_d != 0, FALSE);
   g_return_val_if_fail (b_d != 0, FALSE);
 
+  gcd = gst_util_greatest_common_divisor (a_n, a_d);
+  a_n /= gcd;
+  a_d /= gcd;
+
+  gcd = gst_util_greatest_common_divisor (b_n, b_d);
+  b_n /= gcd;
+  b_d /= gcd;
+
   if (a_n == 0) {
     *res_n = b_n;
     *res_d = b_d;
@@ -4080,16 +4132,25 @@ gst_util_fraction_add (gint a_n, gint a_d, gint b_n, gint b_d, gint * res_n,
     return TRUE;
   }
 
-  g_return_val_if_fail (a_n == 0 || G_MAXINT / ABS (a_n) >= ABS (b_n), FALSE);
-  g_return_val_if_fail (G_MAXINT / ABS (a_d) >= ABS (b_d), FALSE);
-  g_return_val_if_fail (G_MAXINT / ABS (a_d) >= ABS (b_d), FALSE);
+  /* This would result in overflow */
+  if (G_MAXINT / ABS (a_n) < ABS (b_n))
+    return FALSE;
+  if (G_MAXINT / ABS (a_d) < ABS (b_d))
+    return FALSE;
+  if (G_MAXINT / ABS (a_d) < ABS (b_d))
+    return FALSE;
 
   *res_n = (a_n * b_d) + (a_d * b_n);
   *res_d = a_d * b_d;
 
   gcd = gst_util_greatest_common_divisor (*res_n, *res_d);
-  *res_n /= gcd;
-  *res_d /= gcd;
+  if (gcd) {
+    *res_n /= gcd;
+    *res_d /= gcd;
+  } else {
+    /* res_n == 0 */
+    *res_d = 1;
+  }
 
   return TRUE;
 }

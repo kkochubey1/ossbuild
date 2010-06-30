@@ -178,6 +178,40 @@ G_CONST_RETURN gchar*	gst_flow_get_name	(GstFlowReturn ret);
 GQuark			gst_flow_to_quark	(GstFlowReturn ret);
 
 /**
+ * GstPadLinkCheck:
+ * @GST_PAD_LINK_CHECK_NOTHING: Don't check hierarchy or caps compatibility.
+ * @GST_PAD_LINK_CHECK_HIERARCHY: Check the pads have same parents/grandparents.
+ * @GST_PAD_LINK_CHECK_TEMPLATE_CAPS: Check if the pads are compatible by using their
+ * template caps.
+ * @GST_PAD_LINK_CHECK_CAPS: Check if the pads are compatible by comparing the caps
+ * returned by #gst_pad_get_caps.
+ *
+ * The amount of check to be done when linking pads.
+ *
+ * Warning: Only use these flags if you are 100% certain you know the link will
+ * not fail because of hierarchy/caps failures. If uncertain, use the default
+ * checks (#GST_PAD_LINK_CHECK_DEFAULT) or the regular methods.
+ *
+ * Since: 0.10.30
+ */
+
+typedef enum {
+  GST_PAD_LINK_CHECK_NOTHING       = 0,
+  GST_PAD_LINK_CHECK_HIERARCHY     = 1 << 0,
+  GST_PAD_LINK_CHECK_TEMPLATE_CAPS = 1 << 1,
+  GST_PAD_LINK_CHECK_CAPS          = 1 << 2,
+} GstPadLinkCheck;
+
+/**
+ * GST_PAD_LINK_CHECK_DEFAULT:
+ *
+ * The default checks done when linking pads (i.e. the ones used by #gst_pad_link.
+ *
+ * Since: 0.10.30
+ */
+#define GST_PAD_LINK_CHECK_DEFAULT (GST_PAD_LINK_CHECK_HIERARCHY | GST_PAD_LINK_CHECK_CAPS)
+
+/**
  * GstActivateMode:
  * @GST_ACTIVATE_NONE:	  	 Pad will not handle dataflow
  * @GST_ACTIVATE_PUSH:		 Pad handles dataflow in downstream push mode
@@ -291,8 +325,9 @@ typedef GstFlowReturn		(*GstPadChainListFunction)	(GstPad *pad, GstBufferList *l
  * #GST_FLOW_UNEXPECTED, which corresponds to EOS. In this case @buffer does not
  * contain a valid buffer.
  *
- * The buffer size of @buffer might be smaller than @length when @offset is near
- * the end of the stream.
+ * The buffer size of @buffer will only be smaller than @length when @offset is
+ * near the end of the stream. In all other cases, the size of @buffer must be
+ * exactly the requested size.
  *
  * It is allowed to call this function with a 0 @length and valid @offset, in
  * which case @buffer will contain a 0-sized buffer and the function returns
@@ -305,7 +340,8 @@ typedef GstFlowReturn		(*GstPadChainListFunction)	(GstPad *pad, GstBufferList *l
  * optimal length is returned in @buffer. The length might depend on the value
  * of @offset.
  *
- * Returns: #GST_FLOW_OK for success
+ * Returns: #GST_FLOW_OK for success and a valid buffer in @buffer. Any other
+ * return value leaves @buffer undefined.
  */
 typedef GstFlowReturn		(*GstPadGetRangeFunction)	(GstPad *pad, guint64 offset,
 		                                                 guint length, GstBuffer **buffer);
@@ -343,7 +379,7 @@ typedef gboolean		(*GstPadCheckGetRangeFunction)	(GstPad *pad);
  *
  * The signature of the internal pad link function.
  *
- * Returns: a newly allocated #GList of pads that are linked to the given pad on
+ * Returns: (element-type Gst.Pad) (transfer container): a newly allocated #GList of pads that are linked to the given pad on
  * the inside of the parent element.
  *
  * The caller must call g_list_free() on it after use.
@@ -890,6 +926,7 @@ void			gst_pad_set_unlink_function		(GstPad *pad, GstPadUnlinkFunction unlink);
 
 gboolean                gst_pad_can_link                        (GstPad *srcpad, GstPad *sinkpad);
 GstPadLinkReturn        gst_pad_link				(GstPad *srcpad, GstPad *sinkpad);
+GstPadLinkReturn        gst_pad_link_full			(GstPad *srcpad, GstPad *sinkpad, GstPadLinkCheck flags);
 gboolean		gst_pad_unlink				(GstPad *srcpad, GstPad *sinkpad);
 gboolean		gst_pad_is_linked			(GstPad *pad);
 
@@ -969,7 +1006,7 @@ gboolean		gst_pad_query_default			(GstPad *pad, GstQuery *query);
 gboolean		gst_pad_dispatcher			(GstPad *pad, GstPadDispatcherFunction dispatch,
 								 gpointer data);
 
-#ifndef GST_DISABLE_LOADSAVE
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_DISABLE_DEPRECATED)
 void			gst_pad_load_and_link			(xmlNodePtr self, GstObject *parent);
 #endif
 

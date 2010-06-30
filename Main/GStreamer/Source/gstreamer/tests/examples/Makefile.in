@@ -388,8 +388,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@GST_DISABLE_LOADSAVE_FALSE@GST_LOADSAVE_DIRS = xml typefind
-@GST_DISABLE_LOADSAVE_TRUE@GST_LOADSAVE_DIRS = 
 @GST_DISABLE_PARSE_FALSE@GST_PARSE_DIRS = launch
 @GST_DISABLE_PARSE_TRUE@GST_PARSE_DIRS = 
 @HAVE_SYS_TIMES_H_AND_UNISTD_H_FALSE@ADAPTER_TEST_DIR = 
@@ -403,7 +401,8 @@ always_dirs = \
 	metadata   \
 	queue      \
 	stepping \
-	streams
+	streams \
+	typefind
 
 
 #appreader
@@ -424,10 +423,9 @@ always_dirs = \
 SUBDIRS = \
 	$(always_dirs)			\
 	$(ADAPTER_TEST_DIR)		\
-	$(GST_PARSE_DIRS)		\
-	$(GST_LOADSAVE_DIRS)
+	$(GST_PARSE_DIRS)
 
-DIST_SUBDIRS = $(always_dirs) adapter xml typefind launch
+DIST_SUBDIRS = $(always_dirs) adapter launch
 all: all-recursive
 
 .SUFFIXES:

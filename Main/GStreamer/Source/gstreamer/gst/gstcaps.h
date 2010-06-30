@@ -186,7 +186,7 @@ GstCaps *         gst_caps_new_full_valist         (GstStructure  *structure,
 /* reference counting */
 GstCaps *         gst_caps_ref                     (GstCaps       *caps);
 GstCaps *         gst_caps_copy                    (const GstCaps *caps);
-GstCaps *         gst_caps_make_writable           (GstCaps       *caps);
+GstCaps *         gst_caps_make_writable           (GstCaps       *caps) G_GNUC_WARN_UNUSED_RESULT;
 void              gst_caps_unref                   (GstCaps       *caps);
 
 GType             gst_static_caps_get_type         (void);
@@ -204,6 +204,8 @@ void              gst_caps_merge_structure         (GstCaps       *caps,
                                                     GstStructure  *structure);
 guint             gst_caps_get_size                (const GstCaps *caps);
 GstStructure *    gst_caps_get_structure           (const GstCaps *caps,
+                                                    guint          index);
+GstStructure *    gst_caps_steal_structure         (GstCaps *caps,
                                                     guint          index);
 GstCaps *         gst_caps_copy_nth                (const GstCaps *caps, guint nth);
 void              gst_caps_truncate                (GstCaps       *caps);
@@ -242,7 +244,7 @@ GstCaps *         gst_caps_union                   (const GstCaps *caps1,
 GstCaps *         gst_caps_normalize               (const GstCaps *caps);
 gboolean          gst_caps_do_simplify             (GstCaps       *caps);
 
-#ifndef GST_DISABLE_LOADSAVE
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_DISABLE_DEPRECATED)
 xmlNodePtr        gst_caps_save_thyself            (const GstCaps *caps,
                                                     xmlNodePtr     parent);
 GstCaps *         gst_caps_load_thyself            (xmlNodePtr     parent);

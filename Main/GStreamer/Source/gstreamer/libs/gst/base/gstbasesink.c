@@ -365,7 +365,6 @@ static gboolean gst_base_sink_pad_activate (GstPad * pad);
 static gboolean gst_base_sink_pad_activate_push (GstPad * pad, gboolean active);
 static gboolean gst_base_sink_pad_activate_pull (GstPad * pad, gboolean active);
 static gboolean gst_base_sink_event (GstPad * pad, GstEvent * event);
-static gboolean gst_base_sink_peer_query (GstBaseSink * sink, GstQuery * query);
 
 static gboolean gst_base_sink_negotiate_pull (GstBaseSink * basesink);
 static GstCaps *gst_base_sink_pad_getcaps (GstPad * pad);
@@ -1026,7 +1025,7 @@ gst_base_sink_query_latency (GstBaseSink * sink, gboolean * live,
     query = gst_query_new_latency ();
 
     /* ask the peer for the latency */
-    if ((res = gst_base_sink_peer_query (sink, query))) {
+    if ((res = gst_pad_peer_query (sink->sinkpad, query))) {
       /* get upstream min and max latency */
       gst_query_parse_latency (query, &us_live, &us_min, &us_max);
 
@@ -2234,7 +2233,7 @@ static GstFlowReturn
 gst_base_sink_do_sync (GstBaseSink * basesink, GstPad * pad,
     GstMiniObject * obj, gboolean * late, gboolean * step_end)
 {
-  GstClockTimeDiff jitter;
+  GstClockTimeDiff jitter = 0;
   gboolean syncable;
   GstClockReturn status = GST_CLOCK_OK;
   GstClockTime rstart, rstop, sstart, sstop, stime;
@@ -2322,7 +2321,8 @@ again:
    * or sync is disabled with GST_CLOCK_BADTIME. */
   status = gst_base_sink_wait_clock (basesink, stime, &jitter);
 
-  GST_DEBUG_OBJECT (basesink, "clock returned %d", status);
+  GST_DEBUG_OBJECT (basesink, "clock returned %d, jitter %" GST_TIME_FORMAT,
+      status, GST_TIME_ARGS (jitter));
 
   /* invalid time, no clock or sync disabled, just render */
   if (status == GST_CLOCK_BADTIME)
@@ -2673,7 +2673,6 @@ gst_base_sink_render_object (GstBaseSink * basesink, GstPad * pad,
   GstBaseSinkClass *bclass;
   gboolean late, step_end;
   gpointer sync_obj;
-
   GstBaseSinkPrivate *priv;
 
   priv = basesink->priv;
@@ -2749,7 +2748,7 @@ again:
 
       priv->rendered++;
     }
-  } else {
+  } else if (G_LIKELY (GST_IS_EVENT (obj))) {
     GstEvent *event = GST_EVENT_CAST (obj);
     gboolean event_res = TRUE;
     GstEventType type;
@@ -2813,6 +2812,8 @@ again:
           break;
       }
     }
+  } else {
+    g_return_val_if_reached (GST_FLOW_ERROR);
   }
 
 done:
@@ -4233,19 +4234,6 @@ gst_base_sink_send_event (GstElement * element, GstEvent * event)
   return result;
 }
 
-static gboolean
-gst_base_sink_peer_query (GstBaseSink * sink, GstQuery * query)
-{
-  GstPad *peer;
-  gboolean res = FALSE;
-
-  if ((peer = gst_pad_get_peer (sink->sinkpad))) {
-    res = gst_pad_query (peer, query);
-    gst_object_unref (peer);
-  }
-  return res;
-}
-
 /* get the end position of the last seen object, this is used
  * for EOS and for making sure that we don't report a position we
  * have not reached yet. With LOCK. */
@@ -4527,6 +4515,39 @@ convert_failed:
 }
 
 static gboolean
+gst_base_sink_get_duration (GstBaseSink * basesink, GstFormat format,
+    gint64 * dur, gboolean * upstream)
+{
+  gboolean res = FALSE;
+
+  if (basesink->pad_mode == GST_ACTIVATE_PULL) {
+    GstFormat uformat = GST_FORMAT_BYTES;
+    gint64 uduration;
+
+    /* get the duration in bytes, in pull mode that's all we are sure to
+     * know. We have to explicitly get this value from upstream instead of
+     * using our cached value because it might change. Duration caching
+     * should be done at a higher level. */
+    res = gst_pad_query_peer_duration (basesink->sinkpad, &uformat, &uduration);
+    if (res) {
+      gst_segment_set_duration (&basesink->segment, uformat, uduration);
+      if (format != uformat) {
+        /* convert to the requested format */
+        res = gst_pad_query_convert (basesink->sinkpad, uformat, uduration,
+            &format, dur);
+      } else {
+        *dur = uduration;
+      }
+    }
+    *upstream = FALSE;
+  } else {
+    *upstream = TRUE;
+  }
+
+  return res;
+}
+
+static gboolean
 gst_base_sink_query (GstElement * element, GstQuery * query)
 {
   gboolean res = FALSE;
@@ -4542,7 +4563,8 @@ gst_base_sink_query (GstElement * element, GstQuery * query)
 
       gst_query_parse_position (query, &format, NULL);
 
-      GST_DEBUG_OBJECT (basesink, "position format %d", format);
+      GST_DEBUG_OBJECT (basesink, "position query in format %s",
+          gst_format_get_name (format));
 
       /* first try to get the position based on the clock */
       if ((res =
@@ -4550,46 +4572,64 @@ gst_base_sink_query (GstElement * element, GstQuery * query)
         gst_query_set_position (query, format, cur);
       } else if (upstream) {
         /* fallback to peer query */
-        res = gst_base_sink_peer_query (basesink, query);
+        res = gst_pad_peer_query (basesink->sinkpad, query);
+      }
+      if (!res) {
+        /* we can handle a few things if upstream failed */
+        if (format == GST_FORMAT_PERCENT) {
+          gint64 dur = 0;
+          GstFormat uformat = GST_FORMAT_TIME;
+
+          res = gst_base_sink_get_position (basesink, GST_FORMAT_TIME, &cur,
+              &upstream);
+          if (!res && upstream) {
+            res = gst_pad_query_peer_position (basesink->sinkpad, &uformat,
+                &cur);
+          }
+          if (res) {
+            res = gst_base_sink_get_duration (basesink, GST_FORMAT_TIME, &dur,
+                &upstream);
+            if (!res && upstream) {
+              res = gst_pad_query_peer_duration (basesink->sinkpad, &uformat,
+                  &dur);
+            }
+          }
+          if (res) {
+            gint64 pos;
+
+            pos = gst_util_uint64_scale (100 * GST_FORMAT_PERCENT_SCALE, cur,
+                dur);
+            gst_query_set_position (query, GST_FORMAT_PERCENT, pos);
+          }
+        }
       }
       break;
     }
     case GST_QUERY_DURATION:
     {
-      GstFormat format, uformat;
-      gint64 duration, uduration;
+      gint64 dur = 0;
+      GstFormat format;
+      gboolean upstream = FALSE;
 
       gst_query_parse_duration (query, &format, NULL);
 
       GST_DEBUG_OBJECT (basesink, "duration query in format %s",
           gst_format_get_name (format));
 
-      if (basesink->pad_mode == GST_ACTIVATE_PULL) {
-        uformat = GST_FORMAT_BYTES;
-
-        /* get the duration in bytes, in pull mode that's all we are sure to
-         * know. We have to explicitly get this value from upstream instead of
-         * using our cached value because it might change. Duration caching
-         * should be done at a higher level. */
-        res = gst_pad_query_peer_duration (basesink->sinkpad, &uformat,
-            &uduration);
-        if (res) {
-          gst_segment_set_duration (&basesink->segment, uformat, uduration);
-          if (format != uformat) {
-            /* convert to the requested format */
-            res = gst_pad_query_convert (basesink->sinkpad, uformat, uduration,
-                &format, &duration);
-          } else {
-            duration = uduration;
-          }
-          if (res) {
-            /* set the result */
-            gst_query_set_duration (query, format, duration);
-          }
+      if ((res =
+              gst_base_sink_get_duration (basesink, format, &dur, &upstream))) {
+        gst_query_set_duration (query, format, dur);
+      } else if (upstream) {
+        /* fallback to peer query */
+        res = gst_pad_peer_query (basesink->sinkpad, query);
+      }
+      if (!res) {
+        /* we can handle a few things if upstream failed */
+        if (format == GST_FORMAT_PERCENT) {
+          gst_query_set_duration (query, GST_FORMAT_PERCENT,
+              GST_FORMAT_PERCENT_MAX);
+          res = TRUE;
         }
-      } else {
-        /* in push mode we simply forward upstream */
-        res = gst_base_sink_peer_query (basesink, query);
       }
       break;
     }
@@ -4615,15 +4655,18 @@ gst_base_sink_query (GstElement * element, GstQuery * query)
       /* FIXME, bring start/stop to stream time */
       gst_query_set_segment (query, basesink->segment.rate,
           GST_FORMAT_TIME, basesink->segment.start, basesink->segment.stop);
+      res = TRUE;
       break;
     }
     case GST_QUERY_SEEKING:
     case GST_QUERY_CONVERT:
     case GST_QUERY_FORMATS:
     default:
-      res = gst_base_sink_peer_query (basesink, query);
+      res = gst_pad_peer_query (basesink->sinkpad, query);
       break;
   }
+  GST_DEBUG_OBJECT (basesink, "query %s returns %d",
+      GST_QUERY_TYPE_NAME (query), res);
   return res;
 }
 

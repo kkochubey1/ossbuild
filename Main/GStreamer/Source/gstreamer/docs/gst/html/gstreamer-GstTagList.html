@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="GstSystemClock.html" title="GstSystemClock">
 <link rel="next" href="GstTagSetter.html" title="GstTagSetter">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -108,6 +108,9 @@ enum                <a class="link" href="gstreamer-GstTagList.html#GstTagFlag" 
 #define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-CITY:CAPS" title="GST_TAG_GEO_LOCATION_CITY">GST_TAG_GEO_LOCATION_CITY</a>
 #define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-COUNTRY:CAPS" title="GST_TAG_GEO_LOCATION_COUNTRY">GST_TAG_GEO_LOCATION_COUNTRY</a>
 #define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-SUBLOCATION:CAPS" title="GST_TAG_GEO_LOCATION_SUBLOCATION">GST_TAG_GEO_LOCATION_SUBLOCATION</a>
+#define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-MOVEMENT-DIRECTION:CAPS" title="GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION">GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION</a>
+#define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-MOVEMENT-SPEED:CAPS" title="GST_TAG_GEO_LOCATION_MOVEMENT_SPEED">GST_TAG_GEO_LOCATION_MOVEMENT_SPEED</a>
+#define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-CAPTURE-DIRECTION:CAPS" title="GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION">GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION</a>
 #define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-SHOW-NAME:CAPS" title="GST_TAG_SHOW_NAME">GST_TAG_SHOW_NAME</a>
 #define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-SHOW-SORTNAME:CAPS" title="GST_TAG_SHOW_SORTNAME">GST_TAG_SHOW_SORTNAME</a>
 #define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-SHOW-EPISODE-NUMBER:CAPS" title="GST_TAG_SHOW_EPISODE_NUMBER">GST_TAG_SHOW_EPISODE_NUMBER</a>
@@ -116,6 +119,9 @@ enum                <a class="link" href="gstreamer-GstTagList.html#GstTagFlag" 
 #define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-COMPOSER-SORTNAME:CAPS" title="GST_TAG_COMPOSER_SORTNAME">GST_TAG_COMPOSER_SORTNAME</a>
 #define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-GROUPING:CAPS" title="GST_TAG_GROUPING">GST_TAG_GROUPING</a>
 #define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-USER-RATING:CAPS" title="GST_TAG_USER_RATING">GST_TAG_USER_RATING</a>
+#define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-DEVICE-MANUFACTURER:CAPS" title="GST_TAG_DEVICE_MANUFACTURER">GST_TAG_DEVICE_MANUFACTURER</a>
+#define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-DEVICE-MODEL:CAPS" title="GST_TAG_DEVICE_MODEL">GST_TAG_DEVICE_MODEL</a>
+#define             <a class="link" href="gstreamer-GstTagList.html#GST-TAG-IMAGE-ORIENTATION:CAPS" title="GST_TAG_IMAGE_ORIENTATION">GST_TAG_IMAGE_ORIENTATION</a>
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstTagList.html#gst-tag-register" title="gst_tag_register ()">gst_tag_register</a>                    (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstTagList.html#GstTagFlag" title="enum GstTagFlag"><span class="type">GstTagFlag</span></a> flag</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gobject/gobject-Type-Information.html#GType"><span class="type">GType</span></a> type</code></em>,
@@ -263,6 +269,10 @@ const <a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValu
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> index</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **value</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstTagList.html#gst-tag-list-peek-string-index" title="gst_tag_list_peek_string_index ()">gst_tag_list_peek_string_index</a>      (<em class="parameter"><code>const <a class="link" href="gstreamer-GstTagList.html#GstTagList" title="GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> index</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **value</code></em>);
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstTagList.html#gst-tag-list-get-pointer" title="gst_tag_list_get_pointer ()">gst_tag_list_get_pointer</a>            (<em class="parameter"><code>const <a class="link" href="gstreamer-GstTagList.html#GstTagList" title="GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> *value</code></em>);
@@ -334,7 +344,7 @@ In the table below this is shown for the cases that a tag exists in the list
 <p>
 </p>
 <div class="table">
-<a name="id654575"></a><p class="title"><b>Table 1. merge mode</b></p>
+<a name="id812006"></a><p class="title"><b>Table 1. merge mode</b></p>
 <div class="table-contents"><table summary="merge mode" border="1">
 <colgroup>
 <col>
@@ -1156,6 +1166,52 @@ Iptc4xmpcore schema.
 <p class="since">Since 0.10.29</p>
 </div>
 <hr>
+<div class="refsect2" title="GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION">
+<a name="GST-TAG-GEO-LOCATION-MOVEMENT-DIRECTION:CAPS"></a><h3>GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION</h3>
+<pre class="programlisting">#define GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION "geo-location-movement-direction"
+</pre>
+<p>
+Indicates the movement direction of the device performing the capture
+of a media. It is represented as degrees in floating point representation,
+0 means the geographic north, and increases clockwise (double from 0 to 360)
+</p>
+<p>
+See also <a class="link" href="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-CAPTURE-DIRECTION:CAPS" title="GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION"><span class="type">GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION</span></a>
+</p>
+<p class="since">Since 0.10.30</p>
+</div>
+<hr>
+<div class="refsect2" title="GST_TAG_GEO_LOCATION_MOVEMENT_SPEED">
+<a name="GST-TAG-GEO-LOCATION-MOVEMENT-SPEED:CAPS"></a><h3>GST_TAG_GEO_LOCATION_MOVEMENT_SPEED</h3>
+<pre class="programlisting">#define GST_TAG_GEO_LOCATION_MOVEMENT_SPEED       "geo-location-movement-speed"
+</pre>
+<p>
+Speed of the capturing device when performing the capture.
+Represented in m/s. (double)
+</p>
+<p>
+See also <a class="link" href="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-MOVEMENT-DIRECTION:CAPS" title="GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION"><span class="type">GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION</span></a>
+</p>
+<p>
+Since 0.10.30
+</p>
+</div>
+<hr>
+<div class="refsect2" title="GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION">
+<a name="GST-TAG-GEO-LOCATION-CAPTURE-DIRECTION:CAPS"></a><h3>GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION</h3>
+<pre class="programlisting">#define GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION  "geo-location-capture-direction"
+</pre>
+<p>
+Indicates the direction the device is pointing to when capturing
+a media. It is represented as degrees in floating point representation,
+0 means the geographic north, and increases clockwise (double from 0 to 360)
+</p>
+<p>
+See also <a class="link" href="gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-MOVEMENT-DIRECTION:CAPS" title="GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION"><span class="type">GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION</span></a>
+</p>
+<p class="since">Since 0.10.30</p>
+</div>
+<hr>
 <div class="refsect2" title="GST_TAG_SHOW_NAME">
 <a name="GST-TAG-SHOW-NAME:CAPS"></a><h3>GST_TAG_SHOW_NAME</h3>
 <pre class="programlisting">#define GST_TAG_SHOW_NAME                         "show-name"
@@ -1237,6 +1293,57 @@ The higher the value, the more the user likes this media
 (unsigned int from 0 to 100)
 </p>
 <p class="since">Since 0.10.29</p>
+</div>
+<hr>
+<div class="refsect2" title="GST_TAG_DEVICE_MANUFACTURER">
+<a name="GST-TAG-DEVICE-MANUFACTURER:CAPS"></a><h3>GST_TAG_DEVICE_MANUFACTURER</h3>
+<pre class="programlisting">#define GST_TAG_DEVICE_MANUFACTURER               "device-manufacturer"
+</pre>
+<p>
+Manufacturer of the device used to create the media (string)
+</p>
+<p class="since">Since 0.10.30</p>
+</div>
+<hr>
+<div class="refsect2" title="GST_TAG_DEVICE_MODEL">
+<a name="GST-TAG-DEVICE-MODEL:CAPS"></a><h3>GST_TAG_DEVICE_MODEL</h3>
+<pre class="programlisting">#define GST_TAG_DEVICE_MODEL                      "device-model"
+</pre>
+<p>
+Model of the device used to create the media (string)
+</p>
+<p class="since">Since 0.10.30</p>
+</div>
+<hr>
+<div class="refsect2" title="GST_TAG_IMAGE_ORIENTATION">
+<a name="GST-TAG-IMAGE-ORIENTATION:CAPS"></a><h3>GST_TAG_IMAGE_ORIENTATION</h3>
+<pre class="programlisting">#define GST_TAG_IMAGE_ORIENTATION            "image-orientation"
+</pre>
+<p>
+Represents the 'Orientation' tag from EXIF. Defines how the image
+should be rotated and mirrored for display. (string)
+</p>
+<p>
+This tag has a predefined set of allowed values:
+  "rotate-0"
+  "rotate-90"
+  "rotate-180"
+  "rotate-270"
+  "flip-rotate-0"
+  "flip-rotate-90"
+  "flip-rotate-180"
+  "flip-rotate-270"
+</p>
+<p>
+The naming is adopted according to a possible transformation to perform
+on the image to fix its orientation, obviously equivalent operations will
+yield the same result.
+</p>
+<p>
+Rotations indicated by the values are in clockwise direction and
+'flip' means an horizontal mirroring.
+</p>
+<p class="since">Since 0.10.30</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_tag_register ()">
@@ -3051,6 +3158,54 @@ returned string is also guaranteed to be non-NULL and non-empty.
 </table></div>
 </div>
 <hr>
+<div class="refsect2" title="gst_tag_list_peek_string_index ()">
+<a name="gst-tag-list-peek-string-index"></a><h3>gst_tag_list_peek_string_index ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_tag_list_peek_string_index      (<em class="parameter"><code>const <a class="link" href="gstreamer-GstTagList.html#GstTagList" title="GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> index</code></em>,
+                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **value</code></em>);</pre>
+<p>
+Peeks at the value that is at the given index for the given tag in the given
+list.
+</p>
+<p>
+The resulting string in <em class="parameter"><code>value</code></em> will be in UTF-8 encoding and doesn't need
+to be freed by the caller. The returned string is also guaranteed to
+be non-NULL and non-empty.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>list</code></em> :</span></p></td>
+<td>a <a class="link" href="gstreamer-GstTagList.html#GstTagList" title="GstTagList"><span class="type">GstTagList</span></a> to get the tag from
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>tag</code></em> :</span></p></td>
+<td>tag to read out
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>index</code></em> :</span></p></td>
+<td>number of entry to read out
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>value</code></em> :</span></p></td>
+<td>location for the result
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> TRUE, if a value was set, FALSE if the tag didn't exist in the
+             given list.
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
 <div class="refsect2" title="gst_tag_list_get_pointer ()">
 <a name="gst-tag-list-get-pointer"></a><h3>gst_tag_list_get_pointer ()</h3>
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_tag_list_get_pointer            (<em class="parameter"><code>const <a class="link" href="gstreamer-GstTagList.html#GstTagList" title="GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
@@ -3302,6 +3457,6 @@ with <a class="link" href="gstreamer-GstBuffer.html#gst-buffer-unref" title="gst
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>
