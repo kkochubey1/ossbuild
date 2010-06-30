@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="vlc-plugins-ffmpeg">
+
+	<References>
+		<Add name="ffmpeg" />
+		<Add name="vlc-core" />
+		<Add name="vlc-plugins-base" />
+	</References>
+	
+	<Extract package="resources.vlcffmpeg.${lic}.windows.x86" directory="${nativeResDir}/">
+		<Echo key="res.vlcffmpeg.init" msg="Initializing VLC FFmpeg plugins..." />
+		
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="VlcApiVersion" value="1.0" />
+
+		<Var name="dirVlcApiVersion" value="1.0" />
+		<Var name="pkgVlcApiVersion" value="1_0" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.vlc_${pkgVlcApiVersion}" directory="${dirPlatform}/lib/vlc-${dirVlcApiVersion}/">
+		<IfDef var="lic" value="lgpl">
+			<File resource="libaccess_avio_plugin-lgpl.dll" destName="libaccess_avio_plugin.dll" />
+			<File resource="libavcodec_plugin-lgpl.dll"     destName="libavcodec_plugin.dll" />
+			<File resource="libavformat_plugin-lgpl.dll"    destName="libavformat_plugin.dll" />
+			<File resource="libswscale_plugin-lgpl.dll"     destName="libswscale_plugin.dll" />
+		</IfDef>
+		<IfDef var="lic" value="gpl">
+			<File resource="libaccess_avio_plugin-gpl.dll"  destName="libaccess_avio_plugin.dll" />
+			<File resource="libavcodec_plugin-gpl.dll"      destName="libavcodec_plugin.dll" />
+			<File resource="libavformat_plugin-gpl.dll"     destName="libavformat_plugin.dll" />
+			<File resource="libswscale_plugin-gpl.dll"      destName="libswscale_plugin.dll" />
+		</IfDef>
+	</Extract>
+
+</Resources>

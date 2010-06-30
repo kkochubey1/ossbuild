@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="vlc-plugins-base">
+
+	<References>
+		<Add name="base" />
+		<Add name="xml" />
+		<Add name="crypto" />
+		<Add name="fonts" />
+		<Add name="images" />
+	</References>
+	
+	<Extract package="resources.vlcbase.windows.x86" directory="${nativeResDir}/">
+		<Echo key="res.vlcbase.init" msg="Initializing VLC base libraries..." />
+		
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="VlcApiVersion" value="1.0" />
+
+		<Var name="dirVlcApiVersion" value="1.0" />
+		<Var name="pkgVlcApiVersion" value="1_0" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<Library resource="libogg-0.dll" />
+		<Library resource="libvorbis-0.dll" />
+		<Library resource="libvorbisenc-2.dll" />
+		<Library resource="libvorbisfile-3.dll" />
+		<Library resource="libtheora-0.dll" />
+		<Library resource="libtheoradec-1.dll" />
+		<Library resource="libtheoraenc-1.dll" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.vlc_${pkgVlcApiVersion}" directory="${dirPlatform}/lib/vlc-${dirVlcApiVersion}/">
+		<!-- Plugins with dependencies -->
+		<File resource="libmp4_plugin.dll" />
+		<File resource="libsap_plugin.dll" />
+		<File resource="libaccess_http_plugin.dll" />
+		<File resource="libzip_plugin.dll" />
+		<File resource="libgnutls_plugin.dll" />
+		<File resource="libremoteosd_plugin.dll" />
+		<File resource="librtp_plugin.dll" />
+		<File resource="libstream_out_raop_plugin.dll" />
+		<File resource="libstream_out_rtp_plugin.dll" />
+		<File resource="libfreetype_plugin.dll" />
+		<File resource="libmux_ogg_plugin.dll" />
+		<File resource="libogg_plugin.dll" />
+		<File resource="libtheora_plugin.dll" />
+		<File resource="libvorbis_plugin.dll" />
+
+		<!-- Plugins without dependencies -->
+		<File resource="liba52_plugin.dll" />
+		<File resource="liba52tospdif_plugin.dll" />
+		<File resource="libaccess_attachment_plugin.dll" />
+		<File resource="libaccess_bd_plugin.dll" />
+		<File resource="libaccess_fake_plugin.dll" />
+		<File resource="libaccess_imem_plugin.dll" />
+		<File resource="libaccess_output_dummy_plugin.dll" />
+		<File resource="libaccess_output_file_plugin.dll" />
+		<File resource="libaccess_output_http_plugin.dll" />
+		<File resource="libaccess_output_udp_plugin.dll" />
+		<File resource="libaccess_smb_plugin.dll" />
+		<File resource="libaccess_tcp_plugin.dll" />
+		<File resource="libaccess_udp_plugin.dll" />
+		<File resource="libadjust_plugin.dll" />
+		<File resource="libadpcm_plugin.dll" />
+		<File resource="libaes3_plugin.dll" />
+		<File resource="libaiff_plugin.dll" />
+		<File resource="libalphamask_plugin.dll" />
+		<File resource="libaout_directx_plugin.dll" />
+		<File resource="libaout_file_plugin.dll" />
+		<File resource="libaraw_plugin.dll" />
+		<File resource="libasf_plugin.dll" />
+		<File resource="libatmo_plugin.dll" />
+		<File resource="libaudioscrobbler_plugin.dll" />
+		<File resource="libaudio_format_plugin.dll" />
+		<File resource="libau_plugin.dll" />
+		<File resource="libavi_plugin.dll" />
+		<File resource="libball_plugin.dll" />
+		<File resource="libbandlimited_resampler_plugin.dll" />
+		<File resource="libbda_plugin.dll" />
+		<File resource="libblendbench_plugin.dll" />
+		<File resource="libblend_plugin.dll" />
+		<File resource="libbluescreen_plugin.dll" />
+		<File resource="libcanvas_plugin.dll" />
+		<File resource="libcc_plugin.dll" />
+		<File resource="libcdda_plugin.dll" />
+		<File resource="libcdg_plugin.dll" />
+		<File resource="libchain_plugin.dll" />
+		<File resource="libchorus_flanger_plugin.dll" />
+		<File resource="libclone_plugin.dll" />
+		<File resource="libcolorthres_plugin.dll" />
+		<File resource="libconverter_fixed_plugin.dll" />
+		<File resource="libcroppadd_plugin.dll" />
+		<File resource="libcrop_plugin.dll" />
+		<File resource="libcvdsub_plugin.dll" />
+		<File resource="libdeinterlace_plugin.dll" />
+		<File resource="libdemuxdump_plugin.dll" />
+		<File resource="libdemux_cdg_plugin.dll" />
+		<File resource="libdirac_plugin.dll" />
+		<File resource="libdmo_plugin.dll" />
+		<File resource="libdolby_surround_decoder_plugin.dll" />
+		<File resource="libdrawable_plugin.dll" />
+		<File resource="libdshow_plugin.dll" />
+		<File resource="libdtstospdif_plugin.dll" />
+		<File resource="libdts_plugin.dll" />
+		<File resource="libdummy_plugin.dll" />
+		<File resource="libdvbsub_plugin.dll" />
+		<File resource="libequalizer_plugin.dll" />
+		<File resource="liberase_plugin.dll" />
+		<File resource="libes_plugin.dll" />
+		<File resource="libexport_plugin.dll" />
+		<File resource="libextract_plugin.dll" />
+		<File resource="libfake_plugin.dll" />
+		<File resource="libfilesystem_plugin.dll" />
+		<File resource="libflacsys_plugin.dll" />
+		<File resource="libfloat32_mixer_plugin.dll" />
+		<File resource="libfolder_plugin.dll" />
+		<File resource="libgaussianblur_plugin.dll" />
+		<File resource="libgradient_plugin.dll" />
+		<File resource="libgrain_plugin.dll" />
+		<File resource="libgrey_yuv_plugin.dll" />
+		<File resource="libh264_plugin.dll" />
+		<File resource="libheadphone_channel_mixer_plugin.dll" />
+		<File resource="libi420_rgb_mmx_plugin.dll" />
+		<File resource="libi420_rgb_plugin.dll" />
+		<File resource="libi420_rgb_sse2_plugin.dll" />
+		<File resource="libi420_yuy2_mmx_plugin.dll" />
+		<File resource="libi420_yuy2_plugin.dll" />
+		<File resource="libi420_yuy2_sse2_plugin.dll" />
+		<File resource="libi422_i420_plugin.dll" />
+		<File resource="libi422_yuy2_mmx_plugin.dll" />
+		<File resource="libi422_yuy2_plugin.dll" />
+		<File resource="libi422_yuy2_sse2_plugin.dll" />
+		<File resource="libinvert_plugin.dll" />
+		<File resource="libinvmem_plugin.dll" />
+		<File resource="liblogger_plugin.dll" />
+		<File resource="liblogo_plugin.dll" />
+		<File resource="liblpcm_plugin.dll" />
+		<File resource="libmagnify_plugin.dll" />
+		<File resource="libmarq_plugin.dll" />
+		<File resource="libmediadirs_plugin.dll" />
+		<File resource="libmemcpy3dn_plugin.dll" />
+		<File resource="libmemcpymmxext_plugin.dll" />
+		<File resource="libmemcpymmx_plugin.dll" />
+		<File resource="libmirror_plugin.dll" />
+		<File resource="libmjpeg_plugin.dll" />
+		<File resource="libmono_plugin.dll" />
+		<File resource="libmpeg_audio_plugin.dll" />
+		<File resource="libmpgv_plugin.dll" />
+		<File resource="libmsn_plugin.dll" />
+		<File resource="libmux_asf_plugin.dll" />
+		<File resource="libmux_avi_plugin.dll" />
+		<File resource="libmux_dummy_plugin.dll" />
+		<File resource="libmux_mp4_plugin.dll" />
+		<File resource="libmux_mpjpeg_plugin.dll" />
+		<File resource="libmux_ps_plugin.dll" />
+		<File resource="libmux_wav_plugin.dll" />
+		<File resource="libnetsync_plugin.dll" />
+		<File resource="libnoise_plugin.dll" />
+		<File resource="libnormvol_plugin.dll" />
+		<File resource="libnsc_plugin.dll" />
+		<File resource="libnsv_plugin.dll" />
+		<File resource="libnuv_plugin.dll" />
+		<File resource="libpacketizer_copy_plugin.dll" />
+		<File resource="libpacketizer_dirac_plugin.dll" />
+		<File resource="libpacketizer_flac_plugin.dll" />
+		<File resource="libpacketizer_h264_plugin.dll" />
+		<File resource="libpacketizer_mlp_plugin.dll" />
+		<File resource="libpacketizer_mpeg4audio_plugin.dll" />
+		<File resource="libpacketizer_mpeg4video_plugin.dll" />
+		<File resource="libpacketizer_mpegvideo_plugin.dll" />
+		<File resource="libpacketizer_vc1_plugin.dll" />
+		<File resource="libpanoramix_plugin.dll" />
+		<File resource="libparam_eq_plugin.dll" />
+		<File resource="libplaylist_plugin.dll" />
+		<File resource="libpodcast_plugin.dll" />
+		<File resource="libps_plugin.dll" />
+		<File resource="libpva_plugin.dll" />
+		<File resource="librawaud_plugin.dll" />
+		<File resource="librawdv_plugin.dll" />
+		<File resource="librawvideo_plugin.dll" />
+		<File resource="librawvid_plugin.dll" />
+		<File resource="libreal_plugin.dll" />
+		<File resource="librotate_plugin.dll" />
+		<File resource="librss_plugin.dll" />
+		<File resource="librv32_plugin.dll" />
+		<File resource="libscaletempo_plugin.dll" />
+		<File resource="libscale_plugin.dll" />
+		<File resource="libscene_plugin.dll" />
+		<File resource="libscreen_plugin.dll" />
+		<File resource="libsharpen_plugin.dll" />
+		<File resource="libsimple_channel_mixer_plugin.dll" />
+		<File resource="libsmf_plugin.dll" />
+		<File resource="libsnapshot_plugin.dll" />
+		<File resource="libspatializer_plugin.dll" />
+		<File resource="libspdif_mixer_plugin.dll" />
+		<File resource="libspudec_plugin.dll" />
+		<File resource="libstats_plugin.dll" />
+		<File resource="libstream_filter_rar_plugin.dll" />
+		<File resource="libstream_filter_record_plugin.dll" />
+		<File resource="libstream_out_autodel_plugin.dll" />
+		<File resource="libstream_out_bridge_plugin.dll" />
+		<File resource="libstream_out_description_plugin.dll" />
+		<File resource="libstream_out_display_plugin.dll" />
+		<File resource="libstream_out_dummy_plugin.dll" />
+		<File resource="libstream_out_duplicate_plugin.dll" />
+		<File resource="libstream_out_es_plugin.dll" />
+		<File resource="libstream_out_gather_plugin.dll" />
+		<File resource="libstream_out_mosaic_bridge_plugin.dll" />
+		<File resource="libstream_out_record_plugin.dll" />
+		<File resource="libstream_out_smem_plugin.dll" />
+		<File resource="libstream_out_standard_plugin.dll" />
+		<File resource="libstream_out_transcode_plugin.dll" />
+		<File resource="libsubsdec_plugin.dll" />
+		<File resource="libsubsusf_plugin.dll" />
+		<File resource="libsubtitle_plugin.dll" />
+		<File resource="libsvcdsub_plugin.dll" />
+		<File resource="libt140_plugin.dll" />
+		<File resource="libtelx_plugin.dll" />
+		<File resource="libtransform_plugin.dll" />
+		<File resource="libtrivial_channel_mixer_plugin.dll" />
+		<File resource="libtrivial_mixer_plugin.dll" />
+		<File resource="libtta_plugin.dll" />
+		<File resource="libty_plugin.dll" />
+		<File resource="libugly_resampler_plugin.dll" />
+		<File resource="libvc1_plugin.dll" />
+		<File resource="libvcd_plugin.dll" />
+		<File resource="libvideo_filter_wrapper_plugin.dll" />
+		<File resource="libvisual_plugin.dll" />
+		<File resource="libvmem_plugin.dll" />
+		<File resource="libvobsub_plugin.dll" />
+		<File resource="libvoc_plugin.dll" />
+		<File resource="libvod_rtsp_plugin.dll" />
+		<File resource="libwaveout_plugin.dll" />
+		<File resource="libwave_plugin.dll" />
+		<File resource="libwav_plugin.dll" />
+		<File resource="libxa_plugin.dll" />
+		<File resource="libxtag_plugin.dll" />
+		<File resource="libyuvp_plugin.dll" />
+		<File resource="libyuv_plugin.dll" />
+		<File resource="libyuy2_i420_plugin.dll" />
+		<File resource="libyuy2_i422_plugin.dll" />
+		
+		<!-- Video plugins -->
+		<File resource="libvout_wrapper_plugin.dll" />
+		<File resource="libwingdi_plugin.dll" />
+		<File resource="libglwin32_plugin.dll" />
+		<File resource="libdirect3d_plugin.dll" />
+		<File resource="libdirectx_plugin.dll" />
+
+		<!-- Unnecessary plugins -->
+		<!--
+		<File resource="libaccess_ftp_plugin.dll" />
+		<File resource="libaccess_mms_plugin.dll" />
+		<File resource="libaudiobargraph_a_plugin.dll" />
+		<File resource="libaudiobargraph_v_plugin.dll" />
+		<File resource="libgestures_plugin.dll" />
+		<File resource="libglobalhotkeys_plugin.dll" />
+		<File resource="libhotkeys_plugin.dll" />
+		<File resource="libmosaic_plugin.dll" />
+		<File resource="libmotionblur_plugin.dll" />
+		<File resource="libmotiondetect_plugin.dll" />
+		<File resource="libntservice_plugin.dll" />
+		<File resource="liboldrc_plugin.dll" />
+		<File resource="liboldtelnet_plugin.dll" />
+		<File resource="libpsychedelic_plugin.dll" />
+		<File resource="libpuzzle_plugin.dll" />
+		<File resource="libripple_plugin.dll" />
+		<File resource="libwall_plugin.dll" />
+		-->
+	</Extract>
+
+</Resources>

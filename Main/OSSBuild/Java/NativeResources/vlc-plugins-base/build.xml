@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<!-- By default, only the Clean and Build commands use this build script. -->
+<!-- Commands such as Run, Debug, and Test only use this build script if -->
+<!-- the Compile on Save feature is turned off for the project. -->
+<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
+<!-- in the project's Project Properties dialog box.-->
+<project name="OSSBuild :: Resource Package :: VLC :: Plugins :: Base" default="default" basedir=".">
+    <description>Builds, tests, and runs the project.</description>
+    <import file="nbproject/build-impl.xml"/>
+
+	<target name="-post-init">
+		<property name="project.jarpart.name" value="vlc-plugins-base" />
+		<property name="project.package.name" value="vlcbase" />
+
+		<property name="vlc-api-version" value="1.0" />
+		<property name="pkg-vlc-api-version" value="1_0" />
+
+		<property name="top.dir" location="../../../../.." />
+		<property name="top.build.dir" location="${top.dir}/Build" />
+		<property name="top.shared.dir" location="${top.dir}/Shared/Build" />
+		<property name="top.deployment.dir" location="${top.dir}/Deployment/Java" />
+
+		<mkdir dir="${top.build.dir}" />
+		<mkdir dir="${top.shared.dir}" />
+		<mkdir dir="${top.deployment.dir}" />
+	</target>
+
+	<target name="-post-jar">
+		<antcall target="-build-platform-jar">
+			<param name="os" value="windows" />
+			<param name="arch" value="x86" />
+			<param name="build.os" value="Windows" />
+			<param name="build.arch" value="Win32" />
+		</antcall>
+		<!--
+		<antcall target="-build-platform-jar">
+			<param name="os" value="unix" />
+			<param name="arch" value="x86" />
+			<param name="build.os" value="Linux" />
+			<param name="build.arch" value="x86" />
+		</antcall>
+		-->
+	</target>
+
+	<target name="-build-platform-jar">
+		<property name="build.platform.dir" location="${top.build.dir}/${build.os}/${build.arch}/Release" />
+		<property name="build.include.dir" location="${build.platform.dir}/include" />
+		<property name="build.share.dir" location="${build.platform.dir}/share" />
+		<property name="build.java.dir" location="${build.platform.dir}/java" />
+		<property name="build.bin.dir" location="${build.platform.dir}/bin" />
+		<property name="build.lib.dir" location="${build.platform.dir}/lib" />
+		<property name="build.etc.dir" location="${build.platform.dir}/etc" />
+
+		<property name="shared.platform.dir" location="${top.shared.dir}/${build.os}/${build.arch}" />
+		<property name="shared.include.dir" location="${shared.platform.dir}/include" />
+		<property name="shared.share.dir" location="${shared.platform.dir}/share" />
+		<property name="shared.bin.dir" location="${shared.platform.dir}/bin" />
+		<property name="shared.lib.dir" location="${shared.platform.dir}/lib" />
+		<property name="shared.etc.dir" location="${shared.platform.dir}/etc" />
+
+		<property name="src.java.platform.dir" location="${build.classes.dir}/resources/${project.package.name}/${os}/${arch}" />
+		<property name="src.java.platform.bin.dir" location="${src.java.platform.dir}/bin" />
+		<property name="src.java.platform.lib.dir" location="${src.java.platform.dir}/lib" />
+		<property name="src.java.platform.etc.dir" location="${src.java.platform.dir}/etc" />
+		<property name="src.java.platform.share.dir" location="${src.java.platform.dir}/share" />
+
+		<property name="build.java.dir" location="${build.platform.dir}/java/" />
+
+		<property name="build.java.platform.dir" location="${build.java.dir}/resources/${project.package.name}/${os}/${arch}" />
+		<property name="build.java.platform.bin.dir" location="${build.java.platform.dir}/bin" />
+		<property name="build.java.platform.lib.dir" location="${build.java.platform.dir}/lib" />
+		<property name="build.java.platform.etc.dir" location="${build.java.platform.dir}/etc" />
+		<property name="build.java.platform.share.dir" location="${build.java.platform.dir}/share" />
+
+		<delete failonerror="false" quiet="true" dir="${build.java.dir}" />
+
+		<mkdir dir="${build.java.platform.dir}" />
+		<mkdir dir="${build.java.platform.bin.dir}" />
+		<mkdir dir="${build.java.platform.lib.dir}" />
+		<mkdir dir="${build.java.platform.etc.dir}" />
+		<mkdir dir="${build.java.platform.share.dir}" />
+
+		<property name="platform.dir" location="${top.deployment.dir}" />
+		<property name="platform.jar.name" value="resources-native-${os}-${arch}-${project.jarpart.name}.jar" />
+		<property name="platform.jar" location="${platform.dir}/${platform.jar.name}" />
+
+		<mkdir dir="${platform.dir}" />
+
+		<antcall target="-platform-jar" />
+	</target>
+
+	<target name="-platform-jar">
+		<!-- Create jar -->
+		<copy todir="${build.java.platform.dir}">
+			<fileset dir="${src.java.platform.dir}" erroronmissingdir="false">
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+
+		<!--
+			Plugins with dependencies:
+				libmp4_plugin.dll (z)
+				libsap_plugin.dll (z)
+				libaccess_http_plugin.dll (z)
+				libzip_plugin.dll (z)
+
+				libgnutls_plugin.dll (libgcrypt, libgnutls)
+				libremoteosd_plugin.dll (libgcrypt)
+				librtp_plugin.dll (libgcrypt)
+				libstream_out_raop_plugin.dll (libgcrypt, libgpg-error)
+				libstream_out_rtp_plugin.dll (libgcrypt)
+
+				libfreetype_plugin.dll (libfontconfig, libfreetype, libxml2, libiconv, z)
+
+				libaccess_avio_plugin-gpl.dll
+				libaccess_avio_plugin-lgpl.dll
+				libavcodec_plugin-gpl.dll
+				libavcodec_plugin-lgpl.dll
+				libavformat_plugin-gpl.dll
+				libavformat_plugin-lgpl.dll
+				libswscale_plugin-gpl.dll
+				libswscale_plugin-lgpl.dll
+
+				libmux_ogg_plugin.dll (libogg)
+				libogg_plugin.dll (libogg)
+				libtheora_plugin.dll (libtheora)
+				libvorbis_plugin.dll (libvorbis, libvorbisenc)
+
+				liba52tofloat32_plugin.dll (liba52)
+				libdtstofloat32_plugin.dll (libdca-0.dll)
+				libdvdnav_plugin.dll (libdvdnav-4.dll)
+				libdvdread_plugin.dll (libdvdread-4.dll)
+				libflac_plugin.dll (libflac-8.dll)
+				liblibmpeg2_plugin.dll (libmpeg2)
+				libschroedinger_plugin.dll (libschroedinger)
+				libspeex_plugin.dll (libspeex)
+				libx264_plugin.dll (libx264)
+
+				libaout_sdl_plugin.dll (sdl)
+				libvout_sdl_plugin.dll (sdl)
+
+				libxml_plugin.dll (libxml)
+				libsvg_plugin.dll (glib, gdk-pixbuf, intl.dll, libiconv)
+			
+			Plugins without dependencies:
+				liba52_plugin.dll
+				liba52tospdif_plugin.dll
+				libaccess_attachment_plugin.dll
+				libaccess_bd_plugin.dll
+				libaccess_fake_plugin.dll
+				libaccess_ftp_plugin.dll
+				libaccess_imem_plugin.dll
+				libaccess_mms_plugin.dll
+				libaccess_output_dummy_plugin.dll
+				libaccess_output_file_plugin.dll
+				libaccess_output_http_plugin.dll
+				libaccess_output_udp_plugin.dll
+				libaccess_smb_plugin.dll
+				libaccess_tcp_plugin.dll
+				libaccess_udp_plugin.dll
+				libadjust_plugin.dll
+				libadpcm_plugin.dll
+				libaes3_plugin.dll
+				libaiff_plugin.dll
+				libalphamask_plugin.dll
+				libaout_directx_plugin.dll
+				libaout_file_plugin.dll
+				libaraw_plugin.dll
+				libasf_plugin.dll
+				libatmo_plugin.dll
+				libaudiobargraph_a_plugin.dll
+				libaudiobargraph_v_plugin.dll
+				libaudioscrobbler_plugin.dll
+				libaudio_format_plugin.dll
+				libau_plugin.dll
+				libavi_plugin.dll
+				libball_plugin.dll
+				libbandlimited_resampler_plugin.dll
+				libbda_plugin.dll
+				libblendbench_plugin.dll
+				libblend_plugin.dll
+				libbluescreen_plugin.dll
+				libcanvas_plugin.dll
+				libcc_plugin.dll
+				libcdda_plugin.dll
+				libcdg_plugin.dll
+				libchain_plugin.dll
+				libchorus_flanger_plugin.dll
+				libclone_plugin.dll
+				libcolorthres_plugin.dll
+				libconverter_fixed_plugin.dll
+				libcroppadd_plugin.dll
+				libcrop_plugin.dll
+				libcvdsub_plugin.dll
+				libdeinterlace_plugin.dll
+				libdemuxdump_plugin.dll
+				libdemux_cdg_plugin.dll
+				libdirac_plugin.dll
+				libdirect3d_plugin.dll
+				libdirectx_plugin.dll
+				libdmo_plugin.dll
+				libdolby_surround_decoder_plugin.dll
+				libdrawable_plugin.dll
+				libdshow_plugin.dll
+				libdtstospdif_plugin.dll
+				libdts_plugin.dll
+				libdummy_plugin.dll
+				libdvbsub_plugin.dll
+				libequalizer_plugin.dll
+				liberase_plugin.dll
+				libes_plugin.dll
+				libexport_plugin.dll
+				libextract_plugin.dll
+				libfake_plugin.dll
+				libfilesystem_plugin.dll
+				libflacsys_plugin.dll
+				libfloat32_mixer_plugin.dll
+				libfolder_plugin.dll
+				libgaussianblur_plugin.dll
+				libgestures_plugin.dll
+				libglobalhotkeys_plugin.dll
+				libglwin32_plugin.dll
+				libgradient_plugin.dll
+				libgrain_plugin.dll
+				libgrey_yuv_plugin.dll
+				libh264_plugin.dll
+				libheadphone_channel_mixer_plugin.dll
+				libhotkeys_plugin.dll
+				libi420_rgb_mmx_plugin.dll
+				libi420_rgb_plugin.dll
+				libi420_rgb_sse2_plugin.dll
+				libi420_yuy2_mmx_plugin.dll
+				libi420_yuy2_plugin.dll
+				libi420_yuy2_sse2_plugin.dll
+				libi422_i420_plugin.dll
+				libi422_yuy2_mmx_plugin.dll
+				libi422_yuy2_plugin.dll
+				libi422_yuy2_sse2_plugin.dll
+				libinvert_plugin.dll
+				libinvmem_plugin.dll
+				liblogger_plugin.dll
+				liblogo_plugin.dll
+				liblpcm_plugin.dll
+				libmagnify_plugin.dll
+				libmarq_plugin.dll
+				libmediadirs_plugin.dll
+				libmemcpy3dn_plugin.dll
+				libmemcpymmxext_plugin.dll
+				libmemcpymmx_plugin.dll
+				libmirror_plugin.dll
+				libmjpeg_plugin.dll
+				libmono_plugin.dll
+				libmosaic_plugin.dll
+				libmotionblur_plugin.dll
+				libmotiondetect_plugin.dll
+				libmpeg_audio_plugin.dll
+				libmpgv_plugin.dll
+				libmsn_plugin.dll
+				libmux_asf_plugin.dll
+				libmux_avi_plugin.dll
+				libmux_dummy_plugin.dll
+				libmux_mp4_plugin.dll
+				libmux_mpjpeg_plugin.dll
+				libmux_ps_plugin.dll
+				libmux_wav_plugin.dll
+				libnetsync_plugin.dll
+				libnoise_plugin.dll
+				libnormvol_plugin.dll
+				libnsc_plugin.dll
+				libnsv_plugin.dll
+				libntservice_plugin.dll
+				libnuv_plugin.dll
+				liboldrc_plugin.dll
+				liboldtelnet_plugin.dll
+				libpacketizer_copy_plugin.dll
+				libpacketizer_dirac_plugin.dll
+				libpacketizer_flac_plugin.dll
+				libpacketizer_h264_plugin.dll
+				libpacketizer_mlp_plugin.dll
+				libpacketizer_mpeg4audio_plugin.dll
+				libpacketizer_mpeg4video_plugin.dll
+				libpacketizer_mpegvideo_plugin.dll
+				libpacketizer_vc1_plugin.dll
+				libpanoramix_plugin.dll
+				libparam_eq_plugin.dll
+				libplaylist_plugin.dll
+				libpodcast_plugin.dll
+				libpsychedelic_plugin.dll
+				libps_plugin.dll
+				libpuzzle_plugin.dll
+				libpva_plugin.dll
+				librawaud_plugin.dll
+				librawdv_plugin.dll
+				librawvideo_plugin.dll
+				librawvid_plugin.dll
+				libreal_plugin.dll
+				libripple_plugin.dll
+				librotate_plugin.dll
+				librss_plugin.dll
+				librv32_plugin.dll
+				libscaletempo_plugin.dll
+				libscale_plugin.dll
+				libscene_plugin.dll
+				libscreen_plugin.dll
+				libsharpen_plugin.dll
+				libsimple_channel_mixer_plugin.dll
+				libsmf_plugin.dll
+				libsnapshot_plugin.dll
+				libspatializer_plugin.dll
+				libspdif_mixer_plugin.dll
+				libspudec_plugin.dll
+				libstats_plugin.dll
+				libstream_filter_rar_plugin.dll
+				libstream_filter_record_plugin.dll
+				libstream_out_autodel_plugin.dll
+				libstream_out_bridge_plugin.dll
+				libstream_out_description_plugin.dll
+				libstream_out_display_plugin.dll
+				libstream_out_dummy_plugin.dll
+				libstream_out_duplicate_plugin.dll
+				libstream_out_es_plugin.dll
+				libstream_out_gather_plugin.dll
+				libstream_out_mosaic_bridge_plugin.dll
+				libstream_out_record_plugin.dll
+				libstream_out_smem_plugin.dll
+				libstream_out_standard_plugin.dll
+				libstream_out_transcode_plugin.dll
+				libsubsdec_plugin.dll
+				libsubsusf_plugin.dll
+				libsubtitle_plugin.dll
+				libsvcdsub_plugin.dll
+				libt140_plugin.dll
+				libtelx_plugin.dll
+				libtransform_plugin.dll
+				libtrivial_channel_mixer_plugin.dll
+				libtrivial_mixer_plugin.dll
+				libtta_plugin.dll
+				libty_plugin.dll
+				libugly_resampler_plugin.dll
+				libvc1_plugin.dll
+				libvcd_plugin.dll
+				libvideo_filter_wrapper_plugin.dll
+				libvisual_plugin.dll
+				libvmem_plugin.dll
+				libvobsub_plugin.dll
+				libvoc_plugin.dll
+				libvod_rtsp_plugin.dll
+				libvout_wrapper_plugin.dll
+				libwall_plugin.dll
+				libwaveout_plugin.dll
+				libwave_plugin.dll
+				libwav_plugin.dll
+				libwingdi_plugin.dll
+				libxa_plugin.dll
+				libxtag_plugin.dll
+				libyuvp_plugin.dll
+				libyuv_plugin.dll
+				libyuy2_i420_plugin.dll
+				libyuy2_i422_plugin.dll
+		-->
+
+		<copy todir="${build.java.platform.bin.dir}">
+			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
+				<include name="*ogg*.so.*" />
+				<include name="*vorbis*.so.*" />
+				<include name="*theora*.so.*" />
+			</fileset>
+			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
+				<include name="*ogg*.dll" />
+				<include name="*vorbis*.dll" />
+				<include name="*theora*.dll" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${build.java.platform.lib.dir}/vlc_${pkg-vlc-api-version}/" />
+		<copy todir="${build.java.platform.lib.dir}/vlc_${pkg-vlc-api-version}/">
+			<fileset dir="${shared.lib.dir}/vlc-${vlc-api-version}/" erroronmissingdir="false">
+				<!-- Plugins with dependencies -->
+				<include name="*mp4_plugin*" />
+				<include name="*sap_plugin*" />
+				<include name="*access_http_plugin*" />
+				<include name="*zip_plugin*" />
+				<include name="*gnutls_plugin*" />
+				<include name="*remoteosd_plugin*" />
+				<include name="*rtp_plugin*" />
+				<include name="*stream_out_raop_plugin*" />
+				<include name="*stream_out_rtp_plugin*" />
+				<include name="*freetype_plugin*" />
+				<include name="*mux_ogg_plugin.dll*" />
+				<include name="*ogg_plugin.dll*" />
+				<include name="*theora_plugin.dll*" />
+				<include name="*vorbis_plugin.dll*" />
+
+				<!-- Plugins without dependencies -->
+				<include name="*a52_plugin*" />
+				<include name="*a52tospdif_plugin*" />
+				<include name="*access_attachment_plugin*" />
+				<include name="*access_bd_plugin*" />
+				<include name="*access_fake_plugin*" />
+				<include name="*access_ftp_plugin*" />
+				<include name="*access_imem_plugin*" />
+				<include name="*access_mms_plugin*" />
+				<include name="*access_output_dummy_plugin*" />
+				<include name="*access_output_file_plugin*" />
+				<include name="*access_output_http_plugin*" />
+				<include name="*access_output_udp_plugin*" />
+				<include name="*access_smb_plugin*" />
+				<include name="*access_tcp_plugin*" />
+				<include name="*access_udp_plugin*" />
+				<include name="*adjust_plugin*" />
+				<include name="*adpcm_plugin*" />
+				<include name="*aes3_plugin*" />
+				<include name="*aiff_plugin*" />
+				<include name="*alphamask_plugin*" />
+				<include name="*aout_directx_plugin*" />
+				<include name="*aout_file_plugin*" />
+				<include name="*araw_plugin*" />
+				<include name="*asf_plugin*" />
+				<include name="*atmo_plugin*" />
+				<include name="*audiobargraph_a_plugin*" />
+				<include name="*audiobargraph_v_plugin*" />
+				<include name="*audioscrobbler_plugin*" />
+				<include name="*audio_format_plugin*" />
+				<include name="*au_plugin*" />
+				<include name="*avi_plugin*" />
+				<include name="*ball_plugin*" />
+				<include name="*bandlimited_resampler_plugin*" />
+				<include name="*bda_plugin*" />
+				<include name="*blendbench_plugin*" />
+				<include name="*blend_plugin*" />
+				<include name="*bluescreen_plugin*" />
+				<include name="*canvas_plugin*" />
+				<include name="*cc_plugin*" />
+				<include name="*cdda_plugin*" />
+				<include name="*cdg_plugin*" />
+				<include name="*chain_plugin*" />
+				<include name="*chorus_flanger_plugin*" />
+				<include name="*clone_plugin*" />
+				<include name="*colorthres_plugin*" />
+				<include name="*converter_fixed_plugin*" />
+				<include name="*croppadd_plugin*" />
+				<include name="*crop_plugin*" />
+				<include name="*cvdsub_plugin*" />
+				<include name="*deinterlace_plugin*" />
+				<include name="*demuxdump_plugin*" />
+				<include name="*demux_cdg_plugin*" />
+				<include name="*dirac_plugin*" />
+				<include name="*direct3d_plugin*" />
+				<include name="*directx_plugin*" />
+				<include name="*dmo_plugin*" />
+				<include name="*dolby_surround_decoder_plugin*" />
+				<include name="*drawable_plugin*" />
+				<include name="*dshow_plugin*" />
+				<include name="*dtstospdif_plugin*" />
+				<include name="*dts_plugin*" />
+				<include name="*dummy_plugin*" />
+				<include name="*dvbsub_plugin*" />
+				<include name="*equalizer_plugin*" />
+				<include name="*erase_plugin*" />
+				<include name="*es_plugin*" />
+				<include name="*export_plugin*" />
+				<include name="*extract_plugin*" />
+				<include name="*fake_plugin*" />
+				<include name="*filesystem_plugin*" />
+				<include name="*flacsys_plugin*" />
+				<include name="*float32_mixer_plugin*" />
+				<include name="*folder_plugin*" />
+				<include name="*gaussianblur_plugin*" />
+				<include name="*gestures_plugin*" />
+				<include name="*globalhotkeys_plugin*" />
+				<include name="*glwin32_plugin*" />
+				<include name="*gradient_plugin*" />
+				<include name="*grain_plugin*" />
+				<include name="*grey_yuv_plugin*" />
+				<include name="*h264_plugin*" />
+				<include name="*headphone_channel_mixer_plugin*" />
+				<include name="*hotkeys_plugin*" />
+				<include name="*i420_rgb_mmx_plugin*" />
+				<include name="*i420_rgb_plugin*" />
+				<include name="*i420_rgb_sse2_plugin*" />
+				<include name="*i420_yuy2_mmx_plugin*" />
+				<include name="*i420_yuy2_plugin*" />
+				<include name="*i420_yuy2_sse2_plugin*" />
+				<include name="*i422_i420_plugin*" />
+				<include name="*i422_yuy2_mmx_plugin*" />
+				<include name="*i422_yuy2_plugin*" />
+				<include name="*i422_yuy2_sse2_plugin*" />
+				<include name="*invert_plugin*" />
+				<include name="*invmem_plugin*" />
+				<include name="*logger_plugin*" />
+				<include name="*logo_plugin*" />
+				<include name="*lpcm_plugin*" />
+				<include name="*magnify_plugin*" />
+				<include name="*marq_plugin*" />
+				<include name="*mediadirs_plugin*" />
+				<include name="*memcpy3dn_plugin*" />
+				<include name="*memcpymmxext_plugin*" />
+				<include name="*memcpymmx_plugin*" />
+				<include name="*mirror_plugin*" />
+				<include name="*mjpeg_plugin*" />
+				<include name="*mono_plugin*" />
+				<include name="*mosaic_plugin*" />
+				<include name="*motionblur_plugin*" />
+				<include name="*motiondetect_plugin*" />
+				<include name="*mpeg_audio_plugin*" />
+				<include name="*mpgv_plugin*" />
+				<include name="*msn_plugin*" />
+				<include name="*mux_asf_plugin*" />
+				<include name="*mux_avi_plugin*" />
+				<include name="*mux_dummy_plugin*" />
+				<include name="*mux_mp4_plugin*" />
+				<include name="*mux_mpjpeg_plugin*" />
+				<include name="*mux_ps_plugin*" />
+				<include name="*mux_wav_plugin*" />
+				<include name="*netsync_plugin*" />
+				<include name="*noise_plugin*" />
+				<include name="*normvol_plugin*" />
+				<include name="*nsc_plugin*" />
+				<include name="*nsv_plugin*" />
+				<include name="*ntservice_plugin*" />
+				<include name="*nuv_plugin*" />
+				<include name="*oldrc_plugin*" />
+				<include name="*oldtelnet_plugin*" />
+				<include name="*packetizer_copy_plugin*" />
+				<include name="*packetizer_dirac_plugin*" />
+				<include name="*packetizer_flac_plugin*" />
+				<include name="*packetizer_h264_plugin*" />
+				<include name="*packetizer_mlp_plugin*" />
+				<include name="*packetizer_mpeg4audio_plugin*" />
+				<include name="*packetizer_mpeg4video_plugin*" />
+				<include name="*packetizer_mpegvideo_plugin*" />
+				<include name="*packetizer_vc1_plugin*" />
+				<include name="*panoramix_plugin*" />
+				<include name="*param_eq_plugin*" />
+				<include name="*playlist_plugin*" />
+				<include name="*podcast_plugin*" />
+				<include name="*psychedelic_plugin*" />
+				<include name="*ps_plugin*" />
+				<include name="*puzzle_plugin*" />
+				<include name="*pva_plugin*" />
+				<include name="*rawaud_plugin*" />
+				<include name="*rawdv_plugin*" />
+				<include name="*rawvideo_plugin*" />
+				<include name="*rawvid_plugin*" />
+				<include name="*real_plugin*" />
+				<include name="*ripple_plugin*" />
+				<include name="*rotate_plugin*" />
+				<include name="*rss_plugin*" />
+				<include name="*rv32_plugin*" />
+				<include name="*scaletempo_plugin*" />
+				<include name="*scale_plugin*" />
+				<include name="*scene_plugin*" />
+				<include name="*screen_plugin*" />
+				<include name="*sharpen_plugin*" />
+				<include name="*simple_channel_mixer_plugin*" />
+				<include name="*smf_plugin*" />
+				<include name="*snapshot_plugin*" />
+				<include name="*spatializer_plugin*" />
+				<include name="*spdif_mixer_plugin*" />
+				<include name="*spudec_plugin*" />
+				<include name="*stats_plugin*" />
+				<include name="*stream_filter_rar_plugin*" />
+				<include name="*stream_filter_record_plugin*" />
+				<include name="*stream_out_autodel_plugin*" />
+				<include name="*stream_out_bridge_plugin*" />
+				<include name="*stream_out_description_plugin*" />
+				<include name="*stream_out_display_plugin*" />
+				<include name="*stream_out_dummy_plugin*" />
+				<include name="*stream_out_duplicate_plugin*" />
+				<include name="*stream_out_es_plugin*" />
+				<include name="*stream_out_gather_plugin*" />
+				<include name="*stream_out_mosaic_bridge_plugin*" />
+				<include name="*stream_out_record_plugin*" />
+				<include name="*stream_out_smem_plugin*" />
+				<include name="*stream_out_standard_plugin*" />
+				<include name="*stream_out_transcode_plugin*" />
+				<include name="*subsdec_plugin*" />
+				<include name="*subsusf_plugin*" />
+				<include name="*subtitle_plugin*" />
+				<include name="*svcdsub_plugin*" />
+				<include name="*t140_plugin*" />
+				<include name="*telx_plugin*" />
+				<include name="*transform_plugin*" />
+				<include name="*trivial_channel_mixer_plugin*" />
+				<include name="*trivial_mixer_plugin*" />
+				<include name="*tta_plugin*" />
+				<include name="*ty_plugin*" />
+				<include name="*ugly_resampler_plugin*" />
+				<include name="*vc1_plugin*" />
+				<include name="*vcd_plugin*" />
+				<include name="*video_filter_wrapper_plugin*" />
+				<include name="*visual_plugin*" />
+				<include name="*vmem_plugin*" />
+				<include name="*vobsub_plugin*" />
+				<include name="*voc_plugin*" />
+				<include name="*vod_rtsp_plugin*" />
+				<include name="*vout_wrapper_plugin*" />
+				<include name="*wall_plugin*" />
+				<include name="*waveout_plugin*" />
+				<include name="*wave_plugin*" />
+				<include name="*wav_plugin*" />
+				<include name="*wingdi_plugin*" />
+				<include name="*xa_plugin*" />
+				<include name="*xtag_plugin*" />
+				<include name="*yuvp_plugin*" />
+				<include name="*yuv_plugin*" />
+				<include name="*yuy2_i420_plugin*" />
+				<include name="*yuy2_i422_plugin*" />
+			</fileset>
+		</copy>
+		
+		<jar compress="true" destfile="${platform.jar}" basedir="${build.java.dir}">
+			<fileset dir="${build.classes.dir}" excludes="resources/${project.package.name}/" />
+		</jar>
+	</target>
+
+    <!--
+
+    There exist several targets which are by default empty and which can be 
+    used for execution of your tasks. These targets are usually executed 
+    before and after some main targets. They are: 
+
+      -pre-init:                 called before initialization of project properties
+      -post-init:                called after initialization of project properties
+      -pre-compile:              called before javac compilation
+      -post-compile:             called after javac compilation
+      -pre-compile-single:       called before javac compilation of single file
+      -post-compile-single:      called after javac compilation of single file
+      -pre-compile-test:         called before javac compilation of JUnit tests
+      -post-compile-test:        called after javac compilation of JUnit tests
+      -pre-compile-test-single:  called before javac compilation of single JUnit test
+      -post-compile-test-single: called after javac compilation of single JUunit test
+      -pre-jar:                  called before JAR building
+      -post-jar:                 called after JAR building
+      -post-clean:               called after cleaning build products
+
+    (Targets beginning with '-' are not intended to be called on their own.)
+
+    Example of inserting an obfuscator after compilation could look like this:
+
+        <target name="-post-compile">
+            <obfuscate>
+                <fileset dir="${build.classes.dir}"/>
+            </obfuscate>
+        </target>
+
+    For list of available properties check the imported 
+    nbproject/build-impl.xml file. 
+
+
+    Another way to customize the build is by overriding existing main targets.
+    The targets of interest are: 
+
+      -init-macrodef-javac:     defines macro for javac compilation
+      -init-macrodef-junit:     defines macro for junit execution
+      -init-macrodef-debug:     defines macro for class debugging
+      -init-macrodef-java:      defines macro for class execution
+      -do-jar-with-manifest:    JAR building (if you are using a manifest)
+      -do-jar-without-manifest: JAR building (if you are not using a manifest)
+      run:                      execution of project 
+      -javadoc-build:           Javadoc generation
+      test-report:              JUnit report generation
+
+    An example of overriding the target for project execution could look like this:
+
+        <target name="run" depends="OSSBuild-impl.jar">
+            <exec dir="bin" executable="launcher.exe">
+                <arg file="${dist.jar}"/>
+            </exec>
+        </target>
+
+    Notice that the overridden target depends on the jar target and not only on 
+    the compile target as the regular run target does. Again, for a list of available 
+    properties which you can use, check the target you are overriding in the
+    nbproject/build-impl.xml file. 
+
+    -->
+</project>
