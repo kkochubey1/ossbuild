@@ -34,12 +34,17 @@
 
 		<Library resource="z.dll" />
 		<Library resource="libbz2.dll" />
-		<Library resource="iconv.dll" />
+		<Library resource="libiconv-2.dll" />
+		<Library resource="libcharset-1.dll" />
+		<Library resource="libfribidi-0.dll" />
 		<Library resource="pthreadGC2.dll" />
 		<Library resource="liboil-0.3-0.dll" />
 		<Library resource="liborc-0.4-0.dll" />
 		<Library resource="liborc-test-0.4-0.dll" />
 		<Library resource="liborc-float-0.4-0.dll" />
+
+		<Library resource="libgcc_s_sjlj-1.dll" />
+		<Library resource="libstdc++-6.dll" />
 	</Extract>
 
 </Resources>

@@ -46,5 +46,9 @@
 		<Library resource="liborc-0.4.so.0" executable="true" />
 		<Library resource="liborc-test-0.4.so.0" executable="true" />
 		<Library resource="liborc-float-0.4.so.0" executable="true" />
+
+		<!--
+			TODO: Add libiconv and libcharset
+		-->
 	</Extract>
 </Resources>

@@ -100,13 +100,20 @@
 		<copy todir="${build.java.platform.bin.dir}">
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
 				<include name="z.dll" />
-				<include name="iconv.dll" />
+				<include name="libiconv*.dll" />
+				<include name="libcharset*.dll" />
+				<include name="libfribidi*.dll" />
 				<include name="pthreadGC2.dll" />
 				<include name="*oil*.dll" />
 				<include name="*bz2*.dll" />
 				<include name="liborc*.dll" />
+				<include name="libgcc*.dll" />
+				<include name="libstdc++*.dll" />
 
 				<include name="libz.so.*" />
+				<include name="libiconv*.so.*" />
+				<include name="libcharset*.so.*" />
+				<include name="fribidi*.so.*" />
 				<include name="libbz2.so.*.*" />
 				<include name="liboil*.so.*" />
 				<include name="liborc*.so.*" />
