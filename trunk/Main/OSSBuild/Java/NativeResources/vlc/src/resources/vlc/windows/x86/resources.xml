@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="vlc">
+
+	<!--
+		We take advantage of the fact that non-existent references are
+		silently ignored and use this package to reference any other
+		VLC plugin resource packages it happens to find in the
+		classpath.
+	-->
+	<References>
+		<Add name="vlc-core" />
+		<Add name="vlc-plugins-base" />
+		<Add name="vlc-plugins-ffmpeg" />
+	</References>
+
+</Resources>

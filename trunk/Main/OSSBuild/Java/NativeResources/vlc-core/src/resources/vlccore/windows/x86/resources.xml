@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Resources name="vlc-core">
+
+	<!--
+		We play a bit of magic here by using <File /> instead of <Library />
+		tags in all VLC resource packages. This allows us to extract
+		all plugins + associated libraries before they're used and also
+		allows us to use Sys.loadNativeResources() with just one call. It
+		also means we can mix and match plugin jars if they are or aren't
+		on the classpath.
+	-->
+	<References>
+		<Add name="base" />
+		<Add name="xml" />
+		<Add name="crypto" />
+		<Add name="fonts" />
+		<Add name="images" />
+	</References>
+	
+	<Extract package="resources.vlccore.windows.x86" directory="${nativeResDir}/">
+		<Echo key="res.vlccore.init" msg="Initializing VLC core libraries..." />
+		
+		<!-- Set variables to hold the platform's base package name and the base directory -->
+		<Var name="pkgPlatform" value="${pkg}" />
+		<Var name="dirPlatform" value="${dir}" />
+
+		<Var name="VlcApiVersion" value="1.0" />
+
+		<Var name="dirVlcApiVersion" value="1.0" />
+		<Var name="pkgVlcApiVersion" value="1_0" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Libraries -->
+		<Library resource="libvlccore.dll" />
+		<Library resource="libvlc.dll" />
+
+		<AddJNASearchPath libraryName="vlccore"   path="${dir}" />
+		<AddJNASearchPath libraryName="vlc"       path="${dir}" />
+	</Extract>
+
+	<Extract package="${pkgPlatform}.lib.vlc_${pkgVlcApiVersion}" directory="${dirPlatform}/lib/vlc-${dirVlcApiVersion}/">
+		<!-- Environment Variables -->
+	</Extract>
+
+</Resources>
