@@ -746,6 +746,7 @@ register_gst_debug_level (GType* id)
     { C_ENUM(GST_LEVEL_DEBUG), "GST_LEVEL_DEBUG", "debug" },
     { C_ENUM(GST_LEVEL_LOG), "GST_LEVEL_LOG", "log" },
     { C_ENUM(GST_LEVEL_FIXME), "GST_LEVEL_FIXME", "fixme" },
+    { C_ENUM(GST_LEVEL_TRACE), "GST_LEVEL_TRACE", "trace" },
     { C_ENUM(GST_LEVEL_MEMDUMP), "GST_LEVEL_MEMDUMP", "memdump" },
     { C_ENUM(GST_LEVEL_COUNT), "GST_LEVEL_COUNT", "count" },
     { 0, NULL, NULL }
@@ -1004,6 +1005,27 @@ gst_flow_return_get_type (void)
   static GOnce once = G_ONCE_INIT;
 
   g_once (&once, (GThreadFunc)register_gst_flow_return, &id);
+  return id;
+}
+static void
+register_gst_pad_link_check (GType* id)
+{
+  static const GFlagsValue values[] = {
+    { C_FLAGS(GST_PAD_LINK_CHECK_NOTHING), "GST_PAD_LINK_CHECK_NOTHING", "nothing" },
+    { C_FLAGS(GST_PAD_LINK_CHECK_HIERARCHY), "GST_PAD_LINK_CHECK_HIERARCHY", "hierarchy" },
+    { C_FLAGS(GST_PAD_LINK_CHECK_TEMPLATE_CAPS), "GST_PAD_LINK_CHECK_TEMPLATE_CAPS", "template-caps" },
+    { C_FLAGS(GST_PAD_LINK_CHECK_CAPS), "GST_PAD_LINK_CHECK_CAPS", "caps" },
+    { 0, NULL, NULL }
+  };
+  *id = g_flags_register_static ("GstPadLinkCheck", values);
+}
+GType
+gst_pad_link_check_get_type (void)
+{
+  static GType id;
+  static GOnce once = G_ONCE_INIT;
+
+  g_once (&once, (GThreadFunc)register_gst_pad_link_check, &id);
   return id;
 }
 static void
