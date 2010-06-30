@@ -27,3 +27,7 @@ bsf v3.0 (bean scripting framework)
 commons-logging v1.1.1
 	http://commons.apache.org/logging/
 	http://apache.cs.utah.edu/commons/logging/binaries/commons-logging-1.1.1-bin.zip
+
+lob4j v1.2.16
+	http://logging.apache.org/log4j/
+	http://www.devlib.org/apache/logging/log4j/1.2.16/apache-log4j-1.2.16.zip
