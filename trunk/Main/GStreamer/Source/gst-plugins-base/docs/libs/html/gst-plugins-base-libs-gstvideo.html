@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-video.html" title="Video Library">
 <link rel="prev" href="gstreamer-video.html" title="Video Library">
 <link rel="next" href="gst-plugins-base-libs-gstvideofilter.html" title="gstvideofilter">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -174,7 +174,7 @@ const <span class="returnvalue">char</span> *        <a class="link" href="gst-p
 <div class="refsect1" title="Description">
 <a name="gst-plugins-base-libs-gstvideo.description"></a><h2>Description</h2>
 <div class="refsect2">
-<a name="id541911"></a><p>
+<a name="id772528"></a><p>
 This library contains some helper functions and includes the 
 videosink and videofilter base classes.
 </p>
@@ -184,32 +184,48 @@ videosink and videofilter base classes.
 <a name="gst-plugins-base-libs-gstvideo.details"></a><h2>Details</h2>
 <div class="refsect2" title="GST_VIDEO_BLUE_MASK_15">
 <a name="GST-VIDEO-BLUE-MASK-15:CAPS"></a><h3>GST_VIDEO_BLUE_MASK_15</h3>
-<pre class="programlisting">#define GST_VIDEO_BLUE_MASK_15 "0x001f"
+<pre class="programlisting">#define GST_VIDEO_BLUE_MASK_15 GST_VIDEO_COMP3_MASK_15
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_BLUE_MASK_15</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
 <hr>
 <div class="refsect2" title="GST_VIDEO_BLUE_MASK_15_INT">
 <a name="GST-VIDEO-BLUE-MASK-15-INT:CAPS"></a><h3>GST_VIDEO_BLUE_MASK_15_INT</h3>
-<pre class="programlisting">#define GST_VIDEO_BLUE_MASK_15_INT 0x001f
+<pre class="programlisting">#define GST_VIDEO_BLUE_MASK_15_INT GST_VIDEO_COMP3_MASK_15_INT
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_BLUE_MASK_15_INT</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
 <hr>
 <div class="refsect2" title="GST_VIDEO_BLUE_MASK_16">
 <a name="GST-VIDEO-BLUE-MASK-16:CAPS"></a><h3>GST_VIDEO_BLUE_MASK_16</h3>
-<pre class="programlisting">#define GST_VIDEO_BLUE_MASK_16 "0x001f"
+<pre class="programlisting">#define GST_VIDEO_BLUE_MASK_16 GST_VIDEO_COMP3_MASK_16
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_BLUE_MASK_16</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
 <hr>
 <div class="refsect2" title="GST_VIDEO_BLUE_MASK_16_INT">
 <a name="GST-VIDEO-BLUE-MASK-16-INT:CAPS"></a><h3>GST_VIDEO_BLUE_MASK_16_INT</h3>
-<pre class="programlisting">#define GST_VIDEO_BLUE_MASK_16_INT 0x001f
+<pre class="programlisting">#define GST_VIDEO_BLUE_MASK_16_INT GST_VIDEO_COMP3_MASK_16_INT
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_BLUE_MASK_16_INT</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
@@ -478,64 +494,96 @@ Generic caps string for 16-bit grayscale video, for use in pad templates.
 <hr>
 <div class="refsect2" title="GST_VIDEO_GREEN_MASK_15">
 <a name="GST-VIDEO-GREEN-MASK-15:CAPS"></a><h3>GST_VIDEO_GREEN_MASK_15</h3>
-<pre class="programlisting">#define GST_VIDEO_GREEN_MASK_15 "0x03e0"
+<pre class="programlisting">#define GST_VIDEO_GREEN_MASK_15 GST_VIDEO_COMP2_MASK_15
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_GREEN_MASK_15</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
 <hr>
 <div class="refsect2" title="GST_VIDEO_GREEN_MASK_15_INT">
 <a name="GST-VIDEO-GREEN-MASK-15-INT:CAPS"></a><h3>GST_VIDEO_GREEN_MASK_15_INT</h3>
-<pre class="programlisting">#define GST_VIDEO_GREEN_MASK_15_INT 0x03e0
+<pre class="programlisting">#define GST_VIDEO_GREEN_MASK_15_INT GST_VIDEO_COMP2_MASK_15_INT
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_GREEN_MASK_15_INT</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
 <hr>
 <div class="refsect2" title="GST_VIDEO_GREEN_MASK_16">
 <a name="GST-VIDEO-GREEN-MASK-16:CAPS"></a><h3>GST_VIDEO_GREEN_MASK_16</h3>
-<pre class="programlisting">#define GST_VIDEO_GREEN_MASK_16 "0x07e0"
+<pre class="programlisting">#define GST_VIDEO_GREEN_MASK_16 GST_VIDEO_COMP2_MASK_16
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_GREEN_MASK_16</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
 <hr>
 <div class="refsect2" title="GST_VIDEO_GREEN_MASK_16_INT">
 <a name="GST-VIDEO-GREEN-MASK-16-INT:CAPS"></a><h3>GST_VIDEO_GREEN_MASK_16_INT</h3>
-<pre class="programlisting">#define GST_VIDEO_GREEN_MASK_16_INT 0x07e0
+<pre class="programlisting">#define GST_VIDEO_GREEN_MASK_16_INT GST_VIDEO_COMP2_MASK_16_INT
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_GREEN_MASK_16_INT</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
 <hr>
 <div class="refsect2" title="GST_VIDEO_RED_MASK_15">
 <a name="GST-VIDEO-RED-MASK-15:CAPS"></a><h3>GST_VIDEO_RED_MASK_15</h3>
-<pre class="programlisting">#define GST_VIDEO_RED_MASK_15 "0x7c00"
+<pre class="programlisting">#define GST_VIDEO_RED_MASK_15 GST_VIDEO_COMP1_MASK_15
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_RED_MASK_15</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
 <hr>
 <div class="refsect2" title="GST_VIDEO_RED_MASK_15_INT">
 <a name="GST-VIDEO-RED-MASK-15-INT:CAPS"></a><h3>GST_VIDEO_RED_MASK_15_INT</h3>
-<pre class="programlisting">#define GST_VIDEO_RED_MASK_15_INT 0x7c00
+<pre class="programlisting">#define GST_VIDEO_RED_MASK_15_INT GST_VIDEO_COMP1_MASK_15_INT
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_RED_MASK_15_INT</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
 <hr>
 <div class="refsect2" title="GST_VIDEO_RED_MASK_16">
 <a name="GST-VIDEO-RED-MASK-16:CAPS"></a><h3>GST_VIDEO_RED_MASK_16</h3>
-<pre class="programlisting">#define GST_VIDEO_RED_MASK_16 "0xf800"
+<pre class="programlisting">#define GST_VIDEO_RED_MASK_16 GST_VIDEO_COMP1_MASK_16
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_RED_MASK_16</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
 <hr>
 <div class="refsect2" title="GST_VIDEO_RED_MASK_16_INT">
 <a name="GST-VIDEO-RED-MASK-16-INT:CAPS"></a><h3>GST_VIDEO_RED_MASK_16_INT</h3>
-<pre class="programlisting">#define GST_VIDEO_RED_MASK_16_INT 0xf800
+<pre class="programlisting">#define GST_VIDEO_RED_MASK_16_INT GST_VIDEO_COMP1_MASK_16_INT
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GST_VIDEO_RED_MASK_16_INT</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 </p>
 </div>
@@ -610,7 +658,14 @@ If the <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#
   GST_VIDEO_FORMAT_NV21,
   GST_VIDEO_FORMAT_GRAY8,
   GST_VIDEO_FORMAT_GRAY16_BE,
-  GST_VIDEO_FORMAT_GRAY16_LE
+  GST_VIDEO_FORMAT_GRAY16_LE,
+  GST_VIDEO_FORMAT_v308,
+  GST_VIDEO_FORMAT_Y800,
+  GST_VIDEO_FORMAT_Y16,
+  GST_VIDEO_FORMAT_RGB16,
+  GST_VIDEO_FORMAT_BGR16,
+  GST_VIDEO_FORMAT_RGB15,
+  GST_VIDEO_FORMAT_BGR15
 } GstVideoFormat;
 </pre>
 <p>
@@ -752,6 +807,41 @@ Enum value describing the most common video formats.
 <tr>
 <td><p><a name="GST-VIDEO-FORMAT-GRAY16-LE:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_FORMAT_GRAY16_LE</code></span></p></td>
 <td>16-bit grayscale, least significant byte first (Since: 0.10.29)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VIDEO-FORMAT-v308"></a><span class="term"><code class="literal">GST_VIDEO_FORMAT_v308</code></span></p></td>
+<td>packed 4:4:4 YUV (Since: 0.10.29)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VIDEO-FORMAT-Y800:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_FORMAT_Y800</code></span></p></td>
+<td>same as GST_VIDEO_FORMAT_GRAY8 (Since: 0.10.30)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VIDEO-FORMAT-Y16:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_FORMAT_Y16</code></span></p></td>
+<td>same as GST_VIDEO_FORMAT_GRAY16_LE (Since: 0.10.30)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VIDEO-FORMAT-RGB16:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_FORMAT_RGB16</code></span></p></td>
+<td>rgb 5-6-5 bits per component (Since: 0.10.30)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VIDEO-FORMAT-BGR16:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_FORMAT_BGR16</code></span></p></td>
+<td>reverse rgb 5-6-5 bits per component (Since: 0.10.30)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VIDEO-FORMAT-RGB15:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_FORMAT_RGB15</code></span></p></td>
+<td>rgb 5-5-5 bits per component (Since: 0.10.30)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-VIDEO-FORMAT-BGR15:CAPS"></a><span class="term"><code class="literal">GST_VIDEO_FORMAT_BGR15</code></span></p></td>
+<td>reverse rgb 5-5-5 bits per component (Since: 0.10.30)
 </td>
 </tr>
 </tbody>
@@ -1717,6 +1807,6 @@ to be "mpeg2".
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

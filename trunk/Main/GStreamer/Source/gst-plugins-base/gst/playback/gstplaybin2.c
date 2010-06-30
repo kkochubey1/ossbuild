@@ -232,8 +232,8 @@
 #include "gstplayback.h"
 #include "gstplaysink.h"
 #include "gstfactorylists.h"
-#include "gstinputselector.h"
 #include "gstscreenshot.h"
+#include "gstinputselector.h"
 #include "gstsubtitleoverlay.h"
 
 GST_DEBUG_CATEGORY_STATIC (gst_play_bin_debug);
@@ -492,6 +492,7 @@ enum
   PROP_CONNECTION_SPEED,
   PROP_BUFFER_SIZE,
   PROP_BUFFER_DURATION,
+  PROP_AV_OFFSET,
   PROP_LAST
 };
 
@@ -559,42 +560,14 @@ static GstElementClass *parent_class;
 
 static guint gst_play_bin_signals[LAST_SIGNAL] = { 0 };
 
+static GstStaticCaps av_raw_caps = GST_STATIC_CAPS ("audio/x-raw-int; "
+    "audio/x-raw-float; "
+    "video/x-raw-yuv; " "video/x-raw-rgb; " "video/x-raw-gray;");
+
 #define REMOVE_SIGNAL(obj,id)            \
 if (id) {                                \
   g_signal_handler_disconnect (obj, id); \
   id = 0;                                \
-}
-
-static void
-gst_play_marshal_BUFFER__BOXED (GClosure * closure,
-    GValue * return_value G_GNUC_UNUSED,
-    guint n_param_values,
-    const GValue * param_values,
-    gpointer invocation_hint G_GNUC_UNUSED, gpointer marshal_data)
-{
-  typedef GstBuffer *(*GMarshalFunc_OBJECT__BOXED) (gpointer data1,
-      gpointer arg_1, gpointer data2);
-  register GMarshalFunc_OBJECT__BOXED callback;
-  register GCClosure *cc = (GCClosure *) closure;
-  register gpointer data1, data2;
-  GstBuffer *v_return;
-
-  g_return_if_fail (return_value != NULL);
-  g_return_if_fail (n_param_values == 2);
-
-  if (G_CCLOSURE_SWAP_DATA (closure)) {
-    data1 = closure->data;
-    data2 = g_value_peek_pointer (param_values + 0);
-  } else {
-    data1 = g_value_peek_pointer (param_values + 0);
-    data2 = closure->data;
-  }
-  callback =
-      (GMarshalFunc_OBJECT__BOXED) (marshal_data ? marshal_data : cc->callback);
-
-  v_return = callback (data1, g_value_get_boxed (param_values + 1), data2);
-
-  gst_value_take_buffer (return_value, v_return);
 }
 
 static GType
@@ -784,7 +757,7 @@ gst_play_bin_class_init (GstPlayBinClass * klass)
    * GstPlayBin2:frame:
    * @playbin: a #GstPlayBin2
    *
-   * Get the currently rendered or prerolled frame in the sink.
+   * Get the currently rendered or prerolled frame in the video sink.
    * The #GstCaps on the buffer will describe the format of the buffer.
    */
   g_object_class_install_property (gobject_klass, PROP_FRAME,
@@ -813,6 +786,20 @@ gst_play_bin_class_init (GstPlayBinClass * klass)
       g_param_spec_int64 ("buffer-duration", "Buffer duration (ns)",
           "Buffer duration when buffering network streams",
           -1, G_MAXINT64, DEFAULT_BUFFER_DURATION,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * GstPlayBin2:av-offset:
+   *
+   * Control the synchronisation offset between the audio and video streams.
+   * Positive values make the audio ahead of the video and negative values make
+   * the audio go behind the video.
+   *
+   * Since: 0.10.30
+   */
+  g_object_class_install_property (gobject_klass, PROP_AV_OFFSET,
+      g_param_spec_int64 ("av-offset", "AV Offset",
+          "The synchronisation offset between audio and video in nanoseconds",
+          G_MININT64, G_MAXINT64, 0,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
@@ -1400,17 +1387,7 @@ gst_play_bin_get_text_tags (GstPlayBin * playbin, gint stream)
 static GstBuffer *
 gst_play_bin_convert_frame (GstPlayBin * playbin, GstCaps * caps)
 {
-  GstBuffer *result;
-
-  result = gst_play_sink_get_last_frame (playbin->playsink);
-  if (result != NULL && caps != NULL) {
-    GstBuffer *temp;
-
-    temp = gst_play_frame_conv_convert (result, caps);
-    gst_buffer_unref (result);
-    result = temp;
-  }
-  return result;
+  return gst_play_sink_convert_frame (playbin->playsink, caps);
 }
 
 /* Returns current stream number, or -1 if none has been selected yet */
@@ -1730,12 +1707,31 @@ gst_play_bin_set_sink (GstPlayBin * playbin, GstElement ** elem,
 }
 
 static void
+gst_play_bin_set_encoding (GstPlayBin * playbin, const gchar * encoding)
+{
+  GstElement *elem;
+
+  GST_PLAY_BIN_LOCK (playbin);
+
+  /* set subtitles on all current and next decodebins. */
+  if ((elem = playbin->groups[0].uridecodebin))
+    g_object_set (G_OBJECT (elem), "subtitle-encoding", encoding, NULL);
+  if ((elem = playbin->groups[0].suburidecodebin))
+    g_object_set (G_OBJECT (elem), "subtitle-encoding", encoding, NULL);
+  if ((elem = playbin->groups[1].uridecodebin))
+    g_object_set (G_OBJECT (elem), "subtitle-encoding", encoding, NULL);
+  if ((elem = playbin->groups[1].suburidecodebin))
+    g_object_set (G_OBJECT (elem), "subtitle-encoding", encoding, NULL);
+
+  gst_play_sink_set_subtitle_encoding (playbin->playsink, encoding);
+  GST_PLAY_BIN_UNLOCK (playbin);
+}
+
+static void
 gst_play_bin_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec)
 {
-  GstPlayBin *playbin;
-
-  playbin = GST_PLAY_BIN (object);
+  GstPlayBin *playbin = GST_PLAY_BIN (object);
 
   switch (prop_id) {
     case PROP_URI:
@@ -1757,8 +1753,7 @@ gst_play_bin_set_property (GObject * object, guint prop_id,
       gst_play_bin_set_current_text_stream (playbin, g_value_get_int (value));
       break;
     case PROP_SUBTITLE_ENCODING:
-      gst_play_sink_set_subtitle_encoding (playbin->playsink,
-          g_value_get_string (value));
+      gst_play_bin_set_encoding (playbin, g_value_get_string (value));
       break;
     case PROP_VIDEO_SINK:
       gst_play_bin_set_sink (playbin, &playbin->video_sink, "video",
@@ -1797,6 +1792,10 @@ gst_play_bin_set_property (GObject * object, guint prop_id,
     case PROP_BUFFER_DURATION:
       playbin->buffer_duration = g_value_get_int64 (value);
       break;
+    case PROP_AV_OFFSET:
+      gst_play_sink_set_av_offset (playbin->playsink,
+          g_value_get_int64 (value));
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1807,9 +1806,7 @@ static GstElement *
 gst_play_bin_get_current_sink (GstPlayBin * playbin, GstElement ** elem,
     const gchar * dbg, GstPlaySinkType type)
 {
-  GstElement *sink;
-
-  sink = gst_play_sink_get_sink (playbin->playsink, type);
+  GstElement *sink = gst_play_sink_get_sink (playbin->playsink, type);
 
   GST_LOG_OBJECT (playbin, "play_sink_get_sink() returned %s sink %"
       GST_PTR_FORMAT ", the originally set %s sink is %" GST_PTR_FORMAT,
@@ -1829,9 +1826,7 @@ static void
 gst_play_bin_get_property (GObject * object, guint prop_id, GValue * value,
     GParamSpec * pspec)
 {
-  GstPlayBin *playbin;
-
-  playbin = GST_PLAY_BIN (object);
+  GstPlayBin *playbin = GST_PLAY_BIN (object);
 
   switch (prop_id) {
     case PROP_URI:
@@ -1947,7 +1942,8 @@ gst_play_bin_get_property (GObject * object, guint prop_id, GValue * value,
       g_value_set_boolean (value, gst_play_sink_get_mute (playbin->playsink));
       break;
     case PROP_FRAME:
-      gst_value_take_buffer (value, gst_play_bin_convert_frame (playbin, NULL));
+      gst_value_take_buffer (value,
+          gst_play_sink_get_last_frame (playbin->playsink));
       break;
     case PROP_FONT_DESC:
       g_value_take_string (value,
@@ -1967,6 +1963,10 @@ gst_play_bin_get_property (GObject * object, guint prop_id, GValue * value,
       GST_OBJECT_LOCK (playbin);
       g_value_set_int64 (value, playbin->buffer_duration);
       GST_OBJECT_UNLOCK (playbin);
+      break;
+    case PROP_AV_OFFSET:
+      g_value_set_int64 (value,
+          gst_play_sink_get_av_offset (playbin->playsink));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -2058,11 +2058,15 @@ gst_play_bin_query (GstElement * element, GstQuery * query)
           break;
         }
       }
-      GST_DEBUG_OBJECT (playbin,
-          "Taking cached duration because of pending group switch: %d", ret);
-      GST_SOURCE_GROUP_UNLOCK (group);
-      GST_PLAY_BIN_UNLOCK (playbin);
-      return ret;
+      /* if nothing cached yet, we might as well request duration,
+       * such as during initial startup */
+      if (ret) {
+        GST_DEBUG_OBJECT (playbin,
+            "Taking cached duration because of pending group switch: %d", ret);
+        GST_SOURCE_GROUP_UNLOCK (group);
+        GST_PLAY_BIN_UNLOCK (playbin);
+        return ret;
+      }
     }
     GST_SOURCE_GROUP_UNLOCK (group);
   }
@@ -2429,8 +2433,8 @@ _playsink_sink_event_probe_cb (GstPad * pad, GstEvent * event,
 
     if (format != GST_FORMAT_TIME)
       data->group->selector[data->type].group_start_accum = GST_CLOCK_TIME_NONE;
-    else if (!GST_CLOCK_TIME_IS_VALID (data->group->selector[data->
-                type].group_start_accum))
+    else if (!GST_CLOCK_TIME_IS_VALID (data->group->selector[data->type].
+            group_start_accum))
       data->group->selector[data->type].group_start_accum = segment->accum;
   } else if (GST_EVENT_TYPE (event) == GST_EVENT_FLUSH_STOP) {
     gst_segment_init (&data->playbin->segments[index], GST_FORMAT_UNDEFINED);
@@ -2949,6 +2953,9 @@ autoplug_factories_cb (GstElement * decodebin, GstPad * pad,
   return result;
 }
 
+static GstStaticCaps sub_plaintext_caps =
+    GST_STATIC_CAPS ("text/x-pango-markup; text/plain");
+
 /* autoplug-continue decides, if a pad has raw caps that can be exposed
  * directly or if further decoding is necessary. We use this to expose
  * supported subtitles directly */
@@ -2956,10 +2963,36 @@ static gboolean
 autoplug_continue_cb (GstElement * element, GstPad * pad, GstCaps * caps,
     GstSourceGroup * group)
 {
-  GstCaps *subcaps;
+  GstCaps *subcaps = NULL;
   gboolean ret = FALSE;
+  GstElement *text_sink;
+  GstPad *text_sinkpad = NULL;
 
-  subcaps = gst_subtitle_overlay_create_factory_caps ();
+  text_sink =
+      (group->playbin->text_sink) ? gst_object_ref (group->playbin->
+      text_sink) : NULL;
+  if (text_sink)
+    text_sinkpad = gst_element_get_static_pad (text_sink, "sink");
+
+  if (text_sinkpad) {
+    subcaps = gst_pad_get_caps_reffed (text_sinkpad);
+    gst_object_unref (text_sinkpad);
+
+    /* If the textsink claims to support ANY subcaps,
+     * go the save way and only use the plaintext caps */
+    if (gst_caps_is_any (subcaps)) {
+      GST_WARNING_OBJECT (group->playbin, "Text sink '%s' accepts ANY caps",
+          GST_OBJECT_NAME (text_sink));
+      gst_caps_unref (subcaps);
+      subcaps = gst_static_caps_get (&sub_plaintext_caps);
+    }
+  } else {
+    subcaps = gst_subtitle_overlay_create_factory_caps ();
+  }
+
+  if (text_sink)
+    gst_object_unref (text_sink);
+
   ret = !gst_caps_can_intersect (subcaps, caps);
   gst_caps_unref (subcaps);
 
@@ -3144,6 +3177,8 @@ activate_group (GstPlayBin * playbin, GstSourceGroup * group, GstState target)
     uridecodebin = gst_element_factory_make ("uridecodebin", NULL);
     if (!uridecodebin)
       goto no_decodebin;
+    g_object_set (uridecodebin, "caps", gst_static_caps_get (&av_raw_caps),
+        NULL);
     gst_bin_add (GST_BIN_CAST (playbin), uridecodebin);
     group->uridecodebin = gst_object_ref (uridecodebin);
   }
@@ -3215,7 +3250,8 @@ activate_group (GstPlayBin * playbin, GstSourceGroup * group, GstState target)
       suburidecodebin = gst_element_factory_make ("uridecodebin", NULL);
       if (!suburidecodebin)
         goto no_decodebin;
-
+      g_object_set (uridecodebin, "caps", gst_static_caps_get (&av_raw_caps),
+          NULL);
       gst_bin_add (GST_BIN_CAST (playbin), suburidecodebin);
       group->suburidecodebin = gst_object_ref (suburidecodebin);
     }

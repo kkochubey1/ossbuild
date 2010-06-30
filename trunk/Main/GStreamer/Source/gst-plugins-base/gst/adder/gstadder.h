@@ -66,6 +66,7 @@ struct _GstAdder {
   gint            channels;
   gint            width;
   gint            endianness;
+  int             sample_size;
 
   /* the next are valid only for format == GST_ADDER_FORMAT_INT */
   gint            depth;
@@ -85,7 +86,7 @@ struct _GstAdder {
   GstPadEventFunction  collect_event;
   GstSegment      segment;
   gboolean        segment_pending;
-  guint64         segment_position;
+  guint64         segment_start, segment_end;
   gdouble         segment_rate;
   /* src event handling */
   gboolean        flush_stop_pending;

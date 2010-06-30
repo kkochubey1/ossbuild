@@ -80,18 +80,18 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/freetype2.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-alsa.m4 \
-	$(top_srcdir)/m4/gst-fionread.m4 $(top_srcdir)/m4/iconv.m4 \
-	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
-	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/lrint.m4 \
-	$(top_srcdir)/m4/lrintf.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/ogg.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/vorbis.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/freetype2.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/lrint.m4 $(top_srcdir)/m4/lrintf.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/ogg.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
+	$(top_srcdir)/m4/vorbis.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -125,6 +125,7 @@ AWK = @AWK@
 CC = @CC@
 CCASFLAGS = @CCASFLAGS@
 CCDEPMODE = @CCDEPMODE@
+CDPARANOIA_CFLAGS = @CDPARANOIA_CFLAGS@
 CDPARANOIA_LIBS = @CDPARANOIA_LIBS@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
@@ -248,8 +249,6 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBVISUAL_CFLAGS = @LIBVISUAL_CFLAGS@
@@ -272,6 +271,9 @@ OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
+ORCC = @ORCC@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -298,6 +300,7 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
+QT4_MOC = @QT4_MOC@
 QT_CFLAGS = @QT_CFLAGS@
 QT_LIBS = @QT_LIBS@
 RANLIB = @RANLIB@
@@ -727,13 +730,7 @@ uninstall-am: uninstall-local
 html: html-build.stamp
 
 upload: $(FORMATS)
-	@if test "x$(PACKAGE_VERSION_NANO)" = x0; then \
-            export DOCVERSION=$(VERSION); \
-        else export DOCVERSION=head; \
-        fi; \
-        export DIR=$(DOC_BASE)/gstreamer/$$DOCVERSION/$(DOC); \
-	ssh $(DOC_SERVER) mkdir -p $$DIR; \
-	if echo $(FORMATS) | grep html > /dev/null; then \
+	@if echo $(FORMATS) | grep html > /dev/null; then \
 	  echo "Preparing docs for upload (rebasing cross-references) ..." ; \
 	  if test x$(builddir) != x$(srcdir); then \
 	    echo "make upload can only be used if srcdir == builddir"; \
@@ -758,9 +755,22 @@ upload: $(FORMATS)
 	fi; \
 	if echo $(FORMATS) | grep ps > /dev/null; then export SRC="$$SRC $(DOC).ps"; fi; \
 	if echo $(FORMATS) | grep pdf > /dev/null; then export SRC="$$SRC $(DOC).pdf"; fi; \
+	\
+	# upload releases to both 0.10.X/ and head/ subdirectories \
+	if test "x$(PACKAGE_VERSION_NANO)" = x0; then \
+	  export DIR=$(DOC_BASE)/gstreamer/$(VERSION)/$(DOC); \
+	  echo Uploading $$SRC to $(DOC_SERVER):$$DIR; \
+	  ssh $(DOC_SERVER) mkdir -p $$DIR; \
+	  rsync -rv -e ssh --delete $$SRC $(DOC_SERVER):$$DIR; \
+	  ssh $(DOC_SERVER) chmod -R g+w $$DIR; \
+	fi; \
+	\
+	export DIR=$(DOC_BASE)/gstreamer/head/$(DOC); \
 	echo Uploading $$SRC to $(DOC_SERVER):$$DIR; \
+	ssh $(DOC_SERVER) mkdir -p $$DIR; \
 	rsync -rv -e ssh --delete $$SRC $(DOC_SERVER):$$DIR; \
 	ssh $(DOC_SERVER) chmod -R g+w $$DIR; \
+	\
 	if echo $(FORMATS) | grep html > /dev/null; then \
 	  echo "Un-preparing docs for upload (rebasing cross-references) ..." ; \
 	  gtkdoc-rebase --html-dir=$(builddir)/html ; \

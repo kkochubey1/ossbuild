@@ -111,6 +111,7 @@ struct _GstOggPad
 
   gboolean discont;
   GstFlowReturn last_ret;       /* last return of _pad_push() */
+  gboolean is_eos;
 
   gboolean added;
 };
@@ -139,11 +140,13 @@ struct _GstOggDemux
   gboolean running;
 
   gboolean need_chains;
+  gboolean resync;
 
   /* state */
   GMutex *chain_lock;           /* we need the lock to protect the chains */
   GArray *chains;               /* list of chains we know */
   GstClockTime total_time;
+  gint bitrate;                 /* bitrate of the current chain */
 
   GstOggChain *current_chain;
   GstOggChain *building_chain;
@@ -157,7 +160,6 @@ struct _GstOggDemux
   GstEvent *newsegment;         /* pending newsegment to be sent from _loop */
 
   /* annodex stuff */
-  gboolean have_fishead;
   gint64 basetime;
   gint64 prestime;
 

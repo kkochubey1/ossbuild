@@ -2626,12 +2626,18 @@ read_joystick (GIOChannel * source, GIOCondition condition, gpointer user_data)
 {
   gchar buf[sizeof (struct js_event)];
   struct js_event *js = (struct js_event *) buf;
+  GError *err = NULL;
   gsize bytes_read = 0;
   GIOStatus result;
 
   result =
-      g_io_channel_read (source, buf, sizeof (struct js_event), &bytes_read);
-  if (bytes_read != sizeof (struct js_event)) {
+      g_io_channel_read_chars (source, buf, sizeof (struct js_event),
+      &bytes_read, &err);
+  if (err) {
+    g_print ("error reading from joystick: %s", err->message);
+    g_error_free (err);
+    return FALSE;
+  } else if (bytes_read != sizeof (struct js_event)) {
     g_print ("error reading joystick, read %u bytes of %u\n",
         (guint) bytes_read, (guint) sizeof (struct js_event));
     return TRUE;
@@ -2841,10 +2847,8 @@ main (int argc, char **argv)
   hscale = gtk_hscale_new (adjustment);
   gtk_scale_set_digits (GTK_SCALE (hscale), 2);
   gtk_scale_set_value_pos (GTK_SCALE (hscale), GTK_POS_RIGHT);
-#if GTK_CHECK_VERSION(2,12,0)
   gtk_range_set_show_fill_level (GTK_RANGE (hscale), TRUE);
   gtk_range_set_fill_level (GTK_RANGE (hscale), 100.0);
-#endif
   gtk_range_set_update_policy (GTK_RANGE (hscale), GTK_UPDATE_CONTINUOUS);
 
   g_signal_connect (hscale, "button_press_event", G_CALLBACK (start_seek),

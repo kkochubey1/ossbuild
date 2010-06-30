@@ -54,10 +54,10 @@ check_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	libs/fft$(EXEEXT) libs/mixer$(EXEEXT) libs/navigation$(EXEEXT) \
 	libs/netbuffer$(EXEEXT) libs/pbutils$(EXEEXT) \
 	libs/rtp$(EXEEXT) libs/tag$(EXEEXT) libs/video$(EXEEXT) \
-	pipelines/simple-launch-lines$(EXEEXT) \
+	$(am__EXEEXT_9) pipelines/simple-launch-lines$(EXEEXT) \
 	pipelines/streamheader$(EXEEXT) pipelines/basetime$(EXEEXT) \
 	pipelines/capsfilter-renegotiation$(EXEEXT)
-noinst_PROGRAMS = $(am__EXEEXT_9)
+noinst_PROGRAMS = $(am__EXEEXT_10)
 subdir = tests/check
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
@@ -83,18 +83,18 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
 	$(top_srcdir)/common/m4/introspection.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/freetype2.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-alsa.m4 \
-	$(top_srcdir)/m4/gst-fionread.m4 $(top_srcdir)/m4/iconv.m4 \
-	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
-	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/lrint.m4 \
-	$(top_srcdir)/m4/lrintf.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/ogg.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/vorbis.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/freetype2.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/lrint.m4 $(top_srcdir)/m4/lrintf.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/ogg.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
+	$(top_srcdir)/m4/vorbis.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -112,7 +112,11 @@ CONFIG_CLEAN_VPATH_FILES =
 @USE_VORBIS_TRUE@	elements/vorbistag$(EXEEXT)
 @USE_THEORA_TRUE@am__EXEEXT_7 = pipelines/theoraenc$(EXEEXT)
 @USE_PLUGIN_SUBPARSE_TRUE@am__EXEEXT_8 = elements/subparse$(EXEEXT)
-@USE_LIBVISUAL_TRUE@am__EXEEXT_9 = elements/libvisual$(EXEEXT)
+@HAVE_ORC_TRUE@am__EXEEXT_9 = orc/adder$(EXEEXT) \
+@HAVE_ORC_TRUE@	orc/audioconvert$(EXEEXT) orc/volume$(EXEEXT) \
+@HAVE_ORC_TRUE@	orc/videoscale$(EXEEXT) \
+@HAVE_ORC_TRUE@	orc/videotestsrc$(EXEEXT)
+@USE_LIBVISUAL_TRUE@am__EXEEXT_10 = elements/libvisual$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 elements_adder_SOURCES = elements/adder.c
 elements_adder_OBJECTS = adder.$(OBJEXT)
@@ -373,7 +377,8 @@ libs_rtp_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 libs_tag_SOURCES = libs/tag.c
 libs_tag_OBJECTS = libs_tag-tag.$(OBJEXT)
-libs_tag_DEPENDENCIES = $(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la \
+libs_tag_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la \
 	$(am__DEPENDENCIES_2)
 libs_tag_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_tag_CFLAGS) \
@@ -384,6 +389,39 @@ libs_video_DEPENDENCIES = $(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MA
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 libs_video_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_video_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+orc_adder_SOURCES = orc/adder.c
+orc_adder_OBJECTS = orc_adder-adder.$(OBJEXT)
+orc_adder_DEPENDENCIES = $(am__DEPENDENCIES_1)
+orc_adder_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(orc_adder_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+orc_audioconvert_SOURCES = orc/audioconvert.c
+orc_audioconvert_OBJECTS = orc_audioconvert-audioconvert.$(OBJEXT)
+orc_audioconvert_DEPENDENCIES = $(am__DEPENDENCIES_1)
+orc_audioconvert_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(orc_audioconvert_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
+orc_videoscale_SOURCES = orc/videoscale.c
+orc_videoscale_OBJECTS = orc_videoscale-videoscale.$(OBJEXT)
+orc_videoscale_DEPENDENCIES = $(am__DEPENDENCIES_1)
+orc_videoscale_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(orc_videoscale_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
+	$@
+orc_videotestsrc_SOURCES = orc/videotestsrc.c
+orc_videotestsrc_OBJECTS = orc_videotestsrc-videotestsrc.$(OBJEXT)
+orc_videotestsrc_DEPENDENCIES = $(am__DEPENDENCIES_1)
+orc_videotestsrc_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(orc_videotestsrc_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
+orc_volume_SOURCES = orc/volume.c
+orc_volume_OBJECTS = orc_volume-volume.$(OBJEXT)
+orc_volume_DEPENDENCIES = $(am__DEPENDENCIES_1)
+orc_volume_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(orc_volume_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 pipelines_basetime_SOURCES = pipelines/basetime.c
 pipelines_basetime_OBJECTS = basetime.$(OBJEXT)
@@ -494,7 +532,8 @@ SOURCES = elements/adder.c elements/alsa.c elements/appsink.c \
 	generic/states.c gst/typefindfunctions.c libs/audio.c \
 	libs/cddabasesrc.c libs/fft.c libs/mixer.c libs/navigation.c \
 	libs/netbuffer.c libs/pbutils.c libs/rtp.c libs/tag.c \
-	libs/video.c pipelines/basetime.c \
+	libs/video.c orc/adder.c orc/audioconvert.c orc/videoscale.c \
+	orc/videotestsrc.c orc/volume.c pipelines/basetime.c \
 	pipelines/capsfilter-renegotiation.c pipelines/gio.c \
 	pipelines/oggmux.c pipelines/simple-launch-lines.c \
 	pipelines/streamheader.c pipelines/theoraenc.c \
@@ -513,7 +552,8 @@ DIST_SOURCES = elements/adder.c elements/alsa.c elements/appsink.c \
 	generic/states.c gst/typefindfunctions.c libs/audio.c \
 	libs/cddabasesrc.c libs/fft.c libs/mixer.c libs/navigation.c \
 	libs/netbuffer.c libs/pbutils.c libs/rtp.c libs/tag.c \
-	libs/video.c pipelines/basetime.c \
+	libs/video.c orc/adder.c orc/audioconvert.c orc/videoscale.c \
+	orc/videotestsrc.c orc/volume.c pipelines/basetime.c \
 	pipelines/capsfilter-renegotiation.c pipelines/gio.c \
 	pipelines/oggmux.c pipelines/simple-launch-lines.c \
 	pipelines/streamheader.c pipelines/theoraenc.c \
@@ -541,6 +581,7 @@ AWK = @AWK@
 CC = @CC@
 CCASFLAGS = @CCASFLAGS@
 CCDEPMODE = @CCDEPMODE@
+CDPARANOIA_CFLAGS = @CDPARANOIA_CFLAGS@
 CDPARANOIA_LIBS = @CDPARANOIA_LIBS@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
@@ -664,8 +705,6 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIBVISUAL_CFLAGS = @LIBVISUAL_CFLAGS@
@@ -688,6 +727,9 @@ OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
+ORCC = @ORCC@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -714,6 +756,7 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
+QT4_MOC = @QT4_MOC@
 QT_CFLAGS = @QT_CFLAGS@
 QT_LIBS = @QT_LIBS@
 RANLIB = @RANLIB@
@@ -808,6 +851,7 @@ LOOPS = 10
 # inspect every plugin feature
 GST_INSPECT = $(GST_TOOLS_DIR)/gst-inspect-$(GST_MAJORMINOR)
 CHECK_REGISTRY = $(top_builddir)/tests/check/test-registry.reg
+TEST_FILES_DIRECTORY = $(top_srcdir)/tests/files
 REGISTRY_ENVIRONMENT = \
 	GST_REGISTRY=$(CHECK_REGISTRY)
 
@@ -816,7 +860,8 @@ TESTS_ENVIRONMENT = \
         STATE_IGNORE_ELEMENTS="$(STATE_IGNORE_ELEMENTS)"	\
 	$(REGISTRY_ENVIRONMENT)					\
 	GST_PLUGIN_SYSTEM_PATH=					\
-	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/sys:$(top_builddir)/ext:$(GST_PLUGINS_DIR)
+	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/sys:$(top_builddir)/ext:$(GST_PLUGINS_DIR) \
+	GST_PLUGIN_LOADING_WHITELIST="gstreamer:gst-plugins-base@$(top_builddir)"
 
 
 # ths core dumps of some machines have PIDs appended
@@ -845,6 +890,8 @@ TESTS = $(check_PROGRAMS)
 @USE_THEORA_TRUE@check_theora = pipelines/theoraenc
 @USE_PLUGIN_SUBPARSE_FALSE@check_subparse = 
 @USE_PLUGIN_SUBPARSE_TRUE@check_subparse = elements/subparse
+@HAVE_ORC_FALSE@check_orc = 
+@HAVE_ORC_TRUE@check_orc = orc/adder orc/audioconvert orc/volume orc/videoscale orc/videotestsrc
 
 # TORTURE_TO_FIX = \
 #       elements/adder
@@ -854,7 +901,9 @@ VALGRIND_TO_FIX = \
 	elements/ffmpegcolorspace \
 	libs/video
 
-AM_CFLAGS = $(GST_CFLAGS) $(GST_CHECK_CFLAGS)
+AM_CFLAGS = $(GST_CFLAGS) $(GST_CHECK_CFLAGS) \
+	-DGST_TEST_FILES_PATH="\"$(TEST_FILES_DIRECTORY)\""
+
 LDADD = $(GST_LIBS) $(GST_CHECK_LIBS)
 
 # valgrind testing
@@ -928,10 +977,12 @@ libs_rtp_LDADD = \
 	$(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMINOR@.la $(LDADD)
 
 libs_tag_CFLAGS = \
+	$(GST_BASE_CFLAGS) \
 	$(GST_PLUGINS_BASE_CFLAGS) \
 	$(AM_CFLAGS)
 
 libs_tag_LDADD = \
+	$(GST_BASE_LIBS) \
 	$(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la $(LDADD)
 
 libs_pbutils_CFLAGS = \
@@ -1067,6 +1118,16 @@ pipelines_simple_launch_lines_LDADD = \
 	$(GST_BASE_LIBS) \
 	$(LDADD)
 
+orc_adder_CFLAGS = $(ORC_CFLAGS)
+orc_adder_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_audioconvert_CFLAGS = $(ORC_CFLAGS)
+orc_audioconvert_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_volume_CFLAGS = $(ORC_CFLAGS)
+orc_volume_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_videoscale_CFLAGS = $(ORC_CFLAGS)
+orc_videoscale_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_videotestsrc_CFLAGS = $(ORC_CFLAGS)
+orc_videotestsrc_LDADD = $(ORC_LIBS) -lorc-test-0.4
 EXTRA_DIST = gst-plugins-base.supp
 all: all-am
 
@@ -1246,6 +1307,24 @@ libs/tag$(EXEEXT): $(libs_tag_OBJECTS) $(libs_tag_DEPENDENCIES) libs/$(am__dirst
 libs/video$(EXEEXT): $(libs_video_OBJECTS) $(libs_video_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/video$(EXEEXT)
 	$(AM_V_CCLD)$(libs_video_LINK) $(libs_video_OBJECTS) $(libs_video_LDADD) $(LIBS)
+orc/$(am__dirstamp):
+	@$(MKDIR_P) orc
+	@: > orc/$(am__dirstamp)
+orc/adder$(EXEEXT): $(orc_adder_OBJECTS) $(orc_adder_DEPENDENCIES) orc/$(am__dirstamp)
+	@rm -f orc/adder$(EXEEXT)
+	$(AM_V_CCLD)$(orc_adder_LINK) $(orc_adder_OBJECTS) $(orc_adder_LDADD) $(LIBS)
+orc/audioconvert$(EXEEXT): $(orc_audioconvert_OBJECTS) $(orc_audioconvert_DEPENDENCIES) orc/$(am__dirstamp)
+	@rm -f orc/audioconvert$(EXEEXT)
+	$(AM_V_CCLD)$(orc_audioconvert_LINK) $(orc_audioconvert_OBJECTS) $(orc_audioconvert_LDADD) $(LIBS)
+orc/videoscale$(EXEEXT): $(orc_videoscale_OBJECTS) $(orc_videoscale_DEPENDENCIES) orc/$(am__dirstamp)
+	@rm -f orc/videoscale$(EXEEXT)
+	$(AM_V_CCLD)$(orc_videoscale_LINK) $(orc_videoscale_OBJECTS) $(orc_videoscale_LDADD) $(LIBS)
+orc/videotestsrc$(EXEEXT): $(orc_videotestsrc_OBJECTS) $(orc_videotestsrc_DEPENDENCIES) orc/$(am__dirstamp)
+	@rm -f orc/videotestsrc$(EXEEXT)
+	$(AM_V_CCLD)$(orc_videotestsrc_LINK) $(orc_videotestsrc_OBJECTS) $(orc_videotestsrc_LDADD) $(LIBS)
+orc/volume$(EXEEXT): $(orc_volume_OBJECTS) $(orc_volume_DEPENDENCIES) orc/$(am__dirstamp)
+	@rm -f orc/volume$(EXEEXT)
+	$(AM_V_CCLD)$(orc_volume_LINK) $(orc_volume_OBJECTS) $(orc_volume_LDADD) $(LIBS)
 pipelines/$(am__dirstamp):
 	@$(MKDIR_P) pipelines
 	@: > pipelines/$(am__dirstamp)
@@ -1319,6 +1398,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_tag-tag.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libs_video-video.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multifdsink.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orc_adder-adder.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orc_audioconvert-audioconvert.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orc_videoscale-videoscale.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orc_videotestsrc-videotestsrc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orc_volume-volume.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pipelines_gio-gio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pipelines_oggmux-oggmux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pipelines_simple_launch_lines-simple-launch-lines.Po@am__quote@
@@ -1963,6 +2047,86 @@ libs_video-video.obj: libs/video.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libs_video_CFLAGS) $(CFLAGS) -c -o libs_video-video.obj `if test -f 'libs/video.c'; then $(CYGPATH_W) 'libs/video.c'; else $(CYGPATH_W) '$(srcdir)/libs/video.c'; fi`
 
+orc_adder-adder.o: orc/adder.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_adder_CFLAGS) $(CFLAGS) -MT orc_adder-adder.o -MD -MP -MF $(DEPDIR)/orc_adder-adder.Tpo -c -o orc_adder-adder.o `test -f 'orc/adder.c' || echo '$(srcdir)/'`orc/adder.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_adder-adder.Tpo $(DEPDIR)/orc_adder-adder.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/adder.c' object='orc_adder-adder.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_adder_CFLAGS) $(CFLAGS) -c -o orc_adder-adder.o `test -f 'orc/adder.c' || echo '$(srcdir)/'`orc/adder.c
+
+orc_adder-adder.obj: orc/adder.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_adder_CFLAGS) $(CFLAGS) -MT orc_adder-adder.obj -MD -MP -MF $(DEPDIR)/orc_adder-adder.Tpo -c -o orc_adder-adder.obj `if test -f 'orc/adder.c'; then $(CYGPATH_W) 'orc/adder.c'; else $(CYGPATH_W) '$(srcdir)/orc/adder.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_adder-adder.Tpo $(DEPDIR)/orc_adder-adder.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/adder.c' object='orc_adder-adder.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_adder_CFLAGS) $(CFLAGS) -c -o orc_adder-adder.obj `if test -f 'orc/adder.c'; then $(CYGPATH_W) 'orc/adder.c'; else $(CYGPATH_W) '$(srcdir)/orc/adder.c'; fi`
+
+orc_audioconvert-audioconvert.o: orc/audioconvert.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_audioconvert_CFLAGS) $(CFLAGS) -MT orc_audioconvert-audioconvert.o -MD -MP -MF $(DEPDIR)/orc_audioconvert-audioconvert.Tpo -c -o orc_audioconvert-audioconvert.o `test -f 'orc/audioconvert.c' || echo '$(srcdir)/'`orc/audioconvert.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_audioconvert-audioconvert.Tpo $(DEPDIR)/orc_audioconvert-audioconvert.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/audioconvert.c' object='orc_audioconvert-audioconvert.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_audioconvert_CFLAGS) $(CFLAGS) -c -o orc_audioconvert-audioconvert.o `test -f 'orc/audioconvert.c' || echo '$(srcdir)/'`orc/audioconvert.c
+
+orc_audioconvert-audioconvert.obj: orc/audioconvert.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_audioconvert_CFLAGS) $(CFLAGS) -MT orc_audioconvert-audioconvert.obj -MD -MP -MF $(DEPDIR)/orc_audioconvert-audioconvert.Tpo -c -o orc_audioconvert-audioconvert.obj `if test -f 'orc/audioconvert.c'; then $(CYGPATH_W) 'orc/audioconvert.c'; else $(CYGPATH_W) '$(srcdir)/orc/audioconvert.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_audioconvert-audioconvert.Tpo $(DEPDIR)/orc_audioconvert-audioconvert.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/audioconvert.c' object='orc_audioconvert-audioconvert.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_audioconvert_CFLAGS) $(CFLAGS) -c -o orc_audioconvert-audioconvert.obj `if test -f 'orc/audioconvert.c'; then $(CYGPATH_W) 'orc/audioconvert.c'; else $(CYGPATH_W) '$(srcdir)/orc/audioconvert.c'; fi`
+
+orc_videoscale-videoscale.o: orc/videoscale.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videoscale_CFLAGS) $(CFLAGS) -MT orc_videoscale-videoscale.o -MD -MP -MF $(DEPDIR)/orc_videoscale-videoscale.Tpo -c -o orc_videoscale-videoscale.o `test -f 'orc/videoscale.c' || echo '$(srcdir)/'`orc/videoscale.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_videoscale-videoscale.Tpo $(DEPDIR)/orc_videoscale-videoscale.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/videoscale.c' object='orc_videoscale-videoscale.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videoscale_CFLAGS) $(CFLAGS) -c -o orc_videoscale-videoscale.o `test -f 'orc/videoscale.c' || echo '$(srcdir)/'`orc/videoscale.c
+
+orc_videoscale-videoscale.obj: orc/videoscale.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videoscale_CFLAGS) $(CFLAGS) -MT orc_videoscale-videoscale.obj -MD -MP -MF $(DEPDIR)/orc_videoscale-videoscale.Tpo -c -o orc_videoscale-videoscale.obj `if test -f 'orc/videoscale.c'; then $(CYGPATH_W) 'orc/videoscale.c'; else $(CYGPATH_W) '$(srcdir)/orc/videoscale.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_videoscale-videoscale.Tpo $(DEPDIR)/orc_videoscale-videoscale.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/videoscale.c' object='orc_videoscale-videoscale.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videoscale_CFLAGS) $(CFLAGS) -c -o orc_videoscale-videoscale.obj `if test -f 'orc/videoscale.c'; then $(CYGPATH_W) 'orc/videoscale.c'; else $(CYGPATH_W) '$(srcdir)/orc/videoscale.c'; fi`
+
+orc_videotestsrc-videotestsrc.o: orc/videotestsrc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videotestsrc_CFLAGS) $(CFLAGS) -MT orc_videotestsrc-videotestsrc.o -MD -MP -MF $(DEPDIR)/orc_videotestsrc-videotestsrc.Tpo -c -o orc_videotestsrc-videotestsrc.o `test -f 'orc/videotestsrc.c' || echo '$(srcdir)/'`orc/videotestsrc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_videotestsrc-videotestsrc.Tpo $(DEPDIR)/orc_videotestsrc-videotestsrc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/videotestsrc.c' object='orc_videotestsrc-videotestsrc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videotestsrc_CFLAGS) $(CFLAGS) -c -o orc_videotestsrc-videotestsrc.o `test -f 'orc/videotestsrc.c' || echo '$(srcdir)/'`orc/videotestsrc.c
+
+orc_videotestsrc-videotestsrc.obj: orc/videotestsrc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videotestsrc_CFLAGS) $(CFLAGS) -MT orc_videotestsrc-videotestsrc.obj -MD -MP -MF $(DEPDIR)/orc_videotestsrc-videotestsrc.Tpo -c -o orc_videotestsrc-videotestsrc.obj `if test -f 'orc/videotestsrc.c'; then $(CYGPATH_W) 'orc/videotestsrc.c'; else $(CYGPATH_W) '$(srcdir)/orc/videotestsrc.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_videotestsrc-videotestsrc.Tpo $(DEPDIR)/orc_videotestsrc-videotestsrc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/videotestsrc.c' object='orc_videotestsrc-videotestsrc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videotestsrc_CFLAGS) $(CFLAGS) -c -o orc_videotestsrc-videotestsrc.obj `if test -f 'orc/videotestsrc.c'; then $(CYGPATH_W) 'orc/videotestsrc.c'; else $(CYGPATH_W) '$(srcdir)/orc/videotestsrc.c'; fi`
+
+orc_volume-volume.o: orc/volume.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_volume_CFLAGS) $(CFLAGS) -MT orc_volume-volume.o -MD -MP -MF $(DEPDIR)/orc_volume-volume.Tpo -c -o orc_volume-volume.o `test -f 'orc/volume.c' || echo '$(srcdir)/'`orc/volume.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_volume-volume.Tpo $(DEPDIR)/orc_volume-volume.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/volume.c' object='orc_volume-volume.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_volume_CFLAGS) $(CFLAGS) -c -o orc_volume-volume.o `test -f 'orc/volume.c' || echo '$(srcdir)/'`orc/volume.c
+
+orc_volume-volume.obj: orc/volume.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_volume_CFLAGS) $(CFLAGS) -MT orc_volume-volume.obj -MD -MP -MF $(DEPDIR)/orc_volume-volume.Tpo -c -o orc_volume-volume.obj `if test -f 'orc/volume.c'; then $(CYGPATH_W) 'orc/volume.c'; else $(CYGPATH_W) '$(srcdir)/orc/volume.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_volume-volume.Tpo $(DEPDIR)/orc_volume-volume.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/volume.c' object='orc_volume-volume.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_volume_CFLAGS) $(CFLAGS) -c -o orc_volume-volume.obj `if test -f 'orc/volume.c'; then $(CYGPATH_W) 'orc/volume.c'; else $(CYGPATH_W) '$(srcdir)/orc/volume.c'; fi`
+
 basetime.o: pipelines/basetime.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT basetime.o -MD -MP -MF $(DEPDIR)/basetime.Tpo -c -o basetime.o `test -f 'pipelines/basetime.c' || echo '$(srcdir)/'`pipelines/basetime.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/basetime.Tpo $(DEPDIR)/basetime.Po
@@ -2116,6 +2280,7 @@ clean-libtool:
 	-rm -rf generic/.libs generic/_libs
 	-rm -rf gst/.libs gst/_libs
 	-rm -rf libs/.libs libs/_libs
+	-rm -rf orc/.libs orc/_libs
 	-rm -rf pipelines/.libs pipelines/_libs
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -2324,6 +2489,7 @@ distclean-generic:
 	-rm -f generic/$(am__dirstamp)
 	-rm -f gst/$(am__dirstamp)
 	-rm -f libs/$(am__dirstamp)
+	-rm -f orc/$(am__dirstamp)
 	-rm -f pipelines/$(am__dirstamp)
 
 maintainer-clean-generic:
@@ -2590,10 +2756,33 @@ help:
 	@echo "  GST_CHECKS=test_many_threads    make element/foobar.forever"
 	@echo
 
-clean-local: clean-local-check
+clean-local: clean-local-check clean-local-orc
 
 $(CHECK_REGISTRY):
 	$(TESTS_ENVIRONMENT)
+
+orc/adder.c: $(top_srcdir)/gst/adder/gstadderorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/audioconvert.c: $(top_srcdir)/gst/audioconvert/gstaudioconvertorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/volume.c: $(top_srcdir)/gst/volume/gstvolumeorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/videoscale.c: $(top_srcdir)/gst/videoscale/gstvideoscaleorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/videotestsrc.c: $(top_srcdir)/gst/videotestsrc/gstvideotestsrcorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+clean-local-orc:
+	rm -rf orc
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

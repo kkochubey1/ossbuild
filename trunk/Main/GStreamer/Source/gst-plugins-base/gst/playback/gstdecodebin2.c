@@ -167,6 +167,8 @@ struct _GstDecodeBin
   GMutex *dyn_lock;             /* lock protecting pad blocking */
   gboolean shutdown;            /* if we are shutting down */
   GList *blocked_pads;          /* pads that have set to block */
+
+  gboolean expose_allstreams;   /* Whether to expose unknow type streams or not */
 };
 
 struct _GstDecodeBinClass
@@ -232,6 +234,7 @@ enum
 #define DEFAULT_MAX_SIZE_BUFFERS  0
 #define DEFAULT_MAX_SIZE_TIME     0
 #define DEFAULT_POST_STREAM_TOPOLOGY FALSE
+#define DEFAULT_EXPOSE_ALL_STREAMS  TRUE
 
 /* Properties */
 enum
@@ -247,6 +250,7 @@ enum
   PROP_MAX_SIZE_BUFFERS,
   PROP_MAX_SIZE_TIME,
   PROP_POST_STREAM_TOPOLOGY,
+  PROP_EXPOSE_ALL_STREAMS,
   PROP_LAST
 };
 
@@ -551,6 +555,22 @@ _gst_select_accumulator (GSignalInvocationHint * ihint,
   return FALSE;
 }
 
+static gboolean
+_gst_array_hasvalue_accumulator (GSignalInvocationHint * ihint,
+    GValue * return_accu, const GValue * handler_return, gpointer dummy)
+{
+  gpointer array;
+
+  array = g_value_get_boxed (handler_return);
+  if (!(ihint->run_type & G_SIGNAL_RUN_CLEANUP))
+    g_value_set_boxed (return_accu, array);
+
+  if (array != NULL)
+    return FALSE;
+
+  return TRUE;
+}
+
 static void
 gst_decode_bin_class_init (GstDecodeBinClass * klass)
 {
@@ -677,8 +697,9 @@ gst_decode_bin_class_init (GstDecodeBinClass * klass)
   gst_decode_bin_signals[SIGNAL_AUTOPLUG_SORT] =
       g_signal_new ("autoplug-sort", G_TYPE_FROM_CLASS (klass),
       G_SIGNAL_RUN_LAST, G_STRUCT_OFFSET (GstDecodeBinClass, autoplug_sort),
-      NULL, NULL, gst_play_marshal_BOXED__OBJECT_BOXED_BOXED,
-      G_TYPE_VALUE_ARRAY, 3, GST_TYPE_PAD, GST_TYPE_CAPS, G_TYPE_VALUE_ARRAY);
+      _gst_array_hasvalue_accumulator, NULL,
+      gst_play_marshal_BOXED__OBJECT_BOXED_BOXED, G_TYPE_VALUE_ARRAY, 3,
+      GST_TYPE_PAD, GST_TYPE_CAPS, G_TYPE_VALUE_ARRAY);
 
   /**
    * GstDecodeBin2::autoplug-select:
@@ -831,6 +852,24 @@ gst_decode_bin_class_init (GstDecodeBinClass * klass)
           DEFAULT_POST_STREAM_TOPOLOGY,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  /**
+   * GstDecodeBin2::expose-all-streams
+   *
+   * Expose streams of unknown type.
+   *
+   * If set to %FALSE, then only the streams that can be decoded to the final
+   * caps (see 'caps' property) will have a pad exposed. Streams that do not
+   * match those caps but could have been decoded will not have decoder plugged
+   * in internally and will not have a pad exposed. 
+   *
+   * Since: 0.10.30
+   */
+  g_object_class_install_property (gobject_klass, PROP_EXPOSE_ALL_STREAMS,
+      g_param_spec_boolean ("expose-all-streams", "Expose All Streams",
+          "Expose all streams, including those of unknown type or that don't match the 'caps' property",
+          DEFAULT_EXPOSE_ALL_STREAMS,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
 
 
   klass->autoplug_continue =
@@ -926,6 +965,8 @@ gst_decode_bin_init (GstDecodeBin * decode_bin)
   decode_bin->max_size_bytes = DEFAULT_MAX_SIZE_BYTES;
   decode_bin->max_size_buffers = DEFAULT_MAX_SIZE_BUFFERS;
   decode_bin->max_size_time = DEFAULT_MAX_SIZE_TIME;
+
+  decode_bin->expose_allstreams = DEFAULT_EXPOSE_ALL_STREAMS;
 }
 
 static void
@@ -1118,6 +1159,9 @@ gst_decode_bin_set_property (GObject * object, guint prop_id,
     case PROP_POST_STREAM_TOPOLOGY:
       dbin->post_stream_topology = g_value_get_boolean (value);
       break;
+    case PROP_EXPOSE_ALL_STREAMS:
+      dbin->expose_allstreams = g_value_get_boolean (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1161,6 +1205,9 @@ gst_decode_bin_get_property (GObject * object, guint prop_id,
       break;
     case PROP_POST_STREAM_TOPOLOGY:
       g_value_set_boolean (value, dbin->post_stream_topology);
+      break;
+    case PROP_EXPOSE_ALL_STREAMS:
+      g_value_set_boolean (value, dbin->expose_allstreams);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1230,7 +1277,7 @@ gst_decode_bin_autoplug_select (GstElement * element, GstPad * pad,
  * Discovery methods
  *****/
 
-static gboolean are_raw_caps (GstDecodeBin * dbin, GstCaps * caps);
+static gboolean are_final_caps (GstDecodeBin * dbin, GstCaps * caps);
 static gboolean is_demuxer_element (GstElement * srcelement);
 
 static gboolean connect_pad (GstDecodeBin * dbin, GstElement * src,
@@ -1315,7 +1362,7 @@ analyze_new_pad (GstDecodeBin * dbin, GstElement * src, GstPad * pad,
       &apcontinue);
 
   /* 1.a if autoplug-continue is FALSE or caps is a raw format, goto pad_is_final */
-  if ((!apcontinue) || are_raw_caps (dbin, caps))
+  if ((!apcontinue) || are_final_caps (dbin, caps))
     goto expose_pad;
 
   /* 1.b when the caps are not fixed yet, we can't be sure what element to
@@ -1333,9 +1380,20 @@ analyze_new_pad (GstDecodeBin * dbin, GstElement * src, GstPad * pad,
   if (factories == NULL)
     goto expose_pad;
 
-  /* if the array is empty, we have an unknown type */
+  /* if the array is empty, we have a type for which we have no decoder */
   if (factories->n_values == 0) {
-    /* no compatible factories */
+    if (!dbin->expose_allstreams) {
+      GstCaps *raw = gst_static_caps_get (&default_raw_caps);
+
+      /* If the caps are raw, this just means we don't want to expose them */
+      if (gst_caps_can_intersect (raw, caps)) {
+        gst_caps_unref (raw);
+        goto discarded_type;
+      }
+      gst_caps_unref (raw);
+    }
+
+    /* if not we have a unhandled type with no compatible factories */
     g_value_array_free (factories);
     gst_object_unref (dpad);
     goto unknown_type;
@@ -1348,7 +1406,52 @@ analyze_new_pad (GstDecodeBin * dbin, GstElement * src, GstPad * pad,
   g_value_array_free (factories);
   factories = result;
 
-  /* 1.e else continue autoplugging something from the list. */
+  /* At this point we have a potential decoder, but we might not need it
+   * if it doesn't match the output caps  */
+  if (!dbin->expose_allstreams) {
+    guint i;
+    GstCaps *rawcaps = gst_static_caps_get (&default_raw_caps);
+    const GList *tmps;
+    gboolean dontuse = FALSE;
+
+    GST_DEBUG ("Checking if we can abort early");
+
+    /* 1.e Do an early check to see if the candidates are potential decoders, but
+     * due to the fact that they decode to a mediatype that is not final we don't 
+     * need them */
+
+    for (i = 0; i < factories->n_values && !dontuse; i++) {
+      GstElementFactory *factory =
+          g_value_get_object (g_value_array_get_nth (factories, 0));
+      GstCaps *tcaps;
+
+      /* We are only interested in skipping decoders */
+      if (strstr (gst_element_factory_get_klass (factory), "Decoder")) {
+
+        GST_DEBUG ("Trying factory %s",
+            gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (factory)));
+
+        /* Check the source pad template caps to see if they match raw caps but don't match
+         * our final caps*/
+        for (tmps = gst_element_factory_get_static_pad_templates (factory);
+            tmps && !dontuse; tmps = tmps->next) {
+          GstStaticPadTemplate *st = (GstStaticPadTemplate *) tmps->data;
+          if (st->direction != GST_PAD_SRC)
+            continue;
+          tcaps = gst_static_pad_template_get_caps (st);
+          if (!gst_caps_can_intersect (tcaps, dbin->caps))
+            dontuse = TRUE;
+          gst_caps_unref (tcaps);
+        }
+      }
+    }
+    gst_caps_unref (rawcaps);
+
+    if (dontuse)
+      goto discarded_type;
+  }
+
+  /* 1.f else continue autoplugging something from the list. */
   GST_LOG_OBJECT (pad, "Let's continue discovery on this pad");
   connect_pad (dbin, src, dpad, pad, caps, factories, chain);
 
@@ -1364,6 +1467,24 @@ expose_pad:
     gst_object_unref (dpad);
     return;
   }
+
+discarded_type:
+  {
+    GST_LOG_OBJECT (pad, "Known type, but discarded because not final caps");
+    chain->deadend = TRUE;
+    chain->endcaps = gst_caps_ref (caps);
+
+    /* Try to expose anything */
+    EXPOSE_LOCK (dbin);
+    if (gst_decode_chain_is_complete (dbin->decode_chain)) {
+      gst_decode_bin_expose (dbin);
+    }
+    EXPOSE_UNLOCK (dbin);
+    do_async_done (dbin);
+
+    return;
+  }
+
 unknown_type:
   {
     GST_LOG_OBJECT (pad, "Unknown type, posting message and firing signal");
@@ -1851,7 +1972,19 @@ pad_added_cb (GstElement * element, GstPad * pad, GstDecodeChain * chain)
 
   GST_DEBUG_OBJECT (pad, "pad added, chain:%p", chain);
 
-  caps = gst_pad_get_caps_reffed (pad);
+  /* first check the pad caps, if this is set, we are positively sure it is
+   * fixed and exactly what the element will produce. */
+  GST_OBJECT_LOCK (pad);
+  if ((caps = GST_PAD_CAPS (pad)))
+    gst_caps_ref (caps);
+  GST_OBJECT_UNLOCK (pad);
+
+  /* then use the getcaps function if we don't have caps. These caps might not
+   * be fixed in some cases, in which case analyze_new_pad will set up a
+   * notify::caps signal to continue autoplugging. */
+  if (caps == NULL)
+    caps = gst_pad_get_caps_reffed (pad);
+
   analyze_new_pad (dbin, element, pad, caps, chain);
   if (caps)
     gst_caps_unref (caps);
@@ -2019,13 +2152,13 @@ is_demuxer_element (GstElement * srcelement)
   return TRUE;
 }
 
-/* Returns TRUE if the caps are raw, or if they are compatible with the caps 
- * specified in the 'caps' property 
+/* Returns TRUE if the caps are compatible with the caps specified in the 'caps'
+ * property (which by default are the raw caps)
  * 
  * The decodebin_lock should be taken !
  */
 static gboolean
-are_raw_caps (GstDecodeBin * dbin, GstCaps * caps)
+are_final_caps (GstDecodeBin * dbin, GstCaps * caps)
 {
   gboolean res;
 
@@ -3359,6 +3492,11 @@ gst_decode_bin_change_state (GstElement * element, GstStateChange transition)
       g_mutex_unlock (dbin->factories_lock);
       break;
     case GST_STATE_CHANGE_READY_TO_PAUSED:
+      /* Make sure we've cleared all existing chains */
+      if (dbin->decode_chain) {
+        gst_decode_chain_free (dbin->decode_chain);
+        dbin->decode_chain = NULL;
+      }
       DYN_LOCK (dbin);
       GST_LOG_OBJECT (dbin, "clearing shutdown flag");
       dbin->shutdown = FALSE;

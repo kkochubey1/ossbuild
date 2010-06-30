@@ -52,10 +52,6 @@
 #include "streamvolume.h"
 #include <math.h>
 
-#ifndef HAVE_CBRT
-#define cbrt(x) (pow(abs(x),1.0/3.0))
-#endif
-
 static void
 gst_stream_volume_class_init (GstStreamVolumeInterface * iface)
 {
@@ -198,7 +194,7 @@ gst_stream_volume_convert_volume (GstStreamVolumeFormat from,
         case GST_STREAM_VOLUME_FORMAT_LINEAR:
           return val;
         case GST_STREAM_VOLUME_FORMAT_CUBIC:
-          return cbrt (val);
+          return pow (val, 1 / 3.0);
         case GST_STREAM_VOLUME_FORMAT_DB:
           return 20.0 * log10 (val);
       }

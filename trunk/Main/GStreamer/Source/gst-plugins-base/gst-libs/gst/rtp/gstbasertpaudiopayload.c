@@ -426,6 +426,9 @@ gst_base_rtp_audio_payload_set_meta (GstBaseRTPAudioPayload * payload,
 
   priv->offset += payload_len;
 
+  /* Set the duration from the size */
+  GST_BUFFER_DURATION (buffer) = priv->bytes_to_time (payload, payload_len);
+
   /* remember the last rtptime/timestamp pair. We will use this to realign our
    * RTP timestamp after a buffer discont */
   priv->last_rtptime = GST_BUFFER_OFFSET (buffer);
@@ -719,16 +722,27 @@ static GstClockTime
 gst_base_rtp_audio_payload_frame_bytes_to_time (GstBaseRTPAudioPayload *
     payload, guint64 bytes)
 {
-  return (bytes / payload->frame_size) * (payload->priv->frame_duration_ns);
+  guint64 framecount;
+
+  framecount = bytes / payload->frame_size;
+  if (G_UNLIKELY (bytes % payload->frame_size))
+    framecount++;
+
+  return framecount * payload->priv->frame_duration_ns;
 }
 
 static guint32
 gst_base_rtp_audio_payload_frame_bytes_to_rtptime (GstBaseRTPAudioPayload *
     payload, guint64 bytes)
 {
+  guint64 framecount;
   guint64 time;
 
-  time = (bytes / payload->frame_size) * (payload->priv->frame_duration_ns);
+  framecount = bytes / payload->frame_size;
+  if (G_UNLIKELY (bytes % payload->frame_size))
+    framecount++;
+
+  time = framecount * payload->priv->frame_duration_ns;
 
   return gst_util_uint64_scale_int (time,
       GST_BASE_RTP_PAYLOAD (payload)->clock_rate, GST_SECOND);

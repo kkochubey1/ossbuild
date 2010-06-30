@@ -1,6 +1,7 @@
 include $(top_srcdir)/common/check.mak
 
 CHECK_REGISTRY = $(top_builddir)/tests/check/test-registry.reg
+TEST_FILES_DIRECTORY = $(top_srcdir)/tests/files
 
 REGISTRY_ENVIRONMENT = \
 	GST_REGISTRY=$(CHECK_REGISTRY)
@@ -10,12 +11,14 @@ TESTS_ENVIRONMENT = \
         STATE_IGNORE_ELEMENTS="$(STATE_IGNORE_ELEMENTS)"	\
 	$(REGISTRY_ENVIRONMENT)					\
 	GST_PLUGIN_SYSTEM_PATH=					\
-	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/sys:$(top_builddir)/ext:$(GST_PLUGINS_DIR)
+	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/sys:$(top_builddir)/ext:$(GST_PLUGINS_DIR) \
+	GST_PLUGIN_LOADING_WHITELIST="gstreamer:gst-plugins-base@$(top_builddir)"
+
 
 # ths core dumps of some machines have PIDs appended
 CLEANFILES = core.* test-registry.*
 
-clean-local: clean-local-check
+clean-local: clean-local-check clean-local-orc
 
 $(CHECK_REGISTRY):
 	$(TESTS_ENVIRONMENT)
@@ -80,6 +83,12 @@ else
 check_subparse =
 endif
 
+if HAVE_ORC
+check_orc = orc/adder orc/audioconvert orc/volume orc/videoscale orc/videotestsrc
+else
+check_orc =
+endif
+
 check_PROGRAMS = \
 	$(check_alsa) \
 	$(check_gnomevfs) \
@@ -120,6 +129,7 @@ check_PROGRAMS = \
 	libs/rtp \
 	libs/tag \
 	libs/video \
+	$(check_orc) \
 	pipelines/simple-launch-lines \
 	pipelines/streamheader \
 	pipelines/basetime \
@@ -136,7 +146,8 @@ VALGRIND_TO_FIX = \
 # these tests don't even pass
 noinst_PROGRAMS = $(check_libvisual)
 
-AM_CFLAGS = $(GST_CFLAGS) $(GST_CHECK_CFLAGS)
+AM_CFLAGS = $(GST_CFLAGS) $(GST_CHECK_CFLAGS) \
+	-DGST_TEST_FILES_PATH="\"$(TEST_FILES_DIRECTORY)\""
 LDADD = $(GST_LIBS) $(GST_CHECK_LIBS)
 
 # valgrind testing
@@ -210,9 +221,11 @@ libs_rtp_LDADD = \
 	$(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMINOR@.la $(LDADD)
 
 libs_tag_CFLAGS = \
+	$(GST_BASE_CFLAGS) \
 	$(GST_PLUGINS_BASE_CFLAGS) \
 	$(AM_CFLAGS)
 libs_tag_LDADD = \
+	$(GST_BASE_LIBS) \
 	$(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la $(LDADD)
 
 libs_pbutils_CFLAGS = \
@@ -359,5 +372,40 @@ pipelines_simple_launch_lines_LDADD = \
 	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-@GST_MAJORMINOR@.la \
 	$(GST_BASE_LIBS) \
 	$(LDADD)
+
+orc_adder_CFLAGS = $(ORC_CFLAGS)
+orc_adder_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_audioconvert_CFLAGS = $(ORC_CFLAGS)
+orc_audioconvert_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_volume_CFLAGS = $(ORC_CFLAGS)
+orc_volume_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_videoscale_CFLAGS = $(ORC_CFLAGS)
+orc_videoscale_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_videotestsrc_CFLAGS = $(ORC_CFLAGS)
+orc_videotestsrc_LDADD = $(ORC_LIBS) -lorc-test-0.4
+
+orc/adder.c: $(top_srcdir)/gst/adder/gstadderorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/audioconvert.c: $(top_srcdir)/gst/audioconvert/gstaudioconvertorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/volume.c: $(top_srcdir)/gst/volume/gstvolumeorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/videoscale.c: $(top_srcdir)/gst/videoscale/gstvideoscaleorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/videotestsrc.c: $(top_srcdir)/gst/videotestsrc/gstvideotestsrcorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+
+clean-local-orc:
+	rm -rf orc
 
 EXTRA_DIST = gst-plugins-base.supp

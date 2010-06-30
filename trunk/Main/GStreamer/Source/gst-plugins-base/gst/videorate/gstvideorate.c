@@ -104,14 +104,16 @@ static GstStaticPadTemplate gst_video_rate_src_template =
     GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("video/x-raw-yuv; video/x-raw-rgb; image/jpeg; image/png")
+    GST_STATIC_CAPS ("video/x-raw-yuv;"
+        "video/x-raw-rgb;" "video/x-raw-gray;" "image/jpeg;" "image/png")
     );
 
 static GstStaticPadTemplate gst_video_rate_sink_template =
     GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("video/x-raw-yuv; video/x-raw-rgb; image/jpeg; image/png")
+    GST_STATIC_CAPS ("video/x-raw-yuv;"
+        "video/x-raw-rgb;" "video/x-raw-gray;" "image/jpeg;" "image/png")
     );
 
 static void gst_video_rate_swap_prev (GstVideoRate * videorate,
@@ -194,7 +196,7 @@ gst_video_rate_class_init (GstVideoRateClass * klass)
           "Don't produce buffers before the first one we receive",
           DEFAULT_SKIP_TO_FIRST, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
-  element_class->change_state = gst_video_rate_change_state;
+  element_class->change_state = GST_DEBUG_FUNCPTR (gst_video_rate_change_state);
 }
 
 /* return the caps that can be used on out_pad given in_caps on in_pad */
@@ -277,7 +279,7 @@ gst_video_rate_setcaps (GstPad * pad, GstCaps * caps)
 
   videorate = GST_VIDEO_RATE (gst_pad_get_parent (pad));
 
-  GST_DEBUG ("setcaps called %" GST_PTR_FORMAT, caps);
+  GST_DEBUG_OBJECT (pad, "setcaps called %" GST_PTR_FORMAT, caps);
 
   structure = gst_caps_get_structure (caps, 0);
   if (!gst_structure_get_fraction (structure, "framerate",
@@ -304,7 +306,6 @@ gst_video_rate_setcaps (GstPad * pad, GstCaps * caps)
       ret = TRUE;
     } else {
       GstCaps *peercaps;
-      GstCaps *intersect;
       GstCaps *transform = NULL;
 
       ret = FALSE;
@@ -316,19 +317,18 @@ gst_video_rate_setcaps (GstPad * pad, GstCaps * caps)
       /* see what the peer can do */
       peercaps = gst_pad_get_caps (opeer);
 
-      GST_DEBUG ("icaps %" GST_PTR_FORMAT, peercaps);
-      GST_DEBUG ("transform %" GST_PTR_FORMAT, transform);
+      GST_DEBUG_OBJECT (opeer, "icaps %" GST_PTR_FORMAT, peercaps);
+      GST_DEBUG_OBJECT (videorate, "transform %" GST_PTR_FORMAT, transform);
 
       /* filter against our possibilities */
-      intersect = gst_caps_intersect (peercaps, transform);
+      caps = gst_caps_intersect (peercaps, transform);
       gst_caps_unref (peercaps);
       gst_caps_unref (transform);
 
-      GST_DEBUG ("intersect %" GST_PTR_FORMAT, intersect);
+      GST_DEBUG_OBJECT (videorate, "intersect %" GST_PTR_FORMAT, caps);
 
       /* take first possibility */
-      caps = gst_caps_copy_nth (intersect, 0);
-      gst_caps_unref (intersect);
+      gst_caps_truncate (caps);
       structure = gst_caps_get_structure (caps, 0);
 
       /* and fixate */
@@ -345,6 +345,14 @@ gst_video_rate_setcaps (GstPad * pad, GstCaps * caps)
         videorate->from_rate_numerator = rate_numerator;
         videorate->from_rate_denominator = rate_denominator;
       }
+
+      if (gst_structure_has_field (structure, "interlaced"))
+        gst_structure_fixate_field_boolean (structure, "interlaced", FALSE);
+      if (gst_structure_has_field (structure, "color-matrix"))
+        gst_structure_fixate_field_string (structure, "color-matrix", "sdtv");
+      if (gst_structure_has_field (structure, "chroma-site"))
+        gst_structure_fixate_field_string (structure, "chroma-site", "mpeg2");
+
       gst_pad_set_caps (otherpad, caps);
       gst_caps_unref (caps);
       ret = TRUE;
@@ -354,7 +362,7 @@ gst_video_rate_setcaps (GstPad * pad, GstCaps * caps)
 done:
   /* After a setcaps, our caps may have changed. In that case, we can't use
    * the old buffer, if there was one (it might have different dimensions) */
-  GST_DEBUG ("swapping old buffers");
+  GST_DEBUG_OBJECT (videorate, "swapping old buffers");
   gst_video_rate_swap_prev (videorate, NULL, GST_CLOCK_TIME_NONE);
 
   gst_object_unref (videorate);
@@ -376,7 +384,7 @@ no_transform:
 static void
 gst_video_rate_reset (GstVideoRate * videorate)
 {
-  GST_DEBUG ("resetting internal variables");
+  GST_DEBUG_OBJECT (videorate, "resetting internal variables");
 
   videorate->in = 0;
   videorate->out = 0;
@@ -394,20 +402,26 @@ gst_video_rate_reset (GstVideoRate * videorate)
 static void
 gst_video_rate_init (GstVideoRate * videorate, GstVideoRateClass * klass)
 {
-  GST_DEBUG ("gst_video_rate_init");
   videorate->sinkpad =
       gst_pad_new_from_static_template (&gst_video_rate_sink_template, "sink");
-  gst_pad_set_event_function (videorate->sinkpad, gst_video_rate_event);
-  gst_pad_set_chain_function (videorate->sinkpad, gst_video_rate_chain);
-  gst_pad_set_getcaps_function (videorate->sinkpad, gst_video_rate_getcaps);
-  gst_pad_set_setcaps_function (videorate->sinkpad, gst_video_rate_setcaps);
+  gst_pad_set_event_function (videorate->sinkpad,
+      GST_DEBUG_FUNCPTR (gst_video_rate_event));
+  gst_pad_set_chain_function (videorate->sinkpad,
+      GST_DEBUG_FUNCPTR (gst_video_rate_chain));
+  gst_pad_set_getcaps_function (videorate->sinkpad,
+      GST_DEBUG_FUNCPTR (gst_video_rate_getcaps));
+  gst_pad_set_setcaps_function (videorate->sinkpad,
+      GST_DEBUG_FUNCPTR (gst_video_rate_setcaps));
   gst_element_add_pad (GST_ELEMENT (videorate), videorate->sinkpad);
 
   videorate->srcpad =
       gst_pad_new_from_static_template (&gst_video_rate_src_template, "src");
-  gst_pad_set_query_function (videorate->srcpad, gst_video_rate_query);
-  gst_pad_set_getcaps_function (videorate->srcpad, gst_video_rate_getcaps);
-  gst_pad_set_setcaps_function (videorate->srcpad, gst_video_rate_setcaps);
+  gst_pad_set_query_function (videorate->srcpad,
+      GST_DEBUG_FUNCPTR (gst_video_rate_query));
+  gst_pad_set_getcaps_function (videorate->srcpad,
+      GST_DEBUG_FUNCPTR (gst_video_rate_getcaps));
+  gst_pad_set_setcaps_function (videorate->srcpad,
+      GST_DEBUG_FUNCPTR (gst_video_rate_setcaps));
   gst_element_add_pad (GST_ELEMENT (videorate), videorate->srcpad);
 
   gst_video_rate_reset (videorate);
