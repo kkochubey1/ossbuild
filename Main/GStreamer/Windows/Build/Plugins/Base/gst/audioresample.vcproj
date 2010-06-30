@@ -156,7 +156,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="..\..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\..\..\..\..\Shared\MSVC\Properties\Libraries\LibOil.vsprops;..\..\..\..\Properties\gstreamer-plugin-base.vsprops"
+			InheritedPropertySheets="..\..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\..\Properties\gstreamer-plugin-base.vsprops;..\..\..\..\..\..\..\Shared\MSVC\Properties\Libraries\LibOrc.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -294,11 +294,11 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstaudio.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstaudio.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E50}"
-			RelativePathToProject=".\Main\GStreamer\Libraries\libgstbase.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
 		/>
 	</References>
 	<Files>
