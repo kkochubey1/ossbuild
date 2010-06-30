@@ -20,6 +20,8 @@ public class NativeResource {
 		, Crypto                    = "crypto"
 		, Serial                    = "serial"
 		, LWJGL                     = "lwjgl"
+		, VLC                       = "vlc"
+		, MPlayer                   = "mplayer"
 
 		, GStreamer                 = "gstreamer"
 		//, GStreamerPluginsBase      = "gst-plugins-base"
