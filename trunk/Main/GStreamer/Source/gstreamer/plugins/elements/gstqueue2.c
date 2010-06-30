@@ -947,10 +947,12 @@ gst_queue2_write_buffer_to_file (GstQueue2 * queue, GstBuffer * buffer)
 
     GST_DEBUG_OBJECT (queue, "merging ranges %" G_GUINT64_FORMAT,
         next->writing_pos);
-    /* we ran over the offset of the next group */
-    queue->current->writing_pos = writing_pos = next->writing_pos;
 
-    /* remove the group */
+    /* remove the group, we could choose to not read the data in this range
+     * again. This would involve us doing a seek to the current writing position
+     * in the range. FIXME, It would probably make sense to do a seek when there
+     * is a lot of data in the range we merged with to avoid reading it all
+     * again. */
     queue->current->next = next->next;
     g_slice_free (GstQueue2Range, next);
 
@@ -1051,7 +1053,7 @@ gst_queue2_have_data (GstQueue2 * queue, guint64 offset, guint length)
     GST_INFO_OBJECT (queue, "not found in any range");
     /* we don't have the range, see how far away we are, FIXME, find a good
      * threshold based on the incomming rate. */
-    if (queue->current) {
+    if (!queue->is_eos && queue->current) {
       if (offset < queue->current->writing_pos + 200000) {
         update_cur_pos (queue, queue->current, offset + length);
         GST_INFO_OBJECT (queue, "wait for data");
@@ -2288,7 +2290,13 @@ gst_queue2_change_state (GstElement * element, GstStateChange transition)
       break;
   }
 
+  if (ret == GST_STATE_CHANGE_FAILURE)
+    return ret;
+
   ret = GST_ELEMENT_CLASS (parent_class)->change_state (element, transition);
+
+  if (ret == GST_STATE_CHANGE_FAILURE)
+    return ret;
 
   switch (transition) {
     case GST_STATE_CHANGE_PLAYING_TO_PAUSED:

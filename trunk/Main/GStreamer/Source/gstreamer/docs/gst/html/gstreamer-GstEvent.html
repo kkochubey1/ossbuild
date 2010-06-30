@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="gstreamer-GstGError.html" title="GstGError">
 <link rel="next" href="gstreamer-GstFilter.html" title="GstFilter">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -192,7 +192,7 @@ To do that <a class="link" href="gstreamer-GstEvent.html#gst-event-new-seek" tit
 the needed parameters to specity seeking time and mode.
 </p>
 <div class="example">
-<a name="id483626"></a><p class="title"><b>Example 11. performing a seek on a pipeline</b></p>
+<a name="id637939"></a><p class="title"><b>Example 11. performing a seek on a pipeline</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -404,12 +404,14 @@ Specific custom events are distinguished by the name of the structure.
 </tr>
 <tr>
 <td><p><a name="GST-EVENT-FLUSH-START:CAPS"></a><span class="term"><code class="literal">GST_EVENT_FLUSH_START</code></span></p></td>
-<td>Start a flush operation
+<td>Start a flush operation. This event clears all data
+                from the pipeline and unblock all streaming threads.
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-EVENT-FLUSH-STOP:CAPS"></a><span class="term"><code class="literal">GST_EVENT_FLUSH_STOP</code></span></p></td>
-<td>Stop a flush operation
+<td>Stop a flush operation. This event resets the
+                running-time of the pipeline.
 </td>
 </tr>
 <tr>
@@ -420,7 +422,10 @@ Specific custom events are distinguished by the name of the structure.
 </tr>
 <tr>
 <td><p><a name="GST-EVENT-NEWSEGMENT:CAPS"></a><span class="term"><code class="literal">GST_EVENT_NEWSEGMENT</code></span></p></td>
-<td>A new media segment follows in the dataflow.
+<td>A new media segment follows in the dataflow. The
+                segment events contains information for clipping buffers and
+                converting buffer timestamps to running-time and
+                stream-time.
 </td>
 </tr>
 <tr>
@@ -430,7 +435,8 @@ Specific custom events are distinguished by the name of the structure.
 </tr>
 <tr>
 <td><p><a name="GST-EVENT-BUFFERSIZE:CAPS"></a><span class="term"><code class="literal">GST_EVENT_BUFFERSIZE</code></span></p></td>
-<td>Notification of buffering requirements
+<td>Notification of buffering requirements. Currently not
+                used yet.
 </td>
 </tr>
 <tr>
@@ -461,12 +467,15 @@ Specific custom events are distinguished by the name of the structure.
 </tr>
 <tr>
 <td><p><a name="GST-EVENT-LATENCY:CAPS"></a><span class="term"><code class="literal">GST_EVENT_LATENCY</code></span></p></td>
-<td>Notification of new latency adjustment. Since: 0.10.12
+<td>Notification of new latency adjustment. Sinks will use
+                    the latency information to adjust their synchronisation.
+                    Since: 0.10.12
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-EVENT-STEP:CAPS"></a><span class="term"><code class="literal">GST_EVENT_STEP</code></span></p></td>
-<td>A request for stepping through the media. Since: 0.10.24
+<td>A request for stepping through the media. Sinks will usually
+                 execute the step operation. Since: 0.10.24
 </td>
 </tr>
 <tr>
@@ -1232,32 +1241,32 @@ of the newsegment event.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>update</code></em> :</span></p></td>
-<td>A pointer to the update flag of the segment
+<td> A pointer to the update flag of the segment. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rate</code></em> :</span></p></td>
-<td>A pointer to the rate of the segment
+<td> A pointer to the rate of the segment. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>A pointer to the format of the newsegment values
+<td> A pointer to the format of the newsegment values. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>start</code></em> :</span></p></td>
-<td>A pointer to store the start value in
+<td> A pointer to store the start value in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stop</code></em> :</span></p></td>
-<td>A pointer to store the stop value in
+<td> A pointer to store the stop value in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>position</code></em> :</span></p></td>
-<td>A pointer to store the stream time in
+<td> A pointer to store the stream time in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1289,37 +1298,37 @@ for a full description of the newsegment event.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>update</code></em> :</span></p></td>
-<td>A pointer to the update flag of the segment
+<td> A pointer to the update flag of the segment. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rate</code></em> :</span></p></td>
-<td>A pointer to the rate of the segment
+<td> A pointer to the rate of the segment. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>applied_rate</code></em> :</span></p></td>
-<td>A pointer to the applied_rate of the segment
+<td> A pointer to the applied_rate of the segment. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>A pointer to the format of the newsegment values
+<td> A pointer to the format of the newsegment values. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>start</code></em> :</span></p></td>
-<td>A pointer to store the start value in
+<td> A pointer to store the start value in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stop</code></em> :</span></p></td>
-<td>A pointer to store the stop value in
+<td> A pointer to store the stop value in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>position</code></em> :</span></p></td>
-<td>A pointer to store the stream time in
+<td> A pointer to store the stream time in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1367,7 +1376,7 @@ Parses a tag <em class="parameter"><code>event</code></em> and stores the result
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>taglist</code></em> :</span></p></td>
-<td>pointer to metadata list
+<td> pointer to metadata list. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1439,22 +1448,22 @@ Get the format, minsize, maxsize and async-flag in the buffersize event.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>A pointer to store the format in
+<td> A pointer to store the format in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>minsize</code></em> :</span></p></td>
-<td>A pointer to store the minsize in
+<td> A pointer to store the minsize in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>maxsize</code></em> :</span></p></td>
-<td>A pointer to store the maxsize in
+<td> A pointer to store the maxsize in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>async</code></em> :</span></p></td>
-<td>A pointer to store the async-flag in
+<td> A pointer to store the async-flag in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1553,17 +1562,17 @@ Get the proportion, diff and timestamp in the qos event. See
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>proportion</code></em> :</span></p></td>
-<td>A pointer to store the proportion in
+<td> A pointer to store the proportion in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>diff</code></em> :</span></p></td>
-<td>A pointer to store the diff in
+<td> A pointer to store the diff in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timestamp</code></em> :</span></p></td>
-<td>A pointer to store the timestamp in
+<td> A pointer to store the timestamp in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1814,37 +1823,37 @@ Parses a seek <em class="parameter"><code>event</code></em> and stores the resul
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rate</code></em> :</span></p></td>
-<td>result location for the rate
+<td> result location for the rate. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>result location for the stream format
+<td> result location for the stream format. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flags</code></em> :</span></p></td>
-<td>result location for the <a class="link" href="gstreamer-GstEvent.html#GstSeekFlags" title="enum GstSeekFlags"><span class="type">GstSeekFlags</span></a>
+<td> result location for the <a class="link" href="gstreamer-GstEvent.html#GstSeekFlags" title="enum GstSeekFlags"><span class="type">GstSeekFlags</span></a>. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>start_type</code></em> :</span></p></td>
-<td>result location for the <a class="link" href="gstreamer-GstEvent.html#GstSeekType" title="enum GstSeekType"><span class="type">GstSeekType</span></a> of the start position
+<td> result location for the <a class="link" href="gstreamer-GstEvent.html#GstSeekType" title="enum GstSeekType"><span class="type">GstSeekType</span></a> of the start position. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>start</code></em> :</span></p></td>
-<td>result location for the start postion expressed in <em class="parameter"><code>format</code></em>
+<td> result location for the start postion expressed in <em class="parameter"><code>format</code></em>. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stop_type</code></em> :</span></p></td>
-<td>result location for the <a class="link" href="gstreamer-GstEvent.html#GstSeekType" title="enum GstSeekType"><span class="type">GstSeekType</span></a> of the stop position
+<td> result location for the <a class="link" href="gstreamer-GstEvent.html#GstSeekType" title="enum GstSeekType"><span class="type">GstSeekType</span></a> of the stop position. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stop</code></em> :</span></p></td>
-<td>result location for the stop postion expressed in <em class="parameter"><code>format</code></em>
+<td> result location for the stop postion expressed in <em class="parameter"><code>format</code></em>. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1923,7 +1932,7 @@ Get the latency in the latency event.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>latency</code></em> :</span></p></td>
-<td>A pointer to store the latency in.
+<td> A pointer to store the latency in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2015,27 +2024,27 @@ Parse the step event.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>A pointer to store the format in.
+<td> A pointer to store the format in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>amount</code></em> :</span></p></td>
-<td>A pointer to store the amount in.
+<td> A pointer to store the amount in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rate</code></em> :</span></p></td>
-<td>A pointer to store the rate in.
+<td> A pointer to store the rate in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flush</code></em> :</span></p></td>
-<td>A pointer to store the flush boolean in.
+<td> A pointer to store the flush boolean in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>intermediate</code></em> :</span></p></td>
-<td>A pointer to store the intermediate boolean in.
+<td> A pointer to store the intermediate boolean in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2087,7 +2096,7 @@ Parse the sink-message event. Unref <em class="parameter"><code>msg</code></em> 
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>msg</code></em> :</span></p></td>
-<td>A pointer to store the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> in.
+<td> A pointer to store the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> in. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2102,6 +2111,6 @@ Parse the sink-message event. Unref <em class="parameter"><code>msg</code></em> 
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

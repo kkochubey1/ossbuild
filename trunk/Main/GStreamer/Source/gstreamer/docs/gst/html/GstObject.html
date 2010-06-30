@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="gstreamer-GstMiniObject.html" title="GstMiniObject">
 <link rel="next" href="GstPad.html" title="GstPad">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -247,11 +247,11 @@ Last reviewed on 2005-11-09 (0.9.4)
 <div class="refsect2" title="GstObject">
 <a name="GstObject-struct"></a><h3>GstObject</h3>
 <pre class="programlisting">typedef struct {
-  gint           refcount;
+  gint           refcount;    /* unused (FIXME 0.11: remove) */
 
   GMutex        *lock;        /* object LOCK */
   gchar         *name;        /* object name */
-  gchar         *name_prefix; /* used for debugging */
+  gchar         *name_prefix; /* (un)used for debugging (FIXME 0.11: remove) */
   GstObject     *parent;      /* this object's parent, weak ref */
   guint32        flags;
 } GstObject;
@@ -279,7 +279,7 @@ GStreamer base object class.
 </tr>
 <tr>
 <td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstObject-struct.name-prefix"></a>name_prefix</code></em>;</span></p></td>
-<td>used for debugging
+<td>unused
 </td>
 </tr>
 <tr>
@@ -311,10 +311,12 @@ GStreamer base object class.
   /* FIXME-0.11: remove, and pass NULL in g_signal_new(), we never used them */
   void          (*parent_set)       (GstObject * object, GstObject * parent);
   void          (*parent_unset)     (GstObject * object, GstObject * parent);
+  /* FIXME 0.11: Remove this, it's deprecated */
   void          (*object_saved)     (GstObject * object, GstXmlNodePtr parent);
   void          (*deep_notify)      (GstObject * object, GstObject * orig, GParamSpec * pspec);
 
   /* virtual methods for subclasses */
+  /* FIXME 0.11: Remove this, it's deprecated */
   GstXmlNodePtr (*save_thyself)     (GstObject * object, GstXmlNodePtr parent);
   void          (*restore_thyself)  (GstObject * object, GstXmlNodePtr self);
 } GstObjectClass;
@@ -896,6 +898,11 @@ MT safe. Grabs and releases <em class="parameter"><code>object</code></em>'s loc
 <div class="refsect2" title="gst_object_get_name_prefix ()">
 <a name="gst-object-get-name-prefix"></a><h3>gst_object_get_name_prefix ()</h3>
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*              gst_object_get_name_prefix          (<em class="parameter"><code><a class="link" href="GstObject.html" title="GstObject"><span class="type">GstObject</span></a> *object</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_object_get_name_prefix</code> is deprecated and should not be used in newly-written code. deprecated because the name prefix has never actually been used
+    for anything.</p>
+</div>
 <p>
 Returns a copy of the name prefix of <em class="parameter"><code>object</code></em>.
 Caller should <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> the return value after usage.
@@ -915,6 +922,7 @@ as well.
 <td> the name prefix of <em class="parameter"><code>object</code></em>. <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> after usage.
 
 MT safe. This function grabs and releases <em class="parameter"><code>object</code></em>'s LOCK.
+
 </td>
 </tr>
 </tbody>
@@ -925,6 +933,11 @@ MT safe. This function grabs and releases <em class="parameter"><code>object</co
 <a name="gst-object-set-name-prefix"></a><h3>gst_object_set_name_prefix ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_object_set_name_prefix          (<em class="parameter"><code><a class="link" href="GstObject.html" title="GstObject"><span class="type">GstObject</span></a> *object</code></em>,
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name_prefix</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_object_set_name_prefix</code> is deprecated and should not be used in newly-written code. deprecated because the name prefix has never actually been used
+    for anything.</p>
+</div>
 <p>
 Sets the name prefix of <em class="parameter"><code>object</code></em> to <em class="parameter"><code>name_prefix</code></em>.
 This function makes a copy of the provided name prefix, so the caller
@@ -1099,6 +1112,10 @@ MT safe. Grabs and releases <em class="parameter"><code>object</code></em>'s loc
 <a name="gst-object-save-thyself"></a><h3>gst_object_save_thyself ()</h3>
 <pre class="programlisting"><span class="returnvalue">GstXmlNodePtr</span>       gst_object_save_thyself             (<em class="parameter"><code><a class="link" href="GstObject.html" title="GstObject"><span class="type">GstObject</span></a> *object</code></em>,
                                                          <em class="parameter"><code><span class="type">GstXmlNodePtr</span> parent</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_object_save_thyself</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 Saves <em class="parameter"><code>object</code></em> into the parent XML node.
 </p>
@@ -1128,6 +1145,10 @@ Saves <em class="parameter"><code>object</code></em> into the parent XML node.
 <a name="gst-object-restore-thyself"></a><h3>gst_object_restore_thyself ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_object_restore_thyself          (<em class="parameter"><code><a class="link" href="GstObject.html" title="GstObject"><span class="type">GstObject</span></a> *object</code></em>,
                                                          <em class="parameter"><code><span class="type">GstXmlNodePtr</span> self</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_object_restore_thyself</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 Restores <em class="parameter"><code>object</code></em> with the data from the parent XML node.
 </p>
@@ -1363,6 +1384,10 @@ Connect to a class signal.
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_class_signal_emit_by_name       (<em class="parameter"><code><a class="link" href="GstObject.html" title="GstObject"><span class="type">GstObject</span></a> *object</code></em>,
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
                                                          <em class="parameter"><code><span class="type">GstXmlNodePtr</span> self</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_class_signal_emit_by_name</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 emits the named class signal.
 </p>
@@ -1527,6 +1552,6 @@ Emitted when the parent of an object is unset.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

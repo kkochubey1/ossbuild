@@ -345,6 +345,10 @@ gboolean     gst_tag_list_get_string_index  (const GstTagList * list,
                                              const gchar      * tag,
                                              guint              index,
                                              gchar           ** value);
+gboolean     gst_tag_list_peek_string_index (const GstTagList * list,
+                                             const gchar      * tag,
+                                             guint              index,
+                                             const gchar     ** value);
 gboolean     gst_tag_list_get_pointer       (const GstTagList * list,
                                              const gchar      * tag,
                                              gpointer         * value);
@@ -823,6 +827,41 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  */
 #define GST_TAG_GEO_LOCATION_SUBLOCATION             "geo-location-sublocation"
 /**
+ * GST_TAG_GEO_LOCATION_MOVEMENT_SPEED:
+ *
+ * Speed of the capturing device when performing the capture.
+ * Represented in m/s. (double)
+ *
+ * See also #GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION
+ *
+ * Since 0.10.30
+ */
+#define GST_TAG_GEO_LOCATION_MOVEMENT_SPEED       "geo-location-movement-speed"
+/**
+ * GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION:
+ *
+ * Indicates the movement direction of the device performing the capture
+ * of a media. It is represented as degrees in floating point representation,
+ * 0 means the geographic north, and increases clockwise (double from 0 to 360)
+ *
+ * See also #GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION
+ *
+ * Since: 0.10.30
+ */
+#define GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION "geo-location-movement-direction"
+/**
+ * GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION:
+ *
+ * Indicates the direction the device is pointing to when capturing
+ * a media. It is represented as degrees in floating point representation,
+ * 0 means the geographic north, and increases clockwise (double from 0 to 360)
+ *
+ * See also #GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION
+ *
+ * Since: 0.10.30
+ */
+#define GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION  "geo-location-capture-direction"
+/**
  * GST_TAG_SHOW_NAME:
  *
  * Name of the show, used for displaying (string)
@@ -889,6 +928,48 @@ gboolean     gst_tag_list_get_buffer_index  (const GstTagList * list,
  * Since: 0.10.29
  */
 #define GST_TAG_USER_RATING                       "user-rating"
+/**
+ * GST_TAG_DEVICE_MANUFACTURER:
+ *
+ * Manufacturer of the device used to create the media (string)
+ *
+ * Since: 0.10.30
+ */
+#define GST_TAG_DEVICE_MANUFACTURER               "device-manufacturer"
+/**
+ * GST_TAG_DEVICE_MODEL:
+ *
+ * Model of the device used to create the media (string)
+ *
+ * Since: 0.10.30
+ */
+#define GST_TAG_DEVICE_MODEL                      "device-model"
+/**
+ * GST_TAG_IMAGE_ORIENTATION:
+ *
+ * Represents the 'Orientation' tag from EXIF. Defines how the image
+ * should be rotated and mirrored for display. (string)
+ *
+ * This tag has a predefined set of allowed values:
+ *   "rotate-0"
+ *   "rotate-90"
+ *   "rotate-180"
+ *   "rotate-270"
+ *   "flip-rotate-0"
+ *   "flip-rotate-90"
+ *   "flip-rotate-180"
+ *   "flip-rotate-270"
+ *
+ * The naming is adopted according to a possible transformation to perform
+ * on the image to fix its orientation, obviously equivalent operations will
+ * yield the same result.
+ *
+ * Rotations indicated by the values are in clockwise direction and
+ * 'flip' means an horizontal mirroring.
+ *
+ * Since: 0.10.30
+ */
+#define GST_TAG_IMAGE_ORIENTATION            "image-orientation"
 
 G_END_DECLS
 

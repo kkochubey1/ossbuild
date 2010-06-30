@@ -37,7 +37,7 @@ host_triplet = @host@
 TESTS = bin$(EXEEXT) elementcreate$(EXEEXT) elementfactory$(EXEEXT) \
 	elementget$(EXEEXT) elementlink$(EXEEXT) elementmake$(EXEEXT) \
 	ghostpad$(EXEEXT) init$(EXEEXT)
-noinst_PROGRAMS = $(am__EXEEXT_3)
+noinst_PROGRAMS = $(am__EXEEXT_2)
 subdir = tests/examples/manual
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -83,14 +83,12 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__EXEEXT_1 =
-@GST_DISABLE_LOADSAVE_FALSE@am__EXEEXT_2 = xml-mp3$(EXEEXT)
-am__EXEEXT_3 = dynamic$(EXEEXT) $(am__EXEEXT_1) elementcreate$(EXEEXT) \
+am__EXEEXT_2 = dynamic$(EXEEXT) $(am__EXEEXT_1) elementcreate$(EXEEXT) \
 	elementmake$(EXEEXT) elementfactory$(EXEEXT) \
 	elementget$(EXEEXT) elementlink$(EXEEXT) bin$(EXEEXT) \
 	pad$(EXEEXT) ghostpad$(EXEEXT) helloworld$(EXEEXT) \
 	init$(EXEEXT) query$(EXEEXT) typefind$(EXEEXT) \
-	fakesrc$(EXEEXT) playbin$(EXEEXT) decodebin$(EXEEXT) \
-	$(am__EXEEXT_2)
+	fakesrc$(EXEEXT) playbin$(EXEEXT) decodebin$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 bin_SOURCES = bin.c
 bin_OBJECTS = bin.$(OBJEXT)
@@ -192,12 +190,6 @@ typefind_LDADD = $(LDADD)
 typefind_DEPENDENCIES =  \
 	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
 	$(am__DEPENDENCIES_1)
-xml_mp3_SOURCES = xml-mp3.c
-xml_mp3_OBJECTS = xml-mp3.$(OBJEXT)
-xml_mp3_LDADD = $(LDADD)
-xml_mp3_DEPENDENCIES =  \
-	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
-	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -226,12 +218,11 @@ am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = bin.c decodebin.c dynamic.c elementcreate.c elementfactory.c \
 	elementget.c elementlink.c elementmake.c fakesrc.c ghostpad.c \
-	helloworld.c init.c pad.c playbin.c query.c typefind.c \
-	xml-mp3.c
+	helloworld.c init.c pad.c playbin.c query.c typefind.c
 DIST_SOURCES = bin.c decodebin.c dynamic.c elementcreate.c \
 	elementfactory.c elementget.c elementlink.c elementmake.c \
 	fakesrc.c ghostpad.c helloworld.c init.c pad.c playbin.c \
-	query.c typefind.c xml-mp3.c
+	query.c typefind.c
 ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
@@ -499,9 +490,7 @@ top_srcdir = @top_srcdir@
 # GNOME = gnome
 # else
 GNOME = 
-@GST_DISABLE_LOADSAVE_FALSE@GST_LOADSAVE_SRC = xml-mp3
 # endif
-@GST_DISABLE_LOADSAVE_TRUE@GST_LOADSAVE_SRC = 
 
 # gnome_LDADD = $(GST_OBJ_LIBS) $(LIBGNOMEUI_LIBS)
 # gnome_CFLAGS = $(GST_OBJ_CFLAGS) $(LIBGNOMEUI_CFLAGS)
@@ -632,9 +621,6 @@ query$(EXEEXT): $(query_OBJECTS) $(query_DEPENDENCIES)
 typefind$(EXEEXT): $(typefind_OBJECTS) $(typefind_DEPENDENCIES) 
 	@rm -f typefind$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(typefind_OBJECTS) $(typefind_LDADD) $(LIBS)
-xml-mp3$(EXEEXT): $(xml_mp3_OBJECTS) $(xml_mp3_DEPENDENCIES) 
-	@rm -f xml-mp3$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(xml_mp3_OBJECTS) $(xml_mp3_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -658,7 +644,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/playbin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/query.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/typefind.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xml-mp3.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="GstPreset.html" title="GstPreset">
 <link rel="next" href="GstRegistry.html" title="GstRegistry">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -185,7 +185,7 @@ The following example shows how to query the duration of a pipeline:
 <p>
 </p>
 <div class="example">
-<a name="id573348"></a><p class="title"><b>Example 16. Query duration on a pipeline</b></p>
+<a name="id730282"></a><p class="title"><b>Example 16. Query duration on a pipeline</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -822,22 +822,22 @@ and <em class="parameter"><code>dest_value</code></em> may be NULL, in which cas
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>src_format</code></em> :</span></p></td>
-<td>the storage for the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> of the source value, or NULL
+<td> the storage for the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> of the source value, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>src_value</code></em> :</span></p></td>
-<td>the storage for the source value, or NULL
+<td> the storage for the source value, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>dest_format</code></em> :</span></p></td>
-<td>the storage for the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> of the destination value, or NULL
+<td> the storage for the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> of the destination value, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>dest_value</code></em> :</span></p></td>
-<td>the storage for the destination value, or NULL
+<td> the storage for the destination value, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -918,12 +918,12 @@ into <em class="parameter"><code>cur</code></em>, if the respective parameters a
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>the storage for the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> of the position values (may be NULL)
+<td> the storage for the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> of the position values (may be NULL). <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>cur</code></em> :</span></p></td>
-<td>the storage for the current position (may be NULL)
+<td> the storage for the current position (may be NULL). <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1004,12 +1004,12 @@ and the value into <em class="parameter"><code>duration</code></em>, if the resp
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>the storage for the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> of the duration value, or NULL.
+<td> the storage for the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> of the duration value, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>duration</code></em> :</span></p></td>
-<td>the storage for the total duration, or NULL.
+<td> the storage for the total duration, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1056,17 +1056,17 @@ Parse a latency query answer.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>live</code></em> :</span></p></td>
-<td>storage for live or NULL
+<td> storage for live or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>min_latency</code></em> :</span></p></td>
-<td>the storage for the min latency or NULL
+<td> the storage for the min latency or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>max_latency</code></em> :</span></p></td>
-<td>the storage for the max latency or NULL
+<td> the storage for the max latency or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1199,22 +1199,22 @@ are non-NULL
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>the format to set for the <em class="parameter"><code>segment_start</code></em> and <em class="parameter"><code>segment_end</code></em> values
+<td> the format to set for the <em class="parameter"><code>segment_start</code></em> and <em class="parameter"><code>segment_end</code></em> values. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>seekable</code></em> :</span></p></td>
-<td>the seekable flag to set
+<td> the seekable flag to set. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>segment_start</code></em> :</span></p></td>
-<td>the segment_start to set
+<td> the segment_start to set. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>segment_end</code></em> :</span></p></td>
-<td>the segment_end to set
+<td> the segment_end to set. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1320,7 +1320,7 @@ Parse the number of formats in the formats <em class="parameter"><code>query</co
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>n_formats</code></em> :</span></p></td>
-<td>the number of formats in this query.
+<td> the number of formats in this query. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1348,12 +1348,12 @@ set to GST_FORMAT_UNDEFINED.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>nth</code></em> :</span></p></td>
-<td>the nth format to retrieve.
+<td> the nth format to retrieve. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>a pointer to store the nth format
+<td> a pointer to store the nth format. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1463,22 +1463,22 @@ See <a class="link" href="gstreamer-GstQuery.html#gst-query-set-segment" title="
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rate</code></em> :</span></p></td>
-<td>the storage for the rate of the segment, or NULL
+<td> the storage for the rate of the segment, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>the storage for the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> of the values, or NULL
+<td> the storage for the <a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> of the values, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>start_value</code></em> :</span></p></td>
-<td>the storage for the start value, or NULL
+<td> the storage for the start value, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stop_value</code></em> :</span></p></td>
-<td>the storage for the stop value, or NULL
+<td> the storage for the stop value, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1601,12 +1601,12 @@ The <em class="parameter"><code>busy</code></em> indicator is <a href="/usr/shar
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>busy</code></em> :</span></p></td>
-<td>if buffering is busy
+<td> if buffering is busy. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>percent</code></em> :</span></p></td>
-<td>a buffering percent
+<td> a buffering percent. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1677,22 +1677,22 @@ Extracts the buffering stats values from <em class="parameter"><code>query</code
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>mode</code></em> :</span></p></td>
-<td>a buffering mode
+<td> a buffering mode. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>avg_in</code></em> :</span></p></td>
-<td>the average input rate
+<td> the average input rate. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>avg_out</code></em> :</span></p></td>
-<td>the average output rate
+<td> the average output rate. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffering_left</code></em> :</span></p></td>
-<td>amount of buffering time left
+<td> amount of buffering time left. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1765,22 +1765,22 @@ are non-NULL
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>the format to set for the <em class="parameter"><code>segment_start</code></em> and <em class="parameter"><code>segment_end</code></em> values
+<td> the format to set for the <em class="parameter"><code>segment_start</code></em> and <em class="parameter"><code>segment_end</code></em> values. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>start</code></em> :</span></p></td>
-<td>the start to set
+<td> the start to set. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stop</code></em> :</span></p></td>
-<td>the stop to set
+<td> the stop to set. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>estimated_total</code></em> :</span></p></td>
-<td>estimated total amount of download time
+<td> estimated total amount of download time. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1827,7 +1827,7 @@ Free the string with <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocatio
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
-<td>the storage for the current URI (may be NULL)
+<td> the storage for the current URI (may be NULL). <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1867,6 +1867,6 @@ Answer a URI query by setting the requested URI.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

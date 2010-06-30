@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = caps$(EXEEXT) complexity$(EXEEXT) \
+noinst_PROGRAMS = caps$(EXEEXT) capsnego$(EXEEXT) complexity$(EXEEXT) \
 	controller$(EXEEXT) init$(EXEEXT) mass-elements$(EXEEXT) \
 	gstpollstress$(EXEEXT) gstclockstress$(EXEEXT) \
 	gstbufferstress$(EXEEXT)
@@ -91,6 +91,10 @@ caps_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
+capsnego_SOURCES = capsnego.c
+capsnego_OBJECTS = capsnego.$(OBJEXT)
+capsnego_LDADD = $(LDADD)
+capsnego_DEPENDENCIES = $(am__DEPENDENCIES_1)
 complexity_SOURCES = complexity.c
 complexity_OBJECTS = complexity.$(OBJEXT)
 complexity_LDADD = $(LDADD)
@@ -149,10 +153,12 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = caps.c complexity.c controller.c gstbufferstress.c \
-	gstclockstress.c gstpollstress.c init.c mass-elements.c
-DIST_SOURCES = caps.c complexity.c controller.c gstbufferstress.c \
-	gstclockstress.c gstpollstress.c init.c mass-elements.c
+SOURCES = caps.c capsnego.c complexity.c controller.c \
+	gstbufferstress.c gstclockstress.c gstpollstress.c init.c \
+	mass-elements.c
+DIST_SOURCES = caps.c capsnego.c complexity.c controller.c \
+	gstbufferstress.c gstclockstress.c gstpollstress.c init.c \
+	mass-elements.c
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -463,6 +469,9 @@ clean-noinstPROGRAMS:
 caps$(EXEEXT): $(caps_OBJECTS) $(caps_DEPENDENCIES) 
 	@rm -f caps$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(caps_OBJECTS) $(caps_LDADD) $(LIBS)
+capsnego$(EXEEXT): $(capsnego_OBJECTS) $(capsnego_DEPENDENCIES) 
+	@rm -f capsnego$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(capsnego_OBJECTS) $(capsnego_LDADD) $(LIBS)
 complexity$(EXEEXT): $(complexity_OBJECTS) $(complexity_DEPENDENCIES) 
 	@rm -f complexity$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(complexity_OBJECTS) $(complexity_LDADD) $(LIBS)
@@ -492,6 +501,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/caps.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/capsnego.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/complexity.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/controller-controller.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstbufferstress.Po@am__quote@

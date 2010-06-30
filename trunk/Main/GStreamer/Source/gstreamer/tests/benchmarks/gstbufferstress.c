@@ -26,14 +26,6 @@
 static guint64 nbbuffers;
 static GMutex *mutex;
 
-static GstClockTime
-gst_get_current_time (void)
-{
-  GTimeVal tv;
-
-  g_get_current_time (&tv);
-  return GST_TIMEVAL_TO_TIME (tv);
-}
 
 static void *
 run_test (void *user_data)
@@ -46,14 +38,16 @@ run_test (void *user_data)
   g_mutex_lock (mutex);
   g_mutex_unlock (mutex);
 
-  start = gst_get_current_time ();
+  start = gst_util_get_timestamp ();
+
+  g_assert (nbbuffers > 0);
 
   for (nb = nbbuffers; nb; nb--) {
     buf = gst_buffer_new ();
     gst_buffer_unref (buf);
   }
 
-  end = gst_get_current_time ();
+  end = gst_util_get_timestamp ();
   g_print ("total %" GST_TIME_FORMAT " - average %" GST_TIME_FORMAT
       "  - Thread %d\n", GST_TIME_ARGS (end - start),
       GST_TIME_ARGS ((end - start) / nbbuffers), threadid);
@@ -83,6 +77,16 @@ main (gint argc, gchar * argv[])
   num_threads = atoi (argv[1]);
   nbbuffers = atoi (argv[2]);
 
+  if (num_threads <= 0 || num_threads > MAX_THREADS) {
+    g_print ("number of threads must be between 0 and %d\n", MAX_THREADS);
+    exit (-2);
+  }
+
+  if (nbbuffers <= 0) {
+    g_print ("number of buffers must be greater than 0\n");
+    exit (-3);
+  }
+
   g_mutex_lock (mutex);
   /* Let's just make sure the GstBufferClass is loaded ... */
   tmp = gst_buffer_new ();
@@ -99,7 +103,7 @@ main (gint argc, gchar * argv[])
   }
 
   /* Signal all threads to start */
-  start = gst_get_current_time ();
+  start = gst_util_get_timestamp ();
   g_mutex_unlock (mutex);
 
   for (t = 0; t < num_threads; t++) {
@@ -107,7 +111,7 @@ main (gint argc, gchar * argv[])
       g_thread_join (threads[t]);
   }
 
-  end = gst_get_current_time ();
+  end = gst_util_get_timestamp ();
   g_print ("*** total %" GST_TIME_FORMAT " - average %" GST_TIME_FORMAT
       "  - Done creating %" G_GUINT64_FORMAT " buffers\n",
       GST_TIME_ARGS (end - start),

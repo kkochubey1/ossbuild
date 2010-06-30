@@ -1,3 +1,4 @@
+<ONLINE href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/">
 <ANCHOR id="GstBaseSrc" href="gstreamer-libs-0.10/GstBaseSrc.html">
 <ANCHOR id="GstBaseSrc.synopsis" href="gstreamer-libs-0.10/GstBaseSrc.html#GstBaseSrc.synopsis">
 <ANCHOR id="GstBaseSrc.object-hierarchy" href="gstreamer-libs-0.10/GstBaseSrc.html#GstBaseSrc.object-hierarchy">
@@ -120,6 +121,7 @@
 <ANCHOR id="gst-adapter-take-buffer" href="gstreamer-libs-0.10/GstAdapter.html#gst-adapter-take-buffer">
 <ANCHOR id="gst-adapter-prev-timestamp" href="gstreamer-libs-0.10/GstAdapter.html#gst-adapter-prev-timestamp">
 <ANCHOR id="gst-adapter-masked-scan-uint32" href="gstreamer-libs-0.10/GstAdapter.html#gst-adapter-masked-scan-uint32">
+<ANCHOR id="gst-adapter-masked-scan-uint32-peek" href="gstreamer-libs-0.10/GstAdapter.html#gst-adapter-masked-scan-uint32-peek">
 <ANCHOR id="gstreamer-libs-GstBitReader" href="gstreamer-libs-0.10/gstreamer-libs-GstBitReader.html">
 <ANCHOR id="gstreamer-libs-GstBitReader.synopsis" href="gstreamer-libs-0.10/gstreamer-libs-GstBitReader.html#gstreamer-libs-GstBitReader.synopsis">
 <ANCHOR id="gstreamer-libs-GstBitReader.description" href="gstreamer-libs-0.10/gstreamer-libs-GstBitReader.html#gstreamer-libs-GstBitReader.description">

@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-support.html" title="GStreamer Core Support">
 <link rel="prev" href="gstreamer-support.html" title="GStreamer Core Support">
 <link rel="next" href="gstreamer-GstTrace.html" title="GstTrace">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -138,6 +138,9 @@ const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span c
 #define             <a class="link" href="gstreamer-GstInfo.html#GST-CAT-FIXME-OBJECT:CAPS" title="GST_CAT_FIXME_OBJECT()">GST_CAT_FIXME_OBJECT</a>                (cat,
                                                          obj,
                                                          ...)
+#define             <a class="link" href="gstreamer-GstInfo.html#GST-CAT-TRACE-OBJECT:CAPS" title="GST_CAT_TRACE_OBJECT()">GST_CAT_TRACE_OBJECT</a>                (cat,
+                                                         obj,
+                                                         ...)
 #define             <a class="link" href="gstreamer-GstInfo.html#GST-CAT-MEMDUMP-OBJECT:CAPS" title="GST_CAT_MEMDUMP_OBJECT()">GST_CAT_MEMDUMP_OBJECT</a>              (cat,
                                                          obj,
                                                          msg,
@@ -155,6 +158,8 @@ const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span c
                                                          ...)
 #define             <a class="link" href="gstreamer-GstInfo.html#GST-CAT-FIXME:CAPS" title="GST_CAT_FIXME()">GST_CAT_FIXME</a>                       (cat,
                                                          ...)
+#define             <a class="link" href="gstreamer-GstInfo.html#GST-CAT-TRACE:CAPS" title="GST_CAT_TRACE()">GST_CAT_TRACE</a>                       (cat,
+                                                         ...)
 #define             <a class="link" href="gstreamer-GstInfo.html#GST-CAT-MEMDUMP:CAPS" title="GST_CAT_MEMDUMP()">GST_CAT_MEMDUMP</a>                     (cat,
                                                          msg,
                                                          data,
@@ -171,6 +176,8 @@ const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span c
                                                          ...)
 #define             <a class="link" href="gstreamer-GstInfo.html#GST-FIXME-OBJECT:CAPS" title="GST_FIXME_OBJECT()">GST_FIXME_OBJECT</a>                    (obj,
                                                          ...)
+#define             <a class="link" href="gstreamer-GstInfo.html#GST-TRACE-OBJECT:CAPS" title="GST_TRACE_OBJECT()">GST_TRACE_OBJECT</a>                    (obj,
+                                                         ...)
 #define             <a class="link" href="gstreamer-GstInfo.html#GST-MEMDUMP-OBJECT:CAPS" title="GST_MEMDUMP_OBJECT()">GST_MEMDUMP_OBJECT</a>                  (obj,
                                                          msg,
                                                          data,
@@ -181,6 +188,7 @@ const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span c
 #define             <a class="link" href="gstreamer-GstInfo.html#GST-DEBUG:CAPS" title="GST_DEBUG()">GST_DEBUG</a>                           (...)
 #define             <a class="link" href="gstreamer-GstInfo.html#GST-LOG:CAPS" title="GST_LOG()">GST_LOG</a>                             (...)
 #define             <a class="link" href="gstreamer-GstInfo.html#GST-FIXME:CAPS" title="GST_FIXME()">GST_FIXME</a>                           (...)
+#define             <a class="link" href="gstreamer-GstInfo.html#GST-TRACE:CAPS" title="GST_TRACE()">GST_TRACE</a>                           (...)
 #define             <a class="link" href="gstreamer-GstInfo.html#GST-MEMDUMP:CAPS" title="GST_MEMDUMP()">GST_MEMDUMP</a>                         (msg,
                                                          data,
                                                          length)
@@ -294,6 +302,7 @@ categories. These are explained at <a class="link" href="gstreamer-GstInfo.html#
   GST_LEVEL_DEBUG,
   GST_LEVEL_LOG,
   GST_LEVEL_FIXME = 6,
+  GST_LEVEL_TRACE = 7,
   /* add more */
   GST_LEVEL_MEMDUMP = 9,
   /* add more */
@@ -341,17 +350,20 @@ message is, the greater the probability that the debugging system outputs it.
 <tr>
 <td><p><a name="GST-LEVEL-DEBUG:CAPS"></a><span class="term"><code class="literal">GST_LEVEL_DEBUG</code></span></p></td>
 <td>Debugging messages should be used when something common
- happens that is not the expected default behavior.
- An example would be notifications about state changes or receiving/sending of
- events.
+ happens that is not the expected default behavior, or something that's
+ useful to know but doesn't happen all the time (ie. per loop iteration or
+ buffer processed or event handled).
+ An example would be notifications about state changes or receiving/sending
+ of events.
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-LEVEL-LOG:CAPS"></a><span class="term"><code class="literal">GST_LEVEL_LOG</code></span></p></td>
 <td>Log messages are messages that are very common but might be
  useful to know. As a rule of thumb a pipeline that is iterating as expected
- should never output anzthing else but LOG messages.
- Examples for this are referencing/dereferencing of objects or cothread switches.
+ should never output anything else but LOG messages. Use this log level to
+ log recurring information in chain functions and loop functions, for
+ example.
 </td>
 </tr>
 <tr>
@@ -361,6 +373,12 @@ message is, the greater the probability that the debugging system outputs it.
  that this does not replace proper error handling in any way, the purpose
  of this message is to make it easier to spot incomplete/unfinished pieces
  of code when reading the debug log. (Since: 0.10.23)
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-LEVEL-TRACE:CAPS"></a><span class="term"><code class="literal">GST_LEVEL_TRACE</code></span></p></td>
+<td>Tracing-related messages (Since: 0.10.30)
+ Examples for this are referencing/dereferencing of objects.
 </td>
 </tr>
 <tr>
@@ -1283,7 +1301,7 @@ Otherwise cat will be NULL.
 <span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-DEBUG-CATEGORY-STATIC:CAPS">GST_DEBUG_CATEGORY_STATIC</a></span> <span class="symbol">(</span>GST_CAT_PERFORMANCE<span class="symbol">);</span>
 <span class="symbol">...</span>
 <span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-DEBUG-CATEGORY-INIT:CAPS">GST_DEBUG_CATEGORY_INIT</a></span> <span class="symbol">(</span>gst_myplugin_debug<span class="symbol">,</span> <span class="string">&quot;myplugin&quot;</span><span class="symbol">,</span> <span class="number">0</span><span class="symbol">,</span> <span class="string">&quot;nice element&quot;</span><span class="symbol">);</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-DEBUG-CATEGORY-GET:CAPS">GST_DEBUG_CATEGORY_GET</a></span> <span class="symbol">(</span>GST_CAT_PERFORMANCE<span class="symbol">,</span> <span class="string">&quot;performance&quot;</span><span class="symbol">);</span></pre></td>
+<span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-DEBUG-CATEGORY-GET:CAPS">GST_DEBUG_CATEGORY_GET</a></span> <span class="symbol">(</span>GST_CAT_PERFORMANCE<span class="symbol">,</span> <span class="string">&quot;GST_PERFORMANCE&quot;</span><span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1753,6 +1771,36 @@ Output a fixme message belonging to the given object in the given category.
 <p class="since">Since 0.10.23</p>
 </div>
 <hr>
+<div class="refsect2" title="GST_CAT_TRACE_OBJECT()">
+<a name="GST-CAT-TRACE-OBJECT:CAPS"></a><h3>GST_CAT_TRACE_OBJECT()</h3>
+<pre class="programlisting">#define             GST_CAT_TRACE_OBJECT(cat,obj,...)</pre>
+<p>
+Output a tracing message belonging to the given object in the given
+category.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>cat</code></em> :</span></p></td>
+<td>category to use
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>obj</code></em> :</span></p></td>
+<td>the <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> the message belongs to
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>...</code></em> :</span></p></td>
+<td>printf-style message to output
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
+</div>
+<hr>
 <div class="refsect2" title="GST_CAT_MEMDUMP_OBJECT()">
 <a name="GST-CAT-MEMDUMP-OBJECT:CAPS"></a><h3>GST_CAT_MEMDUMP_OBJECT()</h3>
 <pre class="programlisting">#define             GST_CAT_MEMDUMP_OBJECT(cat,obj,msg,data,length)</pre>
@@ -1932,6 +1980,30 @@ Output an fixme message in the given category.
 <p class="since">Since 0.10.23</p>
 </div>
 <hr>
+<div class="refsect2" title="GST_CAT_TRACE()">
+<a name="GST-CAT-TRACE:CAPS"></a><h3>GST_CAT_TRACE()</h3>
+<pre class="programlisting">#define             GST_CAT_TRACE(cat,...)</pre>
+<p>
+Output a tracing message in the given category.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>cat</code></em> :</span></p></td>
+<td>category to use
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>...</code></em> :</span></p></td>
+<td>printf-style message to output
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
+</div>
+<hr>
 <div class="refsect2" title="GST_CAT_MEMDUMP()">
 <a name="GST-CAT-MEMDUMP:CAPS"></a><h3>GST_CAT_MEMDUMP()</h3>
 <pre class="programlisting">#define             GST_CAT_MEMDUMP(cat,msg,data,length)</pre>
@@ -2087,7 +2159,7 @@ Output a logging message belonging to the given object in the default category.
 <a name="GST-FIXME-OBJECT:CAPS"></a><h3>GST_FIXME_OBJECT()</h3>
 <pre class="programlisting">#define             GST_FIXME_OBJECT(obj,...)</pre>
 <p>
-Output a logging message belonging to the given object in the default category.
+Output a fixme message belonging to the given object in the default category.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -2105,6 +2177,30 @@ Output a logging message belonging to the given object in the default category.
 </tbody>
 </table></div>
 <p class="since">Since 0.10.23</p>
+</div>
+<hr>
+<div class="refsect2" title="GST_TRACE_OBJECT()">
+<a name="GST-TRACE-OBJECT:CAPS"></a><h3>GST_TRACE_OBJECT()</h3>
+<pre class="programlisting">#define             GST_TRACE_OBJECT(obj,...)</pre>
+<p>
+Output a tracing message belonging to the given object in the default category.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>obj</code></em> :</span></p></td>
+<td>the <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> the message belongs to
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>...</code></em> :</span></p></td>
+<td>printf-style message to output
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
 </div>
 <hr>
 <div class="refsect2" title="GST_MEMDUMP_OBJECT()">
@@ -2236,6 +2332,23 @@ Output a fixme message in the default category.
 </tr></tbody>
 </table></div>
 <p class="since">Since 0.10.23</p>
+</div>
+<hr>
+<div class="refsect2" title="GST_TRACE()">
+<a name="GST-TRACE:CAPS"></a><h3>GST_TRACE()</h3>
+<pre class="programlisting">#define             GST_TRACE(...)</pre>
+<p>
+Output a tracing message in the default category.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>...</code></em> :</span></p></td>
+<td>printf-style message to output
+</td>
+</tr></tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
 </div>
 <hr>
 <div class="refsect2" title="GST_MEMDUMP()">
@@ -2457,6 +2570,6 @@ and environment variables that affect the debugging output.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

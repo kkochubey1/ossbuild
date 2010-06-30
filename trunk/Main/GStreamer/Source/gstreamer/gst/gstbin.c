@@ -171,6 +171,18 @@
 #include "gstutils.h"
 #include "gstchildproxy.h"
 
+#ifdef GST_DISABLE_DEPRECATED
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_REMOVE_DEPRECATED)
+#undef GstXmlNodePtr
+#define GstXmlNodePtr xmlNodePtr
+#include <libxml/parser.h>
+GstXmlNodePtr gst_object_save_thyself (GstObject * object,
+    GstXmlNodePtr parent);
+void gst_object_restore_thyself (GstObject * object, GstXmlNodePtr parent);
+GstElement *gst_xml_make_element (xmlNodePtr cur, GstObject * parent);
+#endif
+#endif
+
 /* enable for DURATION caching.
  * FIXME currently too many elements don't update
  * their duration when it changes so we return inaccurate values. */
@@ -248,7 +260,7 @@ static gboolean gst_bin_query (GstElement * element, GstQuery * query);
 
 static gboolean gst_bin_do_latency_func (GstBin * bin);
 
-#ifndef GST_DISABLE_LOADSAVE
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_REMOVE_DEPRECATED)
 static xmlNodePtr gst_bin_save_thyself (GstObject * object, xmlNodePtr parent);
 static void gst_bin_restore_thyself (GstObject * object, xmlNodePtr self);
 #endif
@@ -456,10 +468,13 @@ gst_bin_class_init (GstBinClass * klass)
 
   gobject_class->dispose = gst_bin_dispose;
 
-#ifndef GST_DISABLE_LOADSAVE
-  gstobject_class->save_thyself = GST_DEBUG_FUNCPTR (gst_bin_save_thyself);
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_REMOVE_DEPRECATED)
+  gstobject_class->save_thyself =
+      ((gpointer (*)(GstObject * object,
+              gpointer self)) * GST_DEBUG_FUNCPTR (gst_bin_save_thyself));
   gstobject_class->restore_thyself =
-      GST_DEBUG_FUNCPTR (gst_bin_restore_thyself);
+      ((void (*)(GstObject * object,
+              gpointer self)) *GST_DEBUG_FUNCPTR (gst_bin_restore_thyself));
 #endif
 
   gstelement_class->change_state =
@@ -3002,6 +3017,17 @@ gst_bin_handle_message_func (GstBin * bin, GstMessage * message)
       GST_MESSAGE_TYPE_NAME (message));
 
   switch (type) {
+    case GST_MESSAGE_ERROR:
+    {
+      GST_OBJECT_LOCK (bin);
+      /* flag error */
+      GST_DEBUG_OBJECT (bin, "got ERROR message, unlocking state change");
+      GST_STATE_RETURN (bin) = GST_STATE_CHANGE_FAILURE;
+      GST_STATE_BROADCAST (bin);
+      GST_OBJECT_UNLOCK (bin);
+
+      goto forward;
+    }
     case GST_MESSAGE_EOS:
     {
       gboolean eos;
@@ -3727,7 +3753,7 @@ gst_bin_iterate_all_by_interface (GstBin * bin, GType iface)
   return result;
 }
 
-#ifndef GST_DISABLE_LOADSAVE
+#if !defined(GST_DISABLE_LOADSAVE) && !defined(GST_REMOVE_DEPRECATED)
 static xmlNodePtr
 gst_bin_save_thyself (GstObject * object, xmlNodePtr parent)
 {

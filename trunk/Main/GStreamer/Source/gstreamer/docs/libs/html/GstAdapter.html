@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-base.html" title="GStreamer Base and Utillity Classes">
 <link rel="prev" href="GstPushSrc.html" title="GstPushSrc">
 <link rel="next" href="gstreamer-libs-GstBitReader.html" title="GstBitReader">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -68,6 +68,12 @@ const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span 
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> pattern</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> offset</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> size</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstAdapter.html#gst-adapter-masked-scan-uint32-peek" title="gst_adapter_masked_scan_uint32_peek ()">gst_adapter_masked_scan_uint32_peek</a> (<em class="parameter"><code><a class="link" href="GstAdapter.html" title="GstAdapter"><span class="type">GstAdapter</span></a> *adapter</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> mask</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> pattern</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> offset</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> size</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> *value</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
@@ -545,6 +551,10 @@ adapter for it to match, even if the first or last bytes are masked out.
 It is an error to call this function without making sure that there is
 enough data (offset+size bytes) in the adapter.
 </p>
+<p>
+This function calls <a class="link" href="GstAdapter.html#gst-adapter-masked-scan-uint32-peek" title="gst_adapter_masked_scan_uint32_peek ()"><code class="function">gst_adapter_masked_scan_uint32_peek()</code></a> passing NULL
+for value.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
@@ -604,10 +614,77 @@ gst_adapter_masked_scan_uint32 (adapter, 0xffff0000, 0x02030000, 0, 4);
 </table></div>
 <p class="since">Since 0.10.24</p>
 </div>
+<hr>
+<div class="refsect2" title="gst_adapter_masked_scan_uint32_peek ()">
+<a name="gst-adapter-masked-scan-uint32-peek"></a><h3>gst_adapter_masked_scan_uint32_peek ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_adapter_masked_scan_uint32_peek (<em class="parameter"><code><a class="link" href="GstAdapter.html" title="GstAdapter"><span class="type">GstAdapter</span></a> *adapter</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> mask</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> pattern</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> offset</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> size</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> *value</code></em>);</pre>
+<p>
+Scan for pattern <em class="parameter"><code>pattern</code></em> with applied mask <em class="parameter"><code>mask</code></em> in the adapter data,
+starting from offset <em class="parameter"><code>offset</code></em>.  If a match is found, the value that matched
+is returned through <em class="parameter"><code>value</code></em>, otherwise <em class="parameter"><code>value</code></em> is left untouched.
+</p>
+<p>
+The bytes in <em class="parameter"><code>pattern</code></em> and <em class="parameter"><code>mask</code></em> are interpreted left-to-right, regardless
+of endianness.  All four bytes of the pattern must be present in the
+adapter for it to match, even if the first or last bytes are masked out.
+</p>
+<p>
+It is an error to call this function without making sure that there is
+enough data (offset+size bytes) in the adapter.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>adapter</code></em> :</span></p></td>
+<td>a <a class="link" href="GstAdapter.html" title="GstAdapter"><span class="type">GstAdapter</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>mask</code></em> :</span></p></td>
+<td>mask to apply to data before matching against <em class="parameter"><code>pattern</code></em>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>pattern</code></em> :</span></p></td>
+<td>pattern to match (after mask is applied)
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>offset</code></em> :</span></p></td>
+<td>offset into the adapter data from which to start scanning, returns
+         the last scanned position.
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
+<td>number of bytes to scan from offset
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>value</code></em> :</span></p></td>
+<td>pointer to uint32 to return matching data
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> offset of the first match, or -1 if no match was found.
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
+</div>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

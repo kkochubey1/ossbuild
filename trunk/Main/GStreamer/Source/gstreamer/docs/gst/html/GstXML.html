@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="gstreamer-GstVersion.html" title="GstVersion">
 <link rel="next" href="gstreamer-support.html" title="GStreamer Core Support">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -104,6 +104,10 @@ and <a class="link" href="GstObject.html#GstObjectClass.restore-thyself"><code c
   xmlNsPtr ns;
 } GstXML;
 </pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">GstXML</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 XML parser object
 </p>
@@ -127,6 +131,10 @@ XML parser object
 <div class="refsect2" title="gst_xml_write ()">
 <a name="gst-xml-write"></a><h3>gst_xml_write ()</h3>
 <pre class="programlisting"><span class="returnvalue">xmlDocPtr</span>           gst_xml_write                       (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_xml_write</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 Converts the given element into an XML presentation.
 </p>
@@ -151,6 +159,10 @@ Converts the given element into an XML presentation.
 <a name="gst-xml-write-file"></a><h3>gst_xml_write_file ()</h3>
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_xml_write_file                  (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><span class="type">FILE</span> *out</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_xml_write_file</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 Converts the given element into XML and writes the formatted XML to an open
 file.
@@ -180,6 +192,10 @@ file.
 <div class="refsect2" title="gst_xml_new ()">
 <a name="gst-xml-new"></a><h3>gst_xml_new ()</h3>
 <pre class="programlisting"><a class="link" href="GstXML.html" title="GstXML"><span class="returnvalue">GstXML</span></a>*             gst_xml_new                         (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_xml_new</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 Create a new GstXML parser object.
 </p>
@@ -198,6 +214,10 @@ Create a new GstXML parser object.
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_xml_parse_doc                   (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>,
                                                          <em class="parameter"><code><span class="type">xmlDocPtr</span> doc</code></em>,
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *root</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_xml_parse_doc</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 Fills the GstXML object with the elements from the
 xmlDocPtr.
@@ -234,6 +254,10 @@ xmlDocPtr.
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_xml_parse_file                  (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>,
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *fname</code></em>,
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *root</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_xml_parse_file</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 Fills the GstXML object with the corresponding elements from
 the XML file fname. Optionally it will only build the element from
@@ -278,6 +302,10 @@ of any format that libxml supports, including http.
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *buffer</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> size</code></em>,
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *root</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_xml_parse_memory</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 Fills the GstXML object with the corresponding elements from
 an in memory XML buffer.
@@ -318,6 +346,10 @@ an in memory XML buffer.
 <a name="gst-xml-get-element"></a><h3>gst_xml_get_element ()</h3>
 <pre class="programlisting"><a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a>*         gst_xml_get_element                 (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>,
                                                          <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *name</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_xml_get_element</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 This function is used to get a pointer to the GstElement corresponding
 to name in the pipeline description. You would use this if you have
@@ -348,6 +380,10 @@ to do anything to the element after loading.
 <div class="refsect2" title="gst_xml_get_topelements ()">
 <a name="gst-xml-get-topelements"></a><h3>gst_xml_get_topelements ()</h3>
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*              gst_xml_get_topelements             (<em class="parameter"><code><a class="link" href="GstXML.html" title="GstXML"><span class="type">GstXML</span></a> *xml</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_xml_get_topelements</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 Retrieve a list of toplevel elements.
 </p>
@@ -375,6 +411,10 @@ reference using <a class="link" href="GstObject.html#gst-object-ref" title="gst_
 <a name="gst-xml-make-element"></a><h3>gst_xml_make_element ()</h3>
 <pre class="programlisting"><a class="link" href="GstElement.html" title="GstElement"><span class="returnvalue">GstElement</span></a>*         gst_xml_make_element                (<em class="parameter"><code><span class="type">xmlNodePtr</span> cur</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstObject.html" title="GstObject"><span class="type">GstObject</span></a> *parent</code></em>);</pre>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p><code class="literal">gst_xml_make_element</code> is deprecated and should not be used in newly-written code.</p>
+</div>
 <p>
 Load the element from the XML description
 </p>
@@ -440,6 +480,6 @@ Signals that a new object has been deserialized.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

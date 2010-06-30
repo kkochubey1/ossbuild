@@ -96,10 +96,12 @@ endif
 # FIXME: this target should be run every time we do "make release"
 # find a way of automating that
 win32-update:
-	for f in gstversion.h gstenumtypes.c gstenumtypes.h; do \
+	for f in gstversion.h gstenumtypes.c gstenumtypes.h gstmarshal.c gstmarshal.h; do \
 		cp $(top_builddir)/gst/$$f win32/common; done
 	$(top_srcdir)/tools/gst-indent win32/common/gstenumtypes.c
 	$(top_srcdir)/tools/gst-indent win32/common/gstenumtypes.c
+	$(top_srcdir)/tools/gst-indent win32/common/gstmarshal.c
+	$(top_srcdir)/tools/gst-indent win32/common/gstmarshal.c
 	cp $(top_builddir)/win32/common/config.h-new \
 		$(top_srcdir)/win32/common/config.h
 
@@ -194,6 +196,9 @@ CRUFT_FILES = \
 	$(top_builddir)/common/m4/wchar_t.m4 \
 	$(top_builddir)/common/m4/wint_t.m4 \
 	$(top_builddir)/common/m4/xsize.m4
+
+CRUFT_DIRS = \
+	$(top_builddir)/tests/examples/xml
 
 include $(top_srcdir)/common/cruft.mak
 

@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="gstreamer-GstIterator.html" title="GstIterator">
 <link rel="next" href="gstreamer-GstMiniObject.html" title="GstMiniObject">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -259,7 +259,7 @@ The basic use pattern of posting a message on a <a class="link" href="GstBus.htm
 <p>
 </p>
 <div class="example">
-<a name="id547185"></a><p class="title"><b>Example 14. Posting a <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a></b></p>
+<a name="id702660"></a><p class="title"><b>Example 14. Posting a <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a></b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -1008,12 +1008,12 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>gerror</code></em> :</span></p></td>
-<td>Location for the GError
+<td> Location for the GError. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>debug</code></em> :</span></p></td>
-<td>Location for the debug message, or NULL
+<td> Location for the debug message, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1080,12 +1080,12 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>gerror</code></em> :</span></p></td>
-<td>Location for the GError
+<td> Location for the GError. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>debug</code></em> :</span></p></td>
-<td>Location for the debug message, or NULL
+<td> Location for the debug message, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1155,12 +1155,12 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>gerror</code></em> :</span></p></td>
-<td>Location for the GError
+<td> Location for the GError. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>debug</code></em> :</span></p></td>
-<td>Location for the debug message, or NULL
+<td> Location for the debug message, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1304,7 +1304,7 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>tag_list</code></em> :</span></p></td>
-<td>Return location for the tag-list.
+<td> Return location for the tag-list. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1333,12 +1333,12 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td>Location where the originating pad is stored, unref after usage
+<td> Location where the originating pad is stored, unref after usage. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>tag_list</code></em> :</span></p></td>
-<td>Return location for the tag-list.
+<td> Return location for the tag-list. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1411,7 +1411,7 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>percent</code></em> :</span></p></td>
-<td>Return location for the percent.
+<td> Return location for the percent. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1482,22 +1482,22 @@ Extracts the buffering stats values from <em class="parameter"><code>message</co
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>mode</code></em> :</span></p></td>
-<td>a buffering mode 
+<td> a buffering mode. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>avg_in</code></em> :</span></p></td>
-<td>the average input rate
+<td> the average input rate. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>avg_out</code></em> :</span></p></td>
-<td>the average output rate
+<td> the average output rate. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffering_left</code></em> :</span></p></td>
-<td>amount of buffering time left in milliseconds.
+<td> amount of buffering time left in milliseconds. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1615,17 +1615,17 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>oldstate</code></em> :</span></p></td>
-<td>the previous state, or NULL
+<td> the previous state, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>newstate</code></em> :</span></p></td>
-<td>the new (current) state, or NULL
+<td> the new (current) state, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pending</code></em> :</span></p></td>
-<td>the pending (target) state, or NULL
+<td> the pending (target) state, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1759,37 +1759,37 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>result location for the format
+<td> result location for the format. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>amount</code></em> :</span></p></td>
-<td>result location for the amount
+<td> result location for the amount. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rate</code></em> :</span></p></td>
-<td>result location for the rate
+<td> result location for the rate. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flush</code></em> :</span></p></td>
-<td>result location for the flush flag
+<td> result location for the flush flag. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>intermediate</code></em> :</span></p></td>
-<td>result location for the intermediate flag
+<td> result location for the intermediate flag. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>duration</code></em> :</span></p></td>
-<td>result location for the duration
+<td> result location for the duration. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>eos</code></em> :</span></p></td>
-<td>result location for the EOS flag
+<td> result location for the EOS flag. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1862,12 +1862,12 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>clock</code></em> :</span></p></td>
-<td>A pointer to  hold a clock object.
+<td> A pointer to  hold a clock object. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>ready</code></em> :</span></p></td>
-<td>A pointer to hold the ready flag.
+<td> A pointer to hold the ready flag. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -1932,7 +1932,7 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>clock</code></em> :</span></p></td>
-<td>A pointer to hold the lost clock
+<td> A pointer to hold the lost clock. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2168,12 +2168,12 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>Result location for the format, or NULL
+<td> Result location for the format, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>position</code></em> :</span></p></td>
-<td>Result location for the position, or NULL
+<td> Result location for the position, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2241,12 +2241,12 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>Result location for the format, or NULL
+<td> Result location for the format, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>position</code></em> :</span></p></td>
-<td>Result location for the position, or NULL
+<td> Result location for the position, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2320,12 +2320,12 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>Result location for the format, or NULL
+<td> Result location for the format, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>duration</code></em> :</span></p></td>
-<td>Result location for the duration, or NULL
+<td> Result location for the duration, or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2415,7 +2415,7 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>new_base_time</code></em> :</span></p></td>
-<td>Result location for the new_base_time or NULL
+<td> Result location for the new_base_time or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2549,32 +2549,32 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>active</code></em> :</span></p></td>
-<td>result location for the active flag
+<td> result location for the active flag. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>result location for the format
+<td> result location for the format. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>amount</code></em> :</span></p></td>
-<td>result location for the amount
+<td> result location for the amount. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>rate</code></em> :</span></p></td>
-<td>result location for the rate
+<td> result location for the rate. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flush</code></em> :</span></p></td>
-<td>result location for the flush flag
+<td> result location for the flush flag. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>intermediate</code></em> :</span></p></td>
-<td>result location for the intermediate flag
+<td> result location for the intermediate flag. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2773,27 +2773,27 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>live</code></em> :</span></p></td>
-<td>if the message was generated by a live element
+<td> if the message was generated by a live element. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>running_time</code></em> :</span></p></td>
-<td>the running time of the buffer that generated the message
+<td> the running time of the buffer that generated the message. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>stream_time</code></em> :</span></p></td>
-<td>the stream time of the buffer that generated the message
+<td> the stream time of the buffer that generated the message. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timestamp</code></em> :</span></p></td>
-<td>the timestamps of the buffer that generated the message
+<td> the timestamps of the buffer that generated the message. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>duration</code></em> :</span></p></td>
-<td>the duration of the buffer that generated the message
+<td> the duration of the buffer that generated the message. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2823,19 +2823,19 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>jitter</code></em> :</span></p></td>
-<td>The difference of the running-time against the deadline.
+<td> The difference of the running-time against the deadline. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>proportion</code></em> :</span></p></td>
-<td>Long term prediction of the ideal rate relative to normal rate
-to get optimal quality.
+<td> Long term prediction of the ideal rate relative to normal rate
+to get optimal quality. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>quality</code></em> :</span></p></td>
-<td>An element dependent integer value that specifies the current
-quality level of the element. The default maximum quality is 1000000.
+<td> An element dependent integer value that specifies the current
+quality level of the element. The default maximum quality is 1000000. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2870,21 +2870,21 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>format</code></em> :</span></p></td>
-<td>Units of the 'processed' and 'dropped' fields. Video sinks and video
+<td> Units of the 'processed' and 'dropped' fields. Video sinks and video
 filters will use GST_FORMAT_BUFFERS (frames). Audio sinks and audio filters
-will likely use GST_FORMAT_DEFAULT (samples).
+will likely use GST_FORMAT_DEFAULT (samples). <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>processed</code></em> :</span></p></td>
-<td>Total number of units correctly processed since the last state
-change to READY or a flushing operation.
+<td> Total number of units correctly processed since the last state
+change to READY or a flushing operation. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>dropped</code></em> :</span></p></td>
-<td>Total number of units dropped since the last state change to READY
-or a flushing operation.
+<td> Total number of units dropped since the last state change to READY
+or a flushing operation. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -2992,18 +2992,18 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>type</code></em> :</span></p></td>
-<td>A pointer to hold the change type
+<td> A pointer to hold the change type. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>owner</code></em> :</span></p></td>
-<td>The owner element of the message source
+<td> The owner element of the message source. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>busy</code></em> :</span></p></td>
-<td>A pointer to hold whether the change is in progress or has been
-completed
+<td> A pointer to hold whether the change is in progress or has been
+completed. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -3066,7 +3066,7 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>state</code></em> :</span></p></td>
-<td>Result location for the requested state or NULL
+<td> Result location for the requested state or NULL. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -3197,12 +3197,12 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>type</code></em> :</span></p></td>
-<td>A pointer to hold the status type
+<td> A pointer to hold the status type. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>owner</code></em> :</span></p></td>
-<td>The owner element of the message source
+<td> The owner element of the message source. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -3272,6 +3272,6 @@ future. The object remains valid as long as <em class="parameter"><code>message<
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

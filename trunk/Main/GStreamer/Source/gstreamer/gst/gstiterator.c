@@ -546,7 +546,6 @@ gst_iterator_fold (GstIterator * it, GstIteratorFoldFunction func,
     result = gst_iterator_next (it, &item);
     switch (result) {
       case GST_ITERATOR_OK:
-        /* FIXME: is there a way to ref/unref items? */
         if (!func (item, ret, user_data))
           goto fold_done;
         else
@@ -621,6 +620,13 @@ find_custom_fold_func (gpointer item, GValue * ret, FindCustomFoldData * data)
   }
 }
 
+/* FIXME 0.11:
+ * We should store ref/unref (or copy/free) functions for the type
+ * in GstIterator. The unref but only if it's not a match behaviour
+ * of find_custom() is very bad for bindings. The ref/unref functions
+ * are also useful for the fold and filter cases.
+ */
+
 /**
  * gst_iterator_find_custom:
  * @it: The #GstIterator to iterate
@@ -630,12 +636,12 @@ find_custom_fold_func (gpointer item, GValue * ret, FindCustomFoldData * data)
  * Find the first element in @it that matches the compare function @func.
  * @func should return 0 when the element is found.  As in gst_iterator_fold(),
  * the refcount of a refcounted object will be increased before @func is 
- * called, and should be unrefed after use.
+ * called, and should be unrefed after use in @func unless it is the matching
+ * element.
  *
  * The iterator will not be freed.
  *
- * This function will return NULL if an error or resync happened to
- * the iterator.
+ * This function will return NULL if an error happened to the iterator.
  *
  * Returns: The element in the iterator that matches the compare
  * function or NULL when no element matched.
@@ -654,11 +660,11 @@ gst_iterator_find_custom (GstIterator * it, GCompareFunc func,
   data.func = func;
   data.user_data = user_data;
 
-  /* FIXME, we totally ignore RESYNC and return NULL so that the
-   * app does not know if the element was not found or a resync happened */
-  res =
-      gst_iterator_fold (it, (GstIteratorFoldFunction) find_custom_fold_func,
-      &ret, &data);
+  do {
+    res =
+        gst_iterator_fold (it, (GstIteratorFoldFunction) find_custom_fold_func,
+        &ret, &data);
+  } while (res == GST_ITERATOR_RESYNC);
 
   /* no need to unset, it's just a pointer */
   return g_value_get_pointer (&ret);
