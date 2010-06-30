@@ -94,8 +94,8 @@
 						to get its settings and will instead use our generic ones which 
 						99% of the time don't look right or won't match the system theme.
 					-->
-					<exclude name="*-${os}-${arch}-fonts.jar" />
-					<exclude name="*-${os}-${arch}-graphics.jar" />
+					<exclude name="*-unix-${arch}-fonts.jar" />
+					<exclude name="*-unix-${arch}-graphics.jar" />
 				</fileset>
 			</path>
 		</foreach>
