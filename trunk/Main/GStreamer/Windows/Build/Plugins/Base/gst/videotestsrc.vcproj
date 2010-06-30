@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="gstvideotestsrc"
 	ProjectGUID="{AB87873B-2B88-4B1B-B627-F70DF4F91F27}"
 	RootNamespace="libgstvideotestsrc"
@@ -155,7 +155,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="..\..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\..\..\..\..\Shared\MSVC\Properties\Libraries\LibOil.vsprops;..\..\..\..\Properties\gstreamer-plugin-base.vsprops"
+			InheritedPropertySheets="..\..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\..\Properties\gstreamer-plugin-base.vsprops;..\..\..\..\..\..\..\Shared\MSVC\Properties\Libraries\LibOrc.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -234,7 +234,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\..\..\..\..\Source\gst-plugins-base\gst\app\"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)Main\GStreamer\Windows\Generated\gst-plugins-base\gst\videotestsrc&quot;;&quot;..\..\..\..\..\Source\gst-plugins-base\gst\app\&quot;"
 				PreprocessorDefinitions="LIBGSTADDER_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -303,6 +303,14 @@
 		</File>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\videotestsrc\gstvideotestsrc.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\Generated\gst-plugins-base\gst\videotestsrc\gstvideotestsrcorc.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\Generated\gst-plugins-base\gst\videotestsrc\gstvideotestsrcorc.h"
 			>
 		</File>
 		<File
