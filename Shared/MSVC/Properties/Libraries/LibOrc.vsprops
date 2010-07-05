@@ -10,7 +10,7 @@
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="liborc-$(LibOrcLibVersionString).dll.a"
+		AdditionalDependencies="orc-$(LibOrcLibVersionString).lib"
 	/>
 	<UserMacro
 		Name="LibOrcMajorVersion"
