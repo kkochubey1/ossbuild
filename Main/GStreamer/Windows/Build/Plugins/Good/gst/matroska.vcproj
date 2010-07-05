@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="gstmatroska"
 	ProjectGUID="{AB87873B-2B88-4B1B-B627-F70DF4F92A21}"
 	RootNamespace="libgstmatroska"
@@ -294,7 +294,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstriff.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstriff.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E50}"
@@ -302,7 +302,7 @@
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F05}"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgsttag.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgsttag.vcproj"
 		/>
 	</References>
 	<Files>
@@ -360,6 +360,14 @@
 		</File>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\matroska\matroska.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\matroska\webm-mux.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\matroska\webm-mux.h"
 			>
 		</File>
 	</Files>
