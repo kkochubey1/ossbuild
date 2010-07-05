@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="gstdeinterlace"
 	ProjectGUID="{F3A7C701-0ACC-0BB0-CE27-AA0DFFFF0026}"
 	RootNamespace="libgstdeinterlace"
@@ -155,7 +155,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="..\..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\..\Properties\gstreamer-plugin-good.vsprops;..\..\..\..\..\..\..\Shared\MSVC\Properties\Libraries\LibOil.vsprops"
+			InheritedPropertySheets="..\..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\..\Properties\gstreamer-plugin-good.vsprops;..\..\..\..\..\..\..\Shared\MSVC\Properties\Libraries\LibOrc.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -234,7 +234,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="&quot;..\..\..\..\..\Source\gst-plugins-good\gst\deinterlace&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)Main\GStreamer\Windows\Generated\gst-plugins-good\gst\deinterlace&quot;;&quot;..\..\..\..\..\Source\gst-plugins-good\gst\deinterlace&quot;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -297,7 +297,7 @@
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F13}"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstvideo.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstvideo.vcproj"
 		/>
 	</References>
 	<Files>
@@ -464,6 +464,22 @@
 					ModuleName="gstreamer-$(ApiVersionString)\gst"
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\deinterlace\gstdeinterlacemethod.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\deinterlace\gstdeinterlacemethod.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\Generated\gst-plugins-good\gst\deinterlace\tvtime.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\Generated\gst-plugins-good\gst\deinterlace\tvtime.h"
+			>
 		</File>
 	</Files>
 	<Globals>
