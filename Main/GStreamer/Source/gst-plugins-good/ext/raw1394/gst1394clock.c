@@ -82,7 +82,6 @@ gst_1394_clock_class_init (Gst1394ClockClass * klass)
 static void
 gst_1394_clock_init (Gst1394Clock * clock)
 {
-  clock->last_time = 0;
   GST_OBJECT_FLAG_SET (clock, GST_CLOCK_FLAG_CAN_SET_MASTER);
 }
 
@@ -128,7 +127,7 @@ gst_1394_clock_get_internal_time (GstClock * clock)
     result = (((((guint64) _1394clock->cycle_timer_hi) << 32) |
             cycle_timer) >> 25) * GST_SECOND;
     /* add the microseconds from the cycleCount counter */
-    result += (((cycle_timer >> 13) & 0x1fff) * 125) * GST_USECOND;
+    result += (((cycle_timer >> 12) & 0x1fff) * 125) * GST_USECOND;
 
     GST_LOG_OBJECT (clock, "result %" GST_TIME_FORMAT, GST_TIME_ARGS (result));
   } else {

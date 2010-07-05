@@ -84,8 +84,6 @@ struct _GstMultipartDemux
 
   /* Index inside the current data when manually looking for the boundary */
   gint scanpos;
-
-  gboolean singleStream;
 };
 
 struct _GstMultipartDemuxClass

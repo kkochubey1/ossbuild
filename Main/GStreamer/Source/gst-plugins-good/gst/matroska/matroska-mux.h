@@ -85,8 +85,11 @@ typedef struct _GstMatroskaMux {
   /* Application name (for the writing application header element) */
   gchar          *writing_app;
 
-  /* Matroska version. */
-  guint          matroska_version;
+  /* EBML DocType. */
+  const gchar    *doctype;
+
+  /* DocType version. */
+  guint          doctype_version;
 
   /* state */
   GstMatroskaMuxState state;
@@ -95,9 +98,12 @@ typedef struct _GstMatroskaMux {
   GstMatroskaIndex *index;
   guint          num_indexes;
   GstClockTimeDiff min_index_interval;
+  gboolean       streamable;
  
   /* timescale in the file */
   guint64        time_scale;
+  /* based on timescale, limit of nanoseconds you can have in a cluster */ 
+  guint64        max_cluster_duration;
 
   /* length, position (time, ns) */
   guint64        duration;
@@ -116,7 +122,8 @@ typedef struct _GstMatroskaMux {
   /* current cluster */
   guint64        cluster,
                  cluster_time,
-                 cluster_pos;
+                 cluster_pos,
+		 prev_cluster_size;
 
 } GstMatroskaMux;
 
@@ -124,7 +131,7 @@ typedef struct _GstMatroskaMuxClass {
   GstElementClass parent;
 } GstMatroskaMuxClass;
 
-gboolean gst_matroska_mux_plugin_init (GstPlugin *plugin);
+GType   gst_matroska_mux_get_type (void);
 
 G_END_DECLS
 

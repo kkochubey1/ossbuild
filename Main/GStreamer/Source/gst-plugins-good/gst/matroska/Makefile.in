@@ -62,9 +62,10 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
-	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/aalib.m4 $(top_srcdir)/m4/esd.m4 \
+	$(top_srcdir)/m4/gconf-2.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
 	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
@@ -111,7 +112,8 @@ am_libgstmatroska_la_OBJECTS = libgstmatroska_la-ebml-read.lo \
 	libgstmatroska_la-ebml-write.lo libgstmatroska_la-matroska.lo \
 	libgstmatroska_la-matroska-demux.lo \
 	libgstmatroska_la-matroska-ids.lo \
-	libgstmatroska_la-matroska-mux.lo libgstmatroska_la-lzo.lo
+	libgstmatroska_la-matroska-mux.lo \
+	libgstmatroska_la-webm-mux.lo libgstmatroska_la-lzo.lo
 libgstmatroska_la_OBJECTS = $(am_libgstmatroska_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -221,6 +223,8 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
+GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
+GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -301,8 +305,6 @@ LIBIEC61883_LIBS = @LIBIEC61883_LIBS@
 LIBINTL = @LIBINTL@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBPNG_CFLAGS = @LIBPNG_CFLAGS@
 LIBPNG_LIBS = @LIBPNG_LIBS@
 LIBS = @LIBS@
@@ -328,6 +330,9 @@ OBJCDEPMODE = @OBJCDEPMODE@
 OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+ORCC = @ORCC@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -355,6 +360,8 @@ PULSE_0_9_13_CFLAGS = @PULSE_0_9_13_CFLAGS@
 PULSE_0_9_13_LIBS = @PULSE_0_9_13_LIBS@
 PULSE_0_9_15_CFLAGS = @PULSE_0_9_15_CFLAGS@
 PULSE_0_9_15_LIBS = @PULSE_0_9_15_LIBS@
+PULSE_0_9_16_CFLAGS = @PULSE_0_9_16_CFLAGS@
+PULSE_0_9_16_LIBS = @PULSE_0_9_16_LIBS@
 PULSE_0_9_20_CFLAGS = @PULSE_0_9_20_CFLAGS@
 PULSE_0_9_20_LIBS = @PULSE_0_9_20_LIBS@
 PULSE_CFLAGS = @PULSE_CFLAGS@
@@ -472,6 +479,7 @@ libgstmatroska_la_SOURCES = \
 	matroska-demux.c \
 	matroska-ids.c \
 	matroska-mux.c \
+	webm-mux.c \
 	lzo.c
 
 noinst_HEADERS = \
@@ -481,6 +489,7 @@ noinst_HEADERS = \
 	matroska-demux.h \
 	matroska-ids.h \
 	matroska-mux.h \
+	webm-mux.h \
 	lzo.h
 
 libgstmatroska_la_CFLAGS = \
@@ -582,6 +591,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstmatroska_la-matroska-ids.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstmatroska_la-matroska-mux.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstmatroska_la-matroska.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstmatroska_la-webm-mux.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -654,6 +664,14 @@ libgstmatroska_la-matroska-mux.lo: matroska-mux.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='matroska-mux.c' object='libgstmatroska_la-matroska-mux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmatroska_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmatroska_la_CFLAGS) $(CFLAGS) -c -o libgstmatroska_la-matroska-mux.lo `test -f 'matroska-mux.c' || echo '$(srcdir)/'`matroska-mux.c
+
+libgstmatroska_la-webm-mux.lo: webm-mux.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmatroska_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmatroska_la_CFLAGS) $(CFLAGS) -MT libgstmatroska_la-webm-mux.lo -MD -MP -MF $(DEPDIR)/libgstmatroska_la-webm-mux.Tpo -c -o libgstmatroska_la-webm-mux.lo `test -f 'webm-mux.c' || echo '$(srcdir)/'`webm-mux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmatroska_la-webm-mux.Tpo $(DEPDIR)/libgstmatroska_la-webm-mux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='webm-mux.c' object='libgstmatroska_la-webm-mux.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmatroska_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmatroska_la_CFLAGS) $(CFLAGS) -c -o libgstmatroska_la-webm-mux.lo `test -f 'webm-mux.c' || echo '$(srcdir)/'`webm-mux.c
 
 libgstmatroska_la-lzo.lo: lzo.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmatroska_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmatroska_la_CFLAGS) $(CFLAGS) -MT libgstmatroska_la-lzo.lo -MD -MP -MF $(DEPDIR)/libgstmatroska_la-lzo.Tpo -c -o libgstmatroska_la-lzo.lo `test -f 'lzo.c' || echo '$(srcdir)/'`lzo.c

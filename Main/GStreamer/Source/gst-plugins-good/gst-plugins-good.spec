@@ -4,8 +4,8 @@
 %define gst_minver   0.10.0
 
 Name: 		%{gstreamer}-plugins-good
-Version: 	0.10.22
-Release: 	1.gst
+Version: 	0.10.23.3
+Release: 	0.20100629.191520.gst
 Summary: 	GStreamer plug-ins with good code and licensing
 
 Group: 		Applications/Multimedia
@@ -105,7 +105,6 @@ gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/gstreamer-%{maj
 %{_libdir}/gstreamer-%{majorminor}/libgstsmpte.so
 %{_libdir}/gstreamer-%{majorminor}/libgstudp.so
 %{_libdir}/gstreamer-%{majorminor}/libgstvideobox.so
-%{_libdir}/gstreamer-%{majorminor}/libgstvideoflip.so
 %{_libdir}/gstreamer-%{majorminor}/libgstwavenc.so
 %{_libdir}/gstreamer-%{majorminor}/libgstwavparse.so
 %{_libdir}/gstreamer-%{majorminor}/libgstauparse.so
@@ -122,13 +121,11 @@ gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/gstreamer-%{maj
 %{_libdir}/gstreamer-%{majorminor}/libgstgdkpixbuf.so
 %{_libdir}/gstreamer-%{majorminor}/libgstapetag.so
 %{_libdir}/gstreamer-%{majorminor}/libgstannodex.so
-%{_libdir}/gstreamer-%{majorminor}/libgstvideobalance.so
 %{_libdir}/gstreamer-%{majorminor}/libgstvideocrop.so
 %{_libdir}/gstreamer-%{majorminor}/libgsticydemux.so
 %{_libdir}/gstreamer-%{majorminor}/libgsttaglib.so
 %{_libdir}/gstreamer-%{majorminor}/libgstximagesrc.so
 %{_libdir}/gstreamer-%{majorminor}/libgstaudiofx.so
-%{_libdir}/gstreamer-%{majorminor}/libgstgamma.so
 %{_libdir}/gstreamer-%{majorminor}/libgstequalizer.so
 %{_libdir}/gstreamer-%{majorminor}/libgstmultifile.so
 %{_libdir}/gstreamer-%{majorminor}/libgstspectrum.so
@@ -138,6 +135,10 @@ gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/gstreamer-%{maj
 %{_libdir}/gstreamer-%{majorminor}/libgstdeinterlace.so
 %{_libdir}/gstreamer-%{majorminor}/libgstflv.so
 %{_libdir}/gstreamer-%{majorminor}/libgsty4menc.so
+%{_libdir}/gstreamer-%{majorminor}/libgstoss4audio.so
+%{_libdir}/gstreamer-%{majorminor}/libgstimagefreeze.so
+%{_libdir}/gstreamer-%{majorminor}/libgstshapewipe.so
+%{_libdir}/gstreamer-%{majorminor}/libgstvideofilter.so
 
 # sys plugins
 %{_libdir}/gstreamer-%{majorminor}/libgstvideo4linux2.so

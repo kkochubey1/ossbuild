@@ -112,11 +112,18 @@ struct _GstPulseRingBuffer
 
   pa_sample_spec sample_spec;
 
+#ifdef HAVE_PULSE_0_9_16
+  void *m_data;
+  size_t m_towrite;
+  size_t m_writable;
+  gint64 m_offset;
+  gint64 m_lastoffset;
+#endif
+
   gboolean corked:1;
   gboolean in_commit:1;
   gboolean paused:1;
 };
-
 struct _GstPulseRingBufferClass
 {
   GstRingBufferClass parent_class;
@@ -180,7 +187,7 @@ gst_pulseringbuffer_class_init (GstPulseRingBufferClass * klass)
 
   ring_parent_class = g_type_class_peek_parent (klass);
 
-  gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_pulseringbuffer_finalize);
+  gobject_class->finalize = gst_pulseringbuffer_finalize;
 
   gstringbuffer_class->open_device =
       GST_DEBUG_FUNCPTR (gst_pulseringbuffer_open_device);
@@ -220,6 +227,14 @@ gst_pulseringbuffer_init (GstPulseRingBuffer * pbuf,
   pbuf->sample_spec.channels = 0;
 #endif
 
+#ifdef HAVE_PULSE_0_9_16
+  pbuf->m_data = NULL;
+  pbuf->m_towrite = 0;
+  pbuf->m_writable = 0;
+  pbuf->m_offset = 0;
+  pbuf->m_lastoffset = 0;
+#endif
+
   pbuf->corked = TRUE;
   pbuf->in_commit = FALSE;
   pbuf->paused = FALSE;
@@ -229,6 +244,21 @@ static void
 gst_pulsering_destroy_stream (GstPulseRingBuffer * pbuf)
 {
   if (pbuf->stream) {
+
+#ifdef HAVE_PULSE_0_9_16
+    if (pbuf->m_data) {
+      /* drop shm memory buffer */
+      pa_stream_cancel_write (pbuf->stream);
+
+      /* reset internal variables */
+      pbuf->m_data = NULL;
+      pbuf->m_towrite = 0;
+      pbuf->m_writable = 0;
+      pbuf->m_offset = 0;
+      pbuf->m_lastoffset = 0;
+    }
+#endif
+
     pa_stream_disconnect (pbuf->stream);
 
     /* Make sure we don't get any further callbacks */
@@ -1236,6 +1266,153 @@ gst_pulseringbuffer_commit (GstRingBuffer * buf, guint64 * sample,
         "need to write %d samples at offset %" G_GINT64_FORMAT, *toprocess,
         offset);
 
+#ifdef HAVE_PULSE_0_9_16
+    if (offset != pbuf->m_lastoffset)
+      GST_LOG_OBJECT (psink, "discontinuity, offset is %" G_GINT64_FORMAT ", "
+          "last offset was %" G_GINT64_FORMAT, offset, pbuf->m_lastoffset);
+
+    towrite = out_samples * bps;
+
+    /* Only ever write segsize bytes at once. This will
+     * also limit the PA shm buffer to segsize
+     */
+    if (towrite > buf->spec.segsize)
+      towrite = buf->spec.segsize;
+
+    if ((pbuf->m_writable < towrite) || (offset != pbuf->m_lastoffset)) {
+      /* if no room left or discontinuity in offset,
+         we need to flush data and get a new buffer */
+
+      /* flush the buffer if possible */
+      if ((pbuf->m_data != NULL) && (pbuf->m_towrite > 0)) {
+
+        GST_LOG_OBJECT (psink,
+            "flushing %u samples at offset %" G_GINT64_FORMAT,
+            (guint) pbuf->m_towrite / bps, pbuf->m_offset);
+
+        if (pa_stream_write (pbuf->stream, (uint8_t *) pbuf->m_data,
+                pbuf->m_towrite, NULL, pbuf->m_offset, PA_SEEK_ABSOLUTE) < 0) {
+          goto write_failed;
+        }
+      }
+      pbuf->m_towrite = 0;
+      pbuf->m_offset = offset;  /* keep track of current offset */
+
+      /* get a buffer to write in for now on */
+      for (;;) {
+        pbuf->m_writable = pa_stream_writable_size (pbuf->stream);
+
+        if (pbuf->m_writable == (size_t) - 1)
+          goto writable_size_failed;
+
+        pbuf->m_writable /= bps;
+        pbuf->m_writable *= bps;        /* handle only complete samples */
+
+        if (pbuf->m_writable >= towrite)
+          break;
+
+        /* see if we need to uncork because we have no free space */
+        if (pbuf->corked) {
+          if (!gst_pulsering_set_corked (pbuf, FALSE, FALSE))
+            goto uncork_failed;
+        }
+
+        /* we can't write a single byte, wait a bit */
+        GST_LOG_OBJECT (psink, "waiting for free space");
+        pa_threaded_mainloop_wait (psink->mainloop);
+
+        if (pbuf->paused)
+          goto was_paused;
+      }
+
+      /* make sure we only buffer up latency-time samples */
+      if (pbuf->m_writable > buf->spec.segsize) {
+        /* limit buffering to latency-time value */
+        pbuf->m_writable = buf->spec.segsize;
+
+        GST_LOG_OBJECT (psink, "Limiting buffering to %" G_GSIZE_FORMAT,
+            pbuf->m_writable);
+      }
+
+      GST_LOG_OBJECT (psink, "requesting %u bytes of shared memory",
+          pbuf->m_writable);
+      if (pa_stream_begin_write (pbuf->stream, &pbuf->m_data,
+              &pbuf->m_writable) < 0) {
+        GST_LOG_OBJECT (psink, "pa_stream_begin_write() failed");
+        goto writable_size_failed;
+      }
+      GST_LOG_OBJECT (psink, "got %u bytes of shared memory", pbuf->m_writable);
+
+      /* Just to make sure that we didn't get more than requested */
+      if (pbuf->m_writable > buf->spec.segsize) {
+        /* limit buffering to latency-time value */
+        pbuf->m_writable = buf->spec.segsize;
+      }
+    }
+
+    if (pbuf->m_writable < towrite)
+      towrite = pbuf->m_writable;
+    avail = towrite / bps;
+
+    GST_LOG_OBJECT (psink, "writing %u samples at offset %" G_GUINT64_FORMAT,
+        (guint) avail, offset);
+
+    if (G_LIKELY (inr == outr && !reverse)) {
+      /* no rate conversion, simply write out the samples */
+      /* copy the data into internal buffer */
+
+      memcpy ((guint8 *) pbuf->m_data + pbuf->m_towrite, data, towrite);
+      pbuf->m_towrite += towrite;
+      pbuf->m_writable -= towrite;
+
+      data += towrite;
+      in_samples -= avail;
+      out_samples -= avail;
+    } else {
+      guint8 *dest, *d, *d_end;
+
+      /* write into the PulseAudio shm buffer */
+      dest = d = (guint8 *) pbuf->m_data + pbuf->m_towrite;
+      d_end = d + towrite;
+
+      if (!reverse) {
+        if (inr >= outr)
+          /* forward speed up */
+          FWD_UP_SAMPLES (data, data_end, d, d_end);
+        else
+          /* forward slow down */
+          FWD_DOWN_SAMPLES (data, data_end, d, d_end);
+      } else {
+        if (inr >= outr)
+          /* reverse speed up */
+          REV_UP_SAMPLES (data, data_end, d, d_end);
+        else
+          /* reverse slow down */
+          REV_DOWN_SAMPLES (data, data_end, d, d_end);
+      }
+      /* see what we have left to write */
+      towrite = (d - dest);
+      pbuf->m_towrite += towrite;
+      pbuf->m_writable -= towrite;
+
+      avail = towrite / bps;
+    }
+
+    /* flush the buffer if it's full */
+    if ((pbuf->m_data != NULL) && (pbuf->m_towrite > 0)
+        && (pbuf->m_writable == 0)) {
+      GST_LOG_OBJECT (psink, "flushing %u samples at offset %" G_GINT64_FORMAT,
+          (guint) pbuf->m_towrite / bps, pbuf->m_offset);
+
+      if (pa_stream_write (pbuf->stream, (uint8_t *) pbuf->m_data,
+              pbuf->m_towrite, NULL, pbuf->m_offset, PA_SEEK_ABSOLUTE) < 0) {
+        goto write_failed;
+      }
+      pbuf->m_towrite = 0;
+      pbuf->m_offset = offset + towrite;        /* keep track of current offset */
+    }
+#else
+
     for (;;) {
       /* FIXME, this is not quite right */
       if ((avail = pa_stream_writable_size (pbuf->stream)) == (size_t) - 1)
@@ -1314,8 +1491,14 @@ gst_pulseringbuffer_commit (GstRingBuffer * buf, guint64 * sample,
 
       avail = towrite / bps;
     }
+#endif /* HAVE_PULSE_0_9_16 */
+
     *sample += avail;
     offset += avail * bps;
+
+#ifdef HAVE_PULSE_0_9_16
+    pbuf->m_lastoffset = offset;
+#endif
 
     /* check if we need to uncork after writing the samples */
     if (pbuf->corked) {
@@ -1404,6 +1587,9 @@ static void gst_pulsesink_get_property (GObject * object, guint prop_id,
 static void gst_pulsesink_finalize (GObject * object);
 
 static gboolean gst_pulsesink_event (GstBaseSink * sink, GstEvent * event);
+
+static GstStateChangeReturn gst_pulsesink_change_state (GstElement * element,
+    GstStateChange transition);
 
 static void gst_pulsesink_init_interfaces (GType type);
 
@@ -1544,16 +1730,20 @@ gst_pulsesink_class_init (GstPulseSinkClass * klass)
   GstBaseSinkClass *gstbasesink_class = GST_BASE_SINK_CLASS (klass);
   GstBaseSinkClass *bc;
   GstBaseAudioSinkClass *gstaudiosink_class = GST_BASE_AUDIO_SINK_CLASS (klass);
+  GstElementClass *gstelement_class = GST_ELEMENT_CLASS (klass);
 
-  gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_pulsesink_finalize);
-  gobject_class->set_property = GST_DEBUG_FUNCPTR (gst_pulsesink_set_property);
-  gobject_class->get_property = GST_DEBUG_FUNCPTR (gst_pulsesink_get_property);
+  gobject_class->finalize = gst_pulsesink_finalize;
+  gobject_class->set_property = gst_pulsesink_set_property;
+  gobject_class->get_property = gst_pulsesink_get_property;
 
   gstbasesink_class->event = GST_DEBUG_FUNCPTR (gst_pulsesink_event);
 
   /* restore the original basesink pull methods */
   bc = g_type_class_peek (GST_TYPE_BASE_SINK);
   gstbasesink_class->activate_pull = GST_DEBUG_FUNCPTR (bc->activate_pull);
+
+  gstelement_class->change_state =
+      GST_DEBUG_FUNCPTR (gst_pulsesink_change_state);
 
   gstaudiosink_class->create_ringbuffer =
       GST_DEBUG_FUNCPTR (gst_pulsesink_create_ringbuffer);
@@ -1635,8 +1825,6 @@ server_dead:
 static void
 gst_pulsesink_init (GstPulseSink * pulsesink, GstPulseSinkClass * klass)
 {
-  guint res;
-
   pulsesink->server = NULL;
   pulsesink->device = NULL;
   pulsesink->device_description = NULL;
@@ -1655,22 +1843,10 @@ gst_pulsesink_init (GstPulseSink * pulsesink, GstPulseSinkClass * klass)
   GST_DEBUG_OBJECT (pulsesink, "using pulseaudio version %s",
       pulsesink->pa_version);
 
-  pulsesink->mainloop = pa_threaded_mainloop_new ();
-  g_assert (pulsesink->mainloop != NULL);
-  res = pa_threaded_mainloop_start (pulsesink->mainloop);
-  g_assert (res == 0);
-
   /* TRUE for sinks, FALSE for sources */
   pulsesink->probe = gst_pulseprobe_new (G_OBJECT (pulsesink),
       G_OBJECT_GET_CLASS (pulsesink), PROP_DEVICE, pulsesink->device,
       TRUE, FALSE);
-
-  /* override with a custom clock */
-  if (GST_BASE_AUDIO_SINK (pulsesink)->provided_clock)
-    gst_object_unref (GST_BASE_AUDIO_SINK (pulsesink)->provided_clock);
-  GST_BASE_AUDIO_SINK (pulsesink)->provided_clock =
-      gst_audio_clock_new ("GstPulseSinkClock",
-      (GstAudioClockGetTimeFunc) gst_pulsesink_get_time, pulsesink);
 }
 
 static void
@@ -1678,13 +1854,9 @@ gst_pulsesink_finalize (GObject * object)
 {
   GstPulseSink *pulsesink = GST_PULSESINK_CAST (object);
 
-  pa_threaded_mainloop_stop (pulsesink->mainloop);
-
   g_free (pulsesink->server);
   g_free (pulsesink->device);
   g_free (pulsesink->device_description);
-
-  pa_threaded_mainloop_free (pulsesink->mainloop);
 
   if (pulsesink->probe) {
     gst_pulseprobe_free (pulsesink->probe);
@@ -1702,6 +1874,9 @@ gst_pulsesink_set_volume (GstPulseSink * psink, gdouble volume)
   pa_operation *o = NULL;
   GstPulseRingBuffer *pbuf;
   uint32_t idx;
+
+  if (!psink->mainloop)
+    goto no_mainloop;
 
   pa_threaded_mainloop_lock (psink->mainloop);
 
@@ -1731,6 +1906,14 @@ unlock:
   return;
 
   /* ERRORS */
+no_mainloop:
+  {
+    psink->volume = volume;
+    psink->volume_set = TRUE;
+
+    GST_DEBUG_OBJECT (psink, "we have no mainloop");
+    return;
+  }
 no_buffer:
   {
     psink->volume = volume;
@@ -1760,6 +1943,9 @@ gst_pulsesink_set_mute (GstPulseSink * psink, gboolean mute)
   GstPulseRingBuffer *pbuf;
   uint32_t idx;
 
+  if (!psink->mainloop)
+    goto no_mainloop;
+
   pa_threaded_mainloop_lock (psink->mainloop);
 
   GST_DEBUG_OBJECT (psink, "setting mute state to %d", mute);
@@ -1786,6 +1972,14 @@ unlock:
   return;
 
   /* ERRORS */
+no_mainloop:
+  {
+    psink->mute = mute;
+    psink->mute_set = TRUE;
+
+    GST_DEBUG_OBJECT (psink, "we have no mainloop");
+    return;
+  }
 no_buffer:
   {
     psink->mute = mute;
@@ -1844,6 +2038,9 @@ gst_pulsesink_get_volume (GstPulseSink * psink)
   gdouble v = DEFAULT_VOLUME;
   uint32_t idx;
 
+  if (!psink->mainloop)
+    goto no_mainloop;
+
   pa_threaded_mainloop_lock (psink->mainloop);
 
   pbuf = GST_PULSERING_BUFFER_CAST (GST_BASE_AUDIO_SINK (psink)->ringbuffer);
@@ -1863,9 +2060,9 @@ gst_pulsesink_get_volume (GstPulseSink * psink)
       goto unlock;
   }
 
+unlock:
   v = psink->volume;
 
-unlock:
   if (o)
     pa_operation_unref (o);
 
@@ -1879,6 +2076,12 @@ unlock:
   return v;
 
   /* ERRORS */
+no_mainloop:
+  {
+    v = psink->volume;
+    GST_DEBUG_OBJECT (psink, "we have no mainloop");
+    return v;
+  }
 no_buffer:
   {
     GST_DEBUG_OBJECT (psink, "we have no ringbuffer");
@@ -1905,6 +2108,9 @@ gst_pulsesink_get_mute (GstPulseSink * psink)
   pa_operation *o = NULL;
   uint32_t idx;
   gboolean mute = FALSE;
+
+  if (!psink->mainloop)
+    goto no_mainloop;
 
   pa_threaded_mainloop_lock (psink->mainloop);
   mute = psink->mute;
@@ -1935,6 +2141,12 @@ unlock:
   return mute;
 
   /* ERRORS */
+no_mainloop:
+  {
+    mute = psink->mute;
+    GST_DEBUG_OBJECT (psink, "we have no mainloop");
+    return mute;
+  }
 no_buffer:
   {
     GST_DEBUG_OBJECT (psink, "we have no ringbuffer");
@@ -1987,6 +2199,9 @@ gst_pulsesink_device_description (GstPulseSink * psink)
   pa_operation *o = NULL;
   gchar *t;
 
+  if (!psink->mainloop)
+    goto no_mainloop;
+
   pa_threaded_mainloop_lock (psink->mainloop);
   pbuf = GST_PULSERING_BUFFER_CAST (GST_BASE_AUDIO_SINK (psink)->ringbuffer);
   if (pbuf == NULL || pbuf->stream == NULL)
@@ -2013,6 +2228,11 @@ unlock:
   return t;
 
   /* ERRORS */
+no_mainloop:
+  {
+    GST_DEBUG_OBJECT (psink, "we have no mainloop");
+    return NULL;
+  }
 no_buffer:
   {
     GST_DEBUG_OBJECT (psink, "we have no ringbuffer");
@@ -2263,4 +2483,56 @@ gst_pulsesink_event (GstBaseSink * sink, GstEvent * event)
   }
 
   return GST_BASE_SINK_CLASS (parent_class)->event (sink, event);
+}
+
+static GstStateChangeReturn
+gst_pulsesink_change_state (GstElement * element, GstStateChange transition)
+{
+  GstPulseSink *pulsesink = GST_PULSESINK (element);
+  GstStateChangeReturn ret;
+  guint res;
+
+  switch (transition) {
+    case GST_STATE_CHANGE_NULL_TO_READY:
+      g_assert (pulsesink->mainloop == NULL);
+      pulsesink->mainloop = pa_threaded_mainloop_new ();
+      g_assert (pulsesink->mainloop != NULL);
+      res = pa_threaded_mainloop_start (pulsesink->mainloop);
+      g_assert (res == 0);
+
+      /* override with a custom clock */
+      if (GST_BASE_AUDIO_SINK (pulsesink)->provided_clock)
+        gst_object_unref (GST_BASE_AUDIO_SINK (pulsesink)->provided_clock);
+      GST_BASE_AUDIO_SINK (pulsesink)->provided_clock =
+          gst_audio_clock_new ("GstPulseSinkClock",
+          (GstAudioClockGetTimeFunc) gst_pulsesink_get_time, pulsesink);
+      gst_element_post_message (element,
+          gst_message_new_clock_provide (GST_OBJECT_CAST (element),
+              GST_BASE_AUDIO_SINK (pulsesink)->provided_clock, TRUE));
+      break;
+    default:
+      break;
+  }
+
+  ret = GST_ELEMENT_CLASS (parent_class)->change_state (element, transition);
+
+  switch (transition) {
+    case GST_STATE_CHANGE_READY_TO_NULL:
+      gst_element_post_message (element,
+          gst_message_new_clock_provide (GST_OBJECT_CAST (element), NULL,
+              FALSE));
+      if (GST_BASE_AUDIO_SINK (pulsesink)->provided_clock)
+        gst_object_unref (GST_BASE_AUDIO_SINK (pulsesink)->provided_clock);
+      GST_BASE_AUDIO_SINK (pulsesink)->provided_clock = NULL;
+      if (pulsesink->mainloop) {
+        pa_threaded_mainloop_stop (pulsesink->mainloop);
+        pa_threaded_mainloop_free (pulsesink->mainloop);
+        pulsesink->mainloop = NULL;
+      }
+      break;
+    default:
+      break;
+  }
+
+  return ret;
 }

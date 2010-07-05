@@ -62,16 +62,14 @@ enum
   LAST_SIGNAL
 };
 
-#define DEFAULT_AUTOSCAN		FALSE
-#define DEFAULT_BOUNDARY		NULL
-#define DEFAULT_SINGLE_STREAM	FALSE
+#define DEFAULT_AUTOSCAN	FALSE
+#define DEFAULT_BOUNDARY	NULL
 
 enum
 {
   PROP_0,
   PROP_AUTOSCAN,
-  PROP_BOUNDARY,
-  PROP_SINGLE_STREAM
+  PROP_BOUNDARY
 };
 
 static GstStaticPadTemplate multipart_demux_src_template_factory =
@@ -166,11 +164,6 @@ gst_multipart_demux_class_init (GstMultipartDemuxClass * klass)
           "Try to autofind the prefix (deprecated unused, see boundary)",
           DEFAULT_AUTOSCAN, G_PARAM_READWRITE));
 
-  g_object_class_install_property (gobject_class, PROP_SINGLE_STREAM,
-      g_param_spec_boolean ("single-stream", "Single Stream",
-          "Assume that there is only one stream whose content-type will not change and emit NO_MORE_PADS as soon as the first boundary content is parsed, decoded, and pads are linked",
-		  DEFAULT_SINGLE_STREAM, G_PARAM_READWRITE));
-
   /* populate gst names and mime types pairs */
   klass->gstnames = g_hash_table_new (g_str_hash, g_str_equal);
   for (i = 0; gstnames[i].key; i++) {
@@ -200,7 +193,6 @@ gst_multipart_demux_init (GstMultipartDemux * multipart,
   multipart->header_completed = FALSE;
   multipart->scanpos = 0;
   multipart->autoscan = DEFAULT_AUTOSCAN;
-  multipart->singleStream = DEFAULT_SINGLE_STREAM;
 }
 
 static void
@@ -331,10 +323,6 @@ gst_multipart_find_pad_by_mime (GstMultipartDemux * demux, gchar * mime,
       *created = TRUE;
     }
 
-    if (demux->singleStream) {
-        gst_element_no_more_pads(GST_ELEMENT_CAST (demux));
-    }
-    
     return mppad;
   }
 }
@@ -675,9 +663,6 @@ gst_multipart_set_property (GObject * object, guint prop_id,
     case PROP_AUTOSCAN:
       filter->autoscan = g_value_get_boolean (value);
       break;
-    case PROP_SINGLE_STREAM:
-      filter->singleStream = g_value_get_boolean (value);
-      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -699,9 +684,6 @@ gst_multipart_get_property (GObject * object, guint prop_id,
       break;
     case PROP_AUTOSCAN:
       g_value_set_boolean (value, filter->autoscan);
-      break;
-    case PROP_SINGLE_STREAM:
-      g_value_set_boolean (value, filter->singleStream);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

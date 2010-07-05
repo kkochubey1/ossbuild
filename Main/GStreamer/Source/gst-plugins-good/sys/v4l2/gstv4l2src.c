@@ -223,7 +223,7 @@ gst_v4l2src_base_init (gpointer g_class)
 
   gst_element_class_set_details_simple (gstelement_class,
       "Video (video4linux2) Source", "Source/Video",
-      "Reads frames from a video4linux2 (BT8x8) device",
+      "Reads frames from a Video4Linux2 device",
       "Edgard Lima <edgard.lima@indt.org.br>,"
       " Stefan Kost <ensonic@users.sf.net>");
 
@@ -259,11 +259,11 @@ gst_v4l2src_class_init (GstV4l2SrcClass * klass)
       g_param_spec_uint ("queue-size", "Queue size",
           "Number of buffers to be enqueud in the driver in streaming mode",
           GST_V4L2_MIN_BUFFERS, GST_V4L2_MAX_BUFFERS, PROP_DEF_QUEUE_SIZE,
-          G_PARAM_READWRITE));
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   g_object_class_install_property (gobject_class, PROP_ALWAYS_COPY,
       g_param_spec_boolean ("always-copy", "Always Copy",
           "If the buffer will or not be used directly from mmap",
-          PROP_DEF_ALWAYS_COPY, G_PARAM_READWRITE));
+          PROP_DEF_ALWAYS_COPY, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   basesrc_class->get_caps = GST_DEBUG_FUNCPTR (gst_v4l2src_get_caps);
   basesrc_class->set_caps = GST_DEBUG_FUNCPTR (gst_v4l2src_set_caps);
@@ -516,8 +516,8 @@ gst_v4l2src_negotiate (GstBaseSrc * basesrc)
         result = TRUE;
       } else if (gst_caps_is_fixed (caps)) {
         /* yay, fixed caps, use those then */
-        gst_pad_set_caps (GST_BASE_SRC_PAD (basesrc), caps);
-        result = TRUE;
+        if (gst_pad_set_caps (GST_BASE_SRC_PAD (basesrc), caps))
+          result = TRUE;
       }
     }
     gst_caps_unref (caps);
@@ -913,7 +913,6 @@ gst_v4l2src_create (GstPushSrc * src, GstBuffer ** buf)
   if (G_LIKELY (ret == GST_FLOW_OK && *buf)) {
     GstClock *clock;
     GstClockTime timestamp;
-    GstClockTime duration = GST_CLOCK_TIME_NONE;
 
     GST_BUFFER_OFFSET (*buf) = v4l2src->offset++;
     GST_BUFFER_OFFSET_END (*buf) = v4l2src->offset;
@@ -930,30 +929,23 @@ gst_v4l2src_create (GstPushSrc * src, GstBuffer ** buf)
     }
     GST_OBJECT_UNLOCK (v4l2src);
 
-    if (clock) {
+    if (G_LIKELY (clock)) {
       /* the time now is the time of the clock minus the base time */
       timestamp = gst_clock_get_time (clock) - timestamp;
       gst_object_unref (clock);
 
       /* if we have a framerate adjust timestamp for frame latency */
-      if (v4l2src->fps_n > 0 && v4l2src->fps_d > 0) {
-        GstClockTime latency;
-
-        latency = gst_util_uint64_scale_int (GST_SECOND, v4l2src->fps_d,
-            v4l2src->fps_n);
-
-        if (timestamp > latency)
-          timestamp -= latency;
+      if (GST_CLOCK_TIME_IS_VALID (v4l2src->duration)) {
+        if (timestamp > v4l2src->duration)
+          timestamp -= v4l2src->duration;
         else
           timestamp = 0;
-
-        duration = latency;
       }
     }
 
     /* FIXME: use the timestamp from the buffer itself! */
     GST_BUFFER_TIMESTAMP (*buf) = timestamp;
-    GST_BUFFER_DURATION (*buf) = duration;
+    GST_BUFFER_DURATION (*buf) = v4l2src->duration;
   }
   return ret;
 }

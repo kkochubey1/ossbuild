@@ -89,14 +89,11 @@ gst_auto_video_sink_class_init (GstAutoVideoSinkClass * klass)
   GstElementClass *eklass = GST_ELEMENT_CLASS (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->dispose =
-      (GObjectFinalizeFunc) GST_DEBUG_FUNCPTR (gst_auto_video_sink_dispose);
-  eklass->change_state = GST_DEBUG_FUNCPTR (gst_auto_video_sink_change_state);
-  gobject_class->set_property =
-      GST_DEBUG_FUNCPTR (gst_auto_video_sink_set_property);
-  gobject_class->get_property =
-      GST_DEBUG_FUNCPTR (gst_auto_video_sink_get_property);
+  gobject_class->dispose = (GObjectFinalizeFunc) gst_auto_video_sink_dispose;
+  gobject_class->set_property = gst_auto_video_sink_set_property;
+  gobject_class->get_property = gst_auto_video_sink_get_property;
 
+  eklass->change_state = GST_DEBUG_FUNCPTR (gst_auto_video_sink_change_state);
   /**
    * GstAutoVideoSink:filter-caps
    *
@@ -133,6 +130,8 @@ gst_auto_video_sink_clear_kid (GstAutoVideoSink * sink)
     gst_element_set_state (sink->kid, GST_STATE_NULL);
     gst_bin_remove (GST_BIN (sink), sink->kid);
     sink->kid = NULL;
+    /* Don't lose the SINK flag */
+    GST_OBJECT_FLAG_SET (sink, GST_ELEMENT_IS_SINK);
   }
 }
 
@@ -243,7 +242,7 @@ gst_auto_video_sink_find_best (GstAutoVideoSink * sink)
   GSList *errors = NULL;
   GstBus *bus = gst_bus_new ();
   GstPad *el_pad = NULL;
-  GstCaps *el_caps = NULL, *intersect = NULL;
+  GstCaps *el_caps = NULL;
   gboolean no_match = TRUE;
 
   list = gst_registry_feature_filter (gst_registry_get_default (),
@@ -270,10 +269,8 @@ gst_auto_video_sink_find_best (GstAutoVideoSink * sink)
         GST_DEBUG_OBJECT (sink,
             "Checking caps: %" GST_PTR_FORMAT " vs. %" GST_PTR_FORMAT,
             sink->filter_caps, el_caps);
-        intersect = gst_caps_intersect (sink->filter_caps, el_caps);
-        no_match = gst_caps_is_empty (intersect);
+        no_match = !gst_caps_can_intersect (sink->filter_caps, el_caps);
         gst_caps_unref (el_caps);
-        gst_caps_unref (intersect);
 
         if (no_match) {
           GST_DEBUG_OBJECT (sink, "Incompatible caps");

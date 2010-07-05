@@ -1,6 +1,7 @@
 /* GStreamer
- * Copyright (C) <1999> Erik Walthinsen <omega@cse.ogi.edu>
- * Copyright (C) <2010> Sebastian Dröge <sebastian.droege@collabora.co.uk>
+ * Copyright (C) 1999 Erik Walthinsen <omega@cse.ogi.edu>
+ * Copyright (C) 2006 Tim-Philipp Müller <tim centricular net>
+ * Copyright (C) 2010 Sebastian Dröge <sebastian.droege@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -58,9 +59,9 @@
 #endif
 
 #include "gstvideobox.h"
+#include "gstvideoboxorc.h"
 
 #include <math.h>
-#include <liboil/liboil.h>
 #include <string.h>
 
 #include <gst/controller/gstcontroller.h>
@@ -152,7 +153,7 @@ fill_ayuv (GstVideoBoxFill fill_type, guint b_alpha, GstVideoFormat format,
         (yuv_hdtv_colors_Y[fill_type] << 16) |
         (yuv_hdtv_colors_U[fill_type] << 8) | yuv_hdtv_colors_V[fill_type]);
 
-  oil_splat_u32_ns ((guint32 *) dest, &empty_pixel, width * height);
+  orc_splat_u32 ((guint32 *) dest, empty_pixel, width * height);
 }
 
 static void
@@ -181,6 +182,7 @@ copy_ayuv_ayuv (guint i_alpha, GstVideoFormat dest_format, guint8 * dest,
 
     for (i = 0; i < h; i++) {
       for (j = 0; j < w; j += 4) {
+        /* ORC FIXME */
         dest[j] = (src[j] * i_alpha) >> 8;
         y = src[j + 1];
         u = src[j + 2];
@@ -195,6 +197,7 @@ copy_ayuv_ayuv (guint i_alpha, GstVideoFormat dest_format, guint8 * dest,
   } else {
     for (i = 0; i < h; i++) {
       for (j = 0; j < w; j += 4) {
+        /* ORC FIXME */
         dest[j] = (src[j] * i_alpha) >> 8;
         dest[j + 1] = src[j + 1];
         dest[j + 2] = src[j + 2];
@@ -626,8 +629,9 @@ copy_ayuv_i420 (guint i_alpha, GstVideoFormat dest_format, guint8 * dest,
 }
 
 static void
-fill_i420 (GstVideoBoxFill fill_type, guint b_alpha, GstVideoFormat format,
-    guint8 * dest, gboolean sdtv, gint width, gint height)
+fill_planar_yuv (GstVideoBoxFill fill_type, guint b_alpha,
+    GstVideoFormat format, guint8 * dest, gboolean sdtv, gint width,
+    gint height)
 {
   guint8 empty_pixel[3];
   guint8 *destY, *destU, *destV;
@@ -644,25 +648,535 @@ fill_i420 (GstVideoBoxFill fill_type, guint b_alpha, GstVideoFormat format,
     empty_pixel[2] = yuv_hdtv_colors_V[fill_type];
   }
 
-  strideY = gst_video_format_get_row_stride (GST_VIDEO_FORMAT_I420, 0, width);
-  strideUV = gst_video_format_get_row_stride (GST_VIDEO_FORMAT_I420, 1, width);
+  strideY = gst_video_format_get_row_stride (format, 0, width);
+  strideUV = gst_video_format_get_row_stride (format, 1, width);
 
   destY =
-      dest + gst_video_format_get_component_offset (GST_VIDEO_FORMAT_I420, 0,
-      width, height);
+      dest + gst_video_format_get_component_offset (format, 0, width, height);
   destU =
       dest + gst_video_format_get_component_offset (format, 1, width, height);
   destV =
       dest + gst_video_format_get_component_offset (format, 2, width, height);
 
-  heightY =
-      gst_video_format_get_component_height (GST_VIDEO_FORMAT_I420, 0, height);
-  heightUV =
-      gst_video_format_get_component_height (GST_VIDEO_FORMAT_I420, 1, height);
+  heightY = gst_video_format_get_component_height (format, 0, height);
+  heightUV = gst_video_format_get_component_height (format, 1, height);
 
-  oil_splat_u8_ns (destY, &empty_pixel[0], strideY * heightY);
-  oil_splat_u8_ns (destU, &empty_pixel[1], strideUV * heightUV);
-  oil_splat_u8_ns (destV, &empty_pixel[2], strideUV * heightUV);
+  memset (destY, empty_pixel[0], strideY * heightY);
+  memset (destU, empty_pixel[1], strideUV * heightUV);
+  memset (destV, empty_pixel[2], strideUV * heightUV);
+}
+
+static void
+copy_y444_y444 (guint i_alpha, GstVideoFormat dest_format, guint8 * dest,
+    gboolean dest_sdtv, gint dest_width, gint dest_height, gint dest_x,
+    gint dest_y, GstVideoFormat src_format, const guint8 * src,
+    gboolean src_sdtv, gint src_width, gint src_height, gint src_x, gint src_y,
+    gint w, gint h)
+{
+  gint i, j;
+  guint8 *destY, *destU, *destV;
+  const guint8 *srcY, *srcU, *srcV;
+  gint dest_stride;
+  gint src_stride;
+
+  dest_stride = gst_video_format_get_row_stride (dest_format, 0, dest_width);
+  src_stride = gst_video_format_get_row_stride (src_format, 0, src_width);
+
+  destY =
+      dest + gst_video_format_get_component_offset (dest_format, 0,
+      dest_width, dest_height);
+  destU =
+      dest + gst_video_format_get_component_offset (dest_format, 1,
+      dest_width, dest_height);
+  destV =
+      dest + gst_video_format_get_component_offset (dest_format, 2,
+      dest_width, dest_height);
+
+  srcY =
+      src + gst_video_format_get_component_offset (src_format, 0,
+      src_width, src_height);
+  srcU =
+      src + gst_video_format_get_component_offset (src_format, 1,
+      src_width, src_height);
+  srcV =
+      src + gst_video_format_get_component_offset (src_format, 2,
+      src_width, src_height);
+
+  destY = destY + dest_y * dest_stride + dest_x;
+  destU = destU + dest_y * dest_stride + dest_x;
+  destV = destV + dest_y * dest_stride + dest_x;
+
+  srcY = srcY + src_y * src_stride + src_x;
+  srcU = srcU + src_y * src_stride + src_x;
+  srcV = srcV + src_y * src_stride + src_x;
+
+  if (src_sdtv != dest_sdtv) {
+    gint matrix[12];
+    gint y, u, v;
+
+    memcpy (matrix,
+        dest_sdtv ? cog_ycbcr_hdtv_to_ycbcr_sdtv_matrix_8bit :
+        cog_ycbcr_sdtv_to_ycbcr_hdtv_matrix_8bit, 12 * sizeof (gint));
+
+    for (i = 0; i < h; i++) {
+      for (j = 0; j < w; j++) {
+        y = APPLY_MATRIX (matrix, 0, srcY[j], srcU[j], srcV[j]);
+        u = APPLY_MATRIX (matrix, 1, srcY[j], srcU[j], srcV[j]);
+        v = APPLY_MATRIX (matrix, 2, srcY[j], srcU[j], srcV[j]);
+
+        destY[j] = y;
+        destU[j] = u;
+        destV[j] = v;
+      }
+      destY += dest_stride;
+      destU += dest_stride;
+      destV += dest_stride;
+
+      srcY += src_stride;
+      srcU += src_stride;
+      srcV += src_stride;
+    }
+  } else {
+    for (i = 0; i < h; i++) {
+      memcpy (destY, srcY, w);
+      memcpy (destU, srcU, w);
+      memcpy (destV, srcV, w);
+
+      destY += dest_stride;
+      destU += dest_stride;
+      destV += dest_stride;
+
+      srcY += src_stride;
+      srcU += src_stride;
+      srcV += src_stride;
+    }
+  }
+}
+
+static void
+copy_y42b_y42b (guint i_alpha, GstVideoFormat dest_format, guint8 * dest,
+    gboolean dest_sdtv, gint dest_width, gint dest_height, gint dest_x,
+    gint dest_y, GstVideoFormat src_format, const guint8 * src,
+    gboolean src_sdtv, gint src_width, gint src_height, gint src_x, gint src_y,
+    gint w, gint h)
+{
+  gint i, j;
+  guint8 *destY, *destU, *destV;
+  const guint8 *srcY, *srcU, *srcV;
+  gint dest_strideY, dest_strideUV;
+  gint src_strideY, src_strideUV;
+  gint src_y_idx, src_uv_idx;
+  gint dest_y_idx, dest_uv_idx;
+  gint matrix[12];
+  gint y1, y2;
+  gint u1, u2;
+  gint v1, v2;
+
+  dest_strideY = gst_video_format_get_row_stride (dest_format, 0, dest_width);
+  dest_strideUV = gst_video_format_get_row_stride (dest_format, 1, dest_width);
+  src_strideY = gst_video_format_get_row_stride (src_format, 0, src_width);
+  src_strideUV = gst_video_format_get_row_stride (src_format, 1, src_width);
+
+  destY =
+      dest + gst_video_format_get_component_offset (dest_format, 0,
+      dest_width, dest_height);
+  destU =
+      dest + gst_video_format_get_component_offset (dest_format, 1,
+      dest_width, dest_height);
+  destV =
+      dest + gst_video_format_get_component_offset (dest_format, 2,
+      dest_width, dest_height);
+
+  srcY =
+      src + gst_video_format_get_component_offset (src_format, 0,
+      src_width, src_height);
+  srcU =
+      src + gst_video_format_get_component_offset (src_format, 1,
+      src_width, src_height);
+  srcV =
+      src + gst_video_format_get_component_offset (src_format, 2,
+      src_width, src_height);
+
+
+  destY = destY + dest_y * dest_strideY + dest_x;
+  destU = destU + dest_y * dest_strideUV + dest_x / 2;
+  destV = destV + dest_y * dest_strideUV + dest_x / 2;
+
+  srcY = srcY + src_y * src_strideY + src_x;
+  srcU = srcU + src_y * src_strideUV + src_x / 2;
+  srcV = srcV + src_y * src_strideUV + src_x / 2;
+
+  h = dest_y + h;
+  w = dest_x + w;
+
+  if (src_sdtv != dest_sdtv)
+    memcpy (matrix,
+        dest_sdtv ? cog_ycbcr_hdtv_to_ycbcr_sdtv_matrix_8bit :
+        cog_ycbcr_sdtv_to_ycbcr_hdtv_matrix_8bit, 12 * sizeof (gint));
+  else
+    memcpy (matrix, cog_identity_matrix_8bit, 12 * sizeof (gint));
+
+  /* 1. Copy all macro pixel scanlines, the destination scanline
+   *    now starts at macro pixel boundary. */
+  for (i = dest_y; i < h; i++) {
+    /* 1.1. Handle the first destination pixel if it doesn't
+     *      start at the macro pixel boundary, i.e. blend with
+     *      the background! */
+    if (dest_x % 2 == 1) {
+      y1 = srcY[0];
+      u1 = srcU[0];
+      v1 = srcV[0];
+
+      destY[0] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destU[0] = CLAMP (
+          (destU[0] + APPLY_MATRIX (matrix, 1, y1, u1, v1)) / 2, 0, 255);
+      destV[0] = CLAMP (
+          (destV[0] + APPLY_MATRIX (matrix, 2, y1, u1, v1)) / 2, 0, 255);
+      j = dest_x + 1;
+      src_y_idx = dest_y_idx = dest_uv_idx = 1;
+      src_uv_idx = (src_x % 2) + 1;
+    } else {
+      j = dest_x;
+      src_y_idx = dest_y_idx = dest_uv_idx = 0;
+      src_uv_idx = (src_x % 2);
+    }
+
+    /* 1.2. Copy all macro pixels from the source to the destination.
+     *      All pixels now start at macro pixel boundary, i.e. no
+     *      blending with the background is necessary. */
+    for (; j < w - 1; j += 2) {
+      y1 = srcY[src_y_idx];
+      y2 = srcY[src_y_idx + 1];
+
+      u1 = srcU[src_uv_idx / 2];
+      v1 = srcV[src_uv_idx / 2];
+      src_uv_idx++;
+      u2 = srcU[src_uv_idx / 2];
+      v2 = srcV[src_uv_idx / 2];
+      src_uv_idx++;
+
+      destY[dest_y_idx] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destY[dest_y_idx + 1] =
+          CLAMP (APPLY_MATRIX (matrix, 0, y2, u2, v2), 0, 255);
+
+      destU[dest_uv_idx] = CLAMP (
+          (APPLY_MATRIX (matrix, 1, y1, u1, v1) + APPLY_MATRIX (matrix, 1, y2,
+                  u2, v2)) / 2, 0, 255);
+      destV[dest_uv_idx] = CLAMP (
+          (APPLY_MATRIX (matrix, 2, y1, u1, v1) + APPLY_MATRIX (matrix, 2, y2,
+                  u2, v2)) / 2, 0, 255);
+
+      dest_y_idx += 2;
+      src_y_idx += 2;
+      dest_uv_idx++;
+    }
+
+    /* 1.3. Now copy the last pixel if one exists and blend it
+     *      with the background because we only fill part of
+     *      the macro pixel. In case this is the last pixel of
+     *      the destination we will a larger part. */
+    if (j == w - 1 && j == dest_width - 1) {
+      y1 = srcY[src_y_idx];
+      u1 = srcU[src_uv_idx / 2];
+      v1 = srcV[src_uv_idx / 2];
+
+      destY[dest_y_idx] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destU[dest_uv_idx] = CLAMP (APPLY_MATRIX (matrix, 1, y1, u1, v1), 0, 255);
+      destV[dest_uv_idx] = CLAMP (APPLY_MATRIX (matrix, 1, y1, u1, v1), 0, 255);
+    } else if (j == w - 1) {
+      y1 = srcY[src_y_idx];
+      u1 = srcU[src_uv_idx / 2];
+      v1 = srcV[src_uv_idx / 2];
+
+      destY[dest_y_idx] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destU[dest_uv_idx] = CLAMP (
+          (destU[dest_uv_idx] + APPLY_MATRIX (matrix, 1, y1, u1,
+                  v1)) / 2, 0, 255);
+      destV[dest_uv_idx] = CLAMP (
+          (destV[dest_uv_idx] + APPLY_MATRIX (matrix, 1, y1, u1,
+                  v1)) / 2, 0, 255);
+    }
+
+    destY += dest_strideY;
+    destU += dest_strideUV;
+    destV += dest_strideUV;
+    srcY += src_strideY;
+
+    srcU += src_strideUV;
+    srcV += src_strideUV;
+  }
+}
+
+static void
+copy_y41b_y41b (guint i_alpha, GstVideoFormat dest_format, guint8 * dest,
+    gboolean dest_sdtv, gint dest_width, gint dest_height, gint dest_x,
+    gint dest_y, GstVideoFormat src_format, const guint8 * src,
+    gboolean src_sdtv, gint src_width, gint src_height, gint src_x, gint src_y,
+    gint w, gint h)
+{
+  gint i, j;
+  guint8 *destY, *destU, *destV;
+  const guint8 *srcY, *srcU, *srcV;
+  gint dest_strideY, dest_strideUV;
+  gint src_strideY, src_strideUV;
+  gint src_y_idx, src_uv_idx;
+  gint dest_y_idx, dest_uv_idx;
+  gint matrix[12];
+  gint y1, y2, y3, y4;
+  gint u1, u2, u3, u4;
+  gint v1, v2, v3, v4;
+
+  dest_strideY = gst_video_format_get_row_stride (dest_format, 0, dest_width);
+  dest_strideUV = gst_video_format_get_row_stride (dest_format, 1, dest_width);
+  src_strideY = gst_video_format_get_row_stride (src_format, 0, src_width);
+  src_strideUV = gst_video_format_get_row_stride (src_format, 1, src_width);
+
+  destY =
+      dest + gst_video_format_get_component_offset (dest_format, 0,
+      dest_width, dest_height);
+  destU =
+      dest + gst_video_format_get_component_offset (dest_format, 1,
+      dest_width, dest_height);
+  destV =
+      dest + gst_video_format_get_component_offset (dest_format, 2,
+      dest_width, dest_height);
+
+  srcY =
+      src + gst_video_format_get_component_offset (src_format, 0,
+      src_width, src_height);
+  srcU =
+      src + gst_video_format_get_component_offset (src_format, 1,
+      src_width, src_height);
+  srcV =
+      src + gst_video_format_get_component_offset (src_format, 2,
+      src_width, src_height);
+
+
+  destY = destY + dest_y * dest_strideY + dest_x;
+  destU = destU + dest_y * dest_strideUV + dest_x / 4;
+  destV = destV + dest_y * dest_strideUV + dest_x / 4;
+
+  srcY = srcY + src_y * src_strideY + src_x;
+  srcU = srcU + src_y * src_strideUV + src_x / 4;
+  srcV = srcV + src_y * src_strideUV + src_x / 4;
+
+  h = dest_y + h;
+  w = dest_x + w;
+
+  if (src_sdtv != dest_sdtv)
+    memcpy (matrix,
+        dest_sdtv ? cog_ycbcr_hdtv_to_ycbcr_sdtv_matrix_8bit :
+        cog_ycbcr_sdtv_to_ycbcr_hdtv_matrix_8bit, 12 * sizeof (gint));
+  else
+    memcpy (matrix, cog_identity_matrix_8bit, 12 * sizeof (gint));
+
+  /* 1. Copy all macro pixel scanlines, the destination scanline
+   *    now starts at macro pixel boundary. */
+  for (i = dest_y; i < h; i++) {
+    /* 1.1. Handle the first destination pixel if it doesn't
+     *      start at the macro pixel boundary, i.e. blend with
+     *      the background! */
+    if (dest_x % 4 == 1) {
+      y1 = srcY[0];
+      y2 = srcY[1];
+      y3 = srcY[2];
+      u1 = srcU[0];
+      v1 = srcV[0];
+
+      destY[0] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destY[1] = CLAMP (APPLY_MATRIX (matrix, 0, y2, u1, v1), 0, 255);
+      destY[2] = CLAMP (APPLY_MATRIX (matrix, 0, y3, u1, v1), 0, 255);
+
+      destU[0] = CLAMP (
+          (destU[0] + APPLY_MATRIX (matrix, 1, y1, u1,
+                  v1) + APPLY_MATRIX (matrix, 1, y2, u1,
+                  v1) + APPLY_MATRIX (matrix, 1, y3, u1, v1)) / 4, 0, 255);
+      destV[0] =
+          CLAMP ((destV[0] + APPLY_MATRIX (matrix, 2, y1, u1,
+                  v1) + APPLY_MATRIX (matrix, 2, y2, u1,
+                  v1) + APPLY_MATRIX (matrix, 2, y3, u1, v1)) / 4, 0, 255);
+
+      j = dest_x + 3;
+      src_y_idx = dest_y_idx = 3;
+      dest_uv_idx = 1;
+      src_uv_idx = (src_x % 4) + 3;
+    } else if (dest_x % 4 == 2) {
+      y1 = srcY[0];
+      y2 = srcY[1];
+      u1 = srcU[0];
+      v1 = srcV[0];
+
+      destY[0] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destY[1] = CLAMP (APPLY_MATRIX (matrix, 0, y2, u1, v1), 0, 255);
+
+      destU[0] = CLAMP (
+          (2 * destU[0] + APPLY_MATRIX (matrix, 1, y1, u1,
+                  v1) + APPLY_MATRIX (matrix, 1, y2, u1, v1)) / 4, 0, 255);
+      destV[0] =
+          CLAMP ((2 * destV[0] + APPLY_MATRIX (matrix, 2, y1, u1,
+                  v1) + APPLY_MATRIX (matrix, 2, y2, u1, v1)) / 4, 0, 255);
+
+      j = dest_x + 2;
+      src_y_idx = dest_y_idx = 2;
+      dest_uv_idx = 1;
+      src_uv_idx = (src_x % 4) + 2;
+    } else if (dest_x % 4 == 3) {
+      y1 = srcY[0];
+      u1 = srcU[0];
+      v1 = srcV[0];
+
+      destY[0] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+
+      destU[0] = CLAMP (
+          (3 * destU[0] + APPLY_MATRIX (matrix, 1, y1, u1, v1)) / 4, 0, 255);
+      destV[0] = CLAMP (
+          (3 * destV[0] + APPLY_MATRIX (matrix, 2, y1, u1, v1)) / 4, 0, 255);
+
+      j = dest_x + 1;
+      src_y_idx = dest_y_idx = 1;
+      dest_uv_idx = 1;
+      src_uv_idx = (src_x % 4) + 1;
+    } else {
+      j = dest_x;
+      src_y_idx = dest_y_idx = dest_uv_idx = 0;
+      src_uv_idx = (src_x % 4);
+    }
+
+    /* 1.2. Copy all macro pixels from the source to the destination.
+     *      All pixels now start at macro pixel boundary, i.e. no
+     *      blending with the background is necessary. */
+    for (; j < w - 3; j += 4) {
+      y1 = srcY[src_y_idx];
+      y2 = srcY[src_y_idx + 1];
+      y3 = srcY[src_y_idx + 2];
+      y4 = srcY[src_y_idx + 3];
+
+      u1 = srcU[src_uv_idx / 4];
+      v1 = srcV[src_uv_idx / 4];
+      src_uv_idx++;
+      u2 = srcU[src_uv_idx / 4];
+      v2 = srcV[src_uv_idx / 4];
+      src_uv_idx++;
+      u3 = srcU[src_uv_idx / 4];
+      v3 = srcV[src_uv_idx / 4];
+      src_uv_idx++;
+      u4 = srcU[src_uv_idx / 4];
+      v4 = srcV[src_uv_idx / 4];
+      src_uv_idx++;
+
+      destY[dest_y_idx] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destY[dest_y_idx + 1] =
+          CLAMP (APPLY_MATRIX (matrix, 0, y2, u2, v2), 0, 255);
+      destY[dest_y_idx + 2] =
+          CLAMP (APPLY_MATRIX (matrix, 0, y3, u3, v3), 0, 255);
+      destY[dest_y_idx + 3] =
+          CLAMP (APPLY_MATRIX (matrix, 0, y4, u4, v4), 0, 255);
+
+      destU[dest_uv_idx] = CLAMP (
+          (APPLY_MATRIX (matrix, 1, y1, u1, v1) + APPLY_MATRIX (matrix, 1, y2,
+                  u2, v2) + APPLY_MATRIX (matrix, 1, y3, u3,
+                  v3) + APPLY_MATRIX (matrix, 1, y4, u4, v4)) / 4, 0, 255);
+      destV[dest_uv_idx] =
+          CLAMP ((APPLY_MATRIX (matrix, 2, y1, u1, v1) + APPLY_MATRIX (matrix,
+                  2, y2, u2, v2) + APPLY_MATRIX (matrix, 2, y3, u3,
+                  v3) + APPLY_MATRIX (matrix, 2, y4, u4, v4)) / 4, 0, 255);
+
+      dest_y_idx += 4;
+      src_y_idx += 4;
+      dest_uv_idx++;
+    }
+
+    /* 1.3. Now copy the last pixel if one exists and blend it
+     *      with the background because we only fill part of
+     *      the macro pixel. In case this is the last pixel of
+     *      the destination we will a larger part. */
+    if (j == w - 1 && j == dest_width - 1) {
+      y1 = srcY[src_y_idx];
+      u1 = srcU[src_uv_idx / 4];
+      v1 = srcV[src_uv_idx / 4];
+
+      destY[dest_y_idx] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destU[dest_uv_idx] = CLAMP (APPLY_MATRIX (matrix, 1, y1, u1, v1), 0, 255);
+      destV[dest_uv_idx] = CLAMP (APPLY_MATRIX (matrix, 1, y1, u1, v1), 0, 255);
+    } else if (j == w - 1) {
+      y1 = srcY[src_y_idx];
+      u1 = srcU[src_uv_idx / 4];
+      v1 = srcV[src_uv_idx / 4];
+
+      destY[dest_y_idx] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destU[dest_uv_idx] = CLAMP (
+          (destU[dest_uv_idx] + 3 * APPLY_MATRIX (matrix, 1, y1, u1,
+                  v1)) / 4, 0, 255);
+      destV[dest_uv_idx] = CLAMP (
+          (destV[dest_uv_idx] + 3 * APPLY_MATRIX (matrix, 1, y1, u1,
+                  v1)) / 4, 0, 255);
+    } else if (j == w - 2 && j == dest_width - 2) {
+      y1 = srcY[src_y_idx];
+      y2 = srcY[src_y_idx + 1];
+      u1 = srcU[src_uv_idx / 4];
+      v1 = srcV[src_uv_idx / 4];
+
+      destY[dest_y_idx] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destY[dest_y_idx + 1] =
+          CLAMP (APPLY_MATRIX (matrix, 0, y2, u1, v1), 0, 255);
+      destU[dest_uv_idx] = CLAMP (APPLY_MATRIX (matrix, 1, y1, u1, v1), 0, 255);
+      destV[dest_uv_idx] = CLAMP (APPLY_MATRIX (matrix, 1, y1, u1, v1), 0, 255);
+    } else if (j == w - 2) {
+      y1 = srcY[src_y_idx];
+      y2 = srcY[src_y_idx + 1];
+      u1 = srcU[src_uv_idx / 4];
+      v1 = srcV[src_uv_idx / 4];
+
+      destY[dest_y_idx] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destY[dest_y_idx + 1] =
+          CLAMP (APPLY_MATRIX (matrix, 0, y2, u1, v1), 0, 255);
+      destU[dest_uv_idx] =
+          CLAMP ((destU[dest_uv_idx] + APPLY_MATRIX (matrix, 1, y1, u1,
+                  v1)) / 2, 0, 255);
+      destV[dest_uv_idx] =
+          CLAMP ((destV[dest_uv_idx] + APPLY_MATRIX (matrix, 1, y1, u1,
+                  v1)) / 2, 0, 255);
+    } else if (j == w - 3 && j == dest_width - 3) {
+      y1 = srcY[src_y_idx];
+      y2 = srcY[src_y_idx + 1];
+      y3 = srcY[src_y_idx + 2];
+      u1 = srcU[src_uv_idx / 4];
+      v1 = srcV[src_uv_idx / 4];
+
+      destY[dest_y_idx] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destY[dest_y_idx + 1] =
+          CLAMP (APPLY_MATRIX (matrix, 0, y2, u1, v1), 0, 255);
+      destY[dest_y_idx + 2] =
+          CLAMP (APPLY_MATRIX (matrix, 0, y3, u1, v1), 0, 255);
+      destU[dest_uv_idx] = CLAMP (APPLY_MATRIX (matrix, 1, y1, u1, v1), 0, 255);
+      destV[dest_uv_idx] = CLAMP (APPLY_MATRIX (matrix, 1, y1, u1, v1), 0, 255);
+    } else if (j == w - 3) {
+      y1 = srcY[src_y_idx];
+      y2 = srcY[src_y_idx + 1];
+      y3 = srcY[src_y_idx + 2];
+      u1 = srcU[src_uv_idx / 4];
+      v1 = srcV[src_uv_idx / 4];
+
+      destY[dest_y_idx] = CLAMP (APPLY_MATRIX (matrix, 0, y1, u1, v1), 0, 255);
+      destY[dest_y_idx + 1] =
+          CLAMP (APPLY_MATRIX (matrix, 0, y2, u1, v1), 0, 255);
+      destY[dest_y_idx + 2] =
+          CLAMP (APPLY_MATRIX (matrix, 0, y3, u1, v1), 0, 255);
+      destU[dest_uv_idx] =
+          CLAMP ((3 * destU[dest_uv_idx] + APPLY_MATRIX (matrix, 1, y1, u1,
+                  v1)) / 4, 0, 255);
+      destV[dest_uv_idx] =
+          CLAMP ((3 * destV[dest_uv_idx] + APPLY_MATRIX (matrix, 1, y1, u1,
+                  v1)) / 4, 0, 255);
+    }
+
+    destY += dest_strideY;
+    destU += dest_strideUV;
+    destV += dest_strideUV;
+    srcY += src_strideY;
+    srcU += src_strideUV;
+    srcV += src_strideUV;
+  }
 }
 
 static void
@@ -1265,7 +1779,7 @@ fill_rgb32 (GstVideoBoxFill fill_type, guint b_alpha, GstVideoFormat format,
       (rgb_colors_G[fill_type] << (p[2] * 8)) |
       (rgb_colors_B[fill_type] << (p[3] * 8)));
 
-  oil_splat_u32_ns ((guint32 *) dest, &empty_pixel, width * height);
+  orc_splat_u32 ((guint32 *) dest, empty_pixel, width * height);
 }
 
 static void
@@ -1638,7 +2152,7 @@ fill_gray (GstVideoBoxFill fill_type, guint b_alpha, GstVideoFormat format,
 
     dest_stride = GST_ROUND_UP_4 (width);
     for (i = 0; i < height; i++) {
-      oil_splat_u8_ns (dest, &val, width);
+      memset (dest, val, width);
       dest += dest_stride;
     }
   } else {
@@ -1683,9 +2197,147 @@ copy_packed_simple (guint i_alpha, GstVideoFormat dest_format, guint8 * dest,
   src = src + src_y * src_stride + src_x * pixel_stride;
 
   for (i = 0; i < h; i++) {
-    oil_copy_u8 (dest, src, row_size);
+    memcpy (dest, src, row_size);
     dest += dest_stride;
     src += src_stride;
+  }
+}
+
+static void
+fill_yuy2 (GstVideoBoxFill fill_type, guint b_alpha, GstVideoFormat format,
+    guint8 * dest, gboolean sdtv, gint width, gint height)
+{
+  guint8 y, u, v;
+  gint i, j;
+  gint stride = gst_video_format_get_row_stride (format, 0, width);
+
+  y = (sdtv) ? yuv_sdtv_colors_Y[fill_type] : yuv_hdtv_colors_Y[fill_type];
+  u = (sdtv) ? yuv_sdtv_colors_U[fill_type] : yuv_hdtv_colors_U[fill_type];
+  v = (sdtv) ? yuv_sdtv_colors_V[fill_type] : yuv_hdtv_colors_V[fill_type];
+
+  width = width + (width % 2);
+
+  if (format == GST_VIDEO_FORMAT_YUY2) {
+    for (i = 0; i < height; i++) {
+      for (j = 0; j < width; j += 2) {
+        dest[j * 2 + 0] = y;
+        dest[j * 2 + 1] = u;
+        dest[j * 2 + 2] = y;
+        dest[j * 2 + 3] = v;
+      }
+
+      dest += stride;
+    }
+  } else if (format == GST_VIDEO_FORMAT_YVYU) {
+    for (i = 0; i < height; i++) {
+      for (j = 0; j < width; j += 2) {
+        dest[j * 2 + 0] = y;
+        dest[j * 2 + 1] = v;
+        dest[j * 2 + 2] = y;
+        dest[j * 2 + 3] = u;
+      }
+
+      dest += stride;
+    }
+  } else {
+    for (i = 0; i < height; i++) {
+      for (j = 0; j < width; j += 2) {
+        dest[j * 2 + 0] = u;
+        dest[j * 2 + 1] = y;
+        dest[j * 2 + 2] = v;
+        dest[j * 2 + 3] = y;
+      }
+
+      dest += stride;
+    }
+  }
+}
+
+static void
+copy_yuy2_yuy2 (guint i_alpha, GstVideoFormat dest_format, guint8 * dest,
+    gboolean dest_sdtv, gint dest_width, gint dest_height, gint dest_x,
+    gint dest_y, GstVideoFormat src_format, const guint8 * src,
+    gboolean src_sdtv, gint src_width, gint src_height, gint src_x, gint src_y,
+    gint w, gint h)
+{
+  gint i, j;
+  gint src_stride, dest_stride;
+
+  src_stride = gst_video_format_get_row_stride (src_format, 0, src_width);
+  dest_stride = gst_video_format_get_row_stride (dest_format, 0, dest_width);
+
+  dest_x = (dest_x & ~1);
+  src_x = (src_x & ~1);
+
+  w = w + (w % 2);
+
+  dest = dest + dest_y * dest_stride + dest_x * 2;
+  src = src + src_y * src_stride + src_x * 2;
+
+  if (src_sdtv != dest_sdtv) {
+    gint y1, u1, v1;
+    gint y2, u2, v2;
+    gint matrix[12];
+
+    memcpy (matrix,
+        dest_sdtv ? cog_ycbcr_hdtv_to_ycbcr_sdtv_matrix_8bit :
+        cog_ycbcr_sdtv_to_ycbcr_hdtv_matrix_8bit, 12 * sizeof (gint));
+
+    if (src_format == GST_VIDEO_FORMAT_YUY2) {
+      for (i = 0; i < h; i++) {
+        for (j = 0; j < w; j += 2) {
+          y1 = src[j * 2 + 0];
+          y2 = src[j * 2 + 2];
+          u1 = u2 = src[j * 2 + 1];
+          v1 = v2 = src[j * 2 + 3];
+
+          dest[j * 2 + 0] = APPLY_MATRIX (matrix, 0, y1, u1, v1);
+          dest[j * 2 + 1] = APPLY_MATRIX (matrix, 1, y1, u1, v1);
+          dest[j * 2 + 2] = APPLY_MATRIX (matrix, 0, y1, u2, v2);
+          dest[j * 2 + 3] = APPLY_MATRIX (matrix, 2, y2, u2, v2);
+        }
+        dest += dest_stride;
+        src += src_stride;
+      }
+    } else if (src_format == GST_VIDEO_FORMAT_YVYU) {
+      for (i = 0; i < h; i++) {
+        for (j = 0; j < w; j += 2) {
+          y1 = src[j * 2 + 0];
+          y2 = src[j * 2 + 2];
+          v1 = v2 = src[j * 2 + 1];
+          u1 = u2 = src[j * 2 + 3];
+
+          dest[j * 2 + 0] = APPLY_MATRIX (matrix, 0, y1, u1, v1);
+          dest[j * 2 + 1] = APPLY_MATRIX (matrix, 2, y1, u1, v1);
+          dest[j * 2 + 2] = APPLY_MATRIX (matrix, 0, y1, u2, v2);
+          dest[j * 2 + 3] = APPLY_MATRIX (matrix, 1, y2, u2, v2);
+        }
+        dest += dest_stride;
+        src += src_stride;
+      }
+    } else {
+      for (i = 0; i < h; i++) {
+        for (j = 0; j < w; j += 2) {
+          u1 = u2 = src[j * 2 + 0];
+          v1 = v2 = src[j * 2 + 2];
+          y1 = src[j * 2 + 1];
+          y2 = src[j * 2 + 3];
+
+          dest[j * 2 + 1] = APPLY_MATRIX (matrix, 0, y1, u1, v1);
+          dest[j * 2 + 0] = APPLY_MATRIX (matrix, 1, y1, u1, v1);
+          dest[j * 2 + 3] = APPLY_MATRIX (matrix, 0, y1, u2, v2);
+          dest[j * 2 + 2] = APPLY_MATRIX (matrix, 2, y2, u2, v2);
+        }
+        dest += dest_stride;
+        src += src_stride;
+      }
+    }
+  } else {
+    for (i = 0; i < h; i++) {
+      memcpy (dest, src, w * 2);
+      dest += dest_stride;
+      src += src_stride;
+    }
   }
 }
 
@@ -1716,13 +2368,19 @@ static GstStaticPadTemplate gst_video_box_src_template =
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV ("AYUV") ";"
-        GST_VIDEO_CAPS_YUV ("I420") ";"
-        GST_VIDEO_CAPS_YUV ("YV12") ";"
-        GST_VIDEO_CAPS_xRGB ";" GST_VIDEO_CAPS_BGRx ";"
-        GST_VIDEO_CAPS_xBGR ";" GST_VIDEO_CAPS_RGBx ";"
         GST_VIDEO_CAPS_ARGB ";" GST_VIDEO_CAPS_BGRA ";"
         GST_VIDEO_CAPS_ABGR ";" GST_VIDEO_CAPS_RGBA ";"
+        GST_VIDEO_CAPS_xRGB ";" GST_VIDEO_CAPS_BGRx ";"
+        GST_VIDEO_CAPS_xBGR ";" GST_VIDEO_CAPS_RGBx ";"
         GST_VIDEO_CAPS_RGB ";" GST_VIDEO_CAPS_BGR ";"
+        GST_VIDEO_CAPS_YUV ("Y444") ";"
+        GST_VIDEO_CAPS_YUV ("Y42B") ";"
+        GST_VIDEO_CAPS_YUV ("YUY2") ";"
+        GST_VIDEO_CAPS_YUV ("YVYU") ";"
+        GST_VIDEO_CAPS_YUV ("UYVY") ";"
+        GST_VIDEO_CAPS_YUV ("I420") ";"
+        GST_VIDEO_CAPS_YUV ("YV12") ";"
+        GST_VIDEO_CAPS_YUV ("Y41B") ";"
         GST_VIDEO_CAPS_GRAY8 ";"
         GST_VIDEO_CAPS_GRAY16 ("BIG_ENDIAN") ";"
         GST_VIDEO_CAPS_GRAY16 ("LITTLE_ENDIAN"))
@@ -1733,13 +2391,19 @@ static GstStaticPadTemplate gst_video_box_sink_template =
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV ("AYUV") ";"
-        GST_VIDEO_CAPS_YUV ("I420") ";"
-        GST_VIDEO_CAPS_YUV ("YV12") ";"
-        GST_VIDEO_CAPS_xRGB ";" GST_VIDEO_CAPS_BGRx ";"
-        GST_VIDEO_CAPS_xBGR ";" GST_VIDEO_CAPS_RGBx ";"
         GST_VIDEO_CAPS_ARGB ";" GST_VIDEO_CAPS_BGRA ";"
         GST_VIDEO_CAPS_ABGR ";" GST_VIDEO_CAPS_RGBA ";"
+        GST_VIDEO_CAPS_xRGB ";" GST_VIDEO_CAPS_BGRx ";"
+        GST_VIDEO_CAPS_xBGR ";" GST_VIDEO_CAPS_RGBx ";"
         GST_VIDEO_CAPS_RGB ";" GST_VIDEO_CAPS_BGR ";"
+        GST_VIDEO_CAPS_YUV ("Y444") ";"
+        GST_VIDEO_CAPS_YUV ("Y42B") ";"
+        GST_VIDEO_CAPS_YUV ("YUY2") ";"
+        GST_VIDEO_CAPS_YUV ("YVYU") ";"
+        GST_VIDEO_CAPS_YUV ("UYVY") ";"
+        GST_VIDEO_CAPS_YUV ("I420") ";"
+        GST_VIDEO_CAPS_YUV ("YV12") ";"
+        GST_VIDEO_CAPS_YUV ("Y41B") ";"
         GST_VIDEO_CAPS_GRAY8 ";"
         GST_VIDEO_CAPS_GRAY16 ("BIG_ENDIAN") ";"
         GST_VIDEO_CAPS_GRAY16 ("LITTLE_ENDIAN"))
@@ -1762,8 +2426,12 @@ static gboolean gst_video_box_get_unit_size (GstBaseTransform * trans,
     GstCaps * caps, guint * size);
 static GstFlowReturn gst_video_box_transform (GstBaseTransform * trans,
     GstBuffer * in, GstBuffer * out);
+static void gst_video_box_before_transform (GstBaseTransform * trans,
+    GstBuffer * in);
 static void gst_video_box_fixate_caps (GstBaseTransform * trans,
     GstPadDirection direction, GstCaps * caps, GstCaps * othercaps);
+static gboolean gst_video_box_src_event (GstBaseTransform * trans,
+    GstEvent * event);
 
 #define GST_TYPE_VIDEO_BOX_FILL (gst_video_box_fill_get_type())
 static GType
@@ -1872,11 +2540,14 @@ gst_video_box_class_init (GstVideoBoxClass * klass)
           "Auto crop", FALSE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   trans_class->transform = GST_DEBUG_FUNCPTR (gst_video_box_transform);
+  trans_class->before_transform =
+      GST_DEBUG_FUNCPTR (gst_video_box_before_transform);
   trans_class->transform_caps =
       GST_DEBUG_FUNCPTR (gst_video_box_transform_caps);
   trans_class->set_caps = GST_DEBUG_FUNCPTR (gst_video_box_set_caps);
   trans_class->get_unit_size = GST_DEBUG_FUNCPTR (gst_video_box_get_unit_size);
   trans_class->fixate_caps = GST_DEBUG_FUNCPTR (gst_video_box_fixate_caps);
+  trans_class->src_event = GST_DEBUG_FUNCPTR (gst_video_box_src_event);
 }
 
 static void
@@ -2062,6 +2733,66 @@ gst_video_box_get_property (GObject * object, guint prop_id, GValue * value,
   }
 }
 
+static inline gint
+gst_video_box_transform_dimension (gint val, gint delta)
+{
+  gint64 new_val = (gint64) val + (gint64) delta;
+
+  new_val = CLAMP (new_val, 1, G_MAXINT);
+
+  return (gint) new_val;
+}
+
+static gboolean
+gst_video_box_transform_dimension_value (const GValue * src_val,
+    gint delta, GValue * dest_val)
+{
+  gboolean ret = TRUE;
+
+  g_value_init (dest_val, G_VALUE_TYPE (src_val));
+
+  if (G_VALUE_HOLDS_INT (src_val)) {
+    gint ival = g_value_get_int (src_val);
+
+    ival = gst_video_box_transform_dimension (ival, delta);
+    g_value_set_int (dest_val, ival);
+  } else if (GST_VALUE_HOLDS_INT_RANGE (src_val)) {
+    gint min = gst_value_get_int_range_min (src_val);
+    gint max = gst_value_get_int_range_max (src_val);
+
+    min = gst_video_box_transform_dimension (min, delta);
+    max = gst_video_box_transform_dimension (max, delta);
+    if (min > max) {
+      ret = FALSE;
+      g_value_unset (dest_val);
+    } else {
+      gst_value_set_int_range (dest_val, min, max);
+    }
+  } else if (GST_VALUE_HOLDS_LIST (src_val)) {
+    gint i;
+
+    for (i = 0; i < gst_value_list_get_size (src_val); ++i) {
+      const GValue *list_val;
+      GValue newval = { 0, };
+
+      list_val = gst_value_list_get_value (src_val, i);
+      if (gst_video_box_transform_dimension_value (list_val, delta, &newval))
+        gst_value_list_append_value (dest_val, &newval);
+      g_value_unset (&newval);
+    }
+
+    if (gst_value_list_get_size (dest_val) == 0) {
+      g_value_unset (dest_val);
+      ret = FALSE;
+    }
+  } else {
+    g_value_unset (dest_val);
+    ret = FALSE;
+  }
+
+  return ret;
+}
+
 static GstCaps *
 gst_video_box_transform_caps (GstBaseTransform * trans,
     GstPadDirection direction, GstCaps * from)
@@ -2072,7 +2803,6 @@ gst_video_box_transform_caps (GstBaseTransform * trans,
   const gchar *name;
   GstStructure *structure;
   GstPad *other;
-  gint width, height;
 
   to = gst_caps_copy (from);
   /* Just to be sure... */
@@ -2084,37 +2814,51 @@ gst_video_box_transform_caps (GstBaseTransform * trans,
     gst_structure_remove_field (structure, "width");
     gst_structure_remove_field (structure, "height");
   } else {
+    gint dw = 0, dh = 0;
+    const GValue *v;
+    GValue w_val = { 0, };
+    GValue h_val = { 0, };
+
     /* calculate width and height */
-    if (gst_structure_get_int (structure, "width", &width)) {
-      if (direction == GST_PAD_SINK) {
-        width -= video_box->box_left;
-        width -= video_box->box_right;
-      } else {
-        width += video_box->box_left;
-        width += video_box->box_right;
-      }
-      if (width <= 0)
-        width = 1;
-
-      GST_DEBUG_OBJECT (trans, "New caps width: %d", width);
-      gst_structure_set (structure, "width", G_TYPE_INT, width, NULL);
+    if (direction == GST_PAD_SINK) {
+      dw -= video_box->box_left;
+      dw -= video_box->box_right;
+    } else {
+      dw += video_box->box_left;
+      dw += video_box->box_right;
     }
 
-    if (gst_structure_get_int (structure, "height", &height)) {
-      if (direction == GST_PAD_SINK) {
-        height -= video_box->box_top;
-        height -= video_box->box_bottom;
-      } else {
-        height += video_box->box_top;
-        height += video_box->box_bottom;
-      }
-
-      if (height <= 0)
-        height = 1;
-
-      GST_DEBUG_OBJECT (trans, "New caps height: %d", height);
-      gst_structure_set (structure, "height", G_TYPE_INT, height, NULL);
+    if (direction == GST_PAD_SINK) {
+      dh -= video_box->box_top;
+      dh -= video_box->box_bottom;
+    } else {
+      dh += video_box->box_top;
+      dh += video_box->box_bottom;
     }
+
+    v = gst_structure_get_value (structure, "width");
+    if (!gst_video_box_transform_dimension_value (v, dw, &w_val)) {
+      GST_WARNING_OBJECT (video_box, "could not tranform width value with dw=%d"
+          ", caps structure=%" GST_PTR_FORMAT, dw, structure);
+      gst_caps_unref (to);
+      to = gst_caps_new_empty ();
+      return to;
+    }
+    gst_structure_set_value (structure, "width", &w_val);
+
+    v = gst_structure_get_value (structure, "height");
+    if (!gst_video_box_transform_dimension_value (v, dh, &h_val)) {
+      g_value_unset (&w_val);
+      GST_WARNING_OBJECT (video_box,
+          "could not tranform height value with dh=%d" ", caps structure=%"
+          GST_PTR_FORMAT, dh, structure);
+      gst_caps_unref (to);
+      to = gst_caps_new_empty ();
+      return to;
+    }
+    gst_structure_set_value (structure, "height", &h_val);
+    g_value_unset (&w_val);
+    g_value_unset (&h_val);
   }
 
   /* Supported conversions:
@@ -2177,8 +2921,10 @@ gst_video_box_transform_caps (GstBaseTransform * trans,
         gst_structure_set_value (s2, "depth", &list);
         gst_structure_set_value (s2, "bpp", &list);
         g_value_unset (&list);
+        gst_caps_append_structure (to, s2);
+      } else {
+        gst_structure_free (s2);
       }
-      gst_caps_append_structure (to, s2);
     }
   } else if (g_str_equal (name, "video/x-raw-rgb")) {
     gint bpp;
@@ -2286,7 +3032,7 @@ gst_video_box_select_processing_functions (GstVideoBox * video_box)
       break;
     case GST_VIDEO_FORMAT_I420:
     case GST_VIDEO_FORMAT_YV12:
-      video_box->fill = fill_i420;
+      video_box->fill = fill_planar_yuv;
       switch (video_box->in_format) {
         case GST_VIDEO_FORMAT_AYUV:
           video_box->copy = copy_ayuv_i420;
@@ -2340,6 +3086,38 @@ gst_video_box_select_processing_functions (GstVideoBox * video_box)
         case GST_VIDEO_FORMAT_GRAY16_BE:
         case GST_VIDEO_FORMAT_GRAY16_LE:
           video_box->copy = copy_packed_simple;
+          break;
+        default:
+          break;
+      }
+      break;
+    case GST_VIDEO_FORMAT_YUY2:
+    case GST_VIDEO_FORMAT_YVYU:
+    case GST_VIDEO_FORMAT_UYVY:
+      video_box->fill = fill_yuy2;
+      switch (video_box->in_format) {
+        case GST_VIDEO_FORMAT_YUY2:
+        case GST_VIDEO_FORMAT_YVYU:
+        case GST_VIDEO_FORMAT_UYVY:
+          video_box->copy = copy_yuy2_yuy2;
+          break;
+        default:
+          break;
+      }
+      break;
+    case GST_VIDEO_FORMAT_Y444:
+    case GST_VIDEO_FORMAT_Y42B:
+    case GST_VIDEO_FORMAT_Y41B:
+      video_box->fill = fill_planar_yuv;
+      switch (video_box->in_format) {
+        case GST_VIDEO_FORMAT_Y444:
+          video_box->copy = copy_y444_y444;
+          break;
+        case GST_VIDEO_FORMAT_Y42B:
+          video_box->copy = copy_y42b_y42b;
+          break;
+        case GST_VIDEO_FORMAT_Y41B:
+          video_box->copy = copy_y41b_y41b;
           break;
         default:
           break;
@@ -2408,7 +3186,6 @@ static gboolean
 gst_video_box_get_unit_size (GstBaseTransform * trans, GstCaps * caps,
     guint * size)
 {
-  GstVideoBox *video_box = GST_VIDEO_BOX (trans);
   GstVideoFormat format;
   gint width, height;
   gboolean ret;
@@ -2417,13 +3194,13 @@ gst_video_box_get_unit_size (GstBaseTransform * trans, GstCaps * caps,
 
   ret = gst_video_format_parse_caps (caps, &format, &width, &height);
   if (!ret) {
-    GST_ERROR_OBJECT (video_box, "Invalid caps: %" GST_PTR_FORMAT, caps);
+    GST_ERROR_OBJECT (trans, "Invalid caps: %" GST_PTR_FORMAT, caps);
     return FALSE;
   }
 
   *size = gst_video_format_get_size (format, width, height);
 
-  GST_LOG_OBJECT (video_box, "Returning from _unit_size %d", *size);
+  GST_LOG_OBJECT (trans, "Returning from _unit_size %d", *size);
 
   return TRUE;
 }
@@ -2445,12 +3222,58 @@ gst_video_box_fixate_caps (GstBaseTransform * trans,
   gst_structure_fixate_field_nearest_int (s, "height", height);
 }
 
+static gboolean
+gst_video_box_src_event (GstBaseTransform * trans, GstEvent * event)
+{
+  GstVideoBox *video_box = GST_VIDEO_BOX (trans);
+  GstStructure *new_structure;
+  const GstStructure *structure;
+  const gchar *event_name;
+  gdouble pointer_x;
+  gdouble pointer_y;
+
+  GST_OBJECT_LOCK (video_box);
+  if (GST_EVENT_TYPE (event) == GST_EVENT_NAVIGATION &&
+      (video_box->box_left != 0 || video_box->box_top != 0)) {
+    structure = gst_event_get_structure (event);
+    event_name = gst_structure_get_string (structure, "event");
+
+    if (event_name &&
+        (strcmp (event_name, "mouse-move") == 0 ||
+            strcmp (event_name, "mouse-button-press") == 0 ||
+            strcmp (event_name, "mouse-button-release") == 0)) {
+      if (gst_structure_get_double (structure, "pointer_x", &pointer_x) &&
+          gst_structure_get_double (structure, "pointer_y", &pointer_y)) {
+        gdouble new_pointer_x, new_pointer_y;
+        GstEvent *new_event;
+
+        new_pointer_x = pointer_x + video_box->box_left;
+        new_pointer_y = pointer_y + video_box->box_top;
+
+        new_structure = gst_structure_copy (structure);
+        gst_structure_set (new_structure,
+            "pointer_x", G_TYPE_DOUBLE, (gdouble) (new_pointer_x),
+            "pointer_y", G_TYPE_DOUBLE, (gdouble) (new_pointer_y), NULL);
+
+        new_event = gst_event_new_navigation (new_structure);
+        gst_event_unref (event);
+        event = new_event;
+      } else {
+        GST_WARNING_OBJECT (video_box, "Failed to read navigation event");
+      }
+    }
+  }
+  GST_OBJECT_UNLOCK (video_box);
+
+  return GST_BASE_TRANSFORM_CLASS (parent_class)->src_event (trans, event);
+}
+
 static void
 gst_video_box_process (GstVideoBox * video_box, const guint8 * src,
     guint8 * dest)
 {
-  guint b_alpha = CLAMP ((guint) video_box->border_alpha * 256, 0, 256);
-  guint i_alpha = CLAMP ((guint) video_box->alpha * 256, 0, 256);
+  guint b_alpha = CLAMP (video_box->border_alpha * 256, 0, 256);
+  guint i_alpha = CLAMP (video_box->alpha * 256, 0, 256);
   GstVideoBoxFill fill_type = video_box->fill_type;
   gint br, bl, bt, bb, crop_w, crop_h;
 
@@ -2528,13 +3351,10 @@ gst_video_box_process (GstVideoBox * video_box, const guint8 * src,
   GST_LOG_OBJECT (video_box, "image created");
 }
 
-static GstFlowReturn
-gst_video_box_transform (GstBaseTransform * trans, GstBuffer * in,
-    GstBuffer * out)
+static void
+gst_video_box_before_transform (GstBaseTransform * trans, GstBuffer * in)
 {
   GstVideoBox *video_box = GST_VIDEO_BOX (trans);
-  const guint8 *indata;
-  guint8 *outdata;
   GstClockTime timestamp, stream_time;
 
   timestamp = GST_BUFFER_TIMESTAMP (in);
@@ -2546,6 +3366,15 @@ gst_video_box_transform (GstBaseTransform * trans, GstBuffer * in,
 
   if (GST_CLOCK_TIME_IS_VALID (stream_time))
     gst_object_sync_values (G_OBJECT (video_box), stream_time);
+}
+
+static GstFlowReturn
+gst_video_box_transform (GstBaseTransform * trans, GstBuffer * in,
+    GstBuffer * out)
+{
+  GstVideoBox *video_box = GST_VIDEO_BOX (trans);
+  const guint8 *indata;
+  guint8 *outdata;
 
   indata = GST_BUFFER_DATA (in);
   outdata = GST_BUFFER_DATA (out);
@@ -2560,8 +3389,6 @@ gst_video_box_transform (GstBaseTransform * trans, GstBuffer * in,
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
-  oil_init ();
-
   gst_controller_init (NULL, NULL);
 
   GST_DEBUG_CATEGORY_INIT (videobox_debug, "videobox", 0,

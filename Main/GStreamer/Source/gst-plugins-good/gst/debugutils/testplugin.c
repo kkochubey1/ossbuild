@@ -108,8 +108,8 @@ gst_test_class_init (GstTestClass * klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   guint i;
 
-  object_class->set_property = GST_DEBUG_FUNCPTR (gst_test_set_property);
-  object_class->get_property = GST_DEBUG_FUNCPTR (gst_test_get_property);
+  object_class->set_property = gst_test_set_property;
+  object_class->get_property = gst_test_get_property;
 
   object_class->finalize = (GObjectFinalizeFunc) gst_test_finalize;
 
@@ -124,7 +124,6 @@ gst_test_class_init (GstTestClass * klass)
     g_object_class_install_property (object_class, 2 * i + 2, spec);
   }
 
-  basesink_class->preroll = GST_DEBUG_FUNCPTR (gst_test_render_buffer);
   basesink_class->render = GST_DEBUG_FUNCPTR (gst_test_render_buffer);
   basesink_class->event = GST_DEBUG_FUNCPTR (gst_test_sink_event);
   basesink_class->start = GST_DEBUG_FUNCPTR (gst_test_start);

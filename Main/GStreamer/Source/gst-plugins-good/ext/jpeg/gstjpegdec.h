@@ -24,6 +24,8 @@
 
 #include <setjmp.h>
 #include <gst/gst.h>
+#include <gst/video/video.h>
+#include <gst/base/gstadapter.h>
 
 /* this is a hack hack hack to get around jpeglib header bugs... */
 #ifdef HAVE_STDLIB_H
@@ -68,7 +70,7 @@ struct _GstJpegDec {
   GstPad  *sinkpad;
   GstPad  *srcpad;
 
-  GstBuffer *tempbuf;
+  GstAdapter *adapter;
 
   /* TRUE if each input buffer contains a whole jpeg image */
   gboolean packetized;
@@ -96,13 +98,19 @@ struct _GstJpegDec {
   gint     caps_width;
   gint     caps_height;
   gint     outsize;
+  gint     clrspc;
+
+  gint     offset[3];
+  gint     stride;
+  gint     inc;
+
+  /* parse state */
+  gint     parse_offset;
+  gint     parse_entropy_len;
+  gint     parse_resync;
 
   /* properties */
   gint     idct_method;
-  gint     error_after;
-
-  /* number of errors we're currently at before reporting GST_FLOW_ERROR */
-  gint     error_after_count;
 
   struct jpeg_decompress_struct cinfo;
   struct GstJpegDecErrorMgr     jerr;
@@ -111,6 +119,8 @@ struct _GstJpegDec {
   /* arrays for indirect decoding */
   gboolean idr_width_allocated;
   guchar *idr_y[16],*idr_u[16],*idr_v[16];
+  /* current (parsed) image size */
+  guint    rem_img_len;
 };
 
 struct _GstJpegDecClass {

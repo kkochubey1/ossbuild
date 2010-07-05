@@ -211,9 +211,9 @@ gst_pulsesrc_class_init (GstPulseSrcClass * klass)
   GstBaseSrcClass *gstbasesrc_class = GST_BASE_SRC_CLASS (klass);
   GstElementClass *gstelement_class = GST_ELEMENT_CLASS (klass);
 
-  gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_pulsesrc_finalize);
-  gobject_class->set_property = GST_DEBUG_FUNCPTR (gst_pulsesrc_set_property);
-  gobject_class->get_property = GST_DEBUG_FUNCPTR (gst_pulsesrc_get_property);
+  gobject_class->finalize = gst_pulsesrc_finalize;
+  gobject_class->set_property = gst_pulsesrc_set_property;
+  gobject_class->get_property = gst_pulsesrc_get_property;
 
   gstelement_class->change_state =
       GST_DEBUG_FUNCPTR (gst_pulsesrc_change_state);
@@ -250,8 +250,6 @@ gst_pulsesrc_class_init (GstPulseSrcClass * klass)
 static void
 gst_pulsesrc_init (GstPulseSrc * pulsesrc, GstPulseSrcClass * klass)
 {
-  int e;
-
   pulsesrc->server = NULL;
   pulsesrc->device = NULL;
   pulsesrc->device_description = NULL;
@@ -273,12 +271,6 @@ gst_pulsesrc_init (GstPulseSrc * pulsesrc, GstPulseSrcClass * klass)
   pulsesrc->operation_success = FALSE;
   pulsesrc->paused = FALSE;
   pulsesrc->in_read = FALSE;
-
-  pulsesrc->mainloop = pa_threaded_mainloop_new ();
-  g_assert (pulsesrc->mainloop);
-
-  e = pa_threaded_mainloop_start (pulsesrc->mainloop);
-  g_assert (e == 0);
 
   pulsesrc->mixer = NULL;
 
@@ -320,14 +312,8 @@ gst_pulsesrc_finalize (GObject * object)
 {
   GstPulseSrc *pulsesrc = GST_PULSESRC_CAST (object);
 
-  pa_threaded_mainloop_stop (pulsesrc->mainloop);
-
-  gst_pulsesrc_destroy_context (pulsesrc);
-
   g_free (pulsesrc->server);
   g_free (pulsesrc->device);
-
-  pa_threaded_mainloop_free (pulsesrc->mainloop);
 
   if (pulsesrc->mixer) {
     gst_pulsemixer_ctrl_free (pulsesrc->mixer);
@@ -410,6 +396,9 @@ gst_pulsesrc_device_description (GstPulseSrc * pulsesrc)
   pa_operation *o = NULL;
   gchar *t;
 
+  if (!pulsesrc->mainloop)
+    goto no_mainloop;
+
   pa_threaded_mainloop_lock (pulsesrc->mainloop);
 
   if (!pulsesrc->stream)
@@ -443,6 +432,12 @@ unlock:
   pa_threaded_mainloop_unlock (pulsesrc->mainloop);
 
   return t;
+
+no_mainloop:
+  {
+    GST_DEBUG_OBJECT (pulsesrc, "have no mainloop");
+    return NULL;
+  }
 }
 
 static void
@@ -898,23 +893,17 @@ gst_pulsesrc_negotiate (GstBaseSrc * basesrc)
   peercaps = gst_pad_peer_get_caps (GST_BASE_SRC_PAD (basesrc));
   GST_DEBUG_OBJECT (basesrc, "caps of peer: %" GST_PTR_FORMAT, peercaps);
   if (peercaps) {
-    GstCaps *icaps;
-
     /* get intersection */
-    icaps = gst_caps_intersect (thiscaps, peercaps);
-    GST_DEBUG_OBJECT (basesrc, "intersect: %" GST_PTR_FORMAT, icaps);
+    caps = gst_caps_intersect (thiscaps, peercaps);
+    GST_DEBUG_OBJECT (basesrc, "intersect: %" GST_PTR_FORMAT, caps);
     gst_caps_unref (thiscaps);
     gst_caps_unref (peercaps);
-    if (icaps) {
-      /* take first (and best, since they are sorted) possibility */
-      caps = gst_caps_copy_nth (icaps, 0);
-      gst_caps_unref (icaps);
-    }
   } else {
     /* no peer, work with our own caps then */
     caps = thiscaps;
   }
   if (caps) {
+    /* take first (and best, since they are sorted) possibility */
     caps = gst_caps_make_writable (caps);
     gst_caps_truncate (caps);
 
@@ -1177,9 +1166,16 @@ gst_pulsesrc_change_state (GstElement * element, GstStateChange transition)
 {
   GstStateChangeReturn ret;
   GstPulseSrc *this = GST_PULSESRC_CAST (element);
+  int e;
 
   switch (transition) {
     case GST_STATE_CHANGE_NULL_TO_READY:
+      this->mainloop = pa_threaded_mainloop_new ();
+      g_assert (this->mainloop);
+
+      e = pa_threaded_mainloop_start (this->mainloop);
+      g_assert (e == 0);
+
       if (!this->mixer)
         this->mixer =
             gst_pulsemixer_ctrl_new (G_OBJECT (this), this->server,
@@ -1211,6 +1207,16 @@ gst_pulsesrc_change_state (GstElement * element, GstStateChange transition)
       if (this->mixer) {
         gst_pulsemixer_ctrl_free (this->mixer);
         this->mixer = NULL;
+      }
+
+      if (this->mainloop)
+        pa_threaded_mainloop_stop (this->mainloop);
+
+      gst_pulsesrc_destroy_context (this);
+
+      if (this->mainloop) {
+        pa_threaded_mainloop_free (this->mainloop);
+        this->mainloop = NULL;
       }
       break;
     default:

@@ -83,6 +83,16 @@ typedef struct _GstRTSPSrcClass GstRTSPSrcClass;
 #define GST_RTSP_CONN_LOCK(rtsp)         (g_static_rec_mutex_lock (GST_RTSP_CONN_GET_LOCK(rtsp)))
 #define GST_RTSP_CONN_UNLOCK(rtsp)       (g_static_rec_mutex_unlock (GST_RTSP_CONN_GET_LOCK(rtsp)))
 
+typedef struct _GstRTSPConnInfo GstRTSPConnInfo;
+
+struct _GstRTSPConnInfo {
+  gchar              *location;
+  GstRTSPUrl         *url;
+  gchar              *url_str;
+  GstRTSPConnection  *connection;
+  gboolean            connected;
+};
+
 typedef struct _GstRTSPStream GstRTSPStream;
 
 struct _GstRTSPStream {
@@ -117,19 +127,25 @@ struct _GstRTSPStream {
 
   /* state */
   gint          pt;
+  guint         port;
   gboolean      container;
   /* original control url */
   gchar        *control_url;
-  /* fully qualified control url */
-  gchar        *setup_url;
   guint32       ssrc; 
   guint32       seqbase;
   guint64       timebase;
+
+  /* per stream connection */
+  GstRTSPConnInfo  conninfo;
 
   /* bandwidth */
   guint         as_bandwidth;
   guint         rs_bandwidth;
   guint         rr_bandwidth;
+
+  /* destination */
+  gchar        *destination;
+  guint         ttl;
 };
 
 /**
@@ -171,15 +187,13 @@ struct _GstRTSPSrc {
   /* mutex for protecting the connection */
   GStaticRecMutex *conn_rec_lock;
 
+  GstSDPMessage   *sdp;
   gint             numstreams;
   GList           *streams;
   GstStructure    *props;
   gboolean         need_activate;
 
   /* properties */
-  gchar            *location;
-  gchar            *req_location; /* Sanitised URL to use in network requests */
-  GstRTSPUrl       *url;
   GstRTSPLowerTrans protocols;
   gboolean          debug;
   guint   	    retry;
@@ -207,6 +221,7 @@ struct _GstRTSPSrc {
   gchar             *addr;
   gboolean           need_redirect;
   GstRTSPTimeRange  *range;
+  gchar             *control;
 
   /* supported methods */
   gint               methods;
@@ -216,8 +231,7 @@ struct _GstRTSPSrc {
   gulong           session_sig_id;
   gulong           session_ptmap_id;
 
-  GstRTSPConnection  *connection;
-  gboolean            connected;
+  GstRTSPConnInfo  conninfo;
 
   /* a list of RTSP extensions as GstElement */
   GstRTSPExtensionList  *extensions;

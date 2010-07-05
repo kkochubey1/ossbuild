@@ -71,9 +71,10 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
-	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/aalib.m4 $(top_srcdir)/m4/esd.m4 \
+	$(top_srcdir)/m4/gconf-2.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
 	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
@@ -205,6 +206,8 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
+GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
+GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -285,8 +288,6 @@ LIBIEC61883_LIBS = @LIBIEC61883_LIBS@
 LIBINTL = @LIBINTL@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBPNG_CFLAGS = @LIBPNG_CFLAGS@
 LIBPNG_LIBS = @LIBPNG_LIBS@
 LIBS = @LIBS@
@@ -312,6 +313,9 @@ OBJCDEPMODE = @OBJCDEPMODE@
 OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+ORCC = @ORCC@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -339,6 +343,8 @@ PULSE_0_9_13_CFLAGS = @PULSE_0_9_13_CFLAGS@
 PULSE_0_9_13_LIBS = @PULSE_0_9_13_LIBS@
 PULSE_0_9_15_CFLAGS = @PULSE_0_9_15_CFLAGS@
 PULSE_0_9_15_LIBS = @PULSE_0_9_15_LIBS@
+PULSE_0_9_16_CFLAGS = @PULSE_0_9_16_CFLAGS@
+PULSE_0_9_16_LIBS = @PULSE_0_9_16_LIBS@
 PULSE_0_9_20_CFLAGS = @PULSE_0_9_20_CFLAGS@
 PULSE_0_9_20_LIBS = @PULSE_0_9_20_LIBS@
 PULSE_CFLAGS = @PULSE_CFLAGS@
@@ -450,6 +456,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 @USE_OSS_FALSE@OSS_DIR = 
 @USE_OSS_TRUE@OSS_DIR = oss
+@USE_OSS4_FALSE@OSS4_DIR = 
+@USE_OSS4_TRUE@OSS4_DIR = oss4
 @USE_DIRECTSOUND_FALSE@DIRECTSOUND_DIR = 
 @USE_DIRECTSOUND_TRUE@DIRECTSOUND_DIR = directsound
 @USE_SUNAUDIO_FALSE@SUNAUDIO_DIR = 
@@ -486,8 +494,8 @@ top_srcdir = @top_srcdir@
 # GL_DIR=
 # endif
 @USE_X_TRUE@XIMAGE_DIR = ximage
-SUBDIRS = $(DIRECTSOUND_DIR) $(OSS_DIR) $(OSX_AUDIO_DIR) $(OSX_VIDEO_DIR) $(SUNAUDIO_DIR) $(V4L2_DIR) $(XIMAGE_DIR)
-DIST_SUBDIRS = directsound oss osxaudio osxvideo sunaudio v4l2 waveform ximage
+SUBDIRS = $(DIRECTSOUND_DIR) $(OSS_DIR) $(OSS4_DIR) $(OSX_AUDIO_DIR) $(OSX_VIDEO_DIR) $(SUNAUDIO_DIR) $(V4L2_DIR) $(XIMAGE_DIR)
+DIST_SUBDIRS = directsound oss oss4 osxaudio osxvideo sunaudio v4l2 waveform ximage
 all: all-recursive
 
 .SUFFIXES:

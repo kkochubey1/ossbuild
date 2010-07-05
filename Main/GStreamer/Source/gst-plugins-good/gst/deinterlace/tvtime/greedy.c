@@ -4,7 +4,7 @@
  * Copyright (c) 2000 Tom Barry  All rights reserved.
  * mmx.h port copyright (c) 2002 Billy Biggs <vektor@dumbterm.net>.
  *
- * Copyright (C) 2008 Sebastian Dröge <slomo@collabora.co.uk>
+ * Copyright (C) 2008,2010 Sebastian Dröge <slomo@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,10 +32,12 @@
 # include "config.h"
 #endif
 
-#include "_stdint.h"
-
-#include "gstdeinterlace.h"
+#include "gstdeinterlacemethod.h"
 #include <string.h>
+#ifdef HAVE_ORC
+#include <orc/orc.h>
+#endif
+
 
 #define GST_TYPE_DEINTERLACE_METHOD_GREEDY_L	(gst_deinterlace_method_greedy_l_get_type ())
 #define GST_IS_DEINTERLACE_METHOD_GREEDY_L(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GST_TYPE_DEINTERLACE_METHOD_GREEDY_L))
@@ -54,11 +56,14 @@ typedef struct
   guint max_comb;
 } GstDeinterlaceMethodGreedyL;
 
+typedef void (*GreedyLScanlineFunction) (GstDeinterlaceMethodGreedyL * self,
+    const guint8 * L2, const guint8 * L1, const guint8 * L3, const guint8 * L2P,
+    guint8 * Dest, gint width);
+
 typedef struct
 {
   GstDeinterlaceMethodClass parent_class;
-  void (*scanline) (GstDeinterlaceMethodGreedyL * self, uint8_t * L2,
-      uint8_t * L1, uint8_t * L3, uint8_t * L2P, uint8_t * Dest, int size);
+  GreedyLScanlineFunction scanline;
 } GstDeinterlaceMethodGreedyLClass;
 
 // This is a simple lightweight DeInterlace method that uses little CPU time
@@ -74,11 +79,11 @@ typedef struct
 // Blended Clip but this give too good results for the CPU to ignore here.
 
 static inline void
-deinterlace_greedy_packed422_scanline_c (GstDeinterlaceMethodGreedyL * self,
-    uint8_t * m0, uint8_t * t1,
-    uint8_t * b1, uint8_t * m2, uint8_t * output, int width)
+deinterlace_greedy_scanline_c (GstDeinterlaceMethodGreedyL * self,
+    const guint8 * m0, const guint8 * t1,
+    const guint8 * b1, const guint8 * m2, guint8 * output, gint width)
 {
-  int avg, l2_diff, lp2_diff, max, min, best;
+  gint avg, l2_diff, lp2_diff, max, min, best;
   guint max_comb = self->max_comb;
 
   // L2 == m0
@@ -124,9 +129,9 @@ deinterlace_greedy_packed422_scanline_c (GstDeinterlaceMethodGreedyL * self,
 #ifdef BUILD_X86_ASM
 #include "mmx.h"
 static void
-deinterlace_greedy_packed422_scanline_mmx (GstDeinterlaceMethodGreedyL * self,
-    uint8_t * m0, uint8_t * t1,
-    uint8_t * b1, uint8_t * m2, uint8_t * output, int width)
+deinterlace_greedy_scanline_mmx (GstDeinterlaceMethodGreedyL * self,
+    const guint8 * m0, const guint8 * t1,
+    const guint8 * b1, const guint8 * m2, guint8 * output, gint width)
 {
   mmx_t MaxComb;
   mmx_t ShiftMask;
@@ -233,16 +238,15 @@ deinterlace_greedy_packed422_scanline_mmx (GstDeinterlaceMethodGreedyL * self,
   }
   emms ();
   if (width > 0)
-    deinterlace_greedy_packed422_scanline_c (self, m0, t1, b1, m2, output,
-        width);
+    deinterlace_greedy_scanline_c (self, m0, t1, b1, m2, output, width);
 }
 
 #include "sse.h"
 
 static void
-deinterlace_greedy_packed422_scanline_mmxext (GstDeinterlaceMethodGreedyL *
-    self, uint8_t * m0, uint8_t * t1, uint8_t * b1, uint8_t * m2,
-    uint8_t * output, int width)
+deinterlace_greedy_scanline_mmxext (GstDeinterlaceMethodGreedyL *
+    self, const guint8 * m0, const guint8 * t1, const guint8 * b1,
+    const guint8 * m2, guint8 * output, gint width)
 {
   mmx_t MaxComb;
 
@@ -327,70 +331,80 @@ deinterlace_greedy_packed422_scanline_mmxext (GstDeinterlaceMethodGreedyL *
   emms ();
 
   if (width > 0)
-    deinterlace_greedy_packed422_scanline_c (self, m0, t1, b1, m2, output,
-        width);
+    deinterlace_greedy_scanline_c (self, m0, t1, b1, m2, output, width);
 }
 
 #endif
 
 static void
-deinterlace_frame_di_greedy (GstDeinterlaceMethod * d_method,
-    GstDeinterlace * object, GstBuffer * outbuf)
+deinterlace_frame_di_greedy_packed (GstDeinterlaceMethod * method,
+    const GstDeinterlaceField * history, guint history_count,
+    GstBuffer * outbuf)
 {
-  GstDeinterlaceMethodGreedyL *self =
-      GST_DEINTERLACE_METHOD_GREEDY_L (d_method);
+  GstDeinterlaceMethodGreedyL *self = GST_DEINTERLACE_METHOD_GREEDY_L (method);
   GstDeinterlaceMethodGreedyLClass *klass =
       GST_DEINTERLACE_METHOD_GREEDY_L_GET_CLASS (self);
-  int InfoIsOdd = 0;
-  int Line;
-  unsigned int Pitch = object->field_stride;
-  unsigned char *L1;            // ptr to Line1, of 3
-  unsigned char *L2;            // ptr to Line2, the weave line
-  unsigned char *L3;            // ptr to Line3
-
-  unsigned char *L2P;           // ptr to prev Line2
-  unsigned char *Dest = GST_BUFFER_DATA (outbuf);
+  gint InfoIsOdd = 0;
+  gint Line;
+  gint RowStride = method->row_stride[0];
+  gint FieldHeight = method->frame_height / 2;
+  gint Pitch = method->row_stride[0] * 2;
+  const guint8 *L1;             // ptr to Line1, of 3
+  const guint8 *L2;             // ptr to Line2, the weave line
+  const guint8 *L3;             // ptr to Line3
+  const guint8 *L2P;            // ptr to prev Line2
+  guint8 *Dest = GST_BUFFER_DATA (outbuf);
 
   // copy first even line no matter what, and the first odd line if we're
   // processing an EVEN field. (note diff from other deint rtns.)
 
-  if (object->field_history[object->history_count - 1].flags ==
-      PICTURE_INTERLACED_BOTTOM) {
+  if (history[history_count - 1].flags == PICTURE_INTERLACED_BOTTOM) {
     InfoIsOdd = 1;
 
-    L1 = GST_BUFFER_DATA (object->field_history[object->history_count - 2].buf);
-    L2 = GST_BUFFER_DATA (object->field_history[object->history_count - 1].buf);
+    L1 = GST_BUFFER_DATA (history[history_count - 2].buf);
+    if (history[history_count - 2].flags & PICTURE_INTERLACED_BOTTOM)
+      L1 += RowStride;
+
+    L2 = GST_BUFFER_DATA (history[history_count - 1].buf);
+    if (history[history_count - 1].flags & PICTURE_INTERLACED_BOTTOM)
+      L2 += RowStride;
+
     L3 = L1 + Pitch;
-    L2P =
-        GST_BUFFER_DATA (object->field_history[object->history_count - 3].buf);
+    L2P = GST_BUFFER_DATA (history[history_count - 3].buf);
+    if (history[history_count - 3].flags & PICTURE_INTERLACED_BOTTOM)
+      L2P += RowStride;
 
     // copy first even line
-    oil_memcpy (Dest, L1, object->row_stride);
-    Dest += object->row_stride;
+    memcpy (Dest, L1, RowStride);
+    Dest += RowStride;
   } else {
     InfoIsOdd = 0;
-    L1 = GST_BUFFER_DATA (object->field_history[object->history_count - 2].buf);
-    L2 = GST_BUFFER_DATA (object->field_history[object->history_count -
-            1].buf) + Pitch;
+    L1 = GST_BUFFER_DATA (history[history_count - 2].buf);
+    if (history[history_count - 2].flags & PICTURE_INTERLACED_BOTTOM)
+      L1 += RowStride;
+
+    L2 = GST_BUFFER_DATA (history[history_count - 1].buf) + Pitch;
+    if (history[history_count - 1].flags & PICTURE_INTERLACED_BOTTOM)
+      L2 += RowStride;
+
     L3 = L1 + Pitch;
-    L2P =
-        GST_BUFFER_DATA (object->field_history[object->history_count - 3].buf) +
-        Pitch;
+    L2P = GST_BUFFER_DATA (history[history_count - 3].buf) + Pitch;
+    if (history[history_count - 3].flags & PICTURE_INTERLACED_BOTTOM)
+      L2P += RowStride;
 
     // copy first even line
-    oil_memcpy (Dest, GST_BUFFER_DATA (object->field_history[0].buf),
-        object->row_stride);
-    Dest += object->row_stride;
+    memcpy (Dest, L1, RowStride);
+    Dest += RowStride;
     // then first odd line
-    oil_memcpy (Dest, L1, object->row_stride);
-    Dest += object->row_stride;
+    memcpy (Dest, L1, RowStride);
+    Dest += RowStride;
   }
 
-  for (Line = 0; Line < (object->field_height - 1); ++Line) {
-    klass->scanline (self, L2, L1, L3, L2P, Dest, object->row_stride);
-    Dest += object->row_stride;
-    oil_memcpy (Dest, L3, object->row_stride);
-    Dest += object->row_stride;
+  for (Line = 0; Line < (FieldHeight - 1); ++Line) {
+    klass->scanline (self, L2, L1, L3, L2P, Dest, RowStride);
+    Dest += RowStride;
+    memcpy (Dest, L3, RowStride);
+    Dest += RowStride;
 
     L1 += Pitch;
     L2 += Pitch;
@@ -399,18 +413,107 @@ deinterlace_frame_di_greedy (GstDeinterlaceMethod * d_method,
   }
 
   if (InfoIsOdd) {
-    oil_memcpy (Dest, L2, object->row_stride);
+    memcpy (Dest, L2, RowStride);
   }
 }
 
+static void
+deinterlace_frame_di_greedy_planar_plane (GstDeinterlaceMethodGreedyL * self,
+    const guint8 * L1, const guint8 * L2, const guint8 * L3, const guint8 * L2P,
+    guint8 * Dest, gint RowStride, gint FieldHeight, gint Pitch, gint InfoIsOdd,
+    GreedyLScanlineFunction scanline)
+{
+  gint Line;
+
+  // copy first even line no matter what, and the first odd line if we're
+  // processing an EVEN field. (note diff from other deint rtns.)
+
+  if (InfoIsOdd) {
+    // copy first even line
+    memcpy (Dest, L1, RowStride);
+    Dest += RowStride;
+  } else {
+    // copy first even line
+    memcpy (Dest, L1, RowStride);
+    Dest += RowStride;
+    // then first odd line
+    memcpy (Dest, L1, RowStride);
+    Dest += RowStride;
+  }
+
+  for (Line = 0; Line < (FieldHeight - 1); ++Line) {
+    scanline (self, L2, L1, L3, L2P, Dest, RowStride);
+    Dest += RowStride;
+    memcpy (Dest, L3, RowStride);
+    Dest += RowStride;
+
+    L1 += Pitch;
+    L2 += Pitch;
+    L3 += Pitch;
+    L2P += Pitch;
+  }
+
+  if (InfoIsOdd) {
+    memcpy (Dest, L2, RowStride);
+  }
+}
+
+static void
+deinterlace_frame_di_greedy_planar (GstDeinterlaceMethod * method,
+    const GstDeinterlaceField * history, guint history_count,
+    GstBuffer * outbuf)
+{
+  GstDeinterlaceMethodGreedyL *self = GST_DEINTERLACE_METHOD_GREEDY_L (method);
+  GstDeinterlaceMethodGreedyLClass *klass =
+      GST_DEINTERLACE_METHOD_GREEDY_L_GET_CLASS (self);
+  gint InfoIsOdd;
+  gint RowStride;
+  gint FieldHeight;
+  gint Pitch;
+  const guint8 *L1;             // ptr to Line1, of 3
+  const guint8 *L2;             // ptr to Line2, the weave line
+  const guint8 *L3;             // ptr to Line3
+  const guint8 *L2P;            // ptr to prev Line2
+  guint8 *Dest;
+  gint i;
+  gint Offset;
+  GreedyLScanlineFunction scanline = klass->scanline;
+
+  for (i = 0; i < 3; i++) {
+    Offset = method->offset[i];
+
+    InfoIsOdd = (history[history_count - 1].flags == PICTURE_INTERLACED_BOTTOM);
+    RowStride = method->row_stride[i];
+    FieldHeight = method->height[i] / 2;
+    Pitch = method->row_stride[i] * 2;
+
+    Dest = GST_BUFFER_DATA (outbuf) + Offset;
+
+    L1 = GST_BUFFER_DATA (history[history_count - 2].buf) + Offset;
+    if (history[history_count - 2].flags & PICTURE_INTERLACED_BOTTOM)
+      L1 += RowStride;
+
+    L2 = GST_BUFFER_DATA (history[history_count - 1].buf) + Offset;
+    if (history[history_count - 1].flags & PICTURE_INTERLACED_BOTTOM)
+      L2 += RowStride;
+
+    L3 = L1 + Pitch;
+    L2P = GST_BUFFER_DATA (history[history_count - 3].buf) + Offset;
+    if (history[history_count - 3].flags & PICTURE_INTERLACED_BOTTOM)
+      L2P += RowStride;
+
+    deinterlace_frame_di_greedy_planar_plane (self, L1, L2, L3, L2P, Dest,
+        RowStride, FieldHeight, Pitch, InfoIsOdd, scanline);
+  }
+}
 
 G_DEFINE_TYPE (GstDeinterlaceMethodGreedyL, gst_deinterlace_method_greedy_l,
     GST_TYPE_DEINTERLACE_METHOD);
 
 enum
 {
-  ARG_0,
-  ARG_MAX_COMB
+  PROP_0,
+  PROP_MAX_COMB
 };
 
 static void
@@ -420,7 +523,7 @@ gst_deinterlace_method_greedy_l_set_property (GObject * object, guint prop_id,
   GstDeinterlaceMethodGreedyL *self = GST_DEINTERLACE_METHOD_GREEDY_L (object);
 
   switch (prop_id) {
-    case ARG_MAX_COMB:
+    case PROP_MAX_COMB:
       self->max_comb = g_value_get_uint (value);
       break;
     default:
@@ -435,7 +538,7 @@ gst_deinterlace_method_greedy_l_get_property (GObject * object, guint prop_id,
   GstDeinterlaceMethodGreedyL *self = GST_DEINTERLACE_METHOD_GREEDY_L (object);
 
   switch (prop_id) {
-    case ARG_MAX_COMB:
+    case PROP_MAX_COMB:
       g_value_set_uint (value, self->max_comb);
       break;
     default:
@@ -450,34 +553,50 @@ gst_deinterlace_method_greedy_l_class_init (GstDeinterlaceMethodGreedyLClass *
   GstDeinterlaceMethodClass *dim_class = (GstDeinterlaceMethodClass *) klass;
   GObjectClass *gobject_class = (GObjectClass *) klass;
 #ifdef BUILD_X86_ASM
-  guint cpu_flags = oil_cpu_get_flags ();
+  guint cpu_flags =
+      orc_target_get_default_flags (orc_target_get_by_name ("mmx"));
 #endif
 
   gobject_class->set_property = gst_deinterlace_method_greedy_l_set_property;
   gobject_class->get_property = gst_deinterlace_method_greedy_l_get_property;
 
-  g_object_class_install_property (gobject_class, ARG_MAX_COMB,
+  g_object_class_install_property (gobject_class, PROP_MAX_COMB,
       g_param_spec_uint ("max-comb",
           "Max comb",
           "Max Comb", 0, 255, 15, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)
       );
 
   dim_class->fields_required = 4;
-  dim_class->deinterlace_frame = deinterlace_frame_di_greedy;
   dim_class->name = "Motion Adaptive: Simple Detection";
   dim_class->nick = "greedyl";
   dim_class->latency = 1;
 
+  dim_class->deinterlace_frame_yuy2 = deinterlace_frame_di_greedy_packed;
+  dim_class->deinterlace_frame_yvyu = deinterlace_frame_di_greedy_packed;
+  dim_class->deinterlace_frame_uyvy = deinterlace_frame_di_greedy_packed;
+  dim_class->deinterlace_frame_y444 = deinterlace_frame_di_greedy_planar;
+  dim_class->deinterlace_frame_y42b = deinterlace_frame_di_greedy_planar;
+  dim_class->deinterlace_frame_i420 = deinterlace_frame_di_greedy_planar;
+  dim_class->deinterlace_frame_yv12 = deinterlace_frame_di_greedy_planar;
+  dim_class->deinterlace_frame_y41b = deinterlace_frame_di_greedy_planar;
+  dim_class->deinterlace_frame_ayuv = deinterlace_frame_di_greedy_planar;
+  dim_class->deinterlace_frame_argb = deinterlace_frame_di_greedy_packed;
+  dim_class->deinterlace_frame_rgba = deinterlace_frame_di_greedy_packed;
+  dim_class->deinterlace_frame_abgr = deinterlace_frame_di_greedy_packed;
+  dim_class->deinterlace_frame_bgra = deinterlace_frame_di_greedy_packed;
+  dim_class->deinterlace_frame_rgb = deinterlace_frame_di_greedy_packed;
+  dim_class->deinterlace_frame_bgr = deinterlace_frame_di_greedy_packed;
+
 #ifdef BUILD_X86_ASM
-  if (cpu_flags & OIL_IMPL_FLAG_MMXEXT) {
-    klass->scanline = deinterlace_greedy_packed422_scanline_mmxext;
-  } else if (cpu_flags & OIL_IMPL_FLAG_MMX) {
-    klass->scanline = deinterlace_greedy_packed422_scanline_mmx;
+  if (cpu_flags & ORC_TARGET_MMX_MMXEXT) {
+    klass->scanline = deinterlace_greedy_scanline_mmxext;
+  } else if (cpu_flags & ORC_TARGET_MMX_MMX) {
+    klass->scanline = deinterlace_greedy_scanline_mmx;
   } else {
-    klass->scanline = deinterlace_greedy_packed422_scanline_c;
+    klass->scanline = deinterlace_greedy_scanline_c;
   }
 #else
-  klass->scanline = deinterlace_greedy_packed422_scanline_c;
+  klass->scanline = deinterlace_greedy_scanline_c;
 #endif
 }
 

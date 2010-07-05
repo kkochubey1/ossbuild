@@ -51,20 +51,6 @@ GST_DEBUG_CATEGORY_STATIC (jpegenc_debug);
 #define JPEG_DEFAULT_SMOOTHING 0
 #define JPEG_DEFAULT_IDCT_METHOD	JDCT_FASTEST
 
-/* These macros are adapted from videotestsrc.c 
- *  and/or gst-plugins/gst/games/gstvideoimage.c */
-
-/* I420 */
-#define I420_Y_ROWSTRIDE(width) (GST_ROUND_UP_4(width))
-#define I420_U_ROWSTRIDE(width) (GST_ROUND_UP_8(width)/2)
-#define I420_V_ROWSTRIDE(width) ((GST_ROUND_UP_8(I420_Y_ROWSTRIDE(width)))/2)
-
-#define I420_Y_OFFSET(w,h) (0)
-#define I420_U_OFFSET(w,h) (I420_Y_OFFSET(w,h)+(I420_Y_ROWSTRIDE(w)*GST_ROUND_UP_2(h)))
-#define I420_V_OFFSET(w,h) (I420_U_OFFSET(w,h)+(I420_U_ROWSTRIDE(w)*GST_ROUND_UP_2(h)/2))
-
-#define I420_SIZE(w,h)     (I420_V_OFFSET(w,h)+(I420_V_ROWSTRIDE(w)*GST_ROUND_UP_2(h)/2))
-
 /* JpegEnc signals and args */
 enum
 {
@@ -81,6 +67,7 @@ enum
   PROP_IDCT_METHOD
 };
 
+static void gst_jpegenc_reset (GstJpegEnc * enc);
 static void gst_jpegenc_base_init (gpointer g_class);
 static void gst_jpegenc_class_init (GstJpegEnc * klass);
 static void gst_jpegenc_init (GstJpegEnc * jpegenc);
@@ -127,20 +114,27 @@ gst_jpegenc_get_type (void)
   return jpegenc_type;
 }
 
+/* *INDENT-OFF* */
 static GstStaticPadTemplate gst_jpegenc_sink_pad_template =
 GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV ("I420"))
+    GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV
+        ("{ I420, YV12, YUY2, UYVY, Y41B, Y42B, YVYU, Y444 }") "; "
+        GST_VIDEO_CAPS_RGB "; " GST_VIDEO_CAPS_BGR "; "
+        GST_VIDEO_CAPS_RGBx "; " GST_VIDEO_CAPS_xRGB "; "
+        GST_VIDEO_CAPS_BGRx "; " GST_VIDEO_CAPS_xBGR "; "
+        GST_VIDEO_CAPS_GRAY8)
     );
+/* *INDENT-ON* */
 
 static GstStaticPadTemplate gst_jpegenc_src_pad_template =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS ("image/jpeg, "
-        "width = (int) [ 16, 4096 ], "
-        "height = (int) [ 16, 4096 ], " "framerate = (fraction) [ 0/1, MAX ]")
+        "width = (int) [ 16, 65535 ], "
+        "height = (int) [ 16, 65535 ], " "framerate = (fraction) [ 0/1, MAX ]")
     );
 
 static void
@@ -293,11 +287,37 @@ gst_jpegenc_init (GstJpegEnc * jpegenc)
   jpegenc->cinfo.dest = &jpegenc->jdest;
   jpegenc->cinfo.client_data = jpegenc;
 
-
   /* init properties */
   jpegenc->quality = JPEG_DEFAULT_QUALITY;
   jpegenc->smoothing = JPEG_DEFAULT_SMOOTHING;
   jpegenc->idct_method = JPEG_DEFAULT_IDCT_METHOD;
+
+  gst_jpegenc_reset (jpegenc);
+}
+
+static void
+gst_jpegenc_reset (GstJpegEnc * enc)
+{
+  gint i, j;
+
+  g_free (enc->line[0]);
+  g_free (enc->line[1]);
+  g_free (enc->line[2]);
+  enc->line[0] = NULL;
+  enc->line[1] = NULL;
+  enc->line[2] = NULL;
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 4 * DCTSIZE; j++) {
+      g_free (enc->row[i][j]);
+      enc->row[i][j] = NULL;
+    }
+  }
+
+  enc->width = -1;
+  enc->height = -1;
+  enc->format = GST_VIDEO_FORMAT_UNKNOWN;
+  enc->fps_den = enc->par_den = 0;
+  enc->height = enc->width = 0;
 }
 
 static void
@@ -314,31 +334,45 @@ static GstCaps *
 gst_jpegenc_getcaps (GstPad * pad)
 {
   GstJpegEnc *jpegenc = GST_JPEGENC (gst_pad_get_parent (pad));
-  GstCaps *caps;
-  int i;
+  GstCaps *caps, *othercaps;
+  const GstCaps *templ;
+  gint i, j;
   GstStructure *structure = NULL;
 
   /* we want to proxy properties like width, height and framerate from the
      other end of the element */
 
-  caps = gst_pad_get_allowed_caps (jpegenc->srcpad);
-
-  if (caps == NULL) {
+  othercaps = gst_pad_get_allowed_caps (jpegenc->srcpad);
+  if (othercaps == NULL ||
+      gst_caps_is_empty (othercaps) || gst_caps_is_any (othercaps)) {
     caps = gst_caps_copy (gst_pad_get_pad_template_caps (pad));
-  } else if (gst_caps_is_any (caps)) {
-    gst_caps_unref (caps);
-    caps = gst_caps_copy (gst_pad_get_pad_template_caps (pad));
-  } else {
-    caps = gst_caps_make_writable (caps);
+    goto done;
   }
 
-  for (i = 0; i < gst_caps_get_size (caps); i++) {
-    structure = gst_caps_get_structure (caps, i);
+  caps = gst_caps_new_empty ();
+  templ = gst_pad_get_pad_template_caps (pad);
 
-    gst_structure_set_name (structure, "video/x-raw-yuv");
-    gst_structure_set (structure, "format", GST_TYPE_FOURCC,
-        GST_STR_FOURCC ("I420"), NULL);
+  for (i = 0; i < gst_caps_get_size (templ); i++) {
+    /* pick fields from peer caps */
+    for (j = 0; j < gst_caps_get_size (othercaps); j++) {
+      GstStructure *s = gst_caps_get_structure (othercaps, j);
+      const GValue *val;
+
+      structure = gst_structure_copy (gst_caps_get_structure (templ, i));
+      if ((val = gst_structure_get_value (s, "width")))
+        gst_structure_set_value (structure, "width", val);
+      if ((val = gst_structure_get_value (s, "height")))
+        gst_structure_set_value (structure, "height", val);
+      if ((val = gst_structure_get_value (s, "framerate")))
+        gst_structure_set_value (structure, "framerate", val);
+
+      gst_caps_merge_structure (caps, structure);
+    }
   }
+
+done:
+
+  gst_caps_replace (&othercaps, NULL);
   gst_object_unref (jpegenc);
 
   return caps;
@@ -347,93 +381,151 @@ gst_jpegenc_getcaps (GstPad * pad)
 static gboolean
 gst_jpegenc_setcaps (GstPad * pad, GstCaps * caps)
 {
-  GstJpegEnc *jpegenc;
-  const GValue *framerate;
-  GstStructure *structure;
-  GstCaps *pcaps;
+  GstJpegEnc *enc = GST_JPEGENC (gst_pad_get_parent (pad));
+  GstVideoFormat format;
+  gint width, height;
+  gint fps_num, fps_den;
+  gint par_num, par_den;
+  gint i;
+  GstCaps *othercaps;
   gboolean ret;
 
-  jpegenc = GST_JPEGENC (gst_pad_get_parent (pad));
+  /* get info from caps */
+  if (!gst_video_format_parse_caps (caps, &format, &width, &height))
+    goto refuse_caps;
+  /* optional; pass along if present */
+  fps_num = fps_den = -1;
+  par_num = par_den = -1;
+  gst_video_parse_caps_framerate (caps, &fps_num, &fps_den);
+  gst_video_parse_caps_pixel_aspect_ratio (caps, &par_num, &par_den);
 
-  structure = gst_caps_get_structure (caps, 0);
-  framerate = gst_structure_get_value (structure, "framerate");
-  gst_structure_get_int (structure, "width", &jpegenc->width);
-  gst_structure_get_int (structure, "height", &jpegenc->height);
+  if (width == enc->width && height == enc->height && enc->format == format
+      && fps_num == enc->fps_num && fps_den == enc->fps_den
+      && par_num == enc->par_num && par_den == enc->par_den)
+    return TRUE;
 
-  pcaps = gst_caps_new_simple ("image/jpeg",
-      "width", G_TYPE_INT, jpegenc->width,
-      "height", G_TYPE_INT, jpegenc->height, NULL);
-  structure = gst_caps_get_structure (pcaps, 0);
-  if (framerate)
-    gst_structure_set_value (structure, "framerate", framerate);
+  /* store input description */
+  enc->format = format;
+  enc->width = width;
+  enc->height = height;
+  enc->fps_num = fps_num;
+  enc->fps_den = fps_den;
+  enc->par_num = par_num;
+  enc->par_den = par_den;
 
-  ret = gst_pad_set_caps (jpegenc->srcpad, pcaps);
+  /* prepare a cached image description  */
+  enc->channels = 3 + (gst_video_format_has_alpha (format) ? 1 : 0);
+  /* ... but any alpha is disregarded in encoding */
+  if (gst_video_format_is_gray (format))
+    enc->channels = 1;
+  else
+    enc->channels = 3;
+  enc->h_max_samp = 0;
+  enc->v_max_samp = 0;
+  for (i = 0; i < enc->channels; ++i) {
+    enc->cwidth[i] = gst_video_format_get_component_width (format, i, width);
+    enc->cheight[i] = gst_video_format_get_component_height (format, i, height);
+    enc->offset[i] = gst_video_format_get_component_offset (format, i, width,
+        height);
+    enc->stride[i] = gst_video_format_get_row_stride (format, i, width);
+    enc->inc[i] = gst_video_format_get_pixel_stride (format, i);
+    enc->h_samp[i] = GST_ROUND_UP_4 (width) / enc->cwidth[i];
+    enc->h_max_samp = MAX (enc->h_max_samp, enc->h_samp[i]);
+    enc->v_samp[i] = GST_ROUND_UP_4 (height) / enc->cheight[i];
+    enc->v_max_samp = MAX (enc->v_max_samp, enc->v_samp[i]);
+  }
+  /* samp should only be 1, 2 or 4 */
+  g_assert (enc->h_max_samp <= 4);
+  g_assert (enc->v_max_samp <= 4);
+  /* now invert */
+  /* maximum is invariant, as one of the components should have samp 1 */
+  for (i = 0; i < enc->channels; ++i) {
+    enc->h_samp[i] = enc->h_max_samp / enc->h_samp[i];
+    enc->v_samp[i] = enc->v_max_samp / enc->v_samp[i];
+  }
+  enc->planar = (enc->inc[0] == 1 && enc->inc[1] == 1 && enc->inc[2] == 1);
+
+  othercaps = gst_caps_copy (gst_pad_get_pad_template_caps (enc->srcpad));
+  gst_caps_set_simple (othercaps,
+      "width", G_TYPE_INT, enc->width, "height", G_TYPE_INT, enc->height, NULL);
+  if (enc->fps_den > 0)
+    gst_caps_set_simple (othercaps,
+        "framerate", GST_TYPE_FRACTION, enc->fps_num, enc->fps_den, NULL);
+  if (enc->par_den > 0)
+    gst_caps_set_simple (othercaps,
+        "pixel-aspect-ratio", GST_TYPE_FRACTION, enc->par_num, enc->par_den,
+        NULL);
+
+  ret = gst_pad_set_caps (enc->srcpad, othercaps);
+  gst_caps_unref (othercaps);
 
   if (ret)
-    gst_jpegenc_resync (jpegenc);
+    gst_jpegenc_resync (enc);
 
-  gst_caps_unref (pcaps);
-  gst_object_unref (jpegenc);
+  gst_object_unref (enc);
 
   return ret;
+
+  /* ERRORS */
+refuse_caps:
+  {
+    GST_WARNING_OBJECT (enc, "refused caps %" GST_PTR_FORMAT, caps);
+    gst_object_unref (enc);
+    return FALSE;
+  }
 }
 
 static void
 gst_jpegenc_resync (GstJpegEnc * jpegenc)
 {
   gint width, height;
+  gint i, j;
 
   GST_DEBUG_OBJECT (jpegenc, "resync");
 
   jpegenc->cinfo.image_width = width = jpegenc->width;
   jpegenc->cinfo.image_height = height = jpegenc->height;
-  jpegenc->cinfo.input_components = 3;
+  jpegenc->cinfo.input_components = jpegenc->channels;
 
   GST_DEBUG_OBJECT (jpegenc, "width %d, height %d", width, height);
+  GST_DEBUG_OBJECT (jpegenc, "format %d", jpegenc->format);
 
-#ifdef ENABLE_COLORSPACE_RGB
-  switch (jpegenc->format) {
-    case GST_COLORSPACE_RGB24:
-      jpegenc->bufsize = jpegenc->width * jpegenc->height * 3;
-      GST_DEBUG ("gst_jpegenc_resync: setting format to RGB24");
-      jpegenc->cinfo.in_color_space = JCS_RGB;
-      jpegenc->cinfo.raw_data_in = FALSE;
-      break;
-    case GST_COLORSPACE_YUV420P:
-#endif
-      GST_DEBUG_OBJECT (jpegenc, "setting format to YUV420P");
-
-      jpegenc->bufsize = I420_SIZE (jpegenc->width, jpegenc->height);
-      jpegenc->cinfo.in_color_space = JCS_YCbCr;
-
-      jpeg_set_defaults (&jpegenc->cinfo);
-      /* these are set in _chain()
-         jpeg_set_quality (&jpegenc->cinfo, jpegenc->quality, TRUE);
-         jpegenc->cinfo.smoothing_factor = jpegenc->smoothing;
-         jpegenc->cinfo.dct_method = jpegenc->idct_method;
-       */
-
-      jpegenc->cinfo.raw_data_in = TRUE;
-
-      if (height != -1) {
-        jpegenc->line[0] =
-            g_realloc (jpegenc->line[0], height * sizeof (char *));
-        jpegenc->line[1] =
-            g_realloc (jpegenc->line[1], height * sizeof (char *) / 2);
-        jpegenc->line[2] =
-            g_realloc (jpegenc->line[2], height * sizeof (char *) / 2);
-      }
-
-      GST_DEBUG_OBJECT (jpegenc, "setting format done");
-#ifdef ENABLE_COLORSPACE_RGB
-      break;
-    default:
-      printf ("gst_jpegenc_resync: unsupported colorspace, using RGB\n");
-      jpegenc->bufsize = jpegenc->width * jpegenc->height * 3;
-      jpegenc->cinfo.in_color_space = JCS_RGB;
-      break;
+  if (gst_video_format_is_rgb (jpegenc->format)) {
+    GST_DEBUG_OBJECT (jpegenc, "RGB");
+    jpegenc->cinfo.in_color_space = JCS_RGB;
+  } else if (gst_video_format_is_gray (jpegenc->format)) {
+    GST_DEBUG_OBJECT (jpegenc, "gray");
+    jpegenc->cinfo.in_color_space = JCS_GRAYSCALE;
+  } else {
+    GST_DEBUG_OBJECT (jpegenc, "YUV");
+    jpegenc->cinfo.in_color_space = JCS_YCbCr;
   }
-#endif
+
+  /* input buffer size as max output */
+  jpegenc->bufsize = gst_video_format_get_size (jpegenc->format, width, height);
+  jpeg_set_defaults (&jpegenc->cinfo);
+  jpegenc->cinfo.raw_data_in = TRUE;
+  /* duh, libjpeg maps RGB to YUV ... and don't expect some conversion */
+  if (jpegenc->cinfo.in_color_space == JCS_RGB)
+    jpeg_set_colorspace (&jpegenc->cinfo, JCS_RGB);
+
+  GST_DEBUG_OBJECT (jpegenc, "h_max_samp=%d, v_max_samp=%d",
+      jpegenc->h_max_samp, jpegenc->v_max_samp);
+  /* image dimension info */
+  for (i = 0; i < jpegenc->channels; i++) {
+    GST_DEBUG_OBJECT (jpegenc, "comp %i: h_samp=%d, v_samp=%d", i,
+        jpegenc->h_samp[i], jpegenc->v_samp[i]);
+    jpegenc->cinfo.comp_info[i].h_samp_factor = jpegenc->h_samp[i];
+    jpegenc->cinfo.comp_info[i].v_samp_factor = jpegenc->v_samp[i];
+    jpegenc->line[i] = g_realloc (jpegenc->line[i],
+        jpegenc->v_max_samp * DCTSIZE * sizeof (char *));
+    if (!jpegenc->planar) {
+      for (j = 0; j < jpegenc->v_max_samp * DCTSIZE; j++) {
+        jpegenc->row[i][j] = g_realloc (jpegenc->row[i][j], width);
+        jpegenc->line[i][j] = jpegenc->row[i][j];
+      }
+    }
+  }
 
   /* guard against a potential error in gst_jpegenc_term_destination
      which occurs iff bufsize % 4 < free_space_remaining */
@@ -479,19 +571,11 @@ gst_jpegenc_chain (GstPad * pad, GstBuffer * buf)
   width = jpegenc->width;
   height = jpegenc->height;
 
-  base[0] = data + I420_Y_OFFSET (width, height);
-  base[1] = data + I420_U_OFFSET (width, height);
-  base[2] = data + I420_V_OFFSET (width, height);
+  for (i = 0; i < jpegenc->channels; i++) {
+    base[i] = data + jpegenc->offset[i];
+    end[i] = base[i] + jpegenc->cheight[i] * jpegenc->stride[i];
+  }
 
-  end[0] = base[0] + height * I420_Y_ROWSTRIDE (width);
-  end[1] = base[1] + (height / 2) * I420_U_ROWSTRIDE (width);
-  end[2] = base[2] + (height / 2) * I420_V_ROWSTRIDE (width);
-
-  /* FIXME: shouldn't we also set
-   * - jpegenc->cinfo.max_{v,h}_samp_factor
-   * - jpegenc->cinfo.comp_info[0,1,2].{v,h}_samp_factor
-   * accordingly?
-   */
   jpegenc->jdest.next_output_byte = GST_BUFFER_DATA (jpegenc->output_buffer);
   jpegenc->jdest.free_in_buffer = GST_BUFFER_SIZE (jpegenc->output_buffer);
 
@@ -506,23 +590,40 @@ gst_jpegenc_chain (GstPad * pad, GstBuffer * buf)
 
   GST_LOG_OBJECT (jpegenc, "compressing");
 
-  for (i = 0; i < height; i += 2 * DCTSIZE) {
-    /*g_print ("next scanline: %d\n", jpegenc->cinfo.next_scanline); */
-    for (j = 0, k = 0; j < (2 * DCTSIZE); j += 2, k++) {
-      jpegenc->line[0][j] = base[0];
-      if (base[0] + I420_Y_ROWSTRIDE (width) < end[0])
-        base[0] += I420_Y_ROWSTRIDE (width);
-      jpegenc->line[0][j + 1] = base[0];
-      if (base[0] + I420_Y_ROWSTRIDE (width) < end[0])
-        base[0] += I420_Y_ROWSTRIDE (width);
-      jpegenc->line[1][k] = base[1];
-      if (base[1] + I420_U_ROWSTRIDE (width) < end[1])
-        base[1] += I420_U_ROWSTRIDE (width);
-      jpegenc->line[2][k] = base[2];
-      if (base[2] + I420_V_ROWSTRIDE (width) < end[2])
-        base[2] += I420_V_ROWSTRIDE (width);
+  if (jpegenc->planar) {
+    for (i = 0; i < height; i += jpegenc->v_max_samp * DCTSIZE) {
+      for (k = 0; k < jpegenc->channels; k++) {
+        for (j = 0; j < jpegenc->v_samp[k] * DCTSIZE; j++) {
+          jpegenc->line[k][j] = base[k];
+          if (base[k] + jpegenc->stride[k] < end[k])
+            base[k] += jpegenc->stride[k];
+        }
+      }
+      jpeg_write_raw_data (&jpegenc->cinfo, jpegenc->line,
+          jpegenc->v_max_samp * DCTSIZE);
     }
-    jpeg_write_raw_data (&jpegenc->cinfo, jpegenc->line, 2 * DCTSIZE);
+  } else {
+    for (i = 0; i < height; i += jpegenc->v_max_samp * DCTSIZE) {
+      for (k = 0; k < jpegenc->channels; k++) {
+        for (j = 0; j < jpegenc->v_samp[k] * DCTSIZE; j++) {
+          guchar *src, *dst;
+          gint l;
+
+          /* ouch, copy line */
+          src = base[k];
+          dst = jpegenc->line[k][j];
+          for (l = jpegenc->cwidth[k]; l > 0; l--) {
+            *dst = *src;
+            src += jpegenc->inc[k];
+            dst++;
+          }
+          if (base[k] + jpegenc->stride[k] < end[k])
+            base[k] += jpegenc->stride[k];
+        }
+      }
+      jpeg_write_raw_data (&jpegenc->cinfo, jpegenc->line,
+          jpegenc->v_max_samp * DCTSIZE);
+    }
   }
 
   /* This will ensure that gst_jpegenc_term_destination is called; we push
@@ -622,15 +723,8 @@ gst_jpegenc_change_state (GstElement * element, GstStateChange transition)
     return ret;
 
   switch (transition) {
-    case GST_STATE_CHANGE_READY_TO_NULL:
-      g_free (filter->line[0]);
-      g_free (filter->line[1]);
-      g_free (filter->line[2]);
-      filter->line[0] = NULL;
-      filter->line[1] = NULL;
-      filter->line[2] = NULL;
-      filter->width = -1;
-      filter->height = -1;
+    case GST_STATE_CHANGE_PAUSED_TO_READY:
+      gst_jpegenc_reset (filter);
       break;
     default:
       break;

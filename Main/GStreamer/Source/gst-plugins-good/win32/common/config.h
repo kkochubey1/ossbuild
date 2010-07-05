@@ -23,6 +23,9 @@
 /* Default visualizer */
 #define DEFAULT_VISUALIZER "goom"
 
+/* Disable Orc */
+#undef DISABLE_ORC
+
 /* Define to 1 if translation of program messages to the user's native
    language is requested. */
 #undef ENABLE_NLS
@@ -40,10 +43,10 @@
 #define GST_LICENSE "LGPL"
 
 /* package name in plugins */
-#define GST_PACKAGE_NAME "GStreamer Good Plug-ins source release"
+#define GST_PACKAGE_NAME "GStreamer Good Plug-ins prerelease"
 
 /* package origin */
-#define GST_PACKAGE_ORIGIN "OSSBuild"
+#define GST_PACKAGE_ORIGIN "Unknown package origin"
 
 /* struct v4l2_buffer missing */
 #undef GST_V4L2_MISSING_BUFDECL
@@ -75,7 +78,7 @@
 #undef HAVE_CFPREFERENCESCOPYAPPVALUE
 
 /* Define to 1 if you have the `cosh' function. */
-#define HAVE_COSH
+#undef HAVE_COSH
 
 /* Define if the host CPU is an Alpha */
 #undef HAVE_CPU_ALPHA
@@ -144,6 +147,9 @@
 /* Define to enable building of plug-ins with external deps. */
 #undef HAVE_EXTERNAL
 
+/* Define to 1 if you have the <fcntl.h> header file. */
+#undef HAVE_FCNTL_H
+
 /* FIONREAD ioctl found in sys/filio.h */
 #undef HAVE_FIONREAD_IN_SYS_FILIO
 
@@ -167,6 +173,9 @@
 
 /* Define to enable GDK pixbuf (used by gdkpixbuf). */
 #undef HAVE_GDK_PIXBUF
+
+/* Define to enable GDK pixbuf (used by gdkpixbuf3). */
+#undef HAVE_GDK_PIXBUF3
 
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
@@ -225,8 +234,14 @@
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #undef HAVE_NETINET_IN_H
 
+/* Use Orc */
+#undef HAVE_ORC
+
 /* Define to enable OSS audio (used by ossaudio). */
 #undef HAVE_OSS
+
+/* Define to enable Open Sound System 4 (used by oss4). */
+#undef HAVE_OSS4
 
 /* Define if OSS includes are in /machine/ */
 #undef HAVE_OSS_INCLUDE_IN_MACHINE
@@ -258,6 +273,9 @@
 /* defined if pulseaudio >= 0.9.15 is available */
 #undef HAVE_PULSE_0_9_15
 
+/* defined if pulseaudio >= 0.9.16 is available */
+#undef HAVE_PULSE_0_9_16
+
 /* defined if pulseaudio >= 0.9.20 is available */
 #undef HAVE_PULSE_0_9_20
 
@@ -271,7 +289,7 @@
 #undef HAVE_SHOUT2
 
 /* Define to 1 if you have the `sinh' function. */
-#define HAVE_SINH
+#undef HAVE_SINH
 
 /* Define to enable soup http client plugin (2.4) (used by souphttpsrc). */
 #undef HAVE_SOUP
@@ -293,6 +311,9 @@
 
 /* Define to enable Sun Audio (used by sunaudio). */
 #undef HAVE_SUNAUDIO
+
+/* Define to 1 if you have the <sys/ioctl.h> header file. */
+#undef HAVE_SYS_IOCTL_H
 
 /* Define to 1 if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
@@ -359,7 +380,7 @@
 #define PACKAGE_NAME "GStreamer Good Plug-ins"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GStreamer Good Plug-ins 0.10.22"
+#define PACKAGE_STRING "GStreamer Good Plug-ins 0.10.23.3"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gst-plugins-good"
@@ -368,7 +389,7 @@
 #undef PACKAGE_URL
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.10.22"
+#define PACKAGE_VERSION "0.10.23.3"
 
 /* directory where plugins are located */
 #ifdef _DEBUG
@@ -399,7 +420,7 @@
 #undef STDC_HEADERS
 
 /* Version number of package */
-#define VERSION "0.10.22"
+#define VERSION "0.10.23.3"
 
 /* old wavpack API */
 #undef WAVPACK_OLD_API

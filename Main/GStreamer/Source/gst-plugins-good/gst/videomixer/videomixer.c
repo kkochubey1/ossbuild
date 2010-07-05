@@ -280,7 +280,7 @@ static void
 gst_videomixer_set_master_geometry (GstVideoMixer * mix)
 {
   GSList *walk;
-  gint width = 0, height = 0, fps_n = 0, fps_d = 0;
+  gint width = 0, height = 0, fps_n = 0, fps_d = 0, par_n = 0, par_d = 0;
   GstVideoMixerPad *master = NULL;
 
   walk = mix->sinkpads;
@@ -300,6 +300,8 @@ gst_videomixer_set_master_geometry (GstVideoMixer * mix)
         ((gint64) fps_n * mixpad->fps_d < (gint64) mixpad->fps_n * fps_d)) {
       fps_n = mixpad->fps_n;
       fps_d = mixpad->fps_d;
+      par_n = mixpad->par_n;
+      par_d = mixpad->par_d;
       GST_DEBUG_OBJECT (mixpad, "becomes the master pad");
       master = mixpad;
     }
@@ -308,7 +310,7 @@ gst_videomixer_set_master_geometry (GstVideoMixer * mix)
   /* set results */
   if (mix->master != master || mix->in_width != width
       || mix->in_height != height || mix->fps_n != fps_n
-      || mix->fps_d != fps_d) {
+      || mix->fps_d != fps_d || mix->par_n != par_n || mix->par_d != par_d) {
     mix->setcaps = TRUE;
     mix->sendseg = TRUE;
     gst_videomixer_reset_qos (mix);
@@ -317,6 +319,8 @@ gst_videomixer_set_master_geometry (GstVideoMixer * mix)
     mix->in_height = height;
     mix->fps_n = fps_n;
     mix->fps_d = fps_d;
+    mix->par_n = par_n;
+    mix->par_d = par_d;
   }
 }
 
@@ -328,7 +332,7 @@ gst_videomixer_pad_sink_setcaps (GstPad * pad, GstCaps * vscaps)
   GstStructure *structure;
   gint in_width, in_height;
   gboolean ret = FALSE;
-  const GValue *framerate;
+  const GValue *framerate, *par;
 
   GST_INFO_OBJECT (pad, "Setting caps %" GST_PTR_FORMAT, vscaps);
 
@@ -344,10 +348,17 @@ gst_videomixer_pad_sink_setcaps (GstPad * pad, GstCaps * vscaps)
       || !gst_structure_get_int (structure, "height", &in_height)
       || (framerate = gst_structure_get_value (structure, "framerate")) == NULL)
     goto beach;
+  par = gst_structure_get_value (structure, "pixel-aspect-ratio");
 
   GST_VIDEO_MIXER_STATE_LOCK (mix);
   mixpad->fps_n = gst_value_get_fraction_numerator (framerate);
   mixpad->fps_d = gst_value_get_fraction_denominator (framerate);
+  if (par) {
+    mixpad->par_n = gst_value_get_fraction_numerator (par);
+    mixpad->par_d = gst_value_get_fraction_denominator (par);
+  } else {
+    mixpad->par_n = mixpad->par_d = 1;
+  }
 
   mixpad->in_width = in_width;
   mixpad->in_height = in_height;
@@ -361,6 +372,64 @@ beach:
   gst_object_unref (mix);
 
   return ret;
+}
+
+static GstCaps *
+gst_videomixer_pad_sink_getcaps (GstPad * pad)
+{
+  GstVideoMixer *mix;
+  GstVideoMixerPad *mixpad;
+  GstCaps *res = NULL;
+  GstCaps *mastercaps;
+  GstStructure *st;
+
+  mix = GST_VIDEO_MIXER (gst_pad_get_parent (pad));
+  mixpad = GST_VIDEO_MIXER_PAD (pad);
+
+  if (!mixpad)
+    goto beach;
+
+  /* Get downstream allowed caps */
+  res = gst_pad_get_allowed_caps (mix->srcpad);
+  if (G_UNLIKELY (res == NULL)) {
+    res = gst_caps_copy (gst_pad_get_pad_template_caps (pad));
+    goto beach;
+  }
+
+  GST_VIDEO_MIXER_STATE_LOCK (mix);
+
+  /* Return as-is if not other sinkpad set as master */
+  if (mix->master == NULL) {
+    GST_VIDEO_MIXER_STATE_UNLOCK (mix);
+    goto beach;
+  }
+
+  mastercaps = gst_pad_get_fixed_caps_func (GST_PAD (mix->master));
+
+  /* If master pad caps aren't negotiated yet, return downstream
+   * allowed caps */
+  if (!GST_CAPS_IS_SIMPLE (mastercaps)) {
+    GST_VIDEO_MIXER_STATE_UNLOCK (mix);
+    gst_caps_unref (mastercaps);
+    goto beach;
+  }
+
+  gst_caps_unref (res);
+  res = gst_caps_make_writable (mastercaps);
+  st = gst_caps_get_structure (res, 0);
+  gst_structure_set (st, "width", GST_TYPE_INT_RANGE, 1, G_MAXINT,
+      "height", GST_TYPE_INT_RANGE, 1, G_MAXINT,
+      "framerate", GST_TYPE_FRACTION_RANGE, 0, 1, G_MAXINT, 1, NULL);
+  if (!gst_structure_has_field (st, "pixel-aspect-ratio"))
+    gst_structure_set (st, "pixel-aspect-ratio", GST_TYPE_FRACTION, 1, 1, NULL);
+
+  GST_VIDEO_MIXER_STATE_UNLOCK (mix);
+
+
+beach:
+  GST_DEBUG_OBJECT (pad, "Returning %" GST_PTR_FORMAT, res);
+
+  return res;
 }
 
 /*
@@ -383,22 +452,14 @@ gst_videomixer_pad_sink_acceptcaps (GstPad * pad, GstCaps * vscaps)
     acceptedCaps = gst_caps_make_writable (acceptedCaps);
     GST_LOG_OBJECT (pad, "master's caps %" GST_PTR_FORMAT, acceptedCaps);
     if (GST_CAPS_IS_SIMPLE (acceptedCaps)) {
-      int templCapsSize =
-          gst_caps_get_size (gst_pad_get_pad_template_caps (pad));
-      guint i;
-      for (i = 0; i < templCapsSize; i++) {
-        GstCaps *caps1 = gst_caps_copy (acceptedCaps);
-        GstCaps *caps2 =
-            gst_caps_copy_nth (gst_pad_get_pad_template_caps (pad), i);
-        gst_caps_merge (caps1, caps2);
-        gst_caps_do_simplify (caps1);
-        if (GST_CAPS_IS_SIMPLE (caps1)) {
-          gst_caps_replace (&acceptedCaps, caps1);
-          gst_caps_unref (caps1);
-          break;
-        }
-        gst_caps_unref (caps1);
-      }
+      GstStructure *s;
+      s = gst_caps_get_structure (acceptedCaps, 0);
+      gst_structure_set (s, "width", GST_TYPE_INT_RANGE, 1, G_MAXINT,
+          "height", GST_TYPE_INT_RANGE, 1, G_MAXINT,
+          "framerate", GST_TYPE_FRACTION_RANGE, 0, 1, G_MAXINT, 1, NULL);
+      if (!gst_structure_has_field (s, "pixel-aspect-ratio"))
+        gst_structure_set (s, "pixel-aspect-ratio", GST_TYPE_FRACTION, 1, 1,
+            NULL);
     }
   } else {
     acceptedCaps = gst_pad_get_fixed_caps_func (pad);
@@ -407,7 +468,9 @@ gst_videomixer_pad_sink_acceptcaps (GstPad * pad, GstCaps * vscaps)
   GST_INFO_OBJECT (pad, "vscaps: %" GST_PTR_FORMAT, vscaps);
   GST_INFO_OBJECT (pad, "acceptedCaps: %" GST_PTR_FORMAT, acceptedCaps);
 
-  ret = gst_caps_is_always_compatible (vscaps, acceptedCaps);
+  ret = gst_caps_can_intersect (vscaps, acceptedCaps);
+  GST_INFO_OBJECT (pad, "%saccepted caps %" GST_PTR_FORMAT, (ret ? "" : "not "),
+      vscaps);
   gst_caps_unref (acceptedCaps);
   GST_VIDEO_MIXER_STATE_UNLOCK (mix);
   gst_object_unref (mix);
@@ -424,6 +487,8 @@ gst_videomixer_pad_init (GstVideoMixerPad * mixerpad)
       gst_videomixer_pad_sink_setcaps);
   gst_pad_set_acceptcaps_function (GST_PAD (mixerpad),
       GST_DEBUG_FUNCPTR (gst_videomixer_pad_sink_acceptcaps));
+  gst_pad_set_getcaps_function (GST_PAD (mixerpad),
+      gst_videomixer_pad_sink_getcaps);
 
   mixerpad->zorder = DEFAULT_PAD_ZORDER;
   mixerpad->xpos = DEFAULT_PAD_XPOS;
@@ -471,7 +536,11 @@ static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV ("AYUV") ";" GST_VIDEO_CAPS_BGRA ";"
         GST_VIDEO_CAPS_ARGB ";" GST_VIDEO_CAPS_RGBA ";" GST_VIDEO_CAPS_ABGR ";"
-        GST_VIDEO_CAPS_YUV ("I420") ";" GST_VIDEO_CAPS_RGB ";"
+        GST_VIDEO_CAPS_YUV ("Y444") ";" GST_VIDEO_CAPS_YUV ("Y42B") ";"
+        GST_VIDEO_CAPS_YUV ("YUY2") ";" GST_VIDEO_CAPS_YUV ("UYVY") ";"
+        GST_VIDEO_CAPS_YUV ("YVYU") ";"
+        GST_VIDEO_CAPS_YUV ("I420") ";" GST_VIDEO_CAPS_YUV ("YV12") ";"
+        GST_VIDEO_CAPS_YUV ("Y41B") ";" GST_VIDEO_CAPS_RGB ";"
         GST_VIDEO_CAPS_BGR ";" GST_VIDEO_CAPS_xRGB ";" GST_VIDEO_CAPS_xBGR ";"
         GST_VIDEO_CAPS_RGBx ";" GST_VIDEO_CAPS_BGRx)
     );
@@ -481,7 +550,11 @@ static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE ("sink_%d",
     GST_PAD_REQUEST,
     GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV ("AYUV") ";" GST_VIDEO_CAPS_BGRA ";"
         GST_VIDEO_CAPS_ARGB ";" GST_VIDEO_CAPS_RGBA ";" GST_VIDEO_CAPS_ABGR ";"
-        GST_VIDEO_CAPS_YUV ("I420") ";" GST_VIDEO_CAPS_RGB ";"
+        GST_VIDEO_CAPS_YUV ("Y444") ";" GST_VIDEO_CAPS_YUV ("Y42B") ";"
+        GST_VIDEO_CAPS_YUV ("YUY2") ";" GST_VIDEO_CAPS_YUV ("UYVY") ";"
+        GST_VIDEO_CAPS_YUV ("YVYU") ";"
+        GST_VIDEO_CAPS_YUV ("I420") ";" GST_VIDEO_CAPS_YUV ("YV12") ";"
+        GST_VIDEO_CAPS_YUV ("Y41B") ";" GST_VIDEO_CAPS_RGB ";"
         GST_VIDEO_CAPS_BGR ";" GST_VIDEO_CAPS_xRGB ";" GST_VIDEO_CAPS_xBGR ";"
         GST_VIDEO_CAPS_RGBx ";" GST_VIDEO_CAPS_BGRx)
     );
@@ -586,7 +659,7 @@ gst_videomixer_class_init (GstVideoMixerClass * klass)
   GObjectClass *gobject_class = (GObjectClass *) klass;
   GstElementClass *gstelement_class = (GstElementClass *) klass;
 
-  gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_videomixer_finalize);
+  gobject_class->finalize = gst_videomixer_finalize;
 
   gobject_class->get_property = gst_videomixer_get_property;
   gobject_class->set_property = gst_videomixer_set_property;
@@ -628,6 +701,7 @@ gst_videomixer_reset (GstVideoMixer * mix)
   mix->out_width = 0;
   mix->out_height = 0;
   mix->fps_n = mix->fps_d = 0;
+  mix->par_n = mix->par_d = 1;
   mix->setcaps = FALSE;
   mix->sendseg = FALSE;
 
@@ -975,10 +1049,52 @@ gst_videomixer_setcaps (GstPad * pad, GstCaps * caps)
       mixer->fill_color = gst_video_mixer_fill_color_rgba;
       ret = TRUE;
       break;
+    case GST_VIDEO_FORMAT_Y444:
+      mixer->blend = gst_video_mixer_blend_y444;
+      mixer->fill_checker = gst_video_mixer_fill_checker_y444;
+      mixer->fill_color = gst_video_mixer_fill_color_y444;
+      ret = TRUE;
+      break;
+    case GST_VIDEO_FORMAT_Y42B:
+      mixer->blend = gst_video_mixer_blend_y42b;
+      mixer->fill_checker = gst_video_mixer_fill_checker_y42b;
+      mixer->fill_color = gst_video_mixer_fill_color_y42b;
+      ret = TRUE;
+      break;
+    case GST_VIDEO_FORMAT_YUY2:
+      mixer->blend = gst_video_mixer_blend_yuy2;
+      mixer->fill_checker = gst_video_mixer_fill_checker_yuy2;
+      mixer->fill_color = gst_video_mixer_fill_color_yuy2;
+      ret = TRUE;
+      break;
+    case GST_VIDEO_FORMAT_UYVY:
+      mixer->blend = gst_video_mixer_blend_uyvy;
+      mixer->fill_checker = gst_video_mixer_fill_checker_uyvy;
+      mixer->fill_color = gst_video_mixer_fill_color_uyvy;
+      ret = TRUE;
+      break;
+    case GST_VIDEO_FORMAT_YVYU:
+      mixer->blend = gst_video_mixer_blend_yvyu;
+      mixer->fill_checker = gst_video_mixer_fill_checker_yvyu;
+      mixer->fill_color = gst_video_mixer_fill_color_yvyu;
+      ret = TRUE;
+      break;
     case GST_VIDEO_FORMAT_I420:
       mixer->blend = gst_video_mixer_blend_i420;
       mixer->fill_checker = gst_video_mixer_fill_checker_i420;
       mixer->fill_color = gst_video_mixer_fill_color_i420;
+      ret = TRUE;
+      break;
+    case GST_VIDEO_FORMAT_YV12:
+      mixer->blend = gst_video_mixer_blend_yv12;
+      mixer->fill_checker = gst_video_mixer_fill_checker_yv12;
+      mixer->fill_color = gst_video_mixer_fill_color_yv12;
+      ret = TRUE;
+      break;
+    case GST_VIDEO_FORMAT_Y41B:
+      mixer->blend = gst_video_mixer_blend_y41b;
+      mixer->fill_checker = gst_video_mixer_fill_checker_y41b;
+      mixer->fill_color = gst_video_mixer_fill_color_y41b;
       ret = TRUE;
       break;
     case GST_VIDEO_FORMAT_RGB:
@@ -1051,7 +1167,9 @@ gst_videomixer_request_new_pad (GstElement * element,
     gchar *name = NULL;
     GstVideoMixerCollect *mixcol = NULL;
 
-    if (req_name == NULL || strlen (req_name) < 6) {
+    GST_VIDEO_MIXER_STATE_LOCK (mix);
+    if (req_name == NULL || strlen (req_name) < 6
+        || !g_str_has_prefix (req_name, "sink_")) {
       /* no name given when requesting the pad, use next available int */
       serial = mix->next_sinkpad++;
     } else {
@@ -1066,7 +1184,6 @@ gst_videomixer_request_new_pad (GstElement * element,
         templ->direction, "template", templ, NULL);
     g_free (name);
 
-    GST_VIDEO_MIXER_STATE_LOCK (mix);
     mixpad->zorder = mix->numpads;
     mixpad->xpos = DEFAULT_PAD_XPOS;
     mixpad->ypos = DEFAULT_PAD_YPOS;
@@ -1379,7 +1496,8 @@ gst_videomixer_collected (GstCollectPads * pads, GstVideoMixer * mix)
         (gst_pad_get_negotiated_caps (GST_PAD (mix->master)));
     gst_caps_set_simple (newcaps,
         "width", G_TYPE_INT, mix->in_width,
-        "height", G_TYPE_INT, mix->in_height, NULL);
+        "height", G_TYPE_INT, mix->in_height,
+        "pixel-aspect-ratio", GST_TYPE_FRACTION, mix->par_n, mix->par_d, NULL);
 
     mix->out_width = mix->in_width;
     mix->out_height = mix->in_height;

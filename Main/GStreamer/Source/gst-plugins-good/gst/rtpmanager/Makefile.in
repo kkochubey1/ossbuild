@@ -70,9 +70,10 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
-	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/aalib.m4 $(top_srcdir)/m4/esd.m4 \
+	$(top_srcdir)/m4/gconf-2.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
 	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
@@ -236,6 +237,8 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
+GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
+GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -316,8 +319,6 @@ LIBIEC61883_LIBS = @LIBIEC61883_LIBS@
 LIBINTL = @LIBINTL@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBPNG_CFLAGS = @LIBPNG_CFLAGS@
 LIBPNG_LIBS = @LIBPNG_LIBS@
 LIBS = @LIBS@
@@ -343,6 +344,9 @@ OBJCDEPMODE = @OBJCDEPMODE@
 OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+ORCC = @ORCC@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -370,6 +374,8 @@ PULSE_0_9_13_CFLAGS = @PULSE_0_9_13_CFLAGS@
 PULSE_0_9_13_LIBS = @PULSE_0_9_13_LIBS@
 PULSE_0_9_15_CFLAGS = @PULSE_0_9_15_CFLAGS@
 PULSE_0_9_15_LIBS = @PULSE_0_9_15_LIBS@
+PULSE_0_9_16_CFLAGS = @PULSE_0_9_16_CFLAGS@
+PULSE_0_9_16_LIBS = @PULSE_0_9_16_LIBS@
 PULSE_0_9_20_CFLAGS = @PULSE_0_9_20_CFLAGS@
 PULSE_0_9_20_LIBS = @PULSE_0_9_20_LIBS@
 PULSE_CFLAGS = @PULSE_CFLAGS@
@@ -952,7 +958,7 @@ $(glib_gen_basename)-enumtypes.h: $(glib_enum_headers)
 	$^ > $@
 
 $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
-	@if test "x$(glib_enum_headers)" == "x"; then echo "ERROR: glib_enum_headers is empty, please fix Makefile"; exit 1; fi
+	@if test "x$(glib_enum_headers)" = "x"; then echo "ERROR: glib_enum_headers is empty, please fix Makefile"; exit 1; fi
 	$(AM_V_GEN)glib-mkenums \
 	--fhead "#include \"$(glib_gen_basename)-enumtypes.h\"\n$(enum_headers)" \
 	--fprod "\n/* enumerations from \"@filename@\" */" \

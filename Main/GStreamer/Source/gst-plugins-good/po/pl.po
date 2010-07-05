@@ -1,15 +1,16 @@
 # Polish translation for gst-plugins-good.
 # This file is distributed under the same license as the gst-plugins-good package.
-# Jakub Bogusz <qboosh@pld-linux.org>, 2007-2009.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2007-2010.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gst-plugins-good 0.10.16.2\n"
+"Project-Id-Version: gst-plugins-good 0.10.22.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-04-28 02:51+0100\n"
-"PO-Revision-Date: 2009-11-11 22:18+0100\n"
+"POT-Creation-Date: 2010-06-29 19:21+0100\n"
+"PO-Revision-Date: 2010-05-20 08:18+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -177,26 +178,335 @@ msgstr ""
 msgid "Could not open audio device for recording."
 msgstr "Nie udało się otworzyć urządzenia dźwiękowego do nagrywania."
 
-msgid "Gain"
-msgstr "Wzmocnienie"
+msgid "Could not open audio device for mixer control handling."
+msgstr "Nie udało się otworzyć urządzenia dźwiękowego do sterowania mikserem."
+
+msgid ""
+"Could not open audio device for mixer control handling. This version of the "
+"Open Sound System is not supported by this element."
+msgstr ""
+"Nie udało się otworzyć urządzenia dźwiękowego do sterowania mikserem. Ta "
+"wersja Open Sound System nie jest obsługiwana przez ten element."
+
+msgid "Master"
+msgstr "Główna"
+
+msgid "Front"
+msgstr "Przód"
+
+msgid "Rear"
+msgstr "Tył"
+
+msgid "Headphones"
+msgstr "Słuchawki"
+
+msgid "Center"
+msgstr "Środek"
+
+msgid "LFE"
+msgstr "LFE"
+
+msgid "Surround"
+msgstr "Surround"
+
+msgid "Side"
+msgstr "Boki"
 
 msgid "Built-in Speaker"
 msgstr "Wbudowany głośniczek"
-
-msgid "Headphone"
-msgstr "Słuchawki"
-
-msgid "Line Out"
-msgstr "Wyjście linii"
-
-msgid "SPDIF Out"
-msgstr "Wyjście SPDIF"
 
 msgid "AUX 1 Out"
 msgstr "Wyjście AUX 1"
 
 msgid "AUX 2 Out"
 msgstr "Wyjście AUX 2"
+
+msgid "AUX Out"
+msgstr "Wyjście AUX"
+
+msgid "3D Depth"
+msgstr "Głębia 3D"
+
+msgid "3D Center"
+msgstr "Środek 3D"
+
+msgid "3D Enhance"
+msgstr "Rozszerzenie 3D"
+
+msgid "Telephone"
+msgstr "Telefon"
+
+msgid "Line Out"
+msgstr "Wyjście linii"
+
+msgid "Line In"
+msgstr "Wejście linii"
+
+msgid "Internal CD"
+msgstr "Wewnętrzny CD"
+
+msgid "Video In"
+msgstr "Wejście video"
+
+msgid "AUX 1 In"
+msgstr "Wejście AUX 1"
+
+msgid "AUX 2 In"
+msgstr "Wejście AUX 2"
+
+msgid "AUX In"
+msgstr "Wejście AUX"
+
+msgid "Record Gain"
+msgstr "Wzmocnienie nagrywania"
+
+msgid "Output Gain"
+msgstr "Wzmocnienie wyjścia"
+
+msgid "Microphone Boost"
+msgstr "Podbicie mikrofonu"
+
+msgid "Loopback"
+msgstr "Pętla zwrotna"
+
+msgid "Diagnostic"
+msgstr "Diagnostyka"
+
+msgid "Bass Boost"
+msgstr "Podbicie basów"
+
+msgid "Playback Ports"
+msgstr "Porty odtwarzania"
+
+msgid "Input"
+msgstr "Wejście"
+
+msgid "Record Source"
+msgstr "Źródło nagrywania"
+
+msgid "Monitor Source"
+msgstr "Źródło monitora"
+
+msgid "Keyboard Beep"
+msgstr "Piszczenie klawiatury"
+
+msgid "Simulate Stereo"
+msgstr "Symulacja stereo"
+
+msgid "Stereo"
+msgstr "Stereo"
+
+msgid "Surround Sound"
+msgstr "Dźwięk surround"
+
+msgid "Microphone Gain"
+msgstr "Wzmocnienie mikrofonu"
+
+msgid "Speaker Source"
+msgstr "Źródło głośniczka"
+
+msgid "Microphone Source"
+msgstr "Źródło mikrofonu"
+
+msgid "Jack"
+msgstr "Gniazdo jack"
+
+msgid "Center / LFE"
+msgstr "Środek / LFE"
+
+msgid "Stereo Mix"
+msgstr "Miksowanie stereo"
+
+msgid "Mono Mix"
+msgstr "Miksowanie mono"
+
+msgid "Input Mix"
+msgstr "Miksowanie wejścia"
+
+msgid "SPDIF In"
+msgstr "Wejście SPDIF"
+
+msgid "SPDIF Out"
+msgstr "Wyjście SPDIF"
+
+msgid "Microphone 1"
+msgstr "Mikrofon 1"
+
+msgid "Microphone 2"
+msgstr "Mikrofon 2"
+
+msgid "Digital Out"
+msgstr "Wyjście cyfrowe"
+
+msgid "Digital In"
+msgstr "Wejście cyfrowe"
+
+msgid "HDMI"
+msgstr "HDMI"
+
+msgid "Modem"
+msgstr "Modem"
+
+msgid "Handset"
+msgstr "Zestaw słuchawkowy"
+
+msgid "Other"
+msgstr "Inne"
+
+msgid "None"
+msgstr "Brak"
+
+msgid "On"
+msgstr "Włączone"
+
+msgid "Off"
+msgstr "Wyłączone"
+
+msgid "Mute"
+msgstr "Wyciszenie"
+
+msgid "Fast"
+msgstr "Szybko"
+
+#. TRANSLATORS: "Very Low" is a quality setting here
+msgid "Very Low"
+msgstr "Bardzo małe"
+
+#. TRANSLATORS: "Low" is a quality setting here
+msgid "Low"
+msgstr "Małe"
+
+#. TRANSLATORS: "Medium" is a quality setting here
+msgid "Medium"
+msgstr "Średnie"
+
+#. TRANSLATORS: "High" is a quality setting here
+msgid "High"
+msgstr "Duże"
+
+#. TRANSLATORS: "Very High" is a quality setting here
+msgid "Very High"
+msgstr "Bardzo duże"
+
+#. TRANSLATORS: "Production" is a quality setting here
+msgid "Production"
+msgstr "Produkcja"
+
+msgid "Front Panel Microphone"
+msgstr "Mikrofon na panelu przednim"
+
+msgid "Front Panel Line In"
+msgstr "Wejście linii na panelu przednim"
+
+msgid "Front Panel Headphones"
+msgstr "Słuchawki na panelu przednim"
+
+msgid "Front Panel Line Out"
+msgstr "Wyjśćie linii na panelu przednim"
+
+msgid "Green Connector"
+msgstr "Złącze zielone"
+
+msgid "Pink Connector"
+msgstr "Złącze różowe"
+
+msgid "Blue Connector"
+msgstr "Złącze niebieskie"
+
+msgid "White Connector"
+msgstr "Złącze białe"
+
+msgid "Black Connector"
+msgstr "Złącze czarne"
+
+msgid "Gray Connector"
+msgstr "Złącze szare"
+
+msgid "Orange Connector"
+msgstr "Złącze pomarańczowe"
+
+msgid "Red Connector"
+msgstr "Złącze czerwone"
+
+msgid "Yellow Connector"
+msgstr "Złącze żółte"
+
+msgid "Green Front Panel Connector"
+msgstr "Złącze zielone na panelu przednim"
+
+msgid "Pink Front Panel Connector"
+msgstr "Złącze różowe na panelu przednim"
+
+msgid "Blue Front Panel Connector"
+msgstr "Złącze niebieskie na panelu przednim"
+
+msgid "White Front Panel Connector"
+msgstr "Złącze białe na panelu przednim"
+
+msgid "Black Front Panel Connector"
+msgstr "Złącze czarne na panelu przednim"
+
+msgid "Gray Front Panel Connector"
+msgstr "Złącze szare na panelu przednim"
+
+msgid "Orange Front Panel Connector"
+msgstr "Złącze pomarańczowe na panelu przednim"
+
+msgid "Red Front Panel Connector"
+msgstr "Złącze czerwone na panelu przednim"
+
+msgid "Yellow Front Panel Connector"
+msgstr "Złącze żółte na panelu przednim"
+
+msgid "Spread Output"
+msgstr "Rozprowadzenie wyjścia"
+
+msgid "Downmix"
+msgstr "Miksowanie w dół"
+
+msgid "Virtual Mixer Input"
+msgstr "Wejście miksera wirtualnego"
+
+msgid "Virtual Mixer Output"
+msgstr "Wyjście miksera wirtualnego"
+
+msgid "Virtual Mixer Channels"
+msgstr "Kanały miksera wirtualnego"
+
+#. TRANSLATORS: name + number of a volume mixer control
+#, c-format
+msgid "%s %d Function"
+msgstr "Funkcja %s %d"
+
+#. TRANSLATORS: name of a volume mixer control
+#, c-format
+msgid "%s Function"
+msgstr "Funkcja %s"
+
+msgid ""
+"Could not open audio device for playback. This version of the Open Sound "
+"System is not supported by this element."
+msgstr ""
+"Nie udało się otworzyć urządzenia dźwiękowego do odtwarzania. Ta wersja Open "
+"Sound System nie jest obsługiwana przez ten element."
+
+msgid "Playback is not supported by this audio device."
+msgstr "Odtwarzanie nie jest obsługiwane przez to urządzenie dźwiękowe."
+
+msgid "Audio playback error."
+msgstr "Błąd odtwarzania dźwięku."
+
+msgid "Recording is not supported by this audio device."
+msgstr "Nagrywanie nie jest obsługiwane przez to urządzenie dźwiękowe."
+
+msgid "Error recording from audio device."
+msgstr "Błąd nagrywania z urządzenia dźwiękowego."
+
+msgid "Gain"
+msgstr "Wzmocnienie"
+
+msgid "Headphone"
+msgstr "Słuchawki"
 
 #, c-format
 msgid "Error reading %d bytes from device '%s'."

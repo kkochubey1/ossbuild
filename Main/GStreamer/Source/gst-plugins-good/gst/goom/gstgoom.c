@@ -43,7 +43,9 @@
 #include <gst/video/video.h>
 #include "goom.h"
 
-#include <liboil/liboil.h>
+#if HAVE_ORC
+#include <orc/orc.h>
+#endif
 
 GST_DEBUG_CATEGORY (goom_debug);
 #define GST_CAT_DEFAULT goom_debug
@@ -262,7 +264,7 @@ gst_goom_src_setcaps (GstPad * pad, GstCaps * caps)
 static gboolean
 gst_goom_src_negotiate (GstGoom * goom)
 {
-  GstCaps *othercaps, *target, *intersect;
+  GstCaps *othercaps, *target;
   GstStructure *structure;
   const GstCaps *templ;
 
@@ -273,14 +275,13 @@ gst_goom_src_negotiate (GstGoom * goom)
   /* see what the peer can do */
   othercaps = gst_pad_peer_get_caps (goom->srcpad);
   if (othercaps) {
-    intersect = gst_caps_intersect (othercaps, templ);
+    target = gst_caps_intersect (othercaps, templ);
     gst_caps_unref (othercaps);
 
-    if (gst_caps_is_empty (intersect))
+    if (gst_caps_is_empty (target))
       goto no_format;
 
-    target = gst_caps_copy_nth (intersect, 0);
-    gst_caps_unref (intersect);
+    gst_caps_truncate (target);
   } else {
     target = gst_caps_ref ((GstCaps *) templ);
   }
@@ -297,7 +298,7 @@ gst_goom_src_negotiate (GstGoom * goom)
 
 no_format:
   {
-    gst_caps_unref (intersect);
+    gst_caps_unref (target);
     return FALSE;
   }
 }
@@ -588,7 +589,9 @@ plugin_init (GstPlugin * plugin)
 {
   GST_DEBUG_CATEGORY_INIT (goom_debug, "goom", 0, "goom visualisation element");
 
-  oil_init ();
+#if HAVE_ORC
+  orc_init ();
+#endif
 
   return gst_element_register (plugin, "goom", GST_RANK_NONE, GST_TYPE_GOOM);
 }

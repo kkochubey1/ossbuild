@@ -112,6 +112,9 @@ static gboolean gst_rtp_h264_pay_setcaps (GstBaseRTPPayload * basepayload,
     GstCaps * caps);
 static GstFlowReturn gst_rtp_h264_pay_handle_buffer (GstBaseRTPPayload * pad,
     GstBuffer * buffer);
+static gboolean gst_rtp_h264_pay_handle_event (GstPad * pad, GstEvent * event);
+static GstStateChangeReturn gst_basertppayload_change_state (GstElement *
+    element, GstStateChange transition);
 
 GST_BOILERPLATE (GstRtpH264Pay, gst_rtp_h264_pay, GstBaseRTPPayload,
     GST_TYPE_BASE_RTP_PAYLOAD);
@@ -136,9 +139,11 @@ static void
 gst_rtp_h264_pay_class_init (GstRtpH264PayClass * klass)
 {
   GObjectClass *gobject_class;
+  GstElementClass *gstelement_class;
   GstBaseRTPPayloadClass *gstbasertppayload_class;
 
   gobject_class = (GObjectClass *) klass;
+  gstelement_class = (GstElementClass *) klass;
   gstbasertppayload_class = (GstBaseRTPPayloadClass *) klass;
 
   gobject_class->set_property = gst_rtp_h264_pay_set_property;
@@ -183,8 +188,12 @@ gst_rtp_h264_pay_class_init (GstRtpH264PayClass * klass)
 
   gobject_class->finalize = gst_rtp_h264_pay_finalize;
 
+  gstelement_class->change_state =
+      GST_DEBUG_FUNCPTR (gst_basertppayload_change_state);
+
   gstbasertppayload_class->set_caps = gst_rtp_h264_pay_setcaps;
   gstbasertppayload_class->handle_buffer = gst_rtp_h264_pay_handle_buffer;
+  gstbasertppayload_class->handle_event = gst_rtp_h264_pay_handle_event;
 
   GST_DEBUG_CATEGORY_INIT (rtph264pay_debug, "rtph264pay", 0,
       "H264 RTP Payloader");
@@ -415,6 +424,60 @@ avcc_error:
   }
 }
 
+static void
+gst_rtp_h264_pay_parse_sprop_parameter_sets (GstRtpH264Pay * rtph264pay)
+{
+  const gchar *ps;
+  gchar **params;
+  guint len, num_sps, num_pps;
+  gint i;
+  GstBuffer *buf;
+
+  ps = rtph264pay->sprop_parameter_sets;
+  if (ps == NULL)
+    return;
+
+  gst_rtp_h264_pay_clear_sps_pps (rtph264pay);
+
+  params = g_strsplit (ps, ",", 0);
+  len = g_strv_length (params);
+
+  GST_DEBUG_OBJECT (rtph264pay, "we have %d params", len);
+
+  num_sps = num_pps = 0;
+
+  for (i = 0; params[i]; i++) {
+    gsize nal_len;
+    guint8 *nalp;
+    guint save = 0;
+    gint state = 0;
+
+    nal_len = strlen (params[i]);
+    buf = gst_buffer_new_and_alloc (nal_len);
+    nalp = GST_BUFFER_DATA (buf);
+
+    nal_len = g_base64_decode_step (params[i], nal_len, nalp, &state, &save);
+    GST_BUFFER_SIZE (buf) = nal_len;
+
+    if (!nal_len) {
+      gst_buffer_unref (buf);
+      continue;
+    }
+
+    /* append to the right list */
+    if ((nalp[0] & 0x1f) == 7) {
+      GST_DEBUG_OBJECT (rtph264pay, "adding param %d as SPS %d", i, num_sps);
+      rtph264pay->sps = g_list_append (rtph264pay->sps, buf);
+      num_sps++;
+    } else {
+      GST_DEBUG_OBJECT (rtph264pay, "adding param %d as PPS %d", i, num_pps);
+      rtph264pay->pps = g_list_append (rtph264pay->pps, buf);
+      num_pps++;
+    }
+  }
+  g_strfreev (params);
+}
+
 static guint
 next_start_code (guint8 * data, guint size)
 {
@@ -422,8 +485,8 @@ next_start_code (guint8 * data, guint size)
    * sense because our search 'alphabet' is binary - 0 & 1 only.
    * This allow us to simplify the general BM algorithm to a very
    * simple form. */
-  /* assume 1 is in the 4th byte */
-  guint offset = 3;
+  /* assume 1 is in the 3th byte */
+  guint offset = 2;
 
   while (offset < size) {
     if (1 == data[offset]) {
@@ -431,23 +494,21 @@ next_start_code (guint8 * data, guint size)
 
       if (0 == data[--shift]) {
         if (0 == data[--shift]) {
-          if (0 == data[--shift]) {
-            return shift;
-          }
+          return shift;
         }
       }
-      /* The jump is always 4 because of the 1 previously matched.
+      /* The jump is always 3 because of the 1 previously matched.
        * All the 0's must be after this '1' matched at offset */
-      offset += 4;
+      offset += 3;
     } else if (0 == data[offset]) {
       /* maybe next byte is 1? */
       offset++;
     } else {
-      /* can jump 4 bytes forward */
-      offset += 4;
+      /* can jump 3 bytes forward */
+      offset += 3;
     }
     /* at each iteration, we rescan in a backward manner until
-     * we match 0.0.0.1 in reverse order. Since our search string
+     * we match 0.0.1 in reverse order. Since our search string
      * has only 2 'alpabets' (i.e. 0 & 1), we know that any
      * mismatch will force us to shift a fixed number of steps */
   }
@@ -668,9 +729,10 @@ gst_rtp_h264_pay_payload_nal (GstBaseRTPPayload * basepayload, guint8 * data,
     }
   }
 
-  if (send_spspps) {
+  if (send_spspps || rtph264pay->send_spspps) {
     /* we need to send SPS/PPS now first. FIXME, don't use the timestamp for
      * checking when we need to send SPS/PPS but convert to running_time first. */
+    rtph264pay->send_spspps = FALSE;
     ret = gst_rtp_h264_pay_send_sps_pps (basepayload, rtph264pay, timestamp);
     if (ret != GST_FLOW_OK)
       return ret;
@@ -921,8 +983,8 @@ gst_rtp_h264_pay_handle_buffer (GstBaseRTPPayload * basepayload,
     /* first pass to locate NALs and parse SPS/PPS */
     while (size > 4) {
       /* skip start code */
-      data += 4;
-      size -= 4;
+      data += 3;
+      size -= 3;
 
       if (rtph264pay->scan_mode == GST_H264_SCAN_MODE_SINGLE_NAL) {
         /* we are told that there is only a single NAL in this packet so that we
@@ -953,9 +1015,12 @@ gst_rtp_h264_pay_handle_buffer (GstBaseRTPPayload * basepayload,
                   rtph264pay->sprop_parameter_sets, NULL))
             goto caps_rejected;
 
+          /* parse SPS and PPS from provided parameter set (for insertion) */
+          gst_rtp_h264_pay_parse_sprop_parameter_sets (rtph264pay);
+
           rtph264pay->update_caps = FALSE;
 
-          GST_DEBUG ("outcaps udpate: sprop-parameter-sets=%s",
+          GST_DEBUG ("outcaps update: sprop-parameter-sets=%s",
               rtph264pay->sprop_parameter_sets);
         }
       } else {
@@ -981,13 +1046,24 @@ gst_rtp_h264_pay_handle_buffer (GstBaseRTPPayload * basepayload,
     /* second pass to payload and push */
     data = nal_data;
     for (i = 0; i < nal_queue->len; i++) {
+      guint size;
+
       nal_len = g_array_index (nal_queue, guint, i);
       /* skip start code */
-      data += 4;
+      data += 3;
+
+      /* Trim the end unless we're the last NAL in the buffer.
+       * In case we're not at the end of the buffer we know the next block
+       * starts with 0x000001 so all the 0x00 bytes at the end of this one are
+       * trailing 0x0 that can be discarded */
+      size = nal_len;
+      if (i + 1 != nal_queue->len)
+        for ( ; size > 1 && data[size - 1] == 0x0; size--)
+          /* skip */;
 
       /* put the data in one or more RTP packets */
       ret =
-          gst_rtp_h264_pay_payload_nal (basepayload, data, nal_len, timestamp,
+          gst_rtp_h264_pay_payload_nal (basepayload, data, size, timestamp,
           buffer);
       if (ret != GST_FLOW_OK) {
         break;
@@ -1010,6 +1086,51 @@ caps_rejected:
   g_array_set_size (nal_queue, 0);
   gst_buffer_unref (buffer);
   return GST_FLOW_NOT_NEGOTIATED;
+}
+
+static gboolean
+gst_rtp_h264_pay_handle_event (GstPad * pad, GstEvent * event)
+{
+  const GstStructure *s;
+  GstRtpH264Pay *rtph264pay =
+      GST_RTP_H264_PAY (gst_pad_get_parent_element (pad));
+
+  switch (GST_EVENT_TYPE (event)) {
+    case GST_EVENT_CUSTOM_DOWNSTREAM:
+      s = gst_event_get_structure (event);
+      if (gst_structure_has_name (s, "GstForceKeyUnit")) {
+        gboolean resend_codec_data;
+
+        if (gst_structure_get_boolean (s, "all-headers",
+                &resend_codec_data) && resend_codec_data)
+          rtph264pay->send_spspps = TRUE;
+      }
+      break;
+    default:
+      break;
+  }
+
+  return FALSE;
+}
+
+static GstStateChangeReturn
+gst_basertppayload_change_state (GstElement * element,
+    GstStateChange transition)
+{
+  GstStateChangeReturn ret;
+  GstRtpH264Pay *rtph264pay = GST_RTP_H264_PAY (element);
+
+  switch (transition) {
+    case GST_STATE_CHANGE_READY_TO_PAUSED:
+      rtph264pay->send_spspps = FALSE;
+      break;
+    default:
+      break;
+  }
+
+  ret = GST_ELEMENT_CLASS (parent_class)->change_state (element, transition);
+
+  return ret;
 }
 
 static void

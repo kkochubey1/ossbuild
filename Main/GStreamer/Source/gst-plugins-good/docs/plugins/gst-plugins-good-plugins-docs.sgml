@@ -51,6 +51,7 @@
     <xi:include href="xml/element-cairotextoverlay.xml" />
     <xi:include href="xml/element-cairotimeoverlay.xml" />
     <xi:include href="xml/element-cairorender.xml" />
+    <xi:include href="xml/element-capssetter.xml" />
     <xi:include href="xml/element-cmmldec.xml" />
     <xi:include href="xml/element-cmmlenc.xml" />
     <xi:include href="xml/element-cutter.xml" />
@@ -91,6 +92,7 @@
     <xi:include href="xml/element-icydemux.xml" />
     <xi:include href="xml/element-id3demux.xml" />
     <xi:include href="xml/element-id3v2mux.xml" />
+    <xi:include href="xml/element-imagefreeze.xml" />
     <xi:include href="xml/element-interleave.xml" />
     <xi:include href="xml/element-jpegdec.xml" />
     <xi:include href="xml/element-jpegenc.xml" />
@@ -106,6 +108,9 @@
     <xi:include href="xml/element-multipartmux.xml" />
     <xi:include href="xml/element-multiudpsink.xml" />
     <xi:include href="xml/element-optv.xml" />
+    <xi:include href="xml/element-oss4mixer.xml" />
+    <xi:include href="xml/element-oss4sink.xml" />
+    <xi:include href="xml/element-oss4src.xml" />
     <xi:include href="xml/element-ossmixer.xml" />
     <xi:include href="xml/element-osssink.xml" />
     <xi:include href="xml/element-osssrc.xml" />
@@ -159,6 +164,7 @@
     <xi:include href="xml/element-wavpackenc.xml" />
     <xi:include href="xml/element-wavpackparse.xml" />
     <xi:include href="xml/element-wavparse.xml" />
+    <xi:include href="xml/element-webmmux.xml" />
     <xi:include href="xml/element-ximagesrc.xml" />
     <xi:include href="xml/element-y4menc.xml" />
   </chapter>
@@ -190,7 +196,6 @@
     <xi:include href="xml/plugin-flac.xml" />
     <xi:include href="xml/plugin-flv.xml" />
     <xi:include href="xml/plugin-flxdec.xml" />
-    <xi:include href="xml/plugin-gamma.xml" />
     <xi:include href="xml/plugin-gconfelements.xml" />
     <xi:include href="xml/plugin-gdkpixbuf.xml" />
     <xi:include href="xml/plugin-goom.xml" />
@@ -198,6 +203,7 @@
     <xi:include href="xml/plugin-halelements.xml" />
     <xi:include href="xml/plugin-icydemux.xml" />
     <xi:include href="xml/plugin-id3demux.xml" />
+    <xi:include href="xml/plugin-imagefreeze.xml" />
     <xi:include href="xml/plugin-interleave.xml" />
     <xi:include href="xml/plugin-jpeg.xml" />
     <xi:include href="xml/plugin-level.xml" />
@@ -207,6 +213,7 @@
     <xi:include href="xml/plugin-multifile.xml" />
     <xi:include href="xml/plugin-multipart.xml" />
     <xi:include href="xml/plugin-navigationtest.xml" />
+    <xi:include href="xml/plugin-oss4.xml" />
     <xi:include href="xml/plugin-ossaudio.xml" />
     <xi:include href="xml/plugin-osxaudio.xml" />
     <xi:include href="xml/plugin-osxvideo.xml" />
@@ -226,10 +233,9 @@
     <xi:include href="xml/plugin-taglib.xml" />
     <xi:include href="xml/plugin-udp.xml" />
     <xi:include href="xml/plugin-video4linux2.xml" />
-    <xi:include href="xml/plugin-videobalance.xml" />
     <xi:include href="xml/plugin-videobox.xml" />
     <xi:include href="xml/plugin-videocrop.xml" />
-    <xi:include href="xml/plugin-videoflip.xml" />
+    <xi:include href="xml/plugin-videofilter.xml" />
     <xi:include href="xml/plugin-videomixer.xml" />
     <xi:include href="xml/plugin-waveform.xml" />
     <xi:include href="xml/plugin-wavenc.xml" />

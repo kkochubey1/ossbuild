@@ -11,10 +11,10 @@ GObject
     GstElement
       GstBin
         GstPipeline
-        GstGConfVideoSink
-        GstGConfVideoSrc
         GstSwitchSink
+          GstGConfVideoSink
           GstGConfAudioSink
+        GstGConfVideoSrc
         GstGConfAudioSrc
         GstHalAudioSink
         GstHalAudioSrc
@@ -36,6 +36,7 @@ GObject
           GstAudioSink
             GstEsdSink
             GstOssSink
+            GstOss4Sink
         GstCACASink
         GstVideoSink
           GstGdkPixbufSink
@@ -55,6 +56,7 @@ GObject
             GstAudioSrc
               GstPulseSrc
               GstOssSrc
+              GstOss4Source
           GstV4l2Src
           GstXImageSrc
           GstMultiFileSrc
@@ -88,14 +90,15 @@ GObject
           GstStreakTV
           GstRippleTV
           GstNavigationtest
-          GstVideoFlip
-          GstVideoBalance
           GstGamma
+          GstVideoBalance
+          GstVideoFlip
           GstSMPTEAlpha
           GstAlpha
           GstAlphaColor
         GstVideoBox
         GstBreakMyData
+        GstCapsSetter
         GstNavSeek
         GstProgressReport
         GstTagInject
@@ -135,6 +138,7 @@ GObject
       GstPngEnc
       GstGdkPixbuf
       GstOssMixerElement
+      GstOss4Mixer
       GstShapeWipe
       GstAviDemux
       GstAviMux
@@ -154,6 +158,7 @@ GObject
         GstRtpPcmaDepay
         GstRtpPcmuDepay
         GstRtpMPADepay
+        GstRtpMPARobustDepay
         GstRtpMPVDepay
         GstRtpH263PDepay
         GstRtpH263Depay
@@ -166,6 +171,7 @@ GObject
         GstRtpMP4VDepay
         GstRtpMP4ADepay
         GstRtpMP4GDepay
+        GstRtpQCELPDepay
         GstRtpQDM2Depay
         GstRTPSirenDepay
         GstRtpSPEEXDepay
@@ -215,9 +221,9 @@ GObject
       GstRndBufferSize
       GstEFence
       GstCutter
-      GstEbmlRead
-        GstMatroskaDemux
+      GstMatroskaDemux
       GstMatroskaMux
+        GstWebMMux
       GstRTPDec
       GstQTDemux
       GstSMPTE
@@ -233,6 +239,7 @@ GObject
         GstID3Demux
       GstFlxDec
       GstDeinterlace
+      GstImageFreeze
       GstY4mEncode
       GstInterleave
       GstDeinterleave
@@ -250,18 +257,18 @@ GObject
     GstPlugin
     GstRegistry
     GstRingBuffer
-      GstAudioSinkRingBuffer
       GstAudioSrcRingBuffer
+      GstAudioSinkRingBuffer
   GstSignalObject
   GstCmmlTagStream
   GstCmmlTagHead
   GstCmmlTagClip
   GstColorBalanceChannel
   RTPSession
-  GstTunerNorm
-  GstTunerChannel
   GstMixerTrack
     GstMixerOptions
+  GstTunerNorm
+  GstTunerChannel
   GdkPixbuf
 GInterface
   GTypePlugin

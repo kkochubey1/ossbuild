@@ -55,6 +55,7 @@
 #include "gstwavparse.h"
 #include "gst/riff/riff-ids.h"
 #include "gst/riff/riff-media.h"
+#include <gst/base/gsttypefindhelper.h>
 #include <gst/gst-i18n-plugin.h>
 
 GST_DEBUG_CATEGORY_STATIC (wavparse_debug);
@@ -661,15 +662,16 @@ gst_wavparse_other (GstWavParse * wav)
           length = G_MAXUINT32;
         }
         if (file_length > G_MAXUINT32) {
-          GST_DEBUG_OBJECT (wav, "file length %lld, clipping to 32 bits");
+          GST_DEBUG_OBJECT (wav, "file length %" G_GUINT64_FORMAT
+              ", clipping to 32 bits", file_length);
           /* could not get length, assuming till eof */
           length = G_MAXUINT32;
         } else {
-          GST_DEBUG_OBJECT (wav, "file length %lld, datalength",
-              file_length, length);
+          GST_DEBUG_OBJECT (wav, "file length %" G_GUINT64_FORMAT
+              ", datalength %u", file_length, length);
           /* substract offset of datastart from length */
           length = file_length - wav->datastart;
-          GST_DEBUG_OBJECT (wav, "datalength %lld", length);
+          GST_DEBUG_OBJECT (wav, "datalength %u", length);
         }
       }
       wav->datasize = (guint64) length;
@@ -962,17 +964,14 @@ gst_wavparse_perform_seek (GstWavParse * wav, GstEvent * event)
       /* we are running the current segment and doing a non-flushing seek,
        * close the segment first based on the previous last_stop. */
       GST_DEBUG_OBJECT (wav, "closing running segment %" G_GINT64_FORMAT
-          " to %" G_GINT64_FORMAT, wav->segment.accum, wav->segment.last_stop);
+          " to %" G_GINT64_FORMAT, wav->segment.start, wav->segment.last_stop);
 
       /* queue the segment for sending in the stream thread */
       if (wav->close_segment)
         gst_event_unref (wav->close_segment);
       wav->close_segment = gst_event_new_new_segment (TRUE,
           wav->segment.rate, wav->segment.format,
-          wav->segment.accum, wav->segment.last_stop, wav->segment.accum);
-
-      /* keep track of our last_stop */
-      seeksegment.accum = wav->segment.last_stop;
+          wav->segment.start, wav->segment.last_stop, wav->segment.start);
     }
   }
 
@@ -1161,7 +1160,7 @@ static GstFlowReturn
 gst_wavparse_stream_headers (GstWavParse * wav)
 {
   GstFlowReturn res = GST_FLOW_OK;
-  GstBuffer *buf;
+  GstBuffer *buf = NULL;
   gst_riff_strf_auds *header = NULL;
   guint32 tag, size;
   gboolean gotdata = FALSE;
@@ -1728,22 +1727,32 @@ static void
 gst_wavparse_add_src_pad (GstWavParse * wav, GstBuffer * buf)
 {
   GstStructure *s;
-  const guint8 dts_marker[] = { 0xFF, 0x1F, 0x00, 0xE8, 0xF1, 0x07 };
 
   GST_DEBUG_OBJECT (wav, "adding src pad");
 
   if (wav->caps) {
     s = gst_caps_get_structure (wav->caps, 0);
-    if (s && gst_structure_has_name (s, "audio/x-raw-int") && buf &&
-        GST_BUFFER_SIZE (buf) > 6 &&
-        memcmp (GST_BUFFER_DATA (buf), dts_marker, 6) == 0) {
+    if (s && gst_structure_has_name (s, "audio/x-raw-int") && buf != NULL) {
+      GstTypeFindProbability prob;
+      GstCaps *tf_caps;
 
-      GST_WARNING_OBJECT (wav, "Found DTS marker in file marked as raw PCM");
-      gst_caps_unref (wav->caps);
-      wav->caps = gst_caps_from_string ("audio/x-dts");
+      tf_caps = gst_type_find_helper_for_buffer (GST_OBJECT (wav), buf, &prob);
+      if (tf_caps != NULL) {
+        s = gst_caps_get_structure (tf_caps, 0);
+        if (gst_structure_has_name (s, "audio/x-dts")
+            && prob >= GST_TYPE_FIND_LIKELY) {
+          GST_INFO_OBJECT (wav, "Found DTS marker in file marked as raw PCM");
+          gst_caps_unref (wav->caps);
+          wav->caps = tf_caps;
 
-      gst_tag_list_add (wav->tags, GST_TAG_MERGE_REPLACE,
-          GST_TAG_AUDIO_CODEC, "dts", NULL);
+          gst_tag_list_add (wav->tags, GST_TAG_MERGE_REPLACE,
+              GST_TAG_AUDIO_CODEC, "dts", NULL);
+        } else {
+          GST_DEBUG_OBJECT (wav, "found caps %" GST_PTR_FORMAT " for stream "
+              "marked as raw PCM audio, but ignoring for now", tf_caps);
+          gst_caps_unref (tf_caps);
+        }
+      }
     }
   }
 
@@ -1844,7 +1853,29 @@ iterate_adapter:
     if ((res = gst_pad_pull_range (wav->sinkpad, wav->offset,
                 desired, &buf)) != GST_FLOW_OK)
       goto pull_error;
+
+    /* we may get a short buffer at the end of the file */
+    if (GST_BUFFER_SIZE (buf) < desired) {
+      GST_LOG_OBJECT (wav, "Got only %u bytes of data", GST_BUFFER_SIZE (buf));
+      if (GST_BUFFER_SIZE (buf) >= wav->blockalign) {
+        buf = gst_buffer_make_metadata_writable (buf);
+        GST_BUFFER_SIZE (buf) -= (GST_BUFFER_SIZE (buf) % wav->blockalign);
+      } else {
+        gst_buffer_unref (buf);
+        goto found_eos;
+      }
+    }
   }
+
+  obtained = GST_BUFFER_SIZE (buf);
+
+  /* our positions in bytes */
+  pos = wav->offset - wav->datastart;
+  nextpos = pos + obtained;
+
+  /* update offsets, does not overflow. */
+  GST_BUFFER_OFFSET (buf) = pos / wav->bytes_per_sample;
+  GST_BUFFER_OFFSET_END (buf) = nextpos / wav->bytes_per_sample;
 
   /* first chunk of data? create the source pad. We do this only here so
    * we can detect broken .wav files with dts disguised as raw PCM (sigh) */
@@ -1864,16 +1895,6 @@ iterate_adapter:
     }
   }
 
-  obtained = GST_BUFFER_SIZE (buf);
-
-  /* our positions in bytes */
-  pos = wav->offset - wav->datastart;
-  nextpos = pos + obtained;
-
-  /* update offsets, does not overflow. */
-  GST_BUFFER_OFFSET (buf) = pos / wav->bytes_per_sample;
-  GST_BUFFER_OFFSET_END (buf) = nextpos / wav->bytes_per_sample;
-
   if (wav->bps > 0) {
     /* and timestamps if we have a bitrate, be careful for overflows */
     timestamp = uint64_ceiling_scale (pos, GST_SECOND, (guint64) wav->bps);
@@ -1882,7 +1903,9 @@ iterate_adapter:
     duration = next_timestamp - timestamp;
 
     /* update current running segment position */
-    gst_segment_set_last_stop (&wav->segment, GST_FORMAT_TIME, next_timestamp);
+    if (G_LIKELY (next_timestamp >= wav->segment.start))
+      gst_segment_set_last_stop (&wav->segment, GST_FORMAT_TIME,
+          next_timestamp);
   } else if (wav->fact) {
     guint64 bps =
         gst_util_uint64_scale_int (wav->datasize, wav->rate, wav->fact);
@@ -1899,7 +1922,8 @@ iterate_adapter:
       timestamp = GST_CLOCK_TIME_NONE;
     duration = GST_CLOCK_TIME_NONE;
     /* update current running segment position with byte offset */
-    gst_segment_set_last_stop (&wav->segment, GST_FORMAT_BYTES, nextpos);
+    if (G_LIKELY (nextpos >= wav->segment.start))
+      gst_segment_set_last_stop (&wav->segment, GST_FORMAT_BYTES, nextpos);
   }
   if ((pos > 0) && wav->vbr) {
     /* don't set timestamps for VBR files if it's not the first buffer */

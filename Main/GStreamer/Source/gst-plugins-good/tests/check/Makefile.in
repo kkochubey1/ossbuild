@@ -46,10 +46,11 @@ check_PROGRAMS = generic/states$(EXEEXT) $(am__EXEEXT_1) \
 	elements/audiopanorama$(EXEEXT) \
 	elements/audiowsincband$(EXEEXT) \
 	elements/audiowsinclimit$(EXEEXT) elements/avimux$(EXEEXT) \
-	elements/avisubtitle$(EXEEXT) elements/deinterlace$(EXEEXT) \
-	elements/deinterleave$(EXEEXT) elements/equalizer$(EXEEXT) \
-	elements/flvdemux$(EXEEXT) elements/flvmux$(EXEEXT) \
-	elements/icydemux$(EXEEXT) elements/id3demux$(EXEEXT) \
+	elements/avisubtitle$(EXEEXT) elements/capssetter$(EXEEXT) \
+	elements/deinterlace$(EXEEXT) elements/deinterleave$(EXEEXT) \
+	elements/equalizer$(EXEEXT) elements/flvdemux$(EXEEXT) \
+	elements/flvmux$(EXEEXT) elements/icydemux$(EXEEXT) \
+	elements/id3demux$(EXEEXT) elements/imagefreeze$(EXEEXT) \
 	elements/interleave$(EXEEXT) elements/level$(EXEEXT) \
 	elements/matroskamux$(EXEEXT) elements/multifile$(EXEEXT) \
 	elements/rganalysis$(EXEEXT) elements/rglimiter$(EXEEXT) \
@@ -62,7 +63,7 @@ check_PROGRAMS = generic/states$(EXEEXT) $(am__EXEEXT_1) \
 	pipelines/simple-launch-lines$(EXEEXT) \
 	pipelines/effectv$(EXEEXT) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
-	$(am__EXEEXT_7) $(am__EXEEXT_8)
+	$(am__EXEEXT_7) $(am__EXEEXT_8) $(am__EXEEXT_9)
 noinst_PROGRAMS = elements/autodetect$(EXEEXT)
 subdir = tests/check
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -89,9 +90,10 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
-	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/aalib.m4 $(top_srcdir)/m4/esd.m4 \
+	$(top_srcdir)/m4/gconf-2.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
 	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
@@ -119,6 +121,8 @@ CONFIG_CLEAN_VPATH_FILES =
 @USE_WAVPACK_TRUE@	elements/wavpackdec$(EXEEXT) \
 @USE_WAVPACK_TRUE@	elements/wavpackenc$(EXEEXT) \
 @USE_WAVPACK_TRUE@	pipelines/wavpack$(EXEEXT)
+@HAVE_ORC_TRUE@am__EXEEXT_9 = orc/deinterlace$(EXEEXT) \
+@HAVE_ORC_TRUE@	orc/videomixer$(EXEEXT) orc/videobox$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 elements_alphacolor_SOURCES = elements/alphacolor.c
 elements_alphacolor_OBJECTS =  \
@@ -208,6 +212,10 @@ elements_avisubtitle_SOURCES = elements/avisubtitle.c
 elements_avisubtitle_OBJECTS = avisubtitle.$(OBJEXT)
 elements_avisubtitle_LDADD = $(LDADD)
 elements_avisubtitle_DEPENDENCIES = $(am__DEPENDENCIES_1)
+elements_capssetter_SOURCES = elements/capssetter.c
+elements_capssetter_OBJECTS = capssetter.$(OBJEXT)
+elements_capssetter_LDADD = $(LDADD)
+elements_capssetter_DEPENDENCIES = $(am__DEPENDENCIES_1)
 elements_cmmldec_SOURCES = elements/cmmldec.c
 elements_cmmldec_OBJECTS = elements_cmmldec-cmmldec.$(OBJEXT)
 elements_cmmldec_LDADD = $(LDADD)
@@ -275,6 +283,15 @@ elements_id3v2mux_SOURCES = elements/id3v2mux.c
 elements_id3v2mux_OBJECTS = id3v2mux.$(OBJEXT)
 elements_id3v2mux_LDADD = $(LDADD)
 elements_id3v2mux_DEPENDENCIES = $(am__DEPENDENCIES_1)
+elements_imagefreeze_SOURCES = elements/imagefreeze.c
+elements_imagefreeze_OBJECTS =  \
+	elements_imagefreeze-imagefreeze.$(OBJEXT)
+elements_imagefreeze_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
+elements_imagefreeze_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(elements_imagefreeze_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 elements_interleave_SOURCES = elements/interleave.c
 elements_interleave_OBJECTS =  \
 	elements_interleave-interleave.$(OBJEXT)
@@ -294,8 +311,8 @@ elements_level_DEPENDENCIES = $(am__DEPENDENCIES_2) \
 	$(am__DEPENDENCIES_1)
 elements_matroskamux_SOURCES = elements/matroskamux.c
 elements_matroskamux_OBJECTS = matroskamux.$(OBJEXT)
-elements_matroskamux_LDADD = $(LDADD)
-elements_matroskamux_DEPENDENCIES = $(am__DEPENDENCIES_1)
+elements_matroskamux_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
 elements_multifile_SOURCES = elements/multifile.c
 elements_multifile_OBJECTS = multifile.$(OBJEXT)
 elements_multifile_LDADD = $(LDADD)
@@ -372,9 +389,14 @@ elements_videocrop_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(elements_videocrop_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 elements_videofilter_SOURCES = elements/videofilter.c
-elements_videofilter_OBJECTS = videofilter.$(OBJEXT)
-elements_videofilter_LDADD = $(LDADD)
-elements_videofilter_DEPENDENCIES = $(am__DEPENDENCIES_1)
+elements_videofilter_OBJECTS =  \
+	elements_videofilter-videofilter.$(OBJEXT)
+elements_videofilter_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
+elements_videofilter_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(elements_videofilter_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 elements_wavpackdec_SOURCES = elements/wavpackdec.c
 elements_wavpackdec_OBJECTS = wavpackdec.$(OBJEXT)
 elements_wavpackdec_LDADD = $(LDADD)
@@ -395,6 +417,26 @@ generic_states_SOURCES = generic/states.c
 generic_states_OBJECTS = states.$(OBJEXT)
 generic_states_LDADD = $(LDADD)
 generic_states_DEPENDENCIES = $(am__DEPENDENCIES_1)
+orc_deinterlace_SOURCES = orc/deinterlace.c
+orc_deinterlace_OBJECTS = orc_deinterlace-deinterlace.$(OBJEXT)
+orc_deinterlace_DEPENDENCIES = $(am__DEPENDENCIES_1)
+orc_deinterlace_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(orc_deinterlace_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
+orc_videobox_SOURCES = orc/videobox.c
+orc_videobox_OBJECTS = orc_videobox-videobox.$(OBJEXT)
+orc_videobox_DEPENDENCIES = $(am__DEPENDENCIES_1)
+orc_videobox_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(orc_videobox_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+orc_videomixer_SOURCES = orc/videomixer.c
+orc_videomixer_OBJECTS = orc_videomixer-videomixer.$(OBJEXT)
+orc_videomixer_DEPENDENCIES = $(am__DEPENDENCIES_1)
+orc_videomixer_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(orc_videomixer_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
+	$@
 pipelines_effectv_SOURCES = pipelines/effectv.c
 pipelines_effectv_OBJECTS = effectv.$(OBJEXT)
 pipelines_effectv_LDADD = $(LDADD)
@@ -450,10 +492,11 @@ SOURCES = elements/alphacolor.c elements/apev2mux.c \
 	elements/audioinvert.c elements/audiopanorama.c \
 	elements/audiowsincband.c elements/audiowsinclimit.c \
 	elements/autodetect.c elements/avimux.c elements/avisubtitle.c \
-	elements/cmmldec.c elements/cmmlenc.c elements/deinterlace.c \
-	elements/deinterleave.c elements/equalizer.c \
-	elements/flvdemux.c elements/flvmux.c elements/gdkpixbufsink.c \
-	elements/icydemux.c elements/id3demux.c elements/id3v2mux.c \
+	elements/capssetter.c elements/cmmldec.c elements/cmmlenc.c \
+	elements/deinterlace.c elements/deinterleave.c \
+	elements/equalizer.c elements/flvdemux.c elements/flvmux.c \
+	elements/gdkpixbufsink.c elements/icydemux.c \
+	elements/id3demux.c elements/id3v2mux.c elements/imagefreeze.c \
 	elements/interleave.c elements/jpegenc.c elements/level.c \
 	elements/matroskamux.c elements/multifile.c \
 	elements/rganalysis.c elements/rglimiter.c elements/rgvolume.c \
@@ -464,6 +507,7 @@ SOURCES = elements/alphacolor.c elements/apev2mux.c \
 	elements/udpsink.c elements/videocrop.c elements/videofilter.c \
 	elements/wavpackdec.c elements/wavpackenc.c \
 	elements/wavpackparse.c elements/y4menc.c generic/states.c \
+	orc/deinterlace.c orc/videobox.c orc/videomixer.c \
 	pipelines/effectv.c pipelines/flacdec.c \
 	pipelines/simple-launch-lines.c pipelines/wavpack.c
 DIST_SOURCES = elements/alphacolor.c elements/apev2mux.c \
@@ -474,10 +518,11 @@ DIST_SOURCES = elements/alphacolor.c elements/apev2mux.c \
 	elements/audioinvert.c elements/audiopanorama.c \
 	elements/audiowsincband.c elements/audiowsinclimit.c \
 	elements/autodetect.c elements/avimux.c elements/avisubtitle.c \
-	elements/cmmldec.c elements/cmmlenc.c elements/deinterlace.c \
-	elements/deinterleave.c elements/equalizer.c \
-	elements/flvdemux.c elements/flvmux.c elements/gdkpixbufsink.c \
-	elements/icydemux.c elements/id3demux.c elements/id3v2mux.c \
+	elements/capssetter.c elements/cmmldec.c elements/cmmlenc.c \
+	elements/deinterlace.c elements/deinterleave.c \
+	elements/equalizer.c elements/flvdemux.c elements/flvmux.c \
+	elements/gdkpixbufsink.c elements/icydemux.c \
+	elements/id3demux.c elements/id3v2mux.c elements/imagefreeze.c \
 	elements/interleave.c elements/jpegenc.c elements/level.c \
 	elements/matroskamux.c elements/multifile.c \
 	elements/rganalysis.c elements/rglimiter.c elements/rgvolume.c \
@@ -488,6 +533,7 @@ DIST_SOURCES = elements/alphacolor.c elements/apev2mux.c \
 	elements/udpsink.c elements/videocrop.c elements/videofilter.c \
 	elements/wavpackdec.c elements/wavpackenc.c \
 	elements/wavpackparse.c elements/y4menc.c generic/states.c \
+	orc/deinterlace.c orc/videobox.c orc/videomixer.c \
 	pipelines/effectv.c pipelines/flacdec.c \
 	pipelines/simple-launch-lines.c pipelines/wavpack.c
 ETAGS = etags
@@ -564,6 +610,8 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
+GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
+GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -644,8 +692,6 @@ LIBIEC61883_LIBS = @LIBIEC61883_LIBS@
 LIBINTL = @LIBINTL@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBPNG_CFLAGS = @LIBPNG_CFLAGS@
 LIBPNG_LIBS = @LIBPNG_LIBS@
 LIBS = @LIBS@
@@ -671,6 +717,9 @@ OBJCDEPMODE = @OBJCDEPMODE@
 OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+ORCC = @ORCC@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -698,6 +747,8 @@ PULSE_0_9_13_CFLAGS = @PULSE_0_9_13_CFLAGS@
 PULSE_0_9_13_LIBS = @PULSE_0_9_13_LIBS@
 PULSE_0_9_15_CFLAGS = @PULSE_0_9_15_CFLAGS@
 PULSE_0_9_15_LIBS = @PULSE_0_9_15_LIBS@
+PULSE_0_9_16_CFLAGS = @PULSE_0_9_16_CFLAGS@
+PULSE_0_9_16_LIBS = @PULSE_0_9_16_LIBS@
 PULSE_0_9_20_CFLAGS = @PULSE_0_9_20_CFLAGS@
 PULSE_0_9_20_LIBS = @PULSE_0_9_20_LIBS@
 PULSE_CFLAGS = @PULSE_CFLAGS@
@@ -820,6 +871,7 @@ TESTS_ENVIRONMENT = \
 	$(REGISTRY_ENVIRONMENT)					\
 	GST_PLUGIN_SYSTEM_PATH=					\
 	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/ext:$(top_builddir)/sys:$(GSTPB_PLUGINS_DIR):$(GST_PLUGINS_DIR)			\
+	GST_PLUGIN_LOADING_WHITELIST="gstreamer@$(GST_PLUGINS_DIR):gst-plugins-base@$(GSTPB_PLUGINS_DIR):gst-plugins-good@$(top_builddir)"	\
 	STATE_IGNORE_ELEMENTS="aasink autoaudiosrc autoaudiosink autovideosrc autovideosink \
 		cacasink cairotextoverlay gconfaudiosrc gconfvideosrc gconfaudiosink gconfvideosink \
 		halaudiosrc halaudiosink v4l2src osssrc osssink pulsesink pulsesrc pulsemixer \
@@ -868,6 +920,8 @@ CLEANFILES = core.* test-registry.*
 @USE_WAVPACK_TRUE@       elements/wavpackenc \
 @USE_WAVPACK_TRUE@       pipelines/wavpack
 
+@HAVE_ORC_FALSE@check_orc = 
+@HAVE_ORC_TRUE@check_orc = orc/deinterlace orc/videomixer orc/videobox
 VALGRIND_TO_FIX = \
 	elements/rtp-payloading
 
@@ -903,7 +957,10 @@ elements_deinterleave_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
 elements_deinterleave_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstaudio-$(GST_MAJORMINOR) $(LDADD)
 elements_interleave_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
 elements_interleave_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstaudio-$(GST_MAJORMINOR) $(LDADD)
+elements_imagefreeze_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(AM_CFLAGS)
+elements_imagefreeze_LDADD = $(GST_BASE_LIBS) $(LDADD) -lgstvideo-0.10
 elements_level_LDADD = $(LDADD) $(LIBM)
+elements_matroskamux_LDADD = $(GST_BASE_LIBS) $(LDADD) $(LIBM)
 elements_rtpbin_buffer_list_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) \
 	$(WARNING_CFLAGS) $(ERROR_CFLAGS) $(GST_CHECK_CFLAGS)
 
@@ -924,6 +981,8 @@ elements_sunaudio_LDADD = \
 
 elements_videocrop_LDADD = $(GST_BASE_LIBS) $(LDADD)
 elements_videocrop_CFLAGS = $(GST_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
+elements_videofilter_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
+elements_videofilter_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstvideo-$(GST_MAJORMINOR) $(LDADD)
 
 # FIXME: configure should check for gdk-pixbuf not gtk
 # only need video.h header, not the lib
@@ -935,6 +994,12 @@ elements_gdkpixbufsink_LDADD = \
 
 pipelines_wavpack_LDADD = $(LDADD) $(GST_BASE_LIBS)
 pipelines_wavpack_CFLAGS = $(GST_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
+orc_deinterlace_CFLAGS = $(ORC_CFLAGS)
+orc_deinterlace_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_videomixer_CFLAGS = $(ORC_CFLAGS)
+orc_videomixer_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_videobox_CFLAGS = $(ORC_CFLAGS)
+orc_videobox_LDADD = $(ORC_LIBS) -lorc-test-0.4
 EXTRA_DIST = gst-plugins-good.supp
 all: all-am
 
@@ -1042,6 +1107,9 @@ elements/avimux$(EXEEXT): $(elements_avimux_OBJECTS) $(elements_avimux_DEPENDENC
 elements/avisubtitle$(EXEEXT): $(elements_avisubtitle_OBJECTS) $(elements_avisubtitle_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/avisubtitle$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(elements_avisubtitle_OBJECTS) $(elements_avisubtitle_LDADD) $(LIBS)
+elements/capssetter$(EXEEXT): $(elements_capssetter_OBJECTS) $(elements_capssetter_DEPENDENCIES) elements/$(am__dirstamp)
+	@rm -f elements/capssetter$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(elements_capssetter_OBJECTS) $(elements_capssetter_LDADD) $(LIBS)
 elements/cmmldec$(EXEEXT): $(elements_cmmldec_OBJECTS) $(elements_cmmldec_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/cmmldec$(EXEEXT)
 	$(AM_V_CCLD)$(elements_cmmldec_LINK) $(elements_cmmldec_OBJECTS) $(elements_cmmldec_LDADD) $(LIBS)
@@ -1075,6 +1143,9 @@ elements/id3demux$(EXEEXT): $(elements_id3demux_OBJECTS) $(elements_id3demux_DEP
 elements/id3v2mux$(EXEEXT): $(elements_id3v2mux_OBJECTS) $(elements_id3v2mux_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/id3v2mux$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(elements_id3v2mux_OBJECTS) $(elements_id3v2mux_LDADD) $(LIBS)
+elements/imagefreeze$(EXEEXT): $(elements_imagefreeze_OBJECTS) $(elements_imagefreeze_DEPENDENCIES) elements/$(am__dirstamp)
+	@rm -f elements/imagefreeze$(EXEEXT)
+	$(AM_V_CCLD)$(elements_imagefreeze_LINK) $(elements_imagefreeze_OBJECTS) $(elements_imagefreeze_LDADD) $(LIBS)
 elements/interleave$(EXEEXT): $(elements_interleave_OBJECTS) $(elements_interleave_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/interleave$(EXEEXT)
 	$(AM_V_CCLD)$(elements_interleave_LINK) $(elements_interleave_OBJECTS) $(elements_interleave_LDADD) $(LIBS)
@@ -1131,7 +1202,7 @@ elements/videocrop$(EXEEXT): $(elements_videocrop_OBJECTS) $(elements_videocrop_
 	$(AM_V_CCLD)$(elements_videocrop_LINK) $(elements_videocrop_OBJECTS) $(elements_videocrop_LDADD) $(LIBS)
 elements/videofilter$(EXEEXT): $(elements_videofilter_OBJECTS) $(elements_videofilter_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/videofilter$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(elements_videofilter_OBJECTS) $(elements_videofilter_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(elements_videofilter_LINK) $(elements_videofilter_OBJECTS) $(elements_videofilter_LDADD) $(LIBS)
 elements/wavpackdec$(EXEEXT): $(elements_wavpackdec_OBJECTS) $(elements_wavpackdec_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/wavpackdec$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(elements_wavpackdec_OBJECTS) $(elements_wavpackdec_LDADD) $(LIBS)
@@ -1150,6 +1221,18 @@ generic/$(am__dirstamp):
 generic/states$(EXEEXT): $(generic_states_OBJECTS) $(generic_states_DEPENDENCIES) generic/$(am__dirstamp)
 	@rm -f generic/states$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(generic_states_OBJECTS) $(generic_states_LDADD) $(LIBS)
+orc/$(am__dirstamp):
+	@$(MKDIR_P) orc
+	@: > orc/$(am__dirstamp)
+orc/deinterlace$(EXEEXT): $(orc_deinterlace_OBJECTS) $(orc_deinterlace_DEPENDENCIES) orc/$(am__dirstamp)
+	@rm -f orc/deinterlace$(EXEEXT)
+	$(AM_V_CCLD)$(orc_deinterlace_LINK) $(orc_deinterlace_OBJECTS) $(orc_deinterlace_LDADD) $(LIBS)
+orc/videobox$(EXEEXT): $(orc_videobox_OBJECTS) $(orc_videobox_DEPENDENCIES) orc/$(am__dirstamp)
+	@rm -f orc/videobox$(EXEEXT)
+	$(AM_V_CCLD)$(orc_videobox_LINK) $(orc_videobox_OBJECTS) $(orc_videobox_LDADD) $(LIBS)
+orc/videomixer$(EXEEXT): $(orc_videomixer_OBJECTS) $(orc_videomixer_DEPENDENCIES) orc/$(am__dirstamp)
+	@rm -f orc/videomixer$(EXEEXT)
+	$(AM_V_CCLD)$(orc_videomixer_LINK) $(orc_videomixer_OBJECTS) $(orc_videomixer_LDADD) $(LIBS)
 pipelines/$(am__dirstamp):
 	@$(MKDIR_P) pipelines
 	@: > pipelines/$(am__dirstamp)
@@ -1186,6 +1269,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autodetect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/avimux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/avisubtitle.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/capssetter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/effectv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_alphacolor-alphacolor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_aspectratiocrop-aspectratiocrop.Po@am__quote@
@@ -1195,11 +1279,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_deinterlace-deinterlace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_deinterleave-deinterleave.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_gdkpixbufsink-gdkpixbufsink.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_imagefreeze-imagefreeze.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_interleave-interleave.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_rtpbin_buffer_list-rtpbin_buffer_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_souphttpsrc-souphttpsrc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_sunaudio-sunaudio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_videocrop-videocrop.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_videofilter-videofilter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/equalizer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flacdec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/flvdemux.Po@am__quote@
@@ -1211,6 +1297,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/level.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/matroskamux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multifile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orc_deinterlace-deinterlace.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orc_videobox-videobox.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/orc_videomixer-videomixer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pipelines_wavpack-wavpack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rganalysis.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rglimiter.Po@am__quote@
@@ -1223,7 +1312,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spectrum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/states.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/udpsink.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/videofilter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wavpackdec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wavpackenc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wavpackparse.Po@am__quote@
@@ -1525,6 +1613,22 @@ avisubtitle.obj: elements/avisubtitle.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o avisubtitle.obj `if test -f 'elements/avisubtitle.c'; then $(CYGPATH_W) 'elements/avisubtitle.c'; else $(CYGPATH_W) '$(srcdir)/elements/avisubtitle.c'; fi`
 
+capssetter.o: elements/capssetter.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT capssetter.o -MD -MP -MF $(DEPDIR)/capssetter.Tpo -c -o capssetter.o `test -f 'elements/capssetter.c' || echo '$(srcdir)/'`elements/capssetter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/capssetter.Tpo $(DEPDIR)/capssetter.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/capssetter.c' object='capssetter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o capssetter.o `test -f 'elements/capssetter.c' || echo '$(srcdir)/'`elements/capssetter.c
+
+capssetter.obj: elements/capssetter.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT capssetter.obj -MD -MP -MF $(DEPDIR)/capssetter.Tpo -c -o capssetter.obj `if test -f 'elements/capssetter.c'; then $(CYGPATH_W) 'elements/capssetter.c'; else $(CYGPATH_W) '$(srcdir)/elements/capssetter.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/capssetter.Tpo $(DEPDIR)/capssetter.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/capssetter.c' object='capssetter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o capssetter.obj `if test -f 'elements/capssetter.c'; then $(CYGPATH_W) 'elements/capssetter.c'; else $(CYGPATH_W) '$(srcdir)/elements/capssetter.c'; fi`
+
 elements_cmmldec-cmmldec.o: elements/cmmldec.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_cmmldec_CFLAGS) $(CFLAGS) -MT elements_cmmldec-cmmldec.o -MD -MP -MF $(DEPDIR)/elements_cmmldec-cmmldec.Tpo -c -o elements_cmmldec-cmmldec.o `test -f 'elements/cmmldec.c' || echo '$(srcdir)/'`elements/cmmldec.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/elements_cmmldec-cmmldec.Tpo $(DEPDIR)/elements_cmmldec-cmmldec.Po
@@ -1700,6 +1804,22 @@ id3v2mux.obj: elements/id3v2mux.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/id3v2mux.c' object='id3v2mux.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o id3v2mux.obj `if test -f 'elements/id3v2mux.c'; then $(CYGPATH_W) 'elements/id3v2mux.c'; else $(CYGPATH_W) '$(srcdir)/elements/id3v2mux.c'; fi`
+
+elements_imagefreeze-imagefreeze.o: elements/imagefreeze.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_imagefreeze_CFLAGS) $(CFLAGS) -MT elements_imagefreeze-imagefreeze.o -MD -MP -MF $(DEPDIR)/elements_imagefreeze-imagefreeze.Tpo -c -o elements_imagefreeze-imagefreeze.o `test -f 'elements/imagefreeze.c' || echo '$(srcdir)/'`elements/imagefreeze.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/elements_imagefreeze-imagefreeze.Tpo $(DEPDIR)/elements_imagefreeze-imagefreeze.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/imagefreeze.c' object='elements_imagefreeze-imagefreeze.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_imagefreeze_CFLAGS) $(CFLAGS) -c -o elements_imagefreeze-imagefreeze.o `test -f 'elements/imagefreeze.c' || echo '$(srcdir)/'`elements/imagefreeze.c
+
+elements_imagefreeze-imagefreeze.obj: elements/imagefreeze.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_imagefreeze_CFLAGS) $(CFLAGS) -MT elements_imagefreeze-imagefreeze.obj -MD -MP -MF $(DEPDIR)/elements_imagefreeze-imagefreeze.Tpo -c -o elements_imagefreeze-imagefreeze.obj `if test -f 'elements/imagefreeze.c'; then $(CYGPATH_W) 'elements/imagefreeze.c'; else $(CYGPATH_W) '$(srcdir)/elements/imagefreeze.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/elements_imagefreeze-imagefreeze.Tpo $(DEPDIR)/elements_imagefreeze-imagefreeze.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/imagefreeze.c' object='elements_imagefreeze-imagefreeze.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_imagefreeze_CFLAGS) $(CFLAGS) -c -o elements_imagefreeze-imagefreeze.obj `if test -f 'elements/imagefreeze.c'; then $(CYGPATH_W) 'elements/imagefreeze.c'; else $(CYGPATH_W) '$(srcdir)/elements/imagefreeze.c'; fi`
 
 elements_interleave-interleave.o: elements/interleave.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_interleave_CFLAGS) $(CFLAGS) -MT elements_interleave-interleave.o -MD -MP -MF $(DEPDIR)/elements_interleave-interleave.Tpo -c -o elements_interleave-interleave.o `test -f 'elements/interleave.c' || echo '$(srcdir)/'`elements/interleave.c
@@ -1989,21 +2109,21 @@ elements_videocrop-videocrop.obj: elements/videocrop.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_videocrop_CFLAGS) $(CFLAGS) -c -o elements_videocrop-videocrop.obj `if test -f 'elements/videocrop.c'; then $(CYGPATH_W) 'elements/videocrop.c'; else $(CYGPATH_W) '$(srcdir)/elements/videocrop.c'; fi`
 
-videofilter.o: elements/videofilter.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT videofilter.o -MD -MP -MF $(DEPDIR)/videofilter.Tpo -c -o videofilter.o `test -f 'elements/videofilter.c' || echo '$(srcdir)/'`elements/videofilter.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/videofilter.Tpo $(DEPDIR)/videofilter.Po
+elements_videofilter-videofilter.o: elements/videofilter.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_videofilter_CFLAGS) $(CFLAGS) -MT elements_videofilter-videofilter.o -MD -MP -MF $(DEPDIR)/elements_videofilter-videofilter.Tpo -c -o elements_videofilter-videofilter.o `test -f 'elements/videofilter.c' || echo '$(srcdir)/'`elements/videofilter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/elements_videofilter-videofilter.Tpo $(DEPDIR)/elements_videofilter-videofilter.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/videofilter.c' object='videofilter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/videofilter.c' object='elements_videofilter-videofilter.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o videofilter.o `test -f 'elements/videofilter.c' || echo '$(srcdir)/'`elements/videofilter.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_videofilter_CFLAGS) $(CFLAGS) -c -o elements_videofilter-videofilter.o `test -f 'elements/videofilter.c' || echo '$(srcdir)/'`elements/videofilter.c
 
-videofilter.obj: elements/videofilter.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT videofilter.obj -MD -MP -MF $(DEPDIR)/videofilter.Tpo -c -o videofilter.obj `if test -f 'elements/videofilter.c'; then $(CYGPATH_W) 'elements/videofilter.c'; else $(CYGPATH_W) '$(srcdir)/elements/videofilter.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/videofilter.Tpo $(DEPDIR)/videofilter.Po
+elements_videofilter-videofilter.obj: elements/videofilter.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_videofilter_CFLAGS) $(CFLAGS) -MT elements_videofilter-videofilter.obj -MD -MP -MF $(DEPDIR)/elements_videofilter-videofilter.Tpo -c -o elements_videofilter-videofilter.obj `if test -f 'elements/videofilter.c'; then $(CYGPATH_W) 'elements/videofilter.c'; else $(CYGPATH_W) '$(srcdir)/elements/videofilter.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/elements_videofilter-videofilter.Tpo $(DEPDIR)/elements_videofilter-videofilter.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/videofilter.c' object='videofilter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/videofilter.c' object='elements_videofilter-videofilter.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o videofilter.obj `if test -f 'elements/videofilter.c'; then $(CYGPATH_W) 'elements/videofilter.c'; else $(CYGPATH_W) '$(srcdir)/elements/videofilter.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_videofilter_CFLAGS) $(CFLAGS) -c -o elements_videofilter-videofilter.obj `if test -f 'elements/videofilter.c'; then $(CYGPATH_W) 'elements/videofilter.c'; else $(CYGPATH_W) '$(srcdir)/elements/videofilter.c'; fi`
 
 wavpackdec.o: elements/wavpackdec.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT wavpackdec.o -MD -MP -MF $(DEPDIR)/wavpackdec.Tpo -c -o wavpackdec.o `test -f 'elements/wavpackdec.c' || echo '$(srcdir)/'`elements/wavpackdec.c
@@ -2085,6 +2205,54 @@ states.obj: generic/states.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o states.obj `if test -f 'generic/states.c'; then $(CYGPATH_W) 'generic/states.c'; else $(CYGPATH_W) '$(srcdir)/generic/states.c'; fi`
 
+orc_deinterlace-deinterlace.o: orc/deinterlace.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_deinterlace_CFLAGS) $(CFLAGS) -MT orc_deinterlace-deinterlace.o -MD -MP -MF $(DEPDIR)/orc_deinterlace-deinterlace.Tpo -c -o orc_deinterlace-deinterlace.o `test -f 'orc/deinterlace.c' || echo '$(srcdir)/'`orc/deinterlace.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_deinterlace-deinterlace.Tpo $(DEPDIR)/orc_deinterlace-deinterlace.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/deinterlace.c' object='orc_deinterlace-deinterlace.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_deinterlace_CFLAGS) $(CFLAGS) -c -o orc_deinterlace-deinterlace.o `test -f 'orc/deinterlace.c' || echo '$(srcdir)/'`orc/deinterlace.c
+
+orc_deinterlace-deinterlace.obj: orc/deinterlace.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_deinterlace_CFLAGS) $(CFLAGS) -MT orc_deinterlace-deinterlace.obj -MD -MP -MF $(DEPDIR)/orc_deinterlace-deinterlace.Tpo -c -o orc_deinterlace-deinterlace.obj `if test -f 'orc/deinterlace.c'; then $(CYGPATH_W) 'orc/deinterlace.c'; else $(CYGPATH_W) '$(srcdir)/orc/deinterlace.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_deinterlace-deinterlace.Tpo $(DEPDIR)/orc_deinterlace-deinterlace.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/deinterlace.c' object='orc_deinterlace-deinterlace.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_deinterlace_CFLAGS) $(CFLAGS) -c -o orc_deinterlace-deinterlace.obj `if test -f 'orc/deinterlace.c'; then $(CYGPATH_W) 'orc/deinterlace.c'; else $(CYGPATH_W) '$(srcdir)/orc/deinterlace.c'; fi`
+
+orc_videobox-videobox.o: orc/videobox.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videobox_CFLAGS) $(CFLAGS) -MT orc_videobox-videobox.o -MD -MP -MF $(DEPDIR)/orc_videobox-videobox.Tpo -c -o orc_videobox-videobox.o `test -f 'orc/videobox.c' || echo '$(srcdir)/'`orc/videobox.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_videobox-videobox.Tpo $(DEPDIR)/orc_videobox-videobox.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/videobox.c' object='orc_videobox-videobox.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videobox_CFLAGS) $(CFLAGS) -c -o orc_videobox-videobox.o `test -f 'orc/videobox.c' || echo '$(srcdir)/'`orc/videobox.c
+
+orc_videobox-videobox.obj: orc/videobox.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videobox_CFLAGS) $(CFLAGS) -MT orc_videobox-videobox.obj -MD -MP -MF $(DEPDIR)/orc_videobox-videobox.Tpo -c -o orc_videobox-videobox.obj `if test -f 'orc/videobox.c'; then $(CYGPATH_W) 'orc/videobox.c'; else $(CYGPATH_W) '$(srcdir)/orc/videobox.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_videobox-videobox.Tpo $(DEPDIR)/orc_videobox-videobox.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/videobox.c' object='orc_videobox-videobox.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videobox_CFLAGS) $(CFLAGS) -c -o orc_videobox-videobox.obj `if test -f 'orc/videobox.c'; then $(CYGPATH_W) 'orc/videobox.c'; else $(CYGPATH_W) '$(srcdir)/orc/videobox.c'; fi`
+
+orc_videomixer-videomixer.o: orc/videomixer.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videomixer_CFLAGS) $(CFLAGS) -MT orc_videomixer-videomixer.o -MD -MP -MF $(DEPDIR)/orc_videomixer-videomixer.Tpo -c -o orc_videomixer-videomixer.o `test -f 'orc/videomixer.c' || echo '$(srcdir)/'`orc/videomixer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_videomixer-videomixer.Tpo $(DEPDIR)/orc_videomixer-videomixer.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/videomixer.c' object='orc_videomixer-videomixer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videomixer_CFLAGS) $(CFLAGS) -c -o orc_videomixer-videomixer.o `test -f 'orc/videomixer.c' || echo '$(srcdir)/'`orc/videomixer.c
+
+orc_videomixer-videomixer.obj: orc/videomixer.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videomixer_CFLAGS) $(CFLAGS) -MT orc_videomixer-videomixer.obj -MD -MP -MF $(DEPDIR)/orc_videomixer-videomixer.Tpo -c -o orc_videomixer-videomixer.obj `if test -f 'orc/videomixer.c'; then $(CYGPATH_W) 'orc/videomixer.c'; else $(CYGPATH_W) '$(srcdir)/orc/videomixer.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/orc_videomixer-videomixer.Tpo $(DEPDIR)/orc_videomixer-videomixer.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='orc/videomixer.c' object='orc_videomixer-videomixer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(orc_videomixer_CFLAGS) $(CFLAGS) -c -o orc_videomixer-videomixer.obj `if test -f 'orc/videomixer.c'; then $(CYGPATH_W) 'orc/videomixer.c'; else $(CYGPATH_W) '$(srcdir)/orc/videomixer.c'; fi`
+
 effectv.o: pipelines/effectv.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT effectv.o -MD -MP -MF $(DEPDIR)/effectv.Tpo -c -o effectv.o `test -f 'pipelines/effectv.c' || echo '$(srcdir)/'`pipelines/effectv.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/effectv.Tpo $(DEPDIR)/effectv.Po
@@ -2156,6 +2324,7 @@ clean-libtool:
 	-rm -rf .libs _libs
 	-rm -rf elements/.libs elements/_libs
 	-rm -rf generic/.libs generic/_libs
+	-rm -rf orc/.libs orc/_libs
 	-rm -rf pipelines/.libs pipelines/_libs
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -2362,6 +2531,7 @@ distclean-generic:
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-rm -f elements/$(am__dirstamp)
 	-rm -f generic/$(am__dirstamp)
+	-rm -f orc/$(am__dirstamp)
 	-rm -f pipelines/$(am__dirstamp)
 
 maintainer-clean-generic:
@@ -2628,7 +2798,22 @@ help:
 	@echo "  GST_CHECKS=test_many_threads    make element/foobar.forever"
 	@echo
 
-clean-local: clean-local-check
+clean-local: clean-local-check clean-local-orc
+
+orc/deinterlace.c: $(top_srcdir)/gst/deinterlace/tvtime.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/videomixer.c: $(top_srcdir)/gst/videomixer/blendorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/videobox.c: $(top_srcdir)/gst/videobox/gstvideoboxorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+clean-local-orc:
+	rm -rf orc
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

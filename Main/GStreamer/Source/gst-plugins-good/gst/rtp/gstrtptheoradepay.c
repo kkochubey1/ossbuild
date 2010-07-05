@@ -37,9 +37,7 @@ GST_STATIC_PAD_TEMPLATE ("sink",
     GST_STATIC_CAPS ("application/x-rtp, "
         "media = (string) \"video\", "
         "payload = (int) " GST_RTP_PAYLOAD_DYNAMIC_STRING ", "
-        "clock-rate = (int) 90000, " "encoding-name = (string) \"THEORA\","
-        /* only support inline delivery */
-        "delivery-method = (string) \"inline\""
+        "clock-rate = (int) 90000, " "encoding-name = (string) \"THEORA\""
         /* All required parameters 
          *
          * "sampling = (string) { "YCbCr-4:2:0", "YCbCr-4:2:2", "YCbCr-4:4:4" } "
@@ -126,22 +124,18 @@ gst_rtp_theora_depay_finalize (GObject * object)
 
 static gboolean
 gst_rtp_theora_depay_parse_configuration (GstRtpTheoraDepay * rtptheoradepay,
-    const gchar * configuration)
+    GstBuffer * confbuf)
 {
   GstBuffer *buf;
   guint32 num_headers;
   guint8 *data;
-  gsize size;
+  guint size;
   gint i, j;
 
-  /* deserialize base64 to buffer */
-  size = strlen (configuration);
-  GST_DEBUG_OBJECT (rtptheoradepay, "base64 config size %" G_GSIZE_FORMAT,
-      size);
+  data = GST_BUFFER_DATA (confbuf);
+  size = GST_BUFFER_SIZE (confbuf);
 
-  data = g_base64_decode (configuration, &size);
-
-  GST_DEBUG_OBJECT (rtptheoradepay, "config size %" G_GSIZE_FORMAT, size);
+  GST_DEBUG_OBJECT (rtptheoradepay, "config size %u", size);
 
   /* +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    * |                     Number of packed headers                  |
@@ -195,6 +189,7 @@ gst_rtp_theora_depay_parse_configuration (GstRtpTheoraDepay * rtptheoradepay,
     guint8 n_headers, b;
     GstRtpTheoraConfig *conf;
     guint *h_sizes;
+    guint extra = 1;
 
     if (size < 6)
       goto too_small;
@@ -206,10 +201,12 @@ gst_rtp_theora_depay_parse_configuration (GstRtpTheoraDepay * rtptheoradepay,
     data += 6;
 
     GST_DEBUG_OBJECT (rtptheoradepay,
-        "header %d, ident 0x%08x, length %u, left %" G_GSIZE_FORMAT, i, ident,
-        length, size);
+        "header %d, ident 0x%08x, length %u, left %u", i, ident, length, size);
 
-    if (size < length)
+    /* FIXME check if we already got this ident */
+
+    /* length might also include count of following size fields */
+    if (size < length && size + 1 != length)
       goto too_small;
 
     /* read header sizes we read 2 sizes, the third size (for which we allocate
@@ -224,6 +221,7 @@ gst_rtp_theora_depay_parse_configuration (GstRtpTheoraDepay * rtptheoradepay,
           goto too_small;
         b = *data++;
         size--;
+        extra++;
         h_size = (h_size << 7) | (b & 0x7f);
       } while (b & 0x80);
       GST_DEBUG_OBJECT (rtptheoradepay, "headers %d: size: %u", j, h_size);
@@ -242,8 +240,15 @@ gst_rtp_theora_depay_parse_configuration (GstRtpTheoraDepay * rtptheoradepay,
       guint h_size;
 
       h_size = h_sizes[j];
-      if (size < h_size)
-        goto too_small;
+      if (size < h_size) {
+        if (j != n_headers || size + extra != h_size) {
+          goto too_small;
+        } else {
+          /* otherwise means that overall length field contained total length,
+           * including extra fields */
+          h_size -= extra;
+        }
+      }
 
       GST_DEBUG_OBJECT (rtptheoradepay, "reading header %d, size %u", j,
           h_size);
@@ -267,12 +272,37 @@ too_small:
 }
 
 static gboolean
+gst_rtp_theora_depay_parse_inband_configuration (GstRtpTheoraDepay *
+    rtptheoradepay, guint ident, guint8 * configuration, guint size,
+    guint length)
+{
+  GstBuffer *confbuf;
+  guint8 *conf;
+
+  if (G_UNLIKELY (size < 4))
+    return FALSE;
+
+  /* transform inline to out-of-band and parse that one */
+  confbuf = gst_buffer_new_and_alloc (size + 9);
+  conf = GST_BUFFER_DATA (confbuf);
+  /* 1 header */
+  GST_WRITE_UINT32_BE (conf, 1);
+  /* write Ident */
+  GST_WRITE_UINT24_BE (conf + 4, ident);
+  /* write sort-of-length */
+  GST_WRITE_UINT16_BE (conf + 7, length);
+  /* copy remainder */
+  memcpy (conf + 9, configuration, size);
+
+  return gst_rtp_theora_depay_parse_configuration (rtptheoradepay, confbuf);
+}
+
+static gboolean
 gst_rtp_theora_depay_setcaps (GstBaseRTPDepayload * depayload, GstCaps * caps)
 {
   GstStructure *structure;
   GstRtpTheoraDepay *rtptheoradepay;
   GstCaps *srccaps;
-  const gchar *delivery_method;
   const gchar *configuration;
   gboolean res;
 
@@ -280,29 +310,28 @@ gst_rtp_theora_depay_setcaps (GstBaseRTPDepayload * depayload, GstCaps * caps)
 
   structure = gst_caps_get_structure (caps, 0);
 
-  /* see how the configuration parameters will be transmitted */
-  delivery_method = gst_structure_get_string (structure, "delivery-method");
-  if (delivery_method == NULL)
-    goto no_delivery_method;
-
-  if (!g_ascii_strcasecmp (delivery_method, "inline")) {
-    /* configure string is in the caps */
-  } else if (!g_ascii_strcasecmp (delivery_method, "in_band")) {
-    /* headers will (also) be transmitted in the RTP packets */
-    goto unsupported_delivery_method;
-  } else if (g_str_has_prefix (delivery_method, "out_band/")) {
-    /* some other method of header delivery. */
-    goto unsupported_delivery_method;
-  } else
-    goto unsupported_delivery_method;
-
   /* read and parse configuration string */
   configuration = gst_structure_get_string (structure, "configuration");
-  if (configuration == NULL)
-    goto no_configuration;
+  if (configuration) {
+    GstBuffer *confbuf;
+    guint8 *data;
+    gsize size;
 
-  if (!gst_rtp_theora_depay_parse_configuration (rtptheoradepay, configuration))
-    goto invalid_configuration;
+    /* configure string should be in the caps */
+    if (configuration == NULL)
+      goto no_configuration;
+
+    /* deserialize base64 to buffer */
+    data = g_base64_decode (configuration, &size);
+
+    confbuf = gst_buffer_new ();
+    GST_BUFFER_DATA (confbuf) = data;
+    GST_BUFFER_MALLOCDATA (confbuf) = data;
+    GST_BUFFER_SIZE (confbuf) = size;
+
+    if (!gst_rtp_theora_depay_parse_configuration (rtptheoradepay, confbuf))
+      goto invalid_configuration;
+  }
 
   /* set caps on pad and on header */
   srccaps = gst_caps_new_simple ("video/x-theora", NULL);
@@ -315,17 +344,6 @@ gst_rtp_theora_depay_setcaps (GstBaseRTPDepayload * depayload, GstCaps * caps)
   return res;
 
   /* ERRORS */
-unsupported_delivery_method:
-  {
-    GST_ERROR_OBJECT (rtptheoradepay,
-        "unsupported delivery-method \"%s\" specified", delivery_method);
-    return FALSE;
-  }
-no_delivery_method:
-  {
-    GST_ERROR_OBJECT (rtptheoradepay, "no delivery-method specified");
-    return FALSE;
-  }
 no_configuration:
   {
     GST_ERROR_OBJECT (rtptheoradepay, "no configuration specified");
@@ -515,6 +533,15 @@ gst_rtp_theora_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
     if (G_UNLIKELY (length > payload_len))
       goto length_short;
 
+    /* handle in-band configuration */
+    if (G_UNLIKELY (TDT == 1)) {
+      GST_DEBUG_OBJECT (rtptheoradepay, "in-band configuration");
+      if (!gst_rtp_theora_depay_parse_inband_configuration (rtptheoradepay,
+              ident, payload, payload_len, length))
+        goto invalid_configuration;
+      goto no_output;
+    }
+
     /* create buffer for packet */
     if (G_UNLIKELY (to_free)) {
       outbuf = gst_buffer_new ();
@@ -555,7 +582,7 @@ no_output:
   /* ERORRS */
 switch_failed:
   {
-    GST_ELEMENT_ERROR (rtptheoradepay, STREAM, DECODE,
+    GST_ELEMENT_WARNING (rtptheoradepay, STREAM, DECODE,
         (NULL), ("Could not switch codebooks"));
     return NULL;
   }
@@ -574,6 +601,13 @@ length_short:
   {
     GST_ELEMENT_WARNING (rtptheoradepay, STREAM, DECODE,
         (NULL), ("Packet contains invalid data"));
+    return NULL;
+  }
+invalid_configuration:
+  {
+    /* fatal, as we otherwise risk carrying on without output */
+    GST_ELEMENT_ERROR (rtptheoradepay, STREAM, DECODE,
+        (NULL), ("Packet contains invalid configuration"));
     return NULL;
   }
 }
