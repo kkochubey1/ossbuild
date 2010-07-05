@@ -25,6 +25,7 @@
 
 #include <glib.h>
 #include <gst/gst.h>
+#include <gst/base/gstbytewriter.h>
 
 G_BEGIN_DECLS
 
@@ -48,13 +49,18 @@ typedef struct _GstEbmlWrite {
   guint64 pos;
   GstClockTime timestamp;
 
-  GstBuffer *cache;
-  guint cache_size;
-  guint handled;
+  GstByteWriter *cache;
+  guint64 cache_pos;
 
   GstFlowReturn last_write_result;
 
   gboolean need_newsegment;
+
+  gboolean writing_streamheader;
+  GstByteWriter *streamheader;
+  guint64 streamheader_pos;
+
+  GstCaps *caps;
 } GstEbmlWrite;
 
 typedef struct _GstEbmlWriteClass {
@@ -68,13 +74,18 @@ void    gst_ebml_write_reset         (GstEbmlWrite *ebml);
 
 GstFlowReturn gst_ebml_last_write_result (GstEbmlWrite *ebml);
 
+/* Used to create streamheaders */
+void    gst_ebml_start_streamheader  (GstEbmlWrite *ebml);
+GstBuffer*    gst_ebml_stop_streamheader   (GstEbmlWrite *ebml);
+
 /*
  * Caching means that we do not push one buffer for
  * each element, but fill this one until a flush.
  */
 void    gst_ebml_write_set_cache     (GstEbmlWrite *ebml,
                                       guint         size);
-void    gst_ebml_write_flush_cache   (GstEbmlWrite *ebml);
+void    gst_ebml_write_flush_cache   (GstEbmlWrite *ebml,
+                                      gboolean is_keyframe);
 
 /*
  * Seeking.
@@ -107,6 +118,9 @@ guint64 gst_ebml_write_master_start  (GstEbmlWrite *ebml,
                                       guint32       id);
 void    gst_ebml_write_master_finish (GstEbmlWrite *ebml,
                                       guint64       startpos);
+void    gst_ebml_write_master_finish_full (GstEbmlWrite * ebml,
+                                      guint64 startpos,
+                                      guint64 extra_size);
 void    gst_ebml_write_binary        (GstEbmlWrite *ebml,
                                       guint32       id,
                                       guchar       *binary,

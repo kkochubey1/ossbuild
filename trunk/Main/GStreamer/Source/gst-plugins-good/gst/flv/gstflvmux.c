@@ -26,7 +26,7 @@
  * <refsect2>
  * <title>Example launch line</title>
  * |[
- * gst-launch -v filesrc location=/path/to/audio ! decodebin2 ! queue ! flvmux name=m ! filesink location=file.flv   filesrc location=/path/to/video ! decodebin2 ! queue ! m. 
+ * gst-launch -v filesrc location=/path/to/audio ! decodebin2 ! queue ! flvmux name=m ! filesink location=file.flv   filesrc location=/path/to/video ! decodebin2 ! queue ! m.
  * ]| This pipeline muxes an audio and video file into a single FLV file.
  * </refsect2>
  */
@@ -46,10 +46,10 @@ GST_DEBUG_CATEGORY_STATIC (flvmux_debug);
 enum
 {
   PROP_0,
-  PROP_IS_LIVE
+  PROP_STREAMABLE
 };
 
-#define DEFAULT_IS_LIVE FALSE
+#define DEFAULT_STREAMABLE FALSE
 #define MAX_INDEX_ENTRIES 128
 
 static GstStaticPadTemplate src_templ = GST_STATIC_PAD_TEMPLATE ("src",
@@ -160,14 +160,21 @@ gst_flv_mux_class_init (GstFlvMuxClass * klass)
   gobject_class->set_property = gst_flv_mux_set_property;
   gobject_class->finalize = gst_flv_mux_finalize;
 
-  /* FIXME: disabled for release, needs a better/less wrong name; ideally the
-   * right mode of operation should be detected automatically using queries */
-#if 0
-  g_object_class_install_property (gobject_class, PROP_IS_LIVE,
-      g_param_spec_boolean ("is-live", "Is Live",
-          "The stream is live and does not need an index", DEFAULT_IS_LIVE,
-          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
-#endif
+  /* FIXME: ideally the right mode of operation should be detected
+   * automatically using queries when parameter not specified. */
+  /**
+   * GstFlvMux:streamable
+   *
+   * If True, the output will be streaming friendly. (ie without indexes and
+   * duration)
+   *
+   * Since: 0.10.24
+   **/
+  g_object_class_install_property (gobject_class, PROP_STREAMABLE,
+      g_param_spec_boolean ("streamable", "streamable",
+          "If set to true, the output should be as if it is to be streamed "
+          "and hence no indexes written or duration written.",
+          DEFAULT_STREAMABLE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   gstelement_class->change_state = GST_DEBUG_FUNCPTR (gst_flv_mux_change_state);
   gstelement_class->request_new_pad =
@@ -183,7 +190,7 @@ gst_flv_mux_init (GstFlvMux * mux, GstFlvMuxClass * g_class)
   gst_element_add_pad (GST_ELEMENT (mux), mux->srcpad);
 
   /* property */
-  mux->is_live = DEFAULT_IS_LIVE;
+  mux->streamable = DEFAULT_STREAMABLE;
 
   mux->collect = gst_collect_pads_new ();
   gst_collect_pads_set_function (mux->collect,
@@ -678,17 +685,17 @@ gst_flv_mux_create_metadata (GstFlvMux * mux)
 
   /* Sometimes the information about the total file size is useful for the
      player. It will be filled later, after getting EOS */
-  if (!mux->is_live) {
+  if (!mux->streamable) {
     tmp = gst_flv_mux_create_number_script_value ("filesize", 0);
     script_tag = gst_buffer_join (script_tag, tmp);
     tags_written++;
   }
 
-  if (!mux->is_live) {
+  if (!mux->streamable) {
     tmp = gst_flv_mux_preallocate_index (mux);
     script_tag = gst_buffer_join (script_tag, tmp);
   } else {
-    GST_DEBUG_OBJECT (mux, "not preallocating index, stream is live");
+    GST_DEBUG_OBJECT (mux, "not preallocating index, streamable mode");
   }
 
   for (i = 0; tags && i < n_tags; i++) {
@@ -1184,7 +1191,7 @@ gst_flv_mux_write_buffer (GstFlvMux * mux, GstFlvPad * cpad)
       gst_collect_pads_pop (mux->collect, (GstCollectData *) cpad);
   GstFlowReturn ret;
 
-  if (!mux->is_live)
+  if (!mux->streamable)
     gst_flv_mux_update_index (mux, buffer, cpad);
 
   tag = gst_flv_mux_buffer_to_tag (mux, buffer, cpad);
@@ -1193,7 +1200,7 @@ gst_flv_mux_write_buffer (GstFlvMux * mux, GstFlvPad * cpad)
 
   ret = gst_flv_mux_push (mux, tag);
 
-  if (ret == GST_FLOW_OK)
+  if (ret == GST_FLOW_OK && GST_BUFFER_TIMESTAMP_IS_VALID (tag))
     cpad->last_timestamp = GST_BUFFER_TIMESTAMP (tag);
 
   return ret;
@@ -1239,7 +1246,7 @@ gst_flv_mux_rewrite_header (GstFlvMux * mux)
   guint32 index_len, allocate_size;
   guint32 i, index_skip;
 
-  if (mux->is_live)
+  if (mux->streamable)
     return GST_FLOW_OK;
 
   /* seek back to the preallocated index space */
@@ -1426,7 +1433,7 @@ gst_flv_mux_collected (GstCollectPads * pads, gpointer user_data)
   /* The FLV timestamp is an int32 field. For non-live streams error out if a
      bigger timestamp is seen, for live the timestamp will get wrapped in
      gst_flv_mux_buffer_to_tag */
-  if (!mux->is_live && GST_CLOCK_TIME_IS_VALID (best_time)
+  if (!mux->streamable && GST_CLOCK_TIME_IS_VALID (best_time)
       && best_time / GST_MSECOND > G_MAXINT32) {
     GST_WARNING_OBJECT (mux, "Timestamp larger than FLV supports - EOS");
     eos = TRUE;
@@ -1450,8 +1457,8 @@ gst_flv_mux_get_property (GObject * object,
   GstFlvMux *mux = GST_FLV_MUX (object);
 
   switch (prop_id) {
-    case PROP_IS_LIVE:
-      g_value_set_boolean (value, mux->is_live);
+    case PROP_STREAMABLE:
+      g_value_set_boolean (value, mux->streamable);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1466,8 +1473,8 @@ gst_flv_mux_set_property (GObject * object,
   GstFlvMux *mux = GST_FLV_MUX (object);
 
   switch (prop_id) {
-    case PROP_IS_LIVE:
-      mux->is_live = g_value_get_boolean (value);
+    case PROP_STREAMABLE:
+      mux->streamable = g_value_get_boolean (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

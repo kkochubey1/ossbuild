@@ -399,6 +399,32 @@ incomplete_caps:
   }
 }
 
+/* nal must have writable meta-data,
+ * returns TRUE if delta unit */
+static gboolean
+gst_rtp_h264_depay_mark_delta (GstRtpH264Depay * rtph264depay, GstBuffer * nal)
+{
+  gint nal_unit_type;
+  gboolean res = FALSE;
+
+  if (G_UNLIKELY (GST_BUFFER_SIZE (nal) < 5))
+    return FALSE;
+
+  nal_unit_type = (GST_BUFFER_DATA (nal))[4] & 0x1f;
+  GST_DEBUG_OBJECT (rtph264depay, "type %d", nal_unit_type);
+  /* SPS/PPS/IDR considered key, all others DELTA;
+   * so downstream waiting for keyframe can pick up at SPS/PPS/IDR */
+  if ((nal_unit_type == 5) || (nal_unit_type == 7) || (nal_unit_type == 8)) {
+    GST_BUFFER_FLAG_UNSET (nal, GST_BUFFER_FLAG_DELTA_UNIT);
+  } else {
+    GST_BUFFER_FLAG_SET (nal, GST_BUFFER_FLAG_DELTA_UNIT);
+    res = TRUE;
+  }
+
+  return res;
+}
+
+/* nal must have writable meta-data */
 static GstBuffer *
 gst_rtp_h264_depay_push_nal (GstRtpH264Depay * rtph264depay, GstBuffer * nal,
     GstClockTime timestamp)
@@ -441,6 +467,7 @@ gst_rtp_h264_depay_push_nal (GstRtpH264Depay * rtph264depay, GstBuffer * nal,
   if (rtph264depay->picture_complete) {
     outsize = gst_adapter_available (rtph264depay->picture_adapter);
     outbuf = gst_adapter_take_buffer (rtph264depay->picture_adapter, outsize);
+    outbuf = gst_buffer_make_metadata_writable (outbuf);
     rtph264depay->picture_complete = FALSE;
     rtph264depay->picture_start = start;
 
@@ -453,9 +480,17 @@ gst_rtp_h264_depay_push_nal (GstRtpH264Depay * rtph264depay, GstBuffer * nal,
     if (GST_CLOCK_TIME_IS_VALID (timestamp) &&
         GST_CLOCK_TIME_IS_VALID (rtph264depay->last_ts))
       GST_BUFFER_DURATION (outbuf) = timestamp - rtph264depay->last_ts;
+
+    if (rtph264depay->last_delta)
+      GST_BUFFER_FLAG_SET (outbuf, GST_BUFFER_FLAG_DELTA_UNIT);
+    else
+      GST_BUFFER_FLAG_UNSET (outbuf, GST_BUFFER_FLAG_DELTA_UNIT);
+    rtph264depay->last_delta = FALSE;
   }
 
   rtph264depay->last_ts = timestamp;
+  rtph264depay->last_delta = rtph264depay->last_delta ||
+      gst_rtp_h264_depay_mark_delta (rtph264depay, nal);
   gst_adapter_push (rtph264depay->picture_adapter, nal);
 
   return outbuf;
@@ -585,6 +620,9 @@ gst_rtp_h264_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
         if (!rtph264depay->merge) {
           outsize = gst_adapter_available (rtph264depay->adapter);
           outbuf = gst_adapter_take_buffer (rtph264depay->adapter, outsize);
+          outbuf = gst_buffer_make_metadata_writable (outbuf);
+
+          gst_rtp_h264_depay_mark_delta (rtph264depay, outbuf);
           gst_buffer_set_caps (outbuf, GST_PAD_CAPS (depayload->srcpad));
           return outbuf;
         }
@@ -670,6 +708,7 @@ gst_rtp_h264_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
 
           outsize = gst_adapter_available (rtph264depay->adapter);
           outbuf = gst_adapter_take_buffer (rtph264depay->adapter, outsize);
+          outbuf = gst_buffer_make_metadata_writable (outbuf);
           outdata = GST_BUFFER_DATA (outbuf);
 
           if (rtph264depay->byte_stream) {
@@ -694,6 +733,8 @@ gst_rtp_h264_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
             outbuf = gst_rtp_h264_depay_push_nal (rtph264depay, outbuf, ts);
             if (!outbuf)
               break;
+          } else {
+            gst_rtp_h264_depay_mark_delta (rtph264depay, outbuf);
           }
 
           gst_buffer_set_caps (outbuf, GST_PAD_CAPS (depayload->srcpad));
@@ -733,6 +774,8 @@ gst_rtp_h264_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
           outbuf = gst_rtp_h264_depay_push_nal (rtph264depay, outbuf, ts);
           if (!outbuf)
             break;
+        } else {
+          gst_rtp_h264_depay_mark_delta (rtph264depay, outbuf);
         }
 
         gst_buffer_set_caps (outbuf, GST_PAD_CAPS (depayload->srcpad));
@@ -781,6 +824,7 @@ gst_rtp_h264_depay_change_state (GstElement * element,
       gst_adapter_clear (rtph264depay->picture_adapter);
       rtph264depay->picture_start = FALSE;
       rtph264depay->picture_complete = FALSE;
+      rtph264depay->last_delta = FALSE;
       break;
     default:
       break;

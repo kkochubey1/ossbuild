@@ -84,7 +84,14 @@ static gboolean gst_gdk_pixbuf_sink_event (GstPad * pad, GstEvent * event);
 static void gst_gdk_pixbuf_type_find (GstTypeFind * tf, gpointer ignore);
 #endif
 
+#ifdef GDK_PIXBUF3
+typedef GstGdkPixbuf GstGdkPixbuf3;
+typedef GstGdkPixbufClass GstGdkPixbuf3Class;
+
+GST_BOILERPLATE (GstGdkPixbuf3, gst_gdk_pixbuf, GstElement, GST_TYPE_ELEMENT);
+#else
 GST_BOILERPLATE (GstGdkPixbuf, gst_gdk_pixbuf, GstElement, GST_TYPE_ELEMENT);
+#endif
 
 static gboolean
 gst_gdk_pixbuf_sink_setcaps (GstPad * pad, GstCaps * caps)
@@ -118,6 +125,7 @@ gst_gdk_pixbuf_get_capslist (void)
   GSList *slist0;
   GstCaps *capslist = NULL;
   GstCaps *return_caps = NULL;
+  GstCaps *tmpl_caps;
 
   capslist = gst_caps_new_empty ();
   slist0 = gdk_pixbuf_get_formats ();
@@ -137,9 +145,10 @@ gst_gdk_pixbuf_get_capslist (void)
   }
   g_slist_free (slist0);
 
-  return_caps = gst_caps_intersect (capslist,
-      gst_static_caps_get (&gst_gdk_pixbuf_sink_template.static_caps));
+  tmpl_caps = gst_static_caps_get (&gst_gdk_pixbuf_sink_template.static_caps);
+  return_caps = gst_caps_intersect (capslist, tmpl_caps);
 
+  gst_caps_unref (tmpl_caps);
   gst_caps_unref (capslist);
   return return_caps;
 }
@@ -514,6 +523,16 @@ gst_gdk_pixbuf_type_find (GstTypeFind * tf, gpointer ignore)
 }
 #endif
 
+#ifdef GDK_PIXBUF3
+#define PLUGIN_NAME "gdkpixbuf3"
+#define GDKPIXBUFDEC "gdkpixbufdec3"
+#define GDKPIXBUFSINK "gdkpixbufsink3"
+#else
+#define PLUGIN_NAME "gdkpixbuf"
+#define GDKPIXBUFDEC "gdkpixbufdec"
+#define GDKPIXBUFSINK "gdkpixbufsink"
+#endif
+
 /* entry point to initialize the plug-in
  * initialize the plug-in itself
  * register the element factories and pad templates
@@ -522,10 +541,10 @@ gst_gdk_pixbuf_type_find (GstTypeFind * tf, gpointer ignore)
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
-  GST_DEBUG_CATEGORY_INIT (gst_gdk_pixbuf_debug, "gdkpixbuf", 0,
+  GST_DEBUG_CATEGORY_INIT (gst_gdk_pixbuf_debug, PLUGIN_NAME, 0,
       "gdk pixbuf loader");
 
-  if (!gst_element_register (plugin, "gdkpixbufdec", GST_RANK_MARGINAL,
+  if (!gst_element_register (plugin, GDKPIXBUFDEC, GST_RANK_SECONDARY,
           GST_TYPE_GDK_PIXBUF))
     return FALSE;
 
@@ -534,7 +553,7 @@ plugin_init (GstPlugin * plugin)
       gst_gdk_pixbuf_type_find, NULL, GST_CAPS_ANY, NULL);
 #endif
 
-  if (!gst_element_register (plugin, "gdkpixbufsink", GST_RANK_NONE,
+  if (!gst_element_register (plugin, GDKPIXBUFSINK, GST_RANK_NONE,
           GST_TYPE_GDK_PIXBUF_SINK))
     return FALSE;
 
@@ -550,6 +569,6 @@ plugin_init (GstPlugin * plugin)
  * so keep the name plugin_desc, or you cannot get your plug-in registered */
 GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,
     GST_VERSION_MINOR,
-    "gdkpixbuf",
+    PLUGIN_NAME,
     "GdkPixbuf-based image decoder, scaler and sink",
     plugin_init, VERSION, "LGPL", GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN)

@@ -644,9 +644,9 @@ gst_avi_demux_seek_streams (GstAviDemux * avi, guint64 offset, gboolean before)
 
     if (before) {
       if (entry) {
+        gst_index_entry_assoc_map (entry, GST_FORMAT_BYTES, &val);
         GST_DEBUG_OBJECT (avi, "stream %d, previous entry at %"
             G_GUINT64_FORMAT, i, val);
-        gst_index_entry_assoc_map (entry, GST_FORMAT_BYTES, &val);
         if (val < min)
           min = val;
       }
@@ -711,9 +711,9 @@ gst_avi_demux_seek_streams_index (GstAviDemux * avi, guint64 offset,
 
     if (before) {
       if (entry) {
+        val = stream->index[index].offset;
         GST_DEBUG_OBJECT (avi,
             "stream %d, previous entry at %" G_GUINT64_FORMAT, i, val);
-        val = stream->index[index].offset;
         if (val < min)
           min = val;
       }
@@ -1988,11 +1988,12 @@ gst_avi_demux_parse_stream (GstAviDemux * avi, GstBuffer * buf)
             GST_DEBUG_OBJECT (element, "marking video as VBR, res %d", res);
             break;
           case GST_RIFF_FCC_auds:
-            stream->is_vbr = (stream->strh->samplesize == 0)
-                && stream->strh->scale > 1;
             res =
                 gst_riff_parse_strf_auds (element, sub, &stream->strf.auds,
                 &stream->extradata);
+            stream->is_vbr = (stream->strh->samplesize == 0)
+                && stream->strh->scale > 1
+                && stream->strf.auds->blockalign != 1;
             sub = NULL;
             GST_DEBUG_OBJECT (element, "marking audio as VBR:%d, res %d",
                 stream->is_vbr, res);
@@ -5345,6 +5346,7 @@ gst_avi_demux_change_state (GstElement * element, GstStateChange transition)
 
   switch (transition) {
     case GST_STATE_CHANGE_PAUSED_TO_READY:
+      avi->have_index = FALSE;
       gst_avi_demux_reset (avi);
       break;
     default:

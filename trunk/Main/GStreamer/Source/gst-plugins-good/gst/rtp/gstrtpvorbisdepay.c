@@ -152,27 +152,22 @@ gst_rtp_vorbis_depay_finalize (GObject * object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
+/* takes ownership of confbuf */
 static gboolean
 gst_rtp_vorbis_depay_parse_configuration (GstRtpVorbisDepay * rtpvorbisdepay,
-    const gchar * configuration)
+    GstBuffer * confbuf)
 {
   GstBuffer *buf;
   guint32 num_headers;
   guint8 *data;
-  GstBuffer *confbuf;
-  gsize size;
+  guint size;
   guint offset;
   gint i, j;
 
-  /* deserialize base64 to buffer */
-  data = g_base64_decode (configuration, &size);
+  data = GST_BUFFER_DATA (confbuf);
+  size = GST_BUFFER_SIZE (confbuf);
 
-  confbuf = gst_buffer_new ();
-  GST_BUFFER_DATA (confbuf) = data;
-  GST_BUFFER_MALLOCDATA (confbuf) = data;
-  GST_BUFFER_SIZE (confbuf) = size;
-
-  GST_DEBUG_OBJECT (rtpvorbisdepay, "config size %" G_GSIZE_FORMAT, size);
+  GST_DEBUG_OBJECT (rtpvorbisdepay, "config size %u", size);
 
   /* +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
    * |                     Number of packed headers                  |
@@ -227,6 +222,7 @@ gst_rtp_vorbis_depay_parse_configuration (GstRtpVorbisDepay * rtpvorbisdepay,
     guint8 n_headers, b;
     GstRtpVorbisConfig *conf;
     guint *h_sizes;
+    guint extra = 1;
 
     if (size < 6)
       goto too_small;
@@ -239,10 +235,12 @@ gst_rtp_vorbis_depay_parse_configuration (GstRtpVorbisDepay * rtpvorbisdepay,
     offset += 6;
 
     GST_DEBUG_OBJECT (rtpvorbisdepay,
-        "header %d, ident 0x%08x, length %u, left %" G_GSIZE_FORMAT, i, ident,
-        length, size);
+        "header %d, ident 0x%08x, length %u, left %u", i, ident, length, size);
 
-    if (size < length)
+    /* FIXME check if we already got this ident */
+
+    /* length might also include count of following size fields */
+    if (size < length && size + 1 != length)
       goto too_small;
 
     /* read header sizes we read 2 sizes, the third size (for which we allocate
@@ -257,6 +255,7 @@ gst_rtp_vorbis_depay_parse_configuration (GstRtpVorbisDepay * rtpvorbisdepay,
           goto too_small;
         b = *data++;
         offset++;
+        extra++;
         size--;
         h_size = (h_size << 7) | (b & 0x7f);
       } while (b & 0x80);
@@ -281,8 +280,14 @@ gst_rtp_vorbis_depay_parse_configuration (GstRtpVorbisDepay * rtpvorbisdepay,
 
       h_size = h_sizes[j];
       if (size < h_size) {
-        free_config (conf);
-        goto too_small;
+        if (j != n_headers || size + extra != h_size) {
+          free_config (conf);
+          goto too_small;
+        } else {
+          /* otherwise means that overall length field contained total length,
+           * including extra fields */
+          h_size -= extra;
+        }
       }
 
       GST_DEBUG_OBJECT (rtpvorbisdepay, "reading header %d, size %u", j,
@@ -309,6 +314,32 @@ too_small:
 }
 
 static gboolean
+gst_rtp_vorbis_depay_parse_inband_configuration (GstRtpVorbisDepay *
+    rtpvorbisdepay, guint ident, guint8 * configuration, guint size,
+    guint length)
+{
+  GstBuffer *confbuf;
+  guint8 *conf;
+
+  if (G_UNLIKELY (size < 4))
+    return FALSE;
+
+  /* transform inline to out-of-band and parse that one */
+  confbuf = gst_buffer_new_and_alloc (size + 9);
+  conf = GST_BUFFER_DATA (confbuf);
+  /* 1 header */
+  GST_WRITE_UINT32_BE (conf, 1);
+  /* write Ident */
+  GST_WRITE_UINT24_BE (conf + 4, ident);
+  /* write sort-of-length */
+  GST_WRITE_UINT16_BE (conf + 7, length);
+  /* copy remainder */
+  memcpy (conf + 9, configuration, size);
+
+  return gst_rtp_vorbis_depay_parse_configuration (rtpvorbisdepay, confbuf);
+}
+
+static gboolean
 gst_rtp_vorbis_depay_setcaps (GstBaseRTPDepayload * depayload, GstCaps * caps)
 {
   GstStructure *structure;
@@ -329,8 +360,18 @@ gst_rtp_vorbis_depay_setcaps (GstBaseRTPDepayload * depayload, GstCaps * caps)
   /* read and parse configuration string */
   configuration = gst_structure_get_string (structure, "configuration");
   if (configuration) {
-    if (!gst_rtp_vorbis_depay_parse_configuration (rtpvorbisdepay,
-            configuration))
+    GstBuffer *confbuf;
+    guint8 *data;
+    gsize size;
+
+    /* deserialize base64 to buffer */
+    data = g_base64_decode (configuration, &size);
+
+    confbuf = gst_buffer_new ();
+    GST_BUFFER_DATA (confbuf) = data;
+    GST_BUFFER_MALLOCDATA (confbuf) = data;
+    GST_BUFFER_SIZE (confbuf) = size;
+    if (!gst_rtp_vorbis_depay_parse_configuration (rtpvorbisdepay, confbuf))
       goto invalid_configuration;
   } else {
     GST_WARNING_OBJECT (rtpvorbisdepay, "no configuration specified");
@@ -540,6 +581,15 @@ gst_rtp_vorbis_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
     if (G_UNLIKELY (length > payload_len))
       goto length_short;
 
+    /* handle in-band configuration */
+    if (G_UNLIKELY (VDT == 1)) {
+      GST_DEBUG_OBJECT (rtpvorbisdepay, "in-band configuration");
+      if (!gst_rtp_vorbis_depay_parse_inband_configuration (rtpvorbisdepay,
+              ident, payload, payload_len, length))
+        goto invalid_configuration;
+      goto no_output;
+    }
+
     /* create buffer for packet */
     if (G_UNLIKELY (to_free)) {
       outbuf = gst_buffer_new ();
@@ -599,6 +649,13 @@ length_short:
   {
     GST_ELEMENT_WARNING (rtpvorbisdepay, STREAM, DECODE,
         (NULL), ("Packet contains invalid data"));
+    return NULL;
+  }
+invalid_configuration:
+  {
+    /* fatal, as we otherwise risk carrying on without output */
+    GST_ELEMENT_ERROR (rtpvorbisdepay, STREAM, DECODE,
+        (NULL), ("Packet contains invalid configuration"));
     return NULL;
   }
 }

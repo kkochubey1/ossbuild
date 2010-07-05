@@ -35,7 +35,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
-	videocrop-test$(EXEEXT) videobox-test$(EXEEXT) \
+	$(am__EXEEXT_4) videocrop-test$(EXEEXT) videobox-test$(EXEEXT) \
 	videocrop2-test$(EXEEXT)
 subdir = tests/icles
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
@@ -63,9 +63,10 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
-	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/aalib.m4 $(top_srcdir)/m4/esd.m4 \
+	$(top_srcdir)/m4/gconf-2.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
 	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
@@ -81,8 +82,9 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 @HAVE_GTK_TRUE@am__EXEEXT_1 = gdkpixbufsink-test$(EXEEXT)
-@USE_GST_V4L2_TRUE@am__EXEEXT_2 = v4l2src-test$(EXEEXT)
-@USE_X_TRUE@am__EXEEXT_3 = ximagesrc-test$(EXEEXT)
+@USE_OSS4_TRUE@am__EXEEXT_2 = test-oss4$(EXEEXT)
+@USE_GST_V4L2_TRUE@am__EXEEXT_3 = v4l2src-test$(EXEEXT)
+@USE_X_TRUE@am__EXEEXT_4 = ximagesrc-test$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 am__gdkpixbufsink_test_SOURCES_DIST = gdkpixbufsink-test.c
 @HAVE_GTK_TRUE@am_gdkpixbufsink_test_OBJECTS = gdkpixbufsink_test-gdkpixbufsink-test.$(OBJEXT)
@@ -97,6 +99,14 @@ gdkpixbufsink_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(gdkpixbufsink_test_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
+am__test_oss4_SOURCES_DIST = test-oss4.c
+@USE_OSS4_TRUE@am_test_oss4_OBJECTS = test_oss4-test-oss4.$(OBJEXT)
+test_oss4_OBJECTS = $(am_test_oss4_OBJECTS)
+@USE_OSS4_TRUE@test_oss4_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+@USE_OSS4_TRUE@	$(am__DEPENDENCIES_1)
+test_oss4_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test_oss4_CFLAGS) \
+	$(CFLAGS) $(test_oss4_LDFLAGS) $(LDFLAGS) -o $@
 am__v4l2src_test_SOURCES_DIST = v4l2src-test.c
 @USE_GST_V4L2_TRUE@am_v4l2src_test_OBJECTS =  \
 @USE_GST_V4L2_TRUE@	v4l2src_test-v4l2src-test.$(OBJEXT)
@@ -162,13 +172,14 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(gdkpixbufsink_test_SOURCES) $(v4l2src_test_SOURCES) \
-	$(videobox_test_SOURCES) $(videocrop_test_SOURCES) \
-	$(videocrop2_test_SOURCES) $(ximagesrc_test_SOURCES)
-DIST_SOURCES = $(am__gdkpixbufsink_test_SOURCES_DIST) \
-	$(am__v4l2src_test_SOURCES_DIST) $(videobox_test_SOURCES) \
+SOURCES = $(gdkpixbufsink_test_SOURCES) $(test_oss4_SOURCES) \
+	$(v4l2src_test_SOURCES) $(videobox_test_SOURCES) \
 	$(videocrop_test_SOURCES) $(videocrop2_test_SOURCES) \
-	$(am__ximagesrc_test_SOURCES_DIST)
+	$(ximagesrc_test_SOURCES)
+DIST_SOURCES = $(am__gdkpixbufsink_test_SOURCES_DIST) \
+	$(am__test_oss4_SOURCES_DIST) $(am__v4l2src_test_SOURCES_DIST) \
+	$(videobox_test_SOURCES) $(videocrop_test_SOURCES) \
+	$(videocrop2_test_SOURCES) $(am__ximagesrc_test_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -241,6 +252,8 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
+GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
+GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -321,8 +334,6 @@ LIBIEC61883_LIBS = @LIBIEC61883_LIBS@
 LIBINTL = @LIBINTL@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBPNG_CFLAGS = @LIBPNG_CFLAGS@
 LIBPNG_LIBS = @LIBPNG_LIBS@
 LIBS = @LIBS@
@@ -348,6 +359,9 @@ OBJCDEPMODE = @OBJCDEPMODE@
 OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+ORCC = @ORCC@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -375,6 +389,8 @@ PULSE_0_9_13_CFLAGS = @PULSE_0_9_13_CFLAGS@
 PULSE_0_9_13_LIBS = @PULSE_0_9_13_LIBS@
 PULSE_0_9_15_CFLAGS = @PULSE_0_9_15_CFLAGS@
 PULSE_0_9_15_LIBS = @PULSE_0_9_15_LIBS@
+PULSE_0_9_16_CFLAGS = @PULSE_0_9_16_CFLAGS@
+PULSE_0_9_16_LIBS = @PULSE_0_9_16_LIBS@
 PULSE_0_9_20_CFLAGS = @PULSE_0_9_20_CFLAGS@
 PULSE_0_9_20_LIBS = @PULSE_0_9_20_LIBS@
 PULSE_CFLAGS = @PULSE_CFLAGS@
@@ -494,6 +510,12 @@ top_srcdir = @top_srcdir@
 @USE_GST_V4L2_TRUE@v4l2src_test_SOURCES = v4l2src-test.c
 @USE_GST_V4L2_TRUE@v4l2src_test_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
 @USE_GST_V4L2_TRUE@v4l2src_test_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstinterfaces-$(GST_MAJORMINOR) $(GST_LIBS)
+@USE_OSS4_FALSE@OSS4_TESTS = 
+@USE_OSS4_TRUE@OSS4_TESTS = test-oss4
+@USE_OSS4_TRUE@test_oss4_SOURCES = test-oss4.c
+@USE_OSS4_TRUE@test_oss4_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
+@USE_OSS4_TRUE@test_oss4_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstinterfaces-0.10 $(GST_LIBS)
+@USE_OSS4_TRUE@test_oss4_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 @USE_X_FALSE@X_TESTS = 
 @USE_X_TRUE@X_TESTS = ximagesrc-test
 @USE_X_TRUE@ximagesrc_test_SOURCES = ximagesrc-test.c
@@ -554,6 +576,9 @@ clean-noinstPROGRAMS:
 gdkpixbufsink-test$(EXEEXT): $(gdkpixbufsink_test_OBJECTS) $(gdkpixbufsink_test_DEPENDENCIES) 
 	@rm -f gdkpixbufsink-test$(EXEEXT)
 	$(AM_V_CCLD)$(gdkpixbufsink_test_LINK) $(gdkpixbufsink_test_OBJECTS) $(gdkpixbufsink_test_LDADD) $(LIBS)
+test-oss4$(EXEEXT): $(test_oss4_OBJECTS) $(test_oss4_DEPENDENCIES) 
+	@rm -f test-oss4$(EXEEXT)
+	$(AM_V_CCLD)$(test_oss4_LINK) $(test_oss4_OBJECTS) $(test_oss4_LDADD) $(LIBS)
 v4l2src-test$(EXEEXT): $(v4l2src_test_OBJECTS) $(v4l2src_test_DEPENDENCIES) 
 	@rm -f v4l2src-test$(EXEEXT)
 	$(AM_V_CCLD)$(v4l2src_test_LINK) $(v4l2src_test_OBJECTS) $(v4l2src_test_LDADD) $(LIBS)
@@ -577,6 +602,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdkpixbufsink_test-gdkpixbufsink-test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_oss4-test-oss4.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/v4l2src_test-v4l2src-test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/videobox_test-videobox-test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/videocrop2_test-videocrop2-test.Po@am__quote@
@@ -622,6 +648,22 @@ gdkpixbufsink_test-gdkpixbufsink-test.obj: gdkpixbufsink-test.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gdkpixbufsink-test.c' object='gdkpixbufsink_test-gdkpixbufsink-test.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gdkpixbufsink_test_CFLAGS) $(CFLAGS) -c -o gdkpixbufsink_test-gdkpixbufsink-test.obj `if test -f 'gdkpixbufsink-test.c'; then $(CYGPATH_W) 'gdkpixbufsink-test.c'; else $(CYGPATH_W) '$(srcdir)/gdkpixbufsink-test.c'; fi`
+
+test_oss4-test-oss4.o: test-oss4.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_oss4_CFLAGS) $(CFLAGS) -MT test_oss4-test-oss4.o -MD -MP -MF $(DEPDIR)/test_oss4-test-oss4.Tpo -c -o test_oss4-test-oss4.o `test -f 'test-oss4.c' || echo '$(srcdir)/'`test-oss4.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_oss4-test-oss4.Tpo $(DEPDIR)/test_oss4-test-oss4.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test-oss4.c' object='test_oss4-test-oss4.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_oss4_CFLAGS) $(CFLAGS) -c -o test_oss4-test-oss4.o `test -f 'test-oss4.c' || echo '$(srcdir)/'`test-oss4.c
+
+test_oss4-test-oss4.obj: test-oss4.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_oss4_CFLAGS) $(CFLAGS) -MT test_oss4-test-oss4.obj -MD -MP -MF $(DEPDIR)/test_oss4-test-oss4.Tpo -c -o test_oss4-test-oss4.obj `if test -f 'test-oss4.c'; then $(CYGPATH_W) 'test-oss4.c'; else $(CYGPATH_W) '$(srcdir)/test-oss4.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_oss4-test-oss4.Tpo $(DEPDIR)/test_oss4-test-oss4.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test-oss4.c' object='test_oss4-test-oss4.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_oss4_CFLAGS) $(CFLAGS) -c -o test_oss4-test-oss4.obj `if test -f 'test-oss4.c'; then $(CYGPATH_W) 'test-oss4.c'; else $(CYGPATH_W) '$(srcdir)/test-oss4.c'; fi`
 
 v4l2src_test-v4l2src-test.o: v4l2src-test.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(v4l2src_test_CFLAGS) $(CFLAGS) -MT v4l2src_test-v4l2src-test.o -MD -MP -MF $(DEPDIR)/v4l2src_test-v4l2src-test.Tpo -c -o v4l2src_test-v4l2src-test.o `test -f 'v4l2src-test.c' || echo '$(srcdir)/'`v4l2src-test.c

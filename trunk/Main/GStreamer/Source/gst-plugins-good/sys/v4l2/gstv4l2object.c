@@ -315,17 +315,19 @@ gst_v4l2_object_install_properties_helper (GObjectClass * gobject_class,
 {
   g_object_class_install_property (gobject_class, PROP_DEVICE,
       g_param_spec_string ("device", "Device", "Device location",
-          default_device, G_PARAM_READWRITE));
+          default_device, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   g_object_class_install_property (gobject_class, PROP_DEVICE_NAME,
       g_param_spec_string ("device-name", "Device name",
-          "Name of the device", DEFAULT_PROP_DEVICE_NAME, G_PARAM_READABLE));
+          "Name of the device", DEFAULT_PROP_DEVICE_NAME,
+          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
   g_object_class_install_property (gobject_class, PROP_DEVICE_FD,
       g_param_spec_int ("device-fd", "File descriptor",
           "File descriptor of the device", -1, G_MAXINT, DEFAULT_PROP_DEVICE_FD,
-          G_PARAM_READABLE));
+          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
   g_object_class_install_property (gobject_class, PROP_FLAGS,
       g_param_spec_flags ("flags", "Flags", "Device type flags",
-          GST_TYPE_V4L2_DEVICE_FLAGS, DEFAULT_PROP_FLAGS, G_PARAM_READABLE));
+          GST_TYPE_V4L2_DEVICE_FLAGS, DEFAULT_PROP_FLAGS,
+          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 }
 
 GstV4l2Object *
@@ -1731,7 +1733,7 @@ default_frame_sizes:
     /* Since we can't get framerate directly, try to use the current norm */
     if (v4l2object->norm && v4l2object->norms) {
       GList *norms;
-      GstTunerNorm *norm;
+      GstTunerNorm *norm = NULL;
 
       for (norms = v4l2object->norms; norms != NULL; norms = norms->next) {
         norm = (GstTunerNorm *) norms->data;
@@ -1868,6 +1870,22 @@ gst_v4l2_object_set_format (GstV4l2Object * v4l2object, guint32 pixelformat,
 
   if (v4l2_ioctl (fd, VIDIOC_G_FMT, &format) < 0)
     goto get_fmt_failed;
+
+  if (format.type == v4l2object->type &&
+      format.fmt.pix.width == width &&
+      format.fmt.pix.height == height &&
+      format.fmt.pix.pixelformat == pixelformat) {
+    /* Nothing to do. We want to succeed immediately
+     * here because setting the same format back
+     * can still fail due to EBUSY. By short-circuiting
+     * here, we allow pausing and re-playing pipelines
+     * with changed caps, as long as the changed caps
+     * do not change the webcam's format. Otherwise,
+     * any caps change would require us to go to NULL
+     * state to close the device and set format.
+     */
+    return TRUE;
+  }
 
   format.type = v4l2object->type;
   format.fmt.pix.width = width;

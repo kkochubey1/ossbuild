@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-gstrtpptdemux.html" title="gstrtpptdemux">
 <link rel="next" href="gst-plugins-good-plugins-gstrtpssrcdemux.html" title="gstrtpssrcdemux">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -65,6 +65,8 @@
   "<a class="link" href="gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession--num-sources" title='The "num-sources" property'>num-sources</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read
   "<a class="link" href="gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession--rtcp-fraction" title='The "rtcp-fraction" property'>rtcp-fraction</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write
   "<a class="link" href="gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession--sdes" title='The "sdes" property'>sdes</a>"                     <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a>*         : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession--rtcp-rr-bandwidth" title='The "rtcp-rr-bandwidth" property'>rtcp-rr-bandwidth</a>"        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession--rtcp-rs-bandwidth" title='The "rtcp-rs-bandwidth" property'>rtcp-rs-bandwidth</a>"        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Signals">
@@ -140,7 +142,7 @@ mapping. One can clear the cached values with the <a class="link" href="gst-plug
 signal.
 </p>
 <div class="refsect2" title="Example pipelines">
-<a name="id435711"></a><h3>Example pipelines</h3>
+<a name="id539012"></a><h3>Example pipelines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -223,7 +225,7 @@ Last reviewed on 2007-05-28 (0.10.5)
 <div class="refsect2" title='The "bandwidth" property'>
 <a name="GstRtpSession--bandwidth"></a><h3>The <code class="literal">"bandwidth"</code> property</h3>
 <pre class="programlisting">  "bandwidth"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write</pre>
-<p>The bandwidth of the session.</p>
+<p>The bandwidth of the session in bytes per second.</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 64000</p>
 </div>
@@ -258,15 +260,31 @@ Last reviewed on 2007-05-28 (0.10.5)
 <div class="refsect2" title='The "rtcp-fraction" property'>
 <a name="GstRtpSession--rtcp-fraction"></a><h3>The <code class="literal">"rtcp-fraction"</code> property</h3>
 <pre class="programlisting">  "rtcp-fraction"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write</pre>
-<p>The fraction of the bandwidth used for RTCP.</p>
+<p>The RTCP bandwidth of the session in bytes per second.</p>
 <p>Allowed values: &gt;= 0</p>
-<p>Default value: 3000</p>
+<p>Default value: 3200</p>
 </div>
 <hr>
 <div class="refsect2" title='The "sdes" property'>
 <a name="GstRtpSession--sdes"></a><h3>The <code class="literal">"sdes"</code> property</h3>
 <pre class="programlisting">  "sdes"                     <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a>*         : Read / Write</pre>
 <p>The SDES items of this session.</p>
+</div>
+<hr>
+<div class="refsect2" title='The "rtcp-rr-bandwidth" property'>
+<a name="GstRtpSession--rtcp-rr-bandwidth"></a><h3>The <code class="literal">"rtcp-rr-bandwidth"</code> property</h3>
+<pre class="programlisting">  "rtcp-rr-bandwidth"        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<p>The RTCP bandwidth used for receivers in bytes per second (-1 = default).</p>
+<p>Allowed values: &gt;= G_MAXULONG</p>
+<p>Default value: -1</p>
+</div>
+<hr>
+<div class="refsect2" title='The "rtcp-rs-bandwidth" property'>
+<a name="GstRtpSession--rtcp-rs-bandwidth"></a><h3>The <code class="literal">"rtcp-rs-bandwidth"</code> property</h3>
+<pre class="programlisting">  "rtcp-rs-bandwidth"        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<p>The RTCP bandwidth used for senders in bytes per second (-1 = default).</p>
+<p>Allowed values: &gt;= G_MAXULONG</p>
+<p>Default value: -1</p>
 </div>
 </div>
 <div class="refsect1" title="Signal Details">
@@ -588,6 +606,6 @@ gstrtpjitterbuffer, gstrtpbin, gstrtpptdemux, gstrtpssrcdemux
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

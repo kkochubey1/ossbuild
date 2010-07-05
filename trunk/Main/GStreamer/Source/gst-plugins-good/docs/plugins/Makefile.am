@@ -138,6 +138,7 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/avi/gstavimux.h \
 	$(top_srcdir)/gst/avi/gstavisubtitle.h \
 	$(top_srcdir)/gst/cutter/gstcutter.h \
+	$(top_srcdir)/gst/debugutils/gstcapssetter.h \
 	$(top_srcdir)/gst/debugutils/gsttaginject.h \
 	$(top_srcdir)/gst/debugutils/progressreport.h \
 	$(top_srcdir)/gst/deinterlace/gstdeinterlace.h \
@@ -168,11 +169,13 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/law/mulaw-encode.h \
 	$(top_srcdir)/gst/icydemux/gsticydemux.h \
 	$(top_srcdir)/gst/id3demux/gstid3demux.h \
+	$(top_srcdir)/gst/imagefreeze/gstimagefreeze.h \
 	$(top_srcdir)/gst/interleave/deinterleave.h \
 	$(top_srcdir)/gst/interleave/interleave.h \
 	$(top_srcdir)/gst/level/gstlevel.h \
 	$(top_srcdir)/gst/matroska/matroska-demux.h \
 	$(top_srcdir)/gst/matroska/matroska-mux.h \
+	$(top_srcdir)/gst/matroska/webm-mux.h \
 	$(top_srcdir)/gst/monoscope/gstmonoscope.h \
 	$(top_srcdir)/gst/multifile/gstmultifilesink.h \
 	$(top_srcdir)/gst/multifile/gstmultifilesrc.h \
@@ -210,6 +213,9 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/wavparse/gstwavparse.h \
 	$(top_srcdir)/gst/y4m/gsty4mencode.h \
 	$(top_srcdir)/sys/directsound/gstdirectsoundsink.h \
+	$(top_srcdir)/sys/oss4/oss4-mixer.h \
+	$(top_srcdir)/sys/oss4/oss4-sink.h \
+	$(top_srcdir)/sys/oss4/oss4-source.h \
 	$(top_srcdir)/sys/oss/gstossmixerelement.h \
 	$(top_srcdir)/sys/oss/gstosssink.h \
 	$(top_srcdir)/sys/oss/gstosssrc.h \

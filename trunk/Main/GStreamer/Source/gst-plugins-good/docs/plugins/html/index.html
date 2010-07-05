@@ -6,7 +6,7 @@
 <meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
 <link rel="home" href="index.html" title="GStreamer Good Plugins 0.10 Plugins Reference Manual">
 <link rel="next" href="ch01.html" title="gst-plugins-good Elements">
-<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -15,7 +15,7 @@
 <div>
 <div><table class="navigation" id="top" width="100%" cellpadding="2" cellspacing="0"><tr><th valign="middle"><p class="title">GStreamer Good Plugins 0.10 Plugins Reference Manual</p></th></tr></table></div>
 <div><p class="releaseinfo">
-      for GStreamer Good Plugins 0.10 (0.10.22)
+      for GStreamer Good Plugins 0.10 (0.10.23.3)
       The latest version of this documentation can be found on-line at
       <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-good/html/" target="_top">http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-good/html/</a>.
     </p></div>
@@ -123,6 +123,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-cairorender.html">cairorender</a></span><span class="refpurpose"> — Encodes streams using Cairo</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-capssetter.html">capssetter</a></span><span class="refpurpose"> — Set/merge caps on stream</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-cmmldec.html">cmmldec</a></span><span class="refpurpose"> — Decodes CMML streams</span>
@@ -245,6 +248,9 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-id3v2mux.html">id3v2mux</a></span><span class="refpurpose"> — Adds an ID3v2 header to the beginning of MP3 files using taglib</span>
 </dt>
 <dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-imagefreeze.html">imagefreeze</a></span><span class="refpurpose"> — Generates a still frame stream from an image</span>
+</dt>
+<dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-interleave.html">interleave</a></span><span class="refpurpose"> — Folds many mono channels into one interleaved audio stream</span>
 </dt>
 <dt>
@@ -260,7 +266,7 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-matroskamux.html">matroskamux</a></span><span class="refpurpose"> — Muxes video/audio/subtitle streams into a matroska stream</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-good-plugins-matroskademux.html">matroskademux</a></span><span class="refpurpose"> — Demuxes a Matroska Stream into video/audio/subtitles</span>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-matroskademux.html">matroskademux</a></span><span class="refpurpose"> — Demuxes Matroska/WebM streams into video/audio/subtitles</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-monoscope.html">monoscope</a></span><span class="refpurpose"> — Displays a highly stabilised waveform of audio input</span>
@@ -288,6 +294,15 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-optv.html">optv</a></span><span class="refpurpose"> — Optical art meets real-time video effect</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-oss4mixer.html">oss4mixer</a></span><span class="refpurpose"> — Control sound input and output levels with OSS4</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-oss4sink.html">oss4sink</a></span><span class="refpurpose"> — Output to a sound card via OSS version 4</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-oss4src.html">oss4src</a></span><span class="refpurpose"> — Capture from a sound card via OSS version 4</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-ossmixer.html">ossmixer</a></span><span class="refpurpose"> — Control sound input and output levels with OSS</span>
@@ -404,7 +419,7 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-udpsink.html">udpsink</a></span><span class="refpurpose"> — Send data over the network via UDP</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-good-plugins-v4l2src.html">v4l2src</a></span><span class="refpurpose"> — Reads frames from a video4linux2 (BT8x8) device</span>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-v4l2src.html">v4l2src</a></span><span class="refpurpose"> — Reads frames from a Video4Linux2 device</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-v4l2sink.html">v4l2sink</a></span><span class="refpurpose"> — Displays frames on a video4linux2 device</span>
@@ -447,6 +462,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-wavparse.html">wavparse</a></span><span class="refpurpose"> — Parse a .wav file into raw audio</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-webmmux.html">webmmux</a></span><span class="refpurpose"> — Muxes video and audio streams into a WebM stream</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-ximagesrc.html">ximagesrc</a></span><span class="refpurpose"> — Creates a screenshot video stream</span>
@@ -533,9 +551,6 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-flxdec.html">flxdec</a></span><span class="refpurpose"> — FLC/FLI/FLX video decoder</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-gamma.html">gamma</a></span><span class="refpurpose"> — Changes gamma on video images</span>
-</dt>
-<dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-gconfelements.html">gconfelements</a></span><span class="refpurpose"> — elements wrapping the GStreamer/GConf audio/video output settings</span>
 </dt>
 <dt>
@@ -557,6 +572,9 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-id3demux.html">id3demux</a></span><span class="refpurpose"> — Demux ID3v1 and ID3v2 tags from a file</span>
 </dt>
 <dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-imagefreeze.html">imagefreeze</a></span><span class="refpurpose"> — Still frame stream generator</span>
+</dt>
+<dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-interleave.html">interleave</a></span><span class="refpurpose"> — Audio interleaver/deinterleaver</span>
 </dt>
 <dt>
@@ -566,7 +584,7 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-level.html">level</a></span><span class="refpurpose"> — Audio level plugin</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-matroska.html">matroska</a></span><span class="refpurpose"> — Matroska stream handling</span>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-matroska.html">matroska</a></span><span class="refpurpose"> — Matroska and WebM stream handling</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-monoscope.html">monoscope</a></span><span class="refpurpose"> — Monoscope visualization</span>
@@ -582,6 +600,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-navigationtest.html">navigationtest</a></span><span class="refpurpose"> — Template for a video filter</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-oss4.html">oss4</a></span><span class="refpurpose"> — Open Sound System (OSS) version 4 support for GStreamer</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-ossaudio.html">ossaudio</a></span><span class="refpurpose"> — OSS (Open Sound System) support for GStreamer</span>
@@ -641,16 +662,13 @@
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-video4linux2.html">video4linux2</a></span><span class="refpurpose"> — elements for Video 4 Linux</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-videobalance.html">videobalance</a></span><span class="refpurpose"> — Changes hue, saturation, brightness etc. on video images</span>
-</dt>
-<dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-videobox.html">videobox</a></span><span class="refpurpose"> — resizes a video by adding borders or cropping</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-videocrop.html">videocrop</a></span><span class="refpurpose"> — Crops video into a user-defined region</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-videoflip.html">videoflip</a></span><span class="refpurpose"> — Flips and rotates video</span>
+<span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-videofilter.html">videofilter</a></span><span class="refpurpose"> — Video filters plugin</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-good-plugins-plugin-videomixer.html">videomixer</a></span><span class="refpurpose"> — Video mixer</span>
@@ -687,6 +705,6 @@
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.14</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

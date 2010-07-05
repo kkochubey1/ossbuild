@@ -91,13 +91,11 @@ gst_auto_video_src_class_init (GstAutoVideoSrcClass * klass)
   GstElementClass *eklass = GST_ELEMENT_CLASS (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->dispose =
-      (GObjectFinalizeFunc) GST_DEBUG_FUNCPTR (gst_auto_video_src_dispose);
+  gobject_class->dispose = (GObjectFinalizeFunc) gst_auto_video_src_dispose;
+  gobject_class->set_property = gst_auto_video_src_set_property;
+  gobject_class->get_property = gst_auto_video_src_get_property;
+
   eklass->change_state = GST_DEBUG_FUNCPTR (gst_auto_video_src_change_state);
-  gobject_class->set_property =
-      GST_DEBUG_FUNCPTR (gst_auto_video_src_set_property);
-  gobject_class->get_property =
-      GST_DEBUG_FUNCPTR (gst_auto_video_src_get_property);
 
   /**
    * GstAutoVideoSrc:filter-caps
@@ -244,7 +242,7 @@ gst_auto_video_src_find_best (GstAutoVideoSrc * src)
   GSList *errors = NULL;
   GstBus *bus = gst_bus_new ();
   GstPad *el_pad = NULL;
-  GstCaps *el_caps = NULL, *intersect = NULL;
+  GstCaps *el_caps = NULL;
   gboolean no_match = TRUE;
 
   list = gst_registry_feature_filter (gst_registry_get_default (),
@@ -271,10 +269,8 @@ gst_auto_video_src_find_best (GstAutoVideoSrc * src)
         GST_DEBUG_OBJECT (src,
             "Checking caps: %" GST_PTR_FORMAT " vs. %" GST_PTR_FORMAT,
             src->filter_caps, el_caps);
-        intersect = gst_caps_intersect (src->filter_caps, el_caps);
-        no_match = gst_caps_is_empty (intersect);
+        no_match = !gst_caps_can_intersect (src->filter_caps, el_caps);
         gst_caps_unref (el_caps);
-        gst_caps_unref (intersect);
 
         if (no_match) {
           GST_DEBUG_OBJECT (src, "Incompatible caps");

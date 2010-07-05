@@ -10,6 +10,7 @@ TESTS_ENVIRONMENT = \
 	$(REGISTRY_ENVIRONMENT)					\
 	GST_PLUGIN_SYSTEM_PATH=					\
 	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/ext:$(top_builddir)/sys:$(GSTPB_PLUGINS_DIR):$(GST_PLUGINS_DIR)			\
+	GST_PLUGIN_LOADING_WHITELIST="gstreamer@$(GST_PLUGINS_DIR):gst-plugins-base@$(GSTPB_PLUGINS_DIR):gst-plugins-good@$(top_builddir)"	\
 	STATE_IGNORE_ELEMENTS="aasink autoaudiosrc autoaudiosink autovideosrc autovideosink \
 		cacasink cairotextoverlay gconfaudiosrc gconfvideosrc gconfaudiosink gconfvideosink \
 		halaudiosrc halaudiosink v4l2src osssrc osssink pulsesink pulsesrc pulsemixer \
@@ -31,7 +32,7 @@ TESTS_ENVIRONMENT = \
 # the core dumps of some machines have PIDs appended
 CLEANFILES = core.* test-registry.*
 
-clean-local: clean-local-check
+clean-local: clean-local-check clean-local-orc
 
 if USE_ANNODEX
 check_annodex = \
@@ -89,6 +90,13 @@ else
 check_wavpack =
 endif
 
+if HAVE_ORC
+check_orc = orc/deinterlace orc/videomixer orc/videobox
+else
+check_orc =
+endif
+
+
 check_PROGRAMS = \
 	generic/states \
 	$(check_annodex) \
@@ -107,6 +115,7 @@ check_PROGRAMS = \
 	elements/audiowsinclimit \
 	elements/avimux \
 	elements/avisubtitle \
+	elements/capssetter \
 	elements/deinterlace \
 	elements/deinterleave \
 	elements/equalizer \
@@ -114,6 +123,7 @@ check_PROGRAMS = \
 	elements/flvmux \
 	elements/icydemux \
 	elements/id3demux \
+	elements/imagefreeze \
 	elements/interleave \
 	elements/level \
 	elements/matroskamux \
@@ -139,7 +149,8 @@ check_PROGRAMS = \
 	$(check_soup) \
 	$(check_sunaudio) \
 	$(check_taglib) \
-	$(check_wavpack)
+	$(check_wavpack) \
+	$(check_orc)
 
 VALGRIND_TO_FIX = \
 	elements/rtp-payloading
@@ -187,7 +198,12 @@ elements_deinterleave_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstaudio-$(GST_MAJORMIN
 elements_interleave_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
 elements_interleave_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstaudio-$(GST_MAJORMINOR) $(LDADD)
 
+elements_imagefreeze_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(AM_CFLAGS)
+elements_imagefreeze_LDADD = $(GST_BASE_LIBS) $(LDADD) -lgstvideo-0.10
+
 elements_level_LDADD = $(LDADD) $(LIBM)
+
+elements_matroskamux_LDADD = $(GST_BASE_LIBS) $(LDADD) $(LIBM)
 
 elements_rtpbin_buffer_list_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) \
 	$(WARNING_CFLAGS) $(ERROR_CFLAGS) $(GST_CHECK_CFLAGS)
@@ -209,6 +225,9 @@ elements_sunaudio_LDADD = \
 elements_videocrop_LDADD = $(GST_BASE_LIBS) $(LDADD)
 elements_videocrop_CFLAGS = $(GST_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
 
+elements_videofilter_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
+elements_videofilter_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstvideo-$(GST_MAJORMINOR) $(LDADD)
+
 # FIXME: configure should check for gdk-pixbuf not gtk
 # only need video.h header, not the lib
 elements_gdkpixbufsink_CFLAGS = \
@@ -219,5 +238,27 @@ elements_gdkpixbufsink_LDADD = \
 
 pipelines_wavpack_LDADD = $(LDADD) $(GST_BASE_LIBS)
 pipelines_wavpack_CFLAGS = $(GST_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
+
+orc_deinterlace_CFLAGS = $(ORC_CFLAGS)
+orc_deinterlace_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_videomixer_CFLAGS = $(ORC_CFLAGS)
+orc_videomixer_LDADD = $(ORC_LIBS) -lorc-test-0.4
+orc_videobox_CFLAGS = $(ORC_CFLAGS)
+orc_videobox_LDADD = $(ORC_LIBS) -lorc-test-0.4
+
+orc/deinterlace.c: $(top_srcdir)/gst/deinterlace/tvtime.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/videomixer.c: $(top_srcdir)/gst/videomixer/blendorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+orc/videobox.c: $(top_srcdir)/gst/videobox/gstvideoboxorc.orc
+	$(MKDIR_P) orc/
+	$(ORCC) --test -o $@ $<
+
+clean-local-orc:
+	rm -rf orc
 
 EXTRA_DIST = gst-plugins-good.supp

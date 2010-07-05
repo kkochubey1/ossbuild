@@ -817,7 +817,8 @@ gst_qtdemux_find_index_linear (GstQTDemux * qtdemux, QtDemuxStream * str,
   guint32 index = 0;
 
   /* convert media_time to mov format */
-  media_time = gst_util_uint64_scale (media_time, str->timescale, GST_SECOND);
+  media_time =
+      gst_util_uint64_scale_ceil (media_time, str->timescale, GST_SECOND);
 
   if (media_time == result->timestamp)
     return index;
@@ -1318,6 +1319,8 @@ qtdemux_ensure_index (GstQTDemux * qtdemux)
 {
   guint i;
 
+  GST_DEBUG_OBJECT (qtdemux, "collecting all metadata for all streams");
+
   /* Build complete index */
   for (i = 0; i < qtdemux->n_streams; i++) {
     QtDemuxStream *stream = qtdemux->streams[i];
@@ -1345,13 +1348,17 @@ gst_qtdemux_handle_src_event (GstPad * pad, GstEvent * event)
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_SEEK:
     {
+#ifndef GST_DISABLE_GST_DEBUG
       GstClockTime ts = gst_util_get_timestamp ();
+#endif
       /* Build complete index for seeking */
       if (!qtdemux_ensure_index (qtdemux))
         goto index_failed;
+#ifndef GST_DISABLE_GST_DEBUG
       ts = gst_util_get_timestamp () - ts;
       GST_INFO_OBJECT (qtdemux,
           "Time taken to parse index %" GST_TIME_FORMAT, GST_TIME_ARGS (ts));
+#endif
     }
       if (qtdemux->pullbased) {
         res = gst_qtdemux_do_seek (qtdemux, pad, event);
@@ -1395,7 +1402,6 @@ gst_qtdemux_find_sample (GstQTDemux * qtdemux, gint64 byte_pos, gboolean fw,
     gboolean set, QtDemuxStream ** _stream, gint * _index, gint64 * _time)
 {
   gint i, n, index;
-  guint32 ts_timescale = -1;    /* the timescale corresponding to min_time */
   gint64 time, min_time;
   QtDemuxStream *stream;
 
@@ -1407,7 +1413,6 @@ gst_qtdemux_find_sample (GstQTDemux * qtdemux, gint64 byte_pos, gboolean fw,
     QtDemuxStream *str;
     gint inc;
     gboolean set_sample;
-
 
     str = qtdemux->streams[n];
     set_sample = !set;
@@ -1432,10 +1437,10 @@ gst_qtdemux_find_sample (GstQTDemux * qtdemux, gint64 byte_pos, gboolean fw,
         }
         /* determine min/max time */
         time = str->samples[i].timestamp + str->samples[i].pts_offset;
-        if (min_time == -1 || (!fw && min_time > time) ||
-            (fw && min_time < time)) {
+        time = gst_util_uint64_scale (time, GST_SECOND, str->timescale);
+        if (min_time == -1 || (!fw && time > min_time) ||
+            (fw && time < min_time)) {
           min_time = time;
-          ts_timescale = str->timescale;
         }
         /* determine stream with leading sample, to get its position */
         if (!stream || (fw
@@ -1453,8 +1458,8 @@ gst_qtdemux_find_sample (GstQTDemux * qtdemux, gint64 byte_pos, gboolean fw,
       gst_qtdemux_move_stream (qtdemux, str, str->n_samples);
   }
 
-  if (_time && ts_timescale != -1)
-    *_time = gst_util_uint64_scale (min_time, GST_SECOND, ts_timescale);
+  if (_time)
+    *_time = min_time;
   if (_stream)
     *_stream = stream;
   if (_index)
@@ -1522,7 +1527,9 @@ gst_qtdemux_handle_sink_event (GstPad * sinkpad, GstEvent * event)
         if (stop > 0) {
           gst_qtdemux_find_sample (demux, stop, FALSE, FALSE, NULL, NULL,
               &stop);
-          stop = MAX (stop, 0);
+          /* keyframe seeking should already arrange for start >= stop,
+           * but make sure in other rare cases */
+          stop = MAX (stop, start);
         }
       } else {
         GST_DEBUG_OBJECT (demux, "unsupported segment format, ignoring");
@@ -1536,17 +1543,6 @@ gst_qtdemux_handle_sink_event (GstPad * sinkpad, GstEvent * event)
           "applied rate %g, format %d, start %" GST_TIME_FORMAT ", "
           "stop %" GST_TIME_FORMAT, update, rate, arate, GST_FORMAT_TIME,
           GST_TIME_ARGS (start), GST_TIME_ARGS (stop));
-
-      /* FIXME: workaround/safety check for broken files (don't want to end
-       * up with NULL events if stop < start). Figure out real cause of this
-       * and fix it. */
-      if (stop < start) {
-        GST_ELEMENT_ERROR (demux, STREAM, DEMUX,
-            (_("This file is invalid and cannot be played.")),
-            ("stop %" GST_TIME_FORMAT " < start %" GST_TIME_FORMAT,
-                GST_TIME_ARGS (stop), GST_TIME_ARGS (start)));
-        return FALSE;
-      }
 
       gst_qtdemux_push_event (demux,
           gst_event_new_new_segment_full (update, rate, arate, GST_FORMAT_TIME,
@@ -1728,6 +1724,8 @@ gst_qtdemux_change_state (GstElement * element, GstStateChange transition)
       qtdemux->n_audio_streams = 0;
       qtdemux->n_sub_streams = 0;
       gst_segment_init (&qtdemux->segment, GST_FORMAT_TIME);
+      qtdemux->requested_seek_time = GST_CLOCK_TIME_NONE;
+      qtdemux->seek_offset = 0;
       break;
     }
     default:
@@ -4318,10 +4316,13 @@ static gboolean
 qtdemux_parse_samples (GstQTDemux * qtdemux, QtDemuxStream * stream, guint32 n)
 {
   gint i, j, k;
-  //gint index = 0;
   QtDemuxSample *samples, *first, *cur, *last;
   guint32 n_samples_per_chunk;
   guint32 n_samples;
+
+  GST_LOG_OBJECT (qtdemux, "parsing samples for stream fourcc %"
+      GST_FOURCC_FORMAT ", pad %s", GST_FOURCC_ARGS (stream->fourcc),
+      stream->pad ? GST_PAD_NAME (stream->pad) : "(NULL)");
 
   n_samples = stream->n_samples;
 
@@ -4667,10 +4668,11 @@ ctts:
         cur->pts_offset = ctts_soffset;
         cur++;
 
-        if (G_UNLIKELY (cur > last))
+        if (G_UNLIKELY (cur > last)) {
           /* save state */
           stream->ctts_sample_index = j + 1;
-        goto done;
+          goto done;
+        }
       }
       stream->ctts_sample_index = 0;
       stream->ctts_index++;
@@ -7585,7 +7587,7 @@ qtdemux_video_caps (GstQTDemux * qtdemux, QtDemuxStream * stream,
           NULL);
       break;
     case GST_MAKE_FOURCC ('2', 'v', 'u', 'y'):
-      _codec ("Raw packed YUV 4:2:0");
+      _codec ("Raw packed YUV 4:2:2");
       caps = gst_caps_new_simple ("video/x-raw-yuv",
           "format", GST_TYPE_FOURCC, GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'),
           NULL);
@@ -7765,6 +7767,10 @@ qtdemux_video_caps (GstQTDemux * qtdemux, QtDemuxStream * stream,
     case GST_MAKE_FOURCC ('A', 'V', 'd', 'n'):
       _codec ("AVID DNxHD");
       caps = gst_caps_from_string ("video/x-dnxhd");
+      break;
+    case GST_MAKE_FOURCC ('V', 'P', '8', '0'):
+      _codec ("On2 VP8");
+      caps = gst_caps_from_string ("video/x-vp8");
       break;
     case GST_MAKE_FOURCC ('k', 'p', 'c', 'd'):
     default:

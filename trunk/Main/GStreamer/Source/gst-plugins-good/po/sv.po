@@ -6,12 +6,13 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gst-plugins-good 0.10.16.2\n"
+"Project-Id-Version: gst-plugins-good 0.10.22.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-04-28 02:51+0100\n"
-"PO-Revision-Date: 2009-11-11 20:50+0100\n"
+"POT-Creation-Date: 2010-06-29 19:21+0100\n"
+"PO-Revision-Date: 2010-05-25 09:09+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -180,26 +181,351 @@ msgstr ""
 msgid "Could not open audio device for recording."
 msgstr "Kunde inte öppna ljudenheten för inspelning."
 
-msgid "Gain"
-msgstr "Förstärk"
+msgid "Could not open audio device for mixer control handling."
+msgstr "Kunde inte öppna ljudenheten för hantering av mixerstyrning."
+
+#, fuzzy
+msgid ""
+"Could not open audio device for mixer control handling. This version of the "
+"Open Sound System is not supported by this element."
+msgstr ""
+"Kunde inte öppna ljudenheten för inspelning. Du har inte behörighet att "
+"öppna enheten."
+
+msgid "Master"
+msgstr "Övergripande"
+
+msgid "Front"
+msgstr ""
+
+#, fuzzy
+msgid "Rear"
+msgstr "Retro"
+
+msgid "Headphones"
+msgstr "Hörlurar"
+
+msgid "Center"
+msgstr "Center"
+
+msgid "LFE"
+msgstr ""
+
+msgid "Surround"
+msgstr "Surround"
+
+#, fuzzy
+msgid "Side"
+msgstr "Video"
 
 msgid "Built-in Speaker"
 msgstr "Inbyggd högtalare"
-
-msgid "Headphone"
-msgstr "Hörlur"
-
-msgid "Line Out"
-msgstr "Linje ut"
-
-msgid "SPDIF Out"
-msgstr "SPDIF ut"
 
 msgid "AUX 1 Out"
 msgstr "AUX 1 ut"
 
 msgid "AUX 2 Out"
 msgstr "AUX 2 ut"
+
+#, fuzzy
+msgid "AUX Out"
+msgstr "AUX 1 ut"
+
+msgid "3D Depth"
+msgstr ""
+
+msgid "3D Center"
+msgstr ""
+
+#, fuzzy
+msgid "3D Enhance"
+msgstr "Dance"
+
+msgid "Telephone"
+msgstr "Telefon"
+
+msgid "Line Out"
+msgstr "Linje ut"
+
+msgid "Line In"
+msgstr "Linje-in"
+
+#, fuzzy
+msgid "Internal CD"
+msgstr "Instrumentellt"
+
+msgid "Video In"
+msgstr "Video-in"
+
+#, fuzzy
+msgid "AUX 1 In"
+msgstr "AUX 1 ut"
+
+#, fuzzy
+msgid "AUX 2 In"
+msgstr "AUX 2 ut"
+
+msgid "AUX In"
+msgstr ""
+
+#, fuzzy
+msgid "Record Gain"
+msgstr "Spela in som"
+
+#, fuzzy
+msgid "Output Gain"
+msgstr "Utförstärkning"
+
+#, fuzzy
+msgid "Microphone Boost"
+msgstr "Mikrofon"
+
+#, fuzzy
+msgid "Loopback"
+msgstr "Lås"
+
+msgid "Diagnostic"
+msgstr ""
+
+msgid "Bass Boost"
+msgstr ""
+
+msgid "Playback Ports"
+msgstr "Uppspelningsportar"
+
+msgid "Input"
+msgstr "Ingång"
+
+msgid "Record Source"
+msgstr "Inspelningskälla"
+
+#, fuzzy
+msgid "Monitor Source"
+msgstr "Monitor"
+
+msgid "Keyboard Beep"
+msgstr "Tangentbordspip"
+
+msgid "Simulate Stereo"
+msgstr "Simulera stereo"
+
+msgid "Stereo"
+msgstr "Stereo"
+
+msgid "Surround Sound"
+msgstr "Surroundljud"
+
+msgid "Microphone Gain"
+msgstr "Mikrofonförstärkning"
+
+msgid "Speaker Source"
+msgstr "Högtalarkälla"
+
+msgid "Microphone Source"
+msgstr "Mikrofonkälla"
+
+msgid "Jack"
+msgstr "Jack"
+
+msgid "Center / LFE"
+msgstr ""
+
+msgid "Stereo Mix"
+msgstr ""
+
+msgid "Mono Mix"
+msgstr ""
+
+msgid "Input Mix"
+msgstr ""
+
+#, fuzzy
+msgid "SPDIF In"
+msgstr "SPDIF ut"
+
+msgid "SPDIF Out"
+msgstr "SPDIF ut"
+
+msgid "Microphone 1"
+msgstr "Mikrofon 1"
+
+msgid "Microphone 2"
+msgstr "Mikrofon 2"
+
+msgid "Digital Out"
+msgstr "Digital-ut"
+
+msgid "Digital In"
+msgstr "Digital-in"
+
+msgid "HDMI"
+msgstr "HDMI"
+
+msgid "Modem"
+msgstr "Modem"
+
+msgid "Handset"
+msgstr ""
+
+msgid "Other"
+msgstr "Annat"
+
+msgid "None"
+msgstr "Ingen"
+
+msgid "On"
+msgstr "På"
+
+msgid "Off"
+msgstr "Av"
+
+msgid "Mute"
+msgstr "Tyst"
+
+msgid "Fast"
+msgstr "Snabb"
+
+#. TRANSLATORS: "Very Low" is a quality setting here
+msgid "Very Low"
+msgstr "Mycket låg"
+
+#. TRANSLATORS: "Low" is a quality setting here
+msgid "Low"
+msgstr "Låg"
+
+#. TRANSLATORS: "Medium" is a quality setting here
+msgid "Medium"
+msgstr "Medel"
+
+#. TRANSLATORS: "High" is a quality setting here
+msgid "High"
+msgstr "Hög"
+
+#. TRANSLATORS: "Very High" is a quality setting here
+msgid "Very High"
+msgstr "Mycket hög"
+
+#. TRANSLATORS: "Production" is a quality setting here
+#, fuzzy
+msgid "Production"
+msgstr "Plats"
+
+#, fuzzy
+msgid "Front Panel Microphone"
+msgstr "Mikrofon"
+
+msgid "Front Panel Line In"
+msgstr ""
+
+msgid "Front Panel Headphones"
+msgstr ""
+
+msgid "Front Panel Line Out"
+msgstr ""
+
+msgid "Green Connector"
+msgstr "Grön kontakt"
+
+msgid "Pink Connector"
+msgstr "Rosa kontakt"
+
+msgid "Blue Connector"
+msgstr "Blå kontakt"
+
+msgid "White Connector"
+msgstr "Vit kontakt"
+
+msgid "Black Connector"
+msgstr "Svart kontakt"
+
+msgid "Gray Connector"
+msgstr "Grå kontakt"
+
+msgid "Orange Connector"
+msgstr "Orange kontakt"
+
+msgid "Red Connector"
+msgstr "Röd kontakt"
+
+msgid "Yellow Connector"
+msgstr "Gul kontakt"
+
+msgid "Green Front Panel Connector"
+msgstr ""
+
+msgid "Pink Front Panel Connector"
+msgstr ""
+
+msgid "Blue Front Panel Connector"
+msgstr ""
+
+msgid "White Front Panel Connector"
+msgstr ""
+
+msgid "Black Front Panel Connector"
+msgstr ""
+
+msgid "Gray Front Panel Connector"
+msgstr ""
+
+msgid "Orange Front Panel Connector"
+msgstr ""
+
+msgid "Red Front Panel Connector"
+msgstr ""
+
+msgid "Yellow Front Panel Connector"
+msgstr ""
+
+msgid "Spread Output"
+msgstr ""
+
+msgid "Downmix"
+msgstr ""
+
+msgid "Virtual Mixer Input"
+msgstr ""
+
+msgid "Virtual Mixer Output"
+msgstr ""
+
+msgid "Virtual Mixer Channels"
+msgstr ""
+
+#. TRANSLATORS: name + number of a volume mixer control
+#, c-format
+msgid "%s %d Function"
+msgstr "%s %d-funktion"
+
+#. TRANSLATORS: name of a volume mixer control
+#, c-format
+msgid "%s Function"
+msgstr "%s-funktion"
+
+msgid ""
+"Could not open audio device for playback. This version of the Open Sound "
+"System is not supported by this element."
+msgstr ""
+"Kunde inte öppna ljudenheten för uppspelning. Denna version av Open Sound "
+"System stöds inte av detta element."
+
+msgid "Playback is not supported by this audio device."
+msgstr "Uppspelning stöds inte av denna ljudenhet."
+
+msgid "Audio playback error."
+msgstr "Fel vid ljuduppspelning."
+
+msgid "Recording is not supported by this audio device."
+msgstr "Inspelning stöds inte av denna ljudenhet."
+
+msgid "Error recording from audio device."
+msgstr "Fel vid inspelning från ljudenheten."
+
+msgid "Gain"
+msgstr "Förstärk"
+
+msgid "Headphone"
+msgstr "Hörlur"
 
 #, c-format
 msgid "Error reading %d bytes from device '%s'."
@@ -442,13 +768,6 @@ msgstr "Kan inte fungera utan en klocka"
 #~ msgid "Your OSS device could not be probed correctly"
 #~ msgstr "Din OSS-enhet kunde inte undersökas korrekt"
 
-#~ msgid "Master"
-#~ msgstr "Övergripande"
-
-#, fuzzy
-#~ msgid "Playback"
-#~ msgstr "Spela"
-
 #, fuzzy
 #~ msgid "Capture"
 #~ msgstr "Satir"
@@ -498,9 +817,6 @@ msgstr "Kan inte fungera utan en klocka"
 #~ msgstr ""
 #~ "Inget användbart namnrymdselement kunde hittas.\n"
 #~ "Installera ett och starta om."
-
-#~ msgid "Digital"
-#~ msgstr "Digital"
 
 #~ msgid "Phone in"
 #~ msgstr "Tele in"
@@ -554,12 +870,6 @@ msgstr "Kan inte fungera utan en klocka"
 #~ msgid "Hostna_me:"
 #~ msgstr "Värdna_mn:"
 
-#~ msgid "Server"
-#~ msgstr "Server"
-
-#~ msgid "Location"
-#~ msgstr "Plats"
-
 #~ msgid "_Update Server List"
 #~ msgstr "_Uppdatera serverlistan"
 
@@ -608,12 +918,6 @@ msgstr "Kan inte fungera utan en klocka"
 #~ msgid "Classical Rock"
 #~ msgstr "Klassisk rock"
 
-#~ msgid "Country"
-#~ msgstr "Country"
-
-#~ msgid "Dance"
-#~ msgstr "Dance"
-
 #~ msgid "Disco"
 #~ msgstr "Disco"
 
@@ -637,9 +941,6 @@ msgstr "Kan inte fungera utan en klocka"
 
 #~ msgid "Oldies"
 #~ msgstr "Gamla godingar"
-
-#~ msgid "Other"
-#~ msgstr "Annat"
 
 #~ msgid "Pop"
 #~ msgstr "Pop"
@@ -701,9 +1002,6 @@ msgstr "Kan inte fungera utan en klocka"
 #~ msgid "Classical"
 #~ msgstr "Klassiskt"
 
-#~ msgid "Instrumental"
-#~ msgstr "Instrumentellt"
-
 #~ msgid "Acid"
 #~ msgstr "Acid"
 
@@ -718,9 +1016,6 @@ msgstr "Kan inte fungera utan en klocka"
 
 #~ msgid "Gospel"
 #~ msgstr "Gospel"
-
-#~ msgid "Noise"
-#~ msgstr "Brus"
 
 #~ msgid "Alt"
 #~ msgstr "Alt"
@@ -826,9 +1121,6 @@ msgstr "Kan inte fungera utan en klocka"
 
 #~ msgid "Polka"
 #~ msgstr "Polka"
-
-#~ msgid "Retro"
-#~ msgstr "Retro"
 
 #~ msgid "Musical"
 #~ msgstr "Musikal"
@@ -1009,9 +1301,6 @@ msgstr "Kan inte fungera utan en klocka"
 
 #~ msgid "Heavy Metal"
 #~ msgstr "Heavy Metal"
-
-#~ msgid "Black Metal"
-#~ msgstr "Black Metal"
 
 #~ msgid "Crossover"
 #~ msgstr "Crossover"
@@ -1298,9 +1587,6 @@ msgstr "Kan inte fungera utan en klocka"
 #~ msgid "New"
 #~ msgstr "Nytt"
 
-#~ msgid "Open"
-#~ msgstr "Öppna"
-
 #~ msgid "Open a file"
 #~ msgstr "Öppna en fil"
 
@@ -1315,9 +1601,6 @@ msgstr "Kan inte fungera utan en klocka"
 
 #~ msgid "Recent _Files"
 #~ msgstr "Senaste _filer"
-
-#~ msgid "Record sound"
-#~ msgstr "Spela in ljud"
 
 #~ msgid "Run Mixer"
 #~ msgstr "Kör mixer"
@@ -1433,9 +1716,6 @@ msgstr "Kan inte fungera utan en klocka"
 #~ msgid "2 (stereo)"
 #~ msgstr "2 (stereo)"
 
-#~ msgid "%s Information"
-#~ msgstr "Information om %s"
-
 #~ msgid "Folder:"
 #~ msgstr "Mapp:"
 
@@ -1469,9 +1749,6 @@ msgstr "Kan inte fungera utan en klocka"
 #~ msgid "Recording..."
 #~ msgstr "Spelar in..."
 
-#~ msgid "Record as"
-#~ msgstr "Spela in som"
-
 #~ msgid "File information"
 #~ msgstr "Filinformation"
 
@@ -1484,9 +1761,6 @@ msgstr "Kan inte fungera utan en klocka"
 #~ msgid "Adjust the volume level"
 #~ msgstr "Justera nivån på volymen"
 
-#~ msgid "Volume Control"
-#~ msgstr "Volymkontroll"
-
 #~ msgid "%s Slider"
 #~ msgstr "%s-skjutreglage"
 
@@ -1495,9 +1769,6 @@ msgstr "Kan inte fungera utan en klocka"
 
 #~ msgid "%s Slider %d"
 #~ msgstr "%s-skjutreglage %d"
-
-#~ msgid "Lock"
-#~ msgstr "Lås"
 
 #~ msgid "%s Lock"
 #~ msgstr "%s-lås"

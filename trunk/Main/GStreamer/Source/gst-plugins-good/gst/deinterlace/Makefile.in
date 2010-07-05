@@ -15,6 +15,28 @@
 
 @SET_MAKE@
 
+#
+# This is a makefile.am fragment to build Orc code.
+#
+# Define ORC_SOURCE and then include this file, such as:
+#
+#  ORC_SOURCE=gstadderorc
+#  include $(top_srcdir)/common/orc.mak
+#
+# This fragment will create tmp-orc.c and gstadderorc.h from
+# gstadderorc.orc.
+#
+# When 'make dist' is run at the top level, or 'make orc-update'
+# in a directory including this fragment, the generated source 
+# files will be copied to $(ORC_SOURCE)-dist.[ch].  These files
+# should be checked in to git, since they are used if Orc is
+# disabled.
+# 
+# Note that this file defines BUILT_SOURCES, so any later usage
+# of BUILT_SOURCES in the Makefile.am that includes this file
+# must use '+='.
+#
+
 
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
@@ -35,9 +57,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = gst/deinterlace
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+	$(srcdir)/Makefile.in $(top_srcdir)/common/orc.mak
+subdir = gst/deinterlace
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/as-auto-alt.m4 \
@@ -62,9 +84,10 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/aalib.m4 \
-	$(top_srcdir)/m4/esd.m4 $(top_srcdir)/m4/gconf-2.m4 \
-	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/gst-fionread.m4 \
+	$(top_srcdir)/common/m4/orc.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/aalib.m4 $(top_srcdir)/m4/esd.m4 \
+	$(top_srcdir)/m4/gconf-2.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-shout2.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
 	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
@@ -108,15 +131,18 @@ libgstdeinterlace_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_libgstdeinterlace_la_OBJECTS =  \
 	libgstdeinterlace_la-gstdeinterlace.lo \
-	libgstdeinterlace_la-greedy.lo libgstdeinterlace_la-greedyh.lo \
-	libgstdeinterlace_la-vfir.lo \
+	libgstdeinterlace_la-gstdeinterlacemethod.lo \
 	libgstdeinterlace_la-tomsmocomp.lo \
-	libgstdeinterlace_la-weavetff.lo \
+	libgstdeinterlace_la-greedy.lo libgstdeinterlace_la-greedyh.lo \
+	libgstdeinterlace_la-vfir.lo libgstdeinterlace_la-weavetff.lo \
 	libgstdeinterlace_la-weavebff.lo libgstdeinterlace_la-weave.lo \
 	libgstdeinterlace_la-linear.lo \
 	libgstdeinterlace_la-linearblend.lo \
 	libgstdeinterlace_la-scalerbob.lo
-libgstdeinterlace_la_OBJECTS = $(am_libgstdeinterlace_la_OBJECTS)
+am__objects_1 = libgstdeinterlace_la-tmp-orc.lo
+nodist_libgstdeinterlace_la_OBJECTS = $(am__objects_1)
+libgstdeinterlace_la_OBJECTS = $(am_libgstdeinterlace_la_OBJECTS) \
+	$(nodist_libgstdeinterlace_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
@@ -150,7 +176,8 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(libgstdeinterlace_la_SOURCES)
+SOURCES = $(libgstdeinterlace_la_SOURCES) \
+	$(nodist_libgstdeinterlace_la_SOURCES)
 DIST_SOURCES = $(libgstdeinterlace_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
@@ -225,6 +252,8 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
+GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
+GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -305,8 +334,6 @@ LIBIEC61883_LIBS = @LIBIEC61883_LIBS@
 LIBINTL = @LIBINTL@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
-LIBOIL_CFLAGS = @LIBOIL_CFLAGS@
-LIBOIL_LIBS = @LIBOIL_LIBS@
 LIBPNG_CFLAGS = @LIBPNG_CFLAGS@
 LIBPNG_LIBS = @LIBPNG_LIBS@
 LIBS = @LIBS@
@@ -332,6 +359,9 @@ OBJCDEPMODE = @OBJCDEPMODE@
 OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
+ORCC = @ORCC@
+ORC_CFLAGS = @ORC_CFLAGS@
+ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
 OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
@@ -359,6 +389,8 @@ PULSE_0_9_13_CFLAGS = @PULSE_0_9_13_CFLAGS@
 PULSE_0_9_13_LIBS = @PULSE_0_9_13_LIBS@
 PULSE_0_9_15_CFLAGS = @PULSE_0_9_15_CFLAGS@
 PULSE_0_9_15_LIBS = @PULSE_0_9_15_LIBS@
+PULSE_0_9_16_CFLAGS = @PULSE_0_9_16_CFLAGS@
+PULSE_0_9_16_LIBS = @PULSE_0_9_16_LIBS@
 PULSE_0_9_20_CFLAGS = @PULSE_0_9_20_CFLAGS@
 PULSE_0_9_20_LIBS = @PULSE_0_9_20_LIBS@
 PULSE_CFLAGS = @PULSE_CFLAGS@
@@ -469,12 +501,23 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 plugin_LTLIBRARIES = libgstdeinterlace.la
+ORC_SOURCE = tvtime
+EXTRA_DIST = $(ORC_SOURCE).orc
+ORC_NODIST_SOURCES = tmp-orc.c $(ORC_SOURCE).h
+BUILT_SOURCES = tmp-orc.c $(ORC_SOURCE).h
+orcc_v_gen = $(orcc_v_gen_$(V))
+orcc_v_gen_ = $(orcc_v_gen_$(AM_DEFAULT_VERBOSITY))
+orcc_v_gen_0 = @echo "  ORCC   $@";
+cp_v_gen = $(cp_v_gen_$(V))
+cp_v_gen_ = $(cp_v_gen_$(AM_DEFAULT_VERBOSITY))
+cp_v_gen_0 = @echo "  CP     $@";
 libgstdeinterlace_la_SOURCES = \
 	gstdeinterlace.c \
+	gstdeinterlacemethod.c \
+	tvtime/tomsmocomp.c \
 	tvtime/greedy.c \
 	tvtime/greedyh.c \
 	tvtime/vfir.c \
-	tvtime/tomsmocomp.c \
 	tvtime/weavetff.c \
 	tvtime/weavebff.c \
 	tvtime/weave.c \
@@ -482,16 +525,18 @@ libgstdeinterlace_la_SOURCES = \
 	tvtime/linearblend.c \
 	tvtime/scalerbob.c
 
+nodist_libgstdeinterlace_la_SOURCES = $(ORC_NODIST_SOURCES)
 libgstdeinterlace_la_CFLAGS = \
-	$(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS) $(LIBOIL_CFLAGS)
+	$(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS) $(ORC_CFLAGS)
 
 libgstdeinterlace_la_LIBADD = \
-	$(GST_PLUGINS_BASE_LIBS) -lgstvideo-$(GST_MAJORMINOR) $(GST_BASE_LIBS) $(GST_LIBS) $(LIBOIL_LIBS)
+	$(GST_PLUGINS_BASE_LIBS) -lgstvideo-$(GST_MAJORMINOR) $(GST_BASE_LIBS) $(GST_LIBS) $(ORC_LIBS)
 
 libgstdeinterlace_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 libgstdeinterlace_la_LIBTOOLFLAGS = --tag=disable-static
 noinst_HEADERS = \
 	gstdeinterlace.h \
+	gstdeinterlacemethod.h \
 	tvtime/mmx.h \
 	tvtime/sse.h \
 	tvtime/greedyh.asm \
@@ -516,11 +561,12 @@ noinst_HEADERS = \
 	tvtime/tomsmocomp/tomsmocompmacros.h \
 	tvtime/tomsmocomp/WierdBob.inc
 
-all: all-am
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/orc.mak $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -593,9 +639,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdeinterlace_la-greedy.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdeinterlace_la-greedyh.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdeinterlace_la-gstdeinterlace.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdeinterlace_la-gstdeinterlacemethod.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdeinterlace_la-linear.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdeinterlace_la-linearblend.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdeinterlace_la-scalerbob.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdeinterlace_la-tmp-orc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdeinterlace_la-tomsmocomp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdeinterlace_la-vfir.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdeinterlace_la-weave.Plo@am__quote@
@@ -634,6 +682,22 @@ libgstdeinterlace_la-gstdeinterlace.lo: gstdeinterlace.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -c -o libgstdeinterlace_la-gstdeinterlace.lo `test -f 'gstdeinterlace.c' || echo '$(srcdir)/'`gstdeinterlace.c
 
+libgstdeinterlace_la-gstdeinterlacemethod.lo: gstdeinterlacemethod.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -MT libgstdeinterlace_la-gstdeinterlacemethod.lo -MD -MP -MF $(DEPDIR)/libgstdeinterlace_la-gstdeinterlacemethod.Tpo -c -o libgstdeinterlace_la-gstdeinterlacemethod.lo `test -f 'gstdeinterlacemethod.c' || echo '$(srcdir)/'`gstdeinterlacemethod.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdeinterlace_la-gstdeinterlacemethod.Tpo $(DEPDIR)/libgstdeinterlace_la-gstdeinterlacemethod.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstdeinterlacemethod.c' object='libgstdeinterlace_la-gstdeinterlacemethod.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -c -o libgstdeinterlace_la-gstdeinterlacemethod.lo `test -f 'gstdeinterlacemethod.c' || echo '$(srcdir)/'`gstdeinterlacemethod.c
+
+libgstdeinterlace_la-tomsmocomp.lo: tvtime/tomsmocomp.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -MT libgstdeinterlace_la-tomsmocomp.lo -MD -MP -MF $(DEPDIR)/libgstdeinterlace_la-tomsmocomp.Tpo -c -o libgstdeinterlace_la-tomsmocomp.lo `test -f 'tvtime/tomsmocomp.c' || echo '$(srcdir)/'`tvtime/tomsmocomp.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdeinterlace_la-tomsmocomp.Tpo $(DEPDIR)/libgstdeinterlace_la-tomsmocomp.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tvtime/tomsmocomp.c' object='libgstdeinterlace_la-tomsmocomp.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -c -o libgstdeinterlace_la-tomsmocomp.lo `test -f 'tvtime/tomsmocomp.c' || echo '$(srcdir)/'`tvtime/tomsmocomp.c
+
 libgstdeinterlace_la-greedy.lo: tvtime/greedy.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -MT libgstdeinterlace_la-greedy.lo -MD -MP -MF $(DEPDIR)/libgstdeinterlace_la-greedy.Tpo -c -o libgstdeinterlace_la-greedy.lo `test -f 'tvtime/greedy.c' || echo '$(srcdir)/'`tvtime/greedy.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdeinterlace_la-greedy.Tpo $(DEPDIR)/libgstdeinterlace_la-greedy.Plo
@@ -657,14 +721,6 @@ libgstdeinterlace_la-vfir.lo: tvtime/vfir.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tvtime/vfir.c' object='libgstdeinterlace_la-vfir.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -c -o libgstdeinterlace_la-vfir.lo `test -f 'tvtime/vfir.c' || echo '$(srcdir)/'`tvtime/vfir.c
-
-libgstdeinterlace_la-tomsmocomp.lo: tvtime/tomsmocomp.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -MT libgstdeinterlace_la-tomsmocomp.lo -MD -MP -MF $(DEPDIR)/libgstdeinterlace_la-tomsmocomp.Tpo -c -o libgstdeinterlace_la-tomsmocomp.lo `test -f 'tvtime/tomsmocomp.c' || echo '$(srcdir)/'`tvtime/tomsmocomp.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdeinterlace_la-tomsmocomp.Tpo $(DEPDIR)/libgstdeinterlace_la-tomsmocomp.Plo
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tvtime/tomsmocomp.c' object='libgstdeinterlace_la-tomsmocomp.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -c -o libgstdeinterlace_la-tomsmocomp.lo `test -f 'tvtime/tomsmocomp.c' || echo '$(srcdir)/'`tvtime/tomsmocomp.c
 
 libgstdeinterlace_la-weavetff.lo: tvtime/weavetff.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -MT libgstdeinterlace_la-weavetff.lo -MD -MP -MF $(DEPDIR)/libgstdeinterlace_la-weavetff.Tpo -c -o libgstdeinterlace_la-weavetff.lo `test -f 'tvtime/weavetff.c' || echo '$(srcdir)/'`tvtime/weavetff.c
@@ -713,6 +769,14 @@ libgstdeinterlace_la-scalerbob.lo: tvtime/scalerbob.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tvtime/scalerbob.c' object='libgstdeinterlace_la-scalerbob.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -c -o libgstdeinterlace_la-scalerbob.lo `test -f 'tvtime/scalerbob.c' || echo '$(srcdir)/'`tvtime/scalerbob.c
+
+libgstdeinterlace_la-tmp-orc.lo: tmp-orc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -MT libgstdeinterlace_la-tmp-orc.lo -MD -MP -MF $(DEPDIR)/libgstdeinterlace_la-tmp-orc.Tpo -c -o libgstdeinterlace_la-tmp-orc.lo `test -f 'tmp-orc.c' || echo '$(srcdir)/'`tmp-orc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdeinterlace_la-tmp-orc.Tpo $(DEPDIR)/libgstdeinterlace_la-tmp-orc.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tmp-orc.c' object='libgstdeinterlace_la-tmp-orc.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdeinterlace_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdeinterlace_la_CFLAGS) $(CFLAGS) -c -o libgstdeinterlace_la-tmp-orc.lo `test -f 'tmp-orc.c' || echo '$(srcdir)/'`tmp-orc.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -802,14 +866,19 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	$(MAKE) $(AM_MAKEFLAGS) \
+	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
+	  dist-hook
 check-am: all-am
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(plugindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -834,10 +903,11 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-pluginLTLIBRARIES \
-	mostlyclean-am
+clean-am: clean-generic clean-libtool clean-local \
+	clean-pluginLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -905,22 +975,56 @@ ps-am:
 
 uninstall-am: uninstall-pluginLTLIBRARIES
 
-.MAKE: install-am install-strip
+.MAKE: all check install install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-pluginLTLIBRARIES ctags distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-pluginLTLIBRARIES \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-pluginLTLIBRARIES
+	clean-libtool clean-local clean-pluginLTLIBRARIES ctags \
+	dist-hook distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-pluginLTLIBRARIES install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+	uninstall-pluginLTLIBRARIES
 
+
+orc-update: tmp-orc.c $(ORC_SOURCE).h
+	$(top_srcdir)/common/gst-indent tmp-orc.c
+	cp tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c
+	cp $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h
+
+@HAVE_ORC_TRUE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORC_TRUE@	$(orcc_v_gen)$(ORCC) --implementation --include glib.h -o tmp-orc.c $(srcdir)/$(ORC_SOURCE).orc
+
+@HAVE_ORC_TRUE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORC_TRUE@	$(orcc_v_gen)$(ORCC) --header --include glib.h -o $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORC_FALSE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.c tmp-orc.c
+
+@HAVE_ORC_FALSE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.h $(ORC_SOURCE).h
+
+clean-local: clean-orc
+.PHONY: clean-orc
+clean-orc:
+	rm -f tmp-orc.c $(ORC_SOURCE).h
+
+dist-hook: dist-hook-orc
+.PHONY: dist-hook-orc
+dist-hook-orc: tmp-orc.c $(ORC_SOURCE).h
+	$(top_srcdir)/common/gst-indent tmp-orc.c
+	rm -f tmp-orc.c~
+	cmp -s tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c || \
+	  cp tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c
+	cmp -s $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h || \
+	  cp $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h
+	cp -p $(srcdir)/$(ORC_SOURCE)-dist.c $(distdir)/
+	cp -p $(srcdir)/$(ORC_SOURCE)-dist.h $(distdir)/
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -27,6 +27,13 @@
 #include "ebml-ids.h"
 
 /*
+ * EBML DocType.
+ */
+
+#define GST_MATROSKA_DOCTYPE_MATROSKA              "matroska"
+#define GST_MATROSKA_DOCTYPE_WEBM                  "webm"
+
+/*
  * Matroska element IDs. max. 32-bit.
  */
 
@@ -337,6 +344,7 @@
 #define GST_MATROSKA_CODEC_ID_VIDEO_QUICKTIME    "V_QUICKTIME"
 #define GST_MATROSKA_CODEC_ID_VIDEO_SNOW         "V_SNOW"
 #define GST_MATROSKA_CODEC_ID_VIDEO_DIRAC        "V_DIRAC"
+#define GST_MATROSKA_CODEC_ID_VIDEO_VP8          "V_VP8"
 
 #define GST_MATROSKA_CODEC_ID_AUDIO_MPEG1_L1       "A_MPEG/L1"
 #define GST_MATROSKA_CODEC_ID_AUDIO_MPEG1_L2       "A_MPEG/L2"
@@ -468,6 +476,8 @@ struct _GstMatroskaTrackContext {
   GstFlowReturn last_flow;
   /* reverse playback */
   GstClockTime  from_time;
+  gint64                   from_offset;
+  gint64                   to_offset;
 
   GArray       *index_table;
 
@@ -536,6 +546,9 @@ typedef struct _GstMatroskaTrackVideoContext {
   gdouble       default_fps;
   GstMatroskaAspectRatioMode asr_mode;
   guint32       fourcc;
+
+  /* QoS */
+  GstClockTime  earliest_time;
 
   GstBuffer     *dirac_unit;
 } GstMatroskaTrackVideoContext;

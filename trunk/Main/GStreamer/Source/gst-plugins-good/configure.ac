@@ -1,18 +1,18 @@
-AC_PREREQ(2.52)
+AC_PREREQ(2.60)
 
 dnl please read gstreamer/docs/random/autotools before changing this file
 
 dnl initialize autoconf
 dnl releases only do -Wall, git and prerelease does -Werror too
 dnl use a three digit version number for releases, and four for git/pre
-AC_INIT(GStreamer Good Plug-ins, 0.10.22,
+AC_INIT(GStreamer Good Plug-ins, 0.10.23.3,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-good)
 
 AG_GST_INIT
 
 dnl initialize automake
-AM_INIT_AUTOMAKE([-Wno-portability])
+AM_INIT_AUTOMAKE([-Wno-portability 1.10])
 
 dnl define PACKAGE_VERSION_* variables
 AS_VERSION
@@ -52,8 +52,8 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.29
-GSTPB_REQ=0.10.29
+GST_REQ=0.10.29.2
+GSTPB_REQ=0.10.29.2
 
 dnl *** autotools stuff ****
 
@@ -193,7 +193,7 @@ fi
 
 dnl Check for mmap (needed by electricfence plugin)
 AC_FUNC_MMAP
-AM_CONDITIONAL(GST_HAVE_MMAP, test "x$ac_cv_func_mmap_fixed_mapped" == "xyes")
+AM_CONDITIONAL(GST_HAVE_MMAP, test "x$ac_cv_func_mmap_fixed_mapped" = "xyes")
 
 dnl Check for mmap (needed by electricfence plugin)
 
@@ -206,11 +206,9 @@ dnl *** checks for dependency libraries ***
 dnl GLib is required
 AG_GST_GLIB_CHECK([2.18])
 
-dnl liboil is required
-PKG_CHECK_MODULES(LIBOIL, liboil-0.3 >= 0.3.8, HAVE_LIBOIL=yes, HAVE_LIBOIL=no)
-if test "x$HAVE_LIBOIL" != "xyes"; then
-  AC_ERROR([liboil-0.3.8 or later is required])
-fi
+dnl Orc
+ORC_CHECK([0.4.5])
+
 
 dnl checks for gstreamer
 dnl uninstalled is selected preferentially -- see pkg-config(1)
@@ -242,7 +240,8 @@ AC_SUBST(GSTPB_PREFIX)
 
 dnl GTK is optional and used in examples
 if test "x$BUILD_EXAMPLES" = "xyes"; then
-  PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.8.0, HAVE_GTK=yes, HAVE_GTK=no)
+  PKG_CHECK_MODULES(GTK, gtk+-3.0, HAVE_GTK=yes,
+  [PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.14.0, HAVE_GTK=yes, HAVE_GTK=no)])
   AC_SUBST(GTK_LIBS)
   AC_SUBST(GTK_CFLAGS)
 fi
@@ -315,6 +314,7 @@ AG_GST_CHECK_PLUGIN(interleave)
 AG_GST_CHECK_PLUGIN(flx)
 AG_GST_CHECK_PLUGIN(goom)
 AG_GST_CHECK_PLUGIN(goom2k1)
+AG_GST_CHECK_PLUGIN(imagefreeze)
 AG_GST_CHECK_PLUGIN(law)
 AG_GST_CHECK_PLUGIN(level)
 AG_GST_CHECK_PLUGIN(matroska)
@@ -429,6 +429,15 @@ dnl Some old BSD versions and also newer OpenBSD versions :
      ])
    ])
  ])
+])
+
+dnl *** oss4 ***
+translit(dnm, m, l) AM_CONDITIONAL(USE_OSS4, true)
+AG_GST_CHECK_FEATURE(OSS4, [Open Sound System 4], oss4, [
+  AC_MSG_CHECKING([Checking if we can build the OSS4 elements])
+  AC_CHECK_HEADERS([fcntl.h sys/ioctl.h sys/stat.h sys/types.h],
+      [test -z "$OSS4_MISSING_HEADER" && HAVE_OSS4="yes"],
+      [OSS4_MISSING_HEADER="yes";HAVE_OSS4="no"])
 ])
 
 dnl *** Sun Audio ***
@@ -714,6 +723,11 @@ AG_GST_CHECK_FEATURE(GDK_PIXBUF, [GDK pixbuf], gdkpixbuf, [
   AG_GST_PKG_CHECK_MODULES(GDK_PIXBUF, gdk-pixbuf-2.0 >= 2.8.0)
 ])
 
+translit(dnm, m, l) AM_CONDITIONAL(USE_GDK_PIXBUF3, true)
+AG_GST_CHECK_FEATURE(GDK_PIXBUF3, [GDK pixbuf], gdkpixbuf3, [
+  AG_GST_PKG_CHECK_MODULES(GDK_PIXBUF3, gdk-pixbuf-3.0)
+])
+
 dnl *** HAL ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_HAL, true)
 AG_GST_CHECK_FEATURE(HAL, [HAL libraries], halelements, [
@@ -787,6 +801,10 @@ AG_GST_CHECK_FEATURE(PULSE, [pulseaudio plug-in], pulseaudio, [
   if test x$HAVE_PULSE_0_9_15 = xyes; then
     AC_DEFINE(HAVE_PULSE_0_9_15, 1, [defined if pulseaudio >= 0.9.15 is available])
   fi
+  AG_GST_PKG_CHECK_MODULES(PULSE_0_9_16, libpulse >= 0.9.16)
+  if test x$HAVE_PULSE_0_9_16 = xyes; then
+    AC_DEFINE(HAVE_PULSE_0_9_16, 1, [defined if pulseaudio >= 0.9.16 is available])
+  fi
   AG_GST_PKG_CHECK_MODULES(PULSE_0_9_20, libpulse >= 0.9.20)
   if test x$HAVE_PULSE_0_9_20 = xyes; then
     AC_DEFINE(HAVE_PULSE_0_9_20, 1, [defined if pulseaudio >= 0.9.20 is available])
@@ -796,8 +814,8 @@ AG_GST_CHECK_FEATURE(PULSE, [pulseaudio plug-in], pulseaudio, [
 dnl *** dv1394 ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_DV1394, true)
 AG_GST_CHECK_FEATURE(DV1394, [raw1394 and avc1394 library], 1394, [
-  dnl first test for libraw1394 >= 1.2.1
-  AG_GST_PKG_CHECK_MODULES(RAW1394, libraw1394 >= 1.2.1)
+  dnl first test for libraw1394 >= 2.0.0
+  AG_GST_PKG_CHECK_MODULES(RAW1394, libraw1394 >= 2.0.0)
   AG_GST_PKG_CHECK_MODULES(LIBIEC61883, libiec61883 >= 1.0.0)
   dnl now see how far we got
   if test x$HAVE_RAW1394 = xyes && \
@@ -981,6 +999,7 @@ AM_CONDITIONAL(USE_FLAC, false)
 AM_CONDITIONAL(USE_GCONF, false)
 AM_CONDITIONAL(USE_GCONFTOOL, false)
 AM_CONDITIONAL(USE_GDK_PIXBUF, false)
+AM_CONDITIONAL(USE_GDK_PIXBUF3, false)
 AM_CONDITIONAL(USE_GST_V4L2, false)
 AM_CONDITIONAL(USE_HAL, false)
 AM_CONDITIONAL(USE_JPEG, false)
@@ -988,6 +1007,7 @@ AM_CONDITIONAL(USE_LIBCACA, false)
 AM_CONDITIONAL(USE_LIBDV, false)
 AM_CONDITIONAL(USE_LIBPNG, false)
 AM_CONDITIONAL(USE_OSS, false)
+AM_CONDITIONAL(USE_OSS4, false)
 AM_CONDITIONAL(USE_OSX_AUDIO, false)
 AM_CONDITIONAL(USE_OSX_VIDEO, false)
 AM_CONDITIONAL(USE_PULSE, false)
@@ -1042,8 +1062,8 @@ dnl FIXME: do we want to rename to GST_ALL_* ?
 dnl prefer internal headers to already installed ones
 dnl also add builddir include for enumtypes and marshal
 dnl add ERROR_CFLAGS, but overridable
-GST_CXXFLAGS="-I\$(top_srcdir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CXXFLAGS)"
-GST_CFLAGS="-I\$(top_srcdir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CFLAGS)"
+GST_CXXFLAGS="-I\$(top_srcdir)/gst-libs $GST_CFLAGS $GLIB_EXTRA_CFLAGS \$(GST_OPTION_CXXFLAGS)"
+GST_CFLAGS="-I\$(top_srcdir)/gst-libs $GST_CFLAGS $GLIB_EXTRA_CFLAGS \$(GST_OPTION_CFLAGS)"
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_CXXFLAGS)
 AC_SUBST(GST_LIBS)
@@ -1078,6 +1098,7 @@ gst/equalizer/Makefile
 gst/flv/Makefile
 gst/id3demux/Makefile
 gst/icydemux/Makefile
+gst/imagefreeze/Makefile
 gst/interleave/Makefile
 gst/goom/Makefile
 gst/goom2k1/Makefile
@@ -1127,9 +1148,10 @@ ext/wavpack/Makefile
 sys/Makefile
 sys/directsound/Makefile
 sys/oss/Makefile
-sys/sunaudio/Makefile
+sys/oss4/Makefile
 sys/osxaudio/Makefile
 sys/osxvideo/Makefile
+sys/sunaudio/Makefile
 sys/v4l2/Makefile
 sys/waveform/Makefile
 sys/ximage/Makefile
@@ -1202,3 +1224,5 @@ sed \
 AC_OUTPUT
 
 AG_GST_OUTPUT_PLUGINS
+ORC_OUTPUT
+

@@ -3,10 +3,10 @@
   <description>transfer data via RTSP</description>
   <filename>../../gst/rtsp/.libs/libgstrtsp.so</filename>
   <basename>libgstrtsp.so</basename>
-  <version>0.10.22</version>
+  <version>0.10.23.3</version>
   <license>LGPL</license>
   <source>gst-plugins-good</source>
-  <package>GStreamer Good Plug-ins source release</package>
+  <package>GStreamer Good Plug-ins prerelease</package>
   <origin>Unknown package origin</origin>
   <elements>
     <element>
@@ -16,18 +16,6 @@
       <description>Accepts raw RTP and RTCP packets and sends them forward</description>
       <author>Wim Taymans &lt;wim@fluendo.com&gt;</author>
       <pads>
-        <caps>
-          <name>rtcp_src_%d</name>
-          <direction>source</direction>
-          <presence>request</presence>
-          <details>application/x-rtcp</details>
-        </caps>
-        <caps>
-          <name>recv_rtp_src_%d_%d_%d</name>
-          <direction>source</direction>
-          <presence>sometimes</presence>
-          <details>application/x-rtp</details>
-        </caps>
         <caps>
           <name>recv_rtcp_sink_%d</name>
           <direction>sink</direction>
@@ -39,6 +27,18 @@
           <direction>sink</direction>
           <presence>request</presence>
           <details>application/x-rtp</details>
+        </caps>
+        <caps>
+          <name>recv_rtp_src_%d_%d_%d</name>
+          <direction>source</direction>
+          <presence>sometimes</presence>
+          <details>application/x-rtp</details>
+        </caps>
+        <caps>
+          <name>rtcp_src_%d</name>
+          <direction>source</direction>
+          <presence>request</presence>
+          <details>application/x-rtcp</details>
         </caps>
       </pads>
     </element>

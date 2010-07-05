@@ -1,6 +1,6 @@
-/**
+/*
  * Copyright (C) 2002 Billy Biggs <vektor@dumbterm.net>.
- * Copyright (C) 2008 Sebastian Dröge <slomo@collabora.co.uk>
+ * Copyright (C) 2008,2010 Sebastian Dröge <slomo@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,9 +27,12 @@
 # include "config.h"
 #endif
 
-#include "_stdint.h"
-#include "gstdeinterlace.h"
+#include "gstdeinterlacemethod.h"
 #include <string.h>
+#ifdef HAVE_ORC
+#include <orc/orc.h>
+#endif
+#include "tvtime.h"
 
 #define GST_TYPE_DEINTERLACE_METHOD_LINEAR	(gst_deinterlace_method_linear_get_type ())
 #define GST_IS_DEINTERLACE_METHOD_LINEAR(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GST_TYPE_DEINTERLACE_METHOD_LINEAR))
@@ -42,33 +45,57 @@
 GType gst_deinterlace_method_linear_get_type (void);
 
 typedef GstDeinterlaceSimpleMethod GstDeinterlaceMethodLinear;
-
 typedef GstDeinterlaceSimpleMethodClass GstDeinterlaceMethodLinearClass;
 
 static void
-deinterlace_scanline_linear_c (GstDeinterlaceMethod * self,
-    GstDeinterlace * parent, guint8 * out,
-    GstDeinterlaceScanlineData * scanlines, gint width)
+deinterlace_scanline_linear_c (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const guint8 * s1, const guint8 * s2, gint size)
 {
-  gint i;
+  deinterlace_line_linear (out, s1, s2, size);
+}
 
-  width *= 2;
-  for (i = 0; i < width; i++)
-    out[i] = (scanlines->t0[i] + scanlines->b0[i]) / 2;
+static void
+deinterlace_scanline_linear_packed_c (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_c (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[0]);
+}
+
+static void
+deinterlace_scanline_linear_planar_y_c (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_c (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[0]);
+}
+
+static void
+deinterlace_scanline_linear_planar_u_c (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_c (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[1]);
+}
+
+static void
+deinterlace_scanline_linear_planar_v_c (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_c (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[2]);
 }
 
 #ifdef BUILD_X86_ASM
 #include "mmx.h"
 static void
-deinterlace_scanline_linear_mmx (GstDeinterlaceMethod * self,
-    GstDeinterlace * parent, guint8 * out,
-    GstDeinterlaceScanlineData * scanlines, gint width)
+deinterlace_scanline_linear_mmx (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const guint8 * bot, const guint8 * top, gint size)
 {
   const mmx_t shiftmask = { 0xfefffefffefffeffULL };    /* To avoid shifting chroma to luma. */
   int i;
-  guint8 *bot = scanlines->b0, *top = scanlines->t0;
 
-  for (i = width / 16; i; --i) {
+  for (i = size / 32; i; --i) {
     movq_m2r (*bot, mm0);
     movq_m2r (*top, mm1);
     movq_m2r (*(bot + 8), mm2);
@@ -105,9 +132,9 @@ deinterlace_scanline_linear_mmx (GstDeinterlaceMethod * self,
     top += 32;
     bot += 32;
   }
-  width = (width & 0xf);
+  size = (size & 0x1f);
 
-  for (i = width / 4; i; --i) {
+  for (i = size / 8; i; --i) {
     movq_m2r (*bot, mm0);
     movq_m2r (*top, mm1);
     pand_m2r (shiftmask, mm0);
@@ -120,26 +147,56 @@ deinterlace_scanline_linear_mmx (GstDeinterlaceMethod * self,
     top += 8;
     bot += 8;
   }
-  width = width & 0x7;
+  emms ();
+
+  size = size & 0xf;
 
   /* Handle last few pixels. */
-  for (i = width * 2; i; --i) {
+  for (i = size; i; --i) {
     *out++ = ((*top++) + (*bot++)) >> 1;
   }
+}
 
-  emms ();
+static void
+deinterlace_scanline_linear_packed_mmx (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_mmx (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[0]);
+}
+
+static void
+deinterlace_scanline_linear_planar_y_mmx (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_mmx (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[0]);
+}
+
+static void
+deinterlace_scanline_linear_planar_u_mmx (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_mmx (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[1]);
+}
+
+static void
+deinterlace_scanline_linear_planar_v_mmx (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_mmx (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[2]);
 }
 
 #include "sse.h"
 static void
-deinterlace_scanline_linear_mmxext (GstDeinterlaceMethod * self,
-    GstDeinterlace * parent, guint8 * out,
-    GstDeinterlaceScanlineData * scanlines, gint width)
+deinterlace_scanline_linear_mmxext (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const guint8 * bot, const guint8 * top, gint size)
 {
   gint i;
-  guint8 *bot = scanlines->b0, *top = scanlines->t0;
 
-  for (i = width / 16; i; --i) {
+  for (i = size / 32; i; --i) {
     movq_m2r (*bot, mm0);
     movq_m2r (*top, mm1);
     movq_m2r (*(bot + 8), mm2);
@@ -160,9 +217,9 @@ deinterlace_scanline_linear_mmxext (GstDeinterlaceMethod * self,
     top += 32;
     bot += 32;
   }
-  width = (width & 0xf);
+  size = (size & 0x1f);
 
-  for (i = width / 4; i; --i) {
+  for (i = size / 8; i; --i) {
     movq_m2r (*bot, mm0);
     movq_m2r (*top, mm1);
     pavgb_r2r (mm1, mm0);
@@ -171,14 +228,46 @@ deinterlace_scanline_linear_mmxext (GstDeinterlaceMethod * self,
     top += 8;
     bot += 8;
   }
-  width = width & 0x7;
+  emms ();
+
+  size = size & 0xf;
 
   /* Handle last few pixels. */
-  for (i = width * 2; i; --i) {
+  for (i = size; i; --i) {
     *out++ = ((*top++) + (*bot++)) >> 1;
   }
+}
 
-  emms ();
+static void
+deinterlace_scanline_linear_packed_mmxext (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_mmxext (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[0]);
+}
+
+static void
+deinterlace_scanline_linear_planar_y_mmxext (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_mmxext (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[0]);
+}
+
+static void
+deinterlace_scanline_linear_planar_u_mmxext (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_mmxext (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[1]);
+}
+
+static void
+deinterlace_scanline_linear_planar_v_mmxext (GstDeinterlaceSimpleMethod * self,
+    guint8 * out, const GstDeinterlaceScanlineData * scanlines)
+{
+  deinterlace_scanline_linear_mmxext (self, out, scanlines->t0, scanlines->b0,
+      self->parent.row_stride[2]);
 }
 
 #endif
@@ -194,7 +283,8 @@ gst_deinterlace_method_linear_class_init (GstDeinterlaceMethodLinearClass *
   GstDeinterlaceSimpleMethodClass *dism_class =
       (GstDeinterlaceSimpleMethodClass *) klass;
 #ifdef BUILD_X86_ASM
-  guint cpu_flags = oil_cpu_get_flags ();
+  guint cpu_flags =
+      orc_target_get_default_flags (orc_target_get_by_name ("mmx"));
 #endif
 
   dim_class->fields_required = 1;
@@ -202,13 +292,78 @@ gst_deinterlace_method_linear_class_init (GstDeinterlaceMethodLinearClass *
   dim_class->nick = "linear";
   dim_class->latency = 0;
 
-  dism_class->interpolate_scanline = deinterlace_scanline_linear_c;
+  dism_class->interpolate_scanline_yuy2 = deinterlace_scanline_linear_packed_c;
+  dism_class->interpolate_scanline_yvyu = deinterlace_scanline_linear_packed_c;
+  dism_class->interpolate_scanline_uyvy = deinterlace_scanline_linear_packed_c;
+  dism_class->interpolate_scanline_ayuv = deinterlace_scanline_linear_packed_c;
+  dism_class->interpolate_scanline_argb = deinterlace_scanline_linear_packed_c;
+  dism_class->interpolate_scanline_abgr = deinterlace_scanline_linear_packed_c;
+  dism_class->interpolate_scanline_rgba = deinterlace_scanline_linear_packed_c;
+  dism_class->interpolate_scanline_bgra = deinterlace_scanline_linear_packed_c;
+  dism_class->interpolate_scanline_rgb = deinterlace_scanline_linear_packed_c;
+  dism_class->interpolate_scanline_bgr = deinterlace_scanline_linear_packed_c;
+  dism_class->interpolate_scanline_planar_y =
+      deinterlace_scanline_linear_planar_y_c;
+  dism_class->interpolate_scanline_planar_u =
+      deinterlace_scanline_linear_planar_u_c;
+  dism_class->interpolate_scanline_planar_v =
+      deinterlace_scanline_linear_planar_v_c;
 
 #ifdef BUILD_X86_ASM
-  if (cpu_flags & OIL_IMPL_FLAG_MMXEXT) {
-    dism_class->interpolate_scanline = deinterlace_scanline_linear_mmxext;
-  } else if (cpu_flags & OIL_IMPL_FLAG_MMXEXT) {
-    dism_class->interpolate_scanline = deinterlace_scanline_linear_mmx;
+  if (cpu_flags & ORC_TARGET_MMX_MMXEXT) {
+    dism_class->interpolate_scanline_ayuv =
+        deinterlace_scanline_linear_packed_mmxext;
+    dism_class->interpolate_scanline_yuy2 =
+        deinterlace_scanline_linear_packed_mmxext;
+    dism_class->interpolate_scanline_yvyu =
+        deinterlace_scanline_linear_packed_mmxext;
+    dism_class->interpolate_scanline_uyvy =
+        deinterlace_scanline_linear_packed_mmxext;
+    dism_class->interpolate_scanline_argb =
+        deinterlace_scanline_linear_packed_mmxext;
+    dism_class->interpolate_scanline_abgr =
+        deinterlace_scanline_linear_packed_mmxext;
+    dism_class->interpolate_scanline_rgba =
+        deinterlace_scanline_linear_packed_mmxext;
+    dism_class->interpolate_scanline_bgra =
+        deinterlace_scanline_linear_packed_mmxext;
+    dism_class->interpolate_scanline_rgb =
+        deinterlace_scanline_linear_packed_mmxext;
+    dism_class->interpolate_scanline_bgr =
+        deinterlace_scanline_linear_packed_mmxext;
+    dism_class->interpolate_scanline_planar_y =
+        deinterlace_scanline_linear_planar_y_mmxext;
+    dism_class->interpolate_scanline_planar_u =
+        deinterlace_scanline_linear_planar_u_mmxext;
+    dism_class->interpolate_scanline_planar_v =
+        deinterlace_scanline_linear_planar_v_mmxext;
+  } else if (cpu_flags & ORC_TARGET_MMX_MMX) {
+    dism_class->interpolate_scanline_ayuv =
+        deinterlace_scanline_linear_packed_mmx;
+    dism_class->interpolate_scanline_yuy2 =
+        deinterlace_scanline_linear_packed_mmx;
+    dism_class->interpolate_scanline_yvyu =
+        deinterlace_scanline_linear_packed_mmx;
+    dism_class->interpolate_scanline_uyvy =
+        deinterlace_scanline_linear_packed_mmx;
+    dism_class->interpolate_scanline_argb =
+        deinterlace_scanline_linear_packed_mmx;
+    dism_class->interpolate_scanline_abgr =
+        deinterlace_scanline_linear_packed_mmx;
+    dism_class->interpolate_scanline_rgba =
+        deinterlace_scanline_linear_packed_mmx;
+    dism_class->interpolate_scanline_bgra =
+        deinterlace_scanline_linear_packed_mmx;
+    dism_class->interpolate_scanline_rgb =
+        deinterlace_scanline_linear_packed_mmx;
+    dism_class->interpolate_scanline_bgr =
+        deinterlace_scanline_linear_packed_mmx;
+    dism_class->interpolate_scanline_planar_y =
+        deinterlace_scanline_linear_planar_y_mmx;
+    dism_class->interpolate_scanline_planar_u =
+        deinterlace_scanline_linear_planar_u_mmx;
+    dism_class->interpolate_scanline_planar_v =
+        deinterlace_scanline_linear_planar_v_mmx;
   }
 #endif
 }

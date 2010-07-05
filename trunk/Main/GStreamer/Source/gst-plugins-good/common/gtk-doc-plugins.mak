@@ -14,7 +14,6 @@ help:
 
 # update the stuff maintained by doc maintainers
 update:
-	$(MAKE) inspect-update
 	$(MAKE) scanobj-update
 
 # We set GPATH here; this gives us semantics for GNU make
@@ -27,11 +26,12 @@ GPATH = $(srcdir)
 # thomas: make docs parallel installable
 TARGET_DIR=$(HTML_DIR)/$(DOC_MODULE)-@GST_MAJORMINOR@
 
+MAINTAINER_DOC_STAMPS =			\
+	scanobj-build.stamp
+
 EXTRA_DIST = 				\
-	scanobj-build.stamp		\
+	$(MAINTAINER_DOC_STAMPS)		\
 	$(srcdir)/inspect/*.xml		\
-	inspect.stamp			\
-	inspect-build.stamp		\
 	$(SCANOBJ_FILES)		\
 	$(content_files)		\
 	$(extra_files)			\
@@ -40,13 +40,8 @@ EXTRA_DIST = 				\
 	$(DOC_OVERRIDES)		\
 	$(DOC_MODULE)-sections.txt
 
-MAINTAINER_DOC_STAMPS =			\
-	scanobj-build.stamp		\
-	inspect-build.stamp		\
-	inspect.stamp
-
-# we don't add inspect-build.stamp and scanobj-build.stamp here since they are
-# built manually by docs maintainers and result is commited to git
+# we don't add scanobj-build.stamp here since they are built manually by docs
+# maintainers and result is commited to git
 DOC_STAMPS =				\
 	scan-build.stamp		\
 	tmpl-build.stamp		\
@@ -96,40 +91,6 @@ CLEANFILES = \
 if ENABLE_GTK_DOC
 all-local: html-build.stamp
 
-#### scan gobjects; done by documentation maintainer ####
-scanobj-update:
-	-rm scanobj-build.stamp
-	$(MAKE) scanobj-build.stamp
-
-# in the case of non-srcdir builds, the built gst directory gets added
-# to gtk-doc scanning; but only then, to avoid duplicates
-# FIXME: since we don't have the scan step as part of the build anymore,
-# we could remove that
-# TODO: finish elite script that updates the output files of this step
-# instead of rewriting them, so that multiple maintainers can generate
-# a collective set of args and signals
-scanobj-build.stamp: $(SCANOBJ_DEPS) $(basefiles)
-	@echo '*** Scanning GObjects ***'
-	if test x"$(srcdir)" != x. ; then				\
-	    for f in $(SCANOBJ_FILES);					\
-	    do								\
-	        cp $(srcdir)/$$f . ;					\
-	    done;							\
-	else								\
-	    $(INSPECT_ENVIRONMENT) 					\
-	    CC="$(GTKDOC_CC)" LD="$(GTKDOC_LD)"				\
-	    CFLAGS="$(GTKDOC_CFLAGS) $(CFLAGS)"				\
-	    LDFLAGS="$(GTKDOC_LIBS) $(LDFLAGS)"				\
-	    $(GST_DOC_SCANOBJ) --type-init-func="gst_init(NULL,NULL)"	\
-	        --module=$(DOC_MODULE) --source=$(PACKAGE) &&		\
-		$(PYTHON)						\
-		$(top_srcdir)/common/scangobj-merge.py $(DOC_MODULE);	\
-	fi
-	touch scanobj-build.stamp
-
-$(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(SCANOBJ_FILES_O): scan-build.stamp
-	@true
-
 ### inspect GStreamer plug-ins; done by documentation maintainer ###
 
 # only look at the plugins in this module when building inspect .xml stuff
@@ -144,26 +105,42 @@ INSPECT_ENVIRONMENT=\
 inspect:
 	mkdir inspect
 
-inspect-update: inspect
-	-rm -f $(INSPECT_REGISTRY) inspect-build.stamp
-	$(MAKE) inspect-build.stamp
+#### scan gobjects; done by documentation maintainer ####
+scanobj-update:
+	-rm scanobj-build.stamp
+	$(MAKE) scanobj-build.stamp
 
-# FIXME: inspect.stamp should be written to by gst-xmlinspect.py
-# IF the output changed; see gtkdoc-mktmpl
-inspect-build.stamp:
-	@echo '*** Rebuilding plugin inspection files ***'
-	if test x"$(srcdir)" != x. ; then \
-	    cp $(srcdir)/inspect.stamp . ; \
-	    cp $(srcdir)/inspect-build.stamp . ; \
-	else \
-	    $(INSPECT_ENVIRONMENT) $(PYTHON) \
-	        $(top_srcdir)/common/gst-xmlinspect.py $(PACKAGE) inspect && \
-	    echo -n "timestamp" > inspect.stamp && \
-	    touch inspect-build.stamp; \
-        fi
+# in the case of non-srcdir builds, the built gst directory gets added
+# to gtk-doc scanning; but only then, to avoid duplicates
+# FIXME: since we don't have the scan step as part of the build anymore,
+# we could remove that
+# TODO: finish elite script that updates the output files of this step
+# instead of rewriting them, so that multiple maintainers can generate
+# a collective set of args and signals
+scanobj-build.stamp: $(SCANOBJ_DEPS) $(basefiles) inspect
+	@echo '*** Scanning GObjects ***'
+	if test x"$(srcdir)" != x. ; then				\
+	    for f in $(SCANOBJ_FILES);					\
+	    do								\
+	        cp $(srcdir)/$$f . ;					\
+	    done;							\
+	else								\
+	    $(INSPECT_ENVIRONMENT) 					\
+	    CC="$(GTKDOC_CC)" LD="$(GTKDOC_LD)"				\
+	    CFLAGS="$(GTKDOC_CFLAGS) $(CFLAGS) $(WARNING_CFLAGS)"	\
+	    LDFLAGS="$(GTKDOC_LIBS) $(LDFLAGS)"				\
+	    $(GST_DOC_SCANOBJ) --type-init-func="gst_init(NULL,NULL)"	\
+	        --module=$(DOC_MODULE) --source=$(PACKAGE) --inspect-dir="inspect" &&		\
+		$(PYTHON)						\
+		$(top_srcdir)/common/scangobj-merge.py $(DOC_MODULE);	\
+	fi
+	touch scanobj-build.stamp
+
+$(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(SCANOBJ_FILES_O): scan-build.stamp
+	@true
 
 ### scan headers; done on every build ###
-scan-build.stamp: $(HFILE_GLOB) $(EXTRA_HFILES) $(basefiles) scanobj-build.stamp inspect-build.stamp
+scan-build.stamp: $(HFILE_GLOB) $(EXTRA_HFILES) $(basefiles) scanobj-build.stamp
 	if test "x$(top_srcdir)" != "x$(top_builddir)" &&		\
 	   test -d "$(top_builddir)/gst";				\
         then								\
@@ -202,7 +179,7 @@ tmpl.stamp: tmpl-build.stamp
 #### build xml; done on every build ####
 
 ### FIXME: make this error out again when docs are fixed for 0.9
-sgml-build.stamp: tmpl.stamp inspect.stamp $(CFILE_GLOB) $(top_srcdir)/common/plugins.xsl $(expand_content_files)
+sgml-build.stamp: tmpl.stamp scan-build.stamp $(CFILE_GLOB) $(top_srcdir)/common/plugins.xsl $(expand_content_files)
 	@echo '*** Building XML ***'
 	@-mkdir -p xml
 	@for a in $(srcdir)/inspect/*.xml; do \
@@ -254,7 +231,7 @@ clean-local-gtkdoc:
 	rm -rf xml tmpl html
 # clean files copied for nonsrcdir templates build
 	if test x"$(srcdir)" != x. ; then \
-	    rm -rf $(SCANOBJ_FILES) $(SCAN_FILES); \
+	    rm -rf $(SCANOBJ_FILES) $(SCAN_FILES) $(MAINTAINER_DOC_STAMPS); \
 	fi
 else
 all-local:
@@ -346,6 +323,9 @@ dist-check-gtkdoc:
 endif
 
 # FIXME: decide whether we want to dist generated html or not
+# also this only works, if the project has been build before
+# we could dist html only if its there, but that might lead to missing html in
+# tarballs
 dist-hook: dist-check-gtkdoc dist-hook-local
 	mkdir $(distdir)/html
 	cp html/* $(distdir)/html

@@ -579,6 +579,16 @@
 </ARG>
 
 <ARG>
+<NAME>GstSMPTE::invert</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Invert</NICK>
+<BLURB>Invert transition mask.</BLURB>
+<DEFAULT>FALSE</DEFAULT>
+</ARG>
+
+<ARG>
 <NAME>GstRTSPSrc::debug</NAME>
 <TYPE>gboolean</TYPE>
 <RANGE></RANGE>
@@ -956,6 +966,16 @@
 <NICK>Sensitivity</NICK>
 <BLURB>Sensitivity to bright colors.</BLURB>
 <DEFAULT>100</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstAlpha::prefer-passthrough</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Prefer Passthrough</NICK>
+<BLURB>Don't do any processing for alpha=1.0 if possible.</BLURB>
+<DEFAULT>FALSE</DEFAULT>
 </ARG>
 
 <ARG>
@@ -1813,9 +1833,9 @@
 <TYPE>gint</TYPE>
 <RANGE>[1,2]</RANGE>
 <FLAGS>rw</FLAGS>
-<NICK>Matroska version</NICK>
-<BLURB>This parameter determines what matroska features can be used.</BLURB>
-<DEFAULT>1</DEFAULT>
+<NICK>DocType version</NICK>
+<BLURB>This parameter determines what Matroska features can be used.</BLURB>
+<DEFAULT>2</DEFAULT>
 </ARG>
 
 <ARG>
@@ -1826,6 +1846,16 @@
 <NICK>Minimum time between index entries</NICK>
 <BLURB>An index entry is created every so many nanoseconds.</BLURB>
 <DEFAULT>0</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstMatroskaMux::streamable</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Determines whether output should be streamable</NICK>
+<BLURB>If set to true, the output should be as if it is to be streamed and hence no indexes written or duration written.</BLURB>
+<DEFAULT>FALSE</DEFAULT>
 </ARG>
 
 <ARG>
@@ -2135,7 +2165,7 @@
 <FLAGS>rw</FLAGS>
 <NICK>method</NICK>
 <BLURB>method.</BLURB>
-<DEFAULT>Rotate clockwise 90 degrees</DEFAULT>
+<DEFAULT>Identity (no rotation)</DEFAULT>
 </ARG>
 
 <ARG>
@@ -2156,6 +2186,16 @@
 <NICK>Buffer Array</NICK>
 <BLURB>Use Buffer Arrays.</BLURB>
 <DEFAULT>FALSE</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstRtpMP4VPay::config-interval</NAME>
+<TYPE>guint</TYPE>
+<RANGE><= 3600</RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Config Send Interval</NICK>
+<BLURB>Send Config Insertion Interval in seconds (configuration headers will be multiplexed in the data stream when detected.) (0 = disabled).</BLURB>
+<DEFAULT>0</DEFAULT>
 </ARG>
 
 <ARG>
@@ -19489,6 +19529,16 @@
 </ARG>
 
 <ARG>
+<NAME>GstSMPTEAlpha::invert</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Invert</NICK>
+<BLURB>Invert transition mask.</BLURB>
+<DEFAULT>FALSE</DEFAULT>
+</ARG>
+
+<ARG>
 <NAME>GstVideoMixerPad::alpha</NAME>
 <TYPE>gdouble</TYPE>
 <RANGE>[0,1]</RANGE>
@@ -20155,7 +20205,7 @@
 <FLAGS>rw</FLAGS>
 <NICK>Mode</NICK>
 <BLURB>Deinterlace Mode.</BLURB>
-<DEFAULT>Force deinterlacing</DEFAULT>
+<DEFAULT>Auto detection</DEFAULT>
 </ARG>
 
 <ARG>
@@ -20434,7 +20484,7 @@
 <RANGE>>= 0</RANGE>
 <FLAGS>rw</FLAGS>
 <NICK>Bandwidth</NICK>
-<BLURB>The bandwidth of the session.</BLURB>
+<BLURB>The bandwidth of the session in bytes per second.</BLURB>
 <DEFAULT>64000</DEFAULT>
 </ARG>
 
@@ -20484,8 +20534,8 @@
 <RANGE>>= 0</RANGE>
 <FLAGS>rw</FLAGS>
 <NICK>RTCP Fraction</NICK>
-<BLURB>The fraction of the bandwidth used for RTCP.</BLURB>
-<DEFAULT>3000</DEFAULT>
+<BLURB>The RTCP bandwidth of the session in bytes per second.</BLURB>
+<DEFAULT>3200</DEFAULT>
 </ARG>
 
 <ARG>
@@ -20496,6 +20546,26 @@
 <NICK>SDES</NICK>
 <BLURB>The SDES items of this session.</BLURB>
 <DEFAULT></DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstRtpSession::rtcp-rr-bandwidth</NAME>
+<TYPE>gint</TYPE>
+<RANGE>>= G_MAXULONG</RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>RTCP RR bandwidth</NICK>
+<BLURB>The RTCP bandwidth used for receivers in bytes per second (-1 = default).</BLURB>
+<DEFAULT>-1</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstRtpSession::rtcp-rs-bandwidth</NAME>
+<TYPE>gint</TYPE>
+<RANGE>>= G_MAXULONG</RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>RTCP RS bandwidth</NICK>
+<BLURB>The RTCP bandwidth used for senders in bytes per second (-1 = default).</BLURB>
+<DEFAULT>-1</DEFAULT>
 </ARG>
 
 <ARG>
@@ -20616,5 +20686,135 @@
 <NICK>Is Live</NICK>
 <BLURB>The stream is live and does not need an index.</BLURB>
 <DEFAULT>FALSE</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstFlvMux::streamable</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>streamable</NICK>
+<BLURB>If set to true, the output should be as if it is to be streamed and hence no indexes written or duration written.</BLURB>
+<DEFAULT>FALSE</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstCapsSetter::caps</NAME>
+<TYPE>GstCaps*</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Merge caps</NICK>
+<BLURB>Merge these caps (thereby overwriting) in the stream.</BLURB>
+<DEFAULT></DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstCapsSetter::join</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Join</NICK>
+<BLURB>Match incoming caps' mime-type to mime-type of provided caps.</BLURB>
+<DEFAULT>TRUE</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstCapsSetter::replace</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Replace</NICK>
+<BLURB>Drop fields of incoming caps.</BLURB>
+<DEFAULT>FALSE</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstOss4Mixer::device</NAME>
+<TYPE>gchar*</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Device</NICK>
+<BLURB>OSS mixer device (e.g. /dev/oss/hdaudio0/mix0 or /dev/mixerN) (NULL = use first mixer device found).</BLURB>
+<DEFAULT>NULL</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstOss4Mixer::device-name</NAME>
+<TYPE>gchar*</TYPE>
+<RANGE></RANGE>
+<FLAGS>r</FLAGS>
+<NICK>Device name</NICK>
+<BLURB>Human-readable name of the sound device.</BLURB>
+<DEFAULT>NULL</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstOss4Source::device</NAME>
+<TYPE>gchar*</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Device</NICK>
+<BLURB>OSS4 device (e.g. /dev/oss/hdaudio0/pcm0 or /dev/dspN) (NULL = use first available device).</BLURB>
+<DEFAULT>NULL</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstOss4Source::device-name</NAME>
+<TYPE>gchar*</TYPE>
+<RANGE></RANGE>
+<FLAGS>r</FLAGS>
+<NICK>Device name</NICK>
+<BLURB>Human-readable name of the sound device.</BLURB>
+<DEFAULT>NULL</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstOss4Sink::device</NAME>
+<TYPE>gchar*</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Device</NICK>
+<BLURB>OSS4 device (e.g. /dev/oss/hdaudio0/pcm0 or /dev/dspN) (NULL = use first available playback device).</BLURB>
+<DEFAULT>NULL</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstOss4Sink::device-name</NAME>
+<TYPE>gchar*</TYPE>
+<RANGE></RANGE>
+<FLAGS>r</FLAGS>
+<NICK>Device name</NICK>
+<BLURB>Human-readable name of the sound device.</BLURB>
+<DEFAULT>NULL</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstOss4Sink::mute</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Mute</NICK>
+<BLURB>Mute state of this stream.</BLURB>
+<DEFAULT>FALSE</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstOss4Sink::volume</NAME>
+<TYPE>gdouble</TYPE>
+<RANGE>[0,10]</RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Volume</NICK>
+<BLURB>Linear volume of this stream, 1.0=100%.</BLURB>
+<DEFAULT>1</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstRtpTheoraPay::config-interval</NAME>
+<TYPE>guint</TYPE>
+<RANGE><= 3600</RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Config Send Interval</NICK>
+<BLURB>Send Config Insertion Interval in seconds (configuration headers will be multiplexed in the data stream when detected.) (0 = disabled).</BLURB>
+<DEFAULT>0</DEFAULT>
 </ARG>
 

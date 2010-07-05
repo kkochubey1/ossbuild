@@ -34,7 +34,7 @@
  * manager and after being validated forwarded on #GstRtpSsrcDemux element. Each
  * RTP stream is demuxed based on the SSRC and send to a #GstRtpJitterBuffer. After
  * the packets are released from the jitterbuffer, they will be forwarded to a
- * #GstRtpSsrcDemux element. The #GstRtpSsrcDemux element will demux the packets based
+ * #GstRtpPtDemux element. The #GstRtpPtDemux element will demux the packets based
  * on the payload type and will create a unique pad recv_rtp_src_\%d_\%d_\%d on
  * gstrtpbin with the session number, SSRC and payload type respectively as the pad
  * name.
@@ -1181,6 +1181,15 @@ create_stream (GstRtpBinSession * session, guint32 ssrc)
   if (demux)
     gst_element_link (buffer, demux);
 
+  if (rtpbin->buffering) {
+    guint64 last_out;
+
+    GST_INFO_OBJECT (rtpbin,
+        "bin is buffering, set jitterbuffer as not active");
+    g_signal_emit_by_name (buffer, "set-active", FALSE, (gint64) 0, &last_out);
+  }
+
+
   GST_OBJECT_LOCK (rtpbin);
   target = GST_STATE_TARGET (rtpbin);
   GST_OBJECT_UNLOCK (rtpbin);
@@ -1795,16 +1804,22 @@ gst_rtp_bin_handle_message (GstBin * bin, GstMessage * message)
           GstRtpBinSession *session = (GstRtpBinSession *) sessions->data;
 
           GST_RTP_SESSION_LOCK (session);
-          for (streams = session->streams; streams;
-              streams = g_slist_next (streams)) {
-            GstRtpBinStream *stream = (GstRtpBinStream *) streams->data;
+          if (session->streams) {
+            for (streams = session->streams; streams;
+                streams = g_slist_next (streams)) {
+              GstRtpBinStream *stream = (GstRtpBinStream *) streams->data;
 
-            GST_DEBUG_OBJECT (bin, "stream %p percent %d", stream,
-                stream->percent);
+              GST_DEBUG_OBJECT (bin, "stream %p percent %d", stream,
+                  stream->percent);
 
-            /* find min percent */
-            if (min_percent > stream->percent)
-              min_percent = stream->percent;
+              /* find min percent */
+              if (min_percent > stream->percent)
+                min_percent = stream->percent;
+            }
+          } else {
+            GST_INFO_OBJECT (bin,
+                "session has no streams, setting min_percent to 0");
+            min_percent = 0;
           }
           GST_RTP_SESSION_UNLOCK (session);
         }
@@ -1886,7 +1901,7 @@ gst_rtp_bin_handle_message (GstBin * bin, GstMessage * message)
 
                 if (last_out == -1)
                   last_out = 0;
-                if (last_out < min_out_time)
+                if (min_out_time == -1 || last_out < min_out_time)
                   min_out_time = last_out;
               }
 

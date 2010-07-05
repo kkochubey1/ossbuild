@@ -206,7 +206,6 @@ gst_rtp_h263_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
      * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
      */
     I = (payload[1] & 0x10) == 0x10;
-
   } else {
     if (P == 0) {
       /* F == 1 and P == 0
@@ -247,13 +246,30 @@ gst_rtp_h263_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
   GST_LOG ("SBIT : %d , EBIT : %d", SBIT, EBIT);
   GST_LOG ("payload_len : %d, header_len : %d , leftover : 0x%x",
       payload_len, header_len, rtph263depay->leftover);
-#if 0
-  gst_util_dump_mem (payload, header_len);
-#endif
 
   /* skip header */
   payload += header_len;
   payload_len -= header_len;
+
+  if (!rtph263depay->start) {
+    /* do not skip this fragment if it is a Mode A with picture start code */
+    if (!F && payload_len > 4 && (GST_READ_UINT32_BE (payload) >> 10 == 0x20)) {
+      GST_DEBUG ("Mode A with PSC => frame start");
+      rtph263depay->start = TRUE;
+      if (!!(payload[4] & 0x02) != I) {
+        GST_DEBUG ("Wrong Picture Coding Type Flag in rtp header");
+        I = !I;
+      }
+      rtph263depay->psc_I = I;
+    } else {
+      GST_DEBUG ("no frame start yet, skipping payload");
+      goto skip;
+    }
+  }
+
+  /* only trust I info from Mode A starting packet
+   * from buggy payloaders or hw */
+  I = rtph263depay->psc_I;
 
   if (SBIT) {
     /* take the leftover and merge it at the beginning, FIXME make the buffer
@@ -268,31 +284,28 @@ gst_rtp_h263_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
   }
 
   if (!EBIT) {
-    if (rtph263depay->start) {
-      GstBuffer *tmp = gst_buffer_new_and_alloc (payload_len);
+    GstBuffer *tmp;
 
-      /* Copy the entire buffer, FIXME, use subbuffers */
-      memcpy (GST_BUFFER_DATA (tmp), payload, payload_len);
-      gst_adapter_push (rtph263depay->adapter, tmp);
-    }
+    /* Take the entire buffer */
+    tmp = gst_rtp_buffer_get_payload_subbuffer (buf, header_len, payload_len);
+    gst_adapter_push (rtph263depay->adapter, tmp);
   } else {
-    if (rtph263depay->start) {
-      GstBuffer *tmp = gst_buffer_new_and_alloc (payload_len - 1);
+    GstBuffer *tmp;
 
-      /* Copy the entire buffer except for the last byte. FIXME, use
-       * subbuffers. */
-      memcpy (GST_BUFFER_DATA (tmp), payload, payload_len - 1);
-      gst_adapter_push (rtph263depay->adapter, tmp);
+    /* Take the entire buffer except for the last byte */
+    tmp = gst_rtp_buffer_get_payload_subbuffer (buf, header_len,
+        payload_len - 1);
+    gst_adapter_push (rtph263depay->adapter, tmp);
 
-      /* Put the last byte into the leftover */
-      GST_DEBUG ("payload[payload_len - 1] : 0x%x", payload[payload_len - 1]);
-      GST_DEBUG ("mask : 0x%x", 0xFF << EBIT);
-      rtph263depay->leftover = (payload[payload_len - 1] >> EBIT) << EBIT;
-      rtph263depay->offset = 1;
-      GST_DEBUG ("leftover : 0x%x", rtph263depay->leftover);
-    }
+    /* Put the last byte into the leftover */
+    GST_DEBUG ("payload[payload_len - 1] : 0x%x", payload[payload_len - 1]);
+    GST_DEBUG ("mask : 0x%x", 0xFF << EBIT);
+    rtph263depay->leftover = (payload[payload_len - 1] >> EBIT) << EBIT;
+    rtph263depay->offset = 1;
+    GST_DEBUG ("leftover : 0x%x", rtph263depay->leftover);
   }
 
+skip:
   if (M) {
     if (rtph263depay->start) {
       /* frame is completed */
@@ -320,6 +333,7 @@ gst_rtp_h263_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
       gst_base_rtp_depayload_push_ts (depayload, timestamp, outbuf);
       rtph263depay->offset = 0;
       rtph263depay->leftover = 0;
+      rtph263depay->start = FALSE;
     } else {
       rtph263depay->start = TRUE;
     }
