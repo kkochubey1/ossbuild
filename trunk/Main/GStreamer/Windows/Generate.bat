@@ -184,8 +184,17 @@ rem videotestsrc/gstvideotestsrcorc
 rem audioconvert/gstaudioconvertorc
 %GEN_ORC_BAT% gstaudioconvertorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\audioconvert %GEN_GST_PLUGINS_BASE_DIR%\gst\audioconvert
 
-rem voloume/volume
+rem voloume/volumeorc
 %GEN_ORC_BAT% gstvolumeorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\volume %GEN_GST_PLUGINS_BASE_DIR%\gst\volume
+
+rem deinterlace/tvtime
+%GEN_ORC_BAT% tvtime  %SRC_GST_PLUGINS_GOOD_DIR%\gst\deinterlace %GEN_GST_PLUGINS_GOOD_DIR%\gst\deinterlace
+
+rem videobox/gstvideoboxorc
+%GEN_ORC_BAT% gstvideoboxorc  %SRC_GST_PLUGINS_GOOD_DIR%\gst\videobox %GEN_GST_PLUGINS_GOOD_DIR%\gst\videobox
+
+rem videomixer/blendorc
+%GEN_ORC_BAT% blendorc  %SRC_GST_PLUGINS_GOOD_DIR%\gst\videomixer %GEN_GST_PLUGINS_GOOD_DIR%\gst\videomixer
 
 
 goto exit
