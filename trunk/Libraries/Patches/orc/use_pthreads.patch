@@ -1,0 +1,11 @@
+--- configure.ac.orig	2010-06-08 07:49:02 +0200
++++ configure.ac	2010-07-06 22:40:05 +0200
+@@ -101,7 +101,7 @@
+ esac
+ 
+ case "${host_os}" in
+-  mingw*|pw32*|cygwin*)
++  pw32*|cygwin*)
+     AC_DEFINE(HAVE_THREAD_WIN32, 1, [Use Windows thread code])
+     ;;
+   *)
