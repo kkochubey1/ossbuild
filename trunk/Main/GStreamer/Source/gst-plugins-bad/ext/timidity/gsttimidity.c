@@ -51,12 +51,6 @@
 GST_DEBUG_CATEGORY_STATIC (gst_timidity_debug);
 #define GST_CAT_DEFAULT gst_timidity_debug
 
-static const GstElementDetails gst_timidity_details =
-GST_ELEMENT_DETAILS ("Timidity",
-    "Codec/Decoder/Audio",
-    "Midi Synthesizer Element",
-    "Wouter Paesen <wouter@blue-gate.be>");
-
 enum
 {
   /* FILL ME */
@@ -68,9 +62,6 @@ enum
   ARG_0,
   /* FILL ME */
 };
-
-static void gst_timidity_base_init (gpointer g_class);
-static void gst_timidity_class_init (GstTimidityClass * klass);
 
 static gboolean gst_timidity_src_event (GstPad * pad, GstEvent * event);
 static GstStateChangeReturn gst_timidity_change_state (GstElement * element,
@@ -108,7 +99,9 @@ gst_timidity_base_init (gpointer gclass)
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &gst_timidity_details);
+  gst_element_class_set_details_simple (element_class, "Timidity",
+      "Codec/Decoder/Audio",
+      "Midi Synthesizer Element", "Wouter Paesen <wouter@blue-gate.be>");
 }
 
 /* initialize the plugin's class */
@@ -135,7 +128,7 @@ gst_timidity_init (GstTimidity * filter, GstTimidityClass * g_class)
   GstElementClass *klass = GST_ELEMENT_GET_CLASS (filter);
 
   /* initialise timidity library */
-  if (mid_init (TIMIDITY_CFG) == 0) {
+  if (mid_init ((char *) TIMIDITY_CFG) == 0) {
     filter->initialized = TRUE;
   } else {
     GST_WARNING ("can't initialize timidity with config: " TIMIDITY_CFG);
@@ -546,7 +539,7 @@ gst_timidity_fill_buffer (GstTimidity * timidity, GstBuffer * buffer)
 
   GST_DEBUG_OBJECT (timidity,
       "generated buffer %" GST_TIME_FORMAT "-%" GST_TIME_FORMAT
-      " (%d samples)",
+      " (%" G_GINT64_FORMAT " samples)",
       GST_TIME_ARGS ((guint64) GST_BUFFER_TIMESTAMP (buffer)),
       GST_TIME_ARGS (((guint64) (GST_BUFFER_TIMESTAMP (buffer) +
                   GST_BUFFER_DURATION (buffer)))), samples);

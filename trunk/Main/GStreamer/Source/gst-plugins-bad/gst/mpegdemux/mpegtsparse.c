@@ -82,13 +82,6 @@ static GQuark QUARK_PCR_PID;
 static GQuark QUARK_STREAMS;
 static GQuark QUARK_STREAM_TYPE;
 
-static GstElementDetails mpegts_parse_details =
-GST_ELEMENT_DETAILS ("MPEG transport stream parser",
-    "Codec/Parser",
-    "Parses MPEG2 transport streams",
-    "Alessandro Decina <alessandro@nnva.org>\n"
-    "Zaheer Abbas Merali <zaheerabbas at merali dot org>");
-
 static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
@@ -228,7 +221,11 @@ mpegts_parse_base_init (gpointer klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&program_template));
 
-  gst_element_class_set_details (element_class, &mpegts_parse_details);
+  gst_element_class_set_details_simple (element_class,
+      "MPEG transport stream parser", "Codec/Parser",
+      "Parses MPEG2 transport streams",
+      "Alessandro Decina <alessandro@nnva.org>, "
+      "Zaheer Abbas Merali <zaheerabbas at merali dot org>");
 }
 
 static void
@@ -776,7 +773,7 @@ mpegts_parse_push (MpegTSParse * parse, MpegTSPacketizerPacket * packet,
   GList *srcpads;
 
   pid = packet->pid;
-  buffer = packet->buffer;
+  buffer = gst_buffer_make_metadata_writable (packet->buffer);
   /* we have the same caps on all the src pads */
   gst_buffer_set_caps (buffer, parse->packetizer->caps);
 
@@ -1098,16 +1095,28 @@ mpegts_parse_apply_eit (MpegTSParse * parse,
           gst_structure_copy (eit_info)));
 }
 
+static void
+mpegts_parse_apply_tdt (MpegTSParse * parse,
+    guint16 tdt_pid, GstStructure * tdt_info)
+{
+  gst_element_post_message (GST_ELEMENT_CAST (parse),
+      gst_message_new_element (GST_OBJECT (parse),
+          gst_structure_copy (tdt_info)));
+}
+
 static gboolean
 mpegts_parse_handle_psi (MpegTSParse * parse, MpegTSPacketizerSection * section)
 {
   gboolean res = TRUE;
   GstStructure *structure = NULL;
 
-  if (G_UNLIKELY (mpegts_parse_calc_crc32 (GST_BUFFER_DATA (section->buffer),
-              GST_BUFFER_SIZE (section->buffer)) != 0)) {
-    GST_WARNING_OBJECT (parse, "bad crc in psi pid 0x%x", section->pid);
-    return FALSE;
+  /* table ids 0x70 - 0x72 do not have a crc */
+  if (G_LIKELY (section->table_id < 0x70 || section->table_id > 0x72)) {
+    if (G_UNLIKELY (mpegts_parse_calc_crc32 (GST_BUFFER_DATA (section->buffer),
+                GST_BUFFER_SIZE (section->buffer)) != 0)) {
+      GST_WARNING_OBJECT (parse, "bad crc in psi pid 0x%x", section->pid);
+      return FALSE;
+    }
   }
 
   switch (section->table_id) {
@@ -1186,6 +1195,14 @@ mpegts_parse_handle_psi (MpegTSParse * parse, MpegTSPacketizerSection * section)
       structure = mpegts_packetizer_parse_eit (parse->packetizer, section);
       if (G_LIKELY (structure))
         mpegts_parse_apply_eit (parse, section->pid, structure);
+      else
+        res = FALSE;
+      break;
+    case 0x70:
+      /* TDT (Time and Date table) */
+      structure = mpegts_packetizer_parse_tdt (parse->packetizer, section);
+      if (G_LIKELY (structure))
+        mpegts_parse_apply_tdt (parse, section->pid, structure);
       else
         res = FALSE;
       break;

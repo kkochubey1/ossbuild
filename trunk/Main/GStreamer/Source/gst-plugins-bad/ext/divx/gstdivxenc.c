@@ -26,13 +26,6 @@
 #include <gst/video/video.h>
 #include <encore2.h>
 
-/* elementfactory information */
-static const GstElementDetails gst_divxenc_details =
-GST_ELEMENT_DETAILS ("Divx4linux video encoder",
-    "Codec/Encoder/Video",
-    "Divx encoder based on divxencore",
-    "Ronald Bultje <rbultje@ronald.bitfreak.net>");
-
 static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
@@ -85,10 +78,10 @@ static GstElementClass *parent_class = NULL;
 static guint gst_divxenc_signals[LAST_SIGNAL] = { 0 };
 
 
-static gchar *
+static const gchar *
 gst_divxenc_error (int errorcode)
 {
-  gchar *error;
+  const gchar *error;
 
   switch (errorcode) {
     case ENC_BUFFER:
@@ -153,7 +146,10 @@ gst_divxenc_base_init (GstDivxEncClass * klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_template));
 
-  gst_element_class_set_details (element_class, &gst_divxenc_details);
+  gst_element_class_set_details_simple (element_class,
+      "Divx4linux video encoder", "Codec/Encoder/Video",
+      "Divx encoder based on divxencore",
+      "Ronald Bultje <rbultje@ronald.bitfreak.net>");
 }
 
 

@@ -137,11 +137,7 @@ gst_colorconvert_get_type (void)
 static void
 gst_colorconvert_base_init (gpointer g_class)
 {
-  static GstElementDetails compress_details =
-      GST_ELEMENT_DETAILS ("Video Filter Template",
-      "Filter/Effect/Video",
-      "Template for a video filter",
-      "David Schleef <ds@schleef.org>");
+
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
   gst_element_class_add_pad_template (element_class,
@@ -149,7 +145,9 @@ gst_colorconvert_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_colorconvert_sink_template));
 
-  gst_element_class_set_details (element_class, &compress_details);
+  gst_element_class_set_details_simple (element_class, "Video Filter Template",
+      "Filter/Effect/Video",
+      "Template for a video filter", "David Schleef <ds@schleef.org>");
 }
 
 static void
@@ -238,18 +236,22 @@ gst_colorconvert_transform_ip (GstBaseTransform * base_transform,
       li->format, li->width, li->height);
 
   vf = cog_virt_frame_new_unpack (cog_frame_ref (frame));
-  vf = cog_virt_frame_new_subsample (vf, COG_FRAME_FORMAT_U8_444);
+  vf = cog_virt_frame_new_subsample (vf, COG_FRAME_FORMAT_U8_444,
+      COG_CHROMA_SITE_MPEG2, 2);
   vf = cog_virt_frame_new_color_transform (vf);
   if (frame->format == COG_FRAME_FORMAT_YUYV) {
-    vf = cog_virt_frame_new_subsample (vf, COG_FRAME_FORMAT_U8_422);
+    vf = cog_virt_frame_new_subsample (vf, COG_FRAME_FORMAT_U8_422,
+        COG_CHROMA_SITE_MPEG2, 2);
     vf = cog_virt_frame_new_pack_YUY2 (vf);
   } else if (frame->format == COG_FRAME_FORMAT_UYVY) {
-    vf = cog_virt_frame_new_subsample (vf, COG_FRAME_FORMAT_U8_422);
+    vf = cog_virt_frame_new_subsample (vf, COG_FRAME_FORMAT_U8_422,
+        COG_CHROMA_SITE_MPEG2, 2);
     vf = cog_virt_frame_new_pack_UYVY (vf);
   } else if (frame->format == COG_FRAME_FORMAT_AYUV) {
     vf = cog_virt_frame_new_pack_AYUV (vf);
   } else if (frame->format == COG_FRAME_FORMAT_U8_420) {
-    vf = cog_virt_frame_new_subsample (vf, COG_FRAME_FORMAT_U8_420);
+    vf = cog_virt_frame_new_subsample (vf, COG_FRAME_FORMAT_U8_420,
+        COG_CHROMA_SITE_MPEG2, 2);
   } else {
     g_assert_not_reached ();
   }

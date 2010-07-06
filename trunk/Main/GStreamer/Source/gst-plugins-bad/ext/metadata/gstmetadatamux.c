@@ -147,17 +147,6 @@ static gboolean gst_metadata_mux_configure_srccaps (GstMetadataMux * filter);
  * GObject callback functions declaration
  */
 
-static void gst_metadata_mux_base_init (gpointer gclass);
-
-static void gst_metadata_mux_class_init (GstMetadataMuxClass * klass);
-
-static void
-gst_metadata_mux_init (GstMetadataMux * filter, GstMetadataMuxClass * gclass);
-
-static void gst_metadata_mux_dispose (GObject * object);
-
-static void gst_metadata_mux_finalize (GObject * object);
-
 static void gst_metadata_mux_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
 
@@ -206,7 +195,7 @@ gst_metadata_mux_configure_srccaps (GstMetadataMux * filter)
 {
   GstCaps *caps = NULL;
   gboolean ret = FALSE;
-  gchar *mime = NULL;
+  const gchar *mime = NULL;
 
   switch (GST_BASE_METADATA_IMG_TYPE (filter)) {
     case IMG_JPEG:
@@ -243,13 +232,7 @@ done:
 static void
 gst_metadata_mux_base_init (gpointer gclass)
 {
-/* *INDENT-OFF* */
-  static GstElementDetails element_details = {
-    "Metadata muxer",
-    "Muxer/Formatter/Metadata",
-    "Write metadata (EXIF, IPTC and XMP) into a image stream",
-    "Edgard Lima <edgard.lima@indt.org.br>"
-  };
+
 /* *INDENT-ON* */
   GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
 
@@ -257,7 +240,10 @@ gst_metadata_mux_base_init (gpointer gclass)
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "Metadata muxer",
+      "Muxer/Formatter/Metadata",
+      "Write metadata (EXIF, IPTC and XMP) into a image stream",
+      "Edgard Lima <edgard.lima@indt.org.br>");
 }
 
 static void
@@ -272,9 +258,6 @@ gst_metadata_mux_class_init (GstMetadataMuxClass * klass)
   gstbasemetadata_class = (GstBaseMetadataClass *) klass;
 
   metadata_parent_class = g_type_class_peek_parent (klass);
-
-  gobject_class->dispose = GST_DEBUG_FUNCPTR (gst_metadata_mux_dispose);
-  gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_metadata_mux_finalize);
 
   gobject_class->set_property = gst_metadata_mux_set_property;
   gobject_class->get_property = gst_metadata_mux_get_property;
@@ -379,20 +362,6 @@ gst_metadata_mux_change_state (GstElement * element, GstStateChange transition)
   return ret;
 }
 
-
-static void
-gst_metadata_mux_dispose (GObject * object)
-{
-  G_OBJECT_CLASS (metadata_parent_class)->dispose (object);
-}
-
-static void
-gst_metadata_mux_finalize (GObject * object)
-{
-  G_OBJECT_CLASS (metadata_parent_class)->finalize (object);
-}
-
-
 /*
  * GstBaseMetadata virtual functions implementation
  */
@@ -415,12 +384,12 @@ gst_metadata_mux_create_chunks_from_tags (GstBaseMetadata * base)
   GstMetadataMux *filter = GST_METADATA_MUX (base);
   GstTagSetter *setter = GST_TAG_SETTER (filter);
   const GstTagList *taglist = gst_tag_setter_get_tag_list (setter);
-  guint8 *buf = NULL;
-  guint32 size = 0;
 
   GST_DEBUG_OBJECT (base, "Creating chunks from tags..");
 
   if (taglist) {
+    guint8 *buf = NULL;
+    guint32 size = 0;
 
     if (gst_base_metadata_get_option_flag (base) & META_OPT_EXIF) {
       GST_DEBUG_OBJECT (base, "Using EXIF");
@@ -428,6 +397,9 @@ gst_metadata_mux_create_chunks_from_tags (GstBaseMetadata * base)
           &filter->exif_options);
       gst_base_metadata_update_inject_segment_with_new_data (base, &buf, &size,
           MD_CHUNK_EXIF);
+      g_free (buf);
+      buf = NULL;
+      size = 0;
     }
 
     if (gst_base_metadata_get_option_flag (base) & META_OPT_IPTC) {
@@ -435,6 +407,9 @@ gst_metadata_mux_create_chunks_from_tags (GstBaseMetadata * base)
       metadatamux_iptc_create_chunk_from_tag_list (&buf, &size, taglist);
       gst_base_metadata_update_inject_segment_with_new_data (base, &buf, &size,
           MD_CHUNK_IPTC);
+      g_free (buf);
+      buf = NULL;
+      size = 0;
     }
 
     if (gst_base_metadata_get_option_flag (base) & META_OPT_XMP) {
@@ -442,16 +417,11 @@ gst_metadata_mux_create_chunks_from_tags (GstBaseMetadata * base)
       metadatamux_xmp_create_chunk_from_tag_list (&buf, &size, taglist);
       gst_base_metadata_update_inject_segment_with_new_data (base, &buf, &size,
           MD_CHUNK_XMP);
+      g_free (buf);
     }
 
-  }
-
-  else {
+  } else {
     GST_DEBUG_OBJECT (base, "Empty taglist");
-  }
-
-  if (buf) {
-    g_free (buf);
   }
 
 }

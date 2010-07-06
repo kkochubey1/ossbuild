@@ -63,12 +63,6 @@
 GST_DEBUG_CATEGORY_STATIC (directsoundsrc_debug);
 #define GST_CAT_DEFAULT directsoundsrc_debug
 
-static GstElementDetails gst_directsound_src_details =
-GST_ELEMENT_DETAILS ("Direct Sound Audio Src",
-    "Source/Audio",
-    "Capture from a soundcard via DIRECTSOUND",
-    "Joni Valtanen <joni.valtanen@movial.fi>");
-
 /* defaults here */
 #define DEFAULT_DEVICE 0
 
@@ -157,7 +151,10 @@ gst_directsound_src_base_init (gpointer g_class)
 
   GST_DEBUG ("initializing directsoundsrc base\n");
 
-  gst_element_class_set_details (element_class, &gst_directsound_src_details);
+  gst_element_class_set_details_simple (element_class, "Direct Sound Audio Src",
+      "Source/Audio",
+      "Capture from a soundcard via DIRECTSOUND",
+      "Joni Valtanen <joni.valtanen@movial.fi>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&directsound_src_src_factory));
@@ -332,7 +329,7 @@ dsound_open:
     DWORD err = GetLastError ();
     GST_ELEMENT_ERROR (dsoundsrc, RESOURCE, OPEN_READ,
         ("Unable to open dsound.dll"), (NULL));
-    g_print ("0x%x\n", HRESULT_FROM_WIN32 (err));
+    g_print ("0x%lx\n", HRESULT_FROM_WIN32 (err));
     return FALSE;
   }
 }
@@ -423,7 +420,7 @@ gst_directsound_src_prepare (GstAudioSrc * asrc, GstRingBufferSpec * spec)
   spec->bytes_per_sample = (spec->width / 8) * spec->channels;
   dsoundsrc->bytes_per_sample = spec->bytes_per_sample;
 
-  GST_DEBUG ("latency time: %llu - buffer time: %llu",
+  GST_DEBUG ("latency time: %" G_GUINT64_FORMAT " - buffer time: %" G_GUINT64_FORMAT,
       spec->latency_time, spec->buffer_time);
 
   /* Buffer-time should be allways more than 2*latency */
@@ -449,7 +446,7 @@ gst_directsound_src_prepare (GstAudioSrc * asrc, GstRingBufferSpec * spec)
 
   spec->segtotal = spec->width * (wfx.nAvgBytesPerSec / spec->segsize);
 
-  GST_DEBUG ("bytes/sec: %d, buffer size: %d, segsize: %d, segtotal: %d",
+  GST_DEBUG ("bytes/sec: %lu, buffer size: %d, segsize: %d, segtotal: %d",
       wfx.nAvgBytesPerSec,
       dsoundsrc->buffer_size, spec->segsize, spec->segtotal);
 

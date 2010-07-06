@@ -37,12 +37,6 @@
 GST_DEBUG_CATEGORY_STATIC (gst_jasper_enc_debug);
 #define GST_CAT_DEFAULT gst_jasper_enc_debug
 
-static const GstElementDetails plugin_details =
-GST_ELEMENT_DETAILS ("Jasper JPEG2000 image encoder",
-    "Codec/Encoder/Image",
-    "Encodes video to JPEG2000 using jasper",
-    "Mark Nauwelaerts <mnauw@users.sf.net>");
-
 enum
 {
   ARG_0,
@@ -70,11 +64,6 @@ static GstStaticPadTemplate gst_jasper_enc_src_template =
         "framerate = " GST_VIDEO_FPS_RANGE ", " "fields = (int) 1; "
         "image/jp2")
     );
-
-static void gst_jasper_enc_base_init (gpointer g_class);
-static void gst_jasper_enc_class_init (GstJasperEncClass * klass);
-static void gst_jasper_enc_init (GstJasperEnc * filter,
-    GstJasperEncClass * klass);
 
 static void gst_jasper_enc_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
@@ -119,7 +108,10 @@ gst_jasper_enc_base_init (gpointer g_class)
       gst_static_pad_template_get (&gst_jasper_enc_src_template));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_jasper_enc_sink_template));
-  gst_element_class_set_details (element_class, &plugin_details);
+  gst_element_class_set_details_simple (element_class,
+      "Jasper JPEG2000 image encoder", "Codec/Encoder/Image",
+      "Encodes video to JPEG2000 using jasper",
+      "Mark Nauwelaerts <mnauw@users.sf.net>");
 }
 
 /* initialize the plugin's class */
@@ -263,10 +255,10 @@ gst_jasper_enc_init_encoder (GstJasperEnc * enc)
   switch (enc->mode) {
     case GST_JP2ENC_MODE_J2C:
     case GST_JP2ENC_MODE_JPC:
-      enc->fmt = jas_image_strtofmt ("jpc");
+      enc->fmt = jas_image_strtofmt ((char *) "jpc");
       break;
     case GST_JP2ENC_MODE_JP2:
-      enc->fmt = jas_image_strtofmt ("jp2");
+      enc->fmt = jas_image_strtofmt ((char *) "jp2");
       break;
   }
 
@@ -430,7 +422,7 @@ gst_jasper_enc_get_data (GstJasperEnc * enc, guint8 * data, GstBuffer ** outbuf)
 
   GST_LOG_OBJECT (enc, "all components written");
 
-  if (jas_image_encode (enc->image, stream, enc->fmt, ""))
+  if (jas_image_encode (enc->image, stream, enc->fmt, (char *) ""))
     goto fail_encode;
 
   GST_LOG_OBJECT (enc, "image encoded");

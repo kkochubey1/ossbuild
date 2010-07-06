@@ -14,6 +14,11 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
+# include this at the end of $MODULE/ext/Makefile.am to force make to
+# build subdirectories in parallel when make -jN is used. We will end up
+# descending into all subdirectories a second time, but only after the first
+# (parallel) run has finished, so it should go right through the second time.
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -33,8 +38,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(top_srcdir)/common/parallel-subdirs.mak
 subdir = ext
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/as-auto-alt.m4 \
@@ -59,8 +65,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -76,6 +81,12 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -126,7 +137,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -184,7 +195,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -195,11 +205,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -246,6 +254,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -268,6 +278,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -309,7 +320,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -323,6 +333,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -368,7 +379,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -397,13 +407,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -478,7 +490,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -535,8 +546,8 @@ AUDIORESAMPLE_DIR =
 @USE_DIVX_TRUE@DIVX_DIR = divx
 @USE_DTS_FALSE@DTS_DIR = 
 @USE_DTS_TRUE@DTS_DIR = dts
-@USE_DVDNAV_FALSE@DVDNAV_DIR = 
-@USE_DVDNAV_TRUE@DVDNAV_DIR = resindvd
+@USE_RESINDVD_FALSE@RESINDVD_DIR = 
+@USE_RESINDVD_TRUE@RESINDVD_DIR = resindvd
 @USE_FAAC_FALSE@FAAC_DIR = 
 @USE_FAAC_TRUE@FAAC_DIR = faac
 @USE_FAAD_FALSE@FAAD_DIR = 
@@ -608,13 +619,7 @@ LIBFAME_DIR =
 @USE_TIMIDITY_FALSE@@USE_WILDMIDI_FALSE@TIMIDITY_DIR = 
 @USE_TIMIDITY_TRUE@TIMIDITY_DIR = timidity
 @USE_WILDMIDI_TRUE@TIMIDITY_DIR = timidity
-
-# if USE_POLYP
-# POLYP_DIR=polyp
-# else
-POLYP_DIR = 
 @USE_SCHRO_FALSE@SCHRO_DIR = 
-# endif
 @USE_SCHRO_TRUE@SCHRO_DIR = schroedinger
 @USE_SDL_FALSE@SDL_DIR = 
 @USE_SDL_TRUE@SDL_DIR = sdl
@@ -649,7 +654,9 @@ SMOOTHWAVE_DIR =
 # TARKIN_DIR=tarkin
 # else
 TARKIN_DIR = 
+@USE_VP8_FALSE@VP8_DIR = 
 # endif
+@USE_VP8_TRUE@VP8_DIR = vp8
 
 # if USE_XINE
 # XINE_DIR=xine
@@ -678,7 +685,7 @@ SUBDIRS = \
 	$(DIRECTFB_DIR) \
 	$(DIVX_DIR) \
 	$(DTS_DIR) \
-	$(DVDNAV_DIR) \
+	$(RESINDVD_DIR) \
 	$(FAAC_DIR) \
 	$(FAAD_DIR) \
 	$(FLITE_DIR) \
@@ -705,7 +712,6 @@ SUBDIRS = \
 	$(NEON_DIR) \
 	$(OFA_DIR) \
 	$(RSVG_DIR) \
-	$(POLYP_DIR) \
 	$(SCHRO_DIR) \
 	$(SDL_DIR) \
 	$(SHOUT_DIR) \
@@ -718,6 +724,7 @@ SUBDIRS = \
 	$(TARKIN_DIR) \
 	$(THEORA_DIR) \
 	$(TIMIDITY_DIR) \
+	$(VP8_DIR) \
 	$(XINE_DIR) \
 	$(XVID_DIR) \
 	$(ZBAR_DIR)
@@ -768,13 +775,14 @@ DIST_SUBDIRS = \
 	swfdec \
 	theora \
 	timidity \
+	vp8 \
 	xvid \
 	zbar
 
 all: all-recursive
 
 .SUFFIXES:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/parallel-subdirs.mak $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1117,6 +1125,15 @@ uninstall-am:
 	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
 	uninstall uninstall-am
 
+
+.PHONY: independent-subdirs $(SUBDIRS)
+
+independent-subdirs: $(SUBDIRS)
+
+$(SUBDIRS):
+	$(MAKE) -C $@
+
+all-recursive: independent-subdirs
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

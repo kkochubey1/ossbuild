@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -112,22 +111,39 @@ am__objects_1 = libgstnsf_la-fmopl.lo libgstnsf_la-log.lo \
 	libgstnsf_la-vrcvisnd.lo
 am_libgstnsf_la_OBJECTS = libgstnsf_la-gstnsf.lo $(am__objects_1)
 libgstnsf_la_OBJECTS = $(am_libgstnsf_la_OBJECTS)
-libgstnsf_la_LINK = $(LIBTOOL) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libgstnsf_la_CFLAGS) \
-	$(CFLAGS) $(libgstnsf_la_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstnsf_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(libgstnsf_la_CFLAGS) $(CFLAGS) \
+	$(libgstnsf_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstnsf_la_SOURCES)
 DIST_SOURCES = $(libgstnsf_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -142,7 +158,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -200,7 +216,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -211,11 +226,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -262,6 +275,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -284,6 +299,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -325,7 +341,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -339,6 +354,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -384,7 +400,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -413,13 +428,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -494,7 +511,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -598,7 +614,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstnsf.la: $(libgstnsf_la_OBJECTS) $(libgstnsf_la_DEPENDENCIES) 
-	$(libgstnsf_la_LINK) -rpath $(plugindir) $(libgstnsf_la_OBJECTS) $(libgstnsf_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstnsf_la_LINK) -rpath $(plugindir) $(libgstnsf_la_OBJECTS) $(libgstnsf_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -618,95 +634,108 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstnsf_la-vrcvisnd.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstnsf_la-gstnsf.lo: gstnsf.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-gstnsf.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-gstnsf.Tpo -c -o libgstnsf_la-gstnsf.lo `test -f 'gstnsf.c' || echo '$(srcdir)/'`gstnsf.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstnsf_la-gstnsf.Tpo $(DEPDIR)/libgstnsf_la-gstnsf.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-gstnsf.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-gstnsf.Tpo -c -o libgstnsf_la-gstnsf.lo `test -f 'gstnsf.c' || echo '$(srcdir)/'`gstnsf.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstnsf_la-gstnsf.Tpo $(DEPDIR)/libgstnsf_la-gstnsf.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstnsf.c' object='libgstnsf_la-gstnsf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-gstnsf.lo `test -f 'gstnsf.c' || echo '$(srcdir)/'`gstnsf.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-gstnsf.lo `test -f 'gstnsf.c' || echo '$(srcdir)/'`gstnsf.c
 
 libgstnsf_la-fmopl.lo: fmopl.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-fmopl.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-fmopl.Tpo -c -o libgstnsf_la-fmopl.lo `test -f 'fmopl.c' || echo '$(srcdir)/'`fmopl.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstnsf_la-fmopl.Tpo $(DEPDIR)/libgstnsf_la-fmopl.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-fmopl.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-fmopl.Tpo -c -o libgstnsf_la-fmopl.lo `test -f 'fmopl.c' || echo '$(srcdir)/'`fmopl.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstnsf_la-fmopl.Tpo $(DEPDIR)/libgstnsf_la-fmopl.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fmopl.c' object='libgstnsf_la-fmopl.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-fmopl.lo `test -f 'fmopl.c' || echo '$(srcdir)/'`fmopl.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-fmopl.lo `test -f 'fmopl.c' || echo '$(srcdir)/'`fmopl.c
 
 libgstnsf_la-log.lo: log.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-log.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-log.Tpo -c -o libgstnsf_la-log.lo `test -f 'log.c' || echo '$(srcdir)/'`log.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstnsf_la-log.Tpo $(DEPDIR)/libgstnsf_la-log.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-log.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-log.Tpo -c -o libgstnsf_la-log.lo `test -f 'log.c' || echo '$(srcdir)/'`log.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstnsf_la-log.Tpo $(DEPDIR)/libgstnsf_la-log.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='log.c' object='libgstnsf_la-log.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-log.lo `test -f 'log.c' || echo '$(srcdir)/'`log.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-log.lo `test -f 'log.c' || echo '$(srcdir)/'`log.c
 
 libgstnsf_la-mmc5_snd.lo: mmc5_snd.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-mmc5_snd.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-mmc5_snd.Tpo -c -o libgstnsf_la-mmc5_snd.lo `test -f 'mmc5_snd.c' || echo '$(srcdir)/'`mmc5_snd.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstnsf_la-mmc5_snd.Tpo $(DEPDIR)/libgstnsf_la-mmc5_snd.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-mmc5_snd.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-mmc5_snd.Tpo -c -o libgstnsf_la-mmc5_snd.lo `test -f 'mmc5_snd.c' || echo '$(srcdir)/'`mmc5_snd.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstnsf_la-mmc5_snd.Tpo $(DEPDIR)/libgstnsf_la-mmc5_snd.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mmc5_snd.c' object='libgstnsf_la-mmc5_snd.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-mmc5_snd.lo `test -f 'mmc5_snd.c' || echo '$(srcdir)/'`mmc5_snd.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-mmc5_snd.lo `test -f 'mmc5_snd.c' || echo '$(srcdir)/'`mmc5_snd.c
 
 libgstnsf_la-nes_apu.lo: nes_apu.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-nes_apu.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-nes_apu.Tpo -c -o libgstnsf_la-nes_apu.lo `test -f 'nes_apu.c' || echo '$(srcdir)/'`nes_apu.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstnsf_la-nes_apu.Tpo $(DEPDIR)/libgstnsf_la-nes_apu.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-nes_apu.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-nes_apu.Tpo -c -o libgstnsf_la-nes_apu.lo `test -f 'nes_apu.c' || echo '$(srcdir)/'`nes_apu.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstnsf_la-nes_apu.Tpo $(DEPDIR)/libgstnsf_la-nes_apu.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nes_apu.c' object='libgstnsf_la-nes_apu.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-nes_apu.lo `test -f 'nes_apu.c' || echo '$(srcdir)/'`nes_apu.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-nes_apu.lo `test -f 'nes_apu.c' || echo '$(srcdir)/'`nes_apu.c
 
 libgstnsf_la-vrc7_snd.lo: vrc7_snd.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-vrc7_snd.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-vrc7_snd.Tpo -c -o libgstnsf_la-vrc7_snd.lo `test -f 'vrc7_snd.c' || echo '$(srcdir)/'`vrc7_snd.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstnsf_la-vrc7_snd.Tpo $(DEPDIR)/libgstnsf_la-vrc7_snd.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-vrc7_snd.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-vrc7_snd.Tpo -c -o libgstnsf_la-vrc7_snd.lo `test -f 'vrc7_snd.c' || echo '$(srcdir)/'`vrc7_snd.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstnsf_la-vrc7_snd.Tpo $(DEPDIR)/libgstnsf_la-vrc7_snd.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='vrc7_snd.c' object='libgstnsf_la-vrc7_snd.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-vrc7_snd.lo `test -f 'vrc7_snd.c' || echo '$(srcdir)/'`vrc7_snd.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-vrc7_snd.lo `test -f 'vrc7_snd.c' || echo '$(srcdir)/'`vrc7_snd.c
 
 libgstnsf_la-fds_snd.lo: fds_snd.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-fds_snd.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-fds_snd.Tpo -c -o libgstnsf_la-fds_snd.lo `test -f 'fds_snd.c' || echo '$(srcdir)/'`fds_snd.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstnsf_la-fds_snd.Tpo $(DEPDIR)/libgstnsf_la-fds_snd.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-fds_snd.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-fds_snd.Tpo -c -o libgstnsf_la-fds_snd.lo `test -f 'fds_snd.c' || echo '$(srcdir)/'`fds_snd.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstnsf_la-fds_snd.Tpo $(DEPDIR)/libgstnsf_la-fds_snd.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fds_snd.c' object='libgstnsf_la-fds_snd.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-fds_snd.lo `test -f 'fds_snd.c' || echo '$(srcdir)/'`fds_snd.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-fds_snd.lo `test -f 'fds_snd.c' || echo '$(srcdir)/'`fds_snd.c
 
 libgstnsf_la-nes6502.lo: nes6502.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-nes6502.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-nes6502.Tpo -c -o libgstnsf_la-nes6502.lo `test -f 'nes6502.c' || echo '$(srcdir)/'`nes6502.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstnsf_la-nes6502.Tpo $(DEPDIR)/libgstnsf_la-nes6502.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-nes6502.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-nes6502.Tpo -c -o libgstnsf_la-nes6502.lo `test -f 'nes6502.c' || echo '$(srcdir)/'`nes6502.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstnsf_la-nes6502.Tpo $(DEPDIR)/libgstnsf_la-nes6502.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nes6502.c' object='libgstnsf_la-nes6502.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-nes6502.lo `test -f 'nes6502.c' || echo '$(srcdir)/'`nes6502.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-nes6502.lo `test -f 'nes6502.c' || echo '$(srcdir)/'`nes6502.c
 
 libgstnsf_la-nsf.lo: nsf.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-nsf.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-nsf.Tpo -c -o libgstnsf_la-nsf.lo `test -f 'nsf.c' || echo '$(srcdir)/'`nsf.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstnsf_la-nsf.Tpo $(DEPDIR)/libgstnsf_la-nsf.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-nsf.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-nsf.Tpo -c -o libgstnsf_la-nsf.lo `test -f 'nsf.c' || echo '$(srcdir)/'`nsf.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstnsf_la-nsf.Tpo $(DEPDIR)/libgstnsf_la-nsf.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='nsf.c' object='libgstnsf_la-nsf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-nsf.lo `test -f 'nsf.c' || echo '$(srcdir)/'`nsf.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-nsf.lo `test -f 'nsf.c' || echo '$(srcdir)/'`nsf.c
 
 libgstnsf_la-vrcvisnd.lo: vrcvisnd.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-vrcvisnd.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-vrcvisnd.Tpo -c -o libgstnsf_la-vrcvisnd.lo `test -f 'vrcvisnd.c' || echo '$(srcdir)/'`vrcvisnd.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstnsf_la-vrcvisnd.Tpo $(DEPDIR)/libgstnsf_la-vrcvisnd.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -MT libgstnsf_la-vrcvisnd.lo -MD -MP -MF $(DEPDIR)/libgstnsf_la-vrcvisnd.Tpo -c -o libgstnsf_la-vrcvisnd.lo `test -f 'vrcvisnd.c' || echo '$(srcdir)/'`vrcvisnd.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstnsf_la-vrcvisnd.Tpo $(DEPDIR)/libgstnsf_la-vrcvisnd.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='vrcvisnd.c' object='libgstnsf_la-vrcvisnd.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-vrcvisnd.lo `test -f 'vrcvisnd.c' || echo '$(srcdir)/'`vrcvisnd.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstnsf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstnsf_la_CFLAGS) $(CFLAGS) -c -o libgstnsf_la-vrcvisnd.lo `test -f 'vrcvisnd.c' || echo '$(srcdir)/'`vrcvisnd.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -141,20 +141,6 @@ gst_camerabin_get_type
 </SECTION>
 
 <SECTION>
-<FILE>element-capssetter</FILE>
-<TITLE>capssetter</TITLE>
-GstCapsSetter
-<SUBSECTION Standard>
-GstCapsSetterClass
-GST_TYPE_CAPS_SETTER
-GST_CAPS_SETTER
-GST_IS_CAPS_SETTER
-GST_CAPS_SETTER_CLASS
-GST_IS_CAPS_SETTER_CLASS
-gst_caps_setter_get_type
-</SECTION>
-
-<SECTION>
 <FILE>element-celtdec</FILE>
 <TITLE>celtdec</TITLE>
 GstCeltDec
@@ -476,6 +462,20 @@ GST_IS_FPS_DISPLAY_SINK
 GST_FPS_DISPLAY_SINK_CLASS
 GST_IS_FPS_DISPLAY_SINK_CLASS
 fps_display_sink_get_type
+</SECTION>
+
+<SECTION>
+<FILE>element-freeze</FILE>
+<TITLE>freeze</TITLE>
+GstFreeze
+<SUBSECTION Standard>
+GstFreezeClass
+GST_FREEZE
+GST_FREEZE_CLASS
+GST_IS_FREEZE
+GST_IS_FREEZE_CLASS
+GST_TYPE_FREEZE
+gst_freeze_get_type
 </SECTION>
 
 <SECTION>
@@ -1168,5 +1168,52 @@ GST_ZBAR_CLASS
 GST_IS_ZBAR
 GST_IS_ZBAR_CLASS
 GST_TYPE_ZBAR
+</SECTION>
+
+# gst-libs
+
+<SECTION>
+<FILE>gstphotography</FILE>
+<TITLE>GstPhotography</TITLE>
+GstPhotography
+GstWhiteBalanceMode
+GstColourToneMode
+GstSceneMode
+GstFlashMode
+GstFlickerReductionMode
+GstFocusMode
+GstFocusStatus
+GstPhotoCaps
+GstPhotoShakeRisk
+GstPhotoSettings
+GstPhotoCapturePrepared
+gst_photography_get_ev_compensation
+gst_photography_get_iso_speed
+gst_photography_get_aperture
+gst_photography_get_exposure
+gst_photography_get_white_balance_mode
+gst_photography_get_colour_tone_mode
+gst_photography_get_scene_mode
+gst_photography_get_flash_mode
+gst_photography_get_zoom
+gst_photography_set_ev_compensation
+gst_photography_set_iso_speed
+gst_photography_set_aperture
+gst_photography_set_exposure
+gst_photography_set_white_balance_mode
+gst_photography_set_colour_tone_mode
+gst_photography_set_scene_mode
+gst_photography_set_flash_mode
+gst_photography_set_zoom
+gst_photography_get_capabilities
+gst_photography_prepare_for_capture
+gst_photography_set_autofocus
+gst_photography_set_config
+gst_photography_get_config
+<SUBSECTION Standard>
+GST_PHOTOGRAPHY
+GST_IS_PHOTOGRAPHY
+GST_PHOTOGRAPHY_GET_IFACE
+gst_photography_get_type
 </SECTION>
 

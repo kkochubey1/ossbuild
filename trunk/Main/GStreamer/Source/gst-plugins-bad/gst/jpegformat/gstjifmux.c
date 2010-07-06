@@ -24,7 +24,9 @@
  * SECTION:element-jifmux
  * @short_description: JPEG interchange format writer
  *
- * Writes a JPEG image as JPEG/EXIF or JPEG/JFIF including various metadata.
+ * Writes a JPEG image as JPEG/EXIF or JPEG/JFIF including various metadata. The
+ * jpeg image received on the sink pad should be minimal (e.g. should not
+ * contain metadata already).
  *
  * <refsect2>
  * <title>Example launch line</title>
@@ -55,6 +57,7 @@ gst-launch videotestsrc num-buffers=1 ! jpegenc ! taginject tags="comment=\"test
 #include <string.h>
 #include <gst/base/gstbytereader.h>
 #include <gst/base/gstbytewriter.h>
+#include <gst/tag/tag.h>
 
 #include "gstjifmux.h"
 
@@ -94,8 +97,6 @@ struct _GstJifMuxPrivate
   const guint8 *scan_data;
 };
 
-static void gst_jif_mux_base_init (gpointer g_class);
-static void gst_jif_mux_class_init (GstJifMuxClass * klass);
 static void gst_jif_mux_finalize (GObject * object);
 
 static void gst_jif_mux_reset (GstJifMux * self);
@@ -218,6 +219,15 @@ gst_jif_mux_sink_event (GstPad * pad, GstEvent * event)
 }
 
 static void
+gst_jif_mux_marker_free (GstJifMuxMarker * m)
+{
+  if (m->owned)
+    g_free ((gpointer) m->data);
+
+  g_slice_free (GstJifMuxMarker, m);
+}
+
+static void
 gst_jif_mux_reset (GstJifMux * self)
 {
   GList *node;
@@ -225,11 +235,7 @@ gst_jif_mux_reset (GstJifMux * self)
 
   for (node = self->priv->markers; node; node = g_list_next (node)) {
     m = (GstJifMuxMarker *) node->data;
-
-    if (m->owned)
-      g_free ((gpointer) m->data);
-
-    g_slice_free (GstJifMuxMarker, m);
+    gst_jif_mux_marker_free (m);
   }
   g_list_free (self->priv->markers);
   self->priv->markers = NULL;
@@ -254,9 +260,9 @@ gst_jif_mux_parse_image (GstJifMux * self, GstBuffer * buf)
 {
   GstByteReader reader = GST_BYTE_READER_INIT_FROM_BUFFER (buf);
   GstJifMuxMarker *m;
-  guint8 marker;
-  guint16 size;
-  const guint8 *data;
+  guint8 marker = 0;
+  guint16 size = 0;
+  const guint8 *data = NULL;
 
   if (!gst_byte_reader_peek_uint8 (&reader, &marker))
     goto error;
@@ -335,14 +341,16 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
   const GstTagList *tags;
   GstJifMuxMarker *m;
   GList *node, *file_hdr = NULL, *frame_hdr = NULL, *scan_hdr = NULL;
+  GList *app0_jfif = NULL, *app1_exif = NULL, *app1_xmp = NULL, *com = NULL;
+  GstBuffer *xmp_data;
+  gchar *str = NULL;
 
-  /* FIXME: implement me more
-   * - update the APP markers
-   *   - put any JFIF APP0 first
-   *   - the Exif APP1 next, 
-   *   - the XMP APP1 next, 
-   *   - the PSIR APP13 next,
-   *   - followed by all other marker segments
+  /* update the APP markers
+   * - put any JFIF APP0 first
+   * - the Exif APP1 next, 
+   * - the XMP APP1 next, 
+   * - the PSIR APP13 next,
+   * - followed by all other marker segments
    */
 
   /* find some reference points where we insert before/after */
@@ -351,6 +359,30 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
     m = (GstJifMuxMarker *) node->data;
 
     switch (m->marker) {
+      case APP0:
+        if (m->size > 5 && !memcmp (m->data, "JFIF\0", 5)) {
+          GST_DEBUG_OBJECT (self, "found APP0 JFIF");
+          if (!app0_jfif)
+            app0_jfif = node;
+        }
+        break;
+      case APP1:
+        if (m->size > 6 && !memcmp (m->data, "EXIF\0\0", 6)) {
+          GST_DEBUG_OBJECT (self, "found APP1 EXIF");
+          if (!app1_exif)
+            app1_exif = node;
+        } else if (m->size > 29
+            && !memcmp (m->data, "http://ns.adobe.com/xap/1.0/\0", 29)) {
+          GST_INFO_OBJECT (self, "found APP1 XMP, will be replaced");
+          if (!app1_xmp)
+            app1_xmp = node;
+        }
+        break;
+      case COM:
+        GST_INFO_OBJECT (self, "found COM, will be replaced");
+        if (!com)
+          com = node;
+        break;
       case DQT:
       case SOF0:
       case SOF1:
@@ -380,36 +412,99 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
 
   /* if we want combined or JFIF */
   /* check if we don't have JFIF APP0 */
-  /* insert into self->markers list */
-  /* ensure its first */
+  if (!app0_jfif) {
+    /* build jfif header */
+    static const struct
+    {
+      gchar id[5];
+      guint8 ver[2];
+      guint8 du;
+      guint8 xd[2], yd[2];
+      guint8 tw, th;
+    } jfif_data = {
+      "JFIF", {
+      1, 2}, 0, {
+      0, 1},                    /* FIXME: check pixel-aspect from caps */
+      {
+    0, 1}, 0, 0};
+    m = gst_jif_mux_new_marker (APP0, sizeof (jfif_data),
+        (const guint8 *) &jfif_data, FALSE);
+    /* insert into self->markers list */
+    self->priv->markers = g_list_insert (self->priv->markers, m, 1);
+  }
   /* else */
   /* remove JFIF if exists */
 
   /* if we want combined or EXIF */
   /* check if we don't have EXIF APP1 */
-  /* insert into self->markers list */
+  if (!app1_exif) {
+    /* exif_data = gst_tag_list_to_exif_buffer (tags); */
+    /* insert into self->markers list */
+  }
   /* else */
   /* remove EXIF if exists */
 
-  /* add jpeg comment */
   tags = gst_tag_setter_get_tag_list (GST_TAG_SETTER (self));
-  if (tags) {
-    gchar *str = NULL;
+  if (!tags) {
+    tags = gst_tag_list_new ();
+  }
+  /* FIXME: not happy with those
+   * - else where we would use VIDEO_CODEC = "Jpeg"
+   gst_tag_list_add (tags, GST_TAG_MERGE_REPLACE,
+   GST_TAG_VIDEO_CODEC, "image/jpeg", NULL);
+   */
 
-    (void) (gst_tag_list_get_string (tags, GST_TAG_COMMENT, &str) ||
-        gst_tag_list_get_string (tags, GST_TAG_DESCRIPTION, &str) ||
-        gst_tag_list_get_string (tags, GST_TAG_TITLE, &str));
+  /* add xmp */
+  xmp_data = gst_tag_list_to_xmp_buffer (tags, FALSE);
+  if (xmp_data) {
+    guint8 *data, *xmp = GST_BUFFER_DATA (xmp_data);
+    guint size = GST_BUFFER_SIZE (xmp_data);
+    GList *pos;
 
-    if (str) {
-      /* insert new marker into self->markers list */
-      m = gst_jif_mux_new_marker (COM, strlen (str) + 1, (const guint8 *) str,
-          TRUE);
-      /* this should go before SOS, maybe at the end of file-header */
-      self->priv->markers = g_list_insert_before (self->priv->markers,
-          frame_hdr, m);
+    data = g_malloc (size + 29);
+    memcpy (data, "http://ns.adobe.com/xap/1.0/\0", 29);
+    memcpy (&data[29], xmp, size);
+    m = gst_jif_mux_new_marker (APP1, size + 29, data, TRUE);
 
-      modified = TRUE;
+    /* 
+     * Replace the old xmp marker and not add a new one.
+     * There shouldn't be a xmp packet in the input, but it is better
+     * to be safe than add another one and end up with 2 packets.
+     */
+    if (app1_xmp) {
+      gst_jif_mux_marker_free ((GstJifMuxMarker *) app1_xmp->data);
+      app1_xmp->data = m;
+    } else {
+
+      pos = file_hdr;
+      if (app1_exif)
+        pos = app1_exif;
+      else if (app0_jfif)
+        pos = app0_jfif;
+      pos = g_list_next (pos);
+
+      self->priv->markers = g_list_insert_before (self->priv->markers, pos, m);
+
     }
+    gst_buffer_unref (xmp_data);
+    modified = TRUE;
+  }
+
+  /* add jpeg comment */
+  (void) (gst_tag_list_get_string (tags, GST_TAG_COMMENT, &str) ||
+      gst_tag_list_get_string (tags, GST_TAG_DESCRIPTION, &str) ||
+      gst_tag_list_get_string (tags, GST_TAG_TITLE, &str));
+
+  if (str) {
+    /* insert new marker into self->markers list */
+    m = gst_jif_mux_new_marker (COM, strlen (str) + 1, (const guint8 *) str,
+        TRUE);
+    /* FIXME: if we have one already, replace */
+    /* this should go before SOS, maybe at the end of file-header */
+    self->priv->markers = g_list_insert_before (self->priv->markers,
+        frame_hdr, m);
+
+    modified = TRUE;
   }
   return modified;
 }
@@ -424,6 +519,7 @@ gst_jif_mux_recombine_image (GstJifMux * self, GstBuffer ** new_buf,
   GstJifMuxMarker *m;
   GList *node;
   guint size = self->priv->scan_size;
+  gboolean writer_status = TRUE;
 
   /* iterate list and collect size */
   for (node = self->priv->markers; node; node = g_list_next (node)) {
@@ -452,26 +548,33 @@ gst_jif_mux_recombine_image (GstJifMux * self, GstBuffer ** new_buf,
 
   /* memcopy markers */
   writer = gst_byte_writer_new_with_buffer (buf, TRUE);
-  for (node = self->priv->markers; node; node = g_list_next (node)) {
+  for (node = self->priv->markers; node && writer_status;
+      node = g_list_next (node)) {
     m = (GstJifMuxMarker *) node->data;
 
-    gst_byte_writer_put_uint8 (writer, 0xff);
-    gst_byte_writer_put_uint8 (writer, m->marker);
+    writer_status &= gst_byte_writer_put_uint8 (writer, 0xff);
+    writer_status &= gst_byte_writer_put_uint8 (writer, m->marker);
 
     GST_DEBUG_OBJECT (self, "marker = %2x, size = %u", m->marker, m->size + 2);
 
     if (m->size) {
-      gst_byte_writer_put_uint16_be (writer, m->size + 2);
-      gst_byte_writer_put_data (writer, m->data, m->size);
+      writer_status &= gst_byte_writer_put_uint16_be (writer, m->size + 2);
+      writer_status &= gst_byte_writer_put_data (writer, m->data, m->size);
     }
 
     if (m->marker == SOS) {
       GST_DEBUG_OBJECT (self, "scan data, size = %u", self->priv->scan_size);
-      gst_byte_writer_put_data (writer, self->priv->scan_data,
+      writer_status &= gst_byte_writer_put_data (writer, self->priv->scan_data,
           self->priv->scan_size);
     }
   }
   gst_byte_writer_free (writer);
+
+  if (!writer_status) {
+    GST_WARNING_OBJECT (self, "Failed to write to buffer, calculated size "
+        "was probably too short");
+    g_assert_not_reached ();
+  }
 
   *new_buf = buf;
   return GST_FLOW_OK;
@@ -488,6 +591,12 @@ gst_jif_mux_chain (GstPad * pad, GstBuffer * buf)
   GstJifMux *self = GST_JIF_MUX (GST_PAD_PARENT (pad));
   guint8 *data = GST_BUFFER_DATA (buf);
   GstFlowReturn fret = GST_FLOW_OK;
+
+  if (GST_BUFFER_CAPS (buf) == NULL) {
+    GST_WARNING_OBJECT (self, "Rejecting buffer without caps");
+    gst_buffer_unref (buf);
+    return GST_FLOW_NOT_NEGOTIATED;
+  }
 
   GST_MEMDUMP ("jpeg beg", data, 64);
   GST_MEMDUMP ("jpeg end", &data[GST_BUFFER_SIZE (buf) - 64], 64);

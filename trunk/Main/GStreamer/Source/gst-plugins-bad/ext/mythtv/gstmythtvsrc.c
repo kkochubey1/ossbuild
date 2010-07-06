@@ -86,14 +86,6 @@ GST_DEBUG_CATEGORY_STATIC (mythtvsrc_debug);
 #define READ_SIZE_LIVETV                    (80*1024)
 #define GST_FLOW_ERROR_NO_DATA              (-101)
 
-static const GstElementDetails gst_mythtv_src_details =
-GST_ELEMENT_DETAILS ("MythTV client source",
-    "Source/Network",
-    "Control and receive data as a client over the network "
-    "via raw socket connections using the MythTV protocol",
-    "Rosfran Borges <rosfran.borges@indt.org.br>,"
-    "Renato Filho <renato.filho@indt.org.br>");
-
 static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
@@ -167,7 +159,12 @@ GST_BOILERPLATE_FULL (GstMythtvSrc, gst_mythtv_src, GstPushSrc,
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&srctemplate));
 
-  gst_element_class_set_details (element_class, &gst_mythtv_src_details);
+  gst_element_class_set_details_simple (element_class, "MythTV client source",
+      "Source/Network",
+      "Control and receive data as a client over the network "
+      "via raw socket connections using the MythTV protocol",
+      "Rosfran Borges <rosfran.borges@indt.org.br>, "
+      "Renato Filho <renato.filho@indt.org.br>");
 
   element_class->change_state = gst_mythtv_src_change_state;
 
@@ -434,32 +431,6 @@ read_error:
   GST_ELEMENT_ERROR (src, RESOURCE, READ, (NULL),
       ("Could not read any bytes (%d, %s)", result, src->uri_name));
   return GST_FLOW_ERROR;
-}
-
-gint64
-gst_mythtv_src_get_position (GstMythtvSrc * src)
-{
-  gint64 size_tmp = 0;
-  guint max_tries = 2;
-
-  if (src->live_tv == TRUE &&
-      (abs (src->content_size - src->bytes_read) <
-          GMYTHTV_TRANSFER_MAX_BUFFER)) {
-
-  get_file_pos:
-    g_usleep (10);
-    size_tmp = gmyth_recorder_get_file_position (src->spawn_livetv->recorder);
-    if (size_tmp > (src->content_size + GMYTHTV_TRANSFER_MAX_BUFFER))
-      src->content_size = size_tmp;
-    else if (size_tmp > 0 && --max_tries > 0)
-      goto get_file_pos;
-    GST_LOG_OBJECT (src, "file_position = %" G_GINT64_FORMAT, size_tmp);
-    /*
-     * sets the last content size amount before it can be updated 
-     */
-    src->prev_content_size = src->content_size;
-  }
-  return src->content_size;
 }
 
 static gboolean
@@ -732,6 +703,32 @@ gst_mythtv_src_stop (GstBaseSrc * bsrc)
 }
 
 #if 0
+static gint64
+gst_mythtv_src_get_position (GstMythtvSrc * src)
+{
+  gint64 size_tmp = 0;
+  guint max_tries = 2;
+
+  if (src->live_tv == TRUE &&
+      (abs (src->content_size - src->bytes_read) <
+          GMYTHTV_TRANSFER_MAX_BUFFER)) {
+
+  get_file_pos:
+    g_usleep (10);
+    size_tmp = gmyth_recorder_get_file_position (src->spawn_livetv->recorder);
+    if (size_tmp > (src->content_size + GMYTHTV_TRANSFER_MAX_BUFFER))
+      src->content_size = size_tmp;
+    else if (size_tmp > 0 && --max_tries > 0)
+      goto get_file_pos;
+    GST_LOG_OBJECT (src, "file_position = %" G_GINT64_FORMAT, size_tmp);
+    /*
+     * sets the last content size amount before it can be updated 
+     */
+    src->prev_content_size = src->content_size;
+  }
+  return src->content_size;
+}
+
 static gboolean
 gst_mythtv_src_handle_event (GstPad * pad, GstEvent * event)
 {
@@ -972,9 +969,9 @@ gst_mythtv_src_uri_get_type (void)
 static gchar **
 gst_mythtv_src_uri_get_protocols (void)
 {
-  static gchar *protocols[] = { "myth", "myths", NULL };
+  static const gchar *protocols[] = { "myth", "myths", NULL };
 
-  return protocols;
+  return (gchar **) protocols;
 }
 
 static const gchar *
@@ -1013,11 +1010,4 @@ gst_mythtv_src_uri_handler_init (gpointer g_iface, gpointer iface_data)
   iface->get_protocols = gst_mythtv_src_uri_get_protocols;
   iface->get_uri = gst_mythtv_src_uri_get_uri;
   iface->set_uri = gst_mythtv_src_uri_set_uri;
-}
-
-void
-size_header_handler (void *src, const char *value)
-{
-  GST_DEBUG_OBJECT (src, "content size = %" G_GUINT64_FORMAT " bytes",
-      GST_MYTHTV_SRC (src)->content_size);
 }

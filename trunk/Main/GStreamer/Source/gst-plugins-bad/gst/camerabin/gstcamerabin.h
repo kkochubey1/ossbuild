@@ -63,22 +63,27 @@ struct _GstCameraBin
   GstCameraBinFlags flags;
   gboolean stop_requested;        /* TRUE if capturing stop needed */
   gboolean paused;                /* TRUE if capturing paused */
+  gboolean block_viewfinder;      /* TRUE if viewfinder blocks after capture */
 
-  /* resolution and frames per second of image captured by v4l2 device */
+  /* Resolution of the buffers configured to camerabin */
   gint width;
   gint height;
+  /* Frames per second configured to camerabin */
   gint fps_n;
   gint fps_d;
 
+  gboolean video_capture_caps_update;
+
   /* Image capture resolution */
-  gint image_width;
-  gint image_height;
+  gint image_capture_width;
+  gint image_capture_height;
 
   /* Image tags are collected here first before sending to imgbin */
   GstTagList *event_tags;
 
   /* Caps applied to capsfilters when taking still image */
   GstCaps *image_capture_caps;
+  gboolean image_capture_caps_update;
 
   /* Caps applied to capsfilters when in view finder mode */
   GstCaps *view_finder_caps;
@@ -133,9 +138,11 @@ struct _GstCameraBin
   GstElement *view_scale;
   GstElement *view_sink;
 
-  /* User configurable elements */
-  GstElement *user_vid_src;
-  GstElement *user_vf_sink;
+  /* Application configurable elements */
+  GstElement *app_vid_src;
+  GstElement *app_vf_sink;
+  GstElement *app_video_filter;
+  GstElement *app_viewfinder_filter;
 
   /* Night mode handling */
   gboolean night_mode;
@@ -147,6 +154,13 @@ struct _GstCameraBin
 
   /* Buffer probe id for captured image handling */
   gulong image_captured_id;
+
+  /* Optional base crop for frames. Used to crop frames e.g.
+     due to wrong aspect ratio, before the crop related to zooming. */
+  gint base_crop_top;
+  gint base_crop_bottom;
+  gint base_crop_left;
+  gint base_crop_right;
 };
 
 /**
@@ -160,16 +174,16 @@ struct _GstCameraBinClass
 
   /* action signals */
 
-  void (*user_start) (GstCameraBin * camera);
-  void (*user_stop) (GstCameraBin * camera);
-  void (*user_pause) (GstCameraBin * camera);
-  void (*user_res_fps) (GstCameraBin * camera, gint width, gint height,
-      gint fps_n, gint fps_d);
-  void (*user_image_res) (GstCameraBin * camera, gint width, gint height);
+  void (*capture_start) (GstCameraBin * camera);
+  void (*capture_stop) (GstCameraBin * camera);
+  void (*capture_pause) (GstCameraBin * camera);
+  void (*set_video_resolution_fps) (GstCameraBin * camera, gint width,
+      gint height, gint fps_n, gint fps_d);
+  void (*set_image_resolution) (GstCameraBin * camera, gint width, gint height);
 
   /* signals (callback) */
 
-   gboolean (*img_done) (GstCameraBin * camera, const gchar * filename);
+    gboolean (*img_done) (GstCameraBin * camera, const gchar * filename);
 };
 
 /**
@@ -188,4 +202,4 @@ typedef enum
 GType gst_camerabin_get_type (void);
 
 G_END_DECLS
-#endif                          /* #ifndef __GST_CAMERABIN_H__ */
+#endif /* #ifndef __GST_CAMERABIN_H__ */

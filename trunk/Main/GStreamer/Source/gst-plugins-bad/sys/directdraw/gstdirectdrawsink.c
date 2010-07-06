@@ -48,13 +48,6 @@
 GST_DEBUG_CATEGORY_STATIC (directdrawsink_debug);
 #define GST_CAT_DEFAULT directdrawsink_debug
 
-/* elementfactory information */
-static const GstElementDetails gst_directdraw_sink_details =
-GST_ELEMENT_DETAILS ("Direct Draw Video Sink",
-    "Sink/Video",
-    "Output to a video card via Direct Draw",
-    "Sebastien Moutte <sebastien@moutte.net>");
-
 static void gst_directdraw_sink_init_interfaces (GType type);
 
 GST_BOILERPLATE_FULL (GstDirectDrawSink, gst_directdraw_sink, GstVideoSink,
@@ -97,7 +90,7 @@ static gboolean gst_ddrawvideosink_get_format_from_caps (GstDirectDrawSink *
     ddrawsink, GstCaps * caps, DDPIXELFORMAT * pPixelFormat);
 static void gst_directdraw_sink_center_rect (GstDirectDrawSink * ddrawsink,
     RECT src, RECT dst, RECT * result);
-char *DDErrorString (HRESULT hr);
+static const char *DDErrorString (HRESULT hr);
 
 /* surfaces management functions */
 static void gst_directdraw_sink_surface_destroy (GstDirectDrawSink * ddrawsink,
@@ -309,7 +302,7 @@ gst_ddrawsurface_class_init (gpointer g_class, gpointer class_data)
   mini_object_class->finalize = GST_DEBUG_FUNCPTR (gst_ddrawsurface_finalize);
 }
 
-GType
+static GType
 gst_ddrawsurface_get_type (void)
 {
   static GType _gst_ddrawsurface_type;
@@ -387,7 +380,10 @@ gst_directdraw_sink_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &gst_directdraw_sink_details);
+  gst_element_class_set_details_simple (element_class, "Direct Draw Video Sink",
+      "Sink/Video",
+      "Output to a video card via Direct Draw",
+      "Sebastien Moutte <sebastien@moutte.net>");
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&directdrawsink_sink_factory));
 }
@@ -884,7 +880,7 @@ gst_directdraw_sink_show_frame (GstBaseSink * bsink, GstBuffer * buf)
   }
 
   if (buf == NULL) {
-    /*GST_ERROR_OBJECT (ddrawsink, "No buffer to render.");*/
+    GST_ERROR_OBJECT (ddrawsink, "No buffer to render.");
     return GST_FLOW_ERROR;
   } else if (!ddrawsink->video_window) {
     GST_WARNING_OBJECT (ddrawsink, "No video window to render to.");
@@ -1143,7 +1139,7 @@ gst_directdraw_sink_center_rect (GstDirectDrawSink * ddrawsink, RECT src,
  * @hr: HRESULT code
  * Returns: Text representation of the error.
  */
-char *
+static const char *
 DDErrorString (HRESULT hr)
 {
   switch (hr) {
@@ -1394,7 +1390,7 @@ gst_directdraw_sink_setup_ddraw (GstDirectDrawSink * ddrawsink)
   return bRet;
 }
 
-long FAR PASCAL
+static long FAR PASCAL
 WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
   switch (message) {
@@ -1457,7 +1453,7 @@ WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_MBUTTONUP:
         case WM_MOUSEMOVE:{
           gint x, y, button;
-          gchar *action;
+          const gchar *action;
 
           switch (message) {
             case WM_MOUSEMOVE:
@@ -1490,6 +1486,7 @@ WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
               break;
             default:
               button = 4;
+              action = NULL;
           }
 
           x = LOWORD (lParam);
@@ -1730,9 +1727,9 @@ gst_directdraw_sink_get_depth (LPDDPIXELFORMAT lpddpfPixelFormat)
   gint order = 0, binary;
 
   binary =
-      lpddpfPixelFormat->dwRBitMask | lpddpfPixelFormat->
-      dwGBitMask | lpddpfPixelFormat->dwBBitMask | lpddpfPixelFormat->
-      dwRGBAlphaBitMask;
+      lpddpfPixelFormat->
+      dwRBitMask | lpddpfPixelFormat->dwGBitMask | lpddpfPixelFormat->
+      dwBBitMask | lpddpfPixelFormat->dwRGBAlphaBitMask;
   while (binary != 0) {
     if ((binary % 2) == 1)
       order++;
@@ -1741,7 +1738,7 @@ gst_directdraw_sink_get_depth (LPDDPIXELFORMAT lpddpfPixelFormat)
   return order;
 }
 
-HRESULT WINAPI
+static HRESULT WINAPI
 EnumModesCallback2 (LPDDSURFACEDESC lpDDSurfaceDesc, LPVOID lpContext)
 {
   GstDirectDrawSink *ddrawsink = (GstDirectDrawSink *) lpContext;

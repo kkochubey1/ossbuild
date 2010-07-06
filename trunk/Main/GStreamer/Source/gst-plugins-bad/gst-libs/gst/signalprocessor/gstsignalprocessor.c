@@ -108,7 +108,8 @@ gst_signal_processor_class_add_pad_template (GstSignalProcessorClass * klass,
 
   caps = gst_caps_new_simple ("audio/x-raw-float",
       "endianness", G_TYPE_INT, G_BYTE_ORDER,
-      "width", G_TYPE_INT, 32, "channels", G_TYPE_INT, channels, NULL);
+      "width", G_TYPE_INT, 32, "channels", G_TYPE_INT, channels,
+      "rate", GST_TYPE_INT_RANGE, 1, G_MAXINT, NULL);
 
   new = g_object_new (GST_TYPE_SIGNAL_PROCESSOR_PAD_TEMPLATE,
       "name", name, "name-template", name,
@@ -165,8 +166,8 @@ gst_signal_processor_pad_get_type (void)
 static void
 _do_init (GType object_type)
 {
-  GST_DEBUG_CATEGORY_INIT (gst_signal_processor_debug, "gst-dsp", 0,
-      "signalprocessor element");
+  GST_DEBUG_CATEGORY_INIT (gst_signal_processor_debug, "signalprocessor", 0,
+      "signalprocessor baseclass");
 }
 
 GST_BOILERPLATE_FULL (GstSignalProcessor, gst_signal_processor, GstElement,
@@ -208,6 +209,13 @@ gst_signal_processor_class_init (GstSignalProcessorClass * klass)
 
   gstelement_class->change_state =
       GST_DEBUG_FUNCPTR (gst_signal_processor_change_state);
+
+  GST_DEBUG_REGISTER_FUNCPTR (gst_signal_processor_setcaps);
+  GST_DEBUG_REGISTER_FUNCPTR (gst_signal_processor_event);
+  GST_DEBUG_REGISTER_FUNCPTR (gst_signal_processor_chain);
+  GST_DEBUG_REGISTER_FUNCPTR (gst_signal_processor_sink_activate_push);
+  GST_DEBUG_REGISTER_FUNCPTR (gst_signal_processor_getrange);
+  GST_DEBUG_REGISTER_FUNCPTR (gst_signal_processor_src_activate_pull);
 }
 
 static void
@@ -224,25 +232,21 @@ gst_signal_processor_add_pad_from_template (GstSignalProcessor * self,
   GST_SIGNAL_PROCESSOR_PAD (pad)->channels =
       GST_SIGNAL_PROCESSOR_PAD_TEMPLATE (templ)->channels;
 
-  gst_pad_set_setcaps_function (pad,
-      GST_DEBUG_FUNCPTR (gst_signal_processor_setcaps));
+  gst_pad_set_setcaps_function (pad, gst_signal_processor_setcaps);
 
   if (templ->direction == GST_PAD_SINK) {
     GST_DEBUG_OBJECT (pad, "added new sink pad");
 
-    gst_pad_set_event_function (pad,
-        GST_DEBUG_FUNCPTR (gst_signal_processor_event));
-    gst_pad_set_chain_function (pad,
-        GST_DEBUG_FUNCPTR (gst_signal_processor_chain));
+    gst_pad_set_event_function (pad, gst_signal_processor_event);
+    gst_pad_set_chain_function (pad, gst_signal_processor_chain);
     gst_pad_set_activatepush_function (pad,
-        GST_DEBUG_FUNCPTR (gst_signal_processor_sink_activate_push));
+        gst_signal_processor_sink_activate_push);
   } else {
     GST_DEBUG_OBJECT (pad, "added new src pad");
 
-    gst_pad_set_getrange_function (pad,
-        GST_DEBUG_FUNCPTR (gst_signal_processor_getrange));
+    gst_pad_set_getrange_function (pad, gst_signal_processor_getrange);
     gst_pad_set_activatepull_function (pad,
-        GST_DEBUG_FUNCPTR (gst_signal_processor_src_activate_pull));
+        gst_signal_processor_src_activate_pull);
   }
 
   gst_element_add_pad (GST_ELEMENT (self), pad);
@@ -568,6 +572,8 @@ gst_signal_processor_event (GstPad * pad, GstEvent * event)
   self = GST_SIGNAL_PROCESSOR (gst_pad_get_parent (pad));
   bclass = GST_SIGNAL_PROCESSOR_GET_CLASS (self);
 
+  GST_DEBUG_OBJECT (pad, "got event %s", GST_EVENT_TYPE_NAME (event));
+
   /* FIXME, this probably isn't the correct interface: what about return values,
    * what about overriding event_default
    * Sync with GstBaseTransform::gst_base_transform_sink_event */
@@ -674,6 +680,9 @@ gst_signal_processor_prepare (GstSignalProcessor * self, guint nframes)
      is the exact size of the number of samples we are processing. */
   sinks = elem->sinkpads;
   srcs = elem->srcpads;
+
+  GST_LOG_OBJECT (self, "allocating %d buffers", g_list_length (srcs));
+
   if (GST_SIGNAL_PROCESSOR_CLASS_CAN_PROCESS_IN_PLACE (klass)) {
     while (sinks && srcs) {
       GstSignalProcessorPad *sinkpad, *srcpad;
@@ -707,12 +716,15 @@ gst_signal_processor_prepare (GstSignalProcessor * self, guint nframes)
 
     srcpad = (GstSignalProcessorPad *) srcs->data;
 
-    ret =
-        gst_pad_alloc_buffer_and_set_caps (GST_PAD (srcpad), -1,
+    ret = gst_pad_alloc_buffer_and_set_caps (GST_PAD (srcpad),
+        GST_CLOCK_TIME_NONE,
         samples_avail * srcpad->channels * sizeof (gfloat), self->caps,
         &srcpad->pen);
 
     if (ret != GST_FLOW_OK) {
+      GST_INFO_OBJECT (self,
+          "allocating buffer for %u samples, %u channels failed", samples_avail,
+          srcpad->channels);
       self->flow_state = ret;
       return 0;
     } else if (srcpad->channels > 1) {
@@ -723,7 +735,6 @@ gst_signal_processor_prepare (GstSignalProcessor * self, guint nframes)
         group->buffer =
             (gfloat *) g_realloc (group->buffer,
             samples_avail * srcpad->channels * sizeof (gfloat));
-      g_assert (group->buffer);
       group->channels = srcpad->channels;
       group->nframes = samples_avail;
       self->pending_out++;
@@ -789,15 +800,15 @@ gst_signal_processor_update_outputs (GstSignalProcessor * self,
     gst_signal_processor_interleave_group (&self->group_out[i], nprocessed);
 }
 
-static void
+static gboolean
 gst_signal_processor_process (GstSignalProcessor * self, guint nframes)
 {
   GstElement *elem;
   GstSignalProcessorClass *klass;
 
   /* check if we have buffers enqueued */
-  g_return_if_fail (self->pending_in == 0);
-  g_return_if_fail (self->pending_out == 0);
+  g_return_val_if_fail (self->pending_in == 0, FALSE);
+  g_return_val_if_fail (self->pending_out == 0, FALSE);
 
   elem = GST_ELEMENT (self);
 
@@ -815,13 +826,14 @@ gst_signal_processor_process (GstSignalProcessor * self, guint nframes)
   gst_signal_processor_update_inputs (self, nframes);
   gst_signal_processor_update_outputs (self, nframes);
 
-  return;
+  return TRUE;
 
 flow_error:
   {
-    GST_WARNING ("gst_pad_alloc_buffer_and_set_caps() returned %d",
-        self->flow_state);
-    return;
+    GST_WARNING_OBJECT (self,
+        "gst_signal_processor_prepare() returned %d, flow_ref=%s", nframes,
+        gst_flow_get_name (self->flow_state));
+    return FALSE;
   }
 }
 
@@ -1014,12 +1026,14 @@ gst_signal_processor_chain (GstPad * pad, GstBuffer * buffer)
 
   self = GST_SIGNAL_PROCESSOR (gst_pad_get_parent (pad));
 
+  GST_LOG_OBJECT (self, "chain(%s:%s, %p) : p_in=%u, p_out=%u",
+      GST_DEBUG_PAD_NAME (pad), buffer, self->pending_in, self->pending_out);
+
   gst_signal_processor_pen_buffer (self, pad, buffer);
 
   if (self->pending_in == 0) {
-    gst_signal_processor_process (self, G_MAXUINT);
-
-    gst_signal_processor_do_pushes (self);
+    if (gst_signal_processor_process (self, G_MAXUINT))
+      gst_signal_processor_do_pushes (self);
   }
 
   gst_object_unref (self);

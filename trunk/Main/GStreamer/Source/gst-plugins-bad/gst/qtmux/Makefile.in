@@ -64,8 +64,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -106,14 +105,17 @@ am__installdirs = "$(DESTDIR)$(plugindir)"
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libgstqtmux_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_libgstqtmux_la_OBJECTS = libgstqtmux_la-gstqtmux.lo \
 	libgstqtmux_la-gstqtmoovrecover.lo \
 	libgstqtmux_la-gstqtmuxplugin.lo libgstqtmux_la-atoms.lo \
 	libgstqtmux_la-atomsrecovery.lo libgstqtmux_la-descriptors.lo \
 	libgstqtmux_la-properties.lo libgstqtmux_la-gstqtmuxmap.lo
 libgstqtmux_la_OBJECTS = $(am_libgstqtmux_la_OBJECTS)
-libgstqtmux_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstqtmux_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstqtmux_la_CFLAGS) $(CFLAGS) \
 	$(libgstqtmux_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -123,13 +125,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstqtmux_la_SOURCES)
 DIST_SOURCES = $(libgstqtmux_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -144,7 +159,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -202,7 +217,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -213,11 +227,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -264,6 +276,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -286,6 +300,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -327,7 +342,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -341,6 +355,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -386,7 +401,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -415,13 +429,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -496,7 +512,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -518,8 +533,8 @@ libgstqtmux_la_SOURCES = gstqtmux.c \
 
 # flags used to compile this plugin
 # add other _CFLAGS and _LIBS as needed
-libgstqtmux_la_CFLAGS = $(GST_CFLAGS) $(GST_BASE_CFLAGS)
-libgstqtmux_la_LIBADD = $(GST_LIBS) $(GST_BASE_LIBS)
+libgstqtmux_la_CFLAGS = $(GST_CFLAGS) $(GST_BASE_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS)
+libgstqtmux_la_LIBADD = $(GST_LIBS) $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS) -lgsttag-$(GST_MAJORMINOR)
 libgstqtmux_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 libgstqtmux_la_LIBTOOLFLAGS = --tag=disable-static
 
@@ -600,7 +615,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstqtmux.la: $(libgstqtmux_la_OBJECTS) $(libgstqtmux_la_DEPENDENCIES) 
-	$(libgstqtmux_la_LINK) -rpath $(plugindir) $(libgstqtmux_la_OBJECTS) $(libgstqtmux_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstqtmux_la_LINK) -rpath $(plugindir) $(libgstqtmux_la_OBJECTS) $(libgstqtmux_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -618,81 +633,92 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstqtmux_la-properties.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstqtmux_la-gstqtmux.lo: gstqtmux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-gstqtmux.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-gstqtmux.Tpo -c -o libgstqtmux_la-gstqtmux.lo `test -f 'gstqtmux.c' || echo '$(srcdir)/'`gstqtmux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstqtmux_la-gstqtmux.Tpo $(DEPDIR)/libgstqtmux_la-gstqtmux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-gstqtmux.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-gstqtmux.Tpo -c -o libgstqtmux_la-gstqtmux.lo `test -f 'gstqtmux.c' || echo '$(srcdir)/'`gstqtmux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstqtmux_la-gstqtmux.Tpo $(DEPDIR)/libgstqtmux_la-gstqtmux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstqtmux.c' object='libgstqtmux_la-gstqtmux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-gstqtmux.lo `test -f 'gstqtmux.c' || echo '$(srcdir)/'`gstqtmux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-gstqtmux.lo `test -f 'gstqtmux.c' || echo '$(srcdir)/'`gstqtmux.c
 
 libgstqtmux_la-gstqtmoovrecover.lo: gstqtmoovrecover.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-gstqtmoovrecover.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-gstqtmoovrecover.Tpo -c -o libgstqtmux_la-gstqtmoovrecover.lo `test -f 'gstqtmoovrecover.c' || echo '$(srcdir)/'`gstqtmoovrecover.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstqtmux_la-gstqtmoovrecover.Tpo $(DEPDIR)/libgstqtmux_la-gstqtmoovrecover.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-gstqtmoovrecover.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-gstqtmoovrecover.Tpo -c -o libgstqtmux_la-gstqtmoovrecover.lo `test -f 'gstqtmoovrecover.c' || echo '$(srcdir)/'`gstqtmoovrecover.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstqtmux_la-gstqtmoovrecover.Tpo $(DEPDIR)/libgstqtmux_la-gstqtmoovrecover.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstqtmoovrecover.c' object='libgstqtmux_la-gstqtmoovrecover.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-gstqtmoovrecover.lo `test -f 'gstqtmoovrecover.c' || echo '$(srcdir)/'`gstqtmoovrecover.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-gstqtmoovrecover.lo `test -f 'gstqtmoovrecover.c' || echo '$(srcdir)/'`gstqtmoovrecover.c
 
 libgstqtmux_la-gstqtmuxplugin.lo: gstqtmuxplugin.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-gstqtmuxplugin.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-gstqtmuxplugin.Tpo -c -o libgstqtmux_la-gstqtmuxplugin.lo `test -f 'gstqtmuxplugin.c' || echo '$(srcdir)/'`gstqtmuxplugin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstqtmux_la-gstqtmuxplugin.Tpo $(DEPDIR)/libgstqtmux_la-gstqtmuxplugin.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-gstqtmuxplugin.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-gstqtmuxplugin.Tpo -c -o libgstqtmux_la-gstqtmuxplugin.lo `test -f 'gstqtmuxplugin.c' || echo '$(srcdir)/'`gstqtmuxplugin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstqtmux_la-gstqtmuxplugin.Tpo $(DEPDIR)/libgstqtmux_la-gstqtmuxplugin.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstqtmuxplugin.c' object='libgstqtmux_la-gstqtmuxplugin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-gstqtmuxplugin.lo `test -f 'gstqtmuxplugin.c' || echo '$(srcdir)/'`gstqtmuxplugin.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-gstqtmuxplugin.lo `test -f 'gstqtmuxplugin.c' || echo '$(srcdir)/'`gstqtmuxplugin.c
 
 libgstqtmux_la-atoms.lo: atoms.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-atoms.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-atoms.Tpo -c -o libgstqtmux_la-atoms.lo `test -f 'atoms.c' || echo '$(srcdir)/'`atoms.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstqtmux_la-atoms.Tpo $(DEPDIR)/libgstqtmux_la-atoms.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-atoms.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-atoms.Tpo -c -o libgstqtmux_la-atoms.lo `test -f 'atoms.c' || echo '$(srcdir)/'`atoms.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstqtmux_la-atoms.Tpo $(DEPDIR)/libgstqtmux_la-atoms.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='atoms.c' object='libgstqtmux_la-atoms.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-atoms.lo `test -f 'atoms.c' || echo '$(srcdir)/'`atoms.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-atoms.lo `test -f 'atoms.c' || echo '$(srcdir)/'`atoms.c
 
 libgstqtmux_la-atomsrecovery.lo: atomsrecovery.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-atomsrecovery.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-atomsrecovery.Tpo -c -o libgstqtmux_la-atomsrecovery.lo `test -f 'atomsrecovery.c' || echo '$(srcdir)/'`atomsrecovery.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstqtmux_la-atomsrecovery.Tpo $(DEPDIR)/libgstqtmux_la-atomsrecovery.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-atomsrecovery.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-atomsrecovery.Tpo -c -o libgstqtmux_la-atomsrecovery.lo `test -f 'atomsrecovery.c' || echo '$(srcdir)/'`atomsrecovery.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstqtmux_la-atomsrecovery.Tpo $(DEPDIR)/libgstqtmux_la-atomsrecovery.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='atomsrecovery.c' object='libgstqtmux_la-atomsrecovery.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-atomsrecovery.lo `test -f 'atomsrecovery.c' || echo '$(srcdir)/'`atomsrecovery.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-atomsrecovery.lo `test -f 'atomsrecovery.c' || echo '$(srcdir)/'`atomsrecovery.c
 
 libgstqtmux_la-descriptors.lo: descriptors.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-descriptors.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-descriptors.Tpo -c -o libgstqtmux_la-descriptors.lo `test -f 'descriptors.c' || echo '$(srcdir)/'`descriptors.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstqtmux_la-descriptors.Tpo $(DEPDIR)/libgstqtmux_la-descriptors.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-descriptors.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-descriptors.Tpo -c -o libgstqtmux_la-descriptors.lo `test -f 'descriptors.c' || echo '$(srcdir)/'`descriptors.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstqtmux_la-descriptors.Tpo $(DEPDIR)/libgstqtmux_la-descriptors.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='descriptors.c' object='libgstqtmux_la-descriptors.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-descriptors.lo `test -f 'descriptors.c' || echo '$(srcdir)/'`descriptors.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-descriptors.lo `test -f 'descriptors.c' || echo '$(srcdir)/'`descriptors.c
 
 libgstqtmux_la-properties.lo: properties.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-properties.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-properties.Tpo -c -o libgstqtmux_la-properties.lo `test -f 'properties.c' || echo '$(srcdir)/'`properties.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstqtmux_la-properties.Tpo $(DEPDIR)/libgstqtmux_la-properties.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-properties.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-properties.Tpo -c -o libgstqtmux_la-properties.lo `test -f 'properties.c' || echo '$(srcdir)/'`properties.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstqtmux_la-properties.Tpo $(DEPDIR)/libgstqtmux_la-properties.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='properties.c' object='libgstqtmux_la-properties.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-properties.lo `test -f 'properties.c' || echo '$(srcdir)/'`properties.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-properties.lo `test -f 'properties.c' || echo '$(srcdir)/'`properties.c
 
 libgstqtmux_la-gstqtmuxmap.lo: gstqtmuxmap.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-gstqtmuxmap.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-gstqtmuxmap.Tpo -c -o libgstqtmux_la-gstqtmuxmap.lo `test -f 'gstqtmuxmap.c' || echo '$(srcdir)/'`gstqtmuxmap.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstqtmux_la-gstqtmuxmap.Tpo $(DEPDIR)/libgstqtmux_la-gstqtmuxmap.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -MT libgstqtmux_la-gstqtmuxmap.lo -MD -MP -MF $(DEPDIR)/libgstqtmux_la-gstqtmuxmap.Tpo -c -o libgstqtmux_la-gstqtmuxmap.lo `test -f 'gstqtmuxmap.c' || echo '$(srcdir)/'`gstqtmuxmap.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstqtmux_la-gstqtmuxmap.Tpo $(DEPDIR)/libgstqtmux_la-gstqtmuxmap.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstqtmuxmap.c' object='libgstqtmux_la-gstqtmuxmap.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-gstqtmuxmap.lo `test -f 'gstqtmuxmap.c' || echo '$(srcdir)/'`gstqtmuxmap.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstqtmux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstqtmux_la_CFLAGS) $(CFLAGS) -c -o libgstqtmux_la-gstqtmuxmap.lo `test -f 'gstqtmuxmap.c' || echo '$(srcdir)/'`gstqtmuxmap.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

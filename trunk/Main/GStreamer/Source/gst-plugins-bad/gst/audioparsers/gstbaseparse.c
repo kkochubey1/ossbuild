@@ -190,6 +190,8 @@
 
 #include "gstbaseparse.h"
 
+#define MIN_FRAMES_TO_POST_BITRATE 10
+
 GST_DEBUG_CATEGORY_STATIC (gst_base_parse_debug);
 #define GST_CAT_DEFAULT gst_base_parse_debug
 
@@ -228,22 +230,23 @@ struct _GstBaseParsePrivate
 
   guint64 framecount;
   guint64 bytecount;
+  guint64 data_bytecount;
   guint64 acc_duration;
+
+  gboolean post_min_bitrate;
+  gboolean post_avg_bitrate;
+  gboolean post_max_bitrate;
+  guint min_bitrate;
+  guint avg_bitrate;
+  guint max_bitrate;
 
   GList *pending_events;
 
   GstBuffer *cache;
 };
 
-struct _GstBaseParseClassPrivate
-{
-  gpointer _padding;
-};
-
 static GstElementClass *parent_class = NULL;
 
-static void gst_base_parse_base_init (gpointer g_class);
-static void gst_base_parse_base_finalize (gpointer g_class);
 static void gst_base_parse_class_init (GstBaseParseClass * klass);
 static void gst_base_parse_init (GstBaseParse * parse,
     GstBaseParseClass * klass);
@@ -256,8 +259,8 @@ gst_base_parse_get_type (void)
   if (!base_parse_type) {
     static const GTypeInfo base_parse_info = {
       sizeof (GstBaseParseClass),
-      (GBaseInitFunc) gst_base_parse_base_init,
-      (GBaseFinalizeFunc) gst_base_parse_base_finalize,
+      (GBaseInitFunc) NULL,
+      (GBaseFinalizeFunc) NULL,
       (GClassInitFunc) gst_base_parse_class_init,
       NULL,
       NULL,
@@ -281,6 +284,7 @@ static gboolean gst_base_parse_sink_activate_pull (GstPad * pad,
     gboolean active);
 static gboolean gst_base_parse_handle_seek (GstBaseParse * parse,
     GstEvent * event);
+static void gst_base_parse_handle_tag (GstBaseParse * parse, GstEvent * event);
 
 static gboolean gst_base_parse_src_event (GstPad * pad, GstEvent * event);
 static gboolean gst_base_parse_sink_event (GstPad * pad, GstEvent * event);
@@ -310,30 +314,8 @@ gboolean gst_base_parse_convert (GstBaseParse * parse, GstFormat src_format,
 
 static void gst_base_parse_drain (GstBaseParse * parse);
 
-static void
-gst_base_parse_base_init (gpointer g_class)
-{
-  GstBaseParseClass *klass = GST_BASE_PARSE_CLASS (g_class);
-  GstBaseParseClassPrivate *priv;
-
-  GST_DEBUG_CATEGORY_INIT (gst_base_parse_debug, "baseparse", 0,
-      "baseparse element");
-
-  /* TODO: Remove this once GObject supports class private data */
-  priv = g_slice_new0 (GstBaseParseClassPrivate);
-  if (klass->priv)
-    memcpy (priv, klass->priv, sizeof (GstBaseParseClassPrivate));
-  klass->priv = priv;
-}
-
-static void
-gst_base_parse_base_finalize (gpointer g_class)
-{
-  GstBaseParseClass *klass = GST_BASE_PARSE_CLASS (g_class);
-
-  g_slice_free (GstBaseParseClassPrivate, klass->priv);
-  klass->priv = NULL;
-}
+static void gst_base_parse_post_bitrates (GstBaseParse * parse,
+    gboolean post_min, gboolean post_avg, gboolean post_max);
 
 static void
 gst_base_parse_finalize (GObject * object)
@@ -383,6 +365,9 @@ gst_base_parse_class_init (GstBaseParseClass * klass)
   klass->src_event = gst_base_parse_src_eventfunc;
   klass->is_seekable = gst_base_parse_is_seekable;
   klass->convert = gst_base_parse_convert;
+
+  GST_DEBUG_CATEGORY_INIT (gst_base_parse_debug, "baseparse", 0,
+      "baseparse element");
 }
 
 static void
@@ -545,10 +530,20 @@ gst_base_parse_sink_event (GstPad * pad, GstEvent * event)
       && GST_EVENT_TYPE (event) != GST_EVENT_NEWSEGMENT
       && GST_EVENT_TYPE (event) != GST_EVENT_FLUSH_START
       && GST_EVENT_TYPE (event) != GST_EVENT_FLUSH_STOP) {
+
+    if (GST_EVENT_TYPE (event) == GST_EVENT_TAG)
+      /* See if any bitrate tags were posted */
+      gst_base_parse_handle_tag (parse, event);
+
     parse->priv->pending_events =
         g_list_append (parse->priv->pending_events, event);
     ret = TRUE;
   } else {
+
+    if (GST_EVENT_TYPE (event) == GST_EVENT_EOS &&
+        parse->priv->framecount < MIN_FRAMES_TO_POST_BITRATE)
+      /* We've not posted bitrate tags yet - do so now */
+      gst_base_parse_post_bitrates (parse, TRUE, TRUE, TRUE);
 
     if (bclass->event)
       handled = bclass->event (parse, event);
@@ -870,6 +865,99 @@ gst_base_parse_update_duration (GstBaseParse * aacparse)
   }
 }
 
+static void
+gst_base_parse_post_bitrates (GstBaseParse * parse, gboolean post_min,
+    gboolean post_avg, gboolean post_max)
+{
+  GstTagList *taglist = gst_tag_list_new ();
+
+  if (post_min && parse->priv->post_min_bitrate)
+    gst_tag_list_add (taglist, GST_TAG_MERGE_REPLACE,
+        GST_TAG_MINIMUM_BITRATE, parse->priv->min_bitrate, NULL);
+
+  if (post_avg && parse->priv->post_min_bitrate)
+    gst_tag_list_add (taglist, GST_TAG_MERGE_REPLACE, GST_TAG_BITRATE,
+        parse->priv->avg_bitrate, NULL);
+
+  if (post_max && parse->priv->post_max_bitrate)
+    gst_tag_list_add (taglist, GST_TAG_MERGE_REPLACE,
+        GST_TAG_MAXIMUM_BITRATE, parse->priv->max_bitrate, NULL);
+
+  GST_DEBUG_OBJECT (parse, "Updated bitrates. Min: %u, Avg: %u, Max: %u",
+      parse->priv->min_bitrate, parse->priv->avg_bitrate,
+      parse->priv->max_bitrate);
+
+  gst_element_found_tags_for_pad (GST_ELEMENT (parse), parse->srcpad, taglist);
+}
+
+/**
+ * gst_base_parse_update_bitrates:
+ * @parse: #GstBaseParse.
+ * @buffer: Current frame as a #GstBuffer
+ *
+ * Keeps track of the minimum and maximum bitrates, and also maintains a
+ * running average bitrate of the stream so far.
+ */
+static void
+gst_base_parse_update_bitrates (GstBaseParse * parse, GstBuffer * buffer)
+{
+  /* Only update the tag on a 10 kbps delta */
+  static const gint update_threshold = 10000;
+
+  GstBaseParseClass *klass;
+  guint64 data_len, frame_dur;
+  gint overhead = 0, frame_bitrate, old_avg_bitrate = parse->priv->avg_bitrate;
+  gboolean update_min = FALSE, update_avg = FALSE, update_max = FALSE;
+
+  klass = GST_BASE_PARSE_GET_CLASS (parse);
+
+  if (klass->get_frame_overhead) {
+    overhead = klass->get_frame_overhead (parse, buffer);
+    if (overhead == -1)
+      return;
+  }
+
+  data_len = GST_BUFFER_SIZE (buffer) - overhead;
+  parse->priv->data_bytecount += data_len;
+
+  if (parse->priv->fps_num) {
+    /* Calculate duration of a frame from frame properties */
+    frame_dur = (GST_SECOND * parse->priv->fps_den) / parse->priv->fps_num;
+    parse->priv->avg_bitrate = (8 * parse->priv->data_bytecount * GST_SECOND) /
+        (parse->priv->framecount * frame_dur);
+
+  } else if (GST_BUFFER_DURATION_IS_VALID (buffer)) {
+    /* Calculate duration of a frame from buffer properties */
+    frame_dur = GST_BUFFER_DURATION (buffer);
+    parse->priv->avg_bitrate = (8 * parse->priv->data_bytecount * GST_SECOND) /
+        parse->priv->acc_duration;
+
+  } else {
+    /* No way to figure out frame duration (is this even possible?) */
+    return;
+  }
+
+  frame_bitrate = (8 * data_len * GST_SECOND) / frame_dur;
+
+  if (frame_bitrate < parse->priv->min_bitrate) {
+    parse->priv->min_bitrate = frame_bitrate;
+    update_min = TRUE;
+  }
+
+  if (frame_bitrate > parse->priv->max_bitrate) {
+    parse->priv->max_bitrate = frame_bitrate;
+    update_max = TRUE;
+  }
+
+  if (old_avg_bitrate / update_threshold !=
+      parse->priv->avg_bitrate / update_threshold)
+    update_avg = TRUE;
+
+  if (parse->priv->framecount >= MIN_FRAMES_TO_POST_BITRATE &&
+      (update_min || update_avg || update_max))
+    gst_base_parse_post_bitrates (parse, update_min, update_avg, update_max);
+}
+
 /**
  * gst_base_parse_handle_and_push_buffer:
  * @parse: #GstBaseParse.
@@ -945,6 +1033,7 @@ GstFlowReturn
 gst_base_parse_push_buffer (GstBaseParse * parse, GstBuffer * buffer)
 {
   GstFlowReturn ret = GST_FLOW_OK;
+  GstClockTime last_start = GST_CLOCK_TIME_NONE;
   GstClockTime last_stop = GST_CLOCK_TIME_NONE;
 
   GST_LOG_OBJECT (parse,
@@ -966,10 +1055,13 @@ gst_base_parse_push_buffer (GstBaseParse * parse, GstBuffer * buffer)
       (parse->priv->framecount % parse->priv->update_interval) == 0)
     gst_base_parse_update_duration (parse);
 
+  gst_base_parse_update_bitrates (parse, buffer);
+
   if (GST_BUFFER_TIMESTAMP_IS_VALID (buffer))
-    last_stop = GST_BUFFER_TIMESTAMP (buffer);
-  if (last_stop != GST_CLOCK_TIME_NONE && GST_BUFFER_DURATION_IS_VALID (buffer))
-    last_stop += GST_BUFFER_DURATION (buffer);
+    last_start = last_stop = GST_BUFFER_TIMESTAMP (buffer);
+  if (last_start != GST_CLOCK_TIME_NONE
+      && GST_BUFFER_DURATION_IS_VALID (buffer))
+    last_stop = last_start + GST_BUFFER_DURATION (buffer);
 
   /* should have caps by now */
   g_return_val_if_fail (GST_PAD_CAPS (parse->srcpad), GST_FLOW_ERROR);
@@ -980,13 +1072,13 @@ gst_base_parse_push_buffer (GstBaseParse * parse, GstBuffer * buffer)
    * actual frame data might lead subclass to different timestamps,
    * so override segment start from what is supplied there */
   if (G_UNLIKELY (parse->pending_segment && !parse->priv->passthrough &&
-          GST_CLOCK_TIME_IS_VALID (last_stop))) {
+          GST_CLOCK_TIME_IS_VALID (last_start))) {
     gst_event_unref (parse->pending_segment);
     /* stop time possibly lost this way,
      * but unlikely and not really supported */
     parse->pending_segment =
         gst_event_new_new_segment (FALSE, parse->segment.rate,
-        parse->segment.format, last_stop, -1, last_stop);
+        parse->segment.format, last_start, -1, last_start);
   }
 
   /* and should then also be linked downstream, so safe to send some events */
@@ -1493,6 +1585,12 @@ gst_base_parse_activate (GstBaseParse * parse, gboolean active)
     parse->priv->estimated_duration = -1;
     parse->priv->next_ts = 0;
     parse->priv->passthrough = FALSE;
+    parse->priv->post_min_bitrate = TRUE;
+    parse->priv->post_avg_bitrate = TRUE;
+    parse->priv->post_max_bitrate = TRUE;
+    parse->priv->min_bitrate = G_MAXUINT;
+    parse->priv->max_bitrate = 0;
+    parse->priv->max_bitrate = 0;
 
     if (parse->pending_segment)
       gst_event_unref (parse->pending_segment);
@@ -2109,6 +2207,29 @@ wrong_type:
   }
 }
 
+/**
+ * gst_base_parse_handle_tag:
+ * @parse: #GstBaseParse.
+ * @event: #GstEvent.
+ *
+ * Checks if bitrates are available from upstream tags so that we don't
+ * override them later
+ */
+static void
+gst_base_parse_handle_tag (GstBaseParse * parse, GstEvent * event)
+{
+  GstTagList *taglist = NULL;
+  guint tmp;
+
+  gst_event_parse_tag (event, &taglist);
+
+  if (gst_tag_list_get_uint (taglist, GST_TAG_MINIMUM_BITRATE, &tmp))
+    parse->priv->post_min_bitrate = FALSE;
+  if (gst_tag_list_get_uint (taglist, GST_TAG_BITRATE, &tmp))
+    parse->priv->post_avg_bitrate = FALSE;
+  if (gst_tag_list_get_uint (taglist, GST_TAG_MAXIMUM_BITRATE, &tmp))
+    parse->priv->post_max_bitrate = FALSE;
+}
 
 /**
  * gst_base_parse_sink_setcaps:

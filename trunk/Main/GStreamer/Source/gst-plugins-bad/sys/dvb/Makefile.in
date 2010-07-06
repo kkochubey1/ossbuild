@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -116,22 +115,39 @@ am_libgstdvb_la_OBJECTS = libgstdvb_la-gstdvb.lo \
 	libgstdvb_la-camconditionalaccess.lo \
 	libgstdvb_la-parsechannels.lo
 libgstdvb_la_OBJECTS = $(am_libgstdvb_la_OBJECTS)
-libgstdvb_la_LINK = $(LIBTOOL) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libgstdvb_la_CFLAGS) \
-	$(CFLAGS) $(libgstdvb_la_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstdvb_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(libgstdvb_la_CFLAGS) $(CFLAGS) \
+	$(libgstdvb_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstdvb_la_SOURCES)
 DIST_SOURCES = $(libgstdvb_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -146,7 +162,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -204,7 +220,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -215,11 +230,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -266,6 +279,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -288,6 +303,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -329,7 +345,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -343,6 +358,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -388,7 +404,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -417,13 +432,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -498,7 +515,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -522,7 +538,7 @@ libgstdvb_la_SOURCES = \
 	camconditionalaccess.c \
 	parsechannels.c
 
-libgstdvb_la_CFLAGS = $(GST_CFLAGS)
+libgstdvb_la_CFLAGS = $(GST_PLUGINS_BAD_CFLAGS) $(GST_CFLAGS)
 libgstdvb_la_LIBADD = $(GST_BASE_LIBS) $(GST_PLUGINS_BASE_LIBS)
 libgstdvb_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 libgstdvb_la_LIBTOOLFLAGS = --tag=disable-static
@@ -607,7 +623,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstdvb.la: $(libgstdvb_la_OBJECTS) $(libgstdvb_la_DEPENDENCIES) 
-	$(libgstdvb_la_LINK) -rpath $(plugindir) $(libgstdvb_la_OBJECTS) $(libgstdvb_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstdvb_la_LINK) -rpath $(plugindir) $(libgstdvb_la_OBJECTS) $(libgstdvb_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -631,123 +647,140 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdvb_la-parsechannels.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstdvb_la-gstdvb.lo: gstdvb.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-gstdvb.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-gstdvb.Tpo -c -o libgstdvb_la-gstdvb.lo `test -f 'gstdvb.c' || echo '$(srcdir)/'`gstdvb.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-gstdvb.Tpo $(DEPDIR)/libgstdvb_la-gstdvb.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-gstdvb.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-gstdvb.Tpo -c -o libgstdvb_la-gstdvb.lo `test -f 'gstdvb.c' || echo '$(srcdir)/'`gstdvb.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-gstdvb.Tpo $(DEPDIR)/libgstdvb_la-gstdvb.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstdvb.c' object='libgstdvb_la-gstdvb.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-gstdvb.lo `test -f 'gstdvb.c' || echo '$(srcdir)/'`gstdvb.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-gstdvb.lo `test -f 'gstdvb.c' || echo '$(srcdir)/'`gstdvb.c
 
 libgstdvb_la-gstdvbsrc.lo: gstdvbsrc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-gstdvbsrc.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-gstdvbsrc.Tpo -c -o libgstdvb_la-gstdvbsrc.lo `test -f 'gstdvbsrc.c' || echo '$(srcdir)/'`gstdvbsrc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-gstdvbsrc.Tpo $(DEPDIR)/libgstdvb_la-gstdvbsrc.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-gstdvbsrc.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-gstdvbsrc.Tpo -c -o libgstdvb_la-gstdvbsrc.lo `test -f 'gstdvbsrc.c' || echo '$(srcdir)/'`gstdvbsrc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-gstdvbsrc.Tpo $(DEPDIR)/libgstdvb_la-gstdvbsrc.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstdvbsrc.c' object='libgstdvb_la-gstdvbsrc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-gstdvbsrc.lo `test -f 'gstdvbsrc.c' || echo '$(srcdir)/'`gstdvbsrc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-gstdvbsrc.lo `test -f 'gstdvbsrc.c' || echo '$(srcdir)/'`gstdvbsrc.c
 
 libgstdvb_la-dvbbasebin.lo: dvbbasebin.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-dvbbasebin.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-dvbbasebin.Tpo -c -o libgstdvb_la-dvbbasebin.lo `test -f 'dvbbasebin.c' || echo '$(srcdir)/'`dvbbasebin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-dvbbasebin.Tpo $(DEPDIR)/libgstdvb_la-dvbbasebin.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-dvbbasebin.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-dvbbasebin.Tpo -c -o libgstdvb_la-dvbbasebin.lo `test -f 'dvbbasebin.c' || echo '$(srcdir)/'`dvbbasebin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-dvbbasebin.Tpo $(DEPDIR)/libgstdvb_la-dvbbasebin.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dvbbasebin.c' object='libgstdvb_la-dvbbasebin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-dvbbasebin.lo `test -f 'dvbbasebin.c' || echo '$(srcdir)/'`dvbbasebin.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-dvbbasebin.lo `test -f 'dvbbasebin.c' || echo '$(srcdir)/'`dvbbasebin.c
 
 libgstdvb_la-cam.lo: cam.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-cam.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-cam.Tpo -c -o libgstdvb_la-cam.lo `test -f 'cam.c' || echo '$(srcdir)/'`cam.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-cam.Tpo $(DEPDIR)/libgstdvb_la-cam.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-cam.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-cam.Tpo -c -o libgstdvb_la-cam.lo `test -f 'cam.c' || echo '$(srcdir)/'`cam.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-cam.Tpo $(DEPDIR)/libgstdvb_la-cam.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='cam.c' object='libgstdvb_la-cam.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-cam.lo `test -f 'cam.c' || echo '$(srcdir)/'`cam.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-cam.lo `test -f 'cam.c' || echo '$(srcdir)/'`cam.c
 
 libgstdvb_la-camdevice.lo: camdevice.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camdevice.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camdevice.Tpo -c -o libgstdvb_la-camdevice.lo `test -f 'camdevice.c' || echo '$(srcdir)/'`camdevice.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-camdevice.Tpo $(DEPDIR)/libgstdvb_la-camdevice.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camdevice.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camdevice.Tpo -c -o libgstdvb_la-camdevice.lo `test -f 'camdevice.c' || echo '$(srcdir)/'`camdevice.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-camdevice.Tpo $(DEPDIR)/libgstdvb_la-camdevice.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camdevice.c' object='libgstdvb_la-camdevice.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camdevice.lo `test -f 'camdevice.c' || echo '$(srcdir)/'`camdevice.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camdevice.lo `test -f 'camdevice.c' || echo '$(srcdir)/'`camdevice.c
 
 libgstdvb_la-camswclient.lo: camswclient.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camswclient.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camswclient.Tpo -c -o libgstdvb_la-camswclient.lo `test -f 'camswclient.c' || echo '$(srcdir)/'`camswclient.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-camswclient.Tpo $(DEPDIR)/libgstdvb_la-camswclient.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camswclient.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camswclient.Tpo -c -o libgstdvb_la-camswclient.lo `test -f 'camswclient.c' || echo '$(srcdir)/'`camswclient.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-camswclient.Tpo $(DEPDIR)/libgstdvb_la-camswclient.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camswclient.c' object='libgstdvb_la-camswclient.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camswclient.lo `test -f 'camswclient.c' || echo '$(srcdir)/'`camswclient.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camswclient.lo `test -f 'camswclient.c' || echo '$(srcdir)/'`camswclient.c
 
 libgstdvb_la-camutils.lo: camutils.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camutils.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camutils.Tpo -c -o libgstdvb_la-camutils.lo `test -f 'camutils.c' || echo '$(srcdir)/'`camutils.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-camutils.Tpo $(DEPDIR)/libgstdvb_la-camutils.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camutils.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camutils.Tpo -c -o libgstdvb_la-camutils.lo `test -f 'camutils.c' || echo '$(srcdir)/'`camutils.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-camutils.Tpo $(DEPDIR)/libgstdvb_la-camutils.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camutils.c' object='libgstdvb_la-camutils.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camutils.lo `test -f 'camutils.c' || echo '$(srcdir)/'`camutils.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camutils.lo `test -f 'camutils.c' || echo '$(srcdir)/'`camutils.c
 
 libgstdvb_la-camtransport.lo: camtransport.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camtransport.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camtransport.Tpo -c -o libgstdvb_la-camtransport.lo `test -f 'camtransport.c' || echo '$(srcdir)/'`camtransport.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-camtransport.Tpo $(DEPDIR)/libgstdvb_la-camtransport.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camtransport.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camtransport.Tpo -c -o libgstdvb_la-camtransport.lo `test -f 'camtransport.c' || echo '$(srcdir)/'`camtransport.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-camtransport.Tpo $(DEPDIR)/libgstdvb_la-camtransport.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camtransport.c' object='libgstdvb_la-camtransport.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camtransport.lo `test -f 'camtransport.c' || echo '$(srcdir)/'`camtransport.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camtransport.lo `test -f 'camtransport.c' || echo '$(srcdir)/'`camtransport.c
 
 libgstdvb_la-camsession.lo: camsession.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camsession.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camsession.Tpo -c -o libgstdvb_la-camsession.lo `test -f 'camsession.c' || echo '$(srcdir)/'`camsession.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-camsession.Tpo $(DEPDIR)/libgstdvb_la-camsession.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camsession.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camsession.Tpo -c -o libgstdvb_la-camsession.lo `test -f 'camsession.c' || echo '$(srcdir)/'`camsession.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-camsession.Tpo $(DEPDIR)/libgstdvb_la-camsession.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camsession.c' object='libgstdvb_la-camsession.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camsession.lo `test -f 'camsession.c' || echo '$(srcdir)/'`camsession.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camsession.lo `test -f 'camsession.c' || echo '$(srcdir)/'`camsession.c
 
 libgstdvb_la-camapplication.lo: camapplication.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camapplication.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camapplication.Tpo -c -o libgstdvb_la-camapplication.lo `test -f 'camapplication.c' || echo '$(srcdir)/'`camapplication.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-camapplication.Tpo $(DEPDIR)/libgstdvb_la-camapplication.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camapplication.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camapplication.Tpo -c -o libgstdvb_la-camapplication.lo `test -f 'camapplication.c' || echo '$(srcdir)/'`camapplication.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-camapplication.Tpo $(DEPDIR)/libgstdvb_la-camapplication.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camapplication.c' object='libgstdvb_la-camapplication.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camapplication.lo `test -f 'camapplication.c' || echo '$(srcdir)/'`camapplication.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camapplication.lo `test -f 'camapplication.c' || echo '$(srcdir)/'`camapplication.c
 
 libgstdvb_la-camresourcemanager.lo: camresourcemanager.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camresourcemanager.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camresourcemanager.Tpo -c -o libgstdvb_la-camresourcemanager.lo `test -f 'camresourcemanager.c' || echo '$(srcdir)/'`camresourcemanager.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-camresourcemanager.Tpo $(DEPDIR)/libgstdvb_la-camresourcemanager.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camresourcemanager.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camresourcemanager.Tpo -c -o libgstdvb_la-camresourcemanager.lo `test -f 'camresourcemanager.c' || echo '$(srcdir)/'`camresourcemanager.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-camresourcemanager.Tpo $(DEPDIR)/libgstdvb_la-camresourcemanager.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camresourcemanager.c' object='libgstdvb_la-camresourcemanager.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camresourcemanager.lo `test -f 'camresourcemanager.c' || echo '$(srcdir)/'`camresourcemanager.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camresourcemanager.lo `test -f 'camresourcemanager.c' || echo '$(srcdir)/'`camresourcemanager.c
 
 libgstdvb_la-camapplicationinfo.lo: camapplicationinfo.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camapplicationinfo.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camapplicationinfo.Tpo -c -o libgstdvb_la-camapplicationinfo.lo `test -f 'camapplicationinfo.c' || echo '$(srcdir)/'`camapplicationinfo.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-camapplicationinfo.Tpo $(DEPDIR)/libgstdvb_la-camapplicationinfo.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camapplicationinfo.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camapplicationinfo.Tpo -c -o libgstdvb_la-camapplicationinfo.lo `test -f 'camapplicationinfo.c' || echo '$(srcdir)/'`camapplicationinfo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-camapplicationinfo.Tpo $(DEPDIR)/libgstdvb_la-camapplicationinfo.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camapplicationinfo.c' object='libgstdvb_la-camapplicationinfo.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camapplicationinfo.lo `test -f 'camapplicationinfo.c' || echo '$(srcdir)/'`camapplicationinfo.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camapplicationinfo.lo `test -f 'camapplicationinfo.c' || echo '$(srcdir)/'`camapplicationinfo.c
 
 libgstdvb_la-camconditionalaccess.lo: camconditionalaccess.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camconditionalaccess.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camconditionalaccess.Tpo -c -o libgstdvb_la-camconditionalaccess.lo `test -f 'camconditionalaccess.c' || echo '$(srcdir)/'`camconditionalaccess.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-camconditionalaccess.Tpo $(DEPDIR)/libgstdvb_la-camconditionalaccess.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-camconditionalaccess.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-camconditionalaccess.Tpo -c -o libgstdvb_la-camconditionalaccess.lo `test -f 'camconditionalaccess.c' || echo '$(srcdir)/'`camconditionalaccess.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-camconditionalaccess.Tpo $(DEPDIR)/libgstdvb_la-camconditionalaccess.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camconditionalaccess.c' object='libgstdvb_la-camconditionalaccess.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camconditionalaccess.lo `test -f 'camconditionalaccess.c' || echo '$(srcdir)/'`camconditionalaccess.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-camconditionalaccess.lo `test -f 'camconditionalaccess.c' || echo '$(srcdir)/'`camconditionalaccess.c
 
 libgstdvb_la-parsechannels.lo: parsechannels.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-parsechannels.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-parsechannels.Tpo -c -o libgstdvb_la-parsechannels.lo `test -f 'parsechannels.c' || echo '$(srcdir)/'`parsechannels.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstdvb_la-parsechannels.Tpo $(DEPDIR)/libgstdvb_la-parsechannels.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -MT libgstdvb_la-parsechannels.lo -MD -MP -MF $(DEPDIR)/libgstdvb_la-parsechannels.Tpo -c -o libgstdvb_la-parsechannels.lo `test -f 'parsechannels.c' || echo '$(srcdir)/'`parsechannels.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdvb_la-parsechannels.Tpo $(DEPDIR)/libgstdvb_la-parsechannels.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parsechannels.c' object='libgstdvb_la-parsechannels.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-parsechannels.lo `test -f 'parsechannels.c' || echo '$(srcdir)/'`parsechannels.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdvb_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdvb_la_CFLAGS) $(CFLAGS) -c -o libgstdvb_la-parsechannels.lo `test -f 'parsechannels.c' || echo '$(srcdir)/'`parsechannels.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

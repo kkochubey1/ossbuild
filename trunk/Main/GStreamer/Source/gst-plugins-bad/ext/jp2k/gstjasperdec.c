@@ -37,12 +37,6 @@
 GST_DEBUG_CATEGORY_STATIC (gst_jasper_dec_debug);
 #define GST_CAT_DEFAULT gst_jasper_dec_debug
 
-static const GstElementDetails plugin_details =
-GST_ELEMENT_DETAILS ("Jasper JPEG2000 image decoder",
-    "Codec/Decoder/Image",
-    "Decodes JPEG2000 encoded images using jasper",
-    "Mark Nauwelaerts <mnauw@users.sf.net>");
-
 enum
 {
   ARG_0,
@@ -73,11 +67,6 @@ static GstStaticPadTemplate gst_jasper_dec_src_template =
         GST_VIDEO_CAPS_BGRx "; " GST_VIDEO_CAPS_xBGR "; "
         GST_VIDEO_CAPS_YUV ("{ I420, YV12, YUY2, UYVY, Y41B, Y42B }"))
     );
-
-static void gst_jasper_dec_base_init (gpointer g_class);
-static void gst_jasper_dec_class_init (GstJasperDecClass * klass);
-static void gst_jasper_dec_init (GstJasperDec * filter,
-    GstJasperDecClass * klass);
 
 static void gst_jasper_dec_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
@@ -115,7 +104,10 @@ gst_jasper_dec_base_init (gpointer g_class)
       gst_static_pad_template_get (&gst_jasper_dec_src_template));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_jasper_dec_sink_template));
-  gst_element_class_set_details (element_class, &plugin_details);
+  gst_element_class_set_details_simple (element_class,
+      "Jasper JPEG2000 image decoder", "Codec/Decoder/Image",
+      "Decodes JPEG2000 encoded images using jasper",
+      "Mark Nauwelaerts <mnauw@users.sf.net>");
 }
 
 /* initialize the plugin's class */
@@ -226,7 +218,7 @@ gst_jasper_dec_sink_setcaps (GstPad * pad, GstCaps * caps)
         break;
     }
 
-    dec->fmt = jas_image_strtofmt ("jpc");
+    dec->fmt = jas_image_strtofmt ((char *) "jpc");
     /* strip the j2c box stuff it is embedded in */
     if (!strcmp (mimetype, "image/x-jpc"))
       dec->strip = 0;
@@ -239,7 +231,7 @@ gst_jasper_dec_sink_setcaps (GstPad * pad, GstCaps * caps)
       gst_buffer_ref (dec->codec_data);
     }
   } else if (!strcmp (mimetype, "image/jp2"))
-    dec->fmt = jas_image_strtofmt ("jp2");
+    dec->fmt = jas_image_strtofmt ((char *) "jp2");
 
   if (dec->fmt < 0)
     goto refuse_caps;
@@ -465,7 +457,7 @@ gst_jasper_dec_get_picture (GstJasperDec * dec, guint8 * data,
   if (!(stream = jas_stream_memopen ((gpointer) data, size)))
     goto fail_stream;
 
-  if (!(image = jas_image_decode (stream, dec->fmt, "")))
+  if (!(image = jas_image_decode (stream, dec->fmt, (char *) "")))
     goto fail_decode;
 
   if (!gst_jasper_dec_negotiate (dec, image))

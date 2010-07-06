@@ -39,7 +39,6 @@ static gboolean gst_cdxa_parse_sink_activate (GstPad * sinkpad);
 static void gst_cdxa_parse_loop (GstPad * sinkpad);
 static gboolean gst_cdxa_parse_sink_activate_pull (GstPad * sinkpad,
     gboolean active);
-static gboolean gst_cdxa_parse_sink_activate (GstPad * sinkpad);
 static GstStateChangeReturn gst_cdxa_parse_change_state (GstElement * element,
     GstStateChange transition);
 static gboolean gst_cdxa_parse_src_event (GstPad * srcpad, GstEvent * event);
@@ -65,13 +64,11 @@ static void
 gst_cdxa_parse_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
-  static const GstElementDetails gst_cdxa_parse_details =
-      GST_ELEMENT_DETAILS ("(S)VCD parser",
+
+  gst_element_class_set_details_simple (element_class, "(S)VCD parser",
       "Codec/Parser",
       "Parse a .dat file from (S)VCD into raw MPEG-1",
       "Wim Taymans <wim.taymans@tvd.be>");
-
-  gst_element_class_set_details (element_class, &gst_cdxa_parse_details);
 
   /* register src pads */
   gst_element_class_add_pad_template (element_class,
@@ -423,7 +420,7 @@ gst_cdxa_parse_do_seek (GstCDXAParse * cdxa, GstEvent * event)
     return FALSE;
   }
 
-  if (format != GST_SEEK_TYPE_SET) {
+  if (start_type != GST_SEEK_TYPE_SET) {
     GST_DEBUG_OBJECT (cdxa, "Can only handle seek from start (SEEK_TYPE_SET)");
     return FALSE;
   }

@@ -100,10 +100,10 @@ else
 DTS_DIR=
 endif
 
-if USE_DVDNAV
- DVDNAV_DIR = resindvd
+if USE_RESINDVD
+ RESINDVD_DIR = resindvd
 else
- DVDNAV_DIR =
+ RESINDVD_DIR =
 endif
 
 if USE_FAAC
@@ -276,12 +276,6 @@ TIMIDITY_DIR=
 endif
 endif
 
-# if USE_POLYP
-# POLYP_DIR=polyp
-# else
-POLYP_DIR=
-# endif
-
 if USE_SCHRO
 SCHRO_DIR=schroedinger
 else
@@ -348,6 +342,12 @@ endif
 TARKIN_DIR=
 # endif
 
+if USE_VP8
+VP8_DIR=vp8
+else
+VP8_DIR=
+endif
+
 # if USE_XINE
 # XINE_DIR=xine
 # else
@@ -384,7 +384,7 @@ SUBDIRS=\
 	$(DIRECTFB_DIR) \
 	$(DIVX_DIR) \
 	$(DTS_DIR) \
-	$(DVDNAV_DIR) \
+	$(RESINDVD_DIR) \
 	$(FAAC_DIR) \
 	$(FAAD_DIR) \
 	$(FLITE_DIR) \
@@ -411,7 +411,6 @@ SUBDIRS=\
 	$(NEON_DIR) \
 	$(OFA_DIR) \
 	$(RSVG_DIR) \
-	$(POLYP_DIR) \
 	$(SCHRO_DIR) \
 	$(SDL_DIR) \
 	$(SHOUT_DIR) \
@@ -424,6 +423,7 @@ SUBDIRS=\
 	$(TARKIN_DIR) \
 	$(THEORA_DIR) \
 	$(TIMIDITY_DIR) \
+	$(VP8_DIR) \
 	$(XINE_DIR) \
 	$(XVID_DIR) \
 	$(ZBAR_DIR)
@@ -474,5 +474,8 @@ DIST_SUBDIRS = \
 	swfdec \
 	theora \
 	timidity \
+	vp8 \
 	xvid \
 	zbar
+
+include $(top_srcdir)/common/parallel-subdirs.mak

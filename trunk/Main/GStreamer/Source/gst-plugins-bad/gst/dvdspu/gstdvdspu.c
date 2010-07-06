@@ -116,12 +116,6 @@ static void gst_dvd_spu_handle_dvd_event (GstDVDSpu * dvdspu, GstEvent * event);
 static void
 gst_dvd_spu_base_init (gpointer gclass)
 {
-  static GstElementDetails element_details =
-      GST_ELEMENT_DETAILS ("GStreamer Sub-picture Overlay",
-      "Mixer/Video/Overlay/SubPicture/DVD/Bluray",
-      "Parses Sub-Picture command streams and renders the SPU overlay "
-      "onto the video as it passes through",
-      "Jan Schmidt <thaytan@noraisin.net>");
   GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
 
   gst_element_class_add_pad_template (element_class,
@@ -130,7 +124,11 @@ gst_dvd_spu_base_init (gpointer gclass)
       gst_static_pad_template_get (&video_sink_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&subpic_sink_factory));
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "Sub-picture Overlay",
+      "Mixer/Video/Overlay/SubPicture/DVD/Bluray",
+      "Parses Sub-Picture command streams and renders the SPU overlay "
+      "onto the video as it passes through",
+      "Jan Schmidt <thaytan@noraisin.net>");
 
   element_class->change_state = gst_dvd_spu_change_state;
 }
@@ -1171,7 +1169,7 @@ gst_dvd_spu_change_state (GstElement * element, GstStateChange transition)
   return ret;
 }
 
-gboolean
+static gboolean
 gst_dvd_spu_plugin_init (GstPlugin * plugin)
 {
   GST_DEBUG_CATEGORY_INIT (dvdspu_debug, "gstspu",

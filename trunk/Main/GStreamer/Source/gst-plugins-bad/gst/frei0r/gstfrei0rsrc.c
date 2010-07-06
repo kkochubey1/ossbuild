@@ -26,6 +26,8 @@
 #include "gstfrei0r.h"
 #include "gstfrei0rsrc.h"
 
+#include <gst/controller/gstcontroller.h>
+
 GST_DEBUG_CATEGORY_EXTERN (frei0r_debug);
 #define GST_CAT_DEFAULT frei0r_debug
 
@@ -66,6 +68,7 @@ gst_frei0r_src_create (GstPushSrc * src, GstBuffer ** buf)
   guint size, newsize;
   GstFlowReturn ret = GST_FLOW_OK;
   GstBuffer *outbuf = NULL;
+  GstClockTime timestamp;
   gdouble time;
 
   *buf = NULL;
@@ -101,7 +104,7 @@ gst_frei0r_src_create (GstPushSrc * src, GstBuffer ** buf)
     gst_buffer_set_caps (outbuf, GST_PAD_CAPS (GST_BASE_SRC_PAD (src)));
   }
 
-  GST_BUFFER_TIMESTAMP (outbuf) =
+  GST_BUFFER_TIMESTAMP (outbuf) = timestamp =
       gst_util_uint64_scale (self->n_frames, GST_SECOND * self->fps_d,
       self->fps_n);
   GST_BUFFER_OFFSET (outbuf) = self->n_frames;
@@ -111,14 +114,26 @@ gst_frei0r_src_create (GstPushSrc * src, GstBuffer ** buf)
       gst_util_uint64_scale (self->n_frames, GST_SECOND * self->fps_d,
       self->fps_n) - GST_BUFFER_TIMESTAMP (outbuf);
 
+  timestamp =
+      gst_segment_to_stream_time (&GST_BASE_SRC_CAST (self)->segment,
+      GST_FORMAT_TIME, timestamp);
+
+  GST_DEBUG_OBJECT (self, "sync to %" GST_TIME_FORMAT,
+      GST_TIME_ARGS (timestamp));
+
+  if (GST_CLOCK_TIME_IS_VALID (timestamp))
+    gst_object_sync_values (G_OBJECT (self), timestamp);
+
   time = ((gdouble) GST_BUFFER_TIMESTAMP (outbuf)) / GST_SECOND;
 
+  GST_OBJECT_LOCK (self);
   if (klass->ftable->update2)
     klass->ftable->update2 (self->f0r_instance, time, NULL, NULL, NULL,
         (guint32 *) GST_BUFFER_DATA (outbuf));
   else
     klass->ftable->update (self->f0r_instance, time, NULL,
         (guint32 *) GST_BUFFER_DATA (outbuf));
+  GST_OBJECT_UNLOCK (self);
 
   *buf = outbuf;
 
@@ -291,10 +306,12 @@ gst_frei0r_src_get_property (GObject * object, guint prop_id, GValue * value,
   GstFrei0rSrc *self = GST_FREI0R_SRC (object);
   GstFrei0rSrcClass *klass = GST_FREI0R_SRC_GET_CLASS (object);
 
+  GST_OBJECT_LOCK (self);
   if (!gst_frei0r_get_property (self->f0r_instance, klass->ftable,
           klass->properties, klass->n_properties, self->property_cache, prop_id,
           value))
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+  GST_OBJECT_UNLOCK (self);
 }
 
 static void
@@ -304,10 +321,12 @@ gst_frei0r_src_set_property (GObject * object, guint prop_id,
   GstFrei0rSrc *self = GST_FREI0R_SRC (object);
   GstFrei0rSrcClass *klass = GST_FREI0R_SRC_GET_CLASS (object);
 
+  GST_OBJECT_LOCK (self);
   if (!gst_frei0r_set_property (self->f0r_instance, klass->ftable,
           klass->properties, klass->n_properties, self->property_cache, prop_id,
           value))
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+  GST_OBJECT_UNLOCK (self);
 }
 
 static void

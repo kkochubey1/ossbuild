@@ -178,6 +178,7 @@
 #define ST_BD_AUDIO_AC3_TRUE_HD         0x83
 #define ST_BD_AUDIO_AC3_PLUS            0x84
 #define ST_BD_AUDIO_DTS_HD              0x85
+#define ST_BD_AUDIO_DTS_HD_MASTER_AUDIO 0x86
 #define ST_BD_AUDIO_EAC3                0x87
 #define ST_BD_PGS_SUBPICTURE            0x90
 #define ST_BD_IGS                       0x91
@@ -225,7 +226,7 @@
     target |= ((guint64) (*data++ & 0xFE)) >> 1;
 
 /* some extra GstFlowReturn values used internally */
-#define GST_FLOW_NEED_MORE_DATA   -100
-#define GST_FLOW_LOST_SYNC        -101
+#define GST_FLOW_NEED_MORE_DATA   GST_FLOW_CUSTOM_SUCCESS
+#define GST_FLOW_LOST_SYNC        GST_FLOW_CUSTOM_SUCCESS_1
 
 #endif /* __GST_MPEG_DEFS_H__ */

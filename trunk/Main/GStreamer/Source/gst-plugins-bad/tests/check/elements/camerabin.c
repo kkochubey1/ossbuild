@@ -25,13 +25,18 @@
 #endif
 
 #include <unistd.h>
+#include <glib.h>
 #include <gst/gst.h>
 #include <gst/check/gstcheck.h>
 #include <gst/interfaces/photography.h>
 
 #define SINGLE_IMAGE_FILENAME "image.cap"
+#define SINGLE_IMAGE_WITH_FLAGS_FILENAME "image_with_flags.cap"
 #define BURST_IMAGE_FILENAME "burst_image.cap"
 #define VIDEO_FILENAME "video.cap"
+#define VIDEO_WITH_FLAGS_FILENAME "video_with_flags.cap"
+#define VIDEO_PAUSE_FILENAME "video_pause.cap"
+#define VIDEO_NOAUDIO_FILENAME "video_noaudio.cap"
 #define CYCLE_IMAGE_FILENAME "cycle_image.cap"
 #define CYCLE_VIDEO_FILENAME "cycle_video.cap"
 #define MAX_BURST_IMAGES 10
@@ -40,6 +45,7 @@
 static GstElement *camera;
 static GMainLoop *main_loop;
 static guint cycle_count = 0;
+static gboolean received_preview_msg = FALSE;
 
 /* helper function for filenames */
 static const gchar *
@@ -74,6 +80,9 @@ static gboolean
 handle_image_captured_cb (gpointer data)
 {
   GMainLoop *loop = (GMainLoop *) data;
+
+  /* unblock viewfinder */
+  g_object_set (camera, "block-after-capture", FALSE, NULL);
 
   GST_DEBUG ("handle_image_captured_cb, cycle: %d", cycle_count);
   if (cycle_count == 0) {
@@ -116,11 +125,29 @@ capture_done (GstElement * elem, const gchar * filename, gpointer user_data)
 
 /* configuration */
 
+static gboolean
+set_and_check_camerabin_element (GstElement * camera, const char *property,
+    GstElement * element)
+{
+  GstElement *element_check;
+  gboolean ret = FALSE;
+
+  if (element) {
+    g_object_set (camera, property, element, NULL);
+    g_object_get (camera, property, &element_check, NULL);
+    if (element_check == element)
+      ret = TRUE;
+    if (element_check)
+      g_object_unref (element_check);
+  }
+  return ret;
+}
+
 static void
 setup_camerabin_elements (GstElement * camera)
 {
   GstElement *vfsink, *audiosrc, *videosrc, *audioenc, *videoenc, *imageenc,
-      *videomux;
+      *videomux, *viewfinder_filter, *imagepp, *videopp;
   GstCaps *audiocaps, *videocaps;
 
   /* Use fakesink for view finder */
@@ -129,7 +156,8 @@ setup_camerabin_elements (GstElement * camera)
   audiosrc = gst_element_factory_make ("audiotestsrc", NULL);
   g_object_set (audiosrc, "is-live", TRUE, NULL);
   videosrc = gst_element_factory_make ("videotestsrc", NULL);
-  g_object_set (videosrc, "is-live", TRUE, NULL);
+  /* Set pattern to white (3) to avoid timeouts */
+  g_object_set (videosrc, "is-live", TRUE, "pattern", 3, NULL);
   audioenc = gst_element_factory_make ("capsfilter", NULL);
   audiocaps = gst_caps_from_string ("audio/x-raw-int");
   g_object_set (audioenc, "caps", audiocaps, NULL);
@@ -140,12 +168,24 @@ setup_camerabin_elements (GstElement * camera)
   gst_caps_unref (videocaps);
   videomux = gst_element_factory_make ("avimux", NULL);
   imageenc = gst_element_factory_make ("jpegenc", NULL);
+  viewfinder_filter = gst_element_factory_make ("identity", NULL);
+  imagepp = gst_element_factory_make ("identity", NULL);
+  videopp = gst_element_factory_make ("identity", NULL);
 
-  if (vfsink && audiosrc && videosrc && audioenc && videoenc && videomux
-      && imageenc) {
-    g_object_set (camera, "viewfinder-sink", vfsink, "audio-source", audiosrc,
-        "video-source", videosrc, "audio-encoder", audioenc, "video-encoder",
-        videoenc, "image-encoder", imageenc, "video-muxer", videomux, NULL);
+  if (set_and_check_camerabin_element (camera, "viewfinder-sink", vfsink)
+      && set_and_check_camerabin_element (camera, "audio-source", audiosrc)
+      && set_and_check_camerabin_element (camera, "video-source", videosrc)
+      && set_and_check_camerabin_element (camera, "audio-encoder", audioenc)
+      && set_and_check_camerabin_element (camera, "video-encoder", videoenc)
+      && set_and_check_camerabin_element (camera, "image-encoder", imageenc)
+      && set_and_check_camerabin_element (camera, "video-muxer", videomux)
+      && set_and_check_camerabin_element (camera, "viewfinder-filter",
+          viewfinder_filter)
+      && set_and_check_camerabin_element (camera, "image-post-processing",
+          imagepp)
+      && set_and_check_camerabin_element (camera, "video-post-processing",
+          videopp)) {
+    GST_INFO ("element properties set and checked");
   } else {
     GST_WARNING ("error setting up test plugins");
   }
@@ -201,6 +241,23 @@ capture_bus_cb (GstBus * bus, GstMessage * message, gpointer data)
   return TRUE;
 }
 
+static GstBusSyncReply
+bus_sync_callback (GstBus * bus, GstMessage * message, gpointer data)
+{
+  const GstStructure *st;
+  st = gst_message_get_structure (message);
+  if (st) {
+    if (gst_structure_has_name (st, "preview-image")) {
+      GST_DEBUG ("get preview-image message");
+      received_preview_msg = TRUE;
+    }
+  }
+
+
+  return GST_BUS_PASS;
+
+}
+
 static void
 setup (void)
 {
@@ -221,6 +278,7 @@ setup (void)
 
   bus = gst_pipeline_get_bus (GST_PIPELINE (camera));
   gst_bus_add_watch (bus, (GstBusFunc) capture_bus_cb, main_loop);
+  gst_bus_set_sync_handler (bus, bus_sync_callback, main_loop);
   gst_object_unref (bus);
 
   filter_caps = gst_caps_from_string ("video/x-raw-yuv,format=(fourcc)I420");
@@ -262,15 +320,24 @@ teardown (void)
 static void
 test_photography_settings (GstElement * cam)
 {
-#ifdef HAVE_GST_PHOTO_IFACE_H
   GTypeClass *tclass;
+  gfloat ev_comp, orig_ev_comp;
+  guint iso_speed = 100, orig_iso_speed;
+  GstFlashMode flash, orig_flash;
+  GstWhiteBalanceMode wb, orig_wb;
+  GstColourToneMode ct, orig_ct;
+  GstSceneMode sm, orig_sm;
+  GstFlickerReductionMode flm, orig_flm;
+  GstFocusMode fm, orig_fm;
+  gfloat zoom, orig_zoom;
 
   if (!GST_IS_PHOTOGRAPHY (cam)) {
-    GST_WARNING ("omitting photography test");
+    GST_WARNING
+        ("omitting photography settings test, "
+        "photography interface not implemented");
     return;
   }
 
-  gfloat ev_comp, orig_ev_comp;
   for (ev_comp = -3.0; ev_comp <= 3.0; ev_comp += 0.5) {
     orig_ev_comp = ev_comp;
     gst_photography_set_ev_compensation (GST_PHOTOGRAPHY (cam), ev_comp);
@@ -282,7 +349,6 @@ test_photography_settings (GstElement * cam)
   }
 
   /* FIXME: what are the actual iso values? */
-  guint iso_speed = 100, orig_iso_speed;
   for (iso_speed = 100; iso_speed <= 800; iso_speed *= 2) {
     orig_iso_speed = iso_speed;
     gst_photography_set_iso_speed (GST_PHOTOGRAPHY (cam), iso_speed);
@@ -294,7 +360,6 @@ test_photography_settings (GstElement * cam)
   }
 
   tclass = g_type_class_ref (GST_TYPE_FLASH_MODE);
-  GstFlashMode flash, orig_flash;
   for (flash = 0; flash < G_ENUM_CLASS (tclass)->n_values; flash++) {
     orig_flash = flash;
     gst_photography_set_flash_mode (GST_PHOTOGRAPHY (cam), flash);
@@ -306,7 +371,6 @@ test_photography_settings (GstElement * cam)
   g_type_class_unref (tclass);
 
   tclass = g_type_class_ref (GST_TYPE_WHITE_BALANCE_MODE);
-  GstWhiteBalanceMode wb, orig_wb;
   for (wb = 0; wb < G_ENUM_CLASS (tclass)->n_values; wb++) {
     orig_wb = wb;
     gst_photography_set_white_balance_mode (GST_PHOTOGRAPHY (cam), wb);
@@ -318,7 +382,6 @@ test_photography_settings (GstElement * cam)
   g_type_class_unref (tclass);
 
   tclass = g_type_class_ref (GST_TYPE_COLOUR_TONE_MODE);
-  GstColourToneMode ct, orig_ct;
   for (ct = 0; ct < G_ENUM_CLASS (tclass)->n_values; ct++) {
     orig_ct = ct;
     gst_photography_set_colour_tone_mode (GST_PHOTOGRAPHY (cam), ct);
@@ -330,7 +393,6 @@ test_photography_settings (GstElement * cam)
   g_type_class_unref (tclass);
 
   tclass = g_type_class_ref (GST_TYPE_SCENE_MODE);
-  GstSceneMode sm, orig_sm;
   for (sm = 0; sm < G_ENUM_CLASS (tclass)->n_values; sm++) {
     orig_sm = sm;
     gst_photography_set_scene_mode (GST_PHOTOGRAPHY (cam), sm);
@@ -341,8 +403,28 @@ test_photography_settings (GstElement * cam)
   }
   g_type_class_unref (tclass);
 
-  gfloat zoom, orig_zoom;
-  gst_photography_set_zoom (GST_PHOTOGRAPHY (cam), zoom);
+  tclass = g_type_class_ref (GST_TYPE_FOCUS_MODE);
+  for (fm = 0; fm < G_ENUM_CLASS (tclass)->n_values; fm++) {
+    orig_fm = fm;
+    gst_photography_set_focus_mode (GST_PHOTOGRAPHY (cam), fm);
+    gst_photography_get_focus_mode (GST_PHOTOGRAPHY (cam), &fm);
+    fail_if (orig_fm != fm, "setting photography focus mode failed");
+    fm = orig_fm;
+    g_usleep (PHOTO_SETTING_DELAY_US);
+  }
+  g_type_class_unref (tclass);
+
+  tclass = g_type_class_ref (GST_TYPE_FLICKER_REDUCTION_MODE);
+  for (flm = 0; flm < G_ENUM_CLASS (tclass)->n_values; flm++) {
+    orig_flm = flm;
+    gst_photography_set_flicker_mode (GST_PHOTOGRAPHY (cam), flm);
+    gst_photography_get_flicker_mode (GST_PHOTOGRAPHY (cam), &flm);
+    fail_if (orig_flm != flm, "setting photography flicker mode failed");
+    flm = orig_flm;
+    g_usleep (PHOTO_SETTING_DELAY_US);
+  }
+  g_type_class_unref (tclass);
+
   for (zoom = 1.0; zoom <= 10.0; zoom += 1.0) {
     orig_zoom = zoom;
     gst_photography_set_zoom (GST_PHOTOGRAPHY (cam), zoom);
@@ -351,9 +433,168 @@ test_photography_settings (GstElement * cam)
     zoom = orig_zoom;
     g_usleep (PHOTO_SETTING_DELAY_US);
   }
-#else
-  GST_DEBUG ("omitting photography test");
-#endif
+}
+
+static void
+test_photography_properties (GstElement * cam)
+{
+  GTypeClass *tclass;
+  gulong capabilities;
+  guint aperture;
+  guint32 exposure;
+  gfloat ev_comp, orig_ev_comp;
+  guint iso_speed = 100, orig_iso_speed;
+  GstFlashMode flash, orig_flash;
+  GstWhiteBalanceMode wb, orig_wb;
+  GstColourToneMode ct, orig_ct;
+  GstSceneMode sm, orig_sm;
+  GstFocusMode fm, orig_fm;
+  GstFlickerReductionMode flm, orig_flm;
+  GstCaps *caps = NULL;
+
+  if (!GST_IS_PHOTOGRAPHY (cam)) {
+    GST_WARNING
+        ("omitting photography properties test, not photography interface");
+    return;
+  }
+
+  /* NOTE: unit testing uses videotestsrc element which is doesn't implement
+     photography interface so we just check that values returned
+     are sane */
+
+  /* read only flags */
+  g_object_get (GST_PHOTOGRAPHY (cam), "capabilities", &capabilities, NULL);
+  fail_if (capabilities < 0, "getting photography capabilities failed");
+
+  /* for image-capture-supported-caps we should get something always */
+  g_object_get (GST_PHOTOGRAPHY (cam), "image-capture-supported-caps", &caps,
+      NULL);
+  fail_if (caps == NULL, "getting photography capabilities failed");
+  if (caps)
+    gst_caps_unref (caps);
+
+  exposure = 0;                 /* auto */
+  g_object_set (GST_PHOTOGRAPHY (cam), "exposure", exposure, NULL);
+  g_object_get (GST_PHOTOGRAPHY (cam), "exposure", &exposure, NULL);
+  fail_if (exposure < 0, "setting photography exposure failed");
+
+  aperture = 0;                 /* auto */
+  g_object_set (GST_PHOTOGRAPHY (cam), "aperture", aperture, NULL);
+  g_object_get (GST_PHOTOGRAPHY (cam), "aperture", &aperture, NULL);
+  fail_if (aperture < 0 || aperture > 255,
+      "setting photography aperture failed");
+
+  for (ev_comp = -2.5; ev_comp <= 2.5; ev_comp += 0.5) {
+    orig_ev_comp = ev_comp;
+    g_object_set (GST_PHOTOGRAPHY (cam), "ev-compensation", ev_comp, NULL);
+    g_object_get (GST_PHOTOGRAPHY (cam), "ev-compensation", &ev_comp, NULL);
+    fail_if (ev_comp < -2.5 || ev_comp > 2.5,
+        "setting photography ev compensation failed");
+    ev_comp = orig_ev_comp;
+  }
+
+  /* FIXME: what are the actual iso values? */
+  for (iso_speed = 100; iso_speed <= 800; iso_speed *= 2) {
+    orig_iso_speed = iso_speed;
+    g_object_set (GST_PHOTOGRAPHY (cam), "iso-speed", iso_speed, NULL);
+    g_object_get (GST_PHOTOGRAPHY (cam), "iso-speed", &iso_speed, NULL);
+    fail_if (iso_speed < 0 || iso_speed > 800,
+        "setting photography iso speed failed");
+    iso_speed = orig_iso_speed;
+  }
+
+  tclass = g_type_class_ref (GST_TYPE_FLASH_MODE);
+  for (flash = 0; flash < G_ENUM_CLASS (tclass)->n_values; flash++) {
+    orig_flash = flash;
+    g_object_set (GST_PHOTOGRAPHY (cam), "flash-mode", flash, NULL);
+    g_object_get (GST_PHOTOGRAPHY (cam), "flash-mode", &flash, NULL);
+    fail_if (flash < 0 || flash >= G_ENUM_CLASS (tclass)->n_values,
+        "setting photography flash failed");
+    flash = orig_flash;
+  }
+  g_type_class_unref (tclass);
+
+  tclass = g_type_class_ref (GST_TYPE_WHITE_BALANCE_MODE);
+  for (wb = 0; wb < G_ENUM_CLASS (tclass)->n_values; wb++) {
+    orig_wb = wb;
+    g_object_set (G_OBJECT (cam), "white-balance-mode", wb, NULL);
+    g_object_get (G_OBJECT (cam), "white-balance-mode", &wb, NULL);
+    fail_if (wb < 0 || wb >= G_ENUM_CLASS (tclass)->n_values,
+        "setting photography white balance mode failed");
+    wb = orig_wb;
+  }
+  g_type_class_unref (tclass);
+
+  tclass = g_type_class_ref (GST_TYPE_COLOUR_TONE_MODE);
+  for (ct = 0; ct < G_ENUM_CLASS (tclass)->n_values; ct++) {
+    orig_ct = ct;
+    g_object_set (G_OBJECT (cam), "colour-tone-mode", ct, NULL);
+    g_object_get (G_OBJECT (cam), "colour-tone-mode", &ct, NULL);
+    fail_if (ct < 0 || ct >= G_ENUM_CLASS (tclass)->n_values,
+        "setting photography colour tone mode failed");
+    ct = orig_ct;
+  }
+  g_type_class_unref (tclass);
+
+  tclass = g_type_class_ref (GST_TYPE_SCENE_MODE);
+  for (sm = 0; sm < G_ENUM_CLASS (tclass)->n_values; sm++) {
+    orig_sm = sm;
+    g_object_set (G_OBJECT (cam), "scene-mode", sm, NULL);
+    g_object_get (G_OBJECT (cam), "scene-mode", &sm, NULL);
+    fail_if (sm < 0 || sm > G_ENUM_CLASS (tclass)->n_values,
+        "setting photography scene mode failed");
+    sm = orig_sm;
+  }
+  g_type_class_unref (tclass);
+
+  tclass = g_type_class_ref (GST_TYPE_FOCUS_MODE);
+  for (fm = 0; fm < G_ENUM_CLASS (tclass)->n_values; fm++) {
+    orig_fm = fm;
+    g_object_set (G_OBJECT (cam), "focus-mode", fm, NULL);
+    g_object_get (G_OBJECT (cam), "focus-mode", &fm, NULL);
+    fail_if (fm < 0 || fm > G_ENUM_CLASS (tclass)->n_values,
+        "setting photography focus mode failed");
+    fm = orig_fm;
+    g_usleep (PHOTO_SETTING_DELAY_US);
+  }
+  g_type_class_unref (tclass);
+
+  tclass = g_type_class_ref (GST_TYPE_FLICKER_REDUCTION_MODE);
+  for (flm = 0; flm < G_ENUM_CLASS (tclass)->n_values; flm++) {
+    orig_flm = flm;
+    g_object_set (G_OBJECT (cam), "flicker-mode", flm, NULL);
+    g_object_get (G_OBJECT (cam), "flicker-mode", &flm, NULL);
+    fail_if (flm < 0 || flm > G_ENUM_CLASS (tclass)->n_values,
+        "setting photography flicker reduction mode failed");
+    flm = orig_flm;
+    g_usleep (PHOTO_SETTING_DELAY_US);
+  }
+  g_type_class_unref (tclass);
+}
+
+static void
+test_camerabin_properties (GstElement * cam)
+{
+  guint flags;
+  gint zoom;
+  gboolean mute;
+
+  flags = 0x1f;
+  g_object_set (G_OBJECT (cam), "flags", flags, NULL);
+  g_object_get (G_OBJECT (cam), "flags", &flags, NULL);
+  fail_if (flags != 0x1f, "setting camerabin flags failed");
+
+  zoom = 200;
+  g_object_set (G_OBJECT (cam), "zoom", zoom, NULL);
+  g_object_get (G_OBJECT (cam), "zoom", &zoom, NULL);
+  fail_if (zoom != 200, "setting camerabin zoom failed");
+  g_object_set (G_OBJECT (cam), "zoom", 100, NULL);
+
+  mute = TRUE;
+  g_object_set (G_OBJECT (cam), "mute", mute, NULL);
+  g_object_get (G_OBJECT (cam), "mute", &mute, NULL);
+  fail_if (mute != TRUE, "setting camerabin mute failed");
+  g_object_set (G_OBJECT (cam), "mute", FALSE, NULL);
 }
 
 static gboolean
@@ -410,13 +651,42 @@ GST_START_TEST (test_single_image_capture)
   if (!camera)
     return;
 
+  /* Test photography iface settings */
+  gst_element_get_state (GST_ELEMENT (camera), NULL, NULL, (2 * GST_SECOND));
+  test_photography_settings (camera);
+  test_photography_properties (camera);
+  test_camerabin_properties (camera);
+
+  /* set flags to disable additional elements */
+  g_object_set (camera, "flags", 0, NULL);
+
   /* set still image mode */
   g_object_set (camera, "mode", 0,
       "filename", make_test_file_name (SINGLE_IMAGE_FILENAME), NULL);
 
-  /* Test photography iface settings */
-  gst_element_get_state (GST_ELEMENT (camera), NULL, NULL, (2 * GST_SECOND));
-  test_photography_settings (camera);
+  /* don't run viewfinder after capture */
+  g_object_set (camera, "block-after-capture", TRUE, NULL);
+
+  GST_INFO ("starting capture");
+  g_signal_emit_by_name (camera, "capture-start", NULL);
+
+  g_main_loop_run (main_loop);
+  gst_element_set_state (GST_ELEMENT (camera), GST_STATE_NULL);
+}
+
+GST_END_TEST;
+
+GST_START_TEST (test_single_image_capture_with_flags)
+{
+  if (!camera)
+    return;
+
+  /* set flags to enable modifier elements */
+  g_object_set (camera, "flags", 79, NULL);
+
+  /* set still image mode */
+  g_object_set (camera, "mode", 0,
+      "filename", make_test_file_name (SINGLE_IMAGE_WITH_FLAGS_FILENAME), NULL);
 
   GST_INFO ("starting capture");
   g_signal_emit_by_name (camera, "capture-start", NULL);
@@ -429,18 +699,127 @@ GST_END_TEST;
 
 GST_START_TEST (test_video_recording)
 {
+  GstCaps *preview_caps;
+  preview_caps = gst_caps_from_string ("video/x-raw-rgb,width=320,height=240");
+
   if (!camera)
     return;
+
+  /* set flags to disable additional elements */
+  g_object_set (camera, "flags", 0, NULL);
 
   /* Set video recording mode */
   g_object_set (camera, "mode", 1,
       "filename", make_test_file_name (VIDEO_FILENAME), NULL);
+
+  /* Set preview-caps */
+  g_object_set (camera, "preview-caps", preview_caps, NULL);
 
   GST_INFO ("starting capture");
   g_signal_emit_by_name (camera, "capture-start", NULL);
   /* Record for one seconds  */
   g_usleep (G_USEC_PER_SEC);
   g_signal_emit_by_name (camera, "capture-stop", NULL);
+
+  /* check if receiving the preview-image message */
+  fail_if (!received_preview_msg,
+      "creating video recording preview image failed");
+
+  gst_element_set_state (GST_ELEMENT (camera), GST_STATE_NULL);
+}
+
+GST_END_TEST;
+
+GST_START_TEST (test_video_recording_with_flags)
+{
+  GstCaps *preview_caps;
+  preview_caps = gst_caps_from_string ("video/x-raw-rgb,width=320,height=240");
+
+  if (!camera)
+    return;
+
+  /* set flags to enable modifier elements */
+  g_object_set (camera, "flags", 95, NULL);
+
+  /* Set video recording mode */
+  g_object_set (camera, "mode", 1,
+      "filename", make_test_file_name (VIDEO_FILENAME), NULL);
+
+  /* Set preview-caps */
+  g_object_set (camera, "preview-caps", preview_caps, NULL);
+
+  GST_INFO ("starting capture");
+  g_signal_emit_by_name (camera, "capture-start", NULL);
+  /* Record for one seconds  */
+  g_usleep (G_USEC_PER_SEC);
+  g_signal_emit_by_name (camera, "capture-stop", NULL);
+
+  /*check if receiving the preview-image message */
+  fail_if (!received_preview_msg,
+      "creating video recording preview image failed");
+
+  gst_element_set_state (GST_ELEMENT (camera), GST_STATE_NULL);
+}
+
+GST_END_TEST;
+
+GST_START_TEST (test_video_recording_pause)
+{
+  if (!camera)
+    return;
+
+  /* Set video recording mode */
+  g_object_set (camera, "mode", 1,
+      "filename", make_test_file_name (VIDEO_PAUSE_FILENAME), NULL);
+
+  GST_INFO ("starting capture");
+  g_signal_emit_by_name (camera, "capture-start", NULL);
+  /* Record for one seconds  */
+  g_usleep (G_USEC_PER_SEC);
+
+  GST_INFO ("pause capture");
+  g_signal_emit_by_name (camera, "capture-pause", NULL);
+  /* Record for one seconds  */
+  g_usleep (G_USEC_PER_SEC);
+
+  GST_INFO ("continue capture");
+  g_signal_emit_by_name (camera, "capture-start", NULL);
+  /* Record for one seconds  */
+  g_usleep (G_USEC_PER_SEC);
+  g_signal_emit_by_name (camera, "capture-stop", NULL);
+  gst_element_set_state (GST_ELEMENT (camera), GST_STATE_NULL);
+}
+
+GST_END_TEST;
+
+GST_START_TEST (test_video_recording_no_audio)
+{
+  GstCaps *preview_caps;
+  preview_caps = gst_caps_from_string ("video/x-raw-rgb,width=320,height=240");
+
+  if (!camera)
+    return;
+
+  /* set flags to disable audio elements */
+  g_object_set (camera, "flags", 32, NULL);
+
+  /* Set video recording mode */
+  g_object_set (camera, "mode", 1,
+      "filename", make_test_file_name (VIDEO_NOAUDIO_FILENAME), NULL);
+
+  /* Set preview-caps */
+  g_object_set (camera, "preview-caps", preview_caps, NULL);
+
+  GST_INFO ("starting capture");
+  g_signal_emit_by_name (camera, "capture-start", NULL);
+  /* Record for one seconds  */
+  g_usleep (G_USEC_PER_SEC);
+  g_signal_emit_by_name (camera, "capture-stop", NULL);
+
+  /* check if receiving the preview-image message */
+  fail_if (!received_preview_msg,
+      "creating video recording preview image failed");
+
   gst_element_set_state (GST_ELEMENT (camera), GST_STATE_NULL);
 }
 
@@ -473,6 +852,8 @@ GST_START_TEST (validate_captured_image_files)
 
   /* validate single image */
   check_file_validity (SINGLE_IMAGE_FILENAME);
+  /* validate single image with flags */
+  check_file_validity (SINGLE_IMAGE_WITH_FLAGS_FILENAME);
 
 /* burst capture is not supported in camerabin for the moment */
 #ifdef ENABLE_BURST_CAPTURE
@@ -500,14 +881,19 @@ GST_START_TEST (validate_captured_video_files)
 
   /* validate video recording */
   check_file_validity (VIDEO_FILENAME);
-
+  /* validate video recording */
+  check_file_validity (VIDEO_WITH_FLAGS_FILENAME);
+  /* validate video recording with pause */
+  check_file_validity (VIDEO_PAUSE_FILENAME);
+  /* validate video recording without audio */
+  check_file_validity (VIDEO_NOAUDIO_FILENAME);
   /* validate cycled  video */
   check_file_validity (CYCLE_VIDEO_FILENAME);
 }
 
 GST_END_TEST;
 
-Suite *
+static Suite *
 camerabin_suite (void)
 {
   Suite *s = suite_create ("camerabin");
@@ -520,7 +906,11 @@ camerabin_suite (void)
   tcase_set_timeout (tc_basic, 20);
   tcase_add_checked_fixture (tc_basic, setup, teardown);
   tcase_add_test (tc_basic, test_single_image_capture);
+  tcase_add_test (tc_basic, test_single_image_capture_with_flags);
   tcase_add_test (tc_basic, test_video_recording);
+  tcase_add_test (tc_basic, test_video_recording_with_flags);
+  tcase_add_test (tc_basic, test_video_recording_pause);
+  tcase_add_test (tc_basic, test_video_recording_no_audio);
   tcase_add_test (tc_basic, test_image_video_cycle);
 
   /* Validate captured files */

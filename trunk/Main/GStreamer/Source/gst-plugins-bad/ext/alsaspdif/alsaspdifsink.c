@@ -70,15 +70,6 @@ GST_DEBUG_CATEGORY_STATIC (alsaspdifsink_debug);
   (((GstClockTime) AC3_RATE * (time)) / GST_SECOND)
 #endif
 
-/* ElementFactory information. */
-static GstElementDetails alsaspdifsink_details = {
-  "S/PDIF ALSA audiosink",
-  "Sink/Audio",
-  "Feeds audio to S/PDIF interfaces through the ALSA sound driver",
-  "Martin Soto <martinsoto@users.sourceforge.net>\n"
-      "Michael Smith <msmith@fluendo.com>"
-};
-
 /* AlsaSPDIFSink signals and args */
 enum
 {
@@ -141,7 +132,11 @@ alsaspdifsink_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &alsaspdifsink_details);
+  gst_element_class_set_details_simple (element_class, "S/PDIF ALSA audiosink",
+      "Sink/Audio",
+      "Feeds audio to S/PDIF interfaces through the ALSA sound driver",
+      "Martin Soto <martinsoto@users.sourceforge.net>, "
+      "Michael Smith <msmith@fluendo.com>");
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&alsaspdifsink_sink_factory));
 }
@@ -348,8 +343,8 @@ alsaspdifsink_open (AlsaSPDIFSink * sink)
 
   err = snd_pcm_open (&(sink->pcm), pcm_name, SND_PCM_STREAM_PLAYBACK, 0);
   if (err < 0) {
-    GST_DEBUG_OBJECT ("Open failed for %s - searching for IEC958 manually\n",
-        pcm_name);
+    GST_DEBUG_OBJECT (sink,
+        "Open failed for %s - searching for IEC958 manually\n", pcm_name);
 
     err = alsaspdifsink_find_pcm_device (sink);
     if (err == 0 && sink->pcm == NULL)

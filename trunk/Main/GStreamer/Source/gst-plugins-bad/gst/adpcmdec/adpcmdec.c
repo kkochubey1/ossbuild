@@ -39,12 +39,6 @@
 #define GST_CAT_DEFAULT adpcmdec_debug
 GST_DEBUG_CATEGORY_STATIC (adpcmdec_debug);
 
-static const GstElementDetails adpcmdec_details =
-GST_ELEMENT_DETAILS ("ADPCM decoder",
-    "Codec/Decoder/Audio",
-    "Decode MS and IMA ADPCM audio",
-    "Pioneers of the Inevitable <songbird@songbirdnest.com");
-
 static GstStaticPadTemplate adpcmdec_sink_template =
     GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
@@ -103,6 +97,7 @@ typedef struct _ADPCMDec
 
 } ADPCMDec;
 
+GType adpcmdec_get_type (void);
 GST_BOILERPLATE (ADPCMDec, adpcmdec, GstElement, GST_TYPE_ELEMENT);
 static gboolean
 adpcmdec_setup (ADPCMDec * dec)
@@ -571,7 +566,10 @@ adpcmdec_base_init (gpointer klass)
       gst_static_pad_template_get (&adpcmdec_sink_template));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&adpcmdec_src_template));
-  gst_element_class_set_details (element_class, &adpcmdec_details);
+  gst_element_class_set_details_simple (element_class, "ADPCM decoder",
+      "Codec/Decoder/Audio",
+      "Decode MS and IMA ADPCM audio",
+      "Pioneers of the Inevitable <songbird@songbirdnest.com");
 }
 
 static gboolean

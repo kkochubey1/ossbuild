@@ -28,7 +28,8 @@
  * Parses a JPEG stream into JPEG images.  It looks for EOI boundaries to
  * split a continuous stream into single-frame buffers. Also reads the
  * image header searching for image properties such as width and height
- * among others.
+ * among others. Jpegparse can also extract metadata (e.g. xmp).
+ *
  * <refsect2>
  * <title>Example launch line</title>
  * |[
@@ -38,13 +39,18 @@
  * HTTP and stores it in a matroska file.
  * </refsect2>
  */
-
+/* FIXME: output plain JFIF APP marker only. This provides best code reuse.
+ * JPEG decoders would not need to handle this part anymore. Also when remuxing
+ * (... ! jpegparse ! ... ! jifmux ! ...) metadata consolidation would be
+ * easier.
+ */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
 #include <string.h>
 #include <gst/base/gstbytereader.h>
+#include <gst/tag/tag.h>
 
 #include "gstjpegparse.h"
 
@@ -76,6 +82,7 @@ struct _GstJpegParsePrivate
 
   GstAdapter *adapter;
   guint last_offset;
+  guint last_entropy_len;
 
   /* negotiated state */
   gint caps_width, caps_height;
@@ -108,8 +115,6 @@ struct _GstJpegParsePrivate
   gint framerate_denominator;
 };
 
-static void gst_jpeg_parse_base_init (gpointer g_class);
-static void gst_jpeg_parse_class_init (GstJpegParseClass * klass);
 static void gst_jpeg_parse_dispose (GObject * object);
 
 static GstFlowReturn gst_jpeg_parse_chain (GstPad * pad, GstBuffer * buffer);
@@ -291,7 +296,8 @@ gst_jpeg_parse_parse_tag_has_entropy_segment (guint8 tag)
  * enough data.
  */
 static guint
-gst_jpeg_parse_match_next_marker (const guint8 * data, guint size)
+gst_jpeg_parse_match_next_marker (GstJpegParse * parse, const guint8 * data,
+    guint size)
 {
   guint marker_len;
   guint8 tag;
@@ -316,11 +322,19 @@ gst_jpeg_parse_match_next_marker (const guint8 * data, guint size)
     goto need_more_data;
 
   if (G_UNLIKELY (gst_jpeg_parse_parse_tag_has_entropy_segment (tag))) {
+    if (parse->priv->last_entropy_len) {
+      marker_len = parse->priv->last_entropy_len;
+      GST_LOG_OBJECT (parse, "resuming entropy segment scan at len %u",
+          marker_len);
+    }
     while (!(data[marker_len] == 0xff && data[marker_len + 1] != 0x00)) {
       ++marker_len;
-      if (G_UNLIKELY (marker_len + 2 > size))
+      if (G_UNLIKELY (marker_len + 2 > size)) {
+        parse->priv->last_entropy_len = marker_len;
         goto need_more_data;
+      }
     }
+    parse->priv->last_entropy_len = 0;
   }
   return marker_len;
 
@@ -369,7 +383,7 @@ gst_jpeg_parse_find_end_marker (GstJpegParse * parse, const guint8 * data,
       return offset;
     }
     /* Skip over this marker. */
-    marker_len = gst_jpeg_parse_match_next_marker (data + offset,
+    marker_len = gst_jpeg_parse_match_next_marker (parse, data + offset,
         size - offset);
     if (G_UNLIKELY (marker_len == -1)) {
       return -1;
@@ -432,7 +446,7 @@ gst_jpeg_parse_get_image_length (GstJpegParse * parse)
 static gboolean
 gst_jpeg_parse_sof (GstJpegParse * parse, GstByteReader * reader)
 {
-  guint8 numcomps;              /* Number of components in image
+  guint8 numcomps = 0;          /* Number of components in image
                                    (1 for gray, 3 for YUV, etc.) */
   guint8 precision;             /* precision (in bits) for the samples */
   guint8 compId[3];             /* unique value identifying each component */
@@ -440,7 +454,7 @@ gst_jpeg_parse_sof (GstJpegParse * parse, GstByteReader * reader)
   guint8 blockWidth[3];         /* Array[numComponents] giving the number of
                                    blocks (horiz) in this component */
   guint8 blockHeight[3];        /* Same for the vertical part of this component */
-  guint8 i, value;
+  guint8 i, value = 0;
   gint temp;
 
   /* flush length field */
@@ -512,8 +526,8 @@ static gboolean
 gst_jpeg_parse_read_header (GstJpegParse * parse, GstBuffer * buffer)
 {
   GstByteReader reader = GST_BYTE_READER_INIT_FROM_BUFFER (buffer);
-  guint8 marker;
-  guint16 size;
+  guint8 marker = 0;
+  guint16 size = 0;
   gboolean foundSOF = FALSE;
 
   if (!gst_byte_reader_peek_uint8 (&reader, &marker))
@@ -542,7 +556,7 @@ gst_jpeg_parse_read_header (GstJpegParse * parse, GstBuffer * buffer)
 
       case COM:{               /* read comment and post as tag */
         GstTagList *tags;
-        const guint8 *comment;
+        const guint8 *comment = NULL;
 
         if (!gst_byte_reader_get_uint16_be (&reader, &size))
           goto error;
@@ -557,8 +571,44 @@ gst_jpeg_parse_read_header (GstJpegParse * parse, GstBuffer * buffer)
         break;
       }
 
+      case APP1:{
+        const gchar *id_str;
+        if (!gst_byte_reader_get_uint16_be (&reader, &size))
+          goto error;
+        if (!gst_byte_reader_get_string_utf8 (&reader, &id_str))
+          goto error;
+
+        if (!strcmp (id_str, "http://ns.adobe.com/xap/1.0/")) {
+          const guint8 *xmp_data = NULL;
+          guint xmp_size = size - 2 - 29;
+          GstTagList *tags;
+          GstBuffer *buf;
+
+          /* handle xmp metadata */
+          if (!gst_byte_reader_get_data (&reader, xmp_size, &xmp_data))
+            goto error;
+
+          buf = gst_buffer_new ();
+          GST_BUFFER_DATA (buf) = (guint8 *) xmp_data;
+          GST_BUFFER_SIZE (buf) = xmp_size;
+          tags = gst_tag_list_from_xmp_buffer (buf);
+          gst_buffer_unref (buf);
+          if (tags) {
+            GST_INFO_OBJECT (parse, "post xmp metadata");
+            gst_element_found_tags_for_pad (GST_ELEMENT_CAST (parse),
+                parse->priv->srcpad, tags);
+          }
+          GST_LOG_OBJECT (parse, "parsed marker %x: '%s' %u bytes",
+              marker, id_str, size - 2);
+        } else {
+          if (!gst_byte_reader_skip (&reader, size - 3 - strlen (id_str)))
+            goto error;
+          GST_LOG_OBJECT (parse, "unhandled marker %x: '%s' skiping %u bytes",
+              marker, id_str, size - 2);
+        }
+        break;
+      }
       case APP0:
-      case APP1:
       case APP2:
       case APP13:
       case APP14:
@@ -700,6 +750,7 @@ gst_jpeg_parse_push_buffer (GstJpegParse * parse, guint len)
 
   /* reset the offset (only when we flushed) */
   parse->priv->last_offset = 2;
+  parse->priv->last_entropy_len = 0;
 
   outbuf = gst_adapter_take_buffer (parse->priv->adapter, len);
   if (outbuf == NULL) {
@@ -849,6 +900,7 @@ gst_jpeg_parse_change_state (GstElement * element, GstStateChange transition)
       parse->priv->next_ts = GST_CLOCK_TIME_NONE;
 
       parse->priv->last_offset = 2;
+      parse->priv->last_entropy_len = 0;
     default:
       break;
   }

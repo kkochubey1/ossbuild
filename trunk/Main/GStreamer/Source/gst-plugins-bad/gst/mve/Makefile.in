@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -111,22 +110,39 @@ am_libgstmve_la_OBJECTS = libgstmve_la-gstmve.lo \
 	libgstmve_la-mvevideodec16.lo libgstmve_la-mveaudioenc.lo \
 	libgstmve_la-mvevideoenc8.lo libgstmve_la-mvevideoenc16.lo
 libgstmve_la_OBJECTS = $(am_libgstmve_la_OBJECTS)
-libgstmve_la_LINK = $(LIBTOOL) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libgstmve_la_CFLAGS) \
-	$(CFLAGS) $(libgstmve_la_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstmve_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(libgstmve_la_CFLAGS) $(CFLAGS) \
+	$(libgstmve_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstmve_la_SOURCES)
 DIST_SOURCES = $(libgstmve_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -141,7 +157,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -199,7 +215,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -210,11 +225,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -261,6 +274,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -283,6 +298,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -324,7 +340,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -338,6 +353,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -383,7 +399,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -412,13 +427,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -493,7 +510,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -584,7 +600,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstmve.la: $(libgstmve_la_OBJECTS) $(libgstmve_la_DEPENDENCIES) 
-	$(libgstmve_la_LINK) -rpath $(plugindir) $(libgstmve_la_OBJECTS) $(libgstmve_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstmve_la_LINK) -rpath $(plugindir) $(libgstmve_la_OBJECTS) $(libgstmve_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -603,88 +619,100 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstmve_la-mvevideoenc8.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstmve_la-gstmve.lo: gstmve.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-gstmve.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-gstmve.Tpo -c -o libgstmve_la-gstmve.lo `test -f 'gstmve.c' || echo '$(srcdir)/'`gstmve.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmve_la-gstmve.Tpo $(DEPDIR)/libgstmve_la-gstmve.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-gstmve.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-gstmve.Tpo -c -o libgstmve_la-gstmve.lo `test -f 'gstmve.c' || echo '$(srcdir)/'`gstmve.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmve_la-gstmve.Tpo $(DEPDIR)/libgstmve_la-gstmve.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmve.c' object='libgstmve_la-gstmve.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-gstmve.lo `test -f 'gstmve.c' || echo '$(srcdir)/'`gstmve.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-gstmve.lo `test -f 'gstmve.c' || echo '$(srcdir)/'`gstmve.c
 
 libgstmve_la-gstmvemux.lo: gstmvemux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-gstmvemux.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-gstmvemux.Tpo -c -o libgstmve_la-gstmvemux.lo `test -f 'gstmvemux.c' || echo '$(srcdir)/'`gstmvemux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmve_la-gstmvemux.Tpo $(DEPDIR)/libgstmve_la-gstmvemux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-gstmvemux.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-gstmvemux.Tpo -c -o libgstmve_la-gstmvemux.lo `test -f 'gstmvemux.c' || echo '$(srcdir)/'`gstmvemux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmve_la-gstmvemux.Tpo $(DEPDIR)/libgstmve_la-gstmvemux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmvemux.c' object='libgstmve_la-gstmvemux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-gstmvemux.lo `test -f 'gstmvemux.c' || echo '$(srcdir)/'`gstmvemux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-gstmvemux.lo `test -f 'gstmvemux.c' || echo '$(srcdir)/'`gstmvemux.c
 
 libgstmve_la-gstmvedemux.lo: gstmvedemux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-gstmvedemux.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-gstmvedemux.Tpo -c -o libgstmve_la-gstmvedemux.lo `test -f 'gstmvedemux.c' || echo '$(srcdir)/'`gstmvedemux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmve_la-gstmvedemux.Tpo $(DEPDIR)/libgstmve_la-gstmvedemux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-gstmvedemux.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-gstmvedemux.Tpo -c -o libgstmve_la-gstmvedemux.lo `test -f 'gstmvedemux.c' || echo '$(srcdir)/'`gstmvedemux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmve_la-gstmvedemux.Tpo $(DEPDIR)/libgstmve_la-gstmvedemux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmvedemux.c' object='libgstmve_la-gstmvedemux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-gstmvedemux.lo `test -f 'gstmvedemux.c' || echo '$(srcdir)/'`gstmvedemux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-gstmvedemux.lo `test -f 'gstmvedemux.c' || echo '$(srcdir)/'`gstmvedemux.c
 
 libgstmve_la-mveaudiodec.lo: mveaudiodec.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mveaudiodec.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mveaudiodec.Tpo -c -o libgstmve_la-mveaudiodec.lo `test -f 'mveaudiodec.c' || echo '$(srcdir)/'`mveaudiodec.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmve_la-mveaudiodec.Tpo $(DEPDIR)/libgstmve_la-mveaudiodec.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mveaudiodec.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mveaudiodec.Tpo -c -o libgstmve_la-mveaudiodec.lo `test -f 'mveaudiodec.c' || echo '$(srcdir)/'`mveaudiodec.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmve_la-mveaudiodec.Tpo $(DEPDIR)/libgstmve_la-mveaudiodec.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mveaudiodec.c' object='libgstmve_la-mveaudiodec.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mveaudiodec.lo `test -f 'mveaudiodec.c' || echo '$(srcdir)/'`mveaudiodec.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mveaudiodec.lo `test -f 'mveaudiodec.c' || echo '$(srcdir)/'`mveaudiodec.c
 
 libgstmve_la-mvevideodec8.lo: mvevideodec8.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mvevideodec8.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mvevideodec8.Tpo -c -o libgstmve_la-mvevideodec8.lo `test -f 'mvevideodec8.c' || echo '$(srcdir)/'`mvevideodec8.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmve_la-mvevideodec8.Tpo $(DEPDIR)/libgstmve_la-mvevideodec8.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mvevideodec8.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mvevideodec8.Tpo -c -o libgstmve_la-mvevideodec8.lo `test -f 'mvevideodec8.c' || echo '$(srcdir)/'`mvevideodec8.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmve_la-mvevideodec8.Tpo $(DEPDIR)/libgstmve_la-mvevideodec8.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mvevideodec8.c' object='libgstmve_la-mvevideodec8.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mvevideodec8.lo `test -f 'mvevideodec8.c' || echo '$(srcdir)/'`mvevideodec8.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mvevideodec8.lo `test -f 'mvevideodec8.c' || echo '$(srcdir)/'`mvevideodec8.c
 
 libgstmve_la-mvevideodec16.lo: mvevideodec16.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mvevideodec16.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mvevideodec16.Tpo -c -o libgstmve_la-mvevideodec16.lo `test -f 'mvevideodec16.c' || echo '$(srcdir)/'`mvevideodec16.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmve_la-mvevideodec16.Tpo $(DEPDIR)/libgstmve_la-mvevideodec16.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mvevideodec16.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mvevideodec16.Tpo -c -o libgstmve_la-mvevideodec16.lo `test -f 'mvevideodec16.c' || echo '$(srcdir)/'`mvevideodec16.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmve_la-mvevideodec16.Tpo $(DEPDIR)/libgstmve_la-mvevideodec16.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mvevideodec16.c' object='libgstmve_la-mvevideodec16.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mvevideodec16.lo `test -f 'mvevideodec16.c' || echo '$(srcdir)/'`mvevideodec16.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mvevideodec16.lo `test -f 'mvevideodec16.c' || echo '$(srcdir)/'`mvevideodec16.c
 
 libgstmve_la-mveaudioenc.lo: mveaudioenc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mveaudioenc.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mveaudioenc.Tpo -c -o libgstmve_la-mveaudioenc.lo `test -f 'mveaudioenc.c' || echo '$(srcdir)/'`mveaudioenc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmve_la-mveaudioenc.Tpo $(DEPDIR)/libgstmve_la-mveaudioenc.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mveaudioenc.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mveaudioenc.Tpo -c -o libgstmve_la-mveaudioenc.lo `test -f 'mveaudioenc.c' || echo '$(srcdir)/'`mveaudioenc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmve_la-mveaudioenc.Tpo $(DEPDIR)/libgstmve_la-mveaudioenc.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mveaudioenc.c' object='libgstmve_la-mveaudioenc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mveaudioenc.lo `test -f 'mveaudioenc.c' || echo '$(srcdir)/'`mveaudioenc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mveaudioenc.lo `test -f 'mveaudioenc.c' || echo '$(srcdir)/'`mveaudioenc.c
 
 libgstmve_la-mvevideoenc8.lo: mvevideoenc8.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mvevideoenc8.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mvevideoenc8.Tpo -c -o libgstmve_la-mvevideoenc8.lo `test -f 'mvevideoenc8.c' || echo '$(srcdir)/'`mvevideoenc8.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmve_la-mvevideoenc8.Tpo $(DEPDIR)/libgstmve_la-mvevideoenc8.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mvevideoenc8.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mvevideoenc8.Tpo -c -o libgstmve_la-mvevideoenc8.lo `test -f 'mvevideoenc8.c' || echo '$(srcdir)/'`mvevideoenc8.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmve_la-mvevideoenc8.Tpo $(DEPDIR)/libgstmve_la-mvevideoenc8.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mvevideoenc8.c' object='libgstmve_la-mvevideoenc8.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mvevideoenc8.lo `test -f 'mvevideoenc8.c' || echo '$(srcdir)/'`mvevideoenc8.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mvevideoenc8.lo `test -f 'mvevideoenc8.c' || echo '$(srcdir)/'`mvevideoenc8.c
 
 libgstmve_la-mvevideoenc16.lo: mvevideoenc16.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mvevideoenc16.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mvevideoenc16.Tpo -c -o libgstmve_la-mvevideoenc16.lo `test -f 'mvevideoenc16.c' || echo '$(srcdir)/'`mvevideoenc16.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmve_la-mvevideoenc16.Tpo $(DEPDIR)/libgstmve_la-mvevideoenc16.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -MT libgstmve_la-mvevideoenc16.lo -MD -MP -MF $(DEPDIR)/libgstmve_la-mvevideoenc16.Tpo -c -o libgstmve_la-mvevideoenc16.lo `test -f 'mvevideoenc16.c' || echo '$(srcdir)/'`mvevideoenc16.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmve_la-mvevideoenc16.Tpo $(DEPDIR)/libgstmve_la-mvevideoenc16.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mvevideoenc16.c' object='libgstmve_la-mvevideoenc16.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mvevideoenc16.lo `test -f 'mvevideoenc16.c' || echo '$(srcdir)/'`mvevideoenc16.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmve_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmve_la_CFLAGS) $(CFLAGS) -c -o libgstmve_la-mvevideoenc16.lo `test -f 'mvevideoenc16.c' || echo '$(srcdir)/'`mvevideoenc16.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

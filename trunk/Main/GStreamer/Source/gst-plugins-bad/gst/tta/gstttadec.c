@@ -171,18 +171,16 @@ gst_tta_dec_get_type (void)
 static void
 gst_tta_dec_base_init (GstTtaDecClass * klass)
 {
-  static const GstElementDetails plugin_details =
-      GST_ELEMENT_DETAILS ("TTA audio decoder",
-      "Codec/Decoder/Audio",
-      "Decode TTA audio data",
-      "Arwed v. Merkatz <v.merkatz@gmx.net>");
+
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &plugin_details);
+  gst_element_class_set_details_simple (element_class, "TTA audio decoder",
+      "Codec/Decoder/Audio",
+      "Decode TTA audio data", "Arwed v. Merkatz <v.merkatz@gmx.net>");
 }
 
 static void
@@ -233,7 +231,7 @@ gst_tta_dec_init (GstTtaDec * ttadec)
   ttadec->tta_buf.buffer_end = ttadec->tta_buf.buffer + TTA_BUFFER_SIZE;
 }
 
-void
+static void
 rice_init (adapt * rice, unsigned long k0, unsigned long k1)
 {
   rice->k0 = k0;
@@ -242,7 +240,7 @@ rice_init (adapt * rice, unsigned long k0, unsigned long k1)
   rice->sum1 = shift_16[k1];
 }
 
-void
+static void
 decoder_init (decoder * tta, long nch, long byte_size)
 {
   long shift = flt_set[byte_size - 1];
@@ -255,7 +253,7 @@ decoder_init (decoder * tta, long nch, long byte_size)
   }
 }
 
-void
+static void
 get_binary (tta_buffer * tta_buf, guchar * buffer, unsigned long buffersize,
     unsigned long *value, unsigned long bits)
 {
@@ -281,7 +279,7 @@ get_binary (tta_buffer * tta_buf, guchar * buffer, unsigned long buffersize,
   tta_buf->bit_cache &= bit_mask[tta_buf->bit_count];
 }
 
-void
+static void
 get_unary (tta_buffer * tta_buf, guchar * buffer, unsigned long buffersize,
     unsigned long *value)
 {

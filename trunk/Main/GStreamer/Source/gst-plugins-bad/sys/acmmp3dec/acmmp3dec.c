@@ -40,12 +40,6 @@
 #define GST_CAT_DEFAULT acmmp3dec_debug
 GST_DEBUG_CATEGORY_STATIC (acmmp3dec_debug);
 
-static const GstElementDetails acmmp3dec_details =
-GST_ELEMENT_DETAILS ("ACM MP3 decoder",
-    "Codec/Decoder/Audio",
-    "Decode MP3 using ACM decoder",
-    "Pioneers of the Inevitable <songbird@songbirdnest.com");
-
 static GstStaticPadTemplate acmmp3dec_src_template =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
@@ -100,6 +94,8 @@ typedef struct _ACMMP3Dec
   GstCaps *output_caps;
 } ACMMP3Dec;
 
+GType acmmp3dec_get_type (void);
+
 GST_BOILERPLATE (ACMMP3Dec, acmmp3dec, GstElement, GST_TYPE_ELEMENT);
 
 static GstCaps *
@@ -109,7 +105,7 @@ acmmp3dec_caps_from_format (WAVEFORMATEX * fmt)
       NULL, (gst_riff_strf_auds *) fmt, NULL, NULL, NULL);
 }
 
-gboolean
+static gboolean
 acmmp3dec_set_input_format (ACMMP3Dec * dec)
 {
   dec->infmt.wfx.wFormatTag = WAVE_FORMAT_MPEGLAYER3;
@@ -130,7 +126,7 @@ acmmp3dec_set_input_format (ACMMP3Dec * dec)
   return TRUE;
 }
 
-gboolean
+static gboolean
 acmmp3dec_set_output_format (ACMMP3Dec * dec)
 {
   dec->outfmt.wFormatTag = WAVE_FORMAT_PCM;
@@ -263,7 +259,7 @@ acmmp3dec_push_output (ACMMP3Dec * dec)
     if (dec->timestamp != GST_CLOCK_TIME_NONE)
       dec->timestamp += GST_BUFFER_DURATION (outbuf);
 
-    GST_DEBUG_OBJECT (dec, "Pushing %d byte decoded buffer",
+    GST_DEBUG_OBJECT (dec, "Pushing %lu byte decoded buffer",
         dec->header.cbDstLengthUsed);
     ret = gst_pad_push (dec->srcpad, outbuf);
   } else
@@ -325,7 +321,7 @@ done:
   return ret;
 }
 
-GstFlowReturn
+static GstFlowReturn
 acmmp3dec_finish_stream (ACMMP3Dec * dec)
 {
   MMRESULT res;
@@ -413,7 +409,10 @@ acmmp3dec_base_init (gpointer klass)
       gst_static_pad_template_get (&acmmp3dec_sink_template));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&acmmp3dec_src_template));
-  gst_element_class_set_details (element_class, &acmmp3dec_details);
+  gst_element_class_set_details_simple (element_class, "ACM MP3 decoder",
+      "Codec/Decoder/Audio",
+      "Decode MP3 using ACM decoder",
+      "Pioneers of the Inevitable <songbird@songbirdnest.com");
 }
 
 static gboolean

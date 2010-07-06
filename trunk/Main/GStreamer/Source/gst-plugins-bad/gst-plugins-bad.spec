@@ -4,7 +4,7 @@
 %define gst_minver   0.10.0
 
 Name: 		%{gstreamer}-plugins-bad
-Version: 	0.10.18
+Version: 	0.10.19
 Release: 	1.gst
 Summary: 	GStreamer plug-ins of bad quality
 
@@ -97,7 +97,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/gstreamer-%{majorminor}/libgstrawparse.so
 %{_libdir}/gstreamer-%{majorminor}/libgstselector.so
 %{_libdir}/gstreamer-%{majorminor}/libgstsubenc.so
-%{_libdir}/gstreamer-%{majorminor}/libgstoss4audio.so
 %{_libdir}/gstreamer-%{majorminor}/libresindvd.so
 %{_libdir}/gstreamer-%{majorminor}/libgstaiff.so
 %{_libdir}/gstreamer-%{majorminor}/libgstdccp.so

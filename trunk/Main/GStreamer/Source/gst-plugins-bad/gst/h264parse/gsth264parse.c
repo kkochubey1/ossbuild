@@ -46,13 +46,6 @@ static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
 GST_DEBUG_CATEGORY_STATIC (h264_parse_debug);
 #define GST_CAT_DEFAULT h264_parse_debug
 
-static const GstElementDetails gst_h264_parse_details =
-GST_ELEMENT_DETAILS ("H264Parse",
-    "Codec/Parser/Video",
-    "Parses raw h264 stream",
-    "Michal Benes <michal.benes@itonis.tv>,"
-    "Wim Taymans <wim.taymans@gmail.com>");
-
 #define DEFAULT_SPLIT_PACKETIZED     FALSE
 #define DEFAULT_ACCESS_UNIT          FALSE
 #define DEFAULT_OUTPUT_FORMAT        GST_H264_PARSE_FORMAT_INPUT
@@ -896,7 +889,11 @@ gst_h264_parse_base_init (gpointer g_class)
       gst_static_pad_template_get (&srctemplate));
   gst_element_class_add_pad_template (gstelement_class,
       gst_static_pad_template_get (&sinktemplate));
-  gst_element_class_set_details (gstelement_class, &gst_h264_parse_details);
+  gst_element_class_set_details_simple (gstelement_class, "H264Parse",
+      "Codec/Parser/Video",
+      "Parses raw h264 stream",
+      "Michal Benes <michal.benes@itonis.tv>,"
+      "Wim Taymans <wim.taymans@gmail.com>");
 
   GST_DEBUG_CATEGORY_INIT (h264_parse_debug, "h264parse", 0, "h264 parser");
 }
@@ -1300,9 +1297,9 @@ gst_h264_parse_update_src_caps (GstH264Parse * h264parse, GstCaps * caps)
         GST_DEBUG_OBJECT (h264parse, "setting new codec_data");
         gst_caps_set_simple (src_caps, "codec_data", GST_TYPE_BUFFER, buf,
             NULL);
-        gst_buffer_unref (buf);
         modified = TRUE;
       }
+      gst_buffer_unref (buf);
     } else {
       GST_DEBUG_OBJECT (h264parse, "no codec_data yet");
     }
@@ -1317,10 +1314,9 @@ gst_h264_parse_update_src_caps (GstH264Parse * h264parse, GstCaps * caps)
   /* save as new caps, caps will be set when pushing data */
   /* avoid replacing caps by a mere identical copy, thereby triggering
    * negotiating (which e.g. some container might not appreciate) */
-  if (modified) {
+  if (modified)
     gst_caps_replace (&h264parse->src_caps, src_caps);
-    gst_caps_unref (src_caps);
-  }
+  gst_caps_unref (src_caps);
 
   return TRUE;
 }
@@ -1476,6 +1472,9 @@ gst_h264_parse_write_nal_prefix (GstH264Parse * h264parse, GstBuffer * nal)
       nal = gst_buffer_make_writable (nal);
       while (offset + 4 <= GST_BUFFER_SIZE (nal)) {
         nalu_size = GST_READ_UINT32_BE (GST_BUFFER_DATA (nal) + offset);
+        /* input may already be in byte-stream */
+        if (nalu_size == 1)
+          break;
         GST_WRITE_UINT32_BE (GST_BUFFER_DATA (nal) + offset, 0x01);
         offset += nalu_size + 4;
       }
@@ -2333,6 +2332,7 @@ gst_h264_parse_sink_event (GstPad * pad, GstEvent * event)
       GST_DEBUG_OBJECT (h264parse, "received FLUSH stop");
       gst_segment_init (&h264parse->segment, GST_FORMAT_UNDEFINED);
       gst_h264_parse_clear_queues (h264parse);
+      h264parse->last_outbuf_dts = GST_CLOCK_TIME_NONE;
       res = gst_pad_push_event (h264parse->srcpad, event);
       break;
     case GST_EVENT_EOS:

@@ -103,6 +103,7 @@ typedef struct
   guint section_length;
   guint8 version_number;
   guint8 current_next_indicator;
+  guint32 crc;
 } MpegTSPacketizerSection; 
 
 typedef struct
@@ -113,6 +114,7 @@ typedef struct
    * section_syntax_indicator is 0, sub_table_extension will be set to 0 */
   guint16 subtable_extension;
   guint8 version_number;
+  guint32 crc;
 } MpegTSPacketizerStreamSubtable;
 
 typedef enum {
@@ -121,9 +123,9 @@ typedef enum {
   PACKET_NEED_MORE
 } MpegTSPacketizerPacketReturn;
 
-GType gst_mpegts_packetizer_get_type(void);
+GType mpegts_packetizer_get_type(void);
 
-MpegTSPacketizer *mpegts_packetizer_new ();
+MpegTSPacketizer *mpegts_packetizer_new (void);
 void mpegts_packetizer_clear (MpegTSPacketizer *packetizer);
 void mpegts_packetizer_push (MpegTSPacketizer *packetizer, GstBuffer *buffer);
 gboolean mpegts_packetizer_has_packets (MpegTSPacketizer *packetizer);
@@ -145,6 +147,8 @@ GstStructure *mpegts_packetizer_parse_nit (MpegTSPacketizer *packetizer,
 GstStructure *mpegts_packetizer_parse_sdt (MpegTSPacketizer *packetizer,
   MpegTSPacketizerSection *section);
 GstStructure *mpegts_packetizer_parse_eit (MpegTSPacketizer *packetizer,
+  MpegTSPacketizerSection *section);
+GstStructure *mpegts_packetizer_parse_tdt (MpegTSPacketizer *packetizer,
   MpegTSPacketizerSection *section);
 
 G_END_DECLS

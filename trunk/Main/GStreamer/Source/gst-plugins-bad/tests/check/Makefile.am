@@ -108,8 +108,7 @@ VALGRIND_TESTS_DISABLE = \
 # changes to fix this are needed in the camerabin test)
 # neon: too flaky (almost always fails 'the first time')
 noinst_PROGRAMS = \
-	$(check_neon)      \
-	elements/camerabin
+	$(check_neon)
 
 check_PROGRAMS = \
 	generic/states \
@@ -125,7 +124,7 @@ check_PROGRAMS = \
 	elements/amrparse \
 	elements/autoconvert \
 	elements/asfmux \
-	elements/capssetter \
+	elements/camerabin \
 	elements/dataurisrc \
 	elements/legacyresample \
 	elements/jpegparse \
@@ -136,7 +135,8 @@ check_PROGRAMS = \
 	pipelines/mxf \
 	$(check_metadata) \
 	$(check_mimic) \
-	elements/rtpmux
+	elements/rtpmux \
+        pipelines/tagschecking
 
 noinst_HEADERS = elements/mxfdemux.h elements/amrparse_data.h elements/aacparse_data.h
 
@@ -148,7 +148,7 @@ LDADD = $(GST_OBJ_LIBS) $(GST_CHECK_LIBS) $(CHECK_LIBS)
 elements_camerabin_CFLAGS = \
         -I$(top_builddir)/gst-libs \
         $(GST_CFLAGS) $(GST_BASE_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) \
-        $(GST_CHECK_CFLAGS) \
+        $(GST_PLUGINS_BAD_CFLAGS) $(GST_CHECK_CFLAGS) \
         -DGST_USE_UNSTABLE_API
 elements_camerabin_LDADD = \
         $(top_builddir)/gst-libs/gst/interfaces/libgstphotography-@GST_MAJORMINOR@.la \

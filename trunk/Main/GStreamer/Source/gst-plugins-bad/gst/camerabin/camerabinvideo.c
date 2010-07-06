@@ -102,13 +102,6 @@ static void gst_camerabin_video_destroy_elements (GstCameraBinVideo * vid);
 
 GST_BOILERPLATE (GstCameraBinVideo, gst_camerabin_video, GstBin, GST_TYPE_BIN);
 
-static const GstElementDetails gst_camerabin_video_details =
-GST_ELEMENT_DETAILS ("Video capture bin for camerabin",
-    "Bin/Video",
-    "Process and store video data",
-    "Edgard Lima <edgard.lima@indt.org.br>\n"
-    "Nokia Corporation <multimedia@maemo.org>");
-
 static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
@@ -131,7 +124,11 @@ gst_camerabin_video_base_init (gpointer klass)
       gst_static_pad_template_get (&sink_template));
   gst_element_class_add_pad_template (eklass,
       gst_static_pad_template_get (&src_template));
-  gst_element_class_set_details (eklass, &gst_camerabin_video_details);
+  gst_element_class_set_details_simple (eklass,
+      "Video capture bin for camerabin", "Bin/Video",
+      "Process and store video data",
+      "Edgard Lima <edgard.lima@indt.org.br>, "
+      "Nokia Corporation <multimedia@maemo.org>");
 }
 
 static void
@@ -169,11 +166,11 @@ gst_camerabin_video_init (GstCameraBinVideo * vid,
 {
   vid->filename = g_string_new ("");
 
-  vid->user_post = NULL;
-  vid->user_vid_enc = NULL;
-  vid->user_aud_enc = NULL;
-  vid->user_aud_src = NULL;
-  vid->user_mux = NULL;
+  vid->app_post = NULL;
+  vid->app_vid_enc = NULL;
+  vid->app_aud_enc = NULL;
+  vid->app_aud_src = NULL;
+  vid->app_mux = NULL;
 
   vid->aud_src = NULL;
   vid->sink = NULL;
@@ -219,29 +216,29 @@ gst_camerabin_video_dispose (GstCameraBinVideo * vid)
     vid->vid_sink_probe_id = 0;
   }
 
-  if (vid->user_post) {
-    gst_object_unref (vid->user_post);
-    vid->user_post = NULL;
+  if (vid->app_post) {
+    gst_object_unref (vid->app_post);
+    vid->app_post = NULL;
   }
 
-  if (vid->user_vid_enc) {
-    gst_object_unref (vid->user_vid_enc);
-    vid->user_vid_enc = NULL;
+  if (vid->app_vid_enc) {
+    gst_object_unref (vid->app_vid_enc);
+    vid->app_vid_enc = NULL;
   }
 
-  if (vid->user_aud_enc) {
-    gst_object_unref (vid->user_aud_enc);
-    vid->user_aud_enc = NULL;
+  if (vid->app_aud_enc) {
+    gst_object_unref (vid->app_aud_enc);
+    vid->app_aud_enc = NULL;
   }
 
-  if (vid->user_aud_src) {
-    gst_object_unref (vid->user_aud_src);
-    vid->user_aud_src = NULL;
+  if (vid->app_aud_src) {
+    gst_object_unref (vid->app_aud_src);
+    vid->app_aud_src = NULL;
   }
 
-  if (vid->user_mux) {
-    gst_object_unref (vid->user_mux);
-    vid->user_mux = NULL;
+  if (vid->app_mux) {
+    gst_object_unref (vid->app_mux);
+    vid->app_mux = NULL;
   }
 
   G_OBJECT_CLASS (parent_class)->dispose ((GObject *) vid);
@@ -551,11 +548,11 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
   vid->calculate_adjust_ts_aud = FALSE;
 
   /* Add video post processing element if any */
-  if (vid->user_post) {
-    if (!gst_camerabin_add_element (vidbin, vid->user_post)) {
+  if (vid->app_post) {
+    if (!gst_camerabin_add_element (vidbin, vid->app_post)) {
       goto error;
     }
-    vid_sinkpad = gst_element_get_static_pad (vid->user_post, "sink");
+    vid_sinkpad = gst_element_get_static_pad (vid->app_post, "sink");
   }
 
   /* Add tee element */
@@ -573,8 +570,8 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
   /* Add queue element for video */
   vid->tee_video_srcpad = gst_element_get_request_pad (vid->tee, "src%d");
 
-  if (!(vid->video_queue =
-          gst_camerabin_create_and_add_element (vidbin, "queue"))) {
+  vid->video_queue = gst_element_factory_make ("queue", "video-queue");
+  if (!gst_camerabin_add_element (vidbin, vid->video_queue)) {
     goto error;
   }
 
@@ -583,8 +580,8 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
       G_CALLBACK (camerabin_video_pad_tee_src0_have_buffer), vid);
 
   /* Add user set or default video encoder element */
-  if (vid->user_vid_enc) {
-    vid->vid_enc = vid->user_vid_enc;
+  if (vid->app_vid_enc) {
+    vid->vid_enc = vid->app_vid_enc;
     if (!gst_camerabin_add_element (vidbin, vid->vid_enc)) {
       goto error;
     }
@@ -593,9 +590,9 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
     goto error;
   }
 
-  /* Add user set or default muxer element */
-  if (vid->user_mux) {
-    vid->muxer = vid->user_mux;
+  /* Add application set or default muxer element */
+  if (vid->app_mux) {
+    vid->muxer = vid->app_mux;
     if (!gst_camerabin_add_element (vidbin, vid->muxer)) {
       goto error;
     }
@@ -613,9 +610,9 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
       NULL);
 
   if (!(vid->flags & GST_CAMERABIN_FLAG_DISABLE_AUDIO)) {
-    /* Add user set or default audio source element */
+    /* Add application set or default audio source element */
     if (!(vid->aud_src = gst_camerabin_setup_default_element (vidbin,
-                vid->user_aud_src, "autoaudiosrc", DEFAULT_AUDIOSRC))) {
+                vid->app_aud_src, "autoaudiosrc", DEFAULT_AUDIOSRC))) {
       vid->aud_src = NULL;
       goto error;
     } else {
@@ -624,7 +621,8 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
     }
 
     /* Add queue element for audio */
-    if (!(gst_camerabin_create_and_add_element (vidbin, "queue"))) {
+    queue = gst_element_factory_make ("queue", "audio-queue");
+    if (!gst_camerabin_add_element (vidbin, queue)) {
       goto error;
     }
 
@@ -647,9 +645,9 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
       g_object_set (vid->volume, "mute", vid->mute, NULL);
     }
 
-    /* Add user set or default audio encoder element */
-    if (vid->user_aud_enc) {
-      vid->aud_enc = vid->user_aud_enc;
+    /* Add application set or default audio encoder element */
+    if (vid->app_aud_enc) {
+      vid->aud_enc = vid->app_aud_enc;
       if (!gst_camerabin_add_element (vidbin, vid->aud_enc)) {
         goto error;
       }
@@ -667,7 +665,8 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
   }
   /* Add queue leading out of the video bin and to view finder */
   vid->tee_vf_srcpad = gst_element_get_request_pad (vid->tee, "src%d");
-  if (!(queue = gst_camerabin_create_and_add_element (vidbin, "queue"))) {
+  queue = gst_element_factory_make ("queue", "viewfinder-queue");
+  if (!gst_camerabin_add_element (vidbin, queue)) {
     goto error;
   }
   /* Set queue leaky, we don't want to block video encoder feed, but
@@ -790,12 +789,12 @@ gst_camerabin_video_set_mute (GstCameraBinVideo * vid, gboolean mute)
 void
 gst_camerabin_video_set_post (GstCameraBinVideo * vid, GstElement * post)
 {
-  GstElement **user_post;
+  GstElement **app_post;
   GST_DEBUG_OBJECT (vid, "setting video post processing: %" GST_PTR_FORMAT,
       post);
   GST_OBJECT_LOCK (vid);
-  user_post = &vid->user_post;
-  gst_object_replace ((GstObject **) user_post, GST_OBJECT (post));
+  app_post = &vid->app_post;
+  gst_object_replace ((GstObject **) app_post, GST_OBJECT (post));
   GST_OBJECT_UNLOCK (vid);
 }
 
@@ -803,11 +802,11 @@ void
 gst_camerabin_video_set_video_enc (GstCameraBinVideo * vid,
     GstElement * video_enc)
 {
-  GstElement **user_vid_enc;
+  GstElement **app_vid_enc;
   GST_DEBUG_OBJECT (vid, "setting video encoder: %" GST_PTR_FORMAT, video_enc);
   GST_OBJECT_LOCK (vid);
-  user_vid_enc = &vid->user_vid_enc;
-  gst_object_replace ((GstObject **) user_vid_enc, GST_OBJECT (video_enc));
+  app_vid_enc = &vid->app_vid_enc;
+  gst_object_replace ((GstObject **) app_vid_enc, GST_OBJECT (video_enc));
   GST_OBJECT_UNLOCK (vid);
 }
 
@@ -815,22 +814,22 @@ void
 gst_camerabin_video_set_audio_enc (GstCameraBinVideo * vid,
     GstElement * audio_enc)
 {
-  GstElement **user_aud_enc;
+  GstElement **app_aud_enc;
   GST_DEBUG_OBJECT (vid, "setting audio encoder: %" GST_PTR_FORMAT, audio_enc);
   GST_OBJECT_LOCK (vid);
-  user_aud_enc = &vid->user_aud_enc;
-  gst_object_replace ((GstObject **) user_aud_enc, GST_OBJECT (audio_enc));
+  app_aud_enc = &vid->app_aud_enc;
+  gst_object_replace ((GstObject **) app_aud_enc, GST_OBJECT (audio_enc));
   GST_OBJECT_UNLOCK (vid);
 }
 
 void
 gst_camerabin_video_set_muxer (GstCameraBinVideo * vid, GstElement * muxer)
 {
-  GstElement **user_mux;
+  GstElement **app_mux;
   GST_DEBUG_OBJECT (vid, "setting muxer: %" GST_PTR_FORMAT, muxer);
   GST_OBJECT_LOCK (vid);
-  user_mux = &vid->user_mux;
-  gst_object_replace ((GstObject **) user_mux, GST_OBJECT (muxer));
+  app_mux = &vid->app_mux;
+  gst_object_replace ((GstObject **) app_mux, GST_OBJECT (muxer));
   GST_OBJECT_UNLOCK (vid);
 }
 
@@ -838,11 +837,11 @@ void
 gst_camerabin_video_set_audio_src (GstCameraBinVideo * vid,
     GstElement * audio_src)
 {
-  GstElement **user_aud_src;
+  GstElement **app_aud_src;
   GST_DEBUG_OBJECT (vid, "setting audio source: %" GST_PTR_FORMAT, audio_src);
   GST_OBJECT_LOCK (vid);
-  user_aud_src = &vid->user_aud_src;
-  gst_object_replace ((GstObject **) user_aud_src, GST_OBJECT (audio_src));
+  app_aud_src = &vid->app_aud_src;
+  gst_object_replace ((GstObject **) app_aud_src, GST_OBJECT (audio_src));
   GST_OBJECT_UNLOCK (vid);
 }
 
@@ -871,29 +870,29 @@ gst_camerabin_video_get_mute (GstCameraBinVideo * vid)
 GstElement *
 gst_camerabin_video_get_post (GstCameraBinVideo * vid)
 {
-  return vid->user_post;
+  return vid->app_post;
 }
 
 GstElement *
 gst_camerabin_video_get_video_enc (GstCameraBinVideo * vid)
 {
-  return vid->vid_enc ? vid->vid_enc : vid->user_vid_enc;
+  return vid->vid_enc ? vid->vid_enc : vid->app_vid_enc;
 }
 
 GstElement *
 gst_camerabin_video_get_audio_enc (GstCameraBinVideo * vid)
 {
-  return vid->aud_enc ? vid->aud_enc : vid->user_aud_enc;
+  return vid->aud_enc ? vid->aud_enc : vid->app_aud_enc;
 }
 
 GstElement *
 gst_camerabin_video_get_muxer (GstCameraBinVideo * vid)
 {
-  return vid->muxer ? vid->muxer : vid->user_mux;
+  return vid->muxer ? vid->muxer : vid->app_mux;
 }
 
 GstElement *
 gst_camerabin_video_get_audio_src (GstCameraBinVideo * vid)
 {
-  return vid->aud_src ? vid->aud_src : vid->user_aud_src;
+  return vid->aud_src ? vid->aud_src : vid->app_aud_src;
 }

@@ -37,14 +37,6 @@ GST_DEBUG_CATEGORY_STATIC (neonhttpsrc_debug);
 /* max number of HTTP redirects, when iterating over a sequence of HTTP 3xx status code */
 #define MAX_HTTP_REDIRECTS_NUMBER 5
 
-static const GstElementDetails gst_neonhttp_src_details =
-GST_ELEMENT_DETAILS ("HTTP client source",
-    "Source/Network",
-    "Receive data as a client over the network via HTTP using NEON",
-    "Edgard Lima <edgard.lima@indt.org.br>, "
-    "Rosfran Borges <rosfran.borges@indt.org.br>, "
-    "Andre Moreira Magalhaes <andre.magalhaes@indt.org.br>");
-
 static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
@@ -140,7 +132,12 @@ gst_neonhttp_src_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&srctemplate));
 
-  gst_element_class_set_details (element_class, &gst_neonhttp_src_details);
+  gst_element_class_set_details_simple (element_class, "HTTP client source",
+      "Source/Network",
+      "Receive data as a client over the network via HTTP using NEON",
+      "Edgard Lima <edgard.lima@indt.org.br>, "
+      "Rosfran Borges <rosfran.borges@indt.org.br>, "
+      "Andre Moreira Magalhaes <andre.magalhaes@indt.org.br>");
 }
 
 static void
@@ -387,7 +384,7 @@ gst_neonhttp_src_get_property (GObject * object, guint prop_id,
         g_value_set_string (value, str);
         ne_free (str);
       } else {
-        g_value_set_string (value, "");
+        g_value_set_static_string (value, "");
       }
       break;
     }
@@ -402,7 +399,7 @@ gst_neonhttp_src_get_property (GObject * object, guint prop_id,
         g_value_set_string (value, str);
         ne_free (str);
       } else {
-        g_value_set_string (value, "");
+        g_value_set_static_string (value, "");
       }
       break;
     }
@@ -440,7 +437,7 @@ gst_neonhttp_src_get_property (GObject * object, guint prop_id,
 
 /* NEON CALLBACK */
 static void
-oom_callback ()
+oom_callback (void)
 {
   GST_ERROR ("memory exeception in neon");
 }
@@ -1029,8 +1026,8 @@ gst_neonhttp_src_uri_get_type (void)
 static gchar **
 gst_neonhttp_src_uri_get_protocols (void)
 {
-  static gchar *protocols[] = { "http", "https", NULL };
-  return protocols;
+  static const gchar *protocols[] = { "http", "https", NULL };
+  return (gchar **) protocols;
 }
 
 static const gchar *

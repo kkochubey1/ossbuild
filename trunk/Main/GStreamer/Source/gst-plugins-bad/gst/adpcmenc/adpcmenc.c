@@ -42,12 +42,6 @@
 #define GST_CAT_DEFAULT adpcmenc_debug
 GST_DEBUG_CATEGORY_STATIC (adpcmenc_debug);
 
-static const GstElementDetails adpcmenc_details =
-GST_ELEMENT_DETAILS ("ADPCM encoder",
-    "Codec/Encoder/Audio",
-    "Encode ADPCM audio",
-    "Pioneers of the Inevitable <songbird@songbirdnest.com");
-
 static GstStaticPadTemplate adpcmenc_sink_template =
 GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
@@ -150,6 +144,7 @@ typedef struct _ADPCMEnc
 
 } ADPCMEnc;
 
+GType adpcmenc_get_type (void);
 GST_BOILERPLATE (ADPCMEnc, adpcmenc, GstElement, GST_TYPE_ELEMENT);
 static gboolean
 adpcmenc_setup (ADPCMEnc * enc)
@@ -157,8 +152,8 @@ adpcmenc_setup (ADPCMEnc * enc)
   const int DVI_IMA_HEADER_SIZE = 4;
   const int ADPCM_SAMPLES_PER_BYTE = 2;
   guint64 sample_bytes;
+  const char *layout;
 
-  char *layout;
   switch (enc->layout) {
     case LAYOUT_ADPCM_DVI:
       layout = "dvi";
@@ -552,7 +547,10 @@ adpcmenc_base_init (gpointer klass)
       gst_static_pad_template_get (&adpcmenc_sink_template));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&adpcmenc_src_template));
-  gst_element_class_set_details (element_class, &adpcmenc_details);
+  gst_element_class_set_details_simple (element_class, "ADPCM encoder",
+      "Codec/Encoder/Audio",
+      "Encode ADPCM audio",
+      "Pioneers of the Inevitable <songbird@songbirdnest.com");
 }
 
 static gboolean

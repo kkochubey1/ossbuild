@@ -32,7 +32,9 @@ typedef GstBinClass TestElement1Class;
 typedef GstBin TestElement2;
 typedef GstBinClass TestElement2Class;
 
+GType test_element1_get_type (void);
 G_DEFINE_TYPE (TestElement1, test_element1, GST_TYPE_BIN);
+GType test_element2_get_type (void);
 G_DEFINE_TYPE (TestElement2, test_element2, GST_TYPE_BIN);
 
 static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
@@ -60,7 +62,7 @@ teardown (void)
 static void
 set_autoconvert_factories (GstElement * autoconvert)
 {
-  gchar *desired_features[] = { "testelement1", "testelement2" };
+  const gchar *desired_features[] = { "testelement1", "testelement2" };
   GstElementFactory *feature;
   GList *factories = NULL;
   gint i;
@@ -149,7 +151,7 @@ GST_START_TEST (test_autoconvert_simple)
 
 GST_END_TEST;
 
-Suite *
+static Suite *
 autoconvert_suite (void)
 {
   Suite *s = suite_create ("autoconvert");
@@ -165,7 +167,7 @@ autoconvert_suite (void)
 /* Implementation of the test elements */
 
 static void
-configure_test_element (GstBin * bin, gchar * capsfilter)
+configure_test_element (GstBin * bin, const gchar * capsfilter)
 {
   GstElement *filter;
   GstElement *identity;

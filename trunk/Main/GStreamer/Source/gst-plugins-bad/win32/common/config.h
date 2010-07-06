@@ -27,7 +27,7 @@
 #define GST_PACKAGE_NAME "GStreamer Bad Plug-ins source release"
 
 /* package origin */
-#define GST_PACKAGE_ORIGIN "OSSBuild"
+#define GST_PACKAGE_ORIGIN "Unknown package origin"
 
 /* Define if the host CPU is an Alpha */
 #undef HAVE_CPU_ALPHA
@@ -199,7 +199,7 @@
 #undef USE_POISONING
 
 /* Version number of package */
-#define VERSION "0.10.18"
+#define VERSION "0.10.19"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */
@@ -221,9 +221,3 @@
 #define GST_PACKAGE "Gst-plugins-bad"
 #define PACKAGE "gst-plugins-bad"
 #define GST_ORIGIN "gstreamer.freedesktop.org"
-
-
-#define DEFAULT_VIDEOSRC  "dshowvideosrc"
-#define DEFAULT_VIDEOSINK  "directdrawsink"
-#define DEFAULT_AUDIOSRC  "directsoundsrc"
-#define DEFAULT_REAL_CODECS_PATH "C:\realcodecs"

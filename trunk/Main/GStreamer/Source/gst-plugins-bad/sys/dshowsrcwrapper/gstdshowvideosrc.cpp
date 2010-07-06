@@ -28,12 +28,6 @@
 
 #include <gst/video/video.h>
 
-static const GstElementDetails gst_dshowvideosrc_details =
-GST_ELEMENT_DETAILS ("DirectShow video capture source",
-    "Source/Video",
-    "Receive data from a directshow video capture graph",
-    "Sebastien Moutte <sebastien@moutte.net>");
-
 GST_DEBUG_CATEGORY_STATIC (dshowvideosrc_debug);
 #define GST_CAT_DEFAULT dshowvideosrc_debug
 
@@ -135,7 +129,10 @@ gst_dshowvideosrc_base_init (gpointer klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_template));
 
-  gst_element_class_set_details (element_class, &gst_dshowvideosrc_details);
+  gst_element_class_set_details_simple (element_class,
+      "DirectShow video capture source", "Source/Video",
+      "Receive data from a directshow video capture graph",
+      "Sebastien Moutte <sebastien@moutte.net>");
 }
 
 static void
@@ -921,6 +918,7 @@ gst_dshowvideosrc_getcaps_from_streamcaps (GstDshowVideoSrc * src, IPin * pin)
       if (video_format != GST_VIDEO_FORMAT_UNKNOWN) {
         mediacaps = gst_dshow_new_video_caps (video_format, NULL,
             pin_mediatype);
+
       } else if (gst_dshow_check_mediatype (pin_mediatype->mediatype,
               MEDIASUBTYPE_dvsd, FORMAT_VideoInfo)) {
         mediacaps =

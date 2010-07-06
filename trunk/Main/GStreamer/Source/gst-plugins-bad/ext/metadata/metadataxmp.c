@@ -168,13 +168,13 @@ static const SchemaTagMap schema_map_dublin_tags_map[] = {
 };
 
 static const SchemaTagMap schema_map_photoshop_tags_map[] = {
-  {"Country",     GST_TAG_XMP_GEO_LOCATION_COUNTRY },
-  {"City",        GST_TAG_XMP_GEO_LOCATION_CITY   },
+  {"Country",     GST_TAG_GEO_LOCATION_COUNTRY },
+  {"City",        GST_TAG_GEO_LOCATION_CITY   },
   {NULL, NULL}
 };
 
 static const SchemaTagMap schema_map_iptc4xmpcore_tags_map[] = {
-  {"location",    GST_TAG_XMP_GEO_LOCATION_SUBLOCATION },
+  {"location",    GST_TAG_GEO_LOCATION_SUBLOCATION },
   {NULL, NULL}
 };
 /* *INDENT-ON* */
@@ -362,10 +362,9 @@ metadatamux_xmp_create_chunk_from_tag_list (guint8 ** buf, guint32 * size,
 
   if (!(buf && size))
     goto done;
-  if (*buf) {
-    g_free (*buf);
-    *buf = NULL;
-  }
+
+  g_free (*buf);
+  *buf = NULL;
   *size = 0;
 
   val = gst_tag_list_get_value_index (taglist, GST_TAG_XMP, 0);

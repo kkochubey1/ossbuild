@@ -147,6 +147,7 @@ G_BEGIN_DECLS
 #define FOURCC_s263     GST_MAKE_FOURCC('s','2','6','3')
 #define FOURCC_avcC     GST_MAKE_FOURCC('a','v','c','C')
 #define FOURCC_VP31     GST_MAKE_FOURCC('V','P','3','1')
+#define FOURCC_VP80     GST_MAKE_FOURCC('V','P','8','0')
 #define FOURCC_rle_     GST_MAKE_FOURCC('r','l','e',' ')
 #define FOURCC_MAC6     GST_MAKE_FOURCC('M','A','C','6')
 #define FOURCC_MAC3     GST_MAKE_FOURCC('M','A','C','3')
@@ -185,6 +186,7 @@ G_BEGIN_DECLS
 #define FOURCC_soaa     GST_MAKE_FOURCC('s','o','a','a')
 #define FOURCC_soco     GST_MAKE_FOURCC('s','o','c','o')
 #define FOURCC_sosn     GST_MAKE_FOURCC('s','o','s','n')
+#define FOURCC_XMP_     GST_MAKE_FOURCC('X','M','P','_')
 
 
 /* SVQ3 fourcc */

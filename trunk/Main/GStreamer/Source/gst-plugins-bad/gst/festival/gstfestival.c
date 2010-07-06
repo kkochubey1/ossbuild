@@ -122,13 +122,6 @@ static FT_Info *festival_default_info (void);
 static char *socket_receive_file_to_buff (int fd, int *size);
 static char *client_accept_s_expr (int fd);
 
-/* elementfactory information */
-static const GstElementDetails gst_festival_details =
-GST_ELEMENT_DETAILS ("Festival Text-to-Speech synthesizer",
-    "Filter/Effect/Audio",
-    "Synthesizes plain text into audio",
-    "Wim Taymans <wim.taymans@chello.be>");
-
 static GstStaticPadTemplate sink_template_factory =
 GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
@@ -196,7 +189,10 @@ gst_festival_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_template_factory));
 
-  gst_element_class_set_details (element_class, &gst_festival_details);
+  gst_element_class_set_details_simple (element_class,
+      "Festival Text-to-Speech synthesizer", "Filter/Effect/Audio",
+      "Synthesizes plain text into audio",
+      "Wim Taymans <wim.taymans@chello.be>");
 }
 
 static void
@@ -472,7 +468,7 @@ gst_festival_open (GstFestival * festival)
         ("Could not talk to festival server (no server running or wrong host/port?)");
     return FALSE;
   }
-
+  GST_OBJECT_FLAG_SET (festival, GST_FESTIVAL_OPEN);
   return TRUE;
 }
 
@@ -484,7 +480,7 @@ gst_festival_close (GstFestival * festival)
 
   if (festival->info->server_fd != -1)
     close (festival->info->server_fd);
-
+  GST_OBJECT_FLAG_UNSET (festival, GST_FESTIVAL_OPEN);
   return;
 }
 
@@ -494,10 +490,13 @@ gst_festival_change_state (GstElement * element, GstStateChange transition)
   g_return_val_if_fail (GST_IS_FESTIVAL (element), GST_STATE_CHANGE_FAILURE);
 
   if (GST_STATE_PENDING (element) == GST_STATE_NULL) {
-    if (GST_OBJECT_FLAG_IS_SET (element, GST_FESTIVAL_OPEN))
+    if (GST_OBJECT_FLAG_IS_SET (element, GST_FESTIVAL_OPEN)) {
+      GST_DEBUG ("Closing connection ");
       gst_festival_close (GST_FESTIVAL (element));
+    }
   } else {
     if (!GST_OBJECT_FLAG_IS_SET (element, GST_FESTIVAL_OPEN)) {
+      GST_DEBUG ("Opening connection ");
       if (!gst_festival_open (GST_FESTIVAL (element)))
         return GST_STATE_CHANGE_FAILURE;
     }

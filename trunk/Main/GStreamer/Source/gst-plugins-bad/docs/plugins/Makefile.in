@@ -78,8 +78,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -95,6 +94,12 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -146,7 +151,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -204,7 +209,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -215,11 +219,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -266,6 +268,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -288,6 +292,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -329,7 +334,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -343,6 +347,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -388,7 +393,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -417,13 +421,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -498,7 +504,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -572,7 +577,9 @@ CFILE_GLOB = $(DOC_SOURCE_DIR)/*/*/*.c $(DOC_SOURCE_DIR)/*/*/*.cc
 # this is a wingo addition
 # thomasvs: another nice wingo addition would be an explanation on why
 # this is useful ;)
-SCANOBJ_DEPS = 
+SCANOBJ_DEPS = \
+	$(top_builddir)/gst-libs/gst/interfaces/libgstphotography-@GST_MAJORMINOR@.la
+
 
 # Header files to ignore when scanning.
 IGNORE_HFILES = 
@@ -643,13 +650,13 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/dccp/gstdccpserversink.h \
 	$(top_srcdir)/gst/dccp/gstdccpserversrc.h \
 	$(top_srcdir)/gst/debugutils/fpsdisplaysink.h \
-	$(top_srcdir)/gst/debugutils/gstcapssetter.h \
 	$(top_srcdir)/gst/dtmf/gstdtmfsrc.h \
 	$(top_srcdir)/gst/dtmf/gstdtmfdetect.h \
 	$(top_srcdir)/gst/dtmf/gstrtpdtmfsrc.h \
 	$(top_srcdir)/gst/dtmf/gstrtpdtmfdepay.h \
 	$(top_srcdir)/gst/dvdspu/gstdvdspu.h \
 	$(top_srcdir)/gst/festival/gstfestival.h \
+	$(top_srcdir)/gst/freeze/gstfreeze.h \
 	$(top_srcdir)/gst/legacyresample/gstlegacyresample.h \
 	$(top_srcdir)/gst/liveadder/liveadder.h \
 	$(top_srcdir)/gst/jpegformat/gstjpegparse.h \
@@ -672,11 +679,12 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/videosignal/gstvideomark.h \
 	$(top_srcdir)/gst/valve/gstvalve.h \
 	$(top_srcdir)/sys/directdraw/gstdirectdrawsink.h \
-	$(top_srcdir)/sys/dvb/gstdvbsrc.h
+	$(top_srcdir)/sys/dvb/gstdvbsrc.h \
+	$(top_srcdir)/gst-libs/gst/interfaces/photography.h
 
 
 # Images to copy into HTML directory.
-HTML_IMAGES = $(srcdir)/figures/*.png
+HTML_IMAGES = camerabin.png
 
 # Extra SGML files that are included by $(DOC_MAIN_SGML_FILE).
 content_files = 
@@ -686,7 +694,7 @@ extra_files =
 
 # CFLAGS and LDFLAGS for compiling scan program. Only needed if your app/lib
 # contains GtkObjects/GObjects and you want to document signals and properties.
-GTKDOC_CFLAGS = $(GST_BASE_CFLAGS) -I$(top_builddir)
+GTKDOC_CFLAGS = -DGST_USE_UNSTABLE_API $(GST_PLUGINS_BAD_CFLAGS) $(GST_BASE_CFLAGS) -I$(top_builddir)
 GTKDOC_LIBS = $(SCANOBJ_DEPS) $(GST_BASE_LIBS)
 GTKDOC_CC = $(LIBTOOL) --tag=CC --mode=compile $(CC)
 GTKDOC_LD = $(LIBTOOL) --tag=CC --mode=link $(CC)
@@ -705,19 +713,11 @@ GPATH = $(srcdir)
 
 # thomas: make docs parallel installable
 TARGET_DIR = $(HTML_DIR)/$(DOC_MODULE)-@GST_MAJORMINOR@
-EXTRA_DIST = \
-	scanobj-build.stamp		\
-	$(srcdir)/inspect/*.xml		\
-	inspect.stamp			\
-	inspect-build.stamp		\
-	$(SCANOBJ_FILES)		\
-	$(content_files)		\
-	$(extra_files)			\
-	$(HTML_IMAGES)			\
-	$(DOC_MAIN_SGML_FILE)	\
-	$(DOC_OVERRIDES)		\
-	$(DOC_MODULE)-sections.txt
-
+EXTRA_DIST = scanobj-build.stamp $(srcdir)/inspect/*.xml inspect.stamp \
+	inspect-build.stamp $(SCANOBJ_FILES) $(content_files) \
+	$(extra_files) $(HTML_IMAGES) $(DOC_MAIN_SGML_FILE) \
+	$(DOC_OVERRIDES) $(DOC_MODULE)-sections.txt \
+	$(FIGURES_SOURCEFILES)
 MAINTAINER_DOC_STAMPS = \
 	scanobj-build.stamp		\
 	inspect-build.stamp		\
@@ -788,10 +788,13 @@ MAINTAINERCLEANFILES = $(MAINTAINER_DOC_STAMPS)
 
 # wildcard is apparently not portable to other makes, hence the use of find
 inspect_files = $(shell find $(srcdir)/inspect -name '*.xml')
-SUBDIRS = figures
+SUBDIRS = 
+FIGURES_SOURCEFILES = camerabin.dot
+FIGURES_IMAGES = camerabin.png
 all: all-recursive
 
 .SUFFIXES:
+.SUFFIXES: .dot .png
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/upload-doc.mak $(top_srcdir)/common/gtk-doc-plugins.mak $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -1143,13 +1146,7 @@ uninstall-am: uninstall-local
 html: html-build.stamp
 
 upload: $(FORMATS)
-	@if test "x$(PACKAGE_VERSION_NANO)" = x0; then \
-            export DOCVERSION=$(VERSION); \
-        else export DOCVERSION=head; \
-        fi; \
-        export DIR=$(DOC_BASE)/gstreamer/$$DOCVERSION/$(DOC); \
-	ssh $(DOC_SERVER) mkdir -p $$DIR; \
-	if echo $(FORMATS) | grep html > /dev/null; then \
+	@if echo $(FORMATS) | grep html > /dev/null; then \
 	  echo "Preparing docs for upload (rebasing cross-references) ..." ; \
 	  if test x$(builddir) != x$(srcdir); then \
 	    echo "make upload can only be used if srcdir == builddir"; \
@@ -1174,9 +1171,22 @@ upload: $(FORMATS)
 	fi; \
 	if echo $(FORMATS) | grep ps > /dev/null; then export SRC="$$SRC $(DOC).ps"; fi; \
 	if echo $(FORMATS) | grep pdf > /dev/null; then export SRC="$$SRC $(DOC).pdf"; fi; \
+	\
+	# upload releases to both 0.10.X/ and head/ subdirectories \
+	if test "x$(PACKAGE_VERSION_NANO)" = x0; then \
+	  export DIR=$(DOC_BASE)/gstreamer/$(VERSION)/$(DOC); \
+	  echo Uploading $$SRC to $(DOC_SERVER):$$DIR; \
+	  ssh $(DOC_SERVER) mkdir -p $$DIR; \
+	  rsync -rv -e ssh --delete $$SRC $(DOC_SERVER):$$DIR; \
+	  ssh $(DOC_SERVER) chmod -R g+w $$DIR; \
+	fi; \
+	\
+	export DIR=$(DOC_BASE)/gstreamer/head/$(DOC); \
 	echo Uploading $$SRC to $(DOC_SERVER):$$DIR; \
+	ssh $(DOC_SERVER) mkdir -p $$DIR; \
 	rsync -rv -e ssh --delete $$SRC $(DOC_SERVER):$$DIR; \
 	ssh $(DOC_SERVER) chmod -R g+w $$DIR; \
+	\
 	if echo $(FORMATS) | grep html > /dev/null; then \
 	  echo "Un-preparing docs for upload (rebasing cross-references) ..." ; \
 	  gtkdoc-rebase --html-dir=$(builddir)/html ; \
@@ -1440,6 +1450,29 @@ dist-hook: dist-check-gtkdoc dist-hook-local
         -gtkdoc-rebase --online --relative --html-dir=$(distdir)/html
 
 .PHONY : dist-hook-local docs
+
+# some additional clean rules from gtk-doc.mak
+distclean-local:
+	rm -f $(REPORT_FILES) \
+                $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
+	rm -rf tmpl/*.sgml.bak
+	rm -f $(DOC_MODULE).hierarchy
+	rm -f *.stamp || true
+	if test x"$(srcdir)" != x. ; then \
+	    rm -f $(DOC_MODULE)-docs.sgml ; \
+	    rm -f $(DOC_MODULE).types ; \
+	    rm -f $(DOC_MODULE).interfaces ; \
+            rm -f $(DOC_MODULE)-overrides.txt ; \
+	    rm -f $(DOC_MODULE).prerequisites ; \
+	    rm -f $(DOC_MODULE)-sections.txt ; \
+	    rm -rf tmpl/*.sgml ; \
+	fi
+	rm -rf *.o
+
+.dot.png:
+	dot -Tpng $< -o$@
+
+update-figures: $(FIGURES_IMAGES)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

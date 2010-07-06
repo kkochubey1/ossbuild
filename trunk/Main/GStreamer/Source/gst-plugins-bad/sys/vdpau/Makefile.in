@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -108,27 +107,32 @@ libgstvdp_@GST_MAJORMINOR@_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_libgstvdp_@GST_MAJORMINOR@_la_OBJECTS =  \
 	libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.lo \
+	libgstvdp_@GST_MAJORMINOR@_la-gstvdputils.lo \
 	libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.lo \
 	libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.lo \
 	libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.lo \
-	libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.lo
+	libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.lo \
+	libgstvdp_@GST_MAJORMINOR@_la-gstvdp.lo
 libgstvdp_@GST_MAJORMINOR@_la_OBJECTS =  \
 	$(am_libgstvdp_@GST_MAJORMINOR@_la_OBJECTS)
-libgstvdp_@GST_MAJORMINOR@_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstvdp_@GST_MAJORMINOR@_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) \
 	$(CFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_LDFLAGS) $(LDFLAGS) \
 	-o $@
 libgstvdpau_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	libgstvdp-@GST_MAJORMINOR@.la
 am_libgstvdpau_la_OBJECTS = libgstvdpau_la-gstvdpmpegdec.lo \
-	libgstvdpau_la-mpegutil.lo libgstvdpau_la-gstvdp.lo \
-	libgstvdpau_la-gstvdputils.lo \
+	libgstvdpau_la-mpegutil.lo libgstvdpau_la-gstvdpau.lo \
 	libgstvdpau_la-gstvdpvideopostprocess.lo \
 	libgstvdpau_la-gstvdpsink.lo
 libgstvdpau_la_OBJECTS = $(am_libgstvdpau_la_OBJECTS)
-libgstvdpau_la_LINK = $(LIBTOOL) --tag=CC \
+libgstvdpau_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstvdpau_la_CFLAGS) $(CFLAGS) \
 	$(libgstvdpau_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -138,13 +142,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstvdp_@GST_MAJORMINOR@_la_SOURCES) \
 	$(libgstvdpau_la_SOURCES)
 DIST_SOURCES = $(libgstvdp_@GST_MAJORMINOR@_la_SOURCES) \
@@ -162,7 +179,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -220,7 +237,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -231,11 +247,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -282,6 +296,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -304,6 +320,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -345,7 +362,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -359,6 +375,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -404,7 +421,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -433,13 +449,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -514,7 +532,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -525,15 +542,14 @@ plugin_LTLIBRARIES = libgstvdpau.la
 libgstvdpau_la_SOURCES = \
 	gstvdpmpegdec.c \
 	mpegutil.c \
-	gstvdp.c \
-	gstvdputils.c \
+	gstvdpau.c \
 	gstvdpvideopostprocess.c \
 	gstvdpsink.c
 
 libgstvdpau_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) $(X11_CFLAGS) $(VDPAU_CFLAGS)
 libgstvdpau_la_LIBADD = $(GST_LIBS) $(GST_BASE_LIBS) \
 	$(GST_PLUGINS_BASE_LIBS) $(X11_LIBS) -lgstvideo-$(GST_MAJORMINOR) \
-	-lgstinterfaces-$(GST_MAJORMINOR) $(VDPAU_LIBS) -lgstvdp-$(GST_MAJORMINOR)
+	-lgstinterfaces-$(GST_MAJORMINOR) $(VDPAU_LIBS) libgstvdp-@GST_MAJORMINOR@.la
 
 libgstvdpau_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 libgstvdpau_la_LIBTOOLFLAGS = --tag=disable-static
@@ -547,10 +563,12 @@ noinst_HEADERS = \
 lib_LTLIBRARIES = libgstvdp-@GST_MAJORMINOR@.la
 libgstvdp_@GST_MAJORMINOR@_la_SOURCES = \
 	gstvdpdevice.c \
+	gstvdputils.c \
 	gstvdpvideobuffer.c \
 	gstvdpoutputbuffer.c \
 	gstvdpvideosrcpad.c \
-	gstvdpoutputsrcpad.c
+	gstvdpoutputsrcpad.c \
+	gstvdp.c 
 
 libgstvdp_@GST_MAJORMINOR@includedir = $(includedir)/gstreamer-@GST_MAJORMINOR@/gst/vdpau
 libgstvdp_@GST_MAJORMINOR@include_HEADERS = \
@@ -558,10 +576,15 @@ libgstvdp_@GST_MAJORMINOR@include_HEADERS = \
 	gstvdpvideobuffer.h \
 	gstvdpoutputbuffer.h \
 	gstvdpvideosrcpad.h \
-	gstvdpoutputsrcpad.h
+	gstvdpoutputsrcpad.h \
+	gstvdp.h
 
-libgstvdp_@GST_MAJORMINOR@_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) $(X11_CFLAGS) $(VDPAU_CFLAGS)
-libgstvdp_@GST_MAJORMINOR@_la_LIBADD = $(GST_LIBS) $(VDPAU_LIBS) $(X11_LIBS) -lgstvideo-$(GST_MAJORMINOR)
+libgstvdp_@GST_MAJORMINOR@_la_CFLAGS = $(GST_CFLAGS) $(GST_BASE_CFLAGS) \
+  $(GST_PLUGINS_BASE_CFLAGS) $(X11_CFLAGS) $(VDPAU_CFLAGS)
+
+libgstvdp_@GST_MAJORMINOR@_la_LIBADD = $(GST_LIBS) $(X11_LIBS) $(VDPAU_LIBS) \
+  -lgstvideo-$(GST_MAJORMINOR)
+
 libgstvdp_@GST_MAJORMINOR@_la_LDFLAGS = $(GST_LIB_LDFLAGS) $(GST_LT_LDFLAGS) $(GST_ALL_LDFLAGS)
 libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS = --tag=disable-static
 all: all-am
@@ -661,9 +684,9 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstvdp-@GST_MAJORMINOR@.la: $(libgstvdp_@GST_MAJORMINOR@_la_OBJECTS) $(libgstvdp_@GST_MAJORMINOR@_la_DEPENDENCIES) 
-	$(libgstvdp_@GST_MAJORMINOR@_la_LINK) -rpath $(libdir) $(libgstvdp_@GST_MAJORMINOR@_la_OBJECTS) $(libgstvdp_@GST_MAJORMINOR@_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstvdp_@GST_MAJORMINOR@_la_LINK) -rpath $(libdir) $(libgstvdp_@GST_MAJORMINOR@_la_OBJECTS) $(libgstvdp_@GST_MAJORMINOR@_la_LIBADD) $(LIBS)
 libgstvdpau.la: $(libgstvdpau_la_OBJECTS) $(libgstvdpau_la_DEPENDENCIES) 
-	$(libgstvdpau_la_LINK) -rpath $(plugindir) $(libgstvdpau_la_OBJECTS) $(libgstvdpau_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstvdpau_la_LINK) -rpath $(plugindir) $(libgstvdpau_la_OBJECTS) $(libgstvdpau_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -671,115 +694,138 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdputils.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdpau_la-gstvdp.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdpau_la-gstvdpau.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdpau_la-gstvdpmpegdec.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdpau_la-gstvdpsink.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdpau_la-gstvdputils.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdpau_la-gstvdpvideopostprocess.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvdpau_la-mpegutil.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.lo: gstvdpdevice.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.lo `test -f 'gstvdpdevice.c' || echo '$(srcdir)/'`gstvdpdevice.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.lo `test -f 'gstvdpdevice.c' || echo '$(srcdir)/'`gstvdpdevice.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdpdevice.c' object='libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.lo `test -f 'gstvdpdevice.c' || echo '$(srcdir)/'`gstvdpdevice.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpdevice.lo `test -f 'gstvdpdevice.c' || echo '$(srcdir)/'`gstvdpdevice.c
+
+libgstvdp_@GST_MAJORMINOR@_la-gstvdputils.lo: gstvdputils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdputils.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdputils.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdputils.lo `test -f 'gstvdputils.c' || echo '$(srcdir)/'`gstvdputils.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdputils.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdputils.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdputils.c' object='libgstvdp_@GST_MAJORMINOR@_la-gstvdputils.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdputils.lo `test -f 'gstvdputils.c' || echo '$(srcdir)/'`gstvdputils.c
 
 libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.lo: gstvdpvideobuffer.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.lo `test -f 'gstvdpvideobuffer.c' || echo '$(srcdir)/'`gstvdpvideobuffer.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.lo `test -f 'gstvdpvideobuffer.c' || echo '$(srcdir)/'`gstvdpvideobuffer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdpvideobuffer.c' object='libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.lo `test -f 'gstvdpvideobuffer.c' || echo '$(srcdir)/'`gstvdpvideobuffer.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideobuffer.lo `test -f 'gstvdpvideobuffer.c' || echo '$(srcdir)/'`gstvdpvideobuffer.c
 
 libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.lo: gstvdpoutputbuffer.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.lo `test -f 'gstvdpoutputbuffer.c' || echo '$(srcdir)/'`gstvdpoutputbuffer.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.lo `test -f 'gstvdpoutputbuffer.c' || echo '$(srcdir)/'`gstvdpoutputbuffer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdpoutputbuffer.c' object='libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.lo `test -f 'gstvdpoutputbuffer.c' || echo '$(srcdir)/'`gstvdpoutputbuffer.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputbuffer.lo `test -f 'gstvdpoutputbuffer.c' || echo '$(srcdir)/'`gstvdpoutputbuffer.c
 
 libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.lo: gstvdpvideosrcpad.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.lo `test -f 'gstvdpvideosrcpad.c' || echo '$(srcdir)/'`gstvdpvideosrcpad.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.lo `test -f 'gstvdpvideosrcpad.c' || echo '$(srcdir)/'`gstvdpvideosrcpad.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdpvideosrcpad.c' object='libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.lo `test -f 'gstvdpvideosrcpad.c' || echo '$(srcdir)/'`gstvdpvideosrcpad.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpvideosrcpad.lo `test -f 'gstvdpvideosrcpad.c' || echo '$(srcdir)/'`gstvdpvideosrcpad.c
 
 libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.lo: gstvdpoutputsrcpad.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.lo `test -f 'gstvdpoutputsrcpad.c' || echo '$(srcdir)/'`gstvdpoutputsrcpad.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.lo `test -f 'gstvdpoutputsrcpad.c' || echo '$(srcdir)/'`gstvdpoutputsrcpad.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdpoutputsrcpad.c' object='libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.lo `test -f 'gstvdpoutputsrcpad.c' || echo '$(srcdir)/'`gstvdpoutputsrcpad.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdpoutputsrcpad.lo `test -f 'gstvdpoutputsrcpad.c' || echo '$(srcdir)/'`gstvdpoutputsrcpad.c
+
+libgstvdp_@GST_MAJORMINOR@_la-gstvdp.lo: gstvdp.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvdp_@GST_MAJORMINOR@_la-gstvdp.lo -MD -MP -MF $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdp.Tpo -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdp.lo `test -f 'gstvdp.c' || echo '$(srcdir)/'`gstvdp.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdp.Tpo $(DEPDIR)/libgstvdp_@GST_MAJORMINOR@_la-gstvdp.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdp.c' object='libgstvdp_@GST_MAJORMINOR@_la-gstvdp.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdp_@GST_MAJORMINOR@_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdp_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvdp_@GST_MAJORMINOR@_la-gstvdp.lo `test -f 'gstvdp.c' || echo '$(srcdir)/'`gstvdp.c
 
 libgstvdpau_la-gstvdpmpegdec.lo: gstvdpmpegdec.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -MT libgstvdpau_la-gstvdpmpegdec.lo -MD -MP -MF $(DEPDIR)/libgstvdpau_la-gstvdpmpegdec.Tpo -c -o libgstvdpau_la-gstvdpmpegdec.lo `test -f 'gstvdpmpegdec.c' || echo '$(srcdir)/'`gstvdpmpegdec.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvdpau_la-gstvdpmpegdec.Tpo $(DEPDIR)/libgstvdpau_la-gstvdpmpegdec.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -MT libgstvdpau_la-gstvdpmpegdec.lo -MD -MP -MF $(DEPDIR)/libgstvdpau_la-gstvdpmpegdec.Tpo -c -o libgstvdpau_la-gstvdpmpegdec.lo `test -f 'gstvdpmpegdec.c' || echo '$(srcdir)/'`gstvdpmpegdec.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdpau_la-gstvdpmpegdec.Tpo $(DEPDIR)/libgstvdpau_la-gstvdpmpegdec.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdpmpegdec.c' object='libgstvdpau_la-gstvdpmpegdec.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -c -o libgstvdpau_la-gstvdpmpegdec.lo `test -f 'gstvdpmpegdec.c' || echo '$(srcdir)/'`gstvdpmpegdec.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -c -o libgstvdpau_la-gstvdpmpegdec.lo `test -f 'gstvdpmpegdec.c' || echo '$(srcdir)/'`gstvdpmpegdec.c
 
 libgstvdpau_la-mpegutil.lo: mpegutil.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -MT libgstvdpau_la-mpegutil.lo -MD -MP -MF $(DEPDIR)/libgstvdpau_la-mpegutil.Tpo -c -o libgstvdpau_la-mpegutil.lo `test -f 'mpegutil.c' || echo '$(srcdir)/'`mpegutil.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvdpau_la-mpegutil.Tpo $(DEPDIR)/libgstvdpau_la-mpegutil.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -MT libgstvdpau_la-mpegutil.lo -MD -MP -MF $(DEPDIR)/libgstvdpau_la-mpegutil.Tpo -c -o libgstvdpau_la-mpegutil.lo `test -f 'mpegutil.c' || echo '$(srcdir)/'`mpegutil.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdpau_la-mpegutil.Tpo $(DEPDIR)/libgstvdpau_la-mpegutil.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpegutil.c' object='libgstvdpau_la-mpegutil.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -c -o libgstvdpau_la-mpegutil.lo `test -f 'mpegutil.c' || echo '$(srcdir)/'`mpegutil.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -c -o libgstvdpau_la-mpegutil.lo `test -f 'mpegutil.c' || echo '$(srcdir)/'`mpegutil.c
 
-libgstvdpau_la-gstvdp.lo: gstvdp.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -MT libgstvdpau_la-gstvdp.lo -MD -MP -MF $(DEPDIR)/libgstvdpau_la-gstvdp.Tpo -c -o libgstvdpau_la-gstvdp.lo `test -f 'gstvdp.c' || echo '$(srcdir)/'`gstvdp.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvdpau_la-gstvdp.Tpo $(DEPDIR)/libgstvdpau_la-gstvdp.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdp.c' object='libgstvdpau_la-gstvdp.lo' libtool=yes @AMDEPBACKSLASH@
+libgstvdpau_la-gstvdpau.lo: gstvdpau.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -MT libgstvdpau_la-gstvdpau.lo -MD -MP -MF $(DEPDIR)/libgstvdpau_la-gstvdpau.Tpo -c -o libgstvdpau_la-gstvdpau.lo `test -f 'gstvdpau.c' || echo '$(srcdir)/'`gstvdpau.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdpau_la-gstvdpau.Tpo $(DEPDIR)/libgstvdpau_la-gstvdpau.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdpau.c' object='libgstvdpau_la-gstvdpau.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -c -o libgstvdpau_la-gstvdp.lo `test -f 'gstvdp.c' || echo '$(srcdir)/'`gstvdp.c
-
-libgstvdpau_la-gstvdputils.lo: gstvdputils.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -MT libgstvdpau_la-gstvdputils.lo -MD -MP -MF $(DEPDIR)/libgstvdpau_la-gstvdputils.Tpo -c -o libgstvdpau_la-gstvdputils.lo `test -f 'gstvdputils.c' || echo '$(srcdir)/'`gstvdputils.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvdpau_la-gstvdputils.Tpo $(DEPDIR)/libgstvdpau_la-gstvdputils.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdputils.c' object='libgstvdpau_la-gstvdputils.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -c -o libgstvdpau_la-gstvdputils.lo `test -f 'gstvdputils.c' || echo '$(srcdir)/'`gstvdputils.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -c -o libgstvdpau_la-gstvdpau.lo `test -f 'gstvdpau.c' || echo '$(srcdir)/'`gstvdpau.c
 
 libgstvdpau_la-gstvdpvideopostprocess.lo: gstvdpvideopostprocess.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -MT libgstvdpau_la-gstvdpvideopostprocess.lo -MD -MP -MF $(DEPDIR)/libgstvdpau_la-gstvdpvideopostprocess.Tpo -c -o libgstvdpau_la-gstvdpvideopostprocess.lo `test -f 'gstvdpvideopostprocess.c' || echo '$(srcdir)/'`gstvdpvideopostprocess.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvdpau_la-gstvdpvideopostprocess.Tpo $(DEPDIR)/libgstvdpau_la-gstvdpvideopostprocess.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -MT libgstvdpau_la-gstvdpvideopostprocess.lo -MD -MP -MF $(DEPDIR)/libgstvdpau_la-gstvdpvideopostprocess.Tpo -c -o libgstvdpau_la-gstvdpvideopostprocess.lo `test -f 'gstvdpvideopostprocess.c' || echo '$(srcdir)/'`gstvdpvideopostprocess.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdpau_la-gstvdpvideopostprocess.Tpo $(DEPDIR)/libgstvdpau_la-gstvdpvideopostprocess.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdpvideopostprocess.c' object='libgstvdpau_la-gstvdpvideopostprocess.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -c -o libgstvdpau_la-gstvdpvideopostprocess.lo `test -f 'gstvdpvideopostprocess.c' || echo '$(srcdir)/'`gstvdpvideopostprocess.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -c -o libgstvdpau_la-gstvdpvideopostprocess.lo `test -f 'gstvdpvideopostprocess.c' || echo '$(srcdir)/'`gstvdpvideopostprocess.c
 
 libgstvdpau_la-gstvdpsink.lo: gstvdpsink.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -MT libgstvdpau_la-gstvdpsink.lo -MD -MP -MF $(DEPDIR)/libgstvdpau_la-gstvdpsink.Tpo -c -o libgstvdpau_la-gstvdpsink.lo `test -f 'gstvdpsink.c' || echo '$(srcdir)/'`gstvdpsink.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstvdpau_la-gstvdpsink.Tpo $(DEPDIR)/libgstvdpau_la-gstvdpsink.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -MT libgstvdpau_la-gstvdpsink.lo -MD -MP -MF $(DEPDIR)/libgstvdpau_la-gstvdpsink.Tpo -c -o libgstvdpau_la-gstvdpsink.lo `test -f 'gstvdpsink.c' || echo '$(srcdir)/'`gstvdpsink.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvdpau_la-gstvdpsink.Tpo $(DEPDIR)/libgstvdpau_la-gstvdpsink.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvdpsink.c' object='libgstvdpau_la-gstvdpsink.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -c -o libgstvdpau_la-gstvdpsink.lo `test -f 'gstvdpsink.c' || echo '$(srcdir)/'`gstvdpsink.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvdpau_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvdpau_la_CFLAGS) $(CFLAGS) -c -o libgstvdpau_la-gstvdpsink.lo `test -f 'gstvdpsink.c' || echo '$(srcdir)/'`gstvdpsink.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

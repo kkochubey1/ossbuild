@@ -26,6 +26,8 @@
 #include "gstfrei0r.h"
 #include "gstfrei0rmixer.h"
 
+#include <gst/controller/gstcontroller.h>
+
 GST_DEBUG_CATEGORY_EXTERN (frei0r_debug);
 #define GST_CAT_DEFAULT frei0r_debug
 
@@ -84,10 +86,12 @@ gst_frei0r_mixer_get_property (GObject * object, guint prop_id, GValue * value,
   GstFrei0rMixer *self = GST_FREI0R_MIXER (object);
   GstFrei0rMixerClass *klass = GST_FREI0R_MIXER_GET_CLASS (object);
 
+  GST_OBJECT_LOCK (self);
   if (!gst_frei0r_get_property (self->f0r_instance, klass->ftable,
           klass->properties, klass->n_properties, self->property_cache, prop_id,
           value))
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+  GST_OBJECT_UNLOCK (self);
 }
 
 static void
@@ -97,10 +101,12 @@ gst_frei0r_mixer_set_property (GObject * object, guint prop_id,
   GstFrei0rMixer *self = GST_FREI0R_MIXER (object);
   GstFrei0rMixerClass *klass = GST_FREI0R_MIXER_GET_CLASS (object);
 
+  GST_OBJECT_LOCK (self);
   if (!gst_frei0r_set_property (self->f0r_instance, klass->ftable,
           klass->properties, klass->n_properties, self->property_cache, prop_id,
           value))
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+  GST_OBJECT_UNLOCK (self);
 }
 
 static GstStateChangeReturn
@@ -542,7 +548,9 @@ gst_frei0r_mixer_collected (GstCollectPads * pads, GstFrei0rMixer * self)
   GstFlowReturn ret = GST_FLOW_OK;
   GSList *l;
   GstFrei0rMixerClass *klass = GST_FREI0R_MIXER_GET_CLASS (self);
+  GstClockTime timestamp;
   gdouble time;
+  GstSegment *segment = NULL;
 
   if (G_UNLIKELY (self->width <= 0 || self->height <= 0))
     return GST_FLOW_NOT_NEGOTIATED;
@@ -569,26 +577,40 @@ gst_frei0r_mixer_collected (GstCollectPads * pads, GstFrei0rMixer * self)
   for (l = pads->data; l; l = l->next) {
     GstCollectData *cdata = l->data;
 
-    if (cdata->pad == self->sink0)
+    if (cdata->pad == self->sink0) {
       inbuf0 = gst_collect_pads_pop (pads, cdata);
-    else if (cdata->pad == self->sink1)
+      segment = &cdata->segment;
+    } else if (cdata->pad == self->sink1) {
       inbuf1 = gst_collect_pads_pop (pads, cdata);
-    else if (cdata->pad == self->sink2)
+    } else if (cdata->pad == self->sink2) {
       inbuf2 = gst_collect_pads_pop (pads, cdata);
+    }
   }
 
   if (!inbuf0 || !inbuf1 || (!inbuf2 && self->sink2))
     goto eos;
 
+  g_assert (segment != NULL);
+  timestamp = GST_BUFFER_TIMESTAMP (inbuf0);
+  timestamp = gst_segment_to_stream_time (segment, GST_FORMAT_TIME, timestamp);
+
+  GST_DEBUG_OBJECT (self, "sync to %" GST_TIME_FORMAT,
+      GST_TIME_ARGS (timestamp));
+
+  if (GST_CLOCK_TIME_IS_VALID (timestamp))
+    gst_object_sync_values (G_OBJECT (self), timestamp);
+
   gst_buffer_copy_metadata (outbuf, inbuf0,
       GST_BUFFER_COPY_FLAGS | GST_BUFFER_COPY_TIMESTAMPS);
   time = ((gdouble) GST_BUFFER_TIMESTAMP (outbuf)) / GST_SECOND;
 
+  GST_OBJECT_LOCK (self);
   klass->ftable->update2 (self->f0r_instance, time,
       (const guint32 *) GST_BUFFER_DATA (inbuf0),
       (const guint32 *) GST_BUFFER_DATA (inbuf1),
       (inbuf2) ? (const guint32 *) GST_BUFFER_DATA (inbuf2) : NULL,
       (guint32 *) GST_BUFFER_DATA (outbuf));
+  GST_OBJECT_UNLOCK (self);
 
   gst_buffer_unref (inbuf0);
   gst_buffer_unref (inbuf1);

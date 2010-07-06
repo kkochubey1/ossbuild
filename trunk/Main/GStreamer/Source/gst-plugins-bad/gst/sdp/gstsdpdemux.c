@@ -84,13 +84,6 @@
 GST_DEBUG_CATEGORY_STATIC (sdpdemux_debug);
 #define GST_CAT_DEFAULT (sdpdemux_debug)
 
-/* elementfactory information */
-static const GstElementDetails gst_sdp_demux_details =
-GST_ELEMENT_DETAILS ("SDP session setup",
-    "Codec/Demuxer/Network/RTP",
-    "Receive data over the network via SDP",
-    "Wim Taymans <wim.taymans@gmail.com>");
-
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
@@ -119,7 +112,6 @@ enum
   PROP_LATENCY
 };
 
-static void gst_sdp_demux_base_init (gpointer g_class);
 static void gst_sdp_demux_finalize (GObject * object);
 
 static void gst_sdp_demux_set_property (GObject * object, guint prop_id,
@@ -162,7 +154,10 @@ gst_sdp_demux_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&rtptemplate));
 
-  gst_element_class_set_details (element_class, &gst_sdp_demux_details);
+  gst_element_class_set_details_simple (element_class, "SDP session setup",
+      "Codec/Demuxer/Network/RTP",
+      "Receive data over the network via SDP",
+      "Wim Taymans <wim.taymans@gmail.com>");
 }
 
 static void
@@ -319,7 +314,7 @@ find_stream_by_udpsrc (GstSDPStream * stream, gconstpointer a)
   return -1;
 }
 
-GstSDPStream *
+static GstSDPStream *
 find_stream (GstSDPDemux * demux, gconstpointer data, gconstpointer func)
 {
   GList *lstream;
@@ -387,12 +382,12 @@ is_multicast_address (const gchar * host_name)
   for (ai = res; !ret && ai; ai = ai->ai_next) {
     if (ai->ai_family == AF_INET)
       ret =
-          IN_MULTICAST (ntohl (((struct sockaddr_in *) ai->ai_addr)->
-              sin_addr.s_addr));
+          IN_MULTICAST (ntohl (((struct sockaddr_in *) ai->ai_addr)->sin_addr.
+              s_addr));
     else
       ret =
-          IN6_IS_ADDR_MULTICAST (&((struct sockaddr_in6 *) ai->
-              ai_addr)->sin6_addr);
+          IN6_IS_ADDR_MULTICAST (&((struct sockaddr_in6 *) ai->ai_addr)->
+          sin6_addr);
   }
 
   freeaddrinfo (res);
@@ -687,8 +682,8 @@ gst_sdp_demux_media_to_caps (gint pt, const GstSDPMedia * media)
       /* <param>[=<value>] are separated with ';' */
       pairs = g_strsplit (p, ";", 0);
       for (i = 0; pairs[i]; i++) {
-        gchar *valpos;
-        gchar *val, *key;
+        gchar *valpos, *key;
+        const gchar *val;
 
         /* the key may not have a '=', the value can have other '='s */
         valpos = strstr (pairs[i], "=");
@@ -938,7 +933,8 @@ start_session_failure:
 static gboolean
 gst_sdp_demux_stream_configure_udp (GstSDPDemux * demux, GstSDPStream * stream)
 {
-  gchar *uri, *name, *destination;
+  gchar *uri, *name;
+  const gchar *destination;
   GstPad *pad;
 
   GST_DEBUG_OBJECT (demux, "creating UDP sources for multicast");
@@ -1053,6 +1049,8 @@ gst_sdp_demux_stream_configure_udp_sink (GstSDPDemux * demux,
   if (!stream->multicast)
     g_signal_emit_by_name (stream->udpsink, "clear");
 
+  g_object_set (G_OBJECT (stream->udpsink), "auto-multicast", FALSE, NULL);
+  g_object_set (G_OBJECT (stream->udpsink), "loop", FALSE, NULL);
   /* no sync needed */
   g_object_set (G_OBJECT (stream->udpsink), "sync", FALSE, NULL);
   /* no async state changes needed */

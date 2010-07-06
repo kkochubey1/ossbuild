@@ -36,7 +36,6 @@
 
 #define AMR_FRAME_DURATION (GST_SECOND/50)
 
-GList *buffers;
 GList *current_buf = NULL;
 
 GstPad *srcpad, *sinkpad;
@@ -90,7 +89,7 @@ typedef struct
 /*
  * Create a GstBuffer of the given data and set the caps, if not NULL.
  */
-GstBuffer *
+static GstBuffer *
 buffer_new (const unsigned char *buffer_data, guint size,
     const gchar * caps_str)
 {
@@ -174,7 +173,7 @@ buffer_verify_wb (void *buffer, void *user_data)
 /*
  * Create a parser and pads according to given templates.
  */
-GstElement *
+static GstElement *
 setup_amrparse (GstStaticPadTemplate * srctemplate,
     GstStaticPadTemplate * sinktemplate)
 {
@@ -621,7 +620,7 @@ GST_END_TEST;
  * Create test suite.
  */
 static Suite *
-amrparse_suite ()
+amrparse_suite (void)
 {
   Suite *s = suite_create ("amrparse");
   TCase *tc_chain = tcase_create ("general");

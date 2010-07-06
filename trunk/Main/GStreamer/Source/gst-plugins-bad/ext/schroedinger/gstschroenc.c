@@ -83,6 +83,8 @@ struct _GstSchroEncClass
   GstBaseVideoEncoderClass parent_class;
 };
 
+GType gst_schro_enc_get_type (void);
+
 
 
 enum
@@ -135,11 +137,7 @@ GST_BOILERPLATE (GstSchroEnc, gst_schro_enc, GstBaseVideoEncoder,
 static void
 gst_schro_enc_base_init (gpointer g_class)
 {
-  static GstElementDetails schro_enc_details =
-      GST_ELEMENT_DETAILS ("Dirac Encoder",
-      "Codec/Encoder/Video",
-      "Encode raw video into Dirac stream",
-      "David Schleef <ds@schleef.org>");
+
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
   gst_element_class_add_pad_template (element_class,
@@ -147,7 +145,9 @@ gst_schro_enc_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_schro_enc_sink_template));
 
-  gst_element_class_set_details (element_class, &schro_enc_details);
+  gst_element_class_set_details_simple (element_class, "Dirac Encoder",
+      "Codec/Encoder/Video",
+      "Encode raw video into Dirac stream", "David Schleef <ds@schleef.org>");
 }
 
 static GType
@@ -764,6 +764,21 @@ gst_schro_enc_process (GstSchroEnc * schro_enc)
           /* FIXME This shouldn't happen */
           return GST_FLOW_ERROR;
         }
+#if SCHRO_CHECK_VERSION (1, 0, 9)
+        {
+          GstMessage *message;
+          GstStructure *structure;
+          GstBuffer *buf;
+
+          buf = gst_buffer_new_and_alloc (sizeof (double) * 21);
+          schro_encoder_get_frame_stats (schro_enc->encoder,
+              (double *) GST_BUFFER_DATA (buf), 21);
+          structure = gst_structure_new ("schroenc",
+              "frame-stats", GST_TYPE_BUFFER, buf, NULL);
+          message = gst_message_new_element (GST_OBJECT (schro_enc), structure);
+          gst_element_post_message (GST_ELEMENT (schro_enc), message);
+        }
+#endif
 
         if (voidptr == NULL) {
           GST_DEBUG ("got eos");
