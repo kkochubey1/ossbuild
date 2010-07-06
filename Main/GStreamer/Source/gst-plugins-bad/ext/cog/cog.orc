@@ -1,4 +1,5 @@
 
+
 .function cogorc_downsample_horiz_cosite_1tap
 .dest 1 d1
 .source 2 s1
@@ -30,6 +31,27 @@ addw t4, t4, t5
 addw t4, t4, 2
 shrsw t4, t4, 2
 convsuswb d1, t4
+
+
+.function cogorc_downsample_420_jpeg
+.dest 1 d1
+.source 2 s1
+.source 2 s2
+.temp 2 t1
+.temp 1 t2
+.temp 1 t3
+.temp 1 t4
+.temp 1 t5
+
+copyw t1, s1
+select0wb t2, t1
+select1wb t3, t1
+avgub t2, t2, t3
+copyw t1, s2
+select0wb t4, t1
+select1wb t5, t1
+avgub t4, t4, t5
+avgub d1, t2, t4
 
 
 .function cogorc_downsample_vert_halfsite_2tap
@@ -361,6 +383,39 @@ addw t3, t3, 128
 shrsw t3, t3, 8
 addw t3, t3, t1
 convsuswb d1, t3
+
+
+.function orc_matrix3_100_offset_u8
+.dest 1 d1 uint8_t
+.source 1 s1 uint8_t
+.source 1 s2 uint8_t
+.source 1 s3 uint8_t
+.param 2 p1
+.param 2 p2
+.param 2 p3
+.param 2 p4
+.param 2 p5
+#.param 2 p6
+.temp 2 t1
+.temp 2 t2
+.temp 2 t3
+#.temp 2 t3
+#.temp 2 t4
+
+convubw t3, s1
+mullw t1, t3, p1
+convubw t2, s2
+mullw t2, t2, p2
+addw t1, t1, t2
+convubw t2, s3
+mullw t2, t2, p3
+addw t1, t1, t2
+addw t1, t1, p4
+shrsw t1, t1, p5
+#addw t1, t1, p6
+addw t1, t1, t3
+convsuswb d1, t1
+
 
 
 .function orc_matrix3_000_u8

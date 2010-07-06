@@ -731,8 +731,8 @@ AtomInfo *   build_jp2h_extension        (AtomTRAK * trak, gint width, gint heig
 
 AtomInfo *   build_jp2x_extension        (const GstBuffer * prefix);
 AtomInfo *   build_fiel_extension        (gint fields);
-AtomInfo *   build_amr_extension         ();
-AtomInfo *   build_h263_extension        ();
+AtomInfo *   build_amr_extension         (void);
+AtomInfo *   build_h263_extension        (void);
 AtomInfo *   build_gama_atom             (gdouble gamma);
 AtomInfo *   build_SMI_atom              (const GstBuffer *seqh);
 AtomInfo *   build_ima_adpcm_extension   (gint channels, gint rate,
@@ -755,6 +755,8 @@ void atom_moov_add_3gp_str_int_tag   (AtomMOOV * moov, guint32 fourcc, const gch
                                       gint16 ivalue);
 void atom_moov_add_3gp_tag           (AtomMOOV * moov, guint32 fourcc, guint8 * data,
                                       guint size);
+
+void atom_moov_add_xmp_tags          (AtomMOOV * moov, const GstTagList * tags);
 
 #define GST_QT_MUX_DEFAULT_TAG_LANGUAGE   "eng"
 guint16  language_code               (const char * lang);

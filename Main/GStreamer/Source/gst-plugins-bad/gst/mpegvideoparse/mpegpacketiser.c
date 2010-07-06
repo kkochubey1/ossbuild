@@ -118,7 +118,7 @@ mpeg_util_find_start_code (guint32 * sync_word, guint8 * cur, guint8 * end)
 
 /* Get the index of the next unfilled block in the buffer. May need to grow
  * the array first */
-gint
+static gint
 get_next_free_block (MPEGPacketiser * p)
 {
   gint next;
@@ -412,6 +412,11 @@ mpeg_packetiser_get_block (MPEGPacketiser * p, GstBuffer ** buf)
     p->adapter_offset += block->length;
 
     GST_BUFFER_TIMESTAMP (*buf) = block->ts;
+  } else {
+    GST_DEBUG ("we have a block but do not meet all conditions buf: %p "
+        "block length: %d adapter offset %" G_GUINT64_FORMAT " block offset "
+        "%" G_GUINT64_FORMAT, buf, block->length, p->adapter_offset,
+        block->offset);
   }
   return block;
 }
@@ -498,7 +503,6 @@ mpeg_util_parse_extension_packet (MPEGSeqHdr * hdr, guint8 * data, guint8 * end)
     case MPEG_PACKET_EXT_SEQUENCE:
     {
       /* Parse a Sequence Extension */
-      guint8 profile_level;
       gboolean low_delay;
       guint8 chroma_format;
       guint8 horiz_size_ext, vert_size_ext;
@@ -508,7 +512,8 @@ mpeg_util_parse_extension_packet (MPEGSeqHdr * hdr, guint8 * data, guint8 * end)
         /* need at least 10 bytes, minus 4 for the start code 000001b5 */
         return FALSE;
 
-      profile_level = ((data[0] << 4) & 0xf0) | ((data[1]) >> 4);
+      hdr->profile = data[0] & 0x0f;    /* profile (0:2) + escape bit (3) */
+      hdr->level = (data[1] >> 4) & 0x0f;
       hdr->progressive = data[1] & 0x08;
       chroma_format = (data[1] >> 2) & 0x03;
       horiz_size_ext = ((data[1] << 1) & 0x02) | ((data[2] >> 7) & 0x01);
@@ -561,6 +566,15 @@ mpeg_util_parse_sequence_hdr (MPEGSeqHdr * hdr, guint8 * data, guint8 * end)
   set_par_from_dar (hdr, dar_idx);
   fps_idx = code & 0xf;
   set_fps_from_code (hdr, fps_idx);
+
+  hdr->bitrate = ((data[6] >> 6) | (data[5] << 2) | (data[4] << 10));
+  if (hdr->bitrate == 0x3ffff) {
+    /* VBR stream */
+    hdr->bitrate = 0;
+  } else {
+    /* Value in header is in units of 400 bps */
+    hdr->bitrate *= 400;
+  }
 
   constrained_flag = (data[7] >> 2) & 0x01;
   load_intra_flag = (data[7] >> 1) & 0x01;

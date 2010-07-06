@@ -77,33 +77,6 @@ typedef enum
 GST_DEBUG_CATEGORY_STATIC (gstflupsdemux_debug);
 #define GST_CAT_DEFAULT (gstflupsdemux_debug)
 
-/* elementfactory information */
-static GstElementDetails flups_demux_details = {
-  "The Fluendo MPEG Program Stream Demuxer",
-  "Codec/Demuxer",
-  "Demultiplexes MPEG Program Streams",
-  "Wim Taymans <wim@fluendo.com>"
-};
-
-#define GST_TYPE_FLUPS_DEMUX_SYNC          (gst_flups_demux_sync_get_type ())
-GType
-gst_flups_demux_sync_get_type (void)
-{
-  static GType sync_type = 0;
-  static GEnumValue sync_types[] = {
-    {GST_FLUPS_DEMUX_SYNC_AUTO, "Auto-select method to synchronize streams",
-        "auto"},
-    {GST_FLUPS_DEMUX_SYNC_SCR, "Use SCR to synchronize streams", "scr"},
-    {GST_FLUPS_DEMUX_SYNC_DTS, "Use DTS to synchronize streams", "dts"},
-    {0, NULL, NULL}
-  };
-
-  if (sync_type == 0)
-    sync_type = g_enum_register_static ("GstPSDemuxSync", sync_types);
-
-  return sync_type;
-}
-
 /* MPEG2Demux signals and args */
 enum
 {
@@ -241,7 +214,9 @@ gst_flups_demux_base_init (GstFluPSDemuxClass * klass)
   gst_element_class_add_pad_template (element_class, klass->private_template);
   gst_element_class_add_pad_template (element_class, klass->sink_template);
 
-  gst_element_class_set_details (element_class, &flups_demux_details);
+  gst_element_class_set_details_simple (element_class,
+      "The Fluendo MPEG Program Stream Demuxer", "Codec/Demuxer",
+      "Demultiplexes MPEG Program Streams", "Wim Taymans <wim@fluendo.com>");
 }
 
 static void

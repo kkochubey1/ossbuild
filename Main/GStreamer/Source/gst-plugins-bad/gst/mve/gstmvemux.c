@@ -37,13 +37,6 @@ gst-launch-0.10 filesrc location=movie.mve ! mvedemux name=d !
 GST_DEBUG_CATEGORY_STATIC (mvemux_debug);
 #define GST_CAT_DEFAULT mvemux_debug
 
-extern GstFlowReturn mve_encode_frame8 (GstMveMux * mve,
-    GstBuffer * frame, const guint32 * palette, guint16 max_data);
-extern GstFlowReturn mve_encode_frame16 (GstMveMux * mve,
-    GstBuffer * frame, guint16 max_data);
-extern gint mve_compress_audio (guint8 * dest,
-    const guint8 * src, guint16 len, guint8 channels);
-
 static const char mve_preamble[] = MVE_PREAMBLE;
 
 enum
@@ -1353,11 +1346,6 @@ gst_mve_mux_release_pad (GstElement * element, GstPad * pad)
 static void
 gst_mve_mux_base_init (GstMveMuxClass * klass)
 {
-  static const GstElementDetails gst_mve_mux_details =
-      GST_ELEMENT_DETAILS ("MVE Multiplexer",
-      "Codec/Muxer",
-      "Muxes audio and video into an MVE stream",
-      "Jens Granseuer <jensgr@gmx.net>");
 
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
@@ -1368,7 +1356,10 @@ gst_mve_mux_base_init (GstMveMuxClass * klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&video_sink_factory));
 
-  gst_element_class_set_details (element_class, &gst_mve_mux_details);
+  gst_element_class_set_details_simple (element_class, "MVE Multiplexer",
+      "Codec/Muxer",
+      "Muxes audio and video into an MVE stream",
+      "Jens Granseuer <jensgr@gmx.net>");
 }
 
 static void

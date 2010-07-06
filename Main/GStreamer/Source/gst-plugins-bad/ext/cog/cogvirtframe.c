@@ -139,9 +139,11 @@ cog_virt_frame_get_line (CogFrame * frame, int component, int i)
   }
 
   if (i < frame->cache_offset[component]) {
-    g_warning ("cache failure: %d outside [%d,%d]", i,
-        frame->cache_offset[component],
-        frame->cache_offset[component] + COG_FRAME_CACHE_SIZE - 1);
+    if (i != 0) {
+      g_warning ("cache failure: %d outside [%d,%d]", i,
+          frame->cache_offset[component],
+          frame->cache_offset[component] + COG_FRAME_CACHE_SIZE - 1);
+    }
 
     frame->cache_offset[component] = i;
     for (j = 0; j < COG_FRAME_CACHE_SIZE; j++) {
@@ -255,7 +257,7 @@ cog_virt_frame_render_downsample_horiz_cosite_3tap (CogFrame * frame,
   }
 }
 
-void
+static void
 cog_virt_frame_render_downsample_horiz_halfsite (CogFrame * frame,
     void *_dest, int component, int i)
 {
@@ -343,7 +345,7 @@ cog_virt_frame_new_horiz_downsample (CogFrame * vf, int n_taps)
   return virt_frame;
 }
 
-void
+static void
 cog_virt_frame_render_downsample_vert_cosite (CogFrame * frame,
     void *_dest, int component, int i)
 {
@@ -410,7 +412,7 @@ cog_virt_frame_render_downsample_vert_halfsite_4tap (CogFrame * frame,
 }
 
 
-void
+static void
 cog_virt_frame_render_downsample_vert_halfsite (CogFrame * frame,
     void *_dest, int component, int i)
 {
@@ -505,7 +507,7 @@ cog_virt_frame_new_vert_downsample (CogFrame * vf, int n_taps)
   return virt_frame;
 }
 
-void
+static void
 cog_virt_frame_render_resample_vert_1tap (CogFrame * frame, void *_dest,
     int component, int i)
 {
@@ -528,7 +530,7 @@ cog_virt_frame_render_resample_vert_1tap (CogFrame * frame, void *_dest,
   orc_memcpy (dest, src1, frame->components[component].width);
 }
 
-void
+static void
 cog_virt_frame_render_resample_vert_2tap (CogFrame * frame, void *_dest,
     int component, int i)
 {
@@ -559,7 +561,7 @@ cog_virt_frame_render_resample_vert_2tap (CogFrame * frame, void *_dest,
   }
 }
 
-void
+static void
 cog_virt_frame_render_resample_vert_4tap (CogFrame * frame, void *_dest,
     int component, int i)
 {
@@ -622,7 +624,7 @@ cog_virt_frame_new_vert_resample (CogFrame * vf, int height, int n_taps)
   return virt_frame;
 }
 
-void
+static void
 cog_virt_frame_render_resample_horiz_1tap (CogFrame * frame, void *_dest,
     int component, int i)
 {
@@ -643,7 +645,7 @@ cog_virt_frame_render_resample_horiz_1tap (CogFrame * frame, void *_dest,
   }
 }
 
-void
+static void
 cog_virt_frame_render_resample_horiz_2tap (CogFrame * frame, void *_dest,
     int component, int i)
 {
@@ -690,7 +692,7 @@ cog_virt_frame_render_resample_horiz_2tap (CogFrame * frame, void *_dest,
   }
 }
 
-void
+static void
 cog_virt_frame_render_resample_horiz_4tap (CogFrame * frame, void *_dest,
     int component, int i)
 {
@@ -1470,6 +1472,75 @@ cog_virt_frame_new_color_matrix_RGB_to_YCbCr (CogFrame * vf,
   return virt_frame;
 }
 
+static const int cog_ycbcr_sdtv_to_ycbcr_hdtv_matrix_8bit[] = {
+  256, -30, -53, 10600,
+  0, 261, 29, -4367,
+  0, 19, 262, -3289,
+};
+
+static const int cog_ycbcr_hdtv_to_ycbcr_sdtv_matrix_8bit[] = {
+  256, 25, 49, -9536,
+  0, 253, -28, 3958,
+  0, -19, 252, 2918,
+};
+
+
+static void
+color_matrix_YCbCr_to_YCbCr (CogFrame * frame, void *_dest, int component,
+    int i)
+{
+  uint8_t *dest = _dest;
+  uint8_t *src1;
+  uint8_t *src2;
+  uint8_t *src3;
+  int *matrix = frame->virt_priv2;
+
+  src1 = cog_virt_frame_get_line (frame->virt_frame1, 0, i);
+  src2 = cog_virt_frame_get_line (frame->virt_frame1, 1, i);
+  src3 = cog_virt_frame_get_line (frame->virt_frame1, 2, i);
+
+  switch (component) {
+    case 0:
+      orc_matrix3_100_offset_u8 (dest, src1, src2, src3,
+          matrix[0] - 256, matrix[1], matrix[2], matrix[3], 8, frame->width);
+      break;
+    case 1:
+      orc_matrix3_000_u8 (dest, src1, src2, src3,
+          matrix[4], matrix[5], matrix[6], matrix[7], 8, frame->width);
+      break;
+    case 2:
+      orc_matrix3_000_u8 (dest, src1, src2, src3,
+          matrix[8], matrix[9], matrix[10], matrix[11], 8, frame->width);
+      break;
+    default:
+      break;
+  }
+
+}
+
+CogFrame *
+cog_virt_frame_new_color_matrix_YCbCr_to_YCbCr (CogFrame * vf,
+    CogColorMatrix in_color_matrix, CogColorMatrix out_color_matrix, int bits)
+{
+  CogFrame *virt_frame;
+
+  if (in_color_matrix == out_color_matrix)
+    return vf;
+
+  virt_frame = cog_frame_new_virtual (NULL, COG_FRAME_FORMAT_U8_444,
+      vf->width, vf->height);
+  virt_frame->virt_frame1 = vf;
+  virt_frame->render_line = color_matrix_YCbCr_to_YCbCr;
+  if (in_color_matrix == COG_COLOR_MATRIX_HDTV) {
+    virt_frame->virt_priv2 = (void *) cog_ycbcr_hdtv_to_ycbcr_sdtv_matrix_8bit;
+  } else {
+    virt_frame->virt_priv2 = (void *) cog_ycbcr_sdtv_to_ycbcr_hdtv_matrix_8bit;
+  }
+
+  return virt_frame;
+}
+
+
 static void
 convert_444_422 (CogFrame * frame, void *_dest, int component, int i)
 {
@@ -1525,25 +1596,168 @@ convert_422_420 (CogFrame * frame, void *_dest, int component, int i)
   }
 }
 
+static void
+convert_444_420_mpeg2 (CogFrame * frame, void *_dest, int component, int i)
+{
+  uint8_t *dest = _dest;
+  uint8_t *src;
+
+  if (component == 0) {
+    src = cog_virt_frame_get_line (frame->virt_frame1, component, i);
+    orc_memcpy (dest, src, frame->components[component].width);
+  } else {
+    uint8_t *dest = _dest;
+    uint8_t *src1;
+    uint8_t *src2;
+    int n_src;
+
+    n_src = frame->virt_frame1->components[component].height;
+    src1 = cog_virt_frame_get_line (frame->virt_frame1, component,
+        CLAMP (i * 2 + 0, 0, n_src - 1));
+    src2 = cog_virt_frame_get_line (frame->virt_frame1, component,
+        CLAMP (i * 2 + 1, 0, n_src - 1));
+
+#if 0
+    cogorc_downsample_420_mpeg2 (dest + 1,
+        (uint16_t *) src1, (uint16_t *) (src1 + 2),
+        (uint16_t *) src2, (uint16_t *) (src2 + 2),
+        frame->components[component].width - 1);
+#else
+    {
+      int j;
+      int x;
+
+      for (j = 1; j < frame->components[component].width; j++) {
+        x = 1 * src1[j * 2 - 1];
+        x += 2 * src1[j * 2 + 0];
+        x += 1 * src1[j * 2 + 1];
+        x += 1 * src2[j * 2 - 1];
+        x += 2 * src2[j * 2 + 0];
+        x += 1 * src2[j * 2 + 1];
+        dest[j] = CLAMP ((x + 4) >> 3, 0, 255);
+      }
+    }
+#endif
+    {
+      int j;
+      int x;
+
+      j = 0;
+      x = 1 * src1[CLAMP (j * 2 - 1, 0, n_src - 1)];
+      x += 2 * src1[CLAMP (j * 2 + 0, 0, n_src - 1)];
+      x += 1 * src1[CLAMP (j * 2 + 1, 0, n_src - 1)];
+      x += 1 * src2[CLAMP (j * 2 - 1, 0, n_src - 1)];
+      x += 2 * src2[CLAMP (j * 2 + 0, 0, n_src - 1)];
+      x += 1 * src2[CLAMP (j * 2 + 1, 0, n_src - 1)];
+      dest[j] = CLAMP ((x + 4) >> 3, 0, 255);
+    }
+  }
+}
+
+static void
+convert_444_420_jpeg (CogFrame * frame, void *_dest, int component, int i)
+{
+  uint8_t *dest = _dest;
+  uint8_t *src;
+
+  if (component == 0) {
+    src = cog_virt_frame_get_line (frame->virt_frame1, component, i);
+    orc_memcpy (dest, src, frame->components[component].width);
+  } else {
+    uint8_t *dest = _dest;
+    uint8_t *src1;
+    uint8_t *src2;
+    int n_src;
+
+    n_src = frame->virt_frame1->components[component].height;
+    src1 = cog_virt_frame_get_line (frame->virt_frame1, component,
+        CLAMP (i * 2 + 0, 0, n_src - 1));
+    src2 = cog_virt_frame_get_line (frame->virt_frame1, component,
+        CLAMP (i * 2 + 1, 0, n_src - 1));
+
+    cogorc_downsample_420_jpeg (dest,
+        (uint16_t *) src1, (uint16_t *) src2,
+        frame->components[component].width);
+  }
+}
+
 /* up */
+
+static void
+convert_420_444_mpeg2 (CogFrame * frame, void *_dest, int component, int i)
+{
+  uint8_t *dest = _dest;
+  uint8_t *src;
+  int n_taps = frame->param1;
+
+  if (component == 0) {
+    src = cog_virt_frame_get_line (frame->virt_frame1, component, i);
+
+    orc_memcpy (dest, src, frame->width);
+  } else {
+    src = cog_virt_frame_get_line (frame->virt_frame1, component, i / 2);
+
+    switch (n_taps) {
+      default:
+      case 2:
+        cogorc_upsample_horiz_cosite (dest, src, src + 1,
+            frame->components[component].width / 2 - 1);
+        break;
+    }
+    dest[frame->components[component].width - 2] =
+        src[frame->components[component].width / 2 - 1];
+    dest[frame->components[component].width - 1] =
+        src[frame->components[component].width / 2 - 1];
+  }
+}
+
+static void
+convert_420_444_jpeg (CogFrame * frame, void *_dest, int component, int i)
+{
+  uint8_t *dest = _dest;
+  uint8_t *src;
+  int n_taps = frame->param1;
+
+  if (component == 0) {
+    src = cog_virt_frame_get_line (frame->virt_frame1, component, i);
+
+    orc_memcpy (dest, src, frame->width);
+  } else {
+    src = cog_virt_frame_get_line (frame->virt_frame1, component, i / 2);
+
+    switch (n_taps) {
+      default:
+      case 1:
+        cogorc_upsample_horiz_cosite_1tap (dest, src,
+            frame->components[component].width / 2 - 1);
+        break;
+    }
+    dest[frame->components[component].width - 2] =
+        src[frame->components[component].width / 2 - 1];
+    dest[frame->components[component].width - 1] =
+        src[frame->components[component].width / 2 - 1];
+  }
+}
 
 static void
 convert_422_444 (CogFrame * frame, void *_dest, int component, int i)
 {
   uint8_t *dest = _dest;
   uint8_t *src;
+  int n_taps = frame->param1;
 
   src = cog_virt_frame_get_line (frame->virt_frame1, component, i);
 
   if (component == 0) {
     orc_memcpy (dest, src, frame->width);
   } else {
-    cogorc_upsample_horiz_cosite_1tap (dest, src,
-        frame->components[component].width / 2 - 1);
-#if 0
-    cogorc_upsample_horiz_cosite (dest, src, src + 1,
-        frame->components[component].width / 2 - 1);
-#endif
+    switch (n_taps) {
+      default:
+      case 2:
+        cogorc_upsample_horiz_cosite (dest, src, src + 1,
+            frame->components[component].width / 2 - 1);
+        break;
+    }
     dest[frame->components[component].width - 2] =
         src[frame->components[component].width / 2 - 1];
     dest[frame->components[component].width - 1] =
@@ -1556,33 +1770,39 @@ convert_420_422 (CogFrame * frame, void *_dest, int component, int i)
 {
   uint8_t *dest = _dest;
   uint8_t *src;
+  int n_taps = frame->param1;
 
   if (component == 0) {
     src = cog_virt_frame_get_line (frame->virt_frame1, component, i);
     orc_memcpy (dest, src, frame->components[component].width);
   } else {
-#if 0
-    if ((i & 1) && i < frame->components[component].height - 1) {
-      uint8_t *src2;
+    switch (n_taps) {
+      case 1:
+      default:
+        src = cog_virt_frame_get_line (frame->virt_frame1, component, i >> 1);
+        orc_memcpy (dest, src, frame->components[component].width);
+        break;
+      case 2:
+        if ((i & 1) && i < frame->components[component].height - 1) {
+          uint8_t *src2;
 
-      src = cog_virt_frame_get_line (frame->virt_frame1, component, i >> 1);
-      src2 = cog_virt_frame_get_line (frame->virt_frame1,
-          component, (i >> 1) + 1);
-      cogorc_upsample_vert_avgub (dest, src, src2,
-          frame->components[component].width);
-    } else {
-      src = cog_virt_frame_get_line (frame->virt_frame1, component, i >> 1);
-      orc_memcpy (dest, src, frame->components[component].width);
+          src = cog_virt_frame_get_line (frame->virt_frame1, component, i >> 1);
+          src2 = cog_virt_frame_get_line (frame->virt_frame1,
+              component, (i >> 1) + 1);
+          cogorc_upsample_vert_avgub (dest, src, src2,
+              frame->components[component].width);
+        } else {
+          src = cog_virt_frame_get_line (frame->virt_frame1, component, i >> 1);
+          orc_memcpy (dest, src, frame->components[component].width);
+        }
+        break;
     }
-#else
-    src = cog_virt_frame_get_line (frame->virt_frame1, component, i >> 1);
-    orc_memcpy (dest, src, frame->components[component].width);
-#endif
   }
 }
 
 CogFrame *
-cog_virt_frame_new_subsample (CogFrame * vf, CogFrameFormat format)
+cog_virt_frame_new_subsample (CogFrame * vf, CogFrameFormat format,
+    CogChromaSite chroma_site, int n_taps)
 {
   CogFrame *virt_frame;
   CogFrameRenderFunc render_line;
@@ -1595,13 +1815,11 @@ cog_virt_frame_new_subsample (CogFrame * vf, CogFrameFormat format)
     render_line = convert_422_420;
   } else if (vf->format == COG_FRAME_FORMAT_U8_444 &&
       format == COG_FRAME_FORMAT_U8_420) {
-    virt_frame = cog_frame_new_virtual (NULL, COG_FRAME_FORMAT_U8_422,
-        vf->width, vf->height);
-    virt_frame->virt_frame1 = vf;
-    virt_frame->render_line = convert_444_422;
-    vf = virt_frame;
-
-    render_line = convert_422_420;
+    if (chroma_site == COG_CHROMA_SITE_MPEG2) {
+      render_line = convert_444_420_mpeg2;
+    } else {
+      render_line = convert_444_420_jpeg;
+    }
   } else if (vf->format == COG_FRAME_FORMAT_U8_444 &&
       format == COG_FRAME_FORMAT_U8_422) {
     render_line = convert_444_422;
@@ -1610,13 +1828,11 @@ cog_virt_frame_new_subsample (CogFrame * vf, CogFrameFormat format)
     render_line = convert_420_422;
   } else if (vf->format == COG_FRAME_FORMAT_U8_420 &&
       format == COG_FRAME_FORMAT_U8_444) {
-    virt_frame = cog_frame_new_virtual (NULL, COG_FRAME_FORMAT_U8_422,
-        vf->width, vf->height);
-    virt_frame->virt_frame1 = vf;
-    virt_frame->render_line = convert_420_422;
-    vf = virt_frame;
-
-    render_line = convert_422_444;
+    if (chroma_site == COG_CHROMA_SITE_MPEG2) {
+      render_line = convert_420_444_mpeg2;
+    } else {
+      render_line = convert_420_444_jpeg;
+    }
   } else if (vf->format == COG_FRAME_FORMAT_U8_422 &&
       format == COG_FRAME_FORMAT_U8_444) {
     render_line = convert_422_444;
@@ -1626,6 +1842,7 @@ cog_virt_frame_new_subsample (CogFrame * vf, CogFrameFormat format)
   }
   virt_frame = cog_frame_new_virtual (NULL, format, vf->width, vf->height);
   virt_frame->virt_frame1 = vf;
+  virt_frame->param1 = n_taps;
   virt_frame->render_line = render_line;
 
   return virt_frame;

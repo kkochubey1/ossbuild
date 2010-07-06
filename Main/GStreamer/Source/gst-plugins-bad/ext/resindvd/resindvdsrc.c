@@ -189,17 +189,13 @@ rsn_dvdsrc_register_extra (GType rsn_dvdsrc_type)
 static void
 rsn_dvdsrc_base_init (gpointer gclass)
 {
-  static GstElementDetails element_details = {
-    "Resin DVD Src",
-    "Source/DVD",
-    "DVD source element",
-    "Jan Schmidt <thaytan@noraisin.net>"
-  };
+
   GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_factory));
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "Resin DVD Src",
+      "Source/DVD", "DVD source element", "Jan Schmidt <thaytan@noraisin.net>");
 }
 
 static void
@@ -870,8 +866,10 @@ rsn_dvdsrc_step (resinDvdSrc * src, gboolean have_dvd_lock)
   gint event, len;
 
   /* Allocate an output buffer if there isn't a pending one */
-  if (src->alloc_buf == NULL)
+  if (src->alloc_buf == NULL) {
     src->alloc_buf = gst_buffer_new_and_alloc (DVD_VIDEO_LB_LEN);
+    gst_buffer_set_caps (src->alloc_buf, GST_PAD_CAPS (GST_BASE_SRC_PAD (src)));
+  }
 
   data = GST_BUFFER_DATA (src->alloc_buf);
   len = DVD_VIDEO_LB_LEN;
@@ -2783,15 +2781,4 @@ rsn_dvdsrc_do_seek (GstBaseSrc * bsrc, GstSegment * segment)
 fail:
   GST_DEBUG_OBJECT (src, "Seek in format %d failed", segment->format);
   return FALSE;
-}
-
-gboolean
-rsndvdsrc_init (GstPlugin * plugin)
-{
-  gboolean res;
-
-  res = gst_element_register (plugin, "rsndvdsrc",
-      GST_RANK_NONE, RESIN_TYPE_DVDSRC);
-
-  return res;
 }

@@ -41,13 +41,18 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include "metadata_editor.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
 #include <gst/gst.h>
-#include <gtk/gtk.h>
 
 /*
  * Global constants
@@ -93,8 +98,8 @@ me_gst_setup_encode_pipeline (const gchar * src_file, const gchar * dest_file,
 
 /* ui related functions */
 
-static void ui_refresh ();
-static void process_file();
+static void ui_refresh (void);
+static void process_file(void);
 
 /*
  * Global Vars 
@@ -730,7 +735,7 @@ done:
 }
 
 static void
-ui_refresh ()
+ui_refresh (void)
 {
   GtkTreeStore *store =
       GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (ui_tree)));
@@ -740,7 +745,7 @@ ui_refresh ()
 }
 
 static int
-ui_create ()
+ui_create (void)
 {
   GError *error = NULL;
   int ret = 0;
@@ -939,7 +944,7 @@ me_gst_bus_callback_view (GstBus * bus, GstMessage * message, gpointer data)
 }
 
 static void
-me_gst_cleanup_elements ()
+me_gst_cleanup_elements (void)
 {
   /* when adding an element to pipeline rember to set it to NULL or add extra ref */
 
@@ -1286,7 +1291,8 @@ done:
 }
 
 static void
-process_file() {
+process_file(void)
+{
   /* filename for future usage (title and file name to be created) */
   me_gst_cleanup_elements ();
 

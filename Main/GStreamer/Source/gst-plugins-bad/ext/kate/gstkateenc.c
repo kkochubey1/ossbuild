@@ -150,18 +150,17 @@ GST_BOILERPLATE_FULL (GstKateEnc, gst_kate_enc, GstElement,
 static void
 gst_kate_enc_base_init (gpointer gclass)
 {
-  static const GstElementDetails element_details =
-      GST_ELEMENT_DETAILS ("Kate stream encoder",
-      "Codec/Encoder/Subtitle",
-      "Encodes Kate streams from text or subpictures",
-      "Vincent Penquerc'h <ogg.k.ogg.k@googlemail.com>");
+
   GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "Kate stream encoder",
+      "Codec/Encoder/Subtitle",
+      "Encodes Kate streams from text or subpictures",
+      "Vincent Penquerc'h <ogg.k.ogg.k@googlemail.com>");
 }
 
 /* initialize the plugin's class */
@@ -1273,8 +1272,8 @@ gst_kate_enc_sink_event (GstPad * pad, GstEvent * event)
               NULL, NULL);
           if (format != GST_FORMAT_TIME || !GST_CLOCK_TIME_IS_VALID (timestamp)) {
             GST_WARNING_OBJECT (ke,
-                "No time in newsegment event %p, format %d, timestamp %lld",
-                event, (int) format, (long long) timestamp);
+                "No time in newsegment event %p, format %d, timestamp %" G_GINT64_FORMAT,
+                event, (int) format, timestamp);
             /* to be safe, we'd need to generate a keepalive anyway, but we'd have to guess at the timestamp to use; a
                good guess would be the last known timestamp plus the keepalive time, but if we then get a packet with a
                timestamp less than this, it would fail to encode, which would be Bad. If we don't encode a keepalive, we

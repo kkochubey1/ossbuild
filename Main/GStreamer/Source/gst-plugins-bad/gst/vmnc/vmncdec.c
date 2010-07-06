@@ -134,12 +134,6 @@ typedef struct
   GstElementClass parent_class;
 } GstVMncDecClass;
 
-static const GstElementDetails vmnc_dec_details =
-GST_ELEMENT_DETAILS ("VMnc video decoder",
-    "Codec/Decoder/Video",
-    "Decode VMnc to raw (RGB) video",
-    "Michael Smith <msmith@xiph.org>");
-
 static GstStaticPadTemplate vmnc_dec_src_factory =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
@@ -155,6 +149,7 @@ GST_STATIC_PAD_TEMPLATE ("sink",
         "width=(int)[0, max], " "height=(int)[0, max]")
     );
 
+GType gst_vmnc_dec_get_type (void);
 GST_BOILERPLATE (GstVMncDec, gst_vmnc_dec, GstElement, GST_TYPE_ELEMENT);
 
 static void vmnc_dec_get_property (GObject * object, guint prop_id,
@@ -177,7 +172,10 @@ gst_vmnc_dec_base_init (gpointer g_class)
       gst_static_pad_template_get (&vmnc_dec_src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&vmnc_dec_sink_factory));
-  gst_element_class_set_details (element_class, &vmnc_dec_details);
+  gst_element_class_set_details_simple (element_class, "VMnc video decoder",
+      "Codec/Decoder/Video",
+      "Decode VmWare video to raw (RGB) video",
+      "Michael Smith <msmith@xiph.org>");
 }
 
 static void
@@ -1142,5 +1140,5 @@ plugin_init (GstPlugin * plugin)
 GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,
     GST_VERSION_MINOR,
     "vmnc",
-    "VMnc video plugin library",
+    "VmWare Video Codec plugins",
     plugin_init, VERSION, "LGPL", GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN)

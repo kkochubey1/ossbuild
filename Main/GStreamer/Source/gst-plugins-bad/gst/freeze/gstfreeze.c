@@ -46,14 +46,6 @@ enum
   ARG_MAX_BUFFERS,
 };
 
-
-static const GstElementDetails freeze_details =
-GST_ELEMENT_DETAILS ("Stream freezer",
-    "Generic",
-    "Makes a stream from buffers of data",
-    "Gergely Nagy <gergely.nagy@neteyes.hu>,"
-    " Renato Filho <renato.filho@indt.org.br>");
-
 static GstStaticPadTemplate gst_freeze_src_template =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
@@ -66,7 +58,6 @@ GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS_ANY);
 
-static void gst_freeze_class_init (GstFreezeClass * klass);
 static void gst_freeze_dispose (GObject * object);
 static void gst_freeze_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
@@ -92,7 +83,11 @@ gst_freeze_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
-  gst_element_class_set_details (element_class, &freeze_details);
+  gst_element_class_set_details_simple (element_class, "Stream freezer",
+      "Generic",
+      "Makes a stream from buffers of data",
+      "Gergely Nagy <gergely.nagy@neteyes.hu>,"
+      " Renato Filho <renato.filho@indt.org.br>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_freeze_sink_template));

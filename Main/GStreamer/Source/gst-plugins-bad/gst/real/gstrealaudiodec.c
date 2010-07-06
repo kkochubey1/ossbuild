@@ -31,11 +31,6 @@
 GST_DEBUG_CATEGORY_STATIC (real_audio_dec_debug);
 #define GST_CAT_DEFAULT real_audio_dec_debug
 
-static GstElementDetails real_audio_dec_details =
-GST_ELEMENT_DETAILS ("RealAudio decoder",
-    "Codec/Decoder/Audio", "Decoder for RealAudio streams",
-    "Lutz Mueller <lutz@topfrose.de>");
-
 static GstStaticPadTemplate snk_t =
     GST_STATIC_PAD_TEMPLATE ("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
     GST_STATIC_CAPS ("audio/x-pn-realaudio, "
@@ -92,7 +87,7 @@ typedef struct
     guint16 (*RAOpenCodec2) (gpointer, const gchar *);
     guint16 (*RASetFlavor) (gpointer, guint16);
   void (*SetDLLAccessPath) (gchar *);
-  void (*RASetPwd) (gpointer, gchar *);
+  void (*RASetPwd) (gpointer, const gchar *);
 } GstRADecLibrary;
 
 typedef struct
@@ -216,7 +211,7 @@ close_library (GstRealAudioDec * dec, GstRADecLibrary * lib)
 static gboolean
 open_library (GstRealAudioDec * dec, gint version, GstRADecLibrary * lib)
 {
-  gchar *path, *names;
+  const gchar *path, *names;
   gchar **split_names, **split_path;
   gint i, j;
   gpointer ra_close_codec, ra_decode, ra_free_decoder;
@@ -305,7 +300,7 @@ codec_search_done:
   lib->RAOpenCodec2 = (guint16 (*)(gpointer, const gchar *)) ra_open_codec2;
   lib->RAInitDecoder = (guint16 (*)(gpointer, gpointer)) ra_init_decoder;
   lib->RASetFlavor = (guint16 (*)(gpointer, guint16)) ra_set_flavor;
-  lib->RASetPwd = (void (*)(gpointer, gchar *)) ra_set_pwd;
+  lib->RASetPwd = (void (*)(gpointer, const gchar *)) ra_set_pwd;
   lib->SetDLLAccessPath = (void (*)(gchar *)) set_dll_access_path;
 
   if (lib->SetDLLAccessPath)
@@ -568,7 +563,9 @@ gst_real_audio_dec_base_init (gpointer g_class)
 
   gst_element_class_add_pad_template (ec, gst_static_pad_template_get (&snk_t));
   gst_element_class_add_pad_template (ec, gst_static_pad_template_get (&src_t));
-  gst_element_class_set_details (ec, &real_audio_dec_details);
+  gst_element_class_set_details_simple (ec, "RealAudio decoder",
+      "Codec/Decoder/Audio", "Decoder for RealAudio streams",
+      "Lutz Mueller <lutz@topfrose.de>");
 }
 
 static GstStateChangeReturn

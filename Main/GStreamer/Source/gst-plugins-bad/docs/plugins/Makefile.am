@@ -65,7 +65,8 @@ CFILE_GLOB=$(DOC_SOURCE_DIR)/*/*/*.c $(DOC_SOURCE_DIR)/*/*/*.cc
 # thomasvs: another nice wingo addition would be an explanation on why
 # this is useful ;)
 
-SCANOBJ_DEPS =
+SCANOBJ_DEPS = \
+	$(top_builddir)/gst-libs/gst/interfaces/libgstphotography-@GST_MAJORMINOR@.la
 
 # Header files to ignore when scanning.
 IGNORE_HFILES = 
@@ -136,13 +137,13 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/dccp/gstdccpserversink.h \
 	$(top_srcdir)/gst/dccp/gstdccpserversrc.h \
 	$(top_srcdir)/gst/debugutils/fpsdisplaysink.h \
-	$(top_srcdir)/gst/debugutils/gstcapssetter.h \
 	$(top_srcdir)/gst/dtmf/gstdtmfsrc.h \
 	$(top_srcdir)/gst/dtmf/gstdtmfdetect.h \
 	$(top_srcdir)/gst/dtmf/gstrtpdtmfsrc.h \
 	$(top_srcdir)/gst/dtmf/gstrtpdtmfdepay.h \
 	$(top_srcdir)/gst/dvdspu/gstdvdspu.h \
 	$(top_srcdir)/gst/festival/gstfestival.h \
+	$(top_srcdir)/gst/freeze/gstfreeze.h \
 	$(top_srcdir)/gst/legacyresample/gstlegacyresample.h \
 	$(top_srcdir)/gst/liveadder/liveadder.h \
 	$(top_srcdir)/gst/jpegformat/gstjpegparse.h \
@@ -165,10 +166,11 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/videosignal/gstvideomark.h \
 	$(top_srcdir)/gst/valve/gstvalve.h \
 	$(top_srcdir)/sys/directdraw/gstdirectdrawsink.h \
-	$(top_srcdir)/sys/dvb/gstdvbsrc.h
+	$(top_srcdir)/sys/dvb/gstdvbsrc.h \
+	$(top_srcdir)/gst-libs/gst/interfaces/photography.h
 
 # Images to copy into HTML directory.
-HTML_IMAGES = $(srcdir)/figures/*.png
+HTML_IMAGES = camerabin.png
 
 # Extra SGML files that are included by $(DOC_MAIN_SGML_FILE).
 content_files =
@@ -178,7 +180,7 @@ extra_files =
 
 # CFLAGS and LDFLAGS for compiling scan program. Only needed if your app/lib
 # contains GtkObjects/GObjects and you want to document signals and properties.
-GTKDOC_CFLAGS = $(GST_BASE_CFLAGS) -I$(top_builddir)
+GTKDOC_CFLAGS = -DGST_USE_UNSTABLE_API $(GST_PLUGINS_BAD_CFLAGS) $(GST_BASE_CFLAGS) -I$(top_builddir)
 GTKDOC_LIBS = $(SCANOBJ_DEPS) $(GST_BASE_LIBS)
 
 GTKDOC_CC=$(LIBTOOL) --tag=CC --mode=compile $(CC)
@@ -191,4 +193,33 @@ DOC_OVERRIDES =
 
 include $(top_srcdir)/common/gtk-doc-plugins.mak
 
-SUBDIRS = figures
+# some additional clean rules from gtk-doc.mak
+distclean-local:
+	rm -f $(REPORT_FILES) \
+                $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
+	rm -rf tmpl/*.sgml.bak
+	rm -f $(DOC_MODULE).hierarchy
+	rm -f *.stamp || true
+	if test x"$(srcdir)" != x. ; then \
+	    rm -f $(DOC_MODULE)-docs.sgml ; \
+	    rm -f $(DOC_MODULE).types ; \
+	    rm -f $(DOC_MODULE).interfaces ; \
+            rm -f $(DOC_MODULE)-overrides.txt ; \
+	    rm -f $(DOC_MODULE).prerequisites ; \
+	    rm -f $(DOC_MODULE)-sections.txt ; \
+	    rm -rf tmpl/*.sgml ; \
+	fi
+	rm -rf *.o
+
+
+SUBDIRS =
+
+FIGURES_SOURCEFILES = camerabin.dot
+FIGURES_IMAGES      = camerabin.png
+
+EXTRA_DIST += $(FIGURES_SOURCEFILES)
+
+.dot.png:
+	dot -Tpng $< -o$@
+
+update-figures: $(FIGURES_IMAGES)

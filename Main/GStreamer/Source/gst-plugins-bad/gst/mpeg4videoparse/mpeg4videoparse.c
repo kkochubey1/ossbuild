@@ -29,13 +29,6 @@
 GST_DEBUG_CATEGORY_STATIC (mpeg4v_parse_debug);
 #define GST_CAT_DEFAULT mpeg4v_parse_debug
 
-/* elementfactory information */
-static GstElementDetails mpeg4vparse_details =
-GST_ELEMENT_DETAILS ("MPEG 4 video elementary stream parser",
-    "Codec/Parser/Video",
-    "Parses MPEG-4 Part 2 elementary video streams",
-    "Julien Moutte <julien@fluendo.com>");
-
 static GstStaticPadTemplate src_template =
 GST_STATIC_PAD_TEMPLATE ("src", GST_PAD_SRC,
     GST_PAD_ALWAYS,
@@ -217,10 +210,26 @@ static gint aspect_ratio_table[6][2] = { {-1, -1}, {1, 1}, {12, 11},
 {10, 11}, {16, 11}, {40, 33}
 };
 
+static void
+gst_mpeg4vparse_set_config (GstMpeg4VParse * parse, const guint8 * data,
+    gsize size)
+{
+  /* limit possible caps noise */
+  if (parse->config && size == GST_BUFFER_SIZE (parse->config) &&
+      memcmp (GST_BUFFER_DATA (parse->config), data, size) == 0)
+    return;
+
+  if (parse->config != NULL)
+    gst_buffer_unref (parse->config);
+
+  parse->config = gst_buffer_new_and_alloc (size);
+  memcpy (GST_BUFFER_DATA (parse->config), data, size);
+}
+
 /* Handle parsing a video object */
 static gboolean
 gst_mpeg4vparse_handle_vo (GstMpeg4VParse * parse, const guint8 * data,
-    gsize size)
+    gsize size, gboolean set_codec_data)
 {
   guint32 bits;
   bitstream_t bs = { data, 0, 0, size };
@@ -228,6 +237,9 @@ gst_mpeg4vparse_handle_vo (GstMpeg4VParse * parse, const guint8 * data,
   guint16 fixed_time_increment = 0;
   gint aspect_ratio_width = -1, aspect_ratio_height = -1;
   gint height = -1, width = -1;
+
+  if (set_codec_data)
+    gst_mpeg4vparse_set_config (parse, data, size);
 
   /* expecting a video object startcode */
   GET_BITS (&bs, 32, &bits);
@@ -391,11 +403,7 @@ gst_mpeg4vparse_handle_vos (GstMpeg4VParse * parse, const guint8 * data,
   /* Even if we fail to parse, then some other element might succeed, so always
    * put the VOS in the config */
   parse->profile = profile;
-  if (parse->config != NULL)
-    gst_buffer_unref (parse->config);
-
-  parse->config = gst_buffer_new_and_alloc (size);
-  memcpy (GST_BUFFER_DATA (parse->config), data, size);
+  gst_mpeg4vparse_set_config (parse, data, size);
 
   parse->have_config = TRUE;
 
@@ -447,7 +455,7 @@ gst_mpeg4vparse_handle_vos (GstMpeg4VParse * parse, const guint8 * data,
   data = &bs.data[bs.offset];
   size -= bs.offset;
 
-  return gst_mpeg4vparse_handle_vo (parse, data, size);
+  return gst_mpeg4vparse_handle_vo (parse, data, size, FALSE);
 
 out:
   return gst_mpeg4vparse_set_new_caps (parse, 0, 0, -1, -1, -1, -1);
@@ -584,7 +592,7 @@ gst_mpeg4vparse_drain (GstMpeg4VParse * parse, GstBuffer * last_buffer)
               /* end of VOS found, interpret the config data and restart the
                * search for the VOP */
               gst_mpeg4vparse_handle_vo (parse, data + parse->vos_offset,
-                  parse->offset - parse->vos_offset);
+                  parse->offset - parse->vos_offset, TRUE);
               parse->state = PARSE_START_FOUND;
               break;
             default:
@@ -686,12 +694,14 @@ gst_mpeg4vparse_sink_setcaps (GstPad * pad, GstCaps * caps)
           /* Usually the codec data will be a visual object sequence, containing
              a visual object, with a video object/video object layer. */
           res = gst_mpeg4vparse_handle_vos (parse, data, GST_BUFFER_SIZE (buf));
-        } else if (data[3] >= VIDEO_OBJECT_STARTCODE_MIN &&
-            data[3] <= VIDEO_OBJECT_STARTCODE_MAX) {
+        } else if (data[3] <= VIDEO_OBJECT_STARTCODE_MAX) {
+          /* VIDEO_OBJECT_STARTCODE_MIN is zero, and data is unsigned, so we
+             don't need to check min (and in fact that causes a compile err */
           /* Sometimes, instead, it'll just have the video object/video object
              layer data. We can parse that too, though it'll give us slightly
              less information. */
-          res = gst_mpeg4vparse_handle_vo (parse, data, GST_BUFFER_SIZE (buf));
+          res = gst_mpeg4vparse_handle_vo (parse, data, GST_BUFFER_SIZE (buf),
+              FALSE);
         }
       } else {
         GST_WARNING_OBJECT (parse,
@@ -858,7 +868,10 @@ gst_mpeg4vparse_base_init (gpointer klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_template));
 
-  gst_element_class_set_details (element_class, &mpeg4vparse_details);
+  gst_element_class_set_details_simple (element_class,
+      "MPEG 4 video elementary stream parser", "Codec/Parser/Video",
+      "Parses MPEG-4 Part 2 elementary video streams",
+      "Julien Moutte <julien@fluendo.com>");
 }
 
 static void

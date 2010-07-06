@@ -74,10 +74,8 @@ struct _GstMSEClass
   GstElementClass parent;
 };
 
-static const GstElementDetails element_details = GST_ELEMENT_DETAILS ("FIXME",
-    "Filter/Effect",
-    "FIXME example filter",
-    "FIXME <fixme@fixme.com>");
+GType gst_mse_get_type (void);
+
 
 enum
 {
@@ -142,7 +140,8 @@ gst_mse_base_init (gpointer klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_framestore_sink_test_template));
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "FIXME",
+      "Filter/Effect", "FIXME example filter", "FIXME <fixme@fixme.com>");
 }
 
 static void

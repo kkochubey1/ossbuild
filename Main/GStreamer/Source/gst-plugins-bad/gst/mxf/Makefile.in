@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -115,22 +114,39 @@ am_libgstmxf_la_OBJECTS = libgstmxf_la-mxf.lo libgstmxf_la-mxful.lo \
 	libgstmxf_la-mxfup.lo libgstmxf_la-mxfvc3.lo \
 	libgstmxf_la-mxfdms1.lo
 libgstmxf_la_OBJECTS = $(am_libgstmxf_la_OBJECTS)
-libgstmxf_la_LINK = $(LIBTOOL) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libgstmxf_la_CFLAGS) \
-	$(CFLAGS) $(libgstmxf_la_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstmxf_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
+	$(CCLD) $(libgstmxf_la_CFLAGS) $(CFLAGS) \
+	$(libgstmxf_la_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstmxf_la_SOURCES)
 DIST_SOURCES = $(libgstmxf_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -145,7 +161,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -203,7 +219,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -214,11 +229,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -265,6 +278,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -287,6 +302,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -328,7 +344,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -342,6 +357,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -387,7 +403,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -416,13 +431,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -497,7 +514,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -614,7 +630,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstmxf.la: $(libgstmxf_la_OBJECTS) $(libgstmxf_la_DEPENDENCIES) 
-	$(libgstmxf_la_LINK) -rpath $(plugindir) $(libgstmxf_la_OBJECTS) $(libgstmxf_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstmxf_la_LINK) -rpath $(plugindir) $(libgstmxf_la_OBJECTS) $(libgstmxf_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -641,144 +657,164 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstmxf_la-mxfvc3.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstmxf_la-mxf.lo: mxf.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxf.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxf.Tpo -c -o libgstmxf_la-mxf.lo `test -f 'mxf.c' || echo '$(srcdir)/'`mxf.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxf.Tpo $(DEPDIR)/libgstmxf_la-mxf.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxf.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxf.Tpo -c -o libgstmxf_la-mxf.lo `test -f 'mxf.c' || echo '$(srcdir)/'`mxf.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxf.Tpo $(DEPDIR)/libgstmxf_la-mxf.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxf.c' object='libgstmxf_la-mxf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxf.lo `test -f 'mxf.c' || echo '$(srcdir)/'`mxf.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxf.lo `test -f 'mxf.c' || echo '$(srcdir)/'`mxf.c
 
 libgstmxf_la-mxful.lo: mxful.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxful.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxful.Tpo -c -o libgstmxf_la-mxful.lo `test -f 'mxful.c' || echo '$(srcdir)/'`mxful.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxful.Tpo $(DEPDIR)/libgstmxf_la-mxful.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxful.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxful.Tpo -c -o libgstmxf_la-mxful.lo `test -f 'mxful.c' || echo '$(srcdir)/'`mxful.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxful.Tpo $(DEPDIR)/libgstmxf_la-mxful.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxful.c' object='libgstmxf_la-mxful.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxful.lo `test -f 'mxful.c' || echo '$(srcdir)/'`mxful.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxful.lo `test -f 'mxful.c' || echo '$(srcdir)/'`mxful.c
 
 libgstmxf_la-mxftypes.lo: mxftypes.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxftypes.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxftypes.Tpo -c -o libgstmxf_la-mxftypes.lo `test -f 'mxftypes.c' || echo '$(srcdir)/'`mxftypes.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxftypes.Tpo $(DEPDIR)/libgstmxf_la-mxftypes.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxftypes.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxftypes.Tpo -c -o libgstmxf_la-mxftypes.lo `test -f 'mxftypes.c' || echo '$(srcdir)/'`mxftypes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxftypes.Tpo $(DEPDIR)/libgstmxf_la-mxftypes.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxftypes.c' object='libgstmxf_la-mxftypes.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxftypes.lo `test -f 'mxftypes.c' || echo '$(srcdir)/'`mxftypes.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxftypes.lo `test -f 'mxftypes.c' || echo '$(srcdir)/'`mxftypes.c
 
 libgstmxf_la-mxfmetadata.lo: mxfmetadata.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfmetadata.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfmetadata.Tpo -c -o libgstmxf_la-mxfmetadata.lo `test -f 'mxfmetadata.c' || echo '$(srcdir)/'`mxfmetadata.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfmetadata.Tpo $(DEPDIR)/libgstmxf_la-mxfmetadata.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfmetadata.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfmetadata.Tpo -c -o libgstmxf_la-mxfmetadata.lo `test -f 'mxfmetadata.c' || echo '$(srcdir)/'`mxfmetadata.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfmetadata.Tpo $(DEPDIR)/libgstmxf_la-mxfmetadata.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfmetadata.c' object='libgstmxf_la-mxfmetadata.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfmetadata.lo `test -f 'mxfmetadata.c' || echo '$(srcdir)/'`mxfmetadata.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfmetadata.lo `test -f 'mxfmetadata.c' || echo '$(srcdir)/'`mxfmetadata.c
 
 libgstmxf_la-mxfessence.lo: mxfessence.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfessence.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfessence.Tpo -c -o libgstmxf_la-mxfessence.lo `test -f 'mxfessence.c' || echo '$(srcdir)/'`mxfessence.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfessence.Tpo $(DEPDIR)/libgstmxf_la-mxfessence.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfessence.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfessence.Tpo -c -o libgstmxf_la-mxfessence.lo `test -f 'mxfessence.c' || echo '$(srcdir)/'`mxfessence.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfessence.Tpo $(DEPDIR)/libgstmxf_la-mxfessence.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfessence.c' object='libgstmxf_la-mxfessence.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfessence.lo `test -f 'mxfessence.c' || echo '$(srcdir)/'`mxfessence.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfessence.lo `test -f 'mxfessence.c' || echo '$(srcdir)/'`mxfessence.c
 
 libgstmxf_la-mxfquark.lo: mxfquark.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfquark.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfquark.Tpo -c -o libgstmxf_la-mxfquark.lo `test -f 'mxfquark.c' || echo '$(srcdir)/'`mxfquark.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfquark.Tpo $(DEPDIR)/libgstmxf_la-mxfquark.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfquark.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfquark.Tpo -c -o libgstmxf_la-mxfquark.lo `test -f 'mxfquark.c' || echo '$(srcdir)/'`mxfquark.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfquark.Tpo $(DEPDIR)/libgstmxf_la-mxfquark.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfquark.c' object='libgstmxf_la-mxfquark.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfquark.lo `test -f 'mxfquark.c' || echo '$(srcdir)/'`mxfquark.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfquark.lo `test -f 'mxfquark.c' || echo '$(srcdir)/'`mxfquark.c
 
 libgstmxf_la-mxfmux.lo: mxfmux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfmux.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfmux.Tpo -c -o libgstmxf_la-mxfmux.lo `test -f 'mxfmux.c' || echo '$(srcdir)/'`mxfmux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfmux.Tpo $(DEPDIR)/libgstmxf_la-mxfmux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfmux.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfmux.Tpo -c -o libgstmxf_la-mxfmux.lo `test -f 'mxfmux.c' || echo '$(srcdir)/'`mxfmux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfmux.Tpo $(DEPDIR)/libgstmxf_la-mxfmux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfmux.c' object='libgstmxf_la-mxfmux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfmux.lo `test -f 'mxfmux.c' || echo '$(srcdir)/'`mxfmux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfmux.lo `test -f 'mxfmux.c' || echo '$(srcdir)/'`mxfmux.c
 
 libgstmxf_la-mxfdemux.lo: mxfdemux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfdemux.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfdemux.Tpo -c -o libgstmxf_la-mxfdemux.lo `test -f 'mxfdemux.c' || echo '$(srcdir)/'`mxfdemux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfdemux.Tpo $(DEPDIR)/libgstmxf_la-mxfdemux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfdemux.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfdemux.Tpo -c -o libgstmxf_la-mxfdemux.lo `test -f 'mxfdemux.c' || echo '$(srcdir)/'`mxfdemux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfdemux.Tpo $(DEPDIR)/libgstmxf_la-mxfdemux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfdemux.c' object='libgstmxf_la-mxfdemux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfdemux.lo `test -f 'mxfdemux.c' || echo '$(srcdir)/'`mxfdemux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfdemux.lo `test -f 'mxfdemux.c' || echo '$(srcdir)/'`mxfdemux.c
 
 libgstmxf_la-mxfaes-bwf.lo: mxfaes-bwf.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfaes-bwf.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfaes-bwf.Tpo -c -o libgstmxf_la-mxfaes-bwf.lo `test -f 'mxfaes-bwf.c' || echo '$(srcdir)/'`mxfaes-bwf.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfaes-bwf.Tpo $(DEPDIR)/libgstmxf_la-mxfaes-bwf.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfaes-bwf.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfaes-bwf.Tpo -c -o libgstmxf_la-mxfaes-bwf.lo `test -f 'mxfaes-bwf.c' || echo '$(srcdir)/'`mxfaes-bwf.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfaes-bwf.Tpo $(DEPDIR)/libgstmxf_la-mxfaes-bwf.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfaes-bwf.c' object='libgstmxf_la-mxfaes-bwf.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfaes-bwf.lo `test -f 'mxfaes-bwf.c' || echo '$(srcdir)/'`mxfaes-bwf.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfaes-bwf.lo `test -f 'mxfaes-bwf.c' || echo '$(srcdir)/'`mxfaes-bwf.c
 
 libgstmxf_la-mxfmpeg.lo: mxfmpeg.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfmpeg.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfmpeg.Tpo -c -o libgstmxf_la-mxfmpeg.lo `test -f 'mxfmpeg.c' || echo '$(srcdir)/'`mxfmpeg.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfmpeg.Tpo $(DEPDIR)/libgstmxf_la-mxfmpeg.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfmpeg.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfmpeg.Tpo -c -o libgstmxf_la-mxfmpeg.lo `test -f 'mxfmpeg.c' || echo '$(srcdir)/'`mxfmpeg.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfmpeg.Tpo $(DEPDIR)/libgstmxf_la-mxfmpeg.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfmpeg.c' object='libgstmxf_la-mxfmpeg.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfmpeg.lo `test -f 'mxfmpeg.c' || echo '$(srcdir)/'`mxfmpeg.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfmpeg.lo `test -f 'mxfmpeg.c' || echo '$(srcdir)/'`mxfmpeg.c
 
 libgstmxf_la-mxfdv-dif.lo: mxfdv-dif.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfdv-dif.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfdv-dif.Tpo -c -o libgstmxf_la-mxfdv-dif.lo `test -f 'mxfdv-dif.c' || echo '$(srcdir)/'`mxfdv-dif.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfdv-dif.Tpo $(DEPDIR)/libgstmxf_la-mxfdv-dif.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfdv-dif.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfdv-dif.Tpo -c -o libgstmxf_la-mxfdv-dif.lo `test -f 'mxfdv-dif.c' || echo '$(srcdir)/'`mxfdv-dif.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfdv-dif.Tpo $(DEPDIR)/libgstmxf_la-mxfdv-dif.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfdv-dif.c' object='libgstmxf_la-mxfdv-dif.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfdv-dif.lo `test -f 'mxfdv-dif.c' || echo '$(srcdir)/'`mxfdv-dif.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfdv-dif.lo `test -f 'mxfdv-dif.c' || echo '$(srcdir)/'`mxfdv-dif.c
 
 libgstmxf_la-mxfalaw.lo: mxfalaw.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfalaw.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfalaw.Tpo -c -o libgstmxf_la-mxfalaw.lo `test -f 'mxfalaw.c' || echo '$(srcdir)/'`mxfalaw.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfalaw.Tpo $(DEPDIR)/libgstmxf_la-mxfalaw.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfalaw.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfalaw.Tpo -c -o libgstmxf_la-mxfalaw.lo `test -f 'mxfalaw.c' || echo '$(srcdir)/'`mxfalaw.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfalaw.Tpo $(DEPDIR)/libgstmxf_la-mxfalaw.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfalaw.c' object='libgstmxf_la-mxfalaw.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfalaw.lo `test -f 'mxfalaw.c' || echo '$(srcdir)/'`mxfalaw.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfalaw.lo `test -f 'mxfalaw.c' || echo '$(srcdir)/'`mxfalaw.c
 
 libgstmxf_la-mxfjpeg2000.lo: mxfjpeg2000.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfjpeg2000.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfjpeg2000.Tpo -c -o libgstmxf_la-mxfjpeg2000.lo `test -f 'mxfjpeg2000.c' || echo '$(srcdir)/'`mxfjpeg2000.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfjpeg2000.Tpo $(DEPDIR)/libgstmxf_la-mxfjpeg2000.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfjpeg2000.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfjpeg2000.Tpo -c -o libgstmxf_la-mxfjpeg2000.lo `test -f 'mxfjpeg2000.c' || echo '$(srcdir)/'`mxfjpeg2000.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfjpeg2000.Tpo $(DEPDIR)/libgstmxf_la-mxfjpeg2000.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfjpeg2000.c' object='libgstmxf_la-mxfjpeg2000.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfjpeg2000.lo `test -f 'mxfjpeg2000.c' || echo '$(srcdir)/'`mxfjpeg2000.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfjpeg2000.lo `test -f 'mxfjpeg2000.c' || echo '$(srcdir)/'`mxfjpeg2000.c
 
 libgstmxf_la-mxfd10.lo: mxfd10.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfd10.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfd10.Tpo -c -o libgstmxf_la-mxfd10.lo `test -f 'mxfd10.c' || echo '$(srcdir)/'`mxfd10.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfd10.Tpo $(DEPDIR)/libgstmxf_la-mxfd10.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfd10.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfd10.Tpo -c -o libgstmxf_la-mxfd10.lo `test -f 'mxfd10.c' || echo '$(srcdir)/'`mxfd10.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfd10.Tpo $(DEPDIR)/libgstmxf_la-mxfd10.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfd10.c' object='libgstmxf_la-mxfd10.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfd10.lo `test -f 'mxfd10.c' || echo '$(srcdir)/'`mxfd10.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfd10.lo `test -f 'mxfd10.c' || echo '$(srcdir)/'`mxfd10.c
 
 libgstmxf_la-mxfup.lo: mxfup.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfup.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfup.Tpo -c -o libgstmxf_la-mxfup.lo `test -f 'mxfup.c' || echo '$(srcdir)/'`mxfup.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfup.Tpo $(DEPDIR)/libgstmxf_la-mxfup.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfup.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfup.Tpo -c -o libgstmxf_la-mxfup.lo `test -f 'mxfup.c' || echo '$(srcdir)/'`mxfup.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfup.Tpo $(DEPDIR)/libgstmxf_la-mxfup.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfup.c' object='libgstmxf_la-mxfup.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfup.lo `test -f 'mxfup.c' || echo '$(srcdir)/'`mxfup.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfup.lo `test -f 'mxfup.c' || echo '$(srcdir)/'`mxfup.c
 
 libgstmxf_la-mxfvc3.lo: mxfvc3.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfvc3.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfvc3.Tpo -c -o libgstmxf_la-mxfvc3.lo `test -f 'mxfvc3.c' || echo '$(srcdir)/'`mxfvc3.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfvc3.Tpo $(DEPDIR)/libgstmxf_la-mxfvc3.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfvc3.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfvc3.Tpo -c -o libgstmxf_la-mxfvc3.lo `test -f 'mxfvc3.c' || echo '$(srcdir)/'`mxfvc3.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfvc3.Tpo $(DEPDIR)/libgstmxf_la-mxfvc3.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfvc3.c' object='libgstmxf_la-mxfvc3.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfvc3.lo `test -f 'mxfvc3.c' || echo '$(srcdir)/'`mxfvc3.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfvc3.lo `test -f 'mxfvc3.c' || echo '$(srcdir)/'`mxfvc3.c
 
 libgstmxf_la-mxfdms1.lo: mxfdms1.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfdms1.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfdms1.Tpo -c -o libgstmxf_la-mxfdms1.lo `test -f 'mxfdms1.c' || echo '$(srcdir)/'`mxfdms1.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmxf_la-mxfdms1.Tpo $(DEPDIR)/libgstmxf_la-mxfdms1.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -MT libgstmxf_la-mxfdms1.lo -MD -MP -MF $(DEPDIR)/libgstmxf_la-mxfdms1.Tpo -c -o libgstmxf_la-mxfdms1.lo `test -f 'mxfdms1.c' || echo '$(srcdir)/'`mxfdms1.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmxf_la-mxfdms1.Tpo $(DEPDIR)/libgstmxf_la-mxfdms1.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mxfdms1.c' object='libgstmxf_la-mxfdms1.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfdms1.lo `test -f 'mxfdms1.c' || echo '$(srcdir)/'`mxfdms1.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmxf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmxf_la_CFLAGS) $(CFLAGS) -c -o libgstmxf_la-mxfdms1.lo `test -f 'mxfdms1.c' || echo '$(srcdir)/'`mxfdms1.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

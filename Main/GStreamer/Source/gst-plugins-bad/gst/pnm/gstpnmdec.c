@@ -42,8 +42,6 @@
 
 #include <string.h>
 
-static GstElementClass *parent_class;
-
 static GstStaticPadTemplate gst_pnmdec_src_pad_template =
     GST_STATIC_PAD_TEMPLATE ("src", GST_PAD_SRC, GST_PAD_ALWAYS,
     GST_STATIC_CAPS (GST_VIDEO_CAPS_RGB "; "
@@ -54,6 +52,8 @@ static GstStaticPadTemplate gst_pnmdec_src_pad_template =
 static GstStaticPadTemplate gst_pnmdec_sink_pad_template =
 GST_STATIC_PAD_TEMPLATE ("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
     GST_STATIC_CAPS (MIME_ALL));
+
+GST_BOILERPLATE (GstPnmdec, gst_pnmdec, GstElement, GST_TYPE_ELEMENT);
 
 static GstFlowReturn
 gst_pnmdec_push (GstPnmdec * s, GstPad * src, GstBuffer * buf)
@@ -330,5 +330,3 @@ gst_pnmdec_class_init (GstPnmdecClass * klass)
 
   gobject_class->finalize = gst_pnmdec_finalize;
 }
-
-GST_BOILERPLATE (GstPnmdec, gst_pnmdec, GstElement, GST_TYPE_ELEMENT)

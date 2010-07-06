@@ -178,9 +178,6 @@
 /* Define to enable DVB Source (used by dvb). */
 #undef HAVE_DVB
 
-/* Define to enable dvdnav library (used by resindvd). */
-#undef HAVE_DVDNAV
-
 /* Define to enable building of experimental plug-ins. */
 #undef HAVE_EXPERIMENTAL
 
@@ -195,9 +192,6 @@
 
 /* Define to enable linux framebuffer (used by fbdevsink). */
 #undef HAVE_FBDEV
-
-/* Define to 1 if you have the <fcntl.h> header file. */
-#undef HAVE_FCNTL_H
 
 /* FIONREAD ioctl found in sys/filio.h */
 #undef HAVE_FIONREAD_IN_SYS_FILIO
@@ -310,9 +304,6 @@
 /* Define to enable ofa plugins (used by ofa). */
 #undef HAVE_OFA
 
-/* Define to enable Open Sound System 4 (used by oss4). */
-#undef HAVE_OSS4
-
 /* Defined if compiling for OSX */
 #undef HAVE_OSX
 
@@ -327,6 +318,9 @@
 
 /* Define if RDTSC is available */
 #undef HAVE_RDTSC
+
+/* Define to enable resindvd plugin (used by resindvd). */
+#undef HAVE_RESINDVD
 
 /* Define to enable rsvg decoder (used by rsvg). */
 #undef HAVE_RSVG
@@ -363,9 +357,6 @@
 
 /* Define to enable swfdec plug-in (used by swfdec). */
 #undef HAVE_SWFDEC
-
-/* Define to 1 if you have the <sys/ioctl.h> header file. */
-#undef HAVE_SYS_IOCTL_H
 
 /* Define to 1 if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
@@ -405,6 +396,15 @@
 
 /* Define to enable VDPAU (used by vdpau). */
 #undef HAVE_VDPAU
+
+/* Define to enable VP8 decoder (used by vp8). */
+#undef HAVE_VP8
+
+/* Defined if the VP8 decoder is available */
+#undef HAVE_VP8_DECODER
+
+/* Defined if the VP8 encoder is available */
+#undef HAVE_VP8_ENCODER
 
 /* Define to enable wildmidi midi soft synth plugin (used by wildmidi). */
 #undef HAVE_WILDMIDI

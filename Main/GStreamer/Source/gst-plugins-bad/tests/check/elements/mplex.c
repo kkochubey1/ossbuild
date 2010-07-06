@@ -97,7 +97,7 @@ guint8 mp2_data[] =             /* 384 */
 
 /* end binary data. size = 384 bytes */
 
-gboolean
+static gboolean
 test_sink_event (GstPad * pad, GstEvent * event)
 {
 
@@ -116,9 +116,9 @@ test_sink_event (GstPad * pad, GstEvent * event)
 }
 
 /* setup and teardown needs some special handling for muxer */
-GstPad *
+static GstPad *
 setup_src_pad (GstElement * element,
-    GstStaticPadTemplate * template, GstCaps * caps, gchar * sinkname)
+    GstStaticPadTemplate * template, GstCaps * caps, const gchar * sinkname)
 {
   GstPad *srcpad, *sinkpad;
 
@@ -145,8 +145,8 @@ setup_src_pad (GstElement * element,
   return srcpad;
 }
 
-void
-teardown_src_pad (GstElement * element, gchar * sinkname)
+static void
+teardown_src_pad (GstElement * element, const gchar * sinkname)
 {
   GstPad *srcpad, *sinkpad;
   gchar *padname;
@@ -175,8 +175,8 @@ teardown_src_pad (GstElement * element, gchar * sinkname)
 
 }
 
-GstElement *
-setup_mplex ()
+static GstElement *
+setup_mplex (void)
 {
   GstElement *mplex;
 
@@ -197,7 +197,7 @@ setup_mplex ()
   return mplex;
 }
 
-void
+static void
 cleanup_mplex (GstElement * mplex)
 {
   GST_DEBUG ("cleanup_mplex");
@@ -285,7 +285,7 @@ GST_START_TEST (test_audio_pad)
 
 GST_END_TEST;
 
-Suite *
+static Suite *
 mplex_suite (void)
 {
   Suite *s = suite_create ("mplex");

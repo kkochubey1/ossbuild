@@ -166,18 +166,6 @@ gst_metadata_demux_configure_srccaps (GstMetadataDemux * filter);
  * GObject callback functions declaration
  */
 
-static void gst_metadata_demux_base_init (gpointer gclass);
-
-static void gst_metadata_demux_class_init (GstMetadataDemuxClass * klass);
-
-static void
-gst_metadata_demux_init (GstMetadataDemux * filter,
-    GstMetadataDemuxClass * gclass);
-
-static void gst_metadata_demux_dispose (GObject * object);
-
-static void gst_metadata_demux_finalize (GObject * object);
-
 static void gst_metadata_demux_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
 
@@ -213,7 +201,7 @@ gst_metadata_demux_configure_srccaps (GstMetadataDemux * filter)
 {
   GstCaps *caps = NULL;
   gboolean ret = FALSE;
-  gchar *mime = NULL;
+  const gchar *mime = NULL;
 
   switch (GST_BASE_METADATA_IMG_TYPE (filter)) {
     case IMG_JPEG:
@@ -251,22 +239,17 @@ done:
 static void
 gst_metadata_demux_base_init (gpointer gclass)
 {
-/* *INDENT-OFF* */
-  static GstElementDetails element_details = {
-    "Metadata demuxer",
-    "Demuxer/Extracter/Metadata",
-    "Send metadata tags (EXIF, IPTC and XMP) and "
-      "remove metadata chunks from stream",
-    "Edgard Lima <edgard.lima@indt.org.br>"
-  };
-/* *INDENT-ON* */
   GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "Metadata demuxer",
+      "Demuxer/Extracter/Metadata",
+      "Send metadata tags (EXIF, IPTC and XMP) and "
+      "remove metadata chunks from stream",
+      "Edgard Lima <edgard.lima@indt.org.br>");
 }
 
 static void
@@ -281,9 +264,6 @@ gst_metadata_demux_class_init (GstMetadataDemuxClass * klass)
   gstbasemetadata_class = (GstBaseMetadataClass *) klass;
 
   metadata_parent_class = g_type_class_peek_parent (klass);
-
-  gobject_class->dispose = GST_DEBUG_FUNCPTR (gst_metadata_demux_dispose);
-  gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_metadata_demux_finalize);
 
   gobject_class->set_property = gst_metadata_demux_set_property;
   gobject_class->get_property = gst_metadata_demux_get_property;
@@ -348,21 +328,6 @@ gst_metadata_demux_get_property (GObject * object, guint prop_id,
       break;
   }
 }
-
-
-
-static void
-gst_metadata_demux_dispose (GObject * object)
-{
-  G_OBJECT_CLASS (metadata_parent_class)->dispose (object);
-}
-
-static void
-gst_metadata_demux_finalize (GObject * object)
-{
-  G_OBJECT_CLASS (metadata_parent_class)->finalize (object);
-}
-
 
 /*
  * GstBaseMetadata virtual functions implementation

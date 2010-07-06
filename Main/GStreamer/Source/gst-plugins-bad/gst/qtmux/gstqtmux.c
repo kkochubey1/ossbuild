@@ -155,8 +155,8 @@ gst_qt_mux_base_init (gpointer g_class)
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
   GstQTMuxClass *klass = (GstQTMuxClass *) g_class;
   GstQTMuxClassParams *params;
-  GstElementDetails details;
   GstPadTemplate *videosinktempl, *audiosinktempl, *srctempl;
+  gchar *longname, *description;
 
   params =
       (GstQTMuxClassParams *) g_type_get_qdata (G_OBJECT_CLASS_TYPE (g_class),
@@ -164,16 +164,14 @@ gst_qt_mux_base_init (gpointer g_class)
   g_assert (params != NULL);
 
   /* construct the element details struct */
-  details.longname = g_strdup_printf ("%s Muxer", params->prop->long_name);
-  details.klass = g_strdup ("Codec/Muxer");
-  details.description =
-      g_strdup_printf ("Multiplex audio and video into a %s file",
+  longname = g_strdup_printf ("%s Muxer", params->prop->long_name);
+  description = g_strdup_printf ("Multiplex audio and video into a %s file",
       params->prop->long_name);
-  details.author = "Thiago Sousa Santos <thiagoss@embedded.ufcg.edu.br>";
-  gst_element_class_set_details (element_class, &details);
-  g_free (details.longname);
-  g_free (details.klass);
-  g_free (details.description);
+  gst_element_class_set_details_simple (element_class, longname,
+      "Codec/Muxer", description,
+      "Thiago Sousa Santos <thiagoss@embedded.ufcg.edu.br>");
+  g_free (longname);
+  g_free (description);
 
   /* pad templates */
   srctempl = gst_pad_template_new ("src", GST_PAD_SRC,
@@ -247,8 +245,6 @@ gst_qt_mux_class_init (GstQTMuxClass * klass)
       GST_DEBUG_FUNCPTR (gst_qt_mux_request_new_pad);
   gstelement_class->change_state = GST_DEBUG_FUNCPTR (gst_qt_mux_change_state);
   gstelement_class->release_pad = GST_DEBUG_FUNCPTR (gst_qt_mux_release_pad);
-
-  GST_DEBUG_CATEGORY_INIT (gst_qt_mux_debug, "qtmux", 0, "QT Muxer");
 }
 
 static void
@@ -878,6 +874,22 @@ static const GstTagToFourcc tag_matches_3gp[] = {
 #define GST_QT_DEMUX_PRIVATE_TAG "private-qt-tag"
 
 static void
+gst_qt_mux_add_xmp_tags (GstQTMux * qtmux, const GstTagList * list)
+{
+  GstQTMuxClass *qtmux_klass = (GstQTMuxClass *) (G_OBJECT_GET_CLASS (qtmux));
+
+  /* adobe specs only say 'quicktime', but I guess we can extrapolate to
+   * mp4 and gpp. Keep mj2 out for now as we don't add any tags for it yet.
+   * If you have further info about xmp on these formats, please share */
+  if (qtmux_klass->format == GST_QT_MUX_FORMAT_MJ2)
+    return;
+
+  GST_DEBUG_OBJECT (qtmux, "Adding xmp tags");
+
+  atom_moov_add_xmp_tags (qtmux->moov, list);
+}
+
+static void
 gst_qt_mux_add_metadata_tags (GstQTMux * qtmux, const GstTagList * list)
 {
   GstQTMuxClass *qtmux_klass = (GstQTMuxClass *) (G_OBJECT_GET_CLASS (qtmux));
@@ -969,6 +981,7 @@ gst_qt_mux_setup_metadata (GstQTMux * qtmux)
   if (tags && !gst_tag_list_is_empty (tags)) {
     GST_DEBUG_OBJECT (qtmux, "Formatting tags");
     gst_qt_mux_add_metadata_tags (qtmux, tags);
+    gst_qt_mux_add_xmp_tags (qtmux, tags);
   } else {
     GST_DEBUG_OBJECT (qtmux, "No tags received");
   }
@@ -2398,6 +2411,9 @@ gst_qt_mux_video_sink_set_caps (GstPad * pad, GstCaps * caps)
       GST_DEBUG_OBJECT (qtmux, "missing or invalid fourcc in jp2 caps");
       goto refuse_caps;
     }
+  } else if (strcmp (mimetype, "video/x-vp8") == 0) {
+    entry.fourcc = FOURCC_VP80;
+    sync = FALSE;
   } else if (strcmp (mimetype, "video/x-qt-part") == 0) {
     guint32 fourcc;
 
@@ -2726,6 +2742,8 @@ gst_qt_mux_register (GstPlugin * plugin)
   GstQTMuxFormat format;
   GstQTMuxClassParams *params;
   guint i = 0;
+
+  GST_DEBUG_CATEGORY_INIT (gst_qt_mux_debug, "qtmux", 0, "QT Muxer");
 
   GST_LOG ("Registering muxers");
 

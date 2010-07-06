@@ -115,12 +115,6 @@ struct _GstBayer2RGBClass
   GstBaseTransformClass parent;
 };
 
-static const GstElementDetails element_details =
-GST_ELEMENT_DETAILS ("Bayer to RGB decoder for cameras",
-    "Filter/Converter/Video",
-    "Converts video/x-raw-bayer to video/x-raw-rgb",
-    "William Brack <wbrack@mmm.com.hk>");
-
 //#define SRC_CAPS GST_VIDEO_CAPS_RGBx
 #define	SRC_CAPS                                 \
   GST_VIDEO_CAPS_RGBx ";"                        \
@@ -144,6 +138,7 @@ enum
 #define DEBUG_INIT(bla) \
   GST_DEBUG_CATEGORY_INIT (gst_bayer2rgb_debug, "bayer2rgb", 0, "bayer2rgb element");
 
+GType gst_bayer2rgb_get_type (void);
 GST_BOILERPLATE_FULL (GstBayer2RGB, gst_bayer2rgb, GstBaseTransform,
     GST_TYPE_BASE_TRANSFORM, DEBUG_INIT);
 
@@ -168,7 +163,10 @@ gst_bayer2rgb_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class,
+      "Bayer to RGB decoder for cameras", "Filter/Converter/Video",
+      "Converts video/x-raw-bayer to video/x-raw-rgb",
+      "William Brack <wbrack@mmm.com.hk>");
 
   gst_element_class_add_pad_template (element_class,
       gst_pad_template_new ("src", GST_PAD_SRC, GST_PAD_ALWAYS,

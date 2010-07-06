@@ -7,11 +7,9 @@
 <link rel="home" href="index.html" title="GStreamer Bad Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="ch03.html" title="gst-plugins-bad Classes">
 <link rel="prev" href="ch03.html" title="gst-plugins-bad Classes">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<link rel="next" href="ch04.html" title="gst-plugins-bad Interfaces">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-bad Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-bad Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-bad Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -20,7 +18,7 @@
 <td><a accesskey="u" href="ch03.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
 <th width="100%" align="center">GStreamer Bad Plugins 0.10 Plugins Reference Manual</th>
-<td> </td>
+<td><a accesskey="n" href="ch04.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#GstBaseMetadata.synopsis" class="shortcut">Top</a>
@@ -44,16 +42,16 @@
 <pre class="synopsis">                    <a class="link" href="GstBaseMetadata.html#GstBaseMetadata-struct" title="GstBaseMetadata">GstBaseMetadata</a>;
 #define             <a class="link" href="GstBaseMetadata.html#GST-BASE-METADATA-SINK-PAD:CAPS" title="GST_BASE_METADATA_SINK_PAD()">GST_BASE_METADATA_SINK_PAD</a>          (obj)
 #define             <a class="link" href="GstBaseMetadata.html#GST-BASE-METADATA-SRC-PAD:CAPS" title="GST_BASE_METADATA_SRC_PAD()">GST_BASE_METADATA_SRC_PAD</a>           (obj)
-<span class="returnvalue">MetaOptions</span>         <a class="link" href="GstBaseMetadata.html#gst-base-metadata-get-option-flag" title="gst_base_metadata_get_option_flag ()">gst_base_metadata_get_option_flag</a>   (const <a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="returnvalue">GstBaseMetadata</span></a> *base);
-<span class="returnvalue">void</span>                <a class="link" href="GstBaseMetadata.html#gst-base-metadata-set-option-flag" title="gst_base_metadata_set_option_flag ()">gst_base_metadata_set_option_flag</a>   (<a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="returnvalue">GstBaseMetadata</span></a> *base,
-                                                         const <span class="returnvalue">MetaOptions</span> options);
-<span class="returnvalue">void</span>                <a class="link" href="GstBaseMetadata.html#gst-base-metadata-unset-option-flag" title="gst_base_metadata_unset_option_flag ()">gst_base_metadata_unset_option_flag</a> (<a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="returnvalue">GstBaseMetadata</span></a> *base,
-                                                         const <span class="returnvalue">MetaOptions</span> options);
+<span class="returnvalue">MetaOptions</span>         <a class="link" href="GstBaseMetadata.html#gst-base-metadata-get-option-flag" title="gst_base_metadata_get_option_flag ()">gst_base_metadata_get_option_flag</a>   (<em class="parameter"><code>const <a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="type">GstBaseMetadata</span></a> *base</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstBaseMetadata.html#gst-base-metadata-set-option-flag" title="gst_base_metadata_set_option_flag ()">gst_base_metadata_set_option_flag</a>   (<em class="parameter"><code><a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="type">GstBaseMetadata</span></a> *base</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">MetaOptions</span> options</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstBaseMetadata.html#gst-base-metadata-unset-option-flag" title="gst_base_metadata_unset_option_flag ()">gst_base_metadata_unset_option_flag</a> (<em class="parameter"><code><a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="type">GstBaseMetadata</span></a> *base</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">MetaOptions</span> options</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstBaseMetadata.html#gst-base-metadata-update-inject-segment-with-new-data" title="gst_base_metadata_update_inject_segment_with_new_data ()">gst_base_metadata_update_inject_segment_with_new_data</a>
-                                                        (<a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="returnvalue">GstBaseMetadata</span></a> *base,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a> **data,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="returnvalue">guint32</span></a> *size,
-                                                         <span class="returnvalue">MetadataChunkType</span> type);
+                                                        (<em class="parameter"><code><a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="type">GstBaseMetadata</span></a> *base</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> **data</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> *size</code></em>,
+                                                         <em class="parameter"><code><span class="type">MetadataChunkType</span> type</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
@@ -82,10 +80,8 @@ types of elements are supported:
 </ul></div>
 <p>
 </p>
-<p>
-</p>
 <div class="refsect2">
-<a name="id425013"></a><p>
+<a name="id432098"></a><p>
 This a abstract element that parses a stream and find chunks and offset
 where new chunks could be injected into it.
 Basically, the only thing need by implementors (parsers, (de)muxers) is to
@@ -116,9 +112,8 @@ stream types and EXIF, IPTC and XMP metadatas.
 </p>
 </div>
 <p>
+Last reviewed on 2008-01-21 (0.10.15)
 </p>
-<p>
-Last reviewed on 2008-01-21 (0.10.15)</p>
 </div>
 <div class="refsect1" title="Details">
 <a name="GstBaseMetadata.details"></a><h2>Details</h2>
@@ -126,7 +121,8 @@ Last reviewed on 2008-01-21 (0.10.15)</p>
 <a name="GstBaseMetadata-struct"></a><h3>GstBaseMetadata</h3>
 <pre class="programlisting">typedef struct _GstBaseMetadata GstBaseMetadata;</pre>
 <p>
-The opaque <a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="type">GstBaseMetadata</span></a> data structure.</p>
+The opaque <a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="type">GstBaseMetadata</span></a> data structure.
+</p>
 </div>
 <hr>
 <div class="refsect2" title="GST_BASE_METADATA_SINK_PAD()">
@@ -163,18 +159,19 @@ The opaque <a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><
 <hr>
 <div class="refsect2" title="gst_base_metadata_get_option_flag ()">
 <a name="gst-base-metadata-get-option-flag"></a><h3>gst_base_metadata_get_option_flag ()</h3>
-<pre class="programlisting"><span class="returnvalue">MetaOptions</span>         gst_base_metadata_get_option_flag   (const <a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="returnvalue">GstBaseMetadata</span></a> *base);</pre>
+<pre class="programlisting"><span class="returnvalue">MetaOptions</span>         gst_base_metadata_get_option_flag   (<em class="parameter"><code>const <a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="type">GstBaseMetadata</span></a> *base</code></em>);</pre>
 <p>
 Check how the this base class will behaviour. As a demuxer or muxer.
 Hanlding EXIF, IPTC, XMP or not.
 <em class="parameter"><code>see_also</code></em>: <a class="link" href="GstBaseMetadata.html#gst-base-metadata-set-option-flag" title="gst_base_metadata_set_option_flag ()"><span class="type">gst_base_metadata_set_option_flag</span></a>
-<a class="link" href="GstBaseMetadata.html#gst-base-metadata-unset-option-flag" title="gst_base_metadata_unset_option_flag ()"><span class="type">gst_base_metadata_unset_option_flag</span></a></p>
+<a class="link" href="GstBaseMetadata.html#gst-base-metadata-unset-option-flag" title="gst_base_metadata_unset_option_flag ()"><span class="type">gst_base_metadata_unset_option_flag</span></a>
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>base</code></em> :</span></p></td>
-<td> the base metadata instance
+<td>the base metadata instance
 </td>
 </tr>
 <tr>
@@ -188,24 +185,25 @@ Hanlding EXIF, IPTC, XMP or not.
 <hr>
 <div class="refsect2" title="gst_base_metadata_set_option_flag ()">
 <a name="gst-base-metadata-set-option-flag"></a><h3>gst_base_metadata_set_option_flag ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_base_metadata_set_option_flag   (<a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="returnvalue">GstBaseMetadata</span></a> *base,
-                                                         const <span class="returnvalue">MetaOptions</span> options);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_base_metadata_set_option_flag   (<em class="parameter"><code><a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="type">GstBaseMetadata</span></a> *base</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">MetaOptions</span> options</code></em>);</pre>
 <p>
 Set how the this base class will behaviour. As a demuxer or muxer. Hanlding
 EXIF, IPTC, XMP or not.
 <em class="parameter"><code>see_also</code></em>: <a class="link" href="GstBaseMetadata.html#gst-base-metadata-unset-option-flag" title="gst_base_metadata_unset_option_flag ()"><span class="type">gst_base_metadata_unset_option_flag</span></a>
-<a class="link" href="GstBaseMetadata.html#gst-base-metadata-get-option-flag" title="gst_base_metadata_get_option_flag ()"><span class="type">gst_base_metadata_get_option_flag</span></a></p>
+<a class="link" href="GstBaseMetadata.html#gst-base-metadata-get-option-flag" title="gst_base_metadata_get_option_flag ()"><span class="type">gst_base_metadata_get_option_flag</span></a>
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>base</code></em> :</span></p></td>
-<td> the base metadata instance
+<td>the base metadata instance
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>options</code></em> :</span></p></td>
-<td> mode of operation
+<td>mode of operation
 </td>
 </tr>
 </tbody>
@@ -214,24 +212,25 @@ EXIF, IPTC, XMP or not.
 <hr>
 <div class="refsect2" title="gst_base_metadata_unset_option_flag ()">
 <a name="gst-base-metadata-unset-option-flag"></a><h3>gst_base_metadata_unset_option_flag ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_base_metadata_unset_option_flag (<a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="returnvalue">GstBaseMetadata</span></a> *base,
-                                                         const <span class="returnvalue">MetaOptions</span> options);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_base_metadata_unset_option_flag (<em class="parameter"><code><a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="type">GstBaseMetadata</span></a> *base</code></em>,
+                                                         <em class="parameter"><code>const <span class="type">MetaOptions</span> options</code></em>);</pre>
 <p>
 Set how the this base class will behaviour. As a demuxer or muxer. Hanlding
 EXIF, IPTC, XMP or not.
 <em class="parameter"><code>see_also</code></em>: <a class="link" href="GstBaseMetadata.html#gst-base-metadata-set-option-flag" title="gst_base_metadata_set_option_flag ()"><span class="type">gst_base_metadata_set_option_flag</span></a>
-<a class="link" href="GstBaseMetadata.html#gst-base-metadata-get-option-flag" title="gst_base_metadata_get_option_flag ()"><span class="type">gst_base_metadata_get_option_flag</span></a></p>
+<a class="link" href="GstBaseMetadata.html#gst-base-metadata-get-option-flag" title="gst_base_metadata_get_option_flag ()"><span class="type">gst_base_metadata_get_option_flag</span></a>
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>base</code></em> :</span></p></td>
-<td> the base metadata instance
+<td>the base metadata instance
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>options</code></em> :</span></p></td>
-<td> mode of operation
+<td>mode of operation
 </td>
 </tr>
 </tbody>
@@ -241,38 +240,39 @@ EXIF, IPTC, XMP or not.
 <div class="refsect2" title="gst_base_metadata_update_inject_segment_with_new_data ()">
 <a name="gst-base-metadata-update-inject-segment-with-new-data"></a><h3>gst_base_metadata_update_inject_segment_with_new_data ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_base_metadata_update_inject_segment_with_new_data
-                                                        (<a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="returnvalue">GstBaseMetadata</span></a> *base,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a> **data,
-                                                         <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="returnvalue">guint32</span></a> *size,
-                                                         <span class="returnvalue">MetadataChunkType</span> type);</pre>
+                                                        (<em class="parameter"><code><a class="link" href="GstBaseMetadata.html" title="GstBaseMetadata"><span class="type">GstBaseMetadata</span></a> *base</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> **data</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> *size</code></em>,
+                                                         <em class="parameter"><code><span class="type">MetadataChunkType</span> type</code></em>);</pre>
 <p>
 If the file type specification of the parsed stream allows a chunk of <em class="parameter"><code>type</code></em>,
 set the <em class="parameter"><code>data</code></em> and <em class="parameter"><code>size</code></em> of the segment to be injected. This the <em class="parameter"><code>data</code></em> has
 been injected (metadata type supported by the stream <em class="parameter"><code>type</code></em>) then, the
 the <em class="parameter"><code>data</code></em> ownership will be taken and <em class="parameter"><code>data</code></em> and <em class="parameter"><code>size</code></em> willl be set to 0;
 Hanlding EXIF, IPTC, XMP or not.
-<em class="parameter"><code>see_also</code></em>: <span class="type">gst_base_metadata_calculate_offsets</span></p>
+<em class="parameter"><code>see_also</code></em>: <span class="type">gst_base_metadata_calculate_offsets</span>
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>base</code></em> :</span></p></td>
-<td> the base metadata instance
+<td>the base metadata instance
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td> new data to be injected
+<td>new data to be injected
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td> the size in bytes of <em class="parameter"><code>data</code></em>
+<td>the size in bytes of <em class="parameter"><code>data</code></em>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>type</code></em> :</span></p></td>
-<td> kind of metadata chunk it is (currently EXIF, IPTC or XMP)
+<td>kind of metadata chunk it is (currently EXIF, IPTC or XMP)
 </td>
 </tr>
 </tbody>
@@ -282,6 +282,6 @@ Hanlding EXIF, IPTC, XMP or not.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

@@ -91,8 +91,6 @@ enum
   LAST_SIGNAL
 };
 
-static void gst_cdaudio_class_init (GstCDAudioClass * klass);
-static void gst_cdaudio_init (GstCDAudio * cdaudio, GstCDAudioClass * g_class);
 static void gst_cdaudio_finalize (GObject * object);
 
 static void gst_cdaudio_set_property (GObject * object, guint prop_id,
@@ -115,13 +113,6 @@ static GstFormat sector_format;
 static GstElementClass *parent_class;
 static guint gst_cdaudio_signals[LAST_SIGNAL] = { 0 };
 
-static const GstElementDetails gst_cdaudio_details =
-GST_ELEMENT_DETAILS ("CD player",
-    "Generic/Bin",
-    "Play CD audio through the CD Drive",
-    "Wim Taymans <wim@fluendo.com>");
-
-
 static void
 _do_init (GType cdaudio_type)
 {
@@ -135,6 +126,7 @@ _do_init (GType cdaudio_type)
       &urihandler_info);
 }
 
+GType gst_cdaudio_get_type (void);
 GST_BOILERPLATE_FULL (GstCDAudio, gst_cdaudio, GstElement, GST_TYPE_ELEMENT,
     _do_init);
 
@@ -143,7 +135,9 @@ gst_cdaudio_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &gst_cdaudio_details);
+  gst_element_class_set_details_simple (element_class, "CD player",
+      "Generic/Bin",
+      "Play CD audio through the CD Drive", "Wim Taymans <wim@fluendo.com>");
 
   /* Register the track and sector format */
   track_format = gst_format_register ("track", "CD track");
@@ -595,7 +589,7 @@ cdaudio_uri_get_type (void)
 static gchar **
 cdaudio_uri_get_protocols (void)
 {
-  static gchar *protocols[] = { "cd", NULL };
+  static gchar *protocols[] = { (char *) "cd", NULL };
 
   return protocols;
 }

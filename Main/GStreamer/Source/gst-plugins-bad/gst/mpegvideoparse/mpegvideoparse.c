@@ -44,14 +44,6 @@
 GST_DEBUG_CATEGORY_STATIC (mpv_parse_debug);
 #define GST_CAT_DEFAULT mpv_parse_debug
 
-/* elementfactory information */
-static GstElementDetails mpegvideoparse_details =
-GST_ELEMENT_DETAILS ("MPEG video elementary stream parser",
-    "Codec/Parser/Video",
-    "Parses and frames MPEG-1 and MPEG-2 elementary video streams",
-    "Wim Taymans <wim.taymans@chello.be>\n"
-    "Jan Schmidt <thaytan@mad.scientist.com>");
-
 static GstStaticPadTemplate src_template =
 GST_STATIC_PAD_TEMPLATE ("src", GST_PAD_SRC,
     GST_PAD_ALWAYS,
@@ -140,7 +132,12 @@ gst_mpegvideoparse_base_init (MpegVideoParseClass * klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_template));
 
-  gst_element_class_set_details (element_class, &mpegvideoparse_details);
+  gst_element_class_set_details_simple (element_class,
+      "MPEG video elementary stream parser",
+      "Codec/Parser/Video",
+      "Parses and frames MPEG-1 and MPEG-2 elementary video streams",
+      "Wim Taymans <wim.taymans@chello.be>, "
+      "Jan Schmidt <thaytan@mad.scientist.com>");
 }
 
 static void
@@ -253,6 +250,17 @@ mpegvideoparse_handle_sequence (MpegVideoParse * mpegvideoparse,
   if (memcmp (&mpegvideoparse->seq_hdr, &new_hdr, sizeof (MPEGSeqHdr)) != 0) {
     GstCaps *caps;
     GstBuffer *seq_buf;
+    /*
+     * Profile indication - 1 => High, 2 => Spatially Scalable,
+     *                      3 => SNR Scalable, 4 => Main, 5 => Simple
+     * 4:2:2 and Multi-view have profile = 0, with the escape bit set to 1
+     */
+    const gchar *profiles[] = { "high", "spatial", "snr", "main", "simple" };
+    /*
+     * Level indication - 4 => High, 6 => High-1440, 8 => Main, 10 => Low,
+     *                    except in the case of profile = 0
+     */
+    const gchar *levels[] = { "high", "high-1440", "main", "low" };
 
     /* Store the entire sequence header + sequence header extension
        for output as codec_data */
@@ -271,12 +279,65 @@ mpegvideoparse_handle_sequence (MpegVideoParse * mpegvideoparse,
         "interlaced", G_TYPE_BOOLEAN, !new_hdr.progressive,
         "codec_data", GST_TYPE_BUFFER, seq_buf, NULL);
 
+    if (new_hdr.mpeg_version == 2) {
+      const gchar *profile = NULL, *level = NULL;
+
+      if (new_hdr.profile > 0 && new_hdr.profile < 6)
+        profile = profiles[new_hdr.profile - 1];
+
+      if ((new_hdr.level > 3) && (new_hdr.level < 11) &&
+          (new_hdr.level % 2 == 0))
+        level = levels[(new_hdr.level >> 1) - 1];
+
+      if (new_hdr.profile == 8) {
+        /* Non-hierarchical profile */
+        switch (new_hdr.level) {
+          case 2:
+            level = levels[0];
+          case 5:
+            level = levels[2];
+            profile = "4:2:2";
+            break;
+          case 10:
+            level = levels[0];
+          case 11:
+            level = levels[1];
+          case 13:
+            level = levels[2];
+          case 14:
+            level = levels[3];
+            profile = "multiview";
+            break;
+          default:
+            break;
+        }
+      }
+
+      if (profile)
+        gst_caps_set_simple (caps, "profile", G_TYPE_STRING, profile, NULL);
+      else
+        GST_DEBUG ("Invalid profile - %u", new_hdr.profile);
+
+      if (level)
+        gst_caps_set_simple (caps, "level", G_TYPE_STRING, level, NULL);
+      else
+        GST_DEBUG ("Invalid level - %u", new_hdr.level);
+    }
+
     GST_DEBUG ("New mpegvideoparse caps: %" GST_PTR_FORMAT, caps);
     if (!gst_pad_set_caps (mpegvideoparse->srcpad, caps)) {
       gst_caps_unref (caps);
       return FALSE;
     }
     gst_caps_unref (caps);
+
+    if (new_hdr.bitrate > 0) {
+      GstTagList *taglist;
+
+      taglist = gst_tag_list_new_full (GST_TAG_BITRATE, new_hdr.bitrate, NULL);
+      gst_element_found_tags_for_pad (GST_ELEMENT_CAST (mpegvideoparse),
+          mpegvideoparse->srcpad, taglist);
+    }
 
     /* And update the new_hdr into our stored version */
     mpegvideoparse->seq_hdr = new_hdr;
@@ -432,25 +493,21 @@ mpegvideoparse_drain_avail (MpegVideoParse * mpegvideoparse)
         cur->length, picture_start_code_name (cur->first_pack_type),
         cur->flags);
 
-    /* Don't start pushing out buffers until we've seen a sequence header */
-    if (mpegvideoparse->seq_hdr.mpeg_version == 0) {
-      if (cur->flags & MPEG_BLOCK_FLAG_SEQUENCE) {
-        /* Found a sequence header */
-        if (!mpegvideoparse_handle_sequence (mpegvideoparse, buf)) {
-          GST_DEBUG_OBJECT (mpegvideoparse,
-              "Invalid sequence header. Dropping buffer.");
-          gst_buffer_unref (buf);
-          buf = NULL;
-        }
-      } else {
-        if (buf) {
-          GST_DEBUG_OBJECT (mpegvideoparse,
-              "No sequence header yet. Dropping buffer of %u bytes",
-              GST_BUFFER_SIZE (buf));
-          gst_buffer_unref (buf);
-          buf = NULL;
-        }
+    if ((cur->flags & MPEG_BLOCK_FLAG_SEQUENCE) && buf != NULL) {
+      /* Found a sequence header */
+      if (!mpegvideoparse_handle_sequence (mpegvideoparse, buf)) {
+        GST_DEBUG_OBJECT (mpegvideoparse,
+            "Invalid sequence header. Dropping buffer.");
+        gst_buffer_unref (buf);
+        buf = NULL;
       }
+    } else if (mpegvideoparse->seq_hdr.mpeg_version == 0 && buf) {
+      /* Don't start pushing out buffers until we've seen a sequence header */
+      GST_DEBUG_OBJECT (mpegvideoparse,
+          "No sequence header yet. Dropping buffer of %u bytes",
+          GST_BUFFER_SIZE (buf));
+      gst_buffer_unref (buf);
+      buf = NULL;
     }
 
     if (buf != NULL) {

@@ -38,7 +38,7 @@
 
 #include "gstladspa.h"
 #include <ladspa.h>             /* main ladspa sdk include file */
-#if HAVE_LRDF
+#ifdef HAVE_LRDF
 #include <lrdf.h>
 #endif
 
@@ -80,13 +80,14 @@ gst_ladspa_base_init (gpointer g_class)
   GstLADSPAClass *klass = (GstLADSPAClass *) g_class;
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
   GstSignalProcessorClass *gsp_class = GST_SIGNAL_PROCESSOR_CLASS (g_class);
-  GstElementDetails *details;
   LADSPA_Descriptor *desc;
   guint j, audio_in_count, audio_out_count, control_in_count, control_out_count;
-  gchar *klass_tags;
-#if HAVE_LRDF
-  gchar *uri, *extra_klass_tags = NULL;
+  const gchar *klass_tags;
+  gchar *longname, *author;
+#ifdef HAVE_LRDF
+  gchar *uri;
 #endif
+  gchar *extra_klass_tags = NULL;
 
   GST_DEBUG ("base_init %p", g_class);
 
@@ -138,17 +139,14 @@ gst_ladspa_base_init (gpointer g_class)
     }
   }
 
-  /* construct the element details struct */
-  details = g_new0 (GstElementDetails, 1);
-  details->longname = g_locale_to_utf8 (desc->Name, -1, NULL, NULL, NULL);
-  if (!details->longname)
-    details->longname = g_strdup ("no description available");
-  details->description = details->longname;
-  details->author = g_locale_to_utf8 (desc->Maker, -1, NULL, NULL, NULL);
-  if (!details->author)
-    details->author = g_strdup ("no author available");
+  longname = g_locale_to_utf8 (desc->Name, -1, NULL, NULL, NULL);
+  if (!longname)
+    longname = g_strdup ("no description available");
+  author = g_locale_to_utf8 (desc->Maker, -1, NULL, NULL, NULL);
+  if (!author)
+    author = g_strdup ("no author available");
 
-#if HAVE_LRDF
+#ifdef HAVE_LRDF
   /* libldrf support, we want to get extra class information here */
   uri = g_strdup_printf (LADSPA_BASE "%ld", desc->UniqueID);
   if (uri) {
@@ -169,8 +167,8 @@ gst_ladspa_base_init (gpointer g_class)
 
     /* get the rdf:type for this plugin */
     query.subject = uri;
-    query.predicate = RDF_BASE "type";
-    query.object = "?";
+    query.predicate = (char *) RDF_BASE "type";
+    query.object = (char *) "?";
     query.next = NULL;
     uris = lrdf_match_multi (&query);
     if (uris) {
@@ -234,20 +232,19 @@ gst_ladspa_base_init (gpointer g_class)
   } else
     klass_tags = "Filter/Effect/Audio/LADSPA";
 
-#if HAVE_LRDF
+#ifdef HAVE_LRDF
   if (extra_klass_tags) {
-    details->klass = g_strconcat (klass_tags, extra_klass_tags, NULL);
+    char *s = g_strconcat (klass_tags, extra_klass_tags, NULL);
     g_free (extra_klass_tags);
-  } else
-#endif
-  {
-    details->klass = klass_tags;
+    extra_klass_tags = s;
   }
-  GST_INFO ("tags : %s", details->klass);
-  gst_element_class_set_details (element_class, details);
-  g_free (details->longname);
-  g_free (details->author);
-  g_free (details);
+#endif
+  GST_INFO ("tags : %s", klass_tags);
+  gst_element_class_set_details_simple (element_class, longname,
+      extra_klass_tags ? extra_klass_tags : klass_tags, longname, author);
+  g_free (longname);
+  g_free (author);
+  g_free (extra_klass_tags);
 
   klass->audio_in_portnums = g_new0 (gint, gsp_class->num_audio_in);
   klass->audio_out_portnums = g_new0 (gint, gsp_class->num_audio_out);
@@ -719,7 +716,7 @@ ladspa_describe_plugin (LADSPA_Descriptor_Function descriptor_function)
   }
 }
 
-#if HAVE_LRDF
+#ifdef HAVE_LRDF
 static gboolean
 ladspa_rdf_directory_search (const char *dir_name)
 {
@@ -801,7 +798,7 @@ ladspa_plugin_path_search (void)
   gchar **paths;
   gint i, j, path_entries;
   gboolean res = FALSE, skip;
-#if HAVE_LRDF
+#ifdef HAVE_LRDF
   gchar *pos, *prefix, *rdf_path;
 #endif
 
@@ -818,7 +815,7 @@ ladspa_plugin_path_search (void)
   path_entries = g_strv_length (paths);
   GST_INFO ("%d dirs in search paths \"%s\"", path_entries, ladspa_path);
 
-#if HAVE_LRDF
+#ifdef HAVE_LRDF
   for (i = 0; i < path_entries; i++) {
     skip = FALSE;
     for (j = 0; j < i; j++) {
@@ -874,7 +871,7 @@ plugin_init (GstPlugin * plugin)
       "LADSPA_PATH",
       GST_LADSPA_DEFAULT_PATH, NULL, GST_PLUGIN_DEPENDENCY_FLAG_NONE);
 
-#if HAVE_LRDF
+#ifdef HAVE_LRDF
   lrdf_init ();
 #endif
 
@@ -883,7 +880,12 @@ plugin_init (GstPlugin * plugin)
   ladspa_plugin = plugin;
   descriptor_quark = g_quark_from_static_string ("ladspa-descriptor");
 
-  return ladspa_plugin_path_search ();
+  if (!ladspa_plugin_path_search ()) {
+    GST_WARNING ("no ladspa plugins found, check LADSPA_PATH");
+  }
+
+  /* we don't want to fail, even if there are no elements registered */
+  return TRUE;
 }
 
 GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,

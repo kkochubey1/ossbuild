@@ -31,7 +31,7 @@
 static GList *elements = NULL;
 
 static void
-setup ()
+setup (void)
 {
   GList *features, *f;
   GList *plugins, *p;
@@ -88,7 +88,7 @@ setup ()
 }
 
 static void
-teardown ()
+teardown (void)
 {
   GList *e;
 
@@ -213,7 +213,7 @@ GST_START_TEST (test_state_changes_down_seq)
 GST_END_TEST;
 
 
-Suite *
+static Suite *
 states_suite (void)
 {
   Suite *s = suite_create ("states");

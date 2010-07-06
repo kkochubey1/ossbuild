@@ -32,14 +32,6 @@
 GST_DEBUG_CATEGORY_STATIC (mvedemux_debug);
 #define GST_CAT_DEFAULT mvedemux_debug
 
-extern int ipvideo_decode_frame8 (const GstMveDemuxStream * s,
-    const unsigned char *data, unsigned short len);
-extern int ipvideo_decode_frame16 (const GstMveDemuxStream * s,
-    const unsigned char *data, unsigned short len);
-
-extern void ipaudio_uncompress (short *buffer,
-    unsigned short buf_len, const unsigned char *data, unsigned char channels);
-
 enum MveDemuxState
 {
   MVEDEMUX_STATE_INITIAL,       /* initial state, header not read */
@@ -1089,12 +1081,7 @@ gst_mve_demux_dispose (GObject * obj)
 static void
 gst_mve_demux_base_init (GstMveDemuxClass * klass)
 {
-  static const GstElementDetails mve_demux_details = {
-    "MVE Demuxer",
-    "Codec/Demuxer",
-    "Demultiplex an Interplay movie (MVE) stream into audio and video",
-    "Jens Granseuer <jensgr@gmx.net>"
-  };
+
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
   gst_element_class_add_pad_template (element_class,
@@ -1103,7 +1090,10 @@ gst_mve_demux_base_init (GstMveDemuxClass * klass)
       gst_static_pad_template_get (&vidsrc_template));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&audsrc_template));
-  gst_element_class_set_details (element_class, &mve_demux_details);
+  gst_element_class_set_details_simple (element_class, "MVE Demuxer",
+      "Codec/Demuxer",
+      "Demultiplex an Interplay movie (MVE) stream into audio and video",
+      "Jens Granseuer <jensgr@gmx.net>");
 }
 
 static void

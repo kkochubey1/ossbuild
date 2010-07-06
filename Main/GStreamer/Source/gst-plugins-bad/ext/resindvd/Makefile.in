@@ -64,8 +64,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -116,7 +115,10 @@ am_libresindvd_la_OBJECTS = libresindvd_la-plugin.lo \
 	libresindvd_la-rsnparsetter.lo \
 	libresindvd_la-rsnwrappedbuffer.lo
 libresindvd_la_OBJECTS = $(am_libresindvd_la_OBJECTS)
-libresindvd_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libresindvd_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libresindvd_la_CFLAGS) $(CFLAGS) \
 	$(libresindvd_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -126,13 +128,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libresindvd_la_SOURCES)
 DIST_SOURCES = $(libresindvd_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -147,7 +162,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -205,7 +220,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -216,11 +230,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -267,6 +279,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -289,6 +303,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -330,7 +345,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -344,6 +358,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -389,7 +404,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -418,13 +432,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -499,7 +515,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -520,7 +535,8 @@ libresindvd_la_SOURCES = \
 	rsnparsetter.c \
 	rsnwrappedbuffer.c
 
-libresindvd_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) \
+libresindvd_la_CFLAGS = $(GST_PLUGINS_BAD_CFLAGS) \
+$(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) \
 $(GST_CFLAGS) $(DVDNAV_CFLAGS)
 
 libresindvd_la_LIBADD = $(GST_PLUGINS_BASE_LIBS) \
@@ -609,7 +625,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libresindvd.la: $(libresindvd_la_OBJECTS) $(libresindvd_la_DEPENDENCIES) 
-	$(libresindvd_la_LINK) -rpath $(plugindir) $(libresindvd_la_OBJECTS) $(libresindvd_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libresindvd_la_LINK) -rpath $(plugindir) $(libresindvd_la_OBJECTS) $(libresindvd_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -630,102 +646,116 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libresindvd_la-rsnwrappedbuffer.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libresindvd_la-plugin.lo: plugin.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-plugin.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-plugin.Tpo -c -o libresindvd_la-plugin.lo `test -f 'plugin.c' || echo '$(srcdir)/'`plugin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libresindvd_la-plugin.Tpo $(DEPDIR)/libresindvd_la-plugin.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-plugin.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-plugin.Tpo -c -o libresindvd_la-plugin.lo `test -f 'plugin.c' || echo '$(srcdir)/'`plugin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libresindvd_la-plugin.Tpo $(DEPDIR)/libresindvd_la-plugin.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='plugin.c' object='libresindvd_la-plugin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-plugin.lo `test -f 'plugin.c' || echo '$(srcdir)/'`plugin.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-plugin.lo `test -f 'plugin.c' || echo '$(srcdir)/'`plugin.c
 
 libresindvd_la-resindvdbin.lo: resindvdbin.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-resindvdbin.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-resindvdbin.Tpo -c -o libresindvd_la-resindvdbin.lo `test -f 'resindvdbin.c' || echo '$(srcdir)/'`resindvdbin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libresindvd_la-resindvdbin.Tpo $(DEPDIR)/libresindvd_la-resindvdbin.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-resindvdbin.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-resindvdbin.Tpo -c -o libresindvd_la-resindvdbin.lo `test -f 'resindvdbin.c' || echo '$(srcdir)/'`resindvdbin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libresindvd_la-resindvdbin.Tpo $(DEPDIR)/libresindvd_la-resindvdbin.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='resindvdbin.c' object='libresindvd_la-resindvdbin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-resindvdbin.lo `test -f 'resindvdbin.c' || echo '$(srcdir)/'`resindvdbin.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-resindvdbin.lo `test -f 'resindvdbin.c' || echo '$(srcdir)/'`resindvdbin.c
 
 libresindvd_la-rsnaudiomunge.lo: rsnaudiomunge.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-rsnaudiomunge.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-rsnaudiomunge.Tpo -c -o libresindvd_la-rsnaudiomunge.lo `test -f 'rsnaudiomunge.c' || echo '$(srcdir)/'`rsnaudiomunge.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libresindvd_la-rsnaudiomunge.Tpo $(DEPDIR)/libresindvd_la-rsnaudiomunge.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-rsnaudiomunge.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-rsnaudiomunge.Tpo -c -o libresindvd_la-rsnaudiomunge.lo `test -f 'rsnaudiomunge.c' || echo '$(srcdir)/'`rsnaudiomunge.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libresindvd_la-rsnaudiomunge.Tpo $(DEPDIR)/libresindvd_la-rsnaudiomunge.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rsnaudiomunge.c' object='libresindvd_la-rsnaudiomunge.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-rsnaudiomunge.lo `test -f 'rsnaudiomunge.c' || echo '$(srcdir)/'`rsnaudiomunge.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-rsnaudiomunge.lo `test -f 'rsnaudiomunge.c' || echo '$(srcdir)/'`rsnaudiomunge.c
 
 libresindvd_la-rsndec.lo: rsndec.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-rsndec.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-rsndec.Tpo -c -o libresindvd_la-rsndec.lo `test -f 'rsndec.c' || echo '$(srcdir)/'`rsndec.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libresindvd_la-rsndec.Tpo $(DEPDIR)/libresindvd_la-rsndec.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-rsndec.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-rsndec.Tpo -c -o libresindvd_la-rsndec.lo `test -f 'rsndec.c' || echo '$(srcdir)/'`rsndec.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libresindvd_la-rsndec.Tpo $(DEPDIR)/libresindvd_la-rsndec.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rsndec.c' object='libresindvd_la-rsndec.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-rsndec.lo `test -f 'rsndec.c' || echo '$(srcdir)/'`rsndec.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-rsndec.lo `test -f 'rsndec.c' || echo '$(srcdir)/'`rsndec.c
 
 libresindvd_la-rsnstreamselector.lo: rsnstreamselector.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-rsnstreamselector.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-rsnstreamselector.Tpo -c -o libresindvd_la-rsnstreamselector.lo `test -f 'rsnstreamselector.c' || echo '$(srcdir)/'`rsnstreamselector.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libresindvd_la-rsnstreamselector.Tpo $(DEPDIR)/libresindvd_la-rsnstreamselector.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-rsnstreamselector.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-rsnstreamselector.Tpo -c -o libresindvd_la-rsnstreamselector.lo `test -f 'rsnstreamselector.c' || echo '$(srcdir)/'`rsnstreamselector.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libresindvd_la-rsnstreamselector.Tpo $(DEPDIR)/libresindvd_la-rsnstreamselector.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rsnstreamselector.c' object='libresindvd_la-rsnstreamselector.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-rsnstreamselector.lo `test -f 'rsnstreamselector.c' || echo '$(srcdir)/'`rsnstreamselector.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-rsnstreamselector.lo `test -f 'rsnstreamselector.c' || echo '$(srcdir)/'`rsnstreamselector.c
 
 libresindvd_la-resindvdsrc.lo: resindvdsrc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-resindvdsrc.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-resindvdsrc.Tpo -c -o libresindvd_la-resindvdsrc.lo `test -f 'resindvdsrc.c' || echo '$(srcdir)/'`resindvdsrc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libresindvd_la-resindvdsrc.Tpo $(DEPDIR)/libresindvd_la-resindvdsrc.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-resindvdsrc.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-resindvdsrc.Tpo -c -o libresindvd_la-resindvdsrc.lo `test -f 'resindvdsrc.c' || echo '$(srcdir)/'`resindvdsrc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libresindvd_la-resindvdsrc.Tpo $(DEPDIR)/libresindvd_la-resindvdsrc.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='resindvdsrc.c' object='libresindvd_la-resindvdsrc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-resindvdsrc.lo `test -f 'resindvdsrc.c' || echo '$(srcdir)/'`resindvdsrc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-resindvdsrc.lo `test -f 'resindvdsrc.c' || echo '$(srcdir)/'`resindvdsrc.c
 
 libresindvd_la-gstmpegdesc.lo: gstmpegdesc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-gstmpegdesc.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-gstmpegdesc.Tpo -c -o libresindvd_la-gstmpegdesc.lo `test -f 'gstmpegdesc.c' || echo '$(srcdir)/'`gstmpegdesc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libresindvd_la-gstmpegdesc.Tpo $(DEPDIR)/libresindvd_la-gstmpegdesc.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-gstmpegdesc.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-gstmpegdesc.Tpo -c -o libresindvd_la-gstmpegdesc.lo `test -f 'gstmpegdesc.c' || echo '$(srcdir)/'`gstmpegdesc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libresindvd_la-gstmpegdesc.Tpo $(DEPDIR)/libresindvd_la-gstmpegdesc.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmpegdesc.c' object='libresindvd_la-gstmpegdesc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-gstmpegdesc.lo `test -f 'gstmpegdesc.c' || echo '$(srcdir)/'`gstmpegdesc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-gstmpegdesc.lo `test -f 'gstmpegdesc.c' || echo '$(srcdir)/'`gstmpegdesc.c
 
 libresindvd_la-gstmpegdemux.lo: gstmpegdemux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-gstmpegdemux.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-gstmpegdemux.Tpo -c -o libresindvd_la-gstmpegdemux.lo `test -f 'gstmpegdemux.c' || echo '$(srcdir)/'`gstmpegdemux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libresindvd_la-gstmpegdemux.Tpo $(DEPDIR)/libresindvd_la-gstmpegdemux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-gstmpegdemux.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-gstmpegdemux.Tpo -c -o libresindvd_la-gstmpegdemux.lo `test -f 'gstmpegdemux.c' || echo '$(srcdir)/'`gstmpegdemux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libresindvd_la-gstmpegdemux.Tpo $(DEPDIR)/libresindvd_la-gstmpegdemux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmpegdemux.c' object='libresindvd_la-gstmpegdemux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-gstmpegdemux.lo `test -f 'gstmpegdemux.c' || echo '$(srcdir)/'`gstmpegdemux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-gstmpegdemux.lo `test -f 'gstmpegdemux.c' || echo '$(srcdir)/'`gstmpegdemux.c
 
 libresindvd_la-gstpesfilter.lo: gstpesfilter.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-gstpesfilter.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-gstpesfilter.Tpo -c -o libresindvd_la-gstpesfilter.lo `test -f 'gstpesfilter.c' || echo '$(srcdir)/'`gstpesfilter.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libresindvd_la-gstpesfilter.Tpo $(DEPDIR)/libresindvd_la-gstpesfilter.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-gstpesfilter.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-gstpesfilter.Tpo -c -o libresindvd_la-gstpesfilter.lo `test -f 'gstpesfilter.c' || echo '$(srcdir)/'`gstpesfilter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libresindvd_la-gstpesfilter.Tpo $(DEPDIR)/libresindvd_la-gstpesfilter.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstpesfilter.c' object='libresindvd_la-gstpesfilter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-gstpesfilter.lo `test -f 'gstpesfilter.c' || echo '$(srcdir)/'`gstpesfilter.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-gstpesfilter.lo `test -f 'gstpesfilter.c' || echo '$(srcdir)/'`gstpesfilter.c
 
 libresindvd_la-rsnparsetter.lo: rsnparsetter.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-rsnparsetter.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-rsnparsetter.Tpo -c -o libresindvd_la-rsnparsetter.lo `test -f 'rsnparsetter.c' || echo '$(srcdir)/'`rsnparsetter.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libresindvd_la-rsnparsetter.Tpo $(DEPDIR)/libresindvd_la-rsnparsetter.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-rsnparsetter.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-rsnparsetter.Tpo -c -o libresindvd_la-rsnparsetter.lo `test -f 'rsnparsetter.c' || echo '$(srcdir)/'`rsnparsetter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libresindvd_la-rsnparsetter.Tpo $(DEPDIR)/libresindvd_la-rsnparsetter.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rsnparsetter.c' object='libresindvd_la-rsnparsetter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-rsnparsetter.lo `test -f 'rsnparsetter.c' || echo '$(srcdir)/'`rsnparsetter.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-rsnparsetter.lo `test -f 'rsnparsetter.c' || echo '$(srcdir)/'`rsnparsetter.c
 
 libresindvd_la-rsnwrappedbuffer.lo: rsnwrappedbuffer.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-rsnwrappedbuffer.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-rsnwrappedbuffer.Tpo -c -o libresindvd_la-rsnwrappedbuffer.lo `test -f 'rsnwrappedbuffer.c' || echo '$(srcdir)/'`rsnwrappedbuffer.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libresindvd_la-rsnwrappedbuffer.Tpo $(DEPDIR)/libresindvd_la-rsnwrappedbuffer.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -MT libresindvd_la-rsnwrappedbuffer.lo -MD -MP -MF $(DEPDIR)/libresindvd_la-rsnwrappedbuffer.Tpo -c -o libresindvd_la-rsnwrappedbuffer.lo `test -f 'rsnwrappedbuffer.c' || echo '$(srcdir)/'`rsnwrappedbuffer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libresindvd_la-rsnwrappedbuffer.Tpo $(DEPDIR)/libresindvd_la-rsnwrappedbuffer.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='rsnwrappedbuffer.c' object='libresindvd_la-rsnwrappedbuffer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-rsnwrappedbuffer.lo `test -f 'rsnwrappedbuffer.c' || echo '$(srcdir)/'`rsnwrappedbuffer.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libresindvd_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libresindvd_la_CFLAGS) $(CFLAGS) -c -o libresindvd_la-rsnwrappedbuffer.lo `test -f 'rsnwrappedbuffer.c' || echo '$(srcdir)/'`rsnwrappedbuffer.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

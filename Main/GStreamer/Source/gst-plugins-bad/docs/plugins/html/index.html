@@ -6,11 +6,8 @@
 <meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
 <link rel="home" href="index.html" title="GStreamer Bad Plugins 0.10 Plugins Reference Manual">
 <link rel="next" href="ch01.html" title="gst-plugins-bad Elements">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-bad Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-bad Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-bad Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <div class="book" title="GStreamer Bad Plugins 0.10 Plugins Reference Manual">
@@ -18,7 +15,7 @@
 <div>
 <div><table class="navigation" id="top" width="100%" cellpadding="2" cellspacing="0"><tr><th valign="middle"><p class="title">GStreamer Bad Plugins 0.10 Plugins Reference Manual</p></th></tr></table></div>
 <div><p class="releaseinfo">
-      for GStreamer Bad Plugins 0.10 (0.10.18)
+      for GStreamer Bad Plugins 0.10 (0.10.19)
       The latest version of this documentation can be found on-line at
       <a class="ulink" href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-bad/html/" target="_top">http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-bad/html/</a>.
     </p></div>
@@ -54,9 +51,6 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-camerabin.html">camerabin</a></span><span class="refpurpose"> — Handle lot of features present in DSC</span>
-</dt>
-<dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-capssetter.html">capssetter</a></span><span class="refpurpose"> — Set/merge caps on stream</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-celtdec.html">celtdec</a></span><span class="refpurpose"> — decode celt streams to audio</span>
@@ -114,6 +108,9 @@
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-fpsdisplaysink.html">fpsdisplaysink</a></span><span class="refpurpose"> — Shows the current frame-rate and drop-rate of the videosink as overlay or text on stdout</span>
+</dt>
+<dt>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-freeze.html">freeze</a></span><span class="refpurpose"> — Makes a stream from buffers of data</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-input-selector.html">input-selector</a></span><span class="refpurpose"> — N-to-1 input stream selectoring</span>
@@ -179,7 +176,7 @@
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-mxfmux.html">mxfmux</a></span><span class="refpurpose"> — Muxes video/audio streams into a MXF stream</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-nuvdemux.html">nuvdemux</a></span><span class="refpurpose"> — Demultiplex a mythtv .nuv file into audio and video</span>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-nuvdemux.html">nuvdemux</a></span><span class="refpurpose"> — Demultiplex a MythTV NuppleVideo .nuv file into audio and video</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-output-selector.html">output-selector</a></span><span class="refpurpose"> — 1-to-N output stream selectoring</span>
@@ -218,7 +215,7 @@
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-stereo.html">stereo</a></span><span class="refpurpose"> — Muck with the stereo signal to enhance its 'stereo-ness'</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-tiger.html">tiger</a></span><span class="refpurpose"></span>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-tiger.html">tiger</a></span><span class="refpurpose"> — Decodes and renders Kate streams on top of a video</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-timidity.html">timidity</a></span><span class="refpurpose"> — Midi Synthesizer Element</span>
@@ -413,10 +410,7 @@
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-neon.html">neon</a></span><span class="refpurpose"> — lib neon http client src</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-nsfdec.html">nsfdec</a></span><span class="refpurpose"> — Uses nosefart to decode .nsf files</span>
-</dt>
-<dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-nuvdemux.html">nuvdemux</a></span><span class="refpurpose"> — Demuxes and muxes audio and video</span>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-nuvdemux.html">nuvdemux</a></span><span class="refpurpose"> — Demuxes MythTV NuppelVideo files</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-pcapparse.html">pcapparse</a></span><span class="refpurpose"> — Element parsing raw pcap streams</span>
@@ -479,7 +473,7 @@
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-videosignal.html">videosignal</a></span><span class="refpurpose"> — Various video signal analysers</span>
 </dt>
 <dt>
-<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-vmnc.html">vmnc</a></span><span class="refpurpose"> — VMnc video plugin library</span>
+<span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-vmnc.html">vmnc</a></span><span class="refpurpose"> — VmWare Video Codec plugins</span>
 </dt>
 <dt>
 <span class="refentrytitle"><a href="gst-plugins-bad-plugins-plugin-wildmidi.html">wildmidi</a></span><span class="refpurpose"> — Wildmidi Plugin</span>
@@ -495,10 +489,14 @@
 <dd><dl><dt>
 <span class="refentrytitle"><a href="GstBaseMetadata.html">GstBaseMetadata</a></span><span class="refpurpose"> — Base class for metadata handling elements</span>
 </dt></dl></dd>
+<dt><span class="chapter"><a href="ch04.html">gst-plugins-bad Interfaces</a></span></dt>
+<dd><dl><dt>
+<span class="refentrytitle"><a href="GstPhotography.html">GstPhotography</a></span><span class="refpurpose"> — Interface for digital image capture elements</span>
+</dt></dl></dd>
 </dl></div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

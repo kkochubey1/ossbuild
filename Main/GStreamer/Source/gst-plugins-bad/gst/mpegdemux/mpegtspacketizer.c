@@ -48,7 +48,6 @@ static GQuark QUARK_NETWORK_ID;
 static GQuark QUARK_CURRENT_NEXT_INDICATOR;
 static GQuark QUARK_ACTUAL_NETWORK;
 static GQuark QUARK_NETWORK_NAME;
-static GQuark QUARK_TRANSPORT_STREAM_ID;
 static GQuark QUARK_ORIGINAL_NETWORK_ID;
 static GQuark QUARK_TRANSPORTS;
 
@@ -104,11 +103,12 @@ mpegts_packetizer_stream_subtable_new (guint8 table_id,
   subtable->version_number = VERSION_NUMBER_UNSET;
   subtable->table_id = table_id;
   subtable->subtable_extension = subtable_extension;
+  subtable->crc = 0;
   return subtable;
 }
 
 static MpegTSPacketizerStream *
-mpegts_packetizer_stream_new ()
+mpegts_packetizer_stream_new (void)
 {
   MpegTSPacketizerStream *stream;
 
@@ -265,7 +265,7 @@ mpegts_packetizer_parse_section_header (MpegTSPacketizer * packetizer,
     MpegTSPacketizerStream * stream, MpegTSPacketizerSection * section)
 {
   guint8 tmp;
-  guint8 *data;
+  guint8 *data, *crc_data;
   MpegTSPacketizerStreamSubtable *subtable;
   GSList *subtable_list = NULL;
 
@@ -303,21 +303,30 @@ mpegts_packetizer_parse_section_header (MpegTSPacketizer * packetizer,
   tmp = *data++;
   section->version_number = (tmp >> 1) & 0x1F;
   section->current_next_indicator = tmp & 0x01;
+
   if (!section->current_next_indicator)
     goto not_applicable;
 
-  if (section->version_number == subtable->version_number)
+  /* CRC is at the end of the section */
+  crc_data =
+      GST_BUFFER_DATA (section->buffer) + GST_BUFFER_SIZE (section->buffer) - 4;
+  section->crc = GST_READ_UINT32_BE (crc_data);
+
+  if (section->version_number == subtable->version_number &&
+      section->crc == subtable->crc)
     goto not_applicable;
+
   subtable->version_number = section->version_number;
+  subtable->crc = section->crc;
   stream->section_table_id = section->table_id;
 
   return TRUE;
 
 not_applicable:
   GST_LOG
-      ("not applicable pid %d table_id %d subtable_extension %d, current_next %d version %d",
+      ("not applicable pid %d table_id %d subtable_extension %d, current_next %d version %d, crc 0x%x",
       section->pid, section->table_id, section->subtable_extension,
-      section->current_next_indicator, section->version_number);
+      section->current_next_indicator, section->version_number, section->crc);
   section->complete = FALSE;
   gst_buffer_unref (section->buffer);
   return TRUE;
@@ -592,6 +601,7 @@ mpegts_packetizer_parse_pmt (MpegTSPacketizer * packetizer,
           lang_code = g_strndup (language_n, 3);
           gst_structure_set (stream_info, "lang-code", G_TYPE_STRING,
               lang_code, NULL);
+          g_free (lang_code);
         }
 
         gst_mpeg_descriptor_free (desc);
@@ -800,10 +810,10 @@ mpegts_packetizer_parse_nit (MpegTSPacketizer * packetizer,
             DESC_DVB_SATELLITE_DELIVERY_SYSTEM_west_east_flag (delivery);
         guint8 polarization =
             DESC_DVB_SATELLITE_DELIVERY_SYSTEM_polarization (delivery);
-        gchar *polarization_str;
+        const gchar *polarization_str;
         guint8 modulation =
             DESC_DVB_SATELLITE_DELIVERY_SYSTEM_modulation (delivery);
-        gchar *modulation_str;
+        const gchar *modulation_str;
         guint8 *symbol_rate_bcd =
             DESC_DVB_SATELLITE_DELIVERY_SYSTEM_symbol_rate (delivery);
         guint32 symbol_rate =
@@ -815,7 +825,7 @@ mpegts_packetizer_parse_nit (MpegTSPacketizer * packetizer,
             100000 * ((symbol_rate_bcd[0] & 0xF0) >> 4);
         guint8 fec_inner =
             DESC_DVB_SATELLITE_DELIVERY_SYSTEM_fec_inner (delivery);
-        gchar *fec_inner_str;
+        const gchar *fec_inner_str;
 
         switch (polarization) {
           case 0:
@@ -915,7 +925,7 @@ mpegts_packetizer_parse_nit (MpegTSPacketizer * packetizer,
             DESC_DVB_TERRESTRIAL_DELIVERY_SYSTEM_transmission_mode (delivery);
         gboolean other_frequency =
             DESC_DVB_TERRESTRIAL_DELIVERY_SYSTEM_other_frequency (delivery);
-        gchar *constellation_str, *code_rate_hp_str, *code_rate_lp_str,
+        const gchar *constellation_str, *code_rate_hp_str, *code_rate_lp_str,
             *transmission_mode_str;
         /* do the stuff */
         /* bandwidth is 8 if 0, 7 if 1, 6 if 2, reserved otherwise */
@@ -1042,7 +1052,7 @@ mpegts_packetizer_parse_nit (MpegTSPacketizer * packetizer,
             10000000 * ((frequency_bcd[0] & 0xF0) >> 4));
         guint8 modulation =
             DESC_DVB_CABLE_DELIVERY_SYSTEM_modulation (delivery);
-        gchar *modulation_str;
+        const gchar *modulation_str;
         guint8 *symbol_rate_bcd =
             DESC_DVB_CABLE_DELIVERY_SYSTEM_symbol_rate (delivery);
         guint32 symbol_rate =
@@ -1053,7 +1063,7 @@ mpegts_packetizer_parse_nit (MpegTSPacketizer * packetizer,
             10000 * (symbol_rate_bcd[0] & 0x0F) +
             100000 * ((symbol_rate_bcd[0] & 0xF0) >> 4);
         guint8 fec_inner = DESC_DVB_CABLE_DELIVERY_SYSTEM_fec_inner (delivery);
-        gchar *fec_inner_str;
+        const gchar *fec_inner_str;
 
         switch (fec_inner) {
           case 0:
@@ -1387,7 +1397,7 @@ mpegts_packetizer_parse_sdt (MpegTSPacketizer * packetizer,
             (gchar *) DESC_DVB_SERVICE_name_text (service_descriptor);
         if (servicename_length + serviceprovider_name_length + 2 <=
             DESC_LENGTH (service_descriptor)) {
-          gchar *running_status_tmp;
+          const gchar *running_status_tmp;
           switch (running_status) {
             case 0:
               running_status_tmp = "undefined";
@@ -1701,7 +1711,7 @@ mpegts_packetizer_parse_eit (MpegTSPacketizer * packetizer,
           gint freq = 25;       /* 25 or 30 measured in Hertz */
           gboolean highdef = FALSE;
           gboolean panvectors = FALSE;
-          gchar *comptype = "";
+          const gchar *comptype = "";
 
           comp_descriptor = g_array_index (component_descriptors, guint8 *, i);
           switch (DESC_DVB_COMPONENT_stream_content (comp_descriptor)) {
@@ -1931,6 +1941,75 @@ error:
   return NULL;
 }
 
+GstStructure *
+mpegts_packetizer_parse_tdt (MpegTSPacketizer * packetizer,
+    MpegTSPacketizerSection * section)
+{
+  GstStructure *tdt = NULL;
+  guint16 mjd;
+  guint year, month, day, hour, minute, second;
+  guint8 *data, *end, *utc_ptr;
+
+  GST_DEBUG ("TDT");
+  /* length always 8 */
+  if (G_UNLIKELY (GST_BUFFER_SIZE (section->buffer) != 8)) {
+    GST_WARNING ("PID %d invalid TDT size %d",
+        section->pid, section->section_length);
+    goto error;
+  }
+
+  data = GST_BUFFER_DATA (section->buffer);
+  end = data + GST_BUFFER_SIZE (section->buffer);
+
+  section->table_id = *data++;
+  section->section_length = GST_READ_UINT16_BE (data) & 0x0FFF;
+  data += 2;
+
+  if (data + section->section_length != end) {
+    GST_WARNING ("PID %d invalid TDT section length %d expected %d",
+        section->pid, section->section_length, (gint) (end - data));
+    goto error;
+  }
+
+  mjd = GST_READ_UINT16_BE (data);
+  data += 2;
+  utc_ptr = data;
+  if (mjd == G_MAXUINT16) {
+    year = 1900;
+    month = day = hour = minute = second = 0;
+  } else {
+    /* See EN 300 468 Annex C */
+    year = (guint32) (((mjd - 15078.2) / 365.25));
+    month = (guint8) ((mjd - 14956.1 - (guint) (year * 365.25)) / 30.6001);
+    day = mjd - 14956 - (guint) (year * 365.25) - (guint) (month * 30.6001);
+    if (month == 14 || month == 15) {
+      year++;
+      month = month - 1 - 12;
+    } else {
+      month--;
+    }
+    year += 1900;
+    hour = ((utc_ptr[0] & 0xF0) >> 4) * 10 + (utc_ptr[0] & 0x0F);
+    minute = ((utc_ptr[1] & 0xF0) >> 4) * 10 + (utc_ptr[1] & 0x0F);
+    second = ((utc_ptr[2] & 0xF0) >> 4) * 10 + (utc_ptr[2] & 0x0F);
+  }
+  tdt = gst_structure_new ("tdt",
+      "year", G_TYPE_UINT, year,
+      "month", G_TYPE_UINT, month,
+      "day", G_TYPE_UINT, day,
+      "hour", G_TYPE_UINT, hour,
+      "minute", G_TYPE_UINT, minute, "second", G_TYPE_UINT, second, NULL);
+
+  return tdt;
+
+error:
+  if (tdt)
+    gst_structure_free (tdt);
+
+  return NULL;
+}
+
+
 void
 mpegts_packetizer_clear (MpegTSPacketizer * packetizer)
 {
@@ -1967,7 +2046,7 @@ mpegts_packetizer_remove_stream (MpegTSPacketizer * packetizer, gint16 pid)
 }
 
 MpegTSPacketizer *
-mpegts_packetizer_new ()
+mpegts_packetizer_new (void)
 {
   MpegTSPacketizer *packetizer;
 
@@ -1983,7 +2062,7 @@ mpegts_packetizer_push (MpegTSPacketizer * packetizer, GstBuffer * buffer)
   gst_adapter_push (packetizer->adapter, buffer);
 }
 
-void
+static void
 mpegts_try_discover_packet_size (MpegTSPacketizer * packetizer)
 {
   guint8 *dest;
@@ -2190,6 +2269,7 @@ mpegts_packetizer_push_section (MpegTSPacketizer * packetizer,
       /* flush stuffing bytes */
       mpegts_packetizer_clear_section (packetizer, stream);
     } else {
+      GST_DEBUG ("section not complete");
       /* section not complete yet */
       section->complete = FALSE;
     }
@@ -2200,11 +2280,12 @@ mpegts_packetizer_push_section (MpegTSPacketizer * packetizer,
 
 out:
   packet->data = data;
+  GST_DEBUG ("result: %d complete: %d", res, section->complete);
   return res;
 }
 
 static void
-_init_local ()
+_init_local (void)
 {
   GST_DEBUG_CATEGORY_INIT (mpegts_packetizer_debug, "mpegtspacketizer", 0,
       "MPEG transport stream parser");
@@ -2227,7 +2308,6 @@ _init_local ()
   QUARK_CURRENT_NEXT_INDICATOR = g_quark_from_string ("current-next-indicator");
   QUARK_ACTUAL_NETWORK = g_quark_from_string ("actual-network");
   QUARK_NETWORK_NAME = g_quark_from_string ("network-name");
-  QUARK_TRANSPORT_STREAM_ID = g_quark_from_string ("transport-stream-id");
   QUARK_ORIGINAL_NETWORK_ID = g_quark_from_string ("original-network-id");
   QUARK_TRANSPORTS = g_quark_from_string ("transports");
 

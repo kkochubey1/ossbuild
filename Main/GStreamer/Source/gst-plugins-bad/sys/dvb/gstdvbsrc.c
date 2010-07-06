@@ -68,15 +68,6 @@ GST_DEBUG_CATEGORY_STATIC (gstdvbsrc_debug);
 #define LOF1 (9750*1000UL)
 #define LOF2 (10600*1000UL)
 
-
-static GstElementDetails dvbsrc_details = {
-  "DVB Source",
-  "Source/Video",
-  "Digital Video Broadcast Source",
-  "P2P-VCR, C-Lab, University of Paderborn\n"
-      "Zaheer Abbas Merali <zaheerabbas at merali dot org>"
-};
-
 /* Arguments */
 enum
 {
@@ -305,7 +296,11 @@ gst_dvbsrc_base_init (gpointer gclass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&ts_src_factory));
 
-  gst_element_class_set_details (element_class, &dvbsrc_details);
+  gst_element_class_set_details_simple (element_class, "DVB Source",
+      "Source/Video",
+      "Digital Video Broadcast Source",
+      "P2P-VCR, C-Lab, University of Paderborn,"
+      "Zaheer Abbas Merali <zaheerabbas at merali dot org>");
 }
 
 
@@ -349,8 +344,8 @@ gst_dvbsrc_class_init (GstDvbSrcClass * klass)
           G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, ARG_DVBSRC_FREQUENCY,
-      g_param_spec_int ("frequency",
-          "frequency", "Frequency", 0, G_MAXINT, 0, G_PARAM_READWRITE));
+      g_param_spec_uint ("frequency",
+          "frequency", "Frequency", 0, G_MAXUINT, 0, G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, ARG_DVBSRC_POLARITY,
       g_param_spec_string ("polarity",
@@ -364,10 +359,10 @@ gst_dvbsrc_class_init (GstDvbSrcClass * klass)
           "8192", G_PARAM_WRITABLE));
 
   g_object_class_install_property (gobject_class, ARG_DVBSRC_SYM_RATE,
-      g_param_spec_int ("symbol-rate",
+      g_param_spec_uint ("symbol-rate",
           "symbol rate",
           "Symbol Rate (DVB-S, DVB-C)",
-          0, G_MAXINT, DEFAULT_SYMBOL_RATE, G_PARAM_READWRITE));
+          0, G_MAXUINT, DEFAULT_SYMBOL_RATE, G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, ARG_DVBSRC_TUNE,
       g_param_spec_pointer ("tune",
@@ -496,7 +491,7 @@ gst_dvbsrc_set_property (GObject * _object, guint prop_id,
       GST_INFO_OBJECT (object, "Set Property: ARG_DVBSRC_DISEQC_ID");
       break;
     case ARG_DVBSRC_FREQUENCY:
-      object->freq = g_value_get_int (value);
+      object->freq = g_value_get_uint (value);
       GST_INFO_OBJECT (object, "Set Property: ARG_DVBSRC_FREQUENCY");
       break;
     case ARG_DVBSRC_POLARITY:
@@ -562,7 +557,7 @@ gst_dvbsrc_set_property (GObject * _object, guint prop_id,
     }
       break;
     case ARG_DVBSRC_SYM_RATE:
-      object->sym_rate = g_value_get_int (value);
+      object->sym_rate = g_value_get_uint (value);
       GST_INFO_OBJECT (object, "Set Property: ARG_DVBSRC_SYM_RATE to value %d",
           g_value_get_int (value));
       break;
@@ -591,17 +586,17 @@ gst_dvbsrc_set_property (GObject * _object, guint prop_id,
     case ARG_DVBSRC_INVERSION:
       object->inversion = g_value_get_enum (value);
       break;
-    case ARG_DVBSRC_TUNE:
+    case ARG_DVBSRC_TUNE:{
       GST_INFO_OBJECT (object, "Set Property: ARG_DVBSRC_TUNE");
+
       /* if we are in paused/playing state tune now, otherwise in ready to paused state change */
-      if (gst_element_get_state
-          (GST_ELEMENT (object), NULL, NULL,
-              GST_CLOCK_TIME_NONE) > GST_STATE_READY) {
+      if (GST_STATE (object) > GST_STATE_READY) {
         g_mutex_lock (object->tune_mutex);
         gst_dvbsrc_tune (object);
         g_mutex_unlock (object->tune_mutex);
       }
       break;
+    }
     case ARG_DVBSRC_STATS_REPORTING_INTERVAL:
       object->stats_interval = g_value_get_uint (value);
       object->stats_counter = 0;
@@ -629,16 +624,16 @@ gst_dvbsrc_get_property (GObject * _object, guint prop_id,
       g_value_set_int (value, object->frontend_number);
       break;
     case ARG_DVBSRC_FREQUENCY:
-      g_value_set_int (value, object->freq);
+      g_value_set_uint (value, object->freq);
       break;
     case ARG_DVBSRC_POLARITY:
       if (object->pol == DVB_POL_H)
-        g_value_set_string (value, "H");
+        g_value_set_static_string (value, "H");
       else
-        g_value_set_string (value, "V");
+        g_value_set_static_string (value, "V");
       break;
     case ARG_DVBSRC_SYM_RATE:
-      g_value_set_int (value, object->sym_rate);
+      g_value_set_uint (value, object->sym_rate);
       break;
     case ARG_DVBSRC_DISEQC_SRC:
       g_value_set_int (value, object->diseqc_src);
@@ -692,7 +687,7 @@ static gboolean
 gst_dvbsrc_open_frontend (GstDvbSrc * object)
 {
   struct dvb_frontend_info fe_info;
-  char *adapter_desc = NULL;
+  const char *adapter_desc = NULL;
   gchar *frontend_dev;
   GstStructure *adapter_structure;
   char *adapter_name = NULL;

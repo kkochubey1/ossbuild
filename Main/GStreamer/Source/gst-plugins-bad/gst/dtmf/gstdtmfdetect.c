@@ -26,51 +26,34 @@
  * SECTION:element-dtmfdetect
  * @short_description: Detects DTMF tones
  *
- * This element will detect DTMF tones and emit messages
+ * This element will detect DTMF tones and emit messages.
  *
- * The message is called "dtmf-event" and has the following fields
- * <informaltable>
- * <tgroup cols='4'>
- * <colspec colname='Name' />
- * <colspec colname='Type' />
- * <colspec colname='Possible values' />
- * <colspec colname='Purpose' />
- * <thead>
- * <row>
- * <entry>Name</entry>
- * <entry>GType</entry>
- * <entry>Possible values</entry>
- * <entry>Purpose</entry>
- * </row>
- * </thead>
- * <tbody>
- * <row>
- * <entry>type</entry>
- * <entry>G_TYPE_INT</entry>
- * <entry>0-1</entry>
- * <entry>The application uses this field to specify which of the two methods
- * specified in RFC 2833 to use. The value should be 0 for tones and 1 for
- * named events. Tones are specified by their frequencies and events are specied
- * by their number. This element can only take events as input. Do not confuse
- * with "method" which specified the output.
- * </entry>
- * </row>
-  * <row>
- * <entry>number</entry>
- * <entry>G_TYPE_INT</entry>
- * <entry>0-16</entry>
- * <entry>The event number.</entry>
- * </row>
- * <row>
- * <entry>method</entry>
- * <entry>G_TYPE_INT</entry>
- * <entry>2</entry>
- * <entry>This field will always been 2 (ie sound) from this element.
- * </entry>
- * </row>
- * </tbody>
- * </tgroup>
- * </informaltable>
+ * The message is called <classname>&quot;dtmf-event&quot;</classname> and has
+ * the following fields:
+ * <itemizedlist>
+ * <listitem>
+ *   <para>
+ *   gint <classname>type</classname> (0-1):
+ *   The application uses this field to specify which of the two methods
+ *   specified in RFC 2833 to use. The value should be 0 for tones and 1 for
+ *   named events. Tones are specified by their frequencies and events are
+ *   specfied by their number. This element can only take events as input.
+ *   Do not confuse with "method" which specified the output.
+ *   </para>
+ * </listitem>
+ * <listitem>
+ *   <para>
+ *   gint <classname>number</classname> (0-16):
+ *   The event number.
+ *   </para>
+ * </listitem>
+ * <listitem>
+ *   <para>
+ *   gint <classname>method</classname> (2):
+ *   This field will always been 2 (ie sound) from this element.
+ *   </para>
+ * </listitem>
+ * </itemizedlist>
  */
 
 #ifdef HAVE_CONFIG_H
@@ -83,14 +66,6 @@
 
 GST_DEBUG_CATEGORY (dtmf_detect_debug);
 #define GST_CAT_DEFAULT (dtmf_detect_debug)
-
-/* elementfactory information */
-static const GstElementDetails gst_dtmf_detect_details =
-GST_ELEMENT_DETAILS ("DTMF detector element",
-    "Detect",
-    "This element detects DTMF tones",
-    "Olivier Crete <olivier.crete@collabora.co.uk>");
-
 
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
@@ -148,7 +123,10 @@ gst_dtmf_detect_base_init (gpointer klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sinktemplate));
 
-  gst_element_class_set_details (element_class, &gst_dtmf_detect_details);
+  gst_element_class_set_details_simple (element_class, "DTMF detector element",
+      "Filter/Analyzer/Audio",
+      "This element detects DTMF tones",
+      "Olivier Crete <olivier.crete@collabora.co.uk>");
 }
 
 static void
@@ -192,13 +170,14 @@ static GstFlowReturn
 gst_dtmf_detect_transform_ip (GstBaseTransform * trans, GstBuffer * buf)
 {
   GstDtmfDetect *self = GST_DTMF_DETECT (trans);
-  int dtmf_count;
-  char dtmfbuf[MAX_DTMF_DIGITS] = "";
-  int i;
+  gint dtmf_count;
+  gchar dtmfbuf[MAX_DTMF_DIGITS] = "";
+  gint i;
 
   if (GST_BUFFER_IS_DISCONT (buf))
     zap_dtmf_detect_init (&self->dtmf_state);
-
+  if (GST_BUFFER_FLAG_IS_SET (buf, GST_BUFFER_FLAG_GAP))
+    return GST_FLOW_OK;
 
   zap_dtmf_detect (&self->dtmf_state, (int16_t *) GST_BUFFER_DATA (buf),
       GST_BUFFER_SIZE (buf) / 2, FALSE);

@@ -1,5 +1,5 @@
 /* GStreamer
- * Copyright (C) 2009 Sebastian Dröge <sebastian.droege@collabora.co.uk>
+ * Copyright (C) 2009,2010 Sebastian Dröge <sebastian.droege@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,8 @@
 
 #include "gstfrei0r.h"
 #include "gstfrei0rfilter.h"
+
+#include <gst/controller/gstcontroller.h>
 
 GST_DEBUG_CATEGORY_EXTERN (frei0r_debug);
 #define GST_CAT_DEFAULT frei0r_debug
@@ -64,6 +66,24 @@ gst_frei0r_filter_stop (GstBaseTransform * trans)
   return TRUE;
 }
 
+static void
+gst_frei0r_filter_before_transform (GstBaseTransform * trans,
+    GstBuffer * buffer)
+{
+  GstClockTime timestamp;
+  GstFrei0rFilter *self = GST_FREI0R_FILTER (trans);
+
+  timestamp = GST_BUFFER_TIMESTAMP (buffer);
+  timestamp =
+      gst_segment_to_stream_time (&trans->segment, GST_FORMAT_TIME, timestamp);
+
+  GST_DEBUG_OBJECT (self, "sync to %" GST_TIME_FORMAT,
+      GST_TIME_ARGS (timestamp));
+
+  if (GST_CLOCK_TIME_IS_VALID (timestamp))
+    gst_object_sync_values (G_OBJECT (self), timestamp);
+}
+
 static GstFlowReturn
 gst_frei0r_filter_transform (GstBaseTransform * trans, GstBuffer * inbuf,
     GstBuffer * outbuf)
@@ -85,6 +105,7 @@ gst_frei0r_filter_transform (GstBaseTransform * trans, GstBuffer * inbuf,
 
   time = ((gdouble) GST_BUFFER_TIMESTAMP (inbuf)) / GST_SECOND;
 
+  GST_OBJECT_LOCK (self);
   if (klass->ftable->update2)
     klass->ftable->update2 (self->f0r_instance, time,
         (const guint32 *) GST_BUFFER_DATA (inbuf), NULL, NULL,
@@ -93,6 +114,7 @@ gst_frei0r_filter_transform (GstBaseTransform * trans, GstBuffer * inbuf,
     klass->ftable->update (self->f0r_instance, time,
         (const guint32 *) GST_BUFFER_DATA (inbuf),
         (guint32 *) GST_BUFFER_DATA (outbuf));
+  GST_OBJECT_UNLOCK (self);
 
   return GST_FLOW_OK;
 }
@@ -123,10 +145,12 @@ gst_frei0r_filter_get_property (GObject * object, guint prop_id, GValue * value,
   GstFrei0rFilter *self = GST_FREI0R_FILTER (object);
   GstFrei0rFilterClass *klass = GST_FREI0R_FILTER_GET_CLASS (object);
 
+  GST_OBJECT_LOCK (self);
   if (!gst_frei0r_get_property (self->f0r_instance, klass->ftable,
           klass->properties, klass->n_properties, self->property_cache, prop_id,
           value))
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+  GST_OBJECT_UNLOCK (self);
 }
 
 static void
@@ -136,10 +160,12 @@ gst_frei0r_filter_set_property (GObject * object, guint prop_id,
   GstFrei0rFilter *self = GST_FREI0R_FILTER (object);
   GstFrei0rFilterClass *klass = GST_FREI0R_FILTER_GET_CLASS (object);
 
+  GST_OBJECT_LOCK (self);
   if (!gst_frei0r_set_property (self->f0r_instance, klass->ftable,
           klass->properties, klass->n_properties, self->property_cache, prop_id,
           value))
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+  GST_OBJECT_UNLOCK (self);
 }
 
 static void
@@ -187,6 +213,8 @@ gst_frei0r_filter_class_init (GstFrei0rFilterClass * klass,
   gsttrans_class->set_caps = GST_DEBUG_FUNCPTR (gst_frei0r_filter_set_caps);
   gsttrans_class->stop = GST_DEBUG_FUNCPTR (gst_frei0r_filter_stop);
   gsttrans_class->transform = GST_DEBUG_FUNCPTR (gst_frei0r_filter_transform);
+  gsttrans_class->before_transform =
+      GST_DEBUG_FUNCPTR (gst_frei0r_filter_before_transform);
 }
 
 static void

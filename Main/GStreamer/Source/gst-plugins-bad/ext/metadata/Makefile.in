@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -122,7 +121,10 @@ am_libgstmetadata_la_OBJECTS = libgstmetadata_la-gstmetadata.lo \
 	libgstmetadata_la-metadatatags.lo \
 	libgstmetadata_la-gstbasemetadata.lo
 libgstmetadata_la_OBJECTS = $(am_libgstmetadata_la_OBJECTS)
-libgstmetadata_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstmetadata_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstmetadata_la_CFLAGS) $(CFLAGS) \
 	$(libgstmetadata_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -132,13 +134,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstmetadata_la_SOURCES)
 DIST_SOURCES = $(libgstmetadata_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -153,7 +168,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -211,7 +226,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -222,11 +236,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -273,6 +285,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -295,6 +309,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -336,7 +351,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -350,6 +364,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -395,7 +410,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -424,13 +438,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -505,7 +521,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -615,7 +630,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstmetadata.la: $(libgstmetadata_la_OBJECTS) $(libgstmetadata_la_DEPENDENCIES) 
-	$(libgstmetadata_la_LINK) -rpath $(plugindir) $(libgstmetadata_la_OBJECTS) $(libgstmetadata_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstmetadata_la_LINK) -rpath $(plugindir) $(libgstmetadata_la_OBJECTS) $(libgstmetadata_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -640,130 +655,148 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstmetadata_la-metadataxmp.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstmetadata_la-gstmetadata.lo: gstmetadata.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-gstmetadata.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-gstmetadata.Tpo -c -o libgstmetadata_la-gstmetadata.lo `test -f 'gstmetadata.c' || echo '$(srcdir)/'`gstmetadata.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-gstmetadata.Tpo $(DEPDIR)/libgstmetadata_la-gstmetadata.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-gstmetadata.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-gstmetadata.Tpo -c -o libgstmetadata_la-gstmetadata.lo `test -f 'gstmetadata.c' || echo '$(srcdir)/'`gstmetadata.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-gstmetadata.Tpo $(DEPDIR)/libgstmetadata_la-gstmetadata.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmetadata.c' object='libgstmetadata_la-gstmetadata.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-gstmetadata.lo `test -f 'gstmetadata.c' || echo '$(srcdir)/'`gstmetadata.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-gstmetadata.lo `test -f 'gstmetadata.c' || echo '$(srcdir)/'`gstmetadata.c
 
 libgstmetadata_la-gstmetadatademux.lo: gstmetadatademux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-gstmetadatademux.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-gstmetadatademux.Tpo -c -o libgstmetadata_la-gstmetadatademux.lo `test -f 'gstmetadatademux.c' || echo '$(srcdir)/'`gstmetadatademux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-gstmetadatademux.Tpo $(DEPDIR)/libgstmetadata_la-gstmetadatademux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-gstmetadatademux.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-gstmetadatademux.Tpo -c -o libgstmetadata_la-gstmetadatademux.lo `test -f 'gstmetadatademux.c' || echo '$(srcdir)/'`gstmetadatademux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-gstmetadatademux.Tpo $(DEPDIR)/libgstmetadata_la-gstmetadatademux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmetadatademux.c' object='libgstmetadata_la-gstmetadatademux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-gstmetadatademux.lo `test -f 'gstmetadatademux.c' || echo '$(srcdir)/'`gstmetadatademux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-gstmetadatademux.lo `test -f 'gstmetadatademux.c' || echo '$(srcdir)/'`gstmetadatademux.c
 
 libgstmetadata_la-metadata.lo: metadata.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadata.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadata.Tpo -c -o libgstmetadata_la-metadata.lo `test -f 'metadata.c' || echo '$(srcdir)/'`metadata.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-metadata.Tpo $(DEPDIR)/libgstmetadata_la-metadata.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadata.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadata.Tpo -c -o libgstmetadata_la-metadata.lo `test -f 'metadata.c' || echo '$(srcdir)/'`metadata.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-metadata.Tpo $(DEPDIR)/libgstmetadata_la-metadata.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadata.c' object='libgstmetadata_la-metadata.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadata.lo `test -f 'metadata.c' || echo '$(srcdir)/'`metadata.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadata.lo `test -f 'metadata.c' || echo '$(srcdir)/'`metadata.c
 
 libgstmetadata_la-metadataparsejpeg.lo: metadataparsejpeg.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataparsejpeg.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataparsejpeg.Tpo -c -o libgstmetadata_la-metadataparsejpeg.lo `test -f 'metadataparsejpeg.c' || echo '$(srcdir)/'`metadataparsejpeg.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataparsejpeg.Tpo $(DEPDIR)/libgstmetadata_la-metadataparsejpeg.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataparsejpeg.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataparsejpeg.Tpo -c -o libgstmetadata_la-metadataparsejpeg.lo `test -f 'metadataparsejpeg.c' || echo '$(srcdir)/'`metadataparsejpeg.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataparsejpeg.Tpo $(DEPDIR)/libgstmetadata_la-metadataparsejpeg.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadataparsejpeg.c' object='libgstmetadata_la-metadataparsejpeg.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataparsejpeg.lo `test -f 'metadataparsejpeg.c' || echo '$(srcdir)/'`metadataparsejpeg.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataparsejpeg.lo `test -f 'metadataparsejpeg.c' || echo '$(srcdir)/'`metadataparsejpeg.c
 
 libgstmetadata_la-metadatamuxjpeg.lo: metadatamuxjpeg.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadatamuxjpeg.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadatamuxjpeg.Tpo -c -o libgstmetadata_la-metadatamuxjpeg.lo `test -f 'metadatamuxjpeg.c' || echo '$(srcdir)/'`metadatamuxjpeg.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-metadatamuxjpeg.Tpo $(DEPDIR)/libgstmetadata_la-metadatamuxjpeg.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadatamuxjpeg.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadatamuxjpeg.Tpo -c -o libgstmetadata_la-metadatamuxjpeg.lo `test -f 'metadatamuxjpeg.c' || echo '$(srcdir)/'`metadatamuxjpeg.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-metadatamuxjpeg.Tpo $(DEPDIR)/libgstmetadata_la-metadatamuxjpeg.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadatamuxjpeg.c' object='libgstmetadata_la-metadatamuxjpeg.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadatamuxjpeg.lo `test -f 'metadatamuxjpeg.c' || echo '$(srcdir)/'`metadatamuxjpeg.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadatamuxjpeg.lo `test -f 'metadatamuxjpeg.c' || echo '$(srcdir)/'`metadatamuxjpeg.c
 
 libgstmetadata_la-metadataparsepng.lo: metadataparsepng.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataparsepng.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataparsepng.Tpo -c -o libgstmetadata_la-metadataparsepng.lo `test -f 'metadataparsepng.c' || echo '$(srcdir)/'`metadataparsepng.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataparsepng.Tpo $(DEPDIR)/libgstmetadata_la-metadataparsepng.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataparsepng.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataparsepng.Tpo -c -o libgstmetadata_la-metadataparsepng.lo `test -f 'metadataparsepng.c' || echo '$(srcdir)/'`metadataparsepng.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataparsepng.Tpo $(DEPDIR)/libgstmetadata_la-metadataparsepng.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadataparsepng.c' object='libgstmetadata_la-metadataparsepng.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataparsepng.lo `test -f 'metadataparsepng.c' || echo '$(srcdir)/'`metadataparsepng.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataparsepng.lo `test -f 'metadataparsepng.c' || echo '$(srcdir)/'`metadataparsepng.c
 
 libgstmetadata_la-metadatamuxpng.lo: metadatamuxpng.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadatamuxpng.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadatamuxpng.Tpo -c -o libgstmetadata_la-metadatamuxpng.lo `test -f 'metadatamuxpng.c' || echo '$(srcdir)/'`metadatamuxpng.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-metadatamuxpng.Tpo $(DEPDIR)/libgstmetadata_la-metadatamuxpng.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadatamuxpng.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadatamuxpng.Tpo -c -o libgstmetadata_la-metadatamuxpng.lo `test -f 'metadatamuxpng.c' || echo '$(srcdir)/'`metadatamuxpng.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-metadatamuxpng.Tpo $(DEPDIR)/libgstmetadata_la-metadatamuxpng.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadatamuxpng.c' object='libgstmetadata_la-metadatamuxpng.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadatamuxpng.lo `test -f 'metadatamuxpng.c' || echo '$(srcdir)/'`metadatamuxpng.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadatamuxpng.lo `test -f 'metadatamuxpng.c' || echo '$(srcdir)/'`metadatamuxpng.c
 
 libgstmetadata_la-metadataexif.lo: metadataexif.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataexif.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataexif.Tpo -c -o libgstmetadata_la-metadataexif.lo `test -f 'metadataexif.c' || echo '$(srcdir)/'`metadataexif.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataexif.Tpo $(DEPDIR)/libgstmetadata_la-metadataexif.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataexif.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataexif.Tpo -c -o libgstmetadata_la-metadataexif.lo `test -f 'metadataexif.c' || echo '$(srcdir)/'`metadataexif.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataexif.Tpo $(DEPDIR)/libgstmetadata_la-metadataexif.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadataexif.c' object='libgstmetadata_la-metadataexif.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataexif.lo `test -f 'metadataexif.c' || echo '$(srcdir)/'`metadataexif.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataexif.lo `test -f 'metadataexif.c' || echo '$(srcdir)/'`metadataexif.c
 
 libgstmetadata_la-metadataiptc.lo: metadataiptc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataiptc.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataiptc.Tpo -c -o libgstmetadata_la-metadataiptc.lo `test -f 'metadataiptc.c' || echo '$(srcdir)/'`metadataiptc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataiptc.Tpo $(DEPDIR)/libgstmetadata_la-metadataiptc.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataiptc.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataiptc.Tpo -c -o libgstmetadata_la-metadataiptc.lo `test -f 'metadataiptc.c' || echo '$(srcdir)/'`metadataiptc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataiptc.Tpo $(DEPDIR)/libgstmetadata_la-metadataiptc.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadataiptc.c' object='libgstmetadata_la-metadataiptc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataiptc.lo `test -f 'metadataiptc.c' || echo '$(srcdir)/'`metadataiptc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataiptc.lo `test -f 'metadataiptc.c' || echo '$(srcdir)/'`metadataiptc.c
 
 libgstmetadata_la-metadataxmp.lo: metadataxmp.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataxmp.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataxmp.Tpo -c -o libgstmetadata_la-metadataxmp.lo `test -f 'metadataxmp.c' || echo '$(srcdir)/'`metadataxmp.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataxmp.Tpo $(DEPDIR)/libgstmetadata_la-metadataxmp.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataxmp.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataxmp.Tpo -c -o libgstmetadata_la-metadataxmp.lo `test -f 'metadataxmp.c' || echo '$(srcdir)/'`metadataxmp.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataxmp.Tpo $(DEPDIR)/libgstmetadata_la-metadataxmp.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadataxmp.c' object='libgstmetadata_la-metadataxmp.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataxmp.lo `test -f 'metadataxmp.c' || echo '$(srcdir)/'`metadataxmp.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataxmp.lo `test -f 'metadataxmp.c' || echo '$(srcdir)/'`metadataxmp.c
 
 libgstmetadata_la-metadataparseutil.lo: metadataparseutil.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataparseutil.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataparseutil.Tpo -c -o libgstmetadata_la-metadataparseutil.lo `test -f 'metadataparseutil.c' || echo '$(srcdir)/'`metadataparseutil.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataparseutil.Tpo $(DEPDIR)/libgstmetadata_la-metadataparseutil.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadataparseutil.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadataparseutil.Tpo -c -o libgstmetadata_la-metadataparseutil.lo `test -f 'metadataparseutil.c' || echo '$(srcdir)/'`metadataparseutil.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-metadataparseutil.Tpo $(DEPDIR)/libgstmetadata_la-metadataparseutil.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadataparseutil.c' object='libgstmetadata_la-metadataparseutil.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataparseutil.lo `test -f 'metadataparseutil.c' || echo '$(srcdir)/'`metadataparseutil.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadataparseutil.lo `test -f 'metadataparseutil.c' || echo '$(srcdir)/'`metadataparseutil.c
 
 libgstmetadata_la-metadatatypes.lo: metadatatypes.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadatatypes.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadatatypes.Tpo -c -o libgstmetadata_la-metadatatypes.lo `test -f 'metadatatypes.c' || echo '$(srcdir)/'`metadatatypes.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-metadatatypes.Tpo $(DEPDIR)/libgstmetadata_la-metadatatypes.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadatatypes.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadatatypes.Tpo -c -o libgstmetadata_la-metadatatypes.lo `test -f 'metadatatypes.c' || echo '$(srcdir)/'`metadatatypes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-metadatatypes.Tpo $(DEPDIR)/libgstmetadata_la-metadatatypes.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadatatypes.c' object='libgstmetadata_la-metadatatypes.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadatatypes.lo `test -f 'metadatatypes.c' || echo '$(srcdir)/'`metadatatypes.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadatatypes.lo `test -f 'metadatatypes.c' || echo '$(srcdir)/'`metadatatypes.c
 
 libgstmetadata_la-gstmetadatamux.lo: gstmetadatamux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-gstmetadatamux.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-gstmetadatamux.Tpo -c -o libgstmetadata_la-gstmetadatamux.lo `test -f 'gstmetadatamux.c' || echo '$(srcdir)/'`gstmetadatamux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-gstmetadatamux.Tpo $(DEPDIR)/libgstmetadata_la-gstmetadatamux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-gstmetadatamux.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-gstmetadatamux.Tpo -c -o libgstmetadata_la-gstmetadatamux.lo `test -f 'gstmetadatamux.c' || echo '$(srcdir)/'`gstmetadatamux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-gstmetadatamux.Tpo $(DEPDIR)/libgstmetadata_la-gstmetadatamux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmetadatamux.c' object='libgstmetadata_la-gstmetadatamux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-gstmetadatamux.lo `test -f 'gstmetadatamux.c' || echo '$(srcdir)/'`gstmetadatamux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-gstmetadatamux.lo `test -f 'gstmetadatamux.c' || echo '$(srcdir)/'`gstmetadatamux.c
 
 libgstmetadata_la-metadatatags.lo: metadatatags.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadatatags.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadatatags.Tpo -c -o libgstmetadata_la-metadatatags.lo `test -f 'metadatatags.c' || echo '$(srcdir)/'`metadatatags.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-metadatatags.Tpo $(DEPDIR)/libgstmetadata_la-metadatatags.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-metadatatags.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-metadatatags.Tpo -c -o libgstmetadata_la-metadatatags.lo `test -f 'metadatatags.c' || echo '$(srcdir)/'`metadatatags.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-metadatatags.Tpo $(DEPDIR)/libgstmetadata_la-metadatatags.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='metadatatags.c' object='libgstmetadata_la-metadatatags.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadatatags.lo `test -f 'metadatatags.c' || echo '$(srcdir)/'`metadatatags.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-metadatatags.lo `test -f 'metadatatags.c' || echo '$(srcdir)/'`metadatatags.c
 
 libgstmetadata_la-gstbasemetadata.lo: gstbasemetadata.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-gstbasemetadata.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-gstbasemetadata.Tpo -c -o libgstmetadata_la-gstbasemetadata.lo `test -f 'gstbasemetadata.c' || echo '$(srcdir)/'`gstbasemetadata.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmetadata_la-gstbasemetadata.Tpo $(DEPDIR)/libgstmetadata_la-gstbasemetadata.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -MT libgstmetadata_la-gstbasemetadata.lo -MD -MP -MF $(DEPDIR)/libgstmetadata_la-gstbasemetadata.Tpo -c -o libgstmetadata_la-gstbasemetadata.lo `test -f 'gstbasemetadata.c' || echo '$(srcdir)/'`gstbasemetadata.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmetadata_la-gstbasemetadata.Tpo $(DEPDIR)/libgstmetadata_la-gstbasemetadata.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstbasemetadata.c' object='libgstmetadata_la-gstbasemetadata.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-gstbasemetadata.lo `test -f 'gstbasemetadata.c' || echo '$(srcdir)/'`gstbasemetadata.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmetadata_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmetadata_la_CFLAGS) $(CFLAGS) -c -o libgstmetadata_la-gstbasemetadata.lo `test -f 'gstbasemetadata.c' || echo '$(srcdir)/'`gstbasemetadata.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

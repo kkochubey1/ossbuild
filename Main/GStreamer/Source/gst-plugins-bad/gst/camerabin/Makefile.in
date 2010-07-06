@@ -71,8 +71,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -127,7 +126,10 @@ am__objects_1 = libgstcamerabin_la-gstcamerabin-marshal.lo
 nodist_libgstcamerabin_la_OBJECTS = $(am__objects_1)
 libgstcamerabin_la_OBJECTS = $(am_libgstcamerabin_la_OBJECTS) \
 	$(nodist_libgstcamerabin_la_OBJECTS)
-libgstcamerabin_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstcamerabin_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) \
 	$(libgstcamerabin_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -137,13 +139,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstcamerabin_la_SOURCES) \
 	$(nodist_libgstcamerabin_la_SOURCES)
 DIST_SOURCES = $(libgstcamerabin_la_SOURCES)
@@ -159,7 +174,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -217,7 +232,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -228,11 +242,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -279,6 +291,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -301,6 +315,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -342,7 +357,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -356,6 +370,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -401,7 +416,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -430,13 +444,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -511,7 +527,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -538,7 +553,7 @@ libgstcamerabin_la_SOURCES = gstcamerabin.c             \
 
 nodist_libgstcamerabin_la_SOURCES = $(built_sources)
 libgstcamerabin_la_CFLAGS = \
-	-I$(top_builddir)/gst-libs \
+	$(GST_PLUGINS_BAD_CFLAGS) \
 	$(GST_CFLAGS) $(GST_BASE_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) \
 	-DGST_USE_UNSTABLE_API
 
@@ -625,7 +640,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstcamerabin.la: $(libgstcamerabin_la_OBJECTS) $(libgstcamerabin_la_DEPENDENCIES) 
-	$(libgstcamerabin_la_LINK) -rpath $(plugindir) $(libgstcamerabin_la_OBJECTS) $(libgstcamerabin_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstcamerabin_la_LINK) -rpath $(plugindir) $(libgstcamerabin_la_OBJECTS) $(libgstcamerabin_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -644,88 +659,100 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcamerabin_la-gstcamerabinphotography.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstcamerabin_la-gstcamerabin.lo: gstcamerabin.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-gstcamerabin.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-gstcamerabin.Tpo -c -o libgstcamerabin_la-gstcamerabin.lo `test -f 'gstcamerabin.c' || echo '$(srcdir)/'`gstcamerabin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcamerabin_la-gstcamerabin.Tpo $(DEPDIR)/libgstcamerabin_la-gstcamerabin.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-gstcamerabin.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-gstcamerabin.Tpo -c -o libgstcamerabin_la-gstcamerabin.lo `test -f 'gstcamerabin.c' || echo '$(srcdir)/'`gstcamerabin.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcamerabin_la-gstcamerabin.Tpo $(DEPDIR)/libgstcamerabin_la-gstcamerabin.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstcamerabin.c' object='libgstcamerabin_la-gstcamerabin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-gstcamerabin.lo `test -f 'gstcamerabin.c' || echo '$(srcdir)/'`gstcamerabin.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-gstcamerabin.lo `test -f 'gstcamerabin.c' || echo '$(srcdir)/'`gstcamerabin.c
 
 libgstcamerabin_la-gstcamerabincolorbalance.lo: gstcamerabincolorbalance.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-gstcamerabincolorbalance.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-gstcamerabincolorbalance.Tpo -c -o libgstcamerabin_la-gstcamerabincolorbalance.lo `test -f 'gstcamerabincolorbalance.c' || echo '$(srcdir)/'`gstcamerabincolorbalance.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcamerabin_la-gstcamerabincolorbalance.Tpo $(DEPDIR)/libgstcamerabin_la-gstcamerabincolorbalance.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-gstcamerabincolorbalance.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-gstcamerabincolorbalance.Tpo -c -o libgstcamerabin_la-gstcamerabincolorbalance.lo `test -f 'gstcamerabincolorbalance.c' || echo '$(srcdir)/'`gstcamerabincolorbalance.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcamerabin_la-gstcamerabincolorbalance.Tpo $(DEPDIR)/libgstcamerabin_la-gstcamerabincolorbalance.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstcamerabincolorbalance.c' object='libgstcamerabin_la-gstcamerabincolorbalance.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-gstcamerabincolorbalance.lo `test -f 'gstcamerabincolorbalance.c' || echo '$(srcdir)/'`gstcamerabincolorbalance.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-gstcamerabincolorbalance.lo `test -f 'gstcamerabincolorbalance.c' || echo '$(srcdir)/'`gstcamerabincolorbalance.c
 
 libgstcamerabin_la-camerabinimage.lo: camerabinimage.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-camerabinimage.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-camerabinimage.Tpo -c -o libgstcamerabin_la-camerabinimage.lo `test -f 'camerabinimage.c' || echo '$(srcdir)/'`camerabinimage.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcamerabin_la-camerabinimage.Tpo $(DEPDIR)/libgstcamerabin_la-camerabinimage.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-camerabinimage.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-camerabinimage.Tpo -c -o libgstcamerabin_la-camerabinimage.lo `test -f 'camerabinimage.c' || echo '$(srcdir)/'`camerabinimage.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcamerabin_la-camerabinimage.Tpo $(DEPDIR)/libgstcamerabin_la-camerabinimage.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camerabinimage.c' object='libgstcamerabin_la-camerabinimage.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-camerabinimage.lo `test -f 'camerabinimage.c' || echo '$(srcdir)/'`camerabinimage.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-camerabinimage.lo `test -f 'camerabinimage.c' || echo '$(srcdir)/'`camerabinimage.c
 
 libgstcamerabin_la-camerabinvideo.lo: camerabinvideo.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-camerabinvideo.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-camerabinvideo.Tpo -c -o libgstcamerabin_la-camerabinvideo.lo `test -f 'camerabinvideo.c' || echo '$(srcdir)/'`camerabinvideo.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcamerabin_la-camerabinvideo.Tpo $(DEPDIR)/libgstcamerabin_la-camerabinvideo.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-camerabinvideo.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-camerabinvideo.Tpo -c -o libgstcamerabin_la-camerabinvideo.lo `test -f 'camerabinvideo.c' || echo '$(srcdir)/'`camerabinvideo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcamerabin_la-camerabinvideo.Tpo $(DEPDIR)/libgstcamerabin_la-camerabinvideo.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camerabinvideo.c' object='libgstcamerabin_la-camerabinvideo.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-camerabinvideo.lo `test -f 'camerabinvideo.c' || echo '$(srcdir)/'`camerabinvideo.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-camerabinvideo.lo `test -f 'camerabinvideo.c' || echo '$(srcdir)/'`camerabinvideo.c
 
 libgstcamerabin_la-camerabingeneral.lo: camerabingeneral.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-camerabingeneral.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-camerabingeneral.Tpo -c -o libgstcamerabin_la-camerabingeneral.lo `test -f 'camerabingeneral.c' || echo '$(srcdir)/'`camerabingeneral.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcamerabin_la-camerabingeneral.Tpo $(DEPDIR)/libgstcamerabin_la-camerabingeneral.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-camerabingeneral.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-camerabingeneral.Tpo -c -o libgstcamerabin_la-camerabingeneral.lo `test -f 'camerabingeneral.c' || echo '$(srcdir)/'`camerabingeneral.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcamerabin_la-camerabingeneral.Tpo $(DEPDIR)/libgstcamerabin_la-camerabingeneral.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camerabingeneral.c' object='libgstcamerabin_la-camerabingeneral.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-camerabingeneral.lo `test -f 'camerabingeneral.c' || echo '$(srcdir)/'`camerabingeneral.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-camerabingeneral.lo `test -f 'camerabingeneral.c' || echo '$(srcdir)/'`camerabingeneral.c
 
 libgstcamerabin_la-camerabinpreview.lo: camerabinpreview.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-camerabinpreview.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-camerabinpreview.Tpo -c -o libgstcamerabin_la-camerabinpreview.lo `test -f 'camerabinpreview.c' || echo '$(srcdir)/'`camerabinpreview.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcamerabin_la-camerabinpreview.Tpo $(DEPDIR)/libgstcamerabin_la-camerabinpreview.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-camerabinpreview.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-camerabinpreview.Tpo -c -o libgstcamerabin_la-camerabinpreview.lo `test -f 'camerabinpreview.c' || echo '$(srcdir)/'`camerabinpreview.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcamerabin_la-camerabinpreview.Tpo $(DEPDIR)/libgstcamerabin_la-camerabinpreview.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camerabinpreview.c' object='libgstcamerabin_la-camerabinpreview.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-camerabinpreview.lo `test -f 'camerabinpreview.c' || echo '$(srcdir)/'`camerabinpreview.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-camerabinpreview.lo `test -f 'camerabinpreview.c' || echo '$(srcdir)/'`camerabinpreview.c
 
 libgstcamerabin_la-gstcamerabinphotography.lo: gstcamerabinphotography.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-gstcamerabinphotography.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-gstcamerabinphotography.Tpo -c -o libgstcamerabin_la-gstcamerabinphotography.lo `test -f 'gstcamerabinphotography.c' || echo '$(srcdir)/'`gstcamerabinphotography.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcamerabin_la-gstcamerabinphotography.Tpo $(DEPDIR)/libgstcamerabin_la-gstcamerabinphotography.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-gstcamerabinphotography.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-gstcamerabinphotography.Tpo -c -o libgstcamerabin_la-gstcamerabinphotography.lo `test -f 'gstcamerabinphotography.c' || echo '$(srcdir)/'`gstcamerabinphotography.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcamerabin_la-gstcamerabinphotography.Tpo $(DEPDIR)/libgstcamerabin_la-gstcamerabinphotography.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstcamerabinphotography.c' object='libgstcamerabin_la-gstcamerabinphotography.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-gstcamerabinphotography.lo `test -f 'gstcamerabinphotography.c' || echo '$(srcdir)/'`gstcamerabinphotography.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-gstcamerabinphotography.lo `test -f 'gstcamerabinphotography.c' || echo '$(srcdir)/'`gstcamerabinphotography.c
 
 libgstcamerabin_la-gstcamerabin-enum.lo: gstcamerabin-enum.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-gstcamerabin-enum.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-gstcamerabin-enum.Tpo -c -o libgstcamerabin_la-gstcamerabin-enum.lo `test -f 'gstcamerabin-enum.c' || echo '$(srcdir)/'`gstcamerabin-enum.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcamerabin_la-gstcamerabin-enum.Tpo $(DEPDIR)/libgstcamerabin_la-gstcamerabin-enum.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-gstcamerabin-enum.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-gstcamerabin-enum.Tpo -c -o libgstcamerabin_la-gstcamerabin-enum.lo `test -f 'gstcamerabin-enum.c' || echo '$(srcdir)/'`gstcamerabin-enum.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcamerabin_la-gstcamerabin-enum.Tpo $(DEPDIR)/libgstcamerabin_la-gstcamerabin-enum.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstcamerabin-enum.c' object='libgstcamerabin_la-gstcamerabin-enum.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-gstcamerabin-enum.lo `test -f 'gstcamerabin-enum.c' || echo '$(srcdir)/'`gstcamerabin-enum.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-gstcamerabin-enum.lo `test -f 'gstcamerabin-enum.c' || echo '$(srcdir)/'`gstcamerabin-enum.c
 
 libgstcamerabin_la-gstcamerabin-marshal.lo: gstcamerabin-marshal.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-gstcamerabin-marshal.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-gstcamerabin-marshal.Tpo -c -o libgstcamerabin_la-gstcamerabin-marshal.lo `test -f 'gstcamerabin-marshal.c' || echo '$(srcdir)/'`gstcamerabin-marshal.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstcamerabin_la-gstcamerabin-marshal.Tpo $(DEPDIR)/libgstcamerabin_la-gstcamerabin-marshal.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -MT libgstcamerabin_la-gstcamerabin-marshal.lo -MD -MP -MF $(DEPDIR)/libgstcamerabin_la-gstcamerabin-marshal.Tpo -c -o libgstcamerabin_la-gstcamerabin-marshal.lo `test -f 'gstcamerabin-marshal.c' || echo '$(srcdir)/'`gstcamerabin-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcamerabin_la-gstcamerabin-marshal.Tpo $(DEPDIR)/libgstcamerabin_la-gstcamerabin-marshal.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstcamerabin-marshal.c' object='libgstcamerabin_la-gstcamerabin-marshal.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-gstcamerabin-marshal.lo `test -f 'gstcamerabin-marshal.c' || echo '$(srcdir)/'`gstcamerabin-marshal.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcamerabin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcamerabin_la_CFLAGS) $(CFLAGS) -c -o libgstcamerabin_la-gstcamerabin-marshal.lo `test -f 'gstcamerabin-marshal.c' || echo '$(srcdir)/'`gstcamerabin-marshal.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -941,16 +968,16 @@ uninstall-am: uninstall-pluginLTLIBRARIES
 
 # these are all the rules generating the relevant files
 $(glib_gen_basename)-marshal.h: $(glib_gen_basename)-marshal.list
-	glib-genmarshal --header --prefix=$(glib_gen_prefix)_marshal $^ > $(glib_gen_basename)-marshal.h.tmp
+	$(AM_V_GEN)glib-genmarshal --header --prefix=$(glib_gen_prefix)_marshal $^ > $(glib_gen_basename)-marshal.h.tmp && \
 	mv $(glib_gen_basename)-marshal.h.tmp $(glib_gen_basename)-marshal.h
 
 $(glib_gen_basename)-marshal.c: $(glib_gen_basename)-marshal.list
-	echo "#include \"$(glib_gen_basename)-marshal.h\"" >> $(glib_gen_basename)-marshal.c.tmp
-	glib-genmarshal --body --prefix=$(glib_gen_prefix)_marshal $^ >> $(glib_gen_basename)-marshal.c.tmp
+	$(AM_V_GEN)echo "#include \"$(glib_gen_basename)-marshal.h\"" >> $(glib_gen_basename)-marshal.c.tmp && \
+	glib-genmarshal --body --prefix=$(glib_gen_prefix)_marshal $^ >> $(glib_gen_basename)-marshal.c.tmp && \
 	mv $(glib_gen_basename)-marshal.c.tmp $(glib_gen_basename)-marshal.c
 
 $(glib_gen_basename)-enumtypes.h: $(glib_enum_headers)
-	glib-mkenums \
+	$(AM_V_GEN)glib-mkenums \
 	--fhead "#ifndef __$(glib_enum_define)_ENUM_TYPES_H__\n#define __$(glib_enum_define)_ENUM_TYPES_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
 	--fprod "\n/* enumerations from \"@filename@\" */\n" \
 	--vhead "GType @enum_name@_get_type (void);\n#define GST_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n"         \
@@ -958,8 +985,8 @@ $(glib_gen_basename)-enumtypes.h: $(glib_enum_headers)
 	$^ > $@
 
 $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
-	@if test "x$(glib_enum_headers)" == "x"; then echo "ERROR: glib_enum_headers is empty, please fix Makefile"; exit 1; fi
-	glib-mkenums \
+	@if test "x$(glib_enum_headers)" = "x"; then echo "ERROR: glib_enum_headers is empty, please fix Makefile"; exit 1; fi
+	$(AM_V_GEN)glib-mkenums \
 	--fhead "#include \"$(glib_gen_basename)-enumtypes.h\"\n$(enum_headers)" \
 	--fprod "\n/* enumerations from \"@filename@\" */" \
 	--vhead "GType\n@enum_name@_get_type (void)\n{\n  static volatile gsize g_define_type_id__volatile = 0;\n  if (g_once_init_enter (&g_define_type_id__volatile)) {\n    static const G@Type@Value values[] = {"     \
@@ -970,10 +997,10 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 # a hack rule to make sure .Plo files exist because they get include'd
 # from Makefile's
 .deps/%-marshal.Plo:
-	touch $@
+	@touch $@
 
 .deps/%-enumtypes.Plo:
-	touch $@
+	@touch $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -62,8 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
 	$(top_srcdir)/common/m4/gst.m4 \
 	$(top_srcdir)/common/m4/gtk-doc.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/common/m4/pkg.m4 $(top_srcdir)/m4/gettext.m4 \
 	$(top_srcdir)/m4/gst-alsa.m4 $(top_srcdir)/m4/gst-fionread.m4 \
 	$(top_srcdir)/m4/gst-sdl.m4 $(top_srcdir)/m4/iconv.m4 \
 	$(top_srcdir)/m4/intlmacosx.m4 $(top_srcdir)/m4/lib-ld.m4 \
@@ -118,7 +117,10 @@ am_libgstmpegdemux_la_OBJECTS = libgstmpegdemux_la-flumpegdemux.lo \
 	libgstmpegdemux_la-mpegtsparse.lo \
 	libgstmpegdemux_la-mpegtspacketizer.lo
 libgstmpegdemux_la_OBJECTS = $(am_libgstmpegdemux_la_OBJECTS)
-libgstmpegdemux_la_LINK = $(LIBTOOL) --tag=CC \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+libgstmpegdemux_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) \
 	$(libgstmpegdemux_la_LDFLAGS) $(LDFLAGS) -o $@
@@ -128,13 +130,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstmpegdemux_la_SOURCES)
 DIST_SOURCES = $(libgstmpegdemux_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
@@ -149,7 +164,7 @@ ALSA_CFLAGS = @ALSA_CFLAGS@
 ALSA_LIBS = @ALSA_LIBS@
 AMRWB_LIBS = @AMRWB_LIBS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 APEXSINK_CFLAGS = @APEXSINK_CFLAGS@
 APEXSINK_LIBS = @APEXSINK_LIBS@
 AR = @AR@
@@ -207,7 +222,6 @@ DSYMUTIL = @DSYMUTIL@
 DTS_LIBS = @DTS_LIBS@
 DUMPBIN = @DUMPBIN@
 DVDNAV_CFLAGS = @DVDNAV_CFLAGS@
-DVDNAV_CONFIG = @DVDNAV_CONFIG@
 DVDNAV_LIBS = @DVDNAV_LIBS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -218,11 +232,9 @@ ERROR_CXXFLAGS = @ERROR_CXXFLAGS@
 EXEEXT = @EXEEXT@
 EXIF_CFLAGS = @EXIF_CFLAGS@
 EXIF_LIBS = @EXIF_LIBS@
-F77 = @F77@
 FAAC_LIBS = @FAAC_LIBS@
 FAAD_IS_NEAAC = @FAAD_IS_NEAAC@
 FAAD_LIBS = @FAAD_LIBS@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 FLITE_CFLAGS = @FLITE_CFLAGS@
@@ -269,6 +281,8 @@ GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
+GST_PLUGINS_BAD_CFLAGS = @GST_PLUGINS_BAD_CFLAGS@
+GST_PLUGINS_BAD_CXXFLAGS = @GST_PLUGINS_BAD_CXXFLAGS@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -291,6 +305,7 @@ HAVE_FLITE = @HAVE_FLITE@
 HAVE_GSM = @HAVE_GSM@
 HAVE_JP2K = @HAVE_JP2K@
 HAVE_NAS = @HAVE_NAS@
+HAVE_VPX = @HAVE_VPX@
 HAVE_X = @HAVE_X@
 HAVE_X11 = @HAVE_X11@
 HTML_DIR = @HTML_DIR@
@@ -332,7 +347,6 @@ LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 METADATA_CFLAGS = @METADATA_CFLAGS@
 METADATA_LIBS = @METADATA_LIBS@
@@ -346,6 +360,7 @@ MODPLUG_LIBS = @MODPLUG_LIBS@
 MPEG2ENC_CFLAGS = @MPEG2ENC_CFLAGS@
 MPEG2ENC_LIBS = @MPEG2ENC_LIBS@
 MPLEX_CFLAGS = @MPLEX_CFLAGS@
+MPLEX_LDFLAGS = @MPLEX_LDFLAGS@
 MPLEX_LIBS = @MPLEX_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -391,7 +406,6 @@ PYTHON_EXEC_PREFIX = @PYTHON_EXEC_PREFIX@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 RSVG_CFLAGS = @RSVG_CFLAGS@
 RSVG_LIBS = @RSVG_LIBS@
@@ -420,13 +434,15 @@ TIGER_LIBS = @TIGER_LIBS@
 TIMIDITY_CFLAGS = @TIMIDITY_CFLAGS@
 TIMIDITY_LIBS = @TIMIDITY_LIBS@
 USE_NLS = @USE_NLS@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VDPAU_CFLAGS = @VDPAU_CFLAGS@
 VDPAU_LIBS = @VDPAU_LIBS@
 VERSION = @VERSION@
+VPX_LIBS = @VPX_LIBS@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WILDMIDI_CFLAGS = @WILDMIDI_CFLAGS@
 WILDMIDI_LIBS = @WILDMIDI_LIBS@
 WIN32_LIBS = @WIN32_LIBS@
@@ -501,7 +517,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -611,7 +626,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstmpegdemux.la: $(libgstmpegdemux_la_OBJECTS) $(libgstmpegdemux_la_DEPENDENCIES) 
-	$(libgstmpegdemux_la_LINK) -rpath $(plugindir) $(libgstmpegdemux_la_OBJECTS) $(libgstmpegdemux_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstmpegdemux_la_LINK) -rpath $(plugindir) $(libgstmpegdemux_la_OBJECTS) $(libgstmpegdemux_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -632,102 +647,116 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstmpegdemux_la-mpegtsparse.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 libgstmpegdemux_la-flumpegdemux.lo: flumpegdemux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-flumpegdemux.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-flumpegdemux.Tpo -c -o libgstmpegdemux_la-flumpegdemux.lo `test -f 'flumpegdemux.c' || echo '$(srcdir)/'`flumpegdemux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmpegdemux_la-flumpegdemux.Tpo $(DEPDIR)/libgstmpegdemux_la-flumpegdemux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-flumpegdemux.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-flumpegdemux.Tpo -c -o libgstmpegdemux_la-flumpegdemux.lo `test -f 'flumpegdemux.c' || echo '$(srcdir)/'`flumpegdemux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmpegdemux_la-flumpegdemux.Tpo $(DEPDIR)/libgstmpegdemux_la-flumpegdemux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='flumpegdemux.c' object='libgstmpegdemux_la-flumpegdemux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-flumpegdemux.lo `test -f 'flumpegdemux.c' || echo '$(srcdir)/'`flumpegdemux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-flumpegdemux.lo `test -f 'flumpegdemux.c' || echo '$(srcdir)/'`flumpegdemux.c
 
 libgstmpegdemux_la-flutspatinfo.lo: flutspatinfo.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-flutspatinfo.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-flutspatinfo.Tpo -c -o libgstmpegdemux_la-flutspatinfo.lo `test -f 'flutspatinfo.c' || echo '$(srcdir)/'`flutspatinfo.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmpegdemux_la-flutspatinfo.Tpo $(DEPDIR)/libgstmpegdemux_la-flutspatinfo.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-flutspatinfo.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-flutspatinfo.Tpo -c -o libgstmpegdemux_la-flutspatinfo.lo `test -f 'flutspatinfo.c' || echo '$(srcdir)/'`flutspatinfo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmpegdemux_la-flutspatinfo.Tpo $(DEPDIR)/libgstmpegdemux_la-flutspatinfo.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='flutspatinfo.c' object='libgstmpegdemux_la-flutspatinfo.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-flutspatinfo.lo `test -f 'flutspatinfo.c' || echo '$(srcdir)/'`flutspatinfo.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-flutspatinfo.lo `test -f 'flutspatinfo.c' || echo '$(srcdir)/'`flutspatinfo.c
 
 libgstmpegdemux_la-flutspmtinfo.lo: flutspmtinfo.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-flutspmtinfo.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-flutspmtinfo.Tpo -c -o libgstmpegdemux_la-flutspmtinfo.lo `test -f 'flutspmtinfo.c' || echo '$(srcdir)/'`flutspmtinfo.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmpegdemux_la-flutspmtinfo.Tpo $(DEPDIR)/libgstmpegdemux_la-flutspmtinfo.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-flutspmtinfo.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-flutspmtinfo.Tpo -c -o libgstmpegdemux_la-flutspmtinfo.lo `test -f 'flutspmtinfo.c' || echo '$(srcdir)/'`flutspmtinfo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmpegdemux_la-flutspmtinfo.Tpo $(DEPDIR)/libgstmpegdemux_la-flutspmtinfo.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='flutspmtinfo.c' object='libgstmpegdemux_la-flutspmtinfo.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-flutspmtinfo.lo `test -f 'flutspmtinfo.c' || echo '$(srcdir)/'`flutspmtinfo.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-flutspmtinfo.lo `test -f 'flutspmtinfo.c' || echo '$(srcdir)/'`flutspmtinfo.c
 
 libgstmpegdemux_la-flutspmtstreaminfo.lo: flutspmtstreaminfo.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-flutspmtstreaminfo.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-flutspmtstreaminfo.Tpo -c -o libgstmpegdemux_la-flutspmtstreaminfo.lo `test -f 'flutspmtstreaminfo.c' || echo '$(srcdir)/'`flutspmtstreaminfo.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmpegdemux_la-flutspmtstreaminfo.Tpo $(DEPDIR)/libgstmpegdemux_la-flutspmtstreaminfo.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-flutspmtstreaminfo.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-flutspmtstreaminfo.Tpo -c -o libgstmpegdemux_la-flutspmtstreaminfo.lo `test -f 'flutspmtstreaminfo.c' || echo '$(srcdir)/'`flutspmtstreaminfo.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmpegdemux_la-flutspmtstreaminfo.Tpo $(DEPDIR)/libgstmpegdemux_la-flutspmtstreaminfo.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='flutspmtstreaminfo.c' object='libgstmpegdemux_la-flutspmtstreaminfo.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-flutspmtstreaminfo.lo `test -f 'flutspmtstreaminfo.c' || echo '$(srcdir)/'`flutspmtstreaminfo.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-flutspmtstreaminfo.lo `test -f 'flutspmtstreaminfo.c' || echo '$(srcdir)/'`flutspmtstreaminfo.c
 
 libgstmpegdemux_la-gstmpegdemux.lo: gstmpegdemux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-gstmpegdemux.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-gstmpegdemux.Tpo -c -o libgstmpegdemux_la-gstmpegdemux.lo `test -f 'gstmpegdemux.c' || echo '$(srcdir)/'`gstmpegdemux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmpegdemux_la-gstmpegdemux.Tpo $(DEPDIR)/libgstmpegdemux_la-gstmpegdemux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-gstmpegdemux.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-gstmpegdemux.Tpo -c -o libgstmpegdemux_la-gstmpegdemux.lo `test -f 'gstmpegdemux.c' || echo '$(srcdir)/'`gstmpegdemux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmpegdemux_la-gstmpegdemux.Tpo $(DEPDIR)/libgstmpegdemux_la-gstmpegdemux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmpegdemux.c' object='libgstmpegdemux_la-gstmpegdemux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-gstmpegdemux.lo `test -f 'gstmpegdemux.c' || echo '$(srcdir)/'`gstmpegdemux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-gstmpegdemux.lo `test -f 'gstmpegdemux.c' || echo '$(srcdir)/'`gstmpegdemux.c
 
 libgstmpegdemux_la-gstmpegdesc.lo: gstmpegdesc.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-gstmpegdesc.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-gstmpegdesc.Tpo -c -o libgstmpegdemux_la-gstmpegdesc.lo `test -f 'gstmpegdesc.c' || echo '$(srcdir)/'`gstmpegdesc.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmpegdemux_la-gstmpegdesc.Tpo $(DEPDIR)/libgstmpegdemux_la-gstmpegdesc.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-gstmpegdesc.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-gstmpegdesc.Tpo -c -o libgstmpegdemux_la-gstmpegdesc.lo `test -f 'gstmpegdesc.c' || echo '$(srcdir)/'`gstmpegdesc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmpegdemux_la-gstmpegdesc.Tpo $(DEPDIR)/libgstmpegdemux_la-gstmpegdesc.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmpegdesc.c' object='libgstmpegdemux_la-gstmpegdesc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-gstmpegdesc.lo `test -f 'gstmpegdesc.c' || echo '$(srcdir)/'`gstmpegdesc.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-gstmpegdesc.lo `test -f 'gstmpegdesc.c' || echo '$(srcdir)/'`gstmpegdesc.c
 
 libgstmpegdemux_la-gstmpegtsdemux.lo: gstmpegtsdemux.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-gstmpegtsdemux.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-gstmpegtsdemux.Tpo -c -o libgstmpegdemux_la-gstmpegtsdemux.lo `test -f 'gstmpegtsdemux.c' || echo '$(srcdir)/'`gstmpegtsdemux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmpegdemux_la-gstmpegtsdemux.Tpo $(DEPDIR)/libgstmpegdemux_la-gstmpegtsdemux.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-gstmpegtsdemux.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-gstmpegtsdemux.Tpo -c -o libgstmpegdemux_la-gstmpegtsdemux.lo `test -f 'gstmpegtsdemux.c' || echo '$(srcdir)/'`gstmpegtsdemux.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmpegdemux_la-gstmpegtsdemux.Tpo $(DEPDIR)/libgstmpegdemux_la-gstmpegtsdemux.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmpegtsdemux.c' object='libgstmpegdemux_la-gstmpegtsdemux.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-gstmpegtsdemux.lo `test -f 'gstmpegtsdemux.c' || echo '$(srcdir)/'`gstmpegtsdemux.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-gstmpegtsdemux.lo `test -f 'gstmpegtsdemux.c' || echo '$(srcdir)/'`gstmpegtsdemux.c
 
 libgstmpegdemux_la-gstpesfilter.lo: gstpesfilter.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-gstpesfilter.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-gstpesfilter.Tpo -c -o libgstmpegdemux_la-gstpesfilter.lo `test -f 'gstpesfilter.c' || echo '$(srcdir)/'`gstpesfilter.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmpegdemux_la-gstpesfilter.Tpo $(DEPDIR)/libgstmpegdemux_la-gstpesfilter.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-gstpesfilter.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-gstpesfilter.Tpo -c -o libgstmpegdemux_la-gstpesfilter.lo `test -f 'gstpesfilter.c' || echo '$(srcdir)/'`gstpesfilter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmpegdemux_la-gstpesfilter.Tpo $(DEPDIR)/libgstmpegdemux_la-gstpesfilter.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstpesfilter.c' object='libgstmpegdemux_la-gstpesfilter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-gstpesfilter.lo `test -f 'gstpesfilter.c' || echo '$(srcdir)/'`gstpesfilter.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-gstpesfilter.lo `test -f 'gstpesfilter.c' || echo '$(srcdir)/'`gstpesfilter.c
 
 libgstmpegdemux_la-gstsectionfilter.lo: gstsectionfilter.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-gstsectionfilter.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-gstsectionfilter.Tpo -c -o libgstmpegdemux_la-gstsectionfilter.lo `test -f 'gstsectionfilter.c' || echo '$(srcdir)/'`gstsectionfilter.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmpegdemux_la-gstsectionfilter.Tpo $(DEPDIR)/libgstmpegdemux_la-gstsectionfilter.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-gstsectionfilter.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-gstsectionfilter.Tpo -c -o libgstmpegdemux_la-gstsectionfilter.lo `test -f 'gstsectionfilter.c' || echo '$(srcdir)/'`gstsectionfilter.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmpegdemux_la-gstsectionfilter.Tpo $(DEPDIR)/libgstmpegdemux_la-gstsectionfilter.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstsectionfilter.c' object='libgstmpegdemux_la-gstsectionfilter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-gstsectionfilter.lo `test -f 'gstsectionfilter.c' || echo '$(srcdir)/'`gstsectionfilter.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-gstsectionfilter.lo `test -f 'gstsectionfilter.c' || echo '$(srcdir)/'`gstsectionfilter.c
 
 libgstmpegdemux_la-mpegtsparse.lo: mpegtsparse.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-mpegtsparse.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-mpegtsparse.Tpo -c -o libgstmpegdemux_la-mpegtsparse.lo `test -f 'mpegtsparse.c' || echo '$(srcdir)/'`mpegtsparse.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmpegdemux_la-mpegtsparse.Tpo $(DEPDIR)/libgstmpegdemux_la-mpegtsparse.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-mpegtsparse.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-mpegtsparse.Tpo -c -o libgstmpegdemux_la-mpegtsparse.lo `test -f 'mpegtsparse.c' || echo '$(srcdir)/'`mpegtsparse.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmpegdemux_la-mpegtsparse.Tpo $(DEPDIR)/libgstmpegdemux_la-mpegtsparse.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpegtsparse.c' object='libgstmpegdemux_la-mpegtsparse.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-mpegtsparse.lo `test -f 'mpegtsparse.c' || echo '$(srcdir)/'`mpegtsparse.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-mpegtsparse.lo `test -f 'mpegtsparse.c' || echo '$(srcdir)/'`mpegtsparse.c
 
 libgstmpegdemux_la-mpegtspacketizer.lo: mpegtspacketizer.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-mpegtspacketizer.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-mpegtspacketizer.Tpo -c -o libgstmpegdemux_la-mpegtspacketizer.lo `test -f 'mpegtspacketizer.c' || echo '$(srcdir)/'`mpegtspacketizer.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libgstmpegdemux_la-mpegtspacketizer.Tpo $(DEPDIR)/libgstmpegdemux_la-mpegtspacketizer.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -MT libgstmpegdemux_la-mpegtspacketizer.lo -MD -MP -MF $(DEPDIR)/libgstmpegdemux_la-mpegtspacketizer.Tpo -c -o libgstmpegdemux_la-mpegtspacketizer.lo `test -f 'mpegtspacketizer.c' || echo '$(srcdir)/'`mpegtspacketizer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstmpegdemux_la-mpegtspacketizer.Tpo $(DEPDIR)/libgstmpegdemux_la-mpegtspacketizer.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpegtspacketizer.c' object='libgstmpegdemux_la-mpegtspacketizer.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-mpegtspacketizer.lo `test -f 'mpegtspacketizer.c' || echo '$(srcdir)/'`mpegtspacketizer.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstmpegdemux_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstmpegdemux_la_CFLAGS) $(CFLAGS) -c -o libgstmpegdemux_la-mpegtspacketizer.lo `test -f 'mpegtspacketizer.c' || echo '$(srcdir)/'`mpegtspacketizer.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

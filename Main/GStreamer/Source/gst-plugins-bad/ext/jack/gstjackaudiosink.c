@@ -160,9 +160,6 @@ gst_jack_ring_buffer_class_init (GstJackRingBufferClass * klass)
 
   ring_parent_class = g_type_class_peek_parent (klass);
 
-  gobject_class->dispose = GST_DEBUG_FUNCPTR (gst_jack_ring_buffer_dispose);
-  gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_jack_ring_buffer_finalize);
-
   gstringbuffer_class->open_device =
       GST_DEBUG_FUNCPTR (gst_jack_ring_buffer_open_device);
   gstringbuffer_class->close_device =
@@ -317,22 +314,6 @@ gst_jack_ring_buffer_init (GstJackRingBuffer * buf,
   buf->channels = -1;
   buf->buffer_size = -1;
   buf->sample_rate = -1;
-}
-
-static void
-gst_jack_ring_buffer_dispose (GObject * object)
-{
-  G_OBJECT_CLASS (ring_parent_class)->dispose (object);
-}
-
-static void
-gst_jack_ring_buffer_finalize (GObject * object)
-{
-  GstJackRingBuffer *ringbuffer;
-
-  ringbuffer = GST_JACK_RING_BUFFER_CAST (object);
-
-  G_OBJECT_CLASS (ring_parent_class)->finalize (object);
 }
 
 /* the _open_device method should make a connection with the server
@@ -621,13 +602,6 @@ gst_jack_ring_buffer_delay (GstRingBuffer * buf)
   return res;
 }
 
-/* elementfactory information */
-static const GstElementDetails gst_jack_audio_sink_details =
-GST_ELEMENT_DETAILS ("Audio Sink (Jack)",
-    "Sink/Audio",
-    "Output to Jack",
-    "Wim Taymans <wim@fluendo.com>");
-
 static GstStaticPadTemplate jackaudiosink_sink_factory =
 GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
@@ -662,6 +636,7 @@ enum
 GST_BOILERPLATE_FULL (GstJackAudioSink, gst_jack_audio_sink, GstBaseAudioSink,
     GST_TYPE_BASE_AUDIO_SINK, _do_init);
 
+static void gst_jack_audio_sink_dispose (GObject * object);
 static void gst_jack_audio_sink_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
 static void gst_jack_audio_sink_get_property (GObject * object, guint prop_id,
@@ -676,7 +651,8 @@ gst_jack_audio_sink_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &gst_jack_audio_sink_details);
+  gst_element_class_set_details_simple (element_class, "Audio Sink (Jack)",
+      "Sink/Audio", "Output to Jack", "Wim Taymans <wim@fluendo.com>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&jackaudiosink_sink_factory));
@@ -695,10 +671,9 @@ gst_jack_audio_sink_class_init (GstJackAudioSinkClass * klass)
   gstbasesink_class = (GstBaseSinkClass *) klass;
   gstbaseaudiosink_class = (GstBaseAudioSinkClass *) klass;
 
-  gobject_class->get_property =
-      GST_DEBUG_FUNCPTR (gst_jack_audio_sink_get_property);
-  gobject_class->set_property =
-      GST_DEBUG_FUNCPTR (gst_jack_audio_sink_set_property);
+  gobject_class->dispose = gst_jack_audio_sink_dispose;
+  gobject_class->get_property = gst_jack_audio_sink_get_property;
+  gobject_class->set_property = gst_jack_audio_sink_set_property;
 
   g_object_class_install_property (gobject_class, PROP_CONNECT,
       g_param_spec_enum ("connect", "Connect",
@@ -730,6 +705,15 @@ gst_jack_audio_sink_init (GstJackAudioSink * sink,
   sink->server = g_strdup (DEFAULT_PROP_SERVER);
   sink->ports = NULL;
   sink->port_count = 0;
+}
+
+static void
+gst_jack_audio_sink_dispose (GObject * object)
+{
+  GstJackAudioSink *sink = GST_JACK_AUDIO_SINK (object);
+
+  gst_caps_replace (&sink->caps, NULL);
+  G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void

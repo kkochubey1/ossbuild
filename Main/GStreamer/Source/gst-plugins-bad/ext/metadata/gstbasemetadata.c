@@ -322,7 +322,7 @@ gst_base_metadata_dispose_members (GstBaseMetadata * filter)
 const gchar *
 gst_base_metadata_get_type_name (int img_type)
 {
-  gchar *type_name = NULL;
+  const gchar *type_name = NULL;
 
   switch (img_type) {
     case IMG_JPEG:
@@ -412,7 +412,7 @@ gst_base_metadata_configure_caps (GstBaseMetadata * filter)
 {
   GstCaps *caps = NULL;
   gboolean ret = FALSE;
-  gchar *mime = NULL;
+  const gchar *mime = NULL;
   GstPad *peer = NULL;
 
   peer = gst_pad_get_peer (filter->sinkpad);
@@ -526,8 +526,6 @@ gst_base_metadata_reset_streaming (GstBaseMetadata * filter)
 static void
 gst_base_metadata_reset_parsing (GstBaseMetadata * filter)
 {
-
-
   if (filter->prepend_buffer) {
     gst_buffer_unref (filter->prepend_buffer);
     filter->prepend_buffer = NULL;
@@ -1991,18 +1989,13 @@ void gst_base_metadata_update_inject_segment_with_new_data
   MetadataChunk *inject = META_DATA_INJECT_CHUNKS (base->metadata).chunk;
   const gsize inject_len = META_DATA_INJECT_CHUNKS (base->metadata).len;
 
-  if (!(data && size))
-    goto done;
-  if (*data == 0)
-    goto done;
-  if (*size == 0)
+  if (!(data && size && *data && *size))
     goto done;
 
   for (i = 0; i < inject_len; ++i) {
     if (inject[i].type == type) {
       inject[i].size = *size;
-      if (inject[i].data)
-        g_free (inject[i].data);
+      g_free (inject[i].data);
       inject[i].data = *data;
       *size = 0;
       *data = 0;

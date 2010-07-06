@@ -99,13 +99,6 @@
 GST_DEBUG_CATEGORY_STATIC (dfbvideosink_debug);
 #define GST_CAT_DEFAULT dfbvideosink_debug
 
-/* ElementFactory information */
-static const GstElementDetails gst_dfbvideosink_details =
-GST_ELEMENT_DETAILS ("DirectFB video sink",
-    "Sink/Video",
-    "A DirectFB based videosink",
-    "Julien Moutte <julien@moutte.net>");
-
 /* Default template */
 static GstStaticPadTemplate gst_dfbvideosink_sink_template_factory =
     GST_STATIC_PAD_TEMPLATE ("sink",
@@ -346,8 +339,8 @@ gst_dfbvideosink_event_thread (GstDfbVideoSink * dfbvideosink)
 
   while (dfbvideosink->running) {
     /* Wait for an event with a 50 ms timeout */
-    dfbvideosink->event_buffer->WaitForEventWithTimeout (dfbvideosink->
-        event_buffer, 0, 50);
+    dfbvideosink->event_buffer->
+        WaitForEventWithTimeout (dfbvideosink->event_buffer, 0, 50);
 
     /* Do we have an event ? */
     ret = dfbvideosink->event_buffer->HasEvent (dfbvideosink->event_buffer);
@@ -581,7 +574,7 @@ gst_dfbvideosink_setup (GstDfbVideoSink * dfbvideosink)
         "DirectFB fullscreen");
     if (!dfbvideosink->dfb) {
       DFBGraphicsDeviceDescription hw_caps;
-      char *argv[] = { "-", "--dfb:quiet", NULL };
+      char *argv[] = { (char *) "-", (char *) "--dfb:quiet", NULL };
       int argc = 2;
       char **args;
 
@@ -674,16 +667,16 @@ gst_dfbvideosink_setup (GstDfbVideoSink * dfbvideosink)
 
       /* Check that this layer is able to do colorbalance settings */
       if (dl_desc.caps & DLCAPS_BRIGHTNESS) {
-        channels_list = g_list_append (channels_list, "BRIGHTNESS");
+        channels_list = g_list_append (channels_list, (char *) "BRIGHTNESS");
       }
       if (dl_desc.caps & DLCAPS_CONTRAST) {
-        channels_list = g_list_append (channels_list, "CONTRAST");
+        channels_list = g_list_append (channels_list, (char *) "CONTRAST");
       }
       if (dl_desc.caps & DLCAPS_HUE) {
-        channels_list = g_list_append (channels_list, "HUE");
+        channels_list = g_list_append (channels_list, (char *) "HUE");
       }
       if (dl_desc.caps & DLCAPS_SATURATION) {
-        channels_list = g_list_append (channels_list, "SATURATION");
+        channels_list = g_list_append (channels_list, (char *) "SATURATION");
       }
 
       if (channels_list) {
@@ -2275,7 +2268,9 @@ gst_dfbvideosink_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &gst_dfbvideosink_details);
+  gst_element_class_set_details_simple (element_class, "DirectFB video sink",
+      "Sink/Video",
+      "A DirectFB based videosink", "Julien Moutte <julien@moutte.net>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_dfbvideosink_sink_template_factory));

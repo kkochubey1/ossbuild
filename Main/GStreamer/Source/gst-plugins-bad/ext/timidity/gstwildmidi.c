@@ -61,12 +61,6 @@
 GST_DEBUG_CATEGORY_STATIC (gst_wildmidi_debug);
 #define GST_CAT_DEFAULT gst_wildmidi_debug
 
-static const GstElementDetails gst_wildmidi_details =
-GST_ELEMENT_DETAILS ("WildMidi",
-    "Codec/Decoder/Audio",
-    "Midi Synthesizer Element",
-    "Wouter Paesen <wouter@blue-gate.be>");
-
 enum
 {
   /* FILL ME */
@@ -81,8 +75,6 @@ enum
   /* FILL ME */
 };
 
-static void gst_wildmidi_base_init (gpointer g_class);
-static void gst_wildmidi_class_init (GstWildmidiClass * klass);
 static void gst_wildmidi_finalize (GObject * object);
 
 static gboolean gst_wildmidi_sink_event (GstPad * pad, GstEvent * event);
@@ -129,11 +121,13 @@ gst_wildmidi_base_init (gpointer gclass)
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &gst_wildmidi_details);
+  gst_element_class_set_details_simple (element_class, "WildMidi",
+      "Codec/Decoder/Audio",
+      "Midi Synthesizer Element", "Wouter Paesen <wouter@blue-gate.be>");
 }
 
 static gboolean
-wildmidi_open_config ()
+wildmidi_open_config (void)
 {
   gchar *path = g_strdup (g_getenv ("WILDMIDI_CFG"));
   gint ret;

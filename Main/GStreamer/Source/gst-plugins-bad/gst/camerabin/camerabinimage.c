@@ -85,13 +85,6 @@ static void gst_camerabin_image_get_property (GObject * object, guint prop_id,
 
 GST_BOILERPLATE (GstCameraBinImage, gst_camerabin_image, GstBin, GST_TYPE_BIN);
 
-static const GstElementDetails gst_camerabin_image_details =
-GST_ELEMENT_DETAILS ("Image capture bin for camerabin",
-    "Bin/Image",
-    "Process and store image data",
-    "Edgard Lima <edgard.lima@indt.org.br>\n"
-    "Nokia Corporation <multimedia@maemo.org>");
-
 static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
@@ -111,7 +104,11 @@ gst_camerabin_image_base_init (gpointer klass)
       gst_static_pad_template_get (&sink_template));
   gst_element_class_add_pad_template (eklass,
       gst_static_pad_template_get (&src_template));
-  gst_element_class_set_details (eklass, &gst_camerabin_image_details);
+  gst_element_class_set_details_simple (eklass,
+      "Image capture bin for camerabin", "Bin/Image",
+      "Process and store image data",
+      "Edgard Lima <edgard.lima@indt.org.br>, "
+      "Nokia Corporation <multimedia@maemo.org>");
 }
 
 static void
@@ -150,7 +147,7 @@ gst_camerabin_image_init (GstCameraBinImage * img,
 
   img->post = NULL;
   img->enc = NULL;
-  img->user_enc = NULL;
+  img->app_enc = NULL;
   img->meta_mux = NULL;
   img->sink = NULL;
 
@@ -170,9 +167,9 @@ gst_camerabin_image_dispose (GstCameraBinImage * img)
   g_string_free (img->filename, TRUE);
   img->filename = NULL;
 
-  if (img->user_enc) {
-    gst_object_unref (img->user_enc);
-    img->user_enc = NULL;
+  if (img->app_enc) {
+    gst_object_unref (img->app_enc);
+    img->app_enc = NULL;
   }
 
   if (img->post) {
@@ -435,12 +432,12 @@ gst_camerabin_image_create_elements (GstCameraBinImage * img)
                 "ffmpegcolorspace"))) {
       goto done;
     }
-    img_sinkpad = gst_element_get_static_pad (csp, "sink");
+    if (!img_sinkpad)
+      img_sinkpad = gst_element_get_static_pad (csp, "sink");
   }
 
-  /* Create image encoder */
-  if (img->user_enc) {
-    img->enc = img->user_enc;
+  if (img->app_enc) {
+    img->enc = img->app_enc;
     if (!gst_camerabin_add_element (imgbin, img->enc)) {
       goto done;
     }
@@ -521,12 +518,12 @@ void
 gst_camerabin_image_set_encoder (GstCameraBinImage * img, GstElement * encoder)
 {
   GST_DEBUG ("setting image encoder %" GST_PTR_FORMAT, encoder);
-  if (img->user_enc)
-    gst_object_unref (img->user_enc);
+  if (img->app_enc)
+    gst_object_unref (img->app_enc);
   if (encoder)
     gst_object_ref (encoder);
 
-  img->user_enc = encoder;
+  img->app_enc = encoder;
 }
 
 void
@@ -554,8 +551,8 @@ gst_camerabin_image_get_encoder (GstCameraBinImage * img)
 {
   GstElement *enc;
 
-  if (img->user_enc) {
-    enc = img->user_enc;
+  if (img->app_enc) {
+    enc = img->app_enc;
   } else {
     enc = img->enc;
   }

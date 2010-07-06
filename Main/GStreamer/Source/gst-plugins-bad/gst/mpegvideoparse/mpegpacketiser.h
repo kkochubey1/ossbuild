@@ -76,6 +76,10 @@ struct MPEGSeqHdr
   gint width, height;
   /* Framerate */
   gint fps_n, fps_d;
+  /* Bitrate */
+  guint bitrate;
+  /* Profile and level */
+  guint profile, level;
 
   gboolean progressive;
 };

@@ -428,7 +428,7 @@ gst_camerabin_handle_scene_mode (GstCameraBin * camera, GstSceneMode scene_mode)
       camera->pre_night_fps_n = camera->fps_n;
       camera->pre_night_fps_d = camera->fps_d;
       g_signal_emit_by_name (camera, "set-video-resolution-fps", camera->width,
-          camera->height, 0, 0, 0);
+          camera->height, 0, 1, NULL);
     } else {
       GST_DEBUG ("night mode already enabled");
     }
@@ -441,6 +441,86 @@ gst_camerabin_handle_scene_mode (GstCameraBin * camera, GstSceneMode scene_mode)
           camera->height, camera->pre_night_fps_n, camera->pre_night_fps_d, 0);
     }
   }
+}
+
+static gboolean
+gst_camerabin_set_flicker_mode (GstPhotography * photo,
+    GstFlickerReductionMode flicker_mode)
+{
+  GstCameraBin *camera;
+  gboolean ret = TRUE;
+
+  g_return_val_if_fail (photo != NULL, FALSE);
+
+  camera = GST_CAMERABIN (photo);
+
+  /* Cache the setting */
+  camera->photo_settings.flicker_mode = flicker_mode;
+
+  if (PHOTOGRAPHY_IS_OK (camera->src_vid_src)) {
+    ret =
+        gst_photography_set_flicker_mode (GST_PHOTOGRAPHY (camera->src_vid_src),
+        flicker_mode);
+  }
+  return ret;
+}
+
+static gboolean
+gst_camerabin_get_flicker_mode (GstPhotography * photo,
+    GstFlickerReductionMode * flicker_mode)
+{
+  GstCameraBin *camera;
+  gboolean ret = FALSE;
+
+  g_return_val_if_fail (photo != NULL, FALSE);
+
+  camera = GST_CAMERABIN (photo);
+
+  if (PHOTOGRAPHY_IS_OK (camera->src_vid_src)) {
+    ret =
+        gst_photography_get_flicker_mode (GST_PHOTOGRAPHY (camera->src_vid_src),
+        flicker_mode);
+  }
+  return ret;
+}
+
+static gboolean
+gst_camerabin_set_focus_mode (GstPhotography * photo, GstFocusMode focus_mode)
+{
+  GstCameraBin *camera;
+  gboolean ret = TRUE;
+
+  g_return_val_if_fail (photo != NULL, FALSE);
+
+  camera = GST_CAMERABIN (photo);
+
+  /* Cache the setting */
+  camera->photo_settings.focus_mode = focus_mode;
+
+  if (PHOTOGRAPHY_IS_OK (camera->src_vid_src)) {
+    ret =
+        gst_photography_set_focus_mode (GST_PHOTOGRAPHY (camera->src_vid_src),
+        focus_mode);
+  }
+  return ret;
+}
+
+static gboolean
+gst_camerabin_get_focus_mode (GstPhotography * photo, GstFocusMode * focus_mode)
+{
+  GstCameraBin *camera;
+  gboolean ret = FALSE;
+
+  g_return_val_if_fail (photo != NULL, FALSE);
+
+  camera = GST_CAMERABIN (photo);
+
+  if (PHOTOGRAPHY_IS_OK (camera->src_vid_src)) {
+    ret =
+        gst_photography_get_focus_mode (GST_PHOTOGRAPHY (camera->src_vid_src),
+        focus_mode);
+  }
+  return ret;
 }
 
 gboolean
@@ -544,6 +624,38 @@ gst_camerabin_photography_get_property (GstCameraBin * camera, guint prop_id,
       ret = TRUE;
       break;
     }
+    case ARG_IMAGE_CAPTURE_SUPPORTED_CAPS:
+    {
+      GST_DEBUG_OBJECT (camera, "==== GETTING PROP_IMAGE_CAPTURE_CAPS ====");
+      if (PHOTOGRAPHY_IS_OK (camera->src_vid_src)) {
+        g_object_get_property (G_OBJECT (camera->src_vid_src),
+            "image-capture-supported-caps", value);
+      } else {
+        g_object_get_property (G_OBJECT (camera), "video-source-caps", value);
+      }
+      ret = TRUE;
+      break;
+    }
+    case ARG_FLICKER_MODE:
+    {
+      GstFlickerReductionMode mode;
+      GST_DEBUG_OBJECT (camera, "==== GETTING PROP_FLICKER_MODE ====");
+      if (gst_camerabin_get_flicker_mode ((GstPhotography *) camera, &mode)) {
+        g_value_set_enum (value, mode);
+      }
+      ret = TRUE;
+      break;
+    }
+    case ARG_FOCUS_MODE:
+    {
+      GstFocusMode mode;
+      GST_DEBUG_OBJECT (camera, "==== GETTING PROP_FOCUS_MODE ====");
+      if (gst_camerabin_get_focus_mode ((GstPhotography *) camera, &mode)) {
+        g_value_set_enum (value, mode);
+      }
+      ret = TRUE;
+      break;
+    }
     default:
       break;
   }
@@ -608,6 +720,18 @@ gst_camerabin_photography_set_property (GstCameraBin * camera, guint prop_id,
       GST_DEBUG_OBJECT (camera, "==== SETTING PROP_EXPOSURE ====");
       gst_camerabin_set_exposure ((GstPhotography *) camera,
           g_value_get_uint (value));
+      ret = TRUE;
+      break;
+    case ARG_FLICKER_MODE:
+      GST_DEBUG_OBJECT (camera, "==== SETTING PROP_FLICKER_MODE ====");
+      gst_camerabin_set_flicker_mode ((GstPhotography *) camera,
+          g_value_get_enum (value));
+      ret = TRUE;
+      break;
+    case ARG_FOCUS_MODE:
+      GST_DEBUG_OBJECT (camera, "==== SETTING PROP_FOCUS_MODE ====");
+      gst_camerabin_set_focus_mode ((GstPhotography *) camera,
+          g_value_get_enum (value));
       ret = TRUE;
       break;
     default:

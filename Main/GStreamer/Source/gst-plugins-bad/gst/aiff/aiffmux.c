@@ -183,8 +183,8 @@ typedef struct AVExtFloat
   guint8 mantissa[8];
 } AVExtFloat;
 
-AVExtFloat
-av_dbl2ext (double d)
+static void
+gst_aiff_mux_write_ext (GstByteWriter * writer, double d)
 {
   struct AVExtFloat ext = { {0} };
   gint e, i;
@@ -202,12 +202,14 @@ av_dbl2ext (double d)
   } else if (f != 0.0) {
     ext.exponent[0] = 0x7f;
     ext.exponent[1] = 0xff;
-    if (f != 1.0)
+    if (f != 1 / 0.0)
       ext.mantissa[0] = ~0;
   }
   if (d < 0)
     ext.exponent[0] |= 0x80;
-  return ext;
+
+  gst_byte_writer_put_data (writer, ext.exponent, 2);
+  gst_byte_writer_put_data (writer, ext.mantissa, 8);
 }
 
 /*
@@ -218,8 +220,6 @@ static void
 gst_aiff_mux_write_comm_header (GstAiffMux * aiffmux, guint audio_data_size,
     GstByteWriter * writer)
 {
-  AVExtFloat sample_rate = av_dbl2ext (aiffmux->rate);
-
   gst_byte_writer_put_uint32_le (writer, GST_MAKE_FOURCC ('C', 'O', 'M', 'M'));
   gst_byte_writer_put_uint32_be (writer, 18);
   gst_byte_writer_put_uint16_be (writer, aiffmux->channels);
@@ -227,8 +227,7 @@ gst_aiff_mux_write_comm_header (GstAiffMux * aiffmux, guint audio_data_size,
   gst_byte_writer_put_uint32_be (writer,
       (audio_data_size * 8) / (aiffmux->width * aiffmux->channels));
   gst_byte_writer_put_uint16_be (writer, aiffmux->depth);
-  gst_byte_writer_put_data (writer, (const guint8 *) &sample_rate,
-      sizeof (AVExtFloat));
+  gst_aiff_mux_write_ext (writer, aiffmux->rate);
 }
 
 static void

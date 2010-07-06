@@ -3,7 +3,7 @@ AC_PREREQ(2.52)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GStreamer Bad Plug-ins, 0.10.18,
+AC_INIT(GStreamer Bad Plug-ins, 0.10.19,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-bad)
 
@@ -16,7 +16,7 @@ dnl define PACKAGE_VERSION_* variables
 AS_VERSION
 
 dnl check if this is a release version
-AS_NANO(GST_CVS="no", GST_CVS="yes")
+AS_NANO(GST_GIT="no", GST_GIT="yes")
 
 dnl can autoconf find the source ?
 AC_CONFIG_SRCDIR([docs/plugins/gst-plugins-bad-plugins-docs.sgml])
@@ -29,6 +29,11 @@ AM_MAINTAINER_MODE
 
 dnl sets host_* variables
 AC_CANONICAL_HOST
+
+dnl use pretty build output with automake >= 1.11
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])],
+  [AM_DEFAULT_VERBOSITY=1
+   AC_SUBST(AM_DEFAULT_VERBOSITY)])
 
 dnl our libraries and install dirs use major.minor as a version
 GST_MAJORMINOR=$GST_PLUGINS_BAD_VERSION_MAJOR.$GST_PLUGINS_BAD_VERSION_MINOR
@@ -45,8 +50,8 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.27
-GSTPB_REQ=0.10.27
+GST_REQ=0.10.29
+GSTPB_REQ=0.10.29
 
 dnl *** autotools stuff ****
 
@@ -204,7 +209,8 @@ AC_SUBST(GSTPB_PREFIX)
 
 dnl GTK is optional and used in examples
 HAVE_GTK=NO
-PKG_CHECK_MODULES(GTK, gtk+-x11-2.0 >= 2.12.0, HAVE_GTK=yes, HAVE_GTK=no)
+PKG_CHECK_MODULES(GTK, gtk+-x11-3.0, HAVE_GTK=yes,
+    [PKG_CHECK_MODULES(GTK, gtk+-x11-2.0 >= 2.12.0, HAVE_GTK=yes,HAVE_GTK=no)])
 AM_CONDITIONAL(HAVE_GTK, test "x$HAVE_GTK" = "xyes")
 
 dnl Needed for GtkBuilder to autoconnect signals
@@ -234,13 +240,22 @@ dnl set location of plugin directory
 AG_GST_SET_PLUGINDIR
 
 dnl define an ERROR_CFLAGS Makefile variable
-AG_GST_SET_ERROR_CFLAGS($GST_CVS)
+dnl -Waggregate-return - libexif returns aggregates
+dnl -Wundef - Windows headers check _MSC_VER unconditionally
+AG_GST_SET_ERROR_CFLAGS($GST_GIT, [
+    -Wmissing-declarations -Wmissing-prototypes -Wredundant-decls
+    -Wwrite-strings -Wformat-nonliteral -Wformat-security -Wold-style-definition
+    -Winit-self -Wmissing-include-dirs -Waddress -Wno-multichar
+    -Wnested-externs])
 
 dnl define an ERROR_CXXFLAGS Makefile variable
-AG_GST_SET_ERROR_CXXFLAGS($GST_CVS)
+AG_GST_SET_ERROR_CXXFLAGS($GST_GIT, [
+    -Wmissing-declarations -Wredundant-decls
+    -Wwrite-strings -Wformat-nonliteral -Wformat-security
+    -Winit-self -Wmissing-include-dirs -Waddress -Wno-multichar ])
 
 dnl define correct level for debugging messages
-AG_GST_SET_LEVEL_DEFAULT($GST_CVS)
+AG_GST_SET_LEVEL_DEFAULT($GST_GIT)
 
 dnl used in examples
 AG_GST_DEFAULT_ELEMENTS
@@ -269,6 +284,7 @@ AG_GST_CHECK_PLUGIN(frei0r)
 AG_GST_CHECK_PLUGIN(h264parse)
 AG_GST_CHECK_PLUGIN(hdvparse)
 AG_GST_CHECK_PLUGIN(id3tag)
+AG_GST_CHECK_PLUGIN(invtelecine)
 AG_GST_CHECK_PLUGIN(jpegformat)
 AG_GST_CHECK_PLUGIN(librfb)
 AG_GST_CHECK_PLUGIN(liveadder)
@@ -289,6 +305,7 @@ AG_GST_CHECK_PLUGIN(real)
 AG_GST_CHECK_PLUGIN(rtpmux)
 AG_GST_CHECK_PLUGIN(scaletempo)
 AG_GST_CHECK_PLUGIN(sdp)
+AG_GST_CHECK_PLUGIN(segmentclip)
 AG_GST_CHECK_PLUGIN(selector)
 AG_GST_CHECK_PLUGIN(siren)
 AG_GST_CHECK_PLUGIN(speed)
@@ -570,7 +587,7 @@ AG_GST_CHECK_FEATURE(CELT, [celt], celt, [
 dnl *** Cog ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_COG, true)
 AG_GST_CHECK_FEATURE(COG, [Cog plugin], cog, [
-  PKG_CHECK_MODULES(COG, libpng12 orc-0.4 >= 0.4.3, HAVE_COG="yes", [
+  PKG_CHECK_MODULES(COG, libpng >= 1.2 orc-0.4 >= 0.4.3, HAVE_COG="yes", [
     HAVE_COG="no"
     AC_MSG_RESULT(no)
   ])
@@ -706,33 +723,13 @@ return 0;
   fi
 ])
 
-dnl *** dvdnav for resindvd ***
-translit(dnm, m, l) AM_CONDITIONAL(USE_DVDNAV, true)
-AG_GST_CHECK_FEATURE(DVDNAV, [dvdnav library], resindvd, [
-  translit(dnm, m, l) AC_SUBST(DVDNAV_LIBS)
-  translit(dnm, m, l) AC_SUBST(DVDNAV_CFLAGS)
-  AG_GST_CHECK_CONFIGPROG(DVDNAV, dvdnav-config)
-  if test x"$HAVE_DVDNAV" = x"yes"; then
-    dnl check version
-    DVDNAV_VERSION=`dvdnav-config --version|head -n 1|sed 's/^.*) //'|sed 's/ (.*)//'`
-    DVDNAV_MAJOR=`echo $DVDNAV_VERSION | cut -d. -f1 | sed s/[a-zA-Z\-].*//g`
-    DVDNAV_MINOR=`echo $DVDNAV_VERSION | cut -d. -f2 | sed s/[a-zA-Z\-].*//g`
-    DVDNAV_MICRO=`echo $DVDNAV_VERSION | cut -d. -f3 | sed s/[a-zA-Z\-].*//g`
-    if [[ "$DVDNAV_MAJOR" -lt "4" ]]; then
-      AC_MSG_WARN([libdvdnav >= 4.1.2 is required, you have $DVDNAV_VERSION])
-      HAVE_DVDNAV="no"
-    elif [[ "$DVDNAV_MAJOR" -eq "4" ]] && \
-         [[ "$DVDNAV_MINOR" -lt "1" ]]; then
-      AC_MSG_WARN([libdvdnav >= 4.1.2 is required, you have $DVDNAV_VERSION])
-      HAVE_DVDNAV="no"
-    elif [[ "$DVDNAV_MAJOR" -eq "4" ]] && \
-         [[ "$DVDNAV_MINOR" -eq "1" ]] && \
-         [[ "$DVDNAV_MICRO" -lt "2" ]]; then
-      AC_MSG_WARN([libdvdnav >= 4.1.2 is required, you have $DVDNAV_VERSION])
-      HAVE_DVDNAV="no"
-    fi
-  fi
-  AS_SCRUB_INCLUDE(DVDNAV_CFLAGS)
+dnl *** resindvd ***
+translit(dnm, m, l) AM_CONDITIONAL(USE_RESINDVD, true)
+AG_GST_CHECK_FEATURE(RESINDVD, [resindvd plugin], resindvd, [
+  PKG_CHECK_MODULES(DVDNAV, dvdnav >= 4.1.2 dvdread >= 4.1.2, HAVE_RESINDVD="yes", [
+    HAVE_RESINDVD="no"
+    AC_MSG_RESULT(no)
+  ])
 ])
 
 dnl *** METADATA ***
@@ -1091,6 +1088,8 @@ AG_GST_CHECK_FEATURE(MPLEX, [mplex], mplex, [
         MPLEX_LIBS="$MPLEX_LIBS -lmplex2 -lm"
         OLD_LIBS="$LIBS"
         LIBS="$LIBS $MPLEX_LIBS"
+        OLD_LDFLAGS="$LDFLAGS"
+        LDFLAGS="$LDFLAGS $MPLEX_LDFLAGS"
         dnl older libmplex uses off_t SegmentSize (), which leads to fuzzy ABI;
         dnl don't want this here
         AC_MSG_CHECKING([for valid mplex objects])
@@ -1123,9 +1122,11 @@ main (int   argc,
           HAVE_MPLEX="yes"
           AC_SUBST(MPLEX_CFLAGS)
           AC_SUBST(MPLEX_LIBS)
+          AC_SUBST(MPLEX_LDFLAGS)
           AC_MSG_RESULT(yes)
         ], AC_MSG_RESULT(no))
         LIBS="$OLD_LIBS"
+        LDFLAGS="$OLD_LDFLAGS"
       ])
       CPPFLAGS="$OLD_CPPFLAGS"
       AC_LANG_C
@@ -1403,15 +1404,6 @@ AG_GST_CHECK_FEATURE(DVB, [DVB Source], dvb, [
   AC_CHECK_HEADER(linux/dvb/frontend.h, [HAVE_DVB="yes"], [HAVE_DVB="no"])
 ])
 
-dnl *** oss4 ***
-translit(dnm, m, l) AM_CONDITIONAL(USE_OSS4, true)
-AG_GST_CHECK_FEATURE(OSS4, [Open Sound System 4], oss4, [
-  AC_MSG_CHECKING([Checking if we can build the OSS4 elements])
-  AC_CHECK_HEADERS([fcntl.h sys/ioctl.h sys/stat.h sys/types.h],
-      [test -z "$OSS4_MISSING_HEADER" && HAVE_OSS4="yes"],
-      [OSS4_MISSING_HEADER="yes";HAVE_OSS4="no"])
-])
-
 dnl *** wininet ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_WININET, true)
 AG_GST_CHECK_FEATURE(WININET, [Windows internet library], wininet, [
@@ -1490,6 +1482,33 @@ AG_GST_CHECK_FEATURE(ZBAR, [ZBar barcode detector], zbar, [
   AG_GST_PKG_CHECK_MODULES(ZBAR, zbar >= 0.9)
 ])
 
+dnl *** vp8 ***
+translit(dnm, m, l) AM_CONDITIONAL(USE_VP8, vp8)
+AG_GST_CHECK_FEATURE(VP8, [VP8 decoder], vp8, [
+  VPX_LIBS=""
+  AG_GST_CHECK_LIBHEADER(VPX, vpx,
+                        vpx_codec_version, ,
+                        vpx/vpx_codec.h, [
+    HAVE_VP8_ENCODER=no
+    HAVE_VP8_DECODER=no
+
+    OLD_LIBS="$LIBS"
+    LIBS="$LIBS -lm -lpthread"
+    AC_CHECK_LIB(vpx, vpx_codec_vp8_cx_algo, [
+      HAVE_VP8=yes
+      AC_DEFINE(HAVE_VP8_ENCODER, 1, [Defined if the VP8 encoder is available])
+      VPX_LIBS="-lvpx"
+    ])
+    AC_CHECK_LIB(vpx, vpx_codec_vp8_dx_algo, [
+      HAVE_VP8=yes
+      AC_DEFINE(HAVE_VP8_DECODER, 1, [Defined if the VP8 decoder is available])
+      VPX_LIBS="-lvpx"
+    ])
+    LIBS="$OLD_LIBS"
+  ])
+  AC_SUBST(VPX_LIBS)
+])
+
 else
 
 dnl not building plugins with external dependencies,
@@ -1508,11 +1527,12 @@ AM_CONDITIONAL(USE_DIRECTFB, false)
 AM_CONDITIONAL(USE_DIRAC, false)
 AM_CONDITIONAL(USE_DTS, false)
 AM_CONDITIONAL(USE_DIVX, false)
-AM_CONDITIONAL(USE_DVDNAV, false)
+AM_CONDITIONAL(USE_RESINDVD, false)
 AM_CONDITIONAL(USE_METADATA, false)
 AM_CONDITIONAL(USE_FAAC, false)
 AM_CONDITIONAL(USE_FAAD, false)
 AM_CONDITIONAL(USE_FBDEV, false)
+AM_CONDITIONAL(USE_FLITE, false)
 AM_CONDITIONAL(USE_GSM, false)
 AM_CONDITIONAL(USE_JACK, false)
 AM_CONDITIONAL(USE_JP2K, false)
@@ -1543,12 +1563,12 @@ AM_CONDITIONAL(USE_SWFDEC, false)
 AM_CONDITIONAL(USE_THEORADEC, false)
 AM_CONDITIONAL(USE_XVID, false)
 AM_CONDITIONAL(USE_DVB, false)
-AM_CONDITIONAL(USE_OSS4, false)
 AM_CONDITIONAL(USE_WININET, false)
 AM_CONDITIONAL(USE_ACM, false)
 AM_CONDITIONAL(USE_VDPAU, false)
 AM_CONDITIONAL(USE_SCHRO, false)
 AM_CONDITIONAL(USE_ZBAR, false)
+AM_CONDITIONAL(USE_VP8, false)
 
 fi dnl of EXT plugins
 
@@ -1578,8 +1598,8 @@ AC_SUBST(DEPRECATED_CFLAGS)
 
 dnl every flag in GST_OPTION_CFLAGS and GST_OPTION_CXXFLAGS can be overridden
 dnl at make time with e.g. make ERROR_CFLAGS=""
-GST_OPTION_CFLAGS="\$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
-GST_OPTION_CXXFLAGS="\$(ERROR_CXXFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CFLAGS="\$(WARNING_CFLAGS) \$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CXXFLAGS="\$(WARNING_CXXFLAGS) \$(ERROR_CXXFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
 AC_SUBST(GST_OPTION_CFLAGS)
 AC_SUBST(GST_OPTION_CXXFLAGS)
 
@@ -1587,11 +1607,15 @@ dnl FIXME: do we want to rename to GST_ALL_* ?
 dnl prefer internal headers to already installed ones
 dnl also add builddir include for enumtypes and marshal
 dnl add GST_OPTION_CFLAGS, but overridable
-GST_CXXFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CXXFLAGS)"
-GST_CFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CFLAGS)"
+GST_CXXFLAGS="$GST_CFLAGS \$(GST_OPTION_CXXFLAGS)"
+GST_CFLAGS="$GST_CFLAGS \$(GST_OPTION_CFLAGS)"
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_CXXFLAGS)
 AC_SUBST(GST_LIBS)
+GST_PLUGINS_BAD_CXXFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs"
+GST_PLUGINS_BAD_CFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs"
+AC_SUBST(GST_PLUGINS_BAD_CFLAGS)
+AC_SUBST(GST_PLUGINS_BAD_CXXFLAGS)
 
 dnl LDFLAGS really should only contain flags, not libs - they get added before
 dnl whatevertarget_LIBS and -L flags here affect the rest of the linking
@@ -1603,8 +1627,6 @@ dnl whatevertarget_LIBS and -L flags here affect the rest of the linking
 GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^[_]*gst_plugin_desc\$\$' $GST_ALL_LDFLAGS"
 AC_SUBST(GST_PLUGIN_LDFLAGS)
 
-SHAVE_INIT([common],[enable])
-
 dnl *** output files ***
 
 dnl po/Makefile.in
@@ -1612,8 +1634,6 @@ dnl po/Makefile.in
 AC_CONFIG_FILES(
 Makefile
 common/Makefile
-common/shave
-common/shave-libtool
 common/m4/Makefile
 gst-plugins-bad.spec
 gst/Makefile
@@ -1637,6 +1657,7 @@ gst/frei0r/Makefile
 gst/h264parse/Makefile
 gst/hdvparse/Makefile
 gst/id3tag/Makefile
+gst/invtelecine/Makefile
 gst/jpegformat/Makefile
 gst/legacyresample/Makefile
 gst/librfb/Makefile
@@ -1659,6 +1680,7 @@ gst/real/Makefile
 gst/rtpmux/Makefile
 gst/scaletempo/Makefile
 gst/sdp/Makefile
+gst/segmentclip/Makefile
 gst/selector/Makefile
 gst/siren/Makefile
 gst/speed/Makefile
@@ -1684,7 +1706,6 @@ sys/dshowsrcwrapper/Makefile
 sys/dshowvideosink/Makefile
 sys/dvb/Makefile
 sys/fbdev/Makefile
-sys/oss4/Makefile
 sys/osxvideo/Makefile
 sys/qtwrapper/Makefile
 sys/vcd/Makefile
@@ -1748,16 +1769,17 @@ ext/spc/Makefile
 ext/swfdec/Makefile
 ext/theora/Makefile
 ext/timidity/Makefile
+ext/vp8/Makefile
 ext/xvid/Makefile
 ext/zbar/Makefile
 po/Makefile.in
 docs/Makefile
 docs/plugins/Makefile
-docs/plugins/figures/Makefile
 docs/version.entities
 pkgconfig/Makefile
 pkgconfig/gstreamer-plugins-bad.pc
 pkgconfig/gstreamer-plugins-bad-uninstalled.pc
+tools/Makefile
 m4/Makefile
 win32/common/config.h
 )

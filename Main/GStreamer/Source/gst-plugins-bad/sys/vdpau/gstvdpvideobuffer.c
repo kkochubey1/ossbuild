@@ -24,6 +24,12 @@
 
 #include "gstvdpvideobuffer.h"
 
+GST_DEBUG_CATEGORY_STATIC (gst_vdp_video_buffer_debug);
+#define GST_CAT_DEFAULT gst_vdp_video_buffer_debug
+
+#define DEBUG_INIT(bla) \
+GST_DEBUG_CATEGORY_INIT (gst_vdp_video_buffer_debug, "vdpvideobuffer", 0, "VDPAU video buffer");
+
 GstVdpVideoBuffer *
 gst_vdp_video_buffer_new (GstVdpDevice * device, VdpChromaType chroma_type,
     gint width, gint height)
@@ -157,14 +163,16 @@ gst_vdp_video_buffer_get_caps (gboolean filter, VdpChromaType chroma_type)
 }
 
 GstCaps *
-gst_vdp_video_buffer_get_allowed_yuv_caps (GstVdpDevice * device)
+gst_vdp_video_buffer_get_allowed_caps (GstVdpDevice * device)
 {
-  GstCaps *caps;
+  GstCaps *video_caps, *yuv_caps;
   gint i;
+  VdpStatus status;
 
-  caps = gst_caps_new_empty ();
+  video_caps = gst_caps_new_empty ();
+  yuv_caps = gst_caps_new_empty ();
+
   for (i = 0; i < G_N_ELEMENTS (chroma_types); i++) {
-    VdpStatus status;
     VdpBool is_supported;
     guint32 max_w, max_h;
 
@@ -172,16 +180,18 @@ gst_vdp_video_buffer_get_allowed_yuv_caps (GstVdpDevice * device)
         device->vdp_video_surface_query_capabilities (device->device,
         chroma_types[i], &is_supported, &max_w, &max_h);
 
-    if (status != VDP_STATUS_OK && status != VDP_STATUS_INVALID_CHROMA_TYPE) {
-      GST_ERROR_OBJECT (device,
-          "Could not get query VDPAU video surface capabilites, "
-          "Error returned from vdpau was: %s",
-          device->vdp_get_error_string (status));
+    if (status != VDP_STATUS_OK && status != VDP_STATUS_INVALID_CHROMA_TYPE)
+      goto surface_query_caps_error;
 
-      goto error;
-    }
     if (is_supported) {
+      GstCaps *format_caps;
       gint j;
+
+      format_caps = gst_caps_new_simple ("video/x-vdpau-video",
+          "chroma-type", G_TYPE_INT, chroma_types[i],
+          "width", GST_TYPE_INT_RANGE, 1, max_w,
+          "height", GST_TYPE_INT_RANGE, 1, max_h, NULL);
+      gst_caps_append (video_caps, format_caps);
 
       for (j = 0; j < G_N_ELEMENTS (formats); j++) {
         if (formats[j].chroma_type != chroma_types[i])
@@ -191,69 +201,36 @@ gst_vdp_video_buffer_get_allowed_yuv_caps (GstVdpDevice * device)
             device->vdp_video_surface_query_ycbcr_capabilities (device->device,
             formats[j].chroma_type, formats[j].format, &is_supported);
         if (status != VDP_STATUS_OK
-            && status != VDP_STATUS_INVALID_Y_CB_CR_FORMAT) {
-          GST_ERROR_OBJECT (device, "Could not query VDPAU YCbCr capabilites, "
-              "Error returned from vdpau was: %s",
-              device->vdp_get_error_string (status));
-
-          goto error;
-        }
+            && status != VDP_STATUS_INVALID_Y_CB_CR_FORMAT)
+          goto surface_query_ycbcr_error;
 
         if (is_supported) {
-          GstCaps *format_caps;
-
           format_caps = gst_caps_new_simple ("video/x-raw-yuv",
               "format", GST_TYPE_FOURCC, formats[j].fourcc,
               "width", GST_TYPE_INT_RANGE, 1, max_w,
               "height", GST_TYPE_INT_RANGE, 1, max_h, NULL);
-          gst_caps_append (caps, format_caps);
+          gst_caps_append (yuv_caps, format_caps);
         }
       }
     }
   }
 
-error:
-  return caps;
-}
+done:
+  gst_caps_append (video_caps, yuv_caps);
+  return video_caps;
 
-GstCaps *
-gst_vdp_video_buffer_get_allowed_video_caps (GstVdpDevice * device)
-{
-  GstCaps *caps;
-  gint i;
+surface_query_caps_error:
+  GST_ERROR_OBJECT (device,
+      "Could not get query VDPAU video surface capabilites, "
+      "Error returned from vdpau was: %s",
+      device->vdp_get_error_string (status));
+  goto done;
 
-  caps = gst_caps_new_empty ();
-  for (i = 0; i < G_N_ELEMENTS (chroma_types); i++) {
-    VdpStatus status;
-    VdpBool is_supported;
-    guint32 max_w, max_h;
-
-    status =
-        device->vdp_video_surface_query_capabilities (device->device,
-        chroma_types[i], &is_supported, &max_w, &max_h);
-
-    if (status != VDP_STATUS_OK && status != VDP_STATUS_INVALID_CHROMA_TYPE) {
-      GST_ERROR_OBJECT (device,
-          "Could not get query VDPAU video surface capabilites, "
-          "Error returned from vdpau was: %s",
-          device->vdp_get_error_string (status));
-
-      goto error;
-    }
-
-    if (is_supported) {
-      GstCaps *format_caps;
-
-      format_caps = gst_caps_new_simple ("video/x-vdpau-video",
-          "chroma-type", G_TYPE_INT, chroma_types[i],
-          "width", GST_TYPE_INT_RANGE, 1, max_w,
-          "height", GST_TYPE_INT_RANGE, 1, max_h, NULL);
-      gst_caps_append (caps, format_caps);
-    }
-  }
-
-error:
-  return caps;
+surface_query_ycbcr_error:
+  GST_ERROR_OBJECT (device, "Could not query VDPAU YCbCr capabilites, "
+      "Error returned from vdpau was: %s",
+      device->vdp_get_error_string (status));
+  goto done;
 }
 
 gboolean
@@ -293,41 +270,63 @@ gst_vdp_video_buffer_calculate_size (guint32 fourcc, gint width, gint height,
   return TRUE;
 }
 
-gboolean
-gst_vdp_video_buffer_parse_yuv_caps (GstCaps * yuv_caps,
-    VdpChromaType * chroma_type, gint * width, gint * height)
+GstCaps *
+gst_vdp_video_buffer_parse_yuv_caps (GstCaps * yuv_caps)
 {
-  GstStructure *structure;
-  guint32 fourcc;
+
+  GstCaps *video_caps;
   gint i;
 
-  g_return_val_if_fail (GST_IS_CAPS (yuv_caps), FALSE);
-  g_return_val_if_fail (!gst_caps_is_empty (yuv_caps), FALSE);
-  g_return_val_if_fail (chroma_type, FALSE);
-  g_return_val_if_fail (width, FALSE);
-  g_return_val_if_fail (height, FALSE);
+  g_return_val_if_fail (GST_IS_CAPS (yuv_caps), NULL);
 
-  structure = gst_caps_get_structure (yuv_caps, 0);
-  if (!gst_structure_has_name (structure, "video/x-raw-yuv"))
-    return FALSE;
+  video_caps = gst_caps_copy (yuv_caps);
+  for (i = 0; i < gst_caps_get_size (video_caps); i++) {
+    GstStructure *structure;
+    guint32 fourcc;
+    VdpChromaType chroma_type;
 
-  if (!gst_structure_get_fourcc (structure, "format", &fourcc) ||
-      !gst_structure_get_int (structure, "width", width) ||
-      !gst_structure_get_int (structure, "height", height))
-    return FALSE;
+    structure = gst_caps_get_structure (video_caps, i);
+    if (!gst_structure_has_name (structure, "video/x-raw-yuv"))
+      goto not_yuv_error;
 
-  *chroma_type = -1;
-  for (i = 0; i < G_N_ELEMENTS (formats); i++) {
-    if (formats[i].fourcc == fourcc) {
-      *chroma_type = formats[i].chroma_type;
-      break;
+    if (!gst_structure_get_fourcc (structure, "format", &fourcc))
+      goto no_format_error;
+
+    chroma_type = -1;
+    for (i = 0; i < G_N_ELEMENTS (formats); i++) {
+      if (formats[i].fourcc == fourcc) {
+        chroma_type = formats[i].chroma_type;
+        break;
+      }
     }
+
+    if (chroma_type == -1)
+      goto no_chroma_error;
+
+    /* now we transform the caps */
+    gst_structure_set_name (structure, "video/x-vdpau-video");
+    gst_structure_remove_field (structure, "format");
+    gst_structure_set (structure, "chroma-type", G_TYPE_INT, chroma_type, NULL);
   }
 
-  if (*chroma_type == -1)
-    return FALSE;
+  return video_caps;
 
-  return TRUE;
+error:
+  gst_caps_unref (video_caps);
+  return NULL;
+
+not_yuv_error:
+  GST_WARNING ("The caps weren't of type \"video/x-raw-yuv\"");
+  goto error;
+
+no_format_error:
+  GST_WARNING ("The caps didn't have a \"fourcc\" field");
+  goto error;
+
+no_chroma_error:
+  GST_WARNING ("The caps had an invalid \"fourcc\" field");
+  goto error;
+
 }
 
 gboolean

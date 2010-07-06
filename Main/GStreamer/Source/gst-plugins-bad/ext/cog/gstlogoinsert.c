@@ -58,7 +58,7 @@ struct _GstLogoinsert
   gchar *data;
   gsize size;
   CogFrame *overlay_frame;
-  CogFrame *ayuv_frame;
+  CogFrame *argb_frame;
   CogFrame *alpha_frame;
 
 };
@@ -68,7 +68,6 @@ struct _GstLogoinsertClass
   GstBaseTransformClass parent_class;
 
 };
-
 
 /* GstLogoinsert signals and args */
 enum
@@ -116,7 +115,7 @@ static GstStaticPadTemplate gst_logoinsert_src_template =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV ("{I420,YUY2,UYVY,AYUV}"))
+    GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV ("I420"))
     );
 
 GType
@@ -147,11 +146,7 @@ gst_logoinsert_get_type (void)
 static void
 gst_logoinsert_base_init (gpointer g_class)
 {
-  static GstElementDetails compress_details =
-      GST_ELEMENT_DETAILS ("Video Filter Template",
-      "Filter/Effect/Video",
-      "Template for a video filter",
-      "David Schleef <ds@schleef.org>");
+
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
   gst_element_class_add_pad_template (element_class,
@@ -159,7 +154,9 @@ gst_logoinsert_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_logoinsert_sink_template));
 
-  gst_element_class_set_details (element_class, &compress_details);
+  gst_element_class_set_details_simple (element_class, "Video Filter Template",
+      "Filter/Effect/Video",
+      "Template for a video filter", "David Schleef <ds@schleef.org>");
 }
 
 static void
@@ -254,20 +251,22 @@ gst_logoinsert_transform_ip (GstBaseTransform * base_transform, GstBuffer * buf)
 
   frame = gst_cog_buffer_wrap (buf, li->format, li->width, li->height);
 
-  if (li->ayuv_frame == NULL)
+  if (li->argb_frame == NULL)
     return GST_FLOW_OK;
 
   if (li->overlay_frame == NULL) {
     CogFrame *f;
 
-    f = cog_virt_frame_extract_alpha (cog_frame_ref (li->ayuv_frame));
-    f = cog_virt_frame_new_subsample (f, frame->format);
+    f = cog_virt_frame_extract_alpha (cog_frame_ref (li->argb_frame));
+    f = cog_virt_frame_new_subsample (f, frame->format,
+        COG_CHROMA_SITE_MPEG2, 2);
     li->alpha_frame = cog_frame_realize (f);
 
-    f = cog_virt_frame_new_unpack (cog_frame_ref (li->ayuv_frame));
+    f = cog_virt_frame_new_unpack (cog_frame_ref (li->argb_frame));
     f = cog_virt_frame_new_color_matrix_RGB_to_YCbCr (f, COG_COLOR_MATRIX_SDTV,
         8);
-    f = cog_virt_frame_new_subsample (f, frame->format);
+    f = cog_virt_frame_new_subsample (f, frame->format,
+        COG_CHROMA_SITE_MPEG2, 2);
     li->overlay_frame = cog_frame_realize (f);
   }
 
@@ -327,7 +326,7 @@ gst_logoinsert_set_location (GstLogoinsert * li, const gchar * location)
     return;
   }
 
-  li->ayuv_frame = cog_frame_new_from_png (li->data, li->size);
+  li->argb_frame = cog_frame_new_from_png (li->data, li->size);
 
   if (li->alpha_frame) {
     cog_frame_unref (li->alpha_frame);
@@ -352,7 +351,7 @@ struct png_data_struct
 static void
 read_data (png_structp png_ptr, png_bytep data, png_size_t length)
 {
-  struct png_data_struct *s = png_ptr->io_ptr;
+  struct png_data_struct *s = png_get_io_ptr (png_ptr);
 
   memcpy (data, s->data + s->offset, length);
   s->offset += length;
@@ -396,7 +395,7 @@ cog_frame_new_from_png (void *data, int size)
   }
 
   frame_data = g_malloc (width * height * 4);
-  frame = cog_frame_new_from_data_AYUV (frame_data, width, height);
+  frame = cog_frame_new_from_data_ARGB (frame_data, width, height);
 
   rowbytes = png_get_rowbytes (png_ptr, info_ptr);
   rows = (png_bytep *) g_malloc (sizeof (png_bytep) * height);
@@ -407,7 +406,7 @@ cog_frame_new_from_png (void *data, int size)
   png_read_image (png_ptr, rows);
   g_free (rows);
 
-  png_destroy_read_struct (&png_ptr, &info_ptr, png_infopp_NULL);
+  png_destroy_read_struct (&png_ptr, &info_ptr, (png_infopp) NULL);
 
   return frame;
 }

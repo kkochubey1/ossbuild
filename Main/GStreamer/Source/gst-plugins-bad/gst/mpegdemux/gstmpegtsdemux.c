@@ -76,13 +76,6 @@ GST_DEBUG_CATEGORY_STATIC (gstmpegtsdemux_debug);
 #define FORCE_INLINE
 #endif
 
-static GstElementDetails mpegts_demux_details = {
-  "The Fluendo MPEG Transport stream demuxer",
-  "Codec/Demuxer",
-  "Demultiplexes MPEG2 Transport Streams",
-  "Wim Taymans <wim@fluendo.com>"
-};
-
 /* MPEG2Demux signals and args */
 enum
 {
@@ -257,7 +250,9 @@ gst_mpegts_demux_base_init (GstMpegTSDemuxClass * klass)
   gst_element_class_add_pad_template (element_class, klass->private_template);
   gst_element_class_add_pad_template (element_class, klass->sink_template);
 
-  gst_element_class_set_details (element_class, &mpegts_demux_details);
+  gst_element_class_set_details_simple (element_class,
+      "The Fluendo MPEG Transport stream demuxer", "Codec/Demuxer",
+      "Demultiplexes MPEG2 Transport Streams", "Wim Taymans <wim@fluendo.com>");
 }
 
 static void
@@ -772,6 +767,9 @@ gst_mpegts_demux_fill_stream (GstMpegTSStream * stream, guint8 id,
       caps = gst_caps_new_simple ("audio/x-eac3", NULL);
       break;
     case ST_PS_AUDIO_DTS:
+    case ST_BD_AUDIO_DTS:
+    case ST_BD_AUDIO_DTS_HD:
+    case ST_BD_AUDIO_DTS_HD_MASTER_AUDIO:
       template = klass->audio_template;
       name = g_strdup_printf ("audio_%04x", stream->PID);
       caps = gst_caps_new_simple ("audio/x-dts", NULL);
@@ -1046,8 +1044,8 @@ gst_mpegts_demux_data_cb (GstPESFilter * filter, gboolean first,
        * to drop. */
       if (stream->PMT_pid <= MPEGTS_MAX_PID && demux->streams[stream->PMT_pid]
           && demux->streams[demux->streams[stream->PMT_pid]->PMT.PCR_PID]
-          && demux->streams[demux->streams[stream->PMT_pid]->PMT.PCR_PID]->
-          discont_PCR) {
+          && demux->streams[demux->streams[stream->PMT_pid]->PMT.
+              PCR_PID]->discont_PCR) {
         GST_WARNING_OBJECT (demux, "middle of discont, dropping");
         goto bad_timestamp;
       }
@@ -1069,8 +1067,8 @@ gst_mpegts_demux_data_cb (GstPESFilter * filter, gboolean first,
          */
         if (stream->PMT_pid <= MPEGTS_MAX_PID && demux->streams[stream->PMT_pid]
             && demux->streams[demux->streams[stream->PMT_pid]->PMT.PCR_PID]
-            && demux->streams[demux->streams[stream->PMT_pid]->PMT.PCR_PID]->
-            last_PCR > 0) {
+            && demux->streams[demux->streams[stream->PMT_pid]->PMT.
+                PCR_PID]->last_PCR > 0) {
           GST_DEBUG_OBJECT (demux, "timestamps wrapped before noticed in PCR");
           time = MPEGTIME_TO_GSTTIME (pts) + stream->base_time +
               MPEGTIME_TO_GSTTIME ((guint64) (1) << 33);
@@ -1784,7 +1782,7 @@ gst_mpegts_demux_parse_adaptation_field (GstMpegTSStream * stream,
                     pmt_stream = demux->streams[demux->streams[j]->PMT_pid];
                     GST_DEBUG_OBJECT (demux, "Updating base_time on all es "
                         "pids belonging to PMT 0x%02x", stream->PMT_pid);
-                    for (i = 0; i <= pmt_stream->PMT.entries->len; i++) {
+                    for (i = 0; i < pmt_stream->PMT.entries->len; i++) {
                       GstMpegTSPMTEntry *cur_entry =
                           &g_array_index (pmt_stream->PMT.entries,
                           GstMpegTSPMTEntry, i);
@@ -2381,7 +2379,7 @@ gst_mpegts_demux_parse_stream (GstMpegTSDemux * demux, GstMpegTSStream * stream,
       case PID_TYPE_ELEMENTARY:
       {
         if (payload_unit_start_indicator) {
-          GST_DEBUG_OBJECT (demux, "new PES start for PID 0x%04x, used %u"
+          GST_DEBUG_OBJECT (demux, "new PES start for PID 0x%04x, used %u "
               "bytes of %u bytes in the PES buffer",
               PID, stream->pes_buffer_used, stream->pes_buffer_size);
           /* Flush buffered PES data */
@@ -3224,15 +3222,15 @@ gst_mpegts_demux_get_property (GObject * object, guint prop_id,
       if (demux->nb_elementary_pids == 0) {
         g_value_set_static_string (value, "");
       } else {
-        gchar **ts_pids;
+        GString *ts_pids;
 
-        ts_pids = g_new0 (gchar *, demux->nb_elementary_pids + 1);
-        for (i = 0; i < demux->nb_elementary_pids; i++) {
-          ts_pids[i] = g_strdup_printf ("%d", demux->elementary_pids[i]);
+        ts_pids = g_string_sized_new (32);
+        /* FIXME: align with property description which uses hex numbers? */
+        g_string_append_printf (ts_pids, "%d", demux->elementary_pids[0]);
+        for (i = 1; i < demux->nb_elementary_pids; i++) {
+          g_string_append_printf (ts_pids, ":%d", demux->elementary_pids[i]);
         }
-
-        g_value_set_string (value, g_strjoinv (":", ts_pids));
-        g_strfreev (ts_pids);
+        g_value_take_string (value, g_string_free (ts_pids, FALSE));
       }
       break;
     case PROP_CHECK_CRC:

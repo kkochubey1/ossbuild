@@ -8,11 +8,8 @@
 <link rel="up" href="ch01.html" title="gst-plugins-bad Elements">
 <link rel="prev" href="gst-plugins-bad-plugins-modplug.html" title="modplug">
 <link rel="next" href="gst-plugins-bad-plugins-mplex.html" title="mplex">
-<meta name="generator" content="GTK-Doc V1.13 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="gst-plugins-bad Elements">
-<link rel="chapter" href="ch02.html" title="gst-plugins-bad Plugins">
-<link rel="chapter" href="ch03.html" title="gst-plugins-bad Classes">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -28,6 +25,10 @@
                    | 
                   <a href="#gst-plugins-bad-plugins-mpeg2enc.description" class="shortcut">Description</a>
                    | 
+                  <a href="#gst-plugins-bad-plugins-mpeg2enc.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#gst-plugins-bad-plugins-mpeg2enc.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+                   | 
                   <a href="#gst-plugins-bad-plugins-mpeg2enc.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
@@ -42,8 +43,23 @@
 </tr></table></div>
 <div class="refsynopsisdiv" title="Synopsis">
 <a name="gst-plugins-bad-plugins-mpeg2enc.synopsis"></a><h2>Synopsis</h2>
-<pre class="synopsis">                    <a class="link" href="gst-plugins-bad-plugins-mpeg2enc.html#GstMpeg2enc" title="GstMpeg2enc">GstMpeg2enc</a>;
+<a name="GstMpeg2enc"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-bad-plugins-mpeg2enc.html#GstMpeg2enc-struct" title="GstMpeg2enc">GstMpeg2enc</a>;
 </pre>
+</div>
+<div class="refsect1" title="Object Hierarchy">
+<a name="gst-plugins-bad-plugins-mpeg2enc.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
+         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
+               +----GstMpeg2enc
+</pre>
+</div>
+<div class="refsect1" title="Implemented Interfaces">
+<a name="gst-plugins-bad-plugins-mpeg2enc.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
+<p>
+GstMpeg2enc implements
+ <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPreset.html">GstPreset</a>.</p>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-bad-plugins-mpeg2enc.properties"></a><h2>Properties</h2>
@@ -94,10 +110,8 @@ Documentation on MPEG encoding in general can be found in the
 and on the various available parameters in the documentation
 of the mpeg2enc tool in particular, which shares options with this element.
 </p>
-<p>
-</p>
 <div class="refsect2" title="Example pipeline">
-<a name="id404526"></a><h3>Example pipeline</h3>
+<a name="id400787"></a><h3>Example pipeline</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -136,35 +150,8 @@ for PAL <a class="link" href="gst-plugins-bad-plugins-mpeg2enc.html#GstMpeg2enc-
 <div class="refsect1" title="Details">
 <a name="gst-plugins-bad-plugins-mpeg2enc.details"></a><h2>Details</h2>
 <div class="refsect2" title="GstMpeg2enc">
-<a name="GstMpeg2enc"></a><h3>GstMpeg2enc</h3>
-<pre class="programlisting">typedef struct {
-  GstElement parent;
-
-  /* pads */
-  GstPad *sinkpad, *srcpad;
-
-  /* options wrapper */
-  GstMpeg2EncOptions *options;
-
-  /* general encoding object (contains rest) */
-  GstMpeg2Encoder *encoder;
-
-  /* lock for syncing with encoding task */
-  GMutex *tlock;
-  /* with TLOCK */
-  /* signals counterpart thread that something changed;
-   * buffer ready for task or buffer has been processed */
-  GCond *cond;
-  /* seen eos */
-  gboolean eos;
-  /* flowreturn obtained by encoding task */
-  GstFlowReturn srcresult;
-  /* buffer for encoding task */
-  GstBuffer *buffer;
-  /* timestamps for output */
-  GQueue *time;
-} GstMpeg2enc;
-</pre>
+<a name="GstMpeg2enc-struct"></a><h3>GstMpeg2enc</h3>
+<pre class="programlisting">typedef struct _GstMpeg2enc GstMpeg2enc;</pre>
 <p>
 </p>
 </div>
@@ -291,7 +278,7 @@ for PAL <a class="link" href="gst-plugins-bad-plugins-mpeg2enc.html#GstMpeg2enc-
 <a name="GstMpeg2enc--max-gop-size"></a><h3>The <code class="literal">"max-gop-size"</code> property</h3>
 <pre class="programlisting">  "max-gop-size"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Maximal size per Group-of-Pictures (-1=default).</p>
-<p>Allowed values: [-1,250]</p>
+<p>Allowed values: [G_MAXULONG,250]</p>
 <p>Default value: -1</p>
 </div>
 <hr>
@@ -299,7 +286,7 @@ for PAL <a class="link" href="gst-plugins-bad-plugins-mpeg2enc.html#GstMpeg2enc-
 <a name="GstMpeg2enc--min-gop-size"></a><h3>The <code class="literal">"min-gop-size"</code> property</h3>
 <pre class="programlisting">  "min-gop-size"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Minimal size per Group-of-Pictures (-1=default).</p>
-<p>Allowed values: [-1,250]</p>
+<p>Allowed values: [G_MAXULONG,250]</p>
 <p>Default value: -1</p>
 </div>
 <hr>
@@ -359,7 +346,7 @@ for PAL <a class="link" href="gst-plugins-bad-plugins-mpeg2enc.html#GstMpeg2enc-
 <a name="GstMpeg2enc--quantisation"></a><h3>The <code class="literal">"quantisation"</code> property</h3>
 <pre class="programlisting">  "quantisation"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Quantisation factor (-1=cbr, 0=default, 1=best, 31=worst).</p>
-<p>Allowed values: [-1,31]</p>
+<p>Allowed values: [G_MAXULONG,31]</p>
 <p>Default value: 0</p>
 </div>
 <hr>
@@ -433,6 +420,6 @@ mpeg2dec
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.13</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

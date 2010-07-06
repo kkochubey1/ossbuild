@@ -27,6 +27,8 @@
 #include <string.h>
 #include <gst/gst.h>
 
+#include "parsechannels.h"
+
 /* this will do zap style channels.conf only for the moment*/
 GHashTable *
 parse_channels_conf_from_file (const gchar * filename)
@@ -35,14 +37,14 @@ parse_channels_conf_from_file (const gchar * filename)
   gchar **lines;
   gchar *line;
   gchar **fields;
-  gchar *terrestrial[] = { "inversion", "bandwidth",
+  const gchar *terrestrial[] = { "inversion", "bandwidth",
     "code-rate-hp", "code-rate-lp", "modulation", "transmission-mode",
     "guard", "hierarchy"
   };
-  gchar *satellite[] = { "polarity", "diseqc-source",
+  const gchar *satellite[] = { "polarity", "diseqc-source",
     "symbol-rate"
   };
-  gchar *cable[] = { "inversion", "symbol-rate", "code-rate-hp",
+  const gchar *cable[] = { "inversion", "symbol-rate", "code-rate-hp",
     "modulation"
   };
   int i;
