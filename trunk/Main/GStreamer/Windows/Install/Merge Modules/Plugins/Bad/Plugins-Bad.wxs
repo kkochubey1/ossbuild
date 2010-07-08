@@ -60,6 +60,7 @@
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstvideomeasure\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstvideosignal\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstvmnc\.dll" />
+				<OSSBuild:Filter Include=".*\\[^\\]*.*gstvp8\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstwasapi\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstwininet\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstwinks\.dll" />
