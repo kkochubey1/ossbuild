@@ -6,10 +6,13 @@ set MY_TOOLSDIR=%MY_TOPDIR%\Tools
 set MY_SHAREDDIR=%MY_TOPDIR%\Shared
 set MY_SHAREDBINDIR=%MY_SHAREDDIR%\Build\Windows\Win32\bin
 
-set MY_PYTHON_VERSION=Python26
-set MY_PYTHON_INSTALL_DIR=C:\%MY_PYTHON_VERSION%
+set MY_PYTHON_ROOT=%SystemDrive%
+set MY_PYTHON_VERSION=Python25
+if not exist "%MY_PYTHON_ROOT%\%MY_PYTHON_VERSION%" set MY_PYTHON_VERSION=Python26
+if not exist "%MY_PYTHON_ROOT%\%MY_PYTHON_VERSION%" set MY_PYTHON_VERSION=Python27
+if not exist "%MY_PYTHON_ROOT%\%MY_PYTHON_VERSION%" set MY_PYTHON_VERSION=Python31
+set MY_PYTHON_INSTALL_DIR=%MY_PYTHON_ROOT%\%MY_PYTHON_VERSION%
 set MY_PYTHON=%MY_PYTHON_INSTALL_DIR%\python.exe
-
 set MY_SED=sed.exe
 
 set PATH=%MY_SHAREDBINDIR%;%MY_TOOLSDIR%;%MY_PYTHON_INSTALL_DIR%;%PATH%
@@ -28,6 +31,7 @@ if %ERRORLEVEL% neq 0 (
 	echo Unable to produce %MY_PREFIX%.c
 	echo You are missing python. The script was unable to generate python-related files.
 	echo If you do not need to generate the python files from scratch, then you're okay.
+	echo The final attempted path to look for python was: %MY_PYTHON_INSTALL_DIR%
 	goto end
 )
 
