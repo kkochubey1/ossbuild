@@ -289,18 +289,30 @@
 	<References>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E50}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{EB5D7598-7014-42D3-886C-9B9EC38167C3}"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Farsight2\gst-libs\libgstfarsight.vcproj"
-		/>
-		<ProjectReference
-			ReferencedProjectIdentifier="{6D935778-C3CD-4A93-9434-58CBCF2D85DB}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstfarsight.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F07}"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstnetbuffer.vcproj"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstnetbuffer.vcproj"
 		/>
 	</References>
 	<Files>
