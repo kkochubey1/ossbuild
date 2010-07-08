@@ -3,9 +3,10 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="LibVpx"
+	InheritedPropertySheets="..\SDKs\MinGW.vsprops"
 	>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="vpx.lib"
+		AdditionalDependencies="libvpx.a"
 	/>
 </VisualStudioPropertySheet>
