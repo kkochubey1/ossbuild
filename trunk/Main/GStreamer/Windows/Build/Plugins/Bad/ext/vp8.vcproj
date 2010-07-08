@@ -236,7 +236,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)Main\GStreamer\Source\gst-plugins-bad\ext\vp8&quot;"
-				PreprocessorDefinitions="GST_USE_UNSTABLE_API"
+				PreprocessorDefinitions="GST_USE_UNSTABLE_API;HAVE_VP8_ENCODER;HAVE_VP8_DECODER"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -318,6 +318,10 @@
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F13}"
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstvideo.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F05}"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgsttag.vcproj"
 		/>
 	</References>
 	<Files>
