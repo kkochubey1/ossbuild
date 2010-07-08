@@ -705,6 +705,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\rtp\gstrtpmparobustdepay.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\rtp\gstrtpmparobustdepay.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\rtp\gstrtpmpvdepay.c"
 			>
 		</File>
@@ -750,6 +758,14 @@
 		</File>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\rtp\gstrtppcmupay.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\rtp\gstrtpqcelpdepay.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\rtp\gstrtpqcelpdepay.h"
 			>
 		</File>
 		<File
