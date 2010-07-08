@@ -136,6 +136,42 @@ gst_photo_shake_risk_get_type (void)
   }
   return etype;
 }
+GType
+gst_flicker_reduction_mode_get_type (void)
+{
+  static GType etype = 0;
+  if (etype == 0) {
+    static const GEnumValue values[] = {
+      { GST_PHOTOGRAPHY_FLICKER_REDUCTION_OFF, "GST_PHOTOGRAPHY_FLICKER_REDUCTION_OFF", "off" },
+      { GST_PHOTOGRAPHY_FLICKER_REDUCTION_50HZ, "GST_PHOTOGRAPHY_FLICKER_REDUCTION_50HZ", "50hz" },
+      { GST_PHOTOGRAPHY_FLICKER_REDUCTION_60HZ, "GST_PHOTOGRAPHY_FLICKER_REDUCTION_60HZ", "60hz" },
+      { GST_PHOTOGRAPHY_FLICKER_REDUCTION_AUTO, "GST_PHOTOGRAPHY_FLICKER_REDUCTION_AUTO", "auto" },
+      { 0, NULL, NULL }
+    };
+    etype = g_enum_register_static ("GstFlickerReductionMode", values);
+  }
+  return etype;
+}
+GType
+gst_focus_mode_get_type (void)
+{
+  static GType etype = 0;
+  if (etype == 0) {
+    static const GEnumValue values[] = {
+      { GST_PHOTOGRAPHY_FOCUS_MODE_AUTO, "GST_PHOTOGRAPHY_FOCUS_MODE_AUTO", "auto" },
+      { GST_PHOTOGRAPHY_FOCUS_MODE_MACRO, "GST_PHOTOGRAPHY_FOCUS_MODE_MACRO", "macro" },
+      { GST_PHOTOGRAPHY_FOCUS_MODE_PORTRAIT, "GST_PHOTOGRAPHY_FOCUS_MODE_PORTRAIT", "portrait" },
+      { GST_PHOTOGRAPHY_FOCUS_MODE_INFINITY, "GST_PHOTOGRAPHY_FOCUS_MODE_INFINITY", "infinity" },
+      { GST_PHOTOGRAPHY_FOCUS_MODE_HYPERFOCAL, "GST_PHOTOGRAPHY_FOCUS_MODE_HYPERFOCAL", "hyperfocal" },
+      { GST_PHOTOGRAPHY_FOCUS_MODE_EXTENDED, "GST_PHOTOGRAPHY_FOCUS_MODE_EXTENDED", "extended" },
+      { GST_PHOTOGRAPHY_FOCUS_MODE_CONTINUOUS_NORMAL, "GST_PHOTOGRAPHY_FOCUS_MODE_CONTINUOUS_NORMAL", "continuous-normal" },
+      { GST_PHOTOGRAPHY_FOCUS_MODE_CONTINUOUS_EXTENDED, "GST_PHOTOGRAPHY_FOCUS_MODE_CONTINUOUS_EXTENDED", "continuous-extended" },
+      { 0, NULL, NULL }
+    };
+    etype = g_enum_register_static ("GstFocusMode", values);
+  }
+  return etype;
+}
 
 
 

@@ -23,6 +23,10 @@ GType gst_photo_caps_get_type (void);
 #define GST_TYPE_PHOTO_CAPS (gst_photo_caps_get_type())
 GType gst_photo_shake_risk_get_type (void);
 #define GST_TYPE_PHOTO_SHAKE_RISK (gst_photo_shake_risk_get_type())
+GType gst_flicker_reduction_mode_get_type (void);
+#define GST_TYPE_FLICKER_REDUCTION_MODE (gst_flicker_reduction_mode_get_type())
+GType gst_focus_mode_get_type (void);
+#define GST_TYPE_FOCUS_MODE (gst_focus_mode_get_type())
 G_END_DECLS
 
 #endif /* __GST_PHOTOGRAPHY_ENUM_TYPES_H__ */
