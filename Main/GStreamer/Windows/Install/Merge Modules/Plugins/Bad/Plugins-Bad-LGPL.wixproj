@@ -107,6 +107,13 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\ext\vp8.vcproj">
+      <Name>gstvp8</Name>
+      <Project>{e87b4644-9208-4159-9561-862e8c1677b1}</Project>
+      <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst-libs\libgstphotography.vcproj">
       <Name>gstphotography</Name>
       <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff2000}</Project>
