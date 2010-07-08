@@ -187,7 +187,7 @@
 #undef PACKAGE_TARNAME
 
 /* Define to the version of this package. */
-#undef PACKAGE_VERSION
+#define PACKAGE_VERSION "0.10.19"
 
 /* directory where plugins are located */
 #define PLUGINDIR PREFIX "\\lib\\gstreamer-0.10"
