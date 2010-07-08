@@ -23,3 +23,8 @@ EXPORTS
 	gst_photography_set_autofocus
 	gst_photography_set_config
 	gst_photography_get_config
+	gst_photography_set_focus_mode
+	gst_photography_get_focus_mode
+	gst_photography_set_flicker_mode
+	gst_photography_get_flicker_mode
+	
