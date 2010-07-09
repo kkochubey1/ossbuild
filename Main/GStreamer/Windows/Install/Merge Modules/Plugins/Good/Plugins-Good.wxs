@@ -34,6 +34,7 @@
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gsticydemux\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstid3demux\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstinterleave\.dll" />
+					<OSSBuild:Filter Include=".*\\[^\\]*.*gstimagefreeze\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstjpeg\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstlevel\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstmatroska\.dll" />
