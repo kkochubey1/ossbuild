@@ -158,25 +158,6 @@ if [ ! -f "$BinDir/lib${Prefix}oil-0.3-0.dll" ]; then
 	reset_flags
 fi
 
-#orc (oil runtime compiler)
-if [ ! -f "$BinDir/lib${Prefix}orc-0.4-0.dll" ]; then
-	unpack_gzip_and_move "orc.tar.gz" "$PKG_DIR_ORC"
-	mkdir "$IntDir/orc"
-
-	cd $PKG_DIR
-	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/orc/use_pthreads.patch"
-	autoconf	
-
-	cd "$IntDir/orc"
-	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir LDFLAGS="$LDFLAGS -lpthread"
-
-	make -j3 && make install
-	
-	$MSLIB /name:lib${Prefix}orc-0.4-0.dll /out:orc-0.4.lib /machine:$MSLibMachine /def:orc/.libs/lib${Prefix}orc-0.4-0.dll.def
-	$MSLIB /name:lib${Prefix}orc-test-0.4-0.dll /out:orc-test-0.4.lib /machine:$MSLibMachine /def:orc-test/.libs/lib${Prefix}orc-test-0.4-0.dll.def
-	move_files_to_dir "*.exp *.lib" "$LibDir"
-fi
-
 #pthreads
 PthreadsPrefix=lib${Prefix}
 if [ "${Prefix}" = "" ]; then
@@ -203,6 +184,25 @@ if [ ! -f "$BinDir/${PthreadsPrefix}pthreadGC2.dll" ]; then
 	rm -f "$LibDir/libpthreadGC2.a"
 	
 	generate_libtool_la_windows "libpthreadGC2.la" "${PthreadsPrefix}pthreadGC2.dll" "libpthreadGC2.dll.a"
+fi
+
+#orc (oil runtime compiler)
+if [ ! -f "$BinDir/lib${Prefix}orc-0.4-0.dll" ]; then
+	unpack_gzip_and_move "orc.tar.gz" "$PKG_DIR_ORC"
+	mkdir "$IntDir/orc"
+
+	cd $PKG_DIR
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/orc/use_pthreads.patch"
+	autoconf
+
+	cd "$IntDir/orc"
+	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir LDFLAGS="$LDFLAGS -lpthread" CPPFLAGS="-D_TIMESPEC_DEFINED"
+
+	make -j3 && make install
+	
+	$MSLIB /name:lib${Prefix}orc-0.4-0.dll /out:orc-0.4.lib /machine:$MSLibMachine /def:orc/.libs/lib${Prefix}orc-0.4-0.dll.def
+	$MSLIB /name:lib${Prefix}orc-test-0.4-0.dll /out:orc-test-0.4.lib /machine:$MSLibMachine /def:orc-test/.libs/lib${Prefix}orc-test-0.4-0.dll.def
+	move_files_to_dir "*.exp *.lib" "$LibDir"
 fi
 
 #libiconv

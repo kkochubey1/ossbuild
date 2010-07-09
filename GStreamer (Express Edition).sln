@@ -636,6 +636,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstopengl", "Main\GStreamer
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstvp8", "Main\GStreamer\Windows\Build\Plugins\Bad\ext\vp8.vcproj", "{E87B4644-9208-4159-9561-862E8C1677B1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstimagefreeze", "Main\GStreamer\Windows\Build\Plugins\Good\gst\imagefreeze.vcproj", "{C64101B3-2E61-4033-A16C-D4A8676B9A54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release (All)|Win32 = Release (All)|Win32
@@ -1909,6 +1911,12 @@ Global
 		{E87B4644-9208-4159-9561-862E8C1677B1}.Release (GPL)|Win32.Build.0 = Release|Win32
 		{E87B4644-9208-4159-9561-862E8C1677B1}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
 		{E87B4644-9208-4159-9561-862E8C1677B1}.Release (LGPL)|Win32.Build.0 = Release|Win32
+		{C64101B3-2E61-4033-A16C-D4A8676B9A54}.Release (All)|Win32.ActiveCfg = Release|Win32
+		{C64101B3-2E61-4033-A16C-D4A8676B9A54}.Release (All)|Win32.Build.0 = Release|Win32
+		{C64101B3-2E61-4033-A16C-D4A8676B9A54}.Release (GPL)|Win32.ActiveCfg = Release|Win32
+		{C64101B3-2E61-4033-A16C-D4A8676B9A54}.Release (GPL)|Win32.Build.0 = Release|Win32
+		{C64101B3-2E61-4033-A16C-D4A8676B9A54}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
+		{C64101B3-2E61-4033-A16C-D4A8676B9A54}.Release (LGPL)|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
