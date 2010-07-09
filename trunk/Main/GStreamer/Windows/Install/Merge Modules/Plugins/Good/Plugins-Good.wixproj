@@ -105,6 +105,13 @@
       <Project>{b9551c49-79e6-493b-8d1f-653faec7adcd}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\imagefreeze.vcproj">
+      <Name>gstimagefreeze</Name>
+      <Project>{c64101b3-2e61-4033-a16c-d4a8676b9a54}</Project>
+      <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Good\gst\libgstalaw.vcproj">
       <Name>gstalaw</Name>
       <Project>{ab87873b-2b88-4b1b-b627-f70df4f92a19}</Project>

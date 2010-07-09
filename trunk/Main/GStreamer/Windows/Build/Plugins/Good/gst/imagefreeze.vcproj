@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="gstdebug"
-	ProjectGUID="{AB87873B-2B88-4B1B-B627-F70DF4F92A10}"
-	RootNamespace="libgstdebug"
+	Name="gstimagefreeze"
+	ProjectGUID="{C64101B3-2E61-4033-A16C-D4A8676B9A54}"
+	RootNamespace="libgstimagefreeze"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -120,6 +120,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="gstaudio.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft Visual Studio .NET 2003\Vc7\crt\src\intel\dll_lib&quot;"
 				GenerateDebugInformation="true"
@@ -285,15 +286,6 @@
 	</Configurations>
 	<References>
 		<ProjectReference
-			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E49}"
-			CopyLocal="false"
-			CopyLocalDependencies="false"
-			UseInBuild="false"
-			UseDependenciesInBuild="false"
-			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstreamer.vcproj"
-		/>
-		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E50}"
 			CopyLocal="false"
 			CopyLocalDependencies="false"
@@ -305,67 +297,11 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\breakmydata.c"
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\imagefreeze\gstimagefreeze.c"
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gstcapssetter.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gstcapssetter.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gstdebug.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gstnavseek.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gstnavseek.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gstpushfilesrc.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gstpushfilesrc.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gsttaginject.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gsttaginject.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\progressreport.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\progressreport.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\rndbuffersize.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\testplugin.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\tests.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\tests.h"
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\imagefreeze\gstimagefreeze.h"
 			>
 		</File>
 	</Files>
