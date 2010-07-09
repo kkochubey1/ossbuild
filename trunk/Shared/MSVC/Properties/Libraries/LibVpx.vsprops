@@ -11,6 +11,6 @@
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="vpx.lib"
+		AdditionalDependencies="libvpx.a"
 	/>
 </VisualStudioPropertySheet>
