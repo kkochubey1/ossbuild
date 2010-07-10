@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="video"
-	ProjectGUID="{39C85775-F04E-415A-ADE9-89B10D85F5D0}"
-	RootNamespace="video"
+	Name="gstd3dvideosink"
+	ProjectGUID="{EB0CC982-3411-4ED1-A28C-F386749D1644}"
+	RootNamespace="libgstd3dvideosink"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -15,14 +15,14 @@
 	</Platforms>
 	<ToolFiles>
 		<ToolFile
-			RelativePath="..\..\..\..\..\..\Common.rules"
+			RelativePath="..\..\..\..\..\..\..\Common.rules"
 		/>
 	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Debug.vsprops;..\..\..\Properties\gstreamer-python-2.5-bindings.vsprops"
+			InheritedPropertySheets="..\..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Debug.vsprops;..\..\..\..\..\..\..\Shared\MSVC\Properties\SDKs\Direct3D.vsprops;..\..\..\..\Properties\gstreamer-plugin-bad.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -102,6 +102,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories=""
+				PreprocessorDefinitions="UNICODE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -120,11 +121,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/ignore:4099"
+				AdditionalDependencies="gstinterfaces.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				ModuleDefinitionFile="video.def"
-				AddModuleNamesToAssembly=""
-				GenerateDebugInformation="false"
+				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -156,7 +157,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\Properties\gstreamer-python-2.5-bindings.vsprops"
+			InheritedPropertySheets="..\..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\..\..\..\..\Shared\MSVC\Properties\SDKs\Direct3D.vsprops;..\..\..\..\Properties\gstreamer-plugin-bad.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -235,7 +236,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="&quot;..\..\Source\gst-python\gst&quot;"
+				AdditionalIncludeDirectories=""
+				PreprocessorDefinitions="UNICODE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -252,11 +254,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalOptions="/ignore:4099"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
-				ModuleDefinitionFile="video.def"
-				AddModuleNamesToAssembly=""
-				GenerateDebugInformation="false"
+				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -290,15 +291,6 @@
 	</Configurations>
 	<References>
 		<ProjectReference
-			ReferencedProjectIdentifier="{A01C663D-CFBB-4444-A4C1-7D8F91E76F59}"
-			CopyLocal="false"
-			CopyLocalDependencies="false"
-			UseInBuild="false"
-			UseDependenciesInBuild="false"
-			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Bindings\Python\_gst-2.5.vcproj"
-		/>
-		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E50}"
 			CopyLocal="false"
 			CopyLocalDependencies="false"
@@ -306,6 +298,15 @@
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F02}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstinterfaces.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F13}"
@@ -318,34 +319,14 @@
 		/>
 	</References>
 	<Files>
-		<Filter
-			Name="Headers Files"
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\sys\d3dvideosink\d3dvideosink.cpp"
 			>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\common.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Sources Files"
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\sys\d3dvideosink\d3dvideosink.h"
 			>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\gst-argtypes.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\videomodule.c"
-				>
-			</File>
-			<Filter
-				Name="Generated"
-				>
-				<File
-					RelativePath="..\..\..\Generated\gst-python\video.c"
-					>
-				</File>
-			</Filter>
-		</Filter>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
