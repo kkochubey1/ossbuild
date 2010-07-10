@@ -787,7 +787,7 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
   }
 
   if (!sink->d3ddev) {
-    return GST_FLOW_ERROR;
+    return GST_FLOW_RESEND;
   }
 
   //RECT srcRect;
@@ -821,7 +821,7 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
         case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
           /* Nice and simple */
           int srcstride = GST_ROUND_UP_4 (sink->width * 2);
-          int dststride = lr.Pitch * 2;
+          int dststride = lr.Pitch;
 
           for (int i = 0; i < sink->height; i++) {
             memcpy (dest + dststride * i, source + srcstride * i, srcstride);
@@ -837,6 +837,8 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
 
   sink->d3ddev->EndScene();
   sink->d3ddev->Present(NULL, NULL, NULL, NULL);
+
+  //gst_buffer_unref(buffer);
   
 
   GST_DEBUG("SHOWING FRAME");
