@@ -94,8 +94,7 @@ static gboolean
 gst_d3dvideosink_interface_supported (GstImplementsInterface * iface,
     GType type)
 {
-  g_assert (type == GST_TYPE_X_OVERLAY);
-  return TRUE;
+  return (type == GST_TYPE_X_OVERLAY);
 }
 
 static void
@@ -118,13 +117,13 @@ gst_d3dvideosink_init_interfaces (GType type)
   static const GInterfaceInfo iface_info = {
     (GInterfaceInitFunc) gst_d3dvideosink_interface_init,
     NULL,
-    NULL,
+    NULL
   };
 
   static const GInterfaceInfo xoverlay_info = {
     (GInterfaceInitFunc) gst_d3dvideosink_xoverlay_interface_init,
     NULL,
-    NULL,
+    NULL
   };
 
   g_type_add_interface_static (type, GST_TYPE_IMPLEMENTS_INTERFACE,
@@ -162,10 +161,8 @@ gst_d3dvideosink_class_init (GstD3DVideoSinkClass * klass)
   gstvideosink_class = (GstVideoSinkClass *) klass;
 
   gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_d3dvideosink_finalize);
-  gobject_class->set_property =
-      GST_DEBUG_FUNCPTR (gst_d3dvideosink_set_property);
-  gobject_class->get_property =
-      GST_DEBUG_FUNCPTR (gst_d3dvideosink_get_property);
+  gobject_class->set_property = GST_DEBUG_FUNCPTR (gst_d3dvideosink_set_property);
+  gobject_class->get_property = GST_DEBUG_FUNCPTR (gst_d3dvideosink_get_property);
 
   gstelement_class->change_state = GST_DEBUG_FUNCPTR (gst_d3dvideosink_change_state);
 
@@ -174,8 +171,7 @@ gst_d3dvideosink_class_init (GstD3DVideoSinkClass * klass)
   gstbasesink_class->start = GST_DEBUG_FUNCPTR (gst_d3dvideosink_start);
   gstbasesink_class->stop = GST_DEBUG_FUNCPTR (gst_d3dvideosink_stop);
   gstbasesink_class->unlock = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock);
-  gstbasesink_class->unlock_stop =
-      GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock_stop);
+  gstbasesink_class->unlock_stop = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock_stop);
 
   gstvideosink_class->show_frame = GST_DEBUG_FUNCPTR (gst_d3dvideosink_show_frame);
 
@@ -208,6 +204,12 @@ gst_d3dvideosink_init (GstD3DVideoSink * sink, GstD3DVideoSinkClass * klass)
 {
   gst_d3dvideosink_clear (sink);
 
+  sink->d3d_lock = g_mutex_new();
+  sink->video_lock = g_mutex_new();
+  sink->device_lock = g_mutex_new();
+  sink->surface_lock = g_mutex_new();
+  sink->backbuffer_lock = g_mutex_new();
+
   /* TODO: Copied from GstVideoSink; should we use that as base class? */
   /* 20ms is more than enough, 80-130ms is noticable */
   gst_base_sink_set_max_lateness (GST_BASE_SINK (sink), 20 * GST_MSECOND);
@@ -218,6 +220,29 @@ static void
 gst_d3dvideosink_finalize (GObject * gobject)
 {
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (gobject);
+
+  if (sink->is_new_window)
+    g_thread_join(sink->window_thread);
+
+  if (sink->caps)
+    gst_caps_unref(sink->caps);
+  sink->caps = NULL;
+
+  g_mutex_free (sink->backbuffer_lock);
+  sink->backbuffer_lock = NULL;
+
+  g_mutex_free (sink->surface_lock);
+  sink->surface_lock = NULL;
+
+  g_mutex_free (sink->device_lock);
+  sink->device_lock = NULL;
+
+  g_mutex_free (sink->video_lock);
+  sink->video_lock = NULL;
+
+  g_mutex_free (sink->d3d_lock);
+  sink->d3d_lock = NULL;
+
   G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
 
@@ -262,8 +287,23 @@ gst_d3dvideosink_get_property (GObject * object, guint prop_id,
 static GstCaps *
 gst_d3dvideosink_get_caps (GstBaseSink * basesink)
 {
-  GstD3DVideoSink *sink = GST_D3DVIDEOSINK (basesink);
-  return sink->caps;
+  //GstD3DVideoSink *sink = GST_D3DVIDEOSINK (basesink);
+  //if (!sink)
+  //  return NULL;
+  //return sink->caps;
+  return NULL;
+}
+
+static void 
+gst_d3dvideosink_close_window (GstD3DVideoSink * sink) 
+{
+  if (!sink || !sink->is_new_window || !sink->window_id)
+    return;
+
+  SendMessage (sink->window_id, WM_CLOSE, NULL, NULL);
+  g_thread_join(sink->window_thread);
+  sink->is_new_window = FALSE;
+  sink->window_id = NULL;
 }
 
 /* WNDPROC for application-supplied windows */
@@ -273,7 +313,15 @@ LRESULT APIENTRY WndProcHook (HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
    * Then forward back to the original window.
    */
   GstD3DVideoSink *sink = (GstD3DVideoSink *)GetProp (hWnd, L"GstD3DVideoSink");
+  
+  /* Check it */
   gst_d3dvideosink_wnd_proc (sink, hWnd, message, wParam, lParam);
+
+  switch (message) 
+  {
+    case WM_ERASEBKGND:
+      return TRUE;
+  }
   return CallWindowProc (sink->prevWndProc, hWnd, message, wParam, lParam);
 }
 
@@ -283,9 +331,9 @@ WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
   if (message == WM_CREATE) 
   {
-    GstD3DVideoSink *sink = (GstD3DVideoSink *)lParam;
-
-    /* lParam holds the parameter used when creating the window. */
+    /* lParam holds a pointer to a CREATESTRUCT instance which in turn holds the parameter used when creating the window. */
+    GstD3DVideoSink *sink = (GstD3DVideoSink *)((LPCREATESTRUCT)lParam)->lpCreateParams;
+    
     /* In our case, this is a pointer to the sink. So we immediately attach it for use in subsequent calls. */
     SetWindowLongPtr (hWnd, GWLP_USERDATA, (LONG)sink);
 
@@ -298,6 +346,9 @@ WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
   switch (message) 
   {
+    case WM_ERASEBKGND:
+      return TRUE;
+
     case WM_DESTROY:
       {
         PostQuitMessage(0);
@@ -313,10 +364,17 @@ gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM
 {
   switch (message) 
   {
+    case WM_PAINT:
+      {
+        GST_DEBUG("PAINTING");
+        gst_d3dvideosink_update(GST_BASE_SINK(sink));
+        break;
+      }
     case WM_CLOSE:
     case WM_DESTROY:
       {
         sink->window_closed = TRUE;
+        break;
       }
   }
 }
@@ -431,12 +489,16 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
       goto destroy_window;
   }
 
+  GST_D3DVIDEOSINK_D3D_LOCK(sink);
+
   sink->d3d = Direct3DCreate9(D3D_SDK_VERSION);
 
   if (FAILED(sink->d3d->CheckDeviceFormatConversion(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, sink->d3dfourcc, sink->d3dformat))) {
     /* Prevent memory leak */
     sink->d3d->Release();
     sink->d3d = NULL;
+
+    GST_D3DVIDEOSINK_D3D_UNLOCK(sink);
 
     GST_WARNING ("Failed to find compatible Direct3D format");
     goto destroy_window;
@@ -469,6 +531,8 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
   d3dpp.EnableAutoDepthStencil = sink->d3dEnableAutoDepthStencil;
   d3dpp.AutoDepthStencilFormat = sink->d3dstencilformat;
 
+  GST_D3DVIDEOSINK_DEVICE_LOCK(sink);
+
   if (FAILED(sink->d3d->CreateDevice(
     D3DADAPTER_DEFAULT, 
     D3DDEVTYPE_HAL, 
@@ -481,6 +545,9 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
     sink->d3d->Release();
     sink->d3d = NULL;
 
+    GST_D3DVIDEOSINK_DEVICE_UNLOCK(sink);
+    GST_D3DVIDEOSINK_D3D_UNLOCK(sink);
+
     GST_WARNING ("Unable to create Direct3D device");
     goto destroy_window;
   }
@@ -492,15 +559,26 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
     sink->d3d->Release();
     sink->d3d = NULL;
 
+    GST_D3DVIDEOSINK_DEVICE_UNLOCK(sink);
+    GST_D3DVIDEOSINK_D3D_UNLOCK(sink);
+
     GST_WARNING ("Unable to retrieve Direct3D device caps");
     goto destroy_window;
   }
 
   //Create offscreen plain surface
+  GST_D3DVIDEOSINK_SURFACE_LOCK(sink);
   sink->d3ddev->CreateOffscreenPlainSurface(sink->width, sink->height, sink->d3dfourcc, D3DPOOL_DEFAULT, &sink->d3dsurface, NULL);
 
   //Get a pointer to the backbuffer
+  GST_D3DVIDEOSINK_BACKBUFFER_LOCK(sink);
   sink->d3ddev->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &sink->d3dbackbuffer);
+  
+  //At this point we have a valid d3d objects
+  GST_D3DVIDEOSINK_BACKBUFFER_UNLOCK(sink);
+  GST_D3DVIDEOSINK_SURFACE_UNLOCK(sink);
+  GST_D3DVIDEOSINK_DEVICE_UNLOCK(sink);
+  GST_D3DVIDEOSINK_D3D_UNLOCK(sink);
 
   /* Now show the window, as appropriate */
   if (sink->full_screen) {
@@ -525,11 +603,14 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
       DispatchMessage(&msg);
     }
     
-    if(msg.message == WM_QUIT)
+    if(msg.message == WM_QUIT || msg.message == WM_CLOSE)
       break;
-    
-    gst_d3dvideosink_update(GST_BASE_SINK(sink));
   }
+
+  GST_D3DVIDEOSINK_D3D_LOCK(sink);
+  GST_D3DVIDEOSINK_DEVICE_LOCK(sink);
+  GST_D3DVIDEOSINK_SURFACE_LOCK(sink);
+  GST_D3DVIDEOSINK_BACKBUFFER_LOCK(sink);
 
   sink->d3dbackbuffer->Release();
   sink->d3dbackbuffer = NULL;
@@ -542,6 +623,11 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
 
   sink->d3d->Release();
   sink->d3d = NULL;
+
+  GST_D3DVIDEOSINK_BACKBUFFER_UNLOCK(sink);
+  GST_D3DVIDEOSINK_SURFACE_UNLOCK(sink);
+  GST_D3DVIDEOSINK_DEVICE_UNLOCK(sink);
+  GST_D3DVIDEOSINK_D3D_UNLOCK(sink);
 
   UnregisterClass(WndClass.lpszClassName, WndClass.hInstance);
   return NULL;
@@ -658,6 +744,7 @@ gst_d3dvideosink_change_state (GstElement * element, GstStateChange transition)
     case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
       break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
+      gst_d3dvideosink_stop (GST_BASE_SINK_CAST(sink));
       break;
     case GST_STATE_CHANGE_READY_TO_NULL:
       gst_d3dvideosink_clear (sink);
@@ -689,7 +776,12 @@ gst_d3dvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
   gint targetHeight;
 
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (bsink);
+
+  /* If this was set before, then unref it */
+  if (sink->caps)
+    gst_caps_unref(sink->caps);
   gst_caps_ref(caps);
+
   sink->caps = caps;
 
   /* Do what you must here to convert caps into something Direct3D can use */
@@ -764,13 +856,7 @@ static gboolean
 gst_d3dvideosink_stop (GstBaseSink * bsink)
 {
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (bsink);
-
-  if (sink->is_new_window) {
-    SendMessage (sink->window_id, WM_CLOSE, NULL, NULL);
-    while (!sink->window_closed);
-    sink->is_new_window = FALSE;
-  }
-
+  gst_d3dvideosink_close_window(sink);
   return TRUE;
 }
 
@@ -786,8 +872,10 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
     return GST_FLOW_ERROR;
   }
 
+  GST_D3DVIDEOSINK_DEVICE_LOCK(sink);
+
   if (!sink->d3ddev) {
-    return GST_FLOW_RESEND;
+    return GST_FLOW_ERROR;
   }
 
   //RECT srcRect;
@@ -810,8 +898,6 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
 
     sink->d3dsurface->LockRect(&lr, NULL, 0);
     guint8 *dest = (guint8 *)lr.pBits;
-
-    GST_DEBUG("DEST BUFFER: %d", dest);
 
     if (dest) {
       switch(sink->fourcc) 
@@ -837,29 +923,8 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
 
   sink->d3ddev->EndScene();
   sink->d3ddev->Present(NULL, NULL, NULL, NULL);
-
-  //gst_buffer_unref(buffer);
   
-
-  GST_DEBUG("SHOWING FRAME");
-
-
-
-  //GST_DEBUG_OBJECT (sink, "Pushing buffer through fakesrc->renderer");
-  //GST_D3DVIDEOSINK_GRAPH_LOCK(sink);
-  //if (!sink->graph_running){
-  //  retst = gst_d3dvideosink_start_graph(sink);
-  //  if (retst == GST_STATE_CHANGE_FAILURE)
-  //    return GST_FLOW_WRONG_STATE;
-  //}
-  //ret = sink->fakesrc->GetOutputPin()->PushBuffer (buffer);
-  //if (!sink->graph_running){
-  //  retst = gst_d3dvideosink_pause_graph(sink);
-  //  if (retst == GST_STATE_CHANGE_FAILURE)
-  //    return GST_FLOW_WRONG_STATE;
-  //}
-  //GST_D3DVIDEOSINK_GRAPH_UNLOCK(sink);
-  //GST_DEBUG_OBJECT (sink, "Done pushing buffer through fakesrc->renderer: %s", gst_flow_get_name(ret));
+  GST_D3DVIDEOSINK_DEVICE_UNLOCK(sink);
 
   return GST_FLOW_OK;
 }

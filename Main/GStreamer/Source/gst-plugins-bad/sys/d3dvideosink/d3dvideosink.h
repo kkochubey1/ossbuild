@@ -29,13 +29,28 @@
 #pragma warning( disable : 4090 4024)
 
 G_BEGIN_DECLS
-#define GST_TYPE_D3DVIDEOSINK                (gst_d3dvideosink_get_type())
-#define GST_D3DVIDEOSINK(obj)                (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_D3DVIDEOSINK,GstD3DVideoSink))
-#define GST_D3DVIDEOSINK_CLASS(klass)        (G_TYPE_CHECK_CLASS_CAST((klass),GST_TYPE_D3DVIDEOSINK,GstD3DVideoSinkClass))
-#define GST_IS_D3DVIDEOSINK(obj)             (G_TYPE_CHECK_INSTANCE_TYPE((obj),GST_TYPE_D3DVIDEOSINK))
-#define GST_IS_D3DVIDEOSINK_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_D3DVIDEOSINK))
+#define GST_TYPE_D3DVIDEOSINK                     (gst_d3dvideosink_get_type())
+#define GST_D3DVIDEOSINK(obj)                     (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_D3DVIDEOSINK,GstD3DVideoSink))
+#define GST_D3DVIDEOSINK_CLASS(klass)             (G_TYPE_CHECK_CLASS_CAST((klass),GST_TYPE_D3DVIDEOSINK,GstD3DVideoSinkClass))
+#define GST_IS_D3DVIDEOSINK(obj)                  (G_TYPE_CHECK_INSTANCE_TYPE((obj),GST_TYPE_D3DVIDEOSINK))
+#define GST_IS_D3DVIDEOSINK_CLASS(klass)          (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_D3DVIDEOSINK))
 typedef struct _GstD3DVideoSink GstD3DVideoSink;
 typedef struct _GstD3DVideoSinkClass GstD3DVideoSinkClass;
+
+#define GST_D3DVIDEOSINK_D3D_LOCK(sink)	          g_mutex_lock (GST_D3DVIDEOSINK (sink)->d3d_lock)
+#define GST_D3DVIDEOSINK_D3D_UNLOCK(sink)         g_mutex_unlock (GST_D3DVIDEOSINK (sink)->d3d_lock)
+
+#define GST_D3DVIDEOSINK_VIDEO_LOCK(sink)	        g_mutex_lock (GST_D3DVIDEOSINK (sink)->video_lock)
+#define GST_D3DVIDEOSINK_VIDEO_UNLOCK(sink)       g_mutex_unlock (GST_D3DVIDEOSINK (sink)->video_lock)
+
+#define GST_D3DVIDEOSINK_DEVICE_LOCK(sink)	      g_mutex_lock (GST_D3DVIDEOSINK (sink)->device_lock)
+#define GST_D3DVIDEOSINK_DEVICE_UNLOCK(sink)      g_mutex_unlock (GST_D3DVIDEOSINK (sink)->device_lock)
+
+#define GST_D3DVIDEOSINK_SURFACE_LOCK(sink)	      g_mutex_lock (GST_D3DVIDEOSINK (sink)->surface_lock)
+#define GST_D3DVIDEOSINK_SURFACE_UNLOCK(sink)     g_mutex_unlock (GST_D3DVIDEOSINK (sink)->surface_lock)
+
+#define GST_D3DVIDEOSINK_BACKBUFFER_LOCK(sink)	  g_mutex_lock (GST_D3DVIDEOSINK (sink)->backbuffer_lock)
+#define GST_D3DVIDEOSINK_BACKBUFFER_UNLOCK(sink)  g_mutex_unlock (GST_D3DVIDEOSINK (sink)->backbuffer_lock)
 
 struct _GstD3DVideoSink
 {
@@ -71,6 +86,12 @@ struct _GstD3DVideoSink
 
   /* If we use an app-supplied window, we need to hook its WNDPROC */
   WNDPROC prevWndProc;
+
+  GMutex *d3d_lock;
+  GMutex *video_lock;
+  GMutex *device_lock;
+  GMutex *surface_lock;
+  GMutex *backbuffer_lock;
 
   LPDIRECT3D9 d3d;
   LPDIRECT3DDEVICE9 d3ddev;
