@@ -224,6 +224,6 @@
 
 
 #define DEFAULT_VIDEOSRC  "dshowvideosrc"
-#define DEFAULT_VIDEOSINK  "directdrawsink"
+#define DEFAULT_VIDEOSINK  "direct3dsink"
 #define DEFAULT_AUDIOSRC  "directsoundsrc"
 #define DEFAULT_REAL_CODECS_PATH "C:\realcodecs"
