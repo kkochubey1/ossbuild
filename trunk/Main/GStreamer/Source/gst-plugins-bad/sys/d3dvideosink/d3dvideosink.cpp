@@ -597,7 +597,8 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
   MSG msg;
   while(TRUE)
   {
-    while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+    //while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+    while(GetMessage(&msg, NULL, 0, 0))
     {
       TranslateMessage(&msg);
       DispatchMessage(&msg);
