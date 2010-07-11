@@ -875,6 +875,7 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
   GST_D3DVIDEOSINK_DEVICE_LOCK(sink);
 
   if (!sink->d3ddev) {
+    GST_D3DVIDEOSINK_DEVICE_UNLOCK(sink);
     return GST_FLOW_ERROR;
   }
 
