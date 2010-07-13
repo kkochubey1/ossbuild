@@ -29,11 +29,14 @@
 #include <stdlib.h>
 #include <windows.h>
 
+#define NUMBER_OF_SIMULTANEOUS_PIPELINES 20
+
 typedef struct _App App;
 
 struct _App
 {
-  GstElement *pipeline;
+  GstElement** pipelines;
+  int pipeline_count;
 
   GMainLoop *loop;
 };
@@ -44,52 +47,76 @@ static void
 test_thread (App* app)
 {
 	int i;
+  int index;
+  GstElement* pipeline;
+
 	for(i = 0; i < 300; ++i) {
-		g_print ("Playing...\n");
-		gst_element_set_state (app->pipeline, GST_STATE_PLAYING);
-		Sleep(100);
-		g_print ("Null...\n");
-		gst_element_set_state (app->pipeline, GST_STATE_NULL);
+    
+    g_print ("Playing...\n");
+
+    for(index = 0; index < app->pipeline_count; ++index) {
+      pipeline = app->pipelines[index];		  
+		  gst_element_set_state (pipeline, GST_STATE_PLAYING);
+    }
+
+    Sleep(200);
+    
+    g_print ("Null...\n");
+
+    for(index = 0; index < app->pipeline_count; ++index) {
+      pipeline = app->pipelines[index];
+		  gst_element_set_state (pipeline, GST_STATE_NULL);
+    }
 	}
+
 	g_print ("Test complete\n");
-	gst_object_unref (app->pipeline);
+  for(index = 0; index < app->pipeline_count; ++index)
+	  gst_object_unref (app->pipelines[index]);
 	g_main_loop_quit(app->loop);
 }
 
 int
 main (int argc, char *argv[])
 {
+  int index;
   App *app = &s_app;
-  GstElement* pipeline;
-  GstElement* videotestsrc;
-  GstElement* ffmpegcolorspace;
-  GstElement* videosink;
+  GstElement* pipelines[NUMBER_OF_SIMULTANEOUS_PIPELINES];
+
+  app->pipelines = pipelines;
+  app->pipeline_count = NUMBER_OF_SIMULTANEOUS_PIPELINES;
 
   gst_init (&argc, &argv);
 
-  ///* create a mainloop to get messages */
+  /* create a mainloop to get messages */
   app->loop = g_main_loop_new (NULL, TRUE);
 
-  g_message ("creating elements");
+  for(index = 0; index < app->pipeline_count; ++index)
+  {
+    GstElement* pipeline;
+    GstElement* videotestsrc;
+    GstElement* ffmpegcolorspace;
+    GstElement* videosink;
 
-  pipeline = gst_pipeline_new("pipeline");
-  g_assert (pipeline);
-  
-  videotestsrc = gst_element_factory_make ("videotestsrc", "videotestsrc");
-  g_assert (videotestsrc);
+    g_message ("creating elements");
 
-  ffmpegcolorspace = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcolorspace");
-  g_assert (ffmpegcolorspace);
+    pipeline = app->pipelines[index] = gst_pipeline_new("pipeline");
+    g_assert (pipeline);
+    
+    videotestsrc = gst_element_factory_make ("videotestsrc", "videotestsrc");
+    g_assert (videotestsrc);
 
-  videosink = gst_element_factory_make ("d3dvideosink", "videosink");
-  g_assert (videosink);
+    ffmpegcolorspace = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcolorspace");
+    g_assert (ffmpegcolorspace);
 
-  gst_bin_add_many(GST_BIN(pipeline), videotestsrc, ffmpegcolorspace, videosink, NULL);
-  gst_element_link_many(videotestsrc, ffmpegcolorspace, videosink, NULL);
+    videosink = gst_element_factory_make ("d3dvideosink", "videosink");
+    g_assert (videosink);
 
-  g_message ("elements added and linked");
+    gst_bin_add_many(GST_BIN(pipeline), videotestsrc, ffmpegcolorspace, videosink, NULL);
+    gst_element_link_many(videotestsrc, ffmpegcolorspace, videosink, NULL);
 
-  app->pipeline = pipeline;
+    g_message ("elements added and linked");
+  }
+
   g_thread_create ((GThreadFunc)test_thread, app, FALSE, NULL);
 
   /* this mainloop is stopped when we receive an error or EOS */
