@@ -30,21 +30,36 @@
 #include <windows.h>
 
 #define NUMBER_OF_SIMULTANEOUS_PIPELINES 20
+#define NUMBER_OF_SIMULTANEOUS_THREADS 4
 
 typedef struct _App App;
+typedef struct _ThreadInfo ThreadInfo;
 
 struct _App
 {
   GstElement** pipelines;
   int pipeline_count;
 
+  GThread** threads;
+  int thread_count;
+
   GMainLoop *loop;
+};
+
+struct _ThreadInfo 
+{
+  App* app;
+
+  int thread_index;
+
+  GstElement* pipelines[NUMBER_OF_SIMULTANEOUS_PIPELINES / NUMBER_OF_SIMULTANEOUS_THREADS];
+  int pipeline_count;
 };
 
 App s_app;
 
 static void
-test_thread (App* app)
+test_thread (ThreadInfo* ti)
 {
 	int i;
   int index;
@@ -52,27 +67,29 @@ test_thread (App* app)
 
 	for(i = 0; i < 300; ++i) {
     
-    g_print ("Playing...\n");
+    //g_print ("Playing...\n");
 
-    for(index = 0; index < app->pipeline_count; ++index) {
-      pipeline = app->pipelines[index];		  
+    for(index = 0; index < ti->pipeline_count; ++index) {
+      pipeline = ti->pipelines[index];
+      //g_print ("Setting pipeline %d to playing...", pipeline);
 		  gst_element_set_state (pipeline, GST_STATE_PLAYING);
     }
 
-    Sleep(200);
+    Sleep(100);
     
-    g_print ("Null...\n");
+    //g_print ("Null...\n");
 
-    for(index = 0; index < app->pipeline_count; ++index) {
-      pipeline = app->pipelines[index];
+    for(index = 0; index < ti->pipeline_count; ++index) {
+      pipeline = ti->pipelines[index];
 		  gst_element_set_state (pipeline, GST_STATE_NULL);
     }
 	}
 
-	g_print ("Test complete\n");
-  for(index = 0; index < app->pipeline_count; ++index)
-	  gst_object_unref (app->pipelines[index]);
-	g_main_loop_quit(app->loop);
+  g_print ("Thread %d completed\n", ti->thread_index);
+  for(index = 0; index < ti->pipeline_count; ++index)
+	  gst_object_unref (ti->pipelines[index]);
+
+  g_main_loop_quit(ti->app->loop);
 }
 
 int
@@ -80,7 +97,12 @@ main (int argc, char *argv[])
 {
   int index;
   App *app = &s_app;
+  GThread* threads[NUMBER_OF_SIMULTANEOUS_THREADS];
+  ThreadInfo threadInfos[NUMBER_OF_SIMULTANEOUS_THREADS];
   GstElement* pipelines[NUMBER_OF_SIMULTANEOUS_PIPELINES];
+
+  app->threads = threads;
+  app->thread_count = NUMBER_OF_SIMULTANEOUS_THREADS;
 
   app->pipelines = pipelines;
   app->pipeline_count = NUMBER_OF_SIMULTANEOUS_PIPELINES;
@@ -97,7 +119,7 @@ main (int argc, char *argv[])
     GstElement* ffmpegcolorspace;
     GstElement* videosink;
 
-    g_message ("creating elements");
+    g_print ("creating elements\n");
 
     pipeline = app->pipelines[index] = gst_pipeline_new("pipeline");
     g_assert (pipeline);
@@ -114,19 +136,53 @@ main (int argc, char *argv[])
     gst_bin_add_many(GST_BIN(pipeline), videotestsrc, ffmpegcolorspace, videosink, NULL);
     gst_element_link_many(videotestsrc, ffmpegcolorspace, videosink, NULL);
 
-    g_message ("elements added and linked");
+    g_print ("elements added and linked\n");
   }
 
-  g_thread_create ((GThreadFunc)test_thread, app, FALSE, NULL);
+  for(index = 0; index < app->thread_count; ++index)
+  {
+    g_print ("Clearing memory for thread %d\n", index);
+    threadInfos[index].pipeline_count = 0;
+  }
+
+  /* partition the pipelines into threads */
+  for(index = 0; index < app->pipeline_count; ++index)
+  {
+    ThreadInfo* ti;
+    int threadIndex;
+    GstElement* pipeline;
+    
+    threadIndex = index % app->thread_count;
+    ti = &threadInfos[threadIndex];
+    pipeline = app->pipelines[index];
+
+    g_print("Assigning pipeline %d (%d) to thread %d as pipeline %d\n", index, pipeline, threadIndex, ti->pipeline_count);
+    ti->app = app;
+    ti->thread_index = threadIndex;
+    ti->pipelines[ti->pipeline_count] = pipeline;
+    ti->pipeline_count++;
+  }
+
+  for(index = 0; index < app->thread_count; ++index)
+  {
+    app->threads[index] = g_thread_create ((GThreadFunc)test_thread, &threadInfos[index], TRUE, NULL);
+  }
 
   /* this mainloop is stopped when we receive an error or EOS */
   g_main_loop_run (app->loop);
 
-  g_message ("stopping");
+  for(index = 0; index < app->thread_count; ++index)
+  {
+    g_thread_join(app->threads[index]);
+  }
+
+  g_print ("stopping\n");
 
   //gst_element_set_state (app->pipeline, GST_STATE_NULL);
 
   g_main_loop_unref (app->loop);
+
+  g_print ("Test complete\n");
 
   return 0;
 }
