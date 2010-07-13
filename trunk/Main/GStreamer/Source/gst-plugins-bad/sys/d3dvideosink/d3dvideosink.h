@@ -37,25 +37,12 @@ G_BEGIN_DECLS
 typedef struct _GstD3DVideoSink GstD3DVideoSink;
 typedef struct _GstD3DVideoSinkClass GstD3DVideoSinkClass;
 
-#define GST_D3DVIDEOSINK_D3D_LOCK(sink)	          g_mutex_lock (GST_D3DVIDEOSINK (sink)->d3d_lock)
-#define GST_D3DVIDEOSINK_D3D_UNLOCK(sink)         g_mutex_unlock (GST_D3DVIDEOSINK (sink)->d3d_lock)
-
-#define GST_D3DVIDEOSINK_VIDEO_LOCK(sink)	        g_mutex_lock (GST_D3DVIDEOSINK (sink)->video_lock)
-#define GST_D3DVIDEOSINK_VIDEO_UNLOCK(sink)       g_mutex_unlock (GST_D3DVIDEOSINK (sink)->video_lock)
-
-#define GST_D3DVIDEOSINK_DEVICE_LOCK(sink)	      g_mutex_lock (GST_D3DVIDEOSINK (sink)->device_lock)
-#define GST_D3DVIDEOSINK_DEVICE_UNLOCK(sink)      g_mutex_unlock (GST_D3DVIDEOSINK (sink)->device_lock)
-
-#define GST_D3DVIDEOSINK_SURFACE_LOCK(sink)	      g_mutex_lock (GST_D3DVIDEOSINK (sink)->surface_lock)
-#define GST_D3DVIDEOSINK_SURFACE_UNLOCK(sink)     g_mutex_unlock (GST_D3DVIDEOSINK (sink)->surface_lock)
-
-#define GST_D3DVIDEOSINK_BACKBUFFER_LOCK(sink)	  g_mutex_lock (GST_D3DVIDEOSINK (sink)->backbuffer_lock)
-#define GST_D3DVIDEOSINK_BACKBUFFER_UNLOCK(sink)  g_mutex_unlock (GST_D3DVIDEOSINK (sink)->backbuffer_lock)
+#define GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink)	  g_mutex_lock (GST_D3DVIDEOSINK (sink)->d3d_swap_chain_lock);
+#define GST_D3DVIDEOSINK_SWAP_CHAIN_UNLOCK(sink)  g_mutex_unlock (GST_D3DVIDEOSINK (sink)->d3d_swap_chain_lock);
 
 struct _GstD3DVideoSink
 {
   GstVideoSink sink;
-  GstCaps* caps;
 
   /* source rectangle */
   gint width;
@@ -87,21 +74,12 @@ struct _GstD3DVideoSink
   /* If we use an app-supplied window, we need to hook its WNDPROC */
   WNDPROC prevWndProc;
 
-  GMutex *d3d_lock;
-  GMutex *video_lock;
-  GMutex *device_lock;
-  GMutex *surface_lock;
-  GMutex *backbuffer_lock;
+  GMutex *d3d_swap_chain_lock;
+  LPDIRECT3DSWAPCHAIN9 d3d_swap_chain;
+  LPDIRECT3DSURFACE9 d3d_offscreen_surface;
 
-  LPDIRECT3D9 d3d;
-  LPDIRECT3DDEVICE9 d3ddev;
-  D3DCAPS9 d3dcaps;
   D3DFORMAT d3dformat;
   D3DFORMAT d3dfourcc;
-  D3DFORMAT d3dstencilformat;
-  LPDIRECT3DSURFACE9 d3dsurface;
-  LPDIRECT3DSURFACE9 d3dbackbuffer;
-  gboolean d3dEnableAutoDepthStencil;
 };
 
 struct _GstD3DVideoSinkClass
