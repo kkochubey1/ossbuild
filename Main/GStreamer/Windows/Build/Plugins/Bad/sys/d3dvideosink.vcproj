@@ -320,7 +320,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\sys\d3dvideosink\d3dvideosink.cpp"
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\sys\d3dvideosink\d3dvideosink.c"
 			>
 		</File>
 		<File
