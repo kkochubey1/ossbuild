@@ -1030,13 +1030,24 @@ gst_d3dvideosink_initialize_direct3d (GstD3DVideoSink *sink)
   GST_DEBUG("Initializing Direct3D");
 
   {
+    HRESULT hr;
     LPDIRECT3D9 d3d;
     D3DDISPLAYMODE d3ddm;
     LPDIRECT3DDEVICE9 d3ddev;
     D3DPRESENT_PARAMETERS d3dpp;
 
     d3d = Direct3DCreate9(D3D_SDK_VERSION);
-    IDirect3D9_GetAdapterDisplayMode(d3d, D3DADAPTER_DEFAULT, &d3ddm);
+    if (!d3d) {
+      GST_WARNING ("Unable to create Direct3D interface");
+      goto error;
+    }
+
+    if (FAILED(IDirect3D9_GetAdapterDisplayMode(d3d, D3DADAPTER_DEFAULT, &d3ddm))) {
+      /* Prevent memory leak */
+      IDirect3D9_Release(d3d);
+      GST_WARNING ("Unable to request adapter display mode");
+      goto error;
+    }
     
     ZeroMemory(&d3dpp, sizeof(d3dpp));
     //d3dpp.Flags = D3DPRESENTFLAG_VIDEO;
@@ -1051,7 +1062,7 @@ gst_d3dvideosink_initialize_direct3d (GstD3DVideoSink *sink)
 
     GST_DEBUG("Creating Direct3D device for hidden window %d", shared.hidden_window_id);
 
-    if (FAILED(IDirect3D9_CreateDevice(
+    if (FAILED(hr = IDirect3D9_CreateDevice(
       d3d, 
       D3DADAPTER_DEFAULT, 
       D3DDEVTYPE_HAL, 
@@ -1062,7 +1073,7 @@ gst_d3dvideosink_initialize_direct3d (GstD3DVideoSink *sink)
     ))) {
       /* Prevent memory leak */
       IDirect3D9_Release(d3d);
-      GST_WARNING ("Unable to create Direct3D device");
+      GST_WARNING ("Unable to create Direct3D device. Result: %d (0x%x)", hr, hr);
       goto error;
     }
 
@@ -1247,11 +1258,15 @@ gst_d3dvideosink_release_direct3d (GstD3DVideoSink *sink)
   {
     GST_DEBUG("Cleaning all Direct3D objects");
 
-    IDirect3DDevice9_Release(shared.d3ddev);
-    shared.d3ddev = NULL;
+    if (shared.d3ddev) {
+      IDirect3DDevice9_Release(shared.d3ddev);
+      shared.d3ddev = NULL;
+    }
 
-    IDirect3D9_Release(shared.d3d);
-    shared.d3d = NULL;
+    if (shared.d3d) {
+      IDirect3D9_Release(shared.d3d);
+      shared.d3d = NULL;
+    }
   }
 
   GST_DEBUG("Closing shared Direct3D window");
