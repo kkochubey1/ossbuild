@@ -69,7 +69,7 @@ static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE ("sink",
         "width = (int) [ 1, MAX ],"
         "height = (int) [ 1, MAX ],"
         "framerate = (fraction) [ 0, MAX ]," 
-        "format = {(fourcc)YUY2, (fourcc)UYVY, (fourcc) YUVY, (fourcc)YV12 }")
+        "format = {(fourcc)YUY2, (fourcc)UYVY, (fourcc) YUVY}")
     );
 
 static void gst_d3dvideosink_init_interfaces (GType type);
@@ -79,9 +79,8 @@ GST_BOILERPLATE_FULL (GstD3DVideoSink, gst_d3dvideosink, GstVideoSink,
 
 enum
 {
-  PROP_0,
-  PROP_KEEP_ASPECT_RATIO,
-  PROP_FULL_SCREEN
+  PROP_0
+  //, PROP_KEEP_ASPECT_RATIO
 };
 
 /* GObject methods */
@@ -215,23 +214,17 @@ gst_d3dvideosink_class_init (GstD3DVideoSinkClass * klass)
   gstvideosink_class->show_frame = GST_DEBUG_FUNCPTR (gst_d3dvideosink_show_frame);
 
   /* Add properties */
-  g_object_class_install_property (G_OBJECT_CLASS (klass),
-      PROP_KEEP_ASPECT_RATIO, g_param_spec_boolean ("force-aspect-ratio",
-          "Force aspect ratio",
-          "When enabled, scaling will respect original aspect ratio", FALSE,
-          (GParamFlags)G_PARAM_READWRITE));
-  g_object_class_install_property (G_OBJECT_CLASS (klass),
-      PROP_FULL_SCREEN, g_param_spec_boolean ("fullscreen",
-          "Full screen mode",
-          "Use full-screen mode (not available when using XOverlay)", FALSE,
-          (GParamFlags)G_PARAM_READWRITE));
+  //g_object_class_install_property (G_OBJECT_CLASS (klass),
+  //    PROP_KEEP_ASPECT_RATIO, g_param_spec_boolean ("force-aspect-ratio",
+  //        "Force aspect ratio",
+  //        "When enabled, scaling will respect original aspect ratio", FALSE,
+  //        (GParamFlags)G_PARAM_READWRITE));
 }
 
 static void
 gst_d3dvideosink_clear (GstD3DVideoSink *sink)
 {
   sink->keep_aspect_ratio = FALSE;
-  sink->full_screen = FALSE;
 
   sink->window_closed = FALSE;
   sink->window_id = NULL;
@@ -247,7 +240,7 @@ gst_d3dvideosink_init (GstD3DVideoSink * sink, GstD3DVideoSinkClass * klass)
 
   /* TODO: Copied from GstVideoSink; should we use that as base class? */
   /* 20ms is more than enough, 80-130ms is noticable */
-  gst_base_sink_set_max_lateness (GST_BASE_SINK (sink), 20 * GST_MSECOND);
+  gst_base_sink_set_max_lateness (GST_BASE_SINK (sink), 50 * GST_MSECOND);
   gst_base_sink_set_qos_enabled (GST_BASE_SINK (sink), TRUE);
 }
 
@@ -269,12 +262,9 @@ gst_d3dvideosink_set_property (GObject * object, guint prop_id,
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (object);
 
   switch (prop_id) {
-    case PROP_KEEP_ASPECT_RATIO:
-      sink->keep_aspect_ratio = g_value_get_boolean (value);
-      break;
-    case PROP_FULL_SCREEN:
-      sink->full_screen = g_value_get_boolean (value);
-      break;
+    //case PROP_KEEP_ASPECT_RATIO:
+    //  sink->keep_aspect_ratio = g_value_get_boolean (value);
+    //  break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -288,12 +278,9 @@ gst_d3dvideosink_get_property (GObject * object, guint prop_id,
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (object);
 
   switch (prop_id) {
-    case PROP_KEEP_ASPECT_RATIO:
-      g_value_set_boolean (value, sink->keep_aspect_ratio);
-      break;
-    case PROP_FULL_SCREEN:
-      g_value_set_boolean (value, sink->full_screen);
-      break;
+    //case PROP_KEEP_ASPECT_RATIO:
+    //  g_value_set_boolean (value, sink->keep_aspect_ratio);
+    //  break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -315,17 +302,15 @@ gst_d3dvideosink_close_window (GstD3DVideoSink * sink)
 {
   if (!sink || !sink->window_id)
     return;
-
+  
   if (!sink->is_new_window) {
     gst_d3dvideosink_remove_window_for_renderer(sink);
     return;
   }
-
+  
   SendMessage (sink->window_id, WM_CLOSE, (WPARAM)NULL, (WPARAM)NULL);
   g_thread_join(sink->window_thread);
   sink->is_new_window = FALSE;
-  sink->window_thread = NULL;
-  sink->window_id = NULL;
 }
 
 static gboolean  
@@ -538,13 +523,15 @@ gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM
         gst_d3dvideosink_update(GST_BASE_SINK(sink));
         break;
       }
-    case WM_SYSCOMMAND:
     case WM_SIZE:
-    case WM_WINDOWPOSCHANGED:
       {
         RECT sz;
+        int window_width;
+        int window_height;
         GetWindowRect(hWnd, &sz);
-        gst_d3dvideosink_resize_swap_chain(sink, MAX(1, ABS(sz.right - sz.left)), MAX(1, ABS(sz.bottom - sz.top)));
+        window_width = MAX(1, ABS(sz.right - sz.left)) - (sink->is_new_window ? GetSystemMetrics (SM_CXSIZEFRAME) * 2 : 0);
+        window_height = MAX(1, ABS(sz.bottom - sz.top)) - (sink->is_new_window ? GetSystemMetrics (SM_CYCAPTION) + (GetSystemMetrics (SM_CYSIZEFRAME) * 2) : 0);
+        gst_d3dvideosink_resize_swap_chain(sink, window_width, window_height);
         gst_d3dvideosink_update(GST_BASE_SINK(sink));
         //gst_d3dvideosink_resize_swap_chain(sink, MAX(1, ABS(LOWORD(lParam))), MAX(1, ABS(HIWORD(lParam))));
         break;
@@ -566,65 +553,51 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
   int offx, offy;
   DWORD exstyle, style;
   HWND video_window;
+  RECT rect;
+  int screenwidth;
+  int screenheight;
   MSG msg;
 
-  memset (&WndClass, 0, sizeof (WNDCLASS));
-  WndClass.style = CS_HREDRAW | CS_VREDRAW;
-  WndClass.hInstance = GetModuleHandle (NULL);
+  memset (&WndClass, 0, sizeof(WNDCLASS));
+  WndClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+  WndClass.hInstance = GetModuleHandle(NULL);
   WndClass.lpszClassName = L"GST-D3DSink";
-  WndClass.hbrBackground = (HBRUSH) GetStockObject (BLACK_BRUSH);
+  WndClass.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
+  WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+  WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
   WndClass.cbClsExtra = 0;
   WndClass.cbWndExtra = 0;
   WndClass.lpfnWndProc = WndProc;
   RegisterClass (&WndClass);
 
-  if (sink->full_screen) {
-    /* This doesn't seem to work, it returns the wrong values! But when we
-     * later use ShowWindow to show it maximized, it goes to full-screen
-     * anyway. TODO: Figure out why. */
-    width = GetSystemMetrics (SM_CXFULLSCREEN);
-    height = GetSystemMetrics (SM_CYFULLSCREEN);
-    offx = 0;
-    offy = 0;
+  /* By default, create a normal top-level window, the size of the video. */
 
-    style = WS_POPUP; /* No window decorations */
-    exstyle = 0;
+  /* targetWidth is the aspect-ratio-corrected size of the video. */
+  /* GetSystemMetrics() returns the width of the dialog's border (doubled b/c of left and right borders). */
+  width = sink->targetWidth + GetSystemMetrics (SM_CXSIZEFRAME) * 2;
+  height = sink->targetHeight + GetSystemMetrics (SM_CYCAPTION) + (GetSystemMetrics (SM_CYSIZEFRAME) * 2);
 
-  } else {
-    /* By default, create a normal top-level window, the size 
-     * of the video.
-     */
-    RECT rect;
-    int screenwidth;
-    int screenheight;
-	
-    /* targetWidth is the aspect-ratio-corrected size of the video. */
-    /* GetSystemMetrics() returns the width of the dialog's border (doubled b/c of left and right borders). */
-    width = sink->targetWidth + GetSystemMetrics (SM_CXSIZEFRAME) * 2;
-    height = sink->targetHeight + GetSystemMetrics (SM_CYCAPTION) + (GetSystemMetrics (SM_CYSIZEFRAME) * 2);
+  SystemParametersInfo(SPI_GETWORKAREA, (UINT)NULL, &rect, 0);
+  screenwidth = rect.right - rect.left;
+  screenheight = rect.bottom - rect.top;
+  offx = rect.left;
+  offy = rect.top;
 
-    SystemParametersInfo (SPI_GETWORKAREA, (UINT)NULL, &rect, 0);
-    screenwidth = rect.right - rect.left;
-    screenheight = rect.bottom - rect.top;
-    offx = rect.left;
-    offy = rect.top;
-
-    /* Make it fit into the screen without changing the
-     * aspect ratio. */
-    if (width > screenwidth) {
-      double ratio = (double)screenwidth/(double)width;
-      width = screenwidth;
-      height = (int)(height * ratio);
-    }
-    if (height > screenheight) {
-      double ratio = (double)screenheight/(double)height;
-      height = screenheight;
-      width = (int)(width * ratio);
-    }
-
-    style = WS_OVERLAPPEDWINDOW; /* Normal top-level window */
-    exstyle = 0;
+  /* Make it fit into the screen without changing the aspect ratio. */
+  if (width > screenwidth) {
+    double ratio = (double)screenwidth/(double)width;
+    width = screenwidth;
+    height = (int)(height * ratio);
   }
+
+  if (height > screenheight) {
+    double ratio = (double)screenheight/(double)height;
+    height = screenheight;
+    width = (int)(width * ratio);
+  }
+
+  style = WS_OVERLAPPEDWINDOW; /* Normal top-level window */
+  exstyle = 0;
 
   video_window = CreateWindowEx (
     exstyle, L"GST-D3DSink",
@@ -649,12 +622,7 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
   sink->window_id = video_window;
 
   /* Now show the window, as appropriate */
-  if (sink->full_screen) {
-    ShowWindow (video_window, SW_SHOWMAXIMIZED);
-    ShowCursor (FALSE);
-  } else {
-    ShowWindow (video_window, SW_SHOWNORMAL);
-  }
+  ShowWindow (video_window, SW_SHOWNORMAL);
 
   /* Trigger the initial paint of the window */
   UpdateWindow (video_window);
@@ -676,6 +644,7 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
   }
 
   UnregisterClass(WndClass.lpszClassName, WndClass.hInstance);
+  sink->window_id = NULL;
   return NULL;
 
 destroy_window:
@@ -772,7 +741,7 @@ static void gst_d3dvideosink_set_window_for_renderer (GstD3DVideoSink *sink)
 static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink)
 {
   GST_DEBUG("Removing rendering window hook");
-  if (sink->window_id) {
+  if (!sink->is_new_window && sink->window_id) {
     WNDPROC currWndProc;
 
     /* Retrieve current msg handler */
@@ -836,6 +805,7 @@ gst_d3dvideosink_change_state (GstElement * element, GstStateChange transition)
       break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
       gst_d3dvideosink_remove_window_for_renderer(sink);
+
       break;
     case GST_STATE_CHANGE_READY_TO_NULL:
       gst_d3dvideosink_release_direct3d(sink);
@@ -980,7 +950,7 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
       goto error;
     }
 
-      /* Get a reference to the buffer containing the image we want to display on screen */
+    /* Get a reference to the buffer containing the image we want to display on screen */
     source = GST_BUFFER_DATA(buffer);
 
     /* Set the render target to our swap chain */
@@ -1001,8 +971,13 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
 
         if (dest) {
           int i;
+          int width;
+          int height;
           int srcstride;
           int dststride;
+
+          width = sink->width;
+          height = sink->height;
 
           /* Push the bytes to the video card */
           switch(sink->fourcc) {
@@ -1010,16 +985,106 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
             case GST_MAKE_FOURCC ('Y', 'U', 'Y', 'V'):
             case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
               /* Nice and simple */
-              srcstride = GST_ROUND_UP_4 (sink->width * 2);
+              srcstride = GST_ROUND_UP_4 (width * 2);
               dststride = lr.Pitch;
 
-              for (i = 0; i < sink->height; ++i)
+              for (i = 0; i < height; ++i)
                 memcpy (dest + dststride * i, source + srcstride * i, srcstride);
               break;
+            
+            default:
+              break;
+            //case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
+            //  {
+            //    guint8 *src;
+            //    guint8 *dst;
+            //    gint32 rows;
+            //    int component;
+
+            //    for (component = 0; component < 3; component++) {
+            //      // TODO: Get format properly rather than hard-coding it. Use gst_video_* APIs *?
+            //      if (component == 0) {
+            //        srcstride = GST_ROUND_UP_4 (width);
+            //        src = source;
+            //      }
+            //      else {
+            //        srcstride = GST_ROUND_UP_4 ( GST_ROUND_UP_2 (width) / 2);
+            //        if (component == 1)
+            //          src = source + GST_ROUND_UP_4 (width) * GST_ROUND_UP_2 (height);
+            //        else
+            //          src = source + GST_ROUND_UP_4 (width) * GST_ROUND_UP_2 (height) +
+            //                  srcstride * (GST_ROUND_UP_2 (height) / 2);
+            //      }
+
+            //      /* Is there a better way to do this? This is ICK! */
+            //      if (component == 0) {
+            //        dststride = width;
+            //        dst = dest;
+            //        rows = height;
+            //      } else if (component == 1) {
+            //        dststride = width / 2;
+            //        dst = dest + width * height;
+            //        rows = height/2;
+            //      }
+            //      else {
+            //        dststride = width / 2;
+            //        dst = dest + width * height +
+            //                       width/2 * height/2;
+            //        rows = height/2;
+            //      }
+
+            //      for (i = 0; i < rows; i++) {
+            //        memcpy (dst + i * dststride, src + i * srcstride, srcstride);
+            //      }
+            //    }
+            //  }
+            //  break;
           }
         }
         IDirect3DSurface9_UnlockRect(sink->d3d_offscreen_surface);
       }
+      //if (sink->keep_aspect_ratio) {
+      //  int width;
+      //  int height;
+      //  int window_width;
+      //  int window_height;
+      //  RECT r;
+      //  D3DPRESENT_PARAMETERS d3dpp;
+
+      //  width = sink->width;
+      //  height = sink->height;
+
+      //  //IDirect3DSwapChain9_GetPresentParameters(sink->d3d_swap_chain, &d3dpp);
+      //  //window_width = d3dpp.BackBufferWidth;
+      //  //window_height = d3dpp.BackBufferHeight;
+
+      //  GetWindowRect(sink->window_id, &r);
+      //  window_width = MAX(1, ABS(r.right - r.left)) - (sink->is_new_window ? GetSystemMetrics (SM_CXSIZEFRAME) * 2 : 0);
+      //  window_height = MAX(1, ABS(r.bottom - r.top)) - (sink->is_new_window ? GetSystemMetrics (SM_CYCAPTION) + (GetSystemMetrics (SM_CYSIZEFRAME) * 2) : 0);
+
+      //  if (width > window_width) {
+      //    double ratio = (double)window_width/(double)width;
+      //    width = window_width;
+      //    height = (int)(height * ratio);
+      //  }
+
+      //  if (height > window_height) {
+      //    double ratio = (double)window_height/(double)height;
+      //    height = window_height;
+      //    width = (int)(width * ratio);
+      //  }
+
+      //  r.top = MAX(0, (window_height - height) / 2);
+      //  r.bottom = MAX(window_height, window_height - r.top + height);
+      //  r.left = MAX(0, (window_width - width) / 2);
+      //  r.right = MAX(window_width, window_width - r.left + width);
+
+      //  GST_DEBUG("aspect ratio. top: %d, bottom: %d, left: %d, right: %d", r.top, r.bottom, r.left, r.right);
+
+      //  IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, &r, D3DTEXF_NONE);
+      //} else {
+      //  IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, NULL, D3DTEXF_NONE);
+      //}
       IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, NULL, D3DTEXF_NONE);
       IDirect3DDevice9_EndScene(shared.d3ddev);
     }
@@ -1031,7 +1096,6 @@ success:
   GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK
   return GST_FLOW_OK;
 error:
-  
   GST_D3DVIDEOSINK_SWAP_CHAIN_UNLOCK(sink);
   GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK
   return GST_FLOW_ERROR;
