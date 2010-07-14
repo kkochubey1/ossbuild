@@ -116,6 +116,9 @@
 		<File resource="libgstrsvg.dll" />
 		-->
 
+		<!-- sys -->
+		<File resource="libgstd3dvideosink.dll" />
+
 		<IfDef var="lic" value="gpl">
 			<File resource="libgstdtsdec.dll" />
 			<File resource="libgstfaac.dll" />
