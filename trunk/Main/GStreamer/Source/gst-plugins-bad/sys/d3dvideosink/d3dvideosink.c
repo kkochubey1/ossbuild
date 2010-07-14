@@ -37,6 +37,7 @@
 typedef struct _GstD3DVideoSinkShared GstD3DVideoSinkShared;
 struct _GstD3DVideoSinkShared
 {
+  GList* element_list;
   gint32 element_count;
 
   HWND hidden_window_id;
@@ -109,6 +110,7 @@ static void gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT mes
 
 /* Paint/update methods */
 static void gst_d3dvideosink_update(GstBaseSink *bsink);
+static gboolean gst_d3dvideosink_refresh (GstD3DVideoSink *sink);
 
 /* Misc methods */
 static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink);
@@ -119,6 +121,7 @@ static gboolean gst_d3dvideosink_resize_swap_chain (GstD3DVideoSink *sink, gint 
 static gboolean gst_d3dvideosink_notify_device_lost (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_device_lost (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_release_swap_chain (GstD3DVideoSink *sink);
+static gboolean gst_d3dvideosink_release_d3d_device (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_release_direct3d (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_shared_hidden_window_thread (GstD3DVideoSink * sink);
 LRESULT APIENTRY SharedHiddenWndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -520,7 +523,7 @@ gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM
   {
     case WM_PAINT:
       {
-        gst_d3dvideosink_update(GST_BASE_SINK(sink));
+        gst_d3dvideosink_refresh(sink);
         break;
       }
     case WM_SIZE:
@@ -532,7 +535,7 @@ gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM
         window_width = MAX(1, ABS(sz.right - sz.left)) - (sink->is_new_window ? GetSystemMetrics (SM_CXSIZEFRAME) * 2 : 0);
         window_height = MAX(1, ABS(sz.bottom - sz.top)) - (sink->is_new_window ? GetSystemMetrics (SM_CYCAPTION) + (GetSystemMetrics (SM_CYSIZEFRAME) * 2) : 0);
         gst_d3dvideosink_resize_swap_chain(sink, window_width, window_height);
-        gst_d3dvideosink_update(GST_BASE_SINK(sink));
+        gst_d3dvideosink_refresh(sink);
         //gst_d3dvideosink_resize_swap_chain(sink, MAX(1, ABS(LOWORD(lParam))), MAX(1, ABS(HIWORD(lParam))));
         break;
       }
@@ -927,6 +930,7 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
   GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
   GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
   {
+    HRESULT hr;
     guint8 *source;
     LPDIRECT3DSURFACE9 backBuffer;
 
@@ -1088,7 +1092,18 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
       IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, NULL, D3DTEXF_NONE);
       IDirect3DDevice9_EndScene(shared.d3ddev);
     }
-    IDirect3DSwapChain9_Present(sink->d3d_swap_chain, NULL, NULL, NULL, NULL, 0);
+    /* Swap back and front buffers on video card and present to the user */
+    if (FAILED(hr = IDirect3DSwapChain9_Present(sink->d3d_swap_chain, NULL, NULL, NULL, NULL, 0))) {
+      switch(hr) 
+      {
+        case D3DERR_DEVICELOST:
+        case D3DERR_DEVICENOTRESET:
+          gst_d3dvideosink_notify_device_lost(sink);
+          break;
+        default:
+          goto error;
+      }
+    }
   }
 
 success:
@@ -1101,6 +1116,73 @@ error:
   return GST_FLOW_ERROR;
 }
 
+/* Simply redraws the last item on our offscreen surface to the window */
+static gboolean 
+gst_d3dvideosink_refresh (GstD3DVideoSink *sink)
+{
+  GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
+  GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
+  {
+    HRESULT hr;
+    LPDIRECT3DSURFACE9 backBuffer;
+
+    if (!shared.d3ddev) {
+      GST_DEBUG_OBJECT (sink, "No Direct3D device has been created");
+      goto error;
+    }
+
+    if (!sink->d3d_offscreen_surface) {
+      GST_DEBUG_OBJECT (sink, "No Direct3D offscreen surface has been created");
+      goto error;
+    }
+
+    if (!sink->d3d_swap_chain) {
+      GST_DEBUG_OBJECT (sink, "No Direct3D swap chain has been created");
+      goto error;
+    }
+
+    if (sink->window_closed) {
+      GST_DEBUG_OBJECT (sink, "Window has been closed");
+      goto error;
+    }
+
+    /* Set the render target to our swap chain */
+    IDirect3DSwapChain9_GetBackBuffer(sink->d3d_swap_chain, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+    IDirect3DDevice9_SetRenderTarget(shared.d3ddev, 0, backBuffer);
+    IDirect3DSurface9_Release(backBuffer);
+
+    /* Clear the target */
+    IDirect3DDevice9_Clear(shared.d3ddev, 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+
+    if (SUCCEEDED(IDirect3DDevice9_BeginScene(shared.d3ddev))) {
+      IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, NULL, D3DTEXF_NONE);
+      IDirect3DDevice9_EndScene(shared.d3ddev);
+    }
+  
+    /* Swap back and front buffers on video card and present to the user */
+    if (FAILED(hr = IDirect3DSwapChain9_Present(sink->d3d_swap_chain, NULL, NULL, NULL, NULL, 0))) {
+      switch(hr) 
+      {
+        case D3DERR_DEVICELOST:
+        case D3DERR_DEVICENOTRESET:
+          gst_d3dvideosink_notify_device_lost(sink);
+          break;
+        default:
+          goto error;
+      }
+    }
+  }
+
+success:
+  GST_D3DVIDEOSINK_SWAP_CHAIN_UNLOCK(sink);
+  GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK
+  return TRUE;
+error:
+  GST_D3DVIDEOSINK_SWAP_CHAIN_UNLOCK(sink);
+  GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK
+  return FALSE;
+}
+
 static void
 gst_d3dvideosink_expose(GstXOverlay * overlay)
 {
@@ -1108,8 +1190,10 @@ gst_d3dvideosink_expose(GstXOverlay * overlay)
   GstBuffer *last_buffer;
 
   last_buffer = gst_base_sink_get_last_buffer(GST_BASE_SINK(sink));
-  if (last_buffer != NULL)
+  if (last_buffer) {
     gst_d3dvideosink_show_frame(GST_VIDEO_SINK(sink), last_buffer);
+    gst_buffer_unref(last_buffer);
+  }
 }
 
 static void 
@@ -1118,8 +1202,10 @@ gst_d3dvideosink_update(GstBaseSink * bsink)
   GstBuffer *last_buffer;
 
   last_buffer = gst_base_sink_get_last_buffer(bsink);
-  if (last_buffer != NULL)
+  if (last_buffer) {
     gst_d3dvideosink_show_frame(GST_VIDEO_SINK(bsink), last_buffer);
+    gst_buffer_unref(last_buffer);
+  }
 }
 
 /* TODO: How can we implement these? Figure that out... */
@@ -1150,6 +1236,10 @@ gst_d3dvideosink_initialize_direct3d (GstD3DVideoSink *sink)
 
   GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
   GST_D3DVIDEOSINK_SHARED_D3D_LOCK
+
+  /* Add to our GList containing all of our elements. */
+  /* GLists are doubly-linked lists and calling prepend() prevents it from having to traverse the entire list just to add one item. */
+  shared.element_list = g_list_prepend(shared.element_list, sink);
 
   /* Increment our count of the number of elements we have */
   shared.element_count++;
@@ -1414,11 +1504,11 @@ error:
 static gboolean
 gst_d3dvideosink_release_swap_chain (GstD3DVideoSink *sink)
 {
-  GST_DEBUG("Releasing Direct3D swap chain for sink %d", sink);
-
   GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
   GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
   {
+    GST_DEBUG("Releasing Direct3D swap chain for sink %d", sink);
+
      /* This should always work since gst_d3dvideosink_initialize_direct3d() should have always been called previously */
     if (!shared.d3d || !shared.d3ddev) {
       GST_ERROR("Direct3D device has not been initialized");
@@ -1478,16 +1568,48 @@ error:
 }
 
 static gboolean gst_d3dvideosink_device_lost (GstD3DVideoSink *sink) {
-  /* Called from hidden window's message loop */
+  /* Must be called from hidden window's message loop! */
+
+  GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink)
   GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
   GST_D3DVIDEOSINK_SHARED_D3D_LOCK
-  GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink)
   {
     GST_DEBUG("Direct3D device lost. Resetting the device.");
+
+    if (g_thread_self() != shared.hidden_window_thread) {
+      GST_ERROR("Direct3D device can only be reset by the thread that created it.");
+      goto error;
+    }
 
     if (!shared.d3d || !shared.d3ddev) {
       GST_ERROR("Direct3D device has not been initialized");
       goto error;
+    }
+
+    {
+      GList* item;
+      GstD3DVideoSink *s;
+
+      /* This is technically a bit different from the normal. We don't call reset(), instead */
+      /* we recreate everything from scratch. */
+
+      /* Release all swap chains, surfaces, buffers, etc. */
+      for(item = g_list_first(shared.element_list); item; item = item->next) {
+        s = item->data;
+        gst_d3dvideosink_release_swap_chain(s);
+      }
+
+      /* Release the device */
+      gst_d3dvideosink_release_d3d_device(NULL);
+
+      /* Recreate device */
+      gst_d3dvideosink_initialize_d3d_device(NULL);
+
+      /* Reinitialize all swap chains, surfaces, buffers, etc. */
+      for(item = g_list_first(shared.element_list); item; item = item->next) {
+        s = item->data;
+        gst_d3dvideosink_initialize_swap_chain(s);
+      }
     }
   }
 
@@ -1506,10 +1628,33 @@ error:
 }
 
 static gboolean
+gst_d3dvideosink_release_d3d_device (GstD3DVideoSink *sink)
+{
+  GST_DEBUG("Cleaning all Direct3D objects");
+
+  if (shared.d3ddev) {
+    int ref_count;
+    ref_count = IDirect3DDevice9_Release(shared.d3ddev);
+    shared.d3ddev = NULL;
+    GST_DEBUG("Direct3D device released. Reference count: %d", ref_count);
+  }
+
+  if (shared.d3d) {
+    int ref_count;
+    ref_count = IDirect3D9_Release(shared.d3d);
+    shared.d3d = NULL;
+    GST_DEBUG("Direct3D object released. Reference count: %d", ref_count);
+  }
+}
+
+static gboolean
 gst_d3dvideosink_release_direct3d (GstD3DVideoSink *sink)
 {
   GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
   GST_D3DVIDEOSINK_SHARED_D3D_LOCK
+
+  /* Remove item from the list */
+  shared.element_list = g_list_remove(shared.element_list, sink);
 
   /* Decrement our count of the number of elements we have */
   shared.element_count--;
@@ -1518,23 +1663,7 @@ gst_d3dvideosink_release_direct3d (GstD3DVideoSink *sink)
   if (shared.element_count > 0)
     goto success;
 
-  {
-    GST_DEBUG("Cleaning all Direct3D objects");
-
-    if (shared.d3ddev) {
-      int ref_count;
-      ref_count = IDirect3DDevice9_Release(shared.d3ddev);
-      shared.d3ddev = NULL;
-      GST_DEBUG("Direct3D device released. Reference count: %d", ref_count);
-    }
-
-    if (shared.d3d) {
-      int ref_count;
-      ref_count = IDirect3D9_Release(shared.d3d);
-      shared.d3d = NULL;
-      GST_DEBUG("Direct3D object released. Reference count: %d", ref_count);
-    }
-  }
+  gst_d3dvideosink_release_d3d_device(sink);
 
   GST_DEBUG("Closing hidden Direct3D window");
   gst_d3dvideosink_close_shared_hidden_window(sink);
