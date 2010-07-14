@@ -181,10 +181,11 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		switch (Sys.getOSFamily()) {
 			case Windows:
 				audioElement = "autoaudiosink";
-				//videoElement = "autovideosink";
+				videoElement = "autovideosink";
 				//videoElement = "glimagesink";
 				//videoElement = "directdrawsink";
-				videoElement = "dshowvideosink";
+				//videoElement = "dshowvideosink";
+				//videoElement = "d3dvideosink";
 				break;
 			case Unix:
 				//audioElement = "autoaudiosink";

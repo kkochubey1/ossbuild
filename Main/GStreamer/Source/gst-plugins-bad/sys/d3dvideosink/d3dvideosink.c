@@ -112,6 +112,7 @@ static void gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT mes
 static void gst_d3dvideosink_update(GstBaseSink *bsink);
 
 /* Misc methods */
+static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_initialize_direct3d (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink);
@@ -312,12 +313,18 @@ gst_d3dvideosink_get_caps (GstBaseSink * basesink)
 static void 
 gst_d3dvideosink_close_window (GstD3DVideoSink * sink) 
 {
-  if (!sink || !sink->is_new_window || !sink->window_id)
+  if (!sink || !sink->window_id)
     return;
+
+  if (!sink->is_new_window) {
+    gst_d3dvideosink_remove_window_for_renderer(sink);
+    return;
+  }
 
   SendMessage (sink->window_id, WM_CLOSE, (WPARAM)NULL, (WPARAM)NULL);
   g_thread_join(sink->window_thread);
   sink->is_new_window = FALSE;
+  sink->window_thread = NULL;
   sink->window_id = NULL;
 }
 
@@ -531,11 +538,14 @@ gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM
         gst_d3dvideosink_update(GST_BASE_SINK(sink));
         break;
       }
+    case WM_SYSCOMMAND:
     case WM_SIZE:
+    case WM_WINDOWPOSCHANGED:
       {
         RECT sz;
         GetWindowRect(hWnd, &sz);
         gst_d3dvideosink_resize_swap_chain(sink, MAX(1, ABS(sz.right - sz.left)), MAX(1, ABS(sz.bottom - sz.top)));
+        gst_d3dvideosink_update(GST_BASE_SINK(sink));
         //gst_d3dvideosink_resize_swap_chain(sink, MAX(1, ABS(LOWORD(lParam))), MAX(1, ABS(HIWORD(lParam))));
         break;
       }
@@ -557,7 +567,6 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
   DWORD exstyle, style;
   HWND video_window;
   MSG msg;
-  D3DPRESENT_PARAMETERS d3dpp;
 
   memset (&WndClass, 0, sizeof (WNDCLASS));
   WndClass.style = CS_HREDRAW | CS_VREDRAW;
@@ -705,43 +714,89 @@ failed:
 static void gst_d3dvideosink_set_window_id (GstXOverlay * overlay, ULONG window_id)
 {
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (overlay);
-  HWND videowindow = (HWND)window_id;
+  HWND hWnd = (HWND)window_id;
 
-  if (videowindow == sink->window_id) {
+  if (hWnd == sink->window_id) {
     GST_DEBUG_OBJECT (sink, "Window already set");
     return;
   }
 
-  /* TODO: What if we already have a window? What if we're already playing? */
-  sink->window_id = videowindow;
+  GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
+  GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
+  {
+    /* If we're already playing/paused, then we need to lock the swap chain, and recreate it with the new window. */
+    gst_d3dvideosink_release_swap_chain(sink);
+
+    /* Close our existing window if there is one */
+    gst_d3dvideosink_close_window(sink);
+
+    /* Save our window id */
+    sink->window_id = hWnd;
+  }
+
+success:
+  GST_DEBUG("Direct3D window id succesfully changed for sink %d to %d", sink, hWnd);
+  GST_D3DVIDEOSINK_SWAP_CHAIN_UNLOCK(sink);
+  GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK
+  return;
+error:
+  GST_DEBUG("Error attempting to change the window id for sink %d to %d", sink, hWnd);
+  GST_D3DVIDEOSINK_SWAP_CHAIN_UNLOCK(sink);
+  GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK
+  return;
 }
 
 static void gst_d3dvideosink_set_window_for_renderer (GstD3DVideoSink *sink)
 {
+  WNDPROC currWndProc;
+
   /* Application has requested a specific window ID */
-  sink->prevWndProc = (WNDPROC) SetWindowLong (sink->window_id, GWL_WNDPROC, (LONG)WndProcHook);
-  GST_DEBUG_OBJECT (sink, "Set wndproc to %p from %p", WndProcHook, sink->prevWndProc);
-  SetProp (sink->window_id, L"GstD3DVideoSink", sink);
-  /* This causes the new WNDPROC to become active */
-  SetWindowPos (sink->window_id, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-
-  //if (!sink->renderersupport->SetRendererWindow (sink->window_id)) {
-  //  GST_WARNING_OBJECT (sink, "Failed to set HWND %x on renderer", sink->window_id);
-  //  return;
-  //}
   sink->is_new_window = FALSE;
+  currWndProc = (WNDPROC)GetWindowLongPtr(sink->window_id, GWL_WNDPROC);
+  if (sink->prevWndProc != currWndProc && currWndProc != WndProcHook)
+    sink->prevWndProc = (WNDPROC)SetWindowLongPtr(sink->window_id, GWL_WNDPROC, (LONG_PTR)WndProcHook);
 
-  /* This tells the renderer where the window is located, needed to 
-   * start drawing in the right place.  */
-  //sink->renderersupport->MoveWindow();
-  GST_INFO_OBJECT (sink, "Set renderer window to %x", sink->window_id);
+  GST_DEBUG_OBJECT(sink, "Set wndproc to %p from %p", WndProcHook, sink->prevWndProc);
+
+  /* Allows us to pick up the video sink inside the msg handler */
+  SetProp(sink->window_id, L"GstD3DVideoSink", sink);
+
+  /* This causes the new WNDPROC to become active */
+  SetWindowPos(sink->window_id, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+
+  GST_DEBUG_OBJECT(sink, "Set renderer window to %x", sink->window_id);
+  
+  sink->is_new_window = FALSE;
+}
+
+static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink)
+{
+  GST_DEBUG("Removing rendering window hook");
+  if (sink->window_id) {
+    WNDPROC currWndProc;
+
+    /* Retrieve current msg handler */
+    currWndProc = (WNDPROC)GetWindowLongPtr(sink->window_id, GWL_WNDPROC);
+
+    /* Return control of application window */
+    if (sink->prevWndProc != NULL && currWndProc == WndProcHook)
+      SetWindowLongPtr(sink->window_id, GWL_WNDPROC, (LONG_PTR)sink->prevWndProc);
+
+    /* Remove the property associating our sink with the window */
+    RemoveProp (sink->window_id, L"GstDShowVideoSink");
+
+    /* This causes the old WNDPROC to become active */
+    SetWindowPos(sink->window_id, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+
+    sink->prevWndProc = NULL;
+    sink->window_id = NULL;
+    sink->is_new_window = FALSE;
+  }
 }
 
 static void
 gst_d3dvideosink_prepare_window (GstD3DVideoSink *sink)
 {
-  HRESULT hres;
-
   /* Give the app a last chance to supply a window id */
   if (!sink->window_id) {
     gst_x_overlay_prepare_xwindow_id (GST_X_OVERLAY (sink));
@@ -762,7 +817,7 @@ static GstStateChangeReturn
 gst_d3dvideosink_change_state (GstElement * element, GstStateChange transition)
 {
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (element);
-  GstStateChangeReturn ret, rettmp;
+  GstStateChangeReturn ret;
 
   switch (transition) {
     case GST_STATE_CHANGE_NULL_TO_READY:
@@ -780,6 +835,7 @@ gst_d3dvideosink_change_state (GstElement * element, GstStateChange transition)
     case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
       break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
+      gst_d3dvideosink_remove_window_for_renderer(sink);
       break;
     case GST_STATE_CHANGE_READY_TO_NULL:
       gst_d3dvideosink_release_direct3d(sink);
@@ -897,8 +953,6 @@ static GstFlowReturn
 gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
 {
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (vsink);
-  GstFlowReturn ret;
-  GstStateChangeReturn retst;
   
   GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
   GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
@@ -1139,14 +1193,14 @@ gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink)
   GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
   GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
   {
-    D3DDISPLAYMODE mode;
+    //D3DDISPLAYMODE mode;
     D3DPRESENT_PARAMETERS d3dpp;
     D3DFORMAT d3dformat;
     D3DFORMAT d3dfourcc;
-    D3DFORMAT d3dstencilformat;
+    //D3DFORMAT d3dstencilformat;
     LPDIRECT3DSWAPCHAIN9 d3dswapchain;
     LPDIRECT3DSURFACE9 d3dsurface;
-    gboolean d3dEnableAutoDepthStencil;
+    //gboolean d3dEnableAutoDepthStencil;
 
     /* This should always work since gst_d3dvideosink_initialize_direct3d() should have always been called previously */
     if (!shared.d3ddev) {

@@ -62,6 +62,8 @@ public class Main {
 		//Sys.setEnvironmentVariable("GST_DEBUG", "typefindfunctions*:4,jpeg*:4");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:2,GST_CAPS*:3,decodebin*:4,jpeg*:4,queue*:4,multipart*:4");
 		//Sys.setEnvironmentVariable("GST_DEBUG", "*:2,GST_CAPS*:3,videotestsrc*:4");
+		Sys.setEnvironmentVariable("GST_DEBUG", "autovideosink:4,d3dvideosink:4");
+		
 		Sys.initializeRegistry();
 		Sys.loadNativeResources(NativeResource.Base);
 		Sys.loadNativeResources(NativeResource.XML);
@@ -249,17 +251,33 @@ public class Main {
 
 		final GstMediaComponent mediaComp = comp;
 
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-//
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-//
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		final Scale scale = new Scale(dlg, SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);

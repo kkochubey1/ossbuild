@@ -299,7 +299,6 @@
 				<include name="*gstreal*.*" />
 				<include name="*gstrtpmux*.*" />
 				<include name="*gstscaletempoplugin*.*" />
-				<include name="*gstschro*.*" />
 				<include name="*gstsdl*.*" />
 				<include name="*gstsdpelem*.*" />
 				<include name="*gstselector*.*" />
@@ -317,8 +316,12 @@
 				<include name="*gstwinks*.*" />
 				<include name="*gstwinscreencap*.*" />
 				<!--
+				<include name="*gstschro*.*" />
 				<include name="*gstrsvg*.*" />
 				-->
+				
+				<!-- sys -->
+				<include name="*gstd3dvideosink*.*" />
 			</fileset>
 		</copy>
 		
