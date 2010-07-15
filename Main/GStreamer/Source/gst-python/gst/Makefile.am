@@ -32,9 +32,13 @@ versioned_overrides = \
 	gst-0.10.24.ignore 	\
 	gst-0.10.25.ignore 	\
 	gst-0.10.26.ignore 	\
+	gst-0.10.29.ignore 	\
+	gst-0.10.30.ignore 	\
 	gst-pb-0.10.23.ignore	\
 	gst-pb-0.10.25.ignore	\
 	gst-pb-0.10.26.ignore	\
+	gst-pb-0.10.29.ignore	\
+	gst-pb-0.10.30.ignore	\
 	gst-disable-loadsave.ignore
 
 INCLUDES = $(PYTHON_INCLUDES)
@@ -172,7 +176,7 @@ endif
 
 
 .defs.c: 
-	($(PYTHON) $(top_srcdir)/codegen/codegen.py \
+	$(AM_V_GEN)($(PYTHON) $(top_srcdir)/codegen/codegen.py \
 		--load-types $(srcdir)/arg-types.py \
 		--register $(srcdir)/gst-types.defs \
 		--override $(srcdir)/$*.override \

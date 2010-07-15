@@ -20,6 +20,12 @@
 # include this snippet to add a common release: target by using
 # include $(top_srcdir)/common/release.mak
 
+# checks for left-over files in the (usually uninstalled) tree, ie. for
+# stuff that best be deleted to avoid problems like having old plugin binaries
+# lying around.
+#
+# set CRUFT_FILES and/or CRUFT_DIRS in your Makefile.am when you include this
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -43,6 +49,7 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(srcdir)/gst-python.spec.in \
 	$(top_srcdir)/common/coverage/lcov.mak \
+	$(top_srcdir)/common/cruft.mak \
 	$(top_srcdir)/common/release.mak \
 	$(top_srcdir)/common/win32.mak $(top_srcdir)/configure \
 	$(top_srcdir)/win32/common/config.h.in AUTHORS COPYING \
@@ -59,14 +66,10 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-feature.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-valgrind.m4 \
-	$(top_srcdir)/common/m4/gst.m4 \
-	$(top_srcdir)/common/m4/libtool.m4 \
-	$(top_srcdir)/common/m4/ltoptions.m4 \
-	$(top_srcdir)/common/m4/ltsugar.m4 \
-	$(top_srcdir)/common/m4/ltversion.m4 \
-	$(top_srcdir)/common/m4/lt~obsolete.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/acinclude.m4 \
+	$(top_srcdir)/common/m4/gst.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -104,7 +107,10 @@ am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 gstoption_la_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_gstoption_la_OBJECTS = gstoption_la-gstoptionmodule.lo
 gstoption_la_OBJECTS = $(am_gstoption_la_OBJECTS)
-gstoption_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+gstoption_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(gstoption_la_CFLAGS) \
 	$(CFLAGS) $(gstoption_la_LDFLAGS) $(LDFLAGS) -o $@
 @HAVE_PYGOBJECT_2_16_TRUE@am_gstoption_la_rpath = -rpath $(pyexecdir)
@@ -114,13 +120,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(gstoption_la_SOURCES)
 DIST_SOURCES = $(gstoption_la_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -177,9 +196,9 @@ distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 
 # include before EXTRA_DIST for win32 assignment
-ACLOCAL_AMFLAGS = -I common/m4
+ACLOCAL_AMFLAGS = -I m4 -I common/m4
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -192,7 +211,6 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
@@ -206,8 +224,6 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 GCOV = @GCOV@
@@ -248,10 +264,14 @@ IGNORE_GST_0_10_23 = @IGNORE_GST_0_10_23@
 IGNORE_GST_0_10_24 = @IGNORE_GST_0_10_24@
 IGNORE_GST_0_10_25 = @IGNORE_GST_0_10_25@
 IGNORE_GST_0_10_26 = @IGNORE_GST_0_10_26@
+IGNORE_GST_0_10_29 = @IGNORE_GST_0_10_29@
+IGNORE_GST_0_10_30 = @IGNORE_GST_0_10_30@
 IGNORE_GST_LOADSAVE = @IGNORE_GST_LOADSAVE@
 IGNORE_GST_PB_0_10_23 = @IGNORE_GST_PB_0_10_23@
 IGNORE_GST_PB_0_10_25 = @IGNORE_GST_PB_0_10_25@
 IGNORE_GST_PB_0_10_26 = @IGNORE_GST_PB_0_10_26@
+IGNORE_GST_PB_0_10_29 = @IGNORE_GST_PB_0_10_29@
+IGNORE_GST_PB_0_10_30 = @IGNORE_GST_PB_0_10_30@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -266,12 +286,10 @@ LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OTOOL = @OTOOL@
@@ -311,17 +329,16 @@ PYTHON_LIB_LOC = @PYTHON_LIB_LOC@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -358,7 +375,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -373,7 +389,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -417,6 +432,15 @@ CLEANFILES = pygst.py pygst.pyc
 
 # make bz2 as well
 AUTOMAKE_OPTIONS = dist-bzip2
+CRUFT_FILES = \
+	$(top_builddir)/common/shave \
+	$(top_builddir)/common/shave-libtool \
+	$(top_builddir)/common/m4/libtool.m4 \
+	$(top_builddir)/common/m4/ltoptions.m4 \
+	$(top_builddir)/common/m4/ltsugar.m4 \
+	$(top_builddir)/common/m4/ltversion.m4 \
+	$(top_builddir)/common/m4/lt~obsolete.m4
+
 all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -424,7 +448,7 @@ all: $(BUILT_SOURCES) config.h
 .SUFFIXES: .c .lo .o .obj
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/win32.mak $(top_srcdir)/common/release.mak $(top_srcdir)/common/coverage/lcov.mak $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/common/win32.mak $(top_srcdir)/common/release.mak $(top_srcdir)/common/coverage/lcov.mak $(top_srcdir)/common/cruft.mak $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -509,7 +533,7 @@ clean-pyexecLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 gstoption.la: $(gstoption_la_OBJECTS) $(gstoption_la_DEPENDENCIES) 
-	$(gstoption_la_LINK) $(am_gstoption_la_rpath) $(gstoption_la_OBJECTS) $(gstoption_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(gstoption_la_LINK) $(am_gstoption_la_rpath) $(gstoption_la_OBJECTS) $(gstoption_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -520,32 +544,36 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstoption_la-gstoptionmodule.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 gstoption_la-gstoptionmodule.lo: gstoptionmodule.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gstoption_la_CFLAGS) $(CFLAGS) -MT gstoption_la-gstoptionmodule.lo -MD -MP -MF $(DEPDIR)/gstoption_la-gstoptionmodule.Tpo -c -o gstoption_la-gstoptionmodule.lo `test -f 'gstoptionmodule.c' || echo '$(srcdir)/'`gstoptionmodule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gstoption_la-gstoptionmodule.Tpo $(DEPDIR)/gstoption_la-gstoptionmodule.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gstoption_la_CFLAGS) $(CFLAGS) -MT gstoption_la-gstoptionmodule.lo -MD -MP -MF $(DEPDIR)/gstoption_la-gstoptionmodule.Tpo -c -o gstoption_la-gstoptionmodule.lo `test -f 'gstoptionmodule.c' || echo '$(srcdir)/'`gstoptionmodule.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gstoption_la-gstoptionmodule.Tpo $(DEPDIR)/gstoption_la-gstoptionmodule.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstoptionmodule.c' object='gstoption_la-gstoptionmodule.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gstoption_la_CFLAGS) $(CFLAGS) -c -o gstoption_la-gstoptionmodule.lo `test -f 'gstoptionmodule.c' || echo '$(srcdir)/'`gstoptionmodule.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gstoption_la_CFLAGS) $(CFLAGS) -c -o gstoption_la-gstoptionmodule.lo `test -f 'gstoptionmodule.c' || echo '$(srcdir)/'`gstoptionmodule.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -873,7 +901,7 @@ distcleancheck: distclean
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-all-am: Makefile $(LTLIBRARIES) config.h
+all-am: Makefile $(LTLIBRARIES) config.h all-local
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(pyexecdir)"; do \
@@ -986,11 +1014,11 @@ uninstall-am: uninstall-local uninstall-pyexecLTLIBRARIES
 	tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am am--refresh check check-am clean clean-generic \
-	clean-libtool clean-pyexecLTLIBRARIES ctags ctags-recursive \
-	dist dist-all dist-bzip2 dist-gzip dist-hook dist-lzma \
-	dist-shar dist-tarZ dist-xz dist-zip distcheck distclean \
-	distclean-compile distclean-generic distclean-hdr \
+	all all-am all-local am--refresh check check-am clean \
+	clean-generic clean-libtool clean-pyexecLTLIBRARIES ctags \
+	ctags-recursive dist dist-all dist-bzip2 dist-gzip dist-hook \
+	dist-lzma dist-shar dist-tarZ dist-xz dist-zip distcheck \
+	distclean distclean-compile distclean-generic distclean-hdr \
 	distclean-libtool distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
@@ -1030,7 +1058,7 @@ win32-check-crlf:
 # (don't care about other unixes for now, it's enough if it works on one of
 # the linux build bots; we assume .so )
 check-exports:
-	fail=0 ; \
+	@fail=0 ; \
 	for l in $(win32defs); do \
 	  libbase=`basename "$$l" ".def"`; \
 	  libso=`find "$(top_builddir)" -name "$$libbase-@GST_MAJORMINOR@.so" | grep -v /_build/ | head -n1`; \
@@ -1050,13 +1078,13 @@ check-exports:
 	fi; \
 	exit $$fail
 
-# complain about nonportable 64-bit printf format strings (%lld, %llu etc.)
-check-nonportable-int64-print-format:
-	fail=0 ; \
-	loc=`find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]'`; \
+# complain about nonportable printf format strings (%lld, %llu, %zu etc.)
+check-nonportable-print-format:
+	@fail=0 ; \
+	loc=`find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]' -e '%[0-9]*z[udx]'`; \
 	if test "x$$loc" != "x"; then \
 	  echo "Please fix the following print format strings:" ; \
-	  find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]'; \
+	  find "$(top_srcdir)" -name '*.c' | xargs grep -n -e '%[0-9]*ll[udx]' -e '%[0-9]*z[udx]'; \
 	  fail=1; \
 	fi; \
 	exit $$fail
@@ -1146,6 +1174,58 @@ lcov:
 
 @GST_GCOV_ENABLED_FALSE@lcov-report:
 @GST_GCOV_ENABLED_FALSE@	echo "Need to reconfigure with --enable-gcov"
+
+check-cruft:
+	@cruft_files=""; cruft_dirs=""; \
+	for f in $(CRUFT_FILES); do \
+	  if test -e $$f; then \
+	    cruft_files="$$cruft_files $$f"; \
+	  fi \
+	done; \
+	for d in $(CRUFT_DIRS); do \
+	  if test -e $$d; then \
+	    cruft_dirs="$$cruft_dirs $$d"; \
+	  fi \
+	done; \
+	if test "x$$cruft_files$$cruft_dirs" != x; then \
+	  echo; \
+	  echo "**** CRUFT ALERT *****"; \
+	  echo; \
+	  echo "The following files and directories may not be needed any "; \
+	  echo "longer (usually because a plugin has been merged into     "; \
+	  echo "another plugin, moved to a different module, or been      "; \
+	  echo "renamed), and you probably want to clean them up if you   "; \
+	  echo "don't have local changes:                                 "; \
+	  echo; \
+	  for f in $$cruft_files; do echo "file $$f"; done; \
+	  echo; \
+	  for d in $$cruft_dirs; do echo "directory $$d"; done; \
+	  echo; \
+	  echo "'make clean-cruft' will remove these for you."; \
+	  echo; \
+	fi
+
+clean-cruft-dirs:
+	@for d in $(CRUFT_DIRS); do \
+	  if test -e $$d; then \
+	    rm -r "$$d" && echo "Removed directory $$d"; \
+	  fi \
+	done
+
+clean-cruft-files:
+	@for f in $(CRUFT_FILES); do \
+	  if test -e $$f; then \
+	    rm "$$f" && echo "Removed file $$f"; \
+	  fi \
+	done
+
+clean-cruft: clean-cruft-dirs clean-cruft-files
+
+# also might want to add this to your Makefile.am:
+#
+# all-local: check-cruft
+
+all-local: check-cruft
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

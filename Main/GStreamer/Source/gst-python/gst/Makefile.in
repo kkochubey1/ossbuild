@@ -51,14 +51,10 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-feature.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-valgrind.m4 \
-	$(top_srcdir)/common/m4/gst.m4 \
-	$(top_srcdir)/common/m4/libtool.m4 \
-	$(top_srcdir)/common/m4/ltoptions.m4 \
-	$(top_srcdir)/common/m4/ltsugar.m4 \
-	$(top_srcdir)/common/m4/ltversion.m4 \
-	$(top_srcdir)/common/m4/lt~obsolete.m4 \
-	$(top_srcdir)/common/m4/pkg.m4 \
-	$(top_srcdir)/common/m4/shave.m4 $(top_srcdir)/acinclude.m4 \
+	$(top_srcdir)/common/m4/gst.m4 $(top_srcdir)/common/m4/pkg.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -98,9 +94,12 @@ am__gst_la_OBJECTS = _gst_la-gst-argtypes.lo _gst_la-gstmodule.lo \
 	_gst_la-pygstvalue.lo _gst_la-pygstexception.lo
 nodist__gst_la_OBJECTS = _gst_la-gst.lo
 _gst_la_OBJECTS = $(am__gst_la_OBJECTS) $(nodist__gst_la_OBJECTS)
-_gst_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(_gst_la_CFLAGS) $(CFLAGS) \
-	$(_gst_la_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+_gst_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(_gst_la_CFLAGS) \
+	$(CFLAGS) $(_gst_la_LDFLAGS) $(LDFLAGS) -o $@
 @HAVE_GST_AUDIO_TRUE@audio_la_DEPENDENCIES = $(am__DEPENDENCIES_2) \
 @HAVE_GST_AUDIO_TRUE@	$(am__DEPENDENCIES_1)
 am__audio_la_SOURCES_DIST = audiomodule.c gst-argtypes.c
@@ -108,16 +107,16 @@ am__audio_la_SOURCES_DIST = audiomodule.c gst-argtypes.c
 @HAVE_GST_AUDIO_TRUE@	audio_la-gst-argtypes.lo
 @HAVE_GST_AUDIO_TRUE@nodist_audio_la_OBJECTS = audio_la-audio.lo
 audio_la_OBJECTS = $(am_audio_la_OBJECTS) $(nodist_audio_la_OBJECTS)
-audio_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(audio_la_CFLAGS) $(CFLAGS) \
-	$(audio_la_LDFLAGS) $(LDFLAGS) -o $@
+audio_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(audio_la_CFLAGS) \
+	$(CFLAGS) $(audio_la_LDFLAGS) $(LDFLAGS) -o $@
 @HAVE_GST_AUDIO_TRUE@am_audio_la_rpath = -rpath $(pygstexecdir)
 interfaces_la_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_interfaces_la_OBJECTS = interfaces_la-interfacesmodule.lo
 nodist_interfaces_la_OBJECTS = interfaces_la-interfaces.lo
 interfaces_la_OBJECTS = $(am_interfaces_la_OBJECTS) \
 	$(nodist_interfaces_la_OBJECTS)
-interfaces_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+interfaces_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(interfaces_la_CFLAGS) \
 	$(CFLAGS) $(interfaces_la_LDFLAGS) $(LDFLAGS) -o $@
 pbutils_la_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
@@ -126,7 +125,7 @@ am_pbutils_la_OBJECTS = pbutils_la-pbutilsmodule.lo \
 nodist_pbutils_la_OBJECTS = pbutils_la-pbutils.lo
 pbutils_la_OBJECTS = $(am_pbutils_la_OBJECTS) \
 	$(nodist_pbutils_la_OBJECTS)
-pbutils_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+pbutils_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(pbutils_la_CFLAGS) \
 	$(CFLAGS) $(pbutils_la_LDFLAGS) $(LDFLAGS) -o $@
 @HAVE_GST_TAG_TRUE@tag_la_DEPENDENCIES = $(am__DEPENDENCIES_2) \
@@ -136,8 +135,8 @@ am__tag_la_SOURCES_DIST = tagmodule.c gst-argtypes.c
 @HAVE_GST_TAG_TRUE@	tag_la-gst-argtypes.lo
 @HAVE_GST_TAG_TRUE@nodist_tag_la_OBJECTS = tag_la-tag.lo
 tag_la_OBJECTS = $(am_tag_la_OBJECTS) $(nodist_tag_la_OBJECTS)
-tag_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(tag_la_CFLAGS) $(CFLAGS) \
+tag_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(tag_la_CFLAGS) $(CFLAGS) \
 	$(tag_la_LDFLAGS) $(LDFLAGS) -o $@
 @HAVE_GST_TAG_TRUE@am_tag_la_rpath = -rpath $(pygstexecdir)
 @HAVE_GST_VIDEO_TRUE@video_la_DEPENDENCIES = $(am__DEPENDENCIES_2) \
@@ -147,9 +146,9 @@ am__video_la_SOURCES_DIST = videomodule.c gst-argtypes.c
 @HAVE_GST_VIDEO_TRUE@	video_la-gst-argtypes.lo
 @HAVE_GST_VIDEO_TRUE@nodist_video_la_OBJECTS = video_la-video.lo
 video_la_OBJECTS = $(am_video_la_OBJECTS) $(nodist_video_la_OBJECTS)
-video_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(video_la_CFLAGS) $(CFLAGS) \
-	$(video_la_LDFLAGS) $(LDFLAGS) -o $@
+video_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(video_la_CFLAGS) \
+	$(CFLAGS) $(video_la_LDFLAGS) $(LDFLAGS) -o $@
 @HAVE_GST_VIDEO_TRUE@am_video_la_rpath = -rpath $(pygstexecdir)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -157,13 +156,26 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(_gst_la_SOURCES) $(nodist__gst_la_SOURCES) \
 	$(audio_la_SOURCES) $(nodist_audio_la_SOURCES) \
 	$(interfaces_la_SOURCES) $(nodist_interfaces_la_SOURCES) \
@@ -220,7 +232,7 @@ am__relativize = \
 ACLOCAL = @ACLOCAL@
 ACLOCAL_AMFLAGS = @ACLOCAL_AMFLAGS@
 AMTAR = @AMTAR@
-AM_MAKEFLAGS = @AM_MAKEFLAGS@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -233,7 +245,6 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
@@ -247,8 +258,6 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 ERROR_CFLAGS = @ERROR_CFLAGS@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FC = @FC@
 FFLAGS = @FFLAGS@
 FGREP = @FGREP@
 GCOV = @GCOV@
@@ -289,10 +298,14 @@ IGNORE_GST_0_10_23 = @IGNORE_GST_0_10_23@
 IGNORE_GST_0_10_24 = @IGNORE_GST_0_10_24@
 IGNORE_GST_0_10_25 = @IGNORE_GST_0_10_25@
 IGNORE_GST_0_10_26 = @IGNORE_GST_0_10_26@
+IGNORE_GST_0_10_29 = @IGNORE_GST_0_10_29@
+IGNORE_GST_0_10_30 = @IGNORE_GST_0_10_30@
 IGNORE_GST_LOADSAVE = @IGNORE_GST_LOADSAVE@
 IGNORE_GST_PB_0_10_23 = @IGNORE_GST_PB_0_10_23@
 IGNORE_GST_PB_0_10_25 = @IGNORE_GST_PB_0_10_25@
 IGNORE_GST_PB_0_10_26 = @IGNORE_GST_PB_0_10_26@
+IGNORE_GST_PB_0_10_29 = @IGNORE_GST_PB_0_10_29@
+IGNORE_GST_PB_0_10_30 = @IGNORE_GST_PB_0_10_30@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -307,12 +320,10 @@ LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
-MAKEFLAGS = @MAKEFLAGS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
 NM = @NM@
 NMEDIT = @NMEDIT@
-OBJC = @OBJC@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OTOOL = @OTOOL@
@@ -352,17 +363,16 @@ PYTHON_LIB_LOC = @PYTHON_LIB_LOC@
 PYTHON_PLATFORM = @PYTHON_PLATFORM@
 PYTHON_PREFIX = @PYTHON_PREFIX@
 PYTHON_VERSION = @PYTHON_VERSION@
-Q = @Q@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-V = @V@
 VALGRIND_CFLAGS = @VALGRIND_CFLAGS@
 VALGRIND_LIBS = @VALGRIND_LIBS@
 VALGRIND_PATH = @VALGRIND_PATH@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -399,7 +409,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -414,7 +423,6 @@ pyexecdir = @pyexecdir@
 pythondir = @pythondir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-shavedir = @shavedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
@@ -446,9 +454,13 @@ versioned_overrides = \
 	gst-0.10.24.ignore 	\
 	gst-0.10.25.ignore 	\
 	gst-0.10.26.ignore 	\
+	gst-0.10.29.ignore 	\
+	gst-0.10.30.ignore 	\
 	gst-pb-0.10.23.ignore	\
 	gst-pb-0.10.25.ignore	\
 	gst-pb-0.10.26.ignore	\
+	gst-pb-0.10.29.ignore	\
+	gst-pb-0.10.30.ignore	\
 	gst-disable-loadsave.ignore
 
 INCLUDES = $(PYTHON_INCLUDES)
@@ -622,17 +634,17 @@ clean-pygstexecLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 _gst.la: $(_gst_la_OBJECTS) $(_gst_la_DEPENDENCIES) 
-	$(_gst_la_LINK) -rpath $(pygstexecdir) $(_gst_la_OBJECTS) $(_gst_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(_gst_la_LINK) -rpath $(pygstexecdir) $(_gst_la_OBJECTS) $(_gst_la_LIBADD) $(LIBS)
 audio.la: $(audio_la_OBJECTS) $(audio_la_DEPENDENCIES) 
-	$(audio_la_LINK) $(am_audio_la_rpath) $(audio_la_OBJECTS) $(audio_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(audio_la_LINK) $(am_audio_la_rpath) $(audio_la_OBJECTS) $(audio_la_LIBADD) $(LIBS)
 interfaces.la: $(interfaces_la_OBJECTS) $(interfaces_la_DEPENDENCIES) 
-	$(interfaces_la_LINK) -rpath $(pygstexecdir) $(interfaces_la_OBJECTS) $(interfaces_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(interfaces_la_LINK) -rpath $(pygstexecdir) $(interfaces_la_OBJECTS) $(interfaces_la_LIBADD) $(LIBS)
 pbutils.la: $(pbutils_la_OBJECTS) $(pbutils_la_DEPENDENCIES) 
-	$(pbutils_la_LINK) -rpath $(pygstexecdir) $(pbutils_la_OBJECTS) $(pbutils_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(pbutils_la_LINK) -rpath $(pygstexecdir) $(pbutils_la_OBJECTS) $(pbutils_la_LIBADD) $(LIBS)
 tag.la: $(tag_la_OBJECTS) $(tag_la_DEPENDENCIES) 
-	$(tag_la_LINK) $(am_tag_la_rpath) $(tag_la_OBJECTS) $(tag_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(tag_la_LINK) $(am_tag_la_rpath) $(tag_la_OBJECTS) $(tag_la_LIBADD) $(LIBS)
 video.la: $(video_la_OBJECTS) $(video_la_DEPENDENCIES) 
-	$(video_la_LINK) $(am_video_la_rpath) $(video_la_OBJECTS) $(video_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(video_la_LINK) $(am_video_la_rpath) $(video_la_OBJECTS) $(video_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -663,172 +675,196 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/video_la-videomodule.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 _gst_la-gst-argtypes.lo: gst-argtypes.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-gst-argtypes.lo -MD -MP -MF $(DEPDIR)/_gst_la-gst-argtypes.Tpo -c -o _gst_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/_gst_la-gst-argtypes.Tpo $(DEPDIR)/_gst_la-gst-argtypes.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-gst-argtypes.lo -MD -MP -MF $(DEPDIR)/_gst_la-gst-argtypes.Tpo -c -o _gst_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/_gst_la-gst-argtypes.Tpo $(DEPDIR)/_gst_la-gst-argtypes.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-argtypes.c' object='_gst_la-gst-argtypes.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
 
 _gst_la-gstmodule.lo: gstmodule.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-gstmodule.lo -MD -MP -MF $(DEPDIR)/_gst_la-gstmodule.Tpo -c -o _gst_la-gstmodule.lo `test -f 'gstmodule.c' || echo '$(srcdir)/'`gstmodule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/_gst_la-gstmodule.Tpo $(DEPDIR)/_gst_la-gstmodule.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-gstmodule.lo -MD -MP -MF $(DEPDIR)/_gst_la-gstmodule.Tpo -c -o _gst_la-gstmodule.lo `test -f 'gstmodule.c' || echo '$(srcdir)/'`gstmodule.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/_gst_la-gstmodule.Tpo $(DEPDIR)/_gst_la-gstmodule.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmodule.c' object='_gst_la-gstmodule.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-gstmodule.lo `test -f 'gstmodule.c' || echo '$(srcdir)/'`gstmodule.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-gstmodule.lo `test -f 'gstmodule.c' || echo '$(srcdir)/'`gstmodule.c
 
 _gst_la-pygstiterator.lo: pygstiterator.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-pygstiterator.lo -MD -MP -MF $(DEPDIR)/_gst_la-pygstiterator.Tpo -c -o _gst_la-pygstiterator.lo `test -f 'pygstiterator.c' || echo '$(srcdir)/'`pygstiterator.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/_gst_la-pygstiterator.Tpo $(DEPDIR)/_gst_la-pygstiterator.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-pygstiterator.lo -MD -MP -MF $(DEPDIR)/_gst_la-pygstiterator.Tpo -c -o _gst_la-pygstiterator.lo `test -f 'pygstiterator.c' || echo '$(srcdir)/'`pygstiterator.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/_gst_la-pygstiterator.Tpo $(DEPDIR)/_gst_la-pygstiterator.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pygstiterator.c' object='_gst_la-pygstiterator.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-pygstiterator.lo `test -f 'pygstiterator.c' || echo '$(srcdir)/'`pygstiterator.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-pygstiterator.lo `test -f 'pygstiterator.c' || echo '$(srcdir)/'`pygstiterator.c
 
 _gst_la-pygstminiobject.lo: pygstminiobject.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-pygstminiobject.lo -MD -MP -MF $(DEPDIR)/_gst_la-pygstminiobject.Tpo -c -o _gst_la-pygstminiobject.lo `test -f 'pygstminiobject.c' || echo '$(srcdir)/'`pygstminiobject.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/_gst_la-pygstminiobject.Tpo $(DEPDIR)/_gst_la-pygstminiobject.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-pygstminiobject.lo -MD -MP -MF $(DEPDIR)/_gst_la-pygstminiobject.Tpo -c -o _gst_la-pygstminiobject.lo `test -f 'pygstminiobject.c' || echo '$(srcdir)/'`pygstminiobject.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/_gst_la-pygstminiobject.Tpo $(DEPDIR)/_gst_la-pygstminiobject.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pygstminiobject.c' object='_gst_la-pygstminiobject.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-pygstminiobject.lo `test -f 'pygstminiobject.c' || echo '$(srcdir)/'`pygstminiobject.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-pygstminiobject.lo `test -f 'pygstminiobject.c' || echo '$(srcdir)/'`pygstminiobject.c
 
 _gst_la-pygstvalue.lo: pygstvalue.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-pygstvalue.lo -MD -MP -MF $(DEPDIR)/_gst_la-pygstvalue.Tpo -c -o _gst_la-pygstvalue.lo `test -f 'pygstvalue.c' || echo '$(srcdir)/'`pygstvalue.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/_gst_la-pygstvalue.Tpo $(DEPDIR)/_gst_la-pygstvalue.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-pygstvalue.lo -MD -MP -MF $(DEPDIR)/_gst_la-pygstvalue.Tpo -c -o _gst_la-pygstvalue.lo `test -f 'pygstvalue.c' || echo '$(srcdir)/'`pygstvalue.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/_gst_la-pygstvalue.Tpo $(DEPDIR)/_gst_la-pygstvalue.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pygstvalue.c' object='_gst_la-pygstvalue.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-pygstvalue.lo `test -f 'pygstvalue.c' || echo '$(srcdir)/'`pygstvalue.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-pygstvalue.lo `test -f 'pygstvalue.c' || echo '$(srcdir)/'`pygstvalue.c
 
 _gst_la-pygstexception.lo: pygstexception.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-pygstexception.lo -MD -MP -MF $(DEPDIR)/_gst_la-pygstexception.Tpo -c -o _gst_la-pygstexception.lo `test -f 'pygstexception.c' || echo '$(srcdir)/'`pygstexception.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/_gst_la-pygstexception.Tpo $(DEPDIR)/_gst_la-pygstexception.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-pygstexception.lo -MD -MP -MF $(DEPDIR)/_gst_la-pygstexception.Tpo -c -o _gst_la-pygstexception.lo `test -f 'pygstexception.c' || echo '$(srcdir)/'`pygstexception.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/_gst_la-pygstexception.Tpo $(DEPDIR)/_gst_la-pygstexception.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pygstexception.c' object='_gst_la-pygstexception.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-pygstexception.lo `test -f 'pygstexception.c' || echo '$(srcdir)/'`pygstexception.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-pygstexception.lo `test -f 'pygstexception.c' || echo '$(srcdir)/'`pygstexception.c
 
 _gst_la-gst.lo: gst.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-gst.lo -MD -MP -MF $(DEPDIR)/_gst_la-gst.Tpo -c -o _gst_la-gst.lo `test -f 'gst.c' || echo '$(srcdir)/'`gst.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/_gst_la-gst.Tpo $(DEPDIR)/_gst_la-gst.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -MT _gst_la-gst.lo -MD -MP -MF $(DEPDIR)/_gst_la-gst.Tpo -c -o _gst_la-gst.lo `test -f 'gst.c' || echo '$(srcdir)/'`gst.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/_gst_la-gst.Tpo $(DEPDIR)/_gst_la-gst.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst.c' object='_gst_la-gst.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-gst.lo `test -f 'gst.c' || echo '$(srcdir)/'`gst.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(_gst_la_CFLAGS) $(CFLAGS) -c -o _gst_la-gst.lo `test -f 'gst.c' || echo '$(srcdir)/'`gst.c
 
 audio_la-audiomodule.lo: audiomodule.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -MT audio_la-audiomodule.lo -MD -MP -MF $(DEPDIR)/audio_la-audiomodule.Tpo -c -o audio_la-audiomodule.lo `test -f 'audiomodule.c' || echo '$(srcdir)/'`audiomodule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/audio_la-audiomodule.Tpo $(DEPDIR)/audio_la-audiomodule.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -MT audio_la-audiomodule.lo -MD -MP -MF $(DEPDIR)/audio_la-audiomodule.Tpo -c -o audio_la-audiomodule.lo `test -f 'audiomodule.c' || echo '$(srcdir)/'`audiomodule.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/audio_la-audiomodule.Tpo $(DEPDIR)/audio_la-audiomodule.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audiomodule.c' object='audio_la-audiomodule.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -c -o audio_la-audiomodule.lo `test -f 'audiomodule.c' || echo '$(srcdir)/'`audiomodule.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -c -o audio_la-audiomodule.lo `test -f 'audiomodule.c' || echo '$(srcdir)/'`audiomodule.c
 
 audio_la-gst-argtypes.lo: gst-argtypes.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -MT audio_la-gst-argtypes.lo -MD -MP -MF $(DEPDIR)/audio_la-gst-argtypes.Tpo -c -o audio_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/audio_la-gst-argtypes.Tpo $(DEPDIR)/audio_la-gst-argtypes.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -MT audio_la-gst-argtypes.lo -MD -MP -MF $(DEPDIR)/audio_la-gst-argtypes.Tpo -c -o audio_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/audio_la-gst-argtypes.Tpo $(DEPDIR)/audio_la-gst-argtypes.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-argtypes.c' object='audio_la-gst-argtypes.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -c -o audio_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -c -o audio_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
 
 audio_la-audio.lo: audio.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -MT audio_la-audio.lo -MD -MP -MF $(DEPDIR)/audio_la-audio.Tpo -c -o audio_la-audio.lo `test -f 'audio.c' || echo '$(srcdir)/'`audio.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/audio_la-audio.Tpo $(DEPDIR)/audio_la-audio.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -MT audio_la-audio.lo -MD -MP -MF $(DEPDIR)/audio_la-audio.Tpo -c -o audio_la-audio.lo `test -f 'audio.c' || echo '$(srcdir)/'`audio.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/audio_la-audio.Tpo $(DEPDIR)/audio_la-audio.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audio.c' object='audio_la-audio.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -c -o audio_la-audio.lo `test -f 'audio.c' || echo '$(srcdir)/'`audio.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_la_CFLAGS) $(CFLAGS) -c -o audio_la-audio.lo `test -f 'audio.c' || echo '$(srcdir)/'`audio.c
 
 interfaces_la-interfacesmodule.lo: interfacesmodule.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(interfaces_la_CFLAGS) $(CFLAGS) -MT interfaces_la-interfacesmodule.lo -MD -MP -MF $(DEPDIR)/interfaces_la-interfacesmodule.Tpo -c -o interfaces_la-interfacesmodule.lo `test -f 'interfacesmodule.c' || echo '$(srcdir)/'`interfacesmodule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/interfaces_la-interfacesmodule.Tpo $(DEPDIR)/interfaces_la-interfacesmodule.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(interfaces_la_CFLAGS) $(CFLAGS) -MT interfaces_la-interfacesmodule.lo -MD -MP -MF $(DEPDIR)/interfaces_la-interfacesmodule.Tpo -c -o interfaces_la-interfacesmodule.lo `test -f 'interfacesmodule.c' || echo '$(srcdir)/'`interfacesmodule.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/interfaces_la-interfacesmodule.Tpo $(DEPDIR)/interfaces_la-interfacesmodule.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='interfacesmodule.c' object='interfaces_la-interfacesmodule.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(interfaces_la_CFLAGS) $(CFLAGS) -c -o interfaces_la-interfacesmodule.lo `test -f 'interfacesmodule.c' || echo '$(srcdir)/'`interfacesmodule.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(interfaces_la_CFLAGS) $(CFLAGS) -c -o interfaces_la-interfacesmodule.lo `test -f 'interfacesmodule.c' || echo '$(srcdir)/'`interfacesmodule.c
 
 interfaces_la-interfaces.lo: interfaces.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(interfaces_la_CFLAGS) $(CFLAGS) -MT interfaces_la-interfaces.lo -MD -MP -MF $(DEPDIR)/interfaces_la-interfaces.Tpo -c -o interfaces_la-interfaces.lo `test -f 'interfaces.c' || echo '$(srcdir)/'`interfaces.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/interfaces_la-interfaces.Tpo $(DEPDIR)/interfaces_la-interfaces.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(interfaces_la_CFLAGS) $(CFLAGS) -MT interfaces_la-interfaces.lo -MD -MP -MF $(DEPDIR)/interfaces_la-interfaces.Tpo -c -o interfaces_la-interfaces.lo `test -f 'interfaces.c' || echo '$(srcdir)/'`interfaces.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/interfaces_la-interfaces.Tpo $(DEPDIR)/interfaces_la-interfaces.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='interfaces.c' object='interfaces_la-interfaces.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(interfaces_la_CFLAGS) $(CFLAGS) -c -o interfaces_la-interfaces.lo `test -f 'interfaces.c' || echo '$(srcdir)/'`interfaces.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(interfaces_la_CFLAGS) $(CFLAGS) -c -o interfaces_la-interfaces.lo `test -f 'interfaces.c' || echo '$(srcdir)/'`interfaces.c
 
 pbutils_la-pbutilsmodule.lo: pbutilsmodule.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -MT pbutils_la-pbutilsmodule.lo -MD -MP -MF $(DEPDIR)/pbutils_la-pbutilsmodule.Tpo -c -o pbutils_la-pbutilsmodule.lo `test -f 'pbutilsmodule.c' || echo '$(srcdir)/'`pbutilsmodule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pbutils_la-pbutilsmodule.Tpo $(DEPDIR)/pbutils_la-pbutilsmodule.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -MT pbutils_la-pbutilsmodule.lo -MD -MP -MF $(DEPDIR)/pbutils_la-pbutilsmodule.Tpo -c -o pbutils_la-pbutilsmodule.lo `test -f 'pbutilsmodule.c' || echo '$(srcdir)/'`pbutilsmodule.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pbutils_la-pbutilsmodule.Tpo $(DEPDIR)/pbutils_la-pbutilsmodule.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pbutilsmodule.c' object='pbutils_la-pbutilsmodule.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -c -o pbutils_la-pbutilsmodule.lo `test -f 'pbutilsmodule.c' || echo '$(srcdir)/'`pbutilsmodule.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -c -o pbutils_la-pbutilsmodule.lo `test -f 'pbutilsmodule.c' || echo '$(srcdir)/'`pbutilsmodule.c
 
 pbutils_la-gst-argtypes.lo: gst-argtypes.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -MT pbutils_la-gst-argtypes.lo -MD -MP -MF $(DEPDIR)/pbutils_la-gst-argtypes.Tpo -c -o pbutils_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pbutils_la-gst-argtypes.Tpo $(DEPDIR)/pbutils_la-gst-argtypes.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -MT pbutils_la-gst-argtypes.lo -MD -MP -MF $(DEPDIR)/pbutils_la-gst-argtypes.Tpo -c -o pbutils_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pbutils_la-gst-argtypes.Tpo $(DEPDIR)/pbutils_la-gst-argtypes.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-argtypes.c' object='pbutils_la-gst-argtypes.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -c -o pbutils_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -c -o pbutils_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
 
 pbutils_la-pbutils.lo: pbutils.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -MT pbutils_la-pbutils.lo -MD -MP -MF $(DEPDIR)/pbutils_la-pbutils.Tpo -c -o pbutils_la-pbutils.lo `test -f 'pbutils.c' || echo '$(srcdir)/'`pbutils.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/pbutils_la-pbutils.Tpo $(DEPDIR)/pbutils_la-pbutils.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -MT pbutils_la-pbutils.lo -MD -MP -MF $(DEPDIR)/pbutils_la-pbutils.Tpo -c -o pbutils_la-pbutils.lo `test -f 'pbutils.c' || echo '$(srcdir)/'`pbutils.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pbutils_la-pbutils.Tpo $(DEPDIR)/pbutils_la-pbutils.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pbutils.c' object='pbutils_la-pbutils.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -c -o pbutils_la-pbutils.lo `test -f 'pbutils.c' || echo '$(srcdir)/'`pbutils.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(pbutils_la_CFLAGS) $(CFLAGS) -c -o pbutils_la-pbutils.lo `test -f 'pbutils.c' || echo '$(srcdir)/'`pbutils.c
 
 tag_la-tagmodule.lo: tagmodule.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -MT tag_la-tagmodule.lo -MD -MP -MF $(DEPDIR)/tag_la-tagmodule.Tpo -c -o tag_la-tagmodule.lo `test -f 'tagmodule.c' || echo '$(srcdir)/'`tagmodule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tag_la-tagmodule.Tpo $(DEPDIR)/tag_la-tagmodule.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -MT tag_la-tagmodule.lo -MD -MP -MF $(DEPDIR)/tag_la-tagmodule.Tpo -c -o tag_la-tagmodule.lo `test -f 'tagmodule.c' || echo '$(srcdir)/'`tagmodule.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_la-tagmodule.Tpo $(DEPDIR)/tag_la-tagmodule.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tagmodule.c' object='tag_la-tagmodule.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -c -o tag_la-tagmodule.lo `test -f 'tagmodule.c' || echo '$(srcdir)/'`tagmodule.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -c -o tag_la-tagmodule.lo `test -f 'tagmodule.c' || echo '$(srcdir)/'`tagmodule.c
 
 tag_la-gst-argtypes.lo: gst-argtypes.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -MT tag_la-gst-argtypes.lo -MD -MP -MF $(DEPDIR)/tag_la-gst-argtypes.Tpo -c -o tag_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tag_la-gst-argtypes.Tpo $(DEPDIR)/tag_la-gst-argtypes.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -MT tag_la-gst-argtypes.lo -MD -MP -MF $(DEPDIR)/tag_la-gst-argtypes.Tpo -c -o tag_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_la-gst-argtypes.Tpo $(DEPDIR)/tag_la-gst-argtypes.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-argtypes.c' object='tag_la-gst-argtypes.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -c -o tag_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -c -o tag_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
 
 tag_la-tag.lo: tag.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -MT tag_la-tag.lo -MD -MP -MF $(DEPDIR)/tag_la-tag.Tpo -c -o tag_la-tag.lo `test -f 'tag.c' || echo '$(srcdir)/'`tag.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tag_la-tag.Tpo $(DEPDIR)/tag_la-tag.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -MT tag_la-tag.lo -MD -MP -MF $(DEPDIR)/tag_la-tag.Tpo -c -o tag_la-tag.lo `test -f 'tag.c' || echo '$(srcdir)/'`tag.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_la-tag.Tpo $(DEPDIR)/tag_la-tag.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tag.c' object='tag_la-tag.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -c -o tag_la-tag.lo `test -f 'tag.c' || echo '$(srcdir)/'`tag.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tag_la_CFLAGS) $(CFLAGS) -c -o tag_la-tag.lo `test -f 'tag.c' || echo '$(srcdir)/'`tag.c
 
 video_la-videomodule.lo: videomodule.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -MT video_la-videomodule.lo -MD -MP -MF $(DEPDIR)/video_la-videomodule.Tpo -c -o video_la-videomodule.lo `test -f 'videomodule.c' || echo '$(srcdir)/'`videomodule.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/video_la-videomodule.Tpo $(DEPDIR)/video_la-videomodule.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -MT video_la-videomodule.lo -MD -MP -MF $(DEPDIR)/video_la-videomodule.Tpo -c -o video_la-videomodule.lo `test -f 'videomodule.c' || echo '$(srcdir)/'`videomodule.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/video_la-videomodule.Tpo $(DEPDIR)/video_la-videomodule.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='videomodule.c' object='video_la-videomodule.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -c -o video_la-videomodule.lo `test -f 'videomodule.c' || echo '$(srcdir)/'`videomodule.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -c -o video_la-videomodule.lo `test -f 'videomodule.c' || echo '$(srcdir)/'`videomodule.c
 
 video_la-gst-argtypes.lo: gst-argtypes.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -MT video_la-gst-argtypes.lo -MD -MP -MF $(DEPDIR)/video_la-gst-argtypes.Tpo -c -o video_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/video_la-gst-argtypes.Tpo $(DEPDIR)/video_la-gst-argtypes.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -MT video_la-gst-argtypes.lo -MD -MP -MF $(DEPDIR)/video_la-gst-argtypes.Tpo -c -o video_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/video_la-gst-argtypes.Tpo $(DEPDIR)/video_la-gst-argtypes.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst-argtypes.c' object='video_la-gst-argtypes.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -c -o video_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -c -o video_la-gst-argtypes.lo `test -f 'gst-argtypes.c' || echo '$(srcdir)/'`gst-argtypes.c
 
 video_la-video.lo: video.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -MT video_la-video.lo -MD -MP -MF $(DEPDIR)/video_la-video.Tpo -c -o video_la-video.lo `test -f 'video.c' || echo '$(srcdir)/'`video.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/video_la-video.Tpo $(DEPDIR)/video_la-video.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -MT video_la-video.lo -MD -MP -MF $(DEPDIR)/video_la-video.Tpo -c -o video_la-video.lo `test -f 'video.c' || echo '$(srcdir)/'`video.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/video_la-video.Tpo $(DEPDIR)/video_la-video.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='video.c' object='video_la-video.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -c -o video_la-video.lo `test -f 'video.c' || echo '$(srcdir)/'`video.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(video_la_CFLAGS) $(CFLAGS) -c -o video_la-video.lo `test -f 'video.c' || echo '$(srcdir)/'`video.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1221,7 +1257,7 @@ pbutils.c: $(PBUTILS_DEFS) $(PBUTILS_OVERRIDES) $(GEN_FILES)
 @HAVE_GST_TAG_TRUE@tag.c: $(TAG_DEFS) $(TAG_OVERRIDES) $(GEN_FILES)
 
 .defs.c: 
-	($(PYTHON) $(top_srcdir)/codegen/codegen.py \
+	$(AM_V_GEN)($(PYTHON) $(top_srcdir)/codegen/codegen.py \
 		--load-types $(srcdir)/arg-types.py \
 		--register $(srcdir)/gst-types.defs \
 		--override $(srcdir)/$*.override \
