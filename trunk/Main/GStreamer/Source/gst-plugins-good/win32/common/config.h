@@ -46,7 +46,7 @@
 #define GST_PACKAGE_NAME "GStreamer Good Plug-ins source release"
 
 /* package origin */
-#define GST_PACKAGE_ORIGIN "OSSBuild"
+#define GST_PACKAGE_ORIGIN "Unknown package origin"
 
 /* struct v4l2_buffer missing */
 #undef GST_V4L2_MISSING_BUFDECL
@@ -78,7 +78,7 @@
 #undef HAVE_CFPREFERENCESCOPYAPPVALUE
 
 /* Define to 1 if you have the `cosh' function. */
-#define HAVE_COSH 1
+#undef HAVE_COSH
 
 /* Define if the host CPU is an Alpha */
 #undef HAVE_CPU_ALPHA
@@ -289,7 +289,7 @@
 #undef HAVE_SHOUT2
 
 /* Define to 1 if you have the `sinh' function. */
-#define HAVE_SINH 1
+#undef HAVE_SINH
 
 /* Define to enable soup http client plugin (2.4) (used by souphttpsrc). */
 #undef HAVE_SOUP
@@ -380,7 +380,7 @@
 #define PACKAGE_NAME "GStreamer Good Plug-ins"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GStreamer Good Plug-ins 0.10.23.3"
+#define PACKAGE_STRING "GStreamer Good Plug-ins 0.10.24"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gst-plugins-good"
@@ -389,7 +389,7 @@
 #undef PACKAGE_URL
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.10.23.3"
+#define PACKAGE_VERSION "0.10.24"
 
 /* directory where plugins are located */
 #ifdef _DEBUG
@@ -420,7 +420,7 @@
 #undef STDC_HEADERS
 
 /* Version number of package */
-#define VERSION "0.10.23.3"
+#define VERSION "0.10.24"
 
 /* old wavpack API */
 #undef WAVPACK_OLD_API
