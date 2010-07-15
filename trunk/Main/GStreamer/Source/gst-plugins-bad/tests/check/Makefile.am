@@ -10,10 +10,11 @@ REGISTRY_ENVIRONMENT = \
 # FIXME: the PLUGIN_PATH has a hack to reach good for now
 # decide if it's worth it to add a .pc file for this, plus a dependancy on it
 TESTS_ENVIRONMENT = \
-        $(REGISTRY_ENVIRONMENT)                                 \
-        GST_PLUGIN_SYSTEM_PATH=					\
-        GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/sys:$(top_builddir)/ext:$(top_builddir)/../gst-ffmpeg/ext/ffmpeg:$(top_builddir)/../gst-plugins-good/gst:$(top_builddir)/../gst-plugins-good/sys:$(top_builddir)/../gst-plugins-good/ext:$(top_builddir)/../gst-plugins-ugly/gst:$(top_builddir)/../gst-plugins-ugly/sys:$(top_builddir)/../gst-plugins-ugly/ext:$(GSTPB_PLUGINS_DIR):$(GST_PLUGINS_DIR) \
-        STATE_IGNORE_ELEMENTS="alsaspdifsink apexsink camerabin cdaudio dc1394src dccpclientsrc dccpclientsink dccpserversrc dccpserversink dvbsrc dvbbasebin dfbvideosink festival nassink rsndvdbin sdlaudiosink sdlvideosink vcdsrc rfbsrc vdpauyuvvideo vdpauvideoyuv vdpaumpegdec neonhttpsrc"
+	$(REGISTRY_ENVIRONMENT)                                 \
+	GST_PLUGIN_SYSTEM_PATH=					\
+	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/sys:$(top_builddir)/ext:$(top_builddir)/../gst-ffmpeg/ext/ffmpeg:$(top_builddir)/../gst-plugins-good/gst:$(top_builddir)/../gst-plugins-good/sys:$(top_builddir)/../gst-plugins-good/ext:$(top_builddir)/../gst-plugins-ugly/gst:$(top_builddir)/../gst-plugins-ugly/sys:$(top_builddir)/../gst-plugins-ugly/ext:$(GSTPB_PLUGINS_DIR):$(GST_PLUGINS_DIR) \
+	GST_PLUGIN_LOADING_WHITELIST="gstreamer@$(GST_PLUGINS_DIR):gst-plugins-base@$(GSTPB_PLUGINS_DIR):gst-plugins-good:gst-plugins-ugly:gst-ffmpeg:gst-plugins-bad@$(top_builddir)" \
+	STATE_IGNORE_ELEMENTS="alsaspdifsink apexsink camerabin cdaudio dc1394src dccpclientsrc dccpclientsink dccpserversrc dccpserversink dvbsrc dvbbasebin dfbvideosink festival nassink rsndvdbin sdlaudiosink sdlvideosink vcdsrc rfbsrc vdpauyuvvideo vdpauvideoyuv vdpaumpegdec neonhttpsrc"
 
 plugindir = $(libdir)/gstreamer-@GST_MAJORMINOR@
 
@@ -25,7 +26,7 @@ CLEANFILES = core.* test-registry.*
 
 SUPPRESSIONS = $(top_srcdir)/common/gst.supp $(srcdir)/gst-plugins-bad.supp
 
-clean-local: clean-local-check
+clean-local: clean-local-check clean-local-orc
 
 if USE_ASSRENDER
 check_assrender = elements/assrender
@@ -43,6 +44,12 @@ if USE_FAAD
 check_faad = elements/faad
 else
 check_faad =
+endif
+
+if USE_EXIF
+check_jifmux = elements/jifmux
+else
+check_jifmux =
 endif
 
 if USE_METADATA
@@ -93,6 +100,12 @@ else
 check_mimic=
 endif
 
+if HAVE_ORC
+check_orc = orc/cog
+else
+check_orc =
+endif
+
 
 VALGRIND_TO_FIX = \
 	elements/mpeg2enc \
@@ -127,6 +140,7 @@ check_PROGRAMS = \
 	elements/camerabin \
 	elements/dataurisrc \
 	elements/legacyresample \
+        $(check_jifmux) \
 	elements/jpegparse \
 	elements/qtmux \
 	elements/selector \
@@ -136,6 +150,7 @@ check_PROGRAMS = \
 	$(check_metadata) \
 	$(check_mimic) \
 	elements/rtpmux \
+	$(check_orc) \
         pipelines/tagschecking
 
 noinst_HEADERS = elements/mxfdemux.h elements/amrparse_data.h elements/aacparse_data.h
@@ -157,6 +172,10 @@ elements_camerabin_LDADD = \
          -lgstinterfaces-@GST_MAJORMINOR@
 elements_camerabin_SOURCES = elements/camerabin.c
 
+elements_jifmux_CFLAGS = $(GST_OBJ_CFLAGS) $(GST_CHECK_CFLAGS) $(CHECK_CFLAGS) $(GST_OPTION_CFLAGS) $(AM_CFLAGS) $(EXIF_CFLAGS)
+elements_jifmux_LDADD = $(GST_OBJ_LIBS) $(GST_CHECK_LIBS) $(CHECK_LIBS) $(EXIF_LIBS) $(LDADD)
+elements_jifmux_SOURCES = elements/jifmux.c
+
 elements_timidity_CFLAGS = $(GST_BASE_CFLAGS) $(AM_CFLAGS)
 elements_timidity_LDADD = $(GST_BASE_LIBS) $(LDADD)
 
@@ -170,3 +189,14 @@ elements_assrender_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(AM_C
 elements_assrender_LDADD = $(GST_BASE_LIBS) $(LDADD) -lgstvideo-0.10 -lgstapp-0.10
 
 EXTRA_DIST = gst-plugins-bad.supp
+
+orc_cog_CFLAGS = $(ORC_CFLAGS)
+orc_cog_LDADD = $(ORC_LIBS) -lorc-test-0.4
+
+orc/cog.c: $(top_srcdir)/ext/cog/gstcogorc.orc
+	$(MKDIR_P) orc
+	$(ORCC) --test -o $@ $<
+
+clean-local-orc:
+	rm -rf orc
+

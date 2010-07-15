@@ -27,7 +27,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-#include <liboil/liboil.h>
+
+#include "_stdint.h"
 
 #include "resample.h"
 #include "buffer.h"

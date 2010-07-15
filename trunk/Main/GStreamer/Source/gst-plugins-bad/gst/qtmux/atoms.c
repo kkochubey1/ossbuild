@@ -3091,7 +3091,7 @@ atom_trak_set_video_type (AtomTRAK * trak, AtomsContext * context,
 
 AtomInfo *
 build_esds_extension (AtomTRAK * trak, guint8 object_type, guint8 stream_type,
-    const GstBuffer * codec_data)
+    const GstBuffer * codec_data, guint32 avg_bitrate, guint32 max_bitrate)
 {
   guint32 track_id;
   AtomESDS *esds;
@@ -3102,6 +3102,11 @@ build_esds_extension (AtomTRAK * trak, guint8 object_type, guint8 stream_type,
   esds->es.id = track_id & 0xFFFF;
   esds->es.dec_conf_desc.object_type = object_type;
   esds->es.dec_conf_desc.stream_type = stream_type << 2 | 0x01;
+
+  if (avg_bitrate > 0)
+    esds->es.dec_conf_desc.avg_bitrate = avg_bitrate;
+  if (max_bitrate > 0)
+    esds->es.dec_conf_desc.max_bitrate = max_bitrate;
 
   /* optional DecoderSpecificInfo */
   if (codec_data) {
@@ -3117,6 +3122,30 @@ build_esds_extension (AtomTRAK * trak, guint8 object_type, guint8 stream_type,
 
   return build_atom_info_wrapper ((Atom *) esds, atom_esds_copy_data,
       atom_esds_free);
+}
+
+AtomInfo *
+build_btrt_extension (guint32 buffer_size_db, guint32 avg_bitrate,
+    guint32 max_bitrate)
+{
+  AtomData *atom_data;
+  GstBuffer *buf;
+
+  if (buffer_size_db == 0 && avg_bitrate == 0 && max_bitrate == 0)
+    return 0;
+
+  buf = gst_buffer_new_and_alloc (12);
+
+  GST_WRITE_UINT32_BE (GST_BUFFER_DATA (buf), buffer_size_db);
+  GST_WRITE_UINT32_BE (GST_BUFFER_DATA (buf) + 4, avg_bitrate);
+  GST_WRITE_UINT32_BE (GST_BUFFER_DATA (buf) + 8, max_bitrate);
+
+  atom_data =
+      atom_data_new_from_gst_buffer (GST_MAKE_FOURCC ('b', 't', 'r', 't'), buf);
+  gst_buffer_unref (buf);
+
+  return build_atom_info_wrapper ((Atom *) atom_data, atom_data_copy_data,
+      atom_data_free);
 }
 
 static AtomInfo *
@@ -3157,14 +3186,15 @@ build_mov_wave_extension (AtomTRAK * trak, guint32 fourcc, AtomInfo * atom1,
 }
 
 AtomInfo *
-build_mov_aac_extension (AtomTRAK * trak, const GstBuffer * codec_data)
+build_mov_aac_extension (AtomTRAK * trak, const GstBuffer * codec_data,
+    guint32 avg_bitrate, guint32 max_bitrate)
 {
   AtomInfo *esds, *mp4a;
   GstBuffer *buf;
 
   /* Add ESDS atom to WAVE */
   esds = build_esds_extension (trak, ESDS_OBJECT_TYPE_MPEG4_P3,
-      ESDS_STREAM_TYPE_AUDIO, codec_data);
+      ESDS_STREAM_TYPE_AUDIO, codec_data, avg_bitrate, max_bitrate);
 
   /* Add MP4A atom to the WAVE:
    * not really in spec, but makes offset based players happy */

@@ -56,14 +56,6 @@ enum
 #define DEFAULT_SEQNUM_OFFSET    -1
 #define DEFAULT_SSRC             -1
 
-typedef struct
-{
-  gboolean have_clock_base;
-  guint clock_base;
-
-  GstCaps *out_caps;
-} GstRTPMuxPadPrivate;
-
 static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
@@ -80,8 +72,11 @@ static GstPad *gst_rtp_mux_request_new_pad (GstElement * element,
     GstPadTemplate * templ, const gchar * name);
 static void gst_rtp_mux_release_pad (GstElement * element, GstPad * pad);
 static GstFlowReturn gst_rtp_mux_chain (GstPad * pad, GstBuffer * buffer);
+static GstFlowReturn gst_rtp_mux_chain_list (GstPad * pad,
+    GstBufferList * bufferlist);
 static gboolean gst_rtp_mux_setcaps (GstPad * pad, GstCaps * caps);
 static GstCaps *gst_rtp_mux_getcaps (GstPad * pad);
+static gboolean gst_rtp_mux_sink_event (GstPad * pad, GstEvent * event);
 
 static GstStateChangeReturn gst_rtp_mux_change_state (GstElement *
     element, GstStateChange transition);
@@ -144,8 +139,6 @@ gst_rtp_mux_class_init (GstRTPMuxClass * klass)
       GST_DEBUG_FUNCPTR (gst_rtp_mux_request_new_pad);
   gstelement_class->release_pad = GST_DEBUG_FUNCPTR (gst_rtp_mux_release_pad);
   gstelement_class->change_state = GST_DEBUG_FUNCPTR (gst_rtp_mux_change_state);
-
-  klass->chain_func = gst_rtp_mux_chain;
 }
 
 static void
@@ -219,37 +212,8 @@ gst_rtp_mux_init (GstRTPMux * object, GstRTPMuxClass * g_class)
   object->ssrc = DEFAULT_SSRC;
   object->ts_offset = DEFAULT_TIMESTAMP_OFFSET;
   object->seqnum_offset = DEFAULT_SEQNUM_OFFSET;
-}
 
-static GstPad *
-gst_rtp_mux_create_sinkpad (GstRTPMux * rtp_mux, GstPadTemplate * templ,
-    const gchar * req_name)
-{
-  GstPad *newpad = NULL;
-  GstPadTemplate *class_templ;
-
-  class_templ =
-      gst_element_class_get_pad_template (GST_ELEMENT_GET_CLASS (rtp_mux),
-      "sink_%d");
-
-  if (templ == class_templ) {
-    gchar *tmpname = NULL;
-    const gchar *name = NULL;
-
-    /* create new pad with the name */
-    if (req_name)
-      name = req_name;
-    else
-      name = tmpname = g_strdup_printf ("sink_%02d", rtp_mux->numpads);
-    newpad = gst_pad_new_from_template (templ, name);
-    g_free (tmpname);
-
-    rtp_mux->numpads++;
-  } else {
-    GST_WARNING_OBJECT (rtp_mux, "this is not our template!\n");
-  }
-
-  return newpad;
+  object->segment_pending = TRUE;
 }
 
 static void
@@ -263,17 +227,18 @@ gst_rtp_mux_setup_sinkpad (GstRTPMux * rtp_mux, GstPad * sinkpad)
   /* setup some pad functions */
   gst_pad_set_setcaps_function (sinkpad, gst_rtp_mux_setcaps);
   gst_pad_set_getcaps_function (sinkpad, gst_rtp_mux_getcaps);
-  if (klass->chain_func)
-    gst_pad_set_chain_function (sinkpad, klass->chain_func);
-  if (klass->sink_event_func)
-    gst_pad_set_event_function (sinkpad, klass->sink_event_func);
+  gst_pad_set_chain_function (sinkpad, GST_DEBUG_FUNCPTR (gst_rtp_mux_chain));
+  gst_pad_set_chain_list_function (sinkpad,
+      GST_DEBUG_FUNCPTR (gst_rtp_mux_chain_list));
+  gst_pad_set_event_function (sinkpad,
+      GST_DEBUG_FUNCPTR (gst_rtp_mux_sink_event));
 
-  /* This could break with gstreamer 0.10.9 */
-  gst_pad_set_active (sinkpad, TRUE);
+
+  gst_segment_init (&padpriv->segment, GST_FORMAT_UNDEFINED);
 
   gst_pad_set_element_private (sinkpad, padpriv);
 
-  /* dd the pad to the element */
+  gst_pad_set_active (sinkpad, TRUE);
   gst_element_add_pad (GST_ELEMENT (rtp_mux), sinkpad);
 }
 
@@ -294,7 +259,7 @@ gst_rtp_mux_request_new_pad (GstElement * element,
     return NULL;
   }
 
-  newpad = gst_rtp_mux_create_sinkpad (rtp_mux, templ, req_name);
+  newpad = gst_pad_new_from_template (templ, req_name);
   if (newpad)
     gst_rtp_mux_setup_sinkpad (rtp_mux, newpad);
   else
@@ -323,24 +288,123 @@ gst_rtp_mux_release_pad (GstElement * element, GstPad * pad)
 
 /* Put our own clock-base on the buffer */
 static void
-gst_rtp_mux_readjust_rtp_timestamp (GstRTPMux * rtp_mux, GstPad * pad,
-    GstBuffer * buffer)
+gst_rtp_mux_readjust_rtp_timestamp_locked (GstRTPMux * rtp_mux,
+    GstRTPMuxPadPrivate * padpriv, GstBuffer * buffer)
 {
   guint32 ts;
   guint32 sink_ts_base = 0;
-  GstRTPMuxPadPrivate *padpriv;
 
-
-  GST_OBJECT_LOCK (rtp_mux);
-  padpriv = gst_pad_get_element_private (pad);
   if (padpriv && padpriv->have_clock_base)
     sink_ts_base = padpriv->clock_base;
-  GST_OBJECT_UNLOCK (rtp_mux);
 
   ts = gst_rtp_buffer_get_timestamp (buffer) - sink_ts_base + rtp_mux->ts_base;
   GST_LOG_OBJECT (rtp_mux, "Re-adjusting RTP ts %u to %u",
       gst_rtp_buffer_get_timestamp (buffer), ts);
   gst_rtp_buffer_set_timestamp (buffer, ts);
+}
+
+static gboolean
+process_buffer_locked (GstRTPMux * rtp_mux, GstRTPMuxPadPrivate * padpriv,
+    GstBuffer * buffer)
+{
+  GstRTPMuxClass *klass = GST_RTP_MUX_GET_CLASS (rtp_mux);
+
+  if (klass->accept_buffer_locked)
+    if (!klass->accept_buffer_locked (rtp_mux, padpriv, buffer))
+      return FALSE;
+
+  rtp_mux->seqnum++;
+  gst_rtp_buffer_set_seq (buffer, rtp_mux->seqnum);
+
+  gst_rtp_buffer_set_ssrc (buffer, rtp_mux->current_ssrc);
+  gst_rtp_mux_readjust_rtp_timestamp_locked (rtp_mux, padpriv, buffer);
+  GST_LOG_OBJECT (rtp_mux, "Pushing packet size %d, seq=%d, ts=%u",
+      GST_BUFFER_SIZE (buffer), rtp_mux->seqnum,
+      gst_rtp_buffer_get_timestamp (buffer));
+
+  if (padpriv) {
+    gst_buffer_set_caps (buffer, padpriv->out_caps);
+    if (padpriv->segment.format == GST_FORMAT_TIME)
+      GST_BUFFER_TIMESTAMP (buffer) =
+          gst_segment_to_running_time (&padpriv->segment, GST_FORMAT_TIME,
+          GST_BUFFER_TIMESTAMP (buffer));
+  }
+
+  return TRUE;
+}
+
+static GstFlowReturn
+gst_rtp_mux_chain_list (GstPad * pad, GstBufferList * bufferlist)
+{
+  GstRTPMux *rtp_mux;
+  GstFlowReturn ret;
+  GstBufferListIterator *it;
+  GstRTPMuxPadPrivate *padpriv;
+  GstEvent *newseg_event = NULL;
+  gboolean drop = TRUE;
+
+  rtp_mux = GST_RTP_MUX (gst_pad_get_parent (pad));
+
+  if (!gst_rtp_buffer_list_validate (bufferlist)) {
+    GST_ERROR_OBJECT (rtp_mux, "Invalid RTP buffer");
+    gst_object_unref (rtp_mux);
+    return GST_FLOW_ERROR;
+  }
+
+  GST_OBJECT_LOCK (rtp_mux);
+
+  padpriv = gst_pad_get_element_private (pad);
+  if (!padpriv) {
+    GST_OBJECT_UNLOCK (rtp_mux);
+    ret = GST_FLOW_NOT_LINKED;
+    gst_buffer_list_unref (bufferlist);
+    goto out;
+  }
+
+  bufferlist = gst_buffer_list_make_writable (bufferlist);
+  it = gst_buffer_list_iterate (bufferlist);
+  while (gst_buffer_list_iterator_next_group (it)) {
+    GstBuffer *rtpbuf;
+
+    rtpbuf = gst_buffer_list_iterator_next (it);
+    rtpbuf = gst_buffer_make_writable (rtpbuf);
+
+    drop = !process_buffer_locked (rtp_mux, padpriv, rtpbuf);
+
+    if (drop)
+      break;
+
+    gst_buffer_list_iterator_take (it, rtpbuf);
+  }
+  gst_buffer_list_iterator_free (it);
+
+  if (!drop && rtp_mux->segment_pending) {
+    /*
+     * We set the start at 0, because we re-timestamps to the running time
+     */
+    newseg_event = gst_event_new_new_segment_full (FALSE, 1.0, 1.0,
+        GST_FORMAT_TIME, 0, -1, 0);
+
+    rtp_mux->segment_pending = FALSE;
+  }
+
+  GST_OBJECT_UNLOCK (rtp_mux);
+
+  if (newseg_event)
+    gst_pad_push_event (rtp_mux->srcpad, newseg_event);
+
+  if (drop) {
+    gst_buffer_list_unref (bufferlist);
+    ret = GST_FLOW_OK;
+  } else {
+    ret = gst_pad_push_list (rtp_mux->srcpad, bufferlist);
+  }
+
+out:
+
+  gst_object_unref (rtp_mux);
+
+  return ret;
 }
 
 static GstFlowReturn
@@ -349,37 +413,52 @@ gst_rtp_mux_chain (GstPad * pad, GstBuffer * buffer)
   GstRTPMux *rtp_mux;
   GstFlowReturn ret;
   GstRTPMuxPadPrivate *padpriv;
+  GstEvent *newseg_event = NULL;
+  gboolean drop;
 
   rtp_mux = GST_RTP_MUX (gst_pad_get_parent (pad));
 
   if (!gst_rtp_buffer_validate (buffer)) {
+    gst_buffer_unref (buffer);
     GST_ERROR_OBJECT (rtp_mux, "Invalid RTP buffer");
     gst_object_unref (rtp_mux);
     return GST_FLOW_ERROR;
   }
 
-  buffer = gst_buffer_make_writable (buffer);
-
   GST_OBJECT_LOCK (rtp_mux);
-  rtp_mux->seqnum++;
-  gst_rtp_buffer_set_seq (buffer, rtp_mux->seqnum);
   padpriv = gst_pad_get_element_private (pad);
-  if (padpriv)
-    gst_buffer_set_caps (buffer, padpriv->out_caps);
-  GST_OBJECT_UNLOCK (rtp_mux);
-  gst_rtp_buffer_set_ssrc (buffer, rtp_mux->current_ssrc);
-  gst_rtp_mux_readjust_rtp_timestamp (rtp_mux, pad, buffer);
-  GST_LOG_OBJECT (rtp_mux, "Pushing packet size %d, seq=%d, ts=%u",
-      GST_BUFFER_SIZE (buffer), rtp_mux->seqnum,
-      gst_rtp_buffer_get_timestamp (buffer));
 
   if (!padpriv) {
+    GST_OBJECT_UNLOCK (rtp_mux);
     ret = GST_FLOW_NOT_LINKED;
     gst_buffer_unref (buffer);
     goto out;
   }
 
-  ret = gst_pad_push (rtp_mux->srcpad, buffer);
+  buffer = gst_buffer_make_writable (buffer);
+
+  drop = !process_buffer_locked (rtp_mux, padpriv, buffer);
+
+  if (!drop && rtp_mux->segment_pending) {
+    /*
+     * We set the start at 0, because we re-timestamps to the running time
+     */
+    newseg_event = gst_event_new_new_segment_full (FALSE, 1.0, 1.0,
+        GST_FORMAT_TIME, 0, -1, 0);
+
+    rtp_mux->segment_pending = FALSE;
+  }
+  GST_OBJECT_UNLOCK (rtp_mux);
+
+  if (newseg_event)
+    gst_pad_push_event (rtp_mux->srcpad, newseg_event);
+
+  if (drop) {
+    gst_buffer_unref (buffer);
+    ret = GST_FLOW_OK;
+  } else {
+    ret = gst_pad_push (rtp_mux->srcpad, buffer);
+  }
 
 out:
 
@@ -600,10 +679,97 @@ gst_rtp_mux_set_property (GObject * object,
   }
 }
 
+static gboolean
+gst_rtp_mux_sink_event (GstPad * pad, GstEvent * event)
+{
+
+  GstRTPMux *mux;
+  gboolean ret = FALSE;
+  gboolean forward = TRUE;
+
+  mux = GST_RTP_MUX (gst_pad_get_parent (pad));
+
+  switch (GST_EVENT_TYPE (event)) {
+    case GST_EVENT_FLUSH_STOP:
+    {
+      GstRTPMuxPadPrivate *padpriv;
+
+      GST_OBJECT_LOCK (mux);
+      mux->segment_pending = TRUE;
+      padpriv = gst_pad_get_element_private (pad);
+      if (padpriv)
+        gst_segment_init (&padpriv->segment, GST_FORMAT_UNDEFINED);
+      GST_OBJECT_UNLOCK (pad);
+    }
+      break;
+    case GST_EVENT_NEWSEGMENT:
+    {
+      gboolean update;
+      gdouble rate, applied_rate;
+      GstFormat format;
+      gint64 start, stop, position;
+      GstRTPMuxPadPrivate *padpriv;
+
+      gst_event_parse_new_segment_full (event, &update, &rate, &applied_rate,
+          &format, &start, &stop, &position);
+
+      GST_OBJECT_LOCK (mux);
+      padpriv = gst_pad_get_element_private (pad);
+
+      if (padpriv) {
+        if (format == GST_FORMAT_TIME)
+          gst_segment_set_newsegment_full (&padpriv->segment, update,
+              rate, applied_rate, format, start, stop, position);
+        else
+          gst_segment_init (&padpriv->segment, GST_FORMAT_UNDEFINED);
+      }
+      GST_OBJECT_UNLOCK (mux);
+      gst_event_unref (event);
+      forward = FALSE;
+      ret = TRUE;
+      break;
+    }
+    default:
+      break;
+  }
+
+  if (forward)
+    ret = gst_pad_push_event (mux->srcpad, event);
+
+  gst_object_unref (mux);
+  return ret;
+}
+
+
+static void
+clear_segment (gpointer data, gpointer user_data)
+{
+  GstPad *pad = data;
+  GstRTPMux *mux = user_data;
+  GstRTPMuxPadPrivate *padpriv;
+
+  GST_OBJECT_LOCK (mux);
+  padpriv = gst_pad_get_element_private (pad);
+  if (padpriv)
+    gst_segment_init (&padpriv->segment, GST_FORMAT_UNDEFINED);
+  GST_OBJECT_UNLOCK (mux);
+
+  gst_object_unref (pad);
+}
+
+
 static void
 gst_rtp_mux_ready_to_paused (GstRTPMux * rtp_mux)
 {
+  GstIterator *iter;
+
+  iter = gst_element_iterate_sink_pads (GST_ELEMENT (rtp_mux));
+  while (gst_iterator_foreach (iter, clear_segment, rtp_mux) ==
+      GST_ITERATOR_RESYNC);
+  gst_iterator_free (iter);
+
   GST_OBJECT_LOCK (rtp_mux);
+  rtp_mux->segment_pending = TRUE;
 
   if (rtp_mux->ssrc == -1)
     rtp_mux->current_ssrc = g_random_int ();
@@ -620,6 +786,7 @@ gst_rtp_mux_ready_to_paused (GstRTPMux * rtp_mux)
     rtp_mux->ts_base = g_random_int ();
   else
     rtp_mux->ts_base = rtp_mux->ts_offset;
+
   GST_DEBUG_OBJECT (rtp_mux, "set clock-base to %u", rtp_mux->ts_base);
 
   GST_OBJECT_UNLOCK (rtp_mux);

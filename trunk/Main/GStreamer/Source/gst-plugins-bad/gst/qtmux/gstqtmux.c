@@ -258,6 +258,8 @@ gst_qt_mux_pad_reset (GstQTPad * qtpad)
   qtpad->last_dts = 0;
   qtpad->first_ts = GST_CLOCK_TIME_NONE;
   qtpad->prepare_buf_func = NULL;
+  qtpad->avg_bitrate = 0;
+  qtpad->max_bitrate = 0;
 
   if (qtpad->last_buf)
     gst_buffer_replace (&qtpad->last_buf, NULL);
@@ -428,13 +430,13 @@ gst_qt_mux_add_mp4_tag (GstQTMux * qtmux, const GstTagList * list,
     }
     case G_TYPE_UINT:
     {
-      guint value;
+      guint value = 0;
       if (tag2) {
         /* paired unsigned integers */
-        guint count;
+        guint count = 0;
 
-        if (!gst_tag_list_get_uint (list, tag, &value) ||
-            !gst_tag_list_get_uint (list, tag2, &count))
+        if (!(gst_tag_list_get_uint (list, tag, &value) ||
+                gst_tag_list_get_uint (list, tag2, &count)))
           break;
         GST_DEBUG_OBJECT (qtmux, "Adding tag %" GST_FOURCC_FORMAT " -> %u/%u",
             GST_FOURCC_ARGS (fourcc), value, count);
@@ -979,9 +981,17 @@ gst_qt_mux_setup_metadata (GstQTMux * qtmux)
   GST_LOG_OBJECT (qtmux, "tags: %" GST_PTR_FORMAT, tags);
 
   if (tags && !gst_tag_list_is_empty (tags)) {
+    GstTagList *copy = gst_tag_list_copy (tags);
+
+    GST_DEBUG_OBJECT (qtmux, "Removing bogus tags");
+    gst_tag_list_remove_tag (copy, GST_TAG_VIDEO_CODEC);
+    gst_tag_list_remove_tag (copy, GST_TAG_AUDIO_CODEC);
+    gst_tag_list_remove_tag (copy, GST_TAG_CONTAINER_FORMAT);
+
     GST_DEBUG_OBJECT (qtmux, "Formatting tags");
-    gst_qt_mux_add_metadata_tags (qtmux, tags);
-    gst_qt_mux_add_xmp_tags (qtmux, tags);
+    gst_qt_mux_add_metadata_tags (qtmux, copy);
+    gst_qt_mux_add_xmp_tags (qtmux, copy);
+    gst_tag_list_free (copy);
   } else {
     GST_DEBUG_OBJECT (qtmux, "No tags received");
   }
@@ -1935,7 +1945,8 @@ gst_qt_mux_audio_sink_set_caps (GstPad * pad, GstCaps * caps)
               entry.fourcc = FOURCC_mp4a;
               ext_atom =
                   build_esds_extension (qtpad->trak, ESDS_OBJECT_TYPE_MPEG1_P3,
-                  ESDS_STREAM_TYPE_AUDIO, codec_data);
+                  ESDS_STREAM_TYPE_AUDIO, codec_data, qtpad->avg_bitrate,
+                  qtpad->max_bitrate);
             }
             entry.samples_per_packet = 1152;
             entry.bytes_per_sample = 2;
@@ -1973,11 +1984,13 @@ gst_qt_mux_audio_sink_set_caps (GstPad * pad, GstCaps * caps)
         entry.fourcc = FOURCC_mp4a;
 
         if (format == GST_QT_MUX_FORMAT_QT)
-          ext_atom = build_mov_aac_extension (qtpad->trak, codec_data);
+          ext_atom = build_mov_aac_extension (qtpad->trak, codec_data,
+              qtpad->avg_bitrate, qtpad->max_bitrate);
         else
           ext_atom =
               build_esds_extension (qtpad->trak, ESDS_OBJECT_TYPE_MPEG4_P3,
-              ESDS_STREAM_TYPE_AUDIO, codec_data);
+              ESDS_STREAM_TYPE_AUDIO, codec_data, qtpad->avg_bitrate,
+              qtpad->max_bitrate);
         break;
       default:
         break;
@@ -2294,7 +2307,8 @@ gst_qt_mux_video_sink_set_caps (GstPad * pad, GstCaps * caps)
       entry.fourcc = FOURCC_mp4v;
       ext_atom =
           build_esds_extension (qtpad->trak, ESDS_OBJECT_TYPE_MPEG4_P2,
-          ESDS_STREAM_TYPE_VISUAL, codec_data);
+          ESDS_STREAM_TYPE_VISUAL, codec_data, qtpad->avg_bitrate,
+          qtpad->max_bitrate);
       if (ext_atom != NULL)
         ext_atom_list = g_list_prepend (ext_atom_list, ext_atom);
       if (!codec_data)
@@ -2304,6 +2318,9 @@ gst_qt_mux_video_sink_set_caps (GstPad * pad, GstCaps * caps)
   } else if (strcmp (mimetype, "video/x-h264") == 0) {
     entry.fourcc = FOURCC_avc1;
     qtpad->is_out_of_order = TRUE;
+    ext_atom = build_btrt_extension (0, qtpad->avg_bitrate, qtpad->max_bitrate);
+    if (ext_atom != NULL)
+      ext_atom_list = g_list_prepend (ext_atom_list, ext_atom);
     if (!codec_data)
       GST_WARNING_OBJECT (qtmux, "no codec_data in h264 caps");
     ext_atom = build_codec_data_extension (FOURCC_avcC, codec_data);
@@ -2465,6 +2482,7 @@ gst_qt_mux_sink_event (GstPad * pad, GstEvent * event)
 {
   gboolean ret;
   GstQTMux *qtmux;
+  guint32 avg_bitrate = 0, max_bitrate = 0;
 
   qtmux = GST_QT_MUX_CAST (gst_pad_get_parent (pad));
   switch (GST_EVENT_TYPE (event)) {
@@ -2481,6 +2499,18 @@ gst_qt_mux_sink_event (GstPad * pad, GstEvent * event)
 
       gst_tag_setter_merge_tags (setter, list, mode);
       GST_OBJECT_UNLOCK (qtmux);
+
+      if (gst_tag_list_get_uint (list, GST_TAG_BITRATE, &avg_bitrate) |
+          gst_tag_list_get_uint (list, GST_TAG_MAXIMUM_BITRATE, &max_bitrate)) {
+        GstQTPad *qtpad = gst_pad_get_element_private (pad);
+        g_assert (qtpad);
+
+        if (avg_bitrate > 0 && avg_bitrate < G_MAXUINT32)
+          qtpad->avg_bitrate = avg_bitrate;
+        if (max_bitrate > 0 && max_bitrate < G_MAXUINT32)
+          qtpad->max_bitrate = max_bitrate;
+      }
+
       break;
     }
     default:
@@ -2498,24 +2528,21 @@ gst_qt_mux_release_pad (GstElement * element, GstPad * pad)
 {
   GstQTMux *mux = GST_QT_MUX_CAST (element);
   GSList *walk;
-  gboolean to_remove;
 
-  /* let GstCollectPads complain if it is some unknown pad */
-  if (gst_collect_pads_remove_pad (mux->collect, pad)) {
-    gst_element_remove_pad (element, pad);
-    to_remove = TRUE;
-    for (walk = mux->sinkpads; walk; walk = g_slist_next (walk)) {
-      GstQTPad *qtpad = (GstQTPad *) walk->data;
-      if (qtpad->collect.pad == pad) {
-        /* this is it, remove */
-        mux->sinkpads = g_slist_delete_link (mux->sinkpads, walk);
-        to_remove = FALSE;
-        break;
-      }
+  GST_DEBUG_OBJECT (element, "Releasing %s:%s", GST_DEBUG_PAD_NAME (pad));
+
+  for (walk = mux->sinkpads; walk; walk = g_slist_next (walk)) {
+    GstQTPad *qtpad = (GstQTPad *) walk->data;
+    GST_DEBUG ("Checking %s:%s", GST_DEBUG_PAD_NAME (qtpad->collect.pad));
+    if (qtpad->collect.pad == pad) {
+      /* this is it, remove */
+      mux->sinkpads = g_slist_delete_link (mux->sinkpads, walk);
+      gst_element_remove_pad (element, pad);
+      break;
     }
-    if (to_remove)
-      GST_WARNING_OBJECT (mux, "Released pad not in internal sinkpad list");
   }
+
+  gst_collect_pads_remove_pad (mux->collect, pad);
 }
 
 static GstPad *

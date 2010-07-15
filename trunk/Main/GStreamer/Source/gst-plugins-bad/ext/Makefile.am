@@ -348,6 +348,12 @@ else
 VP8_DIR=
 endif
 
+if USE_GSETTINGS
+GSETTINGS_DIR=gsettings
+else
+GSETTINGS_DIR=
+endif
+
 # if USE_XINE
 # XINE_DIR=xine
 # else
@@ -365,6 +371,13 @@ ZBAR_DIR=zbar
 else
 ZBAR_DIR=
 endif
+
+if USE_RTMP
+RTMP_DIR = rtmp
+else
+RTMP_DIR =
+endif
+
 
 SUBDIRS=\
 	$(ALSASPDIF_DIR) \
@@ -388,6 +401,7 @@ SUBDIRS=\
 	$(FAAC_DIR) \
 	$(FAAD_DIR) \
 	$(FLITE_DIR) \
+	$(GSETTINGS_DIR) \
 	$(GSM_DIR) \
 	$(G729_DIR) \
 	$(HERMES_DIR) \
@@ -426,7 +440,8 @@ SUBDIRS=\
 	$(VP8_DIR) \
 	$(XINE_DIR) \
 	$(XVID_DIR) \
-	$(ZBAR_DIR)
+	$(ZBAR_DIR) \
+	$(RTMP_DIR)
 
 DIST_SUBDIRS = \
 	alsaspdif \
@@ -443,6 +458,7 @@ DIST_SUBDIRS = \
 	faac \
 	faad \
 	flite \
+	gsettings \
 	gsm \
 	ladspa \
 	jack \
@@ -476,6 +492,7 @@ DIST_SUBDIRS = \
 	timidity \
 	vp8 \
 	xvid \
-	zbar
+	zbar \
+	rtmp
 
 include $(top_srcdir)/common/parallel-subdirs.mak

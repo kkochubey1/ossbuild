@@ -1,16 +1,16 @@
-AC_PREREQ(2.52)
+AC_PREREQ(2.60)
 
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GStreamer Bad Plug-ins, 0.10.19,
+AC_INIT(GStreamer Bad Plug-ins, 0.10.19.1,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-bad)
 
 AG_GST_INIT
 
 dnl initialize automake
-AM_INIT_AUTOMAKE([-Wno-portability])
+AM_INIT_AUTOMAKE([-Wno-portability 1.10])
 
 dnl define PACKAGE_VERSION_* variables
 AS_VERSION
@@ -50,8 +50,8 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.29
-GSTPB_REQ=0.10.29
+GST_REQ=0.10.29.1
+GSTPB_REQ=0.10.29.1
 
 dnl *** autotools stuff ****
 
@@ -167,6 +167,11 @@ dnl *** checks for compiler characteristics ***
 dnl *** checks for library functions ***
 AC_CHECK_FUNCS([gmtime_r])
 
+LIBS_SAVE=$LIBS
+LIBS="$LIBS $LIBM"
+AC_CHECK_FUNCS([log2])
+LIBS=$LIBS_SAVE
+
 dnl *** checks for headers ***
 AC_CHECK_HEADERS([sys/utsname.h])
 
@@ -177,13 +182,7 @@ AC_CHECK_FUNC(socket,,[AC_CHECK_LIB(socket,socket)])
 AC_CHECK_FUNC(gethostbyname,,[AC_CHECK_LIB(nsl,gethostbyname)])
 
 dnl GLib is required
-AG_GST_GLIB_CHECK([2.16])
-
-dnl liboil is required
-PKG_CHECK_MODULES(LIBOIL, liboil-0.3 >= 0.3.8, HAVE_LIBOIL=yes, HAVE_LIBOIL=no)
-if test "x$HAVE_LIBOIL" != "xyes"; then
-  AC_ERROR([liboil-0.3.8 or later is required])
-fi
+AG_GST_GLIB_CHECK([2.20])
 
 dnl checks for gstreamer
 dnl uninstalled is selected preferentially -- see pkg-config(1)
@@ -210,7 +209,7 @@ AC_SUBST(GSTPB_PREFIX)
 dnl GTK is optional and used in examples
 HAVE_GTK=NO
 PKG_CHECK_MODULES(GTK, gtk+-x11-3.0, HAVE_GTK=yes,
-    [PKG_CHECK_MODULES(GTK, gtk+-x11-2.0 >= 2.12.0, HAVE_GTK=yes,HAVE_GTK=no)])
+    [PKG_CHECK_MODULES(GTK, gtk+-x11-2.0 >= 2.14.0, HAVE_GTK=yes,HAVE_GTK=no)])
 AM_CONDITIONAL(HAVE_GTK, test "x$HAVE_GTK" = "xyes")
 
 dnl Needed for GtkBuilder to autoconnect signals
@@ -226,6 +225,9 @@ AM_CONDITIONAL(HAVE_X11, test "x$HAVE_X11" = "xyes")
 if test "x$HAVE_X11" = "xyes"; then
   AC_DEFINE(HAVE_X11, 1, [Define if you have X11 library])
 fi
+
+dnl Orc
+ORC_CHECK([0.4.5])
 
 dnl set license and copyright notice
 GST_LICENSE="LGPL"
@@ -281,10 +283,12 @@ AG_GST_CHECK_PLUGIN(dvdspu)
 AG_GST_CHECK_PLUGIN(festival)
 AG_GST_CHECK_PLUGIN(freeze)
 AG_GST_CHECK_PLUGIN(frei0r)
+AG_GST_CHECK_PLUGIN(geometrictransform)
 AG_GST_CHECK_PLUGIN(h264parse)
 AG_GST_CHECK_PLUGIN(hdvparse)
 AG_GST_CHECK_PLUGIN(id3tag)
 AG_GST_CHECK_PLUGIN(invtelecine)
+AG_GST_CHECK_PLUGIN(ivfparse)
 AG_GST_CHECK_PLUGIN(jpegformat)
 AG_GST_CHECK_PLUGIN(librfb)
 AG_GST_CHECK_PLUGIN(liveadder)
@@ -313,6 +317,7 @@ AG_GST_CHECK_PLUGIN(subenc)
 AG_GST_CHECK_PLUGIN(stereo)
 AG_GST_CHECK_PLUGIN(tta)
 AG_GST_CHECK_PLUGIN(valve)
+AG_GST_CHECK_PLUGIN(videomaxrate)
 AG_GST_CHECK_PLUGIN(videomeasure)
 AG_GST_CHECK_PLUGIN(videosignal)
 AG_GST_CHECK_PLUGIN(vmnc)
@@ -470,6 +475,12 @@ AG_GST_CHECK_FEATURE(QUICKTIME, [QuickTime wrapper], qtwrapper, [
       [#include <Quicktime/Quicktime.h>])
 ])
 
+dnl check for shm_open (for shm plugin)
+translit(dnm, m, l) AM_CONDITIONAL(USE_SHM, true)
+AG_GST_CHECK_FEATURE(SHM, [POSIX shared memory source and sink], shm, [
+  AC_CHECK_LIB(rt, shm_open, HAVE_SHM=yes, HAVE_SHM=no)
+])
+
 dnl check for Video CD
 translit(dnm, m, l) AM_CONDITIONAL(USE_VCD, true)
 AG_GST_CHECK_FEATURE(VCD, [Video CD], vcdsrc, [
@@ -562,21 +573,20 @@ AG_GST_CHECK_FEATURE(CDAUDIO, [cdaudio], cdaudio, [
 dnl *** celt ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_CELT, true)
 AG_GST_CHECK_FEATURE(CELT, [celt], celt, [
-  PKG_CHECK_MODULES(CELT, celt >= 0.4.0, [
-          HAVE_CELT="yes"
-  ], [
-          AC_MSG_RESULT(no)
-	  HAVE_CELT="no"
-  ])
-
-  PKG_CHECK_MODULES(CELT_0_5, celt >= 0.5.0, [
-          AC_DEFINE([HAVE_CELT_0_5], 1, [Define if libcelt 0.5 is installed])
+  PKG_CHECK_MODULES(CELT, celt >= 0.5.0, [
+          AC_DEFINE([HAVE_CELT], 1, [Define if libcelt 0.5 is installed])
   ], [
           AC_MSG_RESULT(no)
   ])
 
   PKG_CHECK_MODULES(CELT_0_7, celt >= 0.7.0, [
           AC_DEFINE([HAVE_CELT_0_7], 1, [Define if libcelt 0.7 is installed])
+  ], [
+          AC_MSG_RESULT(no)
+  ])
+
+  PKG_CHECK_MODULES(CELT_0_8, celt >= 0.8.0, [
+          AC_DEFINE([HAVE_CELT_0_8], 1, [Define if libcelt 0.8 is installed])
   ], [
           AC_MSG_RESULT(no)
   ])
@@ -587,17 +597,13 @@ AG_GST_CHECK_FEATURE(CELT, [celt], celt, [
 dnl *** Cog ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_COG, true)
 AG_GST_CHECK_FEATURE(COG, [Cog plugin], cog, [
-  PKG_CHECK_MODULES(COG, libpng >= 1.2 orc-0.4 >= 0.4.3, HAVE_COG="yes", [
+  PKG_CHECK_MODULES(COG, libpng >= 1.2 orc-0.4 >= $ORC_REQ, HAVE_COG="yes", [
     HAVE_COG="no"
     AC_MSG_RESULT(no)
   ])
   AC_SUBST(COG_CFLAGS)
   AC_SUBST(COG_LIBS)
-  ORCC=`$PKG_CONFIG --variable=orcc orc-0.4`
-  if test "x$ORCC" = x ; then
-    ORCC=orcc
-  fi
-  AC_SUBST(ORCC)
+  dnl ORCC was set up by Orc check above
 ])
 
 dnl *** dc1394  ***
@@ -732,13 +738,20 @@ AG_GST_CHECK_FEATURE(RESINDVD, [resindvd plugin], resindvd, [
   ])
 ])
 
+dnl **** exif (used on metadata and jifmux tests) ****
+translit(dnm, m, l) AM_CONDITIONAL(USE_EXIF, true)
+AG_GST_CHECK_FEATURE(EXIF, [exif], exif, [
+  PKG_CHECK_MODULES(EXIF, libexif >= 0.6.16, HAVE_EXIF="yes", [
+    HAVE_EXIF="no"
+    AC_MSG_RESULT(no)
+  ])
+])
+
+
 dnl *** METADATA ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_METADATA, true)
 AG_GST_CHECK_FEATURE(METADATA, [METADATA muxer and demuxer], metadata, [
   HAVE_METADATA="no"
-  PKG_CHECK_MODULES(EXIF, libexif >= 0.6.16, HAVE_EXIF="yes", [
-    HAVE_EXIF="no"
-  ])
   PKG_CHECK_MODULES(IPTC, libiptcdata >= 1.0.2, HAVE_IPTC="yes", [
     HAVE_IPTC="no"
   ])
@@ -747,7 +760,7 @@ AG_GST_CHECK_FEATURE(METADATA, [METADATA muxer and demuxer], metadata, [
   ])
   PKG_CHECK_MODULES(XMP_1_99_5, exempi-2.0 >= 1.99.5, XMP_CFLAGS="-DXMP_1_99_5 $XMP_CFLAGS", AC_MSG_RESULT(no))
   if test x$HAVE_EXIF = xyes; then
-    METADATA_CFLAGS="-DHAVE_EXIF $EXIF_CFLAGS $METADATA_CFLAGS"
+    METADATA_CFLAGS="$EXIF_CFLAGS $METADATA_CFLAGS"
     METADATA_LIBS="$EXIF_LIBS $METADATA_LIBS -lm"
     HAVE_METADATA="yes"
   fi
@@ -1250,7 +1263,12 @@ AG_GST_CHECK_FEATURE(TIMIDITY, [timidity midi soft synth plugin], timidity, [
 dnl *** wildmidi ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_WILDMIDI, true)
 AG_GST_CHECK_FEATURE(WILDMIDI, [wildmidi midi soft synth plugin], wildmidi, [
-  AC_CHECK_HEADER([wildmidi_lib.h],HAVE_WILDMIDI=yes, HAVE_WILDMIDI=no)
+  AG_GST_CHECK_LIBHEADER(WILDMIDI, WildMidi,
+                         WildMidi_Init, ,
+                         wildmidi_lib.h,
+                         WILDMIDI_LIBS="-lWildMidi")
+  AC_CHECK_LIB(WildMidi, WildMidi_LoadSamples, AC_DEFINE(HAVE_WILDMIDI_0_2_2, [1], [Have WildMidi 0.2.2 or earlier library]))
+
   if test "x$HAVE_WILDMIDI" = "xyes"; then
 	 WILDMIDI_CFLAGS=
 	 WILDMIDI_LIBS=-lWildMidi
@@ -1509,6 +1527,21 @@ AG_GST_CHECK_FEATURE(VP8, [VP8 decoder], vp8, [
   AC_SUBST(VPX_LIBS)
 ])
 
+dnl *** rtmp ***
+translit(dnm, m, l) AM_CONDITIONAL(USE_RTMP, true)
+AG_GST_CHECK_FEATURE(RTMP, [rtmp library], rtmp, [
+  AG_GST_PKG_CHECK_MODULES(RTMP, librtmp)
+])
+
+dnl *** GSettings ***
+translit(dnm, m, l) AM_CONDITIONAL(USE_GSETTINGS, true)
+AG_GST_CHECK_FEATURE(GSETTINGS, [GSettings plugin], gsettings, [
+  AG_GST_PKG_CHECK_MODULES(GSETTINGS, gio-2.0 >= 2.25.0)
+  if test "x$HAVE_GSETTINGS" = "xyes"; then
+    GLIB_GSETTINGS
+  fi
+])
+
 else
 
 dnl not building plugins with external dependencies,
@@ -1559,6 +1592,7 @@ AM_CONDITIONAL(USE_SNDFILE, false)
 AM_CONDITIONAL(USE_SOUNDTOUCH, false)
 AM_CONDITIONAL(USE_SPC, false)
 AM_CONDITIONAL(USE_GME, false)
+AM_CONDITIONAL(USE_GSETTINGS, false)
 AM_CONDITIONAL(USE_SWFDEC, false)
 AM_CONDITIONAL(USE_THEORADEC, false)
 AM_CONDITIONAL(USE_XVID, false)
@@ -1569,6 +1603,7 @@ AM_CONDITIONAL(USE_VDPAU, false)
 AM_CONDITIONAL(USE_SCHRO, false)
 AM_CONDITIONAL(USE_ZBAR, false)
 AM_CONDITIONAL(USE_VP8, false)
+AM_CONDITIONAL(USE_RTMP, false)
 
 fi dnl of EXT plugins
 
@@ -1607,8 +1642,8 @@ dnl FIXME: do we want to rename to GST_ALL_* ?
 dnl prefer internal headers to already installed ones
 dnl also add builddir include for enumtypes and marshal
 dnl add GST_OPTION_CFLAGS, but overridable
-GST_CXXFLAGS="$GST_CFLAGS \$(GST_OPTION_CXXFLAGS)"
-GST_CFLAGS="$GST_CFLAGS \$(GST_OPTION_CFLAGS)"
+GST_CXXFLAGS="$GST_CFLAGS $GLIB_EXTRA_CFLAGS \$(GST_OPTION_CXXFLAGS)"
+GST_CFLAGS="$GST_CFLAGS $GLIB_EXTRA_CFLAGS \$(GST_OPTION_CFLAGS)"
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_CXXFLAGS)
 AC_SUBST(GST_LIBS)
@@ -1654,10 +1689,12 @@ gst/dvdspu/Makefile
 gst/festival/Makefile
 gst/freeze/Makefile
 gst/frei0r/Makefile
+gst/geometrictransform/Makefile
 gst/h264parse/Makefile
 gst/hdvparse/Makefile
 gst/id3tag/Makefile
 gst/invtelecine/Makefile
+gst/ivfparse/Makefile
 gst/jpegformat/Makefile
 gst/legacyresample/Makefile
 gst/librfb/Makefile
@@ -1688,6 +1725,7 @@ gst/subenc/Makefile
 gst/stereo/Makefile
 gst/tta/Makefile
 gst/valve/Makefile
+gst/videomaxrate/Makefile
 gst/videomeasure/Makefile
 gst/videosignal/Makefile
 gst/vmnc/Makefile
@@ -1708,8 +1746,11 @@ sys/dvb/Makefile
 sys/fbdev/Makefile
 sys/osxvideo/Makefile
 sys/qtwrapper/Makefile
+sys/shm/Makefile
 sys/vcd/Makefile
 sys/vdpau/Makefile
+sys/vdpau/gstvdp/Makefile
+sys/vdpau/basevideodecoder/Makefile
 sys/wasapi/Makefile
 sys/wininet/Makefile
 sys/winks/Makefile
@@ -1760,11 +1801,14 @@ ext/neon/Makefile
 ext/ofa/Makefile
 ext/rsvg/Makefile
 ext/resindvd/Makefile
+ext/rtmp/Makefile
 ext/schroedinger/Makefile
 ext/sdl/Makefile
 ext/sndfile/Makefile
 ext/soundtouch/Makefile
 ext/gme/Makefile
+ext/gsettings/Makefile
+ext/gsettings/org.freedesktop.gstreamer.default-elements.gschema.xml
 ext/spc/Makefile
 ext/swfdec/Makefile
 ext/theora/Makefile
@@ -1786,3 +1830,5 @@ win32/common/config.h
 AC_OUTPUT
 
 AG_GST_OUTPUT_PLUGINS
+ORC_OUTPUT
+

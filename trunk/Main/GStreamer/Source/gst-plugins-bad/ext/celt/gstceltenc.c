@@ -54,6 +54,29 @@
 GST_DEBUG_CATEGORY_STATIC (celtenc_debug);
 #define GST_CAT_DEFAULT celtenc_debug
 
+#define GST_CELT_ENC_TYPE_PREDICTION (gst_celt_enc_prediction_get_type())
+static GType
+gst_celt_enc_prediction_get_type (void)
+{
+  static const GEnumValue values[] = {
+    {0, "Independent frames", "idependent"},
+    {1, "Short term interframe prediction", "short-term"},
+    {2, "Long term interframe prediction", "long-term"},
+    {0, NULL, NULL}
+  };
+  static volatile GType id = 0;
+
+  if (g_once_init_enter ((gsize *) & id)) {
+    GType _id;
+
+    _id = g_enum_register_static ("GstCeltEncPrediction", values);
+
+    g_once_init_leave ((gsize *) & id, _id);
+  }
+
+  return id;
+}
+
 static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
@@ -77,6 +100,8 @@ static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
 #define DEFAULT_CBR             TRUE
 #define DEFAULT_COMPLEXITY      9
 #define DEFAULT_MAX_BITRATE     64
+#define DEFAULT_PREDICTION      0
+#define DEFAULT_START_BAND      0
 
 enum
 {
@@ -85,7 +110,9 @@ enum
   PROP_FRAMESIZE,
   PROP_CBR,
   PROP_COMPLEXITY,
-  PROP_MAX_BITRATE
+  PROP_MAX_BITRATE,
+  PROP_PREDICTION,
+  PROP_START_BAND
 };
 
 static void gst_celt_enc_finalize (GObject * object);
@@ -172,6 +199,16 @@ gst_celt_enc_class_init (GstCeltEncClass * klass)
       g_param_spec_int ("max-bitrate", "Maximum Encoding Bit-rate",
           "Specify a maximum encoding bit rate (in Kbps) for variable bit rate encoding.",
           10, 320, DEFAULT_MAX_BITRATE,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_PREDICTION,
+      g_param_spec_enum ("prediction", "Interframe Prediction",
+          "Controls the use of interframe prediction.",
+          GST_CELT_ENC_TYPE_PREDICTION, DEFAULT_PREDICTION,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_START_BAND,
+      g_param_spec_int ("start-band", "Start Band",
+          "Controls the start band that should be used",
+          0, G_MAXINT, DEFAULT_START_BAND,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_celt_enc_finalize);
@@ -542,6 +579,7 @@ gst_celt_enc_init (GstCeltEnc * enc, GstCeltEncClass * klass)
   enc->cbr = DEFAULT_CBR;
   enc->complexity = DEFAULT_COMPLEXITY;
   enc->max_bitrate = DEFAULT_MAX_BITRATE;
+  enc->prediction = DEFAULT_PREDICTION;
 
   enc->setup = FALSE;
   enc->header_sent = FALSE;
@@ -594,14 +632,18 @@ gst_celt_enc_setup (GstCeltEnc * enc)
   if (!enc->mode)
     goto mode_initialization_failed;
 
-  celt_mode_info (enc->mode, CELT_GET_FRAME_SIZE, &enc->frame_size);
-
 #ifdef HAVE_CELT_0_7
   celt_header_init (&enc->header, enc->mode, enc->channels);
 #else
   celt_header_init (&enc->header, enc->mode);
 #endif
   enc->header.nb_channels = enc->channels;
+
+#ifdef HAVE_CELT_0_8
+  enc->frame_size = enc->header.frame_size;
+#else
+  celt_mode_info (enc->mode, CELT_GET_FRAME_SIZE, &enc->frame_size);
+#endif
 
 #ifdef HAVE_CELT_0_7
   enc->state = celt_encoder_create (enc->mode, enc->channels, &error);
@@ -613,12 +655,17 @@ gst_celt_enc_setup (GstCeltEnc * enc)
 
 #ifdef CELT_SET_VBR_RATE
   if (!enc->cbr) {
-    GST_ERROR ("setting vbr");
     celt_encoder_ctl (enc->state, CELT_SET_VBR_RATE (enc->bitrate), 0);
   }
 #endif
 #ifdef CELT_SET_COMPLEXITY
   celt_encoder_ctl (enc->state, CELT_SET_COMPLEXITY (enc->complexity), 0);
+#endif
+#ifdef CELT_SET_PREDICTION
+  celt_encoder_ctl (enc->state, CELT_SET_PREDICTION (enc->prediction), 0);
+#endif
+#ifdef CELT_SET_START_BAND
+  celt_encoder_ctl (enc->state, CELT_SET_START_BAND (enc->start_band), 0);
 #endif
 
   GST_LOG_OBJECT (enc, "we have frame size %d", enc->frame_size);
@@ -789,13 +836,13 @@ gst_celt_enc_encode (GstCeltEnc * enc, gboolean flush)
 
     GST_DEBUG_OBJECT (enc, "encoding %d samples (%d bytes)", frame_size, bytes);
 
-#ifdef HAVE_CELT_0_5
+#ifdef HAVE_CELT_0_8
     outsize =
-        celt_encode (enc->state, data, NULL,
+        celt_encode (enc->state, data, frame_size,
         GST_BUFFER_DATA (outbuf), bytes_per_packet);
 #else
     outsize =
-        celt_encode (enc->state, data,
+        celt_encode (enc->state, data, NULL,
         GST_BUFFER_DATA (outbuf), bytes_per_packet);
 #endif
 
@@ -1007,15 +1054,19 @@ gst_celt_enc_get_property (GObject * object, guint prop_id, GValue * value,
       g_value_set_int (value, enc->frame_size);
       break;
     case PROP_CBR:
-#ifdef CELT_SET_VBR_RATE
       g_value_set_boolean (value, enc->cbr);
-#endif
       break;
     case PROP_COMPLEXITY:
       g_value_set_int (value, enc->complexity);
       break;
     case PROP_MAX_BITRATE:
       g_value_set_int (value, enc->max_bitrate);
+      break;
+    case PROP_PREDICTION:
+      g_value_set_enum (value, enc->prediction);
+      break;
+    case PROP_START_BAND:
+      g_value_set_int (value, enc->start_band);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1046,6 +1097,12 @@ gst_celt_enc_set_property (GObject * object, guint prop_id,
       break;
     case PROP_MAX_BITRATE:
       enc->max_bitrate = g_value_get_int (value);
+      break;
+    case PROP_PREDICTION:
+      enc->prediction = g_value_get_enum (value);
+      break;
+    case PROP_START_BAND:
+      enc->start_band = g_value_get_int (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

@@ -81,9 +81,9 @@ typedef struct dts_state_s dca_state_t;
 
 #include "gstdtsdec.h"
 
-#include <liboil/liboil.h>
-#include <liboil/liboilcpu.h>
-#include <liboil/liboilfunction.h>
+#if HAVE_ORC
+#include <orc/orc.h>
+#endif
 
 #if defined(LIBDTS_FIXED) || defined(LIBDCA_FIXED)
 #define SAMPLE_WIDTH 16
@@ -187,16 +187,20 @@ gst_dtsdec_class_init (GstDtsDecClass * klass)
       g_param_spec_boolean ("drc", "Dynamic Range Compression",
           "Use Dynamic Range Compression", FALSE, G_PARAM_READWRITE));
 
-  oil_init ();
-
   klass->dts_cpuflags = 0;
-  cpuflags = oil_cpu_get_flags ();
-  if (cpuflags & OIL_IMPL_FLAG_MMX)
+
+#if HAVE_ORC
+  cpuflags = orc_target_get_default_flags (orc_target_get_by_name ("mmx"));
+  if (cpuflags & ORC_TARGET_MMX_MMX)
     klass->dts_cpuflags |= MM_ACCEL_X86_MMX;
-  if (cpuflags & OIL_IMPL_FLAG_3DNOW)
+  if (cpuflags & ORC_TARGET_MMX_3DNOW)
     klass->dts_cpuflags |= MM_ACCEL_X86_3DNOW;
-  if (cpuflags & OIL_IMPL_FLAG_MMXEXT)
+  if (cpuflags & ORC_TARGET_MMX_MMXEXT)
     klass->dts_cpuflags |= MM_ACCEL_X86_MMXEXT;
+#else
+  cpuflags = 0;
+  klass->dts_cpuflags = 0;
+#endif
 
   GST_LOG ("CPU flags: dts=%08x, liboil=%08x", klass->dts_cpuflags, cpuflags);
 }
@@ -945,6 +949,10 @@ gst_dtsdec_get_property (GObject * object, guint prop_id, GValue * value,
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
+#if HAVE_ORC
+  orc_init ();
+#endif
+
   if (!gst_element_register (plugin, "dtsdec", GST_RANK_PRIMARY,
           GST_TYPE_DTSDEC))
     return FALSE;
