@@ -1,7 +1,7 @@
 Index: ext/jpeg/gstjpegdec.c
 ===================================================================
---- ext/jpeg/gstjpegdec.c	(revision 722)
-+++ ext/jpeg/gstjpegdec.c	(working copy)
+--- ext/jpeg/gstjpegdec.c	Thu Jul 15 00:36:42 2010
++++ ext/jpeg/gstjpegdec.c	Thu Jul 15 00:40:54 2010
 @@ -52,11 +52,13 @@
          (((struct GstJpegDecSourceMgr*)((cinfo_ptr)->src))->dec)
  
@@ -17,7 +17,7 @@ Index: ext/jpeg/gstjpegdec.c
  };
  
  /* *INDENT-OFF* */
-@@ -190,7 +192,13 @@
+@@ -190,6 +192,11 @@
        g_param_spec_enum ("idct-method", "IDCT Method",
            "The IDCT algorithm to use", GST_TYPE_IDCT_METHOD,
            JPEG_DEFAULT_IDCT_METHOD, G_PARAM_READWRITE));
@@ -27,11 +27,9 @@ Index: ext/jpeg/gstjpegdec.c
 +          G_MININT, G_MAXINT, JPEG_DEFAULT_ERROR_AFTER,
 +          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
  
-+
    gstelement_class->change_state =
        GST_DEBUG_FUNCPTR (gst_jpeg_dec_change_state);
- 
-@@ -319,6 +327,7 @@
+@@ -322,6 +329,7 @@
  
    /* init properties */
    dec->idct_method = JPEG_DEFAULT_IDCT_METHOD;
@@ -39,7 +37,7 @@ Index: ext/jpeg/gstjpegdec.c
  
    dec->adapter = gst_adapter_new ();
  }
-@@ -1399,6 +1408,11 @@
+@@ -1402,6 +1410,11 @@
        GST_TIME_ARGS (GST_BUFFER_DURATION (outbuf)));
  
    ret = gst_pad_push (dec->srcpad, outbuf);
@@ -51,7 +49,7 @@ Index: ext/jpeg/gstjpegdec.c
  
  skip_decoding:
  done:
-@@ -1422,11 +1436,22 @@
+@@ -1425,11 +1438,22 @@
    /* ERRORS */
  wrong_size:
    {
@@ -79,7 +77,7 @@ Index: ext/jpeg/gstjpegdec.c
    }
  decode_error:
    {
-@@ -1434,14 +1459,24 @@
+@@ -1437,14 +1461,24 @@
  
      dec->jerr.pub.format_message ((j_common_ptr) (&dec->cinfo), err_msg);
  
@@ -111,7 +109,7 @@ Index: ext/jpeg/gstjpegdec.c
    }
  decode_direct_failed:
    {
-@@ -1468,6 +1503,11 @@
+@@ -1471,6 +1505,11 @@
    }
  drop_buffer:
    {
@@ -123,7 +121,7 @@ Index: ext/jpeg/gstjpegdec.c
      GST_WARNING_OBJECT (dec, "Outgoing buffer is outside configured segment");
      gst_buffer_unref (outbuf);
      ret = GST_FLOW_OK;
-@@ -1475,10 +1515,17 @@
+@@ -1478,10 +1517,17 @@
    }
  components_not_supported:
    {
@@ -145,7 +143,7 @@ Index: ext/jpeg/gstjpegdec.c
    }
  unsupported_colorspace:
    {
-@@ -1583,6 +1630,9 @@
+@@ -1588,6 +1634,9 @@
      case PROP_IDCT_METHOD:
        dec->idct_method = g_value_get_enum (value);
        break;
@@ -155,7 +153,7 @@ Index: ext/jpeg/gstjpegdec.c
  
      default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-@@ -1602,6 +1652,9 @@
+@@ -1607,6 +1656,9 @@
      case PROP_IDCT_METHOD:
        g_value_set_enum (value, dec->idct_method);
        break;
@@ -165,7 +163,7 @@ Index: ext/jpeg/gstjpegdec.c
  
      default:
        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-@@ -1619,6 +1672,7 @@
+@@ -1624,6 +1676,7 @@
  
    switch (transition) {
      case GST_STATE_CHANGE_READY_TO_PAUSED:
@@ -175,9 +173,9 @@ Index: ext/jpeg/gstjpegdec.c
        dec->caps_framerate_numerator = dec->caps_framerate_denominator = 0;
 Index: ext/jpeg/gstjpegdec.h
 ===================================================================
---- ext/jpeg/gstjpegdec.h	(revision 722)
-+++ ext/jpeg/gstjpegdec.h	(working copy)
-@@ -111,6 +111,10 @@
+--- ext/jpeg/gstjpegdec.h	Thu Jul 15 00:36:42 2010
++++ ext/jpeg/gstjpegdec.h	Thu Jul 15 00:41:46 2010
+@@ -113,6 +113,10 @@
  
    /* properties */
    gint     idct_method;
