@@ -78,7 +78,7 @@ GstXOverlay requires
 <div class="refsect1" title="Description">
 <a name="gst-plugins-base-libs-gstxoverlay.description"></a><h2>Description</h2>
 <div class="refsect2">
-<a name="id675289"></a><p>
+<a name="id640337"></a><p>
 The XOverlay interface is used for 2 main purposes :
 </p>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc">
@@ -168,7 +168,7 @@ immediately. Here is an example on how to do that correctly:
  
  <span class="function">XSync</span> <span class="symbol">(</span>disp<span class="symbol">,</span> FALSE<span class="symbol">);</span>
   
- <span class="function"><a href="../gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstxoverlay.html#gst-x-overlay-set-xwindow-id">gst_x_overlay_set_xwindow_id</a></span> <span class="symbol">(</span><span class="function">GST_X_OVERLAY</span> <span class="symbol">(</span><span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-SRC:CAPS">GST_MESSAGE_SRC</a></span> <span class="symbol">(</span>message<span class="symbol">)),</span>
+ <span class="function"><a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstxoverlay.html#gst-x-overlay-set-xwindow-id">gst_x_overlay_set_xwindow_id</a></span> <span class="symbol">(</span><span class="function">GST_X_OVERLAY</span> <span class="symbol">(</span><span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-SRC:CAPS">GST_MESSAGE_SRC</a></span> <span class="symbol">(</span>message<span class="symbol">)),</span>
      win<span class="symbol">);</span>
   
  <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#gst-message-unref">gst_message_unref</a></span> <span class="symbol">(</span>message<span class="symbol">);</span>
@@ -194,7 +194,7 @@ immediately. Here is an example on how to do that correctly:
 </div>
 <hr>
 <div class="refsect2" title="Two basic usage scenarios">
-<a name="id681031"></a><h3>Two basic usage scenarios</h3>
+<a name="id625453"></a><h3>Two basic usage scenarios</h3>
 <p>
 There are two basic usage scenarios: in the simplest case, the application
 knows exactly what particular element is used for video output, which is
@@ -237,7 +237,7 @@ used in the callback).
 </div>
 <hr>
 <div class="refsect2" title="GstXOverlay and Gtk+">
-<a name="id685409"></a><h3>GstXOverlay and Gtk+</h3>
+<a name="id625554"></a><h3>GstXOverlay and Gtk+</h3>
 <p>
 </p>
 <div class="informalexample">
@@ -347,7 +347,7 @@ used in the callback).
    
    <span class="gtkdoc slc">// GST_MESSAGE_SRC (message) will be the video sink element</span>
    xoverlay <span class="symbol">=</span> <span class="function">GST_X_OVERLAY</span> <span class="symbol">(</span><span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GST-MESSAGE-SRC:CAPS">GST_MESSAGE_SRC</a></span> <span class="symbol">(</span>message<span class="symbol">));</span>
-   <span class="function"><a href="../gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstxoverlay.html#gst-x-overlay-set-xwindow-id">gst_x_overlay_set_xwindow_id</a></span> <span class="symbol">(</span>xoverlay<span class="symbol">,</span> video_window_xid<span class="symbol">);</span>
+   <span class="function"><a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstxoverlay.html#gst-x-overlay-set-xwindow-id">gst_x_overlay_set_xwindow_id</a></span> <span class="symbol">(</span>xoverlay<span class="symbol">,</span> video_window_xid<span class="symbol">);</span>
  <span class="symbol">}</span> <span class="keyword">else</span> <span class="symbol">{</span>
    <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Message-Logging.html#g-warning">g_warning</a></span> <span class="symbol">(</span><span class="string">&quot;Should have obtained video_window_xid by now!&quot;</span><span class="symbol">);</span>
  <span class="symbol">}</span>
@@ -418,7 +418,7 @@ used in the callback).
 </div>
 <hr>
 <div class="refsect2" title="GstXOverlay and Qt">
-<a name="id685449"></a><h3>GstXOverlay and Qt</h3>
+<a name="id644266"></a><h3>GstXOverlay and Qt</h3>
 <p>
 </p>
 <div class="informalexample">
@@ -510,7 +510,7 @@ used in the callback).
   window<span class="symbol">.</span><span class="function">show</span><span class="symbol">();</span>
   
   WId xwinid <span class="symbol">=</span> window<span class="symbol">.</span><span class="function">winId</span><span class="symbol">();</span>
-  <span class="function"><a href="../gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstxoverlay.html#gst-x-overlay-set-xwindow-id">gst_x_overlay_set_xwindow_id</a></span> <span class="symbol">(</span><span class="function">GST_X_OVERLAY</span> <span class="symbol">(</span>sink<span class="symbol">),</span> xwinid<span class="symbol">);</span>
+  <span class="function"><a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstxoverlay.html#gst-x-overlay-set-xwindow-id">gst_x_overlay_set_xwindow_id</a></span> <span class="symbol">(</span><span class="function">GST_X_OVERLAY</span> <span class="symbol">(</span>sink<span class="symbol">),</span> xwinid<span class="symbol">);</span>
 
   <span class="gtkdoc slc">// run the pipeline</span>
 
