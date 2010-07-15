@@ -113,10 +113,6 @@ struct _GstJpegDec {
 
   /* properties */
   gint     idct_method;
-  gint     error_after;
- 
-  /* number of errors we're currently at before reporting GST_FLOW_ERROR */
-  gint     error_after_count;
 
   struct jpeg_decompress_struct cinfo;
   struct GstJpegDecErrorMgr     jerr;

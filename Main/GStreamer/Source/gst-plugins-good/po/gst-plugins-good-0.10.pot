@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gst-plugins-good 0.10.23.3\n"
+"Project-Id-Version: gst-plugins-good 0.10.24\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-06-29 19:21+0100\n"
+"POT-Creation-Date: 2010-07-15 01:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,7 +36,7 @@ msgstr ""
 msgid "Internal data stream error."
 msgstr ""
 
-#: ext/jpeg/gstjpegdec.c:919 ext/jpeg/gstjpegdec.c:1438
+#: ext/jpeg/gstjpegdec.c:922 ext/jpeg/gstjpegdec.c:1441
 msgid "Failed to decode JPEG image"
 msgstr ""
 
@@ -63,7 +63,7 @@ msgstr ""
 
 #: gst/qtdemux/qtdemux.c:3829 gst/qtdemux/qtdemux.c:3836
 #: gst/qtdemux/qtdemux.c:4304 gst/qtdemux/qtdemux.c:4706
-#: gst/qtdemux/qtdemux.c:4712 gst/qtdemux/qtdemux.c:6125
+#: gst/qtdemux/qtdemux.c:4712 gst/qtdemux/qtdemux.c:6134
 msgid "This file is corrupt and cannot be played."
 msgstr ""
 
