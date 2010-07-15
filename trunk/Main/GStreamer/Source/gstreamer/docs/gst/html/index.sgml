@@ -352,6 +352,7 @@
 <ANCHOR id="gst-clock-id-get-time" href="gstreamer-0.10/GstClock.html#gst-clock-id-get-time">
 <ANCHOR id="gst-clock-id-wait" href="gstreamer-0.10/GstClock.html#gst-clock-id-wait">
 <ANCHOR id="gst-clock-id-wait-async" href="gstreamer-0.10/GstClock.html#gst-clock-id-wait-async">
+<ANCHOR id="gst-clock-id-wait-async-full" href="gstreamer-0.10/GstClock.html#gst-clock-id-wait-async-full">
 <ANCHOR id="gst-clock-id-unschedule" href="gstreamer-0.10/GstClock.html#gst-clock-id-unschedule">
 <ANCHOR id="gst-clock-id-compare-func" href="gstreamer-0.10/GstClock.html#gst-clock-id-compare-func">
 <ANCHOR id="gst-clock-id-ref" href="gstreamer-0.10/GstClock.html#gst-clock-id-ref">

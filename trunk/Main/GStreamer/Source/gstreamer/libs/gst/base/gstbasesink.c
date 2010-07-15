@@ -236,6 +236,7 @@ struct _GstBaseSinkPrivate
   gboolean have_latency;
 
   /* the last buffer we prerolled or rendered. Useful for making snapshots */
+  gboolean enable_last_buffer;
   GstBuffer *last_buffer;
 
   /* caps for pull based scheduling */
@@ -281,6 +282,7 @@ struct _GstBaseSinkPrivate
 #define DEFAULT_TS_OFFSET           0
 #define DEFAULT_BLOCKSIZE           4096
 #define DEFAULT_RENDER_DELAY        0
+#define DEFAULT_ENABLE_LAST_BUFFER  TRUE
 
 enum
 {
@@ -291,6 +293,7 @@ enum
   PROP_QOS,
   PROP_ASYNC,
   PROP_TS_OFFSET,
+  PROP_ENABLE_LAST_BUFFER,
   PROP_LAST_BUFFER,
   PROP_BLOCKSIZE,
   PROP_RENDER_DELAY,
@@ -450,6 +453,22 @@ gst_base_sink_class_init (GstBaseSinkClass * klass)
       g_param_spec_int64 ("ts-offset", "TS Offset",
           "Timestamp offset in nanoseconds", G_MININT64, G_MAXINT64,
           DEFAULT_TS_OFFSET, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  /**
+   * GstBaseSink:enable-last-buffer
+   *
+   * Enable the last-buffer property. If FALSE, basesink doesn't keep a
+   * reference to the last buffer arrived and the last-buffer property is always
+   * set to NULL. This can be useful if you need buffers to be released as soon
+   * as possible, eg. if you're using a buffer pool.
+   *
+   * Since: 0.10.30
+   */
+  g_object_class_install_property (gobject_class, PROP_ENABLE_LAST_BUFFER,
+      g_param_spec_boolean ("enable-last-buffer", "Enable Last Buffer",
+          "Enable the last-buffer property", DEFAULT_ENABLE_LAST_BUFFER,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
   /**
    * GstBaseSink:last-buffer
    *
@@ -648,6 +667,7 @@ gst_base_sink_init (GstBaseSink * basesink, gpointer g_class)
   priv->ts_offset = DEFAULT_TS_OFFSET;
   priv->render_delay = DEFAULT_RENDER_DELAY;
   priv->blocksize = DEFAULT_BLOCKSIZE;
+  priv->enable_last_buffer = DEFAULT_ENABLE_LAST_BUFFER;
 
   GST_OBJECT_FLAG_SET (basesink, GST_ELEMENT_IS_SINK);
 }
@@ -928,12 +948,12 @@ gst_base_sink_get_last_buffer (GstBaseSink * sink)
   return res;
 }
 
+/* with OBJECT_LOCK */
 static void
-gst_base_sink_set_last_buffer (GstBaseSink * sink, GstBuffer * buffer)
+gst_base_sink_set_last_buffer_unlocked (GstBaseSink * sink, GstBuffer * buffer)
 {
   GstBuffer *old;
 
-  GST_OBJECT_LOCK (sink);
   old = sink->priv->last_buffer;
   if (G_LIKELY (old != buffer)) {
     GST_DEBUG_OBJECT (sink, "setting last buffer to %p", buffer);
@@ -943,12 +963,75 @@ gst_base_sink_set_last_buffer (GstBaseSink * sink, GstBuffer * buffer)
   } else {
     old = NULL;
   }
-  GST_OBJECT_UNLOCK (sink);
-
   /* avoid unreffing with the lock because cleanup code might want to take the
    * lock too */
-  if (G_LIKELY (old))
+  if (G_LIKELY (old)) {
+    GST_OBJECT_UNLOCK (sink);
     gst_buffer_unref (old);
+    GST_OBJECT_LOCK (sink);
+  }
+}
+
+static void
+gst_base_sink_set_last_buffer (GstBaseSink * sink, GstBuffer * buffer)
+{
+  GST_OBJECT_LOCK (sink);
+  if (sink->priv->enable_last_buffer == FALSE)
+    goto out;
+
+  gst_base_sink_set_last_buffer_unlocked (sink, buffer);
+
+out:
+  GST_OBJECT_UNLOCK (sink);
+}
+
+/**
+ * gst_base_sink_set_last_buffer_enabled:
+ * @sink: the sink
+ * @enabled: the new enable-last-buffer value.
+ *
+ * Configures @sink to store the last received buffer in the last-buffer
+ * property.
+ *
+ * Since: 0.10.30
+ */
+void
+gst_base_sink_set_last_buffer_enabled (GstBaseSink * sink, gboolean enabled)
+{
+  g_return_if_fail (GST_IS_BASE_SINK (sink));
+
+  GST_OBJECT_LOCK (sink);
+  if (enabled != sink->priv->enable_last_buffer) {
+    sink->priv->enable_last_buffer = enabled;
+    if (!enabled)
+      gst_base_sink_set_last_buffer_unlocked (sink, NULL);
+  }
+  GST_OBJECT_UNLOCK (sink);
+}
+
+/**
+ * gst_base_sink_is_last_buffer_enabled:
+ * @sink: the sink
+ *
+ * Checks if @sink is currently configured to store the last received buffer in
+ * the last-buffer property.
+ *
+ * Returns: TRUE if the sink is configured to store the last received buffer.
+ *
+ * Since: 0.10.30
+ */
+gboolean
+gst_base_sink_is_last_buffer_enabled (GstBaseSink * sink)
+{
+  gboolean res;
+
+  g_return_val_if_fail (GST_IS_BASE_SINK (sink), FALSE);
+
+  GST_OBJECT_LOCK (sink);
+  res = sink->priv->enable_last_buffer;
+  GST_OBJECT_UNLOCK (sink);
+
+  return res;
 }
 
 /**
@@ -1219,6 +1302,9 @@ gst_base_sink_set_property (GObject * object, guint prop_id,
     case PROP_RENDER_DELAY:
       gst_base_sink_set_render_delay (sink, g_value_get_uint64 (value));
       break;
+    case PROP_ENABLE_LAST_BUFFER:
+      gst_base_sink_set_last_buffer_enabled (sink, g_value_get_boolean (value));
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1254,6 +1340,9 @@ gst_base_sink_get_property (GObject * object, guint prop_id, GValue * value,
       break;
     case PROP_LAST_BUFFER:
       gst_value_take_buffer (value, gst_base_sink_get_last_buffer (sink));
+      break;
+    case PROP_ENABLE_LAST_BUFFER:
+      g_value_set_boolean (value, gst_base_sink_is_last_buffer_enabled (sink));
       break;
     case PROP_BLOCKSIZE:
       g_value_set_uint (value, gst_base_sink_get_blocksize (sink));

@@ -53,6 +53,8 @@
 <ANCHOR id="gst-base-sink-get-ts-offset" href="gstreamer-libs-0.10/GstBaseSink.html#gst-base-sink-get-ts-offset">
 <ANCHOR id="gst-base-sink-set-render-delay" href="gstreamer-libs-0.10/GstBaseSink.html#gst-base-sink-set-render-delay">
 <ANCHOR id="gst-base-sink-get-render-delay" href="gstreamer-libs-0.10/GstBaseSink.html#gst-base-sink-get-render-delay">
+<ANCHOR id="gst-base-sink-set-last-buffer-enabled" href="gstreamer-libs-0.10/GstBaseSink.html#gst-base-sink-set-last-buffer-enabled">
+<ANCHOR id="gst-base-sink-is-last-buffer-enabled" href="gstreamer-libs-0.10/GstBaseSink.html#gst-base-sink-is-last-buffer-enabled">
 <ANCHOR id="gst-base-sink-get-last-buffer" href="gstreamer-libs-0.10/GstBaseSink.html#gst-base-sink-get-last-buffer">
 <ANCHOR id="gst-base-sink-set-blocksize" href="gstreamer-libs-0.10/GstBaseSink.html#gst-base-sink-set-blocksize">
 <ANCHOR id="gst-base-sink-get-blocksize" href="gstreamer-libs-0.10/GstBaseSink.html#gst-base-sink-get-blocksize">
@@ -60,6 +62,7 @@
 <ANCHOR id="GstBaseSink.property-details" href="gstreamer-libs-0.10/GstBaseSink.html#GstBaseSink.property-details">
 <ANCHOR id="GstBaseSink--async" href="gstreamer-libs-0.10/GstBaseSink.html#GstBaseSink--async">
 <ANCHOR id="GstBaseSink--blocksize" href="gstreamer-libs-0.10/GstBaseSink.html#GstBaseSink--blocksize">
+<ANCHOR id="GstBaseSink--enable-last-buffer" href="gstreamer-libs-0.10/GstBaseSink.html#GstBaseSink--enable-last-buffer">
 <ANCHOR id="GstBaseSink--last-buffer" href="gstreamer-libs-0.10/GstBaseSink.html#GstBaseSink--last-buffer">
 <ANCHOR id="GstBaseSink--max-lateness" href="gstreamer-libs-0.10/GstBaseSink.html#GstBaseSink--max-lateness">
 <ANCHOR id="GstBaseSink--preroll-queue-len" href="gstreamer-libs-0.10/GstBaseSink.html#GstBaseSink--preroll-queue-len">

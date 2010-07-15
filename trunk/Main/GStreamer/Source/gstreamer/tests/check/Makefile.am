@@ -64,6 +64,7 @@ REGISTRY_CHECKS =				\
 	elements/multiqueue			\
 	elements/tee			  	\
 	libs/basesrc				\
+	libs/basesink				\
 	libs/controller				\
 	libs/typefindhelper			\
 	pipelines/stress			\
@@ -86,6 +87,7 @@ check_PROGRAMS =				\
 	gst/gstpoll     			\
 	gst/gstsegment				\
 	gst/gstsystemclock			\
+	gst/gstclock				\
 	gst/gststructure			\
 	gst/gsttag				\
 	gst/gsttagsetter			\

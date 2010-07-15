@@ -66,7 +66,7 @@
     <sub name="Annotation Glossary" link="annotation-glossary.html"/>
   </chapters>
   <functions>
-    <keyword type="" name="Environment variables" link="gst-running.html#id566639"/>
+    <keyword type="" name="Environment variables" link="gst-running.html#id389955"/>
     <keyword type="function" name="gst_init ()" link="gstreamer-Gst.html#gst-init"/>
     <keyword type="function" name="gst_init_check ()" link="gstreamer-Gst.html#gst-init-check"/>
     <keyword type="function" name="gst_init_get_option_group ()" link="gstreamer-Gst.html#gst-init-get-option-group"/>
@@ -78,7 +78,7 @@
     <keyword type="function" name="gst_registry_fork_is_enabled ()" link="gstreamer-Gst.html#gst-registry-fork-is-enabled" since="0.10.10"/>
     <keyword type="function" name="gst_registry_fork_set_enabled ()" link="gstreamer-Gst.html#gst-registry-fork-set-enabled" since="0.10.10"/>
     <keyword type="function" name="gst_update_registry ()" link="gstreamer-Gst.html#gst-update-registry" since="0.10.12"/>
-    <keyword type="" name="Notes" link="GstBin.html#id555028"/>
+    <keyword type="" name="Notes" link="GstBin.html#id409621"/>
     <keyword type="struct" name="GstBin" link="GstBin.html#GstBin-struct"/>
     <keyword type="struct" name="GstBinClass" link="GstBin.html#GstBinClass"/>
     <keyword type="function" name="gst_bin_new ()" link="GstBin.html#gst-bin-new"/>
@@ -327,6 +327,7 @@
     <keyword type="function" name="gst_clock_id_get_time ()" link="GstClock.html#gst-clock-id-get-time"/>
     <keyword type="function" name="gst_clock_id_wait ()" link="GstClock.html#gst-clock-id-wait"/>
     <keyword type="function" name="gst_clock_id_wait_async ()" link="GstClock.html#gst-clock-id-wait-async"/>
+    <keyword type="function" name="gst_clock_id_wait_async_full ()" link="GstClock.html#gst-clock-id-wait-async-full" since="0.10.30"/>
     <keyword type="function" name="gst_clock_id_unschedule ()" link="GstClock.html#gst-clock-id-unschedule"/>
     <keyword type="function" name="gst_clock_id_compare_func ()" link="GstClock.html#gst-clock-id-compare-func"/>
     <keyword type="function" name="gst_clock_id_ref ()" link="GstClock.html#gst-clock-id-ref"/>

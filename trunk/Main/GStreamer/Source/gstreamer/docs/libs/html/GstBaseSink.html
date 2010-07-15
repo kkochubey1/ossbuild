@@ -79,6 +79,11 @@
 <span class="returnvalue">void</span>                <a class="link" href="GstBaseSink.html#gst-base-sink-set-render-delay" title="gst_base_sink_set_render_delay ()">gst_base_sink_set_render_delay</a>      (<em class="parameter"><code><a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> *sink</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> delay</code></em>);
 <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        <a class="link" href="GstBaseSink.html#gst-base-sink-get-render-delay" title="gst_base_sink_get_render_delay ()">gst_base_sink_get_render_delay</a>      (<em class="parameter"><code><a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> *sink</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstBaseSink.html#gst-base-sink-set-last-buffer-enabled" title="gst_base_sink_set_last_buffer_enabled ()">gst_base_sink_set_last_buffer_enabled</a>
+                                                        (<em class="parameter"><code><a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> *sink</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> enable</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstBaseSink.html#gst-base-sink-is-last-buffer-enabled" title="gst_base_sink_is_last_buffer_enabled ()">gst_base_sink_is_last_buffer_enabled</a>
+                                                        (<em class="parameter"><code><a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> *sink</code></em>);
 <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         <a class="link" href="GstBaseSink.html#gst-base-sink-get-last-buffer" title="gst_base_sink_get_last_buffer ()">gst_base_sink_get_last_buffer</a>       (<em class="parameter"><code><a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> *sink</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstBaseSink.html#gst-base-sink-set-blocksize" title="gst_base_sink_set_blocksize ()">gst_base_sink_set_blocksize</a>         (<em class="parameter"><code><a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> *sink</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> blocksize</code></em>);
@@ -100,6 +105,7 @@
 <pre class="synopsis">
   "<a class="link" href="GstBaseSink.html#GstBaseSink--async" title='The "async" property'>async</a>"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
   "<a class="link" href="GstBaseSink.html#GstBaseSink--blocksize" title='The "blocksize" property'>blocksize</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="GstBaseSink.html#GstBaseSink--enable-last-buffer" title='The "enable-last-buffer" property'>enable-last-buffer</a>"       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
   "<a class="link" href="GstBaseSink.html#GstBaseSink--last-buffer" title='The "last-buffer" property'>last-buffer</a>"              <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a>*            : Read
   "<a class="link" href="GstBaseSink.html#GstBaseSink--max-lateness" title='The "max-lateness" property'>max-lateness</a>"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a>                : Read / Write
   "<a class="link" href="GstBaseSink.html#GstBaseSink--preroll-queue-len" title='The "preroll-queue-len" property'>preroll-queue-len</a>"        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct
@@ -1034,6 +1040,60 @@ information about the render delay.
 <p class="since">Since 0.10.21</p>
 </div>
 <hr>
+<div class="refsect2" title="gst_base_sink_set_last_buffer_enabled ()">
+<a name="gst-base-sink-set-last-buffer-enabled"></a><h3>gst_base_sink_set_last_buffer_enabled ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_base_sink_set_last_buffer_enabled
+                                                        (<em class="parameter"><code><a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> *sink</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> enable</code></em>);</pre>
+<p>
+Configures <em class="parameter"><code>sink</code></em> to store the last received buffer in the last-buffer
+property.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>sink</code></em> :</span></p></td>
+<td>the sink
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>enable</code></em> :</span></p></td>
+<td>
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
+</div>
+<hr>
+<div class="refsect2" title="gst_base_sink_is_last_buffer_enabled ()">
+<a name="gst-base-sink-is-last-buffer-enabled"></a><h3>gst_base_sink_is_last_buffer_enabled ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_base_sink_is_last_buffer_enabled
+                                                        (<em class="parameter"><code><a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> *sink</code></em>);</pre>
+<p>
+Checks if <em class="parameter"><code>sink</code></em> is currently configured to store the last received buffer in
+the last-buffer property.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>sink</code></em> :</span></p></td>
+<td>the sink
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> TRUE if the sink is configured to store the last received buffer.
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
+</div>
+<hr>
 <div class="refsect2" title="gst_base_sink_get_last_buffer ()">
 <a name="gst-base-sink-get-last-buffer"></a><h3>gst_base_sink_get_last_buffer ()</h3>
 <pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         gst_base_sink_get_last_buffer       (<em class="parameter"><code><a class="link" href="GstBaseSink.html" title="GstBaseSink"><span class="type">GstBaseSink</span></a> *sink</code></em>);</pre>
@@ -1157,6 +1217,19 @@ The amount of bytes to pull when operating in pull mode.
 </p>
 <p>Default value: 4096</p>
 <p class="since">Since 0.10.22</p>
+</div>
+<hr>
+<div class="refsect2" title='The "enable-last-buffer" property'>
+<a name="GstBaseSink--enable-last-buffer"></a><h3>The <code class="literal">"enable-last-buffer"</code> property</h3>
+<pre class="programlisting">  "enable-last-buffer"       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<p>
+Enable the last-buffer property. If FALSE, basesink doesn't keep a
+reference to the last buffer arrived and the last-buffer property is always
+set to NULL. This can be useful if you need buffers to be released as soon
+as possible, eg. if you're using a buffer pool.
+</p>
+<p>Default value: TRUE</p>
+<p class="since">Since 0.10.30</p>
 </div>
 <hr>
 <div class="refsect2" title='The "last-buffer" property'>

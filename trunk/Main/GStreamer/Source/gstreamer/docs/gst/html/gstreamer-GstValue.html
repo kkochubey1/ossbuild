@@ -1287,8 +1287,8 @@ Checks if the given <a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-val
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_value_set_caps                  (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> *value</code></em>,
                                                          <em class="parameter"><code>const <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);</pre>
 <p>
-Sets the contents of <em class="parameter"><code>value</code></em> to <em class="parameter"><code>caps</code></em>.  The actual
-<a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> structure is copied before it is used.
+Sets the contents of <em class="parameter"><code>value</code></em> to <em class="parameter"><code>caps</code></em>. A reference to the
+provided <em class="parameter"><code>caps</code></em> will be taken by the <em class="parameter"><code>value</code></em>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -1311,7 +1311,9 @@ Sets the contents of <em class="parameter"><code>value</code></em> to <em class=
 <a name="gst-value-get-caps"></a><h3>gst_value_get_caps ()</h3>
 <pre class="programlisting">const <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="returnvalue">GstCaps</span></a> *     gst_value_get_caps                  (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/gobject/gobject-Generic-values.html#GValue"><span class="type">GValue</span></a> *value</code></em>);</pre>
 <p>
-Gets the contents of <em class="parameter"><code>value</code></em>.
+Gets the contents of <em class="parameter"><code>value</code></em>. The reference count of the returned
+<a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> will not be modified, therefore the caller must take one
+before getting rid of the <em class="parameter"><code>value</code></em>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
