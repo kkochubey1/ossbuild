@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="gstid3demux"
 	ProjectGUID="{AB87873B-2B88-4B1B-B627-F70DF4F92A17}"
 	RootNamespace="libgstid3demux"
@@ -286,21 +286,31 @@
 	</Configurations>
 	<References>
 		<ProjectReference
+			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E50}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F08}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstpbutils.vcproj"
+		/>
+		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F05}"
 			CopyLocal="false"
 			CopyLocalDependencies="false"
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgsttag.vcproj"
-		/>
-		<ProjectReference
-			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F08}"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstpbutils.vcproj"
-		/>
-		<ProjectReference
-			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E50}"
-			RelativePathToProject=".\Main\GStreamer\Libraries\libgstbase.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgsttag.vcproj"
 		/>
 	</References>
 	<Files>

@@ -62,7 +62,7 @@ libmms          -       win32 branch    -       https://code.launchpad.net/~libm
 libmms-0.4.0    -       0.4.0           -       http://sourceforge.net/projects/libmms/files/libmms/0.4/libmms-0.4.tar.gz/download
 x264            -       20100617        -       http://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-20100617-2245.tar.bz2
 libspeex        -       1.2rc1          -       http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
-libschrodinger  -       1.0.9           -       http://diracvideo.org/download/schroedinger/schroedinger-1.0.9.tar.gz
+libschroedinger -       1.0.9           -       http://diracvideo.org/download/schroedinger/schroedinger-1.0.9.tar.gz
 mp3lame         -       3.98.4          -       http://downloads.sourceforge.net/project/lame/lame/3.98.4/lame-3.98.4.tar.gz?use_mirror=voxel
 ffmpeg          -       0.6.0           -       http://ffmpeg.org/releases/ffmpeg-export-snapshot.tar.bz2 [Updated 06-24-2010]
 libnice         -       0.0.12          -       http://nice.freedesktop.org/releases/libnice-0.0.12.tar.gz
