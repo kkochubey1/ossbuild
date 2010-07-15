@@ -560,10 +560,6 @@ static GstElementClass *parent_class;
 
 static guint gst_play_bin_signals[LAST_SIGNAL] = { 0 };
 
-static GstStaticCaps av_raw_caps = GST_STATIC_CAPS ("audio/x-raw-int; "
-    "audio/x-raw-float; "
-    "video/x-raw-yuv; " "video/x-raw-rgb; " "video/x-raw-gray;");
-
 #define REMOVE_SIGNAL(obj,id)            \
 if (id) {                                \
   g_signal_handler_disconnect (obj, id); \
@@ -3177,8 +3173,6 @@ activate_group (GstPlayBin * playbin, GstSourceGroup * group, GstState target)
     uridecodebin = gst_element_factory_make ("uridecodebin", NULL);
     if (!uridecodebin)
       goto no_decodebin;
-    g_object_set (uridecodebin, "caps", gst_static_caps_get (&av_raw_caps),
-        NULL);
     gst_bin_add (GST_BIN_CAST (playbin), uridecodebin);
     group->uridecodebin = gst_object_ref (uridecodebin);
   }
@@ -3250,8 +3244,7 @@ activate_group (GstPlayBin * playbin, GstSourceGroup * group, GstState target)
       suburidecodebin = gst_element_factory_make ("uridecodebin", NULL);
       if (!suburidecodebin)
         goto no_decodebin;
-      g_object_set (uridecodebin, "caps", gst_static_caps_get (&av_raw_caps),
-          NULL);
+
       gst_bin_add (GST_BIN_CAST (playbin), suburidecodebin);
       group->suburidecodebin = gst_object_ref (suburidecodebin);
     }
@@ -3455,7 +3448,7 @@ setup_next_source (GstPlayBin * playbin, GstState target)
 
   /* first unlink the current source, if any */
   old_group = playbin->curr_group;
-  if (old_group && old_group->valid) {
+  if (old_group && old_group->valid && old_group->active) {
     gst_play_bin_update_cached_duration (playbin);
     /* unlink our pads with the sink */
     deactivate_group (playbin, old_group);
@@ -3561,8 +3554,10 @@ gst_play_bin_change_state (GstElement * element, GstStateChange transition)
       for (i = 0; i < 3; i++)
         gst_segment_init (&playbin->segments[i], GST_FORMAT_UNDEFINED);
 
-      if (!setup_next_source (playbin, GST_STATE_READY))
-        goto source_failed;
+      if (!setup_next_source (playbin, GST_STATE_READY)) {
+        ret = GST_STATE_CHANGE_FAILURE;
+        goto failure;
+      }
       break;
     }
     case GST_STATE_CHANGE_PAUSED_TO_READY:
@@ -3578,51 +3573,19 @@ gst_play_bin_change_state (GstElement * element, GstStateChange transition)
       GST_LOG_OBJECT (playbin, "dynamic lock taken, we can continue shutdown");
       GST_PLAY_BIN_DYN_UNLOCK (playbin);
       break;
-    case GST_STATE_CHANGE_READY_TO_NULL:{
-      guint i;
-
+    case GST_STATE_CHANGE_READY_TO_NULL:
       memset (&playbin->duration, 0, sizeof (playbin->duration));
 
       /* unlock so that all groups go to NULL */
       groups_set_locked_state (playbin, FALSE);
-
-      for (i = 0; i < 2; i++) {
-        if (playbin->groups[i].uridecodebin) {
-          gst_element_set_state (playbin->groups[i].uridecodebin,
-              GST_STATE_NULL);
-          gst_object_unref (playbin->groups[i].uridecodebin);
-          playbin->groups[i].uridecodebin = NULL;
-        }
-        if (playbin->groups[i].suburidecodebin) {
-          gst_element_set_state (playbin->groups[i].suburidecodebin,
-              GST_STATE_NULL);
-          gst_object_unref (playbin->groups[i].suburidecodebin);
-          playbin->groups[i].suburidecodebin = NULL;
-        }
-      }
       break;
-    }
     default:
       break;
   }
 
   ret = GST_ELEMENT_CLASS (parent_class)->change_state (element, transition);
-  if (ret == GST_STATE_CHANGE_FAILURE) {
-    if (transition == GST_STATE_CHANGE_READY_TO_PAUSED) {
-      GstSourceGroup *curr_group;
-
-      curr_group = playbin->curr_group;
-      if (curr_group && curr_group->valid) {
-        /* unlink our pads with the sink */
-        deactivate_group (playbin, curr_group);
-      }
-
-      /* Swap current and next group back */
-      playbin->curr_group = playbin->next_group;
-      playbin->next_group = curr_group;
-    }
-    return ret;
-  }
+  if (ret == GST_STATE_CHANGE_FAILURE)
+    goto failure;
 
   switch (transition) {
     case GST_STATE_CHANGE_READY_TO_PAUSED:
@@ -3634,10 +3597,38 @@ gst_play_bin_change_state (GstElement * element, GstStateChange transition)
       save_current_group (playbin);
       break;
     case GST_STATE_CHANGE_READY_TO_NULL:
+    {
+      guint i;
+
+      /* Deactive the groups, set the uridecodebins to NULL
+       * and unref them.
+       */
+      for (i = 0; i < 2; i++) {
+        if (playbin->groups[i].active && playbin->groups[i].valid) {
+          deactivate_group (playbin, &playbin->groups[i]);
+          playbin->groups[i].valid = FALSE;
+        }
+
+        if (playbin->groups[i].uridecodebin) {
+          gst_element_set_state (playbin->groups[i].uridecodebin,
+              GST_STATE_NULL);
+          gst_object_unref (playbin->groups[i].uridecodebin);
+          playbin->groups[i].uridecodebin = NULL;
+        }
+
+        if (playbin->groups[i].suburidecodebin) {
+          gst_element_set_state (playbin->groups[i].suburidecodebin,
+              GST_STATE_NULL);
+          gst_object_unref (playbin->groups[i].suburidecodebin);
+          playbin->groups[i].suburidecodebin = NULL;
+        }
+      }
+
       /* make sure the groups don't perform a state change anymore until we
        * enable them again */
       groups_set_locked_state (playbin, TRUE);
       break;
+    }
     default:
       break;
   }
@@ -3645,9 +3636,23 @@ gst_play_bin_change_state (GstElement * element, GstStateChange transition)
   return ret;
 
   /* ERRORS */
-source_failed:
+failure:
   {
-    return GST_STATE_CHANGE_FAILURE;
+    if (transition == GST_STATE_CHANGE_READY_TO_PAUSED) {
+      GstSourceGroup *curr_group;
+
+      curr_group = playbin->curr_group;
+      if (curr_group && curr_group->active && curr_group->valid) {
+        /* unlink our pads with the sink */
+        deactivate_group (playbin, curr_group);
+        curr_group->valid = FALSE;
+      }
+
+      /* Swap current and next group back */
+      playbin->curr_group = playbin->next_group;
+      playbin->next_group = curr_group;
+    }
+    return ret;
   }
 }
 
