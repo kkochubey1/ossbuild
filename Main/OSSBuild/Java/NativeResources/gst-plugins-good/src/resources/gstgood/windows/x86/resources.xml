@@ -56,6 +56,7 @@
 		<File resource="libgstflxdec.dll" />
 		<File resource="libgsticydemux.dll" />
 		<File resource="libgstid3demux.dll" />
+		<File resource="libgstimagefreeze.dll" />
 		<File resource="libgstinterleave.dll" />
 		<File resource="libgstalaw.dll" />
 		<File resource="libgstmulaw.dll" />

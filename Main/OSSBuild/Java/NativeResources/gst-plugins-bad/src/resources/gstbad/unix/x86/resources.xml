@@ -107,6 +107,7 @@
 		<File resource="libgstvideomeasure.so"                              executable="true" />
 		<File resource="libgstvideosignal.so"                               executable="true" />
 		<File resource="libgstvmnc.so"                                      executable="true" />
+		<File resource="libgstvp8.so"                                       executable="true" />
 		<File resource="libgstadpcmdec.so"                                  executable="true" />
 		<File resource="libgstalsaspdif.so"                                 executable="true" />
 		<File resource="libgstautoconvert.so"                               executable="true" />

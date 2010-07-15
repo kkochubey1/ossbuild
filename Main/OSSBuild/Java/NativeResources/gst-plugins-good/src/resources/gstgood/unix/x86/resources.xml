@@ -57,6 +57,7 @@
 		<File resource="libgsticydemux.so"          executable="true" />
 		<File resource="libgstid3demux.so"          executable="true" />
 		<File resource="libgstinterleave.so"        executable="true" />
+		<File resource="libgstimagefreeze.so"       executable="true" />
 		<File resource="libgstalaw.so"              executable="true" />
 		<File resource="libgstmulaw.so"             executable="true" />
 		<File resource="libgstlevel.so"             executable="true" />
