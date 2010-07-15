@@ -45,9 +45,9 @@
 #include <gst/gst.h>
 #include <gst/video/gstvideosink.h>
 
-#include "gstvdputils.h"
-#include "gstvdpoutputbuffer.h"
-#include "gstvdpoutputsrcpad.h"
+#include "gstvdp/gstvdputils.h"
+#include "gstvdp/gstvdpoutputbuffer.h"
+#include "gstvdp/gstvdpoutputsrcpad.h"
 
 #include "gstvdpvideopostprocess.h"
 
@@ -328,7 +328,7 @@ gst_vdp_vpp_add_buffer (GstVdpVideoPostProcess * vpp, GstVdpVideoBuffer * buf)
     pic2.structure = VDP_VIDEO_MIXER_PICTURE_STRUCTURE_BOTTOM_FIELD;
   } else {
     pic1.structure = VDP_VIDEO_MIXER_PICTURE_STRUCTURE_BOTTOM_FIELD;
-    pic1.structure = VDP_VIDEO_MIXER_PICTURE_STRUCTURE_TOP_FIELD;
+    pic2.structure = VDP_VIDEO_MIXER_PICTURE_STRUCTURE_TOP_FIELD;
   }
 
   pic1.timestamp = GST_BUFFER_TIMESTAMP (buf);
@@ -359,6 +359,7 @@ gst_vdp_vpp_post_error (GstVdpVideoPostProcess * vpp, GError * error)
 
   message = gst_message_new_error (GST_OBJECT (vpp), error, NULL);
   gst_element_post_message (GST_ELEMENT (vpp), message);
+  g_error_free (error);
 }
 
 static GstFlowReturn
@@ -372,10 +373,8 @@ gst_vdp_vpp_open_device (GstVdpVideoPostProcess * vpp)
   ret =
       gst_vdp_output_src_pad_get_device (GST_VDP_OUTPUT_SRC_PAD (vpp->srcpad),
       &vpp->device, &err);
-  if (ret == GST_FLOW_ERROR) {
+  if (ret == GST_FLOW_ERROR)
     gst_vdp_vpp_post_error (vpp, err);
-    g_error_free (err);
-  }
 
   return ret;
 }
@@ -700,6 +699,12 @@ gst_vdp_vpp_drain (GstVdpVideoPostProcess * vpp)
 
     continue;
 
+  invalid_caps:
+    gst_buffer_unref (GST_BUFFER (outbuf));
+    GST_ELEMENT_ERROR (vpp, STREAM, FAILED, ("Invalid output caps"), (NULL));
+    ret = GST_FLOW_ERROR;
+    break;
+
   render_error:
     gst_buffer_unref (GST_BUFFER (outbuf));
     GST_ELEMENT_ERROR (vpp, RESOURCE, READ,
@@ -707,18 +712,11 @@ gst_vdp_vpp_drain (GstVdpVideoPostProcess * vpp)
         ("Error returned from vdpau was: %s",
             device->vdp_get_error_string (status)));
     ret = GST_FLOW_ERROR;
-
-  invalid_caps:
-    gst_buffer_unref (GST_BUFFER (outbuf));
-    GST_ELEMENT_ERROR (vpp, STREAM, FAILED, ("Invalid output caps"), (NULL));
-    ret = GST_FLOW_ERROR;
     break;
 
   output_pad_error:
-    if (ret == GST_FLOW_ERROR && err != NULL) {
+    if (ret == GST_FLOW_ERROR && err != NULL)
       gst_vdp_vpp_post_error (vpp, err);
-      g_error_free (err);
-    }
     break;
   }
 

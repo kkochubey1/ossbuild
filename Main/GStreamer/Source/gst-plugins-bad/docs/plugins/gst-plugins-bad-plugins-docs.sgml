@@ -89,9 +89,12 @@
     <xi:include href="xml/element-videoanalyse.xml" />
     <xi:include href="xml/element-videodetect.xml" />
     <xi:include href="xml/element-videomark.xml" />
+    <xi:include href="xml/element-videomaxrate.xml" />
     <xi:include href="xml/element-videoparse.xml" />
     <xi:include href="xml/element-wildmidi.xml" />
     <xi:include href="xml/element-zbar.xml" />
+    <xi:include href="xml/element-vp8dec.xml" />
+    <xi:include href="xml/element-vp8enc.xml" />
   </chapter>
 
   <chapter>
@@ -171,10 +174,12 @@
     <xi:include href="xml/plugin-tta.xml" />
     <xi:include href="xml/plugin-valve.xml" />
     <xi:include href="xml/plugin-vcdsrc.xml" />
+    <xi:include href="xml/plugin-videomaxrate.xml" />
     <xi:include href="xml/plugin-videosignal.xml" />
     <xi:include href="xml/plugin-vmnc.xml" />
     <xi:include href="xml/plugin-wildmidi.xml" />
     <xi:include href="xml/plugin-xvid.xml" />
+    <xi:include href="xml/plugin-vp8.xml" />
     <xi:include href="xml/plugin-zbar.xml" />
   </chapter>
 

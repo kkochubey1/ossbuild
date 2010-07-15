@@ -69,11 +69,14 @@ enum
 
 enum
 {
-  ARG_0,
-  ARG_LINEAR_VOLUME,
-  ARG_HIGH_QUALITY,
+  PROP_0,
+  PROP_LINEAR_VOLUME,
+  PROP_HIGH_QUALITY,
   /* FILL ME */
 };
+
+#define DEFAULT_LINEAR_VOLUME    TRUE
+#define DEFAULT_HIGH_QUALITY     TRUE
 
 static void gst_wildmidi_finalize (GObject * object);
 
@@ -235,13 +238,15 @@ gst_wildmidi_class_init (GstWildmidiClass * klass)
   gobject_class->set_property = gst_wildmidi_set_property;
   gobject_class->get_property = gst_wildmidi_get_property;
 
-  g_object_class_install_property (gobject_class, ARG_LINEAR_VOLUME,
+  g_object_class_install_property (gobject_class, PROP_LINEAR_VOLUME,
       g_param_spec_boolean ("linear-volume", "Linear volume",
-          "Linear volume", TRUE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          "Linear volume", DEFAULT_LINEAR_VOLUME,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
-  g_object_class_install_property (gobject_class, ARG_HIGH_QUALITY,
+  g_object_class_install_property (gobject_class, PROP_HIGH_QUALITY,
       g_param_spec_boolean ("high-quality", "High Quality",
-          "High Quality", TRUE, G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+          "High Quality", DEFAULT_HIGH_QUALITY,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   gstelement_class->change_state = gst_wildmidi_change_state;
 }
@@ -282,6 +287,9 @@ gst_wildmidi_init (GstWildmidi * filter, GstWildmidiClass * g_class)
   filter->adapter = gst_adapter_new ();
 
   filter->bytes_per_frame = WILDMIDI_BPS;
+
+  filter->high_quality = DEFAULT_HIGH_QUALITY;
+  filter->linear_volume = DEFAULT_LINEAR_VOLUME;
 }
 
 static void
@@ -489,11 +497,16 @@ gst_wildmidi_do_seek (GstWildmidi * wildmidi, GstEvent * event)
   sample = segment->last_stop;
 
   GST_OBJECT_LOCK (wildmidi);
+#ifdef HAVE_WILDMIDI_0_2_2
   if (accurate) {
     WildMidi_SampledSeek (wildmidi->song, &sample);
   } else {
     WildMidi_FastSeek (wildmidi->song, &sample);
   }
+#else
+  WildMidi_FastSeek (wildmidi->song, &sample);
+#endif
+
   GST_OBJECT_UNLOCK (wildmidi);
 
   segment->start = segment->time = segment->last_stop = sample;
@@ -669,12 +682,21 @@ gst_wildmidi_parse_song (GstWildmidi * wildmidi)
   if (!wildmidi->song)
     goto open_failed;
 
+#ifdef HAVE_WILDMIDI_0_2_2
   WildMidi_LoadSamples (wildmidi->song);
+#endif
 
+#ifdef HAVE_WILDMIDI_0_2_2
   WildMidi_SetOption (wildmidi->song, WM_MO_LINEAR_VOLUME,
       wildmidi->linear_volume);
   WildMidi_SetOption (wildmidi->song, WM_MO_EXPENSIVE_INTERPOLATION,
       wildmidi->high_quality);
+#else
+  WildMidi_SetOption (wildmidi->song, WM_MO_LOG_VOLUME,
+      !wildmidi->linear_volume);
+  WildMidi_SetOption (wildmidi->song, WM_MO_ENHANCED_RESAMPLING,
+      wildmidi->high_quality);
+#endif
 
   info = WildMidi_GetInfo (wildmidi->song);
   GST_OBJECT_UNLOCK (wildmidi);
@@ -754,6 +776,8 @@ gst_wildmidi_sink_event (GstPad * pad, GstEvent * event)
       res = gst_pad_push_event (wildmidi->srcpad, event);
       break;
   }
+
+  gst_object_unref (wildmidi);
   return res;
 }
 
@@ -895,20 +919,30 @@ gst_wildmidi_set_property (GObject * object, guint prop_id,
   wildmidi = GST_WILDMIDI (object);
 
   switch (prop_id) {
-    case ARG_LINEAR_VOLUME:
+    case PROP_LINEAR_VOLUME:
       GST_OBJECT_LOCK (object);
       wildmidi->linear_volume = g_value_get_boolean (value);
       if (wildmidi->song)
+#ifdef HAVE_WILDMIDI_0_2_2
         WildMidi_SetOption (wildmidi->song, WM_MO_LINEAR_VOLUME,
             wildmidi->linear_volume);
+#else
+        WildMidi_SetOption (wildmidi->song, WM_MO_LOG_VOLUME,
+            !wildmidi->linear_volume);
+#endif
       GST_OBJECT_UNLOCK (object);
       break;
-    case ARG_HIGH_QUALITY:
+    case PROP_HIGH_QUALITY:
       GST_OBJECT_LOCK (object);
       wildmidi->high_quality = g_value_get_boolean (value);
       if (wildmidi->song)
+#ifdef HAVE_WILDMIDI_0_2_2
         WildMidi_SetOption (wildmidi->song, WM_MO_EXPENSIVE_INTERPOLATION,
             wildmidi->high_quality);
+#else
+        WildMidi_SetOption (wildmidi->song, WM_MO_ENHANCED_RESAMPLING,
+            wildmidi->high_quality);
+#endif
       GST_OBJECT_UNLOCK (object);
       break;
     default:
@@ -928,12 +962,12 @@ gst_wildmidi_get_property (GObject * object, guint prop_id,
   wildmidi = GST_WILDMIDI (object);
 
   switch (prop_id) {
-    case ARG_LINEAR_VOLUME:
+    case PROP_LINEAR_VOLUME:
       GST_OBJECT_LOCK (object);
       g_value_set_boolean (value, wildmidi->linear_volume);
       GST_OBJECT_UNLOCK (object);
       break;
-    case ARG_HIGH_QUALITY:
+    case PROP_HIGH_QUALITY:
       GST_OBJECT_LOCK (object);
       g_value_set_boolean (value, wildmidi->high_quality);
       GST_OBJECT_UNLOCK (object);

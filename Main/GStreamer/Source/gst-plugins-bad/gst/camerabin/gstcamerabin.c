@@ -163,6 +163,7 @@
 #include "gstcamerabincolorbalance.h"
 #include "gstcamerabinphotography.h"
 
+#include "camerabindebug.h"
 #include "camerabingeneral.h"
 #include "camerabinpreview.h"
 
@@ -640,7 +641,7 @@ camerabin_setup_view_elements (GstCameraBin * camera)
   /* Find the actual sink if using bin like autovideosink */
   if (GST_IS_BIN (camera->view_sink)) {
     GList *child = NULL, *children = GST_BIN_CHILDREN (camera->view_sink);
-    for (child = children; child != NULL; child = g_list_next (children)) {
+    for (child = children; child != NULL; child = g_list_next (child)) {
       GObject *ch = G_OBJECT (child->data);
       if (g_object_class_find_property (G_OBJECT_GET_CLASS (ch), "sync")) {
         g_object_set (G_OBJECT (ch), "sync", FALSE, "qos", FALSE, "async",
@@ -1042,6 +1043,9 @@ gst_camerabin_set_flags (GstCameraBin * camera, GstCameraBinFlags flags)
 static void
 gst_camerabin_change_filename (GstCameraBin * camera, const gchar * name)
 {
+  if (name == NULL)
+    name = "";
+
   if (0 != strcmp (camera->filename->str, name)) {
     GST_DEBUG_OBJECT (camera, "changing filename from '%s' to '%s'",
         camera->filename->str, name);
@@ -3303,7 +3307,8 @@ gst_camerabin_set_property (GObject * object, guint prop_id,
         if (camera->app_vf_sink)
           gst_object_unref (camera->app_vf_sink);
         camera->app_vf_sink = g_value_get_object (value);
-        gst_object_ref (camera->app_vf_sink);
+        if (camera->app_vf_sink)
+          gst_object_ref (camera->app_vf_sink);
       }
       break;
     case ARG_VIDEO_SRC:
@@ -3315,7 +3320,8 @@ gst_camerabin_set_property (GObject * object, guint prop_id,
         if (camera->app_vid_src)
           gst_object_unref (camera->app_vid_src);
         camera->app_vid_src = g_value_get_object (value);
-        gst_object_ref (camera->app_vid_src);
+        if (camera->app_vid_src)
+          gst_object_ref (camera->app_vid_src);
       }
       break;
     case ARG_AUDIO_SRC:
@@ -3342,6 +3348,9 @@ gst_camerabin_set_property (GObject * object, guint prop_id,
       gst_caps_replace (&camera->view_finder_caps,
           (GstCaps *) gst_value_get_caps (value));
       GST_OBJECT_UNLOCK (camera);
+      if (!camera->view_finder_caps)
+        camera->view_finder_caps =
+            gst_caps_from_string (CAMERABIN_DEFAULT_VF_CAPS);
       gst_camerabin_configure_format (camera, camera->view_finder_caps);
       break;
     case ARG_PREVIEW_CAPS:

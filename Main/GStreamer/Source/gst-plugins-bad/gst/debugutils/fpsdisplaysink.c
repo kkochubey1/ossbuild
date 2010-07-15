@@ -40,20 +40,18 @@
  *   select and fpsdisplaysink is set to use autovideosink as its internal sink
  *   it doesn't work. Reason: autovideosink creates a fpsdisplaysink, that
  *   creates an autovideosink, that...
- *
- * IDEAS:
- * - do we want to gather min/max fps and show in GST_STATE_CHANGE_READY_TO_NULL
- * - add another property for the FPS_DISPLAY_INTERVAL_MS
  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
+#include "debugutils-marshal.h"
 #include "fpsdisplaysink.h"
 #include <gst/interfaces/xoverlay.h>
 
-#define FPS_DISPLAY_INTERVAL_MS 500     /* 500 ms */
+#define DEFAULT_SIGNAL_FPS_MEASUREMENTS FALSE
+#define DEFAULT_FPS_UPDATE_INTERVAL_MS 500      /* 500 ms */
 #define DEFAULT_FONT "Sans 20"
 
 /* generic templates */
@@ -68,11 +66,22 @@ GST_DEBUG_CATEGORY_STATIC (fps_display_sink_debug);
 
 enum
 {
+  /* FILL ME */
+  SIGNAL_FPS_MEASUREMENTS,
+  LAST_SIGNAL
+};
+
+enum
+{
   ARG_0,
   ARG_SYNC,
   ARG_TEXT_OVERLAY,
   ARG_VIDEO_SINK,
-  /* FILL ME */
+  ARG_FPS_UPDATE_INTERVAL,
+  ARG_MAX_FPS,
+  ARG_MIN_FPS,
+  ARG_SIGNAL_FPS_MEASUREMENTS
+      /* FILL ME */
 };
 
 static GstBinClass *parent_class = NULL;
@@ -84,6 +93,8 @@ static void fps_display_sink_set_property (GObject * object, guint prop_id,
 static void fps_display_sink_get_property (GObject * object, guint prop_id,
     GValue * value, GParamSpec * pspec);
 static void fps_display_sink_dispose (GObject * object);
+
+static guint fpsdisplaysink_signals[LAST_SIGNAL] = { 0 };
 
 static void
 fps_display_sink_class_init (GstFPSDisplaySinkClass * klass)
@@ -113,7 +124,50 @@ fps_display_sink_class_init (GstFPSDisplaySinkClass * klass)
       g_param_spec_object ("video-sink",
           "video-sink",
           "Video sink to use (Must only be called on NULL state)",
-          GST_TYPE_ELEMENT, G_PARAM_READWRITE));
+          GST_TYPE_ELEMENT, G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_klass, ARG_FPS_UPDATE_INTERVAL,
+      g_param_spec_int ("fps-update-interval", "Fps update interval",
+          "Time between consecutive frames per second measures and update "
+          " (in ms). Should be set on NULL state", 1, G_MAXINT,
+          DEFAULT_FPS_UPDATE_INTERVAL_MS,
+          G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_klass, ARG_MAX_FPS,
+      g_param_spec_double ("max-fps", "Max fps",
+          "Maximum fps rate measured. Reset when going from NULL to READY."
+          "-1 means no measurement has yet been done", -1, G_MAXDOUBLE, -1,
+          G_PARAM_STATIC_STRINGS | G_PARAM_READABLE));
+
+  g_object_class_install_property (gobject_klass, ARG_MIN_FPS,
+      g_param_spec_double ("min-fps", "Min fps",
+          "Minimum fps rate measured. Reset when going from NULL to READY."
+          "-1 means no measurement has yet been done", -1, G_MAXDOUBLE, -1,
+          G_PARAM_STATIC_STRINGS | G_PARAM_READABLE));
+
+  g_object_class_install_property (gobject_klass, ARG_SIGNAL_FPS_MEASUREMENTS,
+      g_param_spec_boolean ("signal-fps-measurements",
+          "Signal fps measurements",
+          "If the fps-measurements signal should be emited.",
+          DEFAULT_SIGNAL_FPS_MEASUREMENTS,
+          G_PARAM_STATIC_STRINGS | G_PARAM_READWRITE));
+
+  /**
+   * GstFPSDisplaySink::fps-measurements:
+   * @fpsdisplaysink: a #GstFPSDisplaySink
+   * @fps: The current measured fps
+   * @droprate: The rate at which buffers are being dropped
+   * @avgfps: The average fps
+   *
+   * Signals the application about the measured fps
+   *
+   * Since: 0.10.20
+   */
+  fpsdisplaysink_signals[SIGNAL_FPS_MEASUREMENTS] =
+      g_signal_new ("fps-measurements", G_TYPE_FROM_CLASS (klass),
+      G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+      __gst_debugutils_marshal_VOID__DOUBLE_DOUBLE_DOUBLE,
+      G_TYPE_NONE, 3, G_TYPE_DOUBLE, G_TYPE_DOUBLE, G_TYPE_DOUBLE);
 
   gstelement_klass->change_state = fps_display_sink_change_state;
 
@@ -246,8 +300,12 @@ fps_display_sink_init (GstFPSDisplaySink * self,
     GstFPSDisplaySinkClass * g_class)
 {
   self->sync = FALSE;
+  self->signal_measurements = DEFAULT_SIGNAL_FPS_MEASUREMENTS;
   self->use_text_overlay = TRUE;
+  self->fps_update_interval = DEFAULT_FPS_UPDATE_INTERVAL_MS;
   self->video_sink = NULL;
+  self->max_fps = -1;
+  self->min_fps = -1;
 
   self->ghost_pad = gst_ghost_pad_new_no_target ("sink", GST_PAD_SINK);
   gst_element_add_pad (GST_ELEMENT (self), self->ghost_pad);
@@ -262,10 +320,14 @@ display_current_fps (gpointer data)
   gint64 current_ts;
 
   /* if query failed try again on next timer tick */
-  if (!gst_element_query (self->video_sink, self->query))
+  if (!gst_element_query (self->video_sink, self->query)) {
+    GST_DEBUG_OBJECT (self, "Failed to query position, skipping measurement");
     return TRUE;
+  }
 
   gst_query_parse_position (self->query, NULL, &current_ts);
+  GST_LOG_OBJECT (self, "Received position %" GST_TIME_FORMAT,
+      GST_TIME_ARGS (current_ts));
 
   if (GST_CLOCK_TIME_IS_VALID (self->last_ts)) {
     gdouble rr, dr, average_fps;
@@ -278,6 +340,23 @@ display_current_fps (gpointer data)
         self->last_frames_dropped) / time_diff;
 
     average_fps = self->frames_rendered / (gdouble) (current_ts / GST_SECOND);
+
+    if (self->max_fps == -1 || rr > self->max_fps) {
+      self->max_fps = rr;
+      GST_DEBUG_OBJECT (self, "Updated max-fps to %f", rr);
+    }
+    if (self->min_fps == -1 || rr < self->min_fps) {
+      self->min_fps = rr;
+      GST_DEBUG_OBJECT (self, "Updated min-fps to %f", rr);
+    }
+
+    if (self->signal_measurements) {
+      GST_LOG_OBJECT (self, "Signaling measurements: fps:%f droprate:%f "
+          "avg-fps:%f", rr, dr, average_fps);
+      g_signal_emit (G_OBJECT (self),
+          fpsdisplaysink_signals[SIGNAL_FPS_MEASUREMENTS], 0, rr, dr,
+          average_fps);
+    }
 
     if (dr == 0.0) {
       g_snprintf (fps_message, 255, "current: %.2f\naverage: %.2f", rr,
@@ -310,6 +389,8 @@ fps_display_sink_start (GstFPSDisplaySink * self)
   self->last_ts = GST_CLOCK_TIME_NONE;
   self->frames_rendered = G_GUINT64_CONSTANT (0);
   self->frames_dropped = G_GUINT64_CONSTANT (0);
+  self->max_fps = -1;
+  self->min_fps = -1;
 
   GST_DEBUG_OBJECT (self, "Use text-overlay? %d", self->use_text_overlay);
 
@@ -346,9 +427,11 @@ no_text_overlay:
   gst_object_unref (target_pad);
 
   /* Set a timeout for the fps display */
+  GST_DEBUG_OBJECT (self, "setting a timeout with a %dms interval",
+      self->fps_update_interval);
   self->timeout_id =
-      g_timeout_add (FPS_DISPLAY_INTERVAL_MS,
-      display_current_fps, (gpointer) self);
+      g_timeout_add (self->fps_update_interval, display_current_fps,
+      (gpointer) self);
 }
 
 static void
@@ -365,6 +448,9 @@ fps_display_sink_stop (GstFPSDisplaySink * self)
     gst_bin_remove (GST_BIN (self), self->text_overlay);
     gst_object_unref (self->text_overlay);
     self->text_overlay = NULL;
+  } else {
+    /* print the max and minimum fps values */
+    g_print ("Max-fps: %0.2f\nMin-fps: %0.2f\n", self->max_fps, self->min_fps);
   }
 }
 
@@ -426,6 +512,12 @@ fps_display_sink_set_property (GObject * object, guint prop_id,
       }
       update_video_sink (self, (GstElement *) g_value_get_object (value));
       break;
+    case ARG_FPS_UPDATE_INTERVAL:
+      self->fps_update_interval = g_value_get_int (value);
+      break;
+    case ARG_SIGNAL_FPS_MEASUREMENTS:
+      self->signal_measurements = g_value_get_boolean (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -447,6 +539,18 @@ fps_display_sink_get_property (GObject * object, guint prop_id,
       break;
     case ARG_VIDEO_SINK:
       g_value_set_object (value, self->video_sink);
+      break;
+    case ARG_FPS_UPDATE_INTERVAL:
+      g_value_set_int (value, self->fps_update_interval);
+      break;
+    case ARG_MAX_FPS:
+      g_value_set_double (value, self->max_fps);
+      break;
+    case ARG_MIN_FPS:
+      g_value_set_double (value, self->min_fps);
+      break;
+    case ARG_SIGNAL_FPS_MEASUREMENTS:
+      g_value_set_boolean (value, self->signal_measurements);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

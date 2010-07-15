@@ -21,7 +21,7 @@
 #define __DSHOWVIDEOSINK_H__
 
 #include <gst/gst.h>
-#include <gst/video/gstvideosink.h>
+#include <gst/base/gstbasesink.h>
 
 #include "dshowvideofakesrc.h"
 
@@ -41,9 +41,6 @@ G_BEGIN_DECLS
 typedef struct _GstDshowVideoSink GstDshowVideoSink;
 typedef struct _GstDshowVideoSinkClass GstDshowVideoSinkClass;
 
-#define GST_DSHOWVIDEOSINK_GRAPH_LOCK(sink)	g_mutex_lock (GST_DSHOWVIDEOSINK (sink)->graph_lock)
-#define GST_DSHOWVIDEOSINK_GRAPH_UNLOCK(clock) g_mutex_unlock (GST_DSHOWVIDEOSINK (sink)->graph_lock)
-
 /* Renderer-specific support classes */
 class RendererSupport
 {
@@ -62,7 +59,7 @@ public:
 
 struct _GstDshowVideoSink
 {
-  GstVideoSink sink;
+  GstBaseSink sink;
 
   /* Preferred renderer to use: VM9 or VMR */
   char *preferredrenderer;
@@ -89,12 +86,8 @@ struct _GstDshowVideoSink
 
   /* The video window set through GstXOverlay */
   HWND window_id;
-  
-  /* If we created the window, it needs to be closed in ::stop() */
-  gboolean is_new_window;
 
   gboolean connected;
-  gboolean graph_running;
 
   /* If we create our own window, we run it from another thread */
   GThread *window_thread;
@@ -103,19 +96,12 @@ struct _GstDshowVideoSink
   /* If we use an app-supplied window, we need to hook its WNDPROC */
   WNDPROC prevWndProc;
 
-  /* Lock for transitions */
-  GMutex *graph_lock;
-
   gboolean comInitialized;
-  GMutex   *com_lock;
-  GCond    *com_initialized;
-  GCond    *com_uninitialize;
-  GCond    *com_uninitialized;
 };
 
 struct _GstDshowVideoSinkClass
 {
-  GstVideoSinkClass parent_class;
+  GstBaseSinkClass parent_class;
 };
 
 GType gst_dshowvideosink_get_type (void);

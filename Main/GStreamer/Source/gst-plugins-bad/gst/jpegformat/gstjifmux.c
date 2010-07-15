@@ -182,13 +182,12 @@ gst_jif_mux_finalize (GObject * object)
 static gboolean
 gst_jif_mux_sink_setcaps (GstPad * pad, GstCaps * caps)
 {
-  GstJifMux *self = GST_JIF_MUX (GST_PAD_PARENT (pad));
   GstStructure *s = gst_caps_get_structure (caps, 0);
   const gchar *variant;
 
   /* should be {combined (default), EXIF, JFIF} */
   if ((variant = gst_structure_get_string (s, "variant")) != NULL) {
-    GST_INFO_OBJECT (self, "muxing to '%s'", variant);
+    GST_INFO_OBJECT (pad, "muxing to '%s'", variant);
     /* FIXME: do we want to switch it like this or use a gobject property ? */
   }
 
@@ -338,7 +337,8 @@ static gboolean
 gst_jif_mux_mangle_markers (GstJifMux * self)
 {
   gboolean modified = FALSE;
-  const GstTagList *tags;
+  GstTagList *tags = NULL;
+  gboolean cleanup_tags;
   GstJifMuxMarker *m;
   GList *node, *file_hdr = NULL, *frame_hdr = NULL, *scan_hdr = NULL;
   GList *app0_jfif = NULL, *app1_exif = NULL, *app1_xmp = NULL, *com = NULL;
@@ -367,7 +367,8 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
         }
         break;
       case APP1:
-        if (m->size > 6 && !memcmp (m->data, "EXIF\0\0", 6)) {
+        if (m->size > 6 && (!memcmp (m->data, "EXIF\0\0", 6) ||
+                !memcmp (m->data, "Exif\0\0", 6))) {
           GST_DEBUG_OBJECT (self, "found APP1 EXIF");
           if (!app1_exif)
             app1_exif = node;
@@ -435,24 +436,65 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
   /* else */
   /* remove JFIF if exists */
 
-  /* if we want combined or EXIF */
-  /* check if we don't have EXIF APP1 */
-  if (!app1_exif) {
-    /* exif_data = gst_tag_list_to_exif_buffer (tags); */
-    /* insert into self->markers list */
+  /* Existing exif tags will be removed and our own will be added */
+  if (!tags) {
+    tags = (GstTagList *) gst_tag_setter_get_tag_list (GST_TAG_SETTER (self));
+    cleanup_tags = FALSE;
   }
-  /* else */
-  /* remove EXIF if exists */
-
-  tags = gst_tag_setter_get_tag_list (GST_TAG_SETTER (self));
   if (!tags) {
     tags = gst_tag_list_new ();
   }
+
   /* FIXME: not happy with those
    * - else where we would use VIDEO_CODEC = "Jpeg"
    gst_tag_list_add (tags, GST_TAG_MERGE_REPLACE,
    GST_TAG_VIDEO_CODEC, "image/jpeg", NULL);
    */
+
+  /* Add EXIF */
+  {
+    GstBuffer *exif_data;
+    guint8 *data;
+    GstJifMuxMarker *m;
+    GList *pos;
+
+    /* insert into self->markers list */
+    exif_data = gst_tag_list_to_exif_buffer_with_tiff_header (tags);
+    if (exif_data &&
+        GST_BUFFER_SIZE (exif_data) + 8 >= G_GUINT64_CONSTANT (65536)) {
+      GST_WARNING_OBJECT (self, "Exif tags data size exceed maximum size");
+      gst_buffer_unref (exif_data);
+      exif_data = NULL;
+    }
+    if (exif_data) {
+      data = g_malloc0 (GST_BUFFER_SIZE (exif_data) + 6);
+      memcpy (data, "Exif", 4);
+      memcpy (data + 6, GST_BUFFER_DATA (exif_data),
+          GST_BUFFER_SIZE (exif_data));
+      m = gst_jif_mux_new_marker (APP1, GST_BUFFER_SIZE (exif_data) + 6, data,
+          TRUE);
+      gst_buffer_unref (exif_data);
+
+      if (app1_exif) {
+        gst_jif_mux_marker_free ((GstJifMuxMarker *) app1_exif->data);
+        app1_exif->data = m;
+      } else {
+        pos = file_hdr;
+        if (app0_jfif)
+          pos = app0_jfif;
+        pos = g_list_next (pos);
+
+        self->priv->markers =
+            g_list_insert_before (self->priv->markers, pos, m);
+        if (pos) {
+          app1_exif = g_list_previous (pos);
+        } else {
+          app1_exif = g_list_last (self->priv->markers);
+        }
+      }
+      modified = TRUE;
+    }
+  }
 
   /* add xmp */
   xmp_data = gst_tag_list_to_xmp_buffer (tags, FALSE);
@@ -506,6 +548,9 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
 
     modified = TRUE;
   }
+
+  if (tags && cleanup_tags)
+    gst_tag_list_free (tags);
   return modified;
 }
 
@@ -589,7 +634,6 @@ static GstFlowReturn
 gst_jif_mux_chain (GstPad * pad, GstBuffer * buf)
 {
   GstJifMux *self = GST_JIF_MUX (GST_PAD_PARENT (pad));
-  guint8 *data = GST_BUFFER_DATA (buf);
   GstFlowReturn fret = GST_FLOW_OK;
 
   if (GST_BUFFER_CAPS (buf) == NULL) {
@@ -598,8 +642,9 @@ gst_jif_mux_chain (GstPad * pad, GstBuffer * buf)
     return GST_FLOW_NOT_NEGOTIATED;
   }
 
-  GST_MEMDUMP ("jpeg beg", data, 64);
-  GST_MEMDUMP ("jpeg end", &data[GST_BUFFER_SIZE (buf) - 64], 64);
+  GST_MEMDUMP ("jpeg beg", GST_BUFFER_DATA (buf), 64);
+  GST_MEMDUMP ("jpeg end", GST_BUFFER_DATA (buf) + GST_BUFFER_SIZE (buf) - 64,
+      64);
 
   /* we should have received a whole picture from SOI to EOI
    * build a list of markers */

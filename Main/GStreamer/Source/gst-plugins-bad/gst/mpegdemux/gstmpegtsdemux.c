@@ -48,8 +48,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <liboil/liboil.h>
-
 #include <gst/tag/tag.h>
 
 #include "gstmpegdefs.h"
@@ -329,7 +327,6 @@ gst_mpegts_demux_init (GstMpegTSDemux * demux)
   demux->pcr[1] = -1;
   demux->cache_duration = GST_CLOCK_TIME_NONE;
   demux->base_pts = GST_CLOCK_TIME_NONE;
-  oil_init ();
 }
 
 static void
@@ -744,13 +741,14 @@ gst_mpegts_demux_fill_stream (GstMpegTSStream * stream, guint8 id,
         template = klass->audio_template;
         name = g_strdup_printf ("audio_%04x", stream->PID);
         caps = gst_caps_new_simple ("audio/x-eac3", NULL);
-      } else if (gst_mpeg_descriptor_find (stream->ES_info,
+      } else if (stream->ES_info && gst_mpeg_descriptor_find (stream->ES_info,
               DESC_DVB_ENHANCED_AC3)) {
         template = klass->audio_template;
         name = g_strdup_printf ("audio_%04x", stream->PID);
         caps = gst_caps_new_simple ("audio/x-eac3", NULL);
       } else {
-        if (!gst_mpeg_descriptor_find (stream->ES_info, DESC_DVB_AC3)) {
+        if (!stream->ES_info ||
+            !gst_mpeg_descriptor_find (stream->ES_info, DESC_DVB_AC3)) {
           GST_WARNING ("AC3 stream type found but no corresponding "
               "descriptor to differentiate between AC3 and EAC3. "
               "Assuming plain AC3.");
@@ -1598,7 +1596,7 @@ gst_mpegts_stream_parse_private_section (GstMpegTSStream * stream,
   /* just dump this down the pad */
   if (gst_pad_alloc_buffer (stream->pad, 0, datalen, NULL, &buffer) ==
       GST_FLOW_OK) {
-    oil_memcpy (buffer->data, data, datalen);
+    memcpy (buffer->data, data, datalen);
     gst_pad_push (stream->pad, buffer);
   }
 
@@ -2162,7 +2160,7 @@ gst_mpegts_stream_pes_buffer_push (GstMpegTSStream * stream,
     stream->pes_buffer_used = 0;
   }
   out_data = GST_BUFFER_DATA (stream->pes_buffer) + stream->pes_buffer_used;
-  oil_memcpy (out_data, in_data, in_size);
+  memcpy (out_data, in_data, in_size);
   stream->pes_buffer_used += in_size;
 done:
   return ret;
@@ -2190,7 +2188,7 @@ gst_mpegts_demux_push_fragment (GstMpegTSStream * stream,
 {
   GstFlowReturn ret;
   GstBuffer *es_buf = gst_buffer_new_and_alloc (in_size);
-  oil_memcpy (GST_BUFFER_DATA (es_buf), in_data, in_size);
+  memcpy (GST_BUFFER_DATA (es_buf), in_data, in_size);
   ret = gst_pes_filter_push (&stream->filter, es_buf);
 
   /* If PES filter return ok then PES fragment buffering 
@@ -2330,7 +2328,7 @@ gst_mpegts_demux_parse_stream (GstMpegTSDemux * demux, GstMpegTSStream * stream,
         /* FIXME: try to use data directly instead of creating a buffer and
            pushing in into adapter at section filter */
         sec_buf = gst_buffer_new_and_alloc (datalen);
-        oil_memcpy (GST_BUFFER_DATA (sec_buf), data, datalen);
+        memcpy (GST_BUFFER_DATA (sec_buf), data, datalen);
         if (gst_section_filter_push (&stream->section_filter,
                 payload_unit_start_indicator, continuity_counter, sec_buf)) {
           GST_DEBUG_OBJECT (demux, "section finished");
