@@ -2,7 +2,6 @@
 #ifndef _ORC_PROGRAM_H_
 #define _ORC_PROGRAM_H_
 
-#include <orc/orc-stdint.h>
 #include <orc/orcutils.h>
 
 typedef struct _OrcOpcodeExecutor OrcOpcodeExecutor;
@@ -75,7 +74,9 @@ typedef void (*OrcExecutorFunc)(OrcExecutor *ex);
 enum {
   ORC_TARGET_C_C99 = (1<<0),
   ORC_TARGET_C_BARE = (1<<1),
-  ORC_TARGET_C_NOEXEC = (1<<2)
+  ORC_TARGET_C_NOEXEC = (1<<2),
+  ORC_TARGET_FAST_NAN = (1<<30),
+  ORC_TARGET_FAST_DENORMAL = (1<<31)
 };
 
 enum {
@@ -83,7 +84,8 @@ enum {
 };
 
 enum {
-  ORC_TARGET_NEON_CLEAN_COMPILE = (1<<0)
+  ORC_TARGET_NEON_CLEAN_COMPILE = (1<<0),
+  ORC_TARGET_NEON_NEON = (1<<1)
 };
 
 typedef enum {
@@ -206,7 +208,7 @@ struct _OrcVariable {
   int ptr_offset;
   int mask_alloc;
   int aligned_data;
-  int sampling_type;
+  int is_float_param;
   int load_dest;
 };
 
@@ -391,6 +393,7 @@ struct _OrcCompiler {
 
   int alloc_loop_counter;
   int loop_counter;
+  int size_region;
 };
 
 #define ORC_SRC_ARG(p,i,n) ((p)->vars[(i)->src_args[(n)]].alloc)
@@ -480,8 +483,9 @@ struct _OrcTarget {
 
   const char * (*get_asm_preamble)(void);
   void (*load_constant)(OrcCompiler *compiler, int reg, int size, int value);
+  const char * (*get_flag_name)(int shift);
 
-  void *_unused[8];
+  void *_unused[7];
 };
 
 
@@ -535,6 +539,7 @@ int orc_program_add_source (OrcProgram *program, int size, const char *name);
 int orc_program_add_destination (OrcProgram *program, int size, const char *name);
 int orc_program_add_constant (OrcProgram *program, int size, int value, const char *name);
 int orc_program_add_parameter (OrcProgram *program, int size, const char *name);
+int orc_program_add_parameter_float (OrcProgram *program, int size, const char *name);
 int orc_program_add_accumulator (OrcProgram *program, int size, const char *name);
 void orc_program_set_type_name (OrcProgram *program, int var, const char *type_name);
 void orc_program_set_sampling_type (OrcProgram *program, int var, int sampling_type);
@@ -568,6 +573,7 @@ OrcRule * orc_target_get_rule (OrcTarget *target, OrcStaticOpcode *opcode,
 OrcTarget * orc_target_get_default (void);
 unsigned int orc_target_get_default_flags (OrcTarget *target);
 const char * orc_target_get_name (OrcTarget *target);
+const char * orc_target_get_flag_name (OrcTarget *target, int shift);
 
 int orc_program_allocate_register (OrcProgram *program, int is_data);
 
@@ -578,6 +584,7 @@ int orc_compiler_get_constant (OrcCompiler *compiler, int size, int value);
 const char *orc_program_get_asm_code (OrcProgram *program);
 const char *orc_target_get_asm_preamble (const char *target);
 const char * orc_target_get_preamble (OrcTarget *target);
+const char * orc_target_c_get_typedefs (void);
 
 void orc_compiler_append_code (OrcCompiler *p, const char *fmt, ...)
   ORC_GNU_PRINTF(2,3);
@@ -587,6 +594,21 @@ OrcTarget *orc_target_get_by_name (const char *target_name);
 int orc_program_get_max_var_size (OrcProgram *program);
 int orc_program_get_max_array_size (OrcProgram *program);
 int orc_program_get_max_accumulator_size (OrcProgram *program);
+
+void orc_get_data_cache_sizes (int *level1, int *level2, int *level3);
+
+#ifdef ORC_ENABLE_UNSTABLE_API
+
+int orc_compiler_flag_check (const char *flag);
+
+extern int _orc_data_cache_size_level1;
+extern int _orc_data_cache_size_level2;
+extern int _orc_data_cache_size_level3;
+
+extern int _orc_compiler_flag_backup;
+extern int _orc_compiler_flag_debug;
+
+#endif
 
 #endif
 

@@ -191,10 +191,6 @@ if [ ! -f "$BinDir/lib${Prefix}orc-0.4-0.dll" ]; then
 	unpack_gzip_and_move "orc.tar.gz" "$PKG_DIR_ORC"
 	mkdir "$IntDir/orc"
 
-	cd $PKG_DIR
-	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/orc/use_pthreads.patch"
-	autoconf
-
 	cd "$IntDir/orc"
 	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir LDFLAGS="$LDFLAGS -lpthread" CPPFLAGS="-D_TIMESPEC_DEFINED"
 
