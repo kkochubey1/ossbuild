@@ -1,16 +1,16 @@
-AC_PREREQ(2.52)
+AC_PREREQ(2.60)
 
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GStreamer Python Bindings, 0.10.18,
+AC_INIT(GStreamer Python Bindings, 0.10.19,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-python)
 
 AG_GST_INIT
 
 dnl initialize automake
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([-Wno-portability 1.10])
 
 dnl define PACKAGE_VERSION_* variables
 AS_VERSION
@@ -27,6 +27,11 @@ AM_CONFIG_HEADER([config.h])
 dnl AM_MAINTAINER_MODE only provides the option to configure to enable it
 AM_MAINTAINER_MODE
 
+dnl use pretty build output with automake >= 1.11
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])],
+  [AM_DEFAULT_VERBOSITY=1
+   AC_SUBST(AM_DEFAULT_VERBOSITY)])
+
 AC_DEFINE_UNQUOTED(PYGST_MAJOR_VERSION, $PACKAGE_VERSION_MAJOR, [PyGst major version])
 AC_DEFINE_UNQUOTED(PYGST_MINOR_VERSION, $PACKAGE_VERSION_MINOR, [PyGst minor version])
 AC_DEFINE_UNQUOTED(PYGST_MICRO_VERSION, $PACKAGE_VERSION_MICRO, [PyGst micro version])
@@ -37,7 +42,7 @@ AC_SUBST(PACKAGE_VERSION_MICRO)
 AC_SUBST(PACKAGE_VERSION_NANO)
 
 dnl Add parameters for aclocal
-AC_SUBST(ACLOCAL_AMFLAGS, "-I common/m4")
+AC_SUBST(ACLOCAL_AMFLAGS, "-I m4 -I common/m4")
 
 dnl required versions of other packages
 AC_SUBST(PYGTK_REQ, 2.6.3)
@@ -84,6 +89,7 @@ GST_MAJORMINOR=0.10
 AC_SUBST(GST_MAJORMINOR)
 PKG_CHECK_MODULES(GST, gstreamer-$GST_MAJORMINOR >= $GST_REQ)
 AC_DEFINE_UNQUOTED(GST_MAJORMINOR, "$GST_MAJORMINOR", [Gst MajorMinor version])
+GST_CFLAGS="$GST_CFLAGS $GLIB_EXTRA_CFLAGS"
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_LIBS)
 
@@ -153,6 +159,20 @@ then
     IGNORE_GST_0_10_26=""
   fi
 
+  if test $GST_MINOR_VERSION -lt "29"
+  then
+    IGNORE_GST_0_10_29="gst-0.10.29.ignore"
+  else
+    IGNORE_GST_0_10_29=""
+  fi
+
+  if test $GST_MINOR_VERSION -lt "30"
+  then
+    IGNORE_GST_0_10_30="gst-0.10.30.ignore"
+  else
+    IGNORE_GST_0_10_30=""
+  fi
+
   dnl plugins base
   if test $GST_PB_MINOR_VERSION -ge "22"
   then
@@ -182,6 +202,20 @@ then
   else
     IGNORE_GST_PB_0_10_26=""
   fi
+
+  if test $GST_PB_MINOR_VERSION -lt "29"
+  then
+    IGNORE_GST_PB_0_10_29="gst-pb-0.10.29.ignore"
+  else
+    IGNORE_GST_PB_0_10_29=""
+  fi
+
+  if test $GST_PB_MINOR_VERSION -lt "30"
+  then
+    IGNORE_GST_PB_0_10_30="gst-pb-0.10.30.ignore"
+  else
+    IGNORE_GST_PB_0_10_30=""
+  fi
 else
   IGNORE_GST_0_10_18=""
   IGNORE_GST_0_10_20=""
@@ -191,9 +225,13 @@ else
   IGNORE_GST_0_10_24=""
   IGNORE_GST_0_10_25=""
   IGNORE_GST_0_10_26=""
+  IGNORE_GST_0_10_29=""
+  IGNORE_GST_0_10_30=""
   IGNORE_GST_PB_0_10_23=""
   IGNORE_GST_PB_0_10_25=""
   IGNORE_GST_PB_0_10_26=""
+  IGNORE_GST_PB_0_10_29=""
+  IGNORE_GST_PB_0_10_30=""
   AC_DEFINE_UNQUOTED(HAVE_GST_AUDIO, 1, [We can use the gst-audio library])
   AC_DEFINE_UNQUOTED(HAVE_GST_VIDEO, 1, [We can use the gst-video library])
   AC_DEFINE_UNQUOTED(HAVE_GST_TAG, 1, [We can use the gst-tag library])
@@ -206,9 +244,13 @@ AC_SUBST(IGNORE_GST_0_10_23)
 AC_SUBST(IGNORE_GST_0_10_24)
 AC_SUBST(IGNORE_GST_0_10_25)
 AC_SUBST(IGNORE_GST_0_10_26)
+AC_SUBST(IGNORE_GST_0_10_29)
+AC_SUBST(IGNORE_GST_0_10_30)
 AC_SUBST(IGNORE_GST_PB_0_10_23)
 AC_SUBST(IGNORE_GST_PB_0_10_25)
 AC_SUBST(IGNORE_GST_PB_0_10_26)
+AC_SUBST(IGNORE_GST_PB_0_10_29)
+AC_SUBST(IGNORE_GST_PB_0_10_30)
 AM_CONDITIONAL(HAVE_GST_AUDIO, $HAVE_GST_AUDIO)
 AM_CONDITIONAL(HAVE_GST_VIDEO, $HAVE_GST_VIDEO)
 AM_CONDITIONAL(HAVE_GST_TAG, $HAVE_GST_TAG)
@@ -353,15 +395,11 @@ AM_CHECK_PYTHON_LIBS(,[AC_MSG_ERROR(could not find Python lib)])
 
 AG_GST_SET_PLUGINDIR
 
-SHAVE_INIT([common],[enable])
-
 AC_OUTPUT([
   Makefile
   codegen/Makefile
   common/Makefile
   common/m4/Makefile
-  common/shave
-  common/shave-libtool
   gst/Makefile
   gst/gstversion.override
   gst/extend/Makefile

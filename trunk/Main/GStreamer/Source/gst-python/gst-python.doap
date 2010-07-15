@@ -26,12 +26,33 @@ It also comes with a number of examples.
  <download-page rdf:resource="http://gstreamer.freedesktop.org/download/" />
 
  <repository>
-   <CVSRepository>
-     <anon-root>:pserver:anonymous@cvs.freedesktop.org:/cvs/gstreamer</anon-root>
-     <module>gst-python</module>
-     <browse rdf:resource="http://webcvs.freedesktop.org/gstreamer/gst-python/" />
-   </CVSRepository>
+   <GitRepository>
+     <location rdf:resource="git://anongit.freedesktop.org/gstreamer/gst-python"/>
+     <browse rdf:resource="http://cgit.freedesktop.org/gstreamer/gst-python"/>
+   </GitRepository>
  </repository> 
+
+ <release>
+  <Version>
+   <revision>0.10.19</revision>
+   <branch>0.10</branch>
+   <name>Insert Casablanca quote here</name>
+   <created>2010-07-15</created>
+   <file-release rdf:resource="http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.19.tar.bz2" />
+   <file-release rdf:resource="http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.19.tar.gz" />
+  </Version>
+ </release>
+
+ <release>
+  <Version>
+   <revision>0.10.18</revision>
+   <branch>0.10</branch>
+   <name>A pigeon carrying a 500ton block</name>
+   <created>2010-02-11</created>
+   <file-release rdf:resource="http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.18.tar.bz2" />
+   <file-release rdf:resource="http://gstreamer.freedesktop.org/src/gst-python/gst-python-0.10.18.tar.gz" />
+  </Version>
+ </release>
 
  <release>
   <Version>
@@ -220,7 +241,7 @@ It also comes with a number of examples.
  </maintainer>
  <maintainer>
   <foaf:Person>
-     <foaf:name>Thomas Vander Stichele</foaf:name>
+     <foaf:name>Edward Hervey</foaf:name>
   </foaf:Person>
  </maintainer>
 

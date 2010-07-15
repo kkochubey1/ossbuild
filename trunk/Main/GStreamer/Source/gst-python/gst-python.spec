@@ -4,7 +4,7 @@
 %define		_gst		0.10.18
 
 Name:           %{gstreamer}-python
-Version:        0.10.18
+Version:        0.10.19
 Release:        1
 Summary:        Python bindings for GStreamer.
 
