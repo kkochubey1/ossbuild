@@ -68,7 +68,9 @@ typedef enum {
   ORC_ARM_ROR
 } OrcArmShift;
 
-void orc_arm_emit (OrcCompiler *compiler, uint32_t insn);
+unsigned long orc_arm_get_cpu_flags (void);
+
+void orc_arm_emit (OrcCompiler *compiler, orc_uint32 insn);
 void orc_arm_emit_bx_lr (OrcCompiler *compiler);
 const char * orc_arm_reg_name (int reg);
 const char * orc_arm_cond_name (OrcArmCond cond);
@@ -78,7 +80,7 @@ void orc_arm_emit_add (OrcCompiler *compiler, int dest, int src1, int src2);
 void orc_arm_emit_sub (OrcCompiler *compiler, int dest, int src1, int src2);
 void orc_arm_emit_add_imm (OrcCompiler *compiler, int dest, int src1, int value);
 void orc_arm_emit_and_imm (OrcCompiler *compiler, int dest, int src1, int value);
-void orc_arm_emit_sub_imm (OrcCompiler *compiler, int dest, int src1, int value);
+void orc_arm_emit_sub_imm (OrcCompiler *compiler, int dest, int src1, int value, int record);
 void orc_arm_emit_asr_imm (OrcCompiler *compiler, int dest, int src1, int value);
 void orc_arm_emit_lsl_imm (OrcCompiler *compiler, int dest, int src1, int value);
 void orc_arm_emit_cmp_imm (OrcCompiler *compiler, int src1, int value);
@@ -91,8 +93,12 @@ void orc_arm_emit_push (OrcCompiler *compiler, int regs);
 void orc_arm_emit_pop (OrcCompiler *compiler, int regs);
 void orc_arm_emit_branch (OrcCompiler *compiler, int cond, int label);
 
+void orc_arm_loadb (OrcCompiler *compiler, int dest, int src1, int offset);
+void orc_arm_storeb (OrcCompiler *compiler, int dest, int offset, int src1);
 void orc_arm_loadw (OrcCompiler *compiler, int dest, int src1, int offset);
 void orc_arm_storew (OrcCompiler *compiler, int dest, int offset, int src1);
+void orc_arm_loadl (OrcCompiler *compiler, int dest, int src1, int offset);
+void orc_arm_storel (OrcCompiler *compiler, int dest, int offset, int src1);
 
 void orc_arm_emit_load_reg (OrcCompiler *compiler, int dest, int src1, int offset);
 void orc_arm_emit_store_reg (OrcCompiler *compiler, int src, int dest, int offset);
@@ -101,7 +107,7 @@ void orc_arm_add_fixup (OrcCompiler *compiler, int label, int type);
 void orc_arm_do_fixups (OrcCompiler *compiler);
 
 void orc_arm_emit_dp (OrcCompiler *p, int type, OrcArmCond cond, OrcArmDP opcode,
-    int S, int Rd, int Rn, int Rm, int shift, uint32_t val);
+    int S, int Rd, int Rn, int Rm, int shift, orc_uint32 val);
 void orc_arm_emit_par (OrcCompiler *p, int op, int mode, OrcArmCond cond,
     int Rd, int Rn, int Rm);
 void orc_arm_emit_xt (OrcCompiler *p, int op, OrcArmCond cond,

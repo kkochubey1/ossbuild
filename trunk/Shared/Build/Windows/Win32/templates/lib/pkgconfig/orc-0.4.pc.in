@@ -7,7 +7,7 @@ toolsdir=${exec_prefix}/bin
 
 Name: orc-0.4
 Description: Library of Optimized Inner Loops Runtime Compiler
-Version: 0.4.5
+Version: 0.4.6
 Libs: -L${libdir} -lorc-0.4
 Libs.private: -lm 
 Cflags: -I${includedir}
