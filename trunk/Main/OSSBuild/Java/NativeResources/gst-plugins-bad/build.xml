@@ -246,6 +246,7 @@
 				<include name="*gstvideomeasure*.*" />
 				<include name="*gstvideosignal*.*" />
 				<include name="*gstvmnc*.*" />
+				<include name="*gstvp8*.*" />
 				<include name="*gstadpcmdec*.*" />
 				<include name="*gstalsaspdif*.*" />
 				<include name="*gstautoconvert*.*" />
@@ -299,6 +300,7 @@
 				<include name="*gstreal*.*" />
 				<include name="*gstrtpmux*.*" />
 				<include name="*gstscaletempoplugin*.*" />
+				<include name="*gstschro*.*" />
 				<include name="*gstsdl*.*" />
 				<include name="*gstsdpelem*.*" />
 				<include name="*gstselector*.*" />
@@ -311,12 +313,12 @@
 				<include name="*gstvideomeasure*.*" />
 				<include name="*gstvideosignal*.*" />
 				<include name="*gstvmnc*.*" />
+				<include name="*gstvp8*.*" />
 				<include name="*gstwasapi*.*" />
 				<include name="*gstwininet*.*" />
 				<include name="*gstwinks*.*" />
 				<include name="*gstwinscreencap*.*" />
 				<!--
-				<include name="*gstschro*.*" />
 				<include name="*gstrsvg*.*" />
 				-->
 				

@@ -108,6 +108,7 @@
 		<File resource="libgstvideomeasure.dll" />
 		<File resource="libgstvideosignal.dll" />
 		<File resource="libgstvmnc.dll" />
+		<File resource="libgstvp8.dll" />
 		<File resource="libgstwasapi.dll" />
 		<File resource="libgstwininet.dll" />
 		<File resource="libgstwinks.dll" />
