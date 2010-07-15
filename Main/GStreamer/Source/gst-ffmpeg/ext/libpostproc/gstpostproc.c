@@ -24,9 +24,10 @@
 #include <gst/gst.h>
 #include <gst/video/video.h>
 #include <gst/video/gstvideofilter.h>
-#include <liboil/liboil.h>
-#include <liboil/liboilcpu.h>
-#include <liboil/liboilfunction.h>
+
+#ifdef HAVE_ORC
+#include <orc/orc.h>
+#endif
 
 #ifdef HAVE_FFMPEG_UNINSTALLED
 #include <avcodec.h>
@@ -41,12 +42,12 @@ typedef struct _PostProcDetails PostProcDetails;
 
 struct _PostProcDetails
 {
-  char *shortname;
-  char *longname;
-  char *description;
+  const char *shortname;
+  const char *longname;
+  const char *description;
 };
 
-static PostProcDetails filterdetails[] = {
+static const PostProcDetails filterdetails[] = {
   {"hb", "hdeblock", "horizontal deblocking filter"},
   {"vb", "vdeblock", "vertical deblocking filter"},
   {"h1", "x1hdeblock", "experimental horizontal deblocking filter 1"},
@@ -280,7 +281,8 @@ gst_ffmpeg_log_callback (void *ptr, int level, const char *fmt, va_list vl)
 static void
 change_context (GstPostProc * postproc, gint width, gint height)
 {
-  guint flags;
+  guint mmx_flags;
+  guint altivec_flags;
   gint ppflags;
 
   GST_DEBUG_OBJECT (postproc, "change_context, width:%d, height:%d",
@@ -289,11 +291,22 @@ change_context (GstPostProc * postproc, gint width, gint height)
   if ((width != postproc->width) && (height != postproc->height)) {
     if (postproc->context)
       pp_free_context (postproc->context);
-    flags = oil_cpu_get_flags ();
-    ppflags = (flags & OIL_IMPL_FLAG_MMX ? PP_CPU_CAPS_MMX : 0)
-        | (flags & OIL_IMPL_FLAG_MMXEXT ? PP_CPU_CAPS_MMX2 : 0)
-        | (flags & OIL_IMPL_FLAG_3DNOW ? PP_CPU_CAPS_3DNOW : 0)
-        | (flags & OIL_IMPL_FLAG_ALTIVEC ? PP_CPU_CAPS_ALTIVEC : 0);
+
+#ifdef HAVE_ORC
+    mmx_flags = orc_target_get_default_flags (orc_target_get_by_name ("mmx"));
+    altivec_flags =
+        orc_target_get_default_flags (orc_target_get_by_name ("altivec"));
+    ppflags = (mmx_flags & ORC_TARGET_MMX_MMX ? PP_CPU_CAPS_MMX : 0)
+        | (mmx_flags & ORC_TARGET_MMX_MMXEXT ? PP_CPU_CAPS_MMX2 : 0)
+        | (mmx_flags & ORC_TARGET_MMX_3DNOW ? PP_CPU_CAPS_3DNOW : 0)
+        | (altivec_flags & ORC_TARGET_ALTIVEC_ALTIVEC ? PP_CPU_CAPS_ALTIVEC :
+        0);
+#else
+    mmx_flags = 0;
+    altivec_flags = 0;
+    ppflags = 0;
+#endif
+
     postproc->context = pp_get_context (width, height, PP_FORMAT_420 | ppflags);
     postproc->width = width;
     postproc->height = height;
@@ -314,7 +327,7 @@ static void inline
 append (gchar ** base, gchar * app)
 {
   gchar *res;
-  gchar *sep;
+  const gchar *sep;
 
   if (**base && *app)
     sep = ":";
@@ -352,22 +365,21 @@ gst_post_proc_base_init (GstPostProcClass * klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
-  GstElementDetails details;
   gint ppidx;
+  gchar *longname, *description;
 
   ppidx = GPOINTER_TO_INT (g_hash_table_lookup (global_plugins,
           GINT_TO_POINTER (G_OBJECT_CLASS_TYPE (gobject_class))));
 
-  details.longname = g_strdup_printf ("LibPostProc %s filter",
+  longname = g_strdup_printf ("LibPostProc %s filter",
       filterdetails[ppidx].longname);
-  details.klass = "Filter/Video";
-  details.description = g_strdup_printf ("LibPostProc %s",
+  description = g_strdup_printf ("LibPostProc %s",
       filterdetails[ppidx].description);
-  details.author =
-      "Edward Hervey <edward@fluendo.com>, Mark Nauwelaerts (manauw@skynet.be)";
-  gst_element_class_set_details (element_class, &details);
-  g_free (details.longname);
-  g_free (details.description);
+  gst_element_class_set_details_simple (element_class, longname, "Filter/Video",
+      description,
+      "Edward Hervey <edward@fluendo.com>, Mark Nauwelaerts (manauw@skynet.be)");
+  g_free (longname);
+  g_free (description);
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_post_proc_src_template));
@@ -827,7 +839,7 @@ gst_post_proc_forcequant_get_property (GObject * object, guint prop_id,
 }
 
 
-gboolean
+static gboolean
 gst_post_proc_register (GstPlugin * plugin)
 {
   GTypeInfo typeinfo = {
@@ -883,6 +895,11 @@ plugin_init (GstPlugin * plugin)
 {
   GST_DEBUG_CATEGORY_INIT (postproc_debug, "postproc", 0,
       "video postprocessing elements");
+
+#ifdef HAVE_ORC
+  orc_init ();
+#endif
+
 #ifndef GST_DISABLE_GST_DEBUG
   av_log_set_callback (gst_ffmpeg_log_callback);
 #endif

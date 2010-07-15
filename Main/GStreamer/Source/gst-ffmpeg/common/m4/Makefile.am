@@ -38,4 +38,4 @@ EXTRA_DIST = \
 	introspection.m4 \
 	pkg.m4 \
 	check.m4 \
-        shave.m4
+	orc.m4

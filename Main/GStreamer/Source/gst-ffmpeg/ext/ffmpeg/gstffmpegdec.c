@@ -102,6 +102,7 @@ struct _GstFFMpegDec
     {
       gint width, height;
       gint clip_width, clip_height;
+      gint par_n, par_d;
       gint fps_n, fps_d;
       gint old_fps_n, old_fps_d;
       gboolean interlaced;
@@ -126,6 +127,8 @@ struct _GstFFMpegDec
   gboolean has_b_frames;
 
   /* parsing */
+  gboolean turnoff_parser;      /* used for turning off aac raw parsing
+                                 * See bug #566250 */
   AVCodecParserContext *pctx;
   GstBuffer *pcache;
   guint8 *padded;
@@ -293,10 +296,10 @@ static void
 gst_ffmpegdec_base_init (GstFFMpegDecClass * klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
-  GstElementDetails details;
   GstPadTemplate *sinktempl, *srctempl;
   GstCaps *sinkcaps, *srccaps;
   AVCodec *in_plugin;
+  gchar *longname, *classification, *description;
 
   in_plugin =
       (AVCodec *) g_type_get_qdata (G_OBJECT_CLASS_TYPE (klass),
@@ -304,18 +307,18 @@ gst_ffmpegdec_base_init (GstFFMpegDecClass * klass)
   g_assert (in_plugin != NULL);
 
   /* construct the element details struct */
-  details.longname = g_strdup_printf ("FFmpeg %s decoder",
-      in_plugin->long_name);
-  details.klass = g_strdup_printf ("Codec/Decoder/%s",
+  longname = g_strdup_printf ("FFmpeg %s decoder", in_plugin->long_name);
+  classification = g_strdup_printf ("Codec/Decoder/%s",
       (in_plugin->type == CODEC_TYPE_VIDEO) ? "Video" : "Audio");
-  details.description = g_strdup_printf ("FFmpeg %s decoder", in_plugin->name);
-  details.author = "Wim Taymans <wim.taymans@gmail.com>, "
+  description = g_strdup_printf ("FFmpeg %s decoder", in_plugin->name);
+  gst_element_class_set_details_simple (element_class, longname, classification,
+      description,
+      "Wim Taymans <wim.taymans@gmail.com>, "
       "Ronald Bultje <rbultje@ronald.bitfreak.net>, "
-      "Edward Hervey <bilboed@bilboed.com>";
-  gst_element_class_set_details (element_class, &details);
-  g_free (details.longname);
-  g_free (details.klass);
-  g_free (details.description);
+      "Edward Hervey <bilboed@bilboed.com>");
+  g_free (longname);
+  g_free (classification);
+  g_free (description);
 
   /* get the caps */
   sinkcaps = gst_ffmpeg_codecid_to_caps (in_plugin->id, NULL, FALSE);
@@ -435,6 +438,7 @@ gst_ffmpegdec_init (GstFFMpegDec * ffmpegdec)
 
   gst_ts_handler_init (ffmpegdec);
 
+  ffmpegdec->format.video.par_n = -1;
   ffmpegdec->format.video.fps_n = -1;
   ffmpegdec->format.video.old_fps_n = -1;
   gst_segment_init (&ffmpegdec->segment, GST_FORMAT_TIME);
@@ -598,6 +602,7 @@ gst_ffmpegdec_close (GstFFMpegDec * ffmpegdec)
     ffmpegdec->pctx = NULL;
   }
 
+  ffmpegdec->format.video.par_n = -1;
   ffmpegdec->format.video.fps_n = -1;
   ffmpegdec->format.video.old_fps_n = -1;
   ffmpegdec->format.video.interlaced = FALSE;
@@ -647,11 +652,15 @@ gst_ffmpegdec_open (GstFFMpegDec * ffmpegdec)
       ffmpegdec->is_realvideo = TRUE;
       break;
     default:
-      ffmpegdec->pctx = av_parser_init (oclass->in_plugin->id);
-      if (ffmpegdec->pctx)
-        GST_LOG_OBJECT (ffmpegdec, "Using parser %p", ffmpegdec->pctx);
-      else
-        GST_LOG_OBJECT (ffmpegdec, "No parser for codec");
+      if (!ffmpegdec->turnoff_parser) {
+        ffmpegdec->pctx = av_parser_init (oclass->in_plugin->id);
+        if (ffmpegdec->pctx)
+          GST_LOG_OBJECT (ffmpegdec, "Using parser %p", ffmpegdec->pctx);
+        else
+          GST_LOG_OBJECT (ffmpegdec, "No parser for codec");
+      } else {
+        GST_LOG_OBJECT (ffmpegdec, "Parser deactivated for format");
+      }
       break;
   }
 
@@ -729,6 +738,9 @@ gst_ffmpegdec_setcaps (GstPad * pad, GstCaps * caps)
   ffmpegdec->context->release_buffer = gst_ffmpegdec_release_buffer;
   ffmpegdec->context->draw_horiz_band = NULL;
 
+  /* default is to let format decide if it needs a parser */
+  ffmpegdec->turnoff_parser = FALSE;
+
   /* assume PTS as input, we will adapt when we detect timestamp reordering
    * in the output frames. */
   ffmpegdec->ts_is_dts = FALSE;
@@ -765,7 +777,7 @@ gst_ffmpegdec_setcaps (GstPad * pad, GstCaps * caps)
     gst_value_init_and_copy (ffmpegdec->par, par);
   }
 
-  /* get the framerate from incomming caps. fps_n is set to -1 when
+  /* get the framerate from incoming caps. fps_n is set to -1 when
    * there is no valid framerate */
   fps = gst_structure_get_value (structure, "framerate");
   if (fps != NULL && GST_VALUE_HOLDS_FRACTION (fps)) {
@@ -811,6 +823,15 @@ gst_ffmpegdec_setcaps (GstPad * pad, GstCaps * caps)
     /* do *not* draw edges when in direct rendering, for some reason it draws
      * outside of the memory. */
     ffmpegdec->context->flags |= CODEC_FLAG_EMU_EDGE;
+  }
+
+  /* for AAC we only use av_parse if not on raw caps */
+  if (oclass->in_plugin->id == CODEC_ID_AAC) {
+    const gchar *format = gst_structure_get_string (structure, "stream-format");
+
+    if (format == NULL || strcmp (format, "raw") == 0) {
+      ffmpegdec->turnoff_parser = TRUE;
+    }
   }
 
   /* workaround encoder bugs */
@@ -1171,19 +1192,30 @@ gst_ffmpegdec_negotiate (GstFFMpegDec * ffmpegdec, gboolean force)
           && ffmpegdec->format.video.height == ffmpegdec->context->height
           && ffmpegdec->format.video.fps_n == ffmpegdec->format.video.old_fps_n
           && ffmpegdec->format.video.fps_d == ffmpegdec->format.video.old_fps_d
-          && ffmpegdec->format.video.pix_fmt == ffmpegdec->context->pix_fmt)
+          && ffmpegdec->format.video.pix_fmt == ffmpegdec->context->pix_fmt
+          && ffmpegdec->format.video.par_n ==
+          ffmpegdec->context->sample_aspect_ratio.num
+          && ffmpegdec->format.video.par_d ==
+          ffmpegdec->context->sample_aspect_ratio.den)
         return TRUE;
       GST_DEBUG_OBJECT (ffmpegdec,
-          "Renegotiating video from %dx%d@ %d/%d fps to %dx%d@ %d/%d fps",
+          "Renegotiating video from %dx%d@ %d:%d PAR %d/%d fps to %dx%d@ %d:%d PAR %d/%d fps",
           ffmpegdec->format.video.width, ffmpegdec->format.video.height,
+          ffmpegdec->format.video.par_n, ffmpegdec->format.video.par_d,
           ffmpegdec->format.video.old_fps_n, ffmpegdec->format.video.old_fps_n,
           ffmpegdec->context->width, ffmpegdec->context->height,
+          ffmpegdec->context->sample_aspect_ratio.num,
+          ffmpegdec->context->sample_aspect_ratio.den,
           ffmpegdec->format.video.fps_n, ffmpegdec->format.video.fps_d);
       ffmpegdec->format.video.width = ffmpegdec->context->width;
       ffmpegdec->format.video.height = ffmpegdec->context->height;
       ffmpegdec->format.video.old_fps_n = ffmpegdec->format.video.fps_n;
       ffmpegdec->format.video.old_fps_d = ffmpegdec->format.video.fps_d;
       ffmpegdec->format.video.pix_fmt = ffmpegdec->context->pix_fmt;
+      ffmpegdec->format.video.par_n =
+          ffmpegdec->context->sample_aspect_ratio.num;
+      ffmpegdec->format.video.par_d =
+          ffmpegdec->context->sample_aspect_ratio.den;
       break;
     case CODEC_TYPE_AUDIO:
     {
@@ -1625,6 +1657,18 @@ opaque_find (GstFFMpegDec * ffmpegdec, gpointer opaque_val, guint64 * _ts,
     }
   }
   return FALSE;
+}
+
+static void
+flush_opaque (GstFFMpegDec * ffmpegdec)
+{
+  GList *tmp;
+
+  for (tmp = ffmpegdec->opaque; tmp; tmp = tmp->next)
+    g_slice_free (GstDataPassThrough, tmp->data);
+  if (ffmpegdec->opaque)
+    g_list_free (ffmpegdec->opaque);
+  ffmpegdec->opaque = NULL;
 }
 
 /* gst_ffmpegdec_[video|audio]_frame:
@@ -2237,6 +2281,7 @@ gst_ffmpegdec_frame (GstFFMpegDec * ffmpegdec,
       ffmpegdec->discont = FALSE;
     }
     /* set caps */
+    outbuf = gst_buffer_make_metadata_writable (outbuf);
     gst_buffer_set_caps (outbuf, GST_PAD_CAPS (ffmpegdec->srcpad));
 
     if (ffmpegdec->segment.rate > 0.0) {
@@ -2708,6 +2753,7 @@ gst_ffmpegdec_change_state (GstElement * element, GstStateChange transition)
       GST_OBJECT_UNLOCK (ffmpegdec);
       clear_queued (ffmpegdec);
       g_free (ffmpegdec->padded);
+      flush_opaque (ffmpegdec);
       ffmpegdec->padded = NULL;
       ffmpegdec->padded_size = 0;
       ffmpegdec->can_allocate_aligned = TRUE;
@@ -2816,8 +2862,11 @@ gst_ffmpegdec_register (GstPlugin * plugin)
 
     /* no quasi-codecs, please */
     if (in_plugin->id == CODEC_ID_RAWVIDEO ||
+        in_plugin->id == CODEC_ID_V210 ||
+        in_plugin->id == CODEC_ID_V210X ||
+        in_plugin->id == CODEC_ID_R210 ||
         (in_plugin->id >= CODEC_ID_PCM_S16LE &&
-            in_plugin->id <= CODEC_ID_PCM_F64LE)) {
+            in_plugin->id <= CODEC_ID_PCM_BLURAY)) {
       goto next;
     }
 
@@ -2898,21 +2947,18 @@ gst_ffmpegdec_register (GstPlugin * plugin)
       case CODEC_ID_COOK:
         rank = GST_RANK_PRIMARY;
         break;
+        /* DVVIDEO: we have a good dv decoder, fast on both ppc as well as x86.
+         * They say libdv's quality is better though. leave as secondary.
+         * note: if you change this, see the code in gstdv.c in good/ext/dv.
+         *
+         * SIPR: decoder should have a higher rank than realaudiodec.
+         */
       case CODEC_ID_DVVIDEO:
-        /* we have a good dv decoder, fast on both ppc as well as x86. they say
-           libdv's quality is better though. leave as secondary.
-           note: if you change this, see the code in gstdv.c in good/ext/dv. */
+      case CODEC_ID_SIPR:
         rank = GST_RANK_SECONDARY;
         break;
-      case CODEC_ID_AAC:
-        /* The ffmpeg AAC decoder isn't complete, and there's no way to figure out
-         * before decoding whether it will support the given stream or not.
-         * We therefore set it to NONE until it can handle the full specs. */
-        rank = GST_RANK_NONE;
-        break;
       default:
-	    /* We still want these plugins choosen first on Windows */
-        rank = GST_RANK_MARGINAL + 1;
+        rank = GST_RANK_MARGINAL;
         break;
     }
     if (!gst_element_register (plugin, type_name, rank, type)) {

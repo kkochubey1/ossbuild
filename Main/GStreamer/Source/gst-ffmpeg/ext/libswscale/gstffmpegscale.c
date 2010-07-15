@@ -32,9 +32,10 @@
 #include <gst/gst.h>
 #include <gst/base/gstbasetransform.h>
 #include <gst/video/video.h>
-#include <liboil/liboil.h>
-#include <liboil/liboilcpu.h>
-#include <liboil/liboilfunction.h>
+
+#ifdef HAVE_ORC
+#include <orc/orc.h>
+#endif
 
 #include <string.h>
 
@@ -76,14 +77,10 @@ typedef struct _GstFFMpegScaleClass
 #define GST_IS_FFMPEGSCALE_CLASS(klass) \
 	(G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_FFMPEGSCALE))
 
+GType gst_ffmpegscale_get_type (void);
+
 GST_DEBUG_CATEGORY (ffmpegscale_debug);
 #define GST_CAT_DEFAULT ffmpegscale_debug
-
-static const GstElementDetails plugin_details =
-GST_ELEMENT_DETAILS ("FFMPEG Scale element",
-    "Filter/Converter/Video",
-    "Converts video from one resolution to another",
-    "Luca Ognibene <luogni@tin.it>, Mark Nauwelaerts <mnauw@users.sf.net>");
 
 /* libswscale supported formats depend on endianness */
 #if G_BYTE_ORDER == G_BIG_ENDIAN
@@ -197,7 +194,10 @@ gst_ffmpegscale_base_init (gpointer g_class)
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &plugin_details);
+  gst_element_class_set_details_simple (element_class, "FFMPEG Scale element",
+      "Filter/Converter/Video",
+      "Converts video from one resolution to another",
+      "Luca Ognibene <luogni@tin.it>, Mark Nauwelaerts <mnauw@users.sf.net>");
 }
 
 static void
@@ -596,7 +596,8 @@ gst_ffmpegscale_set_caps (GstBaseTransform * trans, GstCaps * incaps,
     GstCaps * outcaps)
 {
   GstFFMpegScale *scale = GST_FFMPEGSCALE (trans);
-  gint flags, swsflags;
+  guint mmx_flags, altivec_flags;
+  gint swsflags;
   GstVideoFormat in_format, out_format;
   gboolean ok;
 
@@ -630,11 +631,21 @@ gst_ffmpegscale_set_caps (GstBaseTransform * trans, GstCaps * incaps,
   gst_ffmpegscale_fill_info (scale, out_format, scale->out_width,
       scale->out_height, scale->out_stride, scale->out_offset);
 
-  flags = oil_cpu_get_flags ();
-  swsflags = (flags & OIL_IMPL_FLAG_MMX ? SWS_CPU_CAPS_MMX : 0)
-      | (flags & OIL_IMPL_FLAG_MMXEXT ? SWS_CPU_CAPS_MMX2 : 0)
-      | (flags & OIL_IMPL_FLAG_3DNOW ? SWS_CPU_CAPS_3DNOW : 0)
-      | (flags & OIL_IMPL_FLAG_ALTIVEC ? SWS_CPU_CAPS_ALTIVEC : 0);
+#ifdef HAVE_ORC
+  mmx_flags = orc_target_get_default_flags (orc_target_get_by_name ("mmx"));
+  altivec_flags =
+      orc_target_get_default_flags (orc_target_get_by_name ("altivec"));
+  swsflags = (mmx_flags & ORC_TARGET_MMX_MMX ? SWS_CPU_CAPS_MMX : 0)
+      | (mmx_flags & ORC_TARGET_MMX_MMXEXT ? SWS_CPU_CAPS_MMX2 : 0)
+      | (mmx_flags & ORC_TARGET_MMX_3DNOW ? SWS_CPU_CAPS_3DNOW : 0)
+      | (altivec_flags & ORC_TARGET_ALTIVEC_ALTIVEC ? SWS_CPU_CAPS_ALTIVEC : 0);
+#else
+  mmx_flags = 0;
+  altivec_flags = 0;
+  swsflags = 0;
+#endif
+
+
   scale->ctx = sws_getContext (scale->in_width, scale->in_height,
       scale->in_pixfmt, scale->out_width, scale->out_height, scale->out_pixfmt,
       swsflags | gst_ffmpegscale_method_flags[scale->method], NULL, NULL, NULL);
@@ -787,11 +798,16 @@ gst_ffmpeg_log_callback (void *ptr, int level, const char *fmt, va_list vl)
 }
 #endif
 
-gboolean
+static gboolean
 plugin_init (GstPlugin * plugin)
 {
   GST_DEBUG_CATEGORY_INIT (ffmpegscale_debug, "ffvideoscale", 0,
       "video scaling element");
+
+#ifdef HAVE_ORC
+  orc_init ();
+#endif
+
 #ifndef GST_DISABLE_GST_DEBUG
   av_log_set_callback (gst_ffmpeg_log_callback);
 #endif

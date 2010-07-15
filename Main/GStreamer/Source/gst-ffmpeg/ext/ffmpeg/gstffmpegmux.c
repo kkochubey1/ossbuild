@@ -137,16 +137,73 @@ static GstElementClass *parent_class = NULL;
 
 /*static guint gst_ffmpegmux_signals[LAST_SIGNAL] = { 0 }; */
 
+typedef struct
+{
+  const char *name;
+  const char *replacement;
+} GstFFMpegMuxReplacement;
+
+static const char *
+gst_ffmpegmux_get_replacement (const char *name)
+{
+  static const GstFFMpegMuxReplacement blacklist[] = {
+    {"avi", "avimux"},
+    {"matroska", "matroskamux"},
+    {"mov", "qtmux"},
+    {"mpegts", "mpegtsmux"},
+    {"mp4", "mp4mux"},
+    {"mpjpeg", "multipartmux"},
+    {"ogg", "oggmux"},
+    {"wav", "wavenc"},
+    {"webm", "webmmux"},
+    {"mxf", "mxfmux"},
+    {"3gp", "gppmux"},
+    {"yuv4mpegpipe", "y4menc"},
+    {"aiff", "aiffmux"},
+    {"adts", "aacparse"},
+    {"asf", "asfmux"},
+    {"asf_stream", "asfmux"},
+    {"flv", "flvmux"},
+    {"mp3", "id3v2mux"},
+    {"mp2", "id3v2mux"}
+  };
+  int i;
+
+  for (i = 0; i < sizeof (blacklist) / sizeof (blacklist[0]); i++) {
+    if (strcmp (blacklist[i].name, name) == 0) {
+      return blacklist[i].replacement;
+    }
+  }
+
+  return NULL;
+}
+
+static gboolean
+gst_ffmpegmux_is_formatter (const char *name)
+{
+  static const char *replace[] = {
+    "mp2", "mp3", NULL
+  };
+  int i;
+
+  for (i = 0; replace[i]; i++)
+    if (strcmp (replace[i], name) == 0)
+      return TRUE;
+  return FALSE;
+}
+
 static void
 gst_ffmpegmux_base_init (gpointer g_class)
 {
   GstFFMpegMuxClass *klass = (GstFFMpegMuxClass *) g_class;
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
-  GstElementDetails details;
   GstPadTemplate *videosinktempl, *audiosinktempl, *srctempl;
   AVOutputFormat *in_plugin;
   GstCaps *srccaps, *audiosinkcaps, *videosinkcaps;
   enum CodecID *video_ids = NULL, *audio_ids = NULL;
+  gchar *longname, *description;
+  const char *replacement;
+  gboolean is_formatter;
 
   in_plugin =
       (AVOutputFormat *) g_type_get_qdata (G_OBJECT_CLASS_TYPE (klass),
@@ -154,16 +211,29 @@ gst_ffmpegmux_base_init (gpointer g_class)
   g_assert (in_plugin != NULL);
 
   /* construct the element details struct */
-  details.longname = g_strdup_printf ("FFmpeg %s muxer", in_plugin->long_name);
-  details.klass = g_strdup ("Codec/Muxer");
-  details.description = g_strdup_printf ("FFmpeg %s muxer",
-      in_plugin->long_name);
-  details.author = "Wim Taymans <wim.taymans@chello.be>, "
-      "Ronald Bultje <rbultje@ronald.bitfreak.net>";
-  gst_element_class_set_details (element_class, &details);
-  g_free (details.longname);
-  g_free (details.klass);
-  g_free (details.description);
+  replacement = gst_ffmpegmux_get_replacement (in_plugin->name);
+  is_formatter = gst_ffmpegmux_is_formatter (in_plugin->name);
+  if (replacement != NULL) {
+    longname =
+        g_strdup_printf ("FFmpeg %s %s (not recommended, use %s instead)",
+        in_plugin->long_name, is_formatter ? "formatter" : "muxer",
+        replacement);
+    description =
+        g_strdup_printf ("FFmpeg %s %s (not recommended, use %s instead)",
+        in_plugin->long_name, is_formatter ? "formatter" : "muxer",
+        replacement);
+  } else {
+    longname = g_strdup_printf ("FFmpeg %s %s", in_plugin->long_name,
+        is_formatter ? "formatter" : "muxer");
+    description = g_strdup_printf ("FFmpeg %s %s", in_plugin->long_name,
+        is_formatter ? "formatter" : "muxer");
+  }
+  gst_element_class_set_details_simple (element_class, longname,
+      is_formatter ? "Formatter/Metadata" : "Codec/Muxer", description,
+      "Wim Taymans <wim.taymans@chello.be>, "
+      "Ronald Bultje <rbultje@ronald.bitfreak.net>");
+  g_free (longname);
+  g_free (description);
 
   /* Try to find the caps that belongs here */
   srccaps = gst_ffmpeg_formatid_to_caps (in_plugin->name);
@@ -811,6 +881,7 @@ gst_ffmpegmux_register (GstPlugin * plugin)
   while (in_plugin) {
     gchar *type_name;
     gchar *p;
+    GstRank rank = GST_RANK_MARGINAL;
 
     if ((!strncmp (in_plugin->name, "u16", 3)) ||
         (!strncmp (in_plugin->name, "s16", 3)) ||
@@ -831,11 +902,20 @@ gst_ffmpegmux_register (GstPlugin * plugin)
         (!strncmp (in_plugin->name, "mulaw", 5)) ||
         (!strncmp (in_plugin->name, "alaw", 4)) ||
         (!strncmp (in_plugin->name, "h26", 3)) ||
+        (!strncmp (in_plugin->name, "rtp", 3)) ||
         (!strncmp (in_plugin->name, "ass", 3))
         ) {
       GST_LOG ("Ignoring muxer %s", in_plugin->name);
       goto next;
     }
+
+    if ((!strncmp (in_plugin->long_name, "raw ", 4))) {
+      GST_LOG ("Ignoring raw muxer %s", in_plugin->name);
+      goto next;
+    }
+
+    if (gst_ffmpegmux_get_replacement (in_plugin->name))
+      rank = GST_RANK_NONE;
 
     /* FIXME : We need a fast way to know whether we have mappings for this
      * muxer type. */
@@ -860,7 +940,7 @@ gst_ffmpegmux_register (GstPlugin * plugin)
       g_type_add_interface_static (type, GST_TYPE_TAG_SETTER, &tag_setter_info);
     }
 
-    if (!gst_element_register (plugin, type_name, GST_RANK_MARGINAL, type)) {
+    if (!gst_element_register (plugin, type_name, rank, type)) {
       g_free (type_name);
       return FALSE;
     }

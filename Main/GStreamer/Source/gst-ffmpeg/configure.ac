@@ -1,22 +1,22 @@
-AC_PREREQ(2.52)
+AC_PREREQ(2.60)
 
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GStreamer FFMpeg, 0.10.10,
+AC_INIT(GStreamer FFMpeg, 0.10.11,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-ffmpeg)
 
 AG_GST_INIT
 
 dnl initialize automake
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([-Wno-portability 1.10])
 
 dnl define PACKAGE_VERSION_* variables
 AS_VERSION
 
 dnl check if this is a release version
-AS_NANO(GST_CVS="no", GST_CVS="yes")
+AS_NANO(GST_GIT="no", GST_GIT="yes")
 
 dnl can autoconf find the source ?
 AC_CONFIG_SRCDIR([ext/ffmpeg/gstffmpeg.c])
@@ -30,6 +30,11 @@ AM_MAINTAINER_MODE
 dnl sets host_* variables
 AC_CANONICAL_HOST
 
+dnl use pretty build output with automake >= 1.11
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])],
+  [AM_DEFAULT_VERBOSITY=1
+   AC_SUBST(AM_DEFAULT_VERBOSITY)])
+
 dnl our libraries and install dirs use major.minor as a version
 GST_MAJORMINOR=$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR
 dnl we override it here if we need to for the release candidate of new series
@@ -41,8 +46,7 @@ AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
 GST_REQ=0.10.22
-LIBOIL_MAJORMINOR=0.3
-LIBOIL_REQ=0.3.6
+ORC_REQ=0.4.5
 
 dnl *** autotools stuff ****
 
@@ -120,18 +124,8 @@ AM_CONDITIONAL(HAVE_GST_CHECK, test "x$HAVE_GST_CHECK" = "xyes")
 AC_MSG_NOTICE(Using GStreamer Core Plugins in $GST_PLUGINS_DIR)
 AC_MSG_NOTICE(Using GStreamer Base Plugins in $GSTPB_PLUGINS_DIR)
 
-dnl liboil is required for cpu detection for libpostproc
-dnl FIXME : In theory we should be able to compile libpostproc with cpudetect
-dnl capabilities, which would enable us to get rid of this
-PKG_CHECK_MODULES(LIBOIL, liboil-$LIBOIL_MAJORMINOR >= $LIBOIL_REQ, HAVE_LIBOIL=yes, HAVE_LIBOIL=no)
-if test "x$HAVE_LIBOIL" != "xyes"
-then
-  AC_MSG_ERROR([liboil-$LIBOIL_REQ or later is required])
-  AC_ERROR
-fi
-
-AC_SUBST(LIBOIL_CFLAGS)
-AC_SUBST(LIBOIL_LIBS)
+dnl orc is required for cpu detection for libpostproc
+ORC_CHECK([$ORC_REQ])
 
 dnl *** set variables based on configure arguments ***
 
@@ -139,10 +133,14 @@ dnl set location of plugin directory
 AG_GST_SET_PLUGINDIR
 
 dnl define an ERROR_CFLAGS Makefile variable
-AG_GST_SET_ERROR_CFLAGS($GST_CVS)
+AG_GST_SET_ERROR_CFLAGS($GST_GIT, [
+    -Wmissing-declarations -Wmissing-prototypes -Wredundant-decls -Wundef
+    -Wwrite-strings -Wformat-nonliteral -Wformat-security -Wold-style-definition
+    -Wcast-align -Winit-self -Wmissing-include-dirs -Waddress
+    -Waggregate-return -Wno-multichar -Wnested-externs ])
 
 dnl define correct level for debugging messages
-AG_GST_SET_LEVEL_DEFAULT($GST_CVS)
+AG_GST_SET_LEVEL_DEFAULT($GST_GIT)
 
 dnl *** finalize CFLAGS, LDFLAGS, LIBS ***
 
@@ -160,7 +158,7 @@ if test "x$USE_DEBUG" = xyes; then
 fi
 AC_SUBST(PROFILE_CFLAGS)
 
-if test "x$GST_CVS" = "xyes"; then
+if test "x$GST_GIT" = "xyes"; then
   DEPRECATED_CFLAGS="-DGST_DISABLE_DEPRECATED"
 else
   DEPRECATED_CFLAGS=""
@@ -168,7 +166,7 @@ fi
 AC_SUBST(DEPRECATED_CFLAGS)
 
 dnl every flag in GST_OPTION_CFLAGS can be overridden at make time
-GST_OPTION_CFLAGS="\$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CFLAGS="\$(WARNING_CFLAGS) \$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
 
 AC_SUBST(GST_OPTION_CFLAGS)
 
@@ -176,7 +174,7 @@ dnl FIXME: do we want to rename to GST_ALL_* ?
 dnl prefer internal headers to already installed ones
 dnl also add builddir include for enumtypes and marshal
 dnl add GST_OPTION_CFLAGS, but overridable
-GST_CFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CFLAGS)"
+GST_CFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS $GLIB_EXTRA_CFLAGS \$(GST_OPTION_CFLAGS)"
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_LIBS)
 
@@ -216,6 +214,7 @@ AC_ARG_WITH(system-ffmpeg,
 
 if test "x$with_system_ffmpeg" = "xyes"; then
   PKG_CHECK_MODULES(FFMPEG, libavformat libavcodec libavutil) 
+  PKG_CHECK_MODULES(POSTPROC, libpostproc libavcodec libavutil)
   PKG_CHECK_MODULES(SWSCALE, libswscale libavutil)
   saved_CPPFLAGS="$CPPFLAGS"
   CPPFLAGS="$CPPFLAGS $FFMPEG_CFLAGS"
@@ -257,7 +256,7 @@ if test "x$with_system_ffmpeg" = "xyes"; then
   sleep 15
 else
 
-  source "$srcdir/ffmpegrev"
+  . "$srcdir/ffmpegrev"
   
   AC_MSG_NOTICE([Using ffmpeg revision $FFMPEG_REVISION])
   
@@ -308,11 +307,12 @@ else
   # basic arguments
   embffmpeg_configure_args="--prefix=$prefix"
 
-  # Enable shared and static so that we get .a files, but with PIC code.
+  # Enable pic and static so that we get .a files, but with PIC code.
   embffmpeg_configure_args="$embffmpeg_configure_args --disable-ffserver --disable-ffplay\
-        --enable-postproc --enable-gpl --enable-static --enable-shared \
+        --disable-ffmpeg --disable-ffprobe --enable-postproc --enable-gpl --enable-static --enable-pic \
 	--disable-encoder=flac --disable-decoder=cavs --disable-protocols --disable-devices\
-	 --disable-network --disable-hwaccels"
+	--disable-network --disable-hwaccels --disable-filters --disable-doc\
+	--enable-optimizations"
 
   # if we are cross-compiling, tell ffmpeg so
   if test "x$cross_compiling" = xyes; then
@@ -338,7 +338,7 @@ else
   esac
 
   dnl checks for extra enable/disable flags
-  FFMPEG_OPTS="`$srcdir/gst-libs/ext/ffmpeg/configure --help`"
+  FFMPEG_OPTS="(cd $srcdir/gst-libs/ext/ffmpeg && ./configure --help)"
   # Let's check if we can disable the building of the ffmpeg binary
   can_disable=`echo "$FFMPEG_OPTS" | grep 'disable-ffmpeg'`
   if test "$can_disable" != ""; then
@@ -394,17 +394,14 @@ if test x$HAVE_FFMPEG_UNINSTALLED = x1; then
 fi
 AM_CONDITIONAL(HAVE_FFMPEG_UNINSTALLED, test x$HAVE_FFMPEG_UNINSTALLED = x1)
 
-SHAVE_INIT([common],[enable])
-
 AC_CONFIG_FILES(
 Makefile
 common/Makefile
 common/m4/Makefile
-common/shave
-common/shave-libtool
 gst-ffmpeg.spec
 ext/Makefile
 ext/ffmpeg/Makefile
+ext/libpostproc/Makefile
 ext/libswscale/Makefile
 gst-libs/Makefile
 gst-libs/ext/Makefile
@@ -416,3 +413,4 @@ tests/files/Makefile
 )
 AC_OUTPUT
 
+ORC_OUTPUT

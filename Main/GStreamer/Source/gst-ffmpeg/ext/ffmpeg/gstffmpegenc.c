@@ -124,9 +124,9 @@ gst_ffmpegenc_base_init (GstFFMpegEncClass * klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
   AVCodec *in_plugin;
-  GstElementDetails details;
   GstPadTemplate *srctempl = NULL, *sinktempl = NULL;
   GstCaps *srccaps = NULL, *sinkcaps = NULL;
+  gchar *longname, *classification, *description;
 
   in_plugin =
       (AVCodec *) g_type_get_qdata (G_OBJECT_CLASS_TYPE (klass),
@@ -134,17 +134,17 @@ gst_ffmpegenc_base_init (GstFFMpegEncClass * klass)
   g_assert (in_plugin != NULL);
 
   /* construct the element details struct */
-  details.longname = g_strdup_printf ("FFmpeg %s encoder",
-      in_plugin->long_name);
-  details.klass = g_strdup_printf ("Codec/Encoder/%s",
+  longname = g_strdup_printf ("FFmpeg %s encoder", in_plugin->long_name);
+  classification = g_strdup_printf ("Codec/Encoder/%s",
       (in_plugin->type == CODEC_TYPE_VIDEO) ? "Video" : "Audio");
-  details.description = g_strdup_printf ("FFmpeg %s encoder", in_plugin->name);
-  details.author = "Wim Taymans <wim.taymans@gmail.com>, "
-      "Ronald Bultje <rbultje@ronald.bitfreak.net>";
-  gst_element_class_set_details (element_class, &details);
-  g_free (details.longname);
-  g_free (details.klass);
-  g_free (details.description);
+  description = g_strdup_printf ("FFmpeg %s encoder", in_plugin->name);
+  gst_element_class_set_details_simple (element_class, longname, classification,
+      description,
+      "Wim Taymans <wim.taymans@gmail.com>, "
+      "Ronald Bultje <rbultje@ronald.bitfreak.net>");
+  g_free (longname);
+  g_free (classification);
+  g_free (description);
 
   if (!(srccaps = gst_ffmpeg_codecid_to_caps (in_plugin->id, NULL, TRUE))) {
     GST_DEBUG ("Couldn't get source caps for encoder '%s'", in_plugin->name);
@@ -307,6 +307,67 @@ gst_ffmpegenc_finalize (GObject * object)
 }
 
 static GstCaps *
+gst_ffmpegenc_get_possible_sizes (GstFFMpegEnc * ffmpegenc, GstPad * pad,
+    const GstCaps * caps)
+{
+  GstCaps *othercaps = NULL;
+  GstCaps *tmpcaps = NULL;
+  GstCaps *intersect = NULL;
+  guint i;
+
+  othercaps = gst_pad_peer_get_caps (ffmpegenc->srcpad);
+
+  if (!othercaps)
+    return gst_caps_copy (caps);
+
+  intersect = gst_caps_intersect (othercaps,
+      gst_pad_get_pad_template_caps (ffmpegenc->srcpad));
+  gst_caps_unref (othercaps);
+
+  if (gst_caps_is_empty (intersect))
+    return intersect;
+
+  if (gst_caps_is_any (intersect))
+    return gst_caps_copy (caps);
+
+  tmpcaps = gst_caps_new_empty ();
+
+  for (i = 0; i < gst_caps_get_size (intersect); i++) {
+    GstStructure *s = gst_caps_get_structure (intersect, i);
+    const GValue *height = NULL;
+    const GValue *width = NULL;
+    const GValue *framerate = NULL;
+    GstStructure *tmps;
+
+    height = gst_structure_get_value (s, "height");
+    width = gst_structure_get_value (s, "width");
+    framerate = gst_structure_get_value (s, "framerate");
+
+    tmps = gst_structure_new ("video/x-raw-rgb", NULL);
+    if (width)
+      gst_structure_set_value (tmps, "width", width);
+    if (height)
+      gst_structure_set_value (tmps, "height", height);
+    if (framerate)
+      gst_structure_set_value (tmps, "framerate", framerate);
+    gst_caps_merge_structure (tmpcaps, gst_structure_copy (tmps));
+
+    gst_structure_set_name (tmps, "video/x-raw-yuv");
+    gst_caps_merge_structure (tmpcaps, gst_structure_copy (tmps));
+
+    gst_structure_set_name (tmps, "video/x-raw-gray");
+    gst_caps_merge_structure (tmpcaps, tmps);
+  }
+  gst_caps_unref (intersect);
+
+  intersect = gst_caps_intersect (caps, tmpcaps);
+  gst_caps_unref (tmpcaps);
+
+  return intersect;
+}
+
+
+static GstCaps *
 gst_ffmpegenc_getcaps (GstPad * pad)
 {
   GstFFMpegEnc *ffmpegenc = (GstFFMpegEnc *) GST_PAD_PARENT (pad);
@@ -315,6 +376,7 @@ gst_ffmpegenc_getcaps (GstPad * pad)
   AVCodecContext *ctx = NULL;
   enum PixelFormat pixfmt;
   GstCaps *caps = NULL;
+  GstCaps *finalcaps = NULL;
   gint i;
 
   GST_DEBUG_OBJECT (ffmpegenc, "getting caps");
@@ -331,7 +393,7 @@ gst_ffmpegenc_getcaps (GstPad * pad)
 
   /* cached */
   if (oclass->sinkcaps) {
-    caps = gst_caps_copy (oclass->sinkcaps);
+    caps = gst_ffmpegenc_get_possible_sizes (ffmpegenc, pad, oclass->sinkcaps);
     GST_DEBUG_OBJECT (ffmpegenc, "return cached caps %" GST_PTR_FORMAT, caps);
     return caps;
   }
@@ -430,7 +492,8 @@ gst_ffmpegenc_getcaps (GstPad * pad)
 
   /* make sure we have something */
   if (!caps) {
-    caps = gst_caps_copy (gst_pad_get_pad_template_caps (pad));
+    caps = gst_ffmpegenc_get_possible_sizes (ffmpegenc, pad,
+        gst_pad_get_pad_template_caps (pad));
     GST_DEBUG_OBJECT (ffmpegenc, "probing gave nothing, "
         "return template %" GST_PTR_FORMAT, caps);
     return caps;
@@ -439,7 +502,10 @@ gst_ffmpegenc_getcaps (GstPad * pad)
   GST_DEBUG_OBJECT (ffmpegenc, "probed caps gave %" GST_PTR_FORMAT, caps);
   oclass->sinkcaps = gst_caps_copy (caps);
 
-  return caps;
+  finalcaps = gst_ffmpegenc_get_possible_sizes (ffmpegenc, pad, caps);
+  gst_caps_unref (caps);
+
+  return finalcaps;
 }
 
 static gboolean
@@ -864,15 +930,18 @@ gst_ffmpegenc_chain_audio (GstPad * pad, GstBuffer * inbuf)
       ffmpegenc->adapter_consumed = 0;
     } else {
       GstClockTime upstream_time;
+      GstClockTime consumed_time;
       guint64 bytes;
 
       /* use timestamp at head of the adapter */
-      GST_LOG_OBJECT (ffmpegenc, "taking adapter timestamp %" GST_TIME_FORMAT,
-          GST_TIME_ARGS (ffmpegenc->adapter_ts));
-      timestamp = ffmpegenc->adapter_ts;
-      timestamp +=
+      consumed_time =
           gst_util_uint64_scale (ffmpegenc->adapter_consumed, GST_SECOND,
           ctx->sample_rate);
+      timestamp = ffmpegenc->adapter_ts + consumed_time;
+      GST_LOG_OBJECT (ffmpegenc, "taking adapter timestamp %" GST_TIME_FORMAT
+          " and adding consumed time %" GST_TIME_FORMAT,
+          GST_TIME_ARGS (ffmpegenc->adapter_ts), GST_TIME_ARGS (consumed_time));
+
       /* check with upstream timestamps, if too much deviation,
        * forego some timestamp perfection in favour of upstream syncing
        * (particularly in case these do not happen to come in multiple
@@ -882,7 +951,8 @@ gst_ffmpegenc_chain_audio (GstPad * pad, GstBuffer * inbuf)
         GstClockTimeDiff diff;
 
         upstream_time +=
-            gst_util_uint64_scale (bytes, GST_SECOND, ctx->sample_rate);
+            gst_util_uint64_scale (bytes, GST_SECOND,
+            ctx->sample_rate * osize * ctx->channels);
         diff = upstream_time - timestamp;
         /* relaxed difference, rather than half a sample or so ... */
         if (diff > GST_SECOND / 10 || diff < -GST_SECOND / 10) {
@@ -890,9 +960,11 @@ gst_ffmpegenc_chain_audio (GstPad * pad, GstBuffer * inbuf)
               "taking upstream timestamp %" GST_TIME_FORMAT,
               GST_TIME_ARGS (upstream_time));
           timestamp = upstream_time;
+          /* samples corresponding to bytes */
+          ffmpegenc->adapter_consumed = bytes / (osize * ctx->channels);
           ffmpegenc->adapter_ts = upstream_time -
-              gst_util_uint64_scale (bytes, GST_SECOND, ctx->sample_rate);
-          ffmpegenc->adapter_consumed = bytes;
+              gst_util_uint64_scale (ffmpegenc->adapter_consumed, GST_SECOND,
+              ctx->sample_rate);
           ffmpegenc->discont = TRUE;
         }
       }
@@ -911,6 +983,10 @@ gst_ffmpegenc_chain_audio (GstPad * pad, GstBuffer * inbuf)
     while (avail >= frame_bytes) {
       GST_LOG_OBJECT (ffmpegenc, "taking %u bytes from the adapter",
           frame_bytes);
+
+      /* Note that we take frame_bytes and add frame_size.
+       * Makes sense when resyncing because you don't have to count channels
+       * or samplesize to divide by the samplerate */
 
       /* take an audio buffer out of the adapter */
       in_data = (guint8 *) gst_adapter_peek (ffmpegenc->adapter, frame_bytes);
@@ -1234,9 +1310,12 @@ gst_ffmpegenc_register (GstPlugin * plugin)
 
     /* no quasi codecs, please */
     if (in_plugin->id == CODEC_ID_RAWVIDEO ||
+        in_plugin->id == CODEC_ID_V210 ||
+        in_plugin->id == CODEC_ID_V210X ||
+        in_plugin->id == CODEC_ID_R210 ||
         in_plugin->id == CODEC_ID_ZLIB ||
         (in_plugin->id >= CODEC_ID_PCM_S16LE &&
-            in_plugin->id <= CODEC_ID_PCM_F64LE)) {
+            in_plugin->id <= CODEC_ID_PCM_BLURAY)) {
       goto next;
     }
 

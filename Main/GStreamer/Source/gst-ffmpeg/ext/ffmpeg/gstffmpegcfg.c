@@ -27,6 +27,7 @@
 
 #include "gstffmpeg.h"
 #include "gstffmpegenc.h"
+#include "gstffmpegcfg.h"
 
 #include <string.h>
 
@@ -272,6 +273,7 @@ gst_ffmpeg_flags_get_type (void)
       {CODEC_FLAG_MV0, "Always try a MB with MV (0,0)", "mv0"},
       {CODEC_FLAG_PART,
           "Store MV, DC and AC coefficients in seperate partitions", "part"},
+      {CODEC_FLAG_LOOP_FILTER, "Loop filter", "loop-filter"},
       {CODEC_FLAG_GRAY, "Only decode/encode grayscale", "gray"},
       {CODEC_FLAG_NORMALIZE_AQP,
           "Normalize Adaptive Quantization (masking, etc)", "aqp"},
@@ -381,7 +383,7 @@ static gint huffyuv[] = {
  * or some may have slightly varying enum-types with more or less options.
  * The enum-types themselves should be declared above. */
 void
-gst_ffmpeg_cfg_init ()
+gst_ffmpeg_cfg_init (void)
 {
   GParamSpec *pspec;
 

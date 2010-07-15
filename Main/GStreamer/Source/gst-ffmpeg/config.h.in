@@ -3,6 +3,9 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
+/* Disable Orc */
+#undef DISABLE_ORC
+
 /* Describes where the FFmpeg libraries come from. */
 #undef FFMPEG_SOURCE
 
@@ -71,6 +74,9 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Use Orc */
+#undef HAVE_ORC
 
 /* Define if RDTSC is available */
 #undef HAVE_RDTSC

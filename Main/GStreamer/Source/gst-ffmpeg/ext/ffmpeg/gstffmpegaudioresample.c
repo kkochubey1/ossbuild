@@ -65,6 +65,8 @@ typedef struct _GstFFMpegAudioResampleClass
 #define GST_IS_FFMPEGAUDIORESAMPLE_CLASS(klass) \
 	(G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_FFMPEGAUDIORESAMPLE))
 
+GType gst_ffmpegaudioresample_get_type (void);
+
 static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
@@ -99,19 +101,16 @@ static GstFlowReturn gst_ffmpegaudioresample_transform (GstBaseTransform *
 static void
 gst_ffmpegaudioresample_base_init (gpointer g_class)
 {
-  static GstElementDetails plugin_details = {
-    "FFMPEG Audio resampling element",
-    "Filter/Converter/Audio",
-    "Converts audio from one samplerate to another",
-    "Edward Hervey <bilboed@bilboed.com>",
-  };
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &plugin_details);
+  gst_element_class_set_details_simple (element_class,
+      "FFMPEG Audio resampling element", "Filter/Converter/Audio",
+      "Converts audio from one samplerate to another",
+      "Edward Hervey <bilboed@bilboed.com>");
 }
 
 static void
