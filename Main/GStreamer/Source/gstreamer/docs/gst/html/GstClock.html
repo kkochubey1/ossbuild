@@ -125,6 +125,10 @@ enum                <a class="link" href="GstClock.html#GstClockFlags" title="en
 <a class="link" href="GstClock.html#GstClockReturn" title="enum GstClockReturn"><span class="returnvalue">GstClockReturn</span></a>      <a class="link" href="GstClock.html#gst-clock-id-wait-async" title="gst_clock_id_wait_async ()">gst_clock_id_wait_async</a>             (<em class="parameter"><code><a class="link" href="GstClock.html#GstClockID" title="GstClockID"><span class="type">GstClockID</span></a> id</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockCallback" title="GstClockCallback ()"><span class="type">GstClockCallback</span></a> func</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
+<a class="link" href="GstClock.html#GstClockReturn" title="enum GstClockReturn"><span class="returnvalue">GstClockReturn</span></a>      <a class="link" href="GstClock.html#gst-clock-id-wait-async-full" title="gst_clock_id_wait_async_full ()">gst_clock_id_wait_async_full</a>        (<em class="parameter"><code><a class="link" href="GstClock.html#GstClockID" title="GstClockID"><span class="type">GstClockID</span></a> id</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstClock.html#GstClockCallback" title="GstClockCallback ()"><span class="type">GstClockCallback</span></a> func</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> destroy_data</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstClock.html#gst-clock-id-unschedule" title="gst_clock_id_unschedule ()">gst_clock_id_unschedule</a>             (<em class="parameter"><code><a class="link" href="GstClock.html#GstClockID" title="GstClockID"><span class="type">GstClockID</span></a> id</code></em>);
 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="GstClock.html#gst-clock-id-compare-func" title="gst_clock_id_compare_func ()">gst_clock_id_compare_func</a>           (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gconstpointer"><span class="type">gconstpointer</span></a> id1</code></em>,
                                                          <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gconstpointer"><span class="type">gconstpointer</span></a> id2</code></em>);
@@ -623,6 +627,8 @@ The name used for tracing clock entry allocations.
 <p>
 All pending timeouts or periodic notifies are converted into
 an entry.
+Note that GstClockEntry should be treated as an opaque structure. It must
+not be extended or allocated using a custom allocator.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -1636,6 +1642,60 @@ MT safe.
 </tr>
 </tbody>
 </table></div>
+</div>
+<hr>
+<div class="refsect2" title="gst_clock_id_wait_async_full ()">
+<a name="gst-clock-id-wait-async-full"></a><h3>gst_clock_id_wait_async_full ()</h3>
+<pre class="programlisting"><a class="link" href="GstClock.html#GstClockReturn" title="enum GstClockReturn"><span class="returnvalue">GstClockReturn</span></a>      gst_clock_id_wait_async_full        (<em class="parameter"><code><a class="link" href="GstClock.html#GstClockID" title="GstClockID"><span class="type">GstClockID</span></a> id</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GstClock.html#GstClockCallback" title="GstClockCallback ()"><span class="type">GstClockCallback</span></a> func</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> destroy_data</code></em>);</pre>
+<p>
+Register a callback on the given <a class="link" href="GstClock.html#GstClockID" title="GstClockID"><span class="type">GstClockID</span></a> <em class="parameter"><code>id</code></em> with the given
+function and user_data. When passing a <a class="link" href="GstClock.html#GstClockID" title="GstClockID"><span class="type">GstClockID</span></a> with an invalid
+time to this function, the callback will be called immediately
+with  a time set to GST_CLOCK_TIME_NONE. The callback will
+be called when the time of <em class="parameter"><code>id</code></em> has been reached.
+</p>
+<p>
+The callback <em class="parameter"><code>func</code></em> can be invoked from any thread, either provided by the
+core or from a streaming thread. The application should be prepared for this.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>id</code></em> :</span></p></td>
+<td>a <a class="link" href="GstClock.html#GstClockID" title="GstClockID"><span class="type">GstClockID</span></a> to wait on
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>func</code></em> :</span></p></td>
+<td>The callback function
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
+<td>User data passed in the callback
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>destroy_data</code></em> :</span></p></td>
+<td>
+<a href="/usr/share/gtk-doc/html/glib/glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> for user_data
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> the result of the non blocking wait.
+
+MT safe.
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.30</p>
 </div>
 <hr>
 <div class="refsect2" title="gst_clock_id_unschedule ()">

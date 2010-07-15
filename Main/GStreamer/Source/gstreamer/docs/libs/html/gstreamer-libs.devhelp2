@@ -42,7 +42,7 @@
     <sub name="Index of deprecated API" link="api-index-deprecated.html"/>
   </chapters>
   <functions>
-    <keyword type="" name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#id317285"/>
+    <keyword type="" name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#id337902"/>
     <keyword type="struct" name="GstBaseSrc" link="GstBaseSrc.html#GstBaseSrc-struct"/>
     <keyword type="struct" name="GstBaseSrcClass" link="GstBaseSrc.html#GstBaseSrcClass"/>
     <keyword type="enum" name="enum GstBaseSrcFlags" link="GstBaseSrc.html#GstBaseSrcFlags"/>
@@ -81,12 +81,15 @@
     <keyword type="function" name="gst_base_sink_get_ts_offset ()" link="GstBaseSink.html#gst-base-sink-get-ts-offset" since="0.10.15"/>
     <keyword type="function" name="gst_base_sink_set_render_delay ()" link="GstBaseSink.html#gst-base-sink-set-render-delay" since="0.10.21"/>
     <keyword type="function" name="gst_base_sink_get_render_delay ()" link="GstBaseSink.html#gst-base-sink-get-render-delay" since="0.10.21"/>
+    <keyword type="function" name="gst_base_sink_set_last_buffer_enabled ()" link="GstBaseSink.html#gst-base-sink-set-last-buffer-enabled" since="0.10.30"/>
+    <keyword type="function" name="gst_base_sink_is_last_buffer_enabled ()" link="GstBaseSink.html#gst-base-sink-is-last-buffer-enabled" since="0.10.30"/>
     <keyword type="function" name="gst_base_sink_get_last_buffer ()" link="GstBaseSink.html#gst-base-sink-get-last-buffer" since="0.10.15"/>
     <keyword type="function" name="gst_base_sink_set_blocksize ()" link="GstBaseSink.html#gst-base-sink-set-blocksize" since="0.10.22"/>
     <keyword type="function" name="gst_base_sink_get_blocksize ()" link="GstBaseSink.html#gst-base-sink-get-blocksize" since="0.10.22"/>
     <keyword type="macro" name="GST_BASE_SINK_PAD()" link="GstBaseSink.html#GST-BASE-SINK-PAD:CAPS"/>
     <keyword type="property" name="The &quot;async&quot; property" link="GstBaseSink.html#GstBaseSink--async"/>
     <keyword type="property" name="The &quot;blocksize&quot; property" link="GstBaseSink.html#GstBaseSink--blocksize"/>
+    <keyword type="property" name="The &quot;enable-last-buffer&quot; property" link="GstBaseSink.html#GstBaseSink--enable-last-buffer"/>
     <keyword type="property" name="The &quot;last-buffer&quot; property" link="GstBaseSink.html#GstBaseSink--last-buffer"/>
     <keyword type="property" name="The &quot;max-lateness&quot; property" link="GstBaseSink.html#GstBaseSink--max-lateness"/>
     <keyword type="property" name="The &quot;preroll-queue-len&quot; property" link="GstBaseSink.html#GstBaseSink--preroll-queue-len"/>
@@ -94,8 +97,8 @@
     <keyword type="property" name="The &quot;render-delay&quot; property" link="GstBaseSink.html#GstBaseSink--render-delay"/>
     <keyword type="property" name="The &quot;sync&quot; property" link="GstBaseSink.html#GstBaseSink--sync"/>
     <keyword type="property" name="The &quot;ts-offset&quot; property" link="GstBaseSink.html#GstBaseSink--ts-offset"/>
-    <keyword type="" name="Use Cases" link="GstBaseTransform.html#id368010"/>
-    <keyword type="" name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#id384300"/>
+    <keyword type="" name="Use Cases" link="GstBaseTransform.html#id390784"/>
+    <keyword type="" name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#id390956"/>
     <keyword type="struct" name="GstBaseTransform" link="GstBaseTransform.html#GstBaseTransform-struct"/>
     <keyword type="struct" name="GstBaseTransformClass" link="GstBaseTransform.html#GstBaseTransformClass"/>
     <keyword type="function" name="gst_base_transform_is_passthrough ()" link="GstBaseTransform.html#gst-base-transform-is-passthrough"/>

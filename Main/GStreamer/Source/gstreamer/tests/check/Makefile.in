@@ -44,13 +44,14 @@ check_PROGRAMS = gst/gstabi$(EXEEXT) gst/gstbuffer$(EXEEXT) \
 	gst/gstminiobject$(EXEEXT) gst/gstobject$(EXEEXT) \
 	gst/gstpad$(EXEEXT) gst/gstparamspecs$(EXEEXT) \
 	gst/gstpoll$(EXEEXT) gst/gstsegment$(EXEEXT) \
-	gst/gstsystemclock$(EXEEXT) gst/gststructure$(EXEEXT) \
-	gst/gsttag$(EXEEXT) gst/gsttagsetter$(EXEEXT) \
-	gst/gsttask$(EXEEXT) gst/gstvalue$(EXEEXT) \
-	generic/states$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
-	libs/libsabi$(EXEEXT) libs/gdp$(EXEEXT) libs/adapter$(EXEEXT) \
-	libs/bitreader$(EXEEXT) libs/bytereader$(EXEEXT) \
-	libs/bytewriter$(EXEEXT) libs/gstnetclientclock$(EXEEXT) \
+	gst/gstsystemclock$(EXEEXT) gst/gstclock$(EXEEXT) \
+	gst/gststructure$(EXEEXT) gst/gsttag$(EXEEXT) \
+	gst/gsttagsetter$(EXEEXT) gst/gsttask$(EXEEXT) \
+	gst/gstvalue$(EXEEXT) generic/states$(EXEEXT) $(am__EXEEXT_1) \
+	$(am__EXEEXT_2) libs/libsabi$(EXEEXT) libs/gdp$(EXEEXT) \
+	libs/adapter$(EXEEXT) libs/bitreader$(EXEEXT) \
+	libs/bytereader$(EXEEXT) libs/bytewriter$(EXEEXT) \
+	libs/gstnetclientclock$(EXEEXT) \
 	libs/gstnettimeprovider$(EXEEXT) libs/transform1$(EXEEXT)
 noinst_PROGRAMS = gst/gstpipeline$(EXEEXT) libs/collectpads$(EXEEXT) \
 	elements/queue$(EXEEXT)
@@ -127,6 +128,7 @@ CONFIG_CLEAN_VPATH_FILES =
 @GST_DISABLE_REGISTRY_FALSE@	elements/multiqueue$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	elements/tee$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	libs/basesrc$(EXEEXT) \
+@GST_DISABLE_REGISTRY_FALSE@	libs/basesink$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	libs/controller$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	libs/typefindhelper$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	pipelines/stress$(EXEEXT) \
@@ -263,6 +265,12 @@ gst_gstchildproxy_SOURCES = gst/gstchildproxy.c
 gst_gstchildproxy_OBJECTS = gstchildproxy.$(OBJEXT)
 gst_gstchildproxy_LDADD = $(LDADD)
 gst_gstchildproxy_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
+	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1)
+gst_gstclock_SOURCES = gst/gstclock.c
+gst_gstclock_OBJECTS = gstclock.$(OBJEXT)
+gst_gstclock_LDADD = $(LDADD)
+gst_gstclock_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
 	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
 	$(am__DEPENDENCIES_1)
 gst_gstelement_SOURCES = gst/gstelement.c
@@ -434,6 +442,12 @@ libs_adapter_LDADD = $(LDADD)
 libs_adapter_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
 	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
 	$(am__DEPENDENCIES_1)
+libs_basesink_SOURCES = libs/basesink.c
+libs_basesink_OBJECTS = basesink.$(OBJEXT)
+libs_basesink_LDADD = $(LDADD)
+libs_basesink_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
+	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1)
 libs_basesrc_SOURCES = libs/basesrc.c
 libs_basesrc_OBJECTS = basesrc.$(OBJEXT)
 libs_basesrc_LDADD = $(LDADD)
@@ -571,7 +585,7 @@ SOURCES = elements/capsfilter.c elements/fakesink.c elements/fakesrc.c \
 	elements/identity.c elements/multiqueue.c elements/queue.c \
 	elements/tee.c generic/sinks.c generic/states.c gst/gst.c \
 	gst/gstabi.c gst/gstbin.c gst/gstbuffer.c gst/gstbufferlist.c \
-	gst/gstbus.c gst/gstcaps.c gst/gstchildproxy.c \
+	gst/gstbus.c gst/gstcaps.c gst/gstchildproxy.c gst/gstclock.c \
 	gst/gstelement.c gst/gstevent.c gst/gstghostpad.c \
 	gst/gstindex.c gst/gstinfo.c gst/gstinterface.c \
 	gst/gstiterator.c gst/gstmessage.c gst/gstminiobject.c \
@@ -580,36 +594,38 @@ SOURCES = elements/capsfilter.c elements/fakesink.c elements/fakesrc.c \
 	gst/gstpreset.c gst/gstquery.c gst/gstregistry.c \
 	gst/gstsegment.c gst/gststructure.c gst/gstsystemclock.c \
 	gst/gsttag.c gst/gsttagsetter.c gst/gsttask.c gst/gsturi.c \
-	gst/gstutils.c gst/gstvalue.c libs/adapter.c libs/basesrc.c \
-	libs/bitreader.c libs/bytereader.c libs/bytewriter.c \
-	libs/collectpads.c libs/controller.c $(libs_gdp_SOURCES) \
-	libs/gstnetclientclock.c libs/gstnettimeprovider.c \
-	libs/libsabi.c libs/transform1.c libs/typefindhelper.c \
-	pipelines/cleanup.c pipelines/parse-disabled.c \
-	pipelines/parse-launch.c pipelines/queue-error.c \
-	pipelines/simple-launch-lines.c pipelines/stress.c
+	gst/gstutils.c gst/gstvalue.c libs/adapter.c libs/basesink.c \
+	libs/basesrc.c libs/bitreader.c libs/bytereader.c \
+	libs/bytewriter.c libs/collectpads.c libs/controller.c \
+	$(libs_gdp_SOURCES) libs/gstnetclientclock.c \
+	libs/gstnettimeprovider.c libs/libsabi.c libs/transform1.c \
+	libs/typefindhelper.c pipelines/cleanup.c \
+	pipelines/parse-disabled.c pipelines/parse-launch.c \
+	pipelines/queue-error.c pipelines/simple-launch-lines.c \
+	pipelines/stress.c
 DIST_SOURCES = elements/capsfilter.c elements/fakesink.c \
 	elements/fakesrc.c elements/fdsrc.c elements/filesink.c \
 	elements/filesrc.c elements/identity.c elements/multiqueue.c \
 	elements/queue.c elements/tee.c generic/sinks.c \
 	generic/states.c gst/gst.c gst/gstabi.c gst/gstbin.c \
 	gst/gstbuffer.c gst/gstbufferlist.c gst/gstbus.c gst/gstcaps.c \
-	gst/gstchildproxy.c gst/gstelement.c gst/gstevent.c \
-	gst/gstghostpad.c gst/gstindex.c gst/gstinfo.c \
+	gst/gstchildproxy.c gst/gstclock.c gst/gstelement.c \
+	gst/gstevent.c gst/gstghostpad.c gst/gstindex.c gst/gstinfo.c \
 	gst/gstinterface.c gst/gstiterator.c gst/gstmessage.c \
 	gst/gstminiobject.c gst/gstobject.c gst/gstpad.c \
 	gst/gstparamspecs.c gst/gstpipeline.c gst/gstplugin.c \
 	gst/gstpoll.c gst/gstpreset.c gst/gstquery.c gst/gstregistry.c \
 	gst/gstsegment.c gst/gststructure.c gst/gstsystemclock.c \
 	gst/gsttag.c gst/gsttagsetter.c gst/gsttask.c gst/gsturi.c \
-	gst/gstutils.c gst/gstvalue.c libs/adapter.c libs/basesrc.c \
-	libs/bitreader.c libs/bytereader.c libs/bytewriter.c \
-	libs/collectpads.c libs/controller.c $(libs_gdp_SOURCES) \
-	libs/gstnetclientclock.c libs/gstnettimeprovider.c \
-	libs/libsabi.c libs/transform1.c libs/typefindhelper.c \
-	pipelines/cleanup.c pipelines/parse-disabled.c \
-	pipelines/parse-launch.c pipelines/queue-error.c \
-	pipelines/simple-launch-lines.c pipelines/stress.c
+	gst/gstutils.c gst/gstvalue.c libs/adapter.c libs/basesink.c \
+	libs/basesrc.c libs/bitreader.c libs/bytereader.c \
+	libs/bytewriter.c libs/collectpads.c libs/controller.c \
+	$(libs_gdp_SOURCES) libs/gstnetclientclock.c \
+	libs/gstnettimeprovider.c libs/libsabi.c libs/transform1.c \
+	libs/typefindhelper.c pipelines/cleanup.c \
+	pipelines/parse-disabled.c pipelines/parse-launch.c \
+	pipelines/queue-error.c pipelines/simple-launch-lines.c \
+	pipelines/stress.c
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -922,6 +938,7 @@ SUPPRESSIONS = $(top_srcdir)/common/gst.supp
 @GST_DISABLE_REGISTRY_FALSE@	elements/multiqueue			\
 @GST_DISABLE_REGISTRY_FALSE@	elements/tee			  	\
 @GST_DISABLE_REGISTRY_FALSE@	libs/basesrc				\
+@GST_DISABLE_REGISTRY_FALSE@	libs/basesink				\
 @GST_DISABLE_REGISTRY_FALSE@	libs/controller				\
 @GST_DISABLE_REGISTRY_FALSE@	libs/typefindhelper			\
 @GST_DISABLE_REGISTRY_FALSE@	pipelines/stress			\
@@ -1139,6 +1156,9 @@ gst/gstcaps$(EXEEXT): $(gst_gstcaps_OBJECTS) $(gst_gstcaps_DEPENDENCIES) gst/$(a
 gst/gstchildproxy$(EXEEXT): $(gst_gstchildproxy_OBJECTS) $(gst_gstchildproxy_DEPENDENCIES) gst/$(am__dirstamp)
 	@rm -f gst/gstchildproxy$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(gst_gstchildproxy_OBJECTS) $(gst_gstchildproxy_LDADD) $(LIBS)
+gst/gstclock$(EXEEXT): $(gst_gstclock_OBJECTS) $(gst_gstclock_DEPENDENCIES) gst/$(am__dirstamp)
+	@rm -f gst/gstclock$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(gst_gstclock_OBJECTS) $(gst_gstclock_LDADD) $(LIBS)
 gst/gstelement$(EXEEXT): $(gst_gstelement_OBJECTS) $(gst_gstelement_DEPENDENCIES) gst/$(am__dirstamp)
 	@rm -f gst/gstelement$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(gst_gstelement_OBJECTS) $(gst_gstelement_LDADD) $(LIBS)
@@ -1226,6 +1246,9 @@ libs/$(am__dirstamp):
 libs/adapter$(EXEEXT): $(libs_adapter_OBJECTS) $(libs_adapter_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/adapter$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(libs_adapter_OBJECTS) $(libs_adapter_LDADD) $(LIBS)
+libs/basesink$(EXEEXT): $(libs_basesink_OBJECTS) $(libs_basesink_DEPENDENCIES) libs/$(am__dirstamp)
+	@rm -f libs/basesink$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(libs_basesink_OBJECTS) $(libs_basesink_LDADD) $(LIBS)
 libs/basesrc$(EXEEXT): $(libs_basesrc_OBJECTS) $(libs_basesrc_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/basesrc$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(libs_basesrc_OBJECTS) $(libs_basesrc_LDADD) $(LIBS)
@@ -1291,6 +1314,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adapter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basesink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basesrc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bitreader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bytereader.Po@am__quote@
@@ -1312,6 +1336,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstbus.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstcaps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstchildproxy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstclock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstelement.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstevent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstghostpad.Po@am__quote@
@@ -1700,6 +1725,22 @@ gstchildproxy.obj: gst/gstchildproxy.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst/gstchildproxy.c' object='gstchildproxy.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gstchildproxy.obj `if test -f 'gst/gstchildproxy.c'; then $(CYGPATH_W) 'gst/gstchildproxy.c'; else $(CYGPATH_W) '$(srcdir)/gst/gstchildproxy.c'; fi`
+
+gstclock.o: gst/gstclock.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gstclock.o -MD -MP -MF $(DEPDIR)/gstclock.Tpo -c -o gstclock.o `test -f 'gst/gstclock.c' || echo '$(srcdir)/'`gst/gstclock.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gstclock.Tpo $(DEPDIR)/gstclock.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst/gstclock.c' object='gstclock.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gstclock.o `test -f 'gst/gstclock.c' || echo '$(srcdir)/'`gst/gstclock.c
+
+gstclock.obj: gst/gstclock.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gstclock.obj -MD -MP -MF $(DEPDIR)/gstclock.Tpo -c -o gstclock.obj `if test -f 'gst/gstclock.c'; then $(CYGPATH_W) 'gst/gstclock.c'; else $(CYGPATH_W) '$(srcdir)/gst/gstclock.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gstclock.Tpo $(DEPDIR)/gstclock.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst/gstclock.c' object='gstclock.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gstclock.obj `if test -f 'gst/gstclock.c'; then $(CYGPATH_W) 'gst/gstclock.c'; else $(CYGPATH_W) '$(srcdir)/gst/gstclock.c'; fi`
 
 gstelement.o: gst/gstelement.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gstelement.o -MD -MP -MF $(DEPDIR)/gstelement.Tpo -c -o gstelement.o `test -f 'gst/gstelement.c' || echo '$(srcdir)/'`gst/gstelement.c
@@ -2148,6 +2189,22 @@ adapter.obj: libs/adapter.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/adapter.c' object='adapter.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o adapter.obj `if test -f 'libs/adapter.c'; then $(CYGPATH_W) 'libs/adapter.c'; else $(CYGPATH_W) '$(srcdir)/libs/adapter.c'; fi`
+
+basesink.o: libs/basesink.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT basesink.o -MD -MP -MF $(DEPDIR)/basesink.Tpo -c -o basesink.o `test -f 'libs/basesink.c' || echo '$(srcdir)/'`libs/basesink.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/basesink.Tpo $(DEPDIR)/basesink.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/basesink.c' object='basesink.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o basesink.o `test -f 'libs/basesink.c' || echo '$(srcdir)/'`libs/basesink.c
+
+basesink.obj: libs/basesink.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT basesink.obj -MD -MP -MF $(DEPDIR)/basesink.Tpo -c -o basesink.obj `if test -f 'libs/basesink.c'; then $(CYGPATH_W) 'libs/basesink.c'; else $(CYGPATH_W) '$(srcdir)/libs/basesink.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/basesink.Tpo $(DEPDIR)/basesink.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libs/basesink.c' object='basesink.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o basesink.obj `if test -f 'libs/basesink.c'; then $(CYGPATH_W) 'libs/basesink.c'; else $(CYGPATH_W) '$(srcdir)/libs/basesink.c'; fi`
 
 basesrc.o: libs/basesrc.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT basesrc.o -MD -MP -MF $(DEPDIR)/basesrc.Tpo -c -o basesrc.o `test -f 'libs/basesrc.c' || echo '$(srcdir)/'`libs/basesrc.c

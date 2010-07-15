@@ -833,16 +833,26 @@ link step.
   GST_PAD_LINK_CHECK_NOTHING       = 0,
   GST_PAD_LINK_CHECK_HIERARCHY     = 1 &lt;&lt; 0,
   GST_PAD_LINK_CHECK_TEMPLATE_CAPS = 1 &lt;&lt; 1,
-  GST_PAD_LINK_CHECK_CAPS          = 1 &lt;&lt; 2,
+  GST_PAD_LINK_CHECK_CAPS          = 1 &lt;&lt; 2
 } GstPadLinkCheck;
 </pre>
 <p>
-The amount of check to be done when linking pads.
+The amount of checking to be done when linking pads. <em class="parameter"><code>GST_PAD_LINK_CHECK_CAPS</code></em>
+and <em class="parameter"><code>GST_PAD_LINK_CHECK_TEMPLATE_CAPS</code></em> are mutually exclusive. If both are
+specified, expensive but safe <em class="parameter"><code>GST_PAD_LINK_CHECK_CAPS</code></em> are performed.
 </p>
 <p>
-Warning: Only use these flags if you are 100% certain you know the link will
-not fail because of hierarchy/caps failures. If uncertain, use the default
-checks (<a class="link" href="GstPad.html#GST-PAD-LINK-CHECK-DEFAULT:CAPS" title="GST_PAD_LINK_CHECK_DEFAULT"><span class="type">GST_PAD_LINK_CHECK_DEFAULT</span></a>) or the regular methods.
+</p>
+<div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
+<h3 class="title">Warning</h3>
+<p>
+Only disable some of the checks if you are 100% certain you know the link
+will not fail because of hierarchy/caps compatibility failures. If uncertain,
+use the default checks (<a class="link" href="GstPad.html#GST-PAD-LINK-CHECK-DEFAULT:CAPS" title="GST_PAD_LINK_CHECK_DEFAULT"><code class="literal">GST_PAD_LINK_CHECK_DEFAULT</code></a>) or the regular methods
+for linking the pads.
+</p>
+</div>
+<p>
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -855,18 +865,21 @@ checks (<a class="link" href="GstPad.html#GST-PAD-LINK-CHECK-DEFAULT:CAPS" title
 <tr>
 <td><p><a name="GST-PAD-LINK-CHECK-HIERARCHY:CAPS"></a><span class="term"><code class="literal">GST_PAD_LINK_CHECK_HIERARCHY</code></span></p></td>
 <td>Check the pads have same parents/grandparents.
+  Could be omitted if it is already known that the two elements that own the
+  pads are in the same bin. 
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-PAD-LINK-CHECK-TEMPLATE-CAPS"></a><span class="term"><code class="literal">GST_PAD_LINK_CHECK_TEMPLATE_CAPS</code></span></p></td>
-<td>Check if the pads are compatible by using their
-template caps.
+<td>Check if the pads are compatible by using
+  their template caps. This is much faster than <em class="parameter"><code>GST_PAD_LINK_CHECK_CAPS</code></em>, but
+  would be unsafe e.g. if one pad has <a class="link" href="gstreamer-GstCaps.html#GST-CAPS-ANY:CAPS" title="GST_CAPS_ANY"><code class="literal">GST_CAPS_ANY</code></a>.
 </td>
 </tr>
 <tr>
 <td><p><a name="GST-PAD-LINK-CHECK-CAPS"></a><span class="term"><code class="literal">GST_PAD_LINK_CHECK_CAPS</code></span></p></td>
-<td>Check if the pads are compatible by comparing the caps
-returned by <a class="link" href="GstPad.html#gst-pad-get-caps" title="gst_pad_get_caps ()"><span class="type">gst_pad_get_caps</span></a>.
+<td>Check if the pads are compatible by comparing the
+  caps returned by <a class="link" href="GstPad.html#gst-pad-get-caps" title="gst_pad_get_caps ()"><code class="function">gst_pad_get_caps()</code></a>.
 </td>
 </tr>
 </tbody>
@@ -879,7 +892,8 @@ returned by <a class="link" href="GstPad.html#gst-pad-get-caps" title="gst_pad_g
 <pre class="programlisting">#define GST_PAD_LINK_CHECK_DEFAULT (GST_PAD_LINK_CHECK_HIERARCHY | GST_PAD_LINK_CHECK_CAPS)
 </pre>
 <p>
-The default checks done when linking pads (i.e. the ones used by <a class="link" href="GstPad.html#gst-pad-link" title="gst_pad_link ()"><span class="type">gst_pad_link</span></a>.
+The default checks done when linking pads (i.e. the ones used by 
+<a class="link" href="GstPad.html#gst-pad-link" title="gst_pad_link ()"><code class="function">gst_pad_link()</code></a>).
 </p>
 <p class="since">Since 0.10.30</p>
 </div>

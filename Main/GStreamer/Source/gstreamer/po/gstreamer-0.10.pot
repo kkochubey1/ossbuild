@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gstreamer 0.10.29.3\n"
+"Project-Id-Version: gstreamer 0.10.30\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-06-29 18:05+0100\n"
+"POT-Creation-Date: 2010-07-15 10:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -916,12 +916,12 @@ msgstr ""
 msgid ", "
 msgstr ""
 
-#: gst/gstutils.c:2393 tools/gst-launch.c:262
+#: gst/gstutils.c:2397 tools/gst-launch.c:262
 #, c-format
 msgid "ERROR: from element %s: %s\n"
 msgstr ""
 
-#: gst/gstutils.c:2395 tools/gst-launch.c:264 tools/gst-launch.c:547
+#: gst/gstutils.c:2399 tools/gst-launch.c:264 tools/gst-launch.c:547
 #, c-format
 msgid ""
 "Additional debug info:\n"
@@ -1001,20 +1001,20 @@ msgid "Internal clock error."
 msgstr ""
 
 #: libs/gst/base/gstbasesrc.c:2549 libs/gst/base/gstbasesrc.c:2560
-#: libs/gst/base/gstbasesink.c:3870 plugins/elements/gstqueue.c:1210
+#: libs/gst/base/gstbasesink.c:3959 plugins/elements/gstqueue.c:1210
 #: plugins/elements/gstqueue2.c:1868
 msgid "Internal data flow error."
 msgstr ""
 
-#: libs/gst/base/gstbasesink.c:2596
+#: libs/gst/base/gstbasesink.c:2685
 msgid "A lot of buffers are being dropped."
 msgstr ""
 
-#: libs/gst/base/gstbasesink.c:3343
+#: libs/gst/base/gstbasesink.c:3432
 msgid "Internal data flow problem."
 msgstr ""
 
-#: libs/gst/base/gstbasesink.c:3859
+#: libs/gst/base/gstbasesink.c:3948
 msgid "Internal data stream error."
 msgstr ""
 

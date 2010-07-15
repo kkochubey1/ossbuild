@@ -25,7 +25,7 @@
   <functions>
     <function name="GstCapsFilter" link="gstreamer-plugins-capsfilter.html#GstCapsFilter-struct"/>
     <function name="The &quot;caps&quot; property" link="gstreamer-plugins-capsfilter.html#GstCapsFilter--caps"/>
-    <function name="Example launch line" link="gstreamer-plugins-fakesrc.html#id543779"/>
+    <function name="Example launch line" link="gstreamer-plugins-fakesrc.html#id521490"/>
     <function name="GstFakeSrc" link="gstreamer-plugins-fakesrc.html#GstFakeSrc-struct"/>
     <function name="enum GstFakeSrcDataType" link="gstreamer-plugins-fakesrc.html#GstFakeSrcDataType"/>
     <function name="enum GstFakeSrcFillType" link="gstreamer-plugins-fakesrc.html#GstFakeSrcFillType"/>
@@ -63,7 +63,7 @@
     <function name="The &quot;preroll-handoff&quot; signal" link="gstreamer-plugins-fakesink.html#GstFakeSink-preroll-handoff"/>
     <function name="GstFdSink" link="gstreamer-plugins-fdsink.html#GstFdSink-struct"/>
     <function name="The &quot;fd&quot; property" link="gstreamer-plugins-fdsink.html#GstFdSink--fd"/>
-    <function name="Example launch line" link="gstreamer-plugins-fdsrc.html#id528881"/>
+    <function name="Example launch line" link="gstreamer-plugins-fdsrc.html#id506592"/>
     <function name="GstFdSrc" link="gstreamer-plugins-fdsrc.html#GstFdSrc-struct"/>
     <function name="The &quot;fd&quot; property" link="gstreamer-plugins-fdsrc.html#GstFdSrc--fd"/>
     <function name="The &quot;timeout&quot; property" link="gstreamer-plugins-fdsrc.html#GstFdSrc--timeout"/>
@@ -94,7 +94,7 @@
     <function name="The &quot;check-imperfect-timestamp&quot; property" link="gstreamer-plugins-identity.html#GstIdentity--check-imperfect-timestamp"/>
     <function name="The &quot;signal-handoffs&quot; property" link="gstreamer-plugins-identity.html#GstIdentity--signal-handoffs"/>
     <function name="The &quot;handoff&quot; signal" link="gstreamer-plugins-identity.html#GstIdentity-handoff"/>
-    <function name="" link="gstreamer-plugins-multiqueue.html#id525299"/>
+    <function name="" link="gstreamer-plugins-multiqueue.html#id503010"/>
     <function name="GstMultiQueue" link="gstreamer-plugins-multiqueue.html#GstMultiQueue-struct"/>
     <function name="The &quot;extra-size-buffers&quot; property" link="gstreamer-plugins-multiqueue.html#GstMultiQueue--extra-size-buffers"/>
     <function name="The &quot;extra-size-bytes&quot; property" link="gstreamer-plugins-multiqueue.html#GstMultiQueue--extra-size-bytes"/>

@@ -2220,6 +2220,11 @@ Side effect is that if one of the pads has no parent, it becomes a
 child of the parent of the other element.  If they have different
 parents, the link fails.
 </p>
+<p>
+Calling <a class="link" href="GstElement.html#gst-element-link-pads-full" title="gst_element_link_pads_full ()"><code class="function">gst_element_link_pads_full()</code></a> with <em class="parameter"><code>flags</code></em> == <a class="link" href="GstPad.html#GST-PAD-LINK-CHECK-DEFAULT:CAPS" title="GST_PAD_LINK_CHECK_DEFAULT"><code class="literal">GST_PAD_LINK_CHECK_DEFAULT</code></a>
+is the same as calling <a class="link" href="GstElement.html#gst-element-link-pads" title="gst_element_link_pads ()"><code class="function">gst_element_link_pads()</code></a> and the recommended way of
+linking pads with safety checks applied.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
