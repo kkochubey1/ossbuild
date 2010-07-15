@@ -198,7 +198,6 @@ gst_jpeg_dec_class_init (GstJpegDecClass * klass)
           G_MININT, G_MAXINT, JPEG_DEFAULT_ERROR_AFTER,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
-
   gstelement_class->change_state =
       GST_DEBUG_FUNCPTR (gst_jpeg_dec_change_state);
 
@@ -223,7 +222,10 @@ gst_jpeg_dec_fill_input_buffer (j_decompress_ptr cinfo)
     av = dec->rem_img_len;
   dec->rem_img_len -= av;
 
-  cinfo->src->next_input_byte = gst_adapter_take (dec->adapter, av);
+  g_free (dec->cur_buf);
+  dec->cur_buf = gst_adapter_take (dec->adapter, av);
+
+  cinfo->src->next_input_byte = dec->cur_buf;
   cinfo->src->bytes_in_buffer = av;
 
   return TRUE;
@@ -406,7 +408,7 @@ gst_jpeg_dec_parse_image_data (GstJpegDec * dec)
     /* may have marker, but could have been resyncng */
     resync = resync || dec->parse_resync;
     /* Skip over extra 0xff */
-    while ((noffset > 0) && ((value & 0xff) == 0xff)) {
+    while ((noffset >= 0) && ((value & 0xff) == 0xff)) {
       noffset++;
       noffset =
           gst_adapter_masked_scan_uint32_peek (adapter, 0x0000ff00, 0x0000ff00,
@@ -1585,6 +1587,8 @@ gst_jpeg_dec_sink_event (GstPad * pad, GstEvent * event)
       jpeg_abort_decompress (&dec->cinfo);
       gst_segment_init (&dec->segment, GST_FORMAT_UNDEFINED);
       gst_adapter_clear (dec->adapter);
+      g_free (dec->cur_buf);
+      dec->cur_buf = NULL;
       dec->parse_offset = 0;
       dec->parse_entropy_len = 0;
       dec->parse_resync = FALSE;
@@ -1685,6 +1689,7 @@ gst_jpeg_dec_change_state (GstElement * element, GstStateChange transition)
       dec->parse_offset = 0;
       dec->parse_entropy_len = 0;
       dec->parse_resync = FALSE;
+      dec->cur_buf = NULL;
       gst_segment_init (&dec->segment, GST_FORMAT_UNDEFINED);
       gst_jpeg_dec_reset_qos (dec);
     default:
@@ -1698,6 +1703,8 @@ gst_jpeg_dec_change_state (GstElement * element, GstStateChange transition)
   switch (transition) {
     case GST_STATE_CHANGE_PAUSED_TO_READY:
       gst_adapter_clear (dec->adapter);
+      g_free (dec->cur_buf);
+      dec->cur_buf = NULL;
       gst_jpeg_dec_free_buffers (dec);
       break;
     default:

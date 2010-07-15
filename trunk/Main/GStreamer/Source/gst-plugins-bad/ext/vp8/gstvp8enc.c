@@ -19,6 +19,30 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+/**
+ * SECTION:element-vp8enc
+ * @see_also: vp8dec, webmmux, oggmux
+ *
+ * This element encodes raw video into a VP8 stream.
+ * <ulink url="http://www.webmproject.org">VP8</ulink> is a royalty-free
+ * video codec maintained by <ulink url="http://www.google.com/">Google
+ * </ulink>. It's the successor of On2 VP3, which was the base of the
+ * Theora video codec.
+ *
+ * To control the quality of the encoding, the #GstVP8Enc::bitrate and
+ * #GstVP8Enc::quality properties can be used. These two properties are
+ * mutualy exclusive. Setting the bitrate property will produce a constant
+ * bitrate (CBR) stream while setting the quality property will produce a
+ * variable bitrate (VBR) stream.
+ *
+ * <refsect2>
+ * <title>Example pipeline</title>
+ * |[
+ * gst-launch -v videotestsrc num-buffers=1000 ! vp8enc ! webmmux ! filesink location=videotestsrc.webm
+ * ]| This example pipeline will encode a test video source to VP8 muxed in an
+ * WebM container.
+ * </refsect2>
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -26,88 +50,20 @@
 
 #ifdef HAVE_VP8_ENCODER
 
-#include <gst/gst.h>
-#include <gst/video/gstbasevideoencoder.h>
-#include <gst/video/gstbasevideoutils.h>
-#include <gst/base/gstbasetransform.h>
-#include <gst/base/gstadapter.h>
-#include <gst/video/video.h>
 #include <gst/tag/tag.h>
 #include <string.h>
-#include <math.h>
-
-/* FIXME: Undef HAVE_CONFIG_H because vpx_codec.h uses it,
- * which causes compilation failures */
-#ifdef HAVE_CONFIG_H
-#undef HAVE_CONFIG_H
-#endif
-
-#include <vpx/vpx_encoder.h>
-#include <vpx/vp8cx.h>
 
 #include "gstvp8utils.h"
+#include "gstvp8enc.h"
 
 GST_DEBUG_CATEGORY_STATIC (gst_vp8enc_debug);
 #define GST_CAT_DEFAULT gst_vp8enc_debug
-
-#define GST_TYPE_VP8_ENC \
-  (gst_vp8_enc_get_type())
-#define GST_VP8_ENC(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_VP8_ENC,GstVP8Enc))
-#define GST_VP8_ENC_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST((klass),GST_TYPE_VP8_ENC,GstVP8EncClass))
-#define GST_IS_GST_VP8_ENC(obj) \
-  (G_TYPE_CHECK_INSTANCE_TYPE((obj),GST_TYPE_VP8_ENC))
-#define GST_IS_GST_VP8_ENC_CLASS(obj) \
-  (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_VP8_ENC))
-
-typedef struct _GstVP8Enc GstVP8Enc;
-typedef struct _GstVP8EncClass GstVP8EncClass;
-
-struct _GstVP8Enc
-{
-  GstBaseVideoEncoder base_video_encoder;
-
-  vpx_codec_ctx_t encoder;
-
-  /* properties */
-  int bitrate;
-  enum vpx_rc_mode mode;
-  double quality;
-  gboolean error_resilient;
-  int max_latency;
-  int max_keyframe_distance;
-  int speed;
-  int threads;
-
-  /* state */
-
-  gboolean force_keyframe;
-  gboolean inited;
-
-  int resolution_id;
-  int n_frames;
-  int keyframe_distance;
-
-  GstPadEventFunction base_sink_event_func;
-};
-
-struct _GstVP8EncClass
-{
-  GstBaseVideoEncoderClass base_video_encoder_class;
-};
 
 typedef struct
 {
   vpx_image_t *image;
   GList *invisible;
 } GstVP8EncCoderHook;
-
-/* GstVP8Enc signals and args */
-enum
-{
-  LAST_SIGNAL
-};
 
 #define DEFAULT_BITRATE 0
 #define DEFAULT_MODE VPX_VBR
@@ -117,6 +73,9 @@ enum
 #define DEFAULT_MAX_KEYFRAME_DISTANCE 60
 #define DEFAULT_SPEED 0
 #define DEFAULT_THREADS 1
+#define DEFAULT_MULTIPASS_MODE VPX_RC_ONE_PASS
+#define DEFAULT_MULTIPASS_CACHE_FILE NULL
+#define DEFAULT_AUTO_ALT_REF_FRAMES FALSE
 
 enum
 {
@@ -128,7 +87,10 @@ enum
   PROP_MAX_LATENCY,
   PROP_MAX_KEYFRAME_DISTANCE,
   PROP_SPEED,
-  PROP_THREADS
+  PROP_THREADS,
+  PROP_MULTIPASS_MODE,
+  PROP_MULTIPASS_CACHE_FILE,
+  PROP_AUTO_ALT_REF_FRAMES
 };
 
 #define GST_VP8_ENC_MODE_TYPE (gst_vp8_enc_mode_get_type())
@@ -146,6 +108,29 @@ gst_vp8_enc_mode_get_type (void)
     GType _id;
 
     _id = g_enum_register_static ("GstVP8EncMode", values);
+
+    g_once_init_leave ((gsize *) & id, _id);
+  }
+
+  return id;
+}
+
+#define GST_VP8_ENC_MULTIPASS_MODE_TYPE (gst_vp8_enc_multipass_mode_get_type())
+static GType
+gst_vp8_enc_multipass_mode_get_type (void)
+{
+  static const GEnumValue values[] = {
+    {VPX_RC_ONE_PASS, "One pass encoding (default)", "one-pass"},
+    {VPX_RC_FIRST_PASS, "First pass of multipass encoding", "first-pass"},
+    {VPX_RC_LAST_PASS, "Last pass of multipass encoding", "last-pass"},
+    {0, NULL, NULL}
+  };
+  static volatile GType id = 0;
+
+  if (g_once_init_enter ((gsize *) & id)) {
+    GType _id;
+
+    _id = g_enum_register_static ("GstVP8EncMultipassMode", values);
 
     g_once_init_leave ((gsize *) & id, _id);
   }
@@ -171,8 +156,6 @@ static GstFlowReturn gst_vp8_enc_shape_output (GstBaseVideoEncoder * encoder,
 static GstCaps *gst_vp8_enc_get_caps (GstBaseVideoEncoder * base_video_encoder);
 
 static gboolean gst_vp8_enc_sink_event (GstPad * pad, GstEvent * event);
-
-GType gst_vp8_enc_get_type (void);
 
 static GstStaticPadTemplate gst_vp8_enc_sink_template =
 GST_STATIC_PAD_TEMPLATE ("sink",
@@ -279,7 +262,7 @@ gst_vp8_enc_class_init (GstVP8EncClass * klass)
   g_object_class_install_property (gobject_class, PROP_MAX_KEYFRAME_DISTANCE,
       g_param_spec_int ("max-keyframe-distance", "Maximum Key frame distance",
           "Maximum distance between key frames",
-          1, 9999, DEFAULT_MAX_KEYFRAME_DISTANCE,
+          0, 9999, DEFAULT_MAX_KEYFRAME_DISTANCE,
           (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
   g_object_class_install_property (gobject_class, PROP_SPEED,
@@ -293,6 +276,25 @@ gst_vp8_enc_class_init (GstVP8EncClass * klass)
           "Threads",
           1, 64, DEFAULT_THREADS,
           (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class, PROP_MULTIPASS_MODE,
+      g_param_spec_enum ("multipass-mode", "Multipass Mode",
+          "Multipass encode mode",
+          GST_VP8_ENC_MULTIPASS_MODE_TYPE, DEFAULT_MULTIPASS_MODE,
+          (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class, PROP_MULTIPASS_CACHE_FILE,
+      g_param_spec_string ("multipass-cache-file", "Multipass Cache File",
+          "Multipass cache file",
+          DEFAULT_MULTIPASS_CACHE_FILE,
+          (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+  g_object_class_install_property (gobject_class, PROP_AUTO_ALT_REF_FRAMES,
+      g_param_spec_boolean ("auto-alt-ref-frames", "Auto Alt Ref Frames",
+          "Automatically create alternative reference frames",
+          DEFAULT_AUTO_ALT_REF_FRAMES,
+          (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
 
   GST_DEBUG_CATEGORY_INIT (gst_vp8enc_debug, "vp8enc", 0, "VP8 Encoder");
 }
@@ -309,6 +311,9 @@ gst_vp8_enc_init (GstVP8Enc * gst_vp8_enc, GstVP8EncClass * klass)
   gst_vp8_enc->error_resilient = DEFAULT_ERROR_RESILIENT;
   gst_vp8_enc->max_latency = DEFAULT_MAX_LATENCY;
   gst_vp8_enc->max_keyframe_distance = DEFAULT_MAX_KEYFRAME_DISTANCE;
+  gst_vp8_enc->multipass_mode = DEFAULT_MULTIPASS_MODE;
+  gst_vp8_enc->multipass_cache_file = DEFAULT_MULTIPASS_CACHE_FILE;
+  gst_vp8_enc->auto_alt_ref_frames = DEFAULT_AUTO_ALT_REF_FRAMES;
 
   /* FIXME: Add sink/src event vmethods */
   gst_vp8_enc->base_sink_event_func =
@@ -324,8 +329,11 @@ gst_vp8_enc_finalize (GObject * object)
 
   GST_DEBUG_OBJECT (object, "finalize");
 
-  g_return_if_fail (GST_IS_GST_VP8_ENC (object));
+  g_return_if_fail (GST_IS_VP8_ENC (object));
   gst_vp8_enc = GST_VP8_ENC (object);
+
+  g_free (gst_vp8_enc->multipass_cache_file);
+  gst_vp8_enc->multipass_cache_file = NULL;
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 
@@ -337,7 +345,7 @@ gst_vp8_enc_set_property (GObject * object, guint prop_id,
 {
   GstVP8Enc *gst_vp8_enc;
 
-  g_return_if_fail (GST_IS_GST_VP8_ENC (object));
+  g_return_if_fail (GST_IS_VP8_ENC (object));
   gst_vp8_enc = GST_VP8_ENC (object);
 
   GST_DEBUG_OBJECT (object, "gst_vp8_enc_set_property");
@@ -366,6 +374,17 @@ gst_vp8_enc_set_property (GObject * object, guint prop_id,
     case PROP_THREADS:
       gst_vp8_enc->threads = g_value_get_int (value);
       break;
+    case PROP_MULTIPASS_MODE:
+      gst_vp8_enc->multipass_mode = g_value_get_enum (value);
+      break;
+    case PROP_MULTIPASS_CACHE_FILE:
+      if (gst_vp8_enc->multipass_cache_file)
+        g_free (gst_vp8_enc->multipass_cache_file);
+      gst_vp8_enc->multipass_cache_file = g_value_dup_string (value);
+      break;
+    case PROP_AUTO_ALT_REF_FRAMES:
+      gst_vp8_enc->auto_alt_ref_frames = g_value_get_boolean (value);
+      break;
     default:
       break;
   }
@@ -377,7 +396,7 @@ gst_vp8_enc_get_property (GObject * object, guint prop_id, GValue * value,
 {
   GstVP8Enc *gst_vp8_enc;
 
-  g_return_if_fail (GST_IS_GST_VP8_ENC (object));
+  g_return_if_fail (GST_IS_VP8_ENC (object));
   gst_vp8_enc = GST_VP8_ENC (object);
 
   switch (prop_id) {
@@ -404,6 +423,15 @@ gst_vp8_enc_get_property (GObject * object, guint prop_id, GValue * value,
       break;
     case PROP_THREADS:
       g_value_set_int (value, gst_vp8_enc->threads);
+      break;
+    case PROP_MULTIPASS_MODE:
+      g_value_set_enum (value, gst_vp8_enc->multipass_mode);
+      break;
+    case PROP_MULTIPASS_CACHE_FILE:
+      g_value_set_string (value, gst_vp8_enc->multipass_cache_file);
+      break;
+    case PROP_AUTO_ALT_REF_FRAMES:
+      g_value_set_boolean (value, gst_vp8_enc->auto_alt_ref_frames);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -435,6 +463,17 @@ gst_vp8_enc_stop (GstBaseVideoEncoder * base_video_encoder)
   if (encoder->inited) {
     vpx_codec_destroy (&encoder->encoder);
     encoder->inited = FALSE;
+  }
+
+  if (encoder->first_pass_cache_content) {
+    g_byte_array_free (encoder->first_pass_cache_content, TRUE);
+    encoder->first_pass_cache_content = NULL;
+  }
+
+  if (encoder->last_pass_cache_content.buf) {
+    g_free (encoder->last_pass_cache_content.buf);
+    encoder->last_pass_cache_content.buf = NULL;
+    encoder->last_pass_cache_content.sz = 0;
   }
 
   gst_tag_setter_reset_tags (GST_TAG_SETTER (encoder));
@@ -561,10 +600,27 @@ gst_vp8_enc_finish (GstBaseVideoEncoder * base_video_encoder)
     GstVP8EncCoderHook *hook;
     gboolean invisible, keyframe;
 
-    GST_DEBUG_OBJECT (encoder, "packet %d type %d", pkt->data.frame.sz,
+    GST_DEBUG_OBJECT (encoder, "packet %u type %d", (guint) pkt->data.frame.sz,
         pkt->kind);
 
-    if (pkt->kind != VPX_CODEC_CX_FRAME_PKT) {
+    if (pkt->kind == VPX_CODEC_STATS_PKT
+        && encoder->multipass_mode == VPX_RC_FIRST_PASS) {
+      GST_LOG_OBJECT (encoder, "handling STATS packet");
+
+      g_byte_array_append (encoder->first_pass_cache_content,
+          pkt->data.twopass_stats.buf, pkt->data.twopass_stats.sz);
+
+      frame = gst_base_video_encoder_get_oldest_frame (base_video_encoder);
+      if (frame != NULL) {
+        buffer = gst_buffer_new ();
+        GST_BUFFER_FLAG_SET (buffer, GST_BUFFER_FLAG_PREROLL);
+        frame->src_buffer = buffer;
+        gst_base_video_encoder_finish_frame (base_video_encoder, frame);
+      }
+
+      pkt = vpx_codec_get_cx_data (&encoder->encoder, &iter);
+      continue;
+    } else if (pkt->kind != VPX_CODEC_CX_FRAME_PKT) {
       GST_LOG_OBJECT (encoder, "non frame pkt: %d", pkt->kind);
       pkt = vpx_codec_get_cx_data (&encoder->encoder, &iter);
       continue;
@@ -596,6 +652,19 @@ gst_vp8_enc_finish (GstBaseVideoEncoder * base_video_encoder)
     pkt = vpx_codec_get_cx_data (&encoder->encoder, &iter);
   }
 
+  if (encoder->multipass_mode == VPX_RC_FIRST_PASS
+      && encoder->multipass_cache_file) {
+    GError *err = NULL;
+
+    if (!g_file_set_contents (encoder->multipass_cache_file,
+            (const gchar *) encoder->first_pass_cache_content->data,
+            encoder->first_pass_cache_content->len, &err)) {
+      GST_ELEMENT_ERROR (encoder, RESOURCE, WRITE, (NULL),
+          ("Failed to write multipass cache file: %s", err->message));
+      g_error_free (err);
+    }
+  }
+
   return TRUE;
 }
 
@@ -606,29 +675,29 @@ gst_vp8_enc_buffer_to_image (GstVP8Enc * enc, GstBuffer * buffer)
   GstBaseVideoEncoder *encoder = (GstBaseVideoEncoder *) enc;
   guint8 *data = GST_BUFFER_DATA (buffer);
 
-  image->fmt = IMG_FMT_I420;
+  image->fmt = VPX_IMG_FMT_I420;
   image->bps = 12;
   image->x_chroma_shift = image->y_chroma_shift = 1;
   image->img_data = data;
   image->w = image->d_w = encoder->state.width;
   image->h = image->d_h = encoder->state.height;
 
-  image->stride[PLANE_Y] =
+  image->stride[VPX_PLANE_Y] =
       gst_video_format_get_row_stride (encoder->state.format, 0,
       encoder->state.width);
-  image->stride[PLANE_U] =
+  image->stride[VPX_PLANE_U] =
       gst_video_format_get_row_stride (encoder->state.format, 1,
       encoder->state.width);
-  image->stride[PLANE_V] =
+  image->stride[VPX_PLANE_V] =
       gst_video_format_get_row_stride (encoder->state.format, 2,
       encoder->state.width);
-  image->planes[PLANE_Y] =
+  image->planes[VPX_PLANE_Y] =
       data + gst_video_format_get_component_offset (encoder->state.format, 0,
       encoder->state.width, encoder->state.height);
-  image->planes[PLANE_U] =
+  image->planes[VPX_PLANE_U] =
       data + gst_video_format_get_component_offset (encoder->state.format, 1,
       encoder->state.width, encoder->state.height);
-  image->planes[PLANE_V] =
+  image->planes[VPX_PLANE_V] =
       data + gst_video_format_get_component_offset (encoder->state.format, 2,
       encoder->state.width, encoder->state.height);
 
@@ -636,9 +705,9 @@ gst_vp8_enc_buffer_to_image (GstVP8Enc * enc, GstBuffer * buffer)
 }
 
 static const int speed_table[] = {
-  0,
-  100000,
-  1,
+  VPX_DL_BEST_QUALITY,
+  VPX_DL_GOOD_QUALITY,
+  VPX_DL_REALTIME,
 };
 
 static gboolean
@@ -663,8 +732,8 @@ gst_vp8_enc_handle_frame (GstBaseVideoEncoder * base_video_encoder,
   state = gst_base_video_encoder_get_state (base_video_encoder);
   encoder->n_frames++;
 
-  GST_DEBUG_OBJECT (base_video_encoder, "res id %d size %d %d",
-      encoder->resolution_id, state->width, state->height);
+  GST_DEBUG_OBJECT (base_video_encoder, "size %d %d", state->width,
+      state->height);
 
   if (!encoder->inited) {
     vpx_codec_enc_cfg_t cfg;
@@ -683,7 +752,6 @@ gst_vp8_enc_handle_frame (GstBaseVideoEncoder * base_video_encoder,
     cfg.g_timebase.den = base_video_encoder->state.fps_n;
 
     cfg.g_error_resilient = encoder->error_resilient;
-    cfg.g_pass = VPX_RC_ONE_PASS;
     cfg.g_lag_in_frames = encoder->max_latency;
     cfg.g_threads = encoder->threads;
     cfg.rc_end_usage = encoder->mode;
@@ -699,13 +767,53 @@ gst_vp8_enc_handle_frame (GstBaseVideoEncoder * base_video_encoder,
     cfg.kf_min_dist = 0;
     cfg.kf_max_dist = encoder->max_keyframe_distance;
 
+    cfg.g_pass = encoder->multipass_mode;
+    if (encoder->multipass_mode == VPX_RC_FIRST_PASS) {
+      encoder->first_pass_cache_content = g_byte_array_sized_new (4096);
+    } else if (encoder->multipass_mode == VPX_RC_LAST_PASS) {
+      GError *err = NULL;
+
+
+      if (!encoder->multipass_cache_file) {
+        GST_ELEMENT_ERROR (encoder, RESOURCE, OPEN_READ,
+            ("No multipass cache file provided"), (NULL));
+        return GST_FLOW_ERROR;
+      }
+
+      if (!g_file_get_contents (encoder->multipass_cache_file,
+              (gchar **) & encoder->last_pass_cache_content.buf,
+              &encoder->last_pass_cache_content.sz, &err)) {
+        GST_ELEMENT_ERROR (encoder, RESOURCE, OPEN_READ,
+            ("Failed to read multipass cache file provided"), ("%s",
+                err->message));
+        g_error_free (err);
+        return GST_FLOW_ERROR;
+      }
+      cfg.rc_twopass_stats_in = encoder->last_pass_cache_content;
+    }
+
     status = vpx_codec_enc_init (&encoder->encoder, &vpx_codec_vp8_cx_algo,
         &cfg, 0);
-    if (status) {
+    if (status != VPX_CODEC_OK) {
       GST_ELEMENT_ERROR (encoder, LIBRARY, INIT,
           ("Failed to initialize encoder"), ("%s",
               gst_vpx_error_name (status)));
       return GST_FLOW_ERROR;
+    }
+
+    status = vpx_codec_control (&encoder->encoder, VP8E_SET_CPUUSED, 0);
+    if (status != VPX_CODEC_OK) {
+      GST_WARNING_OBJECT (encoder, "Failed to set VP8E_SET_CPUUSED to 0: %s",
+          gst_vpx_error_name (status));
+    }
+
+    status =
+        vpx_codec_control (&encoder->encoder, VP8E_SET_ENABLEAUTOALTREF,
+        (encoder->auto_alt_ref_frames ? 1 : 0));
+    if (status != VPX_CODEC_OK) {
+      GST_WARNING_OBJECT (encoder,
+          "Failed to set VP8E_ENABLEAUTOALTREF to %d: %s",
+          (encoder->auto_alt_ref_frames ? 1 : 0), gst_vpx_error_name (status));
     }
 
     gst_base_video_encoder_set_latency (base_video_encoder, 0,
@@ -741,10 +849,27 @@ gst_vp8_enc_handle_frame (GstBaseVideoEncoder * base_video_encoder,
     GstBuffer *buffer;
     gboolean invisible;
 
-    GST_DEBUG_OBJECT (encoder, "packet %d type %d", pkt->data.frame.sz,
+    GST_DEBUG_OBJECT (encoder, "packet %u type %d", (guint) pkt->data.frame.sz,
         pkt->kind);
 
-    if (pkt->kind != VPX_CODEC_CX_FRAME_PKT) {
+    if (pkt->kind == VPX_CODEC_STATS_PKT
+        && encoder->multipass_mode == VPX_RC_FIRST_PASS) {
+      GST_LOG_OBJECT (encoder, "handling STATS packet");
+
+      g_byte_array_append (encoder->first_pass_cache_content,
+          pkt->data.twopass_stats.buf, pkt->data.twopass_stats.sz);
+
+      frame = gst_base_video_encoder_get_oldest_frame (base_video_encoder);
+      if (frame != NULL) {
+        buffer = gst_buffer_new ();
+        GST_BUFFER_FLAG_SET (buffer, GST_BUFFER_FLAG_PREROLL);
+        frame->src_buffer = buffer;
+        gst_base_video_encoder_finish_frame (base_video_encoder, frame);
+      }
+
+      pkt = vpx_codec_get_cx_data (&encoder->encoder, &iter);
+      continue;
+    } else if (pkt->kind != VPX_CODEC_CX_FRAME_PKT) {
       GST_LOG_OBJECT (encoder, "non frame pkt: %d", pkt->kind);
       pkt = vpx_codec_get_cx_data (&encoder->encoder, &iter);
       continue;
@@ -789,6 +914,13 @@ _to_granulepos (guint64 frame_end_number, guint inv_count, guint keyframe_dist)
   return granulepos;
 }
 
+static void
+_gst_mini_object_unref0 (GstMiniObject * obj)
+{
+  if (obj)
+    gst_mini_object_unref (obj);
+}
+
 static GstFlowReturn
 gst_vp8_enc_shape_output (GstBaseVideoEncoder * base_video_encoder,
     GstVideoFrame * frame)
@@ -807,8 +939,11 @@ gst_vp8_enc_shape_output (GstBaseVideoEncoder * base_video_encoder,
 
   state = gst_base_video_encoder_get_state (base_video_encoder);
 
+  g_assert (hook != NULL);
+
   for (inv_count = 0, l = hook->invisible; l; inv_count++, l = l->next) {
     buf = l->data;
+    l->data = NULL;
 
     if (l == hook->invisible && frame->is_sync_point) {
       GST_BUFFER_FLAG_UNSET (buf, GST_BUFFER_FLAG_DELTA_UNIT);
@@ -868,10 +1003,12 @@ gst_vp8_enc_shape_output (GstBaseVideoEncoder * base_video_encoder,
   }
 
 done:
-  g_list_foreach (hook->invisible, (GFunc) gst_mini_object_unref, NULL);
-  g_list_free (hook->invisible);
-  g_slice_free (GstVP8EncCoderHook, hook);
-  frame->coder_hook = NULL;
+  if (hook) {
+    g_list_foreach (hook->invisible, (GFunc) _gst_mini_object_unref0, NULL);
+    g_list_free (hook->invisible);
+    g_slice_free (GstVP8EncCoderHook, hook);
+    frame->coder_hook = NULL;
+  }
 
   return ret;
 }

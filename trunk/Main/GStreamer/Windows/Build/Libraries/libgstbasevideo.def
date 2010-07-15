@@ -16,6 +16,8 @@ EXPORTS
 	gst_base_video_decoder_lost_sync
 	gst_base_video_decoder_set_sync_point
 	gst_base_video_decoder_set_src_caps
+	gst_base_video_decoder_skip_frame
+	gst_base_video_decoder_alloc_src_frame
 
 	gst_base_video_encoder_get_type
 	gst_base_video_encoder_get_width
@@ -25,6 +27,7 @@ EXPORTS
 	gst_base_video_encoder_end_of_stream
 	gst_base_video_encoder_set_latency
 	gst_base_video_encoder_set_latency_fields
+	gst_base_video_encoder_get_oldest_frame
 
 	gst_base_video_parse_get_type	
 	gst_base_video_parse_get_state
@@ -39,5 +42,4 @@ EXPORTS
 	
 	gst_base_video_rawvideo_convert
 	gst_base_video_encoded_video_convert
-	gst_base_video_state_from_caps
 	gst_video_state_get_timestamp

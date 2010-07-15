@@ -1,4 +1,4 @@
-/* VP8 plugin
+/* VP8
  * Copyright (C) 2006 David Schleef <ds@schleef.org>
  * Copyright (C) 2008,2009,2010 Entropy Wave Inc
  * Copyright (C) 2010 Sebastian Dröge <sebastian.droege@collabora.co.uk>
@@ -19,6 +19,23 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+/**
+ * SECTION:element-vp8dec
+ * @see_also: vp8enc, matroskademux
+ *
+ * This element decodes VP8 streams into raw video.
+ * <ulink url="http://www.webmproject.org">VP8</ulink> is a royalty-free
+ * video codec maintained by <ulink url="http://www.google.com/">Google
+ * </ulink>. It's the successor of On2 VP3, which was the base of the
+ * Theora video codec.
+ *
+ * <refsect2>
+ * <title>Example pipeline</title>
+ * |[
+ * gst-launch -v filesrc location=videotestsrc.webm ! matroskademux ! vp8dec ! xvimagesink
+ * ]| This example pipeline will decode a WebM stream and decodes the VP8 video.
+ * </refsect2>
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -26,72 +43,13 @@
 
 #ifdef HAVE_VP8_DECODER
 
-#include <gst/gst.h>
-#include <gst/video/gstbasevideodecoder.h>
-#include <gst/video/gstbasevideoutils.h>
-#include <gst/base/gstbasetransform.h>
-#include <gst/base/gstadapter.h>
-#include <gst/video/video.h>
 #include <string.h>
-#include <math.h>
 
-/* FIXME: Undef HAVE_CONFIG_H because vpx_codec.h uses it,
- * which causes compilation failures */
-#ifdef HAVE_CONFIG_H
-#undef HAVE_CONFIG_H
-#endif
-
-#include <vpx/vpx_decoder.h>
-#include <vpx/vp8dx.h>
-
+#include "gstvp8dec.h"
 #include "gstvp8utils.h"
 
 GST_DEBUG_CATEGORY_STATIC (gst_vp8dec_debug);
 #define GST_CAT_DEFAULT gst_vp8dec_debug
-
-#define GST_TYPE_VP8_DEC \
-  (gst_vp8_dec_get_type())
-#define GST_VP8_DEC(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_VP8_DEC,GstVP8Dec))
-#define GST_VP8_DEC_CLASS(klass) \
-  (G_TYPE_CHECK_CLASS_CAST((klass),GST_TYPE_VP8_DEC,GstVP8DecClass))
-#define GST_IS_GST_VP8_DEC(obj) \
-  (G_TYPE_CHECK_INSTANCE_TYPE((obj),GST_TYPE_VP8_DEC))
-#define GST_IS_GST_VP8_DEC_CLASS(obj) \
-  (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_VP8_DEC))
-
-typedef struct _GstVP8Dec GstVP8Dec;
-typedef struct _GstVP8DecClass GstVP8DecClass;
-
-struct _GstVP8Dec
-{
-  GstBaseVideoDecoder base_video_decoder;
-
-  vpx_codec_ctx_t decoder;
-
-  /* state */
-
-  gboolean decoder_inited;
-
-  /* properties */
-  gboolean post_processing;
-  enum vp8_postproc_level post_processing_flags;
-  gint deblocking_level;
-  gint noise_level;
-};
-
-struct _GstVP8DecClass
-{
-  GstBaseVideoDecoderClass base_video_decoder_class;
-};
-
-
-/* GstVP8Dec signals and args */
-enum
-{
-  LAST_SIGNAL
-};
-
 
 #define DEFAULT_POST_PROCESSING FALSE
 #define DEFAULT_POST_PROCESSING_FLAGS (VP8_DEBLOCK | VP8_DEMACROBLOCK)
@@ -146,8 +104,6 @@ static GstFlowReturn gst_vp8_dec_parse_data (GstBaseVideoDecoder * decoder,
     gboolean at_eos);
 static GstFlowReturn gst_vp8_dec_handle_frame (GstBaseVideoDecoder * decoder,
     GstVideoFrame * frame, GstClockTimeDiff deadline);
-
-GType gst_vp8_dec_get_type (void);
 
 static GstStaticPadTemplate gst_vp8_dec_sink_template =
 GST_STATIC_PAD_TEMPLATE ("sink",
@@ -246,7 +202,7 @@ gst_vp8_dec_finalize (GObject * object)
 
   GST_DEBUG_OBJECT (object, "finalize");
 
-  g_return_if_fail (GST_IS_GST_VP8_DEC (object));
+  g_return_if_fail (GST_IS_VP8_DEC (object));
   gst_vp8_dec = GST_VP8_DEC (object);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
@@ -258,7 +214,7 @@ gst_vp8_dec_set_property (GObject * object, guint prop_id,
 {
   GstVP8Dec *dec;
 
-  g_return_if_fail (GST_IS_GST_VP8_DEC (object));
+  g_return_if_fail (GST_IS_VP8_DEC (object));
   dec = GST_VP8_DEC (object);
 
   GST_DEBUG_OBJECT (object, "gst_vp8_dec_set_property");
@@ -287,7 +243,7 @@ gst_vp8_dec_get_property (GObject * object, guint prop_id, GValue * value,
 {
   GstVP8Dec *dec;
 
-  g_return_if_fail (GST_IS_GST_VP8_DEC (object));
+  g_return_if_fail (GST_IS_VP8_DEC (object));
   dec = GST_VP8_DEC (object);
 
   switch (prop_id) {
@@ -390,7 +346,8 @@ gst_vp8_dec_image_to_buffer (GstVP8Dec * dec, const vpx_image_t * img,
   w = MIN (w, img->w);
 
   for (i = 0; i < h; i++)
-    memcpy (d + i * stride, img->planes[PLANE_Y] + i * img->stride[PLANE_Y], w);
+    memcpy (d + i * stride,
+        img->planes[VPX_PLANE_Y] + i * img->stride[VPX_PLANE_Y], w);
 
   d = GST_BUFFER_DATA (buffer) +
       gst_video_format_get_component_offset (decoder->state.format, 1,
@@ -405,14 +362,16 @@ gst_vp8_dec_image_to_buffer (GstVP8Dec * dec, const vpx_image_t * img,
       decoder->state.width);
   w = MIN (w, img->w >> img->x_chroma_shift);
   for (i = 0; i < h; i++)
-    memcpy (d + i * stride, img->planes[PLANE_U] + i * img->stride[PLANE_U], w);
+    memcpy (d + i * stride,
+        img->planes[VPX_PLANE_U] + i * img->stride[VPX_PLANE_U], w);
 
   d = GST_BUFFER_DATA (buffer) +
       gst_video_format_get_component_offset (decoder->state.format, 2,
       decoder->state.width, decoder->state.height);
   /* Same stride, height, width as above */
   for (i = 0; i < h; i++)
-    memcpy (d + i * stride, img->planes[PLANE_V] + i * img->stride[PLANE_V], w);
+    memcpy (d + i * stride,
+        img->planes[VPX_PLANE_V] + i * img->stride[VPX_PLANE_V], w);
 }
 
 static GstFlowReturn
@@ -424,6 +383,7 @@ gst_vp8_dec_handle_frame (GstBaseVideoDecoder * decoder, GstVideoFrame * frame,
   vpx_codec_err_t status;
   vpx_codec_iter_t iter = NULL;
   vpx_image_t *img;
+  long decoder_deadline = 0;
 
   GST_DEBUG_OBJECT (decoder, "handle_frame");
 
@@ -508,9 +468,17 @@ gst_vp8_dec_handle_frame (GstBaseVideoDecoder * decoder, GstVideoFrame * frame,
   }
 #endif
 
+  if (deadline < 0) {
+    decoder_deadline = 1;
+  } else if (deadline == G_MAXINT64) {
+    decoder_deadline = 0;
+  } else {
+    decoder_deadline = MAX (1, deadline / GST_MSECOND);
+  }
+
   status = vpx_codec_decode (&dec->decoder,
       GST_BUFFER_DATA (frame->sink_buffer),
-      GST_BUFFER_SIZE (frame->sink_buffer), NULL, 0);
+      GST_BUFFER_SIZE (frame->sink_buffer), NULL, decoder_deadline);
   if (status) {
     GST_ELEMENT_ERROR (decoder, LIBRARY, ENCODE,
         ("Failed to decode frame"), ("%s", gst_vpx_error_name (status)));

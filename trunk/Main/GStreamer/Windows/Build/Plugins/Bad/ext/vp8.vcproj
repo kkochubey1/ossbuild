@@ -336,59 +336,19 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstbasevideocodec.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstbasevideocodec.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstbasevideodecoder.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstbasevideodecoder.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstbasevideoencoder.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstbasevideoencoder.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstbasevideoparse.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstbasevideoparse.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstbasevideoutils.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstbasevideoutils.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstvideocompat.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gst\video\gstvideocompat.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gstvp8dec.c"
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gstvp8dec.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gstvp8enc.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\ext\vp8\gstvp8enc.h"
 			>
 		</File>
 		<File
