@@ -182,9 +182,9 @@ gst_ffmpegdemux_base_init (GstFFMpegDemuxClass * klass)
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
   AVInputFormat *in_plugin;
   gchar *p, *name;
-  GstElementDetails details;
   GstCaps *sinkcaps;
   GstPadTemplate *sinktempl, *audiosrctempl, *videosrctempl;
+  gchar *longname, *description;
 
   in_plugin = (AVInputFormat *)
       g_type_get_qdata (G_OBJECT_CLASS_TYPE (klass), GST_FFDEMUX_PARAMS_QDATA);
@@ -198,17 +198,15 @@ gst_ffmpegdemux_base_init (GstFFMpegDemuxClass * klass)
   }
 
   /* construct the element details struct */
-  details.longname = g_strdup_printf ("FFmpeg %s demuxer",
-      in_plugin->long_name);
-  details.klass = "Codec/Demuxer";
-  details.description = g_strdup_printf ("FFmpeg %s demuxer",
-      in_plugin->long_name);
-  details.author = "Wim Taymans <wim@fluendo.com>, "
+  longname = g_strdup_printf ("FFmpeg %s demuxer", in_plugin->long_name);
+  description = g_strdup_printf ("FFmpeg %s demuxer", in_plugin->long_name);
+  gst_element_class_set_details_simple (element_class, longname,
+      "Codec/Demuxer", description,
+      "Wim Taymans <wim@fluendo.com>, "
       "Ronald Bultje <rbultje@ronald.bitfreak.net>, "
-      "Edward Hervey <bilboed@bilboed.com>";
-  gst_element_class_set_details (element_class, &details);
-  g_free (details.longname);
-  g_free (details.description);
+      "Edward Hervey <bilboed@bilboed.com>");
+  g_free (longname);
+  g_free (description);
 
   /* pad templates */
   sinkcaps = gst_ffmpeg_formatid_to_caps (name);
@@ -936,6 +934,18 @@ gst_ffmpegdemux_aggregated_flow (GstFFMpegDemux * demux)
   return res;
 }
 
+static gchar *
+gst_ffmpegdemux_create_padname (const gchar * templ, gint n)
+{
+  GString *string;
+
+  string = g_string_new (templ);
+  g_string_truncate (string, string->len - 4);
+  g_string_append_printf (string, "%02d", n);
+
+  return g_string_free (string, FALSE);
+}
+
 static GstFFStream *
 gst_ffmpegdemux_get_stream (GstFFMpegDemux * demux, AVStream * avstream)
 {
@@ -990,7 +1000,9 @@ gst_ffmpegdemux_get_stream (GstFFMpegDemux * demux, AVStream * avstream)
   stream->unknown = FALSE;
 
   /* create new pad for this stream */
-  padname = g_strdup_printf (GST_PAD_TEMPLATE_NAME_TEMPLATE (templ), num);
+  padname =
+      gst_ffmpegdemux_create_padname (GST_PAD_TEMPLATE_NAME_TEMPLATE (templ),
+      num);
   pad = gst_pad_new_from_template (templ, padname);
   g_free (padname);
 
@@ -1960,7 +1972,6 @@ gst_ffmpegdemux_register (GstPlugin * plugin)
         !strcmp (in_plugin->name, "aiff") ||
         !strcmp (in_plugin->name, "4xm") ||
         !strcmp (in_plugin->name, "yuv4mpegpipe") ||
-		!strcmp (in_plugin->name, "dv") ||
         !strcmp (in_plugin->name, "mpc") || !strcmp (in_plugin->name, "gif"))
       rank = GST_RANK_MARGINAL;
     else

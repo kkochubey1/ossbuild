@@ -66,6 +66,8 @@ typedef struct _GstFFMpegDeinterlaceClass
 #define GST_IS_FFMPEGDEINTERLACE_CLASS(klass) \
   (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_FFMPEGDEINTERLACE))
 
+GType gst_ffmpegdeinterlace_get_type (void);
+
 static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
@@ -87,19 +89,15 @@ static GstFlowReturn gst_ffmpegdeinterlace_chain (GstPad * pad,
 static void
 gst_ffmpegdeinterlace_base_init (gpointer g_class)
 {
-  static GstElementDetails plugin_details = {
-    "FFMPEG Deinterlace element",
-    "Filter/Converter/Video",
-    "Deinterlace video",
-    "Luca Ognibene <luogni@tin.it>",
-  };
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_factory));
-  gst_element_class_set_details (element_class, &plugin_details);
+  gst_element_class_set_details_simple (element_class,
+      "FFMPEG Deinterlace element", "Filter/Converter/Video",
+      "Deinterlace video", "Luca Ognibene <luogni@tin.it>");
 }
 
 static void
@@ -114,6 +112,9 @@ gst_ffmpegdeinterlace_sink_setcaps (GstPad * pad, GstCaps * caps)
       GST_FFMPEGDEINTERLACE (gst_pad_get_parent (pad));
   GstStructure *structure = gst_caps_get_structure (caps, 0);
   AVCodecContext *ctx;
+  GValue interlaced = { 0 };
+  GstCaps *srcCaps;
+  GstFlowReturn ret;
 
   if (!gst_structure_get_int (structure, "width", &deinterlace->width))
     return FALSE;
@@ -138,7 +139,15 @@ gst_ffmpegdeinterlace_sink_setcaps (GstPad * pad, GstCaps * caps)
       avpicture_get_size (deinterlace->pixfmt, deinterlace->width,
       deinterlace->height);
 
-  return gst_pad_set_caps (deinterlace->srcpad, caps);
+  srcCaps = gst_caps_copy (caps);
+  g_value_init (&interlaced, G_TYPE_BOOLEAN);
+  g_value_set_boolean (&interlaced, FALSE);
+  gst_caps_set_value (srcCaps, "interlaced", &interlaced);
+  g_value_unset (&interlaced);
+
+  ret = gst_pad_set_caps (deinterlace->srcpad, srcCaps);
+  gst_caps_unref (srcCaps);
+  return ret;
 }
 
 static void

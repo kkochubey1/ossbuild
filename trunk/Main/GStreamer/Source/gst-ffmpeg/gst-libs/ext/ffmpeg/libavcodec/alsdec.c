@@ -20,7 +20,7 @@
  */
 
 /**
- * @file libavcodec/alsdec.c
+ * @file
  * MPEG-4 ALS decoder
  * @author Thilo Borgmann <thilo.borgmann _at_ googlemail.com>
  */
@@ -519,7 +519,7 @@ static void get_block_sizes(ALSDecContext *ctx, unsigned int *div_blocks,
         unsigned int remaining = ctx->cur_frame_length;
 
         for (b = 0; b < ctx->num_blocks; b++) {
-            if (remaining < div_blocks[b]) {
+            if (remaining <= div_blocks[b]) {
                 div_blocks[b] = remaining;
                 ctx->num_blocks = b + 1;
                 break;
@@ -703,10 +703,14 @@ static int read_var_block_data(ALSDecContext *ctx, ALSBlockData *bd)
         *bd->use_ltp = get_bits1(gb);
 
         if (*bd->use_ltp) {
+            int r, c;
+
             bd->ltp_gain[0]   = decode_rice(gb, 1) << 3;
             bd->ltp_gain[1]   = decode_rice(gb, 2) << 3;
 
-            bd->ltp_gain[2]   = ltp_gain_values[get_unary(gb, 0, 4)][get_bits(gb, 2)];
+            r                 = get_unary(gb, 0, 4);
+            c                 = get_bits(gb, 2);
+            bd->ltp_gain[2]   = ltp_gain_values[r][c];
 
             bd->ltp_gain[3]   = decode_rice(gb, 2) << 3;
             bd->ltp_gain[4]   = decode_rice(gb, 1) << 3;
@@ -1618,7 +1622,7 @@ static av_cold void flush(AVCodecContext *avctx)
 
 AVCodec als_decoder = {
     "als",
-    CODEC_TYPE_AUDIO,
+    AVMEDIA_TYPE_AUDIO,
     CODEC_ID_MP4ALS,
     sizeof(ALSDecContext),
     decode_init,

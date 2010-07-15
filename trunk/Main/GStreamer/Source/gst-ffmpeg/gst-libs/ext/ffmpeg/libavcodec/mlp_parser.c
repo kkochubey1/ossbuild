@@ -20,7 +20,7 @@
  */
 
 /**
- * @file libavcodec/mlp_parser.c
+ * @file
  * MLP parser
  */
 
@@ -293,5 +293,5 @@ AVCodecParser mlp_parser = {
     sizeof(MLPParseContext),
     mlp_init,
     mlp_parse,
-    NULL,
+    ff_parse_close,
 };

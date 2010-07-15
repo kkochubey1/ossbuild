@@ -66,9 +66,6 @@
    fun:dl_main
    fun:_dl_sysdep_start
    fun:_dl_start
-   obj:/lib64/ld-2.*.so
-   obj:*
-   obj:*
 }
 
 {
@@ -931,10 +928,8 @@
 {
    <g_type_init calloc>
    Memcheck:Leak
-   fun:calloc
-   fun:g_malloc0
-   obj:*
-   obj:*
+   fun:*alloc
+   ...
    fun:g_type_register_fundamental
 }
 
@@ -1252,19 +1247,10 @@
 {
    <alsa error>
    Memcheck:Cond
-   fun:_snd_pcm_hw_param_set_min
-   fun:snd*_pcm_hw_param_set_min
+   ...
    fun:snd*_pcm_hw_param_set_near
 }
 
-{
-   <alsa error>
-   Memcheck:Cond
-   obj:/*lib/libasound.so.2.0.0
-   obj:/*lib/libasound.so.2.0.0
-   fun:snd_pcm_hw_param_set_near
-   fun:set_hwparams
-}
 {
    <alsa error>
    Memcheck:Cond
@@ -1318,9 +1304,19 @@
    <alsa error>
    Memcheck:Leak
    fun:malloc
-   fun:snd_dlobj_cache_add
-   obj:/*lib/libasound.so.2.0.0
+   ...
+   fun:snd*_dlobj_cache_add
+   obj:/*lib*/libasound.so.2.0.0
 }
+
+{
+   <alsa leak in loading configuration>
+   Memcheck:Leak
+   fun:*alloc
+   ...
+   fun:snd_pcm_open_conf
+}
+
 {
    <alsa leak snd_config_hook_load>
    Memcheck:Leak
@@ -1329,6 +1325,7 @@
    ...
    fun:snd_config_hook_load
 }
+
 {
    <alsa leak snd_config_update_r>
    Memcheck:Leak
@@ -3943,15 +3940,13 @@
    fun:dlopen@@GLIBC_2.2.5
 }
 
-# glib 2.22 leaks
+# glib type leaks
 {
    <insert_a_suppression_name_here>
    Memcheck:Leak
    fun:*alloc
-   fun:*
-   fun:type_data_make_W
+   ...
    fun:g_type_register_static
-   fun:g_param_type_register_static
 }
 
 # new registry system
@@ -3961,50 +3956,7 @@
    <insert_a_suppression_name_here>
    Memcheck:Leak
    fun:*alloc
-   fun:*
-   fun:_priv_gst_registry_chunks_load_plugin
-}
-
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   fun:*alloc
-   fun:*
-   fun:*
-   fun:_priv_gst_registry_chunks_load_plugin
-}
-
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   fun:*alloc
-   fun:*
-   fun:*
-   fun:*
-   fun:_priv_gst_registry_chunks_load_plugin
-}
-
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   fun:*alloc
-   fun:*
-   fun:*
-   fun:*
-   fun:*
-   fun:_priv_gst_registry_chunks_load_plugin
-}
-
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   fun:*alloc
-   fun:*
-   fun:*
-   fun:*
-   fun:*
-   fun:*
-   fun:*
+   ...
    fun:_priv_gst_registry_chunks_load_plugin
 }
 
@@ -4036,9 +3988,7 @@
    <insert_a_suppression_name_here>
    Memcheck:Leak
    fun:*alloc
-   fun:*
-   fun:*
-   fun:*
+   ...
    fun:_gst_query_initialize
    fun:init_post
 }
@@ -4060,9 +4010,7 @@
    <insert_a_suppression_name_here>
    Memcheck:Leak
    fun:*alloc
-   fun:*
-   fun:*
-   fun:freelist_alloc
+   ...
    fun:_g_atomic_array_copy
 }
 
@@ -4086,9 +4034,15 @@
 {
    <insert_a_suppression_name_here>
    Memcheck:Leak
-   fun:malloc
-   fun:g_malloc
-   fun:g_memdup
-   fun:type_iface_vtable_base_init_Wm
+   fun:*alloc
+   ...
+   fun:g_type_add_interface_static
+}
+
+{
+   <leak in dash on debian sid>
+   Memcheck:Leak
+   fun:*alloc
+   obj:*/dash
 }
 

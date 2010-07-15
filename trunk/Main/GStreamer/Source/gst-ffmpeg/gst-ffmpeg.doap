@@ -26,12 +26,33 @@ colorspace conversion elements.
  <download-page rdf:resource="http://gstreamer.freedesktop.org/download/" />
 
  <repository>
-   <CVSRepository>
-     <anon-root>:pserver:anonymous@cvs.freedesktop.org:/cvs/gstreamer</anon-root>
-     <module>gst-ffmpeg</module>
-     <browse rdf:resource="http://webcvs.freedesktop.org/gstreamer/gst-ffmpeg/" />
-   </CVSRepository>
+   <GitRepository>
+     <location rdf:resource="git://anongit.freedesktop.org/gstreamer/gst-ffmpeg"/>
+     <browse rdf:resource="http://cgit.freedesktop.org/gstreamer/gst-ffmpeg"/>
+   </GitRepository>
  </repository> 
+
+ <release>
+  <Version>
+   <revision>0.10.11</revision>
+   <branch>0.10</branch>
+   <name>Feeding trolls is strictly forbidden</name>
+   <created>2010-07-15</created>
+   <file-release rdf:resource="http://gstreamer.freedesktop.org/src/gst-ffmpeg/gst-ffmpeg-0.10.11.tar.bz2" />
+   <file-release rdf:resource="http://gstreamer.freedesktop.org/src/gst-ffmpeg/gst-ffmpeg-0.10.11.tar.gz" />
+  </Version>
+ </release>
+
+ <release>
+  <Version>
+   <revision>0.10.10</revision>
+   <branch>0.10</branch>
+   <name>It's the bomb</name>
+   <created>2010-03-06</created>
+   <file-release rdf:resource="http://gstreamer.freedesktop.org/src/gst-ffmpeg/gst-ffmpeg-0.10.10.tar.bz2" />
+   <file-release rdf:resource="http://gstreamer.freedesktop.org/src/gst-ffmpeg/gst-ffmpeg-0.10.10.tar.gz" />
+  </Version>
+ </release>
 
  <release>
   <Version>
@@ -240,7 +261,7 @@ colorspace conversion elements.
  </maintainer>
  <maintainer>
   <foaf:Person>
-     <foaf:name>Thomas Vander Stichele</foaf:name>
+     <foaf:name>Edward Hervey</foaf:name>
   </foaf:Person>
  </maintainer>
 
