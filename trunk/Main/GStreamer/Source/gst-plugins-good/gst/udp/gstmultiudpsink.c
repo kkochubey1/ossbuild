@@ -775,12 +775,22 @@ gst_multiudpsink_configure_client (GstMultiUDPSink * sink,
     if (gst_udp_set_loop (sink->sock, sink->ss_family, sink->loop) != 0)
       goto loop_failed;
     GST_DEBUG_OBJECT (sink, "setting ttl to %d", sink->ttl_mc);
-    if (gst_udp_set_ttl (sink->sock, sink->ss_family, sink->ttl_mc, TRUE) != 0)
+    if (gst_udp_set_ttl (sink->sock, sink->ss_family, sink->ttl_mc, TRUE) != 0){
+#ifdef G_OS_WIN32
+      /* This still fails on some Windows versions, ignore the error */
+      return TRUE;
+#endif
       goto ttl_failed;
+	}
   } else {
     GST_DEBUG_OBJECT (sink, "setting unicast ttl to %d", sink->ttl);
-    if (gst_udp_set_ttl (sink->sock, sink->ss_family, sink->ttl, FALSE) != 0)
+    if (gst_udp_set_ttl (sink->sock, sink->ss_family, sink->ttl, FALSE) != 0) {
+#ifdef G_OS_WIN32
+      /* This still fails on some Windows versions, ignore the error */
+      return TRUE;
+#endif
       goto ttl_failed;
+    }
   }
   return TRUE;
 

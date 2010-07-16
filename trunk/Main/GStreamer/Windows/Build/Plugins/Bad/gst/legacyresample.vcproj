@@ -293,7 +293,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Libraries\libgstbase.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
 		/>
 	</References>
 	<Files>
@@ -318,10 +318,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\legacyresample\gstlegacyresample.c"
-			>
-		</File>
-		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\legacyresample\gstlegacyresample.h"
 			>
 		</File>
@@ -331,10 +327,6 @@
 		</File>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\legacyresample\resample.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\legacyresample\resample_chunk.c"
 			>
 		</File>
 		<File

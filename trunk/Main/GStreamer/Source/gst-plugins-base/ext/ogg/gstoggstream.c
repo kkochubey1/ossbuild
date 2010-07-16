@@ -78,7 +78,7 @@ struct _GstOggMap
   GstOggMapGranuleposToKeyGranuleFunc granulepos_to_key_granule_func;
 };
 
-static const GstOggMap mappers[];
+static const GstOggMap mappers[18];
 
 GstClockTime
 gst_ogg_stream_get_packet_start_time (GstOggStream * pad, ogg_packet * packet)
