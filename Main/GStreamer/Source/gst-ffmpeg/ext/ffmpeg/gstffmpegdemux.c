@@ -1972,6 +1972,7 @@ gst_ffmpegdemux_register (GstPlugin * plugin)
         !strcmp (in_plugin->name, "aiff") ||
         !strcmp (in_plugin->name, "4xm") ||
         !strcmp (in_plugin->name, "yuv4mpegpipe") ||
+        !strcmp (in_plugin->name, "dv") ||
         !strcmp (in_plugin->name, "mpc") || !strcmp (in_plugin->name, "gif"))
       rank = GST_RANK_MARGINAL;
     else

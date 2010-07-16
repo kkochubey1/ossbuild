@@ -266,38 +266,38 @@ gst_cairo_render_setcaps_sink (GstPad * pad, GstCaps * caps)
 
 static GstStaticPadTemplate t_src = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS (
-#if CAIRO_HAS_PDF_SURFACE
+//#if CAIRO_HAS_PDF_SURFACE
         "application/pdf, "
         "width = (int) [ 1, MAX], " "height = (int) [ 1, MAX] "
-#endif
-#if CAIRO_HAS_PDF_SURFACE && (CAIRO_HAS_PS_SURFACE || CAIRO_HAS_SVG_SURFACE || CAIRO_HAS_PNG_FUNCTIONS)
+//#endif
+//#if CAIRO_HAS_PDF_SURFACE && (CAIRO_HAS_PS_SURFACE || CAIRO_HAS_SVG_SURFACE || CAIRO_HAS_PNG_FUNCTIONS)
         ";"
-#endif
-#if CAIRO_HAS_PS_SURFACE
+//#endif
+//#if CAIRO_HAS_PS_SURFACE
         "application/postscript, "
         "width = (int) [ 1, MAX], " "height = (int) [ 1, MAX] "
-#endif
-#if (CAIRO_HAS_PDF_SURFACE || CAIRO_HAS_PS_SURFACE) && (CAIRO_HAS_SVG_SURFACE || CAIRO_HAS_PNG_FUNCTIONS)
+//#endif
+//#if (CAIRO_HAS_PDF_SURFACE || CAIRO_HAS_PS_SURFACE) && (CAIRO_HAS_SVG_SURFACE || CAIRO_HAS_PNG_FUNCTIONS)
         ";"
-#endif
-#if CAIRO_HAS_SVG_SURFACE
+//#endif
+//#if CAIRO_HAS_SVG_SURFACE
         "image/svg+xml, "
         "width = (int) [ 1, MAX], " "height = (int) [ 1, MAX] "
-#endif
-#if (CAIRO_HAS_PDF_SURFACE || CAIRO_HAS_PS_SURFACE || CAIRO_HAS_SVG_SURFACE) && CAIRO_HAS_PNG_FUNCTIONS
+//#endif
+//#if (CAIRO_HAS_PDF_SURFACE || CAIRO_HAS_PS_SURFACE || CAIRO_HAS_SVG_SURFACE) && CAIRO_HAS_PNG_FUNCTIONS
         ";"
-#endif
-#if CAIRO_HAS_PNG_FUNCTIONS
+//#endif
+//#if CAIRO_HAS_PNG_FUNCTIONS
         "image/png, " "width = (int) [ 1, MAX], " "height = (int) [ 1, MAX] "
-#endif
+//#endif
     ));
 static GstStaticPadTemplate t_snk = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS (
-#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+//#if G_BYTE_ORDER == G_LITTLE_ENDIAN
         GST_VIDEO_CAPS_BGRx " ; " GST_VIDEO_CAPS_BGRA " ; "
-#else
+/*#else
         GST_VIDEO_CAPS_xRGB " ; " GST_VIDEO_CAPS_ARGB " ; "
-#endif
+#endif*/
         GST_VIDEO_CAPS_YUV ("Y800") " ; "
         "video/x-raw-gray, "
         "bpp = 8, "
@@ -305,10 +305,10 @@ static GstStaticPadTemplate t_snk = GST_STATIC_PAD_TEMPLATE ("sink",
         "width = " GST_VIDEO_SIZE_RANGE ", "
         "height = " GST_VIDEO_SIZE_RANGE ", " "framerate = " GST_VIDEO_FPS_RANGE
         " ; "
-#if CAIRO_HAS_PNG_FUNCTIONS
+//#if CAIRO_HAS_PNG_FUNCTIONS
         "image/png, "
         "width = " GST_VIDEO_SIZE_RANGE ", " "height = " GST_VIDEO_SIZE_RANGE
-#endif
+//#endif
     ));
 
 GST_BOILERPLATE (GstCairoRender, gst_cairo_render, GstElement,

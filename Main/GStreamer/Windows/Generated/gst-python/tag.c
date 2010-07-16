@@ -276,6 +276,48 @@ _wrap_gst_tag_to_id3_tag(PyObject *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyObject *
+_wrap_gst_tag_list_from_exif_buffer(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "buffer", "byte_order", "base_offset", NULL };
+    PyObject *py_buffer;
+    int byte_order;
+    GstTagList *ret;
+    unsigned long base_offset;
+    const GstBuffer *buffer;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"Oik:tag_list_from_exif_buffer", kwlist, &py_buffer, &byte_order, &base_offset))
+        return NULL;
+    buffer = GST_BUFFER(pygstminiobject_get (py_buffer));
+    if (PyErr_Occurred())
+      return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_tag_list_from_exif_buffer(buffer, byte_order, base_offset);
+    pyg_end_allow_threads;
+    /* pyg_boxed_new handles NULL checking */
+    return pyg_boxed_new(GST_TYPE_TAG_LIST, (GstTagList*) ret, TRUE, TRUE);
+}
+
+static PyObject *
+_wrap_gst_tag_list_from_exif_buffer_with_tiff_header(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "buffer", NULL };
+    PyObject *py_buffer;
+    GstTagList *ret;
+    const GstBuffer *buffer;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O:tag_list_from_exif_buffer_with_tiff_header", kwlist, &py_buffer))
+        return NULL;
+    buffer = GST_BUFFER(pygstminiobject_get (py_buffer));
+    if (PyErr_Occurred())
+      return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_tag_list_from_exif_buffer_with_tiff_header(buffer);
+    pyg_end_allow_threads;
+    /* pyg_boxed_new handles NULL checking */
+    return pyg_boxed_new(GST_TYPE_TAG_LIST, (GstTagList*) ret, TRUE, TRUE);
+}
+
+static PyObject *
 _wrap_gst_tag_register_musicbrainz_tags(PyObject *self)
 {
     pyg_begin_allow_threads;
@@ -357,6 +399,50 @@ _wrap_gst_tag_get_language_code_iso_639_2T(PyObject *self, PyObject *args, PyObj
     return Py_None;
 }
 
+static PyObject *
+_wrap_gst_tag_list_from_xmp_buffer(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "buffer", NULL };
+    PyObject *py_buffer;
+    GstTagList *ret;
+    const GstBuffer *buffer;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O:tag_list_from_xmp_buffer", kwlist, &py_buffer))
+        return NULL;
+    buffer = GST_BUFFER(pygstminiobject_get (py_buffer));
+    if (PyErr_Occurred())
+      return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_tag_list_from_xmp_buffer(buffer);
+    pyg_end_allow_threads;
+    /* pyg_boxed_new handles NULL checking */
+    return pyg_boxed_new(GST_TYPE_TAG_LIST, (GstTagList*) ret, TRUE, TRUE);
+}
+
+static PyObject *
+_wrap_gst_tag_list_to_xmp_buffer(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "taglist", "readonly", NULL };
+    GstTagList *taglist = NULL;
+    PyObject *py_taglist;
+    int readonly;
+    GstBuffer *ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"Oi:tag_list_to_xmp_buffer", kwlist, &py_taglist, &readonly))
+        return NULL;
+    if (pyg_boxed_check(py_taglist, GST_TYPE_TAG_LIST))
+        taglist = pyg_boxed_get(py_taglist, GstTagList);
+    else {
+        PyErr_SetString(PyExc_TypeError, "taglist should be a GstTagList");
+        return NULL;
+    }
+    pyg_begin_allow_threads;
+    ret = gst_tag_list_to_xmp_buffer(taglist, readonly);
+    pyg_end_allow_threads;
+    /* pygobject_new handles NULL checking */
+    return pygstminiobject_new((GstMiniObject *)ret);
+}
+
 const PyMethodDef pytag_functions[] = {
     { "from_vorbis_tag", (PyCFunction)_wrap_gst_tag_from_vorbis_tag, METH_VARARGS|METH_KEYWORDS,
       NULL },
@@ -374,6 +460,10 @@ const PyMethodDef pytag_functions[] = {
       NULL },
     { "to_id3_tag", (PyCFunction)_wrap_gst_tag_to_id3_tag, METH_VARARGS|METH_KEYWORDS,
       NULL },
+    { "tag_list_from_exif_buffer", (PyCFunction)_wrap_gst_tag_list_from_exif_buffer, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "tag_list_from_exif_buffer_with_tiff_header", (PyCFunction)_wrap_gst_tag_list_from_exif_buffer_with_tiff_header, METH_VARARGS|METH_KEYWORDS,
+      NULL },
     { "register_musicbrainz_tags", (PyCFunction)_wrap_gst_tag_register_musicbrainz_tags, METH_NOARGS,
       NULL },
     { "get_language_name", (PyCFunction)_wrap_gst_tag_get_language_name, METH_VARARGS|METH_KEYWORDS,
@@ -383,6 +473,10 @@ const PyMethodDef pytag_functions[] = {
     { "get_language_code_iso_639_2B", (PyCFunction)_wrap_gst_tag_get_language_code_iso_639_2B, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "get_language_code_iso_639_2T", (PyCFunction)_wrap_gst_tag_get_language_code_iso_639_2T, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "tag_list_from_xmp_buffer", (PyCFunction)_wrap_gst_tag_list_from_xmp_buffer, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "tag_list_to_xmp_buffer", (PyCFunction)_wrap_gst_tag_list_to_xmp_buffer, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { NULL, NULL, 0, NULL }
 };
@@ -484,6 +578,6 @@ pytag_register_classes(PyObject *d)
     }
 
 
-#line 488 "..\\..\\..\\Source\\gst-python\\gst\\tag.c"
+#line 582 "..\\..\\..\\Source\\gst-python\\gst\\tag.c"
     pygobject_register_class(d, "GstTagDemux", GST_TYPE_TAG_DEMUX, &PyGstTagDemux_Type, Py_BuildValue("(O)", &PyGstElement_Type));
 }

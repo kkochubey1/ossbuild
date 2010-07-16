@@ -162,6 +162,50 @@ PyTypeObject PyGstVideoSink_Type = {
 /* ----------- functions ----------- */
 
 static PyObject *
+_wrap_gst_video_parse_caps_color_matrix(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "caps", NULL };
+    PyObject *py_caps;
+    const gchar *ret;
+    GstCaps *caps;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O:parse_caps_color_matrix", kwlist, &py_caps))
+        return NULL;
+    caps = pygst_caps_from_pyobject (py_caps, NULL);
+    if (PyErr_Occurred())
+      return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_video_parse_caps_color_matrix(caps);
+    pyg_end_allow_threads;
+    if (ret)
+        return PyString_FromString(ret);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *
+_wrap_gst_video_parse_caps_chroma_site(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "caps", NULL };
+    PyObject *py_caps;
+    const gchar *ret;
+    GstCaps *caps;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O:parse_caps_chroma_site", kwlist, &py_caps))
+        return NULL;
+    caps = pygst_caps_from_pyobject (py_caps, NULL);
+    if (PyErr_Occurred())
+      return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_video_parse_caps_chroma_site(caps);
+    pyg_end_allow_threads;
+    if (ret)
+        return PyString_FromString(ret);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *
 _wrap_gst_video_format_from_fourcc(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = { "fourcc", NULL };
@@ -193,6 +237,10 @@ _wrap_gst_video_event_new_still_frame(PyObject *self, PyObject *args, PyObject *
 }
 
 const PyMethodDef pyvideo_functions[] = {
+    { "parse_caps_color_matrix", (PyCFunction)_wrap_gst_video_parse_caps_color_matrix, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "parse_caps_chroma_site", (PyCFunction)_wrap_gst_video_parse_caps_chroma_site, METH_VARARGS|METH_KEYWORDS,
+      NULL },
     { "format_from_fourcc", (PyCFunction)_wrap_gst_video_format_from_fourcc, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "event_new_still_frame", (PyCFunction)_wrap_gst_video_event_new_still_frame, METH_VARARGS|METH_KEYWORDS,
@@ -296,7 +344,7 @@ pyvideo_register_classes(PyObject *d)
     }
 
 
-#line 300 "..\\..\\..\\Source\\gst-python\\gst\\video.c"
+#line 348 "..\\..\\..\\Source\\gst-python\\gst\\video.c"
     pygobject_register_class(d, "GstVideoFilter", GST_TYPE_VIDEO_FILTER, &PyGstVideoFilter_Type, Py_BuildValue("(O)", &PyGstBaseTransform_Type));
     pygobject_register_class(d, "GstVideoSink", GST_TYPE_VIDEO_SINK, &PyGstVideoSink_Type, Py_BuildValue("(O)", &PyGstBaseSink_Type));
 }

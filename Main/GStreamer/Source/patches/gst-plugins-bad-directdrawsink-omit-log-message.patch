@@ -1,8 +1,6 @@
-Index: sys/directdraw/gstdirectdrawsink.c
-===================================================================
---- sys/directdraw/gstdirectdrawsink.c	(revision 605)
-+++ sys/directdraw/gstdirectdrawsink.c	(working copy)
-@@ -884,7 +884,7 @@
+--- sys/directdraw/gstdirectdrawsink.c	Thu Jul  8 10:27:45 2010
++++ sys/directdraw/gstdirectdrawsink.c	Thu Jul 15 16:24:09 2010
+@@ -880,7 +880,7 @@
    }
  
    if (buf == NULL) {

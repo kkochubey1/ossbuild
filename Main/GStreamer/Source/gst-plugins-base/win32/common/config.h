@@ -26,7 +26,7 @@
 #undef DEFAULT_AUDIOSRC
 
 /* Default video sink */
-#define DEFAULT_VIDEOSINK "directdrawsink"
+#define DEFAULT_VIDEOSINK "d3dvideosink"
 
 /* Default video source */
 #undef DEFAULT_VIDEOSRC
@@ -45,10 +45,10 @@
 #define GETTEXT_PACKAGE "gst-plugins-base-0.10"
 
 /* The GIO library directory. */
-#undef GIO_LIBDIR
+#define GIO_LIBDIR ""
 
 /* The GIO modules directory. */
-#undef GIO_MODULE_DIR
+#define GIO_MODULE_DIR ""
 
 /* The GnomeVFS modules directory. */
 #undef GNOME_VFS_MODULES_DIR
@@ -72,7 +72,7 @@
 #define GST_PACKAGE_NAME "GStreamer Base Plug-ins source release"
 
 /* package origin */
-#define GST_PACKAGE_ORIGIN "Unknown package origin"
+#define GST_PACKAGE_ORIGIN "OSSBuild"
 
 /* I know the API is subject to change. */
 #undef G_UDEV_API_IS_SUBJECT_TO_CHANGE

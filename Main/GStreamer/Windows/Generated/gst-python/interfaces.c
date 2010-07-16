@@ -549,6 +549,21 @@ _wrap_gst_x_overlay_set_xwindow_id(PyGObject *self, PyObject *args, PyObject *kw
 }
 
 static PyObject *
+_wrap_gst_x_overlay_set_render_rectangle(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "x", "y", "width", "height", NULL };
+    int x, y, width, height, ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"iiii:GstXOverlay.set_render_rectangle", kwlist, &x, &y, &width, &height))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_x_overlay_set_render_rectangle(GST_X_OVERLAY(self->obj), x, y, width, height);
+    pyg_end_allow_threads;
+    return PyBool_FromLong(ret);
+
+}
+
+static PyObject *
 _wrap_gst_x_overlay_expose(PyGObject *self)
 {
     pyg_begin_allow_threads;
@@ -585,6 +600,8 @@ _wrap_gst_x_overlay_prepare_xwindow_id(PyGObject *self)
 
 static const PyMethodDef _PyGstXOverlay_methods[] = {
     { "set_xwindow_id", (PyCFunction)_wrap_gst_x_overlay_set_xwindow_id, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "set_render_rectangle", (PyCFunction)_wrap_gst_x_overlay_set_render_rectangle, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "expose", (PyCFunction)_wrap_gst_x_overlay_expose, METH_NOARGS,
       NULL },
@@ -667,7 +684,7 @@ _wrap_gst_color_balance_list_channels(PyGObject *self)
 
     return py_list;
 }
-#line 671 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 688 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 static PyObject *
@@ -1019,7 +1036,7 @@ _wrap_gst_mixer_list_tracks(PyGObject *self)
 		
     return py_list;
 }
-#line 1023 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 1040 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 #line 184 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.override"
@@ -1069,7 +1086,7 @@ _wrap_gst_mixer_set_volume (PyGObject *self, PyObject *args, PyObject *kwargs)
     return ret;
 }
 
-#line 1073 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 1090 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 #line 232 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.override"
@@ -1110,7 +1127,7 @@ _wrap_gst_mixer_get_volume (PyGObject *self, PyObject *args, PyObject *kwargs)
     return py_tuple;
 }
 
-#line 1114 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 1131 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 static PyObject *
@@ -1806,7 +1823,7 @@ _wrap_gst_property_probe_get_properties (PyGObject *self)
 
     return py_list;
 }
-#line 1810 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 1827 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 #line 271 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.override"
@@ -1831,7 +1848,7 @@ _wrap_gst_property_probe_get_property (PyGObject *self, PyObject *args)
 
     return pyg_param_spec_new((GParamSpec*)spec);
 }
-#line 1835 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 1852 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 static PyObject *
@@ -1899,7 +1916,7 @@ _wrap_gst_property_probe_get_values_name (PyGObject *self, PyObject *args)
     
     return py_list;
 }
-#line 1903 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 1920 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 static const PyMethodDef _PyGstPropertyProbe_methods[] = {
@@ -1988,7 +2005,7 @@ _wrap_gst_tuner_list_channels(PyGObject *self)
 		
     return py_list;
 }
-#line 1992 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 2009 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 static PyObject *
@@ -2041,7 +2058,7 @@ _wrap_gst_tuner_list_norms(PyGObject *self)
 		
     return py_list;
 }
-#line 2045 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 2062 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 static PyObject *
@@ -3002,7 +3019,7 @@ _wrap_gst_video_orientation_get_hflip (PyGObject * self)
 			 PyBool_FromLong(res),
 			 PyBool_FromLong(flip));
 }
-#line 3006 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 3023 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 #line 448 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.override"
@@ -3017,7 +3034,7 @@ _wrap_gst_video_orientation_get_vflip (PyGObject * self)
 			 PyBool_FromLong(res),
 			 PyBool_FromLong(flip));
 }
-#line 3021 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 3038 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 #line 461 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.override"
@@ -3033,7 +3050,7 @@ _wrap_gst_video_orientation_get_hcenter (PyGObject * self)
 			 PyBool_FromLong(res),
 			 center);
 }
-#line 3037 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 3054 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 #line 475 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.override"
@@ -3049,7 +3066,7 @@ _wrap_gst_video_orientation_get_vcenter (PyGObject * self)
 			 PyBool_FromLong(res),
 			 center);
 }
-#line 3053 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 3070 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 static PyObject *
@@ -3198,7 +3215,7 @@ _wrap_gst_mixer_message_parse_mute_toggled (PyGstMiniObject * self)
 			 pygobject_new(G_OBJECT (track)),
 			 PyBool_FromLong(mute));
 }
-#line 3202 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 3219 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 #line 371 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.override"
@@ -3218,7 +3235,7 @@ _wrap_gst_mixer_message_parse_record_toggled (PyGstMiniObject * self)
 			 pygobject_new(G_OBJECT (track)),
 			 PyBool_FromLong(record));
 }
-#line 3222 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 3239 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 #line 389 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.override"
@@ -3248,7 +3265,7 @@ _wrap_gst_mixer_message_parse_volume_changed (PyGstMiniObject * self)
 			 pygobject_new(G_OBJECT (track)),
 			 pvolumes, num_channels);
 }
-#line 3252 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 3269 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 #line 417 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.override"
@@ -3268,7 +3285,7 @@ _wrap_gst_mixer_message_parse_option_changed (PyGstMiniObject * self)
 			 pygobject_new(G_OBJECT (options)),
 			 value);
 }
-#line 3272 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 3289 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
 
 
 static PyObject *
@@ -3539,7 +3556,7 @@ pyinterfaces_register_classes(PyObject *d)
     }
 
 
-#line 3543 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
+#line 3560 "..\\..\\..\\Source\\gst-python\\gst\\interfaces.c"
     pyg_register_interface(d, "XOverlay", GST_TYPE_X_OVERLAY, &PyGstXOverlay_Type);
     pyg_register_interface(d, "ColorBalance", GST_TYPE_COLOR_BALANCE, &PyGstColorBalance_Type);
     pyg_register_interface_info(GST_TYPE_COLOR_BALANCE, &__GstColorBalance__iinfo);

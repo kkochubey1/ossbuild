@@ -293,7 +293,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Libraries\libgstbase.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
 		/>
 	</References>
 	<Files>
@@ -303,6 +303,14 @@
 		</File>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\bayer\gstbayer2rgb.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\bayer\gstrgb2bayer.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\bayer\gstrgb2bayer.h"
 			>
 		</File>
 	</Files>
