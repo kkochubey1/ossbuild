@@ -73,6 +73,7 @@
 		<File resource="libgstdvdspu.dll" />
 		<File resource="libgstfreeze.dll" />
 		<File resource="libgstfrei0r.dll" />
+		<File resource="libgstgeometrictransform.dll" />
 		<File resource="libgsth264parse.dll" />
 		<File resource="libgsthdvparse.dll" />
 		<File resource="libgstjpegformat.dll" />

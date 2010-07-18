@@ -24,6 +24,7 @@
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstdvdspu\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstfreeze\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstfrei0r\.dll" />
+				<OSSBuild:Filter Include=".*\\[^\\]*.*gstgeometrictransform\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gsth264parse\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gsthdvparse\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstjpegformat\.dll" />
@@ -65,6 +66,9 @@
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstwininet\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstwinks\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstwinscreencap\.dll" />
+				
+				<!-- sys -->
+				<OSSBuild:Filter Include=".*\\[^\\]*.*gstd3dvideosink\.dll" />
 			</OSSBuild:FillDirectory>
 		</DirectoryRef>
 		

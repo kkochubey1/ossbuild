@@ -119,6 +119,13 @@
       <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff2000}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\geometrictransform.vcproj">
+      <Name>gstgeometrictransform</Name>
+      <Project>{bbe23841-4387-4351-b747-b8def98ca700}</Project>
+      <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\hdvparse.vcproj">
       <Name>gsthdvparse</Name>
       <Project>{57a86dcf-b7c9-419b-af1c-96f08d34de85}</Project>
@@ -348,6 +355,13 @@
       <Name>gstvmnc</Name>
       <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff0057}</Project>
       <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\sys\d3dvideosink.vcproj">
+      <Name>gstd3dvideosink</Name>
+      <Project>{eb0cc982-3411-4ed1-a28c-f386749d1644}</Project>
+      <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\sys\libgstdirectdraw.vcproj">
       <Name>gstdirectdraw</Name>
