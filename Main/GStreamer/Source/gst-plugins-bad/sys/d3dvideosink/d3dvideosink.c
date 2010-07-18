@@ -1660,14 +1660,16 @@ gst_d3dvideosink_release_swap_chain (GstD3DVideoSink *sink)
 
     if (sink->d3d_offscreen_surface) {
       int ref_count;
-      ref_count = IDirect3DSurface9_Release(sink->d3d_offscreen_surface);
+      while((ref_count = IDirect3DSurface9_Release(sink->d3d_offscreen_surface)) > 0)
+        ;
       sink->d3d_offscreen_surface = NULL;
       GST_DEBUG("Direct3D offscreen surface released for sink %d. Reference count: %d", sink, ref_count);
     }
 
     if (sink->d3d_swap_chain) {
       int ref_count;
-      ref_count = IDirect3DSwapChain9_Release(sink->d3d_swap_chain);
+      while((ref_count = IDirect3DSwapChain9_Release(sink->d3d_swap_chain)) > 0)
+        ;
       sink->d3d_swap_chain = NULL;
       GST_DEBUG("Direct3D swap chain released for sink %d. Reference count: %d", sink, ref_count);
     }
