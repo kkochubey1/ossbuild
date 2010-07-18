@@ -72,6 +72,7 @@
 		<File resource="libgstdvdspu.so"                                    executable="true" />
 		<File resource="libgstfreeze.so"                                    executable="true" />
 		<File resource="libgstfrei0r.so"                                    executable="true" />
+		<File resource="libgstgeometrictransform.so"                        executable="true" />
 		<File resource="libgsth264parse.so"                                 executable="true" />
 		<File resource="libgsthdvparse.so"                                  executable="true" />
 		<File resource="libgstjpegformat.so"                                executable="true" />

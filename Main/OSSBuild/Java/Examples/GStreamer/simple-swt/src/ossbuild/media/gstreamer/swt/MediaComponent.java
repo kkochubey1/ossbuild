@@ -1538,7 +1538,10 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 	protected Element createVideoSink(final MediaType newMediaType, final IMediaRequest newRequest, final Pipeline newPipeline, final String suggestedVideoSink) {
 		final Element videoSink = ElementFactory.make(suggestedVideoSink, "videoSink");
-		videoSink.set("show-preroll-frame", true);
+		try {
+			videoSink.set("show-preroll-frame", true);
+		} catch(Throwable t) {
+		}
 		videoSink.getStaticPad("sink").connect("notify::caps", Object.class, null, new GstCallback() {
 			@SuppressWarnings("unused")
 			public boolean callback(Pad pad, Pointer unused, Pointer dynamic) {
