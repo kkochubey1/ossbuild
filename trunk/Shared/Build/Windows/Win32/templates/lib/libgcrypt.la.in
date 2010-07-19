@@ -14,12 +14,12 @@ library_names='libgcrypt.dll.a'
 old_library=''
 
 # Libraries that this one depends upon.
-dependency_libs=' -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/lib/libgpg-error.la'
+dependency_libs=' -L@SHARED_BUILD_DIR@/lib  -L/E/Work/OSSBuild/Build/Windows/Win32/Release/lib /E/Development/OSSBuild/Shared/Build/Windows/Win32/lib/libgpg-error.la'
 
 # Version information for libgcrypt.
-current=16
-age=5
-revision=3
+current=17
+age=6
+revision=0
 
 # Is this an already installed library?
 installed=yes

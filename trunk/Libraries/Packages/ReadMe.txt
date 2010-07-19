@@ -21,21 +21,21 @@ pthreads        -       2.9.0           -       CVS (for now), eventually http:/
 libiconv        -       1.13.1          -       http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.13.1.tar.gz
 zlib            -       1.2.5           -       http://zlib.net/zlib-1.2.5.tar.bz2
 bz2             -       1.0.5           -       http://www.bzip.org/1.0.5/bzip2-1.0.5.tar.gz
-glew            -       1.5.4           -       http://downloads.sourceforge.net/project/glew/glew/1.5.4/glew-1.5.4.tgz?use_mirror=cdnetworks-us-2
+glew            -       1.5.5           -       http://downloads.sourceforge.net/project/glew/glew/1.5.5/glew-1.5.5.tgz?use_mirror=superb-sea2&ts=1279558007
 expat           -       2.0.1           -       http://sourceforge.net/projects/expat/files/expat/2.0.1/expat-2.0.1.tar.gz/download
 libxml2         -       2.7.7           -       http://xmlsoft.org/sources/libxml2-2.7.7.tar.gz
 libxslt         -       1.1.26          -       http://xmlsoft.org/sources/libxslt-1.1.26.tar.gz
 libjpeg         -       8.0.0b          -       http://www.ijg.org/files/jpegsrc.v8b.tar.gz
 openjpeg        -       1.3.0           -       http://www.openjpeg.org/openjpeg_v1_3.tar.gz
-libpng          -       1.4.2           -       http://downloads.sourceforge.net/project/libpng/01-libpng-master/1.4.2/libpng-1.4.2.tar.gz?use_mirror=cdnetworks-us-2
+libpng          -       1.4.3           -       http://downloads.sourceforge.net/project/libpng/01-libpng-master/1.4.3/libpng-1.4.3.tar.gz?use_mirror=voxel&ts=1279558401
 libtiff         -       3.9.4           -       http://ftp.remotesensing.org/pub/libtiff/tiff-3.9.4.tar.gz
-glib            -       2.25.10         -       http://ftp.gnome.org/pub/GNOME/sources/glib/2.25/glib-2.25.10.tar.bz2
+glib            -       2.25.11         -       http://ftp.gnome.org/pub/GNOME/sources/glib/2.25/glib-2.25.11.tar.bz2
 atk             -       1.30.0          -       http://ftp.gnome.org/pub/gnome/sources/atk/1.30/atk-1.30.0.tar.bz2
 openssl         -       0.9.8j          -       http://www.openssl.org/source/openssl-0.9.8j.tar.gz
 libgpg-error    -       1.8.0           -       http://mirror.tje.me.uk/pub/mirrors/ftp.gnupg.org/libgpg-error/libgpg-error-1.8.tar.bz2
 libtasn1        -       2.7.0           -       http://ftp.gnu.org/gnu/libtasn1/libtasn1-2.7.tar.gz
-libgcrypt       -       1.4.5           -       http://mirror.tje.me.uk/pub/mirrors/ftp.gnupg.org/libgcrypt/libgcrypt-1.4.5.tar.bz2
-gnutls          -       2.9.12          -       http://alpha.gnu.org/gnu/gnutls/gnutls-2.9.12.tar.bz2
+libgcrypt       -       1.4.6           -       http://mirror.tje.me.uk/pub/mirrors/ftp.gnupg.org/libgcrypt/libgcrypt-1.4.6.tar.bz2
+gnutls          -       2.10.0          -       http://ftp.gnu.org/pub/gnu/gnutls/gnutls-2.10.0.tar.bz2
 curl            -       7.19.7          -       http://curl.haxx.se/download/curl-7.19.7.tar.bz2
 libsoup         -       2.30.2          -       http://ftp.gnome.org/pub/GNOME/sources/libsoup/2.30/libsoup-2.30.2.news
 libneon         -       0.29.3          -       http://www.webdav.org/neon/neon-0.29.3.tar.gz
@@ -44,7 +44,7 @@ fontconfig      -       2.8.0           -       http://fontconfig.org/release/fo
 pixman          -       0.18.2          -       http://cairographics.org/releases/pixman-0.18.2.tar.gz
 cairo           -       1.8.10          -       http://cairographics.org/releases/cairo-1.8.10.tar.gz
 pango           -       1.28.1          -       http://ftp.gnome.org/pub/GNOME/sources/pango/1.28/pango-1.28.1.tar.bz2
-gtk+            -       2.21.2          -       http://ftp.gnome.org/pub/gnome/sources/gtk+/2.21/gtk+-2.21.2.tar.bz2
+gtk+            -       2.21.5          -       http://ftp.gnome.org/pub/gnome/sources/gtk+/2.21/gtk+-2.21.5.tar.bz2
 gtkglarea       -       2.0.1           -       http://ftp.gnome.org/pub/gnome/sources/gtkglarea/2.0/gtkglarea-2.0.1.tar.bz2
 libcroco        -       0.6.2           -       http://ftp.gnome.org/pub/GNOME/sources/libcroco/0.6/libcroco-0.6.2.tar.bz2
 perl make-maker -       6.56.0          -       http://search.cpan.org/CPAN/authors/id/M/MS/MSCHWERN/ExtUtils-MakeMaker-6.56.tar.gz
@@ -60,7 +60,7 @@ libcelt         -       0.7.1           -       http://downloads.xiph.org/releas
 libtheora       -       1.1.1           -       http://downloads.xiph.org/releases/theora/libtheora-1.1.1.tar.bz2
 libmms          -       win32 branch    -       https://code.launchpad.net/~libmms-devel/libmms/win32
 libmms-0.4.0    -       0.4.0           -       http://sourceforge.net/projects/libmms/files/libmms/0.4/libmms-0.4.tar.gz/download
-x264            -       20100617        -       http://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-20100617-2245.tar.bz2
+x264            -       20100718        -       http://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-20100718-2245.tar.bz2
 libspeex        -       1.2rc1          -       http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
 libschroedinger -       1.0.9           -       http://diracvideo.org/download/schroedinger/schroedinger-1.0.9.tar.gz
 mp3lame         -       3.98.4          -       http://downloads.sourceforge.net/project/lame/lame/3.98.4/lame-3.98.4.tar.gz?use_mirror=voxel
