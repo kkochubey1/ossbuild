@@ -1,0 +1,31 @@
+--- common/x86/cpu-a.asm	Mon Jul 19 13:16:57 2010
++++ common/x86/cpu-a.asm	Mon Jul 19 13:17:09 2010
+@@ -96,13 +96,15 @@
+ cglobal stack_align
+     push ebp
+     mov  ebp, esp
+-    sub  esp, 8
++    sub  esp, 12
+     and  esp, ~15
+     mov  ecx, [ebp+8]
+     mov  edx, [ebp+12]
+     mov  [esp], edx
+     mov  edx, [ebp+16]
+     mov  [esp+4], edx
++    mov  edx, [ebp+20]
++    mov  [esp+8], edx
+     call ecx
+     leave
+     ret
+
+--- encoder/encoder.c	Mon Jul 19 13:18:58 2010
++++ encoder/encoder.c	Mon Jul 19 13:19:12 2010
+@@ -2332,7 +2332,7 @@
+                 return -1;
+         }
+         else
+-            x264_adaptive_quant_frame( h, fenc, pic_in->prop.quant_offsets );
++            x264_stack_align( x264_adaptive_quant_frame, h, fenc, pic_in->prop.quant_offsets );
+ 
+         if( pic_in->prop.quant_offsets_free )
+             pic_in->prop.quant_offsets_free( pic_in->prop.quant_offsets );

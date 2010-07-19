@@ -37,13 +37,15 @@ G_BEGIN_DECLS
  * @G_APP_INFO_CREATE_NONE: No flags.
  * @G_APP_INFO_CREATE_NEEDS_TERMINAL: Application opens in a terminal window.
  * @G_APP_INFO_CREATE_SUPPORTS_URIS: Application supports URI arguments.
+ * @G_APP_INFO_CREATE_SUPPORTS_STARTUP_NOTIFICATION: Application supports startup notification. Since 2.26
  *
  * Flags used when creating a #GAppInfo.
  */
 typedef enum {
-  G_APP_INFO_CREATE_NONE           = 0,         /*< nick=none >*/
-  G_APP_INFO_CREATE_NEEDS_TERMINAL = (1 << 0),  /*< nick=needs-terminal >*/
-  G_APP_INFO_CREATE_SUPPORTS_URIS  = (1 << 1)   /*< nick=supports-uris >*/
+  G_APP_INFO_CREATE_NONE                           = 0,         /*< nick=none >*/
+  G_APP_INFO_CREATE_NEEDS_TERMINAL                 = (1 << 0),  /*< nick=needs-terminal >*/
+  G_APP_INFO_CREATE_SUPPORTS_URIS                  = (1 << 1),  /*< nick=supports-uris >*/
+  G_APP_INFO_CREATE_SUPPORTS_STARTUP_NOTIFICATION  = (1 << 2)   /*< nick=supports-startup-notification >*/
 } GAppInfoCreateFlags;
 
 /**
@@ -969,6 +971,8 @@ typedef enum
  * method.
  * @G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION: Pass this flag if connecting to a peer that is a
  * message bus. This means that the Hello() method will be invoked as part of the connection setup.
+ * @G_DBUS_CONNECTION_FLAGS_DELAY_MESSAGE_PROCESSING: If set, processing of D-Bus messages is
+ * delayed until g_dbus_connection_start_message_processing() is called.
  *
  * Flags used when creating a new #GDBusConnection.
  *
@@ -979,7 +983,8 @@ typedef enum {
   G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT = (1<<0),
   G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_SERVER = (1<<1),
   G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_ALLOW_ANONYMOUS = (1<<2),
-  G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION = (1<<3)
+  G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION = (1<<3),
+  G_DBUS_CONNECTION_FLAGS_DELAY_MESSAGE_PROCESSING = (1<<4)
 } GDBusConnectionFlags;
 
 /**

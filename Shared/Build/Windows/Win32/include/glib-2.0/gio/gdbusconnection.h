@@ -33,52 +33,7 @@ G_BEGIN_DECLS
 
 #define G_TYPE_DBUS_CONNECTION         (g_dbus_connection_get_type ())
 #define G_DBUS_CONNECTION(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), G_TYPE_DBUS_CONNECTION, GDBusConnection))
-#define G_DBUS_CONNECTION_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_DBUS_CONNECTION, GDBusConnectionClass))
-#define G_DBUS_CONNECTION_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), G_TYPE_DBUS_CONNECTION, GDBusConnectionClass))
 #define G_IS_DBUS_CONNECTION(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), G_TYPE_DBUS_CONNECTION))
-#define G_IS_DBUS_CONNECTION_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_DBUS_CONNECTION))
-
-typedef struct _GDBusConnectionClass   GDBusConnectionClass;
-typedef struct _GDBusConnectionPrivate GDBusConnectionPrivate;
-
-/**
- * GDBusConnection:
- *
- * The #GDBusConnection structure contains only private data and
- * should only be accessed using the provided API.
- *
- * Since: 2.26
- */
-struct _GDBusConnection
-{
-  /*< private >*/
-  GObject parent_instance;
-  GDBusConnectionPrivate *priv;
-};
-
-/**
- * GDBusConnectionClass:
- * @closed: Signal class handler for the #GDBusConnection::closed signal.
- *
- * Class structure for #GDBusConnection.
- *
- * Since: 2.26
- */
-struct _GDBusConnectionClass
-{
-  /*< private >*/
-  GObjectClass parent_class;
-
-  /*< public >*/
-  /* Signals */
-  void (*closed) (GDBusConnection *connection,
-                  gboolean         remote_peer_vanished,
-                  GError          *error);
-
-  /*< private >*/
-  /* Padding for future expansion */
-  gpointer padding[64];
-};
 
 GType            g_dbus_connection_get_type                   (void) G_GNUC_CONST;
 
@@ -128,6 +83,7 @@ GDBusConnection *g_dbus_connection_new_for_address_sync       (const gchar      
 
 /* ---------------------------------------------------------------------------------------------------- */
 
+void             g_dbus_connection_start_message_processing   (GDBusConnection    *connection);
 gboolean         g_dbus_connection_is_closed                  (GDBusConnection    *connection);
 void             g_dbus_connection_close                      (GDBusConnection    *connection);
 GIOStream       *g_dbus_connection_get_stream                 (GDBusConnection    *connection);
@@ -138,6 +94,20 @@ gboolean         g_dbus_connection_get_exit_on_close          (GDBusConnection  
 void             g_dbus_connection_set_exit_on_close          (GDBusConnection    *connection,
                                                                gboolean            exit_on_close);
 GDBusCapabilityFlags  g_dbus_connection_get_capabilities      (GDBusConnection    *connection);
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+void             g_dbus_connection_flush                          (GDBusConnection     *connection,
+                                                                   GCancellable        *cancellable,
+                                                                   GAsyncReadyCallback  callback,
+                                                                   gpointer             user_data);
+gboolean         g_dbus_connection_flush_finish                   (GDBusConnection     *connection,
+                                                                   GAsyncResult        *res,
+                                                                   GError             **error);
+gboolean         g_dbus_connection_flush_sync                     (GDBusConnection     *connection,
+                                                                   GCancellable        *cancellable,
+                                                                   GError             **error);
+
 /* ---------------------------------------------------------------------------------------------------- */
 
 gboolean         g_dbus_connection_send_message                   (GDBusConnection     *connection,
@@ -302,7 +272,7 @@ struct _GDBusInterfaceVTable
 
 guint            g_dbus_connection_register_object            (GDBusConnection            *connection,
                                                                const gchar                *object_path,
-                                                               const GDBusInterfaceInfo   *introspection_data,
+                                                               const GDBusInterfaceInfo   *interface_info,
                                                                const GDBusInterfaceVTable *vtable,
                                                                gpointer                    user_data,
                                                                GDestroyNotify              user_data_free_func,

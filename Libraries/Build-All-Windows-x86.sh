@@ -525,6 +525,7 @@ fi
 if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then 
 	unpack_bzip2_and_move "glib.tar.bz2" "$PKG_DIR_GLIB"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/glib/run-markup-tests.sh.patch"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/glib/gdbusaddress.c.patch"
 	
 	mkdir_and_move "$IntDir/glib"
 	
@@ -543,6 +544,7 @@ if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then
 	#we run make once to create the proper dll, then copy it in place, and run make 
 	#again.
 	make -j3
+
 	#glib-genmarshal needs libglib-2.0-0.dll but can't load it b/c it isn't in the path
 	#Setting PATH didn't work
 	cp -p "$IntDir/glib/glib/.libs/libglib-2.0-0.dll" "gobject/.libs/"
@@ -661,13 +663,8 @@ if [ ! -f "$BinDir/lib${Prefix}gcrypt-11.dll" ]; then
 	unpack_bzip2_and_move "libgcrypt.tar.bz2" "$PKG_DIR_LIBGCRYPT"
 	mkdir_and_move "$IntDir/libgcrypt"
 	
-	CFLAGS=$ORIG_CFLAGS
-	CPPFLAGS=$ORIG_CPPFLAGS
-	
 	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	change_libname_spec
-	
-	reset_flags
 	
 	make -j3 && make install
 	
@@ -1419,8 +1416,9 @@ if [ ! -f "$BinDir/lib${Prefix}mms-0.dll" ]; then
 fi
 
 #x264
-if [ ! -f "$BinDir/lib${Prefix}x264-98.dll" ]; then 
+if [ ! -f "$BinDir/${Prefix}x264.exe" ]; then 
 	unpack_bzip2_and_move "x264.tar.bz2" "$PKG_DIR_X264"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/x264/alignment.patch"
 	mkdir_and_move "$IntDir/x264"
 	
 	PATH=$PATH:$TOOLS_DIR
@@ -1430,8 +1428,9 @@ if [ ! -f "$BinDir/lib${Prefix}x264-98.dll" ]; then
 	CPPFLAGS=""
 	LDFLAGS="-Wl,--exclude-libs,libpthreadGC2.dll.a -Wl,--exclude-libs,pthreadGC2.lib"
 	ORIG_LDFLAGS="$ORIG_LDFLAGS -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias"
-	./configure --disable-gpac --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
-	#change_key "." "config.mak" "SONAME" "lib${Prefix}x264-98.dll"
+	./configure --disable-gpac --enable-shared --host=$Host --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	API=$(grep '#define X264_BUILD' < x264.h | cut -f 3 -d ' ')
+	#change_key "." "config.mak" "SONAME" "lib${Prefix}x264-$API.dll"
 	#change_key "." "config.mak" "IMPLIBNAME" "lib${Prefix}x264.dll.a"
 	
 	#Download example y4m for use in profiling and selecting the best CPU instruction set
@@ -1450,9 +1449,9 @@ if [ ! -f "$BinDir/lib${Prefix}x264-98.dll" ]; then
 
 	cd "$IntDir/x264"
 	rm -rf "$LibDir/libx264.a"
-	pexports "$BinDir/lib${Prefix}x264-98.dll" | sed "s/^_//" > in.def
+	pexports "$BinDir/lib${Prefix}x264-$API.dll" | sed "s/^_//" > in.def
 	sed -e 's/DATA//g' in.def > in-mod.def
-	$MSLIB /name:lib${Prefix}x264-98.dll /out:x264.lib /machine:$MSLibMachine /def:in-mod.def
+	$MSLIB /name:lib${Prefix}x264-$API.dll /out:x264.lib /machine:$MSLibMachine /def:in-mod.def
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
 	
 	update_library_names_windows "lib${Prefix}x264.dll.a" "libx264.la"

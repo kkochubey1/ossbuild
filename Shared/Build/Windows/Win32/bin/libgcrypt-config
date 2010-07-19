@@ -12,11 +12,11 @@
 # File: src/libgcrypt-config.  Generated from libgcrypt-config.in by configure.
 
 # General.
-prefix="/E/Work/OSSBuild/Build/Windows/Win32/Release"
+prefix="/E/Development/OSSBuild/Build/Windows/Win32/Release"
 exec_prefix="${prefix}"
-version="1.4.5"
-includedir="/E/Work/OSSBuild/Build/Windows/Win32/Release/include"
-libdir="/E/Work/OSSBuild/Build/Windows/Win32/Release/lib"
+version="1.4.6"
+includedir="/E/Development/OSSBuild/Build/Windows/Win32/Release/include"
+libdir="/E/Development/OSSBuild/Build/Windows/Win32/Release/lib"
 gpg_error_libs="-L/E/Work/OSSBuild/Build/Windows/Win32/Release/lib -lgpg-error"
 gpg_error_cflags="-I/E/Work/OSSBuild/Build/Windows/Win32/Release/include"
 
@@ -30,7 +30,7 @@ api_version="1"
 # Misc information.
 symmetric_ciphers="arcfour blowfish cast5 des aes twofish serpent rfc2268 seed camellia"
 asymmetric_ciphers="dsa elgamal rsa ecc"
-digests="crc md4 md5 rmd160 sha1 sha256"
+digests="crc md4 md5 rmd160 sha1 sha256 sha512 tiger whirlpool"
 
 # State variables.
 echo_libs=no
