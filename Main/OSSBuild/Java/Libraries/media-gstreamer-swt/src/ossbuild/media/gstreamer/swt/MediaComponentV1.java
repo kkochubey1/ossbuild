@@ -1,6 +1,7 @@
 
 package ossbuild.media.gstreamer.swt;
 
+import ossbuild.media.swt.MediaComponent;
 import org.eclipse.swt.events.PaintEvent;
 import ossbuild.media.MediaType;
 import ossbuild.media.Scheme;
@@ -72,13 +73,13 @@ import ossbuild.Sys;
 import ossbuild.media.MediaRequest;
 import ossbuild.media.MediaRequestType;
 import ossbuild.media.gstreamer.ErrorType;
-import ossbuild.media.gstreamer.elements.VideoTestSrcPattern;
+import ossbuild.media.gstreamer.VideoTestSrcPattern;
 
 /**
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public abstract class MediaComponent extends SWTMediaComponent {
+public abstract class MediaComponentV1 extends MediaComponent {
 	//<editor-fold defaultstate="collapsed" desc="Constants">
 	public static final Scheme[] VALID_SCHEMES = new Scheme[] {
 		  Scheme.HTTP
@@ -195,15 +196,15 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		DEFAULT_AUDIO_ELEMENT = audioElement;
 	}
 
-	public MediaComponent(Composite parent, int style) {
+	public MediaComponentV1(Composite parent, int style) {
 		this(DEFAULT_VIDEO_ELEMENT, DEFAULT_AUDIO_ELEMENT, parent, style);
 	}
 
-	public MediaComponent(String videoElement, Composite parent, int style) {
+	public MediaComponentV1(String videoElement, Composite parent, int style) {
 		this(videoElement, DEFAULT_AUDIO_ELEMENT, parent, style);
 	}
 
-	public MediaComponent(String videoElement, String audioElement, Composite parent, int style) {
+	public MediaComponentV1(String videoElement, String audioElement, Composite parent, int style) {
 		super(parent, style | SWT.EMBEDDED | SWT.DOUBLE_BUFFERED);
 
 		this.nativeHandle = SWTOverlay.handle(this);
@@ -238,7 +239,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 			@Override
 			public void run() {
 				synchronized(display) {
-					xoverlay.setWindowID(MediaComponent.this);
+					xoverlay.setWindowID(MediaComponentV1.this);
 				}
 			}
 		};
@@ -583,7 +584,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 		return false;
 	}
 
-	private static String createColorspaceFilter(final MediaComponent src, final float fps) {
+	private static String createColorspaceFilter(final MediaComponentV1 src, final float fps) {
 		final String framerate = (fps == IMediaRequest.DEFAULT_FPS || src.currentLiveSource ? null : ", framerate=" + (int)fps + "/1");
 		final StringBuilder sb = new StringBuilder(256);
 
@@ -795,14 +796,14 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 	//<editor-fold defaultstate="collapsed" desc="Interfaces">
 	public static interface IErrorListener {
-		void handleError(final MediaComponent source, final IMediaRequest request, final ErrorType errorType, final int code, final String message);
+		void handleError(final MediaComponentV1 source, final IMediaRequest request, final ErrorType errorType, final int code, final String message);
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Adapters">
 	public static abstract class ErrorListenerAdapter implements IErrorListener {
 		@Override
-		public void handleError(final MediaComponent source, final IMediaRequest request, ErrorType errorType, int code, String message) {
+		public void handleError(final MediaComponentV1 source, final IMediaRequest request, ErrorType errorType, int code, String message) {
 		}
 	}
 	//</editor-fold>
@@ -1309,7 +1310,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 	@Override
 	public boolean playBlackBurst(String title) {
-		return playPattern(title, VideoTestSrcPattern.Black);
+		return playPattern(title, VideoTestSrcPattern.BLACK);
 	}
 
 	@Override
@@ -1913,7 +1914,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 
 			final Pipeline newPipeline = new Pipeline("pipeline");
 			final Element videoTestSrc = ElementFactory.make("videotestsrc", "videoTestSrc");
-			videoTestSrc.set("pattern", (long)pattern.getNativeValue());
+			videoTestSrc.set("pattern", (long)pattern.intValue());
 
 			final Bin videoBin = new Bin("videoBin");
 			final Element videoQueue = ElementFactory.make("queue2", "videoQueue");
@@ -1971,7 +1972,7 @@ public abstract class MediaComponent extends SWTMediaComponent {
 					Structure s = msg.getStructure();
 					if (s == null || !s.hasName("prepare-xwindow-id"))
 						return BusSyncReply.PASS;
-					xoverlay.setWindowID(MediaComponent.this.nativeHandle);
+					xoverlay.setWindowID(MediaComponentV1.this.nativeHandle);
 					return BusSyncReply.DROP;
 				}
 			});

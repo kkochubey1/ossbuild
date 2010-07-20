@@ -81,6 +81,9 @@ public interface IMediaPlayer {
 
 	BufferedImage snapshot();
 
+	boolean lock();
+	boolean unlock();
+
 	boolean mute();
 	boolean adjustVolume(int percent);
 

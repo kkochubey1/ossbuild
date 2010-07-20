@@ -1,25 +1,27 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package ossbuild.media.gstreamer.swt;
 
+import ossbuild.media.swt.MediaComponent;
+import ossbuild.media.MediaType;
+import ossbuild.media.MediaRequestType;
+import ossbuild.media.MediaRequest;
+import ossbuild.media.Scheme;
+import ossbuild.media.IMediaRequest;
 import com.sun.jna.Pointer;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.eclipse.swt.SWT;
@@ -27,802 +29,47 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Scale;
-import org.eclipse.swt.widgets.Shell;
-import org.gstreamer.Gst;
-import ossbuild.Path;
+import org.gstreamer.Bin;
+import org.gstreamer.Buffer;
+import org.gstreamer.Bus;
+import org.gstreamer.BusSyncReply;
+import org.gstreamer.Caps;
+import org.gstreamer.Element;
+import org.gstreamer.ElementFactory;
+import org.gstreamer.Format;
+import org.gstreamer.Fraction;
+import org.gstreamer.GhostPad;
+import org.gstreamer.GstObject;
+import org.gstreamer.Message;
+import org.gstreamer.MiniObject;
+import org.gstreamer.Pad;
+import org.gstreamer.Pipeline;
+import org.gstreamer.SeekFlags;
+import org.gstreamer.SeekType;
+import org.gstreamer.State;
+import org.gstreamer.StateChangeReturn;
+import org.gstreamer.Structure;
+import org.gstreamer.event.BusSyncHandler;
+import org.gstreamer.event.StepEvent;
+import org.gstreamer.lowlevel.GstAPI.GstCallback;
+import org.gstreamer.swt.overlay.SWTOverlay;
 import ossbuild.StringUtil;
 import ossbuild.Sys;
-import ossbuild.extract.Resources;
-import ossbuild.extract.processors.FileProcessor;
-import ossbuild.media.IMediaPlayer;
-import ossbuild.media.IMediaRequest;
-import ossbuild.media.MediaRequestType;
-import ossbuild.media.MediaType;
-import ossbuild.media.Scheme;
-import ossbuild.media.events.IAudioListener;
-import ossbuild.media.events.IMediaEventListener;
-import ossbuild.media.events.IPositionListener;
-import ossbuild.media.gstreamer.Bin;
-import ossbuild.media.gstreamer.Buffer;
-import ossbuild.media.gstreamer.Bus;
-import ossbuild.media.gstreamer.BusSyncReply;
-import ossbuild.media.gstreamer.Caps;
-import ossbuild.media.gstreamer.Colorspace2;
-import ossbuild.media.gstreamer.Element;
 import ossbuild.media.gstreamer.ErrorType;
-import ossbuild.media.gstreamer.Format;
-import ossbuild.media.gstreamer.Fraction;
-import ossbuild.media.gstreamer.GhostPad;
-import ossbuild.media.gstreamer.IBin;
-import ossbuild.media.gstreamer.IBus;
-import ossbuild.media.gstreamer.IElement;
-import ossbuild.media.gstreamer.IPipeline;
-import ossbuild.media.gstreamer.Message;
-import ossbuild.media.gstreamer.Pad;
-import ossbuild.media.gstreamer.Pipeline;
-import ossbuild.media.gstreamer.SeekFlags;
-import ossbuild.media.gstreamer.SeekType;
-import ossbuild.media.gstreamer.State;
-import ossbuild.media.gstreamer.StateChangeReturn;
-import ossbuild.media.gstreamer.Structure;
-import ossbuild.media.gstreamer.api.GTypeConverters;
-import ossbuild.media.gstreamer.api.Utils;
-import ossbuild.media.gstreamer.callbacks.IBusSyncHandler;
-import ossbuild.media.gstreamer.events.StepEvent;
-import ossbuild.media.gstreamer.signals.IAboutToFinish;
-import ossbuild.media.gstreamer.signals.IBuffering;
-import ossbuild.media.gstreamer.signals.IElementAdded;
-import ossbuild.media.gstreamer.signals.IEndOfStream;
-import ossbuild.media.gstreamer.signals.IError;
-import ossbuild.media.gstreamer.signals.IHandoff;
-import ossbuild.media.gstreamer.signals.INotifyCaps;
-import ossbuild.media.gstreamer.signals.IPadAdded;
-import ossbuild.media.gstreamer.signals.ISegmentDone;
-import ossbuild.media.gstreamer.signals.IStateChanged;
+import ossbuild.media.gstreamer.VideoTestSrcPattern;
 
 /**
  *
- * @author David
+ * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class MediaComponentNew extends SWTMediaComponent {
-	public static void main(String[] args) {
-		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_REFCOUNTING:3");
-		//Sys.setEnvironmentVariable("GST_DEBUG", "playbin*:4");
-		//Sys.setEnvironmentVariable("GST_DEBUG", "GST_SIGNAL:4");
-		//Sys.setEnvironmentVariable("GST_DEBUG", "ximagesink*:4");
-		//Sys.setEnvironmentVariable("GST_DEBUG", "*:3");
-		
-		Sys.initialize();
-		Gst.init("test", new String[] { "--gst-disable-segtrap" });
-		//GStreamer.initialize();
-
-		final Display display = new Display();
-		final Shell dlg = new Shell(display, SWT.NORMAL | SWT.SHELL_TRIM);
-
-		Button btn;
-		GridData gd;
-
-		final GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-
-		dlg.setText("OSSBuild :: Media :: GStreamer :: SWT");
-		dlg.setLayout(layout);
-		dlg.setSize(700, 700);
-
-		GstMediaComponent comp;
-
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		final GstMediaComponent mediaComp = comp;
-
-		final Scale scale = new Scale(dlg, SWT.HORIZONTAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		scale.setEnabled(false);
-		scale.setLayoutData(gd);
-		scale.setIncrement(100);
-		scale.setPageIncrement(1000);
-
-		final Button btnBrowse = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnBrowse.setLayoutData(gd);
-		btnBrowse.setText("Browse...");
-
-		final Button btnPlayImage = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnPlayImage.setLayoutData(gd);
-		btnPlayImage.setText("Play Image");
-
-		final Button btnPlayMJPEG = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnPlayMJPEG.setLayoutData(gd);
-		btnPlayMJPEG.setText("Play MJPEG");
-
-		final Button btnPlayExample = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnPlayExample.setLayoutData(gd);
-		btnPlayExample.setText("Play Example");
-
-		final Button btnPlayExampleMJPG = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnPlayExampleMJPG.setLayoutData(gd);
-		btnPlayExampleMJPG.setText("Play Example MJPG");
-
-		final Button btnPlay = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnPlay.setLayoutData(gd);
-		btnPlay.setText("Play Again");
-
-		final Button btnPlayForever = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnPlayForever.setLayoutData(gd);
-		btnPlayForever.setText("Play Again Forever");
-
-		final Button btnPlayTestSignal = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnPlayTestSignal.setLayoutData(gd);
-		btnPlayTestSignal.setText("Play Test Signal");
-
-		final Button btnPlayBlackBurst = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnPlayBlackBurst.setLayoutData(gd);
-		btnPlayBlackBurst.setText("Play Blackburst");
-
-		final Button btnPause = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnPause.setLayoutData(gd);
-		btnPause.setText("Pause");
-
-		final Button btnContinue = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnContinue.setLayoutData(gd);
-		btnContinue.setText("Continue");
-
-		final Button btnStop = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnStop.setLayoutData(gd);
-		btnStop.setText("Stop");
-
-		final Button btnRateNormal = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnRateNormal.setLayoutData(gd);
-		btnRateNormal.setText("Normal Playback Rate");
-
-		final Button btnRateDouble = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnRateDouble.setLayoutData(gd);
-		btnRateDouble.setText("Double Playback Rate");
-
-		final Button btnRateBackwards = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnRateBackwards.setLayoutData(gd);
-		btnRateBackwards.setText("Play Backwards");
-
-		final Button btnRateDoubleBackwards = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnRateDoubleBackwards.setLayoutData(gd);
-		btnRateDoubleBackwards.setText("Double Play Backwards Rate");
-
-		final Button btnStepForward = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnStepForward.setLayoutData(gd);
-		btnStepForward.setText("Step Forward");
-
-		final Button btnStepBackward = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnStepBackward.setLayoutData(gd);
-		btnStepBackward.setText("Step Backward");
-
-		final Button btnSnapshot = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnSnapshot.setLayoutData(gd);
-		btnSnapshot.setText("Take Snapshot");
-
-		final Button btnSeekToBeginning = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnSeekToBeginning.setLayoutData(gd);
-		btnSeekToBeginning.setText("Seek to Beginning");
-
-		final Button btnMute = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnMute.setLayoutData(gd);
-		btnMute.setText("Mute/Unmute");
-
-		final Button btnVolume0 = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnVolume0.setLayoutData(gd);
-		btnVolume0.setText("Volume 0%");
-
-		final Button btnVolume50 = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnVolume50.setLayoutData(gd);
-		btnVolume50.setText("Volume 50%");
-
-		final Button btnVolume100 = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnVolume100.setLayoutData(gd);
-		btnVolume100.setText("Volume 100%");
-
-		final Button btnGarbageCollect = new Button(dlg, SWT.NORMAL);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		//gd.horizontalSpan = 2;
-		btnGarbageCollect.setLayoutData(gd);
-		btnGarbageCollect.setText("Garbage Collect");
-
-		dlg.open();
-
-		final String fileName = "";
-		final FileDialog selFile = new FileDialog(dlg, SWT.OPEN);
-		selFile.setFilterNames(new String[]{"All Files (*.*)"});
-		selFile.setFilterExtensions(new String[]{"*.*"});
-//		if (StringUtil.isNullOrEmpty(fileName = selFile.open())) {
-//			Gst.quit();
-//			return;
-//		}
-
-		final File[] file = new File[] { new File(fileName) };
-		btnBrowse.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				final String fileName;
-				final FileDialog selFile = new FileDialog(dlg, SWT.OPEN);
-				selFile.setFilterNames(new String[]{"All Files (*.*)"});
-				selFile.setFilterExtensions(new String[]{"*.*"});
-				if (StringUtil.isNullOrEmpty(fileName = selFile.open()))
-					return;
-				file[0] = new File(fileName);
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).play(false, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
-					}
-				}
-			}
-		});
-		btnPlayMJPEG.addSelectionListener(new SelectionAdapter() {
-			int index = 0;
-			String[] uri = new String[] {
-				  "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1"
-				, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb"
-				//, "http://www.google.com/test/"
-				//, "http://www.asfjasflasf.com/"
-				//, "http://samples.mplayerhq.hu/mov/RQ004F14.MOV"
-				//, "http://users.design.ucla.edu/~acolubri/test/gstreamer/station-svq1.mov"
-				//, "rtsp://s-0-1.sg.softspb.com:554/test/test.mp4"
-			};
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						GstMediaComponent.execute(new Runnable() {
-							@Override
-							public void run() {
-								((GstMediaComponent) c).play(true, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, uri[index]);
-								if (++index >= uri.length)
-									index = 0;
-							}
-						});
-					}
-				}
-			}
-		});
-		btnPlayImage.addSelectionListener(new SelectionAdapter() {
-			int index = 0;
-			String[] images = new String[] {
-				  "http://arsdictum.com/images/madonastann.jpg"
-				, "http://yeinjee.com/travel/wp-content/uploads/2007/08/paris-notre-dame-top.jpg"
-				, "http://upload.wikimedia.org/wikipedia/commons/7/7a/Basketball.png"
-				, "http://www.google.com/intl/en_ALL/images/srpr/logo1w.png"
-			};
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						GstMediaComponent.execute(new Runnable() {
-							@Override
-							public void run() {
-								((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, IMediaRequest.DEFAULT_FPS, images[index]);
-								if (++index >= images.length)
-									index = 0;
-							}
-						});
-					}
-				}
-			}
-		});
-		btnPlayExample.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					//Extract resource
-					Resources.extractAll(ossbuild.extract.Package.newInstance("resources.media", Path.nativeResourcesDirectory, new FileProcessor(false, "example.mov"))).get();
-				} catch(Throwable t) {
-				}
-
-				file[0] = Path.combine(Path.nativeResourcesDirectory, "example.mov");
-				for (final Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						GstMediaComponent.execute(new Runnable() {
-							@Override
-							public void run() {
-								((GstMediaComponent) c).play(false, IMediaRequest.DEFAULT_REPEAT_COUNT, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
-							}
-						});
-					}
-				}
-			}
-		});
-		btnPlayExampleMJPG.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				try {
-					//Extract resource
-					Resources.extractAll(ossbuild.extract.Package.newInstance("resources.media", Path.nativeResourcesDirectory, new FileProcessor(false, "example.mjpg"))).get();
-				} catch(Throwable t) {
-				}
-
-				file[0] = Path.combine(Path.nativeResourcesDirectory, "example.mjpg");
-				for (final Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						GstMediaComponent.execute(new Runnable() {
-							@Override
-							public void run() {
-								((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, 2.0f, file[0].toURI().toString());
-							}
-						});
-					}
-				}
-			}
-		});
-		btnPlayBlackBurst.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						GstMediaComponent.execute(new Runnable() {
-							@Override
-							public void run() {
-								((GstMediaComponent) c).playBlackBurst();
-							}
-						});
-					}
-				}
-			}
-		});
-		btnPlayTestSignal.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						GstMediaComponent.execute(new Runnable() {
-							@Override
-							public void run() {
-								((GstMediaComponent) c).playTestSignal();
-							}
-						});
-					}
-				}
-			}
-		});
-		btnPlay.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						GstMediaComponent.execute(new Runnable() {
-							@Override
-							public void run() {
-								((GstMediaComponent) c).play(false, 1/*IMediaRequest.REPEAT_FOREVER/**/, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
-							}
-						});
-					}
-				}
-			}
-		});
-		btnPlayForever.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						GstMediaComponent.execute(new Runnable() {
-							@Override
-							public void run() {
-								((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, IMediaRequest.DEFAULT_FPS, file[0].toURI().toString());
-							}
-						});
-					}
-				}
-			}
-		});
-		btnPause.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						GstMediaComponent.execute(new Runnable() {
-							@Override
-							public void run() {
-								((GstMediaComponent) c).pause();
-							}
-						});
-					}
-				}
-			}
-		});
-		btnContinue.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						GstMediaComponent.execute(new Runnable() {
-							@Override
-							public void run() {
-								((GstMediaComponent) c).unpause();
-							}
-						});
-					}
-				}
-			}
-		});
-		btnStop.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (final Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						GstMediaComponent.execute(new Runnable() {
-							@Override
-							public void run() {
-								((GstMediaComponent) c).stop();
-							}
-						});
-					}
-				}
-			}
-		});
-		btnRateNormal.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).adjustPlaybackRate(1.0D);
-					}
-				}
-			}
-		});
-		btnRateDouble.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).adjustPlaybackRate(2.0D);
-					}
-				}
-			}
-		});
-		btnRateBackwards.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).adjustPlaybackRate(-1.0D);
-					}
-				}
-			}
-		});
-		btnRateDoubleBackwards.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).adjustPlaybackRate(-2.0D);
-					}
-				}
-			}
-		});
-		btnStepForward.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).stepForward();
-					}
-				}
-			}
-		});
-		btnStepBackward.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).stepBackward();
-					}
-				}
-			}
-		});
-		btnSeekToBeginning.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).seekToBeginning();
-					}
-				}
-			}
-		});
-		btnSnapshot.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				mediaComp.saveSnapshot(new File(System.currentTimeMillis() + ".jpg"));
-			}
-		});
-		btnMute.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).mute();
-					}
-				}
-			}
-		});
-		btnVolume0.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).adjustVolume(0);
-					}
-				}
-			}
-		});
-		btnVolume50.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).adjustVolume(50);
-					}
-				}
-			}
-		});
-		btnVolume100.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).adjustVolume(100);
-					}
-				}
-			}
-		});
-		btnGarbageCollect.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				System.gc();
-			}
-		});
-
-		mediaComp.addAudioListener(new IAudioListener() {
-			@Override
-			public void audioMuted(IMediaPlayer source) {
-				System.out.println("muted");
-			}
-
-			@Override
-			public void audioUnmuted(IMediaPlayer source) {
-				System.out.println("unmuted");
-			}
-
-			@Override
-			public void audioVolumeChanged(IMediaPlayer source, int percent) {
-				System.out.println("volume change: " + percent);
-			}
-		});
-
-		mediaComp.addMediaEventListener(new IMediaEventListener() {
-			@Override
-			public void mediaStopped(final IMediaPlayer source) {
-				System.out.println("STOPPED");
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (scale.isDisposed())
-							return;
-
-						scale.setEnabled(false);
-						scale.setSelection(0);
-					}
-				});
-			}
-
-			@Override
-			public void mediaPaused(final IMediaPlayer source) {
-				System.out.println("PAUSED");
-			}
-
-			@Override
-			public void mediaContinued(final IMediaPlayer source) {
-				System.out.println("CONTINUED");
-				enableScale(source);
-			}
-
-			@Override
-			public void mediaPlayRequested(final IMediaPlayer source, final IMediaRequest request) {
-				System.out.println("PLAY REQUESTED: " + source.getMediaRequest().getURI().toString());
-			}
-
-			@Override
-			public void mediaPlayed(final IMediaPlayer source) {
-				System.out.println("PLAYED: " + source.getMediaRequest().getURI().toString());
-				enableScale(source);
-			}
-
-			private void enableScale(final IMediaPlayer source) {
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (scale.isDisposed())
-							return;
-
-						scale.setEnabled(source.isSeekable() && scale.getMinimum() < scale.getMaximum());
-					}
-				});
-			}
-		});
-
-		mediaComp.addPositionListener(new IPositionListener() {
-			private long lastDuration = 0L;
-			private long lastPosition = 0L;
-
-			@Override
-			public void positionChanged(final IMediaPlayer source, final int percent, final long position, final long duration) {
-				System.out.println("percent: " + percent + ", position: " + position + ", duration: " + duration);
-				if (position != lastPosition || duration != lastDuration) {
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							if (scale.isDisposed())
-								return;
-
-							if (duration != lastDuration) {
-								lastDuration = duration;
-								if (duration > 0) {
-									int totalSeconds = (int)TimeUnit.MILLISECONDS.toSeconds(duration);
-
-									scale.setEnabled(true);
-									scale.setMinimum(0);
-									scale.setMaximum(totalSeconds);
-									scale.setIncrement(1);
-									if (totalSeconds < 10) //10 seconds
-										scale.setPageIncrement(1);
-									else if (totalSeconds < 60) //1 minutes
-										scale.setPageIncrement(6);
-									else if (totalSeconds < 600) //10 minutes
-										scale.setPageIncrement(60);
-									else if (totalSeconds < 60 * 60) //1 hour
-										scale.setPageIncrement(60 * 6);
-									else if (totalSeconds < 60 * 60 * 2) //2 hours
-										scale.setPageIncrement(60 * 10);
-									else if (totalSeconds < 60 * 60 * 24) //1 day
-										scale.setPageIncrement(60 * 60);
-									else
-										scale.setPageIncrement(60 * 60 * 4);
-								}
-							}
-
-							if (position != lastPosition) {
-								lastPosition = position;
-								scale.setSelection((int)TimeUnit.MILLISECONDS.toSeconds(position) + scale.getMinimum());
-							}
-						}
-					});
-				}
-			}
-		});
-
-		scale.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				final long position = TimeUnit.SECONDS.toNanos(scale.getSelection());
-				for (Control c : dlg.getChildren()) {
-					if (c instanceof GstMediaComponent) {
-						((GstMediaComponent) c).seek(position);
-					}
-				}
-			}
-		});
-
-		Thread t = new Thread(new Runnable() {
-			public void run() {
-				try {
-					while(true) {
-						display.asyncExec(new Runnable() {
-							public void run() {
-								btnPlayExample.notifyListeners(SWT.Selection, new Event());
-							}
-						});
-						Thread.sleep(3000L);
-					}
-				} catch(Throwable t) {
-				}
-			}
-		});
-		t.setDaemon(true);
-		t.setName("test click thread");
-		//t.start();
-
-		while (!dlg.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		display.dispose();
-	}
-
-	private static void gc() {
-		for(int i = 0; i < 40; ++i)
-			System.gc();
-	}
-
+public abstract class MediaComponentNew extends MediaComponent {
 	//<editor-fold defaultstate="collapsed" desc="Constants">
 	public static final Scheme[] VALID_SCHEMES = new Scheme[] {
 		  Scheme.HTTP
@@ -850,51 +97,62 @@ public class MediaComponentNew extends SWTMediaComponent {
 	private static final long
 		  SEEK_STOP_DURATION = TimeUnit.MILLISECONDS.toNanos(10L)
 	;
+
+	public static final String[] VALID_COLORSPACES = {
+		  "video/x-raw-rgb"
+		, "video/x-raw-yuv"
+	};
+
+	public static final String[] VALID_YUV_FORMATS = {
+		  "YUY2"
+	};
+
+	public static final String[] VALID_DIRECTDRAW_COLORSPACES = {
+		  "video/x-raw-rgb"
+	};
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Variables">
-	protected final Map<IPipeline, Map<State, Queue<Runnable>>> stateQueue = new HashMap<IPipeline, Map<State, Queue<Runnable>>>(2);
-
-	private boolean currentLiveSource;
-	private int volume = 100;
-	private boolean muted = false;
-	private long bufferSize = DEFAULT_BUFFER_SIZE;
-	private boolean hasAudio = false;
-	private boolean hasVideo = false;
-	private boolean hasMultipartDemux = false;
-	private int videoWidth = 0;
-	private int videoHeight = 0;
-	private float actualFPS;
-	private int currentRepeatCount;
-	private int numberOfRepeats;
-	private boolean emitPositionUpdates = true;
-	private long lastPosition = 0L;
-	private long lastDuration = 0L;
-	private boolean maintainAspectRatio = true;
-	private double currentRate = DEFAULT_RATE;
-	protected IMediaRequest mediaRequest = null;
-	protected volatile State currentState = State.Null;
-	
-	private MediaType mediaType = MediaType.Unknown;
-	private ImageData singleImage = null;
-	protected final Display display;
-
 	protected final long nativeHandle;
-	protected SWTOverlay xoverlay = null;
-
+	protected final Lock lock = new ReentrantLock();
 	protected final String videoElement;
 	protected final String audioElement;
-	protected IElement currentVideoSink;
-	protected IElement currentAudioSink;
-	protected IElement currentAudioVolumeElement;
-	protected IPipeline pipeline;
+	protected final Display display;
 
+	protected Pipeline pipeline;
+	protected Element currentVideoSink;
+	protected Element currentAudioSink;
+	protected Element currentAudioVolumeElement;
+	protected SWTOverlay xoverlay = null;
+
+	private boolean hasAudio = false;
+	private boolean hasVideo = false;
+
+	private int fullVideoWidth = 0;
+	private int fullVideoHeight = 0;
 	protected final Runnable redrawRunnable;
+	//private final Runnable seekFinishedRunnable;
 	protected final Runnable xoverlayRunnable;
-	protected final PaintListener paintListener;
 
-	protected final Lock lock = new ReentrantLock();
-	
+	private float actualFPS;
+
+	private boolean emitPositionUpdates = true;
+	private boolean currentLiveSource;
+	private int currentRepeatCount;
+	private int numberOfRepeats;
+	private boolean maintainAspectRatio = true;
+	private double currentRate = DEFAULT_RATE;
+	private long bufferSize = DEFAULT_BUFFER_SIZE;
+	private MediaType mediaType = MediaType.Unknown;
+
+	protected IMediaRequest mediaRequest = null;
+
+	protected volatile State currentState = State.NULL;
+
+	private AtomicBoolean isSeeking = new AtomicBoolean(false);
+	//private long seekingPos = 0L;
+	//private double seekingRate = DEFAULT_RATE;
+
 	private List<IErrorListener> errorListeners;
 	private final Object errorListenerLock = new Object();
 	//</editor-fold>
@@ -907,7 +165,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 			case Windows:
 				//videoElement = "dshowvideosink";
 				videoElement = "directdrawsink";
-				//videoElement = "fakesink";
 				audioElement = "autoaudiosink";
 				break;
 			case Unix:
@@ -938,16 +195,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 		this.display = getDisplay();
 		this.audioElement = audioElement;
 		this.videoElement = videoElement;
-		this.paintListener = new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				if (mediaType != MediaType.Image || singleImage == null) {
-					expose();
-					return;
-				}
-				paintImage(e.gc, singleImage);
-			}
-		};
+		this.setLayout(new FillLayout());
 
 		this.redrawRunnable = new Runnable() {
 			@Override
@@ -956,12 +204,41 @@ public class MediaComponentNew extends SWTMediaComponent {
 					redraw();
 			}
 		};
+
 		this.positionUpdateRunnable = new Runnable() {
+			private long lastPosition = 0L;
+			private long lastDuration = 0L;
+
 			@Override
 			public void run() {
-				onPositionUpdate();
+				if (!emitPositionUpdates)
+					return;
+				if (lock.tryLock()) {
+					try {
+						if (pipeline != null) {
+							final long position = pipeline.queryPosition(TimeUnit.MILLISECONDS);
+							final long duration = Math.max(position, pipeline.queryDuration(TimeUnit.MILLISECONDS));
+							final int percent = (duration > 0 ? Math.max(0, Math.min(100, (int)(((double)position / (double)duration) * 100.0D))) : -1);
+							final boolean positionChanged = (position != lastPosition && position >= 0L);
+							final boolean last = (position <= 0L && lastPosition > 0L);
+
+							if (last && positionChanged && !currentLiveSource)
+								firePositionChanged(100, lastDuration, lastDuration);
+
+							lastPosition = position;
+							lastDuration = duration;
+							if (positionChanged && !currentLiveSource)
+								firePositionChanged(percent, position, duration);
+						} else {
+							lastPosition = 0L;
+						}
+					} finally {
+						lock.unlock();
+					}
+				}
 			}
 		};
+
 		this.xoverlayRunnable = new Runnable() {
 			@Override
 			public void run() {
@@ -971,10 +248,7 @@ public class MediaComponentNew extends SWTMediaComponent {
 			}
 		};
 
-		//<editor-fold defaultstate="collapsed" desc="SWT">
-		this.setLayout(new FillLayout());
-		this.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-
+		//<editor-fold defaultstate="collapsed" desc="SWT Events">
 		this.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent ce) {
@@ -984,26 +258,16 @@ public class MediaComponentNew extends SWTMediaComponent {
 		this.addDisposeListener(new DisposeListener() {
 			@Override
 			public void widgetDisposed(DisposeEvent de) {
-				if (pipeline != null)
-					resetPipeline(pipeline);
+				stop();
+				if (pipeline != null) {
+					pipeline.setState(State.NULL);
+					if (pipeline.getState(10000L, TimeUnit.MILLISECONDS) == State.NULL)
+						pipeline.dispose();
+					pipeline = null;
+				}
 			}
 		});
 		//</editor-fold>
-
-		init();
-	}
-
-	protected void init() {
-	}
-
-	@Override
-	protected void componentInitialize() {
-		//throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	protected Runnable createPositionUpdater() {
-		return positionUpdateRunnable;
 	}
 	//</editor-fold>
 
@@ -1013,70 +277,62 @@ public class MediaComponentNew extends SWTMediaComponent {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Getters">
-	@Override
 	public Lock getMediaLock() {
 		return lock;
 	}
 
-	@Override
 	public Scheme[] getValidSchemes() {
 		return VALID_SCHEMES;
 	}
-
-	@Override
+	
 	public int getVideoWidth() {
-		return videoWidth;
+		return fullVideoWidth;
 	}
 
-	@Override
 	public int getVideoHeight() {
-		return videoHeight;
+		return fullVideoHeight;
 	}
 
-	@Override
 	public boolean isMediaAvailable() {
 		lock.lock();
 		try {
-			return (currentState(0L) != State.Null);
+			return (pipeline != null && pipeline.getState(0L) != State.NULL);
 		} finally {
 			lock.unlock();
 		}
 	}
 
-	@Override
 	public boolean isPaused() {
 		lock.lock();
 		try {
 			if (pipeline == null)
 				return false;
-			final State state = currentState(0L);
-			return (state == State.Paused || state == State.Ready);
+			final State state = pipeline.getState(0L);
+			return (state == State.PAUSED || state == State.READY);
 		} finally {
 			lock.unlock();
 		}
 	}
 
-	@Override
 	public boolean isStopped() {
 		lock.lock();
 		try {
 			if (pipeline == null)
 				return true;
-			final State state = currentState(0L);
-			return (state == State.Null || state == State.Ready);
+			final State state = pipeline.getState(0L);
+			return (state == State.NULL || state == State.READY);
 		} finally {
 			lock.unlock();
 		}
 	}
 
-	@Override
 	public boolean isPlaying() {
 		lock.lock();
 		try {
 			if (pipeline == null)
 				return true;
-			final State state = currentState(0L);
-			return (state == State.Playing);
+			final State state = pipeline.getState(0L);
+			return (state == State.PLAYING);
 		} finally {
 			lock.unlock();
 		}
@@ -1086,12 +342,10 @@ public class MediaComponentNew extends SWTMediaComponent {
 		return currentLiveSource;
 	}
 
-	@Override
 	public boolean isSeekable() {
-		return !currentLiveSource && emitPositionUpdates && !hasMultipartDemux && mediaType != MediaType.Image && mediaType != MediaType.Unknown;
+		return !currentLiveSource && emitPositionUpdates;
 	}
 
-	@Override
 	public int getRepeatCount() {
 		return currentRepeatCount;
 	}
@@ -1100,7 +354,6 @@ public class MediaComponentNew extends SWTMediaComponent {
 		return currentRepeatCount == IMediaRequest.REPEAT_FOREVER;
 	}
 
-	@Override
 	public float getVideoFPS() {
 		lock.lock();
 		try {
@@ -1112,14 +365,13 @@ public class MediaComponentNew extends SWTMediaComponent {
 		}
 	}
 
-	@Override
 	public long getPosition() {
 		lock.lock();
 		try {
 			if (pipeline == null)
 				return 0L;
-			final State state = currentState(0L);
-			if (state != State.Playing || state != State.Paused)
+			final State state = pipeline.getState(0L);
+			if (state != State.PLAYING || state != State.PAUSED)
 				return 0L;
 			return pipeline.queryPosition(TimeUnit.MILLISECONDS);
 		} finally {
@@ -1127,14 +379,13 @@ public class MediaComponentNew extends SWTMediaComponent {
 		}
 	}
 
-	@Override
 	public long getDuration() {
 		lock.lock();
 		try {
 			if (pipeline == null)
 				return 0L;
-			final State state = currentState(0L);
-			if (state != State.Playing || state != State.Paused)
+			final State state = pipeline.getState(0L);
+			if (state != State.PLAYING || state != State.PAUSED)
 				return 0L;
 			return pipeline.queryDuration(TimeUnit.MILLISECONDS);
 		} finally {
@@ -1142,294 +393,210 @@ public class MediaComponentNew extends SWTMediaComponent {
 		}
 	}
 
-	@Override
 	public boolean isMuted() {
 		lock.lock();
 		try {
-			if (pipeline == null)
+			if (pipeline == null || currentAudioVolumeElement == null)
 				return false;
 
-			return (Boolean)pipeline.get("mute");
+			return (Boolean)currentAudioVolumeElement.get("mute");
 		} finally {
 			lock.unlock();
 		}
 	}
 
-	@Override
 	public int getVolume() {
 		lock.lock();
 		try {
-			if (pipeline == null)
+			if (pipeline == null || currentAudioVolumeElement == null)
 				return 100;
 
-			return Math.max(0, Math.min(100, (int)((Double)pipeline.get("volume") * 100.0D)));
+			return Math.max(0, Math.min(100, (int)((Double)currentAudioVolumeElement.get("volume") * 100.0D)));
 		} finally {
 			lock.unlock();
 		}
 	}
 
-	@Override
 	public boolean isAudioAvailable() {
-		lock.lock();
-		try {
-			if (pipeline == null)
-				return false;
-
-			int numAudioStreams = (Integer)pipeline.get("n-audio");
-			return (numAudioStreams > 0);
-		} finally {
-			lock.unlock();
-		}
+		return this.hasAudio;
 	}
 
-	@Override
 	public boolean isVideoAvailable() {
-		lock.lock();
-		try {
-			if (pipeline == null)
-				return false;
-
-			int numVideoStreams = (Integer)pipeline.get("n-video");
-			return (numVideoStreams > 0);
-		} finally {
-			lock.unlock();
-		}
+		return this.hasVideo;
 	}
 
-	@Override
 	public long getBufferSize() {
 		return bufferSize;
 	}
 
-	@Override
 	public boolean isAspectRatioMaintained() {
 		return maintainAspectRatio;
 	}
 
-	@Override
 	public IMediaRequest getMediaRequest() {
 		lock.lock();
 		try {
+			if (pipeline == null)
+				return null;
 			return mediaRequest;
 		} finally {
 			lock.unlock();
 		}
 	}
 
-	@Override
 	public MediaType getMediaType() {
 		return mediaType;
 	}
 
-	@Override
 	public void setBufferSize(long size) {
 		this.bufferSize = size;
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Helper Methods">
-	protected static boolean isParser(final IElement elem) {
-		return isParser(elem.getFactoryClass());
-	}
-
-	protected static boolean isDecoder(final IElement elem) {
-		return isDecoder(elem.getFactoryClass());
-	}
-
-	protected static boolean isImage(final IElement elem) {
-		return isImage(elem.getFactoryClass());
-	}
-
-	protected static boolean isGeneric(final String factoryClass) {
-		return (factoryClass.equals("Generic") || factoryClass.contains("Generic/") || factoryClass.contains("/Generic"));
-	}
-
-	protected static boolean isSource(final String factoryClass) {
-		return (factoryClass.contains("Source/") || factoryClass.contains("/Source"));
-	}
-
-	protected static boolean isParser(final String factoryClass) {
-		return (factoryClass.contains("/Demuxer") || factoryClass.contains("Demuxer/"));
-	}
-
-	protected static boolean isDecoder(final String factoryClass) {
-		return (factoryClass.contains("/Decoder") || factoryClass.contains("Decoder/"));
-	}
-
-	protected static boolean isImage(final String factoryClass) {
-		return (factoryClass.contains("/Image") || factoryClass.contains("Image/"));
-	}
-
-	protected static boolean determineIfSingleImage(final IBin bin) {
-		//Examine all the elements. Look at the factory class
-		//which will look like:
-		//    Codec/Decoder/Image (decoder, image)
-		//    Codec/Demuxer       (parser)
-		//    Source/Network      (source)
-		//    Generic             (generic)
-		//    Generic/Bin/Decoder (generic, bin)
-		//If there is exactly one decoder and zero demuxers/parsers,
-		//and there's an image, it's safe (most of the time) to
-		//assume it's an image we're looking at.
-		final boolean[] imageFound = new boolean[1];
-		bin.visitElementsRecursive(new IBin.IElementVisitor() {
-			int decoderCount = 0;
-
-			@Override
-			public boolean visit(IBin src, IElement element) {
-				String factoryClass = element.getFactoryClass();
-				if (isGeneric(factoryClass) || isSource(factoryClass))
-					return true;
-				if (isParser(factoryClass) || (isDecoder(factoryClass) && ++decoderCount > 1)) {
-					imageFound[0] = false;
-					return false;
-				}
-				if (isImage(factoryClass)) {
-					imageFound[0] = true;
-					return true;
-				}
-				return true;
-			}
-		});
-		return imageFound[0];
-	}
-
-	protected Map<State, Queue<Runnable>> createEmptyStateQueue() {
-		//Create a new queue for each state
-		Map<State, Queue<Runnable>> newStateQueue = new HashMap<State, Queue<Runnable>>(State.values().length);
-		for(State s : State.values())
-			newStateQueue.put(s, new ConcurrentLinkedQueue<Runnable>());
-		return newStateQueue;
-	}
-
-	protected State currentState() {
-		return pipeline.requestState(0L);
-	}
-
-	protected State currentState(long timeout) {
-		return pipeline.requestState(TimeUnit.MILLISECONDS, timeout);
-	}
-
-	protected StateChangeReturn changeState(State state) {
-		return changeState(pipeline, state, 0L, null);
-	}
-
-	protected StateChangeReturn changeState(State state, long timeout) {
-		return changeState(pipeline, state, timeout, null);
-	}
-
-	protected StateChangeReturn changeState(State state, Runnable action) {
-		return changeState(pipeline, state, 0L, action);
-	}
-
-	protected StateChangeReturn changeState(State state, long timeout, Runnable action) {
-		return changeState(pipeline, state, timeout, action);
-	}
-
-	protected StateChangeReturn changeState(IPipeline pipeline, State state) {
-		return changeState(pipeline, state, 0L, null);
-	}
-
-	protected StateChangeReturn changeState(IPipeline pipeline, State state, long timeout) {
-		return changeState(pipeline, state, timeout, null);
-	}
-
-	protected StateChangeReturn changeState(IPipeline pipeline, State state, Runnable action) {
-		return changeState(pipeline, state, 0L, action);
-	}
-
-	protected StateChangeReturn changeState(IPipeline pipeline, State state, long timeout, Runnable action) {
-		if (pipeline == null)
-			return StateChangeReturn.Failure;
-		stateAction(pipeline, state, action);
-		if (timeout <= 0L) {
-			return pipeline.changeState(state);
-		} else {
-			pipeline.changeState(state);
-			if (pipeline.requestState(TimeUnit.MILLISECONDS, timeout) == state)
-				return StateChangeReturn.Success;
-			else
-				return StateChangeReturn.Failure;
-		}
-	}
-
-	protected void stateAction(State state, Runnable action) {
-		stateAction(pipeline, state, action);
-	}
-
-	protected void stateAction(IPipeline pipeline, State state, Runnable action) {
-		if (action != null) {
-			if (!stateQueue.containsKey(pipeline))
-				stateQueue.put(pipeline, createEmptyStateQueue());
-			stateQueue.get(pipeline).get(state).add(action);
-		}
-	}
-
-	protected Queue<Runnable> actionsForState(IPipeline pipeline, State state) {
-		if (!stateQueue.containsKey(pipeline))
+	public static IntBuffer convertToRGB(final ByteBuffer bb, final int width, final int height, final String colorspace, final String fourcc) {
+		if (!isValidColorspace(colorspace))
 			return null;
-		return stateQueue.get(pipeline).get(state);
-	}
 
-	protected void clearStateActions(IPipeline pipeline, State state) {
-		Queue<Runnable> actions = actionsForState(pipeline, state);
-		if (actions != null)
-			actions.clear();
-	}
-
-	protected void clearAllStateActions(IPipeline pipeline) {
-		Map<State, Queue<Runnable>> map = stateQueue.get(pipeline);
-		if (map == null)
-			return;
-		map.clear();
-		stateQueue.remove(pipeline);
-	}
-
-	protected void clearAllPipelineStateActions() {
-		stateQueue.clear();
-	}
-
-	protected void insertPaintListener() {
-		if (!isUIThread()) {
-			display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					insertPaintListener();
-				}
-			});
-			return;
+		if (isRGBColorspace(colorspace)) {
+			return bb.asIntBuffer();
+		} else if(isYUVColorspace(colorspace)) {
+			if ("YUY2".equalsIgnoreCase(fourcc) || "YUYV".equalsIgnoreCase(fourcc) || "YUNV".equalsIgnoreCase(fourcc) || "V422".equalsIgnoreCase(fourcc))
+				return yuyv2rgb(bb, width, height);
+			else
+				return null;
+		} else {
+			return null;
 		}
-		addPaintListener(paintListener);
 	}
 
-	protected void clearPaintListener() {
-		if (!isUIThread()) {
-			display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					clearPaintListener();
-				}
-			});
-			return;
+	public static IntBuffer yuyv2rgb(final ByteBuffer bb, final int width, final int height) {
+		//Courtesy jcam
+		//    http://www.stenza.org/packages/jcam.tgz
+
+		final ByteBuffer destbb = ByteBuffer.allocate(4 * width * height);
+		destbb.order(ByteOrder.BIG_ENDIAN);
+		bb.order(ByteOrder.BIG_ENDIAN);
+
+		int y1, u, y2, v;
+		int cb, cr, cg;
+		int r, g, b;
+
+		int halfWidth = width / 2;
+		int sstride = width*2;
+		int dstride = width*4;
+
+		int isrcindex, idestindex;
+
+		for (int i = 0; i < height; ++i) {
+			for (int j = 0; j < halfWidth; ++j) {
+				isrcindex = i * sstride + 4*j;
+				idestindex = i * dstride + 8*j;
+
+				y1 = bb.get(isrcindex + 0)&0xff;
+				u  = bb.get(isrcindex + 1)&0xff;
+				y2 = bb.get(isrcindex + 2)&0xff;
+				v  = bb.get(isrcindex + 3)&0xff;
+
+				cb = ((u-128) * 454) >> 8;
+				cr = ((v-128) * 359) >> 8;
+				cg = ((v-128) * 183 + (u-128) * 88) >> 8;
+
+				r = y1 + cr;
+				b = y1 + cb;
+				g = y1 - cg;
+
+				destbb.put(idestindex + 0, (byte)0);
+				destbb.put(idestindex + 1, (byte)Math.max(0, Math.min(255, r)));
+				destbb.put(idestindex + 2, (byte)Math.max(0, Math.min(255, g)));
+				destbb.put(idestindex + 3, (byte)Math.max(0, Math.min(255, b)));
+
+				r = y2 + cr;
+				b = y2 + cb;
+				g = y2 - cg;
+
+				destbb.put(idestindex + 4, (byte)0);
+				destbb.put(idestindex + 5, (byte)Math.max(0, Math.min(255, r)));
+				destbb.put(idestindex + 6, (byte)Math.max(0, Math.min(255, g)));
+				destbb.put(idestindex + 7, (byte)Math.max(0, Math.min(255, b)));
+			}
 		}
-		removePaintListener(paintListener);
+
+		//destbb.flip();
+		return destbb.asIntBuffer();
 	}
 
-	protected void asyncRedraw() {
-		display.asyncExec(redrawRunnable);
+	public static byte clamp(int min, int max, int value) {
+		if (value < min)
+			return (byte)min;
+		if (value > max)
+			return (byte)max;
+		return (byte)(value);
+	}
+
+	public static boolean isRGBColorspace(final String colorspace) {
+		return VALID_COLORSPACES[0].equalsIgnoreCase(colorspace);
+	}
+
+	public static boolean isYUVColorspace(final String colorspace) {
+		return VALID_COLORSPACES[1].equalsIgnoreCase(colorspace);
+	}
+
+	public static boolean isValidYUVFormat(final String yuvFormat) {
+		if (StringUtil.isNullOrEmpty(yuvFormat))
+			return false;
+		for(String cs : VALID_YUV_FORMATS)
+			if (cs.equalsIgnoreCase(yuvFormat))
+				return true;
+		return false;
+	}
+
+	public static boolean isValidColorspace(final String colorspace) {
+		if (StringUtil.isNullOrEmpty(colorspace))
+			return false;
+		for(String cs : VALID_COLORSPACES)
+			if (cs.equalsIgnoreCase(colorspace))
+				return true;
+		return false;
+	}
+
+	private static String createColorspaceFilter(final MediaComponentNew src, final float fps) {
+		final String framerate = (fps == IMediaRequest.DEFAULT_FPS || src.currentLiveSource ? null : ", framerate=" + (int)fps + "/1");
+		final StringBuilder sb = new StringBuilder(256);
+
+		sb.append("video/x-raw-rgb, bpp=32, depth=24");
+		for(int i = 1; i < VALID_COLORSPACES.length; ++i) {
+			sb.append(';');
+			sb.append(VALID_COLORSPACES[i]);
+			if (framerate != null)
+				sb.append(framerate);
+		}
+		sb.deleteCharAt(0);
+		return sb.toString();
+	}
+
+	private static String uriString(URI uri) {
+		//Courtesy http://code.google.com/p/gstreamer-java/source/browse/trunk/gstreamer-java/src/org/gstreamer/GObject.java
+		String uriString = uri.toString();
+		 // Need to fixup file:/ to be file:/// for gstreamer
+		 if ("file".equals(uri.getScheme()) && uri.getHost() == null) {
+			 final String path = uri.getRawPath();
+			 uriString = "file://" + path;
+		 }
+		return uriString;
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Interfaces">
 	public static interface IErrorListener {
-		void handleError(final IMediaPlayer source, final IMediaRequest request, final ErrorType errorType, final int code, final String message);
+		void handleError(final MediaComponentNew source, final IMediaRequest request, final ErrorType errorType, final int code, final String message);
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Adapters">
 	public static abstract class ErrorListenerAdapter implements IErrorListener {
 		@Override
-		public void handleError(final IMediaPlayer source, final IMediaRequest request, ErrorType errorType, int code, String message) {
+		public void handleError(final MediaComponentNew source, final IMediaRequest request, ErrorType errorType, int code, String message) {
 		}
 	}
 	//</editor-fold>
@@ -1543,14 +710,34 @@ public class MediaComponentNew extends SWTMediaComponent {
 		try {
 			lock.lock();
 			try {
-				if (currentVideoSink == null || !currentVideoSink.hasProperty("last-buffer"))
+				if (currentVideoSink == null)
 					return null;
 
-				buffer = currentVideoSink.get("last-buffer", GTypeConverters.BUFFER);
+				final Pointer ptr = currentVideoSink.getPointer("last-buffer");
+				if (ptr == null)
+					return null;
+				buffer = MiniObject.objectFor(ptr, Buffer.class, false);
 				if (buffer == null)
 					return null;
 
-				return swtImageDataSnapshot(buffer);
+				final Caps caps = buffer.getCaps();
+				final Structure struct = caps.getStructure(0);
+				final int width = struct.getInteger("width");
+				final int height = struct.getInteger("height");
+				if (width < 1 || height < 1)
+					return null;
+
+				//Convert to RGB using the provided direct buffer
+				final IntBuffer rgb = convertToRGB(buffer.getByteBuffer(), width, height, struct.getName(), struct.hasField("format") ? struct.getFourccString("format") : null);
+				if (rgb == null)
+					return null;
+
+				int[] pixels = new int[rgb.remaining()];
+				ImageData imageData = new ImageData(width, height, 24, new PaletteData(0x00FF0000, 0x0000FF00, 0x000000FF));
+				rgb.get(pixels, 0, rgb.remaining());
+				imageData.setPixels(0, 0, pixels.length, pixels, 0);
+
+				return imageData;
 			} finally {
 				lock.unlock();
 			}
@@ -1562,43 +749,38 @@ public class MediaComponentNew extends SWTMediaComponent {
 		}
 	}
 
-	public ImageData swtImageDataSnapshot(Buffer buffer) {
-		try {
-			//Convert to RGB using the provided direct buffer
-			final Colorspace2.Frame frame = Colorspace2.createRGBFrame(buffer);
-			if (frame == null)
-				return null;
-
-			final IntBuffer rgb = frame.getBuffer();
-			if (rgb == null)
-				return null;
-
-			int[] pixels = new int[rgb.remaining()];
-			ImageData imageData = new ImageData(frame.getWidth(), frame.getHeight(), 24, new PaletteData(0x00FF0000, 0x0000FF00, 0x000000FF));
-			rgb.get(pixels, 0, rgb.remaining());
-			imageData.setPixels(0, 0, pixels.length, pixels, 0);
-
-			return imageData;
-		} catch(Throwable t) {
-			return null;
-		} finally {
-		}
-	}
-
-	@Override
 	public BufferedImage snapshot() {
 		Buffer buffer = null;
 		try {
 			lock.lock();
 			try {
-				if (currentVideoSink == null || !currentVideoSink.hasProperty("last-buffer"))
+				if (currentVideoSink == null)
 					return null;
 
-				buffer = currentVideoSink.get("last-buffer", GTypeConverters.BUFFER);
+				final Pointer ptr = currentVideoSink.getPointer("last-buffer");
+				if (ptr == null)
+					return null;
+				buffer = MiniObject.objectFor(ptr, Buffer.class, false);
 				if (buffer == null)
 					return null;
 
-				return Colorspace2.createBufferedImage(buffer);
+				final Caps caps = buffer.getCaps();
+				final Structure struct = caps.getStructure(0);
+				final int width = struct.getInteger("width");
+				final int height = struct.getInteger("height");
+				if (width < 1 || height < 1)
+					return null;
+
+				//Convert to RGB using the provided direct buffer
+				final IntBuffer rgb = convertToRGB(buffer.getByteBuffer(), width, height, struct.getName(), struct.hasField("format") ? struct.getFourccString("format") : null);
+				if (rgb == null)
+					return null;
+
+				final BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+				img.setAccelerationPriority(0.001f);
+				rgb.get(((DataBufferInt)img.getRaster().getDataBuffer()).getData(), 0, rgb.remaining());
+
+				return img;
 			} finally {
 				lock.unlock();
 			}
@@ -1615,36 +797,25 @@ public class MediaComponentNew extends SWTMediaComponent {
 	public boolean expose() {
 		if (isDisposed())
 			return false;
-		if (mediaType == MediaType.Image)
-			return true;
-
 		State state;
-		lock.lock();
-		try {
-			if (xoverlay != null && pipeline != null && ((state = currentState()) == State.Playing || state == State.Paused)) {
-				xoverlay.expose();
-				return true;
-			}
-			return false;
-		} finally {
-			lock.unlock();
+		if (xoverlay != null && pipeline != null && ((state = pipeline.getState(0)) == State.PLAYING ||state == State.PAUSED)) {
+			xoverlay.expose();
+			return true;
 		}
+		return false;
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Volume">
-	@Override
 	public boolean mute() {
 		lock.lock();
 		try {
-			if (pipeline == null)
+			if (pipeline == null || currentAudioVolumeElement == null)
 				return false;
 
-			boolean shouldMute = !isMuted();
-			pipeline.set("mute", (muted = shouldMute));
-			if (!shouldMute)
-				adjustVolume(volume);
-			if (shouldMute)
+			boolean muted = !isMuted();
+			currentAudioVolumeElement.set("mute", muted);
+			if (muted)
 				fireAudioMuted();
 			else
 				fireAudioUnmuted();
@@ -1654,16 +825,15 @@ public class MediaComponentNew extends SWTMediaComponent {
 		return true;
 	}
 
-	@Override
 	public boolean adjustVolume(int percent) {
 		lock.lock();
 		try {
-			if (pipeline == null)
+			if (pipeline == null || currentAudioVolumeElement == null)
 				return false;
 
 			int oldVolume = getVolume();
 			int newVolume = Math.max(0, Math.min(100, percent));
-			pipeline.set("volume", (double)(volume = newVolume) / 100.0D);
+			currentAudioVolumeElement.set("volume", (double)newVolume / 100.0D);
 			if (oldVolume != newVolume)
 				fireAudioVolumeChanged(newVolume);
 		} finally {
@@ -1674,26 +844,27 @@ public class MediaComponentNew extends SWTMediaComponent {
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Seek">
-	@Override
 	public boolean seekToBeginning() {
 		lock.lock();
 		try {
-			if (isLiveSource())
-				return true;
-			if (!seek(currentRate, 0L)) {
-				return (changeState(State.Ready, new Runnable() {
-							@Override
-							public void run() {
-								onPositionUpdate();
-								changeState(State.Playing);
-							}
-						}
-					)
-					!=
-					StateChangeReturn.Failure
-				);
-			}
-			return true;
+			if (pipeline == null)
+				return false;
+
+			State state = pipeline.getState(0L);
+
+			if (currentLiveSource && state != State.PLAYING)
+				return pipeline.setState(State.PLAYING) == StateChangeReturn.SUCCESS;
+
+			final double rate = currentRate;
+			final boolean forwards = (rate >= 0.0);
+			final long positionNanoSeconds = 0L;
+			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
+			final long stop = (forwards ? -1 : 0);
+
+			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop);
+			pipeline.setState(State.PLAYING);
+
+			return success;
 		} finally {
 			lock.unlock();
 		}
@@ -1702,75 +873,68 @@ public class MediaComponentNew extends SWTMediaComponent {
 	public boolean seekToBeginningAndPause() {
 		lock.lock();
 		try {
-			if (isLiveSource())
-				return pause();
-			return (changeState(State.Ready, new Runnable() {
-						@Override
-						public void run() {
-							onPositionUpdate();
-							changeState(State.Paused);
-						}
-					}
-				)
-				!=
-				StateChangeReturn.Failure
-			);
+			if (pipeline == null)
+				return false;
+
+			State state = pipeline.getState(0L);
+
+			if (currentLiveSource && state != State.PLAYING)
+				return pipeline.setState(State.PLAYING) == StateChangeReturn.SUCCESS;
+
+			final double rate = currentRate;
+			final boolean forwards = (rate >= 0.0);
+			final long positionNanoSeconds = 0L;
+			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
+			final long stop = (forwards ? -1 : 0);
+
+			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop);
+			pipeline.setState(State.PAUSED);
+
+			return success;
 		} finally {
 			lock.unlock();
 		}
 	}
 
-	@Override
 	public boolean adjustPlaybackRate(final double rate) {
-		return false;
-//		//TODO: Figure out why playing backwards (rate is negative) isn't working
-//
-//		if (rate < 0.0f)
-//			return false;
-//
-//		if (rate == 0.0f)
-//			return pause();
-//
-//		lock.lock();
-//		try {
-//			if (isLiveSource())
-//				return false;
-//
-//			final Segment segment = pipeline.querySegment();
-//			if (segment != null && rate == segment.getRate())
-//				return true;
-//
-//			State state = currentState();
-//
-//			switch(state) {
-//				case PLAYING:
-//					changeState(State.PAUSED, new Runnable() {
-//						@Override
-//						public void run() {
-//							adjustPlaybackRate(rate);
-//						}
-//					});
-//					return true;
-//				case PAUSED:
-//					break;
-//				default:
-//					return false;
-//			}
-//
-//			final boolean forwards = (rate >= 0.0);
-//			final long positionNanoSeconds = pipeline.queryPosition(Format.TIME);
-//			//final long stop = (forwards ? positionNanoSeconds + SEEK_STOP_DURATION : Math.max(0, positionNanoSeconds - SEEK_STOP_DURATION));
-//			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
-//			final long stop = (forwards ? -1 : 0);
-//
-//			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop) && changeState(State.PLAYING) != StateChangeReturn.FAILURE;
-//			if (success)
-//				currentRate = rate;
-//
-//			return success;
-//		} finally {
-//			lock.unlock();
-//		}
+		//TODO: Figure out why playing backwards (rate is negative) isn't working
+		if (rate < 0.0f)
+			return false;
+		
+		if (rate == 0.0f)
+			return pause();
+
+		lock.lock();
+		try {
+			if (pipeline == null || currentLiveSource)
+				return false;
+
+			State state;
+			if ((state = pipeline.getState(0L)) == State.NULL)
+				return false;
+
+			if (state == State.PLAYING) {
+				pipeline.setState(State.PAUSED);
+				if ((state = pipeline.getState(2000L, TimeUnit.MILLISECONDS)) != State.PAUSED)
+					return false;
+			}
+
+			final boolean forwards = (rate >= 0.0);
+			final long positionNanoSeconds = pipeline.queryPosition(Format.TIME);
+			//final long stop = (forwards ? positionNanoSeconds + SEEK_STOP_DURATION : Math.max(0, positionNanoSeconds - SEEK_STOP_DURATION));
+			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
+			final long stop = (forwards ? -1 : 0);
+
+			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop);
+			pipeline.setState(State.PLAYING);
+
+			if (success)
+				currentRate = rate;
+			
+			return success;
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	public boolean seek(final long positionNanoSeconds) {
@@ -1787,496 +951,524 @@ public class MediaComponentNew extends SWTMediaComponent {
 
 		lock.lock();
 		try {
-			if (pipeline == null)
+			if (pipeline == null || currentLiveSource)
 				return false;
 
-			if (isLiveSource())
+			if (pipeline.getState(0L) == State.NULL)
 				return false;
-
-			State state = currentState();
-
-			switch(state) {
-				case Playing:
-				case Paused:
-					break;
-				default:
-					return false;
-			}
 
 			final boolean forwards = (rate >= 0.0);
 			final long begin = (forwards ? positionNanoSeconds : positionNanoSeconds);
 			final long stop = (forwards ? -1 : 0);
 
-			final boolean success = pipeline.seek(rate, Format.Time, SeekFlags.toNative(SeekFlags.Flush, SeekFlags.Segment), SeekType.Set, begin, SeekType.Set, stop);
-			changeState(State.Playing);
+			final boolean success = pipeline.seek(rate, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, begin, SeekType.SET, stop);
+			pipeline.setState(State.PLAYING);
 
-			if (success) {
+			if (success)
 				currentRate = rate;
-				onPositionUpdate();
-			}
 
 			return success;
 		} finally {
 			lock.unlock();
 		}
 	}
+
+	private void seekFinished() {
+		isSeeking.set(false);
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Step">
-	@Override
 	public boolean stepForward() {
 		lock.lock();
 		try {
 			if (pipeline == null)
 				return false;
-			final State state = currentState();
-			if (state != State.Paused) {
-				changeState(pipeline, State.Paused, new Runnable() {
-					@Override
-					public void run() {
-						StepEvent evt = new StepEvent(Format.Buffers, 1L, 1.0D, true, false);
-						pipeline.sendEvent(evt);
-						evt.dispose();
-					}
-				});
-				return true;
+
+			State state;
+			if ((state = pipeline.getState(0L)) == State.NULL)
+				return false;
+
+			if (state != State.PAUSED) {
+				if (state == State.PLAYING) {
+					pause();
+				} else {
+					seekToBeginningAndPause();
+				}
+				if (pipeline.getState(2000L, TimeUnit.MILLISECONDS) != State.PAUSED)
+					return false;
 			}
-			StepEvent evt = new StepEvent(Format.Buffers, 1L, 1.0D, true, false);
-			boolean ret = pipeline.sendEvent(evt);
-			evt.dispose();
-			return ret;
+
+			return pipeline.sendEvent(new StepEvent(Format.BUFFERS, 1L, 1.0D, true, false));
 		} finally {
 			lock.unlock();
 		}
 	}
 
-	@Override
 	public boolean stepBackward() {
 		return false;
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Pause">
-	@Override
 	public boolean pause() {
 		lock.lock();
 		try {
-			if (currentState() == State.Paused)
+			if (pipeline == null)
+				return false;
+			State state;
+			if ((state = pipeline.getState(0L)) == State.PAUSED || state == State.NULL || state == State.READY)
 				return true;
-			return changeState(State.Paused) != StateChangeReturn.Failure;
+			pipeline.setState(State.PAUSED);
 		} finally {
 			lock.unlock();
 		}
+		return true;
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Continue">
-	@Override
 	public boolean unpause() {
 		lock.lock();
 		try {
-			return (
-				changeState(State.Playing, 2000L,
-					new Runnable() {
-						@Override
-						public void run() {
-							adjustPlaybackRate(currentRate);
-						}
-					}
-				)
-				!=
-				StateChangeReturn.Failure
-			);
+			if (pipeline == null)
+				return false;
+
+			State state;
+			if ((state = pipeline.getState(0L)) == State.PLAYING)
+				return true;
+			if (state != State.PAUSED && !currentLiveSource)
+				return seekToBeginning();
+
+			pipeline.setState(State.PLAYING);
+			fireMediaEventContinued();
 		} finally {
 			lock.unlock();
 		}
+		return true;
 	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Stop">
-	@Override
 	public boolean stop() {
 		lock.lock();
 		try {
 			if (pipeline == null)
 				return true;
-			pipeline.changeState(State.Null);
-			pipeline.dispose();
-			pipeline = null;
-			singleImage = null;
-			asyncRedraw();
-			return true;
+
+			State state;
+			if ((state = pipeline.getState(0L)) == State.NULL || state == State.READY)
+				return true;
+
+			pipeline.setState(State.READY);
 		} finally {
 			lock.unlock();
 		}
+		this.redraw();
+		return true;
+	}
+	//</editor-fold>
+
+	//<editor-fold defaultstate="collapsed" desc="Play">
+	public boolean playBlackBurst() {
+		return playBlackBurst(StringUtil.empty);
+	}
+
+	public boolean playBlackBurst(String title) {
+		return playPattern(title, VideoTestSrcPattern.BLACK);
+	}
+
+	public boolean playTestSignal() {
+		return playTestSignal(StringUtil.empty);
+	}
+
+	public boolean playTestSignal(String title) {
+		return playPattern(title, VideoTestSrcPattern.SMPTE);
 	}
 	//</editor-fold>
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="The Meat">
-	//<editor-fold defaultstate="collapsed" desc="Cleanup">
-	protected void resetPipeline(final IPipeline newPipeline) {
-		if (newPipeline != null) {
-			display.asyncExec(new Runnable() {
+	public boolean playPattern(final String title, final VideoTestSrcPattern pattern) {
+		lock.lock();
+		try {
+			if (pipeline != null)
+				pipeline.setState(State.NULL);
+
+			final IMediaRequest newRequest = new MediaRequest(
+				MediaRequestType.TestVideo,
+				!StringUtil.isNullOrEmpty(title) ? title : pattern.name(),
+				false,
+				true, 
+				IMediaRequest.REPEAT_NONE,
+				15.0f,
+				Scheme.Local,
+				new URI("local", "pattern", "/", pattern.name())
+			);
+
+			//Reset these values
+			hasVideo = false;
+			hasAudio = false;
+			fullVideoWidth = 0;
+			fullVideoHeight = 0;
+			numberOfRepeats = 0;
+			actualFPS = 0.0f;
+			currentVideoSink = null;
+			currentAudioSink = null;
+			currentAudioVolumeElement = null;
+			maintainAspectRatio = true;
+			mediaType = MediaType.Video;
+
+			//Save these values
+			currentLiveSource = false;
+			currentRepeatCount = 0;
+			currentRate = 1.0D;
+			mediaRequest = newRequest;
+
+			fireMediaEventPlayRequested(newRequest);
+
+			final float checked_fps = (newRequest.getFPS() >= IMediaRequest.MINIMUM_FPS ? newRequest.getFPS() : IMediaRequest.DEFAULT_FPS);
+			final Pipeline newPipeline = new Pipeline("pipeline");
+			final Element videoTestSrc = ElementFactory.make("videotestsrc", "videoTestSrc");
+			final Element videoQueue = ElementFactory.make("queue2", "videoQueue");
+			final Element videoRate = ElementFactory.make("videorate", "videoRate");
+			final Element videoColorspace = ElementFactory.make("ffmpegcolorspace", "videoColorspace");
+			final Element videoCapsFilter = ElementFactory.make("capsfilter", "videoCapsFilter");
+			final Element videoScale = ElementFactory.make("videoscale", "videoScale");
+			final Element videoSink = createVideoSink(videoElement);
+
+			videoRate.set("silent", true);
+			videoCapsFilter.setCaps(Caps.fromString(createColorspaceFilter(this, checked_fps))); //framerate=25/1 means 25 FPS
+
+			videoTestSrc.set("pattern", (long)pattern.intValue());
+
+			newPipeline.addMany(videoTestSrc, videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
+			Element.linkMany(videoTestSrc, videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
+			
+			//<editor-fold defaultstate="collapsed" desc="Signals">
+			//<editor-fold defaultstate="collapsed" desc="Bus">
+			final Bus bus = newPipeline.getBus();
+			bus.connect(new Bus.STATE_CHANGED() {
 				@Override
-				public void run() {
-					do {
-						newPipeline.changeState(State.Null);
-					} while(newPipeline.requestState() != State.Null);
-					//cleanup(newPipeline);
-					newPipeline.dispose();
-					//while(newPipeline.refCount() >= 1)
-					//	newPipeline.unref();
-					pipeline = null;
-					asyncRedraw();
+				public void stateChanged(GstObject source, State oldState, State newState, State pendingState) {
+					if (source != newPipeline)
+						return;
+
+					if (newState == State.NULL && pendingState == State.NULL) {
+						disposeAudioBin(newPipeline);
+						disposeVideoBin(newPipeline);
+						newPipeline.dispose();
+						display.asyncExec(redrawRunnable);
+					}
+
+					switch (newState) {
+						case PLAYING:
+							if (currentState == State.NULL || currentState == State.READY || currentState == State.PAUSED) {
+								fireMediaEventPlayed();
+								currentState = State.PLAYING;
+							}
+							break;
+						case PAUSED:
+							if (currentState == State.PLAYING || currentState == State.READY) {
+								currentState = State.PAUSED;
+								fireMediaEventPaused();
+							}
+							break;
+						case NULL:
+						case READY:
+							if (currentState == State.PLAYING || currentState == State.PAUSED) {
+								currentState = State.READY;
+								fireMediaEventStopped();
+							}
+							break;
+					}
 				}
 			});
+			bus.connect(new Bus.ERROR() {
+				@Override
+				public void errorMessage(GstObject source, int code, String message) {
+					//System.out.println("Error: code=" + code + " message=" + message);
+					fireHandleError(mediaRequest, ErrorType.fromNativeValue(code), code, message);
+				}
+			});
+			bus.connect(new Bus.SEGMENT_DONE() {
+				@Override
+				public void segmentDone(GstObject source, Format format, long position) {
+					numberOfRepeats = 0;
+					pipeline.setState(State.READY);
+					display.asyncExec(redrawRunnable);
+				}
+			});
+			bus.connect(new Bus.EOS() {
+				@Override
+				public void endOfStream(GstObject source) {
+					numberOfRepeats = 0;
+					pipeline.setState(State.READY);
+					display.asyncExec(redrawRunnable);
+				}
+			});
+			bus.setSyncHandler(new BusSyncHandler() {
+				@Override
+				public BusSyncReply syncMessage(Message msg) {
+					Structure s = msg.getStructure();
+					if (s == null || !s.hasName("prepare-xwindow-id"))
+						return BusSyncReply.PASS;
+					xoverlay.setWindowID(MediaComponentNew.this.nativeHandle);
+					return BusSyncReply.DROP;
+				}
+			});
+			//</editor-fold>
+			//</editor-fold>
+
+			pipeline = newPipeline;
+			currentVideoSink = videoSink;
+			xoverlay = SWTOverlay.wrap(videoSink);
+			emitPositionUpdates = false;
+
+			//Start playing
+			pipeline.setState(State.PLAYING);
+			return true;
+		} catch(Throwable t) {
+			t.printStackTrace();
+			return false;
+		} finally {
+			lock.unlock();
 		}
 	}
+	
+	public boolean play(final IMediaRequest request) {
+		if (request == null)
+			return false;
 
-	protected void cleanup(final IPipeline newPipeline) {
-		//Remove any pending actions for this pipeline
-		clearAllStateActions(newPipeline);
-
-		//Clean out audio and video bins
-		disposeAudioBin(newPipeline);
-		disposeVideoBin(newPipeline);
-
-		//Clean out any videotestsrc that may be in the pipeline
-		final IElement videoTestSrc = newPipeline.elementFromName("videoTestSrc");
-		if (videoTestSrc != null) {
-			newPipeline.remove(videoTestSrc);
-			videoTestSrc.dispose();
-		}
-	}
-
-	@SuppressWarnings("empty-statement")
-	protected synchronized boolean disposeAudioBin(final IPipeline newPipeline) {
-		final IBin bin = newPipeline.binFromName("audioBin");
-
-		if (bin == null)
-			return true;
-
-		do {
-			bin.changeState(State.Null);
-		} while(bin.requestState() != State.Null);
-
-		bin.visitPads(new IElement.IPadVisitor() {
-			@Override
-			public boolean visit(IElement src, Pad pad) {
-				bin.removePad(pad);
-				return true;
-			}
-		});
-
-		bin.visitElements(new IBin.IElementVisitor() {
-			@Override
-			public boolean visit(IBin src, IElement element) {
-				Bin.unlink(bin, element);
-				bin.remove(element);
-				return true;
-			}
-		});
-
-		newPipeline.remove(bin);
-		bin.dispose();
-
-		return true;
-	}
-
-	@SuppressWarnings("empty-statement")
-	protected synchronized boolean disposeVideoBin(final IPipeline newPipeline) {
-		final IBin bin = newPipeline.binFromName("videoBin");
-
-		if (bin == null)
-			return true;
-
-		do {
-			bin.changeState(State.Null);
-		} while(bin.requestState() != State.Null);
-
-		bin.visitPads(new IElement.IPadVisitor() {
-			@Override
-			public boolean visit(IElement src, Pad pad) {
-				bin.removePad(pad);
-				return true;
-			}
-		});
-
-		bin.visitElements(new IBin.IElementVisitor() {
-			@Override
-			public boolean visit(IBin src, IElement element) {
-				Bin.unlink(bin, element);
-				bin.remove(element);
-				return true;
-			}
-		});
-
-		newPipeline.remove(bin);
-		bin.dispose();
-
-		return true;
-	}
-	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="Create">
-	protected synchronized IPipeline createPipeline(final IMediaRequest newRequest) {
-		//gst-launch uridecodebin use-buffering=false name=dec location=http://.../video.avi
-		//    dec. ! [ queue ! audioconvert ! audioresample ! autoaudiosink ]
-		//    dec. ! [ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
-
-		final IPipeline newPipeline = Pipeline.make("pipeline");
-
-		final IBin uridecodebin = Bin.make("uridecodebin", "uridecodebin");
-
-		uridecodebin.set("use-buffering", false);
-		uridecodebin.set("download", false);
-		uridecodebin.set("buffer-duration", TimeUnit.MILLISECONDS.toNanos(500L));
-		uridecodebin.set("uri", Utils.toGstURI(newRequest.getURI()));
-
-		newPipeline.add(uridecodebin);
-
-		//<editor-fold defaultstate="collapsed" desc="UriDecodeBin Signals">
-		uridecodebin.connect(new IPadAdded() {
-			public void padAdded(Pointer pElement, Pointer pPad) {
-				Pad pad = Pad.from(pPad);
-				onPadAdded(newRequest, newPipeline, uridecodebin, pad);
-				pad.dispose();
-			}
-		});
-		uridecodebin.connect(new IElementAdded() {
-			public void elementAdded(Pointer pBin, Pointer pElement) {
-				//<editor-fold defaultstate="collapsed" desc="Validate arguments">
-				if (pElement == null)
-					return;
-
-				final IElement element = Element.from(pElement);
-				final String factoryName = element.getFactoryName();
-
-				if (StringUtil.isNullOrEmpty(factoryName)) {
-					element.dispose();
-					return;
-				}
-				//</editor-fold>
-
-				//<editor-fold defaultstate="collapsed" desc="Connect to decodebin">
-				if (factoryName.startsWith("decodebin")) {
-					element.connect(new IElementAdded() {
-						public void elementAdded(Pointer pBin, Pointer pElement) {
-							System.out.println("decodebin::elementAdded: " + newPipeline.refCount());
-							IBin decodebin = Bin.from(pBin);
-							IElement element = Element.from(pElement);
-							onDecodeBinElementAdded(newPipeline, uridecodebin, decodebin, element);
-							element.dispose();
-							decodebin.dispose();
-							System.out.println("decodebin::elementAdded: " + newPipeline.refCount());
-						}
-					});
-				}
-				//</editor-fold>
-
-				onUriDecodeBinElementAdded(newPipeline, uridecodebin, element);
-				element.dispose();
-			}
-		});
-		//</editor-fold>
-
-		//<editor-fold defaultstate="collapsed" desc="Bus Signals">
-		final IBus bus = newPipeline.getBus();
-		bus.connect(new IStateChanged() {
-			@Override
-			public void stateChanged(Pointer pSrc, State oldState, State newState, State pendingState) {
-				if (pSrc == null || !newPipeline.equals(pSrc))
-					return;
-				onStateChanged(newPipeline, uridecodebin, oldState, newState, pendingState);
-			}
-		});
-		bus.connect(new IError() {
-			@Override
-			public void error(Pointer pSrc, int code, String message) {
-				onError(newRequest, newPipeline, code, message);
-			}
-		});
-		bus.connect(new ISegmentDone() {
-			@Override
-			public void segmentDone(Pointer pSrc, Format format, long position) {
-				onSegmentDone(newPipeline);
-			}
-		});
-		bus.connect(new IEndOfStream() {
-			@Override
-			public void endOfStream(Pointer pSrc) {
-				onEOS(newPipeline);
-			}
-		});
-		bus.connect(new IBuffering() {
-			@Override
-			public void buffering(Pointer pSrc, int percent) {
-				onBuffering(newPipeline, percent);
-			}
-		});
-		bus.syncHandler(new IBusSyncHandler() {
-			@Override
-			public BusSyncReply handle(Bus bus, Message msg, Pointer src, Pointer data) {
-				return onBusSyncHandler(msg);
-			}
-		});
-		//</editor-fold>
-
-		return newPipeline;
-	}
-
-	protected IElement createImageSink(final MediaType newMediaType, final IMediaRequest newRequest, final IPipeline newPipeline, final String suggestedVideoSink) {
-		final Pad sinkPad;
-		final IElement videoSink = Element.make("fakesink", "videoSink");
-		videoSink.set("signal-handoffs", true);
+		final URI uri = request.getURI();
+		if (uri == null)
+			return false;
 		
-		(sinkPad = videoSink.staticPad("sink")).connect(new INotifyCaps() {
-			@Override
-			public boolean notifyCaps(Pointer pPad, Pointer pUnused, Pointer pDynamic) {
-				Pad pad = Pad.from(pPad);
-				boolean ret = onNotifyCaps(newPipeline, pad);
-				pad.dispose();
-				return ret;
-			}
-		});
-		videoSink.connect(new IHandoff() {
-			public void handoff(Pointer pElement, Pointer pBuffer, Pointer pPad) {
-				Buffer buffer = Buffer.from(pBuffer);
-				onImageSinkHandoff(newPipeline, buffer);
-				buffer.dispose();
-			}
-		});
+		lock.lock();
+		try {
+			if (pipeline != null)
+				pipeline.setState(State.NULL);
 
-		sinkPad.dispose();
-		return videoSink;
+			//Reset these values
+			hasVideo = false;
+			hasAudio = false;
+			fullVideoWidth = 0;
+			fullVideoHeight = 0;
+			numberOfRepeats = 0;
+			actualFPS = 0.0f;
+			currentVideoSink = null;
+			currentAudioSink = null;
+			currentAudioVolumeElement = null;
+			mediaType = MediaType.Unknown;
+
+			//Save these values
+			mediaRequest = request;
+			currentLiveSource = request.isLiveSource();
+			currentRepeatCount = request.getRepeatCount();
+			maintainAspectRatio = request.isAspectRatioMaintained();
+
+			currentRate = 1.0D;
+			emitPositionUpdates = true;
+			
+			fireMediaEventPlayRequested(request);
+
+			pipeline = createPipeline(request);
+
+			//Start playing
+			//Attempts to ensure that we're using segment seeks (which signals SEGMENT_DONE) to look for repeats instead of EOS
+			pipeline.seek(1.0D, Format.TIME, SeekFlags.FLUSH | SeekFlags.SEGMENT, SeekType.SET, 0L, SeekType.SET, -1L);
+			pipeline.setState(State.PLAYING);
+			return true;
+		} finally {
+			lock.unlock();
+		}
 	}
 
-	protected IElement createVideoSink(final MediaType newMediaType, final IMediaRequest newRequest, final IPipeline newPipeline, final String suggestedVideoSink) {
-		final Pad sinkPad;
-		final IElement videoSink = Element.make(suggestedVideoSink, "videoSink");
+	protected Element createVideoSink(String suggestedVideoSink) {
+		final Element videoSink = ElementFactory.make(suggestedVideoSink, "videoSink");
 		videoSink.set("show-preroll-frame", true);
+		videoSink.getStaticPad("sink").connect("notify::caps", Object.class, null, new GstCallback() {
+			@SuppressWarnings("unused")
+			public boolean callback(Pad pad, Pointer unused, Pointer dynamic) {
+				final Caps caps = pad.getNegotiatedCaps();
+				if (caps == null || caps.isEmpty())
+					return false;
+				final Structure struct = caps.getStructure(0);
+				if (struct == null)
+					return false;
 
-		(sinkPad = videoSink.staticPad("sink")).connect(new INotifyCaps() {
-			@Override
-			public boolean notifyCaps(Pointer pPad, Pointer pUnused, Pointer pDynamic) {
-				Pad pad = Pad.from(pPad);
-				boolean ret = onNotifyCaps(newPipeline, pad);
-				pad.dispose();
-				return ret;
+				if (struct.hasField("framerate")) {
+					Fraction framerate = struct.getFraction("framerate");
+					actualFPS = (float)framerate.getNumerator() / (float)framerate.getDenominator();
+				}
+
+				if (struct.hasIntField("width") && struct.hasIntField("height")) {
+					final int width = struct.getInteger("width");
+					final int height = struct.getInteger("height");
+					fullVideoWidth = width;
+					fullVideoHeight = height;
+					fireVideoDimensionsNegotiated(width, height);
+				}
+				return true;
 			}
 		});
-
-		sinkPad.dispose();
 		return videoSink;
 	}
 
-	protected IElement createAudioSink(final MediaType newMediaType, final IMediaRequest newRequest, final IPipeline newPipeline, final String suggestedAudioSink) {
-		return Element.make(suggestedAudioSink, "audioSink");
+	protected Element createAudioSink(String suggestedAudioSink) {
+		return ElementFactory.make(suggestedAudioSink, "audioSink");
 	}
 
-	protected Pad createAudioBin(final MediaType newMediaType, final IMediaRequest newRequest, final IPipeline newPipeline, final IBin audioBin, final IBin uridecodebin, final Pad pad) {
+	protected Pad createAudioBin(final IMediaRequest newRequest, final Pipeline newPipeline, final Bin audioBin, final Bin uridecodebin, final Pad pad) {
 
 		//[ queue2 ! volume ! audioconvert ! audioresample ! scaletempo ! audioconvert ! audioresample ! autoaudiosink ]
 
-		final IElement audioQueue = Element.make("queue2", "audioQueue");
-		final IElement audioVolume = Element.make("volume", "audioVolume");
-		final IElement audioConvert = Element.make("audioconvert", "audioConvert");
-		final IElement audioResample = Element.make("audioresample", "audioResample");
-		final IElement audioScaleTempo = Element.make("scaletempo", "audioScaleTempo");
-		final IElement audioConvertAfterScaleTempo = Element.make("audioconvert", "audioConvertAfterScaleTempo");
-		final IElement audioResampleAfterScaleTempo = Element.make("audioresample", "audioResampleAfterScaleTempo");
-		final IElement audioSink = createAudioSink(newMediaType, newRequest, newPipeline, audioElement);
+		final Element audioQueue = ElementFactory.make("queue2", "audioQueue");
+		final Element audioVolume = ElementFactory.make("volume", "audioVolume");
+		final Element audioConvert = ElementFactory.make("audioconvert", "audioConvert");
+		final Element audioResample = ElementFactory.make("audioresample", "audioResample");
+		final Element audioScaleTempo = ElementFactory.make("scaletempo", "audioScaleTempo");
+		final Element audioConvertAfterScaleTempo = ElementFactory.make("audioconvert", "audioConvertAfterScaleTempo");
+		final Element audioResampleAfterScaleTempo = ElementFactory.make("audioresample", "audioResampleAfterScaleTempo");
+		final Element audioSink = createAudioSink(audioElement);
 
-		audioBin.addAndLinkMany(audioQueue, audioVolume, audioConvert, audioResample, audioScaleTempo, audioConvertAfterScaleTempo, audioResampleAfterScaleTempo, audioSink);
+		audioBin.addMany(audioQueue, audioVolume, audioConvert, audioResample, audioScaleTempo, audioConvertAfterScaleTempo, audioResampleAfterScaleTempo, audioSink);
+		Element.linkMany(audioQueue, audioVolume, audioConvert, audioResample, audioScaleTempo, audioConvertAfterScaleTempo, audioResampleAfterScaleTempo, audioSink);
 
 		currentAudioSink = audioSink;
 		currentAudioVolumeElement = audioVolume;
 
-		//Set this to whatever was previously set
-		audioVolume.set("mute", muted);
-		audioVolume.set("volume", (double)volume / 100.0D);
-
 		//Element to connect uridecodebin src pad to.
-		return audioQueue.staticPad("sink");
+		return audioQueue.getStaticPad("sink");
 	}
 
-	protected Pad createVideoBin(final MediaType newMediaType, final IMediaRequest newRequest, final IPipeline newPipeline, final IBin videoBin, final IBin uridecodebin, final Pad pad) {
+	protected Pad createVideoBin(final IMediaRequest newRequest, final Pipeline newPipeline, final Bin videoBin, final Bin uridecodebin, final Pad pad) {
 
 		//[ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
 
 		final float checked_fps = (newRequest.getFPS() >= IMediaRequest.MINIMUM_FPS ? newRequest.getFPS() : IMediaRequest.DEFAULT_FPS);
 
-		final IElement videoQueue;
-		final IElement videoRate;
-		final IElement videoColorspace;
-		final IElement videoCapsFilter;
-		final IElement videoScale;
-		final IElement videoSink;
+		final Element videoQueue;
+		final Element videoRate;
+		final Element videoColorspace;
+		final Element videoCapsFilter;
+		final Element videoScale;
+		final Element videoSink;
 
-		if (newMediaType != MediaType.Image) {
-			if (!currentLiveSource) {
-				videoQueue = Element.make("queue2", "videoQueue");
-				videoRate = Element.make("videorate", "videoRate");
-				videoColorspace = Element.make("ffmpegcolorspace", "videoColorspace");
-				videoCapsFilter = Element.make("capsfilter", "videoCapsFilter");
-				videoScale = Element.make("videoscale", "videoScale");
-				videoSink = createVideoSink(newMediaType, newRequest, newPipeline, videoElement);
-
-				videoRate.set("silent", true);
-				videoCapsFilter.setCaps(Caps.from(Colorspace2.createKnownColorspaceFilter(checked_fps == IMediaRequest.DEFAULT_FPS || currentLiveSource, checked_fps))); //framerate=25/1 means 25 FPS
-
-				videoBin.addAndLinkMany(videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
-			} else {
-				videoQueue = Element.make("queue2", "videoQueue");
-				videoRate = null;
-				videoColorspace = Element.make("ffmpegcolorspace", "videoColorspace");
-				//videoCapsFilter = ElementFactory.make("capsfilter", "videoCapsFilter");
-				//videoScale = ElementFactory.make("videoscale", "videoScale");
-				videoSink = createVideoSink(newMediaType, newRequest, newPipeline, videoElement);
-
-				//videoCapsFilter.setCaps(Caps.fromString(createColorspaceFilter(this, checked_fps))); //framerate=25/1 means 25 FPS
-
-				videoBin.addAndLinkMany(videoQueue, videoColorspace, /*videoCapsFilter, videoScale,*/ videoSink);
-			}
-
-			currentVideoSink = videoSink;
-			try {
-				//If we're testing w/ a non XOverlay video sink (e.g. fakesink),
-				//then this will through an exception.
-				xoverlay = SWTOverlay.wrap(videoSink);
-			} catch(Throwable t) {
-				xoverlay = null;
-				asyncRedraw();
-			}
+		if (!currentLiveSource) {
+			videoQueue = ElementFactory.make("queue2", "videoQueue");
+			videoRate = ElementFactory.make("videorate", "videoRate");
+			videoColorspace = ElementFactory.make("ffmpegcolorspace", "videoColorspace");
+			videoCapsFilter = ElementFactory.make("capsfilter", "videoCapsFilter");
+			videoScale = ElementFactory.make("videoscale", "videoScale");
+			videoSink = createVideoSink(videoElement);
 			
-			//The paint listener is removed in the play()/playPattern() methods to ensure
-			//that it's also removed for audio-only playback. The only time to insert it is
-			//when we're drawing the single image ourselves.
+			videoRate.set("silent", true);
+			videoCapsFilter.setCaps(Caps.fromString(createColorspaceFilter(this, checked_fps))); //framerate=25/1 means 25 FPS
+			
+			videoBin.addMany(videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
+			Element.linkMany(/*teeVideo,*/ videoQueue, videoRate, videoCapsFilter, videoColorspace, videoScale, videoSink);
 		} else {
-			videoSink = createImageSink(newMediaType, newRequest, newPipeline, videoElement);
-			videoQueue = Element.make("queue2", "videoQueue");
-			videoColorspace = Element.make("ffmpegcolorspace", "videoColorspace");
-			videoCapsFilter = Element.make("capsfilter", "videoCapsFilter");
-			videoCapsFilter.setCaps(Caps.from("video/x-raw-rgb, bpp=32, depth=24"));
+			videoQueue = ElementFactory.make("queue2", "videoQueue");
+			videoRate = null;
+			videoColorspace = ElementFactory.make("ffmpegcolorspace", "videoColorspace");
+			//videoCapsFilter = ElementFactory.make("capsfilter", "videoCapsFilter");
+			//videoScale = ElementFactory.make("videoscale", "videoScale");
+			videoSink = createVideoSink(videoElement);
+			
+			//videoCapsFilter.setCaps(Caps.fromString(createColorspaceFilter(this, checked_fps))); //framerate=25/1 means 25 FPS
 
-			videoBin.addAndLinkMany(videoQueue, videoColorspace, videoCapsFilter, videoSink);
-
-			currentVideoSink = videoSink;
-			insertPaintListener();
+			videoBin.addMany(videoQueue, videoColorspace, /*videoCapsFilter, videoScale,*/ videoSink);
+			Element.linkMany(/*teeVideo,*/ videoQueue, videoColorspace, /*videoCapsFilter, videoScale,*/ videoSink);
 		}
 
-		return videoQueue.staticPad("sink");
-	}
-	//</editor-fold>
+		currentVideoSink = videoSink;
+		xoverlay = SWTOverlay.wrap(videoSink);
 
-	//<editor-fold defaultstate="collapsed" desc="Signals">
-	protected void onUriDecodeBinElementAdded(final IPipeline newPipeline, final IBin uridecodebin, final IElement element) {
+		return videoQueue.getStaticPad("sink");
+	}
+
+	protected boolean disposeAudioBin(final Pipeline newPipeline) {
+		final Element existingAudioBin = newPipeline.getElementByName("audioBin");
+
+		if (existingAudioBin == null)
+			return true;
+		
+		existingAudioBin.setState(State.NULL);
+		if (existingAudioBin.getState() == State.NULL) {
+			newPipeline.remove(existingAudioBin);
+			existingAudioBin.dispose();
+		}
+		
+		return true;
+	}
+
+	protected boolean disposeVideoBin(final Pipeline newPipeline) {
+		final Element existingVideoBin = newPipeline.getElementByName("videoBin");
+
+		if (existingVideoBin == null)
+			return true;
+
+		existingVideoBin.setState(State.NULL);
+		if (existingVideoBin.getState() == State.NULL) {
+			newPipeline.remove(existingVideoBin);
+			existingVideoBin.dispose();
+		}
+
+		return true;
+	}
+
+	protected void onPadAdded(final IMediaRequest newRequest, final Pipeline newPipeline, final Bin uridecodebin, final Pad pad) {
+		//only link once
+		if (pad.isLinked())
+			return;
+
+		//check media type
+		final Caps caps = pad.getCaps();
+		final Structure struct = caps.getStructure(0);
+		final String padCaps = struct.getName();
+
+		if (StringUtil.isNullOrEmpty(padCaps))
+			return;
+
+		if (padCaps.startsWith("audio/")) {
+			disposeAudioBin(newPipeline);
+
+			//Create audio bin
+			final Bin audioBin = new Bin("audioBin");
+			audioBin.addPad(new GhostPad("sink", createAudioBin(newRequest, newPipeline, audioBin, uridecodebin, pad)));
+			newPipeline.add(audioBin);
+			pad.link(audioBin.getStaticPad("sink"));
+
+			hasAudio = true;
+			if (mediaType == mediaType.Unknown)
+				mediaType = MediaType.Audio;
+
+			audioBin.setState(State.PLAYING);
+		} else if (padCaps.startsWith("video/")) {
+			disposeVideoBin(newPipeline);
+
+			//Create video bin
+			final Bin videoBin = new Bin("videoBin");
+			videoBin.addPad(new GhostPad("sink", createVideoBin(newRequest, newPipeline, videoBin, uridecodebin, pad)));
+			newPipeline.add(videoBin);
+			pad.link(videoBin.getStaticPad("sink"));
+
+			hasVideo = true;
+
+			if (mediaType == mediaType.Unknown)
+				mediaType = MediaType.Video;
+
+			videoBin.setState(State.PLAYING);
+		}
+	}
+
+	protected void onUriDecodeBinElementAdded(final Pipeline newPipeline, final Bin uridecodebin, final Element element) {
 		//<editor-fold defaultstate="collapsed" desc="Validate arguments">
 		//We only care to modify the element if we're using a live source
 		if (!currentLiveSource || element == null)
 			return;
-		final String factoryName = element.getFactoryName();
+		final String factoryName = element.getFactory().getName();
 		//</editor-fold>
 
 		if (factoryName.startsWith("souphttpsrc")) {
@@ -2290,529 +1482,182 @@ public class MediaComponentNew extends SWTMediaComponent {
 		}
 	}
 
-	protected void onDecodeBinElementAdded(final IPipeline newPipeline, final IBin uridecodebin, final IBin decodebin, final IElement element) {
+	protected void onDecodeBinElementAdded(final Pipeline newPipeline, final Bin uridecodebin, final Bin decodebin, final Element element) {
 		//<editor-fold defaultstate="collapsed" desc="Validate arguments">
+		//We only care to modify the multipartdemux if we're using a live stream
+		if (!currentLiveSource)
+			return;
 		//Determine if what we're looking at is a multipartdemux element
-		final String factoryName = element.getFactoryName();
+		final String factoryName = element.getFactory().getName();
 		if (!"multipartdemux".equalsIgnoreCase(factoryName))
 			return;
 		//</editor-fold>
 
-		hasMultipartDemux = true;
-
-		//Informs multipartdemux elements that it needs to emit the pad added signal as
-		//soon as it links the pads. Otherwise it could be some time before it happens.
-		//This was primarily added to instantly connect to motion jpeg digital cameras
-		//that have a low framerate (e.g. 1 or 2 FPS).
-		//It could be an issue with a "live source" that is emitting multiple streams
-		//via a multipart mux. There's really not much we can do about something like
-		//that in an automatic way -- that is, you'd have to remove this and instead
-		//use a custom pipeline to work w/ low framerate digital cameras.
-		if (element.hasProperty("single-stream"))
-			element.set("single-stream", true);
-	}
-	
-	protected void onPadAdded(final IMediaRequest newRequest, final IPipeline newPipeline, final IBin uridecodebin, final Pad pad) {
-		//only link once
-		if (pad.isLinked())
-			return;
-
-		//check media type
-		final Caps caps = pad.getCaps();
-		final Structure struct = caps.structureAt(0);
-		final String padCaps = struct.name();
-
-		if (StringUtil.isNullOrEmpty(padCaps)) {
-			struct.dispose();
-			caps.dispose();
-			return;
-		}
-
-		if (padCaps.startsWith("audio/")) {
-			disposeAudioBin(newPipeline);
-
-			hasAudio = true;
-			if (mediaType == MediaType.Unknown && mediaType != MediaType.Video)
-				mediaType = MediaType.Audio;
-
-			//Create audio bin
-			final IBin audioBin = Bin.make("audioBin");
-			final Pad audioPad = createAudioBin(mediaType, newRequest, newPipeline, audioBin, uridecodebin, pad);
-			final GhostPad audioGhostPad = GhostPad.from("audioGhostPadSink", audioPad);
-
-			audioBin.addPad(audioGhostPad);
-			newPipeline.add(audioBin);
-			pad.link(audioGhostPad);
-
-			audioBin.changeState(State.Playing);
-
-			audioGhostPad.dispose();
-			audioPad.dispose();
-			audioBin.dispose();
-
-		} else if (padCaps.startsWith("video/")) {
-			disposeVideoBin(newPipeline);
-
-			hasVideo = true;
-			if (mediaType == MediaType.Unknown || mediaType == MediaType.Audio)
-				mediaType = (!determineIfSingleImage(uridecodebin) ? MediaType.Video : MediaType.Image);
-
-			//Create video bin
-			final IBin videoBin = Bin.make("videoBin");
-			final Pad videoPad = createVideoBin(mediaType, newRequest, newPipeline, videoBin, uridecodebin, pad);
-			final GhostPad videoGhostPad = GhostPad.from("videoGhostPadSink", videoPad);
-
-			videoBin.addPad(videoGhostPad);
-			newPipeline.add(videoBin);
-			pad.link(videoGhostPad);
-
-			videoBin.changeState(State.Playing);
-
-			//videoPad.unref();
-			//videoGhostPad.unref();
-			
-			videoGhostPad.dispose();
-			videoPad.dispose();
-			videoBin.dispose();
-		}
-
-		struct.dispose();
-		caps.dispose();
-	}
-
-	protected void onImageSinkHandoff(final IPipeline newPipeline, final Buffer buffer) {
-		singleImage = swtImageDataSnapshot(buffer);
-		display.asyncExec(redrawRunnable);
-	}
-
-	protected boolean onNotifyCaps(final IPipeline newPipeline, final Pad pad) {
-		final Caps caps = pad.getNegotiatedCaps();
-
-		if (caps == null)
-			return false;
-
-		if (caps.isEmpty()) {
-			caps.dispose();
-			return false;
-		}
-
-		final Structure struct = caps.structureAt(0);
-		if (struct == null)
-			return false;
-
-		if (struct.fieldExists("framerate")) {
-			Fraction framerate = struct.fieldAsFraction("framerate");
-			actualFPS = (float)framerate.getNumerator() / (float)framerate.getDenominator();
-		}
-
-		if (struct.fieldExists("width") && struct.fieldExists("height")) {
-			final int width = struct.fieldAsInt("width");
-			final int height = struct.fieldAsInt("height");
-			videoWidth = width;
-			videoHeight = height;
-			fireVideoDimensionsNegotiated(width, height);
-		}
-
-		struct.dispose();
-		caps.dispose();
-
-		return true;
-	}
-	
-	@SuppressWarnings("empty-statement")
-	protected void onStateChanged(final IPipeline newPipeline, final IBin uridecodebin, final State oldState, final State newState, final State pendingState) {
-		//<editor-fold defaultstate="collapsed" desc="Fire state events">
-		switch (newState) {
-			case Playing:
-				if (currentState == State.Null || currentState == State.Ready || currentState == State.Paused) {
-					currentState = State.Playing;
-					fireMediaEventPlayed();
-				}
-				break;
-			case Paused:
-				if (currentState == State.Playing || currentState == State.Ready) {
-					currentState = State.Paused;
-					fireMediaEventPaused();
-				}
-				break;
-			case Null:
-			case Ready:
-				if (currentState == State.Playing || currentState == State.Paused) {
-					currentState = State.Ready;
-					fireMediaEventStopped();
-				}
-				break;
-		}
-		//</editor-fold>
-
-		//<editor-fold defaultstate="collapsed" desc="Run all actions for this state change">
-		Queue<Runnable> actions = actionsForState(newPipeline, newState);
-		if (actions != null && !actions.isEmpty()) {
-			Runnable r;
-			while((r = actions.poll()) != null) {
-				try {
-					r.run();
-				} catch(Throwable t) {
-					t.printStackTrace();
-				}
-			}
-		}
-		//</editor-fold>
-	}
-
-	protected void onBuffering(final IPipeline newPipeline, int percent) {
-		if (!currentLiveSource) {
-			if (percent < 100) {
-				changeState(newPipeline, State.Paused);
-			} else if (percent >= 100) {
-				changeState(newPipeline, State.Playing);
-			}
-		}
-	}
-
-	protected void onSegmentDone(final IPipeline newPipeline) {
-		onEOS(newPipeline);
-	}
-
-	protected void onEOS(final IPipeline newPipeline) {
-		if (mediaType != MediaType.Image && mediaRequest != null && (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount))) {
-			++numberOfRepeats;
-			display.asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					lock.lock();
-					try {
-						int repeatCount = numberOfRepeats;
-						play(mediaRequest);
-						numberOfRepeats = repeatCount;
-					} finally {
-						lock.unlock();
-					}
-				}
-			});
-			return;
-		}
-		numberOfRepeats = 0;
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				if (newPipeline != null) {
-					if (mediaType == MediaType.Image)
-						newPipeline.changeState(State.Paused);
-					else
-						newPipeline.changeState(State.Null);
-				}
-				if (!isDisposed())
-					redraw();
-			}
-		});
-	}
-
-	protected void onPositionUpdate() {
-		if (!emitPositionUpdates)
-			return;
-		if (lock.tryLock()) {
-			try {
-				if (pipeline != null) {
-					//if (!isSeekable())
-					//	return;
-
-					final long position = pipeline.queryPosition(TimeUnit.MILLISECONDS);
-					final long duration = Math.max(position, pipeline.queryDuration(TimeUnit.MILLISECONDS));
-					final int percent = (duration > 0 ? Math.max(0, Math.min(100, (int)(((double)position / (double)duration) * 100.0D))) : -1);
-					final boolean positionChanged = (position != lastPosition && position >= 0L);
-					final boolean last = (position <= 0L && lastPosition > 0L);
-
-					if (last && positionChanged && !currentLiveSource)
-						firePositionChanged(100, lastDuration, lastDuration);
-
-					lastPosition = position;
-					lastDuration = duration;
-					if (positionChanged && !currentLiveSource)
-						firePositionChanged(percent, position, duration);
-				} else {
-					lastPosition = 0L;
-				}
-			} finally {
-				lock.unlock();
-			}
-		}
-	}
-
-	protected void onError(final IMediaRequest newRequest, final IPipeline newPipeline, int code, String message) {
-		display.asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				changeState(State.Null);
-			}
-		});
-		fireHandleError(newRequest, ErrorType.fromNativeValue(code), code, message);
-	}
-
-	protected BusSyncReply onBusSyncHandler(final Message msg) {
-		Structure s = msg.getStructure();
-		if (s == null || !s. nameEquals("prepare-xwindow-id"))
-			return BusSyncReply.Pass;
-		xoverlay.setWindowID(nativeHandle);
-		return BusSyncReply.Drop;
-	}
-	//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="Play">
-	public boolean play(final IMediaRequest request) {
-		if (request == null)
-			return false;
-
-		final URI uri = request.getURI();
-		if (uri == null)
-			return false;
-
-		lock.lock();
 		try {
-			stop();
-
-			//Reset these values
-			hasVideo = false;
-			hasAudio = false;
-			hasMultipartDemux = false;
-			videoWidth = 0;
-			videoHeight = 0;
-			numberOfRepeats = 0;
-			actualFPS = 0.0f;
-			currentVideoSink = null;
-			currentAudioSink = null;
-			currentAudioVolumeElement = null;
-			mediaType = MediaType.Unknown;
-			clearPaintListener();
-
-			//Save these values
-			mediaRequest = request;
-			currentLiveSource = request.isLiveSource();
-			currentRepeatCount = request.getRepeatCount();
-			maintainAspectRatio = request.isAspectRatioMaintained();
-
-			currentRate = 1.0D;
-			emitPositionUpdates = true;
-
-			fireMediaEventPlayRequested(request);
-
-			final IPipeline newPipeline = Pipeline.make("playbin2", "pipeline");
-			final IBin videoBin = Bin.make("videoBin");
-			final IElement videoQueue = Element.make("queue2", "videoQueue");
-			final IElement videoSink = Element.make(videoElement, "videoSink");
-
-			//Clear all elements
-			videoBin.visitElements(new IBin.IElementVisitor() {
-				public boolean visit(IBin bin, IElement element) {
-					bin.unlinkAndRemoveMany(element);
-					return true;
-				}
-			});
-
-			if (!currentLiveSource) {
-				final float checked_fps = (request.getFPS() >= IMediaRequest.MINIMUM_FPS ? request.getFPS() : IMediaRequest.DEFAULT_FPS);
-				final String capsFramerateFilter = Colorspace2.createKnownColorspaceFilter(checked_fps == IMediaRequest.DEFAULT_FPS || currentLiveSource, checked_fps);
-				
-				final IElement videoRate = Element.make("videorate", "videoRate");
-				final IElement videoCapsFilter = Element.make("capsfilter", "videoCaps");
-				final Caps videoCaps = Caps.from(capsFramerateFilter);
-				videoCapsFilter.setCaps(videoCaps);
-
-				videoBin.addAndLinkMany(videoQueue, videoRate, videoCapsFilter, videoSink);
-				
-				final Pad videoBinPad = videoQueue.staticPad("sink");
-				final GhostPad videoBinGhostPad = GhostPad.from("videoBinGhostPad", videoBinPad);
-				videoBin.addPad(videoBinGhostPad);
-
-				//videoBinGhostPad.dispose();
-				//videoBinPad.dispose();
-				//videoRate.dispose();
-				//videoCapsFilter.dispose();
-				//videoCaps.dispose();
-				//videoSink.dispose();
-				//videoQueue.dispose();
-			} else {
-				videoBin.addAndLinkMany(videoQueue, videoSink);
-
-				final Pad videoBinPad = videoQueue.staticPad("sink");
-				final GhostPad videoBinGhostPad = GhostPad.from("videoBinGhostPad", videoBinPad);
-				videoBin.addPad(videoBinGhostPad);
-
-				videoBinGhostPad.dispose();
-				videoBinPad.dispose();
-				videoSink.dispose();
-				videoQueue.dispose();
-			}
-
-			newPipeline.set("video-sink", videoBin);
-			videoBin.dispose();
-
-			newPipeline.set("uri", uri);
-			newPipeline.set("mute", muted);
-			newPipeline.set("volume", Math.max(0, Math.min(100, volume)) / 100.0D);
-
-			IBus bus = newPipeline.getBus();
-			newPipeline.busSyncHandler(new IBusSyncHandler() {
-				public BusSyncReply handle(Bus bus, Message msg, Pointer src, Pointer data) {
-					return onBusSyncHandler(msg);
-				}
-			});
-			bus.connect(new ISegmentDone() {
-				public void segmentDone(Pointer pSrc, Format format, long position) {
-					onSegmentDone(newPipeline);
-				}
-			});
-			bus.connect(new IEndOfStream() {
-				@Override
-				public void endOfStream(Pointer pSrc) {
-					onEOS(newPipeline);
-				}
-			});
-			newPipeline.connect(new IElementAdded() {
-				@Override
-				public void elementAdded(Pointer pBin, Pointer pElement) {
-					IElement element = Element.from(pElement);
-					if ("uridecodebin".equalsIgnoreCase(element.getFactoryName())) {
-						element.connect(new IElementAdded() {
-							@Override
-							public void elementAdded(Pointer pBin, Pointer pElement) {
-								IBin bin = Bin.from(pBin);
-								IElement element = Element.from(pElement);
-
-								onUriDecodeBinElementAdded(newPipeline, bin, element);
-
-								String factoryName = element.getFactoryName();
-								if (factoryName.startsWith("decodebin")) {
-									element.connect(new IElementAdded() {
-										@Override
-										public void elementAdded(Pointer pBin, Pointer pElement) {
-											IBin bin = Bin.from(pBin);
-											IElement element = Element.from(pElement);
-
-											onDecodeBinElementAdded(newPipeline, null, bin, element);
-
-											element.dispose();
-											bin.dispose();
-										}
-									});
-								}
-								element.dispose();
-								bin.dispose();
-							}
-						});
-					}
-					element.dispose();
-				}
-			});
-			newPipeline.connect(new IAboutToFinish() {
-				@Override
-				public void aboutToFinish(Pointer pPlaybin, Pointer pUserData) {
-					IPipeline playbin = Pipeline.from(pPlaybin);
-					if (mediaType != MediaType.Image && (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount))) {
-						++numberOfRepeats;
-						playbin.set("uri", uri);
-						return;
-					}
-					numberOfRepeats = 0;
-					if (mediaType == MediaType.Image)
-						playbin.changeState(State.Paused);
-					else
-						playbin.changeState(State.Null);
-					display.asyncExec(redrawRunnable);
-					playbin.dispose();
-				}
-			});
-			xoverlay = SWTOverlay.wrap(videoSink);
-			pipeline = newPipeline;
-
-			//Start playing
-			newPipeline.changeState(State.Playing);
-
-			return true;
-		} catch(Throwable t) {
-			t.printStackTrace();
-			return false;
-		} finally {
-			lock.unlock();
+			//Informs multipartdemux elements that it needs to emit the pad added signal as
+			//soon as it links the pads. Otherwise it could be some time before it happens.
+			//This was primarily added to instantly connect to motion jpeg digital cameras
+			//that have a low framerate (e.g. 1 or 2 FPS).
+			//It could be an issue with a "live source" that is emitting multiple streams
+			//via a multipart mux. There's really not much we can do about something like
+			//that in an automatic way -- that is, you'd have to remove this and instead
+			//use a custom pipeline to work w/ low framerate digital cameras.
+			element.set("single-stream", true);
+		} catch(IllegalArgumentException e) {
 		}
 	}
-	//</editor-fold>
 
-	//<editor-fold defaultstate="collapsed" desc="Paint">
-	protected void paintImage(GC g, ImageData imgData) {
-		Rectangle r = getClientArea();
+	protected Pipeline createPipeline(final IMediaRequest newRequest) {
+		//gst-launch uridecodebin use-buffering=false name=dec location=http://.../video.avi
+		//    dec. ! [ queue ! audioconvert ! audioresample ! autoaudiosink ]
+		//    dec. ! [ queue ! videorate silent=true ! ffmpegcolorspace ! video/x-raw-rgb, bpp=32, depth=24 ! directdrawsink show-preroll-frame=true ]
+		final Pipeline newPipeline = new Pipeline("pipeline");
+		final Bin uridecodebin = (Bin)ElementFactory.make("uridecodebin", "uridecodebin");
+		uridecodebin.set("use-buffering", true);
+		//uridecodebin.set("download", true);
+		uridecodebin.set("buffer-duration", TimeUnit.MILLISECONDS.toNanos(500L));
+		uridecodebin.set("uri", uriString(newRequest.getURI()));
+		newPipeline.addMany(uridecodebin);
 
-		g.setForeground(getBackground());
-		g.fillRectangle(r);
+		//<editor-fold defaultstate="collapsed" desc="Signals">
+		//<editor-fold defaultstate="collapsed" desc="Uridecodebin">
+		uridecodebin.connect(new Element.PAD_ADDED() {
+			@Override
+			public void padAdded(Element elem, Pad pad) {
+				onPadAdded(newRequest, newPipeline, uridecodebin, pad);
+			}
+		});
+		uridecodebin.connect(new Bin.ELEMENT_ADDED() {
+			@Override
+			public void elementAdded(Bin bin, Element element) {
+				//<editor-fold defaultstate="collapsed" desc="Validate arguments">
+				if (element == null)
+					return;
+				final String factoryName = element.getFactory().getName();
+				if (StringUtil.isNullOrEmpty(factoryName))
+					return;
+				//</editor-fold>
 
-		g.setAntialias(SWT.ON);
+				//<editor-fold defaultstate="collapsed" desc="Connect to decodebin">
+				if (factoryName.startsWith("decodebin")) {
+					final Bin decodebin = (Bin)element;
+					decodebin.connect(new Bin.ELEMENT_ADDED() {
+						@Override
+						public void elementAdded(Bin bin, Element element) {
+							onDecodeBinElementAdded(newPipeline, uridecodebin, decodebin, element);
+						}
+					});
+				}
+				//</editor-fold>
 
-		Image img = new Image(display, imgData);
-		g.drawImage(img, 0, 0, imgData.width, imgData.height, 0, 0, r.width, r.height);
-		img.dispose();
-	}
-	//</editor-fold>
-	//</editor-fold>
+				onUriDecodeBinElementAdded(newPipeline, uridecodebin, element);
+			}
+		});
+		//</editor-fold>
 
-	//<editor-fold defaultstate="collapsed" desc="TBD">
-	public boolean playBlackBurst() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
+		//<editor-fold defaultstate="collapsed" desc="Bus">
+		final Bus bus = newPipeline.getBus();
+		bus.connect(new Bus.STATE_CHANGED() {
+			@Override
+			public void stateChanged(GstObject source, State oldState, State newState, State pendingState) {
+				if (source != newPipeline)
+					return;
+				
+				if (newState == State.NULL && pendingState == State.NULL) {
+					disposeAudioBin(newPipeline);
+					disposeVideoBin(newPipeline);
+					newPipeline.dispose();
+					display.asyncExec(redrawRunnable);
+				}
 
-	public boolean playBlackBurst(String Title) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean playTestSignal() {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean playTestSignal(String Title) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean play(File file) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean play(String URI) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean play(boolean LiveSource, String URI) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean play(int RepeatCount, String URI) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean play(int RepeatCount, Scheme Scheme, String URI) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean play(String Title, int RepeatCount, Scheme Scheme, String URI) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean play(String Title, boolean LiveSource, int RepeatCount, Scheme Scheme, String URI) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean play(String Title, boolean LiveSource, boolean MaintainAspectRatio, int RepeatCount, Scheme Scheme, String URI) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean play(MediaRequestType RequestType, String Title, boolean LiveSource, boolean MaintainAspectRatio, int RepeatCount, float FPS, URI URI) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean play(MediaRequestType RequestType, String Title, boolean LiveSource, boolean MaintainAspectRatio, int RepeatCount, float FPS, Scheme Scheme, URI URI) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	public boolean play(MediaRequestType RequestType, long LastModifiedTime, String Title, boolean LiveSource, boolean MaintainAspectRatio, int RepeatCount, float FPS, Scheme Scheme, URI URI) {
-		throw new UnsupportedOperationException("Not supported yet.");
+				switch (newState) {
+					case PLAYING:
+						if (currentState == State.NULL || currentState == State.READY || currentState == State.PAUSED) {
+							fireMediaEventPlayed();
+							currentState = State.PLAYING;
+						}
+						break;
+					case PAUSED:
+						if (currentState == State.PLAYING || currentState == State.READY) {
+							currentState = State.PAUSED;
+							fireMediaEventPaused();
+						}
+						break;
+					case NULL:
+					case READY:
+						if (currentState == State.PLAYING || currentState == State.PAUSED) {
+							currentState = State.READY;
+							fireMediaEventStopped();
+						}
+						break;
+				}
+			}
+		});
+		bus.connect(new Bus.ERROR() {
+			@Override
+			public void errorMessage(GstObject source, int code, String message) {
+				//System.out.println("Error: code=" + code + " message=" + message);
+				fireHandleError(newRequest, ErrorType.fromNativeValue(code), code, message);
+			}
+		});
+		bus.connect(new Bus.SEGMENT_DONE() {
+			@Override
+			public void segmentDone(GstObject source, Format format, long position) {
+				if (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount)) {
+					++numberOfRepeats;
+					if (!seekToBeginning()) {
+						stop();
+						unpause();
+					}
+					return;
+				}
+				numberOfRepeats = 0;
+				pipeline.setState(State.READY);
+				display.asyncExec(redrawRunnable);
+			}
+		});
+		bus.connect(new Bus.EOS() {
+			@Override
+			public void endOfStream(GstObject source) {
+				if (currentRepeatCount == IMediaRequest.REPEAT_FOREVER || (currentRepeatCount > 0 && numberOfRepeats < currentRepeatCount)) {
+					++numberOfRepeats;
+					if (!seekToBeginning()) {
+						stop();
+						unpause();
+					}
+					return;
+				}
+				numberOfRepeats = 0;
+				pipeline.setState(State.READY);
+				display.asyncExec(redrawRunnable);
+			}
+		});
+		bus.connect(new Bus.BUFFERING() {
+			@Override
+			public void bufferingData(GstObject source, int percent) {
+				if (!currentLiveSource) {
+					if (percent < 100) {
+						pipeline.setState(State.PAUSED);
+					} else if (percent >= 100) {
+						pipeline.setState(State.PLAYING);
+					}
+				}
+			}
+		});
+		bus.setSyncHandler(new BusSyncHandler() {
+			@Override
+			public BusSyncReply syncMessage(Message msg) {
+				Structure s = msg.getStructure();
+				if (s == null || !s.hasName("prepare-xwindow-id"))
+					return BusSyncReply.PASS;
+				xoverlay.setWindowID(MediaComponentNew.this.nativeHandle);
+				return BusSyncReply.DROP;
+			}
+		});
+		//</editor-fold>
+		//</editor-fold>
+		
+		return newPipeline;
 	}
 	//</editor-fold>
 }

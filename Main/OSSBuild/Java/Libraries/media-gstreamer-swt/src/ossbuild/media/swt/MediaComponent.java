@@ -1,5 +1,5 @@
 
-package ossbuild.media.gstreamer.swt;
+package ossbuild.media.swt;
 
 import ossbuild.media.Scheme;
 import ossbuild.media.IMediaPlayer;
@@ -23,7 +23,13 @@ import ossbuild.media.events.IVideoCapsListener;
 /**
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public abstract class SWTMediaComponent extends Canvas implements IMediaPlayer {
+public abstract class MediaComponent extends Canvas implements IMediaPlayer {
+	//<editor-fold defaultstate="collapsed" desc="Constants">
+	public static final String
+		VIDEO_SINK_UNACCELERATED = "unaccelerated"
+	;
+	//</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="Variables">
 	public static final ScheduledExecutorService
 		TASK_EXECUTOR
@@ -76,7 +82,7 @@ public abstract class SWTMediaComponent extends Canvas implements IMediaPlayer {
 		}));
 	}
 
-	public SWTMediaComponent(final Composite parent, final int style) {
+	public MediaComponent(final Composite parent, final int style) {
 		super(parent, style | SWT.EMBEDDED);
 		init();
 	}
