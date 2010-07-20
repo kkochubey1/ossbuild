@@ -262,22 +262,22 @@ public class Main {
 		comp = new GstMediaComponent(dlg, SWT.NONE);
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		comp = new GstMediaComponent(dlg, SWT.NONE);
-		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+//
+//		comp = new GstMediaComponent(dlg, SWT.NONE);
+//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		final Scale scale = new Scale(dlg, SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -469,7 +469,7 @@ public class Main {
 		btnPlayMJPEG.addSelectionListener(new SelectionAdapter() {
 			int index = 0;
 			String[] uri = new String[] {
-				  "http://129.125.136.20/axis-cgi/mjpg/video.cgi?camera=1"
+				  "http://www.serveurperso.com:81/axis-cgi/mjpg/video.cgi"
 				, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb"
 				//, "http://www.google.com/test/"
 				//, "http://www.asfjasflasf.com/"
