@@ -27,7 +27,7 @@
 			<Library resource="libmp3lame-0.dll" />
 			<Library resource="libmpeg2-0.dll" />
 			<Library resource="libmpeg2convert-0.dll" />
-			<Library resource="libx264-98.dll" />
+			<Library resource="libx264-104.dll" />
 		</IfDef>
 	</Extract>
 
