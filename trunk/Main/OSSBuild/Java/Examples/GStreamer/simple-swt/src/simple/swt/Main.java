@@ -317,6 +317,12 @@ public class Main {
 		btnPlayExampleMJPG.setLayoutData(gd);
 		btnPlayExampleMJPG.setText("Play Example MJPG");
 
+		final Button btnPlayCorruptMJPG = new Button(dlg, SWT.NORMAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		//gd.horizontalSpan = 2;
+		btnPlayCorruptMJPG.setLayoutData(gd);
+		btnPlayCorruptMJPG.setText("Play Corrupt MJPG");
+
 		final Button btnPlay = new Button(dlg, SWT.NORMAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		//gd.horizontalSpan = 2;
@@ -469,7 +475,7 @@ public class Main {
 		btnPlayMJPEG.addSelectionListener(new SelectionAdapter() {
 			int index = 0;
 			String[] uri = new String[] {
-				  "http://www.serveurperso.com:81/axis-cgi/mjpg/video.cgi"
+				  "http://72.240.51.210/axis-cgi/mjpg/video.cgi?resolution=352x240&camera=1&dummy=garb"
 				, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb"
 				//, "http://www.google.com/test/"
 				//, "http://www.asfjasflasf.com/"
@@ -551,6 +557,28 @@ public class Main {
 				}
 
 				file[0] = Path.combine(Path.nativeResourcesDirectory, "example.mjpg");
+				for (final Control c : dlg.getChildren()) {
+					if (c instanceof GstMediaComponent) {
+						GstMediaComponent.execute(new Runnable() {
+							@Override
+							public void run() {
+								((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, 2.0f, file[0].toURI().toString());
+							}
+						});
+					}
+				}
+			}
+		});
+		btnPlayCorruptMJPG.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					//Extract resource
+					Resources.extractAll(ossbuild.extract.Package.newInstance("resources.media", Path.nativeResourcesDirectory, new FileProcessor(false, "corrupt.mjpg"))).get();
+				} catch(Throwable t) {
+				}
+
+				file[0] = Path.combine(Path.nativeResourcesDirectory, "corrupt.mjpg");
 				for (final Control c : dlg.getChildren()) {
 					if (c instanceof GstMediaComponent) {
 						GstMediaComponent.execute(new Runnable() {
