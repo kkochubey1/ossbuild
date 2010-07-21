@@ -825,27 +825,36 @@ static void gst_d3dvideosink_set_window_for_renderer (GstD3DVideoSink *sink)
 
 static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink)
 {
-  GST_DEBUG("Removing rendering window hook");
-  if (!sink->is_new_window && sink->window_id) {
-    WNDPROC currWndProc;
+  GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
+  GST_D3DVIDEOSINK_SHARED_D3D_LOCK
+  GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
+  {
+    GST_DEBUG("Removing rendering window hook");
+    if (!sink->is_new_window && sink->window_id) {
+      WNDPROC currWndProc;
 
-    /* Retrieve current msg handler */
-    currWndProc = (WNDPROC)GetWindowLongPtr(sink->window_id, GWL_WNDPROC);
+      /* Retrieve current msg handler */
+      currWndProc = (WNDPROC)GetWindowLongPtr(sink->window_id, GWL_WNDPROC);
 
-    /* Return control of application window */
-    if (sink->prevWndProc != NULL && currWndProc == WndProcHook)
-      SetWindowLongPtr(sink->window_id, GWL_WNDPROC, (LONG_PTR)sink->prevWndProc);
+      /* Return control of application window */
+      if (sink->prevWndProc != NULL && currWndProc == WndProcHook) {
+        SetWindowLongPtr(sink->window_id, GWL_WNDPROC, (LONG_PTR)sink->prevWndProc);
 
-    /* Remove the property associating our sink with the window */
-    RemoveProp (sink->window_id, L"GstDShowVideoSink");
+        /* Remove the property associating our sink with the window */
+        RemoveProp (sink->window_id, L"GstDShowVideoSink");
 
-    /* This causes the old WNDPROC to become active */
-    SetWindowPos(sink->window_id, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        /* This causes the old WNDPROC to become active */
+        SetWindowPos(sink->window_id, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
-    sink->prevWndProc = NULL;
-    sink->window_id = NULL;
-    sink->is_new_window = FALSE;
+        sink->prevWndProc = NULL;
+        sink->window_id = NULL;
+        sink->is_new_window = FALSE;
+      }
+    }
   }
+  GST_D3DVIDEOSINK_SWAP_CHAIN_UNLOCK(sink);
+  GST_D3DVIDEOSINK_SHARED_D3D_UNLOCK
+  GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK
 }
 
 static void
