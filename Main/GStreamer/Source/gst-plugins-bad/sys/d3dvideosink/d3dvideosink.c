@@ -220,10 +220,10 @@ gst_d3dvideosink_class_init (GstD3DVideoSinkClass * klass)
 
   gstbasesink_class->get_caps = GST_DEBUG_FUNCPTR (gst_d3dvideosink_get_caps);
   gstbasesink_class->set_caps = GST_DEBUG_FUNCPTR (gst_d3dvideosink_set_caps);
-  gstbasesink_class->start = GST_DEBUG_FUNCPTR (gst_d3dvideosink_start);
+  //gstbasesink_class->start = GST_DEBUG_FUNCPTR (gst_d3dvideosink_start);
   gstbasesink_class->stop = GST_DEBUG_FUNCPTR (gst_d3dvideosink_stop);
-  gstbasesink_class->unlock = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock);
-  gstbasesink_class->unlock_stop = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock_stop);
+  //gstbasesink_class->unlock = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock);
+  //gstbasesink_class->unlock_stop = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock_stop);
 
   gstvideosink_class->show_frame = GST_DEBUG_FUNCPTR (gst_d3dvideosink_show_frame);
 
@@ -538,16 +538,26 @@ LRESULT APIENTRY WndProcHook (HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
    * Then forward back to the original window.
    */
   GstD3DVideoSink *sink = (GstD3DVideoSink *)GetProp (hWnd, L"GstD3DVideoSink");
-  
-  /* Check it */
-  gst_d3dvideosink_wnd_proc (sink, hWnd, message, wParam, lParam);
 
   switch (message) 
   {
     case WM_ERASEBKGND:
       return TRUE;
+    case WM_PAINT: 
+      {
+        LRESULT ret;
+        ret = CallWindowProc (sink->prevWndProc, hWnd, message, wParam, lParam);
+        /* Call this afterwards to ensure that our paint happens last */
+        gst_d3dvideosink_wnd_proc (sink, hWnd, message, wParam, lParam);
+        return ret;
+      }
+    default:
+      {
+        /* Check it */
+        gst_d3dvideosink_wnd_proc (sink, hWnd, message, wParam, lParam);
+        return CallWindowProc (sink->prevWndProc, hWnd, message, wParam, lParam);
+      }
   }
-  return CallWindowProc (sink->prevWndProc, hWnd, message, wParam, lParam);
 }
 
 /* WndProc for our default window, if the application didn't supply one */
@@ -761,7 +771,7 @@ static void gst_d3dvideosink_set_window_id (GstXOverlay * overlay, ULONG window_
   HWND hWnd = (HWND)window_id;
 
   if (hWnd == sink->window_id) {
-    GST_DEBUG_OBJECT (sink, "Window already set");
+    GST_DEBUG("Window already set");
     return;
   }
 
@@ -800,7 +810,7 @@ static void gst_d3dvideosink_set_window_for_renderer (GstD3DVideoSink *sink)
   if (sink->prevWndProc != currWndProc && currWndProc != WndProcHook)
     sink->prevWndProc = (WNDPROC)SetWindowLongPtr(sink->window_id, GWL_WNDPROC, (LONG_PTR)WndProcHook);
 
-  GST_DEBUG_OBJECT(sink, "Set wndproc to %p from %p", WndProcHook, sink->prevWndProc);
+  GST_DEBUG("Set wndproc to %p from %p", WndProcHook, sink->prevWndProc);
 
   /* Allows us to pick up the video sink inside the msg handler */
   SetProp(sink->window_id, L"GstD3DVideoSink", sink);
@@ -808,7 +818,7 @@ static void gst_d3dvideosink_set_window_for_renderer (GstD3DVideoSink *sink)
   /* This causes the new WNDPROC to become active */
   SetWindowPos(sink->window_id, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
-  GST_DEBUG_OBJECT(sink, "Set renderer window to %x", sink->window_id);
+  GST_DEBUG("Set renderer window to %x", sink->window_id);
   
   sink->is_new_window = FALSE;
 }
@@ -1214,22 +1224,22 @@ gst_d3dvideosink_refresh (GstD3DVideoSink *sink)
 
     if (!shared.d3ddev) {
       if (!shared.device_lost)
-        GST_DEBUG_OBJECT (sink, "No Direct3D device has been created");
+        GST_DEBUG("No Direct3D device has been created");
       goto error;
     }
 
     if (!sink->d3d_offscreen_surface) {
-      GST_DEBUG_OBJECT (sink, "No Direct3D offscreen surface has been created");
+      GST_DEBUG("No Direct3D offscreen surface has been created");
       goto error;
     }
 
     if (!sink->d3d_swap_chain) {
-      GST_DEBUG_OBJECT (sink, "No Direct3D swap chain has been created");
+      GST_DEBUG("No Direct3D swap chain has been created");
       goto error;
     }
 
     if (sink->window_closed) {
-      GST_DEBUG_OBJECT (sink, "Window has been closed");
+      GST_DEBUG("Window has been closed");
       goto error;
     }
 

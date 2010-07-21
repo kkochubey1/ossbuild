@@ -257,27 +257,27 @@ public abstract class MediaComponentV2 extends MediaComponent {
 		//<editor-fold defaultstate="collapsed" desc="Paint">
 		//When showing video, use expose() methods. When showing images, draw the
 		//image using SWT.
-		acceleratedVideoCanvas.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				if (layout.topControl != acceleratedVideoCanvas || !acceleratedVideoCanvas.isVisible())
-					return;
-				State state;
-				if (pipeline == null || (state = pipeline.getState(0L)) == State.NULL || state == State.READY) {
-					e.gc.setBackground(getBackground());
-					e.gc.fillRectangle(acceleratedVideoCanvas.getBounds());
-				}
-				
-				boolean locked = lock.tryLock();
-				try {
-					if (locked)
-						expose();
-				} finally {
-					if (locked)
-						lock.unlock();
-				}
-			}
-		});
+		//acceleratedVideoCanvas.addPaintListener(new PaintListener() {
+		//	@Override
+		//	public void paintControl(PaintEvent e) {
+		//		if (layout.topControl != acceleratedVideoCanvas || !acceleratedVideoCanvas.isVisible())
+		//			return;
+		//		State state;
+		//		if (pipeline == null || (state = pipeline.getState(0L)) == State.NULL || state == State.READY) {
+		//			e.gc.setBackground(getBackground());
+		//			e.gc.fillRectangle(acceleratedVideoCanvas.getBounds());
+		//		}
+		//
+		//		boolean locked = lock.tryLock();
+		//		try {
+		//			if (locked)
+		//				expose();
+		//		} finally {
+		//			if (locked)
+		//				lock.unlock();
+		//		}
+		//	}
+		//});
 		imgCanvas.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
@@ -298,6 +298,9 @@ public abstract class MediaComponentV2 extends MediaComponent {
 
 		//<editor-fold defaultstate="collapsed" desc="SWT">
 		//this.setLayout(new FillLayout());
+		imgCanvas.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		videoCanvas.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		acceleratedVideoCanvas.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		this.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		this.addControlListener(new ControlAdapter() {
 			@Override
@@ -1984,6 +1987,7 @@ public abstract class MediaComponentV2 extends MediaComponent {
 	protected void onError(final IMediaRequest newRequest, final Pipeline newPipeline, int code, String message) {
 		//System.out.println(message);
 		resetPipeline(newPipeline);
+		showNone();
 		fireHandleError(newRequest, ErrorType.fromNativeValue(code), code, message);
 	}
 
@@ -2107,7 +2111,7 @@ public abstract class MediaComponentV2 extends MediaComponent {
 				public BusSyncReply syncMessage(Message msg) {
 					Structure s = msg.getStructure();
 					if (s == null || !s.hasName("prepare-xwindow-id"))
-						return BusSyncReply.PASS;
+						return BusSyncReply.ASYNC;
 					if (xoverlay != null)
 						xoverlay.setWindowID(nativeHandle);
 					return BusSyncReply.DROP;

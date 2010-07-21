@@ -922,15 +922,28 @@ gst_jpeg_dec_decode_direct (GstJpegDec * dec, guchar * base[3],
       GST_INFO_OBJECT (dec, "jpeg_read_raw_data() returned 0");
     }
   }
+
+  /* reset error after counter on good buffers */
+  if (dec->error_after >= 0) {
+    dec->error_after_count = 0;
+  }
   return GST_FLOW_OK;
 
 format_not_supported:
   {
-    GST_ELEMENT_ERROR (dec, STREAM, DECODE,
-        (_("Failed to decode JPEG image")),
-        ("Unsupported subsampling schema: v_samp factors: %u %u %u",
-            v_samp[0], v_samp[1], v_samp[2]));
-    return GST_FLOW_ERROR;
+    if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
+      GST_ELEMENT_INFO (dec, STREAM, DECODE,
+          (_("Failed to decode JPEG image. Error count: %d"), dec->error_after_count),
+          ("Unsupported subsampling schema: v_samp factors: %u %u %u",
+              v_samp[0], v_samp[1], v_samp[2]));
+      return GST_FLOW_OK;
+    } else {
+      GST_ELEMENT_ERROR (dec, STREAM, DECODE,
+          (_("Failed to decode JPEG image. Error count: %d"), dec->error_after_count),
+          ("Unsupported subsampling schema: v_samp factors: %u %u %u",
+              v_samp[0], v_samp[1], v_samp[2]));
+      return GST_FLOW_ERROR;
+    }
   }
 }
 
@@ -1440,7 +1453,7 @@ wrong_size:
   {
     if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
       GST_ELEMENT_INFO (dec, STREAM, DECODE,
-          ("Picture is too small or too big (%ux%u)", width, height),
+          ("Picture is too small or too big (%ux%u). Error count: %d", width, height, dec->error_after_count),
           ("Picture is too small or too big (%ux%u)", width, height));
       if (outbuf) {
         gst_buffer_unref (outbuf);
@@ -1449,7 +1462,7 @@ wrong_size:
       goto exit;
 	} else {
       GST_ELEMENT_ERROR (dec, STREAM, DECODE,
-          ("Picture is too small or too big (%ux%u)", width, height),
+          ("Picture is too small or too big (%ux%u). Error count: %d", width, height, dec->error_after_count),
           ("Picture is too small or too big (%ux%u)", width, height));
       ret = GST_FLOW_ERROR;
 	  goto done;
@@ -1463,7 +1476,7 @@ decode_error:
 
     if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
       GST_ELEMENT_INFO (dec, STREAM, DECODE,
-          (_("Failed to decode JPEG image")), ("Error #%u: %s", code, err_msg));
+          (_("Failed to decode JPEG image. Error count: %d"), dec->error_after_count), ("Error #%u: %s", code, err_msg));
       if (outbuf) {
         gst_buffer_unref (outbuf);
       }
@@ -1471,7 +1484,7 @@ decode_error:
       goto exit;
 	} else {
       GST_ELEMENT_ERROR (dec, STREAM, DECODE,
-          (_("Failed to decode JPEG image")), ("Error #%u: %s", code, err_msg));
+          (_("Failed to decode JPEG image. Error count: %d"), dec->error_after_count), ("Error #%u: %s", code, err_msg));
       if (outbuf) {
         gst_buffer_unref (outbuf);
         outbuf = NULL;
@@ -1519,29 +1532,43 @@ components_not_supported:
   {
     if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
       GST_ELEMENT_INFO (dec, STREAM, DECODE, (NULL),
-          ("more components than supported: %d > 3", dec->cinfo.num_components));
+          ("More components than supported: %d > 3. Error count: ", dec->cinfo.num_components, dec->error_after_count));
       ret = GST_FLOW_OK;
       goto exit;
 	} else {
       GST_ELEMENT_ERROR (dec, STREAM, DECODE, (NULL),
-          ("more components than supported: %d > 3", dec->cinfo.num_components));
+          ("More components than supported: %d > 3. Error count: ", dec->cinfo.num_components, dec->error_after_count));
       ret = GST_FLOW_ERROR;
       goto done;
     }
   }
 unsupported_colorspace:
   {
-    GST_ELEMENT_ERROR (dec, STREAM, DECODE, (NULL),
-        ("Picture has unknown or unsupported colourspace"));
-    ret = GST_FLOW_ERROR;
-    goto done;
+    if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
+      GST_ELEMENT_INFO (dec, STREAM, DECODE, (NULL),
+          ("Picture has unknown or unsupported colourspace. Error count: %d", dec->error_after_count));
+      ret = GST_FLOW_OK;
+      goto exit;
+    } else {
+      GST_ELEMENT_ERROR (dec, STREAM, DECODE, (NULL),
+          ("Picture has unknown or unsupported colourspace. Error count: %d", dec->error_after_count));
+      ret = GST_FLOW_ERROR;
+      goto done;
+    }
   }
 invalid_yuvrgbgrayscale:
   {
-    GST_ELEMENT_ERROR (dec, STREAM, DECODE, (NULL),
-        ("Picture is corrupt or unhandled YUV/RGB/grayscale layout"));
-    ret = GST_FLOW_ERROR;
-    goto done;
+    if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
+      GST_ELEMENT_INFO (dec, STREAM, DECODE, (NULL),
+          ("Picture is corrupt or unhandled YUV/RGB/grayscale layout. Error count: %d", dec->error_after_count));
+      ret = GST_FLOW_OK;
+      goto exit;
+    } else {
+      GST_ELEMENT_ERROR (dec, STREAM, DECODE, (NULL),
+          ("Picture is corrupt or unhandled YUV/RGB/grayscale layout. Error count: %d", dec->error_after_count));
+      ret = GST_FLOW_ERROR;
+      goto done;
+    }
   }
 }
 
