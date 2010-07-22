@@ -654,10 +654,11 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
 
   /* By default, create a normal top-level window, the size of the video. */
 
-  /* targetWidth is the aspect-ratio-corrected size of the video. */
+  /* GST_VIDEO_SINK_WIDTH() is the aspect-ratio-corrected size of the video. */
   /* GetSystemMetrics() returns the width of the dialog's border (doubled b/c of left and right borders). */
-  width = sink->targetWidth + GetSystemMetrics (SM_CXSIZEFRAME) * 2;
-  height = sink->targetHeight + GetSystemMetrics (SM_CYCAPTION) + (GetSystemMetrics (SM_CYSIZEFRAME) * 2);
+  width = GST_VIDEO_SINK_WIDTH (sink) + GetSystemMetrics (SM_CXSIZEFRAME) * 2;
+  height = GST_VIDEO_SINK_HEIGHT (sink) + GetSystemMetrics (SM_CYCAPTION) + 
+      (GetSystemMetrics (SM_CYSIZEFRAME) * 2);
 
   SystemParametersInfo(SPI_GETWORKAREA, (UINT)NULL, &rect, 0);
   screenwidth = rect.right - rect.left;
@@ -930,7 +931,7 @@ gst_d3dvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
 
   sink = GST_D3DVIDEOSINK (bsink);
   sink_caps = gst_static_pad_template_get_caps (&sink_template);
-  
+
   GST_DEBUG_OBJECT (sink,
       "In setcaps. Possible caps %" GST_PTR_FORMAT ", setting caps %"
       GST_PTR_FORMAT, sink_caps, caps);
@@ -942,7 +943,7 @@ gst_d3dvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
     goto invalid_format;
 
   if (!gst_video_parse_caps_framerate (caps, &fps_n, &fps_d) ||
-        !video_width || !video_height)
+          !video_width || !video_height)
     goto incomplete_caps;
 
   fourcc = gst_video_format_to_fourcc (format);
@@ -1019,9 +1020,7 @@ gst_d3dvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
   sink->width = video_width;
   sink->height = video_height;
   sink->fourcc = fourcc;
-  sink->targetWidth = GST_VIDEO_SINK_WIDTH (sink);
-  sink->targetHeight = GST_VIDEO_SINK_HEIGHT (sink);
-
+ 
   /* Create a window (or start using an application-supplied one, then connect the graph */
   gst_d3dvideosink_prepare_window (sink);
 
@@ -1612,7 +1611,8 @@ gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink)
     //
     //GST_DEBUG("Determined Direct3D stencil format: %d", d3dstencilformat);
 
-    GST_DEBUG("Direct3D back buffer size: %dx%d", sink->targetWidth, sink->targetHeight);
+    GST_DEBUG("Direct3D back buffer size: %dx%d", GST_VIDEO_SINK_WIDTH (sink), 
+        GST_VIDEO_SINK_HEIGHT (sink));
 
     /* Get the current size of the window */
     gst_d3dvideosink_window_size(sink, &width, &height);
