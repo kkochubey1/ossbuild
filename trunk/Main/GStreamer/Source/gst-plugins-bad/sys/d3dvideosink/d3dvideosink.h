@@ -48,10 +48,6 @@ struct _GstD3DVideoSink
   gint width;
   gint height;
   
-  /* target rectangle */
-  gint targetWidth;
-  gint targetHeight;
-
   gint bpp;
   guint32 fourcc;
 
