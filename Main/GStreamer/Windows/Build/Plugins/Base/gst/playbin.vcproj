@@ -346,6 +346,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gststreamsynchronizer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstsubtitleoverlay.h"
 				>
 			</File>
@@ -395,6 +399,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gststreamselector.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gststreamsynchronizer.c"
 				>
 			</File>
 			<File

@@ -1833,7 +1833,10 @@ public abstract class MediaComponentV2 extends MediaComponent {
 		//</editor-fold>
 
 		if (factoryName.startsWith("souphttpsrc")) {
-			//element.set("do-timestamp", true);
+			if (currentLiveSource) {
+				element.set("do-timestamp", true);
+				element.set("is-live", true);
+			}
 			element.set("blocksize", bufferSize);
 			element.set("timeout", 3);
 			element.set("automatic-redirect", true);

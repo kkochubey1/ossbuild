@@ -1796,12 +1796,16 @@ gst_pad_link_check_compatible_unlocked (GstPad * src, GstPad * sink,
     srccaps = gst_pad_get_caps_unlocked (src);
     sinkcaps = gst_pad_get_caps_unlocked (sink);
   } else {
-    if (GST_PAD_PAD_TEMPLATE (src))
-      srccaps =
-          gst_caps_ref (GST_PAD_TEMPLATE_CAPS (GST_PAD_PAD_TEMPLATE (src)));
-    if (GST_PAD_PAD_TEMPLATE (sink))
-      sinkcaps =
-          gst_caps_ref (GST_PAD_TEMPLATE_CAPS (GST_PAD_PAD_TEMPLATE (sink)));
+    /* If one of the two pads doesn't have a template, consider the intersection
+     * as valid.*/
+    if (G_UNLIKELY ((GST_PAD_PAD_TEMPLATE (src) == NULL)
+            || (GST_PAD_PAD_TEMPLATE (sink) == NULL))) {
+      compatible = TRUE;
+      goto done;
+    }
+    srccaps = gst_caps_ref (GST_PAD_TEMPLATE_CAPS (GST_PAD_PAD_TEMPLATE (src)));
+    sinkcaps =
+        gst_caps_ref (GST_PAD_TEMPLATE_CAPS (GST_PAD_PAD_TEMPLATE (sink)));
   }
 
   GST_CAT_DEBUG (GST_CAT_CAPS, "src caps %" GST_PTR_FORMAT, srccaps);
@@ -2706,7 +2710,7 @@ gst_pad_configure_sink (GstPad * pad, GstCaps * caps)
   gboolean res;
 
   /* See if pad accepts the caps */
-  if (!gst_pad_accept_caps (pad, caps))
+  if (!gst_caps_can_intersect (caps, gst_pad_get_pad_template_caps (pad)))
     goto not_accepted;
 
   /* set caps on pad if call succeeds */
