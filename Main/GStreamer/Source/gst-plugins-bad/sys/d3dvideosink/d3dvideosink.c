@@ -88,6 +88,7 @@ enum
 {
   PROP_0
   //, PROP_KEEP_ASPECT_RATIO
+  , PROP_PIXEL_ASPECT_RATIO
   , PROP_LAST
 };
 
@@ -233,6 +234,11 @@ gst_d3dvideosink_class_init (GstD3DVideoSinkClass * klass)
   //        "Force aspect ratio",
   //        "When enabled, scaling will respect original aspect ratio", FALSE,
   //        (GParamFlags)G_PARAM_READWRITE));
+  g_object_class_install_property (G_OBJECT_CLASS (klass), 
+        PROP_PIXEL_ASPECT_RATIO, g_param_spec_string ("pixel-aspect-ratio", 
+          "Pixel Aspect Ratio",
+          "The pixel aspect ratio of the device", "1/1",
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 static void
@@ -252,6 +258,8 @@ gst_d3dvideosink_init (GstD3DVideoSink * sink, GstD3DVideoSinkClass * klass)
 
   sink->d3d_swap_chain_lock = g_mutex_new();
 
+  sink->par = NULL;
+
   /* TODO: Copied from GstVideoSink; should we use that as base class? */
   /* 20ms is more than enough, 80-130ms is noticable */
   gst_base_sink_set_max_lateness (GST_BASE_SINK (sink), 50 * GST_MSECOND);
@@ -263,9 +271,14 @@ gst_d3dvideosink_finalize (GObject * gobject)
 {
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (gobject);
 
+  if (sink->par) {
+    g_free (sink->par);
+    sink->par = NULL;
+  }
+
   g_mutex_free (sink->d3d_swap_chain_lock);
   sink->d3d_swap_chain_lock = NULL;
-
+  
   G_OBJECT_CLASS (parent_class)->finalize (gobject);
 }
 
@@ -279,6 +292,18 @@ gst_d3dvideosink_set_property (GObject * object, guint prop_id,
     //case PROP_KEEP_ASPECT_RATIO:
     //  sink->keep_aspect_ratio = g_value_get_boolean (value);
     //  break;
+    case PROP_PIXEL_ASPECT_RATIO:
+      g_free (sink->par);
+      sink->par = g_new0 (GValue, 1);
+      g_value_init (sink->par, GST_TYPE_FRACTION);
+      if (!g_value_transform (value, sink->par)) {
+        g_warning ("Could not transform string to aspect ratio");
+        gst_value_set_fraction (sink->par, 1, 1);
+      }
+      GST_DEBUG_OBJECT (sink, "set PAR to %d/%d",
+          gst_value_get_fraction_numerator (sink->par),
+          gst_value_get_fraction_denominator (sink->par));
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -295,6 +320,10 @@ gst_d3dvideosink_get_property (GObject * object, guint prop_id,
     //case PROP_KEEP_ASPECT_RATIO:
     //  g_value_set_boolean (value, sink->keep_aspect_ratio);
     //  break;
+    case PROP_PIXEL_ASPECT_RATIO:
+      if (sink->par)
+        g_value_transform (sink->par, value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -967,15 +996,14 @@ gst_d3dvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
     video_par_n = 1;
     video_par_d = 1;
   }  
-  /* FIXME: keep this for when 'display-aspect-ratio' porperty is implemented
   /* get display's PAR */
-  /*if (sink->par) {
+  if (sink->par) {
     display_par_n = gst_value_get_fraction_numerator (sink->par);
     display_par_d = gst_value_get_fraction_denominator (sink->par);
-  } else {*/
+  } else {
     display_par_n = 1;
     display_par_d = 1;
-  /*}*/
+  }
 
   if (!gst_video_calculate_display_ratio (&num, &den, video_width,
           video_height, video_par_n, video_par_d, display_par_n, display_par_d))
