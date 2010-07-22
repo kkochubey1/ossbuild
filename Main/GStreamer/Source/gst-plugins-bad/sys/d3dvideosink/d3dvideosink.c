@@ -304,11 +304,9 @@ gst_d3dvideosink_get_property (GObject * object, guint prop_id,
 static GstCaps *
 gst_d3dvideosink_get_caps (GstBaseSink * basesink)
 {
-  //GstD3DVideoSink *sink = GST_D3DVIDEOSINK (basesink);
-  //if (!sink)
-  //  return NULL;
-  //return sink->caps;
-  return NULL;
+  GstD3DVideoSink *sink = GST_D3DVIDEOSINK (basesink);
+  
+  return gst_caps_copy (gst_pad_get_pad_template_caps (GST_VIDEO_SINK_PAD (sink)));
 }
 
 static void 
