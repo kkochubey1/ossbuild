@@ -917,86 +917,145 @@ gst_d3dvideosink_start (GstBaseSink * bsink)
 static gboolean
 gst_d3dvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
 {
+  GstD3DVideoSink *sink;
+  GstCaps *sink_caps;
+  GstVideoFormat format;
   guint32 fourcc;
-  gint width;
-  gint height;
-  gint par_n;
-  gint par_d;
   gint bpp;
-  gint targetWidth;
-  gint targetHeight;
-  GstStructure *s;
-  const gchar *name;
-  gchar *capsstring;
+  gint video_width, video_height;
+  gint video_par_n, video_par_d;        /* video's PAR */
+  gint display_par_n, display_par_d;    /* display's PAR */
+  gint fps_n, fps_d;
+  guint num, den;
 
-  GstD3DVideoSink *sink = GST_D3DVIDEOSINK (bsink);
-
-  /* Do what you must here to convert caps into something Direct3D can use */
-  s = gst_caps_get_structure (caps, 0);
-  name = gst_structure_get_name (s);
-
-  capsstring = gst_caps_to_string (caps);
-  GST_DEBUG ("Setting caps to: %s", capsstring);
-  g_free (capsstring);
-
-  if (!strcmp (name, "video/x-raw-yuv")) {
-    if (!gst_structure_get_fourcc (s, "format", &fourcc)) {
-      GST_WARNING ("Failed to convert caps, missing fourcc");
-      return FALSE;
-    }
-
-    if (!gst_structure_get_int (s, "width", &width)) {
-      GST_WARNING ("Failed to convert caps, missing width");
-      return FALSE;
-    }
-
-    if (!gst_structure_get_int (s, "height", &height)) {
-      GST_WARNING ("Failed to convert caps, missing height");
-      return FALSE;
-    }
-
-    switch (fourcc) {
-      case GST_MAKE_FOURCC ('Y', 'U', 'Y', '2'):
-        bpp = 16;
-        break;
-      case GST_MAKE_FOURCC ('Y', 'U', 'Y', 'V'):
-        bpp = 16;
-        break;
-      case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
-        bpp = 16;
-        break;
-      case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
-        bpp = 12;
-        break;
-      default:
-        GST_WARNING ("Failed to convert caps, unknown fourcc");
-        return FALSE;
-    }
-
-    if (gst_structure_get_fraction (s, "pixel-aspect-ratio", &par_n, &par_d)) {
-      targetWidth = width * par_n / par_d;
-      targetHeight = height;
-    } else {
-      targetWidth = width;
-      targetHeight = height;
-    }
+  sink = GST_D3DVIDEOSINK (bsink);
+  sink_caps = gst_static_pad_template_get_caps (&sink_template);
   
-    sink->bpp = bpp;
-    sink->width = width;
-    sink->height = height;
-    sink->fourcc = fourcc;
-    sink->targetWidth = targetWidth;
-    sink->targetHeight = targetHeight;
+  GST_DEBUG_OBJECT (sink,
+      "In setcaps. Possible caps %" GST_PTR_FORMAT ", setting caps %"
+      GST_PTR_FORMAT, sink_caps, caps);
 
-  } else {
-    GST_WARNING ("Failed to convert caps, unknown caps type");
-    return FALSE;
+  if (!gst_caps_intersect (sink_caps, caps))
+    goto incompatible_caps;
+
+  if (!gst_video_format_parse_caps (caps, &format, &video_width, &video_height))
+    goto invalid_format;
+
+  if (!gst_video_parse_caps_framerate (caps, &fps_n, &fps_d) ||
+        !video_width || !video_height)
+    goto incomplete_caps;
+
+  fourcc = gst_video_format_to_fourcc (format);
+  switch (fourcc) {
+    case GST_MAKE_FOURCC ('Y', 'U', 'Y', '2'):
+    case GST_MAKE_FOURCC ('Y', 'U', 'Y', 'V'):
+    case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
+      bpp = 16;
+      break;
+    case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
+      bpp = 12;
+      break;
+    default:
+      g_assert_not_reached();
   }
+
+  /* get aspect ratio from caps if it's present, and
+   * convert video width and height to a display width and height
+   * using wd / hd = wv / hv * PARv / PARd */
+
+  /* get video's PAR */
+  if (!gst_video_parse_caps_pixel_aspect_ratio (caps, &video_par_n, &video_par_d)){ 
+    video_par_n = 1;
+    video_par_d = 1;
+  }  
+  /* FIXME: keep this for when 'display-aspect-ratio' porperty is implemented
+  /* get display's PAR */
+  /*if (sink->par) {
+    display_par_n = gst_value_get_fraction_numerator (sink->par);
+    display_par_d = gst_value_get_fraction_denominator (sink->par);
+  } else {*/
+    display_par_n = 1;
+    display_par_d = 1;
+  /*}*/
+
+  if (!gst_video_calculate_display_ratio (&num, &den, video_width,
+          video_height, video_par_n, video_par_d, display_par_n, display_par_d))
+    goto no_disp_ratio;
+  
+  GST_DEBUG_OBJECT (sink,
+      "video width/height: %dx%d, calculated display ratio: %d/%d",
+      video_width, video_height, num, den);
+
+  /* now find a width x height that respects this display ratio.
+   * prefer those that have one of w/h the same as the incoming video
+   * using wd / hd = num / den */
+
+  /* start with same height, because of interlaced video */
+  /* check hd / den is an integer scale factor, and scale wd with the PAR */
+  if (video_height % den == 0) {
+    GST_DEBUG_OBJECT (sink, "keeping video height");
+    GST_VIDEO_SINK_WIDTH (sink) = (guint)
+        gst_util_uint64_scale_int (video_height, num, den);
+    GST_VIDEO_SINK_HEIGHT (sink) = video_height;
+  } else if (video_width % num == 0) {
+    GST_DEBUG_OBJECT (sink, "keeping video width");
+    GST_VIDEO_SINK_WIDTH (sink) = video_width;
+    GST_VIDEO_SINK_HEIGHT (sink) = (guint)
+        gst_util_uint64_scale_int (video_width, den, num);
+  } else {
+    GST_DEBUG_OBJECT (sink, "approximating while keeping video height");
+    GST_VIDEO_SINK_WIDTH (sink) = (guint)
+        gst_util_uint64_scale_int (video_height, num, den);
+    GST_VIDEO_SINK_HEIGHT (sink) = video_height;
+  }
+  GST_DEBUG_OBJECT (sink, "scaling to %dx%d",
+      GST_VIDEO_SINK_WIDTH (sink), GST_VIDEO_SINK_HEIGHT (sink));
+
+  if (GST_VIDEO_SINK_WIDTH (sink) <= 0 ||
+      GST_VIDEO_SINK_HEIGHT (sink) <= 0)
+    goto no_display_size;
+
+  sink->bpp = bpp;
+  sink->width = video_width;
+  sink->height = video_height;
+  sink->fourcc = fourcc;
+  sink->targetWidth = GST_VIDEO_SINK_WIDTH (sink);
+  sink->targetHeight = GST_VIDEO_SINK_HEIGHT (sink);
 
   /* Create a window (or start using an application-supplied one, then connect the graph */
   gst_d3dvideosink_prepare_window (sink);
 
   return TRUE;
+    /* ERRORS */
+incompatible_caps:
+  {
+    GST_ERROR_OBJECT (sink, "caps incompatible");
+    return FALSE;
+  }
+incomplete_caps:
+  {
+    GST_DEBUG_OBJECT (sink, "Failed to retrieve either width, "
+        "height or framerate from intersected caps");
+    return FALSE;
+  }
+invalid_format:
+  {
+    GST_DEBUG_OBJECT (sink,
+        "Could not locate image format from caps %" GST_PTR_FORMAT, caps);
+    return FALSE;
+  }
+no_disp_ratio:
+  {
+    GST_ELEMENT_ERROR (sink, CORE, NEGOTIATION, (NULL),
+        ("Error calculating the output display ratio of the video."));
+    return FALSE;
+  }
+no_display_size:
+  {
+    GST_ELEMENT_ERROR (sink, CORE, NEGOTIATION, (NULL),
+        ("Error calculating the output display ratio of the video."));
+    return FALSE;
+  }
 }
 
 static gboolean
