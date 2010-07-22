@@ -859,6 +859,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstd3dvideosink", "Main\GSt
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstgeometrictransform", "Main\GStreamer\Windows\Build\Plugins\Bad\gst\geometrictransform.vcproj", "{BBE23841-4387-4351-B747-B8DEF98CA700}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xoverlay-start-stop", "Main\GStreamer\Windows\Build\Tests\xoverlay-start-stop.vcproj", "{3AA4D055-E2DC-492F-8A93-162AE91FB9C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release (All)|Win32 = Release (All)|Win32
@@ -2378,6 +2380,9 @@ Global
 		{BBE23841-4387-4351-B747-B8DEF98CA700}.Release (GPL)|Win32.Build.0 = Release|Win32
 		{BBE23841-4387-4351-B747-B8DEF98CA700}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
 		{BBE23841-4387-4351-B747-B8DEF98CA700}.Release (LGPL)|Win32.Build.0 = Release|Win32
+		{3AA4D055-E2DC-492F-8A93-162AE91FB9C1}.Release (All)|Win32.ActiveCfg = Release|Win32
+		{3AA4D055-E2DC-492F-8A93-162AE91FB9C1}.Release (GPL)|Win32.ActiveCfg = Release|Win32
+		{3AA4D055-E2DC-492F-8A93-162AE91FB9C1}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2705,5 +2710,6 @@ Global
 		{1B0A8CBA-415D-4885-B567-71B5DCB2921A} = {E212FB60-8023-4B77-9A05-E8EB5ED547F7}
 		{C987873B-2B88-0C1B-B627-27FD04F91144} = {19987483-5CBC-4EF3-8CF7-C2AF906F8A62}
 		{D987A73B-2C88-FC11-B627-27FD04F91104} = {19987483-5CBC-4EF3-8CF7-C2AF906F8A62}
+		{3AA4D055-E2DC-492F-8A93-162AE91FB9C1} = {19987483-5CBC-4EF3-8CF7-C2AF906F8A62}
 	EndGlobalSection
 EndGlobal

@@ -815,9 +815,6 @@ static void gst_d3dvideosink_set_window_for_renderer (GstD3DVideoSink *sink)
   /* Allows us to pick up the video sink inside the msg handler */
   SetProp(sink->window_id, L"GstD3DVideoSink", sink);
 
-  /* This causes the new WNDPROC to become active */
-  SetWindowPos(sink->window_id, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-
   GST_DEBUG("Set renderer window to %x", sink->window_id);
   
   sink->is_new_window = FALSE;
@@ -825,9 +822,9 @@ static void gst_d3dvideosink_set_window_for_renderer (GstD3DVideoSink *sink)
 
 static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink)
 {
-  GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
-  GST_D3DVIDEOSINK_SHARED_D3D_LOCK
-  GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
+  //GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
+  //GST_D3DVIDEOSINK_SHARED_D3D_LOCK
+  //GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
   {
     GST_DEBUG("Removing rendering window hook");
     if (!sink->is_new_window && sink->window_id) {
@@ -843,18 +840,15 @@ static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink)
         /* Remove the property associating our sink with the window */
         RemoveProp (sink->window_id, L"GstDShowVideoSink");
 
-        /* This causes the old WNDPROC to become active */
-        SetWindowPos(sink->window_id, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-
         sink->prevWndProc = NULL;
         sink->window_id = NULL;
         sink->is_new_window = FALSE;
       }
     }
   }
-  GST_D3DVIDEOSINK_SWAP_CHAIN_UNLOCK(sink);
-  GST_D3DVIDEOSINK_SHARED_D3D_UNLOCK
-  GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK
+  //GST_D3DVIDEOSINK_SWAP_CHAIN_UNLOCK(sink);
+  //GST_D3DVIDEOSINK_SHARED_D3D_UNLOCK
+  //GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK
 }
 
 static void
