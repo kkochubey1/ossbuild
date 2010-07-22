@@ -332,6 +332,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\videoscale\vs_fill_borders.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\videoscale\vs_fill_borders.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\videoscale\vs_image.c"
 			>
 		</File>

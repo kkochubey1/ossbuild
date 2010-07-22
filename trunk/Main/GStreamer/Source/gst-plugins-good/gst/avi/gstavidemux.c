@@ -2005,6 +2005,19 @@ gst_avi_demux_parse_stream (GstAviDemux * avi, GstBuffer * buf)
                   "invalid audio header, ignoring stream");
               goto fail;
             }
+            /* some more sanity checks */
+            if (stream->is_vbr) {
+              if (stream->strf.auds->blockalign <= 4) {
+                /* that would mean (too) many frames per chunk,
+                 * so not likely set as expected */
+                GST_DEBUG_OBJECT (element,
+                    "suspicious blockalign %d for VBR audio; "
+                    "overriding to 1 frame per chunk",
+                    stream->strf.auds->blockalign);
+                /* this should top any likely value */
+                stream->strf.auds->blockalign = (1 << 12);
+              }
+            }
             break;
           case GST_RIFF_FCC_iavs:
             stream->is_vbr = TRUE;
@@ -4860,9 +4873,13 @@ gst_avi_demux_stream_data (GstAviDemux * avi)
        * through the whole file */
       if (avi->abort_buffering) {
         avi->abort_buffering = FALSE;
-        gst_adapter_flush (avi->adapter, 8);
+        if (size) {
+          gst_adapter_flush (avi->adapter, 8);
+          return GST_FLOW_OK;
+        }
+      } else {
+        return GST_FLOW_OK;
       }
-      return GST_FLOW_OK;
     }
     GST_DEBUG ("chunk ID %" GST_FOURCC_FORMAT ", size %u",
         GST_FOURCC_ARGS (tag), size);
@@ -4891,9 +4908,13 @@ gst_avi_demux_stream_data (GstAviDemux * avi)
       if (saw_desired_kf) {
         gst_adapter_flush (avi->adapter, 8);
         /* get buffer */
-        buf = gst_adapter_take_buffer (avi->adapter, GST_ROUND_UP_2 (size));
-        /* patch the size */
-        GST_BUFFER_SIZE (buf) = size;
+        if (size) {
+          buf = gst_adapter_take_buffer (avi->adapter, GST_ROUND_UP_2 (size));
+          /* patch the size */
+          GST_BUFFER_SIZE (buf) = size;
+        } else {
+          buf = NULL;
+        }
       } else {
         GST_DEBUG_OBJECT (avi,
             "Desired keyframe not yet reached, flushing chunk");
@@ -4967,6 +4988,7 @@ gst_avi_demux_stream_data (GstAviDemux * avi)
             stream->discont = FALSE;
           }
           res = gst_pad_push (stream->pad, buf);
+          buf = NULL;
 
           /* combine flows */
           res = gst_avi_demux_combine_flows (avi, stream, res);

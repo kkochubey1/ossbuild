@@ -1919,6 +1919,7 @@ gst_qtdemux_seek_to_previous_keyframe (GstQTDemux * qtdemux)
 {
   guint8 n = 0;
   guint32 seg_idx = 0, k_index = 0;
+  guint32 ref_seg_idx, ref_k_index;
   guint64 k_pos = 0, last_stop = 0;
   QtDemuxSegment *seg = NULL;
   QtDemuxStream *ref_str = NULL;
@@ -1988,6 +1989,10 @@ gst_qtdemux_seek_to_previous_keyframe (GstQTDemux * qtdemux)
     }
     ref_str->segment_index--;
     seg = &ref_str->segments[ref_str->segment_index];
+    /* convert seg->media_start to mov format time for timestamp comparison */
+    seg_media_start_mov =
+        gst_util_uint64_scale (seg->media_start, ref_str->timescale,
+        GST_SECOND);
   }
   /* Calculate time position of the keyframe and where we should stop */
   k_pos =
@@ -2012,33 +2017,47 @@ gst_qtdemux_seek_to_previous_keyframe (GstQTDemux * qtdemux)
     goto eos;
   }
 
+  ref_seg_idx = ref_str->segment_index;
+  ref_k_index = k_index;
+
   /* Align them all on this */
   for (n = 0; n < qtdemux->n_streams; n++) {
     guint32 index = 0;
     guint64 media_start = 0, seg_time = 0;
     QtDemuxStream *str = qtdemux->streams[n];
 
-    seg_idx = gst_qtdemux_find_segment (qtdemux, str, k_pos);
-    GST_DEBUG_OBJECT (qtdemux, "align segment %d", seg_idx);
+    /* aligning reference stream again might lead to backing up to yet another
+     * keyframe (due to timestamp rounding issues),
+     * potentially putting more load on downstream; so let's try to avoid */
+    if (str == ref_str) {
+      seg_idx = ref_seg_idx;
+      seg = &str->segments[seg_idx];
+      k_index = ref_k_index;
+      GST_DEBUG_OBJECT (qtdemux, "reference stream segment %d, "
+          "sample at index %d", ref_str->segment_index, k_index);
+    } else {
+      seg_idx = gst_qtdemux_find_segment (qtdemux, str, k_pos);
+      GST_DEBUG_OBJECT (qtdemux, "align segment %d", seg_idx);
 
-    /* segment not found, continue with normal flow */
-    if (seg_idx == -1)
-      continue;
+      /* segment not found, continue with normal flow */
+      if (seg_idx == -1)
+        continue;
 
-    /* get segment and time in the segment */
-    seg = &str->segments[seg_idx];
-    seg_time = k_pos - seg->time;
+      /* get segment and time in the segment */
+      seg = &str->segments[seg_idx];
+      seg_time = k_pos - seg->time;
 
-    /* get the media time in the segment */
-    media_start = seg->media_start + seg_time;
+      /* get the media time in the segment */
+      media_start = seg->media_start + seg_time;
 
-    /* get the index of the sample with media time */
-    index = gst_qtdemux_find_index (qtdemux, str, media_start);
-    GST_DEBUG_OBJECT (qtdemux, "sample for %" GST_TIME_FORMAT " at %u",
-        GST_TIME_ARGS (media_start), index);
+      /* get the index of the sample with media time */
+      index = gst_qtdemux_find_index (qtdemux, str, media_start);
+      GST_DEBUG_OBJECT (qtdemux, "sample for %" GST_TIME_FORMAT " at %u",
+          GST_TIME_ARGS (media_start), index);
 
-    /* find previous keyframe */
-    k_index = gst_qtdemux_find_keyframe (qtdemux, str, index);
+      /* find previous keyframe */
+      k_index = gst_qtdemux_find_keyframe (qtdemux, str, index);
+    }
 
     /* Remember until where we want to go */
     str->to_sample = str->from_sample - 1;
@@ -3950,25 +3969,22 @@ gst_qtdemux_add_stream (GstQTDemux * qtdemux,
           "height", G_TYPE_INT, stream->height,
           "framerate", GST_TYPE_FRACTION, stream->fps_n, stream->fps_d, NULL);
 
-      /* iso files:
-       * calculate pixel-aspect-ratio using display width and height */
-      if (qtdemux->major_brand != FOURCC_qt__) {
-        GST_DEBUG_OBJECT (qtdemux,
-            "video size %dx%d, target display size %dx%d", stream->width,
-            stream->height, stream->display_width, stream->display_height);
+      /* calculate pixel-aspect-ratio using display width and height */
+      GST_DEBUG_OBJECT (qtdemux,
+          "video size %dx%d, target display size %dx%d", stream->width,
+          stream->height, stream->display_width, stream->display_height);
 
-        if (stream->display_width > 0 && stream->display_height > 0 &&
-            stream->width > 0 && stream->height > 0) {
-          gint n, d;
+      if (stream->display_width > 0 && stream->display_height > 0 &&
+          stream->width > 0 && stream->height > 0) {
+        gint n, d;
 
-          /* calculate the pixel aspect ratio using the display and pixel w/h */
-          n = stream->display_width * stream->height;
-          d = stream->display_height * stream->width;
-          if (n != d) {
-            GST_DEBUG_OBJECT (qtdemux, "setting PAR to %d/%d", n, d);
-            gst_caps_set_simple (stream->caps, "pixel-aspect-ratio",
-                GST_TYPE_FRACTION, n, d, NULL);
-          }
+        /* calculate the pixel aspect ratio using the display and pixel w/h */
+        n = stream->display_width * stream->height;
+        d = stream->display_height * stream->width;
+        if (n != d) {
+          GST_DEBUG_OBJECT (qtdemux, "setting PAR to %d/%d", n, d);
+          gst_caps_set_simple (stream->caps, "pixel-aspect-ratio",
+              GST_TYPE_FRACTION, n, d, NULL);
         }
       }
 

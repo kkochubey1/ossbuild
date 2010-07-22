@@ -326,6 +326,8 @@ static gboolean gst_base_transform_acceptcaps_default (GstBaseTransform * trans,
 static gboolean gst_base_transform_setcaps (GstPad * pad, GstCaps * caps);
 static GstFlowReturn gst_base_transform_buffer_alloc (GstPad * pad,
     guint64 offset, guint size, GstCaps * caps, GstBuffer ** buf);
+static gboolean gst_base_transform_query (GstPad * pad, GstQuery * query);
+static const GstQueryType *gst_base_transform_query_type (GstPad * pad);
 
 /* static guint gst_base_transform_signals[LAST_SIGNAL] = { 0 }; */
 
@@ -402,6 +404,10 @@ gst_base_transform_init (GstBaseTransform * trans,
       GST_DEBUG_FUNCPTR (gst_base_transform_sink_activate_push));
   gst_pad_set_bufferalloc_function (trans->sinkpad,
       GST_DEBUG_FUNCPTR (gst_base_transform_buffer_alloc));
+  gst_pad_set_query_function (trans->sinkpad,
+      GST_DEBUG_FUNCPTR (gst_base_transform_query));
+  gst_pad_set_query_type_function (trans->sinkpad,
+      GST_DEBUG_FUNCPTR (gst_base_transform_query_type));
   gst_element_add_pad (GST_ELEMENT (trans), trans->sinkpad);
 
   pad_template =
@@ -420,6 +426,10 @@ gst_base_transform_init (GstBaseTransform * trans,
       GST_DEBUG_FUNCPTR (gst_base_transform_getrange));
   gst_pad_set_activatepull_function (trans->srcpad,
       GST_DEBUG_FUNCPTR (gst_base_transform_src_activate_pull));
+  gst_pad_set_query_function (trans->srcpad,
+      GST_DEBUG_FUNCPTR (gst_base_transform_query));
+  gst_pad_set_query_type_function (trans->srcpad,
+      GST_DEBUG_FUNCPTR (gst_base_transform_query_type));
   gst_element_add_pad (GST_ELEMENT (trans), trans->srcpad);
 
   trans->transform_lock = g_mutex_new ();
@@ -1183,6 +1193,48 @@ failed_configure:
   }
 }
 
+static gboolean
+gst_base_transform_query (GstPad * pad, GstQuery * query)
+{
+  gboolean ret = FALSE;
+  GstBaseTransform *trans = GST_BASE_TRANSFORM (gst_pad_get_parent (pad));
+  GstPad *otherpad = (pad == trans->srcpad) ? trans->sinkpad : trans->srcpad;
+
+  switch (GST_QUERY_TYPE (query)) {
+    case GST_QUERY_POSITION:{
+      GstFormat format;
+
+      gst_query_parse_position (query, &format, NULL);
+      if (format == GST_FORMAT_TIME && trans->segment.format == GST_FORMAT_TIME) {
+        ret = TRUE;
+        gst_query_set_position (query, format,
+            gst_segment_to_stream_time (&trans->segment, GST_FORMAT_TIME,
+                trans->segment.last_stop));
+      } else {
+        ret = gst_pad_peer_query (otherpad, query);
+      }
+      break;
+    }
+    default:
+      ret = gst_pad_peer_query (otherpad, query);
+      break;
+  }
+
+  gst_object_unref (trans);
+  return ret;
+}
+
+static const GstQueryType *
+gst_base_transform_query_type (GstPad * pad)
+{
+  static const GstQueryType types[] = {
+    GST_QUERY_POSITION,
+    GST_QUERY_NONE
+  };
+
+  return types;
+}
+
 /* Allocate a buffer using gst_pad_alloc_buffer
  *
  * This function can do renegotiation on the source pad
@@ -1310,6 +1362,23 @@ gst_base_transform_prepare_output_buffer (GstBaseTransform * trans,
 
     if (can_convert) {
       GST_DEBUG_OBJECT (trans, "reconfigure transform for current buffer");
+
+      /* subclass might want to add fields to the caps */
+      if (bclass->fixate_caps != NULL) {
+        newcaps = gst_caps_copy (newcaps);
+
+        GST_DEBUG_OBJECT (trans, "doing fixate %" GST_PTR_FORMAT
+            " using caps %" GST_PTR_FORMAT
+            " on pad %s:%s using fixate_caps vmethod", newcaps, incaps,
+            GST_DEBUG_PAD_NAME (trans->srcpad));
+        bclass->fixate_caps (trans, GST_PAD_SINK, incaps, newcaps);
+
+        *out_buf = gst_buffer_make_metadata_writable (*out_buf);
+        gst_buffer_set_caps (*out_buf, newcaps);
+        gst_caps_unref (newcaps);
+        newcaps = GST_BUFFER_CAPS (*out_buf);
+      }
+
       /* caps not empty, try to renegotiate to the new format */
       if (!gst_base_transform_configure_caps (trans, incaps, newcaps)) {
         /* not sure we need to fail hard here, we can simply continue our

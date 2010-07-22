@@ -59,6 +59,8 @@ static GstStaticPadTemplate srctemplate = GST_STATIC_PAD_TEMPLATE ("src",
 #define DEFAULT_AUTOMATIC_REDIRECT   TRUE
 #define DEFAULT_ACCEPT_SELF_SIGNED   FALSE
 #define DEFAULT_NEON_HTTP_DEBUG      FALSE
+#define DEFAULT_CONNECT_TIMEOUT      0
+#define DEFAULT_READ_TIMEOUT         0
 
 enum
 {
@@ -72,6 +74,8 @@ enum
   PROP_IRADIO_URL,
   PROP_AUTOMATIC_REDIRECT,
   PROP_ACCEPT_SELF_SIGNED,
+  PROP_CONNECT_TIMEOUT, 
+  PROP_READ_TIMEOUT, 
 #ifndef GST_DISABLE_GST_DEBUG
   PROP_NEON_HTTP_DEBUG
 #endif
@@ -207,6 +211,16 @@ gst_neonhttp_src_class_init (GstNeonhttpSrcClass * klass)
           "Accept self-signed SSL/TLS certificates",
           DEFAULT_ACCEPT_SELF_SIGNED, G_PARAM_READWRITE));
 
+  g_object_class_install_property (gobject_class, PROP_CONNECT_TIMEOUT,
+      g_param_spec_uint ("connect-timeout", "connect-timeout",
+          "Value in seconds to timeout a blocking connection (0 = System default).", 0,
+          3600, 0, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class, PROP_READ_TIMEOUT,
+      g_param_spec_uint ("read-timeout", "read-timeout",
+          "Value in seconds to timeout a blocking read (0 = System default).", 0,
+          3600, 0, G_PARAM_READWRITE));
+
 #ifndef GST_DISABLE_GST_DEBUG
   g_object_class_install_property
       (gobject_class, PROP_NEON_HTTP_DEBUG,
@@ -241,6 +255,8 @@ gst_neonhttp_src_init (GstNeonhttpSrc * src, GstNeonhttpSrcClass * g_class)
   src->user_agent = g_strdup (DEFAULT_USER_AGENT);
   src->automatic_redirect = DEFAULT_AUTOMATIC_REDIRECT;
   src->accept_self_signed = DEFAULT_ACCEPT_SELF_SIGNED;
+  src->connect_timeout = DEFAULT_CONNECT_TIMEOUT;
+  src->read_timeout = DEFAULT_READ_TIMEOUT;
 
   src->session = NULL;
   src->request = NULL;
@@ -353,6 +369,12 @@ gst_neonhttp_src_set_property (GObject * object, guint prop_id,
     case PROP_ACCEPT_SELF_SIGNED:
       src->accept_self_signed = g_value_get_boolean (value);
       break;
+    case PROP_CONNECT_TIMEOUT:
+      src->connect_timeout = g_value_get_uint (value);
+      break;
+    case PROP_READ_TIMEOUT:
+      src->read_timeout = g_value_get_uint (value);
+      break;
 #ifndef GST_DISABLE_GST_DEBUG
     case PROP_NEON_HTTP_DEBUG:
       src->neon_http_debug = g_value_get_boolean (value);
@@ -423,6 +445,12 @@ gst_neonhttp_src_get_property (GObject * object, guint prop_id,
       break;
     case PROP_ACCEPT_SELF_SIGNED:
       g_value_set_boolean (value, neonhttpsrc->accept_self_signed);
+      break;
+    case PROP_CONNECT_TIMEOUT:
+      g_value_set_uint (value, neonhttpsrc->connect_timeout);
+      break;
+    case PROP_READ_TIMEOUT:
+      g_value_set_uint (value, neonhttpsrc->read_timeout);
       break;
 #ifndef GST_DISABLE_GST_DEBUG
     case PROP_NEON_HTTP_DEBUG:
@@ -838,6 +866,14 @@ gst_neonhttp_src_send_request_and_redirect (GstNeonhttpSrc * src,
     } else {
       session =
           ne_session_create (src->uri.scheme, src->uri.host, src->uri.port);
+    }
+
+    if (src->connect_timeout > 0) {
+      ne_set_connect_timeout(session, src->connect_timeout);
+    }
+
+    if (src->read_timeout > 0) {
+      ne_set_read_timeout(session, src->read_timeout);
     }
 
     ne_set_session_flag (session, NE_SESSFLAG_ICYPROTO, 1);
