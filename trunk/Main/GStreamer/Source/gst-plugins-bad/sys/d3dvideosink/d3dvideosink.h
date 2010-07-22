@@ -52,6 +52,7 @@ struct _GstD3DVideoSink
   guint32 fourcc;
 
   gboolean keep_aspect_ratio;
+  GValue *par; 
 
   /* If the window is closed, we set this and error out */
   gboolean window_closed;
