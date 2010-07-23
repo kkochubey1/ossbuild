@@ -15,7 +15,7 @@
 	<Tool
 		Name="VCLinkerTool"
 		AdditionalOptions="/ignore:4099"
-		AdditionalDependencies="strmbase.lib winmm.lib dmoguids.lib wmcodecdspuuid.lib rpcrt4.lib"
+		AdditionalDependencies="strmbase.lib winmm.lib dmoguids.lib wmcodecdspuuid.lib rpcrt4.lib Mfuuid.lib"
 		AdditionalLibraryDirectories="&quot;$(SolutionDir)\Shared\SDKs\DirectShow\lib\$(PlatformName)&quot;"
 	/>
 	<UserMacro
