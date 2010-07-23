@@ -43,19 +43,19 @@ index b916dcc..3800662 100644
 +  min_fr = (gint) (10000000 / pin_mediatype->vscc.MaxFrameInterval);
 +  max_fr = (gint)(10000000 / pin_mediatype->vscc.MinFrameInterval);
 +
-+  if (min_w = max_w)
++  if (min_w == max_w)
 +    gst_structure_set (video_structure, "width", G_TYPE_INT, min_w, NULL);
 +  else 
 +     gst_structure_set (video_structure,
 +       "width", GST_TYPE_INT_RANGE, min_w, max_w, NULL);
 +
-+  if (min_h = max_h)
++  if (min_h == max_h)
 +    gst_structure_set (video_structure, "height", G_TYPE_INT, min_h, NULL);
 +  else 
 +     gst_structure_set (video_structure,
 +       "height", GST_TYPE_INT_RANGE, min_h, max_h, NULL);
 +
-+  if (min_fr = max_fr)
++  if (min_fr == max_fr)
 +    gst_structure_set (video_structure, "framerate", 
 +        GST_TYPE_FRACTION, min_fr, 1, NULL);
 +  else 
