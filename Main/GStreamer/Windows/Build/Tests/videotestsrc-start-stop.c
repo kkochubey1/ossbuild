@@ -130,7 +130,7 @@ main (int argc, char *argv[])
     ffmpegcolorspace = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcolorspace");
     g_assert (ffmpegcolorspace);
 
-    videosink = gst_element_factory_make ("d3dvideosink", "videosink");
+    videosink = gst_element_factory_make ("autovideosink", "videosink");
     g_assert (videosink);
 
     gst_bin_add_many(GST_BIN(pipeline), videotestsrc, ffmpegcolorspace, videosink, NULL);
