@@ -15,7 +15,7 @@ import ossbuild.media.Scheme;
  *
  * @author David Hoyt <dhoyt@hoytsoft.org>
  */
-public class GstMediaComponent extends MediaComponentV4 {
+public class GstMediaComponent extends MediaComponentV5 {
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	public GstMediaComponent(Composite parent, int style) {
 		this(DEFAULT_VIDEO_ELEMENT, DEFAULT_AUDIO_ELEMENT, parent, style);
