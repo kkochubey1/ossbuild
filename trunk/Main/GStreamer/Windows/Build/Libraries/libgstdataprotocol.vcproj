@@ -298,7 +298,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject="..\Libraries\libgstreamer.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstreamer.vcproj"
 		/>
 	</References>
 	<Files>

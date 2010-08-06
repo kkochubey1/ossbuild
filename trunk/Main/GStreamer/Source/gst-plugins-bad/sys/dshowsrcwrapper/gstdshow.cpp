@@ -474,20 +474,20 @@ gst_dshow_new_video_caps (GstVideoFormat video_format, const gchar * name,
 
   if (min_w == max_w)
     gst_structure_set (video_structure, "width", G_TYPE_INT, min_w, NULL);
-  else 
+  else
      gst_structure_set (video_structure,
        "width", GST_TYPE_INT_RANGE, min_w, max_w, NULL);
 
   if (min_h == max_h)
     gst_structure_set (video_structure, "height", G_TYPE_INT, min_h, NULL);
-  else 
+  else
      gst_structure_set (video_structure,
        "height", GST_TYPE_INT_RANGE, min_h, max_h, NULL);
 
   if (min_fr == max_fr)
-    gst_structure_set (video_structure, "framerate", 
+    gst_structure_set (video_structure, "framerate",
         GST_TYPE_FRACTION, min_fr, 1, NULL);
-  else 
+  else
      gst_structure_set (video_structure, "framerate",
          GST_TYPE_FRACTION_RANGE, min_fr, 1, max_fr, 1, NULL);
 

@@ -106,7 +106,7 @@ main (int argc, char *argv[])
   app->playbin = gst_element_factory_make ("playbin2", NULL);
   g_assert (app->playbin);
 
-  app->videosink = gst_element_factory_make ("directdrawsink", "videosink");
+  app->videosink = gst_element_factory_make ("d3dvideosink", "videosink");
   g_assert (app->videosink);
 
   bus = gst_pipeline_get_bus (GST_PIPELINE (app->playbin));
