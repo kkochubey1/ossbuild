@@ -476,7 +476,7 @@ public class Main {
 			int index = 0;
 			String[] uri = new String[] {
 				  "http://72.240.51.210/axis-cgi/mjpg/video.cgi?resolution=352x240&camera=1&dummy=garb"
-				, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb"
+				//, "http://www.warwick.ac.uk/newwebcam/cgi-bin/webcam.pl?dummy=garb"
 				//, "http://www.google.com/test/"
 				//, "http://www.asfjasflasf.com/"
 				//, "http://samples.mplayerhq.hu/mov/RQ004F14.MOV"
