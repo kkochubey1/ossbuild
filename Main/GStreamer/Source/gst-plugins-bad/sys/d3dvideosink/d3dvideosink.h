@@ -69,6 +69,7 @@ struct _GstD3DVideoSink
 
   /* If we use an app-supplied window, we need to hook its WNDPROC */
   WNDPROC prevWndProc;
+  gboolean is_hooked;
 
   GMutex *d3d_swap_chain_lock;
   LPDIRECT3DSWAPCHAIN9 d3d_swap_chain;

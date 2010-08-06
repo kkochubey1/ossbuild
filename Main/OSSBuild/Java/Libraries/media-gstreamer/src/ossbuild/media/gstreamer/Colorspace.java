@@ -7,8 +7,20 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import org.gstreamer.Buffer;
+import org.gstreamer.Bus;
 import org.gstreamer.Caps;
+import org.gstreamer.ClockTime;
+import org.gstreamer.Element;
+import org.gstreamer.ElementFactory;
+import org.gstreamer.Message;
+import org.gstreamer.MessageType;
+import org.gstreamer.Pipeline;
+import org.gstreamer.State;
 import org.gstreamer.Structure;
+import org.gstreamer.elements.AppSink;
+import org.gstreamer.elements.AppSrc;
+import org.gstreamer.lowlevel.GstBusAPI;
+import org.gstreamer.lowlevel.GstPipelineAPI;
 import ossbuild.StringUtil;
 
 /**
@@ -246,6 +258,93 @@ public class Colorspace {
 			return null;
 		} finally {
 		}
+	}
+
+	/* Taken from gstscreenshot.c */
+	public static Buffer convertFrame(final Buffer buffer, final Caps to_caps) {
+		final Caps from_caps = buffer.getCaps();
+		if (from_caps == null)
+			return null;
+
+		Message msg = null;
+		Bus bus = null;
+		Pipeline pipeline = null;
+		AppSrc src = null;
+		Element csp = null, vscale = null;
+		AppSink sink = null;
+
+		try {
+			if (
+				   (src    = (AppSrc)ElementFactory.make("appsrc", "appsrc")) == null
+				|| (csp    = ElementFactory.make("ffmpegcolorspace", "ffmpegcolorspace")) == null
+				|| (vscale = ElementFactory.make("videoscale", "videoscale")) == null
+				|| (sink   = (AppSink)ElementFactory.make("appsink", "appsink")) == null
+			)
+				return null;
+
+			if ((pipeline = new Pipeline("screenshot-pipeline")) == null)
+				return null;
+
+			//Add black borders if necessary to keep the DAR
+			vscale.set("add-borders", true);
+
+			//Add elements
+			pipeline.addMany(src, csp, vscale, sink);
+
+			//Set caps
+			src.set("caps", from_caps);
+			sink.set("caps", to_caps);
+
+			//Linking src->csp
+			if (!Element.linkPads(src, "src", csp, "sink"))
+				return null;
+			//Linking csp->vscale
+			if (!Element.linkPads(csp, "src", vscale, "sink"))
+				return null;
+			//Linking vscale->sink
+			if (!Element.linkPads(vscale, "src", sink, "sink"))
+				return null;
+
+			//Now set the pipeline to the paused state, after we push the buffer into
+			//appsrc, this should preroll the converted buffer in appsink
+			pipeline.setState(State.PAUSED);
+
+			//feed buffer in appsrc
+			src.pushBuffer(buffer);
+
+			//Now see what happens. We either got an error somewhere or the pipeline
+			//prerolled.
+
+			bus = GstPipelineAPI.GSTPIPELINE_API.gst_pipeline_get_bus(pipeline);
+
+			GstBusAPI.GSTBUS_API.gst_bus_poll(bus, MessageType.ASYNC_DONE, ClockTime.fromSeconds(25).toNanos());
+		} finally {
+			if (msg != null)
+				msg.dispose();
+			if (bus != null)
+				bus.dispose();
+			if (pipeline != null) {
+				pipeline.setState(State.NULL);
+				pipeline.dispose();
+			}
+			if (src != null)
+				src.dispose();
+			if (csp != null)
+				csp.dispose();
+			if (vscale != null)
+				vscale.dispose();
+			if (sink != null)
+				sink.dispose();
+			src = null;
+			csp = null;
+			vscale = null;
+			sink = null;
+			msg = null;
+			bus = null;
+			pipeline = null;
+		}
+
+		return null;
 	}
 	//</editor-fold>
 }

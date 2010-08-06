@@ -1341,6 +1341,7 @@ gst_base_transform_prepare_output_buffer (GstBaseTransform * trans,
   /* check if we got different caps on this new output buffer */
   newcaps = GST_BUFFER_CAPS (*out_buf);
   newsize = GST_BUFFER_SIZE (*out_buf);
+
   if (newcaps && !gst_caps_is_equal (newcaps, oldcaps)) {
     GstCaps *othercaps;
     gboolean can_convert;
@@ -1388,6 +1389,9 @@ gst_base_transform_prepare_output_buffer (GstBaseTransform * trans,
       /* new format configure, and use the new output buffer */
       gst_pad_set_caps (trans->srcpad, newcaps);
       discard = FALSE;
+      /* clear previous cached sink-pad caps, so buffer_alloc knows that
+       * it needs to revisit the decision about whether to proxy or not: */
+      gst_caps_replace (&priv->sink_alloc, NULL);
       /* if we got a buffer of the wrong size, discard it now and make sure we
        * allocate a propertly sized buffer later. */
       if (newsize != expsize) {
@@ -1619,6 +1623,7 @@ gst_base_transform_buffer_alloc (GstPad * pad, guint64 offset, guint size,
     GstCaps * caps, GstBuffer ** buf)
 {
   GstBaseTransform *trans;
+  GstBaseTransformClass *klass;
   GstBaseTransformPrivate *priv;
   GstFlowReturn res;
   gboolean proxy, suggest, same_caps;
@@ -1626,6 +1631,7 @@ gst_base_transform_buffer_alloc (GstPad * pad, guint64 offset, guint size,
   guint size_suggest;
 
   trans = GST_BASE_TRANSFORM (gst_pad_get_parent (pad));
+  klass = GST_BASE_TRANSFORM_GET_CLASS (trans);
   priv = trans->priv;
 
   GST_DEBUG_OBJECT (pad, "alloc with caps %p %" GST_PTR_FORMAT ", size %u",
@@ -1707,15 +1713,51 @@ gst_base_transform_buffer_alloc (GstPad * pad, guint64 offset, guint size,
           sink_suggest = NULL;
         }
 
-        GST_DEBUG_OBJECT (trans, "Caps fixated to now: %" GST_PTR_FORMAT,
+        GST_DEBUG_OBJECT (trans, "Caps fixed to: %" GST_PTR_FORMAT,
             sink_suggest);
       }
 
       if (sink_suggest) {
         templ = gst_pad_get_pad_template_caps (pad);
 
-        if (!gst_caps_can_intersect (sink_suggest, templ))
-          goto not_supported;
+        if (!gst_caps_can_intersect (sink_suggest, templ)) {
+          GstCaps *allowed;
+          GstCaps *peercaps;
+
+          /* the requested pad alloc caps are not supported, so let's try
+           * picking something allowed between the pads (they are linked,
+           * there must be something) */
+
+          allowed = gst_pad_get_allowed_caps (pad);
+          if (allowed && !gst_caps_is_empty (allowed)) {
+            GST_DEBUG_OBJECT (trans, "Requested pad alloc caps is not "
+                "supported, but pads could agree on one of the following caps: "
+                "%" GST_PTR_FORMAT, allowed);
+            allowed = gst_caps_make_writable (allowed);
+
+            if (klass->fixate_caps) {
+              peercaps =
+                  gst_pad_get_allowed_caps (GST_BASE_TRANSFORM_SRC_PAD (trans));
+              klass->fixate_caps (trans, GST_PAD_SRC, peercaps, allowed);
+              gst_caps_unref (peercaps);
+            }
+
+            /* Fixate them to be safe if the subclass didn't do it */
+            gst_caps_truncate (allowed);
+            gst_pad_fixate_caps (pad, allowed);
+            gst_caps_replace (&sink_suggest, allowed);
+            gst_caps_unref (allowed);
+
+            suggest = TRUE;
+
+            GST_DEBUG_OBJECT (trans, "Fixated suggestion caps to %"
+                GST_PTR_FORMAT, sink_suggest);
+          } else {
+            if (allowed)
+              gst_caps_unref (allowed);
+            goto not_supported;
+          }
+        }
       }
     }
 
@@ -1757,7 +1799,8 @@ gst_base_transform_buffer_alloc (GstPad * pad, guint64 offset, guint size,
   GST_OBJECT_UNLOCK (pad);
 
   proxy = priv->proxy_alloc;
-  GST_DEBUG_OBJECT (trans, "doing default alloc, proxy %d", proxy);
+  GST_DEBUG_OBJECT (trans, "doing default alloc, proxy %d, suggest %d", proxy,
+      suggest);
 
   /* we only want to proxy if we have no suggestion pending, FIXME */
   if (proxy && !suggest) {
@@ -1789,8 +1832,11 @@ gst_base_transform_buffer_alloc (GstPad * pad, guint64 offset, guint size,
         GST_OBJECT_UNLOCK (pad);
       } else {
         GST_DEBUG_OBJECT (trans, "peer did not accept new caps");
-        /* peer does not accept the caps, free the buffer we received and
-         * create a buffer of the requested format by the default handler. */
+        /* peer does not accept the caps, disable proxy_alloc, free the
+         * buffer we received and create a buffer of the requested format
+         * by the default handler. */
+        GST_DEBUG_OBJECT (trans, "disabling proxy");
+        priv->proxy_alloc = FALSE;
         gst_buffer_unref (*buf);
         *buf = NULL;
       }
