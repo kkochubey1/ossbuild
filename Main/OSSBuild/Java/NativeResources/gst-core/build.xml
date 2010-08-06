@@ -100,6 +100,11 @@
 
 		<copy todir="${build.java.platform.bin.dir}">
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
+				<include name="*gst-player*" />
+				<include name="*gst-launch*" />
+				<include name="*gst-inspect*" />
+				<include name="*gst-typefind*" />
+
 				<include name="*gstreamer*.so.*" />
 				<include name="*gstcontroller*.so.*" />
 				<include name="*gstdataprotocol*.so.*" />
@@ -109,6 +114,11 @@
 				<exclude name="*gstreamer*sharp*" />
 			</fileset>
 			<fileset dir="${build.bin.dir}" erroronmissingdir="false">
+				<include name="*gst-player*.exe" />
+				<include name="*gst-launch*.exe" />
+				<include name="*gst-inspect*.exe" />
+				<include name="*gst-typefind*.exe" />
+
 				<include name="*gstreamer*.dll" />
 				<include name="*gstcontroller*.dll" />
 				<include name="*gstdataprotocol*.dll" />
