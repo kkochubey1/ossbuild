@@ -30,6 +30,12 @@
 	</Extract>
 
 	<Extract package="${pkgPlatform}.bin" directory="${dirPlatform}/bin/">
+		<!-- Executables -->
+		<File resource="gst-player.exe" executable="true" />
+		<File resource="gst-launch.exe" executable="true" />
+		<File resource="gst-inspect.exe" executable="true" />
+		<File resource="gst-typefind.exe" executable="true" />
+
 		<!-- Libraries -->
 		<Library resource="libgstreamer-${GstApiVersion}.dll" />
 		<Library resource="libgstcontroller-${GstApiVersion}.dll" />
