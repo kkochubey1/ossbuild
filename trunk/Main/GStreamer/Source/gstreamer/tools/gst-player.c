@@ -45,6 +45,8 @@
 
 #include <gst/interfaces/xoverlay.h>
 
+/* #define gst_object_unref(obj) */
+
 #define DEFAULT_PROGRAM_NAME "gst-player"
 #define DEFAULT_AUDIO_SINK   "autoaudiosink"
 #define DEFAULT_VIDEO_SINK   "autovideosink"
@@ -418,8 +420,6 @@ examine_element(gchar* factory_name, GstElement* element, App* app)
     }
     g_object_set(element, "timeout", 3, NULL);
     g_object_set(element, "automatic-redirect", TRUE, NULL);
-    if (app->buffer_size > 0)
-      g_object_set(element, "blocksize", app->buffer_size, NULL);
 
   } else if (g_str_has_prefix(factory_name, "neonhttpsrc")) {
 
@@ -430,8 +430,6 @@ examine_element(gchar* factory_name, GstElement* element, App* app)
     g_object_set(element, "connect-timeout", 3, NULL);
     g_object_set(element, "read-timeout", 3, NULL);
     g_object_set(element, "automatic-redirect", TRUE, NULL);
-    if (app->buffer_size > 0)
-      g_object_set(element, "blocksize", app->buffer_size, NULL);
 
   }
 }
@@ -855,6 +853,8 @@ eos:
           if (app->repeat_count == G_MAXINT)
             app->repeat_count = 1;
 
+          GST_PLAYER_COMMAND_LOCK
+
           /* Pause pipeline */
           gst_element_set_state(app->pipeline, GST_STATE_PAUSED);
           gst_element_get_state(app->pipeline, NULL, NULL, -1);
@@ -871,6 +871,8 @@ eos:
 
           GST_PLAYER_EVENT("repeat, %d", app->repeat_count);
 
+          GST_PLAYER_COMMAND_UNLOCK
+
           break;
         }
         app->exiting = TRUE;
@@ -884,6 +886,8 @@ eos:
           GError *err = NULL;
           gchar *name, *debug = NULL;
 
+          GST_PLAYER_COMMAND_LOCK
+
           name = gst_object_get_path_string(GST_MESSAGE_SRC(message));
           gst_message_parse_error(message, &err, &debug);
 
@@ -895,6 +899,8 @@ eos:
 
           gst_element_set_state(app->pipeline, GST_STATE_READY);
           GST_PLAYER_EVENT("stopped");
+
+          GST_PLAYER_COMMAND_UNLOCK
 
           //app->exiting = TRUE;
           if (!(GST_PLAYER_REPEAT_FOREVER(app->total_repeat_count) || (app->total_repeat_count > 0 && app->repeat_count < app->total_repeat_count)))
@@ -917,21 +923,23 @@ eos:
       if (app->buffering)
         break;
 
+      GST_PLAYER_COMMAND_LOCK
       if (new_state == GST_STATE_PLAYING && old_state == GST_STATE_PAUSED) {
         gint64 position;
         GstFormat format = GST_FORMAT_TIME;
         gst_element_query_position(app->pipeline, &format, &position);
-        GST_PLAYER_EVENT("position, %I64d", position / GST_MSECOND);
+        GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
         GST_PLAYER_EVENT("playing");
       } else if (new_state == GST_STATE_PAUSED && pending_state == GST_STATE_VOID_PENDING) {
         gint64 position;
         GstFormat format = GST_FORMAT_TIME;
         gst_element_query_position(app->pipeline, &format, &position);
-        GST_PLAYER_EVENT("position, %I64d", position / GST_MSECOND);
+        GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
         GST_PLAYER_EVENT("paused");
       } else if (new_state == GST_STATE_READY && pending_state == GST_STATE_NULL) {
         GST_PLAYER_EVENT("stopped");
       }
+      GST_PLAYER_COMMAND_UNLOCK
 
       /* else not an interesting message */
       break;
@@ -946,26 +954,31 @@ eos:
 
       gst_message_parse_buffering(message, &percent);
 
+      GST_PLAYER_COMMAND_LOCK
       if (percent >= 100) {
         /* completed buffering, set to PLAYING. */
         if (app->buffering)
-        gst_element_set_state(app->pipeline, GST_STATE_PLAYING);
+          gst_element_set_state(app->pipeline, GST_STATE_PLAYING);
 
         /* a 100% message means buffering is done */
         app->buffering = FALSE;
         app->last_percent = 100;
       } else {
+
+        /* we were not buffering but PLAYING, PAUSE the pipeline. */
+        if (!app->buffering) {
+          gst_element_set_state(app->pipeline, GST_STATE_PAUSED);
+          GST_PLAYER_EVENT("paused");
+        }
+
         /* no need to output another event if the percentage hasn't changed */
         if (percent != app->last_percent)
           GST_PLAYER_EVENT("buffering, %d", percent);
-
-        /* we were not buffering but PLAYING, PAUSE the pipeline. */
-        if (!app->buffering)
-          gst_element_set_state(app->pipeline, GST_STATE_PAUSED);
         
         app->buffering = TRUE;
         app->last_percent = percent;
       }
+      GST_PLAYER_COMMAND_UNLOCK
       break;
     }
     case GST_MESSAGE_LATENCY:
@@ -976,10 +989,13 @@ eos:
     case GST_MESSAGE_REQUEST_STATE:
     {
       GstState state;
-      gchar *name = gst_object_get_path_string(GST_MESSAGE_SRC(message));
+      gchar *name;
+      GST_PLAYER_COMMAND_LOCK
+      name = gst_object_get_path_string(GST_MESSAGE_SRC(message));
       gst_message_parse_request_state(message, &state);
       gst_element_set_state(app->pipeline, state);
       g_free(name);
+      GST_PLAYER_COMMAND_UNLOCK
       break;
     }
     case GST_MESSAGE_APPLICATION:
@@ -1014,6 +1030,9 @@ playbin_element_added(GstBin* playbin, GstElement* element, App* app)
   factory_name = GST_PLUGIN_FEATURE_NAME(factory);
   if (!g_str_has_prefix(factory_name, "uridecodebin"))
     return;
+
+  g_object_set(element, "download", TRUE, NULL);
+  g_object_set(element, "use-buffering", TRUE, NULL);
 
   g_signal_connect(element, "pad-added", G_CALLBACK(uridecodebin_pad_added), app);
   g_signal_connect(element, "element-added", G_CALLBACK(uridecodebin_element_added), app);
@@ -1096,95 +1115,96 @@ uridecodebin_pad_added(GstElement* element, GstPad* pad, App* app)
     if (g_str_has_prefix(name, "audio/")) {
       app->media_type |= MEDIA_TYPE_AUDIO;
     } else if (g_str_has_prefix(name, "video/")) {
-      GstCaps* caps_filter;
-      MediaType media_type;
-      GstPad* sink_pad;
-      GstPad* video_bin_ghost_pad;
-      GstElement *video_bin;
-      GstElement *video_scale, *video_colorspace, *video_capsfilter;
-
       /* We need to do this only once since (for now) we only play the same media in the same process. */
       /* TODO: Support switching pipelines using commands instead of the command line. */
-      if (!app->first_round)
-        return;
-
-      app->first_round = FALSE;
-
-      /* Determine if this is a still image or video we're looking at. */
-      media_type = determine_media_type(GST_BIN(element));
-
-      switch(media_type) {
-        case MEDIA_TYPE_VIDEO:
-          app->media_type |= MEDIA_TYPE_VIDEO;
-          break;
-        case MEDIA_TYPE_STILL:
-          app->media_type |= MEDIA_TYPE_STILL;
-          break;
-      }
-
-      /* Setup a bin w/ ghost pads containing a number of elements we'll need. */
-
-      video_bin = gst_bin_new("video_bin");
-
-      caps_filter = create_app_caps(app);
-
-      video_scale = gst_element_factory_make("videoscale", NULL);
-      video_colorspace = gst_element_factory_make("ffmpegcolorspace", NULL);
-      video_capsfilter = gst_element_factory_make("capsfilter", NULL);
-
-      g_object_set(video_scale, "method", VIDEO_SCALE_METHOD_BILINEAR, NULL);
-      g_object_set(video_capsfilter, "caps", caps_filter, NULL);
-
-      if (!app->is_live) {
-        GstElement *video_rate;
-
-        video_rate = gst_element_factory_make("videorate", NULL);
-        
-        gst_bin_add_many(GST_BIN(video_bin), video_colorspace, video_rate, video_scale, video_capsfilter, app->video_sink, NULL);
-        gst_element_link_many(video_colorspace, video_rate, video_scale, video_capsfilter, app->video_sink, NULL);
-      } else {
-        gst_bin_add_many(GST_BIN(video_bin), video_colorspace, video_scale, video_capsfilter, app->video_sink, NULL);
-        gst_element_link_many(video_colorspace, video_scale, video_capsfilter, app->video_sink, NULL);
-      }
-
-      sink_pad = gst_element_get_static_pad(video_colorspace, "sink");
-      video_bin_ghost_pad = gst_ghost_pad_new("sink", sink_pad);
-      gst_element_add_pad(video_bin, video_bin_ghost_pad);
-      gst_object_unref(sink_pad);
-
-      gst_caps_unref(caps_filter);
-
-      app->video_sink = video_bin;
-
-      /* If we have a still image, then we need to inject an image freeze element */
-      if (GST_PLAYER_MEDIA_IS_STILL(app->media_type)) {
+      if (app->first_round) {
+        GstCaps* caps_filter;
+        MediaType media_type;
         GstPad* sink_pad;
-        GstPad* image_bin_ghost_pad;
-        GstElement* image_bin;
-        GstElement* imagefreeze;
+        GstPad* video_bin_ghost_pad;
+        GstElement *video_bin;
+        GstElement *video_scale, *video_colorspace, *video_capsfilter;
 
-        imagefreeze = gst_element_factory_make("imagefreeze", NULL);
+        app->first_round = FALSE;
 
-        /* Did we succeed in creating an imagefreeze element? */
-        if (imagefreeze) {
-          image_bin = gst_bin_new(NULL);
+        /* Determine if this is a still image or video we're looking at. */
+        media_type = determine_media_type(GST_BIN(element));
+
+        switch(media_type) {
+          case MEDIA_TYPE_VIDEO:
+            app->media_type |= MEDIA_TYPE_VIDEO;
+            break;
+          case MEDIA_TYPE_STILL:
+            app->media_type |= MEDIA_TYPE_STILL;
+            break;
+        }
+
+        /* Setup a bin w/ ghost pads containing a number of elements we'll need. */
+
+        video_bin = gst_bin_new("video_bin");
+
+        caps_filter = create_app_caps(app);
+
+        video_scale = gst_element_factory_make("videoscale", NULL);
+        video_colorspace = gst_element_factory_make("ffmpegcolorspace", NULL);
+        video_capsfilter = gst_element_factory_make("capsfilter", NULL);
+
+        g_object_set(video_scale, "method", VIDEO_SCALE_METHOD_BILINEAR, NULL);
+        g_object_set(video_capsfilter, "caps", caps_filter, NULL);
+
+        gst_caps_unref(caps_filter);
+
+        if (!app->is_live) {
+          GstElement *video_rate;
+
+          video_rate = gst_element_factory_make("videorate", NULL);
           
-          gst_bin_add_many(GST_BIN(image_bin), imagefreeze, app->video_sink, NULL);
-          gst_element_link_many(imagefreeze, app->video_sink, NULL);
+          gst_bin_add_many(GST_BIN(video_bin), video_colorspace, video_rate, video_scale, video_capsfilter, app->video_sink, NULL);
+          gst_element_link_many(video_colorspace, video_rate, video_scale, video_capsfilter, app->video_sink, NULL);
+        } else {
+          gst_bin_add_many(GST_BIN(video_bin), video_colorspace, video_scale, video_capsfilter, app->video_sink, NULL);
+          gst_element_link_many(video_colorspace, video_scale, video_capsfilter, app->video_sink, NULL);
+        }
 
-          sink_pad = gst_element_get_static_pad(imagefreeze, "sink");
-          image_bin_ghost_pad = gst_ghost_pad_new("sink", sink_pad);
-          gst_element_add_pad(image_bin, image_bin_ghost_pad);
+        sink_pad = gst_element_get_static_pad(video_colorspace, "sink");
+        video_bin_ghost_pad = gst_ghost_pad_new("sink", sink_pad);
+        gst_element_add_pad(video_bin, video_bin_ghost_pad);
+        gst_object_unref(sink_pad);
+
+        app->video_sink = video_bin;
+
+        /* If we have a still image, then we need to inject an image freeze element */
+        if (GST_PLAYER_MEDIA_IS_STILL(app->media_type)) {
+          GstPad* sink_pad;
+          GstPad* image_bin_ghost_pad;
+          GstElement* image_bin;
+          GstElement* imagefreeze;
+
+          imagefreeze = gst_element_factory_make("imagefreeze", NULL);
+
+          /* Did we succeed in creating an imagefreeze element? */
+          if (imagefreeze) {
+            image_bin = gst_bin_new(NULL);
+            
+            gst_bin_add_many(GST_BIN(image_bin), imagefreeze, app->video_sink, NULL);
+            gst_element_link_many(imagefreeze, app->video_sink, NULL);
+
+            sink_pad = gst_element_get_static_pad(imagefreeze, "sink");
+            image_bin_ghost_pad = gst_ghost_pad_new("sink", sink_pad);
+            gst_element_add_pad(image_bin, image_bin_ghost_pad);
+            gst_object_unref(sink_pad);
+
+            app->video_sink = image_bin;
+          }
+        }
+        g_object_set(app->pipeline, "video-sink", app->video_sink, NULL);
+        
+        sink_pad = gst_element_get_static_pad(app->video_sink, "sink");
+        if (sink_pad) {
+          g_signal_connect(sink_pad, "notify::caps", G_CALLBACK(notify_caps), app);
           gst_object_unref(sink_pad);
-
-          app->video_sink = image_bin;
         }
       }
-      g_object_set(app->pipeline, "video-sink", app->video_sink, NULL);
-      
-      sink_pad = gst_element_get_static_pad(app->video_sink, "sink");
-      g_signal_connect(sink_pad, "notify::caps", G_CALLBACK(notify_caps), app);
-      gst_object_unref(sink_pad);
     }
     gst_caps_unref(caps);
   }
@@ -1204,11 +1224,15 @@ notify_caps(GstPad* pad, GstPad* peer, App* app)
   caps = gst_pad_get_negotiated_caps(pad);
   if (!caps)
     return;
-  if (gst_caps_get_size(caps) <= 0)
+  if (gst_caps_get_size(caps) <= 0) {
+    gst_caps_unref(caps);
     return;
+  }
   structure = gst_caps_get_structure(caps, 0);
-  if (!structure)
+  if (!structure) {
+    gst_caps_unref(caps);
     return;
+  }
 
   if (gst_structure_has_field_typed(structure, "framerate", GST_TYPE_FRACTION)) {
     gint fps_n = 0;
@@ -1260,8 +1284,8 @@ notify_caps(GstPad* pad, GstPad* peer, App* app)
     GST_PLAYER_EVENT("media_type, %s", "video");
   if (GST_PLAYER_MEDIA_IS_STILL(app->media_type))
     GST_PLAYER_EVENT("media_type, %s", "still");
-  GST_PLAYER_EVENT("duration, %I64d", duration / GST_MSECOND);
-  GST_PLAYER_EVENT("position, %I64d", position / GST_MSECOND);
+  GST_PLAYER_EVENT("duration, %I64d", (duration > 0 ? duration / GST_MSECOND : 0));
+  GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
 }
 
 static void
@@ -1308,7 +1332,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
           gst_element_send_event(app->pipeline, evt);
 
           gst_element_query_position(app->pipeline, &format, &position);
-          GST_PLAYER_EVENT("position, %I64d", position / GST_MSECOND);
+          GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
         }
         break;
       }
@@ -1341,7 +1365,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
           gst_element_send_event(app->pipeline, evt);
 
           gst_element_query_position(app->pipeline, &format, &position);
-          GST_PLAYER_EVENT("position, %I64d", position / GST_MSECOND);
+          GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
         }
         break;
       }
@@ -1356,7 +1380,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
 
           if (position < duration) {
             gst_element_seek_simple(app->pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_KEY_UNIT | GST_SEEK_FLAG_SKIP | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT, arg0 * GST_MSECOND);
-            GST_PLAYER_EVENT("position, %I64d", position / GST_MSECOND);
+            GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
           }
         }
       }
@@ -1440,7 +1464,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
         GstFormat format = GST_FORMAT_TIME;
 
         gst_element_query_position(app->pipeline, &format, &position);
-        GST_PLAYER_RESPONSE("query_position, %I64d", position / GST_MSECOND);
+        GST_PLAYER_RESPONSE("query_position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
       }
       break;
     case COMMAND_QUERY_DURATION:
@@ -1449,7 +1473,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
         GstFormat format = GST_FORMAT_TIME;
 
         gst_element_query_duration(app->pipeline, &format, &duration);
-        GST_PLAYER_RESPONSE("query_duration, %I64d", duration / GST_MSECOND);
+        GST_PLAYER_RESPONSE("query_duration, %I64d", (duration > 0 ? duration / GST_MSECOND : 0));
       }
       break;
     case COMMAND_QUERY_VOLUME:
@@ -1677,8 +1701,8 @@ main (int argc, char *argv[])
     {"height",             0, 0, G_OPTION_ARG_INT,    &height,          N_("Force a height for video playback"), NULL},
     {"audio-sink",         0, 0, G_OPTION_ARG_STRING, &audio_sink_desc, N_("Set the audio sink used by the playbin element"), NULL},
     {"video-sink",         0, 0, G_OPTION_ARG_STRING, &video_sink_desc, N_("Set the video sink used by the playbin element"), NULL},
-    {"buffer-size",        0, 0, G_OPTION_ARG_INT,    &buffer_size,     N_("Set the playbin buffer-size"), NULL},
-    {"buffer-duration",    0, 0, G_OPTION_ARG_INT64,  &buffer_duration, N_("Set the playbin buffer-duration"), NULL},
+    {"buffer-size",        0, 0, G_OPTION_ARG_INT,    &buffer_size,     N_("Set the playbin buffer-size in bytes"), NULL},
+    {"buffer-duration",    0, 0, G_OPTION_ARG_INT64,  &buffer_duration, N_("Set the playbin buffer-duration in nanoseconds"), NULL},
     {"ping-interval",      0, 0, G_OPTION_ARG_INT64,  &ping_interval,   N_("Set the interval in between automatic ping messages (requires command mode)"), NULL},
     GST_TOOLS_GOPTION_VERSION,
     {NULL}
