@@ -26,6 +26,8 @@ set TOOLSDIR=%TOPDIR%\Tools
 set MAINDIR=%TOPDIR%\Main
 set SHAREDDIR=%TOPDIR%\Shared
 
+set SED="%TOOLSDIR%\sed.exe"
+
 set FLEX_BAT=call "%GENERATEDDIR%\flex.bat"
 set BISON_BAT=call "%GENERATEDDIR%\bison.bat"
 set MK_ENUMS_BAT=call "%GENERATEDDIR%\mkenum.bat"
@@ -60,6 +62,7 @@ mkdir "%DESTDIR%" 2> NUL
 
 :start
 cd /d "%DIR%"
+call Version.bat
 
 
 rem gstreamer/win32/common/gstconfig.h
@@ -101,6 +104,7 @@ rem gst-plugins-base/gst-libs/gst/interfaces
 
 rem gst-plugins-base/gst-libs/gst/pbutils
 %MK_ENUMS_BAT% INSTALL "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils" "%BUILDDIR%\Libraries\pbutils.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-enumtypes.c"
+%SED% -e "s:@PACKAGE_VERSION_MAJOR@:%GST_PLUGINS_BASE_VERSION_MAJOR%:g" -e "s:@PACKAGE_VERSION_MINOR@:%GST_PLUGINS_BASE_VERSION_MINOR%:g" -e "s:@PACKAGE_VERSION_MICRO@:%GST_PLUGINS_BASE_VERSION_MICRO%:g" -e "s:@PACKAGE_VERSION_NANO@:%GST_PLUGINS_BASE_VERSION_NANO%:g" "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\gstpluginsbaseversion.h.in" > "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\gstpluginsbaseversion.h"
 
 rem gst-plugins-base/gst-libs/gst/rtsp
 %MK_ENUMS_BAT% RTSP "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp" "%BUILDDIR%\Libraries\rtsp.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-enumtypes.c"
@@ -141,11 +145,11 @@ rem farsight2/transmitters/rawup
 %GEN_MARSHAL_BAT% _fs_rawudp_marshal "%PLUGINS_FARSIGHT2_DIR%\transmitters\fs-rawudp-marshal.list" "%GEN_FARSIGHT2_DIR%\transmitters\rawudp\fs-rawudp-marshal.h" "%GEN_FARSIGHT2_DIR%\transmitters\rawudp\fs-rawudp-marshal.c"
 
 rem farsight2/config.h.in
-sed.exe -e "s/@GETTEXT_PACKAGE@/farsight2/g" -e "s/@PACKAGE@/farsight2/g" -e "s/@PACKAGE_NAME@/Farsight2/g" -e "s/@VERSION@/0.0.9/g" -e "s/@GST_MAJORMINOR@/0.10/g" -e "s/@HOST_CPU@/x86_32/g"  "%PLUGINS_FARSIGHT2_DIR%\config.h.in" > "%GEN_FARSIGHT2_DIR%\config.h"
+%SED% -e "s/@GETTEXT_PACKAGE@/farsight2/g" -e "s/@PACKAGE@/farsight2/g" -e "s/@PACKAGE_NAME@/Farsight2/g" -e "s/@VERSION@/0.0.9/g" -e "s/@GST_MAJORMINOR@/0.10/g" -e "s/@HOST_CPU@/x86_32/g"  "%PLUGINS_FARSIGHT2_DIR%\config.h.in" > "%GEN_FARSIGHT2_DIR%\config.h"
 
 rem gst-python/pygst.py.in
 echo "Generating gst-python/pygst.py.in
-sed.exe -e "s/'@GST_MAJORMINOR@'/\"0.10\"/g" -e "s/_pygst_dir = '@PYGSTDIR@'//g"  "%SRC_GST_PYTHON_DIR%\pygst.py.in" > "%GEN_GST_PYTHON_DIR%\pygst.py"
+%SED% -e "s/'@GST_MAJORMINOR@'/\"0.10\"/g" -e "s/_pygst_dir = '@PYGSTDIR@'//g"  "%SRC_GST_PYTHON_DIR%\pygst.py.in" > "%GEN_GST_PYTHON_DIR%\pygst.py"
 
 rem Copying python generated files
 echo "Copying %BUILDDIR%\Bindings\Python\gstversion.override %SRC_GST_PYTHON_DIR%\gst"

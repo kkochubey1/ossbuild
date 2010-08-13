@@ -362,7 +362,7 @@ gst_init_get_option_group (void)
 
   /* Since GLib 2.23.2 calling g_thread_init() 'late' is allowed and is
    * automatically done as part of g_type_init() */
-  if (!glib_check_version (2, 23, 3)) {
+  if (glib_check_version (2, 23, 3)) {
     /* The GLib threading system must be initialised before calling any other
      * GLib function according to the documentation; if the application hasn't
      * called gst_init() yet or initialised the threading system otherwise, we
@@ -782,9 +782,9 @@ init_post (GOptionContext * context, GOptionGroup * group, gpointer data,
   }
 #endif /* GST_DISABLE_TRACE */
 
-  GST_INFO ("GLib runtime version: %d.%d.%d\n", glib_major_version,
+  GST_INFO ("GLib runtime version: %d.%d.%d", glib_major_version,
       glib_minor_version, glib_micro_version);
-  GST_INFO ("GLib headers version: %d.%d.%d\n", GLIB_MAJOR_VERSION,
+  GST_INFO ("GLib headers version: %d.%d.%d", GLIB_MAJOR_VERSION,
       GLIB_MINOR_VERSION, GLIB_MICRO_VERSION);
 
   return TRUE;

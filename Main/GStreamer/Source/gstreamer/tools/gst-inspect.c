@@ -811,8 +811,11 @@ print_pad_info (GstElement * element)
       n_print ("      Has custom queryfunc(): %s\n",
           GST_DEBUG_FUNCPTR_NAME (pad->queryfunc));
     if (pad->querytypefunc != gst_pad_get_query_types_default) {
-      n_print ("        Provides query types:\n");
-      print_query_types (gst_pad_get_query_types (pad));
+      const GstQueryType *query_types = gst_pad_get_query_types (pad);
+      if (query_types) {
+        n_print ("        Provides query types:\n");
+        print_query_types (query_types);
+      }
     }
 
     if (pad->iterintlinkfunc != gst_pad_iterate_internal_links_default)
@@ -822,6 +825,21 @@ print_pad_info (GstElement * element)
     if (pad->bufferallocfunc)
       n_print ("      Has bufferallocfunc(): %s\n",
           GST_DEBUG_FUNCPTR_NAME (pad->bufferallocfunc));
+
+    if (pad->getcapsfunc)
+      n_print ("      Has getcapsfunc(): %s\n",
+          GST_DEBUG_FUNCPTR_NAME (pad->getcapsfunc));
+    if (pad->setcapsfunc)
+      n_print ("      Has setcapsfunc(): %s\n",
+          GST_DEBUG_FUNCPTR_NAME (pad->setcapsfunc));
+    /* gst_pad_acceptcaps_default is static :/ */
+    if (pad->acceptcapsfunc)
+      n_print ("      Has acceptcapsfunc(): %s\n",
+          GST_DEBUG_FUNCPTR_NAME (pad->acceptcapsfunc));
+    if (pad->fixatecapsfunc)
+      n_print ("      Has fixatecapsfunc(): %s\n",
+          GST_DEBUG_FUNCPTR_NAME (pad->fixatecapsfunc));
+
 
     if (pad->padtemplate)
       n_print ("    Pad Template: '%s'\n", pad->padtemplate->name_template);
@@ -1162,6 +1180,25 @@ print_plugin_info (GstPlugin * plugin)
   n_print ("  Version:\t\t%s\n", plugin->desc.version);
   n_print ("  License:\t\t%s\n", plugin->desc.license);
   n_print ("  Source module:\t%s\n", plugin->desc.source);
+  if (plugin->desc.release_datetime != NULL) {
+    const gchar *tz = "(UTC)";
+    gchar *str, *sep;
+
+    /* may be: YYYY-MM-DD or YYYY-MM-DDTHH:MMZ */
+    /* YYYY-MM-DDTHH:MMZ => YYYY-MM-DD HH:MM (UTC) */
+    str = g_strdup (plugin->desc.release_datetime);
+    sep = strstr (str, "T");
+    if (sep != NULL) {
+      *sep = ' ';
+      sep = strstr (sep + 1, "Z");
+      if (sep != NULL)
+        *sep = ' ';
+    } else {
+      tz = "";
+    }
+    n_print ("  Source release date:\t%s%s\n", str, tz);
+    g_free (str);
+  }
   n_print ("  Binary package:\t%s\n", plugin->desc.package);
   n_print ("  Origin URL:\t\t%s\n", plugin->desc.origin);
   n_print ("\n");

@@ -51,6 +51,8 @@
 #include <gst/interfaces/streamvolume.h>
 #include <gst/gst-i18n-plugin.h>
 
+#include <gst/pbutils/pbutils.h>        /* only used for GST_PLUGINS_BASE_VERSION_* */
+
 #include "pulsesink.h"
 #include "pulseutil.h"
 
@@ -129,9 +131,7 @@ struct _GstPulseRingBufferClass
   GstRingBufferClass parent_class;
 };
 
-static void gst_pulseringbuffer_class_init (GstPulseRingBufferClass * klass);
-static void gst_pulseringbuffer_init (GstPulseRingBuffer * ringbuffer,
-    GstPulseRingBufferClass * klass);
+static GType gst_pulseringbuffer_get_type (void);
 static void gst_pulseringbuffer_finalize (GObject * object);
 
 static GstRingBufferClass *ring_parent_class = NULL;
@@ -149,32 +149,7 @@ static guint gst_pulseringbuffer_commit (GstRingBuffer * buf,
     guint64 * sample, guchar * data, gint in_samples, gint out_samples,
     gint * accum);
 
-/* ringbuffer abstract base class */
-static GType
-gst_pulseringbuffer_get_type (void)
-{
-  static GType ringbuffer_type = 0;
-
-  if (!ringbuffer_type) {
-    static const GTypeInfo ringbuffer_info = {
-      sizeof (GstPulseRingBufferClass),
-      NULL,
-      NULL,
-      (GClassInitFunc) gst_pulseringbuffer_class_init,
-      NULL,
-      NULL,
-      sizeof (GstPulseRingBuffer),
-      0,
-      (GInstanceInitFunc) gst_pulseringbuffer_init,
-      NULL
-    };
-
-    ringbuffer_type =
-        g_type_register_static (GST_TYPE_RING_BUFFER, "GstPulseSinkRingBuffer",
-        &ringbuffer_info, 0);
-  }
-  return ringbuffer_type;
-}
+G_DEFINE_TYPE (GstPulseRingBuffer, gst_pulseringbuffer, GST_TYPE_RING_BUFFER);
 
 static void
 gst_pulseringbuffer_class_init (GstPulseRingBufferClass * klass)
@@ -205,15 +180,10 @@ gst_pulseringbuffer_class_init (GstPulseRingBufferClass * klass)
       GST_DEBUG_FUNCPTR (gst_pulseringbuffer_clear);
 
   gstringbuffer_class->commit = GST_DEBUG_FUNCPTR (gst_pulseringbuffer_commit);
-
-  /* ref class from a thread-safe context to work around missing bit of
-   * thread-safety in GObject */
-  g_type_class_ref (GST_TYPE_PULSERING_BUFFER);
 }
 
 static void
-gst_pulseringbuffer_init (GstPulseRingBuffer * pbuf,
-    GstPulseRingBufferClass * g_class)
+gst_pulseringbuffer_init (GstPulseRingBuffer * pbuf)
 {
   pbuf->stream_name = NULL;
   pbuf->context = NULL;
@@ -1334,14 +1304,17 @@ gst_pulseringbuffer_commit (GstRingBuffer * buf, guint64 * sample,
             pbuf->m_writable);
       }
 
-      GST_LOG_OBJECT (psink, "requesting %u bytes of shared memory",
-          pbuf->m_writable);
+      GST_LOG_OBJECT (psink, "requesting %" G_GSIZE_FORMAT " bytes of "
+          "shared memory", pbuf->m_writable);
+
       if (pa_stream_begin_write (pbuf->stream, &pbuf->m_data,
               &pbuf->m_writable) < 0) {
         GST_LOG_OBJECT (psink, "pa_stream_begin_write() failed");
         goto writable_size_failed;
       }
-      GST_LOG_OBJECT (psink, "got %u bytes of shared memory", pbuf->m_writable);
+
+      GST_LOG_OBJECT (psink, "got %" G_GSIZE_FORMAT " bytes of shared memory",
+          pbuf->m_writable);
 
       /* Just to make sure that we didn't get more than requested */
       if (pbuf->m_writable > buf->spec.segsize) {
@@ -2503,7 +2476,10 @@ gst_pulsesink_change_state (GstElement * element, GstStateChange transition)
       /* override with a custom clock */
       if (GST_BASE_AUDIO_SINK (pulsesink)->provided_clock)
         gst_object_unref (GST_BASE_AUDIO_SINK (pulsesink)->provided_clock);
-#if GST_CHECK_VERSION(0, 10, 31) || (GST_CHECK_VERSION(0, 10, 30) && GST_VERSION_NANO > 0)
+
+/* FIXME: get rid once we can depend on core/base git again (>= 0.10.30.1)
+ * (and the pbutils include above as well) */
+#if defined(GST_PLUGINS_BASE_VERSION_MAJOR)
       GST_BASE_AUDIO_SINK (pulsesink)->provided_clock =
           gst_audio_clock_new_full ("GstPulseSinkClock",
           (GstAudioClockGetTimeFunc) gst_pulsesink_get_time,
@@ -2514,7 +2490,7 @@ gst_pulsesink_change_state (GstElement * element, GstStateChange transition)
           (GstAudioClockGetTimeFunc) gst_pulsesink_get_time, pulsesink);
 #endif
       break;
-    case GST_STATE_CHANGE_PAUSED_TO_PLAYING:
+    case GST_STATE_CHANGE_READY_TO_PAUSED:
       gst_element_post_message (element,
           gst_message_new_clock_provide (GST_OBJECT_CAST (element),
               GST_BASE_AUDIO_SINK (pulsesink)->provided_clock, TRUE));
@@ -2526,7 +2502,7 @@ gst_pulsesink_change_state (GstElement * element, GstStateChange transition)
   ret = GST_ELEMENT_CLASS (parent_class)->change_state (element, transition);
 
   switch (transition) {
-    case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
+    case GST_STATE_CHANGE_PAUSED_TO_READY:
       gst_element_post_message (element,
           gst_message_new_clock_lost (GST_OBJECT_CAST (element),
               GST_BASE_AUDIO_SINK (pulsesink)->provided_clock));

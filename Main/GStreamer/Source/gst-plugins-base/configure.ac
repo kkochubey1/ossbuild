@@ -5,7 +5,7 @@ dnl please read gstreamer/docs/random/autotools before changing this file
 dnl initialize autoconf
 dnl releases only do -Wall, git and prerelease does -Werror too
 dnl use a three digit version number for releases, and four for git/prerelease
-AC_INIT(GStreamer Base Plug-ins, 0.10.30,
+AC_INIT(GStreamer Base Plug-ins, 0.10.30.1,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-base)
 
@@ -60,7 +60,7 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.30
+GST_REQ=0.10.30.1
 
 dnl *** autotools stuff ****
 
@@ -132,6 +132,7 @@ dnl *** checks for programs ***
 
 dnl find a compiler
 AC_PROG_CC
+AC_PROG_CC_STDC
 AC_PROG_CXX
 
 dnl determine if c++ is available on this system
@@ -322,6 +323,11 @@ AC_SUBST(GST_LICENSE)
 
 dnl set location of plugin directory
 AG_GST_SET_PLUGINDIR
+
+dnl set release date/time
+AG_GST_SET_PACKAGE_RELEASE_DATETIME_WITH_NANO([$PACKAGE_VERSION_NANO],
+  ["${srcdir}/gst-plugins-base.doap"],
+  [$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_MICRO])
 
 dnl define an ERROR_CFLAGS Makefile variable
 dnl -Wformat-nonliteral - see ext/pango/gstclockoverlay.c and http://gcc.gnu.org/bugzilla/show_bug.cgi?id=39438
@@ -728,11 +734,7 @@ AG_GST_CHECK_FEATURE(PANGO, [Pango font rendering], pango, [
 dnl *** theora ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_THEORA, true)
 AG_GST_CHECK_FEATURE(THEORA, [Xiph Theora video codec], theora, [
-  dnl theora uses pkg-config version incorrectly, for pkg-config:
-  dnl 1.0 < 1.0RCX < 1.0alphaX < 1.0betaX < 1.0.0
-  dnl theoraenc and theoradec appeared in 1.0beta3
-
-  AG_GST_PKG_CHECK_MODULES(THEORA, theoradec theoraenc)
+  AG_GST_PKG_CHECK_MODULES(THEORA, theoradec >= 1.1 theoraenc >= 1.1)
 ])
 
 dnl *** vorbis ***
@@ -910,6 +912,7 @@ gst-libs/gst/rtsp/Makefile
 gst-libs/gst/sdp/Makefile
 gst-libs/gst/tag/Makefile
 gst-libs/gst/pbutils/Makefile
+gst-libs/gst/pbutils/gstpluginsbaseversion.h
 gst-libs/gst/video/Makefile
 tools/Makefile
 pkgconfig/Makefile
@@ -948,14 +951,15 @@ tests/check/Makefile
 tests/examples/Makefile
 tests/examples/app/Makefile
 tests/examples/dynamic/Makefile
+tests/examples/gio/Makefile
 tests/examples/overlay/Makefile
 tests/examples/seek/Makefile
-tests/examples/volume/Makefile
 tests/examples/snapshot/Makefile
-tests/examples/gio/Makefile
+tests/examples/volume/Makefile
 tests/examples/v4l/Makefile
 tests/files/Makefile
 tests/icles/Makefile
+tests/icles/playback/Makefile
 docs/Makefile
 docs/design/Makefile
 docs/libs/Makefile

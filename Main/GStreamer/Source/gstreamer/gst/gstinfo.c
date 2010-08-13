@@ -914,14 +914,14 @@ gst_debug_log_default (GstDebugCategory * category, GstDebugLevel level,
   pid = getpid ();
   is_colored = gst_debug_is_colored ();
 
-  elapsed = GST_CLOCK_DIFF (_priv_gst_info_start_time,
-      gst_util_get_timestamp ());
-
   if (object) {
     obj = gst_debug_print_object (object);
   } else {
     obj = g_strdup ("");
   }
+
+  elapsed = GST_CLOCK_DIFF (_priv_gst_info_start_time,
+      gst_util_get_timestamp ());
 
   if (is_colored) {
 #ifndef G_OS_WIN32
@@ -1040,7 +1040,7 @@ gst_debug_level_get_name (GstDebugLevel level)
  * @data: user data
  *
  * Adds the logging function to the list of logging functions.
- * Be sure to use G_GNUC_NO_INSTRUMENT on that function, it is needed.
+ * Be sure to use #G_GNUC_NO_INSTRUMENT on that function, it is needed.
  */
 void
 gst_debug_add_log_function (GstLogFunction func, gpointer data)

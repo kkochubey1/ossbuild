@@ -34,11 +34,7 @@
 #define USE_GIO
 #endif
 
-#include <gst/gsttypefind.h>
-#include <gst/gstelement.h>
-#include <gst/gstversion.h>
-#include <gst/gstinfo.h>
-#include <gst/gstutils.h>
+#include <gst/gst.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -1158,6 +1154,10 @@ static GstStaticCaps ac3_caps = GST_STATIC_CAPS ("audio/x-ac3");
 
 #define AC3_CAPS (gst_static_caps_get(&ac3_caps))
 
+static GstStaticCaps eac3_caps = GST_STATIC_CAPS ("audio/x-eac3");
+
+#define EAC3_CAPS (gst_static_caps_get(&eac3_caps))
+
 struct ac3_frmsize
 {
   unsigned short bit_rate;
@@ -1219,37 +1219,68 @@ ac3_type_find (GstTypeFind * tf, gpointer unused)
       break;
 
     if (c.data[0] == 0x0b && c.data[1] == 0x77) {
-      guint fscod = (c.data[4] >> 6) & 0x03;
-      guint frmsizecod = c.data[4] & 0x3f;
+      guint bsid = (c.data[5] >> 3) & 0x1F;
 
-      if (fscod < 3 && frmsizecod < 38) {
+      if (bsid <= 8) {
+        /* ac3 */
+        guint fscod = (c.data[4] >> 6) & 0x03;
+        guint frmsizecod = c.data[4] & 0x3f;
+
+        if (fscod < 3 && frmsizecod < 38) {
+          DataScanCtx c_next = c;
+          guint frame_size;
+
+          frame_size = ac3_frmsizecod_tbl[frmsizecod].frm_size[fscod];
+          GST_LOG ("possible AC3 frame sync at offset %"
+              G_GUINT64_FORMAT ", size=%u", c.offset, frame_size);
+          if (data_scan_ctx_ensure_data (tf, &c_next, (frame_size * 2) + 5)) {
+            data_scan_ctx_advance (tf, &c_next, frame_size * 2);
+
+            if (c_next.data[0] == 0x0b && c_next.data[1] == 0x77) {
+              guint fscod2 = (c_next.data[4] >> 6) & 0x03;
+              guint frmsizecod2 = c_next.data[4] & 0x3f;
+
+              if (fscod == fscod2 && frmsizecod == frmsizecod2) {
+                GstTypeFindProbability prob;
+
+                GST_LOG ("found second AC3 frame, looks good");
+                if (c.offset == 0)
+                  prob = GST_TYPE_FIND_MAXIMUM;
+                else
+                  prob = GST_TYPE_FIND_NEARLY_CERTAIN;
+
+                gst_type_find_suggest (tf, prob, AC3_CAPS);
+                return;
+              }
+            } else {
+              GST_LOG ("no second AC3 frame found, false sync");
+            }
+          }
+        }
+      } else {
+        /* eac3 */
         DataScanCtx c_next = c;
         guint frame_size;
 
-        frame_size = ac3_frmsizecod_tbl[frmsizecod].frm_size[fscod];
-        GST_LOG ("possible frame sync at offset %" G_GUINT64_FORMAT ", size=%u",
-            c.offset, frame_size);
+        frame_size = ((((c.data[2] & 0x07) << 8) +
+                (c.data[3] & 0xff)) + 1) << 1;
+        GST_LOG ("possible E-AC3 frame sync at offset %"
+            G_GUINT64_FORMAT ", size=%u", c.offset, frame_size);
         if (data_scan_ctx_ensure_data (tf, &c_next, (frame_size * 2) + 5)) {
           data_scan_ctx_advance (tf, &c_next, frame_size * 2);
 
           if (c_next.data[0] == 0x0b && c_next.data[1] == 0x77) {
-            guint fscod2 = (c_next.data[4] >> 6) & 0x03;
-            guint frmsizecod2 = c_next.data[4] & 0x3f;
+            GstTypeFindProbability prob;
 
-            if (fscod == fscod2 && frmsizecod == frmsizecod2) {
-              GstTypeFindProbability prob;
+            GST_LOG ("found second E-AC3 frame, looks good");
+            if (c.offset == 0)
+              prob = GST_TYPE_FIND_MAXIMUM;
+            else
+              prob = GST_TYPE_FIND_NEARLY_CERTAIN;
 
-              GST_LOG ("found second frame, looks good");
-              if (c.offset == 0)
-                prob = GST_TYPE_FIND_MAXIMUM;
-              else
-                prob = GST_TYPE_FIND_NEARLY_CERTAIN;
-
-              gst_type_find_suggest (tf, prob, AC3_CAPS);
-              return;
-            }
+            gst_type_find_suggest (tf, prob, EAC3_CAPS);
           } else {
-            GST_LOG ("no second frame found, false sync");
+            GST_LOG ("no second E-AC3 frame found, false sync");
           }
         }
       }
@@ -2324,15 +2355,31 @@ m4a_type_find (GstTypeFind * tf, gpointer unused)
 /*** application/x-3gp ***/
 
 /* The Q is there because variables can't start with a number. */
-
-
 static GstStaticCaps q3gp_caps = GST_STATIC_CAPS ("application/x-3gp");
-
 #define Q3GP_CAPS (gst_static_caps_get(&q3gp_caps))
+
+static const gchar *
+q3gp_type_find_get_profile (const guint8 * data)
+{
+  switch (GST_MAKE_FOURCC (data[0], data[1], data[2], 0)) {
+    case GST_MAKE_FOURCC ('3', 'g', 'g', 0):
+      return "general";
+    case GST_MAKE_FOURCC ('3', 'g', 'p', 0):
+      return "basic";
+    case GST_MAKE_FOURCC ('3', 'g', 's', 0):
+      return "streaming-server";
+    case GST_MAKE_FOURCC ('3', 'g', 'r', 0):
+      return "progressive-download";
+    default:
+      break;
+  }
+  return NULL;
+}
+
 static void
 q3gp_type_find (GstTypeFind * tf, gpointer unused)
 {
-
+  const gchar *profile;
   guint32 ftyp_size = 0;
   gint offset = 0;
   guint8 *data = NULL;
@@ -2348,10 +2395,9 @@ q3gp_type_find (GstTypeFind * tf, gpointer unused)
 
   /* check major brand */
   data += 4;
-  if (memcmp (data, "3gp", 3) == 0 ||
-      memcmp (data, "3gr", 3) == 0 ||
-      memcmp (data, "3gs", 3) == 0 || memcmp (data, "3gg", 3) == 0) {
-    gst_type_find_suggest (tf, GST_TYPE_FIND_MAXIMUM, Q3GP_CAPS);
+  if ((profile = q3gp_type_find_get_profile (data))) {
+    gst_type_find_suggest_simple (tf, GST_TYPE_FIND_MAXIMUM,
+        "application/x-3gp", "profile", G_TYPE_STRING, profile, NULL);
     return;
   }
 
@@ -2363,11 +2409,10 @@ q3gp_type_find (GstTypeFind * tf, gpointer unused)
     if ((data = gst_type_find_peek (tf, offset, 3)) == NULL) {
       break;
     }
-    if (memcmp (data, "3gp", 3) == 0 ||
-        memcmp (data, "3gr", 3) == 0 ||
-        memcmp (data, "3gs", 3) == 0 || memcmp (data, "3gg", 3) == 0) {
-      gst_type_find_suggest (tf, GST_TYPE_FIND_LIKELY, Q3GP_CAPS);
-      break;
+    if ((profile = q3gp_type_find_get_profile (data))) {
+      gst_type_find_suggest_simple (tf, GST_TYPE_FIND_MAXIMUM,
+          "application/x-3gp", "profile", G_TYPE_STRING, profile, NULL);
+      return;
     }
   }
 
@@ -2433,6 +2478,7 @@ qt_type_find (GstTypeFind * tf, gpointer unused)
     }
 
     if (STRNCMP (&data[4], "ftypisom", 8) == 0 ||
+        STRNCMP (&data[4], "ftypavc1", 8) == 0 ||
         STRNCMP (&data[4], "ftypmp42", 8) == 0) {
       tip = GST_TYPE_FIND_MAXIMUM;
       variant = "iso";
@@ -3873,7 +3919,7 @@ plugin_init (GstPlugin * plugin)
     "s3m", "stm", "stx", "ult", "xm", NULL
   };
   static const gchar *mp3_exts[] = { "mp3", "mp2", "mp1", "mpga", NULL };
-  static const gchar *ac3_exts[] = { "ac3", NULL };
+  static const gchar *ac3_exts[] = { "ac3", "eac3", NULL };
   static const gchar *dts_exts[] = { "dts", NULL };
   static const gchar *gsm_exts[] = { "gsm", NULL };
   static const gchar *musepack_exts[] = { "mpc", "mpp", "mp+", NULL };

@@ -402,6 +402,8 @@ struct _GstPlayBin
     GstFormat format;
     gint64 duration;
   } duration[5];                /* cached durations */
+
+  guint64 ring_buffer_max_size; /* 0 means disabled */
 };
 
 struct _GstPlayBinClass
@@ -460,6 +462,7 @@ struct _GstPlayBinClass
 #define DEFAULT_CONNECTION_SPEED  0
 #define DEFAULT_BUFFER_DURATION   -1
 #define DEFAULT_BUFFER_SIZE       -1
+#define DEFAULT_RING_BUFFER_MAX_SIZE 0
 
 enum
 {
@@ -487,6 +490,7 @@ enum
   PROP_BUFFER_SIZE,
   PROP_BUFFER_DURATION,
   PROP_AV_OFFSET,
+  PROP_RING_BUFFER_MAX_SIZE,
   PROP_LAST
 };
 
@@ -790,6 +794,21 @@ gst_play_bin_class_init (GstPlayBinClass * klass)
       g_param_spec_int64 ("av-offset", "AV Offset",
           "The synchronisation offset between audio and video in nanoseconds",
           G_MININT64, G_MAXINT64, 0,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  /**
+   * GstQueue2:ring-buffer-max-size
+   *
+   * The maximum size of the ring buffer in bytes. If set to 0, the ring
+   * buffer is disabled. Default 0.
+   *
+   * Since: 0.10.31
+   */
+  g_object_class_install_property (gobject_klass, PROP_RING_BUFFER_MAX_SIZE,
+      g_param_spec_uint64 ("ring-buffer-max-size",
+          "Max. ring buffer size (bytes)",
+          "Max. amount of data in the ring buffer (bytes, 0 = ring buffer disabled)",
+          0, G_MAXUINT, DEFAULT_RING_BUFFER_MAX_SIZE,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   /**
@@ -1145,8 +1164,6 @@ gst_play_bin_init (GstPlayBin * playbin)
 
   /* first filter out the interesting element factories */
   playbin->elements_lock = g_mutex_new ();
-  gst_play_bin_update_elements_list (playbin);
-  GST_FACTORY_LIST_DEBUG (playbin->elements);
 
   /* add sink */
   playbin->playsink = g_object_new (GST_TYPE_PLAY_SINK, NULL);
@@ -1164,6 +1181,7 @@ gst_play_bin_init (GstPlayBin * playbin)
 
   playbin->buffer_duration = DEFAULT_BUFFER_DURATION;
   playbin->buffer_size = DEFAULT_BUFFER_SIZE;
+  playbin->ring_buffer_max_size = DEFAULT_RING_BUFFER_MAX_SIZE;
 }
 
 static void
@@ -1185,7 +1203,8 @@ gst_play_bin_finalize (GObject * object)
   if (playbin->text_sink)
     gst_object_unref (playbin->text_sink);
 
-  g_value_array_free (playbin->elements);
+  if (playbin->elements)
+    g_value_array_free (playbin->elements);
   g_mutex_free (playbin->lock);
   g_mutex_free (playbin->dyn_lock);
   g_mutex_free (playbin->elements_lock);
@@ -1786,6 +1805,9 @@ gst_play_bin_set_property (GObject * object, guint prop_id,
       gst_play_sink_set_av_offset (playbin->playsink,
           g_value_get_int64 (value));
       break;
+    case PROP_RING_BUFFER_MAX_SIZE:
+      playbin->ring_buffer_max_size = g_value_get_uint64 (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1957,6 +1979,9 @@ gst_play_bin_get_property (GObject * object, guint prop_id, GValue * value,
     case PROP_AV_OFFSET:
       g_value_set_int64 (value,
           gst_play_sink_get_av_offset (playbin->playsink));
+      break;
+    case PROP_RING_BUFFER_MAX_SIZE:
+      g_value_set_uint64 (value, playbin->ring_buffer_max_size);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -2691,10 +2716,9 @@ no_more_pads_cb (GstElement * decodebin, GstSourceGroup * group)
     for (i = 0; i < GST_PLAY_SINK_TYPE_LAST; i++) {
       GstSourceSelect *select = &group->selector[i];
 
-      /* Wait for stream-changed messages on all selectors except
-       * the text selector because of the sparse nature of text streams.
-       */
-      if (select->sinkpad && select->type != GST_PLAY_SINK_TYPE_TEXT) {
+      /* All streamsynchronizer streams should see stream-changed message,
+       * to arrange for blocking unblocking. */
+      if (select->sinkpad) {
         GstStructure *s;
         GstMessage *msg;
         GstEvent *event;
@@ -2823,8 +2847,8 @@ autoplug_continue_cb (GstElement * element, GstPad * pad, GstCaps * caps,
   GstPad *text_sinkpad = NULL;
 
   text_sink =
-      (group->playbin->text_sink) ? gst_object_ref (group->playbin->
-      text_sink) : NULL;
+      (group->playbin->text_sink) ? gst_object_ref (group->
+      playbin->text_sink) : NULL;
   if (text_sink)
     text_sinkpad = gst_element_get_static_pad (text_sink, "sink");
 
@@ -3058,6 +3082,8 @@ activate_group (GstPlayBin * playbin, GstSourceGroup * group, GstState target)
   g_object_set (uridecodebin, "buffer-duration", playbin->buffer_duration,
       NULL);
   g_object_set (uridecodebin, "buffer-size", playbin->buffer_size, NULL);
+  g_object_set (uridecodebin, "ring-buffer-max-size",
+      playbin->ring_buffer_max_size, NULL);
 
   /* connect pads and other things */
   group->pad_added_id = g_signal_connect (uridecodebin, "pad-added",
@@ -3388,9 +3414,6 @@ gst_play_bin_change_state (GstElement * element, GstStateChange transition)
 
   switch (transition) {
     case GST_STATE_CHANGE_NULL_TO_READY:
-      g_mutex_lock (playbin->elements_lock);
-      gst_play_bin_update_elements_list (playbin);
-      g_mutex_unlock (playbin->elements_lock);
       memset (&playbin->duration, 0, sizeof (playbin->duration));
       break;
     case GST_STATE_CHANGE_READY_TO_PAUSED:

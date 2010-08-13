@@ -67,6 +67,7 @@ typedef struct
   gboolean new_stream;
   gboolean drop_discont;
   gboolean is_eos;
+  gboolean seen_data;
 
   gint64 running_time_diff;
 } GstStream;
@@ -283,6 +284,7 @@ gst_stream_synchronizer_sink_event (GstPad * pad, GstEvent * event)
 
           GST_DEBUG_OBJECT (pad, "Stream %d changed", stream->stream_number);
 
+          stream->is_eos = FALSE;
           stream->wait = TRUE;
           stream->new_stream = TRUE;
 
@@ -441,9 +443,11 @@ gst_stream_synchronizer_sink_event (GstPad * pad, GstEvent * event)
             stream->stream_number);
         gst_segment_init (&stream->segment, GST_FORMAT_UNDEFINED);
 
+        stream->is_eos = FALSE;
         stream->wait = FALSE;
         stream->new_stream = FALSE;
         stream->drop_discont = FALSE;
+        stream->seen_data = FALSE;
       }
       GST_STREAM_SYNCHRONIZER_UNLOCK (self);
       break;
@@ -452,6 +456,9 @@ gst_stream_synchronizer_sink_event (GstPad * pad, GstEvent * event)
       GstStream *stream;
       GList *l;
       gboolean all_eos = TRUE;
+      gboolean seen_data;
+      GSList *pads = NULL;
+      GstPad *srcpad;
 
       GST_STREAM_SYNCHRONIZER_LOCK (self);
       stream = gst_pad_get_element_private (pad);
@@ -459,6 +466,9 @@ gst_stream_synchronizer_sink_event (GstPad * pad, GstEvent * event)
         GST_DEBUG_OBJECT (pad, "Have EOS for stream %d", stream->stream_number);
         stream->is_eos = TRUE;
       }
+
+      seen_data = stream->seen_data;
+      srcpad = gst_object_ref (stream->srcpad);
 
       for (l = self->streams; l; l = l->next) {
         GstStream *ostream = l->data;
@@ -469,16 +479,41 @@ gst_stream_synchronizer_sink_event (GstPad * pad, GstEvent * event)
       }
 
       if (all_eos) {
-        ret = TRUE;
         GST_DEBUG_OBJECT (self, "All streams are EOS -- forwarding");
         for (l = self->streams; l; l = l->next) {
           GstStream *ostream = l->data;
-          ret = ret
-              && gst_pad_push_event (ostream->srcpad, gst_event_new_eos ());
+          /* local snapshot of current pads */
+          gst_object_ref (ostream->srcpad);
+          pads = g_slist_prepend (pads, ostream->srcpad);
         }
       }
       GST_STREAM_SYNCHRONIZER_UNLOCK (self);
+      /* drop lock when sending eos, which may block in e.g. preroll */
+      if (pads) {
+        GstPad *pad;
+        GSList *epad;
 
+        ret = TRUE;
+        epad = pads;
+        while (epad) {
+          pad = epad->data;
+          GST_DEBUG_OBJECT (pad, "Pushing EOS");
+          ret = ret && gst_pad_push_event (pad, gst_event_new_eos ());
+          gst_object_unref (pad);
+          epad = g_slist_next (epad);
+        }
+        g_slist_free (pads);
+      } else {
+        /* if EOS, but no data has passed, then send something to replace EOS
+         * for preroll purposes */
+        if (!seen_data) {
+          GstBuffer *buf = gst_buffer_new ();
+
+          GST_BUFFER_FLAG_SET (buf, GST_BUFFER_FLAG_PREROLL);
+          gst_pad_push (srcpad, buf);
+        }
+      }
+      gst_object_unref (srcpad);
       goto done;
       break;
     }
@@ -545,6 +580,7 @@ gst_stream_synchronizer_sink_chain (GstPad * pad, GstBuffer * buffer)
   GST_STREAM_SYNCHRONIZER_LOCK (self);
   stream = gst_pad_get_element_private (pad);
 
+  stream->seen_data = TRUE;
   if (stream && stream->drop_discont) {
     buffer = gst_buffer_make_metadata_writable (buffer);
     GST_BUFFER_FLAG_UNSET (buffer, GST_BUFFER_FLAG_DISCONT);
@@ -714,6 +750,11 @@ gst_stream_synchronizer_release_stream (GstStreamSynchronizer * self,
   }
   g_assert (l != NULL);
 
+  /* we can drop the lock, since stream exists now only local.
+   * Moreover, we should drop, to prevent deadlock with STREAM_LOCK
+   * (due to reverse lock order) when deactivating pads */
+  GST_STREAM_SYNCHRONIZER_UNLOCK (self);
+
   gst_pad_set_element_private (stream->srcpad, NULL);
   gst_pad_set_element_private (stream->sinkpad, NULL);
   gst_pad_set_active (stream->srcpad, FALSE);
@@ -750,6 +791,9 @@ gst_stream_synchronizer_release_stream (GstStreamSynchronizer * self,
    * when it's reconfigured, which happens when the streams
    * change
    */
+
+  /* lock for good measure, since the caller had it */
+  GST_STREAM_SYNCHRONIZER_LOCK (self);
 }
 
 static void
