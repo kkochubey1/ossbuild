@@ -52,13 +52,13 @@
         (((struct GstJpegDecSourceMgr*)((cinfo_ptr)->src))->dec)
 
 #define JPEG_DEFAULT_IDCT_METHOD	JDCT_FASTEST
-#define JPEG_DEFAULT_ERROR_AFTER	-1
+#define JPEG_DEFAULT_MAX_ERRORS	-1
 
 enum
 {
   PROP_0,
   PROP_IDCT_METHOD, 
-  PROP_ERROR_AFTER
+  PROP_MAX_ERRORS
 };
 
 /* *INDENT-OFF* */
@@ -193,9 +193,9 @@ gst_jpeg_dec_class_init (GstJpegDecClass * klass)
           "The IDCT algorithm to use", GST_TYPE_IDCT_METHOD,
           JPEG_DEFAULT_IDCT_METHOD, G_PARAM_READWRITE));
  
-  g_object_class_install_property (gobject_class, PROP_ERROR_AFTER,
+  g_object_class_install_property (gobject_class, PROP_MAX_ERRORS,
       g_param_spec_int ("error-after", "Error After", "Error after N buffers",
-          G_MININT, G_MAXINT, JPEG_DEFAULT_ERROR_AFTER,
+          G_MININT, G_MAXINT, JPEG_DEFAULT_MAX_ERRORS,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   gstelement_class->change_state =
@@ -347,7 +347,7 @@ gst_jpeg_dec_init (GstJpegDec * dec)
 
   /* init properties */
   dec->idct_method = JPEG_DEFAULT_IDCT_METHOD;
-  dec->error_after = JPEG_DEFAULT_ERROR_AFTER;
+  dec->max_errors = JPEG_DEFAULT_MAX_ERRORS;
 
   dec->adapter = gst_adapter_new ();
 }
@@ -942,22 +942,22 @@ gst_jpeg_dec_decode_direct (GstJpegDec * dec, guchar * base[3],
   }
 
   /* reset error after counter on good buffers */
-  if (dec->error_after >= 0) {
-    dec->error_after_count = 0;
+  if (dec->max_errors >= 0) {
+    dec->max_error_count = 0;
   }
   return GST_FLOW_OK;
 
 format_not_supported:
   {
-    if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
+    if (dec->max_errors >= 0 && (++dec->max_error_count) < dec->max_errors) {
       GST_ELEMENT_INFO (dec, STREAM, DECODE,
-          (_("Failed to decode JPEG image. Error count: %d"), dec->error_after_count),
+          (_("Failed to decode JPEG image. Error count: %d"), dec->max_error_count),
           ("Unsupported subsampling schema: v_samp factors: %u %u %u",
               v_samp[0], v_samp[1], v_samp[2]));
       return GST_FLOW_OK;
     } else {
       GST_ELEMENT_ERROR (dec, STREAM, DECODE,
-          (_("Failed to decode JPEG image. Error count: %d"), dec->error_after_count),
+          (_("Failed to decode JPEG image. Error count: %d"), dec->max_error_count),
           ("Unsupported subsampling schema: v_samp factors: %u %u %u",
               v_samp[0], v_samp[1], v_samp[2]));
       return GST_FLOW_ERROR;
@@ -1442,9 +1442,9 @@ gst_jpeg_dec_chain (GstPad * pad, GstBuffer * buf)
 
   ret = gst_pad_push (dec->srcpad, outbuf);
  
-  /* reset error after counter on good buffers */
-  if (dec->error_after >= 0) {
-    dec->error_after_count = 0;
+  /* reset max error counter on good buffers */
+  if (dec->max_errors >= 0) {
+    dec->max_error_count = 0;
   }
 
 skip_decoding:
@@ -1469,22 +1469,22 @@ need_more_data:
   /* ERRORS */
 wrong_size:
   {
-    if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
+    if (dec->max_errors >= 0 && (++dec->max_error_count) < dec->max_errors) {
       GST_ELEMENT_INFO (dec, STREAM, DECODE,
-          ("Picture is too small or too big (%ux%u). Error count: %d", width, height, dec->error_after_count),
+          ("Picture is too small or too big (%ux%u). Error count: %d", width, height, dec->max_error_count),
           ("Picture is too small or too big (%ux%u)", width, height));
       if (outbuf) {
         gst_buffer_unref (outbuf);
       }
       ret = GST_FLOW_OK;
       goto exit;
-	} else {
+    } else {
       GST_ELEMENT_ERROR (dec, STREAM, DECODE,
-          ("Picture is too small or too big (%ux%u). Error count: %d", width, height, dec->error_after_count),
+          ("Picture is too small or too big (%ux%u). Error count: %d", width, height, dec->max_error_count),
           ("Picture is too small or too big (%ux%u)", width, height));
       ret = GST_FLOW_ERROR;
-	  goto done;
-	}
+      goto done;
+    }
   }
 decode_error:
   {
@@ -1492,17 +1492,17 @@ decode_error:
 
     dec->jerr.pub.format_message ((j_common_ptr) (&dec->cinfo), err_msg);
 
-    if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
+    if (dec->max_errors >= 0 && (++dec->max_error_count) < dec->max_errors) {
       GST_ELEMENT_INFO (dec, STREAM, DECODE,
-          (_("Failed to decode JPEG image. Error count: %d"), dec->error_after_count), ("Error #%u: %s", code, err_msg));
+          (_("Failed to decode JPEG image. Error count: %d"), dec->max_error_count), ("Error #%u: %s", code, err_msg));
       if (outbuf) {
         gst_buffer_unref (outbuf);
       }
       ret = GST_FLOW_OK;
       goto exit;
-	} else {
+    } else {
       GST_ELEMENT_ERROR (dec, STREAM, DECODE,
-          (_("Failed to decode JPEG image. Error count: %d"), dec->error_after_count), ("Error #%u: %s", code, err_msg));
+          (_("Failed to decode JPEG image. Error count: %d"), dec->max_error_count), ("Error #%u: %s", code, err_msg));
       if (outbuf) {
         gst_buffer_unref (outbuf);
         outbuf = NULL;
@@ -1538,8 +1538,8 @@ drop_buffer:
   {
     /* reset error after counter on good buffers */
     /* not sure about this one -- should late buffers be essentially a no-op? */
-    if (dec->error_after >= 0) {
-      dec->error_after_count = 0;
+    if (dec->max_errors >= 0) {
+      dec->max_error_count = 0;
     }
     GST_WARNING_OBJECT (dec, "Outgoing buffer is outside configured segment");
     gst_buffer_unref (outbuf);
@@ -1548,42 +1548,42 @@ drop_buffer:
   }
 components_not_supported:
   {
-    if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
+    if (dec->max_errors >= 0 && (++dec->max_error_count) < dec->max_errors) {
       GST_ELEMENT_INFO (dec, STREAM, DECODE, (NULL),
-          ("More components than supported: %d > 3. Error count: ", dec->cinfo.num_components, dec->error_after_count));
+          ("More components than supported: %d > 3. Error count: ", dec->cinfo.num_components, dec->max_error_count));
       ret = GST_FLOW_OK;
       goto exit;
-	} else {
+    } else {
       GST_ELEMENT_ERROR (dec, STREAM, DECODE, (NULL),
-          ("More components than supported: %d > 3. Error count: ", dec->cinfo.num_components, dec->error_after_count));
+          ("More components than supported: %d > 3. Error count: ", dec->cinfo.num_components, dec->max_error_count));
       ret = GST_FLOW_ERROR;
       goto done;
     }
   }
 unsupported_colorspace:
   {
-    if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
+    if (dec->max_errors >= 0 && (++dec->max_error_count) < dec->max_errors) {
       GST_ELEMENT_INFO (dec, STREAM, DECODE, (NULL),
-          ("Picture has unknown or unsupported colourspace. Error count: %d", dec->error_after_count));
+          ("Picture has unknown or unsupported colourspace. Error count: %d", dec->max_error_count));
       ret = GST_FLOW_OK;
       goto exit;
     } else {
       GST_ELEMENT_ERROR (dec, STREAM, DECODE, (NULL),
-          ("Picture has unknown or unsupported colourspace. Error count: %d", dec->error_after_count));
+          ("Picture has unknown or unsupported colourspace. Error count: %d", dec->max_error_count));
       ret = GST_FLOW_ERROR;
       goto done;
     }
   }
 invalid_yuvrgbgrayscale:
   {
-    if (dec->error_after >= 0 && (++dec->error_after_count) < dec->error_after) {
+    if (dec->max_errors >= 0 && (++dec->max_error_count) < dec->max_errors) {
       GST_ELEMENT_INFO (dec, STREAM, DECODE, (NULL),
-          ("Picture is corrupt or unhandled YUV/RGB/grayscale layout. Error count: %d", dec->error_after_count));
+          ("Picture is corrupt or unhandled YUV/RGB/grayscale layout. Error count: %d", dec->max_error_count));
       ret = GST_FLOW_OK;
       goto exit;
     } else {
       GST_ELEMENT_ERROR (dec, STREAM, DECODE, (NULL),
-          ("Picture is corrupt or unhandled YUV/RGB/grayscale layout. Error count: %d", dec->error_after_count));
+          ("Picture is corrupt or unhandled YUV/RGB/grayscale layout. Error count: %d", dec->max_error_count));
       ret = GST_FLOW_ERROR;
       goto done;
     }
@@ -1679,8 +1679,8 @@ gst_jpeg_dec_set_property (GObject * object, guint prop_id,
     case PROP_IDCT_METHOD:
       dec->idct_method = g_value_get_enum (value);
       break;
-    case PROP_ERROR_AFTER:
-      dec->error_after = g_value_get_int (value);
+    case PROP_MAX_ERRORS:
+      dec->max_errors = g_value_get_int (value);
       break;
 
     default:
@@ -1701,8 +1701,8 @@ gst_jpeg_dec_get_property (GObject * object, guint prop_id, GValue * value,
     case PROP_IDCT_METHOD:
       g_value_set_enum (value, dec->idct_method);
       break;
-    case PROP_ERROR_AFTER:
-      g_value_set_int (value, dec->error_after);
+    case PROP_MAX_ERRORS:
+      g_value_set_int (value, dec->max_errors);
       break;
 
     default:
@@ -1721,7 +1721,7 @@ gst_jpeg_dec_change_state (GstElement * element, GstStateChange transition)
 
   switch (transition) {
     case GST_STATE_CHANGE_READY_TO_PAUSED:
-      dec->error_after_count = dec->error_after;
+      dec->max_error_count = dec->max_errors;
       dec->framerate_numerator = 0;
       dec->framerate_denominator = 1;
       dec->caps_framerate_numerator = dec->caps_framerate_denominator = 0;
