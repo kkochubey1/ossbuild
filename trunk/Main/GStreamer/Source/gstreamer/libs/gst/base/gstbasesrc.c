@@ -1297,7 +1297,7 @@ gst_base_src_perform_seek (GstBaseSrc * src, GstEvent * event, gboolean unlock)
   guint32 seqnum;
   GstEvent *tevent;
 
-  GST_DEBUG_OBJECT (src, "doing seek");
+  GST_DEBUG_OBJECT (src, "doing seek: %" GST_PTR_FORMAT, event);
 
   GST_OBJECT_LOCK (src);
   dest_format = src->segment.format;
@@ -1522,7 +1522,7 @@ gst_base_src_send_event (GstElement * element, GstEvent * event)
 
   src = GST_BASE_SRC (element);
 
-  GST_DEBUG_OBJECT (src, "reveived %s event", GST_EVENT_TYPE_NAME (event));
+  GST_DEBUG_OBJECT (src, "handling event %p %" GST_PTR_FORMAT, event, event);
 
   switch (GST_EVENT_TYPE (event)) {
       /* bidirectional events */
@@ -1697,6 +1697,8 @@ static gboolean
 gst_base_src_default_event (GstBaseSrc * src, GstEvent * event)
 {
   gboolean result;
+
+  GST_DEBUG_OBJECT (src, "handle event %" GST_PTR_FORMAT, event);
 
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_SEEK:
@@ -2141,12 +2143,16 @@ again:
 
   /* no timestamp set and we are at offset 0, we can timestamp with 0 */
   if (offset == 0 && src->segment.time == 0
-      && GST_BUFFER_TIMESTAMP (*buf) == -1)
+      && GST_BUFFER_TIMESTAMP (*buf) == -1) {
+    *buf = gst_buffer_make_metadata_writable (*buf);
     GST_BUFFER_TIMESTAMP (*buf) = 0;
+  }
 
   /* set pad caps on the buffer if the buffer had no caps */
-  if (GST_BUFFER_CAPS (*buf) == NULL)
+  if (GST_BUFFER_CAPS (*buf) == NULL) {
+    *buf = gst_buffer_make_metadata_writable (*buf);
     gst_buffer_set_caps (*buf, GST_PAD_CAPS (src->srcpad));
+  }
 
   /* now sync before pushing the buffer */
   status = gst_base_src_do_sync (src, *buf);
@@ -2596,15 +2602,14 @@ gst_base_src_default_negotiate (GstBaseSrc * basesrc)
     /* get intersection */
     caps = gst_caps_intersect (thiscaps, peercaps);
     GST_DEBUG_OBJECT (basesrc, "intersect: %" GST_PTR_FORMAT, caps);
-    gst_caps_unref (thiscaps);
     gst_caps_unref (peercaps);
   } else {
     /* no peer, work with our own caps then */
-    caps = thiscaps;
+    caps = gst_caps_copy (thiscaps);
   }
+  gst_caps_unref (thiscaps);
   if (caps) {
     /* take first (and best, since they are sorted) possibility */
-    caps = gst_caps_make_writable (caps);
     gst_caps_truncate (caps);
 
     /* now fixate */
@@ -2716,8 +2721,9 @@ gst_base_src_start (GstBaseSrc * basesrc)
   }
 
   GST_DEBUG_OBJECT (basesrc,
-      "format: %d, have size: %d, size: %" G_GUINT64_FORMAT ", duration: %"
-      G_GINT64_FORMAT, format, result, size, basesrc->segment.duration);
+      "format: %s, have size: %d, size: %" G_GUINT64_FORMAT ", duration: %"
+      G_GINT64_FORMAT, gst_format_get_name (format), result, size,
+      basesrc->segment.duration);
 
   seekable = gst_base_src_seekable (basesrc);
   GST_DEBUG_OBJECT (basesrc, "is seekable: %d", seekable);

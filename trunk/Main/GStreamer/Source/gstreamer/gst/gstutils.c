@@ -1117,8 +1117,16 @@ gst_element_get_compatible_pad (GstElement * element, GstPad * pad,
   g_return_val_if_fail (GST_PAD_PEER (pad) == NULL, NULL);
 
   done = FALSE;
+
   /* try to get an existing unlinked pad */
-  pads = gst_element_iterate_pads (element);
+  if (GST_PAD_IS_SRC (pad)) {
+    pads = gst_element_iterate_sink_pads (element);
+  } else if (GST_PAD_IS_SINK (pad)) {
+    pads = gst_element_iterate_src_pads (element);
+  } else {
+    pads = gst_element_iterate_pads (element);
+  }
+
   while (!done) {
     gpointer padptr;
 
@@ -1872,6 +1880,7 @@ gst_element_link_pads_filtered (GstElement * src, const gchar * srcpadname,
     GstElement *capsfilter;
     GstObject *parent;
     GstState state, pending;
+    gboolean lr1, lr2;
 
     capsfilter = gst_element_factory_make ("capsfilter", NULL);
     if (!capsfilter) {
@@ -1900,18 +1909,31 @@ gst_element_link_pads_filtered (GstElement * src, const gchar * srcpadname,
 
     g_object_set (capsfilter, "caps", filter, NULL);
 
-    if (gst_element_link_pads (src, srcpadname, capsfilter, "sink")
-        && gst_element_link_pads (capsfilter, "src", dest, destpadname)) {
+    lr1 = gst_element_link_pads (src, srcpadname, capsfilter, "sink");
+    lr2 = gst_element_link_pads (capsfilter, "src", dest, destpadname);
+    if (lr1 && lr2) {
       return TRUE;
     } else {
-      GST_INFO ("Could not link elements");
+      if (!lr1) {
+        GST_INFO ("Could not link pads: %s:%s - capsfilter:sink",
+            GST_ELEMENT_NAME (src), srcpadname);
+      } else {
+        GST_INFO ("Could not link pads: capsfilter:src - %s:%s",
+            GST_ELEMENT_NAME (dest), destpadname);
+      }
       gst_element_set_state (capsfilter, GST_STATE_NULL);
       /* this will unlink and unref as appropriate */
       gst_bin_remove (GST_BIN (GST_OBJECT_PARENT (capsfilter)), capsfilter);
       return FALSE;
     }
   } else {
-    return gst_element_link_pads (src, srcpadname, dest, destpadname);
+    if (gst_element_link_pads (src, srcpadname, dest, destpadname)) {
+      return TRUE;
+    } else {
+      GST_INFO ("Could not link pads: %s:%s - %s:%s", GST_ELEMENT_NAME (src),
+          srcpadname, GST_ELEMENT_NAME (dest), destpadname);
+      return FALSE;
+    }
   }
 }
 
@@ -2745,9 +2767,11 @@ gst_pad_proxy_getcaps (GstPad * pad)
       case GST_ITERATOR_DONE:
         /* all pads iterated, return collected value */
         goto done;
+      case GST_ITERATOR_OK:
+        /* premature exit (happens if caps intersection is empty) */
+        goto done;
       default:
-        /* iterator returned _ERROR or premature end with _OK,
-         * mark an error and exit */
+        /* iterator returned _ERROR, mark an error and exit */
         if ((caps = g_value_get_pointer (&ret)))
           gst_caps_unref (caps);
         g_value_set_pointer (&ret, NULL);

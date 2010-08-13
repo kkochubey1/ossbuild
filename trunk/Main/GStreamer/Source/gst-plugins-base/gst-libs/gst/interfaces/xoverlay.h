@@ -100,9 +100,6 @@ void gst_x_overlay_got_xwindow_id     (GstXOverlay *overlay, gulong xwindow_id);
 
 void gst_x_overlay_prepare_xwindow_id (GstXOverlay *overlay);
 
-/* misc public methods */
-gboolean gst_x_overlay_prepare_out_of_process_window (gulong xwindow_id);
-
 G_END_DECLS
 
 #endif /* __GST_X_OVERLAY_H__ */

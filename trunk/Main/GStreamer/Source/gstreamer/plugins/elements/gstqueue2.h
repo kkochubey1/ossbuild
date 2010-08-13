@@ -60,10 +60,12 @@ struct _GstQueue2Range
 {
   GstQueue2Range *next;
 
-  guint64 offset;
-  guint64 writing_pos;
-  guint64 reading_pos;
-  guint64 max_reading_pos;
+  guint64 offset;          /* offset of range start in source */
+  guint64 rb_offset;       /* offset of range start in ring buffer */
+  guint64 writing_pos;     /* writing position in source */
+  guint64 rb_writing_pos;  /* writing position in ring buffer */
+  guint64 reading_pos;     /* reading position in source */
+  guint64 max_reading_pos; /* latest requested offset in source */
 };
 
 struct _GstQueue2
@@ -132,6 +134,10 @@ struct _GstQueue2
    * because we can't save it on the file */
   gboolean segment_event_received;
   GstEvent *starting_segment;
+
+  gboolean use_ring_buffer;
+  guint64 ring_buffer_max_size;
+  guint8 * ring_buffer;
 };
 
 struct _GstQueue2Class

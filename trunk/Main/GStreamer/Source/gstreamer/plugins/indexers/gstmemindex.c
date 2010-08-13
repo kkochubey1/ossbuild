@@ -107,8 +107,6 @@ enum
   /* FILL ME */
 };
 
-static void gst_mem_index_class_init (GstMemIndexClass * klass);
-static void gst_mem_index_init (GstMemIndex * index);
 static void gst_mem_index_finalize (GObject * object);
 
 static void gst_mem_index_add_entry (GstIndex * index, GstIndexEntry * entry);
@@ -118,35 +116,11 @@ static GstIndexEntry *gst_mem_index_get_assoc_entry (GstIndex * index, gint id,
 
 #define CLASS(mem_index)  GST_MEM_INDEX_CLASS (G_OBJECT_GET_CLASS (mem_index))
 
-static GstIndex *parent_class = NULL;
-
 /*static guint gst_mem_index_signals[LAST_SIGNAL] = { 0 }; */
 
-static GType
-gst_mem_index_get_type (void)
-{
-  static GType mem_index_type = 0;
+GType gst_mem_index_get_type (void);
 
-  if (!mem_index_type) {
-    static const GTypeInfo mem_index_info = {
-      sizeof (GstMemIndexClass),
-      NULL,
-      NULL,
-      (GClassInitFunc) gst_mem_index_class_init,
-      NULL,
-      NULL,
-      sizeof (GstMemIndex),
-      1,
-      (GInstanceInitFunc) gst_mem_index_init,
-      NULL
-    };
-
-    mem_index_type =
-        g_type_register_static (GST_TYPE_INDEX, "GstMemIndex", &mem_index_info,
-        0);
-  }
-  return mem_index_type;
-}
+G_DEFINE_TYPE (GstMemIndex, gst_mem_index, GST_TYPE_INDEX);
 
 static void
 gst_mem_index_class_init (GstMemIndexClass * klass)
@@ -156,8 +130,6 @@ gst_mem_index_class_init (GstMemIndexClass * klass)
 
   gobject_class = (GObjectClass *) klass;
   gstindex_class = (GstIndexClass *) klass;
-
-  parent_class = g_type_class_peek_parent (klass);
 
   gobject_class->finalize = gst_mem_index_finalize;
 
@@ -221,7 +193,7 @@ gst_mem_index_finalize (GObject * object)
     memindex->associations = NULL;
   }
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
+  G_OBJECT_CLASS (gst_mem_index_parent_class)->finalize (object);
 }
 
 static void

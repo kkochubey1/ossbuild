@@ -228,6 +228,22 @@ EXPORTS
 	gst_core_error_get_type
 	gst_core_error_quark
 	gst_date_get_type
+	gst_date_time_get_day
+	gst_date_time_get_hour
+	gst_date_time_get_microsecond
+	gst_date_time_get_minute
+	gst_date_time_get_month
+	gst_date_time_get_second
+	gst_date_time_get_time_zone_offset
+	gst_date_time_get_type
+	gst_date_time_get_year
+	gst_date_time_new
+	gst_date_time_new_from_unix_epoch
+	gst_date_time_new_local_time
+	gst_date_time_new_now_local_time
+	gst_date_time_new_now_utc
+	gst_date_time_ref
+	gst_date_time_unref
 	gst_debug_add_log_function
 	gst_debug_category_free
 	gst_debug_category_get_color
@@ -897,6 +913,7 @@ EXPORTS
 	gst_structure_get_boolean
 	gst_structure_get_clock_time
 	gst_structure_get_date
+	gst_structure_get_date_time
 	gst_structure_get_double
 	gst_structure_get_enum
 	gst_structure_get_field_type
@@ -964,6 +981,8 @@ EXPORTS
 	gst_tag_list_get_char_index
 	gst_tag_list_get_date
 	gst_tag_list_get_date_index
+	gst_tag_list_get_date_time
+	gst_tag_list_get_date_time_index
 	gst_tag_list_get_double
 	gst_tag_list_get_double_index
 	gst_tag_list_get_float
