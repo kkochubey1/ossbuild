@@ -116,7 +116,7 @@ struct _GstJpegDec {
   gint     max_errors;
  
   /* number of errors we're currently at before reporting GST_FLOW_ERROR */
-  gint     max_error_count;
+  gint     error_count;
 
   struct jpeg_decompress_struct cinfo;
   struct GstJpegDecErrorMgr     jerr;
