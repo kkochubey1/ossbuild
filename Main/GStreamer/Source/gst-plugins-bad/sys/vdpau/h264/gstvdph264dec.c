@@ -260,62 +260,71 @@ gst_vdp_h264_dec_idr (GstVdpH264Dec * h264_dec, GstH264Frame * h264_frame)
 
   seq = slice->picture->sequence;
   if (seq != h264_dec->sequence) {
+    GstVideoState state;
+
+    VdpDecoderProfile profile;
     GstFlowReturn ret;
-    GstVdpDevice *device;
 
-    gst_base_video_decoder_set_src_caps (GST_BASE_VIDEO_DECODER (h264_dec));
-    ret = gst_vdp_decoder_get_device (GST_VDP_DECODER (h264_dec), &device,
-        NULL);
+    state =
+        gst_base_video_decoder_get_state (GST_BASE_VIDEO_DECODER (h264_dec));
 
-    if (ret == GST_FLOW_OK) {
-      GstVideoState state;
-      VdpDecoderProfile profile;
-      VdpStatus status;
+    state.width = (seq->pic_width_in_mbs_minus1 + 1) * 16 -
+        2 * seq->frame_crop_right_offset;
 
-      if (h264_dec->decoder != VDP_INVALID_HANDLE) {
-        device->vdp_decoder_destroy (h264_dec->decoder);
-        h264_dec->decoder = VDP_INVALID_HANDLE;
+    state.height = (2 - seq->frame_mbs_only_flag) *
+        (seq->pic_height_in_map_units_minus1 + 1) * 16;
+    if (seq->frame_mbs_only_flag)
+      state.height -= 2 * seq->frame_crop_bottom_offset;
+    else
+      state.height -= 4 * seq->frame_crop_bottom_offset;
+
+    /* calculate framerate if we haven't got one */
+    if (state.fps_n == 0 && seq->vui_parameters_present_flag) {
+      GstH264VUIParameters *vui;
+
+      vui = &seq->vui_parameters;
+      if (vui->timing_info_present_flag && vui->fixed_frame_rate_flag) {
+        state.fps_n = vui->time_scale;
+        state.fps_d = vui->num_units_in_tick;
+
+        if (seq->frame_mbs_only_flag)
+          state.fps_d *= 2;
       }
+    }
 
-      state =
-          gst_base_video_decoder_get_state (GST_BASE_VIDEO_DECODER (h264_dec));
+    gst_base_video_decoder_set_state (GST_BASE_VIDEO_DECODER (h264_dec), state);
 
-      switch (seq->profile_idc) {
-        case 66:
-          profile = VDP_DECODER_PROFILE_H264_BASELINE;
-          break;
+    switch (seq->profile_idc) {
+      case 66:
+        profile = VDP_DECODER_PROFILE_H264_BASELINE;
+        break;
 
-        case 77:
-          profile = VDP_DECODER_PROFILE_H264_MAIN;
-          break;
+      case 77:
+        profile = VDP_DECODER_PROFILE_H264_MAIN;
+        break;
 
-        case 100:
-          profile = VDP_DECODER_PROFILE_H264_HIGH;
-          break;
+      case 100:
+        profile = VDP_DECODER_PROFILE_H264_HIGH;
+        break;
 
-        default:
-          return FALSE;
-      }
+      default:
+        GST_ELEMENT_ERROR (h264_dec, STREAM, WRONG_TYPE,
+            ("vdpauh264dec doesn't support this streams profile"),
+            ("profile_idc: %d", seq->profile_idc));
+        return GST_FLOW_ERROR;
+    }
 
-      status = device->vdp_decoder_create (device->device, profile,
-          state.width, state.height, seq->num_ref_frames, &h264_dec->decoder);
-      if (status != VDP_STATUS_OK) {
-        GST_ELEMENT_ERROR (h264_dec, RESOURCE, READ,
-            ("Could not create vdpau decoder"),
-            ("Error returned from vdpau was: %s",
-                device->vdp_get_error_string (status)));
-
-        return FALSE;
-      }
-    } else
-      return FALSE;
+    ret = gst_vdp_decoder_init_decoder (GST_VDP_DECODER (h264_dec), profile,
+        seq->num_ref_frames);
+    if (ret != GST_FLOW_OK)
+      return ret;
 
     g_object_set (h264_dec->dpb, "num-ref-frames", seq->num_ref_frames, NULL);
 
     h264_dec->sequence = seq;
   }
 
-  return TRUE;
+  return GST_FLOW_OK;
 }
 
 static VdpPictureInfoH264
@@ -438,14 +447,10 @@ gst_vdp_h264_dec_handle_frame (GstBaseVideoDecoder * base_video_decoder,
   GstH264Sequence *seq;
 
   GstFlowReturn ret;
-  GError *err = NULL;
   GstVdpVideoBuffer *outbuf;
   VdpPictureInfoH264 info;
-  GstVdpDevice *device;
-  VdpVideoSurface surface;
   VdpBitstreamBuffer *bufs;
   guint n_bufs;
-  VdpStatus status;
 
   GST_DEBUG ("handle_frame");
 
@@ -457,11 +462,13 @@ gst_vdp_h264_dec_handle_frame (GstBaseVideoDecoder * base_video_decoder,
 
 
   if (slice->nal_unit.IdrPicFlag) {
-    if (gst_vdp_h264_dec_idr (h264_dec, h264_frame))
+    ret = gst_vdp_h264_dec_idr (h264_dec, h264_frame);
+
+    if (ret == GST_FLOW_OK)
       h264_dec->got_idr = TRUE;
     else {
       gst_base_video_decoder_skip_frame (base_video_decoder, frame);
-      return GST_FLOW_OK;
+      return ret;
     }
   }
 
@@ -472,29 +479,20 @@ gst_vdp_h264_dec_handle_frame (GstBaseVideoDecoder * base_video_decoder,
   }
 
 
-
   gst_vdp_h264_dec_init_frame_info (h264_dec, h264_frame);
-
-
-
-  /* decoding */
-  if ((ret = gst_vdp_decoder_alloc_buffer (GST_VDP_DECODER (h264_dec), &outbuf,
-              &err) != GST_FLOW_OK))
-    goto alloc_error;
-
-  device = GST_VDP_VIDEO_BUFFER (outbuf)->device;
-  surface = GST_VDP_VIDEO_BUFFER (outbuf)->surface;
 
   info = gst_vdp_h264_dec_fill_info (h264_dec, h264_frame);
   bufs = gst_vdp_h264_dec_create_bitstream_buffers (h264_dec, h264_frame,
       &n_bufs);
 
-  status = device->vdp_decoder_render (h264_dec->decoder, surface,
-      (VdpPictureInfo *) & info, n_bufs, bufs);
-
+  ret = gst_vdp_decoder_render (GST_VDP_DECODER (h264_dec),
+      (VdpPictureInfo *) & info, n_bufs, bufs, &outbuf);
   g_free (bufs);
-  if (status != VDP_STATUS_OK)
-    goto decode_error;
+
+  if (ret != GST_FLOW_OK) {
+    gst_base_video_decoder_skip_frame (base_video_decoder, frame);
+    return ret;
+  }
 
   frame->src_buffer = GST_BUFFER_CAST (outbuf);
 
@@ -562,24 +560,6 @@ gst_vdp_h264_dec_handle_frame (GstBaseVideoDecoder * base_video_decoder,
   gst_h264_dpb_add (h264_dec->dpb, h264_frame);
 
   return GST_FLOW_OK;
-
-alloc_error:
-  gst_base_video_decoder_skip_frame (base_video_decoder, frame);
-
-  if (ret == GST_FLOW_ERROR)
-    gst_vdp_decoder_post_error (GST_VDP_DECODER (h264_dec), err);
-  return ret;
-
-decode_error:
-  GST_ELEMENT_ERROR (h264_dec, RESOURCE, READ,
-      ("Could not decode"),
-      ("Error returned from vdpau was: %s",
-          device->vdp_get_error_string (status)));
-
-  gst_buffer_unref (GST_BUFFER_CAST (outbuf));
-  gst_base_video_decoder_skip_frame (base_video_decoder, frame);
-
-  return GST_FLOW_ERROR;
 }
 
 static gint
@@ -718,19 +698,12 @@ gst_vdp_h264_dec_parse_data (GstBaseVideoDecoder * base_video_decoder,
 
   frame = gst_base_video_decoder_get_current_frame (base_video_decoder);
 
-  /* does this mark the beginning of a new access unit */
-  if (nal_unit.type == GST_NAL_AU_DELIMITER) {
-    ret = gst_base_video_decoder_have_frame (base_video_decoder, &frame);
-    gst_base_video_decoder_frame_start (base_video_decoder, buf);
-  }
-
   if (GST_VIDEO_FRAME_FLAG_IS_SET (frame, GST_H264_FRAME_GOT_PRIMARY)) {
     if (nal_unit.type == GST_NAL_SPS || nal_unit.type == GST_NAL_PPS ||
-        nal_unit.type == GST_NAL_SEI ||
-        (nal_unit.type >= 14 && nal_unit.type <= 18)) {
-      ret = gst_base_video_decoder_have_frame (base_video_decoder, &frame);
-      gst_base_video_decoder_frame_start (base_video_decoder, buf);
-    }
+        nal_unit.type == GST_NAL_SEI || nal_unit.type == GST_NAL_AU_DELIMITER ||
+        (nal_unit.type >= 14 && nal_unit.type <= 18))
+      ret =
+          gst_base_video_decoder_have_frame (base_video_decoder, FALSE, &frame);
   }
 
   if (nal_unit.type >= GST_NAL_SLICE && nal_unit.type <= GST_NAL_SLICE_IDR) {
@@ -775,10 +748,11 @@ gst_vdp_h264_dec_parse_data (GstBaseVideoDecoder * base_video_decoder,
                 p_slice->delta_pic_order_cnt[1]))
           finish_frame = TRUE;
 
-        if (finish_frame) {
-          ret = gst_base_video_decoder_have_frame (base_video_decoder, &frame);
-          gst_base_video_decoder_frame_start (base_video_decoder, buf);
-        }
+        if (finish_frame)
+          ret =
+              gst_base_video_decoder_have_frame (base_video_decoder, FALSE,
+              &frame);
+
       }
 
       if (!GST_VIDEO_FRAME_FLAG_IS_SET (frame, GST_H264_FRAME_GOT_PRIMARY)) {
@@ -847,7 +821,8 @@ gst_vdp_h264_dec_start (GstBaseVideoDecoder * base_video_decoder)
   gst_h264_dpb_set_output_func (h264_dec->dpb, gst_vdp_h264_dec_output,
       h264_dec);
 
-  return TRUE;
+  return GST_BASE_VIDEO_DECODER_CLASS
+      (parent_class)->start (base_video_decoder);
 }
 
 static gboolean
@@ -855,20 +830,10 @@ gst_vdp_h264_dec_stop (GstBaseVideoDecoder * base_video_decoder)
 {
   GstVdpH264Dec *h264_dec = GST_VDP_H264_DEC (base_video_decoder);
 
-  GstFlowReturn ret;
-  GstVdpDevice *device;
-
   g_object_unref (h264_dec->parser);
   g_object_unref (h264_dec->dpb);
 
-  ret = gst_vdp_decoder_get_device (GST_VDP_DECODER (h264_dec), &device, NULL);
-  if (ret == GST_FLOW_OK) {
-
-    if (h264_dec->decoder != VDP_INVALID_HANDLE)
-      device->vdp_decoder_destroy (h264_dec->decoder);
-  }
-
-  return TRUE;
+  return GST_BASE_VIDEO_DECODER_CLASS (parent_class)->stop (base_video_decoder);
 }
 
 static void

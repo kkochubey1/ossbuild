@@ -106,6 +106,8 @@ static void gst_asf_demux_activate_stream (GstASFDemux * demux,
     AsfStream * stream);
 static GstStructure *gst_asf_demux_get_metadata_for_stream (GstASFDemux * d,
     guint stream_num);
+static GstFlowReturn gst_asf_demux_push_complete_payloads (GstASFDemux * demux,
+    gboolean force);
 
 GST_BOILERPLATE (GstASFDemux, gst_asf_demux, GstElement, GST_TYPE_ELEMENT);
 
@@ -113,12 +115,6 @@ static void
 gst_asf_demux_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
-  static GstElementDetails gst_asf_demux_details = {
-    "ASF Demuxer",
-    "Codec/Demuxer",
-    "Demultiplexes ASF Streams",
-    "Owen Fraser-Green <owen@discobabe.net>"
-  };
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&audio_src_template));
@@ -127,7 +123,9 @@ gst_asf_demux_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_asf_demux_sink_template));
 
-  gst_element_class_set_details (element_class, &gst_asf_demux_details);
+  gst_element_class_set_details_simple (element_class, "ASF Demuxer",
+      "Codec/Demuxer",
+      "Demultiplexes ASF Streams", "Owen Fraser-Green <owen@discobabe.net>");
 }
 
 static void
@@ -378,12 +376,22 @@ gst_asf_demux_sink_event (GstPad * pad, GstEvent * event)
       break;
     }
     case GST_EVENT_EOS:{
+      GstFlowReturn flow;
+
       if (demux->state == GST_ASF_DEMUX_STATE_HEADER) {
         GST_ELEMENT_ERROR (demux, STREAM, DEMUX,
             (_("This stream contains no data.")),
             ("got eos and didn't receive a complete header object"));
         break;
       }
+      flow = gst_asf_demux_push_complete_payloads (demux, TRUE);
+      if (GST_FLOW_IS_FATAL (flow) || flow == GST_FLOW_NOT_LINKED) {
+        GST_ELEMENT_ERROR (demux, STREAM, FAILED,
+            (_("Internal data stream error.")),
+            ("streaming stopped, reason %s", gst_flow_get_name (flow)));
+        break;
+      }
+
       GST_OBJECT_LOCK (demux);
       gst_adapter_clear (demux->adapter);
       GST_OBJECT_UNLOCK (demux);
@@ -1116,7 +1124,8 @@ all_streams_prerolled (GstASFDemux * demux)
   GstClockTime preroll_time;
   guint i, num_no_data = 0;
 
-  preroll_time = demux->preroll;
+  /* Allow at least 500ms of preroll_time  */
+  preroll_time = MAX (demux->preroll, 500 * GST_MSECOND);
 
   /* returns TRUE as long as there isn't a stream which (a) has data queued
    * and (b) the timestamp of last piece of data queued is < demux->preroll
@@ -1486,6 +1495,7 @@ gst_asf_demux_loop (GstASFDemux * demux)
   GstFlowReturn flow = GST_FLOW_OK;
   GstBuffer *buf = NULL;
   guint64 off;
+  gboolean sent_eos = FALSE;
 
   if (G_UNLIKELY (demux->state == GST_ASF_DEMUX_STATE_HEADER)) {
     if (!gst_asf_demux_pull_headers (demux)) {
@@ -1625,21 +1635,22 @@ eos:
         gst_asf_demux_reset (demux, TRUE);
         return;
       }
-      /* normal playback, send EOS to all linked pads */
-      GST_INFO_OBJECT (demux, "Sending EOS, at end of stream");
-      gst_asf_demux_send_event_unlocked (demux, gst_event_new_eos ());
     }
+    /* normal playback, send EOS to all linked pads */
+    GST_INFO_OBJECT (demux, "Sending EOS, at end of stream");
+    gst_asf_demux_send_event_unlocked (demux, gst_event_new_eos ());
+    sent_eos = TRUE;
     /* ... and fall through to pause */
-    GST_DEBUG_OBJECT (demux, "EOSing");
   }
 pause:
   {
-    GST_DEBUG_OBJECT (demux, "pausing task");
+    GST_DEBUG_OBJECT (demux, "pausing task, flow return: %s",
+        gst_flow_get_name (flow));
     demux->segment_running = FALSE;
     gst_pad_pause_task (demux->sinkpad);
 
     /* For the error cases (not EOS) */
-    if (GST_FLOW_IS_FATAL (flow) || flow == GST_FLOW_NOT_LINKED) {
+    if (!sent_eos && (GST_FLOW_IS_FATAL (flow) || flow == GST_FLOW_NOT_LINKED)) {
       /* Post an error. Hopefully something else already has, but if not... */
       GST_ELEMENT_ERROR (demux, STREAM, FAILED,
           (_("Internal data stream error.")),

@@ -1,4 +1,4 @@
-/* 
+/*
  * GStreamer
  * Copyright (C) 2003 Julien Moutte <julien@moutte.net>
  * Copyright (C) 2005,2006,2007 David A. Schleef <ds@schleef.org>
@@ -57,9 +57,10 @@ struct _GstGLImageSink
 
     //caps
     GstCaps *caps;
-    GstVideoFormat format;
     gint width;
     gint height;
+    gint window_width;
+    gint window_height;
     gboolean is_gl;
     gint fps_n, fps_d;
     gint par_n, par_d;
@@ -69,8 +70,10 @@ struct _GstGLImageSink
 
     CRCB clientReshapeCallback;
     CDCB clientDrawCallback;
+    gpointer client_data;
 
     gboolean keep_aspect_ratio;
+    GValue *par;
 };
 
 struct _GstGLImageSinkClass

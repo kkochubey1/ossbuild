@@ -309,6 +309,22 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\cpureport.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\cpureport.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gstcapsdebug.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gstcapsdebug.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\debugutils\gstcapssetter.c"
 			>
 		</File>

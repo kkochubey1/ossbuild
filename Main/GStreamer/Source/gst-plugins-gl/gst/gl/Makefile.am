@@ -4,44 +4,38 @@ plugin_LTLIBRARIES = libgstopengl.la
 AM_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
 AM_LIBS = $(GST_BASE_LIBS)
 
-libgstopengl_la_SOURCES = \
-	gstopengl.c \
-	gstglimagesink.c \
-	gstglimagesink.h \
-	gstglupload.c \
-	gstglupload.h \
+# full opengl required
+if GL_IS_OPENGL
+OPENGL_SOURCES =  \
 	gstglbumper.c \
 	gstglbumper.h \
-	gstgldownload.c \
-	gstgldownload.h \
 	gstglfilterblur.c \
+	gstglfilterblur.h \
 	gstglfiltersobel.c \
-	gstglfiltercube.c \
-	gstglfiltercube.h \
+	gstglfiltersobel.h \
 	gstglfilterlaplacian.c \
 	gstglfilterlaplacian.h \
 	gstglfilterglass.c \
 	gstglfilterglass.h \
 	gstglfilterapp.c \
 	gstglfilterapp.h \
+	gstglfilterreflectedscreen.c \
+	gstglfilterreflectedscreen.h \
 	gstglcolorscale.c \
 	gstglcolorscale.h \
-  gstgldeinterlace.c \
-  gstgldeinterlace.h \
+	gstgldeinterlace.c \
+	gstgldeinterlace.h \
 	gstgldifferencematte.c \
+	gstgldifferencematte.h \
 	gstgloverlay.c \
 	gltestsrc.c \
 	gltestsrc.h \
 	gstgltestsrc.c \
 	gstgltestsrc.h \
-	gstgleffects.c \
-	gstgleffects.h \
-	effects/gstgleffectssources.c \
-	effects/gstgleffectssources.h \
+	gstglmosaic.c \
+	gstglmosaic.h \
+        gstgloverlay.h \
 	effects/gstgleffectscurves.h \
-	effects/gstgleffectidentity.c \
-	effects/gstgleffectmirror.c \
-	effects/gstgleffectsqueeze.c \
 	effects/gstgleffectstretch.c \
 	effects/gstgleffecttunnel.c \
 	effects/gstgleffectfisheye.c \
@@ -54,6 +48,26 @@ libgstopengl_la_SOURCES = \
 	effects/gstgleffectsin.c \
 	effects/gstgleffectglow.c \
 	effects/gstgleffectxray.c
+endif
+
+libgstopengl_la_SOURCES = \
+	gstopengl.c \
+	gstglimagesink.c \
+	gstglimagesink.h \
+	gstglupload.c \
+	gstglupload.h \
+	gstgldownload.c \
+	gstgldownload.h \
+	gstglfiltercube.c \
+	gstglfiltercube.h \
+	gstgleffects.c \
+	gstgleffects.h \
+	effects/gstgleffectssources.c \
+	effects/gstgleffectssources.h \
+	effects/gstgleffectidentity.c \
+	effects/gstgleffectmirror.c \
+	effects/gstgleffectsqueeze.c \
+	$(OPENGL_SOURCES)
 
 # check order of CFLAGS and LIBS, shouldn't the order be the other way around
 # (like in AM_CFLAGS)?
@@ -68,7 +82,8 @@ libgstopengl_la_LIBADD = \
 	$(GST_BASE_LIBS) \
 	$(GST_PLUGINS_BASE_LIBS) -lgstvideo-$(GST_MAJORMINOR) -lgstinterfaces-$(GST_MAJORMINOR) \
 	$(GL_LIBS) \
-	$(LIBPNG_LIBS)
+	$(LIBPNG_LIBS) \
+	$(LIBM)
 
 libgstopengl_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 

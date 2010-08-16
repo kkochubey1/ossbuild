@@ -3,8 +3,12 @@ lib_LTLIBRARIES = libgstvdp-@GST_MAJORMINOR@.la
 libgstvdp_@GST_MAJORMINOR@_la_SOURCES = \
 	gstvdpdevice.c \
 	gstvdputils.c \
+	gstvdpbuffer.c \
+	gstvdpbufferpool.c \
 	gstvdpvideobuffer.c \
+	gstvdpvideobufferpool.c \
 	gstvdpoutputbuffer.c \
+	gstvdpoutputbufferpool.c \
 	gstvdpvideosrcpad.c \
 	gstvdpoutputsrcpad.c \
 	gstvdpdecoder.c \
@@ -13,8 +17,13 @@ libgstvdp_@GST_MAJORMINOR@_la_SOURCES = \
 libgstvdp_@GST_MAJORMINOR@includedir = $(includedir)/gstreamer-@GST_MAJORMINOR@/gst/vdpau
 libgstvdp_@GST_MAJORMINOR@include_HEADERS = \
 	gstvdpdevice.h \
+	gstvdputils.h \
+	gstvdpbuffer.h \
+	gstvdpbufferpool.h \
 	gstvdpvideobuffer.h \
+	gstvdpvideobufferpool.h \
 	gstvdpoutputbuffer.h \
+	gstvdpoutputbufferpool.h \
 	gstvdpvideosrcpad.h \
 	gstvdpoutputsrcpad.h \
 	gstvdpdecoder.h \

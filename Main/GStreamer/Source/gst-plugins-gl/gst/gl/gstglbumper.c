@@ -49,12 +49,6 @@
 #define GST_CAT_DEFAULT gst_gl_bumper_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
 
-static const GstElementDetails element_details =
-GST_ELEMENT_DETAILS ("OpenGL bumper filter",
-    "Filter/Effect",
-    "Bump mapping filter",
-    "Cyril Comparon <cyril.comparon@gmail.com>, Julien Isorce <julien.isorce@gmail.com>");
-
 enum
 {
   PROP_0,
@@ -173,6 +167,8 @@ gst_gl_bumper_init_resources (GstGLFilter * filter)
   guint y = 0;
   guchar *raw_data = NULL;
   guchar **rows = NULL;
+  png_byte magic[8];
+  gint n_read = 0;
 
   if (!filter->display)
     return;
@@ -181,6 +177,15 @@ gst_gl_bumper_init_resources (GstGLFilter * filter)
 
   if ((fp = fopen (bumper->location, "rb")) == NULL)
     LOAD_ERROR ("file not found");
+
+  /* Read magic number */
+  n_read = fread (magic, 1, sizeof (magic), fp);
+
+  /* Check for valid magic number */
+  if (png_sig_cmp (magic, 0, sizeof (magic))) {
+    fclose (fp);
+    LOAD_ERROR ("not a valid PNG image");
+  }
 
   png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
@@ -259,7 +264,10 @@ gst_gl_bumper_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "OpenGL bumper filter",
+      "Filter/Effect", "Bump mapping filter",
+      "Cyril Comparon <cyril.comparon@gmail.com>, "
+      "Julien Isorce <julien.isorce@gmail.com>");
 }
 
 static void

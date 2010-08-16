@@ -23,6 +23,7 @@
  *
  * Synaesthesia is an audio visualisation element. It creates glitter and
  * pulsating fog based on the incomming audio signal.
+ *
  * <refsect2>
  * <title>Example launch line</title>
  * |[
@@ -38,20 +39,6 @@
 
 #include "gstsynaesthesia.h"
 
-/* elementfactory information */
-static const GstElementDetails gst_synaesthesia_details =
-GST_ELEMENT_DETAILS ("Synaesthesia",
-    "Visualization",
-    "Creates video visualizations of audio input, using stereo and pitch information",
-    "Richard Boulton <richard@tartarus.org>");
-
-/* signals and args */
-enum
-{
-  /* FILL ME */
-  LAST_SIGNAL
-};
-
 static GstStaticPadTemplate gst_synaesthesia_src_template =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
@@ -66,10 +53,6 @@ GST_STATIC_PAD_TEMPLATE ("sink",
     GST_STATIC_CAPS (GST_AUDIO_INT_STANDARD_PAD_TEMPLATE_CAPS)
     );
 
-
-static void gst_synaesthesia_base_init (gpointer g_class);
-static void gst_synaesthesia_class_init (GstSynaesthesiaClass * klass);
-static void gst_synaesthesia_init (GstSynaesthesia * synaesthesia);
 static void gst_synaesthesia_finalize (GObject * object);
 static void gst_synaesthesia_dispose (GObject * object);
 
@@ -82,38 +65,18 @@ static gboolean gst_synaesthesia_src_negotiate (GstSynaesthesia * synaesthesia);
 static gboolean gst_synaesthesia_src_setcaps (GstPad * pad, GstCaps * caps);
 static gboolean gst_synaesthesia_sink_setcaps (GstPad * pad, GstCaps * caps);
 
-static GstElementClass *parent_class = NULL;
-
-GType
-gst_synaesthesia_get_type (void)
-{
-  static GType type = 0;
-
-  if (!type) {
-    static const GTypeInfo info = {
-      sizeof (GstSynaesthesiaClass),
-      gst_synaesthesia_base_init,
-      NULL,
-      (GClassInitFunc) gst_synaesthesia_class_init,
-      NULL,
-      NULL,
-      sizeof (GstSynaesthesia),
-      0,
-      (GInstanceInitFunc) gst_synaesthesia_init,
-    };
-
-    type =
-        g_type_register_static (GST_TYPE_ELEMENT, "GstSynaesthesia", &info, 0);
-  }
-  return type;
-}
+GST_BOILERPLATE (GstSynaesthesia, gst_synaesthesia, GstElement,
+    GST_TYPE_ELEMENT);
 
 static void
 gst_synaesthesia_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &gst_synaesthesia_details);
+  gst_element_class_set_details_simple (element_class, "Synaesthesia",
+      "Visualization",
+      "Creates video visualizations of audio input, using stereo and pitch information",
+      "Richard Boulton <richard@tartarus.org>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_synaesthesia_src_template));
@@ -142,7 +105,8 @@ gst_synaesthesia_class_init (GstSynaesthesiaClass * klass)
 }
 
 static void
-gst_synaesthesia_init (GstSynaesthesia * synaesthesia)
+gst_synaesthesia_init (GstSynaesthesia * synaesthesia,
+    GstSynaesthesiaClass * g_class)
 {
   /* create the sink and src pads */
   synaesthesia->sinkpad =
@@ -292,7 +256,7 @@ gst_synaesthesia_src_negotiate (GstSynaesthesia * synaesthesia)
   gst_structure_fixate_field_nearest_fraction (structure, "framerate",
       synaesthesia->fps_n, synaesthesia->fps_d);
 
-  GST_DEBUG ("final caps are %" GST_PTR_FORMAT, target);
+  GST_DEBUG_OBJECT (synaesthesia, "final caps are %" GST_PTR_FORMAT, target);
 
   gst_pad_set_caps (synaesthesia->srcpad, target);
   gst_caps_unref (target);
@@ -363,7 +327,7 @@ gst_synaesthesia_chain (GstPad * pad, GstBuffer * buffer)
 
   synaesthesia = GST_SYNAESTHESIA (gst_pad_get_parent (pad));
 
-  GST_LOG ("chainfunc called");
+  GST_LOG_OBJECT (synaesthesia, "chainfunc called");
 
   /* resync on DISCONT */
   if (GST_BUFFER_FLAG_IS_SET (buffer, GST_BUFFER_FLAG_DISCONT)) {

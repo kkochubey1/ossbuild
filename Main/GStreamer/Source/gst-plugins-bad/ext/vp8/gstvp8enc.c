@@ -75,6 +75,7 @@ typedef struct
 #define DEFAULT_THREADS 1
 #define DEFAULT_MULTIPASS_MODE VPX_RC_ONE_PASS
 #define DEFAULT_MULTIPASS_CACHE_FILE NULL
+#define DEFAULT_AUTO_ALT_REF_FRAMES FALSE
 
 enum
 {
@@ -88,7 +89,8 @@ enum
   PROP_SPEED,
   PROP_THREADS,
   PROP_MULTIPASS_MODE,
-  PROP_MULTIPASS_CACHE_FILE
+  PROP_MULTIPASS_CACHE_FILE,
+  PROP_AUTO_ALT_REF_FRAMES
 };
 
 #define GST_VP8_ENC_MODE_TYPE (gst_vp8_enc_mode_get_type())
@@ -287,6 +289,13 @@ gst_vp8_enc_class_init (GstVP8EncClass * klass)
           DEFAULT_MULTIPASS_CACHE_FILE,
           (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
+  g_object_class_install_property (gobject_class, PROP_AUTO_ALT_REF_FRAMES,
+      g_param_spec_boolean ("auto-alt-ref-frames", "Auto Alt Ref Frames",
+          "Automatically create alternative reference frames",
+          DEFAULT_AUTO_ALT_REF_FRAMES,
+          (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+
+
   GST_DEBUG_CATEGORY_INIT (gst_vp8enc_debug, "vp8enc", 0, "VP8 Encoder");
 }
 
@@ -304,6 +313,7 @@ gst_vp8_enc_init (GstVP8Enc * gst_vp8_enc, GstVP8EncClass * klass)
   gst_vp8_enc->max_keyframe_distance = DEFAULT_MAX_KEYFRAME_DISTANCE;
   gst_vp8_enc->multipass_mode = DEFAULT_MULTIPASS_MODE;
   gst_vp8_enc->multipass_cache_file = DEFAULT_MULTIPASS_CACHE_FILE;
+  gst_vp8_enc->auto_alt_ref_frames = DEFAULT_AUTO_ALT_REF_FRAMES;
 
   /* FIXME: Add sink/src event vmethods */
   gst_vp8_enc->base_sink_event_func =
@@ -372,6 +382,9 @@ gst_vp8_enc_set_property (GObject * object, guint prop_id,
         g_free (gst_vp8_enc->multipass_cache_file);
       gst_vp8_enc->multipass_cache_file = g_value_dup_string (value);
       break;
+    case PROP_AUTO_ALT_REF_FRAMES:
+      gst_vp8_enc->auto_alt_ref_frames = g_value_get_boolean (value);
+      break;
     default:
       break;
   }
@@ -416,6 +429,9 @@ gst_vp8_enc_get_property (GObject * object, guint prop_id, GValue * value,
       break;
     case PROP_MULTIPASS_CACHE_FILE:
       g_value_set_string (value, gst_vp8_enc->multipass_cache_file);
+      break;
+    case PROP_AUTO_ALT_REF_FRAMES:
+      g_value_set_boolean (value, gst_vp8_enc->auto_alt_ref_frames);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -791,6 +807,15 @@ gst_vp8_enc_handle_frame (GstBaseVideoEncoder * base_video_encoder,
           gst_vpx_error_name (status));
     }
 
+    status =
+        vpx_codec_control (&encoder->encoder, VP8E_SET_ENABLEAUTOALTREF,
+        (encoder->auto_alt_ref_frames ? 1 : 0));
+    if (status != VPX_CODEC_OK) {
+      GST_WARNING_OBJECT (encoder,
+          "Failed to set VP8E_ENABLEAUTOALTREF to %d: %s",
+          (encoder->auto_alt_ref_frames ? 1 : 0), gst_vpx_error_name (status));
+    }
+
     gst_base_video_encoder_set_latency (base_video_encoder, 0,
         gst_util_uint64_scale (encoder->max_latency,
             base_video_encoder->state.fps_d * GST_SECOND,
@@ -889,6 +914,13 @@ _to_granulepos (guint64 frame_end_number, guint inv_count, guint keyframe_dist)
   return granulepos;
 }
 
+static void
+_gst_mini_object_unref0 (GstMiniObject * obj)
+{
+  if (obj)
+    gst_mini_object_unref (obj);
+}
+
 static GstFlowReturn
 gst_vp8_enc_shape_output (GstBaseVideoEncoder * base_video_encoder,
     GstVideoFrame * frame)
@@ -907,48 +939,48 @@ gst_vp8_enc_shape_output (GstBaseVideoEncoder * base_video_encoder,
 
   state = gst_base_video_encoder_get_state (base_video_encoder);
 
-  buf = frame->src_buffer;
-  frame->src_buffer = NULL;
+  g_assert (hook != NULL);
 
-  if (hook) {
-    for (inv_count = 0, l = hook->invisible; l; inv_count++, l = l->next) {
-      buf = l->data;
+  for (inv_count = 0, l = hook->invisible; l; inv_count++, l = l->next) {
+    buf = l->data;
+    l->data = NULL;
 
-      if (l == hook->invisible && frame->is_sync_point) {
-        GST_BUFFER_FLAG_UNSET (buf, GST_BUFFER_FLAG_DELTA_UNIT);
-        encoder->keyframe_distance = 0;
-      } else {
-        GST_BUFFER_FLAG_SET (buf, GST_BUFFER_FLAG_DELTA_UNIT);
-        encoder->keyframe_distance++;
-      }
-
-      GST_BUFFER_TIMESTAMP (buf) = gst_video_state_get_timestamp (state,
-          &base_video_encoder->segment, frame->presentation_frame_number);
-      GST_BUFFER_DURATION (buf) = 0;
-      GST_BUFFER_OFFSET_END (buf) =
-          _to_granulepos (frame->presentation_frame_number + 1,
-          inv_count, encoder->keyframe_distance);
-      GST_BUFFER_OFFSET (buf) =
-          gst_util_uint64_scale (frame->presentation_frame_number + 1,
-          GST_SECOND * state->fps_d, state->fps_n);
-
-      gst_buffer_set_caps (buf, base_video_encoder->caps);
-      ret =
-          gst_pad_push (GST_BASE_VIDEO_CODEC_SRC_PAD (base_video_encoder), buf);
-
-      if (ret != GST_FLOW_OK) {
-        GST_WARNING_OBJECT (encoder, "flow error %d", ret);
-        goto done;
-      }
-    }
-
-    if (!hook->invisible && frame->is_sync_point) {
+    if (l == hook->invisible && frame->is_sync_point) {
       GST_BUFFER_FLAG_UNSET (buf, GST_BUFFER_FLAG_DELTA_UNIT);
       encoder->keyframe_distance = 0;
     } else {
       GST_BUFFER_FLAG_SET (buf, GST_BUFFER_FLAG_DELTA_UNIT);
       encoder->keyframe_distance++;
     }
+
+    GST_BUFFER_TIMESTAMP (buf) = gst_video_state_get_timestamp (state,
+        &base_video_encoder->segment, frame->presentation_frame_number);
+    GST_BUFFER_DURATION (buf) = 0;
+    GST_BUFFER_OFFSET_END (buf) =
+        _to_granulepos (frame->presentation_frame_number + 1,
+        inv_count, encoder->keyframe_distance);
+    GST_BUFFER_OFFSET (buf) =
+        gst_util_uint64_scale (frame->presentation_frame_number + 1,
+        GST_SECOND * state->fps_d, state->fps_n);
+
+    gst_buffer_set_caps (buf, base_video_encoder->caps);
+    ret = gst_pad_push (GST_BASE_VIDEO_CODEC_SRC_PAD (base_video_encoder), buf);
+
+    if (ret != GST_FLOW_OK) {
+      GST_WARNING_OBJECT (encoder, "flow error %d", ret);
+      goto done;
+    }
+  }
+
+  buf = frame->src_buffer;
+  frame->src_buffer = NULL;
+
+  if (!hook->invisible && frame->is_sync_point) {
+    GST_BUFFER_FLAG_UNSET (buf, GST_BUFFER_FLAG_DELTA_UNIT);
+    encoder->keyframe_distance = 0;
+  } else {
+    GST_BUFFER_FLAG_SET (buf, GST_BUFFER_FLAG_DELTA_UNIT);
+    encoder->keyframe_distance++;
   }
 
   GST_BUFFER_TIMESTAMP (buf) = gst_video_state_get_timestamp (state,
@@ -972,7 +1004,7 @@ gst_vp8_enc_shape_output (GstBaseVideoEncoder * base_video_encoder,
 
 done:
   if (hook) {
-    g_list_foreach (hook->invisible, (GFunc) gst_mini_object_unref, NULL);
+    g_list_foreach (hook->invisible, (GFunc) _gst_mini_object_unref0, NULL);
     g_list_free (hook->invisible);
     g_slice_free (GstVP8EncCoderHook, hook);
     frame->coder_hook = NULL;

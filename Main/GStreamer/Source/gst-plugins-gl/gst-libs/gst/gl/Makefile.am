@@ -3,13 +3,16 @@ lib_LTLIBRARIES = libgstgl-@GST_MAJORMINOR@.la
 
 EXTRA_DIST = \
 	gstglwindow_x11.c \
+	gstglwindow_x11ES2.c \
 	gstglwindow_win32.c \
+	gstglwindow_winCE.c \
 	gstglwindow_cocoa.m
 
 libgstgl_@GST_MAJORMINOR@_la_SOURCES = \
 	gstgldisplay.c \
 	gstglbuffer.c \
 	gstglfilter.c \
+	gstglmixer.c \
 	gstglshader.c
 
 if GL_BACKEND_WIN32
@@ -21,17 +24,23 @@ endif
 if GL_BACKEND_X11
 libgstgl_@GST_MAJORMINOR@_la_SOURCES += gstglwindow_x11.c
 endif
+if GL_BACKEND_X11ES2
+libgstgl_@GST_MAJORMINOR@_la_SOURCES += gstglwindow_x11ES2.c
+endif
 
 libgstgl_@GST_MAJORMINOR@includedir = $(includedir)/gstreamer-@GST_MAJORMINOR@/gst/gl
 libgstgl_@GST_MAJORMINOR@include_HEADERS = \
 	gstglwindow.h \
 	gstgldisplay.h \
 	gstglbuffer.h \
+	gstgles2.h \
 	gstglfilter.h \
+	gstglmixer.h \
+	gstglmixerpad.h \
 	gstglshader.h
 
 libgstgl_@GST_MAJORMINOR@_la_LIBADD = \
-	$(GST_PLUGINS_BASE_LIBS) -lgstvideo-$(GST_MAJORMINOR) \
+	$(GST_PLUGINS_BASE_LIBS) -lgstvideo-$(GST_MAJORMINOR) -lgstcontroller-$(GST_MAJORMINOR) \
 	$(GST_BASE_LIBS) $(GST_LIBS) \
 	$(GL_LIBS)
 

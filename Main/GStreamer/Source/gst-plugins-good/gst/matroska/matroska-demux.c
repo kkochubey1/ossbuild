@@ -570,12 +570,11 @@ static gint64
 gst_matroska_demux_get_length (GstMatroskaDemux * demux)
 {
   GstFormat fmt = GST_FORMAT_BYTES;
-  gint64 end;
+  gint64 end = -1;
 
-  /* FIXME: what to do if we don't get the upstream length */
   if (!gst_pad_query_peer_duration (demux->sinkpad, &fmt, &end) ||
       fmt != GST_FORMAT_BYTES || end < 0)
-    g_return_val_if_reached (0);
+    GST_DEBUG_OBJECT (demux, "no upstream length");
 
   return end;
 }
@@ -2320,11 +2319,11 @@ gst_matroska_demux_move_to_entry (GstMatroskaDemux * demux,
 static GstMatroskaIndex *
 gst_matroska_demux_search_pos (GstMatroskaDemux * demux, GstClockTime time)
 {
-  GstMatroskaIndex *entry;
+  GstMatroskaIndex *entry = NULL;
   GstMatroskaDemuxState current_state;
   GstClockTime otime, prev_cluster_time, current_cluster_time, cluster_time;
   gint64 opos, newpos, startpos = 0, current_offset;
-  gint64 prev_cluster_offset, current_cluster_offset, cluster_offset;
+  gint64 prev_cluster_offset = -1, current_cluster_offset, cluster_offset;
   const guint chunk = 64 * 1024;
   GstBuffer *buf = NULL;
   GstFlowReturn ret;
@@ -2452,7 +2451,7 @@ retry:
   demux->offset = newpos;
   demux->cluster_time = cluster_time = GST_CLOCK_TIME_NONE;
   while (1) {
-    guint64 cluster_size;
+    guint64 cluster_size = 0;
 
     /* peek and parse some elements */
     ret = gst_matroska_demux_peek_id_length_pull (demux, &id, &length, &needed);
@@ -5290,6 +5289,11 @@ gst_matroska_demux_parse_contents_seekentry (GstMatroskaDemux * demux,
       /* remember */
       length = gst_matroska_demux_get_length (demux);
       before_pos = demux->offset;
+
+      if (length == (guint64) - 1) {
+        GST_DEBUG_OBJECT (demux, "no upstream length, skipping SeakHead entry");
+        break;
+      }
 
       /* check for validity */
       if (seek_pos + demux->ebml_segment_start + 12 >= length) {

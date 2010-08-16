@@ -30,14 +30,6 @@ GST_DEBUG_CATEGORY_STATIC (gstmpegdemux_debug);
 #define PARSE_CLASS(o)  GST_MPEG_PARSE_CLASS (G_OBJECT_GET_CLASS (o))
 #define CLASS(o)  GST_MPEG_DEMUX_CLASS (G_OBJECT_GET_CLASS (o))
 
-/* elementfactory information */
-static GstElementDetails mpeg_demux_details = {
-  "MPEG Demuxer",
-  "Codec/Demuxer",
-  "Demultiplexes MPEG1 and MPEG2 System Streams",
-  "Erik Walthinsen <omega@cse.ogi.edu>\n" "Wim Taymans <wim.taymans@chello.be>"
-};
-
 /* MPEG2Demux signals and args */
 enum
 {
@@ -89,8 +81,6 @@ GST_STATIC_PAD_TEMPLATE ("private_%d",
 
 GST_BOILERPLATE_FULL (GstMPEGDemux, gst_mpeg_demux, GstMPEGParse,
     GST_TYPE_MPEG_PARSE, _do_init);
-
-static void gst_mpeg_demux_class_init (GstMPEGDemuxClass * klass);
 
 static gboolean gst_mpeg_demux_process_event (GstMPEGParse * mpeg_parse,
     GstEvent * event);
@@ -169,7 +159,10 @@ gst_mpeg_demux_base_init (gpointer klass_ptr)
   gst_element_class_add_pad_template (element_class, klass->audio_template);
   gst_element_class_add_pad_template (element_class, klass->private_template);
 
-  gst_element_class_set_details (element_class, &mpeg_demux_details);
+  gst_element_class_set_details_simple (element_class, "MPEG Demuxer",
+      "Codec/Demuxer",
+      "Demultiplexes MPEG1 and MPEG2 System Streams",
+      "Erik Walthinsen <omega@cse.ogi.edu>, Wim Taymans <wim.taymans@chello.be>");
 }
 
 static void

@@ -112,7 +112,7 @@ gst_dshowvideosink_set_window_id (GstXOverlay * overlay, ULONG window_id)
   HWND previous_window = sink->window_id;
   HWND videowindow = (HWND)window_id;
 
-  if (videowindow == previous_window) {
+  if (videowindow == sink->window_id) {
     GST_DEBUG_OBJECT (sink, "Window already set");
     return;
   }
@@ -122,13 +122,12 @@ gst_dshowvideosink_set_window_id (GstXOverlay * overlay, ULONG window_id)
   /* Update window if we're already playing. */
   if (sink->connected && sink->filter_media_event) {
     HRESULT hres;
- 		
+
     if (sink->is_new_window) {
-	  
       /* If we created a new window */
       SendMessage (previous_window, WM_CLOSE, NULL, NULL);
       sink->is_new_window = FALSE;
-	  sink->window_closed = FALSE;
+      sink->window_closed = FALSE;
     } else {
       /* Return control of application window */
       SetWindowLongPtr (previous_window, GWL_WNDPROC, (LONG)sink->prevWndProc);

@@ -48,22 +48,25 @@
 #include "gstglimagesink.h"
 
 #include "gstglfiltercube.h"
+#include "gstgleffects.h"
 
 GType gst_gl_filter_cube_get_type (void);
+GType gst_gl_effects_get_type (void);
 
 #ifndef OPENGL_ES2
 #include "gstgltestsrc.h"
 #include "gstglfilterlaplacian.h"
 #include "gstglfilterglass.h"
 #include "gstglfilterapp.h"
+#include "gstglfilterreflectedscreen.h"
 #include "gstglcolorscale.h"
 #include "gstgldeinterlace.h"
-#include "gstgleffects.h"
 #include "gstglbumper.h"
+#include "gstglmosaic.h"
 
-GType gst_gl_effects_get_type (void);
 GType gst_gl_deinterlace_get_type (void);
 GType gst_gl_filter_app_get_type (void);
+GType gst_gl_filter_reflected_screen_get_type (void);
 GType gst_gl_filterblur_get_type (void);
 GType gst_gl_filtersobel_get_type (void);
 GType gst_gl_filter_laplacian_get_type (void);
@@ -71,6 +74,7 @@ GType gst_gl_filter_glass_get_type (void);
 GType gst_gl_overlay_get_type (void);
 GType gst_gl_differencematte_get_type (void);
 GType gst_gl_bumper_get_type (void);
+GType gst_gl_mosaic_get_type (void);
 #endif
 
 #define GST_CAT_DEFAULT gst_gl_gstgl_debug
@@ -102,6 +106,10 @@ plugin_init (GstPlugin * plugin)
     return FALSE;
   }
 
+  if (!gst_element_register (plugin, "gleffects",
+          GST_RANK_NONE, gst_gl_effects_get_type ())) {
+    return FALSE;
+  }
 #ifndef OPENGL_ES2
   if (!gst_element_register (plugin, "gltestsrc",
           GST_RANK_NONE, GST_TYPE_GL_TEST_SRC)) {
@@ -118,11 +126,6 @@ plugin_init (GstPlugin * plugin)
   }
   if (!gst_element_register (plugin, "glbumper",
           GST_RANK_NONE, gst_gl_bumper_get_type ())) {
-    return FALSE;
-  }
-
-  if (!gst_element_register (plugin, "gleffects",
-          GST_RANK_NONE, gst_gl_effects_get_type ())) {
     return FALSE;
   }
 
@@ -151,6 +154,11 @@ plugin_init (GstPlugin * plugin)
     return FALSE;
   }
 
+  if (!gst_element_register (plugin, "glfilterreflectedscreen",
+          GST_RANK_NONE, GST_TYPE_GL_FILTER_REFLECTED_SCREEN)) {
+    return FALSE;
+  }
+
   if (!gst_element_register (plugin, "gldeinterlace",
           GST_RANK_NONE, GST_TYPE_GL_DEINTERLACE)) {
     return FALSE;
@@ -158,6 +166,10 @@ plugin_init (GstPlugin * plugin)
 
   if (!gst_element_register (plugin, "glcolorscale",
           GST_RANK_NONE, GST_TYPE_GL_COLORSCALE)) {
+    return FALSE;
+  }
+  if (!gst_element_register (plugin, "glmosaic",
+          GST_RANK_NONE, GST_TYPE_GL_MOSAIC)) {
     return FALSE;
   }
 #endif

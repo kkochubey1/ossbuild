@@ -1,6 +1,6 @@
 /*
  * GStreamer
- * Copyright (C) 2008 Filippo Argiolas <filippo.argiolas@gmail.com>
+ * Copyright (C) 2008-2010 Filippo Argiolas <filippo.argiolas@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,12 +41,6 @@
 #define GST_CAT_DEFAULT gst_gl_filter_laplacian_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
 
-static const GstElementDetails element_details =
-GST_ELEMENT_DETAILS ("OpenGL laplacian filter",
-    "Filter/Effect",
-    "Laplacian Convolution Demo Filter",
-    "Filippo Argiolas <filippo.argiolas@gmail.com>");
-
 enum
 {
   PROP_0
@@ -70,32 +64,47 @@ static gboolean gst_gl_filter_laplacian_filter (GstGLFilter * filter,
 static void gst_gl_filter_laplacian_callback (gint width, gint height,
     guint texture, gpointer stuff);
 
+/* *INDENT-OFF* */
+
+/* This filter is meant as a demo of gst-plugins-gl + glsl
+   capabilities. So I'm keeping this shader readable enough. If and
+   when this shader will be used in production be careful to hard code
+   kernel into the shader and remove unneeded zero multiplications in
+   the convolution */
 static const gchar *convolution_fragment_source =
-    "#extension GL_ARB_texture_rectangle : enable\n"
-    "uniform sampler2DRect tex;"
-    "uniform float norm_const;"
-    "uniform float norm_offset;"
-    "uniform float kernel[9];"
-    "void main () {"
-    "  vec2 offset[9] = vec2[9] ("
-    "      vec2(-1.0,-1.0), vec2( 0.0,-1.0), vec2( 1.0,-1.0),"
-    "      vec2(-1.0, 0.0), vec2( 0.0, 0.0), vec2( 1.0, 0.0),"
-    "      vec2(-1.0, 1.0), vec2( 0.0, 1.0), vec2( 1.0, 1.0) );"
-    "  vec2 texturecoord = gl_TexCoord[0].st;"
-    "  int i;"
-    "  vec4 sum = vec4 (0.0);"
-    "  for (i = 0; i < 9; i++) { "
-    "    if (kernel[i] != 0.0) {"
-    "      vec4 neighbor = texture2DRect(tex, texturecoord + vec2(offset[i])); "
-    "      sum += neighbor * kernel[i]/norm_const; "
-    "    }" "  }" "  gl_FragColor = sum + norm_offset;" "}";
+  "#extension GL_ARB_texture_rectangle : enable\n"
+  "uniform sampler2DRect tex;"
+  "uniform float kernel[9];"
+  "void main () {"
+  "  vec2 texturecoord[9];"
+  "  texturecoord[4] = gl_TexCoord[0].st;"                /*  0  0 */
+  "  texturecoord[5] = texturecoord[4] + vec2(1.0, 0.0);" /*  1  0 */
+  "  texturecoord[2] = texturecoord[5] - vec2(0.0, 1.0);" /*  1 -1 */
+  "  texturecoord[1] = texturecoord[2] - vec2(1.0, 0.0);" /*  0 -1 */
+  "  texturecoord[0] = texturecoord[1] - vec2(1.0, 0.0);" /* -1 -1 */
+  "  texturecoord[3] = texturecoord[0] + vec2(0.0, 1.0);" /* -1  0 */
+  "  texturecoord[6] = texturecoord[3] + vec2(0.0, 1.0);" /* -1  1 */
+  "  texturecoord[7] = texturecoord[6] + vec2(1.0, 0.0);" /*  0  1 */
+  "  texturecoord[8] = texturecoord[7] + vec2(1.0, 0.0);" /*  1  1 */
+  "  int i;"
+  "  vec4 sum = vec4 (0.0);"
+  "  for (i = 0; i < 9; i++) { "
+  "    vec4 neighbor = texture2DRect(tex, texturecoord[i]);"
+  "    sum += neighbor * kernel[i];"
+  "  }"
+  "  gl_FragColor = sum;"
+  "}";
+/* *INDENT-ON* */
 
 static void
 gst_gl_filter_laplacian_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class,
+      "OpenGL laplacian filter", "Filter/Effect",
+      "Laplacian Convolution Demo Filter",
+      "Filippo Argiolas <filippo.argiolas@gmail.com>");
 }
 
 static void
@@ -203,9 +212,6 @@ gst_gl_filter_laplacian_callback (gint width, gint height, guint texture,
 
   gst_gl_shader_set_uniform_1i (laplacian_filter->shader, "tex", 0);
   gst_gl_shader_set_uniform_1fv (laplacian_filter->shader, "kernel", 9, kernel);
-  gst_gl_shader_set_uniform_1f (laplacian_filter->shader, "norm_const", 1.0);
-  gst_gl_shader_set_uniform_1f (laplacian_filter->shader, "norm_offset", 0.0);  //set to 0.5 to preserve overall greylevel
-
 
   glBegin (GL_QUADS);
   glTexCoord2i (0, 0);

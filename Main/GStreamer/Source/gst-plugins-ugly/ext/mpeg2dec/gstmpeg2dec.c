@@ -45,13 +45,6 @@ typedef gint mpeg2_state_t;
 GST_DEBUG_CATEGORY_STATIC (mpeg2dec_debug);
 #define GST_CAT_DEFAULT (mpeg2dec_debug)
 
-/* elementfactory information */
-static const GstElementDetails gst_mpeg2dec_details =
-GST_ELEMENT_DETAILS ("mpeg1 and mpeg2 video decoder",
-    "Codec/Decoder/Video",
-    "Uses libmpeg2 to decode MPEG video streams",
-    "Wim Taymans <wim.taymans@chello.be>");
-
 /* Send a warning message about decoding errors after receiving this many
  * STATE_INVALID return values from mpeg2_parse. -1 means never.
  */
@@ -174,7 +167,10 @@ gst_mpeg2dec_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&user_data_template_factory));
 #endif
-  gst_element_class_set_details (element_class, &gst_mpeg2dec_details);
+  gst_element_class_set_details_simple (element_class,
+      "mpeg1 and mpeg2 video decoder", "Codec/Decoder/Video",
+      "Uses libmpeg2 to decode MPEG video streams",
+      "Wim Taymans <wim.taymans@chello.be>");
 }
 
 static void
@@ -441,8 +437,11 @@ crop_buffer (GstMpeg2dec * mpeg2dec, GstBuffer ** buf)
         outbuf = crop_copy_i420_buffer (mpeg2dec, input);
       }
 
+      GST_DEBUG ("cropping buffer");
+
       gst_buffer_set_caps (outbuf, GST_PAD_CAPS (mpeg2dec->srcpad));
-      gst_buffer_copy_metadata (outbuf, input, GST_BUFFER_COPY_TIMESTAMPS);
+      gst_buffer_copy_metadata (outbuf, input,
+          GST_BUFFER_COPY_TIMESTAMPS | GST_BUFFER_COPY_FLAGS);
       gst_buffer_unref (input);
 
       *buf = outbuf;
@@ -974,9 +973,9 @@ handle_slice (GstMpeg2dec * mpeg2dec, const mpeg2_info_t * info)
       (picture->flags & PIC_FLAG_TOP_FIELD_FIRST ? "tff" : "   "),
 //#if MPEG2_RELEASE >= MPEG2_VERSION(0,5,0)
       (picture->flags & PIC_FLAG_REPEAT_FIRST_FIELD ? "rff" : "   "),
-/*#else
-      "unknown rff",
-#endif*/
+//#else
+//      "unknown rff",
+//#endif
       (picture->flags & PIC_FLAG_SKIP ? "skip" : "    "),
       (picture->flags & PIC_FLAG_COMPOSITE_DISPLAY ? "composite" : "         "),
       picture->nb_fields, GST_BUFFER_OFFSET (outbuf),

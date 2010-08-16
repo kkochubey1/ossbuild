@@ -22,10 +22,8 @@
 
 #include <gst/gst.h>
 #include <gst/base/gstadapter.h>
-#include <opencore-amrwb/dec_if.h>
-#include <opencore-amrwb/if_rom.h>
-
-#define L_FRAME16k      320   /* Frame size at 16kHz  */
+#include <dec_if.h>
+#include <if_rom.h>
 
 G_BEGIN_DECLS
 
