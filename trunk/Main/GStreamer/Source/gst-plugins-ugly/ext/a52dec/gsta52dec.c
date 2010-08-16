@@ -49,17 +49,9 @@
 #include <a52dec/mm_accel.h>
 #include "gsta52dec.h"
 
-#include <liboil/liboil.h>
-#include <liboil/liboilcpu.h>
-#include <liboil/liboilfunction.h>
-
-/* elementfactory information */
-static GstElementDetails gst_a52dec_details = {
-  "ATSC A/52 audio decoder",
-  "Codec/Decoder/Audio",
-  "Decodes ATSC A/52 encoded audio streams",
-  "David I. Lehn <dlehn@users.sourceforge.net>"
-};
+#if HAVE_ORC
+#include <orc/orc.h>
+#endif
 
 #ifdef LIBA52_DOUBLE
 #define SAMPLE_WIDTH 64
@@ -140,7 +132,10 @@ gst_a52dec_base_init (gpointer g_class)
       gst_static_pad_template_get (&sink_factory));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_factory));
-  gst_element_class_set_details (element_class, &gst_a52dec_details);
+  gst_element_class_set_details_simple (element_class,
+      "ATSC A/52 audio decoder", "Codec/Decoder/Audio",
+      "Decodes ATSC A/52 encoded audio streams",
+      "David I. Lehn <dlehn@users.sourceforge.net>");
 
   GST_DEBUG_CATEGORY_INIT (a52dec_debug, "a52dec", 0,
       "AC3/A52 software decoder");
@@ -190,8 +185,6 @@ gst_a52dec_class_init (GstA52DecClass * klass)
   g_object_class_install_property (G_OBJECT_CLASS (klass), ARG_LFE,
       g_param_spec_boolean ("lfe", "LFE", "LFE", TRUE, G_PARAM_READWRITE));
 
-  oil_init ();
-
   /* If no CPU instruction based acceleration is available, end up using the
    * generic software djbfft based one when available in the used liba52 */
 #ifdef MM_ACCEL_DJBFFT
@@ -199,13 +192,19 @@ gst_a52dec_class_init (GstA52DecClass * klass)
 #else
   klass->a52_cpuflags = 0;
 #endif
-  cpuflags = oil_cpu_get_flags ();
-  if (cpuflags & OIL_IMPL_FLAG_MMX)
+
+#if HAVE_ORC
+  cpuflags = orc_target_get_default_flags (orc_target_get_by_name ("mmx"));
+
+  if (cpuflags & ORC_TARGET_MMX_MMX)
     klass->a52_cpuflags |= MM_ACCEL_X86_MMX;
-  if (cpuflags & OIL_IMPL_FLAG_3DNOW)
+  if (cpuflags & ORC_TARGET_MMX_3DNOW)
     klass->a52_cpuflags |= MM_ACCEL_X86_3DNOW;
-  if (cpuflags & OIL_IMPL_FLAG_MMXEXT)
+  if (cpuflags & ORC_TARGET_MMX_MMXEXT)
     klass->a52_cpuflags |= MM_ACCEL_X86_MMXEXT;
+#else
+  cpuflags = 0;
+#endif
 
   GST_LOG ("CPU flags: a52=%08x, liboil=%08x", klass->a52_cpuflags, cpuflags);
 }
@@ -976,6 +975,10 @@ gst_a52dec_get_property (GObject * object, guint prop_id, GValue * value,
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
+#if HAVE_ORC
+  orc_init ();
+#endif
+
   /* ensure GstAudioChannelPosition type is registered */
   if (!gst_audio_channel_position_get_type ())
     return FALSE;

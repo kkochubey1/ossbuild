@@ -157,6 +157,8 @@ static guint id3v2_frame_get_size (GstId3v2Tag * tag, GstId3v2Frame * frame);
 
 static void id3v2_tag_add_text_frame (GstId3v2Tag * tag,
     const gchar * frame_id, const gchar ** strings, int num_strings);
+static void id3v2_tag_add_simple_text_frame (GstId3v2Tag * tag,
+    const gchar * frame_id, const gchar * string);
 
 static gboolean
 id3v2_tag_init (GstId3v2Tag * tag, guint major_version)
@@ -434,6 +436,13 @@ id3v2_tag_add_text_frame (GstId3v2Tag * tag, const gchar * frame_id,
   g_array_append_val (tag->frames, frame);
 }
 
+static void
+id3v2_tag_add_simple_text_frame (GstId3v2Tag * tag, const gchar * frame_id,
+    const gchar * string)
+{
+  id3v2_tag_add_text_frame (tag, frame_id, (const gchar **) &string, 1);
+}
+
 /* ====================================================================== */
 
 static void
@@ -567,8 +576,7 @@ add_count_or_num_tag (GstId3v2Tag * id3v2tag, const GstTagList * list,
 
       GST_DEBUG ("Setting %s to %s (frame_id = %s)", tag, tag_str, frame_id);
 
-      id3v2_tag_add_text_frame (id3v2tag, frame_id, (const gchar **) &tag_str,
-          1);
+      id3v2_tag_add_simple_text_frame (id3v2tag, frame_id, tag_str);
       g_free (tag_str);
     }
   } else if (corr[idx].corr_count == NULL) {
@@ -581,10 +589,34 @@ add_count_or_num_tag (GstId3v2Tag * id3v2tag, const GstTagList * list,
       gchar *tag_str = g_strdup_printf ("0/%u", count);
       GST_DEBUG ("Setting %s to %s (frame_id = %s)", tag, tag_str, frame_id);
 
-      id3v2_tag_add_text_frame (id3v2tag, frame_id, (const gchar **) &tag_str,
-          1);
+      id3v2_tag_add_simple_text_frame (id3v2tag, frame_id, tag_str);
       g_free (tag_str);
     }
+  }
+
+  if (num_tags > 1) {
+    GST_WARNING ("more than one %s, can only handle one", tag);
+  }
+}
+
+static void
+add_bpm_tag (GstId3v2Tag * id3v2tag, const GstTagList * list,
+    const gchar * tag, guint num_tags, const gchar * unused)
+{
+  gdouble bpm;
+
+  GST_LOG ("Adding BPM frame");
+
+  if (gst_tag_list_get_double (list, tag, &bpm)) {
+    gchar *tag_str;
+
+    /* bpm is stored as an integer in id3 tags, but is a double in
+     * tag lists.
+     */
+    tag_str = g_strdup_printf ("%u", (guint) bpm);
+    GST_DEBUG ("Setting %s to %s", tag, tag_str);
+    id3v2_tag_add_simple_text_frame (id3v2tag, "TBPM", tag_str);
+    g_free (tag_str);
   }
 
   if (num_tags > 1) {
@@ -1027,6 +1059,9 @@ static const struct
     /* Comment tags */
   GST_TAG_COMMENT, add_comment_tag, NULL}, {
   GST_TAG_EXTENDED_COMMENT, add_comment_tag, NULL}, {
+
+    /* BPM tag */
+  GST_TAG_BEATS_PER_MINUTE, add_bpm_tag, NULL}, {
 
     /* Images */
   GST_TAG_IMAGE, add_image_tag, NULL}, {

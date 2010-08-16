@@ -21,6 +21,8 @@
 #ifndef __GST_GL_EFFECTS_SOURCES_H__
 #define __GST_GL_EFFECTS_SOURCES_H__
 
+extern const gchar *vertex_shader_source;
+extern const gchar *identity_fragment_source;
 extern const gchar *mirror_fragment_source;
 extern const gchar *squeeze_fragment_source;
 extern const gchar *stretch_fragment_source;
@@ -30,9 +32,12 @@ extern const gchar *twirl_fragment_source;
 extern const gchar *bulge_fragment_source;
 extern const gchar *square_fragment_source;
 extern const gchar *luma_threshold_fragment_source;
-extern const gchar *sobel_fragment_source;
-extern const gchar *hconv9_fragment_source;
-extern const gchar *vconv9_fragment_source;
+extern const gchar *sep_sobel_length_fragment_source;
+extern const gchar *desaturate_fragment_source;
+extern const gchar *sep_sobel_hconv3_fragment_source;
+extern const gchar *sep_sobel_vconv3_fragment_source;
+extern const gchar *hconv7_fragment_source;
+extern const gchar *vconv7_fragment_source;
 extern const gchar *sum_fragment_source;
 extern const gchar *luma_to_curve_fragment_source;
 extern const gchar *rgb_to_curve_fragment_source;
@@ -41,5 +46,7 @@ extern const gchar *interpolate_fragment_source;
 extern const gchar *texture_interp_fragment_source;
 extern const gchar *difference_fragment_source;
 extern const gchar *multiply_fragment_source;
+
+void fill_gaussian_kernel (float *kernel, int size, float sigma);
 
 #endif /* __GST_GL_EFFECTS_SOURCES_H__ */

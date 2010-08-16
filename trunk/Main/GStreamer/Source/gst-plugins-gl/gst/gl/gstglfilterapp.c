@@ -45,17 +45,12 @@
 #define GST_CAT_DEFAULT gst_gl_filter_app_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
 
-static const GstElementDetails element_details =
-GST_ELEMENT_DETAILS ("OpenGL application filter",
-    "Filter/Effect",
-    "Use client callbacks to define the scene",
-    "Julien Isorce <julien.isorce@gmail.com>");
-
 enum
 {
   PROP_0,
   PROP_CLIENT_RESHAPE_CALLBACK,
-  PROP_CLIENT_DRAW_CALLBACK
+  PROP_CLIENT_DRAW_CALLBACK,
+  PROP_CLIENT_DATA
 };
 
 #define DEBUG_INIT(bla) \
@@ -82,7 +77,10 @@ gst_gl_filter_app_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class,
+      "OpenGL application filter", "Filter/Effect",
+      "Use client callbacks to define the scene",
+      "Julien Isorce <julien.isorce@gmail.com>");
 }
 
 static void
@@ -106,6 +104,10 @@ gst_gl_filter_app_class_init (GstGLFilterAppClass * klass)
   g_object_class_install_property (gobject_class, PROP_CLIENT_DRAW_CALLBACK,
       g_param_spec_pointer ("client_draw_callback", "Client draw callback",
           "Define a custom draw callback in a client code", G_PARAM_WRITABLE));
+
+  g_object_class_install_property (gobject_class, PROP_CLIENT_DATA,
+      g_param_spec_pointer ("client_data", "Client data",
+          "Pass data to the draw and reshape callbacks", G_PARAM_WRITABLE));
 }
 
 static void
@@ -113,6 +115,7 @@ gst_gl_filter_app_init (GstGLFilterApp * filter, GstGLFilterAppClass * klass)
 {
   filter->clientReshapeCallback = NULL;
   filter->clientDrawCallback = NULL;
+  filter->client_data = NULL;
 }
 
 static void
@@ -130,6 +133,11 @@ gst_gl_filter_app_set_property (GObject * object, guint prop_id,
     case PROP_CLIENT_DRAW_CALLBACK:
     {
       filter->clientDrawCallback = g_value_get_pointer (value);
+      break;
+    }
+    case PROP_CLIENT_DATA:
+    {
+      filter->client_data = g_value_get_pointer (value);
       break;
     }
     default:
@@ -172,7 +180,7 @@ gst_gl_filter_app_filter (GstGLFilter * filter, GstGLBuffer * inbuf,
         filter->fbo, filter->depthbuffer, outbuf->texture,
         app_filter->clientDrawCallback, inbuf->width, inbuf->height,
         inbuf->texture, 45, (gfloat) filter->width / (gfloat) filter->height,
-        0.1, 100, GST_GL_DISPLAY_PROJECTION_PERSPECTIVE, NULL);
+        0.1, 100, GST_GL_DISPLAY_PROJECTION_PERSPECTIVE, app_filter->client_data);
   }
   //default
   else {

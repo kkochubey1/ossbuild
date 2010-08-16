@@ -18,6 +18,20 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/**
+ * SECTION:element-mp3parse
+ *
+ * Parses and frames mpeg1 audio streams. Provides seeking.
+ *
+ * <refsect2>
+ * <title>Example launch line</title>
+ * |[
+ * gst-launch filesrc location=test.mp3 ! mp3parse ! mad ! autoaudiosink
+ * ]|
+ * </refsect2>
+ */
+
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -53,7 +67,7 @@ GST_DEBUG_CATEGORY_STATIC (mp3parse_debug);
 #define MIN_RESYNC_FRAMES 3
 
 static inline MPEGAudioSeekEntry *
-mpeg_audio_seek_entry_new ()
+mpeg_audio_seek_entry_new (void)
 {
   return g_slice_new (MPEGAudioSeekEntry);
 }
@@ -63,15 +77,6 @@ mpeg_audio_seek_entry_free (MPEGAudioSeekEntry * entry)
 {
   g_slice_free (MPEGAudioSeekEntry, entry);
 }
-
-/* elementfactory information */
-static GstElementDetails mp3parse_details = {
-  "MPEG1 Audio Parser",
-  "Codec/Parser/Audio",
-  "Parses and frames mpeg1 audio streams (levels 1-3), provides seek",
-  "Jan Schmidt <thaytan@mad.scientist.com>\n"
-      "Erik Walthinsen <omega@cse.ogi.edu>"
-};
 
 static GstStaticPadTemplate mp3_src_template = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
@@ -104,11 +109,6 @@ enum
       /* FILL ME */
 };
 
-
-static void gst_mp3parse_class_init (GstMPEGAudioParseClass * klass);
-static void gst_mp3parse_base_init (gpointer klass);
-static void gst_mp3parse_init (GstMPEGAudioParse * mp3parse,
-    GstMPEGAudioParseClass * klass);
 
 static gboolean gst_mp3parse_sink_event (GstPad * pad, GstEvent * event);
 static GstFlowReturn gst_mp3parse_chain (GstPad * pad, GstBuffer * buffer);
@@ -297,7 +297,11 @@ gst_mp3parse_base_init (gpointer klass)
 
   GST_DEBUG_CATEGORY_INIT (mp3parse_debug, "mp3parse", 0, "MPEG Audio Parser");
 
-  gst_element_class_set_details (element_class, &mp3parse_details);
+  gst_element_class_set_details_simple (element_class, "MPEG1 Audio Parser",
+      "Codec/Parser/Audio",
+      "Parses and frames mpeg1 audio streams (levels 1-3), provides seek",
+      "Jan Schmidt <thaytan@mad.scientist.com>,"
+      "Erik Walthinsen <omega@cse.ogi.edu>");
 }
 
 static void

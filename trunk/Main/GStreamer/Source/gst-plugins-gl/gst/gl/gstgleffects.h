@@ -43,7 +43,7 @@ typedef struct _GstGLEffectsClass GstGLEffectsClass;
 
 typedef void (* GstGLEffectProcessFunc) (GstGLEffects *effects);
 
-#define NEEDED_TEXTURES 4
+#define NEEDED_TEXTURES 5
 
 enum {
   GST_GL_EFFECTS_CURVE_HEAT,
@@ -70,6 +70,11 @@ struct _GstGLEffects
   GHashTable *shaderstable;
 
   gboolean horizontal_swap; /* switch left to right */
+
+#ifdef OPENGL_ES2
+  GLint draw_attr_position_loc;
+  GLint draw_attr_texture_loc;
+#endif
 };
 
 struct _GstGLEffectsClass

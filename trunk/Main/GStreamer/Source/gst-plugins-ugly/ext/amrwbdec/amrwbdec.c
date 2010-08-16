@@ -59,6 +59,8 @@ static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE ("src",
 GST_DEBUG_CATEGORY_STATIC (gst_amrwbdec_debug);
 #define GST_CAT_DEFAULT gst_amrwbdec_debug
 
+#define L_FRAME16k      320     /* Frame size at 16kHz  */
+
 static const unsigned char block_size[16] =
     { 18, 24, 33, 37, 41, 47, 51, 59, 61,
   6, 6, 0, 0, 0, 1, 1
@@ -82,17 +84,16 @@ static void
 gst_amrwbdec_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
-  GstElementDetails details = GST_ELEMENT_DETAILS ("AMR-WB audio decoder",
-      "Codec/Decoder/Audio",
-      "Adaptive Multi-Rate Wideband audio decoder",
-      "Renato Araujo <renato.filho@indt.org.br>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&sink_template));
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_template));
 
-  gst_element_class_set_details (element_class, &details);
+  gst_element_class_set_details_simple (element_class, "AMR-WB audio decoder",
+      "Codec/Decoder/Audio",
+      "Adaptive Multi-Rate Wideband audio decoder",
+      "Renato Araujo <renato.filho@indt.org.br>");
 }
 
 static void

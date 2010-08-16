@@ -44,6 +44,13 @@ GST_STATIC_PAD_TEMPLATE ("sink",
     GST_STATIC_CAPS (GST_GL_VIDEO_CAPS)
     );
 
+/* Properties */
+enum
+{
+  PROP_0,
+  PROP_EXTERNAL_OPENGL_CONTEXT
+};
+
 #define DEBUG_INIT(bla)							\
   GST_DEBUG_CATEGORY_INIT (gst_gl_filter_debug, "glfilter", 0, "glfilter element");
 
@@ -54,6 +61,8 @@ static void gst_gl_filter_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
 static void gst_gl_filter_get_property (GObject * object, guint prop_id,
     GValue * value, GParamSpec * pspec);
+
+static gboolean gst_gl_filter_src_query (GstPad * pad, GstQuery * query);
 
 static GstCaps *gst_gl_filter_transform_caps (GstBaseTransform * bt,
     GstPadDirection direction, GstCaps * caps);
@@ -105,6 +114,12 @@ gst_gl_filter_class_init (GstGLFilterClass * klass)
   GST_BASE_TRANSFORM_CLASS (klass)->prepare_output_buffer =
       gst_gl_filter_prepare_output_buffer;
 
+  g_object_class_install_property (gobject_class, PROP_EXTERNAL_OPENGL_CONTEXT,
+      g_param_spec_ulong ("external_opengl_context",
+          "External OpenGL context",
+          "Give an external OpenGL context with which to share textures",
+          0, G_MAXULONG, 0, G_PARAM_WRITABLE));
+
   klass->set_caps = NULL;
   klass->filter = NULL;
   klass->display_init_cb = NULL;
@@ -118,10 +133,10 @@ gst_gl_filter_class_init (GstGLFilterClass * klass)
 static void
 gst_gl_filter_init (GstGLFilter * filter, GstGLFilterClass * klass)
 {
-  //gst_element_create_all_pads (GST_ELEMENT (filter));
+  GstBaseTransform *base_trans = GST_BASE_TRANSFORM (filter);
 
-  filter->sinkpad = gst_element_get_static_pad (GST_ELEMENT (filter), "sink");
-  filter->srcpad = gst_element_get_static_pad (GST_ELEMENT (filter), "src");
+  gst_pad_set_query_function (base_trans->srcpad,
+      GST_DEBUG_FUNCPTR (gst_gl_filter_src_query));
 
   gst_gl_filter_reset (filter);
 }
@@ -130,9 +145,14 @@ static void
 gst_gl_filter_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec)
 {
-  //GstGLFilter *filter = GST_GL_FILTER (object);
+  GstGLFilter *filter = GST_GL_FILTER (object);
 
   switch (prop_id) {
+    case PROP_EXTERNAL_OPENGL_CONTEXT:
+    {
+      filter->external_gl_context = g_value_get_ulong (value);
+      break;
+    }
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -150,6 +170,39 @@ gst_gl_filter_get_property (GObject * object, guint prop_id,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
   }
+}
+
+static gboolean
+gst_gl_filter_src_query (GstPad * pad, GstQuery * query)
+{
+  gboolean res = FALSE;
+  GstElement *parent = GST_ELEMENT (gst_pad_get_parent (pad));
+  GstGLFilter *filter = GST_GL_FILTER (parent);
+
+  switch (GST_QUERY_TYPE (query)) {
+    case GST_QUERY_CUSTOM:
+    {
+      GstStructure *structure = gst_query_get_structure (query);
+      if (filter->display) {
+        /* this gl filter is a sink in terms of the gl chain */
+        gst_structure_set (structure, "gstgldisplay", G_TYPE_POINTER,
+            filter->display, NULL);
+      } else {
+        /* at least one gl element is after in our gl chain */
+        res =
+            g_strcmp0 (gst_element_get_name (parent),
+            gst_structure_get_name (structure)) == 0;
+      }
+      if (!res)
+        res = gst_pad_query_default (pad, query);
+      break;
+    }
+    default:
+      res = gst_pad_query_default (pad, query);
+      break;
+  }
+
+  return res;
 }
 
 static void
@@ -170,10 +223,13 @@ gst_gl_filter_reset (GstGLFilter * filter)
     g_object_unref (filter->display);
     filter->display = NULL;
   }
+
   filter->width = 0;
   filter->height = 0;
   filter->fbo = 0;
   filter->depthbuffer = 0;
+  filter->default_shader = NULL;
+  filter->external_gl_context = 0;
 }
 
 static gboolean
@@ -181,6 +237,42 @@ gst_gl_filter_start (GstBaseTransform * bt)
 {
   GstGLFilter *filter = GST_GL_FILTER (bt);
   GstGLFilterClass *filter_class = GST_GL_FILTER_GET_CLASS (filter);
+  GstElement *parent = GST_ELEMENT (gst_element_get_parent (filter));
+  GstStructure *structure = NULL;
+  GstQuery *query = NULL;
+  gboolean isPerformed = FALSE;
+
+  if (!parent) {
+    GST_ELEMENT_ERROR (filter, CORE, STATE_CHANGE, (NULL),
+        ("A parent bin is required"));
+    return FALSE;
+  }
+
+  structure = gst_structure_new (gst_element_get_name (filter), NULL);
+  query = gst_query_new_application (GST_QUERY_CUSTOM, structure);
+
+  isPerformed = gst_element_query (parent, query);
+
+  if (isPerformed) {
+    const GValue *id_value =
+        gst_structure_get_value (structure, "gstgldisplay");
+    if (G_VALUE_HOLDS_POINTER (id_value))
+      /* at least one gl element is after in our gl chain */
+      filter->display =
+          g_object_ref (GST_GL_DISPLAY (g_value_get_pointer (id_value)));
+    else {
+      /* this gl filter is a sink in terms of the gl chain */
+      filter->display = gst_gl_display_new ();
+      gst_gl_display_create_context (filter->display,
+          filter->external_gl_context);
+    }
+  }
+
+  gst_query_unref (query);
+  gst_object_unref (GST_OBJECT (parent));
+
+  if (!isPerformed)
+    return FALSE;
 
   if (filter_class->onStart)
     filter_class->onStart (filter);
@@ -270,28 +362,9 @@ gst_gl_filter_prepare_output_buffer (GstBaseTransform * trans,
     GstBuffer * inbuf, gint size, GstCaps * caps, GstBuffer ** buf)
 {
   GstGLFilter *filter = NULL;
-  GstGLBuffer *gl_inbuf = GST_GL_BUFFER (inbuf);
   GstGLBuffer *gl_outbuf = NULL;
 
   filter = GST_GL_FILTER (trans);
-
-  if (filter->display == NULL) {
-    GstGLFilterClass *filter_class = GST_GL_FILTER_GET_CLASS (filter);
-
-    filter->display = g_object_ref (gl_inbuf->display);
-
-    //blocking call, generate a FBO
-    gst_gl_display_gen_fbo (filter->display, filter->width, filter->height,
-        &filter->fbo, &filter->depthbuffer);
-
-    if (filter_class->display_init_cb != NULL) {
-      gst_gl_display_thread_add (filter->display, gst_gl_filter_start_gl,
-          filter);
-    }
-
-    if (filter_class->onInitFBO)
-      filter_class->onInitFBO (filter);
-  }
 
   gl_outbuf = gst_gl_buffer_new (filter->display,
       filter->width, filter->height);
@@ -313,7 +386,21 @@ gst_gl_filter_set_caps (GstBaseTransform * bt, GstCaps * incaps,
   gboolean ret = FALSE;
   GstGLFilterClass *filter_class = GST_GL_FILTER_GET_CLASS (filter);
 
+  if (!filter->display)
+    return FALSE;
+
   ret = gst_gl_buffer_parse_caps (outcaps, &filter->width, &filter->height);
+
+  //blocking call, generate a FBO
+  gst_gl_display_gen_fbo (filter->display, filter->width, filter->height,
+      &filter->fbo, &filter->depthbuffer);
+
+  if (filter_class->display_init_cb != NULL) {
+    gst_gl_display_thread_add (filter->display, gst_gl_filter_start_gl, filter);
+  }
+
+  if (filter_class->onInitFBO)
+    filter_class->onInitFBO (filter);
 
   if (filter_class->set_caps)
     filter_class->set_caps (filter, incaps, outcaps);
@@ -366,4 +453,56 @@ gst_gl_filter_render_to_target (GstGLFilter * filter,
       filter->width, filter->height, input,
       0, filter->width, 0, filter->height,
       GST_GL_DISPLAY_PROJECTION_ORTHO2D, data);
+}
+
+static void
+_draw_with_shader_cb (gint width, gint height, guint texture, gpointer stuff)
+{
+  GstGLFilter *filter = GST_GL_FILTER (stuff);
+
+  glMatrixMode (GL_PROJECTION);
+  glLoadIdentity ();
+
+  gst_gl_shader_use (filter->default_shader);
+
+  glActiveTexture (GL_TEXTURE1);
+  glEnable (GL_TEXTURE_RECTANGLE_ARB);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, texture);
+  glDisable (GL_TEXTURE_RECTANGLE_ARB);
+
+  gst_gl_shader_set_uniform_1i (filter->default_shader, "tex", 1);
+
+  gst_gl_filter_draw_texture (filter, texture);
+}
+
+/* attach target to a FBO, use shader, pass input as "tex" uniform to
+ * the shader, render input to a quad */
+void
+gst_gl_filter_render_to_target_with_shader (GstGLFilter * filter,
+    GLuint input, GLuint target, GstGLShader * shader)
+{
+  filter->default_shader = shader;
+  gst_gl_filter_render_to_target (filter, input, target, _draw_with_shader_cb,
+      filter);
+}
+
+void
+gst_gl_filter_draw_texture (GstGLFilter * filter, GLuint texture)
+{
+  glActiveTexture (GL_TEXTURE0);
+  glEnable (GL_TEXTURE_RECTANGLE_ARB);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, texture);
+
+  glBegin (GL_QUADS);
+
+  glTexCoord2f (0.0, 0.0);
+  glVertex2f (-1.0, -1.0);
+  glTexCoord2f ((gfloat) filter->width, 0.0);
+  glVertex2f (1.0, -1.0);
+  glTexCoord2f ((gfloat) filter->width, (gfloat) filter->height);
+  glVertex2f (1.0, 1.0);
+  glTexCoord2f (0.0, (gfloat) filter->height);
+  glVertex2f (-1.0, 1.0);
+
+  glEnd ();
 }

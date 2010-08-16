@@ -460,7 +460,7 @@ static gboolean
 register_plugin (GstPlugin * plugin, const gchar * filename)
 {
   GModule *module;
-  gboolean ret = FALSE;
+  GstFrei0rPluginRegisterReturn ret = GST_FREI0R_PLUGIN_REGISTER_RETURN_FAILED;
   GstFrei0rFuncTable ftable = { NULL, };
   gint i;
   f0r_plugin_info_t info = { NULL, };
@@ -560,10 +560,24 @@ register_plugin (GstPlugin * plugin, const gchar * filename)
       break;
   }
 
-  if (!ret)
-    goto invalid_frei0r_plugin;
+  switch (ret) {
+    case GST_FREI0R_PLUGIN_REGISTER_RETURN_OK:
+      return TRUE;
+    case GST_FREI0R_PLUGIN_REGISTER_RETURN_FAILED:
+      GST_ERROR ("Failed to register frei0r plugin");
+      ftable.deinit ();
+      g_module_close (module);
+      return FALSE;
+    case GST_FREI0R_PLUGIN_REGISTER_RETURN_ALREADY_REGISTERED:
+      GST_DEBUG ("frei0r plugin already registered");
+      ftable.deinit ();
+      g_module_close (module);
+      return TRUE;
+    default:
+      g_return_val_if_reached (FALSE);
+  }
 
-  return ret;
+  g_return_val_if_reached (FALSE);
 
 invalid_frei0r_plugin:
   GST_ERROR ("Invalid frei0r plugin");
@@ -574,7 +588,8 @@ invalid_frei0r_plugin:
 }
 
 static gboolean
-register_plugins (GstPlugin * plugin, const gchar * path)
+register_plugins (GstPlugin * plugin, GHashTable * plugin_names,
+    const gchar * path)
 {
   GDir *dir;
   gchar *filename;
@@ -588,15 +603,24 @@ register_plugins (GstPlugin * plugin, const gchar * path)
     return FALSE;
 
   while ((entry_name = g_dir_read_name (dir))) {
+    if (g_hash_table_lookup_extended (plugin_names, entry_name, NULL, NULL))
+      continue;
+
     filename = g_build_filename (path, entry_name, NULL);
     if ((g_str_has_suffix (filename, G_MODULE_SUFFIX)
 #ifdef GST_EXTRA_MODULE_SUFFIX
             || g_str_has_suffix (filename, GST_EXTRA_MODULE_SUFFIX)
 #endif
         ) && g_file_test (filename, G_FILE_TEST_IS_REGULAR)) {
-      ret |= register_plugin (plugin, filename);
+      gboolean this_ret;
+
+      this_ret = register_plugin (plugin, filename);
+      if (this_ret)
+        g_hash_table_insert (plugin_names, g_strdup (entry_name), NULL);
+
+      ret = ret && this_ret;
     } else if (g_file_test (filename, G_FILE_TEST_IS_DIR)) {
-      ret |= register_plugins (plugin, filename);
+      ret = ret && register_plugins (plugin, plugin_names, filename);
     }
     g_free (filename);
   }
@@ -610,6 +634,7 @@ plugin_init (GstPlugin * plugin)
 {
   const gchar *homedir;
   gchar *path;
+  GHashTable *plugin_names;
 
   GST_DEBUG_CATEGORY_INIT (frei0r_debug, "frei0r", 0, "frei0r");
 
@@ -617,16 +642,28 @@ plugin_init (GstPlugin * plugin)
 
   gst_plugin_add_dependency_simple (plugin,
       "HOME/.frei0r-1/lib",
-      "/usr/lib/frei0r-1:/usr/local/lib/frei0r-1",
+      "/usr/lib/frei0r-1:/usr/local/lib/frei0r-1:"
+      "/usr/lib32/frei0r-1:/usr/local/lib32/frei0r-1:"
+      "/usr/lib64/frei0r-1:/usr/local/lib64/frei0r-1",
       NULL, GST_PLUGIN_DEPENDENCY_FLAG_RECURSE);
 
-  register_plugins (plugin, "/usr/lib/frei0r-1");
-  register_plugins (plugin, "/usr/local/lib/frei0r-1");
+  plugin_names =
+      g_hash_table_new_full ((GHashFunc) g_str_hash, (GEqualFunc) g_str_equal,
+      (GDestroyNotify) g_free, NULL);
 
   homedir = g_get_home_dir ();
   path = g_build_filename (homedir, ".frei0r-1", NULL);
-  register_plugins (plugin, path);
+  register_plugins (plugin, plugin_names, path);
   g_free (path);
+
+  register_plugins (plugin, plugin_names, "/usr/local/lib/frei0r-1");
+  register_plugins (plugin, plugin_names, "/usr/lib/frei0r-1");
+  register_plugins (plugin, plugin_names, "/usr/local/lib32/frei0r-1");
+  register_plugins (plugin, plugin_names, "/usr/lib32/frei0r-1");
+  register_plugins (plugin, plugin_names, "/usr/local/lib64/frei0r-1");
+  register_plugins (plugin, plugin_names, "/usr/lib64/frei0r-1");
+
+  g_hash_table_unref (plugin_names);
 
   return TRUE;
 }

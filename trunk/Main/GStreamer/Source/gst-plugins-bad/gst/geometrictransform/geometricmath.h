@@ -63,6 +63,8 @@ gdouble noise_2 (Noise * noise, gdouble x, gdouble y);
 gdouble mod_float (gdouble a, gdouble b);
 gdouble geometric_math_triangle (gdouble x);
 
+gdouble smoothstep (gdouble edge0, gdouble edge1, gdouble x);
+
 G_END_DECLS
 
 #endif /* __GEOMETRIC_MATH_H__ */

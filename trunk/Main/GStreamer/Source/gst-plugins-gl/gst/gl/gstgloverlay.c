@@ -38,42 +38,13 @@
 
 #include <stdlib.h>
 #include <png.h>
-#include <gstglfilter.h>
+#include "gstgloverlay.h"
 #include <gstgleffectssources.h>
 
 #if PNG_LIBPNG_VER >= 10400
 #define int_p_NULL         NULL
 #define png_infopp_NULL    NULL
 #endif
-
-#define GST_TYPE_GL_OVERLAY            (gst_gl_overlay_get_type())
-#define GST_GL_OVERLAY(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GST_TYPE_GL_OVERLAY,GstGLOverlay))
-#define GST_IS_GL_OVERLAY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GST_TYPE_GL_OVERLAY))
-#define GST_GL_OVERLAY_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass) , GST_TYPE_GL_OVERLAY,GstGLOverlayClass))
-#define GST_IS_GL_OVERLAY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass) , GST_TYPE_GL_OVERLAY))
-#define GST_GL_OVERLAY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj) , GST_TYPE_GL_OVERLAY,GstGLOverlayClass))
-
-struct _GstGLOverlay
-{
-  GstGLFilter filter;
-
-  gchar *location;
-  gboolean pbuf_has_changed;
-
-  guchar *pixbuf;
-  gint width, height;
-  GLuint pbuftexture;
-
-//  gboolean stretch;
-};
-
-struct _GstGLOverlayClass
-{
-  GstGLFilterClass filter_class;
-};
-
-typedef struct _GstGLOverlay GstGLOverlay;
-typedef struct _GstGLOverlayClass GstGLOverlayClass;
 
 #define GST_CAT_DEFAULT gst_gl_overlay_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
@@ -97,22 +68,21 @@ static gboolean gst_gl_overlay_filter (GstGLFilter * filter,
 
 static gboolean gst_gl_overlay_loader (GstGLFilter * filter);
 
-static const GstElementDetails element_details =
-GST_ELEMENT_DETAILS ("Gstreamer OpenGL Overlay",
-    "Filter/Effect",
-    "Overlay GL video texture with a PNG image",
-    "Filippo Argiolas <filippo.argiolas@gmail.com>");
-
 enum
 {
   PROP_0,
   PROP_LOCATION,
-//  PROP_STRETCH,
-  /* future properties? */
-  /* PROP_WIDTH, */
-  /* PROP_HEIGHT, */
-  /* PROP_XPOS, */
-  /* PROP_YPOS */
+  PROP_XPOS_PNG,
+  PROP_YPOS_PNG,
+  PROP_SIZE_PNG,
+  PROP_XPOS_VIDEO,
+  PROP_YPOS_VIDEO,
+  PROP_SIZE_VIDEO,
+  PROP_VIDEOTOP,
+  PROP_ROTATE_PNG,
+  PROP_ROTATE_VIDEO,
+  PROP_ANGLE_PNG,
+  PROP_ANGLE_VIDEO
 };
 
 
@@ -137,7 +107,10 @@ gst_gl_overlay_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class,
+      "Gstreamer OpenGL Overlay", "Filter/Effect",
+      "Overlay GL video texture with a PNG image",
+      "Filippo Argiolas <filippo.argiolas@gmail.com>");
 }
 
 static void
@@ -162,71 +135,250 @@ gst_gl_overlay_class_init (GstGLOverlayClass * klass)
       g_param_spec_string ("location",
           "Location of the image",
           "Location of the image", NULL, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+      PROP_XPOS_PNG,
+      g_param_spec_int ("xpos-png",
+          "X position of overlay image in percents",
+          "X position of overlay image in percents",
+          0, 100, 0, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+      PROP_YPOS_PNG,
+      g_param_spec_int ("ypos-png",
+          "Y position of overlay image in percents",
+          "Y position of overlay image in percents",
+          0, 100, 0, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+      PROP_SIZE_PNG,
+      g_param_spec_int ("proportion-png",
+          "Relative size of overlay image, in percents",
+          "Relative size of iverlay image, in percents",
+          0, 100, 0, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+      PROP_XPOS_VIDEO,
+      g_param_spec_int ("xpos-video",
+          "X position of overlay video in percents",
+          "X position of overlay video in percents",
+          0, 100, 0, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+      PROP_YPOS_VIDEO,
+      g_param_spec_int ("ypos-video",
+          "Y position of overlay video in percents",
+          "Y position of overlay video in percents",
+          0, 100, 0, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+      PROP_SIZE_VIDEO,
+      g_param_spec_int ("proportion-video",
+          "Relative size of overlay video, in percents",
+          "Relative size of iverlay video, in percents",
+          0, 100, 0, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+      PROP_VIDEOTOP,
+      g_param_spec_boolean ("video-top",
+          "Video-top", "Video is over png image", FALSE, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+      PROP_ROTATE_PNG,
+      g_param_spec_int ("rotate_png",
+          "choose rotation axis for the moment only Y axis is implemented",
+          "choose rotation axis for the moment only Y axis is implemented",
+          0, 3, 0, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+      PROP_ROTATE_VIDEO,
+      g_param_spec_int ("rotate_video",
+          "choose rotation axis for the moment only Y axis is implemented",
+          "choose rotation axis for the moment only Y axis is implemented",
+          0, 3, 0, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+      PROP_ANGLE_PNG,
+      g_param_spec_int ("angle_png",
+          "choose angle in axis to choosen between -90 and 90",
+          "choose angle in axis to choosen between -90 and 90",
+          -90, 90, 0, G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+      PROP_ANGLE_VIDEO,
+      g_param_spec_int ("angle_video",
+          "choose angle in axis to choosen between -90 and 90",
+          "choose angle in axis to choosen between -90 and 90",
+          -90, 90, 0, G_PARAM_READWRITE));
   /*
      g_object_class_install_property (gobject_class,
      PROP_STRETCH,
      g_param_spec_boolean ("stretch",
-     "Stretch the image to texture size", 
-     "Stretch the image to fit video texture size", 
+     "Stretch the image to texture size",
+     "Stretch the image to fit video texture size",
      TRUE, G_PARAM_READWRITE));
    */
 }
 
-void
-gst_gl_overlay_draw_texture (GstGLOverlay * overlay, GLuint tex)
+static void
+gst_gl_overlay_draw_texture_video_on_png (GstGLOverlay * overlay, GLuint tex)
 {
   GstGLFilter *filter = GST_GL_FILTER (overlay);
-
+  gfloat posx = 0.0;
+  gfloat posy = 0.0;
+  gfloat size = 0.0;
   gfloat width = (gfloat) filter->width;
   gfloat height = (gfloat) filter->height;
+  gfloat ratio = 0.0;
+  gfloat translate = 0.0;
 
+  //  if (overlay->stretch) {
+  //  width = (gfloat) overlay->width;
+  // height = (gfloat) overlay->height;
+  //  }
+  if (overlay->pbuftexture != 0) {
+    size = (overlay->size_png) / 50.0f;
+    posx = (overlay->pos_x_png - 50.0f) / 50.0f;
+    posx =
+        (posx - (size / 2) < -1.00) ? (-1.0f + size / 2) : (posx + (size / 2) >
+        1.00) ? (1.0f - size / 2) : posx;
+    posy = (overlay->pos_y_png - 50.0f) / 50.0f;
+    posy =
+        (posy - (size / 2) < -1.00) ? (-1.0f + size / 2) : (posy + (size / 2) >
+        1.00) ? (1.0f - size / 2) : posy;
+    ratio = ((posx + (size / 2)) - (posx - (size / 2))) * height / width;
+    translate = overlay->size_png / 400.0f;
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable (GL_TEXTURE_RECTANGLE_ARB);
+    glBindTexture (GL_TEXTURE_RECTANGLE_ARB, overlay->pbuftexture);
+    glLoadIdentity ();
+    glTranslatef (0.0f, translate, -1.0f);
+    if (overlay->rotate_png == 2)
+      glRotatef (overlay->angle_png, 0, 1, 0);
+    glBegin (GL_QUADS);
+    glTexCoord3f (0.0f, 0.0f, 0.0f);
+    glVertex3f (posx - (size / 2), posy - (size / 2), 0.0f);
+    glTexCoord3f (width, 0.0, 0.0);
+    glVertex3f (posx + (size / 2), posy - (size / 2), 0.0f);
+    glTexCoord3f (width, height, 0.0);
+    glVertex3f (posx + (size / 2), posy - (size / 2) + ratio, 0.0f);
+    glTexCoord3f (0.0, height, 0.0);
+    glVertex3f (posx - (size / 2), posy - (size / 2) + ratio, 0.0f);
+    glEnd ();
+  }
+  size = (overlay->size_video) / 50.0f;
+  posx = (overlay->pos_x_video - 50.0f) / 50.0f;
+  posx =
+      (posx - (size / 2) < -1.00) ? (-1.0f + size / 2) : (posx + (size / 2) >
+      1.00) ? (1.0f - size / 2) : posx;
+  posy = (overlay->pos_y_video - 50.0f) / 50.0f;
+  posy =
+      (posy - (size / 2) < -1.00) ? (-1.0f + size / 2) : (posy + (size / 2) >
+      1.00) ? (1.0f - size / 2) : posy;
+  ratio = ((posx + (size / 2)) - (posx - (size / 2))) * height / width;
+  translate = overlay->size_video / 400.0f;
   glActiveTexture (GL_TEXTURE0);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable (GL_TEXTURE_RECTANGLE_ARB);
   glBindTexture (GL_TEXTURE_RECTANGLE_ARB, tex);
-
+  glLoadIdentity ();
+  glTranslatef (0.0f, translate, -1.0f);
+  if (overlay->rotate_video)
+    glRotatef (overlay->angle_video, 0, 1, 0);
   glBegin (GL_QUADS);
-
-  glTexCoord2f (0.0, 0.0);
-  glVertex2f (-1.0, -1.0);
-  glTexCoord2f (width, 0.0);
-  glVertex2f (1.0, -1.0);
-  glTexCoord2f (width, height);
-  glVertex2f (1.0, 1.0);
-  glTexCoord2f (0.0, height);
-  glVertex2f (-1.0, 1.0);
-
+  glTexCoord3f (0.0f, 0.0f, 0.0f);
+  glVertex3f (posx - (size / 2), posy - (size / 2), 0.0f);
+  glTexCoord3f (width, 0.0f, 0.0f);
+  glVertex3f (posx + (size / 2), posy - (size / 2), 0.0f);
+  glTexCoord3f (width, height, 0.0);
+  glVertex3f (posx + (size / 2), posy - (size / 2) + ratio, 0.0f);
+  glTexCoord3f (0.0f, height, 0.0f);
+  glVertex3f (posx - (size / 2), posy - (size / 2) + ratio, 0.0f);
   glEnd ();
+  glFlush ();
+}
 
+static void
+gst_gl_overlay_draw_texture_png_on_video (GstGLOverlay * overlay, GLuint tex)
+{
+
+  GstGLFilter *filter = GST_GL_FILTER (overlay);
+  gfloat posx = 0.0;
+  gfloat posy = 0.0;
+  gfloat size = 0.0;
+  gfloat width = (gfloat) filter->width;
+  gfloat height = (gfloat) filter->height;
+  gfloat ratio = 0.0;
+  gfloat translate = 0.0;
+
+  size = (overlay->size_video) / 50.0f;
+  posx = (overlay->pos_x_video - 50.0f) / 50.0f;
+  posx =
+      (posx - (size / 2) < -1.00) ? (-1.0f + size / 2) : (posx + (size / 2) >
+      1.00) ? (1.0f - size / 2) : posx;
+  posy = (overlay->pos_y_video - 50.0f) / 50.0f;
+  posy =
+      (posy - (size / 2) < -1.00) ? (-1.0f + size / 2) : (posy + (size / 2) >
+      1.00) ? (1.0f - size / 2) : posy;
+  ratio = ((posx + (size / 2)) - (posx - (size / 2))) * height / width;
+  translate = overlay->size_video / 400.0f;
+  glActiveTexture (GL_TEXTURE0);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable (GL_TEXTURE_RECTANGLE_ARB);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, tex);
+  glLoadIdentity ();
+  glTranslatef (0.0f, translate, -1.0f);
+  if (overlay->rotate_video)
+    glRotatef (overlay->angle_video, 0, 1, 0);
+  glBegin (GL_QUADS);
+  glTexCoord3f (0.0f, 0.0f, 0.0f);
+  glVertex3f (posx - (size / 2), posy - (size / 2), 0.0f);
+  glTexCoord3f (width, 0.0f, 0.0f);
+  glVertex3f (posx + (size / 2), posy - (size / 2), 0.0f);
+  glTexCoord3f (width, height, 0.0f);
+  glVertex3f (posx + (size / 2), posy - (size / 2) + ratio, 0.0f);
+  glTexCoord3f (0.0f, height, 0.0f);
+  glVertex3f (posx - (size / 2), posy - (size / 2) + ratio, 0.0f);
+  glEnd ();
   if (overlay->pbuftexture == 0)
     return;
 
-//  if (overlay->stretch) {
-  width = (gfloat) overlay->width;
-  height = (gfloat) overlay->height;
-//  }
-
+  //  if (overlay->stretch) {
+  //width = (gfloat) overlay->width;
+  //height = (gfloat) overlay->height;
+  //  }
+  size = (overlay->size_png) / 50.0f;
+  posx = (overlay->pos_x_png - 50.0f) / 50.0f;
+  posx =
+      (posx - (size / 2) < -1.00) ? (-1.0f + size / 2) : (posx + (size / 2) >
+      1.00) ? (1.0f - size / 2) : posx;
+  posy = (overlay->pos_y_png - 50.0f) / 50.0f;
+  posy =
+      (posy - (size / 2) < -1.00) ? (-1.0f + size / 2) : (posy + (size / 2) >
+      1.00) ? (1.0f - size / 2) : posy;
+  ratio = ((posx + (size / 2)) - (posx - (size / 2))) * height / width;
+  translate = overlay->size_png / 400.0f;
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable (GL_BLEND);
-
   glEnable (GL_TEXTURE_RECTANGLE_ARB);
   glBindTexture (GL_TEXTURE_RECTANGLE_ARB, overlay->pbuftexture);
-
+  glLoadIdentity ();
+  glTranslatef (0.0f, translate, -1.0f);
+  if (overlay->rotate_png == 2)
+    glRotatef (overlay->angle_png, 0, 1, 0);
   glBegin (GL_QUADS);
-
-  glTexCoord2f (0.0, 0.0);
-  glVertex2f (-1.0, -1.0);
-  glTexCoord2f (width, 0.0);
-  glVertex2f (1.0, -1.0);
-  glTexCoord2f (width, height);
-  glVertex2f (1.0, 1.0);
-  glTexCoord2f (0.0, height);
-  glVertex2f (-1.0, 1.0);
-
+  glTexCoord3f (0.0f, 0.0f, 0.0f);
+  glVertex3f (posx - (size / 2), posy - (size / 2), 0.0f);
+  glTexCoord3f (width, 0.0f, 0.0f);
+  glVertex3f (posx + (size / 2), posy - (size / 2), 0.0f);
+  glTexCoord3f (width, height, 0.0f);
+  glVertex3f (posx + (size / 2), posy - (size / 2) + ratio, 0.0f);
+  glTexCoord3f (0.0f, height, 0.0f);
+  glVertex3f (posx - (size / 2), posy - (size / 2) + ratio, 0.0f);
   glEnd ();
-
-
   glFlush ();
 }
+
+
 
 static void
 gst_gl_overlay_init (GstGLOverlay * overlay, GstGLOverlayClass * klass)
@@ -237,7 +389,18 @@ gst_gl_overlay_init (GstGLOverlay * overlay, GstGLOverlayClass * klass)
   overlay->pbuftexture = 0;
   overlay->width = 0;
   overlay->height = 0;
-//  overlay->stretch = TRUE;
+  overlay->pos_x_png = 0;
+  overlay->pos_y_png = 0;
+  overlay->size_png = 100;
+  overlay->pos_x_video = 0;
+  overlay->pos_y_video = 0;
+  overlay->size_video = 100;
+  overlay->video_top = FALSE;
+  overlay->rotate_png = 0;
+  overlay->rotate_video = 0;
+  overlay->angle_png = 0;
+  overlay->angle_video = 0;
+  //  overlay->stretch = TRUE;
   overlay->pbuf_has_changed = FALSE;
 }
 
@@ -260,10 +423,43 @@ gst_gl_overlay_set_property (GObject * object, guint prop_id,
       overlay->pbuf_has_changed = TRUE;
       overlay->location = g_value_dup_string (value);
       break;
-/*  case PROP_STRETCH:
-    overlay->stretch = g_value_get_boolean (value);
-    break;
-*/
+    case PROP_XPOS_PNG:
+      overlay->pos_x_png = g_value_get_int (value);
+      break;
+    case PROP_YPOS_PNG:
+      overlay->pos_y_png = g_value_get_int (value);
+      break;
+    case PROP_SIZE_PNG:
+      overlay->size_png = g_value_get_int (value);
+      break;
+    case PROP_XPOS_VIDEO:
+      overlay->pos_x_video = g_value_get_int (value);
+      break;
+    case PROP_YPOS_VIDEO:
+      overlay->pos_y_video = g_value_get_int (value);
+      break;
+    case PROP_SIZE_VIDEO:
+      overlay->size_video = g_value_get_int (value);
+      break;
+    case PROP_VIDEOTOP:
+      overlay->video_top = g_value_get_boolean (value);
+      break;
+    case PROP_ROTATE_PNG:
+      overlay->rotate_png = g_value_get_int (value);
+      break;
+    case PROP_ROTATE_VIDEO:
+      overlay->rotate_video = g_value_get_int (value);
+      break;
+    case PROP_ANGLE_PNG:
+      overlay->angle_png = g_value_get_int (value);
+      break;
+    case PROP_ANGLE_VIDEO:
+      overlay->angle_video = g_value_get_int (value);
+      break;
+      /*  case PROP_STRETCH:
+         overlay->stretch = g_value_get_boolean (value);
+         break;
+       */
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -280,10 +476,43 @@ gst_gl_overlay_get_property (GObject * object, guint prop_id,
     case PROP_LOCATION:
       g_value_set_string (value, overlay->location);
       break;
-/*  case PROP_STRETCH:
-    g_value_set_boolean (value, overlay->stretch);
-    break;
-*/
+    case PROP_XPOS_PNG:
+      g_value_set_int (value, overlay->pos_x_png);
+      break;
+    case PROP_YPOS_PNG:
+      g_value_set_int (value, overlay->pos_y_png);
+      break;
+    case PROP_SIZE_PNG:
+      g_value_set_int (value, overlay->size_png);
+      break;
+    case PROP_XPOS_VIDEO:
+      g_value_set_int (value, overlay->pos_x_video);
+      break;
+    case PROP_YPOS_VIDEO:
+      g_value_set_int (value, overlay->pos_y_video);
+      break;
+    case PROP_SIZE_VIDEO:
+      g_value_set_int (value, overlay->size_video);
+      break;
+    case PROP_VIDEOTOP:
+      g_value_set_boolean (value, overlay->video_top);
+      break;
+    case PROP_ROTATE_PNG:
+      g_value_set_int (value, overlay->rotate_png);
+      break;
+    case PROP_ROTATE_VIDEO:
+      g_value_set_int (value, overlay->rotate_video);
+      break;
+    case PROP_ANGLE_PNG:
+      g_value_set_int (value, overlay->angle_png);
+      break;
+    case PROP_ANGLE_VIDEO:
+      g_value_set_int (value, overlay->angle_video);
+      break;
+      /*  case PROP_STRETCH:
+         g_value_set_boolean (value, overlay->stretch);
+         break;
+       */
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -303,8 +532,13 @@ gst_gl_overlay_callback (gint width, gint height, guint texture, gpointer stuff)
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
-
-  gst_gl_overlay_draw_texture (overlay, texture);
+  gluPerspective (70.0f, (GLfloat) width / (GLfloat) height, 0.0f, 1000.0f);
+  glMatrixMode (GL_MODELVIEW);
+  glLoadIdentity ();
+  if (overlay->video_top)
+    gst_gl_overlay_draw_texture_video_on_png (overlay, texture);
+  else
+    gst_gl_overlay_draw_texture_png_on_video (overlay, texture);
 }
 
 static void
@@ -376,6 +610,7 @@ gst_gl_overlay_loader (GstGLFilter * filter)
   png_FILE_p fp = NULL;
   guint y = 0;
   guchar **rows = NULL;
+  gint filler;
 
   if (!filter->display)
     return TRUE;
@@ -407,6 +642,12 @@ gst_gl_overlay_loader (GstGLFilter * filter)
 
   png_get_IHDR (png_ptr, info_ptr, &width, &height, &bit_depth, &color_type,
       &interlace_type, int_p_NULL, int_p_NULL);
+
+  if (color_type == PNG_COLOR_TYPE_RGB) {
+    filler = 0xff;
+    png_set_filler (png_ptr, filler, PNG_FILLER_AFTER);
+    color_type = PNG_COLOR_TYPE_RGB_ALPHA;
+  }
 
   if (color_type != PNG_COLOR_TYPE_RGB_ALPHA) {
     fclose (fp);

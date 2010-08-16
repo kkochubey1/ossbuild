@@ -1,4 +1,4 @@
-/* 
+/*
  * GStreamer
  * Copyright (C) <1999> Erik Walthinsen <omega@cse.ogi.edu>
  * Copyright (C) 2002,2007 David A. Schleef <ds@schleef.org>
@@ -52,12 +52,6 @@
 GST_DEBUG_CATEGORY_STATIC (gl_test_src_debug);
 #define GST_CAT_DEFAULT gl_test_src_debug
 
-static const GstElementDetails gl_test_src_details =
-GST_ELEMENT_DETAILS ("Video test source",
-    "Source/Video",
-    "Creates a test video stream",
-    "David A. Schleef <ds@schleef.org>");
-
 enum
 {
   PROP_0,
@@ -75,6 +69,8 @@ static void gst_gl_test_src_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
 static void gst_gl_test_src_get_property (GObject * object, guint prop_id,
     GValue * value, GParamSpec * pspec);
+
+static gboolean gst_gl_test_src_src_query (GstPad * pad, GstQuery * query);
 
 static gboolean gst_gl_test_src_setcaps (GstBaseSrc * bsrc, GstCaps * caps);
 static void gst_gl_test_src_src_fixate (GstPad * pad, GstCaps * caps);
@@ -128,7 +124,9 @@ gst_gl_test_src_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (element_class, &gl_test_src_details);
+  gst_element_class_set_details_simple (element_class, "Video test source",
+      "Source/Video", "Creates a test video stream",
+      "David A. Schleef <ds@schleef.org>");
 
   gst_element_class_add_pad_template (element_class,
       gst_pad_template_new ("src", GST_PAD_SRC, GST_PAD_ALWAYS,
@@ -190,6 +188,9 @@ gst_gl_test_src_init (GstGLTestSrc * src, GstGLTestSrcClass * g_class)
   /* we operate in time */
   gst_base_src_set_format (GST_BASE_SRC (src), GST_FORMAT_TIME);
   gst_base_src_set_live (GST_BASE_SRC (src), FALSE);
+
+  gst_pad_set_query_function (pad,
+      GST_DEBUG_FUNCPTR (gst_gl_test_src_src_query));
 }
 
 static void
@@ -302,6 +303,29 @@ gst_gl_test_src_get_property (GObject * object, guint prop_id,
 }
 
 static gboolean
+gst_gl_test_src_src_query (GstPad * pad, GstQuery * query)
+{
+  gboolean res = FALSE;
+  GstElement *parent = GST_ELEMENT (gst_pad_get_parent (pad));
+
+  switch (GST_QUERY_TYPE (query)) {
+    case GST_QUERY_CUSTOM:
+    {
+      GstStructure *structure = gst_query_get_structure (query);
+      res =
+          g_strcmp0 (gst_element_get_name (parent),
+          gst_structure_get_name (structure)) == 0;
+      break;
+    }
+    default:
+      res = gst_pad_query_default (pad, query);
+      break;
+  }
+
+  return res;
+}
+
+static gboolean
 gst_gl_test_src_parse_caps (const GstCaps * caps,
     gint * width, gint * height, gint * rate_numerator, gint * rate_denominator)
 {
@@ -361,10 +385,6 @@ gst_gl_test_src_setcaps (GstBaseSrc * bsrc, GstCaps * caps)
         gltestsrc->width, gltestsrc->height,
         gltestsrc->rate_numerator, gltestsrc->rate_denominator);
 
-    gltestsrc->display = gst_gl_display_new ();
-
-    gst_gl_display_create_context (gltestsrc->display,
-        gltestsrc->width, gltestsrc->height, 0);
 
     gst_gl_display_gen_fbo (gltestsrc->display, gltestsrc->width,
         gltestsrc->height, &gltestsrc->fbo, &gltestsrc->depthbuffer);
@@ -596,12 +616,44 @@ static gboolean
 gst_gl_test_src_start (GstBaseSrc * basesrc)
 {
   GstGLTestSrc *src = GST_GL_TEST_SRC (basesrc);
+  GstElement *parent = GST_ELEMENT (gst_element_get_parent (src));
+  GstStructure *structure = NULL;
+  GstQuery *query = NULL;
+  gboolean isPerformed = FALSE;
+
+  if (!parent) {
+    GST_ELEMENT_ERROR (src, CORE, STATE_CHANGE, (NULL),
+        ("A parent bin is required"));
+    return FALSE;
+  }
+
+  structure = gst_structure_new (gst_element_get_name (src), NULL);
+  query = gst_query_new_application (GST_QUERY_CUSTOM, structure);
+
+  isPerformed = gst_element_query (parent, query);
+
+  if (isPerformed) {
+    const GValue *id_value =
+        gst_structure_get_value (structure, "gstgldisplay");
+    if (G_VALUE_HOLDS_POINTER (id_value))
+      /* at least one gl element is before in our gl chain */
+      src->display =
+          g_object_ref (GST_GL_DISPLAY (g_value_get_pointer (id_value)));
+    else {
+      /* this gl filter is a sink in terms of the gl chain */
+      src->display = gst_gl_display_new ();
+      gst_gl_display_create_context (src->display, 0);
+    }
+  }
+
+  gst_query_unref (query);
+  gst_object_unref (GST_OBJECT (parent));
 
   src->running_time = 0;
   src->n_frames = 0;
   src->negotiated = FALSE;
 
-  return TRUE;
+  return isPerformed;
 }
 
 static gboolean

@@ -29,6 +29,12 @@
 #include "gstsphere.h"
 #include "gsttwirl.h"
 #include "gstwaterripple.h"
+#include "gststretch.h"
+#include "gstbulge.h"
+#include "gsttunnel.h"
+#include "gstsquare.h"
+#include "gstmirror.h"
+#include "gstfisheye.h"
 
 static gboolean
 plugin_init (GstPlugin * plugin)
@@ -55,6 +61,24 @@ plugin_init (GstPlugin * plugin)
     return FALSE;
 
   if (!gst_water_ripple_plugin_init (plugin))
+    return FALSE;
+
+  if (!gst_stretch_plugin_init (plugin))
+    return FALSE;
+
+  if (!gst_bulge_plugin_init (plugin))
+    return FALSE;
+
+  if (!gst_tunnel_plugin_init (plugin))
+    return FALSE;
+
+  if (!gst_square_plugin_init (plugin))
+    return FALSE;
+
+  if (!gst_mirror_plugin_init (plugin))
+    return FALSE;
+
+  if (!gst_fisheye_plugin_init (plugin))
     return FALSE;
 
   return TRUE;

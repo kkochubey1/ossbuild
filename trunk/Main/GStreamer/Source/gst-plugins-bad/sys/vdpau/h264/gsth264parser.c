@@ -18,16 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include <string.h>
-#include <math.h>
-
-#ifndef HAVE_LOG2
-#define log2(x) (log(x)/log(2))
-#endif
 
 #include "gstnalreader.h"
 
@@ -244,7 +235,15 @@ gst_h264_parse_vui_parameters (GstH264VUIParameters * vui,
   READ_UINT8 (reader, vui->timing_info_present_flag, 1);
   if (vui->timing_info_present_flag) {
     READ_UINT32 (reader, vui->num_units_in_tick, 32);
+    if (vui->num_units_in_tick == 0)
+      GST_WARNING
+          ("num_units_in_tick = 0 detected in stream (incompliant to H.264 E.2.1).");
+
     READ_UINT32 (reader, vui->time_scale, 32);
+    if (vui->time_scale == 0)
+      GST_WARNING
+          ("time_scale = 0 detected in stream (incompliant to H.264 E.2.1).");
+
     READ_UINT8 (reader, vui->fixed_frame_rate_flag, 1);
   }
 
@@ -615,7 +614,7 @@ gst_h264_parser_parse_picture (GstH264Parser * parser, guint8 * data,
       gint i;
 
       READ_UE (&reader, pic->pic_size_in_map_units_minus1);
-      bits = ceil (log2 (pic->num_slice_groups_minus1 + 1));
+      bits = g_bit_storage (pic->num_slice_groups_minus1);
 
       pic->slice_group_id =
           g_new (guint8, pic->pic_size_in_map_units_minus1 + 1);

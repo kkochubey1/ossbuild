@@ -1,3 +1,23 @@
+/*
+ * GStreamer
+ * Copyright (C) 2008-2009 Julien Isorce <julien.isorce@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include <GL/glew.h>
 #include <gst/gst.h>
 
@@ -41,7 +61,7 @@ static gboolean bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 }
 
 //client reshape callback
-void reshapeCallback (GLuint width, GLuint height)
+void reshapeCallback (GLuint width, GLuint height, gpointer data)
 {
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
@@ -51,7 +71,7 @@ void reshapeCallback (GLuint width, GLuint height)
 }
 
 //client draw callback
-gboolean drawCallback (GLuint texture, GLuint width, GLuint height)
+gboolean drawCallback (GLuint texture, GLuint width, GLuint height, gpointer data)
 {
     static GLfloat	xrot = 0;
     static GLfloat	yrot = 0;
@@ -184,6 +204,7 @@ gint main (gint argc, gchar *argv[])
     g_object_set(G_OBJECT(videosrc), "num-buffers", 400, NULL);
     g_object_set(G_OBJECT(glimagesink), "client-reshape-callback", reshapeCallback, NULL);
     g_object_set(G_OBJECT(glimagesink), "client-draw-callback", drawCallback, NULL);
+    g_object_set(G_OBJECT(glimagesink), "client-data", NULL, NULL);
 
     /* add elements */
     gst_bin_add_many (GST_BIN (pipeline), videosrc, glupload, glimagesink, NULL);

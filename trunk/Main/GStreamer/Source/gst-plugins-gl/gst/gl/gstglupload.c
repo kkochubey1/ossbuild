@@ -74,12 +74,6 @@
 #define GST_CAT_DEFAULT gst_gl_upload_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
 
-static const GstElementDetails element_details =
-GST_ELEMENT_DETAILS ("OpenGL upload",
-    "Filter/Effect",
-    "A from video to GL flow filter",
-    "Julien Isorce <julien.isorce@gmail.com>");
-
 /* Source pad definition */
 static GstStaticPadTemplate gst_gl_upload_src_pad_template =
 GST_STATIC_PAD_TEMPLATE ("src",
@@ -136,6 +130,8 @@ static void gst_gl_upload_set_property (GObject * object, guint prop_id,
 static void gst_gl_upload_get_property (GObject * object, guint prop_id,
     GValue * value, GParamSpec * pspec);
 
+static gboolean gst_gl_upload_src_query (GstPad * pad, GstQuery * query);
+
 static void gst_gl_upload_reset (GstGLUpload * upload);
 static gboolean gst_gl_upload_set_caps (GstBaseTransform * bt,
     GstCaps * incaps, GstCaps * outcaps);
@@ -158,7 +154,9 @@ gst_gl_upload_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "OpenGL upload",
+      "Filter/Effect", "A from video to GL flow filter",
+      "Julien Isorce <julien.isorce@gmail.com>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_gl_upload_src_pad_template));
@@ -196,6 +194,11 @@ gst_gl_upload_class_init (GstGLUploadClass * klass)
 static void
 gst_gl_upload_init (GstGLUpload * upload, GstGLUploadClass * klass)
 {
+  GstBaseTransform *base_trans = GST_BASE_TRANSFORM (upload);
+
+  gst_pad_set_query_function (base_trans->srcpad,
+      GST_DEBUG_FUNCPTR (gst_gl_upload_src_query));
+
   gst_gl_upload_reset (upload);
 }
 
@@ -230,6 +233,31 @@ gst_gl_upload_get_property (GObject * object, guint prop_id,
   }
 }
 
+static gboolean
+gst_gl_upload_src_query (GstPad * pad, GstQuery * query)
+{
+  gboolean res = FALSE;
+  GstElement *parent = GST_ELEMENT (gst_pad_get_parent (pad));
+
+  switch (GST_QUERY_TYPE (query)) {
+    case GST_QUERY_CUSTOM:
+    {
+      GstStructure *structure = gst_query_get_structure (query);
+      res =
+          g_strcmp0 (gst_element_get_name (parent),
+          gst_structure_get_name (structure)) == 0;
+      if (!res)
+        res = gst_pad_query_default (pad, query);
+      break;
+    }
+    default:
+      res = gst_pad_query_default (pad, query);
+      break;
+  }
+
+  return res;
+}
+
 static void
 gst_gl_upload_reset (GstGLUpload * upload)
 {
@@ -243,9 +271,42 @@ gst_gl_upload_reset (GstGLUpload * upload)
 static gboolean
 gst_gl_upload_start (GstBaseTransform * bt)
 {
-  //GstGLUpload* upload = GST_GL_UPLOAD (bt);
+  GstGLUpload *upload = GST_GL_UPLOAD (bt);
+  GstElement *parent = GST_ELEMENT (gst_element_get_parent (upload));
+  GstStructure *structure = NULL;
+  GstQuery *query = NULL;
+  gboolean isPerformed = FALSE;
 
-  return TRUE;
+  if (!parent) {
+    GST_ELEMENT_ERROR (upload, CORE, STATE_CHANGE, (NULL),
+        ("A parent bin is required"));
+    return FALSE;
+  }
+
+  structure = gst_structure_new (gst_element_get_name (upload), NULL);
+  query = gst_query_new_application (GST_QUERY_CUSTOM, structure);
+
+  isPerformed = gst_element_query (parent, query);
+
+  if (isPerformed) {
+    const GValue *id_value =
+        gst_structure_get_value (structure, "gstgldisplay");
+    if (G_VALUE_HOLDS_POINTER (id_value))
+      /* at least one gl element is after in our gl chain */
+      upload->display =
+          g_object_ref (GST_GL_DISPLAY (g_value_get_pointer (id_value)));
+    else {
+      /* this gl filter is a sink in terms of the gl chain */
+      upload->display = gst_gl_display_new ();
+      gst_gl_display_create_context (upload->display,
+          upload->external_gl_context);
+    }
+  }
+
+  gst_query_unref (query);
+  gst_object_unref (GST_OBJECT (parent));
+
+  return isPerformed;
 }
 
 static gboolean
@@ -266,12 +327,10 @@ gst_gl_upload_transform_caps (GstBaseTransform * bt,
   GstStructure *structure = gst_caps_get_structure (caps, 0);
   GstCaps *newcaps = NULL;
   const GValue *framerate_value = NULL;
-  const GValue *par_value = NULL;
 
   GST_DEBUG ("transform caps %" GST_PTR_FORMAT, caps);
 
   framerate_value = gst_structure_get_value (structure, "framerate");
-  par_value = gst_structure_get_value (structure, "pixel-aspect-ratio");
 
   if (direction == GST_PAD_SRC) {
     GstCaps *newothercaps = gst_caps_new_simple ("video/x-raw-rgb", NULL);
@@ -287,11 +346,6 @@ gst_gl_upload_transform_caps (GstBaseTransform * bt,
       "height", GST_TYPE_INT_RANGE, 1, G_MAXINT, NULL);
 
   gst_structure_set_value (structure, "framerate", framerate_value);
-  if (par_value)
-    gst_structure_set_value (structure, "pixel-aspect-ratio", par_value);
-  else
-    gst_structure_set (structure, "pixel-aspect-ratio", GST_TYPE_FRACTION,
-        1, 1, NULL);
 
   gst_caps_merge_structure (newcaps, gst_structure_copy (structure));
 
@@ -444,13 +498,6 @@ gst_gl_upload_set_caps (GstBaseTransform * bt, GstCaps * incaps,
     GST_DEBUG ("caps connot be parsed");
     return FALSE;
   }
-  //we have video and gl size, we can now init OpenGL stuffs
-  upload->display = gst_gl_display_new ();
-
-  //init unvisible opengl context
-  gst_gl_display_create_context (upload->display,
-      upload->gl_width, upload->gl_height, upload->external_gl_context);
-
   //init colorspace conversion if needed
   gst_gl_display_init_upload (upload->display, upload->video_format,
       upload->gl_width, upload->gl_height,

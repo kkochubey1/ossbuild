@@ -44,13 +44,6 @@
 GST_DEBUG_CATEGORY_STATIC (rtspreal_debug);
 #define GST_CAT_DEFAULT (rtspreal_debug)
 
-/* elementfactory information */
-static const GstElementDetails rtspreal_details =
-GST_ELEMENT_DETAILS ("RealMedia RTSP Extension",
-    "Network/Extension/Protocol",
-    "Extends RTSP so that it can handle RealMedia setup",
-    "Wim Taymans <wim.taymans@gmail.com>");
-
 #define SERVER_PREFIX "RealServer"
 #define DEFAULT_BANDWIDTH	"10485800"
 
@@ -214,16 +207,16 @@ G_STMT_START {			       \
 
 #define READ_BUFFER_GEN(src, func, name, dest, dest_len)    \
 G_STMT_START {			                            \
-  dest = (gchar *)func (src, name);                                  \
+  dest = (gchar *)func (src, name);                         \
   if (!dest) {                                              \
-    dest = "";                                              \
+    dest = (char *) "";                                     \
     dest_len = 0;                                           \
   }                                                         \
   else if (!strncmp (dest, "buffer;\"", 8)) {               \
     dest += 8;                                              \
     dest_len = strlen (dest) - 1;                           \
     dest[dest_len] = '\0';                                  \
-    gst_rtsp_base64_decode_ip (dest, &dest_len);            \
+    g_base64_decode_inplace (dest, &dest_len);            \
   }                                                         \
 } G_STMT_END
 
@@ -250,11 +243,11 @@ G_STMT_START {			                          \
 G_STMT_START {			                              \
   const gchar *val = gst_sdp_media_get_attribute_val (media, name); \
   if (val && !strncmp (val, "string;\"", 8)) {                \
-    dest = (gchar *) val + 8;                                           \
+    dest = (gchar *) val + 8;                                 \
     dest_len = strlen (dest) - 1;                             \
     dest[dest_len] = '\0';                                    \
   } else {                                                    \
-    dest = "";                                                \
+    dest = (char *) "";                                       \
     dest_len = 0;                                             \
   }                                                           \
 } G_STMT_END
@@ -370,7 +363,8 @@ rtsp_ext_real_parse_sdp (GstRTSPExtension * ext, GstSDPMessage * sdp,
   /* fix the hashtale for the rule parser */
   rules = g_string_new ("");
   vars = g_hash_table_new (g_str_hash, g_str_equal);
-  g_hash_table_insert (vars, "Bandwidth", DEFAULT_BANDWIDTH);
+  g_hash_table_insert (vars, (gchar *) "Bandwidth",
+      (gchar *) DEFAULT_BANDWIDTH);
 
   /* MDPR */
   for (i = 0; i < ctx->n_streams; i++) {
@@ -693,7 +687,10 @@ gst_rtsp_real_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
-  gst_element_class_set_details (element_class, &rtspreal_details);
+  gst_element_class_set_details_simple (element_class,
+      "RealMedia RTSP Extension", "Network/Extension/Protocol",
+      "Extends RTSP so that it can handle RealMedia setup",
+      "Wim Taymans <wim.taymans@gmail.com>");
 }
 
 static void

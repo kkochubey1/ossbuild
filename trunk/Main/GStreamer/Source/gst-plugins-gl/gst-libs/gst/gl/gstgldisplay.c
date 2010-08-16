@@ -24,8 +24,18 @@
 #include "config.h"
 #endif
 
+#include <stdio.h>
+
 #include <gst/video/gstvideosink.h>
 #include "gstgldisplay.h"
+
+#ifndef GLEW_VERSION_MAJOR
+#define GLEW_VERSION_MAJOR 4
+#endif
+
+#ifndef GLEW_VERSION_MINOR
+#define GLEW_VERSION_MINOR 0
+#endif
 
 /*
  * gst-launch-0.10 --gst-debug=gldisplay:N pipeline
@@ -51,7 +61,6 @@ gpointer gst_gl_display_thread_create_context (GstGLDisplay * display);
 void gst_gl_display_thread_destroy_context (GstGLDisplay * display);
 void gst_gl_display_thread_run_generic (GstGLDisplay * display);
 void gst_gl_display_thread_gen_texture (GstGLDisplay * display);
-void gst_gl_display_thread_del_texture (GstGLDisplay * display);
 #ifdef OPENGL_ES2
 void gst_gl_display_thread_init_redisplay (GstGLDisplay * display);
 #endif
@@ -61,6 +70,7 @@ void gst_gl_display_thread_init_download (GstGLDisplay * display);
 void gst_gl_display_thread_do_download (GstGLDisplay * display);
 void gst_gl_display_thread_gen_fbo (GstGLDisplay * display);
 void gst_gl_display_thread_use_fbo (GstGLDisplay * display);
+void gst_gl_display_thread_use_fbo_v2 (GstGLDisplay * display);
 void gst_gl_display_thread_del_fbo (GstGLDisplay * display);
 void gst_gl_display_thread_gen_shader (GstGLDisplay * display);
 void gst_gl_display_thread_del_shader (GstGLDisplay * display);
@@ -102,6 +112,8 @@ static void
 gst_gl_display_class_init (GstGLDisplayClass * klass)
 {
   G_OBJECT_CLASS (klass)->finalize = gst_gl_display_finalize;
+
+  gst_gl_window_init_platform ();
 }
 
 
@@ -114,7 +126,6 @@ gst_gl_display_init (GstGLDisplay * display, GstGLDisplayClass * klass)
   //gl context
   display->gl_thread = NULL;
   display->gl_window = NULL;
-  display->visible = FALSE;
   display->isAlive = TRUE;
   display->texture_pool = g_hash_table_new (g_direct_hash, g_direct_equal);
 
@@ -137,13 +148,11 @@ gst_gl_display_init (GstGLDisplay * display, GstGLDisplayClass * klass)
   display->gen_texture = 0;
   display->gen_texture_width = 0;
   display->gen_texture_height = 0;
-  display->del_texture = 0;
-  display->del_texture_width = 0;
-  display->del_texture_height = 0;
 
   //client callbacks
   display->clientReshapeCallback = NULL;
   display->clientDrawCallback = NULL;
+  display->client_data = NULL;
 
   //upload
   display->upload_fbo = 0;
@@ -176,6 +185,7 @@ gst_gl_display_init (GstGLDisplay * display, GstGLDisplayClass * klass)
   display->use_fbo_width = 0;
   display->use_fbo_height = 0;
   display->use_fbo_scene_cb = NULL;
+  display->use_fbo_scene_cb_v2 = NULL;
   display->use_fbo_proj_param1 = 0;
   display->use_fbo_proj_param2 = 0;
   display->use_fbo_proj_param3 = 0;
@@ -514,8 +524,12 @@ gst_gl_display_finalize (GObject * object)
     display->clientReshapeCallback = NULL;
   if (display->clientDrawCallback)
     display->clientDrawCallback = NULL;
+  if (display->client_data)
+    display->client_data = NULL;
   if (display->use_fbo_scene_cb)
     display->use_fbo_scene_cb = NULL;
+  if (display->use_fbo_scene_cb_v2)
+    display->use_fbo_scene_cb_v2 = NULL;
   if (display->use_fbo_stuff)
     display->use_fbo_stuff = NULL;
 }
@@ -532,9 +546,7 @@ gst_gl_display_thread_create_context (GstGLDisplay * display)
   GLenum err = 0;
 
   gst_gl_display_lock (display);
-  display->gl_window =
-      gst_gl_window_new (display->upload_width, display->upload_height,
-      display->external_gl_context);
+  display->gl_window = gst_gl_window_new (display->external_gl_context);
 
   if (!display->gl_window) {
     display->isAlive = FALSE;
@@ -546,12 +558,15 @@ gst_gl_display_thread_create_context (GstGLDisplay * display)
 
   GST_INFO ("gl window created");
 
-  //Init glew
+#ifndef OPENGL_ES2
   err = glewInit ();
+#endif
   if (err != GLEW_OK) {
+#ifndef OPENGL_ES2
     GST_ERROR_OBJECT (display, "Failed to init GLEW: %s",
         glewGetErrorString (err));
     display->isAlive = FALSE;
+#endif
   } else {
     //OpenGL > 1.2.0 and Glew > 1.4.0
     GString *opengl_version =
@@ -564,7 +579,9 @@ gst_gl_display_thread_create_context (GstGLDisplay * display)
         &opengl_version_minor);
 
     GST_INFO ("GL_VERSION: %s", glGetString (GL_VERSION));
+#ifndef OPENGL_ES2
     GST_INFO ("GLEW_VERSION: %s", glewGetString (GLEW_VERSION));
+#endif
     if (glGetString (GL_SHADING_LANGUAGE_VERSION))
       GST_INFO ("GL_SHADING_LANGUAGE_VERSION: %s",
           glGetString (GL_SHADING_LANGUAGE_VERSION));
@@ -756,14 +773,6 @@ gst_gl_display_thread_gen_texture (GstGLDisplay * display)
 }
 
 
-/* Called in the gl thread */
-void
-gst_gl_display_thread_del_texture (GstGLDisplay * display)
-{
-  gst_gl_display_gldel_texture (display, &display->del_texture,
-      display->del_texture_width, display->del_texture_height);
-}
-
 #ifdef OPENGL_ES2
 /* Called in the gl thread */
 void
@@ -932,8 +941,12 @@ gst_gl_display_thread_init_upload (GstGLDisplay * display)
           {
 #ifndef OPENGL_ES2
             gchar text_shader_upload_I420_YV12[2048];
-            if (g_ascii_strncasecmp ("ATI", (gchar *) glGetString (GL_VENDOR),
-                    3) == 0)
+            if ((g_ascii_strncasecmp ("ATI", (gchar *) glGetString (GL_VENDOR),
+                        3) == 0)
+                && (g_ascii_strncasecmp ("ATI Mobility Radeon HD",
+                        (gchar *) glGetString (GL_RENDERER), 22) != 0)
+                && (g_ascii_strncasecmp ("ATI Radeon HD",
+                        (gchar *) glGetString (GL_RENDERER), 13) != 0))
               sprintf (text_shader_upload_I420_YV12,
                   display->text_shader_upload_I420_YV12, "*0.5", "");
             else
@@ -1176,8 +1189,15 @@ gst_gl_display_thread_init_download (GstGLDisplay * display)
         glGenRenderbuffersEXT (1, &display->download_depth_buffer);
         glBindRenderbufferEXT (GL_RENDERBUFFER_EXT,
             display->download_depth_buffer);
+#ifndef OPENGL_ES2
         glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT,
             display->download_width, display->download_height);
+        glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT,
+            display->download_width, display->download_height);
+#else
+        glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16,
+            display->download_width, display->download_height);
+#endif
 
         //setup a first texture to render to
         glGenTextures (1, &display->download_texture);
@@ -1261,6 +1281,12 @@ gst_gl_display_thread_init_download (GstGLDisplay * display)
         glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT,
             GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT,
             display->download_depth_buffer);
+
+#ifndef OPENGL_ES2
+        glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT,
+            GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT,
+            display->download_depth_buffer);
+#endif
 
         gst_gl_display_check_framebuffer_status ();
 
@@ -1540,8 +1566,15 @@ gst_gl_display_thread_gen_fbo (GstGLDisplay * display)
   //setup the render buffer for depth
   glGenRenderbuffersEXT (1, &display->generated_depth_buffer);
   glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, display->generated_depth_buffer);
+#ifndef OPENGL_ES2
   glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT,
       display->gen_fbo_width, display->gen_fbo_height);
+  glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT,
+      display->gen_fbo_width, display->gen_fbo_height);
+#else
+  glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16,
+      display->gen_fbo_width, display->gen_fbo_height);
+#endif
 
   //setup a texture to render to
   glGenTextures (1, &fake_texture);
@@ -1563,6 +1596,11 @@ gst_gl_display_thread_gen_fbo (GstGLDisplay * display)
   //attach the depth render buffer to the FBO
   glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
       GL_RENDERBUFFER_EXT, display->generated_depth_buffer);
+
+#ifndef OPENGL_ES2
+  glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT,
+      GL_RENDERBUFFER_EXT, display->generated_depth_buffer);
+#endif
 
   g_assert (glCheckFramebufferStatusEXT (GL_FRAMEBUFFER_EXT) ==
       GL_FRAMEBUFFER_COMPLETE_EXT);
@@ -1646,6 +1684,47 @@ gst_gl_display_thread_use_fbo (GstGLDisplay * display)
   glViewport (viewport_dim[0], viewport_dim[1], viewport_dim[2],
       viewport_dim[3]);
 #endif
+
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
+}
+
+
+/* Called in a gl thread
+ * Need full shader support */
+void
+gst_gl_display_thread_use_fbo_v2 (GstGLDisplay * display)
+{
+  GLint viewport_dim[4];
+
+  glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, display->use_fbo);
+
+  //setup a texture to render to
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, display->use_fbo_texture);
+
+  //attach the texture to the FBO to renderer to
+  glFramebufferTexture2DEXT (GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+      GL_TEXTURE_RECTANGLE_ARB, display->use_fbo_texture, 0);
+
+  glGetIntegerv (GL_VIEWPORT, viewport_dim);
+
+  glViewport (0, 0, display->use_fbo_width, display->use_fbo_height);
+
+#ifndef OPENGL_ES2
+  glDrawBuffer (GL_COLOR_ATTACHMENT0_EXT);
+#endif
+
+  glClearColor (0.0, 0.0, 0.0, 0.0);
+  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  //the opengl scene
+  display->use_fbo_scene_cb_v2 (display->use_fbo_stuff);
+
+#ifndef OPENGL_ES2
+  glDrawBuffer (GL_NONE);
+#endif
+
+  glViewport (viewport_dim[0], viewport_dim[1],
+      viewport_dim[2], viewport_dim[3]);
 
   glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
 }
@@ -1749,7 +1828,7 @@ gst_gl_display_on_resize (GstGLDisplay * display, gint width, gint height)
 {
   //check if a client reshape callback is registered
   if (display->clientReshapeCallback)
-    display->clientReshapeCallback (width, height);
+    display->clientReshapeCallback (width, height, display->client_data);
 
   //default reshape
   else {
@@ -1801,10 +1880,12 @@ gst_gl_display_on_draw (GstGLDisplay * display)
   if (display->clientDrawCallback) {
     gboolean doRedisplay =
         display->clientDrawCallback (display->redisplay_texture,
-        display->redisplay_texture_width, display->redisplay_texture_height);
+        display->redisplay_texture_width, display->redisplay_texture_height,
+        display->client_data);
 
     if (doRedisplay && display->gl_window)
-      gst_gl_window_draw_unlocked (display->gl_window);
+      gst_gl_window_draw_unlocked (display->gl_window,
+          display->redisplay_texture_width, display->redisplay_texture_height);
   }
   //default opengl scene
   else {
@@ -1887,89 +1968,62 @@ void
 gst_gl_display_glgen_texture (GstGLDisplay * display, GLuint * pTexture,
     GLint width, GLint height)
 {
-  if (display->isAlive) {
-    GQueue *sub_texture_pool = NULL;
+  glGenTextures (1, pTexture);
+  glBindTexture (GL_TEXTURE_RECTANGLE_ARB, *pTexture);
 
-    //make a unique key from w and h
-    //the key cannot be w*h because (4*6 = 6*4 = 2*12 = 12*2)
-    guint key = (gint) width;
-    key <<= 16;
-    key |= (gint) height;
-    sub_texture_pool =
-        g_hash_table_lookup (display->texture_pool, GUINT_TO_POINTER (key));
-
-    //if there is a sub texture pool associated to th given key
-    if (sub_texture_pool && g_queue_get_length (sub_texture_pool) > 0) {
-      //a texture is available in the pool
-      GstGLDisplayTex *tex = g_queue_pop_head (sub_texture_pool);
-      *pTexture = tex->texture;
-      g_free (tex);
-      GST_LOG ("get texture id:%d from the sub texture pool: %d",
-          *pTexture, key);
-    } else {
-      //sub texture pool does not exist yet or empty
-      glGenTextures (1, pTexture);
-      glBindTexture (GL_TEXTURE_RECTANGLE_ARB, *pTexture);
-
-      switch (display->upload_video_format) {
-        case GST_VIDEO_FORMAT_RGB:
-        case GST_VIDEO_FORMAT_BGR:
-        case GST_VIDEO_FORMAT_RGBx:
-        case GST_VIDEO_FORMAT_BGRx:
-        case GST_VIDEO_FORMAT_xRGB:
-        case GST_VIDEO_FORMAT_xBGR:
-        case GST_VIDEO_FORMAT_RGBA:
-        case GST_VIDEO_FORMAT_BGRA:
-        case GST_VIDEO_FORMAT_ARGB:
-        case GST_VIDEO_FORMAT_ABGR:
+  switch (display->upload_video_format) {
+    case GST_VIDEO_FORMAT_RGB:
+    case GST_VIDEO_FORMAT_BGR:
+    case GST_VIDEO_FORMAT_RGBx:
+    case GST_VIDEO_FORMAT_BGRx:
+    case GST_VIDEO_FORMAT_xRGB:
+    case GST_VIDEO_FORMAT_xBGR:
+    case GST_VIDEO_FORMAT_RGBA:
+    case GST_VIDEO_FORMAT_BGRA:
+    case GST_VIDEO_FORMAT_ARGB:
+    case GST_VIDEO_FORMAT_ABGR:
+      glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8,
+          width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+      break;
+    case GST_VIDEO_FORMAT_YUY2:
+    case GST_VIDEO_FORMAT_UYVY:
+      switch (display->upload_colorspace_conversion) {
+        case GST_GL_DISPLAY_CONVERSION_GLSL:
+        case GST_GL_DISPLAY_CONVERSION_MATRIX:
           glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8,
               width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
           break;
-        case GST_VIDEO_FORMAT_YUY2:
-        case GST_VIDEO_FORMAT_UYVY:
-          switch (display->upload_colorspace_conversion) {
-            case GST_GL_DISPLAY_CONVERSION_GLSL:
-            case GST_GL_DISPLAY_CONVERSION_MATRIX:
-              glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8,
-                  width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-              break;
-            case GST_GL_DISPLAY_CONVERSION_MESA:
-              if (display->upload_width != display->upload_data_width ||
-                  display->upload_height != display->upload_data_height)
-                glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8,
-                    width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-              else
-                glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_YCBCR_MESA, width,
-                    height, 0, GL_YCBCR_MESA, GL_UNSIGNED_SHORT_8_8_MESA, NULL);
-              break;
-            default:
-              g_assert_not_reached ();
-          }
-          break;
-        case GST_VIDEO_FORMAT_I420:
-        case GST_VIDEO_FORMAT_YV12:
-        case GST_VIDEO_FORMAT_AYUV:
-          glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8,
-              width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        case GST_GL_DISPLAY_CONVERSION_MESA:
+          if (display->upload_width != display->upload_data_width ||
+              display->upload_height != display->upload_data_height)
+            glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8,
+                width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+          else
+            glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_YCBCR_MESA, width,
+                height, 0, GL_YCBCR_MESA, GL_UNSIGNED_SHORT_8_8_MESA, NULL);
           break;
         default:
           g_assert_not_reached ();
       }
+      break;
+    case GST_VIDEO_FORMAT_I420:
+    case GST_VIDEO_FORMAT_YV12:
+    case GST_VIDEO_FORMAT_AYUV:
+      glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA8,
+          width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+      break;
+    default:
+      g_assert_not_reached ();
+  }
 
-      glTexParameteri (GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER,
-          GL_LINEAR);
-      glTexParameteri (GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER,
-          GL_LINEAR);
-      glTexParameteri (GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S,
-          GL_CLAMP_TO_EDGE);
-      glTexParameteri (GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T,
-          GL_CLAMP_TO_EDGE);
+  glTexParameteri (GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri (GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri (GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_S,
+      GL_CLAMP_TO_EDGE);
+  glTexParameteri (GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T,
+      GL_CLAMP_TO_EDGE);
 
-      GST_LOG ("generate texture id:%d", *pTexture);
-    }
-
-  } else
-    *pTexture = 0;
+  GST_LOG ("generated texture id:%d", *pTexture);
 }
 
 
@@ -2088,24 +2142,24 @@ gst_gl_display_new (void)
 }
 
 
-/* Create an opengl context (one context for one GstGLDisplay)
- * Called by the first gl element of a video/x-raw-gl flow */
+/* Create an opengl context (one context for one GstGLDisplay) */
 void
 gst_gl_display_create_context (GstGLDisplay * display,
-    GLint width, GLint height, gulong external_gl_context)
+    gulong external_gl_context)
 {
   gst_gl_display_lock (display);
 
-  display->upload_width = width;
-  display->upload_height = height;
-  display->external_gl_context = external_gl_context;
+  if (!display->gl_window) {
+    display->external_gl_context = external_gl_context;
 
-  display->gl_thread = g_thread_create (
-      (GThreadFunc) gst_gl_display_thread_create_context, display, TRUE, NULL);
+    display->gl_thread = g_thread_create (
+        (GThreadFunc) gst_gl_display_thread_create_context, display, TRUE,
+        NULL);
 
-  g_cond_wait (display->cond_create_context, display->mutex);
+    g_cond_wait (display->cond_create_context, display->mutex);
 
-  GST_INFO ("gl thread created");
+    GST_INFO ("gl thread created");
+  }
 
   gst_gl_display_unlock (display);
 }
@@ -2113,8 +2167,9 @@ gst_gl_display_create_context (GstGLDisplay * display,
 
 /* Called by the glimagesink element */
 gboolean
-gst_gl_display_redisplay (GstGLDisplay * display, GLuint texture, gint width,
-    gint height, gboolean keep_aspect_ratio)
+gst_gl_display_redisplay (GstGLDisplay * display, GLuint texture,
+    gint gl_width, gint gl_height, gint window_width, gint window_height,
+    gboolean keep_aspect_ratio)
 {
   gboolean isAlive = TRUE;
 
@@ -2131,12 +2186,12 @@ gst_gl_display_redisplay (GstGLDisplay * display, GLuint texture, gint width,
 
     if (texture) {
       display->redisplay_texture = texture;
-      display->redisplay_texture_width = width;
-      display->redisplay_texture_height = height;
+      display->redisplay_texture_width = gl_width;
+      display->redisplay_texture_height = gl_height;
     }
     display->keep_aspect_ratio = keep_aspect_ratio;
     if (display->gl_window)
-      gst_gl_window_draw (display->gl_window);
+      gst_gl_window_draw (display->gl_window, window_width, window_height);
   }
   gst_gl_display_unlock (display);
 
@@ -2161,11 +2216,38 @@ gst_gl_display_gen_texture (GstGLDisplay * display, GLuint * pTexture,
     GLint width, GLint height)
 {
   gst_gl_display_lock (display);
-  display->gen_texture_width = width;
-  display->gen_texture_height = height;
-  gst_gl_window_send_message (display->gl_window,
-      GST_GL_WINDOW_CB (gst_gl_display_thread_gen_texture), display);
-  *pTexture = display->gen_texture;
+
+  if (display->isAlive) {
+    GQueue *sub_texture_pool = NULL;
+
+    //make a unique key from w and h
+    //the key cannot be w*h because (4*6 = 6*4 = 2*12 = 12*2)
+    guint key = (gint) width;
+    key <<= 16;
+    key |= (gint) height;
+    sub_texture_pool =
+        g_hash_table_lookup (display->texture_pool, GUINT_TO_POINTER (key));
+
+    //if there is a sub texture pool associated to the given key
+    if (sub_texture_pool && g_queue_get_length (sub_texture_pool) > 0) {
+      //a texture is available in the pool
+      GstGLDisplayTex *tex = g_queue_pop_head (sub_texture_pool);
+      *pTexture = tex->texture;
+      g_free (tex);
+      GST_LOG ("get texture id:%d from the sub texture pool: %d",
+          *pTexture, key);
+    } else {
+      //only in this case we want to ask a texture from the gl thread
+      display->gen_texture_width = width;
+      display->gen_texture_height = height;
+      gst_gl_window_send_message (display->gl_window,
+          GST_GL_WINDOW_CB (gst_gl_display_thread_gen_texture), display);
+      *pTexture = display->gen_texture;
+    }
+
+  } else
+    *pTexture = 0;
+
   gst_gl_display_unlock (display);
 }
 
@@ -2177,11 +2259,7 @@ gst_gl_display_del_texture (GstGLDisplay * display, GLuint texture, GLint width,
 {
   gst_gl_display_lock (display);
   if (texture) {
-    display->del_texture = texture;
-    display->del_texture_width = width;
-    display->del_texture_height = height;
-    gst_gl_window_send_message (display->gl_window,
-        GST_GL_WINDOW_CB (gst_gl_display_thread_del_texture), display);
+    gst_gl_display_gldel_texture (display, &texture, width, height);
   }
   gst_gl_display_unlock (display);
 }
@@ -2328,6 +2406,30 @@ gst_gl_display_use_fbo (GstGLDisplay * display, gint texture_fbo_width,
   return isAlive;
 }
 
+gboolean
+gst_gl_display_use_fbo_v2 (GstGLDisplay * display, gint texture_fbo_width,
+    gint texture_fbo_height, GLuint fbo, GLuint depth_buffer,
+    GLuint texture_fbo, GLCB_V2 cb, gpointer * stuff)
+{
+  gboolean isAlive = TRUE;
+
+  gst_gl_display_lock (display);
+  isAlive = display->isAlive;
+  if (isAlive) {
+    display->use_fbo = fbo;
+    display->use_depth_buffer = depth_buffer;
+    display->use_fbo_texture = texture_fbo;
+    display->use_fbo_width = texture_fbo_width;
+    display->use_fbo_height = texture_fbo_height;
+    display->use_fbo_scene_cb_v2 = cb;
+    display->use_fbo_stuff = stuff;
+    gst_gl_window_send_message (display->gl_window,
+        GST_GL_WINDOW_CB (gst_gl_display_thread_use_fbo_v2), display);
+  }
+  gst_gl_display_unlock (display);
+
+  return isAlive;
+}
 
 /* Called by gltestsrc and glfilter */
 void
@@ -2403,6 +2505,35 @@ gst_gl_display_set_client_draw_callback (GstGLDisplay * display, CDCB cb)
   gst_gl_display_unlock (display);
 }
 
+void
+gst_gl_display_set_client_data (GstGLDisplay * display, gpointer data)
+{
+  gst_gl_display_lock (display);
+  display->client_data = data;
+  gst_gl_display_unlock (display);
+}
+
+gulong
+gst_gl_display_get_internal_gl_context (GstGLDisplay * display)
+{
+  gulong external_gl_context = 0;
+  gst_gl_display_lock (display);
+  external_gl_context =
+      gst_gl_window_get_internal_gl_context (display->gl_window);
+  gst_gl_display_unlock (display);
+  return external_gl_context;
+}
+
+void
+gst_gl_display_activate_gl_context (GstGLDisplay * display, gboolean activate)
+{
+  if (!activate)
+    gst_gl_display_lock (display);
+  gst_gl_window_activate_gl_context (display->gl_window, activate);
+  if (activate)
+    gst_gl_display_unlock (display);
+}
+
 
 //------------------------------------------------------------
 //------------------------ END PUBLIC ------------------------
@@ -2428,8 +2559,15 @@ gst_gl_display_thread_init_upload_fbo (GstGLDisplay * display)
     //setup the render buffer for depth
     glGenRenderbuffersEXT (1, &display->upload_depth_buffer);
     glBindRenderbufferEXT (GL_RENDERBUFFER_EXT, display->upload_depth_buffer);
+#ifndef OPENGL_ES2
     glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT,
         display->upload_width, display->upload_height);
+    glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT,
+        display->upload_width, display->upload_height);
+#else
+    glRenderbufferStorageEXT (GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16,
+        display->upload_width, display->upload_height);
+#endif
 
     //a fake texture is attached to the upload FBO (cannot init without it)
     glGenTextures (1, &fake_texture);
@@ -2453,6 +2591,11 @@ gst_gl_display_thread_init_upload_fbo (GstGLDisplay * display)
     //attach the depth render buffer to the FBO
     glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
         GL_RENDERBUFFER_EXT, display->upload_depth_buffer);
+
+#ifndef OPENGL_ES2
+    glFramebufferRenderbufferEXT (GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT,
+        GL_RENDERBUFFER_EXT, display->upload_depth_buffer);
+#endif
 
     gst_gl_display_check_framebuffer_status ();
 
@@ -2812,7 +2955,9 @@ gst_gl_display_thread_do_upload_draw (GstGLDisplay * display)
           GL_CLAMP_TO_EDGE);
       glTexParameteri (GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T,
           GL_CLAMP_TO_EDGE);
+#ifndef OPENGL_ES2
       glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+#endif
     }
       break;
 
@@ -2894,7 +3039,9 @@ gst_gl_display_thread_do_upload_draw (GstGLDisplay * display)
               GL_CLAMP_TO_EDGE);
           glTexParameteri (GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T,
               GL_CLAMP_TO_EDGE);
+#ifndef OPENGL_ES2
           glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+#endif
         }
           break;
         default:
@@ -3087,8 +3234,6 @@ gst_gl_display_thread_do_download_draw_rgb (GstGLDisplay * display)
 
   glUseProgramObjectARB (0);
   glDisable (GL_TEXTURE_RECTANGLE_ARB);
-
-  glReadBuffer (GL_BACK);
 #endif
 
   switch (video_format) {
@@ -3323,7 +3468,9 @@ gst_gl_display_thread_do_download_draw_yuv (GstGLDisplay * display)
   gst_gl_display_check_framebuffer_status ();
 
   glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, display->download_fbo);
+#ifndef OPENGL_ES2
   glReadBuffer (GL_COLOR_ATTACHMENT0_EXT);
+#endif
 
   switch (video_format) {
     case GST_VIDEO_FORMAT_AYUV:
@@ -3341,13 +3488,16 @@ gst_gl_display_thread_do_download_draw_yuv (GstGLDisplay * display)
     {
       glReadPixels (0, 0, width, height, GL_LUMINANCE, GL_UNSIGNED_BYTE, data);
 
+#ifndef OPENGL_ES2
       glReadBuffer (GL_COLOR_ATTACHMENT1_EXT);
+#endif
       glReadPixels (0, 0, GST_ROUND_UP_2 (width) / 2,
           GST_ROUND_UP_2 (height) / 2, GL_LUMINANCE, GL_UNSIGNED_BYTE,
           (guint8 *) data + gst_video_format_get_component_offset (video_format,
               1, width, height));
-
+#ifndef OPENGL_ES2
       glReadBuffer (GL_COLOR_ATTACHMENT2_EXT);
+#endif
       glReadPixels (0, 0, GST_ROUND_UP_2 (width) / 2,
           GST_ROUND_UP_2 (height) / 2, GL_LUMINANCE, GL_UNSIGNED_BYTE,
           (guint8 *) data + gst_video_format_get_component_offset (video_format,
@@ -3357,8 +3507,9 @@ gst_gl_display_thread_do_download_draw_yuv (GstGLDisplay * display)
     default:
       g_assert_not_reached ();
   }
-
+#ifndef OPENGL_ES2
   glReadBuffer (GL_NONE);
+#endif
 
   glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
   gst_gl_display_check_framebuffer_status ();

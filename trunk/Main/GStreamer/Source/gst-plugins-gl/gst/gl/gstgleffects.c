@@ -66,12 +66,6 @@ static void gst_gl_effects_ghash_func_clean (gpointer key, gpointer value,
 static gboolean gst_gl_effects_filter (GstGLFilter * filter,
     GstGLBuffer * inbuf, GstGLBuffer * outbuf);
 
-static const GstElementDetails element_details =
-GST_ELEMENT_DETAILS ("Gstreamer OpenGL Effects",
-    "Filter/Effect",
-    "GL Shading Language effects",
-    "Filippo Argiolas <filippo.argiolas@gmail.com>");
-
 /* dont' forget to edit the following when a new effect is added */
 typedef enum
 {
@@ -103,6 +97,7 @@ gst_gl_effects_effect_get_type (void)
     {GST_GL_EFFECT_IDENTITY, "Do nothing Effect", "identity"},
     {GST_GL_EFFECT_MIRROR, "Mirror Effect", "mirror"},
     {GST_GL_EFFECT_SQUEEZE, "Squeeze Effect", "squeeze"},
+#ifndef OPENGL_ES2
     {GST_GL_EFFECT_STRETCH, "Stretch Effect", "stretch"},
     {GST_GL_EFFECT_FISHEYE, "FishEye Effect", "fisheye"},
     {GST_GL_EFFECT_TWIRL, "Twirl Effect", "twirl"},
@@ -116,6 +111,7 @@ gst_gl_effects_effect_get_type (void)
     {GST_GL_EFFECT_XRAY, "Glowing negative effect", "xray"},
     {GST_GL_EFFECT_SIN, "All Grey but Red Effect", "sin"},
     {GST_GL_EFFECT_GLOW, "Glow Lighting Effect", "glow"},
+#endif
     {0, NULL, NULL}
   };
 
@@ -140,6 +136,7 @@ gst_gl_effects_set_effect (GstGLEffects * effects, gint effect_type)
     case GST_GL_EFFECT_SQUEEZE:
       effects->effect = (GstGLEffectProcessFunc) gst_gl_effects_squeeze;
       break;
+#ifndef OPENGL_ES2
     case GST_GL_EFFECT_STRETCH:
       effects->effect = (GstGLEffectProcessFunc) gst_gl_effects_stretch;
       break;
@@ -179,6 +176,7 @@ gst_gl_effects_set_effect (GstGLEffects * effects, gint effect_type)
     case GST_GL_EFFECT_GLOW:
       effects->effect = (GstGLEffectProcessFunc) gst_gl_effects_glow;
       break;
+#endif
     default:
       g_assert_not_reached ();
   }
@@ -230,7 +228,10 @@ gst_gl_effects_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class,
+      "Gstreamer OpenGL Effects", "Filter/Effect",
+      "GL Shading Language effects",
+      "Filippo Argiolas <filippo.argiolas@gmail.com>");
 }
 
 static void
@@ -269,6 +270,7 @@ gst_gl_effects_class_init (GstGLEffectsClass * klass)
 void
 gst_gl_effects_draw_texture (GstGLEffects * effects, GLuint tex)
 {
+#ifndef OPENGL_ES2
   GstGLFilter *filter = GST_GL_FILTER (effects);
 
   glActiveTexture (GL_TEXTURE0);
@@ -287,6 +289,36 @@ gst_gl_effects_draw_texture (GstGLEffects * effects, GLuint tex)
   glVertex2f (-1.0, 1.0);
 
   glEnd ();
+#else
+
+  const GLfloat vVertices[] = { -1.0f, -1.0f, 0.0f,
+    0.0f, 0.0f,
+    1.0, -1.0f, 0.0f,
+    1.0f, 0.0f,
+    1.0f, 1.0f, 0.0f,
+    1.0f, 1.0f,
+    -1.0f, 1.0f, 0.0f,
+    0.0f, 1.0f
+  };
+
+  GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
+
+  //glClear (GL_COLOR_BUFFER_BIT);
+
+  //Load the vertex position
+  glVertexAttribPointer (effects->draw_attr_position_loc, 3, GL_FLOAT,
+      GL_FALSE, 5 * sizeof (GLfloat), vVertices);
+
+  //Load the texture coordinate
+  glVertexAttribPointer (effects->draw_attr_texture_loc, 2, GL_FLOAT,
+      GL_FALSE, 5 * sizeof (GLfloat), &vVertices[3]);
+
+  glEnableVertexAttribArray (effects->draw_attr_position_loc);
+  glEnableVertexAttribArray (effects->draw_attr_texture_loc);
+
+  glDrawElements (GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+#endif
+
 }
 
 static void
@@ -294,6 +326,7 @@ set_horizontal_swap (GstGLDisplay * display, gpointer data)
 {
 //  GstGLEffects *effects = GST_GL_EFFECTS (data);
 
+#ifndef OPENGL_ES2
   const double mirrormatrix[16] = {
     -1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 0.0, 0.0,
@@ -303,6 +336,7 @@ set_horizontal_swap (GstGLDisplay * display, gpointer data)
 
   glMatrixMode (GL_MODELVIEW);
   glLoadMatrixd (mirrormatrix);
+#endif
 }
 
 static void

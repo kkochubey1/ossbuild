@@ -38,44 +38,13 @@
 
 #include <stdlib.h>
 #include <png.h>
-#include <gstglfilter.h>
+#include "gstgldifferencematte.h"
 #include <gstgleffectssources.h>
 
 #if PNG_LIBPNG_VER >= 10400
 #define int_p_NULL         NULL
 #define png_infopp_NULL    NULL
 #endif
-
-#define GST_TYPE_GL_DIFFERENCEMATTE            (gst_gl_differencematte_get_type())
-#define GST_GL_DIFFERENCEMATTE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), GST_TYPE_GL_DIFFERENCEMATTE,GstGLDifferenceMatte))
-#define GST_IS_GL_DIFFERENCEMATTE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), GST_TYPE_GL_DIFFERENCEMATTE))
-#define GST_GL_DIFFERENCEMATTE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass) , GST_TYPE_GL_DIFFERENCEMATTE,GstGLDifferenceMatteClass))
-#define GST_IS_GL_DIFFERENCEMATTE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass) , GST_TYPE_GL_DIFFERENCEMATTE))
-#define GST_GL_DIFFERENCEMATTE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj) , GST_TYPE_GL_DIFFERENCEMATTE,GstGLDifferenceMatteClass))
-
-struct _GstGLDifferenceMatte
-{
-  GstGLFilter filter;
-
-  GstGLShader *shader[4];
-
-  gchar *location;
-  gboolean bg_has_changed;
-
-  guchar *pixbuf;
-  GLuint savedbgtexture;
-  GLuint newbgtexture;
-  GLuint midtexture[4];
-  GLuint intexture;
-};
-
-struct _GstGLDifferenceMatteClass
-{
-  GstGLFilterClass filter_class;
-};
-
-typedef struct _GstGLDifferenceMatte GstGLDifferenceMatte;
-typedef struct _GstGLDifferenceMatteClass GstGLDifferenceMatteClass;
 
 #define GST_CAT_DEFAULT gst_gl_differencematte_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
@@ -98,12 +67,6 @@ static gboolean gst_gl_differencematte_filter (GstGLFilter * filter,
     GstGLBuffer * inbuf, GstGLBuffer * outbuf);
 
 static gboolean gst_gl_differencematte_loader (GstGLFilter * filter);
-
-static const GstElementDetails element_details =
-GST_ELEMENT_DETAILS ("Gstreamer OpenGL DifferenceMatte",
-    "Filter/Effect",
-    "Saves a background frame and replace it with a pixbuf",
-    "Filippo Argiolas <filippo.argiolas@gmail.com>");
 
 enum
 {
@@ -138,10 +101,10 @@ gst_gl_differencematte_init_gl_resources (GstGLFilter * filter)
   g_return_if_fail (gst_gl_shader_compile_and_check (differencematte->shader[0],
           difference_fragment_source, GST_GL_SHADER_FRAGMENT_SOURCE));
   g_return_if_fail (gst_gl_shader_compile_and_check (differencematte->shader[1],
-          hconv9_fragment_source, GST_GL_SHADER_FRAGMENT_SOURCE));
+          hconv7_fragment_source, GST_GL_SHADER_FRAGMENT_SOURCE));
 
   g_return_if_fail (gst_gl_shader_compile_and_check (differencematte->shader[2],
-          vconv9_fragment_source, GST_GL_SHADER_FRAGMENT_SOURCE));
+          vconv7_fragment_source, GST_GL_SHADER_FRAGMENT_SOURCE));
 
   g_return_if_fail (gst_gl_shader_compile_and_check (differencematte->shader[3],
           texture_interp_fragment_source, GST_GL_SHADER_FRAGMENT_SOURCE));
@@ -173,7 +136,10 @@ gst_gl_differencematte_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class,
+      "Gstreamer OpenGL DifferenceMatte", "Filter/Effect",
+      "Saves a background frame and replace it with a pixbuf",
+      "Filippo Argiolas <filippo.argiolas@gmail.com>");
 }
 
 static void
@@ -237,6 +203,8 @@ gst_gl_differencematte_init (GstGLDifferenceMatte * differencematte,
   differencematte->savedbgtexture = 0;
   differencematte->newbgtexture = 0;
   differencematte->bg_has_changed = FALSE;
+
+  fill_gaussian_kernel (differencematte->kernel, 7, 30.0);
 }
 
 static void
@@ -308,8 +276,8 @@ init_pixbuf_texture (GstGLDisplay * display, gpointer data)
   glGenTextures (1, &differencematte->newbgtexture);
   glBindTexture (GL_TEXTURE_RECTANGLE_ARB, differencematte->newbgtexture);
   glTexImage2D (GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA,
-      filter->width, filter->height, 0,
-      GL_RGBA, GL_UNSIGNED_BYTE, differencematte->pixbuf);
+      (gint) differencematte->pbuf_width, (gint) differencematte->pbuf_height,
+      0, GL_RGBA, GL_UNSIGNED_BYTE, differencematte->pixbuf);
 
   if (differencematte->savedbgtexture == 0) {
     glGenTextures (1, &differencematte->savedbgtexture);
@@ -360,11 +328,6 @@ gst_gl_differencematte_hblur (gint width, gint height, guint texture,
     gpointer stuff)
 {
   GstGLDifferenceMatte *differencematte = GST_GL_DIFFERENCEMATTE (stuff);
-  gfloat gauss_kernel[9] = {
-    0.026995f, 0.064759f, 0.120985f,
-    0.176033f, 0.199471f, 0.176033f,
-    0.120985f, 0.064759f, 0.026995f
-  };
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
@@ -378,12 +341,8 @@ gst_gl_differencematte_hblur (gint width, gint height, guint texture,
 
   gst_gl_shader_set_uniform_1i (differencematte->shader[1], "tex", 0);
 
-  gst_gl_shader_set_uniform_1fv (differencematte->shader[1], "kernel", 9,
-      gauss_kernel);
-  gst_gl_shader_set_uniform_1f (differencematte->shader[1], "norm_const",
-      0.977016f);
-  gst_gl_shader_set_uniform_1f (differencematte->shader[1], "norm_offset",
-      0.0f);
+  gst_gl_shader_set_uniform_1fv (differencematte->shader[1], "kernel", 7,
+      differencematte->kernel);
 
   gst_gl_differencematte_draw_texture (differencematte, texture);
 }
@@ -393,11 +352,6 @@ gst_gl_differencematte_vblur (gint width, gint height, guint texture,
     gpointer stuff)
 {
   GstGLDifferenceMatte *differencematte = GST_GL_DIFFERENCEMATTE (stuff);
-  gfloat gauss_kernel[9] = {
-    0.026995f, 0.064759f, 0.120985f,
-    0.176033f, 0.199471f, 0.176033f,
-    0.120985f, 0.064759f, 0.026995f
-  };
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
@@ -411,12 +365,8 @@ gst_gl_differencematte_vblur (gint width, gint height, guint texture,
 
   gst_gl_shader_set_uniform_1i (differencematte->shader[2], "tex", 0);
 
-  gst_gl_shader_set_uniform_1fv (differencematte->shader[2], "kernel", 9,
-      gauss_kernel);
-  gst_gl_shader_set_uniform_1f (differencematte->shader[2], "norm_const",
-      0.977016f);
-  gst_gl_shader_set_uniform_1f (differencematte->shader[2], "norm_offset",
-      0.0f);
+  gst_gl_shader_set_uniform_1fv (differencematte->shader[2], "kernel", 7,
+      differencematte->kernel);
 
   gst_gl_differencematte_draw_texture (differencematte, texture);
 }
@@ -426,6 +376,7 @@ gst_gl_differencematte_interp (gint width, gint height, guint texture,
     gpointer stuff)
 {
   GstGLDifferenceMatte *differencematte = GST_GL_DIFFERENCEMATTE (stuff);
+  GstGLFilter *filter = GST_GL_FILTER (stuff);
 
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity ();
@@ -445,6 +396,15 @@ gst_gl_differencematte_interp (gint width, gint height, guint texture,
   glDisable (GL_TEXTURE_RECTANGLE_ARB);
 
   gst_gl_shader_set_uniform_1i (differencematte->shader[3], "base", 1);
+  gst_gl_shader_set_uniform_1f (differencematte->shader[3],
+      "base_width", (gfloat) differencematte->pbuf_width);
+  gst_gl_shader_set_uniform_1f (differencematte->shader[3],
+      "base_height", (gfloat) differencematte->pbuf_height);
+
+  gst_gl_shader_set_uniform_1f (differencematte->shader[3],
+      "final_width", (gfloat) filter->width);
+  gst_gl_shader_set_uniform_1f (differencematte->shader[3],
+      "final_height", (gfloat) filter->height);
 
   glActiveTexture (GL_TEXTURE2);
   glEnable (GL_TEXTURE_RECTANGLE_ARB);
@@ -548,6 +508,7 @@ gst_gl_differencematte_loader (GstGLFilter * filter)
   png_FILE_p fp = NULL;
   guint y = 0;
   guchar **rows = NULL;
+  gint filler;
 
   if (!filter->display)
     return TRUE;
@@ -580,14 +541,20 @@ gst_gl_differencematte_loader (GstGLFilter * filter)
   png_get_IHDR (png_ptr, info_ptr, &width, &height, &bit_depth, &color_type,
       &interlace_type, int_p_NULL, int_p_NULL);
 
+  if (color_type == PNG_COLOR_TYPE_RGB) {
+    filler = 0xff;
+    png_set_filler (png_ptr, filler, PNG_FILLER_AFTER);
+    color_type = PNG_COLOR_TYPE_RGB_ALPHA;
+  }
+
   if (color_type != PNG_COLOR_TYPE_RGB_ALPHA) {
     fclose (fp);
     png_destroy_read_struct (&png_ptr, png_infopp_NULL, png_infopp_NULL);
     LOAD_ERROR ("color type is not rgb");
   }
 
-  filter->width = width;
-  filter->height = height;
+  differencematte->pbuf_width = width;
+  differencematte->pbuf_height = height;
 
   differencematte->pixbuf =
       (guchar *) malloc (sizeof (guchar) * width * height * 4);

@@ -156,7 +156,7 @@ gst_rtp_L16_depay_setcaps (GstBaseRTPDepayload * depayload, GstCaps * caps)
       clock_rate = 44100;
       break;
     default:
-      /* no fixed mapping, we need channels and clock-rate */
+      /* no fixed mapping, we need clock-rate */
       channels = 0;
       clock_rate = 0;
       break;
@@ -168,9 +168,15 @@ gst_rtp_L16_depay_setcaps (GstBaseRTPDepayload * depayload, GstCaps * caps)
   if (clock_rate == 0)
     goto no_clockrate;
 
-  channels = gst_rtp_L16_depay_parse_int (structure, "channels", channels);
-  if (channels == 0)
-    goto no_channels;
+  channels =
+      gst_rtp_L16_depay_parse_int (structure, "encoding-params", channels);
+  if (channels == 0) {
+    channels = gst_rtp_L16_depay_parse_int (structure, "channels", channels);
+    if (channels == 0) {
+      /* channels defaults to 1 otherwise */
+      channels = 1;
+    }
+  }
 
   depayload->clock_rate = clock_rate;
   rtpL16depay->rate = clock_rate;
@@ -211,11 +217,6 @@ gst_rtp_L16_depay_setcaps (GstBaseRTPDepayload * depayload, GstCaps * caps)
 no_clockrate:
   {
     GST_ERROR_OBJECT (depayload, "no clock-rate specified");
-    return FALSE;
-  }
-no_channels:
-  {
-    GST_ERROR_OBJECT (depayload, "no channels specified");
     return FALSE;
   }
 }

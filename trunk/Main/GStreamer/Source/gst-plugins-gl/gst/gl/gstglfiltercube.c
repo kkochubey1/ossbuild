@@ -1,4 +1,4 @@
-/* 
+/*
  * GStreamer
  * Copyright (C) 2008 Julien Isorce <julien.isorce@gmail.com>
  *
@@ -48,12 +48,6 @@
 
 #define GST_CAT_DEFAULT gst_gl_filter_cube_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
-
-static const GstElementDetails element_details =
-GST_ELEMENT_DETAILS ("OpenGL cube filter",
-    "Filter/Effect",
-    "Map input texture on the 6 cube faces",
-    "Julien Isorce <julien.isorce@gmail.com>");
 
 enum
 {
@@ -118,7 +112,7 @@ static const gchar *cube_v_src =
     "     -sin(zrot),  cos(zrot),        0.0, 0.0,                \n"
     "            0.0,        0.0,        1.0, 0.0,                \n"
     "            0.0,        0.0,        0.0, 1.0 );              \n"
-    "   gl_Position = matZ * matY * matX * u_matrix * a_position; \n"
+    "   gl_Position = u_matrix * matZ * matY * matX * a_position; \n"
     "   v_texCoord = a_texCoord;                                  \n"
     "}                                                            \n";
 
@@ -138,7 +132,9 @@ gst_gl_filter_cube_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class, "OpenGL cube filter",
+      "Filter/Effect", "Map input texture on the 6 cube faces",
+      "Julien Isorce <julien.isorce@gmail.com>");
 }
 
 static void
@@ -319,7 +315,9 @@ gst_gl_filter_cube_callback (gint width, gint height, guint texture,
       GL_CLAMP_TO_EDGE);
   glTexParameteri (GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_WRAP_T,
       GL_CLAMP_TO_EDGE);
+#ifndef OPENGL_ES2
   glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+#endif
 
   glClearColor (cube_filter->red, cube_filter->green, cube_filter->blue, 0.0);
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
