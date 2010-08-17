@@ -26,7 +26,7 @@ public class GstMediaComponent extends MediaComponentV5 {
 	}
 
 	public GstMediaComponent(final String videoElement, final String audioElement, Composite parent, int style) {
-		super(parent, style);
+		super(videoElement, audioElement, parent, style);
 		init(videoElement, audioElement);
 	}
 

@@ -6,9 +6,9 @@
 		<Add name="base" />
 		<Add name="glib" />
 		<Add name="xml" />
-		<!-- <Add name="fonts" /> -->
+		<Add name="fonts" />
 		<Add name="images" />
-		<!-- <Add name="graphics" /> -->
+		<Add name="graphics" />
 		<Add name="crypto" />
 		<Add name="gst-plugins-base" />
 	</References>
@@ -85,7 +85,7 @@
 		<File resource="libgsty4menc.dll" />
 
 		<!-- ext -->
-		<!-- <File resource="libgstcairo.dll" /> -->
+		<File resource="libgstcairo.dll" />
 		<File resource="libgstflac.dll" />
 		<File resource="libgstjpeg.dll" />
 		<File resource="libgstpng.dll" />
