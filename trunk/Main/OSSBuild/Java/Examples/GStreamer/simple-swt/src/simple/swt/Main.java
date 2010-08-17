@@ -245,7 +245,7 @@ public class Main {
 		dlg.setLayout(layout);
 		dlg.setSize(700, 700);
 
-		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp = new GstMediaComponent("timeoverlay shaded-background=true font-desc='arial normal 50px' ! d3dvideosink", dlg, SWT.NONE);
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 

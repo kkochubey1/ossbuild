@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -24,11 +25,10 @@ import ossbuild.StringUtil;
 import ossbuild.Sys;
 import ossbuild.media.IMediaRequest;
 import ossbuild.media.gstreamer.ErrorType;
-import ossbuild.media.gstreamer.ErrorType;
 
 /**
  *
- * @author David Hoyt <dhoyt@llnl.gov>
+ * @author David Hoyt <dhoyt@hoytsoft.org>
  */
 public class GstPlayer {
 	//<editor-fold defaultstate="collapsed" desc="Constants">
@@ -212,7 +212,7 @@ public class GstPlayer {
 		public int getFlag() {
 			return flag;
 		}
-		
+
 		public String getName() {
 			return name;
 		}
@@ -489,7 +489,7 @@ public class GstPlayer {
 	 *
 	 * @return null if the thread group was not found
 	 */
-	private static final ThreadGroup findThreadGroup(String Name) {
+	private static ThreadGroup findThreadGroup(String Name) {
 		ThreadGroup root = Thread.currentThread().getThreadGroup();
 		while(root.getParent() != null)
 			root = root.getParent();
@@ -504,7 +504,7 @@ public class GstPlayer {
 	/**
 	 * @see #findThread(java.lang.String)
 	 */
-	private static final ThreadGroup findThreadGroup(ThreadGroup Parent, String Name) {
+	private static ThreadGroup findThreadGroup(ThreadGroup Parent, String Name) {
 		if (Parent == null)
 			return null;
 
@@ -523,7 +523,7 @@ public class GstPlayer {
 		return null;
 	}
 
-	private static final ThreadGroup findMainThreadGroup() {
+	private static ThreadGroup findMainThreadGroup() {
 		//Find the /system/main/ thread group.
 		ThreadGroup gSys = findThreadGroup("system");
 		if (gSys == null)
@@ -956,7 +956,6 @@ public class GstPlayer {
 	private static void reapUnresponsiveProcesses() {
 		for(GstPlayer p : runningPlayers) {
 			if (p.getPingInterval() > MAX_PING_INTERVAL) {
-				System.out.println("REAPING PROCESS");
 				p.destroy();
 			}
 		}
@@ -967,11 +966,14 @@ public class GstPlayer {
 			GST_PLAYER
 			, "--command-mode"
 			, "--ping-interval=1000"
+			/*, "--buffer-duration=500000000"*/
 			, (request.isRepeatForever() ? "--repeat-forever" : "--repeat-count=" + request.getRepeatCount())
 			, "-v", Double.toString((double)Math.max(0, Math.min(100, volume)) / 100.0)
 			, "-u", uriString(request.getURI())
 		);
 
+		String var;
+		Map<String, String> env = builder.environment();
 		List<String> commands = builder.command();
 
 		if (!StringUtil.isNullOrEmpty(videoElement))
@@ -988,8 +990,8 @@ public class GstPlayer {
 			commands.add("--fps-d=" + Integer.toString(fps_d));
 		}
 
-		if (bufferSize > 0L)
-			commands.add("--buffer-size=" + Long.toString(bufferSize));
+		//if (bufferSize > 0L)
+		//	commands.add("--buffer-size=" + Long.toString(bufferSize));
 
 		if (mute)
 			commands.add("--mute");
@@ -1000,12 +1002,19 @@ public class GstPlayer {
 		if (nativeHandle != 0L)
 			commands.add("--window-id=" + Long.toString(nativeHandle));
 
+		if (!StringUtil.isNullOrEmpty((var = Sys.getEnvironmentVariable("GST_DEBUG"))))
+			env.put("GST_DEBUG", var);
+		if (!StringUtil.isNullOrEmpty((var = Sys.getEnvironmentVariable("G_SLICE"))))
+			env.put("G_SLICE", var);
+		if (!StringUtil.isNullOrEmpty((var = Sys.getEnvironmentVariable("G_DEBUG"))))
+			env.put("G_DEBUG", var);
+
 		builder.directory(GST_PLAYER_DIR);
 		builder.redirectErrorStream(true);
 
 		return builder;
 	}
-	
+
 	public boolean launch(String videoElement, String audioElement, long nativeHandle, boolean mute, int volume, long bufferSize, IMediaRequest request) {
 		final Semaphore startup = new Semaphore(0);
 		final Semaphore inputReady = new Semaphore(0);
@@ -1020,7 +1029,7 @@ public class GstPlayer {
 				this.bufferSize = bufferSize;
 				this.nativeHandle = nativeHandle;
 				this.procBuilder = createProcBuilder(videoElement, audioElement, nativeHandle, mute, volume, bufferSize, request);
-				
+
 				//Create a thread to handle this
 				this.inputMonitor = new Thread(PROCESS_MONITOR_THREAD_GROUP, new Runnable() {
 					@Override
@@ -1073,7 +1082,7 @@ public class GstPlayer {
 
 				this.proc = procBuilder.start();
 				if (proc != null) {
-					this.input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+					this.input = new BufferedReader(new InputStreamReader(proc.getInputStream(), "ASCII"));
 					this.output = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream(), "ASCII"));
 				}
 				inputReady.release();
@@ -1091,7 +1100,7 @@ public class GstPlayer {
 		synchronized(lock) {
 			if (proc == null)
 				return true;
-			
+
 			try {
 				//Send the quit command.
 				command("quit");
@@ -1112,8 +1121,7 @@ public class GstPlayer {
 			if (!isRunning())
 				return true;
 			if (proc != null)
-				if (!stop())
-					proc.destroy();
+				proc.destroy();
 		}
 		return true;
 	}

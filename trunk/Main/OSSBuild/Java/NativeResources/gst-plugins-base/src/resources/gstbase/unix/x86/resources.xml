@@ -6,9 +6,9 @@
 		<Add name="base" />
 		<Add name="glib" />
 		<Add name="xml" />
-		<!-- <Add name="fonts" /> -->
+		<Add name="fonts" />
 		<Add name="images" />
-		<!-- <Add name="graphics" /> -->
+		<Add name="graphics" />
 	</References>
 	
 	<Extract package="resources.gstbase.unix.x86" directory="${nativeResDir}/">
@@ -92,7 +92,7 @@
 		<File resource="libgstgdp.so"                                executable="true" />
 		<File resource="libgstgio.so"                                executable="true" />
 		<File resource="libgstogg.so"                                executable="true" />
-		<!-- <File resource="libgstpango.so"                              executable="true" /> -->
+		<File resource="libgstpango.so"                              executable="true" />
 		<File resource="libgstplaybin.so"                            executable="true" />
 		<File resource="libgstsubparse.so"                           executable="true" />
 		<File resource="libgsttheora.so"                             executable="true" />

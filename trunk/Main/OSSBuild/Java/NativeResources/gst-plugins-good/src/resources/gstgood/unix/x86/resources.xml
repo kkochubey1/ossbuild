@@ -6,9 +6,9 @@
 		<Add name="base" />
 		<Add name="glib" />
 		<Add name="xml" />
-		<!-- <Add name="fonts" /> -->
+		<Add name="fonts" />
 		<Add name="images" />
-		<!-- <Add name="graphics" /> -->
+		<Add name="graphics" />
 		<Add name="crypto" />
 		<Add name="gst-plugins-base" />
 	</References>
@@ -87,7 +87,7 @@
 		<!-- ext -->
 		<File resource="libgstannodex.so"           executable="true" />
 		<File resource="libgstpulse.so"             executable="true" />
-		<!-- <File resource="libgstcairo.so"             executable="true" /> -->
+		<File resource="libgstcairo.so"             executable="true" />
 		<File resource="libgstflac.so"              executable="true" />
 		<File resource="libgstjpeg.so"              executable="true" />
 		<File resource="libgstpng.so"               executable="true" />
