@@ -54,47 +54,48 @@ set PKG_STRAWBERRY_PERL_BIN=http://strawberryperl.com/download/strawberry-perl-5
 
 set MINGW_GET=http://downloads.sourceforge.net/project/mingw/Automated MinGW Installer/mingw-get/mingw-get-0.1-mingw32-alpha-2-bin.tar.gz?use_mirror=softlayer
 
-set PKG_MSYS_CORE_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/msys-1.0.14-1/msysCORE-1.0.14-1-msys-1.0.14-bin.tar.lzma?use_mirror=softlayer
-set PKG_MSYS_RXVT_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/rxvt/rxvt-2.7.2-3/rxvt-2.7.2-3-msys-1.0.14-bin.tar.lzma?use_mirror=voxel
-set PKG_MSYS_BASH_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/bash/bash-3.1.17-3/bash-3.1.17-3-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
-set PKG_MSYS_REGEX_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/regex/regex-1.20090805-2/libregex-1.20090805-2-msys-1.0.13-dll-1.tar.lzma?use_mirror=iweb
-set PKG_MSYS_TERMCAP_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/termcap/termcap-0.20050421_1-2/libtermcap-0.20050421_1-2-msys-1.0.13-dll-0.tar.lzma?use_mirror=iweb
-set PKG_MSYS_COREUTILS_EXT=http://downloads.sourceforge.net/project/mingw/MSYS/coreutils/coreutils-5.97-3/coreutils-5.97-3-msys-1.0.13-ext.tar.lzma?use_mirror=voxel
-set PKG_MSYS_COREUTILS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/coreutils/coreutils-5.97-3/coreutils-5.97-3-msys-1.0.13-bin.tar.lzma?use_mirror=softlayer
-set PKG_MSYS_ICONV_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/libiconv/libiconv-1.13.1-2/libiconv-1.13.1-2-msys-1.0.13-dll-2.tar.lzma?use_mirror=voxel
-set PKG_MSYS_ICONV_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/libiconv/libiconv-1.13.1-2/libiconv-1.13.1-2-msys-1.0.13-bin.tar.lzma?use_mirror=softlayer
-set PKG_MSYS_CHARSET_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/libiconv/libiconv-1.13.1-2/libcharset-1.13.1-2-msys-1.0.13-dll-1.tar.lzma?use_mirror=voxel
+set PKG_MSYS_CORE_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/msys-core/msys-1.0.15-1/msysCORE-1.0.15-1-msys-1.0.15-dev.tar.lzma?use_mirror=iweb
+set PKG_MSYS_CORE_EXT=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/msys-core/msys-1.0.15-1/msysCORE-1.0.15-1-msys-1.0.15-ext.tar.lzma?use_mirror=iweb
+set PKG_MSYS_RXVT_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/rxvt/rxvt-2.7.2-3/rxvt-2.7.2-3-msys-1.0.14-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_BASH_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/bash/bash-3.1.17-3/bash-3.1.17-3-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_REGEX_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/regex/regex-1.20090805-2/libregex-1.20090805-2-msys-1.0.13-dll-1.tar.lzma?use_mirror=iweb
+set PKG_MSYS_TERMCAP_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/termcap/termcap-0.20050421_1-2/libtermcap-0.20050421_1-2-msys-1.0.13-dll-0.tar.lzma?use_mirror=iweb
+set PKG_MSYS_COREUTILS_EXT=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/coreutils/coreutils-5.97-3/coreutils-5.97-3-msys-1.0.13-ext.tar.lzma?use_mirror=iweb
+set PKG_MSYS_COREUTILS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/coreutils/coreutils-5.97-3/coreutils-5.97-3-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_ICONV_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/libiconv/libiconv-1.13.1-2/libiconv-1.13.1-2-msys-1.0.13-dll-2.tar.lzma?use_mirror=iweb
+set PKG_MSYS_ICONV_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/libiconv/libiconv-1.13.1-2/libiconv-1.13.1-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_CHARSET_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/libiconv/libiconv-1.13.1-2/libcharset-1.13.1-2-msys-1.0.13-dll-1.tar.lzma?use_mirror=iweb
 set PKG_MSYS_ZLIB_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/zlib/zlib-1.2.3-2/zlib-1.2.3-2-msys-1.0.13-dll.tar.lzma?use_mirror=voxel
-set PKG_MSYS_INTL_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/gettext/gettext-0.17-2/libintl-0.17-2-msys-dll-8.tar.lzma?use_mirror=voxel
-set PKG_MSYS_GETTEXT_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/gettext/gettext-0.17-2/libgettextpo-0.17-2-msys-dll-0.tar.lzma?use_mirror=voxel
-set PKG_MSYS_ASPRINTF_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/gettext/gettext-0.17-2/libasprintf-0.17-2-msys-dll-0.tar.lzma?use_mirror=voxel
-set PKG_MSYS_GETTEXT_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/gettext/gettext-0.17-2/gettext-0.17-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_INTL_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/gettext/gettext-0.17-2/libintl-0.17-2-msys-dll-8.tar.lzma?use_mirror=iweb
+set PKG_MSYS_GETTEXT_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/gettext/gettext-0.17-2/libgettextpo-0.17-2-msys-dll-0.tar.lzma?use_mirror=iweb
+set PKG_MSYS_ASPRINTF_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/gettext/gettext-0.17-2/libasprintf-0.17-2-msys-dll-0.tar.lzma?use_mirror=iweb
+set PKG_MSYS_GETTEXT_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/gettext/gettext-0.17-2/gettext-0.17-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
 set PKG_MSYS_WGET_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/wget/wget-1.12-1/wget-1.12-1-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
-set PKG_MSYS_UNZIP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/unzip/unzip-6.0-1/unzip-6.0-1-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
+set PKG_MSYS_UNZIP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/unzip/unzip-6.0-1/unzip-6.0-1-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
 set PKG_MSYS_ZIP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/zip/zip-3.0-1/zip-3.0-1-msys-1.0.14-bin.tar.lzma?use_mirror=voxel
-set PKG_MSYS_OPTS_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/autogen/autogen-5.10.1-1/libopts-5.10.1-1-msys-1.0.15-dll-25.tar.lzma?use_mirror=voxel
+set PKG_MSYS_OPTS_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/autogen/autogen-5.10.1-1/libopts-5.10.1-1-msys-1.0.15-dll-25.tar.lzma?use_mirror=iweb
 set PKG_MSYS_AUTOGEN_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/autogen/autogen-5.10.1-1/autogen-5.10.1-1-msys-1.0.15-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_POPT_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/popt/popt-1.15-2/libpopt-1.15-2-msys-1.0.13-dll-0.tar.lzma?use_mirror=voxel
 set PKG_MSYS_CYGUTILS_DOS2UNIX_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/cygutils/cygutils-1.3.4-4/cygutils-dos2unix-1.3.4-4-msys-1.0.13-bin.tar.lzma?use_mirror=softlayer
 set PKG_MSYS_CYGUTILS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/cygutils/cygutils-1.3.4-4/cygutils-1.3.4-4-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_UNZIP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/unzip/unzip-6.0-1/unzip-6.0-1-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_PATCH_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/patch/patch-2.6.1-1/patch-2.6.1-1-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
-set PKG_MSYS_DIFFUTILS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/diffutils/diffutils-2.8.7.20071206cvs-3/diffutils-2.8.7.20071206cvs-3-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
-set PKG_MSYS_GREP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/grep/grep-2.5.4-2/grep-2.5.4-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
-set PKG_MSYS_TAR_EXT=http://downloads.sourceforge.net/project/mingw/MSYS/tar/tar-1.23-1/tar-1.23-1-msys-1.0.13-ext.tar.lzma?use_mirror=softlayer
-set PKG_MSYS_TAR_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/tar/tar-1.23-1/tar-1.23-1-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
-set PKG_MSYS_LESS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/less/less-436-2/less-436-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
-set PKG_MSYS_GZIP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/gzip/gzip-1.3.12-2/gzip-1.3.12-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
+set PKG_MSYS_DIFFUTILS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/diffutils/diffutils-2.8.7.20071206cvs-3/diffutils-2.8.7.20071206cvs-3-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_GREP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/grep/grep-2.5.4-2/grep-2.5.4-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_TAR_EXT=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/tar/tar-1.23-1/tar-1.23-1-msys-1.0.13-ext.tar.lzma?use_mirror=iweb
+set PKG_MSYS_TAR_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/tar/tar-1.23-1/tar-1.23-1-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_LESS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/less/less-436-2/less-436-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_GZIP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/gzip/gzip-1.3.12-2/gzip-1.3.12-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
 set PKG_MSYS_M4_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/m4/m4-1.4.14-1/m4-1.4.14-1-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
-set PKG_MSYS_SED_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/sed/sed-4.2.1-2/sed-4.2.1-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
+set PKG_MSYS_SED_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/sed/sed-4.2.1-2/sed-4.2.1-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
 set PKG_MSYS_BISON_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/bison/bison-2.4.2-1/bison-2.4.2-1-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_FLEX_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/flex/flex-2.5.35-2/flex-2.5.35-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_PERL_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/perl/perl-5.6.1_2-2/perl-5.6.1_2-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_REBASE_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/rebase/rebase-3.0.1_1-2/rebase-3.0.1_1-2-msys-1.0.15-bin.tar.lzma?use_mirror=iweb
 set PKG_MSYS_CRYPT_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/crypt/crypt-1.1_1-3/libcrypt-1.1_1-3-msys-1.0.13-dll-0.tar.lzma?use_mirror=softlayer
 set PKG_MSYS_CRYPT_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/crypt/crypt-1.1_1-3/crypt-1.1_1-3-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
-set PKG_MSYS_BZIP2_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/bzip2/bzip2-1.0.5-2/libbz2-1.0.5-2-msys-1.0.13-dll-1.tar.lzma?use_mirror=iweb
-set PKG_MSYS_BZIP2_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/bzip2/bzip2-1.0.5-2/bzip2-1.0.5-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
+set PKG_MSYS_BZIP2_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/bzip2/bzip2-1.0.5-2/libbz2-1.0.5-2-msys-1.0.13-dll-1.tar.lzma?use_mirror=iweb
+set PKG_MSYS_BZIP2_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/bzip2/bzip2-1.0.5-2/bzip2-1.0.5-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_OPENSSL_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/openssl/openssl-1.0.0-1/libopenssl-1.0.0-1-msys-1.0.13-dll-100.tar.lzma?use_mirror=voxel
 set PKG_MSYS_OPENSSL_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/openssl/openssl-1.0.0-1/openssl-1.0.0-1-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_GMP_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/gmp/gmp-5.0.1-1/libgmp-5.0.1-1-msys-1.0.13-dll-10.tar.lzma?use_mirror=softlayer
@@ -131,7 +132,7 @@ set PKG_MINGW_GETTEXT_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/g
 set PKG_MINGW_LIBCHARSET_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libiconv/libiconv-1.13.1-1/libcharset-1.13.1-1-mingw32-dll-1.tar.lzma?use_mirror=iweb
 set PKG_MINGW_LIBICONV_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libiconv/libiconv-1.13.1-1/libiconv-1.13.1-1-mingw32-dll-2.tar.lzma?use_mirror=iweb
 set PKG_MINGW_LIBICONV_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/libiconv/libiconv-1.13.1-1/libiconv-1.13.1-1-mingw32-bin.tar.lzma?use_mirror=iweb
-set PKG_MINGW_MAKE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/make/make-3.81-20090914-mingw32/make-3.81-20090914-mingw32-bin.tar.gz?use_mirror=voxel
+set PKG_MINGW_MAKE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/make/make-3.82-mingw32/make-3.82-2-mingw32-bin.tar.lzma?use_mirror=iweb
 set PKG_MINGW_GCC_CORE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/gcc-core-4.5.0-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_GCC_CPP_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/gcc-c++-4.5.0-1-mingw32-bin.tar.lzma?use_mirror=iweb
 set PKG_MINGW_GCC_OBJC_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/gcc-objc-4.5.0-1-mingw32-bin.tar.lzma?use_mirror=voxel
@@ -212,6 +213,7 @@ if "%DOWNLOAD%" == "1" (
 	REM call :download mingw-gcc-bin %GCC%
 	
 	call :download msys-core-bin "%PKG_MSYS_CORE_BIN%"
+	call :download msys-core-ext "%PKG_MSYS_CORE_EXT%"
 	call :download msys-rxvt-bin "%PKG_MSYS_RXVT_BIN%"
 	call :download msys-bash-bin "%PKG_MSYS_BASH_BIN%"
 	call :download msys-regex-dll "%PKG_MSYS_REGEX_DLL%"
@@ -234,7 +236,6 @@ if "%DOWNLOAD%" == "1" (
 	call :download msys-popt-bin "%PKG_MSYS_POPT_DLL%"
 	call :download msys-cygutils-dos2unix-bin "%PKG_MSYS_CYGUTILS_DOS2UNIX_BIN%"
 	call :download msys-cygutils-bin "%PKG_MSYS_CYGUTILS_BIN%"
-	call :download msys-unzip-bin "%PKG_MSYS_UNZIP_BIN%"
 	call :download msys-patch-bin "%PKG_MSYS_PATCH_BIN%"
 	call :download msys-diffutils-bin "%PKG_MSYS_DIFFUTILS_BIN%"
 	call :download msys-grep-bin "%PKG_MSYS_GREP_BIN%"
@@ -381,6 +382,7 @@ if "%UNTAR%" == "1" (
 	REM cd ..
 	
 	call :extract msys-core-bin %MSYSDIR%
+	call :extract msys-core-ext %MSYSDIR%
 	call :extract msys-rxvt-bin %MSYSDIR%
 	call :extract msys-bash-bin %MSYSDIR%
 	call :extract msys-regex-dll %MSYSDIR%
@@ -399,12 +401,10 @@ if "%UNTAR%" == "1" (
 	call :extract msys-unzip-bin %MSYSDIR%
 	call :extract msys-zip-bin %MSYSDIR%
 	call :extract msys-opts-dll %MSYSDIR%
-	call :extract msys-opts-bin %MSYSDIR%
 	call :extract msys-autogen-bin %MSYSDIR%
 	call :extract msys-popt-bin %MSYSDIR%
 	call :extract msys-cygutils-dos2unix-bin %MSYSDIR%
 	call :extract msys-cygutils-bin %MSYSDIR%
-	call :extract msys-unzip-bin %MSYSDIR%
 	call :extract msys-patch-bin %MSYSDIR%
 	call :extract msys-diffutils-bin %MSYSDIR%
 	call :extract msys-grep-bin %MSYSDIR%
@@ -460,6 +460,7 @@ if "%UNTAR%" == "1" (
 	call :extract mingw-libcharset-dll %MINGWDIR%
 	call :extract mingw-libiconv-dll %MINGWDIR%
 	call :extract mingw-libiconv-bin %MINGWDIR%
+	call :extract mingw-make-bin %MINGWDIR%
 	REM call :extract mingw-gcc-core-bin %MINGWDIR%
 	REM call :extract mingw-gcc-cpp-bin %MINGWDIR%
 	REM call :extract mingw-gcc-objc-bin %MINGWDIR%
@@ -482,12 +483,6 @@ if "%UNTAR%" == "1" (
 	REM copy "%TMPDIR%\dxva2api.h" "%MINGWDIR%\i686-pc-mingw32\include\dxva2api.h"
 	REM copy "%TMPDIR%\dxva2api.h" "%MINGWDIR%\x86_64-pc-mingw32\include\dxva2api.h"
 	REM copy "%TMPDIR%\dxva2api.h" "%MINGWDIR%\x86_64-w64-mingw32\include\dxva2api.h"
-	
-	rem .tar.gz requires custom handling
-	move mingw-make-bin.tar.lzma mingw-make-bin.tar.gz
-	7za -y x mingw-make-bin.tar.gz
-	7za -y "-o%MINGWDIR%" x make-3.81-20090914-mingw32-bin.tar
-	del make-3.81-20090914-mingw32-bin.tar
 	
 	rem .zip requires custom handling
 	move mingw-glib-dll.tar.lzma mingw-glib-dll.zip
@@ -548,6 +543,7 @@ if "%CLEAN%" == "1" (
 	REM del mingw-gcc-bin.7z
 	
 	call :clean msys-core-bin
+	call :clean msys-core-ext
 	call :clean msys-rxvt-bin
 	call :clean msys-bash-bin
 	call :clean msys-regex-dll
@@ -566,12 +562,10 @@ if "%CLEAN%" == "1" (
 	call :clean msys-unzip-bin
 	call :clean msys-zip-bin
 	call :clean msys-opts-dll
-	call :clean msys-opts-bin
 	call :clean msys-autogen-bin
 	call :clean msys-popt-bin
 	call :clean msys-cygutils-dos2unix-bin
 	call :clean msys-cygutils-bin
-	call :clean msys-unzip-bin
 	call :clean msys-patch-bin
 	call :clean msys-diffutils-bin
 	call :clean msys-grep-bin
@@ -667,7 +661,6 @@ if "%CLEAN%" == "1" (
 	
 	del dxva2api.h
 	
-	del mingw-make-bin.tar.gz
 	del mingw-glib-dll.zip
 	del mingw-pkg-config-bin.zip
 	
