@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Gtk+"
-	InheritedPropertySheets=".\Cairo.vsprops;.\Atk.vsprops"
+	InheritedPropertySheets=".\Cairo.vsprops;.\Pango.vsprops;.\Atk.vsprops"
 	>
 	<Tool
 		Name="VCCLCompilerTool"

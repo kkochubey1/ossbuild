@@ -865,6 +865,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gst-player", "Main\GStreame
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gst-player-start-stop", "Main\GStreamer\Windows\Build\Tests\gst-player-start-stop.vcproj", "{81001585-BA28-492B-9785-A9C1F4575449}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "seek", "Main\GStreamer\Windows\Build\Tests\seek.vcproj", "{E27662B0-B8EC-444F-80ED-591C90A024BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release (All)|Win32 = Release (All)|Win32
@@ -2396,6 +2398,12 @@ Global
 		{81001585-BA28-492B-9785-A9C1F4575449}.Release (All)|Win32.ActiveCfg = Release|Win32
 		{81001585-BA28-492B-9785-A9C1F4575449}.Release (GPL)|Win32.ActiveCfg = Release|Win32
 		{81001585-BA28-492B-9785-A9C1F4575449}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
+		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (All)|Win32.ActiveCfg = Release|Win32
+		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (All)|Win32.Build.0 = Release|Win32
+		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (GPL)|Win32.ActiveCfg = Release|Win32
+		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (GPL)|Win32.Build.0 = Release|Win32
+		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
+		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (LGPL)|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2726,5 +2734,6 @@ Global
 		{D987A73B-2C88-FC11-B627-27FD04F91104} = {19987483-5CBC-4EF3-8CF7-C2AF906F8A62}
 		{3AA4D055-E2DC-492F-8A93-162AE91FB9C1} = {19987483-5CBC-4EF3-8CF7-C2AF906F8A62}
 		{81001585-BA28-492B-9785-A9C1F4575449} = {19987483-5CBC-4EF3-8CF7-C2AF906F8A62}
+		{E27662B0-B8EC-444F-80ED-591C90A024BB} = {19987483-5CBC-4EF3-8CF7-C2AF906F8A62}
 	EndGlobalSection
 EndGlobal
