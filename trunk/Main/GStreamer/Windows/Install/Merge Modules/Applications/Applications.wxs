@@ -15,6 +15,7 @@
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gst-inspect.*\.exe" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gst-xmlinspect.*\.exe" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gst-typefind.*\.exe" />
+					<OSSBuild:Filter Include=".*\\[^\\]*.*gst-player.*\.exe" />
 				</OSSBuild:FillDirectory>
 			</Directory>
 		</Directory>

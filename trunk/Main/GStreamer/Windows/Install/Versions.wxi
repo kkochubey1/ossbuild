@@ -2,7 +2,7 @@
 
 <Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
 	
-	<?define OSSBUILD_VERSION="0.10.6" ?>
+	<?define OSSBUILD_VERSION="0.10.7" ?>
 	
 	<?define GST_VERSION="0.10" ?>
 

@@ -14,7 +14,7 @@ Requirements
               ./Clean-All-Windows-x86.sh
               ./Build-All-Windows-x86.sh
     2. Visual Studio 2008 or later
-    3. Windows Installer XML (WiX) 3.5 or later (http://wix.sourceforge.net/releases/3.5.1329.0/Wix35.msi)
+    3. Windows Installer XML (WiX) 3.5 or later (http://wix.sourceforge.net/releases/3.5.2013.0/Wix35.msi)
     4. Perl 5.10+
        a. Recommended ActiveState Perl (http://www.activestate.com/downloads/) on Windows
           1. Download the LibXML package 
