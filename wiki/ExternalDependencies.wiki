@@ -29,10 +29,11 @@ Each package is defined in the version.sh file (http://code.google.com/p/ossbuil
  * Build output: libraries are built using the the prefix $OSSBUILD\Build\$OS\$ARCH\Release\
 
 
-=== Visual Studio properties sheet ===
+=== Dependecies property sheet ===
 Each external dependency has a Visual Studio properties sheet. It defines:
  * The dependencies with other external dependencies (eg:Gtk depends on Cairo Pango and Atk and must their property sheets)
  * The include directories needed by to the compiler tool to find the headers
  * The imported libraries needed by the linker tool to link against this library
 
 === Tracking files ===
+Version information and the location where you can find the packages used is listed in a README.txt in the Libraries folder (http://code.google.com/p/ossbuild/source/browse/trunk/Libraries/Packages/ReadMe.txt)
