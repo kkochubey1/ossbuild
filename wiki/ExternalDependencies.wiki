@@ -15,7 +15,7 @@ Some libraries requires to be patched, because they don't build cleanly on a pla
 == Build scripts ==
 All the external dependencies are built using a shell script adapted for each platform. Those scripts are located at in the Libraries folder (http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Libraries) 
 
-=== Configuration files and helper scripts ===
+== Configuration files and helper scripts ==
 The build script uses several helper scripts, which can be found in the Scripts folder (http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Shared/Scripts)
 
 Each package is defined in the version.sh file (http://code.google.com/p/ossbuild/source/browse/trunk/Shared/Scripts/Version.sh). For each package two variables are defined:
