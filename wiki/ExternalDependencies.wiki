@@ -3,8 +3,6 @@
 
 GStreamer depends on many external libraries and since maintaining a MSVC build for all of them is overkill and goes out of the scope of OSSBuild, all of them are built with the GCC toolchain using msys/mingw, in the unix-like way. The interoperability of these libraries with the gstreamer's ones, built with the MSVC toolchain,s  iguaranteed using the same CRT, the old msvcrt.dll (http://en.wikipedia.org/wiki/Microsoft_Windows_library_files#Msvcrt.dll)
 
-
-
 = Build system structure =
 
 == Source tarballs and patches ==
@@ -38,5 +36,16 @@ Each external dependency has a Visual Studio properties sheet. It defines:
 Version information and the location where you can find the packages used is listed in a README.txt in the Libraries folder (http://code.google.com/p/ossbuild/source/browse/trunk/Libraries/Packages/ReadMe.txt)
 
 
-
 = Integrating external dependencies into OSSBuild =
+
+In this section, we will explain step by step how to integrate an external dependency using a practical case.
+
+***FIXME:
+ # Set-up environament (donwload mingw tarball and compile deps, might take 1~2 days)
+ # Add tarball
+ # Add info to README.txt 
+ # Add package to version.sh
+ # Edit Build-All-Windows-x86.sh
+ # run Build-All-Windows-x86.sh
+ # Create property sheet
+ # Prepare commit
