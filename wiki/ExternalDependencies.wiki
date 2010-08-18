@@ -24,9 +24,9 @@ Each package is defined in the version.sh file (http://code.google.com/p/ossbuil
  * PKG_DIR_NAME: sets the name of the output folder. This name must match with the name of the extraction folder of the package, which should be like name-$PKG_VER_NAME 
 
 === Output ===
-==== Sources ====
-==== Build folder ====
-==== Build output ====
+ * Sources: the sources are extracted in the folder $OSSBUILD\Libraries\Sources.
+ * Build folder: the package is built in the folder $OSSBUILD\Build\$OS\$ARCH\Release\obj, where $OS is the operative system (eg:Windows) and $ARCH is the architecture (eg:Win32)
+ * Build output: libraries are built using the the prefix $OSSBUILD\Build\$OS\$ARCH\Release\
 
 
 === Visual Studio import files ===
