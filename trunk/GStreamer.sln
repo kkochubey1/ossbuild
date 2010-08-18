@@ -2399,11 +2399,8 @@ Global
 		{81001585-BA28-492B-9785-A9C1F4575449}.Release (GPL)|Win32.ActiveCfg = Release|Win32
 		{81001585-BA28-492B-9785-A9C1F4575449}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
 		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (All)|Win32.ActiveCfg = Release|Win32
-		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (All)|Win32.Build.0 = Release|Win32
 		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (GPL)|Win32.ActiveCfg = Release|Win32
-		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (GPL)|Win32.Build.0 = Release|Win32
 		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
-		{E27662B0-B8EC-444F-80ED-591C90A024BB}.Release (LGPL)|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
