@@ -1,0 +1,34 @@
+#summary Guide to add external dependencies to the build system
+= Introduction =
+
+GStreamer depends on many external libraries and since maintaining a MSVC build for all of them is overkill and goes out of the scope of OSSBuild, all of them are built with the GCC toolchain using msys/mingw, in the unix-like way. The interoperability of these libraries with the gstreamer's ones, built with the MSVC toolchain,s  iguaranteed using the same CRT, the old msvcrt.dll (http://en.wikipedia.org/wiki/Microsoft_Windows_library_files#Msvcrt.dll)
+
+
+= Integrating external dependencies into OSSBuild =
+
+== Build system structure ==
+
+=== Source tarballs and patches ===
+The source tarballs are stored in the build system instead of using a link to the original source url, to help working offline. The tarballs are store in the Packages folder (http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Libraries/Packages)
+
+Some libraries requires to be patched, because they don't build cleanly on a platform or because they need special modifications for a speceific platform. Patches are stored in the Patches folder, in a subfolder with the same name as the library (http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Libraries/Patches)
+
+=== Build scripts ===
+All the external dependencies are built using a shell script adapted for each platform. Those scripts are located at in the Libraries folder (http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Libraries) 
+
+=== Configuration files and helper scripts ===
+The build script uses several helper scripts, which can be found in the Scripts folder (http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Shared/Scripts)
+
+Each package is defined in the version.sh file (http://code.google.com/p/ossbuild/source/browse/trunk/Shared/Scripts/Version.sh). For each package two variables are defined:
+ * PKG_VER_NAME: set the version to be build, where NAME is the name of the library
+ * PKG_DIR_NAME: sets the name of the output folder. This name must match with the name of the extraction folder of the package, which should be like name-$PKG_VER_NAME 
+
+=== Output ===
+==== Sources ====
+==== Build folder ====
+==== Build output ====
+
+
+=== Visual Studio import files ===
+
+=== Tracking files ===
