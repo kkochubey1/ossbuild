@@ -1,0 +1,10 @@
+--- autogen.sh.orig	2010-08-02 23:36:22.000000000 -0700
++++ autogen.sh	2010-08-02 23:36:41.000000000 -0700
+@@ -30,7 +30,7 @@
+ fi
+ 
+ 
+-CONFIGURE_DEF_OPT='--enable-maintainer-mode --enable-gtk-doc'
++CONFIGURE_DEF_OPT=''
+ 
+ autogen_options $@
