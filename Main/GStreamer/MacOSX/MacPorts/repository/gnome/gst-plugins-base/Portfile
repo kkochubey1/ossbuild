@@ -1,0 +1,68 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+
+name                gst-plugins-base
+version             0.10.29
+revision            1
+description         This is gst-plugins, a set of plug-ins for GStreamer.
+long_description    ${description}
+maintainers         rmsfisher openmaintainer
+categories          gnome
+platforms           darwin
+homepage            http://gstreamer.freedesktop.org/
+
+# port:liboil is not universal
+universal_variant   no
+
+use_bzip2           yes
+master_sites        gnome:sources/gst-plugins-base/0.10/ http://gstreamer.freedesktop.org/src/${name}/
+
+checksums           md5     d07e251152cccbaa81807c14cf0fd8c0 \
+                    sha1    22a96d2d4dfbd3c980e3337db6e6c1d06fb0841a \
+                    rmd160  7ade1abdd56201fb10c4e19f3507f91298b760e7
+
+depends_lib	\
+    port:gstreamer \
+    port:gnome-vfs \
+    port:liboil \
+    port:libogg \
+    port:libtheora \
+    port:libvorbis
+
+use_autoreconf      yes
+autoreconf.args     -fvi
+
+configure.args \
+    --enable-experimental \
+    --disable-libvisual\
+    --disable-gst_v4l \
+    --disable-alsa \
+    --disable-cdparanoia
+
+variant no_x11 {
+    configure.args-append --without-x --disable-x --disable-xvideo --disable-xshm
+}
+
+# users of qt4-x11, which depends on gst-plugins-base but has no use for its
+# deeper gnome-related dependencies may wish to use this variant
+variant no_gnome_vfs description {Remove library dependency on gnome-vfs} {
+    depends_lib-delete port:gnome-vfs
+    configure.args-append --disable-gnome_vfs
+}
+
+#
+# current cdparanoia port (cdparanoia III 10.2) appears to not be API compatible
+# with gst-plugins-base.  See #19843. 
+# disable by default until this is rectified.
+#
+
+variant cdparanoia description {Enable (currently broken) cdparanoia plugin} {
+    depends_lib-append port:cdparanoia
+    configure.args-delete --disable-cdparanoia
+}
+
+livecheck.type      regex
+livecheck.url       http://gstreamer.freedesktop.org/src/${name}/
+livecheck.regex     "${name}-(\\d+(?:\\.\\d+)*)${extract.suffix}"
