@@ -1,4 +1,4 @@
-#summary Guide to add external dependencies to the build system
+#summary Guide to adding external dependencies to the build system
 = Introduction =
 
 GStreamer depends on many external libraries and since maintaining a MSVC build for all of them is overkill and goes out of OSSBuild's scope, all of them are built with the GCC toolchain using msys/mingw, in a unix-like way. The interoperability of these libraries with gstreamer's, built with MSVC, is guaranteed by using the same C runtime: msvcrt.dll (http://en.wikipedia.org/wiki/Microsoft_Windows_library_files#Msvcrt.dll).
