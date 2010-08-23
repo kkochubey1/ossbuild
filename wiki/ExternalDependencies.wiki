@@ -1,44 +1,44 @@
 #summary Guide to add external dependencies to the build system
 = Introduction =
 
-GStreamer depends on many external libraries and since maintaining a MSVC build for all of them is overkill and goes out of the scope of OSSBuild, all of them are built with the GCC toolchain using msys/mingw, in the unix-like way. The interoperability of these libraries with the gstreamer's ones, built with the MSVC toolchain,s  iguaranteed using the same CRT, the old msvcrt.dll (http://en.wikipedia.org/wiki/Microsoft_Windows_library_files#Msvcrt.dll)
+GStreamer depends on many external libraries and since maintaining a MSVC build for all of them is overkill and goes out of OSSBuild's scope, all of them are built with the GCC toolchain using msys/mingw, in a unix-like way. The interoperability of these libraries with gstreamer's, built with MSVC, is guaranteed by using the same C runtime: msvcrt.dll (http://en.wikipedia.org/wiki/Microsoft_Windows_library_files#Msvcrt.dll).
 
 = Build system structure =
 
 == Source tarballs and patches ==
-The source tarballs are stored in the build system instead of using a link to the original source url, to help working offline. The tarballs are store in the Packages folder (http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Libraries/Packages)
+The source tarballs are stored in the build system instead of using a link to the original source url, to aid in working offline and to maintain all source for releases in-tree. The tarballs are stored in the $OSSBUILD/Libraries/Packages/ folder: http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Libraries/Packages .
 
-Some libraries requires to be patched, because they don't build cleanly on a platform or because they need special modifications for a speceific platform. Patches are stored in the Patches folder, in a subfolder with the same name as the library (http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Libraries/Patches)
+Some libraries require patches because they don't build cleanly on a platform or because they need special modifications for a speceific platform. Patches are stored in the $OSSBUILD/Libraries/Patches/ folder, in a subfolder with the same name as the library: http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Libraries/Patches .
 
 == Build scripts ==
-All the external dependencies are built using a shell script adapted for each platform. Those scripts are located at in the Libraries folder (http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Libraries) 
+All external dependencies are built using a platform-specific shell script. These scripts are located in the $OSSBUILD/Libraries/ folder: http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Libraries .
 
 == Configuration files and helper scripts ==
-The build script uses several helper scripts, which can be found in the Scripts folder (http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Shared/Scripts)
+The build script uses several helper scripts, which can be found in the Shared/Scripts/: folder: http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Shared/Scripts .
 
-Each package is defined in the version.sh file (http://code.google.com/p/ossbuild/source/browse/trunk/Shared/Scripts/Version.sh). For each package two variables are defined:
- * PKG_VER_NAME: set the version to be build, where NAME is the name of the library
- * PKG_DIR_NAME: sets the name of the output folder. This name must match with the name of the extraction folder of the package, which should be like name-$PKG_VER_NAME 
+Each package is defined in the version.sh file: http://code.google.com/p/ossbuild/source/browse/trunk/Shared/Scripts/Version.sh . For each package, two variables are defined:
+ * PKG_VER_NAME: The version to be build, where NAME is the name of the library.
+ * PKG_DIR_NAME: The name of the output folder. This name must match the name of the package's extraction folder, which should resemble "name-$PKG_VER_NAME".
 
 == Output ==
- * Sources: the sources are extracted in the folder $OSSBUILD\Libraries\Sources.
- * Build folder: the package is built in the folder $OSSBUILD\Build\$OS\$ARCH\Release\obj, where $OS is the operative system (eg:Windows) and $ARCH is the architecture (eg:Win32)
- * Build output: libraries are built using the the prefix $OSSBUILD\Build\$OS\$ARCH\Release\
+ * Source: Source code is extracted to the folder $OSSBUILD/Libraries/Sources/.
+ * Build folder: Packages are built in the folder $OSSBUILD/Build/$OS/$ARCH/Release/obj/, where $OS is the operating system (e.g.: Windows) and $ARCH is the architecture (e.g.: Win32).
+ * Build output: Libraries are built using the the prefix $OSSBUILD/Build/$OS/$ARCH/Release/.
 
 
 == Dependecies property sheet ==
-Each external dependency has a Visual Studio properties sheet. It defines:
- * The dependencies with other external dependencies (eg:Gtk depends on Cairo Pango and Atk and must their property sheets)
- * The include directories needed by to the compiler tool to find the headers
- * The imported libraries needed by the linker tool to link against this library
+Each external dependency has a Visual C++ properties sheet. Each includes:
+ * Other external dependencies (e.g.: Gtk depends on Cairo, Pango, and ATK and must reference their property sheet).
+ * Include directories needed by to the compiler tool to find the headers.
+ * Imported libraries needed by the linker tool to link against it
 
 == Tracking files ==
-Version information and the location where you can find the packages used is listed in a README.txt in the Libraries folder (http://code.google.com/p/ossbuild/source/browse/trunk/Libraries/Packages/ReadMe.txt)
+Version information and the location where you can find the packages used is listed in a README.txt in the $OSSBUILD/Libraries/ folder: http://code.google.com/p/ossbuild/source/browse/trunk/Libraries/Packages/ReadMe.txt .
 
 
 = Integrating external dependencies into OSSBuild =
 
-In this section, we will explain step by step how to integrate an external dependency using a practical case.
+In this section, we'll explain step-by-step how to integrate an external dependency by the use of a practical and straight-forward example.
 
 ***FIXME:
  # Set-up environament (donwload mingw tarball and compile deps, might take 1~2 days)
