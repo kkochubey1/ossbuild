@@ -22,6 +22,7 @@
 gst_init
 gst_init_check
 gst_init_get_option_group
+gst_is_initialized
 gst_deinit
 gst_version
 gst_version_string
@@ -1046,6 +1047,7 @@ gst_debug_color_flags_get_type
 gst_debug_level_get_type
 gst_debug_graph_details_get_type
 M_PI
+GST_CAT_LEVEL_LOG_valist
 </SECTION>
 
 
@@ -2085,6 +2087,7 @@ gst_structure_get_fourcc
 gst_structure_get_double
 gst_structure_get_string
 gst_structure_get_date
+gst_structure_get_date_time
 gst_structure_get_clock_time
 gst_structure_get_enum
 gst_structure_get_fraction
@@ -2145,6 +2148,7 @@ GST_TAG_ALBUM_SORTNAME
 GST_TAG_ALBUM_ARTIST
 GST_TAG_ALBUM_ARTIST_SORTNAME
 GST_TAG_DATE
+GST_TAG_DATE_TIME
 GST_TAG_GENRE
 GST_TAG_COMMENT
 GST_TAG_EXTENDED_COMMENT
@@ -2209,6 +2213,7 @@ GST_TAG_GROUPING
 GST_TAG_USER_RATING
 GST_TAG_DEVICE_MANUFACTURER
 GST_TAG_DEVICE_MODEL
+GST_TAG_APPLICATION_NAME
 GST_TAG_IMAGE_ORIENTATION
 
 gst_tag_register
@@ -2268,6 +2273,8 @@ gst_tag_list_get_pointer
 gst_tag_list_get_pointer_index
 gst_tag_list_get_date
 gst_tag_list_get_date_index
+gst_tag_list_get_date_time
+gst_tag_list_get_date_time_index
 gst_tag_list_get_buffer
 gst_tag_list_get_buffer_index
 <SUBSECTION Standard>
@@ -2585,6 +2592,28 @@ gst_search_mode_get_type
 </SECTION>
 
 <SECTION>
+<FILE>gstdatetime</FILE>
+<TITLE>GstDateTime</TITLE>
+GstDateTime
+GST_TYPE_DATE_TIME
+gst_date_time_get_day
+gst_date_time_get_month
+gst_date_time_get_hour
+gst_date_time_get_microsecond
+gst_date_time_get_minute
+gst_date_time_get_time_zone_offset
+gst_date_time_get_second
+gst_date_time_get_year
+gst_date_time_new
+gst_date_time_new_from_unix_epoch
+gst_date_time_new_local_time
+gst_date_time_new_now_local_time
+gst_date_time_new_now_utc
+gst_date_time_ref
+gst_date_time_unref
+</SECTION>
+
+<SECTION>
 <FILE>gstvalue</FILE>
 <TITLE>GstValue</TITLE>
 
@@ -2646,6 +2675,9 @@ GST_TYPE_DATE
 gst_value_set_date
 gst_value_get_date
 
+<SUBSECTION datetime>
+GST_VALUE_HOLDS_DATE_TIME
+
 <SUBSECTION caps>
 GST_VALUE_HOLDS_CAPS
 gst_value_set_caps
@@ -2702,6 +2734,7 @@ gst_value_array_prepend_value
 
 <SUBSECTION Private>
 gst_date_get_type
+gst_date_time_get_type
 gst_double_range_get_type
 gst_fourcc_get_type
 gst_fraction_get_type
