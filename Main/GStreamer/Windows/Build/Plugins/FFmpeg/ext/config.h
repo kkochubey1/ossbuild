@@ -4,7 +4,7 @@
 #undef AC_APPLE_UNIVERSAL_BUILD
 
 /* Describes where the FFmpeg libraries come from. */
-#define FFMPEG_SOURCE "http://ffmpeg.org/releases/ffmpeg-0.5.tar.bz2"
+#define FFMPEG_SOURCE "http://ffmpeg.org/releases/ffmpeg-0.6.tar.bz2"
 
 /* Default errorlevel to use */
 #undef GST_LEVEL_DEFAULT
@@ -119,13 +119,13 @@
 #define PACKAGE_NAME "GStreamer FFmpeg"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GStreamer FFmpeg 0.10.8"
+#define PACKAGE_STRING "GStreamer FFmpeg 0.10.11"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gst-ffmpeg"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.10.8"
+#define PACKAGE_VERSION "0.10.11"
 
 /* directory where plugins are located */
 #define PLUGINDIR "\\lib\\gstreamer-0.10"
