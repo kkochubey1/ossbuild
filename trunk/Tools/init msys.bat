@@ -54,7 +54,8 @@ set PKG_STRAWBERRY_PERL_BIN=http://strawberryperl.com/download/strawberry-perl-5
 
 set MINGW_GET=http://downloads.sourceforge.net/project/mingw/Automated MinGW Installer/mingw-get/mingw-get-0.1-mingw32-alpha-2-bin.tar.gz?use_mirror=softlayer
 
-set PKG_MSYS_CORE_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/msys-core/msys-1.0.15-1/msysCORE-1.0.15-1-msys-1.0.15-dev.tar.lzma?use_mirror=iweb
+set PKG_MSYS_CORE_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/msys-core/msys-1.0.15-1/msysCORE-1.0.15-1-msys-1.0.15-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_CORE_DEV=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/msys-core/msys-1.0.15-1/msysCORE-1.0.15-1-msys-1.0.15-dev.tar.lzma?use_mirror=iweb
 set PKG_MSYS_CORE_EXT=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/msys-core/msys-1.0.15-1/msysCORE-1.0.15-1-msys-1.0.15-ext.tar.lzma?use_mirror=iweb
 set PKG_MSYS_RXVT_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/rxvt/rxvt-2.7.2-3/rxvt-2.7.2-3-msys-1.0.14-bin.tar.lzma?use_mirror=iweb
 set PKG_MSYS_BASH_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/bash/bash-3.1.17-3/bash-3.1.17-3-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
@@ -112,6 +113,10 @@ set PKG_MSYS_MKTEMP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/mkte
 set PKG_MSYS_GAWK_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/gawk/gawk-3.1.7-2/gawk-3.1.7-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
 set PKG_MSYS_LIBGCC_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/libgcc-4.5.0-1-mingw32-dll-1.tar.lzma?use_mirror=iweb
 set PKG_MSYS_FLIP_BIN=https://ccrma.stanford.edu/~craig/utility/flip/flip.exe
+set PKG_MSYS_TEXINFO_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/texinfo/texinfo-4.13a-2/texinfo-4.13a-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
+set PKG_MSYS_TEXINFO_LANG=http://downloads.sourceforge.net/project/mingw/MSYS/texinfo/texinfo-4.13a-2/texinfo-4.13a-2-msys-1.0.13-lang.tar.lzma?use_mirror=voxel
+set PKG_MSYS_XZ_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/xz/xz-4.999.9beta_20100401-1/xz-4.999.9beta_20100401-1-msys-1.0.13-bin.tar.gz?use_mirror=voxel
+set PKG_MSYS_LZMA_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/xz/xz-4.999.9beta_20100401-1/liblzma-4.999.9beta_20100401-1-msys-1.0.13-dll-1.tar.gz?use_mirror=voxel
 
 set PKG_MINGW_BASICBSDTAR_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/Utilities/basic bsdtar/basic-bsdtar-2.8.3-1/basic-bsdtar-2.8.3-1-mingw32-bin.tar.lzma?use_mirror=iweb
 set PKG_MINGW_AUTOCONF_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/autoconf2.5/autoconf2.5-2.64-1/autoconf2.5-2.64-1-mingw32-bin.tar.lzma?use_mirror=voxel
@@ -132,7 +137,7 @@ set PKG_MINGW_GETTEXT_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/g
 set PKG_MINGW_LIBCHARSET_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libiconv/libiconv-1.13.1-1/libcharset-1.13.1-1-mingw32-dll-1.tar.lzma?use_mirror=iweb
 set PKG_MINGW_LIBICONV_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libiconv/libiconv-1.13.1-1/libiconv-1.13.1-1-mingw32-dll-2.tar.lzma?use_mirror=iweb
 set PKG_MINGW_LIBICONV_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/libiconv/libiconv-1.13.1-1/libiconv-1.13.1-1-mingw32-bin.tar.lzma?use_mirror=iweb
-set PKG_MINGW_MAKE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/make/make-3.82-mingw32/make-3.82-2-mingw32-bin.tar.lzma?use_mirror=iweb
+set PKG_MINGW_MAKE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/make/make-3.82-mingw32/make-3.82-3-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_GCC_CORE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/gcc-core-4.5.0-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_GCC_CPP_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/gcc-c++-4.5.0-1-mingw32-bin.tar.lzma?use_mirror=iweb
 set PKG_MINGW_GCC_OBJC_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/gcc-objc-4.5.0-1-mingw32-bin.tar.lzma?use_mirror=voxel
@@ -151,6 +156,9 @@ set PKG_MINGW_LIBMPC_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/mp
 set PKG_MINGW_MINGWRT_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/MinGW-RT/mingwrt-3.18/mingwrt-3.18-mingw32-dll.tar.gz?use_mirror=voxel
 set PKG_MINGW_GLIB_DLL=http://ftp.gnome.org/pub/gnome/binaries/win32/glib/2.24/glib_2.24.0-2_win32.zip
 set PKG_MINGW_PKGCONFIG_BIN=http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/pkg-config_0.23-3_win32.zip
+
+set PKG_SYSINTERNALS_JUNCTION_BIN=http://download.sysinternals.com/Files/Junction.zip
+
 
 set PATH=%TMPDIR%\bin;%TOOLSDIR%;%PATH%
 
@@ -213,6 +221,7 @@ if "%DOWNLOAD%" == "1" (
 	REM call :download mingw-gcc-bin %GCC%
 	
 	call :download msys-core-bin "%PKG_MSYS_CORE_BIN%"
+	call :download msys-core-dev "%PKG_MSYS_CORE_DEV%"
 	call :download msys-core-ext "%PKG_MSYS_CORE_EXT%"
 	call :download msys-rxvt-bin "%PKG_MSYS_RXVT_BIN%"
 	call :download msys-bash-bin "%PKG_MSYS_BASH_BIN%"
@@ -269,6 +278,10 @@ if "%DOWNLOAD%" == "1" (
 	call :download msys-gawk-bin "%PKG_MSYS_GAWK_BIN%"
 	call :download msys-libgcc-dll "%PKG_MSYS_LIBGCC_DLL%"
 	call :download msys-flip-bin "%PKG_MSYS_FLIP_BIN%"
+	call :download msys-texinfo-bin "%PKG_MSYS_TEXINFO_BIN%"
+	call :download msys-texinfo-lang "%PKG_MSYS_TEXINFO_LANG%"
+	call :download msys-xz-bin "%PKG_MSYS_XZ_BIN%"
+	call :download msys-lzma-dll "%PKG_MSYS_LZMA_DLL%"
 	
 	call :download mingw-basicbsdtar-bin "%PKG_MINGW_BASICBSDTAR_BIN%"
 	call :download mingw-autoconf-bin "%PKG_MINGW_AUTOCONF_BIN%"
@@ -308,6 +321,8 @@ if "%DOWNLOAD%" == "1" (
 	REM call :download mingw-pthreads-dll "%PKG_MINGW_PTHREADS_DLL%"
 	REM call :download mingw-libmpc-dll "%PKG_MINGW_LIBMPC_DLL%"
 	REM call :download mingw-mingwrt-dll "%PKG_MINGW_MINGWRT_DLL%"
+	
+	call :download sysinternals-junction-bin "%PKG_SYSINTERNALS_JUNCTION_BIN%"
 	
 	rem Download DXVA2 for use by FFmpeg AVHWAccel API
 	wget --no-check-certificate -O dxva2api.h "http://downloads.videolan.org/pub/videolan/testing/contrib/dxva2api.h"
@@ -382,6 +397,7 @@ if "%UNTAR%" == "1" (
 	REM cd ..
 	
 	call :extract msys-core-bin %MSYSDIR%
+	call :extract msys-core-dev %MSYSDIR%
 	call :extract msys-core-ext %MSYSDIR%
 	call :extract msys-rxvt-bin %MSYSDIR%
 	call :extract msys-bash-bin %MSYSDIR%
@@ -437,6 +453,10 @@ if "%UNTAR%" == "1" (
 	call :extract msys-mktemp-bin %MSYSDIR%
 	call :extract msys-gawk-bin %MSYSDIR%
 	call :extract msys-libgcc-dll %MSYSDIR%
+	call :extract msys-texinfo-bin %MSYSDIR%
+	call :extract msys-texinfo-lang %MSYSDIR%
+	call :extract msys-xz-bin %MSYSDIR%
+	call :extract msys-lzma-dll %MSYSDIR%
 	
 	rem It's a straight up executable from a website
 	move msys-flip-bin.tar.lzma "%MSYSDIR%\bin\flip.exe"
@@ -491,6 +511,9 @@ if "%UNTAR%" == "1" (
 	move mingw-pkg-config-bin.tar.lzma mingw-pkg-config-bin.zip
 	7za -y "-o%MINGWDIR%" x mingw-pkg-config-bin.zip
 	
+	move sysinternals-junction-bin.tar.lzma sysinternals-junction-bin.zip
+	7za -y "-o%MSYSDIR%\bin" x sysinternals-junction-bin.zip
+	
 	rem TDM gcc (mingw version)
 	REM call :extract tdm-gcc-mingw-core-bin %MINGWDIR%
 	REM call :extract tdm-gcc-mingw-binutils-bin %MINGWDIR%
@@ -543,6 +566,7 @@ if "%CLEAN%" == "1" (
 	REM del mingw-gcc-bin.7z
 	
 	call :clean msys-core-bin
+	call :clean msys-core-dev
 	call :clean msys-core-ext
 	call :clean msys-rxvt-bin
 	call :clean msys-bash-bin
@@ -598,6 +622,10 @@ if "%CLEAN%" == "1" (
 	call :clean msys-mktemp-bin
 	call :clean msys-gawk-bin
 	call :clean msys-libgcc-dll
+	call :clean msys-texinfo-bin
+	call :clean msys-texinfo-lang
+	call :clean msys-xz-bin
+	call :clean msys-lzma-dll
 	
 	call :clean mingw-basicbsdtar-bin
 	call :clean mingw-autoconf-bin
