@@ -9,6 +9,8 @@ set DOWNLOAD=1
 set UNTAR=1
 set CLEAN=1
 
+set GCCBUILD=0
+
 set DIR=%~dp0.
 set CURRDIR=%CD%
 set TOPDIR=%DIR%\..
@@ -19,6 +21,10 @@ set MSYSDIR=%TOOLSDIR%\msys
 set MINGWDIR=%MSYSDIR%\mingw
 set DEST_MSYS_DIR=%MSYSDIR%
 set MINGW_GET_DEFAULTS=%TMPDIR%\var\lib\mingw-get\data\defaults.xml
+
+if /i "%1" equ "GCCBUILD" (
+	set GCCBUILD=1
+)
 
 rem set GCCDIR=cross-mingw.gcc444.generic.20100612
 rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc444.generic.20100612.7z
@@ -110,7 +116,7 @@ set PKG_MSYS_MAKE_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/make/m
 set PKG_MSYS_LOCATE_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/findutils/findutils-4.4.2-2/locate-4.4.2-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_FINDUTILS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/findutils/findutils-4.4.2-2/findutils-4.4.2-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_MKTEMP_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/mktemp/mktemp-1.6-2/mktemp-1.6-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
-set PKG_MSYS_GAWK_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/gawk/gawk-3.1.7-2/gawk-3.1.7-2-msys-1.0.13-bin.tar.lzma?use_mirror=iweb
+set PKG_MSYS_GAWK_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/gawk/gawk-3.1.7-2/gawk-3.1.7-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 set PKG_MSYS_LIBGCC_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GCC/Version4/gcc-4.5.0-1/libgcc-4.5.0-1-mingw32-dll-1.tar.lzma?use_mirror=iweb
 set PKG_MSYS_FLIP_BIN=https://ccrma.stanford.edu/~craig/utility/flip/flip.exe
 set PKG_MSYS_TEXINFO_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/texinfo/texinfo-4.13a-2/texinfo-4.13a-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
@@ -154,8 +160,10 @@ set PKG_MINGW_LIBMPFR_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/m
 set PKG_MINGW_PTHREADS_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/pthreads-w32/pthreads-w32-2.8.0-3/libpthread-2.8.0-3-mingw32-dll-2.tar.lzma?use_mirror=voxel
 set PKG_MINGW_LIBMPC_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/mpc/mpc-0.8.1-1/libmpc-0.8.1-1-mingw32-dll-2.tar.lzma?use_mirror=softlayer
 set PKG_MINGW_MINGWRT_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/MinGW-RT/mingwrt-3.18/mingwrt-3.18-mingw32-dll.tar.gz?use_mirror=voxel
+set PKG_MINGW_MINGWRT_DEV=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/RuntimeLibrary/MinGW-RT/mingwrt-3.18/mingwrt-3.18-mingw32-dev.tar.gz?use_mirror=voxel
 set PKG_MINGW_GLIB_DLL=http://ftp.gnome.org/pub/gnome/binaries/win32/glib/2.24/glib_2.24.0-2_win32.zip
 set PKG_MINGW_PKGCONFIG_BIN=http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/pkg-config_0.23-3_win32.zip
+set PKG_MINGW_GDB_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GDB/GDB-7.1/gdb-7.1-2-mingw32-bin.tar.gz?use_mirror=voxel
 
 set PKG_SYSINTERNALS_JUNCTION_BIN=http://download.sysinternals.com/Files/Junction.zip
 
@@ -305,22 +313,7 @@ if "%DOWNLOAD%" == "1" (
 	call :download mingw-libcharset-dll "%PKG_MINGW_LIBCHARSET_DLL%"
 	call :download mingw-libiconv-dll "%PKG_MINGW_LIBICONV_DLL%"
 	call :download mingw-libiconv-bin "%PKG_MINGW_LIBICONV_BIN%"
-	REM call :download mingw-gcc-core-bin "%PKG_MINGW_GCC_CORE_BIN%"
-	REM call :download mingw-gcc-cpp-bin "%PKG_MINGW_GCC_CPP_BIN%"
-	REM call :download mingw-gcc-objc-bin "%PKG_MINGW_GCC_OBJC_BIN%"
-	REM call :download mingw-libgnat-dll "%PKG_MINGW_LIBGNAT_DLL%"
-	REM call :download mingw-libgomp-dll "%PKG_MINGW_LIBGOMP_DLL%"
-	REM call :download mingw-libgcc-dll "%PKG_MINGW_LIBGCC_DLL%"
-	REM call :download mingw-libstdcpp-dll "%PKG_MINGW_LIBSTDCPP_DLL%"
-	REM call :download mingw-libobjc-dll "%PKG_MINGW_LIBOBJC_DLL%"
-	REM call :download mingw-libssp-dll "%PKG_MINGW_LIBSSP_DLL%"
-	REM call :download mingw-binutils-bin "%PKG_MINGW_BINUTILS_BIN%"
-	REM call :download mingw-w32api-dev "%PKG_MINGW_W32API_DEV%"
-	REM call :download mingw-libgmp-dll "%PKG_MINGW_LIBGMP_DLL%"
-	REM call :download mingw-libmpfr-dll "%PKG_MINGW_LIBMPFR_DLL%"
-	REM call :download mingw-pthreads-dll "%PKG_MINGW_PTHREADS_DLL%"
-	REM call :download mingw-libmpc-dll "%PKG_MINGW_LIBMPC_DLL%"
-	REM call :download mingw-mingwrt-dll "%PKG_MINGW_MINGWRT_DLL%"
+	call :download mingw-gdb-bin "%PKG_MINGW_GDB_BIN%"
 	
 	call :download sysinternals-junction-bin "%PKG_SYSINTERNALS_JUNCTION_BIN%"
 	
@@ -331,30 +324,52 @@ if "%DOWNLOAD%" == "1" (
 	rem wget --no-check-certificate -O perl.zip "%PKG_STRAWBERRY_PERL_BIN%"
 	
 	rem Get msysGit which has a newer version of perl
-	wget --no-check-certificate -O git.7z "%PKG_MSYSGIT_BIN%"
+	if "%GCCBUILD%" neq "1" (
+		wget --no-check-certificate -O git.7z "%PKG_MSYSGIT_BIN%"
+	)
 	
 	rem Get activestate perl
 	wget --no-check-certificate -O perl.zip "%PKG_ACTIVESTATE_PERL_BIN%"
 	
-	rem Get MinGW-w64 gcc
-	REM wget --no-check-certificate -O gcc-x86.zip "%PKG_MINGW_W64_GCC_X86_BIN%"
-	REM wget --no-check-certificate -O gcc-x86_64.zip "%PKG_MINGW_W64_GCC_X86_64_BIN%"
-	
-	rem Get TDM gcc (mingw version)
-	REM call :download tdm-gcc-mingw-core-bin "%PKG_TDM_GCC_MINGW_CORE_BIN%"
-	REM call :download tdm-gcc-mingw-binutils-bin "%PKG_TDM_GCC_MINGW_BINUTILS_BIN%"
-	REM call :download tdm-gcc-mingw-mingwrt-dev "%PKG_TDM_GCC_MINGW_MINGWRT_DEV%"
-	REM call :download tdm-gcc-mingw-mingwrt-dll "%PKG_TDM_GCC_MINGW_MINGWRT_DLL%"
-	REM call :download tdm-gcc-mingw-w32api-dev "%PKG_TDM_GCC_MINGW_W32API_DEV%"
-	REM call :download tdm-gcc-mingw-cpp-bin "%PKG_TDM_GCC_MINGW_CPP_BIN%"
-	REM call :download tdm-gcc-mingw-objc-bin "%PKG_TDM_GCC_MINGW_OBJC_BIN%"
-	
-	rem Get TDM gcc (mingw-w64 version)
-	call :download tdm-gcc-mingw64-core-bin "%PKG_TDM_GCC_MINGW64_CORE_BIN%"
-	call :download tdm-gcc-mingw64-binutils-bin "%PKG_TDM_GCC_MINGW64_BINUTILS_BIN%"
-	call :download tdm-gcc-mingw64-mingwrt-runtime "%PKG_TDM_GCC_MINGW64_MINGWRT_RUNTIME%"
-	call :download tdm-gcc-mingw64-cpp-bin "%PKG_TDM_GCC_MINGW64_CPP_BIN%"
-	call :download tdm-gcc-mingw64-objc-bin "%PKG_TDM_GCC_MINGW64_OBJC_BIN%"
+	if "%GCCBUILD%" == "1" (
+		call :download mingw-gcc-core-bin "%PKG_MINGW_GCC_CORE_BIN%"
+		call :download mingw-gcc-cpp-bin "%PKG_MINGW_GCC_CPP_BIN%"
+		call :download mingw-gcc-objc-bin "%PKG_MINGW_GCC_OBJC_BIN%"
+		call :download mingw-libgnat-dll "%PKG_MINGW_LIBGNAT_DLL%"
+		call :download mingw-libgomp-dll "%PKG_MINGW_LIBGOMP_DLL%"
+		call :download mingw-libgcc-dll "%PKG_MINGW_LIBGCC_DLL%"
+		call :download mingw-libstdcpp-dll "%PKG_MINGW_LIBSTDCPP_DLL%"
+		call :download mingw-libobjc-dll "%PKG_MINGW_LIBOBJC_DLL%"
+		call :download mingw-libssp-dll "%PKG_MINGW_LIBSSP_DLL%"
+		call :download mingw-binutils-bin "%PKG_MINGW_BINUTILS_BIN%"
+		call :download mingw-w32api-dev "%PKG_MINGW_W32API_DEV%"
+		call :download mingw-libgmp-dll "%PKG_MINGW_LIBGMP_DLL%"
+		call :download mingw-libmpfr-dll "%PKG_MINGW_LIBMPFR_DLL%"
+		call :download mingw-pthreads-dll "%PKG_MINGW_PTHREADS_DLL%"
+		call :download mingw-libmpc-dll "%PKG_MINGW_LIBMPC_DLL%"
+		call :download mingw-mingwrt-dll "%PKG_MINGW_MINGWRT_DLL%"
+		call :download mingw-mingwrt-dev "%PKG_MINGW_MINGWRT_DEV%"
+	) else (
+		rem Get MinGW-w64 gcc
+		REM wget --no-check-certificate -O gcc-x86.zip "%PKG_MINGW_W64_GCC_X86_BIN%"
+		REM wget --no-check-certificate -O gcc-x86_64.zip "%PKG_MINGW_W64_GCC_X86_64_BIN%"
+		
+		rem Get TDM gcc (mingw version)
+		REM call :download tdm-gcc-mingw-core-bin "%PKG_TDM_GCC_MINGW_CORE_BIN%"
+		REM call :download tdm-gcc-mingw-binutils-bin "%PKG_TDM_GCC_MINGW_BINUTILS_BIN%"
+		REM call :download tdm-gcc-mingw-mingwrt-dev "%PKG_TDM_GCC_MINGW_MINGWRT_DEV%"
+		REM call :download tdm-gcc-mingw-mingwrt-dll "%PKG_TDM_GCC_MINGW_MINGWRT_DLL%"
+		REM call :download tdm-gcc-mingw-w32api-dev "%PKG_TDM_GCC_MINGW_W32API_DEV%"
+		REM call :download tdm-gcc-mingw-cpp-bin "%PKG_TDM_GCC_MINGW_CPP_BIN%"
+		REM call :download tdm-gcc-mingw-objc-bin "%PKG_TDM_GCC_MINGW_OBJC_BIN%"
+		
+		rem Get TDM gcc (mingw-w64 version)
+		call :download tdm-gcc-mingw64-core-bin "%PKG_TDM_GCC_MINGW64_CORE_BIN%"
+		call :download tdm-gcc-mingw64-binutils-bin "%PKG_TDM_GCC_MINGW64_BINUTILS_BIN%"
+		call :download tdm-gcc-mingw64-mingwrt-runtime "%PKG_TDM_GCC_MINGW64_MINGWRT_RUNTIME%"
+		call :download tdm-gcc-mingw64-cpp-bin "%PKG_TDM_GCC_MINGW64_CPP_BIN%"
+		call :download tdm-gcc-mingw64-objc-bin "%PKG_TDM_GCC_MINGW64_OBJC_BIN%"
+	)
 	
 	cd /d "%MSYSDIR%"
 )
@@ -379,8 +394,10 @@ if "%UNTAR%" == "1" (
 	rem "%TOOLSDIR%\rm" -rf "%TMPDIR%\perl\"
 	rem cd /d "%TMPDIR%"
 	
-	rem Get git commands + newer version of perl
-	7za -y "-o%MSYSDIR%" x git.7z
+	if "%GCCBUILD%" neq "1" (
+		rem Get git commands + newer version of perl
+		7za -y "-o%MSYSDIR%" x git.7z
+	)
 	
 	rem Install activestate perl
 	7za -y "-o%TMPDIR%" x perl.zip
@@ -481,22 +498,7 @@ if "%UNTAR%" == "1" (
 	call :extract mingw-libiconv-dll %MINGWDIR%
 	call :extract mingw-libiconv-bin %MINGWDIR%
 	call :extract mingw-make-bin %MINGWDIR%
-	REM call :extract mingw-gcc-core-bin %MINGWDIR%
-	REM call :extract mingw-gcc-cpp-bin %MINGWDIR%
-	REM call :extract mingw-gcc-objc-bin %MINGWDIR%
-	REM call :extract mingw-libgnat-dll %MINGWDIR%
-	REM call :extract mingw-libgomp-dll %MINGWDIR%
-	REM call :extract mingw-libgcc-dll %MINGWDIR%
-	REM call :extract mingw-libstdcpp-dll %MINGWDIR%
-	REM call :extract mingw-libobjc-dll %MINGWDIR%
-	REM call :extract mingw-libssp-dll %MINGWDIR%
-	REM call :extract mingw-binutils-bin %MINGWDIR%
-	REM call :extract mingw-w32api-dev %MINGWDIR%
-	REM call :extract mingw-libgmp-dll %MINGWDIR%
-	REM call :extract mingw-libmpfr-dll %MINGWDIR%
-	REM call :extract mingw-pthreads-dll %MINGWDIR%
-	REM call :extract mingw-libmpc-dll %MINGWDIR%
-	REM call :extract mingw-mingwrt-dll %MINGWDIR%
+	call :extract mingw-gdb-bin %MINGWDIR%
 	
 	rem Copy these headers so FFmpeg can pick up hardware-accelerated decoding through DirectX
 	rem Not ready yet in mingw-w64, works for mingw32
@@ -514,48 +516,68 @@ if "%UNTAR%" == "1" (
 	move sysinternals-junction-bin.tar.lzma sysinternals-junction-bin.zip
 	7za -y "-o%MSYSDIR%\bin" x sysinternals-junction-bin.zip
 	
-	rem TDM gcc (mingw version)
-	REM call :extract tdm-gcc-mingw-core-bin %MINGWDIR%
-	REM call :extract tdm-gcc-mingw-binutils-bin %MINGWDIR%
-	REM call :extract tdm-gcc-mingw-mingwrt-dev %MINGWDIR%
-	REM call :extract tdm-gcc-mingw-mingwrt-dll %MINGWDIR%
-	REM call :extract tdm-gcc-mingw-w32api-dev %MINGWDIR%
-	REM call :extract tdm-gcc-mingw-cpp-bin %MINGWDIR%
-	REM call :extract tdm-gcc-mingw-objc-bin %MINGWDIR%
-	
-	rem TDM gcc (mingw-w64 version)
-	call :extract tdm-gcc-mingw64-core-bin %MINGWDIR%
-	call :extract tdm-gcc-mingw64-binutils-bin %MINGWDIR%
-	call :extract tdm-gcc-mingw64-mingwrt-runtime %MINGWDIR%
-	call :extract tdm-gcc-mingw64-cpp-bin %MINGWDIR%
-	call :extract tdm-gcc-mingw64-objc-bin %MINGWDIR%
-	
-	REM 7za -y "-o%MINGWDIR%" x gcc-x86.zip
-	REM 7za -y "-o%MINGWDIR%" x gcc-x86_64.zip
-	
-	REM cd /d "%MINGWDIR%\bin\"
-	REM copy addr2line.exe i686-pc-mingw32-addr2line.exe
-	REM copy ar.exe i686-pc-mingw32-ar.exe
-	REM copy as.exe i686-pc-mingw32-as.exe
-	REM copy "c++filt.exe" "i686-pc-mingw32-c++filt.exe"
-	REM copy cpp.exe i686-pc-mingw32-cpp.exe
-	REM copy dlltool.exe i686-pc-mingw32-dlltool.exe
-	REM copy dllwrap.exe i686-pc-mingw32-dllwrap.exe
-	REM copy elfedit.exe i686-pc-mingw32-elfedit.exe
-	REM copy gccbug i686-pc-mingw32-gccbug
-	REM copy gcov.exe i686-pc-mingw32-gcov.exe
-	REM copy gprof.exe i686-pc-mingw32-gprof.exe
-	REM copy ld.exe i686-pc-mingw32-ld.exe
-	REM copy nm.exe i686-pc-mingw32-nm.exe
-	REM copy objcopy.exe i686-pc-mingw32-objcopy.exe
-	REM copy objdump.exe i686-pc-mingw32-objdump.exe
-	REM copy ranlib.exe i686-pc-mingw32-ranlib.exe
-	REM copy readelf.exe i686-pc-mingw32-readelf.exe
-	REM copy size.exe i686-pc-mingw32-size.exe
-	REM copy strings.exe i686-pc-mingw32-strings.exe
-	REM copy strip.exe i686-pc-mingw32-strip.exe
-	REM copy windmc.exe i686-pc-mingw32-windmc.exe
-	REM copy windres.exe i686-pc-mingw32-windres.exe
+	if "%GCCBUILD%" == "1" (
+		call :extract mingw-gcc-core-bin %MINGWDIR%
+		call :extract mingw-gcc-cpp-bin %MINGWDIR%
+		call :extract mingw-gcc-objc-bin %MINGWDIR%
+		call :extract mingw-libgnat-dll %MINGWDIR%
+		call :extract mingw-libgomp-dll %MINGWDIR%
+		call :extract mingw-libgcc-dll %MINGWDIR%
+		call :extract mingw-libstdcpp-dll %MINGWDIR%
+		call :extract mingw-libobjc-dll %MINGWDIR%
+		call :extract mingw-libssp-dll %MINGWDIR%
+		call :extract mingw-binutils-bin %MINGWDIR%
+		call :extract mingw-w32api-dev %MINGWDIR%
+		call :extract mingw-libgmp-dll %MINGWDIR%
+		call :extract mingw-libmpfr-dll %MINGWDIR%
+		call :extract mingw-pthreads-dll %MINGWDIR%
+		call :extract mingw-libmpc-dll %MINGWDIR%
+		call :extract mingw-mingwrt-dll %MINGWDIR%
+		call :extract mingw-mingwrt-dev %MINGWDIR%
+	) else (
+		rem TDM gcc (mingw version)
+		REM call :extract tdm-gcc-mingw-core-bin %MINGWDIR%
+		REM call :extract tdm-gcc-mingw-binutils-bin %MINGWDIR%
+		REM call :extract tdm-gcc-mingw-mingwrt-dev %MINGWDIR%
+		REM call :extract tdm-gcc-mingw-mingwrt-dll %MINGWDIR%
+		REM call :extract tdm-gcc-mingw-w32api-dev %MINGWDIR%
+		REM call :extract tdm-gcc-mingw-cpp-bin %MINGWDIR%
+		REM call :extract tdm-gcc-mingw-objc-bin %MINGWDIR%
+		
+		rem TDM gcc (mingw-w64 version)
+		call :extract tdm-gcc-mingw64-core-bin %MINGWDIR%
+		call :extract tdm-gcc-mingw64-binutils-bin %MINGWDIR%
+		call :extract tdm-gcc-mingw64-mingwrt-runtime %MINGWDIR%
+		call :extract tdm-gcc-mingw64-cpp-bin %MINGWDIR%
+		call :extract tdm-gcc-mingw64-objc-bin %MINGWDIR%
+		
+		REM 7za -y "-o%MINGWDIR%" x gcc-x86.zip
+		REM 7za -y "-o%MINGWDIR%" x gcc-x86_64.zip
+		
+		REM cd /d "%MINGWDIR%\bin\"
+		REM copy addr2line.exe i686-pc-mingw32-addr2line.exe
+		REM copy ar.exe i686-pc-mingw32-ar.exe
+		REM copy as.exe i686-pc-mingw32-as.exe
+		REM copy "c++filt.exe" "i686-pc-mingw32-c++filt.exe"
+		REM copy cpp.exe i686-pc-mingw32-cpp.exe
+		REM copy dlltool.exe i686-pc-mingw32-dlltool.exe
+		REM copy dllwrap.exe i686-pc-mingw32-dllwrap.exe
+		REM copy elfedit.exe i686-pc-mingw32-elfedit.exe
+		REM copy gccbug i686-pc-mingw32-gccbug
+		REM copy gcov.exe i686-pc-mingw32-gcov.exe
+		REM copy gprof.exe i686-pc-mingw32-gprof.exe
+		REM copy ld.exe i686-pc-mingw32-ld.exe
+		REM copy nm.exe i686-pc-mingw32-nm.exe
+		REM copy objcopy.exe i686-pc-mingw32-objcopy.exe
+		REM copy objdump.exe i686-pc-mingw32-objdump.exe
+		REM copy ranlib.exe i686-pc-mingw32-ranlib.exe
+		REM copy readelf.exe i686-pc-mingw32-readelf.exe
+		REM copy size.exe i686-pc-mingw32-size.exe
+		REM copy strings.exe i686-pc-mingw32-strings.exe
+		REM copy strip.exe i686-pc-mingw32-strip.exe
+		REM copy windmc.exe i686-pc-mingw32-windmc.exe
+		REM copy windres.exe i686-pc-mingw32-windres.exe
+	)
 	
 	cd /d "%MSYSDIR%"
 )
@@ -647,43 +669,50 @@ if "%CLEAN%" == "1" (
 	call :clean mingw-libiconv-dll
 	call :clean mingw-libiconv-bin
 	call :clean mingw-make-bin
-	REM call :clean mingw-gcc-core-bin
-	REM call :clean mingw-gcc-cpp-bin
-	REM call :clean mingw-gcc-objc-bin
-	REM call :clean mingw-libgnat-dll
-	REM call :clean mingw-libgomp-dll
-	REM call :clean mingw-libgcc-dll
-	REM call :clean mingw-libstdcpp-dll
-	REM call :clean mingw-libobjc-dll
-	REM call :clean mingw-libssp-dll
-	REM call :clean mingw-binutils-bin
-	REM call :clean mingw-w32api-dev
-	REM call :clean mingw-libgmp-dll
-	REM call :clean mingw-libmpfr-dll
-	REM call :clean mingw-pthreads-dll
-	REM call :clean mingw-libmpc-dll
-	REM call :clean mingw-mingwrt-dll
+	call :clean mingw-gdb-bin
 	
-	rem TDM gcc (mingw version)
-	REM call :clean tdm-gcc-mingw-core-bin
-	REM call :clean tdm-gcc-mingw-binutils-bin
-	REM call :clean tdm-gcc-mingw-mingwrt-dev
-	REM call :clean tdm-gcc-mingw-mingwrt-dll
-	REM call :clean tdm-gcc-mingw-w32api-dev
-	REM call :clean tdm-gcc-mingw-cpp-bin
-	REM call :clean tdm-gcc-mingw-objc-bin
+	if "%GCCBUILD%" == "1" (
+		call :clean mingw-gcc-core-bin
+		call :clean mingw-gcc-cpp-bin
+		call :clean mingw-gcc-objc-bin
+		call :clean mingw-libgnat-dll
+		call :clean mingw-libgomp-dll
+		call :clean mingw-libgcc-dll
+		call :clean mingw-libstdcpp-dll
+		call :clean mingw-libobjc-dll
+		call :clean mingw-libssp-dll
+		call :clean mingw-binutils-bin
+		call :clean mingw-w32api-dev
+		call :clean mingw-libgmp-dll
+		call :clean mingw-libmpfr-dll
+		call :clean mingw-pthreads-dll
+		call :clean mingw-libmpc-dll
+		call :clean mingw-mingwrt-dll
+		call :clean mingw-mingwrt-dev
+	) else (
+		rem TDM gcc (mingw version)
+		REM call :clean tdm-gcc-mingw-core-bin
+		REM call :clean tdm-gcc-mingw-binutils-bin
+		REM call :clean tdm-gcc-mingw-mingwrt-dev
+		REM call :clean tdm-gcc-mingw-mingwrt-dll
+		REM call :clean tdm-gcc-mingw-w32api-dev
+		REM call :clean tdm-gcc-mingw-cpp-bin
+		REM call :clean tdm-gcc-mingw-objc-bin
+		
+		rem TDM gcc (mingw-w64 version)
+		call :clean tdm-gcc-mingw64-core-bin
+		call :clean tdm-gcc-mingw64-binutils-bin
+		call :clean tdm-gcc-mingw64-mingwrt-runtime
+		call :clean tdm-gcc-mingw64-cpp-bin
+		call :clean tdm-gcc-mingw64-objc-bin
+		
+		REM del gcc-x86.zip
+		REM del gcc-x86_64.zip
+	)
 	
-	rem TDM gcc (mingw-w64 version)
-	call :clean tdm-gcc-mingw64-core-bin
-	call :clean tdm-gcc-mingw64-binutils-bin
-	call :clean tdm-gcc-mingw64-mingwrt-runtime
-	call :clean tdm-gcc-mingw64-cpp-bin
-	call :clean tdm-gcc-mingw64-objc-bin
-	
-	REM del gcc-x86.zip
-	REM del gcc-x86_64.zip
-	
-	del git.7z
+	if "%GCCBUILD%" neq "1" (
+		del git.7z
+	)
 	
 	rem del perl.zip
 	
@@ -707,24 +736,26 @@ rem Move to known directory
 cd /d "%MSYSDIR%"
 
 rem Apply patches
-REM copy /Y "%PATCHESDIR%\msys\mingw\i686-pc-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-pc-mingw32\include\ws2tcpip.h"
-REM copy /Y "%PATCHESDIR%\msys\mingw\include\ws2tcpip.h" "%MINGWDIR%\include\ws2tcpip.h"
-REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\wincrypt.h" "%MINGWDIR%\i686-w64-mingw32\include\wincrypt.h"
-REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-w64-mingw32\include\ws2tcpip.h"
-REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\gl.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\gl.h"
-REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glu.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glu.h"
-REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glext.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glext.h"
-copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\_mingw_mac.h" "%MINGWDIR%\x86_64-w64-mingw32\include\_mingw_mac.h"
-copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\iphlpapi.h" "%MINGWDIR%\x86_64-w64-mingw32\include\iphlpapi.h"
-copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\wincrypt.h" "%MINGWDIR%\x86_64-w64-mingw32\include\wincrypt.h"
-copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\ws2tcpip.h" "%MINGWDIR%\x86_64-w64-mingw32\include\ws2tcpip.h"
-copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\winnt.h" "%MINGWDIR%\x86_64-w64-mingw32\include\winnt.h"
-copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\d3d9.h" "%MINGWDIR%\x86_64-w64-mingw32\include\d3d9.h"
-copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\d3d9caps.h" "%MINGWDIR%\x86_64-w64-mingw32\include\d3d9caps.h"
-copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\d3d9types.h" "%MINGWDIR%\x86_64-w64-mingw32\include\d3d9types.h"
-copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\GL\gl.h" "%MINGWDIR%\x86_64-w64-mingw32\include\GL\gl.h"
-copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\GL\glu.h" "%MINGWDIR%\x86_64-w64-mingw32\include\GL\glu.h"
-copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\GL\glext.h" "%MINGWDIR%\x86_64-w64-mingw32\include\GL\glext.h"
+if "%GCCBUILD%" neq "1" (
+	REM copy /Y "%PATCHESDIR%\msys\mingw\i686-pc-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-pc-mingw32\include\ws2tcpip.h"
+	REM copy /Y "%PATCHESDIR%\msys\mingw\include\ws2tcpip.h" "%MINGWDIR%\include\ws2tcpip.h"
+	REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\wincrypt.h" "%MINGWDIR%\i686-w64-mingw32\include\wincrypt.h"
+	REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\ws2tcpip.h" "%MINGWDIR%\i686-w64-mingw32\include\ws2tcpip.h"
+	REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\gl.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\gl.h"
+	REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glu.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glu.h"
+	REM copy /Y "%PATCHESDIR%\msys\mingw\i686-w64-mingw32\include\GL\glext.h" "%MINGWDIR%\i686-w64-mingw32\include\GL\glext.h"
+	copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\_mingw_mac.h" "%MINGWDIR%\x86_64-w64-mingw32\include\_mingw_mac.h"
+	copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\iphlpapi.h" "%MINGWDIR%\x86_64-w64-mingw32\include\iphlpapi.h"
+	copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\wincrypt.h" "%MINGWDIR%\x86_64-w64-mingw32\include\wincrypt.h"
+	copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\ws2tcpip.h" "%MINGWDIR%\x86_64-w64-mingw32\include\ws2tcpip.h"
+	copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\winnt.h" "%MINGWDIR%\x86_64-w64-mingw32\include\winnt.h"
+	copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\d3d9.h" "%MINGWDIR%\x86_64-w64-mingw32\include\d3d9.h"
+	copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\d3d9caps.h" "%MINGWDIR%\x86_64-w64-mingw32\include\d3d9caps.h"
+	copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\d3d9types.h" "%MINGWDIR%\x86_64-w64-mingw32\include\d3d9types.h"
+	copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\GL\gl.h" "%MINGWDIR%\x86_64-w64-mingw32\include\GL\gl.h"
+	copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\GL\glu.h" "%MINGWDIR%\x86_64-w64-mingw32\include\GL\glu.h"
+	copy /Y "%PATCHESDIR%\msys\mingw\x86_64-w64-mingw32\include\GL\glext.h" "%MINGWDIR%\x86_64-w64-mingw32\include\GL\glext.h"
+)
 
 rem Make a shortcut to our shell
 "%TOOLSDIR%\mklink" "%TOPDIR%\msys.bat.lnk" "/q" "%DEST_MSYS_DIR%\msys.bat"
