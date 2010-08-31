@@ -783,7 +783,8 @@ gst_udpsrc_start (GstBaseSrc * bsrc)
     GST_DEBUG_OBJECT (src, "allocating socket for %s:%d", src->uri.host,
         src->uri.port);
     if ((ret =
-            gst_udp_get_addr (src->uri.host, src->uri.port, &src->myaddr)) < 0)
+            gst_udp_get_addr (src->uri.host, src->uri.port, &src->myaddr,
+                AF_UNSPEC)) < 0)
       goto getaddrinfo_error;
 
     if ((ret = socket (src->myaddr.ss_family, SOCK_DGRAM, IPPROTO_UDP)) < 0)
