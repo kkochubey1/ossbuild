@@ -1,3 +1,23 @@
+/*
+ * GStreamer
+ * Copyright (C) 2008-2009 Filippo Argiolas <filippo.argiolas@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include <gst/gst.h>
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
@@ -29,11 +49,32 @@ create_window (GstBus * bus, GstMessage * message, GtkWidget * widget)
   if (!gst_structure_has_name (message->structure, "prepare-xwindow-id"))
     return GST_BUS_PASS;
 
-  gst_x_overlay_set_gtk_window (GST_X_OVERLAY (GST_MESSAGE_SRC (message)), widget);
+  gst_x_overlay_set_gtk_window (GST_X_OVERLAY (GST_MESSAGE_SRC (message)),
+      widget);
 
   gst_message_unref (message);
 
   return GST_BUS_DROP;
+}
+
+static void
+message_cb (GstBus * bus, GstMessage * message, GstElement * pipeline)
+{
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  gst_object_unref (pipeline);
+
+  gtk_main_quit ();
+}
+
+static void
+realize_cb (GtkWidget * widget, GstElement * pipeline)
+{
+#if GTK_CHECK_VERSION(2,18,0)
+  if (!gdk_window_ensure_native (widget->window))
+    g_error ("Failed to create native window!");
+#endif
+
+  gst_element_set_state (pipeline, GST_STATE_PLAYING);
 }
 
 static gboolean
@@ -105,8 +146,12 @@ on_drag_data_received (GtkWidget * widget,
     GdkDragContext * context, int x, int y,
     GtkSelectionData * seldata, guint inf, guint time, gpointer data)
 {
-  GdkPixbufFormat *format;
   SourceData *userdata = g_new0 (SourceData, 1);
+#ifdef G_OS_WIN32
+  gchar *filename =
+      g_filename_from_uri ((const gchar *) seldata->data, NULL, NULL);
+#else
+  GdkPixbufFormat *format;
   gchar **uris = gtk_selection_data_get_uris (seldata);
   gchar *filename = NULL;
 
@@ -117,6 +162,8 @@ on_drag_data_received (GtkWidget * widget,
   g_return_if_fail (format);
   g_print ("received %s image: %s\n", filename,
       gdk_pixbuf_format_get_name (format));
+#endif
+
   userdata->nick = "location";
   userdata->value = g_strdup (filename);
   userdata->data = data;
@@ -134,7 +181,6 @@ on_drag_data_received (GtkWidget * widget,
 gint
 main (gint argc, gchar * argv[])
 {
-  GstStateChangeReturn ret;
   GstElement *pipeline;
   GstElement *uload, *filter, *sink;
   GstElement *sourcebin;
@@ -262,20 +308,19 @@ main (gint argc, gchar * argv[])
 
   bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));
   gst_bus_set_sync_handler (bus, (GstBusSyncHandler) create_window, screen);
+  gst_bus_add_signal_watch (bus);
+  g_signal_connect (bus, "message::error", G_CALLBACK (message_cb), pipeline);
+  g_signal_connect (bus, "message::warning", G_CALLBACK (message_cb), pipeline);
+  g_signal_connect (bus, "message::eos", G_CALLBACK (message_cb), pipeline);
   gst_object_unref (bus);
   g_signal_connect (screen, "expose-event", G_CALLBACK (expose_cb), sink);
+  g_signal_connect (screen, "realize", G_CALLBACK (realize_cb), pipeline);
 
   gtk_drag_dest_set (screen, GTK_DEST_DEFAULT_ALL, NULL, 0, GDK_ACTION_COPY);
   gtk_drag_dest_add_uri_targets (screen);
 
   g_signal_connect (screen, "drag-data-received",
       G_CALLBACK (on_drag_data_received), filter);
-
-  ret = gst_element_set_state (pipeline, GST_STATE_PLAYING);
-  if (ret == GST_STATE_CHANGE_FAILURE) {
-    g_print ("Failed to start up pipeline!\n");
-    return -1;
-  }
 
   gtk_widget_show_all (GTK_WIDGET (window));
 

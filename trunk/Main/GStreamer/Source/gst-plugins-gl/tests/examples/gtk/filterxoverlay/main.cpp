@@ -1,3 +1,23 @@
+/*
+ * GStreamer
+ * Copyright (C) 2008-2009 Julien Isorce <julien.isorce@gmail.com>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include <gst/gst.h>
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
@@ -32,6 +52,22 @@ static void end_stream_cb(GstBus* bus, GstMessage* message, GstElement* pipeline
     gst_object_unref(pipeline);
 
     gtk_main_quit();
+}
+
+
+static void area_realize_cb(GtkWidget* widget, GstElement* pipeline)
+{
+#if GTK_CHECK_VERSION(2,18,0)
+    if (!gdk_window_ensure_native (widget->window))
+        g_error ("Failed to create native window!");
+#endif
+
+    //avoid flickering when resizing or obscuring the main window
+    gdk_window_set_back_pixmap(widget->window, NULL, FALSE);
+    gtk_widget_set_app_paintable(widget,TRUE);
+    gtk_widget_set_double_buffered(widget, FALSE);
+
+    gst_element_set_state (pipeline, GST_STATE_PLAYING);
 }
 
 
@@ -194,12 +230,6 @@ gint main (gint argc, gchar *argv[])
     GtkWidget* area = gtk_drawing_area_new();
     gtk_container_add (GTK_CONTAINER (window), area);
 
-    //avoid flickering when resizing or obscuring the main window
-    gtk_widget_realize(area);
-    gdk_window_set_back_pixmap(area->window, NULL, FALSE);
-    gtk_widget_set_app_paintable(area,TRUE);
-    gtk_widget_set_double_buffered(area, FALSE);
-
     //set window id on this event
     GstBus* bus = gst_pipeline_get_bus (GST_PIPELINE (pipeline));
     gst_bus_set_sync_handler (bus, (GstBusSyncHandler) create_window, area);
@@ -212,6 +242,8 @@ gint main (gint argc, gchar *argv[])
     //needed when being in GST_STATE_READY, GST_STATE_PAUSED
     //or resizing/obscuring the window
     g_signal_connect(area, "expose-event", G_CALLBACK(expose_cb), videosink);
+
+    g_signal_connect (area, "realize", G_CALLBACK (area_realize_cb), pipeline);
 
     //start
     GstStateChangeReturn ret = gst_element_set_state (pipeline, GST_STATE_PLAYING);
