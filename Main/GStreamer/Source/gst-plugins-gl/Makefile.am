@@ -25,7 +25,7 @@ include $(top_srcdir)/common/win32.mak
 
 EXTRA_DIST = \
 	gst-plugins-gl.spec depcomp \
-	AUTHORS COPYING COPYING.LIB NEWS README RELEASE REQUIREMENTS \
+	AUTHORS COPYING NEWS README RELEASE REQUIREMENTS \
 	ChangeLog gst-plugins-gl.doap autogen.sh $(win32)
 
 DISTCLEANFILES = _stdint.h
@@ -57,4 +57,12 @@ include $(top_srcdir)/common/coverage/lcov.mak
 
 check: check-exports
 
+# cruft: plugins that have been merged or moved or renamed
 
+CRUFT_FILES = \
+	$(top_builddir)/common/shave \
+	$(top_builddir)/common/shave-libtool
+
+include $(top_srcdir)/common/cruft.mak
+
+all-local: check-cruft

@@ -1,24 +1,24 @@
-AC_PREREQ(2.52)
+AC_PREREQ(2.60)
 
 dnl please read gstreamer/docs/random/autotools before changing this file
 
 dnl initialize autoconf
-dnl releases only do -Wall, cvs and prerelease does -Werror too
-dnl use a three digit version number for releases, and four for cvs/prerelease
-AC_INIT(GStreamer OpenGL Plug-ins, 0.10.1,
+dnl releases only do -Wall, git and prerelease does -Werror too
+dnl use a three digit version number for releases, and four for git/prerelease
+AC_INIT(GStreamer OpenGL Plug-ins, 0.10.1.5,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-gl)
 
 AG_GST_INIT
 
 dnl initialize automake
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([-Wno-portability 1.10])
 
 dnl define PACKAGE_VERSION_* variables
 AS_VERSION
 
 dnl check if this is a release version
-AS_NANO(GST_CVS="no", GST_CVS="yes")
+AS_NANO(GST_GIT="no", GST_GIT="yes")
 
 dnl libtoolize complains about wrong macros
 AC_CONFIG_MACRO_DIR([m4])
@@ -35,6 +35,11 @@ AM_MAINTAINER_MODE
 dnl sets host_* variables
 AC_CANONICAL_HOST
 
+dnl use pretty build output with automake >= 1.11
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])],
+  [AM_DEFAULT_VERBOSITY=1
+   AC_SUBST(AM_DEFAULT_VERBOSITY)])
+
 dnl our libraries and install dirs use major.minor as a version
 GST_MAJORMINOR=$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR
 dnl we override it here if we need to for the release candidate of new series
@@ -47,7 +52,7 @@ dnl - interfaces added/removed/changed -> increment CURRENT, REVISION = 0
 dnl - interfaces added -> increment AGE
 dnl - interfaces removed -> AGE = 0
 dnl sets GST_LT_LDFLAGS
-AS_LIBTOOL(GST, 0, 0, 0)
+AS_LIBTOOL(GST, 1, 0, 0)
 
 dnl FIXME: this macro doesn't actually work;
 dnl the generated libtool script has no support for the listed tags.
@@ -59,8 +64,8 @@ AM_PROG_LIBTOOL
 AS_PROG_OBJC
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.15.1
-GSTPB_REQ=0.10.15.1
+GST_REQ=0.10.28
+GSTPB_REQ=0.10.28
 
 dnl *** autotools stuff ****
 
@@ -72,7 +77,7 @@ AC_SUBST(ACLOCAL_AMFLAGS, "-I m4 -I common/m4")
 
 dnl set up gettext
 dnl the version check needs to stay here because autopoint greps for it
-AM_GNU_GETTEXT_VERSION([0.11.5])
+AM_GNU_GETTEXT_VERSION([0.17])
 AM_GNU_GETTEXT([external])
 AG_GST_GETTEXT([gst-plugins-gl-$GST_MAJORMINOR])
 
@@ -107,6 +112,7 @@ dnl *** checks for programs ***
 
 dnl find a compiler
 AC_PROG_CC
+AC_PROG_CC_STDC
 AC_PROG_CXX
 
 dnl check if the compiler supports '-c' and '-o' options
@@ -154,29 +160,38 @@ dnl *** checks for dependency libraries ***
 dnl GLib is required
 AG_GST_GLIB_CHECK([2.6])
 
-dnl liboil is required
-PKG_CHECK_MODULES(LIBOIL, liboil-0.3 >= 0.3.8, HAVE_LIBOIL=yes, HAVE_LIBOIL=no)
-if test "x$HAVE_LIBOIL" != "xyes"
-then
-  AC_ERROR([liboil-0.3.8 or later is required])
-fi
-
 #dnl Check for OpenGL, GLU and GLEW
 echo host is $host
 case $host in
-  *-linux*)
+  *-linux* | *-cygwin* | *-solaris* | *-netbsd* | *-freebsd* | *-openbsd* | *-kfreebsd* | *-dragonflybsd* | *-gnu* )
     AG_GST_CHECK_X
     save_CPPFLAGS="$CPPFLAGS"
     save_LIBS="$LIBS"
     CPPFLAGS="$CPPFLAGS $X_CFLAGS"
     LIBS="$LIBS $X_LIBS"
-    AG_GST_CHECK_LIBHEADER(GL, GL, glTexImage2D,, GL/gl.h,, AC_MSG_ERROR([OpenGL is required]))
-    AG_GST_CHECK_LIBHEADER(GLU, GLU, gluSphere,, GL/glu.h,, AC_MSG_ERROR([GLU is required]))
-    AG_GST_CHECK_LIBHEADER(GLEW, GLEW, glewInit,, GL/glew.h,, AC_MSG_ERROR([GLEW is required]))
-    GL_LIBS="$LIBS $X_LIBS -lGL -lGLU -lGLEW"
+    #PKG_CHECK_MODULES(GL, gl, HAVE_GL=yes, HAVE_GL=no)
+    AC_CHECK_HEADERS([GL/gl.h], [HAVE_GL=yes], [HAVE_GL=no])
+    if test "x$HAVE_GL" = "xyes"; then
+      AG_GST_CHECK_LIBHEADER(GL, GL, glTexImage2D,, GL/gl.h,, AC_MSG_ERROR([OpenGL is required]))
+      AG_GST_CHECK_LIBHEADER(GLU, GLU, gluSphere,, GL/glu.h,, AC_MSG_ERROR([GLU is required]))
+      AG_GST_CHECK_LIBHEADER(GLEW, GLEW, glewInit,, GL/glew.h,, AC_MSG_ERROR([GLEW is required]))
+      GL_LIBS="$LIBS $X_LIBS -lGL -lGLU -lGLEW"
+      GL_BACKEND=x11
+      GL_TYPE=gl
+    else
+      AC_CHECK_HEADERS([EGL/egl.h], [HAVE_EGL=yes], [HAVE_EGL=no])
+      if test "x$HAVE_EGL" = "xyes"; then
+        AG_GST_CHECK_LIBHEADER(EGL, EGL, eglGetError,, EGL/egl.h,, AC_MSG_ERROR([EGL is required]))
+        AG_GST_CHECK_LIBHEADER(GLES2, GLESv2, glTexImage2D,, GLES2/gl2.h,, AC_MSG_ERROR([OpenGLES2 is required]))
+        GL_LIBS="$LIBS $X_LIBS -lEGL -lGLESv2"
+        GL_BACKEND=x11ES2
+        GL_TYPE=gles
+      else
+        AC_MSG_ERROR([GL or EGL is required, consider installing libgl1-mesa-dev])
+      fi
+    fi
     CPPFLAGS="$save_CPPFLAGS"
     LIBS="$save_LIBS"
-    GL_BACKEND=x11
     ;;
   *-darwin*)
     save_CPPFLAGS="$CPPFLAGS"
@@ -186,6 +201,7 @@ case $host in
     CPPFLAGS="$save_CPPFLAGS -framework OpenGL"
     LIBS="$save_LIBS"
     GL_BACKEND=cocoa
+    GL_TYPE=gl
     ;;
   *-mingw32*)
     save_CPPFLAGS="$CPPFLAGS"
@@ -198,16 +214,23 @@ case $host in
     CPPFLAGS="$save_CPPFLAGS"
     LIBS="$save_LIBS"
     GL_BACKEND=win32
+    GL_TYPE=gl
     ;;
   *)
     exit 1
     ;;
 esac
+if test "x$GL_TYPE" = "xgles"; then
+  AC_DEFINE(OPENGL_ES2, [1] , [Use OpenGLES2])
+fi
 AC_SUBST(GL_LIBS)
 AC_SUBST(GL_BACKEND)
+AC_SUBST(OPENGL_ES2)
 AM_CONDITIONAL(GL_BACKEND_X11, test "x$GL_BACKEND" = "xx11")
+AM_CONDITIONAL(GL_BACKEND_X11ES2, test "x$GL_BACKEND" = "xx11ES2")
 AM_CONDITIONAL(GL_BACKEND_COCOA, test "x$GL_BACKEND" = "xcocoa")
 AM_CONDITIONAL(GL_BACKEND_WIN32, test "x$GL_BACKEND" = "xwin32")
+AM_CONDITIONAL(GL_IS_OPENGL, test "x$GL_TYPE" = "xgl")
 
 dnl checks for gstreamer
 dnl uninstalled is selected preferentially -- see pkg-config(1)
@@ -229,9 +252,9 @@ AC_SUBST(GSTPB_PREFIX)
 
 
 dnl libpng is required
-PKG_CHECK_MODULES(LIBPNG, libpng12 >= 1.0, HAVE_LIBPNG=yes, HAVE_LIBPNG=no)
+PKG_CHECK_MODULES(LIBPNG, libpng >= 1.0, HAVE_LIBPNG=yes, HAVE_LIBPNG=no)
 if test "x${HAVE_LIBPNG}" != xyes ; then
-  AC_ERROR([libpng12 is required])
+  AC_ERROR([libpng 1.0 or newer is required])
 fi
 AC_SUBST(LIBPNG_LIBS)
 AC_SUBST(LIBPNG_CFLAGS)
@@ -298,6 +321,20 @@ AC_SUBST(CLUTTER_X11_CFLAGS)
 AC_SUBST(HAVE_CLUTTER_X11)
 AM_CONDITIONAL(HAVE_CLUTTER_X11, test "x$HAVE_CLUTTER_X11" = "xyes")
 
+dnl used in the clutteractor example
+PKG_CHECK_MODULES(XCOMPOSITE, xcomposite, HAVE_XCOMPOSITE=yes, HAVE_XCOMPOSITE=no)
+AC_SUBST(XCOMPOSITE_CFLAGS)
+AC_SUBST(XCOMPOSITE_LIBS)
+AM_CONDITIONAL(HAVE_XCOMPOSITE, test "x$HAVE_XCOMPOSITE" = "xyes")
+
+dnl sdl is optional and used in examples
+HAVE_SDL=NO
+PKG_CHECK_MODULES(SDL, sdl >= 1.2.0, HAVE_SDL=yes, HAVE_SDL=no)
+AC_SUBST(SDL_LIBS)
+AC_SUBST(SDL_CFLAGS)
+AC_SUBST(SDL_CLUTTER)
+AM_CONDITIONAL(HAVE_SDL, test "x$HAVE_SDL" = "xyes")
+
 
 dnl *** set variables based on configure arguments ***
 
@@ -310,11 +347,11 @@ dnl set location of plugin directory
 AG_GST_SET_PLUGINDIR
 
 dnl define an ERROR_CFLAGS Makefile variable
-AG_GST_SET_ERROR_CFLAGS($GST_CVS)
-AG_GST_SET_ERROR_CXXFLAGS($GST_CVS)
+AG_GST_SET_ERROR_CFLAGS($GST_GIT)
+AG_GST_SET_ERROR_CXXFLAGS($GST_GIT)
 
 dnl define correct level for debugging messages
-AG_GST_SET_LEVEL_DEFAULT($GST_CVS)
+AG_GST_SET_LEVEL_DEFAULT($GST_GIT)
 
 dnl used in examples
 AG_GST_DEFAULT_ELEMENTS
@@ -362,7 +399,7 @@ if test "x$USE_DEBUG" = xyes; then
 fi
 AC_SUBST(PROFILE_CFLAGS)
 
-if test "x$GST_CVS" = "xyes"; then
+if test "x$GST_GIT" = "xyes"; then
   DEPRECATED_CFLAGS="-DGST_DISABLE_DEPRECATED"
 else
   DEPRECATED_CFLAGS=""
@@ -370,8 +407,8 @@ fi
 AC_SUBST(DEPRECATED_CFLAGS)
 
 dnl every flag in GST_OPTION_CFLAGS can be overridden at make time
-GST_OPTION_CFLAGS="\$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
-GST_OPTION_CXXFLAGS="\$(ERROR_CXXFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CFLAGS="\$(WARNING_CFLAGS) \$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CXXFLAGS="\$(WARNING_CXXFLAGS) \$(ERROR_CXXFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
 AC_SUBST(GST_OPTION_CFLAGS)
 AC_SUBST(GST_OPTION_CXXFLAGS)
 
@@ -386,8 +423,8 @@ AC_SUBST(GST_PLUGINS_GL_CFLAGS)
 
 dnl FIXME: do we want to rename to GST_ALL_* ?
 dnl add GST_OPTION_CFLAGS, but overridable
-GST_CXXFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS $GST_CXXFLAGS \$(GST_OPTION_CXXFLAGS)"
-GST_CFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS \$(GST_OPTION_CFLAGS)"
+GST_CXXFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS $GST_CXXFLAGS $GLIB_EXTRA_CFLAGS \$(GST_OPTION_CXXFLAGS)"
+GST_CFLAGS="-I\$(top_srcdir)/gst-libs -I\$(top_builddir)/gst-libs $GST_CFLAGS $GLIB_EXTRA_CFLAGS \$(GST_OPTION_CFLAGS)"
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_CXXFLAGS)
 
@@ -429,6 +466,8 @@ pkgconfig/gstreamer-gl-uninstalled.pc
 tests/Makefile
 tests/check/Makefile
 tests/examples/Makefile
+tests/examples/cocoa/Makefile
+tests/examples/cocoa/videoxoverlay/Makefile
 tests/examples/generic/Makefile
 tests/examples/generic/cube/Makefile
 tests/examples/generic/cubeyuv/Makefile
@@ -441,6 +480,7 @@ tests/examples/gtk/filterxoverlay/Makefile
 tests/examples/gtk/fxtest/Makefile
 tests/examples/gtk/switchxoverlay/Makefile
 tests/examples/qt/Makefile
+tests/examples/sdl/Makefile
 tests/examples/wx/Makefile
 tests/icles/Makefile
 docs/Makefile
