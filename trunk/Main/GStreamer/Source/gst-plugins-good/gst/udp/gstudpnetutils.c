@@ -80,18 +80,27 @@ gst_udp_get_sockaddr_length (struct sockaddr_storage *addr)
   }
 }
 
-int
-gst_udp_get_addr (const char *hostname, int port, struct sockaddr_storage *addr)
+gst_udp_get_addr (const char *hostname, int port, struct sockaddr_storage *addr,
+    int sock_family)
 {
   struct addrinfo hints, *res = NULL, *nres;
   char service[NI_MAXSERV];
   int ret;
 
   memset (&hints, 0, sizeof (hints));
-  hints.ai_family = AF_UNSPEC;
+  hints.ai_family = sock_family;
   hints.ai_socktype = SOCK_DGRAM;
   g_snprintf (service, sizeof (service) - 1, "%d", port);
   service[sizeof (service) - 1] = '\0';
+  
+  /* Create v4-mapped addresses if we have a v6 socket but a v4 address */
+  if (sock_family == AF_INET6) {
+    hints.ai_flags = AI_V4MAPPED;
+    /* Linux (glibc < 2.8, at least) has a broken implementation of AI_V4MAPPED
+     * which only works if you also pass AI_ALL.
+     */
+    hints.ai_flags = hints.ai_flags | AI_ALL;
+  }
 
   if ((ret = getaddrinfo (hostname, (port == -1) ? NULL : service, &hints,
               &res)) < 0) {
@@ -100,10 +109,55 @@ gst_udp_get_addr (const char *hostname, int port, struct sockaddr_storage *addr)
 
   nres = res;
   while (nres) {
-    if (nres->ai_family == AF_INET || nres->ai_family == AF_INET6)
+    if (sock_family == AF_UNSPEC &&
+        (nres->ai_family == AF_INET || nres->ai_family == AF_INET6))
+      break;
+    else if (nres->ai_family == sock_family)
+       break;
       break;
     nres = nres->ai_next;
   }
+#ifndef G_OS_WIN32
+  /* If we didn't accept any of the results, but we have a v4 address when
+     looking for a v6 address, try it again as a v4mapped address.
+     This can happen if we look up a hostname (rather than an IP); we get a
+     V4 address only - we can then look up THAT address as a v4-mapped address,
+     and will hopefully get a v4mapped address. As an example, looking up
+     'localhost' returns only a v4 address, but we require a v6 address.
+   */
+  if (!nres && res && res->ai_family == AF_INET && sock_family == AF_INET6) {
+    char addrbuf[INET_ADDRSTRLEN];
+    const char *addr;
+
+    memset (&hints, 0, sizeof (hints));
+    hints.ai_family = AF_INET6;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_flags = AI_V4MAPPED | AI_ALL;
+
+    addr = inet_ntop (AF_INET,
+        &((struct sockaddr_in *) (res->ai_addr))->sin_addr,
+        addrbuf, sizeof (addrbuf));
+    if (!addr)
+      goto beach;
+
+    /* free the old one, try the new one again */
+    freeaddrinfo (res);
+    res = NULL;
+
+    if ((ret = getaddrinfo (addr, (port == -1) ? NULL : service, &hints,
+                &res)) < 0) {
+      goto beach;
+    }
+
+    nres = res;
+    while (nres) {
+      if (nres->ai_family == AF_INET6)
+        break;
+      nres = nres->ai_next;
+    }
+  }
+#endif
+
 
   if (nres) {
     memcpy (addr, nres->ai_addr, nres->ai_addrlen);
@@ -111,8 +165,10 @@ gst_udp_get_addr (const char *hostname, int port, struct sockaddr_storage *addr)
     ret = EAI_ADDRFAMILY;
   }
 
-  freeaddrinfo (res);
+
 beach:
+  if (res)
+    freeaddrinfo (res);
   return ret;
 }
 
