@@ -6,7 +6,7 @@ Requirements
   Windows Build
 
     1. MSys/MinGW
-       a. Run "init msys.bat" in the Tools/ directory to automatically setup a build environment for all the dependencies.
+       a. Run "msysEnv.bat" in the Tools/ directory to automatically setup a build environment for all the dependencies.
        b. Double click on the "msys.bat" shortcut in the top level directory to open a shell.
        c. To build dependencies, from the shell:
               cd <OSSBuild Home>
