@@ -35,8 +35,8 @@ rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.7z
 rem set GCCDIR=cross-mingw.gcc451.generic.20100615.1
 rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.1.7z
 
-rem set PKG_MINGW_W64_GCC_X86_BIN=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win32/Automated Builds/mingw-w32-1.0-bin_i686-mingw_20100618.zip?use_mirror=iweb
-rem set PKG_MINGW_W64_GCC_X86_64_BIN=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win64/Automated Builds/mingw-w64-bin_i686-mingw_20100619.zip?use_mirror=iweb
+set PKG_MINGW_W64_GCC_X86_BIN=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win32/Personal Builds/sezero_20100711/mingw-w32-bin_i686-mingw_20100711_sezero.zip?use_mirror=voxel
+set PKG_MINGW_W64_GCC_X86_RUNTIME_UPDATE=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win32/Personal Builds/sezero_20100711/sezero_20100711_w32_runtime_update_3441.zip?use_mirror=voxel
 
 set PKG_TDM_GCC_MINGW_CORE_BIN=http://downloads.sourceforge.net/project/tdm-gcc/TDM-GCC 4.5 series/4.5.0-tdm-1 SJLJ/gcc-4.5.0-tdm-1-core.tar.lzma?use_mirror=voxel
 set PKG_TDM_GCC_MINGW_BINUTILS_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/BaseSystem/GNU-Binutils/binutils-2.20.1/binutils-2.20.1-2-mingw32-bin.tar.gz?use_mirror=voxel
@@ -123,6 +123,8 @@ set PKG_MSYS_TEXINFO_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/tex
 set PKG_MSYS_TEXINFO_LANG=http://downloads.sourceforge.net/project/mingw/MSYS/texinfo/texinfo-4.13a-2/texinfo-4.13a-2-msys-1.0.13-lang.tar.lzma?use_mirror=voxel
 set PKG_MSYS_XZ_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/xz/xz-4.999.9beta_20100401-1/xz-4.999.9beta_20100401-1-msys-1.0.13-bin.tar.gz?use_mirror=voxel
 set PKG_MSYS_LZMA_DLL=http://downloads.sourceforge.net/project/mingw/MSYS/BaseSystem/xz/xz-4.999.9beta_20100401-1/liblzma-4.999.9beta_20100401-1-msys-1.0.13-dll-1.tar.gz?use_mirror=voxel
+set PKG_MSYS_DASH_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/dash/dash-0.5.5.1_2-1/dash-0.5.5.1_2-1-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
+set PKG_MSYS_CVS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/cvs/cvs-1.12.13-2/cvs-1.12.13-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 
 set PKG_MINGW_BASICBSDTAR_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/Utilities/basic bsdtar/basic-bsdtar-2.8.3-1/basic-bsdtar-2.8.3-1-mingw32-bin.tar.lzma?use_mirror=iweb
 set PKG_MINGW_AUTOCONF_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/autoconf2.5/autoconf2.5-2.64-1/autoconf2.5-2.64-1-mingw32-bin.tar.lzma?use_mirror=voxel
@@ -290,6 +292,8 @@ if "%DOWNLOAD%" == "1" (
 	call :download msys-texinfo-lang "%PKG_MSYS_TEXINFO_LANG%"
 	call :download msys-xz-bin "%PKG_MSYS_XZ_BIN%"
 	call :download msys-lzma-dll "%PKG_MSYS_LZMA_DLL%"
+	call :download msys-dash-bin "%PKG_MSYS_DASH_BIN%"
+	call :download msys-cvs-bin "%PKG_MSYS_CVS_BIN%"
 	
 	call :download mingw-basicbsdtar-bin "%PKG_MINGW_BASICBSDTAR_BIN%"
 	call :download mingw-autoconf-bin "%PKG_MINGW_AUTOCONF_BIN%"
@@ -332,28 +336,28 @@ if "%DOWNLOAD%" == "1" (
 	wget --no-check-certificate -O perl.zip "%PKG_ACTIVESTATE_PERL_BIN%"
 	
 	if "%GCCBUILD%" == "1" (
-		call :download mingw-gcc-core-bin "%PKG_MINGW_GCC_CORE_BIN%"
-		call :download mingw-gcc-cpp-bin "%PKG_MINGW_GCC_CPP_BIN%"
-		call :download mingw-gcc-objc-bin "%PKG_MINGW_GCC_OBJC_BIN%"
-		call :download mingw-libgnat-dll "%PKG_MINGW_LIBGNAT_DLL%"
-		call :download mingw-libgomp-dll "%PKG_MINGW_LIBGOMP_DLL%"
-		call :download mingw-libgcc-dll "%PKG_MINGW_LIBGCC_DLL%"
-		call :download mingw-libstdcpp-dll "%PKG_MINGW_LIBSTDCPP_DLL%"
-		call :download mingw-libobjc-dll "%PKG_MINGW_LIBOBJC_DLL%"
-		call :download mingw-libssp-dll "%PKG_MINGW_LIBSSP_DLL%"
-		call :download mingw-binutils-bin "%PKG_MINGW_BINUTILS_BIN%"
-		call :download mingw-w32api-dev "%PKG_MINGW_W32API_DEV%"
-		call :download mingw-libgmp-dll "%PKG_MINGW_LIBGMP_DLL%"
-		call :download mingw-libmpfr-dll "%PKG_MINGW_LIBMPFR_DLL%"
-		call :download mingw-pthreads-dll "%PKG_MINGW_PTHREADS_DLL%"
-		call :download mingw-libmpc-dll "%PKG_MINGW_LIBMPC_DLL%"
-		call :download mingw-mingwrt-dll "%PKG_MINGW_MINGWRT_DLL%"
-		call :download mingw-mingwrt-dev "%PKG_MINGW_MINGWRT_DEV%"
-	) else (
 		rem Get MinGW-w64 gcc
-		REM wget --no-check-certificate -O gcc-x86.zip "%PKG_MINGW_W64_GCC_X86_BIN%"
-		REM wget --no-check-certificate -O gcc-x86_64.zip "%PKG_MINGW_W64_GCC_X86_64_BIN%"
+		wget --no-check-certificate -O gcc-x86-bin.zip "%PKG_MINGW_W64_GCC_X86_BIN%"
+		wget --no-check-certificate -O gcc-x86-runtime-update.zip "%PKG_MINGW_W64_GCC_X86_RUNTIME_UPDATE%"
 		
+		REM call :download mingw-gcc-core-bin "%PKG_MINGW_GCC_CORE_BIN%"
+		REM call :download mingw-gcc-cpp-bin "%PKG_MINGW_GCC_CPP_BIN%"
+		REM call :download mingw-gcc-objc-bin "%PKG_MINGW_GCC_OBJC_BIN%"
+		REM call :download mingw-libgnat-dll "%PKG_MINGW_LIBGNAT_DLL%"
+		REM call :download mingw-libgomp-dll "%PKG_MINGW_LIBGOMP_DLL%"
+		REM call :download mingw-libgcc-dll "%PKG_MINGW_LIBGCC_DLL%"
+		REM call :download mingw-libstdcpp-dll "%PKG_MINGW_LIBSTDCPP_DLL%"
+		REM call :download mingw-libobjc-dll "%PKG_MINGW_LIBOBJC_DLL%"
+		REM call :download mingw-libssp-dll "%PKG_MINGW_LIBSSP_DLL%"
+		REM call :download mingw-binutils-bin "%PKG_MINGW_BINUTILS_BIN%"
+		REM call :download mingw-w32api-dev "%PKG_MINGW_W32API_DEV%"
+		REM call :download mingw-libgmp-dll "%PKG_MINGW_LIBGMP_DLL%"
+		REM call :download mingw-libmpfr-dll "%PKG_MINGW_LIBMPFR_DLL%"
+		REM call :download mingw-pthreads-dll "%PKG_MINGW_PTHREADS_DLL%"
+		REM call :download mingw-libmpc-dll "%PKG_MINGW_LIBMPC_DLL%"
+		REM call :download mingw-mingwrt-dll "%PKG_MINGW_MINGWRT_DLL%"
+		REM call :download mingw-mingwrt-dev "%PKG_MINGW_MINGWRT_DEV%"
+	) else (
 		rem Get TDM gcc (mingw version)
 		REM call :download tdm-gcc-mingw-core-bin "%PKG_TDM_GCC_MINGW_CORE_BIN%"
 		REM call :download tdm-gcc-mingw-binutils-bin "%PKG_TDM_GCC_MINGW_BINUTILS_BIN%"
@@ -474,6 +478,8 @@ if "%UNTAR%" == "1" (
 	call :extract msys-texinfo-lang %MSYSDIR%
 	call :extract msys-xz-bin %MSYSDIR%
 	call :extract msys-lzma-dll %MSYSDIR%
+	call :extract msys-dash-bin %MSYSDIR%
+	call :extract msys-cvs-bin %MSYSDIR%
 	
 	rem It's a straight up executable from a website
 	move msys-flip-bin.tar.lzma "%MSYSDIR%\bin\flip.exe"
@@ -517,23 +523,29 @@ if "%UNTAR%" == "1" (
 	7za -y "-o%MSYSDIR%\bin" x sysinternals-junction-bin.zip
 	
 	if "%GCCBUILD%" == "1" (
-		call :extract mingw-gcc-core-bin %MINGWDIR%
-		call :extract mingw-gcc-cpp-bin %MINGWDIR%
-		call :extract mingw-gcc-objc-bin %MINGWDIR%
-		call :extract mingw-libgnat-dll %MINGWDIR%
-		call :extract mingw-libgomp-dll %MINGWDIR%
-		call :extract mingw-libgcc-dll %MINGWDIR%
-		call :extract mingw-libstdcpp-dll %MINGWDIR%
-		call :extract mingw-libobjc-dll %MINGWDIR%
-		call :extract mingw-libssp-dll %MINGWDIR%
-		call :extract mingw-binutils-bin %MINGWDIR%
-		call :extract mingw-w32api-dev %MINGWDIR%
-		call :extract mingw-libgmp-dll %MINGWDIR%
-		call :extract mingw-libmpfr-dll %MINGWDIR%
-		call :extract mingw-pthreads-dll %MINGWDIR%
-		call :extract mingw-libmpc-dll %MINGWDIR%
-		call :extract mingw-mingwrt-dll %MINGWDIR%
-		call :extract mingw-mingwrt-dev %MINGWDIR%
+		7za -y "-o%MINGWDIR%" x gcc-x86-bin.zip
+		xcopy /Y /K /H /E "%MINGWDIR%\mingw32\*" "%MINGWDIR%"
+		deltree /y "%MINGWDIR%\mingw32"
+		
+		7za -y "-o%MINGWDIR%" x gcc-x86-runtime-update.zip
+		
+		REM call :extract mingw-gcc-core-bin %MINGWDIR%
+		REM call :extract mingw-gcc-cpp-bin %MINGWDIR%
+		REM call :extract mingw-gcc-objc-bin %MINGWDIR%
+		REM call :extract mingw-libgnat-dll %MINGWDIR%
+		REM call :extract mingw-libgomp-dll %MINGWDIR%
+		REM call :extract mingw-libgcc-dll %MINGWDIR%
+		REM call :extract mingw-libstdcpp-dll %MINGWDIR%
+		REM call :extract mingw-libobjc-dll %MINGWDIR%
+		REM call :extract mingw-libssp-dll %MINGWDIR%
+		REM call :extract mingw-binutils-bin %MINGWDIR%
+		REM call :extract mingw-w32api-dev %MINGWDIR%
+		REM call :extract mingw-libgmp-dll %MINGWDIR%
+		REM call :extract mingw-libmpfr-dll %MINGWDIR%
+		REM call :extract mingw-pthreads-dll %MINGWDIR%
+		REM call :extract mingw-libmpc-dll %MINGWDIR%
+		REM call :extract mingw-mingwrt-dll %MINGWDIR%
+		REM call :extract mingw-mingwrt-dev %MINGWDIR%
 	) else (
 		rem TDM gcc (mingw version)
 		REM call :extract tdm-gcc-mingw-core-bin %MINGWDIR%
@@ -550,9 +562,6 @@ if "%UNTAR%" == "1" (
 		call :extract tdm-gcc-mingw64-mingwrt-runtime %MINGWDIR%
 		call :extract tdm-gcc-mingw64-cpp-bin %MINGWDIR%
 		call :extract tdm-gcc-mingw64-objc-bin %MINGWDIR%
-		
-		REM 7za -y "-o%MINGWDIR%" x gcc-x86.zip
-		REM 7za -y "-o%MINGWDIR%" x gcc-x86_64.zip
 		
 		REM cd /d "%MINGWDIR%\bin\"
 		REM copy addr2line.exe i686-pc-mingw32-addr2line.exe
@@ -648,6 +657,8 @@ if "%CLEAN%" == "1" (
 	call :clean msys-texinfo-lang
 	call :clean msys-xz-bin
 	call :clean msys-lzma-dll
+	call :clean msys-dash-bin
+	call :clean msys-cvs-bin
 	
 	call :clean mingw-basicbsdtar-bin
 	call :clean mingw-autoconf-bin
@@ -672,23 +683,26 @@ if "%CLEAN%" == "1" (
 	call :clean mingw-gdb-bin
 	
 	if "%GCCBUILD%" == "1" (
-		call :clean mingw-gcc-core-bin
-		call :clean mingw-gcc-cpp-bin
-		call :clean mingw-gcc-objc-bin
-		call :clean mingw-libgnat-dll
-		call :clean mingw-libgomp-dll
-		call :clean mingw-libgcc-dll
-		call :clean mingw-libstdcpp-dll
-		call :clean mingw-libobjc-dll
-		call :clean mingw-libssp-dll
-		call :clean mingw-binutils-bin
-		call :clean mingw-w32api-dev
-		call :clean mingw-libgmp-dll
-		call :clean mingw-libmpfr-dll
-		call :clean mingw-pthreads-dll
-		call :clean mingw-libmpc-dll
-		call :clean mingw-mingwrt-dll
-		call :clean mingw-mingwrt-dev
+		del gcc-x86-bin.zip
+		del gcc-x86-runtime-update.zip
+		
+		REM call :clean mingw-gcc-core-bin
+		REM call :clean mingw-gcc-cpp-bin
+		REM call :clean mingw-gcc-objc-bin
+		REM call :clean mingw-libgnat-dll
+		REM call :clean mingw-libgomp-dll
+		REM call :clean mingw-libgcc-dll
+		REM call :clean mingw-libstdcpp-dll
+		REM call :clean mingw-libobjc-dll
+		REM call :clean mingw-libssp-dll
+		REM call :clean mingw-binutils-bin
+		REM call :clean mingw-w32api-dev
+		REM call :clean mingw-libgmp-dll
+		REM call :clean mingw-libmpfr-dll
+		REM call :clean mingw-pthreads-dll
+		REM call :clean mingw-libmpc-dll
+		REM call :clean mingw-mingwrt-dll
+		REM call :clean mingw-mingwrt-dev
 	) else (
 		rem TDM gcc (mingw version)
 		REM call :clean tdm-gcc-mingw-core-bin
@@ -705,9 +719,6 @@ if "%CLEAN%" == "1" (
 		call :clean tdm-gcc-mingw64-mingwrt-runtime
 		call :clean tdm-gcc-mingw64-cpp-bin
 		call :clean tdm-gcc-mingw64-objc-bin
-		
-		REM del gcc-x86.zip
-		REM del gcc-x86_64.zip
 	)
 	
 	if "%GCCBUILD%" neq "1" (
