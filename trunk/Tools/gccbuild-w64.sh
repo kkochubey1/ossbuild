@@ -8,13 +8,13 @@
 #                                                                             #
 ###############################################################################
 
-TOP=$(dirname $0)
+TOP=$(dirname $0)/..
+TOOLS_DIR=$TOP/Tools
+
+export PATH=/bin:$PATH
 
 #Global flags
-CFLAGS="-m32 -D_WIN32_WINNT=0x0501 -Dsocklen_t=int "
-CPPFLAGS="-DMINGW64 -D__MINGW64__ -DMINGW32 -D__MINGW32__"
-LDFLAGS="-Wl,--enable-auto-image-base -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc-v2 -Wl,--kill-at "
-CXXFLAGS="${CFLAGS}"
+STRIP="/mingw/bin/strip"
 
 #To get it to compile properly, you'll need to make several changes.
 #
@@ -40,5 +40,14 @@ CXXFLAGS="${CFLAGS}"
 #the include where mp_limb_t is being tested. e.g.:
 #    #include \"$srcdir/gmp-h.in\" needs to be #include \"E:\\Work\\OSSBuild\\Tools\\build\\gcc\\src\\gmp\\gmp-h.in\"
 
-cd "$TOP"
-make -f "gccbuild-w64-x86.mk" MAKEINFO=true
+cd "$TOOLS_DIR"
+
+#Build
+make -f "gccbuild-w64-x86.mk" \
+    MAKEINFO=true \
+    LD="ld -m i386pe" \
+    RC="windres -F pe-i386" \
+    WINDRES="windres -F pe-i386" \
+    DLLTOOL="dlltool -f--32 -m i386 --export-all-symbols" \
+    RCFLAGS="-F pe-i386" 
+
