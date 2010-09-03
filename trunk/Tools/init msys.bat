@@ -24,6 +24,9 @@ set MINGW_GET_DEFAULTS=%TMPDIR%\var\lib\mingw-get\data\defaults.xml
 
 if /i "%1" equ "GCCBUILD" (
 	set GCCBUILD=1
+	set MSYSDIR=%TOOLSDIR%\msys-gccbuild
+	set MINGWDIR=%TOOLSDIR%\msys-gccbuild\mingw32
+	set DEST_MSYS_DIR=%TOOLSDIR%\msys-gccbuild
 )
 
 rem set GCCDIR=cross-mingw.gcc444.generic.20100612
@@ -523,11 +526,17 @@ if "%UNTAR%" == "1" (
 	7za -y "-o%MSYSDIR%\bin" x sysinternals-junction-bin.zip
 	
 	if "%GCCBUILD%" == "1" (
-		7za -y "-o%MINGWDIR%" x gcc-x86-bin.zip
-		xcopy /Y /K /H /E "%MINGWDIR%\mingw32\*" "%MINGWDIR%"
-		deltree /y "%MINGWDIR%\mingw32"
+		7za -y "-o%MSYSDIR%" x gcc-x86-bin.zip
+		rem xcopy /Y /K /H /E "%MINGWDIR%\mingw32\*" "%MINGWDIR%"
+		rem deltree /y "%MINGWDIR%\mingw32"
 		
-		7za -y "-o%MINGWDIR%" x gcc-x86-runtime-update.zip
+		7za -y "-o%MSYSDIR%" x gcc-x86-runtime-update.zip
+		rem xcopy /Y /K /H /E "%MINGWDIR%\mingw32\*" "%MINGWDIR%"
+		rem deltree /y "%MINGWDIR%\mingw32"
+		
+		rem Create a sym link from mingw32 to mingw
+		cd /d "%MSYSDIR%"
+		"%MSYSDIR%\bin\junction.exe" mingw mingw32
 		
 		REM call :extract mingw-gcc-core-bin %MINGWDIR%
 		REM call :extract mingw-gcc-cpp-bin %MINGWDIR%
@@ -769,7 +778,11 @@ if "%GCCBUILD%" neq "1" (
 )
 
 rem Make a shortcut to our shell
-"%TOOLSDIR%\mklink" "%TOPDIR%\msys.bat.lnk" "/q" "%DEST_MSYS_DIR%\msys.bat"
+if "%GCCBUILD%" neq "1" (
+	"%TOOLSDIR%\mklink" "%TOPDIR%\msys.bat.lnk" "/q" "%DEST_MSYS_DIR%\msys.bat"
+) else (
+	"%TOOLSDIR%\mklink" "%TOPDIR%\msys-gccbuild.bat.lnk" "/q" "%DEST_MSYS_DIR%\msys.bat"
+)
 goto done
 
 

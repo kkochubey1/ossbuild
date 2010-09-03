@@ -23,7 +23,7 @@ HOST_ARCH ?=
 ALL_UPDATE ?= # force update everything
 BINUTILS_UPDATE ?= ${ALL_UPDATE} # force update binutils
 BINUTILS_CONFIG_EXTRA_ARGS ?= --disable-debug
-GCC_CONFIG_EXTRA_ARGS ?= --with-pkgversion="OSSBuild-v0.10.7, GCC-4.5.1-rev163658" --with-bugurl="http://code.google.com/p/ossbuild/issues/" --disable-debug --enable-languages=c,c++,fortran,objc,obj-c++ --disable-multilib --enable-targets=all --disable-werror --enable-fully-dynamic-string --disable-nls --disable-win32-registry --enable-version-specific-runtime-libs --enable-libstdcxx-debug
+GCC_CONFIG_EXTRA_ARGS ?= --with-pkgversion="OSSBuild-v0.10.7, r163658" --with-bugurl="http://code.google.com/p/ossbuild/issues/" --disable-debug --enable-languages=c,c++,fortran,objc,obj-c++ --disable-multilib --enable-targets=all --disable-werror --enable-fully-dynamic-string --disable-nls --disable-win32-registry --enable-version-specific-runtime-libs --enable-libstdcxx-debug
 GCC_BRANCH ?= branches/gcc-4_5-branch #trunk # "tags/gcc_4_4_0_release" or "branches/gcc-4_4-branch"
 GCC_REVISION ?= 163658 #head # revision id "146782" or date "2009-04-25"
 GCC_UPDATE ?= ${ALL_UPDATE} # force update gcc
@@ -421,7 +421,7 @@ binutils-compile: \
 
 ${BUILD_DIR}/binutils/obj/.compile.marker: \
     ${BUILD_DIR}/binutils/obj/.config.marker
-	make -C $(dir $@)
+	make -j3 -C $(dir $@)
 	@touch $@
 
 ########################################
@@ -555,7 +555,7 @@ ${BUILD_DIR}/gcc/obj/.compile.marker: \
     ${BUILD_DIR}/gcc/obj/.config.marker \
     ${BUILD_DIR}/mingw/obj/.install.marker
 	PATH=$(realpath build/root/bin):$$PATH \
-	make -C $(dir $@)
+	make -j3 -C $(dir $@)
 	@touch $@
 
 ########################################
@@ -567,7 +567,7 @@ gcc-install: \
 ${BUILD_DIR}/gcc/obj/.install.marker: \
     ${BUILD_DIR}/gcc/obj/.compile.marker
 	PATH=$(realpath build/root/bin):$$PATH \
-	make -C $(dir $@) install-strip
+	make -j3 -C $(dir $@) install
 	@touch $@
 
 ########################################
@@ -578,15 +578,9 @@ release-archive: \
 
 ${BIN_ARCHIVE}: \
     ${BUILD_DIR}/gcc/obj/.install.marker
-ifeq (windows,${HOST_TYPE})
-	cd ${BUILD_DIR}/root && \
-	zip -r -9 ../../$(patsubst %.tar.bz2,%.zip,$@) \
-	     . -x .*.marker *.*.marker
-else
 	$(TAR) vcjf $@ -C ${BUILD_DIR}/root --owner 0 --group 0 \
 	    --exclude=CVS --exclude=.svn --exclude=.*.marker \
             .
-endif
 
 ################################################################################
 # Native (only active when native_dir != build_dir)
