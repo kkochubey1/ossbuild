@@ -23,9 +23,9 @@ HOST_ARCH ?=
 ALL_UPDATE ?= # force update everything
 BINUTILS_UPDATE ?= ${ALL_UPDATE} # force update binutils
 BINUTILS_CONFIG_EXTRA_ARGS ?= --disable-debug
-GCC_CONFIG_EXTRA_ARGS ?= --with-pkgversion="OSSBuild-v0.10.7, r163658" --with-bugurl="http://code.google.com/p/ossbuild/issues/" --disable-debug --enable-languages=c,c++,fortran,objc,obj-c++ --disable-multilib --enable-targets=all --disable-werror --enable-fully-dynamic-string --disable-nls --disable-win32-registry --enable-version-specific-runtime-libs --enable-libstdcxx-debug
+GCC_CONFIG_EXTRA_ARGS ?= --with-pkgversion="OSSBuild-v0.10.8, r163830" --with-bugurl="http://code.google.com/p/ossbuild/issues/" --disable-debug --enable-languages=c,c++,fortran,objc,obj-c++ --disable-multilib --enable-targets=all --disable-werror --enable-fully-dynamic-string --disable-nls --disable-win32-registry --enable-version-specific-runtime-libs --enable-libstdcxx-debug
 GCC_BRANCH ?= branches/gcc-4_5-branch #trunk # "tags/gcc_4_4_0_release" or "branches/gcc-4_4-branch"
-GCC_REVISION ?= 163658 #head # revision id "146782" or date "2009-04-25"
+GCC_REVISION ?= 163830 #head # revision id "146782" or date "2009-04-25"
 GCC_UPDATE ?= ${ALL_UPDATE} # force update gcc
 GMP_VERSION ?= 5.0.1 # GMP release version
 MPFR_VERSION ?= 2.4.2 # MPFR release version

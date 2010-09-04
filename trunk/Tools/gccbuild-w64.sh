@@ -8,13 +8,13 @@
 #                                                                             #
 ###############################################################################
 
-TOP=$(dirname $0)/..
-TOOLS_DIR=$TOP/Tools
+TOP=$(dirname $0)
+CURR_DIR=$TOP
 
 export PATH=/mingw32/bin:/bin:$PATH
 
 #Global flags
-STRIP="/mingw/bin/strip"
+STRIP="/mingw/bin/i686-w64-mingw32-strip"
 
 #To get it to compile properly, you'll need to make several changes.
 #
@@ -22,7 +22,7 @@ STRIP="/mingw/bin/strip"
 #
 #sudo apt-get install bison flex
 
-cd "$TOOLS_DIR"
+cd "$CURR_DIR"
 
 #Build
 echo Building GCC...
@@ -44,16 +44,18 @@ done
 
 #Strip
 echo Stripping executables and shared libraries...
-cd "$TOOLS_DIR"
+cd "$CURR_DIR"
 $STRIP build/root/bin/*.exe
 $STRIP build/root/bin/*.dll
 $STRIP build/root/lib/bin/*.dll
 $STRIP build/root/i686-w64-mingw32/bin/*.exe
 $STRIP build/root/libexec/gcc/i686-w64-mingw32/4.5.2/*.exe
 
+#Create copies
+
 #Create lzma bin archive
 echo Creating lzma compressed archive...
-cd "$TOOLS_DIR"
+cd "$CURR_DIR"
 tar cfa mingw-w64-x86-ossbuild-bin.tar.lzma \
     -C build/root \
     --owner 0 --group 0 \

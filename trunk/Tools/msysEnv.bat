@@ -25,7 +25,7 @@ set MINGW_GET_DEFAULTS=%TMPDIR%\var\lib\mingw-get\data\defaults.xml
 if /i "%1" equ "GCCBUILD" (
 	set GCCBUILD=1
 	set MSYSDIR=%TOOLSDIR%\msys-gccbuild
-	set MINGWDIR=%TOOLSDIR%\msys-gccbuild\mingw32
+	set MINGWDIR=%TOOLSDIR%\msys-gccbuild\mingw
 	set DEST_MSYS_DIR=%TOOLSDIR%\msys-gccbuild
 )
 
@@ -37,6 +37,8 @@ rem set GCCDIR=cross-mingw.gcc451.generic.20100615
 rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.7z
 rem set GCCDIR=cross-mingw.gcc451.generic.20100615.1
 rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.1.7z
+
+set PKG_OSSBUILD_W64_GCC_x86_BIN=http://ossbuild.googlecode.com/files/mingw-w64-x86-ossbuild-bin.tar.lzma
 
 set PKG_MINGW_W64_GCC_X86_BIN=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win32/Personal Builds/sezero_20100711/mingw-w32-bin_i686-mingw_20100711_sezero.zip?use_mirror=voxel
 set PKG_MINGW_W64_GCC_X86_RUNTIME_UPDATE=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win32/Personal Builds/sezero_20100711/sezero_20100711_w32_runtime_update_3441.zip?use_mirror=voxel
@@ -339,9 +341,12 @@ if "%DOWNLOAD%" == "1" (
 	wget --no-check-certificate -O perl.zip "%PKG_ACTIVESTATE_PERL_BIN%"
 	
 	if "%GCCBUILD%" == "1" (
+		rem OSSBuild MinGW-w64 GCC
+		call :download ossbuild-w64-x86-bin "%PKG_OSSBUILD_W64_GCC_x86_BIN%"
+		
 		rem Get MinGW-w64 gcc
-		wget --no-check-certificate -O gcc-x86-bin.zip "%PKG_MINGW_W64_GCC_X86_BIN%"
-		wget --no-check-certificate -O gcc-x86-runtime-update.zip "%PKG_MINGW_W64_GCC_X86_RUNTIME_UPDATE%"
+		REM wget --no-check-certificate -O gcc-x86-bin.zip "%PKG_MINGW_W64_GCC_X86_BIN%"
+		REM wget --no-check-certificate -O gcc-x86-runtime-update.zip "%PKG_MINGW_W64_GCC_X86_RUNTIME_UPDATE%"
 		
 		REM call :download mingw-gcc-core-bin "%PKG_MINGW_GCC_CORE_BIN%"
 		REM call :download mingw-gcc-cpp-bin "%PKG_MINGW_GCC_CPP_BIN%"
@@ -526,17 +531,15 @@ if "%UNTAR%" == "1" (
 	7za -y "-o%MSYSDIR%\bin" x sysinternals-junction-bin.zip
 	
 	if "%GCCBUILD%" == "1" (
-		7za -y "-o%MSYSDIR%" x gcc-x86-bin.zip
-		rem xcopy /Y /K /H /E "%MINGWDIR%\mingw32\*" "%MINGWDIR%"
-		rem deltree /y "%MINGWDIR%\mingw32"
+		call :extract ossbuild-w64-x86-bin %MINGWDIR%
 		
-		7za -y "-o%MSYSDIR%" x gcc-x86-runtime-update.zip
-		rem xcopy /Y /K /H /E "%MINGWDIR%\mingw32\*" "%MINGWDIR%"
-		rem deltree /y "%MINGWDIR%\mingw32"
+		REM rem MinGW-w64 sezero gcc
+		REM 7za -y "-o%MSYSDIR%" x gcc-x86-bin.zip
+		REM 7za -y "-o%MSYSDIR%" x gcc-x86-runtime-update.zip
 		
-		rem Create a sym link from mingw32 to mingw
-		cd /d "%MSYSDIR%"
-		"%MSYSDIR%\bin\junction.exe" mingw mingw32
+		REM rem Create a sym link from mingw32 to mingw
+		REM cd /d "%MSYSDIR%"
+		REM "%MSYSDIR%\bin\junction.exe" mingw mingw32
 		
 		REM call :extract mingw-gcc-core-bin %MINGWDIR%
 		REM call :extract mingw-gcc-cpp-bin %MINGWDIR%
@@ -692,8 +695,10 @@ if "%CLEAN%" == "1" (
 	call :clean mingw-gdb-bin
 	
 	if "%GCCBUILD%" == "1" (
-		del gcc-x86-bin.zip
-		del gcc-x86-runtime-update.zip
+		call :clean ossbuild-w64-x86-bin
+		
+		REM del gcc-x86-bin.zip
+		REM del gcc-x86-runtime-update.zip
 		
 		REM call :clean mingw-gcc-core-bin
 		REM call :clean mingw-gcc-cpp-bin
