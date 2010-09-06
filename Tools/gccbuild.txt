@@ -2,7 +2,7 @@ Prepare the environment:
   1. Open a command prompt (cmd.exe)
   2. Run:
        cd <OSSBuild>\Tools\
-       "msysEnv.bat" gccbuild
+       "msys-env-gccbuild.bat"
 
 Start the build:
   1. Open an msys prompt:
