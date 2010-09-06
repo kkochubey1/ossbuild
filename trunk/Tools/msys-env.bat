@@ -160,15 +160,15 @@ set PKG_MSYS_DASH_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/dash/d
 set PKG_MSYS_CVS_BIN=http://downloads.sourceforge.net/project/mingw/MSYS/cvs/cvs-1.12.13-2/cvs-1.12.13-2-msys-1.0.13-bin.tar.lzma?use_mirror=voxel
 
 set PKG_MINGW_BASICBSDTAR_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/Utilities/basic bsdtar/basic-bsdtar-2.8.3-1/basic-bsdtar-2.8.3-1-mingw32-bin.tar.lzma?use_mirror=iweb
-set PKG_MINGW_AUTOCONF_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/autoconf2.5/autoconf2.5-2.64-1/autoconf2.5-2.64-1-mingw32-bin.tar.lzma?use_mirror=voxel
-set PKG_MINGW_AUTOCONFWRAPPER_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/wrapper/autoconf-7-1/autoconf-7-1-mingw32-bin.tar.lzma?use_mirror=iweb
+set PKG_MINGW_AUTOCONF_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/autoconf2.5/autoconf2.5-2.67-1/autoconf2.5-2.67-1-mingw32-bin.tar.lzma?use_mirror=voxel
+set PKG_MINGW_AUTOCONFWRAPPER_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/autoconf/wrapper/autoconf-9-1/autoconf-9-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_AUTOMAKE_1_4_BIN=http://sourceforge.net/projects/mingw/files/MinGW/automake/automake1.4/automake1.4-1.4p6-1/automake1.4-1.4p6-1-mingw32-bin.tar.lzma/download
 set PKG_MINGW_AUTOMAKE_1_8_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/automake/automake1.8/automake1.8-1.8.5-1/automake1.8-1.8.5-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_AUTOMAKE_1_10_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/automake/automake1.10/automake1.10-1.10.2-1/automake1.10-1.10.2-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_AUTOMAKE_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/automake/automake1.11/automake1.11-1.11-1/automake1.11-1.11-1-mingw32-bin.tar.lzma?use_mirror=softlayer
 set PKG_MINGW_AUTOMAKEWRAPPER_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/automake/wrapper/automake-4-1/automake-4-1-mingw32-bin.tar.lzma?use_mirror=voxel
-set PKG_MINGW_LTDL_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libtool/libtool-2.2.7a-1/libltdl-2.2.7a-1-mingw32-dll-7.tar.lzma?use_mirror=voxel
-set PKG_MINGW_LIBTOOL_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/libtool/libtool-2.2.7a-1/libtool-2.2.7a-1-mingw32-bin.tar.lzma?use_mirror=voxel
+set PKG_MINGW_LTDL_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/libtool/libtool-2.2.11a-1/libltdl-2.2.11a-1-mingw32-dll-7.tar.lzma?use_mirror=voxel
+set PKG_MINGW_LIBTOOL_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/libtool/libtool-2.2.11a-1/libtool-2.2.11a-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_PEXPORTS_BIN=http://downloads.sourceforge.net/project/mingw/MinGW/pexports/pexports-0.44-1/pexports-0.44-1-mingw32-bin.tar.lzma?use_mirror=voxel
 set PKG_MINGW_GETTEXT_DEV=http://downloads.sourceforge.net/project/mingw/MinGW/gettext/gettext-0.17-1/gettext-0.17-1-mingw32-dev.tar.lzma?use_mirror=iweb
 set PKG_MINGW_LIBGETTEXTPO_DLL=http://downloads.sourceforge.net/project/mingw/MinGW/gettext/gettext-0.17-1/libgettextpo-0.17-1-mingw32-dll-0.tar.lzma?use_mirror=iweb
