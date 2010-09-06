@@ -21,8 +21,9 @@ all:: # default target
 TARGET_ARCH ?= x86_64-w64-mingw32
 HOST_ARCH ?= 
 ALL_UPDATE ?= # force update everything
+BINUTILS_VERSION ?= 2.20.51
 BINUTILS_UPDATE ?= ${ALL_UPDATE} # force update binutils
-BINUTILS_CONFIG_EXTRA_ARGS ?= --disable-lto
+BINUTILS_CONFIG_EXTRA_ARGS ?= --disable-debug
 GCC_CONFIG_EXTRA_ARGS ?= --with-pkgversion="OSSBuild-v0.10.8, r163830" --with-bugurl="http://code.google.com/p/ossbuild/issues/" --disable-debug --enable-languages=c,c++,fortran,objc,obj-c++ --disable-multilib --enable-targets=all --disable-werror --enable-fully-dynamic-string --disable-nls --disable-win32-registry --enable-version-specific-runtime-libs --enable-libstdcxx-debug
 GCC_BRANCH ?= branches/gcc-4_5-branch #trunk # "tags/gcc_4_4_0_release" or "branches/gcc-4_4-branch"
 GCC_REVISION ?= 163830 #head # revision id "146782" or date "2009-04-25"
@@ -50,7 +51,7 @@ BIN_ARCHIVE ?= mingw-w64-x86_64-ossbuild-bin.tar.bz2
 ######
 
 TAR := $(or $(shell which gnutar 2>/dev/null),$(shell which tar 2>/dev/null),tar)
-PATCH ?= patch -p0 -u -N -i
+PATCH ?= patch -u -N -i
 CVS=cvs -z9
 SVN=svn --non-interactive --no-auth-cache
 SVN_CO=co
@@ -97,37 +98,37 @@ src/patches/.patches.pull.marker: \
 	       https://mingw-w64.svn.sourceforge.net/svnroot/mingw-w64/experimental/patches/ .
 	@touch $@
 
+########################################
+# Download binutils
+########################################
+
+binutils-download: \
+    src/binutils.tar.bz2
+
+src/binutils.tar.bz2: \
+    src/.mkdir.marker
+	$(WGET) $@ http://mirrors.kernel.org/sources.redhat.com/binutils/snapshots/binutils-$(strip ${BINUTILS_VERSION}).tar.bz2
 
 ########################################
-# Pull binutils
+# Extract binutils
 ########################################
 
-binutils-pull: \
-    src/binutils/.binutils.pull.marker \
-    src/binutils/.binutils.patch.marker
+binutils-extract: \
+    src/.binutils.extract.marker \
+    src/binutils/.patch.marker
 
-src/binutils/.binutils.pull.marker: \
-    src/binutils/.mkdir.marker
-	### XXX Mook: todo: specify revision
-ifeq (,$(strip ${BINUTILS_UPDATE}))
-	cd $(dir $@) && \
-	$(CVS) -d ":pserver:anoncvs@sourceware.org:/cvs/src" \
-	    checkout -d . -N binutils
+src/.binutils.extract.marker: \
+    src/binutils.tar.bz2 \
+    src/binutils/src/.mkdir.marker
+	$(TAR) -C $(dir $@)/binutils/src --strip-components=1 -xjvf $<
 	@touch $@
-else
-	cd $(dir $@) && \
-	$(CVS) -d ":pserver:anoncvs@sourceware.org:/cvs/src" \
-	    update
-	@touch $@
-.PHONY: src/binutils/.binutils.pull.marker
-endif
 
-binutils-patch: \
-    src/binutils/.binutils.patch.marker
+binutils-patch:  \
+    src/binutils/.patch.marker
 
-src/binutils/.binutils.patch.marker: \
+src/binutils/.patch.marker: \
     src/patches/.patches.pull.marker \
-    src/binutils/.binutils.pull.marker
+    src/.binutils.extract.marker
 	@touch $@
 
 ########################################
@@ -317,8 +318,8 @@ src-archive:  ${SRC_ARCHIVE}
 
 ifeq (,$(wildcard ${SRC_ARCHIVE}))
 ${SRC_ARCHIVE}: \
-    src/binutils/.binutils.pull.marker \
-	src/binutils/.binutils.patch.marker \
+    src/.binutils.extract.marker \
+	src/binutils/.patch.marker \
     src/gcc/.gcc.pull.marker \
 	src/gcc/.gcc.patch.marker \
     src/.gmp.extract.marker \
@@ -818,12 +819,11 @@ help::
 
 # build only the cross-compiler by default
 all:: \
-  patch-pull \
   ${BIN_ARCHIVE}
 
 TARGETS := \
   patch-pull \
-  binutils-pull \
+  binutils-extract \
   binutils-patch \
   gcc-pull \
   gcc-patch \

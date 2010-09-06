@@ -9,12 +9,9 @@
 ###############################################################################
 
 TOP=$(dirname $0)
-CURR_DIR=$TOP
+CURR_DIR=$( (cd "$TOP" && pwd) )
 
 export PATH=/mingw32/bin:/bin:$PATH
-
-#Global flags
-STRIP="/mingw/bin/i686-w64-mingw32-strip"
 
 #To get it to compile properly, you'll need to make several changes.
 #
@@ -37,10 +34,15 @@ do
         LD="ld -m i386pe" \
         RC="windres -F pe-i386" \
         WINDRES="windres -F pe-i386" \
-        DLLTOOL="dlltool -f--32 -m i386 --export-all-symbols" \
+        DLLTOOL="dlltool -m i386 --export-all-symbols" \
         RCFLAGS="-F pe-i386" 
     ((i++))
 done
+
+#Set flags
+HOST_TRIPLET=i686-w64-mingw32
+HOST_TRIPLET_DASH=${HOST_TRIPLET}-
+STRIP="/mingw/bin/${HOST_TRIPLET_DASH}strip"
 
 #Strip
 echo Stripping executables and shared libraries...
@@ -48,10 +50,36 @@ cd "$CURR_DIR"
 $STRIP build/root/bin/*.exe
 $STRIP build/root/bin/*.dll
 $STRIP build/root/lib/bin/*.dll
-$STRIP build/root/i686-w64-mingw32/bin/*.exe
-$STRIP build/root/libexec/gcc/i686-w64-mingw32/4.5.2/*.exe
+$STRIP build/root/${HOST_TRIPLET}/bin/*.exe
+$STRIP build/root/libexec/gcc/${HOST_TRIPLET}/4.5.2/*.exe
 
 #Create copies
+echo Creating symbolic links...
+cd build/root/bin/
+ln -s -f ${HOST_TRIPLET_DASH}addr2line addr2line
+ln -s -f ${HOST_TRIPLET_DASH}ar ar
+ln -s -f ${HOST_TRIPLET_DASH}as as
+ln -s -f ${HOST_TRIPLET_DASH}c++ c++
+ln -s -f ${HOST_TRIPLET_DASH}c++filt c++filt
+ln -s -f ${HOST_TRIPLET_DASH}cpp cpp
+ln -s -f ${HOST_TRIPLET_DASH}dlltool dlltool
+ln -s -f ${HOST_TRIPLET_DASH}dllwrap dllwrap
+ln -s -f ${HOST_TRIPLET_DASH}g++ g++
+ln -s -f ${HOST_TRIPLET_DASH}gcc gcc
+ln -s -f ${HOST_TRIPLET_DASH}gccbug gccbug
+ln -s -f ${HOST_TRIPLET_DASH}gcov gcov
+ln -s -f ${HOST_TRIPLET_DASH}gprof gprof
+ln -s -f ${HOST_TRIPLET_DASH}ld ld
+ln -s -f ${HOST_TRIPLET_DASH}nm nm
+ln -s -f ${HOST_TRIPLET_DASH}objcopy objcopy
+ln -s -f ${HOST_TRIPLET_DASH}objdump objdump
+ln -s -f ${HOST_TRIPLET_DASH}ranlib ranlib
+ln -s -f ${HOST_TRIPLET_DASH}readelf readelf
+ln -s -f ${HOST_TRIPLET_DASH}size size
+ln -s -f ${HOST_TRIPLET_DASH}strings strings
+ln -s -f ${HOST_TRIPLET_DASH}strip strip
+ln -s -f ${HOST_TRIPLET_DASH}windmc windmc
+ln -s -f ${HOST_TRIPLET_DASH}windres windres
 
 #Create lzma bin archive
 echo Creating lzma compressed archive...
