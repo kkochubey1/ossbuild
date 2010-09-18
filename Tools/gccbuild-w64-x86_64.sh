@@ -76,6 +76,25 @@ ln -s -f ${HOST_TRIPLET_DASH}strings strings
 ln -s -f ${HOST_TRIPLET_DASH}strip strip
 ln -s -f ${HOST_TRIPLET_DASH}windmc windmc
 ln -s -f ${HOST_TRIPLET_DASH}windres windres
+cd ../lib/gcc/${HOST_TRIPLET}/4.5.2/
+ln -s -f ../lib64/libgcc_s.a libgcc_s.a
+
+#Fix libtool files...
+#Other projects may attempt to use the libtool files which point to directories that may or may not 
+#exist on the system building the libraries. e.g. libstc++.la points to 
+#/c/dev/build/root/lib/gcc/i686-w64-mingw32/4.5.2/ which existed when gcc was built, but is not longer 
+#around after we've installed this gcc to D:\OSSBuild\Tools\msys-x86\.
+echo Fixing libtool files...
+cd "$CURR_DIR/build/root/lib/gcc/${HOST_TRIPLET}/4.5.2/"
+rm -f libgfortran.la
+rm -f libgfortranbegin.la
+rm -f libobjc.la
+rm -f libssp.la
+rm -f libssp_nonshared.la
+rm -f libstdc++.la
+rm -f libsupc++.la
+cd debug/
+rm -f libstdc++.la
 
 #Create lzma bin archive
 echo Creating lzma compressed archive...
