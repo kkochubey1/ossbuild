@@ -15,10 +15,10 @@
 	/>
 	<UserMacro
 		Name="LibRsvgApiVersionString"
-		Value="2"
+		Value="2.0"
 	/>
 	<UserMacro
 		Name="LibRsvgLibVersionString"
-		Value="$(LibRsvgApiVersionString)"
+		Value="2"
 	/>
 </VisualStudioPropertySheet>

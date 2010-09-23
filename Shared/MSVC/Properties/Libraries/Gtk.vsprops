@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Gtk+"
-	InheritedPropertySheets=".\Cairo.vsprops;.\Pango.vsprops;.\Atk.vsprops"
+	InheritedPropertySheets=".\GdkPixbuf.vsprops;.\Cairo.vsprops;.\Pango.vsprops;.\Atk.vsprops"
 	>
 	<Tool
 		Name="VCCLCompilerTool"
@@ -11,7 +11,7 @@
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="gtk-win32-$(LibGtkLibVersionString).lib gdk-win32-$(LibGtkLibVersionString).lib gdk_pixbuf-$(LibGtkLibVersionString).lib"
+		AdditionalDependencies="gtk-win32-$(LibGtkLibVersionString).lib gdk-win32-$(LibGtkLibVersionString).lib"
 	/>
 	<UserMacro
 		Name="LibGtkApiVersionString"
