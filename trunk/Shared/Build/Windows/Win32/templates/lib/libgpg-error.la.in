@@ -23,8 +23,8 @@ dependency_libs=' -L@SHARED_BUILD_DIR@/lib '
 weak_library_names=''
 
 # Version information for libgpg-error.
-current=6
-age=6
+current=7
+age=7
 revision=0
 
 # Is this an already installed library?

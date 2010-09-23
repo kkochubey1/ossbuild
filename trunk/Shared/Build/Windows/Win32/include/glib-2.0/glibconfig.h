@@ -158,7 +158,7 @@ typedef unsigned __int64 guintptr;
 
 #define GLIB_MAJOR_VERSION 2
 #define GLIB_MINOR_VERSION 25
-#define GLIB_MICRO_VERSION 11
+#define GLIB_MICRO_VERSION 17
 
 #define G_OS_WIN32
 #define G_PLATFORM_WIN32

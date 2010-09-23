@@ -436,6 +436,14 @@ typedef enum {
  *     domain. Use g_dbus_error_get_remote_error() to extract the D-Bus
  *     error name and g_dbus_error_strip_remote_error() to fix up the
  *     message so it matches what was received on the wire. Since 2.26.
+ * @G_IO_ERROR_HOST_UNREACHABLE: Host unreachable. Since 2.26
+ * @G_IO_ERROR_NETWORK_UNREACHABLE: Network unreachable. Since 2.26
+ * @G_IO_ERROR_CONNECTION_REFUSED: Connection refused. Since 2.26
+ * @G_IO_ERROR_PROXY_FAILED: Connection to proxy server failed. Since 2.26
+ * @G_IO_ERROR_PROXY_AUTH_FAILED: Proxy authentication failed. Since 2.26
+ * @G_IO_ERROR_PROXY_NEED_AUTH: Proxy server needs authentication. Since 2.26
+ * @G_IO_ERROR_PROXY_NOT_ALLOWED: Proxy connection is not allowed by ruleset.
+ *     Since 2.26
  *
  * Error codes returned by GIO functions.
  *
@@ -477,7 +485,14 @@ typedef enum {
   G_IO_ERROR_ADDRESS_IN_USE,
   G_IO_ERROR_PARTIAL_INPUT,
   G_IO_ERROR_INVALID_DATA,
-  G_IO_ERROR_DBUS_ERROR
+  G_IO_ERROR_DBUS_ERROR,
+  G_IO_ERROR_HOST_UNREACHABLE,
+  G_IO_ERROR_NETWORK_UNREACHABLE,
+  G_IO_ERROR_CONNECTION_REFUSED,
+  G_IO_ERROR_PROXY_FAILED,
+  G_IO_ERROR_PROXY_AUTH_FAILED,
+  G_IO_ERROR_PROXY_NEED_AUTH,
+  G_IO_ERROR_PROXY_NOT_ALLOWED
 } GIOErrorEnum;
 
 
@@ -1138,6 +1153,68 @@ typedef enum
   G_DBUS_SERVER_FLAGS_RUN_IN_THREAD = (1<<0),
   G_DBUS_SERVER_FLAGS_AUTHENTICATION_ALLOW_ANONYMOUS = (1<<1)
 } GDBusServerFlags;
+
+/**
+ * GDBusSignalFlags:
+ * @G_DBUS_SIGNAL_FLAGS_NONE: No flags set.
+ *
+ * Flags used when subscribing to signals via g_dbus_connection_signal_subscribe().
+ *
+ * Since: 2.26
+ */
+typedef enum /*< flags >*/
+{
+  G_DBUS_SIGNAL_FLAGS_NONE = 0
+} GDBusSignalFlags;
+
+/**
+ * GDBusSendMessageFlags:
+ * @G_DBUS_SEND_MESSAGE_FLAGS_NONE: No flags set.
+ * @G_DBUS_SEND_MESSAGE_FLAGS_PRESERVE_SERIAL: Do not automatically
+ * assign a serial number from the #GDBusConnection object when
+ * sending a message.
+ *
+ * Flags used when sending #GDBusMessage<!-- -->s on a #GDBusConnection.
+ *
+ * Since: 2.26
+ */
+typedef enum
+{
+  G_DBUS_SEND_MESSAGE_FLAGS_NONE = 0,
+  G_DBUS_SEND_MESSAGE_FLAGS_PRESERVE_SERIAL = (1<<0)
+} GDBusSendMessageFlags;
+
+/**
+ * GCredentialsType:
+ * @G_CREDENTIALS_TYPE_INVALID: Indicates an invalid native credential type.
+ * @G_CREDENTIALS_TYPE_LINUX_UCRED: The native credentials type is a <type>struct ucred</type>.
+ * @G_CREDENTIALS_TYPE_FREEBSD_CMSGCRED: The native credentials type is a <type>struct cmsgcred</type>.
+ *
+ * Enumeration describing different kinds of native credential types.
+ *
+ * Since: 2.26
+ */
+typedef enum
+{
+  G_CREDENTIALS_TYPE_INVALID,
+  G_CREDENTIALS_TYPE_LINUX_UCRED,
+  G_CREDENTIALS_TYPE_FREEBSD_CMSGCRED
+} GCredentialsType;
+
+/**
+ * GDBusMessageByteOrder:
+ * @G_DBUS_MESSAGE_BYTE_ORDER_BIG_ENDIAN: The byte order is big endian.
+ * @G_DBUS_MESSAGE_BYTE_ORDER_LITTLE_ENDIAN: The byte order is little endian.
+ *
+ * Enumeration used to describe the byte order of a D-Bus message.
+ *
+ * Since: 2.26
+ */
+typedef enum
+{
+  G_DBUS_MESSAGE_BYTE_ORDER_BIG_ENDIAN    = 'B',
+  G_DBUS_MESSAGE_BYTE_ORDER_LITTLE_ENDIAN = 'l'
+} GDBusMessageByteOrder;
 
 G_END_DECLS
 

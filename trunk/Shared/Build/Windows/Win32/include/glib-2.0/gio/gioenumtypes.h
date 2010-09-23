@@ -101,6 +101,14 @@ GType g_dbus_subtree_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_DBUS_SUBTREE_FLAGS (g_dbus_subtree_flags_get_type ())
 GType g_dbus_server_flags_get_type (void) G_GNUC_CONST;
 #define G_TYPE_DBUS_SERVER_FLAGS (g_dbus_server_flags_get_type ())
+GType g_dbus_signal_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_SIGNAL_FLAGS (g_dbus_signal_flags_get_type ())
+GType g_dbus_send_message_flags_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_SEND_MESSAGE_FLAGS (g_dbus_send_message_flags_get_type ())
+GType g_credentials_type_get_type (void) G_GNUC_CONST;
+#define G_TYPE_CREDENTIALS_TYPE (g_credentials_type_get_type ())
+GType g_dbus_message_byte_order_get_type (void) G_GNUC_CONST;
+#define G_TYPE_DBUS_MESSAGE_BYTE_ORDER (g_dbus_message_byte_order_get_type ())
 
 /* enumerations from "gsettings.h" */
 GType g_settings_bind_flags_get_type (void) G_GNUC_CONST;

@@ -290,6 +290,9 @@ typedef enum
     GPG_ERR_NO_PIN = 178,
     GPG_ERR_NOT_ENABLED = 179,
     GPG_ERR_NO_ENGINE = 180,
+    GPG_ERR_MISSING_KEY = 181,
+    GPG_ERR_TOO_MANY = 182,
+    GPG_ERR_LIMIT_REACHED = 183,
     GPG_ERR_UNFINISHED = 199,
     GPG_ERR_BUFFER_TOO_SHORT = 200,
     GPG_ERR_SEXP_INV_LEN_SPEC = 201,
@@ -550,6 +553,10 @@ gpg_error_t gpg_err_init (void) _GPG_ERR_CONSTRUCTOR;
 #ifdef _GPG_ERR_HAVE_CONSTRUCTOR
 #define GPG_ERR_INITIALIZED	1
 #endif
+
+/* See the source on how to use the deinit function; it is usually not
+   required.  */
+void gpg_err_deinit (int mode);
 
 
 /* Constructor and accessor functions.  */

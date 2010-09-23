@@ -45,7 +45,7 @@ def main():
     
     for o, a in opts:
         if o in ("-v", "--version"):
-            print "rsvg version %s" % ("2.26.3")
+            print "rsvg version %s" % ("2.31.0")
             sys.exit(0)
         elif o in ("--usage"):
             usage()
@@ -67,7 +67,7 @@ def main():
         help()
         sys.exit(1)
 
-    return os.system("%s %s -o %s %s" % (shellEscape(os.path.join("/E/Work/OSSBuild/Build/Windows/Win32/Release", "bin", "rsvg-convert")), command_str, shellEscape(args[1]), shellEscape(args[0])))
+    return os.system("%s %s -o %s %s" % (shellEscape(os.path.join("/E/Development/OSSBuild/Build/Windows/Win32/Release", "bin", "rsvg-convert")), command_str, shellEscape(args[1]), shellEscape(args[0])))
 
 if __name__ == "__main__":
     main()

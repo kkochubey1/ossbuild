@@ -28,7 +28,6 @@
 #include <gio/giotypes.h>
 
 #include <gio/gappinfo.h>
-#include <gio/gapplication.h>
 #include <gio/gasyncinitable.h>
 #include <gio/gasyncresult.h>
 #include <gio/gbufferedinputstream.h>
@@ -89,6 +88,10 @@
 #include <gio/gnetworkservice.h>
 #include <gio/goutputstream.h>
 #include <gio/gpermission.h>
+#include <gio/gproxy.h>
+#include <gio/gproxyaddress.h>
+#include <gio/gproxyaddressenumerator.h>
+#include <gio/gproxyresolver.h>
 #include <gio/gresolver.h>
 #include <gio/gseekable.h>
 #include <gio/gsettings.h>
