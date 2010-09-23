@@ -100,6 +100,14 @@ rm -f libsupc++.la
 cd debug/
 rm -f libstdc++.la
 
+#Download OpenGL extension headers from the Khronos group
+echo Adding additional OpenGL headers...
+cd "$CURR_DIR/build/root/${HOST_TRIPLET}/include/GL/"
+wget http://www.opengl.org/registry/api/glext.h
+wget http://www.opengl.org/registry/api/glxext.h
+wget http://www.opengl.org/registry/api/wglext.h
+cd ../
+
 #Create lzma bin archive
 echo Creating lzma compressed archive...
 cd "$CURR_DIR"

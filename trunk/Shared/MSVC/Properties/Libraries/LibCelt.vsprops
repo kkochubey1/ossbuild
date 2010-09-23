@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		PreprocessorDefinitions="HAVE_CELT_0_5;HAVE_CELT_0_6;HAVE_CELT_0_7"
+		PreprocessorDefinitions="HAVE_CELT_0_5;HAVE_CELT_0_6;HAVE_CELT_0_7;HAVE_CELT_0_8"
 	/>
 	<Tool
 		Name="VCLinkerTool"
