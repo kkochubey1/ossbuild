@@ -196,6 +196,18 @@ typedef struct _GThemedIcon                   GThemedIcon;
 typedef struct _GVfs                          GVfs; /* Dummy typedef */
 
 /**
+ * GProxyResolver:
+ *
+ * A helper class to enumerate proxies base on URI.
+ *
+ * Since: 2.26
+ **/
+typedef struct _GProxyResolver                GProxyResolver;
+typedef struct _GProxy			      GProxy;
+typedef struct _GProxyAddress		      GProxyAddress;
+typedef struct _GProxyAddressEnumerator	      GProxyAddressEnumerator;
+
+/**
  * GVolume:
  *
  * Opaque mountable volume object.

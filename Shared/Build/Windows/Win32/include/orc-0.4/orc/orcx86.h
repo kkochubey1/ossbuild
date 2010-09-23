@@ -23,6 +23,23 @@ enum {
   X86_R15
 };
 
+enum {
+  ORC_X86_UNKNOWN,
+  ORC_X86_P6,
+  ORC_X86_NETBURST,
+  ORC_X86_CORE,
+  ORC_X86_PENRYN,
+  ORC_X86_NEHALEM,
+  ORC_X86_BONNELL,
+  ORC_X86_WESTMERE,
+  ORC_X86_SANDY_BRIDGE,
+  ORC_X86_K5,
+  ORC_X86_K6,
+  ORC_X86_K7,
+  ORC_X86_K8,
+  ORC_X86_K10
+};
+
 const char * orc_x86_get_regname(int i);
 int orc_x86_get_regnum(int i);
 const char * orc_x86_get_regname_16(int i);
@@ -54,12 +71,15 @@ void orc_x86_emit_cmp_reg_memoffset (OrcCompiler *compiler, int size, int reg1,
     int offset, int reg);
 void orc_x86_emit_cmp_imm_memoffset (OrcCompiler *compiler, int size, int value,
     int offset, int reg);
+void orc_x86_emit_cmp_imm_reg (OrcCompiler *compiler, int size, int value, int reg);
 void orc_x86_emit_test_imm_memoffset (OrcCompiler *compiler, int size, int value,
     int offset, int reg);
 void orc_x86_emit_emms (OrcCompiler *compiler);
+void orc_x86_emit_rdtsc (OrcCompiler *compiler);
 void orc_x86_emit_rep_movs (OrcCompiler *compiler, int size);
 void orc_x86_emit_ret (OrcCompiler *compiler);
 void orc_x86_emit_jle (OrcCompiler *compiler, int label);
+void orc_x86_emit_jg (OrcCompiler *compiler, int label);
 void orc_x86_emit_je (OrcCompiler *compiler, int label);
 void orc_x86_emit_jne (OrcCompiler *compiler, int label);
 void orc_x86_emit_jmp (OrcCompiler *compiler, int label);

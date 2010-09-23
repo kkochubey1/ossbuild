@@ -54,13 +54,19 @@ typedef enum
 
 typedef struct _GtkNotebook       GtkNotebook;
 typedef struct _GtkNotebookClass  GtkNotebookClass;
+#if !defined (GTK_DISABLE_DEPRECATED) || defined (GTK_COMPILATION)
 typedef struct _GtkNotebookPage   GtkNotebookPage;
+#endif
 
 struct _GtkNotebook
 {
   GtkContainer container;
   
+#if !defined (GTK_DISABLE_DEPRECATED) || defined (GTK_COMPILATION)
   GtkNotebookPage *GSEAL (cur_page);
+#else
+  gpointer GSEAL (cur_page);
+#endif
   GList *GSEAL (children);
   GList *GSEAL (first_tab);		/* The first tab visible (for scrolling notebooks) */
   GList *GSEAL (focus_tab);
@@ -97,7 +103,11 @@ struct _GtkNotebookClass
   GtkContainerClass parent_class;
 
   void (* switch_page)       (GtkNotebook     *notebook,
+#if !defined (GTK_DISABLE_DEPRECATED) || defined (GTK_COMPILATION)
                               GtkNotebookPage *page,
+#else
+                              gpointer         page,
+#endif
 			      guint            page_num);
 
   /* Action signals for keybindings */
@@ -229,6 +239,8 @@ void     gtk_notebook_set_tab_vborder      (GtkNotebook     *notebook,
 void     gtk_notebook_set_scrollable       (GtkNotebook     *notebook,
 					    gboolean         scrollable);
 gboolean gtk_notebook_get_scrollable       (GtkNotebook     *notebook);
+guint16  gtk_notebook_get_tab_hborder      (GtkNotebook     *notebook);
+guint16  gtk_notebook_get_tab_vborder      (GtkNotebook     *notebook);
 
 /***********************************************************
  *               enable/disable PopupMenu                  *

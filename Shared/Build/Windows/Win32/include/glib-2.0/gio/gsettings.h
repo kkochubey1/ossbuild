@@ -79,7 +79,8 @@ GSettings *             g_settings_new_with_backend                     (const g
 GSettings *             g_settings_new_with_backend_and_path            (const gchar        *schema,
                                                                          GSettingsBackend   *backend,
                                                                          const gchar        *path);
-const gchar **          g_settings_list_items                           (GSettings          *settings);
+gchar **                g_settings_list_children                        (GSettings          *settings);
+gchar **                g_settings_list_keys                            (GSettings          *settings);
 
 gboolean                g_settings_set_value                            (GSettings          *settings,
                                                                          const gchar        *key,
@@ -95,6 +96,8 @@ void                    g_settings_get                                  (GSettin
                                                                          const gchar        *key,
                                                                          const gchar        *format,
                                                                          ...);
+void                    g_settings_reset                                (GSettings          *settings,
+                                                                         const gchar        *key);
 
 gint                    g_settings_get_int                              (GSettings          *settings,
                                                                          const gchar        *key);
@@ -178,7 +181,7 @@ typedef gboolean      (*GSettingsBindGetMapping)                        (GValue 
  * @value: the #GVariant to map, or %NULL
  * @result: the result of the mapping
  * @user_data: the user data that was passed to g_settings_get_mapped()
- * Returns: %TRUE if the conversion succeeded, %FALSE in case of an error
+ * @returns: %TRUE if the conversion succeeded, %FALSE in case of an error
  *
  * The type of the function that is used to convert from a value stored
  * in a #GSettings to a value that is useful to the application.
@@ -205,6 +208,9 @@ typedef gboolean      (*GSettingsGetMapping)                            (GVarian
  * @G_SETTINGS_BIND_NO_SENSITIVITY: Do not try to bind a "sensitivity" property to the writability of the setting
  * @G_SETTINGS_BIND_GET_NO_CHANGES: When set in addition to #G_SETTINGS_BIND_GET, set the #GObject property
  *     value initially from the setting, but do not listen for changes of the setting
+ * @G_SETTINGS_BIND_INVERT_BOOLEAN: When passed to g_settings_bind(), uses a pair of mapping functions that invert
+ *     the boolean value when mapping between the setting and the property.  The setting and property must both
+ *     be booleans.  You can not pass this flag to g_settings_bind_with_mapping().
  *
  * Flags used when creating a binding. These flags determine in which
  * direction the binding works. The default is to synchronize in both
@@ -216,7 +222,8 @@ typedef enum
   G_SETTINGS_BIND_GET            = (1<<0),
   G_SETTINGS_BIND_SET            = (1<<1),
   G_SETTINGS_BIND_NO_SENSITIVITY = (1<<2),
-  G_SETTINGS_BIND_GET_NO_CHANGES = (1<<3)
+  G_SETTINGS_BIND_GET_NO_CHANGES = (1<<3),
+  G_SETTINGS_BIND_INVERT_BOOLEAN = (1<<4)
 } GSettingsBindFlags;
 
 void                    g_settings_bind                                 (GSettings               *settings,

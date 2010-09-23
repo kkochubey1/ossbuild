@@ -23,8 +23,8 @@ dependency_libs=' -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/lib/libz.la'
 weak_library_names=''
 
 # Version information for libfreetype.
-current=10
-age=4
+current=12
+age=6
 revision=0
 
 # Is this an already installed library?

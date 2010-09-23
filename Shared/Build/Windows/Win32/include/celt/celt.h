@@ -95,8 +95,10 @@ extern "C" {
 #define CELT_RESET_STATE_REQUEST        8
 #define CELT_RESET_STATE       CELT_RESET_STATE_REQUEST
 
-/** GET the frame size used in the current mode */
-#define CELT_GET_FRAME_SIZE   1000
+#define CELT_SET_START_BAND_REQUEST    10000
+/** Controls the complexity from 0-10 (int) */
+#define CELT_SET_START_BAND(x) CELT_SET_START_BAND_REQUEST, _celt_check_int(x)
+
 /** GET the lookahead used in the current mode */
 #define CELT_GET_LOOKAHEAD    1001
 /** GET the sample rate used in the current mode */
@@ -177,7 +179,7 @@ EXPORT void celt_encoder_destroy(CELTEncoder *st);
  *          only be used if it is known that the far end supports 
  *          extended dynmaic range. There must be exactly
  *          frame_size samples per channel. 
- @param optional_synthesis If not NULL, the encoder copies the audio signal that
+ @param optional_resynthesis If not NULL, the encoder copies the audio signal that
  *          the decoder would decode. It is the same as calling the
  *          decoder on the compressed data, just faster.
  *          This may alias pcm. 
@@ -191,13 +193,33 @@ EXPORT void celt_encoder_destroy(CELTEncoder *st);
  *       the length returned be somehow transmitted to the decoder. Otherwise, no
  *       decoding is possible.
 */
-EXPORT int celt_encode_float(CELTEncoder *st, const float *pcm, float *optional_synthesis, unsigned char *compressed, int nbCompressedBytes);
+EXPORT int celt_encode_resynthesis_float(CELTEncoder *st, const float *pcm, float *optional_resynthesis, int frame_size, unsigned char *compressed, int nbCompressedBytes);
+
+/** Encodes a frame of audio.
+ @param st Encoder state
+ @param pcm PCM audio in float format, with a normal range of ±1.0.
+ *          Samples with a range beyond ±1.0 are supported but will
+ *          be clipped by decoders using the integer API and should
+ *          only be used if it is known that the far end supports
+ *          extended dynmaic range. There must be exactly
+ *          frame_size samples per channel.
+ @param compressed The compressed data is written here. This may not alias pcm or
+ *                 optional_synthesis.
+ @param nbCompressedBytes Maximum number of bytes to use for compressing the frame
+ *          (can change from one frame to another)
+ @return Number of bytes written to "compressed". Will be the same as
+ *       "nbCompressedBytes" unless the stream is VBR and will never be larger.
+ *       If negative, an error has occurred (see error codes). It is IMPORTANT that
+ *       the length returned be somehow transmitted to the decoder. Otherwise, no
+ *       decoding is possible.
+*/
+EXPORT int celt_encode_float(CELTEncoder *st, const float *pcm, int frame_size, unsigned char *compressed, int nbCompressedBytes);
 
 /** Encodes a frame of audio.
  @param st Encoder state
  @param pcm PCM audio in signed 16-bit format (native endian). There must be 
  *          exactly frame_size samples per channel. 
- @param optional_synthesis If not NULL, the encoder copies the audio signal that
+ @param optional_resynthesis If not NULL, the encoder copies the audio signal that
  *                         the decoder would decode. It is the same as calling the
  *                         decoder on the compressed data, just faster.
  *                         This may alias pcm. 
@@ -211,7 +233,23 @@ EXPORT int celt_encode_float(CELTEncoder *st, const float *pcm, float *optional_
  *       the length returned be somehow transmitted to the decoder. Otherwise, no
  *       decoding is possible.
  */
-EXPORT int celt_encode(CELTEncoder *st, const celt_int16 *pcm, celt_int16 *optional_synthesis, unsigned char *compressed, int nbCompressedBytes);
+EXPORT int celt_encode_resynthesis(CELTEncoder *st, const celt_int16 *pcm, celt_int16 *optional_resynthesis, int frame_size, unsigned char *compressed, int nbCompressedBytes);
+
+/** Encodes a frame of audio.
+ @param st Encoder state
+ @param pcm PCM audio in signed 16-bit format (native endian). There must be
+ *          exactly frame_size samples per channel.
+ @param compressed The compressed data is written here. This may not alias pcm or
+ *                         optional_synthesis.
+ @param nbCompressedBytes Maximum number of bytes to use for compressing the frame
+ *                        (can change from one frame to another)
+ @return Number of bytes written to "compressed". Will be the same as
+ *       "nbCompressedBytes" unless the stream is VBR and will never be larger.
+ *       If negative, an error has occurred (see error codes). It is IMPORTANT that
+ *       the length returned be somehow transmitted to the decoder. Otherwise, no
+ *       decoding is possible.
+ */
+EXPORT int celt_encode(CELTEncoder *st, const celt_int16 *pcm, int frame_size, unsigned char *compressed, int nbCompressedBytes);
 
 /** Query and set encoder parameters 
  @param st Encoder state
@@ -248,7 +286,7 @@ EXPORT void celt_decoder_destroy(CELTDecoder *st);
             returned here in float format. 
  @return Error code.
    */
-EXPORT int celt_decode_float(CELTDecoder *st, const unsigned char *data, int len, float *pcm);
+EXPORT int celt_decode_float(CELTDecoder *st, const unsigned char *data, int len, float *pcm, int frame_size);
 
 /** Decodes a frame of audio.
  @param st Decoder state
@@ -259,7 +297,7 @@ EXPORT int celt_decode_float(CELTDecoder *st, const unsigned char *data, int len
             returned here in 16-bit PCM format (native endian). 
  @return Error code.
  */
-EXPORT int celt_decode(CELTDecoder *st, const unsigned char *data, int len, celt_int16 *pcm);
+EXPORT int celt_decode(CELTDecoder *st, const unsigned char *data, int len, celt_int16 *pcm, int frame_size);
 
 /** Query and set decoder parameters
    @param st Decoder state

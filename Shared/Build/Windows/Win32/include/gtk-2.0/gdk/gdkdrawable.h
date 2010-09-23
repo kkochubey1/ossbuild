@@ -268,6 +268,7 @@ void            gdk_drawable_unref        (GdkDrawable    *drawable);
 
 /* Drawing
  */
+#ifndef GDK_DISABLE_DEPRECATED
 void gdk_draw_point     (GdkDrawable      *drawable,
 			 GdkGC            *gc,
 			 gint              x,
@@ -299,17 +300,12 @@ void gdk_draw_polygon   (GdkDrawable      *drawable,
 			 gboolean          filled,
 			 const GdkPoint   *points,
 			 gint              n_points);
-#if !defined (GDK_DISABLE_DEPRECATED) || defined (GTK_COMPILATION)
-/* Used by gtk_default_draw_string () */
 void gdk_draw_string    (GdkDrawable      *drawable,
 			 GdkFont          *font,
 			 GdkGC            *gc,
 			 gint              x,
 			 gint              y,
 			 const gchar      *string);
-#endif /* !GDK_DISABLE_DEPRECATED || GTK_COMPILATION */
-#if !defined (GDK_DISABLE_DEPRECATED) || defined (GDK_COMPILATION)
-/* Used by gdk_pixmap_draw_text (), gdk_window_draw_text() */
 void gdk_draw_text      (GdkDrawable      *drawable,
 			 GdkFont          *font,
 			 GdkGC            *gc,
@@ -317,7 +313,6 @@ void gdk_draw_text      (GdkDrawable      *drawable,
 			 gint              y,
 			 const gchar      *text,
 			 gint              text_length);
-/* Used by gdk_pixmap_draw_text_wc (), gdk_window_draw_text_wc () */
 void gdk_draw_text_wc   (GdkDrawable      *drawable,
 			 GdkFont          *font,
 			 GdkGC            *gc,
@@ -325,7 +320,6 @@ void gdk_draw_text_wc   (GdkDrawable      *drawable,
 			 gint              y,
 			 const GdkWChar   *text,
 			 gint              text_length);
-#endif /* !GDK_DISABLE_DEPRECATED || GDK_COMPILATION */
 void gdk_draw_drawable  (GdkDrawable      *drawable,
 			 GdkGC            *gc,
 			 GdkDrawable      *src,
@@ -413,10 +407,8 @@ void gdk_draw_trapezoids         (GdkDrawable        *drawable,
 				  const GdkTrapezoid *trapezoids,
 				  gint                n_trapezoids);
 
-#ifndef GDK_DISABLE_DEPRECATED
 #define gdk_draw_pixmap                gdk_draw_drawable
 #define gdk_draw_bitmap                gdk_draw_drawable
-#endif /* GDK_DISABLE_DEPRECATED */
 
 GdkImage* gdk_drawable_get_image      (GdkDrawable *drawable,
                                        gint         x,
@@ -431,6 +423,7 @@ GdkImage *gdk_drawable_copy_to_image (GdkDrawable  *drawable,
 				      gint          dest_y,
 				      gint          width,
 				      gint          height);
+#endif /* GDK_DISABLE_DEPRECATED */
 
 GdkRegion *gdk_drawable_get_clip_region    (GdkDrawable *drawable);
 GdkRegion *gdk_drawable_get_visible_region (GdkDrawable *drawable);

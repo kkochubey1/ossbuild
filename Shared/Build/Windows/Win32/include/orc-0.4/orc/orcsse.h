@@ -64,11 +64,18 @@ void orc_sse_emit_0f (OrcCompiler *p, const char *insn_name, int code,
     int src, int dest);
 void orc_sse_emit_pshufd (OrcCompiler *p, int shuf, int src, int dest);
 void orc_sse_emit_pshuflw (OrcCompiler *p, int shuf, int src, int dest);
+void orc_sse_emit_pshufhw (OrcCompiler *p, int shuf, int src, int dest);
+void orc_sse_emit_palignr (OrcCompiler *p, int align, int src, int dest);
+void orc_sse_emit_pinsrw_memoffset (OrcCompiler *p, int imm, int offset, int src, int dest);
+void orc_sse_emit_pextrw_memoffset (OrcCompiler *p, int imm, int src, int offset, int dest);
 void orc_sse_emit_shiftimm (OrcCompiler *p, const char *insn_name,
     int code, int modrm_code, int shift, int reg);
 
 void orc_sse_set_mxcsr (OrcCompiler *compiler);
 void orc_sse_restore_mxcsr (OrcCompiler *compiler);
+
+void sse_load_constant (OrcCompiler *compiler, int reg, int size, int value);
+
 
 unsigned int orc_sse_get_cpu_flags (void);
 
@@ -103,12 +110,12 @@ unsigned int orc_sse_get_cpu_flags (void);
 #define orc_sse_emit_psrldq(p,a,b)     orc_sse_emit_shiftimm (p, "psrldq", 0x73, 3, a, b)
 #define orc_sse_emit_pslldq(p,a,b)     orc_sse_emit_shiftimm (p, "pslldq", 0x73, 7, a, b)
 
+#define orc_sse_emit_psrlq_reg(p,a,b)      orc_sse_emit_660f (p, "psrlq", 0xd3, a, b)
+
 #define orc_sse_emit_pcmpeqb(p,a,b)    orc_sse_emit_660f (p, "pcmpeqb", 0x74, a, b)
 #define orc_sse_emit_pcmpeqw(p,a,b)    orc_sse_emit_660f (p, "pcmpeqw", 0x75, a, b)
 #define orc_sse_emit_pcmpeqd(p,a,b)    orc_sse_emit_660f (p, "pcmpeqd", 0x76, a, b)
 
-#define orc_sse_emit_pinsrw(p,a,b)     orc_sse_emit_660f (p, "pinsrw", 0xc4, a, b)
-#define orc_sse_emit_pextrw(p,a,b)     orc_sse_emit_660f (p, "pextrw", 0xc5, a, b)
 
 #define orc_sse_emit_paddq(p,a,b)      orc_sse_emit_660f (p, "paddq", 0xd4, a, b)
 #define orc_sse_emit_pmullw(p,a,b)     orc_sse_emit_660f (p, "pmullw", 0xd5, a, b)
@@ -125,6 +132,7 @@ unsigned int orc_sse_get_cpu_flags (void);
 #define orc_sse_emit_pavgb(p,a,b)      orc_sse_emit_660f (p, "pavgb", 0xe0, a, b)
 #define orc_sse_emit_pavgw(p,a,b)      orc_sse_emit_660f (p, "pavgw", 0xe3, a, b)
 
+#define orc_sse_emit_pmulhuw(p,a,b)     orc_sse_emit_660f (p, "pmulhuw", 0xe4, a, b)
 #define orc_sse_emit_pmulhw(p,a,b)     orc_sse_emit_660f (p, "pmulhw", 0xe5, a, b)
 
 #define orc_sse_emit_psubsb(p,a,b)     orc_sse_emit_660f (p, "psubsb", 0xe8, a, b)
@@ -168,6 +176,7 @@ unsigned int orc_sse_get_cpu_flags (void);
 #define orc_sse_emit_pabsw(p,a,b)      orc_sse_emit_660f (p, "pabsw", 0x381d, a, b)
 #define orc_sse_emit_pabsd(p,a,b)      orc_sse_emit_660f (p, "pabsd", 0x381e, a, b)
 
+
 /* SSE4.1 instructions */
 #define orc_sse_emit_pmovsxbw(p,a,b)   orc_sse_emit_660f (p, "pmovsxbw", 0x3820, a, b)
 #define orc_sse_emit_pmovsxbd(p,a,b)   orc_sse_emit_660f (p, "pmovsxbd", 0x3821, a, b)
@@ -179,7 +188,7 @@ unsigned int orc_sse_get_cpu_flags (void);
 #define orc_sse_emit_pmuldq(p,a,b)     orc_sse_emit_660f (p, "pmuldq", 0x3828, a, b)
 #define orc_sse_emit_pcmpeqq(p,a,b)    orc_sse_emit_660f (p, "pcmpeqq", 0x3829, a, b)
 
-#define orc_sse_emit_packusdw(p,a,b)   orc_sse_emit_660f (p, "packuswd", 0x382b, a, b)
+#define orc_sse_emit_packusdw(p,a,b)   orc_sse_emit_660f (p, "packusdw", 0x382b, a, b)
 
 #define orc_sse_emit_pmovzxbw(p,a,b)   orc_sse_emit_660f (p, "pmovzxbw", 0x3830, a, b)
 #define orc_sse_emit_pmovzxbd(p,a,b)   orc_sse_emit_660f (p, "pmovzxbd", 0x3831, a, b)
@@ -188,7 +197,7 @@ unsigned int orc_sse_get_cpu_flags (void);
 #define orc_sse_emit_pmovzxwq(p,a,b)   orc_sse_emit_660f (p, "pmovzxwq", 0x3834, a, b)
 #define orc_sse_emit_pmovzxdq(p,a,b)   orc_sse_emit_660f (p, "pmovzxdq", 0x3835, a, b)
 
-#define orc_sse_emit_pmulld(p,a,b)     orc_sse_emit_660f (p, "pmuldq", 0x3840, a, b)
+#define orc_sse_emit_pmulld(p,a,b)     orc_sse_emit_660f (p, "pmulld", 0x3840, a, b)
 #define orc_sse_emit_phminposuw(p,a,b) orc_sse_emit_660f (p, "phminposuw", 0x3841, a, b)
 
 #define orc_sse_emit_pminsb(p,a,b)     orc_sse_emit_660f (p, "pminsb", 0x3838, a, b)

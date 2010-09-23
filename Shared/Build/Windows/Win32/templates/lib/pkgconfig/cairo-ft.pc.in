@@ -5,8 +5,8 @@ includedir=@SHARED_BUILD_DIR@/include
 
 Name: cairo-ft
 Description: FreeType font backend for cairo graphics library
-Version: 1.8.10
+Version: 1.10.0
 
-Requires: cairo freetype2 >= 9.7.3 fontconfig
-Libs: 
+Requires: cairo freetype2 >= 9.7.3 
+Libs:  
 Cflags: -I${includedir}/cairo 

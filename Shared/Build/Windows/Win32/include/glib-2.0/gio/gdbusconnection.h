@@ -85,7 +85,6 @@ GDBusConnection *g_dbus_connection_new_for_address_sync       (const gchar      
 
 void             g_dbus_connection_start_message_processing   (GDBusConnection    *connection);
 gboolean         g_dbus_connection_is_closed                  (GDBusConnection    *connection);
-void             g_dbus_connection_close                      (GDBusConnection    *connection);
 GIOStream       *g_dbus_connection_get_stream                 (GDBusConnection    *connection);
 const gchar     *g_dbus_connection_get_guid                   (GDBusConnection    *connection);
 const gchar     *g_dbus_connection_get_unique_name            (GDBusConnection    *connection);
@@ -94,6 +93,19 @@ gboolean         g_dbus_connection_get_exit_on_close          (GDBusConnection  
 void             g_dbus_connection_set_exit_on_close          (GDBusConnection    *connection,
                                                                gboolean            exit_on_close);
 GDBusCapabilityFlags  g_dbus_connection_get_capabilities      (GDBusConnection    *connection);
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+void             g_dbus_connection_close                          (GDBusConnection     *connection,
+                                                                   GCancellable        *cancellable,
+                                                                   GAsyncReadyCallback  callback,
+                                                                   gpointer             user_data);
+gboolean         g_dbus_connection_close_finish                   (GDBusConnection     *connection,
+                                                                   GAsyncResult        *res,
+                                                                   GError             **error);
+gboolean         g_dbus_connection_close_sync                     (GDBusConnection     *connection,
+                                                                   GCancellable        *cancellable,
+                                                                   GError             **error);
 
 /* ---------------------------------------------------------------------------------------------------- */
 
@@ -112,10 +124,12 @@ gboolean         g_dbus_connection_flush_sync                     (GDBusConnecti
 
 gboolean         g_dbus_connection_send_message                   (GDBusConnection     *connection,
                                                                    GDBusMessage        *message,
+                                                                   GDBusSendMessageFlags flags,
                                                                    volatile guint32    *out_serial,
                                                                    GError             **error);
 void             g_dbus_connection_send_message_with_reply        (GDBusConnection     *connection,
                                                                    GDBusMessage        *message,
+                                                                   GDBusSendMessageFlags flags,
                                                                    gint                 timeout_msec,
                                                                    volatile guint32    *out_serial,
                                                                    GCancellable        *cancellable,
@@ -126,6 +140,7 @@ GDBusMessage    *g_dbus_connection_send_message_with_reply_finish (GDBusConnecti
                                                                    GError             **error);
 GDBusMessage    *g_dbus_connection_send_message_with_reply_sync   (GDBusConnection     *connection,
                                                                    GDBusMessage        *message,
+                                                                   GDBusSendMessageFlags flags,
                                                                    gint                 timeout_msec,
                                                                    volatile guint32    *out_serial,
                                                                    GCancellable        *cancellable,
@@ -206,7 +221,9 @@ typedef void (*GDBusInterfaceMethodCallFunc) (GDBusConnection       *connection,
  *
  * The type of the @get_property function in #GDBusInterfaceVTable.
  *
- * Returns: A newly-allocated #GVariant with the value for @property_name or %NULL if @error is set.
+ * Returns: A #GVariant with the value for @property_name or %NULL if
+ *     @error is set. If the returned #GVariant is floating, it is
+ *     consumed - otherwise its reference count is decreased by one.
  *
  * Since: 2.26
  */
@@ -266,13 +283,16 @@ struct _GDBusInterfaceVTable
   GDBusInterfaceSetPropertyFunc set_property;
 
   /*< private >*/
-  /* Padding for future expansion */
+  /* Padding for future expansion - also remember to update
+   * gdbusconnection.c:_g_dbus_interface_vtable_copy() when
+   * changing this.
+   */
   gpointer padding[8];
 };
 
 guint            g_dbus_connection_register_object            (GDBusConnection            *connection,
                                                                const gchar                *object_path,
-                                                               const GDBusInterfaceInfo   *interface_info,
+                                                               GDBusInterfaceInfo         *interface_info,
                                                                const GDBusInterfaceVTable *vtable,
                                                                gpointer                    user_data,
                                                                GDestroyNotify              user_data_free_func,
@@ -291,6 +311,16 @@ gboolean         g_dbus_connection_unregister_object          (GDBusConnection  
  *
  * The type of the @enumerate function in #GDBusSubtreeVTable.
  *
+ * This function is called when generating introspection data and also
+ * when preparing to dispatch incoming messages in the event that the
+ * %G_DBUS_SUBTREE_FLAGS_DISPATCH_TO_UNENUMERATED_NODES flag is not
+ * specified (ie: to verify that the object path is valid).
+ *
+ * Hierarchies are not supported; the items that you return should not
+ * contain the '/' character.
+ *
+ * The return value will be freed with g_strfreev().
+ *
  * Returns: A newly allocated array of strings for node names that are children of @object_path.
  *
  * Since: 2.26
@@ -305,21 +335,37 @@ typedef gchar** (*GDBusSubtreeEnumerateFunc) (GDBusConnection       *connection,
  * @connection: A #GDBusConnection.
  * @sender: The unique bus name of the remote caller.
  * @object_path: The object path that was registered with g_dbus_connection_register_subtree().
- * @node: A node that is a child of @object_path (relative to @object_path) or <quote>/</quote> for the root of the subtree.
+ * @node: A node that is a child of @object_path (relative to @object_path) or %NULL for the root of the subtree.
  * @user_data: The @user_data #gpointer passed to g_dbus_connection_register_subtree().
  *
  * The type of the @introspect function in #GDBusSubtreeVTable.
  *
- * Returns: A newly-allocated #GPtrArray with pointers to #GDBusInterfaceInfo describing
- * the interfaces implemented by @node.
+ * Subtrees are flat.  @node, if non-%NULL, is always exactly one
+ * segment of the object path (ie: it never contains a slash).
+ *
+ * This function should return %NULL to indicate that there is no object
+ * at this node.
+ *
+ * If this function returns non-%NULL, the return value is expected to
+ * be a %NULL-terminated array of pointers to #GDBusInterfaceInfo
+ * structures describing the interfaces implemented by @node.  This
+ * array will have g_dbus_interface_info_unref() called on each item
+ * before being freed with g_free().
+ *
+ * The difference between returning %NULL and an array containing zero
+ * items is that the standard DBus interfaces will returned to the
+ * remote introspector in the empty array case, but not in the %NULL
+ * case.
+ *
+ * Returns: A %NULL-terminated array of pointers to #GDBusInterfaceInfo, or %NULL.
  *
  * Since: 2.26
  */
-typedef GPtrArray *(*GDBusSubtreeIntrospectFunc) (GDBusConnection       *connection,
-                                                  const gchar           *sender,
-                                                  const gchar           *object_path,
-                                                  const gchar           *node,
-                                                  gpointer               user_data);
+typedef GDBusInterfaceInfo ** (*GDBusSubtreeIntrospectFunc) (GDBusConnection       *connection,
+                                                             const gchar           *sender,
+                                                             const gchar           *object_path,
+                                                             const gchar           *node,
+                                                             gpointer               user_data);
 
 /**
  * GDBusSubtreeDispatchFunc:
@@ -327,11 +373,14 @@ typedef GPtrArray *(*GDBusSubtreeIntrospectFunc) (GDBusConnection       *connect
  * @sender: The unique bus name of the remote caller.
  * @object_path: The object path that was registered with g_dbus_connection_register_subtree().
  * @interface_name: The D-Bus interface name that the method call or property access is for.
- * @node: A node that is a child of @object_path (relative to @object_path) or <quote>/</quote> for the root of the subtree.
+ * @node: A node that is a child of @object_path (relative to @object_path) or %NULL for the root of the subtree.
  * @out_user_data: Return location for user data to pass to functions in the returned #GDBusInterfaceVTable (never %NULL).
  * @user_data: The @user_data #gpointer passed to g_dbus_connection_register_subtree().
  *
  * The type of the @dispatch function in #GDBusSubtreeVTable.
+ *
+ * Subtrees are flat.  @node, if non-%NULL, is always exactly one
+ * segment of the object path (ie: it never contains a slash).
  *
  * Returns: A #GDBusInterfaceVTable or %NULL if you don't want to handle the methods.
  *
@@ -362,15 +411,11 @@ struct _GDBusSubtreeVTable
   GDBusSubtreeDispatchFunc   dispatch;
 
   /*< private >*/
-  /* Padding for future expansion */
-  void (*_g_reserved1) (void);
-  void (*_g_reserved2) (void);
-  void (*_g_reserved3) (void);
-  void (*_g_reserved4) (void);
-  void (*_g_reserved5) (void);
-  void (*_g_reserved6) (void);
-  void (*_g_reserved7) (void);
-  void (*_g_reserved8) (void);
+  /* Padding for future expansion - also remember to update
+   * gdbusconnection.c:_g_dbus_subtree_vtable_copy() when
+   * changing this.
+   */
+  gpointer padding[8];
 };
 
 guint            g_dbus_connection_register_subtree           (GDBusConnection            *connection,
@@ -413,6 +458,7 @@ guint            g_dbus_connection_signal_subscribe           (GDBusConnection  
                                                                const gchar         *member,
                                                                const gchar         *object_path,
                                                                const gchar         *arg0,
+                                                               GDBusSignalFlags     flags,
                                                                GDBusSignalCallback  callback,
                                                                gpointer             user_data,
                                                                GDestroyNotify       user_data_free_func);
@@ -423,23 +469,82 @@ void             g_dbus_connection_signal_unsubscribe         (GDBusConnection  
 
 /**
  * GDBusMessageFilterFunction:
- * @connection: A #GDBusConnection.
- * @message: A #GDBusMessage.
+ * @connection: (transfer none): A #GDBusConnection.
+ * @message: (transfer full): A locked #GDBusMessage that the filter function takes ownership of.
  * @incoming: %TRUE if it is a message received from the other peer, %FALSE if it is
  * a message to be sent to the other peer.
  * @user_data: User data passed when adding the filter.
  *
  * Signature for function used in g_dbus_connection_add_filter().
  *
- * Returns: %TRUE if the filter handled @message, %FALSE to let other
- * handlers run.
+ * A filter function is passed a #GDBusMessage and expected to return
+ * a #GDBusMessage too. Passive filter functions that don't modify the
+ * message can simply return the @message object:
+ * |[
+ * static GDBusMessage *
+ * passive_filter (GDBusConnection *connection
+ *                 GDBusMessage    *message,
+ *                 gboolean         incoming,
+ *                 gpointer         user_data)
+ * {
+ *   /<!-- -->* inspect @message *<!-- -->/
+ *   return message;
+ * }
+ * ]|
+ * Filter functions that wants to drop a message can simply return %NULL:
+ * |[
+ * static GDBusMessage *
+ * drop_filter (GDBusConnection *connection
+ *              GDBusMessage    *message,
+ *              gboolean         incoming,
+ *              gpointer         user_data)
+ * {
+ *   if (should_drop_message)
+ *     {
+ *       g_object_unref (message);
+ *       message = NULL;
+ *     }
+ *   return message;
+ * }
+ * ]|
+ * Finally, a filter function may modify a message by copying it:
+ * |[
+ * static GDBusMessage *
+ * modifying_filter (GDBusConnection *connection
+ *                   GDBusMessage    *message,
+ *                   gboolean         incoming,
+ *                   gpointer         user_data)
+ * {
+ *   GDBusMessage *copy;
+ *   GError *error;
+ *
+ *   error = NULL;
+ *   copy = g_dbus_message_copy (message, &error);
+ *   /<!-- -->* handle @error being is set *<!-- -->/
+ *   g_object_unref (message);
+ *
+ *   /<!-- -->* modify @copy *<!-- -->/
+ *
+ *   return copy;
+ * }
+ * ]|
+ * If the returned #GDBusMessage is different from @message and cannot
+ * be sent on @connection (it could use features, such as file
+ * descriptors, not compatible with @connection), then a warning is
+ * logged to <emphasis>standard error</emphasis>. Applications can
+ * check this ahead of time using g_dbus_message_to_blob() passing a
+ * #GDBusCapabilityFlags value obtained from @connection.
+ *
+ * Returns: (transfer full) (allow-none): A #GDBusMessage that will be freed with
+ * g_object_unref() or %NULL to drop the message. Passive filter
+ * functions can simply return the passed @message object.
  *
  * Since: 2.26
  */
-typedef gboolean (*GDBusMessageFilterFunction) (GDBusConnection *connection,
-                                                GDBusMessage    *message,
-                                                gboolean         incoming,
-                                                gpointer         user_data);
+typedef GDBusMessage *(*GDBusMessageFilterFunction) (GDBusConnection *connection,
+                                                     GDBusMessage    *message,
+                                                     gboolean         incoming,
+                                                     gpointer         user_data);
 
 guint g_dbus_connection_add_filter (GDBusConnection            *connection,
                                     GDBusMessageFilterFunction  filter_function,

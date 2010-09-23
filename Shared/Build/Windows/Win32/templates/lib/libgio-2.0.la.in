@@ -17,14 +17,14 @@ old_library=''
 inherited_linker_flags=' -mthreads'
 
 # Libraries that this one depends upon.
-dependency_libs=' -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/lib/libgobject-2.0.la @SHARED_BUILD_DIR@/lib/libgthread-2.0.la @SHARED_BUILD_DIR@/lib/libgmodule-2.0.la @SHARED_BUILD_DIR@/lib/libglib-2.0.la -lole32 -lshlwapi -lws2_32 -ldnsapi /E/Development/OSSBuild/Shared/Build/Windows/Win32/lib/libz.la /E/Development/OSSBuild/Shared/Build/Windows/Win32/lib/libintl.la'
+dependency_libs=' -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/lib/libgobject-2.0.la @SHARED_BUILD_DIR@/lib/libgthread-2.0.la @SHARED_BUILD_DIR@/lib/libgmodule-2.0.la @SHARED_BUILD_DIR@/lib/libglib-2.0.la -lole32 -lshlwapi -lws2_32 -ldnsapi @SHARED_BUILD_DIR@/lib/libz.la @SHARED_BUILD_DIR@/lib/libintl.la'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
 
 # Version information for libgio-2.0.
-current=2511
-age=2511
+current=2517
+age=2517
 revision=0
 
 # Is this an already installed library?

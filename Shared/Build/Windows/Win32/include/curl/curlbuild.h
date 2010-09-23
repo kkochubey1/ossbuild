@@ -115,7 +115,7 @@
 
 /* Configure process defines this to 1 when it finds out that system  */
 /* header file ws2tcpip.h must be included by the external interface. */
-/* #undef CURL_PULL_WS2TCPIP_H */
+#define CURL_PULL_WS2TCPIP_H 1
 #ifdef CURL_PULL_WS2TCPIP_H
 #  ifndef WIN32_LEAN_AND_MEAN
 #    define WIN32_LEAN_AND_MEAN 1
