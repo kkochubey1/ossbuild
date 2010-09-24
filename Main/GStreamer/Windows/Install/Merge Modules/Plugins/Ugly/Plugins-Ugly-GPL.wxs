@@ -14,6 +14,7 @@
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gsta52dec\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstdvdread\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstlame\.dll" />
+					<OSSBuild:Filter Include=".*\\[^\\]*.*gstmad\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstmpeg2dec\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*gstx264\.dll" />
 				</OSSBuild:FillDirectory>

@@ -25,6 +25,8 @@
 		<IfDef var="lic" value="gpl">
 			<Library resource="liba52-0.dll" />
 			<Library resource="libmp3lame-0.dll" />
+			<Library resource="libid3tag-0.dll" />
+			<Library resource="libmad-0.dll" />
 			<Library resource="libmpeg2-0.dll" />
 			<Library resource="libmpeg2convert-0.dll" />
 			<Library resource="libx264-104.dll" />
@@ -45,6 +47,7 @@
 			<File resource="libgsta52dec.dll" />
 			<File resource="libgstdvdread.dll" />
 			<File resource="libgstlame.dll" />
+			<File resource="libgstmad.dll" />
 			<File resource="libgstmpeg2dec.dll" />
 			<File resource="libgstx264.dll" />
 		</IfDef>

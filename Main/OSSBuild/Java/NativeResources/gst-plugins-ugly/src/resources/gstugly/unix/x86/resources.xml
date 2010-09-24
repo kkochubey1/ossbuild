@@ -25,6 +25,8 @@
 		<IfDef var="lic" value="gpl">
 			<Library resource="liba52.so.0"             executable="true" />
 			<Library resource="libmp3lame.so.0"         executable="true" />
+			<Library resource="libid3tag.so.0"         executable="true" />
+			<Library resource="libmad.so.0"         executable="true" />
 			<Library resource="libmpeg2.so.0"           executable="true" />
 			<Library resource="libmpeg2convert.so.0"    executable="true" />
 			<Library resource="libx264.so.104"           executable="true" />
@@ -44,6 +46,7 @@
 			<File resource="libgsta52dec.so"            executable="true" />
 			<File resource="libgstdvdread.so"           executable="true" />
 			<File resource="libgstlame.so"              executable="true" />
+			<File resource="libgstmad.so"              executable="true" />
 			<File resource="libgstmpeg2dec.so"          executable="true" />
 			<File resource="libgstx264.so"              executable="true" />
 		</IfDef>
