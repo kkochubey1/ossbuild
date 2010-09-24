@@ -217,12 +217,16 @@
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
 				<include name="*a52*.so.*" />
 				<include name="*mp3lame*.so.*" />
+				<include name="*id3tag*.so.*" />
+				<include name="*mad*.so.*" />
 				<include name="*mpeg2*.so.*" />
 				<include name="*x264*.so.*" />
 			</fileset>
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
 				<include name="*a52*.dll" />
 				<include name="*mp3lame*.dll" />
+				<include name="*id3tag*.dll" />
+				<include name="*mad*.dll" />
 				<include name="*mpeg2*.dll" />
 				<include name="*x264*.dll" />
 			</fileset>
@@ -233,6 +237,7 @@
 				<include name="*gsta52dec*.*" />
 				<include name="*gstdvdread*.*" />
 				<include name="*gstlame*.*" />
+				<include name="*gstmad*.*" />
 				<include name="*gstmpeg2dec*.*" />
 				<include name="*gstx264*.*" />
 			</fileset>
@@ -240,6 +245,7 @@
 				<include name="*gsta52dec*.*" />
 				<include name="*gstdvdread*.*" />
 				<include name="*gstlame*.*" />
+				<include name="*gstmad*.*" />
 				<include name="*gstmpeg2dec*.*" />
 				<include name="*gstx264*.*" />
 			</fileset>

@@ -17,6 +17,8 @@
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*x264.*\.dll" />
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*xvidcore.*\.dll" />
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*a52.*\.dll" />
+				<OSSBuild:Filter Exclude=".*\\[^\\]*.*id3tag.*\.dll" />
+				<OSSBuild:Filter Exclude=".*\\[^\\]*.*mad.*\.dll" />
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*mpeg2.*\.dll" />
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*dca.*\.dll" />
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*faac.*\.dll" />
@@ -30,9 +32,6 @@
 
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*libvlc.*\.dll" />
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*stdc.*\.dll" />
-
-				<!-- Remove once libspeex doesn't crash -->
-				<OSSBuild:Filter Exclude=".*\\[^\\]*.*speex.*\.dll" />
 
 				<OSSBuild:Filter Include=".*FLAC*\.dll" />
 				

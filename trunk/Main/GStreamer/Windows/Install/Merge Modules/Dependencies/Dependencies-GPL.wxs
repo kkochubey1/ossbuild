@@ -11,6 +11,7 @@
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="MergeRedirectFolder">
 				<OSSBuild:FillDirectory Directory="$(var.SharedBinDir)">
+					<OSSBuild:Filter Include=".*\\[^\\]*.*avcore$(var.GPL).*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*avcodec$(var.GPL).*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*avdevice$(var.GPL).*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*avfilter$(var.GPL).*\.dll" />
@@ -21,6 +22,8 @@
 					<OSSBuild:Filter Include=".*\\[^\\]*.*x264.*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*xvidcore.*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*a52.*\.dll" />
+					<OSSBuild:Filter Include=".*\\[^\\]*.*id3tag.*\.dll" />
+					<OSSBuild:Filter Include=".*\\[^\\]*.*mad.*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*mpeg2.*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*dca.*\.dll" />
 					<OSSBuild:Filter Include=".*\\[^\\]*.*faac.*\.dll" />

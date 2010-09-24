@@ -1718,7 +1718,7 @@ if [ ! -f "$BinDir/libid3tag-0.dll" ]; then
 	
 	cd .libs/
 	pexports "libid3tag-0.dll" > libid3tag.def
-	$dlltool -l id3tag.lib -d libid3tag.def
+	$MSLIB /name:libid3tag-0.dll /out:id3tag.lib /machine:$MSLibMachine /def:libid3tag.def
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
 fi
 
@@ -1733,7 +1733,7 @@ if [ ! -f "$BinDir/libmad-0.dll" ]; then
 	
 	cd .libs/
 	pexports "libmad-0.dll" > libmad.def
-	$dlltool -l mad.lib -d libmad.def
+	$MSLIB /name:libmad-0.dll /out:mad.lib /machine:$MSLibMachine /def:libmad.def
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
 fi
 
