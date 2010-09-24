@@ -14,6 +14,7 @@
 		<!-- Libraries -->
 
 		<Library resource="libavutil${LicenseSuffix}.so.50"   executable="true" />
+		<Library resource="libavcore${LicenseSuffix}.so.0"   executable="true" />
 		<Library resource="libavcodec${LicenseSuffix}.so.52"  executable="true" />
 		<Library resource="libavformat${LicenseSuffix}.so.52" executable="true" />
 		<Library resource="libavdevice${LicenseSuffix}.so.52" executable="true" />
