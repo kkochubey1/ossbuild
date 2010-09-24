@@ -153,9 +153,7 @@
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
 				<include name="*FLAC*.dll" />
 				<include name="*soup*.dll" />
-				<!--
 				<include name="*speex*.dll" />
-				-->
 				<include name="*wavpack*.dll" />
 			</fileset>
 		</copy>

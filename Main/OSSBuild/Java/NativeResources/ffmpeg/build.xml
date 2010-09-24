@@ -120,6 +120,7 @@
 
 		<copy todir="${build.java.gpl.platform.bin.dir}">
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
+				<include name="*avcore*-gpl*.dll" />
 				<include name="*avcodec*-gpl*.dll" />
 				<include name="*avdevice*-gpl*.dll" />
 				<include name="*avfilter*-gpl*.dll" />
@@ -127,6 +128,7 @@
 				<include name="*avutil*-gpl*.dll" />
 				<include name="*swscale*-gpl*.dll" />
 
+				<include name="*avcore*-gpl*.so.*" />
 				<include name="*avcodec*-gpl*.so.*" />
 				<include name="*avdevice*-gpl*.so.*" />
 				<include name="*avfilter*-gpl*.so.*" />
@@ -149,6 +151,7 @@
 
 		<copy todir="${build.java.lgpl.platform.bin.dir}">
 			<fileset dir="${shared.bin.dir}" erroronmissingdir="false">
+				<include name="*avcore*-lgpl*.dll" />
 				<include name="*avcodec*-lgpl*.dll" />
 				<include name="*avdevice*-lgpl*.dll" />
 				<include name="*avfilter*-lgpl*.dll" />
@@ -156,6 +159,7 @@
 				<include name="*avutil*-lgpl*.dll" />
 				<include name="*swscale*-lgpl*.dll" />
 
+				<include name="*avcore*-lgpl*.so.*" />
 				<include name="*avcodec*-lgpl*.so.*" />
 				<include name="*avdevice*-lgpl*.so.*" />
 				<include name="*avfilter*-lgpl*.so.*" />

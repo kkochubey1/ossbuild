@@ -14,6 +14,7 @@
 		<!-- Libraries -->
 
 		<Library resource="avutil${LicenseSuffix}-50.dll" />
+		<Library resource="avcore${LicenseSuffix}-0.dll" />
 		<Library resource="avcodec${LicenseSuffix}-52.dll" />
 		<Library resource="avformat${LicenseSuffix}-52.dll" />
 		<Library resource="avdevice${LicenseSuffix}-52.dll" />
