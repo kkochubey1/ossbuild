@@ -7,6 +7,7 @@
 		
 		<DirectoryRef Id="MergeRedirectFolder">
 			<OSSBuild:FillDirectory ComponentGroup="LicenseIndependentDependencies" Directory="$(var.SharedBinDir)">
+				<OSSBuild:Filter Exclude=".*\\[^\\]*.*avcore.*\.dll" />
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*avcodec.*\.dll" />
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*avdevice.*\.dll" />
 				<OSSBuild:Filter Exclude=".*\\[^\\]*.*avfilter.*\.dll" />

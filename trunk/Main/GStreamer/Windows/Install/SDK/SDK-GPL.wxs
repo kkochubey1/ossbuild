@@ -51,6 +51,7 @@
 		<ComponentGroup Id="Bindings_C">
 			<ComponentGroupRef Id="Bindings_C_Libs" />
 			<ComponentGroupRef Id="Bindings_C_Headers" />
+			<ComponentGroupRef Id="Bindings_MSVC_Headers" />
 			<ComponentGroupRef Id="Bindings_GStreamer_Libs" />
 			<ComponentGroupRef Id="Bindings_GStreamer_Headers" />
 		</ComponentGroup>
@@ -62,6 +63,12 @@
 
 		<!-- C:\Program Files\OSSBuild\v<Version>\sdk\include\ -->
 		<DirectoryRef Id="GstSDKIncludeInstallDir">
+			<OSSBuild:FillDirectory ComponentGroup="Bindings_MSVC_Headers" Directory="$(var.MsvcIncludeDir)">
+				<OSSBuild:Filter Include=".*\\include\\[^\\]*.*\.h" />
+				
+				<OSSBuild:Filter Exclude=".*\\include\\[^\\]*.*glibconfig\.h" />
+			</OSSBuild:FillDirectory>
+			
 			<OSSBuild:FillDirectory ComponentGroup="Bindings_C_Headers" Directory="$(var.SharedIncludeDir)">
 				<OSSBuild:Filter Include=".*" />
 			</OSSBuild:FillDirectory>
@@ -77,7 +84,8 @@
 		<DirectoryRef Id="GstSDKLibInstallDir">
 			<OSSBuild:FillDirectory ComponentGroup="Bindings_C_Libs" Directory="$(var.SharedLibDir)">
 				<OSSBuild:Filter Include=".*\\lib\\[^\\]*.*\.lib" />
-				
+
+				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*avcore$(var.LGPL)\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*avcodec$(var.LGPL)\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*avdevice$(var.LGPL)\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*avfilter$(var.LGPL)\.lib" />
