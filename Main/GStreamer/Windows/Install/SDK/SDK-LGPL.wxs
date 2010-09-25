@@ -51,6 +51,7 @@
 		<ComponentGroup Id="Bindings_C">
 			<ComponentGroupRef Id="Bindings_C_Libs" />
 			<ComponentGroupRef Id="Bindings_C_Headers" />
+			<ComponentGroupRef Id="Bindings_MSVC_Headers" />
 			<ComponentGroupRef Id="Bindings_GStreamer_Libs" />
 			<ComponentGroupRef Id="Bindings_GStreamer_Headers" />
 		</ComponentGroup>
@@ -62,6 +63,12 @@
 
 		<!-- C:\Program Files\OSSBuild\v<Version>\sdk\include\ -->
 		<DirectoryRef Id="GstSDKIncludeInstallDir">
+			<OSSBuild:FillDirectory ComponentGroup="Bindings_MSVC_Headers" Directory="$(var.MsvcIncludeDir)">
+				<OSSBuild:Filter Include=".*\\include\\[^\\]*.*\.h" />
+
+				<OSSBuild:Filter Exclude=".*\\include\\[^\\]*.*glibconfig\.h" />
+			</OSSBuild:FillDirectory>
+			
 			<OSSBuild:FillDirectory ComponentGroup="Bindings_C_Headers" Directory="$(var.SharedIncludeDir)">
 				<OSSBuild:Filter Exclude=".*\\include\\a52dec.*\\.*" />
 				<OSSBuild:Filter Exclude=".*\\include\\mpeg2dec.*\\.*" />
@@ -70,6 +77,8 @@
 				<OSSBuild:Filter Exclude=".*\\include\\dvdread.*\\.*" />
 				<OSSBuild:Filter Exclude=".*\\include\\[^\\]*dts\.h" />
 				<OSSBuild:Filter Exclude=".*\\include\\[^\\]*dca\.h" />
+				<OSSBuild:Filter Exclude=".*\\include\\[^\\]*id3tag\.h" />
+				<OSSBuild:Filter Exclude=".*\\include\\[^\\]*mad\.h" />
 				<OSSBuild:Filter Exclude=".*\\include\\[^\\]*x264\.h" />
 				<OSSBuild:Filter Exclude=".*\\include\\[^\\]*xvid\.h" />
 				<OSSBuild:Filter Exclude=".*\\include\\[^\\]*faad\.h" />
@@ -94,10 +103,13 @@
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*dvdnav.*\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*dvdread.*\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*dca.*\.lib" />
+				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*id3tag.*\.lib" />
+				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*mad.*\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*x264.*\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*xvidcore.*\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*faad.*\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*faac.*\.lib" />
+				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*avcore$(var.GPL)\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*avcodec$(var.GPL)\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*avdevice$(var.GPL)\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*avfilter$(var.GPL)\.lib" />

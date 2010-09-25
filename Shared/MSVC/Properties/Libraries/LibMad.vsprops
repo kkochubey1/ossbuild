@@ -8,6 +8,7 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		AdditionalIncludeDirectories=""
+		PreprocessorDefinitions="MAD_EXPORTS"
 	/>
 	<Tool
 		Name="VCLinkerTool"
