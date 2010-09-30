@@ -24,9 +24,9 @@ ALL_UPDATE ?= # force update everything
 BINUTILS_VERSION ?= 2.20.51
 BINUTILS_UPDATE ?= ${ALL_UPDATE} # force update binutils
 BINUTILS_CONFIG_EXTRA_ARGS ?= --disable-debug
-GCC_CONFIG_EXTRA_ARGS ?= --with-pkgversion="OSSBuild-v0.10.8, r163830" --with-bugurl="http://code.google.com/p/ossbuild/issues/" --disable-debug --enable-languages=c,c++,fortran,objc,obj-c++ --disable-multilib --enable-targets=all --disable-werror --enable-fully-dynamic-string --disable-nls --disable-win32-registry --enable-version-specific-runtime-libs --enable-libstdcxx-debug
+GCC_CONFIG_EXTRA_ARGS ?= --with-pkgversion="OSSBuild-v0.10.8, r164692" --with-bugurl="http://code.google.com/p/ossbuild/issues/" --disable-debug --enable-languages=c,c++,fortran,objc,obj-c++ --disable-multilib --enable-targets=all --disable-werror --enable-fully-dynamic-string --disable-nls --disable-win32-registry --enable-version-specific-runtime-libs --enable-libstdcxx-debug --enable-checking=release
 GCC_BRANCH ?= branches/gcc-4_5-branch #trunk # "tags/gcc_4_4_0_release" or "branches/gcc-4_4-branch"
-GCC_REVISION ?= 163830 #head # revision id "146782" or date "2009-04-25"
+GCC_REVISION ?= 164692 #head # revision id "146782" or date "2009-04-25"
 GCC_UPDATE ?= ${ALL_UPDATE} # force update gcc
 GMP_VERSION ?= 5.0.1 # GMP release version
 MPFR_VERSION ?= 2.4.2 # MPFR release version
@@ -120,7 +120,7 @@ binutils-extract: \
 src/.binutils.extract.marker: \
     src/binutils.tar.bz2 \
     src/binutils/src/.mkdir.marker
-	$(TAR) -C $(dir $@)/binutils/src --strip-components=1 -xjvf $<
+	$(TAR) -C $(dir $@)/binutils/src --no-same-owner --strip-components=1 -xjvf $<
 	@touch $@
 
 binutils-patch:  \
@@ -182,8 +182,8 @@ gcc-patch: \
 src/gcc/.gcc.patch.marker: \
     src/patches/.patches.pull.marker \
     src/gcc/.gcc.pull.marker
-	-cd $(dir $@) && cd src \
-	$(PATCH) ../../patches/gcc/libgcc_multilib.patch
+	### -cd $(dir $@) && cd src \
+	### $(PATCH) ../../patches/gcc/libgcc_multilib.patch
 	@touch $@
 
 ########################################
@@ -208,7 +208,7 @@ gmp-extract: \
 src/.gmp.extract.marker: \
     src/gmp.tar.bz2 \
     src/gcc/src/gmp/.mkdir.marker
-	$(TAR) -C $(dir $@)/gcc/src/gmp --strip-components=1 -xjvf $<
+	$(TAR) -C $(dir $@)/gcc/src/gmp --no-same-owner --strip-components=1 -xjvf $<
 	@touch $@
 
 gmp-patch:  \
@@ -243,7 +243,7 @@ mpfr-extract: \
 src/.mpfr.extract.marker: \
     src/mpfr.tar.bz2 \
     src/gcc/src/mpfr/.mkdir.marker
-	$(TAR) -C $(dir $@)/gcc/src/mpfr --strip-components=1 -xjvf $<
+	$(TAR) -C $(dir $@)/gcc/src/mpfr --no-same-owner --strip-components=1 -xjvf $<
 	@touch $@
 
 mpfr-patch: \
@@ -276,7 +276,7 @@ mpc-extract: \
 src/.mpc.extract.marker: \
     src/mpc.tar.gz \
     src/gcc/src/mpc/.mkdir.marker
-	$(TAR) -C $(dir $@)/gcc/src/mpc --strip-components=1 -xzvf $<
+	$(TAR) -C $(dir $@)/gcc/src/mpc --no-same-owner --strip-components=1 -xzvf $<
 	@touch $@
 
 mpc-patch: \
@@ -580,7 +580,7 @@ release-archive: \
 ${BIN_ARCHIVE}: \
     ${BUILD_DIR}/gcc/obj/.install.marker
 	$(TAR) vcjf $@ -C ${BUILD_DIR}/root --owner 0 --group 0 \
-	    --exclude=CVS --exclude=.svn --exclude=.*.marker \
+	    --exclude=CVS --exclude=.svn --exclude=.*.marker --exclude=*.la \
             .
 
 ################################################################################
@@ -800,7 +800,7 @@ native-${BIN_ARCHIVE}: \
     ${NATIVE_DIR}/gcc/obj/.install.marker
 	cd ${NATIVE_DIR}/root && \
 	zip -r -9 ${CURDIR}/$(patsubst %.tar.bz2,%.zip,$@) \
-	     . -x .*.marker *.*.marker
+	     . -x .*.marker *.*.marker *.la
 
 
 endif # native_dir != build_dir
