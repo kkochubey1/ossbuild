@@ -306,8 +306,10 @@ gst_d3dvideosink_init (GstD3DVideoSink * sink, GstD3DVideoSinkClass * klass)
 
   sink->d3d_swap_chain_lock = g_mutex_new();
 
-  sink->par = NULL;
-
+  sink->par = g_new0 (GValue, 1);
+  g_value_init (sink->par, GST_TYPE_FRACTION);
+  gst_value_set_fraction (sink->par, 1, 1);
+ 
   /* TODO: Copied from GstVideoSink; should we use that as base class? */
   /* 20ms is more than enough, 80-130ms is noticable */
   gst_base_sink_set_max_lateness (GST_BASE_SINK (sink), 50 * GST_MSECOND);
@@ -369,7 +371,6 @@ gst_d3dvideosink_get_property (GObject * object, guint prop_id,
     //  g_value_set_boolean (value, sink->keep_aspect_ratio);
     //  break;
     case PROP_PIXEL_ASPECT_RATIO:
-      if (sink->par)
         g_value_transform (sink->par, value);
       break;
     default:
