@@ -20,41 +20,43 @@ orc                     -       0.4.9           -       http://code.entropywave.
 pthreads                -       2.9.0           -       CVS (for now), eventually http://mirrors.kernel.org/sources.redhat.com/pthreads-win32/pthreads-w32-2-9-0-release.tar.gz
 libiconv                -       1.13.1          -       http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.13.1.tar.gz
 zlib                    -       1.2.5           -       http://zlib.net/zlib-1.2.5.tar.bz2
-bz2                     -       1.0.5           -       http://www.bzip.org/1.0.5/bzip2-1.0.5.tar.gz
-glew                    -       1.5.5           -       http://downloads.sourceforge.net/project/glew/glew/1.5.5/glew-1.5.5.tgz?use_mirror=superb-sea2&ts=1279558007
+bz2                     -       1.0.6           -       http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
+glew                    -       1.5.6           -       http://downloads.sourceforge.net/project/glew/glew/1.5.6/glew-1.5.6.tgz
 expat                   -       2.0.1           -       http://sourceforge.net/projects/expat/files/expat/2.0.1/expat-2.0.1.tar.gz/download
 libxml2                 -       2.7.7           -       http://xmlsoft.org/sources/libxml2-2.7.7.tar.gz
 libxslt                 -       1.1.26          -       http://xmlsoft.org/sources/libxslt-1.1.26.tar.gz
 libjpeg                 -       8.0.0b          -       http://www.ijg.org/files/jpegsrc.v8b.tar.gz
 openjpeg                -       1.3.0           -       http://www.openjpeg.org/openjpeg_v1_3.tar.gz
-libpng                  -       1.4.3           -       http://downloads.sourceforge.net/project/libpng/01-libpng-master/1.4.3/libpng-1.4.3.tar.gz?use_mirror=voxel&ts=1279558401
+libpng                  -       1.4.4           -       http://download.sourceforge.net/libpng/libpng-1.4.4.tar.gz
 libtiff                 -       3.9.4           -       http://download.osgeo.org/libtiff/tiff-3.9.4.tar.gz
-glib                    -       2.25.17         -       http://ftp.gnome.org/pub/GNOME/sources/glib/2.25/glib-2.25.17.tar.bz2
-atk                     -       1.30.0          -       http://ftp.gnome.org/pub/gnome/sources/atk/1.30/atk-1.30.0.tar.bz2
+glib                    -       2.26.0          -       http://ftp.gnome.org/pub/gnome/sources/glib/2.26/glib-2.26.0.tar.bz2
+atk                     -       1.32.0          -       http://ftp.gnome.org/pub/gnome/sources/atk/1.32/atk-1.32.0.tar.bz2
 openssl                 -       0.9.8j          -       http://www.openssl.org/source/openssl-0.9.8j.tar.gz
 libgpg-error            -       1.9.0           -       http://mirror.tje.me.uk/pub/mirrors/ftp.gnupg.org/libgpg-error/libgpg-error-1.9.tar.bz2
-libtasn1                -       2.7.0           -       http://ftp.gnu.org/gnu/libtasn1/libtasn1-2.7.tar.gz
+libtasn1                -       2.8.0           -       http://ftp.gnu.org/gnu/libtasn1/libtasn1-2.8.tar.gz
 libgcrypt               -       1.4.6           -       http://mirror.tje.me.uk/pub/mirrors/ftp.gnupg.org/libgcrypt/libgcrypt-1.4.6.tar.bz2
-gnutls                  -       2.10.1          -       http://ftp.gnu.org/pub/gnu/gnutls/gnutls-2.10.1.tar.bz2
-curl                    -       7.19.7          -       http://curl.haxx.se/download/curl-7.19.7.tar.bz2
-libsoup                 -       2.31.92         -       http://ftp.gnome.org/pub/GNOME/sources/libsoup/2.31/libsoup-2.31.92.tar.bz2
+gmp                     -       5.0.1           -       http://ftp.gnu.org/gnu/gmp/gmp-5.0.1.tar.bz2
+nettle                  -       2.1.0           -       http://www.lysator.liu.se/~nisse/archive/nettle-2.1.tar.gz
+gnutls                  -       2.10.2          -       http://ftp.gnu.org/pub/gnu/gnutls/gnutls-2.10.2.tar.bz2
+curl                    -       7.21.1          -       http://curl.haxx.se/download/curl-7.21.1.tar.bz2
+libsoup                 -       2.32.0          -       http://ftp.gnome.org/pub/gnome/sources/libsoup/2.32/libsoup-2.32.0.tar.bz2
 libneon                 -       0.29.3          -       http://www.webdav.org/neon/neon-0.29.3.tar.gz
 freetype                -       2.4.2           -       http://download-mirror.savannah.gnu.org/releases/freetype/freetype-2.4.2.tar.bz2
 fontconfig              -       2.8.0           -       http://fontconfig.org/release/fontconfig-2.8.0.tar.gz
 pixman                  -       0.19.4          -       http://cairographics.org/releases/pixman-0.19.4.tar.gz
 cairo                   -       1.10.0          -       http://cairographics.org/releases/cairo-1.10.0.tar.gz
-pango                   -       1.28.1          -       http://ftp.gnome.org/pub/GNOME/sources/pango/1.28/pango-1.28.1.tar.bz2
+pango                   -       1.28.3          -       http://ftp.gnome.org/pub/gnome/sources/pango/1.28/pango-1.28.3.tar.bz2
 libffi                  -       3.0.10 (master) -       http://github.com/atgreen/libffi/tarball/master (atgreen-libffi-v3.0.9-25-g84e8de6.tar.gz)
 gdk-pixbuf              -       2.22.0          -       http://ftp.gnome.org/pub/gnome/sources/gdk-pixbuf/2.22/gdk-pixbuf-2.22.0.tar.bz2
-gtk+                    -       2.21.8          -       http://ftp.gnome.org/pub/gnome/sources/gtk+/2.21/gtk+-2.21.8.tar.bz2
+gtk+                    -       2.22.0          -       http://ftp.gnome.org/pub/gnome/sources/gtk+/2.22/gtk+-2.22.0.tar.bz2
 gtkglarea               -       2.0.1           -       http://ftp.gnome.org/pub/gnome/sources/gtkglarea/2.0/gtkglarea-2.0.1.tar.bz2
-libcroco                -       0.6.2           -       http://ftp.gnome.org/pub/GNOME/sources/libcroco/0.6/libcroco-0.6.2.tar.bz2
+libcroco                -       0.6.2           -       http://ftp.gnome.org/pub/gnome/sources/libcroco/0.6/libcroco-0.6.2.tar.bz2
 perl make-maker         -       6.56.0          -       http://search.cpan.org/CPAN/authors/id/M/MS/MSCHWERN/ExtUtils-MakeMaker-6.56.tar.gz
 perl xml-parser         -       2.36.0          -       http://search.cpan.org/CPAN/authors/id/M/MS/MSERGEANT/XML-Parser-2.36.tar.gz
 intltool                -       0.40.6          -       http://ftp.se.debian.org/pub/gnome/sources/intltool/0.40/intltool-0.40.6.tar.bz2
-libgsf                  -       1.14.18         -       http://ftp.gnome.org/pub/gnome/sources/libgsf/1.14/libgsf-1.14.18.tar.bz2
-librsvg                 -       2.31.0          -       http://ftp.gnome.org/pub/GNOME/sources/librsvg/2.31/librsvg-2.31.0.tar.bz2
-libsdl                  -       1.2.14          -       http://www.libsdl.org/release/SDL-1.2.14.tar.gz
+libgsf                  -       1.14.19         -       http://ftp.gnome.org/pub/gnome/sources/libgsf/1.14/libgsf-1.14.19.tar.bz2
+librsvg                 -       2.32.0          -       http://ftp.gnome.org/pub/gnome/sources/librsvg/2.32/librsvg-2.32.0.tar.bz2
+libsdl                  -       1.2.14 (4903)   -       Mercurial repo., changeset 4903 (typically from http://www.libsdl.org/release/SDL-1.2.14.tar.gz)
 sdlttf                  -       2.0.10          -       http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.10.tar.gz
 libogg                  -       1.2.0           -       http://downloads.xiph.org/releases/ogg/libogg-1.2.0.tar.gz
 libvorbis               -       1.3.1           -       http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.1.tar.bz2
@@ -62,18 +64,16 @@ libcelt                 -       0.8.1           -       http://downloads.xiph.or
 libtheora               -       1.1.1           -       http://downloads.xiph.org/releases/theora/libtheora-1.1.1.tar.bz2
 libmms                  -       win32 branch    -       https://code.launchpad.net/~libmms-devel/libmms/win32
 libmms-0.4.0            -       0.4.0           -       http://sourceforge.net/projects/libmms/files/libmms/0.4/libmms-0.4.tar.gz/download
-x264                    -       20100909        -       http://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-20100909-2245.tar.bz2
+x264                    -       20100930        -       http://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-20100930-2245.tar.bz2
 libspeex                -       1.2rc1          -       http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
 libschroedinger         -       1.0.9           -       http://diracvideo.org/download/schroedinger/schroedinger-1.0.9.tar.gz
 mp3lame                 -       3.98.4          -       http://downloads.sourceforge.net/project/lame/lame/3.98.4/lame-3.98.4.tar.gz?use_mirror=voxel
-ffmpeg                  -       0.6.0           -       http://ffmpeg.org/releases/ffmpeg-export-snapshot.tar.bz2 [Updated 09-21-2010]
+ffmpeg                  -       0.6.0           -       http://ffmpeg.org/releases/ffmpeg-export-snapshot.tar.bz2 [Updated 10-04-2010]
 libnice                 -       0.0.13          -       http://nice.freedesktop.org/releases/libnice-0.0.13.tar.gz
 sqlite                  -       3.7.2           -       http://www.sqlite.org/sqlite-amalgamation-3.7.2.tar.gz
 libvdpau                -       0.4.0           -       http://cgit.freedesktop.org/~aplattner/libvdpau/snapshot/libvdpau-0.4.tar.bz2
 libsndfile              -       1.0.21          -       http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.21.tar.gz
 twolame                 -       0.3.12 (trunk)  -       http://twolame.svn.sourceforge.net/viewvc/twolame/trunk/?view=tar (Typically http://downloads.sourceforge.net/project/twolame/twolame/0.3.12/twolame-0.3.12.tar.gz?use_mirror=voxel)
-gmp                     -       5.0.1           -       http://ftp.gnu.org/gnu/gmp/gmp-5.0.1.tar.bz2
-nettle                  -       2.1.0           -       http://www.lysator.liu.se/~nisse/archive/nettle-2.1.tar.gz
 
 
 BSD Packages
