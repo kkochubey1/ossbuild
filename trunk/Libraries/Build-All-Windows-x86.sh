@@ -21,11 +21,11 @@ if [ ! -d "$PERL_BIN_DIR" ]; then
 fi
 
 #Global flags
-CFLAGS="$CFLAGS -m32 -mms-bitfields -pipe -D_WIN32_WINNT=0x0501 "
+CFLAGS="$CFLAGS -m32 -mms-bitfields -pipe -DWINVER=0x0501 "
 CPPFLAGS="$CPPFLAGS -DMINGW64 -D__MINGW64__ -DMINGW32 -D__MINGW32__"
 LDFLAGS="-Wl,--enable-auto-image-base -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc-v2 -Wl,--kill-at "
 CXXFLAGS="${CFLAGS}"
-MAKE_PARALLEL_FLAGS="-j3"
+MAKE_PARALLEL_FLAGS="-j2"
 
 #Call common startup routines to load a bunch of variables we'll need
 . $TOP/Shared/Scripts/Common.sh
@@ -738,7 +738,7 @@ if [ ! -f "$BinDir/libnettle-4-0.dll" ]; then
 fi
 
 #gnutls
-if [ ! -f "$BinDir/lib${Prefix}gnutls-26.dll" ]; then 
+if [ ! -f "$BinDir/libgnutls-26.dll" ]; then 
 	unpack_bzip2_and_move "gnutls.tar.bz2" "$PKG_DIR_GNUTLS"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/gnutls/gnutls_openssl.c.patch"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/gnutls/openssl.h.patch"
@@ -746,58 +746,46 @@ if [ ! -f "$BinDir/lib${Prefix}gnutls-26.dll" ]; then
 	
 	CFLAGS="-I$PKG_DIR/lib/includes -I$IntDir/gnutls/lib/includes $CFLAGS "
 	CPPFLAGS="-I$PKG_DIR/lib/includes -I$IntDir/gnutls/lib/includes $CPPFLAGS "
-	#LDFLAGS="-Wl,-static-libstdc++"
 	
-	$PKG_DIR/configure --disable-guile --disable-cxx --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
-	change_libname_spec
-	change_libname_spec "${Prefix}" "${DefaultSuffix}" "lib"
-	change_libname_spec "${Prefix}" "${DefaultSuffix}" "libextra"
-	make && make install
+	lt_cv_deplibs_check_method=pass_all $PKG_DIR/configure --disable-guile --disable-cxx --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	make
+	make install
 
-	$MSLIB /name:lib${Prefix}gnutls-26.dll /out:gnutls.lib /machine:$MSLibMachine /def:lib/libgnutls-26.def
-	$MSLIB /name:lib${Prefix}gnutls-extra-26.dll /out:gnutls-extra.lib /machine:$MSLibMachine /def:libextra/libgnutls-extra-26.def
-	$MSLIB /name:lib${Prefix}gnutls-openssl-26.dll /out:gnutls-openssl.lib /machine:$MSLibMachine /def:libextra/libgnutls-openssl-26.def
+	$MSLIB /name:libgnutls-26.dll /out:gnutls.lib /machine:$MSLibMachine /def:lib/libgnutls-26.def
+	$MSLIB /name:libgnutls-extra-26.dll /out:gnutls-extra.lib /machine:$MSLibMachine /def:libextra/libgnutls-extra-26.def
+	$MSLIB /name:libgnutls-openssl-26.dll /out:gnutls-openssl.lib /machine:$MSLibMachine /def:libextra/libgnutls-openssl-26.def
 	
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
 	
 	cd "$BinDir" && remove_files_from_dir "libgnutls-*.def"
 	
 	reset_flags
-	
-	update_library_names_windows "lib${Prefix}gnutls.dll.a" "libgnutls.la"
-	update_library_names_windows "lib${Prefix}gnutls-extra.dll.a" "libgnutls-extra.la"
-	update_library_names_windows "lib${Prefix}gnutls-openssl.dll.a" "libgnutls-openssl.la"
 fi
 
 #curl
-#This is used for testing purposes only
-if [ ! -f "$BinDir/lib${Prefix}curl-4.dll" ]; then 
+if [ ! -f "$BinDir/libcurl-4.dll" ]; then 
 	unpack_bzip2_and_move "curl.tar.bz2" "$PKG_DIR_CURL"
 	mkdir_and_move "$IntDir/curl"
-	
-	$PKG_DIR/configure --with-gnutls --enable-optimize --disable-curldebug --disable-debug --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
-	change_libname_spec
-	
-	#libtool can't find some archives (.la)
-	if [ -e "/mingw/lib/libws2_32.la" ]; then 
-		cp -p /mingw/lib/libws2_32.la "lib"
-		cp -p /mingw/lib/libws2_32.la "src"
-		cp -p /mingw/lib/libws2_32.la "tests"
-		cp -p /mingw/lib/libws2_32.la "tests/libtest"
-		cp -p /mingw/lib/libws2_32.la "."
-	fi
+
+	LDFLAGS="$LDFLAGS -ltasn1 -lz -lgcrypt -lgpg-error"
+	lt_cv_deplibs_check_method=pass_all $PKG_DIR/configure --with-gnutls --enable-optimize --disable-curldebug --disable-debug --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	make ${MAKE_PARALLEL_FLAGS} && make install
 	
-	reset_flags
+	cd "lib/.libs"
+	pexports "libcurl-4.dll" > in.def
+	sed -e '/LIBRARY libcurl/d' in.def > in-mod.def
 	
-	update_library_names_windows "lib${Prefix}curl.dll.a" "libcurl.la"
+	$MSLIB /name:libcurl-4.dll /out:curl.lib /machine:$MSLibMachine /def:in-mod.def
+	move_files_to_dir "*.exp *.lib" "$LibDir/"
+	
+	reset_flags
 fi
 
 #soup
 if [ ! -f "$BinDir/libsoup-2.4-1.dll" ]; then 
 	unpack_bzip2_and_move "libsoup.tar.bz2" "$PKG_DIR_LIBSOUP"
 	mkdir_and_move "$IntDir/libsoup"
-	
+
 	#TODO: Check if this is no longer the case. Bug reported: https://bugzilla.gnome.org/show_bug.cgi?id=606455
 	#libsoup isn't outputting the correct exported symbols, so update Makefile.am so libtool will pick it up
 	#What we want, essentially, is this: 
@@ -811,13 +799,13 @@ if [ ! -f "$BinDir/libsoup-2.4-1.dll" ]; then
 	
 	cd "$IntDir/libsoup"
 	CPPFLAGS="$CPPFLAGS -DIN_LIBXML"
-	$PKG_DIR/configure --disable-silent-rules --enable-ssl --enable-debug=no --disable-more-warnings --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	lt_cv_deplibs_check_method=pass_all $PKG_DIR/configure --disable-silent-rules --enable-ssl --enable-debug=no --disable-more-warnings --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	make ${MAKE_PARALLEL_FLAGS} 
+
 	make install
 
 	cd "libsoup/.libs"
 	pexports "$BinDir/libsoup-2.4-1.dll" > in.def
-	#sed -e '/LIBRARY libsoup/d' -e 's/DATA//g' in.def > in-mod.def
 	sed -e '/LIBRARY libsoup/d' in.def > in-mod.def
 	
 	$MSLIB /name:libsoup-2.4-1.dll /out:soup-2.4.lib /machine:$MSLibMachine /def:in-mod.def
@@ -827,7 +815,7 @@ if [ ! -f "$BinDir/libsoup-2.4-1.dll" ]; then
 fi
 
 #neon
-if [ ! -f "$BinDir/lib${Prefix}neon-27.dll" ]; then 
+if [ ! -f "$BinDir/libneon-27.dll" ]; then 
 	unpack_gzip_and_move "neon.tar.gz" "$PKG_DIR_NEON"
 	mkdir_and_move "$IntDir/neon"
 	
@@ -836,24 +824,17 @@ if [ ! -f "$BinDir/lib${Prefix}neon-27.dll" ]; then
 	sed -e 's/for str in d ld lld/for str in d ld lld I64d/g' $PKG_DIR/configure > $PKG_DIR/configure.tmp
 	mv $PKG_DIR/configure.tmp $PKG_DIR/configure
 
-	$PKG_DIR/configure --with-ssl=gnutls --disable-debug --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
-	change_libname_spec
-	#libtool can't find some archives (.la)
-	if [ -e "/mingw/lib/libws2_32.la" ]; then 
-		copy_files_to_dir "/mingw/lib/libws2_32.la" "src"
-		copy_files_to_dir "/mingw/lib/libws2_32.la" "test"
-	fi
-	make && make install
+	ac_cv_type_socklen_t=yes lt_cv_deplibs_check_method=pass_all $PKG_DIR/configure --with-ssl=gnutls --disable-debug --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	make
+	make install
 
 	cd "src/.libs"
-	pexports "$BinDir/lib${Prefix}neon-27.dll" | sed "s/^_//" > in.def
-	sed -e '/LIBRARY lib${Prefix}neon-27.dll/d' in.def > in-mod.def
-	$MSLIB /name:lib${Prefix}neon-27.dll /out:neon.lib /machine:$MSLibMachine /def:in-mod.def
+	pexports "$BinDir/libneon-27.dll" | sed "s/^_//" > in.def
+	sed -e '/LIBRARY libneon-27.dll/d' in.def > in-mod.def
+	$MSLIB /name:libneon-27.dll /out:neon.lib /machine:$MSLibMachine /def:in-mod.def
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
 	
 	reset_flags
-	
-	update_library_names_windows "lib${Prefix}neon.dll.a" "libneon.la"
 fi
 
 #freetype
@@ -1221,34 +1202,28 @@ if [ -e "$PERL_BIN_DIR" ]; then
 fi
 
 #sdl
-SDLPrefix=lib${Prefix}
-if [ "${Prefix}" = "" ]; then
-	SDLPrefix=""
-fi
-if [ ! -f "$BinDir/${SDLPrefix}SDL.dll" ]; then 
+if [ ! -f "$BinDir/SDL.dll" ]; then 
 	unpack_gzip_and_move "sdl.tar.gz" "$PKG_DIR_SDL"
 	mkdir_and_move "$IntDir/sdl"
 	
+	cd "$PKG_DIR/"
+	./autogen.sh
+
+	cd "$IntDir/sdl/"
 	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir 
-	#Required b/c SDL removes the "lib" portion from the name. This reinserts it.
-	change_libname_spec "${SDLPrefix}"
-	make ${MAKE_PARALLEL_FLAGS} && make install
+	make ${MAKE_PARALLEL_FLAGS}
+	make install
 
 	cp $PKG_DIR/include/SDL_config.h.default $IncludeDir/SDL/SDL_config.h
 	cp $PKG_DIR/include/SDL_config_win32.h $IncludeDir/SDL
 	
 	cd build/.libs
 	
-	pexports "$BinDir/${SDLPrefix}SDL.dll" | sed "s/^_//" > in.def
-	sed -e '/LIBRARY ${SDLPrefix}SDL.dll/d' in.def > in-mod.def
-	$MSLIB /name:${SDLPrefix}SDL.dll /out:sdl.lib /machine:$MSLibMachine /def:in-mod.def
+	pexports "$BinDir/SDL.dll" | sed "s/^_//" > in.def
+	sed -e '/LIBRARY SDL.dll/d' in.def > in-mod.def
+	$MSLIB /name:SDL.dll /out:sdl.lib /machine:$MSLibMachine /def:in-mod.def
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
 	reset_flags
-	
-	cd "$LibDir/"
-	mv "lib${SDLPrefix}SDL.dll.a" "libSDL.dll.a"
-	update_library_names_windows "libSDL.dll.a" "libSDL.la"
-	change_key "." "libSDL.la" "library_names" "\'libSDL.dll.a\'"
 fi
 
 #SDL_ttf
@@ -1257,7 +1232,6 @@ if [ ! -f "$BinDir/SDL_ttf.dll" ]; then
 	mkdir_and_move "$IntDir/sdl_ttf"
 	
 	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
-	change_libname_spec
 	make ${MAKE_PARALLEL_FLAGS} && make install
 	
 	cd .libs/
@@ -1638,8 +1612,10 @@ if [ ! -f "$BinDir/avcodec${FFmpegSuffix}-52.dll" ]; then
 	#Adds $(SLIBPREF) to lib names when linking
 	change_key "." "common.mak" "FFEXTRALIBS\ \\:" "\$\(addprefix\ -l\$\(SLIBPREF\),\$\(addsuffix\ \$\(BUILDSUF\),\$\(FFLIBS\)\)\)\ \$\(EXTRALIBS\)"
 	#For some reason, FFmpeg is not enabling this even when requested
-	sed -e "s/#define HAVE_MMX2 0/#define HAVE_MMX2 1/g" -e "s/#define HAVE_SSSE3 0/#define HAVE_SSSE3 1/g" config.h > config.h.tmp
-	mv config.h.tmp config.h
+	sed \
+		-e "s/#define HAVE_MMX2 0/#define HAVE_MMX2 1/g" \
+		-e "s/#define HAVE_SSSE3 0/#define HAVE_SSSE3 1/g" \
+		config.h > config.h.tmp && mv config.h.tmp config.h
 
 	make ${MAKE_PARALLEL_FLAGS}
 	make install
@@ -1673,7 +1649,7 @@ fi
 
 
 #libnice
-if [ ! -f "$BinDir/lib${Prefix}nice-0.dll" ]; then 
+if [ ! -f "$BinDir/libnice-0.dll" ]; then 
 	unpack_gzip_and_move "libnice.tar.gz" "$PKG_DIR_LIBNICE"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/bind.c-win32.patch"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/libnice/rand.c-win32.patch"
@@ -1686,11 +1662,7 @@ if [ ! -f "$BinDir/lib${Prefix}nice-0.dll" ]; then
 
 	CFLAGS="-D_SSIZE_T_ -D_SSIZE_T_DEFINED -I$PKG_DIR -I$PKG_DIR/stun -D_WIN32_WINNT=0x0501 -DUSE_GETADDRINFO -DHAVE_GETNAMEINFO -DHAVE_GETSOCKOPT -DHAVE_INET_NTOP -DHAVE_INET_PTON"
 	LDFLAGS="$LDFLAGS -lwsock32 -lws2_32 -liphlpapi -no-undefined -mno-cygwin -fno-common -fno-strict-aliasing -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias"
-	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
-	change_libname_spec
-	if [ -e "/mingw/lib/libws2_32.la" ]; then 
-		copy_files_to_dir "/mingw/lib/libws2_32.la /mingw/lib/libole32.la /mingw/lib/libiphlpapi.la /mingw/lib/libwsock32.la" "nice"
-	fi
+	lt_cv_deplibs_check_method=pass_all $PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	
 	make ${MAKE_PARALLEL_FLAGS} && make install
 	
@@ -1764,23 +1736,20 @@ if [ ! -f "$BinDir/${XvidPrefix}xvidcore.dll" ]; then
 fi
 
 #wavpack
-if [ ! -f "$BinDir/lib${Prefix}wavpack-1.dll" ]; then 
+if [ ! -f "$BinDir/libwavpack-1.dll" ]; then 
 	unpack_bzip2_and_move "wavpack.tar.bz2" "$PKG_DIR_WAVPACK"
 	mkdir_and_move "$IntDir/wavpack"
 	
 	cp -p -f "$LIBRARIES_PATCH_DIR/wavpack/Makefile.in" "$PKG_DIR"
 	
 	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
-	change_libname_spec
 	make ${MAKE_PARALLEL_FLAGS} && make install
 	
 	cd src/.libs	
-	$MSLIB /name:lib${Prefix}wavpack-1.dll /out:wavpack.lib /machine:$MSLibMachine /def:lib${Prefix}wavpack-1.dll.def
+	$MSLIB /name:libwavpack-1.dll /out:wavpack.lib /machine:$MSLibMachine /def:libwavpack-1.dll.def
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
 	
 	reset_flags
-
-	update_library_names_windows "lib${Prefix}wavpack.dll.a" "libwavpack.la"
 fi
 
 #a52dec
