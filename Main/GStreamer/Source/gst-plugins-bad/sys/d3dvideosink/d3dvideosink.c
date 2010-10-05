@@ -1,5 +1,6 @@
 /* GStreamer
  * Copyright (C) 2010 David Hoyt <dhoyt@hoytsoft.org>
+ * Copyright (C) 2010 Andoni Morales <ylatuya@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -102,7 +103,7 @@ static GstStaticPadTemplate sink_template =
       GST_PAD_SINK,
       GST_PAD_ALWAYS,
       GST_STATIC_CAPS (
-        GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YUVY }")
+        GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YUVY, YV12, I420 }")
       )
     );
 
@@ -1236,6 +1237,7 @@ gst_d3dvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
       bpp = 16;
       break;
     case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
+	case GST_MAKE_FOURCC ('I', '4', '2', '0'):
       bpp = 12;
       break;
     default:
@@ -1356,7 +1358,6 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
   GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
   {
     HRESULT hr;
-    guint8 *source;
     LPDIRECT3DSURFACE9 backBuffer;
 
     if (!shared.d3ddev) {
@@ -1399,9 +1400,6 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
       }
     }
 
-    /* Get a reference to the buffer containing the image we want to display on screen */
-    source = GST_BUFFER_DATA(buffer);
-
     /* Set the render target to our swap chain */
     IDirect3DSwapChain9_GetBackBuffer(sink->d3d_swap_chain, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
     IDirect3DDevice9_SetRenderTarget(shared.d3ddev, 0, backBuffer);
@@ -1411,7 +1409,7 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
     IDirect3DDevice9_Clear(shared.d3ddev, 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
     if (SUCCEEDED(IDirect3DDevice9_BeginScene(shared.d3ddev))) {
-      if (source) {
+      if (GST_BUFFER_DATA(buffer)) {
         D3DLOCKED_RECT lr;
         guint8 *dest;
 
@@ -1419,75 +1417,15 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
         dest = (guint8 *)lr.pBits;
 
         if (dest) {
-          int i;
-          int width;
-          int height;
-          int srcstride;
-          int dststride;
-
-          width = sink->width;
-          height = sink->height;
-
           /* Push the bytes to the video card */
           switch(sink->fourcc) {
             case GST_MAKE_FOURCC ('Y', 'U', 'Y', '2'):
             case GST_MAKE_FOURCC ('Y', 'U', 'Y', 'V'):
             case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
-              /* Nice and simple */
-              srcstride = GST_ROUND_UP_4 (width * 2);
-              dststride = lr.Pitch;
-
-              for (i = 0; i < height; ++i)
-                memcpy (dest + dststride * i, source + srcstride * i, srcstride);
-              break;
-            
-            default:
-              break;
-            //case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
-            //  {
-            //    guint8 *src;
-            //    guint8 *dst;
-            //    gint32 rows;
-            //    int component;
-
-            //    for (component = 0; component < 3; component++) {
-            //      // TODO: Get format properly rather than hard-coding it. Use gst_video_* APIs *?
-            //      if (component == 0) {
-            //        srcstride = GST_ROUND_UP_4 (width);
-            //        src = source;
-            //      }
-            //      else {
-            //        srcstride = GST_ROUND_UP_4 ( GST_ROUND_UP_2 (width) / 2);
-            //        if (component == 1)
-            //          src = source + GST_ROUND_UP_4 (width) * GST_ROUND_UP_2 (height);
-            //        else
-            //          src = source + GST_ROUND_UP_4 (width) * GST_ROUND_UP_2 (height) +
-            //                  srcstride * (GST_ROUND_UP_2 (height) / 2);
-            //      }
-
-            //      /* Is there a better way to do this? This is ICK! */
-            //      if (component == 0) {
-            //        dststride = width;
-            //        dst = dest;
-            //        rows = height;
-            //      } else if (component == 1) {
-            //        dststride = width / 2;
-            //        dst = dest + width * height;
-            //        rows = height/2;
-            //      }
-            //      else {
-            //        dststride = width / 2;
-            //        dst = dest + width * height +
-            //                       width/2 * height/2;
-            //        rows = height/2;
-            //      }
-
-            //      for (i = 0; i < rows; i++) {
-            //        memcpy (dst + i * dststride, src + i * srcstride, srcstride);
-            //      }
-            //    }
-            //  }
-            //  break;
+            case GST_MAKE_FOURCC ('I', '4', '2', '0'):
+            case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
+			  memcpy (dest , GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));            
+              break;  
           }
         }
         IDirect3DSurface9_UnlockRect(sink->d3d_offscreen_surface);
@@ -1876,12 +1814,16 @@ gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink)
         d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'U', 'Y', 'V');
         break;
       case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
-        d3dformat = D3DFMT_X8R8G8B8;
+	    d3dformat = D3DFMT_X8R8G8B8;
         d3dfourcc = (D3DFORMAT)MAKEFOURCC('U', 'Y', 'V', 'Y');
         break;
       case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
         d3dformat = D3DFMT_X8R8G8B8;
         d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'V', '1', '2');
+        break;
+      case GST_MAKE_FOURCC ('I', '4', '2', '0'):
+        d3dformat = D3DFMT_X8R8G8B8;
+        d3dfourcc = (D3DFORMAT)MAKEFOURCC('I', '4', '2', '0');
         break;
       default:
         GST_WARNING ("Failed to find compatible Direct3D format");
