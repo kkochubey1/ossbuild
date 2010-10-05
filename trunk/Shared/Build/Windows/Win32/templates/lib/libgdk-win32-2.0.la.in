@@ -23,8 +23,8 @@ dependency_libs=''
 weak_library_names=''
 
 # Version information for libgdk-win32-2.0.
-current=2108
-age=2108
+current=2200
+age=2200
 revision=0
 
 # Is this an already installed library?

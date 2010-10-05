@@ -131,25 +131,34 @@ GDateTime *             g_date_time_new_utc                             (gint   
                                                                          gint            minute,
                                                                          gdouble         seconds);
 
+G_GNUC_WARN_UNUSED_RESULT
 GDateTime *             g_date_time_add                                 (GDateTime      *datetime,
                                                                          GTimeSpan       timespan);
 
+G_GNUC_WARN_UNUSED_RESULT
 GDateTime *             g_date_time_add_years                           (GDateTime      *datetime,
                                                                          gint            years);
+G_GNUC_WARN_UNUSED_RESULT
 GDateTime *             g_date_time_add_months                          (GDateTime      *datetime,
                                                                          gint            months);
+G_GNUC_WARN_UNUSED_RESULT
 GDateTime *             g_date_time_add_weeks                           (GDateTime      *datetime,
                                                                          gint            weeks);
+G_GNUC_WARN_UNUSED_RESULT
 GDateTime *             g_date_time_add_days                            (GDateTime      *datetime,
                                                                          gint            days);
 
+G_GNUC_WARN_UNUSED_RESULT
 GDateTime *             g_date_time_add_hours                           (GDateTime      *datetime,
                                                                          gint            hours);
+G_GNUC_WARN_UNUSED_RESULT
 GDateTime *             g_date_time_add_minutes                         (GDateTime      *datetime,
                                                                          gint            minutes);
+G_GNUC_WARN_UNUSED_RESULT
 GDateTime *             g_date_time_add_seconds                         (GDateTime      *datetime,
                                                                          gdouble         seconds);
 
+G_GNUC_WARN_UNUSED_RESULT
 GDateTime *             g_date_time_add_full                            (GDateTime      *datetime,
                                                                          gint            years,
                                                                          gint            months,
@@ -160,8 +169,8 @@ GDateTime *             g_date_time_add_full                            (GDateTi
 
 gint                    g_date_time_compare                             (gconstpointer   dt1,
                                                                          gconstpointer   dt2);
-GTimeSpan               g_date_time_difference                          (GDateTime      *begin,
-                                                                         GDateTime      *end);
+GTimeSpan               g_date_time_difference                          (GDateTime      *end,
+                                                                         GDateTime      *begin);
 guint                   g_date_time_hash                                (gconstpointer   datetime);
 gboolean                g_date_time_equal                               (gconstpointer   dt1,
                                                                          gconstpointer   dt2);
@@ -175,6 +184,7 @@ gint                    g_date_time_get_year                            (GDateTi
 gint                    g_date_time_get_month                           (GDateTime      *datetime);
 gint                    g_date_time_get_day_of_month                    (GDateTime      *datetime);
 
+gint                    g_date_time_get_week_numbering_year             (GDateTime      *datetime);
 gint                    g_date_time_get_week_of_year                    (GDateTime      *datetime);
 gint                    g_date_time_get_day_of_week                     (GDateTime      *datetime);
 

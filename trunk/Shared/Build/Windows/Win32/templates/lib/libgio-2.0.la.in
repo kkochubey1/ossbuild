@@ -23,8 +23,8 @@ dependency_libs=' -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/lib/libgobject-2.
 weak_library_names=''
 
 # Version information for libgio-2.0.
-current=2517
-age=2517
+current=2600
+age=2600
 revision=0
 
 # Is this an already installed library?

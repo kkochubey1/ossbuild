@@ -65,8 +65,8 @@ rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.7z
 rem set GCCDIR=cross-mingw.gcc451.generic.20100615.1
 rem set GCC=http://komisar.gin.by/mingw/cross-mingw.gcc451.generic.20100615.1.7z
 
-set PKG_OSSBUILD_W64_GCC_X86_BIN=http://ossbuild.googlecode.com/files/mingw-w64-x86-ossbuild-bin.tar.lzma
-set PKG_OSSBUILD_W64_GCC_X86_64_BIN=http://ossbuild.googlecode.com/files/mingw-w64-x86_64-ossbuild-bin.tar.lzma
+set PKG_OSSBUILD_W64_GCC_X86_BIN=http://ossbuild.googlecode.com/files/mingw-w64-x86-ossbuild-bin-r164692.tar.lzma
+set PKG_OSSBUILD_W64_GCC_X86_64_BIN=http://ossbuild.googlecode.com/files/mingw-w64-x86_64-ossbuild-bin-r164692.tar.lzma
 
 set PKG_MINGW_W64_GCC_X86_BIN=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win32/Personal Builds/sezero_20100711/mingw-w32-bin_i686-mingw_20100711_sezero.zip?use_mirror=voxel
 set PKG_MINGW_W64_GCC_X86_RUNTIME_UPDATE=http://downloads.sourceforge.net/project/mingw-w64/Toolchains targetting Win32/Personal Builds/sezero_20100711/sezero_20100711_w32_runtime_update_3441.zip?use_mirror=voxel
