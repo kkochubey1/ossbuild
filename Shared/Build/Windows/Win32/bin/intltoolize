@@ -36,7 +36,7 @@ PACKAGE=intltool
 VERSION=0.40.6
 
 # Directory names.
-prefix=/E/Development/OSSBuild/Build/Windows/Win32/Release
+prefix=/C/Build/OSSBuild/Build/Windows/Win32/Release
 
 case "`uname`" in
 MINGW32*)

@@ -48,7 +48,7 @@ typedef struct AVRational{
 static inline int av_cmp_q(AVRational a, AVRational b){
     const int64_t tmp= a.num * (int64_t)b.den - b.num * (int64_t)a.den;
 
-    if(tmp) return (tmp>>63)|1;
+    if(tmp) return ((tmp ^ a.den ^ b.den)>>63)|1;
     else    return 0;
 }
 
@@ -107,6 +107,8 @@ AVRational av_sub_q(AVRational b, AVRational c) av_const;
 
 /**
  * Convert a double precision floating point number to a rational.
+ * inf is expressed as {1,0} or {-1,0} depending on the sign.
+ *
  * @param d double to convert
  * @param max the maximum allowed numerator and denominator
  * @return (AVRational) d

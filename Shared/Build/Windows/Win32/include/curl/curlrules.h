@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: curlrules.h,v 1.7 2009-10-27 16:56:20 yangtse Exp $
  ***************************************************************************/
 
 /* ================================================================ */
@@ -187,7 +186,7 @@ typedef char
 /*          EXTERNALLY AND INTERNALLY VISIBLE DEFINITIONS           */
 /* ================================================================ */
 
-/* 
+/*
  * CURL_ISOCPP and CURL_OFF_T_C definitions are done here in order to allow
  * these to be visible and exported by the external libcurl interface API,
  * while also making them visible to the library internals, simply including
@@ -245,5 +244,9 @@ typedef char
 
 #undef CURL_TYPEOF_CURL_SOCKLEN_T
 #undef CURL_TYPEOF_CURL_OFF_T
+
+#ifdef CURL_NO_OLDIES
+#undef CURL_FORMAT_OFF_T /* not required since 7.19.0 - obsoleted in 7.20.0 */
+#endif
 
 #endif /* __CURL_CURLRULES_H */

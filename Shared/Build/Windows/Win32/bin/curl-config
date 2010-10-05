@@ -6,7 +6,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 2001 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 2001 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -19,12 +19,11 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: curl-config.in,v 1.36 2009-03-20 12:42:29 bagder Exp $
 ###########################################################################
 
-prefix=/E/Development/OSSBuild/Build/Windows/Win32/Release
+prefix=/C/Build/OSSBuild/Build/Windows/Win32/Release
 exec_prefix=${prefix}
-includedir=/E/Development/OSSBuild/Build/Windows/Win32/Release/include
+includedir=/C/Build/OSSBuild/Build/Windows/Win32/Release/include
 
 usage()
 {
@@ -33,10 +32,12 @@ Usage: curl-config [OPTION]
 
 Available values for OPTION include:
 
+  --built-shared says 'yes' if libcurl was built shared
   --ca        ca bundle install path
   --cc        compiler
   --cflags    pre-processor and compiler flags
   --checkfor [version] check for (lib)curl of the specified version
+  --configure the arguments given to configure when building curl
   --features  newline separated list of enabled features
   --help      display this help and exit
   --libs      library linking information
@@ -64,6 +65,10 @@ while test $# -gt 0; do
     esac
 
     case "$1" in
+    --built-shared)
+        echo yes
+        ;;
+
     --ca)
 	echo ""
 	;;
@@ -77,18 +82,19 @@ while test $# -gt 0; do
 	;;
 
     --feature|--features)
-        for feature in  SSL libz NTLM ""; do
+        for feature in SSL libz NTLM ""; do
             test -n "$feature" && echo "$feature"
         done
 	;;
 
     --protocols)
-        for protocol in  HTTP HTTPS FTP FTPS FILE TELNET LDAP DICT TFTP; do
+        for protocol in DICT FILE FTP FTPS HTTP HTTPS IMAP IMAPS LDAP POP3 POP3S RTSP SMTP SMTPS TELNET TFTP; do
             echo "$protocol"
         done
 	;;
+
     --version)
-	echo libcurl 7.19.7
+	echo libcurl 7.21.1
 	exit 0
 	;;
 
@@ -100,20 +106,20 @@ while test $# -gt 0; do
 	# dash as that's used for things like version 1.2.3-CVS
 	cpatch=`echo $checkfor | cut -d. -f3 | cut -d- -f1`
         checknum=`echo "$cmajor*256*256 + $cminor*256 + ${cpatch:-0}" | bc`
-        numuppercase=`echo 071307 | tr 'a-f' 'A-F'`
+        numuppercase=`echo 071501 | tr 'a-f' 'A-F'`
         nownum=`echo "obase=10; ibase=16; $numuppercase" | bc`
 
 	if test "$nownum" -ge "$checknum"; then
 	  # silent success
 	  exit 0
 	else
-	  echo "requested version $checkfor is newer than existing 7.19.7"
+	  echo "requested version $checkfor is newer than existing 7.21.1"
 	  exit 1
 	fi
 	;;
 
     --vernum)
-	echo 071307
+	echo 071501
 	exit 0
 	;;
 
@@ -122,29 +128,33 @@ while test $# -gt 0; do
 	;;
 
     --cflags)
-       	if test "X/E/Development/OSSBuild/Build/Windows/Win32/Release/include" = "X/usr/include"; then
+       	if test "X/C/Build/OSSBuild/Build/Windows/Win32/Release/include" = "X/usr/include"; then
           echo ""
         else
-          echo "-I/E/Development/OSSBuild/Build/Windows/Win32/Release/include"
+          echo "-I/C/Build/OSSBuild/Build/Windows/Win32/Release/include"
         fi
        	;;
 
     --libs)
-	if test "X/E/Development/OSSBuild/Build/Windows/Win32/Release/lib" != "X/usr/lib" -a "X/E/Development/OSSBuild/Build/Windows/Win32/Release/lib" != "X/usr/lib64"; then
-	   CURLLIBDIR="-L/E/Development/OSSBuild/Build/Windows/Win32/Release/lib "
+	if test "X/C/Build/OSSBuild/Build/Windows/Win32/Release/lib" != "X/usr/lib" -a "X/C/Build/OSSBuild/Build/Windows/Win32/Release/lib" != "X/usr/lib64"; then
+	   CURLLIBDIR="-L/C/Build/OSSBuild/Build/Windows/Win32/Release/lib "
 	else
 	   CURLLIBDIR=""
 	fi
 	if test "Xyes" = "Xyes"; then
-	  echo ${CURLLIBDIR}-lcurl -Wl,--enable-auto-image-base -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc-v2 -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -L/E/Development/OSSBuild/Build/Windows/Win32/Release/lib -L/E/Development/OSSBuild/Shared/Build/Windows/Win32/lib -Le:/Development/OSSBuild/Build/Windows/Win32/Release/lib -lwldap32 -lws2_32 -lz -lgnutls -lws2_32 
+	  echo ${CURLLIBDIR}-lcurl -Wl,--enable-auto-image-base -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc-v2 -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -L/C/Build/OSSBuild/Build/Windows/Win32/Release/lib -L/C/Build/OSSBuild/Shared/Build/Windows/Win32/lib -ltasn1 -lz -lgcrypt -lgpg-error -Lc:/Build/OSSBuild/Build/Windows/Win32/Release/lib -lwldap32 -lws2_32 -lz -lgnutls -lws2_32 
 	else
-	  echo ${CURLLIBDIR}-lcurl -Wl,--enable-auto-image-base -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc-v2 -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -L/E/Development/OSSBuild/Build/Windows/Win32/Release/lib -L/E/Development/OSSBuild/Shared/Build/Windows/Win32/lib -Le:/Development/OSSBuild/Build/Windows/Win32/Release/lib 
+	  echo ${CURLLIBDIR}-lcurl -Wl,--enable-auto-image-base -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc-v2 -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -L/C/Build/OSSBuild/Build/Windows/Win32/Release/lib -L/C/Build/OSSBuild/Shared/Build/Windows/Win32/lib -ltasn1 -lz -lgcrypt -lgpg-error -Lc:/Build/OSSBuild/Build/Windows/Win32/Release/lib 
 	fi
 	;;
 
     --static-libs)
-	echo /E/Development/OSSBuild/Build/Windows/Win32/Release/lib/libcurl.a -Wl,--enable-auto-image-base -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc-v2 -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -L/E/Development/OSSBuild/Build/Windows/Win32/Release/lib -L/E/Development/OSSBuild/Shared/Build/Windows/Win32/lib -Le:/Development/OSSBuild/Build/Windows/Win32/Release/lib -lwldap32 -lws2_32 -lz -lgnutls -lws2_32 
+	echo /C/Build/OSSBuild/Build/Windows/Win32/Release/lib/libcurl.a -Wl,--enable-auto-image-base -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc-v2 -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -L/C/Build/OSSBuild/Build/Windows/Win32/Release/lib -L/C/Build/OSSBuild/Shared/Build/Windows/Win32/lib -ltasn1 -lz -lgcrypt -lgpg-error -Lc:/Build/OSSBuild/Build/Windows/Win32/Release/lib -lwldap32 -lws2_32 -lz -lgnutls -lws2_32 
 	;;
+
+    --configure)
+      echo " '--with-gnutls' '--enable-optimize' '--disable-curldebug' '--disable-debug' '--disable-static' '--enable-shared' '--host=' '--build=' '--prefix=/C/Build/OSSBuild/Build/Windows/Win32/Release' '--libexecdir=/C/Build/OSSBuild/Build/Windows/Win32/Release/bin' '--bindir=/C/Build/OSSBuild/Build/Windows/Win32/Release/bin' '--libdir=/C/Build/OSSBuild/Build/Windows/Win32/Release/lib' '--includedir=/C/Build/OSSBuild/Build/Windows/Win32/Release/include' 'build_alias=' 'host_alias=' 'CFLAGS= -m32 -mms-bitfields -pipe -DWINVER=0x0501  -I/C/Build/OSSBuild/Build/Windows/Win32/Release/include -I/C/Build/OSSBuild/Shared/Build/Windows/Win32/include' 'LDFLAGS=-Wl,--enable-auto-image-base -Wl,--enable-auto-import -Wl,--enable-runtime-pseudo-reloc-v2 -Wl,--kill-at  -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -L/C/Build/OSSBuild/Build/Windows/Win32/Release/lib -L/C/Build/OSSBuild/Shared/Build/Windows/Win32/lib -ltasn1 -lz -lgcrypt -lgpg-error' 'CPPFLAGS= -DMINGW64 -D__MINGW64__ -DMINGW32 -D__MINGW32__ -I/C/Build/OSSBuild/Build/Windows/Win32/Release/include -I/C/Build/OSSBuild/Shared/Build/Windows/Win32/include'"
+    ;;
 
     *)
         echo "unknown option: $1"

@@ -5,9 +5,9 @@ includedir=@SHARED_BUILD_DIR@/include
 
 Name: libavcore
 Description: FFmpeg multimedia shared core utilities library
-Version: 0.9.0
+Version: 0.9.1
 Requires: 
-Requires.private: libavutil = 50.27.0
+Requires.private: libavutil = 50.32.1
 Conflicts:
 Libs: -L${libdir} -lavcore 
 Libs.private: 

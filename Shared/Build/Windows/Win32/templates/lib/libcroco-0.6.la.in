@@ -14,7 +14,7 @@ library_names='libcroco-0.6.dll.a'
 old_library=''
 
 # Libraries that this one depends upon.
-dependency_libs=' -Le:/Development/OSSBuild/Build/Windows/Win32/Release/lib -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/lib/libglib-2.0.la -lole32 @SHARED_BUILD_DIR@/lib/libintl.la @SHARED_BUILD_DIR@/lib/libintl.la @SHARED_BUILD_DIR@/lib/libxml2.la @SHARED_BUILD_DIR@/lib/libz.la @SHARED_BUILD_DIR@/lib/libiconv.la -lws2_32'
+dependency_libs=' -Lc:/Build/OSSBuild/Build/Windows/Win32/Release/lib -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/lib/libglib-2.0.la -lole32 @SHARED_BUILD_DIR@/lib/libintl.la @SHARED_BUILD_DIR@/lib/libintl.la @SHARED_BUILD_DIR@/lib/libxml2.la @SHARED_BUILD_DIR@/lib/libz.la @SHARED_BUILD_DIR@/lib/libiconv.la -lws2_32'
 
 # Version information for libcroco-0.6.
 current=3
