@@ -1403,7 +1403,7 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
         dest = (guint8 *)lr.pBits;
         source = GST_BUFFER_DATA (buffer);
 
-		if (dest) {
+        if (dest) {
           if (gst_video_format_is_yuv(sink->format)) {
             switch (gst_video_format_to_fourcc(sink->format)) {
               case GST_MAKE_FOURCC ('Y', 'U', 'Y', '2'):
@@ -1415,22 +1415,22 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
                    memcpy (dest + dststride * i, source + srcstride * i, srcstride);
                 break;
               case GST_MAKE_FOURCC ('I', '4', '2', '0'):
-			    dststride = lr.Pitch;
+                dststride = lr.Pitch;
                 srcstride = GST_ROUND_UP_4(sink->width);
-				for (i = 0; i < GST_ROUND_UP_2(sink->height); ++i)
+                for (i = 0; i < GST_ROUND_UP_2(sink->height); ++i)
                    memcpy (dest + dststride * i, source + srcstride * i, srcstride);
                 /*FIXME: Add missing u and v planes*/ 
                 break;
-             default:
-		        g_assert_not_reached();
-	        }
- 	    } else if (gst_video_format_is_rgb(sink->format)) {
-          dststride = lr.Pitch;
-          srcstride = GST_BUFFER_SIZE(buffer) / sink->height;
-          for (i = 0; i < sink->height; ++i)
-            memcpy (dest + dststride * i, source + srcstride * i, srcstride);
-		  } 
-		}
+              default:
+                g_assert_not_reached();
+            }
+          } else if (gst_video_format_is_rgb(sink->format)) {
+            dststride = lr.Pitch;
+            srcstride = GST_BUFFER_SIZE(buffer) / sink->height;
+            for (i = 0; i < sink->height; ++i)
+              memcpy (dest + dststride * i, source + srcstride * i, srcstride);
+          } 
+        }
         
         IDirect3DSurface9_UnlockRect(sink->d3d_offscreen_surface);
       }
