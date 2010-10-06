@@ -21,6 +21,7 @@
 #define __D3DVIDEOSINK_H__
 
 #include <gst/gst.h>
+#include <gst/video/video.h>
 #include <gst/video/gstvideosink.h>
 
 #include "d3d9.h"
@@ -47,10 +48,9 @@ struct _GstD3DVideoSink
   /* source rectangle */
   gint width;
   gint height;
-  
-  gint bpp;
-  guint32 fourcc;
 
+  GstVideoFormat format;
+ 
   gboolean keep_aspect_ratio;
   GValue *par; 
 
