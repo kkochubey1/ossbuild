@@ -103,11 +103,12 @@ static GstStaticPadTemplate sink_template =
       GST_PAD_ALWAYS,
       GST_STATIC_CAPS (
         GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YUVY, YV12, I420 }")
-		";" "video/x-raw-rgb, "
-        "framerate = (fraction) [ 0, MAX ], "
-        "width = (int) [ 1, MAX ], " "height = (int) [ 1, MAX ], "
-		"bpp = 32, depth = 24, red_mask=\(int\)65280, " 
-		"green_mask=\(int\)16711680, blue_mask=\(int\)-16777216"
+        ";" 
+        "video/x-raw-rgb, "
+          "framerate = (fraction) [ 0, MAX ], "
+          "width = (int) [ 1, MAX ], " "height = (int) [ 1, MAX ], "
+          "bpp = 32, depth = 24, red_mask=\(int\)65280, " 
+          "green_mask=\(int\)16711680, blue_mask=\(int\)-16777216"
       )
     );
 
