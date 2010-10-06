@@ -24,7 +24,6 @@
 
 #include "d3dvideosink.h"
 
-#include <gst/video/video.h>
 #include <gst/interfaces/xoverlay.h>
 
 #include "windows.h"
@@ -104,6 +103,11 @@ static GstStaticPadTemplate sink_template =
       GST_PAD_ALWAYS,
       GST_STATIC_CAPS (
         GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YUVY, YV12, I420 }")
+		";" "video/x-raw-rgb, "
+        "framerate = (fraction) [ 0, MAX ], "
+        "width = (int) [ 1, MAX ], " "height = (int) [ 1, MAX ], "
+		"bpp = 32, depth = 24, red_mask=\(int\)65280, " 
+		"green_mask=\(int\)16711680, blue_mask=\(int\)-16777216"
       )
     );
 
@@ -1203,9 +1207,6 @@ gst_d3dvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
 {
   GstD3DVideoSink *sink;
   GstCaps *sink_caps;
-  GstVideoFormat format;
-  guint32 fourcc;
-  gint bpp;
   gint video_width, video_height;
   gint video_par_n, video_par_d;        /* video's PAR */
   gint display_par_n, display_par_d;    /* display's PAR */
@@ -1222,27 +1223,12 @@ gst_d3dvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
   if (!gst_caps_intersect (sink_caps, caps))
     goto incompatible_caps;
 
-  if (!gst_video_format_parse_caps (caps, &format, &video_width, &video_height))
+  if (!gst_video_format_parse_caps (caps, &sink->format, &video_width, &video_height))
     goto invalid_format;
 
   if (!gst_video_parse_caps_framerate (caps, &fps_n, &fps_d) ||
           !video_width || !video_height)
     goto incomplete_caps;
-
-  fourcc = gst_video_format_to_fourcc (format);
-  switch (fourcc) {
-    case GST_MAKE_FOURCC ('Y', 'U', 'Y', '2'):
-    case GST_MAKE_FOURCC ('Y', 'U', 'Y', 'V'):
-    case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
-      bpp = 16;
-      break;
-    case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
-    case GST_MAKE_FOURCC ('I', '4', '2', '0'):
-      bpp = 12;
-      break;
-    default:
-      g_assert_not_reached();
-  }
 
   /* get aspect ratio from caps if it's present, and
    * convert video width and height to a display width and height
@@ -1299,11 +1285,9 @@ gst_d3dvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
       GST_VIDEO_SINK_HEIGHT (sink) <= 0)
     goto no_display_size;
 
-  sink->bpp = bpp;
   sink->width = video_width;
   sink->height = video_height;
-  sink->fourcc = fourcc;
- 
+  
   /* Create a window (or start using an application-supplied one, then connect the graph */
   gst_d3dvideosink_prepare_window (sink);
 
@@ -1416,18 +1400,10 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
         IDirect3DSurface9_LockRect(sink->d3d_offscreen_surface, &lr, NULL, 0);
         dest = (guint8 *)lr.pBits;
 
-        if (dest) {
+        if (dest)
           /* Push the bytes to the video card */
-          switch(sink->fourcc) {
-            case GST_MAKE_FOURCC ('Y', 'U', 'Y', '2'):
-            case GST_MAKE_FOURCC ('Y', 'U', 'Y', 'V'):
-            case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
-            case GST_MAKE_FOURCC ('I', '4', '2', '0'):
-            case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
-			  memcpy (dest , GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));            
-              break;  
-          }
-        }
+       	  memcpy (dest , GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));            
+        
         IDirect3DSurface9_UnlockRect(sink->d3d_offscreen_surface);
       }
       //if (sink->keep_aspect_ratio) {
@@ -1803,34 +1779,40 @@ gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink)
     }
 
     GST_DEBUG("Initializing Direct3D swap chain for sink %d", sink);
- 
-    switch (sink->fourcc) {
-      case GST_MAKE_FOURCC ('Y', 'U', 'Y', '2'):
-        d3dformat = D3DFMT_X8R8G8B8;
-        d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'U', 'Y', '2');
-        break;
-      case GST_MAKE_FOURCC ('Y', 'U', 'Y', 'V'):
-        d3dformat = D3DFMT_X8R8G8B8;
-        d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'U', 'Y', 'V');
-        break;
-      case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
-        d3dformat = D3DFMT_X8R8G8B8;
-        d3dfourcc = (D3DFORMAT)MAKEFOURCC('U', 'Y', 'V', 'Y');
-        break;
-      case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
-        d3dformat = D3DFMT_X8R8G8B8;
-        d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'V', '1', '2');
-        break;
-      case GST_MAKE_FOURCC ('I', '4', '2', '0'):
-        d3dformat = D3DFMT_X8R8G8B8;
-        d3dfourcc = (D3DFORMAT)MAKEFOURCC('I', '4', '2', '0');
-        break;
-      default:
-        GST_WARNING ("Failed to find compatible Direct3D format");
-        goto error;
-    }
+    
+	if (gst_video_format_is_yuv(sink->format)) {
+      switch (gst_video_format_to_fourcc(sink->format)) {
+        case GST_MAKE_FOURCC ('Y', 'U', 'Y', '2'):
+          d3dformat = D3DFMT_X8R8G8B8;
+          d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'U', 'Y', '2');
+          break;
+        case GST_MAKE_FOURCC ('Y', 'U', 'Y', 'V'):
+          d3dformat = D3DFMT_X8R8G8B8;
+          d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'U', 'Y', 'V');
+          break;
+        case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
+          d3dformat = D3DFMT_X8R8G8B8;
+          d3dfourcc = (D3DFORMAT)MAKEFOURCC('U', 'Y', 'V', 'Y');
+          break;
+        case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
+          d3dformat = D3DFMT_X8R8G8B8;
+          d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'V', '1', '2');
+          break;
+        case GST_MAKE_FOURCC ('I', '4', '2', '0'):
+          d3dformat = D3DFMT_X8R8G8B8;
+          d3dfourcc = (D3DFORMAT)MAKEFOURCC('I', '4', '2', '0');
+          break;
+        default:
+		  g_assert_not_reached();
+	  }
+	} else if (gst_video_format_is_rgb(sink->format)) {
+      d3dformat = D3DFMT_X8R8G8B8;
+      d3dfourcc = D3DFMT_X8R8G8B8;
+	} else {
+      g_assert_not_reached();
+    } 
 
-    GST_DEBUG("Determined Direct3D format: %d", d3dformat);
+    GST_DEBUG("Determined Direct3D format: %d", d3dfourcc);
 
     //Stencil/depth buffers aren't created by default when using swap chains
     //if (SUCCEEDED(IDirect3D9_CheckDeviceFormat(shared.d3d, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dformat, D3DUSAGE_DEPTHSTENCIL, D3DRTYPE_SURFACE, D3DFMT_D32))) {
