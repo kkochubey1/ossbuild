@@ -9,6 +9,7 @@ set SHARED_WIN32=%TOP%\Shared\Build\Windows\Win32\bin
 
 set MSYS=%TOOLS%\msys
 
+set GST_REGISTRY=%BUILD_WIN32%\gst-registry.bin
 set GST_PLUGIN_PATH=%BUILD_WIN32%\plugins
 set PATH=%BUILD_WIN32%;%SHARED_WIN32%;%MSYS%\mingw\bin;%MSYS%\bin;%PATH%
 

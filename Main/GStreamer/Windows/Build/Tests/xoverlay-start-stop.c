@@ -278,7 +278,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd, UINT Msg,
     //    EndPaint(app->hWndChild[i], &Ps);
     //  }
     //}
-    //break;
+    break;
 
   case WM_SIZE: 
     {
@@ -331,7 +331,7 @@ xoverlay_main(App* app) {
   memset(&WndClass, 0, sizeof(WNDCLASS));
   WndClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
   WndClass.hInstance = hInstance = GetModuleHandle(NULL);
-  WndClass.lpszClassName = L"GST-Test-XOverlay";
+  WndClass.lpszClassName = "GST-Test-XOverlay";
   WndClass.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
   WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
   WndClass.cbClsExtra = 0;
@@ -342,7 +342,7 @@ xoverlay_main(App* app) {
   s_app.hWndMain = CreateWindowEx(
     0, 
     WndClass.lpszClassName,
-    L"XOverlay Window",
+    "XOverlay Window",
     WS_OVERLAPPEDWINDOW, 
     CW_USEDEFAULT, 
     CW_USEDEFAULT, 
@@ -361,7 +361,7 @@ xoverlay_main(App* app) {
   for(i = 0; i < NUMBER_OF_CHILD_WINDOWS; ++i) {
     s_app.hWndChild[i] = CreateWindow(
       WndClass.lpszClassName, 
-      L"XOverlay Embedded Window",
+      "XOverlay Embedded Window",
       WS_CHILD | WS_VISIBLE,
       0, 
       0, 
