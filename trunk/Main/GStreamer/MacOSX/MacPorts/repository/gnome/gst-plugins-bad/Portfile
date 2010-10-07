@@ -29,7 +29,6 @@ depends_lib port:gst-plugins-base \
             port:exempi \
             port:faac \
             port:faad2 \
-            port:jack \
             port:jasper \
             port:libdca \
             port:libexif \
