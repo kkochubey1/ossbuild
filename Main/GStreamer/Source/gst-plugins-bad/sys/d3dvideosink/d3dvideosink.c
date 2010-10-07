@@ -102,7 +102,7 @@ static GstStaticPadTemplate sink_template =
       GST_PAD_SINK,
       GST_PAD_ALWAYS,
       GST_STATIC_CAPS (
-        GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YUVY, YV12, I420 }")
+        GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YUVY, YV12 }")
         ";" 
         "video/x-raw-rgb, "
           "framerate = (fraction) [ 0, MAX ], "
@@ -729,7 +729,7 @@ gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM
     case WM_DESTROY:
       {
         sink->window_closed = TRUE;
-        GST_ELEMENT_ERROR (sink, RESOURCE, NOT_FOUND, ("Output window was closed"), (NULL));
+        //GST_ELEMENT_ERROR (sink, RESOURCE, NOT_FOUND, ("Output window was closed"), (NULL));
         break;
       }
   }
@@ -1307,8 +1307,10 @@ incomplete_caps:
   }
 invalid_format:
   {
+    gchar* caps_txt = gst_caps_to_string (caps);
     GST_DEBUG_OBJECT (sink,
-        "Could not locate image format from caps %" GST_PTR_FORMAT, caps);
+        "Could not locate image format from caps %s", caps_txt);
+    g_free (caps_txt);
     return FALSE;
   }
 no_disp_ratio:

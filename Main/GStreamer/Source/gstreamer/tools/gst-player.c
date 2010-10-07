@@ -55,6 +55,9 @@
 
 #define SEEK_TIMEOUT         40 * GST_MSECOND
 
+#define FORWARD_RATE         1.0
+#define REVERSE_RATE        -1.0
+
 #define GST_PLAYER_PING_LOCK	     g_static_mutex_lock(&ping_lock);
 #define GST_PLAYER_PING_UNLOCK     g_static_mutex_unlock(&ping_lock);
 #define GST_PLAYER_COMMAND_LOCK	   g_static_mutex_lock(&cmd_lock);
@@ -209,6 +212,17 @@ typedef enum _EventLoopResult
   ELR_INTERRUPT
 } EventLoopResult;
 
+typedef struct _AppCommand AppCommand;
+struct _AppCommand {
+  Command cmd;
+  gint argc; 
+  gdouble arg0;
+  gdouble arg1;
+  gdouble arg2;
+  gdouble arg3;
+  gpointer data;
+};
+
 typedef struct _App App;
 struct _App
 {
@@ -231,6 +245,8 @@ struct _App
 
   gint last_percent;
   gboolean buffering;
+  gboolean buffering_disabled;
+  gboolean download_disabled;
 
   gboolean ping_please_exit;
   GThread* ping_thread;
@@ -250,6 +266,8 @@ struct _App
   gboolean is_test_pattern;
   gboolean has_multipartdemux;
   gboolean has_jpegdec;
+
+  gfloat rate;
 
   gint width;
   gint height;
@@ -280,8 +298,16 @@ static void uridecodebin_pad_added(GstElement *element, GstPad *pad, App* app);
 static GstBusSyncReply xoverlay_bus_sync_handler(GstBus *bus, GstMessage *message, App* app);
 static GstCaps* create_app_caps(App *app);
 static GstCaps* create_caps(gboolean has_fps, gint fps_n, gint fps_d, gint width, gint height);
+static gboolean change_app_playback_direction(App* app, gboolean forward);
+static gboolean change_playback_direction(GstElement* element, gfloat* rate, gboolean forward);
+static gboolean app_step(App* app, gboolean forward);
+static gboolean app_pause(App* app);
+static gboolean app_stop(App* app);
+static gboolean app_play(App* app);
 static void examine_element(gchar* factory_name, GstElement* element, App* app);
 static void notify_caps(GstPad* pad, GstPad* peer, App* app);
+static AppCommand* create_app_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble arg2, gdouble arg3, App* app);
+static gboolean process_app_command(AppCommand* cmd);
 
 static gchar* 
 readline(gpointer file) 
@@ -473,6 +499,193 @@ create_caps(gboolean has_fps, gint fps_n, gint fps_d, gint width, gint height)
   caps = gst_caps_new_full(structures[0], structures[1], NULL);
 
   return caps;
+}
+
+static gboolean 
+change_app_playback_direction(App* app, gboolean forward) 
+{
+  return change_playback_direction(app->pipeline, &app->rate, forward);
+}
+
+static gboolean 
+change_playback_direction(GstElement* element, gfloat* rate, gboolean forward) 
+{
+  /* Courtesy totem */
+  gboolean is_forward;
+  gboolean retval;
+
+  is_forward = (*rate >= 0.0);
+  if (forward == is_forward)
+    return TRUE;
+
+  retval = FALSE;
+  if (!forward) {
+    GstEvent* evt;
+    GstFormat fmt;
+    gint64 cur;
+
+    cur = 0;
+    fmt = GST_FORMAT_TIME;
+
+    if (gst_element_query_position(element, &fmt, &cur)) {
+      /* Setting playback direction to reverse. */
+      evt = gst_event_new_seek(REVERSE_RATE, fmt, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE, GST_SEEK_TYPE_SET, G_GINT64_CONSTANT(0), GST_SEEK_TYPE_SET, cur);
+      if (!gst_element_send_event(element, evt)) {
+        /* Failed to set playback direction to reverse. */
+      } else {
+        //gst_element_get_state(element, NULL, NULL, GST_CLOCK_TIME_NONE);
+        *rate = REVERSE_RATE;
+        retval = TRUE;
+      }
+    } else {
+      /* Failed to query position to set playback to reverse. */
+    }
+  } else {
+    GstEvent* evt;
+    GstFormat fmt;
+    gint64 cur;
+
+    cur = 0;
+    fmt = GST_FORMAT_TIME;
+
+    if (gst_element_query_position(element, &fmt, &cur)) {
+      /* Setting playback direction to forward. */
+      evt = gst_event_new_seek(FORWARD_RATE, fmt, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE, GST_SEEK_TYPE_SET, cur, GST_SEEK_TYPE_SET, GST_CLOCK_TIME_NONE);
+      if (!gst_element_send_event(element, evt)) {
+        /* Failed to set playback direction to forward. */
+      } else {
+        //gst_element_get_state(element, NULL, NULL, GST_CLOCK_TIME_NONE);
+        *rate = FORWARD_RATE;
+        retval = TRUE;
+      }
+    } else {
+      /* Failed to query position to set playback to forward. */
+    }
+  }
+
+  return retval;
+}
+
+static gboolean 
+app_step(App* app, gboolean forward) 
+{
+  GstEvent* evt;
+  
+  if (!change_app_playback_direction(app, forward))
+    return FALSE;
+
+  gst_element_set_state(GST_ELEMENT(app->pipeline), GST_STATE_PAUSED);
+  //gst_element_get_state(app->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
+
+  //if (!app_pause(app))
+  //  return FALSE;
+
+  evt = gst_event_new_step(GST_FORMAT_BUFFERS, 1, 1.0, TRUE, FALSE);
+  return gst_element_send_event(GST_ELEMENT(app->pipeline), evt);
+}
+
+static gboolean 
+app_pause(App* app) 
+{
+  GstStateChangeReturn ret;
+  GstState state;
+
+  /* Get the current state */
+  ret = gst_element_get_state(GST_ELEMENT(app->pipeline), &state, NULL, 0);
+
+  if (app->is_live != FALSE &&
+      ret != GST_STATE_CHANGE_NO_PREROLL &&
+      ret != GST_STATE_CHANGE_SUCCESS &&
+      state > GST_STATE_READY) {
+    app_stop(app);
+    return TRUE;
+  }
+
+  gst_element_set_state(GST_ELEMENT(app->pipeline), GST_STATE_PAUSED);
+  gst_element_get_state(app->pipeline, NULL, NULL, -1);
+  return TRUE;
+}
+
+static gboolean 
+app_stop(App* app) 
+{
+  GstState cur_state;
+  GstBus *bus;
+
+  bus = gst_element_get_bus(app->pipeline);
+  gst_element_get_state(app->pipeline, &cur_state, NULL, 0);
+  if (cur_state > GST_STATE_READY) {
+    //GstMessage *msg;
+
+    gst_element_set_state (app->pipeline, GST_STATE_READY);
+
+    /* process all remaining state-change messages so everything gets
+     * cleaned up properly (before the state change to NULL flushes them) */
+    //while ((msg = gst_bus_poll(bus, GST_MESSAGE_STATE_CHANGED, 0))) {
+    //  gst_bus_async_signal_func(bus, msg, NULL);
+    //  gst_message_unref(msg);
+    //}
+  }
+
+  /* and now drop all following messages until we start again. The
+   * bus is set to flush=false again in bacon_video_widget_open()
+   */
+  gst_bus_set_flushing(bus, TRUE);
+  gst_object_unref(bus);
+
+  app->repeat_count = 0;
+  app->rate = FORWARD_RATE;
+  return TRUE;
+}
+
+static gboolean 
+app_play(App* app) 
+{
+  GstState cur_state;
+  GstBus *bus;
+
+  /* Don't try to play if we're already doing that */
+  gst_element_get_state(app->pipeline, &cur_state, NULL, 0);
+  if (cur_state == GST_STATE_PLAYING)
+    return TRUE;
+
+  /* Flush the bus to make sure we don't get any messages
+   * from the previous URI, see bug #607224.
+   */
+  bus = gst_element_get_bus(app->pipeline);
+  gst_bus_set_flushing(bus, TRUE);
+
+  gst_element_set_state(app->pipeline, GST_STATE_READY);
+
+  gst_bus_set_flushing(bus, FALSE);
+  gst_object_unref(bus);
+
+  gst_element_set_state(app->pipeline, GST_STATE_PAUSED);
+
+  /* Set direction to forward */
+  if (change_app_playback_direction(app, TRUE) == FALSE) {
+    return FALSE;
+  }
+
+  app->rate = FORWARD_RATE;
+  gst_element_set_state (app->pipeline, GST_STATE_PLAYING);
+
+  return TRUE;
+}
+
+static gboolean 
+app_continue(App* app) 
+{
+  GstState cur_state;
+
+  /* Don't try to continue if we're already playing */
+  gst_element_get_state(app->pipeline, &cur_state, NULL, 0);
+  if (cur_state == GST_STATE_PLAYING)
+    return TRUE;
+
+  gst_element_set_state(app->pipeline, GST_STATE_PLAYING);
+  //gst_element_get_state(app->pipeline, NULL, NULL, -1);
+  return TRUE;
 }
 
 static MediaType 
@@ -855,16 +1068,10 @@ eos:
 
           GST_PLAYER_COMMAND_LOCK
 
-          /* Pause pipeline */
-          gst_element_set_state(app->pipeline, GST_STATE_PAUSED);
+          /* TODO: Do something more intelligent here -- retrieve the segment and restore it */
+          /*       after setting the state to READY. */
+          gst_element_set_state(app->pipeline, GST_STATE_READY);
           gst_element_get_state(app->pipeline, NULL, NULL, -1);
-
-          /* Attempt to seek to the beginning */
-          if (!gst_element_seek_simple(app->pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_SEGMENT, 0)) {
-            /* If it didn't work, then move to ready and back to playing */
-            gst_element_set_state(app->pipeline, GST_STATE_READY);
-            gst_element_get_state(app->pipeline, NULL, NULL, -1);
-          }
 
           gst_element_set_state(app->pipeline, GST_STATE_PLAYING);
           gst_element_get_state(app->pipeline, NULL, NULL, -1);
@@ -928,15 +1135,16 @@ eos:
         gint64 position;
         GstFormat format = GST_FORMAT_TIME;
         gst_element_query_position(app->pipeline, &format, &position);
-        GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
+        GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
         GST_PLAYER_EVENT("playing");
       } else if (new_state == GST_STATE_PAUSED && pending_state == GST_STATE_VOID_PENDING) {
         gint64 position;
         GstFormat format = GST_FORMAT_TIME;
         gst_element_query_position(app->pipeline, &format, &position);
-        GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
+        GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
         GST_PLAYER_EVENT("paused");
       } else if (new_state == GST_STATE_READY && pending_state == GST_STATE_NULL) {
+        app->repeat_count = 0;
         GST_PLAYER_EVENT("stopped");
       }
       GST_PLAYER_COMMAND_UNLOCK
@@ -1031,8 +1239,8 @@ playbin_element_added(GstBin* playbin, GstElement* element, App* app)
   if (!g_str_has_prefix(factory_name, "uridecodebin"))
     return;
 
-  g_object_set(element, "download", TRUE, NULL);
-  g_object_set(element, "use-buffering", TRUE, NULL);
+  g_object_set(element, "download", (app->download_disabled ? FALSE : TRUE), NULL);
+  g_object_set(element, "use-buffering", (app->buffering_disabled ? FALSE : TRUE), NULL);
 
   g_signal_connect(element, "pad-added", G_CALLBACK(uridecodebin_pad_added), app);
   g_signal_connect(element, "element-added", G_CALLBACK(uridecodebin_element_added), app);
@@ -1284,8 +1492,9 @@ notify_caps(GstPad* pad, GstPad* peer, App* app)
     GST_PLAYER_EVENT("media_type, %s", "video");
   if (GST_PLAYER_MEDIA_IS_STILL(app->media_type))
     GST_PLAYER_EVENT("media_type, %s", "still");
-  GST_PLAYER_EVENT("duration, %I64d", (duration > 0 ? duration / GST_MSECOND : 0));
-  GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
+  GST_PLAYER_EVENT("rate, %f", app->rate);
+  GST_PLAYER_EVENT("duration, %" G_GINT64_FORMAT, (duration > 0 ? duration / GST_MSECOND : 0));
+  GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
 }
 
 static void
@@ -1297,15 +1506,15 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
     case COMMAND_PAUSE:
       if (app->is_live)
           break;
-      gst_element_set_state(app->pipeline, GST_STATE_PAUSED);
+      app_pause(app);
       break;
     case COMMAND_CONTINUE:
       if (app->is_live)
           break;
-      gst_element_set_state(app->pipeline, GST_STATE_PLAYING);
+      app_continue(app);
       break;
     case COMMAND_STOP:
-      gst_element_set_state(app->pipeline, GST_STATE_READY);
+      app_stop(app);
       break;
     case COMMAND_QUIT:
       gst_element_set_state(app->pipeline, GST_STATE_NULL);
@@ -1314,59 +1523,37 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
       break;
     case COMMAND_STEP_FORWARD:
       {
-        GstEvent *evt;
+        gint64 position, duration;
+        GstFormat format;
 
         if (app->is_live)
           break;
 
-        if (gst_element_get_state(app->pipeline, &state, NULL, GST_CLOCK_TIME_NONE) != GST_STATE_CHANGE_FAILURE && state != GST_STATE_PAUSED) {
-          gst_element_set_state(app->pipeline, GST_STATE_PAUSED);
-          gst_element_get_state(app->pipeline, NULL, NULL, -1);
-        }
+        format = GST_FORMAT_BUFFERS;
+        gst_element_query_position(GST_ELEMENT(app->pipeline), &format, &position);
+        gst_element_query_duration(GST_ELEMENT(app->pipeline), &format, &duration);
 
-        evt = gst_event_new_step(GST_FORMAT_BUFFERS, 1, 1.0, TRUE, FALSE);
-        if (evt) {
-          gint64 position;
-          GstFormat format = GST_FORMAT_TIME;
-          
-          gst_element_send_event(app->pipeline, evt);
+        if (position < duration && position >= 0 && duration > 0) {
+          app_step(app, TRUE);
 
+          format = GST_FORMAT_TIME;
           gst_element_query_position(app->pipeline, &format, &position);
-          GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
+          GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
         }
         break;
       }
     case COMMAND_STEP_BACKWARD:
       {
-        GstEvent *evt;
-        //GstQuery* qry;
-        //gdouble rate;
-        //GstFormat format;
-        //gint64 start_value;
-        //gint64 stop_value;
+        /* TODO: Fix this so it works. Right now it just does a step forward. */
+        gint64 position;
+        GstFormat format = GST_FORMAT_TIME;
 
-        gst_element_set_state(app->pipeline, GST_STATE_PAUSED);
-        gst_element_get_state(app->pipeline, &state, &pending, GST_CLOCK_TIME_NONE);
+        if (app->is_live)
+          break;
 
-        //qry = gst_query_new_segment(GST_FORMAT_TIME);
-        //gst_query_parse_segment(qry, &rate, &format, &start_value, &stop_value);
-        //if (qry)
-        //  gst_query_unref(qry);
-        //
-        ///* To step backward, we have to modify the segment to play backwards and then send a step event of +1 on the buffers */
-        //if (rate >= 0.0)
-        //  gst_element_seek(app->pipeline, -1.0, GST_FORMAT_TIME, GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT, GST_SEEK_TYPE_SET, start_value, GST_SEEK_TYPE_SET, -1);
-
-        evt = gst_event_new_step(GST_FORMAT_BUFFERS, 1, 1.0, TRUE, FALSE);
-        if (evt) {
-          gint64 position;
-          GstFormat format = GST_FORMAT_TIME;
-          
-          gst_element_send_event(app->pipeline, evt);
-
-          gst_element_query_position(app->pipeline, &format, &position);
-          GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
-        }
+        app_step(app, TRUE);
+        gst_element_query_position(app->pipeline, &format, &position);
+        GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
         break;
       }
     case COMMAND_TIME_SEEK_FORWARD:
@@ -1380,7 +1567,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
 
           if (position < duration) {
             gst_element_seek_simple(app->pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_KEY_UNIT | GST_SEEK_FLAG_SKIP | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT, arg0 * GST_MSECOND);
-            GST_PLAYER_EVENT("position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
+            GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
           }
         }
       }
@@ -1464,7 +1651,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
         GstFormat format = GST_FORMAT_TIME;
 
         gst_element_query_position(app->pipeline, &format, &position);
-        GST_PLAYER_RESPONSE("query_position, %I64d", (position > 0 ? position / GST_MSECOND : 0));
+        GST_PLAYER_RESPONSE("query_position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
       }
       break;
     case COMMAND_QUERY_DURATION:
@@ -1473,7 +1660,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
         GstFormat format = GST_FORMAT_TIME;
 
         gst_element_query_duration(app->pipeline, &format, &duration);
-        GST_PLAYER_RESPONSE("query_duration, %I64d", (duration > 0 ? duration / GST_MSECOND : 0));
+        GST_PLAYER_RESPONSE("query_duration, %" G_GINT64_FORMAT, (duration > 0 ? duration / GST_MSECOND : 0));
       }
       break;
     case COMMAND_QUERY_VOLUME:
@@ -1586,12 +1773,41 @@ process_commands(App* app)
       command = COMMAND_UNKNOWN;
     }
     
-    GST_PLAYER_COMMAND_LOCK
-    interpret_command(argc, command, arg0, arg1, arg2, arg3, app);
-    GST_PLAYER_COMMAND_UNLOCK
-
+    g_idle_add(process_app_command, create_app_command(argc, command, arg0, arg1, arg2, arg3, app));
+    
     g_free(line);
   }
+}
+
+static AppCommand* 
+create_app_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble arg2, gdouble arg3, App* app)
+{
+  AppCommand* p;
+
+  p = g_new0(AppCommand, 1);
+  p->argc = argc;
+  p->cmd = cmd;
+  p->arg0 = arg0;
+  p->arg1 = arg1;
+  p->arg2 = arg2;
+  p->arg3 = arg3;
+  p->data = app;
+
+  return p;
+}
+
+static gboolean 
+process_app_command(AppCommand* p)
+{
+  GST_PLAYER_COMMAND_LOCK
+  interpret_command(p->argc, p->cmd, p->arg0, p->arg1, p->arg2, p->arg3, p->data);
+  GST_PLAYER_COMMAND_UNLOCK
+  
+  /* Cleanup resources. */  
+  g_free(p);
+
+  /* Indicates that we want this executed only once. */
+  return FALSE;
 }
 
 static void 
@@ -1669,6 +1885,8 @@ main (int argc, char *argv[])
   gboolean has_fps = FALSE;
   gboolean repeat_forever = FALSE;
   gboolean command_mode = FALSE;
+  gboolean disable_buffering = FALSE;
+  gboolean disable_download = FALSE;
   gint fps = 0;
   gint fps_n = 0;
   gint fps_d = 0;
@@ -1686,24 +1904,26 @@ main (int argc, char *argv[])
   gint res = 0;
 
   GOptionEntry options[] = {
-    {"window-id",        'w', 0, G_OPTION_ARG_INT64,  &window_id,       N_("Set the window id in which to render video output"), NULL},
-    {"uri",              'u', 0, G_OPTION_ARG_STRING, &uri,             N_("The URI to play media from (in playbin syntax)"), NULL},
-    {"fps",              'f', 0, G_OPTION_ARG_INT,    &fps,             N_("Set the frames-per-second for video playback"), NULL},
-    {"mute",             'm', 0, G_OPTION_ARG_NONE,   &mute,            N_("Mute all audio output"), NULL},
-    {"live",             'l', 0, G_OPTION_ARG_NONE,   &live,            N_("Assume the source is live"), NULL},
-    {"volume",           'v', 0, G_OPTION_ARG_DOUBLE, &volume,          N_("Set the volume for all audio output"), NULL},
-    {"command-mode",     'c', 0, G_OPTION_ARG_NONE,   &command_mode,    N_("Accept and respond to commands through stdin/stdout"), NULL},
-    {"repeat-count",     'r', 0, G_OPTION_ARG_INT,    &repeat_count,    N_("Set the number of times the media should play"), NULL},
-    {"repeat-forever",     0, 0, G_OPTION_ARG_NONE,   &repeat_forever,  N_("Continuously replay the media until the window is forcibly closed or the application exits"), NULL},
-    {"fps-n",              0, 0, G_OPTION_ARG_INT,    &fps_n,           N_("Set the frames-per-second numerator for video playback"), NULL},
-    {"fps-d",              0, 0, G_OPTION_ARG_INT,    &fps_d,           N_("Set the frames-per-second denominator for video playback"), NULL},
-    {"width",              0, 0, G_OPTION_ARG_INT,    &width,           N_("Force a width for video playback"), NULL},
-    {"height",             0, 0, G_OPTION_ARG_INT,    &height,          N_("Force a height for video playback"), NULL},
-    {"audio-sink",         0, 0, G_OPTION_ARG_STRING, &audio_sink_desc, N_("Set the audio sink used by the playbin element"), NULL},
-    {"video-sink",         0, 0, G_OPTION_ARG_STRING, &video_sink_desc, N_("Set the video sink used by the playbin element"), NULL},
-    {"buffer-size",        0, 0, G_OPTION_ARG_INT,    &buffer_size,     N_("Set the playbin buffer-size in bytes"), NULL},
-    {"buffer-duration",    0, 0, G_OPTION_ARG_INT64,  &buffer_duration, N_("Set the playbin buffer-duration in nanoseconds"), NULL},
-    {"ping-interval",      0, 0, G_OPTION_ARG_INT64,  &ping_interval,   N_("Set the interval in between automatic ping messages (requires command mode)"), NULL},
+    {"window-id",        'w', 0, G_OPTION_ARG_INT64,  &window_id,         N_("Set the window id in which to render video output"), NULL},
+    {"uri",              'u', 0, G_OPTION_ARG_STRING, &uri,               N_("The URI to play media from (in playbin syntax)"), NULL},
+    {"fps",              'f', 0, G_OPTION_ARG_INT,    &fps,               N_("Set the frames-per-second for video playback"), NULL},
+    {"mute",             'm', 0, G_OPTION_ARG_NONE,   &mute,              N_("Mute all audio output"), NULL},
+    {"live",             'l', 0, G_OPTION_ARG_NONE,   &live,              N_("Assume the source is live"), NULL},
+    {"volume",           'v', 0, G_OPTION_ARG_DOUBLE, &volume,            N_("Set the volume for all audio output"), NULL},
+    {"command-mode",     'c', 0, G_OPTION_ARG_NONE,   &command_mode,      N_("Accept and respond to commands through stdin/stdout"), NULL},
+    {"repeat-count",     'r', 0, G_OPTION_ARG_INT,    &repeat_count,      N_("Set the number of times the media should play"), NULL},
+    {"repeat-forever",     0, 0, G_OPTION_ARG_NONE,   &repeat_forever,    N_("Continuously replay the media until the window is forcibly closed or the application exits"), NULL},
+    {"fps-n",              0, 0, G_OPTION_ARG_INT,    &fps_n,             N_("Set the frames-per-second numerator for video playback"), NULL},
+    {"fps-d",              0, 0, G_OPTION_ARG_INT,    &fps_d,             N_("Set the frames-per-second denominator for video playback"), NULL},
+    {"width",              0, 0, G_OPTION_ARG_INT,    &width,             N_("Force a width for video playback"), NULL},
+    {"height",             0, 0, G_OPTION_ARG_INT,    &height,            N_("Force a height for video playback"), NULL},
+    {"audio-sink",         0, 0, G_OPTION_ARG_STRING, &audio_sink_desc,   N_("Set the audio sink used by the playbin element"), NULL},
+    {"video-sink",         0, 0, G_OPTION_ARG_STRING, &video_sink_desc,   N_("Set the video sink used by the playbin element"), NULL},
+    {"buffer-size",        0, 0, G_OPTION_ARG_INT,    &buffer_size,       N_("Set the playbin buffer-size in bytes"), NULL},
+    {"buffer-duration",    0, 0, G_OPTION_ARG_INT64,  &buffer_duration,   N_("Set the playbin buffer-duration in nanoseconds"), NULL},
+    {"ping-interval",      0, 0, G_OPTION_ARG_INT64,  &ping_interval,     N_("Set the interval in between automatic ping messages (requires command mode)"), NULL},
+    {"disable-buffering",  0, 0, G_OPTION_ARG_NONE,   &disable_buffering, N_("Disables all buffering"), NULL},
+    {"disable-download",   0, 0, G_OPTION_ARG_NONE,   &disable_download,  N_("Disables download mode"), NULL},
     GST_TOOLS_GOPTION_VERSION,
     {NULL}
   };
@@ -1788,6 +2008,8 @@ main (int argc, char *argv[])
     exit(ERROR_INITIALIZATION);
   }
 
+  app->buffering_disabled = disable_buffering;
+  app->download_disabled = disable_download;
   app->command_mode = command_mode;
   app->window_id = window_id;
   app->is_live = live;
@@ -1811,6 +2033,7 @@ main (int argc, char *argv[])
   app->actual_fps = 0.0;
   app->actual_width = 0;
   app->actual_height = 0;
+  app->rate = FORWARD_RATE;
   app->uri = uri;
 
 
@@ -1935,7 +2158,7 @@ main (int argc, char *argv[])
   /* No need to cleanup cmd_lock -- it's a global, static mutex */
 
   /* Move to paused */
-  ret = gst_element_set_state (app->pipeline, GST_STATE_PLAYING);
+  ret = app_play(app);
 
   /* this mainloop is stopped when we receive an error or EOS */
   g_main_loop_run (app->main_loop);
