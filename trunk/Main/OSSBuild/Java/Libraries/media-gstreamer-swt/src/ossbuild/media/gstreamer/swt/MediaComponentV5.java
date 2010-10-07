@@ -51,7 +51,15 @@ import ossbuild.media.swt.MediaComponent;
 public abstract class MediaComponentV5 extends MediaComponent {
 	//<editor-fold defaultstate="collapsed" desc="Constants">
 	public static final Lock
-		GST_LOCK = new ReentrantLock()
+		  GST_LOCK = new ReentrantLock()
+	;
+	
+	public static final long 
+		  LOCK_ATTEMPT_TIMEOUT = 1L
+	;
+
+	public static final int
+		  MAX_LOCK_ATTEMPTS = 5000
 	;
 
 	public static final Scheme[] VALID_SCHEMES = new Scheme[] {
@@ -625,6 +633,17 @@ public abstract class MediaComponentV5 extends MediaComponent {
 		redraw();
 		//System.out.println("SHOWING NONE");
 	}
+
+	protected boolean acquireLock() {
+		try {
+			for(int i = 0; i < MAX_LOCK_ATTEMPTS; ++i)
+				if (lock.tryLock(LOCK_ATTEMPT_TIMEOUT, TimeUnit.MILLISECONDS))
+					return true;
+			return false;
+		} catch(Throwable t) {
+			return false;
+		}
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Listeners">
@@ -1116,7 +1135,7 @@ public abstract class MediaComponentV5 extends MediaComponent {
 	//<editor-fold defaultstate="collapsed" desc="Play">
 	@SuppressWarnings("empty-statement")
 	public boolean playPattern(final String title, final VideoTestSrcPattern pattern) {
-		if (!lock.tryLock())
+		if (!acquireLock())
 			return false;
 		try {
 			if (player != null) {
@@ -1198,7 +1217,7 @@ public abstract class MediaComponentV5 extends MediaComponent {
 		}
 		//</editor-fold>
 
-		if (!lock.tryLock())
+		if (!acquireLock())
 			return false;
 		try {
 			if (player != null) {
