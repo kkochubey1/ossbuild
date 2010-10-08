@@ -8,7 +8,7 @@ REGISTRY_ENVIRONMENT = \
 
 TESTS_ENVIRONMENT = \
         CK_DEFAULT_TIMEOUT=120                                  \
-        STATE_IGNORE_ELEMENTS="$(STATE_IGNORE_ELEMENTS)"	\
+        GST_STATE_IGNORE_ELEMENTS="$(STATE_IGNORE_ELEMENTS)"	\
 	$(REGISTRY_ENVIRONMENT)					\
 	GST_PLUGIN_SYSTEM_PATH=					\
 	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/sys:$(top_builddir)/ext:$(GST_PLUGINS_DIR) \
@@ -99,6 +99,7 @@ check_PROGRAMS = \
 	$(check_theora) \
 	elements/adder	\
 	elements/appsink	\
+	elements/appsrc 	\
 	elements/audioconvert \
 	elements/audiorate \
 	elements/audioresample \
@@ -218,11 +219,12 @@ libs_rtp_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
 	$(AM_CFLAGS)
 libs_rtp_LDADD = \
-	$(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMINOR@.la $(LDADD)
+	$(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMINOR@.la \
+	$(GST_BASE_LIBS) $(LDADD)
 
 libs_tag_CFLAGS = \
-	$(GST_BASE_CFLAGS) \
 	$(GST_PLUGINS_BASE_CFLAGS) \
+	$(GST_BASE_CFLAGS) \
 	$(AM_CFLAGS)
 libs_tag_LDADD = \
 	$(GST_BASE_LIBS) \
@@ -232,13 +234,23 @@ libs_pbutils_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
 	$(AM_CFLAGS)
 libs_pbutils_LDADD = \
-	$(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la $(LDADD)
+	$(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MAJORMINOR@.la \
+	$(GST_BASE_LIBS) $(LDADD)
 
 elements_appsink_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
 	$(AM_CFLAGS)
 
 elements_appsink_LDADD = \
+	$(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
+	$(LDADD)
+
+elements_appsrc_CFLAGS = \
+	$(GST_PLUGINS_BASE_CFLAGS) \
+	$(AM_CFLAGS)
+
+elements_appsrc_LDADD = \
 	$(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
 	$(LDADD)
 

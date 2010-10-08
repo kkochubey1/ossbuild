@@ -56,28 +56,28 @@ static GstSystemClockClass *parent_class = NULL;
 GType
 gst_audio_clock_get_type (void)
 {
-  static GType clock_type = 0;
+  static volatile gsize clock_type = 0;
+  static const GTypeInfo clock_info = {
+    sizeof (GstAudioClockClass),
+    NULL,
+    NULL,
+    (GClassInitFunc) gst_audio_clock_class_init,
+    NULL,
+    NULL,
+    sizeof (GstAudioClock),
+    4,
+    (GInstanceInitFunc) gst_audio_clock_init,
+    NULL
+  };
 
-  if (!clock_type) {
-    static const GTypeInfo clock_info = {
-      sizeof (GstAudioClockClass),
-      NULL,
-      NULL,
-      (GClassInitFunc) gst_audio_clock_class_init,
-      NULL,
-      NULL,
-      sizeof (GstAudioClock),
-      4,
-      (GInstanceInitFunc) gst_audio_clock_init,
-      NULL
-    };
-
-    clock_type = g_type_register_static (GST_TYPE_SYSTEM_CLOCK, "GstAudioClock",
+  if (g_once_init_enter (&clock_type)) {
+    GType tmp = g_type_register_static (GST_TYPE_SYSTEM_CLOCK, "GstAudioClock",
         &clock_info, 0);
+    g_once_init_leave (&clock_type, tmp);
   }
-  return clock_type;
-}
 
+  return (GType) clock_type;
+}
 
 static void
 gst_audio_clock_class_init (GstAudioClockClass * klass)
@@ -202,6 +202,12 @@ gst_audio_clock_reset (GstAudioClock * clock, GstClockTime time)
 }
 
 static GstClockTime
+gst_audio_clock_func_invalid (GstClock * clock, gpointer user_data)
+{
+  return GST_CLOCK_TIME_NONE;
+}
+
+static GstClockTime
 gst_audio_clock_get_internal_time (GstClock * clock)
 {
   GstAudioClock *aclock;
@@ -282,4 +288,27 @@ gst_audio_clock_adjust (GstClock * clock, GstClockTime time)
   result = time + aclock->abidata.ABI.time_offset;
 
   return result;
+}
+
+/**
+ * gst_audio_clock_invalidate:
+ * @clock: a #GstAudioClock
+ *
+ * Invalidate the clock function. Call this function when the provided
+ * #GstAudioClockGetTimeFunc cannot be called anymore, for example, when the
+ * user_data becomes invalid.
+ *
+ * After calling this function, @clock will return the last returned time for
+ * the rest of its lifetime.
+ *
+ * Since: 0.10.31
+ */
+void
+gst_audio_clock_invalidate (GstClock * clock)
+{
+  GstAudioClock *aclock;
+
+  aclock = GST_AUDIO_CLOCK_CAST (clock);
+
+  aclock->func = gst_audio_clock_func_invalid;
 }

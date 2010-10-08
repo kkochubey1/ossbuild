@@ -198,6 +198,20 @@ get_rank_name (char *s, gint rank)
   return s;
 }
 
+static gboolean
+print_factory_details_meta_data (GQuark field_id, const GValue * value,
+    gpointer user_data)
+{
+  gchar *val = g_strdup_value_contents (value);
+  gchar *key = g_strdup (g_quark_to_string (field_id));
+
+  key[0] = g_ascii_toupper (key[0]);
+  n_print ("  %s:\t\t%s\n", key, val);
+  g_free (val);
+  g_free (key);
+  return TRUE;
+}
+
 static void
 print_factory_details_info (GstElementFactory * factory)
 {
@@ -211,6 +225,10 @@ print_factory_details_info (GstElementFactory * factory)
   n_print ("  Rank:\t\t%s (%d)\n",
       get_rank_name (s, GST_PLUGIN_FEATURE (factory)->rank),
       GST_PLUGIN_FEATURE (factory)->rank);
+  if (factory->meta_data != NULL) {
+    gst_structure_foreach ((GstStructure *) factory->meta_data,
+        print_factory_details_meta_data, NULL);
+  }
   n_print ("\n");
 }
 
@@ -302,6 +320,13 @@ flags_to_string (GFlagsValue * vals, guint flags)
   return g_string_free (s, FALSE);
 }
 
+#define KNOWN_PARAM_FLAGS \
+  (G_PARAM_CONSTRUCT | G_PARAM_CONSTRUCT_ONLY | \
+  G_PARAM_LAX_VALIDATION |  G_PARAM_STATIC_STRINGS | \
+  G_PARAM_READABLE | G_PARAM_WRITABLE | GST_PARAM_CONTROLLABLE | \
+  GST_PARAM_MUTABLE_PLAYING | GST_PARAM_MUTABLE_PAUSED | \
+  GST_PARAM_MUTABLE_READY)
+
 static void
 print_element_properties_info (GstElement * element)
 {
@@ -331,23 +356,27 @@ print_element_properties_info (GstElement * element)
     if (param->flags & G_PARAM_READABLE) {
       g_object_get_property (G_OBJECT (element), param->name, &value);
       readable = TRUE;
-      if (!first_flag)
-        g_print (", ");
-      else
-        first_flag = FALSE;
-      g_print (_("readable"));
+      g_print ("%s%s", (first_flag) ? "" : ", ", _("readable"));
+      first_flag = FALSE;
     }
     if (param->flags & G_PARAM_WRITABLE) {
-      if (!first_flag)
-        g_print (", ");
-      else
-        first_flag = FALSE;
-      g_print (_("writable"));
+      g_print ("%s%s", (first_flag) ? "" : ", ", _("writable"));
+      first_flag = FALSE;
     }
     if (param->flags & GST_PARAM_CONTROLLABLE) {
-      if (!first_flag)
-        g_print (", ");
-      g_print (_("controllable"));
+      g_print (", %s", _("controllable"));
+      first_flag = FALSE;
+    }
+    if (param->flags & GST_PARAM_MUTABLE_PLAYING) {
+      g_print (", %s", _("changeable in NULL, READY, PAUSED or PLAYING state"));
+    } else if (param->flags & GST_PARAM_MUTABLE_PAUSED) {
+      g_print (", %s", _("changeable only in NULL, READY or PAUSED state"));
+    } else if (param->flags & GST_PARAM_MUTABLE_READY) {
+      g_print (", %s", _("changeable only in NULL or READY state"));
+    }
+    if (param->flags & ~KNOWN_PARAM_FLAGS) {
+      g_print ("%s0x%0x", (first_flag) ? "" : ", ",
+          param->flags & ~KNOWN_PARAM_FLAGS);
     }
     n_print ("\n");
 

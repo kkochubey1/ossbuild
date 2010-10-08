@@ -2451,7 +2451,7 @@ bus_sync_handler (GstBus * bus, GstMessage * message, GstPipeline * data)
      * shouldn't be done from a non-GUI thread without explicit locking).  */
     g_assert (embed_xid != 0);
 
-    gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (element), embed_xid);
+    gst_x_overlay_set_window_handle (GST_X_OVERLAY (element), embed_xid);
   }
   return GST_BUS_PASS;
 }
@@ -2463,11 +2463,14 @@ handle_expose_cb (GtkWidget * widget, GdkEventExpose * event, gpointer data)
   if (state < GST_STATE_PAUSED) {
     GtkAllocation allocation;
     GdkWindow *window = gtk_widget_get_window (widget);
-    GtkStyle *style = gtk_widget_get_style (widget);
+    cairo_t *cr;
 
     gtk_widget_get_allocation (widget, &allocation);
-    gdk_draw_rectangle (window, style->black_gc, TRUE, 0, 0,
-        allocation.width, allocation.height);
+    cr = gdk_cairo_create (window);
+    cairo_set_source_rgb (cr, 0, 0, 0);
+    cairo_rectangle (cr, 0, 0, allocation.width, allocation.height);
+    cairo_fill (cr);
+    cairo_destroy (cr);
   }
   return FALSE;
 }
@@ -3021,6 +3024,7 @@ main (int argc, char **argv)
 
   {
     GIOChannel *js_watch = g_io_channel_unix_new (js_fd);
+    g_io_channel_set_encoding (js_watch, NULL, NULL);
     g_io_add_watch (js_watch, G_IO_IN, read_joystick, NULL);
   }
 

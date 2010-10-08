@@ -107,9 +107,11 @@ gst_buffer_format_type_get_type
 GstAudioClock
 GstAudioClockGetTimeFunc
 gst_audio_clock_new
+gst_audio_clock_new_full
 gst_audio_clock_adjust
 gst_audio_clock_get_time
 gst_audio_clock_reset
+gst_audio_clock_invalidate
 <SUBSECTION Standard>
 GstAudioClockClass
 GST_AUDIO_CLOCK
@@ -1216,6 +1218,10 @@ gst_rtcp_packet_fb_set_sender_ssrc
 gst_rtcp_packet_fb_get_media_ssrc
 gst_rtcp_packet_fb_set_media_ssrc
 
+gst_rtcp_packet_fb_get_fci_length
+gst_rtcp_packet_fb_set_fci_length
+gst_rtcp_packet_fb_get_fci
+
 gst_rtcp_ntp_to_unix
 gst_rtcp_unix_to_ntp
 
@@ -1286,6 +1292,7 @@ gst_rtp_buffer_new_take_data
 gst_rtp_buffer_new_copy_data
 gst_rtp_buffer_new_allocate
 gst_rtp_buffer_new_allocate_len
+gst_rtp_buffer_list_from_buffer
 
 gst_rtp_buffer_calc_header_len
 gst_rtp_buffer_calc_packet_len
@@ -1355,6 +1362,15 @@ gst_rtp_buffer_list_set_ssrc
 gst_rtp_buffer_list_get_timestamp
 gst_rtp_buffer_list_set_timestamp
 
+gst_rtp_buffer_get_extension_onebyte_header
+gst_rtp_buffer_get_extension_twobytes_header
+gst_rtp_buffer_add_extension_onebyte_header
+gst_rtp_buffer_add_extension_twobytes_header
+
+gst_rtp_buffer_list_get_extension_onebyte_header
+gst_rtp_buffer_list_get_extension_twobytes_header
+gst_rtp_buffer_list_add_extension_onebyte_header
+gst_rtp_buffer_list_add_extension_twobytes_header
 </SECTION>
 
 # rtsp
@@ -1541,7 +1557,13 @@ gst_sdp_message_new
 gst_sdp_message_init
 gst_sdp_message_uninit
 gst_sdp_message_free
+
 gst_sdp_message_parse_buffer
+gst_sdp_message_as_text
+
+gst_sdp_message_parse_uri
+gst_sdp_message_as_uri
+
 gst_sdp_message_get_version
 gst_sdp_message_set_version
 gst_sdp_message_get_origin
@@ -1580,7 +1602,6 @@ gst_sdp_message_medias_len
 gst_sdp_message_get_media
 gst_sdp_message_add_media
 gst_sdp_message_dump
-gst_sdp_message_as_text
 
 gst_sdp_media_new
 gst_sdp_media_init
@@ -1633,6 +1654,22 @@ GST_TAG_CDDA_TRACK_TAGS
 GST_TAG_CMML_CLIP
 GST_TAG_CMML_HEAD
 GST_TAG_CMML_STREAM
+GST_TAG_CAPTURING_SHUTTER_SPEED
+GST_TAG_CAPTURING_FOCAL_RATIO
+GST_TAG_CAPTURING_FOCAL_LENGTH
+GST_TAG_CAPTURING_DIGITAL_ZOOM_RATIO
+GST_TAG_CAPTURING_ISO_SPEED
+GST_TAG_CAPTURING_EXPOSURE_PROGRAM
+GST_TAG_CAPTURING_EXPOSURE_MODE
+GST_TAG_CAPTURING_SCENE_CAPTURE_TYPE
+GST_TAG_CAPTURING_GAIN_ADJUSTMENT
+GST_TAG_CAPTURING_WHITE_BALANCE
+GST_TAG_CAPTURING_CONTRAST
+GST_TAG_CAPTURING_SATURATION
+GST_TAG_CAPTURING_FLASH_FIRED
+GST_TAG_CAPTURING_FLASH_MODE
+GST_TAG_IMAGE_HORIZONTAL_PPI
+GST_TAG_IMAGE_VERTICAL_PPI
 gst_tag_register_musicbrainz_tags
 gst_tag_freeform_string_to_utf8
 gst_tag_parse_extended_comment
@@ -1728,6 +1765,14 @@ gst_tag_get_language_code_iso_639_2T
 <INCLUDE>gst/pbutils/pbutils.h</INCLUDE>
 <SUBSECTION>
 gst_pb_utils_init
+<SUBSECTION>
+GST_PLUGINS_BASE_VERSION_MAJOR
+GST_PLUGINS_BASE_VERSION_MINOR
+GST_PLUGINS_BASE_VERSION_MICRO
+GST_PLUGINS_BASE_VERSION_NANO
+GST_CHECK_PLUGINS_BASE_VERSION
+gst_plugins_base_version
+gst_plugins_base_version_string
 </SECTION>
 
 <SECTION>
@@ -1786,6 +1831,24 @@ gst_pb_utils_get_element_description
 <SUBSECTION>
 gst_pb_utils_add_codec_description_to_tag_list
 gst_pb_utils_get_codec_description
+</SECTION>
+
+<SECTION>
+<FILE>gstpbutilscodecutils</FILE>
+<INCLUDE>gst/pbutils/codec-utils.h</INCLUDE>
+<SUBSECTION>
+gst_codec_utils_aac_get_sample_rate_from_index
+gst_codec_utils_aac_get_profile
+gst_codec_utils_aac_get_level
+gst_codec_utils_aac_caps_set_level_and_profile
+<SUBSECTION>
+gst_codec_utils_h264_get_profile
+gst_codec_utils_h264_get_level
+gst_codec_utils_h264_caps_set_level_and_profile
+<SUBSECTION>
+gst_codec_utils_mpeg4video_get_profile
+gst_codec_utils_mpeg4video_get_level
+gst_codec_utils_mpeg4video_caps_set_level_and_profile
 </SECTION>
 
 # video
@@ -1866,6 +1929,8 @@ gst_video_parse_caps_framerate
 gst_video_parse_caps_pixel_aspect_ratio
 gst_video_parse_caps_color_matrix
 gst_video_parse_caps_chroma_site
+gst_video_convert_frame
+gst_video_convert_frame_async
 </SECTION>
 
 <SECTION>
@@ -1903,6 +1968,102 @@ GST_VIDEO_SINK_GET_CLASS
 GST_IS_VIDEO_SINK
 GST_IS_VIDEO_SINK_CLASS
 gst_video_sink_get_type
+</SECTION>
+
+<SECTION>
+<FILE>gstdiscoverer</FILE>
+<INCLUDE>gst/pbutils/pbutils.h</INCLUDE>
+<SUBSECTION>
+GstDiscoverer
+gst_discoverer_new
+gst_discoverer_start
+gst_discoverer_stop
+gst_discoverer_discover_uri
+gst_discoverer_discover_uri_async
+<SUBSECTION>
+GstDiscovererInfo
+GstDiscovererResult
+gst_discoverer_info_get_duration
+gst_discoverer_info_get_misc
+gst_discoverer_info_get_result
+gst_discoverer_info_get_stream_info
+gst_discoverer_info_get_stream_list
+gst_discoverer_info_get_tags
+gst_discoverer_info_get_uri
+gst_discoverer_info_unref
+<SUBSECTION>
+GstDiscovererStreamInfo
+GstDiscovererContainerInfo
+GstDiscovererAudioInfo
+GstDiscovererVideoInfo
+gst_discoverer_stream_info_get_caps
+gst_discoverer_stream_info_get_misc
+gst_discoverer_stream_info_get_next
+gst_discoverer_stream_info_get_previous
+gst_discoverer_stream_info_get_tags
+gst_discoverer_stream_info_ref
+gst_discoverer_stream_info_unref
+gst_discoverer_stream_info_list_free
+gst_discoverer_stream_info_get_stream_type_nick
+gst_discoverer_info_copy
+gst_discoverer_info_ref
+gst_discoverer_info_get_audio_streams
+gst_discoverer_info_get_container_streams
+gst_discoverer_info_get_streams
+gst_discoverer_info_get_video_streams
+gst_discoverer_audio_info_get_bitrate
+gst_discoverer_audio_info_get_channels
+gst_discoverer_audio_info_get_depth
+gst_discoverer_audio_info_get_max_bitrate
+gst_discoverer_audio_info_get_sample_rate
+gst_discoverer_container_info_get_streams
+gst_discoverer_video_info_get_bitrate
+gst_discoverer_video_info_get_depth
+gst_discoverer_video_info_get_framerate_denom
+gst_discoverer_video_info_get_framerate_num
+gst_discoverer_video_info_get_height
+gst_discoverer_video_info_get_interlaced
+gst_discoverer_video_info_get_is_image
+gst_discoverer_video_info_get_max_bitrate
+gst_discoverer_video_info_get_par_denom
+gst_discoverer_video_info_get_par_num
+gst_discoverer_video_info_get_width
+<SUBSECTION Standard>
+GST_DISCOVERER
+GST_DISCOVERER_AUDIO_INFO
+GST_DISCOVERER_CLASS
+GST_DISCOVERER_CONTAINER_INFO
+GST_DISCOVERER_INFO
+GST_DISCOVERER_STREAM_INFO
+GST_DISCOVERER_VIDEO_INFO
+GST_IS_DISCOVERER
+GST_IS_DISCOVERER_INFO
+GST_IS_DISCOVERER_AUDIO_INFO
+GST_IS_DISCOVERER_CLASS
+GST_IS_DISCOVERER_CONTAINER_INFO
+GST_IS_DISCOVERER_STREAM_INFO
+GST_IS_DISCOVERER_VIDEO_INFO
+GST_TYPE_DISCOVERER
+GST_TYPE_DISCOVERER_AUDIO_INFO
+GST_TYPE_DISCOVERER_CONTAINER_INFO
+GST_TYPE_DISCOVERER_INFO
+GST_TYPE_DISCOVERER_RESULT
+GST_TYPE_DISCOVERER_STREAM_INFO
+GST_TYPE_DISCOVERER_VIDEO_INFO
+GstDiscovererAudioInfoClass
+GstDiscovererClass
+GstDiscovererContainerInfoClass
+GstDiscovererPrivate
+GstDiscovererStreamInfoClass
+GstDiscovererVideoInfoClass
+GstDiscovererInfoClass
+gst_discoverer_audio_info_get_type
+gst_discoverer_container_info_get_type
+gst_discoverer_get_type
+gst_discoverer_info_get_type
+gst_discoverer_result_get_type
+gst_discoverer_stream_info_get_type
+gst_discoverer_video_info_get_type
 </SECTION>
 
 # private

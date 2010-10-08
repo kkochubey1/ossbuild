@@ -10,12 +10,12 @@ SUBDIRS = \
 	fft \
 	floatcast \
 	netbuffer \
-	pbutils \
 	riff \
 	rtp \
 	sdp \
 	rtsp \
 	video \
+	pbutils \
 	app
 
 noinst_HEADERS = gettext.h gst-i18n-plugin.h
@@ -29,8 +29,10 @@ riff: tag audio
 
 rtsp: sdp
 
+pbutils: video
+
 INDEPENDENT_SUBDIRS = \
-	interfaces tag fft floatcast netbuffer pbutils rtp sdp video app
+	interfaces tag fft floatcast netbuffer rtp sdp video app
 
 .PHONY: independent-subdirs $(INDEPENDENT_SUBDIRS)
 

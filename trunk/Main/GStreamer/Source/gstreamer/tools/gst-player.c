@@ -298,6 +298,8 @@ static void uridecodebin_pad_added(GstElement *element, GstPad *pad, App* app);
 static GstBusSyncReply xoverlay_bus_sync_handler(GstBus *bus, GstMessage *message, App* app);
 static GstCaps* create_app_caps(App *app);
 static GstCaps* create_caps(gboolean has_fps, gint fps_n, gint fps_d, gint width, gint height);
+static GstCaps* create_app_pattern_caps(App* app);
+static GstCaps* create_pattern_caps(gboolean has_fps, gint fps_n, gint fps_d, gint width, gint height);
 static gboolean change_app_playback_direction(App* app, gboolean forward);
 static gboolean change_playback_direction(GstElement* element, gfloat* rate, gboolean forward);
 static gboolean app_step(App* app, gboolean forward);
@@ -432,8 +434,8 @@ examine_element(gchar* factory_name, GstElement* element, App* app)
 
   } else if (g_str_has_prefix(factory_name, "jpegdec")) {
     
-    if (g_object_property_exists(G_OBJECT(element), "error-after"))
-      g_object_set(element, "error-after", 10, NULL);
+    if (g_object_property_exists(G_OBJECT(element), "max-errors"))
+      g_object_set(element, "max-errors", 10, NULL);
 
     /* Change IDCT method to float. On x86 processors, the output is noticeably better. */
     g_object_set(element, "idct-method", 2, NULL);
@@ -495,6 +497,52 @@ create_caps(gboolean has_fps, gint fps_n, gint fps_d, gint width, gint height)
     gst_structure_set(structures[0], "height", G_TYPE_INT, height, NULL);
     gst_structure_set(structures[1], "height", G_TYPE_INT, height, NULL);
   }
+
+  caps = gst_caps_new_full(structures[0], structures[1], NULL);
+
+  return caps;
+}
+
+static GstCaps* 
+create_app_pattern_caps(App* app) 
+{
+  return create_pattern_caps(app->has_fps && !app->is_live, app->fps_n, app->fps_d, app->width, app->height);
+}
+
+static GstCaps* 
+create_pattern_caps(gboolean has_fps, gint fps_n, gint fps_d, gint width, gint height) 
+{
+  GstCaps* caps;
+  GstStructure* structures[2];
+
+  /* Generate caps filter */
+  
+  structures[0] = gst_structure_new(
+      "video/x-raw-yuv",
+      NULL
+  );
+  structures[1] = gst_structure_new(
+      "video/x-raw-rgb",
+      NULL
+  );
+
+  if (has_fps) {
+    gst_structure_set(structures[0], "framerate", GST_TYPE_FRACTION, fps_n, fps_d, NULL);
+    gst_structure_set(structures[1], "framerate", GST_TYPE_FRACTION, fps_n, fps_d, NULL);
+  }
+  if (width > 0) {
+    gst_structure_set(structures[0], "width", G_TYPE_INT, width, NULL);
+    gst_structure_set(structures[1], "width", G_TYPE_INT, width, NULL);
+  }
+  if (height > 0) {
+    gst_structure_set(structures[0], "height", G_TYPE_INT, height, NULL);
+    gst_structure_set(structures[1], "height", G_TYPE_INT, height, NULL);
+  }
+
+  /* Apply a certain colorspace to help reduce video driver quirkiness due to linear interpolation 
+     of the last column of pixels with garbage outside the texture in various video driver 
+     implementations. */
+  gst_structure_set(structures[0], "format", GST_TYPE_FOURCC, GST_MAKE_FOURCC('I', '4', '2', '0'), NULL);
 
   caps = gst_caps_new_full(structures[0], structures[1], NULL);
 
@@ -1509,8 +1557,6 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
       app_pause(app);
       break;
     case COMMAND_CONTINUE:
-      if (app->is_live)
-          break;
       app_continue(app);
       break;
     case COMMAND_STOP:
@@ -2068,7 +2114,7 @@ main (int argc, char *argv[])
     VideoTestSrcPattern pattern = VIDEO_TEST_SRC_PATTERN_SMPTE;
     GstElement *video_testsrc, *video_rate, *video_colorspace, *video_capsfilter, *video_scale;
 
-    caps = create_app_caps(app);
+    caps = create_app_pattern_caps(app);
     
     if (g_str_has_suffix(uri, "SMPTE"))
       pattern = VIDEO_TEST_SRC_PATTERN_SMPTE;

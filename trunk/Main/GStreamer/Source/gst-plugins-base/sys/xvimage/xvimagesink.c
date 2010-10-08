@@ -1012,7 +1012,7 @@ gst_xvimagesink_xwindow_new (GstXvImageSink * xvimagesink,
 
   gst_xvimagesink_xwindow_decorate (xvimagesink, xwindow);
 
-  gst_x_overlay_got_xwindow_id (GST_X_OVERLAY (xvimagesink), xwindow->win);
+  gst_x_overlay_got_window_handle (GST_X_OVERLAY (xvimagesink), xwindow->win);
 
   return xwindow;
 }
@@ -2794,8 +2794,9 @@ gst_xvimagesink_navigation_init (GstNavigationInterface * iface)
 }
 
 static void
-gst_xvimagesink_set_xwindow_id (GstXOverlay * overlay, XID xwindow_id)
+gst_xvimagesink_set_window_handle (GstXOverlay * overlay, guintptr id)
 {
+  XID xwindow_id = id;
   GstXvImageSink *xvimagesink = GST_XVIMAGESINK (overlay);
   GstXWindow *xwindow = NULL;
 
@@ -2933,7 +2934,7 @@ gst_xvimagesink_set_render_rectangle (GstXOverlay * overlay, gint x, gint y,
   GstXvImageSink *xvimagesink = GST_XVIMAGESINK (overlay);
 
   /* FIXME: how about some locking? */
-  if (x >= 0 && y >= 0 && width >= 0 && height >= 0) {
+  if (width >= 0 && height >= 0) {
     xvimagesink->render_rect.x = x;
     xvimagesink->render_rect.y = y;
     xvimagesink->render_rect.w = width;
@@ -2951,7 +2952,7 @@ gst_xvimagesink_set_render_rectangle (GstXOverlay * overlay, gint x, gint y,
 static void
 gst_xvimagesink_xoverlay_init (GstXOverlayClass * iface)
 {
-  iface->set_xwindow_id = gst_xvimagesink_set_xwindow_id;
+  iface->set_window_handle = gst_xvimagesink_set_window_handle;
   iface->expose = gst_xvimagesink_expose;
   iface->handle_events = gst_xvimagesink_set_event_handling;
   iface->set_render_rectangle = gst_xvimagesink_set_render_rectangle;

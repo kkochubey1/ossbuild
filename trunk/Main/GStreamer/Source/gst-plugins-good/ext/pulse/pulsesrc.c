@@ -61,11 +61,11 @@ enum
   PROP_SERVER,
   PROP_DEVICE,
   PROP_DEVICE_NAME,
+  PROP_STREAM_PROPERTIES,
   PROP_LAST
 };
 
 static void gst_pulsesrc_destroy_stream (GstPulseSrc * pulsesrc);
-
 static void gst_pulsesrc_destroy_context (GstPulseSrc * pulsesrc);
 
 static void gst_pulsesrc_set_property (GObject * object, guint prop_id,
@@ -245,6 +245,29 @@ gst_pulsesrc_class_init (GstPulseSrcClass * klass)
       g_param_spec_string ("device-name", "Device name",
           "Human-readable name of the sound device", DEFAULT_DEVICE_NAME,
           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  /**
+   * GstPulseSrc:stream-properties
+   *
+   * List of pulseaudio stream properties. A list of defined properties can be
+   * found in the <ulink href="http://0pointer.de/lennart/projects/pulseaudio/doxygen/proplist_8h.html">pulseaudio api docs</ulink>.
+   *
+   * Below is an example for registering as a music application to pulseaudio.
+   * |[
+   * GstStructure *props;
+   *
+   * props = gst_structure_from_string ("props,media.role=music", NULL);
+   * g_object_set (pulse, "stream-properties", props, NULL);
+   * gst_structure_free (props);
+   * ]|
+   *
+   * Since: 0.10.26
+   */
+  g_object_class_install_property (gobject_class,
+      PROP_STREAM_PROPERTIES,
+      g_param_spec_boxed ("stream-properties", "stream properties",
+          "list of pulseaudio stream properties",
+          GST_TYPE_STRUCTURE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 static void
@@ -273,6 +296,9 @@ gst_pulsesrc_init (GstPulseSrc * pulsesrc, GstPulseSrcClass * klass)
   pulsesrc->in_read = FALSE;
 
   pulsesrc->mixer = NULL;
+
+  pulsesrc->properties = NULL;
+  pulsesrc->proplist = NULL;
 
   pulsesrc->probe = gst_pulseprobe_new (G_OBJECT (pulsesrc), G_OBJECT_GET_CLASS (pulsesrc), PROP_DEVICE, pulsesrc->server, FALSE, TRUE);        /* FALSE for sinks, TRUE for sources */
 
@@ -315,6 +341,11 @@ gst_pulsesrc_finalize (GObject * object)
   g_free (pulsesrc->server);
   g_free (pulsesrc->device);
 
+  if (pulsesrc->properties)
+    gst_structure_free (pulsesrc->properties);
+  if (pulsesrc->proplist)
+    pa_proplist_free (pulsesrc->proplist);
+
   if (pulsesrc->mixer) {
     gst_pulsemixer_ctrl_free (pulsesrc->mixer);
     pulsesrc->mixer = NULL;
@@ -328,47 +359,27 @@ gst_pulsesrc_finalize (GObject * object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
-static gboolean
-gst_pulsesrc_is_dead (GstPulseSrc * pulsesrc)
-{
+#define CONTEXT_OK(c) ((c) && PA_CONTEXT_IS_GOOD (pa_context_get_state ((c))))
+#define STREAM_OK(s) ((s) && PA_STREAM_IS_GOOD (pa_stream_get_state ((s))))
 
-  if (!pulsesrc->context
-      || !PA_CONTEXT_IS_GOOD (pa_context_get_state (pulsesrc->context))
-      || !pulsesrc->stream
-      || !PA_STREAM_IS_GOOD (pa_stream_get_state (pulsesrc->stream))) {
+static gboolean
+gst_pulsesrc_is_dead (GstPulseSrc * pulsesrc, gboolean check_stream)
+{
+  if (!CONTEXT_OK (pulsesrc->context))
+    goto error;
+
+  if (check_stream && !STREAM_OK (pulsesrc->stream))
+    goto error;
+
+  return FALSE;
+
+error:
+  {
     const gchar *err_str = pulsesrc->context ?
         pa_strerror (pa_context_errno (pulsesrc->context)) : NULL;
-
     GST_ELEMENT_ERROR ((pulsesrc), RESOURCE, FAILED, ("Disconnected: %s",
             err_str), (NULL));
     return TRUE;
-  }
-
-  return FALSE;
-}
-
-
-static void
-gst_pulsesrc_set_property (GObject * object,
-    guint prop_id, const GValue * value, GParamSpec * pspec)
-{
-
-  GstPulseSrc *pulsesrc = GST_PULSESRC_CAST (object);
-
-  switch (prop_id) {
-    case PROP_SERVER:
-      g_free (pulsesrc->server);
-      pulsesrc->server = g_value_dup_string (value);
-      if (pulsesrc->probe)
-        gst_pulseprobe_set_server (pulsesrc->probe, pulsesrc->server);
-      break;
-    case PROP_DEVICE:
-      g_free (pulsesrc->device);
-      pulsesrc->device = g_value_dup_string (value);
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
   }
 }
 
@@ -379,15 +390,13 @@ gst_pulsesrc_source_info_cb (pa_context * c, const pa_source_info * i, int eol,
   GstPulseSrc *pulsesrc = GST_PULSESRC_CAST (userdata);
 
   if (!i)
-    return;
-
-  if (!pulsesrc->stream)
-    return;
-
-  g_assert (i->index == pa_stream_get_device_index (pulsesrc->stream));
+    goto done;
 
   g_free (pulsesrc->device_description);
   pulsesrc->device_description = g_strdup (i->description);
+
+done:
+  pa_threaded_mainloop_signal (pulsesrc->mainloop, 0);
 }
 
 static gchar *
@@ -401,12 +410,8 @@ gst_pulsesrc_device_description (GstPulseSrc * pulsesrc)
 
   pa_threaded_mainloop_lock (pulsesrc->mainloop);
 
-  if (!pulsesrc->stream)
-    goto unlock;
-
-  if (!(o = pa_context_get_source_info_by_index (pulsesrc->context,
-              pa_stream_get_device_index (pulsesrc->stream),
-              gst_pulsesrc_source_info_cb, pulsesrc))) {
+  if (!(o = pa_context_get_source_info_by_name (pulsesrc->context,
+              pulsesrc->device, gst_pulsesrc_source_info_cb, pulsesrc))) {
 
     GST_ELEMENT_ERROR (pulsesrc, RESOURCE, FAILED,
         ("pa_stream_get_source_info() failed: %s",
@@ -416,7 +421,7 @@ gst_pulsesrc_device_description (GstPulseSrc * pulsesrc)
 
   while (pa_operation_get_state (o) == PA_OPERATION_RUNNING) {
 
-    if (gst_pulsesrc_is_dead (pulsesrc))
+    if (gst_pulsesrc_is_dead (pulsesrc, FALSE))
       goto unlock;
 
     pa_threaded_mainloop_wait (pulsesrc->mainloop);
@@ -441,6 +446,39 @@ no_mainloop:
 }
 
 static void
+gst_pulsesrc_set_property (GObject * object,
+    guint prop_id, const GValue * value, GParamSpec * pspec)
+{
+
+  GstPulseSrc *pulsesrc = GST_PULSESRC_CAST (object);
+
+  switch (prop_id) {
+    case PROP_SERVER:
+      g_free (pulsesrc->server);
+      pulsesrc->server = g_value_dup_string (value);
+      if (pulsesrc->probe)
+        gst_pulseprobe_set_server (pulsesrc->probe, pulsesrc->server);
+      break;
+    case PROP_DEVICE:
+      g_free (pulsesrc->device);
+      pulsesrc->device = g_value_dup_string (value);
+      break;
+    case PROP_STREAM_PROPERTIES:
+      if (pulsesrc->properties)
+        gst_structure_free (pulsesrc->properties);
+      pulsesrc->properties =
+          gst_structure_copy (gst_value_get_structure (value));
+      if (pulsesrc->proplist)
+        pa_proplist_free (pulsesrc->proplist);
+      pulsesrc->proplist = gst_pulse_make_proplist (pulsesrc->properties);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+  }
+}
+
+static void
 gst_pulsesrc_get_property (GObject * object,
     guint prop_id, GValue * value, GParamSpec * pspec)
 {
@@ -456,6 +494,9 @@ gst_pulsesrc_get_property (GObject * object,
       break;
     case PROP_DEVICE_NAME:
       g_value_take_string (value, gst_pulsesrc_device_description (pulsesrc));
+      break;
+    case PROP_STREAM_PROPERTIES:
+      gst_value_set_structure (value, pulsesrc->properties);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -565,6 +606,8 @@ gst_pulsesrc_open (GstAudioSrc * asrc)
   g_assert (!pulsesrc->context);
   g_assert (!pulsesrc->stream);
 
+  GST_DEBUG_OBJECT (pulsesrc, "opening device");
+
   if (!(pulsesrc->context =
           pa_context_new (pa_threaded_mainloop_get_api (pulsesrc->mainloop),
               name))) {
@@ -575,6 +618,9 @@ gst_pulsesrc_open (GstAudioSrc * asrc)
 
   pa_context_set_state_callback (pulsesrc->context,
       gst_pulsesrc_context_state_cb, pulsesrc);
+
+  GST_DEBUG_OBJECT (pulsesrc, "connect to server %s",
+      GST_STR_NULL (pulsesrc->server));
 
   if (pa_context_connect (pulsesrc->context, pulsesrc->server, 0, NULL) < 0) {
     GST_ELEMENT_ERROR (pulsesrc, RESOURCE, FAILED, ("Failed to connect: %s",
@@ -599,6 +645,7 @@ gst_pulsesrc_open (GstAudioSrc * asrc)
     /* Wait until the context is ready */
     pa_threaded_mainloop_wait (pulsesrc->mainloop);
   }
+  GST_DEBUG_OBJECT (pulsesrc, "connected");
 
   pa_threaded_mainloop_unlock (pulsesrc->mainloop);
 
@@ -665,7 +712,7 @@ gst_pulsesrc_read (GstAudioSrc * asrc, gpointer data, guint length)
     /*check if we have a leftover buffer */
     if (!pulsesrc->read_buffer) {
       for (;;) {
-        if (gst_pulsesrc_is_dead (pulsesrc))
+        if (gst_pulsesrc_is_dead (pulsesrc, TRUE))
           goto unlock_and_fail;
 
         /* read all available data, we keep a pointer to the data and the length
@@ -757,7 +804,7 @@ gst_pulsesrc_delay (GstAudioSrc * asrc)
   guint result;
 
   pa_threaded_mainloop_lock (pulsesrc->mainloop);
-  if (gst_pulsesrc_is_dead (pulsesrc))
+  if (gst_pulsesrc_is_dead (pulsesrc, TRUE))
     goto server_dead;
 
   /* get the latency, this can fail when we don't have a latency update yet.
@@ -793,6 +840,7 @@ gst_pulsesrc_create_stream (GstPulseSrc * pulsesrc, GstCaps * caps)
   GstStructure *s;
   gboolean need_channel_layout = FALSE;
   GstRingBufferSpec spec;
+  const gchar *name;
 
   memset (&spec, 0, sizeof (GstRingBufferSpec));
   spec.latency_time = GST_SECOND;
@@ -828,9 +876,19 @@ gst_pulsesrc_create_stream (GstPulseSrc * pulsesrc, GstCaps * caps)
       need_channel_layout = TRUE;
   }
 
-  if (!(pulsesrc->stream = pa_stream_new (pulsesrc->context,
-              "Record Stream",
-              &pulsesrc->sample_spec,
+  name = "Record Stream";
+  if (pulsesrc->proplist) {
+    if (!(pulsesrc->stream = pa_stream_new_with_proplist (pulsesrc->context,
+                name, &pulsesrc->sample_spec,
+                (need_channel_layout) ? NULL : &channel_map,
+                pulsesrc->proplist))) {
+      GST_ELEMENT_ERROR (pulsesrc, RESOURCE, FAILED,
+          ("Failed to create stream: %s",
+              pa_strerror (pa_context_errno (pulsesrc->context))), (NULL));
+      goto unlock_and_fail;
+    }
+  } else if (!(pulsesrc->stream = pa_stream_new (pulsesrc->context,
+              name, &pulsesrc->sample_spec,
               (need_channel_layout) ? NULL : &channel_map))) {
     GST_ELEMENT_ERROR (pulsesrc, RESOURCE, FAILED,
         ("Failed to create stream: %s",
@@ -883,14 +941,14 @@ gst_pulsesrc_negotiate (GstBaseSrc * basesrc)
   gboolean result = FALSE;
 
   /* first see what is possible on our source pad */
-  thiscaps = gst_pad_get_caps (GST_BASE_SRC_PAD (basesrc));
+  thiscaps = gst_pad_get_caps_reffed (GST_BASE_SRC_PAD (basesrc));
   GST_DEBUG_OBJECT (basesrc, "caps of src: %" GST_PTR_FORMAT, thiscaps);
   /* nothing or anything is allowed, we're done */
   if (thiscaps == NULL || gst_caps_is_any (thiscaps))
     goto no_nego_needed;
 
   /* get the peer caps */
-  peercaps = gst_pad_peer_get_caps (GST_BASE_SRC_PAD (basesrc));
+  peercaps = gst_pad_peer_get_caps_reffed (GST_BASE_SRC_PAD (basesrc));
   GST_DEBUG_OBJECT (basesrc, "caps of peer: %" GST_PTR_FORMAT, peercaps);
   if (peercaps) {
     /* get intersection */
@@ -1028,7 +1086,7 @@ gst_pulsesrc_success_cb (pa_stream * s, int success, void *userdata)
 {
   GstPulseSrc *pulsesrc = GST_PULSESRC_CAST (userdata);
 
-  pulsesrc->operation_success = ! !success;
+  pulsesrc->operation_success = !!success;
   pa_threaded_mainloop_signal (pulsesrc->mainloop, 0);
 }
 
@@ -1041,7 +1099,7 @@ gst_pulsesrc_reset (GstAudioSrc * asrc)
   pa_threaded_mainloop_lock (pulsesrc->mainloop);
   GST_DEBUG_OBJECT (pulsesrc, "reset");
 
-  if (gst_pulsesrc_is_dead (pulsesrc))
+  if (gst_pulsesrc_is_dead (pulsesrc, TRUE))
     goto unlock_and_fail;
 
   if (!(o =
@@ -1062,7 +1120,7 @@ gst_pulsesrc_reset (GstAudioSrc * asrc)
   pulsesrc->operation_success = FALSE;
   while (pa_operation_get_state (o) == PA_OPERATION_RUNNING) {
 
-    if (gst_pulsesrc_is_dead (pulsesrc))
+    if (gst_pulsesrc_is_dead (pulsesrc, TRUE))
       goto unlock_and_fail;
 
     pa_threaded_mainloop_wait (pulsesrc->mainloop);
@@ -1100,7 +1158,7 @@ gst_pulsesrc_set_corked (GstPulseSrc * psrc, gboolean corked, gboolean wait)
 
     while (wait && pa_operation_get_state (o) == PA_OPERATION_RUNNING) {
       pa_threaded_mainloop_wait (psrc->mainloop);
-      if (gst_pulsesrc_is_dead (psrc))
+      if (gst_pulsesrc_is_dead (psrc, TRUE))
         goto server_dead;
     }
     psrc->corked = corked;

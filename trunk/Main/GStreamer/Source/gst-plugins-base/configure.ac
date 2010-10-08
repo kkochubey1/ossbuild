@@ -89,6 +89,8 @@ AG_GST_ARG_WITH_PKG_CONFIG_PATH
 AG_GST_ARG_WITH_PACKAGE_NAME
 AG_GST_ARG_WITH_PACKAGE_ORIGIN
 
+AG_GST_PKG_CONFIG_PATH
+
 dnl let distro override plugin install helper path
 AC_ARG_WITH(install-plugins-helper,
   AC_HELP_STRING([--with-install-plugins-helper],
@@ -217,6 +219,10 @@ dnl *** checks for functions ***
 AC_CHECK_FUNCS([localtime_r gmtime_r])
 
 dnl *** checks for math functions ***
+LIBS_SAVE=$LIBS
+LIBS="$LIBS $LIBM"
+AC_CHECK_FUNCS(log2)
+LIBS=$LIBS_SAVE
 
 dnl *** checks for types/defines ***
 
@@ -253,7 +259,7 @@ dnl *** checks for dependency libraries ***
 dnl GLib is required
 AG_GST_GLIB_CHECK([2.20])
 
-ORC_CHECK([0.4.5])
+ORC_CHECK([0.4.10])
 
 dnl checks for gstreamer
 dnl uninstalled is selected preferentially -- see pkg-config(1)
@@ -955,6 +961,7 @@ tests/examples/gio/Makefile
 tests/examples/overlay/Makefile
 tests/examples/seek/Makefile
 tests/examples/snapshot/Makefile
+tests/examples/playrec/Makefile
 tests/examples/volume/Makefile
 tests/examples/v4l/Makefile
 tests/files/Makefile
@@ -983,6 +990,7 @@ sed \
     -e 's/.* GST_MAJORMINOR$/#define GST_MAJORMINOR "'$GST_MAJORMINOR'"/' \
     -e "s,.* GST_PACKAGE_NAME$,#define GST_PACKAGE_NAME \"${GST_PACKAGE_NAME}\"," \
     -e 's/.* GST_PACKAGE_ORIGIN$/#define GST_PACKAGE_ORIGIN "Unknown package origin"/' \
+    -e "s,.* GST_PACKAGE_RELEASE_DATETIME$,#define GST_PACKAGE_RELEASE_DATETIME \"${GST_PACKAGE_RELEASE_DATETIME}\"," \
     -e 's/.* HAVE_CPU_I386$/#define HAVE_CPU_I386 1/' \
     -e 's/.* HAVE_FGETPOS$/#define HAVE_FGETPOS 1/' \
     -e 's/.* HAVE_FSETPOS$/#define HAVE_FSETPOS 1/' \

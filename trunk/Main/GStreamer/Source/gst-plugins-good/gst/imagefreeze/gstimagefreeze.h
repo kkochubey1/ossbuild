@@ -47,6 +47,7 @@ struct _GstImageFreeze
   GstPad *sinkpad;
   GstPad *srcpad;
 
+  GMutex *lock;
   GstBuffer *buffer;
   gint fps_n, fps_d;
 
@@ -55,6 +56,10 @@ struct _GstImageFreeze
   GstEvent *close_segment;
 
   guint64 offset;
+
+  /* TRUE if currently doing a flushing seek, protected
+   * by srcpad's stream lock */
+  gint seeking;
 };
 
 struct _GstImageFreezeClass

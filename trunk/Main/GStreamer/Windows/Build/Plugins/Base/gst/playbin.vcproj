@@ -314,10 +314,6 @@
 			Name="Header Files"
 			>
 			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstfactorylists.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstinputselector.h"
 				>
 			</File>
@@ -342,10 +338,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstscreenshot.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gststreamsynchronizer.h"
 				>
 			</File>
@@ -357,10 +349,6 @@
 		<Filter
 			Name="Source Files"
 			>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstfactorylists.c"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstinputselector.c"
 				>
@@ -387,10 +375,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstplaysink.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstscreenshot.c"
 				>
 			</File>
 			<File

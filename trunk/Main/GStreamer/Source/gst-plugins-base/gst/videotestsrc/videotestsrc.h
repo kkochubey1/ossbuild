@@ -29,15 +29,19 @@ enum {
   VTS_BAYER
 };
 
-struct vts_color_struct_yuv {
+enum {
+  VTS_BAYER_BGGR,
+  VTS_BAYER_RGGB,
+  VTS_BAYER_GRBG,
+  VTS_BAYER_GBRG
+};
+
+struct vts_color_struct {
   guint8 Y, U, V, A;
+  guint8 R, G, B;
+  guint16 gray;
 };
-struct vts_color_struct_rgb {
-  guint8 R, G, B, A;
-};
-struct vts_color_struct_gray {
-  guint16 G;
-};
+
 
 typedef struct paintinfo_struct paintinfo;
 struct paintinfo_struct
@@ -52,14 +56,23 @@ struct paintinfo_struct
   int vstride;
   int width;
   int height;
-  const struct vts_color_struct_rgb *rgb_colors;
-  const struct vts_color_struct_yuv *yuv_colors;
-  const struct vts_color_struct_gray *gray_colors;
-  const struct vts_color_struct_rgb *rgb_color;
-  const struct vts_color_struct_yuv *yuv_color;
-  const struct vts_color_struct_gray *gray_color;
+  const struct vts_color_struct *colors;
+  const struct vts_color_struct *color;
   /*  const struct vts_color_struct *color; */
   void (*paint_hline) (paintinfo * p, int x, int y, int w);
+  void (*paint_tmpline) (paintinfo * p, int x, int w);
+  void (*convert_tmpline) (paintinfo * p, int y);
+  int x_offset;
+
+  int bayer_x_invert;
+  int bayer_y_invert;
+
+  guint8 *tmpline;
+  guint8 *tmpline2;
+  guint8 *tmpline_u8;
+
+  struct vts_color_struct foreground_color;
+  struct vts_color_struct background_color;
 };
 
 struct fourcc_list_struct
@@ -69,7 +82,7 @@ struct fourcc_list_struct
   const char *name;
   int bitspp;
   void (*paint_setup) (paintinfo * p, unsigned char *dest);
-  void (*paint_hline) (paintinfo * p, int x, int y, int w);
+  void (*convert_hline) (paintinfo * p, int y);
   int depth;
   unsigned int red_mask;
   unsigned int green_mask;
@@ -104,6 +117,8 @@ void    gst_video_test_src_blue         (GstVideoTestSrc * v,
                                          unsigned char *dest, int w, int h);
 void    gst_video_test_src_solid        (GstVideoTestSrc * v,
                                          unsigned char *dest, int w, int h);
+void    gst_video_test_src_blink        (GstVideoTestSrc * v,
+                                         unsigned char *dest, int w, int h);
 void    gst_video_test_src_checkers1    (GstVideoTestSrc * v,
                                          unsigned char *dest, int w, int h);
 void    gst_video_test_src_checkers2    (GstVideoTestSrc * v,
@@ -115,11 +130,18 @@ void    gst_video_test_src_checkers8    (GstVideoTestSrc * v,
 void    gst_video_test_src_circular     (GstVideoTestSrc * v,
                                          unsigned char *dest, int w, int h);
 void    gst_video_test_src_zoneplate    (GstVideoTestSrc * v,
-		                         unsigned char *dest, int w, int h);
+                                         unsigned char *dest, int w, int h);
 void    gst_video_test_src_gamut        (GstVideoTestSrc * v,
-		                         unsigned char *dest, int w, int h);
+                                         unsigned char *dest, int w, int h);
 void    gst_video_test_src_chromazoneplate (GstVideoTestSrc * v,
-		                         unsigned char *dest, int w, int h);
+                                            unsigned char *dest, int w, int h);
+void    gst_video_test_src_ball         (GstVideoTestSrc * v,
+                                         unsigned char *dest, int w, int h);
+void    gst_video_test_src_smpte100     (GstVideoTestSrc * v,
+                                         unsigned char *dest, int w, int h);
+void    gst_video_test_src_bar          (GstVideoTestSrc * v,
+                                         unsigned char *dest, int w, int h);
+
 extern struct fourcc_list_struct fourcc_list[];
 extern int n_fourccs;
 

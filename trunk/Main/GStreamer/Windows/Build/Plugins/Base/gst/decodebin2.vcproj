@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="gstdecodebin2"
 	ProjectGUID="{AB87873B-2B88-4B1B-B627-FE0A0BF91F80}"
 	RootNamespace="libgstdecodebin2"
@@ -294,7 +294,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstpbutils.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstpbutils.vcproj"
 		/>
 	</References>
 	<Files>
@@ -315,10 +315,6 @@
 			>
 			<File
 				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstdecodebin2.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstfactorylists.c"
 				>
 			</File>
 			<File

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.20.3\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2008-10-12 12:12+0200\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -151,6 +151,9 @@ msgstr "Nemohu zavřít podpůrou knihovnu."
 
 msgid "Could not configure supporting library."
 msgstr "Nemohu nastavit podpůrou knihovnu."
+
+msgid "Encoding error."
+msgstr ""
 
 msgid "GStreamer encountered a general resource error."
 msgstr "V GStreameru došlo k obecné chybě zdrojů."
@@ -296,6 +299,14 @@ msgid "date"
 msgstr "datum"
 
 msgid "date the data was created (as a GDate structure)"
+msgstr "datum, kdy byla data vytvořena (jako struktura GDate)"
+
+#, fuzzy
+msgid "datetime"
+msgstr "datum"
+
+#, fuzzy
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr "datum, kdy byla data vytvořena (jako struktura GDate)"
 
 msgid "genre"
@@ -640,6 +651,13 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "geo location horizontal error"
+msgstr "název místa"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
+#, fuzzy
 msgid "geo location movement speed"
 msgstr "zeměpisná délka místa"
 
@@ -742,6 +760,20 @@ msgstr ""
 #, fuzzy
 msgid "Model of the device used to create this media"
 msgstr "verze kodéru používaného pro kódování tohoto proudu"
+
+#, fuzzy
+msgid "application name"
+msgstr "název místa"
+
+#, fuzzy
+msgid "Application used to create the media"
+msgstr "verze kodéru používaného pro kódování tohoto proudu"
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
+msgstr ""
 
 msgid "image orientation"
 msgstr ""
@@ -883,16 +915,16 @@ msgstr "Soubor \"%s\" je socket."
 msgid "Failed after iterations as requested."
 msgstr "Selhání po iteracích podle požadavku."
 
-#, fuzzy
-msgid "Error while writing to download file."
-msgstr "Chyba při zápisu do souboru \"%s\"."
-
 msgid "No Temp directory specified."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "Nemohu získat informace o \"%s\"."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Chyba při zápisu do souboru \"%s\"."
 
 msgid "caps"
 msgstr "schopnosti"
@@ -926,6 +958,15 @@ msgstr "lze zapisovat"
 
 msgid "controllable"
 msgstr "lze ovládat"
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
+msgstr ""
 
 msgid "Blacklisted files:"
 msgstr ""

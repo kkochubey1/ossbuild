@@ -110,19 +110,22 @@ enum
 GType
 gst_base_audio_sink_slave_method_get_type (void)
 {
-  static GType slave_method_type = 0;
+  static volatile gsize slave_method_type = 0;
   static const GEnumValue slave_method[] = {
-    {GST_BASE_AUDIO_SINK_SLAVE_RESAMPLE, "Resampling slaving", "resample"},
-    {GST_BASE_AUDIO_SINK_SLAVE_SKEW, "Skew slaving", "skew"},
-    {GST_BASE_AUDIO_SINK_SLAVE_NONE, "No slaving", "none"},
+    {GST_BASE_AUDIO_SINK_SLAVE_RESAMPLE, "GST_BASE_AUDIO_SINK_SLAVE_RESAMPLE",
+        "resample"},
+    {GST_BASE_AUDIO_SINK_SLAVE_SKEW, "GST_BASE_AUDIO_SINK_SLAVE_SKEW", "skew"},
+    {GST_BASE_AUDIO_SINK_SLAVE_NONE, "GST_BASE_AUDIO_SINK_SLAVE_NONE", "none"},
     {0, NULL, NULL},
   };
 
-  if (!slave_method_type) {
-    slave_method_type =
+  if (g_once_init_enter (&slave_method_type)) {
+    GType tmp =
         g_enum_register_static ("GstBaseAudioSinkSlaveMethod", slave_method);
+    g_once_init_leave (&slave_method_type, tmp);
   }
-  return slave_method_type;
+
+  return (GType) slave_method_type;
 }
 
 
@@ -272,9 +275,8 @@ gst_base_audio_sink_init (GstBaseAudioSink * baseaudiosink,
   baseaudiosink->provide_clock = DEFAULT_PROVIDE_CLOCK;
   baseaudiosink->priv->slave_method = DEFAULT_SLAVE_METHOD;
 
-  baseaudiosink->provided_clock = gst_audio_clock_new_full ("GstAudioSinkClock",
-      (GstAudioClockGetTimeFunc) gst_base_audio_sink_get_time,
-      gst_object_ref (baseaudiosink), (GDestroyNotify) gst_object_unref);
+  baseaudiosink->provided_clock = gst_audio_clock_new ("GstAudioSinkClock",
+      (GstAudioClockGetTimeFunc) gst_base_audio_sink_get_time, baseaudiosink);
 
   GST_BASE_SINK (baseaudiosink)->can_activate_push = TRUE;
   GST_BASE_SINK (baseaudiosink)->can_activate_pull = DEFAULT_CAN_ACTIVATE_PULL;
@@ -311,9 +313,11 @@ gst_base_audio_sink_dispose (GObject * object)
 
   sink = GST_BASE_AUDIO_SINK (object);
 
-  if (sink->provided_clock)
+  if (sink->provided_clock) {
+    gst_audio_clock_invalidate (sink->provided_clock);
     gst_object_unref (sink->provided_clock);
-  sink->provided_clock = NULL;
+    sink->provided_clock = NULL;
+  }
 
   if (sink->ringbuffer) {
     gst_object_unparent (GST_OBJECT_CAST (sink->ringbuffer));
@@ -609,6 +613,51 @@ gst_base_audio_sink_get_slave_method (GstBaseAudioSink * sink)
   return result;
 }
 
+
+/**
+ * gst_base_audio_sink_set_drift_tolerance:
+ * @sink: a #GstBaseAudioSink
+ * @drift_tolerance: the new drift tolerance in microseconds
+ *
+ * Controls the sink's drift tolerance.
+ *
+ * Since: 0.10.31
+ */
+void
+gst_base_audio_sink_set_drift_tolerance (GstBaseAudioSink * sink,
+    gint64 drift_tolerance)
+{
+  g_return_if_fail (GST_IS_BASE_AUDIO_SINK (sink));
+
+  GST_OBJECT_LOCK (sink);
+  sink->priv->drift_tolerance = drift_tolerance;
+  GST_OBJECT_UNLOCK (sink);
+}
+
+/**
+ * gst_base_audio_sink_get_drift_tolerance
+ * @sink: a #GstBaseAudioSink
+ *
+ * Get the current drift tolerance, in microseconds, used by @sink.
+ *
+ * Returns: The current drift tolerance used by @sink.
+ *
+ * Since: 0.10.31
+ */
+gint64
+gst_base_audio_sink_get_drift_tolerance (GstBaseAudioSink * sink)
+{
+  gint64 result;
+
+  g_return_val_if_fail (GST_IS_BASE_AUDIO_SINK (sink), -1);
+
+  GST_OBJECT_LOCK (sink);
+  result = sink->priv->drift_tolerance;
+  GST_OBJECT_UNLOCK (sink);
+
+  return result;
+}
+
 static void
 gst_base_audio_sink_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec)
@@ -634,7 +683,7 @@ gst_base_audio_sink_set_property (GObject * object, guint prop_id,
       GST_BASE_SINK (sink)->can_activate_pull = g_value_get_boolean (value);
       break;
     case PROP_DRIFT_TOLERANCE:
-      sink->priv->drift_tolerance = g_value_get_int64 (value);
+      gst_base_audio_sink_set_drift_tolerance (sink, g_value_get_int64 (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -667,7 +716,7 @@ gst_base_audio_sink_get_property (GObject * object, guint prop_id,
       g_value_set_boolean (value, GST_BASE_SINK (sink)->can_activate_pull);
       break;
     case PROP_DRIFT_TOLERANCE:
-      g_value_set_int64 (value, sink->priv->drift_tolerance);
+      g_value_set_int64 (value, gst_base_audio_sink_get_drift_tolerance (sink));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1144,7 +1193,7 @@ gst_base_audio_sink_sync_latency (GstBaseSink * bsink, GstMiniObject * obj)
 {
   GstClock *clock;
   GstClockReturn status;
-  GstClockTime time;
+  GstClockTime time, render_delay;
   GstFlowReturn ret;
   GstBaseAudioSink *sink;
   GstClockTime itime, etime;
@@ -1173,6 +1222,15 @@ gst_base_audio_sink_sync_latency (GstBaseSink * bsink, GstMiniObject * obj)
     GST_OBJECT_LOCK (sink);
     time = sink->priv->us_latency;
     GST_OBJECT_UNLOCK (sink);
+
+    /* Renderdelay is added onto our own latency, and needs
+     * to be subtracted as well */
+    render_delay = gst_base_sink_get_render_delay (bsink);
+
+    if (G_LIKELY (time > render_delay))
+      time -= render_delay;
+    else
+      time = 0;
 
     /* preroll done, we can sync since we are in PLAYING now. */
     GST_DEBUG_OBJECT (sink, "possibly waiting for clock to reach %"

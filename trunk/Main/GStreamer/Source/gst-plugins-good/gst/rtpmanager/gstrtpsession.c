@@ -192,12 +192,13 @@ enum
 
 #define DEFAULT_NTP_NS_BASE          0
 #define DEFAULT_BANDWIDTH            RTP_STATS_BANDWIDTH
-#define DEFAULT_RTCP_FRACTION        RTP_STATS_RTCP_BANDWIDTH
+#define DEFAULT_RTCP_FRACTION        (RTP_STATS_BANDWIDTH * RTP_STATS_RTCP_FRACTION)
 #define DEFAULT_RTCP_RR_BANDWIDTH    -1
 #define DEFAULT_RTCP_RS_BANDWIDTH    -1
 #define DEFAULT_SDES                 NULL
 #define DEFAULT_NUM_SOURCES          0
 #define DEFAULT_NUM_ACTIVE_SOURCES   0
+#define DEFAULT_USE_PIPELINE_CLOCK   FALSE
 
 enum
 {
@@ -211,6 +212,7 @@ enum
   PROP_NUM_SOURCES,
   PROP_NUM_ACTIVE_SOURCES,
   PROP_INTERNAL_SESSION,
+  PROP_USE_PIPELINE_CLOCK,
   PROP_LAST
 };
 
@@ -238,6 +240,7 @@ struct _GstRtpSessionPrivate
 
   /* NTP base time */
   guint64 ntpnsbase;
+  gboolean use_pipeline_clock;
 };
 
 /* callbacks to handle actions from the session manager */
@@ -534,12 +537,13 @@ gst_rtp_session_class_init (GstRtpSessionClass * klass)
 
   g_object_class_install_property (gobject_class, PROP_BANDWIDTH,
       g_param_spec_double ("bandwidth", "Bandwidth",
-          "The bandwidth of the session in bytes per second",
+          "The bandwidth of the session in bytes per second (0 for auto-discover)",
           0.0, G_MAXDOUBLE, DEFAULT_BANDWIDTH, G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_RTCP_FRACTION,
       g_param_spec_double ("rtcp-fraction", "RTCP Fraction",
-          "The RTCP bandwidth of the session in bytes per second",
+          "The RTCP bandwidth of the session in bytes per second "
+          "(or as a real fraction of the RTP bandwidth if < 1.0)",
           0.0, G_MAXDOUBLE, DEFAULT_RTCP_FRACTION, G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_RTCP_RR_BANDWIDTH,
@@ -572,6 +576,11 @@ gst_rtp_session_class_init (GstRtpSessionClass * klass)
           "The internal RTPSession object", RTP_TYPE_SESSION,
           G_PARAM_READABLE));
 
+  g_object_class_install_property (gobject_class, PROP_USE_PIPELINE_CLOCK,
+      g_param_spec_boolean ("use-pipeline-clock", "Use pipeline clock",
+          "Use the pipeline clock to set the NTP time in the RTCP SR messages",
+          DEFAULT_USE_PIPELINE_CLOCK, G_PARAM_READWRITE));
+
   gstelement_class->change_state =
       GST_DEBUG_FUNCPTR (gst_rtp_session_change_state);
   gstelement_class->request_new_pad =
@@ -592,6 +601,7 @@ gst_rtp_session_init (GstRtpSession * rtpsession, GstRtpSessionClass * klass)
   rtpsession->priv->lock = g_mutex_new ();
   rtpsession->priv->sysclock = gst_system_clock_obtain ();
   rtpsession->priv->session = rtp_session_new ();
+  rtpsession->priv->use_pipeline_clock = DEFAULT_USE_PIPELINE_CLOCK;
 
   /* configure callbacks */
   rtp_session_set_callbacks (rtpsession->priv->session, &callbacks, rtpsession);
@@ -629,15 +639,6 @@ gst_rtp_session_finalize (GObject * object)
   GstRtpSession *rtpsession;
 
   rtpsession = GST_RTP_SESSION (object);
-
-  if (rtpsession->recv_rtp_sink != NULL)
-    gst_object_unref (rtpsession->recv_rtp_sink);
-  if (rtpsession->recv_rtcp_sink != NULL)
-    gst_object_unref (rtpsession->recv_rtcp_sink);
-  if (rtpsession->send_rtp_sink != NULL)
-    gst_object_unref (rtpsession->send_rtp_sink);
-  if (rtpsession->send_rtcp_src != NULL)
-    gst_object_unref (rtpsession->send_rtcp_src);
 
   g_hash_table_destroy (rtpsession->priv->ptmap);
   g_mutex_free (rtpsession->priv->lock);
@@ -681,6 +682,9 @@ gst_rtp_session_set_property (GObject * object, guint prop_id,
       break;
     case PROP_SDES:
       rtp_session_set_sdes_struct (priv->session, g_value_get_boxed (value));
+      break;
+    case PROP_USE_PIPELINE_CLOCK:
+      priv->use_pipeline_clock = g_value_get_boolean (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -731,6 +735,9 @@ gst_rtp_session_get_property (GObject * object, guint prop_id,
     case PROP_INTERNAL_SESSION:
       g_value_set_object (value, priv->session);
       break;
+    case PROP_USE_PIPELINE_CLOCK:
+      g_value_set_boolean (value, priv->use_pipeline_clock);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -743,8 +750,7 @@ get_current_times (GstRtpSession * rtpsession, GstClockTime * running_time,
 {
   guint64 ntpns;
   GstClock *clock;
-  GstClockTime base_time, rt;
-  GTimeVal current;
+  GstClockTime base_time, rt, clock_time;
 
   GST_OBJECT_LOCK (rtpsession);
   if ((clock = GST_ELEMENT_CLOCK (rtpsession))) {
@@ -752,15 +758,23 @@ get_current_times (GstRtpSession * rtpsession, GstClockTime * running_time,
     gst_object_ref (clock);
     GST_OBJECT_UNLOCK (rtpsession);
 
-    /* get current NTP time */
-    g_get_current_time (&current);
-    ntpns = GST_TIMEVAL_TO_TIME (current);
+    clock_time = gst_clock_get_time (clock);
+
+    if (rtpsession->priv->use_pipeline_clock) {
+      ntpns = clock_time;
+    } else {
+      GTimeVal current;
+
+      /* get current NTP time */
+      g_get_current_time (&current);
+      ntpns = GST_TIMEVAL_TO_TIME (current);
+    }
 
     /* add constant to convert from 1970 based time to 1900 based time */
     ntpns += (2208988800LL * GST_SECOND);
 
     /* get current clock time and convert to running time */
-    rt = gst_clock_get_time (clock) - base_time;
+    rt = clock_time - base_time;
 
     gst_object_unref (clock);
   } else {
@@ -1170,28 +1184,19 @@ gst_rtp_session_cache_caps (GstRtpSession * rtpsession, GstCaps * caps)
       gst_caps_ref (caps));
 }
 
-/* called when the session manager needs the clock rate */
-static gint
-gst_rtp_session_clock_rate (RTPSession * sess, guint8 payload,
-    gpointer user_data)
+static GstCaps *
+gst_rtp_session_get_caps_for_pt (GstRtpSession * rtpsession, guint payload)
 {
-  gint ipayload, result = -1;
-  GstRtpSession *rtpsession;
-  GstRtpSessionPrivate *priv;
-  GValue ret = { 0 };
+  GstCaps *caps = NULL;
   GValue args[2] = { {0}, {0} };
-  GstCaps *caps;
-  const GstStructure *s;
-
-  rtpsession = GST_RTP_SESSION_CAST (user_data);
-  priv = rtpsession->priv;
+  GValue ret = { 0 };
 
   GST_RTP_SESSION_LOCK (rtpsession);
-  ipayload = payload;           /* make compiler happy */
-  caps = g_hash_table_lookup (priv->ptmap, GINT_TO_POINTER (ipayload));
+  caps = g_hash_table_lookup (rtpsession->priv->ptmap,
+      GINT_TO_POINTER (payload));
   if (caps) {
     gst_caps_ref (caps);
-    goto found;
+    goto done;
   }
 
   /* not found in the cache, try to get it with a signal */
@@ -1215,7 +1220,35 @@ gst_rtp_session_clock_rate (RTPSession * sess, guint8 payload,
 
   gst_rtp_session_cache_caps (rtpsession, caps);
 
-found:
+done:
+  GST_RTP_SESSION_UNLOCK (rtpsession);
+
+  return caps;
+
+no_caps:
+  {
+    GST_DEBUG_OBJECT (rtpsession, "could not get caps");
+    goto done;
+  }
+}
+
+/* called when the session manager needs the clock rate */
+static gint
+gst_rtp_session_clock_rate (RTPSession * sess, guint8 payload,
+    gpointer user_data)
+{
+  gint result = -1;
+  GstRtpSession *rtpsession;
+  GstCaps *caps;
+  const GstStructure *s;
+
+  rtpsession = GST_RTP_SESSION_CAST (user_data);
+
+  caps = gst_rtp_session_get_caps_for_pt (rtpsession, payload);
+
+  if (!caps)
+    goto done;
+
   s = gst_caps_get_structure (caps, 0);
   if (!gst_structure_get_int (s, "clock-rate", &result))
     goto no_clock_rate;
@@ -1225,16 +1258,10 @@ found:
   GST_DEBUG_OBJECT (rtpsession, "parsed clock-rate %d", result);
 
 done:
-  GST_RTP_SESSION_UNLOCK (rtpsession);
 
   return result;
 
   /* ERRORS */
-no_caps:
-  {
-    GST_DEBUG_OBJECT (rtpsession, "could not get caps");
-    goto done;
-  }
 no_clock_rate:
   {
     gst_caps_unref (caps);

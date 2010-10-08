@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.29.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2010-07-09 01:12+0200\n"
 "Last-Translator: Christian Kirbach <christian.kirbach@googlemail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -160,6 +160,9 @@ msgstr "Die Unterstützungsbibliothek konnte nicht geschlossen werden."
 
 msgid "Could not configure supporting library."
 msgstr "Die Unterstützungsbibliothek konnte nicht konfiguriert werden."
+
+msgid "Encoding error."
+msgstr ""
 
 msgid "GStreamer encountered a general resource error."
 msgstr "GStreamer hat einen allgemeinen Ressourcenfehler festgestellt."
@@ -313,6 +316,14 @@ msgid "date"
 msgstr "Datum"
 
 msgid "date the data was created (as a GDate structure)"
+msgstr "Datum, an dem die Daten erzeugt wurden (als GDate-Struktur)"
+
+#, fuzzy
+msgid "datetime"
+msgstr "Datum"
+
+#, fuzzy
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr "Datum, an dem die Daten erzeugt wurden (als GDate-Struktur)"
 
 msgid "genre"
@@ -655,6 +666,13 @@ msgstr ""
 "ein Ort innerhalb einer Stadt, in dem das Medium aufgezeichnet oder "
 "produziert wurde"
 
+#, fuzzy
+msgid "geo location horizontal error"
+msgstr "geologischer Ort"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
 msgid "geo location movement speed"
 msgstr "Geografische Bewegungsgeschwindigkeit"
 
@@ -760,6 +778,20 @@ msgstr "Gerätemodell"
 
 msgid "Model of the device used to create this media"
 msgstr "Das Modell des Geräts zur Erstellung dieses Mediums"
+
+#, fuzzy
+msgid "application name"
+msgstr "geologischer Ort"
+
+#, fuzzy
+msgid "Application used to create the media"
+msgstr "Das Modell des Geräts zur Erstellung dieses Mediums"
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
+msgstr ""
 
 msgid "image orientation"
 msgstr "Bildorientierung"
@@ -902,15 +934,15 @@ msgstr "Die Datei »%s« ist ein Socket."
 msgid "Failed after iterations as requested."
 msgstr "Nach dem Durchlaufen fehlgeschlagen. Wie gewünscht."
 
-msgid "Error while writing to download file."
-msgstr "Fehler beim Schreiben in die Download-Datei."
-
 msgid "No Temp directory specified."
 msgstr "Kein temporärer Ordner angegeben."
 
 #, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "Die temporäre Datei »%s« konnte nicht angelegt werden."
+
+msgid "Error while writing to download file."
+msgstr "Fehler beim Schreiben in die Download-Datei."
 
 msgid "caps"
 msgstr "Fähigkeiten"
@@ -944,6 +976,15 @@ msgstr "schreibbar"
 
 msgid "controllable"
 msgstr "regelbar"
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
+msgstr ""
 
 msgid "Blacklisted files:"
 msgstr "Dateien auf der schwarzen Liste:"

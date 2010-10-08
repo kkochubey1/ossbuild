@@ -8,7 +8,7 @@ REGISTRY_ENVIRONMENT = \
 	GST_REGISTRY=$(CHECK_REGISTRY)
 
 TESTS_ENVIRONMENT = \
-        STATE_IGNORE_ELEMENTS="$(STATE_IGNORE_ELEMENTS)"	\
+        GST_STATE_IGNORE_ELEMENTS="$(STATE_IGNORE_ELEMENTS)"	\
         $(REGISTRY_ENVIRONMENT)					\
         GST_PLUGIN_SCANNER=$(top_builddir)/libs/gst/helpers/gst-plugin-scanner \
         GST_PLUGIN_SYSTEM_PATH=					\
@@ -31,6 +31,22 @@ if GST_DISABLE_PARSE
 PARSE_CHECKS = pipelines/parse-disabled
 else
 PARSE_CHECKS = pipelines/simple-launch-lines pipelines/cleanup pipelines/parse-launch
+endif
+
+# Do not run the abi test in case any option which causes the API to change has
+# been used
+if !GST_DISABLE_LOADSAVE
+if !GST_DISABLE_REGISTRY
+if !GST_DISABLE_TRACE
+ABI_CHECKS = gst/gstabi
+endif
+endif
+endif
+
+if HAVE_CXX
+CXX_CHECKS = gst/gstcpp
+else
+CXX_CHECKS =
 endif
 
 # if it's calling gst_element_factory_make(), it will probably not work without
@@ -63,6 +79,7 @@ REGISTRY_CHECKS =				\
 	elements/identity			\
 	elements/multiqueue			\
 	elements/tee			  	\
+	elements/queue                          \
 	libs/basesrc				\
 	libs/basesink				\
 	libs/controller				\
@@ -72,11 +89,13 @@ REGISTRY_CHECKS =				\
 endif
 
 check_PROGRAMS =				\
-	gst/gstabi			     	\
+	$(ABI_CHECKS)			     	\
 	gst/gstbuffer				\
 	gst/gstbufferlist			\
 	gst/gstbus				\
 	gst/gstcaps     			\
+	$(CXX_CHECKS)			     	\
+	gst/gstdatetime     			\
 	gst/gstinfo		 		\
 	gst/gstiterator 			\
 	gst/gstmessage	 			\
@@ -107,11 +126,9 @@ check_PROGRAMS =				\
 	libs/transform1				
 
 # failing tests
-# queue : tests is unstable (race conditions)
 noinst_PROGRAMS =				\
 	gst/gstpipeline				\
-	libs/collectpads			\
-	elements/queue
+	libs/collectpads			
 
 # elements to ignore for the state tests
 # STATE_IGNORE_ELEMENTS =
@@ -137,15 +154,17 @@ EXTRA_DIST = \
 	libs/test_transform.c
 
 AM_CFLAGS = $(GST_OBJ_CFLAGS)
+AM_CXXFLAGS = $(GST_OBJ_CXXFLAGS)
 LDADD = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
 	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
 	$(GST_OBJ_LIBS)
+	
+gst_gstcpp_SOURCES = gst/gstcpp.cc
 
 gst_gstutils_LDADD = $(LDADD) $(GSL_LIBS) $(GMP_LIBS)
 
 libs_gdp_SOURCES = \
 	libs/gdp.c
-libs_gdp_CFLAGS = $(AM_CFLAGS)
 libs_gdp_LDADD = \
 	$(top_builddir)/libs/gst/dataprotocol/libgstdataprotocol-@GST_MAJORMINOR@.la \
 	$(LDADD)

@@ -26,6 +26,13 @@
 #include "pulseutil.h"
 #include <gst/audio/multichannel.h>
 
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>            /* getpid on UNIX */
+#endif
+#ifdef HAVE_PROCESS_H
+# include <process.h>           /* getpid on win32 */
+#endif
+
 static const pa_channel_position_t gst_pos_to_pa[GST_AUDIO_CHANNEL_POSITION_NUM]
     = {
   [GST_AUDIO_CHANNEL_POSITION_FRONT_MONO] = PA_CHANNEL_POSITION_MONO,
@@ -125,7 +132,7 @@ gst_pulse_client_name (void)
   else if (pa_get_binary_name (buf, sizeof (buf)))
     return g_strdup (buf);
   else
-    return g_strdup ("GStreamer");
+    return g_strdup_printf ("GStreamer-pid-%lu", (gulong) getpid ());
 }
 
 pa_channel_map *
@@ -208,4 +215,37 @@ gst_pulse_cvolume_from_linear (pa_cvolume * v, unsigned channels,
     gdouble volume)
 {
   pa_cvolume_set (v, channels, pa_sw_volume_from_linear (volume));
+}
+
+static gboolean
+make_proplist_item (GQuark field_id, const GValue * value, gpointer user_data)
+{
+  pa_proplist *p = (pa_proplist *) user_data;
+  gchar *prop_id = (gchar *) g_quark_to_string (field_id);
+
+  /* http://0pointer.de/lennart/projects/pulseaudio/doxygen/proplist_8h.html */
+
+  /* match prop id */
+
+  /* check type */
+  switch (G_VALUE_TYPE (value)) {
+    case G_TYPE_STRING:
+      pa_proplist_sets (p, prop_id, g_value_get_string (value));
+      break;
+    default:
+      GST_WARNING ("unmapped property type %s", G_VALUE_TYPE_NAME (value));
+      break;
+  }
+
+  return TRUE;
+}
+
+pa_proplist *
+gst_pulse_make_proplist (const GstStructure * properties)
+{
+  pa_proplist *proplist = pa_proplist_new ();
+
+  /* iterate the structure and fill the proplist */
+  gst_structure_foreach (properties, make_proplist_item, proplist);
+  return proplist;
 }

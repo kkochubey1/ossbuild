@@ -535,18 +535,82 @@
 			<File
 				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\fft\gstfftf32.c"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="_USE_MATH_DEFINES"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="_USE_MATH_DEFINES"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\fft\gstfftf64.c"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="_USE_MATH_DEFINES"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="_USE_MATH_DEFINES"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\fft\gstffts16.c"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="_USE_MATH_DEFINES"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="_USE_MATH_DEFINES"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\fft\gstffts32.c"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="_USE_MATH_DEFINES"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions="_USE_MATH_DEFINES"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\fft\kiss_fft_f32.c"

@@ -61,12 +61,14 @@ enum
   ARG_VIEWFINDER_FILTER,
   ARG_FLICKER_MODE,
   ARG_FOCUS_MODE,
+  ARG_NOISE_REDUCTION,
   ARG_BLOCK_VIEWFINDER,
   ARG_IMAGE_CAPTURE_WIDTH,
   ARG_IMAGE_CAPTURE_HEIGHT,
   ARG_VIDEO_CAPTURE_WIDTH,
   ARG_VIDEO_CAPTURE_HEIGHT,
-  ARG_VIDEO_CAPTURE_FRAMERATE
+  ARG_VIDEO_CAPTURE_FRAMERATE,
+  ARG_PREVIEW_SOURCE_FILTER
 };
 
 /**
@@ -84,6 +86,8 @@ enum
  * @GST_CAMERABIN_FLAG_DISABLE_AUDIO:  disable audio elements
  * @GST_CAMERABIN_FLAG_IMAGE_COLOR_CONVERSION:  enable color
  *   conversion for image output element
+ * @GST_CAMERABIN_FLAG_VIDEO_COLOR_CONVERSION:  enable color
+ *   conversion for video encoder element
  *
  * Extra flags to configure the behaviour of the sinks.
  */
@@ -94,7 +98,8 @@ typedef enum {
   GST_CAMERABIN_FLAG_VIEWFINDER_SCALE            = (1 << 3),
   GST_CAMERABIN_FLAG_AUDIO_CONVERSION            = (1 << 4),
   GST_CAMERABIN_FLAG_DISABLE_AUDIO               = (1 << 5),
-  GST_CAMERABIN_FLAG_IMAGE_COLOR_CONVERSION      = (1 << 6)
+  GST_CAMERABIN_FLAG_IMAGE_COLOR_CONVERSION      = (1 << 6),
+  GST_CAMERABIN_FLAG_VIDEO_COLOR_CONVERSION      = (1 << 7)
 } GstCameraBinFlags;
 
 #define GST_TYPE_CAMERABIN_FLAGS (gst_camerabin_flags_get_type())

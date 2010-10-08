@@ -26,9 +26,9 @@
 
 #include <gst/gst-i18n-plugin.h>
 #include <gst/pbutils/pbutils.h>
+#include <gst/video/video.h>
 
 #include "gstplaysink.h"
-#include "gstscreenshot.h"
 #include "gststreamsynchronizer.h"
 
 GST_DEBUG_CATEGORY_STATIC (gst_play_sink_debug);
@@ -261,6 +261,37 @@ static void notify_mute_cb (GObject * object, GParamSpec * pspec,
     GstPlaySink * playsink);
 
 static void update_av_offset (GstPlaySink * playsink);
+
+void
+gst_play_marshal_BUFFER__BOXED (GClosure * closure,
+    GValue * return_value G_GNUC_UNUSED,
+    guint n_param_values,
+    const GValue * param_values,
+    gpointer invocation_hint G_GNUC_UNUSED, gpointer marshal_data)
+{
+  typedef GstBuffer *(*GMarshalFunc_OBJECT__BOXED) (gpointer data1,
+      gpointer arg_1, gpointer data2);
+  register GMarshalFunc_OBJECT__BOXED callback;
+  register GCClosure *cc = (GCClosure *) closure;
+  register gpointer data1, data2;
+  GstBuffer *v_return;
+  g_return_if_fail (return_value != NULL);
+  g_return_if_fail (n_param_values == 2);
+
+  if (G_CCLOSURE_SWAP_DATA (closure)) {
+    data1 = closure->data;
+    data2 = g_value_peek_pointer (param_values + 0);
+  } else {
+    data1 = g_value_peek_pointer (param_values + 0);
+    data2 = closure->data;
+  }
+  callback =
+      (GMarshalFunc_OBJECT__BOXED) (marshal_data ? marshal_data : cc->callback);
+
+  v_return = callback (data1, g_value_get_boxed (param_values + 1), data2);
+
+  gst_value_take_buffer (return_value, v_return);
+}
 
 /* static guint gst_play_sink_signals[LAST_SIGNAL] = { 0 }; */
 
@@ -1230,7 +1261,7 @@ gen_video_chain (GstPlaySink * playsink, gboolean raw, gboolean async)
     prev = NULL;
   } else {
     g_object_set (G_OBJECT (chain->queue), "max-size-buffers", 3,
-        "max-size-bytes", 0, "max-size-time", (gint64) 0, NULL);
+        "max-size-bytes", 0, "max-size-time", (gint64) 0, "silent", TRUE, NULL);
     gst_bin_add (bin, chain->queue);
     head = prev = chain->queue;
   }
@@ -1432,7 +1463,8 @@ gen_text_chain (GstPlaySink * playsink)
                   "queue"), ("rendering might be suboptimal"));
         } else {
           g_object_set (G_OBJECT (chain->queue), "max-size-buffers", 3,
-              "max-size-bytes", 0, "max-size-time", (gint64) 0, NULL);
+              "max-size-bytes", 0, "max-size-time", (gint64) 0,
+              "silent", TRUE, NULL);
           gst_bin_add (bin, chain->queue);
         }
         /* we have a custom sink, this will be our textsinkpad */
@@ -1477,7 +1509,8 @@ gen_text_chain (GstPlaySink * playsink)
                 "queue"), ("video rendering might be suboptimal"));
       } else {
         g_object_set (G_OBJECT (chain->queue), "max-size-buffers", 3,
-            "max-size-bytes", 0, "max-size-time", (gint64) 0, NULL);
+            "max-size-bytes", 0, "max-size-time", (gint64) 0,
+            "silent", TRUE, NULL);
         gst_bin_add (bin, chain->queue);
         videosinkpad = gst_element_get_static_pad (chain->queue, "sink");
       }
@@ -1516,7 +1549,8 @@ gen_text_chain (GstPlaySink * playsink)
                   "queue"), ("rendering might be suboptimal"));
         } else {
           g_object_set (G_OBJECT (element), "max-size-buffers", 3,
-              "max-size-bytes", 0, "max-size-time", (gint64) 0, NULL);
+              "max-size-bytes", 0, "max-size-time", (gint64) 0,
+              "silent", TRUE, NULL);
           gst_bin_add (bin, element);
           gst_element_link_pads_full (element, "src", chain->overlay,
               "subtitle_sink", GST_PAD_LINK_CHECK_TEMPLATE_CAPS);
@@ -1658,6 +1692,7 @@ gen_audio_chain (GstPlaySink * playsink, gboolean raw)
     head = chain->sink;
     prev = NULL;
   } else {
+    g_object_set (chain->queue, "silent", TRUE, NULL);
     gst_bin_add (bin, chain->queue);
     prev = head = chain->queue;
   }
@@ -1969,6 +2004,7 @@ gen_vis_chain (GstPlaySink * playsink)
   chain->queue = gst_element_factory_make ("queue", "visqueue");
   if (chain->queue == NULL)
     goto no_queue;
+  g_object_set (chain->queue, "silent", TRUE, NULL);
   gst_bin_add (bin, chain->queue);
 
   chain->conv = gst_element_factory_make ("audioconvert", "aconv");
@@ -2761,9 +2797,16 @@ gst_play_sink_convert_frame (GstPlaySink * playsink, GstCaps * caps)
   result = gst_play_sink_get_last_frame (playsink);
   if (result != NULL && caps != NULL) {
     GstBuffer *temp;
+    GError *err = NULL;
 
-    temp = gst_play_frame_conv_convert (result, caps);
+    temp = gst_video_convert_frame (result, caps, 25 * GST_SECOND, &err);
     gst_buffer_unref (result);
+    if (temp == NULL && err) {
+      /* I'm really uncertain whether we should make playsink post an error
+       * on the bus or not. It's not like it's a critical issue regarding
+       * playsink behaviour. */
+      GST_ERROR ("Error converting frame: %s", err->message);
+    }
     result = temp;
   }
   return result;

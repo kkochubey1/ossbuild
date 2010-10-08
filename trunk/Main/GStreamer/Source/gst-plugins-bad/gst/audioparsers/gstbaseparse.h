@@ -69,14 +69,35 @@ G_BEGIN_DECLS
 #define GST_BASE_PARSE_SINK_PAD(obj)	(GST_BASE_PARSE_CAST (obj)->sinkpad)
 
 /**
+ * GST_BASE_PARSE_SEGMENT:
+ * @obj: base parse instance
+ *
+ * Gives the segment of the element.
+ *
+ * Since: 0.10.x
+ */
+#define GST_BASE_PARSE_SEGMENT(obj)     (GST_BASE_PARSE_CAST (obj)->segment)
+
+/**
  * GST_BASE_PARSE_FLOW_DROPPED:
  *
  * A #GstFlowReturn that can be returned from parse_frame to
- * indicate that no output buffer was generated.
+ * indicate that no output buffer was generated, or from pre_push_buffer to
+ * to forego pushing buffer.
  *
  * Since: 0.10.x
  */
 #define GST_BASE_PARSE_FLOW_DROPPED   GST_FLOW_CUSTOM_SUCCESS
+
+/**
+ * GST_BASE_PARSE_FLOW_CLIP:
+ *
+ * A #GstFlowReturn that can be returned from pre_push_buffer to
+ * indicate that regular segment clipping should be performed.
+ *
+ * Since: 0.10.x
+ */
+#define GST_BASE_PARSE_FLOW_CLIP      GST_FLOW_CUSTOM_SUCCESS_1
 
 /**
  * GST_BASE_PARSE_BUFFER_FLAG_NO_FRAME:
@@ -109,6 +130,21 @@ G_BEGIN_DECLS
  */
 #define GST_BASE_PARSE_UNLOCK(obj) g_mutex_unlock (GST_BASE_PARSE_CAST (obj)->parse_lock)
 
+
+/**
+ * GstBaseParseSeekable:
+ * @GST_BASE_PARSE_SEEK_NONE: No seeking possible.
+ * GST_BASE_PARSE_SEEK_DEFAULT: Default seeking possible using estimated bitrate.
+ * GST_BASE_PARSE_SEEK_TABLE: Additional metadata provides more accurate seeking.
+ *
+ * Indicates what level (of quality) of seeking is possible.
+ */
+typedef enum _GstBaseParseSeekable {
+  GST_BASE_PARSE_SEEK_NONE,
+  GST_BASE_PARSE_SEEK_DEFAULT,
+  GST_BASE_PARSE_SEEK_TABLE
+} GstBaseParseSeekable;
+
 typedef struct _GstBaseParse GstBaseParse;
 typedef struct _GstBaseParseClass GstBaseParseClass;
 typedef struct _GstBaseParsePrivate GstBaseParsePrivate;
@@ -120,16 +156,16 @@ typedef struct _GstBaseParsePrivate GstBaseParsePrivate;
  * The opaque #GstBaseParse data structure.
  */
 struct _GstBaseParse {
-  GstElement	 element;
-  GstAdapter   *adapter;
+  GstElement     element;
+  GstAdapter    *adapter;
 
   /*< protected >*/
   /* source and sink pads */
-  GstPad	*sinkpad;
-  GstPad	*srcpad;
+  GstPad         *sinkpad;
+  GstPad         *srcpad;
 
   /* MT-protected (with STREAM_LOCK) */
-  GstSegment     segment;
+  GstSegment      segment;
 
   /* Newsegment event to be sent after SEEK */
   GstEvent       *pending_segment;
@@ -137,10 +173,7 @@ struct _GstBaseParse {
   /* Segment event that closes the running segment prior to SEEK */
   GstEvent       *close_segment;
 
-  /* Caps nego done already? */
-  gboolean   negotiated;
-
-  GMutex	*parse_lock;
+  GMutex         *parse_lock;
 
   /*< private >*/
   gpointer       _gst_reserved[GST_PADDING_LARGE];
@@ -178,16 +211,19 @@ struct _GstBaseParse {
  * @src_event:      Optional.
  *                  Event handler on the source pad. Should return TRUE
  *                  if the event was handled and can be dropped.
- * @is_seekable:    Optional.
- *                  Subclass can override this if it wants to control the
- *                  seekability of the stream. Otherwise the element assumes
- *                  that stream is always seekable.
  *
  * @get_frame_overhead: Finds the metadata overhead for the given frame. This
  *                      is used to enable more accurate bitrate computations.
  *                      If NULL, the per-frame overhead is assumed to be 0. If
  *                      this returns -1, it is assumed that this frame should
  *                      be skipped in bitrate calculation.
+ *
+ * @pre_push_buffer: Optional.
+ *                   Called just prior to pushing a frame (after any pending
+ *                   events have been sent) to give subclass a chance to perform
+ *                   additional actions at this time (e.g. tag sending) or to
+ *                   decide whether this buffer should be dropped or no
+ *                   (e.g. custom segment clipping).
  *
  * Subclasses can override any of the available virtual methods or not, as
  * needed. At minimum @check_valid_frame and @parse_frame needs to be
@@ -231,9 +267,10 @@ struct _GstBaseParseClass {
   gboolean      (*src_event)          (GstBaseParse *parse,
                                        GstEvent *event);
 
-  gboolean      (*is_seekable)        (GstBaseParse *parse);
-
   gint          (*get_frame_overhead) (GstBaseParse *parse,
+                                       GstBuffer *buf);
+
+  GstFlowReturn (*pre_push_buffer)    (GstBaseParse *parse,
                                        GstBuffer *buf);
 
   /*< private >*/
@@ -247,19 +284,28 @@ GstFlowReturn gst_base_parse_push_buffer (GstBaseParse *parse,
                                           GstBuffer *buffer);
 
 void gst_base_parse_set_duration (GstBaseParse *parse,
-                                  GstFormat fmt,
-                                  gint64 duration);
+                                  GstFormat fmt, gint64 duration, gint interval);
+
+void gst_base_parse_set_seek (GstBaseParse * parse,
+                              GstBaseParseSeekable seek, guint bitrate);
 
 void gst_base_parse_set_min_frame_size (GstBaseParse *parse,
                                         guint min_size);
 void gst_base_parse_set_passthrough (GstBaseParse * parse, gboolean passthrough);
 
 void gst_base_parse_set_frame_props (GstBaseParse * parse, guint fps_num,
-                                     guint fps_den, gint interval);
+                                     guint fps_den, guint lead_in, guint lead_out);
 
 gboolean gst_base_parse_get_sync (GstBaseParse * parse);
 
 gboolean gst_base_parse_get_drain (GstBaseParse * parse);
+
+gboolean gst_base_parse_convert_default (GstBaseParse * parse,
+                                         GstFormat src_format, gint64 src_value,
+                                         GstFormat dest_format, gint64 * dest_value);
+
+gboolean gst_base_parse_add_index_entry (GstBaseParse * parse, guint64 offset,
+                                         GstClockTime ts, gboolean key, gboolean force);
 
 G_END_DECLS
 

@@ -63,8 +63,8 @@ static gboolean gst_sdlvideosink_supported (GstImplementsInterface * iface,
     GType type);
 
 static void gst_sdlvideosink_xoverlay_init (GstXOverlayClass * klass);
-static void gst_sdlvideosink_xoverlay_set_xwindow_id
-    (GstXOverlay * overlay, unsigned long parent);
+static void gst_sdlvideosink_xoverlay_set_window_handle
+    (GstXOverlay * overlay, guintptr parent);
 
 static gboolean gst_sdlvideosink_lock (GstSDLVideoSink * sdl);
 static void gst_sdlvideosink_unlock (GstSDLVideoSink * sdl);
@@ -131,11 +131,9 @@ gst_sdlvideosink_base_init (gpointer g_class)
   guint32 formats[] = {
     GST_MAKE_FOURCC ('I', '4', '2', '0'),
     GST_MAKE_FOURCC ('Y', 'V', '1', '2'),
-    GST_MAKE_FOURCC ('Y', 'U', 'Y', '2')
-        /*
-           GST_MAKE_FOURCC ('Y', 'V', 'Y', 'U'),
-           GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y')
-         */
+    GST_MAKE_FOURCC ('Y', 'U', 'Y', '2'),
+    GST_MAKE_FOURCC ('Y', 'V', 'Y', 'U'),
+    GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y')
   };
 
   /* make a list of all available caps */
@@ -363,14 +361,15 @@ gst_sdlvideosink_supported (GstImplementsInterface * interface,
 static void
 gst_sdlvideosink_xoverlay_init (GstXOverlayClass * klass)
 {
-  klass->set_xwindow_id = gst_sdlvideosink_xoverlay_set_xwindow_id;
+  klass->set_window_handle = gst_sdlvideosink_xoverlay_set_window_handle;
 }
 
 static void
-gst_sdlvideosink_xoverlay_set_xwindow_id (GstXOverlay * overlay,
-    unsigned long parent)
+gst_sdlvideosink_xoverlay_set_window_handle (GstXOverlay * overlay,
+    guintptr handle)
 {
   GstSDLVideoSink *sdlvideosink = GST_SDLVIDEOSINK (overlay);
+  unsigned long parent = (unsigned long) handle;
 
   if (sdlvideosink->xwindow_id == parent)
     return;

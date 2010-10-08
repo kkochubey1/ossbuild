@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.8.0\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2004-04-03 03:14+0300\n"
 "Last-Translator: Baris Cicek <baris@teamforce.name.tr>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -162,6 +162,9 @@ msgstr "Destekleyici kütüphane kapatılamadı."
 msgid "Could not configure supporting library."
 msgstr "Destekleyici kütüphane kapatılamadı."
 
+msgid "Encoding error."
+msgstr ""
+
 #, fuzzy
 msgid "GStreamer encountered a general resource error."
 msgstr "GStreamer genel temel kütüphane hatası ile karşılaştı."
@@ -312,6 +315,14 @@ msgstr "tarih"
 
 #, fuzzy
 msgid "date the data was created (as a GDate structure)"
+msgstr "bu verinin oluşturulduğu tarih (Julian takvimi günleri olarak)"
+
+#, fuzzy
+msgid "datetime"
+msgstr "tarih"
+
+#, fuzzy
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr "bu verinin oluşturulduğu tarih (Julian takvimi günleri olarak)"
 
 msgid "genre"
@@ -653,6 +664,13 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "geo location horizontal error"
+msgstr "konum"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
+#, fuzzy
 msgid "geo location movement speed"
 msgstr "konum"
 
@@ -753,6 +771,20 @@ msgstr ""
 #, fuzzy
 msgid "Model of the device used to create this media"
 msgstr "bu akımı kodlarken kullanılan kodlayıcının sürümü"
+
+#, fuzzy
+msgid "application name"
+msgstr "konum"
+
+#, fuzzy
+msgid "Application used to create the media"
+msgstr "bu akımı kodlarken kullanılan kodlayıcının sürümü"
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
+msgstr ""
 
 msgid "image orientation"
 msgstr ""
@@ -892,16 +924,16 @@ msgstr "\"%s\" dosyası düzenli bir dosya değil."
 msgid "Failed after iterations as requested."
 msgstr "İstenildiği gibi tekrarlama başarısız oldu."
 
-#, fuzzy
-msgid "Error while writing to download file."
-msgstr "\"%s\" dosyası yazılırken hata."
-
 msgid "No Temp directory specified."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "Kaynağa değerler atanamadı ya da alınamadı."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "\"%s\" dosyası yazılırken hata."
 
 msgid "caps"
 msgstr "kabiliyetler"
@@ -936,6 +968,15 @@ msgid "writable"
 msgstr "başlık"
 
 msgid "controllable"
+msgstr ""
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
 msgstr ""
 
 msgid "Blacklisted files:"

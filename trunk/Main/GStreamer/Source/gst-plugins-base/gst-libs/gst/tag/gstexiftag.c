@@ -41,6 +41,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 /* Some useful constants */
 #define TIFF_LITTLE_ENDIAN  0x4949
@@ -101,6 +102,84 @@ static gint deserialize_ ## name (GstExifReader * exif_reader, \
   EXIF_SERIALIZATION_FUNC (name); \
   EXIF_DESERIALIZATION_FUNC (name)
 
+/*
+ * A common case among serialization/deserialization routines is that
+ * the gstreamer tag is a string (with a predefined set of allowed values)
+ * and exif is an int. These macros cover these cases
+ */
+#define EXIF_SERIALIZATION_MAP_STRING_TO_INT_FUNC(name,funcname) \
+static void \
+serialize_ ## name (GstExifWriter * writer, const GstTagList * taglist, \
+    const GstExifTagMatch * exiftag) \
+{ \
+  gchar *str = NULL; \
+  gint exif_value; \
+\
+  if (!gst_tag_list_get_string_index (taglist, exiftag->gst_tag, 0, &str)) { \
+    GST_WARNING ("No %s tag present in taglist", exiftag->gst_tag); \
+    return; \
+  } \
+\
+  exif_value = __exif_tag_ ## funcname ## _to_exif_value (str); \
+  if (exif_value == -1) { \
+    g_free (str); \
+    return; \
+  } \
+  g_free (str); \
+\
+  switch (exiftag->exif_type) { \
+    case EXIF_TYPE_SHORT: \
+      gst_exif_writer_write_short_tag (writer, exiftag->exif_tag, exif_value); \
+      break; \
+    case EXIF_TYPE_LONG: \
+      gst_exif_writer_write_long_tag (writer, exiftag->exif_tag, exif_value); \
+      break; \
+    default: \
+      g_assert_not_reached (); \
+      GST_WARNING ("Unmapped serialization for type %d", exiftag->exif_type); \
+      break; \
+   } \
+}
+
+#define EXIF_DESERIALIZATION_MAP_STRING_TO_INT_FUNC(name,funcname) \
+static gint \
+deserialize_ ## name (GstExifReader * exif_reader, \
+    GstByteReader * reader, const GstExifTagMatch * exiftag, \
+    GstExifTagData * tagdata) \
+{ \
+  const gchar *str = NULL; \
+  gint value; \
+\
+  GST_LOG ("Starting to parse %s tag in exif 0x%x", exiftag->gst_tag, \
+      exiftag->exif_tag); \
+\
+  /* validate tag */ \
+  if (tagdata->tag_type != EXIF_TYPE_SHORT || tagdata->count != 1) { \
+    GST_WARNING ("0x%X has unexpected type/count", tagdata->tag); \
+    return 0; \
+  } \
+\
+  if (exif_reader->byte_order == G_LITTLE_ENDIAN) { \
+    value = GST_READ_UINT16_LE (tagdata->offset_as_data); \
+  } else { \
+    value = GST_READ_UINT16_BE (tagdata->offset_as_data); \
+  } \
+\
+  str = __exif_tag_## funcname ## _from_exif_value (value); \
+  if (str == NULL) { \
+    GST_WARNING ("Invalid value for tag 0x%X: %d", tagdata->tag, value); \
+    return 0; \
+  } \
+  gst_tag_list_add (exif_reader->taglist, GST_TAG_MERGE_REPLACE, \
+      exiftag->gst_tag, str, NULL); \
+\
+  return 0; \
+}
+
+#define EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC(name,funcname) \
+  EXIF_SERIALIZATION_MAP_STRING_TO_INT_FUNC(name,funcname); \
+  EXIF_DESERIALIZATION_MAP_STRING_TO_INT_FUNC(name,funcname);
+
 struct _GstExifTagMatch
 {
   const gchar *gst_tag;
@@ -141,20 +220,87 @@ struct _GstExifReader
   const GstBuffer *buffer;
   guint32 base_offset;
   gint byte_order;
+
+  /* tags waiting for their complementary tags */
+  GSList *pending_tags;
 };
 
-EXIF_SERIALIZATION_DESERIALIZATION_FUNC (orientation);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (aperture_value);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (contrast);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (exposure_program);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (exposure_mode);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (flash);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (gain_control);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (geo_coordinate);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (geo_direction);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (geo_elevation);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (orientation);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (saturation);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (scene_capture_type);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (sensitivity_type);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (shutter_speed);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (speed);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (white_balance);
+
+EXIF_DESERIALIZATION_FUNC (resolution);
+EXIF_DESERIALIZATION_FUNC (add_to_pending_tags);
 
 /* FIXME copyright tag has a weird "artist\0editor\0" format that is
  * not yet handled */
 
+/* exif tag numbers */
+#define EXIF_TAG_GPS_LATITUDE_REF 0x1
+#define EXIF_TAG_GPS_LATITUDE 0x2
+#define EXIF_TAG_GPS_LONGITUDE_REF 0x3
+#define EXIF_TAG_GPS_LONGITUDE 0x4
+#define EXIF_TAG_GPS_ALTITUDE_REF 0x5
+#define EXIF_TAG_GPS_ALTITUDE 0x6
+#define EXIF_TAG_GPS_SPEED_REF 0xC
+#define EXIF_TAG_GPS_SPEED 0xD
+#define EXIF_TAG_GPS_TRACK_REF 0xE
+#define EXIF_TAG_GPS_TRACK 0xF
+#define EXIF_TAG_GPS_IMAGE_DIRECTION_REF 0x10
+#define EXIF_TAG_GPS_IMAGE_DIRECTION 0x11
+#define EXIF_TAG_GPS_HORIZONTAL_POSITIONING_ERROR 0x1F
+#define EXIF_TAG_IMAGE_DESCRIPTION 0x10E
+#define EXIF_TAG_MAKE 0x10F
+#define EXIF_TAG_MODEL 0x110
+#define EXIF_TAG_ORIENTATION 0x112
+#define EXIF_TAG_XRESOLUTION 0x11A
+#define EXIF_TAG_YRESOLUTION 0x11B
+#define EXIF_TAG_RESOLUTION_UNIT 0x128
+#define EXIF_TAG_SOFTWARE 0x131
+#define EXIF_TAG_DATE_TIME 0x132
+#define EXIF_TAG_ARTIST 0x13B
+#define EXIF_TAG_COPYRIGHT 0x8298
+#define EXIF_TAG_EXPOSURE_TIME 0x829A
+#define EXIF_TAG_F_NUMBER 0x829D
+#define EXIF_TAG_EXPOSURE_PROGRAM 0x8822
+#define EXIF_TAG_PHOTOGRAPHIC_SENSITIVITY 0x8827
+#define EXIF_TAG_SENSITIVITY_TYPE 0x8830
+#define EXIF_TAG_ISO_SPEED 0x8833
+#define EXIF_TAG_DATE_TIME_ORIGINAL 0x9003
+#define EXIF_TAG_DATE_TIME_DIGITIZED 0x9004
+#define EXIF_TAG_SHUTTER_SPEED_VALUE 0x9201
+#define EXIF_TAG_APERTURE_VALUE 0x9202
+#define EXIF_TAG_FLASH 0x9209
+#define EXIF_TAG_FOCAL_LENGTH 0x920A
+#define EXIF_TAG_MAKER_NOTE 0x927C
+#define EXIF_TAG_EXPOSURE_MODE 0xA402
+#define EXIF_TAG_WHITE_BALANCE 0xA403
+#define EXIF_TAG_DIGITAL_ZOOM_RATIO 0xA404
+#define EXIF_TAG_SCENE_CAPTURE_TYPE 0xA406
+#define EXIF_TAG_GAIN_CONTROL 0xA407
+#define EXIF_TAG_CONTRAST 0xA408
+#define EXIF_TAG_SATURATION 0xA409
+
+/* IFD pointer tags */
 #define EXIF_IFD_TAG 0x8769
 #define EXIF_GPS_IFD_TAG 0x8825
+
+/* version tags */
 #define EXIF_VERSION_TAG 0x9000
+#define EXIF_FLASHPIX_VERSION_TAG 0xA000
 
 /* useful macros for speed tag */
 #define METERS_PER_SECOND_TO_KILOMETERS_PER_HOUR (3.6)
@@ -162,41 +308,113 @@ EXIF_SERIALIZATION_DESERIALIZATION_FUNC (speed);
 #define MILES_PER_HOUR_TO_METERS_PER_SECOND (0.44704)
 #define KNOTS_TO_METERS_PER_SECOND (0.514444)
 
-/* Should be kept in ascending id order */
+/*
+ * Should be kept in ascending id order
+ *
+ * {gst-tag, exif-tag, exig-type, complementary-exif-tag, serialization-func,
+ *     deserialization-func}
+ */
 static const GstExifTagMatch tag_map_ifd0[] = {
-  {GST_TAG_DESCRIPTION, 0x10E, EXIF_TYPE_ASCII, 0, NULL, NULL},
-  {GST_TAG_DEVICE_MANUFACTURER, 0x10F, EXIF_TYPE_ASCII, 0, NULL, NULL},
-  {GST_TAG_DEVICE_MODEL, 0x110, EXIF_TYPE_ASCII, 0, NULL, NULL},
-  {GST_TAG_IMAGE_ORIENTATION, 0x112, EXIF_TYPE_SHORT, 0, serialize_orientation,
+  {GST_TAG_IMAGE_HORIZONTAL_PPI, EXIF_TAG_XRESOLUTION, EXIF_TYPE_RATIONAL,
+      0, NULL, deserialize_add_to_pending_tags},
+  {GST_TAG_IMAGE_VERTICAL_PPI, EXIF_TAG_YRESOLUTION, EXIF_TYPE_RATIONAL,
+      0, NULL, deserialize_add_to_pending_tags},
+  {NULL, EXIF_TAG_RESOLUTION_UNIT, EXIF_TYPE_SHORT, 0, NULL,
+      deserialize_resolution},
+  {GST_TAG_DESCRIPTION, EXIF_TAG_IMAGE_DESCRIPTION, EXIF_TYPE_ASCII, 0, NULL,
+      NULL},
+  {GST_TAG_DEVICE_MANUFACTURER, EXIF_TAG_MAKE, EXIF_TYPE_ASCII, 0, NULL, NULL},
+  {GST_TAG_DEVICE_MODEL, EXIF_TAG_MODEL, EXIF_TYPE_ASCII, 0, NULL, NULL},
+  {GST_TAG_IMAGE_ORIENTATION, EXIF_TAG_ORIENTATION, EXIF_TYPE_SHORT, 0,
+        serialize_orientation,
       deserialize_orientation},
-  {GST_TAG_APPLICATION_NAME, 0x131, EXIF_TYPE_ASCII, 0, NULL, NULL},
-  {GST_TAG_DATE_TIME, 0x132, EXIF_TYPE_ASCII, 0, NULL, NULL},
-  {GST_TAG_ARTIST, 0x13B, EXIF_TYPE_ASCII, 0, NULL, NULL},
-  {GST_TAG_COPYRIGHT, 0x8298, EXIF_TYPE_ASCII, 0, NULL, NULL},
+  {GST_TAG_APPLICATION_NAME, EXIF_TAG_SOFTWARE, EXIF_TYPE_ASCII, 0, NULL, NULL},
+  {GST_TAG_DATE_TIME, EXIF_TAG_DATE_TIME, EXIF_TYPE_ASCII, 0, NULL, NULL},
+  {GST_TAG_ARTIST, EXIF_TAG_ARTIST, EXIF_TYPE_ASCII, 0, NULL, NULL},
+  {GST_TAG_COPYRIGHT, EXIF_TAG_COPYRIGHT, EXIF_TYPE_ASCII, 0, NULL, NULL},
   {NULL, EXIF_IFD_TAG, EXIF_TYPE_LONG, 0, NULL, NULL},
   {NULL, EXIF_GPS_IFD_TAG, EXIF_TYPE_LONG, 0, NULL, NULL},
   {NULL, 0, 0, 0, NULL, NULL}
 };
 
 static const GstExifTagMatch tag_map_exif[] = {
+  {GST_TAG_CAPTURING_SHUTTER_SPEED, EXIF_TAG_EXPOSURE_TIME, EXIF_TYPE_RATIONAL,
+        0,
+      NULL, NULL},
+  {GST_TAG_CAPTURING_FOCAL_RATIO, EXIF_TAG_F_NUMBER, EXIF_TYPE_RATIONAL, 0,
+        NULL,
+      NULL},
+  {GST_TAG_CAPTURING_EXPOSURE_PROGRAM, EXIF_TAG_EXPOSURE_PROGRAM,
+        EXIF_TYPE_SHORT, 0, serialize_exposure_program,
+      deserialize_exposure_program},
+
+  /* don't need the serializer as we always write the iso speed alone */
+  {GST_TAG_CAPTURING_ISO_SPEED, EXIF_TAG_PHOTOGRAPHIC_SENSITIVITY,
+        EXIF_TYPE_SHORT, 0, NULL,
+      deserialize_add_to_pending_tags},
+
+  {GST_TAG_CAPTURING_ISO_SPEED, EXIF_TAG_SENSITIVITY_TYPE, EXIF_TYPE_SHORT, 0,
+      serialize_sensitivity_type, deserialize_sensitivity_type},
+  {GST_TAG_CAPTURING_ISO_SPEED, EXIF_TAG_ISO_SPEED, EXIF_TYPE_LONG, 0, NULL,
+      NULL},
   {NULL, EXIF_VERSION_TAG, EXIF_TYPE_UNDEFINED, 0, NULL, NULL},
-  {GST_TAG_DATE_TIME, 0x9003, EXIF_TYPE_ASCII, 0, NULL, NULL},
+  {GST_TAG_DATE_TIME, EXIF_TAG_DATE_TIME_ORIGINAL, EXIF_TYPE_ASCII, 0, NULL,
+      NULL},
+  {GST_TAG_CAPTURING_SHUTTER_SPEED, EXIF_TAG_SHUTTER_SPEED_VALUE,
+        EXIF_TYPE_SRATIONAL, 0,
+      serialize_shutter_speed, deserialize_shutter_speed},
+  {GST_TAG_CAPTURING_FOCAL_RATIO, EXIF_TAG_APERTURE_VALUE, EXIF_TYPE_RATIONAL,
+        0,
+      serialize_aperture_value, deserialize_aperture_value},
+  {GST_TAG_CAPTURING_FLASH_FIRED, EXIF_TAG_FLASH, EXIF_TYPE_SHORT, 0,
+      serialize_flash, deserialize_flash},
+  {GST_TAG_CAPTURING_FOCAL_LENGTH, EXIF_TAG_FOCAL_LENGTH, EXIF_TYPE_RATIONAL, 0,
+      NULL, NULL},
+  {GST_TAG_APPLICATION_DATA, EXIF_TAG_MAKER_NOTE, EXIF_TYPE_UNDEFINED, 0, NULL,
+      NULL},
+  {NULL, EXIF_FLASHPIX_VERSION_TAG, EXIF_TYPE_UNDEFINED, 0, NULL, NULL},
+  {GST_TAG_CAPTURING_EXPOSURE_MODE, EXIF_TAG_EXPOSURE_MODE, EXIF_TYPE_SHORT,
+      0, serialize_exposure_mode, deserialize_exposure_mode},
+  {GST_TAG_CAPTURING_WHITE_BALANCE, EXIF_TAG_WHITE_BALANCE, EXIF_TYPE_SHORT,
+      0, serialize_white_balance, deserialize_white_balance},
+  {GST_TAG_CAPTURING_DIGITAL_ZOOM_RATIO, EXIF_TAG_DIGITAL_ZOOM_RATIO,
+        EXIF_TYPE_RATIONAL, 0, NULL,
+      NULL},
+  {GST_TAG_CAPTURING_SCENE_CAPTURE_TYPE, EXIF_TAG_SCENE_CAPTURE_TYPE,
+        EXIF_TYPE_SHORT, 0, serialize_scene_capture_type,
+      deserialize_scene_capture_type},
+  {GST_TAG_CAPTURING_GAIN_ADJUSTMENT, EXIF_TAG_GAIN_CONTROL,
+        EXIF_TYPE_SHORT, 0, serialize_gain_control,
+      deserialize_gain_control},
+  {GST_TAG_CAPTURING_CONTRAST, EXIF_TAG_CONTRAST, EXIF_TYPE_SHORT, 0,
+      serialize_contrast, deserialize_contrast},
+  {GST_TAG_CAPTURING_SATURATION, EXIF_TAG_SATURATION, EXIF_TYPE_SHORT, 0,
+      serialize_saturation, deserialize_saturation},
   {NULL, 0, 0, 0, NULL, NULL}
 };
 
 static const GstExifTagMatch tag_map_gps[] = {
-  {GST_TAG_GEO_LOCATION_LATITUDE, 0x2, EXIF_TYPE_RATIONAL, 0x1,
+  {GST_TAG_GEO_LOCATION_LATITUDE, EXIF_TAG_GPS_LATITUDE, EXIF_TYPE_RATIONAL,
+        EXIF_TAG_GPS_LATITUDE_REF,
       serialize_geo_coordinate, deserialize_geo_coordinate},
-  {GST_TAG_GEO_LOCATION_LONGITUDE, 0x4, EXIF_TYPE_RATIONAL, 0x3,
+  {GST_TAG_GEO_LOCATION_LONGITUDE, EXIF_TAG_GPS_LONGITUDE, EXIF_TYPE_RATIONAL,
+        EXIF_TAG_GPS_LONGITUDE_REF,
       serialize_geo_coordinate, deserialize_geo_coordinate},
-  {GST_TAG_GEO_LOCATION_ELEVATION, 0x6, EXIF_TYPE_RATIONAL, 0x5,
+  {GST_TAG_GEO_LOCATION_ELEVATION, EXIF_TAG_GPS_ALTITUDE, EXIF_TYPE_RATIONAL,
+        EXIF_TAG_GPS_ALTITUDE_REF,
       serialize_geo_elevation, deserialize_geo_elevation},
-  {GST_TAG_GEO_LOCATION_MOVEMENT_SPEED, 0xD, EXIF_TYPE_RATIONAL, 0xC,
+  {GST_TAG_GEO_LOCATION_MOVEMENT_SPEED, EXIF_TAG_GPS_SPEED, EXIF_TYPE_RATIONAL,
+        EXIF_TAG_GPS_SPEED_REF,
       serialize_speed, deserialize_speed},
-  {GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION, 0xF, EXIF_TYPE_RATIONAL, 0xE,
+  {GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION, EXIF_TAG_GPS_TRACK,
+        EXIF_TYPE_RATIONAL, EXIF_TAG_GPS_TRACK_REF,
       serialize_geo_direction, deserialize_geo_direction},
-  {GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION, 0x11, EXIF_TYPE_RATIONAL, 0x10,
+  {GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION, EXIF_TAG_GPS_IMAGE_DIRECTION,
+        EXIF_TYPE_RATIONAL, EXIF_TAG_GPS_IMAGE_DIRECTION_REF,
       serialize_geo_direction, deserialize_geo_direction},
+  {GST_TAG_GEO_LOCATION_HORIZONTAL_ERROR,
+        EXIF_TAG_GPS_HORIZONTAL_POSITIONING_ERROR,
+      EXIF_TYPE_RATIONAL, 0, NULL, NULL},
   {NULL, 0, 0, 0, NULL, NULL}
 };
 
@@ -209,12 +427,63 @@ gst_exif_reader_init (GstExifReader * reader, gint byte_order,
   reader->buffer = buf;
   reader->base_offset = base_offset;
   reader->byte_order = byte_order;
+  reader->pending_tags = NULL;
   if (reader->byte_order != G_LITTLE_ENDIAN &&
       reader->byte_order != G_BIG_ENDIAN) {
     GST_WARNING ("Unexpected byte order %d, using system default: %d",
         reader->byte_order, G_BYTE_ORDER);
     reader->byte_order = G_BYTE_ORDER;
   }
+}
+
+static void
+gst_exif_reader_add_pending_tag (GstExifReader * reader, GstExifTagData * data)
+{
+  GstExifTagData *copy;
+
+  copy = g_slice_new (GstExifTagData);
+  memcpy (copy, data, sizeof (GstExifTagData));
+
+  reader->pending_tags = g_slist_prepend (reader->pending_tags, copy);
+}
+
+static GstExifTagData *
+gst_exif_reader_get_pending_tag (GstExifReader * reader, gint tagid)
+{
+  GSList *walker;
+
+  for (walker = reader->pending_tags; walker; walker = g_slist_next (walker)) {
+    GstExifTagData *data = (GstExifTagData *) walker->data;
+    if (data->tag == tagid)
+      return data;
+  }
+
+  return NULL;
+}
+
+static GstTagList *
+gst_exif_reader_reset (GstExifReader * reader, gboolean return_taglist)
+{
+  GstTagList *ret = NULL;
+  GSList *walker;
+
+  for (walker = reader->pending_tags; walker; walker = g_slist_next (walker)) {
+    GstExifTagData *data = (GstExifTagData *) walker->data;
+
+    g_slice_free (GstExifTagData, data);
+  }
+  g_slist_free (reader->pending_tags);
+
+  if (return_taglist) {
+    ret = reader->taglist;
+    reader->taglist = NULL;
+  }
+
+  if (reader->taglist) {
+    gst_tag_list_free (reader->taglist);
+  }
+
+  return ret;
 }
 
 /* GstExifWriter functions */
@@ -346,6 +615,19 @@ gst_exif_writer_write_rational_data (GstExifWriter * writer, guint32 frac_n,
 }
 
 static void
+gst_exif_writer_write_signed_rational_data (GstExifWriter * writer,
+    gint32 frac_n, gint32 frac_d)
+{
+  if (writer->byte_order == G_LITTLE_ENDIAN) {
+    gst_byte_writer_put_int32_le (&writer->datawriter, frac_n);
+    gst_byte_writer_put_int32_le (&writer->datawriter, frac_d);
+  } else {
+    gst_byte_writer_put_int32_be (&writer->datawriter, frac_n);
+    gst_byte_writer_put_int32_be (&writer->datawriter, frac_d);
+  }
+}
+
+static void
 gst_exif_writer_write_rational_tag (GstExifWriter * writer,
     guint16 tag, guint32 frac_n, guint32 frac_d)
 {
@@ -358,6 +640,18 @@ gst_exif_writer_write_rational_tag (GstExifWriter * writer,
 }
 
 static void
+gst_exif_writer_write_signed_rational_tag (GstExifWriter * writer,
+    guint16 tag, gint32 frac_n, gint32 frac_d)
+{
+  guint32 offset = gst_byte_writer_get_size (&writer->datawriter);
+
+  gst_exif_writer_write_tag_header (writer, tag, EXIF_TYPE_SRATIONAL,
+      1, offset, FALSE);
+
+  gst_exif_writer_write_signed_rational_data (writer, frac_n, frac_d);
+}
+
+static void
 gst_exif_writer_write_rational_tag_from_double (GstExifWriter * writer,
     guint16 tag, gdouble value)
 {
@@ -367,6 +661,18 @@ gst_exif_writer_write_rational_tag_from_double (GstExifWriter * writer,
   gst_util_double_to_fraction (value, &frac_n, &frac_d);
 
   gst_exif_writer_write_rational_tag (writer, tag, frac_n, frac_d);
+}
+
+static void
+gst_exif_writer_write_signed_rational_tag_from_double (GstExifWriter * writer,
+    guint16 tag, gdouble value)
+{
+  gint frac_n;
+  gint frac_d;
+
+  gst_util_double_to_fraction (value, &frac_n, &frac_d);
+
+  gst_exif_writer_write_signed_rational_tag (writer, tag, frac_n, frac_d);
 }
 
 static void
@@ -395,6 +701,22 @@ gst_exif_writer_write_short_tag (GstExifWriter * writer, guint16 tag,
   gst_exif_writer_write_tag_header (writer, tag, EXIF_TYPE_SHORT,
       1, offset, TRUE);
 }
+
+static void
+gst_exif_writer_write_long_tag (GstExifWriter * writer, guint16 tag,
+    guint32 value)
+{
+  guint32 offset = 0;
+  if (writer->byte_order == G_LITTLE_ENDIAN) {
+    GST_WRITE_UINT32_LE ((guint8 *) & offset, value);
+  } else {
+    GST_WRITE_UINT32_BE ((guint8 *) & offset, value);
+  }
+
+  gst_exif_writer_write_tag_header (writer, tag, EXIF_TYPE_LONG,
+      1, offset, TRUE);
+}
+
 
 static void
 write_exif_undefined_tag (GstExifWriter * writer, guint16 tag,
@@ -493,6 +815,120 @@ write_exif_ascii_tag_from_taglist (GstExifWriter * writer,
 }
 
 static void
+write_exif_undefined_tag_from_taglist (GstExifWriter * writer,
+    const GstTagList * taglist, const GstExifTagMatch * exiftag)
+{
+  const GValue *value;
+  const guint8 *data = NULL;
+  gint size = 0;
+  gint tag_size = gst_tag_list_get_tag_size (taglist, exiftag->gst_tag);
+
+  if (tag_size != 1) {
+    GST_WARNING ("Only the first item in the taglist will be serialized");
+    return;
+  }
+
+  value = gst_tag_list_get_value_index (taglist, exiftag->gst_tag, 0);
+
+  /* do some conversion if needed */
+  switch (G_VALUE_TYPE (value)) {
+    case G_TYPE_STRING:
+      data = (guint8 *) g_value_get_string (value);
+      size = strlen ((gchar *) data);   /* no need to +1, undefined doesn't require it */
+      break;
+    default:
+      if (G_VALUE_TYPE (value) == GST_TYPE_BUFFER) {
+        GstBuffer *buf = gst_value_get_buffer (value);
+
+        data = GST_BUFFER_DATA (buf);
+        size = GST_BUFFER_SIZE (buf);
+      } else {
+        GST_WARNING ("Conversion from %s to raw data not supported",
+            G_VALUE_TYPE_NAME (value));
+      }
+      break;
+  }
+
+  if (size == 0)
+    return;
+
+  write_exif_undefined_tag (writer, exiftag->exif_tag, data, size);
+}
+
+static void
+write_exif_rational_tag_from_taglist (GstExifWriter * writer,
+    const GstTagList * taglist, const GstExifTagMatch * exiftag)
+{
+  const GValue *value;
+  gdouble num = 0;
+  gint tag_size = gst_tag_list_get_tag_size (taglist, exiftag->gst_tag);
+
+  if (tag_size != 1) {
+    GST_WARNING ("Only the first item in the taglist will be serialized");
+    return;
+  }
+
+  value = gst_tag_list_get_value_index (taglist, exiftag->gst_tag, 0);
+
+  /* do some conversion if needed */
+  switch (G_VALUE_TYPE (value)) {
+    case G_TYPE_DOUBLE:
+      num = g_value_get_double (value);
+      gst_exif_writer_write_rational_tag_from_double (writer, exiftag->exif_tag,
+          num);
+      break;
+    default:
+      if (G_VALUE_TYPE (value) == GST_TYPE_FRACTION) {
+        gst_exif_writer_write_rational_tag (writer, exiftag->exif_tag,
+            gst_value_get_fraction_numerator (value),
+            gst_value_get_fraction_denominator (value));
+      } else {
+        GST_WARNING ("Conversion from %s to rational not supported",
+            G_VALUE_TYPE_NAME (value));
+      }
+      break;
+  }
+}
+
+static void
+write_exif_integer_tag_from_taglist (GstExifWriter * writer,
+    const GstTagList * taglist, const GstExifTagMatch * exiftag)
+{
+  const GValue *value;
+  guint32 num = 0;
+  gint tag_size = gst_tag_list_get_tag_size (taglist, exiftag->gst_tag);
+
+  if (tag_size != 1) {
+    GST_WARNING ("Only the first item in the taglist will be serialized");
+    return;
+  }
+
+  value = gst_tag_list_get_value_index (taglist, exiftag->gst_tag, 0);
+
+  /* do some conversion if needed */
+  switch (G_VALUE_TYPE (value)) {
+    case G_TYPE_INT:
+      num = g_value_get_int (value);
+      break;
+    default:
+      GST_WARNING ("Conversion from %s to int not supported",
+          G_VALUE_TYPE_NAME (value));
+      break;
+  }
+
+  switch (exiftag->exif_type) {
+    case EXIF_TYPE_LONG:
+      gst_exif_writer_write_long_tag (writer, exiftag->exif_tag, num);
+      break;
+    case EXIF_TYPE_SHORT:
+      gst_exif_writer_write_short_tag (writer, exiftag->exif_tag, num);
+      break;
+    default:
+      break;
+  }
+}
+
+static void
 write_exif_tag_from_taglist (GstExifWriter * writer, const GstTagList * taglist,
     const GstExifTagMatch * exiftag)
 {
@@ -507,6 +943,16 @@ write_exif_tag_from_taglist (GstExifWriter * writer, const GstTagList * taglist,
   switch (exiftag->exif_type) {
     case EXIF_TYPE_ASCII:
       write_exif_ascii_tag_from_taglist (writer, taglist, exiftag);
+      break;
+    case EXIF_TYPE_UNDEFINED:
+      write_exif_undefined_tag_from_taglist (writer, taglist, exiftag);
+      break;
+    case EXIF_TYPE_RATIONAL:
+      write_exif_rational_tag_from_taglist (writer, taglist, exiftag);
+      break;
+    case EXIF_TYPE_LONG:
+    case EXIF_TYPE_SHORT:
+      write_exif_integer_tag_from_taglist (writer, taglist, exiftag);
       break;
     default:
       GST_WARNING ("Unhandled tag type %d", exiftag->exif_type);
@@ -689,14 +1135,88 @@ parse_exif_ascii_tag (GstExifReader * reader, const GstExifTagMatch * tag,
 }
 
 static void
-parse_exif_rational_tag (GstExifReader * exif_reader,
-    const gchar * gst_tag, guint32 count, guint32 offset, gdouble multiplier)
+parse_exif_long_tag (GstExifReader * reader, const GstExifTagMatch * tag,
+    guint32 count, guint32 offset, const guint8 * offset_as_data)
+{
+  GType tagtype;
+
+  if (count > 1) {
+    GST_WARNING ("Long tags with more than one value are not supported");
+    return;
+  }
+
+  tagtype = gst_tag_get_type (tag->gst_tag);
+  if (tagtype == G_TYPE_INT) {
+    gst_tag_list_add (reader->taglist, GST_TAG_MERGE_REPLACE, tag->gst_tag,
+        offset, NULL);
+  } else {
+    GST_WARNING ("No parsing function associated to %x(%s)", tag->exif_tag,
+        tag->gst_tag);
+  }
+}
+
+
+static void
+parse_exif_undefined_tag (GstExifReader * reader, const GstExifTagMatch * tag,
+    guint32 count, guint32 offset, const guint8 * offset_as_data)
+{
+  GType tagtype;
+  guint8 *data;
+  guint32 real_offset;
+
+  if (count > 4) {
+    if (offset < reader->base_offset) {
+      GST_WARNING ("Offset is smaller (%u) than base offset (%u)", offset,
+          reader->base_offset);
+      return;
+    }
+
+    real_offset = offset - reader->base_offset;
+    if (real_offset >= GST_BUFFER_SIZE (reader->buffer)) {
+      GST_WARNING ("Invalid offset %u for buffer of size %u, not adding tag %s",
+          real_offset, GST_BUFFER_SIZE (reader->buffer), tag->gst_tag);
+      return;
+    }
+
+    /* +1 because it could be a string without the \0 */
+    data = malloc (sizeof (guint8) * count + 1);
+    memcpy (data, GST_BUFFER_DATA (reader->buffer) + real_offset, count);
+    data[count] = 0;
+  } else {
+    data = malloc (sizeof (guint8) * count + 1);
+    memcpy (data, (guint8 *) offset_as_data, count);
+    data[count] = 0;
+  }
+
+  tagtype = gst_tag_get_type (tag->gst_tag);
+  if (tagtype == GST_TYPE_BUFFER) {
+    GstBuffer *buf = gst_buffer_new ();
+    gst_buffer_set_data (buf, data, count);
+    data = NULL;
+
+    gst_tag_list_add (reader->taglist, GST_TAG_MERGE_APPEND, tag->gst_tag,
+        buf, NULL);
+
+    gst_buffer_unref (buf);
+  } else if (tagtype == G_TYPE_STRING) {
+    gst_tag_list_add (reader->taglist, GST_TAG_MERGE_REPLACE, tag->gst_tag,
+        data, NULL);
+  } else {
+    GST_WARNING ("No parsing function associated to %x(%s)", tag->exif_tag,
+        tag->gst_tag);
+  }
+  g_free (data);
+}
+
+static gboolean
+exif_reader_read_rational_tag (GstExifReader * exif_reader,
+    guint32 count, guint32 offset, gboolean is_signed,
+    gint32 * _frac_n, gint32 * _frac_d)
 {
   GstByteReader data_reader;
   guint32 real_offset;
-  guint32 frac_n = 0;
-  guint32 frac_d = 1;
-  gdouble value;
+  gint32 frac_n = 0;
+  gint32 frac_d = 0;
 
   if (count > 1) {
     GST_WARNING ("Rationals with multiple entries are not supported");
@@ -704,43 +1224,96 @@ parse_exif_rational_tag (GstExifReader * exif_reader,
   if (offset < exif_reader->base_offset) {
     GST_WARNING ("Offset is smaller (%u) than base offset (%u)", offset,
         exif_reader->base_offset);
-    return;
+    return FALSE;
   }
 
   real_offset = offset - exif_reader->base_offset;
   if (real_offset >= GST_BUFFER_SIZE (exif_reader->buffer)) {
-    GST_WARNING ("Invalid offset %u for buffer of size %u, not adding tag %s",
-        real_offset, GST_BUFFER_SIZE (exif_reader->buffer), gst_tag);
-    return;
+    GST_WARNING ("Invalid offset %u for buffer of size %u",
+        real_offset, GST_BUFFER_SIZE (exif_reader->buffer));
+    return FALSE;
   }
 
   gst_byte_reader_init_from_buffer (&data_reader, exif_reader->buffer);
   if (!gst_byte_reader_set_pos (&data_reader, real_offset))
     goto reader_fail;
 
-  if (exif_reader->byte_order == G_LITTLE_ENDIAN) {
-    if (!gst_byte_reader_get_uint32_le (&data_reader, &frac_n) ||
-        !gst_byte_reader_get_uint32_le (&data_reader, &frac_d))
-      goto reader_fail;
+  if (!is_signed) {
+    guint32 aux_n = 0, aux_d = 0;
+    if (exif_reader->byte_order == G_LITTLE_ENDIAN) {
+      if (!gst_byte_reader_get_uint32_le (&data_reader, &aux_n) ||
+          !gst_byte_reader_get_uint32_le (&data_reader, &aux_d))
+        goto reader_fail;
+    } else {
+      if (!gst_byte_reader_get_uint32_be (&data_reader, &aux_n) ||
+          !gst_byte_reader_get_uint32_be (&data_reader, &aux_d))
+        goto reader_fail;
+    }
+    frac_n = (gint32) aux_n;
+    frac_d = (gint32) aux_d;
   } else {
-    if (!gst_byte_reader_get_uint32_be (&data_reader, &frac_n) ||
-        !gst_byte_reader_get_uint32_be (&data_reader, &frac_d))
-      goto reader_fail;
+    if (exif_reader->byte_order == G_LITTLE_ENDIAN) {
+      if (!gst_byte_reader_get_int32_le (&data_reader, &frac_n) ||
+          !gst_byte_reader_get_int32_le (&data_reader, &frac_d))
+        goto reader_fail;
+    } else {
+      if (!gst_byte_reader_get_int32_be (&data_reader, &frac_n) ||
+          !gst_byte_reader_get_int32_be (&data_reader, &frac_d))
+        goto reader_fail;
+    }
   }
 
-  GST_DEBUG ("Read fraction for tag %s: %u/%u", gst_tag, frac_n, frac_d);
+  if (_frac_n)
+    *_frac_n = frac_n;
+  if (_frac_d)
+    *_frac_d = frac_d;
 
-  gst_util_fraction_to_double (frac_n, frac_d, &value);
-
-  value *= multiplier;
-  GST_DEBUG ("Adding %s tag: %lf", gst_tag, value);
-  gst_tag_list_add (exif_reader->taglist, GST_TAG_MERGE_REPLACE, gst_tag, value,
-      NULL);
-
-  return;
+  return TRUE;
 
 reader_fail:
   GST_WARNING ("Failed to read from byte reader. (Buffer too short?)");
+  return FALSE;
+}
+
+static void
+parse_exif_rational_tag (GstExifReader * exif_reader,
+    const gchar * gst_tag, guint32 count, guint32 offset, gdouble multiplier,
+    gboolean is_signed)
+{
+  GType type;
+  gint32 frac_n = 0;
+  gint32 frac_d = 1;
+  gdouble value;
+
+  GST_DEBUG ("Reading fraction for tag %s...", gst_tag);
+  if (!exif_reader_read_rational_tag (exif_reader, count, offset, is_signed,
+          &frac_n, &frac_d))
+    return;
+  GST_DEBUG ("Read fraction for tag %s: %d/%d", gst_tag, frac_n, frac_d);
+
+  type = gst_tag_get_type (gst_tag);
+  switch (type) {
+    case G_TYPE_DOUBLE:
+      gst_util_fraction_to_double (frac_n, frac_d, &value);
+      value *= multiplier;
+      GST_DEBUG ("Adding %s tag: %lf", gst_tag, value);
+      gst_tag_list_add (exif_reader->taglist, GST_TAG_MERGE_REPLACE, gst_tag,
+          value, NULL);
+      break;
+    default:
+      if (type == GST_TYPE_FRACTION) {
+        GValue fraction = { 0 };
+
+        g_value_init (&fraction, GST_TYPE_FRACTION);
+        gst_value_set_fraction (&fraction, frac_n * multiplier, frac_d);
+        gst_tag_list_add_value (exif_reader->taglist, GST_TAG_MERGE_REPLACE,
+            gst_tag, &fraction);
+        g_value_unset (&fraction);
+      } else {
+        GST_WARNING ("Can't convert from fraction into %s", g_type_name (type));
+      }
+  }
+
 }
 
 static GstBuffer *
@@ -785,6 +1358,10 @@ write_exif_ifd (const GstTagList * taglist, gboolean byte_order,
         /* special case where we write the exif version */
         write_exif_undefined_tag (&writer, EXIF_VERSION_TAG, (guint8 *) "0230",
             4);
+      } else if (tag_map[i].exif_tag == EXIF_FLASHPIX_VERSION_TAG) {
+        /* special case where we write the flashpix version */
+        write_exif_undefined_tag (&writer, EXIF_FLASHPIX_VERSION_TAG,
+            (guint8 *) "0100", 4);
       }
 
       if (inner_tag_map) {
@@ -925,7 +1502,8 @@ parse_exif_ifd (GstExifReader * exif_reader, gint buf_offset,
 
       continue;
     }
-    if (tagdata.tag == EXIF_VERSION_TAG) {
+    if (tagdata.tag == EXIF_VERSION_TAG ||
+        tagdata.tag == EXIF_FLASHPIX_VERSION_TAG) {
       /* skip */
       continue;
     }
@@ -944,11 +1522,42 @@ parse_exif_ifd (GstExifReader * exif_reader, gint buf_offset,
         break;
       case EXIF_TYPE_RATIONAL:
         parse_exif_rational_tag (exif_reader, tag_map[map_index].gst_tag,
-            tagdata.count, tagdata.offset, 1);
+            tagdata.count, tagdata.offset, 1, FALSE);
+        break;
+      case EXIF_TYPE_UNDEFINED:
+        parse_exif_undefined_tag (exif_reader, &tag_map[map_index],
+            tagdata.count, tagdata.offset, tagdata.offset_as_data);
+      case EXIF_TYPE_LONG:
+        parse_exif_long_tag (exif_reader, &tag_map[map_index],
+            tagdata.count, tagdata.offset, tagdata.offset_as_data);
         break;
       default:
         GST_WARNING ("Unhandled tag type: %u", tagdata.tag_type);
         break;
+    }
+  }
+
+  /* check if the pending tags have something that can still be added */
+  {
+    GSList *walker;
+    GstExifTagData *data;
+
+    for (walker = exif_reader->pending_tags; walker;
+        walker = g_slist_next (walker)) {
+      data = (GstExifTagData *) walker->data;
+      switch (data->tag) {
+        case EXIF_TAG_XRESOLUTION:
+          parse_exif_rational_tag (exif_reader, GST_TAG_IMAGE_HORIZONTAL_PPI,
+              data->count, data->offset, 1, FALSE);
+          break;
+        case EXIF_TAG_YRESOLUTION:
+          parse_exif_rational_tag (exif_reader, GST_TAG_IMAGE_VERTICAL_PPI,
+              data->count, data->offset, 1, FALSE);
+          break;
+        default:
+          /* NOP */
+          break;
+      }
     }
   }
 
@@ -1060,12 +1669,11 @@ gst_tag_list_from_exif_buffer (const GstBuffer * buffer, gint byte_order,
   if (!parse_exif_ifd (&reader, 0, tag_map_ifd0))
     goto read_error;
 
-  return reader.taglist;
+  return gst_exif_reader_reset (&reader, TRUE);
 
 read_error:
   {
-    if (reader.taglist)
-      gst_tag_list_free (reader.taglist);
+    gst_exif_reader_reset (&reader, FALSE);
     GST_WARNING ("Failed to parse the exif buffer");
     return NULL;
   }
@@ -1139,63 +1747,22 @@ byte_reader_fail:
 }
 
 /* special serialization functions */
-static void
-serialize_orientation (GstExifWriter * writer, const GstTagList * taglist,
-    const GstExifTagMatch * exiftag)
-{
-  gchar *str = NULL;
-  gint exif_value;
-
-  if (!gst_tag_list_get_string_index (taglist, GST_TAG_IMAGE_ORIENTATION, 0,
-          &str)) {
-    GST_WARNING ("No image orientation tag present in taglist");
-    return;
-  }
-
-  exif_value = gst_tag_image_orientation_to_exif_value (str);
-  if (exif_value == -1) {
-    GST_WARNING ("Invalid image orientation value: %s", str);
-    g_free (str);
-    return;
-  }
-  g_free (str);
-
-  gst_exif_writer_write_short_tag (writer, exiftag->exif_tag, exif_value);
-}
-
-static gint
-deserialize_orientation (GstExifReader * exif_reader,
-    GstByteReader * reader, const GstExifTagMatch * exiftag,
-    GstExifTagData * tagdata)
-{
-  const gchar *str = NULL;
-  gint value;
-
-  GST_LOG ("Starting to parse %s tag in exif 0x%x", exiftag->gst_tag,
-      exiftag->exif_tag);
-
-  /* validate tag */
-  if (tagdata->tag_type != EXIF_TYPE_SHORT || tagdata->count != 1) {
-    GST_WARNING ("Orientation tag has unexpected type/count");
-    return 0;
-  }
-
-  if (exif_reader->byte_order == G_LITTLE_ENDIAN) {
-    value = GST_READ_UINT16_LE (tagdata->offset_as_data);
-  } else {
-    value = GST_READ_UINT16_BE (tagdata->offset_as_data);
-  }
-
-  str = gst_tag_image_orientation_from_exif_value (value);
-  if (str == NULL) {
-    GST_WARNING ("Invalid value for exif orientation tag: %d", value);
-    return 0;
-  }
-  gst_tag_list_add (exif_reader->taglist, GST_TAG_MERGE_REPLACE,
-      exiftag->gst_tag, str, NULL);
-
-  return 0;
-}
+EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (contrast,
+    capturing_contrast);
+EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (exposure_mode,
+    capturing_exposure_mode);
+EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (exposure_program,
+    capturing_exposure_program);
+EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (gain_control,
+    capturing_gain_adjustment);
+EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (orientation,
+    image_orientation);
+EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (saturation,
+    capturing_saturation);
+EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (scene_capture_type,
+    capturing_scene_capture_type);
+EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (white_balance,
+    capturing_white_balance);
 
 static void
 serialize_geo_coordinate (GstExifWriter * writer, const GstTagList * taglist,
@@ -1208,7 +1775,7 @@ serialize_geo_coordinate (GstExifWriter * writer, const GstTagList * taglist,
   gint seconds;
   guint32 offset;
 
-  latitude = exiftag->exif_tag == 0x2;  /* exif tag for latitude */
+  latitude = exiftag->exif_tag == EXIF_TAG_GPS_LATITUDE;        /* exif tag for latitude */
   if (!gst_tag_list_get_double (taglist, exiftag->gst_tag, &value)) {
     GST_WARNING ("Failed to get double from tag list for tag: %s",
         exiftag->gst_tag);
@@ -1458,7 +2025,7 @@ deserialize_geo_direction (GstExifReader * exif_reader,
   }
 
   parse_exif_rational_tag (exif_reader,
-      exiftag->gst_tag, next_tagdata.count, next_tagdata.offset, 1);
+      exiftag->gst_tag, next_tagdata.count, next_tagdata.offset, 1, FALSE);
 
   return ret;
 
@@ -1556,7 +2123,8 @@ deserialize_geo_elevation (GstExifReader * exif_reader,
   }
 
   parse_exif_rational_tag (exif_reader,
-      exiftag->gst_tag, next_tagdata.count, next_tagdata.offset, multiplier);
+      exiftag->gst_tag, next_tagdata.count, next_tagdata.offset, multiplier,
+      FALSE);
 
   return ret;
 
@@ -1655,13 +2223,301 @@ deserialize_speed (GstExifReader * exif_reader,
   }
 
   parse_exif_rational_tag (exif_reader,
-      exiftag->gst_tag, next_tagdata.count, next_tagdata.offset, multiplier);
+      exiftag->gst_tag, next_tagdata.count, next_tagdata.offset, multiplier,
+      FALSE);
 
   return ret;
 
 reader_fail:
   GST_WARNING ("Failed to read fields from buffer (too short?)");
   return ret;
+}
+
+static void
+serialize_shutter_speed (GstExifWriter * writer, const GstTagList * taglist,
+    const GstExifTagMatch * exiftag)
+{
+  const GValue *value = NULL;
+  gdouble num;
+
+  value = gst_tag_list_get_value_index (taglist, exiftag->gst_tag, 0);
+  if (!value) {
+    GST_WARNING ("Failed to get shutter speed from from tag list");
+    return;
+  }
+  gst_util_fraction_to_double (gst_value_get_fraction_numerator (value),
+      gst_value_get_fraction_denominator (value), &num);
+
+#ifdef HAVE_LOG2
+  num = -log2 (num);
+#else
+  num = -log (num) / M_LN2;
+#endif
+
+  /* now the value */
+  gst_exif_writer_write_signed_rational_tag_from_double (writer,
+      exiftag->exif_tag, num);
+}
+
+static gint
+deserialize_shutter_speed (GstExifReader * exif_reader,
+    GstByteReader * reader, const GstExifTagMatch * exiftag,
+    GstExifTagData * tagdata)
+{
+  gint32 frac_n, frac_d;
+  gdouble d;
+  GValue value = { 0 };
+
+  GST_LOG ("Starting to parse %s tag in exif 0x%x", exiftag->gst_tag,
+      exiftag->exif_tag);
+
+  if (!exif_reader_read_rational_tag (exif_reader, tagdata->count,
+          tagdata->offset, TRUE, &frac_n, &frac_d))
+    return 0;
+
+  gst_util_fraction_to_double (frac_n, frac_d, &d);
+  d = pow (2, -d);
+  gst_util_double_to_fraction (d, &frac_n, &frac_d);
+
+  g_value_init (&value, GST_TYPE_FRACTION);
+  gst_value_set_fraction (&value, frac_n, frac_d);
+  gst_tag_list_add_value (exif_reader->taglist, GST_TAG_MERGE_KEEP,
+      exiftag->gst_tag, &value);
+  g_value_unset (&value);
+
+  return 0;
+}
+
+static void
+serialize_aperture_value (GstExifWriter * writer, const GstTagList * taglist,
+    const GstExifTagMatch * exiftag)
+{
+  gdouble num;
+
+  if (!gst_tag_list_get_double_index (taglist, exiftag->gst_tag, 0, &num)) {
+    GST_WARNING ("Failed to get focal ratio from from tag list");
+    return;
+  }
+#ifdef HAVE_LOG2
+  num = 2 * log2 (num);
+#else
+  num = 2 * (log (num) / M_LN2);
+#endif
+
+  /* now the value */
+  gst_exif_writer_write_rational_tag_from_double (writer,
+      exiftag->exif_tag, num);
+}
+
+static gint
+deserialize_aperture_value (GstExifReader * exif_reader,
+    GstByteReader * reader, const GstExifTagMatch * exiftag,
+    GstExifTagData * tagdata)
+{
+  gint32 frac_n, frac_d;
+  gdouble d;
+
+  GST_LOG ("Starting to parse %s tag in exif 0x%x", exiftag->gst_tag,
+      exiftag->exif_tag);
+
+  if (!exif_reader_read_rational_tag (exif_reader, tagdata->count,
+          tagdata->offset, FALSE, &frac_n, &frac_d))
+    return 0;
+
+  gst_util_fraction_to_double (frac_n, frac_d, &d);
+  d = pow (2, d / 2);
+
+  gst_tag_list_add (exif_reader->taglist, GST_TAG_MERGE_KEEP,
+      exiftag->gst_tag, d, NULL);
+
+  return 0;
+}
+
+static void
+serialize_sensitivity_type (GstExifWriter * writer, const GstTagList * taglist,
+    const GstExifTagMatch * exiftag)
+{
+  /* we only support ISOSpeed as the sensitivity type (3) */
+  gst_exif_writer_write_short_tag (writer, exiftag->exif_tag, 3);
+}
+
+static gint
+deserialize_sensitivity_type (GstExifReader * exif_reader,
+    GstByteReader * reader, const GstExifTagMatch * exiftag,
+    GstExifTagData * tagdata)
+{
+  GstExifTagData *sensitivity = NULL;
+  guint16 type_data;
+
+  if (exif_reader->byte_order == G_LITTLE_ENDIAN) {
+    type_data = GST_READ_UINT16_LE (tagdata->offset_as_data);
+  } else {
+    type_data = GST_READ_UINT16_BE (tagdata->offset_as_data);
+  }
+
+  if (type_data != 3) {
+    GST_WARNING ("We only support SensitivityType=3");
+    return 0;
+  }
+
+  /* check the pending tags for the PhotographicSensitivity tag */
+  sensitivity =
+      gst_exif_reader_get_pending_tag (exif_reader,
+      EXIF_TAG_PHOTOGRAPHIC_SENSITIVITY);
+  if (sensitivity == NULL) {
+    GST_WARNING ("PhotographicSensitivity tag not found");
+    return 0;
+  }
+
+  GST_LOG ("Starting to parse %s tag in exif 0x%x", exiftag->gst_tag,
+      exiftag->exif_tag);
+
+  gst_tag_list_add (exif_reader->taglist, GST_TAG_MERGE_KEEP,
+      GST_TAG_CAPTURING_ISO_SPEED, sensitivity->offset_as_data, NULL);
+
+  return 0;
+}
+
+static void
+serialize_flash (GstExifWriter * writer, const GstTagList * taglist,
+    const GstExifTagMatch * exiftag)
+{
+  gboolean flash_fired;
+  const gchar *flash_mode;
+  guint16 tagvalue = 0;
+
+  if (!gst_tag_list_get_boolean_index (taglist, exiftag->gst_tag, 0,
+          &flash_fired)) {
+    GST_WARNING ("Failed to get flash fired from from tag list");
+    return;
+  }
+
+  if (flash_fired)
+    tagvalue = 1;
+
+  if (gst_tag_list_peek_string_index (taglist, GST_TAG_CAPTURING_FLASH_MODE, 0,
+          &flash_mode)) {
+    guint16 mode = 0;
+    if (strcmp (flash_mode, "auto") == 0) {
+      mode = 3;
+    } else if (strcmp (flash_mode, "always") == 0) {
+      mode = 1;
+    } else if (strcmp (flash_mode, "never") == 0) {
+      mode = 2;
+    }
+
+    tagvalue = tagvalue | (mode << 3);
+  } else {
+    GST_DEBUG ("flash-mode not available");
+  }
+
+  gst_exif_writer_write_short_tag (writer, exiftag->exif_tag, tagvalue);
+}
+
+static gint
+deserialize_flash (GstExifReader * exif_reader,
+    GstByteReader * reader, const GstExifTagMatch * exiftag,
+    GstExifTagData * tagdata)
+{
+  guint16 value = 0;
+  guint mode = 0;
+  const gchar *mode_str = NULL;
+
+  GST_LOG ("Starting to parse %s tag in exif 0x%x", exiftag->gst_tag,
+      exiftag->exif_tag);
+
+  if (exif_reader->byte_order == G_LITTLE_ENDIAN) {
+    value = GST_READ_UINT16_LE (tagdata->offset_as_data);
+  } else {
+    value = GST_READ_UINT16_BE (tagdata->offset_as_data);
+  }
+
+  /* check flash fired */
+  if (value & 0x1) {
+    gst_tag_list_add (exif_reader->taglist, GST_TAG_MERGE_REPLACE,
+        GST_TAG_CAPTURING_FLASH_FIRED, TRUE, NULL);
+  } else {
+    gst_tag_list_add (exif_reader->taglist, GST_TAG_MERGE_REPLACE,
+        GST_TAG_CAPTURING_FLASH_FIRED, FALSE, NULL);
+  }
+
+  mode = (value >> 3) & 0x3;
+  if (mode == 1) {
+    mode_str = "always";
+  } else if (mode == 2) {
+    mode_str = "never";
+  } else if (mode == 3) {
+    mode_str = "auto";
+  }
+
+  if (mode_str)
+    gst_tag_list_add (exif_reader->taglist, GST_TAG_MERGE_REPLACE,
+        GST_TAG_CAPTURING_FLASH_MODE, mode_str, NULL);
+
+  return 0;
+}
+
+static gint
+deserialize_resolution (GstExifReader * exif_reader,
+    GstByteReader * reader, const GstExifTagMatch * exiftag,
+    GstExifTagData * tagdata)
+{
+  GstExifTagData *xres = NULL;
+  GstExifTagData *yres = NULL;
+  guint16 unit;
+  gdouble multiplier;
+
+  if (exif_reader->byte_order == G_LITTLE_ENDIAN) {
+    unit = GST_READ_UINT16_LE (tagdata->offset_as_data);
+  } else {
+    unit = GST_READ_UINT16_BE (tagdata->offset_as_data);
+  }
+
+  if (unit != 2 && unit != 3) {
+    GST_WARNING ("Invalid resolution unit, ignoring PPI tags");
+    return 0;
+  }
+
+  xres = gst_exif_reader_get_pending_tag (exif_reader, EXIF_TAG_XRESOLUTION);
+  yres = gst_exif_reader_get_pending_tag (exif_reader, EXIF_TAG_YRESOLUTION);
+
+  switch (unit) {
+    case 2:                    /* inch */
+      multiplier = 1;
+      break;
+    case 3:                    /* cm */
+      multiplier = 1 / 2.54;
+      break;
+    default:
+      multiplier = 1;
+      g_assert_not_reached ();
+      break;
+  }
+
+  if (xres) {
+    parse_exif_rational_tag (exif_reader, GST_TAG_IMAGE_HORIZONTAL_PPI,
+        xres->count, xres->offset, multiplier, FALSE);
+  }
+  if (yres) {
+    parse_exif_rational_tag (exif_reader, GST_TAG_IMAGE_VERTICAL_PPI,
+        yres->count, yres->offset, multiplier, FALSE);
+  }
+
+  return 0;
+}
+
+static gint
+deserialize_add_to_pending_tags (GstExifReader * exif_reader,
+    GstByteReader * reader, const GstExifTagMatch * exiftag,
+    GstExifTagData * tagdata)
+{
+  GST_LOG ("Adding %s tag in exif 0x%x to pending tags", exiftag->gst_tag,
+      exiftag->exif_tag);
+
+  /* add it to the pending tags, as we can only parse it when we find the
+   * SensitivityType tag */
+  gst_exif_reader_add_pending_tag (exif_reader, tagdata);
+  return 0;
 }
 
 #undef EXIF_SERIALIZATION_FUNC

@@ -43,7 +43,7 @@
 #define GST_PACKAGE_NAME "GStreamer Ugly Plug-ins source release"
 
 /* package origin */
-#define GST_PACKAGE_ORIGIN "OSSBuild"
+#define GST_PACKAGE_ORIGIN "http://code.google.com/p/ossbuild/"
 
 /* Define to enable a52dec (used by a52dec). */
 #undef HAVE_A52DEC

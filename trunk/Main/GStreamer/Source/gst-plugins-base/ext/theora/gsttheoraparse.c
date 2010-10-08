@@ -307,8 +307,6 @@ theora_parse_set_streamheader (GstTheoraParse * parse)
     if (buf == NULL)
       continue;
 
-    gst_buffer_set_caps (buf, GST_PAD_CAPS (parse->srcpad));
-
     packet.packet = GST_BUFFER_DATA (buf);
     packet.bytes = GST_BUFFER_SIZE (buf);
     packet.granulepos = GST_BUFFER_OFFSET_END (buf);
@@ -368,8 +366,12 @@ theora_parse_push_headers (GstTheoraParse * parse)
   for (i = 0; i < 3; i++) {
     GstBuffer *buf;
 
-    if ((buf = parse->streamheader[i]))
-      gst_pad_push (parse->srcpad, gst_buffer_ref (buf));
+    if ((buf = parse->streamheader[i])) {
+      buf = gst_buffer_make_metadata_writable (buf);
+      gst_buffer_set_caps (buf, GST_PAD_CAPS (parse->srcpad));
+      gst_pad_push (parse->srcpad, buf);
+      parse->streamheader[i] = NULL;
+    }
   }
 }
 
@@ -583,8 +585,7 @@ theora_parse_drain_queue (GstTheoraParse * parse, gint64 granulepos)
     GST_WARNING ("jumped %" G_GINT64_FORMAT
         " frames backwards! not sure what to do here",
         parse->prev_frame - prev_frame);
-    ret = GST_FLOW_ERROR;
-    goto done;
+    parse->prev_frame = prev_frame;
   } else if (prev_frame > parse->prev_frame) {
     GST_INFO ("discontinuity detected (%" G_GINT64_FORMAT
         " frames)", prev_frame - parse->prev_frame);

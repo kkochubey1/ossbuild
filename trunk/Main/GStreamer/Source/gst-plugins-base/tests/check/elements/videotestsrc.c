@@ -41,7 +41,7 @@ static GstPad *mysinkpad;
 
 #define CAPS_TEMPLATE_STRING            \
     "video/x-raw-yuv, "                 \
-    "format = (fourcc) Y422, "          \
+    "format = (fourcc) UYVY, "          \
     "width = (int) [ 1,  MAX ], "       \
     "height = (int) [ 1,  MAX ], "      \
     "framerate = (fraction) [ 0/1, MAX ]"
@@ -70,9 +70,7 @@ cleanup_videotestsrc (GstElement * videotestsrc)
 {
   GST_DEBUG ("cleanup_videotestsrc");
 
-  g_list_foreach (buffers, (GFunc) gst_mini_object_unref, NULL);
-  g_list_free (buffers);
-  buffers = NULL;
+  gst_check_drop_buffers ();
 
   gst_pad_set_active (mysinkpad, FALSE);
   gst_check_teardown_sink_pad (videotestsrc);
@@ -93,9 +91,10 @@ GST_START_TEST (test_all_patterns)
   fail_unless (G_IS_PARAM_SPEC_ENUM (property));
   values = G_ENUM_CLASS (g_type_class_ref (property->value_type))->values;
 
-
   while (values[j].value_name) {
     GST_DEBUG_OBJECT (videotestsrc, "testing pattern %s", values[j].value_name);
+
+    g_object_set (videotestsrc, "pattern", j, NULL);
 
     fail_unless (gst_element_set_state (videotestsrc,
             GST_STATE_PLAYING) == GST_STATE_CHANGE_SUCCESS,
@@ -108,12 +107,9 @@ GST_START_TEST (test_all_patterns)
     }
     g_mutex_unlock (check_mutex);
 
-
     gst_element_set_state (videotestsrc, GST_STATE_READY);
 
-    g_list_foreach (buffers, (GFunc) gst_mini_object_unref, NULL);
-    g_list_free (buffers);
-    buffers = NULL;
+    gst_check_drop_buffers ();
     ++j;
   }
 

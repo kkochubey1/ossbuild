@@ -44,12 +44,6 @@ GST_DEBUG_CATEGORY_STATIC (gnlsource);
 
 GST_BOILERPLATE (GnlSource, gnl_source, GnlObject, GNL_TYPE_OBJECT);
 
-static GstElementDetails gnl_source_details = GST_ELEMENT_DETAILS
-    ("GNonLin Source",
-    "Filter/Editor",
-    "Manages source elements",
-    "Wim Taymans <wim.taymans@gmail.com>, Edward Hervey <bilboed@bilboed.com>");
-
 struct _GnlSourcePrivate
 {
   gboolean dispose_has_run;
@@ -62,7 +56,9 @@ struct _GnlSourcePrivate
   gulong padaddedid;            /* signal handler for element pad-added signal */
 
   gboolean pendingblock;        /* We have a pending pad_block */
+  gboolean areblocked;          /* We already got blocked */
   GstPad *ghostedpad;           /* Pad (to be) ghosted */
+  GstPad *staticpad;            /* The only pad. We keep an extra ref */
 };
 
 static gboolean gnl_source_prepare (GnlObject * object);
@@ -72,7 +68,6 @@ static gboolean gnl_source_add_element (GstBin * bin, GstElement * element);
 static gboolean gnl_source_remove_element (GstBin * bin, GstElement * element);
 
 static void gnl_source_dispose (GObject * object);
-static void gnl_source_finalize (GObject * object);
 
 static gboolean gnl_source_send_event (GstElement * element, GstEvent * event);
 
@@ -89,7 +84,10 @@ gnl_source_base_init (gpointer g_class)
 {
   GstElementClass *gstclass = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (gstclass, &gnl_source_details);
+  gst_element_class_set_details_simple (gstclass, "GNonLin Source",
+      "Filter/Editor",
+      "Manages source elements",
+      "Wim Taymans <wim.taymans@gmail.com>, Edward Hervey <bilboed@bilboed.com>");
 }
 
 static void
@@ -104,6 +102,8 @@ gnl_source_class_init (GnlSourceClass * klass)
   gstelement_class = (GstElementClass *) klass;
   gstbin_class = (GstBinClass *) klass;
   gnlobject_class = (GnlObjectClass *) klass;
+
+  g_type_class_add_private (klass, sizeof (GnlSourcePrivate));
 
   parent_class = g_type_class_ref (GNL_TYPE_OBJECT);
 
@@ -122,7 +122,6 @@ gnl_source_class_init (GnlSourceClass * klass)
   gstelement_class->change_state = GST_DEBUG_FUNCPTR (gnl_source_change_state);
 
   gobject_class->dispose = GST_DEBUG_FUNCPTR (gnl_source_dispose);
-  gobject_class->finalize = GST_DEBUG_FUNCPTR (gnl_source_finalize);
 
   gst_element_class_add_pad_template (gstelement_class,
       gst_static_pad_template_get (&gnl_source_src_template));
@@ -135,13 +134,11 @@ gnl_source_init (GnlSource * source, GnlSourceClass * klass G_GNUC_UNUSED)
 {
   GST_OBJECT_FLAG_SET (source, GNL_OBJECT_SOURCE);
   source->element = NULL;
-  source->priv = g_new0 (GnlSourcePrivate, 1);
+  source->priv =
+      G_TYPE_INSTANCE_GET_PRIVATE (source, GNL_TYPE_SOURCE, GnlSourcePrivate);
 
-  if (g_object_class_find_property (G_OBJECT_CLASS (parent_class),
-          "async-handling")) {
-    GST_DEBUG_OBJECT (source, "Setting GstBin async-handling to TRUE");
-    g_object_set (G_OBJECT (source), "async-handling", TRUE, NULL);
-  }
+  GST_DEBUG_OBJECT (source, "Setting GstBin async-handling to TRUE");
+  g_object_set (G_OBJECT (source), "async-handling", TRUE, NULL);
 }
 
 static void
@@ -167,19 +164,12 @@ gnl_source_dispose (GObject * object)
     gnl_object_remove_ghost_pad ((GnlObject *) object, source->priv->ghostpad);
   source->priv->ghostpad = NULL;
 
+  if (source->priv->staticpad) {
+    gst_object_unref (source->priv->staticpad);
+    source->priv->staticpad = NULL;
+  }
+
   G_OBJECT_CLASS (parent_class)->dispose (object);
-}
-
-static void
-gnl_source_finalize (GObject * object)
-{
-  GnlSource *source = (GnlSource *) object;
-
-  GST_DEBUG_OBJECT (object, "finalize");
-
-  g_free (source->priv);
-
-  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static gboolean
@@ -256,6 +246,7 @@ element_pad_removed_cb (GstElement * element G_GNUC_UNUSED, GstPad * pad,
     if (source->priv->ghostpad) {
       GST_DEBUG_OBJECT (source, "Clearing up ghostpad");
 
+      source->priv->areblocked = FALSE;
       gst_pad_set_blocked_async (pad, FALSE,
           (GstPadBlockCallback) pad_blocked_cb, source);
 
@@ -336,6 +327,7 @@ ghost_seek_pad (GnlSource * source)
   }
 
   GST_DEBUG_OBJECT (source, "about to unblock %s:%s", GST_DEBUG_PAD_NAME (pad));
+  source->priv->areblocked = FALSE;
   gst_pad_set_blocked_async (pad, FALSE,
       (GstPadBlockCallback) pad_blocked_cb, source);
   gst_element_no_more_pads (GST_ELEMENT (source));
@@ -352,9 +344,9 @@ pad_blocked_cb (GstPad * pad, gboolean blocked, GnlSource * source)
   GST_DEBUG_OBJECT (source, "blocked:%d pad:%s:%s",
       blocked, GST_DEBUG_PAD_NAME (pad));
 
-  if (!(source->priv->ghostpad)) {
-    if (blocked)
-      g_thread_create ((GThreadFunc) ghost_seek_pad, source, FALSE, NULL);
+  if (blocked && !(source->priv->ghostpad) && !(source->priv->areblocked)) {
+    source->priv->areblocked = TRUE;
+    g_thread_create ((GThreadFunc) ghost_seek_pad, source, FALSE, NULL);
   }
 }
 
@@ -403,7 +395,7 @@ gnl_source_control_element_func (GnlSource * source, GstElement * element)
   gst_object_ref (element);
 
   if (get_valid_src_pad (source, source->element, &pad)) {
-    gst_object_unref (pad);
+    source->priv->staticpad = pad;
     GST_DEBUG_OBJECT (source,
         "There is a valid source pad, we consider the object as NOT having dynamic pads");
     source->priv->dynamicpads = FALSE;
@@ -541,9 +533,12 @@ gnl_source_change_state (GstElement * element, GstStateChange transition)
 
         /* Do an async block on valid source pad */
 
-        if (!(get_valid_src_pad (source, source->element, &pad))) {
-          GST_WARNING_OBJECT (source, "Couldn't find a valid source pad");
+        if (!source->priv->staticpad
+            && !(get_valid_src_pad (source, source->element, &pad))) {
+          GST_DEBUG_OBJECT (source, "Couldn't find a valid source pad");
         } else {
+          if (source->priv->staticpad)
+            pad = gst_object_ref (source->priv->staticpad);
           GST_LOG_OBJECT (source, "Trying to async block source pad %s:%s",
               GST_DEBUG_PAD_NAME (pad));
           source->priv->ghostedpad = pad;
@@ -580,6 +575,7 @@ gnl_source_change_state (GstElement * element, GstStateChange transition)
             source->priv->ghostpad);
         source->priv->ghostpad = NULL;
         source->priv->ghostedpad = NULL;
+        source->priv->areblocked = FALSE;
         source->priv->pendingblock = FALSE;
       }
     default:

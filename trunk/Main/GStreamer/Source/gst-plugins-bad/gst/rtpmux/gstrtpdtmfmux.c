@@ -33,6 +33,10 @@
  * stream. It does exactly what it's parent (#rtpmux) does, except
  * that it prevent buffers coming over a regular sink_%%d pad from going through
  * for the duration of buffers that came in a priority_sink_%%d pad.
+ *
+ * This is especially useful if a discontinuous source like dtmfsrc or
+ * rtpdtmfsrc are connected to the priority sink pads. This way, the generated
+ * DTMF signal can replace the recorded audio while the tone is being sent.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -47,19 +51,11 @@
 GST_DEBUG_CATEGORY_STATIC (gst_rtp_dtmf_mux_debug);
 #define GST_CAT_DEFAULT gst_rtp_dtmf_mux_debug
 
-enum
-{
-  LAST_SIGNAL
-};
-
-
 static GstStaticPadTemplate priority_sink_factory =
 GST_STATIC_PAD_TEMPLATE ("priority_sink_%d",
     GST_PAD_SINK,
     GST_PAD_REQUEST,
     GST_STATIC_CAPS ("application/x-rtp"));
-
-// static guint gst_rtpdtmfmux_signals[LAST_SIGNAL] = { 0 };
 
 static GstPad *gst_rtp_dtmf_mux_request_new_pad (GstElement * element,
     GstPadTemplate * templ, const gchar * name);
@@ -93,11 +89,9 @@ gst_rtp_dtmf_mux_base_init (gpointer g_class)
 static void
 gst_rtp_dtmf_mux_class_init (GstRTPDTMFMuxClass * klass)
 {
-  GObjectClass *gobject_class;
   GstElementClass *gstelement_class;
   GstRTPMuxClass *gstrtpmux_class;
 
-  gobject_class = (GObjectClass *) klass;
   gstelement_class = (GstElementClass *) klass;
   gstrtpmux_class = (GstRTPMuxClass *) klass;
 

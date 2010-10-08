@@ -1,9 +1,3 @@
-if USE_ALSA
-ALSASPDIF_DIR = alsaspdif
-else
-ALSASPDIF_DIR =
-endif
-
 if USE_ASSRENDER
 ASSRENDER_DIR = assrender
 else
@@ -202,12 +196,6 @@ else
 MPEG2ENC_DIR=
 endif
 
-if USE_METADATA
-METADATA_DIR=metadata
-else
-METADATA_DIR=
-endif
-
 if USE_MIMIC
 MIMIC_DIR=mimic
 else
@@ -254,6 +242,12 @@ if USE_OFA
 OFA_DIR=ofa
 else
 OFA_DIR=
+endif
+
+if USE_OPENCV
+OPENCV_DIR=opencv
+else
+OPENCV_DIR=
 endif
 
 if USE_RSVG
@@ -380,7 +374,6 @@ endif
 
 
 SUBDIRS=\
-	$(ALSASPDIF_DIR) \
 	$(ASSRENDER_DIR) \
 	$(AMRWB_DIR) \
 	$(APEXSINK_DIR) \
@@ -415,7 +408,6 @@ SUBDIRS=\
 	$(LIBMMS_DIR) \
 	$(MODPLUG_DIR) \
 	$(MPEG2ENC_DIR) \
-	$(METADATA_DIR) \
 	$(MIMIC_DIR) \
 	$(MPLEX_DIR) \
 	$(MUSEPACK_DIR) \
@@ -424,6 +416,7 @@ SUBDIRS=\
 	$(NAS_DIR) \
 	$(NEON_DIR) \
 	$(OFA_DIR) \
+	$(OPENCV_DIR) \
 	$(RSVG_DIR) \
 	$(SCHRO_DIR) \
 	$(SDL_DIR) \
@@ -444,7 +437,6 @@ SUBDIRS=\
 	$(RTMP_DIR)
 
 DIST_SUBDIRS = \
-	alsaspdif \
 	amrwbenc \
 	assrender \
 	apexsink \
@@ -469,7 +461,6 @@ DIST_SUBDIRS = \
 	dts \
 	divx \
 	modplug \
-	metadata \
 	mimic \
 	mpeg2enc \
 	mplex \
@@ -479,6 +470,7 @@ DIST_SUBDIRS = \
 	nas \
 	neon \
 	ofa \
+	opencv \
 	rsvg \
 	resindvd \
 	schroedinger \

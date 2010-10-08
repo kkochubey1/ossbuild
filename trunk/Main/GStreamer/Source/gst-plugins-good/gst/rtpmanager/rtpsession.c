@@ -47,7 +47,7 @@ enum
 
 #define DEFAULT_INTERNAL_SOURCE      NULL
 #define DEFAULT_BANDWIDTH            RTP_STATS_BANDWIDTH
-#define DEFAULT_RTCP_FRACTION        RTP_STATS_RTCP_BANDWIDTH
+#define DEFAULT_RTCP_FRACTION        (RTP_STATS_RTCP_FRACTION * RTP_STATS_BANDWIDTH)
 #define DEFAULT_RTCP_RR_BANDWIDTH    -1
 #define DEFAULT_RTCP_RS_BANDWIDTH    -1
 #define DEFAULT_RTCP_MTU             1400
@@ -80,7 +80,7 @@ enum
   if ((avg) == 0)                       \
    (avg) = (val) << 4;                  \
   else                                  \
-   (avg) = ((val) + (15 * (avg))) >> 4;
+   (avg) = ((val) + (15 * (avg)));
 
 /* The number RTCP intervals after which to timeout entries in the
  * collision table
@@ -250,13 +250,13 @@ rtp_session_class_init (RTPSessionClass * klass)
 
   g_object_class_install_property (gobject_class, PROP_BANDWIDTH,
       g_param_spec_double ("bandwidth", "Bandwidth",
-          "The bandwidth of the session",
+          "The bandwidth of the session (0 for auto-discover)",
           0.0, G_MAXDOUBLE, DEFAULT_BANDWIDTH,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class, PROP_RTCP_FRACTION,
       g_param_spec_double ("rtcp-fraction", "RTCP Fraction",
-          "The fraction of the bandwidth used for RTCP",
+          "The fraction of the bandwidth used for RTCP (or as a real fraction of the RTP bandwidth if < 1)",
           0.0, G_MAXDOUBLE, DEFAULT_RTCP_FRACTION,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
@@ -1096,6 +1096,25 @@ check_collision (RTPSession * sess, RTPSource * source,
      * Maybe should be done in upper layer, only the SDES can tell us
      * if its a collision or a loop
      */
+
+    /* If the source has been inactive for some time, we assume that it has
+     * simply changed its transport source address. Hence, there is no true
+     * third-party collision - only a simulated one. */
+    if (arrival->current_time > source->last_activity) {
+      GstClockTime inactivity_period =
+          arrival->current_time - source->last_activity;
+      if (inactivity_period > 1 * GST_SECOND) {
+        /* Use new network address */
+        if (rtp) {
+          g_assert (source->have_rtp_from);
+          rtp_source_set_rtp_from (source, &arrival->address);
+        } else {
+          g_assert (source->have_rtcp_from);
+          rtp_source_set_rtcp_from (source, &arrival->address);
+        }
+        return FALSE;
+      }
+    }
   } else {
     /* This is sending with our ssrc, is it an address we already know */
 
@@ -1385,6 +1404,7 @@ rtp_session_get_source_by_cname (RTPSession * sess, const gchar * cname)
   return result;
 }
 
+/* should be called with the SESSION lock */
 static guint32
 rtp_session_create_new_ssrc (RTPSession * sess)
 {
@@ -1469,6 +1489,7 @@ update_arrival_stats (RTPSession * sess, RTPArrivalStats * arrival,
  * @sess: and #RTPSession
  * @buffer: an RTP buffer
  * @current_time: the current system time
+ * @running_time: the running_time of @buffer
  *
  * Process an RTP buffer in the session manager. This function takes ownership
  * of @buffer.
@@ -1487,6 +1508,7 @@ rtp_session_process_rtp (RTPSession * sess, GstBuffer * buffer,
   RTPArrivalStats arrival;
   guint32 csrcs[16];
   guint8 i, count;
+  guint64 oldrate;
 
   g_return_val_if_fail (RTP_IS_SESSION (sess), GST_FLOW_ERROR);
   g_return_val_if_fail (GST_IS_BUFFER (buffer), GST_FLOW_ERROR);
@@ -1511,6 +1533,7 @@ rtp_session_process_rtp (RTPSession * sess, GstBuffer * buffer,
 
   prevsender = RTP_SOURCE_IS_SENDER (source);
   prevactive = RTP_SOURCE_IS_ACTIVE (source);
+  oldrate = source->bitrate;
 
   /* copy available csrc for later */
   count = gst_rtp_buffer_get_csrc_count (buffer);
@@ -1536,6 +1559,8 @@ rtp_session_process_rtp (RTPSession * sess, GstBuffer * buffer,
     GST_DEBUG ("source: %08x became sender, %d sender sources", ssrc,
         sess->stats.sender_sources);
   }
+  if (oldrate != source->bitrate)
+    sess->recalc_bandwidth = TRUE;
 
   if (created)
     on_new_ssrc (sess, source);
@@ -2021,6 +2046,7 @@ rtp_session_send_rtp (RTPSession * sess, gpointer data, gboolean is_list,
   RTPSource *source;
   gboolean prevsender;
   gboolean valid_packet;
+  guint64 oldrate;
 
   g_return_val_if_fail (RTP_IS_SESSION (sess), GST_FLOW_ERROR);
   g_return_val_if_fail (is_list || GST_IS_BUFFER (data), GST_FLOW_ERROR);
@@ -2043,12 +2069,15 @@ rtp_session_send_rtp (RTPSession * sess, gpointer data, gboolean is_list,
   source->last_rtp_activity = current_time;
 
   prevsender = RTP_SOURCE_IS_SENDER (source);
+  oldrate = source->bitrate;
 
   /* we use our own source to send */
   result = rtp_source_send_rtp (source, data, is_list, running_time);
 
   if (RTP_SOURCE_IS_SENDER (source) && !prevsender)
     sess->stats.sender_sources++;
+  if (oldrate != source->bitrate)
+    sess->recalc_bandwidth = TRUE;
   RTP_SESSION_UNLOCK (sess);
 
   return result;
@@ -2062,16 +2091,37 @@ invalid_packet:
   }
 }
 
+static void
+add_bitrates (gpointer key, RTPSource * source, gdouble * bandwidth)
+{
+  *bandwidth += source->bitrate;
+}
+
 static GstClockTime
 calculate_rtcp_interval (RTPSession * sess, gboolean deterministic,
     gboolean first)
 {
   GstClockTime result;
 
+  /* recalculate bandwidth when it changed */
   if (sess->recalc_bandwidth) {
-    /* recalculate bandwidth when it changed */
-    rtp_stats_set_bandwidths (&sess->stats, sess->bandwidth,
+    gdouble bandwidth;
+
+    if (sess->bandwidth > 0)
+      bandwidth = sess->bandwidth;
+    else {
+      /* If it is <= 0, then try to estimate the actual bandwidth */
+      bandwidth = sess->source->bitrate;
+
+      g_hash_table_foreach (sess->cnames, (GHFunc) add_bitrates, &bandwidth);
+      bandwidth /= 8.0;
+    }
+    if (bandwidth == 0)
+      bandwidth = RTP_STATS_BANDWIDTH;
+
+    rtp_stats_set_bandwidths (&sess->stats, bandwidth,
         sess->rtcp_bandwidth, sess->rtcp_rs_bandwidth, sess->rtcp_rr_bandwidth);
+
     sess->recalc_bandwidth = FALSE;
   }
 
@@ -2117,7 +2167,8 @@ rtp_session_schedule_bye_locked (RTPSession * sess, const gchar * reason,
   /* at least one member wants to send a BYE */
   g_free (sess->bye_reason);
   sess->bye_reason = g_strdup (reason);
-  sess->stats.avg_rtcp_packet_size = 100;
+  /* The avg packet size is kept scaled by 16 */
+  sess->stats.avg_rtcp_packet_size = 100 * 16;
   sess->stats.bye_members = 1;
   sess->first_rtcp = TRUE;
   sess->sent_bye = FALSE;
@@ -2309,7 +2360,7 @@ session_report_blocks (const gchar * key, RTPSource * source, ReportData * data)
 }
 
 /* perform cleanup of sources that timed out */
-static gboolean
+static void
 session_cleanup (const gchar * key, RTPSource * source, ReportData * data)
 {
   gboolean remove = FALSE;
@@ -2377,7 +2428,8 @@ session_cleanup (const gchar * key, RTPSource * source, ReportData * data)
     if (sendertimeout)
       on_sender_timeout (sess, source);
   }
-  return remove;
+
+  source->closing = remove;
 }
 
 static void
@@ -2505,6 +2557,18 @@ is_rtcp_time (RTPSession * sess, GstClockTime current_time, ReportData * data)
   return result;
 }
 
+static void
+clone_ssrcs_hashtable (gchar * key, RTPSource * source, GHashTable * hash_table)
+{
+  g_hash_table_insert (hash_table, key, g_object_ref (source));
+}
+
+static gboolean
+remove_closing_sources (const gchar * key, RTPSource * source, gpointer * data)
+{
+  return source->closing;
+}
+
 /**
  * rtp_session_on_timeout:
  * @sess: an #RTPSession
@@ -2530,6 +2594,7 @@ rtp_session_on_timeout (RTPSession * sess, GstClockTime current_time,
   GstFlowReturn result = GST_FLOW_OK;
   ReportData data;
   RTPSource *own;
+  GHashTable *table_copy;
   gboolean notify = FALSE;
 
   g_return_val_if_fail (RTP_IS_SESSION (sess), GST_FLOW_ERROR);
@@ -2551,9 +2616,21 @@ rtp_session_on_timeout (RTPSession * sess, GstClockTime current_time,
   /* get a new interval, we need this for various cleanups etc */
   data.interval = calculate_rtcp_interval (sess, TRUE, sess->first_rtcp);
 
-  /* first perform cleanups */
+  /* Make a local copy of the hashtable. We need to do this because the
+   * cleanup stage below releases the session lock. */
+  table_copy = g_hash_table_new_full (NULL, NULL, NULL,
+      (GDestroyNotify) g_object_unref);
+  g_hash_table_foreach (sess->ssrcs[sess->mask_idx],
+      (GHFunc) clone_ssrcs_hashtable, table_copy);
+
+  /* Clean up the session, mark the source for removing, this might release the
+   * session lock. */
+  g_hash_table_foreach (table_copy, (GHFunc) session_cleanup, &data);
+  g_hash_table_destroy (table_copy);
+
+  /* Now remove the marked sources */
   g_hash_table_foreach_remove (sess->ssrcs[sess->mask_idx],
-      (GHRFunc) session_cleanup, &data);
+      (GHRFunc) remove_closing_sources, NULL);
 
   /* see if we need to generate SR or RR packets */
   if (is_rtcp_time (sess, current_time, &data)) {
@@ -2570,8 +2647,6 @@ rtp_session_on_timeout (RTPSession * sess, GstClockTime current_time,
   }
 
   if (data.rtcp) {
-    guint size;
-
     /* we keep track of the last report time in order to timeout inactive
      * receivers or senders */
     sess->last_rtcp_send_time = data.current_time;
@@ -2580,10 +2655,6 @@ rtp_session_on_timeout (RTPSession * sess, GstClockTime current_time,
     /* add SDES for this source when not already added */
     if (!data.has_sdes)
       session_sdes (sess, &data);
-
-    /* update average RTCP size before sending */
-    size = GST_BUFFER_SIZE (data.rtcp) + sess->header_len;
-    UPDATE_AVG (sess->stats.avg_rtcp_packet_size, size);
   }
 
   /* check for outdated collisions */
@@ -2620,10 +2691,12 @@ rtp_session_on_timeout (RTPSession * sess, GstClockTime current_time,
     gst_rtcp_buffer_end (data.rtcp);
 
     GST_DEBUG ("sending packet");
-    if (sess->callbacks.send_rtcp)
+    if (sess->callbacks.send_rtcp) {
+      UPDATE_AVG (sess->stats.avg_rtcp_packet_size,
+          GST_BUFFER_SIZE (data.rtcp));
       result = sess->callbacks.send_rtcp (sess, own, data.rtcp,
           sess->sent_bye, sess->send_rtcp_user_data);
-    else {
+    } else {
       GST_DEBUG ("freeing packet");
       gst_buffer_unref (data.rtcp);
     }

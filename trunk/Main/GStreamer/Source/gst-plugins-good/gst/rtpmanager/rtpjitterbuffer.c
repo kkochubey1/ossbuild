@@ -274,8 +274,12 @@ update_buffer_level (RTPJitterBuffer * jbuf, gint * percent)
 }
 
 /* For the clock skew we use a windowed low point averaging algorithm as can be
- * found in http://www.grame.fr/pub/TR-050601.pdf. The idea is that the jitter is
- * composed of:
+ * found in Fober, Orlarey and Letz, 2005, "Real Time Clock Skew Estimation
+ * over Network Delays":
+ * http://www.grame.fr/Ressources/pub/TR-050601.pdf
+ * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.102.1546
+ *
+ * The idea is that the jitter is composed of:
  *
  *  J = N + n
  *
@@ -603,9 +607,6 @@ rtp_jitter_buffer_insert (RTPJitterBuffer * jbuf, GstBuffer * buf,
       break;
   }
 
-  /* do skew calculation by measuring the difference between rtptime and the
-   * receive time, this function will retimestamp @buf with the skew corrected
-   * running time. */
   rtptime = gst_rtp_buffer_get_timestamp (buf);
   switch (jbuf->mode) {
     case RTP_JITTER_BUFFER_MODE_NONE:
@@ -623,6 +624,9 @@ rtp_jitter_buffer_insert (RTPJitterBuffer * jbuf, GstBuffer * buf,
     default:
       break;
   }
+  /* do skew calculation by measuring the difference between rtptime and the
+   * receive time, this function will retimestamp @buf with the skew corrected
+   * running time. */
   time = calculate_skew (jbuf, rtptime, time, clock_rate);
   GST_BUFFER_TIMESTAMP (buf) = time;
 

@@ -28,7 +28,6 @@
  * All sink pads must be either AYUV, ARGB or BGRA, but a mixture of them is not 
  * supported. The src pad will have the same colorspace as the sinks. 
  * No colorspace conversion is done. 
- * 
  *
  * Individual parameters for each input stream can be configured on the
  * #GstVideoMixerPad.
@@ -36,7 +35,14 @@
  * <refsect2>
  * <title>Sample pipelines</title>
  * |[
- * gst-launch videotestsrc pattern=1 ! video/x-raw-yuv,format=\(fourcc\)AYUV, framerate=\(fraction\)10/1, width=100, height=100 ! videobox border-alpha=0 alpha=0.5 top=-70 bottom=-70 right=-220 ! videomixer name=mix ! ffmpegcolorspace ! xvimagesink videotestsrc ! video/x-raw-yuv, format=\(fourcc\)AYUV, framerate=\(fraction\)5/1, width=320, height=240 ! alpha alpha=0.7 ! mix.
+ * gst-launch-0.10 \
+ *   videotestsrc pattern=1 ! \
+ *   video/x-raw-yuv,format=\(fourcc\)AYUV,framerate=\(fraction\)10/1,width=100,height=100 ! \
+ *   videobox border-alpha=0 top=-70 bottom=-70 right=-220 ! \
+ *   videomixer name=mix sink_0::alpha=0.7 sink_1::alpha=0.5 ! \
+ *   ffmpegcolorspace ! xvimagesink \
+ *   videotestsrc ! \
+ *   video/x-raw-yuv,format=\(fourcc\)AYUV,framerate=\(fraction\)5/1,width=320,height=240 ! mix.
  * ]| A pipeline to demonstrate videomixer used together with videobox.
  * This should show a 320x240 pixels video test source with some transparency
  * showing the background checker pattern. Another video test source with just
@@ -45,22 +51,27 @@
  * video test source behind and the checker pattern under it. Note that the
  * framerate of the output video is 10 frames per second.
  * |[
- * gst-launch videotestsrc pattern=1 ! video/x-raw-rgb, framerate=\(fraction\)10/1, width=100, height=100 ! videomixer name=mix ! ffmpegcolorspace ! ximagesink videotestsrc ! video/x-raw-rgb, framerate=\(fraction\)5/1, width=320, height=240 ! mix.
+ * gst-launch videotestsrc pattern=1 ! \
+ *   video/x-raw-rgb, framerate=\(fraction\)10/1, width=100, height=100 ! \
+ *   videomixer name=mix ! ffmpegcolorspace ! ximagesink \
+ *   videotestsrc !  \
+ *   video/x-raw-rgb, framerate=\(fraction\)5/1, width=320, height=240 ! mix.
  * ]| A pipeline to demostrate bgra mixing. (This does not demonstrate alpha blending). 
  * |[
- * gst-launch   videotestsrc pattern=1 ! video/x-raw-yuv,format =\(fourcc\)I420, framerate=\(fraction\)10/1, width=100, height=100 ! videomixer name=mix ! ffmpegcolorspace ! ximagesink videotestsrc ! video/x-raw-yuv,format=\(fourcc\)I420, framerate=\(fraction\)5/1, width=320, height=240 ! mix.
+ * gst-launch videotestsrc pattern=1 ! \
+ *   video/x-raw-yuv,format =\(fourcc\)I420, framerate=\(fraction\)10/1, width=100, height=100 ! \
+ *   videomixer name=mix ! ffmpegcolorspace ! ximagesink \
+ *   videotestsrc ! \
+ *   video/x-raw-yuv,format=\(fourcc\)I420, framerate=\(fraction\)5/1, width=320, height=240 ! mix.
  * ]| A pipeline to test I420
+ * |[
+ * gst-launch videotestsrc pattern="snow" ! video/x-raw-yuv, framerate=\(fraction\)10/1, width=200, height=150 ! videomixer name=mix sink_1::xpos=20 sink_1::ypos=20 sink_1::alpha=0.5 ! ffmpegcolorspace ! xvimagesink videotestsrc ! video/x-raw-yuv, framerate=\(fraction\)10/1, width=640, height=360 ! mix.
+ * ]| Set position and alpha on the mixer using #GstVideoMixerPad properties.
  * </refsect2>
  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
-
-#ifdef HAVE_GCC_ASM
-#if defined(HAVE_CPU_I386) || defined(HAVE_CPU_X86_64)
-#define BUILD_X86_ASM
-#endif
 #endif
 
 #include <gst/gst.h>
@@ -76,6 +87,7 @@
 #endif
 
 #include "videomixer.h"
+#include "videomixer2.h"
 
 GST_DEBUG_CATEGORY_STATIC (gst_videomixer_debug);
 #define GST_CAT_DEFAULT gst_videomixer_debug
@@ -1846,7 +1858,7 @@ plugin_init (GstPlugin * plugin)
   gst_video_mixer_init_blend ();
 
   return gst_element_register (plugin, "videomixer", GST_RANK_PRIMARY,
-      GST_TYPE_VIDEO_MIXER);
+      GST_TYPE_VIDEO_MIXER) && gst_videomixer2_register (plugin);
 }
 
 GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,

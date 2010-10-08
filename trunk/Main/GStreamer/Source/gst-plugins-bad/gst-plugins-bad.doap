@@ -27,12 +27,22 @@ real live maintainer, or some actual wide use.
  <download-page rdf:resource="http://gstreamer.freedesktop.org/download/" />
 
  <repository>
-   <CVSRepository>
-     <anon-root>:pserver:anonymous@cvs.freedesktop.org:/cvs/gstreamer</anon-root>
-     <module>gst-plugins-bad</module>
-     <browse rdf:resource="http://webcvs.freedesktop.org/gstreamer/gst-plugins-bad/" />
-   </CVSRepository>
+   <GitRepository>
+     <location rdf:resource="git://anongit.freedesktop.org/gstreamer/gst-plugins-bad"/>
+     <browse rdf:resource="http://cgit.freedesktop.org/gstreamer/gst-plugins-bad"/>
+   </GitRepository>
  </repository> 
+
+ <release>
+  <Version>
+   <revision>0.10.20</revision>
+   <branch>0.10</branch>
+   <name>For it is a Human Number</name>
+   <created>2010-09-02</created>
+   <file-release rdf:resource="http://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-0.10.20.tar.bz2" />
+   <file-release rdf:resource="http://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-0.10.20.tar.gz" />
+  </Version>
+ </release>
 
  <release>
   <Version>

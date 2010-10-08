@@ -56,6 +56,8 @@ static gboolean gst_image_freeze_sink_event (GstPad * pad, GstEvent * event);
 static gboolean gst_image_freeze_sink_setcaps (GstPad * pad, GstCaps * caps);
 static GstCaps *gst_image_freeze_sink_getcaps (GstPad * pad);
 static gboolean gst_image_freeze_sink_query (GstPad * pad, GstQuery * query);
+static GstFlowReturn gst_image_freeze_sink_bufferalloc (GstPad * pad,
+    guint64 offset, guint size, GstCaps * caps, GstBuffer ** buf);
 static void gst_image_freeze_src_loop (GstPad * pad);
 static gboolean gst_image_freeze_src_event (GstPad * pad, GstEvent * event);
 static gboolean gst_image_freeze_src_query (GstPad * pad, GstQuery * query);
@@ -119,6 +121,8 @@ gst_image_freeze_init (GstImageFreeze * self, GstImageFreezeClass * g_class)
       GST_DEBUG_FUNCPTR (gst_image_freeze_sink_setcaps));
   gst_pad_set_getcaps_function (self->sinkpad,
       GST_DEBUG_FUNCPTR (gst_image_freeze_sink_getcaps));
+  gst_pad_set_bufferalloc_function (self->sinkpad,
+      GST_DEBUG_FUNCPTR (gst_image_freeze_sink_bufferalloc));
   gst_element_add_pad (GST_ELEMENT (self), self->sinkpad);
 
   self->srcpad = gst_pad_new_from_static_template (&src_pad_template, "src");
@@ -131,6 +135,8 @@ gst_image_freeze_init (GstImageFreeze * self, GstImageFreezeClass * g_class)
   gst_pad_use_fixed_caps (self->srcpad);
   gst_element_add_pad (GST_ELEMENT (self), self->srcpad);
 
+  self->lock = g_mutex_new ();
+
   gst_image_freeze_reset (self);
 }
 
@@ -141,6 +147,10 @@ gst_image_freeze_finalize (GObject * object)
 
   gst_image_freeze_reset (self);
 
+  if (self->lock)
+    g_mutex_free (self->lock);
+  self->lock = NULL;
+
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
@@ -149,7 +159,7 @@ gst_image_freeze_reset (GstImageFreeze * self)
 {
   GST_DEBUG_OBJECT (self, "Resetting internal state");
 
-  GST_OBJECT_LOCK (self);
+  g_mutex_lock (self->lock);
   gst_buffer_replace (&self->buffer, NULL);
 
   gst_segment_init (&self->segment, GST_FORMAT_TIME);
@@ -158,7 +168,9 @@ gst_image_freeze_reset (GstImageFreeze * self)
 
   self->fps_n = self->fps_d = 0;
   self->offset = 0;
-  GST_OBJECT_UNLOCK (self);
+  g_mutex_unlock (self->lock);
+
+  g_atomic_int_set (&self->seeking, 0);
 }
 
 static gboolean
@@ -218,10 +230,10 @@ gst_image_freeze_sink_setcaps (GstPad * pad, GstCaps * caps)
           gst_structure_fixate_field_nearest_fraction (s, "framerate", 25, 1)) {
         gst_structure_get_fraction (s, "framerate", &fps_n, &fps_d);
         if (fps_d != 0) {
-          GST_OBJECT_LOCK (self);
+          g_mutex_lock (self->lock);
           self->fps_n = fps_n;
           self->fps_d = fps_d;
-          GST_OBJECT_UNLOCK (self);
+          g_mutex_unlock (self->lock);
           GST_DEBUG_OBJECT (pad, "Setting caps %" GST_PTR_FORMAT, candidate);
           gst_pad_set_caps (self->srcpad, candidate);
           gst_caps_unref (candidate);
@@ -305,6 +317,48 @@ gst_image_freeze_sink_query (GstPad * pad, GstQuery * query)
   return ret;
 }
 
+static GstFlowReturn
+gst_image_freeze_sink_bufferalloc (GstPad * pad, guint64 offset, guint size,
+    GstCaps * caps, GstBuffer ** buf)
+{
+  GstImageFreeze *self = GST_IMAGE_FREEZE (gst_pad_get_parent (pad));
+  GstFlowReturn ret;
+  gboolean do_alloc;
+
+  GST_LOG_OBJECT (pad, "Allocating buffer with offset 0x%" G_GINT64_MODIFIER
+      "x and size %u with caps: %" GST_PTR_FORMAT, offset, size, caps);
+
+  *buf = NULL;
+
+  g_mutex_lock (self->lock);
+  do_alloc = self->buffer == NULL;
+  g_mutex_unlock (self->lock);
+
+  if (do_alloc) {
+    gboolean seeking = FALSE;
+
+    do {
+      GST_PAD_STREAM_LOCK (self->srcpad);
+      ret = gst_pad_alloc_buffer (self->srcpad, offset, size, caps, buf);
+
+      seeking = ret == GST_FLOW_WRONG_STATE
+          && g_atomic_int_get (&self->seeking);
+      GST_PAD_STREAM_UNLOCK (self->srcpad);
+    } while (seeking);
+
+    if (G_UNLIKELY (ret != GST_FLOW_OK))
+      GST_ERROR_OBJECT (pad, "Allocating buffer failed: %s",
+          gst_flow_get_name (ret));
+  } else {
+    /* Let upstream go EOS if we already have a buffer */
+    ret = GST_FLOW_UNEXPECTED;
+  }
+
+  gst_object_unref (self);
+
+  return ret;
+}
+
 static gboolean
 gst_image_freeze_convert (GstImageFreeze * self,
     GstFormat src_format, gint64 src_value,
@@ -326,14 +380,14 @@ gst_image_freeze_convert (GstImageFreeze * self,
     case GST_FORMAT_DEFAULT:{
       switch (*dest_format) {
         case GST_FORMAT_TIME:
-          GST_OBJECT_LOCK (self);
+          g_mutex_lock (self->lock);
           if (self->fps_n == 0)
             *dest_value = -1;
           else
             *dest_value =
                 gst_util_uint64_scale (src_value, GST_SECOND * self->fps_d,
                 self->fps_n);
-          GST_OBJECT_UNLOCK (self);
+          g_mutex_unlock (self->lock);
           ret = TRUE;
           break;
         default:
@@ -343,11 +397,11 @@ gst_image_freeze_convert (GstImageFreeze * self,
     case GST_FORMAT_TIME:{
       switch (*dest_format) {
         case GST_FORMAT_DEFAULT:
-          GST_OBJECT_LOCK (self);
+          g_mutex_lock (self->lock);
           *dest_value =
               gst_util_uint64_scale (src_value, self->fps_n,
               self->fps_d * GST_SECOND);
-          GST_OBJECT_UNLOCK (self);
+          g_mutex_unlock (self->lock);
           ret = TRUE;
           break;
         default:
@@ -407,15 +461,15 @@ gst_image_freeze_src_query (GstPad * pad, GstQuery * query)
       gst_query_parse_position (query, &format, NULL);
       switch (format) {
         case GST_FORMAT_DEFAULT:{
-          GST_OBJECT_LOCK (self);
+          g_mutex_lock (self->lock);
           position = self->offset;
-          GST_OBJECT_UNLOCK (self);
+          g_mutex_unlock (self->lock);
           ret = TRUE;
         }
         case GST_FORMAT_TIME:{
-          GST_OBJECT_LOCK (self);
+          g_mutex_lock (self->lock);
           position = self->segment.last_stop;
-          GST_OBJECT_UNLOCK (self);
+          g_mutex_unlock (self->lock);
           ret = TRUE;
         }
         default:
@@ -439,19 +493,19 @@ gst_image_freeze_src_query (GstPad * pad, GstQuery * query)
       gst_query_parse_duration (query, &format, NULL);
       switch (format) {
         case GST_FORMAT_TIME:{
-          GST_OBJECT_LOCK (self);
+          g_mutex_lock (self->lock);
           duration = self->segment.stop;
-          GST_OBJECT_UNLOCK (self);
+          g_mutex_unlock (self->lock);
           ret = TRUE;
         }
         case GST_FORMAT_DEFAULT:{
-          GST_OBJECT_LOCK (self);
+          g_mutex_lock (self->lock);
           duration = self->segment.stop;
           if (duration != -1)
             duration =
                 gst_util_uint64_scale (duration, self->fps_n,
                 GST_SECOND * self->fps_d);
-          GST_OBJECT_UNLOCK (self);
+          g_mutex_unlock (self->lock);
           ret = TRUE;
         }
         default:
@@ -573,6 +627,7 @@ gst_image_freeze_src_event (GstPad * pad, GstEvent * event)
       if (flush) {
         GstEvent *e;
 
+        g_atomic_int_set (&self->seeking, 1);
         e = gst_event_new_flush_start ();
         gst_pad_push_event (self->srcpad, e);
       } else {
@@ -581,7 +636,7 @@ gst_image_freeze_src_event (GstPad * pad, GstEvent * event)
 
       GST_PAD_STREAM_LOCK (self->srcpad);
 
-      GST_OBJECT_LOCK (self);
+      g_mutex_lock (self->lock);
       gst_event_replace (&self->close_segment, NULL);
       if (!flush) {
         if (!self->need_segment && self->segment.rate >= 0) {
@@ -608,13 +663,14 @@ gst_image_freeze_src_event (GstPad * pad, GstEvent * event)
       last_stop = self->segment.last_stop;
 
       start_task = self->buffer != NULL;
-      GST_OBJECT_UNLOCK (self);
+      g_mutex_unlock (self->lock);
 
       if (flush) {
         GstEvent *e;
 
         e = gst_event_new_flush_stop ();
         gst_pad_push_event (self->srcpad, e);
+        g_atomic_int_set (&self->seeking, 0);
       }
 
       if (flags & GST_SEEK_FLAG_SEGMENT) {
@@ -629,9 +685,16 @@ gst_image_freeze_src_event (GstPad * pad, GstEvent * event)
 
       GST_DEBUG_OBJECT (pad, "Seek successful");
 
-      if (start_task)
-        gst_pad_start_task (self->srcpad,
-            (GstTaskFunction) gst_image_freeze_src_loop, self->srcpad);
+      if (start_task) {
+        g_mutex_lock (self->lock);
+
+        if (self->buffer != NULL)
+          gst_pad_start_task (self->srcpad,
+              (GstTaskFunction) gst_image_freeze_src_loop, self->srcpad);
+
+        g_mutex_unlock (self->lock);
+      }
+
       ret = TRUE;
       break;
     }
@@ -651,22 +714,21 @@ static GstFlowReturn
 gst_image_freeze_sink_chain (GstPad * pad, GstBuffer * buffer)
 {
   GstImageFreeze *self = GST_IMAGE_FREEZE (GST_PAD_PARENT (pad));
-  GstFlowReturn ret = GST_FLOW_OK;
 
-  GST_OBJECT_LOCK (self);
+  g_mutex_lock (self->lock);
   if (self->buffer) {
     GST_DEBUG_OBJECT (pad, "Already have a buffer, dropping");
     gst_buffer_unref (buffer);
-    GST_OBJECT_UNLOCK (self);
-    return ret;
+    g_mutex_unlock (self->lock);
+    return GST_FLOW_UNEXPECTED;
   }
 
   self->buffer = buffer;
-  GST_OBJECT_UNLOCK (self);
 
   gst_pad_start_task (self->srcpad, (GstTaskFunction) gst_image_freeze_src_loop,
       self->srcpad);
-  return ret;
+  g_mutex_unlock (self->lock);
+  return GST_FLOW_OK;
 }
 
 static void
@@ -675,20 +737,20 @@ gst_image_freeze_src_loop (GstPad * pad)
   GstImageFreeze *self = GST_IMAGE_FREEZE (GST_PAD_PARENT (pad));
   GstBuffer *buffer;
   guint64 offset;
-  GstClockTime timestamp, duration;
+  GstClockTime timestamp, timestamp_end, duration;
   gint64 cstart, cstop;
   gboolean in_seg, eos;
 
-  GST_OBJECT_LOCK (self);
+  g_mutex_lock (self->lock);
   if (!self->buffer) {
     GST_ERROR_OBJECT (pad, "Have no buffer yet");
-    GST_OBJECT_UNLOCK (self);
+    g_mutex_unlock (self->lock);
     gst_pad_pause_task (self->srcpad);
     return;
   }
   buffer = gst_buffer_ref (self->buffer);
   buffer = gst_buffer_make_metadata_writable (buffer);
-  GST_OBJECT_UNLOCK (self);
+  g_mutex_unlock (self->lock);
 
   if (self->close_segment) {
     GST_DEBUG_OBJECT (pad, "Closing previous segment");
@@ -705,7 +767,7 @@ gst_image_freeze_src_loop (GstPad * pad)
         self->segment.applied_rate, self->segment.format, self->segment.start,
         self->segment.stop, self->segment.start);
 
-    GST_OBJECT_LOCK (self);
+    g_mutex_lock (self->lock);
     if (self->segment.rate >= 0) {
       self->offset =
           gst_util_uint64_scale (self->segment.start, self->fps_n,
@@ -715,37 +777,41 @@ gst_image_freeze_src_loop (GstPad * pad)
           gst_util_uint64_scale (self->segment.stop, self->fps_n,
           self->fps_d * GST_SECOND);
     }
-    GST_OBJECT_UNLOCK (self);
+    g_mutex_unlock (self->lock);
 
     self->need_segment = FALSE;
 
     gst_pad_push_event (self->srcpad, e);
   }
 
-  GST_OBJECT_LOCK (self);
+  g_mutex_lock (self->lock);
   offset = self->offset;
 
   if (self->fps_n != 0) {
     timestamp =
         gst_util_uint64_scale (offset, self->fps_d * GST_SECOND, self->fps_n);
-    duration = gst_util_uint64_scale_int (GST_SECOND, self->fps_d, self->fps_n);
+    timestamp_end =
+        gst_util_uint64_scale (offset + 1, self->fps_d * GST_SECOND,
+        self->fps_n);
+    duration = timestamp_end - timestamp;
   } else {
     timestamp = self->segment.start;
+    timestamp_end = GST_CLOCK_TIME_NONE;
     duration = GST_CLOCK_TIME_NONE;
   }
+
   eos = (self->fps_n == 0 && offset > 0) ||
       (self->segment.rate >= 0 && self->segment.stop != -1
       && timestamp > self->segment.stop) || (self->segment.rate < 0
       && offset == 0) || (self->segment.rate < 0
-      && self->segment.start != -1
-      && timestamp + duration < self->segment.start);
+      && self->segment.start != -1 && timestamp_end < self->segment.start);
 
   if (self->fps_n == 0 && offset > 0)
     in_seg = FALSE;
   else
     in_seg =
         gst_segment_clip (&self->segment, GST_FORMAT_TIME, timestamp,
-        timestamp + duration, &cstart, &cstop);
+        timestamp_end, &cstart, &cstop);
 
   if (in_seg)
     gst_segment_set_last_stop (&self->segment, GST_FORMAT_TIME, cstart);
@@ -754,7 +820,7 @@ gst_image_freeze_src_loop (GstPad * pad)
     self->offset++;
   else
     self->offset--;
-  GST_OBJECT_UNLOCK (self);
+  g_mutex_unlock (self->lock);
 
   GST_DEBUG_OBJECT (pad, "Handling buffer with timestamp %" GST_TIME_FORMAT,
       GST_TIME_ARGS (timestamp));

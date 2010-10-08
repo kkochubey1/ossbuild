@@ -32,7 +32,7 @@
  *-----------------------------------------------------------------------------
  * audiosrc -> audio_queue -> audioconvert -> volume -> audioenc
  *                                                       > videomux -> filesink
- *                       video_queue -> [timeoverlay] -> videoenc
+ *                       video_queue -> [timeoverlay] -> [csp] -> videoenc -> queue
  * -> [post proc] -> tee <
  *                       queue ->
  *-----------------------------------------------------------------------------
@@ -575,10 +575,19 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
   if (!gst_camerabin_add_element (vidbin, vid->video_queue)) {
     goto error;
   }
+  g_object_set (vid->video_queue, "silent", TRUE, NULL);
 
   /* Add probe for rewriting video timestamps */
   vid->vid_tee_probe_id = gst_pad_add_buffer_probe (vid->tee_video_srcpad,
       G_CALLBACK (camerabin_video_pad_tee_src0_have_buffer), vid);
+
+  if (vid->flags & GST_CAMERABIN_FLAG_VIDEO_COLOR_CONVERSION) {
+    /* Add colorspace converter */
+    if (gst_camerabin_create_and_add_element (vidbin,
+            "ffmpegcolorspace") == NULL) {
+      goto error;
+    }
+  }
 
   /* Add user set or default video encoder element */
   if (vid->app_vid_enc) {
@@ -626,6 +635,7 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
     if (!gst_camerabin_add_element (vidbin, queue)) {
       goto error;
     }
+    g_object_set (queue, "silent", TRUE, NULL);
 
     /* Add optional audio conversion and volume elements and
        raise no errors if adding them fails */
@@ -658,7 +668,8 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
     }
 
     /* Link audio part to the muxer */
-    if (!gst_element_link (vid->aud_enc, vid->muxer)) {
+    if (!gst_element_link_pads_full (vid->aud_enc, NULL, vid->muxer, NULL,
+            GST_PAD_LINK_CHECK_CAPS)) {
       GST_ELEMENT_ERROR (vid, CORE, NEGOTIATION, (NULL),
           ("linking audio encoder and muxer failed"));
       goto error;
@@ -672,7 +683,8 @@ gst_camerabin_video_create_elements (GstCameraBinVideo * vid)
   }
   /* Set queue leaky, we don't want to block video encoder feed, but
      prefer leaking view finder buffers instead. */
-  g_object_set (G_OBJECT (queue), "leaky", 2, "max-size-buffers", 1, NULL);
+  g_object_set (G_OBJECT (queue), "leaky", 2, "max-size-buffers", 1, "silent",
+      TRUE, NULL);
 
   /* Set up src ghost pad for video bin */
   vid_srcpad = gst_element_get_static_pad (queue, "src");

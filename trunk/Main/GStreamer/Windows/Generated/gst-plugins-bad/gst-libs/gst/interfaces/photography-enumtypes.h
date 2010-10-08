@@ -9,6 +9,8 @@
 G_BEGIN_DECLS
 
 /* enumerations from "photography.h" */
+GType gst_photography_noise_reduction_get_type (void);
+#define GST_TYPE_PHOTOGRAPHY_NOISE_REDUCTION (gst_photography_noise_reduction_get_type())
 GType gst_white_balance_mode_get_type (void);
 #define GST_TYPE_WHITE_BALANCE_MODE (gst_white_balance_mode_get_type())
 GType gst_colour_tone_mode_get_type (void);

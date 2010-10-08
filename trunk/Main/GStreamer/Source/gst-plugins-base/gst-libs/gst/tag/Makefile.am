@@ -10,7 +10,7 @@ libgsttag_@GST_MAJORMINOR@_la_SOURCES = \
     gstvorbistag.c gstid3tag.c gstxmptag.c gstexiftag.c \
     lang.c tags.c gsttagdemux.c gsttageditingprivate.c
 libgsttag_@GST_MAJORMINOR@_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
-libgsttag_@GST_MAJORMINOR@_la_LIBADD = $(GST_BASE_LIBS) $(GST_LIBS) 
+libgsttag_@GST_MAJORMINOR@_la_LIBADD = $(GST_BASE_LIBS) $(GST_LIBS) $(LIBM)
 libgsttag_@GST_MAJORMINOR@_la_LDFLAGS = $(GST_LIB_LDFLAGS) $(GST_ALL_LDFLAGS) $(GST_LT_LDFLAGS)
 
 # lang-tables.dat contains generated static data and is included by lang.c
@@ -26,7 +26,7 @@ gir_sources=$(patsubst %,$(srcdir)/%, $(libgsttag_@GST_MAJORMINOR@_la_SOURCES))
 gir_cincludes=$(patsubst %,--c-include='gst/audio/%',$(libgsttainclude_HEADERS))
 
 GstTag-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgsttag-@GST_MAJORMINOR@.la
-	$(AM_V_GEN)PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
+	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
 		$(INTROSPECTION_SCANNER) -v --namespace GstTag \
 		--nsversion=@GST_MAJORMINOR@ \
 		--strip-prefix=Gst \

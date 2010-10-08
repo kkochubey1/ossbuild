@@ -37,6 +37,7 @@
 #include <math.h>
 #include <cog/cogvirtframe.h>
 #include "gstcogutils.h"
+#include "gstcogorc.h"
 
 #define GST_TYPE_COGCOLORSPACE \
   (gst_cogcolorspace_get_type())
@@ -131,7 +132,7 @@ gst_cogcolorspace_base_init (gpointer g_class)
       gst_static_pad_template_get (&gst_cogcolorspace_sink_template));
 
   gst_element_class_set_details_simple (element_class,
-      "YCbCr/RGB format conversion", "Filter/Effect/Video",
+      "YCbCr/RGB format conversion", "Filter/Converter/Video",
       "YCbCr/RGB format conversion", "David Schleef <ds@schleef.org>");
 }
 
@@ -383,6 +384,502 @@ gst_cogcolorspace_caps_get_chroma_site (GstCaps * caps)
   return COG_CHROMA_SITE_MPEG2;
 }
 
+static void
+convert_I420_YUY2 (CogFrame * dest, CogFrame * src)
+{
+  int i;
+
+  for (i = 0; i < dest->height; i += 2) {
+    cogorc_convert_I420_YUY2 (COG_FRAME_DATA_GET_LINE (dest->components + 0, i),
+        COG_FRAME_DATA_GET_LINE (dest->components + 0, i + 1),
+        COG_FRAME_DATA_GET_LINE (src->components + 0, i),
+        COG_FRAME_DATA_GET_LINE (src->components + 0, i + 1),
+        COG_FRAME_DATA_GET_LINE (src->components + 1, i >> 1),
+        COG_FRAME_DATA_GET_LINE (src->components + 2, i >> 1),
+        (dest->width + 1) / 2);
+  }
+}
+
+static void
+convert_I420_UYVY (CogFrame * dest, CogFrame * src)
+{
+  int i;
+
+  for (i = 0; i < dest->height; i += 2) {
+    cogorc_convert_I420_UYVY (COG_FRAME_DATA_GET_LINE (dest->components + 0, i),
+        COG_FRAME_DATA_GET_LINE (dest->components + 0, i + 1),
+        COG_FRAME_DATA_GET_LINE (src->components + 0, i),
+        COG_FRAME_DATA_GET_LINE (src->components + 0, i + 1),
+        COG_FRAME_DATA_GET_LINE (src->components + 1, i >> 1),
+        COG_FRAME_DATA_GET_LINE (src->components + 2, i >> 1),
+        (dest->width + 1) / 2);
+  }
+}
+
+static void
+convert_I420_AYUV (CogFrame * dest, CogFrame * src)
+{
+  int i;
+
+  for (i = 0; i < dest->height; i += 2) {
+    cogorc_convert_I420_AYUV (COG_FRAME_DATA_GET_LINE (dest->components + 0, i),
+        COG_FRAME_DATA_GET_LINE (dest->components + 0, i + 1),
+        COG_FRAME_DATA_GET_LINE (src->components + 0, i),
+        COG_FRAME_DATA_GET_LINE (src->components + 0, i + 1),
+        COG_FRAME_DATA_GET_LINE (src->components + 1, i >> 1),
+        COG_FRAME_DATA_GET_LINE (src->components + 2, i >> 1), dest->width);
+  }
+}
+
+static void
+convert_I420_Y42B (CogFrame * dest, CogFrame * src)
+{
+  cogorc_memcpy_2d (dest->components[0].data, dest->components[0].stride,
+      src->components[0].data, src->components[0].stride,
+      dest->width, dest->height);
+
+  cogorc_planar_chroma_420_422 (dest->components[1].data,
+      2 * dest->components[1].stride,
+      COG_FRAME_DATA_GET_LINE (dest->components + 2, 1),
+      2 * dest->components[1].stride, src->components[1].data,
+      src->components[1].stride, (dest->width + 1) / 2, dest->height / 2);
+
+  cogorc_planar_chroma_420_422 (dest->components[2].data,
+      2 * dest->components[2].stride,
+      COG_FRAME_DATA_GET_LINE (dest->components + 2, 1),
+      2 * dest->components[2].stride, src->components[2].data,
+      src->components[2].stride, (dest->width + 1) / 2, dest->height / 2);
+}
+
+static void
+convert_I420_Y444 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_memcpy_2d (dest->components[0].data, dest->components[0].stride,
+      src->components[0].data, src->components[0].stride,
+      dest->width, dest->height);
+
+  cogorc_planar_chroma_420_444 (dest->components[1].data,
+      2 * dest->components[1].stride,
+      COG_FRAME_DATA_GET_LINE (dest->components + 1, 1),
+      2 * dest->components[1].stride, src->components[1].data,
+      src->components[1].stride, (dest->width + 1) / 2, (dest->height + 1) / 2);
+
+  cogorc_planar_chroma_420_444 (dest->components[2].data,
+      2 * dest->components[2].stride,
+      COG_FRAME_DATA_GET_LINE (dest->components + 2, 1),
+      2 * dest->components[2].stride, src->components[2].data,
+      src->components[2].stride, (dest->width + 1) / 2, (dest->height + 1) / 2);
+}
+
+static void
+convert_YUY2_I420 (CogFrame * dest, CogFrame * src)
+{
+  int i;
+
+  for (i = 0; i < dest->height; i += 2) {
+    cogorc_convert_YUY2_I420 (COG_FRAME_DATA_GET_LINE (dest->components + 0, i),
+        COG_FRAME_DATA_GET_LINE (dest->components + 0, i + 1),
+        COG_FRAME_DATA_GET_LINE (dest->components + 1, i >> 1),
+        COG_FRAME_DATA_GET_LINE (dest->components + 2, i >> 1),
+        COG_FRAME_DATA_GET_LINE (src->components + 0, i),
+        COG_FRAME_DATA_GET_LINE (src->components + 0, i + 1),
+        (dest->width + 1) / 2);
+  }
+}
+
+static void
+convert_YUY2_AYUV (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_YUY2_AYUV (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_YUY2_Y42B (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_YUY2_Y42B (dest->components[0].data,
+      dest->components[0].stride, dest->components[1].data,
+      dest->components[1].stride, dest->components[2].data,
+      dest->components[2].stride, src->components[0].data,
+      src->components[0].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_YUY2_Y444 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_YUY2_Y444 (dest->components[0].data,
+      dest->components[0].stride, dest->components[1].data,
+      dest->components[1].stride, dest->components[2].data,
+      dest->components[2].stride, src->components[0].data,
+      src->components[0].stride, (dest->width + 1) / 2, dest->height);
+}
+
+
+static void
+convert_UYVY_I420 (CogFrame * dest, CogFrame * src)
+{
+  int i;
+
+  for (i = 0; i < dest->height; i += 2) {
+    cogorc_convert_UYVY_I420 (COG_FRAME_DATA_GET_LINE (dest->components + 0, i),
+        COG_FRAME_DATA_GET_LINE (dest->components + 0, i + 1),
+        COG_FRAME_DATA_GET_LINE (dest->components + 1, i >> 1),
+        COG_FRAME_DATA_GET_LINE (dest->components + 2, i >> 1),
+        COG_FRAME_DATA_GET_LINE (src->components + 0, i),
+        COG_FRAME_DATA_GET_LINE (src->components + 0, i + 1),
+        (dest->width + 1) / 2);
+  }
+}
+
+static void
+convert_UYVY_AYUV (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_UYVY_AYUV (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_UYVY_YUY2 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_UYVY_YUY2 (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_UYVY_Y42B (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_UYVY_Y42B (dest->components[0].data,
+      dest->components[0].stride, dest->components[1].data,
+      dest->components[1].stride, dest->components[2].data,
+      dest->components[2].stride, src->components[0].data,
+      src->components[0].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_UYVY_Y444 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_UYVY_Y444 (dest->components[0].data,
+      dest->components[0].stride, dest->components[1].data,
+      dest->components[1].stride, dest->components[2].data,
+      dest->components[2].stride, src->components[0].data,
+      src->components[0].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_AYUV_I420 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_AYUV_I420 (COG_FRAME_DATA_GET_LINE (dest->components + 0, 0),
+      2 * dest->components[0].stride,
+      COG_FRAME_DATA_GET_LINE (dest->components + 0, 1),
+      2 * dest->components[0].stride,
+      dest->components[1].data, dest->components[1].stride,
+      dest->components[2].data, dest->components[2].stride,
+      COG_FRAME_DATA_GET_LINE (src->components + 0, 0),
+      /* FIXME why not 2* ? */
+      src->components[0].stride,
+      COG_FRAME_DATA_GET_LINE (src->components + 0, 1),
+      src->components[0].stride, dest->width / 2, dest->height / 2);
+}
+
+static void
+convert_AYUV_YUY2 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_AYUV_YUY2 (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, dest->width / 2, dest->height);
+}
+
+static void
+convert_AYUV_UYVY (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_AYUV_UYVY (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, dest->width / 2, dest->height);
+}
+
+static void
+convert_AYUV_Y42B (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_AYUV_Y42B (dest->components[0].data,
+      dest->components[0].stride, dest->components[1].data,
+      dest->components[1].stride, dest->components[2].data,
+      dest->components[2].stride, src->components[0].data,
+      src->components[0].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_AYUV_Y444 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_AYUV_Y444 (dest->components[0].data,
+      dest->components[0].stride, dest->components[1].data,
+      dest->components[1].stride, dest->components[2].data,
+      dest->components[2].stride, src->components[0].data,
+      src->components[0].stride, dest->width, dest->height);
+}
+
+static void
+convert_Y42B_I420 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_memcpy_2d (dest->components[0].data, dest->components[0].stride,
+      src->components[0].data, src->components[0].stride,
+      dest->width, dest->height);
+
+  cogorc_planar_chroma_422_420 (dest->components[1].data,
+      dest->components[1].stride, src->components[1].data,
+      2 * src->components[1].stride,
+      COG_FRAME_DATA_GET_LINE (src->components + 1, 1),
+      2 * src->components[1].stride, (dest->width + 1) / 2,
+      (dest->height + 1) / 2);
+
+  cogorc_planar_chroma_422_420 (dest->components[2].data,
+      dest->components[2].stride, src->components[2].data,
+      2 * src->components[2].stride,
+      COG_FRAME_DATA_GET_LINE (src->components + 2, 1),
+      2 * src->components[2].stride, (dest->width + 1) / 2,
+      (dest->height + 1) / 2);
+}
+
+static void
+convert_Y42B_Y444 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_memcpy_2d (dest->components[0].data, dest->components[0].stride,
+      src->components[0].data, src->components[0].stride,
+      dest->width, dest->height);
+
+  cogorc_planar_chroma_422_444 (dest->components[1].data,
+      dest->components[1].stride, src->components[1].data,
+      src->components[1].stride, (dest->width + 1) / 2, dest->height);
+
+  cogorc_planar_chroma_422_444 (dest->components[2].data,
+      dest->components[2].stride, src->components[2].data,
+      src->components[2].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_Y42B_YUY2 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_Y42B_YUY2 (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, src->components[1].data,
+      src->components[1].stride, src->components[2].data,
+      src->components[2].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_Y42B_UYVY (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_Y42B_UYVY (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, src->components[1].data,
+      src->components[1].stride, src->components[2].data,
+      src->components[2].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_Y42B_AYUV (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_Y42B_AYUV (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, src->components[1].data,
+      src->components[1].stride, src->components[2].data,
+      src->components[2].stride, (dest->width) / 2, dest->height);
+}
+
+static void
+convert_Y444_I420 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_memcpy_2d (dest->components[0].data, dest->components[0].stride,
+      src->components[0].data, src->components[0].stride,
+      dest->width, dest->height);
+
+  cogorc_planar_chroma_444_420 (dest->components[1].data,
+      dest->components[1].stride, src->components[1].data,
+      2 * src->components[1].stride,
+      COG_FRAME_DATA_GET_LINE (src->components + 1, 1),
+      2 * src->components[1].stride, (dest->width + 1) / 2,
+      (dest->height + 1) / 2);
+
+  cogorc_planar_chroma_444_420 (dest->components[2].data,
+      dest->components[2].stride, src->components[2].data,
+      2 * src->components[2].stride,
+      COG_FRAME_DATA_GET_LINE (src->components + 2, 1),
+      2 * src->components[2].stride, (dest->width + 1) / 2,
+      (dest->height + 1) / 2);
+}
+
+static void
+convert_Y444_Y42B (CogFrame * dest, CogFrame * src)
+{
+  cogorc_memcpy_2d (dest->components[0].data, dest->components[0].stride,
+      src->components[0].data, src->components[0].stride,
+      dest->width, dest->height);
+
+  cogorc_planar_chroma_444_422 (dest->components[1].data,
+      dest->components[1].stride, src->components[1].data,
+      src->components[1].stride, (dest->width + 1) / 2, dest->height);
+
+  cogorc_planar_chroma_444_422 (dest->components[2].data,
+      dest->components[2].stride, src->components[2].data,
+      src->components[2].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_Y444_YUY2 (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_Y444_YUY2 (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, src->components[1].data,
+      src->components[1].stride, src->components[2].data,
+      src->components[2].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_Y444_UYVY (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_Y444_UYVY (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, src->components[1].data,
+      src->components[1].stride, src->components[2].data,
+      src->components[2].stride, (dest->width + 1) / 2, dest->height);
+}
+
+static void
+convert_Y444_AYUV (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_Y444_AYUV (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, src->components[1].data,
+      src->components[1].stride, src->components[2].data,
+      src->components[2].stride, dest->width, dest->height);
+}
+
+static void
+convert_AYUV_ARGB (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_AYUV_ARGB (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, dest->width, dest->height);
+}
+
+static void
+convert_AYUV_BGRA (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_AYUV_BGRA (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, dest->width, dest->height);
+}
+
+static void
+convert_AYUV_ABGR (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_AYUV_ABGR (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, dest->width, dest->height);
+}
+
+static void
+convert_AYUV_RGBA (CogFrame * dest, CogFrame * src)
+{
+  cogorc_convert_AYUV_RGBA (dest->components[0].data,
+      dest->components[0].stride, src->components[0].data,
+      src->components[0].stride, dest->width, dest->height);
+}
+
+static void
+convert_I420_BGRA (CogFrame * dest, CogFrame * src)
+{
+  int i;
+  int quality = 0;
+
+  if (quality > 3) {
+    for (i = 0; i < dest->height; i++) {
+      if (i & 1) {
+        cogorc_convert_I420_BGRA_avg (COG_FRAME_DATA_GET_LINE (dest->components
+                + 0, i), COG_FRAME_DATA_GET_LINE (src->components + 0, i),
+            COG_FRAME_DATA_GET_LINE (src->components + 1, i >> 1),
+            COG_FRAME_DATA_GET_LINE (src->components + 1, (i >> 1) + 1),
+            COG_FRAME_DATA_GET_LINE (src->components + 2, i >> 1),
+            COG_FRAME_DATA_GET_LINE (src->components + 2, (i >> 1) + 1),
+            dest->width);
+      } else {
+        cogorc_convert_I420_BGRA (COG_FRAME_DATA_GET_LINE (dest->components + 0,
+                i), COG_FRAME_DATA_GET_LINE (src->components + 0, i),
+            COG_FRAME_DATA_GET_LINE (src->components + 1, i >> 1),
+            COG_FRAME_DATA_GET_LINE (src->components + 2, i >> 1), dest->width);
+      }
+    }
+  } else {
+    for (i = 0; i < dest->height; i++) {
+      cogorc_convert_I420_BGRA (COG_FRAME_DATA_GET_LINE (dest->components + 0,
+              i), COG_FRAME_DATA_GET_LINE (src->components + 0, i),
+          COG_FRAME_DATA_GET_LINE (src->components + 1, i >> 1),
+          COG_FRAME_DATA_GET_LINE (src->components + 2, i >> 1), dest->width);
+    }
+  }
+}
+
+
+
+
+
+typedef struct
+{
+  uint32_t in_format;
+  uint32_t out_format;
+  void (*convert) (CogFrame * dest, CogFrame * src);
+} CogColorspaceTransform;
+static CogColorspaceTransform transforms[] = {
+  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_YUY2, convert_I420_YUY2},
+  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_UYVY, convert_I420_UYVY},
+  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_AYUV, convert_I420_AYUV},
+  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_Y42B, convert_I420_Y42B},
+  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_Y444, convert_I420_Y444},
+
+  {GST_VIDEO_FORMAT_YUY2, GST_VIDEO_FORMAT_I420, convert_YUY2_I420},
+  {GST_VIDEO_FORMAT_YUY2, GST_VIDEO_FORMAT_UYVY, convert_UYVY_YUY2},    /* alias */
+  {GST_VIDEO_FORMAT_YUY2, GST_VIDEO_FORMAT_AYUV, convert_YUY2_AYUV},
+  {GST_VIDEO_FORMAT_YUY2, GST_VIDEO_FORMAT_Y42B, convert_YUY2_Y42B},
+  {GST_VIDEO_FORMAT_YUY2, GST_VIDEO_FORMAT_Y444, convert_YUY2_Y444},
+
+  {GST_VIDEO_FORMAT_UYVY, GST_VIDEO_FORMAT_I420, convert_UYVY_I420},
+  {GST_VIDEO_FORMAT_UYVY, GST_VIDEO_FORMAT_YUY2, convert_UYVY_YUY2},
+  {GST_VIDEO_FORMAT_UYVY, GST_VIDEO_FORMAT_AYUV, convert_UYVY_AYUV},
+  {GST_VIDEO_FORMAT_UYVY, GST_VIDEO_FORMAT_Y42B, convert_UYVY_Y42B},
+  {GST_VIDEO_FORMAT_UYVY, GST_VIDEO_FORMAT_Y444, convert_UYVY_Y444},
+
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_I420, convert_AYUV_I420},
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_YUY2, convert_AYUV_YUY2},
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_UYVY, convert_AYUV_UYVY},
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_Y42B, convert_AYUV_Y42B},
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_Y444, convert_AYUV_Y444},
+
+  {GST_VIDEO_FORMAT_Y42B, GST_VIDEO_FORMAT_I420, convert_Y42B_I420},
+  {GST_VIDEO_FORMAT_Y42B, GST_VIDEO_FORMAT_YUY2, convert_Y42B_YUY2},
+  {GST_VIDEO_FORMAT_Y42B, GST_VIDEO_FORMAT_UYVY, convert_Y42B_UYVY},
+  {GST_VIDEO_FORMAT_Y42B, GST_VIDEO_FORMAT_AYUV, convert_Y42B_AYUV},
+  {GST_VIDEO_FORMAT_Y42B, GST_VIDEO_FORMAT_Y444, convert_Y42B_Y444},
+
+  {GST_VIDEO_FORMAT_Y444, GST_VIDEO_FORMAT_I420, convert_Y444_I420},
+  {GST_VIDEO_FORMAT_Y444, GST_VIDEO_FORMAT_YUY2, convert_Y444_YUY2},
+  {GST_VIDEO_FORMAT_Y444, GST_VIDEO_FORMAT_UYVY, convert_Y444_UYVY},
+  {GST_VIDEO_FORMAT_Y444, GST_VIDEO_FORMAT_AYUV, convert_Y444_AYUV},
+  {GST_VIDEO_FORMAT_Y444, GST_VIDEO_FORMAT_Y42B, convert_Y444_Y42B},
+
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_ARGB, convert_AYUV_ARGB},
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_BGRA, convert_AYUV_BGRA},
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_xRGB, convert_AYUV_ARGB},    /* alias */
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_BGRx, convert_AYUV_BGRA},    /* alias */
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_ABGR, convert_AYUV_ABGR},
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_RGBA, convert_AYUV_RGBA},
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_xBGR, convert_AYUV_ABGR},    /* alias */
+  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_RGBx, convert_AYUV_RGBA},    /* alias */
+
+  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_BGRA, convert_I420_BGRA},
+};
+
 static GstFlowReturn
 gst_cogcolorspace_transform (GstBaseTransform * base_transform,
     GstBuffer * inbuf, GstBuffer * outbuf)
@@ -420,6 +917,28 @@ gst_cogcolorspace_transform (GstBaseTransform * base_transform,
       in_format, width, height);
   out_frame = gst_cog_buffer_wrap (gst_buffer_ref (outbuf),
       out_format, width, height);
+
+  if (in_format == out_format) {
+    memcpy (GST_BUFFER_DATA (outbuf), GST_BUFFER_DATA (inbuf),
+        GST_BUFFER_SIZE (outbuf));
+  }
+
+  {
+    int i;
+
+    for (i = 0; i < sizeof (transforms) / sizeof (transforms[0]); i++) {
+      if (transforms[i].in_format == in_format &&
+          transforms[i].out_format == out_format) {
+        transforms[i].convert (out_frame, frame);
+        cog_frame_unref (frame);
+        cog_frame_unref (out_frame);
+
+        return GST_FLOW_OK;
+      }
+    }
+
+    GST_DEBUG ("no fastpath match %d %d", in_format, out_format);
+  }
 
   switch (out_format) {
     case GST_VIDEO_FORMAT_YUY2:

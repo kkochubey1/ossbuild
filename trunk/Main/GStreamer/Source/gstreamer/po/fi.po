@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.29.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2010-06-30 11:47+0300\n"
 "Last-Translator: Tommi Vainikainen <Tommi.Vainikainen@iki.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -158,6 +158,9 @@ msgstr "Tukikirjastoa ei voitu sulkea."
 msgid "Could not configure supporting library."
 msgstr "Tukikirjastoa ei voitu konfiguroida."
 
+msgid "Encoding error."
+msgstr ""
+
 msgid "GStreamer encountered a general resource error."
 msgstr "GStreamer kohtasi yleisen resurssivirheen."
 
@@ -301,6 +304,14 @@ msgid "date"
 msgstr "päiväys"
 
 msgid "date the data was created (as a GDate structure)"
+msgstr "päiväys, jolloin data luotiin (GDate-muodossa)"
+
+#, fuzzy
+msgid "datetime"
+msgstr "päiväys"
+
+#, fuzzy
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr "päiväys, jolloin data luotiin (GDate-muodossa)"
 
 msgid "genre"
@@ -638,6 +649,13 @@ msgid ""
 "the neighborhood)"
 msgstr "sijainti kaupungin sisällä, jossa media on nauhoitettu tai tuotettu"
 
+#, fuzzy
+msgid "geo location horizontal error"
+msgstr "maantietellisen sijainnin nimi"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
 msgid "geo location movement speed"
 msgstr "maantieteellisen sijainnin liikenopeus"
 
@@ -742,6 +760,20 @@ msgstr "laitemalli"
 
 msgid "Model of the device used to create this media"
 msgstr "Tämän median luomiseen käytetyn laitteen malli"
+
+#, fuzzy
+msgid "application name"
+msgstr "maantietellisen sijainnin nimi"
+
+#, fuzzy
+msgid "Application used to create the media"
+msgstr "Tämän median luomiseen käytetyn laitteen malli"
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
+msgstr ""
 
 msgid "image orientation"
 msgstr "kuvasuunta"
@@ -883,15 +915,15 @@ msgstr "Tiedosto ”%s” on pistoke."
 msgid "Failed after iterations as requested."
 msgstr "Epäonnistui, kuten pyydettiin, yritysten jälkeen."
 
-msgid "Error while writing to download file."
-msgstr "Virhe kirjoitettaessa lataustiedostoon."
-
 msgid "No Temp directory specified."
 msgstr "Tilapäishakemistoa ei ole määritetty."
 
 #, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "Ei voitu luoda tilapäistiedostoa ”%s”."
+
+msgid "Error while writing to download file."
+msgstr "Virhe kirjoitettaessa lataustiedostoon."
 
 msgid "caps"
 msgstr "kyvyt"
@@ -925,6 +957,15 @@ msgstr "kirjoitettavissa"
 
 msgid "controllable"
 msgstr "ohjattavissa"
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
+msgstr ""
 
 msgid "Blacklisted files:"
 msgstr "Mustalistatut tiedostot:"

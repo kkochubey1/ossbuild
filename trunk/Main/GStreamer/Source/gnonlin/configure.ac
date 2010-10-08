@@ -1,22 +1,22 @@
-AC_PREREQ(2.52)
+AC_PREREQ(2.60)
 
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GNonLin, 0.10.15,
+AC_INIT(GNonLin, 0.10.16.1,
     http://gnonlin.sourceforge.net/,
     gnonlin)
 
 AG_GST_INIT
 
 dnl initialize automake
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([-Wno-portability 1.10])
 
 dnl define PACKAGE_VERSION_* variables
 AS_VERSION
 
 dnl check if this is a release version
-AS_NANO(GST_CVS="no", GST_CVS="yes")
+AS_NANO(GST_GIT="no", GST_GIT="yes")
 
 dnl can autoconf find the source ?
 AC_CONFIG_SRCDIR([gnl/gnl.c])
@@ -45,8 +45,8 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.9
-GSTPB_REQ=0.10.13
+GST_REQ=0.10.30
+GSTPB_REQ=0.10.30
 
 dnl *** autotools stuff ****
 
@@ -74,6 +74,7 @@ dnl *** checks for programs ***
 
 dnl find a compiler
 AC_PROG_CC
+AC_PROG_CC_STDC
 
 dnl check if the compiler supports '-c' and '-o' options
 AM_PROG_CC_C_O
@@ -101,28 +102,17 @@ dnl *** checks for library functions ***
 dnl *** checks for dependancy libraries ***
 
 dnl GLib is required
-AG_GST_GLIB_CHECK([2.6])
+AG_GST_GLIB_CHECK([2.20])
 
 dnl checks for gstreamer
 dnl uninstalled is selected preferentially -- see pkg-config(1)
-AG_GST_CHECK_GST($GST_MAJORMINOR, [$GST_REQ])
+AG_GST_CHECK_GST($GST_MAJORMINOR, [$GST_REQ], [yes])
+AG_GST_CHECK_GST_BASE($GST_MAJORMINOR, [$GST_REQ], [yes])
 
-GST_TOOLS_DIR=`$PKG_CONFIG --variable=toolsdir gstreamer-$GST_MAJORMINOR`
-if test -z $GST_TOOLS_DIR; then
-  AC_MSG_ERROR([no tools dir defined in GStreamer pkg-config file; core upgrade needed.])
-fi
-AC_SUBST(GST_TOOLS_DIR)
+AG_GST_CHECK_GST_PLUGINS_BASE($GST_MAJORMINOR, [$GSTPB_REQ], [yes])
 
-GST_PLUGINS_DIR=`$PKG_CONFIG gstreamer-$GST_MAJORMINOR --variable pluginsdir`
-AC_SUBST(GST_PLUGINS_DIR)
-AC_MSG_NOTICE(Using GStreamer Core Plugins in $GST_PLUGINS_DIR)
-
-AG_GST_CHECK_GST_BASE($GST_MAJORMINOR, [$GST_REQ])
-
-AG_GST_CHECK_GST_PLUGINS_BASE($GST_MAJORMINOR, [$GSTPB_REQ])
-GSTPB_PLUGINS_DIR=`$PKG_CONFIG gstreamer-plugins-base-$GST_MAJORMINOR --variable pluginsdir`
-AC_SUBST(GSTPB_PLUGINS_DIR)
-AC_MSG_NOTICE(Using GStreamer Base Plugins in $GSTPB_PLUGINS_DIR)
+dnl check for uninstalled plugin directories for unit tests
+AG_GST_CHECK_GST_PLUGINS_GOOD($GST_MAJORMINOR, [0.10.25])
 
 dnl There are paths for documentation xrefs
 GLIB_PREFIX="`$PKG_CONFIG --variable=prefix glib-2.0`"
@@ -146,10 +136,14 @@ dnl set location of plugin directory
 AG_GST_SET_PLUGINDIR
 
 dnl define an ERROR_CFLAGS Makefile variable
-AG_GST_SET_ERROR_CFLAGS($GST_CVS)
+AG_GST_SET_ERROR_CFLAGS($GST_GIT, [-Wmissing-declarations -Wmissing-prototypes 
+   -Wredundant-decls -Wundef -Wwrite-strings -Wformat-nonliteral
+   -Wformat-security -Wold-style-definition -Wcast-align -Winit-self
+   -Wmissing-include-dirs -Waddress -Waggregate-return -Wno-multichar
+   -Wnested-externs])
 
 dnl define correct level for debugging messages
-AG_GST_SET_LEVEL_DEFAULT($GST_CVS)
+AG_GST_SET_LEVEL_DEFAULT($GST_GIT)
 
 dnl used in examples
 AG_GST_DEFAULT_ELEMENTS
@@ -170,7 +164,7 @@ if test "x$USE_DEBUG" = xyes; then
 fi
 AC_SUBST(PROFILE_CFLAGS)
 
-if test "x$GST_CVS" = "xyes"; then
+if test "x$GST_GIT" = "xyes"; then
   DEPRECATED_CFLAGS="-DGST_DISABLE_DEPRECATED"
 else
   DEPRECATED_CFLAGS=""
@@ -178,13 +172,13 @@ fi
 AC_SUBST(DEPRECATED_CFLAGS)
 
 dnl every flag in GST_OPTION_CFLAGS can be overridden at make time
-GST_OPTION_CFLAGS="\$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
+GST_OPTION_CFLAGS="\$(WARNING_CFLAGS) \$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS) \$(DEPRECATED_CFLAGS)"
 AC_SUBST(GST_OPTION_CFLAGS)
 
 dnl FIXME: do we want to rename to GST_ALL_* ?
 dnl prefer internal headers to already installed ones
 dnl add GST_OPTION_CFLAGS, but overridable
-GST_CFLAGS="$GST_CFLAGS \$(GST_OPTION_CFLAGS)"
+GST_CFLAGS="$GST_CFLAGS $GLIB_EXTRA_CFLAGS \$(GST_OPTION_CFLAGS)"
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_LIBS)
 

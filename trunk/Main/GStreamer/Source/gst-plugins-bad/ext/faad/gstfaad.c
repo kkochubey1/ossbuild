@@ -263,8 +263,8 @@ gst_faad_reset (GstFaad * faad)
   faad->packetised = FALSE;
   g_free (faad->channel_positions);
   faad->channel_positions = NULL;
-  faad->next_ts = 0;
-  faad->prev_ts = GST_CLOCK_TIME_NONE;
+  faad->next_ts = GST_CLOCK_TIME_NONE;
+  faad->prev_ts = 0;
   faad->bytes_in = 0;
   faad->sum_dur_out = 0;
   faad->error_count = 0;
@@ -528,6 +528,12 @@ clear_queued (GstFaad * faad)
   g_list_foreach (faad->queued, (GFunc) gst_mini_object_unref, NULL);
   g_list_free (faad->queued);
   faad->queued = NULL;
+  g_list_foreach (faad->gather, (GFunc) gst_mini_object_unref, NULL);
+  g_list_free (faad->gather);
+  faad->gather = NULL;
+  g_list_foreach (faad->decode, (GFunc) gst_mini_object_unref, NULL);
+  g_list_free (faad->decode);
+  faad->decode = NULL;
 }
 
 static GstFlowReturn
@@ -556,10 +562,24 @@ gst_faad_drain (GstFaad * faad)
 {
   GstFlowReturn ret = GST_FLOW_OK;
 
+  GST_DEBUG_OBJECT (faad, "draining");
+
   if (faad->segment.rate < 0.0) {
+    /* also decode tail = head of previous fragment to fill this one */
+    while (faad->decode) {
+      GstBuffer *buf = GST_BUFFER_CAST (faad->decode->data);
+
+      GST_DEBUG_OBJECT (faad, "processing delayed decode buffer");
+      gst_faad_chain (faad->sinkpad, buf);
+      faad->decode = g_list_delete_link (faad->decode, faad->decode);
+    }
     /* if we have some queued frames for reverse playback, flush
      * them now */
     ret = flush_queued (faad);
+    /* move non-decoded leading buffers gathered in previous run
+     * to decode queue for this run */
+    faad->decode = g_list_reverse (faad->gather);
+    faad->gather = NULL;
   } else {
     /* squeeze any possible remaining frames that are pending sync */
     gst_faad_chain (faad->sinkpad, NULL);
@@ -698,8 +718,8 @@ gst_faad_sink_event (GstPad * pad, GstEvent * event)
             " - %" GST_TIME_FORMAT, GST_TIME_ARGS (new_start),
             GST_TIME_ARGS (new_end));
 
-        faad->next_ts = new_start;
-        faad->prev_ts = GST_CLOCK_TIME_NONE;
+        faad->next_ts = GST_CLOCK_TIME_NONE;
+        faad->prev_ts = new_start;
       }
 
       res = gst_pad_push_event (faad->srcpad, event);
@@ -1045,15 +1065,21 @@ gst_faad_chain (GstPad * pad, GstBuffer * buffer)
     next = FALSE;
   }
 
-  ts = gst_adapter_prev_timestamp (faad->adapter, NULL);
-  if (GST_CLOCK_TIME_IS_VALID (ts) && (ts != faad->prev_ts))
-    faad->prev_ts = faad->next_ts = ts;
-
   available = gst_adapter_available (faad->adapter);
   input_size = available;
-
   if (G_UNLIKELY (!available))
     goto out;
+
+  ts = gst_adapter_prev_timestamp (faad->adapter, NULL);
+  if (GST_CLOCK_TIME_IS_VALID (ts) && (ts != faad->prev_ts)) {
+    faad->prev_ts = ts;
+  } else {
+    /* nothing new */
+    ts = GST_CLOCK_TIME_NONE;
+  }
+
+  if (!GST_CLOCK_TIME_IS_VALID (faad->next_ts))
+    faad->next_ts = faad->prev_ts;
 
   input_data = (guchar *) gst_adapter_peek (faad->adapter, available);
 
@@ -1210,6 +1236,22 @@ gst_faad_chain (GstPad * pad, GstBuffer * buffer)
             goto out;
         }
       }
+    } else {
+      if (faad->packetised && faad->segment.rate < 0.0) {
+        /* leading non-decoded frames used as tail
+         * for next preceding fragment */
+        outbuf = gst_adapter_take_buffer (faad->adapter, available);
+        available = 0;
+        outbuf = gst_buffer_make_metadata_writable (outbuf);
+        GST_BUFFER_FLAG_UNSET (outbuf, GST_BUFFER_FLAG_DISCONT);
+        faad->gather = g_list_prepend (faad->gather, outbuf);
+      }
+    }
+
+    /* adjust to incoming new timestamp, if any, after decoder delay */
+    if (GST_CLOCK_TIME_IS_VALID (ts)) {
+      faad->next_ts = ts;
+      ts = GST_CLOCK_TIME_NONE;
     }
   }
 

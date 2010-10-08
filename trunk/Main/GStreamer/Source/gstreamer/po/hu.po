@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.25.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2010-02-01 15:04+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -150,6 +150,9 @@ msgstr "Nem zárható be a támogató programkönyvtár."
 
 msgid "Could not configure supporting library."
 msgstr "Nem állítható be a támogató programkönyvtár."
+
+msgid "Encoding error."
+msgstr ""
 
 msgid "GStreamer encountered a general resource error."
 msgstr "A GStreamer általános erőforráshibát észlelt."
@@ -296,6 +299,14 @@ msgid "date"
 msgstr "dátum"
 
 msgid "date the data was created (as a GDate structure)"
+msgstr "az adatok létrehozási dátuma (GDate struktúraként)"
+
+#, fuzzy
+msgid "datetime"
+msgstr "dátum"
+
+#, fuzzy
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr "az adatok létrehozási dátuma (GDate struktúraként)"
 
 msgid "genre"
@@ -642,6 +653,13 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "geo location horizontal error"
+msgstr "földrajzi hely neve"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
+#, fuzzy
 msgid "geo location movement speed"
 msgstr "földrajzi hely hosszúsága"
 
@@ -741,6 +759,20 @@ msgstr ""
 #, fuzzy
 msgid "Model of the device used to create this media"
 msgstr "az adatfolyam kódolására használt kódoló verziószáma"
+
+#, fuzzy
+msgid "application name"
+msgstr "földrajzi hely neve"
+
+#, fuzzy
+msgid "Application used to create the media"
+msgstr "az adatfolyam kódolására használt kódoló verziószáma"
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
+msgstr ""
 
 msgid "image orientation"
 msgstr ""
@@ -882,16 +914,16 @@ msgstr "A(z) „%s” fájl egy foglalat."
 msgid "Failed after iterations as requested."
 msgstr "Ismétlések után kérésére meghiúsult."
 
-#, fuzzy
-msgid "Error while writing to download file."
-msgstr "Hiba a(z) „%s” fájl írása közben."
-
 msgid "No Temp directory specified."
 msgstr "Nincs megadva ideiglenes könyvtár."
 
 #, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "Nem hozható létre a következő ideiglenes fájl: „%s”."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Hiba a(z) „%s” fájl írása közben."
 
 msgid "caps"
 msgstr "képességek"
@@ -925,6 +957,15 @@ msgstr "írható"
 
 msgid "controllable"
 msgstr "vezérelhető"
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
+msgstr ""
 
 msgid "Blacklisted files:"
 msgstr "Feketelistás fájlok:"

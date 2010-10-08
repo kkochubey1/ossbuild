@@ -153,6 +153,7 @@ gst_rtsp_src_buffer_mode_get_type (void)
 #define DEFAULT_DEBUG            FALSE
 #define DEFAULT_RETRY            20
 #define DEFAULT_TIMEOUT          5000000
+#define DEFAULT_UDP_BUFFER_SIZE  0
 #define DEFAULT_TCP_TIMEOUT      20000000
 #define DEFAULT_LATENCY_MS       2000
 #define DEFAULT_CONNECTION_SPEED 0
@@ -184,6 +185,7 @@ enum
   PROP_USER_PW,
   PROP_BUFFER_MODE,
   PROP_PORT_RANGE,
+  PROP_UDP_BUFFER_SIZE,
   PROP_LAST
 };
 
@@ -225,6 +227,7 @@ static GstCaps *gst_rtspsrc_media_to_caps (gint pt, const GstSDPMedia * media);
 
 static GstStateChangeReturn gst_rtspsrc_change_state (GstElement * element,
     GstStateChange transition);
+static gboolean gst_rtspsrc_send_event (GstElement * element, GstEvent * event);
 static void gst_rtspsrc_handle_message (GstBin * bin, GstMessage * message);
 
 static void gst_rtspsrc_loop_send_cmd (GstRTSPSrc * src, gint cmd,
@@ -242,9 +245,10 @@ static gboolean gst_rtspsrc_uri_set_uri (GstURIHandler * handler,
 
 static gboolean gst_rtspsrc_activate_streams (GstRTSPSrc * src);
 static void gst_rtspsrc_loop (GstRTSPSrc * src);
-static void gst_rtspsrc_stream_push_event (GstRTSPSrc * src,
-    GstRTSPStream * stream, GstEvent * event);
-static void gst_rtspsrc_push_event (GstRTSPSrc * src, GstEvent * event);
+static gboolean gst_rtspsrc_stream_push_event (GstRTSPSrc * src,
+    GstRTSPStream * stream, GstEvent * event, gboolean source);
+static gboolean gst_rtspsrc_push_event (GstRTSPSrc * src, GstEvent * event,
+    gboolean source);
 static gchar *gst_rtspsrc_dup_printf (const gchar * format, ...);
 
 /* commands we send to out loop to notify it of events */
@@ -429,12 +433,27 @@ gst_rtspsrc_class_init (GstRTSPSrcClass * klass)
           "eg. 3000-3005 (NULL = no restrictions)", DEFAULT_PORT_RANGE,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  /**
+   * GstRTSPSrc::udp-buffer-size:
+   *
+   * Size of the kernel UDP receive buffer in bytes.
+   *
+   * Since: 0.10.26
+   */
+  g_object_class_install_property (gobject_class, PROP_UDP_BUFFER_SIZE,
+      g_param_spec_int ("udp-buffer-size", "UDP Buffer Size",
+          "Size of the kernel UDP receive buffer in bytes, 0=default",
+          0, G_MAXINT, DEFAULT_UDP_BUFFER_SIZE,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  gstelement_class->send_event = gst_rtspsrc_send_event;
   gstelement_class->change_state = gst_rtspsrc_change_state;
 
   gstbin_class->handle_message = gst_rtspsrc_handle_message;
 
   gst_rtsp_ext_list_init ();
 }
+
 
 static void
 gst_rtspsrc_init (GstRTSPSrc * src, GstRTSPSrcClass * g_class)
@@ -464,6 +483,7 @@ gst_rtspsrc_init (GstRTSPSrc * src, GstRTSPSrcClass * g_class)
   src->buffer_mode = DEFAULT_BUFFER_MODE;
   src->client_port_range.min = 0;
   src->client_port_range.max = 0;
+  src->udp_buffer_size = DEFAULT_UDP_BUFFER_SIZE;
 
   /* get a list of all extensions */
   src->extensions = gst_rtsp_ext_list_get ();
@@ -500,6 +520,11 @@ gst_rtspsrc_finalize (GObject * object)
   gst_rtsp_url_free (rtspsrc->conninfo.url);
   g_free (rtspsrc->user_id);
   g_free (rtspsrc->user_pw);
+
+  if (rtspsrc->sdp) {
+    gst_sdp_message_free (rtspsrc->sdp);
+    rtspsrc->sdp = NULL;
+  }
 
   /* free locks */
   g_static_rec_mutex_free (rtspsrc->stream_rec_lock);
@@ -652,6 +677,9 @@ gst_rtspsrc_set_property (GObject * object, guint prop_id, const GValue * value,
       }
       break;
     }
+    case PROP_UDP_BUFFER_SIZE:
+      rtspsrc->udp_buffer_size = g_value_get_int (value);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -741,6 +769,9 @@ gst_rtspsrc_get_property (GObject * object, guint prop_id, GValue * value,
       g_value_take_string (value, str);
       break;
     }
+    case PROP_UDP_BUFFER_SIZE:
+      g_value_set_int (value, rtspsrc->udp_buffer_size);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1120,7 +1151,8 @@ gst_rtspsrc_cleanup (GstRTSPSrc * src)
     gst_rtsp_range_free (src->range);
   src->range = NULL;
 
-  if (src->sdp) {
+  /* don't clear the SDP when it was used in the url */
+  if (src->sdp && !src->from_sdp) {
     gst_sdp_message_free (src->sdp);
     src->sdp = NULL;
   }
@@ -1604,7 +1636,7 @@ gst_rtspsrc_flush (GstRTSPSrc * src, gboolean flush)
       gst_object_unref (clock);
     }
   }
-  gst_rtspsrc_push_event (src, event);
+  gst_rtspsrc_push_event (src, event, FALSE);
   gst_rtspsrc_loop_send_cmd (src, cmd, flush);
 
   /* make running time start start at 0 again */
@@ -2197,7 +2229,7 @@ gst_rtspsrc_do_stream_eos (GstRTSPSrc * src, guint session)
     goto was_eos;
 
   stream->eos = TRUE;
-  gst_rtspsrc_stream_push_event (src, stream, gst_event_new_eos ());
+  gst_rtspsrc_stream_push_event (src, stream, gst_event_new_eos (), TRUE);
   return;
 
   /* ERRORS */
@@ -2626,6 +2658,8 @@ gst_rtspsrc_stream_configure_udp (GstRTSPSrc * src, GstRTSPStream * stream,
      * if we can. */
     g_object_set (G_OBJECT (stream->udpsrc[0]), "timeout", src->udp_timeout,
         NULL);
+    g_object_set (G_OBJECT (stream->udpsrc[0]), "buffer-size",
+        src->udp_buffer_size, NULL);
 
     /* get output pad of the UDP source. */
     *outpad = gst_element_get_static_pad (stream->udpsrc[0], "src");
@@ -3061,7 +3095,7 @@ gst_rtspsrc_combine_flows (GstRTSPSrc * src, GstRTSPStream * stream,
   stream->last_ret = ret;
 
   /* if it's success we can return the value right away */
-  if (GST_FLOW_IS_SUCCESS (ret))
+  if (ret == GST_FLOW_OK)
     goto done;
 
   /* any other error that is not-linked can be returned right
@@ -3085,46 +3119,59 @@ done:
   return ret;
 }
 
-static void
+static gboolean
 gst_rtspsrc_stream_push_event (GstRTSPSrc * src, GstRTSPStream * stream,
-    GstEvent * event)
+    GstEvent * event, gboolean source)
 {
+  gboolean res = TRUE;
+
   /* only streams that have a connection to the outside world */
   if (stream->srcpad == NULL)
     goto done;
 
-  if (stream->channelpad[0]) {
+  if (source && stream->udpsrc[0]) {
+    gst_event_ref (event);
+    res = gst_element_send_event (stream->udpsrc[0], event);
+  } else if (stream->channelpad[0]) {
     gst_event_ref (event);
     if (GST_PAD_IS_SRC (stream->channelpad[0]))
-      gst_pad_push_event (stream->channelpad[0], event);
+      res = gst_pad_push_event (stream->channelpad[0], event);
     else
-      gst_pad_send_event (stream->channelpad[0], event);
+      res = gst_pad_send_event (stream->channelpad[0], event);
   }
 
-  if (stream->channelpad[1]) {
+  if (source && stream->udpsrc[1]) {
+    gst_event_ref (event);
+    res &= gst_element_send_event (stream->udpsrc[1], event);
+  } else if (stream->channelpad[1]) {
     gst_event_ref (event);
     if (GST_PAD_IS_SRC (stream->channelpad[1]))
-      gst_pad_push_event (stream->channelpad[1], event);
+      res &= gst_pad_push_event (stream->channelpad[1], event);
     else
-      gst_pad_send_event (stream->channelpad[1], event);
+      res &= gst_pad_send_event (stream->channelpad[1], event);
   }
 
 done:
   gst_event_unref (event);
+
+  return res;
 }
 
-static void
-gst_rtspsrc_push_event (GstRTSPSrc * src, GstEvent * event)
+static gboolean
+gst_rtspsrc_push_event (GstRTSPSrc * src, GstEvent * event, gboolean source)
 {
   GList *streams;
+  gboolean res = TRUE;
 
   for (streams = src->streams; streams; streams = g_list_next (streams)) {
     GstRTSPStream *ostream = (GstRTSPStream *) streams->data;
 
     gst_event_ref (event);
-    gst_rtspsrc_stream_push_event (src, ostream, event);
+    res &= gst_rtspsrc_stream_push_event (src, ostream, event, source);
   }
   gst_event_unref (event);
+
+  return res;
 }
 
 static GstRTSPResult
@@ -3720,8 +3767,9 @@ gst_rtspsrc_loop_udp (GstRTSPSrc * src)
   /* close and cleanup our state */
   gst_rtspsrc_close (src);
 
-  /* see if we have TCP left to try */
-  if (!(src->protocols & GST_RTSP_LOWER_TRANS_TCP))
+  /* see if we have TCP left to try. Also don't try TCP when we were configured
+   * with an SDP. */
+  if (!(src->protocols & GST_RTSP_LOWER_TRANS_TCP) || src->from_sdp)
     goto no_protocols;
 
   /* We post a warning message now to inform the user
@@ -3850,24 +3898,22 @@ pause:
       /* can be NULL when we stopped and unreffed already */
       gst_task_pause (src->task);
     }
-    if (GST_FLOW_IS_FATAL (ret) || ret == GST_FLOW_NOT_LINKED) {
-      if (ret == GST_FLOW_UNEXPECTED) {
-        /* perform EOS logic */
-        if (src->segment.flags & GST_SEEK_FLAG_SEGMENT) {
-          gst_element_post_message (GST_ELEMENT_CAST (src),
-              gst_message_new_segment_done (GST_OBJECT_CAST (src),
-                  src->segment.format, src->segment.last_stop));
-        } else {
-          gst_rtspsrc_push_event (src, gst_event_new_eos ());
-        }
+    if (ret == GST_FLOW_UNEXPECTED) {
+      /* perform EOS logic */
+      if (src->segment.flags & GST_SEEK_FLAG_SEGMENT) {
+        gst_element_post_message (GST_ELEMENT_CAST (src),
+            gst_message_new_segment_done (GST_OBJECT_CAST (src),
+                src->segment.format, src->segment.last_stop));
       } else {
-        /* for fatal errors we post an error message, post the error before the
-         * EOS so the app knows about the error first. */
-        GST_ELEMENT_ERROR (src, STREAM, FAILED,
-            ("Internal data flow error."),
-            ("streaming task paused, reason %s (%d)", reason, ret));
-        gst_rtspsrc_push_event (src, gst_event_new_eos ());
+        gst_rtspsrc_push_event (src, gst_event_new_eos (), FALSE);
       }
+    } else if (ret == GST_FLOW_NOT_LINKED || ret < GST_FLOW_UNEXPECTED) {
+      /* for fatal errors we post an error message, post the error before the
+       * EOS so the app knows about the error first. */
+      GST_ELEMENT_ERROR (src, STREAM, FAILED,
+          ("Internal data flow error."),
+          ("streaming task paused, reason %s (%d)", reason, ret));
+      gst_rtspsrc_push_event (src, gst_event_new_eos (), FALSE);
     }
     return;
   }
@@ -4542,8 +4588,8 @@ gst_rtspsrc_create_transports_string (GstRTSPSrc * src,
   if (*transports != NULL)
     return GST_RTSP_OK;
 
-  /* it's the default but some servers need it */
-  add_udp_str = TRUE;
+  /* it's the default */
+  add_udp_str = FALSE;
 
   /* the default RTSP transports */
   result = g_string_new ("");
@@ -6091,6 +6137,24 @@ open_failed:
   }
 }
 
+static gboolean
+gst_rtspsrc_send_event (GstElement * element, GstEvent * event)
+{
+  gboolean res;
+  GstRTSPSrc *rtspsrc;
+
+  rtspsrc = GST_RTSPSRC (element);
+
+  if (GST_EVENT_IS_DOWNSTREAM (event)) {
+    res = gst_rtspsrc_push_event (rtspsrc, event, TRUE);
+  } else {
+    res = GST_ELEMENT_CLASS (parent_class)->send_event (element, event);
+  }
+
+  return res;
+}
+
+
 /*** GSTURIHANDLER INTERFACE *************************************************/
 
 static GstURIType
@@ -6102,7 +6166,8 @@ gst_rtspsrc_uri_get_type (void)
 static gchar **
 gst_rtspsrc_uri_get_protocols (void)
 {
-  static const gchar *protocols[] = { "rtsp", "rtspu", "rtspt", "rtsph", NULL };
+  static const gchar *protocols[] =
+      { "rtsp", "rtspu", "rtspt", "rtsph", "rtsp-sdp", NULL };
 
   return (gchar **) protocols;
 }
@@ -6121,7 +6186,8 @@ gst_rtspsrc_uri_set_uri (GstURIHandler * handler, const gchar * uri)
 {
   GstRTSPSrc *src;
   GstRTSPResult res;
-  GstRTSPUrl *newurl;
+  GstRTSPUrl *newurl = NULL;
+  GstSDPMessage *sdp = NULL;
 
   src = GST_RTSPSRC (handler);
 
@@ -6129,18 +6195,37 @@ gst_rtspsrc_uri_set_uri (GstURIHandler * handler, const gchar * uri)
   if (src->conninfo.location && uri && !strcmp (uri, src->conninfo.location))
     goto was_ok;
 
-  /* try to parse */
-  if ((res = gst_rtsp_url_parse (uri, &newurl)) < 0)
-    goto parse_error;
+  if (g_str_has_prefix (uri, "rtsp-sdp://")) {
+    if ((res = gst_sdp_message_new (&sdp) < 0))
+      goto sdp_failed;
+
+    GST_DEBUG_OBJECT (src, "parsing SDP message");
+    if ((res = gst_sdp_message_parse_uri (uri, sdp) < 0))
+      goto invalid_sdp;
+  } else {
+    /* try to parse */
+    GST_DEBUG_OBJECT (src, "parsing URI");
+    if ((res = gst_rtsp_url_parse (uri, &newurl)) < 0)
+      goto parse_error;
+  }
 
   /* if worked, free previous and store new url object along with the original
    * location. */
-  gst_rtsp_url_free (src->conninfo.url);
-  src->conninfo.url = newurl;
+  GST_DEBUG_OBJECT (src, "configuring URI");
   g_free (src->conninfo.location);
   src->conninfo.location = g_strdup (uri);
+  gst_rtsp_url_free (src->conninfo.url);
+  src->conninfo.url = newurl;
   g_free (src->conninfo.url_str);
-  src->conninfo.url_str = gst_rtsp_url_get_request_uri (src->conninfo.url);
+  if (newurl)
+    src->conninfo.url_str = gst_rtsp_url_get_request_uri (src->conninfo.url);
+  else
+    src->conninfo.url_str = NULL;
+
+  if (src->sdp)
+    gst_sdp_message_free (src->sdp);
+  src->sdp = sdp;
+  src->from_sdp = sdp != NULL;
 
   GST_DEBUG_OBJECT (src, "set uri: %s", GST_STR_NULL (uri));
   GST_DEBUG_OBJECT (src, "request uri is: %s",
@@ -6153,6 +6238,18 @@ was_ok:
   {
     GST_DEBUG_OBJECT (src, "URI was ok: '%s'", GST_STR_NULL (uri));
     return TRUE;
+  }
+sdp_failed:
+  {
+    GST_ERROR_OBJECT (src, "Could not create new SDP (%d)", res);
+    return FALSE;
+  }
+invalid_sdp:
+  {
+    GST_ERROR_OBJECT (src, "Not a valid SDP (%d) '%s'", res,
+        GST_STR_NULL (uri));
+    gst_sdp_message_free (sdp);
+    return FALSE;
   }
 parse_error:
   {

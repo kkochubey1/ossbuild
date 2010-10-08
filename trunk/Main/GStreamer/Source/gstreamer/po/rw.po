@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.8.8\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2005-04-04 10:55-0700\n"
 "Last-Translator: Steven Michael Murphy <murf@e-tools.com>\n"
 "Language-Team: Kinyarwanda <translation-team-rw@lists.sourceforge.net>\n"
@@ -208,6 +208,9 @@ msgstr "OYA Gufunga Isomero"
 msgid "Could not configure supporting library."
 msgstr "OYA Gufunga Isomero"
 
+msgid "Encoding error."
+msgstr ""
+
 #, fuzzy
 msgid "GStreamer encountered a general resource error."
 msgstr "a Rusange Isomero Ikosa"
@@ -379,6 +382,14 @@ msgstr "Itariki"
 
 #, fuzzy
 msgid "date the data was created (as a GDate structure)"
+msgstr "Itariki i Ibyatanzwe Byaremwe in Kalindari Iminsi"
+
+#, fuzzy
+msgid "datetime"
+msgstr "Itariki"
+
+#, fuzzy
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr "Itariki i Ibyatanzwe Byaremwe in Kalindari Iminsi"
 
 msgid "genre"
@@ -802,6 +813,13 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "geo location horizontal error"
+msgstr "Inturo"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
+#, fuzzy
 msgid "geo location movement speed"
 msgstr "Inturo"
 
@@ -902,6 +920,20 @@ msgstr ""
 #, fuzzy
 msgid "Model of the device used to create this media"
 msgstr "Verisiyo Bya i Kuri iyi"
+
+#, fuzzy
+msgid "application name"
+msgstr "Inturo"
+
+#, fuzzy
+msgid "Application used to create the media"
+msgstr "Verisiyo Bya i Kuri iyi"
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
+msgstr ""
 
 msgid "image orientation"
 msgstr ""
@@ -1045,16 +1077,16 @@ msgstr "Idosiye ni a"
 msgid "Failed after iterations as requested."
 msgstr "Nyuma Amasubiramo Nka"
 
-#, fuzzy
-msgid "Error while writing to download file."
-msgstr "Kuri IDOSIYE"
-
 msgid "No Temp directory specified."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "OYA Kubona Gushyiraho Amagenamiterere Bivuye ku"
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Kuri IDOSIYE"
 
 # #-#-#-#-#  officecfg.pot (PACKAGE VERSION)  #-#-#-#-#
 # officecfg/registry\schema\org\openoffice\Office\Writer.xcs:....Revision.TextDisplay.Insert.Attribute..5.text
@@ -1101,6 +1133,15 @@ msgid "writable"
 msgstr "umutwe"
 
 msgid "controllable"
+msgstr ""
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
 msgstr ""
 
 msgid "Blacklisted files:"

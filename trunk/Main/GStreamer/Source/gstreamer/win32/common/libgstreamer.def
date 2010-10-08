@@ -98,6 +98,7 @@ EXPORTS
 	gst_buffer_list_iterate
 	gst_buffer_list_iterator_add
 	gst_buffer_list_iterator_add_group
+	gst_buffer_list_iterator_add_list
 	gst_buffer_list_iterator_do
 	gst_buffer_list_iterator_free
 	gst_buffer_list_iterator_merge_group
@@ -286,6 +287,8 @@ EXPORTS
 	gst_element_class_install_std_props
 	gst_element_class_set_details
 	gst_element_class_set_details_simple
+	gst_element_class_set_documentation_uri
+	gst_element_class_set_icon_name
 	gst_element_continue_state
 	gst_element_create_all_pads
 	gst_element_factory_can_sink_caps
@@ -294,7 +297,9 @@ EXPORTS
 	gst_element_factory_find
 	gst_element_factory_get_author
 	gst_element_factory_get_description
+	gst_element_factory_get_documentation_uri
 	gst_element_factory_get_element_type
+	gst_element_factory_get_icon_name
 	gst_element_factory_get_klass
 	gst_element_factory_get_longname
 	gst_element_factory_get_num_pad_templates
@@ -303,6 +308,9 @@ EXPORTS
 	gst_element_factory_get_uri_protocols
 	gst_element_factory_get_uri_type
 	gst_element_factory_has_interface
+	gst_element_factory_list_filter
+	gst_element_factory_list_get_elements
+	gst_element_factory_list_is_type
 	gst_element_factory_make
 	gst_element_flags_get_type
 	gst_element_found_tags
@@ -464,6 +472,7 @@ EXPORTS
 	gst_init
 	gst_init_check
 	gst_init_get_option_group
+	gst_int64_range_get_type
 	gst_int_range_get_type
 	gst_is_initialized
 	gst_is_tag_list
@@ -739,8 +748,10 @@ EXPORTS
 	gst_plugin_feature_get_rank
 	gst_plugin_feature_get_type
 	gst_plugin_feature_list_copy
+	gst_plugin_feature_list_debug
 	gst_plugin_feature_list_free
 	gst_plugin_feature_load
+	gst_plugin_feature_rank_compare_func
 	gst_plugin_feature_set_name
 	gst_plugin_feature_set_rank
 	gst_plugin_feature_type_name_filter
@@ -796,6 +807,8 @@ EXPORTS
 	gst_print_element_args
 	gst_print_pad_caps
 	gst_proxy_pad_get_type
+	gst_query_add_buffering_range
+	gst_query_get_n_buffering_ranges
 	gst_query_get_structure
 	gst_query_get_type
 	gst_query_new_application
@@ -816,6 +829,7 @@ EXPORTS
 	gst_query_parse_formats_length
 	gst_query_parse_formats_nth
 	gst_query_parse_latency
+	gst_query_parse_nth_buffering_range
 	gst_query_parse_position
 	gst_query_parse_seeking
 	gst_query_parse_segment
@@ -941,6 +955,7 @@ EXPORTS
 	gst_structure_id_set
 	gst_structure_id_set_valist
 	gst_structure_id_set_value
+	gst_structure_id_take_value
 	gst_structure_map_in_place
 	gst_structure_n_fields
 	gst_structure_new
@@ -955,6 +970,7 @@ EXPORTS
 	gst_structure_set_parent_refcount
 	gst_structure_set_valist
 	gst_structure_set_value
+	gst_structure_take_value
 	gst_structure_to_string
 	gst_system_clock_get_type
 	gst_system_clock_obtain
@@ -1091,6 +1107,7 @@ EXPORTS
 	gst_util_double_to_fraction
 	gst_util_dump_mem
 	gst_util_fraction_add
+	gst_util_fraction_compare
 	gst_util_fraction_multiply
 	gst_util_fraction_to_double
 	gst_util_gdouble_to_guint64
@@ -1130,6 +1147,8 @@ EXPORTS
 	gst_value_get_fraction_numerator
 	gst_value_get_fraction_range_max
 	gst_value_get_fraction_range_min
+	gst_value_get_int64_range_max
+	gst_value_get_int64_range_min
 	gst_value_get_int_range_max
 	gst_value_get_int_range_min
 	gst_value_get_mini_object
@@ -1155,6 +1174,7 @@ EXPORTS
 	gst_value_set_fraction
 	gst_value_set_fraction_range
 	gst_value_set_fraction_range_full
+	gst_value_set_int64_range
 	gst_value_set_int_range
 	gst_value_set_mini_object
 	gst_value_set_structure

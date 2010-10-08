@@ -38,7 +38,9 @@ typedef struct _GstMultiUDPSink GstMultiUDPSink;
 typedef struct _GstMultiUDPSinkClass GstMultiUDPSinkClass;
 
 typedef struct {
-  int *sock; /* Pointer to the socket FD we're using for this client */
+  gint refcount;
+
+  int *sock;
 
   struct sockaddr_storage theiraddr;
 
@@ -57,39 +59,18 @@ typedef struct {
 struct _GstMultiUDPSink {
   GstBaseSink parent;
 
+  int sock;
+
   GMutex        *client_lock;
   GList         *clients;
 
   /* properties */
   guint64        bytes_to_serve;
   guint64        bytes_served;
-  /* If we have a dual-stack (IPv4 and IPv6) capable system, we use 'sock' for
-   * all connections. If it's two independent stacks (or IPv6 isn't 
-   * supported at all), then 'sock' is for IPv4 only, and 'sock6' is used for IPv6).
-   */
-  gboolean       dualstack;
-#if 0
-   *
-   * if dualstack
-   *   use sock
-   * else
-   *   if addr is v4
-   *     use sock
-   *   else
-   *     use sock6
-#endif
+  int            sockfd;
+  gboolean       closefd;
 
-  int            sock;        /* Actual socket FD */
-  int            sockfd;      /* The FD for the socket to use, or -1 if we're 
-                                 going to allocate a socket ourselves */
-  gboolean       closefd;     /* TRUE if we should close an externally-
-                                 supplied FD when we stop */
-  gboolean       externalfd;  /* TRUE if the FD is externally supplied */
-
-  int            sock6;
-  int            sockfd6;
-  gboolean       closefd6;
-  gboolean       externalfd6;
+  gboolean       externalfd;
 
   gboolean       auto_multicast;
   gint           ttl;
@@ -97,6 +78,8 @@ struct _GstMultiUDPSink {
   gboolean       loop;
   gint           qos_dscp;
   guint16        ss_family;
+
+  gboolean       send_duplicates;
 };
 
 struct _GstMultiUDPSinkClass {

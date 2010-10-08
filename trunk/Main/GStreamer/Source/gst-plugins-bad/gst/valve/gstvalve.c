@@ -1,9 +1,7 @@
-/*
- * Farsight Voice+Video library
- *
- *  Copyright 2007 Collabora Ltd, 
- *  Copyright 2007 Nokia Corporation
+/* GStreamer
+ *  Copyright 2007-2009 Collabora Ltd
  *   @author: Olivier Crete <olivier.crete@collabora.co.uk>
+ *  Copyright 2007-2009 Nokia Corporation
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +19,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 /**
  * SECTION:element-valve
  *
@@ -82,11 +81,8 @@ static GstFlowReturn gst_valve_buffer_alloc (GstPad * pad, guint64 offset,
 static GstFlowReturn gst_valve_chain (GstPad * pad, GstBuffer * buffer);
 static GstCaps *gst_valve_getcaps (GstPad * pad);
 
-static void
-_do_init (GType type)
-{
+#define _do_init(bla) \
   GST_DEBUG_CATEGORY_INIT (valve_debug, "valve", 0, "Valve");
-}
 
 GST_BOILERPLATE_FULL (GstValve, gst_valve, GstElement,
     GST_TYPE_ELEMENT, _do_init);
@@ -120,10 +116,9 @@ gst_valve_class_init (GstValveClass * klass)
   g_object_class_install_property (gobject_class, ARG_DROP,
       g_param_spec_boolean ("drop",
           "Drops all buffers if TRUE",
-          "If this property if TRUE, the element will drop all buffers, if its FALSE, it will let them through",
-          FALSE, G_PARAM_READWRITE));
-
-  parent_class = g_type_class_peek_parent (klass);
+          "If this property if TRUE, the element will drop all buffers, "
+          "if its FALSE, it will let them through",
+          FALSE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 static void
@@ -157,13 +152,11 @@ gst_valve_set_property (GObject * object,
   GstValve *valve = GST_VALVE (object);
 
   switch (prop_id) {
+    case ARG_DROP:
+      g_atomic_int_set (&valve->drop, g_value_get_boolean (value));
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
-    case ARG_DROP:
-      GST_OBJECT_LOCK (object);
-      valve->drop = g_value_get_boolean (value);
-      GST_OBJECT_UNLOCK (object);
       break;
   }
 }
@@ -175,13 +168,11 @@ gst_valve_get_property (GObject * object,
   GstValve *valve = GST_VALVE (object);
 
   switch (prop_id) {
+    case ARG_DROP:
+      g_value_set_boolean (value, g_atomic_int_get (&valve->drop));
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
-    case ARG_DROP:
-      GST_OBJECT_LOCK (object);
-      g_value_set_boolean (value, valve->drop);
-      GST_OBJECT_UNLOCK (object);
       break;
   }
 }
@@ -189,32 +180,27 @@ gst_valve_get_property (GObject * object,
 static GstFlowReturn
 gst_valve_chain (GstPad * pad, GstBuffer * buffer)
 {
-  GstValve *valve = GST_VALVE (gst_pad_get_parent_element (pad));
+  GstValve *valve = GST_VALVE (GST_OBJECT_PARENT (pad));
   GstFlowReturn ret = GST_FLOW_OK;
-  gboolean drop;
 
-  GST_OBJECT_LOCK (GST_OBJECT (valve));
-  drop = valve->drop;
-
-  if (!drop && valve->discont) {
-    buffer = gst_buffer_make_metadata_writable (buffer);
-    GST_BUFFER_FLAG_SET (buffer, GST_BUFFER_FLAG_DISCONT);
-    valve->discont = FALSE;
-  }
-  GST_OBJECT_UNLOCK (GST_OBJECT (valve));
-
-  if (drop)
+  if (g_atomic_int_get (&valve->drop)) {
     gst_buffer_unref (buffer);
-  else
+    valve->discont = TRUE;
+  } else {
+    if (valve->discont) {
+      buffer = gst_buffer_make_metadata_writable (buffer);
+      GST_BUFFER_FLAG_SET (buffer, GST_BUFFER_FLAG_DISCONT);
+    }
+
     ret = gst_pad_push (valve->srcpad, buffer);
+  }
 
 
-  GST_OBJECT_LOCK (GST_OBJECT (valve));
-  if (valve->drop)
+  /* Ignore errors if "drop" was changed while the thread was blocked
+   * downwards
+   */
+  if (g_atomic_int_get (&valve->drop))
     ret = GST_FLOW_OK;
-  GST_OBJECT_UNLOCK (GST_OBJECT (valve));
-
-  gst_object_unref (valve);
 
   return ret;
 }
@@ -225,21 +211,17 @@ gst_valve_event (GstPad * pad, GstEvent * event)
 {
   GstValve *valve = GST_VALVE (gst_pad_get_parent_element (pad));
   gboolean ret = TRUE;
-  gboolean drop;
 
-  GST_OBJECT_LOCK (GST_OBJECT (valve));
-  drop = valve->drop;
-  GST_OBJECT_UNLOCK (GST_OBJECT (valve));
-
-  if (drop)
+  if (g_atomic_int_get (&valve->drop))
     gst_event_unref (event);
   else
     ret = gst_pad_push_event (valve->srcpad, event);
 
-  GST_OBJECT_LOCK (GST_OBJECT (valve));
-  if (valve->drop)
+  /* Ignore errors if "drop" was changed while the thread was blocked
+   * downwards.
+   */
+  if (g_atomic_int_get (&valve->drop))
     ret = TRUE;
-  GST_OBJECT_UNLOCK (GST_OBJECT (valve));
 
   gst_object_unref (valve);
   return ret;
@@ -251,21 +233,17 @@ gst_valve_buffer_alloc (GstPad * pad, guint64 offset, guint size,
 {
   GstValve *valve = GST_VALVE (gst_pad_get_parent_element (pad));
   GstFlowReturn ret = GST_FLOW_OK;
-  gboolean drop;
 
-  GST_OBJECT_LOCK (GST_OBJECT (valve));
-  drop = valve->drop;
-  GST_OBJECT_UNLOCK (GST_OBJECT (valve));
-
-  if (drop)
+  if (g_atomic_int_get (&valve->drop))
     *buf = NULL;
   else
     ret = gst_pad_alloc_buffer (valve->srcpad, offset, size, caps, buf);
 
-  GST_OBJECT_LOCK (GST_OBJECT (valve));
-  if (valve->drop)
+  /* Ignore errors if "drop" was changed while the thread was blocked
+   * downwards
+   */
+  if (g_atomic_int_get (&valve->drop))
     ret = GST_FLOW_OK;
-  GST_OBJECT_UNLOCK (GST_OBJECT (valve));
 
   gst_object_unref (valve);
 

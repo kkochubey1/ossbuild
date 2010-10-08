@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.8.1\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2004-04-26 10:36-0400\n"
 "Last-Translator: Gareth Owen <gowen72@yahoo.com>\n"
 "Language-Team: English (British) <en_gb@li.org>\n"
@@ -159,6 +159,9 @@ msgstr "Could not close supporting library."
 msgid "Could not configure supporting library."
 msgstr "Could not close supporting library."
 
+msgid "Encoding error."
+msgstr ""
+
 #, fuzzy
 msgid "GStreamer encountered a general resource error."
 msgstr "GStreamer encountered a general core library error."
@@ -307,6 +310,14 @@ msgstr "date"
 
 #, fuzzy
 msgid "date the data was created (as a GDate structure)"
+msgstr "date the data was created (in Julian calendar days)"
+
+#, fuzzy
+msgid "datetime"
+msgstr "date"
+
+#, fuzzy
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr "date the data was created (in Julian calendar days)"
 
 msgid "genre"
@@ -647,6 +658,13 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "geo location horizontal error"
+msgstr "location"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
+#, fuzzy
 msgid "geo location movement speed"
 msgstr "location"
 
@@ -747,6 +765,20 @@ msgstr ""
 #, fuzzy
 msgid "Model of the device used to create this media"
 msgstr "version of the encoder used to encode this stream"
+
+#, fuzzy
+msgid "application name"
+msgstr "location"
+
+#, fuzzy
+msgid "Application used to create the media"
+msgstr "version of the encoder used to encode this stream"
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
+msgstr ""
 
 msgid "image orientation"
 msgstr ""
@@ -886,16 +918,16 @@ msgstr "File \"%s\" isn't a regular file."
 msgid "Failed after iterations as requested."
 msgstr "Failed after iterations as requested."
 
-#, fuzzy
-msgid "Error while writing to download file."
-msgstr "Error while writing to file \"%s\"."
-
 msgid "No Temp directory specified."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "Could not get/set settings from/on resource."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Error while writing to file \"%s\"."
 
 msgid "caps"
 msgstr "caps"
@@ -930,6 +962,15 @@ msgid "writable"
 msgstr "title"
 
 msgid "controllable"
+msgstr ""
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
 msgstr ""
 
 msgid "Blacklisted files:"

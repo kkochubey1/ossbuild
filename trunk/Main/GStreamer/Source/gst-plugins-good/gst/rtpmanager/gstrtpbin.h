@@ -49,8 +49,10 @@ struct _GstRtpBin {
   guint64         latency_ns;
   gboolean        do_lost;
   gboolean        ignore_pt;
+  gboolean        ntp_sync;
   RTPJitterBufferMode buffer_mode;
   gboolean        buffering;
+  gboolean        use_pipeline_clock;
   GstClockTime    buffer_start;
   /* a list of session */
   GSList         *sessions;

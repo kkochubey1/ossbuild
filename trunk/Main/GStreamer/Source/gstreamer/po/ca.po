@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.9.7\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2005-12-02 17:43+0100\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -153,6 +153,9 @@ msgstr "No s'ha pogut tancar la biblioteca de suport."
 #, fuzzy
 msgid "Could not configure supporting library."
 msgstr "No s'ha pogut tancar la biblioteca de suport."
+
+msgid "Encoding error."
+msgstr ""
 
 msgid "GStreamer encountered a general resource error."
 msgstr "GStreamer ha trobat un error general de recursos."
@@ -302,6 +305,14 @@ msgid "date"
 msgstr "data"
 
 msgid "date the data was created (as a GDate structure)"
+msgstr "data en la qual es van crear les dades (com a una estructura GDate)"
+
+#, fuzzy
+msgid "datetime"
+msgstr "data"
+
+#, fuzzy
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr "data en la qual es van crear les dades (com a una estructura GDate)"
 
 msgid "genre"
@@ -643,6 +654,13 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "geo location horizontal error"
+msgstr "ubicació"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
+#, fuzzy
 msgid "geo location movement speed"
 msgstr "ubicació"
 
@@ -743,6 +761,20 @@ msgstr ""
 #, fuzzy
 msgid "Model of the device used to create this media"
 msgstr "versió del codificador utilitzat per a codificar aquest flux"
+
+#, fuzzy
+msgid "application name"
+msgstr "ubicació"
+
+#, fuzzy
+msgid "Application used to create the media"
+msgstr "versió del codificador utilitzat per a codificar aquest flux"
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
+msgstr ""
 
 msgid "image orientation"
 msgstr ""
@@ -884,16 +916,16 @@ msgstr "El fitxer «%s» és un sòcol."
 msgid "Failed after iterations as requested."
 msgstr "Ha fallat després de les iteracions com s'ha demanat."
 
-#, fuzzy
-msgid "Error while writing to download file."
-msgstr "S'ha produït un error en escriure al fitxer «%s»."
-
 msgid "No Temp directory specified."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "no s'ha pogut obtenir informació sobre «%s»."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "S'ha produït un error en escriure al fitxer «%s»."
 
 msgid "caps"
 msgstr "capacitats"
@@ -928,6 +960,15 @@ msgid "writable"
 msgstr "títol"
 
 msgid "controllable"
+msgstr ""
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
 msgstr ""
 
 msgid "Blacklisted files:"

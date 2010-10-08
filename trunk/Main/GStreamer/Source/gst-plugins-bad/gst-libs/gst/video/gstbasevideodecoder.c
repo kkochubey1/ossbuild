@@ -158,14 +158,8 @@ gst_base_video_decoder_sink_setcaps (GstPad * pad, GstCaps * caps)
   gst_video_parse_caps_framerate (caps, &state->fps_n, &state->fps_d);
   gst_video_parse_caps_pixel_aspect_ratio (caps, &state->par_n, &state->par_d);
 
-#if 0
-  /* requires 0.10.23 */
   state->have_interlaced =
       gst_video_format_parse_caps_interlaced (caps, &state->interlaced);
-#else
-  state->have_interlaced = gst_structure_get_boolean (structure,
-      "interlaced", &state->interlaced);
-#endif
 
   codec_data = gst_structure_get_value (structure, "codec_data");
   if (codec_data && G_VALUE_TYPE (codec_data) == GST_TYPE_BUFFER) {
@@ -862,32 +856,36 @@ gst_base_video_decoder_chain (GstPad * pad, GstBuffer * buf)
       GST_DEBUG ("no sync, scanning");
 
       n = gst_adapter_available (base_video_decoder->input_adapter);
-      m = klass->scan_for_sync (base_video_decoder, FALSE, 0, n);
+      if (klass->capture_mask != 0) {
+        m = gst_adapter_masked_scan_uint32 (base_video_decoder->input_adapter,
+            klass->capture_mask, klass->capture_pattern, 0, n - 3);
+      } else if (klass->scan_for_sync) {
+        m = klass->scan_for_sync (base_video_decoder, FALSE, 0, n);
+      } else {
+        m = 0;
+      }
       if (m == -1) {
+        GST_ERROR ("scan returned no sync");
+        gst_adapter_flush (base_video_decoder->input_adapter, n - 3);
+
         gst_object_unref (base_video_decoder);
         return GST_FLOW_OK;
-      }
+      } else {
+        if (m > 0) {
+          if (m >= n) {
+            GST_ERROR ("subclass scanned past end %d >= %d", m, n);
+          }
 
-      if (m < 0) {
-        g_warning ("subclass returned negative scan %d", m);
-      }
+          gst_adapter_flush (base_video_decoder->input_adapter, m);
 
-      if (m >= n) {
-        GST_ERROR ("subclass scanned past end %d >= %d", m, n);
-      }
+          if (m < n) {
+            GST_DEBUG ("found possible sync after %d bytes (of %d)", m, n);
 
-      gst_adapter_flush (base_video_decoder->input_adapter, m);
+            /* this is only "maybe" sync */
+            base_video_decoder->have_sync = TRUE;
+          }
+        }
 
-      if (m < n) {
-        GST_DEBUG ("found possible sync after %d bytes (of %d)", m, n);
-
-        /* this is only "maybe" sync */
-        base_video_decoder->have_sync = TRUE;
-      }
-
-      if (!base_video_decoder->have_sync) {
-        gst_object_unref (base_video_decoder);
-        return GST_FLOW_OK;
       }
     }
 
@@ -998,7 +996,7 @@ gst_base_video_decoder_finish_frame (GstBaseVideoDecoder * base_video_decoder,
           GST_TIME_ARGS (frame->presentation_timestamp -
               base_video_decoder->segment.start));
       base_video_decoder->timestamp_offset = frame->presentation_timestamp;
-      base_video_decoder->field_index = 0;
+      base_video_decoder->field_index &= 1;
     } else {
       /* This case is for one initial timestamp and no others, e.g.,
        * filesrc ! decoder ! xvimagesink */
@@ -1013,7 +1011,7 @@ gst_base_video_decoder_finish_frame (GstBaseVideoDecoder * base_video_decoder,
             ("No base timestamp.  Assuming frames start at segment start");
         base_video_decoder->timestamp_offset =
             base_video_decoder->segment.start;
-        base_video_decoder->field_index = 0;
+        base_video_decoder->field_index &= 1;
       }
     }
   }
@@ -1046,15 +1044,6 @@ gst_base_video_decoder_finish_frame (GstBaseVideoDecoder * base_video_decoder,
 
   GST_BUFFER_FLAG_UNSET (frame->src_buffer, GST_BUFFER_FLAG_DELTA_UNIT);
   if (base_video_decoder->state.interlaced) {
-#ifndef GST_VIDEO_BUFFER_TFF
-#define GST_VIDEO_BUFFER_TFF (GST_MINI_OBJECT_FLAG_LAST << 5)
-#endif
-#ifndef GST_VIDEO_BUFFER_RFF
-#define GST_VIDEO_BUFFER_RFF (GST_MINI_OBJECT_FLAG_LAST << 6)
-#endif
-#ifndef GST_VIDEO_BUFFER_ONEFIELD
-#define GST_VIDEO_BUFFER_ONEFIELD (GST_MINI_OBJECT_FLAG_LAST << 7)
-#endif
     int tff = base_video_decoder->state.top_field_first;
 
     if (frame->field_index & 1) {
@@ -1070,11 +1059,11 @@ gst_base_video_decoder_finish_frame (GstBaseVideoDecoder * base_video_decoder,
     if (frame->n_fields == 3) {
       GST_BUFFER_FLAG_SET (frame->src_buffer, GST_VIDEO_BUFFER_RFF);
     } else if (frame->n_fields == 1) {
-      GST_BUFFER_FLAG_UNSET (frame->src_buffer, GST_VIDEO_BUFFER_ONEFIELD);
+      GST_BUFFER_FLAG_SET (frame->src_buffer, GST_VIDEO_BUFFER_ONEFIELD);
     }
   }
   if (base_video_decoder->discont) {
-    GST_BUFFER_FLAG_UNSET (frame->src_buffer, GST_BUFFER_FLAG_DISCONT);
+    GST_BUFFER_FLAG_SET (frame->src_buffer, GST_BUFFER_FLAG_DISCONT);
     base_video_decoder->discont = FALSE;
   }
 
@@ -1341,8 +1330,6 @@ gst_base_video_decoder_have_frame_2 (GstBaseVideoDecoder * base_video_decoder)
   GstVideoFrame *frame = base_video_decoder->current_frame;
   GstBaseVideoDecoderClass *base_video_decoder_class;
   GstFlowReturn ret = GST_FLOW_OK;
-  GstClockTime running_time;
-  GstClockTimeDiff deadline;
 
   base_video_decoder_class =
       GST_BASE_VIDEO_DECODER_GET_CLASS (base_video_decoder);
@@ -1361,18 +1348,12 @@ gst_base_video_decoder_have_frame_2 (GstBaseVideoDecoder * base_video_decoder)
   base_video_decoder->frames = g_list_append (base_video_decoder->frames,
       frame);
 
-  running_time = gst_segment_to_running_time (&base_video_decoder->segment,
+  frame->deadline = gst_segment_to_running_time (&base_video_decoder->segment,
       GST_FORMAT_TIME, frame->presentation_timestamp);
 
-  if (GST_CLOCK_TIME_IS_VALID (base_video_decoder->earliest_time))
-    deadline = GST_CLOCK_DIFF (base_video_decoder->earliest_time, running_time);
-  else
-    deadline = G_MAXINT64;
-
   /* do something with frame */
-  ret = base_video_decoder_class->handle_frame (base_video_decoder, frame,
-      deadline);
-  if (!GST_FLOW_IS_SUCCESS (ret)) {
+  ret = base_video_decoder_class->handle_frame (base_video_decoder, frame);
+  if (ret != GST_FLOW_OK) {
     GST_DEBUG ("flow error!");
   }
 
@@ -1497,4 +1478,29 @@ gst_base_video_decoder_alloc_src_frame (GstBaseVideoDecoder *
   }
 
   return flow_ret;
+}
+
+GstClockTimeDiff
+gst_base_video_decoder_get_max_decode_time (GstBaseVideoDecoder *
+    base_video_decoder, GstVideoFrame * frame)
+{
+  GstClockTimeDiff deadline;
+
+  if (GST_CLOCK_TIME_IS_VALID (base_video_decoder->earliest_time))
+    deadline = GST_CLOCK_DIFF (base_video_decoder->earliest_time,
+        frame->deadline);
+  else
+    deadline = G_MAXINT64;
+
+  return deadline;
+}
+
+void
+gst_base_video_decoder_class_set_capture_pattern (GstBaseVideoDecoderClass *
+    base_video_decoder_class, guint32 mask, guint32 pattern)
+{
+  g_return_if_fail (((~mask) & pattern) == 0);
+
+  base_video_decoder_class->capture_mask = mask;
+  base_video_decoder_class->capture_pattern = pattern;
 }

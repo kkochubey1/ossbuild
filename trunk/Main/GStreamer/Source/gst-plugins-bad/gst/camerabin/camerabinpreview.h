@@ -27,13 +27,16 @@
 
 G_BEGIN_DECLS
     GstElement * gst_camerabin_preview_create_pipeline (GstCameraBin * camera,
-    GstCaps * caps);
+    GstCaps * caps, GstElement * src_filter);
 
 void gst_camerabin_preview_destroy_pipeline (GstCameraBin * camera,
     GstElement * pipeline);
 
 GstBuffer *gst_camerabin_preview_convert (GstCameraBin * camera,
     GstElement * pipeline, GstBuffer * buf);
+
+gboolean gst_camerabin_preview_send_event (GstCameraBin * camera,
+    GstElement * pipeline, GstEvent * event);
 
 G_END_DECLS
 #endif                          /* __CAMERABINPREVIEW_H__ */

@@ -3,7 +3,7 @@ AC_PREREQ(2.60)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GStreamer FFMpeg, 0.10.11,
+AC_INIT(GStreamer FFMpeg, 0.10.11.1,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-ffmpeg)
 
@@ -46,7 +46,7 @@ AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
 GST_REQ=0.10.22
-ORC_REQ=0.4.5
+ORC_REQ=0.4.6
 
 dnl *** autotools stuff ****
 
@@ -75,9 +75,9 @@ dnl *** checks for programs ***
 
 dnl find a compiler
 AC_PROG_CC
+AC_PROG_CC_STDC
 
-# FIXME: are these two lines needed ?
-AM_PROG_CC_STDC
+# FIXME: is this line needed?
 AS="${CC}"
 
 dnl check if the compiler supports '-c' and '-o' options

@@ -80,11 +80,14 @@ gst_deinterlace_methods_get_type (void)
     {GST_DEINTERLACE_GREEDY_L, "Motion Adaptive: Simple Detection", "greedyl"},
     {GST_DEINTERLACE_VFIR, "Blur Vertical", "vfir"},
     {GST_DEINTERLACE_LINEAR, "Television: Full resolution", "linear"},
-    {GST_DEINTERLACE_LINEAR_BLEND, "Blur: Temporal", "linearblend"},
+    {GST_DEINTERLACE_LINEAR_BLEND, "Blur: Temporal (Do Not Use)",
+        "linearblend"},
     {GST_DEINTERLACE_SCALER_BOB, "Double lines", "scalerbob"},
-    {GST_DEINTERLACE_WEAVE, "Weave", "weave"},
-    {GST_DEINTERLACE_WEAVE_TFF, "Progressive: Top Field First", "weavetff"},
-    {GST_DEINTERLACE_WEAVE_BFF, "Progressive: Bottom Field First", "weavebff"},
+    {GST_DEINTERLACE_WEAVE, "Weave (Do Not Use)", "weave"},
+    {GST_DEINTERLACE_WEAVE_TFF, "Progressive: Top Field First (Do Not Use)",
+        "weavetff"},
+    {GST_DEINTERLACE_WEAVE_BFF, "Progressive: Bottom Field First (Do Not Use)",
+        "weavebff"},
     {0, NULL, NULL},
   };
 
@@ -440,7 +443,8 @@ gst_deinterlace_class_init (GstDeinterlaceClass * klass)
    * <listitem>
    * <para>
    * linearblend
-   * Linear interpolation in time domain
+   * Linear interpolation in time domain.  Any motion causes significant
+   * ghosting, so this method should not be used.
    * </para>
    * </listitem>
    * <listitem>
@@ -452,19 +456,19 @@ gst_deinterlace_class_init (GstDeinterlaceClass * klass)
    * <listitem>
    * <para>
    * weave
-   * Weave
+   * Weave.  Bad quality, do not use.
    * </para>
    * </listitem>
    * <listitem>
    * <para>
    * weavetff
-   * Progressive: Top Field First
+   * Progressive: Top Field First.  Bad quality, do not use.
    * </para>
    * </listitem>
    * <listitem>
    * <para>
    * weavebff
-   * Progressive: Bottom Field First
+   * Progressive: Bottom Field First.  Bad quality, do not use.
    * </para>
    * </listitem>
    * </itemizedlist>
@@ -805,15 +809,15 @@ gst_deinterlace_push_history (GstDeinterlace * self, GstBuffer * buffer)
 
   if (field_layout == GST_DEINTERLACE_LAYOUT_TFF) {
     GST_DEBUG_OBJECT (self, "Top field first");
-    field1 = gst_buffer_ref (buffer);
+    field1 = gst_buffer_make_metadata_writable (gst_buffer_ref (buffer));
     field1_flags = PICTURE_INTERLACED_TOP;
-    field2 = gst_buffer_ref (buffer);
+    field2 = gst_buffer_make_metadata_writable (gst_buffer_ref (buffer));
     field2_flags = PICTURE_INTERLACED_BOTTOM;
   } else {
     GST_DEBUG_OBJECT (self, "Bottom field first");
-    field1 = gst_buffer_ref (buffer);
+    field1 = gst_buffer_make_metadata_writable (gst_buffer_ref (buffer));
     field1_flags = PICTURE_INTERLACED_BOTTOM;
-    field2 = gst_buffer_ref (buffer);
+    field2 = gst_buffer_make_metadata_writable (gst_buffer_ref (buffer));
     field2_flags = PICTURE_INTERLACED_TOP;
   }
 
@@ -976,9 +980,9 @@ gst_deinterlace_chain (GstPad * pad, GstBuffer * buf)
   fields_required = gst_deinterlace_method_get_fields_required (self->method);
 
   /* Not enough fields in the history */
-  if (self->history_count < fields_required + 1) {
+  if (self->history_count < fields_required) {
     GST_DEBUG_OBJECT (self, "Need more fields (have %d, need %d)",
-        self->history_count, fields_required + 1);
+        self->history_count, fields_required);
     return GST_FLOW_OK;
   }
 

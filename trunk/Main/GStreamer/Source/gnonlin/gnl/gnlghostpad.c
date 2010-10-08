@@ -567,7 +567,7 @@ ghostpad_query_function (GstPad * ghostpad, GstQuery * query)
 static void
 internal_pad_finalizing (GnlPadPrivate * priv, GObject * pad G_GNUC_UNUSED)
 {
-  g_free (priv);
+  g_slice_free (GnlPadPrivate, priv);
 }
 
 static void
@@ -599,7 +599,7 @@ control_internal_pad (GstPad * ghostpad, GnlObject * object)
   if (G_UNLIKELY (!(priv = gst_pad_get_element_private (internal)))) {
     GST_DEBUG_OBJECT (internal,
         "Creating a GnlPadPrivate to put in element_private");
-    priv = g_new0 (GnlPadPrivate, 1);
+    priv = g_slice_new (GnlPadPrivate);
 
     /* Remember existing pad functions */
     priv->eventfunc = GST_PAD_EVENTFUNC (internal);
@@ -620,6 +620,9 @@ control_internal_pad (GstPad * ghostpad, GnlObject * object)
   priv->ghostpriv = privghost;
   priv->dir = GST_PAD_DIRECTION (ghostpad);
   gst_object_unref (internal);
+
+  GST_DEBUG_OBJECT (ghostpad, "Done with pad %s:%s",
+      GST_DEBUG_PAD_NAME (target));
 }
 
 
@@ -697,7 +700,7 @@ gnl_object_ghost_pad_no_target (GnlObject * object, const gchar * name,
   GST_DEBUG ("grabbing existing pad functions");
 
   /* remember the existing ghostpad event/query/link/unlink functions */
-  priv = g_new0 (GnlPadPrivate, 1);
+  priv = g_slice_new (GnlPadPrivate);
   priv->dir = dir;
   priv->object = object;
 
@@ -728,7 +731,7 @@ gnl_object_remove_ghost_pad (GnlObject * object, GstPad * ghost)
   gst_ghost_pad_set_target (GST_GHOST_PAD (ghost), NULL);
   gst_element_remove_pad (GST_ELEMENT (object), ghost);
   if (priv)
-    g_free (priv);
+    g_slice_free (GnlPadPrivate, priv);
 }
 
 gboolean
@@ -767,7 +770,7 @@ gnl_object_ghost_pad_set_target (GnlObject * object, GstPad * ghost,
 }
 
 void
-gnl_init_ghostpad_category ()
+gnl_init_ghostpad_category (void)
 {
   GST_DEBUG_CATEGORY_INIT (gnlghostpad, "gnlghostpad",
       GST_DEBUG_FG_BLUE | GST_DEBUG_BOLD, "GNonLin GhostPad");

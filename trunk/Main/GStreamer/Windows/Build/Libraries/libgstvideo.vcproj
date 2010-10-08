@@ -467,6 +467,10 @@
 			Name="Source Files"
 			>
 			<File
+				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\video\convertframe.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\video\gstvideofilter.c"
 				>
 			</File>

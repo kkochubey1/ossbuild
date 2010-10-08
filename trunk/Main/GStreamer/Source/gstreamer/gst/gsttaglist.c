@@ -298,6 +298,10 @@ _gst_tag_initialize (void)
       G_TYPE_STRING, _("geo location sublocation"),
       _("a location whithin a city where the media has been produced "
           "or created (e.g. the neighborhood)"), NULL);
+  gst_tag_register (GST_TAG_GEO_LOCATION_HORIZONTAL_ERROR, GST_TAG_FLAG_META,
+      G_TYPE_DOUBLE, _("geo location horizontal error"),
+      _("expected error of the horizontal positioning measures (in meters)"),
+      NULL);
   gst_tag_register (GST_TAG_GEO_LOCATION_MOVEMENT_SPEED, GST_TAG_FLAG_META,
       G_TYPE_DOUBLE, _("geo location movement speed"),
       _("movement speed of the capturing device while performing the capture "
@@ -355,6 +359,9 @@ _gst_tag_initialize (void)
       _("Model of the device used to create this media"), NULL);
   gst_tag_register (GST_TAG_APPLICATION_NAME, GST_TAG_FLAG_META, G_TYPE_STRING,
       _("application name"), _("Application used to create the media"), NULL);
+  gst_tag_register (GST_TAG_APPLICATION_DATA, GST_TAG_FLAG_META,
+      GST_TYPE_BUFFER, _("application data"),
+      _("Arbitrary application data to be serialized into the media"), NULL);
   gst_tag_register (GST_TAG_IMAGE_ORIENTATION, GST_TAG_FLAG_META, G_TYPE_STRING,
       _("image orientation"),
       _("How the image should be rotated or flipped before display"), NULL);

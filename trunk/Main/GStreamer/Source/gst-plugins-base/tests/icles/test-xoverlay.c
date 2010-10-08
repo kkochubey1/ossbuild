@@ -106,29 +106,28 @@ handle_expose_cb (GtkWidget * widget, GdkEventExpose * event,
   GtkAllocation allocation;
   GdkWindow *window;
   GtkStyle *style;
+  cairo_t *cr;
 
   style = gtk_widget_get_style (widget);
   window = gtk_widget_get_window (widget);
   gtk_widget_get_allocation (widget, &allocation);
+  cr = gdk_cairo_create (window);
+
+  gdk_cairo_set_source_color (cr, &style->bg[GTK_STATE_NORMAL]);
 
   /* we should only redraw outside of the video rect! */
-  /*
-     gdk_draw_rectangle (widget->window, widget->style->bg_gc[0], TRUE,
-     0, 0, widget->allocation.width, widget->allocation.height);
-     gdk_draw_rectangle (widget->window, widget->style->bg_gc[0], TRUE,
-     event->area.x, event->area.y, event->area.width, event->area.height);
-   */
-  gdk_draw_rectangle (window, style->bg_gc[0], TRUE,
-      0, event->area.y, r->x, event->area.height);
-  gdk_draw_rectangle (window, style->bg_gc[0], TRUE,
-      r->x + r->w, event->area.y,
+  cairo_rectangle (cr, 0, event->area.y, r->x, event->area.height);
+  cairo_rectangle (cr, r->x + r->w, event->area.y,
       allocation.width - (r->x + r->w), event->area.height);
 
-  gdk_draw_rectangle (window, style->bg_gc[0], TRUE,
-      event->area.x, 0, event->area.width, r->y);
-  gdk_draw_rectangle (window, style->bg_gc[0], TRUE,
-      event->area.x, r->y + r->h,
+  cairo_rectangle (cr, event->area.x, 0, event->area.width, r->y);
+  cairo_rectangle (cr, event->area.x, r->y + r->h,
       event->area.width, allocation.height - (r->y + r->h));
+
+  cairo_fill (cr);
+
+  cairo_destroy (cr);
+
   if (verbose) {
     g_print ("expose(%p)\n", widget);
   }
@@ -217,7 +216,7 @@ main (gint argc, gchar ** argv)
   /* we know what the video sink is in this case (xvimagesink), so we can
    * just set it directly here now (instead of waiting for a prepare-xwindow-id
    * element message in a sync bus handler and setting it there) */
-  gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (sink), embed_xid);
+  gst_x_overlay_set_window_handle (GST_X_OVERLAY (sink), embed_xid);
 
   anim_state.overlay = GST_X_OVERLAY (sink);
   anim_state.widget = video_window;
