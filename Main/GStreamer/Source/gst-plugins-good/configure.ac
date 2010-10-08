@@ -5,7 +5,7 @@ dnl please read gstreamer/docs/random/autotools before changing this file
 dnl initialize autoconf
 dnl releases only do -Wall, git and prerelease does -Werror too
 dnl use a three digit version number for releases, and four for git/pre
-AC_INIT(GStreamer Good Plug-ins, 0.10.24,
+AC_INIT(GStreamer Good Plug-ins, 0.10.25.1,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-good)
 
@@ -53,7 +53,7 @@ AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
 GST_REQ=0.10.30
-GSTPB_REQ=0.10.30
+GSTPB_REQ=0.10.30.1
 
 dnl *** autotools stuff ****
 
@@ -103,6 +103,7 @@ dnl *** checks for programs ***
 
 dnl find a compiler
 AC_PROG_CC
+AC_PROG_CC_STDC
 
 dnl determine c++ compiler
 AC_PROG_CXX
@@ -207,8 +208,7 @@ dnl GLib is required
 AG_GST_GLIB_CHECK([2.18])
 
 dnl Orc
-ORC_CHECK([0.4.5])
-
+ORC_CHECK([0.4.8])
 
 dnl checks for gstreamer
 dnl uninstalled is selected preferentially -- see pkg-config(1)
@@ -269,6 +269,11 @@ AC_SUBST(GST_LICENSE)
 
 dnl set location of plugin directory
 AG_GST_SET_PLUGINDIR
+
+dnl set release date/time
+AG_GST_SET_PACKAGE_RELEASE_DATETIME_WITH_NANO([$PACKAGE_VERSION_NANO],
+  ["${srcdir}/gst-plugins-good.doap"],
+  [$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_MICRO])
 
 dnl define an ERROR_CFLAGS Makefile variable
 dnl -Wundef: too many broken headers
@@ -723,11 +728,6 @@ AG_GST_CHECK_FEATURE(GDK_PIXBUF, [GDK pixbuf], gdkpixbuf, [
   AG_GST_PKG_CHECK_MODULES(GDK_PIXBUF, gdk-pixbuf-2.0 >= 2.8.0)
 ])
 
-translit(dnm, m, l) AM_CONDITIONAL(USE_GDK_PIXBUF3, true)
-AG_GST_CHECK_FEATURE(GDK_PIXBUF3, [GDK pixbuf], gdkpixbuf3, [
-  AG_GST_PKG_CHECK_MODULES(GDK_PIXBUF3, gdk-pixbuf-3.0)
-])
-
 dnl *** HAL ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_HAL, true)
 AG_GST_CHECK_FEATURE(HAL, [HAL libraries], halelements, [
@@ -784,6 +784,10 @@ AG_GST_CHECK_FEATURE(LIBPNG, [Portable Network Graphics library], png, [
 dnl *** pulseaudio ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_PULSE, true)
 AG_GST_CHECK_FEATURE(PULSE, [pulseaudio plug-in], pulseaudio, [
+
+  dnl used in ext/pulse/pulseutil.c
+  AC_CHECK_HEADERS([process.h])
+
   AG_GST_PKG_CHECK_MODULES(PULSE, libpulse >= 0.9.10)
   AG_GST_PKG_CHECK_MODULES(PULSE_0_9_11, libpulse >= 0.9.11)
   if test x$HAVE_PULSE_0_9_11 = xyes; then
@@ -860,6 +864,7 @@ AG_GST_CHECK_FEATURE(DV1394, [raw1394 and avc1394 library], 1394, [
 	 fi
   fi
 ])
+AM_CONDITIONAL(USE_LIBIEC61883, [ test "x${HAVE_LIBIEC61883}" = xyes ] )
 
 dnl *** shout2 ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_SHOUT2, true)
@@ -999,7 +1004,6 @@ AM_CONDITIONAL(USE_FLAC, false)
 AM_CONDITIONAL(USE_GCONF, false)
 AM_CONDITIONAL(USE_GCONFTOOL, false)
 AM_CONDITIONAL(USE_GDK_PIXBUF, false)
-AM_CONDITIONAL(USE_GDK_PIXBUF3, false)
 AM_CONDITIONAL(USE_GST_V4L2, false)
 AM_CONDITIONAL(USE_HAL, false)
 AM_CONDITIONAL(USE_JPEG, false)
@@ -1162,6 +1166,7 @@ tests/examples/Makefile
 tests/examples/audiofx/Makefile
 tests/examples/equalizer/Makefile
 tests/examples/level/Makefile
+tests/examples/pulse/Makefile
 tests/examples/rtp/Makefile
 tests/examples/shapewipe/Makefile
 tests/examples/spectrum/Makefile

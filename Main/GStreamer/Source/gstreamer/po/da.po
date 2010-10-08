@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.12\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2007-03-28 00:09+0200\n"
 "Last-Translator: Mogens Jaeger <mogens@jaeger.tf>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -150,6 +150,9 @@ msgstr "Kunne ikke lukke hjælpebiblioteket."
 
 msgid "Could not configure supporting library."
 msgstr "Kunne ikke konfigurere hjælpebiblioteket."
+
+msgid "Encoding error."
+msgstr ""
 
 msgid "GStreamer encountered a general resource error."
 msgstr "GStreamer opdagede en generel ressourcefejl."
@@ -299,6 +302,14 @@ msgid "date"
 msgstr "dato"
 
 msgid "date the data was created (as a GDate structure)"
+msgstr "dato for oprettelse af data (som i en Gregoriansk datostruktur)"
+
+#, fuzzy
+msgid "datetime"
+msgstr "dato"
+
+#, fuzzy
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr "dato for oprettelse af data (som i en Gregoriansk datostruktur)"
 
 msgid "genre"
@@ -637,6 +648,13 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "geo location horizontal error"
+msgstr "sted"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
+#, fuzzy
 msgid "geo location movement speed"
 msgstr "sted"
 
@@ -737,6 +755,20 @@ msgstr ""
 #, fuzzy
 msgid "Model of the device used to create this media"
 msgstr "koderversion brugt til indkodning af denne mediestrøm"
+
+#, fuzzy
+msgid "application name"
+msgstr "sted"
+
+#, fuzzy
+msgid "Application used to create the media"
+msgstr "koderversion brugt til indkodning af denne mediestrøm"
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
+msgstr ""
 
 msgid "image orientation"
 msgstr ""
@@ -878,16 +910,16 @@ msgstr "Filen \"%s\" er en sokkel."
 msgid "Failed after iterations as requested."
 msgstr "Fejlede efter iterationer som forespurgt."
 
-#, fuzzy
-msgid "Error while writing to download file."
-msgstr "Fejl under skrivning til filen \"%s\"."
-
 msgid "No Temp directory specified."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "Kunne ikke hente info til \"%s\"."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Fejl under skrivning til filen \"%s\"."
 
 msgid "caps"
 msgstr "kapabilitet"
@@ -922,6 +954,15 @@ msgstr "som kan skrives"
 
 msgid "controllable"
 msgstr "kontrollerbar"
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
+msgstr ""
 
 msgid "Blacklisted files:"
 msgstr ""

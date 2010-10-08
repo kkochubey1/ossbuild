@@ -19,8 +19,7 @@ gst_camera_LDADD   = \
 	$(GTK_LIBS) \
 	$(GMODULE_EXPORT_LIBS)
 
-uidir = $(datadir)/gstreamer-@GST_MAJORMINOR@/camera-apps
-ui_DATA = $(GST_CAMERABIN_UI_FILES)
+noinst_DATA = $(GST_CAMERABIN_UI_FILES)
 
 INCLUDES = -DCAMERA_APPS_UIDIR=\""$(uidir)"\"
 
@@ -37,8 +36,13 @@ if HAVE_X11
 GST_CAMERABIN_X11_EXAMPLES = gst-camerabin-test
 
 gst_camerabin_test_SOURCES = gst-camerabin-test.c
-gst_camerabin_test_CFLAGS  = $(GST_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS)
-gst_camerabin_test_LDADD = -lgstinterfaces-@GST_MAJORMINOR@ $(GST_LIBS) $(GST_PLUGINS_BASE_LIBS) $(X11_LIBS)
+gst_camerabin_test_CFLAGS  = $(GST_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) $(GST_PLUGINS_BAD_CFLAGS)
+gst_camerabin_test_LDADD   = \
+	$(top_builddir)/gst-libs/gst/interfaces/libgstphotography-@GST_MAJORMINOR@.la \
+	-lgstinterfaces-@GST_MAJORMINOR@ \
+	$(GST_LIBS) \
+	$(GST_PLUGINS_BASE_LIBS) \
+	$(X11_LIBS)
 
 else
 GST_CAMERABIN_X11_EXAMPLES =

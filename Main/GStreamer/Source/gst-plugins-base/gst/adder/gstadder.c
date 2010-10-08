@@ -116,8 +116,8 @@ GST_STATIC_PAD_TEMPLATE ("sink%d",
     GST_STATIC_CAPS (CAPS)
     );
 
-static void gst_adder_class_init (GstAdderClass * klass);
-static void gst_adder_init (GstAdder * adder);
+GST_BOILERPLATE (GstAdder, gst_adder, GstElement, GST_TYPE_ELEMENT);
+
 static void gst_adder_dispose (GObject * object);
 static void gst_adder_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
@@ -140,29 +140,6 @@ static GstBuffer *gst_adder_do_clip (GstCollectPads * pads,
     GstCollectData * data, GstBuffer * buffer, gpointer user_data);
 static GstFlowReturn gst_adder_collected (GstCollectPads * pads,
     gpointer user_data);
-
-static GstElementClass *parent_class = NULL;
-
-GType
-gst_adder_get_type (void)
-{
-  static GType adder_type = 0;
-
-  if (G_UNLIKELY (adder_type == 0)) {
-    static const GTypeInfo adder_info = {
-      sizeof (GstAdderClass), NULL, NULL,
-      (GClassInitFunc) gst_adder_class_init, NULL, NULL,
-      sizeof (GstAdder), 0,
-      (GInstanceInitFunc) gst_adder_init,
-    };
-
-    adder_type = g_type_register_static (GST_TYPE_ELEMENT, "GstAdder",
-        &adder_info, 0);
-    GST_DEBUG_CATEGORY_INIT (GST_CAT_DEFAULT, "adder", 0,
-        "audio channel mixing element");
-  }
-  return adder_type;
-}
 
 /* non-clipping versions (for float) */
 #define MAKE_FUNC_NC(name,type)                                 \
@@ -685,6 +662,14 @@ gst_adder_src_event (GstPad * pad, GstEvent * event)
         /* flushing seek, start flush downstream, the flush will be done
          * when all pads received a FLUSH_STOP. */
         gst_pad_push_event (adder->srcpad, gst_event_new_flush_start ());
+
+        /* We can't send FLUSH_STOP here since upstream could start pushing data
+         * after we unlock adder->collect.
+         * We set flush_stop_pending to TRUE instead and send FLUSH_STOP after
+         * forwarding the seek upstream or from gst_adder_collected,
+         * whichever happens first.
+         */
+        adder->flush_stop_pending = TRUE;
       }
       GST_DEBUG_OBJECT (adder, "handling seek event: %" GST_PTR_FORMAT, event);
 
@@ -708,10 +693,6 @@ gst_adder_src_event (GstPad * pad, GstEvent * event)
          * have stopped so that the cookie gets properly updated. */
         gst_collect_pads_set_flushing (adder->collect, TRUE);
       }
-      /* we might have a pending flush_stop event now. This event will either be
-       * sent by an upstream element when it completes the seek or we will push
-       * one in the collected callback ourself */
-      adder->flush_stop_pending = flush;
       GST_OBJECT_UNLOCK (adder->collect);
       GST_DEBUG_OBJECT (adder, "forwarding seek event: %" GST_PTR_FORMAT,
           event);
@@ -721,10 +702,11 @@ gst_adder_src_event (GstPad * pad, GstEvent * event)
         /* seek failed. maybe source is a live source. */
         GST_DEBUG_OBJECT (adder, "seeking failed");
       }
-      /* FIXME: ideally we would like to send a flush-stop event from here but
-       * collectpads does not have a method that allows us to do that. Instead
-       * we forward all flush-stop events we receive on the sinkpads. We might
-       * be sending too many flush-stop events. */
+      if (g_atomic_int_compare_and_exchange (&adder->flush_stop_pending,
+              TRUE, FALSE)) {
+        GST_DEBUG_OBJECT (adder, "pending flush stop");
+        gst_pad_push_event (adder->srcpad, gst_event_new_flush_stop ());
+      }
       break;
     }
     case GST_EVENT_QOS:
@@ -799,14 +781,9 @@ beach:
 }
 
 static void
-gst_adder_class_init (GstAdderClass * klass)
+gst_adder_base_init (gpointer g_class)
 {
-  GObjectClass *gobject_class = (GObjectClass *) klass;
-  GstElementClass *gstelement_class = (GstElementClass *) klass;
-
-  gobject_class->set_property = gst_adder_set_property;
-  gobject_class->get_property = gst_adder_get_property;
-  gobject_class->dispose = gst_adder_dispose;
+  GstElementClass *gstelement_class = GST_ELEMENT_CLASS (g_class);
 
   gst_element_class_add_pad_template (gstelement_class,
       gst_static_pad_template_get (&gst_adder_src_template));
@@ -816,8 +793,17 @@ gst_adder_class_init (GstAdderClass * klass)
       "Generic/Audio",
       "Add N audio channels together",
       "Thomas Vander Stichele <thomas at apestaart dot org>");
+}
 
-  parent_class = g_type_class_peek_parent (klass);
+static void
+gst_adder_class_init (GstAdderClass * klass)
+{
+  GObjectClass *gobject_class = (GObjectClass *) klass;
+  GstElementClass *gstelement_class = (GstElementClass *) klass;
+
+  gobject_class->set_property = gst_adder_set_property;
+  gobject_class->get_property = gst_adder_get_property;
+  gobject_class->dispose = gst_adder_dispose;
 
   /**
    * GstAdder:caps:
@@ -838,7 +824,7 @@ gst_adder_class_init (GstAdderClass * klass)
 }
 
 static void
-gst_adder_init (GstAdder * adder)
+gst_adder_init (GstAdder * adder, GstAdderClass * klass)
 {
   GstPadTemplate *template;
 
@@ -1055,9 +1041,10 @@ gst_adder_collected (GstCollectPads * pads, gpointer user_data)
   if (G_UNLIKELY (adder->func == NULL))
     goto not_negotiated;
 
-  if (adder->flush_stop_pending) {
+  if (g_atomic_int_compare_and_exchange (&adder->flush_stop_pending,
+          TRUE, FALSE)) {
+    GST_DEBUG_OBJECT (adder, "pending flush stop");
     gst_pad_push_event (adder->srcpad, gst_event_new_flush_stop ());
-    adder->flush_stop_pending = FALSE;
   }
 
   /* get available bytes for reading, this can be 0 which could mean empty
@@ -1304,6 +1291,11 @@ gst_adder_change_state (GstElement * element, GstStateChange transition)
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
+  GST_DEBUG_CATEGORY_INIT (GST_CAT_DEFAULT, "adder", 0,
+      "audio channel mixing element");
+
+  gst_adder_orc_init ();
+
   if (!gst_element_register (plugin, "adder", GST_RANK_NONE, GST_TYPE_ADDER)) {
     return FALSE;
   }

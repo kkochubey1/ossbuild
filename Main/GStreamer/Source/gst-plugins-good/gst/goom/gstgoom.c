@@ -50,6 +50,11 @@
 GST_DEBUG_CATEGORY (goom_debug);
 #define GST_CAT_DEFAULT goom_debug
 
+#define DEFAULT_WIDTH  320
+#define DEFAULT_HEIGHT 240
+#define DEFAULT_FPS_N  25
+#define DEFAULT_FPS_D  1
+
 /* signals and args */
 enum
 {
@@ -92,6 +97,8 @@ static GstStateChangeReturn gst_goom_change_state (GstElement * element,
 static GstFlowReturn gst_goom_chain (GstPad * pad, GstBuffer * buffer);
 static gboolean gst_goom_src_event (GstPad * pad, GstEvent * event);
 static gboolean gst_goom_sink_event (GstPad * pad, GstEvent * event);
+
+static gboolean gst_goom_src_query (GstPad * pad, GstQuery * query);
 
 static gboolean gst_goom_sink_setcaps (GstPad * pad, GstCaps * caps);
 static gboolean gst_goom_src_setcaps (GstPad * pad, GstCaps * caps);
@@ -170,14 +177,16 @@ gst_goom_init (GstGoom * goom)
       GST_DEBUG_FUNCPTR (gst_goom_src_setcaps));
   gst_pad_set_event_function (goom->srcpad,
       GST_DEBUG_FUNCPTR (gst_goom_src_event));
+  gst_pad_set_query_function (goom->srcpad,
+      GST_DEBUG_FUNCPTR (gst_goom_src_query));
   gst_element_add_pad (GST_ELEMENT (goom), goom->srcpad);
 
   goom->adapter = gst_adapter_new ();
 
-  goom->width = 320;
-  goom->height = 200;
-  goom->fps_n = 25;             /* desired frame rate */
-  goom->fps_d = 1;              /* desired frame rate */
+  goom->width = DEFAULT_WIDTH;
+  goom->height = DEFAULT_HEIGHT;
+  goom->fps_n = DEFAULT_FPS_N;  /* desired frame rate */
+  goom->fps_d = DEFAULT_FPS_D;  /* desired frame rate */
   goom->channels = 0;
   goom->rate = 0;
   goom->duration = 0;
@@ -201,7 +210,6 @@ gst_goom_finalize (GObject * object)
 static void
 gst_goom_reset (GstGoom * goom)
 {
-  goom->next_ts = -1;
   gst_adapter_clear (goom->adapter);
   gst_segment_init (&goom->segment, GST_FORMAT_UNDEFINED);
 
@@ -287,9 +295,10 @@ gst_goom_src_negotiate (GstGoom * goom)
   }
 
   structure = gst_caps_get_structure (target, 0);
-  gst_structure_fixate_field_nearest_int (structure, "width", 320);
-  gst_structure_fixate_field_nearest_int (structure, "height", 240);
-  gst_structure_fixate_field_nearest_fraction (structure, "framerate", 30, 1);
+  gst_structure_fixate_field_nearest_int (structure, "width", DEFAULT_WIDTH);
+  gst_structure_fixate_field_nearest_int (structure, "height", DEFAULT_HEIGHT);
+  gst_structure_fixate_field_nearest_fraction (structure, "framerate",
+      DEFAULT_FPS_N, DEFAULT_FPS_D);
 
   gst_pad_set_caps (goom->srcpad, target);
   gst_caps_unref (target);
@@ -388,6 +397,63 @@ gst_goom_sink_event (GstPad * pad, GstEvent * event)
   return res;
 }
 
+static gboolean
+gst_goom_src_query (GstPad * pad, GstQuery * query)
+{
+  gboolean res;
+  GstGoom *goom;
+
+  goom = GST_GOOM (gst_pad_get_parent (pad));
+
+  switch (GST_QUERY_TYPE (query)) {
+    case GST_QUERY_LATENCY:
+    {
+      /* We need to send the query upstream and add the returned latency to our
+       * own */
+      GstClockTime min_latency, max_latency;
+      gboolean us_live;
+      GstClockTime our_latency;
+      guint max_samples;
+
+      if ((res = gst_pad_peer_query (goom->sinkpad, query))) {
+        gst_query_parse_latency (query, &us_live, &min_latency, &max_latency);
+
+        GST_DEBUG_OBJECT (goom, "Peer latency: min %"
+            GST_TIME_FORMAT " max %" GST_TIME_FORMAT,
+            GST_TIME_ARGS (min_latency), GST_TIME_ARGS (max_latency));
+
+        /* the max samples we must buffer buffer */
+        max_samples = MAX (GOOM_SAMPLES, goom->spf);
+        our_latency =
+            gst_util_uint64_scale_int (max_samples, GST_SECOND, goom->rate);
+
+        GST_DEBUG_OBJECT (goom, "Our latency: %" GST_TIME_FORMAT,
+            GST_TIME_ARGS (our_latency));
+
+        /* we add some latency but only if we need to buffer more than what
+         * upstream gives us */
+        min_latency += our_latency;
+        if (max_latency != -1)
+          max_latency += our_latency;
+
+        GST_DEBUG_OBJECT (goom, "Calculated total latency : min %"
+            GST_TIME_FORMAT " max %" GST_TIME_FORMAT,
+            GST_TIME_ARGS (min_latency), GST_TIME_ARGS (max_latency));
+
+        gst_query_set_latency (query, TRUE, min_latency, max_latency);
+      }
+      break;
+    }
+    default:
+      res = gst_pad_peer_query (goom->sinkpad, query);
+      break;
+  }
+
+  gst_object_unref (goom);
+
+  return res;
+}
+
 static GstFlowReturn
 get_buffer (GstGoom * goom, GstBuffer ** outbuf)
 {
@@ -433,12 +499,7 @@ gst_goom_chain (GstPad * pad, GstBuffer * buffer)
   /* don't try to combine samples from discont buffer */
   if (GST_BUFFER_FLAG_IS_SET (buffer, GST_BUFFER_FLAG_DISCONT)) {
     gst_adapter_clear (goom->adapter);
-    goom->next_ts = -1;
   }
-
-  /* Match timestamps from the incoming audio */
-  if (GST_BUFFER_TIMESTAMP (buffer) != GST_CLOCK_TIME_NONE)
-    goom->next_ts = GST_BUFFER_TIMESTAMP (buffer);
 
   GST_DEBUG_OBJECT (goom,
       "Input buffer has %d samples, time=%" G_GUINT64_FORMAT,
@@ -455,6 +516,7 @@ gst_goom_chain (GstPad * pad, GstBuffer * buffer)
     guchar *out_frame;
     gint i;
     guint avail, to_flush;
+    guint64 dist, timestamp;
 
     avail = gst_adapter_available (goom->adapter);
     GST_DEBUG_OBJECT (goom, "avail now %u", avail);
@@ -469,11 +531,20 @@ gst_goom_chain (GstPad * pad, GstBuffer * buffer)
 
     GST_DEBUG_OBJECT (goom, "processing buffer");
 
-    if (goom->next_ts != -1) {
+    /* get timestamp of the current adapter byte */
+    timestamp = gst_adapter_prev_timestamp (goom->adapter, &dist);
+    if (GST_CLOCK_TIME_IS_VALID (timestamp)) {
+      /* convert bytes to time */
+      dist /= goom->bps;
+      timestamp += gst_util_uint64_scale_int (dist, GST_SECOND, goom->rate);
+    }
+
+    if (timestamp != -1) {
       gint64 qostime;
 
       qostime = gst_segment_to_running_time (&goom->segment, GST_FORMAT_TIME,
-          goom->next_ts);
+          timestamp);
+      qostime += goom->duration;
 
       GST_OBJECT_LOCK (goom);
       /* check for QoS, don't compute buffers that are known to be late */
@@ -514,7 +585,7 @@ gst_goom_chain (GstPad * pad, GstBuffer * buffer)
       }
     }
 
-    GST_BUFFER_TIMESTAMP (outbuf) = goom->next_ts;
+    GST_BUFFER_TIMESTAMP (outbuf) = timestamp;
     GST_BUFFER_DURATION (outbuf) = goom->duration;
     GST_BUFFER_SIZE (outbuf) = goom->outsize;
 
@@ -522,17 +593,13 @@ gst_goom_chain (GstPad * pad, GstBuffer * buffer)
     memcpy (GST_BUFFER_DATA (outbuf), out_frame, goom->outsize);
 
     GST_DEBUG ("Pushing frame with time=%" GST_TIME_FORMAT ", duration=%"
-        GST_TIME_FORMAT, GST_TIME_ARGS (goom->next_ts),
+        GST_TIME_FORMAT, GST_TIME_ARGS (timestamp),
         GST_TIME_ARGS (goom->duration));
 
     ret = gst_pad_push (goom->srcpad, outbuf);
     outbuf = NULL;
 
   skip:
-    /* interpollate next timestamp */
-    if (goom->next_ts != -1)
-      goom->next_ts += goom->duration;
-
     /* Now flush the samples we needed for this frame, which might be more than
      * the samples we used (GOOM_SAMPLES). */
     to_flush = goom->bpf;

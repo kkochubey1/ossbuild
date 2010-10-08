@@ -68,6 +68,15 @@ typedef enum
 #define GNL_OBJECT_IS_EXPANDABLE(obj) \
   (GST_OBJECT_FLAG_IS_SET(obj, GNL_OBJECT_EXPANDABLE))
 
+/* For internal usage only */
+#define GNL_OBJECT_START(obj) (GNL_OBJECT_CAST (obj)->start)
+#define GNL_OBJECT_STOP(obj) (GNL_OBJECT_CAST (obj)->stop)
+#define GNL_OBJECT_DURATION(obj) (GNL_OBJECT_CAST (obj)->duration)
+#define GNL_OBJECT_MEDIA_START(obj) (GNL_OBJECT_CAST (obj)->media_start)
+#define GNL_OBJECT_MEDIA_STOP(obj) (GNL_OBJECT_CAST (obj)->media_stop)
+#define GNL_OBJECT_MEDIA_DURATION(obj) (GNL_OBJECT_CAST (obj)->media_duration)
+#define GNL_OBJECT_PRIORITY(obj) (GNL_OBJECT_CAST (obj)->priority)
+
 struct _GnlObject
 {
   GstBin parent;
@@ -124,6 +133,9 @@ gnl_object_to_media_time (GnlObject * object, GstClockTime otime,
 gboolean
 gnl_media_to_object_time (GnlObject * object, GstClockTime mtime,
 			  GstClockTime * otime);
+
+void
+gnl_object_set_caps (GnlObject * object, const GstCaps * caps);
 
 G_END_DECLS
 #endif /* __GNL_OBJECT_H__ */

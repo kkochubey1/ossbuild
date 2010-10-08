@@ -23,14 +23,14 @@ gir_sources=$(patsubst %,$(srcdir)/%, $(libgstcdda_@GST_MAJORMINOR@_la_SOURCES))
 gir_cincludes=$(patsubst %,--c-include='gst/cdda/%',$(libgstcdda_@GST_MAJORMINOR@include_HEADERS))
 
 GstCdda-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstcdda-@GST_MAJORMINOR@.la
-	$(AM_V_GEN)PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
+	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
 		$(INTROSPECTION_SCANNER) -v --namespace GstCdda \
 		--nsversion=@GST_MAJORMINOR@ \
 		--strip-prefix=Gst \
 		$(gir_cincludes) \
+		--add-include-path=$(builddir)/../tag \
 		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
 		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-base-0.10` \
-		--add-include-path=$(builddir)/../tag \
 		--library=libgstcdda-0.10.la \
 		--include=Gst-0.10 \
 		--include=GstBase-0.10 \

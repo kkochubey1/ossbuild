@@ -56,8 +56,8 @@ FIXXREF_OPTIONS=--extra-dir=$(GLIB_PREFIX)/share/gtk-doc/html \
 	--extra-dir=$(GSTPB_PREFIX)/share/gtk-doc/html
 
 # Used for dependencies.
-HFILE_GLOB=$(DOC_SOURCE_DIR)/*/*/*.h
-CFILE_GLOB=$(DOC_SOURCE_DIR)/*/*/*.c
+HFILE_GLOB=$(DOC_SOURCE_DIR)/gnl/*.h
+CFILE_GLOB=$(DOC_SOURCE_DIR)/gnl/*.c
 
 SCANOBJ_DEPS = 
 # Extra options to supply to gtkdoc-scan.
@@ -100,4 +100,10 @@ GTKDOC_LD=$(LIBTOOL) --tag=CC --mode=link $(CC)
 #DOC_OVERRIDES = $(DOC_MODULE)-overrides.txt
 DOC_OVERRIDES =
 
+# override registry location for unusual gnonlin setup with plugins in docs/libs
+GNL_INSPECT_REGISTRY=$(top_builddir)/docs/libs/inspect-registry.dat
+INSPECT_EXTRA_ENVIRONMENT=GST_REGISTRY=$(GNL_INSPECT_REGISTRY)
+
 include $(top_srcdir)/common/gtk-doc-plugins.mak
+
+CLEANFILES+=$(GNL_INSPECT_REGISTRY)

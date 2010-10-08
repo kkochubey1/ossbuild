@@ -56,7 +56,7 @@ typedef struct {
 
 /**
  * RTPArrivalStats:
- * @current_time: arrival time of a packet according to the system clock
+ * @current_time: current time according to the system clock
  * @running_time: arrival time of a packet as buffer running_time
  * @have_address: if the @address field contains a valid address
  * @address: address of the sender of the packet
@@ -128,7 +128,7 @@ typedef struct {
 } RTPSourceStats;
 
 #define RTP_STATS_BANDWIDTH           64000
-#define RTP_STATS_RTCP_BANDWIDTH      3200
+#define RTP_STATS_RTCP_FRACTION       0.05
 /*
  * Minimum average time between RTCP packets from this site (in
  * seconds).  This time prevents the reports from `clumping' when
@@ -186,11 +186,13 @@ typedef struct {
 
 void           rtp_stats_init_defaults              (RTPSessionStats *stats);
 
-void           rtp_stats_set_bandwidths             (RTPSessionStats *stats, guint rtp_bw, guint rtcp_bw,
+void           rtp_stats_set_bandwidths             (RTPSessionStats *stats,
+                                                     guint rtp_bw,
+                                                     gdouble rtcp_bw,
                                                      guint rs, guint rr);
 
 GstClockTime   rtp_stats_calculate_rtcp_interval    (RTPSessionStats *stats, gboolean sender, gboolean first);
 GstClockTime   rtp_stats_add_rtcp_jitter            (RTPSessionStats *stats, GstClockTime interval);
 GstClockTime   rtp_stats_calculate_bye_interval     (RTPSessionStats *stats);
-
+gint64         rtp_stats_get_packets_lost           (const RTPSourceStats *stats);
 #endif /* __RTP_STATS_H__ */

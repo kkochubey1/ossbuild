@@ -239,6 +239,28 @@ gst_vdp_h264_dec_init_frame_info (GstVdpH264Dec * h264_dec,
 }
 
 static gboolean
+gst_vdp_h264_dec_calculate_par (GstH264VUIParameters * vui, guint16 * par_n,
+    guint16 * par_d)
+{
+  guint16 aspect[16][2] = { {1, 1}, {12, 11}, {10, 11}, {16, 11}, {40, 33},
+  {24, 11}, {20, 11}, {32, 11}, {80, 33}, {18, 11}, {15, 11}, {64, 33},
+  {160, 99}, {4, 3}, {3, 2}, {2, 1}
+  };
+
+  if (vui->aspect_ratio_idc >= 1 && vui->aspect_ratio_idc <= 16) {
+    *par_n = aspect[vui->aspect_ratio_idc - 1][0];
+    *par_d = aspect[vui->aspect_ratio_idc - 1][1];
+    return TRUE;
+  } else if (vui->aspect_ratio_idc == 255) {
+    *par_n = vui->sar_height;
+    *par_d = vui->sar_width;
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static gboolean
 gst_vdp_h264_dec_idr (GstVdpH264Dec * h264_dec, GstH264Frame * h264_frame)
 {
   GstH264Slice *slice;
@@ -281,8 +303,15 @@ gst_vdp_h264_dec_idr (GstVdpH264Dec * h264_dec, GstH264Frame * h264_frame)
     /* calculate framerate if we haven't got one */
     if (state.fps_n == 0 && seq->vui_parameters_present_flag) {
       GstH264VUIParameters *vui;
+      guint16 par_n, par_d;
 
       vui = &seq->vui_parameters;
+
+      if (gst_vdp_h264_dec_calculate_par (vui, &par_n, &par_d)) {
+        state.par_n = par_n;
+        state.par_d = par_d;
+      }
+
       if (vui->timing_info_present_flag && vui->fixed_frame_rate_flag) {
         state.fps_n = vui->time_scale;
         state.fps_d = vui->num_units_in_tick;
@@ -419,8 +448,8 @@ gst_vdp_h264_dec_create_bitstream_buffers (GstVdpH264Dec * h264_dec,
   else {
     guint i;
 
-    bufs = g_new (VdpBitstreamBuffer, h264_frame->slices->len * 2);
-    *n_bufs = h264_frame->slices->len * 2;
+    bufs = g_new (VdpBitstreamBuffer, h264_frame->slices->len);
+    *n_bufs = h264_frame->slices->len;
 
     for (i = 0; i < h264_frame->slices->len; i++) {
       GstBuffer *buf;
@@ -454,7 +483,7 @@ gst_vdp_h264_dec_handle_frame (GstBaseVideoDecoder * base_video_decoder,
 
   GST_DEBUG ("handle_frame");
 
-  h264_frame = (GstH264Frame *) frame;
+  h264_frame = GST_H264_FRAME_CAST (frame);
 
   slice = &h264_frame->slice_hdr;
   pic = slice->picture;
@@ -644,7 +673,7 @@ gst_vdp_h264_dec_scan_for_packet_end (GstBaseVideoDecoder * base_video_decoder,
 
 static GstFlowReturn
 gst_vdp_h264_dec_parse_data (GstBaseVideoDecoder * base_video_decoder,
-    GstBuffer * buf, gboolean at_eos)
+    GstBuffer * buf, gboolean at_eos, GstVideoFrame * frame)
 {
   GstVdpH264Dec *h264_dec = GST_VDP_H264_DEC (base_video_decoder);
   GstBitReader reader;
@@ -655,7 +684,6 @@ gst_vdp_h264_dec_parse_data (GstBaseVideoDecoder * base_video_decoder,
   guint size;
   gint i;
 
-  GstVideoFrame *frame;
   GstFlowReturn ret = GST_FLOW_OK;
 
   GST_MEMDUMP ("data", GST_BUFFER_DATA (buf), GST_BUFFER_SIZE (buf));
@@ -695,8 +723,6 @@ gst_vdp_h264_dec_parse_data (GstBaseVideoDecoder * base_video_decoder,
     size--;
     i--;
   }
-
-  frame = gst_base_video_decoder_get_current_frame (base_video_decoder);
 
   if (GST_VIDEO_FRAME_FLAG_IS_SET (frame, GST_H264_FRAME_GOT_PRIMARY)) {
     if (nal_unit.type == GST_NAL_SPS || nal_unit.type == GST_NAL_PPS ||

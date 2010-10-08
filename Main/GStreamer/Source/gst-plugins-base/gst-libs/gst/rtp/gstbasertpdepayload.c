@@ -240,10 +240,15 @@ gst_base_rtp_depayload_setcaps (GstPad * pad, GstCaps * caps)
   else
     priv->play_scale = 1.0;
 
-  if (bclass->set_caps)
+  if (bclass->set_caps) {
     res = bclass->set_caps (filter, caps);
-  else
+    if (!res) {
+      GST_WARNING_OBJECT (filter, "Subclass rejected caps %" GST_PTR_FORMAT,
+          caps);
+    }
+  } else {
     res = TRUE;
+  }
 
   priv->negotiated = res;
 
@@ -334,6 +339,7 @@ gst_base_rtp_depayload_chain (GstPad * pad, GstBuffer * in)
     /* we detected a seqnum discont but the buffer was not flagged with a discont,
      * set the discont flag so that the subclass can throw away old data. */
     priv->discont = TRUE;
+    in = gst_buffer_make_metadata_writable (in);
     GST_BUFFER_FLAG_SET (in, GST_BUFFER_FLAG_DISCONT);
   }
 
@@ -357,8 +363,22 @@ gst_base_rtp_depayload_chain (GstPad * pad, GstBuffer * in)
 not_negotiated:
   {
     /* this is not fatal but should be filtered earlier */
-    GST_ELEMENT_ERROR (filter, CORE, NEGOTIATION, (NULL),
-        ("Not RTP format was negotiated"));
+    if (GST_BUFFER_CAPS (in) == NULL) {
+      GST_ELEMENT_ERROR (filter, CORE, NEGOTIATION,
+          ("No RTP format was negotiated."),
+          ("Input buffers need to have RTP caps set on them. This is usually "
+              "achieved by setting the 'caps' property of the upstream source "
+              "element (often udpsrc or appsrc), or by putting a capsfilter "
+              "element before the depayloader and setting the 'caps' property "
+              "on that. Also see http://cgit.freedesktop.org/gstreamer/"
+              "gst-plugins-good/tree/gst/rtp/README"));
+    } else {
+      GST_ELEMENT_ERROR (filter, CORE, NEGOTIATION,
+          ("No RTP format was negotiated."),
+          ("RTP caps on input buffer were rejected, most likely because they "
+              "were incomplete or contained wrong values. Check the debug log "
+              "for more information."));
+    }
     gst_buffer_unref (in);
     return GST_FLOW_NOT_NEGOTIATED;
   }

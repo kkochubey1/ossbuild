@@ -1699,6 +1699,24 @@
 						/>
 					</FileConfiguration>
 				</File>
+				<File
+					RelativePath="..\..\..\Source\gstreamer\gst\math-compat.h"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+				</File>
 				<Filter
 					Name="Generated"
 					>

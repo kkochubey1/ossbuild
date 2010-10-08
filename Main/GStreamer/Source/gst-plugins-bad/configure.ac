@@ -3,7 +3,7 @@ AC_PREREQ(2.60)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GStreamer Bad Plug-ins, 0.10.19.1,
+AC_INIT(GStreamer Bad Plug-ins, 0.10.20.1,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-bad)
 
@@ -50,8 +50,8 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.29.1
-GSTPB_REQ=0.10.29.1
+GST_REQ=0.10.30.1
+GSTPB_REQ=0.10.30.1
 
 dnl *** autotools stuff ****
 
@@ -102,6 +102,7 @@ dnl *** checks for programs ***
 
 dnl find a compiler
 AC_PROG_CC
+AC_PROG_CC_STDC
 
 dnl determine c++ compiler
 AC_PROG_CXX
@@ -167,11 +168,6 @@ dnl *** checks for compiler characteristics ***
 dnl *** checks for library functions ***
 AC_CHECK_FUNCS([gmtime_r])
 
-LIBS_SAVE=$LIBS
-LIBS="$LIBS $LIBM"
-AC_CHECK_FUNCS([log2])
-LIBS=$LIBS_SAVE
-
 dnl *** checks for headers ***
 AC_CHECK_HEADERS([sys/utsname.h])
 
@@ -191,12 +187,14 @@ AG_GST_CHECK_GST_BASE($GST_MAJORMINOR, [$GST_REQ], yes)
 AG_GST_CHECK_GST_GDP($GST_MAJORMINOR, [$GST_REQ], yes)
 AG_GST_CHECK_GST_CHECK($GST_MAJORMINOR, [$GST_REQ], no)
 AG_GST_CHECK_GST_CONTROLLER($GST_MAJORMINOR, [$GST_REQ], yes)
-AG_GST_CHECK_GST_PLUGINS_BASE($GST_MAJORMINOR, [$GSTPB_REQ], yes)
 AM_CONDITIONAL(HAVE_GST_CHECK, test "x$HAVE_GST_CHECK" = "xyes")
 
-GSTPB_PLUGINS_DIR=`$PKG_CONFIG gstreamer-plugins-base-$GST_MAJORMINOR --variable pluginsdir`
-AC_SUBST(GSTPB_PLUGINS_DIR)
-AC_MSG_NOTICE(Using GStreamer Base Plugins in $GSTPB_PLUGINS_DIR)
+AG_GST_CHECK_GST_PLUGINS_BASE($GST_MAJORMINOR, [$GSTPB_REQ], yes)
+
+dnl check for uninstalled plugin directories for unit tests
+AG_GST_CHECK_GST_PLUGINS_GOOD($GST_MAJORMINOR, [0.10.25])
+AG_GST_CHECK_GST_PLUGINS_UGLY($GST_MAJORMINOR, [0.10.16])
+AG_GST_CHECK_GST_PLUGINS_FFMPEG($GST_MAJORMINOR, [0.10.11])
 
 dnl Check for documentation xrefs
 GLIB_PREFIX="`$PKG_CONFIG --variable=prefix glib-2.0`"
@@ -227,7 +225,7 @@ if test "x$HAVE_X11" = "xyes"; then
 fi
 
 dnl Orc
-ORC_CHECK([0.4.5])
+ORC_CHECK([0.4.7])
 
 dnl set license and copyright notice
 GST_LICENSE="LGPL"
@@ -240,6 +238,11 @@ AC_DEFINE_UNQUOTED(LIBDIR, "$LIBDIR", [library dir])
 
 dnl set location of plugin directory
 AG_GST_SET_PLUGINDIR
+
+dnl set release date/time
+AG_GST_SET_PACKAGE_RELEASE_DATETIME_WITH_NANO([$PACKAGE_VERSION_NANO],
+  ["${srcdir}/gst-plugins-bad.doap"],
+  [$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_MICRO])
 
 dnl define an ERROR_CFLAGS Makefile variable
 dnl -Waggregate-return - libexif returns aggregates
@@ -271,10 +274,11 @@ AG_GST_CHECK_PLUGIN(aiff)
 AG_GST_CHECK_PLUGIN(asfmux)
 AG_GST_CHECK_PLUGIN(audioparsers)
 AG_GST_CHECK_PLUGIN(autoconvert)
-AG_GST_CHECK_PLUGIN(camerabin)
-AG_GST_CHECK_PLUGIN(legacyresample)
 AG_GST_CHECK_PLUGIN(bayer)
+AG_GST_CHECK_PLUGIN(camerabin)
 AG_GST_CHECK_PLUGIN(cdxaparse)
+AG_GST_CHECK_PLUGIN(coloreffects)
+AG_GST_CHECK_PLUGIN(colorspace)
 AG_GST_CHECK_PLUGIN(dataurisrc)
 AG_GST_CHECK_PLUGIN(dccp)
 AG_GST_CHECK_PLUGIN(debugutils)
@@ -283,13 +287,16 @@ AG_GST_CHECK_PLUGIN(dvdspu)
 AG_GST_CHECK_PLUGIN(festival)
 AG_GST_CHECK_PLUGIN(freeze)
 AG_GST_CHECK_PLUGIN(frei0r)
+AG_GST_CHECK_PLUGIN(gaudieffects)
 AG_GST_CHECK_PLUGIN(geometrictransform)
 AG_GST_CHECK_PLUGIN(h264parse)
 AG_GST_CHECK_PLUGIN(hdvparse)
 AG_GST_CHECK_PLUGIN(id3tag)
+AG_GST_CHECK_PLUGIN(interlace)
 AG_GST_CHECK_PLUGIN(invtelecine)
 AG_GST_CHECK_PLUGIN(ivfparse)
 AG_GST_CHECK_PLUGIN(jpegformat)
+AG_GST_CHECK_PLUGIN(legacyresample)
 AG_GST_CHECK_PLUGIN(librfb)
 AG_GST_CHECK_PLUGIN(liveadder)
 AG_GST_CHECK_PLUGIN(mpegdemux)
@@ -492,18 +499,6 @@ dnl keep this list sorted alphabetically !
 
 if test "x$BUILD_EXTERNAL" = "xyes"; then
 
-dnl *** alsa ***
-translit(dnm, m, l) AM_CONDITIONAL(USE_ALSA, true)
-AG_GST_CHECK_FEATURE(ALSA, [alsa plug-ins], gstalsa, [
-  PKG_CHECK_MODULES(ALSA, alsa >= 0.9.1, [
-    HAVE_ALSA="yes"
-    AC_SUBST(ALSA_CFLAGS)
-    AC_SUBST(ALSA_LIBS)
-  ], [
-    AM_PATH_ALSA(0.9.1, HAVE_ALSA="yes", HAVE_ALSA="no")
-  ])
-])
-
 dnl *** assrender ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_ASSRENDER, true)
 AG_GST_CHECK_FEATURE(ASSRENDER, [ASS/SSA renderer], assrender, [
@@ -575,20 +570,23 @@ translit(dnm, m, l) AM_CONDITIONAL(USE_CELT, true)
 AG_GST_CHECK_FEATURE(CELT, [celt], celt, [
   PKG_CHECK_MODULES(CELT, celt >= 0.5.0, [
           AC_DEFINE([HAVE_CELT], 1, [Define if libcelt 0.5 is installed])
+          HAVE_CELT="yes"
   ], [
-          AC_MSG_RESULT(no)
+          HAVE_CELT="no"
   ])
 
   PKG_CHECK_MODULES(CELT_0_7, celt >= 0.7.0, [
           AC_DEFINE([HAVE_CELT_0_7], 1, [Define if libcelt 0.7 is installed])
   ], [
-          AC_MSG_RESULT(no)
+          dnl to prevent an error
+          true
   ])
 
   PKG_CHECK_MODULES(CELT_0_8, celt >= 0.8.0, [
           AC_DEFINE([HAVE_CELT_0_8], 1, [Define if libcelt 0.8 is installed])
   ], [
-          AC_MSG_RESULT(no)
+          dnl to prevent an error
+          true
   ])
   AC_SUBST(CELT_CFLAGS)
   AC_SUBST(CELT_LIBS)
@@ -597,13 +595,12 @@ AG_GST_CHECK_FEATURE(CELT, [celt], celt, [
 dnl *** Cog ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_COG, true)
 AG_GST_CHECK_FEATURE(COG, [Cog plugin], cog, [
-  PKG_CHECK_MODULES(COG, libpng >= 1.2 orc-0.4 >= $ORC_REQ, HAVE_COG="yes", [
+  PKG_CHECK_MODULES(COG, libpng >= 1.2, HAVE_COG="yes", [
     HAVE_COG="no"
     AC_MSG_RESULT(no)
   ])
   AC_SUBST(COG_CFLAGS)
   AC_SUBST(COG_LIBS)
-  dnl ORCC was set up by Orc check above
 ])
 
 dnl *** dc1394  ***
@@ -738,49 +735,13 @@ AG_GST_CHECK_FEATURE(RESINDVD, [resindvd plugin], resindvd, [
   ])
 ])
 
-dnl **** exif (used on metadata and jifmux tests) ****
+dnl **** exif (used on jifmux tests) ****
 translit(dnm, m, l) AM_CONDITIONAL(USE_EXIF, true)
 AG_GST_CHECK_FEATURE(EXIF, [exif], exif, [
   PKG_CHECK_MODULES(EXIF, libexif >= 0.6.16, HAVE_EXIF="yes", [
     HAVE_EXIF="no"
     AC_MSG_RESULT(no)
   ])
-])
-
-
-dnl *** METADATA ***
-translit(dnm, m, l) AM_CONDITIONAL(USE_METADATA, true)
-AG_GST_CHECK_FEATURE(METADATA, [METADATA muxer and demuxer], metadata, [
-  HAVE_METADATA="no"
-  PKG_CHECK_MODULES(IPTC, libiptcdata >= 1.0.2, HAVE_IPTC="yes", [
-    HAVE_IPTC="no"
-  ])
-  PKG_CHECK_MODULES(XMP, exempi-2.0, HAVE_XMP="yes", [
-    HAVE_XMP="no"
-  ])
-  PKG_CHECK_MODULES(XMP_1_99_5, exempi-2.0 >= 1.99.5, XMP_CFLAGS="-DXMP_1_99_5 $XMP_CFLAGS", AC_MSG_RESULT(no))
-  if test x$HAVE_EXIF = xyes; then
-    METADATA_CFLAGS="$EXIF_CFLAGS $METADATA_CFLAGS"
-    METADATA_LIBS="$EXIF_LIBS $METADATA_LIBS -lm"
-    HAVE_METADATA="yes"
-  fi
-  if test x$HAVE_IPTC = xyes; then
-    METADATA_CFLAGS="-DHAVE_IPTC $IPTC_CFLAGS $METADATA_CFLAGS"
-    METADATA_LIBS="$IPTC_LIBS $METADATA_LIBS"
-    HAVE_METADATA="yes"
-  fi
-  if test x$HAVE_XMP = xyes; then
-    METADATA_CFLAGS="-DHAVE_XMP $XMP_CFLAGS $METADATA_CFLAGS"
-    METADATA_LIBS="$XMP_LIBS $METADATA_LIBS"
-    HAVE_METADATA="yes"
-  fi
-  if test x$HAVE_METADATA = xno; then
-    AC_MSG_WARN(no of metadata libraries (exif, iptc or xmp) found)
-  else
-    HAVE_METADATA="yes"
-  fi
-  AC_SUBST(METADATA_CFLAGS)
-  AC_SUBST(METADATA_LIBS)
 ])
 
 dnl **** Free AAC Encoder (FAAC) ****
@@ -1200,7 +1161,7 @@ AG_GST_CHECK_FEATURE(NAS, [nas plug-in], nassink, [
 dnl *** neon ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_NEON, true)
 AG_GST_CHECK_FEATURE(NEON, [neon http client plugins], neonhttpsrc, [
-  PKG_CHECK_MODULES(NEON, neon >= 0.26.0  neon <= 0.29.99, HAVE_NEON="yes", [
+  PKG_CHECK_MODULES(NEON, neon >= 0.27.0  neon <= 0.29.99, HAVE_NEON="yes", [
     HAVE_NEON="no"
     AC_MSG_RESULT(no)
   ])
@@ -1217,6 +1178,41 @@ AG_GST_CHECK_FEATURE(OFA, [ofa plugins], ofa, [
   ])
   AC_SUBST(OFA_CFLAGS)
   AC_SUBST(OFA_LIBS)
+])
+
+dnl *** opencv ***
+translit(dnm, m, l) AM_CONDITIONAL(USE_OPENCV, true)
+AG_GST_CHECK_FEATURE(OPENCV, [opencv plugins], opencv, [
+  dnl we specify a max. version too because we set CV_NO_BACKWARD_COMPATIBILITY
+  dnl and don't want the build to break when a new opencv version comes out.
+  dnl Need to adjust this upwards once we know that our code compiles fine with
+  dnl a new version and the no-backward-compatibility define. (There doesn't
+  dnl seem to be a switch to suppress the warnings the cvcompat.h header
+  dnl causes.)
+  PKG_CHECK_MODULES(OPENCV, opencv >= 2.0.0 opencv <= 2.1.0 , [
+    AC_PROG_CXX
+    AC_LANG_CPLUSPLUS
+    OLD_CPPFLAGS=$CPPFLAGS
+    CPPFLAGS=$OPENCV_CFLAGS
+    AC_CHECK_HEADER(highgui.h, HAVE_HIGHGUI="yes", HAVE_HIGHGUI="no")
+    AC_CHECK_HEADER(cvaux.h, HAVE_CVAUX="yes", HAVE_CVAUX="no")
+    CPPFLAGS=$OLD_CPPFLAGS
+    AC_LANG_C
+    if test "x$HAVE_HIGHGUI" = "xno"; then
+      AC_MSG_RESULT(highgui.h could not be found.)
+      HAVE_OPENCV="no"
+    elif test "x$HAVE_CVAUX" = "xno"; then
+      AC_MSG_RESULT(cvaux.h could not be found.)
+      HAVE_OPENCV="no"
+    else
+      HAVE_OPENCV="yes"
+    fi
+  ], [
+    HAVE_OPENCV="no"
+    AC_MSG_RESULT(no)
+  ])
+  AC_SUBST(OPENCV_CFLAGS)
+  AC_SUBST(OPENCV_LIBS)
 ])
 
 dnl *** rsvg ***
@@ -1547,7 +1543,6 @@ else
 dnl not building plugins with external dependencies,
 dnl but we still need to set the conditionals
 
-AM_CONDITIONAL(USE_ALSA, false)
 AM_CONDITIONAL(USE_ASSRENDER, false)
 AM_CONDITIONAL(USE_AMRWB, false)
 AM_CONDITIONAL(USE_APEXSINK, false)
@@ -1560,8 +1555,8 @@ AM_CONDITIONAL(USE_DIRECTFB, false)
 AM_CONDITIONAL(USE_DIRAC, false)
 AM_CONDITIONAL(USE_DTS, false)
 AM_CONDITIONAL(USE_DIVX, false)
+AM_CONDITIONAL(USE_EXIF, false)
 AM_CONDITIONAL(USE_RESINDVD, false)
-AM_CONDITIONAL(USE_METADATA, false)
 AM_CONDITIONAL(USE_FAAC, false)
 AM_CONDITIONAL(USE_FAAD, false)
 AM_CONDITIONAL(USE_FBDEV, false)
@@ -1681,6 +1676,8 @@ gst/autoconvert/Makefile
 gst/bayer/Makefile
 gst/camerabin/Makefile
 gst/cdxaparse/Makefile
+gst/colorspace/Makefile
+gst/coloreffects/Makefile
 gst/dataurisrc/Makefile
 gst/dccp/Makefile
 gst/debugutils/Makefile
@@ -1689,10 +1686,12 @@ gst/dvdspu/Makefile
 gst/festival/Makefile
 gst/freeze/Makefile
 gst/frei0r/Makefile
+gst/gaudieffects/Makefile
 gst/geometrictransform/Makefile
 gst/h264parse/Makefile
 gst/hdvparse/Makefile
 gst/id3tag/Makefile
+gst/interlace/Makefile
 gst/invtelecine/Makefile
 gst/ivfparse/Makefile
 gst/jpegformat/Makefile
@@ -1763,8 +1762,8 @@ tests/examples/directfb/Makefile
 tests/examples/mxf/Makefile
 tests/examples/scaletempo/Makefile
 tests/examples/switch/Makefile
+tests/examples/jack/Makefile
 tests/icles/Makefile
-ext/alsaspdif/Makefile
 ext/amrwbenc/Makefile
 ext/assrender/Makefile
 ext/apexsink/Makefile
@@ -1788,7 +1787,6 @@ ext/ladspa/Makefile
 ext/lv2/Makefile
 ext/libmms/Makefile
 ext/Makefile
-ext/metadata/Makefile
 ext/modplug/Makefile
 ext/mpeg2enc/Makefile
 ext/mimic/Makefile
@@ -1799,6 +1797,7 @@ ext/mythtv/Makefile
 ext/nas/Makefile
 ext/neon/Makefile
 ext/ofa/Makefile
+ext/opencv/Makefile
 ext/rsvg/Makefile
 ext/resindvd/Makefile
 ext/rtmp/Makefile

@@ -133,14 +133,18 @@ struct _GstBaseVideoDecoderClass
       int offset, int n);
   GstFlowReturn (*parse_data) (GstBaseVideoDecoder *decoder, gboolean at_eos);
   GstFlowReturn (*finish) (GstBaseVideoDecoder *coder);
-  GstFlowReturn (*handle_frame) (GstBaseVideoDecoder *coder, GstVideoFrame *frame,
-				 GstClockTimeDiff deadline);
+  GstFlowReturn (*handle_frame) (GstBaseVideoDecoder *coder, GstVideoFrame *frame);
   GstFlowReturn (*shape_output) (GstBaseVideoDecoder *coder, GstVideoFrame *frame);
   GstCaps *(*get_caps) (GstBaseVideoDecoder *coder);
 
+  guint32 capture_mask;
+  guint32 capture_pattern;
 };
 
 GType gst_base_video_decoder_get_type (void);
+
+void gst_base_video_decoder_class_set_capture_pattern (GstBaseVideoDecoderClass *klass,
+    guint32 mask, guint32 pattern);
 
 int gst_base_video_decoder_get_width (GstBaseVideoDecoder *coder);
 int gst_base_video_decoder_get_height (GstBaseVideoDecoder *coder);
@@ -170,6 +174,9 @@ void gst_base_video_decoder_set_src_caps (GstBaseVideoDecoder *base_video_decode
 
 GstFlowReturn gst_base_video_decoder_alloc_src_frame (GstBaseVideoDecoder *base_video_decoder,
     GstVideoFrame *frame);
+
+GstClockTimeDiff gst_base_video_decoder_get_max_decode_time (
+    GstBaseVideoDecoder *base_video_decoder, GstVideoFrame *frame);
 
 G_END_DECLS
 

@@ -68,7 +68,8 @@ create_element (const gchar * factory_name, const gchar * elem_name,
  * Returns: New pipeline, or NULL if error occured.
  */
 GstElement *
-gst_camerabin_preview_create_pipeline (GstCameraBin * camera, GstCaps * caps)
+gst_camerabin_preview_create_pipeline (GstCameraBin * camera, GstCaps * caps,
+    GstElement * src_filter)
 {
   GstElement *pipe, *src, *csp, *filter, *vscale, *sink;
   GError *error = NULL;
@@ -93,6 +94,9 @@ gst_camerabin_preview_create_pipeline (GstCameraBin * camera, GstCaps * caps)
 
   GST_DEBUG ("adding elements");
   gst_bin_add_many (GST_BIN (pipe), src, csp, filter, vscale, sink, NULL);
+  if (src_filter) {
+    gst_bin_add (GST_BIN (pipe), src_filter);
+  }
 
   GST_DEBUG ("preview format is: %" GST_PTR_FORMAT, caps);
 
@@ -102,19 +106,36 @@ gst_camerabin_preview_create_pipeline (GstCameraBin * camera, GstCaps * caps)
 
   /* FIXME: linking is still way too expensive, profile this properly */
   GST_DEBUG ("linking src->vscale");
-  if (!gst_element_link_pads (src, "src", vscale, "sink"))
+  if (!gst_element_link_pads_full (src, "src", vscale, "sink",
+          GST_PAD_LINK_CHECK_CAPS))
     return FALSE;
 
-  GST_DEBUG ("linking vscale->csp");
-  if (!gst_element_link_pads (vscale, "src", csp, "sink"))
-    return FALSE;
+  if (src_filter) {
+    GST_DEBUG ("linking vscale->filter");
+    if (!gst_element_link_pads_full (vscale, "src", src_filter, "sink",
+            GST_PAD_LINK_CHECK_CAPS)) {
+      return FALSE;
+    }
+    GST_DEBUG ("linking filter->csp");
+    if (!gst_element_link_pads_full (src_filter, "src", csp, "sink",
+            GST_PAD_LINK_CHECK_CAPS)) {
+      return FALSE;
+    }
+  } else {
+    GST_DEBUG ("linking vscale->csp");
+    if (!gst_element_link_pads_full (vscale, "src", csp, "sink",
+            GST_PAD_LINK_CHECK_CAPS))
+      return FALSE;
+  }
 
   GST_DEBUG ("linking csp->capsfilter");
-  if (!gst_element_link_pads (csp, "src", filter, "sink"))
+  if (!gst_element_link_pads_full (csp, "src", filter, "sink",
+          GST_PAD_LINK_CHECK_CAPS))
     return FALSE;
 
   GST_DEBUG ("linking capsfilter->sink");
-  if (!gst_element_link_pads (filter, "src", sink, "sink"))
+  if (!gst_element_link_pads_full (filter, "src", sink, "sink",
+          GST_PAD_LINK_CHECK_CAPS))
     return FALSE;
 
   return pipe;
@@ -271,4 +292,31 @@ no_pipeline:
         "no pipeline (unknown error)");
     return NULL;
   }
+}
+
+/**
+ * gst_camerabin_preview_send_event:
+ * @camera: the #GstCameraBin
+ * @evt: The #GstEvent to be pushed, takes ownership
+ *
+ * Pushes an event to the preview pipeline.
+ *
+ * Returns: True if the event was handled
+ */
+gboolean
+gst_camerabin_preview_send_event (GstCameraBin * camera, GstElement * pipeline,
+    GstEvent * evt)
+{
+  GstElement *src;
+
+  src = gst_bin_get_by_name (GST_BIN (pipeline), "prev_src");
+  if (!src) {
+    GST_WARNING ("Preview pipeline doesn't have src element, can't push event");
+    gst_event_unref (evt);
+    return FALSE;
+  }
+
+  GST_DEBUG_OBJECT (camera, "Pushing event %p to preview pipeline", evt);
+
+  return gst_element_send_event (src, evt);
 }

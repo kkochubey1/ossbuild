@@ -270,7 +270,7 @@ GST_BOILERPLATE_FULL (type, type_as_function, parent_type,              \
 
 /* Define PUT and GET functions for unaligned memory */
 #define _GST_GET(__data, __idx, __size, __shift) \
-    (((guint##__size) (((guint8 *) (__data))[__idx])) << (__shift))
+    (((guint##__size) (((const guint8 *) (__data))[__idx])) << (__shift))
 
 #define _GST_PUT(__data, __idx, __size, __shift, __num) \
     (((guint8 *) (__data))[__idx] = (((guint##__size) (__num)) >> (__shift)) & 0xff)
@@ -1172,6 +1172,7 @@ void gst_util_fraction_to_double (gint src_n, gint src_d, gdouble *dest);
 void gst_util_double_to_fraction (gdouble src, gint *dest_n, gint *dest_d);
 gboolean gst_util_fraction_multiply (gint a_n, gint a_d, gint b_n, gint b_d, gint *res_n, gint *res_d);
 gboolean gst_util_fraction_add (gint a_n, gint a_d, gint b_n, gint b_d, gint *res_n, gint *res_d);
+gint gst_util_fraction_compare (gint a_n, gint a_d, gint b_n, gint b_d);
 
 
 /* sink message event

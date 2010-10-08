@@ -10,6 +10,10 @@
 extern "C" {
 #endif
 
+void gst_volume_orc_init (void);
+
+
+
 #ifndef _ORC_INTEGER_TYPEDEFS_
 #define _ORC_INTEGER_TYPEDEFS_
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
@@ -22,6 +26,7 @@ typedef uint8_t orc_uint8;
 typedef uint16_t orc_uint16;
 typedef uint32_t orc_uint32;
 typedef uint64_t orc_uint64;
+#define ORC_UINT64_C(x) UINT64_C(x)
 #elif defined(_MSC_VER)
 typedef signed __int8 orc_int8;
 typedef signed __int16 orc_int16;
@@ -31,6 +36,7 @@ typedef unsigned __int8 orc_uint8;
 typedef unsigned __int16 orc_uint16;
 typedef unsigned __int32 orc_uint32;
 typedef unsigned __int64 orc_uint64;
+#define ORC_UINT64_C(x) (x##Ui64)
 #else
 #include <limits.h>
 typedef signed char orc_int8;
@@ -42,19 +48,35 @@ typedef unsigned int orc_uint32;
 #if INT_MAX == LONG_MAX
 typedef long long orc_int64;
 typedef unsigned long long orc_uint64;
+#define ORC_UINT64_C(x) (x##ULL)
 #else
 typedef long orc_int64;
 typedef unsigned long orc_uint64;
+#define ORC_UINT64_C(x) (x##UL)
 #endif
 #endif
-typedef union { orc_int32 i; float f; } orc_union32;
-typedef union { orc_int64 i; double f; } orc_union64;
+typedef union { orc_int16 i; orc_int8 x2[2]; } orc_union16;
+typedef union { orc_int32 i; float f; orc_int16 x2[2]; orc_int8 x4[4]; } orc_union32;
+typedef union { orc_int64 i; double f; orc_int32 x2[2]; float x2f[2]; orc_int16 x4[4]; } orc_union64;
 #endif
-
+void orc_scalarmultiply_f64_ns (double * d1, double p1, int n);
+void orc_scalarmultiply_f32_ns (float * d1, float p1, int n);
+void orc_process_int32 (gint32 * d1, int p1, int n);
+void orc_process_int32_clamp (gint32 * d1, int p1, int n);
 void orc_process_int16 (gint16 * d1, int p1, int n);
 void orc_process_int16_clamp (gint16 * d1, int p1, int n);
 void orc_process_int8 (gint8 * d1, int p1, int n);
 void orc_process_int8_clamp (gint8 * d1, int p1, int n);
+void orc_memset_f64 (gdouble * d1, double p1, int n);
+void orc_prepare_volumes (gdouble * d1, const gboolean * s1, int n);
+void orc_process_controlled_f64_1ch (gdouble * d1, const gdouble * s1, int n);
+void orc_process_controlled_f32_1ch (gfloat * d1, const gdouble * s1, int n);
+void orc_process_controlled_f32_2ch (gfloat * d1, const gdouble * s1, int n);
+void orc_process_controlled_int32_1ch (gint32 * d1, const gdouble * s1, int n);
+void orc_process_controlled_int16_1ch (gint16 * d1, const gdouble * s1, int n);
+void orc_process_controlled_int16_2ch (gint16 * d1, const gdouble * s1, int n);
+void orc_process_controlled_int8_1ch (gint8 * d1, const gdouble * s1, int n);
+void orc_process_controlled_int8_2ch (gint8 * d1, const gdouble * s1, int n);
 
 #ifdef __cplusplus
 }

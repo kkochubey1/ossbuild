@@ -689,15 +689,15 @@ gst_flv_demux_parse_tag_audio (GstFlvDemux * demux, GstBuffer * buffer)
   g_return_val_if_fail (GST_BUFFER_SIZE (buffer) == demux->tag_size,
       GST_FLOW_ERROR);
 
-  GST_LOG_OBJECT (demux, "pts bytes %02X %02X %02X %02X", data[0], data[1],
-      data[2], data[3]);
-
   /* Grab information about audio tag */
   pts = GST_READ_UINT24_BE (data);
   /* read the pts extension to 32 bits integer */
   pts_ext = GST_READ_UINT8 (data + 3);
   /* Combine them */
   pts |= pts_ext << 24;
+
+  GST_LOG_OBJECT (demux, "pts bytes %02X %02X %02X %02X (%d)", data[0], data[1],
+      data[2], data[3], pts);
 
   /* Error out on tags with too small headers */
   if (GST_BUFFER_SIZE (buffer) < 11) {
@@ -1051,9 +1051,6 @@ gst_flv_demux_parse_tag_video (GstFlvDemux * demux, GstBuffer * buffer)
   GST_LOG_OBJECT (demux, "parsing a video tag");
 
 
-  GST_LOG_OBJECT (demux, "pts bytes %02X %02X %02X %02X", data[0], data[1],
-      data[2], data[3]);
-
   if (demux->no_more_pads && !demux->video_pad) {
     GST_WARNING_OBJECT (demux,
         "Signaled no-more-pads already but had no audio pad -- ignoring");
@@ -1066,6 +1063,9 @@ gst_flv_demux_parse_tag_video (GstFlvDemux * demux, GstBuffer * buffer)
   pts_ext = GST_READ_UINT8 (data + 3);
   /* Combine them */
   pts |= pts_ext << 24;
+
+  GST_LOG_OBJECT (demux, "pts bytes %02X %02X %02X %02X (%d)", data[0], data[1],
+      data[2], data[3], pts);
 
   if (GST_BUFFER_SIZE (buffer) < 12) {
     GST_ERROR_OBJECT (demux, "Too small tag size");
@@ -1084,7 +1084,16 @@ gst_flv_demux_parse_tag_video (GstFlvDemux * demux, GstBuffer * buffer)
   if (codec_tag == 4 || codec_tag == 5) {
     codec_data = 2;
   } else if (codec_tag == 7) {
+    gint32 cts;
+
     codec_data = 5;
+
+    cts = GST_READ_UINT24_BE (data + 9);
+    cts = (cts + 0xff800000) ^ 0xff800000;
+
+    GST_LOG_OBJECT (demux, "got cts %d", cts);
+
+    pts = pts + cts;
   }
 
   GST_LOG_OBJECT (demux, "video tag with codec tag %u, keyframe (%d) "
@@ -2237,51 +2246,49 @@ pause:
     GST_LOG_OBJECT (demux, "pausing task, reason %s", reason);
     gst_pad_pause_task (pad);
 
-    if (GST_FLOW_IS_FATAL (ret) || ret == GST_FLOW_NOT_LINKED) {
-      if (ret == GST_FLOW_UNEXPECTED) {
-        /* perform EOS logic */
+    if (ret == GST_FLOW_UNEXPECTED) {
+      /* perform EOS logic */
+      if (!demux->no_more_pads) {
+        gst_element_no_more_pads (GST_ELEMENT_CAST (demux));
+        demux->no_more_pads = TRUE;
+      }
+
+      if (demux->segment.flags & GST_SEEK_FLAG_SEGMENT) {
+        gint64 stop;
+
+        /* for segment playback we need to post when (in stream time)
+         * we stopped, this is either stop (when set) or the duration. */
+        if ((stop = demux->segment.stop) == -1)
+          stop = demux->segment.duration;
+
+        if (demux->segment.rate >= 0) {
+          GST_LOG_OBJECT (demux, "Sending segment done, at end of segment");
+          gst_element_post_message (GST_ELEMENT_CAST (demux),
+              gst_message_new_segment_done (GST_OBJECT_CAST (demux),
+                  GST_FORMAT_TIME, stop));
+        } else {                /* Reverse playback */
+          GST_LOG_OBJECT (demux, "Sending segment done, at beginning of "
+              "segment");
+          gst_element_post_message (GST_ELEMENT_CAST (demux),
+              gst_message_new_segment_done (GST_OBJECT_CAST (demux),
+                  GST_FORMAT_TIME, demux->segment.start));
+        }
+      } else {
+        /* normal playback, send EOS to all linked pads */
         if (!demux->no_more_pads) {
-          gst_element_no_more_pads (GST_ELEMENT_CAST (demux));
+          gst_element_no_more_pads (GST_ELEMENT (demux));
           demux->no_more_pads = TRUE;
         }
 
-        if (demux->segment.flags & GST_SEEK_FLAG_SEGMENT) {
-          gint64 stop;
-
-          /* for segment playback we need to post when (in stream time)
-           * we stopped, this is either stop (when set) or the duration. */
-          if ((stop = demux->segment.stop) == -1)
-            stop = demux->segment.duration;
-
-          if (demux->segment.rate >= 0) {
-            GST_LOG_OBJECT (demux, "Sending segment done, at end of segment");
-            gst_element_post_message (GST_ELEMENT_CAST (demux),
-                gst_message_new_segment_done (GST_OBJECT_CAST (demux),
-                    GST_FORMAT_TIME, stop));
-          } else {              /* Reverse playback */
-            GST_LOG_OBJECT (demux, "Sending segment done, at beginning of "
-                "segment");
-            gst_element_post_message (GST_ELEMENT_CAST (demux),
-                gst_message_new_segment_done (GST_OBJECT_CAST (demux),
-                    GST_FORMAT_TIME, demux->segment.start));
-          }
-        } else {
-          /* normal playback, send EOS to all linked pads */
-          if (!demux->no_more_pads) {
-            gst_element_no_more_pads (GST_ELEMENT (demux));
-            demux->no_more_pads = TRUE;
-          }
-
-          GST_LOG_OBJECT (demux, "Sending EOS, at end of stream");
-          if (!gst_flv_demux_push_src_event (demux, gst_event_new_eos ()))
-            GST_WARNING_OBJECT (demux, "failed pushing EOS on streams");
-        }
-      } else {
-        GST_ELEMENT_ERROR (demux, STREAM, FAILED,
-            ("Internal data stream error."),
-            ("stream stopped, reason %s", reason));
-        gst_flv_demux_push_src_event (demux, gst_event_new_eos ());
+        GST_LOG_OBJECT (demux, "Sending EOS, at end of stream");
+        if (!gst_flv_demux_push_src_event (demux, gst_event_new_eos ()))
+          GST_WARNING_OBJECT (demux, "failed pushing EOS on streams");
       }
+    } else if (ret == GST_FLOW_NOT_LINKED || ret < GST_FLOW_UNEXPECTED) {
+      GST_ELEMENT_ERROR (demux, STREAM, FAILED,
+          ("Internal data stream error."),
+          ("stream stopped, reason %s", reason));
+      gst_flv_demux_push_src_event (demux, gst_event_new_eos ());
     }
     gst_object_unref (demux);
     return;

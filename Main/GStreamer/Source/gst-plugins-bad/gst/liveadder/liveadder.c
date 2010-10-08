@@ -91,8 +91,11 @@ typedef struct _GstLiveAdderPadPrivate
 
 } GstLiveAdderPadPrivate;
 
+#define _do_init(bla) \
+  GST_DEBUG_CATEGORY_INIT (live_adder_debug, "liveadder", 0, "Live Adder");
 
-GST_BOILERPLATE (GstLiveAdder, gst_live_adder, GstElement, GST_TYPE_ELEMENT);
+GST_BOILERPLATE_FULL (GstLiveAdder, gst_live_adder, GstElement,
+    GST_TYPE_ELEMENT, _do_init);
 
 
 static void gst_live_adder_finalize (GObject * object);
@@ -153,21 +156,7 @@ MAKE_FUNC_NC (add_float32, gfloat, gfloat)
 static void
 gst_live_adder_base_init (gpointer klass)
 {
-}
-
-static void
-gst_live_adder_class_init (GstLiveAdderClass * klass)
-{
-  GObjectClass *gobject_class;
-  GstElementClass *gstelement_class;
-
-  gobject_class = (GObjectClass *) klass;
-
-  gobject_class->finalize = gst_live_adder_finalize;
-  gobject_class->set_property = gst_live_adder_set_property;
-  gobject_class->get_property = gst_live_adder_get_property;
-
-  gstelement_class = (GstElementClass *) klass;
+  GstElementClass *gstelement_class = (GstElementClass *) klass;
 
   gst_element_class_add_pad_template (gstelement_class,
       gst_static_pad_template_get (&gst_live_adder_src_template));
@@ -177,8 +166,17 @@ gst_live_adder_class_init (GstLiveAdderClass * klass)
       "Generic/Audio",
       "Mixes live/discontinuous audio streams",
       "Olivier Crete <olivier.crete@collabora.co.uk>");
+}
 
-  parent_class = g_type_class_peek_parent (klass);
+static void
+gst_live_adder_class_init (GstLiveAdderClass * klass)
+{
+  GObjectClass *gobject_class = (GObjectClass *) klass;
+  GstElementClass *gstelement_class = (GstElementClass *) klass;
+
+  gobject_class->finalize = gst_live_adder_finalize;
+  gobject_class->set_property = gst_live_adder_set_property;
+  gobject_class->get_property = gst_live_adder_get_property;
 
   gstelement_class->request_new_pad = gst_live_adder_request_new_pad;
   gstelement_class->release_pad = gst_live_adder_release_pad;
@@ -187,10 +185,7 @@ gst_live_adder_class_init (GstLiveAdderClass * klass)
   g_object_class_install_property (gobject_class, PROP_LATENCY,
       g_param_spec_uint ("latency", "Buffer latency in ms",
           "Amount of data to buffer", 0, G_MAXUINT, DEFAULT_LATENCY_MS,
-          G_PARAM_READWRITE));
-
-  GST_DEBUG_CATEGORY_INIT (live_adder_debug, "liveadder", 0, "Live Adder");
-
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 static void
@@ -224,7 +219,6 @@ gst_live_adder_init (GstLiveAdder * adder, GstLiveAdderClass * klass)
 
   adder->buffers = g_queue_new ();
 }
-
 
 
 static void

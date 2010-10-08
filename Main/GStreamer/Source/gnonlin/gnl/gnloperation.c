@@ -41,12 +41,6 @@
 
 GST_BOILERPLATE (GnlOperation, gnl_operation, GnlObject, GNL_TYPE_OBJECT);
 
-static GstElementDetails gnl_operation_details =
-GST_ELEMENT_DETAILS ("GNonLin Operation",
-    "Filter/Editor",
-    "Encapsulates filters/effects for use with GNL Objects",
-    "Wim Taymans <wim.taymans@gmail.com>, Edward Hervey <bilboed@bilboed.com>");
-
 static GstStaticPadTemplate gnl_operation_src_template =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
@@ -76,7 +70,7 @@ enum
 
 static guint gnl_operation_signals[LAST_SIGNAL] = { 0 };
 
-static void gnl_operation_finalize (GObject * object);
+static void gnl_operation_dispose (GObject * object);
 
 static void gnl_operation_set_property (GObject * object, guint prop_id,
     const GValue * value, GParamSpec * pspec);
@@ -94,13 +88,17 @@ static GstPad *gnl_operation_request_new_pad (GstElement * element,
 static void gnl_operation_release_pad (GstElement * element, GstPad * pad);
 
 static void synchronize_sinks (GnlOperation * operation);
+static gboolean remove_sink_pad (GnlOperation * operation, GstPad * sinkpad);
 
 static void
 gnl_operation_base_init (gpointer g_class)
 {
   GstElementClass *gstclass = GST_ELEMENT_CLASS (g_class);
 
-  gst_element_class_set_details (gstclass, &gnl_operation_details);
+  gst_element_class_set_details_simple (gstclass, "GNonLin Operation",
+      "Filter/Editor",
+      "Encapsulates filters/effects for use with GNL Objects",
+      "Wim Taymans <wim.taymans@gmail.com>, Edward Hervey <bilboed@bilboed.com>");
 }
 
 static void
@@ -115,7 +113,7 @@ gnl_operation_class_init (GnlOperationClass * klass)
   GST_DEBUG_CATEGORY_INIT (gnloperation, "gnloperation",
       GST_DEBUG_FG_BLUE | GST_DEBUG_BOLD, "GNonLin Operation element");
 
-  gobject_class->finalize = GST_DEBUG_FUNCPTR (gnl_operation_finalize);
+  gobject_class->dispose = GST_DEBUG_FUNCPTR (gnl_operation_dispose);
 
   gobject_class->set_property = GST_DEBUG_FUNCPTR (gnl_operation_set_property);
   gobject_class->get_property = GST_DEBUG_FUNCPTR (gnl_operation_get_property);
@@ -165,13 +163,24 @@ gnl_operation_class_init (GnlOperationClass * klass)
 }
 
 static void
-gnl_operation_finalize (GObject * object)
+gnl_operation_dispose (GObject * object)
 {
   GnlOperation *oper = (GnlOperation *) object;
 
-  g_list_free (oper->sinks);
+  GST_DEBUG_OBJECT (object, "Disposing of source pad");
+  if (oper->ghostpad) {
+    gnl_object_remove_ghost_pad (GNL_OBJECT (oper), oper->ghostpad);
+    oper->ghostpad = NULL;
+  }
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
+  GST_DEBUG_OBJECT (object, "Disposing of sink pad(s)");
+  while (oper->sinks) {
+    GstPad *ghost = (GstPad *) oper->sinks->data;
+    remove_sink_pad (oper, ghost);
+  }
+
+  GST_DEBUG_OBJECT (object, "Done, calling parent class ::dispose()");
+  G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
@@ -309,8 +318,11 @@ get_nb_static_sinks (GnlOperation * oper)
 
   while (!done) {
     switch (gst_iterator_next (sinkpads, &val)) {
-      case GST_ITERATOR_OK:
+      case GST_ITERATOR_OK:{
+        GstPad *pad = (GstPad *) val;
         nbsinks++;
+        gst_object_unref (pad);
+      }
         break;
       case GST_ITERATOR_RESYNC:
         nbsinks = 0;
@@ -366,6 +378,9 @@ gnl_operation_add_element (GstBin * bin, GstElement * element)
           operation->ghostpad =
               gnl_object_ghost_pad_full (GNL_OBJECT (operation),
               GST_PAD_NAME (srcpad), srcpad, TRUE);
+
+        /* Remove the reference get_src_pad gave us */
+        gst_object_unref (srcpad);
 
         /* Figure out number of static sink pads */
         operation->num_sinks = get_nb_static_sinks (operation);
@@ -538,8 +553,10 @@ get_unlinked_sink_ghost_pad (GnlOperation * operation)
         if (peer == NULL) {
           ret = pad;
           done = TRUE;
-        } else
-          gst_object_unref ((GstObject *) pad);
+        } else {
+          gst_object_unref (peer);
+          gst_object_unref (pad);
+        }
         break;
       }
       case GST_ITERATOR_RESYNC:
@@ -672,6 +689,7 @@ remove_sink_pad (GnlOperation * operation, GstPad * sinkpad)
     gst_element_release_request_pad (operation->element, target);
     operation->sinks = g_list_remove (operation->sinks, sinkpad);
     gnl_object_remove_ghost_pad ((GnlObject *) operation, sinkpad);
+    gst_object_unref (target);
     operation->realsinks--;
   }
 

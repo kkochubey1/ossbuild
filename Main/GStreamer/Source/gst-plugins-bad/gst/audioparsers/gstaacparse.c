@@ -95,8 +95,6 @@ gboolean gst_aacparse_convert (GstBaseParse * parse,
     GstFormat src_format,
     gint64 src_value, GstFormat dest_format, gint64 * dest_value);
 
-gboolean gst_aacparse_is_seekable (GstBaseParse * parse);
-
 gint gst_aacparse_get_frame_overhead (GstBaseParse * parse, GstBuffer * buffer);
 
 gboolean gst_aacparse_event (GstBaseParse * parse, GstEvent * event);
@@ -158,7 +156,6 @@ gst_aacparse_class_init (GstAacParseClass * klass)
   parse_class->start = GST_DEBUG_FUNCPTR (gst_aacparse_start);
   parse_class->stop = GST_DEBUG_FUNCPTR (gst_aacparse_stop);
   parse_class->set_sink_caps = GST_DEBUG_FUNCPTR (gst_aacparse_sink_setcaps);
-  parse_class->is_seekable = GST_DEBUG_FUNCPTR (gst_aacparse_is_seekable);
   parse_class->parse_frame = GST_DEBUG_FUNCPTR (gst_aacparse_parse_frame);
   parse_class->check_valid_frame =
       GST_DEBUG_FUNCPTR (gst_aacparse_check_valid_frame);
@@ -176,8 +173,6 @@ gst_aacparse_class_init (GstAacParseClass * klass)
 static void
 gst_aacparse_init (GstAacParse * aacparse, GstAacParseClass * klass)
 {
-  /* init rest */
-  gst_base_parse_set_min_frame_size (GST_BASE_PARSE (aacparse), 1024);
   GST_DEBUG ("initialized");
 }
 
@@ -468,7 +463,7 @@ gst_aacparse_detect_stream (GstAacParse * aacparse,
     aacparse->channels = ((data[2] & 0x01) << 2) | ((data[3] & 0xc0) >> 6);
 
     gst_base_parse_set_frame_props (GST_BASE_PARSE (aacparse),
-        aacparse->sample_rate, 1024, 50);
+        aacparse->sample_rate, 1024, 2, 2);
 
     GST_DEBUG ("ADTS: samplerate %d, channels %d, objtype %d",
         aacparse->sample_rate, aacparse->channels, aacparse->object_type);
@@ -491,6 +486,10 @@ gst_aacparse_detect_stream (GstAacParse * aacparse,
 
     aacparse->header_type = DSPAAC_HEADER_ADIF;
     aacparse->mpegversion = 4;
+
+    /* no way to seek this */
+    gst_base_parse_set_seek (GST_BASE_PARSE (aacparse),
+        GST_BASE_PARSE_SEEK_NONE, 0);
 
     /* Skip the "ADIF" bytes */
     adif = data + i + 4;
@@ -664,6 +663,7 @@ gst_aacparse_start (GstBaseParse * parse)
   aacparse = GST_AACPARSE (parse);
   GST_DEBUG ("start");
   aacparse->src_caps_set = FALSE;
+  gst_base_parse_set_min_frame_size (GST_BASE_PARSE (aacparse), 1024);
   gst_base_parse_set_passthrough (parse, FALSE);
   return TRUE;
 }
@@ -687,27 +687,6 @@ gst_aacparse_stop (GstBaseParse * parse)
   return TRUE;
 }
 
-
-/**
- * gst_aacparse_is_seekable:
- * @parse: #GstBaseParse.
- *
- * Implementation of "is_seekable" vmethod in #GstBaseParse class.
- *
- * Returns: TRUE if the current stream is seekable.
- */
-gboolean
-gst_aacparse_is_seekable (GstBaseParse * parse)
-{
-  GstAacParse *aacparse;
-
-  aacparse = GST_AACPARSE (parse);
-  GST_DEBUG_OBJECT (aacparse, "IS_SEEKABLE: %d",
-      aacparse->header_type != DSPAAC_HEADER_ADIF);
-
-  /* Not seekable if ADIF header is found */
-  return (aacparse->header_type != DSPAAC_HEADER_ADIF);
-}
 
 /**
  * gst_aacparse_get_frame_overhead:

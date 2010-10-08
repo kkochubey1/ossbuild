@@ -540,7 +540,7 @@ gst_caps_remove_and_get_structure (GstCaps * caps, guint idx)
 /**
  * gst_caps_steal_structure:
  * @caps: the #GstCaps to retrieve from
- * @idx: Index of the structure to retrieve
+ * @index: Index of the structure to retrieve
  *
  * Retrieves the stucture with the given index from the list of structures
  * contained in @caps. The caller becomes the owner of the returned structure.
@@ -550,15 +550,15 @@ gst_caps_remove_and_get_structure (GstCaps * caps, guint idx)
  * Since: 0.10.30
  */
 GstStructure *
-gst_caps_steal_structure (GstCaps * caps, guint idx)
+gst_caps_steal_structure (GstCaps * caps, guint index)
 {
   g_return_val_if_fail (caps != NULL, NULL);
   g_return_val_if_fail (IS_WRITABLE (caps), NULL);
 
-  if (G_UNLIKELY (idx >= caps->structs->len))
+  if (G_UNLIKELY (index >= caps->structs->len))
     return NULL;
 
-  return gst_caps_remove_and_get_structure (caps, idx);
+  return gst_caps_remove_and_get_structure (caps, index);
 }
 
 static gboolean
@@ -1837,24 +1837,17 @@ gst_caps_structure_simplify (GstStructure ** result,
 
   /* try to subtract to get a real subset */
   if (gst_caps_structure_subtract (&list, simplify, compare)) {
-    switch (g_slist_length (list)) {
-      case 0:
-        *result = NULL;
-        return TRUE;
-      case 1:
-        *result = list->data;
-        g_slist_free (list);
-        return TRUE;
-      default:
-      {
-        GSList *walk;
-
-        for (walk = list; walk; walk = g_slist_next (walk)) {
-          gst_structure_free (walk->data);
-        }
-        g_slist_free (list);
-        break;
-      }
+    if (list == NULL) {         /* no result */
+      *result = NULL;
+      return TRUE;
+    } else if (list->next == NULL) {    /* one result */
+      *result = list->data;
+      g_slist_free (list);
+      return TRUE;
+    } else {                    /* multiple results */
+      g_slist_foreach (list, (GFunc) gst_structure_free, NULL);
+      g_slist_free (list);
+      list = NULL;
     }
   }
 

@@ -26,6 +26,7 @@
 
 #include <gst/audio/audio.h>
 #include "gstdvdemux.h"
+#include "gstsmptetimecode.h"
 
 /**
  * SECTION:element-dvdemux
@@ -1357,6 +1358,48 @@ gst_dvdemux_demux_video (GstDVDemux * dvdemux, GstBuffer * buffer,
   return ret;
 }
 
+static int
+get_ssyb_offset (int dif, int ssyb)
+{
+  int offset;
+
+  offset = dif * 12000;         /* to dif */
+  offset += 80 * (1 + (ssyb / 6));      /* to subcode pack */
+  offset += 3;                  /* past header */
+  offset += 8 * (ssyb % 6);     /* to ssyb */
+
+  return offset;
+}
+
+static gboolean
+gst_dvdemux_get_timecode (GstDVDemux * dvdemux, GstBuffer * buffer,
+    GstSMPTETimeCode * timecode)
+{
+  guint8 *data = GST_BUFFER_DATA (buffer);
+  int offset;
+  int dif;
+  int n_difs = dvdemux->decoder->num_dif_seqs;
+
+  for (dif = 0; dif < n_difs; dif++) {
+    offset = get_ssyb_offset (dif, 3);
+    if (data[offset + 3] == 0x13) {
+      timecode->frames = ((data[offset + 4] >> 4) & 0x3) * 10 +
+          (data[offset + 4] & 0xf);
+      timecode->seconds = ((data[offset + 5] >> 4) & 0x3) * 10 +
+          (data[offset + 5] & 0xf);
+      timecode->minutes = ((data[offset + 6] >> 4) & 0x3) * 10 +
+          (data[offset + 6] & 0xf);
+      timecode->hours = ((data[offset + 7] >> 4) & 0x3) * 10 +
+          (data[offset + 7] & 0xf);
+      GST_DEBUG ("got timecode %" GST_SMPTE_TIME_CODE_FORMAT,
+          GST_SMPTE_TIME_CODE_ARGS (timecode));
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
 static gboolean
 gst_dvdemux_is_new_media (GstDVDemux * dvdemux, GstBuffer * buffer)
 {
@@ -1390,6 +1433,8 @@ gst_dvdemux_demux_frame (GstDVDemux * dvdemux, GstBuffer * buffer)
   GstFlowReturn aret, vret, ret;
   guint8 *data;
   guint64 duration;
+  GstSMPTETimeCode timecode;
+  int frame_number;
 
   if (G_UNLIKELY (dvdemux->need_segment)) {
     GstEvent *event;
@@ -1427,6 +1472,12 @@ gst_dvdemux_demux_frame (GstDVDemux * dvdemux, GstBuffer * buffer)
 
     dvdemux->need_segment = FALSE;
   }
+
+  gst_dvdemux_get_timecode (dvdemux, buffer, &timecode);
+  gst_smpte_time_code_get_frame_number (
+      (dvdemux->decoder->system == e_dv_system_625_50) ?
+      GST_SMPTE_TIME_CODE_SYSTEM_25 : GST_SMPTE_TIME_CODE_SYSTEM_30,
+      &frame_number, &timecode);
 
   next_ts = gst_util_uint64_scale_int (
       (dvdemux->frame_offset + 1) * GST_SECOND,
@@ -1735,24 +1786,21 @@ pause:
     GST_INFO_OBJECT (dvdemux, "pausing task, %s", gst_flow_get_name (ret));
     dvdemux->running = FALSE;
     gst_pad_pause_task (dvdemux->sinkpad);
-    if (GST_FLOW_IS_FATAL (ret) || ret == GST_FLOW_NOT_LINKED) {
-      if (ret == GST_FLOW_UNEXPECTED) {
-        GST_LOG_OBJECT (dvdemux, "got eos");
-        /* perform EOS logic */
-        if (dvdemux->time_segment.flags & GST_SEEK_FLAG_SEGMENT) {
-          gst_element_post_message (GST_ELEMENT (dvdemux),
-              gst_message_new_segment_done (GST_OBJECT_CAST (dvdemux),
-                  dvdemux->time_segment.format,
-                  dvdemux->time_segment.last_stop));
-        } else {
-          gst_dvdemux_push_event (dvdemux, gst_event_new_eos ());
-        }
+    if (ret == GST_FLOW_UNEXPECTED) {
+      GST_LOG_OBJECT (dvdemux, "got eos");
+      /* perform EOS logic */
+      if (dvdemux->time_segment.flags & GST_SEEK_FLAG_SEGMENT) {
+        gst_element_post_message (GST_ELEMENT (dvdemux),
+            gst_message_new_segment_done (GST_OBJECT_CAST (dvdemux),
+                dvdemux->time_segment.format, dvdemux->time_segment.last_stop));
       } else {
-        /* for fatal errors or not-linked we post an error message */
-        GST_ELEMENT_ERROR (dvdemux, STREAM, FAILED,
-            (NULL), ("streaming stopped, reason %s", gst_flow_get_name (ret)));
         gst_dvdemux_push_event (dvdemux, gst_event_new_eos ());
       }
+    } else if (ret == GST_FLOW_NOT_LINKED || ret < GST_FLOW_UNEXPECTED) {
+      /* for fatal errors or not-linked we post an error message */
+      GST_ELEMENT_ERROR (dvdemux, STREAM, FAILED,
+          (NULL), ("streaming stopped, reason %s", gst_flow_get_name (ret)));
+      gst_dvdemux_push_event (dvdemux, gst_event_new_eos ());
     }
     goto done;
   }

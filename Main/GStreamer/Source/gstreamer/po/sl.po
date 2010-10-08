@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.29.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2010-07-02 21:09+0100\n"
 "Last-Translator: Matej Urbančič <matej.urban@gmail.com>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -145,6 +145,9 @@ msgstr "Ni mogoče zapreti podporne knjižnice."
 
 msgid "Could not configure supporting library."
 msgstr "Ni mogoče nastaviti podporne knjižnice."
+
+msgid "Encoding error."
+msgstr ""
 
 msgid "GStreamer encountered a general resource error."
 msgstr ""
@@ -295,6 +298,13 @@ msgid "date"
 msgstr "datum"
 
 msgid "date the data was created (as a GDate structure)"
+msgstr ""
+
+#, fuzzy
+msgid "datetime"
+msgstr "datum"
+
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr ""
 
 msgid "genre"
@@ -646,6 +656,13 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "geo location horizontal error"
+msgstr "Ime mesta vsebine"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
+#, fuzzy
 msgid "geo location movement speed"
 msgstr "Manjkajoče mesto vstavka %s"
 
@@ -743,6 +760,19 @@ msgid "device model"
 msgstr "video kodek"
 
 msgid "Model of the device used to create this media"
+msgstr ""
+
+#, fuzzy
+msgid "application name"
+msgstr "Ime mesta vsebine"
+
+msgid "Application used to create the media"
+msgstr ""
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
 msgstr ""
 
 msgid "image orientation"
@@ -890,16 +920,16 @@ msgid "Failed after iterations as requested."
 msgstr ""
 
 #, fuzzy
-msgid "Error while writing to download file."
-msgstr "Prišlo je do napake med prenosom datoteke"
-
-#, fuzzy
 msgid "No Temp directory specified."
 msgstr "Ni določenega izvornega pogona"
 
 #, fuzzy, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "Ni mogoče ustvariti datoteke predpomnilnika"
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Prišlo je do napake med prenosom datoteke"
 
 #, fuzzy
 msgid "caps"
@@ -937,6 +967,15 @@ msgid "writable"
 msgstr "zapisljivo"
 
 msgid "controllable"
+msgstr ""
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
 msgstr ""
 
 msgid "Blacklisted files:"

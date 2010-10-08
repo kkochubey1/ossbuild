@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.10.28.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2010-04-30 15:45+0200\n"
 "Last-Translator: Freek de Kruijf <f.de.kruijf@gmail.com>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -161,6 +161,9 @@ msgstr "Kan ondersteunende bibliotheek niet sluiten."
 msgid "Could not configure supporting library."
 msgstr "Kan ondersteunende bibliotheek niet configureren."
 
+msgid "Encoding error."
+msgstr ""
+
 msgid "GStreamer encountered a general resource error."
 msgstr "GStreamer kwam een algemene fout tegen met systeembronnen."
 
@@ -305,6 +308,14 @@ msgid "date"
 msgstr "datum"
 
 msgid "date the data was created (as a GDate structure)"
+msgstr "datum waarop het stuk gemaakt is (als GDate-structuur)"
+
+#, fuzzy
+msgid "datetime"
+msgstr "datum"
+
+#, fuzzy
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr "datum waarop het stuk gemaakt is (als GDate-structuur)"
 
 msgid "genre"
@@ -642,6 +653,13 @@ msgstr ""
 "(bijv. de buurt)"
 
 #, fuzzy
+msgid "geo location horizontal error"
+msgstr "naam geografische locatie"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
+#, fuzzy
 msgid "geo location movement speed"
 msgstr "breedtegraad van de geografische locatie"
 
@@ -743,6 +761,20 @@ msgstr ""
 #, fuzzy
 msgid "Model of the device used to create this media"
 msgstr "versie van de encoder gebruikt om deze stroom te coderen"
+
+#, fuzzy
+msgid "application name"
+msgstr "naam geografische locatie"
+
+#, fuzzy
+msgid "Application used to create the media"
+msgstr "versie van de encoder gebruikt om deze stroom te coderen"
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
+msgstr ""
 
 msgid "image orientation"
 msgstr ""
@@ -885,15 +917,15 @@ msgstr "Bestand \"%s\" is een socket."
 msgid "Failed after iterations as requested."
 msgstr "Mislukt na iteraties zoals gevraagd."
 
-msgid "Error while writing to download file."
-msgstr "Fout bij het schrijven om bestand te downloaden."
-
 msgid "No Temp directory specified."
 msgstr "Geen tijdelijke map opgegeven."
 
 #, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "Kon geen tijdelijk bestand \"%s\" aanmaken."
+
+msgid "Error while writing to download file."
+msgstr "Fout bij het schrijven om bestand te downloaden."
 
 msgid "caps"
 msgstr "mogelijkheden"
@@ -927,6 +959,15 @@ msgstr "schrijfbaar"
 
 msgid "controllable"
 msgstr "controleerbaar"
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
+msgstr ""
 
 msgid "Blacklisted files:"
 msgstr "Bestanden op de zwarte lijst:"

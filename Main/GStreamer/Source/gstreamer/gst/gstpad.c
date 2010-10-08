@@ -138,6 +138,8 @@ GList *gst_pad_get_internal_links_default (GstPad * pad);
 static GstObjectClass *parent_class = NULL;
 static guint gst_pad_signals[LAST_SIGNAL] = { 0 };
 
+static GParamSpec *pspec_caps = NULL;
+
 /* quarks for probe signals */
 static GQuark buffer_quark;
 static GQuark event_quark;
@@ -313,9 +315,11 @@ gst_pad_class_init (GstPadClass * klass)
       NULL, gst_marshal_BOOLEAN__POINTER, G_TYPE_BOOLEAN, 1,
       GST_TYPE_MINI_OBJECT);
 
-  g_object_class_install_property (gobject_class, PAD_PROP_CAPS,
-      g_param_spec_boxed ("caps", "Caps", "The capabilities of the pad",
-          GST_TYPE_CAPS, G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+  pspec_caps = g_param_spec_boxed ("caps", "Caps",
+      "The capabilities of the pad", GST_TYPE_CAPS,
+      G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+  g_object_class_install_property (gobject_class, PAD_PROP_CAPS, pspec_caps);
+
   g_object_class_install_property (gobject_class, PAD_PROP_DIRECTION,
       g_param_spec_enum ("direction", "Direction", "The direction of the pad",
           GST_TYPE_PAD_DIRECTION, GST_PAD_UNKNOWN,
@@ -2022,12 +2026,12 @@ done:
  * can cause severe issues. Refer to the documentation of #GstPadLinkCheck
  * for more information.
  *
+ * MT Safe.
+ *
  * Returns: A result code indicating if the connection worked or
  *          what went wrong.
  *
  * Since: 0.10.30
- *
- * MT Safe.
  */
 GstPadLinkReturn
 gst_pad_link_full (GstPad * srcpad, GstPad * sinkpad, GstPadLinkCheck flags)
@@ -2674,7 +2678,11 @@ gst_pad_set_caps (GstPad * pad, GstCaps * caps)
       caps);
   GST_OBJECT_UNLOCK (pad);
 
-  g_object_notify (G_OBJECT (pad), "caps");
+#if GLIB_CHECK_VERSION(2,26,0)
+  g_object_notify_by_pspec ((GObject *) pad, pspec_caps);
+#else
+  g_object_notify ((GObject *) pad, "caps");
+#endif
 
   return TRUE;
 
@@ -4630,29 +4638,8 @@ not_connected:
   }
 }
 
-/**
- * gst_pad_get_range:
- * @pad: a src #GstPad, returns #GST_FLOW_ERROR if not.
- * @offset: The start offset of the buffer
- * @size: The length of the buffer
- * @buffer: a pointer to hold the #GstBuffer, returns #GST_FLOW_ERROR if %NULL.
- *
- * When @pad is flushing this function returns #GST_FLOW_WRONG_STATE
- * immediatly and @buffer is %NULL.
- *
- * Calls the getrange function of @pad, see #GstPadGetRangeFunction for a
- * description of a getrange function. If @pad has no getrange function
- * installed (see gst_pad_set_getrange_function()) this function returns
- * #GST_FLOW_NOT_SUPPORTED.
- *
- * This is a lowlevel function. Usualy gst_pad_pull_range() is used.
- *
- * Returns: a #GstFlowReturn from the pad.
- *
- * MT safe.
- */
-GstFlowReturn
-gst_pad_get_range (GstPad * pad, guint64 offset, guint size,
+static GstFlowReturn
+gst_pad_get_range_unchecked (GstPad * pad, guint64 offset, guint size,
     GstBuffer ** buffer)
 {
   GstFlowReturn ret;
@@ -4660,10 +4647,6 @@ gst_pad_get_range (GstPad * pad, guint64 offset, guint size,
   gboolean emit_signal;
   GstCaps *caps;
   gboolean caps_changed;
-
-  g_return_val_if_fail (GST_IS_PAD (pad), GST_FLOW_ERROR);
-  g_return_val_if_fail (GST_PAD_IS_SRC (pad), GST_FLOW_ERROR);
-  g_return_val_if_fail (buffer != NULL, GST_FLOW_ERROR);
 
   GST_PAD_STREAM_LOCK (pad);
 
@@ -4754,6 +4737,37 @@ not_negotiated:
   }
 }
 
+/**
+ * gst_pad_get_range:
+ * @pad: a src #GstPad, returns #GST_FLOW_ERROR if not.
+ * @offset: The start offset of the buffer
+ * @size: The length of the buffer
+ * @buffer: a pointer to hold the #GstBuffer, returns #GST_FLOW_ERROR if %NULL.
+ *
+ * When @pad is flushing this function returns #GST_FLOW_WRONG_STATE
+ * immediatly and @buffer is %NULL.
+ *
+ * Calls the getrange function of @pad, see #GstPadGetRangeFunction for a
+ * description of a getrange function. If @pad has no getrange function
+ * installed (see gst_pad_set_getrange_function()) this function returns
+ * #GST_FLOW_NOT_SUPPORTED.
+ *
+ * This is a lowlevel function. Usualy gst_pad_pull_range() is used.
+ *
+ * Returns: a #GstFlowReturn from the pad.
+ *
+ * MT safe.
+ */
+GstFlowReturn
+gst_pad_get_range (GstPad * pad, guint64 offset, guint size,
+    GstBuffer ** buffer)
+{
+  g_return_val_if_fail (GST_IS_PAD (pad), GST_FLOW_ERROR);
+  g_return_val_if_fail (GST_PAD_IS_SRC (pad), GST_FLOW_ERROR);
+  g_return_val_if_fail (buffer != NULL, GST_FLOW_ERROR);
+
+  return gst_pad_get_range_unchecked (pad, offset, size, buffer);
+}
 
 /**
  * gst_pad_pull_range:
@@ -4813,7 +4827,7 @@ gst_pad_pull_range (GstPad * pad, guint64 offset, guint size,
   gst_object_ref (peer);
   GST_OBJECT_UNLOCK (pad);
 
-  ret = gst_pad_get_range (peer, offset, size, buffer);
+  ret = gst_pad_get_range_unchecked (peer, offset, size, buffer);
 
   gst_object_unref (peer);
 
@@ -5068,8 +5082,10 @@ gst_pad_send_event (GstPad * pad, GstEvent * event)
       GST_CAT_DEBUG_OBJECT (GST_CAT_EVENT, pad, "set flush flag");
       break;
     case GST_EVENT_FLUSH_STOP:
-      GST_PAD_UNSET_FLUSHING (pad);
-      GST_CAT_DEBUG_OBJECT (GST_CAT_EVENT, pad, "cleared flush flag");
+      if (G_LIKELY (GST_PAD_ACTIVATE_MODE (pad) != GST_ACTIVATE_NONE)) {
+        GST_PAD_UNSET_FLUSHING (pad);
+        GST_CAT_DEBUG_OBJECT (GST_CAT_EVENT, pad, "cleared flush flag");
+      }
       GST_OBJECT_UNLOCK (pad);
       /* grab stream lock */
       GST_PAD_STREAM_LOCK (pad);

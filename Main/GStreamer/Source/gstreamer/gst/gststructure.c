@@ -417,6 +417,18 @@ gst_structure_set_name (GstStructure * structure, const gchar * name)
   structure->name = g_quark_from_string (name);
 }
 
+static inline void
+gst_structure_id_set_value_internal (GstStructure * structure, GQuark field,
+    const GValue * value)
+{
+  GstStructureField gsfield = { 0, {0,} };
+
+  gsfield.name = field;
+  gst_value_init_and_copy (&gsfield.value, value);
+
+  gst_structure_set_field (structure, &gsfield);
+}
+
 /**
  * gst_structure_id_set_value:
  * @structure: a #GstStructure
@@ -431,16 +443,12 @@ void
 gst_structure_id_set_value (GstStructure * structure,
     GQuark field, const GValue * value)
 {
-  GstStructureField gsfield = { 0, {0,} };
 
   g_return_if_fail (structure != NULL);
   g_return_if_fail (G_IS_VALUE (value));
   g_return_if_fail (IS_MUTABLE (structure));
 
-  gsfield.name = field;
-  gst_value_init_and_copy (&gsfield.value, value);
-
-  gst_structure_set_field (structure, &gsfield);
+  gst_structure_id_set_value_internal (structure, field, value);
 }
 
 /**
@@ -462,49 +470,83 @@ gst_structure_set_value (GstStructure * structure,
   g_return_if_fail (G_IS_VALUE (value));
   g_return_if_fail (IS_MUTABLE (structure));
 
-  gst_structure_id_set_value (structure, g_quark_from_string (fieldname),
-      value);
+  gst_structure_id_set_value_internal (structure,
+      g_quark_from_string (fieldname), value);
 }
 
-/**
- * gst_structure_set:
- * @structure: a #GstStructure
- * @fieldname: the name of the field to set
- * @...: variable arguments
- *
- * Parses the variable arguments and sets fields accordingly.
- * Variable arguments should be in the form field name, field type
- * (as a GType), value(s).  The last variable argument should be NULL.
- */
-void
-gst_structure_set (GstStructure * structure, const gchar * field, ...)
+static inline void
+gst_structure_id_take_value_internal (GstStructure * structure, GQuark field,
+    GValue * value)
 {
-  va_list varargs;
+  GstStructureField gsfield = { 0, {0,} };
 
-  g_return_if_fail (structure != NULL);
+  gsfield.name = field;
+  gsfield.value = *value;
 
-  va_start (varargs, field);
-  gst_structure_set_valist (structure, field, varargs);
-  va_end (varargs);
+  gst_structure_set_field (structure, &gsfield);
+
+  /* we took ownership */
+#ifdef USE_POISONING
+  memset (value, 0, sizeof (GValue));
+#else
+  value->g_type = G_TYPE_INVALID;
+#endif
 }
 
 /**
- * gst_structure_set_valist:
+ * gst_structure_id_take_value:
  * @structure: a #GstStructure
- * @fieldname: the name of the field to set
- * @varargs: variable arguments
+ * @field: a #GQuark representing a field
+ * @value: (transfer full): the new value of the field
  *
- * va_list form of gst_structure_set().
+ * Sets the field with the given GQuark @field to @value.  If the field
+ * does not exist, it is created.  If the field exists, the previous
+ * value is replaced and freed.
+ *
+ * Since: 0.10.31
  */
 void
-gst_structure_set_valist (GstStructure * structure,
+gst_structure_id_take_value (GstStructure * structure, GQuark field,
+    GValue * value)
+{
+  g_return_if_fail (structure != NULL);
+  g_return_if_fail (G_IS_VALUE (value));
+  g_return_if_fail (IS_MUTABLE (structure));
+
+  gst_structure_id_take_value_internal (structure, field, value);
+}
+
+/**
+ * gst_structure_take_value:
+ * @structure: a #GstStructure
+ * @fieldname: the name of the field to set
+ * @value: (transfer full): the new value of the field
+ *
+ * Sets the field with the given name @field to @value.  If the field
+ * does not exist, it is created.  If the field exists, the previous
+ * value is replaced and freed. The function will take ownership of @value.
+ *
+ * Since: 0.10.31
+ */
+void
+gst_structure_take_value (GstStructure * structure, const gchar * fieldname,
+    GValue * value)
+{
+  g_return_if_fail (structure != NULL);
+  g_return_if_fail (fieldname != NULL);
+  g_return_if_fail (G_IS_VALUE (value));
+  g_return_if_fail (IS_MUTABLE (structure));
+
+  gst_structure_id_take_value_internal (structure,
+      g_quark_from_string (fieldname), value);
+}
+
+static void
+gst_structure_set_valist_internal (GstStructure * structure,
     const gchar * fieldname, va_list varargs)
 {
   gchar *err = NULL;
   GType type;
-
-  g_return_if_fail (structure != NULL);
-  g_return_if_fail (IS_MUTABLE (structure));
 
   while (fieldname) {
     GstStructureField field = { 0 };
@@ -534,50 +576,52 @@ gst_structure_set_valist (GstStructure * structure,
 }
 
 /**
- * gst_structure_id_set:
+ * gst_structure_set:
  * @structure: a #GstStructure
- * @fieldname: the GQuark for the name of the field to set
+ * @fieldname: the name of the field to set
  * @...: variable arguments
  *
- * Identical to gst_structure_set, except that field names are
- * passed using the GQuark for the field name. This allows more efficient
- * setting of the structure if the caller already knows the associated
- * quark values.
- * The last variable argument must be NULL.
- *
- * Since: 0.10.10
+ * Parses the variable arguments and sets fields accordingly.
+ * Variable arguments should be in the form field name, field type
+ * (as a GType), value(s).  The last variable argument should be NULL.
  */
 void
-gst_structure_id_set (GstStructure * structure, GQuark field, ...)
+gst_structure_set (GstStructure * structure, const gchar * field, ...)
 {
   va_list varargs;
 
   g_return_if_fail (structure != NULL);
+  g_return_if_fail (IS_MUTABLE (structure) || field == NULL);
 
   va_start (varargs, field);
-  gst_structure_id_set_valist (structure, field, varargs);
+  gst_structure_set_valist_internal (structure, field, varargs);
   va_end (varargs);
 }
 
 /**
- * gst_structure_id_set_valist:
+ * gst_structure_set_valist:
  * @structure: a #GstStructure
  * @fieldname: the name of the field to set
  * @varargs: variable arguments
  *
- * va_list form of gst_structure_id_set().
- *
- * Since: 0.10.10
+ * va_list form of gst_structure_set().
  */
 void
-gst_structure_id_set_valist (GstStructure * structure,
+gst_structure_set_valist (GstStructure * structure,
+    const gchar * fieldname, va_list varargs)
+{
+  g_return_if_fail (structure != NULL);
+  g_return_if_fail (IS_MUTABLE (structure));
+
+  gst_structure_set_valist_internal (structure, fieldname, varargs);
+}
+
+static void
+gst_structure_id_set_valist_internal (GstStructure * structure,
     GQuark fieldname, va_list varargs)
 {
   gchar *err = NULL;
   GType type;
-
-  g_return_if_fail (structure != NULL);
-  g_return_if_fail (IS_MUTABLE (structure));
 
   while (fieldname) {
     GstStructureField field = { 0 };
@@ -604,6 +648,52 @@ gst_structure_id_set_valist (GstStructure * structure,
 
     fieldname = va_arg (varargs, GQuark);
   }
+}
+
+/**
+ * gst_structure_id_set:
+ * @structure: a #GstStructure
+ * @fieldname: the GQuark for the name of the field to set
+ * @...: variable arguments
+ *
+ * Identical to gst_structure_set, except that field names are
+ * passed using the GQuark for the field name. This allows more efficient
+ * setting of the structure if the caller already knows the associated
+ * quark values.
+ * The last variable argument must be NULL.
+ *
+ * Since: 0.10.10
+ */
+void
+gst_structure_id_set (GstStructure * structure, GQuark field, ...)
+{
+  va_list varargs;
+
+  g_return_if_fail (structure != NULL);
+
+  va_start (varargs, field);
+  gst_structure_id_set_valist_internal (structure, field, varargs);
+  va_end (varargs);
+}
+
+/**
+ * gst_structure_id_set_valist:
+ * @structure: a #GstStructure
+ * @fieldname: the name of the field to set
+ * @varargs: variable arguments
+ *
+ * va_list form of gst_structure_id_set().
+ *
+ * Since: 0.10.10
+ */
+void
+gst_structure_id_set_valist (GstStructure * structure,
+    GQuark fieldname, va_list varargs)
+{
+  g_return_if_fail (structure != NULL);
+  g_return_if_fail (IS_MUTABLE (structure));
+
+  gst_structure_id_set_valist_internal (structure, fieldname, varargs);
 }
 
 /**
@@ -635,7 +725,7 @@ gst_structure_id_new (GQuark name_quark, GQuark field_quark, ...)
   s = gst_structure_id_empty_new (name_quark);
 
   va_start (varargs, field_quark);
-  gst_structure_id_set_valist (s, field_quark, varargs);
+  gst_structure_id_set_valist_internal (s, field_quark, varargs);
   va_end (varargs);
 
   return s;
@@ -1663,6 +1753,8 @@ gst_structure_value_get_generic_type (GValue * val)
     }
   } else if (G_VALUE_TYPE (val) == GST_TYPE_INT_RANGE) {
     return G_TYPE_INT;
+  } else if (G_VALUE_TYPE (val) == GST_TYPE_INT64_RANGE) {
+    return G_TYPE_INT64;
   } else if (G_VALUE_TYPE (val) == GST_TYPE_DOUBLE_RANGE) {
     return G_TYPE_DOUBLE;
   } else if (G_VALUE_TYPE (val) == GST_TYPE_FRACTION_RANGE) {
@@ -1850,6 +1942,11 @@ gst_structure_parse_range (gchar * s, gchar ** after, GValue * value,
     g_value_init (value, range_type);
     gst_value_set_int_range (value, gst_g_value_get_int_unchecked (&value1),
         gst_g_value_get_int_unchecked (&value2));
+  } else if (G_VALUE_TYPE (&value1) == G_TYPE_INT64) {
+    range_type = GST_TYPE_INT64_RANGE;
+    g_value_init (value, range_type);
+    gst_value_set_int64_range (value, gst_g_value_get_int64_unchecked (&value1),
+        gst_g_value_get_int64_unchecked (&value2));
   } else if (G_VALUE_TYPE (&value1) == GST_TYPE_FRACTION) {
     range_type = GST_TYPE_FRACTION_RANGE;
     g_value_init (value, range_type);

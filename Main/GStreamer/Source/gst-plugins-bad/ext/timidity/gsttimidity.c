@@ -318,7 +318,7 @@ static GstSegment *
 gst_timidity_get_segment (GstTimidity * timidity, GstFormat format,
     gboolean update)
 {
-  gint64 start, stop, time;
+  gint64 start = 0, stop = 0, time = 0;
 
   GstSegment *segment = gst_segment_new ();
 
@@ -377,7 +377,7 @@ gst_timidity_src_event (GstPad * pad, GstEvent * event)
       GstFormat src_format, dst_format;
       GstSeekFlags flags;
       GstSeekType start_type, stop_type;
-      gint64 orig_start, start, stop;
+      gint64 orig_start, start = 0, stop = 0;
       gboolean flush, update;
 
       if (!timidity->song)
@@ -714,7 +714,9 @@ gst_timidity_loop (GstPad * sinkpad)
   gst_buffer_set_caps (out, timidity->out_caps);
   ret = gst_pad_push (timidity->srcpad, out);
 
-  if (GST_FLOW_IS_FATAL (ret) || ret == GST_FLOW_NOT_LINKED)
+  if (ret == GST_FLOW_UNEXPECTED)
+    goto eos;
+  else if (ret < GST_FLOW_UNEXPECTED || ret == GST_FLOW_NOT_LINKED)
     goto error;
 
   return;
@@ -724,6 +726,11 @@ paused:
     GST_DEBUG_OBJECT (timidity, "pausing task");
     gst_pad_pause_task (timidity->sinkpad);
     return;
+  }
+eos:
+  {
+    gst_pad_push_event (timidity->srcpad, gst_event_new_eos ());
+    goto paused;
   }
 error:
   {

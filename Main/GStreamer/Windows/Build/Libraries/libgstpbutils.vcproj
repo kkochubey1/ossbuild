@@ -388,18 +388,72 @@
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E49}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstreamer.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F13}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstvideo.vcproj"
 		/>
 	</References>
 	<Files>
 		<Filter
 			Name="Header Files"
 			>
+			<File
+				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\pbutils-private.h"
+				>
+			</File>
 			<Filter
 				Name="Public"
 				>
 				<File
+					RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\codec-utils.h"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\descriptions.h"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\gstdiscoverer.h"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -509,6 +563,24 @@
 							/>
 						</FileConfiguration>
 					</File>
+					<File
+						RelativePath="..\..\Generated\gst-plugins-base\gst-libs\gst\pbutils\pbutils-marshal.h"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="Header Installer Tool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="Header Installer Tool"
+							/>
+						</FileConfiguration>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>
@@ -516,7 +588,19 @@
 			Name="Source Files"
 			>
 			<File
+				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\codec-utils.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\descriptions.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\gstdiscoverer-types.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\gstdiscoverer.c"
 				>
 			</File>
 			<File
@@ -540,6 +624,10 @@
 				>
 				<File
 					RelativePath="..\..\Generated\gst-plugins-base\gst-libs\gst\pbutils\pbutils-enumtypes.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Generated\gst-plugins-base\gst-libs\gst\pbutils\pbutils-marshal.c"
 					>
 				</File>
 			</Filter>

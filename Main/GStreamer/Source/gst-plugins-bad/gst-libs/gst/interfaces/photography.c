@@ -81,6 +81,7 @@ gst_photography_iface_base_init (GstPhotographyInterface * iface)
   iface->get_colour_tone_mode = NULL;
   iface->get_scene_mode = NULL;
   iface->get_flash_mode = NULL;
+  iface->get_noise_reduction = NULL;
   iface->get_zoom = NULL;
   iface->get_flicker_mode = NULL;
   iface->get_focus_mode = NULL;
@@ -93,6 +94,7 @@ gst_photography_iface_base_init (GstPhotographyInterface * iface)
   iface->set_colour_tone_mode = NULL;
   iface->set_scene_mode = NULL;
   iface->set_flash_mode = NULL;
+  iface->set_noise_reduction = NULL;
   iface->set_zoom = NULL;
   iface->set_flicker_mode = NULL;
   iface->set_focus_mode = NULL;
@@ -288,6 +290,30 @@ GST_PHOTOGRAPHY_FUNC_TEMPLATE (scene_mode, GstSceneMode);
  * Returns: %TRUE if getting the value succeeded, %FALSE otherwise
  */
 GST_PHOTOGRAPHY_FUNC_TEMPLATE (flash_mode, GstFlashMode);
+
+/**
+ * gst_photography_set_noise_reduction:
+ * @photo: #GstPhotography interface of a #GstElement
+ * @noise_reduction: #GstNoiseReductionMode to set
+ *
+ * Set the noise reduction mode for the #GstElement
+ *
+ * Returns: %TRUE if setting the value succeeded, %FALSE otherwise
+ *
+ * Since: 0.10.21
+ */
+/**
+ * gst_photography_get_noise_reduction:
+ * @photo: #GstPhotography interface of a #GstElement
+ * @noise_reduction: #GstNoiseReductionMode to get
+ *
+ * Get the noise reduction mode for the #GstElement
+ *
+ * Returns: %TRUE if getting the value succeeded, %FALSE otherwise
+ *
+ * Since: 0.10.21
+ */
+GST_PHOTOGRAPHY_FUNC_TEMPLATE (noise_reduction, guint);
 
 /**
  * gst_photography_set_zoom:
@@ -573,4 +599,18 @@ gst_photography_iface_class_init (gpointer g_class)
           "Image capture supported caps",
           "Caps describing supported image capture formats", GST_TYPE_CAPS,
           G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  /* Image preview caps */
+  g_object_interface_install_property (g_class,
+      g_param_spec_boxed (GST_PHOTOGRAPHY_PROP_IMAGE_PREVIEW_SUPPORTED_CAPS,
+          "Image preview supported caps",
+          "Caps describing supported image preview formats", GST_TYPE_CAPS,
+          G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
+
+  /* Zoom */
+  g_object_interface_install_property (g_class,
+      g_param_spec_float (GST_PHOTOGRAPHY_PROP_ZOOM,
+          "Zoom property",
+          "How much the resulted image will be zoomed",
+          1.0f, 10.0f, 1.0f, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }

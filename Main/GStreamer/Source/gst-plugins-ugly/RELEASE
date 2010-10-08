@@ -1,5 +1,5 @@
 
-Release notes for GStreamer Ugly Plug-ins 0.10.14 "Run Rabbit"
+Release notes for GStreamer Ugly Plug-ins 0.10.16 "Because He Knows the Time is Short"
         
 
 The GStreamer team is proud to announce a new release
@@ -55,45 +55,38 @@ contains a set of less supported plug-ins that haven't passed the
 
 Features of this release
     
-      * amrwbdec: give decoder a rank so decodebin/playbin will use it
-      * asfdemux: fix flow aggregation
-      * asfdemux: try harder to put sane timestamps and durations on buffers
-      * asfdemux: accept fragments in a continued packet where the subsequent fragments declare a size of 0
-      * asfdemux: improve seek behaviour for audio-only files without an index
-      * asfdemux: careful to avoid crash on bogus data; avoid strlen() on NULL pointers
-      * asfdemux: add support for chained asfs (push mode)
-      * asfdemux: map WM/TrackNumber to GST_TAG_TRACK_NUMBER and prefer over WM/Track
-      * asfdemux: post bitrate tags
-      * mp3parse: seeking fixes: fix non-flushing seek, conserve stop time for non-accurate seek
-      * rtspreal: memory leak fixes; make config header construction valgrind clean
-      * rmdemux: fix AC-3 in RealAudio playback; post bitrate tags
-      * x264enc: fix up avcC header construction and playback by flash players
-      * x264enc: Make upstream GstForceKeyUnit thread-safe
-      * x264enc: make use of Access Unit delimiters configurable
-      * x264enc: adapt to slightly modified x264 API
-      * xingmux: fix unaligned memory access, makes things work better on ARM/SPARC
+      * refactor x264enc to use current x264 API correctly, add new properties and new defaults
+      * liboil is no longer required, but orc is now required
+      * build: require orc >= 0.4.5, GLib >= 2.20, automake >= 1.10, autoconf >= 2.60; liboil is no longer required
+      * asfdemux: fix playback of files or streams that are shorter than the advertised preroll value
+      * asfdemux: fix sending eos event for chained asfs in pull mode (exotic)
+      * asfdemux: fix playback of files or streams that advertise miniscule preroll values
+      * lamemp3enc: implement latency query
+      * rmdemux: fix playback of sipro audio streams
+      * x264enc: refactor code in preparation for presets/tunings
+      * x264enc: add "profile" property (and default to MAIN profile)
+      * x264enc: improve defaults: medium speed/quality preset; auto mode for threads
+      * x264enc: add "speed-preset", "tune" and "psy-tune" properties
+      * x264enc: add "option-string" property to specify advanced parameters
+      * x264enc: set time base if needed, fixes visual artifacts
+      * x264enc: add "sliced-threads", "sync-lookahead", "intra-refresh", "mb-tree", and "rc-lookahead" properties
+      * x264enc: fix compilation against ancient x264 versions (X264_BUILD <= 75)
+      * x264enc: speed up first pass of multi-pass encoding (has no impact on quality)
+      * x264enc: fix flushing of delayed frames with new default settings
 
 Bugs fixed in this release
      
-      * 606662 : h264: add stream-format to output caps
-      * 563276 : Internal GStreamer error: negotiation problem - after opening avi file
-      * 586464 : [xingmux] Unit test failures on sparc and arm/eabi
-      * 598761 : [mpegaudioparse] Reduce processing time by 2
-      * 599095 : x264enc: Adapt to slightly modified x264 API
-      * 599297 : [asfdemux] Doesn't populate video bitrate field
-      * 599299 : [rmdemux] Doesn't populate video bitrate field
-      * 599333 : Segfault with asfdemuxer
-      * 599676 : RealAudio file with AC-3 audio no longer plays
-      * 600037 : [asfdemux] ASF MPEG4 Part 2 file captured from Linksys WVC200 Camera corrupted/fails
-      * 601419 : x264enc crashes
-      * 602280 : [asfdemux] fix segmentation fault when utf8 tag name is null
-      * 602556 : x264enc and ffenc upstream GstForceKeyUnit handling are not thread-safe
-      * 603695 : Innaccurate seeking in MP3 files results in cut off playback
-      * 608564 : [ffdec_cook] memory leak
-      * 610432 : [asfdemux] handle negative payload timestamps
-      * 611473 : [regression] outgoing buffers with a duration of zero
-      * 608533 : [real] memory leak in real audio stream via rtsp
-      * 610089 : Flash players are unable to show x264 encoded streams
+      * 599718 : [asf] support chained asfs
+      * 600412 : [asfdemux] Wrong handling of downstream GstFlowReturn
+      * 607798 : x264enc needs updating to support new features and use x264 correctly
+      * 618896 : lamemp3enc doesn't implement latency query
+      * 620007 : Gibberish sound when playing a certain RealMedia file of Sipro/ACELP.net audio codec
+      * 620344 : Update gst-plugins-ugly docs on website
+      * 622407 : [asfdemux] doesn't detect some streams if preroll value is very small
+      * 624786 : x264enc time base is wrong
+      * 625557 : x264enc doesn't flush delayed frames properly
+      * 626577 : [x264enc] regression: doesn't work with older versions of x264
+      * 627946 : mp3parse misuses GST_FLOW_IS_FATAL, doesn't forward GST_FLOW_UNEXPECTED upstream
 
 Download
 
@@ -122,18 +115,17 @@ Applications
   
 Contributors to this release
     
-      * Arnaud Patard
-      * Benjamin Gaignard
+      * Alessandro Decina
+      * David Hoyt
+      * David Schleef
       * Edward Hervey
-      * Jan Schmidt
       * Mark Nauwelaerts
-      * Michael Smith
       * Olivier Crête
       * Robert Swain
       * Sebastian Dröge
       * Stefan Kost
       * Thiago Santos
       * Tim-Philipp Müller
-      * Vittorio Palmisano
+      * Tristan Matthews
       * Wim Taymans
  

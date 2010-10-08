@@ -63,6 +63,7 @@ GST_DEBUG_CATEGORY (v4l2src_debug);
 
 #define PROP_DEF_QUEUE_SIZE         2
 #define PROP_DEF_ALWAYS_COPY        TRUE
+#define PROP_DEF_DECIMATE           1
 
 #define DEFAULT_PROP_DEVICE   "/dev/video0"
 
@@ -71,7 +72,8 @@ enum
   PROP_0,
   V4L2_STD_OBJECT_PROPS,
   PROP_QUEUE_SIZE,
-  PROP_ALWAYS_COPY
+  PROP_ALWAYS_COPY,
+  PROP_DECIMATE
 };
 
 GST_IMPLEMENT_V4L2_PROBE_METHODS (GstV4l2SrcClass, gst_v4l2src);
@@ -264,6 +266,17 @@ gst_v4l2src_class_init (GstV4l2SrcClass * klass)
       g_param_spec_boolean ("always-copy", "Always Copy",
           "If the buffer will or not be used directly from mmap",
           PROP_DEF_ALWAYS_COPY, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * GstV4l2Src:decimate
+   *
+   * Only use every nth frame
+   *
+   * Since: 0.10.26
+   */
+  g_object_class_install_property (gobject_class, PROP_DECIMATE,
+      g_param_spec_int ("decimate", "Decimate",
+          "Only use every nth frame", 1, G_MAXINT,
+          PROP_DEF_DECIMATE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   basesrc_class->get_caps = GST_DEBUG_FUNCPTR (gst_v4l2src_get_caps);
   basesrc_class->set_caps = GST_DEBUG_FUNCPTR (gst_v4l2src_set_caps);
@@ -290,6 +303,7 @@ gst_v4l2src_init (GstV4l2Src * v4l2src, GstV4l2SrcClass * klass)
   v4l2src->num_buffers = PROP_DEF_QUEUE_SIZE;
 
   v4l2src->always_copy = PROP_DEF_ALWAYS_COPY;
+  v4l2src->decimate = PROP_DEF_DECIMATE;
 
   v4l2src->is_capturing = FALSE;
 
@@ -338,6 +352,9 @@ gst_v4l2src_set_property (GObject * object,
       case PROP_ALWAYS_COPY:
         v4l2src->always_copy = g_value_get_boolean (value);
         break;
+      case PROP_DECIMATE:
+        v4l2src->decimate = g_value_get_int (value);
+        break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
         break;
@@ -360,6 +377,9 @@ gst_v4l2src_get_property (GObject * object,
         break;
       case PROP_ALWAYS_COPY:
         g_value_set_boolean (value, v4l2src->always_copy);
+        break;
+      case PROP_DECIMATE:
+        g_value_set_int (value, v4l2src->decimate);
         break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -613,7 +633,7 @@ gst_v4l2src_set_caps (GstBaseSrc * src, GstCaps * caps)
   /* we want our own v4l2 type of fourcc codes */
   if (!gst_v4l2_object_get_caps_info (v4l2src->v4l2object, caps, &format, &w,
           &h, &fps_n, &fps_d, &size)) {
-    GST_DEBUG_OBJECT (v4l2src,
+    GST_INFO_OBJECT (v4l2src,
         "can't get capture format from caps %" GST_PTR_FORMAT, caps);
     return FALSE;
   }
@@ -710,6 +730,10 @@ gst_v4l2src_start (GstBaseSrc * src)
 
   v4l2src->offset = 0;
 
+  /* activate settings for first frame */
+  v4l2src->ctrl_time = 0;
+  gst_object_sync_values (G_OBJECT (src), v4l2src->ctrl_time);
+
   return TRUE;
 }
 
@@ -800,6 +824,10 @@ gst_v4l2src_get_read (GstV4l2Src * v4l2src, GstBuffer ** buf)
   gint buffersize;
 
   buffersize = v4l2src->frame_byte_size;
+  /* In case the size per frame is unknown assume it's a streaming format (e.g.
+   * mpegts) and grab a reasonable default size instead */
+  if (buffersize == 0)
+    buffersize = GST_BASE_SRC (v4l2src)->blocksize;
 
   *buf = gst_buffer_new_and_alloc (buffersize);
 
@@ -906,9 +934,19 @@ static GstFlowReturn
 gst_v4l2src_create (GstPushSrc * src, GstBuffer ** buf)
 {
   GstV4l2Src *v4l2src = GST_V4L2SRC (src);
+  int i;
   GstFlowReturn ret;
 
+  for (i = 0; i < v4l2src->decimate - 1; i++) {
+    ret = v4l2src->get_frame (v4l2src, buf);
+    if (ret != GST_FLOW_OK) {
+      return ret;
+    }
+    gst_buffer_unref (*buf);
+  }
+
   ret = v4l2src->get_frame (v4l2src, buf);
+
   /* set buffer metadata */
   if (G_LIKELY (ret == GST_FLOW_OK && *buf)) {
     GstClock *clock;
@@ -918,6 +956,7 @@ gst_v4l2src_create (GstPushSrc * src, GstBuffer ** buf)
     GST_BUFFER_OFFSET_END (*buf) = v4l2src->offset;
 
     /* timestamps, LOCK to get clock and base time. */
+    /* FIXME: element clock and base_time is rarely changing */
     GST_OBJECT_LOCK (v4l2src);
     if ((clock = GST_ELEMENT_CLOCK (v4l2src))) {
       /* we have a clock, get base time and ref clock */
@@ -942,6 +981,19 @@ gst_v4l2src_create (GstPushSrc * src, GstBuffer ** buf)
           timestamp = 0;
       }
     }
+
+    /* activate settings for next frame */
+    if (GST_CLOCK_TIME_IS_VALID (v4l2src->duration)) {
+      v4l2src->ctrl_time += v4l2src->duration;
+    } else {
+      /* this is not very good (as it should be the next timestamp),
+       * still good enough for linear fades (as long as it is not -1) 
+       */
+      v4l2src->ctrl_time = timestamp;
+    }
+    gst_object_sync_values (G_OBJECT (src), v4l2src->ctrl_time);
+    GST_INFO_OBJECT (src, "sync to %" GST_TIME_FORMAT,
+        GST_TIME_ARGS (v4l2src->ctrl_time));
 
     /* FIXME: use the timestamp from the buffer itself! */
     GST_BUFFER_TIMESTAMP (*buf) = timestamp;

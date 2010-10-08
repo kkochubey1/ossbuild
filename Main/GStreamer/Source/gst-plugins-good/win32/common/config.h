@@ -46,7 +46,7 @@
 #define GST_PACKAGE_NAME "GStreamer Good Plug-ins source release"
 
 /* package origin */
-#define GST_PACKAGE_ORIGIN "OSSBuild"
+#define GST_PACKAGE_ORIGIN "http://code.google.com/p/ossbuild/"
 
 /* struct v4l2_buffer missing */
 #undef GST_V4L2_MISSING_BUFDECL
@@ -174,9 +174,6 @@
 /* Define to enable GDK pixbuf (used by gdkpixbuf). */
 #undef HAVE_GDK_PIXBUF
 
-/* Define to enable GDK pixbuf (used by gdkpixbuf3). */
-#undef HAVE_GDK_PIXBUF3
-
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
@@ -257,6 +254,9 @@
 
 /* Define to enable OSX video (used by osxvideosink). */
 #undef HAVE_OSX_VIDEO
+
+/* Define to 1 if you have the <process.h> header file. */
+#define HAVE_PROCESS_H 1
 
 /* Define to enable pulseaudio plug-in (used by pulseaudio). */
 #undef HAVE_PULSE

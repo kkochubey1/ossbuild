@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gstreamer 0.8.8\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 10:32+0100\n"
+"POT-Creation-Date: 2010-09-23 20:57+0100\n"
 "PO-Revision-Date: 2005-01-27 16:58+0100\n"
 "Last-Translator: Danilo Segan <dsegan@gmx.net>\n"
 "Language-Team: Serbian <gnu@prevod.org>\n"
@@ -168,6 +168,9 @@ msgstr "Не могу да затворим библиотеку за подрш
 msgid "Could not configure supporting library."
 msgstr "Не могу да затворим библиотеку за подршку."
 
+msgid "Encoding error."
+msgstr ""
+
 #, fuzzy
 msgid "GStreamer encountered a general resource error."
 msgstr "ГСтример је наишао на општу грешку у основној библиотеци."
@@ -318,6 +321,14 @@ msgstr "датум"
 
 #, fuzzy
 msgid "date the data was created (as a GDate structure)"
+msgstr "датум прављења података (као број Јулијанског дана)"
+
+#, fuzzy
+msgid "datetime"
+msgstr "датум"
+
+#, fuzzy
+msgid "date and time the data was created (as a GstDateTime structure)"
 msgstr "датум прављења података (као број Јулијанског дана)"
 
 msgid "genre"
@@ -662,6 +673,13 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+msgid "geo location horizontal error"
+msgstr "положај"
+
+msgid "expected error of the horizontal positioning measures (in meters)"
+msgstr ""
+
+#, fuzzy
 msgid "geo location movement speed"
 msgstr "положај"
 
@@ -762,6 +780,20 @@ msgstr ""
 #, fuzzy
 msgid "Model of the device used to create this media"
 msgstr "издање кодирања којим се кодира овај ток"
+
+#, fuzzy
+msgid "application name"
+msgstr "положај"
+
+#, fuzzy
+msgid "Application used to create the media"
+msgstr "издање кодирања којим се кодира овај ток"
+
+msgid "application data"
+msgstr ""
+
+msgid "Arbitrary application data to be serialized into the media"
+msgstr ""
 
 msgid "image orientation"
 msgstr ""
@@ -901,16 +933,16 @@ msgstr "Датотека „%s“ је сокет."
 msgid "Failed after iterations as requested."
 msgstr "Неуспех након траженог броја покушаја."
 
-#, fuzzy
-msgid "Error while writing to download file."
-msgstr "Грешка при упису у датотеку „%s“."
-
 msgid "No Temp directory specified."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "Could not create temp file \"%s\"."
 msgstr "Не могу да сазнам/поставим подешавања из/у ресурсу."
+
+#, fuzzy
+msgid "Error while writing to download file."
+msgstr "Грешка при упису у датотеку „%s“."
 
 # bug: this should be full word
 msgid "caps"
@@ -946,6 +978,15 @@ msgid "writable"
 msgstr "наслов"
 
 msgid "controllable"
+msgstr ""
+
+msgid "changeable in NULL, READY, PAUSED or PLAYING state"
+msgstr ""
+
+msgid "changeable only in NULL, READY or PAUSED state"
+msgstr ""
+
+msgid "changeable only in NULL or READY state"
 msgstr ""
 
 msgid "Blacklisted files:"

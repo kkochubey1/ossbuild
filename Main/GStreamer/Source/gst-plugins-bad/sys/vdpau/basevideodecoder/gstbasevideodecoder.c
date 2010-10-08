@@ -119,27 +119,6 @@ gst_base_video_decoder_get_timestamp_at_offset (GstBaseVideoDecoder *
 }
 
 static guint64
-gst_base_video_decoder_get_timestamp (GstBaseVideoDecoder * base_video_decoder,
-    gint picture_number)
-{
-  if (base_video_decoder->state.fps_d == 0) {
-    return -1;
-  }
-  if (picture_number < base_video_decoder->base_picture_number) {
-    return base_video_decoder->timestamp_offset -
-        (gint64) gst_util_uint64_scale (base_video_decoder->base_picture_number
-        - picture_number, base_video_decoder->state.fps_d * GST_SECOND,
-        base_video_decoder->state.fps_n);
-  } else {
-    return base_video_decoder->timestamp_offset +
-        gst_util_uint64_scale (picture_number -
-        base_video_decoder->base_picture_number,
-        base_video_decoder->state.fps_d * GST_SECOND,
-        base_video_decoder->state.fps_n);
-  }
-}
-
-static guint64
 gst_base_video_decoder_get_field_timestamp (GstBaseVideoDecoder *
     base_video_decoder, gint field_offset)
 {
@@ -185,12 +164,6 @@ gst_base_video_decoder_new_frame (GstBaseVideoDecoder * base_video_decoder)
   else
     frame = gst_video_frame_new ();
 
-  frame->system_frame_number = base_video_decoder->system_frame_number;
-  base_video_decoder->system_frame_number++;
-
-  frame->decode_frame_number = frame->system_frame_number -
-      base_video_decoder->reorder_depth;
-
   return frame;
 }
 
@@ -203,9 +176,6 @@ gst_base_video_decoder_reset (GstBaseVideoDecoder * base_video_decoder)
   base_video_decoder->have_sync = FALSE;
 
   base_video_decoder->timestamp_offset = GST_CLOCK_TIME_NONE;
-  base_video_decoder->system_frame_number = 0;
-  base_video_decoder->presentation_frame_number = 0;
-  base_video_decoder->base_picture_number = 0;
   base_video_decoder->last_timestamp = GST_CLOCK_TIME_NONE;
 
   base_video_decoder->input_offset = 0;
@@ -243,6 +213,15 @@ gst_base_video_decoder_flush (GstBaseVideoDecoder * base_video_decoder)
     base_video_decoder_class->flush (base_video_decoder);
 }
 
+static void
+gst_base_video_decoder_reset_state (GstVideoState * state)
+{
+  if (state->codec_data)
+    gst_buffer_unref (state->codec_data);
+
+  memset (state, 0, sizeof (GstVideoState));
+  state->par_n = state->par_d = 1;
+}
 
 static gboolean
 gst_base_video_decoder_sink_setcaps (GstPad * pad, GstCaps * caps)
@@ -262,17 +241,13 @@ gst_base_video_decoder_sink_setcaps (GstPad * pad, GstCaps * caps)
 
   state = &base_video_decoder->state;
 
-  if (state->codec_data) {
-    gst_buffer_unref (state->codec_data);
-  }
-  memset (state, 0, sizeof (GstVideoState));
+  gst_base_video_decoder_reset_state (state);
 
   structure = gst_caps_get_structure (caps, 0);
 
   gst_video_format_parse_caps (caps, NULL, &state->width, &state->height);
   gst_video_parse_caps_framerate (caps, &state->fps_n, &state->fps_d);
   gst_video_parse_caps_pixel_aspect_ratio (caps, &state->par_n, &state->par_d);
-
   gst_structure_get_boolean (structure, "interlaced", &state->interlaced);
 
   codec_data = gst_structure_get_value (structure, "codec_data");
@@ -292,7 +267,7 @@ gst_base_video_decoder_sink_event (GstPad * pad, GstEvent * event)
 {
   GstBaseVideoDecoder *base_video_decoder;
   GstBaseVideoDecoderClass *base_video_decoder_class;
-  gboolean ret = FALSE;
+  gboolean res = FALSE;
 
   base_video_decoder = GST_BASE_VIDEO_DECODER (gst_pad_get_parent (pad));
   base_video_decoder_class =
@@ -300,15 +275,14 @@ gst_base_video_decoder_sink_event (GstPad * pad, GstEvent * event)
 
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_EOS:
-    {
       if (!base_video_decoder->packetized)
         gst_base_video_decoder_drain (base_video_decoder, TRUE);
 
-      ret =
+      res =
           gst_pad_push_event (GST_BASE_VIDEO_DECODER_SRC_PAD
           (base_video_decoder), event);
-    }
       break;
+
     case GST_EVENT_NEWSEGMENT:
     {
       gboolean update;
@@ -344,149 +318,34 @@ gst_base_video_decoder_sink_event (GstPad * pad, GstEvent * event)
           GST_TIME_ARGS (segment->start),
           GST_TIME_ARGS (segment->stop), GST_TIME_ARGS (segment->time), update);
 
-      ret =
+      res =
           gst_pad_push_event (GST_BASE_VIDEO_DECODER_SRC_PAD
           (base_video_decoder), event);
-    }
       break;
+    }
 
     case GST_EVENT_FLUSH_STOP:
       gst_base_video_decoder_flush (base_video_decoder);
       gst_segment_init (&base_video_decoder->segment, GST_FORMAT_TIME);
 
-      ret =
+      res =
           gst_pad_push_event (GST_BASE_VIDEO_DECODER_SRC_PAD
           (base_video_decoder), event);
       break;
 
     default:
-      /* FIXME this changes the order of events */
-      ret =
-          gst_pad_push_event (GST_BASE_VIDEO_DECODER_SRC_PAD
-          (base_video_decoder), event);
+      res = gst_pad_event_default (pad, event);
       break;
   }
 
 done:
   gst_object_unref (base_video_decoder);
-  return ret;
+  return res;
 
 newseg_wrong_format:
-  {
-    GST_DEBUG_OBJECT (base_video_decoder, "received non TIME newsegment");
-    gst_event_unref (event);
-    goto done;
-  }
-}
-
-#if 0
-static gboolean
-gst_base_video_decoder_sink_convert (GstPad * pad,
-    GstFormat src_format, gint64 src_value,
-    GstFormat * dest_format, gint64 * dest_value)
-{
-  gboolean res = TRUE;
-  GstBaseVideoDecoder *enc;
-
-  if (src_format == *dest_format) {
-    *dest_value = src_value;
-    return TRUE;
-  }
-
-  enc = GST_BASE_VIDEO_DECODER (gst_pad_get_parent (pad));
-
-  /* FIXME: check if we are in a decoding state */
-
-  switch (src_format) {
-    case GST_FORMAT_BYTES:
-      switch (*dest_format) {
-#if 0
-        case GST_FORMAT_DEFAULT:
-          *dest_value = gst_util_uint64_scale_int (src_value, 1,
-              enc->bytes_per_picture);
-          break;
-#endif
-        case GST_FORMAT_TIME:
-          /* seems like a rather silly conversion, implement me if you like */
-        default:
-          res = FALSE;
-      }
-      break;
-    case GST_FORMAT_DEFAULT:
-      switch (*dest_format) {
-        case GST_FORMAT_TIME:
-          *dest_value = gst_util_uint64_scale (src_value,
-              GST_SECOND * enc->fps_d, enc->fps_n);
-          break;
-#if 0
-        case GST_FORMAT_BYTES:
-          *dest_value = gst_util_uint64_scale_int (src_value,
-              enc->bytes_per_picture, 1);
-          break;
-#endif
-        default:
-          res = FALSE;
-      }
-      break;
-    default:
-      res = FALSE;
-      break;
-  }
-}
-#endif
-
-static gboolean
-gst_base_video_decoder_src_convert (GstPad * pad,
-    GstFormat src_format, gint64 src_value,
-    GstFormat * dest_format, gint64 * dest_value)
-{
-  gboolean res = TRUE;
-  GstBaseVideoDecoder *enc;
-
-  if (src_format == *dest_format) {
-    *dest_value = src_value;
-    return TRUE;
-  }
-
-  enc = GST_BASE_VIDEO_DECODER (gst_pad_get_parent (pad));
-
-  /* FIXME: check if we are in a encoding state */
-
-  GST_DEBUG ("src convert");
-  switch (src_format) {
-#if 0
-    case GST_FORMAT_DEFAULT:
-      switch (*dest_format) {
-        case GST_FORMAT_TIME:
-          *dest_value = gst_util_uint64_scale (granulepos_to_frame (src_value),
-              enc->fps_d * GST_SECOND, enc->fps_n);
-          break;
-        default:
-          res = FALSE;
-      }
-      break;
-    case GST_FORMAT_TIME:
-      switch (*dest_format) {
-        case GST_FORMAT_DEFAULT:
-        {
-          *dest_value = gst_util_uint64_scale (src_value,
-              enc->fps_n, enc->fps_d * GST_SECOND);
-          break;
-        }
-        default:
-          res = FALSE;
-          break;
-      }
-      break;
-#endif
-    default:
-      res = FALSE;
-      break;
-  }
-
-  gst_object_unref (enc);
-
-  return res;
+  GST_DEBUG_OBJECT (base_video_decoder, "received non TIME newsegment");
+  gst_event_unref (event);
+  goto done;
 }
 
 static gboolean
@@ -499,42 +358,14 @@ gst_base_video_decoder_src_event (GstPad * pad, GstEvent * event)
 
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_SEEK:
-    {
-      GstFormat format, tformat;
-      gdouble rate;
-      GstEvent *real_seek;
-      GstSeekFlags flags;
-      GstSeekType cur_type, stop_type;
-      gint64 cur, stop;
-      gint64 tcur, tstop;
 
-      GST_DEBUG ("seek event");
-
-      gst_event_parse_seek (event, &rate, &format, &flags, &cur_type,
-          &cur, &stop_type, &stop);
-      gst_event_unref (event);
-
-      tformat = GST_FORMAT_TIME;
-      res =
-          gst_base_video_decoder_src_convert (pad, format, cur, &tformat,
-          &tcur);
-      if (!res)
-        goto convert_error;
-      res =
-          gst_base_video_decoder_src_convert (pad, format, stop, &tformat,
-          &tstop);
-      if (!res)
-        goto convert_error;
-
-      real_seek = gst_event_new_seek (rate, GST_FORMAT_TIME,
-          flags, cur_type, tcur, stop_type, tstop);
-
+      /* FIXME: do seek using bitrate incase upstream doesn't handle it */
       res =
           gst_pad_push_event (GST_BASE_VIDEO_DECODER_SINK_PAD
-          (base_video_decoder), real_seek);
+          (base_video_decoder), event);
 
       break;
-    }
+
     case GST_EVENT_QOS:
     {
       gdouble proportion;
@@ -573,19 +404,16 @@ gst_base_video_decoder_src_event (GstPad * pad, GstEvent * event)
           (base_video_decoder), event);
       break;
     }
+
     default:
       res =
           gst_pad_push_event (GST_BASE_VIDEO_DECODER_SINK_PAD
           (base_video_decoder), event);
       break;
   }
-done:
+
   gst_object_unref (base_video_decoder);
   return res;
-
-convert_error:
-  GST_DEBUG_OBJECT (base_video_decoder, "could not convert format");
-  goto done;
 }
 
 static const GstQueryType *
@@ -594,7 +422,6 @@ gst_base_video_decoder_get_query_types (GstPad * pad)
   static const GstQueryType query_types[] = {
     GST_QUERY_POSITION,
     GST_QUERY_DURATION,
-    GST_QUERY_CONVERT,
     0
   };
 
@@ -629,33 +456,18 @@ gst_base_video_decoder_src_query (GstPad * pad, GstQuery * query)
       gst_query_set_position (query, format, time);
 
       res = TRUE;
-
       break;
     }
+
     case GST_QUERY_DURATION:
-    {
-      res = gst_pad_peer_query (dec->sinkpad, query);
+      /* FIXME: approximate using bitrate if upstream doesn't answear */
+      res = gst_pad_query (dec->sinkpad, query);
       break;
-    }
-    case GST_QUERY_CONVERT:
-    {
-      GstFormat src_fmt, dest_fmt;
-      gint64 src_val, dest_val;
 
-      GST_DEBUG ("convert query");
-
-      gst_query_parse_convert (query, &src_fmt, &src_val, &dest_fmt, &dest_val);
-      res =
-          gst_base_video_decoder_src_convert (pad, src_fmt, src_val, &dest_fmt,
-          &dest_val);
-      if (!res)
-        goto error;
-      gst_query_set_convert (query, src_fmt, src_val, dest_fmt, dest_val);
-      break;
-    }
     default:
       res = gst_pad_query_default (pad, query);
     }
+
   gst_object_unref (dec);
   return res;
 
@@ -705,9 +517,14 @@ gst_base_video_decoder_set_src_caps (GstBaseVideoDecoder * base_video_decoder)
   gst_caps_set_simple (caps,
       "width", G_TYPE_INT, state->width,
       "height", G_TYPE_INT, state->height,
-      "framerate", GST_TYPE_FRACTION, state->fps_n, state->fps_d,
       "pixel-aspect-ratio", GST_TYPE_FRACTION, state->par_n, state->par_d,
       "interlaced", G_TYPE_BOOLEAN, state->interlaced, NULL);
+
+  if (state->fps_d != 0)
+    gst_caps_set_simple (caps,
+        "framerate", GST_TYPE_FRACTION, state->fps_n, state->fps_d, NULL);
+
+
   gst_pad_fixate_caps (base_video_decoder->srcpad, caps);
 
 
@@ -791,7 +608,7 @@ lost_sync:
     dec->current_buf_offset = dec->input_offset -
         gst_adapter_available (dec->input_adapter);
 
-    ret = klass->parse_data (dec, buf, at_eos);
+    ret = klass->parse_data (dec, buf, at_eos, dec->current_frame);
     if (ret != GST_FLOW_OK)
       return ret;
 
@@ -866,16 +683,14 @@ gst_base_video_decoder_chain (GstPad * pad, GstBuffer * buf)
     gst_base_video_decoder_flush (base_video_decoder);
   }
 
-  if (base_video_decoder->current_frame == NULL) {
-    base_video_decoder->current_frame =
-        gst_base_video_decoder_new_frame (base_video_decoder);
-  }
-
   base_video_decoder->input_offset += GST_BUFFER_SIZE (buf);
   if (GST_BUFFER_TIMESTAMP_IS_VALID (buf)) {
     gst_base_video_decoder_add_timestamp (base_video_decoder, buf);
   }
 
+  if (!base_video_decoder->current_frame)
+    base_video_decoder->current_frame =
+        gst_base_video_decoder_new_frame (base_video_decoder);
 
   if (base_video_decoder->packetized) {
     base_video_decoder->current_frame->sink_buffer = buf;
@@ -921,6 +736,9 @@ gst_base_video_decoder_start (GstBaseVideoDecoder * base_video_decoder)
       GST_BASE_VIDEO_DECODER_GET_CLASS (base_video_decoder);
 
   gst_base_video_decoder_reset (base_video_decoder);
+  gst_base_video_decoder_reset_state (&base_video_decoder->state);
+
+  gst_segment_init (&base_video_decoder->segment, GST_FORMAT_TIME);
 
   if (base_video_decoder_class->start)
     return base_video_decoder_class->start (base_video_decoder);
@@ -962,37 +780,54 @@ gst_base_video_decoder_change_state (GstElement * element,
   return ret;
 }
 
-GstFlowReturn
-gst_base_video_decoder_finish_frame (GstBaseVideoDecoder * base_video_decoder,
-    GstVideoFrame * frame)
+static gboolean
+gst_base_video_decoder_check_timestamp (GstBaseVideoDecoder *
+    base_video_decoder, GstClockTime timestamp)
 {
-  GstBaseVideoDecoderClass *base_video_decoder_class;
-  GstBuffer *src_buffer;
+  if (timestamp == GST_CLOCK_TIME_NONE)
+    return FALSE;
 
-  GST_DEBUG ("finish frame");
+  if (GST_CLOCK_TIME_IS_VALID (base_video_decoder->last_timestamp))
+    return timestamp > base_video_decoder->last_timestamp;
 
-  base_video_decoder_class =
-      GST_BASE_VIDEO_DECODER_GET_CLASS (base_video_decoder);
+  return TRUE;
+}
 
-  GST_DEBUG ("finish frame sync=%d pts=%" GST_TIME_FORMAT,
+static void
+gst_base_video_decoder_calculate_timestamps (GstBaseVideoDecoder *
+    base_video_decoder, GstVideoFrame * frame,
+    GstClockTime * presentation_timestamp, GstClockTime * presentation_duration)
+{
+  GST_DEBUG ("calculate timestamps sync=%d upstream timestamp: %"
+      GST_TIME_FORMAT " parsed timestamp: %" GST_TIME_FORMAT,
       GST_VIDEO_FRAME_FLAG_IS_SET (frame, GST_VIDEO_FRAME_FLAG_SYNC_POINT),
-      GST_TIME_ARGS (frame->presentation_timestamp));
+      GST_TIME_ARGS (frame->upstream_timestamp),
+      GST_TIME_ARGS (frame->parsed_timestamp));
 
-  if (GST_CLOCK_TIME_IS_VALID (frame->presentation_timestamp)) {
-    if (frame->presentation_timestamp != base_video_decoder->timestamp_offset) {
-      GST_DEBUG ("sync timestamp %" GST_TIME_FORMAT " diff %" GST_TIME_FORMAT,
-          GST_TIME_ARGS (frame->presentation_timestamp),
-          GST_TIME_ARGS (frame->presentation_timestamp -
-              base_video_decoder->segment.start));
-      base_video_decoder->timestamp_offset = frame->presentation_timestamp;
-      base_video_decoder->field_index = 0;
-    } else {
-      /* This case is for one initial timestamp and no others, e.g.,
-       * filesrc ! decoder ! xvimagesink */
-      GST_WARNING ("sync timestamp didn't change, ignoring");
-      frame->presentation_timestamp = GST_CLOCK_TIME_NONE;
-    }
-  } else {
+  *presentation_timestamp = GST_CLOCK_TIME_NONE;
+  *presentation_duration = GST_CLOCK_TIME_NONE;
+
+  if (gst_base_video_decoder_check_timestamp (base_video_decoder,
+          frame->upstream_timestamp)) {
+    *presentation_timestamp = frame->upstream_timestamp;
+    *presentation_duration = frame->upstream_duration;
+  }
+
+  else if (gst_base_video_decoder_check_timestamp (base_video_decoder,
+          frame->parsed_timestamp))
+    *presentation_timestamp = frame->parsed_timestamp;
+
+
+  if (GST_CLOCK_TIME_IS_VALID (*presentation_timestamp)) {
+    GST_DEBUG ("sync timestamp %" GST_TIME_FORMAT " diff %" GST_TIME_FORMAT,
+        GST_TIME_ARGS (*presentation_timestamp),
+        GST_TIME_ARGS (*presentation_timestamp -
+            base_video_decoder->segment.start));
+    base_video_decoder->timestamp_offset = *presentation_timestamp;
+    base_video_decoder->field_index = 0;
+  }
+
+  else {
     if (GST_VIDEO_FRAME_FLAG_IS_SET (frame, GST_VIDEO_FRAME_FLAG_SYNC_POINT)) {
       GST_WARNING ("sync point doesn't have timestamp");
       if (!GST_CLOCK_TIME_IS_VALID (base_video_decoder->timestamp_offset)) {
@@ -1003,33 +838,40 @@ gst_base_video_decoder_finish_frame (GstBaseVideoDecoder * base_video_decoder,
         base_video_decoder->field_index = 0;
       }
     }
-  }
-  frame->field_index = base_video_decoder->field_index;
-  base_video_decoder->field_index += frame->n_fields;
 
-  if (frame->presentation_timestamp == GST_CLOCK_TIME_NONE) {
-    frame->presentation_timestamp =
+    *presentation_timestamp =
         gst_base_video_decoder_get_field_timestamp (base_video_decoder,
-        frame->field_index);
-    frame->presentation_duration = GST_CLOCK_TIME_NONE;
-    frame->decode_timestamp =
-        gst_base_video_decoder_get_timestamp (base_video_decoder,
-        frame->decode_frame_number);
+        base_video_decoder->field_index);
   }
-  if (frame->presentation_duration == GST_CLOCK_TIME_NONE) {
-    frame->presentation_duration =
+
+  if (*presentation_duration == GST_CLOCK_TIME_NONE) {
+    *presentation_duration =
         gst_base_video_decoder_get_field_duration (base_video_decoder,
         frame->n_fields);
   }
 
-  if (GST_CLOCK_TIME_IS_VALID (base_video_decoder->last_timestamp)) {
-    if (frame->presentation_timestamp < base_video_decoder->last_timestamp) {
-      GST_WARNING ("decreasing timestamp (%" GST_TIME_FORMAT " < %"
-          GST_TIME_FORMAT ")", GST_TIME_ARGS (frame->presentation_timestamp),
-          GST_TIME_ARGS (base_video_decoder->last_timestamp));
-    }
-  }
-  base_video_decoder->last_timestamp = frame->presentation_timestamp;
+  base_video_decoder->field_index += frame->n_fields;
+  base_video_decoder->last_timestamp = *presentation_timestamp;
+}
+
+GstFlowReturn
+gst_base_video_decoder_finish_frame (GstBaseVideoDecoder * base_video_decoder,
+    GstVideoFrame * frame)
+{
+  GstBaseVideoDecoderClass *base_video_decoder_class;
+
+  GstClockTime presentation_timestamp;
+  GstClockTime presentation_duration;
+
+  GstBuffer *src_buffer;
+
+  GST_DEBUG ("finish frame");
+
+  base_video_decoder_class =
+      GST_BASE_VIDEO_DECODER_GET_CLASS (base_video_decoder);
+
+  gst_base_video_decoder_calculate_timestamps (base_video_decoder, frame,
+      &presentation_timestamp, &presentation_duration);
 
   src_buffer = frame->src_buffer;
 
@@ -1063,13 +905,13 @@ gst_base_video_decoder_finish_frame (GstBaseVideoDecoder * base_video_decoder,
     base_video_decoder->discont = FALSE;
   }
 
-  GST_BUFFER_TIMESTAMP (src_buffer) = frame->presentation_timestamp;
-  GST_BUFFER_DURATION (src_buffer) = frame->presentation_duration;
+  GST_BUFFER_TIMESTAMP (src_buffer) = presentation_timestamp;
+  GST_BUFFER_DURATION (src_buffer) = presentation_duration;
   GST_BUFFER_OFFSET (src_buffer) = GST_BUFFER_OFFSET_NONE;
   GST_BUFFER_OFFSET_END (src_buffer) = GST_BUFFER_OFFSET_NONE;
 
   GST_DEBUG ("pushing frame %" GST_TIME_FORMAT,
-      GST_TIME_ARGS (frame->presentation_timestamp));
+      GST_TIME_ARGS (presentation_timestamp));
 
   gst_base_video_decoder_set_src_caps (base_video_decoder);
 
@@ -1125,63 +967,19 @@ gst_base_video_decoder_skip_frame (GstBaseVideoDecoder * base_video_decoder,
 {
   GstBaseVideoDecoderClass *base_video_decoder_class;
 
+  GstClockTime presentation_timestamp;
+  GstClockTime presentation_duration;
+
   GST_DEBUG ("skip frame");
 
   base_video_decoder_class =
       GST_BASE_VIDEO_DECODER_GET_CLASS (base_video_decoder);
 
-  GST_DEBUG ("skip frame sync=%d pts=%" GST_TIME_FORMAT,
-      GST_VIDEO_FRAME_FLAG_IS_SET (frame, GST_VIDEO_FRAME_FLAG_SYNC_POINT),
-      GST_TIME_ARGS (frame->presentation_timestamp));
-
-  if (GST_CLOCK_TIME_IS_VALID (frame->presentation_timestamp)) {
-    if (frame->presentation_timestamp != base_video_decoder->timestamp_offset) {
-      GST_DEBUG ("sync timestamp %" GST_TIME_FORMAT " diff %" GST_TIME_FORMAT,
-          GST_TIME_ARGS (frame->presentation_timestamp),
-          GST_TIME_ARGS (frame->presentation_timestamp -
-              base_video_decoder->segment.start));
-      base_video_decoder->timestamp_offset = frame->presentation_timestamp;
-      base_video_decoder->field_index = 0;
-    } else {
-      /* This case is for one initial timestamp and no others, e.g.,
-       * filesrc ! decoder ! xvimagesink */
-      GST_WARNING ("sync timestamp didn't change, ignoring");
-      frame->presentation_timestamp = GST_CLOCK_TIME_NONE;
-    }
-  } else {
-    if (GST_VIDEO_FRAME_FLAG_IS_SET (frame, GST_VIDEO_FRAME_FLAG_SYNC_POINT)) {
-      GST_WARNING ("sync point doesn't have timestamp");
-      if (GST_CLOCK_TIME_IS_VALID (base_video_decoder->timestamp_offset)) {
-        GST_WARNING
-            ("No base timestamp.  Assuming frames start at segment start");
-        base_video_decoder->timestamp_offset =
-            base_video_decoder->segment.start;
-        base_video_decoder->field_index = 0;
-      }
-    }
-  }
-  frame->field_index = base_video_decoder->field_index;
-  base_video_decoder->field_index += frame->n_fields;
-
-  if (frame->presentation_timestamp == GST_CLOCK_TIME_NONE) {
-    frame->presentation_timestamp =
-        gst_base_video_decoder_get_field_timestamp (base_video_decoder,
-        frame->field_index);
-    frame->presentation_duration = GST_CLOCK_TIME_NONE;
-    frame->decode_timestamp =
-        gst_base_video_decoder_get_timestamp (base_video_decoder,
-        frame->decode_frame_number);
-  }
-  if (frame->presentation_duration == GST_CLOCK_TIME_NONE) {
-    frame->presentation_duration =
-        gst_base_video_decoder_get_field_duration (base_video_decoder,
-        frame->n_fields);
-  }
-
-  base_video_decoder->last_timestamp = frame->presentation_timestamp;
+  gst_base_video_decoder_calculate_timestamps (base_video_decoder, frame,
+      &presentation_timestamp, &presentation_duration);
 
   GST_DEBUG ("skipping frame %" GST_TIME_FORMAT,
-      GST_TIME_ARGS (frame->presentation_timestamp));
+      GST_TIME_ARGS (presentation_timestamp));
 
   gst_video_frame_unref (frame);
 }
@@ -1209,22 +1007,14 @@ gst_base_video_decoder_have_frame (GstBaseVideoDecoder * base_video_decoder,
   gst_base_video_decoder_get_timestamp_at_offset (base_video_decoder,
       frame_end_offset, &timestamp, &duration);
 
-  frame->presentation_timestamp = timestamp;
-  frame->presentation_duration = duration;
+  frame->upstream_timestamp = timestamp;
+  frame->upstream_duration = duration;
 
-  if (GST_VIDEO_FRAME_FLAG_IS_SET (frame, GST_VIDEO_FRAME_FLAG_SYNC_POINT))
-    base_video_decoder->distance_from_sync = 0;
-
-  frame->distance_from_sync = base_video_decoder->distance_from_sync;
-  base_video_decoder->distance_from_sync++;
-
-  GST_DEBUG ("pts %" GST_TIME_FORMAT,
-      GST_TIME_ARGS (frame->presentation_timestamp));
-  GST_DEBUG ("dts %" GST_TIME_FORMAT, GST_TIME_ARGS (frame->decode_timestamp));
-  GST_DEBUG ("dist %d", frame->distance_from_sync);
+  GST_DEBUG ("upstream timestamp %" GST_TIME_FORMAT,
+      GST_TIME_ARGS (frame->upstream_timestamp));
 
   running_time = gst_segment_to_running_time (&base_video_decoder->segment,
-      GST_FORMAT_TIME, frame->presentation_timestamp);
+      GST_FORMAT_TIME, frame->upstream_timestamp);
 
   if (GST_CLOCK_TIME_IS_VALID (base_video_decoder->earliest_time))
     deadline = GST_CLOCK_DIFF (base_video_decoder->earliest_time, running_time);
@@ -1233,7 +1023,7 @@ gst_base_video_decoder_have_frame (GstBaseVideoDecoder * base_video_decoder,
 
   /* do something with frame */
   ret = klass->handle_frame (base_video_decoder, frame, deadline);
-  if (!GST_FLOW_IS_SUCCESS (ret)) {
+  if (ret != GST_FLOW_OK) {
     GST_DEBUG ("flow error!");
   }
 
@@ -1275,13 +1065,6 @@ gst_base_video_decoder_lost_sync (GstBaseVideoDecoder * base_video_decoder)
   }
 
   base_video_decoder->have_sync = FALSE;
-}
-
-GstVideoFrame *
-gst_base_video_decoder_get_current_frame (GstBaseVideoDecoder *
-    base_video_decoder)
-{
-  return base_video_decoder->current_frame;
 }
 
 /* GObject vmethod implementations */
@@ -1419,11 +1202,7 @@ gst_base_video_decoder_init (GstBaseVideoDecoder * base_video_decoder,
   gst_pad_use_fixed_caps (pad);
 
   base_video_decoder->input_adapter = gst_adapter_new ();
-
-  gst_segment_init (&base_video_decoder->segment, GST_FORMAT_TIME);
-
-  base_video_decoder->current_frame =
-      gst_base_video_decoder_new_frame (base_video_decoder);
+  memset (&base_video_decoder->state, 0, sizeof (GstVideoState));
 
   /* properties */
   base_video_decoder->packetized = FALSE;

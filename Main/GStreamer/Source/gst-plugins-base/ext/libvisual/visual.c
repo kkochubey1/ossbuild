@@ -40,6 +40,14 @@ typedef struct _GstVisualClass GstVisualClass;
 GST_DEBUG_CATEGORY_STATIC (libvisual_debug);
 #define GST_CAT_DEFAULT (libvisual_debug)
 
+/* amounf of samples before we can feed libvisual */
+#define VISUAL_SAMPLES  512
+
+#define DEFAULT_WIDTH   320
+#define DEFAULT_HEIGHT  240
+#define DEFAULT_FPS_N   25
+#define DEFAULT_FPS_D   1
+
 struct _GstVisual
 {
   GstElement element;
@@ -128,6 +136,8 @@ static GstFlowReturn gst_visual_chain (GstPad * pad, GstBuffer * buffer);
 static gboolean gst_visual_sink_event (GstPad * pad, GstEvent * event);
 static gboolean gst_visual_src_event (GstPad * pad, GstEvent * event);
 
+static gboolean gst_visual_src_query (GstPad * pad, GstQuery * query);
+
 static gboolean gst_visual_sink_setcaps (GstPad * pad, GstCaps * caps);
 static gboolean gst_visual_src_setcaps (GstPad * pad, GstCaps * caps);
 static GstCaps *gst_visual_getcaps (GstPad * pad);
@@ -212,6 +222,7 @@ gst_visual_init (GstVisual * visual)
   gst_pad_set_setcaps_function (visual->srcpad, gst_visual_src_setcaps);
   gst_pad_set_getcaps_function (visual->srcpad, gst_visual_getcaps);
   gst_pad_set_event_function (visual->srcpad, gst_visual_src_event);
+  gst_pad_set_query_function (visual->srcpad, gst_visual_src_query);
   gst_element_add_pad (GST_ELEMENT (visual), visual->srcpad);
 
   visual->adapter = gst_adapter_new ();
@@ -404,11 +415,12 @@ gst_vis_src_negotiate (GstVisual * visual)
 
   /* fixate in case something is not fixed. This does nothing if the value is
    * already fixed. For video we always try to fixate to something like
-   * 320x240x30 by convention. */
+   * 320x240x25 by convention. */
   structure = gst_caps_get_structure (target, 0);
-  gst_structure_fixate_field_nearest_int (structure, "width", 320);
-  gst_structure_fixate_field_nearest_int (structure, "height", 240);
-  gst_structure_fixate_field_nearest_fraction (structure, "framerate", 30, 1);
+  gst_structure_fixate_field_nearest_int (structure, "width", DEFAULT_WIDTH);
+  gst_structure_fixate_field_nearest_int (structure, "height", DEFAULT_HEIGHT);
+  gst_structure_fixate_field_nearest_fraction (structure, "framerate",
+      DEFAULT_FPS_N, DEFAULT_FPS_D);
 
   gst_pad_set_caps (visual->srcpad, target);
   gst_caps_unref (target);
@@ -513,6 +525,63 @@ gst_visual_src_event (GstPad * pad, GstEvent * event)
   return res;
 }
 
+static gboolean
+gst_visual_src_query (GstPad * pad, GstQuery * query)
+{
+  gboolean res;
+  GstVisual *visual;
+
+  visual = GST_VISUAL (gst_pad_get_parent (pad));
+
+  switch (GST_QUERY_TYPE (query)) {
+    case GST_QUERY_LATENCY:
+    {
+      /* We need to send the query upstream and add the returned latency to our
+       * own */
+      GstClockTime min_latency, max_latency;
+      gboolean us_live;
+      GstClockTime our_latency;
+      guint max_samples;
+
+      if ((res = gst_pad_peer_query (visual->sinkpad, query))) {
+        gst_query_parse_latency (query, &us_live, &min_latency, &max_latency);
+
+        GST_DEBUG_OBJECT (visual, "Peer latency: min %"
+            GST_TIME_FORMAT " max %" GST_TIME_FORMAT,
+            GST_TIME_ARGS (min_latency), GST_TIME_ARGS (max_latency));
+
+        /* the max samples we must buffer buffer */
+        max_samples = MAX (VISUAL_SAMPLES, visual->spf);
+        our_latency =
+            gst_util_uint64_scale_int (max_samples, GST_SECOND, visual->rate);
+
+        GST_DEBUG_OBJECT (visual, "Our latency: %" GST_TIME_FORMAT,
+            GST_TIME_ARGS (our_latency));
+
+        /* we add some latency but only if we need to buffer more than what
+         * upstream gives us */
+        min_latency += our_latency;
+        if (max_latency != -1)
+          max_latency += our_latency;
+
+        GST_DEBUG_OBJECT (visual, "Calculated total latency : min %"
+            GST_TIME_FORMAT " max %" GST_TIME_FORMAT,
+            GST_TIME_ARGS (min_latency), GST_TIME_ARGS (max_latency));
+
+        gst_query_set_latency (query, TRUE, min_latency, max_latency);
+      }
+      break;
+    }
+    default:
+      res = gst_pad_peer_query (visual->sinkpad, query);
+      break;
+  }
+
+  gst_object_unref (visual);
+
+  return res;
+}
+
 /* allocate and output buffer, if no format was negotiated, this
  * function will negotiate one. After calling this function, a
  * reverse negotiation could have happened. */
@@ -587,8 +656,8 @@ gst_visual_chain (GstPad * pad, GstBuffer * buffer)
     avail = gst_adapter_available (visual->adapter);
     GST_DEBUG_OBJECT (visual, "avail now %u", avail);
 
-    /* we need at least 512 samples */
-    if (avail < 512 * visual->bps)
+    /* we need at least VISUAL_SAMPLES samples */
+    if (avail < VISUAL_SAMPLES * visual->bps)
       break;
 
     /* we need at least enough samples to make one frame */
@@ -609,6 +678,7 @@ gst_visual_chain (GstPad * pad, GstBuffer * buffer)
       /* QoS is done on running time */
       qostime = gst_segment_to_running_time (&visual->segment, GST_FORMAT_TIME,
           timestamp);
+      qostime += visual->duration;
 
       GST_OBJECT_LOCK (visual);
       /* check for QoS, don't compute buffers that are known to be late */
@@ -624,26 +694,27 @@ gst_visual_chain (GstPad * pad, GstBuffer * buffer)
       }
     }
 
-    /* Read 512 samples per channel */
+    /* Read VISUAL_SAMPLES samples per channel */
     data =
-        (const guint16 *) gst_adapter_peek (visual->adapter, 512 * visual->bps);
+        (const guint16 *) gst_adapter_peek (visual->adapter,
+        VISUAL_SAMPLES * visual->bps);
 
 #if defined(VISUAL_API_VERSION) && VISUAL_API_VERSION >= 4000 && VISUAL_API_VERSION < 5000
     {
       VisBuffer *lbuf, *rbuf;
-      guint16 ldata[512], rdata[512];
+      guint16 ldata[VISUAL_SAMPLES], rdata[VISUAL_SAMPLES];
       VisAudioSampleRateType rate;
 
       lbuf = visual_buffer_new_with_buffer (ldata, sizeof (ldata), NULL);
       rbuf = visual_buffer_new_with_buffer (rdata, sizeof (rdata), NULL);
 
       if (visual->channels == 2) {
-        for (i = 0; i < 512; i++) {
+        for (i = 0; i < VISUAL_SAMPLES; i++) {
           ldata[i] = *data++;
           rdata[i] = *data++;
         }
       } else {
-        for (i = 0; i < 512; i++) {
+        for (i = 0; i < VISUAL_SAMPLES; i++) {
           ldata[i] = *data;
           rdata[i] = *data++;
         }
@@ -694,12 +765,12 @@ gst_visual_chain (GstPad * pad, GstBuffer * buffer)
     }
 #else
     if (visual->channels == 2) {
-      for (i = 0; i < 512; i++) {
+      for (i = 0; i < VISUAL_SAMPLES; i++) {
         visual->audio->plugpcm[0][i] = *data++;
         visual->audio->plugpcm[1][i] = *data++;
       }
     } else {
-      for (i = 0; i < 512; i++) {
+      for (i = 0; i < VISUAL_SAMPLES; i++) {
         visual->audio->plugpcm[0][i] = *data;
         visual->audio->plugpcm[1][i] = *data++;
       }
@@ -757,8 +828,8 @@ gst_visual_change_state (GstElement * element, GstStateChange transition)
   switch (transition) {
     case GST_STATE_CHANGE_NULL_TO_READY:
       visual->actor =
-          visual_actor_new (GST_VISUAL_GET_CLASS (visual)->plugin->
-          info->plugname);
+          visual_actor_new (GST_VISUAL_GET_CLASS (visual)->plugin->info->
+          plugname);
       visual->video = visual_video_new ();
       visual->audio = visual_audio_new ();
       /* can't have a play without actors */

@@ -78,7 +78,7 @@ gst_alpha_color_base_init (gpointer g_class)
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
 
   gst_element_class_set_details_simple (element_class, "Alpha color filter",
-      "Filter/Effect/Video",
+      "Filter/Converter/Video",
       "ARGB from/to AYUV colorspace conversion preserving the alpha channel",
       "Wim Taymans <wim@fluendo.com>");
 
@@ -644,6 +644,9 @@ gst_alpha_color_transform_ip (GstBaseTransform * btrans, GstBuffer * inbuf)
         GST_BUFFER_SIZE (inbuf), alpha->width * alpha->height);
     return GST_FLOW_ERROR;
   }
+
+  if (gst_base_transform_is_passthrough (btrans))
+    return GST_FLOW_OK;
 
   if (G_UNLIKELY (!alpha->process)) {
     GST_ERROR_OBJECT (alpha, "Not negotiated yet");

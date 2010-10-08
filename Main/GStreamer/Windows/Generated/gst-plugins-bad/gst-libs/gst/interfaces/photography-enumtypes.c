@@ -7,6 +7,23 @@
 
 /* enumerations from "photography.h" */
 GType
+gst_photography_noise_reduction_get_type (void)
+{
+  static GType etype = 0;
+  if (etype == 0) {
+    static const GFlagsValue values[] = {
+      { GST_PHOTOGRAPHY_NOISE_REDUCTION_BAYER, "GST_PHOTOGRAPHY_NOISE_REDUCTION_BAYER", "bayer" },
+      { GST_PHOTOGRAPHY_NOISE_REDUCTION_YCC, "GST_PHOTOGRAPHY_NOISE_REDUCTION_YCC", "ycc" },
+      { GST_PHOTOGRAPHY_NOISE_REDUCTION_TEMPORAL, "GST_PHOTOGRAPHY_NOISE_REDUCTION_TEMPORAL", "temporal" },
+      { GST_PHOTOGRAPHY_NOISE_REDUCTION_FIXED, "GST_PHOTOGRAPHY_NOISE_REDUCTION_FIXED", "fixed" },
+      { GST_PHOTOGRAPHY_NOISE_REDUCTION_EXTRA, "GST_PHOTOGRAPHY_NOISE_REDUCTION_EXTRA", "extra" },
+      { 0, NULL, NULL }
+    };
+    etype = g_flags_register_static ("GstPhotographyNoiseReduction", values);
+  }
+  return etype;
+}
+GType
 gst_white_balance_mode_get_type (void)
 {
   static GType etype = 0;
@@ -39,6 +56,9 @@ gst_colour_tone_mode_get_type (void)
       { GST_PHOTOGRAPHY_COLOUR_TONE_MODE_COLORSWAP, "GST_PHOTOGRAPHY_COLOUR_TONE_MODE_COLORSWAP", "colorswap" },
       { GST_PHOTOGRAPHY_COLOUR_TONE_MODE_SOLARIZE, "GST_PHOTOGRAPHY_COLOUR_TONE_MODE_SOLARIZE", "solarize" },
       { GST_PHOTOGRAPHY_COLOUR_TONE_MODE_OUT_OF_FOCUS, "GST_PHOTOGRAPHY_COLOUR_TONE_MODE_OUT_OF_FOCUS", "out-of-focus" },
+      { GST_PHOTOGRAPHY_COLOUR_TONE_MODE_SKY_BLUE, "GST_PHOTOGRAPHY_COLOUR_TONE_MODE_SKY_BLUE", "sky-blue" },
+      { GST_PHOTOGRAPHY_COLOUR_TONE_MODE_GRASS_GREEN, "GST_PHOTOGRAPHY_COLOUR_TONE_MODE_GRASS_GREEN", "grass-green" },
+      { GST_PHOTOGRAPHY_COLOUR_TONE_MODE_SKIN_WHITEN, "GST_PHOTOGRAPHY_COLOUR_TONE_MODE_SKIN_WHITEN", "skin-whiten" },
       { 0, NULL, NULL }
     };
     etype = g_enum_register_static ("GstColourToneMode", values);

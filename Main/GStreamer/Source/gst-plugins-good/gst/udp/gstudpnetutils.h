@@ -83,8 +83,7 @@ typedef struct {
 
 int     gst_udp_get_sockaddr_length  (struct sockaddr_storage *addr);
 
-int gst_udp_get_addr      (const char *hostname, int port, struct sockaddr_storage *addr,
-			   int sock_family);
+int     gst_udp_get_addr             (const char *hostname, int port, struct sockaddr_storage *addr);
 int     gst_udp_is_multicast         (struct sockaddr_storage *addr);
 
 int     gst_udp_set_loop             (int sockfd, guint16 ss_family, gboolean loop);

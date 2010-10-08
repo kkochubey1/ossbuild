@@ -445,6 +445,8 @@ gst_queue2_init (GstQueue2 * queue, GstQueue2Class * g_class)
   queue->item_del = g_cond_new ();
   queue->queue = g_queue_new ();
 
+  queue->buffering_percent = 100;
+
   /* tempfile related */
   queue->temp_template = NULL;
   queue->temp_location = NULL;
@@ -781,6 +783,7 @@ update_buffering (GstQueue2 * queue)
     /* on EOS we are always 100% full, we set the var here so that it we can
      * reuse the logic below to stop buffering */
     percent = 100;
+    GST_LOG_OBJECT (queue, "we are EOS");
   } else {
     /* figure out the percent we are filled, we take the max of all formats. */
 
@@ -823,37 +826,38 @@ update_buffering (GstQueue2 * queue)
     if (percent > 100)
       percent = 100;
 
-    queue->buffering_percent = percent;
+    if (percent != queue->buffering_percent) {
+      queue->buffering_percent = percent;
 
-    if (!QUEUE_IS_USING_QUEUE (queue)) {
-      GstFormat fmt = GST_FORMAT_BYTES;
-      gint64 duration;
+      if (!QUEUE_IS_USING_QUEUE (queue)) {
+        GstFormat fmt = GST_FORMAT_BYTES;
+        gint64 duration;
 
-      if (QUEUE_IS_USING_RING_BUFFER (queue))
-        mode = GST_BUFFERING_TIMESHIFT;
-      else
-        mode = GST_BUFFERING_DOWNLOAD;
+        if (QUEUE_IS_USING_RING_BUFFER (queue))
+          mode = GST_BUFFERING_TIMESHIFT;
+        else
+          mode = GST_BUFFERING_DOWNLOAD;
 
-      if (queue->byte_in_rate > 0) {
-        if (gst_pad_query_peer_duration (queue->sinkpad, &fmt, &duration))
-          buffering_left =
-              (gdouble) ((duration -
-                  queue->current->writing_pos) * 1000) / queue->byte_in_rate;
+        if (queue->byte_in_rate > 0) {
+          if (gst_pad_query_peer_duration (queue->sinkpad, &fmt, &duration))
+            buffering_left =
+                (gdouble) ((duration -
+                    queue->current->writing_pos) * 1000) / queue->byte_in_rate;
+        } else {
+          buffering_left = G_MAXINT64;
+        }
       } else {
-        buffering_left = G_MAXINT64;
+        mode = GST_BUFFERING_STREAM;
       }
-    } else {
-      mode = GST_BUFFERING_STREAM;
+
+      GST_DEBUG_OBJECT (queue, "buffering %d percent", (gint) percent);
+      message = gst_message_new_buffering (GST_OBJECT_CAST (queue),
+          (gint) percent);
+      gst_message_set_buffering_stats (message, mode,
+          queue->byte_in_rate, queue->byte_out_rate, buffering_left);
+
+      gst_element_post_message (GST_ELEMENT_CAST (queue), message);
     }
-
-    GST_DEBUG_OBJECT (queue, "buffering %d percent", (gint) percent);
-    message = gst_message_new_buffering (GST_OBJECT_CAST (queue),
-        (gint) percent);
-    gst_message_set_buffering_stats (message, mode,
-        queue->byte_in_rate, queue->byte_out_rate, buffering_left);
-
-    gst_element_post_message (GST_ELEMENT_CAST (queue), message);
-
   } else {
     GST_DEBUG_OBJECT (queue, "filled %d percent", (gint) percent);
   }
@@ -1055,8 +1059,8 @@ gst_queue2_have_data (GstQueue2 * queue, guint64 offset, guint length)
       } else if (offset < queue->current->writing_pos + 200000) {
         update_cur_pos (queue, queue->current, offset + length);
         GST_INFO_OBJECT (queue, "wait for data");
+        return FALSE;
       }
-      return FALSE;
     }
 
     /* too far away, do a seek */
@@ -1823,10 +1827,10 @@ gst_queue2_locked_enqueue (GstQueue2 * queue, gpointer item)
   }
 
   if (item) {
-    if (QUEUE_IS_USING_QUEUE (queue)) {
-      /* update the buffering status */
-      update_buffering (queue);
+    /* update the buffering status */
+    update_buffering (queue);
 
+    if (QUEUE_IS_USING_QUEUE (queue)) {
       g_queue_push_tail (queue->queue, item);
     } else {
       gst_mini_object_unref (GST_MINI_OBJECT_CAST (item));
@@ -2058,11 +2062,10 @@ gst_queue2_is_filled (GstQueue2 * queue)
   /* if using a ring buffer we're filled if all ring buffer space is used
    * _by the current range_ */
   if (QUEUE_IS_USING_RING_BUFFER (queue)) {
-    guint max_bytes = queue->max_level.bytes;
     guint64 rb_size = queue->ring_buffer_max_size;
     GST_DEBUG_OBJECT (queue,
-        "max bytes %u, rb size %" G_GUINT64_FORMAT ", cur bytes %u", max_bytes,
-        rb_size, queue->cur_level.bytes);
+        "max bytes %u, rb size %" G_GUINT64_FORMAT ", cur bytes %u",
+        queue->max_level.bytes, rb_size, queue->cur_level.bytes);
     return CHECK_FILLED (bytes, rb_size);
   }
 
@@ -2303,8 +2306,7 @@ out_flushing:
     GST_QUEUE2_MUTEX_UNLOCK (queue);
     /* let app know about us giving up if upstream is not expected to do so */
     /* UNEXPECTED is already taken care of elsewhere */
-    if (eos && (GST_FLOW_IS_FATAL (ret) || ret == GST_FLOW_NOT_LINKED) &&
-        (ret != GST_FLOW_UNEXPECTED)) {
+    if (eos && (ret == GST_FLOW_NOT_LINKED || ret < GST_FLOW_UNEXPECTED)) {
       GST_ELEMENT_ERROR (queue, STREAM, FAILED,
           (_("Internal data flow error.")),
           ("streaming task paused, reason %s (%d)",
@@ -2445,7 +2447,7 @@ gst_queue2_handle_src_query (GstPad * pad, GstQuery * query)
           goto peer_failed;
         GST_DEBUG_OBJECT (queue, "buffering forwarded to peer");
       } else {
-        gint64 start, stop;
+        gint64 start, stop, range_start, range_stop;
         guint64 writing_pos;
         gint percent;
         gint64 estimated_total, buffering_left;
@@ -2453,6 +2455,7 @@ gst_queue2_handle_src_query (GstPad * pad, GstQuery * query)
         gint64 duration;
         gboolean peer_res, is_buffering, is_eos;
         gdouble byte_in_rate, byte_out_rate;
+        GstQueue2Range *queued_ranges;
 
         /* we need a current download region */
         if (queue->current == NULL)
@@ -2515,6 +2518,37 @@ gst_queue2_handle_src_query (GstPad * pad, GstQuery * query)
             stop = -1;
             break;
         }
+
+        /* fill out the buffered ranges */
+        for (queued_ranges = queue->ranges; queued_ranges;
+            queued_ranges = queued_ranges->next) {
+          switch (format) {
+            case GST_FORMAT_PERCENT:
+              if (duration == -1) {
+                range_start = 0;
+                range_stop = 0;
+                break;
+              }
+              range_start = 100 * queued_ranges->offset / duration;
+              range_stop = 100 * queued_ranges->writing_pos / duration;
+              break;
+            case GST_FORMAT_BYTES:
+              range_start = queued_ranges->offset;
+              range_stop = queued_ranges->writing_pos;
+              break;
+            default:
+              range_start = -1;
+              range_stop = -1;
+              break;
+          }
+          if (range_start == range_stop)
+            continue;
+          GST_DEBUG_OBJECT (queue,
+              "range starting at %" G_GINT64_FORMAT " and finishing at %"
+              G_GINT64_FORMAT, range_start, range_stop);
+          gst_query_add_buffering_range (query, range_start, range_stop);
+        }
+
         gst_query_set_buffering_percent (query, is_buffering, percent);
         gst_query_set_buffering_range (query, format, start, stop,
             estimated_total);

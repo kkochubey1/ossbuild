@@ -108,15 +108,24 @@ EXTRA_HFILES = \
 	$(top_srcdir)/ext/kate/gstkatetiger.h \
 	$(top_srcdir)/ext/ladspa/gstladspa.h \
 	$(top_srcdir)/ext/musicbrainz/gsttrm.h \
-	$(top_srcdir)/ext/metadata/gstbasemetadata.h \
-	$(top_srcdir)/ext/metadata/gstmetadatademux.h \
-	$(top_srcdir)/ext/metadata/gstmetadatamux.h \
 	$(top_srcdir)/ext/mimic/gstmimenc.h \
 	$(top_srcdir)/ext/mimic/gstmimdec.h \
 	$(top_srcdir)/ext/modplug/gstmodplug.h \
 	$(top_srcdir)/ext/mpeg2enc/gstmpeg2enc.hh \
 	$(top_srcdir)/ext/mplex/gstmplex.hh \
 	$(top_srcdir)/ext/mythtv/gstmythtvsrc.h \
+	$(top_srcdir)/ext/opencv/gstcvdilate.h \
+	$(top_srcdir)/ext/opencv/gstcverode.h \
+	$(top_srcdir)/ext/opencv/gstcvequalizehist.h \
+	$(top_srcdir)/ext/opencv/gstcvlaplace.h \
+	$(top_srcdir)/ext/opencv/gstcvsmooth.h \
+	$(top_srcdir)/ext/opencv/gstcvsobel.h \
+	$(top_srcdir)/ext/opencv/gstedgedetect.h \
+	$(top_srcdir)/ext/opencv/gstfaceblur.h \
+	$(top_srcdir)/ext/opencv/gstfacedetect.h \
+	$(top_srcdir)/ext/opencv/gstpyramidsegment.h \
+	$(top_srcdir)/ext/opencv/gsttemplatematch.h \
+	$(top_srcdir)/ext/opencv/gsttextwrite.h \
 	$(top_srcdir)/ext/sdl/sdlaudiosink.h \
 	$(top_srcdir)/ext/sdl/sdlvideosink.h \
 	$(top_srcdir)/ext/theora/theoradec.h \
@@ -133,6 +142,7 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/audioparsers/gstflacparse.h \
 	$(top_srcdir)/gst/autoconvert/gstautoconvert.h \
 	$(top_srcdir)/gst/camerabin/gstcamerabin.h \
+	$(top_srcdir)/gst/coloreffects/gstcoloreffects.h \
 	$(top_srcdir)/gst/dataurisrc/gstdataurisrc.h \
 	$(top_srcdir)/gst/dccp/gstdccpclientsink.h \
 	$(top_srcdir)/gst/dccp/gstdccpclientsrc.h \
@@ -146,9 +156,32 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/dvdspu/gstdvdspu.h \
 	$(top_srcdir)/gst/festival/gstfestival.h \
 	$(top_srcdir)/gst/freeze/gstfreeze.h \
+	$(top_srcdir)/gst/gaudieffects/gstburn.h \
+	$(top_srcdir)/gst/gaudieffects/gstchromium.h \
+	$(top_srcdir)/gst/gaudieffects/gstdilate.h \
+	$(top_srcdir)/gst/gaudieffects/gstdodge.h \
+	$(top_srcdir)/gst/gaudieffects/gstexclusion.h \
+	$(top_srcdir)/gst/gaudieffects/gstgaussblur.h \
+	$(top_srcdir)/gst/gaudieffects/gstplugin.h \
+	$(top_srcdir)/gst/gaudieffects/gstsolarize.h \
+	$(top_srcdir)/gst/geometrictransform/gstbulge.h \
+	$(top_srcdir)/gst/geometrictransform/gstcircle.h \
+	$(top_srcdir)/gst/geometrictransform/gstdiffuse.h \
+	$(top_srcdir)/gst/geometrictransform/gstfisheye.h \
+	$(top_srcdir)/gst/geometrictransform/gstkaleidoscope.h \
+	$(top_srcdir)/gst/geometrictransform/gstmarble.h \
+	$(top_srcdir)/gst/geometrictransform/gstmirror.h \
+	$(top_srcdir)/gst/geometrictransform/gstpinch.h \
+	$(top_srcdir)/gst/geometrictransform/gstsphere.h \
+	$(top_srcdir)/gst/geometrictransform/gstsquare.h \
+	$(top_srcdir)/gst/geometrictransform/gststretch.h \
+	$(top_srcdir)/gst/geometrictransform/gsttunnel.h \
+	$(top_srcdir)/gst/geometrictransform/gsttwirl.h \
+	$(top_srcdir)/gst/geometrictransform/gstwaterripple.h \
+	$(top_srcdir)/gst/ivfparse/gstivfparse.h \
+	$(top_srcdir)/gst/jpegformat/gstjpegparse.h \
 	$(top_srcdir)/gst/legacyresample/gstlegacyresample.h \
 	$(top_srcdir)/gst/liveadder/liveadder.h \
-	$(top_srcdir)/gst/jpegformat/gstjpegparse.h \
 	$(top_srcdir)/gst/mxf/mxfdemux.h \
 	$(top_srcdir)/gst/mxf/mxfmux.h \
 	$(top_srcdir)/gst/nuvdemux/gstnuvdemux.h \
@@ -170,6 +203,8 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/valve/gstvalve.h \
 	$(top_srcdir)/sys/directdraw/gstdirectdrawsink.h \
 	$(top_srcdir)/sys/dvb/gstdvbsrc.h \
+	$(top_srcdir)/sys/shm/gstshmsink.h \
+	$(top_srcdir)/sys/shm/gstshmsrc.h \
 	$(top_srcdir)/gst-libs/gst/interfaces/photography.h
 
 # Images to copy into HTML directory.

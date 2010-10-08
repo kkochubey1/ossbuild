@@ -78,6 +78,7 @@ gtk_widget_get_allocation (GtkWidget * w, GtkAllocation * a)
 /* the state to go to when stop is pressed */
 #define STOP_STATE      GST_STATE_READY
 
+#define N_GRAD 1000.0
 
 static GList *seekable_pads = NULL;
 static GList *rate_pads = NULL;
@@ -1012,9 +1013,9 @@ format_value (GtkScale * scale, gdouble value)
   gint64 seconds;
   gint64 subseconds;
 
-  real = value * duration / 100;
+  real = value * duration / N_GRAD;
   seconds = (gint64) real / GST_SECOND;
-  subseconds = (gint64) real / (GST_SECOND / 100);
+  subseconds = (gint64) real / (GST_SECOND / N_GRAD);
 
   return g_strdup_printf ("%02" G_GINT64_FORMAT ":%02" G_GINT64_FORMAT ":%02"
       G_GINT64_FORMAT, seconds / 60, seconds % 60, subseconds % 100);
@@ -1195,9 +1196,9 @@ update_fill (gpointer data)
             start, stop);
 
         if (stop != -1)
-          fill = 100.0 * stop / GST_FORMAT_PERCENT_MAX;
+          fill = N_GRAD * stop / GST_FORMAT_PERCENT_MAX;
         else
-          fill = 100.0;
+          fill = N_GRAD;
 
         gtk_range_set_fill_level (GTK_RANGE (hscale), fill);
       }
@@ -1244,7 +1245,7 @@ update_scale (gpointer data)
     duration = position;
 
   if (duration > 0) {
-    set_scale (position * 100.0 / duration);
+    set_scale (position * N_GRAD / duration);
   }
 
   /* FIXME: see make_playerbin2_pipeline() and volume_notify_cb() */
@@ -1314,7 +1315,10 @@ do_seek (GtkWidget * widget)
   GstEvent *s_event;
   GstSeekFlags flags;
 
-  real = gtk_range_get_value (GTK_RANGE (widget)) * duration / 100;
+  real = gtk_range_get_value (GTK_RANGE (widget)) * duration / N_GRAD;
+
+  GST_DEBUG ("value=%f, real=%" G_GINT64_FORMAT,
+      gtk_range_get_value (GTK_RANGE (widget)), real);
 
   flags = 0;
   if (flush_seek)
@@ -2402,9 +2406,10 @@ static void
 msg_clock_lost (GstBus * bus, GstMessage * message, GstPipeline * data)
 {
   g_print ("clock lost! PAUSE and PLAY to select a new clock\n");
-
-  gst_element_set_state (pipeline, GST_STATE_PAUSED);
-  gst_element_set_state (pipeline, GST_STATE_PLAYING);
+  if (state == GST_STATE_PLAYING) {
+    gst_element_set_state (pipeline, GST_STATE_PAUSED);
+    gst_element_set_state (pipeline, GST_STATE_PLAYING);
+  }
 }
 
 #ifdef HAVE_X
@@ -2437,7 +2442,7 @@ bus_sync_handler (GstBus * bus, GstMessage * message, GstPipeline * data)
      * shouldn't be done from a non-GUI thread without explicit locking).  */
     g_assert (embed_xid != 0);
 
-    gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (element), embed_xid);
+    gst_x_overlay_set_window_handle (GST_X_OVERLAY (element), embed_xid);
   }
   return GST_BUS_PASS;
 }
@@ -2449,11 +2454,14 @@ handle_expose_cb (GtkWidget * widget, GdkEventExpose * event, gpointer data)
   if (state < GST_STATE_PAUSED) {
     GtkAllocation allocation;
     GdkWindow *window = gtk_widget_get_window (widget);
-    GtkStyle *style = gtk_widget_get_style (widget);
+    cairo_t *cr;
 
     gtk_widget_get_allocation (widget, &allocation);
-    gdk_draw_rectangle (window, style->black_gc, TRUE, 0, 0,
-        allocation.width, allocation.height);
+    cr = gdk_cairo_create (window);
+    cairo_set_source_rgb (cr, 0, 0, 0);
+    cairo_rectangle (cr, 0, 0, allocation.width, allocation.height);
+    cairo_fill (cr);
+    cairo_destroy (cr);
   }
   return FALSE;
 }
@@ -2657,8 +2665,9 @@ main (int argc, char **argv)
 
   pipeline_spec = argv[2];
 
-  if (g_strrstr (pipeline_spec, "*") != NULL ||
-      g_strrstr (pipeline_spec, "?") != NULL) {
+  if (g_path_is_absolute (pipeline_spec) &&
+      (g_strrstr (pipeline_spec, "*") != NULL ||
+          g_strrstr (pipeline_spec, "?") != NULL)) {
     paths = handle_wildcards (pipeline_spec);
   } else {
     paths = g_list_prepend (paths, g_strdup (pipeline_spec));
@@ -2782,12 +2791,12 @@ main (int argc, char **argv)
 
   /* seek bar */
   adjustment =
-      GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.00, 100.0, 0.1, 1.0, 1.0));
+      GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.00, N_GRAD, 0.1, 1.0, 1.0));
   hscale = gtk_hscale_new (adjustment);
   gtk_scale_set_digits (GTK_SCALE (hscale), 2);
   gtk_scale_set_value_pos (GTK_SCALE (hscale), GTK_POS_RIGHT);
   gtk_range_set_show_fill_level (GTK_RANGE (hscale), TRUE);
-  gtk_range_set_fill_level (GTK_RANGE (hscale), 100.0);
+  gtk_range_set_fill_level (GTK_RANGE (hscale), N_GRAD);
   gtk_range_set_update_policy (GTK_RANGE (hscale), GTK_UPDATE_CONTINUOUS);
 
   g_signal_connect (hscale, "button_press_event", G_CALLBACK (start_seek),

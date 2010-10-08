@@ -90,7 +90,6 @@
 #include "gstplay-marshal.h"
 #include "gstplay-enum.h"
 #include "gstplayback.h"
-#include "gstfactorylists.h"
 #include "gstrawcaps.h"
 
 /* generic templates */
@@ -153,7 +152,7 @@ struct _GstDecodeBin
 
   GMutex *factories_lock;
   guint32 factories_cookie;     /* Cookie from last time when factories was updated */
-  GValueArray *factories;       /* factories we can use for selecting elements */
+  GList *factories;             /* factories we can use for selecting elements */
 
   GMutex *subtitle_lock;        /* Protects changes to subtitles and encoding */
   GList *subtitles;             /* List of elements with subtitle-encoding,
@@ -902,8 +901,10 @@ gst_decode_bin_update_factories_list (GstDecodeBin * dbin)
       || dbin->factories_cookie !=
       gst_default_registry_get_feature_list_cookie ()) {
     if (dbin->factories)
-      g_value_array_free (dbin->factories);
-    dbin->factories = gst_factory_list_get_elements (GST_FACTORY_LIST_DECODER);
+      gst_plugin_feature_list_free (dbin->factories);
+    dbin->factories =
+        gst_element_factory_list_get_elements
+        (GST_ELEMENT_FACTORY_TYPE_DECODABLE, GST_RANK_MARGINAL);
     dbin->factories_cookie = gst_default_registry_get_feature_list_cookie ();
   }
 }
@@ -976,7 +977,7 @@ gst_decode_bin_dispose (GObject * object)
   decode_bin = GST_DECODE_BIN (object);
 
   if (decode_bin->factories)
-    g_value_array_free (decode_bin->factories);
+    gst_plugin_feature_list_free (decode_bin->factories);
   decode_bin->factories = NULL;
 
   if (decode_bin->decode_chain)
@@ -1232,6 +1233,7 @@ static GValueArray *
 gst_decode_bin_autoplug_factories (GstElement * element, GstPad * pad,
     GstCaps * caps)
 {
+  GList *list, *tmp;
   GValueArray *result;
   GstDecodeBin *dbin = GST_DECODE_BIN_CAST (element);
 
@@ -1240,8 +1242,22 @@ gst_decode_bin_autoplug_factories (GstElement * element, GstPad * pad,
   /* return all compatible factories for caps */
   g_mutex_lock (dbin->factories_lock);
   gst_decode_bin_update_factories_list (dbin);
-  result = gst_factory_list_filter (dbin->factories, caps);
+  list =
+      gst_element_factory_list_filter (dbin->factories, caps, GST_PAD_SINK,
+      FALSE);
   g_mutex_unlock (dbin->factories_lock);
+
+  result = g_value_array_new (g_list_length (list));
+  for (tmp = list; tmp; tmp = tmp->next) {
+    GstElementFactory *factory = GST_ELEMENT_FACTORY_CAST (tmp->data);
+    GValue val = { 0, };
+
+    g_value_init (&val, G_TYPE_OBJECT);
+    g_value_set_object (&val, factory);
+    g_value_array_append (result, &val);
+    g_value_unset (&val);
+  }
+  gst_plugin_feature_list_free (list);
 
   GST_DEBUG_OBJECT (element, "autoplug-factories returns %p", result);
 
@@ -1387,6 +1403,7 @@ analyze_new_pad (GstDecodeBin * dbin, GstElement * src, GstPad * pad,
       /* If the caps are raw, this just means we don't want to expose them */
       if (gst_caps_can_intersect (raw, caps)) {
         gst_caps_unref (raw);
+        gst_object_unref (dpad);
         goto discarded_type;
       }
       gst_caps_unref (raw);
@@ -1446,8 +1463,10 @@ analyze_new_pad (GstDecodeBin * dbin, GstElement * src, GstPad * pad,
     }
     gst_caps_unref (rawcaps);
 
-    if (dontuse)
+    if (dontuse) {
+      gst_object_unref (dpad);
       goto discarded_type;
+    }
   }
 
   /* 1.f else continue autoplugging something from the list. */
@@ -1503,7 +1522,6 @@ unknown_type:
       gst_decode_bin_expose (dbin);
     }
     EXPOSE_UNLOCK (dbin);
-    do_async_done (dbin);
 
     if (src == dbin->typefind) {
       gchar *desc;
@@ -1521,6 +1539,7 @@ unknown_type:
             (_("Could not determine type of stream")),
             ("Stream caps %" GST_PTR_FORMAT, caps));
       }
+      do_async_done (dbin);
     }
     return;
   }
@@ -1923,7 +1942,7 @@ static void
 type_found (GstElement * typefind, guint probability,
     GstCaps * caps, GstDecodeBin * decode_bin)
 {
-  GstPad *pad;
+  GstPad *pad, *sink_pad;
 
   GST_DEBUG_OBJECT (decode_bin, "typefind found caps %" GST_PTR_FORMAT, caps);
 
@@ -1945,10 +1964,18 @@ type_found (GstElement * typefind, guint probability,
   decode_bin->have_type = TRUE;
 
   pad = gst_element_get_static_pad (typefind, "src");
+  sink_pad = gst_element_get_static_pad (typefind, "sink");
 
+  /* need some lock here to prevent race with shutdown state change
+   * which might yank away e.g. decode_chain while building stuff here.
+   * In typical cases, STREAM_LOCK is held and handles that, it need not
+   * be held (if called from a proxied setcaps), so grab it anyway */
+  GST_PAD_STREAM_LOCK (sink_pad);
   decode_bin->decode_chain = gst_decode_chain_new (decode_bin, NULL, pad);
   analyze_new_pad (decode_bin, typefind, pad, caps, decode_bin->decode_chain);
+  GST_PAD_STREAM_UNLOCK (sink_pad);
 
+  gst_object_unref (sink_pad);
   gst_object_unref (pad);
 
 exit:

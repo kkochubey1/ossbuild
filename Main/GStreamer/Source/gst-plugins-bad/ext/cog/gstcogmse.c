@@ -26,7 +26,9 @@
 #include <gst/video/video.h>
 #include <string.h>
 #include <cog/cogframe.h>
+#ifdef HAVE_ORC
 #include <orc/orc.h>
+#endif
 #include <math.h>
 
 #include "gstcogutils.h"
@@ -140,8 +142,10 @@ gst_mse_base_init (gpointer klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_framestore_sink_test_template));
 
-  gst_element_class_set_details_simple (element_class, "FIXME",
-      "Filter/Effect", "FIXME example filter", "FIXME <fixme@fixme.com>");
+  gst_element_class_set_details_simple (element_class, "Calculate MSE",
+      "Filter/Effect",
+      "Calculates mean squared error between two video streams",
+      "David Schleef <ds@schleef.org>");
 }
 
 static void
@@ -445,7 +449,7 @@ gst_mse_sink_event (GstPad * pad, GstEvent * event)
 static int
 sum_square_diff_u8 (uint8_t * s1, uint8_t * s2, int n)
 {
-#if 0
+#ifndef HAVE_ORC
   int sum = 0;
   int i;
   int x;
@@ -454,8 +458,8 @@ sum_square_diff_u8 (uint8_t * s1, uint8_t * s2, int n)
     x = s1[i] - s2[i];
     sum += x * x;
   }
-  d_1[0] = sum;
-#endif
+  return sum;
+#else
   static OrcProgram *p = NULL;
   OrcExecutor *ex;
   int val;
@@ -492,6 +496,7 @@ sum_square_diff_u8 (uint8_t * s1, uint8_t * s2, int n)
   orc_executor_free (ex);
 
   return val;
+#endif
 }
 
 static double

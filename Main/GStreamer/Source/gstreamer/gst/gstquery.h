@@ -237,7 +237,7 @@ G_INLINE_FUNC GstQuery * gst_query_copy (const GstQuery * q);
 static inline GstQuery *
 gst_query_copy (const GstQuery * q)
 {
-  return GST_QUERY_CAST (gst_mini_object_copy (GST_MINI_OBJECT_CAST (q)));
+  return GST_QUERY_CAST (gst_mini_object_copy (GST_MINI_OBJECT_CONST_CAST (q)));
 }
 
 /**
@@ -318,6 +318,15 @@ void            gst_query_set_buffering_range     (GstQuery *query, GstFormat fo
 void            gst_query_parse_buffering_range   (GstQuery *query, GstFormat *format,
                                                    gint64 *start, gint64 *stop,
                                                    gint64 *estimated_total);
+gboolean        gst_query_add_buffering_range     (GstQuery *query,
+                                                   gint64 start, gint64 stop);
+
+guint           gst_query_get_n_buffering_ranges  (GstQuery *query);
+
+gboolean        gst_query_parse_nth_buffering_range (GstQuery *query,
+                                                     guint index, gint64 *start,
+                                                     gint64 *stop);
+
 /* URI query */
 GstQuery *      gst_query_new_uri                 (void);
 void            gst_query_parse_uri               (GstQuery *query, gchar **uri);

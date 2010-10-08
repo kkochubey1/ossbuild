@@ -49,8 +49,14 @@
 #include <gst/controller/gstcontroller.h>
 #include <gst/audio/audio.h>
 #include <gst/audio/gstaudiofilter.h>
-#include "gstvolumeorc.h"
 
+#ifdef HAVE_ORC
+#include <orc/orcfunctions.h>
+#else
+#define orc_memset memset
+#endif
+
+#include "gstvolumeorc.h"
 #include "gstvolume.h"
 
 /* some defines for audio processing */
@@ -497,20 +503,13 @@ gst_volume_init (GstVolume * self, GstVolumeClass * g_class)
   gst_base_transform_set_gap_aware (GST_BASE_TRANSFORM (self), TRUE);
 }
 
-#define USE_ORC
-
 static void
 volume_process_double (GstVolume * self, gpointer bytes, guint n_bytes)
 {
   gdouble *data = (gdouble *) bytes;
   guint num_samples = n_bytes / sizeof (gdouble);
-  int i;
 
-  gdouble vol = self->current_volume;
-
-  for (i = 0; i < num_samples; i++) {
-    data[i] *= vol;
-  }
+  orc_scalarmultiply_f64_ns (data, self->current_volume, num_samples);
 }
 
 static void
@@ -522,10 +521,14 @@ volume_process_controlled_double (GstVolume * self, gpointer bytes,
   guint i, j;
   gdouble vol;
 
-  for (i = 0; i < num_samples; i++) {
-    vol = *volume++;
-    for (j = 0; j < channels; j++) {
-      *data++ *= vol;
+  if (channels == 1) {
+    orc_process_controlled_f64_1ch (data, volume, num_samples);
+  } else {
+    for (i = 0; i < num_samples; i++) {
+      vol = *volume++;
+      for (j = 0; j < channels; j++) {
+        *data++ *= vol;
+      }
     }
   }
 }
@@ -536,15 +539,7 @@ volume_process_float (GstVolume * self, gpointer bytes, guint n_bytes)
   gfloat *data = (gfloat *) bytes;
   guint num_samples = n_bytes / sizeof (gfloat);
 
-#ifndef broken
-  int i;
-  for (i = 0; i < num_samples; i++) {
-    *data++ *= self->current_volume;
-  }
-#else
-  /* FIXME compiler doesn't set the float parameter correctly */
-  orc_scalarmultiply_f32_ns (data, data, self->current_volume, num_samples);
-#endif
+  orc_scalarmultiply_f32_ns (data, self->current_volume, num_samples);
 }
 
 static void
@@ -556,10 +551,16 @@ volume_process_controlled_float (GstVolume * self, gpointer bytes,
   guint i, j;
   gdouble vol;
 
-  for (i = 0; i < num_samples; i++) {
-    vol = *volume++;
-    for (j = 0; j < channels; j++) {
-      *data++ *= vol;
+  if (channels == 1) {
+    orc_process_controlled_f32_1ch (data, volume, num_samples);
+  } else if (channels == 2) {
+    orc_process_controlled_f32_2ch (data, volume, num_samples);
+  } else {
+    for (i = 0; i < num_samples; i++) {
+      vol = *volume++;
+      for (j = 0; j < channels; j++) {
+        *data++ *= vol;
+      }
     }
   }
 }
@@ -568,37 +569,23 @@ static void
 volume_process_int32 (GstVolume * self, gpointer bytes, guint n_bytes)
 {
   gint32 *data = (gint32 *) bytes;
-  guint i, num_samples;
-  gint64 val;
+  guint num_samples = n_bytes / sizeof (gint);
 
-  num_samples = n_bytes / sizeof (gint);
-  for (i = 0; i < num_samples; i++) {
-    /* we use bitshifting instead of dividing by UNITY_INT for speed */
-    val = (gint64) * data;
-    val =
-        (((gint64) self->current_vol_i32 *
-            val) >> VOLUME_UNITY_INT32_BIT_SHIFT);
-    *data++ = (gint32) val;
-  }
+  /* hard coded in volume.orc */
+  g_assert (VOLUME_UNITY_INT32_BIT_SHIFT == 27);
+  orc_process_int32 (data, self->current_vol_i32, num_samples);
 }
 
 static void
 volume_process_int32_clamp (GstVolume * self, gpointer bytes, guint n_bytes)
 {
   gint32 *data = (gint32 *) bytes;
-  guint i, num_samples;
-  gint64 val;
+  guint num_samples = n_bytes / sizeof (gint);
 
-  num_samples = n_bytes / sizeof (gint32);
+  /* hard coded in volume.orc */
+  g_assert (VOLUME_UNITY_INT32_BIT_SHIFT == 27);
 
-  for (i = 0; i < num_samples; i++) {
-    /* we use bitshifting instead of dividing by UNITY_INT for speed */
-    val = (gint64) * data;
-    val =
-        (((gint64) self->current_vol_i32 *
-            val) >> VOLUME_UNITY_INT32_BIT_SHIFT);
-    *data++ = (gint32) CLAMP (val, VOLUME_MIN_INT32, VOLUME_MAX_INT32);
-  }
+  orc_process_int32_clamp (data, self->current_vol_i32, num_samples);
 }
 
 static void
@@ -610,11 +597,15 @@ volume_process_controlled_int32_clamp (GstVolume * self, gpointer bytes,
   guint num_samples = n_bytes / (sizeof (gint32) * channels);
   gdouble vol, val;
 
-  for (i = 0; i < num_samples; i++) {
-    vol = *volume++;
-    for (j = 0; j < channels; j++) {
-      val = *data * vol;
-      *data++ = (gint32) CLAMP (val, VOLUME_MIN_INT32, VOLUME_MAX_INT32);
+  if (channels == 1) {
+    orc_process_controlled_int32_1ch (data, volume, num_samples);
+  } else {
+    for (i = 0; i < num_samples; i++) {
+      vol = *volume++;
+      for (j = 0; j < channels; j++) {
+        val = *data * vol;
+        *data++ = (gint32) CLAMP (val, VOLUME_MIN_INT32, VOLUME_MAX_INT32);
+      }
     }
   }
 }
@@ -710,24 +701,10 @@ volume_process_int16 (GstVolume * self, gpointer bytes, guint n_bytes)
   gint16 *data = (gint16 *) bytes;
   guint num_samples = n_bytes / sizeof (gint16);
 
-#ifndef USE_ORC
-  guint i;
-  gint val;
-
   /* hard coded in volume.orc */
   g_assert (VOLUME_UNITY_INT16_BIT_SHIFT == 13);
 
-  for (i = 0; i < num_samples; i++) {
-    /* we use bitshifting instead of dividing by UNITY_INT for speed */
-    val = (gint) * data;
-    *data++ =
-        (gint16) ((self->current_vol_i16 *
-            val) >> VOLUME_UNITY_INT16_BIT_SHIFT);
-  }
-#else
-  /* FIXME */
   orc_process_int16 (data, self->current_vol_i16, num_samples);
-#endif
 }
 
 static void
@@ -736,27 +713,10 @@ volume_process_int16_clamp (GstVolume * self, gpointer bytes, guint n_bytes)
   gint16 *data = (gint16 *) bytes;
   guint num_samples = n_bytes / sizeof (gint16);
 
-#ifndef USE_ORC
-  int i;
-
   /* hard coded in volume.orc */
   g_assert (VOLUME_UNITY_INT16_BIT_SHIFT == 13);
 
-  /* FIXME: oil_scalarmultiply_s16_ns ?
-   * https://bugs.freedesktop.org/show_bug.cgi?id=7060
-   */
-  for (i = 0; i < num_samples; i++) {
-    /* we use bitshifting instead of dividing by UNITY_INT for speed */
-    int val = (gint) * data;
-    *data++ =
-        (gint16) CLAMP ((self->current_vol_i16 *
-            val) >> VOLUME_UNITY_INT16_BIT_SHIFT, VOLUME_MIN_INT16,
-        VOLUME_MAX_INT16);
-  }
-#else
-  /* FIXME */
   orc_process_int16_clamp (data, self->current_vol_i16, num_samples);
-#endif
 }
 
 static void
@@ -768,11 +728,17 @@ volume_process_controlled_int16_clamp (GstVolume * self, gpointer bytes,
   guint num_samples = n_bytes / (sizeof (gint16) * channels);
   gdouble vol, val;
 
-  for (i = 0; i < num_samples; i++) {
-    vol = *volume++;
-    for (j = 0; j < channels; j++) {
-      val = *data * vol;
-      *data++ = (gint16) CLAMP (val, VOLUME_MIN_INT16, VOLUME_MAX_INT16);
+  if (channels == 1) {
+    orc_process_controlled_int16_1ch (data, volume, num_samples);
+  } else if (channels == 2) {
+    orc_process_controlled_int16_2ch (data, volume, num_samples);
+  } else {
+    for (i = 0; i < num_samples; i++) {
+      vol = *volume++;
+      for (j = 0; j < channels; j++) {
+        val = *data * vol;
+        *data++ = (gint16) CLAMP (val, VOLUME_MIN_INT16, VOLUME_MAX_INT16);
+      }
     }
   }
 }
@@ -783,22 +749,10 @@ volume_process_int8 (GstVolume * self, gpointer bytes, guint n_bytes)
   gint8 *data = (gint8 *) bytes;
   guint num_samples = n_bytes / sizeof (gint8);
 
-#ifndef USE_ORC
-  int i;
-
-  for (i = 0; i < num_samples; i++) {
-    /* we use bitshifting instead of dividing by UNITY_INT for speed */
-    int val = (gint) * data;
-    *data++ =
-        (gint8) ((self->current_vol_i8 * val) >> VOLUME_UNITY_INT8_BIT_SHIFT);
-  }
-#else
-  /* FIXME */
   /* hard coded in volume.orc */
   g_assert (VOLUME_UNITY_INT8_BIT_SHIFT == 5);
 
   orc_process_int8 (data, self->current_vol_i8, num_samples);
-#endif
 }
 
 static void
@@ -807,24 +761,10 @@ volume_process_int8_clamp (GstVolume * self, gpointer bytes, guint n_bytes)
   gint8 *data = (gint8 *) bytes;
   guint num_samples = n_bytes / sizeof (gint8);
 
-#ifndef USE_ORC
-  int i;
-
   /* hard coded in volume.orc */
   g_assert (VOLUME_UNITY_INT8_BIT_SHIFT == 5);
 
-  for (i = 0; i < num_samples; i++) {
-    /* we use bitshifting instead of dividing by UNITY_INT for speed */
-    int val = (gint) * data;
-    *data++ =
-        (gint8) CLAMP ((self->current_vol_i8 *
-            val) >> VOLUME_UNITY_INT8_BIT_SHIFT, VOLUME_MIN_INT8,
-        VOLUME_MAX_INT8);
-  }
-#else
-  /* FIXME */
   orc_process_int8_clamp (data, self->current_vol_i8, num_samples);
-#endif
 }
 
 static void
@@ -836,11 +776,17 @@ volume_process_controlled_int8_clamp (GstVolume * self, gpointer bytes,
   guint num_samples = n_bytes / (sizeof (gint8) * channels);
   gdouble val, vol;
 
-  for (i = 0; i < num_samples; i++) {
-    vol = *volume++;
-    for (j = 0; j < channels; j++) {
-      val = *data * vol;
-      *data++ = (gint8) CLAMP (val, VOLUME_MIN_INT8, VOLUME_MAX_INT8);
+  if (channels == 1) {
+    orc_process_controlled_int8_1ch (data, volume, num_samples);
+  } else if (channels == 2) {
+    orc_process_controlled_int8_2ch (data, volume, num_samples);
+  } else {
+    for (i = 0; i < num_samples; i++) {
+      vol = *volume++;
+      for (j = 0; j < channels; j++) {
+        val = *data * vol;
+        *data++ = (gint8) CLAMP (val, VOLUME_MIN_INT8, VOLUME_MAX_INT8);
+      }
     }
   }
 }
@@ -988,17 +934,11 @@ volume_transform_ip (GstBaseTransform * base, GstBuffer * outbuf)
       gst_object_unref (volume_csource);
       volume_csource = NULL;
     } else {
-      guint i;
-
-      for (i = 0; i < nsamples; i++)
-        self->volumes[i] = self->current_volume;
+      orc_memset_f64 (self->volumes, self->current_volume, nsamples);
     }
 
     if (mute_csource) {
-      guint i;
-
-      for (i = 0; i < nsamples; i++)
-        self->volumes[i] *= (1.0 - self->mutes[i]);
+      orc_prepare_volumes (self->volumes, self->mutes, nsamples);
     }
 
     self->process_controlled (self, data, self->volumes, channels, size);
@@ -1009,7 +949,7 @@ volume_transform_ip (GstBaseTransform * base, GstBuffer * outbuf)
   }
 
   if (self->current_volume == 0.0 || self->current_mute) {
-    memset (data, 0, size);
+    orc_memset (data, 0, size);
     GST_BUFFER_FLAG_SET (outbuf, GST_BUFFER_FLAG_GAP);
   } else if (self->current_volume != 1.0) {
     self->process (self, data, size);
@@ -1086,6 +1026,8 @@ volume_get_property (GObject * object, guint prop_id, GValue * value,
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
+  gst_volume_orc_init ();
+
   /* initialize gst controller library */
   gst_controller_init (NULL, NULL);
 

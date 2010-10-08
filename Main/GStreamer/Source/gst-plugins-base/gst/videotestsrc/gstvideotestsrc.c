@@ -37,6 +37,7 @@
 #include "config.h"
 #endif
 #include "gstvideotestsrc.h"
+#include "gstvideotestsrcorc.h"
 #include "videotestsrc.h"
 
 #include <string.h>
@@ -50,7 +51,9 @@ GST_DEBUG_CATEGORY_STATIC (video_test_src_debug);
 #define DEFAULT_IS_LIVE            FALSE
 #define DEFAULT_PEER_ALLOC         TRUE
 #define DEFAULT_COLOR_SPEC         GST_VIDEO_TEST_SRC_BT601
-#define DEFAULT_SOLID_COLOR        0xff000000
+#define DEFAULT_FOREGROUND_COLOR   0xffffffff
+#define DEFAULT_BACKGROUND_COLOR   0xff000000
+#define DEFAULT_HORIZONTAL_SPEED   0
 
 enum
 {
@@ -72,7 +75,9 @@ enum
   PROP_KT2,
   PROP_XOFFSET,
   PROP_YOFFSET,
-  PROP_SOLID_COLOR,
+  PROP_FOREGROUND_COLOR,
+  PROP_BACKGROUND_COLOR,
+  PROP_HORIZONTAL_SPEED,
   PROP_LAST
 };
 
@@ -128,6 +133,9 @@ gst_video_test_src_pattern_get_type (void)
     {GST_VIDEO_TEST_SRC_CHROMA_ZONE_PLATE, "Chroma zone plate",
         "chroma-zone-plate"},
     {GST_VIDEO_TEST_SRC_SOLID, "Solid color", "solid-color"},
+    {GST_VIDEO_TEST_SRC_BALL, "Moving ball", "ball"},
+    {GST_VIDEO_TEST_SRC_SMPTE100, "SMPTE 100% color bars", "smpte100"},
+    {GST_VIDEO_TEST_SRC_BAR, "Bar", "bar"},
     {0, NULL, NULL}
   };
 
@@ -202,7 +210,9 @@ gst_video_test_src_class_init (GstVideoTestSrcClass * klass)
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   g_object_class_install_property (gobject_class, PROP_COLOR_SPEC,
       g_param_spec_enum ("colorspec", "Color Specification",
-          "Generate video in the given color specification",
+          "Generate video in the given color specification (Deprecated: "
+          "use a caps filter with video/x-raw-yuv,color-matrix=\"sdtv\" or "
+          "\"hdtv\" instead)",
           GST_TYPE_VIDEO_TEST_SRC_COLOR_SPEC,
           DEFAULT_COLOR_SPEC, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   g_object_class_install_property (gobject_class, PROP_K0,
@@ -236,7 +246,7 @@ gst_video_test_src_class_init (GstVideoTestSrcClass * klass)
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   g_object_class_install_property (gobject_class, PROP_KXY,
       g_param_spec_int ("kxy", "Zoneplate x*y product phase",
-          "Zoneplate x*t product phase", G_MININT32, G_MAXINT32, 0,
+          "Zoneplate x*y product phase", G_MININT32, G_MAXINT32, 0,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   g_object_class_install_property (gobject_class, PROP_KX2,
       g_param_spec_int ("kx2", "Zoneplate 2nd order x phase",
@@ -261,16 +271,37 @@ gst_video_test_src_class_init (GstVideoTestSrcClass * klass)
           "Zoneplate 2nd order products y offset", G_MININT32, G_MAXINT32, 0,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
   /**
-   * GstTextOverlay:solid-color
+   * GstVideoTestSrc:foreground-color
    *
-   * Color to use for solid-color pattern.
+   * Color to use for solid-color pattern and foreground color of other
+   * patterns.  Default is white (0xffffffff).
    *
    * Since: 0.10.31
    **/
-  g_object_class_install_property (gobject_class, PROP_SOLID_COLOR,
-      g_param_spec_uint ("solid-color", "Solid Color",
-          "Solid color to use (big-endian ARGB)", 0, G_MAXUINT32,
-          DEFAULT_SOLID_COLOR, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  g_object_class_install_property (gobject_class, PROP_FOREGROUND_COLOR,
+      g_param_spec_uint ("foreground-color", "Foreground Color",
+          "Foreground color to use (big-endian ARGB)", 0, G_MAXUINT32,
+          DEFAULT_FOREGROUND_COLOR,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  /**
+   * GstVideoTestSrc:background-color
+   *
+   * Color to use for background color of some patterns.  Default is
+   * black (0xff000000).
+   *
+   * Since: 0.10.31
+   **/
+  g_object_class_install_property (gobject_class, PROP_BACKGROUND_COLOR,
+      g_param_spec_uint ("background-color", "Background Color",
+          "Background color to use (big-endian ARGB)", 0, G_MAXUINT32,
+          DEFAULT_BACKGROUND_COLOR,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_property (gobject_class, PROP_HORIZONTAL_SPEED,
+      g_param_spec_int ("horizontal-speed", "Horizontal Speed",
+          "Scroll image number of pixels per frame (positive is scroll to the left)",
+          G_MININT32, G_MAXINT32, DEFAULT_HORIZONTAL_SPEED,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   gstbasesrc_class->get_caps = gst_video_test_src_getcaps;
   gstbasesrc_class->set_caps = gst_video_test_src_setcaps;
@@ -293,7 +324,9 @@ gst_video_test_src_init (GstVideoTestSrc * src, GstVideoTestSrcClass * g_class)
   gst_video_test_src_set_pattern (src, DEFAULT_PATTERN);
 
   src->timestamp_offset = DEFAULT_TIMESTAMP_OFFSET;
-  src->solid_color = DEFAULT_SOLID_COLOR;
+  src->foreground_color = DEFAULT_FOREGROUND_COLOR;
+  src->background_color = DEFAULT_BACKGROUND_COLOR;
+  src->horizontal_speed = DEFAULT_HORIZONTAL_SPEED;
 
   /* we operate in time */
   gst_base_src_set_format (GST_BASE_SRC (src), GST_FORMAT_TIME);
@@ -369,7 +402,7 @@ gst_video_test_src_set_pattern (GstVideoTestSrc * videotestsrc,
       videotestsrc->make_image = gst_video_test_src_circular;
       break;
     case GST_VIDEO_TEST_SRC_BLINK:
-      videotestsrc->make_image = gst_video_test_src_black;
+      videotestsrc->make_image = gst_video_test_src_blink;
       break;
     case GST_VIDEO_TEST_SRC_SMPTE75:
       videotestsrc->make_image = gst_video_test_src_smpte75;
@@ -385,6 +418,15 @@ gst_video_test_src_set_pattern (GstVideoTestSrc * videotestsrc,
       break;
     case GST_VIDEO_TEST_SRC_SOLID:
       videotestsrc->make_image = gst_video_test_src_solid;
+      break;
+    case GST_VIDEO_TEST_SRC_BALL:
+      videotestsrc->make_image = gst_video_test_src_ball;
+      break;
+    case GST_VIDEO_TEST_SRC_SMPTE100:
+      videotestsrc->make_image = gst_video_test_src_smpte100;
+      break;
+    case GST_VIDEO_TEST_SRC_BAR:
+      videotestsrc->make_image = gst_video_test_src_bar;
       break;
     default:
       g_assert_not_reached ();
@@ -411,7 +453,6 @@ gst_video_test_src_set_property (GObject * object, guint prop_id,
       src->peer_alloc = g_value_get_boolean (value);
       break;
     case PROP_COLOR_SPEC:
-      src->color_spec = g_value_get_enum (value);
       break;
     case PROP_K0:
       src->k0 = g_value_get_int (value);
@@ -449,9 +490,14 @@ gst_video_test_src_set_property (GObject * object, guint prop_id,
     case PROP_YOFFSET:
       src->yoffset = g_value_get_int (value);
       break;
-    case PROP_SOLID_COLOR:
-      src->solid_color = g_value_get_uint (value);
+    case PROP_FOREGROUND_COLOR:
+      src->foreground_color = g_value_get_uint (value);
       break;
+    case PROP_BACKGROUND_COLOR:
+      src->background_color = g_value_get_uint (value);
+      break;
+    case PROP_HORIZONTAL_SPEED:
+      src->horizontal_speed = g_value_get_int (value);
     default:
       break;
   }
@@ -477,7 +523,6 @@ gst_video_test_src_get_property (GObject * object, guint prop_id,
       g_value_set_boolean (value, src->peer_alloc);
       break;
     case PROP_COLOR_SPEC:
-      g_value_set_enum (value, src->color_spec);
       break;
     case PROP_K0:
       g_value_set_int (value, src->k0);
@@ -515,8 +560,14 @@ gst_video_test_src_get_property (GObject * object, guint prop_id,
     case PROP_YOFFSET:
       g_value_set_int (value, src->yoffset);
       break;
-    case PROP_SOLID_COLOR:
-      g_value_set_uint (value, src->solid_color);
+    case PROP_FOREGROUND_COLOR:
+      g_value_set_uint (value, src->foreground_color);
+      break;
+    case PROP_BACKGROUND_COLOR:
+      g_value_set_uint (value, src->background_color);
+      break;
+    case PROP_HORIZONTAL_SPEED:
+      g_value_set_int (value, src->horizontal_speed);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -824,19 +875,16 @@ gst_video_test_src_create (GstPushSrc * psrc, GstBuffer ** buffer)
   }
 
   memset (GST_BUFFER_DATA (outbuf), 0, GST_BUFFER_SIZE (outbuf));
+  src->tmpline_u8 = g_malloc (src->width + 8);
+  src->tmpline = g_malloc ((src->width + 8) * 4);
+  src->tmpline2 = g_malloc ((src->width + 8) * 4);
 
-  if (src->pattern_type == GST_VIDEO_TEST_SRC_BLINK) {
-    if (src->n_frames & 0x1) {
-      gst_video_test_src_white (src, (void *) GST_BUFFER_DATA (outbuf),
-          src->width, src->height);
-    } else {
-      gst_video_test_src_black (src, (void *) GST_BUFFER_DATA (outbuf),
-          src->width, src->height);
-    }
-  } else {
-    src->make_image (src, (void *) GST_BUFFER_DATA (outbuf),
-        src->width, src->height);
-  }
+  src->make_image (src, (void *) GST_BUFFER_DATA (outbuf),
+      src->width, src->height);
+
+  g_free (src->tmpline);
+  g_free (src->tmpline2);
+  g_free (src->tmpline_u8);
 
   GST_BUFFER_TIMESTAMP (outbuf) = src->timestamp_offset + src->running_time;
   GST_BUFFER_OFFSET (outbuf) = src->n_frames;
@@ -891,6 +939,8 @@ gst_video_test_src_start (GstBaseSrc * basesrc)
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
+  gst_videotestsrc_orc_init ();
+
   GST_DEBUG_CATEGORY_INIT (video_test_src_debug, "videotestsrc", 0,
       "Video Test Source");
 

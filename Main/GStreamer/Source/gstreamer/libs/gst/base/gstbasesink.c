@@ -843,7 +843,7 @@ gst_base_sink_set_async_enabled (GstBaseSink * sink, gboolean enabled)
   g_return_if_fail (GST_IS_BASE_SINK (sink));
 
   GST_PAD_PREROLL_LOCK (sink->sinkpad);
-  sink->priv->async_enabled = enabled;
+  g_atomic_int_set (&sink->priv->async_enabled, enabled);
   GST_LOG_OBJECT (sink, "set async enabled to %d", enabled);
   GST_PAD_PREROLL_UNLOCK (sink->sinkpad);
 }
@@ -867,9 +867,7 @@ gst_base_sink_is_async_enabled (GstBaseSink * sink)
 
   g_return_val_if_fail (GST_IS_BASE_SINK (sink), FALSE);
 
-  GST_PAD_PREROLL_LOCK (sink->sinkpad);
-  res = sink->priv->async_enabled;
-  GST_PAD_PREROLL_UNLOCK (sink->sinkpad);
+  res = g_atomic_int_get (&sink->priv->async_enabled);
 
   return res;
 }
@@ -1281,7 +1279,7 @@ gst_base_sink_set_property (GObject * object, guint prop_id,
     case PROP_PREROLL_QUEUE_LEN:
       /* preroll lock necessary to serialize with finish_preroll */
       GST_PAD_PREROLL_LOCK (sink->sinkpad);
-      sink->preroll_queue_max_len = g_value_get_uint (value);
+      g_atomic_int_set (&sink->preroll_queue_max_len, g_value_get_uint (value));
       GST_PAD_PREROLL_UNLOCK (sink->sinkpad);
       break;
     case PROP_SYNC:
@@ -1322,9 +1320,7 @@ gst_base_sink_get_property (GObject * object, guint prop_id, GValue * value,
 
   switch (prop_id) {
     case PROP_PREROLL_QUEUE_LEN:
-      GST_PAD_PREROLL_LOCK (sink->sinkpad);
-      g_value_set_uint (value, sink->preroll_queue_max_len);
-      GST_PAD_PREROLL_UNLOCK (sink->sinkpad);
+      g_value_set_uint (value, g_atomic_int_get (&sink->preroll_queue_max_len));
       break;
     case PROP_SYNC:
       g_value_set_boolean (value, gst_base_sink_get_sync (sink));
@@ -2005,7 +2001,8 @@ out_of_segment:
 }
 
 /* with STREAM_LOCK, PREROLL_LOCK, LOCK
- * adjust a timestamp with the latency and timestamp offset */
+ * adjust a timestamp with the latency and timestamp offset. This function does
+ * not adjust for the render delay. */
 static GstClockTime
 gst_base_sink_adjust_time (GstBaseSink * basesink, GstClockTime time)
 {
@@ -2027,6 +2024,12 @@ gst_base_sink_adjust_time (GstBaseSink * basesink, GstClockTime time)
       time = 0;
   } else
     time += ts_offset;
+
+  /* subtract the render delay again, which was included in the latency */
+  if (time > basesink->priv->render_delay)
+    time -= basesink->priv->render_delay;
+  else
+    time = 0;
 
   return time;
 }
@@ -2413,8 +2416,8 @@ again:
    * or sync is disabled with GST_CLOCK_BADTIME. */
   status = gst_base_sink_wait_clock (basesink, stime, &jitter);
 
-  GST_DEBUG_OBJECT (basesink, "clock returned %d, jitter %" GST_TIME_FORMAT,
-      status, GST_TIME_ARGS (jitter));
+  GST_DEBUG_OBJECT (basesink, "clock returned %d, jitter %c%" GST_TIME_FORMAT,
+      status, (jitter < 0 ? '-' : ' '), GST_TIME_ARGS (ABS (jitter)));
 
   /* invalid time, no clock or sync disabled, just render */
   if (status == GST_CLOCK_BADTIME)
@@ -3933,25 +3936,26 @@ paused:
     GST_LOG_OBJECT (basesink, "pausing task, reason %s",
         gst_flow_get_name (result));
     gst_pad_pause_task (pad);
-    /* fatal errors and NOT_LINKED cause EOS */
-    if (GST_FLOW_IS_FATAL (result) || result == GST_FLOW_NOT_LINKED) {
-      if (result == GST_FLOW_UNEXPECTED) {
-        /* perform EOS logic */
-        if (basesink->segment.flags & GST_SEEK_FLAG_SEGMENT) {
-          gst_element_post_message (GST_ELEMENT_CAST (basesink),
-              gst_message_new_segment_done (GST_OBJECT_CAST (basesink),
-                  basesink->segment.format, basesink->segment.last_stop));
-        } else {
-          gst_base_sink_event (pad, gst_event_new_eos ());
-        }
+    if (result == GST_FLOW_UNEXPECTED) {
+      /* perform EOS logic */
+      if (basesink->segment.flags & GST_SEEK_FLAG_SEGMENT) {
+        gst_element_post_message (GST_ELEMENT_CAST (basesink),
+            gst_message_new_segment_done (GST_OBJECT_CAST (basesink),
+                basesink->segment.format, basesink->segment.last_stop));
       } else {
-        /* for fatal errors we post an error message, post the error
-         * first so the app knows about the error first. */
-        GST_ELEMENT_ERROR (basesink, STREAM, FAILED,
-            (_("Internal data stream error.")),
-            ("stream stopped, reason %s", gst_flow_get_name (result)));
         gst_base_sink_event (pad, gst_event_new_eos ());
       }
+    } else if (result == GST_FLOW_NOT_LINKED || result <= GST_FLOW_UNEXPECTED) {
+      /* for fatal errors we post an error message, post the error
+       * first so the app knows about the error first. 
+       * wrong-state is not a fatal error because it happens due to
+       * flushing and posting an error message in that case is the
+       * wrong thing to do, e.g. when basesrc is doing a flushing
+       * seek. */
+      GST_ELEMENT_ERROR (basesink, STREAM, FAILED,
+          (_("Internal data stream error.")),
+          ("stream stopped, reason %s", gst_flow_get_name (result)));
+      gst_base_sink_event (pad, gst_event_new_eos ());
     }
     return;
   }

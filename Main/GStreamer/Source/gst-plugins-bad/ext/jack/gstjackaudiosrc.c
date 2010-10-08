@@ -74,7 +74,11 @@
  * Last reviewed on 2008-07-22 (0.10.4)
  */
 
-#include <gst/gst.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <gst/gst-i18n-plugin.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -341,6 +345,7 @@ gst_jack_ring_buffer_open_device (GstRingBuffer * buf)
     name = "GStreamer";
 
   src->client = gst_jack_audio_client_new (name, src->server,
+      src->jclient,
       GST_JACK_CLIENT_SOURCE,
       jack_shutdown_cb,
       jack_process_cb, jack_buffer_size_cb, jack_sample_rate_cb, buf, &status);
@@ -356,7 +361,8 @@ could_not_open:
   {
     if (status & JackServerFailed) {
       GST_ELEMENT_ERROR (src, RESOURCE, NOT_FOUND,
-          (NULL), ("Cannot connect to the Jack server (status %d)", status));
+          (_("Jack server not found")),
+          ("Cannot connect to the Jack server (status %d)", status));
     } else {
       GST_ELEMENT_ERROR (src, RESOURCE, OPEN_WRITE,
           (NULL), ("Jack client open error (status %d)", status));
@@ -629,6 +635,7 @@ enum
   PROP_0,
   PROP_CONNECT,
   PROP_SERVER,
+  PROP_CLIENT,
   PROP_LAST
 };
 
@@ -668,7 +675,6 @@ static GstRingBuffer *gst_jack_audio_src_create_ringbuffer (GstBaseAudioSrc *
 static void
 gst_jack_audio_src_base_init (gpointer gclass)
 {
-
   GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
 
   gst_element_class_add_pad_template (element_class,
@@ -707,6 +713,12 @@ gst_jack_audio_src_class_init (GstJackAudioSrcClass * klass)
           "The Jack server to connect to (NULL = default)",
           DEFAULT_PROP_SERVER, G_PARAM_READWRITE));
 
+  g_object_class_install_property (gobject_class, PROP_CLIENT,
+      g_param_spec_boxed ("client", "JackClient", "Handle for jack client",
+          GST_TYPE_JACK_CLIENT,
+          GST_PARAM_MUTABLE_READY | G_PARAM_READWRITE |
+          G_PARAM_STATIC_STRINGS));
+
   gstbasesrc_class->get_caps = GST_DEBUG_FUNCPTR (gst_jack_audio_src_getcaps);
   gstbaseaudiosrc_class->create_ringbuffer =
       GST_DEBUG_FUNCPTR (gst_jack_audio_src_create_ringbuffer);
@@ -729,6 +741,7 @@ gst_jack_audio_src_init (GstJackAudioSrc * src, GstJackAudioSrcClass * gclass)
   //gst_base_src_set_live(GST_BASE_SRC (src), TRUE);
   src->connect = DEFAULT_PROP_CONNECT;
   src->server = g_strdup (DEFAULT_PROP_SERVER);
+  src->jclient = NULL;
   src->ports = NULL;
   src->port_count = 0;
   src->buffers = NULL;
@@ -757,6 +770,12 @@ gst_jack_audio_src_set_property (GObject * object, guint prop_id,
       g_free (src->server);
       src->server = g_value_dup_string (value);
       break;
+    case PROP_CLIENT:
+      if (GST_STATE (src) == GST_STATE_NULL ||
+          GST_STATE (src) == GST_STATE_READY) {
+        src->jclient = g_value_get_boxed (value);
+      }
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -775,6 +794,9 @@ gst_jack_audio_src_get_property (GObject * object, guint prop_id,
       break;
     case PROP_SERVER:
       g_value_set_string (value, src->server);
+      break;
+    case PROP_CLIENT:
+      g_value_set_boxed (value, src->jclient);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

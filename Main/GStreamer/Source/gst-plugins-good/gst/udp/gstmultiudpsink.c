@@ -79,6 +79,7 @@ enum
 #define DEFAULT_TTL_MC             1
 #define DEFAULT_LOOP               TRUE
 #define DEFAULT_QOS_DSCP           -1
+#define DEFAULT_SEND_DUPLICATES    TRUE
 
 enum
 {
@@ -88,15 +89,13 @@ enum
   PROP_SOCKFD,
   PROP_CLOSEFD,
   PROP_SOCK,
-  PROP_SOCKFD6,
-  PROP_CLOSEFD6,
-  PROP_SOCK6,
   PROP_CLIENTS,
   PROP_AUTO_MULTICAST,
   PROP_TTL,
   PROP_TTL_MC,
   PROP_LOOP,
   PROP_QOS_DSCP,
+  PROP_SEND_DUPLICATES,
   PROP_LAST
 };
 
@@ -108,12 +107,6 @@ G_STMT_START {                                                            \
       udpctx->sockfd = DEFAULT_SOCKFD;                                    \
   }                                                                       \
   udpctx->sock = DEFAULT_SOCK;                                            \
-  if ((!udpctx->externalfd6) || (udpctx->externalfd6 && udpctx->closefd6)) { \
-    CLOSE_SOCKET(udpctx->sock6);                                           \
-    if (udpctx->sock6 == udpctx->sockfd6)                                   \
-      udpctx->sockfd6 = DEFAULT_SOCKFD;                                    \
-  }                                                                       \
-  udpctx->sock6 = DEFAULT_SOCK;                                            \
 } G_STMT_END
 
 static void gst_multiudpsink_base_init (gpointer g_class);
@@ -139,8 +132,6 @@ static void gst_multiudpsink_add_internal (GstMultiUDPSink * sink,
     const gchar * host, gint port, gboolean lock);
 static void gst_multiudpsink_clear_internal (GstMultiUDPSink * sink,
     gboolean lock);
-
-static void free_client (GstUDPClient * client);
 
 static GstElementClass *parent_class = NULL;
 
@@ -210,7 +201,13 @@ gst_multiudpsink_class_init (GstMultiUDPSinkClass * klass)
    * @port: the port of the client to add
    *
    * Add a client with destination @host and @port to the list of
-   * clients.
+   * clients. When the same host/port pair is added multiple times, the
+   * send-duplicates property defines if the packets are sent multiple times to
+   * the same host/port pair or not.
+   *
+   * When a host/port pair is added multiple times, an equal amount of remove
+   * calls must be performed to actually remove the host/port pair from the list
+   * of destinations.
    */
   gst_multiudpsink_signals[SIGNAL_ADD] =
       g_signal_new ("add", G_TYPE_FROM_CLASS (klass), G_SIGNAL_RUN_LAST,
@@ -304,20 +301,7 @@ gst_multiudpsink_class_init (GstMultiUDPSinkClass * klass)
           DEFAULT_CLOSEFD, G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_SOCK,
       g_param_spec_int ("sock", "Socket Handle",
-          "Socket currently in use for UDP sending . (-1 == no socket)",
-          -1, G_MAXINT, DEFAULT_SOCK, G_PARAM_READABLE));
-  g_object_class_install_property (gobject_class, PROP_SOCKFD6,
-      g_param_spec_int ("sockfd6",
-          "Socket Handle for IP6 for non dual-stack systems",
-          "Socket to use for UDP sending to IP6 clients on non dual-stack systems. (-1 == allocate)",
-          -1, G_MAXINT, DEFAULT_SOCKFD, G_PARAM_READWRITE));
-  g_object_class_install_property (gobject_class, PROP_CLOSEFD6,
-      g_param_spec_boolean ("closefd6", "Close sockfd6",
-          "Close sockfd6 if passed as property on state change",
-          DEFAULT_CLOSEFD, G_PARAM_READWRITE));
-  g_object_class_install_property (gobject_class, PROP_SOCK6,
-      g_param_spec_int ("sock6", "Socket Handle for IP6",
-          "Socket currently in use for UDP sending to IP6 clients on non dual-stack systems. (-1 == no socket)",
+          "Socket currently in use for UDP sending. (-1 == no socket)",
           -1, G_MAXINT, DEFAULT_SOCK, G_PARAM_READABLE));
   g_object_class_install_property (gobject_class, PROP_CLIENTS,
       g_param_spec_string ("clients", "Clients",
@@ -344,6 +328,19 @@ gst_multiudpsink_class_init (GstMultiUDPSinkClass * klass)
       g_param_spec_int ("qos-dscp", "QoS diff srv code point",
           "Quality of Service, differentiated services code point (-1 default)",
           -1, 63, DEFAULT_QOS_DSCP, G_PARAM_READWRITE));
+  /**
+   * GstMultiUDPSink::send-duplicates
+   *
+   * When a host/port pair is added mutliple times, send the packet to the host
+   * multiple times as well.
+   *
+   * Since: 0.10.26
+   */
+  g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_SEND_DUPLICATES,
+      g_param_spec_boolean ("send-duplicates", "Send Duplicates",
+          "When a distination/port pair is added multiple times, send packets "
+          "multiple times as well", DEFAULT_SEND_DUPLICATES,
+          G_PARAM_READWRITE));
 
   gstelement_class->change_state = gst_multiudpsink_change_state;
 
@@ -363,7 +360,6 @@ gst_multiudpsink_class_init (GstMultiUDPSinkClass * klass)
 static void
 gst_multiudpsink_init (GstMultiUDPSink * sink)
 {
-
   WSA_STARTUP (sink);
 
   sink->client_lock = g_mutex_new ();
@@ -371,43 +367,42 @@ gst_multiudpsink_init (GstMultiUDPSink * sink)
   sink->sockfd = DEFAULT_SOCKFD;
   sink->closefd = DEFAULT_CLOSEFD;
   sink->externalfd = (sink->sockfd != -1);
-  sink->sock6 = DEFAULT_SOCK;
-  sink->sockfd6 = DEFAULT_SOCKFD;
-  sink->closefd6 = DEFAULT_CLOSEFD;
-  sink->externalfd6 = (sink->sockfd6 != -1);
   sink->auto_multicast = DEFAULT_AUTO_MULTICAST;
   sink->ttl = DEFAULT_TTL;
   sink->ttl_mc = DEFAULT_TTL_MC;
   sink->loop = DEFAULT_LOOP;
   sink->qos_dscp = DEFAULT_QOS_DSCP;
   sink->ss_family = DEFAULT_FAMILY;
-  
+  sink->send_duplicates = DEFAULT_SEND_DUPLICATES;
+}
 
-  /* Unless we can confirm that dual-stack works, don't use it */
-  sink->dualstack = FALSE;
+static GstUDPClient *
+create_client (GstMultiUDPSink * sink, const gchar * host, gint port)
+{
+  GstUDPClient *client;
 
-#ifndef __APPLE_CC__
-  {
-    int testsock;
-    int v6only;
-    int ret;
+  client = g_slice_new0 (GstUDPClient);
+  client->refcount = 1;
+  client->host = g_strdup (host);
+  client->port = port;
 
-    /* Figure out if we support dual-stack mode */
-    testsock = socket (AF_INET6, SOCK_DGRAM, 0);
-    if (testsock >= 0) {
-      /* Turn off v6-only to make the socket dual-stack */
-      v6only = 0;
-      ret = setsockopt (testsock, IPPROTO_IPV6, IPV6_V6ONLY,
-          (char *) &v6only, sizeof (v6only));
-      /* Successfully switched to dual-stack mode, yay! */
-      if (ret == 0)
-        sink->dualstack = TRUE;
+  return client;
+}
 
-      CLOSE_SOCKET (testsock);
-    }
- }
- #endif
-  GST_DEBUG_OBJECT (sink, "Dualstack mode: %d", sink->dualstack);
+static void
+free_client (GstUDPClient * client)
+{
+  g_free (client->host);
+  g_slice_free (GstUDPClient, client);
+}
+
+static gint
+client_compare (GstUDPClient * a, GstUDPClient * b)
+{
+  if ((a->port == b->port) && (strcmp (a->host, b->host) == 0))
+    return 0;
+
+  return 1;
 }
 
 static void
@@ -422,9 +417,6 @@ gst_multiudpsink_finalize (GObject * object)
 
   if (sink->sockfd >= 0 && sink->closefd)
     CLOSE_SOCKET (sink->sockfd);
-	
-  if (sink->sockfd6 >= 0 && sink->closefd6)
-    CLOSE_SOCKET (sink->sockfd6);
 
   g_mutex_free (sink->client_lock);
 
@@ -501,38 +493,43 @@ gst_multiudpsink_render (GstBaseSink * bsink, GstBuffer * buffer)
 
   for (clients = sink->clients; clients; clients = g_list_next (clients)) {
     GstUDPClient *client;
+    gint count;
 
     client = (GstUDPClient *) clients->data;
     no_clients++;
     GST_LOG_OBJECT (sink, "sending %d bytes to client %p", size, client);
 
-    while (TRUE) {
-      len = gst_udp_get_sockaddr_length (&client->theiraddr);
+    count = sink->send_duplicates ? client->refcount : 1;
 
-      ret = sendto (*client->sock,
+    while (count--) {
+      while (TRUE) {
+        len = gst_udp_get_sockaddr_length (&client->theiraddr);
+
+        ret = sendto (*client->sock,
 #ifdef G_OS_WIN32
-          (char *) data,
+            (char *) data,
 #else
-          data,
+            data,
 #endif
-          size, 0, (struct sockaddr *) &client->theiraddr, len);
+            size, 0, (struct sockaddr *) &client->theiraddr, len);
 
-      if (ret < 0) {
-        /* some error, just warn, it's likely recoverable and we don't want to
-         * break streaming. We break so that we stop retrying for this client. */
-        if (!socket_error_is_ignorable ()) {
-          gchar *errormessage = socket_last_error_message ();
-          GST_WARNING_OBJECT (sink, "client %p gave error %d (%s)", client,
-              socket_last_error_code (), errormessage);
-          g_free (errormessage);
+        if (ret < 0) {
+          /* some error, just warn, it's likely recoverable and we don't want to
+           * break streaming. We break so that we stop retrying for this client. */
+          if (!socket_error_is_ignorable ()) {
+            gchar *errormessage = socket_last_error_message ();
+            GST_WARNING_OBJECT (sink, "client %p gave error %d (%s)", client,
+                socket_last_error_code (), errormessage);
+            g_free (errormessage);
+            break;
+          }
+        } else {
+          num++;
+          client->bytes_sent += ret;
+          client->packets_sent++;
+          sink->bytes_served += ret;
           break;
         }
-      } else {
-        num++;
-        client->bytes_sent += ret;
-        client->packets_sent++;
-        sink->bytes_served += ret;
-        break;
       }
     }
   }
@@ -592,26 +589,31 @@ gst_multiudpsink_render_list (GstBaseSink * bsink, GstBufferList * list)
 
     for (clients = sink->clients; clients; clients = g_list_next (clients)) {
       GstUDPClient *client;
+      gint count;
 
       client = (GstUDPClient *) clients->data;
       no_clients++;
       GST_LOG_OBJECT (sink, "sending %d bytes to client %p", size, client);
 
-      while (TRUE) {
-        msg.msg_name = (void *) &client->theiraddr;
-        msg.msg_namelen = sizeof (client->theiraddr);
-        ret = sendmsg (*client->sock, &msg, 0);
+      count = sink->send_duplicates ? client->refcount : 1;
 
-        if (ret < 0) {
-          if (!socket_error_is_ignorable ()) {
+      while (count--) {
+        while (TRUE) {
+          msg.msg_name = (void *) &client->theiraddr;
+          msg.msg_namelen = sizeof (client->theiraddr);
+          ret = sendmsg (*client->sock, &msg, 0);
+
+          if (ret < 0) {
+            if (!socket_error_is_ignorable ()) {
+              break;
+            }
+          } else {
+            num++;
+            client->bytes_sent += ret;
+            client->packets_sent++;
+            sink->bytes_served += ret;
             break;
           }
-        } else {
-          num++;
-          client->bytes_sent += ret;
-          client->packets_sent++;
-          sink->bytes_served += ret;
-          break;
         }
       }
     }
@@ -676,13 +678,17 @@ gst_multiudpsink_get_clients_string (GstMultiUDPSink * sink)
   clients = sink->clients;
   while (clients) {
     GstUDPClient *client;
+    gint count;
 
     client = (GstUDPClient *) clients->data;
 
     clients = g_list_next (clients);
 
-    g_string_append_printf (str, "%s:%d%s", client->host, client->port,
-        (clients ? "," : ""));
+    count = client->refcount;
+    while (count--) {
+      g_string_append_printf (str, "%s:%d%s", client->host, client->port,
+          (clients || count > 1 ? "," : ""));
+    }
   }
   g_mutex_unlock (sink->client_lock);
 
@@ -698,49 +704,27 @@ gst_multiudpsink_setup_qos_dscp (GstMultiUDPSink * sink)
   if (sink->qos_dscp < 0)
     return;
 
+  if (sink->sock < 0)
+    return;
+
+  GST_DEBUG_OBJECT (sink, "setting TOS to %d", sink->qos_dscp);
+
   /* Extract and shift 6 bits of DSFIELD */
   tos = (sink->qos_dscp & 0x3f) << 2;
 
-  if (sink->sock != -1) {
-    if (setsockopt (sink->sock, IPPROTO_IP, IP_TOS, &tos, sizeof (tos)) < 0) {
-      gchar *errormessage = socket_last_error_message ();
-      GST_ERROR_OBJECT (sink, "could not set TOS: %s", errormessage);
-      g_free (errormessage);
-    }
-#ifdef IPV6_TCLASS
-    /* If we have a sock6, then this isn't an IPv6 socket, so don't try to set this. */
-    if (sink->sock6 == -1) {
-      GST_DEBUG_OBJECT (sink, "setting TCLASS to %d", sink->qos_dscp);
-
-      if (setsockopt (sink->sock, IPPROTO_IPV6, IPV6_TCLASS, &tos,
-              sizeof (tos)) < 0) {
-        gchar *errormessage = socket_last_error_message ();
-        GST_ERROR_OBJECT (sink, "could not set TCLASS: %s", errormessage);
-        g_free (errormessage);
-      }
-    }
-#endif 
+  if (setsockopt (sink->sock, IPPROTO_IP, IP_TOS, &tos, sizeof (tos)) < 0) {
+    gchar *errormessage = socket_last_error_message ();
+    GST_ERROR_OBJECT (sink, "could not set TOS: %s", errormessage);
+    g_free (errormessage);
   }
-  
-  if (sink->sock6 != -1) {
-    GST_DEBUG_OBJECT (sink, "setting TOS to %d", sink->qos_dscp);
-
-    if (setsockopt (sink->sock6, IPPROTO_IP, IP_TOS, &tos, sizeof (tos)) < 0) {
-      gchar *errormessage = socket_last_error_message ();
-      GST_ERROR_OBJECT (sink, "could not set TOS: %s", errormessage);
-      g_free (errormessage);
-    }
 #ifdef IPV6_TCLASS
-    GST_DEBUG_OBJECT (sink, "setting TCLASS to %d", sink->qos_dscp);
-
-    if (setsockopt (sink->sock6, IPPROTO_IPV6, IPV6_TCLASS, &tos,
-            sizeof (tos)) < 0) {
-      gchar *errormessage = socket_last_error_message ();
-      GST_ERROR_OBJECT (sink, "could not set TCLASS: %s", errormessage);
-      g_free (errormessage);
-    }
+  if (setsockopt (sink->sock, IPPROTO_IPV6, IPV6_TCLASS, &tos,
+          sizeof (tos)) < 0) {
+    gchar *errormessage = socket_last_error_message ();
+    GST_ERROR_OBJECT (sink, "could not set TCLASS: %s", errormessage);
+    g_free (errormessage);
+  }
 #endif
-  }
 }
 
 static void
@@ -762,16 +746,6 @@ gst_multiudpsink_set_property (GObject * object, guint prop_id,
     case PROP_CLOSEFD:
       udpsink->closefd = g_value_get_boolean (value);
       break;
-    case PROP_SOCKFD6:
-      if (udpsink->sockfd6 >= 0 && udpsink->sockfd6 != udpsink->sock6 &&
-          udpsink->closefd6)
-        CLOSE_SOCKET (udpsink->sockfd6);
-      udpsink->sockfd6 = g_value_get_int (value);
-      GST_DEBUG_OBJECT (udpsink, "setting SOCKFD6 to %d", udpsink->sockfd6);
-      break;
-    case PROP_CLOSEFD6:
-      udpsink->closefd6 = g_value_get_boolean (value);
-      break;
     case PROP_CLIENTS:
       gst_multiudpsink_set_clients_string (udpsink, g_value_get_string (value));
       break;
@@ -790,6 +764,9 @@ gst_multiudpsink_set_property (GObject * object, guint prop_id,
     case PROP_QOS_DSCP:
       udpsink->qos_dscp = g_value_get_int (value);
       gst_multiudpsink_setup_qos_dscp (udpsink);
+      break;
+    case PROP_SEND_DUPLICATES:
+      udpsink->send_duplicates = g_value_get_boolean (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -821,15 +798,6 @@ gst_multiudpsink_get_property (GObject * object, guint prop_id, GValue * value,
     case PROP_SOCK:
       g_value_set_int (value, udpsink->sock);
       break;
-	  case PROP_SOCKFD6:
-      g_value_set_int (value, udpsink->sockfd6);
-      break;
-    case PROP_CLOSEFD6:
-      g_value_set_boolean (value, udpsink->closefd6);
-      break;
-    case PROP_SOCK6:
-      g_value_set_int (value, udpsink->sock6);
-      break;
     case PROP_CLIENTS:
       g_value_take_string (value,
           gst_multiudpsink_get_clients_string (udpsink));
@@ -848,6 +816,9 @@ gst_multiudpsink_get_property (GObject * object, guint prop_id, GValue * value,
       break;
     case PROP_QOS_DSCP:
       g_value_set_int (value, udpsink->qos_dscp);
+      break;
+    case PROP_SEND_DUPLICATES:
+      g_value_set_boolean (value, udpsink->send_duplicates);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -873,22 +844,12 @@ gst_multiudpsink_configure_client (GstMultiUDPSink * sink,
     if (gst_udp_set_loop (sink->sock, sink->ss_family, sink->loop) != 0)
       goto loop_failed;
     GST_DEBUG_OBJECT (sink, "setting ttl to %d", sink->ttl_mc);
-    if (gst_udp_set_ttl (sink->sock, sink->ss_family, sink->ttl_mc, TRUE) != 0){
-#ifdef G_OS_WIN32
-      /* This still fails on some Windows versions, ignore the error */
-      return TRUE;
-#endif
+    if (gst_udp_set_ttl (sink->sock, sink->ss_family, sink->ttl_mc, TRUE) != 0)
       goto ttl_failed;
-	}
   } else {
     GST_DEBUG_OBJECT (sink, "setting unicast ttl to %d", sink->ttl);
-    if (gst_udp_set_ttl (sink->sock, sink->ss_family, sink->ttl, FALSE) != 0) {
-#ifdef G_OS_WIN32
-      /* This still fails on some Windows versions, ignore the error */
-      return TRUE;
-#endif
+    if (gst_udp_set_ttl (sink->sock, sink->ss_family, sink->ttl, FALSE) != 0)
       goto ttl_failed;
-    }
   }
   return TRUE;
 
@@ -933,124 +894,42 @@ gst_multiudpsink_init_send (GstMultiUDPSink * sink)
   guint bc_val;
   GList *clients;
   GstUDPClient *client;
-  sink->ss_family = AF_INET6;
-  if (sink->sockfd != -1 && sink->sockfd6 != -1) {
-    /* User has supplied two FDs, so use them. */
+
+  if (sink->sockfd == -1) {
+    GST_DEBUG_OBJECT (sink, "creating sockets");
+    /* create sender socket try IP6, fall back to IP4 */
+    sink->ss_family = AF_INET6;
+    if ((sink->sock = socket (AF_INET6, SOCK_DGRAM, 0)) == -1) {
+      sink->ss_family = AF_INET;
+      if ((sink->sock = socket (AF_INET, SOCK_DGRAM, 0)) == -1)
+        goto no_socket;
+    }
+
+    GST_DEBUG_OBJECT (sink, "have socket");
+    sink->externalfd = FALSE;
+  } else {
+    struct sockaddr_storage myaddr;
+#ifdef G_OS_WIN32
+    gint len;
+#else
+    guint len;
+#endif
+
+    GST_DEBUG_OBJECT (sink, "using configured socket");
+    /* we use the configured socket, try to get some info about it */
+    len = sizeof (myaddr);
+    if (getsockname (sink->sockfd, (struct sockaddr *) &myaddr, &len) < 0)
+      goto getsockname_error;
+
+    sink->ss_family = myaddr.ss_family;
+    /* we use the configured socket */
     sink->sock = sink->sockfd;
     sink->externalfd = TRUE;
-
-    sink->sock6 = sink->sockfd6;
-    sink->externalfd6 = TRUE;
-
-    sink->dualstack = FALSE;
-  } else if (sink->dualstack) {
-    int v6only;
-    if (sink->sockfd == -1) {
-      /* create sender socket for (dual-stack) IPv6 */
-      if ((sink->sock = socket (AF_INET6, SOCK_DGRAM, 0)) < 0)
-        goto no_socket;
-    
-      /* Turn off v6-only to make the socket dual-stack */
-      v6only = 0;
-      /* This failing should be impossible, since we determined that
-         dual-stack works already */
-      if (setsockopt (sink->sock, IPPROTO_IPV6, IPV6_V6ONLY,
-              (char *) &v6only, sizeof (v6only)) < 0)
-        goto no_socket;
-
-      GST_DEBUG_OBJECT (sink, "Dual-stack socket FD: %d", sink->sock);
-
-      sink->externalfd = FALSE;
-    } else {
-      struct sockaddr_storage sa;
-      socklen_t slen = sizeof (sa);
-
-      /* we use the configured socket */
-      sink->sock = sink->sockfd;
-      sink->externalfd = TRUE;
-
-      /* If the user-supplied socket is a v6 socket, then make it dual-stack
-       * so we can use v4 on it too */
-      if (getsockname (sink->sock, (struct sockaddr *) &sa, &slen) < 0)
-        goto no_socket;
-
-      if (sa.ss_family == AF_INET6) {
-        /* Turn off v6-only to make the socket dual-stack */
-        v6only = 0;
-        /* This failing should be impossible, since we determined that
-           dual-stack works already */
-        if (setsockopt (sink->sock, IPPROTO_IPV6, IPV6_V6ONLY,
-                (char *) &v6only, sizeof (v6only)) < 0)
-          goto no_socket;
-      } else {
-        GST_INFO_OBJECT (sink,
-            "IPv6 not available since application-supplied socket is IPv4");
-
-        /* Now we need to fix up any IPv4-mapped IPv6 addresses for
-         * already-present clients */
-        for (clients = sink->clients; clients; clients = g_list_next (clients)) {
-          client = (GstUDPClient *) clients->data;
-
-          if (client->theiraddr.ss_family == AF_INET6) {
-            /* Surely there must be a better way to do this... */
-            struct sockaddr_in6 addr6;
-            struct sockaddr_in *addr =
-                (struct sockaddr_in *) &client->theiraddr;
-
-            memcpy (&addr6, &client->theiraddr, sizeof (struct sockaddr_in6));
-
-            addr->sin_family = AF_INET;
-            addr->sin_port = addr6.sin6_port;
-            addr->sin_addr.s_addr = ((guint32 *) & addr6.sin6_addr)[3];
-          }
-        }
-      }
-    }
-  } else {
-    /* Not dual-stack capable. Create two sockets. */
-
-    if (sink->sockfd == -1) {
-      /* create sender socket for IPv4 */
-	  sink->ss_family = AF_INET;
-      if ((sink->sock = socket (AF_INET, SOCK_DGRAM, 0)) < 0)
-        goto no_socket;
-      GST_DEBUG_OBJECT (sink, "IPv4 socket: %d", sink->sock);
-
-      sink->externalfd = FALSE;
-    } else {
-      /* we use the configured socket */
-      sink->sock = sink->sockfd;
-      sink->externalfd = TRUE;
-    }
-
-    if (sink->sockfd6 == -1) {
-      /* create sender socket for IPv6 */
-      if ((sink->sock6 = socket (AF_INET6, SOCK_DGRAM, 0)) < 0) {
-        /* Failing this is ok - it just means we don't have IPv6 support */
-#ifdef G_OS_WIN32
-        if (WSAGetLastError () != WSAEAFNOSUPPORT)
-#else
-        if (errno != EAFNOSUPPORT)
-#endif
-          goto no_socket;
-      }
-      GST_DEBUG_OBJECT (sink, "IPv6 socket: %d", sink->sock6);
-
-      sink->externalfd6 = FALSE;
-    } else {
-      /* we use the configured socket */
-      sink->sock6 = sink->sockfd6;
-      sink->externalfd6 = TRUE;
-    }
   }
 
   bc_val = 1;
-  if (setsockopt (sink->sock, SOL_SOCKET, SO_BROADCAST,
-          &bc_val, sizeof (bc_val)) < 0)
-    goto no_broadcast;
-
-  if (sink->sock6 != -1 && setsockopt (sink->sock6, SOL_SOCKET, SO_BROADCAST,
-          &bc_val, sizeof (bc_val)) < 0)
+  if (setsockopt (sink->sock, SOL_SOCKET, SO_BROADCAST, &bc_val,
+          sizeof (bc_val)) < 0)
     goto no_broadcast;
 
   sink->bytes_to_serve = 0;
@@ -1078,6 +957,15 @@ no_socket:
     g_free (errormessage);
     return FALSE;
   }
+getsockname_error:
+  {
+    gchar *errormessage = socket_last_error_message ();
+    int errorcode = socket_last_error_code ();
+    GST_ELEMENT_ERROR (sink, RESOURCE, FAILED, (NULL),
+        ("Could not getsockname (%d): %s", errorcode, errormessage));
+    g_free (errormessage);
+    return FALSE;
+  }
 no_broadcast:
   {
     gchar *errormessage = socket_last_error_message ();
@@ -1102,40 +990,45 @@ gst_multiudpsink_add_internal (GstMultiUDPSink * sink, const gchar * host,
     gint port, gboolean lock)
 {
   GstUDPClient *client;
+  GstUDPClient udpclient;
   GTimeVal now;
-  int family;
+  GList *find;
+
+  udpclient.host = (gchar *) host;
+  udpclient.port = port;
 
   GST_DEBUG_OBJECT (sink, "adding client on host %s, port %d", host, port);
-  client = g_new0 (GstUDPClient, 1);
-  client->host = g_strdup (host);
-  client->port = port;
-  if (sink->dualstack)
-    family = AF_INET6;
-  else
-    family = AF_UNSPEC;
-
-  if (gst_udp_get_addr (host, port, &client->theiraddr, family) < 0)
-    goto getaddrinfo_error;
-  /* point the client to correct socket family */
-  if (sink->dualstack)
-    client->sock = &sink->sock;
-  else {
-    if (client->theiraddr.ss_family == AF_INET6)
-      client->sock = &sink->sock6;
-    else
-      client->sock = &sink->sock;
-  }
-
-  g_get_current_time (&now);
-  client->connect_time = GST_TIMEVAL_TO_TIME (now);
-
-  if (*client->sock > 0) {
-    gst_multiudpsink_configure_client (sink, client);
-  }
 
   if (lock)
     g_mutex_lock (sink->client_lock);
-  sink->clients = g_list_prepend (sink->clients, client);
+
+  find = g_list_find_custom (sink->clients, &udpclient,
+      (GCompareFunc) client_compare);
+  if (find) {
+    client = (GstUDPClient *) find->data;
+
+    GST_DEBUG_OBJECT (sink, "found %d existing clients with host %s, port %d",
+        client->refcount, host, port);
+    client->refcount++;
+  } else {
+    client = create_client (sink, host, port);
+
+    client->sock = &sink->sock;
+
+    if (gst_udp_get_addr (host, port, &client->theiraddr) < 0)
+      goto getaddrinfo_error;
+
+    g_get_current_time (&now);
+    client->connect_time = GST_TIMEVAL_TO_TIME (now);
+
+    if (*client->sock > 0) {
+      gst_multiudpsink_configure_client (sink, client);
+    }
+
+    GST_DEBUG_OBJECT (sink, "add client with host %s, port %d", host, port);
+    sink->clients = g_list_prepend (sink->clients, client);
+  }
+
   if (lock)
     g_mutex_unlock (sink->client_lock);
 
@@ -1151,8 +1044,9 @@ getaddrinfo_error:
     GST_DEBUG_OBJECT (sink, "did not add client on host %s, port %d", host,
         port);
     GST_WARNING_OBJECT (sink, "getaddrinfo lookup error?");
-    g_free (client->host);
-    g_free (client);
+    free_client (client);
+    if (lock)
+      g_mutex_unlock (sink->client_lock);
     return;
   }
 }
@@ -1161,22 +1055,6 @@ void
 gst_multiudpsink_add (GstMultiUDPSink * sink, const gchar * host, gint port)
 {
   gst_multiudpsink_add_internal (sink, host, port, TRUE);
-}
-
-static gint
-client_compare (GstUDPClient * a, GstUDPClient * b)
-{
-  if ((a->port == b->port) && (strcmp (a->host, b->host) == 0))
-    return 0;
-
-  return 1;
-}
-
-static void
-free_client (GstUDPClient * client)
-{
-  g_free (client->host);
-  g_free (client);
 }
 
 void
@@ -1196,26 +1074,32 @@ gst_multiudpsink_remove (GstMultiUDPSink * sink, const gchar * host, gint port)
   if (!find)
     goto not_found;
 
-  GST_DEBUG_OBJECT (sink, "remove client with host %s, port %d", host, port);
-
   client = (GstUDPClient *) find->data;
 
-  g_get_current_time (&now);
-  client->disconnect_time = GST_TIMEVAL_TO_TIME (now);
+  GST_DEBUG_OBJECT (sink, "found %d clients with host %s, port %d",
+      client->refcount, host, port);
 
-  if (*(client->sock) != -1 && sink->auto_multicast
-      && gst_udp_is_multicast (&client->theiraddr))
-    gst_udp_leave_group (*(client->sock), &client->theiraddr);
+  client->refcount--;
+  if (client->refcount == 0) {
+    GST_DEBUG_OBJECT (sink, "remove client with host %s, port %d", host, port);
 
-  /* Unlock to emit signal before we delete the actual client */
-  g_mutex_unlock (sink->client_lock);
-  g_signal_emit (G_OBJECT (sink),
-      gst_multiudpsink_signals[SIGNAL_CLIENT_REMOVED], 0, host, port);
-  g_mutex_lock (sink->client_lock);
+    g_get_current_time (&now);
+    client->disconnect_time = GST_TIMEVAL_TO_TIME (now);
 
-  sink->clients = g_list_delete_link (sink->clients, find);
+    if (*(client->sock) != -1 && sink->auto_multicast
+        && gst_udp_is_multicast (&client->theiraddr))
+      gst_udp_leave_group (*(client->sock), &client->theiraddr);
 
-  free_client (client);
+    /* Unlock to emit signal before we delete the actual client */
+    g_mutex_unlock (sink->client_lock);
+    g_signal_emit (G_OBJECT (sink),
+        gst_multiudpsink_signals[SIGNAL_CLIENT_REMOVED], 0, host, port);
+    g_mutex_lock (sink->client_lock);
+
+    sink->clients = g_list_delete_link (sink->clients, find);
+
+    free_client (client);
+  }
   g_mutex_unlock (sink->client_lock);
 
   return;

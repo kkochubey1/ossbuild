@@ -27,7 +27,7 @@
 #define GST_PACKAGE_NAME "GStreamer Bad Plug-ins source release"
 
 /* package origin */
-#define GST_PACKAGE_ORIGIN "OSSBuild"
+#define GST_PACKAGE_ORIGIN "http://code.google.com/p/ossbuild/"
 
 /* Define if the host CPU is an Alpha */
 #undef HAVE_CPU_ALPHA

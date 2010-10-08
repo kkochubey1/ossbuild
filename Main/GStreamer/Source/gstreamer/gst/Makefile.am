@@ -61,6 +61,7 @@ libgstreamer_@GST_MAJORMINOR@_la_SOURCES = \
 	gstcaps.c		\
 	gstchildproxy.c		\
 	gstclock.c		\
+	gstdatetime.c		\
 	gstdebugutils.c		\
 	gstelement.c		\
 	gstelementfactory.c	\
@@ -152,6 +153,7 @@ gst_headers =			\
 	gstchildproxy.h		\
 	gstclock.h		\
 	gstcompat.h		\
+	gstdatetime.h		\
 	gstdebugutils.h		\
 	gstelement.h		\
 	gstelementfactory.h	\
@@ -194,7 +196,8 @@ gst_headers =			\
 	gstparse.h		\
 	gstxml.h
 
-libgstreamer_@GST_MAJORMINOR@include_HEADERS = $(gst_headers)
+libgstreamer_@GST_MAJORMINOR@include_HEADERS = $(gst_headers) math-compat.h
+
 nodist_libgstreamer_@GST_MAJORMINOR@include_HEADERS = \
 	$(built_header_configure) $(built_header_make)
 

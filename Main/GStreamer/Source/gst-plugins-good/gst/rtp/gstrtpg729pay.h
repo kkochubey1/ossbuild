@@ -42,16 +42,19 @@ typedef struct _GstRTPG729PayClass GstRTPG729PayClass;
 
 struct _GstRTPG729Pay
 {
-  GstBaseRTPAudioPayload audiopayload;
+  GstBaseRTPPayload payload;
 
   GstAdapter *adapter;
   GstClockTime next_ts;
+  guint32 next_rtp_time;
+  GstClockTime first_ts;
+  guint32 first_rtp_time;
   gboolean discont;
 };
 
 struct _GstRTPG729PayClass
 {
-  GstBaseRTPAudioPayloadClass parent_class;
+  GstBaseRTPPayloadClass parent_class;
 };
 
 GType gst_rtp_g729_pay_get_type (void);

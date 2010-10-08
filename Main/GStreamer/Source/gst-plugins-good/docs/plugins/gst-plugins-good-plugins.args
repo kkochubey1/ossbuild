@@ -529,6 +529,16 @@
 </ARG>
 
 <ARG>
+<NAME>GstUDPSrc::reuse</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Reuse</NICK>
+<BLURB>Enable reuse of the port.</BLURB>
+<DEFAULT>TRUE</DEFAULT>
+</ARG>
+
+<ARG>
 <NAME>GstSMPTE::border</NAME>
 <TYPE>gint</TYPE>
 <RANGE>>= 0</RANGE>
@@ -736,6 +746,26 @@
 <NICK>Buffer Mode</NICK>
 <BLURB>Control the buffering algorithm in use.</BLURB>
 <DEFAULT>Slave receiver to sender clock</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstRTSPSrc::port-range</NAME>
+<TYPE>gchar*</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Port range</NICK>
+<BLURB>Client port range that can be used to receive RTP and RTCP data, eg. 3000-3005 (NULL = no restrictions).</BLURB>
+<DEFAULT>NULL</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstRTSPSrc::udp-buffer-size</NAME>
+<TYPE>gint</TYPE>
+<RANGE>>= 0</RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>UDP Buffer Size</NICK>
+<BLURB>Size of the kernel UDP receive buffer in bytes, 0=default.</BLURB>
+<DEFAULT>0</DEFAULT>
 </ARG>
 
 <ARG>
@@ -2479,6 +2509,16 @@
 </ARG>
 
 <ARG>
+<NAME>GstMultiUDPSink::send-duplicates</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Send Duplicates</NICK>
+<BLURB>When a distination/port pair is added multiple times, send packets multiple times as well.</BLURB>
+<DEFAULT>TRUE</DEFAULT>
+</ARG>
+
+<ARG>
 <NAME>GstCmmlDec::wait-clip-end-time</NAME>
 <TYPE>gboolean</TYPE>
 <RANGE></RANGE>
@@ -3036,6 +3076,56 @@
 <NICK>File descriptor</NICK>
 <BLURB>File descriptor of the device.</BLURB>
 <DEFAULT>-1</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstV4l2Src::brightness</NAME>
+<TYPE>gint</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Brightness</NICK>
+<BLURB>Picture brightness, or more precisely, the black level.</BLURB>
+<DEFAULT>0</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstV4l2Src::contrast</NAME>
+<TYPE>gint</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Contrast</NICK>
+<BLURB>Picture contrast or luma gain.</BLURB>
+<DEFAULT>0</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstV4l2Src::decimate</NAME>
+<TYPE>gint</TYPE>
+<RANGE>>= 1</RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Decimate</NICK>
+<BLURB>Only use every nth frame.</BLURB>
+<DEFAULT>1</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstV4l2Src::hue</NAME>
+<TYPE>gint</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Hue</NICK>
+<BLURB>Hue or color balance.</BLURB>
+<DEFAULT>0</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstV4l2Src::saturation</NAME>
+<TYPE>gint</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Saturation</NICK>
+<BLURB>Picture color saturation or chroma gain.</BLURB>
+<DEFAULT>0</DEFAULT>
 </ARG>
 
 <ARG>
@@ -19689,6 +19779,26 @@
 </ARG>
 
 <ARG>
+<NAME>GstPulseSink::client</NAME>
+<TYPE>gchar*</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Client</NICK>
+<BLURB>The PulseAudio client name to use.</BLURB>
+<DEFAULT>"<unknown>"</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstPulseSink::stream-properties</NAME>
+<TYPE>GstStructure*</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>stream properties</NICK>
+<BLURB>list of pulseaudio stream properties.</BLURB>
+<DEFAULT></DEFAULT>
+</ARG>
+
+<ARG>
 <NAME>GstPulseSrc::device</NAME>
 <TYPE>gchar*</TYPE>
 <RANGE></RANGE>
@@ -19716,6 +19826,16 @@
 <NICK>Device name</NICK>
 <BLURB>Human-readable name of the sound device.</BLURB>
 <DEFAULT>NULL</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstPulseSrc::stream-properties</NAME>
+<TYPE>GstStructure*</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>stream properties</NICK>
+<BLURB>list of pulseaudio stream properties.</BLURB>
+<DEFAULT></DEFAULT>
 </ARG>
 
 <ARG>
@@ -20419,6 +20539,26 @@
 </ARG>
 
 <ARG>
+<NAME>GstRtpBin::ntp-sync</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Sync on NTP clock</NICK>
+<BLURB>Synchronize received streams to the NTP clock.</BLURB>
+<DEFAULT>FALSE</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstRtpBin::use-pipeline-clock</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Use pipeline clock</NICK>
+<BLURB>Use the pipeline clock to set the NTP time in the RTCP SR messages.</BLURB>
+<DEFAULT>FALSE</DEFAULT>
+</ARG>
+
+<ARG>
 <NAME>GstRtpJitterBuffer::do-lost</NAME>
 <TYPE>gboolean</TYPE>
 <RANGE></RANGE>
@@ -20484,7 +20624,7 @@
 <RANGE>>= 0</RANGE>
 <FLAGS>rw</FLAGS>
 <NICK>Bandwidth</NICK>
-<BLURB>The bandwidth of the session in bytes per second.</BLURB>
+<BLURB>The bandwidth of the session in bytes per second (0 for auto-discover).</BLURB>
 <DEFAULT>64000</DEFAULT>
 </ARG>
 
@@ -20534,7 +20674,7 @@
 <RANGE>>= 0</RANGE>
 <FLAGS>rw</FLAGS>
 <NICK>RTCP Fraction</NICK>
-<BLURB>The RTCP bandwidth of the session in bytes per second.</BLURB>
+<BLURB>The RTCP bandwidth of the session in bytes per second (or as a real fraction of the RTP bandwidth if < 1.0).</BLURB>
 <DEFAULT>3200</DEFAULT>
 </ARG>
 
@@ -20566,6 +20706,16 @@
 <NICK>RTCP RS bandwidth</NICK>
 <BLURB>The RTCP bandwidth used for senders in bytes per second (-1 = default).</BLURB>
 <DEFAULT>-1</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstRtpSession::use-pipeline-clock</NAME>
+<TYPE>gboolean</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Use pipeline clock</NICK>
+<BLURB>Use the pipeline clock to set the NTP time in the RTCP SR messages.</BLURB>
+<DEFAULT>FALSE</DEFAULT>
 </ARG>
 
 <ARG>
@@ -20656,6 +20806,46 @@
 <NICK>Queue size</NICK>
 <BLURB>Number of buffers to be enqueud in the driver in streaming mode.</BLURB>
 <DEFAULT>8</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstV4l2Sink::brightness</NAME>
+<TYPE>gint</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Brightness</NICK>
+<BLURB>Picture brightness, or more precisely, the black level.</BLURB>
+<DEFAULT>0</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstV4l2Sink::contrast</NAME>
+<TYPE>gint</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Contrast</NICK>
+<BLURB>Picture contrast or luma gain.</BLURB>
+<DEFAULT>0</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstV4l2Sink::hue</NAME>
+<TYPE>gint</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Hue</NICK>
+<BLURB>Hue or color balance.</BLURB>
+<DEFAULT>0</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstV4l2Sink::saturation</NAME>
+<TYPE>gint</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Saturation</NICK>
+<BLURB>Picture color saturation or chroma gain.</BLURB>
+<DEFAULT>0</DEFAULT>
 </ARG>
 
 <ARG>
@@ -20816,5 +21006,15 @@
 <NICK>Config Send Interval</NICK>
 <BLURB>Send Config Insertion Interval in seconds (configuration headers will be multiplexed in the data stream when detected.) (0 = disabled).</BLURB>
 <DEFAULT>0</DEFAULT>
+</ARG>
+
+<ARG>
+<NAME>GstVideoMixer2::background</NAME>
+<TYPE>GstVideoMixer2Background</TYPE>
+<RANGE></RANGE>
+<FLAGS>rw</FLAGS>
+<NICK>Background</NICK>
+<BLURB>Background type.</BLURB>
+<DEFAULT>Checker pattern</DEFAULT>
 </ARG>
 

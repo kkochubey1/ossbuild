@@ -54,7 +54,7 @@ MKDB_OPTIONS=--sgml-mode --source-suffixes=c,h,cc,m
 
 # Extra options to supply to gtkdoc-fixref.
 FIXXREF_OPTIONS=--extra-dir=$(GLIB_PREFIX)/share/gtk-doc/html \
-	--extra-dir=$(GST_PREFIX)/share/gtk-doc/html
+	--extra-dir=$(GST_PREFIX)/share/gtk-doc/html \
 	--extra-dir=$(GSTPB_PREFIX)/share/gtk-doc/html
 
 # Used for dependencies.
@@ -95,9 +95,11 @@ EXTRA_HFILES = \
 	$(top_srcdir)/ext/twolame/gsttwolame.h \
 	$(top_srcdir)/ext/x264/gstx264enc.h \
 	$(top_srcdir)/gst/asfdemux/gstrtspwms.h \
+	$(top_srcdir)/gst/mpegaudioparse/gstmpegaudioparse.h \
 	$(top_srcdir)/gst/mpegaudioparse/gstxingmux.h \
 	$(top_srcdir)/gst/realmedia/rademux.h \
 	$(top_srcdir)/gst/realmedia/rdtmanager.h \
+	$(top_srcdir)/gst/realmedia/rmdemux.h \
 	$(top_srcdir)/gst/realmedia/rtspreal.h \
 	$(top_srcdir)/gst/synaesthesia/gstsynaesthesia.h
 

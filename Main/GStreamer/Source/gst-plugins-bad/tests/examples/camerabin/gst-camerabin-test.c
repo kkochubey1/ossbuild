@@ -19,20 +19,17 @@
  */
 
  /*
-    Compile using:
-    gcc -Wall `pkg-config --cflags --libs gstreamer-0.10` gst-camerabin-test.c -o gst-camerabin-test
-
     Examples:
     ./gst-camerabin-test --image-width=2048 --image-height=1536 --image-enc=dspjpegenc
     ./gst-camerabin-test --mode=1 --capture-time=10 --image-width=848 --image-height=480 --view-framerate-num=2825 \
     --view-framerate-den=100 --audio-src=pulsesrc --audio-enc=nokiaaacenc --video-enc=dspmp4venc \
     --video-mux=mp4mux --src-colorspace=UYVY
 
-    ./gst-camerabin-test --help
+    gst-camerabin-test --help
     Usage:
     gst-camerabin-test [OPTION...]
 
-    camerabin command line test application
+    camerabin command line test application.
 
     Help Options:
     -h, --help                        Show help options
@@ -51,9 +48,9 @@
     --directory                       Directory for capture file(s) (default is current directory)
     --mode                            Capture mode (default = 0 (image), 1 = video)
     --capture-time                    Time to capture video in seconds (default = 10)
-    --capture-total                   Total number of captures to be done
+    --capture-total                   Total number of captures to be done (default = 1)
     --flags                           Flags for camerabin, (default = 0x9)
-    --mute                            Mute audio (default = 0 (no))
+    --mute                            Mute audio
     --zoom                            Zoom (100 = 1x (default), 200 = 2x etc.)
     --audio-src                       Audio source used in video recording
     --audio-bitrate                   Audio bitrate (default 128000)
@@ -70,10 +67,14 @@
     --image-height                    Height for image capture
     --view-framerate-num              Framerate numerator for viewfinder
     --view-framerate-den              Framerate denominator for viewfinder
-    --src-colorspace                  Colorspace format for videosource (e.g. YUY2, UYVY)
+    --src-colorspace                  Colorspace format for video source (e.g. YUY2, UYVY)
+    --src-format                      Video format for video source
     --preview-caps                    Preview caps (e.g. video/x-raw-rgb,width=320,height=240)
-    --video-source-filter                    Video filter to process all frames from video source
+    --video-source-filter             Video filter to process all frames from video source
     --viewfinder-filter               Filter to process all frames going to viewfinder sink
+    --x-width                         X window width (default = 320)
+    --x-height                        X window height (default = 240)
+    --no-xwindow                      Do not create XWindow
 
   */
 
@@ -84,8 +85,11 @@
 #  include "config.h"
 #endif
 
+#define GST_USE_UNSTABLE_API 1
+
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
+#include <gst/interfaces/photography.h>
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
@@ -101,7 +105,6 @@
  */
 GST_DEBUG_CATEGORY_STATIC (camerabin_test);
 #define GST_CAT_DEFAULT camerabin_test
-
 typedef struct _ResultType
 {
   GstClockTime avg;
@@ -131,6 +134,7 @@ static gint image_width = 1280;
 static gint image_height = 720;
 static gint view_framerate_num = 2825;
 static gint view_framerate_den = 100;
+static gboolean no_xwindow = FALSE;
 
 /* photography interface command line options */
 static gfloat ev_compensation = 0.0;
@@ -143,7 +147,7 @@ static gint wb_mode = 0;
 static gint color_mode = 0;
 static gint mode = 1;
 static gint flags = 0x4f;
-static gint mute = 0;
+static gboolean mute = FALSE;
 static gint zoom = 100;
 
 static gint capture_time = 10;
@@ -265,8 +269,8 @@ bus_callback (GstBus * bus, GstMessage * message, gpointer data)
       st = gst_message_get_structure (message);
       if (st) {
         if (gst_structure_has_name (message->structure, "prepare-xwindow-id")) {
-          if (window) {
-            gst_x_overlay_set_xwindow_id (GST_X_OVERLAY (GST_MESSAGE_SRC
+          if (!no_xwindow && window) {
+            gst_x_overlay_set_window_handle (GST_X_OVERLAY (GST_MESSAGE_SRC
                     (message)), window);
             gst_message_unref (message);
             message = NULL;
@@ -478,6 +482,7 @@ setup_pipeline (void)
     g_warning ("can't set camerabin to playing\n");
     goto error;
   }
+
   GST_INFO_OBJECT (camera_bin, "camera started");
   return TRUE;
 error:
@@ -517,8 +522,8 @@ set_metadata (GstElement * camera)
       GST_TAG_GEO_LOCATION_LONGITUDE, 1.0,
       GST_TAG_GEO_LOCATION_LATITUDE, 2.0,
       GST_TAG_GEO_LOCATION_ELEVATION, 3.0,
-      "device-make", "gst-camerabin-test make",
-      "device-model", "gst-camerabin-test model", NULL);
+      GST_TAG_DEVICE_MANUFACTURER, "gst-camerabin-test manufacturer",
+      GST_TAG_DEVICE_MODEL, "gst-camerabin-test model", NULL);
 
   g_free (desc_str);
   g_date_free (date);
@@ -528,6 +533,9 @@ static gboolean
 run_pipeline (gpointer user_data)
 {
   GstCaps *preview_caps = NULL;
+  gchar *filename_str = NULL;
+  GString *filename_buffer = NULL;
+  GstElement *video_source = NULL;
 
   g_object_set (camera_bin, "mode", mode, NULL);
 
@@ -542,25 +550,37 @@ run_pipeline (gpointer user_data)
 
   set_metadata (camera_bin);
 
-  if (capture_total) {
-    gchar *filename_str = filename->str;
-    filename_str = g_strdup_printf ("%s%d", filename->str, capture_count);
-    g_object_set (camera_bin, "filename", filename_str, NULL);
-    g_free (filename_str);
-  } else {
-    g_object_set (camera_bin, "filename", filename->str, NULL);
-  }
+  filename_str = g_strdup_printf ("/test_%04u", capture_count);
+  filename_buffer = g_string_new (filename->str);
+  filename_buffer = g_string_append (filename_buffer, filename_str);
 
-  g_object_set (camera_bin, "ev-compensation", ev_compensation, NULL);
-  g_object_set (camera_bin, "aperture", aperture, NULL);
-  g_object_set (camera_bin, "flash-mode", flash_mode, NULL);
-  g_object_set (camera_bin, "scene-mode", scene_mode, NULL);
-  g_object_set (camera_bin, "exposure", exposure, NULL);
-  g_object_set (camera_bin, "iso-speed", iso_speed, NULL);
-  g_object_set (camera_bin, "white-balance-mode", wb_mode, NULL);
-  g_object_set (camera_bin, "colour-tone-mode", color_mode, NULL);
+  if (mode == 1)
+    filename_buffer = g_string_append (filename_buffer, ".mp4");
+  else
+    filename_buffer = g_string_append (filename_buffer, ".jpg");
+
+  g_object_set (camera_bin, "filename", filename_buffer->str, NULL);
+  g_string_free (filename_buffer, FALSE);
+  g_free (filename_str);
+
+
+  g_object_get (camera_bin, "video-source", &video_source, NULL);
+  if (video_source) {
+    if (GST_IS_ELEMENT (video_source) &&
+        gst_element_implements_interface (video_source, GST_TYPE_PHOTOGRAPHY)) {
+      g_object_set (video_source, "ev-compensation", ev_compensation, NULL);
+      g_object_set (video_source, "aperture", aperture, NULL);
+      g_object_set (video_source, "flash-mode", flash_mode, NULL);
+      g_object_set (video_source, "scene-mode", scene_mode, NULL);
+      g_object_set (video_source, "exposure", exposure, NULL);
+      g_object_set (video_source, "iso-speed", iso_speed, NULL);
+      g_object_set (video_source, "white-balance-mode", wb_mode, NULL);
+      g_object_set (video_source, "colour-tone-mode", color_mode, NULL);
+    }
+    g_object_unref (video_source);
+  }
   g_object_set (camera_bin, "mute", mute, NULL);
-  g_object_set (camera_bin, "zoom", zoom, NULL);
+  g_object_set (camera_bin, "zoom", zoom / 100.0f, NULL);
 
   capture_count++;
   g_signal_emit_by_name (camera_bin, "capture-start", 0);
@@ -615,9 +635,9 @@ main (int argc, char *argv[])
         "Total number of captures to be done (default = 1)", NULL},
     {"flags", '\0', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_INT, &flags,
         "Flags for camerabin, (default = 0x9)", NULL},
-    {"mute", '\0', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_STRING, &mute,
-        "Mute audio (default = 0 (no))", NULL},
-    {"zoom", '\0', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_STRING, &zoom,
+    {"mute", '\0', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_NONE, &mute,
+        "Mute audio", NULL},
+    {"zoom", '\0', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_INT, &zoom,
         "Zoom (100 = 1x (default), 200 = 2x etc.)", NULL},
     {"audio-src", '\0', 0, G_OPTION_ARG_STRING, &audiosrc_name,
         "Audio source used in video recording", NULL},
@@ -663,6 +683,8 @@ main (int argc, char *argv[])
         "X window width (default = 320)", NULL},
     {"x-height", '\0', 0, G_OPTION_ARG_INT, &x_height,
         "X window height (default = 240)", NULL},
+    {"no-xwindow", '\0', 0, G_OPTION_ARG_NONE, &no_xwindow,
+        "Do not create XWindow", NULL},
     {NULL}
   };
 
@@ -670,7 +692,8 @@ main (int argc, char *argv[])
   GError *err = NULL;
 
   /* if we fail to create xwindow should we care? */
-  create_host_window ();
+  if (!no_xwindow)
+    create_host_window ();
 
   if (!g_thread_supported ())
     g_thread_init (NULL);
@@ -697,12 +720,6 @@ main (int argc, char *argv[])
   filename = g_string_new (fn_option);
   if (filename->len == 0)
     filename = g_string_append (filename, ".");
-
-  filename = g_string_append (filename, "/test_%04u");
-  if (mode == 1)
-    filename = g_string_append (filename, ".mp4");
-  else
-    filename = g_string_append (filename, ".jpg");
 
   /* init */
   if (setup_pipeline ()) {

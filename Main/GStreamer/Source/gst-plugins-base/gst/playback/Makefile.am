@@ -17,9 +17,7 @@ libgstplaybin_la_SOURCES = \
 	gstplaysink.c \
 	gstplaybasebin.c \
 	gstplay-enum.c \
-	gstfactorylists.c \
 	gstinputselector.c \
-	gstscreenshot.c \
 	gststreaminfo.c \
 	gststreamselector.c \
 	gstsubtitleoverlay.c \
@@ -44,7 +42,7 @@ libgstdecodebin_la_LIBADD = \
 	$(GST_LIBS)
 libgstdecodebin_la_LIBTOOLFLAGS = --tag=disable-static
 
-libgstdecodebin2_la_SOURCES = gstdecodebin2.c gsturidecodebin.c gstfactorylists.c gstplay-enum.c
+libgstdecodebin2_la_SOURCES = gstdecodebin2.c gsturidecodebin.c gstplay-enum.c
 nodist_libgstdecodebin2_la_SOURCES = $(built_sources)
 libgstdecodebin2_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
 libgstdecodebin2_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
@@ -58,40 +56,12 @@ noinst_HEADERS = \
 	gstplaybasebin.h \
 	gstplaysink.h \
 	gststreaminfo.h \
-	gstfactorylists.h \
 	gstinputselector.h \
 	gstplay-enum.h \
-	gstscreenshot.h \
 	gststreamselector.h \
 	gstrawcaps.h \
 	gstsubtitleoverlay.h \
 	gststreamsynchronizer.h
-
-noinst_PROGRAMS = test decodetest test2 test3 test4 test5 test6 test7
-
-test_LDADD = $(GST_LIBS) 
-test_CFLAGS = $(GST_CFLAGS)
-
-test2_LDADD = $(GST_LIBS) 
-test2_CFLAGS = $(GST_CFLAGS)
-
-test3_LDADD = $(GST_LIBS) 
-test3_CFLAGS = $(GST_CFLAGS)
-
-test4_LDADD = $(GST_LIBS) 
-test4_CFLAGS = $(GST_CFLAGS)
-
-test5_LDADD = $(GST_LIBS) 
-test5_CFLAGS = $(GST_CFLAGS)
-
-test6_LDADD = $(GST_LIBS) 
-test6_CFLAGS = $(GST_CFLAGS)
-
-test7_LDADD = $(GST_LIBS) 
-test7_CFLAGS = $(GST_CFLAGS)
-
-decodetest_LDADD = $(GST_LIBS) 
-decodetest_CFLAGS = $(GST_CFLAGS)
 
 BUILT_SOURCES = $(built_headers) $(built_sources)
 

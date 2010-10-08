@@ -63,6 +63,8 @@
 #include "gst/riff/riff-media.h"
 #include "gst/riff/riff-read.h"
 
+#include <gst/pbutils/pbutils.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -364,11 +366,8 @@ GST_STATIC_PAD_TEMPLATE ("subtitle_%02d",
     GST_PAD_SOMETIMES,
     GST_STATIC_CAPS_ANY);
 
-static GstElementClass *parent_class = NULL;
+GST_BOILERPLATE (GstQTDemux, gst_qtdemux, GstQTDemux, GST_TYPE_ELEMENT);
 
-static void gst_qtdemux_class_init (GstQTDemuxClass * klass);
-static void gst_qtdemux_base_init (GstQTDemuxClass * klass);
-static void gst_qtdemux_init (GstQTDemux * quicktime_demux);
 static void gst_qtdemux_dispose (GObject * object);
 
 static void gst_qtdemux_set_index (GstElement * element, GstIndex * index);
@@ -403,29 +402,9 @@ static GstCaps *qtdemux_sub_caps (GstQTDemux * qtdemux,
 static gboolean qtdemux_parse_samples (GstQTDemux * qtdemux,
     QtDemuxStream * stream, guint32 n);
 
-GType
-gst_qtdemux_get_type (void)
-{
-  static GType qtdemux_type = 0;
-
-  if (G_UNLIKELY (!qtdemux_type)) {
-    static const GTypeInfo qtdemux_info = {
-      sizeof (GstQTDemuxClass),
-      (GBaseInitFunc) gst_qtdemux_base_init, NULL,
-      (GClassInitFunc) gst_qtdemux_class_init,
-      NULL, NULL, sizeof (GstQTDemux), 0,
-      (GInstanceInitFunc) gst_qtdemux_init,
-    };
-
-    qtdemux_type =
-        g_type_register_static (GST_TYPE_ELEMENT, "GstQTDemux", &qtdemux_info,
-        0);
-  }
-  return qtdemux_type;
-}
 
 static void
-gst_qtdemux_base_init (GstQTDemuxClass * klass)
+gst_qtdemux_base_init (gpointer klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
 
@@ -465,7 +444,7 @@ gst_qtdemux_class_init (GstQTDemuxClass * klass)
 }
 
 static void
-gst_qtdemux_init (GstQTDemux * qtdemux)
+gst_qtdemux_init (GstQTDemux * qtdemux, GstQTDemuxClass * klass)
 {
   qtdemux->sinkpad =
       gst_pad_new_from_static_template (&gst_qtdemux_sink_template, "sink");
@@ -731,7 +710,7 @@ static void
 gst_qtdemux_push_event (GstQTDemux * qtdemux, GstEvent * event)
 {
   guint n;
-  gboolean pushed_sucessfully = FALSE;
+  gboolean has_valid_stream = FALSE;
   GstEventType etype = GST_EVENT_TYPE (event);
 
   GST_DEBUG_OBJECT (qtdemux, "pushing %s event on all source pads",
@@ -739,16 +718,22 @@ gst_qtdemux_push_event (GstQTDemux * qtdemux, GstEvent * event)
 
   for (n = 0; n < qtdemux->n_streams; n++) {
     GstPad *pad;
+    QtDemuxStream *stream = qtdemux->streams[n];
 
-    if ((pad = qtdemux->streams[n]->pad)) {
-      if (gst_pad_push_event (pad, gst_event_ref (event)))
-        pushed_sucessfully = TRUE;
+    if ((pad = stream->pad)) {
+      has_valid_stream = TRUE;
+
+      if (etype == GST_EVENT_EOS)
+        stream->sent_eos = TRUE;
+
+      gst_pad_push_event (pad, gst_event_ref (event));
     }
   }
+
   gst_event_unref (event);
 
-  /* if it is EOS and nothing is pushed, post an error */
-  if (!pushed_sucessfully && etype == GST_EVENT_EOS) {
+  /* if it is EOS and there are no pads, post an error */
+  if (!has_valid_stream && etype == GST_EVENT_EOS) {
     gst_qtdemux_post_no_playable_stream_error (qtdemux);
   }
 }
@@ -1736,6 +1721,20 @@ gst_qtdemux_change_state (GstElement * element, GstStateChange transition)
 }
 
 static void
+qtdemux_post_global_tags (GstQTDemux * qtdemux)
+{
+  if (qtdemux->tag_list) {
+    /* all header tags ready and parsed, push them */
+    GST_INFO_OBJECT (qtdemux, "posting global tags: %" GST_PTR_FORMAT,
+        qtdemux->tag_list);
+    /* post now, send event on pads later */
+    gst_element_post_message (GST_ELEMENT (qtdemux),
+        gst_message_new_tag (GST_OBJECT (qtdemux),
+            gst_tag_list_copy (qtdemux->tag_list)));
+  }
+}
+
+static void
 qtdemux_parse_ftyp (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
 {
   /* only consider at least a sufficiently complete ftyp atom */
@@ -1747,6 +1746,59 @@ qtdemux_parse_ftyp (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
         GST_FOURCC_ARGS (qtdemux->major_brand));
     buf = qtdemux->comp_brands = gst_buffer_new_and_alloc (length - 16);
     memcpy (GST_BUFFER_DATA (buf), buffer + 16, GST_BUFFER_SIZE (buf));
+  }
+}
+
+static void
+qtdemux_handle_xmp_taglist (GstQTDemux * qtdemux, GstTagList * taglist)
+{
+  /* Strip out bogus fields */
+  if (taglist) {
+    gst_tag_list_remove_tag (taglist, GST_TAG_VIDEO_CODEC);
+
+    GST_DEBUG_OBJECT (qtdemux, "Found XMP tags %" GST_PTR_FORMAT, taglist);
+
+    if (qtdemux->tag_list) {
+      /* prioritize native tags using _KEEP mode */
+      gst_tag_list_insert (qtdemux->tag_list, taglist, GST_TAG_MERGE_KEEP);
+      gst_tag_list_free (taglist);
+    } else
+      qtdemux->tag_list = taglist;
+  }
+}
+
+static void
+qtdemux_parse_uuid (GstQTDemux * qtdemux, const guint8 * buffer, gint length)
+{
+  static guint8 xmp_uuid[] = { 0xBE, 0x7A, 0xCF, 0xCB,
+    0x97, 0xA9, 0x42, 0xE8,
+    0x9C, 0x71, 0x99, 0x94,
+    0x91, 0xE3, 0xAF, 0xAC
+  };
+  guint offset;
+
+  offset = (QT_UINT32 (buffer) == 0) ? 16 : 8;
+
+  if (length <= offset + 16) {
+    GST_DEBUG_OBJECT (qtdemux, "uuid atom is too short, skipping");
+    return;
+  }
+
+  if (memcmp (buffer + offset, xmp_uuid, 16) == 0) {
+    GstBuffer *buf;
+    GstTagList *taglist;
+
+    buf = gst_buffer_new ();
+    GST_BUFFER_DATA (buf) = (guint8 *) buffer + offset + 16;
+    GST_BUFFER_SIZE (buf) = length - offset - 16;
+
+    taglist = gst_tag_list_from_xmp_buffer (buf);
+    gst_buffer_unref (buf);
+
+    qtdemux_handle_xmp_taglist (qtdemux, taglist);
+
+  } else {
+    GST_DEBUG_OBJECT (qtdemux, "Ignoring unknown uuid");
   }
 }
 
@@ -1819,6 +1871,12 @@ gst_qtdemux_loop_state_header (GstQTDemux * qtdemux)
     {
       GstBuffer *moov;
 
+      if (qtdemux->got_moov) {
+        GST_DEBUG_OBJECT (qtdemux, "Skipping moov atom as we have one already");
+        qtdemux->offset += length;
+        goto beach;
+      }
+
       ret = gst_pad_pull_range (qtdemux->sinkpad, cur_offset, length, &moov);
       if (ret != GST_FLOW_OK)
         goto beach;
@@ -1868,9 +1926,7 @@ gst_qtdemux_loop_state_header (GstQTDemux * qtdemux)
       g_node_destroy (qtdemux->moov_node);
       gst_buffer_unref (moov);
       qtdemux->moov_node = NULL;
-      qtdemux->state = QTDEMUX_STATE_MOVIE;
-      GST_DEBUG_OBJECT (qtdemux, "switching state to STATE_MOVIE (%d)",
-          qtdemux->state);
+      qtdemux->got_moov = TRUE;
       break;
     }
     case FOURCC_ftyp:
@@ -1885,6 +1941,20 @@ gst_qtdemux_loop_state_header (GstQTDemux * qtdemux)
       qtdemux_parse_ftyp (qtdemux, GST_BUFFER_DATA (ftyp),
           GST_BUFFER_SIZE (ftyp));
       gst_buffer_unref (ftyp);
+      break;
+    }
+    case FOURCC_uuid:
+    {
+      GstBuffer *uuid;
+
+      /* uuid are extension atoms */
+      ret = gst_qtdemux_pull_atom (qtdemux, cur_offset, length, &uuid);
+      if (ret != GST_FLOW_OK)
+        goto beach;
+      qtdemux->offset += length;
+      qtdemux_parse_uuid (qtdemux, GST_BUFFER_DATA (uuid),
+          GST_BUFFER_SIZE (uuid));
+      gst_buffer_unref (uuid);
       break;
     }
     default:
@@ -1907,6 +1977,15 @@ gst_qtdemux_loop_state_header (GstQTDemux * qtdemux)
   }
 
 beach:
+  if (ret == GST_FLOW_UNEXPECTED && qtdemux->got_moov) {
+    /* Only post, event on pads is done after newsegment */
+    qtdemux_post_global_tags (qtdemux);
+
+    qtdemux->state = QTDEMUX_STATE_MOVIE;
+    GST_DEBUG_OBJECT (qtdemux, "switching state to STATE_MOVIE (%d)",
+        qtdemux->state);
+    return GST_FLOW_OK;
+  }
   return ret;
 }
 
@@ -2934,46 +3013,43 @@ pause:
     gst_pad_pause_task (pad);
 
     /* fatal errors need special actions */
-    if (GST_FLOW_IS_FATAL (ret) || ret == GST_FLOW_NOT_LINKED) {
-      /* check EOS */
-      if (ret == GST_FLOW_UNEXPECTED) {
-        if (qtdemux->n_streams == 0) {
-          /* we have no streams, post an error */
-          gst_qtdemux_post_no_playable_stream_error (qtdemux);
-        }
-        if (qtdemux->segment.flags & GST_SEEK_FLAG_SEGMENT) {
-          gint64 stop;
+    /* check EOS */
+    if (ret == GST_FLOW_UNEXPECTED) {
+      if (qtdemux->n_streams == 0) {
+        /* we have no streams, post an error */
+        gst_qtdemux_post_no_playable_stream_error (qtdemux);
+      }
+      if (qtdemux->segment.flags & GST_SEEK_FLAG_SEGMENT) {
+        gint64 stop;
 
-          /* FIXME: I am not sure this is the right fix. If the sinks are
-           * supposed to detect the segment is complete and accumulate 
-           * automatically, it does not seem to work here. Need more work */
-          qtdemux->segment_running = TRUE;
+        /* FIXME: I am not sure this is the right fix. If the sinks are
+         * supposed to detect the segment is complete and accumulate 
+         * automatically, it does not seem to work here. Need more work */
+        qtdemux->segment_running = TRUE;
 
-          if ((stop = qtdemux->segment.stop) == -1)
-            stop = qtdemux->segment.duration;
+        if ((stop = qtdemux->segment.stop) == -1)
+          stop = qtdemux->segment.duration;
 
-          if (qtdemux->segment.rate >= 0) {
-            GST_LOG_OBJECT (qtdemux, "Sending segment done, at end of segment");
-            gst_element_post_message (GST_ELEMENT_CAST (qtdemux),
-                gst_message_new_segment_done (GST_OBJECT_CAST (qtdemux),
-                    GST_FORMAT_TIME, stop));
-          } else {
-            /*  For Reverse Playback */
-            GST_LOG_OBJECT (qtdemux,
-                "Sending segment done, at start of segment");
-            gst_element_post_message (GST_ELEMENT_CAST (qtdemux),
-                gst_message_new_segment_done (GST_OBJECT_CAST (qtdemux),
-                    GST_FORMAT_TIME, qtdemux->segment.start));
-          }
+        if (qtdemux->segment.rate >= 0) {
+          GST_LOG_OBJECT (qtdemux, "Sending segment done, at end of segment");
+          gst_element_post_message (GST_ELEMENT_CAST (qtdemux),
+              gst_message_new_segment_done (GST_OBJECT_CAST (qtdemux),
+                  GST_FORMAT_TIME, stop));
         } else {
-          GST_LOG_OBJECT (qtdemux, "Sending EOS at end of segment");
-          gst_qtdemux_push_event (qtdemux, gst_event_new_eos ());
+          /*  For Reverse Playback */
+          GST_LOG_OBJECT (qtdemux, "Sending segment done, at start of segment");
+          gst_element_post_message (GST_ELEMENT_CAST (qtdemux),
+              gst_message_new_segment_done (GST_OBJECT_CAST (qtdemux),
+                  GST_FORMAT_TIME, qtdemux->segment.start));
         }
       } else {
-        GST_ELEMENT_ERROR (qtdemux, STREAM, FAILED,
-            (NULL), ("streaming stopped, reason %s", reason));
+        GST_LOG_OBJECT (qtdemux, "Sending EOS at end of segment");
         gst_qtdemux_push_event (qtdemux, gst_event_new_eos ());
       }
+    } else if (ret == GST_FLOW_NOT_LINKED || ret < GST_FLOW_UNEXPECTED) {
+      GST_ELEMENT_ERROR (qtdemux, STREAM, FAILED,
+          (NULL), ("streaming stopped, reason %s", reason));
+      gst_qtdemux_push_event (qtdemux, gst_event_new_eos ());
     }
     goto done;
   }
@@ -3133,6 +3209,10 @@ gst_qtdemux_chain (GstPad * sinkpad, GstBuffer * inbuf)
             /* we have the headers, start playback */
             demux->state = QTDEMUX_STATE_MOVIE;
             demux->neededbytes = next_entry_size (demux);
+
+            /* Only post, event on pads is done after newsegment */
+            qtdemux_post_global_tags (demux);
+
           } else {
             /* no headers yet, try to get them */
             guint bs;
@@ -3219,6 +3299,9 @@ gst_qtdemux_chain (GstPad * sinkpad, GstBuffer * inbuf)
         } else if (fourcc == FOURCC_ftyp) {
           GST_DEBUG_OBJECT (demux, "Parsing [ftyp]");
           qtdemux_parse_ftyp (demux, data, demux->neededbytes);
+        } else if (fourcc == FOURCC_uuid) {
+          GST_DEBUG_OBJECT (demux, "Parsing [uuid]");
+          qtdemux_parse_uuid (demux, data, demux->neededbytes);
         } else {
           GST_WARNING_OBJECT (demux,
               "Unknown fourcc while parsing header : %" GST_FOURCC_FORMAT,
@@ -3244,6 +3327,10 @@ gst_qtdemux_chain (GstPad * sinkpad, GstBuffer * inbuf)
           demux->offset = demux->mdatoffset;
           demux->neededbytes = next_entry_size (demux);
           demux->state = QTDEMUX_STATE_MOVIE;
+
+          /* Only post, event on pads is done after newsegment */
+          qtdemux_post_global_tags (demux);
+
         } else {
           GST_DEBUG_OBJECT (demux, "Carrying on normally");
           gst_adapter_flush (demux->adapter, demux->neededbytes);
@@ -4151,7 +4238,7 @@ qtdemux_stbl_init (GstQTDemux * qtdemux, QtDemuxStream * stream, GNode * stbl)
   /* sync sample atom */
   stream->stps_present = FALSE;
   if ((stream->stss_present =
-          !!qtdemux_tree_get_child_by_type_full (stbl, FOURCC_stss,
+          ! !qtdemux_tree_get_child_by_type_full (stbl, FOURCC_stss,
               &stream->stss) ? TRUE : FALSE) == TRUE) {
     /* copy atom data into a new buffer for later use */
     stream->stss.data = g_memdup (stream->stss.data, stream->stss.size);
@@ -4169,7 +4256,7 @@ qtdemux_stbl_init (GstQTDemux * qtdemux, QtDemuxStream * stream, GNode * stbl)
 
     /* partial sync sample atom */
     if ((stream->stps_present =
-            !!qtdemux_tree_get_child_by_type_full (stbl, FOURCC_stps,
+            ! !qtdemux_tree_get_child_by_type_full (stbl, FOURCC_stps,
                 &stream->stps) ? TRUE : FALSE) == TRUE) {
       /* copy atom data into a new buffer for later use */
       stream->stps.data = g_memdup (stream->stps.data, stream->stps.size);
@@ -4293,7 +4380,7 @@ qtdemux_stbl_init (GstQTDemux * qtdemux, QtDemuxStream * stream, GNode * stbl)
 
   /* composition time-to-sample */
   if ((stream->ctts_present =
-          !!qtdemux_tree_get_child_by_type_full (stbl, FOURCC_ctts,
+          ! !qtdemux_tree_get_child_by_type_full (stbl, FOURCC_ctts,
               &stream->ctts) ? TRUE : FALSE) == TRUE) {
     /* copy atom data into a new buffer for later use */
     stream->ctts.data = g_memdup (stream->ctts.data, stream->ctts.size);
@@ -4536,10 +4623,6 @@ done2:
 
         GST_LOG_OBJECT (qtdemux, "block %d, %u timestamps, duration %u",
             i, stream->stts_samples, stream->stts_duration);
-
-        /* take first duration for fps */
-        if (G_UNLIKELY (stream->min_duration == 0))
-          stream->min_duration = stream->stts_duration;
 
         stream->stts_sample_index = 0;
       }
@@ -5031,92 +5114,12 @@ qtdemux_get_rtsp_uri_from_hndl (GstQTDemux * qtdemux, GNode * minf)
   return uri;
 }
 
-/*
- * XXX: This code is duplicated in gst/mastroska/matroska-demux.c. Please
- * replicate any changes you make over there as well.
- */
-static gchar *
-avc_profile_idc_to_string (guint profile_idc, guint constraint_set_flags)
+static gint
+less_than (gconstpointer a, gconstpointer b)
 {
-  const gchar *profile = NULL;
-  gint csf1, csf3;
+  const guint32 *av = a, *bv = b;
 
-  csf1 = (constraint_set_flags & 0x40) >> 6;
-  csf3 = (constraint_set_flags & 0x10) >> 4;
-
-  switch (profile_idc) {
-    case 66:
-      if (csf1)
-        profile = "constrained-baseline";
-      else
-        profile = "baseline";
-      break;
-    case 77:
-      profile = "main";
-      break;
-    case 88:
-      profile = "extended";
-      break;
-    case 100:
-      profile = "high";
-      break;
-    case 110:
-      if (csf3)
-        profile = "high-10-intra";
-      else
-        profile = "high-10";
-      break;
-    case 122:
-      if (csf3)
-        profile = "high-4:2:2-intra";
-      else
-        profile = "high-4:2:2";
-      break;
-    case 244:
-      if (csf3)
-        profile = "high-4:4:4-intra";
-      else
-        profile = "high-4:4:4";
-      break;
-    case 44:
-      profile = "cavlc-4:4:4-intra";
-      break;
-    default:
-      return NULL;
-  }
-
-  return g_strdup (profile);
-}
-
-static gchar *
-avc_level_idc_to_string (guint level_idc, guint constraint_set_flags)
-{
-  gint csf3;
-
-  csf3 = (constraint_set_flags & 0x10) >> 4;
-
-  if (level_idc == 11 && csf3)
-    return g_strdup ("1b");
-  else if (level_idc % 10 == 0)
-    return g_strdup_printf ("%u", level_idc / 10);
-  else
-    return g_strdup_printf ("%u.%u", level_idc / 10, level_idc % 10);
-}
-
-static void
-avc_get_profile_and_level_string (const guint8 * avc_data, gint size,
-    gchar ** profile, gchar ** level)
-{
-  if (size >= 3)
-    /* First byte is the version, second is the profile indication,
-     * and third is the 5 contraint_set_flags and 3 reserved bits */
-    *profile = avc_profile_idc_to_string (QT_UINT8 (avc_data + 1),
-        QT_UINT8 (avc_data + 2));
-
-  if (size >= 4)
-    /* Fourth byte is the level indication */
-    *level = avc_level_idc_to_string (QT_UINT8 (avc_data + 3),
-        QT_UINT8 (avc_data + 2));
+  return *av - *bv;
 }
 
 /* parse the traks.
@@ -5368,22 +5371,14 @@ qtdemux_parse_trak (GstQTDemux * qtdemux, GNode * trak)
               {
                 /* parse, if found */
                 GstBuffer *buf;
-                gchar *profile = NULL, *level = NULL;
-
-                avc_get_profile_and_level_string (avc_data + 0x8, size,
-                    &profile, &level);
-                if (profile) {
-                  gst_caps_set_simple (stream->caps, "profile", G_TYPE_STRING,
-                      profile, NULL);
-                  g_free (profile);
-                }
-                if (level) {
-                  gst_caps_set_simple (stream->caps, "level", G_TYPE_STRING,
-                      level, NULL);
-                  g_free (level);
-                }
 
                 GST_DEBUG_OBJECT (qtdemux, "found avcC codec_data in stsd");
+
+                /* First 4 bytes are the length of the atom, the next 4 bytes
+                 * are the fourcc, the next 1 byte is the version, and the
+                 * subsequent bytes are sequence parameter set like data. */
+                gst_codec_utils_h264_caps_set_level_and_profile (stream->caps,
+                    avc_data + 8 + 1, size - 1);
 
                 buf = gst_buffer_new_and_alloc (size);
                 memcpy (GST_BUFFER_DATA (buf), avc_data + 0x8, size);
@@ -6110,15 +6105,27 @@ qtdemux_parse_trak (GstQTDemux * qtdemux, GNode * trak)
       || !qtdemux_parse_samples (qtdemux, stream, 0))
     goto samples_failed;
 
-  /* look for non-zero min_duration as it is used to set the frame rate cap */
+  /* parse number of initial sample to set frame rate cap */
   if (G_UNLIKELY (stream->min_duration == 0)) {
     guint32 sample_num = 1;
+    const guint samples = 20;
+    GArray *durations;
 
-    while (sample_num < stream->n_samples && stream->min_duration == 0) {
+    while (sample_num < stream->n_samples && sample_num < samples) {
       if (!qtdemux_parse_samples (qtdemux, stream, sample_num))
         goto samples_failed;
       ++sample_num;
     }
+    /* collect and sort durations */
+    durations = g_array_sized_new (FALSE, FALSE, sizeof (guint32), samples);
+    sample_num = 0;
+    while (sample_num <= stream->stbl_index) {
+      g_array_append_val (durations, stream->samples[sample_num].duration);
+      sample_num++;
+    }
+    g_array_sort (durations, less_than);
+    stream->min_duration = g_array_index (durations, guint32, samples / 2);
+    g_array_free (durations, TRUE);
   }
   /* configure segments */
   if (!qtdemux_parse_segments (qtdemux, stream, trak))
@@ -7006,19 +7013,7 @@ qtdemux_parse_udta (GstQTDemux * qtdemux, GNode * udta)
     taglist = gst_tag_list_from_xmp_buffer (buf);
     gst_buffer_unref (buf);
 
-    /* Strip out bogus fields */
-
-    if (taglist) {
-      gst_tag_list_remove_tag (taglist, GST_TAG_VIDEO_CODEC);
-      if (qtdemux->tag_list) {
-        GST_DEBUG_OBJECT (qtdemux, "Found XMP tags");
-
-        /* prioritize native tags using _KEEP mode */
-        gst_tag_list_insert (qtdemux->tag_list, taglist, GST_TAG_MERGE_KEEP);
-        gst_tag_list_free (taglist);
-      } else
-        qtdemux->tag_list = taglist;
-    }
+    qtdemux_handle_xmp_taglist (qtdemux, taglist);
   } else {
     GST_DEBUG_OBJECT (qtdemux, "No XMP_ node found");
   }
@@ -7276,19 +7271,16 @@ qtdemux_parse_tree (GstQTDemux * qtdemux)
   }
 
   qtdemux->tag_list = qtdemux_add_container_format (qtdemux, qtdemux->tag_list);
-  GST_INFO_OBJECT (qtdemux, "posting global tags: %" GST_PTR_FORMAT,
-      qtdemux->tag_list);
-  /* post now, send event on pads later */
-  gst_element_post_message (GST_ELEMENT (qtdemux),
-      gst_message_new_tag (GST_OBJECT (qtdemux),
-          gst_tag_list_copy (qtdemux->tag_list)));
 
   /* check if we should post a redirect in case there is a single trak
    * and it is a redirecting trak */
   if (qtdemux->n_streams == 1 && qtdemux->streams[0]->redirect_uri != NULL) {
     GstMessage *m;
+
+    qtdemux_post_global_tags (qtdemux);
+
     GST_INFO_OBJECT (qtdemux, "Issuing a redirect due to a single track with "
-        "a external content");
+        "an external content");
     m = gst_message_new_element (GST_OBJECT_CAST (qtdemux),
         gst_structure_new ("redirect",
             "new-location", G_TYPE_STRING, qtdemux->streams[0]->redirect_uri,
@@ -7395,6 +7387,13 @@ gst_qtdemux_handle_esds (GstQTDemux * qtdemux, QtDemuxStream * stream,
    * codecs. */
   switch (object_type_id) {
     case 0x20:                 /* MPEG-4 */
+      /* 4 bytes for the visual_object_sequence_start_code and 1 byte for the
+       * profile_and_level_indication */
+      if (data_ptr != NULL && data_len >= 5 &&
+          GST_READ_UINT32_BE (data_ptr) == 0x000001b0) {
+        gst_codec_utils_mpeg4video_caps_set_level_and_profile (stream->caps,
+            data_ptr + 4, data_len - 4);
+      }
       break;                    /* Nothing special needed here */
     case 0x21:                 /* H.264 */
       codec_name = "H.264 / AVC";
@@ -7408,20 +7407,26 @@ gst_qtdemux_handle_esds (GstQTDemux * qtdemux, QtDemuxStream * stream,
        * wrong. */
       /* Only do so for basic setup without HE-AAC extension */
       if (data_ptr && data_len == 2) {
-        guint channels, rateindex;
-        int rates[] = { 96000, 88200, 64000, 48000, 44100, 32000,
-          24000, 22050, 16000, 12000, 11025, 8000
-        };
+        guint channels, rateindex, rate;
 
+        /* FIXME: add gst_codec_utils_aac_get_{channels|sample_rate}()? */
         channels = (data_ptr[1] & 0x7f) >> 3;
-        if (channels <= 7) {
+        if (channels > 0 && channels < 7) {
           stream->n_channels = channels;
+        } else if (channels == 7) {
+          stream->n_channels = 8;
         }
 
         rateindex = ((data_ptr[0] & 0x7) << 1) | ((data_ptr[1] & 0x80) >> 7);
-        if (rateindex < sizeof (rates) / sizeof (*rates)) {
-          stream->rate = rates[rateindex];
-        }
+        rate = gst_codec_utils_aac_get_sample_rate_from_index (rateindex);
+        if (rate > 0)
+          stream->rate = rate;
+      }
+
+      /* Set level and profile if possible */
+      if (data_ptr != NULL && data_len >= 2) {
+        gst_codec_utils_aac_caps_set_level_and_profile (stream->caps,
+            data_ptr, data_len);
       }
       break;
     case 0x60:                 /* MPEG-2, various profiles */

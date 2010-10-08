@@ -223,8 +223,10 @@ mp3_type_frame_length_from_header (GstElement * mp3parse, guint32 header,
   bitrate = mp3types_bitrates[lsf][layer - 1][bitrate] * 1000;
   /* The caller has ensured we have a valid header, so bitrate can't be
      zero here. */
-  if (bitrate == 0)
+  if (bitrate == 0) {
+    GST_DEBUG_OBJECT (mp3parse, "invalid bitrate");
     return 0;
+  }
 
   samplerate = (header >> 10) & 0x3;
   samplerate = mp3types_freqs[lsf + mpg25][samplerate];
@@ -267,6 +269,7 @@ mp3_type_frame_length_from_header (GstElement * mp3parse, guint32 header,
   if (put_crc)
     *put_crc = crc;
 
+  GST_LOG_OBJECT (mp3parse, "size = %u", length);
   return length;
 }
 
@@ -281,15 +284,15 @@ gst_rtp_mpa_robust_depay_generate_dummy_frame (GstRtpMPARobustDepay *
   dummy = g_slice_dup (GstADUFrame, frame);
 
   /* go for maximum bitrate */
-  dummy->header = frame->header | (0xf << 12);
+  dummy->header = (frame->header & ~(0xf << 12)) | (0xe << 12);
   dummy->size =
       mp3_type_frame_length_from_header (GST_ELEMENT_CAST (rtpmpadepay),
       dummy->header, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
   dummy->data_size = dummy->size - dummy->side_info;
   dummy->backpointer = 0;
 
-  dummy->buffer = gst_buffer_new_and_alloc (dummy->size);
-  memset (GST_BUFFER_DATA (dummy->buffer), 0, dummy->size);
+  dummy->buffer = gst_buffer_new_and_alloc (dummy->side_info + 4);
+  memset (GST_BUFFER_DATA (dummy->buffer), 0, dummy->side_info + 4);
   GST_WRITE_UINT32_BE (GST_BUFFER_DATA (dummy->buffer), dummy->header);
   GST_BUFFER_TIMESTAMP (dummy->buffer) = GST_BUFFER_TIMESTAMP (frame->buffer);
 
@@ -341,7 +344,7 @@ gst_rtp_mpa_robust_depay_queue_frame (GstRtpMPARobustDepay * rtpmpadepay,
     GST_LOG_OBJECT (rtpmpadepay, "backpointer: %d", frame->backpointer);
   }
 
-  if (crc)
+  if (!crc)
     frame->side_info += 2;
 
   GST_LOG_OBJECT (rtpmpadepay, "side info: %d", frame->side_info);
@@ -353,7 +356,7 @@ gst_rtp_mpa_robust_depay_queue_frame (GstRtpMPARobustDepay * rtpmpadepay,
 
   /* ADU data would then extend past MP3 frame,
    * even using past byte reservoir */
-  if (-frame->backpointer + GST_BUFFER_SIZE (buf) > frame->size)
+  if (-frame->backpointer + (gint) (GST_BUFFER_SIZE (buf)) > frame->size)
     goto corrupt_frame;
 
   /* ok, take buffer and queue */
@@ -561,6 +564,13 @@ gst_rtp_mpa_robust_depay_push_mp3_frames (GstRtpMPARobustDepay * rtpmpadepay)
             rtpmpadepay->cur_adu_frame, dummy);
         /* offset is known to be zero, so we can shift current one */
         rtpmpadepay->cur_adu_frame = rtpmpadepay->cur_adu_frame->prev;
+        if (!rtpmpadepay->size) {
+          g_assert (rtpmpadepay->cur_adu_frame ==
+              rtpmpadepay->adu_frames->head);
+          GST_LOG_OBJECT (rtpmpadepay, "... which is new head frame");
+          gst_byte_writer_free (rtpmpadepay->mp3_frame);
+          rtpmpadepay->mp3_frame = NULL;
+        }
         /* ... and continue adding that empty one immediately,
          * and then see if that provided enough extra space */
         continue;

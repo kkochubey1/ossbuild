@@ -78,6 +78,13 @@ GST_STATIC_PAD_TEMPLATE ("sink",
 GST_DEBUG_CATEGORY_STATIC (jif_mux_debug);
 #define GST_CAT_DEFAULT jif_mux_debug
 
+#define COLORSPACE_UNKNOWN         (0 << 0)
+#define COLORSPACE_GRAYSCALE       (1 << 0)
+#define COLORSPACE_YUV             (1 << 1)
+#define COLORSPACE_RGB             (1 << 2)
+#define COLORSPACE_CMYK            (1 << 3)
+#define COLORSPACE_YCCK            (1 << 4)
+
 typedef struct _GstJifMuxMarker
 {
   guint8 marker;
@@ -93,7 +100,7 @@ struct _GstJifMuxPrivate
 
   /* list of GstJifMuxMarker */
   GList *markers;
-  guint16 scan_size;
+  guint scan_size;
   const guint8 *scan_data;
 };
 
@@ -103,6 +110,8 @@ static void gst_jif_mux_reset (GstJifMux * self);
 static gboolean gst_jif_mux_sink_setcaps (GstPad * pad, GstCaps * caps);
 static gboolean gst_jif_mux_sink_event (GstPad * pad, GstEvent * event);
 static GstFlowReturn gst_jif_mux_chain (GstPad * pad, GstBuffer * buffer);
+static GstStateChangeReturn gst_jif_mux_change_state (GstElement * element,
+    GstStateChange transition);
 
 
 static void
@@ -129,9 +138,9 @@ gst_jif_mux_base_init (gpointer g_class)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_jif_mux_sink_pad_template));
   gst_element_class_set_details_simple (element_class,
-      "JPEG stream parser",
-      "Codec/Parser/Video",
-      "Parse JPEG images into single-frame buffers",
+      "JPEG stream muxer",
+      "Video/Muxer",
+      "Remuxes JPEG images with markers and tags",
       "Arnout Vandecappelle (Essensium/Mind) <arnout@mind.be>");
 }
 
@@ -139,10 +148,14 @@ static void
 gst_jif_mux_class_init (GstJifMuxClass * klass)
 {
   GObjectClass *gobject_class;
+  GstElementClass *gstelement_class;
 
   gobject_class = (GObjectClass *) klass;
+  gstelement_class = (GstElementClass *) klass;
 
   g_type_class_add_private (gobject_class, sizeof (GstJifMuxPrivate));
+
+  gstelement_class->change_state = GST_DEBUG_FUNCPTR (gst_jif_mux_change_state);
 
   gobject_class->finalize = gst_jif_mux_finalize;
 }
@@ -182,6 +195,7 @@ gst_jif_mux_finalize (GObject * object)
 static gboolean
 gst_jif_mux_sink_setcaps (GstPad * pad, GstCaps * caps)
 {
+  GstJifMux *self = GST_JIF_MUX_CAST (GST_PAD_PARENT (pad));
   GstStructure *s = gst_caps_get_structure (caps, 0);
   const gchar *variant;
 
@@ -191,7 +205,7 @@ gst_jif_mux_sink_setcaps (GstPad * pad, GstCaps * caps)
     /* FIXME: do we want to switch it like this or use a gobject property ? */
   }
 
-  return TRUE;
+  return gst_pad_set_caps (self->priv->srcpad, caps);
 }
 
 static gboolean
@@ -207,6 +221,7 @@ gst_jif_mux_sink_event (GstPad * pad, GstEvent * event)
       const GstTagMergeMode mode = gst_tag_setter_get_tag_merge_mode (setter);
 
       gst_event_parse_tag (event, &list);
+
       gst_tag_setter_merge_tags (setter, list, mode);
       break;
     }
@@ -263,6 +278,8 @@ gst_jif_mux_parse_image (GstJifMux * self, GstBuffer * buf)
   guint16 size = 0;
   const guint8 *data = NULL;
 
+  GST_LOG_OBJECT (self, "Received buffer of size: %u", GST_BUFFER_SIZE (buf));
+
   if (!gst_byte_reader_peek_uint8 (&reader, &marker))
     goto error;
 
@@ -299,39 +316,6 @@ gst_jif_mux_parse_image (GstJifMux * self, GstBuffer * buf)
         if (!gst_byte_reader_get_data (&reader, size - 2, &data))
           goto error;
 
-        if (marker == APP14) {
-          gboolean valid = FALSE;
-
-          /* check if this contains RGB and reject it */
-          /*
-           * This marker should have:
-           * - 'Adobe\0'
-           * - 2 bytes DCTEncodeVersion
-           * - 2 bytes flags0
-           * - 2 bytes flags1
-           * - 1 byte  ColorTransform
-           *             - 0 means unknown (RGB or CMYK)
-           *             - 1 YCbCr
-           *             - 2 YCCK
-           */
-
-          if (size >= 14) {
-            if (strncmp ((gchar *) data, "Adobe\0", 6) == 0) {
-              valid = TRUE;
-
-              if (data[11] == 0) {
-                /* this is either RGB or CMYK, reject it */
-                goto not_yuv;
-              }
-
-            }
-          }
-          if (!valid) {
-            GST_WARNING_OBJECT (self, "Not checking suspicious APP14 "
-                "marker of size due to its size (%u) or name string", size);
-          }
-        }
-
         m = gst_jif_mux_new_marker (marker, size - 2, data, FALSE);
         self->priv->markers = g_list_prepend (self->priv->markers, m);
 
@@ -340,9 +324,26 @@ gst_jif_mux_parse_image (GstJifMux * self, GstBuffer * buf)
     }
 
     if (marker == SOS) {
+      gint eoi_pos = -1;
+      gint i;
+
+      /* search the last 5 bytes for the EOI marker */
+      g_assert (GST_BUFFER_SIZE (buf) >= 5);
+      for (i = 5; i >= 2; i--) {
+        if (GST_BUFFER_DATA (buf)[GST_BUFFER_SIZE (buf) - i] == 0xFF &&
+            GST_BUFFER_DATA (buf)[GST_BUFFER_SIZE (buf) - i + 1] == EOI) {
+          eoi_pos = GST_BUFFER_SIZE (buf) - i;
+          break;
+        }
+      }
+
+      if (eoi_pos == -1) {
+        GST_WARNING_OBJECT (self, "Couldn't find an EOI marker");
+        eoi_pos = GST_BUFFER_SIZE (buf);
+      }
+
       /* remaining size except EOI is scan data */
-      self->priv->scan_size = GST_BUFFER_SIZE (buf) - 4 -
-          gst_byte_reader_get_pos (&reader);
+      self->priv->scan_size = eoi_pos - gst_byte_reader_get_pos (&reader);
       if (!gst_byte_reader_get_data (&reader, self->priv->scan_size,
               &self->priv->scan_data))
         goto error;
@@ -365,10 +366,6 @@ error:
       "Error parsing image header (need more that %u bytes available)",
       gst_byte_reader_get_remaining (&reader));
   return FALSE;
-not_yuv:
-  GST_WARNING_OBJECT (self,
-      "This image is in RGB/CMYK format and JFIF only allows YCbCr");
-  return FALSE;
 }
 
 static gboolean
@@ -382,6 +379,7 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
   GList *app0_jfif = NULL, *app1_exif = NULL, *app1_xmp = NULL, *com = NULL;
   GstBuffer *xmp_data;
   gchar *str = NULL;
+  gint colorspace = COLORSPACE_UNKNOWN;
 
   /* update the APP markers
    * - put any JFIF APP0 first
@@ -400,6 +398,7 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
       case APP0:
         if (m->size > 5 && !memcmp (m->data, "JFIF\0", 5)) {
           GST_DEBUG_OBJECT (self, "found APP0 JFIF");
+          colorspace |= COLORSPACE_GRAYSCALE | COLORSPACE_YUV;
           if (!app0_jfif)
             app0_jfif = node;
         }
@@ -416,6 +415,38 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
           if (!app1_xmp)
             app1_xmp = node;
         }
+        break;
+      case APP14:
+        /* check if this contains RGB */
+        /*
+         * This marker should have:
+         * - 'Adobe\0'
+         * - 2 bytes DCTEncodeVersion
+         * - 2 bytes flags0
+         * - 2 bytes flags1
+         * - 1 byte  ColorTransform
+         *             - 0 means unknown (RGB or CMYK)
+         *             - 1 YCbCr
+         *             - 2 YCCK
+         */
+
+        if ((m->size >= 14)
+            && (strncmp ((gchar *) m->data, "Adobe\0", 6) == 0)) {
+          switch (m->data[11]) {
+            case 0:
+              colorspace |= COLORSPACE_RGB | COLORSPACE_CMYK;
+              break;
+            case 1:
+              colorspace |= COLORSPACE_YUV;
+              break;
+            case 2:
+              colorspace |= COLORSPACE_YCCK;
+              break;
+            default:
+              break;
+          }
+        }
+
         break;
       case COM:
         GST_INFO_OBJECT (self, "found COM, will be replaced");
@@ -451,7 +482,7 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
 
   /* if we want combined or JFIF */
   /* check if we don't have JFIF APP0 */
-  if (!app0_jfif) {
+  if (!app0_jfif && (colorspace & (COLORSPACE_GRAYSCALE | COLORSPACE_YUV))) {
     /* build jfif header */
     static const struct
     {
@@ -470,6 +501,7 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
         (const guint8 *) &jfif_data, FALSE);
     /* insert into self->markers list */
     self->priv->markers = g_list_insert (self->priv->markers, m, 1);
+    app0_jfif = g_list_nth (self->priv->markers, 1);
   }
   /* else */
   /* remove JFIF if exists */
@@ -482,6 +514,8 @@ gst_jif_mux_mangle_markers (GstJifMux * self)
   if (!tags) {
     tags = gst_tag_list_new ();
   }
+
+  GST_DEBUG_OBJECT (self, "Tags to be serialized %" GST_PTR_FORMAT, tags);
 
   /* FIXME: not happy with those
    * - else where we would use VIDEO_CODEC = "Jpeg"
@@ -647,7 +681,8 @@ gst_jif_mux_recombine_image (GstJifMux * self, GstBuffer ** new_buf,
 
     if (m->marker == SOS) {
       GST_DEBUG_OBJECT (self, "scan data, size = %u", self->priv->scan_size);
-      writer_status &= gst_byte_writer_put_data (writer, self->priv->scan_data,
+      writer_status &=
+          gst_byte_writer_put_data (writer, self->priv->scan_data,
           self->priv->scan_size);
     }
   }
@@ -703,4 +738,38 @@ gst_jif_mux_chain (GstPad * pad, GstBuffer * buf)
     fret = gst_pad_push (self->priv->srcpad, buf);
   }
   return fret;
+}
+
+static GstStateChangeReturn
+gst_jif_mux_change_state (GstElement * element, GstStateChange transition)
+{
+  GstStateChangeReturn ret;
+  GstJifMux *self = GST_JIF_MUX_CAST (element);
+
+  switch (transition) {
+    case GST_STATE_CHANGE_NULL_TO_READY:
+      break;
+    case GST_STATE_CHANGE_READY_TO_PAUSED:
+      break;
+    case GST_STATE_CHANGE_PAUSED_TO_PLAYING:
+      break;
+    default:
+      break;
+  }
+
+  ret = GST_ELEMENT_CLASS (parent_class)->change_state (element, transition);
+
+  switch (transition) {
+    case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
+      break;
+    case GST_STATE_CHANGE_PAUSED_TO_READY:
+      gst_tag_setter_reset_tags (GST_TAG_SETTER (self));
+      break;
+    case GST_STATE_CHANGE_READY_TO_NULL:
+      break;
+    default:
+      break;
+  }
+
+  return ret;
 }

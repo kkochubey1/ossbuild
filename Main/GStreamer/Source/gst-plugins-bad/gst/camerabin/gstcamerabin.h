@@ -63,7 +63,26 @@ struct _GstCameraBin
   GstCameraBinFlags flags;
   gboolean stop_requested;        /* TRUE if capturing stop needed */
   gboolean paused;                /* TRUE if capturing paused */
-  gboolean block_viewfinder;      /* TRUE if viewfinder blocks after capture */
+
+  /*
+   * Those 2 booleans work together.
+   *
+   * 'block_viewfinder_prop' is the property, 'block_viewfinder_trigger'
+   * is the flag that actually makes the viewfinder block after capture.
+   * We need both to avoid blocking the viewfinder if the application resets
+   * the flag after issuing the 'capture-start', but before the actual
+   * blocking happens. This causes the viewfinder to block even though
+   * the application resetted the flag to keep it running already.
+   *
+   * Here's how this should work:
+   * When a capture is started, the property is checked, if it is TRUE, the
+   * trigger is set to TRUE. The blocking will only happen if
+   * the trigger is TRUE after image capture finishes, ff the property
+   * is reset before the blocking happens, the trigger goes to
+   * FALSE and no blocking happens.
+   */
+  gboolean block_viewfinder_prop; /* TRUE if viewfinder blocks after capture */
+  gboolean block_viewfinder_trigger;
 
   /* Resolution of the buffers configured to camerabin */
   gint width;
@@ -97,8 +116,8 @@ struct _GstCameraBin
   /* Caps used to create video preview image */
   GstCaps *video_preview_caps;
 
-  /* The digital zoom (from 100% to 1000%) */
-  gint zoom;
+  /* The digital zoom (from 1.0 to 10.0) */
+  gfloat zoom;
 
   /* concurrency control */
   GMutex *capture_mutex;
@@ -143,14 +162,13 @@ struct _GstCameraBin
   GstElement *app_vf_sink;
   GstElement *app_video_filter;
   GstElement *app_viewfinder_filter;
+  GstElement *app_preview_source_filter;
+  GstElement *app_video_preview_source_filter;
 
   /* Night mode handling */
   gboolean night_mode;
   gint pre_night_fps_n;
   gint pre_night_fps_d;
-
-  /* Cache the photography interface settings */
-  GstPhotoSettings photo_settings;
 
   /* Buffer probe id for captured image handling */
   gulong image_captured_id;

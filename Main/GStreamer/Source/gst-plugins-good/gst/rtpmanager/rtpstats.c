@@ -46,10 +46,10 @@ rtp_stats_init_defaults (RTPSessionStats * stats)
  * defaults.
  */
 void
-rtp_stats_set_bandwidths (RTPSessionStats * stats, guint rtp_bw, guint rtcp_bw,
-    guint rs, guint rr)
+rtp_stats_set_bandwidths (RTPSessionStats * stats, guint rtp_bw,
+    gdouble rtcp_bw, guint rs, guint rr)
 {
-  GST_DEBUG ("recalc bandwidths: RTP %u, RTCP %u, RS %u, RR %u", rtp_bw,
+  GST_DEBUG ("recalc bandwidths: RTP %u, RTCP %f, RS %u, RR %u", rtp_bw,
       rtcp_bw, rs, rr);
 
   /* when given, sender and receive bandwidth add up to the total
@@ -57,16 +57,25 @@ rtp_stats_set_bandwidths (RTPSessionStats * stats, guint rtp_bw, guint rtcp_bw,
   if (rs != -1 && rr != -1)
     rtcp_bw = rs + rr;
 
+  /* If rtcp_bw is between 0 and 1, it is a fraction of rtp_bw */
+  if (rtcp_bw > 0.0 && rtcp_bw < 1.0) {
+    if (rtp_bw > 0.0)
+      rtcp_bw = rtp_bw * rtcp_bw;
+    else
+      rtcp_bw = -1.0;
+  }
+
   /* RTCP is 5% of the RTP bandwidth */
-  if (rtp_bw == -1 && rtcp_bw != -1)
+  if (rtp_bw == -1 && rtcp_bw > 1.0)
     rtp_bw = rtcp_bw * 20;
-  else if (rtp_bw != -1 && rtcp_bw == -1)
+  else if (rtp_bw != -1 && rtcp_bw < 0.0)
     rtcp_bw = rtp_bw / 20;
-  else if (rtp_bw == -1 && rtcp_bw == -1) {
+  else if (rtp_bw == -1 && rtcp_bw < 0.0) {
     /* nothing given, take defaults */
     rtp_bw = RTP_STATS_BANDWIDTH;
-    rtcp_bw = RTP_STATS_RTCP_BANDWIDTH;
+    rtcp_bw = rtp_bw * RTP_STATS_RTCP_FRACTION;
   }
+
   stats->bandwidth = rtp_bw;
   stats->rtcp_bandwidth = rtcp_bw;
 
@@ -251,4 +260,28 @@ rtp_stats_calculate_bye_interval (RTPSessionStats * stats)
     interval = rtcp_min_time;
 
   return interval * GST_SECOND;
+}
+
+/**
+ * rtp_stats_get_packets_lost:
+ * @stats: an #RTPSourceStats struct
+ *
+ * Calculate the total number of RTP packets lost since beginning of
+ * reception. Packets that arrive late are not considered lost, and
+ * duplicates are not taken into account. Hence, the loss may be negative
+ * if there are duplicates.
+ *
+ * Returns: total RTP packets lost.
+ */
+gint64
+rtp_stats_get_packets_lost (const RTPSourceStats *stats)
+{
+  gint64 lost;
+  guint64 extended_max, expected;
+
+  extended_max = stats->cycles + stats->max_seq;
+  expected = extended_max - stats->base_seq + 1;
+  lost = expected - stats->packets_received;
+
+  return lost;
 }

@@ -48,20 +48,24 @@ GST_DEBUG_CATEGORY_STATIC (gst_base_audio_src_debug);
 GType
 gst_base_audio_src_slave_method_get_type (void)
 {
-  static GType slave_method_type = 0;
+  static volatile gsize slave_method_type = 0;
+  /* FIXME 0.11: nick should be "retimestamp" not "re-timestamp" */
   static const GEnumValue slave_method[] = {
-    {GST_BASE_AUDIO_SRC_SLAVE_RESAMPLE, "Resampling slaving", "resample"},
-    {GST_BASE_AUDIO_SRC_SLAVE_RETIMESTAMP, "Re-timestamp", "re-timestamp"},
-    {GST_BASE_AUDIO_SRC_SLAVE_SKEW, "Skew", "skew"},
-    {GST_BASE_AUDIO_SRC_SLAVE_NONE, "No slaving", "none"},
+    {GST_BASE_AUDIO_SRC_SLAVE_RESAMPLE,
+        "GST_BASE_AUDIO_SRC_SLAVE_RESAMPLE", "resample"},
+    {GST_BASE_AUDIO_SRC_SLAVE_RETIMESTAMP,
+        "GST_BASE_AUDIO_SRC_SLAVE_RETIMESTAMP", "re-timestamp"},
+    {GST_BASE_AUDIO_SRC_SLAVE_SKEW, "GST_BASE_AUDIO_SRC_SLAVE_SKEW", "skew"},
+    {GST_BASE_AUDIO_SRC_SLAVE_NONE, "GST_BASE_AUDIO_SRC_SLAVE_NONE", "none"},
     {0, NULL, NULL},
   };
 
-  if (!slave_method_type) {
-    slave_method_type =
+  if (g_once_init_enter (&slave_method_type)) {
+    GType tmp =
         g_enum_register_static ("GstBaseAudioSrcSlaveMethod", slave_method);
+    g_once_init_leave (&slave_method_type, tmp);
   }
-  return slave_method_type;
+  return (GType) slave_method_type;
 }
 
 #define GST_BASE_AUDIO_SRC_GET_PRIVATE(obj)  \
@@ -250,9 +254,8 @@ gst_base_audio_src_init (GstBaseAudioSrc * baseaudiosrc,
    * value based on negotiated format. */
   GST_BASE_SRC (baseaudiosrc)->blocksize = 0;
 
-  baseaudiosrc->clock = gst_audio_clock_new_full ("GstAudioSrcClock",
-      (GstAudioClockGetTimeFunc) gst_base_audio_src_get_time,
-      gst_object_ref (baseaudiosrc), (GDestroyNotify) gst_object_unref);
+  baseaudiosrc->clock = gst_audio_clock_new ("GstAudioSrcClock",
+      (GstAudioClockGetTimeFunc) gst_base_audio_src_get_time, baseaudiosrc);
 
   /* we are always a live source */
   gst_base_src_set_live (GST_BASE_SRC (baseaudiosrc), TRUE);
@@ -268,9 +271,11 @@ gst_base_audio_src_dispose (GObject * object)
   src = GST_BASE_AUDIO_SRC (object);
 
   GST_OBJECT_LOCK (src);
-  if (src->clock)
+  if (src->clock) {
+    gst_audio_clock_invalidate (src->clock);
     gst_object_unref (src->clock);
-  src->clock = NULL;
+    src->clock = NULL;
+  }
 
   if (src->ringbuffer) {
     gst_object_unparent (GST_OBJECT_CAST (src->ringbuffer));
