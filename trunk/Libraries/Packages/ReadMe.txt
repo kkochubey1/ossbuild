@@ -16,7 +16,7 @@ iconv                   -       0.0.1	        -       http://win-iconv.googlecod
 fribidi                 -       0.19.2          -       http://fribidi.org/download/fribidi-0.19.2.tar.gz
 dlfcn-win32             -       r19             -       http://dlfcn-win32.googlecode.com/files/dlfcn-win32-r19.tar.bz2
 liboil                  -       0.3.17          -       http://liboil.freedesktop.org/download/liboil-0.3.17.tar.gz
-orc                     -       0.4.9           -       http://code.entropywave.com/download/orc/orc-0.4.9.tar.gz
+orc                     -       0.4.10          -       http://code.entropywave.com/download/orc/orc-0.4.10.tar.gz
 pthreads                -       2.9.0           -       CVS (for now), eventually http://mirrors.kernel.org/sources.redhat.com/pthreads-win32/pthreads-w32-2-9-0-release.tar.gz
 libiconv                -       1.13.1          -       http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.13.1.tar.gz
 zlib                    -       1.2.5           -       http://zlib.net/zlib-1.2.5.tar.bz2
@@ -66,7 +66,7 @@ libmms                  -       win32 branch    -       https://code.launchpad.n
 libmms-0.4.0            -       0.4.0           -       http://sourceforge.net/projects/libmms/files/libmms/0.4/libmms-0.4.tar.gz/download
 x264                    -       20100930        -       http://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-20100930-2245.tar.bz2
 libspeex                -       1.2rc1          -       http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
-libschroedinger         -       1.0.9           -       http://diracvideo.org/download/schroedinger/schroedinger-1.0.9.tar.gz
+libschroedinger         -       1.0.10          -       http://diracvideo.org/download/schroedinger/schroedinger-1.0.10.tar.gz
 mp3lame                 -       3.98.4          -       http://downloads.sourceforge.net/project/lame/lame/3.98.4/lame-3.98.4.tar.gz?use_mirror=voxel
 ffmpeg                  -       0.6.0           -       http://ffmpeg.org/releases/ffmpeg-export-snapshot.tar.bz2 [Updated 10-04-2010]
 libnice                 -       0.0.13          -       http://nice.freedesktop.org/releases/libnice-0.0.13.tar.gz

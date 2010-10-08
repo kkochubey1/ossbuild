@@ -11,6 +11,7 @@ typedef enum {
   ORC_TARGET_MMX_3DNOWEXT = (1<<3),
   ORC_TARGET_MMX_SSSE3 = (1<<4),
   ORC_TARGET_MMX_SSE4_1 = (1<<5),
+  ORC_TARGET_MMX_SSE4_2 = (1<<6),
   ORC_TARGET_MMX_FRAME_POINTER = (1<<7),
   ORC_TARGET_MMX_SHORT_JUMPS = (1<<8),
   ORC_TARGET_MMX_64BIT = (1<<9)
@@ -32,6 +33,8 @@ typedef enum {
 const char * orc_x86_get_regname_mmx(int i);
 void orc_x86_emit_mov_memoffset_mmx (OrcCompiler *compiler, int size, int offset,
     int reg1, int reg2, int is_aligned);
+void orc_x86_emit_mov_memindex_mmx (OrcCompiler *compiler, int size, int offset,
+    int reg1, int regindex, int shift, int reg2, int is_aligned);
 void orc_x86_emit_mov_mmx_memoffset (OrcCompiler *compiler, int size, int reg1, int offset,
     int reg2, int aligned, int uncached);
 void orc_x86_emit_mov_mmx_reg_reg (OrcCompiler *compiler, int reg1, int reg2);
@@ -63,7 +66,8 @@ void orc_mmx_emit_shiftimm (OrcCompiler *p, const char *insn_name,
     int code, int modrm_code, int shift, int reg);
 unsigned int orc_mmx_get_cpu_flags (void);
 
-void mmx_load_constant (OrcCompiler *compiler, int reg, int size, int value);
+void orc_mmx_load_constant (OrcCompiler *compiler, int reg, int size,
+    orc_uint64 value);
 
 /* MMX instructions */
 #define orc_mmx_emit_punpcklbw(p,a,b)  orc_mmx_emit_660f (p, "punpcklbw", 0x60, a, b)

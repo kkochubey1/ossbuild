@@ -55,6 +55,7 @@ create_hostname_windows
 #No prefix from here out
 clear_prefix
 
+
 #Not using dwarf2 yet
 ###gcc_dw2
 ##if [ ! -f "$BinDir/libgcc_s_dw2-1.dll" ]; then
@@ -1523,23 +1524,25 @@ if [ ! -f "$BinDir/libspeex-1.dll" ]; then
 	reset_flags
 fi
 
+#TODO: Remove patch if schroedinger/Makefile.am has been fixed
 #libschroedinger (dirac support)
-if [ ! -f "$BinDir/lib${Prefix}schroedinger-1.0-0.dll" ]; then 
+if [ ! -f "$BinDir/libschroedinger-1.0-0.dll" ]; then 
 	unpack_gzip_and_move "schroedinger.tar.gz" "$PKG_DIR_LIBSCHROEDINGER"
+	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/schroedinger/schroedinger.patch"
 	mkdir_and_move "$IntDir/libschroedinger"
 	
-	#LDFLAGS="-lstdc++_s"
-	$PKG_DIR/configure --with-thread=auto --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
-	change_libname_spec
+	cd "$PKG_DIR/"
+	autoreconf -i -f
+
+	cd "$IntDir/libschroedinger"
+	lt_cv_deplibs_check_method=pass_all $PKG_DIR/configure --with-thread=win32 --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	make ${MAKE_PARALLEL_FLAGS} && make install
 	
 	cd "schroedinger/.libs"
-	$MSLIB /name:lib${Prefix}schroedinger-1.0-0.dll /out:schroedinger-1.0.lib /machine:$MSLibMachine /def:lib${Prefix}schroedinger-1.0-0.dll.def
+	$MSLIB /name:libschroedinger-1.0-0.dll /out:schroedinger-1.0.lib /machine:$MSLibMachine /def:libschroedinger-1.0-0.dll.def
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
 	
 	reset_flags
-	
-	update_library_names_windows "lib${Prefix}schroedinger-1.0.dll.a" "libschroedinger-1.0.la"
 fi
 
 #Not supported at this time!

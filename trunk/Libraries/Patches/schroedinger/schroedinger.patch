@@ -1,0 +1,11 @@
+--- schroedinger/Makefile.am	Thu Oct  7 20:06:31 2010
++++ schroedinger/Makefile.am	Thu Oct  7 20:07:00 2010
+@@ -157,7 +157,7 @@
+ libschroedinger_@SCHRO_MAJORMINOR@_la_LDFLAGS = \
+ 	-no-undefined \
+ 	-version-info $(SCHRO_LIBVERSION) \
+-	-export-symbols-regex '^(schro|orc)_'
++	-export-symbols-regex '^(schro|orc|_orc)_'
+ 
+ %.c.gcov: .libs/libschroedinger_@SCHRO_MAJORMINOR@_la-%.gcda %.c
+ 	$(GCOV) -b -f -o $^ > $@.out

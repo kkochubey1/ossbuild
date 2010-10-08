@@ -23,8 +23,8 @@ dependency_libs=' -L@SHARED_BUILD_DIR@/lib  @SHARED_BUILD_DIR@/lib/liborc-0.4.la
 weak_library_names=''
 
 # Version information for liborc-test-0.4.
-current=9
-age=9
+current=10
+age=10
 revision=0
 
 # Is this an already installed library?
