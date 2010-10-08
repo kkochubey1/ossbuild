@@ -83,6 +83,7 @@ enum {
   ORC_TARGET_C_BARE = (1<<1),
   ORC_TARGET_C_NOEXEC = (1<<2),
   ORC_TARGET_C_OPCODE = (1<<3),
+  ORC_TARGET_CLEAN_COMPILE = (1<<29),
   ORC_TARGET_FAST_NAN = (1<<30),
   ORC_TARGET_FAST_DENORMAL = (1<<31)
 };
@@ -231,6 +232,8 @@ struct _OrcVariable {
   int aligned_data;
   int param_type;
   int load_dest;
+  int update_type;
+  int need_offset_reg;
 };
 
 /**
@@ -325,6 +328,7 @@ struct _OrcConstant {
   unsigned int value;
   unsigned int full_value[4];
   int use_count;
+  int is_long;
 };
 
 /**
@@ -477,6 +481,7 @@ struct _OrcCompiler {
   int max_used_temp_reg;
 
   int insn_shift; /* used when emitting rules */
+  int max_var_size; /* size of largest var */
 };
 
 #define ORC_SRC_ARG(p,i,n) ((p)->vars[(i)->src_args[(n)]].alloc)
@@ -603,8 +608,10 @@ struct _OrcTarget {
   void (*load_constant)(OrcCompiler *compiler, int reg, int size, int value);
   const char * (*get_flag_name)(int shift);
   void (*flush_cache) (OrcCode *code);
+  void (*load_constant_long)(OrcCompiler *compiler, int reg,
+      OrcConstant *constant);
 
-  void *_unused[6];
+  void *_unused[5];
 };
 
 
@@ -714,6 +721,10 @@ int orc_program_allocate_register (OrcProgram *program, int is_data);
 void orc_code_allocate_codemem (OrcCode *code, int size);
 int orc_compiler_label_new (OrcCompiler *compiler);
 int orc_compiler_get_constant (OrcCompiler *compiler, int size, int value);
+int orc_compiler_get_constant_long (OrcCompiler *compiler, orc_uint32 a,
+    orc_uint32 b, orc_uint32 c, orc_uint32 d);
+int orc_compiler_try_get_constant_long (OrcCompiler *compiler, orc_uint32 a,
+    orc_uint32 b, orc_uint32 c, orc_uint32 d);
 int orc_compiler_get_temp_constant (OrcCompiler *compiler, int size, int value);
 int orc_compiler_get_temp_reg (OrcCompiler *compiler);
 int orc_compiler_get_constant_reg (OrcCompiler *compiler);
@@ -731,7 +742,6 @@ void orc_compiler_append_code (OrcCompiler *p, const char *fmt, ...)
  
 void orc_target_register (OrcTarget *target);
 OrcTarget *orc_target_get_by_name (const char *target_name);
-int orc_program_get_max_var_size (OrcProgram *program);
 int orc_program_get_max_array_size (OrcProgram *program);
 int orc_program_get_max_accumulator_size (OrcProgram *program);
 
@@ -756,6 +766,7 @@ extern int _orc_cpu_stepping;
 extern const char *_orc_cpu_name;
 
 extern int _orc_compiler_flag_backup;
+extern int _orc_compiler_flag_emulate;
 extern int _orc_compiler_flag_debug;
 
 void orc_code_chunk_free (OrcCodeChunk *chunk);

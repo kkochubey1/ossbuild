@@ -7,9 +7,10 @@ toolsdir=${exec_prefix}/bin
 
 Name: schroedinger-1.0
 Description: Dirac codec library
-Requires:  orc-0.4 >= 0.4.3
-Version: 1.0.9
-Libs: -L${libdir} -lschroedinger-1.0  -lm
+Requires.private:  orc-0.4 >= 0.4.10
+Version: 1.0.10
+Libs: -L${libdir} -lschroedinger-1.0
+Libs.private:  -lm
 Cflags: -I${includedir}
 
 

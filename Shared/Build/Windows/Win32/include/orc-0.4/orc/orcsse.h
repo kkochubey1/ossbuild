@@ -41,6 +41,10 @@ typedef enum {
 const char * orc_x86_get_regname_sse(int i);
 void orc_x86_emit_mov_memoffset_sse (OrcCompiler *compiler, int size, int offset,
     int reg1, int reg2, int is_aligned);
+void orc_x86_emit_movhps_memoffset_sse (OrcCompiler *compiler, int offset,
+    int reg1, int reg2);
+void orc_x86_emit_mov_memindex_sse (OrcCompiler *compiler, int size, int offset,
+    int reg1, int regindex, int shift, int reg2, int is_aligned);
 void orc_x86_emit_mov_sse_memoffset (OrcCompiler *compiler, int size, int reg1, int offset,
     int reg2, int aligned, int uncached);
 void orc_x86_emit_mov_sse_reg_reg (OrcCompiler *compiler, int reg1, int reg2);
@@ -74,7 +78,8 @@ void orc_sse_emit_shiftimm (OrcCompiler *p, const char *insn_name,
 void orc_sse_set_mxcsr (OrcCompiler *compiler);
 void orc_sse_restore_mxcsr (OrcCompiler *compiler);
 
-void sse_load_constant (OrcCompiler *compiler, int reg, int size, int value);
+void orc_sse_load_constant (OrcCompiler *compiler, int reg, int size,
+    orc_uint64 value);
 
 
 unsigned int orc_sse_get_cpu_flags (void);
