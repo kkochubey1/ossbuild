@@ -75,4 +75,26 @@ libavcodec/cabac.h:641: error: PIC register ‘%ebx’ clobbered in ‘asm’
 {{{
 sudo make; make install
 }}}
-to complete the compilation and installation of gst-ffmpeg
+  to complete the compilation and installation of gst-ffmpeg.
+
+
+
+== Additional steps to create GStreamer binaries for bundling with 3rd-party applications ==
+
+  * You only need _/opt/local/lib_, copy somewhere else.
+  * Remove _.la_, _.a_ files.
+  * remove all subfolders, with the exception of _/lib/gstreamer-0.10_ (containing the plugins).
+  * Any other file that is not _.dylib_ in _/lib_ or _.so_ in _lib/gstreamer-0.10_ can be removed as well.
+  * Replace absolute paths with relative paths using the _replacepath.py_ tool.
+   # For base libs:
+{{{
+> ./replacepath.py --old /opt/local/lib/ --new @loader_path/ --dir <lib folder>
+}}}
+   # For plugins (note that here we use the relative path _@loader_path/../_ instead of _@loader_path/_):
+{{{
+> ./replacepath.py --old /opt/local/lib/ --new @loader_path/../ --dir <lib folder>/gstreamer-0.10
+}}}
+  * If also needed, eliminate symbolic links using the _removesymlinks.py_:
+{{{
+> ./removesymlinks.py ––dir <lib folder>
+}}}
