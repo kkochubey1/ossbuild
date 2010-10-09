@@ -43,7 +43,7 @@ build_arch  i386
 }}}
   * Installation of gst-ffmpeg:
 {{{
-sudo port install gst-ffmpeg
+> sudo port install gst-ffmpeg
 }}}
   will fail during the build stage, at least for version 0.10.10. Inspection of the log file will show this error:
 {{{
