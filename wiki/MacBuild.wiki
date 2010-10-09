@@ -83,7 +83,7 @@ sudo make; make install
 
   * You only need _/opt/local/lib_, copy somewhere else.
   * Remove _.la_, _.a_ files.
-  * remove all subfolders, with the exception of _/lib/gstreamer-0.10_ (containing the plugins).
+  * Remove all subfolders, with the exception of _/lib/gstreamer-0.10_ (containing the plugins).
   * Any other file that is not _.dylib_ in _/lib_ or _.so_ in _lib/gstreamer-0.10_ can be removed as well.
   * Replace absolute paths with relative paths using the _replacepath.py_ tool.
    # For base libs:
