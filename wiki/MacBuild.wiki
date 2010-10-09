@@ -1,6 +1,6 @@
 #summary Compilation on Mac OSX.
 
-Compilation of GStreamer for the Mac platform is in it earlier stages. [http://www.macports.org/ MacPorts] is currently used as the mechanism to resolve dependencies, apply patches and build the binaries. This is followed by some post-build steps to remove absolute paths in the resulting .dylib and .so files (which MacPorts sets by default to /opt/local/lib). In what follows, it will be assumed that the compilation platform is OSX Snow Leopard 64 bits. This makes compilation for Leopard (OSX 10.5) a little bit more complicated, because 
+Compilation of GStreamer for the Mac platform is in it earlier stages. [http://www.macports.org/ MacPorts] is currently used as the mechanism to resolve dependencies, apply patches and build the binaries. This is followed by some post-build steps to remove absolute paths in the resulting _.dylib_ and _.so_ files (which !MacPorts sets by default to /opt/local/lib). In what follows, it will be assumed that the compilation platform is OSX Snow Leopard 64 bits. This makes compilation for Leopard (OSX 10.5) a little bit more complicated, because 
 
 == Target platform: OSX Snow Leopard (10.6) 32 bits ==
 
@@ -18,7 +18,7 @@ Compilation of GStreamer for the Mac platform is in it earlier stages. [http://w
     /Library/Tcl/macports1.0 \
     ~/.macports
 }}}
-  * Edit /opt/local/share/macports/Tcl/port1.0/portconfigure.tcl and replace the line
+  * Edit _/opt/local/share/macports/Tcl/port1.0/portconfigure.tcl_ and replace the line
 {{{
 default configure.ldflags   {-L${prefix}/lib}
 }}}
@@ -26,13 +26,13 @@ default configure.ldflags   {-L${prefix}/lib}
 {{{
 default configure.ldflags   {"-L${prefix}/lib -Xlinker -headerpad_max_install_names"}
 }}}
-this will allow later to replace the absolute dependency paths in the .dylib and .so files by relative paths.
+this will allow later to replace the absolute dependency paths in the _.dylib_ and _.so_ files by relative paths.
   * Use the portfiles included in the [http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Main/GStreamer/MacOSX/MacPorts/repository svn] to create a local repository. Add the location of the local repository to the /opt/local/macports/source.conf file, as explained [http://guide.macports.org/#development.local-repositories here].
   * Add the line:
 {{{
 build_arch  i386
 }}}
-  to /opt/local/etc/macports/macports.conf
+  to _/opt/local/etc/macports/macports.conf_.
   * Install the gstreamer, gst-plugins-base, gst-plugins-good, gst-plugins-bad and gst-plugins-ugly packages:
 {{{
 > sudo port install gstreamer
