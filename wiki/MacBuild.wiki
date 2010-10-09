@@ -84,7 +84,7 @@ The steps above assume that you are compiling GStreamer on the same platform as 
 {{{
 default configure.ldflags   {"-L${prefix}/lib -Xlinker -headerpad_max_install_names -mmacosx-version-min=10.5 -no_compact_linkedit"}
 }}}
-  (Based on [http://lists.apple.com/archives/xcode-users/2009/Oct/msg00530.html this] discussion).
+  (Based on [http://lists.apple.com/archives/xcode-users/2009/Oct/msg00514.html this] discussion).
   * Add the following line:
 {{{
 macosx_deployment_target 10.5
