@@ -1,8 +1,8 @@
 #summary Compilation on Mac OSX.
 
-Compilation of GStreamer for the Mac platform is in it earlier stages. [http://www.macports.org/ MacPorts] is currently used as the mechanism to resolve dependencies, apply patches and build the binaries. This is followed by some post-build steps to remove absolute paths in the resulting _.dylib_ and _.so_ files (which !MacPorts sets by default to /opt/local/lib). In what follows, it will be assumed that the compilation platform is OSX Snow Leopard 64 bits. This makes compilation for Leopard (OSX 10.5) a little bit more complicated, because 
+Compilation of GStreamer for the Mac platform is in it earlier stages. [http://www.macports.org/ MacPorts] is currently used as the mechanism to resolve dependencies, apply patches and build the binaries. This is followed by some post-build steps to remove absolute paths in the resulting _.dylib_ and _.so_ files (which !MacPorts sets by default to /opt/local/lib).
 
-== Target platform: OSX Snow Leopard (10.6) 32 bits ==
+== Target platform: 32 bits ==
 
   * Install macports for Snow Leopard. Completely remove older install if present:
 {{{
@@ -61,7 +61,7 @@ libavcodec/cabac.h:527: error: PIC register ‘%ebx’ clobbered in ‘asm’
 libavcodec/cabac.h:527: error: PIC register ‘%ebx’ clobbered in ‘asm’
 libavcodec/cabac.h:641: error: PIC register ‘%ebx’ clobbered in ‘asm’
 }}}
-  Change into the <local repository>/gnome/gst-ffmpeg/work/gst-ffmpeg-0.10.10 folder.
+  Change into the _<local repository>/gnome/gst-ffmpeg/work/gst-ffmpeg-0.10.10_ folder.
    # Edit _gst-libs/ext/ffmpeg/config.h_ and make sure that the macro HAVE_EBX_AVAILABLE is defined as zero:
 {{{
 #define HAVE_EBX_AVAILABLE 0
@@ -71,3 +71,8 @@ libavcodec/cabac.h:641: error: PIC register ‘%ebx’ clobbered in ‘asm’
 #define HAVE_MMX 0
 }}}
    to _gst-libs/ext/ffmpeg/libswscale/rgb2rgb_template.c_.
+  * Still in _<local repository>/gnome/gst-ffmpeg/work/gst-ffmpeg-0.10.10_ run 
+{{{
+sudo make; make install
+}}}
+to complete the compilation and installation of gst-ffmpeg
