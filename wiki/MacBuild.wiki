@@ -41,3 +41,33 @@ build_arch  i386
 > sudo port install gst-plugins-bad +no_x11 +dc1394
 > sudo port install gst-plugins-ugly
 }}}
+  * Installation of gst-ffmpeg:
+{{{
+sudo port install gst-ffmpeg
+}}}
+  will fail during the build stage, at least for version 0.10.10. Inspection of the log file will show this error:
+{{{
+libavcodec/cabac.h: In function ‘get_cabac_noinline’:
+libavcodec/cabac.h:527: error: PIC register ‘%ebx’ clobbered in ‘asm’
+libavcodec/cabac.h: In function ‘decode_cabac_mb_intra4x4_pred_mode’:
+libavcodec/cabac.h:527: error: PIC register ‘%ebx’ clobbered in ‘asm’
+libavcodec/cabac.h:527: error: PIC register ‘%ebx’ clobbered in ‘asm’
+libavcodec/cabac.h:527: error: PIC register ‘%ebx’ clobbered in ‘asm’
+libavcodec/cabac.h:527: error: PIC register ‘%ebx’ clobbered in ‘asm’
+libavcodec/cabac.h: In function ‘decode_cabac_mb_ref’:
+libavcodec/cabac.h:527: error: PIC register ‘%ebx’ clobbered in ‘asm’
+libavcodec/cabac.h: In function ‘decode_cabac_mb_mvd’:
+libavcodec/cabac.h:527: error: PIC register ‘%ebx’ clobbered in ‘asm’
+libavcodec/cabac.h:527: error: PIC register ‘%ebx’ clobbered in ‘asm’
+libavcodec/cabac.h:641: error: PIC register ‘%ebx’ clobbered in ‘asm’
+}}}
+  Change into the <local repository>/gnome/gst-ffmpeg/work/gst-ffmpeg-0.10.10 folder.
+   # Edit _gst-libs/ext/ffmpeg/config.h_ and make sure that the macro HAVE_EBX_AVAILABLE is defined as zero:
+{{{
+#define HAVE_EBX_AVAILABLE 0
+}}}
+   # Add the following macro definition
+{{{
+#define HAVE_MMX 0
+}}}
+   to _gst-libs/ext/ffmpeg/libswscale/rgb2rgb_template.c_.
