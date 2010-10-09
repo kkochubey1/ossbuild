@@ -75,7 +75,9 @@ libavcodec/cabac.h:641: error: PIC register ‘%ebx’ clobbered in ‘asm’
 {{{
 sudo make; make install
 }}}
-  to complete the compilation and installation of gst-ffmpeg.
+  to manually complete the compilation and installation of gst-ffmpeg.
+
+=== Compiling on a different platform ===
 
 These steps assume that you are compiling GStreamer on the same platform as the target. But if you are compiling from Snow Leopard (10.6) with the intention to generate binaries for Leopard (10.5), then you need to do a few additional things:
   * In _/opt/local/share/macports/Tcl/port1.0/portconfigure.tcl_ have two more linker flags added to the defaults:
