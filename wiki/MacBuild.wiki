@@ -1,6 +1,6 @@
 #summary Compilation on Mac OSX.
 
-Compilation of GStreamer for the Mac platform is in it earlier stages. [http://www.macports.org/ MacPorts] is currently used as the mechanism to resolve dependencies, apply patches and build the binaries. This is followed by some post-build steps to remove absolute paths in the resulting _.dylib_ and _.so_ files (which !MacPorts sets by default to /opt/local/lib).
+Compilation of GStreamer for the Mac platform is in its earlier stages. [http://www.macports.org/ MacPorts] is currently used as the mechanism to resolve dependencies, apply patches and build the binaries. This is followed by some post-build steps to remove absolute paths in the resulting _.dylib_ and _.so_ files (which !MacPorts sets by default to /opt/local/lib).
 
 == Target platform: 32 bits ==
 
