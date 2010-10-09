@@ -79,7 +79,7 @@ sudo make; make install
 
 === Compiling on a different platform ===
 
-These steps assume that you are compiling GStreamer on the same platform as the target. But if you are compiling from Snow Leopard (10.6) with the intention to generate binaries for Leopard (10.5), then you need to do a few additional things:
+The steps above assume that you are compiling GStreamer on the same platform as the target. But if you are compiling from Snow Leopard (10.6) with the intention to generate binaries for Leopard (10.5), then you need to do a few additional things:
   * In _/opt/local/share/macports/Tcl/port1.0/portconfigure.tcl_ have two more linker flags added to the defaults:
 {{{
 default configure.ldflags   {"-L${prefix}/lib -Xlinker -headerpad_max_install_names -mmacosx-version-min=10.5 -no_compact_linkedit"}
@@ -89,7 +89,7 @@ default configure.ldflags   {"-L${prefix}/lib -Xlinker -headerpad_max_install_na
 {{{
 macosx_deployment_target 10.5
 }}}
-  to _/opt/local/etc/macports/macports.conf_.
+  to _/opt/local/etc/macports/macports.conf_. For more details, see [http://lists.macosforge.org/pipermail/macports-users/2010-September/021861.html here] and [http://lists.macosforge.org/pipermail/macports-users/2010-October/022126.html here].
 
 == Additional steps to create GStreamer binaries for bundling with 3rd-party applications ==
 
