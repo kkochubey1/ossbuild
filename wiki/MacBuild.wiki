@@ -77,7 +77,17 @@ sudo make; make install
 }}}
   to complete the compilation and installation of gst-ffmpeg.
 
-
+These steps assume that you are compiling GStreamer on the same platform as the target. But if you are compiling from Snow Leopard (10.6) with the intention to generate binaries for Leopard (10.5), then you need to do a few additional things:
+  * In _/opt/local/share/macports/Tcl/port1.0/portconfigure.tcl_ have two more linker flags added to the defaults:
+{{{
+default configure.ldflags   {"-L${prefix}/lib -Xlinker -headerpad_max_install_names -mmacosx-version-min=10.5 -no_compact_linkedit"}
+}}}
+Based on [http://lists.apple.com/archives/xcode-users/2009/Oct/msg00530.html this] discussion.
+  * Add the following line
+{{{
+macosx_deployment_target 10.5
+}}}
+  to _/opt/local/etc/macports/macports.conf_.
 
 == Additional steps to create GStreamer binaries for bundling with 3rd-party applications ==
 
