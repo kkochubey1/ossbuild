@@ -622,13 +622,16 @@ app_step(App* app, gboolean forward)
   if (!change_app_playback_direction(app, forward))
     return FALSE;
 
-  gst_element_set_state(GST_ELEMENT(app->pipeline), GST_STATE_PAUSED);
+  //gst_element_set_state(GST_ELEMENT(app->pipeline), GST_STATE_PAUSED);
   //gst_element_get_state(app->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
 
-  //if (!app_pause(app))
-  //  return FALSE;
+  if (!app_pause(app))
+    return FALSE;
 
   evt = gst_event_new_step(GST_FORMAT_BUFFERS, 1, 1.0, TRUE, FALSE);
+  if (!evt)
+    return FALSE;
+
   return gst_element_send_event(GST_ELEMENT(app->pipeline), evt);
 }
 
@@ -649,8 +652,10 @@ app_pause(App* app)
     return TRUE;
   }
 
-  gst_element_set_state(GST_ELEMENT(app->pipeline), GST_STATE_PAUSED);
-  gst_element_get_state(app->pipeline, NULL, NULL, -1);
+  if (state > GST_STATE_PAUSED) {
+    gst_element_set_state(GST_ELEMENT(app->pipeline), GST_STATE_PAUSED);
+    gst_element_get_state(app->pipeline, NULL, NULL, -1);
+  }
   return TRUE;
 }
 
@@ -1508,8 +1513,10 @@ notify_caps(GstPad* pad, GstPad* peer, App* app)
 
   gst_caps_unref(caps);
 
-  gst_element_query_duration(app->pipeline, &format, &duration);
-  gst_element_query_position(app->pipeline, &format, &position);
+  if (!gst_element_query_duration(app->pipeline, &format, &duration))
+    duration = 0;
+  if (!gst_element_query_position(app->pipeline, &format, &position))
+    position = 0;
 
   if (g_object_property_exists(G_OBJECT(app->pipeline), "volume")) {
     g_object_get(app->pipeline, "volume", &volume, NULL);
@@ -1529,7 +1536,7 @@ notify_caps(GstPad* pad, GstPad* peer, App* app)
 
   GST_PLAYER_EVENT("window_size, %d, %d", app->actual_width, app->actual_height);
   GST_PLAYER_EVENT("fps, %g", app->actual_fps);
-  GST_PLAYER_EVENT("seekable, %d", !app->is_live);
+  GST_PLAYER_EVENT("seekable, %d", !app->is_live && duration > 0);
   GST_PLAYER_EVENT("live, %d", app->is_live);
   GST_PLAYER_EVENT("uri, %s", app->uri);
   GST_PLAYER_EVENT("volume, %g", volume);
@@ -1569,51 +1576,74 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
       break;
     case COMMAND_STEP_FORWARD:
       {
-        gint64 position, duration;
+        gint64 position = 0; 
+        gint64 duration = 0;
         GstFormat format;
 
         if (app->is_live)
           break;
 
-        format = GST_FORMAT_BUFFERS;
-        gst_element_query_position(GST_ELEMENT(app->pipeline), &format, &position);
-        gst_element_query_duration(GST_ELEMENT(app->pipeline), &format, &duration);
+        //format = GST_FORMAT_BUFFERS;
+        //gst_element_query_position(GST_ELEMENT(app->pipeline), &format, &position);
+        //gst_element_query_duration(GST_ELEMENT(app->pipeline), &format, &duration);
 
-        if (position < duration && position >= 0 && duration > 0) {
+        //if (position < duration && position >= 0 && duration > 0) {
           app_step(app, TRUE);
 
           format = GST_FORMAT_TIME;
-          gst_element_query_position(app->pipeline, &format, &position);
-          GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
-        }
+          if (gst_element_query_position(app->pipeline, &format, &position))
+            GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
+        //}
         break;
       }
     case COMMAND_STEP_BACKWARD:
       {
-        /* TODO: Fix this so it works. Right now it just does a step forward. */
-        gint64 position;
+        /* TODO: Find an alternative method. 
+                 For now, it steps backward by performing a seek to the calculated time 
+                 one frame behind the current position. */
+        gint64 position = 0;
+        gint64 offset = 0;
         GstFormat format = GST_FORMAT_TIME;
 
         if (app->is_live)
           break;
 
-        app_step(app, TRUE);
-        gst_element_query_position(app->pipeline, &format, &position);
-        GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
+        if (app->actual_fps <= 0.0)
+          break;
+
+        if (!app_pause(app))
+          break;
+
+        if (gst_element_query_position(app->pipeline, &format, &position)) {
+          /* Calculate where it should be in the stream and seek there. */
+          offset = (1000000000 / app->actual_fps);
+          position = (position > offset ? position - offset : 0);
+
+          /* Ensure that GST_SEEK_KEY_UNIT is absent so that we get accurate seeking to the frame. */
+          if (gst_element_seek_simple(app->pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_SKIP | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT, (position > 0 ? position : 0))) {
+            if (gst_element_query_position(app->pipeline, &format, &position))
+              GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
+          }
+        }
         break;
       }
     case COMMAND_TIME_SEEK_FORWARD:
       {
         if (argc >= 1 && !app->is_live) {
-          gint64 position, duration;
+          gint64 position = 0; 
+          gint64 duration = 0;
           GstFormat format = GST_FORMAT_TIME;
 
-          gst_element_query_position(app->pipeline, &format, &position);
-          gst_element_query_duration(app->pipeline, &format, &duration);
-
-          if (position < duration) {
-            gst_element_seek_simple(app->pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_KEY_UNIT | GST_SEEK_FLAG_SKIP | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT, arg0 * GST_MSECOND);
-            GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
+          if (
+                 gst_element_query_position(app->pipeline, &format, &position) 
+              && gst_element_query_duration(app->pipeline, &format, &duration) 
+              && position < duration
+          ) {
+            if (gst_element_seek_simple(app->pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_KEY_UNIT | GST_SEEK_FLAG_SKIP | GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_SEGMENT, arg0 * GST_MSECOND)) {
+              if (gst_element_query_position(app->pipeline, &format, &position)) {
+                GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
+              }
+            }
           }
         }
       }
@@ -1672,7 +1702,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
     case COMMAND_TOGGLE_MUTE:
       if (argc >= 1) {
         if (g_object_property_exists(G_OBJECT(app->pipeline), "mute")) {
-          gboolean is_muted;
+          gboolean is_muted = FALSE;
           g_object_get(app->pipeline, "mute", &is_muted, NULL);
           g_object_set(app->pipeline, "mute", !is_muted, NULL);
           GST_PLAYER_EVENT("mute, %d", (!is_muted ? 1 : 0));
@@ -1693,25 +1723,31 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
       break;
     case COMMAND_QUERY_POSITION:
       {
-        gint64 position;
+        gint64 position = 0;
         GstFormat format = GST_FORMAT_TIME;
 
-        gst_element_query_position(app->pipeline, &format, &position);
-        GST_PLAYER_RESPONSE("query_position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
+        if (gst_element_query_position(app->pipeline, &format, &position)) {
+          GST_PLAYER_RESPONSE("query_position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
+        } else {
+          GST_PLAYER_RESPONSE("query_position, %" G_GINT64_FORMAT, 0);
+        }
       }
       break;
     case COMMAND_QUERY_DURATION:
       {
-        gint64 duration;
+        gint64 duration = 0;
         GstFormat format = GST_FORMAT_TIME;
 
-        gst_element_query_duration(app->pipeline, &format, &duration);
-        GST_PLAYER_RESPONSE("query_duration, %" G_GINT64_FORMAT, (duration > 0 ? duration / GST_MSECOND : 0));
+        if (gst_element_query_duration(app->pipeline, &format, &duration)) {
+          GST_PLAYER_RESPONSE("query_duration, %" G_GINT64_FORMAT, (duration > 0 ? duration / GST_MSECOND : 0));
+        } else {
+          GST_PLAYER_RESPONSE("query_duration, %" G_GINT64_FORMAT, 0);
+        }
       }
       break;
     case COMMAND_QUERY_VOLUME:
       {
-        gdouble volume;
+        gdouble volume = 1.0;
 
         if (g_object_property_exists(G_OBJECT(app->pipeline), "volume")) {
           g_object_get(app->pipeline, "volume", &volume, NULL);
@@ -1727,7 +1763,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
       break;
     case COMMAND_QUERY_MUTE:
       {
-        gboolean mute;
+        gboolean mute = FALSE;
 
         if (g_object_property_exists(G_OBJECT(app->pipeline), "mute")) {
           g_object_get(app->pipeline, "mute", &mute, NULL);

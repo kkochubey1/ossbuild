@@ -644,6 +644,11 @@ public abstract class MediaComponentV5 extends MediaComponent {
 			return false;
 		}
 	}
+
+	protected boolean releaseLock() {
+		lock.unlock();
+		return true;
+	}
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Listeners">
@@ -999,14 +1004,14 @@ public abstract class MediaComponentV5 extends MediaComponent {
 	//<editor-fold defaultstate="collapsed" desc="Step">
 	@Override
 	public boolean stepForward() {
-		if (!lock.tryLock())
+		if (!acquireLock())
 			return false;
 		try {
 			if (player == null)
 				return true;
 			return player.stepForward();
 		} finally {
-			lock.unlock();
+			releaseLock();
 		}
 	}
 
@@ -1258,7 +1263,7 @@ public abstract class MediaComponentV5 extends MediaComponent {
 			//t.printStackTrace();
 			return false;
 		} finally {
-			lock.unlock();
+			releaseLock();
 		}
 	}
 	//</editor-fold>
