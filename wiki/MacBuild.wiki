@@ -113,6 +113,6 @@ macosx_deployment_target 10.5
 }}}
   * If also needed, eliminate symbolic links using the _removesymlinks.py_ tool:
 {{{
-> ./removesymlinks.py ––dir <lib folder>
+> ./removesymlinks.py --dir <lib folder>
 }}}
 The _replacepath.py_ and _removesymlinks.py_ tools are located in the ossbuild source trunk [http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Main/GStreamer/MacOSX/MacPorts here].
