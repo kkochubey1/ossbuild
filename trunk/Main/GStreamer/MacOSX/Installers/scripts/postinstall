@@ -1,0 +1,7 @@
+#!/bin/sh
+
+echo "" >> ~/.bash_profile
+echo "# The following line was added by the Gstreamer-MacBuilds installer" >> ~/.bash_profile
+echo "export PATH=/opt/local/bin:$PATH" >> ~/.bash_profile
+
+exit 0
