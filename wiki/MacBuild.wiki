@@ -74,7 +74,11 @@ libavcodec/cabac.h:641: error: PIC register ‘%ebx’ clobbered in ‘asm’
 These workarounds were found in [https://trac.macports.org/ticket/24636 this] bug report.
   * Still in _<local repository>/gnome/gst-ffmpeg/work/gst-ffmpeg-0.10.10_ run:
 {{{
-sudo make; make install
+> sudo make
+}}}
+  followed by:
+{{{
+> sudo make install
 }}}
   to manually complete the compilation and installation of gst-ffmpeg.
 
