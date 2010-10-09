@@ -29,10 +29,10 @@
 		<Library resource="libgstinterfaces-${GstApiVersion}.so.0"      executable="true" />
 		<Library resource="libgstsdp-${GstApiVersion}.so.0"             executable="true" />
 		<Library resource="libgstnetbuffer-${GstApiVersion}.so.0"       executable="true" />
+		<Library resource="libgstvideo-${GstApiVersion}.so.0"           executable="true" />
 		<Library resource="libgstpbutils-${GstApiVersion}.so.0"         executable="true" />
 		<Library resource="libgstfft-${GstApiVersion}.so.0"             executable="true" />
 		<Library resource="libgstapp-${GstApiVersion}.so.0"             executable="true" />
-		<Library resource="libgstvideo-${GstApiVersion}.so.0"           executable="true" />
 		<Library resource="libgstaudio-${GstApiVersion}.so.0"           executable="true" />
 		<Library resource="libgsttag-${GstApiVersion}.so.0"             executable="true" />
 		<Library resource="libgstriff-${GstApiVersion}.so.0"            executable="true" />

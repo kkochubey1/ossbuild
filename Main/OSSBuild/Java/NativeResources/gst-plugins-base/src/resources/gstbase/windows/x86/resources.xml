@@ -29,10 +29,10 @@
 		<Library resource="libgstinterfaces-${GstApiVersion}.dll" />
 		<Library resource="libgstsdp-${GstApiVersion}.dll" />
 		<Library resource="libgstnetbuffer-${GstApiVersion}.dll" />
+		<Library resource="libgstvideo-${GstApiVersion}.dll" />
 		<Library resource="libgstpbutils-${GstApiVersion}.dll" />
 		<Library resource="libgstfft-${GstApiVersion}.dll" />
 		<Library resource="libgstapp-${GstApiVersion}.dll" />
-		<Library resource="libgstvideo-${GstApiVersion}.dll" />
 		<Library resource="libgstaudio-${GstApiVersion}.dll" />
 		<Library resource="libgsttag-${GstApiVersion}.dll" />
 		<Library resource="libgstriff-${GstApiVersion}.dll" />

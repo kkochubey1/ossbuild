@@ -246,6 +246,7 @@ public class Main {
 		dlg.setSize(700, 700);
 
 		comp = new GstMediaComponent("timeoverlay shaded-background=true font-desc='arial normal 50px' ! d3dvideosink", dlg, SWT.NONE);
+		//comp = new GstMediaComponent(dlg, SWT.NONE);
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
@@ -263,21 +264,21 @@ public class Main {
 		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 //
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-//
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-//
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
-//
-//		comp = new GstMediaComponent(dlg, SWT.NONE);
-//		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-//		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		comp = new GstMediaComponent(dlg, SWT.NONE);
+		comp.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		final Scale scale = new Scale(dlg, SWT.HORIZONTAL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -881,6 +882,11 @@ public class Main {
 						if (scale.isDisposed())
 							return;
 
+						scale.setMinimum(0);
+						scale.setMaximum(0);
+						scale.setIncrement(0);
+						scale.setPageIncrement(0);
+						scale.setSelection(0);
 						scale.setEnabled(source.isSeekable() && scale.getMinimum() < scale.getMaximum());
 					}
 				});
@@ -927,7 +933,7 @@ public class Main {
 								}
 							}
 
-							if (position != lastPosition) {
+							if (position != lastPosition && duration > 0) {
 								lastPosition = position;
 								scale.setSelection((int)TimeUnit.MILLISECONDS.toSeconds(position) + scale.getMinimum());
 							}
