@@ -18,11 +18,11 @@ Compilation of GStreamer for the Mac platform is in it earlier stages. [http://w
     /Library/Tcl/macports1.0 \
     ~/.macports
 }}}
-  * Edit _/opt/local/share/macports/Tcl/port1.0/portconfigure.tcl_ and replace the line
+  * Edit _/opt/local/share/macports/Tcl/port1.0/portconfigure.tcl_ and replace the line:
 {{{
 default configure.ldflags   {-L${prefix}/lib}
 }}}
-  with 
+  with:
 {{{
 default configure.ldflags   {"-L${prefix}/lib -Xlinker -headerpad_max_install_names"}
 }}}
@@ -66,12 +66,12 @@ libavcodec/cabac.h:641: error: PIC register ‘%ebx’ clobbered in ‘asm’
 {{{
 #define HAVE_EBX_AVAILABLE 0
 }}}
-   # Add the following macro definition
+   # Add the following macro definition:
 {{{
 #define HAVE_MMX 0
 }}}
    to _gst-libs/ext/ffmpeg/libswscale/rgb2rgb_template.c_.
-  * Still in _<local repository>/gnome/gst-ffmpeg/work/gst-ffmpeg-0.10.10_ run 
+  * Still in _<local repository>/gnome/gst-ffmpeg/work/gst-ffmpeg-0.10.10_ run:
 {{{
 sudo make; make install
 }}}
@@ -82,8 +82,8 @@ These steps assume that you are compiling GStreamer on the same platform as the 
 {{{
 default configure.ldflags   {"-L${prefix}/lib -Xlinker -headerpad_max_install_names -mmacosx-version-min=10.5 -no_compact_linkedit"}
 }}}
-Based on [http://lists.apple.com/archives/xcode-users/2009/Oct/msg00530.html this] discussion.
-  * Add the following line
+  (Based on [http://lists.apple.com/archives/xcode-users/2009/Oct/msg00530.html this] discussion).
+  * Add the following line:
 {{{
 macosx_deployment_target 10.5
 }}}
