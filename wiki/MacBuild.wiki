@@ -106,7 +106,7 @@ macosx_deployment_target 10.5
 {{{
 > ./replacepath.py --old /opt/local/lib/ --new @loader_path/../ --dir <lib folder>/gstreamer-0.10
 }}}
-  * If also needed, eliminate symbolic links using the _removesymlinks.py_:
+  * If also needed, eliminate symbolic links using the _removesymlinks.py_ tool:
 {{{
 > ./removesymlinks.py ––dir <lib folder>
 }}}
