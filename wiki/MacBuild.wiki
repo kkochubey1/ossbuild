@@ -26,7 +26,7 @@ default configure.ldflags   {-L${prefix}/lib}
 {{{
 default configure.ldflags   {"-L${prefix}/lib -Xlinker -headerpad_max_install_names"}
 }}}
-this will allow later to replace the absolute dependency paths in the _.dylib_ and _.so_ files by relative paths.
+this will allow later to change the absolute dependency paths embedded in the _.dylib_ and _.so_ files by relative paths.
   * Use the portfiles included in the [http://code.google.com/p/ossbuild/source/browse/trunk#trunk/Main/GStreamer/MacOSX/MacPorts/repository svn] to create a local repository. Add the location of the local repository to the /opt/local/macports/source.conf file, as explained [http://guide.macports.org/#development.local-repositories here].
   * Add the line:
 {{{
