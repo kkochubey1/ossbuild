@@ -71,7 +71,7 @@ libavcodec/cabac.h:641: error: PIC register ‘%ebx’ clobbered in ‘asm’
 #define HAVE_MMX 0
 }}}
    to _gst-libs/ext/ffmpeg/libswscale/rgb2rgb_template.c_. 
-These workarounds were found in [https://trac.macports.org/ticket/24636 this] bug report.
+  These workarounds were found in [https://trac.macports.org/ticket/24636 this] bug report.
   * Still in _<local repository>/gnome/gst-ffmpeg/work/gst-ffmpeg-0.10.10_ run:
 {{{
 > sudo make
