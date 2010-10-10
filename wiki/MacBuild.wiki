@@ -4,7 +4,7 @@ Compilation of GStreamer for the Mac platform is in its earlier stages. [http://
 
 == Target platform: 32 bits ==
 
-  * Install macports for Snow Leopard. Completely remove older install if present:
+  * Install macports for your platform. Completely remove older install if present:
 {{{
 > sudo rm -rf \
     /opt/local \
