@@ -1411,27 +1411,27 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
                 for (i = 0; i < sink->height; ++i)
                    memcpy (dest + dststride * i, source + srcstride * i, srcstride);
                 break;
-			  case GST_MAKE_FOURCC ('I', '4', '2', '0'):
-			  case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
+              case GST_MAKE_FOURCC ('I', '4', '2', '0'):
+              case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
               {
-				int srcystride, srcvstride, srcustride;
-				int dstystride, dstvstride, dstustride;
-				int rows;
-				guint8 *srcv, *srcu, *dstv, *dstu;
+                int srcystride, srcvstride, srcustride;
+                int dstystride, dstvstride, dstustride;
+                int rows;
+                guint8 *srcv, *srcu, *dstv, *dstu;
 
-				rows = sink->height;
+                rows = sink->height;
 
                 /* Source y, u and v strides */
                 srcystride = GST_ROUND_UP_4(sink->width);
                 srcustride = GST_ROUND_UP_8 (sink->width) / 2;
                 srcvstride = GST_ROUND_UP_8 (srcystride) / 2;
 
-				/* Destination y, u and v strides */
-				dstystride = lr.Pitch;
-				dstustride = dstystride / 2;
-				dstvstride = dstustride;
+                /* Destination y, u and v strides */
+                dstystride = lr.Pitch;
+                dstustride = dstystride / 2;
+                dstvstride = dstustride;
 
-				srcu = source + srcystride * GST_ROUND_UP_2 (rows);           
+                srcu = source + srcystride * GST_ROUND_UP_2 (rows);           
                 srcv = srcu + srcustride * GST_ROUND_UP_2 (rows) / 2;
 
                 dstu = dest + dstystride * rows;
@@ -1440,14 +1440,14 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
                 for (i = 0; i < rows ; ++i)
                   /* Copy the y plane */
                   memcpy (dest + dstystride * i, source + srcystride * i, dstystride);
-				for (i=0; i < rows/2 ; ++i) {
-				  /* Copy the u plane */
+                for (i=0; i < rows/2 ; ++i) {
+                  /* Copy the u plane */
                   memcpy (dstu + dstustride * i, srcu + srcustride * i, dstustride);
                   /* Copy the v plane */
-				  memcpy (dstv + dstvstride * i, srcv + srcvstride * i, dstvstride);
+                  memcpy (dstv + dstvstride * i, srcv + srcvstride * i, dstvstride);
                 }				
                 break;
-			  }
+              }
               default:
                 g_assert_not_reached();
             }
