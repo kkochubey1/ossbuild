@@ -1858,12 +1858,12 @@ gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink)
           d3dformat = D3DFMT_X8R8G8B8;
           d3dfourcc = (D3DFORMAT)MAKEFOURCC('U', 'Y', 'V', 'Y');
           break;
-         case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
-         case GST_MAKE_FOURCC ('I', '4', '2', '0'):
+        case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
+        case GST_MAKE_FOURCC ('I', '4', '2', '0'):
           d3dformat = D3DFMT_X8R8G8B8;
           d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'V', '1', '2');
           break;
-         default:
+        default:
           g_assert_not_reached();
       }
     } else if (gst_video_format_is_rgb(sink->format)) {
