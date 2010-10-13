@@ -82,6 +82,17 @@ libavcodec/cabac.h:641: error: PIC register ‘%ebx’ clobbered in ‘asm’
 }}}
   to manually complete the compilation and installation of gst-ffmpeg.
 
+== Target platform: 64 bits ==
+
+The steps to compile for a 64 bits platforms are almost identical, with a few exceptions: 
+  * Specify 64 bits architecture in _/opt/local/etc/macports/macports.conf_:
+{{{
+build_arch x86_64
+}}}
+  although if you are compiling on a 64 bits platform, the target is assumed to 64 bits by default.
+  * The compilation of gst-ffmpeg completes without error, so no there is no need to apply the workaround described above.
+  * One thing to note is that the osxvideosrc plugin is missing from the 64 bits builds, because it uses the older 32-bit Carbon QuickTime API, which has been deprecated in 64-bit mode. The plugin needs to be rewritten for the newer Cocoa QTKit API (which will work in 32-bit and 64-bit modes).
+
 === Compiling on a different platform ===
 
 The steps above assume that you are compiling GStreamer on the same platform as the target. But if you are compiling in Snow Leopard (10.6) with the intention to generate binaries for Leopard (10.5), then you need to do a few additional things right after installing !MacPorts and before installing any ports:
