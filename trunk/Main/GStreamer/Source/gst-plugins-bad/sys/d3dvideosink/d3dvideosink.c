@@ -102,8 +102,8 @@ static GstStaticPadTemplate sink_template =
       GST_PAD_SINK,
       GST_PAD_ALWAYS,
       GST_STATIC_CAPS (
-        GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YV12 }")
-        ";" GST_VIDEO_CAPS_RGBx)
+        GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YV12, I420 }"))
+        //";" GST_VIDEO_CAPS_RGBx)
     );
 
 static void gst_d3dvideosink_init_interfaces (GType type);
@@ -1435,19 +1435,25 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
                 srcu = source + srcystride * GST_ROUND_UP_2 (rows);           
                 srcv = srcu + srcustride * GST_ROUND_UP_2 (rows) / 2;
 
-                dstu = dest + dstystride * rows;
-                dstv = dstu + dstustride * rows / 2;
+                if (fourcc == GST_MAKE_FOURCC ('I', '4', '2', '0')){
+                  /* swap u and v planes */
+                  dstv = dest + dstystride * rows;
+                  dstu = dstv + dstustride * rows / 2;
+                } else {
+                  dstu = dest + dstystride * rows;
+                  dstv = dstu + dstustride * rows / 2;
+                }
   
                 for (i = 0; i < rows; ++i) {
                   /* Copy the y plane */
-                  memcpy (dest + dstystride * i, source + srcystride * i, dstystride);
+                  memcpy (dest + dstystride * i, source + srcystride * i, srcystride);
                 }
 
                 for (i=0; i < rows / 2; ++i) {
                   /* Copy the u plane */
-                  memcpy (dstu + dstustride * i, srcu + srcustride * i, dstustride);
+                  memcpy (dstu + dstustride * i, srcu + srcustride * i, srcustride);
                   /* Copy the v plane */
-                  memcpy (dstv + dstvstride * i, srcv + srcvstride * i, dstvstride);
+                  memcpy (dstv + dstvstride * i, srcv + srcvstride * i, srcvstride);
                 }
                 break;
               }
@@ -1852,15 +1858,12 @@ gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink)
           d3dformat = D3DFMT_X8R8G8B8;
           d3dfourcc = (D3DFORMAT)MAKEFOURCC('U', 'Y', 'V', 'Y');
           break;
-        case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
+         case GST_MAKE_FOURCC ('Y', 'V', '1', '2'):
+         case GST_MAKE_FOURCC ('I', '4', '2', '0'):
           d3dformat = D3DFMT_X8R8G8B8;
           d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'V', '1', '2');
           break;
-        case GST_MAKE_FOURCC ('I', '4', '2', '0'):
-          d3dformat = D3DFMT_X8R8G8B8;
-          d3dfourcc = (D3DFORMAT)MAKEFOURCC('I', '4', '2', '0');
-          break;
-        default:
+         default:
           g_assert_not_reached();
       }
     } else if (gst_video_format_is_rgb(sink->format)) {
