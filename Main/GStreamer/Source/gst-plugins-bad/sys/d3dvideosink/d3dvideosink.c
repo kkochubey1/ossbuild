@@ -103,7 +103,7 @@ static GstStaticPadTemplate sink_template =
       GST_PAD_ALWAYS,
       GST_STATIC_CAPS (
         GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YV12 }")
-        ";" GST_VIDEO_CAPS_RGBx ";" GST_VIDEO_CAPS_BGRx)
+        ";" GST_VIDEO_CAPS_RGBx)
     );
 
 static void gst_d3dvideosink_init_interfaces (GType type);
