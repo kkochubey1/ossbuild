@@ -103,8 +103,7 @@ static GstStaticPadTemplate sink_template =
       GST_PAD_ALWAYS,
       GST_STATIC_CAPS (
         GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YUVY, YV12, I420 }")
-        GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YUVY, YV12 }")
-		";" GST_VIDEO_CAPS_RGBx ";" GST_VIDEO_CAPS_BGRx)
+        ";" GST_VIDEO_CAPS_RGBx ";" GST_VIDEO_CAPS_BGRx)
     );
 
 static void gst_d3dvideosink_init_interfaces (GType type);
@@ -138,7 +137,7 @@ static GstCaps *gst_d3dvideosink_get_caps (GstBaseSink *bsink);
 static GstFlowReturn gst_d3dvideosink_show_frame (GstVideoSink *sink, GstBuffer *buffer);
 
 /* GstXOverlay methods */
-static void gst_d3dvideosink_set_window_id (GstXOverlay *overlay, ULONG window_id);
+static void gst_d3dvideosink_set_window_handle (GstXOverlay *overlay, guintptr window_id);
 static void gst_d3dvideosink_expose (GstXOverlay *overlay);
 
 /* WndProc methods */
@@ -208,7 +207,7 @@ gst_d3dvideosink_interface_init (GstImplementsInterfaceClass * klass)
 static void
 gst_d3dvideosink_xoverlay_interface_init (GstXOverlayClass * iface)
 {
-  iface->set_xwindow_id = gst_d3dvideosink_set_window_id;
+  iface->set_window_handle = gst_d3dvideosink_set_window_handle;
   iface->expose = gst_d3dvideosink_expose;
 }
 
@@ -657,7 +656,7 @@ WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     SetWindowLongPtr (hWnd, GWLP_USERDATA, (LONG)sink);
 
     /* signal application we created a window */
-    gst_x_overlay_got_xwindow_id (GST_X_OVERLAY (sink), (gulong)hWnd);
+    gst_x_overlay_got_window_handle (GST_X_OVERLAY (sink), (guintptr)hWnd);
   }
 
   
@@ -869,7 +868,7 @@ failed:
   return FALSE;
 }
 
-static void gst_d3dvideosink_set_window_id (GstXOverlay * overlay, ULONG window_id)
+static void gst_d3dvideosink_set_window_handle (GstXOverlay * overlay, guintptr window_id)
 {
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (overlay);
   HWND hWnd = (HWND)window_id;

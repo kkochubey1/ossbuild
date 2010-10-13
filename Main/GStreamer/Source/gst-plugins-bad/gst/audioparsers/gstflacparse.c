@@ -588,8 +588,12 @@ gst_flac_parse_frame_is_valid (GstFlacParse * flacparse, GstBuffer * buffer,
     goto need_more;
   }
 
+  /* mind unknown framesize */
   search_start = MAX (2, flacparse->min_framesize);
-  search_end = MIN (size, flacparse->max_framesize + 9 + 2);
+  if (flacparse->max_framesize)
+    search_end = MIN (size, flacparse->max_framesize + 9 + 2);
+  else
+    search_end = size;
   search_end -= 2;
 
   remaining = size;
@@ -616,13 +620,18 @@ gst_flac_parse_frame_is_valid (GstFlacParse * flacparse, GstBuffer * buffer,
     }
   }
 
-  /* For the last frame check the CRC16 instead of the following
-   * header, which does not exist */
+  /* For the last frame output everything to the end */
   if (G_UNLIKELY (gst_base_parse_get_drain (GST_BASE_PARSE (flacparse)))) {
-    guint16 actual_crc = gst_flac_calculate_crc16 (data, size - 2);
-    guint16 expected_crc = GST_READ_UINT16_BE (data + size - 2);
+    if (flacparse->check_frame_checksums) {
+      guint16 actual_crc = gst_flac_calculate_crc16 (data, size - 2);
+      guint16 expected_crc = GST_READ_UINT16_BE (data + size - 2);
 
-    if (actual_crc == expected_crc) {
+      if (actual_crc == expected_crc) {
+        *ret = size;
+        flacparse->block_size = block_size;
+        return TRUE;
+      }
+    } else {
       *ret = size;
       flacparse->block_size = block_size;
       return TRUE;
