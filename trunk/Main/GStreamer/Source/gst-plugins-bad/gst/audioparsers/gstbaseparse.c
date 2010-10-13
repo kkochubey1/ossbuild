@@ -1130,6 +1130,9 @@ gst_base_parse_update_bitrates (GstBaseParse * parse, GstBuffer * buffer)
   /* override if subclass provided bitrate, e.g. metadata based */
   if (parse->priv->bitrate) {
     parse->priv->avg_bitrate = parse->priv->bitrate;
+    /* spread this (confirmed) info ASAP */
+    if (parse->priv->posted_avg_bitrate != parse->priv->avg_bitrate)
+      gst_base_parse_post_bitrates (parse, FALSE, TRUE, FALSE);
   }
 
   frame_bitrate = (8 * data_len * GST_SECOND) / frame_dur;
@@ -1392,8 +1395,6 @@ gst_base_parse_push_buffer (GstBaseParse * parse, GstBuffer * buffer)
       (parse->priv->framecount % parse->priv->update_interval) == 0)
     gst_base_parse_update_duration (parse);
 
-  gst_base_parse_update_bitrates (parse, buffer);
-
   if (GST_BUFFER_TIMESTAMP_IS_VALID (buffer))
     last_start = last_stop = GST_BUFFER_TIMESTAMP (buffer);
   if (last_start != GST_CLOCK_TIME_NONE
@@ -1494,6 +1495,10 @@ gst_base_parse_push_buffer (GstBaseParse * parse, GstBuffer * buffer)
       parse->pending_segment = NULL;
     }
   }
+
+  /* update bitrates and optionally post corresponding tags
+   * (following newsegment) */
+  gst_base_parse_update_bitrates (parse, buffer);
 
   if (G_UNLIKELY (parse->priv->pending_events)) {
     GList *l;

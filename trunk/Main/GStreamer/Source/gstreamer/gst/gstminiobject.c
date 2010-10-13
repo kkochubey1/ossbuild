@@ -43,7 +43,8 @@
 static GstAllocTrace *_gst_mini_object_trace;
 #endif
 
-#define DEBUG_REFCOUNT
+#define GST_MINI_OBJECT_GET_CLASS_UNCHECKED(obj) \
+    ((GstMiniObjectClass *) (((GTypeInstance*)(obj))->g_class))
 
 #if 0
 static void gst_mini_object_base_init (gpointer g_class);
@@ -307,13 +308,11 @@ gst_mini_object_ref (GstMiniObject * mini_object)
    * the object
    g_return_val_if_fail (mini_object->refcount > 0, NULL);
    */
-#ifdef DEBUG_REFCOUNT
   g_return_val_if_fail (GST_IS_MINI_OBJECT (mini_object), NULL);
 
   GST_CAT_TRACE (GST_CAT_REFCOUNTING, "%p ref %d->%d", mini_object,
       GST_MINI_OBJECT_REFCOUNT_VALUE (mini_object),
       GST_MINI_OBJECT_REFCOUNT_VALUE (mini_object) + 1);
-#endif
 
   g_atomic_int_inc (&mini_object->refcount);
 
@@ -328,9 +327,13 @@ gst_mini_object_free (GstMiniObject * mini_object)
   /* At this point, the refcount of the object is 0. We increase the refcount
    * here because if a subclass recycles the object and gives out a new
    * reference we don't want to free the instance anymore. */
-  gst_mini_object_ref (mini_object);
+  GST_CAT_TRACE (GST_CAT_REFCOUNTING, "%p ref %d->%d", mini_object,
+      GST_MINI_OBJECT_REFCOUNT_VALUE (mini_object),
+      GST_MINI_OBJECT_REFCOUNT_VALUE (mini_object) + 1);
 
-  mo_class = GST_MINI_OBJECT_GET_CLASS (mini_object);
+  g_atomic_int_inc (&mini_object->refcount);
+
+  mo_class = GST_MINI_OBJECT_GET_CLASS_UNCHECKED (mini_object);
   mo_class->finalize (mini_object);
 
   /* decrement the refcount again, if the subclass recycled the object we don't
@@ -353,17 +356,13 @@ gst_mini_object_free (GstMiniObject * mini_object)
 void
 gst_mini_object_unref (GstMiniObject * mini_object)
 {
-  g_return_if_fail (mini_object != NULL);
-  g_return_if_fail (mini_object->refcount > 0);
-
-#ifdef DEBUG_REFCOUNT
   g_return_if_fail (GST_IS_MINI_OBJECT (mini_object));
+  g_return_if_fail (mini_object->refcount > 0);
 
   GST_CAT_TRACE (GST_CAT_REFCOUNTING, "%p unref %d->%d",
       mini_object,
       GST_MINI_OBJECT_REFCOUNT_VALUE (mini_object),
       GST_MINI_OBJECT_REFCOUNT_VALUE (mini_object) - 1);
-#endif
 
   if (G_UNLIKELY (g_atomic_int_dec_and_test (&mini_object->refcount))) {
     gst_mini_object_free (mini_object);
@@ -386,11 +385,9 @@ gst_mini_object_replace (GstMiniObject ** olddata, GstMiniObject * newdata)
 
   g_return_if_fail (olddata != NULL);
 
-#ifdef DEBUG_REFCOUNT
   GST_CAT_TRACE (GST_CAT_REFCOUNTING, "replace %p (%d) with %p (%d)",
       *olddata, *olddata ? (*olddata)->refcount : 0,
       newdata, newdata ? newdata->refcount : 0);
-#endif
 
   olddata_val = g_atomic_pointer_get ((gpointer *) olddata);
 

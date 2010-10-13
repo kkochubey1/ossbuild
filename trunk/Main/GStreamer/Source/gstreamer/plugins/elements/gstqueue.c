@@ -142,7 +142,9 @@ enum
 
 #define GST_QUEUE_WAIT_DEL_CHECK(q, label) G_STMT_START {               \
   STATUS (q, q->sinkpad, "wait for DEL");                               \
+  q->waiting_del = TRUE;                                                \
   g_cond_wait (q->item_del, q->qlock);                                  \
+  q->waiting_del = FALSE;                                               \
   if (q->srcresult != GST_FLOW_OK) {                                    \
     STATUS (q, q->srcpad, "received DEL wakeup");                       \
     goto label;                                                         \
@@ -152,7 +154,9 @@ enum
 
 #define GST_QUEUE_WAIT_ADD_CHECK(q, label) G_STMT_START {               \
   STATUS (q, q->srcpad, "wait for ADD");                                \
+  q->waiting_add = TRUE;                                                \
   g_cond_wait (q->item_add, q->qlock);                                  \
+  q->waiting_add = FALSE;                                               \
   if (q->srcresult != GST_FLOW_OK) {                                    \
     STATUS (q, q->srcpad, "received ADD wakeup");                       \
     goto label;                                                         \
@@ -161,13 +165,17 @@ enum
 } G_STMT_END
 
 #define GST_QUEUE_SIGNAL_DEL(q) G_STMT_START {                          \
-  STATUS (q, q->srcpad, "signal DEL");                                  \
-  g_cond_signal (q->item_del);                                          \
+  if (q->waiting_del) {                                                 \
+    STATUS (q, q->srcpad, "signal DEL");                                \
+    g_cond_signal (q->item_del);                                        \
+  }                                                                     \
 } G_STMT_END
 
 #define GST_QUEUE_SIGNAL_ADD(q) G_STMT_START {                          \
-  STATUS (q, q->sinkpad, "signal ADD");                                 \
-  g_cond_signal (q->item_add);                                          \
+  if (q->waiting_add) {                                                 \
+    STATUS (q, q->sinkpad, "signal ADD");                               \
+    g_cond_signal (q->item_add);                                        \
+  }                                                                     \
 } G_STMT_END
 
 #define _do_init(bla) \
@@ -430,6 +438,8 @@ gst_queue_init (GstQueue * queue, GstQueueClass * g_class)
   queue->sink_tainted = TRUE;
   queue->src_tainted = TRUE;
 
+  queue->newseg_applied_to_src = FALSE;
+
   GST_DEBUG_OBJECT (queue,
       "initialized queue's not_empty & not_full conditions");
 }
@@ -680,15 +690,6 @@ gst_queue_locked_enqueue_buffer (GstQueue * queue, gpointer item)
   queue->cur_level.bytes += GST_BUFFER_SIZE (buffer);
   apply_buffer (queue, buffer, &queue->sink_segment, TRUE, TRUE);
 
-  /* if this is the first buffer update the end side as well, but without the
-   * duration. */
-  /* FIXME : This will only be useful for current time level if the
-   * source task is running, which is not the case for ex in
-   * gstplaybasebin when pre-rolling.
-   * See #482147 */
-  /*     if (queue->cur_level.buffers == 1) */
-  /*       apply_buffer (queue, buffer, &queue->src_segment, FALSE); */
-
   g_queue_push_tail (queue->queue, item);
   GST_QUEUE_SIGNAL_ADD (queue);
 }
@@ -709,6 +710,12 @@ gst_queue_locked_enqueue_event (GstQueue * queue, gpointer item)
       break;
     case GST_EVENT_NEWSEGMENT:
       apply_segment (queue, event, &queue->sink_segment, TRUE);
+      /* if the queue is empty, apply sink segment on the source */
+      if (queue->queue->length == 0) {
+        GST_CAT_LOG_OBJECT (queue_dataflow, queue, "Apply segment on srcpad");
+        apply_segment (queue, event, &queue->src_segment, FALSE);
+        queue->newseg_applied_to_src = TRUE;
+      }
       /* a new segment allows us to accept more buffers if we got UNEXPECTED
        * from downstream */
       queue->unexpected = FALSE;
@@ -758,7 +765,12 @@ gst_queue_locked_dequeue (GstQueue * queue, gboolean * is_buffer)
         GST_QUEUE_CLEAR_LEVEL (queue->cur_level);
         break;
       case GST_EVENT_NEWSEGMENT:
-        apply_segment (queue, event, &queue->src_segment, FALSE);
+        /* apply newsegment if it has not already been applied */
+        if (G_LIKELY (!queue->newseg_applied_to_src)) {
+          apply_segment (queue, event, &queue->src_segment, FALSE);
+        } else {
+          queue->newseg_applied_to_src = FALSE;
+        }
         break;
       default:
         break;

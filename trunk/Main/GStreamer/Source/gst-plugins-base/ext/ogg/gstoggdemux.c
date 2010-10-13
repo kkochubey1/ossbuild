@@ -576,7 +576,7 @@ gst_ogg_demux_chain_peer (GstOggPad * pad, ogg_packet * packet,
             pad->current_granule);
         out_duration = gst_util_uint64_scale (duration,
             GST_SECOND * pad->map.granulerate_d, pad->map.granulerate_n);
-      } else if (pad->is_sparse) {
+      } else if (pad->map.is_sparse) {
         out_timestamp = gst_ogg_stream_granule_to_time (&pad->map,
             pad->current_granule);
         out_duration = GST_CLOCK_TIME_NONE;
@@ -720,7 +720,7 @@ gst_ogg_demux_collect_start_time (GstOggDemux * ogg, GstOggChain * chain)
   for (i = 0; i < chain->streams->len; i++) {
     GstOggPad *pad = g_array_index (chain->streams, GstOggPad *, i);
 
-    if (pad->map.is_skeleton)
+    if (pad->map.is_sparse)
       continue;
 
     /*  can do this if the pad start time is not defined */
@@ -1792,11 +1792,6 @@ gst_ogg_demux_activate_chain (GstOggDemux * ogg, GstOggChain * chain,
     GST_DEBUG_OBJECT (ogg, "adding pad %" GST_PTR_FORMAT, pad);
 
     structure = gst_caps_get_structure (GST_PAD_CAPS (pad), 0);
-    pad->is_sparse =
-        gst_structure_has_name (structure, "application/x-ogm-text") ||
-        gst_structure_has_name (structure, "text/x-cmml") ||
-        gst_structure_has_name (structure, "subtitle/x-kate") ||
-        gst_structure_has_name (structure, "application/x-kate");
 
     /* activate first */
     gst_pad_set_active (GST_PAD_CAST (pad), TRUE);
@@ -2050,6 +2045,7 @@ gst_ogg_demux_do_seek (GstOggDemux * ogg, GstSegment * segment,
   gint64 result = 0;
   GstFlowReturn ret;
   gint i, pending, len;
+  gboolean first_parsed_page = TRUE;
 
   position = segment->last_stop;
 
@@ -2113,6 +2109,32 @@ gst_ogg_demux_do_seek (GstOggDemux * ogg, GstSegment * segment,
       GST_LOG_OBJECT (ogg, "granulepos of next page is -1");
       continue;
     }
+
+    /* we only do this the first time we pass here */
+    if (first_parsed_page) {
+      /* Now that we have a time reference from the page, we can check
+       * whether all streams still have pages from here on.
+       *
+       * This would be more elegant before the loop, but getting the page from
+       * there without breaking anything would be more costly */
+      granule_time = gst_ogg_stream_get_end_time_for_granulepos (&pad->map,
+          granulepos);
+      for (i = 0; i < len; i++) {
+        GstOggPad *stream = g_array_index (chain->streams, GstOggPad *, i);
+
+        if (stream == pad)
+          /* we already know we have at least one page (the current one)
+           * for this stream */
+          continue;
+
+        if (granule_time > stream->map.total_time)
+          /* we won't encounter any more pages of this stream, so we don't
+           * try finding a key frame for it */
+          pending--;
+      }
+      first_parsed_page = FALSE;
+    }
+
 
     /* in reverse we want to go past the page with the lower timestamp */
     if (segment->rate < 0.0) {
@@ -2725,7 +2747,7 @@ gst_ogg_demux_read_chain (GstOggDemux * ogg, GstOggChain ** res_chain)
         }
       }
       /* the timestamp will be filled in when we submit the pages */
-      if (!pad->map.is_skeleton)
+      if (!pad->map.is_sparse)
         done &= (pad->start_time != GST_CLOCK_TIME_NONE);
 
       GST_LOG_OBJECT (ogg, "done %08lx now %d", pad->map.serialno, done);
@@ -2799,17 +2821,15 @@ gst_ogg_demux_read_end_chain (GstOggDemux * ogg, GstOggChain * chain)
       for (i = 0; i < chain->streams->len; i++) {
         GstOggPad *pad = g_array_index (chain->streams, GstOggPad *, i);
 
-        if (pad->map.is_skeleton)
+        if (pad->map.is_sparse)
           continue;
 
         if (pad->map.serialno == ogg_page_serialno (&og)) {
           gint64 granulepos = ogg_page_granulepos (&og);
 
-          if (last_granule == -1 || last_granule < granulepos) {
+          if (granulepos != -1) {
             last_granule = granulepos;
             last_pad = pad;
-          }
-          if (last_granule != -1) {
             done = TRUE;
           }
           break;
@@ -3340,7 +3360,7 @@ gst_ogg_demux_sync_streams (GstOggDemux * ogg)
     /* Theoretically, we should be doing this for all streams, but we're only
      * doing it for known-to-be-sparse streams at the moment in order not to
      * break things for wrongly-muxed streams (like we used to produce once) */
-    if (stream->is_sparse && stream->last_stop != GST_CLOCK_TIME_NONE) {
+    if (stream->map.is_sparse && stream->last_stop != GST_CLOCK_TIME_NONE) {
 
       /* Does this stream lag? Random threshold of 2 seconds */
       if (GST_CLOCK_DIFF (stream->last_stop, cur) > (2 * GST_SECOND)) {
