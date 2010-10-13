@@ -102,7 +102,7 @@ static GstStaticPadTemplate sink_template =
       GST_PAD_SINK,
       GST_PAD_ALWAYS,
       GST_STATIC_CAPS (
-        GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YUVY, YV12, I420 }")
+        GST_VIDEO_CAPS_YUV("{ YUY2, UYVY, YV12 }")
         ";" GST_VIDEO_CAPS_RGBx ";" GST_VIDEO_CAPS_BGRx)
     );
 
@@ -1215,7 +1215,7 @@ gst_d3dvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
       "In setcaps. Possible caps %" GST_PTR_FORMAT ", setting caps %"
       GST_PTR_FORMAT, sink_caps, caps);
 
-  if (!gst_caps_intersect (sink_caps, caps))
+  if (!gst_caps_can_intersect (sink_caps, caps))
     goto incompatible_caps;
 
   if (!gst_video_format_parse_caps (caps, &sink->format, &video_width, &video_height))
@@ -1401,7 +1401,9 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
 
         if (dest) {
           if (gst_video_format_is_yuv(sink->format)) {
-            switch (gst_video_format_to_fourcc(sink->format)) {
+            guint32 fourcc = gst_video_format_to_fourcc(sink->format);
+
+            switch (fourcc) {
               case GST_MAKE_FOURCC ('Y', 'U', 'Y', '2'):
               case GST_MAKE_FOURCC ('Y', 'U', 'Y', 'V'):
               case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
@@ -1434,17 +1436,19 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
                 srcv = srcu + srcustride * GST_ROUND_UP_2 (rows) / 2;
 
                 dstu = dest + dstystride * rows;
-                dstv = dstu + dstustride * rows/2;
+                dstv = dstu + dstustride * rows / 2;
   
-                for (i = 0; i < rows ; ++i)
+                for (i = 0; i < rows; ++i) {
                   /* Copy the y plane */
                   memcpy (dest + dstystride * i, source + srcystride * i, dstystride);
-                for (i=0; i < rows/2 ; ++i) {
+                }
+
+                for (i=0; i < rows / 2; ++i) {
                   /* Copy the u plane */
                   memcpy (dstu + dstustride * i, srcu + srcustride * i, dstustride);
                   /* Copy the v plane */
                   memcpy (dstv + dstvstride * i, srcv + srcvstride * i, dstvstride);
-                }				
+                }
                 break;
               }
               default:
@@ -1840,10 +1844,10 @@ gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink)
           d3dformat = D3DFMT_X8R8G8B8;
           d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'U', 'Y', '2');
           break;
-        case GST_MAKE_FOURCC ('Y', 'U', 'Y', 'V'):
-          d3dformat = D3DFMT_X8R8G8B8;
-          d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'U', 'Y', 'V');
-          break;
+        //case GST_MAKE_FOURCC ('Y', 'U', 'V', 'Y'):
+        //  d3dformat = D3DFMT_X8R8G8B8;
+        //  d3dfourcc = (D3DFORMAT)MAKEFOURCC('Y', 'U', 'V', 'Y');
+        //  break;
         case GST_MAKE_FOURCC ('U', 'Y', 'V', 'Y'):
           d3dformat = D3DFMT_X8R8G8B8;
           d3dfourcc = (D3DFORMAT)MAKEFOURCC('U', 'Y', 'V', 'Y');
@@ -1857,12 +1861,12 @@ gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink)
           d3dfourcc = (D3DFORMAT)MAKEFOURCC('I', '4', '2', '0');
           break;
         default:
-		  g_assert_not_reached();
-	  }
-	} else if (gst_video_format_is_rgb(sink->format)) {
+          g_assert_not_reached();
+      }
+    } else if (gst_video_format_is_rgb(sink->format)) {
       d3dformat = D3DFMT_X8R8G8B8;
       d3dfourcc = D3DFMT_X8R8G8B8;
-	} else {
+    } else {
       g_assert_not_reached();
     } 
 
