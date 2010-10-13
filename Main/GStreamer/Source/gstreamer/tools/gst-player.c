@@ -254,7 +254,7 @@ struct _App
 
   gboolean waiting_eos;
   gboolean is_live;
-  gint64 window_id;
+  guintptr window_handle;
   gint buffer_size;
   gint64 buffer_duration;
 
@@ -1092,12 +1092,12 @@ xoverlay_bus_sync_handler(GstBus* bus, GstMessage* message, App* app)
   if (!gst_structure_has_name(message->structure, "prepare-xwindow-id"))
     return GST_BUS_PASS;
 
-  if (app->window_id != 0) {
+  if (app->window_handle != 0) {
     GstXOverlay *xoverlay;
 
     /* GST_MESSAGE_SRC (message) will be the video sink element */
     xoverlay = GST_X_OVERLAY(GST_MESSAGE_SRC(message));
-    gst_x_overlay_set_xwindow_id(xoverlay, (gulong)app->window_id);
+    gst_x_overlay_set_window_handle(xoverlay, (guintptr)app->window_handle);
   }
 
   gst_message_unref (message);
@@ -1977,7 +1977,7 @@ main (int argc, char *argv[])
   gint repeat_count = 0;
   gint buffer_size = -1;
   gint64 buffer_duration = -1;
-  gint64 window_id = 0;
+  guintptr window_handle = 0;
   guint64 ping_interval = 0;
   GError *err = NULL;
   GOptionContext *ctx;
@@ -1986,7 +1986,7 @@ main (int argc, char *argv[])
   gint res = 0;
 
   GOptionEntry options[] = {
-    {"window-id",        'w', 0, G_OPTION_ARG_INT64,  &window_id,         N_("Set the window id in which to render video output"), NULL},
+    {"window-handle",    'w', 0, G_OPTION_ARG_INT64,  &window_handle,     N_("Set the window handle in which to render video output"), NULL},
     {"uri",              'u', 0, G_OPTION_ARG_STRING, &uri,               N_("The URI to play media from (in playbin syntax)"), NULL},
     {"fps",              'f', 0, G_OPTION_ARG_INT,    &fps,               N_("Set the frames-per-second for video playback"), NULL},
     {"mute",             'm', 0, G_OPTION_ARG_NONE,   &mute,              N_("Mute all audio output"), NULL},
@@ -2093,7 +2093,7 @@ main (int argc, char *argv[])
   app->buffering_disabled = disable_buffering;
   app->download_disabled = disable_download;
   app->command_mode = command_mode;
-  app->window_id = window_id;
+  app->window_handle = window_handle;
   app->is_live = live;
   app->width = width;
   app->height = height;

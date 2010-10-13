@@ -1000,7 +1000,7 @@ public class GstPlayer {
 			commands.add("--live");
 
 		if (nativeHandle != 0L)
-			commands.add("--window-id=" + Long.toString(nativeHandle));
+			commands.add("--window-handle=" + Long.toString(nativeHandle));
 
 		if (!StringUtil.isNullOrEmpty((var = Sys.getEnvironmentVariable("GST_DEBUG"))))
 			env.put("GST_DEBUG", var);
