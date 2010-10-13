@@ -21,8 +21,11 @@
 #include "config.h"
 #endif
 
+#include "glib-compat-private.h"
 #include "gst_private.h"
 #include "gstdatetime.h"
+#include <glib.h>
+#include <math.h>
 
 /**
  * SECTION:gstdatetime
@@ -39,12 +42,202 @@
  * Since: 0.10.31
  */
 
+/**
+ * gst_date_time_get_year:
+ * @datetime: a #GstDateTime
+ *
+ * Returns the year of this #GstDateTime
+ *
+ * Return value: The year of this #GstDateTime
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_get_month:
+ * @datetime: a #GstDateTime
+ *
+ * Returns the month of this #GstDateTime. January is 1, February is 2, etc..
+ *
+ * Return value: The month of this #GstDateTime
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_get_day:
+ * @datetime: a #GstDateTime
+ *
+ * Returns the day of this #GstDateTime.
+ *
+ * Return value: The day of this #GstDateTime
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_get_hour:
+ * @datetime: a #GstDateTime
+ *
+ * Retrieves the hour of the day represented by @datetime in the gregorian
+ * calendar. The return is in the range of 0 to 23.
+ *
+ * Return value: the hour of the day
+ *
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_get_microsecond:
+ * @datetime: a #GstDateTime
+ *
+ * Retrieves the fractional part of the seconds in microseconds represented by
+ * @datetime in the gregorian calendar.
+ *
+ * Return value: the microsecond of the second
+ *
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_get_minute:
+ * @datetime: a #GstDateTime
+ *
+ * Retrieves the minute of the hour represented by @datetime in the gregorian
+ * calendar.
+ *
+ * Return value: the minute of the hour
+ *
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_get_second:
+ * @datetime: a #GstDateTime
+ *
+ * Retrieves the second of the minute represented by @datetime in the gregorian
+ * calendar.
+ *
+ * Return value: the second represented by @datetime
+ *
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_get_second:
+ * @datetime: a #GstDateTime
+ *
+ * Retrieves the second of the minute represented by @datetime in the gregorian
+ * calendar.
+ *
+ * Return value: the second represented by @datetime
+ *
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_get_time_zone_offset:
+ * @datetime: a #GstDateTime
+ *
+ * Retrieves the offset from UTC in hours that the timezone specified
+ * by @datetime represents. Timezones ahead (to the east) of UTC have positive
+ * values, timezones before (to the west) of UTC have negative values.
+ * If @datetime represents UTC time, then the offset is zero.
+ *
+ * Return value: the offset from UTC in hours
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_new_from_unix_epoch:
+ * @secs: seconds from the Unix epoch
+ *
+ * Creates a new #GstDateTime using the time since Jan 1, 1970 specified by
+ * @secs. The #GstDateTime is in the local timezone.
+ *
+ * Return value: the newly created #GstDateTime
+ *
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_new_local_time:
+ * @year: the gregorian year
+ * @month: the gregorian month
+ * @day: the day of the gregorian month
+ * @hour: the hour of the day
+ * @minute: the minute of the hour
+ * @second: the second of the minute
+ * @microsecond: the microsecond of the second
+ *
+ * Creates a new #GstDateTime using the date and times in the gregorian calendar
+ * in the local timezone.
+ *
+ * @year should be from 1 to 9999, @month should be from 1 to 12, @day from
+ * 1 to 31, @hour from 0 to 23, @minutes and @seconds from 0 to 59 and
+ * @microsecond from 0 to 999999.
+ *
+ * Return value: the newly created #GstDateTime
+ *
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_new:
+ * @tzoffset: Offset from UTC in hours.
+ * @year: the gregorian year
+ * @month: the gregorian month
+ * @day: the day of the gregorian month
+ * @hour: the hour of the day
+ * @minute: the minute of the hour
+ * @second: the second of the minute
+ * @microsecond: the microsecond of the second
+ *
+ * Creates a new #GstDateTime using the date and times in the gregorian calendar
+ * in the supplied timezone.
+ *
+ * @year should be from 1 to 9999, @month should be from 1 to 12, @day from
+ * 1 to 31, @hour from 0 to 23, @minutes and @seconds from 0 to 59 and
+ * @microsecond from 0 to 999999.
+ *
+ * Note that @tzoffset is a float and was chosen so for being able to handle
+ * some fractional timezones, while it still keeps the readability of
+ * represeting it in hours for most timezones.
+ *
+ * Return value: the newly created #GstDateTime
+ *
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_new_now_local_time:
+ *
+ * Creates a new #GstDateTime representing the current date and time.
+ *
+ * Return value: the newly created #GstDateTime which should be freed with
+ *   gst_date_time_unref().
+ *
+ * Since: 0.10.31
+ */
+
+/**
+ * gst_date_time_new_now_utc:
+ *
+ * Creates a new #GstDateTime that represents the current instant at Universal
+ * coordinated time.
+ *
+ * Return value: the newly created #GstDateTime which should be freed with
+ *   gst_date_time_unref().
+ *
+ * Since: 0.10.31
+ */
+
+
 #define GST_DATE_TIME_SEC_PER_DAY          (G_GINT64_CONSTANT (86400))
 #define GST_DATE_TIME_USEC_PER_DAY         (G_GINT64_CONSTANT (86400000000))
 #define GST_DATE_TIME_USEC_PER_HOUR        (G_GINT64_CONSTANT (3600000000))
 #define GST_DATE_TIME_USEC_PER_MINUTE      (G_GINT64_CONSTANT (60000000))
 #define GST_DATE_TIME_USEC_PER_SECOND      (G_GINT64_CONSTANT (1000000))
 #define GST_DATE_TIME_USEC_PER_MILLISECOND (G_GINT64_CONSTANT (1000))
+
+#ifndef GLIB_HAS_GDATETIME
 
 #define MAX_SUPPORTED_YEAR 9999
 #define GREGORIAN_LEAP(y)  (((y%4)==0)&&(!(((y%100)==0)&&((y%400)!=0))))
@@ -57,7 +250,7 @@ static const guint16 days_in_months[2][13] = {
 struct _GstDateTime
 {
   /*
-   * As we don't have a math API, we can have fields split here.
+   * As we don't have a datetime math API, we can have fields split here.
    * (There is still some math done internally, but nothing really relevant).
    *
    * If we ever add one, we should go for a days since some epoch counter.
@@ -152,15 +345,6 @@ gst_date_time_new_from_date (gint year, gint month, gint day)
   return dt;
 }
 
-/**
- * gst_date_time_get_year:
- * @datetime: a #GstDateTime
- *
- * Returns the year of this #GstDateTime
- *
- * Return value: The year of this #GstDateTime
- * Since: 0.10.31
- */
 gint
 gst_date_time_get_year (const GstDateTime * datetime)
 {
@@ -169,15 +353,6 @@ gst_date_time_get_year (const GstDateTime * datetime)
   return datetime->year;
 }
 
-/**
- * gst_date_time_get_month:
- * @datetime: a #GstDateTime
- *
- * Returns the month of this #GstDateTime. January is 1, February is 2, etc..
- *
- * Return value: The month of this #GstDateTime
- * Since: 0.10.31
- */
 gint
 gst_date_time_get_month (const GstDateTime * datetime)
 {
@@ -186,15 +361,6 @@ gst_date_time_get_month (const GstDateTime * datetime)
   return datetime->month;
 }
 
-/**
- * gst_date_time_get_day:
- * @datetime: a #GstDateTime
- *
- * Returns the day of this #GstDateTime.
- *
- * Return value: The day of this #GstDateTime
- * Since: 0.10.31
- */
 gint
 gst_date_time_get_day (const GstDateTime * datetime)
 {
@@ -203,17 +369,6 @@ gst_date_time_get_day (const GstDateTime * datetime)
   return datetime->day;
 }
 
-/**
- * gst_date_time_get_hour:
- * @datetime: a #GstDateTime
- *
- * Retrieves the hour of the day represented by @datetime in the gregorian
- * calendar. The return is in the range of 0 to 23.
- *
- * Return value: the hour of the day
- *
- * Since: 0.10.31
- */
 gint
 gst_date_time_get_hour (const GstDateTime * datetime)
 {
@@ -221,17 +376,6 @@ gst_date_time_get_hour (const GstDateTime * datetime)
   return (datetime->usec / GST_DATE_TIME_USEC_PER_HOUR);
 }
 
-/**
- * gst_date_time_get_microsecond:
- * @datetime: a #GstDateTime
- *
- * Retrieves the fractional part of the seconds in microseconds represented by
- * @datetime in the gregorian calendar.
- *
- * Return value: the microsecond of the second
- *
- * Since: 0.10.31
- */
 gint
 gst_date_time_get_microsecond (const GstDateTime * datetime)
 {
@@ -239,17 +383,6 @@ gst_date_time_get_microsecond (const GstDateTime * datetime)
   return (datetime->usec % GST_DATE_TIME_USEC_PER_SECOND);
 }
 
-/**
- * gst_date_time_get_minute:
- * @datetime: a #GstDateTime
- *
- * Retrieves the minute of the hour represented by @datetime in the gregorian
- * calendar.
- *
- * Return value: the minute of the hour
- *
- * Since: 0.10.31
- */
 gint
 gst_date_time_get_minute (const GstDateTime * datetime)
 {
@@ -258,17 +391,6 @@ gst_date_time_get_minute (const GstDateTime * datetime)
       GST_DATE_TIME_USEC_PER_MINUTE;
 }
 
-/**
- * gst_date_time_get_second:
- * @datetime: a #GstDateTime
- *
- * Retrieves the second of the minute represented by @datetime in the gregorian
- * calendar.
- *
- * Return value: the second represented by @datetime
- *
- * Since: 0.10.31
- */
 gint
 gst_date_time_get_second (const GstDateTime * datetime)
 {
@@ -277,18 +399,6 @@ gst_date_time_get_second (const GstDateTime * datetime)
       GST_DATE_TIME_USEC_PER_SECOND;
 }
 
-/**
- * gst_date_time_get_time_zone_offset:
- * @datetime: a #GstDateTime
- *
- * Retrieves the offset from UTC in hours that the timezone specified
- * by @datetime represents. Timezones ahead (to the east) of UTC have positive
- * values, timezones before (to the west) of UTC have negative values.
- * If @datetime represents UTC time, then the offset is zero.
- *
- * Return value: the offset from UTC in hours
- * Since: 0.10.31
- */
 gfloat
 gst_date_time_get_time_zone_offset (const GstDateTime * datetime)
 {
@@ -297,17 +407,6 @@ gst_date_time_get_time_zone_offset (const GstDateTime * datetime)
   return datetime->tzoffset / 60.0f;
 }
 
-/**
- * gst_date_time_new_from_unix_epoch:
- * @secs: seconds from the Unix epoch
- *
- * Creates a new #GstDateTime using the time since Jan 1, 1970 specified by
- * @secs. The #GstDateTime is in the local timezone.
- *
- * Return value: the newly created #GstDateTime
- *
- * Since: 0.10.31
- */
 GstDateTime *
 gst_date_time_new_from_unix_epoch (gint64 secs)
 {
@@ -324,106 +423,49 @@ gst_date_time_new_from_unix_epoch (gint64 secs)
   memcpy (&tm, localtime (&tt), sizeof (struct tm));
 #endif
 
-  dt = gst_date_time_new (tm.tm_year + 1900,
-      tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, 0, 0);
+  dt = gst_date_time_new (0, tm.tm_year + 1900,
+      tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
   gst_date_time_set_local_timezone (dt);
   return dt;
 }
 
-/**
- * gst_date_time_new_local_time:
- * @year: the gregorian year
- * @month: the gregorian month
- * @day: the day of the gregorian month
- * @hour: the hour of the day
- * @minute: the minute of the hour
- * @second: the second of the minute
- * @microsecond: the microsecond of the second
- *
- * Creates a new #GstDateTime using the date and times in the gregorian calendar
- * in the local timezone.
- *
- * @year should be from 1 to 9999, @month should be from 1 to 12, @day from
- * 1 to 31, @hour from 0 to 23, @minutes and @seconds from 0 to 59 and
- * @microsecond from 0 to 999999.
- *
- * Return value: the newly created #GstDateTime
- *
- * Since: 0.10.31
- */
 GstDateTime *
 gst_date_time_new_local_time (gint year, gint month, gint day, gint hour,
-    gint minute, gint second, gint microsecond)
+    gint minute, gdouble seconds)
 {
   GstDateTime *dt;
 
-  dt = gst_date_time_new (year, month, day, hour, minute, second, microsecond,
-      0);
+  dt = gst_date_time_new (0, year, month, day, hour, minute, seconds);
 
   gst_date_time_set_local_timezone (dt);
 
   return dt;
 }
 
-/**
- * gst_date_time_new:
- * @year: the gregorian year
- * @month: the gregorian month
- * @day: the day of the gregorian month
- * @hour: the hour of the day
- * @minute: the minute of the hour
- * @second: the second of the minute
- * @microsecond: the microsecond of the second
- * @tzoffset: Offset from UTC in hours.
- *
- * Creates a new #GstDateTime using the date and times in the gregorian calendar
- * in the supplied timezone.
- *
- * @year should be from 1 to 9999, @month should be from 1 to 12, @day from
- * 1 to 31, @hour from 0 to 23, @minutes and @seconds from 0 to 59 and
- * @microsecond from 0 to 999999.
- *
- * Note that @tzoffset is a float and was chosen so for being able to handle
- * some fractional timezones, while it still keeps the readability of
- * represeting it in hours for most timezones.
- *
- * Return value: the newly created #GstDateTime
- *
- * Since: 0.10.31
- */
 GstDateTime *
-gst_date_time_new (gint year, gint month, gint day, gint hour,
-    gint minute, gint second, gint microsecond, gfloat tzoffset)
+gst_date_time_new (gfloat tzoffset, gint year, gint month, gint day, gint hour,
+    gint minute, gdouble seconds)
 {
   GstDateTime *dt;
 
   g_return_val_if_fail (hour >= 0 && hour < 24, NULL);
   g_return_val_if_fail (minute >= 0 && minute < 60, NULL);
-  g_return_val_if_fail (second >= 0 && second < 60, NULL);
-  g_return_val_if_fail (microsecond >= 0 && microsecond < 1000000, NULL);
+  g_return_val_if_fail (seconds >= 0 && seconds < 60, NULL);
+  g_return_val_if_fail (tzoffset >= -12.0 && tzoffset <= 12.0, NULL);
 
   if (!(dt = gst_date_time_new_from_date (year, month, day)))
     return NULL;
 
   dt->usec = (hour * GST_DATE_TIME_USEC_PER_HOUR)
       + (minute * GST_DATE_TIME_USEC_PER_MINUTE)
-      + (second * GST_DATE_TIME_USEC_PER_SECOND)
-      + microsecond;
-  dt->tzoffset = (gint) (60 * tzoffset);
+      + (guint64) (floor (seconds * GST_DATE_TIME_USEC_PER_SECOND + 0.5));
+
+  /* we store in minutes */
+  dt->tzoffset = (gint) tzoffset *60.0;
 
   return dt;
 }
 
-/**
- * gst_date_time_new_now_local_time:
- *
- * Creates a new #GstDateTime representing the current date and time.
- *
- * Return value: the newly created #GstDateTime which should be freed with
- *   gst_date_time_unref().
- *
- * Since: 0.10.31
- */
 GstDateTime *
 gst_date_time_new_now_local_time (void)
 {
@@ -435,44 +477,6 @@ gst_date_time_new_now_local_time (void)
   datetime->usec += tv.tv_usec;
   gst_date_time_set_local_timezone (datetime);
   return datetime;
-}
-
-/**
- * gst_date_time_ref:
- * @datetime: a #GstDateTime
- *
- * Atomically increments the reference count of @datetime by one.
- *
- * Return value: the reference @datetime
- *
- * Since: 0.10.31
- */
-GstDateTime *
-gst_date_time_ref (GstDateTime * datetime)
-{
-  g_return_val_if_fail (datetime != NULL, NULL);
-  g_return_val_if_fail (datetime->ref_count > 0, NULL);
-  g_atomic_int_inc (&datetime->ref_count);
-  return datetime;
-}
-
-/**
- * gst_date_time_unref:
- * @datetime: a #GstDateTime
- *
- * Atomically decrements the reference count of @datetime by one.  When the
- * reference count reaches zero, the structure is freed.
- *
- * Since: 0.10.31
- */
-void
-gst_date_time_unref (GstDateTime * datetime)
-{
-  g_return_if_fail (datetime != NULL);
-  g_return_if_fail (datetime->ref_count > 0);
-
-  if (g_atomic_int_dec_and_test (&datetime->ref_count))
-    gst_date_time_free (datetime);
 }
 
 static GstDateTime *
@@ -537,17 +541,6 @@ gst_date_time_to_utc (const GstDateTime * dt)
   return utc;
 }
 
-/**
- * gst_date_time_new_now_utc:
- *
- * Creates a new #GstDateTime that represents the current instant at Universal
- * coordinated time.
- *
- * Return value: the newly created #GstDateTime which should be freed with
- *   gst_date_time_unref().
- *
- * Since: 0.10.31
- */
 GstDateTime *
 gst_date_time_new_now_utc (void)
 {
@@ -588,4 +581,179 @@ done:
   gst_date_time_unref (a);
   gst_date_time_unref (b);
   return res;
+}
+
+#else
+
+struct _GstDateTime
+{
+  GDateTime *datetime;
+
+  volatile gint ref_count;
+};
+
+static GstDateTime *
+gst_date_time_new_from_gdatetime (GDateTime * dt)
+{
+  GstDateTime *gst_dt;
+
+  if (!dt)
+    return NULL;
+
+  gst_dt = g_slice_new (GstDateTime);
+  gst_dt->datetime = dt;
+  gst_dt->ref_count = 1;
+  return gst_dt;
+}
+
+gint
+gst_date_time_get_year (const GstDateTime * datetime)
+{
+  return g_date_time_get_year (datetime->datetime);
+}
+
+gint
+gst_date_time_get_month (const GstDateTime * datetime)
+{
+  return g_date_time_get_month (datetime->datetime);
+}
+
+gint
+gst_date_time_get_day (const GstDateTime * datetime)
+{
+  return g_date_time_get_day_of_month (datetime->datetime);
+}
+
+gint
+gst_date_time_get_hour (const GstDateTime * datetime)
+{
+  return g_date_time_get_hour (datetime->datetime);
+}
+
+gint
+gst_date_time_get_minute (const GstDateTime * datetime)
+{
+  return g_date_time_get_minute (datetime->datetime);
+}
+
+gint
+gst_date_time_get_second (const GstDateTime * datetime)
+{
+  return g_date_time_get_second (datetime->datetime);
+}
+
+gint
+gst_date_time_get_microsecond (const GstDateTime * datetime)
+{
+  return g_date_time_get_microsecond (datetime->datetime);
+}
+
+gfloat
+gst_date_time_get_time_zone_offset (const GstDateTime * datetime)
+{
+  return g_date_time_get_utc_offset (datetime->datetime) /
+      (G_USEC_PER_SEC * G_GINT64_CONSTANT (3600));
+}
+
+GstDateTime *
+gst_date_time_new_from_unix_epoch (gint64 secs)
+{
+  return
+      gst_date_time_new_from_gdatetime (g_date_time_new_from_unix_local (secs));
+}
+
+GstDateTime *
+gst_date_time_new_local_time (gint year, gint month, gint day, gint hour,
+    gint minute, gdouble seconds)
+{
+  return gst_date_time_new_from_gdatetime (g_date_time_new_local (year, month,
+          day, hour, minute, seconds));
+}
+
+GstDateTime *
+gst_date_time_new_now_local_time (void)
+{
+  return gst_date_time_new_from_gdatetime (g_date_time_new_now_local ());
+}
+
+GstDateTime *
+gst_date_time_new_now_utc (void)
+{
+  return gst_date_time_new_from_gdatetime (g_date_time_new_now_utc ());
+}
+
+gint
+priv_gst_date_time_compare (gconstpointer dt1, gconstpointer dt2)
+{
+  const GstDateTime *datetime1 = dt1;
+  const GstDateTime *datetime2 = dt2;
+  return g_date_time_compare (datetime1->datetime, datetime2->datetime);
+}
+
+GstDateTime *
+gst_date_time_new (gfloat tzoffset, gint year, gint month, gint day, gint hour,
+    gint minute, gdouble seconds)
+{
+  gchar buf[6];
+  GTimeZone *tz;
+  GDateTime *dt;
+  gint tzhour, tzminute;
+
+  tzhour = (gint) ABS (tzoffset);
+  tzminute = (gint) ((ABS (tzoffset) - tzhour) * 60);
+
+  g_snprintf (buf, 6, "%c%02d%02d", tzoffset >= 0 ? '+' : '-', tzhour,
+      tzminute);
+
+  tz = g_time_zone_new (buf);
+  dt = g_date_time_new (tz, year, month, day, hour, minute, seconds);
+  g_time_zone_unref (tz);
+  return gst_date_time_new_from_gdatetime (dt);
+}
+
+static void
+gst_date_time_free (GstDateTime * datetime)
+{
+  g_date_time_unref (datetime->datetime);
+  g_slice_free (GstDateTime, datetime);
+}
+
+#endif
+
+/**
+ * gst_date_time_ref:
+ * @datetime: a #GstDateTime
+ *
+ * Atomically increments the reference count of @datetime by one.
+ *
+ * Return value: the reference @datetime
+ *
+ * Since: 0.10.31
+ */
+GstDateTime *
+gst_date_time_ref (GstDateTime * datetime)
+{
+  g_return_val_if_fail (datetime != NULL, NULL);
+  g_return_val_if_fail (datetime->ref_count > 0, NULL);
+  g_atomic_int_inc (&datetime->ref_count);
+  return datetime;
+}
+
+/**
+ * gst_date_time_unref:
+ * @datetime: a #GstDateTime
+ *
+ * Atomically decrements the reference count of @datetime by one.  When the
+ * reference count reaches zero, the structure is freed.
+ *
+ * Since: 0.10.31
+ */
+void
+gst_date_time_unref (GstDateTime * datetime)
+{
+  g_return_if_fail (datetime != NULL);
+  g_return_if_fail (datetime->ref_count > 0);
+
+  if (g_atomic_int_dec_and_test (&datetime->ref_count))
+    gst_date_time_free (datetime);
 }
