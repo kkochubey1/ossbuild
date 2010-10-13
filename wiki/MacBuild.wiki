@@ -91,7 +91,7 @@ build_arch x86_64
 }}}
   although if you are compiling on a 64 bits platform, the target is assumed to be 64 bits by default.
   * The compilation of gst-ffmpeg completes without error, so no there is no need to apply the workaround described before.
-  * One thing to note is that the osxvideosrc plugin is missing from the 64 bits builds, because it uses the older 32-bit Carbon QuickTime API, which has been deprecated in 64-bit mode. The plugin needs to be rewritten for the newer Cocoa QTKit API (which will work in 32-bit and 64-bit modes).
+  * One thing to note is that the osxvideosrc plugin is missing from the 64 bits builds, because it uses the older 32-bit Carbon !QuickTime API, which has been deprecated in 64-bit mode. The plugin needs to be rewritten for the newer Cocoa QTKit API (which will work in 32-bit and 64-bit modes).
 
 === Compiling on a different platform ===
 
