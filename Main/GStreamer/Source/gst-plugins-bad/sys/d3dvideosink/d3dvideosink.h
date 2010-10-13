@@ -58,7 +58,7 @@ struct _GstD3DVideoSink
   gboolean window_closed;
 
   /* The video window set through GstXOverlay */
-  HWND window_id;
+  HWND window_handle;
   
   /* If we created the window, it needs to be closed in ::stop() */
   gboolean is_new_window;

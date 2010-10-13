@@ -59,7 +59,7 @@ struct _GstD3DVideoSinkShared
   gboolean device_lost;
   UINT_PTR device_lost_timer;
 
-  HWND hidden_window_id;
+  HWND hidden_window_handle;
   HANDLE hidden_window_created_signal;
   GThread* hidden_window_thread;
 
@@ -69,7 +69,7 @@ typedef struct _GstD3DVideoSinkHookData GstD3DVideoSinkHookData;
 struct _GstD3DVideoSinkHookData
 {
   HHOOK hook;
-  HWND window_id;
+  HWND window_handle;
   DWORD thread_id;
   DWORD process_id;
 };
@@ -294,7 +294,7 @@ gst_d3dvideosink_clear (GstD3DVideoSink *sink)
   sink->keep_aspect_ratio = FALSE;
 
   sink->window_closed = FALSE;
-  sink->window_id = NULL;
+  sink->window_handle = NULL;
   sink->is_new_window = FALSE;
   sink->is_hooked = FALSE;
 }
@@ -390,7 +390,7 @@ gst_d3dvideosink_get_caps (GstBaseSink * basesink)
 static void 
 gst_d3dvideosink_close_window (GstD3DVideoSink * sink) 
 {
-  if (!sink || !sink->window_id)
+  if (!sink || !sink->window_handle)
     return;
   
   if (!sink->is_new_window) {
@@ -398,7 +398,7 @@ gst_d3dvideosink_close_window (GstD3DVideoSink * sink)
     return;
   }
   
-  SendMessage (sink->window_id, WM_CLOSE, (WPARAM)NULL, (WPARAM)NULL);
+  SendMessage (sink->window_handle, WM_CLOSE, (WPARAM)NULL, (WPARAM)NULL);
   g_thread_join(sink->window_thread);
   sink->is_new_window = FALSE;
 }
@@ -420,9 +420,9 @@ gst_d3dvideosink_create_shared_hidden_window (GstD3DVideoSink * sink)
 
   CloseHandle (shared.hidden_window_created_signal);
 
-  GST_DEBUG("Successfully created Direct3D hidden window, handle: %d", shared.hidden_window_id);
+  GST_DEBUG("Successfully created Direct3D hidden window, handle: %d", shared.hidden_window_handle);
 
-  return (shared.hidden_window_id != NULL);
+  return (shared.hidden_window_handle != NULL);
 
 failed:
   CloseHandle (shared.hidden_window_created_signal);
@@ -464,7 +464,7 @@ gst_d3dvideosink_shared_hidden_window_thread (GstD3DVideoSink * sink)
 
   GST_DEBUG("Direct3D hidden window handle: %d", hWnd);
 
-  shared.hidden_window_id = hWnd;
+  shared.hidden_window_handle = hWnd;
   shared.device_lost_timer = 0;
 
   ReleaseSemaphore (shared.hidden_window_created_signal, 1, NULL);
@@ -503,7 +503,7 @@ error:
     DestroyWindow(hWnd);
   UnregisterClass(WndClass.lpszClassName, WndClass.hInstance);
 
-  shared.hidden_window_id = NULL;
+  shared.hidden_window_handle = NULL;
   shared.device_lost_timer = 0;
 
   ReleaseSemaphore (shared.hidden_window_created_signal, 1, NULL);
@@ -594,15 +594,15 @@ SharedHiddenWndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 static void 
 gst_d3dvideosink_close_shared_hidden_window (GstD3DVideoSink * sink) 
 {
-  if (!shared.hidden_window_id)
+  if (!shared.hidden_window_handle)
     return;
 
-  SendMessage (shared.hidden_window_id, WM_CLOSE, (WPARAM)NULL, (WPARAM)NULL);
+  SendMessage (shared.hidden_window_handle, WM_CLOSE, (WPARAM)NULL, (WPARAM)NULL);
   if (shared.hidden_window_thread) {
     g_thread_join(shared.hidden_window_thread);
     shared.hidden_window_thread = NULL;
   }
-  shared.hidden_window_id = NULL;
+  shared.hidden_window_handle = NULL;
 
   GST_DEBUG("Successfully closed Direct3D hidden window");
 }
@@ -696,8 +696,8 @@ gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM
 
               GST_DEBUG("Received IPC call to subclass the window handler");
 
-              sink->window_id = p_ipc_data->hwnd;
-              sink->prevWndProc = (WNDPROC)SetWindowLongPtr(sink->window_id, GWL_WNDPROC, (LONG_PTR)p_ipc_data->wnd_proc);
+              sink->window_handle = p_ipc_data->hwnd;
+              sink->prevWndProc = (WNDPROC)SetWindowLongPtr(sink->window_handle, GWL_WNDPROC, (LONG_PTR)p_ipc_data->wnd_proc);
               break;
             }
         }
@@ -804,7 +804,7 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
   }
 
   sink->is_new_window = TRUE;
-  sink->window_id = video_window;
+  sink->window_handle = video_window;
 
   /* Now show the window, as appropriate */
   ShowWindow (video_window, SW_SHOWNORMAL);
@@ -829,7 +829,7 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
   }
 
   UnregisterClass(WndClass.lpszClassName, WndClass.hInstance);
-  sink->window_id = NULL;
+  sink->window_handle = NULL;
   return NULL;
 
 destroy_window:
@@ -837,7 +837,7 @@ destroy_window:
     DestroyWindow(video_window);
     UnregisterClass(WndClass.lpszClassName, WndClass.hInstance);
   }
-  sink->window_id = NULL;
+  sink->window_handle = NULL;
   ReleaseSemaphore (sink->window_created_signal, 1, NULL);
   return NULL;
 }
@@ -859,7 +859,7 @@ gst_d3dvideosink_create_default_window (GstD3DVideoSink * sink)
     goto failed;
 
   CloseHandle (sink->window_created_signal);
-  return (sink->window_id != NULL);
+  return (sink->window_handle != NULL);
 
 failed:
   CloseHandle (sink->window_created_signal);
@@ -873,7 +873,7 @@ static void gst_d3dvideosink_set_window_handle (GstXOverlay * overlay, guintptr 
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (overlay);
   HWND hWnd = (HWND)window_id;
 
-  if (hWnd == sink->window_id) {
+  if (hWnd == sink->window_handle) {
     GST_DEBUG("Window already set");
     return;
   }
@@ -888,7 +888,7 @@ static void gst_d3dvideosink_set_window_handle (GstXOverlay * overlay, guintptr 
     gst_d3dvideosink_close_window(sink);
 
     /* Save our window id */
-    sink->window_id = hWnd;
+    sink->window_handle = hWnd;
   }
 
 success:
@@ -919,12 +919,12 @@ static void gst_d3dvideosink_set_window_for_renderer (GstD3DVideoSink *sink)
 
   /* Application has requested a specific window ID */
   sink->is_new_window = FALSE;
-  currWndProc = (WNDPROC)GetWindowLongPtr(sink->window_id, GWL_WNDPROC);
+  currWndProc = (WNDPROC)GetWindowLongPtr(sink->window_handle, GWL_WNDPROC);
   if (sink->prevWndProc != currWndProc && currWndProc != WndProcHook)
-    sink->prevWndProc = (WNDPROC)SetWindowLongPtr(sink->window_id, GWL_WNDPROC, (LONG_PTR)WndProcHook);
+    sink->prevWndProc = (WNDPROC)SetWindowLongPtr(sink->window_handle, GWL_WNDPROC, (LONG_PTR)WndProcHook);
 
   /* Allows us to pick up the video sink inside the msg handler */
-  SetProp(sink->window_id, L"GstD3DVideoSink", sink);
+  SetProp(sink->window_handle, L"GstD3DVideoSink", sink);
 
   if (!(sink->prevWndProc)) {
     /* If we were unable to set the window procedure, it's possible we're attempting to render into the  */
@@ -937,7 +937,7 @@ static void gst_d3dvideosink_set_window_for_renderer (GstD3DVideoSink *sink)
     GST_D3DVIDEOSINK_SHARED_D3D_HOOK_UNLOCK
   } else {
     GST_DEBUG("Set wndproc to %p from %p", WndProcHook, sink->prevWndProc);
-    GST_DEBUG("Set renderer window to %x", sink->window_id);
+    GST_DEBUG("Set renderer window to %x", sink->window_handle);
   }
   
   sink->is_new_window = FALSE;
@@ -997,14 +997,14 @@ static gboolean gst_d3dvideosink_unregister_hook_data (HWND window_id)
 static void gst_d3dvideosink_hook_window_for_renderer (GstD3DVideoSink *sink) 
 {
   /* Ensure that our window hook isn't already installed. */
-  if (!sink->is_new_window && !sink->is_hooked && sink->window_id) {
+  if (!sink->is_new_window && !sink->is_hooked && sink->window_handle) {
     DWORD pid;
     DWORD tid;
 
     GST_DEBUG("Attempting to apply a windows hook in process %d.", GetCurrentProcessId());
 
     /* Get thread id of the window in question. */
-    tid = GetWindowThreadProcessId(sink->window_id, &pid);
+    tid = GetWindowThreadProcessId(sink->window_handle, &pid);
 
     if (tid) {
       HHOOK hook;
@@ -1014,7 +1014,7 @@ static void gst_d3dvideosink_hook_window_for_renderer (GstD3DVideoSink *sink)
       /* embedded windows that we're hooking inside of the same dialog/thread. */
 
       hook = gst_d3dvideosink_find_hook(pid, tid);
-      data = gst_d3dvideosink_register_hook_data(sink->window_id);
+      data = gst_d3dvideosink_register_hook_data(sink->window_handle);
       if (data && !hook) {
         GST_DEBUG("No other hooks exist for pid %d and tid %d. Attempting to add one.", pid, tid);
         hook = SetWindowsHookEx(WH_CALLWNDPROCRET, gst_d3dvideosink_hook_proc, g_hinstDll, tid);
@@ -1026,7 +1026,7 @@ static void gst_d3dvideosink_hook_window_for_renderer (GstD3DVideoSink *sink)
         data->hook = hook;
         data->process_id = pid;
         data->thread_id = tid;
-        data->window_id = sink->window_id;
+        data->window_handle = sink->window_handle;
 
         PostThreadMessage(tid, WM_NULL, 0, 0);
         
@@ -1034,7 +1034,7 @@ static void gst_d3dvideosink_hook_window_for_renderer (GstD3DVideoSink *sink)
       } else {
         /* Ensure that we clean up any allocated memory. */
         if (data)
-          gst_d3dvideosink_unregister_hook_data(sink->window_id);
+          gst_d3dvideosink_unregister_hook_data(sink->window_handle);
         GST_DEBUG("Unable to hook the window. The system provided error was: %s", g_win32_error_message(GetLastError()));
       }
     }
@@ -1043,12 +1043,12 @@ static void gst_d3dvideosink_hook_window_for_renderer (GstD3DVideoSink *sink)
 
 static void gst_d3dvideosink_unhook_window_for_renderer (GstD3DVideoSink *sink)
 {
-  if (!sink->is_new_window && sink->is_hooked && sink->window_id) {
+  if (!sink->is_new_window && sink->is_hooked && sink->window_handle) {
     GstD3DVideoSinkHookData* data;
 
     GST_DEBUG("Unhooking a window in process %d.", GetCurrentProcessId());
 
-    data = gst_d3dvideosink_hook_data(sink->window_id);
+    data = gst_d3dvideosink_hook_data(sink->window_handle);
     if (data) {
       DWORD pid;
       DWORD tid;
@@ -1060,7 +1060,7 @@ static void gst_d3dvideosink_unhook_window_for_renderer (GstD3DVideoSink *sink)
       pid = data->process_id;
 
       /* Free the memory */
-      if (gst_d3dvideosink_unregister_hook_data(sink->window_id)) {
+      if (gst_d3dvideosink_unregister_hook_data(sink->window_handle)) {
         /* Check if there's anyone else who still has the hook. If so, then we do nothing. */
         /* If not, then go ahead and unhook. */
         if (gst_d3dvideosink_find_hook(pid, tid)) {
@@ -1106,18 +1106,18 @@ static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink)
   //GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
   {
     GST_DEBUG("Removing custom rendering window procedure");
-    if (!sink->is_new_window && sink->window_id) {
+    if (!sink->is_new_window && sink->window_handle) {
       WNDPROC currWndProc;
 
       /* Retrieve current msg handler */
-      currWndProc = (WNDPROC)GetWindowLongPtr(sink->window_id, GWL_WNDPROC);
+      currWndProc = (WNDPROC)GetWindowLongPtr(sink->window_handle, GWL_WNDPROC);
 
       /* Return control of application window */
       if (sink->prevWndProc != NULL && currWndProc == WndProcHook) {
-        SetWindowLongPtr(sink->window_id, GWL_WNDPROC, (LONG_PTR)sink->prevWndProc);
+        SetWindowLongPtr(sink->window_handle, GWL_WNDPROC, (LONG_PTR)sink->prevWndProc);
 
         sink->prevWndProc = NULL;
-        sink->window_id = NULL;
+        sink->window_handle = NULL;
         sink->is_new_window = FALSE;
       }
     }
@@ -1127,7 +1127,7 @@ static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink)
     GST_D3DVIDEOSINK_SHARED_D3D_HOOK_UNLOCK
 
     /* Remove the property associating our sink with the window */
-    RemoveProp (sink->window_id, L"GstDShowVideoSink");
+    RemoveProp (sink->window_handle, L"GstDShowVideoSink");
   }
   //GST_D3DVIDEOSINK_SWAP_CHAIN_UNLOCK(sink);
   //GST_D3DVIDEOSINK_SHARED_D3D_UNLOCK
@@ -1138,13 +1138,13 @@ static void
 gst_d3dvideosink_prepare_window (GstD3DVideoSink *sink)
 {
   /* Give the app a last chance to supply a window id */
-  if (!sink->window_id) {
+  if (!sink->window_handle) {
     gst_x_overlay_prepare_xwindow_id (GST_X_OVERLAY (sink));
   }
 
   /* If the app supplied one, use it. Otherwise, go ahead
    * and create (and use) our own window */
-  if (sink->window_id) {
+  if (sink->window_handle) {
     gst_d3dvideosink_set_window_for_renderer (sink);
   } else {
     gst_d3dvideosink_create_default_window (sink);
@@ -1366,7 +1366,7 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
       goto error;
     }
 
-    if (sink->window_id && !sink->is_new_window) {
+    if (sink->window_handle && !sink->is_new_window) {
       if (shared.d3ddev) {
         gint win_width = 0, win_height = 0;
         D3DPRESENT_PARAMETERS d3dpp;
@@ -1777,13 +1777,13 @@ gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink)
   d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
   d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT; //D3DPRESENT_INTERVAL_IMMEDIATE;
 
-  GST_DEBUG("Creating Direct3D device for hidden window %d", shared.hidden_window_id);
+  GST_DEBUG("Creating Direct3D device for hidden window %d", shared.hidden_window_handle);
 
   if (FAILED(hr = IDirect3D9_CreateDevice(
     d3d, 
     D3DADAPTER_DEFAULT, 
     D3DDEVTYPE_HAL, 
-    shared.hidden_window_id, 
+    shared.hidden_window_handle, 
     D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE, 
     &d3dpp, 
     &d3ddev
@@ -1898,7 +1898,7 @@ gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink)
     ZeroMemory(&d3dpp, sizeof(d3dpp));
     d3dpp.Windowed = TRUE;
     d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    d3dpp.hDeviceWindow = sink->window_id;
+    d3dpp.hDeviceWindow = sink->window_handle;
     d3dpp.BackBufferFormat = d3dformat;
     d3dpp.BackBufferWidth = width;
     d3dpp.BackBufferHeight = height;
@@ -2043,7 +2043,7 @@ static gboolean gst_d3dvideosink_notify_device_lost (GstD3DVideoSink *sink)
   GST_D3DVIDEOSINK_SHARED_D3D_LOCK
   {
     /* Send notification asynchronously */
-    PostMessage(shared.hidden_window_id, WM_D3D_INIT_DEVICELOST, 0, 0);
+    PostMessage(shared.hidden_window_handle, WM_D3D_INIT_DEVICELOST, 0, 0);
   }
 success:
   GST_DEBUG("Succesfully sent notification of device lost event for sink %d", sink);
@@ -2063,7 +2063,7 @@ static gboolean gst_d3dvideosink_notify_device_reset (GstD3DVideoSink *sink)
   GST_D3DVIDEOSINK_SHARED_D3D_LOCK
   {
     /* Send notification synchronously -- let's ensure the timer's been killed before returning */
-    SendMessage(shared.hidden_window_id, WM_D3D_END_DEVICELOST, 0, 0);
+    SendMessage(shared.hidden_window_handle, WM_D3D_END_DEVICELOST, 0, 0);
   }
 success:
   GST_DEBUG("Succesfully sent notification of device reset event for sink %d", sink);
@@ -2198,7 +2198,7 @@ error:
 static gboolean
 gst_d3dvideosink_window_size (GstD3DVideoSink *sink, gint *width, gint *height)
 {
-  if (!sink || !sink->window_id) {
+  if (!sink || !sink->window_handle) {
     if (width && height) {
       *width = 0;
       *height = 0;
@@ -2208,7 +2208,7 @@ gst_d3dvideosink_window_size (GstD3DVideoSink *sink, gint *width, gint *height)
 
   {
     RECT sz;
-    GetClientRect(sink->window_id, &sz);
+    GetClientRect(sink->window_handle, &sz);
     
     *width = MAX(1, ABS(sz.right - sz.left));
     *height = MAX(1, ABS(sz.bottom - sz.top));
