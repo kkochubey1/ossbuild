@@ -229,6 +229,7 @@ struct _App
   GstBus *bus;
 
   GstElement *pipeline;
+  GstElement *playbin;
   GstElement *audio_sink;
   GstElement *video_sink;
 
@@ -625,8 +626,7 @@ app_step(App* app, gboolean forward)
   //gst_element_set_state(GST_ELEMENT(app->pipeline), GST_STATE_PAUSED);
   //gst_element_get_state(app->pipeline, NULL, NULL, GST_CLOCK_TIME_NONE);
 
-  if (!app_pause(app))
-    return FALSE;
+  app_pause(app);
 
   evt = gst_event_new_step(GST_FORMAT_BUFFERS, 1, 1.0, TRUE, FALSE);
   if (!evt)
@@ -649,14 +649,14 @@ app_pause(App* app)
       ret != GST_STATE_CHANGE_SUCCESS &&
       state > GST_STATE_READY) {
     app_stop(app);
-    return TRUE;
+    return FALSE;
   }
 
   if (state > GST_STATE_PAUSED) {
     gst_element_set_state(GST_ELEMENT(app->pipeline), GST_STATE_PAUSED);
     gst_element_get_state(app->pipeline, NULL, NULL, -1);
   }
-  return TRUE;
+  return FALSE;
 }
 
 static gboolean 
@@ -667,10 +667,10 @@ app_stop(App* app)
 
   bus = gst_element_get_bus(app->pipeline);
   gst_element_get_state(app->pipeline, &cur_state, NULL, 0);
-  if (cur_state > GST_STATE_READY) {
+  if (cur_state > GST_STATE_NULL) {
     //GstMessage *msg;
 
-    gst_element_set_state (app->pipeline, GST_STATE_READY);
+    gst_element_set_state (app->pipeline, GST_STATE_NULL);
 
     /* process all remaining state-change messages so everything gets
      * cleaned up properly (before the state change to NULL flushes them) */
@@ -688,7 +688,7 @@ app_stop(App* app)
 
   app->repeat_count = 0;
   app->rate = FORWARD_RATE;
-  return TRUE;
+  return FALSE;
 }
 
 static gboolean 
@@ -700,7 +700,7 @@ app_play(App* app)
   /* Don't try to play if we're already doing that */
   gst_element_get_state(app->pipeline, &cur_state, NULL, 0);
   if (cur_state == GST_STATE_PLAYING)
-    return TRUE;
+    return FALSE;
 
   /* Flush the bus to make sure we don't get any messages
    * from the previous URI, see bug #607224.
@@ -723,7 +723,7 @@ app_play(App* app)
   app->rate = FORWARD_RATE;
   gst_element_set_state (app->pipeline, GST_STATE_PLAYING);
 
-  return TRUE;
+  return FALSE;
 }
 
 static gboolean 
@@ -734,11 +734,46 @@ app_continue(App* app)
   /* Don't try to continue if we're already playing */
   gst_element_get_state(app->pipeline, &cur_state, NULL, 0);
   if (cur_state == GST_STATE_PLAYING)
-    return TRUE;
+    return FALSE;
 
   gst_element_set_state(app->pipeline, GST_STATE_PLAYING);
-  //gst_element_get_state(app->pipeline, NULL, NULL, -1);
-  return TRUE;
+  gst_element_get_state(app->pipeline, NULL, NULL, -1);
+  return FALSE;
+}
+
+static gboolean 
+app_ready(App* app) 
+{
+  GST_PLAYER_COMMAND_LOCK
+  gst_element_set_state(app->pipeline, GST_STATE_NULL);
+  gst_element_get_state(app->pipeline, NULL, NULL, -1);
+  GST_PLAYER_EVENT("stopped");
+  GST_PLAYER_COMMAND_UNLOCK
+  return FALSE;
+}
+
+static gboolean 
+app_repeat(App* app) 
+{
+  app->repeat_count++;
+  if (app->repeat_count == G_MAXINT)
+    app->repeat_count = 1;
+
+  GST_PLAYER_COMMAND_LOCK
+
+  /* TODO: Do something more intelligent here -- retrieve the segment and restore it */
+  /*       after setting the state to READY. */
+  gst_element_set_state(app->pipeline, GST_STATE_NULL);
+  gst_element_get_state(app->pipeline, NULL, NULL, -1);
+
+  gst_element_set_state(app->pipeline, GST_STATE_PLAYING);
+  gst_element_get_state(app->pipeline, NULL, NULL, -1);
+
+  GST_PLAYER_EVENT("repeat, %d", app->repeat_count);
+
+  GST_PLAYER_COMMAND_UNLOCK
+
+  return FALSE;
 }
 
 static MediaType 
@@ -1115,24 +1150,7 @@ bus_message(GstBus* bus, GstMessage* message, App* app)
 eos:
         /* Handle repeats */
         if (GST_PLAYER_REPEAT_FOREVER(app->total_repeat_count) || (app->total_repeat_count > 0 && app->repeat_count < app->total_repeat_count)) {
-          app->repeat_count++;
-          if (app->repeat_count == G_MAXINT)
-            app->repeat_count = 1;
-
-          GST_PLAYER_COMMAND_LOCK
-
-          /* TODO: Do something more intelligent here -- retrieve the segment and restore it */
-          /*       after setting the state to READY. */
-          gst_element_set_state(app->pipeline, GST_STATE_READY);
-          gst_element_get_state(app->pipeline, NULL, NULL, -1);
-
-          gst_element_set_state(app->pipeline, GST_STATE_PLAYING);
-          gst_element_get_state(app->pipeline, NULL, NULL, -1);
-
-          GST_PLAYER_EVENT("repeat, %d", app->repeat_count);
-
-          GST_PLAYER_COMMAND_UNLOCK
-
+          g_idle_add(app_repeat, app);
           break;
         }
         app->exiting = TRUE;
@@ -1146,25 +1164,23 @@ eos:
           GError *err = NULL;
           gchar *name, *debug = NULL;
 
-          GST_PLAYER_COMMAND_LOCK
-
           name = gst_object_get_path_string(GST_MESSAGE_SRC(message));
           gst_message_parse_error(message, &err, &debug);
 
+          GST_PLAYER_COMMAND_LOCK
           GST_PLAYER_GST_ERROR(err);
+          GST_PLAYER_COMMAND_UNLOCK
 
           g_error_free(err);
           g_free(debug);
           g_free(name);
 
-          gst_element_set_state(app->pipeline, GST_STATE_READY);
-          GST_PLAYER_EVENT("stopped");
-
-          GST_PLAYER_COMMAND_UNLOCK
-
           //app->exiting = TRUE;
-          if (!(GST_PLAYER_REPEAT_FOREVER(app->total_repeat_count) || (app->total_repeat_count > 0 && app->repeat_count < app->total_repeat_count)))
+          if (!(GST_PLAYER_REPEAT_FOREVER(app->total_repeat_count) || (app->total_repeat_count > 0 && app->repeat_count < app->total_repeat_count))) {
             g_main_loop_quit(app->main_loop);
+          } else {
+            g_timeout_add(1000, app_repeat, app);
+          }
         }
         break;
       }
@@ -1185,13 +1201,13 @@ eos:
 
       GST_PLAYER_COMMAND_LOCK
       if (new_state == GST_STATE_PLAYING && old_state == GST_STATE_PAUSED) {
-        gint64 position;
+        gint64 position = 0;
         GstFormat format = GST_FORMAT_TIME;
         gst_element_query_position(app->pipeline, &format, &position);
         GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
         GST_PLAYER_EVENT("playing");
       } else if (new_state == GST_STATE_PAUSED && pending_state == GST_STATE_VOID_PENDING) {
-        gint64 position;
+        gint64 position = 0;
         GstFormat format = GST_FORMAT_TIME;
         gst_element_query_position(app->pipeline, &format, &position);
         GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
@@ -1458,7 +1474,7 @@ uridecodebin_pad_added(GstElement* element, GstPad* pad, App* app)
             app->video_sink = image_bin;
           }
         }
-        g_object_set(app->pipeline, "video-sink", app->video_sink, NULL);
+        g_object_set(app->playbin, "video-sink", app->video_sink, NULL);
         
         sink_pad = gst_element_get_static_pad(app->video_sink, "sink");
         if (sink_pad) {
@@ -1518,8 +1534,8 @@ notify_caps(GstPad* pad, GstPad* peer, App* app)
   if (!gst_element_query_position(app->pipeline, &format, &position))
     position = 0;
 
-  if (g_object_property_exists(G_OBJECT(app->pipeline), "volume")) {
-    g_object_get(app->pipeline, "volume", &volume, NULL);
+  if (app->playbin && g_object_property_exists(G_OBJECT(app->playbin), "volume")) {
+    g_object_get(app->playbin, "volume", &volume, NULL);
     if (volume < 0.0)
       volume = 0.0;
     if (volume > 1.0)
@@ -1528,8 +1544,8 @@ notify_caps(GstPad* pad, GstPad* peer, App* app)
     volume = 1.0;
   }
   
-  if (g_object_property_exists(G_OBJECT(app->pipeline), "mute")) {
-    g_object_get(app->pipeline, "mute", &mute, NULL);
+  if (app->playbin && g_object_property_exists(G_OBJECT(app->playbin), "mute")) {
+    g_object_get(app->playbin, "mute", &mute, NULL);
   } else {
     mute = FALSE;
   }
@@ -1561,13 +1577,13 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
     case COMMAND_PAUSE:
       if (app->is_live)
           break;
-      app_pause(app);
+      g_idle_add(app_pause, app);
       break;
     case COMMAND_CONTINUE:
-      app_continue(app);
+      g_idle_add(app_continue, app);
       break;
     case COMMAND_STOP:
-      app_stop(app);
+      g_idle_add(app_stop, app);
       break;
     case COMMAND_QUIT:
       gst_element_set_state(app->pipeline, GST_STATE_NULL);
@@ -1611,8 +1627,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
         if (app->actual_fps <= 0.0)
           break;
 
-        if (!app_pause(app))
-          break;
+        app_pause(app);
 
         if (gst_element_query_position(app->pipeline, &format, &position)) {
           /* Calculate where it should be in the stream and seek there. */
@@ -1677,34 +1692,34 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
       break;
     case COMMAND_ADJUST_VOLUME:
       if (argc >= 1) {
-        if (g_object_property_exists(G_OBJECT(app->pipeline), "volume")) {
+        if (app->playbin && g_object_property_exists(G_OBJECT(app->playbin), "volume")) {
           if (arg0 < 0.0)
             arg0 = 0.0;
           if (arg0 > 1.0)
             arg0 = 1.0;
-          g_object_set(app->pipeline, "volume", arg0, NULL);
+          g_object_set(app->playbin, "volume", arg0, NULL);
           GST_PLAYER_EVENT("volume, %g", arg0);
         }
       }
       break;
     case COMMAND_MUTE:
-      if (g_object_property_exists(G_OBJECT(app->pipeline), "mute")) {
-        g_object_set(app->pipeline, "mute", TRUE, NULL);
+      if (app->playbin && g_object_property_exists(G_OBJECT(app->playbin), "mute")) {
+        g_object_set(app->playbin, "mute", TRUE, NULL);
         GST_PLAYER_EVENT("mute, %d", 1);
       }
       break;
     case COMMAND_UNMUTE:
-      if (g_object_property_exists(G_OBJECT(app->pipeline), "mute")) {
-        g_object_set(app->pipeline, "mute", FALSE, NULL);
+      if (app->playbin && g_object_property_exists(G_OBJECT(app->playbin), "mute")) {
+        g_object_set(app->playbin, "mute", FALSE, NULL);
         GST_PLAYER_EVENT("mute, %d", 0);
       }
       break;
     case COMMAND_TOGGLE_MUTE:
       if (argc >= 1) {
-        if (g_object_property_exists(G_OBJECT(app->pipeline), "mute")) {
+        if (app->playbin && g_object_property_exists(G_OBJECT(app->playbin), "mute")) {
           gboolean is_muted = FALSE;
-          g_object_get(app->pipeline, "mute", &is_muted, NULL);
-          g_object_set(app->pipeline, "mute", !is_muted, NULL);
+          g_object_get(app->playbin, "mute", &is_muted, NULL);
+          g_object_set(app->playbin, "mute", !is_muted, NULL);
           GST_PLAYER_EVENT("mute, %d", (!is_muted ? 1 : 0));
         }
       }
@@ -1749,8 +1764,8 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
       {
         gdouble volume = 1.0;
 
-        if (g_object_property_exists(G_OBJECT(app->pipeline), "volume")) {
-          g_object_get(app->pipeline, "volume", &volume, NULL);
+        if (app->playbin && g_object_property_exists(G_OBJECT(app->playbin), "volume")) {
+          g_object_get(app->playbin, "volume", &volume, NULL);
           if (volume < 0.0)
             volume = 0.0;
           if (volume > 1.0)
@@ -1765,8 +1780,8 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
       {
         gboolean mute = FALSE;
 
-        if (g_object_property_exists(G_OBJECT(app->pipeline), "mute")) {
-          g_object_get(app->pipeline, "mute", &mute, NULL);
+        if (app->playbin && g_object_property_exists(G_OBJECT(app->playbin), "mute")) {
+          g_object_get(app->playbin, "mute", &mute, NULL);
         } else {
           mute = FALSE;
         }
@@ -2117,7 +2132,8 @@ main (int argc, char *argv[])
   app->actual_height = 0;
   app->rate = FORWARD_RATE;
   app->uri = uri;
-
+  app->pipeline = NULL;
+  app->playbin = NULL;
 
   /* Begin actual work */
 
@@ -2127,14 +2143,20 @@ main (int argc, char *argv[])
   /* Support two different kinds of pipelines. One uses playbin2 and the other is a simple pipeline for displaying test patterns. */
 
   if (!g_str_has_prefix(uri, "local://pattern/")) {
-    app->pipeline = gst_element_factory_make("playbin2", NULL);
+    app->pipeline = gst_pipeline_new("pipeline");
     g_assert(app->pipeline);
+
+    app->playbin = gst_element_factory_make("playbin2", NULL);
+    g_assert(app->playbin);
+
+    gst_bin_add_many(GST_BIN(app->pipeline), app->playbin, NULL);
+    //gst_element_link_many(app->playbin, NULL);
     
     /* Connect to signals to set properties on elements that are auto-selected */
-    g_signal_connect(app->pipeline, "element-added", G_CALLBACK(playbin_element_added), app);
+    g_signal_connect(app->playbin, "element-added", G_CALLBACK(playbin_element_added), app);
 
     g_object_set(
-      app->pipeline, 
+      app->playbin, 
       "uri",             uri, 
       "mute",            mute, 
       "volume",          volume, 
