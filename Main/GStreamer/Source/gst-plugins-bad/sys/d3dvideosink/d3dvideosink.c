@@ -312,7 +312,7 @@ gst_d3dvideosink_init (GstD3DVideoSink * sink, GstD3DVideoSinkClass * klass)
  
   /* TODO: Copied from GstVideoSink; should we use that as base class? */
   /* 20ms is more than enough, 80-130ms is noticable */
-  gst_base_sink_set_max_lateness (GST_BASE_SINK (sink), 50 * GST_MSECOND);
+  gst_base_sink_set_max_lateness (GST_BASE_SINK (sink), 20 * GST_MSECOND);
   gst_base_sink_set_qos_enabled (GST_BASE_SINK (sink), TRUE);
 }
 
