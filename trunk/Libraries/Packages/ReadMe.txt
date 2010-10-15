@@ -16,7 +16,7 @@ iconv                   -       0.0.1	        -       http://win-iconv.googlecod
 fribidi                 -       0.19.2          -       http://fribidi.org/download/fribidi-0.19.2.tar.gz
 dlfcn-win32             -       r19             -       http://dlfcn-win32.googlecode.com/files/dlfcn-win32-r19.tar.bz2
 liboil                  -       0.3.17          -       http://liboil.freedesktop.org/download/liboil-0.3.17.tar.gz
-orc                     -       0.4.10          -       http://code.entropywave.com/download/orc/orc-0.4.10.tar.gz
+orc                     -       0.4.11          -       http://code.entropywave.com/download/orc/orc-0.4.11.tar.gz
 pthreads                -       2.9.0           -       CVS (for now), eventually http://mirrors.kernel.org/sources.redhat.com/pthreads-win32/pthreads-w32-2-9-0-release.tar.gz
 libiconv                -       1.13.1          -       http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.13.1.tar.gz
 zlib                    -       1.2.5           -       http://zlib.net/zlib-1.2.5.tar.bz2

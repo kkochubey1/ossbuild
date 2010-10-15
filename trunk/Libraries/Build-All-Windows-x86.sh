@@ -55,7 +55,6 @@ create_hostname_windows
 #No prefix from here out
 clear_prefix
 
-
 #Not using dwarf2 yet
 ###gcc_dw2
 ##if [ ! -f "$BinDir/libgcc_s_dw2-1.dll" ]; then
@@ -172,7 +171,7 @@ if [ ! -f "$BinDir/${PthreadsPrefix}pthreadGC2.dll" ]; then
 fi
 
 #orc (oil runtime compiler)
-if [ ! -f "$BinDir/lib${Prefix}orc-0.4-0.dll" ]; then
+if [ ! -f "$BinDir/liborc-0.4-0.dll" ]; then
 	unpack_gzip_and_move "orc.tar.gz" "$PKG_DIR_ORC"
 	mkdir "$IntDir/orc"
 
@@ -181,8 +180,8 @@ if [ ! -f "$BinDir/lib${Prefix}orc-0.4-0.dll" ]; then
 
 	make ${MAKE_PARALLEL_FLAGS} && make install
 	
-	$MSLIB /name:lib${Prefix}orc-0.4-0.dll /out:orc-0.4.lib /machine:$MSLibMachine /def:orc/.libs/lib${Prefix}orc-0.4-0.dll.def
-	$MSLIB /name:lib${Prefix}orc-test-0.4-0.dll /out:orc-test-0.4.lib /machine:$MSLibMachine /def:orc-test/.libs/lib${Prefix}orc-test-0.4-0.dll.def
+	$MSLIB /name:liborc-0.4-0.dll /out:orc-0.4.lib /machine:$MSLibMachine /def:orc/.libs/liborc-0.4-0.dll.def
+	$MSLIB /name:liborc-test-0.4-0.dll /out:orc-test-0.4.lib /machine:$MSLibMachine /def:orc-test/.libs/liborc-test-0.4-0.dll.def
 	move_files_to_dir "*.exp *.lib" "$LibDir"
 fi
 
