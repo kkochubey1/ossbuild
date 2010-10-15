@@ -564,6 +564,7 @@ public class Main {
 							@Override
 							public void run() {
 								((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, 2.0f, file[0].toURI().toString());
+								//((GstMediaComponent) c).play(false, IMediaRequest.REPEAT_FOREVER, 2.0f, "http://127.0.0.1/example.mjpg");
 							}
 						});
 					}

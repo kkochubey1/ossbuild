@@ -80,6 +80,8 @@
 #define GST_PLAYER_KLASS_IS_DECODER(klass) (g_strstr_len(klass, -1, "/Decoder") || g_strstr_len(klass, -1, "Decoder/"))
 #define GST_PLAYER_KLASS_IS_GENERIC(klass) (g_strcmp0(klass, "Generic") == 0 || g_strstr_len(klass, -1, "Generic/") || g_strstr_len(klass, -1, "/Generic"))
 
+#define GST_PLAYER_STATE_CHANGE_ERROR(app) GST_ELEMENT_ERROR(app->pipeline, CORE, STATE_CHANGE, ("Unable to stream media"), (NULL))
+
 #define GST_PLAYER_PRINT(format, ...)                                               \
   {                                                                                 \
     GST_PLAYER_MESSAGE_LOCK                                                         \
@@ -387,6 +389,13 @@ g_object_property_exists_of_type(GObject* object, const gchar* property_name, GT
       return TRUE;
     return FALSE;
   }
+}
+
+static gboolean 
+transition_with_timeout(GstState intended_state, App* app) {
+  GstState state = GST_STATE_CHANGE_FAILURE;
+  gst_element_set_state(app->pipeline, intended_state);
+  return (gst_element_get_state(app->pipeline, &state, NULL, 3000 * GST_MSECOND) == GST_STATE_CHANGE_SUCCESS && state == intended_state);
 }
 
 static void 
@@ -766,10 +775,11 @@ app_repeat(App* app)
   gst_element_set_state(app->pipeline, GST_STATE_NULL);
   gst_element_get_state(app->pipeline, NULL, NULL, -1);
 
-  gst_element_set_state(app->pipeline, GST_STATE_PLAYING);
-  gst_element_get_state(app->pipeline, NULL, NULL, -1);
-
-  GST_PLAYER_EVENT("repeat, %d", app->repeat_count);
+  if (transition_with_timeout(GST_STATE_PLAYING, app)) {
+    GST_PLAYER_EVENT("repeat, %d", app->repeat_count);
+  } else {
+    GST_PLAYER_STATE_CHANGE_ERROR(app);
+  }
 
   GST_PLAYER_COMMAND_UNLOCK
 
@@ -1175,12 +1185,14 @@ eos:
           g_free(debug);
           g_free(name);
 
+          app->exiting = TRUE;
+          g_main_loop_quit(app->main_loop);
           //app->exiting = TRUE;
-          if (!(GST_PLAYER_REPEAT_FOREVER(app->total_repeat_count) || (app->total_repeat_count > 0 && app->repeat_count < app->total_repeat_count))) {
-            g_main_loop_quit(app->main_loop);
-          } else {
-            g_timeout_add(1000, app_repeat, app);
-          }
+          //if (!(GST_PLAYER_REPEAT_FOREVER(app->total_repeat_count) || (app->total_repeat_count > 0 && app->repeat_count < app->total_repeat_count))) {
+          //  g_main_loop_quit(app->main_loop);
+          //} else {
+          //  g_timeout_add(1000, app_repeat, app);
+          //}
         }
         break;
       }
@@ -1964,8 +1976,16 @@ static void
 setup_sigint_handler(App* app) 
 {
 #ifdef G_OS_WIN32
-  /* Setup CTRL+C handler */
+  /* Setup the CTRL+C handler. */
   SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
+#endif
+}
+
+static void setup_error_reporting() 
+{
+#ifdef G_OS_WIN32
+  /* Request that the Windows error reporting dialog remain hidden if the app crashes. */
+  SetErrorMode(GetErrorMode() | SEM_NOGPFAULTERRORBOX);
 #endif
 }
 
@@ -2027,6 +2047,9 @@ main (int argc, char *argv[])
 
   /* Clear app */
   memset(app, 0, sizeof(App));
+
+  /* Setup error reporting */
+  setup_error_reporting();
 
   /* Init threads and set the program name */
   g_thread_init(NULL);
