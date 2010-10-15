@@ -73,6 +73,7 @@
 #define GST_PLAYER_MEDIA_IS_STILL(media_type) ((media_type & MEDIA_TYPE_STILL) == MEDIA_TYPE_STILL)
 #define GST_PLAYER_MEDIA_IS_VIDEO(media_type) ((media_type & MEDIA_TYPE_VIDEO) == MEDIA_TYPE_VIDEO)
 #define GST_PLAYER_MEDIA_IS_AUDIO(media_type) ((media_type & MEDIA_TYPE_AUDIO) == MEDIA_TYPE_AUDIO)
+#define GST_PLAYER_MEDIA_IS_AUDIO_ONLY(media_type) (media_type == MEDIA_TYPE_AUDIO)
 
 #define GST_PLAYER_KLASS_IS_IMAGE(klass)   (g_strstr_len(klass, -1, "/Image") || g_strstr_len(klass, -1, "Image/"))
 #define GST_PLAYER_KLASS_IS_SOURCE(klass)  (g_strstr_len(klass, -1, "Source/") || g_strstr_len(klass, -1, "/Source"))
@@ -261,7 +262,8 @@ struct _App
   gint buffer_size;
   gint64 buffer_duration;
 
-  gboolean first_round;
+  gboolean first_audio_round;
+  gboolean first_video_round;
 
   gint repeat_count;
   gint total_repeat_count;
@@ -310,7 +312,8 @@ static gboolean app_pause(App* app);
 static gboolean app_stop(App* app);
 static gboolean app_play(App* app);
 static void examine_element(gchar* factory_name, GstElement* element, App* app);
-static void notify_caps(GstPad* pad, GstPad* peer, App* app);
+static void notify_audio_caps(GstPad* pad, GstPad* peer, App* app);
+static void notify_video_caps(GstPad* pad, GstPad* peer, App* app);
 static AppCommand* create_app_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble arg2, gdouble arg3, App* app);
 static gboolean process_app_command(AppCommand* cmd);
 
@@ -393,9 +396,15 @@ g_object_property_exists_of_type(GObject* object, const gchar* property_name, GT
 
 static gboolean 
 transition_with_timeout(GstState intended_state, App* app) {
-  GstState state = GST_STATE_CHANGE_FAILURE;
+  GstState state = GST_STATE_NULL;
   gst_element_set_state(app->pipeline, intended_state);
   return (gst_element_get_state(app->pipeline, &state, NULL, 3000 * GST_MSECOND) == GST_STATE_CHANGE_SUCCESS && state == intended_state);
+}
+
+static gboolean 
+query_state(GstState* state, App* app) 
+{
+  return (gst_element_get_state(app->pipeline, state, NULL, 0) == GST_STATE_CHANGE_SUCCESS);
 }
 
 static void 
@@ -697,6 +706,9 @@ app_stop(App* app)
 
   app->repeat_count = 0;
   app->rate = FORWARD_RATE;
+
+  GST_PLAYER_EVENT("stopped");
+
   return FALSE;
 }
 
@@ -784,6 +796,13 @@ app_repeat(App* app)
   GST_PLAYER_COMMAND_UNLOCK
 
   return FALSE;
+}
+
+static gboolean 
+app_is_playing(App* app) 
+{
+  GstState state = GST_STATE_NULL;
+  return (query_state(&state, app) && state >= GST_STATE_PAUSED);
 }
 
 static MediaType 
@@ -1402,11 +1421,48 @@ uridecodebin_pad_added(GstElement* element, GstPad* pad, App* app)
     name = gst_structure_get_name(structure);
 
     if (g_str_has_prefix(name, "audio/")) {
-      app->media_type |= MEDIA_TYPE_AUDIO;
+      if (app->first_audio_round) {
+        GstPad* sink_pad;
+        GstPad* audio_bin_ghost_pad;
+        GstElement *audio_bin;
+        GstElement *audio_volume, *audio_convert, *audio_resample, *audio_scaletempo, *audio_convert_after_scaletempo, *audio_resample_after_scaletempo;
+
+        app->first_audio_round = FALSE;
+        app->media_type |= MEDIA_TYPE_AUDIO;
+
+        /* Setup a bin w/ ghost pads containing a number of elements we'll need. */
+        audio_bin = gst_bin_new("audio_bin");
+
+        audio_volume = gst_element_factory_make("volume", NULL);
+        audio_convert = gst_element_factory_make("audioconvert", NULL);
+        audio_resample = gst_element_factory_make("audioresample", NULL);
+        audio_scaletempo = gst_element_factory_make("scaletempo", NULL);
+        audio_convert_after_scaletempo = gst_element_factory_make("audioconvert", NULL);
+        audio_resample_after_scaletempo = gst_element_factory_make("audioresample", NULL);
+
+        gst_bin_add_many(GST_BIN(audio_bin), audio_volume, audio_convert, audio_resample, audio_scaletempo, audio_convert_after_scaletempo, audio_resample_after_scaletempo, app->audio_sink, NULL);
+        gst_element_link_many(audio_volume, audio_convert, audio_resample, audio_scaletempo, audio_convert_after_scaletempo, audio_resample_after_scaletempo, app->audio_sink, NULL);
+
+        sink_pad = gst_element_get_static_pad(audio_volume, "sink");
+        audio_bin_ghost_pad = gst_ghost_pad_new("sink", sink_pad);
+        gst_element_add_pad(audio_bin, audio_bin_ghost_pad);
+        gst_object_unref(sink_pad);
+
+        app->audio_sink = audio_bin;
+
+        g_object_set(app->playbin, "audio-sink", app->audio_sink, NULL);
+
+        sink_pad = gst_element_get_static_pad(app->audio_sink, "sink");
+        if (sink_pad) {
+          g_signal_connect(sink_pad, "notify::caps", G_CALLBACK(notify_audio_caps), app);
+          gst_object_unref(sink_pad);
+        }
+      }
+
     } else if (g_str_has_prefix(name, "video/")) {
       /* We need to do this only once since (for now) we only play the same media in the same process. */
       /* TODO: Support switching pipelines using commands instead of the command line. */
-      if (app->first_round) {
+      if (app->first_video_round) {
         GstCaps* caps_filter;
         MediaType media_type;
         GstPad* sink_pad;
@@ -1414,7 +1470,7 @@ uridecodebin_pad_added(GstElement* element, GstPad* pad, App* app)
         GstElement *video_bin;
         GstElement *video_scale, *video_colorspace, *video_capsfilter;
 
-        app->first_round = FALSE;
+        app->first_video_round = FALSE;
 
         /* Determine if this is a still image or video we're looking at. */
         media_type = determine_media_type(GST_BIN(element));
@@ -1490,7 +1546,7 @@ uridecodebin_pad_added(GstElement* element, GstPad* pad, App* app)
         
         sink_pad = gst_element_get_static_pad(app->video_sink, "sink");
         if (sink_pad) {
-          g_signal_connect(sink_pad, "notify::caps", G_CALLBACK(notify_caps), app);
+          g_signal_connect(sink_pad, "notify::caps", G_CALLBACK(notify_video_caps), app);
           gst_object_unref(sink_pad);
         }
       }
@@ -1500,7 +1556,53 @@ uridecodebin_pad_added(GstElement* element, GstPad* pad, App* app)
 }
 
 static void 
-notify_caps(GstPad* pad, GstPad* peer, App* app) 
+notify_audio_caps(GstPad* pad, GstPad* peer, App* app) 
+{
+  if (!GST_PLAYER_MEDIA_IS_AUDIO_ONLY(app->media_type))
+    return;
+  {
+    gint64 position;
+    gint64 duration;
+    gboolean mute;
+    gdouble volume;
+    GstFormat format = GST_FORMAT_TIME;
+
+    if (!gst_element_query_duration(app->pipeline, &format, &duration))
+      duration = 0;
+    if (!gst_element_query_position(app->pipeline, &format, &position))
+      position = 0;
+
+    if (app->playbin && g_object_property_exists(G_OBJECT(app->playbin), "volume")) {
+      g_object_get(app->playbin, "volume", &volume, NULL);
+      if (volume < 0.0)
+        volume = 0.0;
+      if (volume > 1.0)
+        volume = 1.0;
+    } else {
+      volume = 1.0;
+    }
+    
+    if (app->playbin && g_object_property_exists(G_OBJECT(app->playbin), "mute")) {
+      g_object_get(app->playbin, "mute", &mute, NULL);
+    } else {
+      mute = FALSE;
+    }
+
+    GST_PLAYER_EVENT("seekable, %d", !app->is_live && duration > 0);
+    GST_PLAYER_EVENT("live, %d", app->is_live);
+    GST_PLAYER_EVENT("uri, %s", app->uri);
+    GST_PLAYER_EVENT("volume, %g", volume);
+    GST_PLAYER_EVENT("mute, %d", (mute ? 1 : 0));
+    if (GST_PLAYER_MEDIA_IS_AUDIO(app->media_type))
+      GST_PLAYER_EVENT("media_type, %s", "audio");
+    GST_PLAYER_EVENT("rate, %f", app->rate);
+    GST_PLAYER_EVENT("duration, %" G_GINT64_FORMAT, (duration > 0 ? duration / GST_MSECOND : 0));
+    GST_PLAYER_EVENT("position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
+  }
+}
+
+static void 
+notify_video_caps(GstPad* pad, GstPad* peer, App* app) 
 {
   GstCaps* caps;
   gint64 position;
@@ -1583,8 +1685,6 @@ notify_caps(GstPad* pad, GstPad* peer, App* app)
 static void
 interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble arg2, gdouble arg3, App* app)
 {
-  GstState state, pending;
-
   switch(cmd) {
     case COMMAND_PAUSE:
       if (app->is_live)
@@ -1609,6 +1709,9 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
         GstFormat format;
 
         if (app->is_live)
+          break;
+
+        if (GST_PLAYER_MEDIA_IS_AUDIO_ONLY(app->media_type))
           break;
 
         //format = GST_FORMAT_BUFFERS;
@@ -1637,6 +1740,9 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
           break;
 
         if (app->actual_fps <= 0.0)
+          break;
+
+        if (GST_PLAYER_MEDIA_IS_AUDIO_ONLY(app->media_type))
           break;
 
         app_pause(app);
@@ -1756,7 +1862,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
         if (gst_element_query_position(app->pipeline, &format, &position)) {
           GST_PLAYER_RESPONSE("query_position, %" G_GINT64_FORMAT, (position > 0 ? position / GST_MSECOND : 0));
         } else {
-          GST_PLAYER_RESPONSE("query_position, %" G_GINT64_FORMAT, 0);
+          GST_PLAYER_RESPONSE("query_position, 0");
         }
       }
       break;
@@ -1768,7 +1874,7 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
         if (gst_element_query_duration(app->pipeline, &format, &duration)) {
           GST_PLAYER_RESPONSE("query_duration, %" G_GINT64_FORMAT, (duration > 0 ? duration / GST_MSECOND : 0));
         } else {
-          GST_PLAYER_RESPONSE("query_duration, %" G_GINT64_FORMAT, 0);
+          GST_PLAYER_RESPONSE("query_duration, 0");
         }
       }
       break;
@@ -2045,11 +2151,11 @@ main (int argc, char *argv[])
     {NULL}
   };
 
-  /* Clear app */
-  memset(app, 0, sizeof(App));
-
   /* Setup error reporting */
   setup_error_reporting();
+
+  /* Clear app */
+  memset(app, 0, sizeof(App));
 
   /* Init threads and set the program name */
   g_thread_init(NULL);
@@ -2143,7 +2249,8 @@ main (int argc, char *argv[])
   app->has_fps = has_fps;
   app->has_multipartdemux = FALSE;
   app->has_jpegdec = FALSE;
-  app->first_round = TRUE;
+  app->first_audio_round = TRUE;
+  app->first_video_round = TRUE;
   app->repeat_count = 0;
   if (!repeat_forever)
     app->total_repeat_count = repeat_count;
@@ -2221,7 +2328,7 @@ main (int argc, char *argv[])
     gst_caps_unref(caps);
 
     sink_pad = gst_element_get_static_pad(app->video_sink, "sink");
-    g_signal_connect(sink_pad, "notify::caps", G_CALLBACK(notify_caps), app);
+    g_signal_connect(sink_pad, "notify::caps", G_CALLBACK(notify_video_caps), app);
     gst_object_unref(sink_pad);
 
     /* Set the app media type -- we already know it since we're creating the full pipeline. */
@@ -2236,28 +2343,29 @@ main (int argc, char *argv[])
   gst_bus_set_sync_handler(app->bus, (GstBusSyncHandler)xoverlay_bus_sync_handler, app);
 
   /* Spin up thread to read from stdin */
-
   app->cmd_processor_thread = NULL;
   app->cmd_processor_please_exit = FALSE;
-  cmd_processor_is_started = FALSE;
-  cmd_processor_started = g_cond_new();
+  if (app->command_mode) {
+    cmd_processor_is_started = FALSE;
+    cmd_processor_started = g_cond_new();
 
-  app->cmd_processor_thread = g_thread_create((GThreadFunc)process_commands, app, TRUE, NULL);
-  if (!app->cmd_processor_thread) {
+    app->cmd_processor_thread = g_thread_create((GThreadFunc)process_commands, app, TRUE, NULL);
+    if (!app->cmd_processor_thread) {
+      g_cond_free(cmd_processor_started);
+      goto end;
+    }
+
+    /* Wait for thread to start */
+    GST_PLAYER_COMMAND_LOCK
+    while(!cmd_processor_is_started)
+      g_cond_wait(cmd_processor_started, cmd_lock);
+    GST_PLAYER_COMMAND_UNLOCK
+
+    /* Cleanup the condition */
     g_cond_free(cmd_processor_started);
-    goto end;
   }
 
-  /* Wait for thread to start */
-  GST_PLAYER_COMMAND_LOCK
-  while(!cmd_processor_is_started)
-    g_cond_wait(cmd_processor_started, cmd_lock);
-  GST_PLAYER_COMMAND_UNLOCK
-
-  /* Cleanup the condition */
-  g_cond_free(cmd_processor_started);
-
-  /* Spin up thread to read from stdin */
+  /* Spin up thread to ping periodically */
   if (app->ping_interval > 0 && app->command_mode) {
     app->ping_thread = NULL;
     app->ping_please_exit = FALSE;
