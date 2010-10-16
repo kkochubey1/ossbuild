@@ -184,7 +184,8 @@ typedef enum _Command
   COMMAND_QUERY_POSITION     = 16, 
   COMMAND_QUERY_DURATION     = 17, 
   COMMAND_QUERY_VOLUME       = 18, 
-  COMMAND_QUERY_MUTE         = 19
+  COMMAND_QUERY_MUTE         = 19, 
+  COMMAND_EXPOSE             = 20
 } Command;
 
 typedef enum _VideoTestSrcPattern
@@ -438,6 +439,8 @@ examine_elements(GstBin* bin, App* app)
         break;
     }
   }
+
+  gst_iterator_free(iter);
 }
 
 static void 
@@ -805,6 +808,42 @@ app_is_playing(App* app)
   return (query_state(&state, app) && state >= GST_STATE_PAUSED);
 }
 
+static gboolean 
+app_expose(App* app) 
+{
+  gboolean done;
+  GstIterator* iter;
+  GstElement* element;
+
+  /* Locate the sinks implementing the xoverlay interface. */
+  done = FALSE;
+  iter = gst_bin_iterate_all_by_interface(GST_BIN(app->video_sink), gst_x_overlay_get_type());
+    
+  if (!iter)
+    return FALSE;
+
+  while (!done) {
+    switch(gst_iterator_next(iter, &element)) {
+      case GST_ITERATOR_OK:
+        /* Expose these elements. */
+        gst_x_overlay_expose(GST_X_OVERLAY(element));
+        gst_object_unref(element);
+        break;
+      case GST_ITERATOR_RESYNC:
+        gst_iterator_resync(iter);
+        break;
+      case GST_ITERATOR_ERROR:
+      case GST_ITERATOR_DONE:
+        done = TRUE;
+        break;
+    }
+  }
+
+  gst_iterator_free(iter);
+
+  return FALSE;
+}
+
 static MediaType 
 determine_media_type(GstBin* bin) 
 {
@@ -1121,6 +1160,8 @@ last_buffer(App* app)
         break;
     }
   }
+
+  gst_iterator_free(iter);
 
   /* If we didn't find a valid buffer, then get out of here. */
   if (!found)
@@ -1906,6 +1947,14 @@ interpret_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble ar
         GST_PLAYER_RESPONSE("query_mute, %d", (mute ? 1 : 0));
       }
       break;
+    case COMMAND_EXPOSE: 
+      {
+        if (GST_PLAYER_MEDIA_IS_AUDIO_ONLY(app->media_type))
+          break;
+
+        g_idle_add(app_expose, app);
+      }
+      break;
   }
 }
 static void
@@ -1984,6 +2033,12 @@ process_commands(App* app)
       command = COMMAND_QUERY_VOLUME;
     } else if (GST_PLAYER_STR_EQUALS(cmd, "QUERY_MUTE")) {
       command = COMMAND_QUERY_MUTE;
+    } else if (GST_PLAYER_STR_EQUALS(cmd, "EXPOSE")) {
+      command = COMMAND_EXPOSE;
+    } else if (GST_PLAYER_STR_EQUALS(cmd, "REPAINT")) {
+      command = COMMAND_EXPOSE;
+    } else if (GST_PLAYER_STR_EQUALS(cmd, "PAINT")) {
+      command = COMMAND_EXPOSE;
     } else {
       command = COMMAND_UNKNOWN;
     }
