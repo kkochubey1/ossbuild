@@ -71,9 +71,10 @@
 #define GST_PLAYER_STR_EQUALS(s1, s2) (g_ascii_strcasecmp(s1, s2) == 0)
 
 #define GST_PLAYER_MEDIA_IS_STILL(media_type) ((media_type & MEDIA_TYPE_STILL) == MEDIA_TYPE_STILL)
-#define GST_PLAYER_MEDIA_IS_VIDEO(media_type) ((media_type & MEDIA_TYPE_VIDEO) == MEDIA_TYPE_VIDEO)
 #define GST_PLAYER_MEDIA_IS_AUDIO(media_type) ((media_type & MEDIA_TYPE_AUDIO) == MEDIA_TYPE_AUDIO)
+#define GST_PLAYER_MEDIA_IS_VIDEO(media_type) ((media_type & MEDIA_TYPE_VIDEO) == MEDIA_TYPE_VIDEO)
 #define GST_PLAYER_MEDIA_IS_AUDIO_ONLY(media_type) (media_type == MEDIA_TYPE_AUDIO)
+#define GST_PLAYER_MEDIA_IS_VIDEO_ONLY(media_type) (media_type == MEDIA_TYPE_VIDEO)
 
 #define GST_PLAYER_KLASS_IS_IMAGE(klass)   (g_strstr_len(klass, -1, "/Image") || g_strstr_len(klass, -1, "Image/"))
 #define GST_PLAYER_KLASS_IS_SOURCE(klass)  (g_strstr_len(klass, -1, "Source/") || g_strstr_len(klass, -1, "/Source"))
@@ -266,6 +267,8 @@ struct _App
   gboolean first_audio_round;
   gboolean first_video_round;
 
+  gboolean auto_sync_disabled;
+
   gint repeat_count;
   gint total_repeat_count;
 
@@ -313,6 +316,7 @@ static gboolean app_pause(App* app);
 static gboolean app_stop(App* app);
 static gboolean app_play(App* app);
 static void examine_element(gchar* factory_name, GstElement* element, App* app);
+static void examine_videosink(gchar* factory_name, GstElement* element, App* app);
 static void notify_audio_caps(GstPad* pad, GstPad* peer, App* app);
 static void notify_video_caps(GstPad* pad, GstPad* peer, App* app);
 static AppCommand* create_app_command(gint argc, Command cmd, gdouble arg0, gdouble arg1, gdouble arg2, gdouble arg3, App* app);
@@ -406,6 +410,56 @@ static gboolean
 query_state(GstState* state, App* app) 
 {
   return (gst_element_get_state(app->pipeline, state, NULL, 0) == GST_STATE_CHANGE_SUCCESS);
+}
+
+static void 
+examine_videosinks(GstBin* bin, App* app) 
+{
+  gboolean done;
+  GstIterator* iter;
+  GstElement* element;
+  GstElementFactory* factory;
+
+  /* Locate the sinks implementing the xoverlay interface. */
+  done = FALSE;
+  iter = gst_bin_iterate_all_by_interface(bin, gst_x_overlay_get_type());
+    
+  if (!iter)
+    return;
+
+  while (!done) {
+    switch(gst_iterator_next(iter, &element)) {
+      case GST_ITERATOR_OK:
+        /* Expose these elements. */
+        factory = gst_element_get_factory(element);
+        if (factory)
+          examine_videosink(GST_PLUGIN_FEATURE_NAME(factory), element, app);
+        gst_object_unref(element);
+        break;
+      case GST_ITERATOR_RESYNC:
+        gst_iterator_resync(iter);
+        break;
+      case GST_ITERATOR_ERROR:
+      case GST_ITERATOR_DONE:
+        done = TRUE;
+        break;
+    }
+  }
+
+  gst_iterator_free(iter);
+}
+
+static void 
+examine_videosink(gchar* factory_name, GstElement* element, App* app) 
+{
+  if (!element)
+    return;
+  
+  if (GST_PLAYER_MEDIA_IS_VIDEO_ONLY(app->media_type) && app->is_live) {
+    /* Turn off sync if we've got a live source and it's video only (e.g. a motion jpeg camera). */
+    if (!app->auto_sync_disabled && g_object_property_exists_of_type(G_OBJECT(element), "sync", G_TYPE_BOOLEAN))
+      g_object_set(element, "sync", FALSE, NULL);
+  }
 }
 
 static void 
@@ -1584,6 +1638,8 @@ uridecodebin_pad_added(GstElement* element, GstPad* pad, App* app)
           }
         }
         g_object_set(app->playbin, "video-sink", app->video_sink, NULL);
+
+        examine_videosinks(GST_BIN(app->video_sink), app);
         
         sink_pad = gst_element_get_static_pad(app->video_sink, "sink");
         if (sink_pad) {
@@ -2165,6 +2221,7 @@ main (int argc, char *argv[])
   gboolean command_mode = FALSE;
   gboolean disable_buffering = FALSE;
   gboolean disable_download = FALSE;
+  gboolean disable_auto_sync = FALSE;
   gint fps = 0;
   gint fps_n = 0;
   gint fps_d = 0;
@@ -2182,26 +2239,27 @@ main (int argc, char *argv[])
   gint res = 0;
 
   GOptionEntry options[] = {
-    {"window-handle",    'w', 0, G_OPTION_ARG_INT64,  &window_handle,     N_("Set the window handle in which to render video output"), NULL},
-    {"uri",              'u', 0, G_OPTION_ARG_STRING, &uri,               N_("The URI to play media from (in playbin syntax)"), NULL},
-    {"fps",              'f', 0, G_OPTION_ARG_INT,    &fps,               N_("Set the frames-per-second for video playback"), NULL},
-    {"mute",             'm', 0, G_OPTION_ARG_NONE,   &mute,              N_("Mute all audio output"), NULL},
-    {"live",             'l', 0, G_OPTION_ARG_NONE,   &live,              N_("Assume the source is live"), NULL},
-    {"volume",           'v', 0, G_OPTION_ARG_DOUBLE, &volume,            N_("Set the volume for all audio output"), NULL},
-    {"command-mode",     'c', 0, G_OPTION_ARG_NONE,   &command_mode,      N_("Accept and respond to commands through stdin/stdout"), NULL},
-    {"repeat-count",     'r', 0, G_OPTION_ARG_INT,    &repeat_count,      N_("Set the number of times the media should play"), NULL},
-    {"repeat-forever",     0, 0, G_OPTION_ARG_NONE,   &repeat_forever,    N_("Continuously replay the media until the window is forcibly closed or the application exits"), NULL},
-    {"fps-n",              0, 0, G_OPTION_ARG_INT,    &fps_n,             N_("Set the frames-per-second numerator for video playback"), NULL},
-    {"fps-d",              0, 0, G_OPTION_ARG_INT,    &fps_d,             N_("Set the frames-per-second denominator for video playback"), NULL},
-    {"width",              0, 0, G_OPTION_ARG_INT,    &width,             N_("Force a width for video playback"), NULL},
-    {"height",             0, 0, G_OPTION_ARG_INT,    &height,            N_("Force a height for video playback"), NULL},
-    {"audio-sink",         0, 0, G_OPTION_ARG_STRING, &audio_sink_desc,   N_("Set the audio sink used by the playbin element"), NULL},
-    {"video-sink",         0, 0, G_OPTION_ARG_STRING, &video_sink_desc,   N_("Set the video sink used by the playbin element"), NULL},
-    {"buffer-size",        0, 0, G_OPTION_ARG_INT,    &buffer_size,       N_("Set the playbin buffer-size in bytes"), NULL},
-    {"buffer-duration",    0, 0, G_OPTION_ARG_INT64,  &buffer_duration,   N_("Set the playbin buffer-duration in nanoseconds"), NULL},
-    {"ping-interval",      0, 0, G_OPTION_ARG_INT64,  &ping_interval,     N_("Set the interval in between automatic ping messages (requires command mode)"), NULL},
-    {"disable-buffering",  0, 0, G_OPTION_ARG_NONE,   &disable_buffering, N_("Disables all buffering"), NULL},
-    {"disable-download",   0, 0, G_OPTION_ARG_NONE,   &disable_download,  N_("Disables download mode"), NULL},
+    {"window-handle",      'w', 0, G_OPTION_ARG_INT64,  &window_handle,     N_("Set the window handle in which to render video output"), NULL},
+    {"uri",                'u', 0, G_OPTION_ARG_STRING, &uri,               N_("The URI to play media from (in playbin syntax)"), NULL},
+    {"fps",                'f', 0, G_OPTION_ARG_INT,    &fps,               N_("Set the frames-per-second for video playback"), NULL},
+    {"mute",               'm', 0, G_OPTION_ARG_NONE,   &mute,              N_("Mute all audio output"), NULL},
+    {"live",               'l', 0, G_OPTION_ARG_NONE,   &live,              N_("Assume the source is live"), NULL},
+    {"volume",             'v', 0, G_OPTION_ARG_DOUBLE, &volume,            N_("Set the volume for all audio output"), NULL},
+    {"command-mode",       'c', 0, G_OPTION_ARG_NONE,   &command_mode,      N_("Accept and respond to commands through stdin/stdout"), NULL},
+    {"repeat-count",       'r', 0, G_OPTION_ARG_INT,    &repeat_count,      N_("Set the number of times the media should play"), NULL},
+    {"repeat-forever",       0, 0, G_OPTION_ARG_NONE,   &repeat_forever,    N_("Continuously replay the media until the window is forcibly closed or the application exits"), NULL},
+    {"fps-n",                0, 0, G_OPTION_ARG_INT,    &fps_n,             N_("Set the frames-per-second numerator for video playback"), NULL},
+    {"fps-d",                0, 0, G_OPTION_ARG_INT,    &fps_d,             N_("Set the frames-per-second denominator for video playback"), NULL},
+    {"width",                0, 0, G_OPTION_ARG_INT,    &width,             N_("Force a width for video playback"), NULL},
+    {"height",               0, 0, G_OPTION_ARG_INT,    &height,            N_("Force a height for video playback"), NULL},
+    {"audio-sink",           0, 0, G_OPTION_ARG_STRING, &audio_sink_desc,   N_("Set the audio sink used by the playbin element"), NULL},
+    {"video-sink",           0, 0, G_OPTION_ARG_STRING, &video_sink_desc,   N_("Set the video sink used by the playbin element"), NULL},
+    {"buffer-size",          0, 0, G_OPTION_ARG_INT,    &buffer_size,       N_("Set the playbin buffer-size in bytes"), NULL},
+    {"buffer-duration",      0, 0, G_OPTION_ARG_INT64,  &buffer_duration,   N_("Set the playbin buffer-duration in nanoseconds"), NULL},
+    {"ping-interval",        0, 0, G_OPTION_ARG_INT64,  &ping_interval,     N_("Set the interval in between automatic ping messages (requires command mode)"), NULL},
+    {"disable-buffering",    0, 0, G_OPTION_ARG_NONE,   &disable_buffering, N_("Disables all buffering"), NULL},
+    {"disable-download",     0, 0, G_OPTION_ARG_NONE,   &disable_download,  N_("Disables download mode"), NULL},
+    {"disable-auto-sync",    0, 0, G_OPTION_ARG_NONE,   &disable_auto_sync, N_("Disables automatically determining if video sinks should enable sync or not"), NULL},
     GST_TOOLS_GOPTION_VERSION,
     {NULL}
   };
@@ -2289,6 +2347,7 @@ main (int argc, char *argv[])
     exit(ERROR_INITIALIZATION);
   }
 
+  app->auto_sync_disabled = disable_auto_sync;
   app->buffering_disabled = disable_buffering;
   app->download_disabled = disable_download;
   app->command_mode = command_mode;
