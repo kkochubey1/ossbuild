@@ -25,6 +25,7 @@
 
 /* FIXME: hack alert */
 #ifdef HAVE_WIN32
+#define WINVER 0x0501
 #define DISABLE_FAULT_HANDLER
 #include <windows.h>
 #include <io.h>                 /* lseek, open, close, read */
@@ -2201,8 +2202,10 @@ setup_sigint_handler(App* app)
 static void setup_error_reporting() 
 {
 #ifdef G_OS_WIN32
+#if _WIN32_WINNT >= _WIN32_WINNT_WIN2K
   /* Request that the Windows error reporting dialog remain hidden if the app crashes. */
-  SetErrorMode(GetErrorMode() | SEM_NOGPFAULTERRORBOX);
+  SetErrorMode(SEM_NOGPFAULTERRORBOX);
+#endif
 #endif
 }
 
