@@ -105,11 +105,11 @@ rem gst-plugins-base/gst-libs/gst/interfaces
 rem gst-plugins-base/gst-libs/gst/pbutils
 %MK_ENUMS_BAT% INSTALL "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils" "%BUILDDIR%\Libraries\pbutils.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-enumtypes.c"
 %SED% -e "s:@PACKAGE_VERSION_MAJOR@:%GST_PLUGINS_BASE_VERSION_MAJOR%:g" -e "s:@PACKAGE_VERSION_MINOR@:%GST_PLUGINS_BASE_VERSION_MINOR%:g" -e "s:@PACKAGE_VERSION_MICRO@:%GST_PLUGINS_BASE_VERSION_MICRO%:g" -e "s:@PACKAGE_VERSION_NANO@:%GST_PLUGINS_BASE_VERSION_NANO%:g" "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\gstpluginsbaseversion.h.in" > "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\gstpluginsbaseversion.h"
-%GEN_MARSHAL_BAT% gst_install_marshal "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-marshal.list" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-marshal.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-marshal.c"
+%GEN_MARSHAL_BAT% pbutils_marshal "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-marshal.list" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-marshal.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\pbutils\pbutils-marshal.c"
 
 rem gst-plugins-base/gst-libs/gst/rtsp
 %MK_ENUMS_BAT% RTSP "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp" "%BUILDDIR%\Libraries\rtsp.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-enumtypes.c"
-%GEN_MARSHAL_BAT% gst_rtsp_marshal "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-marshal.list" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-marshal.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-marshal.c"
+%GEN_MARSHAL_BAT% __gst_rtsp_marshal "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-marshal.list" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-marshal.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\rtsp\gstrtsp-marshal.c"
 
 rem gst-plugins-base/gst-libs/gst/video
 %MK_ENUMS_BAT% VIDEO "%SRC_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video" "%BUILDDIR%\Libraries\video.mkenum.lst.txt" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video\video-enumtypes.h" "%GEN_GST_PLUGINS_BASE_DIR%\gst-libs\gst\video\video-enumtypes.c"

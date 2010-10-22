@@ -51,12 +51,12 @@
 
 /* VOID:POINTER,BOXED */
 void
-gst_install_marshal_VOID__POINTER_BOXED (GClosure     *closure,
-                                         GValue       *return_value G_GNUC_UNUSED,
-                                         guint         n_param_values,
-                                         const GValue *param_values,
-                                         gpointer      invocation_hint G_GNUC_UNUSED,
-                                         gpointer      marshal_data)
+pbutils_marshal_VOID__POINTER_BOXED (GClosure     *closure,
+                                     GValue       *return_value G_GNUC_UNUSED,
+                                     guint         n_param_values,
+                                     const GValue *param_values,
+                                     gpointer      invocation_hint G_GNUC_UNUSED,
+                                     gpointer      marshal_data)
 {
   typedef void (*GMarshalFunc_VOID__POINTER_BOXED) (gpointer     data1,
                                                     gpointer     arg_1,
