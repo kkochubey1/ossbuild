@@ -134,6 +134,12 @@ serialize_ ## name (GstExifWriter * writer, const GstTagList * taglist, \
     case EXIF_TYPE_LONG: \
       gst_exif_writer_write_long_tag (writer, exiftag->exif_tag, exif_value); \
       break; \
+    case EXIF_TYPE_UNDEFINED: \
+    { \
+        guint8 data = (guint8) exif_value; \
+        write_exif_undefined_tag (writer, exiftag->exif_tag, &data, 1); \
+    } \
+      break; \
     default: \
       g_assert_not_reached (); \
       GST_WARNING ("Unmapped serialization for type %d", exiftag->exif_type); \
@@ -154,15 +160,23 @@ deserialize_ ## name (GstExifReader * exif_reader, \
       exiftag->exif_tag); \
 \
   /* validate tag */ \
-  if (tagdata->tag_type != EXIF_TYPE_SHORT || tagdata->count != 1) { \
-    GST_WARNING ("0x%X has unexpected type/count", tagdata->tag); \
+  if (tagdata->count != 1) { \
+    GST_WARNING ("0x%X has unexpected count", tagdata->count); \
     return 0; \
   } \
 \
-  if (exif_reader->byte_order == G_LITTLE_ENDIAN) { \
-    value = GST_READ_UINT16_LE (tagdata->offset_as_data); \
+  if (tagdata->tag_type == EXIF_TYPE_SHORT) { \
+    if (exif_reader->byte_order == G_LITTLE_ENDIAN) { \
+      value = GST_READ_UINT16_LE (tagdata->offset_as_data); \
+    } else { \
+      value = GST_READ_UINT16_BE (tagdata->offset_as_data); \
+    } \
+  } else if (tagdata->tag_type == EXIF_TYPE_UNDEFINED) { \
+    value = GST_READ_UINT8 (tagdata->offset_as_data); \
   } else { \
-    value = GST_READ_UINT16_BE (tagdata->offset_as_data); \
+    GST_WARNING ("0x%X has unexpected type %d", exiftag->exif_tag, \
+        tagdata->tag_type); \
+    return 0; \
   } \
 \
   str = __exif_tag_## funcname ## _from_exif_value (value); \
@@ -234,11 +248,15 @@ EXIF_SERIALIZATION_DESERIALIZATION_FUNC (gain_control);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (geo_coordinate);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (geo_direction);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (geo_elevation);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (metering_mode);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (orientation);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (saturation);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (scene_capture_type);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (scene_type);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (sensitivity_type);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (sharpness);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (shutter_speed);
+EXIF_SERIALIZATION_DESERIALIZATION_FUNC (source);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (speed);
 EXIF_SERIALIZATION_DESERIALIZATION_FUNC (white_balance);
 
@@ -283,9 +301,12 @@ EXIF_DESERIALIZATION_FUNC (add_to_pending_tags);
 #define EXIF_TAG_DATE_TIME_DIGITIZED 0x9004
 #define EXIF_TAG_SHUTTER_SPEED_VALUE 0x9201
 #define EXIF_TAG_APERTURE_VALUE 0x9202
+#define EXIF_TAG_METERING_MODE 0x9207
 #define EXIF_TAG_FLASH 0x9209
 #define EXIF_TAG_FOCAL_LENGTH 0x920A
 #define EXIF_TAG_MAKER_NOTE 0x927C
+#define EXIF_TAG_FILE_SOURCE 0xA300
+#define EXIF_TAG_SCENE_TYPE 0xA301
 #define EXIF_TAG_EXPOSURE_MODE 0xA402
 #define EXIF_TAG_WHITE_BALANCE 0xA403
 #define EXIF_TAG_DIGITAL_ZOOM_RATIO 0xA404
@@ -293,6 +314,7 @@ EXIF_DESERIALIZATION_FUNC (add_to_pending_tags);
 #define EXIF_TAG_GAIN_CONTROL 0xA407
 #define EXIF_TAG_CONTRAST 0xA408
 #define EXIF_TAG_SATURATION 0xA409
+#define EXIF_TAG_SHARPNESS 0xA40A
 
 /* IFD pointer tags */
 #define EXIF_IFD_TAG 0x8769
@@ -366,6 +388,8 @@ static const GstExifTagMatch tag_map_exif[] = {
   {GST_TAG_CAPTURING_FOCAL_RATIO, EXIF_TAG_APERTURE_VALUE, EXIF_TYPE_RATIONAL,
         0,
       serialize_aperture_value, deserialize_aperture_value},
+  {GST_TAG_CAPTURING_METERING_MODE, EXIF_TAG_METERING_MODE, EXIF_TYPE_SHORT, 0,
+      serialize_metering_mode, deserialize_metering_mode},
   {GST_TAG_CAPTURING_FLASH_FIRED, EXIF_TAG_FLASH, EXIF_TYPE_SHORT, 0,
       serialize_flash, deserialize_flash},
   {GST_TAG_CAPTURING_FOCAL_LENGTH, EXIF_TAG_FOCAL_LENGTH, EXIF_TYPE_RATIONAL, 0,
@@ -373,6 +397,10 @@ static const GstExifTagMatch tag_map_exif[] = {
   {GST_TAG_APPLICATION_DATA, EXIF_TAG_MAKER_NOTE, EXIF_TYPE_UNDEFINED, 0, NULL,
       NULL},
   {NULL, EXIF_FLASHPIX_VERSION_TAG, EXIF_TYPE_UNDEFINED, 0, NULL, NULL},
+  {GST_TAG_CAPTURING_SOURCE, EXIF_TAG_FILE_SOURCE, EXIF_TYPE_UNDEFINED,
+      0, serialize_source, deserialize_source},
+  {GST_TAG_CAPTURING_SOURCE, EXIF_TAG_SCENE_TYPE, EXIF_TYPE_UNDEFINED,
+      0, serialize_scene_type, deserialize_scene_type},
   {GST_TAG_CAPTURING_EXPOSURE_MODE, EXIF_TAG_EXPOSURE_MODE, EXIF_TYPE_SHORT,
       0, serialize_exposure_mode, deserialize_exposure_mode},
   {GST_TAG_CAPTURING_WHITE_BALANCE, EXIF_TAG_WHITE_BALANCE, EXIF_TYPE_SHORT,
@@ -390,6 +418,8 @@ static const GstExifTagMatch tag_map_exif[] = {
       serialize_contrast, deserialize_contrast},
   {GST_TAG_CAPTURING_SATURATION, EXIF_TAG_SATURATION, EXIF_TYPE_SHORT, 0,
       serialize_saturation, deserialize_saturation},
+  {GST_TAG_CAPTURING_SHARPNESS, EXIF_TAG_SHARPNESS, EXIF_TYPE_SHORT, 0,
+      serialize_sharpness, deserialize_sharpness},
   {NULL, 0, 0, 0, NULL, NULL}
 };
 
@@ -1755,12 +1785,18 @@ EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (exposure_program,
     capturing_exposure_program);
 EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (gain_control,
     capturing_gain_adjustment);
+EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (metering_mode,
+    capturing_metering_mode);
 EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (orientation,
     image_orientation);
 EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (saturation,
     capturing_saturation);
 EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (scene_capture_type,
     capturing_scene_capture_type);
+EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (sharpness,
+    capturing_sharpness);
+EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (source,
+    capturing_source);
 EXIF_SERIALIZATION_DESERIALIZATION_MAP_STRING_TO_INT_FUNC (white_balance,
     capturing_white_balance);
 
@@ -2501,6 +2537,44 @@ deserialize_resolution (GstExifReader * exif_reader,
   if (yres) {
     parse_exif_rational_tag (exif_reader, GST_TAG_IMAGE_VERTICAL_PPI,
         yres->count, yres->offset, multiplier, FALSE);
+  }
+
+  return 0;
+}
+
+static void
+serialize_scene_type (GstExifWriter * writer, const GstTagList * taglist,
+    const GstExifTagMatch * exiftag)
+{
+  const gchar *str;
+  guint8 value = 0;
+
+  if (gst_tag_list_peek_string_index (taglist, GST_TAG_CAPTURING_SOURCE, 0,
+          &str)) {
+    if (strcmp (str, "dsc") == 0) {
+      value = 0;
+    }
+  }
+
+  if (value != 0)
+    write_exif_undefined_tag (writer, exiftag->exif_tag, &value, 1);
+}
+
+static gint
+deserialize_scene_type (GstExifReader * exif_reader,
+    GstByteReader * reader, const GstExifTagMatch * exiftag,
+    GstExifTagData * tagdata)
+{
+  guint8 value = 0;
+
+  GST_LOG ("Starting to parse %s tag in exif 0x%x", exiftag->gst_tag,
+      exiftag->exif_tag);
+
+  value = GST_READ_UINT8 (tagdata->offset_as_data);
+
+  if (value == 1) {
+    gst_tag_list_add (exif_reader->taglist, GST_TAG_MERGE_KEEP,
+        GST_TAG_CAPTURING_SOURCE, "dsc", NULL);
   }
 
   return 0;

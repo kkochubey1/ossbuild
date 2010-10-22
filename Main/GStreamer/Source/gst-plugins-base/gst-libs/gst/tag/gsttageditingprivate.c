@@ -277,8 +277,9 @@ __exif_tag_capturing_white_balance_from_exif_value (gint value)
   }
 }
 
-gint
-__exif_tag_capturing_contrast_to_exif_value (const gchar * str)
+static gint
+__exif_tag_capturing_contrast_sharpness_to_exif_value (const gchar * str,
+    const gchar * tag_name)
 {
   if (str == NULL)
     goto end;
@@ -291,12 +292,13 @@ __exif_tag_capturing_contrast_to_exif_value (const gchar * str)
     return 2;
 
 end:
-  GST_WARNING ("Invalid contrast type: %s", str);
+  GST_WARNING ("Invalid %s type: %s", tag_name, str);
   return -1;
 }
 
-const gchar *
-__exif_tag_capturing_contrast_from_exif_value (gint value)
+static const gchar *
+__exif_tag_capturing_contrast_sharpness_from_exif_value (gint value,
+    const gchar * tag_name)
 {
   switch (value) {
     case 0:
@@ -306,9 +308,23 @@ __exif_tag_capturing_contrast_from_exif_value (gint value)
     case 2:
       return "hard";
     default:
-      GST_WARNING ("Invalid contrast type: %d", value);
+      GST_WARNING ("Invalid %s type: %d", tag_name, value);
       return NULL;
   }
+}
+
+gint
+__exif_tag_capturing_contrast_to_exif_value (const gchar * str)
+{
+  return __exif_tag_capturing_contrast_sharpness_to_exif_value (str,
+      "contrast");
+}
+
+const gchar *
+__exif_tag_capturing_contrast_from_exif_value (gint value)
+{
+  return __exif_tag_capturing_contrast_sharpness_from_exif_value (value,
+      "contrast");
 }
 
 gint
@@ -341,6 +357,112 @@ __exif_tag_capturing_saturation_from_exif_value (gint value)
       return "high-saturation";
     default:
       GST_WARNING ("Invalid saturation type: %d", value);
+      return NULL;
+  }
+}
+
+gint
+__exif_tag_capturing_sharpness_to_exif_value (const gchar * str)
+{
+  return __exif_tag_capturing_contrast_sharpness_to_exif_value (str,
+      "sharpness");
+}
+
+const gchar *
+__exif_tag_capturing_sharpness_from_exif_value (gint value)
+{
+  return __exif_tag_capturing_contrast_sharpness_from_exif_value (value,
+      "sharpness");
+}
+
+gint
+__exif_tag_capturing_metering_mode_to_exif_value (const gchar * str)
+{
+  if (str == NULL)
+    goto end;
+
+  if (strcmp (str, "unknown") == 0)
+    return 0;
+  else if (strcmp (str, "average") == 0)
+    return 1;
+  else if (strcmp (str, "center-weighted-average") == 0)
+    return 2;
+  else if (strcmp (str, "spot") == 0)
+    return 3;
+  else if (strcmp (str, "multi-spot") == 0)
+    return 4;
+  else if (strcmp (str, "pattern") == 0)
+    return 5;
+  else if (strcmp (str, "partial") == 0)
+    return 6;
+  else if (strcmp (str, "other") == 0)
+    return 255;
+
+end:
+  GST_WARNING ("Invalid metering mode type: %s", str);
+  return -1;
+}
+
+const gchar *
+__exif_tag_capturing_metering_mode_from_exif_value (gint value)
+{
+  switch (value) {
+    case 0:
+      return "unknown";
+    case 1:
+      return "average";
+    case 2:
+      return "center-weighted-average";
+    case 3:
+      return "spot";
+    case 4:
+      return "multi-spot";
+    case 5:
+      return "pattern";
+    case 6:
+      return "partial";
+    case 255:
+      return "other";
+    default:
+      GST_WARNING ("Invalid metering mode type: %d", value);
+      return NULL;
+  }
+}
+
+gint
+__exif_tag_capturing_source_to_exif_value (const gchar * str)
+{
+  if (str == NULL)
+    goto end;
+
+  if (strcmp (str, "dsc") == 0)
+    return 3;
+  else if (strcmp (str, "other") == 0)
+    return 0;
+  else if (strcmp (str, "transparent-scanner") == 0)
+    return 1;
+  else if (strcmp (str, "reflex-scanner") == 0)
+    return 2;
+
+end:
+  GST_WARNING ("Invalid capturing source type: %s", str);
+  return -1;
+}
+
+const gchar *
+__exif_tag_capturing_source_from_exif_value (gint value)
+{
+  switch (value) {
+    case 0:
+      return "other";
+    case 1:
+      return "transparent-scanner";
+    case 2:
+      return "reflex-scanner";
+    case 3:
+      return "dsc";
+    default:
+      GST_WARNING ("Invalid capturing source type: %d", value);
       return NULL;
   }
 }

@@ -51,12 +51,12 @@
 
 /* ENUM:POINTER,POINTER */
 void
-gst_rtsp_marshal_ENUM__POINTER_POINTER (GClosure     *closure,
-                                        GValue       *return_value G_GNUC_UNUSED,
-                                        guint         n_param_values,
-                                        const GValue *param_values,
-                                        gpointer      invocation_hint G_GNUC_UNUSED,
-                                        gpointer      marshal_data)
+__gst_rtsp_marshal_ENUM__POINTER_POINTER (GClosure     *closure,
+                                          GValue       *return_value G_GNUC_UNUSED,
+                                          guint         n_param_values,
+                                          const GValue *param_values,
+                                          gpointer      invocation_hint G_GNUC_UNUSED,
+                                          gpointer      marshal_data)
 {
   typedef gint (*GMarshalFunc_ENUM__POINTER_POINTER) (gpointer     data1,
                                                       gpointer     arg_1,

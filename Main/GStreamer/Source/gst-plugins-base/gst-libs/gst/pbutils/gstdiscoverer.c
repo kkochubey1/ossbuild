@@ -105,8 +105,6 @@ struct _GstDiscovererPrivate
   GMainContext *ctx;
   guint sourceid;
   guint timeoutid;
-
-  gpointer _reserved[GST_PADDING];
 };
 
 #define DISCO_LOCK(dc) g_mutex_lock (dc->priv->lock);
@@ -224,7 +222,7 @@ gst_discoverer_class_init (GstDiscovererClass * klass)
   gst_discoverer_signals[SIGNAL_DISCOVERED] =
       g_signal_new ("discovered", G_TYPE_FROM_CLASS (klass), G_SIGNAL_RUN_LAST,
       G_STRUCT_OFFSET (GstDiscovererClass, discovered),
-      NULL, NULL, gst_install_marshal_VOID__POINTER_BOXED,
+      NULL, NULL, pbutils_marshal_VOID__POINTER_BOXED,
       G_TYPE_NONE, 2, GST_TYPE_DISCOVERER_INFO, GST_TYPE_G_ERROR);
 }
 
@@ -1364,14 +1362,16 @@ gst_discoverer_discover_uri (GstDiscoverer * discoverer, const gchar * uri,
 
 /**
  * gst_discoverer_new:
- * @timeout: The timeout to set on the discoverer
+ * @timeout: timeout per file, in nanoseconds. Allowed are values between
+ *     one second (#GST_SECOND) and one hour (3600 * #GST_SECOND)
  * @err: a pointer to a #GError. can be %NULL
  *
  * Creates a new #GstDiscoverer with the provided timeout.
  *
  * Returns: The new #GstDiscoverer. Free with gst_object_unref() when done.
- * If an error happened when creating the discoverer, @err will be set accordingly
- * and %NULL will be returned.
+ * If an error happened when creating the discoverer, @err will be set
+ * accordingly and %NULL will be returned. If @err is set, the caller must
+ * free it when no longer needed using g_error_free().
  * 
  * Since: 0.10.31
  */
