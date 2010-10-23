@@ -143,20 +143,16 @@ if [ ! -f "$BinDir/lib${Prefix}oil-0.3-0.dll" ]; then
 fi
 
 #pthreads
-PthreadsPrefix=lib${Prefix}
-if [ "${Prefix}" = "" ]; then
-	PthreadsPrefix=""
-fi
-if [ ! -f "$BinDir/${PthreadsPrefix}pthreadGC2.dll" ]; then 
+if [ ! -f "$BinDir/pthreadGC2.dll" ]; then 
 	unpack_gzip_and_move "pthreads-w32.tar.gz" "$PKG_DIR_PTHREADS"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/pthreads-w32/sched.h.patch"
 	patch -p0 -u -N -i "$LIBRARIES_PATCH_DIR/pthreads-w32/pthreads-detach.patch"
 	mkdir_and_move "$IntDir/pthreads"
 
 	cd "$PKG_DIR"
-	change_package "${PthreadsPrefix}pthreadGC\$(DLL_VER).dll" "." "GNUmakefile" "GC_DLL"
 	make "CC=${gcc}" "RC=${windres}" "CROSS=${BuildTripletDash}" "PTW32_FLAGS=-D_TIMESPEC_DEFINED" ${MAKE_PARALLEL_FLAGS} GC-inlined
-	$MSLIB /name:${PthreadsPrefix}pthreadGC2.dll /out:pthreadGC2.lib /machine:$MSLibMachine /def:pthread.def
+	sed -e "s/\"//g" pthread.def > pthread.tmp.def && mv pthread.tmp.def pthread.def
+	$MSLIB /name:pthreadGC2.dll /out:pthreadGC2.lib /machine:$MSLibMachine /def:pthread.def
 	cp -p pthreadGC2.lib libpthreadGC2.dll.a
 	copy_files_to_dir "*.exp *.lib *.a" "$LibDir"
 	copy_files_to_dir "*.dll" "$BinDir"
@@ -167,7 +163,7 @@ if [ ! -f "$BinDir/${PthreadsPrefix}pthreadGC2.dll" ]; then
 	cp -p "$LibDir/libpthreadGC2.dll.a" "$LibDir/libpthreads.dll.a"
 	rm -f "$LibDir/libpthreadGC2.a"
 	
-	generate_libtool_la_windows "libpthreadGC2.la" "${PthreadsPrefix}pthreadGC2.dll" "libpthreadGC2.dll.a"
+	generate_libtool_la_windows "libpthreadGC2.la" "pthreadGC2.dll" "libpthreadGC2.dll.a"
 fi
 
 #orc (oil runtime compiler)
