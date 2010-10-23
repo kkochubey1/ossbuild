@@ -29,7 +29,7 @@
 			<Library resource="libmad.so.0"         executable="true" />
 			<Library resource="libmpeg2.so.0"           executable="true" />
 			<Library resource="libmpeg2convert.so.0"    executable="true" />
-			<Library resource="libx264.so.106"           executable="true" />
+			<Library resource="libx264.so.107"           executable="true" />
 		</IfDef>
 	</Extract>
 
