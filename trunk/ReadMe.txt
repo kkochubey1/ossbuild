@@ -6,9 +6,10 @@ Requirements
   Windows Build
 
     1. MSys/MinGW
-       a. Run "msys-env-x86.bat" or "msys-env-x86_64.bat" in the Tools/ directory to automatically setup a build environment for all the dependencies.
-       b. Double click on the "msys.bat" shortcut in the top level directory to open a shell.
-       c. To build dependencies, from the shell:
+       a. This step is typically not necessary if you just want to compile GStreamer itself. Only do this if you're comfortable with an MSys/MinGW environment or have special needs. Otherwise skip this portion entirely.
+       b. Run "msys-env-x86.bat" or "msys-env-x86_64.bat" in the Tools/ directory to automatically setup a build environment for all the dependencies.
+       c. Double click on the "msys.bat" shortcut in the top level directory to open a shell.
+       d. To build dependencies, from the shell:
               cd <OSSBuild Home>
               cd Libraries/
               ./Clean-All-Windows-x86.sh
