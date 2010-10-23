@@ -29,7 +29,7 @@
 			<Library resource="libmad-0.dll" />
 			<Library resource="libmpeg2-0.dll" />
 			<Library resource="libmpeg2convert-0.dll" />
-			<Library resource="libx264-106.dll" />
+			<Library resource="libx264-107.dll" />
 		</IfDef>
 	</Extract>
 
