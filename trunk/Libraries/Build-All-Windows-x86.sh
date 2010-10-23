@@ -151,7 +151,7 @@ if [ ! -f "$BinDir/pthreadGC2.dll" ]; then
 
 	cd "$PKG_DIR"
 	make "CC=${gcc}" "RC=${windres}" "CROSS=${BuildTripletDash}" "PTW32_FLAGS=-D_TIMESPEC_DEFINED" ${MAKE_PARALLEL_FLAGS} GC-inlined
-	sed -e "s/\"//g" pthread.def > pthread.tmp.def && mv pthread.tmp.def pthread.def
+	sed -e "s/\"//g" -e "s/@.*//g" pthread.def > pthread.tmp.def && mv pthread.tmp.def pthread.def
 	$MSLIB /name:pthreadGC2.dll /out:pthreadGC2.lib /machine:$MSLibMachine /def:pthread.def
 	cp -p pthreadGC2.lib libpthreadGC2.dll.a
 	copy_files_to_dir "*.exp *.lib *.a" "$LibDir"
@@ -1443,17 +1443,16 @@ fi
 
 #x264
 if [ ! -f "$BinDir/x264.exe" ]; then 
-	unpack_bzip2_and_move "x264.tar.bz2" "$PKG_DIR_X264"
+	unpack_gzip_and_move "x264.tar.gz" "$PKG_DIR_X264"
 	mkdir_and_move "$IntDir/x264"
 	
-	PATH=$PATH:$TOOLS_DIR
+	reset_path
 	
 	cd "$PKG_DIR/"
-	CFLAGS=""
-	CPPFLAGS=""
-	LDFLAGS="-Wl,--exclude-libs,libpthreadGC2.dll.a -Wl,--exclude-libs,pthreadGC2.lib"
-	ORIG_LDFLAGS="$ORIG_LDFLAGS -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias"
-	./configure --disable-gpac --enable-shared --host=$Host --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+	#For some reason, compiling with -mms-bitfields was causing alignment 
+	#problems in the x264_t struct. Removing it prevented gcc from miscompiling it.
+	CFLAGS="$IncludeFlags -m32 -DHAVE_STRUCT_TIMESPEC" \
+	./configure --disable-gpac --disable-avs --disable-lavf --disable-ffms --disable-swscale --enable-shared --host=$Host --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	API=$(grep '#define X264_BUILD' < x264.h | cut -f 3 -d ' ')
 	
 	#Download example y4m for use in profiling and selecting the best CPU instruction set
@@ -1462,7 +1461,6 @@ if [ ! -f "$BinDir/x264.exe" ]; then
 	
 	#Build using the profiler
 	make fprofiled VIDS="example.y4m"
-	#make
 	make install
 	
 	reset_flags
@@ -1472,12 +1470,10 @@ if [ ! -f "$BinDir/x264.exe" ]; then
 
 	cd "$IntDir/x264"
 	rm -rf "$LibDir/libx264.a"
-	pexports "$BinDir/lib${Prefix}x264-$API.dll" | sed "s/^_//" > in.def
+	pexports "$BinDir/libx264-$API.dll" | sed "s/^_//" > in.def
 	sed -e 's/DATA//g' in.def > in-mod.def
 	$MSLIB /name:libx264-$API.dll /out:x264.lib /machine:$MSLibMachine /def:in-mod.def
 	move_files_to_dir "*.exp *.lib" "$LibDir/"
-	
-	update_library_names_windows "lib${Prefix}x264.dll.a" "libx264.la"
 fi
 
 #libspeex

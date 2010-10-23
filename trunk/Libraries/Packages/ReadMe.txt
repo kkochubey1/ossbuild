@@ -64,7 +64,7 @@ libcelt                 -       0.8.1           -       http://downloads.xiph.or
 libtheora               -       1.1.1           -       http://downloads.xiph.org/releases/theora/libtheora-1.1.1.tar.bz2
 libmms                  -       win32 branch    -       https://code.launchpad.net/~libmms-devel/libmms/win32
 libmms-0.4.0            -       0.4.0           -       http://sourceforge.net/projects/libmms/files/libmms/0.4/libmms-0.4.tar.gz/download
-x264                    -       20100930        -       http://download.videolan.org/pub/videolan/x264/snapshots/x264-snapshot-20100930-2245.tar.bz2
+x264                    -       20101022        -       http://git.videolan.org/?p=x264.git;a=snapshot;h=4785e8e8dc3d48abf3048e1bf639d2936e642eba;sf=tgz
 libspeex                -       1.2rc1          -       http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
 libschroedinger         -       1.0.10          -       http://diracvideo.org/download/schroedinger/schroedinger-1.0.10.tar.gz
 mp3lame                 -       3.98.4          -       http://downloads.sourceforge.net/project/lame/lame/3.98.4/lame-3.98.4.tar.gz?use_mirror=voxel
