@@ -135,6 +135,13 @@ int url_read_complete(URLContext *h, unsigned char *buf, int size);
 int url_write(URLContext *h, const unsigned char *buf, int size);
 
 /**
+ * Passing this as the "whence" parameter to a seek function causes it to
+ * return the filesize without seeking anywhere. Supporting this is optional.
+ * If it is not supported then the seek function will return <0.
+ */
+#define AVSEEK_SIZE 0x10000
+
+/**
  * Change the position that will be used by the next read/write
  * operation on the resource accessed by h.
  *
@@ -175,7 +182,6 @@ int64_t url_filesize(URLContext *h);
 /**
  * Return the file descriptor associated with this URL. For RTP, this
  * will return only the RTP file descriptor, not the RTCP file descriptor.
- * To get both, use rtp_get_file_handles().
  *
  * @return the file descriptor associated with this URL, or <0 on error.
  */
@@ -235,13 +241,6 @@ int av_url_read_pause(URLContext *h, int pause);
  */
 int64_t av_url_read_seek(URLContext *h, int stream_index,
                          int64_t timestamp, int flags);
-
-/**
- * Passing this as the "whence" parameter to a seek function causes it to
- * return the filesize without seeking anywhere. Supporting this is optional.
- * If it is not supported then the seek function will return <0.
- */
-#define AVSEEK_SIZE 0x10000
 
 /**
  * Oring this flag as into the "whence" parameter to a seek function causes it to
@@ -562,7 +561,7 @@ void init_checksum(ByteIOContext *s,
 /* udp.c */
 int udp_set_remote_url(URLContext *h, const char *uri);
 int udp_get_local_port(URLContext *h);
-#if (LIBAVFORMAT_VERSION_MAJOR <= 52)
+#if FF_API_UDP_GET_FILE
 int udp_get_file_handle(URLContext *h);
 #endif
 

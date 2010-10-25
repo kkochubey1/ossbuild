@@ -5,7 +5,7 @@ includedir=@SHARED_BUILD_DIR@/include
 
 Name: libavfilter
 Description: FFmpeg video filtering library
-Version: 1.48.0
+Version: 1.53.0
 Requires: 
 Requires.private: libavcore = 0.9.1
 Conflicts:

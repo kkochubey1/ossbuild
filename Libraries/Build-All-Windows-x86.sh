@@ -1588,11 +1588,7 @@ if [ ! -f "$BinDir/libsndfile-1.dll" ]; then
 fi
 
 #ffmpeg
-FFmpegPrefix=lib${Prefix}
 FFmpegSuffix=-lgpl
-if [ "${Prefix}" = "" ]; then
-	FFmpegPrefix=""
-fi
 if [ ! -f "$BinDir/avcodec${FFmpegSuffix}-52.dll" ]; then 
 	unpack_bzip2_and_move "ffmpeg.tar.bz2" "$PKG_DIR_FFMPEG"
 	mkdir_and_move "$IntDir/ffmpeg"
@@ -1601,11 +1597,11 @@ if [ ! -f "$BinDir/avcodec${FFmpegSuffix}-52.dll" ]; then
 	CFLAGS=""
 	CPPFLAGS="-DETIMEDOUT=10060 -D_TIMESPEC_DEFINED -D_WIN32_WINNT=0x0600 -DCOBJMACROS"
 	LDFLAGS=""
-	$PKG_DIR/configure --cc="$gcc" --ld="$gcc" --arch=x86 --target-os=mingw32 --enable-cross-compile --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --enable-runtime-cpudetect --enable-yasm --enable-sse --enable-ssse3 --enable-amd3dnow --enable-mmx2 --enable-mmx --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
+	$PKG_DIR/configure --cc="$gcc" --ld="$gcc" --arch=x86 --target-os=mingw32 --enable-cross-compile --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -I$IncludeDir/SDL -I$SharedIncludeDir/SDL -fno-lto" --enable-w32threads --enable-runtime-cpudetect --enable-yasm --enable-sse --enable-ssse3 --enable-amd3dnow --enable-mmx2 --enable-mmx --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir 
 	change_key "." "config.mak" "BUILDSUF" "${FFmpegSuffix}"
 	#Adds $(SLIBPREF) to lib names when linking
 	change_key "." "common.mak" "FFEXTRALIBS\ \\:" "\$\(addprefix\ -l\$\(SLIBPREF\),\$\(addsuffix\ \$\(BUILDSUF\),\$\(FFLIBS\)\)\)\ \$\(EXTRALIBS\)"
-	#For some reason, FFmpeg is not enabling this even when requested
+	#FFmpeg is not enabling this b/c "-ETIMEDOUT=10060" is being passed to as.exe when it shouldn't be. Why it removed "-D" I don't know.
 	sed \
 		-e "s/#define HAVE_MMX2 0/#define HAVE_MMX2 1/g" \
 		-e "s/#define HAVE_SSSE3 0/#define HAVE_SSSE3 1/g" \
@@ -1956,11 +1952,11 @@ if [ ! -f "$BinDir/avcodec-gpl-52.dll" ]; then
 	CFLAGS=""
 	CPPFLAGS="-DETIMEDOUT=10060 -D_TIMESPEC_DEFINED -D_WIN32_WINNT=0x0600 -DCOBJMACROS"
 	LDFLAGS=""
-	$PKG_DIR/configure --cc="$gcc" --ld="$gcc" --arch=x86 --target-os=mingw32 --enable-cross-compile --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -fno-lto" --enable-runtime-cpudetect --enable-yasm --enable-sse --enable-ssse3 --enable-amd3dnow --enable-mmx2 --enable-mmx --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --enable-gpl --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir
+	$PKG_DIR/configure --cc="$gcc" --ld="$gcc" --arch=x86 --target-os=mingw32 --enable-cross-compile --extra-ldflags="$LibFlags -Wl,--kill-at -Wl,--exclude-libs=libintl.a -Wl,--add-stdcall-alias -Wl,--no-whole-archive" --extra-cflags="$IncludeFlags -I$IncludeDir/SDL -I$SharedIncludeDir/SDL -fno-lto" --enable-w32threads --enable-runtime-cpudetect --enable-yasm --enable-sse --enable-ssse3 --enable-amd3dnow --enable-mmx2 --enable-mmx --enable-avfilter --enable-avisynth --enable-memalign-hack --enable-ffmpeg --enable-ffplay --disable-ffserver --disable-debug --disable-static --enable-shared --enable-gpl --prefix=$InstallDir --bindir=$BinDir --libdir=$LibDir --shlibdir=$BinDir --incdir=$IncludeDir
 	change_key "." "config.mak" "BUILDSUF" "-gpl"
 	#Adds $(SLIBPREF) to lib names when linking
 	change_key "." "common.mak" "FFEXTRALIBS\ \\:" "\$\(addprefix\ -l\$\(SLIBPREF\),\$\(addsuffix\ \$\(BUILDSUF\),\$\(FFLIBS\)\)\)\ \$\(EXTRALIBS\)"
-	#For some reason, FFmpeg is not enabling this even when requested
+	#FFmpeg is not enabling this b/c "-ETIMEDOUT=10060" is being passed to as.exe when it shouldn't be. Why it removed "-D" I don't know.
 	sed -e "s/#define HAVE_MMX2 0/#define HAVE_MMX2 1/g" -e "s/#define HAVE_SSSE3 0/#define HAVE_SSSE3 1/g" config.h > config.h.tmp
 	mv config.h.tmp config.h
 	
