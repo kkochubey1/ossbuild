@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -118,6 +118,14 @@
       <Name>gstphotography</Name>
       <Project>{f3a7c701-0acc-0bb0-ce27-aa0dffff2000}</Project>
       <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\audioparsersbad.vcproj">
+      <Name>gstaudioparsersbad</Name>
+      <Project>{13d62e2c-8b14-4d36-a8fb-ce2dd9d5e466}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Build\Plugins\Bad\gst\geometrictransform.vcproj">
       <Name>gstgeometrictransform</Name>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
-	Name="gstaudioparsers"
-	ProjectGUID="{91DF5720-80F0-436D-952D-19BED3804508}"
-	RootNamespace="libgstaudioparsers"
+	Version="9.00"
+	Name="gstaudioparsersbad"
+	ProjectGUID="{13D62E2C-8B14-4D36-A8FB-CE2DD9D5E466}"
+	RootNamespace="libgstaudioparsersbad"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -341,11 +341,27 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\audioparsers\gstdcaparse.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\audioparsers\gstdcaparse.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\audioparsers\gstflacparse.c"
 			>
 		</File>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\audioparsers\gstflacparse.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\audioparsers\gstmpegaudioparse.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-bad\gst\audioparsers\gstmpegaudioparse.h"
 			>
 		</File>
 		<File

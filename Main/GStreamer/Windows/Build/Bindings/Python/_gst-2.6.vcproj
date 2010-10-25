@@ -319,7 +319,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\Source\gst-python\gst\pygst-private.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\Source\gst-python\gst\pygst.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\Source\gst-python\gst\pygstexception.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\Source\gst-python\gst\pygstminiobject-private.h"
 				>
 			</File>
 			<File

@@ -11,7 +11,7 @@
 
 #define NO_IMPORT_PYGOBJECT
 
-#include "common.h"
+#include "pygst.h"
 
 #include <gst/gst.h>
 

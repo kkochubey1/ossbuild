@@ -47,6 +47,7 @@ typedef struct _GstEbmlWrite {
 
   GstPad *srcpad;
   guint64 pos;
+  guint64 last_pos;
   GstClockTime timestamp;
 
   GstByteWriter *cache;
@@ -54,12 +55,9 @@ typedef struct _GstEbmlWrite {
 
   GstFlowReturn last_write_result;
 
-  gboolean need_newsegment;
-
   gboolean writing_streamheader;
   GstByteWriter *streamheader;
   guint64 streamheader_pos;
-  guint64 current_offset;
 
   GstCaps *caps;
 } GstEbmlWrite;

@@ -34,9 +34,9 @@ set MY_S_FHEAD=--fhead "#include \"%MY_H_OUTPUT_FILE%\"\n%MY_HEADERS%"
 set MY_S_FPROD=--fprod "\n/* enumerations from \"@filename@\" */"
 set MY_S_FTAIL=--ftail ""
 set MY_S_EPROD=--eprod ""
-set MY_S_VHEAD=--vhead "GType\n@enum_name@_get_type (void)\n{\n  static GType etype = 0;\n  if (etype == 0) {\n    static const G@Type@Value values[] = {"
-set MY_S_VPROD=--vprod "      { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" },"
-set MY_S_VTAIL=--vtail "      { 0, NULL, NULL }\n    };\n    etype = g_@type@_register_static (\"@EnumName@\", values);\n  }\n  return etype;\n}\n"
+set MY_S_VHEAD=--vhead "GType\n@enum_name@_get_type (void)\n{\n  static volatile gsize g_define_type_id__volatile = 0;\n  if (g_once_init_enter (&g_define_type_id__volatile)) {\n    static const G@Type@Value values[] = {"
+set MY_S_VPROD=--vprod "      {@VALUENAME@, \"@VALUENAME@\", \"@valuenick@\"},"
+set MY_S_VTAIL=--vtail "      {0, NULL, NULL}\n    };\n    GType g_define_type_id = g_@type@_register_static (\"@EnumName@\", values);\n    g_once_init_leave (&g_define_type_id__volatile, g_define_type_id);\n  }\n  return g_define_type_id__volatile;\n}\n"
 set MY_S_COMMENTS=--comments ""
 
 set MY_H_ARGS=%MY_H_FHEAD% %MY_H_FPROD% %MY_H_FTAIL% %MY_H_EPROD% %MY_H_VHEAD% %MY_H_VPROD% %MY_H_VTAIL% %MY_H_COMMENTS%

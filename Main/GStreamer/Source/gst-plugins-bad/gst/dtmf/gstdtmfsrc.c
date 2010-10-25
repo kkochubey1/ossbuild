@@ -265,14 +265,15 @@ gst_dtmf_src_class_init (GstDTMFSrcClass * klass)
   gstelement_class = GST_ELEMENT_CLASS (klass);
 
 
-  gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_dtmf_src_finalize);
-  gobject_class->set_property = GST_DEBUG_FUNCPTR (gst_dtmf_src_set_property);
-  gobject_class->get_property = GST_DEBUG_FUNCPTR (gst_dtmf_src_get_property);
+  gobject_class->finalize = gst_dtmf_src_finalize;
+  gobject_class->set_property = gst_dtmf_src_set_property;
+  gobject_class->get_property = gst_dtmf_src_get_property;
 
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_INTERVAL,
       g_param_spec_uint ("interval", "Interval between tone packets",
           "Interval in ms between two tone packets", MIN_PACKET_INTERVAL,
-          MAX_PACKET_INTERVAL, DEFAULT_PACKET_INTERVAL, G_PARAM_READWRITE));
+          MAX_PACKET_INTERVAL, DEFAULT_PACKET_INTERVAL,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   gstelement_class->change_state =
       GST_DEBUG_FUNCPTR (gst_dtmf_src_change_state);

@@ -26,6 +26,7 @@
 #include <pygobject.h>
 #include <gst/gst.h>
 #include <gst/pbutils/pbutils.h>
+#include "pygst.h"
 
 void pypbutils_register_classes (PyObject *d);
 void pypbutils_add_constants(PyObject *module, const gchar *strip_prefix);
@@ -38,10 +39,14 @@ DL_EXPORT(void)
 initpbutils (void)
 {
 	PyObject *m, *d;
+	PyObject *gst;
 
 	init_pygobject ();
-	gst_pb_utils_init ();
 
+	/* Make sure gst module is loaded and ready */
+	gst = pygst_init();
+	gst_pb_utils_init ();
+	
 	m = Py_InitModule ("pbutils", pypbutils_functions);
 	d = PyModule_GetDict (m);
 

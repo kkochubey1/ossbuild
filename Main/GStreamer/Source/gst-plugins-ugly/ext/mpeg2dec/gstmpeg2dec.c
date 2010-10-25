@@ -1527,12 +1527,21 @@ gst_mpeg2dec_src_query (GstPad * pad, GstQuery * query)
       GstFormat format;
       gint64 cur;
 
+      /* First, we try to ask upstream, which might know better, especially in
+       * the case of DVDs, with multiple chapter */
+      if ((res = gst_pad_peer_query (mpeg2dec->sinkpad, query)))
+        break;
+
       /* save requested format */
       gst_query_parse_position (query, &format, NULL);
 
       /* and convert to the requested format */
       if (!gst_mpeg2dec_src_convert (pad, GST_FORMAT_TIME,
               mpeg2dec->next_time, &format, &cur))
+        goto error;
+
+      cur = gst_segment_to_stream_time (&mpeg2dec->segment, format, cur);
+      if (cur == -1)
         goto error;
 
       gst_query_set_position (query, format, cur);

@@ -25,10 +25,9 @@
 /* include this first, before NO_IMPORT_PYGOBJECT is defined */
 #include <pygobject.h>
 #include <gst/gst.h>
+#include <Python.h>
 
-PyTypeObject *_PyGstElement_Type;
-#define PyGstElement_Type (*_PyGstElement_Type)
-
+void *_PyGstElement_Type;
 
 GST_DEBUG_CATEGORY_STATIC (pyplugindebug);
 #define GST_CAT_DEFAULT pyplugindebug
@@ -40,35 +39,62 @@ static PyObject *element;
 static inline gboolean
 np_init_pygobject (void)
 {
-  PyObject *gobject = PyImport_ImportModule ("gobject");
-  gboolean res = TRUE;
+  gboolean res = FALSE;
+  PyObject *gobject = NULL;
+  PyObject *main_module = NULL;
+  PyObject *mdict = NULL;
+  PyObject *pygtk = NULL;
+  PyObject *cobject = NULL;
 
-  if (gobject != NULL) {
-    PyObject *mdict = PyModule_GetDict (gobject);
-    PyObject *cobject = PyDict_GetItemString (mdict, "_PyGObject_API");
-    if (PyCObject_Check (cobject)) {
-      _PyGObject_API =
-          (struct _PyGObject_Functions *) PyCObject_AsVoidPtr (cobject);
-    } else {
-      PyErr_SetString (PyExc_RuntimeError,
-          "could not find _PyGObject_API object");
-      PyErr_Print ();
-      res = FALSE;
-      goto beach;
-    }
-    if (!(PyObject_CallMethod (gobject, "threads_init", NULL, NULL))) {
-      PyErr_SetString (PyExc_RuntimeError, "Could not initialize threads");
-      PyErr_Print ();
-      res = FALSE;
-      goto beach;
-    }
-  } else {
+  pygtk = PyImport_ImportModule ("pygtk");
+  if (pygtk == NULL) {
     PyErr_Print ();
-    GST_WARNING ("could not import gobject");
-    res = FALSE;
+    GST_WARNING ("could not import pygtk");
+    goto beach;
   }
 
+  if (!(PyObject_CallMethod (pygtk, "require", "s", "2.0"))) {
+    GST_WARNING ("could not run pygtk.require");
+    PyErr_Print ();
+    goto beach;
+  }
+
+  gobject = PyImport_ImportModule ("gobject");
+  if (gobject == NULL) {
+    PyErr_Print ();
+    GST_WARNING ("could not import gobject");
+    goto beach;
+  }
+
+  main_module = PyImport_AddModule ("__main__");
+  mdict = PyModule_GetDict (gobject);
+
+  cobject = PyMapping_GetItemString (mdict, "_PyGObject_API");
+  if (cobject == NULL) {
+    GST_WARNING ("could not find _PyGObject_API");
+    goto beach;
+  }
+
+  _PyGObject_API =
+      (struct _PyGObject_Functions *) PyCObject_AsVoidPtr (cobject);
+  if (_PyGObject_API == NULL) {
+    PyErr_Print ();
+    GST_WARNING ("_PyGObject_API is not a valid CObject");
+    goto beach;
+  }
+
+  if (!(PyObject_CallMethod (gobject, "threads_init", NULL, NULL))) {
+    PyErr_Print ();
+    GST_WARNING ("could not initialize threads");
+    goto beach;
+  }
+
+  res = TRUE;
+
 beach:
+  Py_XDECREF (pygtk);
+  Py_XDECREF (gobject);
+
   return res;
 }
 
@@ -121,8 +147,7 @@ gst_python_plugin_load_file (GstPlugin * plugin, const char *name)
     return FALSE;
   }
 
-  if (!PyType_Check (class)
-      || !(PyObject_IsSubclass (class, (PyObject *) & PyGstElement_Type))) {
+  if (!(PyObject_IsSubclass (class, (PyObject *) _PyGstElement_Type))) {
     GST_WARNING ("the class provided isn't a subclass of gst.Element");
     PyErr_Print ();
     PyErr_Clear ();
@@ -259,10 +284,13 @@ pygst_require (gchar * version)
   modules = PySys_GetObject ("modules");
   /* Try to see if 'gst' is already imported */
   if (!(gst = PyMapping_GetItemString (modules, "gst"))) {
+    PyErr_Clear ();
 
     /* if not, see if 'pygst' was already imported. If so, we assume that
      * 'pygst.require' has already been called. */
     if (!(pygst = PyMapping_GetItemString (modules, "pygst"))) {
+      PyErr_Clear ();
+
       if (!(pygst = PyImport_ImportModule ("pygst"))) {
         GST_ERROR ("the pygst module is not available!");
         goto error;
@@ -295,7 +323,7 @@ pygst_require (gchar * version)
     g_unsetenv ("GST_REGISTRY_UPDATE");
 
 #define IMPORT(x, y) \
-    _PyGst##x##_Type = (PyTypeObject *)PyObject_GetAttrString(gst, y); \
+    _PyGst##x##_Type = (void *)PyObject_GetAttrString(gst, y); \
 	if (_PyGst##x##_Type == NULL) { \
 		PyErr_Print(); \
 		return NULL; \
@@ -326,10 +354,12 @@ plugin_init (GstPlugin * plugin)
 
   gst_plugin_add_dependency_simple (plugin,
       "HOME/.gstreamer-0.10/plugins/python:GST_PLUGIN_SYSTEM_PATH/python:GST_PLUGIN_PATH/python",
-      NULL, NULL, GST_PLUGIN_DEPENDENCY_FLAG_NONE);
+      PLUGINDIR "/python:HOME/.gstreamer-0.10/plugins/python:"
+      "GST_PLUGIN_SYSTEM_PATH/python:GST_PLUGIN_PATH/python", NULL,
+      GST_PLUGIN_DEPENDENCY_FLAG_NONE);
 
   GST_LOG ("Checking to see if libpython is already loaded");
-  g_module_symbol (g_module_open (NULL, G_MODULE_BIND_LOCAL), "Py_None",
+  g_module_symbol (g_module_open (NULL, G_MODULE_BIND_LOCAL), "_Py_NoneStruct",
       &has_python);
   if (has_python) {
     GST_LOG ("libpython is already loaded");
@@ -337,7 +367,7 @@ plugin_init (GstPlugin * plugin)
     GST_LOG ("loading libpython");
     libpython =
         g_module_open (PY_LIB_LOC "/libpython" PYTHON_VERSION "."
-        G_MODULE_SUFFIX, 0);
+        PY_LIB_SUFFIX, 0);
     if (!libpython) {
       GST_WARNING ("Couldn't g_module_open libpython. Reason: %s",
           g_module_error ());

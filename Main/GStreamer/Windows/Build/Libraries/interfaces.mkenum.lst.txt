@@ -5,9 +5,9 @@ mixeroptions.h
 mixertrack.h
 navigation.h
 propertyprobe.h
+streamvolume.h
 tuner.h
 tunernorm.h
 tunerchannel.h
 videoorientation.h
-streamvolume.h
 xoverlay.h

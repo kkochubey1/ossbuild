@@ -4263,6 +4263,12 @@ gst_matroska_demux_push_xiph_codec_priv_data (GstMatroskaDemux * demux,
   gint i, offset, num_packets;
   guint *length, last;
 
+  if (stream->codec_priv == NULL || stream->codec_priv_size == 0) {
+    GST_ELEMENT_ERROR (demux, STREAM, DEMUX, (NULL),
+        ("Missing codec private data for xiph headers, broken file"));
+    return GST_FLOW_ERROR;
+  }
+
   /* start of the stream and vorbis audio or theora video, need to
    * send the codec_priv data as first three packets */
   num_packets = p[0] + 1;
@@ -6489,7 +6495,6 @@ gst_matroska_demux_video_caps (GstMatroskaTrackVideoContext *
     context->send_xiph_headers = TRUE;
   } else if (!strcmp (codec_id, GST_MATROSKA_CODEC_ID_VIDEO_DIRAC)) {
     caps = gst_caps_new_simple ("video/x-dirac", NULL);
-    context->send_xiph_headers = FALSE;
     *codec_name = g_strdup_printf ("Dirac");
   } else if (!strcmp (codec_id, GST_MATROSKA_CODEC_ID_VIDEO_VP8)) {
     caps = gst_caps_new_simple ("video/x-vp8", NULL);
@@ -6704,11 +6709,13 @@ gst_matroska_demux_audio_caps (GstMatroskaTrackAudioContext *
         audiocontext->bitdepth);
   } else if (!strncmp (codec_id, GST_MATROSKA_CODEC_ID_AUDIO_AC3,
           strlen (GST_MATROSKA_CODEC_ID_AUDIO_AC3))) {
-    caps = gst_caps_new_simple ("audio/x-ac3", NULL);
+    caps = gst_caps_new_simple ("audio/x-ac3",
+        "framed", G_TYPE_BOOLEAN, TRUE, NULL);
     *codec_name = g_strdup ("AC-3 audio");
   } else if (!strncmp (codec_id, GST_MATROSKA_CODEC_ID_AUDIO_EAC3,
           strlen (GST_MATROSKA_CODEC_ID_AUDIO_EAC3))) {
-    caps = gst_caps_new_simple ("audio/x-eac3", NULL);
+    caps = gst_caps_new_simple ("audio/x-eac3",
+        "framed", G_TYPE_BOOLEAN, TRUE, NULL);
     *codec_name = g_strdup ("E-AC-3 audio");
   } else if (!strcmp (codec_id, GST_MATROSKA_CODEC_ID_AUDIO_DTS)) {
     caps = gst_caps_new_simple ("audio/x-dts", NULL);

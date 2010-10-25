@@ -59,13 +59,13 @@
 #define GST_MAJORMINOR "0.10"
 
 /* package name in plugins */
-#define GST_PACKAGE_NAME "GStreamer source release"
+#define GST_PACKAGE_NAME "GStreamer prerelease"
 
 /* package origin */
 #define GST_PACKAGE_ORIGIN "http://code.google.com/p/ossbuild/"
 
 /* GStreamer package release date/time for plugins as YYYY-MM-DD */
-#define GST_PACKAGE_RELEASE_DATETIME "2010-09-23T23:20Z"
+#define GST_PACKAGE_RELEASE_DATETIME "2010-10-22T16:17Z"
 
 /* location of the installed gst-plugin-scanner */
 #define GST_PLUGIN_SCANNER_INSTALLED LIBDIR "\\gst-plugin-scanner"

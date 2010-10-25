@@ -11,7 +11,7 @@
 #endif
 
 #define NO_IMPORT_PYGOBJECT
-#include "common.h"
+#include "pygst.h"
 
 #include <gst/gst.h>
 
@@ -236,6 +236,34 @@ _wrap_gst_video_event_new_still_frame(PyObject *self, PyObject *args, PyObject *
     return pygstminiobject_new((GstMiniObject *)ret);
 }
 
+static PyObject *
+_wrap_gst_video_convert_frame(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "buf", "to_caps", "timeout", NULL };
+    GstCaps *to_caps;
+    PyObject *py_to_caps;
+    GError *error = NULL;
+    GstBuffer *ret;
+    guint64 timeout;
+    gboolean to_caps_is_copy;
+    PyGstMiniObject *buf;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!OK:video_convert_frame", kwlist, &PyGstBuffer_Type, &buf, &py_to_caps, &timeout))
+        return NULL;
+    to_caps = pygst_caps_from_pyobject (py_to_caps, &to_caps_is_copy);
+    if (PyErr_Occurred())
+      return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_video_convert_frame(GST_BUFFER(buf->obj), to_caps, timeout, &error);
+    pyg_end_allow_threads;
+    if (to_caps && to_caps_is_copy)
+        gst_caps_unref (to_caps);
+    if (pyg_error_check(&error))
+        return NULL;
+    /* pygobject_new handles NULL checking */
+    return pygstminiobject_new((GstMiniObject *)ret);
+}
+
 const PyMethodDef pyvideo_functions[] = {
     { "parse_caps_color_matrix", (PyCFunction)_wrap_gst_video_parse_caps_color_matrix, METH_VARARGS|METH_KEYWORDS,
       NULL },
@@ -244,6 +272,8 @@ const PyMethodDef pyvideo_functions[] = {
     { "format_from_fourcc", (PyCFunction)_wrap_gst_video_format_from_fourcc, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "event_new_still_frame", (PyCFunction)_wrap_gst_video_event_new_still_frame, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "video_convert_frame", (PyCFunction)_wrap_gst_video_convert_frame, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { NULL, NULL, 0, NULL }
 };
@@ -344,7 +374,7 @@ pyvideo_register_classes(PyObject *d)
     }
 
 
-#line 348 "..\\..\\..\\Source\\gst-python\\gst\\video.c"
+#line 378 "..\\..\\..\\Source\\gst-python\\gst\\video.c"
     pygobject_register_class(d, "GstVideoFilter", GST_TYPE_VIDEO_FILTER, &PyGstVideoFilter_Type, Py_BuildValue("(O)", &PyGstBaseTransform_Type));
     pygobject_register_class(d, "GstVideoSink", GST_TYPE_VIDEO_SINK, &PyGstVideoSink_Type, Py_BuildValue("(O)", &PyGstBaseSink_Type));
 }

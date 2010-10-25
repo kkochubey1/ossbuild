@@ -1,0 +1,19 @@
+--- plugin/gstpythonplugin.c	Mon Oct 25 12:57:19 2010
++++ plugin/gstpythonplugin.c	Mon Oct 25 14:20:08 2010
+@@ -44,6 +44,7 @@
+   PyObject *main_module = NULL;
+   PyObject *mdict = NULL;
+   PyObject *pygtk = NULL;
++  PyObject *cobject = NULL;
+ 
+   pygtk = PyImport_ImportModule ("pygtk");
+   if (pygtk == NULL) {
+@@ -68,7 +69,7 @@
+   main_module = PyImport_AddModule ("__main__");
+   mdict = PyModule_GetDict (gobject);
+ 
+-  PyObject *cobject = PyMapping_GetItemString (mdict, "_PyGObject_API");
++  cobject = PyMapping_GetItemString (mdict, "_PyGObject_API");
+   if (cobject == NULL) {
+     GST_WARNING ("could not find _PyGObject_API");
+     goto beach;

@@ -11,7 +11,7 @@
 #endif
 
 #define NO_IMPORT_PYGOBJECT
-#include "common.h"
+#include "pygst.h"
 
 #include <gst/gst.h>
 
@@ -76,12 +76,20 @@ static PyTypeObject *_PyGstElement_Type;
 #define PyGstElement_Type (*_PyGstElement_Type)
 static PyTypeObject *_PyGstMessage_Type;
 #define PyGstMessage_Type (*_PyGstMessage_Type)
+static PyTypeObject *_PyGstMiniObject_Type;
+#define PyGstMiniObject_Type (*_PyGstMiniObject_Type)
 
 
 /* ---------- forward type declarations ---------- */
 PyTypeObject PyGstInstallPluginsContext_Type;
+PyTypeObject PyGstDiscoverer_Type;
+PyTypeObject PyGstDiscovererInfo_Type;
+PyTypeObject PyGstDiscovererStreamInfo_Type;
+PyTypeObject PyGstDiscovererContainerInfo_Type;
+PyTypeObject PyGstDiscovererAudioInfo_Type;
+PyTypeObject PyGstDiscovererVideoInfo_Type;
 
-#line 85 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 93 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
 
 
 
@@ -185,7 +193,753 @@ PyTypeObject PyGstInstallPluginsContext_Type = {
 
 
 
+/* ----------- GstDiscoverer ----------- */
+
+static int
+_wrap_gst_discoverer_new(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "timeout", NULL };
+    GError *err = NULL;
+    guint64 timeout;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"K:GstDiscoverer.__init__", kwlist, &timeout))
+        return -1;
+    self->obj = (GObject *)gst_discoverer_new(timeout, &err);
+    if (pyg_error_check(&err))
+        return -1;
+
+    if (!self->obj) {
+        PyErr_SetString(PyExc_RuntimeError, "could not create GstDiscoverer object");
+        return -1;
+    }
+    pygobject_register_wrapper((PyObject *)self);
+    return 0;
+}
+
+static PyObject *
+_wrap_gst_discoverer_start(PyGObject *self)
+{
+    pyg_begin_allow_threads;
+    gst_discoverer_start(GST_DISCOVERER(self->obj));
+    pyg_end_allow_threads;
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *
+_wrap_gst_discoverer_stop(PyGObject *self)
+{
+    pyg_begin_allow_threads;
+    gst_discoverer_stop(GST_DISCOVERER(self->obj));
+    pyg_end_allow_threads;
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *
+_wrap_gst_discoverer_discover_uri_async(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "uri", NULL };
+    char *uri;
+    int ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"s:GstDiscoverer.discover_uri_async", kwlist, &uri))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_discover_uri_async(GST_DISCOVERER(self->obj), uri);
+    pyg_end_allow_threads;
+    return PyBool_FromLong(ret);
+
+}
+
+static PyObject *
+_wrap_gst_discoverer_discover_uri(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "uri", NULL };
+    char *uri;
+    GstDiscovererInfo *ret;
+    GError *err = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"s:GstDiscoverer.discover_uri", kwlist, &uri))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_discover_uri(GST_DISCOVERER(self->obj), uri, &err);
+    pyg_end_allow_threads;
+    if (pyg_error_check(&err))
+        return NULL;
+    /* pygobject_new handles NULL checking */
+    return pygstminiobject_new((GstMiniObject *)ret);
+}
+
+static const PyMethodDef _PyGstDiscoverer_methods[] = {
+    { "start", (PyCFunction)_wrap_gst_discoverer_start, METH_NOARGS,
+      NULL },
+    { "stop", (PyCFunction)_wrap_gst_discoverer_stop, METH_NOARGS,
+      NULL },
+    { "discover_uri_async", (PyCFunction)_wrap_gst_discoverer_discover_uri_async, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "discover_uri", (PyCFunction)_wrap_gst_discoverer_discover_uri, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { NULL, NULL, 0, NULL }
+};
+
+PyTypeObject PyGstDiscoverer_Type = {
+    PyObject_HEAD_INIT(NULL)
+    0,                                 /* ob_size */
+    "gst.pbutils.Discoverer",                   /* tp_name */
+    sizeof(PyGObject),          /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)0,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)0,       /* tp_getattr */
+    (setattrfunc)0,       /* tp_setattr */
+    (cmpfunc)0,           /* tp_compare */
+    (reprfunc)0,             /* tp_repr */
+    (PyNumberMethods*)0,     /* tp_as_number */
+    (PySequenceMethods*)0, /* tp_as_sequence */
+    (PyMappingMethods*)0,   /* tp_as_mapping */
+    (hashfunc)0,             /* tp_hash */
+    (ternaryfunc)0,          /* tp_call */
+    (reprfunc)0,              /* tp_str */
+    (getattrofunc)0,     /* tp_getattro */
+    (setattrofunc)0,     /* tp_setattro */
+    (PyBufferProcs*)0,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)0,     /* tp_traverse */
+    (inquiry)0,             /* tp_clear */
+    (richcmpfunc)0,   /* tp_richcompare */
+    offsetof(PyGObject, weakreflist),             /* tp_weaklistoffset */
+    (getiterfunc)0,          /* tp_iter */
+    (iternextfunc)0,     /* tp_iternext */
+    (struct PyMethodDef*)_PyGstDiscoverer_methods, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    (struct PyGetSetDef*)0,  /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)0,    /* tp_descr_get */
+    (descrsetfunc)0,    /* tp_descr_set */
+    offsetof(PyGObject, inst_dict),                 /* tp_dictoffset */
+    (initproc)_wrap_gst_discoverer_new,             /* tp_init */
+    (allocfunc)0,           /* tp_alloc */
+    (newfunc)0,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)0              /* tp_is_gc */
+};
+
+
+
+/* ----------- GstDiscovererInfo ----------- */
+
+static int
+pygobject_no_constructor(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    gchar buf[512];
+
+    g_snprintf(buf, sizeof(buf), "%s is an abstract widget", self->ob_type->tp_name);
+    PyErr_SetString(PyExc_NotImplementedError, buf);
+    return -1;
+}
+
+static PyObject *
+_wrap_gst_discoverer_info_copy(PyGstMiniObject *self)
+{
+    GstDiscovererInfo *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_info_copy(GST_DISCOVERER_INFO(self->obj));
+    pyg_end_allow_threads;
+    /* pygobject_new handles NULL checking */
+    return pygstminiobject_new((GstMiniObject *)ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_info_get_uri(PyGstMiniObject *self)
+{
+    const gchar *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_info_get_uri(GST_DISCOVERER_INFO(self->obj));
+    pyg_end_allow_threads;
+    if (ret)
+        return PyString_FromString(ret);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *
+_wrap_gst_discoverer_info_get_result(PyGstMiniObject *self)
+{
+    gint ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_info_get_result(GST_DISCOVERER_INFO(self->obj));
+    pyg_end_allow_threads;
+    return pyg_enum_from_gtype(GST_TYPE_DISCOVERER_RESULT, ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_info_get_stream_info(PyGstMiniObject *self)
+{
+    GstDiscovererStreamInfo *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_info_get_stream_info(GST_DISCOVERER_INFO(self->obj));
+    pyg_end_allow_threads;
+    /* pygobject_new handles NULL checking */
+    return pygstminiobject_new((GstMiniObject *)ret);
+}
+
+#line 277 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+static PyObject *
+_wrap_gst_discoverer_info_get_stream_list(PyGstMiniObject * self)
+{
+    GList *res, *tmp;
+    PyObject *pyres;
+
+    res = gst_discoverer_info_get_stream_list(GST_DISCOVERER_INFO (self->obj));
+
+    pyres = PyList_New(0);
+    for (tmp = res; tmp; tmp = tmp->next) {
+	PyList_Append(pyres, pygstminiobject_new((GstMiniObject*) tmp->data));
+    }
+    if (res)
+	gst_discoverer_stream_info_list_free(res);
+    return pyres;
+}
+#line 412 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+
+
+static PyObject *
+_wrap_gst_discoverer_info_get_duration(PyGstMiniObject *self)
+{
+    guint64 ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_info_get_duration(GST_DISCOVERER_INFO(self->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLongLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_info_get_misc(PyGstMiniObject *self)
+{
+    const GstStructure *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_info_get_misc(GST_DISCOVERER_INFO(self->obj));
+    pyg_end_allow_threads;
+    /* pyg_boxed_new handles NULL checking */
+    return pyg_boxed_new(GST_TYPE_STRUCTURE, (GstStructure*) ret, TRUE, TRUE);
+}
+
+static PyObject *
+_wrap_gst_discoverer_info_get_tags(PyGstMiniObject *self)
+{
+    const GstTagList *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_info_get_tags(GST_DISCOVERER_INFO(self->obj));
+    pyg_end_allow_threads;
+    /* pyg_boxed_new handles NULL checking */
+    return pyg_boxed_new(GST_TYPE_TAG_LIST, (GstTagList*) ret, TRUE, TRUE);
+}
+
+#line 295 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+static PyObject *
+_wrap_gst_discoverer_info_get_streams(PyGstMiniObject * self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "type", NULL };
+    GList *res, *tmp;
+    PyObject *pyres, *py_type;
+    GType ftype;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O:GstDiscovererInfo.get_streams", kwlist, &py_type))
+        return NULL;
+    if ((ftype = pyg_type_from_object(py_type)) == 0)
+        return NULL;
+    res = gst_discoverer_info_get_streams(GST_DISCOVERER_INFO (self->obj), ftype);
+
+    pyres = PyList_New(0);
+    for (tmp = res; tmp; tmp = tmp->next) {
+	PyList_Append(pyres, pygstminiobject_new((GstMiniObject*) tmp->data));
+    }
+    if (res)
+	gst_discoverer_stream_info_list_free(res);
+    return pyres;
+}
+#line 473 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+
+
+#line 319 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+static PyObject *
+_wrap_gst_discoverer_info_get_audio_streams(PyGstMiniObject * self)
+{
+    GList *res, *tmp;
+    PyObject *pyres;
+
+    res = gst_discoverer_info_get_audio_streams(GST_DISCOVERER_INFO (self->obj));
+
+    pyres = PyList_New(0);
+    for (tmp = res; tmp; tmp = tmp->next) {
+	PyList_Append(pyres, pygstminiobject_new((GstMiniObject*) tmp->data));
+    }
+    if (res)
+	gst_discoverer_stream_info_list_free(res);
+    return pyres;
+}
+#line 493 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+
+
+#line 337 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+static PyObject *
+_wrap_gst_discoverer_info_get_video_streams(PyGstMiniObject * self)
+{
+    GList *res, *tmp;
+    PyObject *pyres;
+
+    res = gst_discoverer_info_get_video_streams(GST_DISCOVERER_INFO (self->obj));
+
+    pyres = PyList_New(0);
+    for (tmp = res; tmp; tmp = tmp->next) {
+	PyList_Append(pyres, pygstminiobject_new((GstMiniObject*) tmp->data));
+    }
+    if (res)
+	gst_discoverer_stream_info_list_free(res);
+    return pyres;
+}
+#line 513 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+
+
+#line 355 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+static PyObject *
+_wrap_gst_discoverer_info_get_container_streams(PyGstMiniObject * self)
+{
+    GList *res, *tmp;
+    PyObject *pyres;
+
+    res = gst_discoverer_info_get_container_streams(GST_DISCOVERER_INFO (self->obj));
+
+    pyres = PyList_New(0);
+    for (tmp = res; tmp; tmp = tmp->next) {
+	PyList_Append(pyres, pygstminiobject_new((GstMiniObject*) tmp->data));
+    }
+    if (res)
+	gst_discoverer_stream_info_list_free(res);
+    return pyres;
+}
+#line 533 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+
+
+static const PyMethodDef _PyGstDiscovererInfo_methods[] = {
+    { "copy", (PyCFunction)_wrap_gst_discoverer_info_copy, METH_NOARGS,
+      NULL },
+    { "get_uri", (PyCFunction)_wrap_gst_discoverer_info_get_uri, METH_NOARGS,
+      NULL },
+    { "get_result", (PyCFunction)_wrap_gst_discoverer_info_get_result, METH_NOARGS,
+      NULL },
+    { "get_stream_info", (PyCFunction)_wrap_gst_discoverer_info_get_stream_info, METH_NOARGS,
+      NULL },
+    { "get_stream_list", (PyCFunction)_wrap_gst_discoverer_info_get_stream_list, METH_NOARGS,
+      NULL },
+    { "get_duration", (PyCFunction)_wrap_gst_discoverer_info_get_duration, METH_NOARGS,
+      NULL },
+    { "get_misc", (PyCFunction)_wrap_gst_discoverer_info_get_misc, METH_NOARGS,
+      NULL },
+    { "get_tags", (PyCFunction)_wrap_gst_discoverer_info_get_tags, METH_NOARGS,
+      NULL },
+    { "get_streams", (PyCFunction)_wrap_gst_discoverer_info_get_streams, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "get_audio_streams", (PyCFunction)_wrap_gst_discoverer_info_get_audio_streams, METH_NOARGS,
+      NULL },
+    { "get_video_streams", (PyCFunction)_wrap_gst_discoverer_info_get_video_streams, METH_NOARGS,
+      NULL },
+    { "get_container_streams", (PyCFunction)_wrap_gst_discoverer_info_get_container_streams, METH_NOARGS,
+      NULL },
+    { NULL, NULL, 0, NULL }
+};
+
+PyTypeObject PyGstDiscovererInfo_Type = {
+    PyObject_HEAD_INIT(NULL)
+    0,                                 /* ob_size */
+    "gst.pbutils.DiscovererInfo",                   /* tp_name */
+    sizeof(PyGstMiniObject),          /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)0,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)0,       /* tp_getattr */
+    (setattrfunc)0,       /* tp_setattr */
+    (cmpfunc)0,           /* tp_compare */
+    (reprfunc)0,             /* tp_repr */
+    (PyNumberMethods*)0,     /* tp_as_number */
+    (PySequenceMethods*)0, /* tp_as_sequence */
+    (PyMappingMethods*)0,   /* tp_as_mapping */
+    (hashfunc)0,             /* tp_hash */
+    (ternaryfunc)0,          /* tp_call */
+    (reprfunc)0,              /* tp_str */
+    (getattrofunc)0,     /* tp_getattro */
+    (setattrofunc)0,     /* tp_setattro */
+    (PyBufferProcs*)0,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)0,     /* tp_traverse */
+    (inquiry)0,             /* tp_clear */
+    (richcmpfunc)0,   /* tp_richcompare */
+    offsetof(PyGstMiniObject, weakreflist),             /* tp_weaklistoffset */
+    (getiterfunc)0,          /* tp_iter */
+    (iternextfunc)0,     /* tp_iternext */
+    (struct PyMethodDef*)_PyGstDiscovererInfo_methods, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    (struct PyGetSetDef*)0,  /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)0,    /* tp_descr_get */
+    (descrsetfunc)0,    /* tp_descr_set */
+    offsetof(PyGstMiniObject, inst_dict),                 /* tp_dictoffset */
+    (initproc)pygobject_no_constructor,             /* tp_init */
+    (allocfunc)0,           /* tp_alloc */
+    (newfunc)0,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)0              /* tp_is_gc */
+};
+
+
+
+/* ----------- GstDiscovererStreamInfo ----------- */
+
+static PyObject *
+_wrap_gst_discoverer_stream_info_get_previous(PyGstMiniObject *self)
+{
+    GstDiscovererStreamInfo *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_stream_info_get_previous(GST_DISCOVERER_STREAM_INFO(self->obj));
+    pyg_end_allow_threads;
+    /* pygobject_new handles NULL checking */
+    return pygstminiobject_new((GstMiniObject *)ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_stream_info_get_next(PyGstMiniObject *self)
+{
+    GstDiscovererStreamInfo *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_stream_info_get_next(GST_DISCOVERER_STREAM_INFO(self->obj));
+    pyg_end_allow_threads;
+    /* pygobject_new handles NULL checking */
+    return pygstminiobject_new((GstMiniObject *)ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_stream_info_get_caps(PyGstMiniObject *self)
+{
+    GstCaps *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_stream_info_get_caps(GST_DISCOVERER_STREAM_INFO(self->obj));
+    pyg_end_allow_threads;
+    return pyg_boxed_new (GST_TYPE_CAPS, ret, FALSE, TRUE);
+}
+
+static PyObject *
+_wrap_gst_discoverer_stream_info_get_tags(PyGstMiniObject *self)
+{
+    const GstTagList *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_stream_info_get_tags(GST_DISCOVERER_STREAM_INFO(self->obj));
+    pyg_end_allow_threads;
+    /* pyg_boxed_new handles NULL checking */
+    return pyg_boxed_new(GST_TYPE_TAG_LIST, (GstTagList*) ret, TRUE, TRUE);
+}
+
+static PyObject *
+_wrap_gst_discoverer_stream_info_get_misc(PyGstMiniObject *self)
+{
+    const GstStructure *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_stream_info_get_misc(GST_DISCOVERER_STREAM_INFO(self->obj));
+    pyg_end_allow_threads;
+    /* pyg_boxed_new handles NULL checking */
+    return pyg_boxed_new(GST_TYPE_STRUCTURE, (GstStructure*) ret, TRUE, TRUE);
+}
+
+static PyObject *
+_wrap_gst_discoverer_stream_info_get_stream_type_nick(PyGstMiniObject *self)
+{
+    const gchar *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_stream_info_get_stream_type_nick(GST_DISCOVERER_STREAM_INFO(self->obj));
+    pyg_end_allow_threads;
+    if (ret)
+        return PyString_FromString(ret);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+#line 373 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+static PyObject *
+_wrap_gst_discoverer_container_info_get_streams(PyGstMiniObject * self)
+{
+    GList *res, *tmp;
+    PyObject *pyres;
+
+    res = gst_discoverer_container_info_get_streams(GST_DISCOVERER_STREAM_INFO (self->obj));
+
+    pyres = PyList_New(0);
+    for (tmp = res; tmp; tmp = tmp->next) {
+	PyList_Append(pyres, pygstminiobject_new((GstMiniObject*) tmp->data));
+    }
+    if (res)
+	gst_discoverer_stream_info_list_free(res);
+    return pyres;
+}
+#line 703 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+
+
+static const PyMethodDef _PyGstDiscovererStreamInfo_methods[] = {
+    { "get_previous", (PyCFunction)_wrap_gst_discoverer_stream_info_get_previous, METH_NOARGS,
+      NULL },
+    { "get_next", (PyCFunction)_wrap_gst_discoverer_stream_info_get_next, METH_NOARGS,
+      NULL },
+    { "get_caps", (PyCFunction)_wrap_gst_discoverer_stream_info_get_caps, METH_NOARGS,
+      NULL },
+    { "get_tags", (PyCFunction)_wrap_gst_discoverer_stream_info_get_tags, METH_NOARGS,
+      NULL },
+    { "get_misc", (PyCFunction)_wrap_gst_discoverer_stream_info_get_misc, METH_NOARGS,
+      NULL },
+    { "get_stream_type_nick", (PyCFunction)_wrap_gst_discoverer_stream_info_get_stream_type_nick, METH_NOARGS,
+      NULL },
+    { "container_info_get_streams", (PyCFunction)_wrap_gst_discoverer_container_info_get_streams, METH_NOARGS,
+      NULL },
+    { NULL, NULL, 0, NULL }
+};
+
+PyTypeObject PyGstDiscovererStreamInfo_Type = {
+    PyObject_HEAD_INIT(NULL)
+    0,                                 /* ob_size */
+    "gst.pbutils.DiscovererStreamInfo",                   /* tp_name */
+    sizeof(PyGstMiniObject),          /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)0,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)0,       /* tp_getattr */
+    (setattrfunc)0,       /* tp_setattr */
+    (cmpfunc)0,           /* tp_compare */
+    (reprfunc)0,             /* tp_repr */
+    (PyNumberMethods*)0,     /* tp_as_number */
+    (PySequenceMethods*)0, /* tp_as_sequence */
+    (PyMappingMethods*)0,   /* tp_as_mapping */
+    (hashfunc)0,             /* tp_hash */
+    (ternaryfunc)0,          /* tp_call */
+    (reprfunc)0,              /* tp_str */
+    (getattrofunc)0,     /* tp_getattro */
+    (setattrofunc)0,     /* tp_setattro */
+    (PyBufferProcs*)0,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)0,     /* tp_traverse */
+    (inquiry)0,             /* tp_clear */
+    (richcmpfunc)0,   /* tp_richcompare */
+    offsetof(PyGstMiniObject, weakreflist),             /* tp_weaklistoffset */
+    (getiterfunc)0,          /* tp_iter */
+    (iternextfunc)0,     /* tp_iternext */
+    (struct PyMethodDef*)_PyGstDiscovererStreamInfo_methods, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    (struct PyGetSetDef*)0,  /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)0,    /* tp_descr_get */
+    (descrsetfunc)0,    /* tp_descr_set */
+    offsetof(PyGstMiniObject, inst_dict),                 /* tp_dictoffset */
+    (initproc)pygobject_no_constructor,             /* tp_init */
+    (allocfunc)0,           /* tp_alloc */
+    (newfunc)0,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)0              /* tp_is_gc */
+};
+
+
+
+/* ----------- GstDiscovererContainerInfo ----------- */
+
+PyTypeObject PyGstDiscovererContainerInfo_Type = {
+    PyObject_HEAD_INIT(NULL)
+    0,                                 /* ob_size */
+    "gst.pbutils.DiscovererContainerInfo",                   /* tp_name */
+    sizeof(PyGstMiniObject),          /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)0,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)0,       /* tp_getattr */
+    (setattrfunc)0,       /* tp_setattr */
+    (cmpfunc)0,           /* tp_compare */
+    (reprfunc)0,             /* tp_repr */
+    (PyNumberMethods*)0,     /* tp_as_number */
+    (PySequenceMethods*)0, /* tp_as_sequence */
+    (PyMappingMethods*)0,   /* tp_as_mapping */
+    (hashfunc)0,             /* tp_hash */
+    (ternaryfunc)0,          /* tp_call */
+    (reprfunc)0,              /* tp_str */
+    (getattrofunc)0,     /* tp_getattro */
+    (setattrofunc)0,     /* tp_setattro */
+    (PyBufferProcs*)0,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)0,     /* tp_traverse */
+    (inquiry)0,             /* tp_clear */
+    (richcmpfunc)0,   /* tp_richcompare */
+    offsetof(PyGstMiniObject, weakreflist),             /* tp_weaklistoffset */
+    (getiterfunc)0,          /* tp_iter */
+    (iternextfunc)0,     /* tp_iternext */
+    (struct PyMethodDef*)NULL, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    (struct PyGetSetDef*)0,  /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)0,    /* tp_descr_get */
+    (descrsetfunc)0,    /* tp_descr_set */
+    offsetof(PyGstMiniObject, inst_dict),                 /* tp_dictoffset */
+    (initproc)pygobject_no_constructor,             /* tp_init */
+    (allocfunc)0,           /* tp_alloc */
+    (newfunc)0,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)0              /* tp_is_gc */
+};
+
+
+
+/* ----------- GstDiscovererAudioInfo ----------- */
+
+PyTypeObject PyGstDiscovererAudioInfo_Type = {
+    PyObject_HEAD_INIT(NULL)
+    0,                                 /* ob_size */
+    "gst.pbutils.DiscovererAudioInfo",                   /* tp_name */
+    sizeof(PyGstMiniObject),          /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)0,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)0,       /* tp_getattr */
+    (setattrfunc)0,       /* tp_setattr */
+    (cmpfunc)0,           /* tp_compare */
+    (reprfunc)0,             /* tp_repr */
+    (PyNumberMethods*)0,     /* tp_as_number */
+    (PySequenceMethods*)0, /* tp_as_sequence */
+    (PyMappingMethods*)0,   /* tp_as_mapping */
+    (hashfunc)0,             /* tp_hash */
+    (ternaryfunc)0,          /* tp_call */
+    (reprfunc)0,              /* tp_str */
+    (getattrofunc)0,     /* tp_getattro */
+    (setattrofunc)0,     /* tp_setattro */
+    (PyBufferProcs*)0,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)0,     /* tp_traverse */
+    (inquiry)0,             /* tp_clear */
+    (richcmpfunc)0,   /* tp_richcompare */
+    offsetof(PyGstMiniObject, weakreflist),             /* tp_weaklistoffset */
+    (getiterfunc)0,          /* tp_iter */
+    (iternextfunc)0,     /* tp_iternext */
+    (struct PyMethodDef*)NULL, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    (struct PyGetSetDef*)0,  /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)0,    /* tp_descr_get */
+    (descrsetfunc)0,    /* tp_descr_set */
+    offsetof(PyGstMiniObject, inst_dict),                 /* tp_dictoffset */
+    (initproc)pygobject_no_constructor,             /* tp_init */
+    (allocfunc)0,           /* tp_alloc */
+    (newfunc)0,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)0              /* tp_is_gc */
+};
+
+
+
+/* ----------- GstDiscovererVideoInfo ----------- */
+
+PyTypeObject PyGstDiscovererVideoInfo_Type = {
+    PyObject_HEAD_INIT(NULL)
+    0,                                 /* ob_size */
+    "gst.pbutils.DiscovererVideoInfo",                   /* tp_name */
+    sizeof(PyGstMiniObject),          /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)0,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)0,       /* tp_getattr */
+    (setattrfunc)0,       /* tp_setattr */
+    (cmpfunc)0,           /* tp_compare */
+    (reprfunc)0,             /* tp_repr */
+    (PyNumberMethods*)0,     /* tp_as_number */
+    (PySequenceMethods*)0, /* tp_as_sequence */
+    (PyMappingMethods*)0,   /* tp_as_mapping */
+    (hashfunc)0,             /* tp_hash */
+    (ternaryfunc)0,          /* tp_call */
+    (reprfunc)0,              /* tp_str */
+    (getattrofunc)0,     /* tp_getattro */
+    (setattrofunc)0,     /* tp_setattro */
+    (PyBufferProcs*)0,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)0,     /* tp_traverse */
+    (inquiry)0,             /* tp_clear */
+    (richcmpfunc)0,   /* tp_richcompare */
+    offsetof(PyGstMiniObject, weakreflist),             /* tp_weaklistoffset */
+    (getiterfunc)0,          /* tp_iter */
+    (iternextfunc)0,     /* tp_iternext */
+    (struct PyMethodDef*)NULL, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    (struct PyGetSetDef*)0,  /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)0,    /* tp_descr_get */
+    (descrsetfunc)0,    /* tp_descr_set */
+    offsetof(PyGstMiniObject, inst_dict),                 /* tp_dictoffset */
+    (initproc)pygobject_no_constructor,             /* tp_init */
+    (allocfunc)0,           /* tp_alloc */
+    (newfunc)0,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)0              /* tp_is_gc */
+};
+
+
+
 /* ----------- functions ----------- */
+
+static PyObject *
+_wrap_gst_codec_utils_aac_get_sample_rate_from_index(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "sr_idx", NULL };
+    PyObject *py_sr_idx = NULL;
+    guint sr_idx = 0, ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O:codec_utils_aac_get_sample_rate_from_index", kwlist, &py_sr_idx))
+        return NULL;
+    if (py_sr_idx) {
+        if (PyLong_Check(py_sr_idx))
+            sr_idx = PyLong_AsUnsignedLong(py_sr_idx);
+        else if (PyInt_Check(py_sr_idx))
+            sr_idx = PyInt_AsLong(py_sr_idx);
+        else
+            PyErr_SetString(PyExc_TypeError, "Parameter 'sr_idx' must be an int or a long");
+        if (PyErr_Occurred())
+            return NULL;
+    }
+    pyg_begin_allow_threads;
+    ret = gst_codec_utils_aac_get_sample_rate_from_index(sr_idx);
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
 
 static PyObject *
 _wrap_gst_pb_utils_add_codec_description_to_tag_list(PyObject *self, PyObject *args, PyObject *kwargs)
@@ -365,7 +1119,7 @@ _wrap_gst_pb_utils_get_element_description(PyObject *self, PyObject *args, PyObj
     return Py_None;
 }
 
-#line 164 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+#line 165 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
 static PyObject *
 _wrap_gst_install_plugins_async(PyGObject *self, PyObject *args)
 {
@@ -459,10 +1213,10 @@ _wrap_gst_install_plugins_async(PyGObject *self, PyObject *args)
     py_ret = pyg_enum_from_gtype(GST_TYPE_INSTALL_PLUGINS_RETURN, ret);
     return py_ret;
 }
-#line 463 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 1217 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
 
 
-#line 98 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+#line 99 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
 static PyObject *
 _wrap_gst_install_plugins_sync(PyGObject *self, PyObject *args, PyObject *kwargs)
 {
@@ -527,7 +1281,7 @@ _wrap_gst_install_plugins_sync(PyGObject *self, PyObject *args, PyObject *kwargs
     py_ret = pyg_enum_from_gtype(GST_TYPE_INSTALL_PLUGINS_RETURN, ret);
     return py_ret;
 }
-#line 531 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 1285 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
 
 
 static PyObject *
@@ -552,6 +1306,284 @@ _wrap_gst_install_plugins_supported(PyObject *self)
     pyg_end_allow_threads;
     return PyBool_FromLong(ret);
 
+}
+
+static PyObject *
+_wrap_gst_discoverer_audio_info_get_channels(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_channels", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_audio_info_get_channels(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_audio_info_get_sample_rate(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_sample_rate", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_audio_info_get_sample_rate(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_audio_info_get_depth(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_depth", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_audio_info_get_depth(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_audio_info_get_bitrate(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_bitrate", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_audio_info_get_bitrate(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_audio_info_get_max_bitrate(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_max_bitrate", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_audio_info_get_max_bitrate(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_video_info_get_width(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_width", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_video_info_get_width(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_video_info_get_height(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_height", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_video_info_get_height(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_video_info_get_depth(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_depth", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_video_info_get_depth(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_video_info_get_framerate_num(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_framerate_num", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_video_info_get_framerate_num(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_video_info_get_framerate_denom(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_framerate_denom", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_video_info_get_framerate_denom(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_video_info_get_par_num(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_par_num", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_video_info_get_par_num(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_video_info_get_par_denom(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_par_denom", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_video_info_get_par_denom(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_video_info_get_interlaced(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    int ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_interlaced", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_video_info_get_interlaced(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyBool_FromLong(ret);
+
+}
+
+static PyObject *
+_wrap_gst_discoverer_video_info_get_bitrate(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_bitrate", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_video_info_get_bitrate(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_video_info_get_max_bitrate(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    guint ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_max_bitrate", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_video_info_get_max_bitrate(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromUnsignedLong(ret);
+}
+
+static PyObject *
+_wrap_gst_discoverer_video_info_get_is_image(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "info", NULL };
+    int ret;
+    PyGstMiniObject *info;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_is_image", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_discoverer_video_info_get_is_image(GST_DISCOVERER_STREAM_INFO(info->obj));
+    pyg_end_allow_threads;
+    return PyBool_FromLong(ret);
+
+}
+
+#line 260 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+static PyObject *
+_wrap_gst_plugins_base_version (PyObject *self)
+{
+    guint	major, minor, micro, nano;
+    PyObject	*py_tuple;
+
+    gst_plugins_base_version (&major, &minor, &micro, &nano);
+    py_tuple = PyTuple_New(4);
+    PyTuple_SetItem(py_tuple, 0, PyInt_FromLong(major));
+    PyTuple_SetItem(py_tuple, 1, PyInt_FromLong(minor));
+    PyTuple_SetItem(py_tuple, 2, PyInt_FromLong(micro));
+    PyTuple_SetItem(py_tuple, 3, PyInt_FromLong(nano));
+
+    return py_tuple;
+}
+#line 1570 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+
+
+static PyObject *
+_wrap_gst_plugins_base_version_string(PyObject *self)
+{
+    gchar *ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_plugins_base_version_string();
+    pyg_end_allow_threads;
+    if (ret) {
+        PyObject *py_ret = PyString_FromString(ret);
+        g_free(ret);
+        return py_ret;
+    }
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 static PyObject *
@@ -831,6 +1863,8 @@ _wrap_gst_missing_encoder_installer_detail_new(PyObject *self, PyObject *args, P
 }
 
 const PyMethodDef pypbutils_functions[] = {
+    { "codec_utils_aac_get_sample_rate_from_index", (PyCFunction)_wrap_gst_codec_utils_aac_get_sample_rate_from_index, METH_VARARGS|METH_KEYWORDS,
+      NULL },
     { "add_codec_description_to_tag_list", (PyCFunction)_wrap_gst_pb_utils_add_codec_description_to_tag_list, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "get_codec_description", (PyCFunction)_wrap_gst_pb_utils_get_codec_description, METH_VARARGS|METH_KEYWORDS,
@@ -852,6 +1886,42 @@ const PyMethodDef pypbutils_functions[] = {
     { "install_plugins_installation_in_progress", (PyCFunction)_wrap_gst_install_plugins_installation_in_progress, METH_NOARGS,
       NULL },
     { "install_plugins_supported", (PyCFunction)_wrap_gst_install_plugins_supported, METH_NOARGS,
+      NULL },
+    { "gst_discoverer_audio_info_get_channels", (PyCFunction)_wrap_gst_discoverer_audio_info_get_channels, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_audio_info_get_sample_rate", (PyCFunction)_wrap_gst_discoverer_audio_info_get_sample_rate, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_audio_info_get_depth", (PyCFunction)_wrap_gst_discoverer_audio_info_get_depth, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_audio_info_get_bitrate", (PyCFunction)_wrap_gst_discoverer_audio_info_get_bitrate, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_audio_info_get_max_bitrate", (PyCFunction)_wrap_gst_discoverer_audio_info_get_max_bitrate, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_video_info_get_width", (PyCFunction)_wrap_gst_discoverer_video_info_get_width, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_video_info_get_height", (PyCFunction)_wrap_gst_discoverer_video_info_get_height, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_video_info_get_depth", (PyCFunction)_wrap_gst_discoverer_video_info_get_depth, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_video_info_get_framerate_num", (PyCFunction)_wrap_gst_discoverer_video_info_get_framerate_num, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_video_info_get_framerate_denom", (PyCFunction)_wrap_gst_discoverer_video_info_get_framerate_denom, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_video_info_get_par_num", (PyCFunction)_wrap_gst_discoverer_video_info_get_par_num, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_video_info_get_par_denom", (PyCFunction)_wrap_gst_discoverer_video_info_get_par_denom, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_video_info_get_interlaced", (PyCFunction)_wrap_gst_discoverer_video_info_get_interlaced, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_video_info_get_bitrate", (PyCFunction)_wrap_gst_discoverer_video_info_get_bitrate, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_video_info_get_max_bitrate", (PyCFunction)_wrap_gst_discoverer_video_info_get_max_bitrate, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "gst_discoverer_video_info_get_is_image", (PyCFunction)_wrap_gst_discoverer_video_info_get_is_image, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "plugins_base_version", (PyCFunction)_wrap_gst_plugins_base_version, METH_NOARGS,
+      NULL },
+    { "plugins_base_version_string", (PyCFunction)_wrap_gst_plugins_base_version_string, METH_NOARGS,
       NULL },
     { "missing_uri_source_message_new", (PyCFunction)_wrap_gst_missing_uri_source_message_new, METH_VARARGS|METH_KEYWORDS,
       NULL },
@@ -889,6 +1959,7 @@ void
 pypbutils_add_constants(PyObject *module, const gchar *strip_prefix)
 {
   pyg_enum_add(module, "InstallPluginsReturn", strip_prefix, GST_TYPE_INSTALL_PLUGINS_RETURN);
+  pyg_enum_add(module, "DiscovererResult", strip_prefix, GST_TYPE_DISCOVERER_RESULT);
 
   if (PyErr_Occurred())
     PyErr_Print();
@@ -941,6 +2012,12 @@ pypbutils_register_classes(PyObject *d)
                 "cannot import name Message from gst");
             return;
         }
+        _PyGstMiniObject_Type = (PyTypeObject *)PyDict_GetItemString(moddict, "MiniObject");
+        if (_PyGstMiniObject_Type == NULL) {
+            PyErr_SetString(PyExc_ImportError,
+                "cannot import name MiniObject from gst");
+            return;
+        }
     } else {
         PyErr_SetString(PyExc_ImportError,
             "could not import gst");
@@ -948,6 +2025,12 @@ pypbutils_register_classes(PyObject *d)
     }
 
 
-#line 952 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 2029 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
     pyg_register_boxed(d, "InstallPluginsContext", GST_TYPE_INSTALL_PLUGINS_CONTEXT, &PyGstInstallPluginsContext_Type);
+    pygobject_register_class(d, "GstDiscoverer", GST_TYPE_DISCOVERER, &PyGstDiscoverer_Type, Py_BuildValue("(O)", &PyGObject_Type));
+    pygstminiobject_register_class(d, "GstDiscovererInfo", GST_TYPE_DISCOVERER_INFO, &PyGstDiscovererInfo_Type, Py_BuildValue("(O)", &PyGstMiniObject_Type));
+    pygstminiobject_register_class(d, "GstDiscovererStreamInfo", GST_TYPE_DISCOVERER_STREAM_INFO, &PyGstDiscovererStreamInfo_Type, Py_BuildValue("(O)", &PyGstMiniObject_Type));
+    pygstminiobject_register_class(d, "GstDiscovererContainerInfo", GST_TYPE_DISCOVERER_CONTAINER_INFO, &PyGstDiscovererContainerInfo_Type, Py_BuildValue("(O)", &PyGstDiscovererStreamInfo_Type));
+    pygstminiobject_register_class(d, "GstDiscovererAudioInfo", GST_TYPE_DISCOVERER_AUDIO_INFO, &PyGstDiscovererAudioInfo_Type, Py_BuildValue("(O)", &PyGstDiscovererStreamInfo_Type));
+    pygstminiobject_register_class(d, "GstDiscovererVideoInfo", GST_TYPE_DISCOVERER_VIDEO_INFO, &PyGstDiscovererVideoInfo_Type, Py_BuildValue("(O)", &PyGstDiscovererStreamInfo_Type));
 }

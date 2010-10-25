@@ -1,4 +1,6 @@
 pbutils.h
+codec-utils.h
 descriptions.h
 install-plugins.h
 missing-plugins.h
+gstdiscoverer.h
