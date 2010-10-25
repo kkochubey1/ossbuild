@@ -85,6 +85,9 @@
 			<OSSBuild:FillDirectory ComponentGroup="Bindings_C_Libs" Directory="$(var.SharedLibDir)">
 				<OSSBuild:Filter Include=".*\\lib\\[^\\]*.*\.lib" />
 
+				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*vlc\.lib" />
+				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*vlccore\.lib" />
+
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*avcore$(var.LGPL)\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*avcodec$(var.LGPL)\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*avdevice$(var.LGPL)\.lib" />
