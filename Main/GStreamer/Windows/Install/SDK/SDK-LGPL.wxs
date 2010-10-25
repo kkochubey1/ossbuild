@@ -96,6 +96,9 @@
 		<DirectoryRef Id="GstSDKLibInstallDir">
 			<OSSBuild:FillDirectory ComponentGroup="Bindings_C_Libs" Directory="$(var.SharedLibDir)">
 				<OSSBuild:Filter Include=".*\\lib\\[^\\]*.*\.lib" />
+
+				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*vlc\.lib" />
+				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*vlccore\.lib" />
 				
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*a52.*\.lib" />
 				<OSSBuild:Filter Exclude=".*\\lib\\[^\\]*.*mpeg2.*\.lib" />
