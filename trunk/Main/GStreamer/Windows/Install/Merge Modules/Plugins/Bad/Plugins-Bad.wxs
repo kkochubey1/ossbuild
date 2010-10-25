@@ -9,6 +9,7 @@
 			<OSSBuild:FillDirectory ComponentGroup="PluginsBad" Directory="$(var.GstPluginDir)">
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstaiff\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstasfmux\.dll" />
+				<OSSBuild:Filter Include=".*\\[^\\]*.*gstaudioparsersbad\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstautoconvert\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstbayer\.dll" />
 				<OSSBuild:Filter Include=".*\\[^\\]*.*gstbz2\.dll" />

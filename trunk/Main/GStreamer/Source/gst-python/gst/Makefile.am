@@ -22,10 +22,10 @@ defs_DATA = gst-types.defs \
 	pbutils.defs
 defsdir = $(pkgdatadir)/$(GST_MAJORMINOR)/defs
 
-noinst_HEADERS = common.h pygstvalue.h pygstminiobject.h pygstexception.h
+noinst_HEADERS = common.h pygstvalue.h pygstminiobject.h pygstexception.h \
+	pygst.h pygst-private.h
 
 versioned_overrides = \
-	gst-0.10.20.ignore 	\
 	gst-0.10.21.ignore 	\
 	gst-0.10.22.ignore 	\
 	gst-0.10.23.ignore 	\
@@ -34,11 +34,13 @@ versioned_overrides = \
 	gst-0.10.26.ignore 	\
 	gst-0.10.29.ignore 	\
 	gst-0.10.30.ignore 	\
+	gst-0.10.31.ignore 	\
 	gst-pb-0.10.23.ignore	\
 	gst-pb-0.10.25.ignore	\
 	gst-pb-0.10.26.ignore	\
 	gst-pb-0.10.29.ignore	\
 	gst-pb-0.10.30.ignore	\
+	gst-pb-0.10.31.ignore	\
 	gst-disable-loadsave.ignore
 
 INCLUDES = $(PYTHON_INCLUDES)

@@ -70,6 +70,7 @@ static const FormatInfo formats[] = {
   {"application/x-apetag", N_("APE tag"), FLAG_CONTAINER},
   {"application/x-icy", N_("ICY internet radio"), FLAG_CONTAINER},
   {"application/x-3gp", "3GP", FLAG_CONTAINER},
+  {"application/x-pn-realaudio", "RealAudio", FLAG_CONTAINER},
   {"application/x-yuv4mpeg", "Y4M", FLAG_CONTAINER},
   {"multipart/x-mixed-replace", "Multipart", FLAG_CONTAINER},
   {"video/x-fli", "FLI/FLC/FLX Animation", FLAG_CONTAINER},
@@ -193,6 +194,7 @@ static const FormatInfo formats[] = {
   {"video/x-vp5", "On2 VP5", 0},
   {"video/x-vp6", "On2 VP6", 0},
   {"video/x-vp6-flash", "On2 VP6/Flash", 0},
+  {"video/x-vp6-alpha", "On2 VP6 with alpha", 0},
   {"video/x-vp7", "On2 VP7", 0},
   {"video/x-vp8", "VP8", 0},
   {"video/x-xvid", "XVID MPEG-4", 0},
@@ -224,6 +226,7 @@ static const FormatInfo formats[] = {
   {"image/x-tga", "TGA", 0},
 
   /* subtitle formats with static descriptions */
+  {"application/x-ass", "ASS", 0},
   {"application/x-subtitle-sami", N_("Sami subtitle format"), 0},
   {"application/x-subtitle-tmplayer", N_("TMPlayer subtitle format"), 0},
   {"application/x-kate", "Kate", 0},

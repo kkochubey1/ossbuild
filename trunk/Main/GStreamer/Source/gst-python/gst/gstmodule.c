@@ -28,7 +28,7 @@
 #include <pygobject.h>
 #include <gst/gst.h>
 #include <gst/gstversion.h>
-#include "common.h"
+#include "pygst-private.h"
 #include "pygstexception.h"
 
 #include <locale.h>
@@ -133,6 +133,23 @@ fail:
   return -1;
 }
 
+struct _PyGst_Functions pygst_api_functions = {
+  pygst_caps_from_pyobject,
+  pygst_iterator_new,
+  pygstminiobject_new
+};
+
+/* for addon libraries ... */
+static void
+pygst_register_api (PyObject * d)
+{
+  PyObject *api;
+
+  api = PyCObject_FromVoidPtr (&pygst_api_functions, NULL);
+  PyDict_SetItemString (d, "_PyGst_API", api);
+  Py_DECREF (api);
+}
+
 DL_EXPORT (void)
 init_gst (void)
 {
@@ -193,6 +210,7 @@ init_gst (void)
 
   m = Py_InitModule ("_gst", pygst_functions);
   d = PyModule_GetDict (m);
+  pygst_register_api (d);
 
   /* gst version */
   gst_version (&major, &minor, &micro, &nano);
@@ -279,23 +297,16 @@ init_gst (void)
   PyModule_AddStringConstant (m, "TAG_ALBUM_GAIN", GST_TAG_ALBUM_GAIN);
   PyModule_AddStringConstant (m, "TAG_ALBUM_PEAK", GST_TAG_ALBUM_PEAK);
   PyModule_AddStringConstant (m, "TAG_LANGUAGE_CODE", GST_TAG_LANGUAGE_CODE);
-#if (GST_VERSION_MAJOR == 0 && GST_VERSION_MINOR == 10 && \
-     ((GST_VERSION_MICRO >= 6) || (GST_VERSION_MICRO == 5 && GST_VERSION_NANO > 0)))
   PyModule_AddStringConstant (m, "TAG_IMAGE", GST_TAG_IMAGE);
-#if ((GST_VERSION_MICRO >= 7) || (GST_VERSION_MICRO == 6 && GST_VERSION_NANO > 0 ))
   PyModule_AddStringConstant (m, "TAG_PREVIEW_IMAGE", GST_TAG_PREVIEW_IMAGE);
-#if ((GST_VERSION_MICRO >= 10) || (GST_VERSION_MICRO == 9 && GST_VERSION_NANO > 0 ))
   PyModule_AddStringConstant (m, "TAG_EXTENDED_COMMENT",
       GST_TAG_EXTENDED_COMMENT);
-#if ((GST_VERSION_MICRO >= 12) || (GST_VERSION_MICRO == 11 && GST_VERSION_NANO > 0))
   PyModule_AddStringConstant (m, "TAG_REFERENCE_LEVEL",
       GST_TAG_REFERENCE_LEVEL);
   PyModule_AddStringConstant (m, "TAG_BEATS_PER_MINUTE",
       GST_TAG_BEATS_PER_MINUTE);
-#if ((GST_VERSION_MICRO >= 14) || (GST_VERSION_MICRO == 13 && GST_VERSION_NANO > 0))
   PyModule_AddStringConstant (m, "TAG_LICENSE_URI", GST_TAG_LICENSE_URI);
   PyModule_AddStringConstant (m, "TAG_COPYRIGHT_URI", GST_TAG_COPYRIGHT_URI);
-#if ((GST_VERSION_MICRO >= 15) || (GST_VERSION_MICRO == 14 && GST_VERSION_NANO > 0))
   PyModule_AddStringConstant (m, "TAG_COMPOSER", GST_TAG_COMPOSER);
   PyModule_AddStringConstant (m, "TAG_ARTIST_SORTNAME",
       GST_TAG_ARTIST_SORTNAME);
@@ -354,11 +365,31 @@ init_gst (void)
       GST_TAG_GEO_LOCATION_MOVEMENT_DIRECTION);
   PyModule_AddStringConstant (m, "TAG_GEO_LOCATION_CAPTURE_DIRECTION",
       GST_TAG_GEO_LOCATION_CAPTURE_DIRECTION);
-#endif
-#endif
-#endif
-#endif
-#endif
+#if ((GST_VERSION_MICRO >= 31) || (GST_VERSION_MICRO == 30 && GST_VERSION_NANO > 0))
+#define ADD_FACTORY_TYPE(a) PyModule_AddObject(m, "ELEMENT_FACTORY_TYPE_" #a,\
+      PyLong_FromUnsignedLongLong(GST_ELEMENT_FACTORY_TYPE_##a))
+  ADD_FACTORY_TYPE (DECODER);
+  ADD_FACTORY_TYPE (ENCODER);
+  ADD_FACTORY_TYPE (SINK);
+  ADD_FACTORY_TYPE (SRC);
+  ADD_FACTORY_TYPE (MUXER);
+  ADD_FACTORY_TYPE (DEMUXER);
+  ADD_FACTORY_TYPE (PARSER);
+  ADD_FACTORY_TYPE (PAYLOADER);
+  ADD_FACTORY_TYPE (DEPAYLOADER);
+  ADD_FACTORY_TYPE (FORMATTER);
+  ADD_FACTORY_TYPE (MAX_ELEMENTS);
+  ADD_FACTORY_TYPE (MEDIA_VIDEO);
+  ADD_FACTORY_TYPE (MEDIA_AUDIO);
+  ADD_FACTORY_TYPE (MEDIA_IMAGE);
+  ADD_FACTORY_TYPE (MEDIA_SUBTITLE);
+  ADD_FACTORY_TYPE (MEDIA_METADATA);
+  ADD_FACTORY_TYPE (ANY);
+  ADD_FACTORY_TYPE (MEDIA_ANY);
+  ADD_FACTORY_TYPE (VIDEO_ENCODER);
+  ADD_FACTORY_TYPE (AUDIO_ENCODER);
+  ADD_FACTORY_TYPE (AUDIOVIDEO_SINKS);
+  ADD_FACTORY_TYPE (DECODABLE);
 #endif
 #endif
 #endif

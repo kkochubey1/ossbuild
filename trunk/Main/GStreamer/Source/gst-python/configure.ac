@@ -3,7 +3,7 @@ AC_PREREQ(2.60)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GStreamer Python Bindings, 0.10.19,
+AC_INIT(GStreamer Python Bindings, 0.10.19.2,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-python)
 
@@ -49,8 +49,8 @@ AC_SUBST(PYGTK_REQ, 2.6.3)
 AC_SUBST(PYGOBJECT_REQ, 2.11.2)
 AC_SUBST(GLIB_REQ,  2.8.0)
 AC_SUBST(GTK_REQ,   2.6.0)
-AC_SUBST(GST_REQ,   0.10.18)
-AC_SUBST(GSTPB_REQ, 0.10.18)
+AC_SUBST(GST_REQ,   0.10.20)
+AC_SUBST(GSTPB_REQ, 0.10.20)
 
 AC_DISABLE_STATIC
 
@@ -59,6 +59,7 @@ AC_PROG_LIBTOOL
 
 dnl find a compiler
 AC_PROG_CC
+AC_PROG_CC_STDC
 
 dnl check if the compiler supports '-c' and '-o' options
 AM_PROG_CC_C_O
@@ -110,13 +111,6 @@ dnl _ new core/base is released (add lines + gst-0.10.MINOR.ignore)
 
 if test "x$GST_CVS_VERSION" = "x"
 then
-  if test $GST_MINOR_VERSION -lt "20"
-  then
-    IGNORE_GST_0_10_20="gst-0.10.20.ignore"
-  else
-    IGNORE_GST_0_10_20=""
-  fi
-
   if test $GST_MINOR_VERSION -lt "21"
   then
     IGNORE_GST_0_10_21="gst-0.10.21.ignore"
@@ -173,6 +167,13 @@ then
     IGNORE_GST_0_10_30=""
   fi
 
+  if test $GST_MINOR_VERSION -lt "31"
+  then
+    IGNORE_GST_0_10_31="gst-0.10.31.ignore"
+  else
+    IGNORE_GST_0_10_31=""
+  fi
+
   dnl plugins base
   if test $GST_PB_MINOR_VERSION -ge "22"
   then
@@ -216,9 +217,15 @@ then
   else
     IGNORE_GST_PB_0_10_30=""
   fi
+
+  if test $GST_PB_MINOR_VERSION -lt "31"
+  then
+    IGNORE_GST_PB_0_10_31="gst-pb-0.10.31.ignore"
+  else
+    IGNORE_GST_PB_0_10_31=""
+  fi
 else
   IGNORE_GST_0_10_18=""
-  IGNORE_GST_0_10_20=""
   IGNORE_GST_0_10_21=""
   IGNORE_GST_0_10_22=""
   IGNORE_GST_0_10_23=""
@@ -227,17 +234,18 @@ else
   IGNORE_GST_0_10_26=""
   IGNORE_GST_0_10_29=""
   IGNORE_GST_0_10_30=""
+  IGNORE_GST_0_10_31=""
   IGNORE_GST_PB_0_10_23=""
   IGNORE_GST_PB_0_10_25=""
   IGNORE_GST_PB_0_10_26=""
   IGNORE_GST_PB_0_10_29=""
   IGNORE_GST_PB_0_10_30=""
+  IGNORE_GST_PB_0_10_31=""
   AC_DEFINE_UNQUOTED(HAVE_GST_AUDIO, 1, [We can use the gst-audio library])
   AC_DEFINE_UNQUOTED(HAVE_GST_VIDEO, 1, [We can use the gst-video library])
   AC_DEFINE_UNQUOTED(HAVE_GST_TAG, 1, [We can use the gst-tag library])
 fi
 AC_DEFINE_UNQUOTED(HAVE_STREAM_VOLUME_INTERFACE, 1, [We can use the streamvolume interface])
-AC_SUBST(IGNORE_GST_0_10_20)
 AC_SUBST(IGNORE_GST_0_10_21)
 AC_SUBST(IGNORE_GST_0_10_22)
 AC_SUBST(IGNORE_GST_0_10_23)
@@ -246,11 +254,13 @@ AC_SUBST(IGNORE_GST_0_10_25)
 AC_SUBST(IGNORE_GST_0_10_26)
 AC_SUBST(IGNORE_GST_0_10_29)
 AC_SUBST(IGNORE_GST_0_10_30)
+AC_SUBST(IGNORE_GST_0_10_31)
 AC_SUBST(IGNORE_GST_PB_0_10_23)
 AC_SUBST(IGNORE_GST_PB_0_10_25)
 AC_SUBST(IGNORE_GST_PB_0_10_26)
 AC_SUBST(IGNORE_GST_PB_0_10_29)
 AC_SUBST(IGNORE_GST_PB_0_10_30)
+AC_SUBST(IGNORE_GST_PB_0_10_31)
 AM_CONDITIONAL(HAVE_GST_AUDIO, $HAVE_GST_AUDIO)
 AM_CONDITIONAL(HAVE_GST_VIDEO, $HAVE_GST_VIDEO)
 AM_CONDITIONAL(HAVE_GST_TAG, $HAVE_GST_TAG)

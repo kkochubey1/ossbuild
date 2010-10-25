@@ -11,7 +11,7 @@
 #endif
 
 #define NO_IMPORT_PYGOBJECT
-#include "common.h"
+#include "pygst.h"
 
 #include <gst/gst.h>
 
@@ -279,6 +279,32 @@ _wrap_gst_base_audio_sink_get_slave_method(PyGObject *self)
 }
 
 static PyObject *
+_wrap_gst_base_audio_sink_set_drift_tolerance(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "drift_tolerance", NULL };
+    gint64 drift_tolerance;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"L:GstBaseAudioSink.set_drift_tolerance", kwlist, &drift_tolerance))
+        return NULL;
+    pyg_begin_allow_threads;
+    gst_base_audio_sink_set_drift_tolerance(GST_BASE_AUDIO_SINK(self->obj), drift_tolerance);
+    pyg_end_allow_threads;
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+static PyObject *
+_wrap_gst_base_audio_sink_get_drift_tolerance(PyGObject *self)
+{
+    gint64 ret;
+
+    pyg_begin_allow_threads;
+    ret = gst_base_audio_sink_get_drift_tolerance(GST_BASE_AUDIO_SINK(self->obj));
+    pyg_end_allow_threads;
+    return PyLong_FromLongLong(ret);
+}
+
+static PyObject *
 _wrap_GstBaseAudioSink__do_create_ringbuffer(PyObject *cls, PyObject *args, PyObject *kwargs)
 {
     gpointer klass;
@@ -313,6 +339,10 @@ static const PyMethodDef _PyGstBaseAudioSink_methods[] = {
     { "set_slave_method", (PyCFunction)_wrap_gst_base_audio_sink_set_slave_method, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "get_slave_method", (PyCFunction)_wrap_gst_base_audio_sink_get_slave_method, METH_NOARGS,
+      NULL },
+    { "set_drift_tolerance", (PyCFunction)_wrap_gst_base_audio_sink_set_drift_tolerance, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "get_drift_tolerance", (PyCFunction)_wrap_gst_base_audio_sink_get_drift_tolerance, METH_NOARGS,
       NULL },
     { "do_create_ringbuffer", (PyCFunction)_wrap_GstBaseAudioSink__do_create_ringbuffer, METH_VARARGS|METH_KEYWORDS|METH_CLASS,
       NULL },
@@ -2344,6 +2374,21 @@ _wrap_gst_audio_clock_adjust(PyObject *self, PyObject *args, PyObject *kwargs)
     return PyLong_FromUnsignedLongLong(ret);
 }
 
+static PyObject *
+_wrap_gst_audio_clock_invalidate(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "clock", NULL };
+    PyGObject *clock;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:audio_clock_invalidate", kwlist, &PyGstClock_Type, &clock))
+        return NULL;
+    pyg_begin_allow_threads;
+    gst_audio_clock_invalidate(GST_CLOCK(clock->obj));
+    pyg_end_allow_threads;
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 const PyMethodDef pyaudio_functions[] = {
     { "frame_byte_size", (PyCFunction)_wrap_gst_audio_frame_byte_size, METH_VARARGS|METH_KEYWORDS,
       NULL },
@@ -2358,6 +2403,8 @@ const PyMethodDef pyaudio_functions[] = {
     { "clock_get_time", (PyCFunction)_wrap_gst_audio_clock_get_time, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "clock_adjust", (PyCFunction)_wrap_gst_audio_clock_adjust, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "audio_clock_invalidate", (PyCFunction)_wrap_gst_audio_clock_invalidate, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { NULL, NULL, 0, NULL }
 };
@@ -2470,7 +2517,7 @@ pyaudio_register_classes(PyObject *d)
     }
 
 
-#line 2474 "..\\..\\..\\Source\\gst-python\\gst\\audio.c"
+#line 2521 "..\\..\\..\\Source\\gst-python\\gst\\audio.c"
     pygobject_register_class(d, "GstAudioClock", GST_TYPE_AUDIO_CLOCK, &PyGstAudioClock_Type, Py_BuildValue("(O)", &PyGstSystemClock_Type));
     pygobject_register_class(d, "GstAudioFilter", GST_TYPE_AUDIO_FILTER, &PyGstAudioFilter_Type, Py_BuildValue("(O)", &PyGstBaseTransform_Type));
     pyg_register_class_init(GST_TYPE_AUDIO_FILTER, __GstAudioFilter_class_init);
