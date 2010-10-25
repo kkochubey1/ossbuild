@@ -62,7 +62,8 @@
 	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
 		<File resource="libgstaiff.so"                                      executable="true" />
 		<File resource="libgstasfmux.so"                                    executable="true" />
-		<File resource="libgstaudioconvert.so"                              executable="true" />
+		<File resource="libgstaudioparsersbad.so"                           executable="true" />
+		<File resource="libgstautoconvert.so"                               executable="true" />
 		<File resource="libgstbayer.so"                                     executable="true" />
 		<File resource="libgstbz2.so"                                       executable="true" />
 		<File resource="libgstcamerabin.so"                                 executable="true" />

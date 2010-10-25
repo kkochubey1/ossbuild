@@ -201,7 +201,8 @@
 			<fileset dir="${shared.lib.dir}/gstreamer-${gst-api-version}/" erroronmissingdir="false">
 				<include name="*gstaiff*.*" />
 				<include name="*gstasfmux*.*" />
-				<include name="*gstaudioconvert*.*" />
+				<include name="*gstaudioparsersbad*.*" />
+				<include name="*gstautoconvert*.*" />
 				<include name="*gstbayer*.*" />
 				<include name="*gstbz2*.*" />
 				<include name="*gstcamerabin*.*" />
@@ -264,6 +265,7 @@
 			<fileset dir="${build.bin.dir}/plugins/" erroronmissingdir="false">
 				<include name="*gstaiff*.*" />
 				<include name="*gstasfmux*.*" />
+				<include name="*gstaudioparsersbad*.*" />
 				<include name="*gstautoconvert*.*" />
 				<include name="*gstbayer*.*" />
 				<include name="*gstbz2*.*" />

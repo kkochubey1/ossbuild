@@ -58,6 +58,7 @@
 	<Extract package="${pkgPlatform}.lib.gstreamer_${pkgGstApiVersion}" directory="${dirPlatform}/lib/gstreamer-${dirGstApiVersion}/">
 		<File resource="libgstaiff.dll" />
 		<File resource="libgstasfmux.dll" />
+		<File resource="libgstaudioparsersbad.dll" />
 		<File resource="libgstautoconvert.dll" />
 		<File resource="libgstbayer.dll" />
 		<File resource="libgstbz2.dll" />
