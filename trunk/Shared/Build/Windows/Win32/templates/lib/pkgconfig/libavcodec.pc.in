@@ -5,7 +5,7 @@ includedir=@SHARED_BUILD_DIR@/include
 
 Name: libavcodec
 Description: FFmpeg codec library
-Version: 52.92.0
+Version: 52.93.0
 Requires: 
 Requires.private: libavcore = 0.9.1
 Conflicts:
