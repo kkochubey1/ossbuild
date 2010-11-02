@@ -843,6 +843,7 @@ gst_ogg_pad_submit_packet (GstOggPad * pad, ogg_packet * packet)
    * up.  */
   packet->b_o_s = gst_ogg_stream_packet_is_header (&pad->map, packet);
   if (!packet->b_o_s) {
+    GST_DEBUG ("found non-header packet");
     pad->map.have_headers = TRUE;
     if (pad->start_time == GST_CLOCK_TIME_NONE) {
       gint64 duration = gst_ogg_stream_get_packet_duration (&pad->map, packet);
@@ -992,8 +993,10 @@ gst_ogg_pad_stream_out (GstOggPad * pad, gint npackets)
       case 1:
         GST_LOG_OBJECT (ogg, "packetout gave packet of size %ld", packet.bytes);
         result = gst_ogg_pad_submit_packet (pad, &packet);
+        /* not linked is not a problem, it's possible that we are still
+         * collecting headers and that we don't have exposed the pads yet */
         if (result == GST_FLOW_NOT_LINKED)
-          goto not_linked;
+          break;
         else if (result <= GST_FLOW_UNEXPECTED)
           goto could_not_submit;
         break;
@@ -1012,16 +1015,6 @@ gst_ogg_pad_stream_out (GstOggPad * pad, gint npackets)
   return result;
 
   /* ERRORS */
-not_linked:
-  {
-    GST_WARNING_OBJECT (ogg,
-        "could not submit packet for stream %08lx, error: %d",
-        pad->map.serialno, result);
-    /* Not resetting the pad here because it might be linked
-     * later and should work without problems then.
-     */
-    return result;
-  }
 could_not_submit:
   {
     GST_WARNING_OBJECT (ogg,

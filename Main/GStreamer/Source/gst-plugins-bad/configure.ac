@@ -3,7 +3,7 @@ AC_PREREQ(2.60)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AC_INIT(GStreamer Bad Plug-ins, 0.10.20.1,
+AC_INIT(GStreamer Bad Plug-ins, 0.10.21,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-bad)
 
@@ -458,6 +458,31 @@ int main ()
   fi
   AC_SUBST(HAVE_DIRECTDRAW)
 ])
+
+dnl *** AppleMedia (OS X and iOS) ***
+translit(dnm, m, l) AM_CONDITIONAL(USE_APPLE_MEDIA, true)
+HAVE_APPLE_MEDIA="no"
+dnl SystemConfiguration.h is common to OS X and iOS, so we check for that
+AG_GST_CHECK_FEATURE(APPLE_MEDIA, [Apple video], applemedia, [
+  AC_CHECK_HEADER(SystemConfiguration/SystemConfiguration.h, HAVE_APPLE_MEDIA="yes", HAVE_APPLE_MEDIA="no")
+])
+dnl in case header SystemConfiguration/SystemConfiguration.h is found on other platforms
+case "$host" in
+  *-*darwin*)
+    ;;
+  *)
+    HAVE_APPLE_MEDIA="no"
+    ;;
+esac
+HAVE_IOS="no"
+if test "x$HAVE_APPLE_MEDIA" = "xyes"; then
+  AC_CHECK_HEADER(MobileCoreServices/MobileCoreServices.h, HAVE_IOS="yes", HAVE_IOS="no", [-])
+fi
+
+AM_CONDITIONAL(HAVE_IOS, test "x$HAVE_IOS" = "xyes")
+if test "x$HAVE_IOS" = "xyes"; then
+  AC_DEFINE(HAVE_IOS, 1, [Define if building for Apple iOS])
+fi
 
 dnl *** OS X videosrc ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_OSX_VIDEO, true)
@@ -1737,6 +1762,7 @@ sys/Makefile
 sys/dshowdecwrapper/Makefile
 sys/acmenc/Makefile
 sys/acmmp3dec/Makefile
+sys/applemedia/Makefile
 sys/directdraw/Makefile
 sys/directsound/Makefile
 sys/dshowsrcwrapper/Makefile

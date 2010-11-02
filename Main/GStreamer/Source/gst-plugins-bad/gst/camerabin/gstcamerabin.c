@@ -354,6 +354,9 @@ gst_camerabin_set_image_capture_caps (GstCameraBin * camera, gint width,
 static void
 gst_camerabin_set_video_resolution_fps (GstCameraBin * camera, gint width,
     gint height, gint fps_n, gint fps_d);
+static void
+do_set_video_resolution_fps (GstCameraBin * camera, gint width,
+    gint height, gint fps_n, gint fps_d);
 
 static void
 gst_camerabin_set_image_resolution (GstCameraBin * camera, gint width,
@@ -481,21 +484,22 @@ camerabin_setup_src_elements (GstCameraBin * camera)
 
   gst_camerabin_monitor_video_source_properties (camera);
 
-  if (camera->width > 0 && camera->height > 0) {
+  if (camera->app_width > 0 && camera->app_height > 0) {
     gst_structure_set (st,
-        "width", G_TYPE_INT, camera->width,
-        "height", G_TYPE_INT, camera->height, NULL);
+        "width", G_TYPE_INT, camera->app_width,
+        "height", G_TYPE_INT, camera->app_height, NULL);
   }
 
-  if (camera->fps_n > 0 && camera->fps_d > 0) {
+  if (camera->app_fps_n > 0 && camera->app_fps_d > 0) {
     if (camera->night_mode) {
       GST_INFO_OBJECT (camera, "night mode, lowest allowed fps will be forced");
-      camera->pre_night_fps_n = camera->fps_n;
-      camera->pre_night_fps_d = camera->fps_d;
+      camera->pre_night_fps_n = camera->app_fps_n;
+      camera->pre_night_fps_d = camera->app_fps_d;
       detect_framerate = TRUE;
     } else {
       gst_structure_set (st,
-          "framerate", GST_TYPE_FRACTION, camera->fps_n, camera->fps_d, NULL);
+          "framerate", GST_TYPE_FRACTION, camera->app_fps_n,
+          camera->app_fps_d, NULL);
       new_caps = gst_caps_new_full (st, NULL);
     }
   } else {
@@ -851,6 +855,15 @@ camerabin_destroy_elements (GstCameraBin * camera)
 
   camera->active_bin = NULL;
 
+  /* Reset caps data as the elements might be completely different next
+   * time we 'start' */
+  if (camera->view_finder_caps) {
+    gst_caps_replace (&camera->view_finder_caps, NULL);
+  }
+  gst_caps_replace (&camera->allowed_caps, NULL);
+  camera->fps_n = camera->fps_d = 0;
+  camera->width = camera->height = 0;
+
   /* Remove elements */
   gst_camerabin_remove_elements_from_bin (GST_BIN (camera));
 }
@@ -969,6 +982,11 @@ gst_camerabin_change_mode (GstCameraBin * camera, gint mode)
         mode, camera->mode);
     /* Interrupt ongoing capture */
     gst_camerabin_do_stop (camera);
+
+    /* reset night-mode stored values */
+    camera->pre_night_fps_n = 0;
+    camera->pre_night_fps_d = 1;
+
     camera->mode = mode;
     gst_element_get_state (GST_ELEMENT (camera), &state, &pending_state, 0);
     if (state == GST_STATE_PAUSED || state == GST_STATE_PLAYING ||
@@ -2477,8 +2495,7 @@ gst_camerabin_handle_scene_mode (GstCameraBin * camera, GstSceneMode scene_mode)
       /* Remember frame rate before setting night mode */
       camera->pre_night_fps_n = camera->fps_n;
       camera->pre_night_fps_d = camera->fps_d;
-      g_signal_emit_by_name (camera, "set-video-resolution-fps", camera->width,
-          camera->height, 0, 1, NULL);
+      do_set_video_resolution_fps (camera, camera->width, camera->height, 0, 1);
     } else {
       GST_DEBUG ("night mode already enabled");
     }
@@ -2487,8 +2504,8 @@ gst_camerabin_handle_scene_mode (GstCameraBin * camera, GstSceneMode scene_mode)
       GST_DEBUG ("disabling night mode, restoring fps to %d/%d",
           camera->pre_night_fps_n, camera->pre_night_fps_d);
       camera->night_mode = FALSE;
-      g_signal_emit_by_name (camera, "set-video-resolution-fps", camera->width,
-          camera->height, camera->pre_night_fps_n, camera->pre_night_fps_d, 0);
+      do_set_video_resolution_fps (camera, camera->width, camera->height,
+          camera->pre_night_fps_n, camera->pre_night_fps_d);
     }
   }
 }
@@ -3187,10 +3204,10 @@ gst_camerabin_init (GstCameraBin * camera, GstCameraBinClass * gclass)
   camera->night_mode = FALSE;
   camera->eos_handled = FALSE;
 
-  camera->width = DEFAULT_WIDTH;
-  camera->height = DEFAULT_HEIGHT;
-  camera->fps_n = DEFAULT_FPS_N;
-  camera->fps_d = DEFAULT_FPS_D;
+  camera->app_width = camera->width = DEFAULT_WIDTH;
+  camera->app_height = camera->height = DEFAULT_HEIGHT;
+  camera->app_fps_n = camera->fps_n = DEFAULT_FPS_N;
+  camera->app_fps_d = camera->fps_d = DEFAULT_FPS_D;
   camera->image_capture_width = 0;
   camera->image_capture_height = 0;
   camera->base_crop_left = 0;
@@ -3530,6 +3547,8 @@ gst_camerabin_set_property (GObject * object, guint prop_id,
     {
       gint width = g_value_get_int (value);
 
+      camera->app_width = width;
+
       if (width != camera->width) {
         camera->width = width;
         camera->video_capture_caps_update = TRUE;
@@ -3539,6 +3558,8 @@ gst_camerabin_set_property (GObject * object, guint prop_id,
     case ARG_VIDEO_CAPTURE_HEIGHT:
     {
       gint height = g_value_get_int (value);
+
+      camera->app_height = height;
 
       if (height != camera->height) {
         camera->height = height;
@@ -3552,6 +3573,9 @@ gst_camerabin_set_property (GObject * object, guint prop_id,
 
       fps_n = gst_value_get_fraction_numerator (value);
       fps_d = gst_value_get_fraction_denominator (value);
+
+      camera->app_fps_n = fps_n;
+      camera->app_fps_d = fps_d;
 
       if (fps_n != camera->fps_n || fps_d != camera->fps_d) {
         camera->fps_n = fps_n;
@@ -3668,13 +3692,13 @@ gst_camerabin_get_property (GObject * object, guint prop_id,
       g_value_set_int (value, camera->image_capture_height);
       break;
     case ARG_VIDEO_CAPTURE_WIDTH:
-      g_value_set_int (value, camera->width);
+      g_value_set_int (value, camera->app_width);
       break;
     case ARG_VIDEO_CAPTURE_HEIGHT:
-      g_value_set_int (value, camera->height);
+      g_value_set_int (value, camera->app_height);
       break;
     case ARG_VIDEO_CAPTURE_FRAMERATE:
-      gst_value_set_fraction (value, camera->fps_n, camera->fps_d);
+      gst_value_set_fraction (value, camera->app_fps_n, camera->app_fps_d);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -3830,8 +3854,8 @@ gst_camerabin_handle_message_func (GstBin * bin, GstMessage * msg)
         GST_DEBUG_OBJECT (camera, "got image eos message");
         /* Calling callback directly will deadlock in
            imagebin state change functions */
-        g_idle_add_full (G_PRIORITY_HIGH, gst_camerabin_imgbin_finished, camera,
-            NULL);
+        g_idle_add_full (G_PRIORITY_HIGH_IDLE, gst_camerabin_imgbin_finished,
+            camera, NULL);
       }
       break;
     case GST_MESSAGE_ERROR:
@@ -3963,6 +3987,38 @@ gst_camerabin_capture_pause (GstCameraBin * camera)
   }
 }
 
+/*
+ * Updates the properties (excluding the user preferred width/height/fps) and
+ * tells camerabin to update the video capture caps.
+ */
+static void
+do_set_video_resolution_fps (GstCameraBin * camera, gint width,
+    gint height, gint fps_n, gint fps_d)
+{
+  if (height != camera->height) {
+    camera->height = height;
+    camera->video_capture_caps_update = TRUE;
+  }
+  if (width != camera->width) {
+    camera->width = width;
+    camera->video_capture_caps_update = TRUE;
+  }
+  if (fps_n != camera->fps_n) {
+    camera->fps_n = fps_n;
+    camera->video_capture_caps_update = TRUE;
+  }
+  if (fps_d != camera->fps_d) {
+    camera->fps_d = fps_d;
+    camera->video_capture_caps_update = TRUE;
+  }
+
+  reset_video_capture_caps (camera);
+}
+
+/*
+ * Updates the properties (including the user preferred width/height/fps) and
+ * tells camerabin to update the video capture caps.
+ */
 static void
 gst_camerabin_set_video_resolution_fps (GstCameraBin * camera, gint width,
     gint height, gint fps_n, gint fps_d)
@@ -3998,6 +4054,8 @@ gst_camerabin_set_image_capture_caps (GstCameraBin * camera, gint width,
       "init filter caps for image capture %" GST_PTR_FORMAT, new_caps);
   gst_caps_replace (&camera->image_capture_caps, new_caps);
   camera->image_capture_caps_update = FALSE;
+  if (new_caps)
+    gst_caps_unref (new_caps);
 }
 
 static void

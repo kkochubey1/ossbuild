@@ -51,8 +51,9 @@ struct _GstCsp {
   gfloat fps;
 
   GstVideoFormat from_format;
+  ColorSpaceColorSpec from_spec;
   GstVideoFormat to_format;
-  guint32 *palette;
+  ColorSpaceColorSpec to_spec;
 
   ColorspaceConvert *convert;
 };

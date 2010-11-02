@@ -37,6 +37,13 @@
 #endif
 #include <gst/interfaces/xoverlay.h>
 
+#if (!GTK_CHECK_VERSION(2, 23, 0) || GTK_CHECK_VERSION(2, 90, 0)) && !GTK_CHECK_VERSION(2, 91, 1)
+#define gtk_combo_box_text_new gtk_combo_box_new_text
+#define gtk_combo_box_text_append_text gtk_combo_box_append_text
+#define gtk_combo_box_text_remove gtk_combo_box_remove_text
+#define GTK_COMBO_BOX_TEXT GTK_COMBO_BOX
+#endif
+
 GST_DEBUG_CATEGORY_STATIC (seek_debug);
 #define GST_CAT_DEFAULT (seek_debug)
 
@@ -1778,11 +1785,11 @@ clear_streams (GstElement * pipeline)
 
   /* remove previous info */
   for (i = 0; i < n_video; i++)
-    gtk_combo_box_remove_text (GTK_COMBO_BOX (video_combo), 0);
+    gtk_combo_box_text_remove (GTK_COMBO_BOX_TEXT (video_combo), 0);
   for (i = 0; i < n_audio; i++)
-    gtk_combo_box_remove_text (GTK_COMBO_BOX (audio_combo), 0);
+    gtk_combo_box_text_remove (GTK_COMBO_BOX_TEXT (audio_combo), 0);
   for (i = 0; i < n_text; i++)
-    gtk_combo_box_remove_text (GTK_COMBO_BOX (text_combo), 0);
+    gtk_combo_box_text_remove (GTK_COMBO_BOX_TEXT (text_combo), 0);
 
   n_audio = n_video = n_text = 0;
   gtk_widget_set_sensitive (video_combo, FALSE);
@@ -1823,7 +1830,7 @@ update_streams (GstPipeline * pipeline)
       }
       /* find good name for the label */
       name = g_strdup_printf ("video %d", i + 1);
-      gtk_combo_box_append_text (GTK_COMBO_BOX (video_combo), name);
+      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (video_combo), name);
       g_free (name);
     }
     state = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (video_checkbox));
@@ -1840,7 +1847,7 @@ update_streams (GstPipeline * pipeline)
       }
       /* find good name for the label */
       name = g_strdup_printf ("audio %d", i + 1);
-      gtk_combo_box_append_text (GTK_COMBO_BOX (audio_combo), name);
+      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (audio_combo), name);
       g_free (name);
     }
     state = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (audio_checkbox));
@@ -1869,7 +1876,7 @@ update_streams (GstPipeline * pipeline)
       if (name == NULL)
         name = g_strdup_printf ("text %d", i + 1);
 
-      gtk_combo_box_append_text (GTK_COMBO_BOX (text_combo), name);
+      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (text_combo), name);
       g_free (name);
     }
     state = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (text_checkbox));
@@ -1945,7 +1952,7 @@ init_visualization_features (void)
     name = gst_element_factory_get_longname (entry.factory);
 
     g_array_append_val (vis_entries, entry);
-    gtk_combo_box_append_text (GTK_COMBO_BOX (vis_combo), name);
+    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (vis_combo), name);
   }
   gtk_combo_box_set_active (GTK_COMBO_BOX (vis_combo), 0);
 }
@@ -2741,17 +2748,11 @@ main (int argc, char **argv)
     step = gtk_expander_new ("step options");
     hbox = gtk_hbox_new (FALSE, 0);
 
-#if (GTK_CHECK_VERSION(2, 23, 0) && !GTK_CHECK_VERSION(2, 90, 0)) || GTK_CHECK_VERSION(2, 91, 1)
     format_combo = gtk_combo_box_text_new ();
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (format_combo),
         "frames");
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (format_combo),
         "time (ms)");
-#else
-    format_combo = gtk_combo_box_new_text ();
-    gtk_combo_box_append_text (GTK_COMBO_BOX (format_combo), "frames");
-    gtk_combo_box_append_text (GTK_COMBO_BOX (format_combo), "time (ms)");
-#endif
     gtk_combo_box_set_active (GTK_COMBO_BOX (format_combo), 0);
     gtk_box_pack_start (GTK_BOX (hbox), format_combo, FALSE, FALSE, 2);
 
@@ -2817,9 +2818,9 @@ main (int argc, char **argv)
   if (pipeline_type == 16) {
     /* the playbin2 panel controls for the video/audio/subtitle tracks */
     panel = gtk_hbox_new (FALSE, 0);
-    video_combo = gtk_combo_box_new_text ();
-    audio_combo = gtk_combo_box_new_text ();
-    text_combo = gtk_combo_box_new_text ();
+    video_combo = gtk_combo_box_text_new ();
+    audio_combo = gtk_combo_box_text_new ();
+    text_combo = gtk_combo_box_text_new ();
     gtk_widget_set_sensitive (video_combo, FALSE);
     gtk_widget_set_sensitive (audio_combo, FALSE);
     gtk_widget_set_sensitive (text_combo, FALSE);
@@ -2883,7 +2884,7 @@ main (int argc, char **argv)
         "save a screenshot .png in the current directory");
     g_signal_connect (G_OBJECT (shot_button), "clicked", G_CALLBACK (shot_cb),
         pipeline);
-    vis_combo = gtk_combo_box_new_text ();
+    vis_combo = gtk_combo_box_text_new ();
     g_signal_connect (G_OBJECT (vis_combo), "changed",
         G_CALLBACK (vis_combo_cb), pipeline);
     gtk_widget_set_sensitive (vis_combo, FALSE);

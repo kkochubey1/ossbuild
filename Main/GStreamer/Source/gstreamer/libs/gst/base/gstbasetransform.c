@@ -1209,13 +1209,19 @@ gst_base_transform_query (GstPad * pad, GstQuery * query)
 
       gst_query_parse_position (query, &format, NULL);
       if (format == GST_FORMAT_TIME && trans->segment.format == GST_FORMAT_TIME) {
+        gint64 pos;
         ret = TRUE;
 
-        gst_query_set_position (query, format,
-            gst_segment_to_stream_time (&trans->segment, GST_FORMAT_TIME,
-                (pad ==
-                    trans->sinkpad) ? trans->segment.last_stop : trans->
-                priv->last_stop_out));
+        if ((pad == trans->sinkpad)
+            || (trans->priv->last_stop_out == GST_CLOCK_TIME_NONE)) {
+          pos =
+              gst_segment_to_stream_time (&trans->segment, GST_FORMAT_TIME,
+              trans->segment.last_stop);
+        } else {
+          pos = gst_segment_to_stream_time (&trans->segment, GST_FORMAT_TIME,
+              trans->priv->last_stop_out);
+        }
+        gst_query_set_position (query, format, pos);
       } else {
         ret = gst_pad_peer_query (otherpad, query);
       }
@@ -1239,6 +1245,51 @@ gst_base_transform_query_type (GstPad * pad)
   };
 
   return types;
+}
+
+static void
+compute_upstream_suggestion (GstBaseTransform * trans, guint expsize,
+    GstCaps * caps)
+{
+  GstCaps *othercaps;
+  GstBaseTransformPrivate *priv = trans->priv;
+
+  GST_DEBUG_OBJECT (trans, "trying to find upstream suggestion");
+
+  /* we cannot convert the current buffer but we might be able to suggest a
+   * new format upstream, try to find what the best format is. */
+  othercaps = gst_base_transform_find_transform (trans, trans->srcpad, caps);
+
+  if (!othercaps) {
+    GST_DEBUG_OBJECT (trans, "incompatible caps, ignoring");
+    /* we received caps that we cannot transform. Upstream is behaving badly
+     * because it should have checked if we could handle these caps. We can
+     * simply ignore these caps and produce a buffer with our original caps. */
+  } else {
+    guint size_suggest;
+
+    GST_DEBUG_OBJECT (trans, "getting size of suggestion");
+
+    /* not a subset, we have a new upstream suggestion, remember it and
+     * allocate a default buffer. First we try to convert the size */
+    if (gst_base_transform_transform_size (trans,
+            GST_PAD_SRC, caps, expsize, othercaps, &size_suggest)) {
+
+      /* ok, remember the suggestions now */
+      GST_DEBUG_OBJECT (trans,
+          "storing new caps and size suggestion of %u and %" GST_PTR_FORMAT,
+          size_suggest, othercaps);
+
+      GST_OBJECT_LOCK (trans->sinkpad);
+      if (priv->sink_suggest)
+        gst_caps_unref (priv->sink_suggest);
+      priv->sink_suggest = gst_caps_ref (othercaps);
+      priv->size_suggest = size_suggest;
+      trans->priv->suggest_pending = TRUE;
+      GST_OBJECT_UNLOCK (trans->sinkpad);
+    }
+    gst_caps_unref (othercaps);
+  }
 }
 
 /* Allocate a buffer using gst_pad_alloc_buffer
@@ -1363,6 +1414,12 @@ gst_base_transform_prepare_output_buffer (GstBaseTransform * trans,
 
     if (!can_convert) {
       GST_DEBUG_OBJECT (trans, "cannot perform transform on current buffer");
+
+      gst_base_transform_transform_size (trans,
+          GST_PAD_SINK, incaps, GST_BUFFER_SIZE (in_buf), newcaps, &expsize);
+
+      compute_upstream_suggestion (trans, expsize, newcaps);
+
       /* we got a suggested caps but we can't transform to it. See if there is
        * another downstream format that we can transform to */
       othercaps =
@@ -1426,43 +1483,8 @@ gst_base_transform_prepare_output_buffer (GstBaseTransform * trans,
       }
       outsize = expsize;
     } else {
-      GST_DEBUG_OBJECT (trans, "trying to find upstream suggestion");
+      compute_upstream_suggestion (trans, expsize, newcaps);
 
-      /* we cannot convert the current buffer but we might be able to suggest a
-       * new format upstream, try to find what the best format is. */
-      othercaps =
-          gst_base_transform_find_transform (trans, trans->srcpad, newcaps);
-
-      if (!othercaps) {
-        GST_DEBUG_OBJECT (trans, "incompatible caps, ignoring");
-        /* we received caps that we cannot transform. Upstream is behaving badly
-         * because it should have checked if we could handle these caps. We can
-         * simply ignore these caps and produce a buffer with our original caps. */
-      } else {
-        guint size_suggest;
-
-        GST_DEBUG_OBJECT (trans, "getting size of suggestion");
-
-        /* not a subset, we have a new upstream suggestion, remember it and
-         * allocate a default buffer. First we try to convert the size */
-        if (gst_base_transform_transform_size (trans,
-                GST_PAD_SRC, newcaps, expsize, othercaps, &size_suggest)) {
-
-          /* ok, remember the suggestions now */
-          GST_DEBUG_OBJECT (trans,
-              "storing new caps and size suggestion of %u and %" GST_PTR_FORMAT,
-              size_suggest, othercaps);
-
-          GST_OBJECT_LOCK (trans->sinkpad);
-          if (priv->sink_suggest)
-            gst_caps_unref (priv->sink_suggest);
-          priv->sink_suggest = gst_caps_ref (othercaps);
-          priv->size_suggest = size_suggest;
-          trans->priv->suggest_pending = TRUE;
-          GST_OBJECT_UNLOCK (trans->sinkpad);
-        }
-        gst_caps_unref (othercaps);
-      }
       if (in_buf != *out_buf)
         gst_buffer_unref (*out_buf);
       *out_buf = NULL;

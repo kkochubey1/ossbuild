@@ -102,23 +102,28 @@ enum
 {
   PROP_0,
   PROP_MESSAGE,
-  PROP_CACHE,
+  PROP_CACHE
 };
 
-#define DEFAULT_PROP_ZBAR  1
+#define DEFAULT_CACHE    FALSE
+#define DEFAULT_MESSAGE  TRUE
+
+/* FIXME: add YVU9 and YUV9 once we have a GstVideoFormat for that */
+#define ZBAR_YUV_CAPS \
+    "{ Y800, I420, YV12, NV12, NV21, Y41B, Y42B }"
 
 static GstStaticPadTemplate gst_zbar_src_template =
 GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV ("{ Y800 }"))
+    GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV (ZBAR_YUV_CAPS))
     );
 
 static GstStaticPadTemplate gst_zbar_sink_template =
 GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV ("{ Y800 }"))
+    GST_STATIC_CAPS (GST_VIDEO_CAPS_YUV (ZBAR_YUV_CAPS))
     );
 
 static void gst_zbar_finalize (GObject * object);
@@ -167,14 +172,14 @@ gst_zbar_class_init (GstZBarClass * g_class)
   gobject_class->finalize = gst_zbar_finalize;
 
   g_object_class_install_property (gobject_class, PROP_MESSAGE,
-      g_param_spec_boolean ("message", "mesage",
+      g_param_spec_boolean ("message", "message",
           "Post a barcode message for each detected code",
-          TRUE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+          DEFAULT_MESSAGE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class, PROP_CACHE,
       g_param_spec_boolean ("cache", "cache",
           "Enable or disable the inter-image result cache",
-          TRUE,
+          DEFAULT_CACHE,
           G_PARAM_READWRITE | GST_PARAM_MUTABLE_READY |
           G_PARAM_STATIC_STRINGS));
 
@@ -187,8 +192,8 @@ gst_zbar_class_init (GstZBarClass * g_class)
 static void
 gst_zbar_init (GstZBar * zbar, GstZBarClass * g_class)
 {
-  zbar->cache = TRUE;
-  zbar->message = TRUE;
+  zbar->cache = DEFAULT_CACHE;
+  zbar->message = DEFAULT_MESSAGE;
 
   zbar->scanner = zbar_image_scanner_create ();
 }
@@ -253,14 +258,23 @@ gst_zbar_set_caps (GstBaseTransform * base, GstCaps * incaps, GstCaps * outcaps)
   GstZBar *zbar = GST_ZBAR (base);
   GstStructure *structure;
   gboolean res;
+  guint32 fourcc;
+  gint width, height;
 
   GST_DEBUG_OBJECT (zbar,
       "set_caps: in %" GST_PTR_FORMAT " out %" GST_PTR_FORMAT, incaps, outcaps);
 
   structure = gst_caps_get_structure (incaps, 0);
 
-  res = gst_structure_get_int (structure, "width", &zbar->width);
-  res &= gst_structure_get_int (structure, "height", &zbar->height);
+  res = gst_structure_get_int (structure, "width", &width);
+  res &= gst_structure_get_int (structure, "height", &height);
+  res &= gst_structure_get_fourcc (structure, "format", &fourcc);
+
+  if (res) {
+    zbar->width = width;
+    zbar->height = height;
+    zbar->format = gst_video_format_from_fourcc (fourcc);
+  }
 
   return res;
 }
@@ -270,7 +284,7 @@ gst_zbar_transform_ip (GstBaseTransform * base, GstBuffer * outbuf)
 {
   GstZBar *zbar = GST_ZBAR (base);
   guint8 *data;
-  guint size;
+  guint size, rowstride;
   zbar_image_t *image;
   const zbar_symbol_t *symbol;
   int n;
@@ -282,10 +296,13 @@ gst_zbar_transform_ip (GstBaseTransform * base, GstBuffer * outbuf)
   size = GST_BUFFER_SIZE (outbuf);
 
   image = zbar_image_create ();
+
+  /* all formats we support start with an 8-bit Y plane. zbar doesn't need
+   * to know about the chroma plane(s) */
   zbar_image_set_format (image, GST_MAKE_FOURCC ('Y', '8', '0', '0'));
-  zbar_image_set_size (image, zbar->width, zbar->height);
-  zbar_image_set_data (image, (gpointer) data, zbar->width * zbar->height,
-      NULL);
+  rowstride = gst_video_format_get_row_stride (zbar->format, 0, zbar->width);
+  zbar_image_set_size (image, rowstride, zbar->height);
+  zbar_image_set_data (image, (gpointer) data, rowstride * zbar->height, NULL);
 
   /* scan the image for barcodes */
   n = zbar_scan_image (zbar->scanner, image);
@@ -334,6 +351,10 @@ static gboolean
 gst_zbar_start (GstBaseTransform * base)
 {
   GstZBar *zbar = GST_ZBAR (base);
+
+  zbar->width = 0;
+  zbar->height = 0;
+  zbar->format = GST_VIDEO_FORMAT_UNKNOWN;
 
   /* start the cache if enabled (e.g. for filtering dupes) */
   zbar_image_scanner_enable_cache (zbar->scanner, zbar->cache);

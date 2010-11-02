@@ -1407,12 +1407,23 @@ mergewl ayuv, ay, uv
 .dest 4 ayuv guint8
 .source 1 y guint8
 .const 1 c255 255
-.const 2 c0xffff 0xffff
+.const 2 c0x8080 0x8080
 .temp 2 ay
 
 mergebw ay, c255, y
-mergewl ayuv, ay, c0xffff
+mergewl ayuv, ay, c0x8080
 
+.function cogorc_getline_Y16
+.dest 4 ayuv guint8
+.source 2 y guint8
+.const 1 c255 255
+.const 2 c0x8080 0x8080
+.temp 2 ay
+.temp 1 yb
+
+convhwb yb, y
+mergebw ay, c255, yb
+mergewl ayuv, ay, c0x8080
 
 .function cogorc_getline_BGRA
 .dest 4 argb guint8
@@ -1488,6 +1499,22 @@ mergewl uvuv, uv, uv
 x2 mergebw ay, c255, y
 x2 mergewl d, ay, uvuv
 
+.function cogorc_getline_A420
+.dest 4 d guint8
+.source 1 y guint8
+.source 1 u guint8
+.source 1 v guint8
+.source 1 a guint8
+.temp 2 uv
+.temp 2 ay
+.temp 1 tu
+.temp 1 tv
+
+loadupdb tu, u
+loadupdb tv, v
+mergebw uv, tu, tv
+mergebw ay, a, y
+mergewl d, ay, uv
 
 .function cogorc_putline_I420
 .dest 2 y guint8
@@ -1599,6 +1626,16 @@ select1wb y, ay
 select0lw ay, ayuv
 select1wb y, ay
 
+.function cogorc_putline_Y16
+.dest 2 y guint8
+.source 4 ayuv guint8
+.temp 2 ay
+.temp 1 yb
+
+select0lw ay, ayuv
+select1wb yb, ay
+convubw ay, yb
+shlw y, ay, 8
 
 .function cogorc_putline_BGRA
 .dest 4 bgra guint8
@@ -1678,4 +1715,24 @@ splitlw uv1, uv2, uvuv
 x2 avgub uv, uv1, uv2
 swapw vu, uv
 
+.function cogorc_putline_A420
+.dest 2 y guint8
+.dest 1 u guint8
+.dest 1 v guint8
+.dest 2 a guint8
+.source 8 ayuv guint8
+.temp 4 ay
+.temp 4 uv
+.temp 2 uu
+.temp 2 vv
+.temp 1 t1
+.temp 1 t2
 
+x2 splitlw uv, ay, ayuv
+x2 select1wb y, ay
+x2 select0wb a, ay
+x2 splitwb vv, uu, uv
+splitwb t1, t2, uu
+avgub u, t1, t2
+splitwb t1, t2, vv
+avgub v, t1, t2

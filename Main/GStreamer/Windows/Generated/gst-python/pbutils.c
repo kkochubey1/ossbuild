@@ -1315,10 +1315,10 @@ _wrap_gst_discoverer_audio_info_get_channels(PyObject *self, PyObject *args, PyO
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_channels", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_channels", kwlist, &PyGstDiscovererAudioInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_audio_info_get_channels(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_audio_info_get_channels(GST_DISCOVERER_AUDIO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1330,10 +1330,10 @@ _wrap_gst_discoverer_audio_info_get_sample_rate(PyObject *self, PyObject *args, 
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_sample_rate", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_sample_rate", kwlist, &PyGstDiscovererAudioInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_audio_info_get_sample_rate(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_audio_info_get_sample_rate(GST_DISCOVERER_AUDIO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1345,10 +1345,10 @@ _wrap_gst_discoverer_audio_info_get_depth(PyObject *self, PyObject *args, PyObje
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_depth", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_depth", kwlist, &PyGstDiscovererAudioInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_audio_info_get_depth(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_audio_info_get_depth(GST_DISCOVERER_AUDIO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1360,10 +1360,10 @@ _wrap_gst_discoverer_audio_info_get_bitrate(PyObject *self, PyObject *args, PyOb
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_bitrate", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_bitrate", kwlist, &PyGstDiscovererAudioInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_audio_info_get_bitrate(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_audio_info_get_bitrate(GST_DISCOVERER_AUDIO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1375,10 +1375,10 @@ _wrap_gst_discoverer_audio_info_get_max_bitrate(PyObject *self, PyObject *args, 
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_max_bitrate", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_audio_info_get_max_bitrate", kwlist, &PyGstDiscovererAudioInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_audio_info_get_max_bitrate(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_audio_info_get_max_bitrate(GST_DISCOVERER_AUDIO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1390,10 +1390,10 @@ _wrap_gst_discoverer_video_info_get_width(PyObject *self, PyObject *args, PyObje
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_width", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_width", kwlist, &PyGstDiscovererVideoInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_video_info_get_width(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_video_info_get_width(GST_DISCOVERER_VIDEO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1405,10 +1405,10 @@ _wrap_gst_discoverer_video_info_get_height(PyObject *self, PyObject *args, PyObj
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_height", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_height", kwlist, &PyGstDiscovererVideoInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_video_info_get_height(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_video_info_get_height(GST_DISCOVERER_VIDEO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1420,10 +1420,10 @@ _wrap_gst_discoverer_video_info_get_depth(PyObject *self, PyObject *args, PyObje
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_depth", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_depth", kwlist, &PyGstDiscovererVideoInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_video_info_get_depth(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_video_info_get_depth(GST_DISCOVERER_VIDEO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1435,10 +1435,10 @@ _wrap_gst_discoverer_video_info_get_framerate_num(PyObject *self, PyObject *args
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_framerate_num", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_framerate_num", kwlist, &PyGstDiscovererVideoInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_video_info_get_framerate_num(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_video_info_get_framerate_num(GST_DISCOVERER_VIDEO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1450,10 +1450,10 @@ _wrap_gst_discoverer_video_info_get_framerate_denom(PyObject *self, PyObject *ar
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_framerate_denom", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_framerate_denom", kwlist, &PyGstDiscovererVideoInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_video_info_get_framerate_denom(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_video_info_get_framerate_denom(GST_DISCOVERER_VIDEO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1465,10 +1465,10 @@ _wrap_gst_discoverer_video_info_get_par_num(PyObject *self, PyObject *args, PyOb
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_par_num", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_par_num", kwlist, &PyGstDiscovererVideoInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_video_info_get_par_num(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_video_info_get_par_num(GST_DISCOVERER_VIDEO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1480,25 +1480,25 @@ _wrap_gst_discoverer_video_info_get_par_denom(PyObject *self, PyObject *args, Py
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_par_denom", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_par_denom", kwlist, &PyGstDiscovererVideoInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_video_info_get_par_denom(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_video_info_get_par_denom(GST_DISCOVERER_VIDEO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
 
 static PyObject *
-_wrap_gst_discoverer_video_info_get_interlaced(PyObject *self, PyObject *args, PyObject *kwargs)
+_wrap_gst_discoverer_video_info_is_interlaced(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = { "info", NULL };
     int ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_interlaced", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_is_interlaced", kwlist, &PyGstDiscovererVideoInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_video_info_get_interlaced(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_video_info_is_interlaced(GST_DISCOVERER_VIDEO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyBool_FromLong(ret);
 
@@ -1511,10 +1511,10 @@ _wrap_gst_discoverer_video_info_get_bitrate(PyObject *self, PyObject *args, PyOb
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_bitrate", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_bitrate", kwlist, &PyGstDiscovererVideoInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_video_info_get_bitrate(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_video_info_get_bitrate(GST_DISCOVERER_VIDEO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
@@ -1526,25 +1526,25 @@ _wrap_gst_discoverer_video_info_get_max_bitrate(PyObject *self, PyObject *args, 
     guint ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_max_bitrate", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_max_bitrate", kwlist, &PyGstDiscovererVideoInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_video_info_get_max_bitrate(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_video_info_get_max_bitrate(GST_DISCOVERER_VIDEO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyLong_FromUnsignedLong(ret);
 }
 
 static PyObject *
-_wrap_gst_discoverer_video_info_get_is_image(PyObject *self, PyObject *args, PyObject *kwargs)
+_wrap_gst_discoverer_video_info_is_image(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = { "info", NULL };
     int ret;
     PyGstMiniObject *info;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_get_is_image", kwlist, &PyGstDiscovererStreamInfo_Type, &info))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O!:gst_discoverer_video_info_is_image", kwlist, &PyGstDiscovererVideoInfo_Type, &info))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_discoverer_video_info_get_is_image(GST_DISCOVERER_STREAM_INFO(info->obj));
+    ret = gst_discoverer_video_info_is_image(GST_DISCOVERER_VIDEO_INFO(info->obj));
     pyg_end_allow_threads;
     return PyBool_FromLong(ret);
 
@@ -1911,13 +1911,13 @@ const PyMethodDef pypbutils_functions[] = {
       NULL },
     { "gst_discoverer_video_info_get_par_denom", (PyCFunction)_wrap_gst_discoverer_video_info_get_par_denom, METH_VARARGS|METH_KEYWORDS,
       NULL },
-    { "gst_discoverer_video_info_get_interlaced", (PyCFunction)_wrap_gst_discoverer_video_info_get_interlaced, METH_VARARGS|METH_KEYWORDS,
+    { "gst_discoverer_video_info_is_interlaced", (PyCFunction)_wrap_gst_discoverer_video_info_is_interlaced, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "gst_discoverer_video_info_get_bitrate", (PyCFunction)_wrap_gst_discoverer_video_info_get_bitrate, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "gst_discoverer_video_info_get_max_bitrate", (PyCFunction)_wrap_gst_discoverer_video_info_get_max_bitrate, METH_VARARGS|METH_KEYWORDS,
       NULL },
-    { "gst_discoverer_video_info_get_is_image", (PyCFunction)_wrap_gst_discoverer_video_info_get_is_image, METH_VARARGS|METH_KEYWORDS,
+    { "gst_discoverer_video_info_is_image", (PyCFunction)_wrap_gst_discoverer_video_info_is_image, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "plugins_base_version", (PyCFunction)_wrap_gst_plugins_base_version, METH_NOARGS,
       NULL },

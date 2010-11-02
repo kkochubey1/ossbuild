@@ -44,7 +44,7 @@ np_init_pygobject (void)
   PyObject *main_module = NULL;
   PyObject *mdict = NULL;
   PyObject *pygtk = NULL;
-  PyObject *cobject = NULL;
+  PyObject *cobject;
 
   pygtk = PyImport_ImportModule ("pygtk");
   if (pygtk == NULL) {

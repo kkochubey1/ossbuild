@@ -75,7 +75,7 @@
 #define GST_PACKAGE_ORIGIN "http://code.google.com/p/ossbuild/"
 
 /* GStreamer package release date/time for plugins as YYYY-MM-DD */
-#define GST_PACKAGE_RELEASE_DATETIME "2010-10-22T16:31Z"
+#define GST_PACKAGE_RELEASE_DATETIME "2010-11-01T16:33Z"
 
 /* I know the API is subject to change. */
 #undef G_UDEV_API_IS_SUBJECT_TO_CHANGE
