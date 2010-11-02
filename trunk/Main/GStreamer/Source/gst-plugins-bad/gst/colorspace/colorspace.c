@@ -1,5 +1,6 @@
 /* GStreamer
  * Copyright (C) 2010 David Schleef <ds@schleef.org>
+ * Copyright (C) 2010 Sebastian Dröge <sebastian.droege@collabora.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,23 +29,47 @@
 
 
 static void colorspace_convert_generic (ColorspaceConvert * convert,
-    guint8 * dest, guint8 * src);
+    guint8 * dest, const guint8 * src);
 static void colorspace_convert_lookup_fastpath (ColorspaceConvert * convert);
 static void colorspace_convert_lookup_getput (ColorspaceConvert * convert);
 
 
 ColorspaceConvert *
-colorspace_convert_new (GstVideoFormat to_format,
-    GstVideoFormat from_format, int width, int height)
+colorspace_convert_new (GstVideoFormat to_format, ColorSpaceColorSpec to_spec,
+    GstVideoFormat from_format, ColorSpaceColorSpec from_spec,
+    int width, int height)
 {
   ColorspaceConvert *convert;
   int i;
+
+  g_return_val_if_fail (!gst_video_format_is_rgb (to_format)
+      || to_spec == COLOR_SPEC_RGB, NULL);
+  g_return_val_if_fail (!gst_video_format_is_yuv (to_format)
+      || to_spec == COLOR_SPEC_YUV_BT709
+      || to_spec == COLOR_SPEC_YUV_BT470_6, NULL);
+  g_return_val_if_fail (gst_video_format_is_rgb (to_format)
+      || gst_video_format_is_yuv (to_format)
+      || (gst_video_format_is_gray (to_format) &&
+          to_spec == COLOR_SPEC_GRAY), NULL);
+
+  g_return_val_if_fail (!gst_video_format_is_rgb (from_format)
+      || from_spec == COLOR_SPEC_RGB, NULL);
+  g_return_val_if_fail (!gst_video_format_is_yuv (from_format)
+      || from_spec == COLOR_SPEC_YUV_BT709
+      || from_spec == COLOR_SPEC_YUV_BT470_6, NULL);
+  g_return_val_if_fail (gst_video_format_is_rgb (from_format)
+      || gst_video_format_is_yuv (from_format)
+      || (gst_video_format_is_gray (from_format) &&
+          from_spec == COLOR_SPEC_GRAY), NULL);
+  g_return_val_if_fail (to_format != from_format, NULL);
 
   convert = g_malloc (sizeof (ColorspaceConvert));
   memset (convert, 0, sizeof (ColorspaceConvert));
 
   convert->to_format = to_format;
+  convert->to_spec = to_spec;
   convert->from_format = from_format;
+  convert->from_spec = from_spec;
   convert->height = height;
   convert->width = width;
   convert->convert = colorspace_convert_generic;
@@ -74,6 +99,30 @@ colorspace_convert_new (GstVideoFormat to_format,
 
   convert->tmpline = g_malloc (sizeof (guint32) * width * 2);
 
+#ifdef GST_VIDEO_CAPS_RGB8_PALETTED
+  if (to_format == GST_VIDEO_FORMAT_RGB8_PALETTED) {
+    /* build poor man's palette, taken from ffmpegcolorspace */
+    static const guint8 pal_value[6] = { 0x00, 0x33, 0x66, 0x99, 0xcc, 0xff };
+    guint32 *palette;
+    gint r, g, b;
+
+    convert->palette = palette = g_new (guint32, 256);
+    i = 0;
+    for (r = 0; r < 6; r++) {
+      for (g = 0; g < 6; g++) {
+        for (b = 0; b < 6; b++) {
+          palette[i++] =
+              (0xffU << 24) | (pal_value[r] << 16) | (pal_value[g] << 8) |
+              pal_value[b];
+        }
+      }
+    }
+    palette[i++] = 0;           /* 100% transparent, i == 6*6*6 */
+    while (i < 256)
+      palette[i++] = 0xff000000;
+  }
+#endif
+
   return convert;
 }
 
@@ -96,7 +145,8 @@ colorspace_convert_set_interlaced (ColorspaceConvert * convert,
 }
 
 void
-colorspace_convert_set_palette (ColorspaceConvert * convert, guint32 * palette)
+colorspace_convert_set_palette (ColorspaceConvert * convert,
+    const guint32 * palette)
 {
   if (convert->palette == NULL) {
     convert->palette = g_malloc (sizeof (guint32) * 256);
@@ -104,9 +154,15 @@ colorspace_convert_set_palette (ColorspaceConvert * convert, guint32 * palette)
   memcpy (convert->palette, palette, sizeof (guint32) * 256);
 }
 
+const guint32 *
+colorspace_convert_get_palette (ColorspaceConvert * convert)
+{
+  return convert->palette;
+}
+
 void
 colorspace_convert_convert (ColorspaceConvert * convert,
-    guint8 * dest, guint8 * src)
+    guint8 * dest, const guint8 * src)
 {
   convert->convert (convert, dest, src);
 }
@@ -117,7 +173,8 @@ colorspace_convert_convert (ColorspaceConvert * convert,
   ((dir) + convert-> dir ## _offset[(comp)] + convert-> dir ## _stride[(comp)] * (line))
 
 static void
-getline_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_I420 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_I420 (dest,
       FRAME_GET_LINE (src, 0, j),
@@ -126,7 +183,8 @@ getline_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_I420 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_I420 (FRAME_GET_LINE (dest, 0, j),
       FRAME_GET_LINE (dest, 1, j >> 1),
@@ -134,7 +192,8 @@ putline_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-getline_YV12 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_YV12 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_I420 (dest,
       FRAME_GET_LINE (src, 0, j),
@@ -143,7 +202,8 @@ getline_YV12 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_YV12 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_YV12 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_I420 (FRAME_GET_LINE (dest, 0, j),
       FRAME_GET_LINE (dest, 1, j >> 1),
@@ -151,46 +211,53 @@ putline_YV12 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-getline_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_YUY2 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_YUY2 (dest, FRAME_GET_LINE (src, 0, j), convert->width / 2);
 }
 
 static void
-putline_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_YUY2 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_YUY2 (FRAME_GET_LINE (dest, 0, j), src, convert->width / 2);
 }
 
 static void
-getline_UYVY (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_UYVY (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_UYVY (dest, FRAME_GET_LINE (src, 0, j), convert->width / 2);
 }
 
 static void
-putline_UYVY (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_UYVY (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_UYVY (FRAME_GET_LINE (dest, 0, j), src, convert->width / 2);
 }
 
 static void
-getline_YVYU (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_YVYU (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_YVYU (dest, FRAME_GET_LINE (src, 0, j), convert->width / 2);
 }
 
 static void
-putline_YVYU (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_YVYU (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_YVYU (FRAME_GET_LINE (dest, 0, j), src, convert->width / 2);
 }
 
 static void
-getline_v308 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_v308 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
-  guint8 *srcline = FRAME_GET_LINE (src, 0, j);
+  const guint8 *srcline = FRAME_GET_LINE (src, 0, j);
   for (i = 0; i < convert->width; i++) {
     dest[i * 4 + 0] = 0xff;
     dest[i * 4 + 1] = srcline[i * 3 + 0];
@@ -200,7 +267,8 @@ getline_v308 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_v308 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_v308 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
   guint8 *destline = FRAME_GET_LINE (dest, 0, j);
@@ -212,23 +280,26 @@ putline_v308 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-getline_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_AYUV (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   memcpy (dest, FRAME_GET_LINE (src, 0, j), convert->width * 4);
 }
 
 static void
-putline_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_AYUV (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   memcpy (FRAME_GET_LINE (dest, 0, j), src, convert->width * 4);
 }
 
 #if 0
 static void
-getline_v410 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_v410 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
-  guint8 *srcline = FRAME_GET_LINE (src, 0, j);
+  const guint8 *srcline = FRAME_GET_LINE (src, 0, j);
   for (i = 0; i < convert->width; i++) {
     dest[i * 4 + 0] = GST_READ_UINT16_LE (srcline + i * 8 + 0);
     dest[i * 4 + 1] = GST_READ_UINT16_LE (srcline + i * 8 + 2);
@@ -239,10 +310,11 @@ getline_v410 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 #endif
 
 static void
-getline_v210 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_v210 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
-  guint8 *srcline = FRAME_GET_LINE (src, 0, j);
+  const guint8 *srcline = FRAME_GET_LINE (src, 0, j);
 
   for (i = 0; i < convert->width; i += 6) {
     guint32 a0, a1, a2, a3;
@@ -305,7 +377,8 @@ getline_v210 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_v210 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_v210 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
   guint8 *destline = FRAME_GET_LINE (dest, 0, j);
@@ -344,10 +417,11 @@ putline_v210 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-getline_v216 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_v216 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
-  guint8 *srcline = FRAME_GET_LINE (src, 0, j);
+  const guint8 *srcline = FRAME_GET_LINE (src, 0, j);
   for (i = 0; i < convert->width; i++) {
     dest[i * 4 + 0] = 0xff;
     dest[i * 4 + 1] = GST_READ_UINT16_LE (srcline + i * 4 + 2);
@@ -357,7 +431,8 @@ getline_v216 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_v216 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_v216 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
   guint8 *destline = FRAME_GET_LINE (dest, 0, j);
@@ -370,7 +445,71 @@ putline_v216 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-getline_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_Y41B (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  const guint8 *srclineY = FRAME_GET_LINE (src, 0, j);
+  const guint8 *srclineU = FRAME_GET_LINE (src, 1, j);
+  const guint8 *srclineV = FRAME_GET_LINE (src, 2, j);
+
+  for (i = 0; i < convert->width; i++) {
+    dest[i * 4 + 0] = 0xff;
+    dest[i * 4 + 1] = srclineY[i];
+    dest[i * 4 + 2] = srclineU[i >> 2];
+    dest[i * 4 + 3] = srclineV[i >> 2];
+  }
+}
+
+static void
+putline_Y41B (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  guint8 *destlineY = FRAME_GET_LINE (dest, 0, j);
+  guint8 *destlineU = FRAME_GET_LINE (dest, 1, j);
+  guint8 *destlineV = FRAME_GET_LINE (dest, 2, j);
+
+  for (i = 0; i < convert->width - 3; i += 4) {
+    destlineY[i] = src[i * 4 + 1];
+    destlineY[i + 1] = src[i * 4 + 5];
+    destlineY[i + 2] = src[i * 4 + 9];
+    destlineY[i + 3] = src[i * 4 + 13];
+
+    destlineU[i >> 2] =
+        (src[i * 4 + 2] + src[i * 4 + 6] + src[i * 4 + 10] + src[i * 4 + 14] +
+        2) >> 2;
+    destlineV[i >> 2] =
+        (src[i * 4 + 3] + src[i * 4 + 7] + src[i * 4 + 11] + src[i * 4 + 15] +
+        2) >> 2;
+  }
+
+  if (i == convert->width - 3) {
+    destlineY[i] = src[i * 4 + 1];
+    destlineY[i + 1] = src[i * 4 + 5];
+    destlineY[i + 2] = src[i * 4 + 9];
+
+    destlineU[i >> 2] =
+        (src[i * 4 + 2] + src[i * 4 + 6] + src[i * 4 + 10] + 1) / 3;
+    destlineV[i >> 2] =
+        (src[i * 4 + 3] + src[i * 4 + 7] + src[i * 4 + 11] + 1) / 3;
+  } else if (i == convert->width - 2) {
+    destlineY[i] = src[i * 4 + 1];
+    destlineY[i + 1] = src[i * 4 + 5];
+
+    destlineU[i >> 2] = (src[i * 4 + 2] + src[i * 4 + 6] + 1) >> 1;
+    destlineV[i >> 2] = (src[i * 4 + 3] + src[i * 4 + 7] + 1) >> 1;
+  } else if (i == convert->width - 1) {
+    destlineY[i + 1] = src[i * 4 + 5];
+
+    destlineU[i >> 2] = src[i * 4 + 2];
+    destlineV[i >> 2] = src[i * 4 + 3];
+  }
+}
+
+static void
+getline_Y42B (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_Y42B (dest,
       FRAME_GET_LINE (src, 0, j),
@@ -379,7 +518,8 @@ getline_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_Y42B (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_Y42B (FRAME_GET_LINE (dest, 0, j),
       FRAME_GET_LINE (dest, 1, j),
@@ -387,7 +527,8 @@ putline_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-getline_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_Y444 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_Y444 (dest,
       FRAME_GET_LINE (src, 0, j),
@@ -395,7 +536,8 @@ getline_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_Y444 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_Y444 (FRAME_GET_LINE (dest, 0, j),
       FRAME_GET_LINE (dest, 1, j),
@@ -403,58 +545,189 @@ putline_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-getline_Y800 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_Y800 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_Y800 (dest, FRAME_GET_LINE (src, 0, j), convert->width);
 }
 
 static void
-putline_Y800 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_Y800 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_Y800 (FRAME_GET_LINE (dest, 0, j), src, convert->width);
 }
 
 static void
-getline_BGRA (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_Y16 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  cogorc_getline_Y16 (dest, FRAME_GET_LINE (src, 0, j), convert->width);
+}
+
+static void
+putline_Y16 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  cogorc_putline_Y16 (FRAME_GET_LINE (dest, 0, j), src, convert->width);
+}
+
+static void
+getline_RGB16 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  const guint16 *srcline = (const guint16 *) FRAME_GET_LINE (src, 0, j);
+  for (i = 0; i < convert->width; i++) {
+    dest[i * 4 + 0] = 0xff;
+    dest[i * 4 + 1] = ((srcline[i] >> 11) & 0x1f) << 3;
+    dest[i * 4 + 2] = ((srcline[i] >> 5) & 0x3f) << 2;
+    dest[i * 4 + 3] = ((srcline[i]) & 0x1f) << 3;
+  }
+}
+
+static void
+putline_RGB16 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  guint16 *destline = (guint16 *) FRAME_GET_LINE (dest, 0, j);
+  for (i = 0; i < convert->width; i++) {
+    destline[i] =
+        ((src[i * 4 + 1] >> 3) << 11) | ((src[i * 4 +
+                2] >> 2) << 5) | (src[i * 4 + 3] >> 3);
+  }
+}
+
+static void
+getline_BGR16 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  const guint16 *srcline = (const guint16 *) FRAME_GET_LINE (src, 0, j);
+  for (i = 0; i < convert->width; i++) {
+    dest[i * 4 + 0] = 0xff;
+    dest[i * 4 + 3] = ((srcline[i] >> 11) & 0x1f) << 3;
+    dest[i * 4 + 2] = ((srcline[i] >> 5) & 0x3f) << 2;
+    dest[i * 4 + 1] = ((srcline[i]) & 0x1f) << 3;
+  }
+}
+
+static void
+putline_BGR16 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  guint16 *destline = (guint16 *) FRAME_GET_LINE (dest, 0, j);
+  for (i = 0; i < convert->width; i++) {
+    destline[i] =
+        ((src[i * 4 + 3] >> 3) << 11) | ((src[i * 4 +
+                2] >> 2) << 5) | (src[i * 4 + 1] >> 3);
+  }
+}
+
+static void
+getline_RGB15 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  const guint16 *srcline = (const guint16 *) FRAME_GET_LINE (src, 0, j);
+  for (i = 0; i < convert->width; i++) {
+    dest[i * 4 + 0] = 0xff;
+    dest[i * 4 + 1] = ((srcline[i] >> 10) & 0x1f) << 3;
+    dest[i * 4 + 2] = ((srcline[i] >> 5) & 0x1f) << 3;
+    dest[i * 4 + 3] = ((srcline[i]) & 0x1f) << 3;
+  }
+}
+
+static void
+putline_RGB15 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  guint16 *destline = (guint16 *) FRAME_GET_LINE (dest, 0, j);
+  for (i = 0; i < convert->width; i++) {
+    destline[i] =
+        ((src[i * 4 + 1] >> 3) << 10) | ((src[i * 4 +
+                2] >> 3) << 5) | (src[i * 4 + 3] >> 3);
+  }
+}
+
+static void
+getline_BGR15 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  const guint16 *srcline = (const guint16 *) FRAME_GET_LINE (src, 0, j);
+  for (i = 0; i < convert->width; i++) {
+    dest[i * 4 + 0] = 0xff;
+    dest[i * 4 + 3] = ((srcline[i] >> 10) & 0x1f) << 3;
+    dest[i * 4 + 2] = ((srcline[i] >> 5) & 0x1f) << 3;
+    dest[i * 4 + 1] = ((srcline[i]) & 0x1f) << 3;
+  }
+}
+
+static void
+putline_BGR15 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  guint16 *destline = (guint16 *) FRAME_GET_LINE (dest, 0, j);
+  for (i = 0; i < convert->width; i++) {
+    destline[i] =
+        ((src[i * 4 + 3] >> 3) << 10) | ((src[i * 4 +
+                2] >> 3) << 5) | (src[i * 4 + 1] >> 3);
+  }
+}
+
+static void
+getline_BGRA (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_BGRA (dest, FRAME_GET_LINE (src, 0, j), convert->width);
 }
 
 static void
-putline_BGRA (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_BGRA (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_BGRA (FRAME_GET_LINE (dest, 0, j), src, convert->width);
 }
 
 static void
-getline_ABGR (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_ABGR (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_ABGR (dest, FRAME_GET_LINE (src, 0, j), convert->width);
 }
 
 static void
-putline_ABGR (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_ABGR (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_ABGR (FRAME_GET_LINE (dest, 0, j), src, convert->width);
 }
 
 static void
-getline_RGBA (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_RGBA (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_RGBA (dest, FRAME_GET_LINE (src, 0, j), convert->width);
 }
 
 static void
-putline_RGBA (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_RGBA (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_RGBA (FRAME_GET_LINE (dest, 0, j), src, convert->width);
 }
 
 static void
-getline_RGB (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_RGB (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
-  guint8 *srcline = FRAME_GET_LINE (src, 0, j);
+  const guint8 *srcline = FRAME_GET_LINE (src, 0, j);
   for (i = 0; i < convert->width; i++) {
     dest[i * 4 + 0] = 0xff;
     dest[i * 4 + 1] = srcline[i * 3 + 0];
@@ -464,7 +737,8 @@ getline_RGB (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_RGB (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_RGB (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
   guint8 *destline = FRAME_GET_LINE (dest, 0, j);
@@ -476,10 +750,11 @@ putline_RGB (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-getline_BGR (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_BGR (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
-  guint8 *srcline = FRAME_GET_LINE (src, 0, j);
+  const guint8 *srcline = FRAME_GET_LINE (src, 0, j);
   for (i = 0; i < convert->width; i++) {
     dest[i * 4 + 0] = 0xff;
     dest[i * 4 + 1] = srcline[i * 3 + 2];
@@ -489,7 +764,8 @@ getline_BGR (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_BGR (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_BGR (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
   guint8 *destline = FRAME_GET_LINE (dest, 0, j);
@@ -501,7 +777,8 @@ putline_BGR (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-getline_NV12 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_NV12 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_NV12 (dest,
       FRAME_GET_LINE (src, 0, j),
@@ -509,14 +786,16 @@ getline_NV12 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_NV12 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_NV12 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_NV12 (FRAME_GET_LINE (dest, 0, j),
       FRAME_GET_LINE (dest, 1, j >> 1), src, convert->width / 2);
 }
 
 static void
-getline_NV21 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_NV21 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_getline_NV21 (dest,
       FRAME_GET_LINE (src, 0, j),
@@ -524,14 +803,16 @@ getline_NV21 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_NV21 (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_NV21 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   cogorc_putline_NV21 (FRAME_GET_LINE (dest, 0, j),
       FRAME_GET_LINE (dest, 2, j >> 1), src, convert->width / 2);
 }
 
 static void
-getline_UYVP (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+getline_UYVP (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
 
@@ -557,7 +838,8 @@ getline_UYVP (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
 }
 
 static void
-putline_UYVP (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
+putline_UYVP (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
 {
   int i;
 
@@ -579,17 +861,71 @@ putline_UYVP (ColorspaceConvert * convert, guint8 * dest, guint8 * src, int j)
   }
 }
 
+static void
+getline_A420 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  cogorc_getline_A420 (dest,
+      FRAME_GET_LINE (src, 0, j),
+      FRAME_GET_LINE (src, 1, j >> 1),
+      FRAME_GET_LINE (src, 2, j >> 1),
+      FRAME_GET_LINE (src, 3, j), convert->width);
+}
 
+static void
+putline_A420 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  cogorc_putline_A420 (FRAME_GET_LINE (dest, 0, j),
+      FRAME_GET_LINE (dest, 1, j >> 1),
+      FRAME_GET_LINE (dest, 2, j >> 1),
+      FRAME_GET_LINE (dest, 3, j), src, convert->width / 2);
+}
+
+#ifdef GST_VIDEO_CAPS_RGB8_PALETTED
+static void
+getline_RGB8P (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  const guint8 *srcline = FRAME_GET_LINE (src, 0, j);
+  for (i = 0; i < convert->width; i++) {
+    guint32 v = convert->palette[srcline[i]];
+    dest[i * 4 + 0] = (v >> 24) & 0xff;
+    dest[i * 4 + 1] = (v >> 16) & 0xff;
+    dest[i * 4 + 2] = (v >> 8) & 0xff;
+    dest[i * 4 + 3] = (v) & 0xff;
+  }
+}
+
+static void
+putline_RGB8P (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  guint8 *destline = FRAME_GET_LINE (dest, 0, j);
+  /* Use our poor man's palette, taken from ffmpegcolorspace too */
+  for (i = 0; i < convert->width; i++) {
+    /* crude approximation for alpha ! */
+    if (src[i * 4 + 0] < 0x80)
+      destline[i] = 6 * 6 * 6;
+    else
+      destline[i] =
+          ((((src[i * 4 + 1]) / 47) % 6) * 6 * 6 + (((src[i * 4 +
+                          2]) / 47) % 6) * 6 + (((src[i * 4 + 3]) / 47) % 6));
+  }
+}
+#endif
 
 typedef struct
 {
   GstVideoFormat format;
-  void (*getline) (ColorspaceConvert * convert, guint8 * dest, guint8 * src,
-      int j);
-  void (*putline) (ColorspaceConvert * convert, guint8 * dest, guint8 * src,
-      int j);
+  void (*getline) (ColorspaceConvert * convert, guint8 * dest,
+      const guint8 * src, int j);
+  void (*putline) (ColorspaceConvert * convert, guint8 * dest,
+      const guint8 * src, int j);
 } ColorspaceLine;
-static ColorspaceLine lines[] = {
+static const ColorspaceLine lines[] = {
   {GST_VIDEO_FORMAT_I420, getline_I420, putline_I420},
   {GST_VIDEO_FORMAT_YV12, getline_YV12, putline_YV12},
   {GST_VIDEO_FORMAT_YUY2, getline_YUY2, putline_YUY2},
@@ -605,7 +941,7 @@ static ColorspaceLine lines[] = {
   {GST_VIDEO_FORMAT_ABGR, getline_ABGR, putline_ABGR},
   {GST_VIDEO_FORMAT_RGB, getline_RGB, putline_RGB},
   {GST_VIDEO_FORMAT_BGR, getline_BGR, putline_BGR},
-  //{GST_VIDEO_FORMAT_Y41B, getline_Y41B, putline_Y41B},
+  {GST_VIDEO_FORMAT_Y41B, getline_Y41B, putline_Y41B},
   {GST_VIDEO_FORMAT_Y42B, getline_Y42B, putline_Y42B},
   {GST_VIDEO_FORMAT_YVYU, getline_YVYU, putline_YVYU},
   {GST_VIDEO_FORMAT_Y444, getline_Y444, putline_Y444},
@@ -618,17 +954,20 @@ static ColorspaceLine lines[] = {
   //{GST_VIDEO_FORMAT_GRAY16_LE, getline_GRAY16_LE, putline_GRAY16_LE},
   {GST_VIDEO_FORMAT_v308, getline_v308, putline_v308},
   {GST_VIDEO_FORMAT_Y800, getline_Y800, putline_Y800},
-  //{GST_VIDEO_FORMAT_Y16, getline_Y16, putline_Y16},
-  //{GST_VIDEO_FORMAT_RGB16, getline_RGB16, putline_RGB16},
-  //{GST_VIDEO_FORMAT_BGR16, getline_BGR16, putline_BGR16},
-  //{GST_VIDEO_FORMAT_RGB15, getline_RGB15, putline_RGB15},
-  //{GST_VIDEO_FORMAT_BGR15, getline_BGR15, putline_BGR15},
-  {GST_VIDEO_FORMAT_UYVP, getline_UYVP, putline_UYVP}
+  {GST_VIDEO_FORMAT_Y16, getline_Y16, putline_Y16},
+  {GST_VIDEO_FORMAT_RGB16, getline_RGB16, putline_RGB16},
+  {GST_VIDEO_FORMAT_BGR16, getline_BGR16, putline_BGR16},
+  {GST_VIDEO_FORMAT_RGB15, getline_RGB15, putline_RGB15},
+  {GST_VIDEO_FORMAT_BGR15, getline_BGR15, putline_BGR15},
+  {GST_VIDEO_FORMAT_UYVP, getline_UYVP, putline_UYVP},
+  {GST_VIDEO_FORMAT_A420, getline_A420, putline_A420}
+#ifdef GST_VIDEO_CAPS_RGB8_PALETTED
+  , {GST_VIDEO_FORMAT_RGB8_PALETTED, getline_RGB8P, putline_RGB8P}
+#endif
 };
 
-
 static void
-matrix_rgb2yuv (ColorspaceConvert * convert)
+matrix_rgb_to_yuv_bt470_6 (ColorspaceConvert * convert)
 {
   int i;
   int r, g, b;
@@ -651,7 +990,30 @@ matrix_rgb2yuv (ColorspaceConvert * convert)
 }
 
 static void
-matrix_yuv2rgb (ColorspaceConvert * convert)
+matrix_rgb_to_yuv_bt709 (ColorspaceConvert * convert)
+{
+  int i;
+  int r, g, b;
+  int y, u, v;
+  guint8 *tmpline = convert->tmpline;
+
+  for (i = 0; i < convert->width; i++) {
+    r = tmpline[i * 4 + 1];
+    g = tmpline[i * 4 + 2];
+    b = tmpline[i * 4 + 3];
+
+    y = (47 * r + 157 * g + 16 * b + 4096) >> 8;
+    u = (-26 * r - 87 * g + 112 * b + 32768) >> 8;
+    v = (112 * r - 102 * g - 10 * b + 32768) >> 8;
+
+    tmpline[i * 4 + 1] = CLAMP (y, 0, 255);
+    tmpline[i * 4 + 2] = CLAMP (u, 0, 255);
+    tmpline[i * 4 + 3] = CLAMP (v, 0, 255);
+  }
+}
+
+static void
+matrix_yuv_bt470_6_to_rgb (ColorspaceConvert * convert)
 {
   int i;
   int r, g, b;
@@ -666,6 +1028,75 @@ matrix_yuv2rgb (ColorspaceConvert * convert)
     r = (298 * y + 409 * v - 57068) >> 8;
     g = (298 * y - 100 * u - 208 * v + 34707) >> 8;
     b = (298 * y + 516 * u - 70870) >> 8;
+
+    tmpline[i * 4 + 1] = CLAMP (r, 0, 255);
+    tmpline[i * 4 + 2] = CLAMP (g, 0, 255);
+    tmpline[i * 4 + 3] = CLAMP (b, 0, 255);
+  }
+}
+
+static void
+matrix_yuv_bt709_to_rgb (ColorspaceConvert * convert)
+{
+  int i;
+  int r, g, b;
+  int y, u, v;
+  guint8 *tmpline = convert->tmpline;
+
+  for (i = 0; i < convert->width; i++) {
+    y = tmpline[i * 4 + 1];
+    u = tmpline[i * 4 + 2];
+    v = tmpline[i * 4 + 3];
+
+    r = (298 * y + 459 * v - 63514) >> 8;
+    g = (298 * y - 55 * u - 136 * v + 19681) >> 8;
+    b = (298 * y + 541 * u - 73988) >> 8;
+
+    tmpline[i * 4 + 1] = CLAMP (r, 0, 255);
+    tmpline[i * 4 + 2] = CLAMP (g, 0, 255);
+    tmpline[i * 4 + 3] = CLAMP (b, 0, 255);
+  }
+}
+
+static void
+matrix_yuv_bt709_to_yuv_bt470_6 (ColorspaceConvert * convert)
+{
+  int i;
+  int r, g, b;
+  int y, u, v;
+  guint8 *tmpline = convert->tmpline;
+
+  for (i = 0; i < convert->width; i++) {
+    y = tmpline[i * 4 + 1];
+    u = tmpline[i * 4 + 2];
+    v = tmpline[i * 4 + 3];
+
+    r = (256 * y + 25 * u + 49 * v - 9536) >> 8;
+    g = (253 * u - 28 * v + 3958) >> 8;
+    b = (-19 * u + 252 * v + 2918) >> 8;
+
+    tmpline[i * 4 + 1] = CLAMP (r, 0, 255);
+    tmpline[i * 4 + 2] = CLAMP (g, 0, 255);
+    tmpline[i * 4 + 3] = CLAMP (b, 0, 255);
+  }
+}
+
+static void
+matrix_yuv_bt470_6_to_yuv_bt709 (ColorspaceConvert * convert)
+{
+  int i;
+  int r, g, b;
+  int y, u, v;
+  guint8 *tmpline = convert->tmpline;
+
+  for (i = 0; i < convert->width; i++) {
+    y = tmpline[i * 4 + 1];
+    u = tmpline[i * 4 + 2];
+    v = tmpline[i * 4 + 3];
+
+    r = (256 * y - 30 * u - 53 * v + 10600) >> 8;
+    g = (261 * u + 29 * v - 4367) >> 8;
+    b = (19 * u + 262 * v - 3289) >> 8;
 
     tmpline[i * 4 + 1] = CLAMP (r, 0, 255);
     tmpline[i * 4 + 2] = CLAMP (g, 0, 255);
@@ -701,20 +1132,31 @@ colorspace_convert_lookup_getput (ColorspaceConvert * convert)
   }
   GST_DEBUG ("get %p put %p", convert->getline, convert->putline);
 
-  if (gst_video_format_is_rgb (convert->to_format) &&
-      gst_video_format_is_yuv (convert->from_format)) {
-    convert->matrix = matrix_yuv2rgb;
-  } else if (gst_video_format_is_yuv (convert->to_format) &&
-      gst_video_format_is_rgb (convert->from_format)) {
-    convert->matrix = matrix_rgb2yuv;
-  } else {
+  if (convert->from_spec == convert->to_spec)
     convert->matrix = matrix_identity;
-  }
+  else if (convert->from_spec == COLOR_SPEC_RGB
+      && convert->to_spec == COLOR_SPEC_YUV_BT470_6)
+    convert->matrix = matrix_rgb_to_yuv_bt470_6;
+  else if (convert->from_spec == COLOR_SPEC_RGB
+      && convert->to_spec == COLOR_SPEC_YUV_BT709)
+    convert->matrix = matrix_rgb_to_yuv_bt709;
+  else if (convert->from_spec == COLOR_SPEC_YUV_BT470_6
+      && convert->to_spec == COLOR_SPEC_RGB)
+    convert->matrix = matrix_yuv_bt470_6_to_rgb;
+  else if (convert->from_spec == COLOR_SPEC_YUV_BT709
+      && convert->to_spec == COLOR_SPEC_RGB)
+    convert->matrix = matrix_yuv_bt709_to_rgb;
+  else if (convert->from_spec == COLOR_SPEC_YUV_BT709
+      && convert->to_spec == COLOR_SPEC_YUV_BT470_6)
+    convert->matrix = matrix_yuv_bt709_to_yuv_bt470_6;
+  else if (convert->from_spec == COLOR_SPEC_YUV_BT470_6
+      && convert->to_spec == COLOR_SPEC_YUV_BT709)
+    convert->matrix = matrix_yuv_bt470_6_to_yuv_bt709;
 }
 
 static void
 colorspace_convert_generic (ColorspaceConvert * convert, guint8 * dest,
-    guint8 * src)
+    const guint8 * src)
 {
   int j;
 
@@ -739,7 +1181,8 @@ colorspace_convert_generic (ColorspaceConvert * convert, guint8 * dest,
 /* Fast paths */
 
 static void
-convert_I420_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_I420_YUY2 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   int i;
 
@@ -750,17 +1193,12 @@ convert_I420_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
         FRAME_GET_LINE (src, 0, i + 1),
         FRAME_GET_LINE (src, 1, i >> 1),
         FRAME_GET_LINE (src, 2, i >> 1), (convert->width + 1) / 2);
-    cogorc_convert_I420_YUY2 (FRAME_GET_LINE (dest, 0, i),
-        FRAME_GET_LINE (dest, 0, i + 1),
-        FRAME_GET_LINE (src, 0, i),
-        FRAME_GET_LINE (src, 0, i + 1),
-        FRAME_GET_LINE (src, 1, i >> 1),
-        FRAME_GET_LINE (src, 2, i >> 1), (convert->width + 1) / 2);
   }
 }
 
 static void
-convert_I420_UYVY (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_I420_UYVY (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   int i;
 
@@ -775,7 +1213,8 @@ convert_I420_UYVY (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_I420_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_I420_AYUV (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   int i;
 
@@ -790,7 +1229,8 @@ convert_I420_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_I420_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_I420_Y42B (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_memcpy_2d (FRAME_GET_LINE (dest, 0, 0), convert->dest_stride[0],
       FRAME_GET_LINE (src, 0, 0), convert->src_stride[0],
@@ -808,7 +1248,8 @@ convert_I420_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_I420_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_I420_Y444 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_memcpy_2d (FRAME_GET_LINE (dest, 0, 0), convert->dest_stride[0],
       FRAME_GET_LINE (src, 0, 0), convert->src_stride[0],
@@ -828,7 +1269,8 @@ convert_I420_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_YUY2_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_YUY2_I420 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   int i;
 
@@ -843,7 +1285,8 @@ convert_YUY2_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_YUY2_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_YUY2_AYUV (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_YUY2_AYUV (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -851,7 +1294,8 @@ convert_YUY2_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_YUY2_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_YUY2_Y42B (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_YUY2_Y42B (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (dest, 1, 0),
@@ -861,7 +1305,8 @@ convert_YUY2_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_YUY2_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_YUY2_Y444 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_YUY2_Y444 (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (dest, 1, 0),
@@ -872,7 +1317,8 @@ convert_YUY2_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 
 
 static void
-convert_UYVY_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_UYVY_I420 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   int i;
 
@@ -887,7 +1333,8 @@ convert_UYVY_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_UYVY_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_UYVY_AYUV (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_UYVY_AYUV (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -895,7 +1342,8 @@ convert_UYVY_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_UYVY_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_UYVY_YUY2 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_UYVY_YUY2 (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -903,7 +1351,8 @@ convert_UYVY_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_UYVY_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_UYVY_Y42B (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_UYVY_Y42B (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (dest, 1, 0),
@@ -913,7 +1362,8 @@ convert_UYVY_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_UYVY_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_UYVY_Y444 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_UYVY_Y444 (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (dest, 1, 0),
@@ -923,7 +1373,8 @@ convert_UYVY_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_AYUV_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_AYUV_I420 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_AYUV_I420 (FRAME_GET_LINE (dest, 0, 0),
       2 * convert->dest_stride[0], FRAME_GET_LINE (dest, 0, 1),
@@ -935,7 +1386,8 @@ convert_AYUV_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_AYUV_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_AYUV_YUY2 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_AYUV_YUY2 (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -943,7 +1395,8 @@ convert_AYUV_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_AYUV_UYVY (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_AYUV_UYVY (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_AYUV_UYVY (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -951,7 +1404,8 @@ convert_AYUV_UYVY (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_AYUV_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_AYUV_Y42B (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_AYUV_Y42B (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (dest, 1, 0),
@@ -961,7 +1415,8 @@ convert_AYUV_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_AYUV_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_AYUV_Y444 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_AYUV_Y444 (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (dest, 1, 0),
@@ -971,7 +1426,8 @@ convert_AYUV_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_Y42B_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_Y42B_I420 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_memcpy_2d (FRAME_GET_LINE (dest, 0, 0), convert->dest_stride[0],
       FRAME_GET_LINE (src, 0, 0), convert->src_stride[0],
@@ -991,7 +1447,8 @@ convert_Y42B_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_Y42B_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_Y42B_Y444 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_memcpy_2d (FRAME_GET_LINE (dest, 0, 0), convert->dest_stride[0],
       FRAME_GET_LINE (src, 0, 0), convert->src_stride[0],
@@ -1007,7 +1464,8 @@ convert_Y42B_Y444 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_Y42B_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_Y42B_YUY2 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_Y42B_YUY2 (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -1017,7 +1475,8 @@ convert_Y42B_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_Y42B_UYVY (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_Y42B_UYVY (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_Y42B_UYVY (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -1027,7 +1486,8 @@ convert_Y42B_UYVY (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_Y42B_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_Y42B_AYUV (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_Y42B_AYUV (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -1037,7 +1497,8 @@ convert_Y42B_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_Y444_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_Y444_I420 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_memcpy_2d (FRAME_GET_LINE (dest, 0, 0), convert->dest_stride[0],
       FRAME_GET_LINE (src, 0, 0), convert->src_stride[0],
@@ -1057,7 +1518,8 @@ convert_Y444_I420 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_Y444_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_Y444_Y42B (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_memcpy_2d (FRAME_GET_LINE (dest, 0, 0), convert->dest_stride[0],
       FRAME_GET_LINE (src, 0, 0), convert->src_stride[0],
@@ -1073,7 +1535,8 @@ convert_Y444_Y42B (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_Y444_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_Y444_YUY2 (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_Y444_YUY2 (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -1083,7 +1546,8 @@ convert_Y444_YUY2 (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_Y444_UYVY (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_Y444_UYVY (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_Y444_UYVY (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -1093,7 +1557,8 @@ convert_Y444_UYVY (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_Y444_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_Y444_AYUV (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_Y444_AYUV (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -1103,7 +1568,8 @@ convert_Y444_AYUV (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_AYUV_ARGB (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_AYUV_ARGB (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_AYUV_ARGB (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -1111,7 +1577,8 @@ convert_AYUV_ARGB (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_AYUV_BGRA (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_AYUV_BGRA (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_AYUV_BGRA (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -1119,7 +1586,8 @@ convert_AYUV_BGRA (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_AYUV_ABGR (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_AYUV_ABGR (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_AYUV_ABGR (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -1127,7 +1595,8 @@ convert_AYUV_ABGR (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_AYUV_RGBA (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_AYUV_RGBA (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   cogorc_convert_AYUV_RGBA (FRAME_GET_LINE (dest, 0, 0),
       convert->dest_stride[0], FRAME_GET_LINE (src, 0, 0),
@@ -1135,7 +1604,8 @@ convert_AYUV_RGBA (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 }
 
 static void
-convert_I420_BGRA (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
+convert_I420_BGRA (ColorspaceConvert * convert, guint8 * dest,
+    const guint8 * src)
 {
   int i;
   int quality = 0;
@@ -1173,56 +1643,94 @@ convert_I420_BGRA (ColorspaceConvert * convert, guint8 * dest, guint8 * src)
 typedef struct
 {
   GstVideoFormat from_format;
+  ColorSpaceColorSpec from_spec;
   GstVideoFormat to_format;
-  void (*convert) (ColorspaceConvert * convert, guint8 * dest, guint8 * src);
+  ColorSpaceColorSpec to_spec;
+  gboolean keeps_color_spec;
+  void (*convert) (ColorspaceConvert * convert, guint8 * dest,
+      const guint8 * src);
 } ColorspaceTransform;
-static ColorspaceTransform transforms[] = {
-  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_YUY2, convert_I420_YUY2},
-  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_UYVY, convert_I420_UYVY},
-  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_AYUV, convert_I420_AYUV},
-  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_Y42B, convert_I420_Y42B},
-  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_Y444, convert_I420_Y444},
+static const ColorspaceTransform transforms[] = {
+  {GST_VIDEO_FORMAT_I420, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_YUY2,
+      COLOR_SPEC_NONE, TRUE, convert_I420_YUY2},
+  {GST_VIDEO_FORMAT_I420, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_UYVY,
+      COLOR_SPEC_NONE, TRUE, convert_I420_UYVY},
+  {GST_VIDEO_FORMAT_I420, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_AYUV,
+      COLOR_SPEC_NONE, TRUE, convert_I420_AYUV},
+  {GST_VIDEO_FORMAT_I420, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_Y42B,
+      COLOR_SPEC_NONE, TRUE, convert_I420_Y42B},
+  {GST_VIDEO_FORMAT_I420, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_Y444,
+      COLOR_SPEC_NONE, TRUE, convert_I420_Y444},
 
-  {GST_VIDEO_FORMAT_YUY2, GST_VIDEO_FORMAT_I420, convert_YUY2_I420},
-  {GST_VIDEO_FORMAT_YUY2, GST_VIDEO_FORMAT_UYVY, convert_UYVY_YUY2},    /* alias */
-  {GST_VIDEO_FORMAT_YUY2, GST_VIDEO_FORMAT_AYUV, convert_YUY2_AYUV},
-  {GST_VIDEO_FORMAT_YUY2, GST_VIDEO_FORMAT_Y42B, convert_YUY2_Y42B},
-  {GST_VIDEO_FORMAT_YUY2, GST_VIDEO_FORMAT_Y444, convert_YUY2_Y444},
+  {GST_VIDEO_FORMAT_YUY2, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_I420,
+      COLOR_SPEC_NONE, TRUE, convert_YUY2_I420},
+  {GST_VIDEO_FORMAT_YUY2, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_UYVY, COLOR_SPEC_NONE, TRUE, convert_UYVY_YUY2},    /* alias */
+  {GST_VIDEO_FORMAT_YUY2, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_AYUV,
+      COLOR_SPEC_NONE, TRUE, convert_YUY2_AYUV},
+  {GST_VIDEO_FORMAT_YUY2, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_Y42B,
+      COLOR_SPEC_NONE, TRUE, convert_YUY2_Y42B},
+  {GST_VIDEO_FORMAT_YUY2, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_Y444,
+      COLOR_SPEC_NONE, TRUE, convert_YUY2_Y444},
 
-  {GST_VIDEO_FORMAT_UYVY, GST_VIDEO_FORMAT_I420, convert_UYVY_I420},
-  {GST_VIDEO_FORMAT_UYVY, GST_VIDEO_FORMAT_YUY2, convert_UYVY_YUY2},
-  {GST_VIDEO_FORMAT_UYVY, GST_VIDEO_FORMAT_AYUV, convert_UYVY_AYUV},
-  {GST_VIDEO_FORMAT_UYVY, GST_VIDEO_FORMAT_Y42B, convert_UYVY_Y42B},
-  {GST_VIDEO_FORMAT_UYVY, GST_VIDEO_FORMAT_Y444, convert_UYVY_Y444},
+  {GST_VIDEO_FORMAT_UYVY, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_I420,
+      COLOR_SPEC_NONE, TRUE, convert_UYVY_I420},
+  {GST_VIDEO_FORMAT_UYVY, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_YUY2,
+      COLOR_SPEC_NONE, TRUE, convert_UYVY_YUY2},
+  {GST_VIDEO_FORMAT_UYVY, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_AYUV,
+      COLOR_SPEC_NONE, TRUE, convert_UYVY_AYUV},
+  {GST_VIDEO_FORMAT_UYVY, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_Y42B,
+      COLOR_SPEC_NONE, TRUE, convert_UYVY_Y42B},
+  {GST_VIDEO_FORMAT_UYVY, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_Y444,
+      COLOR_SPEC_NONE, TRUE, convert_UYVY_Y444},
 
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_I420, convert_AYUV_I420},
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_YUY2, convert_AYUV_YUY2},
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_UYVY, convert_AYUV_UYVY},
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_Y42B, convert_AYUV_Y42B},
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_Y444, convert_AYUV_Y444},
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_I420,
+      COLOR_SPEC_NONE, TRUE, convert_AYUV_I420},
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_YUY2,
+      COLOR_SPEC_NONE, TRUE, convert_AYUV_YUY2},
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_UYVY,
+      COLOR_SPEC_NONE, TRUE, convert_AYUV_UYVY},
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_Y42B,
+      COLOR_SPEC_NONE, TRUE, convert_AYUV_Y42B},
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_Y444,
+      COLOR_SPEC_NONE, TRUE, convert_AYUV_Y444},
 
-  {GST_VIDEO_FORMAT_Y42B, GST_VIDEO_FORMAT_I420, convert_Y42B_I420},
-  {GST_VIDEO_FORMAT_Y42B, GST_VIDEO_FORMAT_YUY2, convert_Y42B_YUY2},
-  {GST_VIDEO_FORMAT_Y42B, GST_VIDEO_FORMAT_UYVY, convert_Y42B_UYVY},
-  {GST_VIDEO_FORMAT_Y42B, GST_VIDEO_FORMAT_AYUV, convert_Y42B_AYUV},
-  {GST_VIDEO_FORMAT_Y42B, GST_VIDEO_FORMAT_Y444, convert_Y42B_Y444},
+  {GST_VIDEO_FORMAT_Y42B, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_I420,
+      COLOR_SPEC_NONE, TRUE, convert_Y42B_I420},
+  {GST_VIDEO_FORMAT_Y42B, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_YUY2,
+      COLOR_SPEC_NONE, TRUE, convert_Y42B_YUY2},
+  {GST_VIDEO_FORMAT_Y42B, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_UYVY,
+      COLOR_SPEC_NONE, TRUE, convert_Y42B_UYVY},
+  {GST_VIDEO_FORMAT_Y42B, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_AYUV,
+      COLOR_SPEC_NONE, TRUE, convert_Y42B_AYUV},
+  {GST_VIDEO_FORMAT_Y42B, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_Y444,
+      COLOR_SPEC_NONE, TRUE, convert_Y42B_Y444},
 
-  {GST_VIDEO_FORMAT_Y444, GST_VIDEO_FORMAT_I420, convert_Y444_I420},
-  {GST_VIDEO_FORMAT_Y444, GST_VIDEO_FORMAT_YUY2, convert_Y444_YUY2},
-  {GST_VIDEO_FORMAT_Y444, GST_VIDEO_FORMAT_UYVY, convert_Y444_UYVY},
-  {GST_VIDEO_FORMAT_Y444, GST_VIDEO_FORMAT_AYUV, convert_Y444_AYUV},
-  {GST_VIDEO_FORMAT_Y444, GST_VIDEO_FORMAT_Y42B, convert_Y444_Y42B},
+  {GST_VIDEO_FORMAT_Y444, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_I420,
+      COLOR_SPEC_NONE, TRUE, convert_Y444_I420},
+  {GST_VIDEO_FORMAT_Y444, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_YUY2,
+      COLOR_SPEC_NONE, TRUE, convert_Y444_YUY2},
+  {GST_VIDEO_FORMAT_Y444, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_UYVY,
+      COLOR_SPEC_NONE, TRUE, convert_Y444_UYVY},
+  {GST_VIDEO_FORMAT_Y444, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_AYUV,
+      COLOR_SPEC_NONE, TRUE, convert_Y444_AYUV},
+  {GST_VIDEO_FORMAT_Y444, COLOR_SPEC_NONE, GST_VIDEO_FORMAT_Y42B,
+      COLOR_SPEC_NONE, TRUE, convert_Y444_Y42B},
 
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_ARGB, convert_AYUV_ARGB},
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_BGRA, convert_AYUV_BGRA},
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_xRGB, convert_AYUV_ARGB},    /* alias */
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_BGRx, convert_AYUV_BGRA},    /* alias */
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_ABGR, convert_AYUV_ABGR},
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_RGBA, convert_AYUV_RGBA},
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_xBGR, convert_AYUV_ABGR},    /* alias */
-  {GST_VIDEO_FORMAT_AYUV, GST_VIDEO_FORMAT_RGBx, convert_AYUV_RGBA},    /* alias */
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_YUV_BT470_6, GST_VIDEO_FORMAT_ARGB,
+      COLOR_SPEC_RGB, FALSE, convert_AYUV_ARGB},
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_YUV_BT470_6, GST_VIDEO_FORMAT_BGRA,
+      COLOR_SPEC_RGB, FALSE, convert_AYUV_BGRA},
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_YUV_BT470_6, GST_VIDEO_FORMAT_xRGB, COLOR_SPEC_RGB, FALSE, convert_AYUV_ARGB},     /* alias */
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_YUV_BT470_6, GST_VIDEO_FORMAT_BGRx, COLOR_SPEC_RGB, FALSE, convert_AYUV_BGRA},     /* alias */
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_YUV_BT470_6, GST_VIDEO_FORMAT_ABGR,
+      COLOR_SPEC_RGB, FALSE, convert_AYUV_ABGR},
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_YUV_BT470_6, GST_VIDEO_FORMAT_RGBA,
+      COLOR_SPEC_RGB, FALSE, convert_AYUV_RGBA},
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_YUV_BT470_6, GST_VIDEO_FORMAT_xBGR, COLOR_SPEC_RGB, FALSE, convert_AYUV_ABGR},     /* alias */
+  {GST_VIDEO_FORMAT_AYUV, COLOR_SPEC_YUV_BT470_6, GST_VIDEO_FORMAT_RGBx, COLOR_SPEC_RGB, FALSE, convert_AYUV_RGBA},     /* alias */
 
-  {GST_VIDEO_FORMAT_I420, GST_VIDEO_FORMAT_BGRA, convert_I420_BGRA},
+  {GST_VIDEO_FORMAT_I420, COLOR_SPEC_YUV_BT470_6, GST_VIDEO_FORMAT_BGRA,
+      COLOR_SPEC_RGB, FALSE, convert_I420_BGRA},
 };
 
 static void
@@ -1232,7 +1740,10 @@ colorspace_convert_lookup_fastpath (ColorspaceConvert * convert)
 
   for (i = 0; i < sizeof (transforms) / sizeof (transforms[0]); i++) {
     if (transforms[i].to_format == convert->to_format &&
-        transforms[i].from_format == convert->from_format) {
+        transforms[i].from_format == convert->from_format &&
+        (transforms[i].keeps_color_spec ||
+            (transforms[i].from_spec == convert->from_spec &&
+                transforms[i].to_spec == convert->to_spec))) {
       convert->convert = transforms[i].convert;
       return;
     }

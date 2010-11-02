@@ -258,6 +258,7 @@ struct _GstBaseParsePrivate
   gboolean own_index;
   /* seek table entries only maintained if upstream is BYTE seekable */
   gboolean upstream_seekable;
+  gboolean upstream_has_duration;
   /* minimum distance between two index entries */
   GstClockTimeDiff idx_interval;
   /* ts and offset of last entry added */
@@ -529,6 +530,7 @@ gst_base_parse_reset (GstBaseParse * parse)
   parse->priv->index_last_ts = 0;
   parse->priv->index_last_offset = 0;
   parse->priv->upstream_seekable = FALSE;
+  parse->priv->upstream_has_duration = FALSE;
   parse->priv->idx_interval = 0;
   parse->priv->exact_position = TRUE;
 
@@ -1140,27 +1142,30 @@ gst_base_parse_update_bitrates (GstBaseParse * parse, GstBuffer * buffer)
   GST_LOG_OBJECT (parse, "frame bitrate %u, avg bitrate %u", frame_bitrate,
       parse->priv->avg_bitrate);
 
-  if (frame_bitrate < parse->priv->min_bitrate) {
-    parse->priv->min_bitrate = frame_bitrate;
-    update_min = TRUE;
+  if (parse->priv->framecount < MIN_FRAMES_TO_POST_BITRATE) {
+    goto exit;
+  } else if (parse->priv->framecount == MIN_FRAMES_TO_POST_BITRATE) {
+    /* always post all at threshold time */
+    update_min = update_max = update_avg = TRUE;
+  } else {
+    if (frame_bitrate < parse->priv->min_bitrate) {
+      parse->priv->min_bitrate = frame_bitrate;
+      update_min = TRUE;
+    }
+
+    if (frame_bitrate > parse->priv->max_bitrate) {
+      parse->priv->max_bitrate = frame_bitrate;
+      update_max = TRUE;
+    }
+
+    old_avg_bitrate = parse->priv->posted_avg_bitrate;
+    if ((gint) (old_avg_bitrate - parse->priv->avg_bitrate) > update_threshold
+        || (gint) (parse->priv->avg_bitrate - old_avg_bitrate) >
+        update_threshold)
+      update_avg = TRUE;
   }
 
-  if (frame_bitrate > parse->priv->max_bitrate) {
-    parse->priv->max_bitrate = frame_bitrate;
-    update_max = TRUE;
-  }
-
-  old_avg_bitrate = parse->priv->posted_avg_bitrate;
-  if ((gint) (old_avg_bitrate - parse->priv->avg_bitrate) > update_threshold ||
-      (gint) (parse->priv->avg_bitrate - old_avg_bitrate) > update_threshold)
-    update_avg = TRUE;
-
-  /* always post all at threshold time */
-  if (parse->priv->framecount == MIN_FRAMES_TO_POST_BITRATE)
-    gst_base_parse_post_bitrates (parse, TRUE, TRUE, TRUE);
-
-  if (parse->priv->framecount > MIN_FRAMES_TO_POST_BITRATE &&
-      (update_min || update_avg || update_max))
+  if ((update_min || update_avg || update_max))
     gst_base_parse_post_bitrates (parse, update_min, update_avg, update_max);
 
   /* If average bitrate changes that much and no valid (time) duration provided,
@@ -1170,6 +1175,9 @@ gst_base_parse_update_bitrates (GstBaseParse * parse, GstBuffer * buffer)
           GST_CLOCK_TIME_IS_VALID (parse->priv->duration)))
     gst_element_post_message (GST_ELEMENT (parse),
         gst_message_new_duration (GST_OBJECT (parse), GST_FORMAT_TIME, -1));
+
+exit:
+  return;
 }
 
 /**
@@ -1292,6 +1300,24 @@ done:
   parse->priv->idx_interval = idx_interval * GST_MSECOND;
 }
 
+/* some misc checks on upstream */
+static void
+gst_base_parse_check_upstream (GstBaseParse * parse)
+{
+  GstFormat fmt = GST_FORMAT_TIME;
+  gint64 stop;
+
+  if (gst_pad_query_peer_duration (parse->sinkpad, &fmt, &stop))
+    if (GST_CLOCK_TIME_IS_VALID (stop) && stop) {
+      /* upstream has one, accept it also, and no further updates */
+      gst_base_parse_set_duration (parse, GST_FORMAT_TIME, stop, 0);
+      parse->priv->upstream_has_duration = TRUE;
+    }
+
+  GST_DEBUG_OBJECT (parse, "upstream_has_duration: %d",
+      parse->priv->upstream_has_duration);
+}
+
 /**
  * gst_base_parse_handle_and_push_buffer:
  * @parse: #GstBaseParse.
@@ -1315,6 +1341,12 @@ gst_base_parse_handle_and_push_buffer (GstBaseParse * parse,
     GST_DEBUG_OBJECT (parse, "marking DISCONT");
     GST_BUFFER_FLAG_SET (buffer, GST_BUFFER_FLAG_DISCONT);
     parse->priv->discont = FALSE;
+  }
+
+  /* some one-time start-up */
+  if (G_UNLIKELY (!parse->priv->framecount)) {
+    gst_base_parse_check_seekability (parse);
+    gst_base_parse_check_upstream (parse);
   }
 
   GST_LOG_OBJECT (parse,
@@ -1376,11 +1408,6 @@ gst_base_parse_push_buffer (GstBaseParse * parse, GstBuffer * buffer)
       ", duration %" GST_TIME_FORMAT, GST_BUFFER_SIZE (buffer),
       GST_TIME_ARGS (GST_BUFFER_TIMESTAMP (buffer)),
       GST_TIME_ARGS (GST_BUFFER_DURATION (buffer)));
-
-  /* some one-time start-up */
-  if (G_UNLIKELY (!parse->priv->framecount)) {
-    gst_base_parse_check_seekability (parse);
-  }
 
   /* update stats */
   parse->priv->bytecount += GST_BUFFER_SIZE (buffer);
@@ -2380,6 +2407,11 @@ gst_base_parse_set_duration (GstBaseParse * parse,
   g_return_if_fail (parse != NULL);
 
   GST_BASE_PARSE_LOCK (parse);
+  if (parse->priv->upstream_has_duration) {
+    GST_DEBUG_OBJECT (parse, "using upstream duration; discarding update");
+    goto exit;
+  }
+
   if (duration != parse->priv->duration) {
     GstMessage *m;
 
@@ -2399,6 +2431,7 @@ gst_base_parse_set_duration (GstBaseParse * parse,
   }
   GST_DEBUG_OBJECT (parse, "set update interval: %d", interval);
   parse->priv->update_interval = interval;
+exit:
   GST_BASE_PARSE_UNLOCK (parse);
 }
 
@@ -3058,12 +3091,18 @@ gst_base_parse_handle_tag (GstBaseParse * parse, GstEvent * event)
 
   gst_event_parse_tag (event, &taglist);
 
-  if (gst_tag_list_get_uint (taglist, GST_TAG_MINIMUM_BITRATE, &tmp))
+  if (gst_tag_list_get_uint (taglist, GST_TAG_MINIMUM_BITRATE, &tmp)) {
+    GST_DEBUG_OBJECT (parse, "upstream min bitrate %d", tmp);
     parse->priv->post_min_bitrate = FALSE;
-  if (gst_tag_list_get_uint (taglist, GST_TAG_BITRATE, &tmp))
+  }
+  if (gst_tag_list_get_uint (taglist, GST_TAG_BITRATE, &tmp)) {
+    GST_DEBUG_OBJECT (parse, "upstream avg bitrate %d", tmp);
     parse->priv->post_avg_bitrate = FALSE;
-  if (gst_tag_list_get_uint (taglist, GST_TAG_MAXIMUM_BITRATE, &tmp))
+  }
+  if (gst_tag_list_get_uint (taglist, GST_TAG_MAXIMUM_BITRATE, &tmp)) {
+    GST_DEBUG_OBJECT (parse, "upstream max bitrate %d", tmp);
     parse->priv->post_max_bitrate = FALSE;
+  }
 }
 
 /**
