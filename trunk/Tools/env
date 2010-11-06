@@ -1,0 +1,13 @@
+OSSBUILD_ROOT=/c/ossbuild
+SHARED_BIN=$OSSBUILD_ROOT/Shared/Build/Windows/Win32/bin
+BUILD_BIN=$OSSBUILD_ROOT/Build/Windows/Win32/Release/bin
+BUILD_PLUGINS=$OSSBUILD_ROOT/Build/Windows/Win32/Release/bin/plugins/
+BUILD_PYTHON=$OSSBUILD_ROOT/Build/Windows/Win32/Release/lib/python-2.6/site-packages/
+
+export PATH=$SHARED_BIN:$BUILD_BIN:$PATH
+export LD_LIBRARY_PATH=$SHARED_BIN:$BUILD_BIN:$LD_LIBRARY_PATH
+export PYTHONPATH=$BUILD_PYTHON:$PYTHONPATH
+export GST_PLUGIN_PATH=$BUILD_PLUGINS
+ 
+exec "$@"
+
