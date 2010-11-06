@@ -335,7 +335,11 @@ fs_transmitter_new (const gchar *type,
 GType
 fs_transmitter_get_stream_transmitter_type (FsTransmitter *transmitter)
 {
-  FsTransmitterClass *klass = FS_TRANSMITTER_GET_CLASS (transmitter);
+  FsTransmitterClass *klass;
+
+  g_return_val_if_fail (transmitter, 0);
+
+  klass = FS_TRANSMITTER_GET_CLASS (transmitter);
 
   g_return_val_if_fail (klass, 0);
   g_return_val_if_fail (klass->get_stream_transmitter_type, 0);
