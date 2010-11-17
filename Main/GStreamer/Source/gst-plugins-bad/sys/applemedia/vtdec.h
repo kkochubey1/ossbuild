@@ -66,11 +66,11 @@ struct _GstVTDec
   gint negotiated_fps_n, negotiated_fps_d;
   gint caps_width, caps_height;
   gint caps_fps_n, caps_fps_d;
-  FigFormatDescription * fmt_desc;
-  VTDecompressionSession * session;
+  CMFormatDescriptionRef fmt_desc;
+  VTDecompressionSessionRef session;
 
   GstBuffer * cur_inbuf;
-  GstFlowReturn cur_flowret;
+  GPtrArray * cur_outbufs;
 };
 
 void gst_vtdec_register_elements (GstPlugin * plugin);

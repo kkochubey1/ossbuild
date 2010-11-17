@@ -243,7 +243,10 @@ capture_bus_cb (GstBus * bus, GstMessage * message, gpointer data)
     default:
       st = gst_message_get_structure (message);
       if (st && gst_structure_has_name (st, "image-captured")) {
+        gboolean ready = FALSE;
         GST_INFO ("image captured");
+        g_object_get (camera, "ready-for-capture", &ready, NULL);
+        fail_if (!ready, "not ready for capture");
       }
       break;
   }
@@ -489,6 +492,8 @@ check_file_validity (const gchar * filename, gint num, GstTagList * taglist)
 
 GST_START_TEST (test_single_image_capture)
 {
+  gboolean ready = FALSE;
+  gboolean idle = FALSE;
   if (!camera)
     return;
 
@@ -506,10 +511,25 @@ GST_START_TEST (test_single_image_capture)
   /* don't run viewfinder after capture */
   g_object_set (camera, "block-after-capture", TRUE, NULL);
 
+  /* check that capturing is possible */
+  g_object_get (camera, "ready-for-capture", &ready, NULL);
+  fail_if (!ready, "not ready for capture");
+
+  /* check that the camera is idle */
+  g_object_get (camera, "idle", &idle, NULL);
+  fail_if (!idle, "camera should be idle");
+
   GST_INFO ("starting capture");
   g_signal_emit_by_name (camera, "capture-start", NULL);
 
+  g_object_get (camera, "ready-for-capture", &ready, NULL);
+  fail_if (ready, "ready for capture during capture");
+
   g_main_loop_run (main_loop);
+
+  g_object_get (camera, "idle", &idle, NULL);
+  fail_if (!idle, "camera should be idle");
+
   gst_element_set_state (GST_ELEMENT (camera), GST_STATE_NULL);
 
   check_file_validity (SINGLE_IMAGE_FILENAME, 0, NULL);
@@ -544,6 +564,7 @@ GST_END_TEST;
 GST_START_TEST (test_video_recording)
 {
   GstCaps *preview_caps;
+  gboolean idle = FALSE;
   preview_caps = gst_caps_from_string ("video/x-raw-rgb,width=320,height=240");
 
   if (!camera)
@@ -559,11 +580,23 @@ GST_START_TEST (test_video_recording)
   /* Set preview-caps */
   g_object_set (camera, "preview-caps", preview_caps, NULL);
 
+  /* check that the camera is idle */
+  g_object_get (camera, "idle", &idle, NULL);
+  fail_if (!idle, "camera should be idle");
+
   GST_INFO ("starting capture");
   g_signal_emit_by_name (camera, "capture-start", NULL);
+
+  g_object_get (camera, "idle", &idle, NULL);
+  fail_if (idle, "camera should not be idle");
+
   /* Record for one seconds  */
   g_usleep (G_USEC_PER_SEC);
+
   g_signal_emit_by_name (camera, "capture-stop", NULL);
+
+  g_object_get (camera, "idle", &idle, NULL);
+  fail_if (!idle, "camera should be idle");
 
   /* check if receiving the preview-image message */
   fail_if (!received_preview_msg,
@@ -613,6 +646,7 @@ GST_END_TEST;
 
 GST_START_TEST (test_video_recording_pause)
 {
+  gboolean idle = FALSE;
   if (!camera)
     return;
 
@@ -620,21 +654,40 @@ GST_START_TEST (test_video_recording_pause)
   g_object_set (camera, "mode", 1,
       "filename", make_test_file_name (VIDEO_PAUSE_FILENAME, 0), NULL);
 
+  g_object_get (camera, "idle", &idle, NULL);
+  fail_unless (idle, "camera should be idle");
+
   GST_INFO ("starting capture");
   g_signal_emit_by_name (camera, "capture-start", NULL);
+
+  g_object_get (camera, "idle", &idle, NULL);
+  fail_if (idle, "camera shouldn't be idle when recording");
+
   /* Record for one seconds  */
   g_usleep (G_USEC_PER_SEC);
 
   GST_INFO ("pause capture");
   g_signal_emit_by_name (camera, "capture-pause", NULL);
+
+  g_object_get (camera, "idle", &idle, NULL);
+  fail_if (idle, "camera shouldn't be idle when recording and paused");
+
   /* Record for one seconds  */
   g_usleep (G_USEC_PER_SEC);
 
   GST_INFO ("continue capture");
   g_signal_emit_by_name (camera, "capture-start", NULL);
+
+  g_object_get (camera, "idle", &idle, NULL);
+  fail_if (idle, "camera shouldn't be idle when recording");
+
   /* Record for one seconds  */
   g_usleep (G_USEC_PER_SEC);
   g_signal_emit_by_name (camera, "capture-stop", NULL);
+
+  g_object_get (camera, "idle", &idle, NULL);
+  fail_unless (idle, "camera should be idle after capture-stop");
+
   gst_element_set_state (GST_ELEMENT (camera), GST_STATE_NULL);
 
   check_file_validity (VIDEO_PAUSE_FILENAME, 0, NULL);

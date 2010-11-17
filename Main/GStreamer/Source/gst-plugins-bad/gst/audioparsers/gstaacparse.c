@@ -243,7 +243,6 @@ gst_aacparse_set_src_caps (GstAacParse * aacparse, GstCaps * sink_caps)
 
   GST_DEBUG_OBJECT (aacparse, "setting src caps: %" GST_PTR_FORMAT, src_caps);
 
-  gst_pad_use_fixed_caps (GST_BASE_PARSE (aacparse)->srcpad);
   res = gst_pad_set_caps (GST_BASE_PARSE (aacparse)->srcpad, src_caps);
   gst_caps_unref (src_caps);
   return res;
@@ -265,6 +264,7 @@ gst_aacparse_sink_setcaps (GstBaseParse * parse, GstCaps * caps)
   GstAacParse *aacparse;
   GstStructure *structure;
   gchar *caps_str;
+  const GValue *value;
 
   aacparse = GST_AACPARSE (parse);
   structure = gst_caps_get_structure (caps, 0);
@@ -276,12 +276,11 @@ gst_aacparse_sink_setcaps (GstBaseParse * parse, GstCaps * caps)
   /* This is needed at least in case of RTP
    * Parses the codec_data information to get ObjectType,
    * number of channels and samplerate */
-  if (gst_structure_has_field (structure, "codec_data")) {
+  value = gst_structure_get_value (structure, "codec_data");
+  if (value) {
+    GstBuffer *buf = gst_value_get_buffer (value);
 
-    const GValue *value = gst_structure_get_value (structure, "codec_data");
-
-    if (value) {
-      GstBuffer *buf = gst_value_get_buffer (value);
+    if (buf) {
       const guint8 *buffer = GST_BUFFER_DATA (buf);
       guint sr_idx;
 
@@ -568,6 +567,11 @@ gst_aacparse_detect_stream (GstAacParse * aacparse,
 
     gst_base_parse_set_min_frame_size (GST_BASE_PARSE (aacparse), 512);
 
+    /* arrange for metadata and get out of the way */
+    gst_aacparse_set_src_caps (aacparse,
+        GST_PAD_CAPS (GST_BASE_PARSE_SINK_PAD (aacparse)));
+    gst_base_parse_set_passthrough (GST_BASE_PARSE (aacparse), TRUE);
+
     *framesize = avail;
     return TRUE;
   }
@@ -654,6 +658,9 @@ gst_aacparse_parse_frame (GstBaseParse * parse, GstBuffer * buffer)
 
   aacparse = GST_AACPARSE (parse);
 
+  if (G_UNLIKELY (aacparse->header_type != DSPAAC_HEADER_ADTS))
+    return ret;
+
   gst_aacparse_parse_adts_header (aacparse, GST_BUFFER_DATA (buffer),
       &rate, &channels, NULL, NULL);
   GST_LOG_OBJECT (aacparse, "rate: %d, chans: %d", rate, channels);
@@ -673,7 +680,6 @@ gst_aacparse_parse_frame (GstBaseParse * parse, GstBuffer * buffer)
         aacparse->sample_rate, 1024, 2, 2);
   }
 
-  gst_buffer_set_caps (buffer, GST_PAD_CAPS (parse->srcpad));
   return ret;
 }
 

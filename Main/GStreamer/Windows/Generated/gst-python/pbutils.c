@@ -682,26 +682,6 @@ _wrap_gst_discoverer_stream_info_get_stream_type_nick(PyGstMiniObject *self)
     return Py_None;
 }
 
-#line 373 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
-static PyObject *
-_wrap_gst_discoverer_container_info_get_streams(PyGstMiniObject * self)
-{
-    GList *res, *tmp;
-    PyObject *pyres;
-
-    res = gst_discoverer_container_info_get_streams(GST_DISCOVERER_STREAM_INFO (self->obj));
-
-    pyres = PyList_New(0);
-    for (tmp = res; tmp; tmp = tmp->next) {
-	PyList_Append(pyres, pygstminiobject_new((GstMiniObject*) tmp->data));
-    }
-    if (res)
-	gst_discoverer_stream_info_list_free(res);
-    return pyres;
-}
-#line 703 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
-
-
 static const PyMethodDef _PyGstDiscovererStreamInfo_methods[] = {
     { "get_previous", (PyCFunction)_wrap_gst_discoverer_stream_info_get_previous, METH_NOARGS,
       NULL },
@@ -714,8 +694,6 @@ static const PyMethodDef _PyGstDiscovererStreamInfo_methods[] = {
     { "get_misc", (PyCFunction)_wrap_gst_discoverer_stream_info_get_misc, METH_NOARGS,
       NULL },
     { "get_stream_type_nick", (PyCFunction)_wrap_gst_discoverer_stream_info_get_stream_type_nick, METH_NOARGS,
-      NULL },
-    { "container_info_get_streams", (PyCFunction)_wrap_gst_discoverer_container_info_get_streams, METH_NOARGS,
       NULL },
     { NULL, NULL, 0, NULL }
 };
@@ -769,6 +747,32 @@ PyTypeObject PyGstDiscovererStreamInfo_Type = {
 
 /* ----------- GstDiscovererContainerInfo ----------- */
 
+#line 373 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
+static PyObject *
+_wrap_gst_discoverer_container_info_get_streams(PyGstMiniObject * self)
+{
+    GList *res, *tmp;
+    PyObject *pyres;
+
+    res = gst_discoverer_container_info_get_streams(GST_DISCOVERER_CONTAINER_INFO (self->obj));
+
+    pyres = PyList_New(0);
+    for (tmp = res; tmp; tmp = tmp->next) {
+	PyList_Append(pyres, pygstminiobject_new((GstMiniObject*) tmp->data));
+    }
+    if (res)
+	gst_discoverer_stream_info_list_free(res);
+    return pyres;
+}
+#line 768 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+
+
+static const PyMethodDef _PyGstDiscovererContainerInfo_methods[] = {
+    { "get_streams", (PyCFunction)_wrap_gst_discoverer_container_info_get_streams, METH_NOARGS,
+      NULL },
+    { NULL, NULL, 0, NULL }
+};
+
 PyTypeObject PyGstDiscovererContainerInfo_Type = {
     PyObject_HEAD_INIT(NULL)
     0,                                 /* ob_size */
@@ -799,7 +803,7 @@ PyTypeObject PyGstDiscovererContainerInfo_Type = {
     offsetof(PyGstMiniObject, weakreflist),             /* tp_weaklistoffset */
     (getiterfunc)0,          /* tp_iter */
     (iternextfunc)0,     /* tp_iternext */
-    (struct PyMethodDef*)NULL, /* tp_methods */
+    (struct PyMethodDef*)_PyGstDiscovererContainerInfo_methods, /* tp_methods */
     (struct PyMemberDef*)0,              /* tp_members */
     (struct PyGetSetDef*)0,  /* tp_getset */
     NULL,                              /* tp_base */
@@ -1213,7 +1217,7 @@ _wrap_gst_install_plugins_async(PyGObject *self, PyObject *args)
     py_ret = pyg_enum_from_gtype(GST_TYPE_INSTALL_PLUGINS_RETURN, ret);
     return py_ret;
 }
-#line 1217 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 1221 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
 
 
 #line 99 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.override"
@@ -1281,7 +1285,7 @@ _wrap_gst_install_plugins_sync(PyGObject *self, PyObject *args, PyObject *kwargs
     py_ret = pyg_enum_from_gtype(GST_TYPE_INSTALL_PLUGINS_RETURN, ret);
     return py_ret;
 }
-#line 1285 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 1289 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
 
 
 static PyObject *
@@ -1566,7 +1570,7 @@ _wrap_gst_plugins_base_version (PyObject *self)
 
     return py_tuple;
 }
-#line 1570 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 1574 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
 
 
 static PyObject *
@@ -2025,7 +2029,7 @@ pypbutils_register_classes(PyObject *d)
     }
 
 
-#line 2029 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
+#line 2033 "..\\..\\..\\Source\\gst-python\\gst\\pbutils.c"
     pyg_register_boxed(d, "InstallPluginsContext", GST_TYPE_INSTALL_PLUGINS_CONTEXT, &PyGstInstallPluginsContext_Type);
     pygobject_register_class(d, "GstDiscoverer", GST_TYPE_DISCOVERER, &PyGstDiscoverer_Type, Py_BuildValue("(O)", &PyGObject_Type));
     pygstminiobject_register_class(d, "GstDiscovererInfo", GST_TYPE_DISCOVERER_INFO, &PyGstDiscovererInfo_Type, Py_BuildValue("(O)", &PyGstMiniObject_Type));

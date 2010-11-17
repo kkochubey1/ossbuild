@@ -66,30 +66,31 @@ enum
   PROP_LAST
 };
 
+static const GEnumValue methods_types[] = {
+  {GST_DEINTERLACE_TOMSMOCOMP, "Motion Adaptive: Motion Search",
+      "tomsmocomp"},
+  {GST_DEINTERLACE_GREEDY_H, "Motion Adaptive: Advanced Detection",
+      "greedyh"},
+  {GST_DEINTERLACE_GREEDY_L, "Motion Adaptive: Simple Detection", "greedyl"},
+  {GST_DEINTERLACE_VFIR, "Blur Vertical", "vfir"},
+  {GST_DEINTERLACE_LINEAR, "Television: Full resolution", "linear"},
+  {GST_DEINTERLACE_LINEAR_BLEND, "Blur: Temporal (Do Not Use)",
+      "linearblend"},
+  {GST_DEINTERLACE_SCALER_BOB, "Double lines", "scalerbob"},
+  {GST_DEINTERLACE_WEAVE, "Weave (Do Not Use)", "weave"},
+  {GST_DEINTERLACE_WEAVE_TFF, "Progressive: Top Field First (Do Not Use)",
+      "weavetff"},
+  {GST_DEINTERLACE_WEAVE_BFF, "Progressive: Bottom Field First (Do Not Use)",
+      "weavebff"},
+  {0, NULL, NULL},
+};
+
+
 #define GST_TYPE_DEINTERLACE_METHODS (gst_deinterlace_methods_get_type ())
 static GType
 gst_deinterlace_methods_get_type (void)
 {
   static GType deinterlace_methods_type = 0;
-
-  static const GEnumValue methods_types[] = {
-    {GST_DEINTERLACE_TOMSMOCOMP, "Motion Adaptive: Motion Search",
-        "tomsmocomp"},
-    {GST_DEINTERLACE_GREEDY_H, "Motion Adaptive: Advanced Detection",
-        "greedyh"},
-    {GST_DEINTERLACE_GREEDY_L, "Motion Adaptive: Simple Detection", "greedyl"},
-    {GST_DEINTERLACE_VFIR, "Blur Vertical", "vfir"},
-    {GST_DEINTERLACE_LINEAR, "Television: Full resolution", "linear"},
-    {GST_DEINTERLACE_LINEAR_BLEND, "Blur: Temporal (Do Not Use)",
-        "linearblend"},
-    {GST_DEINTERLACE_SCALER_BOB, "Double lines", "scalerbob"},
-    {GST_DEINTERLACE_WEAVE, "Weave (Do Not Use)", "weave"},
-    {GST_DEINTERLACE_WEAVE_TFF, "Progressive: Top Field First (Do Not Use)",
-        "weavetff"},
-    {GST_DEINTERLACE_WEAVE_BFF, "Progressive: Bottom Field First (Do Not Use)",
-        "weavebff"},
-    {0, NULL, NULL},
-  };
 
   if (!deinterlace_methods_type) {
     deinterlace_methods_type =
@@ -209,6 +210,8 @@ static gboolean gst_deinterlace_src_event (GstPad * pad, GstEvent * event);
 static gboolean gst_deinterlace_src_query (GstPad * pad, GstQuery * query);
 static const GstQueryType *gst_deinterlace_src_query_types (GstPad * pad);
 
+static GstFlowReturn gst_deinterlace_output_frame (GstDeinterlace * self,
+    gboolean flushing);
 static void gst_deinterlace_reset (GstDeinterlace * self);
 static void gst_deinterlace_update_qos (GstDeinterlace * self,
     gdouble proportion, GstClockTimeDiff diff, GstClockTime time);
@@ -575,7 +578,8 @@ gst_deinterlace_init (GstDeinterlace * self, GstDeinterlaceClass * klass)
   gst_element_add_pad (GST_ELEMENT (self), self->srcpad);
 
   self->mode = DEFAULT_MODE;
-  gst_deinterlace_set_method (self, DEFAULT_METHOD);
+  self->user_set_method_id = DEFAULT_METHOD;
+  gst_deinterlace_set_method (self, self->user_set_method_id);
   self->fields = DEFAULT_FIELDS;
   self->field_layout = DEFAULT_FIELD_LAYOUT;
 
@@ -585,25 +589,33 @@ gst_deinterlace_init (GstDeinterlace * self, GstDeinterlaceClass * klass)
 }
 
 static void
-gst_deinterlace_reset_history (GstDeinterlace * self)
+gst_deinterlace_reset_history (GstDeinterlace * self, gboolean drop_all)
 {
   gint i;
 
-  GST_DEBUG_OBJECT (self, "Resetting history");
+  if (drop_all) {
+    GST_DEBUG_OBJECT (self, "Resetting history (count %d)",
+        self->history_count);
 
-  for (i = 0; i < self->history_count; i++) {
-    if (self->field_history[i].buf) {
-      gst_buffer_unref (self->field_history[i].buf);
-      self->field_history[i].buf = NULL;
+    for (i = 0; i < self->history_count; i++) {
+      if (self->field_history[i].buf) {
+        gst_buffer_unref (self->field_history[i].buf);
+        self->field_history[i].buf = NULL;
+      }
     }
+  } else {
+    GST_DEBUG_OBJECT (self, "Flushing history (count %d)", self->history_count);
+    while (self->history_count > 0)
+      gst_deinterlace_output_frame (self, TRUE);
   }
   memset (self->field_history, 0,
       GST_DEINTERLACE_MAX_FIELD_HISTORY * sizeof (GstDeinterlaceField));
   self->history_count = 0;
 
-  if (self->last_buffer)
+  if (!self->still_frame_mode && self->last_buffer) {
     gst_buffer_unref (self->last_buffer);
-  self->last_buffer = NULL;
+    self->last_buffer = NULL;
+  }
 }
 
 static void
@@ -648,7 +660,7 @@ gst_deinterlace_reset (GstDeinterlace * self)
     gst_caps_unref (self->request_caps);
   self->request_caps = NULL;
 
-  gst_deinterlace_reset_history (self);
+  gst_deinterlace_reset_history (self, TRUE);
 
   gst_deinterlace_reset_qos (self);
 }
@@ -679,7 +691,8 @@ gst_deinterlace_set_property (GObject * object, guint prop_id,
       break;
     }
     case PROP_METHOD:
-      gst_deinterlace_set_method (self, g_value_get_enum (value));
+      self->user_set_method_id = g_value_get_enum (value);
+      gst_deinterlace_set_method (self, self->user_set_method_id);
       break;
     case PROP_FIELDS:{
       gint new_fields;
@@ -718,7 +731,7 @@ gst_deinterlace_get_property (GObject * object, guint prop_id,
       g_value_set_enum (value, self->mode);
       break;
     case PROP_METHOD:
-      g_value_set_enum (value, self->method_id);
+      g_value_set_enum (value, self->user_set_method_id);
       break;
     case PROP_FIELDS:
       g_value_set_enum (value, self->fields);
@@ -941,49 +954,36 @@ gst_deinterlace_do_qos (GstDeinterlace * self, GstClockTime timestamp)
 }
 
 static GstFlowReturn
-gst_deinterlace_chain (GstPad * pad, GstBuffer * buf)
+gst_deinterlace_output_frame (GstDeinterlace * self, gboolean flushing)
 {
-  GstDeinterlace *self = GST_DEINTERLACE (GST_PAD_PARENT (pad));
   GstClockTime timestamp;
   GstFlowReturn ret = GST_FLOW_OK;
   gint fields_required = 0;
   gint cur_field_idx = 0;
-  GstBuffer *outbuf;
+  GstBuffer *buf, *outbuf;
 
-  GST_OBJECT_LOCK (self);
-  if (self->reconfigure) {
-    if (self->new_fields != -1)
-      self->fields = self->new_fields;
-    if (self->new_mode != -1)
-      self->mode = self->new_mode;
-    self->new_mode = self->new_fields = -1;
-
-    self->reconfigure = FALSE;
-    GST_OBJECT_UNLOCK (self);
-    if (GST_PAD_CAPS (self->srcpad))
-      gst_deinterlace_setcaps (self->sinkpad, GST_PAD_CAPS (self->sinkpad));
-  } else {
-    GST_OBJECT_UNLOCK (self);
-  }
-
-  if (self->still_frame_mode || self->passthrough)
-    return gst_pad_push (self->srcpad, buf);
-
-  if (GST_BUFFER_FLAG_IS_SET (buf, GST_BUFFER_FLAG_DISCONT)) {
-    GST_DEBUG_OBJECT (self, "DISCONT buffer, resetting history");
-    gst_deinterlace_reset_history (self);
-  }
-
-  gst_deinterlace_push_history (self, buf);
-  buf = NULL;
-
+  gst_deinterlace_set_method (self, self->user_set_method_id);
   fields_required = gst_deinterlace_method_get_fields_required (self->method);
 
-  /* Not enough fields in the history */
   if (self->history_count < fields_required) {
-    GST_DEBUG_OBJECT (self, "Need more fields (have %d, need %d)",
-        self->history_count, fields_required);
-    return GST_FLOW_OK;
+    if (flushing) {
+      /* FIXME: if there are any methods implemented that output different
+       * dimensions (e.g. half height) that require more than one field of
+       * history, it is desirable to degrade to something that outputs
+       * half-height also */
+      gst_deinterlace_set_method (self,
+          self->history_count >= 2 ?
+          GST_DEINTERLACE_VFIR : GST_DEINTERLACE_LINEAR);
+      fields_required =
+          gst_deinterlace_method_get_fields_required (self->method);
+      GST_DEBUG_OBJECT (self, "Flushing field(s) using %s method",
+          methods_types[self->method_id].value_nick);
+    } else {
+      /* Not enough fields in the history */
+      GST_DEBUG_OBJECT (self, "Need more fields (have %d, need %d)",
+          self->history_count, fields_required);
+      return GST_FLOW_OK;
+    }
   }
 
   while (self->history_count >= fields_required) {
@@ -1149,6 +1149,41 @@ gst_deinterlace_chain (GstPad * pad, GstBuffer * buf)
   }
 
   return ret;
+}
+
+static GstFlowReturn
+gst_deinterlace_chain (GstPad * pad, GstBuffer * buf)
+{
+  GstDeinterlace *self = GST_DEINTERLACE (GST_PAD_PARENT (pad));
+
+  GST_OBJECT_LOCK (self);
+  if (self->reconfigure) {
+    if (self->new_fields != -1)
+      self->fields = self->new_fields;
+    if (self->new_mode != -1)
+      self->mode = self->new_mode;
+    self->new_mode = self->new_fields = -1;
+
+    self->reconfigure = FALSE;
+    GST_OBJECT_UNLOCK (self);
+    if (GST_PAD_CAPS (self->srcpad))
+      gst_deinterlace_setcaps (self->sinkpad, GST_PAD_CAPS (self->sinkpad));
+  } else {
+    GST_OBJECT_UNLOCK (self);
+  }
+
+  if (self->still_frame_mode || self->passthrough)
+    return gst_pad_push (self->srcpad, buf);
+
+  if (GST_BUFFER_FLAG_IS_SET (buf, GST_BUFFER_FLAG_DISCONT)) {
+    GST_DEBUG_OBJECT (self, "DISCONT buffer, resetting history");
+    gst_deinterlace_reset_history (self, FALSE);
+  }
+
+  gst_deinterlace_push_history (self, buf);
+  buf = NULL;
+
+  return gst_deinterlace_output_frame (self, FALSE);
 }
 
 static gint
@@ -1341,6 +1376,8 @@ gst_deinterlace_getcaps (GstPad * pad)
 
   GST_DEBUG_OBJECT (pad, "Returning caps %" GST_PTR_FORMAT, ret);
 
+  gst_object_unref (self);
+
   return ret;
 
 error:
@@ -1388,6 +1425,8 @@ gst_deinterlace_setcaps (GstPad * pad, GstCaps * caps)
     othercaps = gst_caps_make_writable (othercaps);
     gst_caps_set_simple (othercaps, "interlaced", G_TYPE_BOOLEAN, FALSE, NULL);
   }
+
+  gst_deinterlace_reset_history (self, FALSE);
 
   if (!gst_pad_set_caps (otherpad, othercaps))
     goto caps_not_accepted;
@@ -1442,7 +1481,8 @@ gst_deinterlace_sink_event (GstPad * pad, GstEvent * event)
   gboolean res = TRUE;
   GstDeinterlace *self = GST_DEINTERLACE (gst_pad_get_parent (pad));
 
-  GST_LOG_OBJECT (pad, "received %s event", GST_EVENT_TYPE_NAME (event));
+  GST_LOG_OBJECT (pad, "received %s event: %" GST_PTR_FORMAT,
+      GST_EVENT_TYPE_NAME (event), event);
 
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_NEWSEGMENT:
@@ -1454,6 +1494,10 @@ gst_deinterlace_sink_event (GstPad * pad, GstEvent * event)
 
       gst_event_parse_new_segment_full (event, &is_update, &rate, &applied_rate,
           &fmt, &start, &end, &base);
+
+      gst_deinterlace_reset_qos (self);
+      gst_deinterlace_reset_history (self, FALSE);
+
       if (fmt == GST_FORMAT_TIME) {
         GST_DEBUG_OBJECT (pad,
             "Got NEWSEGMENT event in GST_FORMAT_TIME, passing on (%"
@@ -1465,8 +1509,6 @@ gst_deinterlace_sink_event (GstPad * pad, GstEvent * event)
         gst_segment_init (&self->segment, GST_FORMAT_UNDEFINED);
       }
 
-      gst_deinterlace_reset_qos (self);
-      gst_deinterlace_reset_history (self);
       res = gst_pad_push_event (self->srcpad, event);
       break;
     }
@@ -1482,6 +1524,7 @@ gst_deinterlace_sink_event (GstPad * pad, GstEvent * event)
 
           GST_DEBUG_OBJECT (self, "Handling still frame");
           self->still_frame_mode = TRUE;
+          gst_deinterlace_reset_history (self, FALSE);
           if (self->last_buffer) {
             ret =
                 gst_pad_push (self->srcpad, gst_buffer_ref (self->last_buffer));
@@ -1498,7 +1541,7 @@ gst_deinterlace_sink_event (GstPad * pad, GstEvent * event)
     }
       /* fall through */
     case GST_EVENT_EOS:
-      gst_deinterlace_reset_history (self);
+      gst_deinterlace_reset_history (self, FALSE);
 
       /* fall through */
     default:
@@ -1512,7 +1555,7 @@ gst_deinterlace_sink_event (GstPad * pad, GstEvent * event)
       }
       gst_deinterlace_reset_qos (self);
       res = gst_pad_push_event (self->srcpad, event);
-      gst_deinterlace_reset_history (self);
+      gst_deinterlace_reset_history (self, TRUE);
       break;
   }
 

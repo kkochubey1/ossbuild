@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Ole André Vadla Ravnås <ole.andre.ravnas@tandberg.com>
+ * Copyright (C) 2009-2010 Ole André Vadla Ravnås <oravnas@cisco.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,8 @@
 #endif
 
 #ifdef HAVE_IOS
-#include "iphonecamerasrc.h"
+#include "avfvideosrc.h"
+#include "celvideosrc.h"
 #else
 #include "qtkitvideosrc.h"
 #include "miovideosrc.h"
@@ -50,8 +51,10 @@ plugin_init (GstPlugin * plugin)
   gboolean res = TRUE;
 
 #ifdef HAVE_IOS
-  res = gst_element_register (plugin, "iphonecamerasrc", GST_RANK_NONE,
-      GST_TYPE_IPHONE_CAMERA_SRC);
+  res = gst_element_register (plugin, "avfvideosrc", GST_RANK_NONE,
+      GST_TYPE_AVF_VIDEO_SRC);
+  res &= gst_element_register (plugin, "celvideosrc", GST_RANK_NONE,
+      GST_TYPE_CEL_VIDEO_SRC);
 #else
   enable_mt_mode ();
 

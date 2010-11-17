@@ -188,6 +188,8 @@ gst_rsvg_decode_image (GstRsvgDec * rsvg, const guint8 * data, guint size,
   gdouble scalex, scaley;
   const gchar *title = NULL, *comment = NULL;
 
+  GST_LOG_OBJECT (rsvg, "parsing svg");
+
   handle = rsvg_handle_new_from_data (data, size, &error);
   if (!handle) {
     GST_ERROR_OBJECT (rsvg, "Failed to parse SVG image: %s", error->message);
@@ -199,6 +201,8 @@ gst_rsvg_decode_image (GstRsvgDec * rsvg, const guint8 * data, guint size,
   comment = rsvg_handle_get_desc (handle);
 
   if (title || comment) {
+    GST_LOG_OBJECT (rsvg, "adding tags");
+
     if (!rsvg->pending_tags)
       rsvg->pending_tags = gst_tag_list_new ();
 
@@ -214,6 +218,8 @@ gst_rsvg_decode_image (GstRsvgDec * rsvg, const guint8 * data, guint size,
   if (rsvg->width != dimension.width || rsvg->height != dimension.height) {
     GstCaps *caps1, *caps2, *caps3;
     GstStructure *s;
+
+    GST_LOG_OBJECT (rsvg, "resolution changed, updating caps");
 
     caps1 = gst_caps_copy (gst_pad_get_pad_template_caps (rsvg->srcpad));
     caps2 = gst_pad_peer_get_caps (rsvg->srcpad);
@@ -280,6 +286,8 @@ gst_rsvg_decode_image (GstRsvgDec * rsvg, const guint8 * data, guint size,
     return ret;
   }
 
+  GST_LOG_OBJECT (rsvg, "render image at %d x %d", rsvg->height, rsvg->width);
+
   surface =
       cairo_image_surface_create_for_data (GST_BUFFER_DATA (*buffer),
       CAIRO_FORMAT_ARGB32, rsvg->width, rsvg->height, rsvg->width * 4);
@@ -315,7 +323,7 @@ gst_rsvg_decode_image (GstRsvgDec * rsvg, const guint8 * data, guint size,
 static GstFlowReturn
 gst_rsvg_dec_chain (GstPad * pad, GstBuffer * buffer)
 {
-  GstRsvgDec *rsvg = GST_RSVG_DEC (gst_pad_get_parent (pad));
+  GstRsvgDec *rsvg = GST_RSVG_DEC (GST_PAD_PARENT (pad));
   gboolean completed = FALSE;
   const guint8 *data;
   guint size;
@@ -347,6 +355,8 @@ gst_rsvg_dec_chain (GstPad * pad, GstBuffer * buffer)
 
     if (completed) {
       GstBuffer *outbuf = NULL;
+
+      GST_LOG_OBJECT (rsvg, "have complete svg of %u bytes", size);
 
       data = gst_adapter_peek (rsvg->adapter, size);
 
@@ -387,6 +397,8 @@ gst_rsvg_dec_chain (GstPad * pad, GstBuffer * buffer)
         rsvg->pending_tags = NULL;
       }
 
+      GST_LOG_OBJECT (rsvg, "image rendered okay");
+
       ret = gst_pad_push (rsvg->srcpad, outbuf);
       if (ret != GST_FLOW_OK)
         break;
@@ -398,8 +410,6 @@ gst_rsvg_dec_chain (GstPad * pad, GstBuffer * buffer)
       break;
     }
   }
-
-  gst_object_unref (rsvg);
 
   return GST_FLOW_OK;
 }
