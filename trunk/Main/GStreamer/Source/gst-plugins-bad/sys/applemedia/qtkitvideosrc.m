@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Ole André Vadla Ravnås <ole.andre.ravnas@tandberg.com>
+ * Copyright (C) 2009 Ole André Vadla Ravnås <oravnas@cisco.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +19,8 @@
 
 #include "qtkitvideosrc.h"
 
+#import "bufferfactory.h"
+
 #import <QTKit/QTKit.h>
 
 #define DEFAULT_DEVICE_INDEX  -1
@@ -31,13 +33,6 @@
 
 GST_DEBUG_CATEGORY (gst_qtkit_video_src_debug);
 #define GST_CAT_DEFAULT gst_qtkit_video_src_debug
-
-static const GstElementDetails element_details = {
-    "QTKitVideoSrc",
-    "Source/Video",
-    "Stream data from a video capture device through QTKit",
-    "Ole André Vadla Ravnås <ole.andre.ravnas@tandberg.com>"
-};
 
 static GstStaticPadTemplate src_template = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
@@ -100,6 +95,7 @@ static GstPushSrcClass * parent_class;
 
   int deviceIndex;
 
+  GstAMBufferFactory *bufferFactory;
   QTCaptureSession *session;
   QTCaptureDeviceInput *input;
   QTCaptureDecompressedVideoOutput *output;
@@ -112,7 +108,6 @@ static GstPushSrcClass * parent_class;
   gint width, height;
   GstClockTime duration;
   guint64 offset;
-  GstClockTime prev_ts;
 }
 
 - (id)init;
@@ -130,7 +125,7 @@ static GstPushSrcClass * parent_class;
 - (BOOL)query:(GstQuery *)query;
 - (GstStateChangeReturn)changeState:(GstStateChange)transition;
 - (GstFlowReturn)create:(GstBuffer **)buf;
-- (BOOL)timestampBuffer:(GstBuffer *)buf;
+- (void)timestampBuffer:(GstBuffer *)buf;
 - (void)captureOutput:(QTCaptureOutput *)captureOutput
   didOutputVideoFrame:(CVImageBufferRef)videoFrame
      withSampleBuffer:(QTSampleBuffer *)sampleBuffer
@@ -167,27 +162,35 @@ static GstPushSrcClass * parent_class;
 
 - (BOOL)openDevice
 {
-  NSString *mediaType;
+  GError *gerror;
+  NSString *mediaType = QTMediaTypeVideo;
   NSError *error = nil;
 
-  mediaType = QTMediaTypeVideo;
+  bufferFactory = [[GstAMBufferFactory alloc] initWithError:&gerror];
+  if (bufferFactory == nil) {
+    GST_ELEMENT_ERROR (element, RESOURCE, FAILED, ("API error"),
+        ("%s", gerror->message));
+    g_clear_error (&gerror);
+    goto openFailed;
+  }
 
   if (deviceIndex == -1) {
     device = [QTCaptureDevice defaultInputDeviceWithMediaType:mediaType];
     if (device == nil) {
       GST_ELEMENT_ERROR (element, RESOURCE, NOT_FOUND,
                          ("No video capture devices found"), (NULL));
-      return NO;
+      goto openFailed;
     }
   } else {
     NSArray *devices = [QTCaptureDevice inputDevicesWithMediaType:mediaType];
     if (deviceIndex >= [devices count]) {
       GST_ELEMENT_ERROR (element, RESOURCE, NOT_FOUND,
                          ("Invalid video capture device index"), (NULL));
-      return NO;
+      goto openFailed;
     }
     device = [devices objectAtIndex:deviceIndex];
   }
+  [device retain];
 
   GST_INFO ("Opening '%s'", [[device localizedDisplayName] UTF8String]);
 
@@ -195,10 +198,22 @@ static GstPushSrcClass * parent_class;
     GST_ELEMENT_ERROR (element, RESOURCE, NOT_FOUND,
         ("Failed to open device '%s'",
             [[device localizedDisplayName] UTF8String]), (NULL));
-    return NO;
+    goto openFailed;
   }
 
   return YES;
+
+  /* ERRORS */
+openFailed:
+  {
+    [device release];
+    device = nil;
+
+    [bufferFactory release];
+    bufferFactory = nil;
+
+    return NO;
+  }
 }
 
 - (void)closeDevice
@@ -214,7 +229,11 @@ static GstPushSrcClass * parent_class;
   [output release];
   output = nil;
 
+  [device release];
   device = nil;
+
+  [bufferFactory release];
+  bufferFactory = nil;
 }
 
 - (BOOL)setCaps:(GstCaps *)caps
@@ -268,7 +287,6 @@ static GstPushSrcClass * parent_class;
 
   duration = gst_util_uint64_scale (GST_SECOND, DEVICE_FPS_D, DEVICE_FPS_N);
   offset = 0;
-  prev_ts = GST_CLOCK_TIME_NONE;
 
   return YES;
 }
@@ -278,8 +296,6 @@ static GstPushSrcClass * parent_class;
   [session stopRunning];
   [output setDelegate:nil];
 
-  for (id frame in queue)
-    CVBufferRelease ((CVImageBufferRef) frame);
   [queueLock release];
   queueLock = nil;
   [queue release];
@@ -358,12 +374,9 @@ static GstPushSrcClass * parent_class;
     return;
   }
 
-  if ([queue count] == FRAME_QUEUE_SIZE) {
-    CVBufferRelease ((CVImageBufferRef) [queue lastObject]);
+  if ([queue count] == FRAME_QUEUE_SIZE)
     [queue removeLastObject];
-  }
 
-  CVBufferRetain (videoFrame);
   [queue insertObject:(id)videoFrame
               atIndex:0];
 
@@ -372,37 +385,29 @@ static GstPushSrcClass * parent_class;
 
 - (GstFlowReturn)create:(GstBuffer **)buf
 {
-  *buf = NULL;
+  CVPixelBufferRef frame;
 
-  do {
-    CVPixelBufferRef frame;
+  [queueLock lockWhenCondition:HAS_FRAME_OR_STOP_REQUEST];
+  if (stopRequest) {
+    [queueLock unlock];
+    return GST_FLOW_WRONG_STATE;
+  }
 
-    [queueLock lockWhenCondition:HAS_FRAME_OR_STOP_REQUEST];
-    if (stopRequest) {
-      [queueLock unlock];
-      return GST_FLOW_WRONG_STATE;
-    }
+  frame = (CVPixelBufferRef) [queue lastObject];
+  CVBufferRetain (frame);
+  [queue removeLastObject];
+  [queueLock unlockWithCondition:
+      ([queue count] == 0) ? NO_FRAMES : HAS_FRAME_OR_STOP_REQUEST];
 
-    frame = (CVPixelBufferRef) [queue lastObject];
-    [queue removeLastObject];
-    [queueLock unlockWithCondition:
-        ([queue count] == 0) ? NO_FRAMES : HAS_FRAME_OR_STOP_REQUEST];
+  *buf = [bufferFactory createGstBufferForCoreVideoBuffer:frame];
+  CVBufferRelease (frame);
 
-    if (*buf != NULL)
-      gst_buffer_unref (*buf);
-    *buf = gst_buffer_new_and_alloc (
-        CVPixelBufferGetBytesPerRow (frame) * CVPixelBufferGetHeight (frame));
-    CVPixelBufferLockBaseAddress (frame, 0);
-    memcpy (GST_BUFFER_DATA (*buf), CVPixelBufferGetBaseAddress (frame),
-        GST_BUFFER_SIZE (*buf));
-    CVPixelBufferUnlockBaseAddress (frame, 0);
-    CVBufferRelease (frame);
-  } while (![self timestampBuffer:*buf]);
+  [self timestampBuffer:*buf];
 
   return GST_FLOW_OK;
 }
 
-- (BOOL)timestampBuffer:(GstBuffer *)buf
+- (void)timestampBuffer:(GstBuffer *)buf
 {
   GstClock *clock;
   GstClockTime timestamp;
@@ -418,8 +423,6 @@ static GstPushSrcClass * parent_class;
   GST_OBJECT_UNLOCK (element);
 
   if (clock != NULL) {
-
-    /* The time according to the current clock */
     timestamp = gst_clock_get_time (clock) - timestamp;
     if (timestamp > duration)
       timestamp -= duration;
@@ -428,55 +431,12 @@ static GstPushSrcClass * parent_class;
 
     gst_object_unref (clock);
     clock = NULL;
-
-    /* Unless it's the first frame, align the current timestamp on a multiple
-     * of duration since the previous */
-    if (GST_CLOCK_TIME_IS_VALID (prev_ts)) {
-      GstClockTime delta;
-      guint delta_remainder, delta_offset;
-
-      if (timestamp < prev_ts) {
-        GST_DEBUG_OBJECT (element, "clock is ticking backwards");
-        return NO;
-      }
-
-      /* Round to a duration boundary */
-      delta = timestamp - prev_ts;
-      delta_remainder = delta % duration;
-
-      if (delta_remainder < duration / 3)
-        timestamp -= delta_remainder;
-      else
-        timestamp += duration - delta_remainder;
-
-      /* How many frames are we off then? */
-      delta = timestamp - prev_ts;
-      delta_offset = delta / duration;
-
-      if (delta_offset == 1)    /* perfect */
-        GST_BUFFER_FLAG_UNSET (buf, GST_BUFFER_FLAG_DISCONT);
-      else if (delta_offset > 1) {
-        guint lost = delta_offset - 1;
-        GST_DEBUG_OBJECT (element, "lost %d frame%s, setting discont flag",
-            lost, (lost > 1) ? "s" : "");
-        GST_BUFFER_FLAG_SET (buf, GST_BUFFER_FLAG_DISCONT);
-      } else if (delta_offset == 0) {   /* overproduction, skip this frame */
-        GST_DEBUG_OBJECT (element, "skipping frame");
-        return NO;
-      }
-
-      offset += delta_offset;
-    }
-
-    prev_ts = timestamp;
   }
 
-  GST_BUFFER_OFFSET (buf) = offset;
+  GST_BUFFER_OFFSET (buf) = offset++;
   GST_BUFFER_OFFSET_END (buf) = GST_BUFFER_OFFSET (buf) + 1;
   GST_BUFFER_TIMESTAMP (buf) = timestamp;
   GST_BUFFER_DURATION (buf) = duration;
-
-  return YES;
 }
 
 @end
@@ -517,7 +477,10 @@ gst_qtkit_video_src_base_init (gpointer gclass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
 
-  gst_element_class_set_details (element_class, &element_details);
+  gst_element_class_set_details_simple (element_class,
+      "Video Source (QTKit)", "Source/Video",
+      "Reads frames from a Mac OS X QTKit device",
+      "Ole André Vadla Ravnås <oravnas@cisco.com>");
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_template));
@@ -708,4 +671,3 @@ gst_qtkit_video_src_create (GstPushSrc * pushsrc, GstBuffer ** buf)
 
   return ret;
 }
-

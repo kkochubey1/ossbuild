@@ -34,7 +34,8 @@ gst_core_media_buffer_finalize (GstMiniObject * mini_object)
 
   if (self->image_buf != NULL) {
     GstCVApi *cv = self->ctx->cv;
-    cv->CVPixelBufferUnlockBaseAddress (self->image_buf, 0);
+    cv->CVPixelBufferUnlockBaseAddress (self->image_buf,
+        kCVPixelBufferLock_ReadOnly);
   }
   self->ctx->cm->FigSampleBufferRelease (self->sample_buf);
   g_object_unref (self->ctx);
@@ -44,28 +45,30 @@ gst_core_media_buffer_finalize (GstMiniObject * mini_object)
 }
 
 GstBuffer *
-gst_core_media_buffer_new (GstCoreMediaCtx * ctx, FigSampleBuffer * sample_buf)
+gst_core_media_buffer_new (GstCoreMediaCtx * ctx, CMSampleBufferRef sample_buf)
 {
   GstCVApi *cv = ctx->cv;
   GstCMApi *cm = ctx->cm;
   CVImageBufferRef image_buf;
   CVPixelBufferRef pixel_buf;
-  FigBlockBuffer *block_buf;
+  CMBlockBufferRef block_buf;
   Byte *data = NULL;
   UInt32 size;
-  FigStatus status;
+  OSStatus status;
   GstCoreMediaBuffer *buf;
 
-  image_buf = cm->FigSampleBufferGetImageBuffer (sample_buf);
+  image_buf = cm->CMSampleBufferGetImageBuffer (sample_buf);
   pixel_buf = NULL;
-  block_buf = cm->FigSampleBufferGetDataBuffer (sample_buf);
+  block_buf = cm->CMSampleBufferGetDataBuffer (sample_buf);
 
   if (image_buf != NULL &&
       CFGetTypeID (image_buf) == cv->CVPixelBufferGetTypeID ()) {
     pixel_buf = (CVPixelBufferRef) image_buf;
 
-    if (cv->CVPixelBufferLockBaseAddress (pixel_buf, 0) != kCVReturnSuccess)
+    if (cv->CVPixelBufferLockBaseAddress (pixel_buf,
+            kCVPixelBufferLock_ReadOnly) != kCVReturnSuccess) {
       goto error;
+    }
 
     if (cv->CVPixelBufferIsPlanar (pixel_buf)) {
       gint plane_count, plane_idx;
@@ -84,10 +87,10 @@ gst_core_media_buffer_new (GstCoreMediaCtx * ctx, FigSampleBuffer * sample_buf)
           cv->CVPixelBufferGetHeight (pixel_buf);
     }
   } else if (block_buf != NULL) {
-    status = cm->FigBlockBufferGetDataPointer (block_buf, 0, 0, 0, &data);
-    if (status != kFigSuccess)
+    status = cm->CMBlockBufferGetDataPointer (block_buf, 0, 0, 0, &data);
+    if (status != noErr)
       goto error;
-    size = cm->FigBlockBufferGetDataLength (block_buf);
+    size = cm->CMBlockBufferGetDataLength (block_buf);
   } else {
     goto error;
   }

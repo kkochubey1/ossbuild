@@ -24859,16 +24859,32 @@ _wrap_gst_caps_from_string(PyObject *self, PyObject *args, PyObject *kwargs)
 }
 
 static PyObject *
-_wrap_gst_date_time_new_from_unix_epoch(PyObject *self, PyObject *args, PyObject *kwargs)
+_wrap_gst_date_time_new_from_unix_epoch_local_time(PyObject *self, PyObject *args, PyObject *kwargs)
 {
     static char *kwlist[] = { "secs", NULL };
     gint64 secs;
     GstDateTime *ret;
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"L:date_time_new_from_unix_epoch", kwlist, &secs))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"L:date_time_new_from_unix_epoch_local_time", kwlist, &secs))
         return NULL;
     pyg_begin_allow_threads;
-    ret = gst_date_time_new_from_unix_epoch(secs);
+    ret = gst_date_time_new_from_unix_epoch_local_time(secs);
+    pyg_end_allow_threads;
+    /* pyg_boxed_new handles NULL checking */
+    return pyg_boxed_new(GST_TYPE_DATE_TIME, (GstDateTime*) ret, FALSE, TRUE);
+}
+
+static PyObject *
+_wrap_gst_date_time_new_from_unix_epoch_utc(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    static char *kwlist[] = { "secs", NULL };
+    gint64 secs;
+    GstDateTime *ret;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"L:date_time_new_from_unix_epoch_utc", kwlist, &secs))
+        return NULL;
+    pyg_begin_allow_threads;
+    ret = gst_date_time_new_from_unix_epoch_utc(secs);
     pyg_end_allow_threads;
     /* pyg_boxed_new handles NULL checking */
     return pyg_boxed_new(GST_TYPE_DATE_TIME, (GstDateTime*) ret, FALSE, TRUE);
@@ -24994,7 +25010,7 @@ _wrap_gst_element_factory_make(PyObject *self, PyObject *args, PyObject *kwargs)
     g_object_unref((GObject *)ret);
     return py_ret;
 }
-#line 24998 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 25014 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 #line 662 "..\\..\\..\\Source\\gst-python\\gst\\gst.override"
@@ -25042,7 +25058,7 @@ _wrap_gst_element_register(PyObject *self, PyObject *args, PyObject *kwargs)
     ret = gst_element_register(_pygst_get_plugin(), elementname, rank, type);
     return PyBool_FromLong(ret);
 }
-#line 25046 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 25062 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 #line 73 "gstelementfactory.override"
@@ -25076,7 +25092,7 @@ _wrap_gst_element_factory_list_get_elements(PyObject *self, PyObject *args, PyOb
 
     return pyres;
 }
-#line 25080 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 25096 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 #line 105 "gstelementfactory.override"
@@ -25129,7 +25145,7 @@ _wrap_gst_element_factory_list_filter(PyObject *self, PyObject *args, PyObject *
 }
     
     
-#line 25133 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 25149 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 #line 211 "gstevent.override"
@@ -25160,7 +25176,7 @@ _wrap_gst_event_new_custom(PyObject *self, PyObject *args, PyObject *kwargs)
        gst_mini_object_unref((GstMiniObject *)ret);
     return py_ret;
 }
-#line 25164 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 25180 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 static PyObject *
@@ -25281,7 +25297,7 @@ _wrap_gst_event_new_tag(PyObject *self, PyObject *args, PyObject *kwargs)
        gst_mini_object_unref((GstMiniObject *)ret);
     return py_ret;
 }
-#line 25285 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 25301 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 static PyObject *
@@ -25384,7 +25400,7 @@ _wrap_gst_event_new_navigation(PyObject *self, PyObject *args, PyObject *kwargs)
        gst_mini_object_unref((GstMiniObject *)ret);
     return py_ret;
 }
-#line 25388 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 25404 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 static PyObject *
@@ -25588,7 +25604,7 @@ _wrap_gst_debug_log (PyObject *whatever, PyObject *string)
     Py_INCREF (Py_None);
     return Py_None;
 }
-#line 25592 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 25608 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 static PyObject *
@@ -26412,7 +26428,7 @@ _wrap_gst_flow_get_name(PyObject *self, PyObject *args, PyObject *kwargs)
     return Py_None;
 }
 
-#line 26416 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 26432 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 static PyObject *
@@ -26890,7 +26906,7 @@ _wrap_gst_structure_from_string(PyObject *self, PyObject *args, PyObject *kwargs
     /* pyg_boxed_new handles NULL checking */
     return pyg_boxed_new(GST_TYPE_STRUCTURE, ret, FALSE, TRUE);
 }
-#line 26894 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 26910 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 static PyObject *
@@ -27232,7 +27248,7 @@ _wrap_gst_type_find_new (PyObject *self, PyObject *args, PyObject *kwargs)
     return pytypefind;
 }
 
-#line 27236 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 27252 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 #line 1208 "..\\..\\..\\Source\\gst-python\\gst\\gst.override"
@@ -27367,7 +27383,7 @@ out:
     return py_res;
 }
 
-#line 27371 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 27387 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 #line 905 "..\\..\\..\\Source\\gst-python\\gst\\gst.override"
@@ -27391,7 +27407,7 @@ _wrap_gst_type_find_factory_get_list (PyObject *self)
 
     return py_list;
 }
-#line 27395 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 27411 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 static PyObject *
@@ -27836,7 +27852,7 @@ _wrap_gst_element_link_many(PyObject *self, PyObject *args)
 }
 
 
-#line 27840 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 27856 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 #line 314 "gstelement.override"
@@ -27885,7 +27901,7 @@ _wrap_gst_element_unlink_many(PyObject *self, PyObject *args)
 	Py_INCREF(Py_None);
 	return Py_None;
 }
-#line 27889 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 27905 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 #line 871 "..\\..\\..\\Source\\gst-python\\gst\\gst.override"
@@ -27921,7 +27937,7 @@ _wrap_GST_TIME_ARGS(PyObject *self, PyObject *args, PyObject *kwargs)
     g_free(ret);
     return string;
 }
-#line 27925 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 27941 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
 
 
 const PyMethodDef pygst_functions[] = {
@@ -28005,7 +28021,9 @@ const PyMethodDef pygst_functions[] = {
       NULL },
     { "caps_from_string", (PyCFunction)_wrap_gst_caps_from_string, METH_VARARGS|METH_KEYWORDS,
       NULL },
-    { "date_time_new_from_unix_epoch", (PyCFunction)_wrap_gst_date_time_new_from_unix_epoch, METH_VARARGS|METH_KEYWORDS,
+    { "date_time_new_from_unix_epoch_local_time", (PyCFunction)_wrap_gst_date_time_new_from_unix_epoch_local_time, METH_VARARGS|METH_KEYWORDS,
+      NULL },
+    { "date_time_new_from_unix_epoch_utc", (PyCFunction)_wrap_gst_date_time_new_from_unix_epoch_utc, METH_VARARGS|METH_KEYWORDS,
       NULL },
     { "date_time_new_local_time", (PyCFunction)_wrap_gst_date_time_new_local_time, METH_VARARGS|METH_KEYWORDS,
       NULL },
@@ -28407,7 +28425,7 @@ pygst_register_classes(PyObject *d)
     gst_controller_init(NULL, NULL);
 }
 
-#line 28411 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
+#line 28429 "..\\..\\..\\Source\\gst-python\\gst\\gst.c"
     pyg_register_boxed(d, "Caps", GST_TYPE_CAPS, &PyGstCaps_Type);
     pyg_register_boxed(d, "DateTime", GST_TYPE_DATE_TIME, &PyGstDateTime_Type);
     pyg_register_boxed(d, "Structure", GST_TYPE_STRUCTURE, &PyGstStructure_Type);

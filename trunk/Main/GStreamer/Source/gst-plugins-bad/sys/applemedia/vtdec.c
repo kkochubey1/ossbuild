@@ -35,19 +35,20 @@ static GstStateChangeReturn gst_vtdec_change_state (GstElement * element,
 static gboolean gst_vtdec_sink_setcaps (GstPad * pad, GstCaps * caps);
 static GstFlowReturn gst_vtdec_chain (GstPad * pad, GstBuffer * buf);
 
-static FigFormatDescription *gst_vtdec_create_format_description
+static CMFormatDescriptionRef gst_vtdec_create_format_description
     (GstVTDec * self);
-static FigFormatDescription *gst_vtdec_create_format_description_from_codec_data
-    (GstVTDec * self, GstBuffer * codec_data);
-static VTDecompressionSession *gst_vtdec_create_session (GstVTDec * self,
-    FigFormatDescription * fmt_desc);
+static CMFormatDescriptionRef
+gst_vtdec_create_format_description_from_codec_data (GstVTDec * self,
+    GstBuffer * codec_data);
+static VTDecompressionSessionRef gst_vtdec_create_session (GstVTDec * self,
+    CMFormatDescriptionRef fmt_desc);
 static void gst_vtdec_destroy_session (GstVTDec * self,
-    VTDecompressionSession ** session);
+    VTDecompressionSessionRef * session);
 static GstFlowReturn gst_vtdec_decode_buffer (GstVTDec * self, GstBuffer * buf);
 static void gst_vtdec_output_frame (void *data, gsize unk1, VTStatus result,
     gsize unk2, CVBufferRef cvbuf);
 
-static FigSampleBuffer *gst_vtdec_sample_buffer_from (GstVTDec * self,
+static CMSampleBufferRef gst_vtdec_sample_buffer_from (GstVTDec * self,
     GstBuffer * buf);
 
 static void
@@ -83,7 +84,7 @@ gst_vtdec_base_init (GstVTDecClass * klass)
       min_fps_n, min_fps_d, max_fps_n, max_fps_d, NULL);
   if (codec_details->format_id == kVTFormatH264) {
     gst_structure_set (gst_caps_get_structure (sink_caps, 0),
-        "stream-format", G_TYPE_STRING, "avc-sample", NULL);
+        "stream-format", G_TYPE_STRING, "avc", NULL);
   }
   sink_template = gst_pad_template_new ("sink", GST_PAD_SINK, GST_PAD_ALWAYS,
       sink_caps);
@@ -93,7 +94,7 @@ gst_vtdec_base_init (GstVTDecClass * klass)
       GST_PAD_SRC,
       GST_PAD_ALWAYS,
       gst_caps_new_simple ("video/x-raw-yuv",
-          "format", GST_TYPE_FOURCC, GST_MAKE_FOURCC ('Y', 'U', 'Y', '2'),
+          "format", GST_TYPE_FOURCC, GST_MAKE_FOURCC ('N', 'V', '1', '2'),
           "width", GST_TYPE_INT_RANGE, min_width, max_width,
           "height", GST_TYPE_INT_RANGE, min_height, max_height,
           "framerate", GST_TYPE_FRACTION_RANGE,
@@ -145,6 +146,8 @@ gst_vtdec_change_state (GstElement * element, GstStateChange transition)
         | GST_API_VIDEO_TOOLBOX, &error);
     if (error != NULL)
       goto api_error;
+
+    self->cur_outbufs = g_ptr_array_new ();
   }
 
   ret = GST_ELEMENT_CLASS (parent_class)->change_state (element, transition);
@@ -159,6 +162,9 @@ gst_vtdec_change_state (GstElement * element, GstStateChange transition)
     self->negotiated_fps_n = self->negotiated_fps_d = 0;
     self->caps_width = self->caps_height = 0;
     self->caps_fps_n = self->caps_fps_d = 0;
+
+    g_ptr_array_free (self->cur_outbufs, TRUE);
+    self->cur_outbufs = NULL;
 
     g_object_unref (self->ctx);
     self->ctx = NULL;
@@ -180,7 +186,7 @@ gst_vtdec_sink_setcaps (GstPad * pad, GstCaps * caps)
 {
   GstVTDec *self = GST_VTDEC_CAST (GST_PAD_PARENT (pad));
   GstStructure *structure;
-  FigFormatDescription *fmt_desc = NULL;
+  CMFormatDescriptionRef fmt_desc = NULL;
 
   structure = gst_caps_get_structure (caps, 0);
   if (!gst_structure_get_int (structure, "width", &self->negotiated_width))
@@ -298,27 +304,27 @@ pending_caps:
   return GST_FLOW_OK;
 }
 
-static FigFormatDescription *
+static CMFormatDescriptionRef
 gst_vtdec_create_format_description (GstVTDec * self)
 {
-  FigFormatDescription *fmt_desc;
-  FigStatus status;
+  CMFormatDescriptionRef fmt_desc;
+  OSStatus status;
 
-  status = self->ctx->cm->FigVideoFormatDescriptionCreate (NULL,
+  status = self->ctx->cm->CMVideoFormatDescriptionCreate (NULL,
       self->details->format_id, self->negotiated_width, self->negotiated_height,
       NULL, &fmt_desc);
-  if (status == kFigSuccess)
+  if (status == noErr)
     return fmt_desc;
   else
     return NULL;
 }
 
-static FigFormatDescription *
+static CMFormatDescriptionRef
 gst_vtdec_create_format_description_from_codec_data (GstVTDec * self,
     GstBuffer * codec_data)
 {
-  FigFormatDescription *fmt_desc;
-  FigStatus status;
+  CMFormatDescriptionRef fmt_desc;
+  OSStatus status;
 
   status =
       self->ctx->cm->
@@ -326,16 +332,16 @@ gst_vtdec_create_format_description_from_codec_data (GstVTDec * self,
       self->details->format_id, self->negotiated_width, self->negotiated_height,
       'avcC', GST_BUFFER_DATA (codec_data), GST_BUFFER_SIZE (codec_data),
       &fmt_desc);
-  if (status == kFigSuccess)
+  if (status == noErr)
     return fmt_desc;
   else
     return NULL;
 }
 
-static VTDecompressionSession *
-gst_vtdec_create_session (GstVTDec * self, FigFormatDescription * fmt_desc)
+static VTDecompressionSessionRef
+gst_vtdec_create_session (GstVTDec * self, CMFormatDescriptionRef fmt_desc)
 {
-  VTDecompressionSession *session = NULL;
+  VTDecompressionSessionRef session = NULL;
   GstCVApi *cv = self->ctx->cv;
   CFMutableDictionaryRef pb_attrs;
   VTDecompressionOutputCallback callback;
@@ -344,7 +350,7 @@ gst_vtdec_create_session (GstVTDec * self, FigFormatDescription * fmt_desc)
   pb_attrs = CFDictionaryCreateMutable (NULL, 0, &kCFTypeDictionaryKeyCallBacks,
       &kCFTypeDictionaryValueCallBacks);
   gst_vtutil_dict_set_i32 (pb_attrs, *(cv->kCVPixelBufferPixelFormatTypeKey),
-      kCVPixelFormatType_422YpCbCr8Deprecated);
+      kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange);
   gst_vtutil_dict_set_i32 (pb_attrs, *(cv->kCVPixelBufferWidthKey),
       self->negotiated_width);
   gst_vtutil_dict_set_i32 (pb_attrs, *(cv->kCVPixelBufferHeightKey),
@@ -366,7 +372,7 @@ gst_vtdec_create_session (GstVTDec * self, FigFormatDescription * fmt_desc)
 }
 
 static void
-gst_vtdec_destroy_session (GstVTDec * self, VTDecompressionSession ** session)
+gst_vtdec_destroy_session (GstVTDec * self, VTDecompressionSessionRef * session)
 {
   self->ctx->vt->VTDecompressionSessionInvalidate (*session);
   self->ctx->vt->VTDecompressionSessionRelease (*session);
@@ -377,12 +383,12 @@ static GstFlowReturn
 gst_vtdec_decode_buffer (GstVTDec * self, GstBuffer * buf)
 {
   GstVTApi *vt = self->ctx->vt;
-  FigSampleBuffer *sbuf;
+  CMSampleBufferRef sbuf;
   VTStatus status;
+  GstFlowReturn ret = GST_FLOW_OK;
+  guint i;
 
   self->cur_inbuf = buf;
-  self->cur_flowret = GST_FLOW_OK;
-
   sbuf = gst_vtdec_sample_buffer_from (self, buf);
 
   status = vt->VTDecompressionSessionDecodeFrame (self->session, sbuf, 0, 0, 0);
@@ -398,11 +404,20 @@ gst_vtdec_decode_buffer (GstVTDec * self, GstBuffer * buf)
   }
 
   self->ctx->cm->FigSampleBufferRelease (sbuf);
-
-  gst_buffer_unref (buf);
   self->cur_inbuf = NULL;
+  gst_buffer_unref (buf);
 
-  return self->cur_flowret;
+  for (i = 0; i != self->cur_outbufs->len; i++) {
+    GstBuffer *buf = g_ptr_array_index (self->cur_outbufs, i);
+
+    if (ret == GST_FLOW_OK)
+      ret = gst_pad_push (self->srcpad, buf);
+    else
+      gst_buffer_unref (buf);
+  }
+  g_ptr_array_set_size (self->cur_outbufs, 0);
+
+  return ret;
 }
 
 static void
@@ -412,7 +427,7 @@ gst_vtdec_output_frame (void *data, gsize unk1, VTStatus result, gsize unk2,
   GstVTDec *self = GST_VTDEC_CAST (data);
   GstBuffer *buf;
 
-  if (result != kVTSuccess || self->cur_flowret != GST_FLOW_OK)
+  if (result != kVTSuccess)
     goto beach;
 
   if (!gst_vtdec_negotiate_downstream (self))
@@ -423,31 +438,31 @@ gst_vtdec_output_frame (void *data, gsize unk1, VTStatus result, gsize unk2,
   gst_buffer_copy_metadata (buf, self->cur_inbuf,
       GST_BUFFER_COPY_FLAGS | GST_BUFFER_COPY_TIMESTAMPS);
 
-  self->cur_flowret = gst_pad_push (self->srcpad, buf);
+  g_ptr_array_add (self->cur_outbufs, buf);
 
 beach:
   return;
 }
 
-static FigSampleBuffer *
+static CMSampleBufferRef
 gst_vtdec_sample_buffer_from (GstVTDec * self, GstBuffer * buf)
 {
   GstCMApi *cm = self->ctx->cm;
-  FigStatus status;
-  FigBlockBuffer *bbuf = NULL;
-  FigSampleBuffer *sbuf = NULL;
+  OSStatus status;
+  CMBlockBufferRef bbuf = NULL;
+  CMSampleBufferRef sbuf = NULL;
 
   g_assert (self->fmt_desc != NULL);
 
-  status = cm->FigBlockBufferCreateWithMemoryBlock (NULL,
+  status = cm->CMBlockBufferCreateWithMemoryBlock (NULL,
       GST_BUFFER_DATA (buf), GST_BUFFER_SIZE (buf), kCFAllocatorNull, NULL,
       0, GST_BUFFER_SIZE (buf), FALSE, &bbuf);
-  if (status != kFigSuccess)
+  if (status != noErr)
     goto beach;
 
-  status = cm->FigSampleBufferCreate (NULL, bbuf, TRUE, 0, 0, self->fmt_desc,
+  status = cm->CMSampleBufferCreate (NULL, bbuf, TRUE, 0, 0, self->fmt_desc,
       1, 0, NULL, 0, NULL, &sbuf);
-  if (status != kFigSuccess)
+  if (status != noErr)
     goto beach;
 
 beach:

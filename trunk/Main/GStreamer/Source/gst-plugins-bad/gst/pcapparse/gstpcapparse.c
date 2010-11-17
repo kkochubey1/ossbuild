@@ -41,7 +41,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#  include <config.h>
+#include <config.h>
 #endif
 
 #include "gstpcapparse.h"
@@ -319,6 +319,7 @@ gst_pcap_parse_read_uint32 (GstPcapParse * self, const guint8 * p)
 }
 
 #define ETH_HEADER_LEN    14
+#define SLL_HEADER_LEN    16
 #define IP_HEADER_MIN_LEN 20
 #define UDP_HEADER_LEN     8
 
@@ -341,14 +342,29 @@ gst_pcap_parse_scan_frame (GstPcapParse * self,
   guint16 udp_dst_port;
   guint16 udp_len;
 
-  if (buf_size < ETH_HEADER_LEN + IP_HEADER_MIN_LEN + UDP_HEADER_LEN)
-    return FALSE;
+  switch (self->linktype) {
+    case DLT_ETHER:
+      if (buf_size < ETH_HEADER_LEN + IP_HEADER_MIN_LEN + UDP_HEADER_LEN)
+        return FALSE;
 
-  eth_type = GUINT16_FROM_BE (*((guint16 *) (buf + 12)));
-  if (eth_type != 0x800)
-    return FALSE;
+      eth_type = GUINT16_FROM_BE (*((guint16 *) (buf + 12)));
+      if (eth_type != 0x800)
+        return FALSE;
 
-  buf_ip = buf + ETH_HEADER_LEN;
+      buf_ip = buf + ETH_HEADER_LEN;
+      break;
+    case DLT_SLL:
+      if (buf_size < SLL_HEADER_LEN + IP_HEADER_MIN_LEN + UDP_HEADER_LEN)
+        return FALSE;
+
+      eth_type = GUINT16_FROM_BE (*((guint16 *) (buf + 2)));
+
+      if (eth_type != 1)
+        return FALSE;
+
+      buf_ip = buf + SLL_HEADER_LEN;
+      break;
+  }
 
   b = *buf_ip;
   if (((b >> 4) & 0x0f) != 4)
@@ -468,7 +484,9 @@ gst_pcap_parse_chain (GstPad * pad, GstBuffer * buffer)
         self->cur_packet_size = incl_len;
       }
     } else {
-      guint magic;
+      guint32 magic;
+      guint32 linktype;
+      guint16 major_version;
 
       if (avail < 24)
         break;
@@ -476,21 +494,45 @@ gst_pcap_parse_chain (GstPad * pad, GstBuffer * buffer)
       data = gst_adapter_peek (self->adapter, 24);
 
       magic = *((guint32 *) data);
+      major_version = *((guint16 *) (data + 4));
+
+      if (magic == 0xa1b2c3d4) {
+        self->swap_endian = FALSE;
+      } else if (magic == 0xd4c3b2a1) {
+        self->swap_endian = TRUE;
+        major_version = major_version << 8 | major_version >> 8;
+      } else {
+        GST_ELEMENT_ERROR (self, STREAM, WRONG_TYPE, (NULL),
+            ("File is not a libpcap file, magic is %X", magic));
+        ret = GST_FLOW_ERROR;
+        goto out;
+      }
+
+      if (major_version != 2) {
+        GST_ELEMENT_ERROR (self, STREAM, WRONG_TYPE, (NULL),
+            ("File is not a libpcap major version 2, but %u", major_version));
+        ret = GST_FLOW_ERROR;
+        goto out;
+      }
+
+      linktype = gst_pcap_parse_read_uint32 (self, data + 20);
+
+      if (linktype != DLT_ETHER && linktype != DLT_SLL) {
+        GST_ELEMENT_ERROR (self, STREAM, WRONG_TYPE, (NULL),
+            ("Only dumps of type Ethernet or Linux Coooked (SLL) understood,"
+                " type %d unknown", linktype));
+        ret = GST_FLOW_ERROR;
+        goto out;
+      }
+
+      self->linktype = linktype;
 
       gst_adapter_flush (self->adapter, 24);
-
-      if (magic == 0xa1b2c3d4)
-        self->swap_endian = FALSE;
-      else if (magic == 0xd4c3b2a1)
-        self->swap_endian = TRUE;
-      else
-        ret = GST_FLOW_ERROR;
-
-      if (ret == GST_FLOW_OK)
-        self->initialized = TRUE;
+      self->initialized = TRUE;
     }
   }
 
+out:
   if (ret != GST_FLOW_OK)
     gst_pcap_parse_reset (self);
 

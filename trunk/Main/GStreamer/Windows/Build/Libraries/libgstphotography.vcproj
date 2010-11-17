@@ -154,7 +154,7 @@
 				AdditionalDependencies="libgstaudio.lib Winmm.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				ModuleDefinitionFile="libgstphotography.def"
+				ModuleDefinitionFile="..\..\..\Source\gst-plugins-bad\win32\common\libgstphotography.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -319,7 +319,7 @@
 				ExecutionBucket="28"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
-				ModuleDefinitionFile="libgstphotography.def"
+				ModuleDefinitionFile="..\..\..\Source\gst-plugins-bad\win32\common\libgstphotography.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -435,7 +435,7 @@
 			Name="Resource Files"
 			>
 			<File
-				RelativePath=".\libgstphotography.def"
+				RelativePath="..\..\..\Source\gst-plugins-bad\win32\common\libgstphotography.def"
 				>
 			</File>
 		</Filter>

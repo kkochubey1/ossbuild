@@ -27,6 +27,8 @@
 #include <string.h>
 #include "gstcolorspaceorc.h"
 
+/* For GST_CHECK_PLUGINS_BASE_VERSION() */
+#include <gst/pbutils/pbutils.h>
 
 static void colorspace_convert_generic (ColorspaceConvert * convert,
     guint8 * dest, const guint8 * src);
@@ -99,7 +101,7 @@ colorspace_convert_new (GstVideoFormat to_format, ColorSpaceColorSpec to_spec,
 
   convert->tmpline = g_malloc (sizeof (guint32) * width * 2);
 
-#ifdef GST_VIDEO_CAPS_RGB8_PALETTED
+#if GST_CHECK_PLUGINS_BASE_VERSION(0, 10, 32)
   if (to_format == GST_VIDEO_FORMAT_RGB8_PALETTED) {
     /* build poor man's palette, taken from ffmpegcolorspace */
     static const guint8 pal_value[6] = { 0x00, 0x33, 0x66, 0x99, 0xcc, 0xff };
@@ -448,17 +450,9 @@ static void
 getline_Y41B (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
     int j)
 {
-  int i;
-  const guint8 *srclineY = FRAME_GET_LINE (src, 0, j);
-  const guint8 *srclineU = FRAME_GET_LINE (src, 1, j);
-  const guint8 *srclineV = FRAME_GET_LINE (src, 2, j);
-
-  for (i = 0; i < convert->width; i++) {
-    dest[i * 4 + 0] = 0xff;
-    dest[i * 4 + 1] = srclineY[i];
-    dest[i * 4 + 2] = srclineU[i >> 2];
-    dest[i * 4 + 3] = srclineV[i >> 2];
-  }
+  cogorc_getline_YUV9 (dest,
+      FRAME_GET_LINE (src, 0, j),
+      FRAME_GET_LINE (src, 1, j), FRAME_GET_LINE (src, 2, j), convert->width);
 }
 
 static void
@@ -882,7 +876,7 @@ putline_A420 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
       FRAME_GET_LINE (dest, 3, j), src, convert->width / 2);
 }
 
-#ifdef GST_VIDEO_CAPS_RGB8_PALETTED
+#if GST_CHECK_PLUGINS_BASE_VERSION(0, 10, 32)
 static void
 getline_RGB8P (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
     int j)
@@ -913,6 +907,151 @@ putline_RGB8P (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
       destline[i] =
           ((((src[i * 4 + 1]) / 47) % 6) * 6 * 6 + (((src[i * 4 +
                           2]) / 47) % 6) * 6 + (((src[i * 4 + 3]) / 47) % 6));
+  }
+}
+
+
+static void
+getline_YUV9 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  cogorc_getline_YUV9 (dest,
+      FRAME_GET_LINE (src, 0, j),
+      FRAME_GET_LINE (src, 1, j >> 2),
+      FRAME_GET_LINE (src, 2, j >> 2), convert->width);
+}
+
+static void
+putline_YUV9 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  guint8 *destY = FRAME_GET_LINE (dest, 0, j);
+  guint8 *destU = FRAME_GET_LINE (dest, 1, j >> 2);
+  guint8 *destV = FRAME_GET_LINE (dest, 2, j >> 2);
+
+  for (i = 0; i < convert->width - 3; i += 4) {
+    destY[i] = src[i * 4 + 1];
+    destY[i + 1] = src[i * 4 + 5];
+    destY[i + 2] = src[i * 4 + 9];
+    destY[i + 3] = src[i * 4 + 13];
+    if (j % 4 == 0) {
+      destU[i >> 2] =
+          (src[i * 4 + 2] + src[i * 4 + 6] + src[i * 4 + 10] + src[i * 4 +
+              14]) >> 2;
+      destV[i >> 2] =
+          (src[i * 4 + 3] + src[i * 4 + 7] + src[i * 4 + 11] + src[i * 4 +
+              15]) >> 2;
+    }
+  }
+
+  if (i == convert->width - 3) {
+    destY[i] = src[i * 4 + 1];
+    destY[i + 1] = src[i * 4 + 5];
+    destY[i + 2] = src[i * 4 + 9];
+    if (j % 4 == 0) {
+      destU[i >> 2] = (src[i * 4 + 2] + src[i * 4 + 6] + src[i * 4 + 10]) / 3;
+      destV[i >> 2] = (src[i * 4 + 3] + src[i * 4 + 7] + src[i * 4 + 11]) / 3;
+    }
+  } else if (i == convert->width - 2) {
+    destY[i] = src[i * 4 + 1];
+    destY[i + 1] = src[i * 4 + 5];
+    if (j % 4 == 0) {
+      destU[i >> 2] = (src[i * 4 + 2] + src[i * 4 + 6]) >> 1;
+      destV[i >> 2] = (src[i * 4 + 3] + src[i * 4 + 7]) >> 1;
+    }
+  } else if (i == convert->width - 1) {
+    destY[i] = src[i * 4 + 1];
+    destU[i >> 2] = src[i * 4 + 2];
+    destV[i >> 2] = src[i * 4 + 3];
+  }
+}
+
+static void
+getline_IYU1 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  const guint8 *srcline = FRAME_GET_LINE (src, 0, j);
+
+  for (i = 0; i < convert->width - 3; i += 4) {
+    dest[i * 4 + 0] = 0xff;
+    dest[i * 4 + 4] = 0xff;
+    dest[i * 4 + 8] = 0xff;
+    dest[i * 4 + 12] = 0xff;
+    dest[i * 4 + 1] = srcline[(i >> 2) * 6 + 1];
+    dest[i * 4 + 5] = srcline[(i >> 2) * 6 + 2];
+    dest[i * 4 + 9] = srcline[(i >> 2) * 6 + 4];
+    dest[i * 4 + 13] = srcline[(i >> 2) * 6 + 5];
+    dest[i * 4 + 2] = dest[i * 4 + 6] = dest[i * 4 + 10] = dest[i * 4 + 14] =
+        srcline[(i >> 2) * 6 + 0];
+    dest[i * 4 + 3] = dest[i * 4 + 7] = dest[i * 4 + 11] = dest[i * 4 + 15] =
+        srcline[(i >> 2) * 6 + 3];
+  }
+
+  if (i == convert->width - 3) {
+    dest[i * 4 + 0] = 0xff;
+    dest[i * 4 + 4] = 0xff;
+    dest[i * 4 + 8] = 0xff;
+    dest[i * 4 + 1] = srcline[(i >> 2) * 6 + 1];
+    dest[i * 4 + 5] = srcline[(i >> 2) * 6 + 2];
+    dest[i * 4 + 9] = srcline[(i >> 2) * 6 + 4];
+    dest[i * 4 + 2] = dest[i * 4 + 6] = dest[i * 4 + 10] =
+        srcline[(i >> 2) * 6 + 0];
+    dest[i * 4 + 3] = dest[i * 4 + 7] = dest[i * 4 + 11] =
+        srcline[(i >> 2) * 6 + 3];
+  } else if (i == convert->width - 2) {
+    dest[i * 4 + 0] = 0xff;
+    dest[i * 4 + 4] = 0xff;
+    dest[i * 4 + 1] = srcline[(i >> 2) * 6 + 1];
+    dest[i * 4 + 5] = srcline[(i >> 2) * 6 + 2];
+    dest[i * 4 + 2] = dest[i * 4 + 6] = srcline[(i >> 2) * 6 + 0];
+    dest[i * 4 + 3] = dest[i * 4 + 7] = srcline[(i >> 2) * 6 + 3];
+  } else if (i == convert->width - 1) {
+    dest[i * 4 + 0] = 0xff;
+    dest[i * 4 + 1] = srcline[(i >> 2) * 6 + 1];
+    dest[i * 4 + 2] = srcline[(i >> 2) * 6 + 0];
+    dest[i * 4 + 3] = srcline[(i >> 2) * 6 + 3];
+  }
+}
+
+static void
+putline_IYU1 (ColorspaceConvert * convert, guint8 * dest, const guint8 * src,
+    int j)
+{
+  int i;
+  guint8 *destline = FRAME_GET_LINE (dest, 0, j);
+
+  for (i = 0; i < convert->width - 3; i += 4) {
+    destline[(i >> 2) * 6 + 1] = src[i * 4 + 1];
+    destline[(i >> 2) * 6 + 2] = src[i * 4 + 5];
+    destline[(i >> 2) * 6 + 4] = src[i * 4 + 9];
+    destline[(i >> 2) * 6 + 5] = src[i * 4 + 13];
+    destline[(i >> 2) * 6 + 0] =
+        (src[i * 4 + 2] + src[i * 4 + 6] + src[i * 4 + 10] + src[i * 4 +
+            14]) >> 2;
+    destline[(i >> 2) * 6 + 3] =
+        (src[i * 4 + 3] + src[i * 4 + 7] + src[i * 4 + 11] + src[i * 4 +
+            15]) >> 2;
+  }
+
+  if (i == convert->width - 3) {
+    destline[(i >> 2) * 6 + 1] = src[i * 4 + 1];
+    destline[(i >> 2) * 6 + 2] = src[i * 4 + 5];
+    destline[(i >> 2) * 6 + 4] = src[i * 4 + 9];
+    destline[(i >> 2) * 6 + 0] =
+        (src[i * 4 + 2] + src[i * 4 + 6] + src[i * 4 + 10]) / 3;
+    destline[(i >> 2) * 6 + 3] =
+        (src[i * 4 + 3] + src[i * 4 + 7] + src[i * 4 + 11]) / 3;
+  } else if (i == convert->width - 2) {
+    destline[(i >> 2) * 6 + 1] = src[i * 4 + 1];
+    destline[(i >> 2) * 6 + 2] = src[i * 4 + 5];
+    destline[(i >> 2) * 6 + 0] = (src[i * 4 + 2] + src[i * 4 + 6]) >> 1;
+    destline[(i >> 2) * 6 + 3] = (src[i * 4 + 3] + src[i * 4 + 7]) >> 1;
+  } else if (i == convert->width - 1) {
+    destline[(i >> 2) * 6 + 1] = src[i * 4 + 1];
+    destline[(i >> 2) * 6 + 0] = src[i * 4 + 2];
+    destline[(i >> 2) * 6 + 3] = src[i * 4 + 3];
   }
 }
 #endif
@@ -961,8 +1100,11 @@ static const ColorspaceLine lines[] = {
   {GST_VIDEO_FORMAT_BGR15, getline_BGR15, putline_BGR15},
   {GST_VIDEO_FORMAT_UYVP, getline_UYVP, putline_UYVP},
   {GST_VIDEO_FORMAT_A420, getline_A420, putline_A420}
-#ifdef GST_VIDEO_CAPS_RGB8_PALETTED
-  , {GST_VIDEO_FORMAT_RGB8_PALETTED, getline_RGB8P, putline_RGB8P}
+#if GST_CHECK_PLUGINS_BASE_VERSION(0, 10, 32)
+  , {GST_VIDEO_FORMAT_RGB8_PALETTED, getline_RGB8P, putline_RGB8P},
+  {GST_VIDEO_FORMAT_YUV9, getline_YUV9, putline_YUV9},
+  {GST_VIDEO_FORMAT_YVU9, getline_YUV9, putline_YUV9},  /* alias */
+  {GST_VIDEO_FORMAT_IYU1, getline_IYU1, putline_IYU1}
 #endif
 };
 
