@@ -460,6 +460,10 @@ examine_videosink(gchar* factory_name, GstElement* element, App* app)
     /* Turn off sync if we've got a live source and it's video only (e.g. a motion jpeg camera). */
     if (!app->auto_sync_disabled && g_object_property_exists_of_type(G_OBJECT(element), "sync", G_TYPE_BOOLEAN))
       g_object_set(element, "sync", FALSE, NULL);
+
+    /* Turn off max-lateness if we've got a live source and it's video only (e.g. a motion jpeg camera). */
+    if (!app->auto_sync_disabled && g_object_property_exists_of_type(G_OBJECT(element), "max-lateness", G_TYPE_INT64))
+      g_object_set(element, "max-lateness", (gint64)-1, NULL);
   }
 }
 
