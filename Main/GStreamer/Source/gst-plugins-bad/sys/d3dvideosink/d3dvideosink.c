@@ -24,10 +24,6 @@
 
 #include "d3dvideosink.h"
 
-#include <gst/interfaces/xoverlay.h>
-
-#include "windows.h"
-
 #define IPC_SET_WINDOW          1
 #define IDT_DEVICELOST          1
 #define WM_D3D_INIT_DEVICELOST  WM_USER + 1
@@ -36,11 +32,11 @@
 #define WM_D3D_RESIZE           WM_USER + 4
 
 /* Provide access to data that will be shared among all instantiations of this element */
-#define GST_D3DVIDEOSINK_SHARED_D3D_LOCK	      g_static_mutex_lock (&shared_d3d_lock);
-#define GST_D3DVIDEOSINK_SHARED_D3D_UNLOCK      g_static_mutex_unlock (&shared_d3d_lock);
-#define GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK	  g_static_mutex_lock (&shared_d3d_dev_lock);
-#define GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK  g_static_mutex_unlock (&shared_d3d_dev_lock);
-#define GST_D3DVIDEOSINK_SHARED_D3D_HOOK_LOCK	  g_static_mutex_lock (&shared_d3d_hook_lock);
+#define GST_D3DVIDEOSINK_SHARED_D3D_LOCK	       g_static_mutex_lock (&shared_d3d_lock);
+#define GST_D3DVIDEOSINK_SHARED_D3D_UNLOCK       g_static_mutex_unlock (&shared_d3d_lock);
+#define GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK	   g_static_mutex_lock (&shared_d3d_dev_lock);
+#define GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK   g_static_mutex_unlock (&shared_d3d_dev_lock);
+#define GST_D3DVIDEOSINK_SHARED_D3D_HOOK_LOCK	   g_static_mutex_lock (&shared_d3d_hook_lock);
 #define GST_D3DVIDEOSINK_SHARED_D3D_HOOK_UNLOCK  g_static_mutex_unlock (&shared_d3d_hook_lock);
 typedef struct _GstD3DVideoSinkShared GstD3DVideoSinkShared;
 struct _GstD3DVideoSinkShared
@@ -114,7 +110,7 @@ GST_BOILERPLATE_FULL (GstD3DVideoSink, gst_d3dvideosink, GstVideoSink,
 enum
 {
   PROP_0
-  //, PROP_KEEP_ASPECT_RATIO
+  , PROP_KEEP_ASPECT_RATIO
   , PROP_PIXEL_ASPECT_RATIO
   , PROP_LAST
 };
@@ -148,6 +144,7 @@ static void gst_d3dvideosink_update (GstBaseSink *bsink);
 static gboolean gst_d3dvideosink_refresh (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_update_all (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_refresh_all (GstD3DVideoSink *sink);
+static void gst_d3dvideosink_stretch (GstD3DVideoSink *sink, LPDIRECT3DSURFACE9 backBuffer);
 
 /* Misc methods */
 static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink);
@@ -276,11 +273,11 @@ gst_d3dvideosink_class_init (GstD3DVideoSinkClass * klass)
   gstvideosink_class->show_frame = GST_DEBUG_FUNCPTR (gst_d3dvideosink_show_frame);
 
   /* Add properties */
-  //g_object_class_install_property (G_OBJECT_CLASS (klass),
-  //    PROP_KEEP_ASPECT_RATIO, g_param_spec_boolean ("force-aspect-ratio",
-  //        "Force aspect ratio",
-  //        "When enabled, scaling will respect original aspect ratio", FALSE,
-  //        (GParamFlags)G_PARAM_READWRITE));
+  g_object_class_install_property (G_OBJECT_CLASS (klass),
+      PROP_KEEP_ASPECT_RATIO, g_param_spec_boolean ("force-aspect-ratio",
+          "Force aspect ratio",
+          "When enabled, scaling will respect original aspect ratio", FALSE,
+          (GParamFlags)G_PARAM_READWRITE));
   g_object_class_install_property (G_OBJECT_CLASS (klass), 
         PROP_PIXEL_ASPECT_RATIO, g_param_spec_string ("pixel-aspect-ratio", 
           "Pixel Aspect Ratio",
@@ -339,9 +336,9 @@ gst_d3dvideosink_set_property (GObject * object, guint prop_id,
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (object);
 
   switch (prop_id) {
-    //case PROP_KEEP_ASPECT_RATIO:
-    //  sink->keep_aspect_ratio = g_value_get_boolean (value);
-    //  break;
+    case PROP_KEEP_ASPECT_RATIO:
+      sink->keep_aspect_ratio = g_value_get_boolean (value);
+      break;
     case PROP_PIXEL_ASPECT_RATIO:
       g_free (sink->par);
       sink->par = g_new0 (GValue, 1);
@@ -367,9 +364,9 @@ gst_d3dvideosink_get_property (GObject * object, guint prop_id,
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (object);
 
   switch (prop_id) {
-    //case PROP_KEEP_ASPECT_RATIO:
-    //  g_value_set_boolean (value, sink->keep_aspect_ratio);
-    //  break;
+    case PROP_KEEP_ASPECT_RATIO:
+      g_value_set_boolean (value, sink->keep_aspect_ratio);
+      break;
     case PROP_PIXEL_ASPECT_RATIO:
         g_value_transform (sink->par, value);
       break;
@@ -1470,49 +1467,7 @@ gst_d3dvideosink_show_frame (GstVideoSink *vsink, GstBuffer *buffer)
         
         IDirect3DSurface9_UnlockRect(sink->d3d_offscreen_surface);
       }
-      //if (sink->keep_aspect_ratio) {
-      //  int width;
-      //  int height;
-      //  int window_width;
-      //  int window_height;
-      //  RECT r;
-      //  D3DPRESENT_PARAMETERS d3dpp;
-
-      //  width = sink->width;
-      //  height = sink->height;
-
-      //  //IDirect3DSwapChain9_GetPresentParameters(sink->d3d_swap_chain, &d3dpp);
-      //  //window_width = d3dpp.BackBufferWidth;
-      //  //window_height = d3dpp.BackBufferHeight;
-
-      //  GetWindowRect(sink->window_id, &r);
-      //  window_width = MAX(1, ABS(r.right - r.left)) - (sink->is_new_window ? GetSystemMetrics (SM_CXSIZEFRAME) * 2 : 0);
-      //  window_height = MAX(1, ABS(r.bottom - r.top)) - (sink->is_new_window ? GetSystemMetrics (SM_CYCAPTION) + (GetSystemMetrics (SM_CYSIZEFRAME) * 2) : 0);
-
-      //  if (width > window_width) {
-      //    double ratio = (double)window_width/(double)width;
-      //    width = window_width;
-      //    height = (int)(height * ratio);
-      //  }
-
-      //  if (height > window_height) {
-      //    double ratio = (double)window_height/(double)height;
-      //    height = window_height;
-      //    width = (int)(width * ratio);
-      //  }
-
-      //  r.top = MAX(0, (window_height - height) / 2);
-      //  r.bottom = MAX(window_height, window_height - r.top + height);
-      //  r.left = MAX(0, (window_width - width) / 2);
-      //  r.right = MAX(window_width, window_width - r.left + width);
-
-      //  GST_DEBUG("aspect ratio. top: %d, bottom: %d, left: %d, right: %d", r.top, r.bottom, r.left, r.right);
-
-      //  IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, &r, D3DTEXF_NONE);
-      //} else {
-      //  IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, NULL, D3DTEXF_NONE);
-      //}
-      IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, NULL, D3DTEXF_NONE);
+      gst_d3dvideosink_stretch(sink, backBuffer);
       IDirect3DDevice9_EndScene(shared.d3ddev);
     }
     /* Swap back and front buffers on video card and present to the user */
@@ -1587,7 +1542,7 @@ gst_d3dvideosink_refresh (GstD3DVideoSink *sink)
     IDirect3DDevice9_Clear(shared.d3ddev, 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
     if (SUCCEEDED(IDirect3DDevice9_BeginScene(shared.d3ddev))) {
-      IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, NULL, D3DTEXF_NONE);
+      gst_d3dvideosink_stretch(sink, backBuffer);
       IDirect3DDevice9_EndScene(shared.d3ddev);
     }
   
@@ -1659,6 +1614,38 @@ error:
   GST_D3DVIDEOSINK_SHARED_D3D_UNLOCK
   GST_D3DVIDEOSINK_SHARED_D3D_DEV_UNLOCK
   return FALSE;
+}
+
+static void
+gst_d3dvideosink_stretch (GstD3DVideoSink *sink, LPDIRECT3DSURFACE9 backBuffer)
+{
+  if (sink->keep_aspect_ratio) {
+    gint window_width;
+    gint window_height;
+    RECT r;
+    GstVideoRectangle src;
+    GstVideoRectangle dst;
+    GstVideoRectangle result;
+
+    gst_d3dvideosink_window_size(sink, &window_width, &window_height);
+
+    src.w = GST_VIDEO_SINK_WIDTH(sink);
+    src.h = GST_VIDEO_SINK_HEIGHT(sink);
+
+    dst.w = window_width;
+    dst.h = window_height;
+
+    gst_video_sink_center_rect(src, dst, &result, TRUE);
+
+    r.left = result.x;
+    r.top = result.y;
+    r.right = result.x + result.w;
+    r.bottom = result.y + result.h;
+
+    IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, &r, D3DTEXF_NONE);
+  } else {
+    IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, NULL, D3DTEXF_NONE);
+  }
 }
 
 static void

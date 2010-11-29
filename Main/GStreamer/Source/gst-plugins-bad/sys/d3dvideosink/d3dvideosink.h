@@ -23,9 +23,11 @@
 #include <gst/gst.h>
 #include <gst/video/video.h>
 #include <gst/video/gstvideosink.h>
+#include <gst/interfaces/xoverlay.h>
 
-#include "d3d9.h"
-#include "D3dx9tex.h"
+#include <windows.h>
+#include <d3d9.h>
+#include <D3dx9tex.h>
 
 #pragma warning( disable : 4090 4024)
 
