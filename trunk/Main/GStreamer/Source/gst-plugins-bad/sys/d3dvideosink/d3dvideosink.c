@@ -112,6 +112,7 @@ enum
   PROP_0
   , PROP_KEEP_ASPECT_RATIO
   , PROP_PIXEL_ASPECT_RATIO
+  , PROP_ENABLE_NAVIGATION_EVENTS
   , PROP_LAST
 };
 
@@ -135,6 +136,9 @@ static GstFlowReturn gst_d3dvideosink_show_frame (GstVideoSink *sink, GstBuffer 
 /* GstXOverlay methods */
 static void gst_d3dvideosink_set_window_handle (GstXOverlay *overlay, guintptr window_id);
 static void gst_d3dvideosink_expose (GstXOverlay *overlay);
+
+/* GstNavigation methods */
+static void gst_d3dvideosink_navigation_send_event (GstNavigation *navigation, GstStructure *structure);
 
 /* WndProc methods */
 static void gst_d3dvideosink_wnd_proc (GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -191,7 +195,7 @@ static gboolean
 gst_d3dvideosink_interface_supported (GstImplementsInterface * iface,
     GType type)
 {
-  return (type == GST_TYPE_X_OVERLAY);
+  return (type == GST_TYPE_X_OVERLAY || type == GST_TYPE_NAVIGATION);
 }
 
 static void
@@ -200,12 +204,17 @@ gst_d3dvideosink_interface_init (GstImplementsInterfaceClass * klass)
   klass->supported = gst_d3dvideosink_interface_supported;
 }
 
-
 static void
 gst_d3dvideosink_xoverlay_interface_init (GstXOverlayClass * iface)
 {
   iface->set_window_handle = gst_d3dvideosink_set_window_handle;
   iface->expose = gst_d3dvideosink_expose;
+}
+
+static void
+gst_d3dvideosink_navigation_interface_init (GstNavigationInterface * iface)
+{
+  iface->send_event = gst_d3dvideosink_navigation_send_event;
 }
 
 static void
@@ -223,9 +232,16 @@ gst_d3dvideosink_init_interfaces (GType type)
     NULL
   };
 
+  static const GInterfaceInfo navigation_info = {
+    (GInterfaceInitFunc) gst_d3dvideosink_navigation_interface_init,
+    NULL,
+    NULL,
+  };
+
   g_type_add_interface_static (type, GST_TYPE_IMPLEMENTS_INTERFACE,
       &iface_info);
   g_type_add_interface_static (type, GST_TYPE_X_OVERLAY, &xoverlay_info);
+  g_type_add_interface_static (type, GST_TYPE_NAVIGATION, &navigation_info);
 
   GST_DEBUG_CATEGORY_INIT (d3dvideosink_debug, "d3dvideosink", 0, \
       "Direct3D video sink");
@@ -274,7 +290,7 @@ gst_d3dvideosink_class_init (GstD3DVideoSinkClass * klass)
 
   /* Add properties */
   g_object_class_install_property (G_OBJECT_CLASS (klass),
-      PROP_KEEP_ASPECT_RATIO, g_param_spec_boolean ("force-aspect-ratio",
+        PROP_KEEP_ASPECT_RATIO, g_param_spec_boolean ("force-aspect-ratio",
           "Force aspect ratio",
           "When enabled, scaling will respect original aspect ratio", FALSE,
           (GParamFlags)G_PARAM_READWRITE));
@@ -283,11 +299,18 @@ gst_d3dvideosink_class_init (GstD3DVideoSinkClass * klass)
           "Pixel Aspect Ratio",
           "The pixel aspect ratio of the device", "1/1",
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+  g_object_class_install_property (G_OBJECT_CLASS (klass),
+        PROP_ENABLE_NAVIGATION_EVENTS, g_param_spec_boolean ("enable-navigation-events",
+          "Enable navigation events",
+          "When enabled, navigation events are sent upstream", TRUE,
+          (GParamFlags)G_PARAM_READWRITE));
+  
 }
 
 static void
 gst_d3dvideosink_clear (GstD3DVideoSink *sink)
 {
+  sink->enable_navigation_events = TRUE;
   sink->keep_aspect_ratio = FALSE;
 
   sink->window_closed = FALSE;
@@ -336,6 +359,9 @@ gst_d3dvideosink_set_property (GObject * object, guint prop_id,
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (object);
 
   switch (prop_id) {
+    case PROP_ENABLE_NAVIGATION_EVENTS:
+      sink->enable_navigation_events = g_value_get_boolean (value);
+      break;
     case PROP_KEEP_ASPECT_RATIO:
       sink->keep_aspect_ratio = g_value_get_boolean (value);
       break;
@@ -364,6 +390,9 @@ gst_d3dvideosink_get_property (GObject * object, guint prop_id,
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (object);
 
   switch (prop_id) {
+    case PROP_ENABLE_NAVIGATION_EVENTS:
+      g_value_set_boolean (value, sink->enable_navigation_events);
+      break;
     case PROP_KEEP_ASPECT_RATIO:
       g_value_set_boolean (value, sink->keep_aspect_ratio);
       break;
@@ -721,6 +750,90 @@ gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM
       {
         sink->window_closed = TRUE;
         //GST_ELEMENT_ERROR (sink, RESOURCE, NOT_FOUND, ("Output window was closed"), (NULL));
+        break;
+      }
+    case WM_CHAR:
+    case WM_KEYDOWN:
+    case WM_KEYUP:
+      {
+        if (!sink->enable_navigation_events)
+          break;
+      }
+      {
+        gunichar2 wcrep[128];
+        if (GetKeyNameTextW (lParam, wcrep, 128)) {
+          gchar *utfrep = g_utf16_to_utf8 (wcrep, 128, NULL, NULL, NULL);
+          if (utfrep) {
+            if (message == WM_CHAR || message == WM_KEYDOWN)
+              gst_navigation_send_key_event (GST_NAVIGATION(sink), "key-press", utfrep);
+            if (message == WM_CHAR || message == WM_KEYUP)
+              gst_navigation_send_key_event (GST_NAVIGATION(sink), "key-release", utfrep);
+            g_free (utfrep);
+          }
+        }
+        break;
+      }
+    case WM_LBUTTONDOWN:
+    case WM_LBUTTONUP:
+    case WM_RBUTTONDOWN:
+    case WM_RBUTTONUP:
+    case WM_MBUTTONDOWN:
+    case WM_MBUTTONUP:
+    case WM_MOUSEMOVE:
+      {
+        if (!sink->enable_navigation_events)
+          break;
+      }
+      {
+        gint x, y, button;
+        const gchar *action;
+
+        switch (message) {
+          case WM_MOUSEMOVE:
+            button = 0;
+            action = "mouse-move";
+            break;
+          case WM_LBUTTONDOWN:
+            button = 1;
+            action = "mouse-button-press";
+            break;
+          case WM_LBUTTONUP:
+            button = 1;
+            action = "mouse-button-release";
+            break;
+          case WM_RBUTTONDOWN:
+            button = 2;
+            action = "mouse-button-press";
+            break;
+          case WM_RBUTTONUP:
+            button = 2;
+            action = "mouse-button-release";
+            break;
+          case WM_MBUTTONDOWN:
+            button = 3;
+            action = "mouse-button-press";
+            break;
+          case WM_MBUTTONUP:
+            button = 3;
+            action = "mouse-button-release";
+            break;
+          default:
+            button = 4;
+            action = NULL;
+            break;
+        }
+
+        x = LOWORD(lParam);
+        y = HIWORD(lParam);
+
+        if (button == 0) {
+          GST_DEBUG_OBJECT(sink, "Mouse moved to %dx%d", x, y);
+        } else
+          GST_DEBUG_OBJECT(sink, "Mouse button %d pressed at %dx%d", button, x, y);
+
+        if (button < 4)
+          gst_navigation_send_mouse_event (GST_NAVIGATION(sink), action, button, x, y);
+
         break;
       }
   }
@@ -2204,6 +2317,73 @@ gst_d3dvideosink_window_size (GstD3DVideoSink *sink, gint *width, gint *height)
     *height = MAX(1, ABS(sz.bottom - sz.top));
   }
   return TRUE;
+}
+
+static void
+gst_d3dvideosink_navigation_send_event (GstNavigation * navigation, GstStructure * structure)
+{
+  GstD3DVideoSink *sink = GST_D3DVIDEOSINK (navigation);
+  gint window_width;
+  gint window_height;
+  GstEvent *e;
+  GstVideoRectangle src, dst, result;
+  double x, y, old_x, old_y;
+  GstPad *pad = NULL;
+
+  gst_d3dvideosink_window_size(sink, &window_width, &window_height);
+
+  src.w = GST_VIDEO_SINK_WIDTH(sink);
+  src.h = GST_VIDEO_SINK_HEIGHT(sink);
+  dst.w = window_width;
+  dst.h = window_height;
+
+  e = gst_event_new_navigation(structure);
+
+  if (sink->keep_aspect_ratio) {
+    gst_video_sink_center_rect(src, dst, &result, TRUE);
+  } else {
+    result.x = 0;
+    result.y = 0;
+    result.w = dst.w;
+    result.h = dst.h;
+  }
+
+  /* Our coordinates can be wrong here if we centered the video */
+
+  /* Converting pointer coordinates to the non scaled geometry */
+  if (gst_structure_get_double(structure, "pointer_x", &old_x)) {
+    x = old_x;
+
+    if (x <= result.x) {
+      x = 0;
+    } else if (x >= result.x + result.w) {
+      x = src.w;
+    } else {
+      x = MAX(0, MIN(src.w, MAX(0, x - result.x) / result.w * src.w));
+    }
+    GST_DEBUG_OBJECT(sink, "translated navigation event x coordinate from %f to %f", old_x, x);
+    gst_structure_set(structure, "pointer_x", G_TYPE_DOUBLE, x, NULL);
+  }
+  if (gst_structure_get_double(structure, "pointer_y", &old_y)) {
+    y = old_y;
+
+    if (y <= result.y) {
+      y = 0;
+    } else if (y >= result.y + result.h) {
+      y = src.h;
+    } else {
+      y = MAX(0, MIN(src.h, MAX(0, y - result.y) / result.h * src.h));
+    }
+    GST_DEBUG_OBJECT (sink, "translated navigation event y coordinate from %f to %f", old_y, y);
+    gst_structure_set (structure, "pointer_y", G_TYPE_DOUBLE, y, NULL);
+  }
+
+  pad = gst_pad_get_peer(GST_VIDEO_SINK_PAD(sink));
+
+  if (GST_IS_PAD(pad) && GST_IS_EVENT(e)) {
+    gst_pad_send_event(pad, e);
+    gst_object_unref(pad);
+  }
 }
 
 /* Plugin entry point */

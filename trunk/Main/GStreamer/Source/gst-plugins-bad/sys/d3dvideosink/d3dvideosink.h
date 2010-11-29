@@ -24,6 +24,7 @@
 #include <gst/video/video.h>
 #include <gst/video/gstvideosink.h>
 #include <gst/interfaces/xoverlay.h>
+#include <gst/interfaces/navigation.h>
 
 #include <windows.h>
 #include <d3d9.h>
@@ -52,6 +53,8 @@ struct _GstD3DVideoSink
   gint height;
 
   GstVideoFormat format;
+
+  gboolean enable_navigation_events;
  
   gboolean keep_aspect_ratio;
   GValue *par; 
