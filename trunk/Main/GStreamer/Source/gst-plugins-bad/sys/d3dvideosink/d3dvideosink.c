@@ -992,6 +992,8 @@ static void gst_d3dvideosink_set_window_handle (GstXOverlay * overlay, guintptr 
   GST_D3DVIDEOSINK_SWAP_CHAIN_LOCK(sink);
   {
     /* If we're already playing/paused, then we need to lock the swap chain, and recreate it with the new window. */
+    gboolean init_swap_chain = sink->d3d_swap_chain != NULL;
+
     gst_d3dvideosink_release_swap_chain(sink);
 
     /* Close our existing window if there is one */
@@ -999,6 +1001,9 @@ static void gst_d3dvideosink_set_window_handle (GstXOverlay * overlay, guintptr 
 
     /* Save our window id */
     sink->window_handle = hWnd;
+  
+    if (init_swap_chain)
+      gst_d3dvideosink_initialize_swap_chain(sink);
   }
 
 success:
