@@ -453,6 +453,13 @@ gst_jpeg_dec_parse_image_data (GstJpegDec * dec)
       dec->parse_resync = FALSE;
       dec->parse_offset = 0;
       return (offset + 4);
+    } else if (value == 0xd8) {
+      /* Skip this frame if we found another SOI marker */
+      GST_DEBUG ("0x%08x: SOI marker before EOI, skipping", offset);
+      gst_adapter_flush(adapter, offset);
+      dec->parse_resync = FALSE;
+      dec->parse_offset = 0;
+      return 0;
     }
 
     if (value >= 0xd0 && value <= 0xd7)
