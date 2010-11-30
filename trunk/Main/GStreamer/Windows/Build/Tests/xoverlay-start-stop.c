@@ -145,6 +145,7 @@ main (int argc, char *argv[])
   {
     GstElement* pipeline;
     GstElement* videotestsrc;
+    GstElement* navigationtest;
     GstElement* ffmpegcolorspace;
     GstElement* videosink;
 
@@ -156,14 +157,17 @@ main (int argc, char *argv[])
     videotestsrc = gst_element_factory_make ("videotestsrc", "videotestsrc");
     g_assert (videotestsrc);
 
+    navigationtest = gst_element_factory_make ("navigationtest", "navigationtest");
+    g_assert (navigationtest);
+
     ffmpegcolorspace = gst_element_factory_make ("ffmpegcolorspace", "ffmpegcolorspace");
     g_assert (ffmpegcolorspace);
 
     videosink = gst_element_factory_make (VIDEO_SINK, "videosink");
     g_assert (videosink);
 
-    gst_bin_add_many(GST_BIN(pipeline), videotestsrc, ffmpegcolorspace, videosink, NULL);
-    gst_element_link_many(videotestsrc, ffmpegcolorspace, videosink, NULL);
+    gst_bin_add_many(GST_BIN(pipeline), videotestsrc, navigationtest, ffmpegcolorspace, videosink, NULL);
+    gst_element_link_many(videotestsrc, navigationtest, ffmpegcolorspace, videosink, NULL);
 
     g_print ("elements added and linked\n");
   }
