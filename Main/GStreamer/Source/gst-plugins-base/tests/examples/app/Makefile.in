@@ -57,6 +57,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -86,7 +87,7 @@ am_appsink_src_OBJECTS = appsink_src-appsink-src.$(OBJEXT)
 appsink_src_OBJECTS = $(am_appsink_src_OBJECTS)
 am__DEPENDENCIES_1 =
 appsink_src_DEPENDENCIES = $(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
@@ -95,27 +96,30 @@ appsink_src_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_appsrc_ra_OBJECTS = appsrc_ra-appsrc-ra.$(OBJEXT)
 appsrc_ra_OBJECTS = $(am_appsrc_ra_OBJECTS)
-appsrc_ra_DEPENDENCIES = $(am__DEPENDENCIES_1)
+appsrc_ra_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 appsrc_ra_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(appsrc_ra_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_appsrc_seekable_OBJECTS =  \
 	appsrc_seekable-appsrc-seekable.$(OBJEXT)
 appsrc_seekable_OBJECTS = $(am_appsrc_seekable_OBJECTS)
-appsrc_seekable_DEPENDENCIES = $(am__DEPENDENCIES_1)
+appsrc_seekable_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 appsrc_seekable_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(appsrc_seekable_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 am_appsrc_stream_OBJECTS = appsrc_stream-appsrc-stream.$(OBJEXT)
 appsrc_stream_OBJECTS = $(am_appsrc_stream_OBJECTS)
-appsrc_stream_DEPENDENCIES = $(am__DEPENDENCIES_1)
+appsrc_stream_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 appsrc_stream_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(appsrc_stream_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_appsrc_stream2_OBJECTS = appsrc_stream2-appsrc-stream2.$(OBJEXT)
 appsrc_stream2_OBJECTS = $(am_appsrc_stream2_OBJECTS)
-appsrc_stream2_DEPENDENCIES = $(am__DEPENDENCIES_1)
+appsrc_stream2_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 appsrc_stream2_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(appsrc_stream2_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
@@ -263,6 +267,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -327,6 +332,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -453,21 +459,21 @@ appsrc_ex_LDADD = \
 
 appsrc_stream_SOURCES = appsrc-stream.c
 appsrc_stream_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
-appsrc_stream_LDADD = $(GST_LIBS)
+appsrc_stream_LDADD = $(GST_BASE_LIBS) $(GST_LIBS)
 appsrc_stream2_SOURCES = appsrc-stream2.c
 appsrc_stream2_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
-appsrc_stream2_LDADD = $(GST_LIBS)
+appsrc_stream2_LDADD = $(GST_BASE_LIBS) $(GST_LIBS)
 appsrc_ra_SOURCES = appsrc-ra.c
 appsrc_ra_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
-appsrc_ra_LDADD = $(GST_LIBS)
+appsrc_ra_LDADD = $(GST_BASE_LIBS) $(GST_LIBS)
 appsrc_seekable_SOURCES = appsrc-seekable.c
 appsrc_seekable_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
-appsrc_seekable_LDADD = $(GST_LIBS)
+appsrc_seekable_LDADD = $(GST_BASE_LIBS) $(GST_LIBS)
 appsink_src_SOURCES = appsink-src.c
 appsink_src_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
 appsink_src_LDADD = \
     $(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
-    $(GST_LIBS)
+    $(GST_BASE_LIBS) $(GST_LIBS)
 
 all: all-am
 

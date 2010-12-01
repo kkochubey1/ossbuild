@@ -43,32 +43,37 @@
 #include &lt;gst/audio/gstaudioclock.h&gt;
 
                     <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClock-struct" title="GstAudioClock">GstAudioClock</a>;
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        (<a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClockGetTimeFunc" title="GstAudioClockGetTimeFunc ()">*GstAudioClockGetTimeFunc</a>)         (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="returnvalue">GstClock</span></a>*           <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-new" title="gst_audio_clock_new ()">gst_audio_clock_new</a>                 (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        (<a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClockGetTimeFunc" title="GstAudioClockGetTimeFunc ()">*GstAudioClockGetTimeFunc</a>)         (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="returnvalue">GstClock</span></a>*           <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-new" title="gst_audio_clock_new ()">gst_audio_clock_new</a>                 (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClockGetTimeFunc" title="GstAudioClockGetTimeFunc ()"><span class="type">GstAudioClockGetTimeFunc</span></a> func</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-adjust" title="gst_audio_clock_adjust ()">gst_audio_clock_adjust</a>              (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> time</code></em>);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-get-time" title="gst_audio_clock_get_time ()">gst_audio_clock_get_time</a>            (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="returnvalue">GstClock</span></a>*           <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-new-full" title="gst_audio_clock_new_full ()">gst_audio_clock_new_full</a>            (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClockGetTimeFunc" title="GstAudioClockGetTimeFunc ()"><span class="type">GstAudioClockGetTimeFunc</span></a> func</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> destroy_notify</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-adjust" title="gst_audio_clock_adjust ()">gst_audio_clock_adjust</a>              (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> time</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-get-time" title="gst_audio_clock_get_time ()">gst_audio_clock_get_time</a>            (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-reset" title="gst_audio_clock_reset ()">gst_audio_clock_reset</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClock"><span class="type">GstAudioClock</span></a> *clock</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> time</code></em>);
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> time</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#gst-audio-clock-invalidate" title="gst_audio_clock_invalidate ()">gst_audio_clock_invalidate</a>          (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-base-libs-gstaudioclock.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html">GstClock</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstSystemClock.html">GstSystemClock</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html">GstClock</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstSystemClock.html">GstSystemClock</a>
                      +----GstAudioClock
 </pre>
 </div>
 <div class="refsect1" title="Description">
 <a name="gst-plugins-base-libs-gstaudioclock.description"></a><h2>Description</h2>
 <p>
-<a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClock"><span class="type">GstAudioClock</span></a> makes it easy for elements to implement a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="type">GstClock</span></a>, they
+<a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClock"><span class="type">GstAudioClock</span></a> makes it easy for elements to implement a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a>, they
 simply need to provide a function that returns the current clock time.
 </p>
 <p>
@@ -94,11 +99,11 @@ Opaque <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioCl
 <hr>
 <div class="refsect2" title="GstAudioClockGetTimeFunc ()">
 <a name="GstAudioClockGetTimeFunc"></a><h3>GstAudioClockGetTimeFunc ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        (*GstAudioClockGetTimeFunc)         (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        (*GstAudioClockGetTimeFunc)         (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>
 This function will be called whenever the current clock time needs to be
-calculated. If this function returns <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GST-CLOCK-TIME-NONE:CAPS"><span class="type">GST_CLOCK_TIME_NONE</span></a>, the last reported
+calculated. If this function returns <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GST-CLOCK-TIME-NONE:CAPS"><span class="type">GST_CLOCK_TIME_NONE</span></a>, the last reported
 time will be returned by the clock.
 </p>
 <div class="variablelist"><table border="0">
@@ -116,7 +121,7 @@ time will be returned by the clock.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the current time or <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GST-CLOCK-TIME-NONE:CAPS"><span class="type">GST_CLOCK_TIME_NONE</span></a> if the previous time should
+<td> the current time or <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GST-CLOCK-TIME-NONE:CAPS"><span class="type">GST_CLOCK_TIME_NONE</span></a> if the previous time should
 be used.
 </td>
 </tr>
@@ -126,13 +131,13 @@ be used.
 <hr>
 <div class="refsect2" title="gst_audio_clock_new ()">
 <a name="gst-audio-clock-new"></a><h3>gst_audio_clock_new ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="returnvalue">GstClock</span></a>*           gst_audio_clock_new                 (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="returnvalue">GstClock</span></a>*           gst_audio_clock_new                 (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClockGetTimeFunc" title="GstAudioClockGetTimeFunc ()"><span class="type">GstAudioClockGetTimeFunc</span></a> func</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>
 Create a new <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClock"><span class="type">GstAudioClock</span></a> instance. Whenever the clock time should be
 calculated it will call <em class="parameter"><code>func</code></em> with <em class="parameter"><code>user_data</code></em>. When <em class="parameter"><code>func</code></em> returns
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GST-CLOCK-TIME-NONE:CAPS"><span class="type">GST_CLOCK_TIME_NONE</span></a>, the clock will return the last reported time.
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GST-CLOCK-TIME-NONE:CAPS"><span class="type">GST_CLOCK_TIME_NONE</span></a>, the clock will return the last reported time.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -154,17 +159,63 @@ calculated it will call <em class="parameter"><code>func</code></em> with <em cl
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a new <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClock"><span class="type">GstAudioClock</span></a> casted to a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="type">GstClock</span></a>.
+<td> a new <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClock"><span class="type">GstAudioClock</span></a> casted to a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a>.
 </td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
+<div class="refsect2" title="gst_audio_clock_new_full ()">
+<a name="gst-audio-clock-new-full"></a><h3>gst_audio_clock_new_full ()</h3>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="returnvalue">GstClock</span></a>*           gst_audio_clock_new_full            (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClockGetTimeFunc" title="GstAudioClockGetTimeFunc ()"><span class="type">GstAudioClockGetTimeFunc</span></a> func</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> destroy_notify</code></em>);</pre>
+<p>
+Create a new <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClock"><span class="type">GstAudioClock</span></a> instance. Whenever the clock time should be
+calculated it will call <em class="parameter"><code>func</code></em> with <em class="parameter"><code>user_data</code></em>. When <em class="parameter"><code>func</code></em> returns
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GST-CLOCK-TIME-NONE:CAPS"><span class="type">GST_CLOCK_TIME_NONE</span></a>, the clock will return the last reported time.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
+<td>the name of the clock
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>func</code></em> :</span></p></td>
+<td>a function
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
+<td>user data
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>destroy_notify</code></em> :</span></p></td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> for <em class="parameter"><code>user_data</code></em>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> a new <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClock"><span class="type">GstAudioClock</span></a> casted to a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a>.
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.31</p>
+</div>
+<hr>
 <div class="refsect2" title="gst_audio_clock_adjust ()">
 <a name="gst-audio-clock-adjust"></a><h3>gst_audio_clock_adjust ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        gst_audio_clock_adjust              (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> time</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        gst_audio_clock_adjust              (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> time</code></em>);</pre>
 <p>
 Adjust <em class="parameter"><code>time</code></em> with the internal offset of the audio clock.
 </p>
@@ -178,7 +229,7 @@ Adjust <em class="parameter"><code>time</code></em> with the internal offset of 
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>time</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a>
 </td>
 </tr>
 <tr>
@@ -194,7 +245,7 @@ Adjust <em class="parameter"><code>time</code></em> with the internal offset of 
 <hr>
 <div class="refsect2" title="gst_audio_clock_get_time ()">
 <a name="gst-audio-clock-get-time"></a><h3>gst_audio_clock_get_time ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        gst_audio_clock_get_time            (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="returnvalue">GstClockTime</span></a>        gst_audio_clock_get_time            (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>);</pre>
 <p>
 Report the time as returned by the <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClockGetTimeFunc" title="GstAudioClockGetTimeFunc ()"><span class="type">GstAudioClockGetTimeFunc</span></a> without applying
 any offsets.
@@ -221,12 +272,12 @@ any offsets.
 <div class="refsect2" title="gst_audio_clock_reset ()">
 <a name="gst-audio-clock-reset"></a><h3>gst_audio_clock_reset ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_audio_clock_reset               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClock"><span class="type">GstAudioClock</span></a> *clock</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> time</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> time</code></em>);</pre>
 <p>
 Inform <em class="parameter"><code>clock</code></em> that future calls to <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClockGetTimeFunc" title="GstAudioClockGetTimeFunc ()"><span class="type">GstAudioClockGetTimeFunc</span></a> will return values
 starting from <em class="parameter"><code>time</code></em>. The clock will update an internal offset to make sure that
 future calls to internal_time will return an increasing result as required by
-the <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="type">GstClock</span></a> object.
+the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a> object.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -238,16 +289,39 @@ the <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html"><span class="
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>time</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a>
 </td>
 </tr>
 </tbody>
 </table></div>
 </div>
+<hr>
+<div class="refsect2" title="gst_audio_clock_invalidate ()">
+<a name="gst-audio-clock-invalidate"></a><h3>gst_audio_clock_invalidate ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_audio_clock_invalidate          (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html"><span class="type">GstClock</span></a> *clock</code></em>);</pre>
+<p>
+Invalidate the clock function. Call this function when the provided
+<a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClockGetTimeFunc" title="GstAudioClockGetTimeFunc ()"><span class="type">GstAudioClockGetTimeFunc</span></a> cannot be called anymore, for example, when the
+user_data becomes invalid.
+</p>
+<p>
+After calling this function, <em class="parameter"><code>clock</code></em> will return the last returned time for
+the rest of its lifetime.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><em class="parameter"><code>clock</code></em> :</span></p></td>
+<td>a <a class="link" href="gst-plugins-base-libs-gstaudioclock.html#GstAudioClock"><span class="type">GstAudioClock</span></a>
+</td>
+</tr></tbody>
+</table></div>
+<p class="since">Since 0.10.31</p>
+</div>
 </div>
 <div class="refsect1" title="See Also">
 <a name="gst-plugins-base-libs-gstaudioclock.see-also"></a><h2>See Also</h2>
-<a class="link" href="gst-plugins-base-libs-gstbaseaudiosink.html#GstBaseAudioSink"><span class="type">GstBaseAudioSink</span></a>, <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstSystemClock.html"><span class="type">GstSystemClock</span></a>
+<a class="link" href="gst-plugins-base-libs-gstbaseaudiosink.html#GstBaseAudioSink"><span class="type">GstBaseAudioSink</span></a>, <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstSystemClock.html"><span class="type">GstSystemClock</span></a>
 </div>
 </div>
 <div class="footer">

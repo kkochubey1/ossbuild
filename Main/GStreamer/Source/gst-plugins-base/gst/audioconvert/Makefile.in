@@ -78,6 +78,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -280,6 +281,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -344,6 +346,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -870,16 +873,16 @@ orc-update: tmp-orc.c $(ORC_SOURCE).h
 	cp tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c
 	cp $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h
 
-@HAVE_ORC_TRUE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_TRUE@	$(orcc_v_gen)$(ORCC) --implementation --include glib.h -o tmp-orc.c $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_TRUE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_TRUE@	$(orcc_v_gen)$(ORCC) $(ORCC_FLAGS) --implementation --include glib.h -o tmp-orc.c $(srcdir)/$(ORC_SOURCE).orc
 
-@HAVE_ORC_TRUE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_TRUE@	$(orcc_v_gen)$(ORCC) --header --include glib.h -o $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_FALSE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.c tmp-orc.c
+@HAVE_ORCC_TRUE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_TRUE@	$(orcc_v_gen)$(ORCC) $(ORCC_FLAGS) --header --include glib.h -o $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_FALSE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc $(srcdir)/$(ORC_SOURCE)-dist.c
+@HAVE_ORCC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.c tmp-orc.c
 
-@HAVE_ORC_FALSE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.h $(ORC_SOURCE).h
+@HAVE_ORCC_FALSE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc $(srcdir)/$(ORC_SOURCE)-dist.c
+@HAVE_ORCC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.h $(ORC_SOURCE).h
 
 clean-local: clean-orc
 .PHONY: clean-orc
@@ -888,15 +891,18 @@ clean-orc:
 
 dist-hook: dist-hook-orc
 .PHONY: dist-hook-orc
+
+# we try and copy updated orc -dist files below, but don't fail if it
+# doesn't work as the srcdir might not be writable
 dist-hook-orc: tmp-orc.c $(ORC_SOURCE).h
 	$(top_srcdir)/common/gst-indent tmp-orc.c
 	rm -f tmp-orc.c~
 	cmp -s tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c || \
-	  cp tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c
+	  cp tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c || true
 	cmp -s $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h || \
-	  cp $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h
-	cp -p $(srcdir)/$(ORC_SOURCE)-dist.c $(distdir)/
-	cp -p $(srcdir)/$(ORC_SOURCE)-dist.h $(distdir)/
+	  cp $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h || true
+	cp -p tmp-orc.c $(distdir)/$(ORC_SOURCE)-dist.c
+	cp -p $(ORC_SOURCE).h $(distdir)/$(ORC_SOURCE)-dist.h
 
 #TESTS = channelmixtest
 #noinst_PROGRAMS = channelmixtest

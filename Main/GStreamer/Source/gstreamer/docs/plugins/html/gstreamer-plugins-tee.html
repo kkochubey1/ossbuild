@@ -48,29 +48,52 @@ enum                <a class="link" href="gstreamer-plugins-tee.html#GstTeePullM
 <div class="refsect1" title="Object Hierarchy">
 <a name="gstreamer-plugins-tee.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
                +----GstTee
 </pre>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gstreamer-plugins-tee.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--has-chain" title='The "has-chain" property'>has-chain</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct
-  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--has-sink-loop" title='The "has-sink-loop" property'>has-sink-loop</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct
-  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--last-message" title='The "last-message" property'>last-message</a>"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read
-  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--num-src-pads" title='The "num-src-pads" property'>num-src-pads</a>"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read
-  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--silent" title='The "silent" property'>silent</a>"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct
+  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--has-chain" title='The "has-chain" property'>has-chain</a>"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct
+  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--has-sink-loop" title='The "has-sink-loop" property'>has-sink-loop</a>"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct
+  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--last-message" title='The "last-message" property'>last-message</a>"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read
+  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--num-src-pads" title='The "num-src-pads" property'>num-src-pads</a>"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read
+  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--silent" title='The "silent" property'>silent</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct
   "<a class="link" href="gstreamer-plugins-tee.html#GstTee--pull-mode" title='The "pull-mode" property'>pull-mode</a>"                <a class="link" href="gstreamer-plugins-tee.html#GstTeePullMode" title="enum GstTeePullMode"><span class="type">GstTeePullMode</span></a>        : Read / Write / Construct
-  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--alloc-pad" title='The "alloc-pad" property'>alloc-pad</a>"                <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a>*               : Read / Write
+  "<a class="link" href="gstreamer-plugins-tee.html#GstTee--alloc-pad" title='The "alloc-pad" property'>alloc-pad</a>"                <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a>*               : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
 <a name="gstreamer-plugins-tee.description"></a><h2>Description</h2>
 <p>
-Split data to multiple pads.
+Split data to multiple pads. Branching the data flow is useful when e.g.
+capturing a video where the video is shown on the screen and also encoded and
+written to a file. Another example is playing music and hooking up a
+visualisation module.
 </p>
+<p>
+One needs to use separate queue elements (or a multiqueue) in each branch to
+provide separate threads for each branch. Otherwise a blocked dataflow in one
+branch would stall the other branches.
+</p>
+<div class="refsect2" title="Example launch line">
+<a name="id555335"></a><h3>Example launch line</h3>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch filesrc location<span class="symbol">=</span>song<span class="symbol">.</span>ogg <span class="symbol">!</span> decodebin2 <span class="symbol">!</span> tee name<span class="symbol">=</span>t <span class="symbol">!</span> queue <span class="symbol">!</span> autoaudiosink t<span class="symbol">. !</span> queue <span class="symbol">!</span> audioconvert <span class="symbol">!</span> goom <span class="symbol">!</span> ffmpegcolorspace <span class="symbol">!</span> autovideosink</pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+ Play a song.ogg from local dir and render visualisations using the goom
+element.
+</div>
 </div>
 <div class="refsect1" title="Details">
 <a name="gstreamer-plugins-tee.details"></a><h2>Details</h2>
@@ -114,28 +137,28 @@ disables pull mode.
 <a name="gstreamer-plugins-tee.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "has-chain" property'>
 <a name="GstTee--has-chain"></a><h3>The <code class="literal">"has-chain"</code> property</h3>
-<pre class="programlisting">  "has-chain"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct</pre>
+<pre class="programlisting">  "has-chain"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct</pre>
 <p>If the element can operate in push mode.</p>
 <p>Default value: TRUE</p>
 </div>
 <hr>
 <div class="refsect2" title='The "has-sink-loop" property'>
 <a name="GstTee--has-sink-loop"></a><h3>The <code class="literal">"has-sink-loop"</code> property</h3>
-<pre class="programlisting">  "has-sink-loop"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct</pre>
+<pre class="programlisting">  "has-sink-loop"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct</pre>
 <p>If the element should spawn a thread (unimplemented and deprecated).</p>
 <p>Default value: FALSE</p>
 </div>
 <hr>
 <div class="refsect2" title='The "last-message" property'>
 <a name="GstTee--last-message"></a><h3>The <code class="literal">"last-message"</code> property</h3>
-<pre class="programlisting">  "last-message"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read</pre>
+<pre class="programlisting">  "last-message"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read</pre>
 <p>The message describing current status.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
 <div class="refsect2" title='The "num-src-pads" property'>
 <a name="GstTee--num-src-pads"></a><h3>The <code class="literal">"num-src-pads"</code> property</h3>
-<pre class="programlisting">  "num-src-pads"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read</pre>
+<pre class="programlisting">  "num-src-pads"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read</pre>
 <p>The number of source pads.</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 0</p>
@@ -143,7 +166,7 @@ disables pull mode.
 <hr>
 <div class="refsect2" title='The "silent" property'>
 <a name="GstTee--silent"></a><h3>The <code class="literal">"silent"</code> property</h3>
-<pre class="programlisting">  "silent"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct</pre>
+<pre class="programlisting">  "silent"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct</pre>
 <p>Don't produce last_message events.</p>
 <p>Default value: TRUE</p>
 </div>
@@ -157,7 +180,7 @@ disables pull mode.
 <hr>
 <div class="refsect2" title='The "alloc-pad" property'>
 <a name="GstTee--alloc-pad"></a><h3>The <code class="literal">"alloc-pad"</code> property</h3>
-<pre class="programlisting">  "alloc-pad"                <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a>*               : Read / Write</pre>
+<pre class="programlisting">  "alloc-pad"                <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a>*               : Read / Write</pre>
 <p>The pad used for gst_pad_alloc_buffer.</p>
 </div>
 </div>

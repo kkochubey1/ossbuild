@@ -41,7 +41,7 @@
 #include &lt;gst/check/gstconsistencychecker.h&gt;
 
                     <a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency">GstStreamConsistency</a>;
-<a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> * <a class="link" href="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-new" title="gst_consistency_checker_new ()">gst_consistency_checker_new</a>      (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);
+<a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> * <a class="link" href="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-new" title="gst_consistency_checker_new ()">gst_consistency_checker_new</a>      (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-reset" title="gst_consistency_checker_reset ()">gst_consistency_checker_reset</a>       (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="type">GstStreamConsistency</span></a> *consist</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-free" title="gst_consistency_checker_free ()">gst_consistency_checker_free</a>        (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="type">GstStreamConsistency</span></a> *consist</code></em>);
 </pre>
@@ -66,7 +66,7 @@ Opaque consistency checker handle.
 <hr>
 <div class="refsect2" title="gst_consistency_checker_new ()">
 <a name="gst-consistency-checker-new"></a><h3>gst_consistency_checker_new ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> * gst_consistency_checker_new      (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-libs-GstStreamConsistency.html#GstStreamConsistency" title="GstStreamConsistency"><span class="returnvalue">GstStreamConsistency</span></a> * gst_consistency_checker_new      (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> *pad</code></em>);</pre>
 <p>
 Sets up a data probe on the given pad which will raise assertions if the
 data flow is inconsistent.
@@ -79,7 +79,7 @@ Currently only works for source pads.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td>The <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> on which the dataflow will be checked.
+<td>The <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> on which the dataflow will be checked.
 </td>
 </tr>
 <tr>

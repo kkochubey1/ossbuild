@@ -38,6 +38,7 @@
 #
 
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -59,6 +60,7 @@ build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/common/orc.mak
+noinst_PROGRAMS = generate_sine_table$(EXEEXT)
 subdir = gst/videotestsrc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
@@ -78,6 +80,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -143,6 +146,15 @@ libgstvideotestsrc_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstvideotestsrc_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(libgstvideotestsrc_la_CFLAGS) $(CFLAGS) \
 	$(libgstvideotestsrc_la_LDFLAGS) $(LDFLAGS) -o $@
+PROGRAMS = $(noinst_PROGRAMS)
+am_generate_sine_table_OBJECTS =  \
+	generate_sine_table-generate_sine_table.$(OBJEXT)
+generate_sine_table_OBJECTS = $(am_generate_sine_table_OBJECTS)
+generate_sine_table_DEPENDENCIES = $(am__DEPENDENCIES_1)
+generate_sine_table_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(generate_sine_table_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -170,8 +182,10 @@ AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstvideotestsrc_la_SOURCES) \
-	$(nodist_libgstvideotestsrc_la_SOURCES)
-DIST_SOURCES = $(libgstvideotestsrc_la_SOURCES)
+	$(nodist_libgstvideotestsrc_la_SOURCES) \
+	$(generate_sine_table_SOURCES)
+DIST_SOURCES = $(libgstvideotestsrc_la_SOURCES) \
+	$(generate_sine_table_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -277,6 +291,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -341,6 +356,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -480,6 +496,9 @@ libgstvideotestsrc_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 libgstvideotestsrc_la_LIBADD = $(GST_BASE_LIBS) $(GST_LIBS) $(ORC_LIBS) $(LIBM)
 libgstvideotestsrc_la_LIBTOOLFLAGS = --tag=disable-static
 noinst_HEADERS = gstvideotestsrc.h videotestsrc.h
+generate_sine_table_SOURCES = generate_sine_table.c
+generate_sine_table_CFLAGS = $(GST_CFLAGS)
+generate_sine_table_LDADD = $(LIBM)
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -549,12 +568,25 @@ clean-pluginLTLIBRARIES:
 libgstvideotestsrc.la: $(libgstvideotestsrc_la_OBJECTS) $(libgstvideotestsrc_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libgstvideotestsrc_la_LINK) -rpath $(plugindir) $(libgstvideotestsrc_la_OBJECTS) $(libgstvideotestsrc_la_LIBADD) $(LIBS)
 
+clean-noinstPROGRAMS:
+	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
+	echo " rm -f" $$list; \
+	rm -f $$list || exit $$?; \
+	test -n "$(EXEEXT)" || exit 0; \
+	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
+	echo " rm -f" $$list; \
+	rm -f $$list
+generate_sine_table$(EXEEXT): $(generate_sine_table_OBJECTS) $(generate_sine_table_DEPENDENCIES) 
+	@rm -f generate_sine_table$(EXEEXT)
+	$(AM_V_CCLD)$(generate_sine_table_LINK) $(generate_sine_table_OBJECTS) $(generate_sine_table_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/generate_sine_table-generate_sine_table.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideotestsrc_la-gstvideotestsrc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideotestsrc_la-tmp-orc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideotestsrc_la-videotestsrc.Plo@am__quote@
@@ -606,6 +638,22 @@ libgstvideotestsrc_la-tmp-orc.lo: tmp-orc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='tmp-orc.c' object='libgstvideotestsrc_la-tmp-orc.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideotestsrc_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideotestsrc_la_CFLAGS) $(CFLAGS) -c -o libgstvideotestsrc_la-tmp-orc.lo `test -f 'tmp-orc.c' || echo '$(srcdir)/'`tmp-orc.c
+
+generate_sine_table-generate_sine_table.o: generate_sine_table.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(generate_sine_table_CFLAGS) $(CFLAGS) -MT generate_sine_table-generate_sine_table.o -MD -MP -MF $(DEPDIR)/generate_sine_table-generate_sine_table.Tpo -c -o generate_sine_table-generate_sine_table.o `test -f 'generate_sine_table.c' || echo '$(srcdir)/'`generate_sine_table.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/generate_sine_table-generate_sine_table.Tpo $(DEPDIR)/generate_sine_table-generate_sine_table.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='generate_sine_table.c' object='generate_sine_table-generate_sine_table.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(generate_sine_table_CFLAGS) $(CFLAGS) -c -o generate_sine_table-generate_sine_table.o `test -f 'generate_sine_table.c' || echo '$(srcdir)/'`generate_sine_table.c
+
+generate_sine_table-generate_sine_table.obj: generate_sine_table.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(generate_sine_table_CFLAGS) $(CFLAGS) -MT generate_sine_table-generate_sine_table.obj -MD -MP -MF $(DEPDIR)/generate_sine_table-generate_sine_table.Tpo -c -o generate_sine_table-generate_sine_table.obj `if test -f 'generate_sine_table.c'; then $(CYGPATH_W) 'generate_sine_table.c'; else $(CYGPATH_W) '$(srcdir)/generate_sine_table.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/generate_sine_table-generate_sine_table.Tpo $(DEPDIR)/generate_sine_table-generate_sine_table.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='generate_sine_table.c' object='generate_sine_table-generate_sine_table.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(generate_sine_table_CFLAGS) $(CFLAGS) -c -o generate_sine_table-generate_sine_table.obj `if test -f 'generate_sine_table.c'; then $(CYGPATH_W) 'generate_sine_table.c'; else $(CYGPATH_W) '$(srcdir)/generate_sine_table.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -701,7 +749,7 @@ distdir: $(DISTFILES)
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(plugindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -735,7 +783,7 @@ maintainer-clean-generic:
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-local \
+clean-am: clean-generic clean-libtool clean-local clean-noinstPROGRAMS \
 	clean-pluginLTLIBRARIES mostlyclean-am
 
 distclean: distclean-am
@@ -807,19 +855,19 @@ uninstall-am: uninstall-pluginLTLIBRARIES
 .MAKE: all check install install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-local clean-pluginLTLIBRARIES ctags \
-	dist-hook distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-pluginLTLIBRARIES install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-pluginLTLIBRARIES
+	clean-libtool clean-local clean-noinstPROGRAMS \
+	clean-pluginLTLIBRARIES ctags dist-hook distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-pluginLTLIBRARIES \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-pluginLTLIBRARIES
 
 
 orc-update: tmp-orc.c $(ORC_SOURCE).h
@@ -827,16 +875,16 @@ orc-update: tmp-orc.c $(ORC_SOURCE).h
 	cp tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c
 	cp $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h
 
-@HAVE_ORC_TRUE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_TRUE@	$(orcc_v_gen)$(ORCC) --implementation --include glib.h -o tmp-orc.c $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_TRUE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_TRUE@	$(orcc_v_gen)$(ORCC) $(ORCC_FLAGS) --implementation --include glib.h -o tmp-orc.c $(srcdir)/$(ORC_SOURCE).orc
 
-@HAVE_ORC_TRUE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_TRUE@	$(orcc_v_gen)$(ORCC) --header --include glib.h -o $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_FALSE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.c tmp-orc.c
+@HAVE_ORCC_TRUE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_TRUE@	$(orcc_v_gen)$(ORCC) $(ORCC_FLAGS) --header --include glib.h -o $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_FALSE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc $(srcdir)/$(ORC_SOURCE)-dist.c
+@HAVE_ORCC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.c tmp-orc.c
 
-@HAVE_ORC_FALSE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.h $(ORC_SOURCE).h
+@HAVE_ORCC_FALSE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc $(srcdir)/$(ORC_SOURCE)-dist.c
+@HAVE_ORCC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.h $(ORC_SOURCE).h
 
 clean-local: clean-orc
 .PHONY: clean-orc
@@ -845,15 +893,18 @@ clean-orc:
 
 dist-hook: dist-hook-orc
 .PHONY: dist-hook-orc
+
+# we try and copy updated orc -dist files below, but don't fail if it
+# doesn't work as the srcdir might not be writable
 dist-hook-orc: tmp-orc.c $(ORC_SOURCE).h
 	$(top_srcdir)/common/gst-indent tmp-orc.c
 	rm -f tmp-orc.c~
 	cmp -s tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c || \
-	  cp tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c
+	  cp tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c || true
 	cmp -s $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h || \
-	  cp $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h
-	cp -p $(srcdir)/$(ORC_SOURCE)-dist.c $(distdir)/
-	cp -p $(srcdir)/$(ORC_SOURCE)-dist.h $(distdir)/
+	  cp $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h || true
+	cp -p tmp-orc.c $(distdir)/$(ORC_SOURCE)-dist.c
+	cp -p $(ORC_SOURCE).h $(distdir)/$(ORC_SOURCE)-dist.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

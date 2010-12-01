@@ -46,9 +46,9 @@
                     <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferClass" title="GstRingBufferClass">GstRingBufferClass</a>;
                     <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferSpec" title="GstRingBufferSpec">GstRingBufferSpec</a>;
 <span class="returnvalue">void</span>                (<a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferCallback" title="GstRingBufferCallback ()">*GstRingBufferCallback</a>)            (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *rbuf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
 enum                <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferSegState" title="enum GstRingBufferSegState">GstRingBufferSegState</a>;
 enum                <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferState" title="enum GstRingBufferState">GstRingBufferState</a>;
 enum                <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstBufferFormat" title="enum GstBufferFormat">GstBufferFormat</a>;
@@ -59,72 +59,72 @@ enum                <a class="link" href="gst-plugins-base-libs-gstringbuffer.ht
 #define             <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GST-RING-BUFFER-WAIT:CAPS" title="GST_RING_BUFFER_WAIT()">GST_RING_BUFFER_WAIT</a>                (buf)
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-set-callback" title="gst_ring_buffer_set_callback ()">gst_ring_buffer_set_callback</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferCallback" title="GstRingBufferCallback ()"><span class="type">GstRingBufferCallback</span></a> cb</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-acquire" title="gst_ring_buffer_acquire ()">gst_ring_buffer_acquire</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-acquire" title="gst_ring_buffer_acquire ()">gst_ring_buffer_acquire</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferSpec" title="GstRingBufferSpec"><span class="type">GstRingBufferSpec</span></a> *spec</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-release" title="gst_ring_buffer_release ()">gst_ring_buffer_release</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-is-acquired" title="gst_ring_buffer_is_acquired ()">gst_ring_buffer_is_acquired</a>         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-activate" title="gst_ring_buffer_activate ()">gst_ring_buffer_activate</a>            (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> active</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-is-active" title="gst_ring_buffer_is_active ()">gst_ring_buffer_is_active</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-start" title="gst_ring_buffer_start ()">gst_ring_buffer_start</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-pause" title="gst_ring_buffer_pause ()">gst_ring_buffer_pause</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-stop" title="gst_ring_buffer_stop ()">gst_ring_buffer_stop</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-delay" title="gst_ring_buffer_delay ()">gst_ring_buffer_delay</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="returnvalue">guint64</span></a>             <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-samples-done" title="gst_ring_buffer_samples_done ()">gst_ring_buffer_samples_done</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-release" title="gst_ring_buffer_release ()">gst_ring_buffer_release</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-is-acquired" title="gst_ring_buffer_is_acquired ()">gst_ring_buffer_is_acquired</a>         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-activate" title="gst_ring_buffer_activate ()">gst_ring_buffer_activate</a>            (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> active</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-is-active" title="gst_ring_buffer_is_active ()">gst_ring_buffer_is_active</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-start" title="gst_ring_buffer_start ()">gst_ring_buffer_start</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-pause" title="gst_ring_buffer_pause ()">gst_ring_buffer_pause</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-stop" title="gst_ring_buffer_stop ()">gst_ring_buffer_stop</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-delay" title="gst_ring_buffer_delay ()">gst_ring_buffer_delay</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="returnvalue">guint64</span></a>             <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-samples-done" title="gst_ring_buffer_samples_done ()">gst_ring_buffer_samples_done</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-set-sample" title="gst_ring_buffer_set_sample ()">gst_ring_buffer_set_sample</a>          (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-commit" title="gst_ring_buffer_commit ()">gst_ring_buffer_commit</a>              (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-commit-full" title="gst_ring_buffer_commit_full ()">gst_ring_buffer_commit_full</a>         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> *sample</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> in_samples</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> out_samples</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *accum</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-convert" title="gst_ring_buffer_convert ()">gst_ring_buffer_convert</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstFormat.html#GstFormat"><span class="type">GstFormat</span></a> src_fmt</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_val</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstFormat.html#GstFormat"><span class="type">GstFormat</span></a> dest_fmt</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_val</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-prepare-read" title="gst_ring_buffer_prepare_read ()">gst_ring_buffer_prepare_read</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *segment</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> **readptr</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *len</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-read" title="gst_ring_buffer_read ()">gst_ring_buffer_read</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-commit" title="gst_ring_buffer_commit ()">gst_ring_buffer_commit</a>              (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-commit-full" title="gst_ring_buffer_commit_full ()">gst_ring_buffer_commit_full</a>         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> *sample</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> in_samples</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> out_samples</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *accum</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-convert" title="gst_ring_buffer_convert ()">gst_ring_buffer_convert</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstFormat.html#GstFormat"><span class="type">GstFormat</span></a> src_fmt</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_val</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstFormat.html#GstFormat"><span class="type">GstFormat</span></a> dest_fmt</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_val</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-prepare-read" title="gst_ring_buffer_prepare_read ()">gst_ring_buffer_prepare_read</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *segment</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> **readptr</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *len</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-read" title="gst_ring_buffer_read ()">gst_ring_buffer_read</a>                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-clear" title="gst_ring_buffer_clear ()">gst_ring_buffer_clear</a>               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> segment</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> segment</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-clear-all" title="gst_ring_buffer_clear_all ()">gst_ring_buffer_clear_all</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-advance" title="gst_ring_buffer_advance ()">gst_ring_buffer_advance</a>             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> advance</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-close-device" title="gst_ring_buffer_close_device ()">gst_ring_buffer_close_device</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-open-device" title="gst_ring_buffer_open_device ()">gst_ring_buffer_open_device</a>         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-device-is-open" title="gst_ring_buffer_device_is_open ()">gst_ring_buffer_device_is_open</a>      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> advance</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-close-device" title="gst_ring_buffer_close_device ()">gst_ring_buffer_close_device</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-open-device" title="gst_ring_buffer_open_device ()">gst_ring_buffer_open_device</a>         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-device-is-open" title="gst_ring_buffer_device_is_open ()">gst_ring_buffer_device_is_open</a>      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-may-start" title="gst_ring_buffer_may_start ()">gst_ring_buffer_may_start</a>           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> allowed</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-parse-caps" title="gst_ring_buffer_parse_caps ()">gst_ring_buffer_parse_caps</a>          (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferSpec" title="GstRingBufferSpec"><span class="type">GstRingBufferSpec</span></a> *spec</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> allowed</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-parse-caps" title="gst_ring_buffer_parse_caps ()">gst_ring_buffer_parse_caps</a>          (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferSpec" title="GstRingBufferSpec"><span class="type">GstRingBufferSpec</span></a> *spec</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-set-flushing" title="gst_ring_buffer_set_flushing ()">gst_ring_buffer_set_flushing</a>        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> flushing</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> flushing</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-base-libs-gstringbuffer.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
          +----GstRingBuffer
 </pre>
 </div>
 <div class="refsect1" title="Description">
 <a name="gst-plugins-base-libs-gstringbuffer.description"></a><h2>Description</h2>
 <div class="refsect2">
-<a name="id607071"></a><p>
+<a name="id547311"></a><p>
 This object is the base class for audio ringbuffers used by the base
 audio source and sink classes.
 </p>
@@ -167,22 +167,22 @@ The ringbuffer base class structure.
 <col align="left" valign="top">
 <tbody>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Threads.html#GCond"><span class="type">GCond</span></a> *<em class="structfield"><code><a name="GstRingBuffer-struct.cond"></a>cond</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Threads.html#GCond"><span class="type">GCond</span></a> *<em class="structfield"><code><a name="GstRingBuffer-struct.cond"></a>cond</code></em>;</span></p></td>
 <td>used to signal start/stop/pause/resume actions
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.open"></a>open</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.open"></a>open</code></em>;</span></p></td>
 <td>boolean indicating that the ringbuffer is open
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.acquired"></a>acquired</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.acquired"></a>acquired</code></em>;</span></p></td>
 <td>boolean indicating that the ringbuffer is acquired
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *<em class="structfield"><code><a name="GstRingBuffer-struct.data"></a>data</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *<em class="structfield"><code><a name="GstRingBuffer-struct.data"></a>data</code></em>;</span></p></td>
 <td>data in the ringbuffer
 </td>
 </tr>
@@ -197,32 +197,32 @@ The ringbuffer base class structure.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.samples-per-seg"></a>samples_per_seg</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.samples-per-seg"></a>samples_per_seg</code></em>;</span></p></td>
 <td>number of samples in one segment
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *<em class="structfield"><code><a name="GstRingBuffer-struct.empty-seg"></a>empty_seg</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *<em class="structfield"><code><a name="GstRingBuffer-struct.empty-seg"></a>empty_seg</code></em>;</span></p></td>
 <td>pointer to memory holding one segment of silence samples
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.state"></a>state</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.state"></a>state</code></em>;</span></p></td>
 <td>state of the buffer
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.segdone"></a>segdone</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.segdone"></a>segdone</code></em>;</span></p></td>
 <td>readpointer in the ringbuffer
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.segbase"></a>segbase</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.segbase"></a>segbase</code></em>;</span></p></td>
 <td>segment corresponding to segment 0 (unused)
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.waiting"></a>waiting</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBuffer-struct.waiting"></a>waiting</code></em>;</span></p></td>
 <td>is a reader or writer waiting for a free segment
 </td>
 </tr>
@@ -251,7 +251,7 @@ The ringbuffer base class structure.
   gboolean     (*activate)     (GstRingBuffer *buf, gboolean active);
 
   guint        (*commit)       (GstRingBuffer * buf, guint64 *sample,
-                                guchar * data, gint in_samples, 
+                                guchar * data, gint in_samples,
                                 gint out_samples, gint * accum);
 
   void         (*clear_all)    (GstRingBuffer * buf);
@@ -264,7 +264,7 @@ The vmethods that subclasses can override to implement the ringbuffer.
 <col align="left" valign="top">
 <tbody>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html#GstObjectClass"><span class="type">GstObjectClass</span></a> <em class="structfield"><code><a name="GstRingBufferClass.parent-class"></a>parent_class</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html#GstObjectClass"><span class="type">GstObjectClass</span></a> <em class="structfield"><code><a name="GstRingBufferClass.parent-class"></a>parent_class</code></em>;</span></p></td>
 <td>parent class
 </td>
 </tr>
@@ -348,7 +348,7 @@ consumed segments in the device. Since 0.10.22
   gint      depth;
   gint      rate;
   gint      channels;
-  
+
   guint64  latency_time;        /* the required/actual latency time, this is the
 				 * actual the size of one segment and the
 				 * minimum possible latency we can achieve. */
@@ -378,7 +378,7 @@ The structure containing the format specification of the ringbuffer.
 <col align="left" valign="top">
 <tbody>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *<em class="structfield"><code><a name="GstRingBufferSpec.caps"></a>caps</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *<em class="structfield"><code><a name="GstRingBufferSpec.caps"></a>caps</code></em>;</span></p></td>
 <td>The caps that generated the Spec.
 </td>
 </tr>
@@ -393,67 +393,67 @@ The structure containing the format specification of the ringbuffer.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.sign"></a>sign</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.sign"></a>sign</code></em>;</span></p></td>
 <td>the sample sign
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.bigend"></a>bigend</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.bigend"></a>bigend</code></em>;</span></p></td>
 <td>the endianness of the samples
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.width"></a>width</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.width"></a>width</code></em>;</span></p></td>
 <td>the width of the samples
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.depth"></a>depth</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.depth"></a>depth</code></em>;</span></p></td>
 <td>th depth of the samples
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.rate"></a>rate</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.rate"></a>rate</code></em>;</span></p></td>
 <td>the samplerate
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.channels"></a>channels</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.channels"></a>channels</code></em>;</span></p></td>
 <td>the number of channels
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.latency-time"></a>latency_time</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.latency-time"></a>latency_time</code></em>;</span></p></td>
 <td>the latency in microseconds
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.buffer-time"></a>buffer_time</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.buffer-time"></a>buffer_time</code></em>;</span></p></td>
 <td>the total buffer size in microseconds
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.segsize"></a>segsize</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.segsize"></a>segsize</code></em>;</span></p></td>
 <td>the size of one segment in bytes
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.segtotal"></a>segtotal</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.segtotal"></a>segtotal</code></em>;</span></p></td>
 <td>the total number of segments
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.bytes-per-sample"></a>bytes_per_sample</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.bytes-per-sample"></a>bytes_per_sample</code></em>;</span></p></td>
 <td>number of bytes in one sample
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.silence-sample"></a>silence_sample</code></em>[32];</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.silence-sample"></a>silence_sample</code></em>[32];</span></p></td>
 <td>bytes representing one sample of silence
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.seglatency"></a>seglatency</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstRingBufferSpec.seglatency"></a>seglatency</code></em>;</span></p></td>
 <td>number of segments queued in the lower level device,
  defaults to segtotal
 </td>
@@ -465,9 +465,9 @@ The structure containing the format specification of the ringbuffer.
 <div class="refsect2" title="GstRingBufferCallback ()">
 <a name="GstRingBufferCallback"></a><h3>GstRingBufferCallback ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                (*GstRingBufferCallback)            (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *rbuf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>
 This function is set with <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-set-callback" title="gst_ring_buffer_set_callback ()"><code class="function">gst_ring_buffer_set_callback()</code></a> and is
 called to fill the memory at <em class="parameter"><code>data</code></em> with <em class="parameter"><code>len</code></em> bytes of samples.
@@ -659,7 +659,7 @@ The format of the samples in the ringbuffer.
 </tr>
 <tr>
 <td><p><a name="GST-BUFTYPE-FLOAT:CAPS"></a><span class="term"><code class="literal">GST_BUFTYPE_FLOAT</code></span></p></td>
-<td>samples in float 
+<td>samples in float
 </td>
 </tr>
 <tr>
@@ -779,7 +779,7 @@ The format of the samples in the ringbuffer.
 <a name="gst-ring-buffer-set-callback"></a><h3>gst_ring_buffer_set_callback ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_ring_buffer_set_callback        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferCallback" title="GstRingBufferCallback ()"><span class="type">GstRingBufferCallback</span></a> cb</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>
 Sets the given callback function on the buffer. This function
 will be called every time a segment has been written to a device.
@@ -811,11 +811,11 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_acquire ()">
 <a name="gst-ring-buffer-acquire"></a><h3>gst_ring_buffer_acquire ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_acquire             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_acquire             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferSpec" title="GstRingBufferSpec"><span class="type">GstRingBufferSpec</span></a> *spec</code></em>);</pre>
 <p>
 Allocate the resources for the ringbuffer. This function fills
-in the data pointer of the ring buffer with a valid <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a>
+in the data pointer of the ring buffer with a valid <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a>
 to which samples can be written.
 </p>
 <div class="variablelist"><table border="0">
@@ -844,7 +844,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_release ()">
 <a name="gst-ring-buffer-release"></a><h3>gst_ring_buffer_release ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_release             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_release             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
 <p>
 Free the resources of the ringbuffer.
 </p>
@@ -869,7 +869,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_is_acquired ()">
 <a name="gst-ring-buffer-is-acquired"></a><h3>gst_ring_buffer_is_acquired ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_is_acquired         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_is_acquired         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
 <p>
 Check if the ringbuffer is acquired and ready to use.
 </p>
@@ -894,8 +894,8 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_activate ()">
 <a name="gst-ring-buffer-activate"></a><h3>gst_ring_buffer_activate ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_activate            (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> active</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_activate            (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> active</code></em>);</pre>
 <p>
 Activate <em class="parameter"><code>buf</code></em> to start or stop pulling data.
 </p>
@@ -929,7 +929,7 @@ FALSE on error.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_is_active ()">
 <a name="gst-ring-buffer-is-active"></a><h3>gst_ring_buffer_is_active ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_is_active           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_is_active           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
 <p>
 Check if <em class="parameter"><code>buf</code></em> is activated.
 </p>
@@ -957,7 +957,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_start ()">
 <a name="gst-ring-buffer-start"></a><h3>gst_ring_buffer_start ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_start               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_start               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
 <p>
 Start processing samples from the ringbuffer.
 </p>
@@ -982,7 +982,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_pause ()">
 <a name="gst-ring-buffer-pause"></a><h3>gst_ring_buffer_pause ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_pause               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_pause               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
 <p>
 Pause processing samples from the ringbuffer.
 </p>
@@ -1007,7 +1007,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_stop ()">
 <a name="gst-ring-buffer-stop"></a><h3>gst_ring_buffer_stop ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_stop                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_stop                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
 <p>
 Stop processing samples from the ringbuffer.
 </p>
@@ -1032,7 +1032,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_delay ()">
 <a name="gst-ring-buffer-delay"></a><h3>gst_ring_buffer_delay ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_ring_buffer_delay               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_ring_buffer_delay               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
 <p>
 Get the number of samples queued in the audio device. This is
 usually less than the segment size but can be bigger when the
@@ -1068,7 +1068,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_samples_done ()">
 <a name="gst-ring-buffer-samples-done"></a><h3>gst_ring_buffer_samples_done ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="returnvalue">guint64</span></a>             gst_ring_buffer_samples_done        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="returnvalue">guint64</span></a>             gst_ring_buffer_samples_done        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
 <p>
 Get the number of samples that were processed by the ringbuffer
 since it was last started. This does not include the number of samples not
@@ -1096,7 +1096,7 @@ MT safe.
 <div class="refsect2" title="gst_ring_buffer_set_sample ()">
 <a name="gst-ring-buffer-set-sample"></a><h3>gst_ring_buffer_set_sample ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_ring_buffer_set_sample          (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>);</pre>
 <p>
 Make sure that the next sample written to the device is
 accounted for as being the <em class="parameter"><code>sample</code></em> sample written to the
@@ -1128,10 +1128,10 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_commit ()">
 <a name="gst-ring-buffer-commit"></a><h3>gst_ring_buffer_commit ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_ring_buffer_commit              (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_ring_buffer_commit              (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>);</pre>
 <p>
 Same as <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-commit-full" title="gst_ring_buffer_commit_full ()"><code class="function">gst_ring_buffer_commit_full()</code></a> but with a in_samples and out_samples
 equal to <em class="parameter"><code>len</code></em>, ignoring accum.
@@ -1173,12 +1173,12 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_commit_full ()">
 <a name="gst-ring-buffer-commit-full"></a><h3>gst_ring_buffer_commit_full ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_ring_buffer_commit_full         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> *sample</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> in_samples</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> out_samples</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *accum</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_ring_buffer_commit_full         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> *sample</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> in_samples</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> out_samples</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *accum</code></em>);</pre>
 <p>
 Commit <em class="parameter"><code>in_samples</code></em> samples pointed to by <em class="parameter"><code>data</code></em> to the ringbuffer <em class="parameter"><code>buf</code></em>. 
 </p>
@@ -1253,11 +1253,11 @@ with a flush or stop.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_convert ()">
 <a name="gst-ring-buffer-convert"></a><h3>gst_ring_buffer_convert ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_convert             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstFormat.html#GstFormat"><span class="type">GstFormat</span></a> src_fmt</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_val</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstFormat.html#GstFormat"><span class="type">GstFormat</span></a> dest_fmt</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_val</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_convert             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstFormat.html#GstFormat"><span class="type">GstFormat</span></a> src_fmt</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_val</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstFormat.html#GstFormat"><span class="type">GstFormat</span></a> dest_fmt</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_val</code></em>);</pre>
 <p>
 Convert <em class="parameter"><code>src_val</code></em> in <em class="parameter"><code>src_fmt</code></em> to the equivalent value in <em class="parameter"><code>dest_fmt</code></em>. The result
 will be put in <em class="parameter"><code>dest_val</code></em>.
@@ -1303,10 +1303,10 @@ will be put in <em class="parameter"><code>dest_val</code></em>.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_prepare_read ()">
 <a name="gst-ring-buffer-prepare-read"></a><h3>gst_ring_buffer_prepare_read ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_prepare_read        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *segment</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> **readptr</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *len</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_prepare_read        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *segment</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> **readptr</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *len</code></em>);</pre>
 <p>
 Returns a pointer to memory where the data from segment <em class="parameter"><code>segment</code></em>
 can be found. This function is mostly used by subclasses.
@@ -1347,10 +1347,10 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_read ()">
 <a name="gst-ring-buffer-read"></a><h3>gst_ring_buffer_read ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_ring_buffer_read                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_ring_buffer_read                (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> sample</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> len</code></em>);</pre>
 <p>
 Read <em class="parameter"><code>len</code></em> samples from the ringbuffer into the memory pointed 
 to by <em class="parameter"><code>data</code></em>.
@@ -1399,7 +1399,7 @@ MT safe.
 <div class="refsect2" title="gst_ring_buffer_clear ()">
 <a name="gst-ring-buffer-clear"></a><h3>gst_ring_buffer_clear ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_ring_buffer_clear               (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> segment</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> segment</code></em>);</pre>
 <p>
 Clear the given segment of the buffer with silence samples.
 This function is used by subclasses.
@@ -1446,7 +1446,7 @@ MT safe.
 <div class="refsect2" title="gst_ring_buffer_advance ()">
 <a name="gst-ring-buffer-advance"></a><h3>gst_ring_buffer_advance ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_ring_buffer_advance             (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> advance</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> advance</code></em>);</pre>
 <p>
 Subclasses should call this function to notify the fact that 
 <em class="parameter"><code>advance</code></em> segments are now processed by the device.
@@ -1473,7 +1473,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_close_device ()">
 <a name="gst-ring-buffer-close-device"></a><h3>gst_ring_buffer_close_device ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_close_device        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_close_device        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
 <p>
 Close the audio device associated with the ring buffer. The ring buffer
 should already have been released via <a class="link" href="gst-plugins-base-libs-gstringbuffer.html#gst-ring-buffer-release" title="gst_ring_buffer_release ()"><code class="function">gst_ring_buffer_release()</code></a>.
@@ -1499,7 +1499,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_open_device ()">
 <a name="gst-ring-buffer-open-device"></a><h3>gst_ring_buffer_open_device ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_open_device         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_open_device         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
 <p>
 Open the audio device associated with the ring buffer. Does not perform any
 setup on the device. You must open the device before acquiring the ring
@@ -1526,7 +1526,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_device_is_open ()">
 <a name="gst-ring-buffer-device-is-open"></a><h3>gst_ring_buffer_device_is_open ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_device_is_open      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_device_is_open      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>);</pre>
 <p>
 Checks the status of the device associated with the ring buffer.
 </p>
@@ -1552,7 +1552,7 @@ MT safe.
 <div class="refsect2" title="gst_ring_buffer_may_start ()">
 <a name="gst-ring-buffer-may-start"></a><h3>gst_ring_buffer_may_start ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_ring_buffer_may_start           (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> allowed</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> allowed</code></em>);</pre>
 <p>
 Tell the ringbuffer that it is allowed to start playback when
 the ringbuffer is filled with samples. 
@@ -1580,8 +1580,8 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_ring_buffer_parse_caps ()">
 <a name="gst-ring-buffer-parse-caps"></a><h3>gst_ring_buffer_parse_caps ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_parse_caps          (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferSpec" title="GstRingBufferSpec"><span class="type">GstRingBufferSpec</span></a> *spec</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_ring_buffer_parse_caps          (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBufferSpec" title="GstRingBufferSpec"><span class="type">GstRingBufferSpec</span></a> *spec</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);</pre>
 <p>
 Parse <em class="parameter"><code>caps</code></em> into <em class="parameter"><code>spec</code></em>.
 </p>
@@ -1595,7 +1595,7 @@ Parse <em class="parameter"><code>caps</code></em> into <em class="parameter"><c
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>caps</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>
 </td>
 </tr>
 <tr>
@@ -1610,7 +1610,7 @@ Parse <em class="parameter"><code>caps</code></em> into <em class="parameter"><c
 <div class="refsect2" title="gst_ring_buffer_set_flushing ()">
 <a name="gst-ring-buffer-set-flushing"></a><h3>gst_ring_buffer_set_flushing ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_ring_buffer_set_flushing        (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstringbuffer.html#GstRingBuffer"><span class="type">GstRingBuffer</span></a> *buf</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> flushing</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> flushing</code></em>);</pre>
 <p>
 Set the ringbuffer to flushing mode or normal mode.
 </p>

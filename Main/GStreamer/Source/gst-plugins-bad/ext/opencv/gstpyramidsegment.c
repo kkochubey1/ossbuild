@@ -62,6 +62,7 @@
 
 #include <gst/gst.h>
 
+#include "gstopencvutils.h"
 #include "gstpyramidsegment.h"
 
 #define BLOCK_SIZE 1000
@@ -92,13 +93,13 @@ enum
 static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("video/x-raw-rgb")
+    GST_STATIC_CAPS (GST_VIDEO_CAPS_RGB)
     );
 
 static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("video/x-raw-rgb")
+    GST_STATIC_CAPS (GST_VIDEO_CAPS_RGB)
     );
 
 GST_BOILERPLATE (Gstpyramidsegment, gst_pyramidsegment, GstElement,
@@ -149,10 +150,8 @@ static void
 gst_pyramidsegment_class_init (GstpyramidsegmentClass * klass)
 {
   GObjectClass *gobject_class;
-  GstElementClass *gstelement_class;
 
   gobject_class = (GObjectClass *) klass;
-  gstelement_class = (GstElementClass *) klass;
   parent_class = g_type_class_peek_parent (klass);
 
   gobject_class->finalize = GST_DEBUG_FUNCPTR (gst_pyramidsegment_finalize);

@@ -42,7 +42,7 @@
     <sub name="Index of deprecated API" link="api-index-deprecated.html"/>
   </chapters>
   <functions>
-    <function name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#id337902"/>
+    <function name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#id555724"/>
     <function name="GstBaseSrc" link="GstBaseSrc.html#GstBaseSrc-struct"/>
     <function name="GstBaseSrcClass" link="GstBaseSrc.html#GstBaseSrcClass"/>
     <function name="enum GstBaseSrcFlags" link="GstBaseSrc.html#GstBaseSrcFlags"/>
@@ -97,8 +97,8 @@
     <function name="The &quot;render-delay&quot; property" link="GstBaseSink.html#GstBaseSink--render-delay"/>
     <function name="The &quot;sync&quot; property" link="GstBaseSink.html#GstBaseSink--sync"/>
     <function name="The &quot;ts-offset&quot; property" link="GstBaseSink.html#GstBaseSink--ts-offset"/>
-    <function name="Use Cases" link="GstBaseTransform.html#id390784"/>
-    <function name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#id390956"/>
+    <function name="Use Cases" link="GstBaseTransform.html#id625128"/>
+    <function name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#id610488"/>
     <function name="GstBaseTransform" link="GstBaseTransform.html#GstBaseTransform-struct"/>
     <function name="GstBaseTransformClass" link="GstBaseTransform.html#GstBaseTransformClass"/>
     <function name="gst_base_transform_is_passthrough ()" link="GstBaseTransform.html#gst-base-transform-is-passthrough"/>
@@ -131,6 +131,7 @@
     <function name="gst_adapter_available_fast ()" link="GstAdapter.html#gst-adapter-available-fast"/>
     <function name="gst_adapter_take ()" link="GstAdapter.html#gst-adapter-take"/>
     <function name="gst_adapter_take_buffer ()" link="GstAdapter.html#gst-adapter-take-buffer"/>
+    <function name="gst_adapter_take_list ()" link="GstAdapter.html#gst-adapter-take-list"/>
     <function name="gst_adapter_prev_timestamp ()" link="GstAdapter.html#gst-adapter-prev-timestamp"/>
     <function name="gst_adapter_masked_scan_uint32 ()" link="GstAdapter.html#gst-adapter-masked-scan-uint32"/>
     <function name="gst_adapter_masked_scan_uint32_peek ()" link="GstAdapter.html#gst-adapter-masked-scan-uint32-peek"/>
@@ -156,6 +157,16 @@
     <function name="gst_bit_reader_peek_bits_uint32 ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-peek-bits-uint32"/>
     <function name="gst_bit_reader_peek_bits_uint64 ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-peek-bits-uint64"/>
     <function name="gst_bit_reader_peek_bits_uint8 ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-peek-bits-uint8"/>
+    <function name="gst_bit_reader_skip_unchecked ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-skip-unchecked"/>
+    <function name="gst_bit_reader_skip_to_byte_unchecked ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-skip-to-byte-unchecked"/>
+    <function name="gst_bit_reader_get_bits_uint16_unchecked ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-get-bits-uint16-unchecked"/>
+    <function name="gst_bit_reader_get_bits_uint32_unchecked ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-get-bits-uint32-unchecked"/>
+    <function name="gst_bit_reader_get_bits_uint64_unchecked ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-get-bits-uint64-unchecked"/>
+    <function name="gst_bit_reader_get_bits_uint8_unchecked ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-get-bits-uint8-unchecked"/>
+    <function name="gst_bit_reader_peek_bits_uint16_unchecked ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-peek-bits-uint16-unchecked"/>
+    <function name="gst_bit_reader_peek_bits_uint32_unchecked ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-peek-bits-uint32-unchecked"/>
+    <function name="gst_bit_reader_peek_bits_uint64_unchecked ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-peek-bits-uint64-unchecked"/>
+    <function name="gst_bit_reader_peek_bits_uint8_unchecked ()" link="gstreamer-libs-GstBitReader.html#gst-bit-reader-peek-bits-uint8-unchecked"/>
     <function name="GstByteReader" link="gstreamer-libs-GstByteReader.html#GstByteReader"/>
     <function name="GST_BYTE_READER_INIT()" link="gstreamer-libs-GstByteReader.html#GST-BYTE-READER-INIT:CAPS"/>
     <function name="GST_BYTE_READER_INIT_FROM_BUFFER()" link="gstreamer-libs-GstByteReader.html#GST-BYTE-READER-INIT-FROM-BUFFER:CAPS"/>
@@ -325,6 +336,30 @@
     <function name="gst_byte_writer_put_string_utf8 ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-string-utf8"/>
     <function name="gst_byte_writer_put_data ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-data"/>
     <function name="gst_byte_writer_fill ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-fill"/>
+    <function name="gst_byte_writer_put_int8_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-int8-unchecked"/>
+    <function name="gst_byte_writer_put_int16_be_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-int16-be-unchecked"/>
+    <function name="gst_byte_writer_put_int16_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-int16-le-unchecked"/>
+    <function name="gst_byte_writer_put_int24_be_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-int24-be-unchecked"/>
+    <function name="gst_byte_writer_put_int24_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-int24-le-unchecked"/>
+    <function name="gst_byte_writer_put_int32_be_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-int32-be-unchecked"/>
+    <function name="gst_byte_writer_put_int32_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-int32-le-unchecked"/>
+    <function name="gst_byte_writer_put_int64_be_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-int64-be-unchecked"/>
+    <function name="gst_byte_writer_put_int64_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-int64-le-unchecked"/>
+    <function name="gst_byte_writer_put_uint8_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint8-unchecked"/>
+    <function name="gst_byte_writer_put_uint16_be_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint16-be-unchecked"/>
+    <function name="gst_byte_writer_put_uint16_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint16-le-unchecked"/>
+    <function name="gst_byte_writer_put_uint24_be_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint24-be-unchecked"/>
+    <function name="gst_byte_writer_put_uint24_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint24-le-unchecked"/>
+    <function name="gst_byte_writer_put_uint32_be_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint32-be-unchecked"/>
+    <function name="gst_byte_writer_put_uint32_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint32-le-unchecked"/>
+    <function name="gst_byte_writer_put_uint64_be_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint64-be-unchecked"/>
+    <function name="gst_byte_writer_put_uint64_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-uint64-le-unchecked"/>
+    <function name="gst_byte_writer_put_float32_be_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float32-be-unchecked"/>
+    <function name="gst_byte_writer_put_float32_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float32-le-unchecked"/>
+    <function name="gst_byte_writer_put_float64_be_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float64-be-unchecked"/>
+    <function name="gst_byte_writer_put_float64_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float64-le-unchecked"/>
+    <function name="gst_byte_writer_put_data_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-data-unchecked"/>
+    <function name="gst_byte_writer_fill_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-fill-unchecked"/>
     <function name="GstCollectData" link="GstCollectPads.html#GstCollectData"/>
     <function name="GstCollectPads" link="GstCollectPads.html#GstCollectPads-struct"/>
     <function name="GstCollectPadsFunction ()" link="GstCollectPads.html#GstCollectPadsFunction"/>

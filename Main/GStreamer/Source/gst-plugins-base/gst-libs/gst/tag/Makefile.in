@@ -59,6 +59,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -109,7 +110,7 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(girdir)" \
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libgsttag_@GST_MAJORMINOR@_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_libgsttag_@GST_MAJORMINOR@_la_OBJECTS =  \
 	libgsttag_@GST_MAJORMINOR@_la-gstvorbistag.lo \
 	libgsttag_@GST_MAJORMINOR@_la-gstid3tag.lo \
@@ -274,6 +275,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -338,6 +340,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -468,7 +471,7 @@ libgsttag_@GST_MAJORMINOR@_la_SOURCES = \
     lang.c tags.c gsttagdemux.c gsttageditingprivate.c
 
 libgsttag_@GST_MAJORMINOR@_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
-libgsttag_@GST_MAJORMINOR@_la_LIBADD = $(GST_BASE_LIBS) $(GST_LIBS) 
+libgsttag_@GST_MAJORMINOR@_la_LIBADD = $(GST_BASE_LIBS) $(GST_LIBS) $(LIBM)
 libgsttag_@GST_MAJORMINOR@_la_LDFLAGS = $(GST_LIB_LDFLAGS) $(GST_ALL_LDFLAGS) $(GST_LT_LDFLAGS)
 
 # lang-tables.dat contains generated static data and is included by lang.c
@@ -970,7 +973,7 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 
 
 @HAVE_INTROSPECTION_TRUE@GstTag-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgsttag-@GST_MAJORMINOR@.la
-@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstTag \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
@@ -983,6 +986,7 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
 @HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-base-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--pkg-export gstreamer-tag-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--output $@ \
 @HAVE_INTROSPECTION_TRUE@		$(gir_headers) \
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)

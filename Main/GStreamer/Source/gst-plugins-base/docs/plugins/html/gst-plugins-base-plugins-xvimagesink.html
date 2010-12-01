@@ -49,11 +49,11 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-base-plugins-xvimagesink.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseSink.html">GstBaseSink</a>
-                     +----<a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstvideosink.html#GstVideoSink">GstVideoSink</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSink.html">GstBaseSink</a>
+                     +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideosink.html#GstVideoSink">GstVideoSink</a>
                            +----GstXvImageSink
 </pre>
 </div>
@@ -61,27 +61,27 @@
 <a name="gst-plugins-base-plugins-xvimagesink.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstXvImageSink implements
- <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstImplementsInterface.html">GstImplementsInterface</a>,  <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstnavigation.html#GstNavigation">GstNavigation</a>,  <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstxoverlay.html#GstXOverlay">GstXOverlay</a>,  <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstcolorbalance.html#GstColorBalance">GstColorBalance</a> and  <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstpropertyprobe.html#GstPropertyProbe">GstPropertyProbe</a>.</p>
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstImplementsInterface.html">GstImplementsInterface</a>,  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstnavigation.html#GstNavigation">GstNavigation</a>,  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstxoverlay.html#GstXOverlay">GstXOverlay</a>,  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstcolorbalance.html#GstColorBalance">GstColorBalance</a> and  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstpropertyprobe.html#GstPropertyProbe">GstPropertyProbe</a>.</p>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-base-plugins-xvimagesink.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--brightness" title='The "brightness" property'>brightness</a>"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--contrast" title='The "contrast" property'>contrast</a>"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--display" title='The "display" property'>display</a>"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--hue" title='The "hue" property'>hue</a>"                      <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--pixel-aspect-ratio" title='The "pixel-aspect-ratio" property'>pixel-aspect-ratio</a>"       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--saturation" title='The "saturation" property'>saturation</a>"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--synchronous" title='The "synchronous" property'>synchronous</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--force-aspect-ratio" title='The "force-aspect-ratio" property'>force-aspect-ratio</a>"       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--device" title='The "device" property'>device</a>"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--device-name" title='The "device-name" property'>device-name</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--handle-events" title='The "handle-events" property'>handle-events</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--double-buffer" title='The "double-buffer" property'>double-buffer</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--handle-expose" title='The "handle-expose" property'>handle-expose</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--autopaint-colorkey" title='The "autopaint-colorkey" property'>autopaint-colorkey</a>"       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--colorkey" title='The "colorkey" property'>colorkey</a>"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--draw-borders" title='The "draw-borders" property'>draw-borders</a>"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--brightness" title='The "brightness" property'>brightness</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--contrast" title='The "contrast" property'>contrast</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--display" title='The "display" property'>display</a>"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--hue" title='The "hue" property'>hue</a>"                      <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--pixel-aspect-ratio" title='The "pixel-aspect-ratio" property'>pixel-aspect-ratio</a>"       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--saturation" title='The "saturation" property'>saturation</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--synchronous" title='The "synchronous" property'>synchronous</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--force-aspect-ratio" title='The "force-aspect-ratio" property'>force-aspect-ratio</a>"       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--device" title='The "device" property'>device</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--device-name" title='The "device-name" property'>device-name</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--handle-events" title='The "handle-events" property'>handle-events</a>"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--double-buffer" title='The "double-buffer" property'>double-buffer</a>"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--handle-expose" title='The "handle-expose" property'>handle-expose</a>"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--autopaint-colorkey" title='The "autopaint-colorkey" property'>autopaint-colorkey</a>"       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--colorkey" title='The "colorkey" property'>colorkey</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--draw-borders" title='The "draw-borders" property'>draw-borders</a>"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -96,7 +96,7 @@ in this drawable. If no Window ID was provided by the application, the
 element will create its own internal window and render into it.
 </p>
 <div class="refsect2" title="Scaling">
-<a name="id489987"></a><h3>Scaling</h3>
+<a name="id515459"></a><h3>Scaling</h3>
 <p>
 The XVideo extension, when it's available, handles hardware accelerated
 scaling of video frames. This means that the element will just accept
@@ -108,7 +108,7 @@ which means drawing black borders around the video frame.
 </div>
 <hr>
 <div class="refsect2" title="Events">
-<a name="id490009"></a><h3>Events</h3>
+<a name="id515480"></a><h3>Events</h3>
 <p>
 XvImageSink creates a thread to handle events coming from the drawable. There
 are several kind of events that can be grouped in 2 big categories: input
@@ -123,7 +123,7 @@ frame with correct borders/aspect-ratio.
 </div>
 <hr>
 <div class="refsect2" title="Pixel aspect ratio">
-<a name="id490025"></a><h3>Pixel aspect ratio</h3>
+<a name="id515497"></a><h3>Pixel aspect ratio</h3>
 <p>
 When changing state to GST_STATE_READY, XvImageSink will open a connection to
 the display specified in the <a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSink--display" title='The "display" property'><span class="type">"display"</span></a> property or the
@@ -139,7 +139,7 @@ then possible to enforce a specific pixel aspect ratio using the
 </div>
 <hr>
 <div class="refsect2" title="Examples">
-<a name="id490056"></a><h3>Examples</h3>
+<a name="id515527"></a><h3>Examples</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -233,7 +233,7 @@ The <a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSi
 <a name="gst-plugins-base-plugins-xvimagesink.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "brightness" property'>
 <a name="GstXvImageSink--brightness"></a><h3>The <code class="literal">"brightness"</code> property</h3>
-<pre class="programlisting">  "brightness"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "brightness"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The brightness of the video.</p>
 <p>Allowed values: [-1000,1000]</p>
 <p>Default value: 0</p>
@@ -241,7 +241,7 @@ The <a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSi
 <hr>
 <div class="refsect2" title='The "contrast" property'>
 <a name="GstXvImageSink--contrast"></a><h3>The <code class="literal">"contrast"</code> property</h3>
-<pre class="programlisting">  "contrast"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "contrast"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The contrast of the video.</p>
 <p>Allowed values: [-1000,1000]</p>
 <p>Default value: 0</p>
@@ -249,14 +249,14 @@ The <a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSi
 <hr>
 <div class="refsect2" title='The "display" property'>
 <a name="GstXvImageSink--display"></a><h3>The <code class="literal">"display"</code> property</h3>
-<pre class="programlisting">  "display"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<pre class="programlisting">  "display"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>X Display name.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
 <div class="refsect2" title='The "hue" property'>
 <a name="GstXvImageSink--hue"></a><h3>The <code class="literal">"hue"</code> property</h3>
-<pre class="programlisting">  "hue"                      <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "hue"                      <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The hue of the video.</p>
 <p>Allowed values: [-1000,1000]</p>
 <p>Default value: 0</p>
@@ -264,14 +264,14 @@ The <a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSi
 <hr>
 <div class="refsect2" title='The "pixel-aspect-ratio" property'>
 <a name="GstXvImageSink--pixel-aspect-ratio"></a><h3>The <code class="literal">"pixel-aspect-ratio"</code> property</h3>
-<pre class="programlisting">  "pixel-aspect-ratio"       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<pre class="programlisting">  "pixel-aspect-ratio"       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>The pixel aspect ratio of the device.</p>
 <p>Default value: "1/1"</p>
 </div>
 <hr>
 <div class="refsect2" title='The "saturation" property'>
 <a name="GstXvImageSink--saturation"></a><h3>The <code class="literal">"saturation"</code> property</h3>
-<pre class="programlisting">  "saturation"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "saturation"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The saturation of the video.</p>
 <p>Allowed values: [-1000,1000]</p>
 <p>Default value: 0</p>
@@ -279,42 +279,42 @@ The <a class="link" href="gst-plugins-base-plugins-xvimagesink.html#GstXvImageSi
 <hr>
 <div class="refsect2" title='The "synchronous" property'>
 <a name="GstXvImageSink--synchronous"></a><h3>The <code class="literal">"synchronous"</code> property</h3>
-<pre class="programlisting">  "synchronous"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "synchronous"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>When enabled, runs the X display in synchronous mode. (used only for debugging).</p>
 <p>Default value: FALSE</p>
 </div>
 <hr>
 <div class="refsect2" title='The "force-aspect-ratio" property'>
 <a name="GstXvImageSink--force-aspect-ratio"></a><h3>The <code class="literal">"force-aspect-ratio"</code> property</h3>
-<pre class="programlisting">  "force-aspect-ratio"       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "force-aspect-ratio"       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>When enabled, scaling will respect original aspect ratio.</p>
 <p>Default value: FALSE</p>
 </div>
 <hr>
 <div class="refsect2" title='The "device" property'>
 <a name="GstXvImageSink--device"></a><h3>The <code class="literal">"device"</code> property</h3>
-<pre class="programlisting">  "device"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<pre class="programlisting">  "device"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>The number of the video adaptor.</p>
 <p>Default value: "0"</p>
 </div>
 <hr>
 <div class="refsect2" title='The "device-name" property'>
 <a name="GstXvImageSink--device-name"></a><h3>The <code class="literal">"device-name"</code> property</h3>
-<pre class="programlisting">  "device-name"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read</pre>
+<pre class="programlisting">  "device-name"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read</pre>
 <p>The name of the video adaptor.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
 <div class="refsect2" title='The "handle-events" property'>
 <a name="GstXvImageSink--handle-events"></a><h3>The <code class="literal">"handle-events"</code> property</h3>
-<pre class="programlisting">  "handle-events"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "handle-events"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>When enabled, XEvents will be selected and handled.</p>
 <p>Default value: TRUE</p>
 </div>
 <hr>
 <div class="refsect2" title='The "double-buffer" property'>
 <a name="GstXvImageSink--double-buffer"></a><h3>The <code class="literal">"double-buffer"</code> property</h3>
-<pre class="programlisting">  "double-buffer"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "double-buffer"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>
 Whether to double-buffer the output.
 </p>
@@ -324,7 +324,7 @@ Whether to double-buffer the output.
 <hr>
 <div class="refsect2" title='The "handle-expose" property'>
 <a name="GstXvImageSink--handle-expose"></a><h3>The <code class="literal">"handle-expose"</code> property</h3>
-<pre class="programlisting">  "handle-expose"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "handle-expose"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>
 When enabled, the current frame will always be drawn in response to X
 Expose.
@@ -335,7 +335,7 @@ Expose.
 <hr>
 <div class="refsect2" title='The "autopaint-colorkey" property'>
 <a name="GstXvImageSink--autopaint-colorkey"></a><h3>The <code class="literal">"autopaint-colorkey"</code> property</h3>
-<pre class="programlisting">  "autopaint-colorkey"       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "autopaint-colorkey"       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>
 Whether to autofill overlay with colorkey
 </p>
@@ -345,7 +345,7 @@ Whether to autofill overlay with colorkey
 <hr>
 <div class="refsect2" title='The "colorkey" property'>
 <a name="GstXvImageSink--colorkey"></a><h3>The <code class="literal">"colorkey"</code> property</h3>
-<pre class="programlisting">  "colorkey"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "colorkey"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>
 Color to use for the overlay mask.
 </p>
@@ -355,7 +355,7 @@ Color to use for the overlay mask.
 <hr>
 <div class="refsect2" title='The "draw-borders" property'>
 <a name="GstXvImageSink--draw-borders"></a><h3>The <code class="literal">"draw-borders"</code> property</h3>
-<pre class="programlisting">  "draw-borders"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "draw-borders"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>
 Draw black borders when using GstXvImageSink:force-aspect-ratio to fill
 unused parts of the video area.

@@ -177,12 +177,10 @@ static void
 gst_schro_enc_class_init (GstSchroEncClass * klass)
 {
   GObjectClass *gobject_class;
-  GstElementClass *gstelement_class;
   GstBaseVideoEncoderClass *basevideocoder_class;
   int i;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gstelement_class = GST_ELEMENT_CLASS (klass);
   basevideocoder_class = GST_BASE_VIDEO_ENCODER_CLASS (klass);
 
   gobject_class->set_property = gst_schro_enc_set_property;
@@ -430,6 +428,14 @@ gst_schro_enc_stop (GstBaseVideoEncoder * base_video_encoder)
   if (schro_enc->encoder) {
     schro_encoder_free (schro_enc->encoder);
     schro_enc->encoder = NULL;
+  }
+  if (schro_enc->seq_header_buffer) {
+    gst_buffer_unref (schro_enc->seq_header_buffer);
+    schro_enc->seq_header_buffer = NULL;
+  }
+  if (schro_enc->video_format) {
+    g_free (schro_enc->video_format);
+    schro_enc->video_format = NULL;
   }
 
   return TRUE;
@@ -777,6 +783,7 @@ gst_schro_enc_process (GstSchroEnc * schro_enc)
               (double *) GST_BUFFER_DATA (buf), 21);
           structure = gst_structure_new ("schroenc",
               "frame-stats", GST_TYPE_BUFFER, buf, NULL);
+          gst_buffer_unref (buf);
           message = gst_message_new_element (GST_OBJECT (schro_enc), structure);
           gst_element_post_message (GST_ELEMENT (schro_enc), message);
         }
@@ -786,6 +793,7 @@ gst_schro_enc_process (GstSchroEnc * schro_enc)
           GST_DEBUG ("got eos");
           //frame = schro_enc->eos_frame;
           frame = NULL;
+          schro_buffer_unref (encoded_buffer);
         }
 
         /* FIXME: Get the frame from somewhere somehow... */

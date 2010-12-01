@@ -24,7 +24,6 @@
 #glib_gen_basename=colorbalance
 
 
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -44,9 +43,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = test$(EXEEXT) decodetest$(EXEEXT) test2$(EXEEXT) \
-	test3$(EXEEXT) test4$(EXEEXT) test5$(EXEEXT) test6$(EXEEXT) \
-	test7$(EXEEXT)
 DIST_COMMON = README $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/common/gst-glib-gen.mak
 subdir = gst/playback
@@ -68,6 +64,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -134,7 +131,6 @@ libgstdecodebin2_la_DEPENDENCIES = $(top_builddir)/gst-libs/gst/pbutils/libgstpb
 	$(am__DEPENDENCIES_1)
 am_libgstdecodebin2_la_OBJECTS = libgstdecodebin2_la-gstdecodebin2.lo \
 	libgstdecodebin2_la-gsturidecodebin.lo \
-	libgstdecodebin2_la-gstfactorylists.lo \
 	libgstdecodebin2_la-gstplay-enum.lo
 am__objects_2 = libgstdecodebin2_la-gstplay-marshal.lo
 nodist_libgstdecodebin2_la_OBJECTS = $(am__objects_2)
@@ -153,12 +149,11 @@ am_libgstplaybin_la_OBJECTS = libgstplaybin_la-gstplayback.lo \
 	libgstplaybin_la-gstplaysink.lo \
 	libgstplaybin_la-gstplaybasebin.lo \
 	libgstplaybin_la-gstplay-enum.lo \
-	libgstplaybin_la-gstfactorylists.lo \
 	libgstplaybin_la-gstinputselector.lo \
-	libgstplaybin_la-gstscreenshot.lo \
 	libgstplaybin_la-gststreaminfo.lo \
 	libgstplaybin_la-gststreamselector.lo \
-	libgstplaybin_la-gstsubtitleoverlay.lo
+	libgstplaybin_la-gstsubtitleoverlay.lo \
+	libgstplaybin_la-gststreamsynchronizer.lo
 am__objects_3 = libgstplaybin_la-gstplay-marshal.lo
 nodist_libgstplaybin_la_OBJECTS = $(am__objects_3)
 libgstplaybin_la_OBJECTS = $(am_libgstplaybin_la_OBJECTS) \
@@ -167,55 +162,6 @@ libgstplaybin_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstplaybin_la_CFLAGS) $(CFLAGS) \
 	$(libgstplaybin_la_LDFLAGS) $(LDFLAGS) -o $@
-PROGRAMS = $(noinst_PROGRAMS)
-decodetest_SOURCES = decodetest.c
-decodetest_OBJECTS = decodetest-decodetest.$(OBJEXT)
-decodetest_DEPENDENCIES = $(am__DEPENDENCIES_1)
-decodetest_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(decodetest_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-test_SOURCES = test.c
-test_OBJECTS = test-test.$(OBJEXT)
-test_DEPENDENCIES = $(am__DEPENDENCIES_1)
-test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-test2_SOURCES = test2.c
-test2_OBJECTS = test2-test2.$(OBJEXT)
-test2_DEPENDENCIES = $(am__DEPENDENCIES_1)
-test2_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test2_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-test3_SOURCES = test3.c
-test3_OBJECTS = test3-test3.$(OBJEXT)
-test3_DEPENDENCIES = $(am__DEPENDENCIES_1)
-test3_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test3_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-test4_SOURCES = test4.c
-test4_OBJECTS = test4-test4.$(OBJEXT)
-test4_DEPENDENCIES = $(am__DEPENDENCIES_1)
-test4_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test4_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-test5_SOURCES = test5.c
-test5_OBJECTS = test5-test5.$(OBJEXT)
-test5_DEPENDENCIES = $(am__DEPENDENCIES_1)
-test5_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test5_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-test6_SOURCES = test6.c
-test6_OBJECTS = test6-test6.$(OBJEXT)
-test6_DEPENDENCIES = $(am__DEPENDENCIES_1)
-test6_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test6_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-test7_SOURCES = test7.c
-test7_OBJECTS = test7-test7.$(OBJEXT)
-test7_DEPENDENCIES = $(am__DEPENDENCIES_1)
-test7_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(test7_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -246,13 +192,9 @@ SOURCES = $(libgstdecodebin_la_SOURCES) \
 	$(nodist_libgstdecodebin_la_SOURCES) \
 	$(libgstdecodebin2_la_SOURCES) \
 	$(nodist_libgstdecodebin2_la_SOURCES) \
-	$(libgstplaybin_la_SOURCES) $(nodist_libgstplaybin_la_SOURCES) \
-	decodetest.c test.c test2.c test3.c test4.c test5.c test6.c \
-	test7.c
+	$(libgstplaybin_la_SOURCES) $(nodist_libgstplaybin_la_SOURCES)
 DIST_SOURCES = $(libgstdecodebin_la_SOURCES) \
-	$(libgstdecodebin2_la_SOURCES) $(libgstplaybin_la_SOURCES) \
-	decodetest.c test.c test2.c test3.c test4.c test5.c test6.c \
-	test7.c
+	$(libgstdecodebin2_la_SOURCES) $(libgstplaybin_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -358,6 +300,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -422,6 +365,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -555,12 +499,11 @@ libgstplaybin_la_SOURCES = \
 	gstplaysink.c \
 	gstplaybasebin.c \
 	gstplay-enum.c \
-	gstfactorylists.c \
 	gstinputselector.c \
-	gstscreenshot.c \
 	gststreaminfo.c \
 	gststreamselector.c \
-	gstsubtitleoverlay.c
+	gstsubtitleoverlay.c \
+	gststreamsynchronizer.c
 
 nodist_libgstplaybin_la_SOURCES = $(built_sources)
 libgstplaybin_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
@@ -581,7 +524,7 @@ libgstdecodebin_la_LIBADD = \
 	$(GST_LIBS)
 
 libgstdecodebin_la_LIBTOOLFLAGS = --tag=disable-static
-libgstdecodebin2_la_SOURCES = gstdecodebin2.c gsturidecodebin.c gstfactorylists.c gstplay-enum.c
+libgstdecodebin2_la_SOURCES = gstdecodebin2.c gsturidecodebin.c gstplay-enum.c
 nodist_libgstdecodebin2_la_SOURCES = $(built_sources)
 libgstdecodebin2_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
 libgstdecodebin2_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
@@ -595,30 +538,13 @@ noinst_HEADERS = \
 	gstplaybasebin.h \
 	gstplaysink.h \
 	gststreaminfo.h \
-	gstfactorylists.h \
 	gstinputselector.h \
 	gstplay-enum.h \
-	gstscreenshot.h \
 	gststreamselector.h \
 	gstrawcaps.h \
-	gstsubtitleoverlay.h
+	gstsubtitleoverlay.h \
+	gststreamsynchronizer.h
 
-test_LDADD = $(GST_LIBS) 
-test_CFLAGS = $(GST_CFLAGS)
-test2_LDADD = $(GST_LIBS) 
-test2_CFLAGS = $(GST_CFLAGS)
-test3_LDADD = $(GST_LIBS) 
-test3_CFLAGS = $(GST_CFLAGS)
-test4_LDADD = $(GST_LIBS) 
-test4_CFLAGS = $(GST_CFLAGS)
-test5_LDADD = $(GST_LIBS) 
-test5_CFLAGS = $(GST_CFLAGS)
-test6_LDADD = $(GST_LIBS) 
-test6_CFLAGS = $(GST_CFLAGS)
-test7_LDADD = $(GST_LIBS) 
-test7_CFLAGS = $(GST_CFLAGS)
-decodetest_LDADD = $(GST_LIBS) 
-decodetest_CFLAGS = $(GST_CFLAGS)
 BUILT_SOURCES = $(built_headers) $(built_sources)
 EXTRA_DIST = gstplay-marshal.list
 CLEANFILES = $(BUILT_SOURCES)
@@ -696,54 +622,18 @@ libgstdecodebin2.la: $(libgstdecodebin2_la_OBJECTS) $(libgstdecodebin2_la_DEPEND
 libgstplaybin.la: $(libgstplaybin_la_OBJECTS) $(libgstplaybin_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libgstplaybin_la_LINK) -rpath $(plugindir) $(libgstplaybin_la_OBJECTS) $(libgstplaybin_la_LIBADD) $(LIBS)
 
-clean-noinstPROGRAMS:
-	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-decodetest$(EXEEXT): $(decodetest_OBJECTS) $(decodetest_DEPENDENCIES) 
-	@rm -f decodetest$(EXEEXT)
-	$(AM_V_CCLD)$(decodetest_LINK) $(decodetest_OBJECTS) $(decodetest_LDADD) $(LIBS)
-test$(EXEEXT): $(test_OBJECTS) $(test_DEPENDENCIES) 
-	@rm -f test$(EXEEXT)
-	$(AM_V_CCLD)$(test_LINK) $(test_OBJECTS) $(test_LDADD) $(LIBS)
-test2$(EXEEXT): $(test2_OBJECTS) $(test2_DEPENDENCIES) 
-	@rm -f test2$(EXEEXT)
-	$(AM_V_CCLD)$(test2_LINK) $(test2_OBJECTS) $(test2_LDADD) $(LIBS)
-test3$(EXEEXT): $(test3_OBJECTS) $(test3_DEPENDENCIES) 
-	@rm -f test3$(EXEEXT)
-	$(AM_V_CCLD)$(test3_LINK) $(test3_OBJECTS) $(test3_LDADD) $(LIBS)
-test4$(EXEEXT): $(test4_OBJECTS) $(test4_DEPENDENCIES) 
-	@rm -f test4$(EXEEXT)
-	$(AM_V_CCLD)$(test4_LINK) $(test4_OBJECTS) $(test4_LDADD) $(LIBS)
-test5$(EXEEXT): $(test5_OBJECTS) $(test5_DEPENDENCIES) 
-	@rm -f test5$(EXEEXT)
-	$(AM_V_CCLD)$(test5_LINK) $(test5_OBJECTS) $(test5_LDADD) $(LIBS)
-test6$(EXEEXT): $(test6_OBJECTS) $(test6_DEPENDENCIES) 
-	@rm -f test6$(EXEEXT)
-	$(AM_V_CCLD)$(test6_LINK) $(test6_OBJECTS) $(test6_LDADD) $(LIBS)
-test7$(EXEEXT): $(test7_OBJECTS) $(test7_DEPENDENCIES) 
-	@rm -f test7$(EXEEXT)
-	$(AM_V_CCLD)$(test7_LINK) $(test7_OBJECTS) $(test7_LDADD) $(LIBS)
-
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/decodetest-decodetest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdecodebin2_la-gstdecodebin2.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdecodebin2_la-gstfactorylists.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdecodebin2_la-gstplay-enum.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdecodebin2_la-gstplay-marshal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdecodebin2_la-gsturidecodebin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdecodebin_la-gstdecodebin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdecodebin_la-gstplay-marshal.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstfactorylists.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstinputselector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstplay-enum.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstplay-marshal.Plo@am__quote@
@@ -752,17 +642,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstplaybin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstplaybin2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstplaysink.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstscreenshot.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gststreaminfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gststreamselector.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gststreamsynchronizer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstsubtitleoverlay.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test-test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test2-test2.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test3-test3.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test4-test4.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test5-test5.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test6-test6.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test7-test7.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -819,14 +702,6 @@ libgstdecodebin2_la-gsturidecodebin.lo: gsturidecodebin.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gsturidecodebin.c' object='libgstdecodebin2_la-gsturidecodebin.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdecodebin2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdecodebin2_la_CFLAGS) $(CFLAGS) -c -o libgstdecodebin2_la-gsturidecodebin.lo `test -f 'gsturidecodebin.c' || echo '$(srcdir)/'`gsturidecodebin.c
-
-libgstdecodebin2_la-gstfactorylists.lo: gstfactorylists.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdecodebin2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdecodebin2_la_CFLAGS) $(CFLAGS) -MT libgstdecodebin2_la-gstfactorylists.lo -MD -MP -MF $(DEPDIR)/libgstdecodebin2_la-gstfactorylists.Tpo -c -o libgstdecodebin2_la-gstfactorylists.lo `test -f 'gstfactorylists.c' || echo '$(srcdir)/'`gstfactorylists.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstdecodebin2_la-gstfactorylists.Tpo $(DEPDIR)/libgstdecodebin2_la-gstfactorylists.Plo
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstfactorylists.c' object='libgstdecodebin2_la-gstfactorylists.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdecodebin2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdecodebin2_la_CFLAGS) $(CFLAGS) -c -o libgstdecodebin2_la-gstfactorylists.lo `test -f 'gstfactorylists.c' || echo '$(srcdir)/'`gstfactorylists.c
 
 libgstdecodebin2_la-gstplay-enum.lo: gstplay-enum.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstdecodebin2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstdecodebin2_la_CFLAGS) $(CFLAGS) -MT libgstdecodebin2_la-gstplay-enum.lo -MD -MP -MF $(DEPDIR)/libgstdecodebin2_la-gstplay-enum.Tpo -c -o libgstdecodebin2_la-gstplay-enum.lo `test -f 'gstplay-enum.c' || echo '$(srcdir)/'`gstplay-enum.c
@@ -892,14 +767,6 @@ libgstplaybin_la-gstplay-enum.lo: gstplay-enum.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -c -o libgstplaybin_la-gstplay-enum.lo `test -f 'gstplay-enum.c' || echo '$(srcdir)/'`gstplay-enum.c
 
-libgstplaybin_la-gstfactorylists.lo: gstfactorylists.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -MT libgstplaybin_la-gstfactorylists.lo -MD -MP -MF $(DEPDIR)/libgstplaybin_la-gstfactorylists.Tpo -c -o libgstplaybin_la-gstfactorylists.lo `test -f 'gstfactorylists.c' || echo '$(srcdir)/'`gstfactorylists.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstplaybin_la-gstfactorylists.Tpo $(DEPDIR)/libgstplaybin_la-gstfactorylists.Plo
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstfactorylists.c' object='libgstplaybin_la-gstfactorylists.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -c -o libgstplaybin_la-gstfactorylists.lo `test -f 'gstfactorylists.c' || echo '$(srcdir)/'`gstfactorylists.c
-
 libgstplaybin_la-gstinputselector.lo: gstinputselector.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -MT libgstplaybin_la-gstinputselector.lo -MD -MP -MF $(DEPDIR)/libgstplaybin_la-gstinputselector.Tpo -c -o libgstplaybin_la-gstinputselector.lo `test -f 'gstinputselector.c' || echo '$(srcdir)/'`gstinputselector.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstplaybin_la-gstinputselector.Tpo $(DEPDIR)/libgstplaybin_la-gstinputselector.Plo
@@ -907,14 +774,6 @@ libgstplaybin_la-gstinputselector.lo: gstinputselector.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstinputselector.c' object='libgstplaybin_la-gstinputselector.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -c -o libgstplaybin_la-gstinputselector.lo `test -f 'gstinputselector.c' || echo '$(srcdir)/'`gstinputselector.c
-
-libgstplaybin_la-gstscreenshot.lo: gstscreenshot.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -MT libgstplaybin_la-gstscreenshot.lo -MD -MP -MF $(DEPDIR)/libgstplaybin_la-gstscreenshot.Tpo -c -o libgstplaybin_la-gstscreenshot.lo `test -f 'gstscreenshot.c' || echo '$(srcdir)/'`gstscreenshot.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstplaybin_la-gstscreenshot.Tpo $(DEPDIR)/libgstplaybin_la-gstscreenshot.Plo
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstscreenshot.c' object='libgstplaybin_la-gstscreenshot.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -c -o libgstplaybin_la-gstscreenshot.lo `test -f 'gstscreenshot.c' || echo '$(srcdir)/'`gstscreenshot.c
 
 libgstplaybin_la-gststreaminfo.lo: gststreaminfo.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -MT libgstplaybin_la-gststreaminfo.lo -MD -MP -MF $(DEPDIR)/libgstplaybin_la-gststreaminfo.Tpo -c -o libgstplaybin_la-gststreaminfo.lo `test -f 'gststreaminfo.c' || echo '$(srcdir)/'`gststreaminfo.c
@@ -940,6 +799,14 @@ libgstplaybin_la-gstsubtitleoverlay.lo: gstsubtitleoverlay.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -c -o libgstplaybin_la-gstsubtitleoverlay.lo `test -f 'gstsubtitleoverlay.c' || echo '$(srcdir)/'`gstsubtitleoverlay.c
 
+libgstplaybin_la-gststreamsynchronizer.lo: gststreamsynchronizer.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -MT libgstplaybin_la-gststreamsynchronizer.lo -MD -MP -MF $(DEPDIR)/libgstplaybin_la-gststreamsynchronizer.Tpo -c -o libgstplaybin_la-gststreamsynchronizer.lo `test -f 'gststreamsynchronizer.c' || echo '$(srcdir)/'`gststreamsynchronizer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstplaybin_la-gststreamsynchronizer.Tpo $(DEPDIR)/libgstplaybin_la-gststreamsynchronizer.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gststreamsynchronizer.c' object='libgstplaybin_la-gststreamsynchronizer.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -c -o libgstplaybin_la-gststreamsynchronizer.lo `test -f 'gststreamsynchronizer.c' || echo '$(srcdir)/'`gststreamsynchronizer.c
+
 libgstplaybin_la-gstplay-marshal.lo: gstplay-marshal.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -MT libgstplaybin_la-gstplay-marshal.lo -MD -MP -MF $(DEPDIR)/libgstplaybin_la-gstplay-marshal.Tpo -c -o libgstplaybin_la-gstplay-marshal.lo `test -f 'gstplay-marshal.c' || echo '$(srcdir)/'`gstplay-marshal.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstplaybin_la-gstplay-marshal.Tpo $(DEPDIR)/libgstplaybin_la-gstplay-marshal.Plo
@@ -947,134 +814,6 @@ libgstplaybin_la-gstplay-marshal.lo: gstplay-marshal.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstplay-marshal.c' object='libgstplaybin_la-gstplay-marshal.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -c -o libgstplaybin_la-gstplay-marshal.lo `test -f 'gstplay-marshal.c' || echo '$(srcdir)/'`gstplay-marshal.c
-
-decodetest-decodetest.o: decodetest.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(decodetest_CFLAGS) $(CFLAGS) -MT decodetest-decodetest.o -MD -MP -MF $(DEPDIR)/decodetest-decodetest.Tpo -c -o decodetest-decodetest.o `test -f 'decodetest.c' || echo '$(srcdir)/'`decodetest.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/decodetest-decodetest.Tpo $(DEPDIR)/decodetest-decodetest.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='decodetest.c' object='decodetest-decodetest.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(decodetest_CFLAGS) $(CFLAGS) -c -o decodetest-decodetest.o `test -f 'decodetest.c' || echo '$(srcdir)/'`decodetest.c
-
-decodetest-decodetest.obj: decodetest.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(decodetest_CFLAGS) $(CFLAGS) -MT decodetest-decodetest.obj -MD -MP -MF $(DEPDIR)/decodetest-decodetest.Tpo -c -o decodetest-decodetest.obj `if test -f 'decodetest.c'; then $(CYGPATH_W) 'decodetest.c'; else $(CYGPATH_W) '$(srcdir)/decodetest.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/decodetest-decodetest.Tpo $(DEPDIR)/decodetest-decodetest.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='decodetest.c' object='decodetest-decodetest.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(decodetest_CFLAGS) $(CFLAGS) -c -o decodetest-decodetest.obj `if test -f 'decodetest.c'; then $(CYGPATH_W) 'decodetest.c'; else $(CYGPATH_W) '$(srcdir)/decodetest.c'; fi`
-
-test-test.o: test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_CFLAGS) $(CFLAGS) -MT test-test.o -MD -MP -MF $(DEPDIR)/test-test.Tpo -c -o test-test.o `test -f 'test.c' || echo '$(srcdir)/'`test.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test-test.Tpo $(DEPDIR)/test-test.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test.c' object='test-test.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_CFLAGS) $(CFLAGS) -c -o test-test.o `test -f 'test.c' || echo '$(srcdir)/'`test.c
-
-test-test.obj: test.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_CFLAGS) $(CFLAGS) -MT test-test.obj -MD -MP -MF $(DEPDIR)/test-test.Tpo -c -o test-test.obj `if test -f 'test.c'; then $(CYGPATH_W) 'test.c'; else $(CYGPATH_W) '$(srcdir)/test.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test-test.Tpo $(DEPDIR)/test-test.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test.c' object='test-test.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test_CFLAGS) $(CFLAGS) -c -o test-test.obj `if test -f 'test.c'; then $(CYGPATH_W) 'test.c'; else $(CYGPATH_W) '$(srcdir)/test.c'; fi`
-
-test2-test2.o: test2.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test2_CFLAGS) $(CFLAGS) -MT test2-test2.o -MD -MP -MF $(DEPDIR)/test2-test2.Tpo -c -o test2-test2.o `test -f 'test2.c' || echo '$(srcdir)/'`test2.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test2-test2.Tpo $(DEPDIR)/test2-test2.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test2.c' object='test2-test2.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test2_CFLAGS) $(CFLAGS) -c -o test2-test2.o `test -f 'test2.c' || echo '$(srcdir)/'`test2.c
-
-test2-test2.obj: test2.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test2_CFLAGS) $(CFLAGS) -MT test2-test2.obj -MD -MP -MF $(DEPDIR)/test2-test2.Tpo -c -o test2-test2.obj `if test -f 'test2.c'; then $(CYGPATH_W) 'test2.c'; else $(CYGPATH_W) '$(srcdir)/test2.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test2-test2.Tpo $(DEPDIR)/test2-test2.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test2.c' object='test2-test2.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test2_CFLAGS) $(CFLAGS) -c -o test2-test2.obj `if test -f 'test2.c'; then $(CYGPATH_W) 'test2.c'; else $(CYGPATH_W) '$(srcdir)/test2.c'; fi`
-
-test3-test3.o: test3.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test3_CFLAGS) $(CFLAGS) -MT test3-test3.o -MD -MP -MF $(DEPDIR)/test3-test3.Tpo -c -o test3-test3.o `test -f 'test3.c' || echo '$(srcdir)/'`test3.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test3-test3.Tpo $(DEPDIR)/test3-test3.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test3.c' object='test3-test3.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test3_CFLAGS) $(CFLAGS) -c -o test3-test3.o `test -f 'test3.c' || echo '$(srcdir)/'`test3.c
-
-test3-test3.obj: test3.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test3_CFLAGS) $(CFLAGS) -MT test3-test3.obj -MD -MP -MF $(DEPDIR)/test3-test3.Tpo -c -o test3-test3.obj `if test -f 'test3.c'; then $(CYGPATH_W) 'test3.c'; else $(CYGPATH_W) '$(srcdir)/test3.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test3-test3.Tpo $(DEPDIR)/test3-test3.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test3.c' object='test3-test3.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test3_CFLAGS) $(CFLAGS) -c -o test3-test3.obj `if test -f 'test3.c'; then $(CYGPATH_W) 'test3.c'; else $(CYGPATH_W) '$(srcdir)/test3.c'; fi`
-
-test4-test4.o: test4.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test4_CFLAGS) $(CFLAGS) -MT test4-test4.o -MD -MP -MF $(DEPDIR)/test4-test4.Tpo -c -o test4-test4.o `test -f 'test4.c' || echo '$(srcdir)/'`test4.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test4-test4.Tpo $(DEPDIR)/test4-test4.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test4.c' object='test4-test4.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test4_CFLAGS) $(CFLAGS) -c -o test4-test4.o `test -f 'test4.c' || echo '$(srcdir)/'`test4.c
-
-test4-test4.obj: test4.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test4_CFLAGS) $(CFLAGS) -MT test4-test4.obj -MD -MP -MF $(DEPDIR)/test4-test4.Tpo -c -o test4-test4.obj `if test -f 'test4.c'; then $(CYGPATH_W) 'test4.c'; else $(CYGPATH_W) '$(srcdir)/test4.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test4-test4.Tpo $(DEPDIR)/test4-test4.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test4.c' object='test4-test4.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test4_CFLAGS) $(CFLAGS) -c -o test4-test4.obj `if test -f 'test4.c'; then $(CYGPATH_W) 'test4.c'; else $(CYGPATH_W) '$(srcdir)/test4.c'; fi`
-
-test5-test5.o: test5.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test5_CFLAGS) $(CFLAGS) -MT test5-test5.o -MD -MP -MF $(DEPDIR)/test5-test5.Tpo -c -o test5-test5.o `test -f 'test5.c' || echo '$(srcdir)/'`test5.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test5-test5.Tpo $(DEPDIR)/test5-test5.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test5.c' object='test5-test5.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test5_CFLAGS) $(CFLAGS) -c -o test5-test5.o `test -f 'test5.c' || echo '$(srcdir)/'`test5.c
-
-test5-test5.obj: test5.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test5_CFLAGS) $(CFLAGS) -MT test5-test5.obj -MD -MP -MF $(DEPDIR)/test5-test5.Tpo -c -o test5-test5.obj `if test -f 'test5.c'; then $(CYGPATH_W) 'test5.c'; else $(CYGPATH_W) '$(srcdir)/test5.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test5-test5.Tpo $(DEPDIR)/test5-test5.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test5.c' object='test5-test5.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test5_CFLAGS) $(CFLAGS) -c -o test5-test5.obj `if test -f 'test5.c'; then $(CYGPATH_W) 'test5.c'; else $(CYGPATH_W) '$(srcdir)/test5.c'; fi`
-
-test6-test6.o: test6.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test6_CFLAGS) $(CFLAGS) -MT test6-test6.o -MD -MP -MF $(DEPDIR)/test6-test6.Tpo -c -o test6-test6.o `test -f 'test6.c' || echo '$(srcdir)/'`test6.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test6-test6.Tpo $(DEPDIR)/test6-test6.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test6.c' object='test6-test6.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test6_CFLAGS) $(CFLAGS) -c -o test6-test6.o `test -f 'test6.c' || echo '$(srcdir)/'`test6.c
-
-test6-test6.obj: test6.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test6_CFLAGS) $(CFLAGS) -MT test6-test6.obj -MD -MP -MF $(DEPDIR)/test6-test6.Tpo -c -o test6-test6.obj `if test -f 'test6.c'; then $(CYGPATH_W) 'test6.c'; else $(CYGPATH_W) '$(srcdir)/test6.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test6-test6.Tpo $(DEPDIR)/test6-test6.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test6.c' object='test6-test6.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test6_CFLAGS) $(CFLAGS) -c -o test6-test6.obj `if test -f 'test6.c'; then $(CYGPATH_W) 'test6.c'; else $(CYGPATH_W) '$(srcdir)/test6.c'; fi`
-
-test7-test7.o: test7.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test7_CFLAGS) $(CFLAGS) -MT test7-test7.o -MD -MP -MF $(DEPDIR)/test7-test7.Tpo -c -o test7-test7.o `test -f 'test7.c' || echo '$(srcdir)/'`test7.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test7-test7.Tpo $(DEPDIR)/test7-test7.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test7.c' object='test7-test7.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test7_CFLAGS) $(CFLAGS) -c -o test7-test7.o `test -f 'test7.c' || echo '$(srcdir)/'`test7.c
-
-test7-test7.obj: test7.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test7_CFLAGS) $(CFLAGS) -MT test7-test7.obj -MD -MP -MF $(DEPDIR)/test7-test7.Tpo -c -o test7-test7.obj `if test -f 'test7.c'; then $(CYGPATH_W) 'test7.c'; else $(CYGPATH_W) '$(srcdir)/test7.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test7-test7.Tpo $(DEPDIR)/test7-test7.Po
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='test7.c' object='test7-test7.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(test7_CFLAGS) $(CFLAGS) -c -o test7-test7.obj `if test -f 'test7.c'; then $(CYGPATH_W) 'test7.c'; else $(CYGPATH_W) '$(srcdir)/test7.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1167,7 +906,7 @@ distdir: $(DISTFILES)
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
-all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(plugindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -1202,8 +941,8 @@ maintainer-clean-generic:
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
-	clean-pluginLTLIBRARIES mostlyclean-am
+clean-am: clean-generic clean-libtool clean-pluginLTLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -1274,19 +1013,18 @@ uninstall-am: uninstall-pluginLTLIBRARIES
 .MAKE: all check install install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstPROGRAMS clean-pluginLTLIBRARIES \
-	ctags distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-pluginLTLIBRARIES install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-pluginLTLIBRARIES
+	clean-libtool clean-pluginLTLIBRARIES ctags distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-pluginLTLIBRARIES \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-pluginLTLIBRARIES
 
 
 # these are all the rules generating the relevant files

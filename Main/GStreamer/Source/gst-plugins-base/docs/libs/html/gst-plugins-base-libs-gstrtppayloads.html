@@ -43,15 +43,15 @@
 enum                <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayload" title="enum GstRTPPayload">GstRTPPayload</a>;
 #define             <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GST-RTP-PAYLOAD-IS-DYNAMIC:CAPS" title="GST_RTP_PAYLOAD_IS_DYNAMIC()">GST_RTP_PAYLOAD_IS_DYNAMIC</a>          (pt)
                     <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayloadInfo" title="GstRTPPayloadInfo">GstRTPPayloadInfo</a>;
-const <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayloadInfo" title="GstRTPPayloadInfo"><span class="returnvalue">GstRTPPayloadInfo</span></a> * <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#gst-rtp-payload-info-for-name" title="gst_rtp_payload_info_for_name ()">gst_rtp_payload_info_for_name</a> (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *media</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *encoding_name</code></em>);
-const <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayloadInfo" title="GstRTPPayloadInfo"><span class="returnvalue">GstRTPPayloadInfo</span></a> * <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#gst-rtp-payload-info-for-pt" title="gst_rtp_payload_info_for_pt ()">gst_rtp_payload_info_for_pt</a>   (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> payload_type</code></em>);
+const <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayloadInfo" title="GstRTPPayloadInfo"><span class="returnvalue">GstRTPPayloadInfo</span></a> * <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#gst-rtp-payload-info-for-name" title="gst_rtp_payload_info_for_name ()">gst_rtp_payload_info_for_name</a> (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *media</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *encoding_name</code></em>);
+const <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayloadInfo" title="GstRTPPayloadInfo"><span class="returnvalue">GstRTPPayloadInfo</span></a> * <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#gst-rtp-payload-info-for-pt" title="gst_rtp_payload_info_for_pt ()">gst_rtp_payload_info_for_pt</a>   (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> payload_type</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Description">
 <a name="gst-plugins-base-libs-gstrtppayloads.description"></a><h2>Description</h2>
 <div class="refsect2">
-<a name="id670395"></a><p>
+<a name="id610297"></a><p>
 The GstRTPPayloads helper functions makes it easy to deal with static and dynamic
 payloads. Its main purpose is to retrieve properties such as the default clock-rate 
 and get session bandwidth information.
@@ -290,34 +290,34 @@ Structure holding default payload type information.
 <col align="left" valign="top">
 <tbody>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> <em class="structfield"><code><a name="GstRTPPayloadInfo.payload-type"></a>payload_type</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> <em class="structfield"><code><a name="GstRTPPayloadInfo.payload-type"></a>payload_type</code></em>;</span></p></td>
 <td>payload type, -1 means dynamic
 </td>
 </tr>
 <tr>
-<td><p><span class="term">const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstRTPPayloadInfo.media"></a>media</code></em>;</span></p></td>
+<td><p><span class="term">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstRTPPayloadInfo.media"></a>media</code></em>;</span></p></td>
 <td>the media type(s), usually "audio", "video", "application", "text",
 "message".
 </td>
 </tr>
 <tr>
-<td><p><span class="term">const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstRTPPayloadInfo.encoding-name"></a>encoding_name</code></em>;</span></p></td>
+<td><p><span class="term">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstRTPPayloadInfo.encoding-name"></a>encoding_name</code></em>;</span></p></td>
 <td>the encoding name of <em class="parameter"><code>pt</code></em>
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="GstRTPPayloadInfo.clock-rate"></a>clock_rate</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="GstRTPPayloadInfo.clock-rate"></a>clock_rate</code></em>;</span></p></td>
 <td>default clock rate, 0 = unknown/variable
 </td>
 </tr>
 <tr>
-<td><p><span class="term">const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstRTPPayloadInfo.encoding-parameters"></a>encoding_parameters</code></em>;</span></p></td>
+<td><p><span class="term">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstRTPPayloadInfo.encoding-parameters"></a>encoding_parameters</code></em>;</span></p></td>
 <td>encoding parameters. For audio this is the number of
 channels. NULL = not applicable.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="GstRTPPayloadInfo.bitrate"></a>bitrate</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="GstRTPPayloadInfo.bitrate"></a>bitrate</code></em>;</span></p></td>
 <td>the bitrate of the media. 0 = unknown/variable.
 </td>
 </tr>
@@ -327,8 +327,8 @@ channels. NULL = not applicable.
 <hr>
 <div class="refsect2" title="gst_rtp_payload_info_for_name ()">
 <a name="gst-rtp-payload-info-for-name"></a><h3>gst_rtp_payload_info_for_name ()</h3>
-<pre class="programlisting">const <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayloadInfo" title="GstRTPPayloadInfo"><span class="returnvalue">GstRTPPayloadInfo</span></a> * gst_rtp_payload_info_for_name (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *media</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *encoding_name</code></em>);</pre>
+<pre class="programlisting">const <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayloadInfo" title="GstRTPPayloadInfo"><span class="returnvalue">GstRTPPayloadInfo</span></a> * gst_rtp_payload_info_for_name (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *media</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *encoding_name</code></em>);</pre>
 <p>
 Get the <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayloadInfo" title="GstRTPPayloadInfo"><span class="type">GstRTPPayloadInfo</span></a> for <em class="parameter"><code>media</code></em> and <em class="parameter"><code>encoding_name</code></em>. This function is
 mostly used to get the default clock-rate and bandwidth for dynamic payload
@@ -361,7 +361,7 @@ The search for <em class="parameter"><code>encoding_name</code></em> will be per
 <hr>
 <div class="refsect2" title="gst_rtp_payload_info_for_pt ()">
 <a name="gst-rtp-payload-info-for-pt"></a><h3>gst_rtp_payload_info_for_pt ()</h3>
-<pre class="programlisting">const <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayloadInfo" title="GstRTPPayloadInfo"><span class="returnvalue">GstRTPPayloadInfo</span></a> * gst_rtp_payload_info_for_pt   (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> payload_type</code></em>);</pre>
+<pre class="programlisting">const <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayloadInfo" title="GstRTPPayloadInfo"><span class="returnvalue">GstRTPPayloadInfo</span></a> * gst_rtp_payload_info_for_pt   (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> payload_type</code></em>);</pre>
 <p>
 Get the <a class="link" href="gst-plugins-base-libs-gstrtppayloads.html#GstRTPPayloadInfo" title="GstRTPPayloadInfo"><span class="type">GstRTPPayloadInfo</span></a> for <em class="parameter"><code>payload_type</code></em>. This function is
 mostly used to get the default clock-rate and bandwidth for static payload

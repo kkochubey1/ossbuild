@@ -15,7 +15,6 @@
 
 @SET_MAKE@
 
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -36,8 +35,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = gst/typefind
-DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in
+DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/as-auto-alt.m4 \
@@ -56,6 +54,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -104,11 +103,10 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(plugindir)"
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-libgsttypefindfunctions_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+libgsttypefindfunctions_la_DEPENDENCIES = $(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_libgsttypefindfunctions_la_OBJECTS =  \
-	libgsttypefindfunctions_la-gsttypefindfunctions.lo \
-	libgsttypefindfunctions_la-gstaacutil.lo
+	libgsttypefindfunctions_la-gsttypefindfunctions.lo
 libgsttypefindfunctions_la_OBJECTS =  \
 	$(am_libgsttypefindfunctions_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
@@ -147,7 +145,6 @@ am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgsttypefindfunctions_la_SOURCES)
 DIST_SOURCES = $(libgsttypefindfunctions_la_SOURCES)
-HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -252,6 +249,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -316,6 +314,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -435,12 +434,17 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 plugin_LTLIBRARIES = libgsttypefindfunctions.la
-libgsttypefindfunctions_la_SOURCES = gsttypefindfunctions.c gstaacutil.c
-libgsttypefindfunctions_la_CFLAGS = $(GST_CFLAGS) $(GIO_CFLAGS)
+libgsttypefindfunctions_la_SOURCES = gsttypefindfunctions.c
+libgsttypefindfunctions_la_CFLAGS = \
+	$(GST_PLUGINS_BASE_CFLAGS) \
+	$(GST_CFLAGS) $(GIO_CFLAGS)
+
 libgsttypefindfunctions_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
-libgsttypefindfunctions_la_LIBADD = $(GST_LIBS) $(GIO_LIBS)
+libgsttypefindfunctions_la_LIBADD = \
+	$(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la \
+	$(GST_LIBS) $(GIO_LIBS)
+
 libgsttypefindfunctions_la_LIBTOOLFLAGS = --tag=disable-static
-noinst_HEADERS = gstaacutil.h
 all: all-am
 
 .SUFFIXES:
@@ -515,7 +519,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgsttypefindfunctions_la-gstaacutil.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgsttypefindfunctions_la-gsttypefindfunctions.Plo@am__quote@
 
 .c.o:
@@ -549,14 +552,6 @@ libgsttypefindfunctions_la-gsttypefindfunctions.lo: gsttypefindfunctions.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gsttypefindfunctions.c' object='libgsttypefindfunctions_la-gsttypefindfunctions.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgsttypefindfunctions_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsttypefindfunctions_la_CFLAGS) $(CFLAGS) -c -o libgsttypefindfunctions_la-gsttypefindfunctions.lo `test -f 'gsttypefindfunctions.c' || echo '$(srcdir)/'`gsttypefindfunctions.c
-
-libgsttypefindfunctions_la-gstaacutil.lo: gstaacutil.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgsttypefindfunctions_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsttypefindfunctions_la_CFLAGS) $(CFLAGS) -MT libgsttypefindfunctions_la-gstaacutil.lo -MD -MP -MF $(DEPDIR)/libgsttypefindfunctions_la-gstaacutil.Tpo -c -o libgsttypefindfunctions_la-gstaacutil.lo `test -f 'gstaacutil.c' || echo '$(srcdir)/'`gstaacutil.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgsttypefindfunctions_la-gstaacutil.Tpo $(DEPDIR)/libgsttypefindfunctions_la-gstaacutil.Plo
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstaacutil.c' object='libgsttypefindfunctions_la-gstaacutil.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgsttypefindfunctions_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgsttypefindfunctions_la_CFLAGS) $(CFLAGS) -c -o libgsttypefindfunctions_la-gstaacutil.lo `test -f 'gstaacutil.c' || echo '$(srcdir)/'`gstaacutil.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -648,7 +643,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(HEADERS)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
 	for dir in "$(DESTDIR)$(plugindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \

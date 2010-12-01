@@ -521,9 +521,6 @@ static gboolean
 gst_celt_enc_sink_query (GstPad * pad, GstQuery * query)
 {
   gboolean res = TRUE;
-  GstCeltEnc *enc;
-
-  enc = GST_CELT_ENC (GST_PAD_PARENT (pad));
 
   switch (GST_QUERY_TYPE (query)) {
     case GST_QUERY_CONVERT:
@@ -591,7 +588,7 @@ static GstBuffer *
 gst_celt_enc_create_metadata_buffer (GstCeltEnc * enc)
 {
   const GstTagList *tags;
-  GstTagList *empty_tags;
+  GstTagList *empty_tags = NULL;
   GstBuffer *comments = NULL;
 
   tags = gst_tag_setter_get_tag_list (GST_TAG_SETTER (enc));

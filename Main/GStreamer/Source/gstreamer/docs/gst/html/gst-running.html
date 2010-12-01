@@ -31,9 +31,9 @@ How to run and debug your GStreamer application
 <td valign="top" align="right"></td>
 </tr></table></div>
 <div class="refsect1" title="Running and debugging GStreamer Applications">
-<a name="id393840"></a><h2>Running and debugging GStreamer Applications</h2>
+<a name="id489186"></a><h2>Running and debugging GStreamer Applications</h2>
 <div class="refsect2" title="Environment variables">
-<a name="id389955"></a><h3>Environment variables</h3>
+<a name="id455436"></a><h3>Environment variables</h3>
 <p> 
 GStreamer inspects a few of environment variables in addition to standard
 variables like <code class="envar">LANG</code>, <code class="envar">PATH</code> or <code class="envar">HOME</code>. 
@@ -149,6 +149,14 @@ GStreamer).
 This is particularly useful to reduce the size of debug output and also allows
 for the output to be compressed much better than with colours turned on.
   </p>
+<p title="GST_DEBUG_OPTIONS"><a name="GST_DEBUG_OPTIONS"></a><b><code class="envar">GST_DEBUG_OPTIONS</code>. </b>
+This environment variable can be used to tweak the behaviour of the debugging
+system. Currently the only options supported are "pretty-tags" and "full-tags".
+In "pretty-tags" mode (the default), taglists in the debug log will be
+serialized so that only the first few and last few bytes of a buffer-type tag
+will be serialized into the log, to avoid dumping hundreds of lines of useless
+output into the log in case of large image tags and the like.
+  </p>
 <p title="GST_DEBUG_DUMP_DOT_DIR"><a name="GST_DEBUG_DUMP_DOT_DIR"></a><b><code class="envar">GST_DEBUG_DUMP_DOT_DIR</code>. </b>
 Set this environment variable to a path to turn on all
 #GST_DEBUG_BIN_TO_DOT_FILE or #GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS calls
@@ -165,6 +173,26 @@ application.
 Set this environment variable to "no" to prevent GStreamer from updating the
 plugin registry. This is useful for embedded device which is not updating the
 plugins frequently, it will save time when doing gst_init().
+  </p>
+<p title="ORC_CODE"><a name="ORC_CODE"></a><b><code class="envar">ORC_CODE</code>. </b>
+Useful Orc environment variable. Set ORC_CODE=debug to enable debuggers
+such as gdb to create useful backtraces from Orc-generated code.  Set
+ORC_CODE=backup or ORC_CODE=emulate if you suspect Orc's SIMD code
+generator is producing incorrect code.  (Quite a few important
+GStreamer plugins like videotestsrc, audioconvert or audioresample use Orc).
+  </p>
+<p title="G_DEBUG"><a name="G_DEBUG"></a><b><code class="envar">G_DEBUG</code>. </b>
+Useful GLib environment variable. Set G_DEBUG=fatal_warnings to make
+GStreamer programs abort when a critical warning such as an assertion failure
+occurs. This is useful if you want to find out which part of the code caused
+that warning to be triggered and under what circumstances. Simply set G_DEBUG
+as mentioned above and run the program in gdb (or let it core dump). Then get
+a stack trace in the usual way.
+  </p>
+<p title="G_SLICE"><a name="G_SLICE"></a><b><code class="envar">G_SLICE</code>. </b>
+Useful GLib environment variable. Set G_SLICE=always-malloc when running
+GStreamer programs in valgrind, or debugging memory leaks with other tools.
+See the GLib API reference for more details.
   </p>
 </div>
 </div>

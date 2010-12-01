@@ -832,6 +832,7 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last,
     GstURIDecodeBin * decoder)
 {
   GstPad *newpad;
+  GstPadTemplate *pad_tmpl;
   gchar *padname;
 
   GST_DEBUG_OBJECT (element, "new decoded pad, name: <%s>. Last: %d",
@@ -842,8 +843,9 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last,
   decoder->numpads++;
   GST_URI_DECODE_BIN_UNLOCK (decoder);
 
-  newpad = gst_ghost_pad_new_from_template (padname, pad,
-      gst_static_pad_template_get (&srctemplate));
+  pad_tmpl = gst_static_pad_template_get (&srctemplate);
+  newpad = gst_ghost_pad_new_from_template (padname, pad, pad_tmpl);
+  gst_object_unref (pad_tmpl);
   g_free (padname);
 
   /* store ref to the ghostpad so we can remove it */
@@ -1653,7 +1655,6 @@ remove_source (GstURIDecodeBin * bin)
   if (source) {
     GST_DEBUG_OBJECT (bin, "removing old src element");
     gst_element_set_state (source, GST_STATE_NULL);
-    gst_bin_remove (GST_BIN_CAST (bin), source);
 
     if (bin->src_np_sig_id) {
       g_signal_handler_disconnect (source, bin->src_np_sig_id);
@@ -1663,6 +1664,7 @@ remove_source (GstURIDecodeBin * bin)
       g_signal_handler_disconnect (source, bin->src_nmp_sig_id);
       bin->src_nmp_sig_id = 0;
     }
+    gst_bin_remove (GST_BIN_CAST (bin), source);
     bin->source = NULL;
   }
   if (bin->queue) {

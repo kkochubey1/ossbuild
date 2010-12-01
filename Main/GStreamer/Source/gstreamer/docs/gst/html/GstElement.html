@@ -91,25 +91,30 @@ enum                <a class="link" href="GstElement.html#GstStateChangeReturn" 
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-class-add-pad-template" title="gst_element_class_add_pad_template ()">gst_element_class_add_pad_template</a>  (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *klass</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPadTemplate.html" title="GstPadTemplate"><span class="type">GstPadTemplate</span></a> *templ</code></em>);
 <a class="link" href="GstPadTemplate.html" title="GstPadTemplate"><span class="returnvalue">GstPadTemplate</span></a>*     <a class="link" href="GstElement.html#gst-element-class-get-pad-template" title="gst_element_class_get_pad_template ()">gst_element_class_get_pad_template</a>  (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *element_class</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*              <a class="link" href="GstElement.html#gst-element-class-get-pad-template-list" title="gst_element_class_get_pad_template_list ()">gst_element_class_get_pad_template_list</a>
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*              <a class="link" href="GstElement.html#gst-element-class-get-pad-template-list" title="gst_element_class_get_pad_template_list ()">gst_element_class_get_pad_template_list</a>
                                                         (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *element_class</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-class-install-std-props" title="gst_element_class_install_std_props ()">gst_element_class_install_std_props</a> (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *klass</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *first_name</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *first_name</code></em>,
                                                          <em class="parameter"><code>...</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-class-set-details" title="gst_element_class_set_details ()">gst_element_class_set_details</a>       (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *klass</code></em>,
                                                          <em class="parameter"><code>const <a class="link" href="GstElementFactory.html#GstElementDetails" title="GstElementDetails"><span class="type">GstElementDetails</span></a> *details</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-class-set-details-simple" title="gst_element_class_set_details_simple ()">gst_element_class_set_details_simple</a>
                                                         (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *klass</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *longname</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *classification</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *description</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *author</code></em>);
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *longname</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *classification</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *description</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *author</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-class-set-documentation-uri" title="gst_element_class_set_documentation_uri ()">gst_element_class_set_documentation_uri</a>
+                                                        (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *klass</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-class-set-icon-name" title="gst_element_class_set_icon_name ()">gst_element_class_set_icon_name</a>     (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *klass</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
 
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-add-pad" title="gst_element_add_pad ()">gst_element_add_pad</a>                 (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-add-pad" title="gst_element_add_pad ()">gst_element_add_pad</a>                 (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *pad</code></em>);
 <a class="link" href="GstPad.html" title="GstPad"><span class="returnvalue">GstPad</span></a>*             <a class="link" href="GstElement.html#gst-element-get-pad" title="gst_element_get_pad ()">gst_element_get_pad</a>                 (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-create-all-pads" title="gst_element_create_all_pads ()">gst_element_create_all_pads</a>         (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 <a class="link" href="GstPad.html" title="GstPad"><span class="returnvalue">GstPad</span></a>*             <a class="link" href="GstElement.html#gst-element-get-compatible-pad" title="gst_element_get_compatible_pad ()">gst_element_get_compatible_pad</a>      (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *pad</code></em>,
@@ -118,47 +123,47 @@ enum                <a class="link" href="GstElement.html#GstStateChangeReturn" 
                                                         (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPadTemplate.html" title="GstPadTemplate"><span class="type">GstPadTemplate</span></a> *compattempl</code></em>);
 <a class="link" href="GstPad.html" title="GstPad"><span class="returnvalue">GstPad</span></a>*             <a class="link" href="GstElement.html#gst-element-get-request-pad" title="gst_element_get_request_pad ()">gst_element_get_request_pad</a>         (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
 <a class="link" href="GstPad.html" title="GstPad"><span class="returnvalue">GstPad</span></a>*             <a class="link" href="GstElement.html#gst-element-get-static-pad" title="gst_element_get_static_pad ()">gst_element_get_static_pad</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-no-more-pads" title="gst_element_no_more_pads ()">gst_element_no_more_pads</a>            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-release-request-pad" title="gst_element_release_request_pad ()">gst_element_release_request_pad</a>     (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *pad</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-remove-pad" title="gst_element_remove_pad ()">gst_element_remove_pad</a>              (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-remove-pad" title="gst_element_remove_pad ()">gst_element_remove_pad</a>              (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *pad</code></em>);
 <a class="link" href="gstreamer-GstIterator.html#GstIterator" title="GstIterator"><span class="returnvalue">GstIterator</span></a> *       <a class="link" href="GstElement.html#gst-element-iterate-pads" title="gst_element_iterate_pads ()">gst_element_iterate_pads</a>            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 <a class="link" href="gstreamer-GstIterator.html#GstIterator" title="GstIterator"><span class="returnvalue">GstIterator</span></a> *       <a class="link" href="GstElement.html#gst-element-iterate-sink-pads" title="gst_element_iterate_sink_pads ()">gst_element_iterate_sink_pads</a>       (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 <a class="link" href="gstreamer-GstIterator.html#GstIterator" title="GstIterator"><span class="returnvalue">GstIterator</span></a> *       <a class="link" href="GstElement.html#gst-element-iterate-src-pads" title="gst_element_iterate_src_pads ()">gst_element_iterate_src_pads</a>        (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link" title="gst_element_link ()">gst_element_link</a>                    (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link" title="gst_element_link ()">gst_element_link</a>                    (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-unlink" title="gst_element_unlink ()">gst_element_unlink</a>                  (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link-many" title="gst_element_link_many ()">gst_element_link_many</a>               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element_1</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link-many" title="gst_element_link_many ()">gst_element_link_many</a>               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element_1</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element_2</code></em>,
                                                          <em class="parameter"><code>...</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-unlink-many" title="gst_element_unlink_many ()">gst_element_unlink_many</a>             (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element_1</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element_2</code></em>,
                                                          <em class="parameter"><code>...</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link-pads" title="gst_element_link_pads ()">gst_element_link_pads</a>               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link-pads" title="gst_element_link_pads ()">gst_element_link_pads</a>               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link-pads-full" title="gst_element_link_pads_full ()">gst_element_link_pads_full</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link-pads-full" title="gst_element_link_pads_full ()">gst_element_link_pads_full</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPad.html#GstPadLinkCheck" title="enum GstPadLinkCheck"><span class="type">GstPadLinkCheck</span></a> flags</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-unlink-pads" title="gst_element_unlink_pads ()">gst_element_unlink_pads</a>             (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link-pads-filtered" title="gst_element_link_pads_filtered ()">gst_element_link_pads_filtered</a>      (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link-pads-filtered" title="gst_element_link_pads_filtered ()">gst_element_link_pads_filtered</a>      (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> *filter</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link-filtered" title="gst_element_link_filtered ()">gst_element_link_filtered</a>           (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-link-filtered" title="gst_element_link_filtered ()">gst_element_link_filtered</a>           (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> *filter</code></em>);
 
@@ -175,7 +180,7 @@ enum                <a class="link" href="GstElement.html#GstStateChangeReturn" 
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-set-index" title="gst_element_set_index ()">gst_element_set_index</a>               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstIndex.html" title="GstIndex"><span class="type">GstIndex</span></a> *index</code></em>);
 <a class="link" href="GstIndex.html" title="GstIndex"><span class="returnvalue">GstIndex</span></a>*           <a class="link" href="GstElement.html#gst-element-get-index" title="gst_element_get_index ()">gst_element_get_index</a>               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-is-indexable" title="gst_element_is_indexable ()">gst_element_is_indexable</a>            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-is-indexable" title="gst_element_is_indexable ()">gst_element_is_indexable</a>            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 #define             <a class="link" href="GstElement.html#gst-element-set-name" title="gst_element_set_name()">gst_element_set_name</a>                (elem,
                                                          name)
 #define             <a class="link" href="GstElement.html#gst-element-get-name" title="gst_element_get_name()">gst_element_get_name</a>                (elem)
@@ -183,11 +188,11 @@ enum                <a class="link" href="GstElement.html#GstStateChangeReturn" 
                                                          parent)
 #define             <a class="link" href="GstElement.html#gst-element-get-parent" title="gst_element_get_parent()">gst_element_get_parent</a>              (elem)
 
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-requires-clock" title="gst_element_requires_clock ()">gst_element_requires_clock</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-set-clock" title="gst_element_set_clock ()">gst_element_set_clock</a>               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-requires-clock" title="gst_element_requires_clock ()">gst_element_requires_clock</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-set-clock" title="gst_element_set_clock ()">gst_element_set_clock</a>               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html" title="GstClock"><span class="type">GstClock</span></a> *clock</code></em>);
 <a class="link" href="GstClock.html" title="GstClock"><span class="returnvalue">GstClock</span></a>*           <a class="link" href="GstElement.html#gst-element-get-clock" title="gst_element_get_clock ()">gst_element_get_clock</a>               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-provides-clock" title="gst_element_provides_clock ()">gst_element_provides_clock</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-provides-clock" title="gst_element_provides_clock ()">gst_element_provides_clock</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 <a class="link" href="GstClock.html" title="GstClock"><span class="returnvalue">GstClock</span></a>*           <a class="link" href="GstElement.html#gst-element-provide-clock" title="gst_element_provide_clock ()">gst_element_provide_clock</a>           (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 
 <a class="link" href="GstElement.html#GstStateChangeReturn" title="enum GstStateChangeReturn"><span class="returnvalue">GstStateChangeReturn</span></a>  <a class="link" href="GstElement.html#gst-element-set-state" title="gst_element_set_state ()">gst_element_set_state</a>             (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
@@ -196,19 +201,19 @@ enum                <a class="link" href="GstElement.html#GstStateChangeReturn" 
                                                          <em class="parameter"><code><a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> *state</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> *pending</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> timeout</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-set-locked-state" title="gst_element_set_locked_state ()">gst_element_set_locked_state</a>        (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> locked_state</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-is-locked-state" title="gst_element_is_locked_state ()">gst_element_is_locked_state</a>         (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-set-locked-state" title="gst_element_set_locked_state ()">gst_element_set_locked_state</a>        (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> locked_state</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-is-locked-state" title="gst_element_is_locked_state ()">gst_element_is_locked_state</a>         (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-abort-state" title="gst_element_abort_state ()">gst_element_abort_state</a>             (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 <a class="link" href="GstElement.html#GstStateChangeReturn" title="enum GstStateChangeReturn"><span class="returnvalue">GstStateChangeReturn</span></a>  <a class="link" href="GstElement.html#gst-element-continue-state" title="gst_element_continue_state ()">gst_element_continue_state</a>        (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html#GstStateChangeReturn" title="enum GstStateChangeReturn"><span class="type">GstStateChangeReturn</span></a> ret</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-lost-state" title="gst_element_lost_state ()">gst_element_lost_state</a>              (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-lost-state-full" title="gst_element_lost_state_full ()">gst_element_lost_state_full</a>         (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> new_base_time</code></em>);
-const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*        <a class="link" href="GstElement.html#gst-element-state-get-name" title="gst_element_state_get_name ()">gst_element_state_get_name</a>          (<em class="parameter"><code><a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> state</code></em>);
-const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       <a class="link" href="GstElement.html#gst-element-state-change-return-get-name" title="gst_element_state_change_return_get_name ()">gst_element_state_change_return_get_name</a>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> new_base_time</code></em>);
+const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*        <a class="link" href="GstElement.html#gst-element-state-get-name" title="gst_element_state_get_name ()">gst_element_state_get_name</a>          (<em class="parameter"><code><a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> state</code></em>);
+const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       <a class="link" href="GstElement.html#gst-element-state-change-return-get-name" title="gst_element_state_change_return_get_name ()">gst_element_state_change_return_get_name</a>
                                                         (<em class="parameter"><code><a class="link" href="GstElement.html#GstStateChangeReturn" title="enum GstStateChangeReturn"><span class="type">GstStateChangeReturn</span></a> state_ret</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-sync-state-with-parent" title="gst_element_sync_state_with_parent ()">gst_element_sync_state_with_parent</a>  (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-sync-state-with-parent" title="gst_element_sync_state_with_parent ()">gst_element_sync_state_with_parent</a>  (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
 <a class="link" href="GstElement.html#GstStateChangeReturn" title="enum GstStateChangeReturn"><span class="returnvalue">GstStateChangeReturn</span></a>  <a class="link" href="GstElement.html#gst-element-change-state" title="gst_element_change_state ()">gst_element_change_state</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html#GstStateChange" title="enum GstStateChange"><span class="type">GstStateChange</span></a> transition</code></em>);
 
@@ -220,51 +225,51 @@ const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span c
 
 <span class="returnvalue">void</span>                <a class="link" href="GstElement.html#gst-element-message-full" title="gst_element_message_full ()">gst_element_message_full</a>            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessageType" title="enum GstMessageType"><span class="type">GstMessageType</span></a> type</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Quarks.html#GQuark"><span class="type">GQuark</span></a> domain</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> code</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *text</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *debug</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *file</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *function</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> line</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-post-message" title="gst_element_post_message ()">gst_element_post_message</a>            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Quarks.html#GQuark"><span class="type">GQuark</span></a> domain</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> code</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *text</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *debug</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *file</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *function</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> line</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-post-message" title="gst_element_post_message ()">gst_element_post_message</a>            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>);
 
 const <a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="returnvalue">GstQueryType</span></a> * <a class="link" href="GstElement.html#gst-element-get-query-types" title="gst_element_get_query_types ()">gst_element_get_query_types</a>        (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-query" title="gst_element_query ()">gst_element_query</a>                   (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-query" title="gst_element_query ()">gst_element_query</a>                   (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-query-convert" title="gst_element_query_convert ()">gst_element_query_convert</a>           (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-query-convert" title="gst_element_query_convert ()">gst_element_query_convert</a>           (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> src_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_val</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_val</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *dest_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_val</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-query-position" title="gst_element_query_position ()">gst_element_query_position</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_val</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-query-position" title="gst_element_query_position ()">gst_element_query_position</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *cur</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-query-duration" title="gst_element_query_duration ()">gst_element_query_duration</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *cur</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-query-duration" title="gst_element_query_duration ()">gst_element_query_duration</a>          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *duration</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *duration</code></em>);
 
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-send-event" title="gst_element_send_event ()">gst_element_send_event</a>              (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-send-event" title="gst_element_send_event ()">gst_element_send_event</a>              (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstEvent.html#GstEvent" title="GstEvent"><span class="type">GstEvent</span></a> *event</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-seek-simple" title="gst_element_seek_simple ()">gst_element_seek_simple</a>             (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-seek-simple" title="gst_element_seek_simple ()">gst_element_seek_simple</a>             (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstEvent.html#GstSeekFlags" title="enum GstSeekFlags"><span class="type">GstSeekFlags</span></a> seek_flags</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> seek_pos</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-seek" title="gst_element_seek ()">gst_element_seek</a>                    (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> rate</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> seek_pos</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstElement.html#gst-element-seek" title="gst_element_seek ()">gst_element_seek</a>                    (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> rate</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstEvent.html#GstSeekFlags" title="enum GstSeekFlags"><span class="type">GstSeekFlags</span></a> flags</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstEvent.html#GstSeekType" title="enum GstSeekType"><span class="type">GstSeekType</span></a> cur_type</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> cur</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> cur</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstEvent.html#GstSeekType" title="enum GstSeekType"><span class="type">GstSeekType</span></a> stop_type</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="GstElement.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
    +----<a class="link" href="GstObject.html" title="GstObject">GstObject</a>
          +----GstElement
                +----<a class="link" href="GstBin.html" title="GstBin">GstBin</a>
@@ -300,7 +305,7 @@ applications in order to retain ABI compatibility.
 <p>
 All elements have pads (of the type <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a>).  These pads link to pads on
 other elements.  <a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="type">GstBuffer</span></a> flow between these linked pads.
-A <a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> has a <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> structures for all their input (or sink)
+A <a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> has a <a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> structures for all their input (or sink)
 and output (or source) pads.
 Core and plug-in writers can add and remove pads with <a class="link" href="GstElement.html#gst-element-add-pad" title="gst_element_add_pad ()"><code class="function">gst_element_add_pad()</code></a>
 and <a class="link" href="GstElement.html#gst-element-remove-pad" title="gst_element_remove_pad ()"><code class="function">gst_element_remove_pad()</code></a>.
@@ -330,11 +335,11 @@ of a <a class="link" href="GstElement.html#GstState" title="enum GstState"><span
 You can get and set a <a class="link" href="GstClock.html" title="GstClock"><span class="type">GstClock</span></a> on an element using <a class="link" href="GstElement.html#gst-element-get-clock" title="gst_element_get_clock ()"><code class="function">gst_element_get_clock()</code></a>
 and <a class="link" href="GstElement.html#gst-element-set-clock" title="gst_element_set_clock ()"><code class="function">gst_element_set_clock()</code></a>.
 Some elements can provide a clock for the pipeline if
-<a class="link" href="GstElement.html#gst-element-provides-clock" title="gst_element_provides_clock ()"><code class="function">gst_element_provides_clock()</code></a> returns <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>. With the
+<a class="link" href="GstElement.html#gst-element-provides-clock" title="gst_element_provides_clock ()"><code class="function">gst_element_provides_clock()</code></a> returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>. With the
 <a class="link" href="GstElement.html#gst-element-provide-clock" title="gst_element_provide_clock ()"><code class="function">gst_element_provide_clock()</code></a> method one can retrieve the clock provided by
 such an element.
 Not all elements require a clock to operate correctly. If
-<a class="link" href="GstElement.html#gst-element-requires-clock" title="gst_element_requires_clock ()"><code class="function">gst_element_requires_clock()</code></a> returns <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>, a clock should be set on the
+<a class="link" href="GstElement.html#gst-element-requires-clock" title="gst_element_requires_clock ()"><code class="function">gst_element_requires_clock()</code></a> returns <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>, a clock should be set on the
 element with <a class="link" href="GstElement.html#gst-element-set-clock" title="gst_element_set_clock ()"><code class="function">gst_element_set_clock()</code></a>.
 </p>
 <p>
@@ -385,17 +390,17 @@ GStreamer element abstract base class.
 <col align="left" valign="top">
 <tbody>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Threads.html#GStaticRecMutex"><span class="type">GStaticRecMutex</span></a> *<em class="structfield"><code><a name="GstElement-struct.state-lock"></a>state_lock</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Threads.html#GStaticRecMutex"><span class="type">GStaticRecMutex</span></a> *<em class="structfield"><code><a name="GstElement-struct.state-lock"></a>state_lock</code></em>;</span></p></td>
 <td>Used to serialize execution of <a class="link" href="GstElement.html#gst-element-set-state" title="gst_element_set_state ()"><code class="function">gst_element_set_state()</code></a>
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Threads.html#GCond"><span class="type">GCond</span></a> *<em class="structfield"><code><a name="GstElement-struct.state-cond"></a>state_cond</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Threads.html#GCond"><span class="type">GCond</span></a> *<em class="structfield"><code><a name="GstElement-struct.state-cond"></a>state_cond</code></em>;</span></p></td>
 <td>Used to signal completion of a state change
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstElement-struct.state-cookie"></a>state_cookie</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstElement-struct.state-cookie"></a>state_cookie</code></em>;</span></p></td>
 <td>Used to detect concurrent execution of
 <a class="link" href="GstElement.html#gst-element-set-state" title="gst_element_set_state ()"><code class="function">gst_element_set_state()</code></a> and <a class="link" href="GstElement.html#gst-element-get-state" title="gst_element_get_state ()"><code class="function">gst_element_get_state()</code></a>
 </td>
@@ -442,37 +447,37 @@ state will yield the running_time against the clock.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> <em class="structfield"><code><a name="GstElement-struct.numpads"></a>numpads</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> <em class="structfield"><code><a name="GstElement-struct.numpads"></a>numpads</code></em>;</span></p></td>
 <td>number of pads of the element, includes both source and sink pads.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *<em class="structfield"><code><a name="GstElement-struct.pads"></a>pads</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *<em class="structfield"><code><a name="GstElement-struct.pads"></a>pads</code></em>;</span></p></td>
 <td>list of pads
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> <em class="structfield"><code><a name="GstElement-struct.numsrcpads"></a>numsrcpads</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> <em class="structfield"><code><a name="GstElement-struct.numsrcpads"></a>numsrcpads</code></em>;</span></p></td>
 <td>number of source pads of the element.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *<em class="structfield"><code><a name="GstElement-struct.srcpads"></a>srcpads</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *<em class="structfield"><code><a name="GstElement-struct.srcpads"></a>srcpads</code></em>;</span></p></td>
 <td>list of source pads
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> <em class="structfield"><code><a name="GstElement-struct.numsinkpads"></a>numsinkpads</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> <em class="structfield"><code><a name="GstElement-struct.numsinkpads"></a>numsinkpads</code></em>;</span></p></td>
 <td>number of sink pads of the element.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *<em class="structfield"><code><a name="GstElement-struct.sinkpads"></a>sinkpads</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *<em class="structfield"><code><a name="GstElement-struct.sinkpads"></a>sinkpads</code></em>;</span></p></td>
 <td>list of sink pads
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstElement-struct.pads-cookie"></a>pads_cookie</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstElement-struct.pads-cookie"></a>pads_cookie</code></em>;</span></p></td>
 <td>updated whenever the a pad is added or removed
 </td>
 </tr>
@@ -486,6 +491,7 @@ state will yield the running_time against the clock.
   GstObjectClass         parent_class;
 
   /* the element details */
+  /* FIXME-0.11: deprecate this in favour of meta_data */
   GstElementDetails      details;
 
   /* factory that the element was created from */
@@ -550,17 +556,17 @@ functionality.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *<em class="structfield"><code><a name="GstElementClass.padtemplates"></a>padtemplates</code></em>;</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of <a class="link" href="GstPadTemplate.html" title="GstPadTemplate"><span class="type">GstPadTemplate</span></a>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *<em class="structfield"><code><a name="GstElementClass.padtemplates"></a>padtemplates</code></em>;</span></p></td>
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of <a class="link" href="GstPadTemplate.html" title="GstPadTemplate"><span class="type">GstPadTemplate</span></a>
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstElementClass.numpadtemplates"></a>numpadtemplates</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstElementClass.numpadtemplates"></a>numpadtemplates</code></em>;</span></p></td>
 <td>the number of padtemplates
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstElementClass.pad-templ-cookie"></a>pad_templ_cookie</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="GstElementClass.pad-templ-cookie"></a>pad_templ_cookie</code></em>;</span></p></td>
 <td>changed whenever the padtemplates change
 </td>
 </tr>
@@ -640,6 +646,7 @@ functionality.
   GST_ELEMENT_LOCKED_STATE      = (GST_OBJECT_FLAG_LAST &lt;&lt; 0),
   GST_ELEMENT_IS_SINK           = (GST_OBJECT_FLAG_LAST &lt;&lt; 1),
   GST_ELEMENT_UNPARENTING       = (GST_OBJECT_FLAG_LAST &lt;&lt; 2),
+  GST_ELEMENT_IS_SOURCE         = (GST_OBJECT_FLAG_LAST &lt;&lt; 3),
   /* padding */
   GST_ELEMENT_FLAG_LAST         = (GST_OBJECT_FLAG_LAST &lt;&lt; 16)
 } GstElementFlags;
@@ -664,6 +671,11 @@ The standard flags that an element may have.
 <td><p><a name="GST-ELEMENT-UNPARENTING:CAPS"></a><span class="term"><code class="literal">GST_ELEMENT_UNPARENTING</code></span></p></td>
 <td>Child is being removed from the parent bin.
  <a class="link" href="GstBin.html#gst-bin-remove" title="gst_bin_remove ()"><code class="function">gst_bin_remove()</code></a> on a child already being removed immediately returns FALSE
+</td>
+</tr>
+<tr>
+<td><p><a name="GST-ELEMENT-IS-SOURCE:CAPS"></a><span class="term"><code class="literal">GST_ELEMENT_IS_SOURCE</code></span></p></td>
+<td>the element is a source. Since 0.10.31
 </td>
 </tr>
 <tr>
@@ -1418,14 +1430,14 @@ functions of classes.
 <div class="refsect2" title="gst_element_class_get_pad_template ()">
 <a name="gst-element-class-get-pad-template"></a><h3>gst_element_class_get_pad_template ()</h3>
 <pre class="programlisting"><a class="link" href="GstPadTemplate.html" title="GstPadTemplate"><span class="returnvalue">GstPadTemplate</span></a>*     gst_element_class_get_pad_template  (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *element_class</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>
 Retrieves a padtemplate from <em class="parameter"><code>element_class</code></em> with the given name.
 </p>
 <div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
-<h3 class="title">Note</h3>If you use this function in the <a href="/usr/share/gtk-doc/html/gobject/gobject-Type-Information.html#GInstanceInitFunc"><span class="type">GInstanceInitFunc</span></a> of an object class
+<h3 class="title">Note</h3>If you use this function in the <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Type-Information.html#GInstanceInitFunc"><span class="type">GInstanceInitFunc</span></a> of an object class
 that has subclasses, make sure to pass the g_class parameter of the
-<a href="/usr/share/gtk-doc/html/gobject/gobject-Type-Information.html#GInstanceInitFunc"><span class="type">GInstanceInitFunc</span></a> here.</div>
+<a href="http://library.gnome.org/devel/gobject/unstable/gobject-Type-Information.html#GInstanceInitFunc"><span class="type">GInstanceInitFunc</span></a> here.</div>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -1443,7 +1455,7 @@ that has subclasses, make sure to pass the g_class parameter of the
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the <a class="link" href="GstPadTemplate.html" title="GstPadTemplate"><span class="type">GstPadTemplate</span></a> with the given name, or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if none was found.
+<td> the <a class="link" href="GstPadTemplate.html" title="GstPadTemplate"><span class="type">GstPadTemplate</span></a> with the given name, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if none was found.
 No unreferencing is necessary.
 </td>
 </tr>
@@ -1453,16 +1465,16 @@ No unreferencing is necessary.
 <hr>
 <div class="refsect2" title="gst_element_class_get_pad_template_list ()">
 <a name="gst-element-class-get-pad-template-list"></a><h3>gst_element_class_get_pad_template_list ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*              gst_element_class_get_pad_template_list
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a>*              gst_element_class_get_pad_template_list
                                                         (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *element_class</code></em>);</pre>
 <p>
 Retrieves a list of the pad templates associated with <em class="parameter"><code>element_class</code></em>. The
 list must not be modified by the calling code.
 </p>
 <div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
-<h3 class="title">Note</h3>If you use this function in the <a href="/usr/share/gtk-doc/html/gobject/gobject-Type-Information.html#GInstanceInitFunc"><span class="type">GInstanceInitFunc</span></a> of an object class
+<h3 class="title">Note</h3>If you use this function in the <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Type-Information.html#GInstanceInitFunc"><span class="type">GInstanceInitFunc</span></a> of an object class
 that has subclasses, make sure to pass the g_class parameter of the
-<a href="/usr/share/gtk-doc/html/gobject/gobject-Type-Information.html#GInstanceInitFunc"><span class="type">GInstanceInitFunc</span></a> here.</div>
+<a href="http://library.gnome.org/devel/gobject/unstable/gobject-Type-Information.html#GInstanceInitFunc"><span class="type">GInstanceInitFunc</span></a> here.</div>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -1475,7 +1487,7 @@ that has subclasses, make sure to pass the g_class parameter of the
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the <a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of padtemplates.
+<td> the <a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of padtemplates.
 </td>
 </tr>
 </tbody>
@@ -1485,7 +1497,7 @@ that has subclasses, make sure to pass the g_class parameter of the
 <div class="refsect2" title="gst_element_class_install_std_props ()">
 <a name="gst-element-class-install-std-props"></a><h3>gst_element_class_install_std_props ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_element_class_install_std_props (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *klass</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *first_name</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *first_name</code></em>,
                                                          <em class="parameter"><code>...</code></em>);</pre>
 <p>
 Adds a list of standardized properties with types to the <em class="parameter"><code>klass</code></em>.
@@ -1555,10 +1567,10 @@ The <em class="parameter"><code>details</code></em> are copied.
 <a name="gst-element-class-set-details-simple"></a><h3>gst_element_class_set_details_simple ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_element_class_set_details_simple
                                                         (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *klass</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *longname</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *classification</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *description</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *author</code></em>);</pre>
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *longname</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *classification</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *description</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *author</code></em>);</pre>
 <p>
 Sets the detailed information for a <a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a>. Simpler version of
 <a class="link" href="GstElement.html#gst-element-class-set-details" title="gst_element_class_set_details ()"><code class="function">gst_element_class_set_details()</code></a> that generates less linker overhead.
@@ -1608,9 +1620,63 @@ multiple author details. E.g: "Joe Bloggs &lt;joe.blogs at foo.com&gt;"
 <p class="since">Since 0.10.14</p>
 </div>
 <hr>
+<div class="refsect2" title="gst_element_class_set_documentation_uri ()">
+<a name="gst-element-class-set-documentation-uri"></a><h3>gst_element_class_set_documentation_uri ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_element_class_set_documentation_uri
+                                                        (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *klass</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);</pre>
+<p>
+Set uri pointing to user documentation. Applications can use this to show
+help for e.g. effects to users.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>klass</code></em> :</span></p></td>
+<td>class to set details for
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>uri</code></em> :</span></p></td>
+<td>uri of element documentation
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.31</p>
+</div>
+<hr>
+<div class="refsect2" title="gst_element_class_set_icon_name ()">
+<a name="gst-element-class-set-icon-name"></a><h3>gst_element_class_set_icon_name ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_element_class_set_icon_name     (<em class="parameter"><code><a class="link" href="GstElement.html#GstElementClass" title="GstElementClass"><span class="type">GstElementClass</span></a> *klass</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+<p>
+Elements that bridge to certain other products can include an icon of that
+used product. Application can show the icon in menus/selectors to help
+identifying specific elements.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>klass</code></em> :</span></p></td>
+<td>class to set details for
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>name</code></em> :</span></p></td>
+<td>name of an icon
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.31</p>
+</div>
+<hr>
 <div class="refsect2" title="gst_element_add_pad ()">
 <a name="gst-element-add-pad"></a><h3>gst_element_add_pad ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_add_pad                 (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_add_pad                 (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *pad</code></em>);</pre>
 <p>
 Adds a pad (link point) to <em class="parameter"><code>element</code></em>. <em class="parameter"><code>pad</code></em>'s parent will be set to <em class="parameter"><code>element</code></em>;
@@ -1642,7 +1708,7 @@ This function will emit the <a class="link" href="GstElement.html#GstElement-pad
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the pad could be added. This function can fail when
+<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the pad could be added. This function can fail when
 a pad with the same name already existed or the pad already had another
 parent.
 
@@ -1656,7 +1722,7 @@ MT safe.
 <div class="refsect2" title="gst_element_get_pad ()">
 <a name="gst-element-get-pad"></a><h3>gst_element_get_pad ()</h3>
 <pre class="programlisting"><a class="link" href="GstPad.html" title="GstPad"><span class="returnvalue">GstPad</span></a>*             gst_element_get_pad                 (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <div class="warning" title="Warning" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Warning</h3>
 <p><code class="literal">gst_element_get_pad</code> is deprecated and should not be used in newly-written code. This function is deprecated as it's unclear if the reference
@@ -1683,7 +1749,7 @@ first, then <a class="link" href="GstElement.html#gst-element-get-request-pad" t
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> if found, otherwise <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. Unref or Release after usage,
+<td> the <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> if found, otherwise <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. Unref or Release after usage,
 depending on the type of the pad.
 </td>
 </tr>
@@ -1719,6 +1785,11 @@ Looks for an unlinked pad to which the given pad can link. It is not
 guaranteed that linking the pads will work, though it should work in most
 cases.
 </p>
+<p>
+This function will first attempt to find a compatible unlinked ALWAYS pad,
+and if none can be found, it will request a compatible REQUEST pad by looking
+at the templates of <em class="parameter"><code>element</code></em>.
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
@@ -1739,7 +1810,7 @@ cases.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> to which a link can be made, or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if one cannot be
+<td> the <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> to which a link can be made, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if one cannot be
 found. <a class="link" href="GstObject.html#gst-object-unref" title="gst_object_unref ()"><code class="function">gst_object_unref()</code></a> after usage.
 </td>
 </tr>
@@ -1782,7 +1853,7 @@ unreferencing is necessary.
 <div class="refsect2" title="gst_element_get_request_pad ()">
 <a name="gst-element-get-request-pad"></a><h3>gst_element_get_request_pad ()</h3>
 <pre class="programlisting"><a class="link" href="GstPad.html" title="GstPad"><span class="returnvalue">GstPad</span></a>*             gst_element_get_request_pad         (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>
 Retrieves a pad from the element by name. This version only retrieves
 request pads. The pad should be released with
@@ -1803,7 +1874,7 @@ request pads. The pad should be released with
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> requested <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> if found, otherwise <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. Release after usage.
+<td> requested <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> if found, otherwise <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. Release after usage.
 </td>
 </tr>
 </tbody>
@@ -1813,7 +1884,7 @@ request pads. The pad should be released with
 <div class="refsect2" title="gst_element_get_static_pad ()">
 <a name="gst-element-get-static-pad"></a><h3>gst_element_get_static_pad ()</h3>
 <pre class="programlisting"><a class="link" href="GstPad.html" title="GstPad"><span class="returnvalue">GstPad</span></a>*             gst_element_get_static_pad          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>
 Retrieves a pad from <em class="parameter"><code>element</code></em> by name. This version only retrieves
 already-existing (i.e. 'static') pads.
@@ -1833,7 +1904,7 @@ already-existing (i.e. 'static') pads.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the requested <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> if found, otherwise <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. unref after
+<td> the requested <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> if found, otherwise <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. unref after
 usage.
 
 MT safe.
@@ -1904,7 +1975,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_element_remove_pad ()">
 <a name="gst-element-remove-pad"></a><h3>gst_element_remove_pad ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_remove_pad              (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_remove_pad              (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> *pad</code></em>);</pre>
 <p>
 Removes <em class="parameter"><code>pad</code></em> from <em class="parameter"><code>element</code></em>. <em class="parameter"><code>pad</code></em> will be destroyed if it has not been
@@ -1943,7 +2014,7 @@ This function will emit the <a class="link" href="GstElement.html#GstElement-pad
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the pad could be removed. Can return <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the
+<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the pad could be removed. Can return <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the
 pad does not belong to the provided element.
 
 MT safe.
@@ -2031,7 +2102,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_element_link ()">
 <a name="gst-element-link"></a><h3>gst_element_link ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link                    (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link                    (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>);</pre>
 <p>
 Links <em class="parameter"><code>src</code></em> to <em class="parameter"><code>dest</code></em>. The link must be from source to
@@ -2097,7 +2168,7 @@ requestpad, which has to be released using <a class="link" href="GstElement.html
 <hr>
 <div class="refsect2" title="gst_element_link_many ()">
 <a name="gst-element-link-many"></a><h3>gst_element_link_many ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link_many               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element_1</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link_many               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element_1</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element_2</code></em>,
                                                          <em class="parameter"><code>...</code></em>);</pre>
 <p>
@@ -2164,10 +2235,10 @@ Unlinks a series of elements. Uses <a class="link" href="GstElement.html#gst-ele
 <hr>
 <div class="refsect2" title="gst_element_link_pads ()">
 <a name="gst-element-link-pads"></a><h3>gst_element_link_pads ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link_pads               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link_pads               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>);</pre>
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>);</pre>
 <p>
 Links the two named pads of the source and destination elements.
 Side effect is that if one of the pads has no parent, it becomes a
@@ -2209,10 +2280,10 @@ or NULL for any pad.
 <hr>
 <div class="refsect2" title="gst_element_link_pads_full ()">
 <a name="gst-element-link-pads-full"></a><h3>gst_element_link_pads_full ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link_pads_full          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link_pads_full          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstPad.html#GstPadLinkCheck" title="enum GstPadLinkCheck"><span class="type">GstPadLinkCheck</span></a> flags</code></em>);</pre>
 <p>
 Links the two named pads of the source and destination elements.
@@ -2268,9 +2339,9 @@ or NULL for any pad.
 <div class="refsect2" title="gst_element_unlink_pads ()">
 <a name="gst-element-unlink-pads"></a><h3>gst_element_unlink_pads ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_element_unlink_pads             (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>);</pre>
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>);</pre>
 <p>
 Unlinks the two named pads of the source and destination elements.
 </p>
@@ -2303,16 +2374,16 @@ Unlinks the two named pads of the source and destination elements.
 <hr>
 <div class="refsect2" title="gst_element_link_pads_filtered ()">
 <a name="gst-element-link-pads-filtered"></a><h3>gst_element_link_pads_filtered ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link_pads_filtered      (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link_pads_filtered      (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *srcpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *destpadname</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> *filter</code></em>);</pre>
 <p>
 Links the two named pads of the source and destination elements. Side effect
 is that if one of the pads has no parent, it becomes a child of the parent of
 the other element. If they have different parents, the link fails. If <em class="parameter"><code>caps</code></em>
-is not <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><span class="type">NULL</span></a>, makes sure that the caps of the link is a subset of <em class="parameter"><code>caps</code></em>.
+is not <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><span class="type">NULL</span></a>, makes sure that the caps of the link is a subset of <em class="parameter"><code>caps</code></em>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -2339,7 +2410,7 @@ is not <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>filter</code></em> :</span></p></td>
-<td>the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> to filter the link, or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><span class="type">NULL</span></a> for no filter.
+<td>the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> to filter the link, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><span class="type">NULL</span></a> for no filter.
 </td>
 </tr>
 <tr>
@@ -2353,7 +2424,7 @@ is not <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS
 <hr>
 <div class="refsect2" title="gst_element_link_filtered ()">
 <a name="gst-element-link-filtered"></a><h3>gst_element_link_filtered ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link_filtered           (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_link_filtered           (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *src</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *dest</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> *filter</code></em>);</pre>
 <p>
@@ -2382,7 +2453,7 @@ Make sure you have added your elements to a bin or pipeline with
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>filter</code></em> :</span></p></td>
-<td>the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> to filter the link, or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><span class="type">NULL</span></a> for no filter.
+<td>the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> to filter the link, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><span class="type">NULL</span></a> for no filter.
 </td>
 </tr>
 <tr>
@@ -2642,7 +2713,7 @@ Gets the index from the element.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a <a class="link" href="GstIndex.html" title="GstIndex"><span class="type">GstIndex</span></a> or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> when no index was set on the
+<td> a <a class="link" href="GstIndex.html" title="GstIndex"><span class="type">GstIndex</span></a> or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> when no index was set on the
 element. unref after usage.
 
 MT safe.
@@ -2654,7 +2725,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_element_is_indexable ()">
 <a name="gst-element-is-indexable"></a><h3>gst_element_is_indexable ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_is_indexable            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_is_indexable            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
 <p>
 Queries if the element can be indexed.
 </p>
@@ -2707,8 +2778,8 @@ Sets the name of the element, getting rid of the old name if there was one.
 </pre>
 <p>
 Returns a copy of the name of <em class="parameter"><code>elem</code></em>.
-Caller should <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> the return value after usage.
-For a nameless element, this returns NULL, which you can safely <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a>
+Caller should <a href="http://library.gnome.org/devel/glib/unstable/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> the return value after usage.
+For a nameless element, this returns NULL, which you can safely <a href="http://library.gnome.org/devel/glib/unstable/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a>
 as well.
 </p>
 <div class="variablelist"><table border="0">
@@ -2721,7 +2792,7 @@ as well.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the name of <em class="parameter"><code>elem</code></em>. <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> after usage. MT safe. 
+<td> the name of <em class="parameter"><code>elem</code></em>. <a href="http://library.gnome.org/devel/glib/unstable/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> after usage. MT safe. 
 
 </td>
 </tr>
@@ -2772,7 +2843,7 @@ Gets the parent of an element.
 <hr>
 <div class="refsect2" title="gst_element_requires_clock ()">
 <a name="gst-element-requires-clock"></a><h3>gst_element_requires_clock ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_requires_clock          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_requires_clock          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
 <p>
 Query if the element requires a clock.
 </p>
@@ -2786,7 +2857,7 @@ Query if the element requires a clock.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the element requires a clock
+<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the element requires a clock
 
 MT safe.
 </td>
@@ -2797,7 +2868,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_element_set_clock ()">
 <a name="gst-element-set-clock"></a><h3>gst_element_set_clock ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_set_clock               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_set_clock               (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html" title="GstClock"><span class="type">GstClock</span></a> *clock</code></em>);</pre>
 <p>
 Sets the clock for the element. This function increases the
@@ -2819,7 +2890,7 @@ is unreffed.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the element accepted the clock. An element can refuse a
+<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the element accepted the clock. An element can refuse a
 clock when it, for example, is not able to slave its internal clock to the
 <em class="parameter"><code>clock</code></em> or when it requires a specific clock to operate.
 
@@ -2858,7 +2929,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_element_provides_clock ()">
 <a name="gst-element-provides-clock"></a><h3>gst_element_provides_clock ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_provides_clock          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_provides_clock          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
 <p>
 Query if the element provides a clock. A <a class="link" href="GstClock.html" title="GstClock"><span class="type">GstClock</span></a> provided by an
 element can be used as the global <a class="link" href="GstClock.html" title="GstClock"><span class="type">GstClock</span></a> for the pipeline.
@@ -2876,7 +2947,7 @@ to operate the clock.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the element provides a clock
+<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the element provides a clock
 
 MT safe.
 </td>
@@ -2906,7 +2977,7 @@ state. Some elements can provide a clock in other states.</div>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the GstClock provided by the element or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+<td> the GstClock provided by the element or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 if no clock could be provided.  Unref after usage.
 
 MT safe.
@@ -3001,13 +3072,13 @@ element to playing, the preroll will complete and playback will start.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>state</code></em> :</span></p></td>
-<td> a pointer to <a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> to hold the state. Can be <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
+<td> a pointer to <a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> to hold the state. Can be <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pending</code></em> :</span></p></td>
 <td> a pointer to <a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> to hold the pending state.
-                 Can be <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
+                 Can be <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
 </td>
 </tr>
 <tr>
@@ -3032,8 +3103,8 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_element_set_locked_state ()">
 <a name="gst-element-set-locked-state"></a><h3>gst_element_set_locked_state ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_set_locked_state        (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> locked_state</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_set_locked_state        (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> locked_state</code></em>);</pre>
 <p>
 Locks the state of an element, so state changes of the parent don't affect
 this element anymore.
@@ -3066,7 +3137,7 @@ or the elements state-locking needed no change.
 <hr>
 <div class="refsect2" title="gst_element_is_locked_state ()">
 <a name="gst-element-is-locked-state"></a><h3>gst_element_is_locked_state ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_is_locked_state         (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_is_locked_state         (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
 <p>
 Checks if the state of an element is locked.
 If the state of an element is locked, state changes of the parent don't
@@ -3166,7 +3237,7 @@ MT safe.
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_element_lost_state              (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
 <p>
 Brings the element to the lost state. This function calls
-<a class="link" href="GstElement.html#gst-element-lost-state-full" title="gst_element_lost_state_full ()"><code class="function">gst_element_lost_state_full()</code></a> with the new_base_time set to <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.
+<a class="link" href="GstElement.html#gst-element-lost-state-full" title="gst_element_lost_state_full ()"><code class="function">gst_element_lost_state_full()</code></a> with the new_base_time set to <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.
 </p>
 <p>
 This function is used internally and should normally not be called from
@@ -3188,7 +3259,7 @@ MT safe.
 <div class="refsect2" title="gst_element_lost_state_full ()">
 <a name="gst-element-lost-state-full"></a><h3>gst_element_lost_state_full ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_element_lost_state_full         (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> new_base_time</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> new_base_time</code></em>);</pre>
 <p>
 Brings the element to the lost state. The current state of the
 element is copied to the pending state so that any call to
@@ -3196,7 +3267,7 @@ element is copied to the pending state so that any call to
 </p>
 <p>
 An ASYNC_START message is posted with indication to distribute a new
-base_time to the element when <em class="parameter"><code>new_base_time</code></em> is <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.
+base_time to the element when <em class="parameter"><code>new_base_time</code></em> is <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.
 If the element was PLAYING, it will go to PAUSED. The element
 will be restored to its PLAYING state by the parent pipeline when it
 prerolls again.
@@ -3235,7 +3306,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_element_state_get_name ()">
 <a name="gst-element-state-get-name"></a><h3>gst_element_state_get_name ()</h3>
-<pre class="programlisting">const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*        gst_element_state_get_name          (<em class="parameter"><code><a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> state</code></em>);</pre>
+<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*        gst_element_state_get_name          (<em class="parameter"><code><a class="link" href="GstElement.html#GstState" title="enum GstState"><span class="type">GstState</span></a> state</code></em>);</pre>
 <p>
 Gets a string representing the given state.
 </p>
@@ -3258,7 +3329,7 @@ Gets a string representing the given state.
 <hr>
 <div class="refsect2" title="gst_element_state_change_return_get_name ()">
 <a name="gst-element-state-change-return-get-name"></a><h3>gst_element_state_change_return_get_name ()</h3>
-<pre class="programlisting">const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       gst_element_state_change_return_get_name
+<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       gst_element_state_change_return_get_name
                                                         (<em class="parameter"><code><a class="link" href="GstElement.html#GstStateChangeReturn" title="enum GstStateChangeReturn"><span class="type">GstStateChangeReturn</span></a> state_ret</code></em>);</pre>
 <p>
 Gets a string representing the given state change result.
@@ -3284,7 +3355,7 @@ Gets a string representing the given state change result.
 <hr>
 <div class="refsect2" title="gst_element_sync_state_with_parent ()">
 <a name="gst-element-sync-state-with-parent"></a><h3>gst_element_sync_state_with_parent ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_sync_state_with_parent  (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_sync_state_with_parent  (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>);</pre>
 <p>
 Tries to change the state of the element to the same as its parent.
 If this function returns FALSE, the state of element is undefined.
@@ -3409,13 +3480,13 @@ This is a utility method for elements. Applications should use the
 <a name="gst-element-message-full"></a><h3>gst_element_message_full ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_element_message_full            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessageType" title="enum GstMessageType"><span class="type">GstMessageType</span></a> type</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Quarks.html#GQuark"><span class="type">GQuark</span></a> domain</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> code</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *text</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *debug</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *file</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *function</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> line</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Quarks.html#GQuark"><span class="type">GQuark</span></a> domain</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> code</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *text</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *debug</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *file</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *function</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> line</code></em>);</pre>
 <p>
 Post an error, warning or info message on the bus from inside an element.
 </p>
@@ -3452,13 +3523,13 @@ MT safe.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>text</code></em> :</span></p></td>
 <td>an allocated text string to be used as a replacement for the
-           default message connected to code, or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+           default message connected to code, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>debug</code></em> :</span></p></td>
 <td>an allocated debug message to be used as a replacement for the
-           default debugging information, or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+           default debugging information, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 </td>
 </tr>
 <tr>
@@ -3482,7 +3553,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_element_post_message ()">
 <a name="gst-element-post-message"></a><h3>gst_element_post_message ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_post_message            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_post_message            (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>);</pre>
 <p>
 Post a message on the element's <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a>. This function takes ownership of the
@@ -3504,8 +3575,8 @@ additional reference before calling.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the message was successfully posted. The function returns
-<a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the element did not have a bus.
+<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the message was successfully posted. The function returns
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the element did not have a bus.
 
 MT safe.
 </td>
@@ -3544,7 +3615,7 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_element_query ()">
 <a name="gst-element-query"></a><h3>gst_element_query ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_query                   (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_query                   (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>);</pre>
 <p>
 Performs a query on the given element.
@@ -3580,11 +3651,11 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_element_query_convert ()">
 <a name="gst-element-query-convert"></a><h3>gst_element_query_convert ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_query_convert           (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_query_convert           (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> src_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_val</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_val</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *dest_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_val</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_val</code></em>);</pre>
 <p>
 Queries an element to convert <em class="parameter"><code>src_val</code></em> in <em class="parameter"><code>src_format</code></em> to <em class="parameter"><code>dest_format</code></em>.
 </p>
@@ -3627,9 +3698,9 @@ Queries an element to convert <em class="parameter"><code>src_val</code></em> in
 <hr>
 <div class="refsect2" title="gst_element_query_position ()">
 <a name="gst-element-query-position"></a><h3>gst_element_query_position ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_query_position          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_query_position          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *cur</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *cur</code></em>);</pre>
 <p>
 Queries an element for the stream position.
 </p>
@@ -3663,9 +3734,9 @@ Queries an element for the stream position.
 <hr>
 <div class="refsect2" title="gst_element_query_duration ()">
 <a name="gst-element-query-duration"></a><h3>gst_element_query_duration ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_query_duration          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_query_duration          (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *duration</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *duration</code></em>);</pre>
 <p>
 Queries an element for the total stream duration.
 </p>
@@ -3699,7 +3770,7 @@ Queries an element for the total stream duration.
 <hr>
 <div class="refsect2" title="gst_element_send_event ()">
 <a name="gst-element-send-event"></a><h3>gst_element_send_event ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_send_event              (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_send_event              (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstEvent.html#GstEvent" title="GstEvent"><span class="type">GstEvent</span></a> *event</code></em>);</pre>
 <p>
 Sends an event to an element. If the element doesn't implement an
@@ -3725,7 +3796,7 @@ This function takes owership of the provided event so you should
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the event was handled.
+<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the event was handled.
 
 MT safe.
 </td>
@@ -3736,10 +3807,10 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_element_seek_simple ()">
 <a name="gst-element-seek-simple"></a><h3>gst_element_seek_simple ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_seek_simple             (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_seek_simple             (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstEvent.html#GstSeekFlags" title="enum GstSeekFlags"><span class="type">GstSeekFlags</span></a> seek_flags</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> seek_pos</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> seek_pos</code></em>);</pre>
 <p>
 Simple API to perform a seek on the given element, meaning it just seeks
 to the given position relative to the start of the stream. For more complex
@@ -3749,13 +3820,13 @@ use <a class="link" href="GstElement.html#gst-element-seek" title="gst_element_s
 </p>
 <p>
 In a completely prerolled PAUSED or PLAYING pipeline, seeking is always
-guaranteed to return <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on a seekable media type or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> when the media
+guaranteed to return <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on a seekable media type or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> when the media
 type is certainly not seekable (such as a live stream).
 </p>
 <p>
 Some elements allow for seeking in the READY state, in this
 case they will store the seek event and execute it when they are put to
-PAUSED. If the element supports seek in READY, it will always return <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> when
+PAUSED. If the element supports seek in READY, it will always return <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> when
 it receives the event in the READY state.
 </p>
 <div class="variablelist"><table border="0">
@@ -3787,7 +3858,7 @@ it receives the event in the READY state.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the seek operation succeeded (the seek might not always be
+<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the seek operation succeeded (the seek might not always be
 executed instantly though)
 
 </td>
@@ -3799,14 +3870,14 @@ executed instantly though)
 <hr>
 <div class="refsect2" title="gst_element_seek ()">
 <a name="gst-element-seek"></a><h3>gst_element_seek ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_seek                    (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> rate</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_element_seek                    (<em class="parameter"><code><a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> rate</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstEvent.html#GstSeekFlags" title="enum GstSeekFlags"><span class="type">GstSeekFlags</span></a> flags</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstEvent.html#GstSeekType" title="enum GstSeekType"><span class="type">GstSeekType</span></a> cur_type</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> cur</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> cur</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstEvent.html#GstSeekType" title="enum GstSeekType"><span class="type">GstSeekType</span></a> stop_type</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop</code></em>);</pre>
 <p>
 Sends a seek event to an element. See <a class="link" href="gstreamer-GstEvent.html#gst-event-new-seek" title="gst_event_new_seek ()"><code class="function">gst_event_new_seek()</code></a> for the details of
 the parameters. The seek event is sent to the element using
@@ -3857,7 +3928,7 @@ the parameters. The seek event is sent to the element using
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the event was handled.
+<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the event was handled.
 
 MT safe.
 </td>
@@ -3871,7 +3942,7 @@ MT safe.
 <div class="refsect2" title='The "no-more-pads" signal'>
 <a name="GstElement-no-more-pads"></a><h3>The <code class="literal">"no-more-pads"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *gstelement,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)       : Run Last</pre>
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)       : Run Last</pre>
 <p>
 This signals that the element will not generate more dynamic pads.
 </p>
@@ -3895,7 +3966,7 @@ This signals that the element will not generate more dynamic pads.
 <a name="GstElement-pad-added"></a><h3>The <code class="literal">"pad-added"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *gstelement,
                                                         <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a>     *new_pad,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)       : Run Last</pre>
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)       : Run Last</pre>
 <p>
 a new <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> has been added to the element.
 </p>
@@ -3924,7 +3995,7 @@ a new <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPa
 <a name="GstElement-pad-removed"></a><h3>The <code class="literal">"pad-removed"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a> *gstelement,
                                                         <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a>     *old_pad,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)       : Run Last</pre>
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)       : Run Last</pre>
 <p>
 a <a class="link" href="GstPad.html" title="GstPad"><span class="type">GstPad</span></a> has been removed from the element
 </p>

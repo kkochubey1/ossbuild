@@ -106,6 +106,15 @@ struct _GstQTPad
   /* all the atom and chunk book-keeping is delegated here
    * unowned/uncounted reference, parent MOOV owns */
   AtomTRAK *trak;
+  /* fragmented support */
+  /* meta data book-keeping delegated here */
+  AtomTRAF *traf;
+  /* fragment buffers */
+  ATOM_ARRAY (GstBuffer *) fragment_buffers;
+  /* running fragment duration */
+  gint64 fragment_duration;
+  /* optional fragment index book-keeping */
+  AtomTFRA *tfra;
 
   /* if nothing is set, it won't be called */
   GstQTPadPrepareBufferFunc prepare_buf_func;
@@ -147,20 +156,29 @@ struct _GstQTMux
   GSList *extra_atoms; /* list of extra top-level atoms (e.g. UUID for xmp)
                         * Stored as AtomInfo structs */
 
+  /* fragmented file index */
+  AtomMFRA *mfra;
+
   /* fast start */
   FILE *fast_start_file;
 
   /* moov recovery */
   FILE *moov_recov_file;
 
+  /* fragment sequence */
+  guint32 fragment_sequence;
+
   /* properties */
   guint32 timescale;
+  guint32 trak_timescale;
   AtomsTreeFlavor flavor;
   gboolean fast_start;
   gboolean large_file;
   gboolean guess_pts;
   gchar *fast_start_file_path;
   gchar *moov_recov_file_path;
+  guint32 fragment_duration;
+  gboolean streamable;
 
   /* for collect pads event handling function */
   GstPadEventFunction collect_event;

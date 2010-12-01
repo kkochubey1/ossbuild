@@ -944,9 +944,6 @@ static gboolean
 gst_base_parse_src_eventfunc (GstBaseParse * parse, GstEvent * event)
 {
   gboolean handled = FALSE;
-  GstBaseParseClass *bclass;
-
-  bclass = GST_BASE_PARSE_GET_CLASS (parse);
 
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_SEEK:
@@ -1131,7 +1128,7 @@ gst_base_parse_update_bitrates (GstBaseParse * parse, GstBuffer * buffer)
 
   /* duration should be valid by now,
    * either set by subclass or maybe based on fps settings */
-  if (GST_BUFFER_DURATION_IS_VALID (buffer)) {
+  if (GST_BUFFER_DURATION_IS_VALID (buffer) && parse->priv->acc_duration != 0) {
     /* Calculate duration of a frame from buffer properties */
     frame_dur = GST_BUFFER_DURATION (buffer);
     parse->priv->avg_bitrate = (8 * parse->priv->data_bytecount * GST_SECOND) /
@@ -1973,6 +1970,7 @@ gst_base_parse_chain (GstPad * pad, GstBuffer * buffer)
     /* Subclass may want to know the data offset */
     GST_BUFFER_OFFSET (outbuf) = parse->priv->offset;
     parse->priv->offset += fsize;
+    GST_BUFFER_TIMESTAMP (outbuf) = GST_CLOCK_TIME_NONE;
 
     /* move along with upstream timestamp (if any),
      * but interpolate in between */
@@ -2195,6 +2193,7 @@ gst_base_parse_scan_frame (GstBaseParse * parse, GstBaseParseClass * klass,
   if (fsize <= GST_BUFFER_SIZE (buffer)) {
     outbuf = gst_buffer_create_sub (buffer, 0, fsize);
     GST_BUFFER_OFFSET (outbuf) = GST_BUFFER_OFFSET (buffer);
+    GST_BUFFER_TIMESTAMP (outbuf) = GST_CLOCK_TIME_NONE;
     gst_buffer_unref (buffer);
   } else {
     gst_buffer_unref (buffer);
@@ -2728,11 +2727,9 @@ static gboolean
 gst_base_parse_query (GstPad * pad, GstQuery * query)
 {
   GstBaseParse *parse;
-  GstBaseParseClass *klass;
   gboolean res = FALSE;
 
   parse = GST_BASE_PARSE (GST_PAD_PARENT (pad));
-  klass = GST_BASE_PARSE_GET_CLASS (parse);
 
   GST_LOG_OBJECT (parse, "handling query: %" GST_PTR_FORMAT, query);
 
@@ -2949,6 +2946,7 @@ gst_base_parse_locate_time (GstBaseParse * parse, GstClockTime * _time,
 
   /* do not know at first */
   *_offset = -1;
+  *_time = GST_CLOCK_TIME_NONE;
 
   /* need initial positions; start and end */
   lpos = parse->priv->first_frame_offset;
@@ -3107,7 +3105,6 @@ exit:
 static gboolean
 gst_base_parse_handle_seek (GstBaseParse * parse, GstEvent * event)
 {
-  GstBaseParseClass *klass;
   gdouble rate;
   GstFormat format;
   GstSeekFlags flags;
@@ -3117,8 +3114,6 @@ gst_base_parse_handle_seek (GstBaseParse * parse, GstEvent * event)
   GstSegment seeksegment = { 0, };
   GstFormat dstformat;
   GstClockTime start_ts;
-
-  klass = GST_BASE_PARSE_GET_CLASS (parse);
 
   gst_event_parse_seek (event, &rate, &format, &flags,
       &cur_type, &cur, &stop_type, &stop);

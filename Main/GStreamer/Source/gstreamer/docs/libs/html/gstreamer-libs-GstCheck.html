@@ -87,41 +87,41 @@
                                                          c)
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-init" title="gst_check_init ()">gst_check_init</a>                      (<em class="parameter"><code><span class="type">int</span> *argc</code></em>,
                                                          <em class="parameter"><code><span class="type">char</span> **argv[]</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-message-error" title="gst_check_message_error ()">gst_check_message_error</a>             (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GstMessageType"><span class="type">GstMessageType</span></a> type</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Quarks.html#GQuark"><span class="type">GQuark</span></a> domain</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> code</code></em>);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="returnvalue">GstElement</span></a> *        <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-setup-element" title="gst_check_setup_element ()">gst_check_setup_element</a>             (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *factory</code></em>);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *            <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-setup-sink-pad" title="gst_check_setup_sink_pad ()">gst_check_setup_sink_pad</a>            (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *template</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *            <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-setup-src-pad" title="gst_check_setup_src_pad ()">gst_check_setup_src_pad</a>             (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *template</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *            <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-setup-sink-pad-by-name" title="gst_check_setup_sink_pad_by_name ()">gst_check_setup_sink_pad_by_name</a>    (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *template</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *            <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-setup-src-pad-by-name" title="gst_check_setup_src_pad_by_name ()">gst_check_setup_src_pad_by_name</a>     (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *template</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-teardown-pad-by-name" title="gst_check_teardown_pad_by_name ()">gst_check_teardown_pad_by_name</a>      (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-teardown-element" title="gst_check_teardown_element ()">gst_check_teardown_element</a>          (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-teardown-sink-pad" title="gst_check_teardown_sink_pad ()">gst_check_teardown_sink_pad</a>         (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-teardown-src-pad" title="gst_check_teardown_src_pad ()">gst_check_teardown_src_pad</a>          (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-message-error" title="gst_check_message_error ()">gst_check_message_error</a>             (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstMessage.html#GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstMessage.html#GstMessageType"><span class="type">GstMessageType</span></a> type</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Quarks.html#GQuark"><span class="type">GQuark</span></a> domain</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> code</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="returnvalue">GstElement</span></a> *        <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-setup-element" title="gst_check_setup_element ()">gst_check_setup_element</a>             (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *factory</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="returnvalue">GstPad</span></a> *            <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-setup-sink-pad" title="gst_check_setup_sink_pad ()">gst_check_setup_sink_pad</a>            (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *tmpl</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="returnvalue">GstPad</span></a> *            <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-setup-src-pad" title="gst_check_setup_src_pad ()">gst_check_setup_src_pad</a>             (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *tmpl</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="returnvalue">GstPad</span></a> *            <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-setup-sink-pad-by-name" title="gst_check_setup_sink_pad_by_name ()">gst_check_setup_sink_pad_by_name</a>    (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *tmpl</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="returnvalue">GstPad</span></a> *            <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-setup-src-pad-by-name" title="gst_check_setup_src_pad_by_name ()">gst_check_setup_src_pad_by_name</a>     (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *tmpl</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-teardown-pad-by-name" title="gst_check_teardown_pad_by_name ()">gst_check_teardown_pad_by_name</a>      (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-teardown-element" title="gst_check_teardown_element ()">gst_check_teardown_element</a>          (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-teardown-sink-pad" title="gst_check_teardown_sink_pad ()">gst_check_teardown_sink_pad</a>         (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-teardown-src-pad" title="gst_check_teardown_src_pad ()">gst_check_teardown_src_pad</a>          (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-drop-buffers" title="gst_check_drop_buffers ()">gst_check_drop_buffers</a>              (<em class="parameter"><code><span class="type">void</span></code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-caps-equal" title="gst_check_caps_equal ()">gst_check_caps_equal</a>                (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps1</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps2</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-element-push-buffer-list" title="gst_check_element_push_buffer_list ()">gst_check_element_push_buffer_list</a>  (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *element_name</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *buffer_in</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *buffer_out</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GstFlowReturn"><span class="type">GstFlowReturn</span></a> last_flow_return</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-element-push-buffer" title="gst_check_element_push_buffer ()">gst_check_element_push_buffer</a>       (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *element_name</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer_in</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer_out</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-run-suite" title="gst_check_run_suite ()">gst_check_run_suite</a>                 (<em class="parameter"><code><span class="type">Suite</span> *suite</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *fname</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-caps-equal" title="gst_check_caps_equal ()">gst_check_caps_equal</a>                (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps1</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps2</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-element-push-buffer-list" title="gst_check_element_push_buffer_list ()">gst_check_element_push_buffer_list</a>  (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *element_name</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *buffer_in</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *buffer_out</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="type">GstFlowReturn</span></a> last_flow_return</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-element-push-buffer" title="gst_check_element_push_buffer ()">gst_check_element_push_buffer</a>       (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *element_name</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer_in</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer_out</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="gstreamer-libs-GstCheck.html#gst-check-run-suite" title="gst_check_run_suite ()">gst_check_run_suite</a>                 (<em class="parameter"><code><span class="type">Suite</span> *suite</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *fname</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -367,12 +367,12 @@ macro is for use in unit tests.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>a</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> value or expression
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>b</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> value or expression
 </td>
 </tr>
 </tbody>
@@ -392,12 +392,12 @@ to. This macro is for use in unit tests.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>a</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> or <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> or <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> value or expression
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>b</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> or <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> or <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> value or expression
 </td>
 </tr>
 </tbody>
@@ -443,12 +443,12 @@ macro is for use in unit tests.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>a</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> value or expression
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>b</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> value or expression
 </td>
 </tr>
 </tbody>
@@ -496,12 +496,12 @@ macro is for use in unit tests.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>a</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> value or expression
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>b</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> value or expression
 </td>
 </tr>
 </tbody>
@@ -522,12 +522,12 @@ to. This macro is for use in unit tests.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>a</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> or <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> or <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> value or expression
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>b</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> or <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> or <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> value or expression
 </td>
 </tr>
 </tbody>
@@ -575,12 +575,12 @@ macro is for use in unit tests.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>a</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> value or expression
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>b</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> value or expression
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> value or expression
 </td>
 </tr>
 </tbody>
@@ -640,10 +640,10 @@ macro is for use in unit tests.
 <hr>
 <div class="refsect2" title="gst_check_message_error ()">
 <a name="gst-check-message-error"></a><h3>gst_check_message_error ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_message_error             (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstMessage.html#GstMessageType"><span class="type">GstMessageType</span></a> type</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Quarks.html#GQuark"><span class="type">GQuark</span></a> domain</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> code</code></em>);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_message_error             (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstMessage.html#GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstMessage.html#GstMessageType"><span class="type">GstMessageType</span></a> type</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Quarks.html#GQuark"><span class="type">GQuark</span></a> domain</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> code</code></em>);</pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -675,7 +675,7 @@ macro is for use in unit tests.
 <hr>
 <div class="refsect2" title="gst_check_setup_element ()">
 <a name="gst-check-setup-element"></a><h3>gst_check_setup_element ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="returnvalue">GstElement</span></a> *        gst_check_setup_element             (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *factory</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="returnvalue">GstElement</span></a> *        gst_check_setup_element             (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *factory</code></em>);</pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -697,9 +697,9 @@ macro is for use in unit tests.
 <hr>
 <div class="refsect2" title="gst_check_setup_sink_pad ()">
 <a name="gst-check-setup-sink-pad"></a><h3>gst_check_setup_sink_pad ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *            gst_check_setup_sink_pad            (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *template</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="returnvalue">GstPad</span></a> *            gst_check_setup_sink_pad            (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *tmpl</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);</pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -711,7 +711,7 @@ macro is for use in unit tests.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>template</code></em> :</span></p></td>
+<td><p><span class="term"><em class="parameter"><code>tmpl</code></em> :</span></p></td>
 <td>
 </td>
 </tr>
@@ -731,9 +731,9 @@ macro is for use in unit tests.
 <hr>
 <div class="refsect2" title="gst_check_setup_src_pad ()">
 <a name="gst-check-setup-src-pad"></a><h3>gst_check_setup_src_pad ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *            gst_check_setup_src_pad             (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *template</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="returnvalue">GstPad</span></a> *            gst_check_setup_src_pad             (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *tmpl</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>);</pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -745,7 +745,7 @@ macro is for use in unit tests.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>template</code></em> :</span></p></td>
+<td><p><span class="term"><em class="parameter"><code>tmpl</code></em> :</span></p></td>
 <td>
 </td>
 </tr>
@@ -765,9 +765,9 @@ macro is for use in unit tests.
 <hr>
 <div class="refsect2" title="gst_check_setup_sink_pad_by_name ()">
 <a name="gst-check-setup-sink-pad-by-name"></a><h3>gst_check_setup_sink_pad_by_name ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *            gst_check_setup_sink_pad_by_name    (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *template</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="returnvalue">GstPad</span></a> *            gst_check_setup_sink_pad_by_name    (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *tmpl</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -779,7 +779,7 @@ macro is for use in unit tests.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>template</code></em> :</span></p></td>
+<td><p><span class="term"><em class="parameter"><code>tmpl</code></em> :</span></p></td>
 <td>
 </td>
 </tr>
@@ -799,9 +799,9 @@ macro is for use in unit tests.
 <hr>
 <div class="refsect2" title="gst_check_setup_src_pad_by_name ()">
 <a name="gst-check-setup-src-pad-by-name"></a><h3>gst_check_setup_src_pad_by_name ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="returnvalue">GstPad</span></a> *            gst_check_setup_src_pad_by_name     (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *template</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="returnvalue">GstPad</span></a> *            gst_check_setup_src_pad_by_name     (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPadTemplate.html#GstStaticPadTemplate"><span class="type">GstStaticPadTemplate</span></a> *tmpl</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -813,7 +813,7 @@ macro is for use in unit tests.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><em class="parameter"><code>template</code></em> :</span></p></td>
+<td><p><span class="term"><em class="parameter"><code>tmpl</code></em> :</span></p></td>
 <td>
 </td>
 </tr>
@@ -833,8 +833,8 @@ macro is for use in unit tests.
 <hr>
 <div class="refsect2" title="gst_check_teardown_pad_by_name ()">
 <a name="gst-check-teardown-pad-by-name"></a><h3>gst_check_teardown_pad_by_name ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_teardown_pad_by_name      (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_teardown_pad_by_name      (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -856,7 +856,7 @@ macro is for use in unit tests.
 <hr>
 <div class="refsect2" title="gst_check_teardown_element ()">
 <a name="gst-check-teardown-element"></a><h3>gst_check_teardown_element ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_teardown_element          (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_teardown_element          (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);</pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -871,7 +871,7 @@ macro is for use in unit tests.
 <hr>
 <div class="refsect2" title="gst_check_teardown_sink_pad ()">
 <a name="gst-check-teardown-sink-pad"></a><h3>gst_check_teardown_sink_pad ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_teardown_sink_pad         (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_teardown_sink_pad         (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);</pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -886,7 +886,7 @@ macro is for use in unit tests.
 <hr>
 <div class="refsect2" title="gst_check_teardown_src_pad ()">
 <a name="gst-check-teardown-src-pad"></a><h3>gst_check_teardown_src_pad ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_teardown_src_pad          (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_teardown_src_pad          (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> *element</code></em>);</pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">
@@ -911,8 +911,8 @@ emptying the list.
 <hr>
 <div class="refsect2" title="gst_check_caps_equal ()">
 <a name="gst-check-caps-equal"></a><h3>gst_check_caps_equal ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_caps_equal                (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps1</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps2</code></em>);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_caps_equal                (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps1</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps2</code></em>);</pre>
 <p>
 Compare two caps with gst_caps_is_equal and fail unless they are
 equal.
@@ -937,10 +937,10 @@ equal.
 <hr>
 <div class="refsect2" title="gst_check_element_push_buffer_list ()">
 <a name="gst-check-element-push-buffer-list"></a><h3>gst_check_element_push_buffer_list ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_element_push_buffer_list  (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *element_name</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *buffer_in</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *buffer_out</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GstFlowReturn"><span class="type">GstFlowReturn</span></a> last_flow_return</code></em>);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_element_push_buffer_list  (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *element_name</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *buffer_in</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> *buffer_out</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="type">GstFlowReturn</span></a> last_flow_return</code></em>);</pre>
 <p>
 Create an <em class="parameter"><code>element</code></em> with the factory with the name and push the buffers in
 <em class="parameter"><code>buffer_in</code></em> to this element. The element should create the buffers equal to
@@ -981,9 +981,9 @@ invalid buffer, when the final buffer is expected to fail, for example.
 <hr>
 <div class="refsect2" title="gst_check_element_push_buffer ()">
 <a name="gst-check-element-push-buffer"></a><h3>gst_check_element_push_buffer ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_element_push_buffer       (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *element_name</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer_in</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer_out</code></em>);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_check_element_push_buffer       (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *element_name</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer_in</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer_out</code></em>);</pre>
 <p>
 Create an <em class="parameter"><code>element</code></em> with the factory with the name and push the
 <em class="parameter"><code>buffer_in</code></em> to this element. The element should create one buffer
@@ -1015,9 +1015,9 @@ and the data of the buffers. This function unrefs the buffers.
 <hr>
 <div class="refsect2" title="gst_check_run_suite ()">
 <a name="gst-check-run-suite"></a><h3>gst_check_run_suite ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_check_run_suite                 (<em class="parameter"><code><span class="type">Suite</span> *suite</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *fname</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_check_run_suite                 (<em class="parameter"><code><span class="type">Suite</span> *suite</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *fname</code></em>);</pre>
 <p>
 </p>
 <div class="variablelist"><table border="0">

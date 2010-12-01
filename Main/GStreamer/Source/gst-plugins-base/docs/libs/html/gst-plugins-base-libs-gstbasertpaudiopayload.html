@@ -50,33 +50,33 @@
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *basertpaudiopayload</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-set-frame-options" title="gst_base_rtp_audio_payload_set_frame_options ()">gst_base_rtp_audio_payload_set_frame_options</a>
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *basertpaudiopayload</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> frame_duration</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> frame_size</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> frame_duration</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> frame_size</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-set-sample-based" title="gst_base_rtp_audio_payload_set_sample_based ()">gst_base_rtp_audio_payload_set_sample_based</a>
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *basertpaudiopayload</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-set-sample-options" title="gst_base_rtp_audio_payload_set_sample_options ()">gst_base_rtp_audio_payload_set_sample_options</a>
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *basertpaudiopayload</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> sample_size</code></em>);
-<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstAdapter.html"><span class="returnvalue">GstAdapter</span></a>*         <a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-get-adapter" title="gst_base_rtp_audio_payload_get_adapter ()">gst_base_rtp_audio_payload_get_adapter</a>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> sample_size</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstAdapter.html"><span class="returnvalue">GstAdapter</span></a>*         <a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-get-adapter" title="gst_base_rtp_audio_payload_get_adapter ()">gst_base_rtp_audio_payload_get_adapter</a>
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *basertpaudiopayload</code></em>);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       <a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-push" title="gst_base_rtp_audio_payload_push ()">gst_base_rtp_audio_payload_push</a>     (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *baseaudiopayload</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> payload_len</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);
-<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       <a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-flush" title="gst_base_rtp_audio_payload_flush ()">gst_base_rtp_audio_payload_flush</a>    (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *baseaudiopayload</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> payload_len</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       <a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-push" title="gst_base_rtp_audio_payload_push ()">gst_base_rtp_audio_payload_push</a>     (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *baseaudiopayload</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> payload_len</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       <a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-flush" title="gst_base_rtp_audio_payload_flush ()">gst_base_rtp_audio_payload_flush</a>    (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *baseaudiopayload</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> payload_len</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#gst-base-rtp-audio-payload-set-samplebits-options" title="gst_base_rtp_audio_payload_set_samplebits_options ()">gst_base_rtp_audio_payload_set_samplebits_options</a>
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *basertpaudiopayload</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> sample_size</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> sample_size</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-base-libs-gstbasertpaudiopayload.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
                +----<a class="link" href="gst-plugins-base-libs-gstbasertppayload.html#GstBaseRTPPayload">GstBaseRTPPayload</a>
                      +----GstBaseRTPAudioPayload
 </pre>
@@ -84,13 +84,13 @@
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-base-libs-gstbasertpaudiopayload.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload--buffer-list" title='The "buffer-list" property'>buffer-list</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload--buffer-list" title='The "buffer-list" property'>buffer-list</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
 <a name="gst-plugins-base-libs-gstbasertpaudiopayload.description"></a><h2>Description</h2>
 <div class="refsect2" title="Usage">
-<a name="id658712"></a><h3>Usage</h3>
+<a name="id599162"></a><h3>Usage</h3>
 <p>
 Provides a base class for audio RTP payloaders for frame or sample based
 audio codecs (constant bitrate)
@@ -166,8 +166,8 @@ audio codec
 <a name="gst-base-rtp-audio-payload-set-frame-options"></a><h3>gst_base_rtp_audio_payload_set_frame_options ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_base_rtp_audio_payload_set_frame_options
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *basertpaudiopayload</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> frame_duration</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> frame_size</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> frame_duration</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> frame_size</code></em>);</pre>
 <p>
 Sets the options for frame based audio codecs.
 </p>
@@ -215,7 +215,7 @@ audio codec
 <a name="gst-base-rtp-audio-payload-set-sample-options"></a><h3>gst_base_rtp_audio_payload_set_sample_options ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_base_rtp_audio_payload_set_sample_options
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *basertpaudiopayload</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> sample_size</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> sample_size</code></em>);</pre>
 <p>
 Sets the options for sample based audio codecs.
 </p>
@@ -238,7 +238,7 @@ Sets the options for sample based audio codecs.
 <hr>
 <div class="refsect2" title="gst_base_rtp_audio_payload_get_adapter ()">
 <a name="gst-base-rtp-audio-payload-get-adapter"></a><h3>gst_base_rtp_audio_payload_get_adapter ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstAdapter.html"><span class="returnvalue">GstAdapter</span></a>*         gst_base_rtp_audio_payload_get_adapter
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstAdapter.html"><span class="returnvalue">GstAdapter</span></a>*         gst_base_rtp_audio_payload_get_adapter
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *basertpaudiopayload</code></em>);</pre>
 <p>
 Gets the internal adapter used by the depayloader.
@@ -253,7 +253,7 @@ Gets the internal adapter used by the depayloader.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a <a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstAdapter.html"><span class="type">GstAdapter</span></a>.
+<td> a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstAdapter.html"><span class="type">GstAdapter</span></a>.
 
 </td>
 </tr>
@@ -264,10 +264,10 @@ Gets the internal adapter used by the depayloader.
 <hr>
 <div class="refsect2" title="gst_base_rtp_audio_payload_push ()">
 <a name="gst-base-rtp-audio-payload-push"></a><h3>gst_base_rtp_audio_payload_push ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       gst_base_rtp_audio_payload_push     (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *baseaudiopayload</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> payload_len</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       gst_base_rtp_audio_payload_push     (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *baseaudiopayload</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> payload_len</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);</pre>
 <p>
 Create an RTP buffer and store <em class="parameter"><code>payload_len</code></em> bytes of <em class="parameter"><code>data</code></em> as the
 payload. Set the timestamp on the new buffer to <em class="parameter"><code>timestamp</code></em> before pushing
@@ -293,12 +293,12 @@ the buffer downstream.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timestamp</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GstFlowReturn"><span class="type">GstFlowReturn</span></a>
+<td> a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="type">GstFlowReturn</span></a>
 
 </td>
 </tr>
@@ -309,9 +309,9 @@ the buffer downstream.
 <hr>
 <div class="refsect2" title="gst_base_rtp_audio_payload_flush ()">
 <a name="gst-base-rtp-audio-payload-flush"></a><h3>gst_base_rtp_audio_payload_flush ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       gst_base_rtp_audio_payload_flush    (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *baseaudiopayload</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> payload_len</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="returnvalue">GstFlowReturn</span></a>       gst_base_rtp_audio_payload_flush    (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *baseaudiopayload</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> payload_len</code></em>,
+                                                         <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a> timestamp</code></em>);</pre>
 <p>
 Create an RTP buffer and store <em class="parameter"><code>payload_len</code></em> bytes of the adapter as the
 payload. Set the timestamp on the new buffer to <em class="parameter"><code>timestamp</code></em> before pushing
@@ -336,12 +336,12 @@ If <em class="parameter"><code>payload_len</code></em> is -1, all pending bytes 
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timestamp</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a>
+<td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstClock.html#GstClockTime"><span class="type">GstClockTime</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html#GstFlowReturn"><span class="type">GstFlowReturn</span></a>
+<td> a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html#GstFlowReturn"><span class="type">GstFlowReturn</span></a>
 
 </td>
 </tr>
@@ -354,7 +354,7 @@ If <em class="parameter"><code>payload_len</code></em> is -1, all pending bytes 
 <a name="gst-base-rtp-audio-payload-set-samplebits-options"></a><h3>gst_base_rtp_audio_payload_set_samplebits_options ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_base_rtp_audio_payload_set_samplebits_options
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstbasertpaudiopayload.html#GstBaseRTPAudioPayload"><span class="type">GstBaseRTPAudioPayload</span></a> *basertpaudiopayload</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> sample_size</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> sample_size</code></em>);</pre>
 <p>
 Sets the options for sample based audio codecs.
 </p>
@@ -380,7 +380,7 @@ Sets the options for sample based audio codecs.
 <a name="gst-plugins-base-libs-gstbasertpaudiopayload.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "buffer-list" property'>
 <a name="GstBaseRTPAudioPayload--buffer-list"></a><h3>The <code class="literal">"buffer-list"</code> property</h3>
-<pre class="programlisting">  "buffer-list"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "buffer-list"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Use Buffer Lists.</p>
 <p>Default value: FALSE</p>
 </div>

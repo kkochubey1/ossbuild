@@ -96,7 +96,8 @@ typedef enum _AtomsTreeFlavor
 {
   ATOMS_TREE_FLAVOR_MOV,
   ATOMS_TREE_FLAVOR_ISOM,
-  ATOMS_TREE_FLAVOR_3GP
+  ATOMS_TREE_FLAVOR_3GP,
+  ATOMS_TREE_FLAVOR_ISML
 } AtomsTreeFlavor;
 
 typedef struct _AtomsContext
@@ -582,6 +583,26 @@ typedef struct _AtomUDTA
   AtomMETA *meta;
 } AtomUDTA;
 
+enum TrFlags
+{
+  TR_DATA_OFFSET              = 0x01,     /* data-offset-present */
+  TR_FIRST_SAMPLE_FLAGS       = 0x04,     /* first-sample-flags-present */
+  TR_SAMPLE_DURATION          = 0x0100,   /* sample-duration-present */
+  TR_SAMPLE_SIZE              = 0x0200,   /* sample-size-present */
+  TR_SAMPLE_FLAGS             = 0x0400,   /* sample-flags-present */
+  TR_COMPOSITION_TIME_OFFSETS = 0x0800    /* sample-composition-time-offsets-presents */
+};
+
+enum TfFlags
+{
+  TF_BASE_DATA_OFFSET         = 0x01,     /* base-data-offset-present */
+  TF_SAMPLE_DESCRIPTION_INDEX = 0x02,     /* sample-description-index-present */
+  TF_DEFAULT_SAMPLE_DURATION  = 0x08,     /* default-sample-duration-present */
+  TF_DEFAULT_SAMPLE_SIZE      = 0x010,    /* default-sample-size-present */
+  TF_DEFAULT_SAMPLE_FLAGS     = 0x020,    /* default-sample-flags-present */
+  TF_DURATION_IS_EMPTY        = 0x010000  /* sample-composition-time-offsets-presents */
+};
+
 typedef struct _AtomTRAK
 {
   Atom header;
@@ -595,6 +616,108 @@ typedef struct _AtomTRAK
   gboolean is_h264;
 } AtomTRAK;
 
+typedef struct _AtomTREX
+{
+  AtomFull header;
+
+  guint32 track_ID;
+  guint32 default_sample_description_index;
+  guint32 default_sample_duration;
+  guint32 default_sample_size;
+  guint32 default_sample_flags;
+} AtomTREX;
+
+typedef struct _AtomMEHD
+{
+  AtomFull header;
+
+  guint64 fragment_duration;
+} AtomMEHD;
+
+
+typedef struct _AtomMVEX
+{
+  Atom header;
+
+  AtomMEHD mehd;
+
+  /* list of AtomTREX */
+  GList *trexs;
+} AtomMVEX;
+
+typedef struct _AtomMFHD
+{
+  AtomFull header;
+
+  guint32 sequence_number;
+} AtomMFHD;
+
+typedef struct _AtomTFHD
+{
+  AtomFull header;
+
+  guint32 track_ID;
+  guint64 base_data_offset;
+  guint32 sample_description_index;
+  guint32 default_sample_duration;
+  guint32 default_sample_size;
+  guint32 default_sample_flags;
+} AtomTFHD;
+
+typedef struct _TRUNSampleEntry
+{
+  guint32 sample_duration;
+  guint32 sample_size;
+  guint32 sample_flags;
+  guint32 sample_composition_time_offset;
+} TRUNSampleEntry;
+
+typedef struct _AtomTRUN
+{
+  AtomFull header;
+
+  guint32 sample_count;
+  gint32 data_offset;
+  guint32 first_sample_flags;
+
+  /* array of fields */
+  ATOM_ARRAY (TRUNSampleEntry) entries;
+} AtomTRUN;
+
+typedef struct _AtomSDTP
+{
+  AtomFull header;
+
+  /* not serialized */
+  guint32 sample_count;
+
+  /* array of fields */
+  ATOM_ARRAY (guint8) entries;
+} AtomSDTP;
+
+typedef struct _AtomTRAF
+{
+  Atom header;
+
+  AtomTFHD tfhd;
+
+  /* list of AtomTRUN */
+  GList *truns;
+  /* list of AtomSDTP */
+  GList *sdtps;
+} AtomTRAF;
+
+typedef struct _AtomMOOF
+{
+  Atom header;
+
+  AtomMFHD mfhd;
+
+  /* list of AtomTRAF */
+  GList *trafs;
+} AtomMOOF;
+
+
 typedef struct _AtomMOOV
 {
   /* style */
@@ -603,10 +726,13 @@ typedef struct _AtomMOOV
   Atom header;
 
   AtomMVHD mvhd;
+  AtomMVEX mvex;
 
   /* list of AtomTRAK */
   GList *traks;
   AtomUDTA *udta;
+
+  gboolean fragmented;
 } AtomMOOV;
 
 typedef struct _AtomWAVE
@@ -616,6 +742,33 @@ typedef struct _AtomWAVE
   /* list of AtomInfo */
   GList *extension_atoms;
 } AtomWAVE;
+
+typedef struct _TFRAEntry
+{
+  guint64 time;
+  guint64 moof_offset;
+  guint32 traf_number;
+  guint32 trun_number;
+  guint32 sample_number;
+} TFRAEntry;
+
+typedef struct _AtomTFRA
+{
+  AtomFull header;
+
+  guint32 track_ID;
+  guint32 lengths;
+  /* array of entries */
+  ATOM_ARRAY (TFRAEntry) entries;
+} AtomTFRA;
+
+typedef struct _AtomMFRA
+{
+  Atom header;
+
+  /* list of tfra */
+  GList *tfras;
+} AtomMFRA;
 
 /*
  * Function to serialize an atom
@@ -657,6 +810,7 @@ void       atom_trak_add_samples       (AtomTRAK * trak, guint32 nsamples, guint
 void       atom_trak_add_elst_entry    (AtomTRAK * trak, guint32 duration,
                                         guint32 media_time, guint32 rate);
 guint32    atom_trak_get_timescale     (AtomTRAK *trak);
+guint32    atom_trak_get_id            (AtomTRAK * trak);
 void       atom_stbl_add_samples       (AtomSTBL * stbl, guint32 nsamples,
                                         guint32 delta, guint32 size,
                                         guint64 chunk_offset, gboolean sync,
@@ -668,6 +822,7 @@ guint64    atom_moov_copy_data         (AtomMOOV *atom, guint8 **buffer, guint64
 void       atom_moov_update_timescale  (AtomMOOV *moov, guint32 timescale);
 void       atom_moov_update_duration   (AtomMOOV *moov);
 void       atom_moov_set_64bits        (AtomMOOV *moov, gboolean large_file);
+void       atom_moov_set_fragmented    (AtomMOOV *moov, gboolean fragmented);
 void       atom_moov_chunks_add_offset (AtomMOOV *moov, guint32 offset);
 void       atom_moov_add_trak          (AtomMOOV *moov, AtomTRAK *trak);
 
@@ -690,6 +845,26 @@ guint64    atom_ctts_copy_data         (AtomCTTS *atom, guint8 **buffer,
                                         guint64 *size, guint64* offset);
 guint64    atom_stco64_copy_data       (AtomSTCO64 *atom, guint8 **buffer,
                                         guint64 *size, guint64* offset);
+AtomMOOF*  atom_moof_new               (AtomsContext *context, guint32 sequence_number);
+void       atom_moof_free              (AtomMOOF *moof);
+guint64    atom_moof_copy_data         (AtomMOOF *moof, guint8 **buffer, guint64 *size, guint64* offset);
+AtomTRAF * atom_traf_new               (AtomsContext * context, guint32 track_ID);
+void       atom_traf_free              (AtomTRAF * traf);
+void       atom_traf_add_samples       (AtomTRAF * traf, guint32 delta,
+                                        guint32 size, gboolean sync,
+                                        gboolean do_pts, gint64 pts_offset,
+                                        gboolean sdtp_sync);
+guint32    atom_traf_get_sample_num    (AtomTRAF * traf);
+void       atom_moof_add_traf          (AtomMOOF *moof, AtomTRAF *traf);
+
+AtomMFRA*  atom_mfra_new               (AtomsContext *context);
+void       atom_mfra_free              (AtomMFRA *mfra);
+AtomTFRA*  atom_tfra_new               (AtomsContext *context, guint32 track_ID);
+void       atom_tfra_add_entry         (AtomTFRA *tfra, guint64 dts, guint32 sample_num);
+void       atom_tfra_update_offset     (AtomTFRA * tfra, guint64 offset);
+void       atom_mfra_add_tfra          (AtomMFRA *mfra, AtomTFRA *tfra);
+guint64    atom_mfra_copy_data         (AtomMFRA *mfra, guint8 **buffer, guint64 *size, guint64* offset);
+
 
 /* media sample description related helpers */
 

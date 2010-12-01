@@ -43,40 +43,40 @@
                     <a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList">GstBufferList</a>;
                     <a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator">GstBufferListIterator</a>;
 <a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         (<a class="link" href="gstreamer-GstBufferList.html#GstBufferListDoFunction" title="GstBufferListDoFunction ()">*GstBufferListDoFunction</a>)          (<em class="parameter"><code><a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
 <a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="returnvalue">GstBufferList</span></a> *     <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-new" title="gst_buffer_list_new ()">gst_buffer_list_new</a>                 (<em class="parameter"><code><span class="type">void</span></code></em>);
 <a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="returnvalue">GstBufferList</span></a> *     <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-ref" title="gst_buffer_list_ref ()">gst_buffer_list_ref</a>                 (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-unref" title="gst_buffer_list_unref ()">gst_buffer_list_unref</a>               (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>);
 <a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="returnvalue">GstBufferList</span></a> *     <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-copy" title="gst_buffer_list_copy ()">gst_buffer_list_copy</a>                (<em class="parameter"><code>const <a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>);
 #define             <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-is-writable" title="gst_buffer_list_is_writable()">gst_buffer_list_is_writable</a>         (list)
 #define             <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-make-writable" title="gst_buffer_list_make_writable()">gst_buffer_list_make_writable</a>       (list)
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-n-groups" title="gst_buffer_list_n_groups ()">gst_buffer_list_n_groups</a>            (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-n-groups" title="gst_buffer_list_n_groups ()">gst_buffer_list_n_groups</a>            (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>);
 enum                <a class="link" href="gstreamer-GstBufferList.html#GstBufferListItem" title="enum GstBufferListItem">GstBufferListItem</a>;
 <a class="link" href="gstreamer-GstBufferList.html#GstBufferListItem" title="enum GstBufferListItem"><span class="returnvalue">GstBufferListItem</span></a>   (<a class="link" href="gstreamer-GstBufferList.html#GstBufferListFunc" title="GstBufferListFunc ()">*GstBufferListFunc</a>)                (<em class="parameter"><code><a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="type">GstBuffer</span></a> **buffer</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> group</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> idx</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> group</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> idx</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-foreach" title="gst_buffer_list_foreach ()">gst_buffer_list_foreach</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListFunc" title="GstBufferListFunc ()"><span class="type">GstBufferListFunc</span></a> func</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
 <a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-get" title="gst_buffer_list_get ()">gst_buffer_list_get</a>                 (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> group</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> idx</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> group</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> idx</code></em>);
 <a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="returnvalue">GstBufferListIterator</span></a> * <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterate" title="gst_buffer_list_iterate ()">gst_buffer_list_iterate</a>         (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-free" title="gst_buffer_list_iterator_free ()">gst_buffer_list_iterator_free</a>       (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-n-buffers" title="gst_buffer_list_iterator_n_buffers ()">gst_buffer_list_iterator_n_buffers</a>  (<em class="parameter"><code>const <a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-n-buffers" title="gst_buffer_list_iterator_n_buffers ()">gst_buffer_list_iterator_n_buffers</a>  (<em class="parameter"><code>const <a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-add" title="gst_buffer_list_iterator_add ()">gst_buffer_list_iterator_add</a>        (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-add-group" title="gst_buffer_list_iterator_add_group ()">gst_buffer_list_iterator_add_group</a>  (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);
 <a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-next" title="gst_buffer_list_iterator_next ()">gst_buffer_list_iterator_next</a>       (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-next-group" title="gst_buffer_list_iterator_next_group ()">gst_buffer_list_iterator_next_group</a> (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-next-group" title="gst_buffer_list_iterator_next_group ()">gst_buffer_list_iterator_next_group</a> (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-remove" title="gst_buffer_list_iterator_remove ()">gst_buffer_list_iterator_remove</a>     (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);
 <a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-steal" title="gst_buffer_list_iterator_steal ()">gst_buffer_list_iterator_steal</a>      (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-take" title="gst_buffer_list_iterator_take ()">gst_buffer_list_iterator_take</a>       (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>);
 <a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-do" title="gst_buffer_list_iterator_do ()">gst_buffer_list_iterator_do</a>         (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListDoFunction" title="GstBufferListDoFunction ()"><span class="type">GstBufferListDoFunction</span></a> do_func</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);
 <a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-merge-group" title="gst_buffer_list_iterator_merge_group ()">gst_buffer_list_iterator_merge_group</a>
                                                         (<em class="parameter"><code>const <a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);
 </pre>
@@ -122,7 +122,7 @@ follows:
 <p>
 </p>
 <div class="example">
-<a name="id416937"></a><p class="title"><b>Example 4. Creating a buffer list</b></p>
+<a name="id480266"></a><p class="title"><b>Example 4. Creating a buffer list</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -146,19 +146,19 @@ follows:
         <td class="listing_code"><pre class="programlisting">GstBufferList <span class="symbol">*</span>list<span class="symbol">;</span>
 GstBufferListIterator <span class="symbol">*</span>it<span class="symbol">;</span>
 
-list <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-new">gst_buffer_list_new</a></span> <span class="symbol">();</span>
-it <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterate">gst_buffer_list_iterate</a></span> <span class="symbol">(</span>list<span class="symbol">);</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add-group">gst_buffer_list_iterator_add_group</a></span> <span class="symbol">(</span>it<span class="symbol">);</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> header1<span class="symbol">);</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> data1<span class="symbol">);</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add-group">gst_buffer_list_iterator_add_group</a></span> <span class="symbol">(</span>it<span class="symbol">);</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> header2<span class="symbol">);</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> data2<span class="symbol">);</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add-group">gst_buffer_list_iterator_add_group</a></span> <span class="symbol">(</span>it<span class="symbol">);</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> header3<span class="symbol">);</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> data3<span class="symbol">);</span>
+list <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-new">gst_buffer_list_new</a></span> <span class="symbol">();</span>
+it <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterate">gst_buffer_list_iterate</a></span> <span class="symbol">(</span>list<span class="symbol">);</span>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add-group">gst_buffer_list_iterator_add_group</a></span> <span class="symbol">(</span>it<span class="symbol">);</span>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> header1<span class="symbol">);</span>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> data1<span class="symbol">);</span>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add-group">gst_buffer_list_iterator_add_group</a></span> <span class="symbol">(</span>it<span class="symbol">);</span>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> header2<span class="symbol">);</span>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> data2<span class="symbol">);</span>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add-group">gst_buffer_list_iterator_add_group</a></span> <span class="symbol">(</span>it<span class="symbol">);</span>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> header3<span class="symbol">);</span>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-add">gst_buffer_list_iterator_add</a></span> <span class="symbol">(</span>it<span class="symbol">,</span> data3<span class="symbol">);</span>
 <span class="symbol">...</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-free">gst_buffer_list_iterator_free</a></span> <span class="symbol">(</span>it<span class="symbol">);</span></pre></td>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-free">gst_buffer_list_iterator_free</a></span> <span class="symbol">(</span>it<span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -173,7 +173,7 @@ The basic use pattern of iterating over a buffer list is as follows:
 <p>
 </p>
 <div class="example">
-<a name="id387600"></a><p class="title"><b>Example 5. Iterating a buffer list</b></p>
+<a name="id489694"></a><p class="title"><b>Example 5. Iterating a buffer list</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -189,13 +189,13 @@ The basic use pattern of iterating over a buffer list is as follows:
 9</pre></td>
         <td class="listing_code"><pre class="programlisting">GstBufferListIterator <span class="symbol">*</span>it<span class="symbol">;</span>
 
-it <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterate">gst_buffer_list_iterate</a></span> <span class="symbol">(</span>list<span class="symbol">);</span>
-<span class="keyword">while</span> <span class="symbol">(</span><span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-next-group">gst_buffer_list_iterator_next_group</a></span> <span class="symbol">(</span>it<span class="symbol">)) {</span>
-  <span class="keyword">while</span> <span class="symbol">((</span>buffer <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-next">gst_buffer_list_iterator_next</a></span> <span class="symbol">(</span>it<span class="symbol">)) !=</span> NULL<span class="symbol">) {</span>
+it <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterate">gst_buffer_list_iterate</a></span> <span class="symbol">(</span>list<span class="symbol">);</span>
+<span class="keyword">while</span> <span class="symbol">(</span><span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-next-group">gst_buffer_list_iterator_next_group</a></span> <span class="symbol">(</span>it<span class="symbol">)) {</span>
+  <span class="keyword">while</span> <span class="symbol">((</span>buffer <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-next">gst_buffer_list_iterator_next</a></span> <span class="symbol">(</span>it<span class="symbol">)) !=</span> NULL<span class="symbol">) {</span>
     <span class="function">do_something_with_buffer</span> <span class="symbol">(</span>buffer<span class="symbol">);</span>
   <span class="symbol">}</span>
 <span class="symbol">}</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-free">gst_buffer_list_iterator_free</a></span> <span class="symbol">(</span>it<span class="symbol">);</span></pre></td>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-free">gst_buffer_list_iterator_free</a></span> <span class="symbol">(</span>it<span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -210,7 +210,7 @@ The basic use pattern of modifying a buffer in a list is as follows:
 <p>
 </p>
 <div class="example">
-<a name="id387624"></a><p class="title"><b>Example 6. Modifying the data of the first buffer in a list</b></p>
+<a name="id486297"></a><p class="title"><b>Example 6. Modifying the data of the first buffer in a list</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -232,19 +232,19 @@ The basic use pattern of modifying a buffer in a list is as follows:
 15</pre></td>
         <td class="listing_code"><pre class="programlisting">GstBufferListIterator <span class="symbol">*</span>it<span class="symbol">;</span>
 
-list <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-make-writable">gst_buffer_list_make_writable</a></span> <span class="symbol">(</span>list<span class="symbol">);</span>
-it <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterate">gst_buffer_list_iterate</a></span> <span class="symbol">(</span>list<span class="symbol">);</span>
-<span class="keyword">if</span> <span class="symbol">(</span><span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-next-group">gst_buffer_list_iterator_next_group</a></span> <span class="symbol">(</span>it<span class="symbol">)) {</span>
+list <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-make-writable">gst_buffer_list_make_writable</a></span> <span class="symbol">(</span>list<span class="symbol">);</span>
+it <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterate">gst_buffer_list_iterate</a></span> <span class="symbol">(</span>list<span class="symbol">);</span>
+<span class="keyword">if</span> <span class="symbol">(</span><span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-next-group">gst_buffer_list_iterator_next_group</a></span> <span class="symbol">(</span>it<span class="symbol">)) {</span>
   GstBuffer <span class="symbol">*</span>buf
 
-  buf <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-next">gst_buffer_list_iterator_next</a></span> <span class="symbol">(</span>it<span class="symbol">);</span>
+  buf <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-next">gst_buffer_list_iterator_next</a></span> <span class="symbol">(</span>it<span class="symbol">);</span>
   <span class="keyword">if</span> <span class="symbol">(</span>buf <span class="symbol">!=</span> NULL<span class="symbol">) {</span>
-    buf <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-do">gst_buffer_list_iterator_do</a></span> <span class="symbol">(</span>it<span class="symbol">,</span>
+    buf <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-do">gst_buffer_list_iterator_do</a></span> <span class="symbol">(</span>it<span class="symbol">,</span>
         <span class="symbol">(</span>GstBufferListDoFunction<span class="symbol">)</span> gst_mini_object_make_writable<span class="symbol">,</span> NULL<span class="symbol">);</span>
-    <span class="function">modify_data</span> <span class="symbol">(</span><span class="function"><a href="../gstreamer-0.10/gstreamer-GstBuffer.html#GST-BUFFER-DATA:CAPS">GST_BUFFER_DATA</a></span> <span class="symbol">(</span>buf<span class="symbol">));</span>
+    <span class="function">modify_data</span> <span class="symbol">(</span><span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GST-BUFFER-DATA:CAPS">GST_BUFFER_DATA</a></span> <span class="symbol">(</span>buf<span class="symbol">));</span>
   <span class="symbol">}</span>
 <span class="symbol">}</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstBufferList.html#gst-buffer-list-iterator-free">gst_buffer_list_iterator_free</a></span> <span class="symbol">(</span>it<span class="symbol">);</span></pre></td>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBufferList.html#gst-buffer-list-iterator-free">gst_buffer_list_iterator_free</a></span> <span class="symbol">(</span>it<span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -281,7 +281,7 @@ Opaque iterator for a <a class="link" href="gstreamer-GstBufferList.html#GstBuff
 <div class="refsect2" title="GstBufferListDoFunction ()">
 <a name="GstBufferListDoFunction"></a><h3>GstBufferListDoFunction ()</h3>
 <pre class="programlisting"><a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         (*GstBufferListDoFunction)          (<em class="parameter"><code><a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>
 A function for accessing the last buffer returned by
 <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-next" title="gst_buffer_list_iterator_next ()"><code class="function">gst_buffer_list_iterator_next()</code></a>. The function can leave <em class="parameter"><code>buffer</code></em> in the list,
@@ -456,7 +456,7 @@ copy will otherwise be made using <a class="link" href="gstreamer-GstBufferList.
 <hr>
 <div class="refsect2" title="gst_buffer_list_n_groups ()">
 <a name="gst-buffer-list-n-groups"></a><h3>gst_buffer_list_n_groups ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_buffer_list_n_groups            (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_buffer_list_n_groups            (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>);</pre>
 <p>
 Returns the number of groups in <em class="parameter"><code>list</code></em>.
 </p>
@@ -516,9 +516,9 @@ The result of the <a class="link" href="gstreamer-GstBufferList.html#GstBufferLi
 <div class="refsect2" title="GstBufferListFunc ()">
 <a name="GstBufferListFunc"></a><h3>GstBufferListFunc ()</h3>
 <pre class="programlisting"><a class="link" href="gstreamer-GstBufferList.html#GstBufferListItem" title="enum GstBufferListItem"><span class="returnvalue">GstBufferListItem</span></a>   (*GstBufferListFunc)                (<em class="parameter"><code><a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="type">GstBuffer</span></a> **buffer</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> group</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> idx</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> group</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> idx</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>
 A function that will be called from <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-foreach" title="gst_buffer_list_foreach ()"><code class="function">gst_buffer_list_foreach()</code></a>. The <em class="parameter"><code>buffer</code></em>
 field will point to a the reference of the buffer at <em class="parameter"><code>idx</code></em> in <em class="parameter"><code>group</code></em>.
@@ -574,7 +574,7 @@ removing or modifying.
 <a name="gst-buffer-list-foreach"></a><h3>gst_buffer_list_foreach ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_buffer_list_foreach             (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListFunc" title="GstBufferListFunc ()"><span class="type">GstBufferListFunc</span></a> func</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>
 Call <em class="parameter"><code>func</code></em> with <em class="parameter"><code>data</code></em> for each buffer in <em class="parameter"><code>list</code></em>.
 </p>
@@ -609,8 +609,8 @@ group should be skipped.
 <div class="refsect2" title="gst_buffer_list_get ()">
 <a name="gst-buffer-list-get"></a><h3>gst_buffer_list_get ()</h3>
 <pre class="programlisting"><a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         gst_buffer_list_get                 (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferList" title="GstBufferList"><span class="type">GstBufferList</span></a> *list</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> group</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> idx</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> group</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> idx</code></em>);</pre>
 <p>
 Get the buffer at <em class="parameter"><code>idx</code></em> in <em class="parameter"><code>group</code></em>.
 </p>
@@ -694,7 +694,7 @@ Free the iterator.
 <hr>
 <div class="refsect2" title="gst_buffer_list_iterator_n_buffers ()">
 <a name="gst-buffer-list-iterator-n-buffers"></a><h3>gst_buffer_list_iterator_n_buffers ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_buffer_list_iterator_n_buffers  (<em class="parameter"><code>const <a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_buffer_list_iterator_n_buffers  (<em class="parameter"><code>const <a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);</pre>
 <p>
 Returns the number of buffers left to iterate in the current group. I.e. the
 number of calls that can be made to <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-next" title="gst_buffer_list_iterator_next ()"><code class="function">gst_buffer_list_iterator_next()</code></a> before
@@ -809,7 +809,7 @@ unref it.
 <hr>
 <div class="refsect2" title="gst_buffer_list_iterator_next_group ()">
 <a name="gst-buffer-list-iterator-next-group"></a><h3>gst_buffer_list_iterator_next_group ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_buffer_list_iterator_next_group (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_buffer_list_iterator_next_group (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>);</pre>
 <p>
 Advance the iterator <em class="parameter"><code>it</code></em> to the first buffer in the next group. If the
 iterator is at the last group, FALSE will be returned. This function may be
@@ -922,7 +922,7 @@ refcount of <em class="parameter"><code>buffer</code></em> is not increased).
 <a name="gst-buffer-list-iterator-do"></a><h3>gst_buffer_list_iterator_do ()</h3>
 <pre class="programlisting"><a class="link" href="gstreamer-GstBuffer.html#GstBuffer" title="GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         gst_buffer_list_iterator_do         (<em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListIterator" title="GstBufferListIterator"><span class="type">GstBufferListIterator</span></a> *it</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstBufferList.html#GstBufferListDoFunction" title="GstBufferListDoFunction ()"><span class="type">GstBufferListDoFunction</span></a> do_func</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>
 Calls the given function for the last buffer returned by
 <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-next" title="gst_buffer_list_iterator_next ()"><code class="function">gst_buffer_list_iterator_next()</code></a>. <a class="link" href="gstreamer-GstBufferList.html#gst-buffer-list-iterator-next" title="gst_buffer_list_iterator_next ()"><code class="function">gst_buffer_list_iterator_next()</code></a> must have

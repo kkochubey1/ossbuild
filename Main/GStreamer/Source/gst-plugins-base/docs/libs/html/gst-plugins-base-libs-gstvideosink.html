@@ -53,29 +53,29 @@
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstvideosink.html#gst-video-sink-center-rect" title="gst_video_sink_center_rect ()">gst_video_sink_center_rect</a>          (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideosink.html#GstVideoRectangle" title="GstVideoRectangle"><span class="type">GstVideoRectangle</span></a> src</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideosink.html#GstVideoRectangle" title="GstVideoRectangle"><span class="type">GstVideoRectangle</span></a> dst</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideosink.html#GstVideoRectangle" title="GstVideoRectangle"><span class="type">GstVideoRectangle</span></a> *result</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> scaling</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> scaling</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-base-libs-gstvideosink.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseSink.html">GstBaseSink</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSink.html">GstBaseSink</a>
                      +----GstVideoSink
 </pre>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-base-libs-gstvideosink.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-base-libs-gstvideosink.html#GstVideoSink--show-preroll-frame" title='The "show-preroll-frame" property'>show-preroll-frame</a>"       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct
+  "<a class="link" href="gst-plugins-base-libs-gstvideosink.html#GstVideoSink--show-preroll-frame" title='The "show-preroll-frame" property'>show-preroll-frame</a>"       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct
 </pre>
 </div>
 <div class="refsect1" title="Description">
 <a name="gst-plugins-base-libs-gstvideosink.description"></a><h2>Description</h2>
 <div class="refsect2">
-<a name="id705854"></a><p>
+<a name="id653061"></a><p>
 Provides useful functions and a base class for video sinks. 
 </p>
 <p>
@@ -116,7 +116,7 @@ The video sink class structure. Derived classes should override the
 <col align="left" valign="top">
 <tbody>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseSink.html#GstBaseSinkClass"><span class="type">GstBaseSinkClass</span></a> <em class="structfield"><code><a name="GstVideoSinkClass.parent-class"></a>parent_class</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSink.html#GstBaseSinkClass"><span class="type">GstBaseSinkClass</span></a> <em class="structfield"><code><a name="GstVideoSinkClass.parent-class"></a>parent_class</code></em>;</span></p></td>
 <td>the parent class structure
 </td>
 </tr>
@@ -124,7 +124,7 @@ The video sink class structure. Derived classes should override the
 <td><p><span class="term"><em class="structfield"><code><a name="GstVideoSinkClass.show-frame"></a>show_frame</code></em> ()</span></p></td>
 <td>render a video frame. Maps to <span class="type">"render"</span> and
     <span class="type">"preroll"</span> vfuncs. Rendering during preroll will be
-    suppressed if the 'show-preroll-frame' property is set to <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALSE:CAPS"><span class="type">FALSE</span></a>.
+    suppressed if the 'show-preroll-frame' property is set to <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><span class="type">FALSE</span></a>.
     Since: 0.10.25
 </td>
 </tr>
@@ -148,22 +148,22 @@ Helper structure representing a rectangular area.
 <col align="left" valign="top">
 <tbody>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstVideoRectangle.x"></a>x</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstVideoRectangle.x"></a>x</code></em>;</span></p></td>
 <td>X coordinate of rectangle's top-left point
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstVideoRectangle.y"></a>y</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstVideoRectangle.y"></a>y</code></em>;</span></p></td>
 <td>Y coordinate of rectangle's top-left point
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstVideoRectangle.w"></a>w</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstVideoRectangle.w"></a>w</code></em>;</span></p></td>
 <td>width of the rectangle
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstVideoRectangle.h"></a>h</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstVideoRectangle.h"></a>h</code></em>;</span></p></td>
 <td>height of the rectangle
 </td>
 </tr>
@@ -192,7 +192,7 @@ Helper structure representing a rectangular area.
 <pre class="programlisting">#define GST_VIDEO_SINK_PAD(obj) GST_BASE_SINK_PAD(obj)
 </pre>
 <p>
-Get the sink <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a> of <em class="parameter"><code>obj</code></em>.
+Get the sink <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a> of <em class="parameter"><code>obj</code></em>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -225,7 +225,7 @@ Get the sink <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span 
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_video_sink_center_rect          (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideosink.html#GstVideoRectangle" title="GstVideoRectangle"><span class="type">GstVideoRectangle</span></a> src</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideosink.html#GstVideoRectangle" title="GstVideoRectangle"><span class="type">GstVideoRectangle</span></a> dst</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideosink.html#GstVideoRectangle" title="GstVideoRectangle"><span class="type">GstVideoRectangle</span></a> *result</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> scaling</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> scaling</code></em>);</pre>
 <p>
 Takes <em class="parameter"><code>src</code></em> rectangle and position it at the center of <em class="parameter"><code>dst</code></em> rectangle with or
 without <em class="parameter"><code>scaling</code></em>. It handles clipping if the <em class="parameter"><code>src</code></em> rectangle is bigger than
@@ -251,7 +251,7 @@ the <em class="parameter"><code>dst</code></em> one and <em class="parameter"><c
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>scaling</code></em> :</span></p></td>
-<td>a <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> indicating if scaling should be applied or not
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> indicating if scaling should be applied or not
 </td>
 </tr>
 </tbody>
@@ -262,9 +262,9 @@ the <em class="parameter"><code>dst</code></em> one and <em class="parameter"><c
 <a name="gst-plugins-base-libs-gstvideosink.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "show-preroll-frame" property'>
 <a name="GstVideoSink--show-preroll-frame"></a><h3>The <code class="literal">"show-preroll-frame"</code> property</h3>
-<pre class="programlisting">  "show-preroll-frame"       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct</pre>
+<pre class="programlisting">  "show-preroll-frame"       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct</pre>
 <p>
-Whether to show video frames during preroll. If set to <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#FALSE:CAPS"><span class="type">FALSE</span></a>, video
+Whether to show video frames during preroll. If set to <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><span class="type">FALSE</span></a>, video
 frames will only be rendered in PLAYING state.
 </p>
 <p>Default value: TRUE</p>
