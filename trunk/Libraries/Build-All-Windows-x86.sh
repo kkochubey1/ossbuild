@@ -489,8 +489,11 @@ if [ ! -f "$LibDir/libvpx.a" ]; then
 	
 	#Configure, compile, and install
 	#--enable-shared isn't available for windows yet
+	CFLAGS=""
+	LDFLAGS=""
+	CPPFLAGS=""
 	CC="$gcc" LD="$gcc" $PKG_DIR/configure --target=x86-win32-gcc --enable-vp8 --enable-psnr --enable-runtime-cpu-detect --prefix=$InstallDir --libdir=$LibDir
-	make ${MAKE_PARALLEL_FLAGS}
+	make 
 	make install
 	
 	cp -p "$LibDir/libvpx.a" "$LibDir/vpx.lib"

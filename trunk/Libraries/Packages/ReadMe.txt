@@ -79,7 +79,7 @@ twolame                 -       0.3.12 (trunk)  -       http://twolame.svn.sourc
 BSD Packages
 -------------------------------------
 
-libvpx                  -       0.9.2           -       http://webm.googlecode.com/files/libvpx-v0.9.2.tar.bz2
+libvpx                  -       0.9.5           -       http://webm.googlecode.com/files/libvpx-v0.9.5.tar.bz2
 wavpack                 -       4.60.1          -       http://www.wavpack.com/wavpack-4.60.1.tar.bz2
 
 
