@@ -163,6 +163,7 @@ static gboolean gst_d3dvideosink_release_swap_chain (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_release_d3d_device (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_release_direct3d (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_window_size (GstD3DVideoSink *sink, gint *width, gint *height);
+static gboolean gst_d3dvideosink_direct3d_supported ();
 static gboolean gst_d3dvideosink_shared_hidden_window_thread (GstD3DVideoSink * sink);
 LRESULT APIENTRY SharedHiddenWndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void gst_d3dvideosink_hook_window_for_renderer (GstD3DVideoSink *sink);
@@ -281,7 +282,7 @@ gst_d3dvideosink_class_init (GstD3DVideoSinkClass * klass)
 
   gstbasesink_class->get_caps = GST_DEBUG_FUNCPTR (gst_d3dvideosink_get_caps);
   gstbasesink_class->set_caps = GST_DEBUG_FUNCPTR (gst_d3dvideosink_set_caps);
-  //gstbasesink_class->start = GST_DEBUG_FUNCPTR (gst_d3dvideosink_start);
+  gstbasesink_class->start = GST_DEBUG_FUNCPTR (gst_d3dvideosink_start);
   gstbasesink_class->stop = GST_DEBUG_FUNCPTR (gst_d3dvideosink_stop);
   //gstbasesink_class->unlock = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock);
   //gstbasesink_class->unlock_stop = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock_stop);
@@ -1306,10 +1307,10 @@ gst_d3dvideosink_change_state (GstElement * element, GstStateChange transition)
 static gboolean
 gst_d3dvideosink_start (GstBaseSink * bsink)
 {
-  HRESULT hres = S_FALSE;
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (bsink);
 
-  return TRUE;
+  /* Determine if Direct 3D is supported */
+  return gst_d3dvideosink_direct3d_supported();
 }
 
 static gboolean
@@ -2390,6 +2391,58 @@ gst_d3dvideosink_navigation_send_event (GstNavigation * navigation, GstStructure
     gst_object_unref(pad);
   }
 }
+
+static gboolean
+gst_d3dvideosink_direct3d_supported ()
+{
+  //HRESULT hr;
+  LPDIRECT3D9 d3d;
+  D3DDISPLAYMODE d3ddm;
+  //LPDIRECT3DDEVICE9 d3ddev;
+  //D3DPRESENT_PARAMETERS d3dpp;
+
+  d3d = Direct3DCreate9(D3D_SDK_VERSION);
+  if (!d3d) {
+    return FALSE;
+  }
+  
+  if (FAILED(IDirect3D9_GetAdapterDisplayMode(d3d, D3DADAPTER_DEFAULT, &d3ddm))) {
+    /* Prevent memory leak */
+    IDirect3D9_Release(d3d);
+    return FALSE;
+  }
+
+  //ZeroMemory(&d3dpp, sizeof(d3dpp));
+  //d3dpp.Windowed = TRUE;
+  //d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+  //d3dpp.BackBufferCount = 1;
+  //d3dpp.BackBufferFormat = d3ddm.Format;
+  //d3dpp.BackBufferWidth = 1;
+  //d3dpp.BackBufferHeight = 1;
+  //d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
+  //d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT; //D3DPRESENT_INTERVAL_IMMEDIATE;
+  //
+  //if (FAILED(hr = IDirect3D9_CreateDevice(
+  //  d3d, 
+  //  D3DADAPTER_DEFAULT, 
+  //  D3DDEVTYPE_HAL, 
+  //  GetDesktopWindow(), 
+  //  D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE, 
+  //  &d3dpp, 
+  //  &d3ddev
+  //))) {
+  //  /* Prevent memory leak */
+  //  IDirect3D9_Release(d3d);
+  //  return FALSE;
+  //}
+  
+  /* Prevent memory leak */
+  //IDirect3DDevice9_Release(d3ddev);
+  IDirect3D9_Release(d3d);
+  
+  return TRUE;
+}
+
 
 /* Plugin entry point */
 static gboolean
