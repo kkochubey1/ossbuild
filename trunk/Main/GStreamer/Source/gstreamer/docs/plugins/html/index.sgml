@@ -216,6 +216,7 @@
 <ANCHOR id="GstQueue--min-threshold-buffers" href="gstreamer-plugins-0.10/gstreamer-plugins-queue.html#GstQueue--min-threshold-buffers">
 <ANCHOR id="GstQueue--min-threshold-bytes" href="gstreamer-plugins-0.10/gstreamer-plugins-queue.html#GstQueue--min-threshold-bytes">
 <ANCHOR id="GstQueue--min-threshold-time" href="gstreamer-plugins-0.10/gstreamer-plugins-queue.html#GstQueue--min-threshold-time">
+<ANCHOR id="GstQueue--silent" href="gstreamer-plugins-0.10/gstreamer-plugins-queue.html#GstQueue--silent">
 <ANCHOR id="gstreamer-plugins-queue.signal-details" href="gstreamer-plugins-0.10/gstreamer-plugins-queue.html#gstreamer-plugins-queue.signal-details">
 <ANCHOR id="GstQueue-overrun" href="gstreamer-plugins-0.10/gstreamer-plugins-queue.html#GstQueue-overrun">
 <ANCHOR id="GstQueue-running" href="gstreamer-plugins-0.10/gstreamer-plugins-queue.html#GstQueue-running">
@@ -243,6 +244,7 @@
 <ANCHOR id="GstQueue2--use-buffering" href="gstreamer-plugins-0.10/gstreamer-plugins-queue2.html#GstQueue2--use-buffering">
 <ANCHOR id="GstQueue2--use-rate-estimate" href="gstreamer-plugins-0.10/gstreamer-plugins-queue2.html#GstQueue2--use-rate-estimate">
 <ANCHOR id="GstQueue2--temp-remove" href="gstreamer-plugins-0.10/gstreamer-plugins-queue2.html#GstQueue2--temp-remove">
+<ANCHOR id="GstQueue2--ring-buffer-max-size" href="gstreamer-plugins-0.10/gstreamer-plugins-queue2.html#GstQueue2--ring-buffer-max-size">
 <ANCHOR id="gstreamer-plugins-tee" href="gstreamer-plugins-0.10/gstreamer-plugins-tee.html">
 <ANCHOR id="gstreamer-plugins-tee.synopsis" href="gstreamer-plugins-0.10/gstreamer-plugins-tee.html#gstreamer-plugins-tee.synopsis">
 <ANCHOR id="GstTee" href="gstreamer-plugins-0.10/gstreamer-plugins-tee.html#GstTee">

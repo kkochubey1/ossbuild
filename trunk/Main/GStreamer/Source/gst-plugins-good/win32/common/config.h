@@ -49,7 +49,7 @@
 #define GST_PACKAGE_ORIGIN "http://code.google.com/p/ossbuild/"
 
 /* GStreamer package release date/time for plugins as YYYY-MM-DD */
-#define GST_PACKAGE_RELEASE_DATETIME "2010-11-01T17:24Z"
+#define GST_PACKAGE_RELEASE_DATETIME "2010-11-18T00:39Z"
 
 /* struct v4l2_buffer missing */
 #undef GST_V4L2_MISSING_BUFDECL

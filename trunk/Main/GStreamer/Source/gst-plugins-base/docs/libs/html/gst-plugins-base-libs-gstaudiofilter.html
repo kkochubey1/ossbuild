@@ -46,16 +46,16 @@
                     <a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilterClass" title="GstAudioFilterClass">GstAudioFilterClass</a>;
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#gst-audio-filter-class-add-pad-templates" title="gst_audio_filter_class_add_pad_templates ()">gst_audio_filter_class_add_pad_templates</a>
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilterClass" title="GstAudioFilterClass"><span class="type">GstAudioFilterClass</span></a> *klass</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *allowed_caps</code></em>);
+                                                         <em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *allowed_caps</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-base-libs-gstaudiofilter.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseTransform.html">GstBaseTransform</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseTransform.html">GstBaseTransform</a>
                      +----GstAudioFilter
 </pre>
 </div>
@@ -115,7 +115,7 @@ function.
 <col align="left" valign="top">
 <tbody>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseTransform.html#GstBaseTransformClass"><span class="type">GstBaseTransformClass</span></a> <em class="structfield"><code><a name="GstAudioFilterClass.basetransformclass"></a>basetransformclass</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseTransform.html#GstBaseTransformClass"><span class="type">GstBaseTransformClass</span></a> <em class="structfield"><code><a name="GstAudioFilterClass.basetransformclass"></a>basetransformclass</code></em>;</span></p></td>
 <td>parent class
 </td>
 </tr>
@@ -133,7 +133,7 @@ function.
 <a name="gst-audio-filter-class-add-pad-templates"></a><h3>gst_audio_filter_class_add_pad_templates ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_audio_filter_class_add_pad_templates
                                                         (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilterClass" title="GstAudioFilterClass"><span class="type">GstAudioFilterClass</span></a> *klass</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *allowed_caps</code></em>);</pre>
+                                                         <em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *allowed_caps</code></em>);</pre>
 <p>
 Convenience function to add pad templates to this element class, with
 <em class="parameter"><code>allowed_caps</code></em> as the caps that can be handled.
@@ -151,7 +151,7 @@ This function is usually used from within a GObject base_init function.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>allowed_caps</code></em> :</span></p></td>
-<td>what formats the filter can handle, as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>
+<td>what formats the filter can handle, as <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>
 </td>
 </tr>
 </tbody>

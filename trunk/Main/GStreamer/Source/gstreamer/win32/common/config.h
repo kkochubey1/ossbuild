@@ -59,7 +59,7 @@
 #define GST_MAJORMINOR "0.10"
 
 /* package name in plugins */
-#define GST_PACKAGE_NAME "GStreamer prerelease"
+#define GST_PACKAGE_NAME "GStreamer source release"
 
 /* package origin */
 #define GST_PACKAGE_ORIGIN "http://code.google.com/p/ossbuild/"

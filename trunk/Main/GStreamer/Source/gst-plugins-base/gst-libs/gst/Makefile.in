@@ -55,6 +55,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -230,6 +231,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -294,6 +296,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -425,17 +428,17 @@ SUBDIRS = \
 	fft \
 	floatcast \
 	netbuffer \
-	pbutils \
 	riff \
 	rtp \
 	sdp \
 	rtsp \
 	video \
+	pbutils \
 	app
 
 noinst_HEADERS = gettext.h gst-i18n-plugin.h
 INDEPENDENT_SUBDIRS = \
-	interfaces tag fft floatcast netbuffer pbutils rtp sdp video app
+	interfaces tag fft floatcast netbuffer rtp sdp video app
 
 all: all-recursive
 
@@ -792,6 +795,8 @@ cdda: tag
 riff: tag audio
 
 rtsp: sdp
+
+pbutils: video
 
 .PHONY: independent-subdirs $(INDEPENDENT_SUBDIRS)
 

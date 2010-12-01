@@ -76,6 +76,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
 	$(top_srcdir)/common/m4/gst-libxml2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-parser.m4 \
 	$(top_srcdir)/common/m4/gst-platform.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
@@ -208,6 +209,9 @@ CHECK_MINOR_VERSION = @CHECK_MINOR_VERSION@
 CHECK_VERSION = @CHECK_VERSION@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIR = @DATADIR@
@@ -246,6 +250,7 @@ GREP = @GREP@
 GSL_LIBS = @GSL_LIBS@
 GST_AGE = @GST_AGE@
 GST_ALL_CFLAGS = @GST_ALL_CFLAGS@
+GST_ALL_CXXFLAGS = @GST_ALL_CXXFLAGS@
 GST_ALL_LDFLAGS = @GST_ALL_LDFLAGS@
 GST_ALL_LIBS = @GST_ALL_LIBS@
 GST_CURRENT = @GST_CURRENT@
@@ -271,10 +276,13 @@ GST_LOADSAVE_DOC_TYPES = @GST_LOADSAVE_DOC_TYPES@
 GST_LT_LDFLAGS = @GST_LT_LDFLAGS@
 GST_MAJORMINOR = @GST_MAJORMINOR@
 GST_OBJ_CFLAGS = @GST_OBJ_CFLAGS@
+GST_OBJ_CXXFLAGS = @GST_OBJ_CXXFLAGS@
 GST_OBJ_LIBS = @GST_OBJ_LIBS@
 GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
+GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PKG_DEPS = @GST_PKG_DEPS@
 GST_PLUGIN_LDFLAGS = @GST_PLUGIN_LDFLAGS@
 GST_PLUGIN_SCANNER_INSTALLED = @GST_PLUGIN_SCANNER_INSTALLED@
@@ -388,6 +396,7 @@ abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_CC = @ac_ct_CC@
+ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
@@ -489,7 +498,7 @@ AUTOMAKE_OPTIONS = dist-bzip2
 
 # Do not run the check-exports test in case any option which causes the API to
 # change has been used
-@GST_DISABLE_GST_DEBUG_FALSE@@GST_DISABLE_LOADSAVE_FALSE@@GST_DISABLE_REGISTRY_FALSE@@GST_DISABLE_TRACE_FALSE@CHECK_EXPORTS = check-exports
+@GST_DISABLE_LOADSAVE_FALSE@@GST_DISABLE_REGISTRY_FALSE@@GST_DISABLE_TRACE_FALSE@CHECK_EXPORTS = check-exports
 
 # cruft: plugins that have been merged or moved or renamed
 CRUFT_FILES = \
@@ -531,7 +540,9 @@ CRUFT_FILES = \
 	$(top_builddir)/common/m4/xsize.m4
 
 CRUFT_DIRS = \
-	$(top_builddir)/tests/examples/xml
+	$(top_builddir)/tests/examples/xml \
+	$(top_builddir)/gst/tmp-introspect* \
+	$(top_builddir)/libs/gst/*/tmp-introspect*
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -1138,10 +1149,10 @@ distcheck-hook:
 	@test "x" = "x`find $(distdir) -name \*-enumtypes.[ch] | grep -v win32`" && \
 	test "x" = "x`find $(distdir) -name \*-marshal.[ch]`" || \
 	( $(ECHO) "*** Leftover enumtypes or marshal files in the tarball." && \
-          $(ECHO) "*** Make sure the following files are not disted:" && \
-          find $(distdir) -name \*-enumtypes.[ch] | grep -v win32 && \
-          find $(distdir) -name \*-marshal.[ch] && \
-          false )
+	  $(ECHO) "*** Make sure the following files are not disted:" && \
+	  find $(distdir) -name \*-enumtypes.[ch] | grep -v win32 && \
+	  find $(distdir) -name \*-marshal.[ch] && \
+	  false )
 
 # rule to download the latest .po files
 download-po: $(top_srcdir)/common/download-translations

@@ -8,6 +8,7 @@
 <ANCHOR id="gst-init" href="gstreamer-0.10/gstreamer-Gst.html#gst-init">
 <ANCHOR id="gst-init-check" href="gstreamer-0.10/gstreamer-Gst.html#gst-init-check">
 <ANCHOR id="gst-init-get-option-group" href="gstreamer-0.10/gstreamer-Gst.html#gst-init-get-option-group">
+<ANCHOR id="gst-is-initialized" href="gstreamer-0.10/gstreamer-Gst.html#gst-is-initialized">
 <ANCHOR id="gst-deinit" href="gstreamer-0.10/gstreamer-Gst.html#gst-deinit">
 <ANCHOR id="gst-version" href="gstreamer-0.10/gstreamer-Gst.html#gst-version">
 <ANCHOR id="gst-version-string" href="gstreamer-0.10/gstreamer-Gst.html#gst-version-string">
@@ -50,6 +51,7 @@
 <ANCHOR id="GST-BIN-NUMCHILDREN:CAPS" href="gstreamer-0.10/GstBin.html#GST-BIN-NUMCHILDREN:CAPS">
 <ANCHOR id="GstBin.property-details" href="gstreamer-0.10/GstBin.html#GstBin.property-details">
 <ANCHOR id="GstBin--async-handling" href="gstreamer-0.10/GstBin.html#GstBin--async-handling">
+<ANCHOR id="GstBin--message-forward" href="gstreamer-0.10/GstBin.html#GstBin--message-forward">
 <ANCHOR id="GstBin.signal-details" href="gstreamer-0.10/GstBin.html#GstBin.signal-details">
 <ANCHOR id="GstBin-do-latency" href="gstreamer-0.10/GstBin.html#GstBin-do-latency">
 <ANCHOR id="GstBin-element-added" href="gstreamer-0.10/GstBin.html#GstBin-element-added">
@@ -388,6 +390,7 @@
 <ANCHOR id="GST-ELEMENT-LOCKED-STATE:CAPS" href="gstreamer-0.10/GstElement.html#GST-ELEMENT-LOCKED-STATE:CAPS">
 <ANCHOR id="GST-ELEMENT-IS-SINK:CAPS" href="gstreamer-0.10/GstElement.html#GST-ELEMENT-IS-SINK:CAPS">
 <ANCHOR id="GST-ELEMENT-UNPARENTING:CAPS" href="gstreamer-0.10/GstElement.html#GST-ELEMENT-UNPARENTING:CAPS">
+<ANCHOR id="GST-ELEMENT-IS-SOURCE:CAPS" href="gstreamer-0.10/GstElement.html#GST-ELEMENT-IS-SOURCE:CAPS">
 <ANCHOR id="GST-ELEMENT-FLAG-LAST:CAPS" href="gstreamer-0.10/GstElement.html#GST-ELEMENT-FLAG-LAST:CAPS">
 <ANCHOR id="GstState" href="gstreamer-0.10/GstElement.html#GstState">
 <ANCHOR id="GST-STATE-VOID-PENDING:CAPS" href="gstreamer-0.10/GstElement.html#GST-STATE-VOID-PENDING:CAPS">
@@ -434,6 +437,8 @@
 <ANCHOR id="gst-element-class-install-std-props" href="gstreamer-0.10/GstElement.html#gst-element-class-install-std-props">
 <ANCHOR id="gst-element-class-set-details" href="gstreamer-0.10/GstElement.html#gst-element-class-set-details">
 <ANCHOR id="gst-element-class-set-details-simple" href="gstreamer-0.10/GstElement.html#gst-element-class-set-details-simple">
+<ANCHOR id="gst-element-class-set-documentation-uri" href="gstreamer-0.10/GstElement.html#gst-element-class-set-documentation-uri">
+<ANCHOR id="gst-element-class-set-icon-name" href="gstreamer-0.10/GstElement.html#gst-element-class-set-icon-name">
 <ANCHOR id="gst-element-add-pad" href="gstreamer-0.10/GstElement.html#gst-element-add-pad">
 <ANCHOR id="gst-element-get-pad" href="gstreamer-0.10/GstElement.html#gst-element-get-pad">
 <ANCHOR id="gst-element-create-all-pads" href="gstreamer-0.10/GstElement.html#gst-element-create-all-pads">
@@ -520,6 +525,8 @@
 <ANCHOR id="gst-element-factory-get-klass" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-get-klass">
 <ANCHOR id="gst-element-factory-get-description" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-get-description">
 <ANCHOR id="gst-element-factory-get-author" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-get-author">
+<ANCHOR id="gst-element-factory-get-documentation-uri" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-get-documentation-uri">
+<ANCHOR id="gst-element-factory-get-icon-name" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-get-icon-name">
 <ANCHOR id="gst-element-factory-get-num-pad-templates" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-get-num-pad-templates">
 <ANCHOR id="gst-element-factory-get-uri-type" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-get-uri-type">
 <ANCHOR id="gst-element-factory-get-uri-protocols" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-get-uri-protocols">
@@ -529,6 +536,32 @@
 <ANCHOR id="gst-element-factory-can-sink-caps" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-can-sink-caps">
 <ANCHOR id="gst-element-factory-can-src-caps" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-can-src-caps">
 <ANCHOR id="gst-element-factory-get-static-pad-templates" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-get-static-pad-templates">
+<ANCHOR id="GstElementFactoryListType" href="gstreamer-0.10/GstElementFactory.html#GstElementFactoryListType">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-ANY:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-ANY:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-AUDIOVIDEO-SINKS:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-AUDIOVIDEO-SINKS:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-AUDIO-ENCODER:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-AUDIO-ENCODER:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-DECODABLE:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-DECODABLE:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-DECODER:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-DECODER:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-DEMUXER:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-DEMUXER:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-DEPAYLOADER:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-DEPAYLOADER:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-ENCODER:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-ENCODER:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-FORMATTER:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-FORMATTER:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-MAX-ELEMENTS:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-MAX-ELEMENTS:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-MEDIA-AUDIO:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-MEDIA-AUDIO:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-MEDIA-IMAGE:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-MEDIA-IMAGE:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-MEDIA-METADATA:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-MEDIA-METADATA:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-MEDIA-SUBTITLE:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-MEDIA-SUBTITLE:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-MEDIA-VIDEO:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-MEDIA-VIDEO:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-MEDIA-ANY:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-MEDIA-ANY:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-MUXER:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-MUXER:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-PARSER:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-PARSER:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-PAYLOADER:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-PAYLOADER:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-SINK:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-SINK:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-SRC:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-SRC:CAPS">
+<ANCHOR id="GST-ELEMENT-FACTORY-TYPE-VIDEO-ENCODER:CAPS" href="gstreamer-0.10/GstElementFactory.html#GST-ELEMENT-FACTORY-TYPE-VIDEO-ENCODER:CAPS">
+<ANCHOR id="gst-element-factory-list-filter" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-list-filter">
+<ANCHOR id="gst-element-factory-list-get-elements" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-list-get-elements">
+<ANCHOR id="gst-element-factory-list-is-type" href="gstreamer-0.10/GstElementFactory.html#gst-element-factory-list-is-type">
 <ANCHOR id="GstElementFactory.see-also" href="gstreamer-0.10/GstElementFactory.html#GstElementFactory.see-also">
 <ANCHOR id="gstreamer-GstGError" href="gstreamer-0.10/gstreamer-GstGError.html">
 <ANCHOR id="gstreamer-GstGError.synopsis" href="gstreamer-0.10/gstreamer-GstGError.html#gstreamer-GstGError.synopsis">
@@ -1426,7 +1459,9 @@
 <ANCHOR id="gst-plugin-feature-load" href="gstreamer-0.10/GstPluginFeature.html#gst-plugin-feature-load">
 <ANCHOR id="gst-plugin-feature-list-copy" href="gstreamer-0.10/GstPluginFeature.html#gst-plugin-feature-list-copy">
 <ANCHOR id="gst-plugin-feature-list-free" href="gstreamer-0.10/GstPluginFeature.html#gst-plugin-feature-list-free">
+<ANCHOR id="gst-plugin-feature-list-debug" href="gstreamer-0.10/GstPluginFeature.html#gst-plugin-feature-list-debug">
 <ANCHOR id="gst-plugin-feature-check-version" href="gstreamer-0.10/GstPluginFeature.html#gst-plugin-feature-check-version">
+<ANCHOR id="gst-plugin-feature-rank-compare-func" href="gstreamer-0.10/GstPluginFeature.html#gst-plugin-feature-rank-compare-func">
 <ANCHOR id="GstPluginFeature.see-also" href="gstreamer-0.10/GstPluginFeature.html#GstPluginFeature.see-also">
 <ANCHOR id="gstreamer-GstPoll" href="gstreamer-0.10/gstreamer-GstPoll.html">
 <ANCHOR id="gstreamer-GstPoll.synopsis" href="gstreamer-0.10/gstreamer-GstPoll.html#gstreamer-GstPoll.synopsis">
@@ -1538,6 +1573,9 @@
 <ANCHOR id="gst-query-parse-buffering-stats" href="gstreamer-0.10/gstreamer-GstQuery.html#gst-query-parse-buffering-stats">
 <ANCHOR id="gst-query-set-buffering-range" href="gstreamer-0.10/gstreamer-GstQuery.html#gst-query-set-buffering-range">
 <ANCHOR id="gst-query-parse-buffering-range" href="gstreamer-0.10/gstreamer-GstQuery.html#gst-query-parse-buffering-range">
+<ANCHOR id="gst-query-add-buffering-range" href="gstreamer-0.10/gstreamer-GstQuery.html#gst-query-add-buffering-range">
+<ANCHOR id="gst-query-get-n-buffering-ranges" href="gstreamer-0.10/gstreamer-GstQuery.html#gst-query-get-n-buffering-ranges">
+<ANCHOR id="gst-query-parse-nth-buffering-range" href="gstreamer-0.10/gstreamer-GstQuery.html#gst-query-parse-nth-buffering-range">
 <ANCHOR id="gst-query-new-uri" href="gstreamer-0.10/gstreamer-GstQuery.html#gst-query-new-uri">
 <ANCHOR id="gst-query-parse-uri" href="gstreamer-0.10/gstreamer-GstQuery.html#gst-query-parse-uri">
 <ANCHOR id="gst-query-set-uri" href="gstreamer-0.10/gstreamer-GstQuery.html#gst-query-set-uri">
@@ -1622,10 +1660,12 @@
 <ANCHOR id="gst-structure-id-get-valist" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-id-get-valist">
 <ANCHOR id="gst-structure-id-get-value" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-id-get-value">
 <ANCHOR id="gst-structure-id-set-value" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-id-set-value">
+<ANCHOR id="gst-structure-id-take-value" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-id-take-value">
 <ANCHOR id="gst-structure-get" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-get">
 <ANCHOR id="gst-structure-get-valist" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-get-valist">
 <ANCHOR id="gst-structure-get-value" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-get-value">
 <ANCHOR id="gst-structure-set-value" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-set-value">
+<ANCHOR id="gst-structure-take-value" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-take-value">
 <ANCHOR id="gst-structure-set" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-set">
 <ANCHOR id="gst-structure-set-valist" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-set-valist">
 <ANCHOR id="gst-structure-id-set" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-id-set">
@@ -1648,6 +1688,7 @@
 <ANCHOR id="gst-structure-get-double" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-get-double">
 <ANCHOR id="gst-structure-get-string" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-get-string">
 <ANCHOR id="gst-structure-get-date" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-get-date">
+<ANCHOR id="gst-structure-get-date-time" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-get-date-time">
 <ANCHOR id="gst-structure-get-clock-time" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-get-clock-time">
 <ANCHOR id="gst-structure-get-enum" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-get-enum">
 <ANCHOR id="gst-structure-get-fraction" href="gstreamer-0.10/gstreamer-GstStructure.html#gst-structure-get-fraction">
@@ -1707,6 +1748,7 @@
 <ANCHOR id="GST-TAG-ALBUM-ARTIST:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-ALBUM-ARTIST:CAPS">
 <ANCHOR id="GST-TAG-ALBUM-ARTIST-SORTNAME:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-ALBUM-ARTIST-SORTNAME:CAPS">
 <ANCHOR id="GST-TAG-DATE:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-DATE:CAPS">
+<ANCHOR id="GST-TAG-DATE-TIME:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-DATE-TIME:CAPS">
 <ANCHOR id="GST-TAG-GENRE:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GENRE:CAPS">
 <ANCHOR id="GST-TAG-COMMENT:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-COMMENT:CAPS">
 <ANCHOR id="GST-TAG-EXTENDED-COMMENT:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-EXTENDED-COMMENT:CAPS">
@@ -1758,6 +1800,7 @@
 <ANCHOR id="GST-TAG-GEO-LOCATION-CITY:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-CITY:CAPS">
 <ANCHOR id="GST-TAG-GEO-LOCATION-COUNTRY:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-COUNTRY:CAPS">
 <ANCHOR id="GST-TAG-GEO-LOCATION-SUBLOCATION:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-SUBLOCATION:CAPS">
+<ANCHOR id="GST-TAG-GEO-LOCATION-HORIZONTAL-ERROR:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-HORIZONTAL-ERROR:CAPS">
 <ANCHOR id="GST-TAG-GEO-LOCATION-MOVEMENT-DIRECTION:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-MOVEMENT-DIRECTION:CAPS">
 <ANCHOR id="GST-TAG-GEO-LOCATION-MOVEMENT-SPEED:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-MOVEMENT-SPEED:CAPS">
 <ANCHOR id="GST-TAG-GEO-LOCATION-CAPTURE-DIRECTION:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-GEO-LOCATION-CAPTURE-DIRECTION:CAPS">
@@ -1771,6 +1814,8 @@
 <ANCHOR id="GST-TAG-USER-RATING:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-USER-RATING:CAPS">
 <ANCHOR id="GST-TAG-DEVICE-MANUFACTURER:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-DEVICE-MANUFACTURER:CAPS">
 <ANCHOR id="GST-TAG-DEVICE-MODEL:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-DEVICE-MODEL:CAPS">
+<ANCHOR id="GST-TAG-APPLICATION-NAME:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-APPLICATION-NAME:CAPS">
+<ANCHOR id="GST-TAG-APPLICATION-DATA:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-APPLICATION-DATA:CAPS">
 <ANCHOR id="GST-TAG-IMAGE-ORIENTATION:CAPS" href="gstreamer-0.10/gstreamer-GstTagList.html#GST-TAG-IMAGE-ORIENTATION:CAPS">
 <ANCHOR id="gst-tag-register" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-register">
 <ANCHOR id="gst-tag-merge-use-first" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-merge-use-first">
@@ -1829,6 +1874,8 @@
 <ANCHOR id="gst-tag-list-get-pointer-index" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-list-get-pointer-index">
 <ANCHOR id="gst-tag-list-get-date" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-list-get-date">
 <ANCHOR id="gst-tag-list-get-date-index" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-list-get-date-index">
+<ANCHOR id="gst-tag-list-get-date-time" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-list-get-date-time">
+<ANCHOR id="gst-tag-list-get-date-time-index" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-list-get-date-time-index">
 <ANCHOR id="gst-tag-list-get-buffer" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-list-get-buffer">
 <ANCHOR id="gst-tag-list-get-buffer-index" href="gstreamer-0.10/gstreamer-GstTagList.html#gst-tag-list-get-buffer-index">
 <ANCHOR id="GstTagSetter" href="gstreamer-0.10/GstTagSetter.html">
@@ -2028,6 +2075,7 @@
 <ANCHOR id="gst-util-double-to-fraction" href="gstreamer-0.10/gstreamer-GstUtils.html#gst-util-double-to-fraction">
 <ANCHOR id="gst-util-fraction-multiply" href="gstreamer-0.10/gstreamer-GstUtils.html#gst-util-fraction-multiply">
 <ANCHOR id="gst-util-fraction-add" href="gstreamer-0.10/gstreamer-GstUtils.html#gst-util-fraction-add">
+<ANCHOR id="gst-util-fraction-compare" href="gstreamer-0.10/gstreamer-GstUtils.html#gst-util-fraction-compare">
 <ANCHOR id="gst-util-seqnum-next" href="gstreamer-0.10/gstreamer-GstUtils.html#gst-util-seqnum-next">
 <ANCHOR id="gst-util-seqnum-compare" href="gstreamer-0.10/gstreamer-GstUtils.html#gst-util-seqnum-compare">
 <ANCHOR id="gst-util-set-object-arg" href="gstreamer-0.10/gstreamer-GstUtils.html#gst-util-set-object-arg">
@@ -2055,6 +2103,11 @@
 <ANCHOR id="gst-value-set-int-range" href="gstreamer-0.10/gstreamer-GstValue.html#gst-value-set-int-range">
 <ANCHOR id="gst-value-get-int-range-min" href="gstreamer-0.10/gstreamer-GstValue.html#gst-value-get-int-range-min">
 <ANCHOR id="gst-value-get-int-range-max" href="gstreamer-0.10/gstreamer-GstValue.html#gst-value-get-int-range-max">
+<ANCHOR id="GST-VALUE-HOLDS-INT64-RANGE:CAPS" href="gstreamer-0.10/gstreamer-GstValue.html#GST-VALUE-HOLDS-INT64-RANGE:CAPS">
+<ANCHOR id="GST-TYPE-INT64-RANGE:CAPS" href="gstreamer-0.10/gstreamer-GstValue.html#GST-TYPE-INT64-RANGE:CAPS">
+<ANCHOR id="gst-value-set-int64-range" href="gstreamer-0.10/gstreamer-GstValue.html#gst-value-set-int64-range">
+<ANCHOR id="gst-value-get-int64-range-min" href="gstreamer-0.10/gstreamer-GstValue.html#gst-value-get-int64-range-min">
+<ANCHOR id="gst-value-get-int64-range-max" href="gstreamer-0.10/gstreamer-GstValue.html#gst-value-get-int64-range-max">
 <ANCHOR id="GST-VALUE-HOLDS-DOUBLE-RANGE:CAPS" href="gstreamer-0.10/gstreamer-GstValue.html#GST-VALUE-HOLDS-DOUBLE-RANGE:CAPS">
 <ANCHOR id="GST-TYPE-DOUBLE-RANGE:CAPS" href="gstreamer-0.10/gstreamer-GstValue.html#GST-TYPE-DOUBLE-RANGE:CAPS">
 <ANCHOR id="gst-value-set-double-range" href="gstreamer-0.10/gstreamer-GstValue.html#gst-value-set-double-range">
@@ -2086,6 +2139,7 @@
 <ANCHOR id="GST-TYPE-DATE:CAPS" href="gstreamer-0.10/gstreamer-GstValue.html#GST-TYPE-DATE:CAPS">
 <ANCHOR id="gst-value-set-date" href="gstreamer-0.10/gstreamer-GstValue.html#gst-value-set-date">
 <ANCHOR id="gst-value-get-date" href="gstreamer-0.10/gstreamer-GstValue.html#gst-value-get-date">
+<ANCHOR id="GST-VALUE-HOLDS-DATE-TIME:CAPS" href="gstreamer-0.10/gstreamer-GstValue.html#GST-VALUE-HOLDS-DATE-TIME:CAPS">
 <ANCHOR id="GST-VALUE-HOLDS-CAPS" href="gstreamer-0.10/gstreamer-GstValue.html#GST-VALUE-HOLDS-CAPS">
 <ANCHOR id="gst-value-set-caps" href="gstreamer-0.10/gstreamer-GstValue.html#gst-value-set-caps">
 <ANCHOR id="gst-value-get-caps" href="gstreamer-0.10/gstreamer-GstValue.html#gst-value-get-caps">

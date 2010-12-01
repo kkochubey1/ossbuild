@@ -45,12 +45,12 @@
 enum                <a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType">GstQueryType</a>;
 #define             <a class="link" href="gstreamer-GstQuery.html#GST-QUERY-TYPE-NAME:CAPS" title="GST_QUERY_TYPE_NAME()">GST_QUERY_TYPE_NAME</a>                 (query)
                     <a class="link" href="gstreamer-GstQuery.html#GstQueryTypeDefinition" title="GstQueryTypeDefinition">GstQueryTypeDefinition</a>;
-const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*        <a class="link" href="gstreamer-GstQuery.html#gst-query-type-get-name" title="gst_query_type_get_name ()">gst_query_type_get_name</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> query</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Quarks.html#GQuark"><span class="returnvalue">GQuark</span></a>              <a class="link" href="gstreamer-GstQuery.html#gst-query-type-to-quark" title="gst_query_type_to_quark ()">gst_query_type_to_quark</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> query</code></em>);
-<a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="returnvalue">GstQueryType</span></a>        <a class="link" href="gstreamer-GstQuery.html#gst-query-type-register" title="gst_query_type_register ()">gst_query_type_register</a>             (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *description</code></em>);
-<a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="returnvalue">GstQueryType</span></a>        <a class="link" href="gstreamer-GstQuery.html#gst-query-type-get-by-nick" title="gst_query_type_get_by_nick ()">gst_query_type_get_by_nick</a>          (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstQuery.html#gst-query-types-contains" title="gst_query_types_contains ()">gst_query_types_contains</a>            (<em class="parameter"><code>const <a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> *types</code></em>,
+const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*        <a class="link" href="gstreamer-GstQuery.html#gst-query-type-get-name" title="gst_query_type_get_name ()">gst_query_type_get_name</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> query</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Quarks.html#GQuark"><span class="returnvalue">GQuark</span></a>              <a class="link" href="gstreamer-GstQuery.html#gst-query-type-to-quark" title="gst_query_type_to_quark ()">gst_query_type_to_quark</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> query</code></em>);
+<a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="returnvalue">GstQueryType</span></a>        <a class="link" href="gstreamer-GstQuery.html#gst-query-type-register" title="gst_query_type_register ()">gst_query_type_register</a>             (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *description</code></em>);
+<a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="returnvalue">GstQueryType</span></a>        <a class="link" href="gstreamer-GstQuery.html#gst-query-type-get-by-nick" title="gst_query_type_get_by_nick ()">gst_query_type_get_by_nick</a>          (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstQuery.html#gst-query-types-contains" title="gst_query_types_contains ()">gst_query_types_contains</a>            (<em class="parameter"><code>const <a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> *types</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> type</code></em>);
 const <a class="link" href="gstreamer-GstQuery.html#GstQueryTypeDefinition" title="GstQueryTypeDefinition"><span class="returnvalue">GstQueryTypeDefinition</span></a> * <a class="link" href="gstreamer-GstQuery.html#gst-query-type-get-details" title="gst_query_type_get_details ()">gst_query_type_get_details</a>
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> type</code></em>);
@@ -63,108 +63,116 @@ const <a class="link" href="gstreamer-GstQuery.html#GstQueryTypeDefinition" titl
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstStructure.html#GstStructure" title="GstStructure"><span class="type">GstStructure</span></a> *structure</code></em>);
 <a class="link" href="gstreamer-GstStructure.html#GstStructure" title="GstStructure"><span class="returnvalue">GstStructure</span></a> *      <a class="link" href="gstreamer-GstQuery.html#gst-query-get-structure" title="gst_query_get_structure ()">gst_query_get_structure</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>);
 <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="returnvalue">GstQuery</span></a>*           <a class="link" href="gstreamer-GstQuery.html#gst-query-new-convert" title="gst_query_new_convert ()">gst_query_new_convert</a>               (<em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> src_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> value</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> dest_format</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-convert" title="gst_query_set_convert ()">gst_query_set_convert</a>               (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> src_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_value</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> dest_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> dest_value</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> dest_value</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-convert" title="gst_query_parse_convert ()">gst_query_parse_convert</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *src_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *src_value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *src_value</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *dest_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_value</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_value</code></em>);
 <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="returnvalue">GstQuery</span></a>*           <a class="link" href="gstreamer-GstQuery.html#gst-query-new-position" title="gst_query_new_position ()">gst_query_new_position</a>              (<em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-position" title="gst_query_set_position ()">gst_query_set_position</a>              (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> cur</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> cur</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-position" title="gst_query_parse_position ()">gst_query_parse_position</a>            (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *cur</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *cur</code></em>);
 <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="returnvalue">GstQuery</span></a>*           <a class="link" href="gstreamer-GstQuery.html#gst-query-new-duration" title="gst_query_new_duration ()">gst_query_new_duration</a>              (<em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-duration" title="gst_query_set_duration ()">gst_query_set_duration</a>              (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> duration</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> duration</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-duration" title="gst_query_parse_duration ()">gst_query_parse_duration</a>            (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *duration</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *duration</code></em>);
 <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="returnvalue">GstQuery</span></a>*           <a class="link" href="gstreamer-GstQuery.html#gst-query-new-latency" title="gst_query_new_latency ()">gst_query_new_latency</a>               (<em class="parameter"><code><span class="type">void</span></code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-latency" title="gst_query_parse_latency ()">gst_query_parse_latency</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *live</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *live</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> *min_latency</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> *max_latency</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-latency" title="gst_query_set_latency ()">gst_query_set_latency</a>               (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> live</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> live</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> min_latency</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> max_latency</code></em>);
 <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="returnvalue">GstQuery</span></a>*           <a class="link" href="gstreamer-GstQuery.html#gst-query-new-seeking" title="gst_query_new_seeking ()">gst_query_new_seeking</a>               (<em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-seeking" title="gst_query_set_seeking ()">gst_query_set_seeking</a>               (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> seekable</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> segment_start</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> segment_end</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> seekable</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> segment_start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> segment_end</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-seeking" title="gst_query_parse_seeking ()">gst_query_parse_seeking</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *seekable</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *segment_start</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *segment_end</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *seekable</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *segment_start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *segment_end</code></em>);
 <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="returnvalue">GstQuery</span></a>*           <a class="link" href="gstreamer-GstQuery.html#gst-query-new-formats" title="gst_query_new_formats ()">gst_query_new_formats</a>               (<em class="parameter"><code><span class="type">void</span></code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-formats" title="gst_query_set_formats ()">gst_query_set_formats</a>               (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> n_formats</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> n_formats</code></em>,
                                                          <em class="parameter"><code>...</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-formatsv" title="gst_query_set_formatsv ()">gst_query_set_formatsv</a>              (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> n_formats</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> n_formats</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *formats</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-formats-length" title="gst_query_parse_formats_length ()">gst_query_parse_formats_length</a>      (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *n_formats</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *n_formats</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-formats-nth" title="gst_query_parse_formats_nth ()">gst_query_parse_formats_nth</a>         (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> nth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> nth</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>);
 <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="returnvalue">GstQuery</span></a>*           <a class="link" href="gstreamer-GstQuery.html#gst-query-new-segment" title="gst_query_new_segment ()">gst_query_new_segment</a>               (<em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-segment" title="gst_query_set_segment ()">gst_query_set_segment</a>               (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> rate</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> rate</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> start_value</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop_value</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> start_value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop_value</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-segment" title="gst_query_parse_segment ()">gst_query_parse_segment</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *rate</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *rate</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *start_value</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *stop_value</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *start_value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *stop_value</code></em>);
 enum                <a class="link" href="gstreamer-GstQuery.html#GstBufferingMode" title="enum GstBufferingMode">GstBufferingMode</a>;
 <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="returnvalue">GstQuery</span></a>*           <a class="link" href="gstreamer-GstQuery.html#gst-query-new-buffering" title="gst_query_new_buffering ()">gst_query_new_buffering</a>             (<em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-buffering-percent" title="gst_query_set_buffering_percent ()">gst_query_set_buffering_percent</a>     (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> busy</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> percent</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> busy</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> percent</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-buffering-percent" title="gst_query_parse_buffering_percent ()">gst_query_parse_buffering_percent</a>   (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *busy</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *percent</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *busy</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *percent</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-buffering-stats" title="gst_query_set_buffering_stats ()">gst_query_set_buffering_stats</a>       (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstBufferingMode" title="enum GstBufferingMode"><span class="type">GstBufferingMode</span></a> mode</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> avg_in</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> avg_out</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> buffering_left</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> avg_in</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> avg_out</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> buffering_left</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-buffering-stats" title="gst_query_parse_buffering_stats ()">gst_query_parse_buffering_stats</a>     (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstBufferingMode" title="enum GstBufferingMode"><span class="type">GstBufferingMode</span></a> *mode</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *avg_in</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *avg_out</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *buffering_left</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *avg_in</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *avg_out</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *buffering_left</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-buffering-range" title="gst_query_set_buffering_range ()">gst_query_set_buffering_range</a>       (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> start</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> estimated_total</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> estimated_total</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-buffering-range" title="gst_query_parse_buffering_range ()">gst_query_parse_buffering_range</a>     (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *start</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *stop</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *estimated_total</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *stop</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *estimated_total</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstQuery.html#gst-query-add-buffering-range" title="gst_query_add_buffering_range ()">gst_query_add_buffering_range</a>       (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gstreamer-GstQuery.html#gst-query-get-n-buffering-ranges" title="gst_query_get_n_buffering_ranges ()">gst_query_get_n_buffering_ranges</a>    (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-nth-buffering-range" title="gst_query_parse_nth_buffering_range ()">gst_query_parse_nth_buffering_range</a> (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> index</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *stop</code></em>);
 <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="returnvalue">GstQuery</span></a> *          <a class="link" href="gstreamer-GstQuery.html#gst-query-new-uri" title="gst_query_new_uri ()">gst_query_new_uri</a>                   (<em class="parameter"><code><span class="type">void</span></code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-parse-uri" title="gst_query_parse_uri ()">gst_query_parse_uri</a>                 (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **uri</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **uri</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstQuery.html#gst-query-set-uri" title="gst_query_set_uri ()">gst_query_set_uri</a>                   (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -185,7 +193,7 @@ The following example shows how to query the duration of a pipeline:
 <p>
 </p>
 <div class="example">
-<a name="id567097"></a><p class="title"><b>Example 16. Query duration on a pipeline</b></p>
+<a name="id605143"></a><p class="title"><b>Example 16. Query duration on a pipeline</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -205,17 +213,17 @@ The following example shows how to query the duration of a pipeline:
 13</pre></td>
         <td class="listing_code"><pre class="programlisting">GstQuery <span class="symbol">*</span>query<span class="symbol">;</span>
 gboolean res<span class="symbol">;</span>
-query <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstQuery.html#gst-query-new-duration">gst_query_new_duration</a></span> <span class="symbol">(</span>GST_FORMAT_TIME<span class="symbol">);</span>
-res <span class="symbol">=</span> <span class="function"><a href="../gstreamer-0.10/GstElement.html#gst-element-query">gst_element_query</a></span> <span class="symbol">(</span>pipeline<span class="symbol">,</span> query<span class="symbol">);</span>
+query <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstQuery.html#gst-query-new-duration">gst_query_new_duration</a></span> <span class="symbol">(</span>GST_FORMAT_TIME<span class="symbol">);</span>
+res <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html#gst-element-query">gst_element_query</a></span> <span class="symbol">(</span>pipeline<span class="symbol">,</span> query<span class="symbol">);</span>
 <span class="keyword">if</span> <span class="symbol">(</span>res<span class="symbol">) {</span>
   gint64 duration<span class="symbol">;</span>
-  <span class="function"><a href="../gstreamer-0.10/gstreamer-GstQuery.html#gst-query-parse-duration">gst_query_parse_duration</a></span> <span class="symbol">(</span>query<span class="symbol">,</span> NULL<span class="symbol">, &amp;</span>duration<span class="symbol">);</span>
-  <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="symbol">(</span><span class="string">&quot;duration = %&quot;</span>GST_TIME_FORMAT<span class="symbol">,</span> <span class="function"><a href="../gstreamer-0.10/gstreamer-GstInfo.html#GST-TIME-ARGS:CAPS">GST_TIME_ARGS</a></span> <span class="symbol">(</span>duration<span class="symbol">));</span>
+  <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstQuery.html#gst-query-parse-duration">gst_query_parse_duration</a></span> <span class="symbol">(</span>query<span class="symbol">,</span> NULL<span class="symbol">, &amp;</span>duration<span class="symbol">);</span>
+  <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="symbol">(</span><span class="string">&quot;duration = %&quot;</span>GST_TIME_FORMAT<span class="symbol">,</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstInfo.html#GST-TIME-ARGS:CAPS">GST_TIME_ARGS</a></span> <span class="symbol">(</span>duration<span class="symbol">));</span>
 <span class="symbol">}</span>
 <span class="keyword">else</span> <span class="symbol">{</span>
-  <span class="function"><a href="/usr/share/gtk-doc/html/glib/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="symbol">(</span><span class="string">&quot;duration query failed...&quot;</span><span class="symbol">);</span>
+  <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="symbol">(</span><span class="string">&quot;duration query failed...&quot;</span><span class="symbol">);</span>
 <span class="symbol">}</span>
-<span class="function"><a href="../gstreamer-0.10/gstreamer-GstQuery.html#gst-query-unref">gst_query_unref</a></span> <span class="symbol">(</span>query<span class="symbol">);</span></pre></td>
+<span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstQuery.html#gst-query-unref">gst_query_unref</a></span> <span class="symbol">(</span>query<span class="symbol">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -399,17 +407,17 @@ A Query Type definition
 </td>
 </tr>
 <tr>
-<td><p><span class="term">const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstQueryTypeDefinition.nick"></a>nick</code></em>;</span></p></td>
+<td><p><span class="term">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstQueryTypeDefinition.nick"></a>nick</code></em>;</span></p></td>
 <td>a short nick
 </td>
 </tr>
 <tr>
-<td><p><span class="term">const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstQueryTypeDefinition.description"></a>description</code></em>;</span></p></td>
+<td><p><span class="term">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstQueryTypeDefinition.description"></a>description</code></em>;</span></p></td>
 <td>a longer description of the query type
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Quarks.html#GQuark"><span class="type">GQuark</span></a> <em class="structfield"><code><a name="GstQueryTypeDefinition.quark"></a>quark</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Quarks.html#GQuark"><span class="type">GQuark</span></a> <em class="structfield"><code><a name="GstQueryTypeDefinition.quark"></a>quark</code></em>;</span></p></td>
 <td>the quark for the nick
 </td>
 </tr>
@@ -419,7 +427,7 @@ A Query Type definition
 <hr>
 <div class="refsect2" title="gst_query_type_get_name ()">
 <a name="gst-query-type-get-name"></a><h3>gst_query_type_get_name ()</h3>
-<pre class="programlisting">const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*        gst_query_type_get_name             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> query</code></em>);</pre>
+<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a>*        gst_query_type_get_name             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> query</code></em>);</pre>
 <p>
 Get a printable name for the given query type. Do not modify or free.
 </p>
@@ -442,7 +450,7 @@ Get a printable name for the given query type. Do not modify or free.
 <hr>
 <div class="refsect2" title="gst_query_type_to_quark ()">
 <a name="gst-query-type-to-quark"></a><h3>gst_query_type_to_quark ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Quarks.html#GQuark"><span class="returnvalue">GQuark</span></a>              gst_query_type_to_quark             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> query</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Quarks.html#GQuark"><span class="returnvalue">GQuark</span></a>              gst_query_type_to_quark             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> query</code></em>);</pre>
 <p>
 Get the unique quark for the given query type.
 </p>
@@ -465,8 +473,8 @@ Get the unique quark for the given query type.
 <hr>
 <div class="refsect2" title="gst_query_type_register ()">
 <a name="gst-query-type-register"></a><h3>gst_query_type_register ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="returnvalue">GstQueryType</span></a>        gst_query_type_register             (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *description</code></em>);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="returnvalue">GstQueryType</span></a>        gst_query_type_register             (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>,
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *description</code></em>);</pre>
 <p>
 Create a new GstQueryType based on the nick or return an
 already registered query with that nick
@@ -496,7 +504,7 @@ with the same nick.
 <hr>
 <div class="refsect2" title="gst_query_type_get_by_nick ()">
 <a name="gst-query-type-get-by-nick"></a><h3>gst_query_type_get_by_nick ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="returnvalue">GstQueryType</span></a>        gst_query_type_get_by_nick          (<em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="returnvalue">GstQueryType</span></a>        gst_query_type_get_by_nick          (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>);</pre>
 <p>
 Get the query type registered with <em class="parameter"><code>nick</code></em>.
 </p>
@@ -520,7 +528,7 @@ if the query was not registered.
 <hr>
 <div class="refsect2" title="gst_query_types_contains ()">
 <a name="gst-query-types-contains"></a><h3>gst_query_types_contains ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_query_types_contains            (<em class="parameter"><code>const <a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> *types</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_query_types_contains            (<em class="parameter"><code>const <a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> *types</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> type</code></em>);</pre>
 <p>
 See if the given <a class="link" href="gstreamer-GstQuery.html#GstQueryType" title="enum GstQueryType"><span class="type">GstQueryType</span></a> is inside the <em class="parameter"><code>types</code></em> query types array.
@@ -725,7 +733,7 @@ by the query and will therefore be freed when the query is unreffed.
 <div class="refsect2" title="gst_query_new_convert ()">
 <a name="gst-query-new-convert"></a><h3>gst_query_new_convert ()</h3>
 <pre class="programlisting"><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="returnvalue">GstQuery</span></a>*           gst_query_new_convert               (<em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> src_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> value</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> dest_format</code></em>);</pre>
 <p>
 Constructs a new convert query object. Use <a class="link" href="gstreamer-GstQuery.html#gst-query-unref" title="gst_query_unref ()"><code class="function">gst_query_unref()</code></a>
@@ -763,9 +771,9 @@ one format and another.
 <a name="gst-query-set-convert"></a><h3>gst_query_set_convert ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_convert               (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> src_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> src_value</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> dest_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> dest_value</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> dest_value</code></em>);</pre>
 <p>
 Answer a convert query by setting the requested values.
 </p>
@@ -805,9 +813,9 @@ Answer a convert query by setting the requested values.
 <a name="gst-query-parse-convert"></a><h3>gst_query_parse_convert ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_convert             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *src_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *src_value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *src_value</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *dest_format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_value</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *dest_value</code></em>);</pre>
 <p>
 Parse a convert query answer. Any of <em class="parameter"><code>src_format</code></em>, <em class="parameter"><code>src_value</code></em>, <em class="parameter"><code>dest_format</code></em>,
 and <em class="parameter"><code>dest_value</code></em> may be NULL, in which case that value is omitted.
@@ -873,7 +881,7 @@ of playback in the streams, in some format.
 <a name="gst-query-set-position"></a><h3>gst_query_set_position ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_position              (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> cur</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> cur</code></em>);</pre>
 <p>
 Answer a position query by setting the requested value in the given format.
 </p>
@@ -903,7 +911,7 @@ Answer a position query by setting the requested value in the given format.
 <a name="gst-query-parse-position"></a><h3>gst_query_parse_position ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_position            (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *cur</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *cur</code></em>);</pre>
 <p>
 Parse a position query, writing the format into <em class="parameter"><code>format</code></em>, and the position
 into <em class="parameter"><code>cur</code></em>, if the respective parameters are non-NULL.
@@ -959,7 +967,7 @@ total length of the stream.
 <a name="gst-query-set-duration"></a><h3>gst_query_set_duration ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_duration              (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> duration</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> duration</code></em>);</pre>
 <p>
 Answer a duration query by setting the requested value in the given format.
 </p>
@@ -989,7 +997,7 @@ Answer a duration query by setting the requested value in the given format.
 <a name="gst-query-parse-duration"></a><h3>gst_query_parse_duration ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_duration            (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *duration</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *duration</code></em>);</pre>
 <p>
 Parse a duration query answer. Write the format of the duration into <em class="parameter"><code>format</code></em>,
 and the value into <em class="parameter"><code>duration</code></em>, if the respective variables are non-NULL.
@@ -1040,7 +1048,7 @@ pipeline.
 <div class="refsect2" title="gst_query_parse_latency ()">
 <a name="gst-query-parse-latency"></a><h3>gst_query_parse_latency ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_latency             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *live</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *live</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> *min_latency</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> *max_latency</code></em>);</pre>
 <p>
@@ -1077,7 +1085,7 @@ Parse a latency query answer.
 <div class="refsect2" title="gst_query_set_latency ()">
 <a name="gst-query-set-latency"></a><h3>gst_query_set_latency ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_latency               (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> live</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> live</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> min_latency</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> max_latency</code></em>);</pre>
 <p>
@@ -1139,9 +1147,9 @@ the stream.
 <a name="gst-query-set-seeking"></a><h3>gst_query_set_seeking ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_seeking               (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> seekable</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> segment_start</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> segment_end</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> seekable</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> segment_start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> segment_end</code></em>);</pre>
 <p>
 Set the seeking query result fields in <em class="parameter"><code>query</code></em>.
 </p>
@@ -1181,9 +1189,9 @@ Set the seeking query result fields in <em class="parameter"><code>query</code><
 <a name="gst-query-parse-seeking"></a><h3>gst_query_parse_seeking ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_seeking             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *seekable</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *segment_start</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *segment_end</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *seekable</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *segment_start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *segment_end</code></em>);</pre>
 <p>
 Parse a seeking query, writing the format into <em class="parameter"><code>format</code></em>, and
 other results into the passed parameters, if the respective parameters
@@ -1243,7 +1251,7 @@ the stream.
 <div class="refsect2" title="gst_query_set_formats ()">
 <a name="gst-query-set-formats"></a><h3>gst_query_set_formats ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_formats               (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> n_formats</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> n_formats</code></em>,
                                                          <em class="parameter"><code>...</code></em>);</pre>
 <p>
 Set the formats query result fields in <em class="parameter"><code>query</code></em>. The number of formats passed
@@ -1274,7 +1282,7 @@ must be equal to <em class="parameter"><code>n_formats</code></em>.
 <div class="refsect2" title="gst_query_set_formatsv ()">
 <a name="gst-query-set-formatsv"></a><h3>gst_query_set_formatsv ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_formatsv              (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> n_formats</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> n_formats</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *formats</code></em>);</pre>
 <p>
 Set the formats query result fields in <em class="parameter"><code>query</code></em>. The number of formats passed
@@ -1306,7 +1314,7 @@ in the <em class="parameter"><code>formats</code></em> array must be equal to <e
 <div class="refsect2" title="gst_query_parse_formats_length ()">
 <a name="gst-query-parse-formats-length"></a><h3>gst_query_parse_formats_length ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_formats_length      (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *n_formats</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> *n_formats</code></em>);</pre>
 <p>
 Parse the number of formats in the formats <em class="parameter"><code>query</code></em>.
 </p>
@@ -1331,7 +1339,7 @@ Parse the number of formats in the formats <em class="parameter"><code>query</co
 <div class="refsect2" title="gst_query_parse_formats_nth ()">
 <a name="gst-query-parse-formats-nth"></a><h3>gst_query_parse_formats_nth ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_formats_nth         (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> nth</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> nth</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>);</pre>
 <p>
 Parse the format query and retrieve the <em class="parameter"><code>nth</code></em> format from it into
@@ -1389,10 +1397,10 @@ currently configured segment for playback.
 <div class="refsect2" title="gst_query_set_segment ()">
 <a name="gst-query-set-segment"></a><h3>gst_query_set_segment ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_segment               (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> rate</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> rate</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> start_value</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop_value</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> start_value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop_value</code></em>);</pre>
 <p>
 Answer a segment query by setting the requested values. The normal
 playback segment of a pipeline is 0 to duration at the default rate of
@@ -1442,10 +1450,10 @@ negative rates, playback will actually happen from <em class="parameter"><code>s
 <div class="refsect2" title="gst_query_parse_segment ()">
 <a name="gst-query-parse-segment"></a><h3>gst_query_parse_segment ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_segment             (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *rate</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> *rate</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *start_value</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *stop_value</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *start_value</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *stop_value</code></em>);</pre>
 <p>
 Parse a segment query answer. Any of <em class="parameter"><code>rate</code></em>, <em class="parameter"><code>format</code></em>, <em class="parameter"><code>start_value</code></em>, and
 <em class="parameter"><code>stop_value</code></em> may be NULL, which will cause this value to be omitted.
@@ -1553,11 +1561,11 @@ a stream.
 <div class="refsect2" title="gst_query_set_buffering_percent ()">
 <a name="gst-query-set-buffering-percent"></a><h3>gst_query_set_buffering_percent ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_buffering_percent     (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> busy</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> percent</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> busy</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> percent</code></em>);</pre>
 <p>
 Set the percentage of buffered data. This is a value between 0 and 100.
-The <em class="parameter"><code>busy</code></em> indicator is <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> when the buffering is in progress.
+The <em class="parameter"><code>busy</code></em> indicator is <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> when the buffering is in progress.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -1585,11 +1593,11 @@ The <em class="parameter"><code>busy</code></em> indicator is <a href="/usr/shar
 <div class="refsect2" title="gst_query_parse_buffering_percent ()">
 <a name="gst-query-parse-buffering-percent"></a><h3>gst_query_parse_buffering_percent ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_buffering_percent   (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *busy</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *percent</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *busy</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *percent</code></em>);</pre>
 <p>
 Get the percentage of buffered data. This is a value between 0 and 100.
-The <em class="parameter"><code>busy</code></em> indicator is <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> when the buffering is in progress.
+The <em class="parameter"><code>busy</code></em> indicator is <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> when the buffering is in progress.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -1618,9 +1626,9 @@ The <em class="parameter"><code>busy</code></em> indicator is <a href="/usr/shar
 <a name="gst-query-set-buffering-stats"></a><h3>gst_query_set_buffering_stats ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_buffering_stats       (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstBufferingMode" title="enum GstBufferingMode"><span class="type">GstBufferingMode</span></a> mode</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> avg_in</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> avg_out</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> buffering_left</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> avg_in</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> avg_out</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> buffering_left</code></em>);</pre>
 <p>
 Configures the buffering stats values in <em class="parameter"><code>query</code></em>.
 </p>
@@ -1661,9 +1669,9 @@ Configures the buffering stats values in <em class="parameter"><code>query</code
 <a name="gst-query-parse-buffering-stats"></a><h3>gst_query_parse_buffering_stats ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_buffering_stats     (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstBufferingMode" title="enum GstBufferingMode"><span class="type">GstBufferingMode</span></a> *mode</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *avg_in</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *avg_out</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *buffering_left</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *avg_in</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *avg_out</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *buffering_left</code></em>);</pre>
 <p>
 Extracts the buffering stats values from <em class="parameter"><code>query</code></em>.
 </p>
@@ -1704,9 +1712,9 @@ Extracts the buffering stats values from <em class="parameter"><code>query</code
 <a name="gst-query-set-buffering-range"></a><h3>gst_query_set_buffering_range ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_buffering_range       (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> start</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> estimated_total</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> estimated_total</code></em>);</pre>
 <p>
 Set the available query result fields in <em class="parameter"><code>query</code></em>.
 </p>
@@ -1747,9 +1755,9 @@ Set the available query result fields in <em class="parameter"><code>query</code
 <a name="gst-query-parse-buffering-range"></a><h3>gst_query_parse_buffering_range ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_buffering_range     (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstFormat.html#GstFormat" title="enum GstFormat"><span class="type">GstFormat</span></a> *format</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *start</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *stop</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *estimated_total</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *stop</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *estimated_total</code></em>);</pre>
 <p>
 Parse an available query, writing the format into <em class="parameter"><code>format</code></em>, and
 other results into the passed parameters, if the respective parameters
@@ -1760,7 +1768,7 @@ are non-NULL
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>query</code></em> :</span></p></td>
-<td>a GST_QUERY_SEEKING type query <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a>
+<td>a GST_QUERY_BUFFERING type query <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a>
 </td>
 </tr>
 <tr>
@@ -1788,6 +1796,114 @@ are non-NULL
 <p class="since">Since 0.10.20</p>
 </div>
 <hr>
+<div class="refsect2" title="gst_query_add_buffering_range ()">
+<a name="gst-query-add-buffering-range"></a><h3>gst_query_add_buffering_range ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_query_add_buffering_range       (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> stop</code></em>);</pre>
+<p>
+Set the buffering-ranges array field in <em class="parameter"><code>query</code></em>. The current last
+start position of the array should be inferior to <em class="parameter"><code>start</code></em>.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>query</code></em> :</span></p></td>
+<td>a GST_QUERY_BUFFERING type query <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>start</code></em> :</span></p></td>
+<td>start position of the range
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>stop</code></em> :</span></p></td>
+<td>stop position of the range
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> indicating if the range was added or not.
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.31</p>
+</div>
+<hr>
+<div class="refsect2" title="gst_query_get_n_buffering_ranges ()">
+<a name="gst-query-get-n-buffering-ranges"></a><h3>gst_query_get_n_buffering_ranges ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_query_get_n_buffering_ranges    (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>);</pre>
+<p>
+Retrieve the number of values currently stored in the
+buffered-ranges array of the query's structure.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>query</code></em> :</span></p></td>
+<td>a GST_QUERY_BUFFERING type query <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> the range array size as a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>.
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.31</p>
+</div>
+<hr>
+<div class="refsect2" title="gst_query_parse_nth_buffering_range ()">
+<a name="gst-query-parse-nth-buffering-range"></a><h3>gst_query_parse_nth_buffering_range ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_query_parse_nth_buffering_range (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> index</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *start</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> *stop</code></em>);</pre>
+<p>
+Parse an available query and get the start and stop values stored
+at the <em class="parameter"><code>index</code></em> of the buffered ranges array.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>query</code></em> :</span></p></td>
+<td>a GST_QUERY_BUFFERING type query <a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>index</code></em> :</span></p></td>
+<td>position in the buffered-ranges array to read
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>start</code></em> :</span></p></td>
+<td> the start position to set. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>stop</code></em> :</span></p></td>
+<td> the stop position to set. <span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> a <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> indicating if the parsing succeeded.
+
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.31</p>
+</div>
+<hr>
 <div class="refsect2" title="gst_query_new_uri ()">
 <a name="gst-query-new-uri"></a><h3>gst_query_new_uri ()</h3>
 <pre class="programlisting"><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="returnvalue">GstQuery</span></a> *          gst_query_new_uri                   (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
@@ -1811,11 +1927,11 @@ that is used by the source or sink.
 <div class="refsect2" title="gst_query_parse_uri ()">
 <a name="gst-query-parse-uri"></a><h3>gst_query_parse_uri ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_parse_uri                 (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **uri</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **uri</code></em>);</pre>
 <p>
 Parse an URI query, writing the URI into <em class="parameter"><code>uri</code></em> as a newly
 allocated string, if the respective parameters are non-NULL.
-Free the string with <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> after usage.
+Free the string with <a href="http://library.gnome.org/devel/glib/unstable/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> after usage.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -1838,7 +1954,7 @@ Free the string with <a href="/usr/share/gtk-doc/html/glib/glib-Memory-Allocatio
 <div class="refsect2" title="gst_query_set_uri ()">
 <a name="gst-query-set-uri"></a><h3>gst_query_set_uri ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_query_set_uri                   (<em class="parameter"><code><a class="link" href="gstreamer-GstQuery.html#GstQuery" title="GstQuery"><span class="type">GstQuery</span></a> *query</code></em>,
-                                                         <em class="parameter"><code>const <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);</pre>
+                                                         <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *uri</code></em>);</pre>
 <p>
 Answer a URI query by setting the requested URI.
 </p>

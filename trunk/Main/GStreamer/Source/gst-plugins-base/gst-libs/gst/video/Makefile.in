@@ -67,6 +67,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -123,7 +124,8 @@ libgstvideo_@GST_MAJORMINOR@_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 am_libgstvideo_@GST_MAJORMINOR@_la_OBJECTS =  \
 	libgstvideo_@GST_MAJORMINOR@_la-video.lo \
 	libgstvideo_@GST_MAJORMINOR@_la-gstvideosink.lo \
-	libgstvideo_@GST_MAJORMINOR@_la-gstvideofilter.lo
+	libgstvideo_@GST_MAJORMINOR@_la-gstvideofilter.lo \
+	libgstvideo_@GST_MAJORMINOR@_la-convertframe.lo
 am__objects_1 = libgstvideo_@GST_MAJORMINOR@_la-video-enumtypes.lo
 am__objects_2 =
 am__objects_3 = $(am__objects_1) $(am__objects_2)
@@ -274,6 +276,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -338,6 +341,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -468,7 +472,7 @@ BUILT_SOURCES = $(built_sources) $(built_headers)
 lib_LTLIBRARIES = libgstvideo-@GST_MAJORMINOR@.la
 CLEANFILES = $(BUILT_SOURCES) $(am__append_1)
 libgstvideo_@GST_MAJORMINOR@_la_SOURCES = \
-	video.c gstvideosink.c gstvideofilter.c
+	video.c gstvideosink.c gstvideofilter.c convertframe.c
 
 nodist_libgstvideo_@GST_MAJORMINOR@_la_SOURCES = $(BUILT_SOURCES)
 libgstvideo_@GST_MAJORMINOR@includedir = $(includedir)/gstreamer-@GST_MAJORMINOR@/gst/video
@@ -575,6 +579,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo_@GST_MAJORMINOR@_la-convertframe.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo_@GST_MAJORMINOR@_la-gstvideofilter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo_@GST_MAJORMINOR@_la-gstvideosink.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo_@GST_MAJORMINOR@_la-video-enumtypes.Plo@am__quote@
@@ -627,6 +632,14 @@ libgstvideo_@GST_MAJORMINOR@_la-gstvideofilter.lo: gstvideofilter.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvideofilter.c' object='libgstvideo_@GST_MAJORMINOR@_la-gstvideofilter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvideo_@GST_MAJORMINOR@_la-gstvideofilter.lo `test -f 'gstvideofilter.c' || echo '$(srcdir)/'`gstvideofilter.c
+
+libgstvideo_@GST_MAJORMINOR@_la-convertframe.lo: convertframe.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvideo_@GST_MAJORMINOR@_la-convertframe.lo -MD -MP -MF $(DEPDIR)/libgstvideo_@GST_MAJORMINOR@_la-convertframe.Tpo -c -o libgstvideo_@GST_MAJORMINOR@_la-convertframe.lo `test -f 'convertframe.c' || echo '$(srcdir)/'`convertframe.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvideo_@GST_MAJORMINOR@_la-convertframe.Tpo $(DEPDIR)/libgstvideo_@GST_MAJORMINOR@_la-convertframe.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='convertframe.c' object='libgstvideo_@GST_MAJORMINOR@_la-convertframe.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstvideo_@GST_MAJORMINOR@_la-convertframe.lo `test -f 'convertframe.c' || echo '$(srcdir)/'`convertframe.c
 
 libgstvideo_@GST_MAJORMINOR@_la-video-enumtypes.lo: video-enumtypes.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstvideo_@GST_MAJORMINOR@_la-video-enumtypes.lo -MD -MP -MF $(DEPDIR)/libgstvideo_@GST_MAJORMINOR@_la-video-enumtypes.Tpo -c -o libgstvideo_@GST_MAJORMINOR@_la-video-enumtypes.lo `test -f 'video-enumtypes.c' || echo '$(srcdir)/'`video-enumtypes.c
@@ -978,7 +991,7 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 	@touch $@
 
 @HAVE_INTROSPECTION_TRUE@GstVideo-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstvideo-@GST_MAJORMINOR@.la
-@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstVideo \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
@@ -993,6 +1006,7 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
 @HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-base-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--pkg-export gstreamer-video-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--output $@ \
 @HAVE_INTROSPECTION_TRUE@		$(gir_headers) \
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)

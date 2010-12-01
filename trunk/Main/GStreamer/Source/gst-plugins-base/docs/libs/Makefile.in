@@ -74,6 +74,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -208,6 +209,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -272,6 +274,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -468,11 +471,12 @@ SCANOBJ_DEPS = \
 	$(top_builddir)/gst-libs/gst/sdp/libgstsdp-@GST_MAJORMINOR@.la \
 	$(top_builddir)/gst-libs/gst/tag/libgsttag-@GST_MAJORMINOR@.la \
 	$(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MAJORMINOR@.la \
-	$(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la
+	$(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la
 
 
 # Header files to ignore when scanning.
-IGNORE_HFILES = 
+IGNORE_HFILES = pbutils-private.h
 
 # Images to copy into HTML directory.
 HTML_IMAGES = 
@@ -803,13 +807,13 @@ upload: $(FORMATS)
 @ENABLE_GTK_DOC_TRUE@	else								\
 @ENABLE_GTK_DOC_TRUE@	    cd $(srcdir) ;						\
 @ENABLE_GTK_DOC_TRUE@	    for i in $(SCANOBJ_FILES) ; do				\
-@ENABLE_GTK_DOC_TRUE@               test -f $$i || touch $$i ;				\
+@ENABLE_GTK_DOC_TRUE@	       test -f $$i || touch $$i ;				\
 @ENABLE_GTK_DOC_TRUE@	    done							\
 @ENABLE_GTK_DOC_TRUE@	fi
 @ENABLE_GTK_DOC_TRUE@	if test "x$(top_srcdir)" != "x$(top_builddir)";			\
-@ENABLE_GTK_DOC_TRUE@        then								\
-@ENABLE_GTK_DOC_TRUE@          export BUILT_OPTIONS="--source-dir=$(DOC_BUILD_DIR)";		\
-@ENABLE_GTK_DOC_TRUE@        fi;								\
+@ENABLE_GTK_DOC_TRUE@	then								\
+@ENABLE_GTK_DOC_TRUE@	  export BUILT_OPTIONS="--source-dir=$(DOC_BUILD_DIR)";		\
+@ENABLE_GTK_DOC_TRUE@	fi;								\
 @ENABLE_GTK_DOC_TRUE@	gtkdoc-scan							\
 @ENABLE_GTK_DOC_TRUE@		$(SCAN_OPTIONS) $(EXTRA_HFILES)				\
 @ENABLE_GTK_DOC_TRUE@		--module=$(DOC_MODULE)					\
@@ -831,7 +835,11 @@ upload: $(FORMATS)
 @ENABLE_GTK_DOC_TRUE@	fi
 @ENABLE_GTK_DOC_TRUE@	gtkdoc-mktmpl --module=$(DOC_MODULE) | tee tmpl-build.log
 @ENABLE_GTK_DOC_TRUE@	@if test -s $(DOC_MODULE)-unused.txt; then \
-@ENABLE_GTK_DOC_TRUE@	    exit $(if $(DOCS_ARE_INCOMPLETE_PLEASE_FIXME),0,1); fi
+@ENABLE_GTK_DOC_TRUE@	  echo "============================================================"; \
+@ENABLE_GTK_DOC_TRUE@	  echo "Please add the following to $(DOC_MODULE)-sections.txt:     "; \
+@ENABLE_GTK_DOC_TRUE@	  cat $(DOC_MODULE)-unused.txt;                                        \
+@ENABLE_GTK_DOC_TRUE@	  echo "============================================================"; \
+@ENABLE_GTK_DOC_TRUE@	fi
 @ENABLE_GTK_DOC_TRUE@	rm -f tmpl-build.log
 @ENABLE_GTK_DOC_TRUE@	touch tmpl-build.stamp
 
@@ -893,7 +901,7 @@ clean-local: clean-local-gtkdoc
 # make distcheck work
 distclean-local:
 	rm -f $(REPORT_FILES) \
-                $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
+	        $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
 	rm -rf tmpl/*.sgml.bak
 	rm -f $(DOC_MODULE).hierarchy
 	rm -f *.stamp || true
@@ -901,7 +909,7 @@ distclean-local:
 	    rm -f $(DOC_MODULE)-docs.sgml ; \
 	    rm -f $(DOC_MODULE).types ; \
 	    rm -f $(DOC_MODULE).interfaces ; \
-            rm -f $(DOC_MODULE)-overrides.txt ; \
+	    rm -f $(DOC_MODULE)-overrides.txt ; \
 	    rm -f $(DOC_MODULE).prerequisites ; \
 	    rm -f $(DOC_MODULE)-sections.txt ; \
 	    rm -rf tmpl/*.sgml ; \
@@ -910,7 +918,7 @@ distclean-local:
 
 maintainer-clean-local: clean
 	cd $(srcdir) && rm -rf html \
-                xml $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
+		xml $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
 
 # thomas: make docs parallel installable; devhelp requires majorminor too
 install-data-local:
@@ -927,8 +935,8 @@ install-data-local:
 	  $(INSTALL_DATA) $(srcdir)/html/$(DOC_MODULE).devhelp \
 	    $(DESTDIR)$(TARGET_DIR)/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp; \
 	  if test -e $(srcdir)/html/$(DOC_MODULE).devhelp2; then \
-        	    $(INSTALL_DATA) $(srcdir)/html/$(DOC_MODULE).devhelp2 \
-	           $(DESTDIR)$(TARGET_DIR)/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp2; \
+	            $(INSTALL_DATA) $(srcdir)/html/$(DOC_MODULE).devhelp2 \
+	            $(DESTDIR)$(TARGET_DIR)/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp2; \
 	  fi; \
 	  (which gtkdoc-rebase >/dev/null && \
 	    gtkdoc-rebase --relative --dest-dir=$(DESTDIR) --html-dir=$(DESTDIR)$(TARGET_DIR)) || true ; \
@@ -955,7 +963,7 @@ dist-hook: dist-check-gtkdoc dist-hook-local
 	-cp $(srcdir)/$(DOC_MODULE).types $(distdir)/
 	-cp $(srcdir)/$(DOC_MODULE)-sections.txt $(distdir)/
 	cd $(distdir) && rm -f $(DISTCLEANFILES)
-        -gtkdoc-rebase --online --relative --html-dir=$(distdir)/html
+	-gtkdoc-rebase --online --relative --html-dir=$(distdir)/html
 
 .PHONY : dist-hook-local docs
 

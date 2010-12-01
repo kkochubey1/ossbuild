@@ -78,6 +78,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -132,7 +133,8 @@ libgstvideoscale_la_DEPENDENCIES = $(top_builddir)/gst-libs/gst/video/libgstvide
 am_libgstvideoscale_la_OBJECTS = libgstvideoscale_la-gstvideoscale.lo \
 	libgstvideoscale_la-vs_image.lo \
 	libgstvideoscale_la-vs_scanline.lo \
-	libgstvideoscale_la-vs_4tap.lo
+	libgstvideoscale_la-vs_4tap.lo \
+	libgstvideoscale_la-vs_fill_borders.lo
 am__objects_1 = libgstvideoscale_la-tmp-orc.lo
 nodist_libgstvideoscale_la_OBJECTS = $(am__objects_1)
 libgstvideoscale_la_OBJECTS = $(am_libgstvideoscale_la_OBJECTS) \
@@ -278,6 +280,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -342,6 +345,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -475,7 +479,8 @@ libgstvideoscale_la_SOURCES = \
 	gstvideoscale.c \
 	vs_image.c \
 	vs_scanline.c \
-	vs_4tap.c
+	vs_4tap.c \
+	vs_fill_borders.c
 
 nodist_libgstvideoscale_la_SOURCES = $(ORC_NODIST_SOURCES)
 libgstvideoscale_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS) $(ORC_CFLAGS)
@@ -489,7 +494,8 @@ noinst_HEADERS = \
 	gstvideoscale.h \
 	vs_image.h \
 	vs_scanline.h \
-	vs_4tap.h
+	vs_4tap.h \
+	vs_fill_borders.h
 
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -569,6 +575,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideoscale_la-gstvideoscale.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideoscale_la-tmp-orc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideoscale_la-vs_4tap.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideoscale_la-vs_fill_borders.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideoscale_la-vs_image.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideoscale_la-vs_scanline.Plo@am__quote@
 
@@ -627,6 +634,14 @@ libgstvideoscale_la-vs_4tap.lo: vs_4tap.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='vs_4tap.c' object='libgstvideoscale_la-vs_4tap.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideoscale_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideoscale_la_CFLAGS) $(CFLAGS) -c -o libgstvideoscale_la-vs_4tap.lo `test -f 'vs_4tap.c' || echo '$(srcdir)/'`vs_4tap.c
+
+libgstvideoscale_la-vs_fill_borders.lo: vs_fill_borders.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideoscale_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideoscale_la_CFLAGS) $(CFLAGS) -MT libgstvideoscale_la-vs_fill_borders.lo -MD -MP -MF $(DEPDIR)/libgstvideoscale_la-vs_fill_borders.Tpo -c -o libgstvideoscale_la-vs_fill_borders.lo `test -f 'vs_fill_borders.c' || echo '$(srcdir)/'`vs_fill_borders.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvideoscale_la-vs_fill_borders.Tpo $(DEPDIR)/libgstvideoscale_la-vs_fill_borders.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='vs_fill_borders.c' object='libgstvideoscale_la-vs_fill_borders.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideoscale_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideoscale_la_CFLAGS) $(CFLAGS) -c -o libgstvideoscale_la-vs_fill_borders.lo `test -f 'vs_fill_borders.c' || echo '$(srcdir)/'`vs_fill_borders.c
 
 libgstvideoscale_la-tmp-orc.lo: tmp-orc.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideoscale_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideoscale_la_CFLAGS) $(CFLAGS) -MT libgstvideoscale_la-tmp-orc.lo -MD -MP -MF $(DEPDIR)/libgstvideoscale_la-tmp-orc.Tpo -c -o libgstvideoscale_la-tmp-orc.lo `test -f 'tmp-orc.c' || echo '$(srcdir)/'`tmp-orc.c
@@ -856,16 +871,16 @@ orc-update: tmp-orc.c $(ORC_SOURCE).h
 	cp tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c
 	cp $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h
 
-@HAVE_ORC_TRUE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_TRUE@	$(orcc_v_gen)$(ORCC) --implementation --include glib.h -o tmp-orc.c $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_TRUE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_TRUE@	$(orcc_v_gen)$(ORCC) $(ORCC_FLAGS) --implementation --include glib.h -o tmp-orc.c $(srcdir)/$(ORC_SOURCE).orc
 
-@HAVE_ORC_TRUE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_TRUE@	$(orcc_v_gen)$(ORCC) --header --include glib.h -o $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_FALSE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.c tmp-orc.c
+@HAVE_ORCC_TRUE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_TRUE@	$(orcc_v_gen)$(ORCC) $(ORCC_FLAGS) --header --include glib.h -o $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE).orc
+@HAVE_ORCC_FALSE@tmp-orc.c: $(srcdir)/$(ORC_SOURCE).orc $(srcdir)/$(ORC_SOURCE)-dist.c
+@HAVE_ORCC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.c tmp-orc.c
 
-@HAVE_ORC_FALSE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc
-@HAVE_ORC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.h $(ORC_SOURCE).h
+@HAVE_ORCC_FALSE@$(ORC_SOURCE).h: $(srcdir)/$(ORC_SOURCE).orc $(srcdir)/$(ORC_SOURCE)-dist.c
+@HAVE_ORCC_FALSE@	$(cp_v_gen)cp $(srcdir)/$(ORC_SOURCE)-dist.h $(ORC_SOURCE).h
 
 clean-local: clean-orc
 .PHONY: clean-orc
@@ -874,15 +889,18 @@ clean-orc:
 
 dist-hook: dist-hook-orc
 .PHONY: dist-hook-orc
+
+# we try and copy updated orc -dist files below, but don't fail if it
+# doesn't work as the srcdir might not be writable
 dist-hook-orc: tmp-orc.c $(ORC_SOURCE).h
 	$(top_srcdir)/common/gst-indent tmp-orc.c
 	rm -f tmp-orc.c~
 	cmp -s tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c || \
-	  cp tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c
+	  cp tmp-orc.c $(srcdir)/$(ORC_SOURCE)-dist.c || true
 	cmp -s $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h || \
-	  cp $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h
-	cp -p $(srcdir)/$(ORC_SOURCE)-dist.c $(distdir)/
-	cp -p $(srcdir)/$(ORC_SOURCE)-dist.h $(distdir)/
+	  cp $(ORC_SOURCE).h $(srcdir)/$(ORC_SOURCE)-dist.h || true
+	cp -p tmp-orc.c $(distdir)/$(ORC_SOURCE)-dist.c
+	cp -p $(ORC_SOURCE).h $(distdir)/$(ORC_SOURCE)-dist.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

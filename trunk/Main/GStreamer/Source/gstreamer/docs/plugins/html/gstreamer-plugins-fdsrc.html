@@ -49,11 +49,11 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gstreamer-plugins-fdsrc.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseSrc.html">GstBaseSrc</a>
-                     +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstPushSrc.html">GstPushSrc</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSrc.html">GstBaseSrc</a>
+                     +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstPushSrc.html">GstPushSrc</a>
                            +----GstFdSrc
 </pre>
 </div>
@@ -61,13 +61,13 @@
 <a name="gstreamer-plugins-fdsrc.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstFdSrc implements
- <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstUriHandler.html#GstURIHandler">GstURIHandler</a>.</p>
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstUriHandler.html#GstURIHandler">GstURIHandler</a>.</p>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gstreamer-plugins-fdsrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc--fd" title='The "fd" property'>fd</a>"                       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc--timeout" title='The "timeout" property'>timeout</a>"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write
+  "<a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc--fd" title='The "fd" property'>fd</a>"                       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc--timeout" title='The "timeout" property'>timeout</a>"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -87,14 +87,14 @@ if no data was recieved in the given timeout.
 The message's structure contains one field:
 </p>
 <div class="itemizedlist"><ul class="itemizedlist" type="disc"><li class="listitem"><p>
-  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>
+  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>
   <code class="classname">"timeout"</code>: the timeout in microseconds that
   expired when waiting for data.
   </p></li></ul></div>
 <p>
 </p>
 <div class="refsect2" title="Example launch line">
-<a name="id506592"></a><h3>Example launch line</h3>
+<a name="id545516"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -126,7 +126,7 @@ Opaque <a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc"><span class=
 <a name="gstreamer-plugins-fdsrc.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "fd" property'>
 <a name="GstFdSrc--fd"></a><h3>The <code class="literal">"fd"</code> property</h3>
-<pre class="programlisting">  "fd"                       <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "fd"                       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>An open file descriptor to read from.</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 0</p>
@@ -134,7 +134,7 @@ Opaque <a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc"><span class=
 <hr>
 <div class="refsect2" title='The "timeout" property'>
 <a name="GstFdSrc--timeout"></a><h3>The <code class="literal">"timeout"</code> property</h3>
-<pre class="programlisting">  "timeout"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
+<pre class="programlisting">  "timeout"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
 <p>
 Post a message after timeout microseconds
 </p>

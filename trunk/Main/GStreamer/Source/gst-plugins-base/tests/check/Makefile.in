@@ -39,10 +39,10 @@ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 check_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
 	$(am__EXEEXT_7) elements/adder$(EXEEXT) \
-	elements/appsink$(EXEEXT) elements/audioconvert$(EXEEXT) \
-	elements/audiorate$(EXEEXT) elements/audioresample$(EXEEXT) \
-	elements/audiotestsrc$(EXEEXT) elements/decodebin$(EXEEXT) \
-	elements/decodebin2$(EXEEXT) \
+	elements/appsink$(EXEEXT) elements/appsrc$(EXEEXT) \
+	elements/audioconvert$(EXEEXT) elements/audiorate$(EXEEXT) \
+	elements/audioresample$(EXEEXT) elements/audiotestsrc$(EXEEXT) \
+	elements/decodebin$(EXEEXT) elements/decodebin2$(EXEEXT) \
 	elements/ffmpegcolorspace$(EXEEXT) elements/gdpdepay$(EXEEXT) \
 	elements/gdppay$(EXEEXT) elements/multifdsink$(EXEEXT) \
 	elements/playbin$(EXEEXT) elements/playbin2$(EXEEXT) \
@@ -77,6 +77,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -143,6 +144,14 @@ elements_appsink_DEPENDENCIES = $(top_builddir)/gst-libs/gst/app/libgstapp-@GST_
 elements_appsink_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(elements_appsink_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
+elements_appsrc_SOURCES = elements/appsrc.c
+elements_appsrc_OBJECTS = elements_appsrc-appsrc.$(OBJEXT)
+elements_appsrc_DEPENDENCIES = $(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_2)
+elements_appsrc_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(elements_appsrc_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 elements_audioconvert_SOURCES = elements/audioconvert.c
 elements_audioconvert_OBJECTS =  \
@@ -261,10 +270,14 @@ elements_videorate_LDADD = $(LDADD)
 elements_videorate_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 elements_videoscale_SOURCES = elements/videoscale.c
-elements_videoscale_OBJECTS = videoscale.$(OBJEXT)
-elements_videoscale_LDADD = $(LDADD)
-elements_videoscale_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+elements_videoscale_OBJECTS =  \
+	elements_videoscale-videoscale.$(OBJEXT)
+elements_videoscale_DEPENDENCIES = $(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+elements_videoscale_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(elements_videoscale_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 elements_videotestsrc_SOURCES = elements/videotestsrc.c
 elements_videotestsrc_OBJECTS = videotestsrc.$(OBJEXT)
 elements_videotestsrc_LDADD = $(LDADD)
@@ -282,7 +295,7 @@ elements_volume_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 elements_vorbisdec_SOURCES = elements/vorbisdec.c
 elements_vorbisdec_OBJECTS = elements_vorbisdec-vorbisdec.$(OBJEXT)
 elements_vorbisdec_DEPENDENCIES = $(am__DEPENDENCIES_2) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 elements_vorbisdec_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(elements_vorbisdec_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -290,7 +303,7 @@ elements_vorbisdec_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 elements_vorbistag_SOURCES = elements/vorbistag.c
 elements_vorbistag_OBJECTS = elements_vorbistag-vorbistag.$(OBJEXT)
 elements_vorbistag_DEPENDENCIES = $(am__DEPENDENCIES_2) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 elements_vorbistag_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(elements_vorbistag_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -364,14 +377,15 @@ libs_netbuffer_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 libs_pbutils_SOURCES = libs/pbutils.c
 libs_pbutils_OBJECTS = libs_pbutils-pbutils.$(OBJEXT)
 libs_pbutils_DEPENDENCIES = $(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la \
-	$(am__DEPENDENCIES_2)
+	$(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 libs_pbutils_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_pbutils_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 libs_rtp_SOURCES = libs/rtp.c
 libs_rtp_OBJECTS = libs_rtp-rtp.$(OBJEXT)
 libs_rtp_DEPENDENCIES = $(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMINOR@.la \
-	$(am__DEPENDENCIES_2)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 libs_rtp_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_rtp_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -390,35 +404,37 @@ libs_video_DEPENDENCIES = $(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MA
 libs_video_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libs_video_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-orc_adder_SOURCES = orc/adder.c
-orc_adder_OBJECTS = orc_adder-adder.$(OBJEXT)
+nodist_orc_adder_OBJECTS = orc_adder-adder.$(OBJEXT)
+orc_adder_OBJECTS = $(nodist_orc_adder_OBJECTS)
 orc_adder_DEPENDENCIES = $(am__DEPENDENCIES_1)
 orc_adder_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(orc_adder_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-orc_audioconvert_SOURCES = orc/audioconvert.c
-orc_audioconvert_OBJECTS = orc_audioconvert-audioconvert.$(OBJEXT)
+nodist_orc_audioconvert_OBJECTS =  \
+	orc_audioconvert-audioconvert.$(OBJEXT)
+orc_audioconvert_OBJECTS = $(nodist_orc_audioconvert_OBJECTS)
 orc_audioconvert_DEPENDENCIES = $(am__DEPENDENCIES_1)
 orc_audioconvert_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(orc_audioconvert_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-orc_videoscale_SOURCES = orc/videoscale.c
-orc_videoscale_OBJECTS = orc_videoscale-videoscale.$(OBJEXT)
+nodist_orc_videoscale_OBJECTS = orc_videoscale-videoscale.$(OBJEXT)
+orc_videoscale_OBJECTS = $(nodist_orc_videoscale_OBJECTS)
 orc_videoscale_DEPENDENCIES = $(am__DEPENDENCIES_1)
 orc_videoscale_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(orc_videoscale_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
 	$@
-orc_videotestsrc_SOURCES = orc/videotestsrc.c
-orc_videotestsrc_OBJECTS = orc_videotestsrc-videotestsrc.$(OBJEXT)
+nodist_orc_videotestsrc_OBJECTS =  \
+	orc_videotestsrc-videotestsrc.$(OBJEXT)
+orc_videotestsrc_OBJECTS = $(nodist_orc_videotestsrc_OBJECTS)
 orc_videotestsrc_DEPENDENCIES = $(am__DEPENDENCIES_1)
 orc_videotestsrc_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(orc_videotestsrc_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-orc_volume_SOURCES = orc/volume.c
-orc_volume_OBJECTS = orc_volume-volume.$(OBJEXT)
+nodist_orc_volume_OBJECTS = orc_volume-volume.$(OBJEXT)
+orc_volume_OBJECTS = $(nodist_orc_volume_OBJECTS)
 orc_volume_DEPENDENCIES = $(am__DEPENDENCIES_1)
 orc_volume_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(orc_volume_CFLAGS) \
@@ -519,7 +535,7 @@ AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = elements/adder.c elements/alsa.c elements/appsink.c \
-	elements/audioconvert.c elements/audiorate.c \
+	elements/appsrc.c elements/audioconvert.c elements/audiorate.c \
 	elements/audioresample.c elements/audiotestsrc.c \
 	elements/decodebin.c elements/decodebin2.c \
 	elements/ffmpegcolorspace.c elements/gdpdepay.c \
@@ -532,14 +548,17 @@ SOURCES = elements/adder.c elements/alsa.c elements/appsink.c \
 	generic/states.c gst/typefindfunctions.c libs/audio.c \
 	libs/cddabasesrc.c libs/fft.c libs/mixer.c libs/navigation.c \
 	libs/netbuffer.c libs/pbutils.c libs/rtp.c libs/tag.c \
-	libs/video.c orc/adder.c orc/audioconvert.c orc/videoscale.c \
-	orc/videotestsrc.c orc/volume.c pipelines/basetime.c \
+	libs/video.c $(nodist_orc_adder_SOURCES) \
+	$(nodist_orc_audioconvert_SOURCES) \
+	$(nodist_orc_videoscale_SOURCES) \
+	$(nodist_orc_videotestsrc_SOURCES) \
+	$(nodist_orc_volume_SOURCES) pipelines/basetime.c \
 	pipelines/capsfilter-renegotiation.c pipelines/gio.c \
 	pipelines/oggmux.c pipelines/simple-launch-lines.c \
 	pipelines/streamheader.c pipelines/theoraenc.c \
 	pipelines/vorbisdec.c pipelines/vorbisenc.c
 DIST_SOURCES = elements/adder.c elements/alsa.c elements/appsink.c \
-	elements/audioconvert.c elements/audiorate.c \
+	elements/appsrc.c elements/audioconvert.c elements/audiorate.c \
 	elements/audioresample.c elements/audiotestsrc.c \
 	elements/decodebin.c elements/decodebin2.c \
 	elements/ffmpegcolorspace.c elements/gdpdepay.c \
@@ -552,8 +571,7 @@ DIST_SOURCES = elements/adder.c elements/alsa.c elements/appsink.c \
 	generic/states.c gst/typefindfunctions.c libs/audio.c \
 	libs/cddabasesrc.c libs/fft.c libs/mixer.c libs/navigation.c \
 	libs/netbuffer.c libs/pbutils.c libs/rtp.c libs/tag.c \
-	libs/video.c orc/adder.c orc/audioconvert.c orc/videoscale.c \
-	orc/videotestsrc.c orc/volume.c pipelines/basetime.c \
+	libs/video.c pipelines/basetime.c \
 	pipelines/capsfilter-renegotiation.c pipelines/gio.c \
 	pipelines/oggmux.c pipelines/simple-launch-lines.c \
 	pipelines/streamheader.c pipelines/theoraenc.c \
@@ -664,6 +682,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -728,6 +747,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -857,7 +877,7 @@ REGISTRY_ENVIRONMENT = \
 
 TESTS_ENVIRONMENT = \
         CK_DEFAULT_TIMEOUT=120                                  \
-        STATE_IGNORE_ELEMENTS="$(STATE_IGNORE_ELEMENTS)"	\
+        GST_STATE_IGNORE_ELEMENTS="$(STATE_IGNORE_ELEMENTS)"	\
 	$(REGISTRY_ENVIRONMENT)					\
 	GST_PLUGIN_SYSTEM_PATH=					\
 	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/sys:$(top_builddir)/ext:$(GST_PLUGINS_DIR) \
@@ -974,11 +994,12 @@ libs_rtp_CFLAGS = \
 	$(AM_CFLAGS)
 
 libs_rtp_LDADD = \
-	$(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMINOR@.la $(LDADD)
+	$(top_builddir)/gst-libs/gst/rtp/libgstrtp-@GST_MAJORMINOR@.la \
+	$(GST_BASE_LIBS) $(LDADD)
 
 libs_tag_CFLAGS = \
-	$(GST_BASE_CFLAGS) \
 	$(GST_PLUGINS_BASE_CFLAGS) \
+	$(GST_BASE_CFLAGS) \
 	$(AM_CFLAGS)
 
 libs_tag_LDADD = \
@@ -990,13 +1011,23 @@ libs_pbutils_CFLAGS = \
 	$(AM_CFLAGS)
 
 libs_pbutils_LDADD = \
-	$(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la $(LDADD)
+	$(top_builddir)/gst-libs/gst/pbutils/libgstpbutils-@GST_MAJORMINOR@.la \
+	$(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MAJORMINOR@.la \
+	$(GST_BASE_LIBS) $(LDADD)
 
 elements_appsink_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
 	$(AM_CFLAGS)
 
 elements_appsink_LDADD = \
+	$(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
+	$(LDADD)
+
+elements_appsrc_CFLAGS = \
+	$(GST_PLUGINS_BASE_CFLAGS) \
+	$(AM_CFLAGS)
+
+elements_appsrc_LDADD = \
 	$(top_builddir)/gst-libs/gst/app/libgstapp-@GST_MAJORMINOR@.la \
 	$(LDADD)
 
@@ -1063,7 +1094,8 @@ elements_volume_CFLAGS = \
 
 elements_vorbisdec_LDADD = \
 	$(LDADD) \
-	$(VORBIS_LIBS)
+	$(VORBIS_LIBS) \
+	$(VORBISENC_LIBS)
 
 elements_vorbisdec_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
@@ -1073,13 +1105,23 @@ elements_vorbisdec_CFLAGS = \
 
 elements_vorbistag_LDADD = \
 	$(LDADD) \
-	$(VORBIS_LIBS)
+	$(VORBIS_LIBS) \
+	$(VORBISENC_LIBS)
 
 elements_vorbistag_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
 	$(AM_CFLAGS) \
 	$(VORBIS_CFLAGS) \
 	$(CFLAGS)
+
+elements_videoscale_CFLAGS = \
+	$(GST_PLUGINS_BASE_CFLAGS) \
+	$(GST_BASE_CFLAGS) \
+	$(AM_CFLAGS)
+
+elements_videoscale_LDADD = \
+	$(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MAJORMINOR@.la \
+	$(GST_BASE_LIBS) $(LDADD)
 
 gst_typefindfunctions_CFLAGS = $(GST_BASE_CFLAGS) $(AM_CFLAGS)
 gst_typefindfunctions_LDADD = $(GST_BASE_LIBS) $(LDADD)
@@ -1120,14 +1162,19 @@ pipelines_simple_launch_lines_LDADD = \
 
 orc_adder_CFLAGS = $(ORC_CFLAGS)
 orc_adder_LDADD = $(ORC_LIBS) -lorc-test-0.4
+nodist_orc_adder_SOURCES = orc/adder.c
 orc_audioconvert_CFLAGS = $(ORC_CFLAGS)
 orc_audioconvert_LDADD = $(ORC_LIBS) -lorc-test-0.4
+nodist_orc_audioconvert_SOURCES = orc/audioconvert.c
 orc_volume_CFLAGS = $(ORC_CFLAGS)
 orc_volume_LDADD = $(ORC_LIBS) -lorc-test-0.4
+nodist_orc_volume_SOURCES = orc/volume.c
 orc_videoscale_CFLAGS = $(ORC_CFLAGS)
 orc_videoscale_LDADD = $(ORC_LIBS) -lorc-test-0.4
+nodist_orc_videoscale_SOURCES = orc/videoscale.c
 orc_videotestsrc_CFLAGS = $(ORC_CFLAGS)
 orc_videotestsrc_LDADD = $(ORC_LIBS) -lorc-test-0.4
+nodist_orc_videotestsrc_SOURCES = orc/videotestsrc.c
 EXTRA_DIST = gst-plugins-base.supp
 all: all-am
 
@@ -1193,6 +1240,9 @@ elements/alsa$(EXEEXT): $(elements_alsa_OBJECTS) $(elements_alsa_DEPENDENCIES) e
 elements/appsink$(EXEEXT): $(elements_appsink_OBJECTS) $(elements_appsink_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/appsink$(EXEEXT)
 	$(AM_V_CCLD)$(elements_appsink_LINK) $(elements_appsink_OBJECTS) $(elements_appsink_LDADD) $(LIBS)
+elements/appsrc$(EXEEXT): $(elements_appsrc_OBJECTS) $(elements_appsrc_DEPENDENCIES) elements/$(am__dirstamp)
+	@rm -f elements/appsrc$(EXEEXT)
+	$(AM_V_CCLD)$(elements_appsrc_LINK) $(elements_appsrc_OBJECTS) $(elements_appsrc_LDADD) $(LIBS)
 elements/audioconvert$(EXEEXT): $(elements_audioconvert_OBJECTS) $(elements_audioconvert_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/audioconvert$(EXEEXT)
 	$(AM_V_CCLD)$(elements_audioconvert_LINK) $(elements_audioconvert_OBJECTS) $(elements_audioconvert_LDADD) $(LIBS)
@@ -1246,7 +1296,7 @@ elements/videorate$(EXEEXT): $(elements_videorate_OBJECTS) $(elements_videorate_
 	$(AM_V_CCLD)$(LINK) $(elements_videorate_OBJECTS) $(elements_videorate_LDADD) $(LIBS)
 elements/videoscale$(EXEEXT): $(elements_videoscale_OBJECTS) $(elements_videoscale_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/videoscale$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(elements_videoscale_OBJECTS) $(elements_videoscale_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(elements_videoscale_LINK) $(elements_videoscale_OBJECTS) $(elements_videoscale_LDADD) $(LIBS)
 elements/videotestsrc$(EXEEXT): $(elements_videotestsrc_OBJECTS) $(elements_videotestsrc_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/videotestsrc$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(elements_videotestsrc_OBJECTS) $(elements_videotestsrc_LDADD) $(LIBS)
@@ -1369,6 +1419,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/clock-selection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_alsa-alsa.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_appsink-appsink.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_appsrc-appsrc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_audioconvert-audioconvert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_audiorate-audiorate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_audioresample-audioresample.Po@am__quote@
@@ -1379,6 +1430,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_playbin2-playbin2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_subparse-subparse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_textoverlay-textoverlay.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_videoscale-videoscale.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_volume-volume.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_vorbisdec-vorbisdec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/elements_vorbistag-vorbistag.Po@am__quote@
@@ -1412,7 +1464,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/states.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/streamheader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/videorate.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/videoscale.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/videotestsrc.Po@am__quote@
 
 .c.o:
@@ -1486,6 +1537,22 @@ elements_appsink-appsink.obj: elements/appsink.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/appsink.c' object='elements_appsink-appsink.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_appsink_CFLAGS) $(CFLAGS) -c -o elements_appsink-appsink.obj `if test -f 'elements/appsink.c'; then $(CYGPATH_W) 'elements/appsink.c'; else $(CYGPATH_W) '$(srcdir)/elements/appsink.c'; fi`
+
+elements_appsrc-appsrc.o: elements/appsrc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_appsrc_CFLAGS) $(CFLAGS) -MT elements_appsrc-appsrc.o -MD -MP -MF $(DEPDIR)/elements_appsrc-appsrc.Tpo -c -o elements_appsrc-appsrc.o `test -f 'elements/appsrc.c' || echo '$(srcdir)/'`elements/appsrc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/elements_appsrc-appsrc.Tpo $(DEPDIR)/elements_appsrc-appsrc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/appsrc.c' object='elements_appsrc-appsrc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_appsrc_CFLAGS) $(CFLAGS) -c -o elements_appsrc-appsrc.o `test -f 'elements/appsrc.c' || echo '$(srcdir)/'`elements/appsrc.c
+
+elements_appsrc-appsrc.obj: elements/appsrc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_appsrc_CFLAGS) $(CFLAGS) -MT elements_appsrc-appsrc.obj -MD -MP -MF $(DEPDIR)/elements_appsrc-appsrc.Tpo -c -o elements_appsrc-appsrc.obj `if test -f 'elements/appsrc.c'; then $(CYGPATH_W) 'elements/appsrc.c'; else $(CYGPATH_W) '$(srcdir)/elements/appsrc.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/elements_appsrc-appsrc.Tpo $(DEPDIR)/elements_appsrc-appsrc.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/appsrc.c' object='elements_appsrc-appsrc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_appsrc_CFLAGS) $(CFLAGS) -c -o elements_appsrc-appsrc.obj `if test -f 'elements/appsrc.c'; then $(CYGPATH_W) 'elements/appsrc.c'; else $(CYGPATH_W) '$(srcdir)/elements/appsrc.c'; fi`
 
 elements_audioconvert-audioconvert.o: elements/audioconvert.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_audioconvert_CFLAGS) $(CFLAGS) -MT elements_audioconvert-audioconvert.o -MD -MP -MF $(DEPDIR)/elements_audioconvert-audioconvert.Tpo -c -o elements_audioconvert-audioconvert.o `test -f 'elements/audioconvert.c' || echo '$(srcdir)/'`elements/audioconvert.c
@@ -1759,21 +1826,21 @@ videorate.obj: elements/videorate.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o videorate.obj `if test -f 'elements/videorate.c'; then $(CYGPATH_W) 'elements/videorate.c'; else $(CYGPATH_W) '$(srcdir)/elements/videorate.c'; fi`
 
-videoscale.o: elements/videoscale.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT videoscale.o -MD -MP -MF $(DEPDIR)/videoscale.Tpo -c -o videoscale.o `test -f 'elements/videoscale.c' || echo '$(srcdir)/'`elements/videoscale.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/videoscale.Tpo $(DEPDIR)/videoscale.Po
+elements_videoscale-videoscale.o: elements/videoscale.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_videoscale_CFLAGS) $(CFLAGS) -MT elements_videoscale-videoscale.o -MD -MP -MF $(DEPDIR)/elements_videoscale-videoscale.Tpo -c -o elements_videoscale-videoscale.o `test -f 'elements/videoscale.c' || echo '$(srcdir)/'`elements/videoscale.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/elements_videoscale-videoscale.Tpo $(DEPDIR)/elements_videoscale-videoscale.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/videoscale.c' object='videoscale.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/videoscale.c' object='elements_videoscale-videoscale.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o videoscale.o `test -f 'elements/videoscale.c' || echo '$(srcdir)/'`elements/videoscale.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_videoscale_CFLAGS) $(CFLAGS) -c -o elements_videoscale-videoscale.o `test -f 'elements/videoscale.c' || echo '$(srcdir)/'`elements/videoscale.c
 
-videoscale.obj: elements/videoscale.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT videoscale.obj -MD -MP -MF $(DEPDIR)/videoscale.Tpo -c -o videoscale.obj `if test -f 'elements/videoscale.c'; then $(CYGPATH_W) 'elements/videoscale.c'; else $(CYGPATH_W) '$(srcdir)/elements/videoscale.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/videoscale.Tpo $(DEPDIR)/videoscale.Po
+elements_videoscale-videoscale.obj: elements/videoscale.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_videoscale_CFLAGS) $(CFLAGS) -MT elements_videoscale-videoscale.obj -MD -MP -MF $(DEPDIR)/elements_videoscale-videoscale.Tpo -c -o elements_videoscale-videoscale.obj `if test -f 'elements/videoscale.c'; then $(CYGPATH_W) 'elements/videoscale.c'; else $(CYGPATH_W) '$(srcdir)/elements/videoscale.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/elements_videoscale-videoscale.Tpo $(DEPDIR)/elements_videoscale-videoscale.Po
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/videoscale.c' object='videoscale.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/videoscale.c' object='elements_videoscale-videoscale.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o videoscale.obj `if test -f 'elements/videoscale.c'; then $(CYGPATH_W) 'elements/videoscale.c'; else $(CYGPATH_W) '$(srcdir)/elements/videoscale.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_videoscale_CFLAGS) $(CFLAGS) -c -o elements_videoscale-videoscale.obj `if test -f 'elements/videoscale.c'; then $(CYGPATH_W) 'elements/videoscale.c'; else $(CYGPATH_W) '$(srcdir)/elements/videoscale.c'; fi`
 
 videotestsrc.o: elements/videotestsrc.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT videotestsrc.o -MD -MP -MF $(DEPDIR)/videotestsrc.Tpo -c -o videotestsrc.o `test -f 'elements/videotestsrc.c' || echo '$(srcdir)/'`elements/videotestsrc.c

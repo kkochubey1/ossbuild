@@ -47,20 +47,20 @@
 <span class="returnvalue">void</span>                (<a class="link" href="GstTaskPool.html#GstTaskPoolFunction" title="GstTaskPoolFunction ()">*GstTaskPoolFunction</a>)              (<em class="parameter"><code><span class="type">void</span> *data</code></em>);
 <a class="link" href="GstTaskPool.html" title="GstTaskPool"><span class="returnvalue">GstTaskPool</span></a> *       <a class="link" href="GstTaskPool.html#gst-task-pool-new" title="gst_task_pool_new ()">gst_task_pool_new</a>                   (<em class="parameter"><code><span class="type">void</span></code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstTaskPool.html#gst-task-pool-prepare" title="gst_task_pool_prepare ()">gst_task_pool_prepare</a>               (<em class="parameter"><code><a class="link" href="GstTaskPool.html" title="GstTaskPool"><span class="type">GstTaskPool</span></a> *pool</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);
-<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>            <a class="link" href="GstTaskPool.html#gst-task-pool-push" title="gst_task_pool_push ()">gst_task_pool_push</a>                  (<em class="parameter"><code><a class="link" href="GstTaskPool.html" title="GstTaskPool"><span class="type">GstTaskPool</span></a> *pool</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>            <a class="link" href="GstTaskPool.html#gst-task-pool-push" title="gst_task_pool_push ()">gst_task_pool_push</a>                  (<em class="parameter"><code><a class="link" href="GstTaskPool.html" title="GstTaskPool"><span class="type">GstTaskPool</span></a> *pool</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstTaskPool.html#GstTaskPoolFunction" title="GstTaskPoolFunction ()"><span class="type">GstTaskPoolFunction</span></a> func</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstTaskPool.html#gst-task-pool-join" title="gst_task_pool_join ()">gst_task_pool_join</a>                  (<em class="parameter"><code><a class="link" href="GstTaskPool.html" title="GstTaskPool"><span class="type">GstTaskPool</span></a> *pool</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> id</code></em>);
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> id</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstTaskPool.html#gst-task-pool-cleanup" title="gst_task_pool_cleanup ()">gst_task_pool_cleanup</a>               (<em class="parameter"><code><a class="link" href="GstTaskPool.html" title="GstTaskPool"><span class="type">GstTaskPool</span></a> *pool</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="GstTaskPool.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
    +----<a class="link" href="GstObject.html" title="GstObject">GstObject</a>
          +----GstTaskPool
 </pre>
@@ -175,7 +175,7 @@ GThreadPool for threads.
 <div class="refsect2" title="gst_task_pool_prepare ()">
 <a name="gst-task-pool-prepare"></a><h3>gst_task_pool_prepare ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_task_pool_prepare               (<em class="parameter"><code><a class="link" href="GstTaskPool.html" title="GstTaskPool"><span class="type">GstTaskPool</span></a> *pool</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>
 Prepare the taskpool for accepting <a class="link" href="GstTaskPool.html#gst-task-pool-push" title="gst_task_pool_push ()"><code class="function">gst_task_pool_push()</code></a> operations.
 </p>
@@ -202,10 +202,10 @@ MT safe.
 <hr>
 <div class="refsect2" title="gst_task_pool_push ()">
 <a name="gst-task-pool-push"></a><h3>gst_task_pool_push ()</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>            gst_task_pool_push                  (<em class="parameter"><code><a class="link" href="GstTaskPool.html" title="GstTaskPool"><span class="type">GstTaskPool</span></a> *pool</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="returnvalue">gpointer</span></a>            gst_task_pool_push                  (<em class="parameter"><code><a class="link" href="GstTaskPool.html" title="GstTaskPool"><span class="type">GstTaskPool</span></a> *pool</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstTaskPool.html#GstTaskPoolFunction" title="GstTaskPoolFunction ()"><span class="type">GstTaskPoolFunction</span></a> func</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>
 Start the execution of a new thread from <em class="parameter"><code>pool</code></em>.
 </p>
@@ -248,7 +248,7 @@ errors.
 <div class="refsect2" title="gst_task_pool_join ()">
 <a name="gst-task-pool-join"></a><h3>gst_task_pool_join ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_task_pool_join                  (<em class="parameter"><code><a class="link" href="GstTaskPool.html" title="GstTaskPool"><span class="type">GstTaskPool</span></a> *pool</code></em>,
-                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> id</code></em>);</pre>
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> id</code></em>);</pre>
 <p>
 Join a task and/or return it to the pool. <em class="parameter"><code>id</code></em> is the id obtained from 
 <a class="link" href="GstTaskPool.html#gst-task-pool-push" title="gst_task_pool_push ()"><code class="function">gst_task_pool_push()</code></a>.

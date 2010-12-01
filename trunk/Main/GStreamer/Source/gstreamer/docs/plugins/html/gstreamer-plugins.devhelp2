@@ -23,9 +23,10 @@
     </sub>
   </chapters>
   <functions>
+    <keyword type="" name="Example launch line" link="gstreamer-plugins-capsfilter.html#id492972"/>
     <keyword type="struct" name="GstCapsFilter" link="gstreamer-plugins-capsfilter.html#GstCapsFilter-struct"/>
     <keyword type="property" name="The &quot;caps&quot; property" link="gstreamer-plugins-capsfilter.html#GstCapsFilter--caps"/>
-    <keyword type="" name="Example launch line" link="gstreamer-plugins-fakesrc.html#id521490"/>
+    <keyword type="" name="Example launch line" link="gstreamer-plugins-fakesrc.html#id540707"/>
     <keyword type="struct" name="GstFakeSrc" link="gstreamer-plugins-fakesrc.html#GstFakeSrc-struct"/>
     <keyword type="enum" name="enum GstFakeSrcDataType" link="gstreamer-plugins-fakesrc.html#GstFakeSrcDataType"/>
     <keyword type="enum" name="enum GstFakeSrcFillType" link="gstreamer-plugins-fakesrc.html#GstFakeSrcFillType"/>
@@ -49,6 +50,7 @@
     <keyword type="property" name="The &quot;sync&quot; property" link="gstreamer-plugins-fakesrc.html#GstFakeSrc--sync"/>
     <keyword type="property" name="The &quot;format&quot; property" link="gstreamer-plugins-fakesrc.html#GstFakeSrc--format"/>
     <keyword type="signal" name="The &quot;handoff&quot; signal" link="gstreamer-plugins-fakesrc.html#GstFakeSrc-handoff"/>
+    <keyword type="" name="Example launch line" link="gstreamer-plugins-fakesink.html#id552149"/>
     <keyword type="struct" name="GstFakeSink" link="gstreamer-plugins-fakesink.html#GstFakeSink-struct"/>
     <keyword type="enum" name="enum GstFakeSinkStateError" link="gstreamer-plugins-fakesink.html#GstFakeSinkStateError"/>
     <keyword type="property" name="The &quot;can-activate-pull&quot; property" link="gstreamer-plugins-fakesink.html#GstFakeSink--can-activate-pull"/>
@@ -63,10 +65,11 @@
     <keyword type="signal" name="The &quot;preroll-handoff&quot; signal" link="gstreamer-plugins-fakesink.html#GstFakeSink-preroll-handoff"/>
     <keyword type="struct" name="GstFdSink" link="gstreamer-plugins-fdsink.html#GstFdSink-struct"/>
     <keyword type="property" name="The &quot;fd&quot; property" link="gstreamer-plugins-fdsink.html#GstFdSink--fd"/>
-    <keyword type="" name="Example launch line" link="gstreamer-plugins-fdsrc.html#id506592"/>
+    <keyword type="" name="Example launch line" link="gstreamer-plugins-fdsrc.html#id545516"/>
     <keyword type="struct" name="GstFdSrc" link="gstreamer-plugins-fdsrc.html#GstFdSrc-struct"/>
     <keyword type="property" name="The &quot;fd&quot; property" link="gstreamer-plugins-fdsrc.html#GstFdSrc--fd"/>
     <keyword type="property" name="The &quot;timeout&quot; property" link="gstreamer-plugins-fdsrc.html#GstFdSrc--timeout"/>
+    <keyword type="" name="Example launch line" link="gstreamer-plugins-filesrc.html#id558983"/>
     <keyword type="struct" name="GstFileSrc" link="gstreamer-plugins-filesrc.html#GstFileSrc-struct"/>
     <keyword type="property" name="The &quot;fd&quot; property" link="gstreamer-plugins-filesrc.html#GstFileSrc--fd"/>
     <keyword type="property" name="The &quot;location&quot; property" link="gstreamer-plugins-filesrc.html#GstFileSrc--location"/>
@@ -74,6 +77,7 @@
     <keyword type="property" name="The &quot;touch&quot; property" link="gstreamer-plugins-filesrc.html#GstFileSrc--touch"/>
     <keyword type="property" name="The &quot;use-mmap&quot; property" link="gstreamer-plugins-filesrc.html#GstFileSrc--use-mmap"/>
     <keyword type="property" name="The &quot;sequential&quot; property" link="gstreamer-plugins-filesrc.html#GstFileSrc--sequential"/>
+    <keyword type="" name="Example launch line" link="gstreamer-plugins-filesink.html#id564570"/>
     <keyword type="struct" name="GstFileSink" link="gstreamer-plugins-filesink.html#GstFileSink-struct"/>
     <keyword type="property" name="The &quot;location&quot; property" link="gstreamer-plugins-filesink.html#GstFileSink--location"/>
     <keyword type="property" name="The &quot;buffer-mode&quot; property" link="gstreamer-plugins-filesink.html#GstFileSink--buffer-mode"/>
@@ -94,7 +98,7 @@
     <keyword type="property" name="The &quot;check-imperfect-timestamp&quot; property" link="gstreamer-plugins-identity.html#GstIdentity--check-imperfect-timestamp"/>
     <keyword type="property" name="The &quot;signal-handoffs&quot; property" link="gstreamer-plugins-identity.html#GstIdentity--signal-handoffs"/>
     <keyword type="signal" name="The &quot;handoff&quot; signal" link="gstreamer-plugins-identity.html#GstIdentity-handoff"/>
-    <keyword type="" name="" link="gstreamer-plugins-multiqueue.html#id503010"/>
+    <keyword type="" name="" link="gstreamer-plugins-multiqueue.html#id552509"/>
     <keyword type="struct" name="GstMultiQueue" link="gstreamer-plugins-multiqueue.html#GstMultiQueue-struct"/>
     <keyword type="property" name="The &quot;extra-size-buffers&quot; property" link="gstreamer-plugins-multiqueue.html#GstMultiQueue--extra-size-buffers"/>
     <keyword type="property" name="The &quot;extra-size-bytes&quot; property" link="gstreamer-plugins-multiqueue.html#GstMultiQueue--extra-size-bytes"/>
@@ -118,6 +122,7 @@
     <keyword type="property" name="The &quot;min-threshold-buffers&quot; property" link="gstreamer-plugins-queue.html#GstQueue--min-threshold-buffers"/>
     <keyword type="property" name="The &quot;min-threshold-bytes&quot; property" link="gstreamer-plugins-queue.html#GstQueue--min-threshold-bytes"/>
     <keyword type="property" name="The &quot;min-threshold-time&quot; property" link="gstreamer-plugins-queue.html#GstQueue--min-threshold-time"/>
+    <keyword type="property" name="The &quot;silent&quot; property" link="gstreamer-plugins-queue.html#GstQueue--silent"/>
     <keyword type="signal" name="The &quot;overrun&quot; signal" link="gstreamer-plugins-queue.html#GstQueue-overrun"/>
     <keyword type="signal" name="The &quot;running&quot; signal" link="gstreamer-plugins-queue.html#GstQueue-running"/>
     <keyword type="signal" name="The &quot;underrun&quot; signal" link="gstreamer-plugins-queue.html#GstQueue-underrun"/>
@@ -136,6 +141,8 @@
     <keyword type="property" name="The &quot;use-buffering&quot; property" link="gstreamer-plugins-queue2.html#GstQueue2--use-buffering"/>
     <keyword type="property" name="The &quot;use-rate-estimate&quot; property" link="gstreamer-plugins-queue2.html#GstQueue2--use-rate-estimate"/>
     <keyword type="property" name="The &quot;temp-remove&quot; property" link="gstreamer-plugins-queue2.html#GstQueue2--temp-remove"/>
+    <keyword type="property" name="The &quot;ring-buffer-max-size&quot; property" link="gstreamer-plugins-queue2.html#GstQueue2--ring-buffer-max-size"/>
+    <keyword type="" name="Example launch line" link="gstreamer-plugins-tee.html#id555335"/>
     <keyword type="struct" name="GstTee" link="gstreamer-plugins-tee.html#GstTee-struct"/>
     <keyword type="enum" name="enum GstTeePullMode" link="gstreamer-plugins-tee.html#GstTeePullMode"/>
     <keyword type="property" name="The &quot;has-chain&quot; property" link="gstreamer-plugins-tee.html#GstTee--has-chain"/>

@@ -45,7 +45,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(libgstpbutils_@GST_MAJORMINOR@include_HEADERS) \
-	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(noinst_HEADERS) $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/gstpluginsbaseversion.h.in \
 	$(top_srcdir)/common/gst-glib-gen.mak
 @HAVE_INTROSPECTION_TRUE@am__append_1 = $(BUILT_GIRSOURCES) $(typelibs_DATA)
 subdir = gst-libs/gst/pbutils
@@ -67,6 +68,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-function.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -89,7 +91,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = gstpluginsbaseversion.h
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -118,16 +120,20 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(girdir)" \
 	"$(DESTDIR)$(libgstpbutils_@GST_MAJORMINOR@includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-libgstpbutils_@GST_MAJORMINOR@_la_DEPENDENCIES =  \
+libgstpbutils_@GST_MAJORMINOR@_la_DEPENDENCIES = $(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MAJORMINOR@.la \
 	$(am__DEPENDENCIES_1)
 am_libgstpbutils_@GST_MAJORMINOR@_la_OBJECTS =  \
+	libgstpbutils_@GST_MAJORMINOR@_la-gstpluginsbaseversion.lo \
 	libgstpbutils_@GST_MAJORMINOR@_la-pbutils.lo \
+	libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.lo \
 	libgstpbutils_@GST_MAJORMINOR@_la-descriptions.lo \
 	libgstpbutils_@GST_MAJORMINOR@_la-install-plugins.lo \
-	libgstpbutils_@GST_MAJORMINOR@_la-missing-plugins.lo
-am__objects_1 =  \
-	libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.lo
-nodist_libgstpbutils_@GST_MAJORMINOR@_la_OBJECTS = $(am__objects_1)
+	libgstpbutils_@GST_MAJORMINOR@_la-missing-plugins.lo \
+	libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.lo \
+	libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer-types.lo
+nodist_libgstpbutils_@GST_MAJORMINOR@_la_OBJECTS =  \
+	libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.lo \
+	libgstpbutils_@GST_MAJORMINOR@_la-pbutils-marshal.lo
 libgstpbutils_@GST_MAJORMINOR@_la_OBJECTS =  \
 	$(am_libgstpbutils_@GST_MAJORMINOR@_la_OBJECTS) \
 	$(nodist_libgstpbutils_@GST_MAJORMINOR@_la_OBJECTS)
@@ -169,7 +175,8 @@ SOURCES = $(libgstpbutils_@GST_MAJORMINOR@_la_SOURCES) \
 DIST_SOURCES = $(libgstpbutils_@GST_MAJORMINOR@_la_SOURCES)
 DATA = $(gir_DATA) $(typelibs_DATA)
 HEADERS = $(libgstpbutils_@GST_MAJORMINOR@include_HEADERS) \
-	$(nodist_libgstpbutils_@GST_MAJORMINOR@include_HEADERS)
+	$(nodist_libgstpbutils_@GST_MAJORMINOR@include_HEADERS) \
+	$(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -274,6 +281,7 @@ GST_OPTION_CFLAGS = @GST_OPTION_CFLAGS@
 GST_OPTION_CXXFLAGS = @GST_OPTION_CXXFLAGS@
 GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
+GST_PKG_CONFIG_PATH = @GST_PKG_CONFIG_PATH@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
@@ -338,6 +346,7 @@ OBJEXT = @OBJEXT@
 OGG_CFLAGS = @OGG_CFLAGS@
 OGG_LIBS = @OGG_LIBS@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -459,46 +468,63 @@ top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = libgstpbutils-@GST_MAJORMINOR@.la
 headers_pbutils = \
 	pbutils.h         \
+	codec-utils.h     \
 	descriptions.h    \
 	install-plugins.h \
-	missing-plugins.h
+	missing-plugins.h \
+	gstdiscoverer.h
 
 
 # variables used for enum/marshal generation
 glib_enum_headers = $(headers_pbutils)
-glib_enum_define = GST_INSTALL
-glib_gen_prefix = gst_install
+glib_enum_define = PB_UTILS
+glib_gen_prefix = pbutils
 glib_gen_basename = pbutils
-built_sources = \
-	pbutils-enumtypes.c
-
-built_headers = \
-	pbutils-enumtypes.h
+built_headers_configure = \
+	gstpluginsbaseversion.h
 
 libgstpbutils_@GST_MAJORMINOR@_la_SOURCES = \
+	gstpluginsbaseversion.c \
 	pbutils.c         \
+	codec-utils.c     \
 	descriptions.c    \
 	install-plugins.c \
-	missing-plugins.c
+	missing-plugins.c \
+	gstdiscoverer.c   \
+	gstdiscoverer-types.c
 
 nodist_libgstpbutils_@GST_MAJORMINOR@_la_SOURCES = \
-	$(built_sources)
+	pbutils-enumtypes.c	\
+	pbutils-marshal.c
 
 libgstpbutils_@GST_MAJORMINOR@includedir = $(includedir)/gstreamer-@GST_MAJORMINOR@/gst/pbutils
 libgstpbutils_@GST_MAJORMINOR@include_HEADERS = \
 	$(headers_pbutils)
 
 nodist_libgstpbutils_@GST_MAJORMINOR@include_HEADERS = \
+	$(built_headers_configure) \
 	pbutils-enumtypes.h
 
-libgstpbutils_@GST_MAJORMINOR@_la_LIBADD = $(GST_LIBS)
+noinst_HEADERS = \
+	pbutils-private.h
+
+EXTRA_DIST = pbutils-marshal.list
+libgstpbutils_@GST_MAJORMINOR@_la_LIBADD = \
+  $(top_builddir)/gst-libs/gst/video/libgstvideo-@GST_MAJORMINOR@.la \
+  $(GST_LIBS)
+
 libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
 libgstpbutils_@GST_MAJORMINOR@_la_LDFLAGS = $(GST_LIB_LDFLAGS) $(GST_ALL_LDFLAGS) $(GST_LT_LDFLAGS)
 BUILT_SOURCES = \
-	$(built_sources) \
-	$(built_headers)
+	pbutils-enumtypes.c \
+	pbutils-enumtypes.h \
+	pbutils-marshal.c   \
+	pbutils-marshal.h
 
 CLEANFILES = $(BUILT_SOURCES) $(am__append_1)
+
+# DISTCLEANFILES is for files generated by configure
+DISTCLEANFILES = $(built_headers_configure)
 enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
 @HAVE_INTROSPECTION_TRUE@BUILT_GIRSOURCES = GstPbutils-@GST_MAJORMINOR@.gir
 @HAVE_INTROSPECTION_TRUE@gir_headers = $(patsubst %,$(srcdir)/%, \
@@ -555,6 +581,8 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+gstpluginsbaseversion.h: $(top_builddir)/config.status $(srcdir)/gstpluginsbaseversion.h.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 install-libLTLIBRARIES: $(lib_LTLIBRARIES)
 	@$(NORMAL_INSTALL)
 	test -z "$(libdir)" || $(MKDIR_P) "$(DESTDIR)$(libdir)"
@@ -595,10 +623,15 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-descriptions.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer-types.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstpluginsbaseversion.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-install-plugins.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-missing-plugins.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils-marshal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils.Plo@am__quote@
 
 .c.o:
@@ -625,6 +658,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
+libgstpbutils_@GST_MAJORMINOR@_la-gstpluginsbaseversion.lo: gstpluginsbaseversion.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstpbutils_@GST_MAJORMINOR@_la-gstpluginsbaseversion.lo -MD -MP -MF $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstpluginsbaseversion.Tpo -c -o libgstpbutils_@GST_MAJORMINOR@_la-gstpluginsbaseversion.lo `test -f 'gstpluginsbaseversion.c' || echo '$(srcdir)/'`gstpluginsbaseversion.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstpluginsbaseversion.Tpo $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstpluginsbaseversion.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstpluginsbaseversion.c' object='libgstpbutils_@GST_MAJORMINOR@_la-gstpluginsbaseversion.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstpbutils_@GST_MAJORMINOR@_la-gstpluginsbaseversion.lo `test -f 'gstpluginsbaseversion.c' || echo '$(srcdir)/'`gstpluginsbaseversion.c
+
 libgstpbutils_@GST_MAJORMINOR@_la-pbutils.lo: pbutils.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstpbutils_@GST_MAJORMINOR@_la-pbutils.lo -MD -MP -MF $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils.Tpo -c -o libgstpbutils_@GST_MAJORMINOR@_la-pbutils.lo `test -f 'pbutils.c' || echo '$(srcdir)/'`pbutils.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils.Tpo $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils.Plo
@@ -632,6 +673,14 @@ libgstpbutils_@GST_MAJORMINOR@_la-pbutils.lo: pbutils.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pbutils.c' object='libgstpbutils_@GST_MAJORMINOR@_la-pbutils.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstpbutils_@GST_MAJORMINOR@_la-pbutils.lo `test -f 'pbutils.c' || echo '$(srcdir)/'`pbutils.c
+
+libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.lo: codec-utils.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.lo -MD -MP -MF $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.Tpo -c -o libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.lo `test -f 'codec-utils.c' || echo '$(srcdir)/'`codec-utils.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.Tpo $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='codec-utils.c' object='libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.lo `test -f 'codec-utils.c' || echo '$(srcdir)/'`codec-utils.c
 
 libgstpbutils_@GST_MAJORMINOR@_la-descriptions.lo: descriptions.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstpbutils_@GST_MAJORMINOR@_la-descriptions.lo -MD -MP -MF $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-descriptions.Tpo -c -o libgstpbutils_@GST_MAJORMINOR@_la-descriptions.lo `test -f 'descriptions.c' || echo '$(srcdir)/'`descriptions.c
@@ -657,6 +706,22 @@ libgstpbutils_@GST_MAJORMINOR@_la-missing-plugins.lo: missing-plugins.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstpbutils_@GST_MAJORMINOR@_la-missing-plugins.lo `test -f 'missing-plugins.c' || echo '$(srcdir)/'`missing-plugins.c
 
+libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.lo: gstdiscoverer.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.lo -MD -MP -MF $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.Tpo -c -o libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.lo `test -f 'gstdiscoverer.c' || echo '$(srcdir)/'`gstdiscoverer.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.Tpo $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstdiscoverer.c' object='libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.lo `test -f 'gstdiscoverer.c' || echo '$(srcdir)/'`gstdiscoverer.c
+
+libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer-types.lo: gstdiscoverer-types.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer-types.lo -MD -MP -MF $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer-types.Tpo -c -o libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer-types.lo `test -f 'gstdiscoverer-types.c' || echo '$(srcdir)/'`gstdiscoverer-types.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer-types.Tpo $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer-types.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstdiscoverer-types.c' object='libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer-types.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer-types.lo `test -f 'gstdiscoverer-types.c' || echo '$(srcdir)/'`gstdiscoverer-types.c
+
 libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.lo: pbutils-enumtypes.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.lo -MD -MP -MF $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.Tpo -c -o libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.lo `test -f 'pbutils-enumtypes.c' || echo '$(srcdir)/'`pbutils-enumtypes.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.Tpo $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.Plo
@@ -664,6 +729,14 @@ libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.lo: pbutils-enumtypes.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pbutils-enumtypes.c' object='libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstpbutils_@GST_MAJORMINOR@_la-pbutils-enumtypes.lo `test -f 'pbutils-enumtypes.c' || echo '$(srcdir)/'`pbutils-enumtypes.c
+
+libgstpbutils_@GST_MAJORMINOR@_la-pbutils-marshal.lo: pbutils-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstpbutils_@GST_MAJORMINOR@_la-pbutils-marshal.lo -MD -MP -MF $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils-marshal.Tpo -c -o libgstpbutils_@GST_MAJORMINOR@_la-pbutils-marshal.lo `test -f 'pbutils-marshal.c' || echo '$(srcdir)/'`pbutils-marshal.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils-marshal.Tpo $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-pbutils-marshal.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pbutils-marshal.c' object='libgstpbutils_@GST_MAJORMINOR@_la-pbutils-marshal.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstpbutils_@GST_MAJORMINOR@_la-pbutils-marshal.lo `test -f 'pbutils-marshal.c' || echo '$(srcdir)/'`pbutils-marshal.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -864,6 +937,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1008,18 +1082,21 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 	@touch $@
 
 @HAVE_INTROSPECTION_TRUE@GstPbutils-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstpbutils-@GST_MAJORMINOR@.la
-@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(PKG_CONFIG_PATH):$(top_builddir)/pkgconfig" \
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstPbutils \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
 @HAVE_INTROSPECTION_TRUE@		$(gir_cincludes) \
 @HAVE_INTROSPECTION_TRUE@		-I$(top_srcdir)/gst-libs \
 @HAVE_INTROSPECTION_TRUE@		-I$(top_builddir)/gst-libs \
+@HAVE_INTROSPECTION_TRUE@		--add-include-path=$(srcdir)/../video \
 @HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
 @HAVE_INTROSPECTION_TRUE@		--library=libgstpbutils-0.10.la \
 @HAVE_INTROSPECTION_TRUE@		--include=Gst-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
 @HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-video-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--pkg-export gstreamer-pbutils-@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--output $@ \
 @HAVE_INTROSPECTION_TRUE@		$(gir_headers) \
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)
@@ -1027,6 +1104,7 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 @HAVE_INTROSPECTION_TRUE@%.typelib: %.gir $(INTROSPECTION_COMPILER)
 @HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)$(INTROSPECTION_COMPILER) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(srcdir) \
+@HAVE_INTROSPECTION_TRUE@		--includedir=$(srcdir)/../video \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)

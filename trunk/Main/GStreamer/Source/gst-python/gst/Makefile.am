@@ -80,9 +80,9 @@ GST_OVERRIDES = 		\
 	gstbase.override
 
 GST_DEFS = gst.defs gst-types.defs gst-extrafuncs.defs libs.defs base.defs
-CLEANFILES = gst.c
+CLEANFILES = gst.c __init__.pyc
 EXTRA_DIST += $(GST_DEFS) $(GST_OVERRIDES) gstversion.override.in
-gst.c: $(GST_DEFS) $(GST_OVERRIDES) $(GEN_FILES) gstversion.override
+gst.c: $(GST_DEFS) $(GST_OVERRIDES) $(GEN_FILES) gstversion.override __init__.py
 
 # GStreamer interfaces bindings
 interfaces_la_CFLAGS = $(common_cflags) $(GST_PLUGINS_BASE_CFLAGS)

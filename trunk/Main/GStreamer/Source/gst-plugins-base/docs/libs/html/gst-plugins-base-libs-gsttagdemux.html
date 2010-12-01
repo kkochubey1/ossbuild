@@ -49,7 +49,7 @@ enum                <a class="link" href="gst-plugins-base-libs-gsttagdemux.html
 <div class="refsect1" title="Description">
 <a name="gst-plugins-base-libs-gsttagdemux.description"></a><h2>Description</h2>
 <div class="refsect2" title="Deriving from GstTagDemux">
-<a name="id558996"></a><h3>Deriving from GstTagDemux</h3>
+<a name="id516160"></a><h3>Deriving from GstTagDemux</h3>
 <p>
 Provides a base class for demuxing tags at the beginning or end of a
 stream and handles things like typefinding, querying, seeking, and
@@ -107,7 +107,7 @@ Opaque <a class="link" href="gst-plugins-base-libs-gsttagdemux.html#GstTagDemux"
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html"><span class="type">GstElement</span></a> <em class="structfield"><code><a name="GstTagDemux.element"></a>element</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a> <em class="structfield"><code><a name="GstTagDemux.element"></a>element</code></em>;</span></p></td>
 <td>parent element
 </td>
 </tr></tbody>
@@ -157,19 +157,19 @@ for details about what subclasses need to override and do.
 <col align="left" valign="top">
 <tbody>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html#GstElementClass"><span class="type">GstElementClass</span></a> <em class="structfield"><code><a name="GstTagDemuxClass.parent-class"></a>parent_class</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html#GstElementClass"><span class="type">GstElementClass</span></a> <em class="structfield"><code><a name="GstTagDemuxClass.parent-class"></a>parent_class</code></em>;</span></p></td>
 <td>the parent class.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="GstTagDemuxClass.min-start-size"></a>min_start_size</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="GstTagDemuxClass.min-start-size"></a>min_start_size</code></em>;</span></p></td>
 <td>minimum size required to identify a tag at the start and
 determine its total size. Set to 0 if not interested in start tags.
 Subclasses should set this in their class_init function.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="GstTagDemuxClass.min-end-size"></a>min_end_size</code></em>;</span></p></td>
+<td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="GstTagDemuxClass.min-end-size"></a>min_end_size</code></em>;</span></p></td>
 <td>minimum size required to identify a tag at the end and
 determine its total size. Set to 0 if not interested in end tags.
 Subclasses should set this in their class_init function.

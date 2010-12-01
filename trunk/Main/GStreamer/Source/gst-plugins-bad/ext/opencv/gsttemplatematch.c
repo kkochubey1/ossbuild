@@ -63,6 +63,7 @@
 
 #include <gst/gst.h>
 
+#include "gstopencvutils.h"
 #include "gsttemplatematch.h"
 
 GST_DEBUG_CATEGORY_STATIC (gst_templatematch_debug);
@@ -90,13 +91,13 @@ enum
 static GstStaticPadTemplate sink_factory = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("video/x-raw-rgb")
+    GST_STATIC_CAPS (GST_VIDEO_CAPS_RGB)
     );
 
 static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
-    GST_STATIC_CAPS ("video/x-raw-rgb")
+    GST_STATIC_CAPS (GST_VIDEO_CAPS_RGB)
     );
 
 GST_BOILERPLATE (GstTemplateMatch, gst_templatematch, GstElement,
@@ -139,10 +140,8 @@ static void
 gst_templatematch_class_init (GstTemplateMatchClass * klass)
 {
   GObjectClass *gobject_class;
-  GstElementClass *gstelement_class;
 
   gobject_class = (GObjectClass *) klass;
-  gstelement_class = (GstElementClass *) klass;
 
   gobject_class->finalize = gst_templatematch_finalize;
   gobject_class->set_property = gst_templatematch_set_property;
