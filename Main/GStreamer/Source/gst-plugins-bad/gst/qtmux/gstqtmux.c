@@ -84,7 +84,7 @@
 #define off_t guint64
 #endif
 
-#ifdef _MSC_VER 
+#ifdef _MSC_VER
 #define ftruncate g_win32_ftruncate
 #endif
 
