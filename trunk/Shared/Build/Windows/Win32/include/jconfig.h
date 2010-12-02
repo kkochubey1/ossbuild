@@ -1,54 +1,61 @@
-/* jconfig.h.  Generated from jconfig.cfg by configure.  */
-/* jconfig.cfg --- source file edited by configure script */
-/* see jconfig.txt for explanations */
+/* jconfig.h.  Generated from jconfig.h.in by configure.  */
+/* Version ID for the JPEG library.
+ * Might be useful for tests like "#if JPEG_LIB_VERSION >= 60".
+ */
+#define JPEG_LIB_VERSION 80
 
+/* Support arithmetic encoding */
+#define C_ARITH_CODING_SUPPORTED 1
+
+/* Support arithmetic decoding */
+#define D_ARITH_CODING_SUPPORTED 1
+
+/* Define if your compiler supports prototypes */
 #define HAVE_PROTOTYPES 1
-#define HAVE_UNSIGNED_CHAR 1
-#define HAVE_UNSIGNED_SHORT 1
-/* #undef void */
-/* #undef const */
-/* #undef CHAR_IS_UNSIGNED */
+
+/* Define to 1 if you have the <stddef.h> header file. */
 #define HAVE_STDDEF_H 1
+
+/* Define to 1 if you have the <stdlib.h> header file. */
 #define HAVE_STDLIB_H 1
-#define HAVE_LOCALE_H 1
-/* #undef NEED_BSD_STRINGS */
-/* #undef NEED_SYS_TYPES_H */
-/* #undef NEED_FAR_POINTERS */
-/* #undef NEED_SHORT_EXTERNAL_NAMES */
-/* Define this if you get warnings about undefined structures. */
+
+/* Define to 1 if the system has the type `unsigned char'. */
+#define HAVE_UNSIGNED_CHAR 1
+
+/* Define to 1 if the system has the type `unsigned short'. */
+#define HAVE_UNSIGNED_SHORT 1
+
+/* Define if you want use complete types */
 /* #undef INCOMPLETE_TYPES_BROKEN */
 
-/* Define "boolean" as unsigned char, not int, on Windows systems. */
-#ifdef _WIN32
-#ifndef __RPCNDR_H__		/* don't conflict if rpcndr.h already read */
-typedef unsigned char boolean;
-#endif
-#define HAVE_BOOLEAN		/* prevent jmorecfg.h from redefining it */
-#endif
+/* Define if you have BSD-like bzero and bcopy */
+/* #undef NEED_BSD_STRINGS */
 
-#ifdef JPEG_INTERNALS
+/* Define if you need short function names */
+/* #undef NEED_SHORT_EXTERNAL_NAMES */
 
+/* Define if you have sys/types.h */
+#define NEED_SYS_TYPES_H 1
+
+/* Define if shift is unsigned */
 /* #undef RIGHT_SHIFT_IS_UNSIGNED */
-#define INLINE __inline__
-/* These are for configuring the JPEG memory manager. */
-/* #undef DEFAULT_MAX_MEM */
-/* #undef NO_MKTEMP */
 
-#endif /* JPEG_INTERNALS */
+/* Use accelerated SIMD routines. */
+#define WITH_SIMD 1
 
-#ifdef JPEG_CJPEG_DJPEG
+/* Define to 1 if type `char' is unsigned and you are not using gcc.  */
+#ifndef __CHAR_UNSIGNED__
+/* # undef __CHAR_UNSIGNED__ */
+#endif
 
-#define BMP_SUPPORTED		/* BMP image file format */
-#define GIF_SUPPORTED		/* GIF image file format */
-#define PPM_SUPPORTED		/* PBMPLUS PPM/PGM image file format */
-/* #undef RLE_SUPPORTED */
-#define TARGA_SUPPORTED		/* Targa image file format */
+/* Define to empty if `const' does not conform to ANSI C. */
+/* #undef const */
 
-/* #undef TWO_FILE_COMMANDLINE */
-/* #undef NEED_SIGNAL_CATCHER */
-/* #undef DONT_USE_B_MODE */
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+/* #undef inline */
+#endif
 
-/* Define this if you want percent-done progress reports from cjpeg/djpeg. */
-/* #undef PROGRESS_REPORT */
-
-#endif /* JPEG_CJPEG_DJPEG */
+/* Define to `unsigned int' if <sys/types.h> does not define. */
+/* #undef size_t */

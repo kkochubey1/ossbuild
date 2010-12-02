@@ -395,24 +395,56 @@ fi
 #fi
 
 #libjpeg
-if [ ! -f "$BinDir/lib${Prefix}jpeg-8.dll" ]; then 
-	unpack_gzip_and_move "jpegsrc.tar.gz" "$PKG_DIR_LIBJPEG"
-	mkdir_and_move "$IntDir/libjpeg"
-	
-	CFLAGS="$CFLAGS -O2"
+#if [ ! -f "$BinDir/lib${Prefix}jpeg-8.dll" ]; then 
+#	unpack_gzip_and_move "jpegsrc.tar.gz" "$PKG_DIR_LIBJPEG"
+#	mkdir_and_move "$IntDir/libjpeg"
+#	
+#	CFLAGS="$CFLAGS -O2"
+#	
+#	#Configure, compile, and install
+#	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
+#	change_libname_spec
+#	make ${MAKE_PARALLEL_FLAGS}
+#	make install
+#	
+#	pexports "$BinDir/lib${Prefix}jpeg-8.dll" > in.def
+#	sed -e '/LIBRARY lib${Prefix}jpeg/d' -e 's/DATA//g' in.def > in-mod.def
+#	$MSLIB /name:lib${Prefix}jpeg-8.dll /out:jpeg.lib /machine:$MSLibMachine /def:in-mod.def
+#	move_files_to_dir "*.exp *.lib" "$LibDir"
+#	
+#	update_library_names_windows "lib${Prefix}jpeg.dll.a" "libjpeg.la"
+#	
+#	reset_flags
+#fi
+
+#libjpeg-turbo
+if [ ! -f "$BinDir/libjpeg-8.dll" ]; then 
+	unpack_gzip_and_move "libjpeg-turbo.tar.gz" "$PKG_DIR_LIBJPEG_TURBO"
+	mkdir_and_move "$IntDir/libjpeg-turbo"
 	
 	#Configure, compile, and install
-	$PKG_DIR/configure --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
-	change_libname_spec
+	CFLAGS=""
+	CPPFLAGS=""
+	LDFLAGS=""
+	
+	cd "$PKG_DIR"
+	autoreconf -fiv
+
+	cd "$IntDir/libjpeg-turbo"
+	$PKG_DIR/configure --with-jpeg8 --disable-static --enable-shared --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	make ${MAKE_PARALLEL_FLAGS}
 	make install
-	
-	pexports "$BinDir/lib${Prefix}jpeg-8.dll" > in.def
-	sed -e '/LIBRARY lib${Prefix}jpeg/d' -e 's/DATA//g' in.def > in-mod.def
-	$MSLIB /name:lib${Prefix}jpeg-8.dll /out:jpeg.lib /machine:$MSLibMachine /def:in-mod.def
+
+	pexports "$BinDir/libjpeg-8.dll" > in.def
+	sed -e '/LIBRARY libjpeg/d' -e 's/DATA//g' in.def > in-mod.def
+	$MSLIB /name:libjpeg-8.dll /out:jpeg.lib /machine:$MSLibMachine /def:in-mod.def
 	move_files_to_dir "*.exp *.lib" "$LibDir"
 	
-	update_library_names_windows "lib${Prefix}jpeg.dll.a" "libjpeg.la"
+	cd "$IntDir/libjpeg-turbo"
+	pexports "$BinDir/libturbojpeg.dll" > in.def
+	sed -e '/LIBRARY libturbojpeg/d' -e 's/DATA//g' in.def > in-mod.def
+	$MSLIB /name:libturbojpeg.dll /out:turbojpeg.lib /machine:$MSLibMachine /def:in-mod.def
+	move_files_to_dir "*.exp *.lib" "$LibDir"
 	
 	reset_flags
 fi

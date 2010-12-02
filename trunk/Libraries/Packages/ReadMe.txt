@@ -26,6 +26,7 @@ expat                   -       2.0.1           -       http://sourceforge.net/p
 libxml2                 -       2.7.7           -       http://xmlsoft.org/sources/libxml2-2.7.7.tar.gz
 libxslt                 -       1.1.26          -       http://xmlsoft.org/sources/libxslt-1.1.26.tar.gz
 libjpeg                 -       8.0.0b          -       http://www.ijg.org/files/jpegsrc.v8b.tar.gz
+libjpeg-turbo           -       1.0.1 (r305)    -       http://libjpeg-turbo.svn.sourceforge.net/viewvc/libjpeg-turbo/trunk.tar.gz?view=tar (Typically http://downloads.sourceforge.net/project/libjpeg-turbo/1.0.1/libjpeg-turbo-1.0.1.tar.gz?use_mirror=surfnet)
 openjpeg                -       1.3.0           -       http://www.openjpeg.org/openjpeg_v1_3.tar.gz
 libpng                  -       1.4.4           -       http://download.sourceforge.net/libpng/libpng-1.4.4.tar.gz
 libtiff                 -       3.9.4           -       http://download.osgeo.org/libtiff/tiff-3.9.4.tar.gz
