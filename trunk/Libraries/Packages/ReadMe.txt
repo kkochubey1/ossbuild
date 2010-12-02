@@ -29,7 +29,7 @@ libjpeg                 -       8.0.0b          -       http://www.ijg.org/files
 openjpeg                -       1.3.0           -       http://www.openjpeg.org/openjpeg_v1_3.tar.gz
 libpng                  -       1.4.4           -       http://download.sourceforge.net/libpng/libpng-1.4.4.tar.gz
 libtiff                 -       3.9.4           -       http://download.osgeo.org/libtiff/tiff-3.9.4.tar.gz
-glib                    -       2.26.0          -       http://ftp.gnome.org/pub/gnome/sources/glib/2.26/glib-2.26.0.tar.bz2
+glib                    -       2.26.1          -       http://ftp.gnome.org/pub/gnome/sources/glib/2.26/glib-2.26.1.tar.bz2
 atk                     -       1.32.0          -       http://ftp.gnome.org/pub/gnome/sources/atk/1.32/atk-1.32.0.tar.bz2
 openssl                 -       0.9.8j          -       http://www.openssl.org/source/openssl-0.9.8j.tar.gz
 libgpg-error            -       1.9.0           -       http://mirror.tje.me.uk/pub/mirrors/ftp.gnupg.org/libgpg-error/libgpg-error-1.9.tar.bz2
@@ -39,7 +39,7 @@ gmp                     -       5.0.1           -       http://ftp.gnu.org/gnu/g
 nettle                  -       2.1.0           -       http://www.lysator.liu.se/~nisse/archive/nettle-2.1.tar.gz
 gnutls                  -       2.10.2          -       http://ftp.gnu.org/pub/gnu/gnutls/gnutls-2.10.2.tar.bz2
 curl                    -       7.21.1          -       http://curl.haxx.se/download/curl-7.21.1.tar.bz2
-libsoup                 -       2.32.0          -       http://ftp.gnome.org/pub/gnome/sources/libsoup/2.32/libsoup-2.32.0.tar.bz2
+libsoup                 -       2.32.2          -       http://ftp.gnome.org/pub/gnome/sources/libsoup/2.32/libsoup-2.32.2.tar.bz2
 libneon                 -       0.29.3          -       http://www.webdav.org/neon/neon-0.29.3.tar.gz
 freetype                -       2.4.2           -       http://download-mirror.savannah.gnu.org/releases/freetype/freetype-2.4.2.tar.bz2
 fontconfig              -       2.8.0           -       http://fontconfig.org/release/fontconfig-2.8.0.tar.gz
