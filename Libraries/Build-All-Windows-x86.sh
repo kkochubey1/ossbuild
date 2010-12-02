@@ -505,7 +505,7 @@ if [ ! -f "$LibDir/libvpx.a" ]; then
 fi
 
 #glib
-if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then 
+if [ ! -f "$BinDir/libglib-2.0-0.dll" ]; then 
 	unpack_bzip2_and_move "glib.tar.bz2" "$PKG_DIR_GLIB"
 	mkdir_and_move "$IntDir/glib"
 	
@@ -516,8 +516,7 @@ if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then
 	CC="$gcc -mtune=i686 -mthreads" \
 	LDFLAGS="$LDFLAGS -Wl,--enable-auto-image-base" \
 	CFLAGS="$CFLAGS -O2" \
-	$PKG_DIR/configure --enable-shared --enable-silent-rules --disable-gtk-doc --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
-	change_libname_spec
+	$PKG_DIR/configure --help --enable-shared --enable-silent-rules --disable-gtk-doc --host=$Host --build=$Build --prefix=$InstallDir --libexecdir=$BinDir --bindir=$BinDir --libdir=$LibDir --includedir=$IncludeDir
 	
 	#This errors out when attempting to run glib-genmarshal for the gobject lib.
 	#This is expected and will hopefully be corrected in the future. As a result, 
@@ -535,19 +534,19 @@ if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then
 	setup_ms_build_env_path
 	
 	cd "$IntDir/glib/gio/.libs"
-	$MSLIB /name:lib${Prefix}gio-2.0-0.dll /out:gio-2.0.lib /machine:$MSLibMachine /def:lib${Prefix}gio-2.0-0.dll.def
+	$MSLIB /name:libgio-2.0-0.dll /out:gio-2.0.lib /machine:$MSLibMachine /def:libgio-2.0-0.dll.def
 	move_files_to_dir "*.exp *.lib" "$LibDir"
 	cd "../../glib/.libs"
-	$MSLIB /name:lib${Prefix}glib-2.0-0.dll /out:glib-2.0.lib /machine:$MSLibMachine /def:lib${Prefix}glib-2.0-0.dll.def
+	$MSLIB /name:libglib-2.0-0.dll /out:glib-2.0.lib /machine:$MSLibMachine /def:libglib-2.0-0.dll.def
 	move_files_to_dir "*.exp *.lib" "$LibDir"
 	cd "../../gmodule/.libs"
-	$MSLIB /name:lib${Prefix}gmodule-2.0-0.dll /out:gmodule-2.0.lib /machine:$MSLibMachine /def:lib${Prefix}gmodule-2.0-0.dll.def
+	$MSLIB /name:libgmodule-2.0-0.dll /out:gmodule-2.0.lib /machine:$MSLibMachine /def:libgmodule-2.0-0.dll.def
 	move_files_to_dir "*.exp *.lib" "$LibDir"
 	cd "../../gobject/.libs"
-	$MSLIB /name:lib${Prefix}gobject-2.0-0.dll /out:gobject-2.0.lib /machine:$MSLibMachine /def:lib${Prefix}gobject-2.0-0.dll.def
+	$MSLIB /name:libgobject-2.0-0.dll /out:gobject-2.0.lib /machine:$MSLibMachine /def:libgobject-2.0-0.dll.def
 	move_files_to_dir "*.exp *.lib" "$LibDir"
 	cd "../../gthread/.libs"
-	$MSLIB /name:lib${Prefix}gthread-2.0-0.dll /out:gthread-2.0.lib /machine:$MSLibMachine /def:lib${Prefix}gthread-2.0-0.dll.def
+	$MSLIB /name:libgthread-2.0-0.dll /out:gthread-2.0.lib /machine:$MSLibMachine /def:libgthread-2.0-0.dll.def
 	move_files_to_dir "*.exp *.lib" "$LibDir"
 	
 	cd "$LibDir"
@@ -556,12 +555,6 @@ if [ ! -f "$BinDir/lib${Prefix}glib-2.0-0.dll" ]; then
 	#This is silly - but glib doesn't copy this config file even when it's needed.
 	#See bug 592773 for more information: http://bugzilla.gnome.org/show_bug.cgi?id=592773
 	cp -f "$LibDir/glib-2.0/include/glibconfig.h" "$IncludeDir/glib-2.0/glibconfig.h"
-	
-	update_library_names_windows "lib${Prefix}glib-2.0.dll.a" "libglib-2.0.la"
-	update_library_names_windows "lib${Prefix}gio-2.0.dll.a" "libgio-2.0.la"
-	update_library_names_windows "lib${Prefix}gmodule-2.0.dll.a" "libgmodule-2.0.la"
-	update_library_names_windows "lib${Prefix}gobject-2.0.dll.a" "libgobject-2.0.la"
-	update_library_names_windows "lib${Prefix}gthread-2.0.dll.a" "libgthread-2.0.la"
 	
 	reset_flags
 fi
