@@ -35,8 +35,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@USE_GDK_PIXBUF_TRUE@am__append_1 = libgstgdkpixbuf.la
-@USE_GDK_PIXBUF3_TRUE@am__append_2 = libgstgdkpixbuf3.la
 subdir = ext/gdk_pixbuf
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -59,6 +57,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-feature.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -120,20 +119,6 @@ libgstgdkpixbuf_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgstgdkpixbuf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link \
 	$(CCLD) $(libgstgdkpixbuf_la_CFLAGS) $(CFLAGS) \
 	$(libgstgdkpixbuf_la_LDFLAGS) $(LDFLAGS) -o $@
-@USE_GDK_PIXBUF_TRUE@am_libgstgdkpixbuf_la_rpath = -rpath $(plugindir)
-libgstgdkpixbuf3_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
-am_libgstgdkpixbuf3_la_OBJECTS = libgstgdkpixbuf3_la-gstgdkpixbuf.lo \
-	libgstgdkpixbuf3_la-gstgdkpixbufsink.lo \
-	libgstgdkpixbuf3_la-pixbufscale.lo
-libgstgdkpixbuf3_la_OBJECTS = $(am_libgstgdkpixbuf3_la_OBJECTS)
-libgstgdkpixbuf3_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
-	$(libgstgdkpixbuf3_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(libgstgdkpixbuf3_la_CFLAGS) $(CFLAGS) \
-	$(libgstgdkpixbuf3_la_LDFLAGS) $(LDFLAGS) -o $@
-@USE_GDK_PIXBUF3_TRUE@am_libgstgdkpixbuf3_la_rpath = -rpath \
-@USE_GDK_PIXBUF3_TRUE@	$(plugindir)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -160,9 +145,8 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(libgstgdkpixbuf_la_SOURCES) $(libgstgdkpixbuf3_la_SOURCES)
-DIST_SOURCES = $(libgstgdkpixbuf_la_SOURCES) \
-	$(libgstgdkpixbuf3_la_SOURCES)
+SOURCES = $(libgstgdkpixbuf_la_SOURCES)
+DIST_SOURCES = $(libgstgdkpixbuf_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -236,8 +220,6 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
-GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
-GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -273,6 +255,7 @@ GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
@@ -344,6 +327,7 @@ OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -484,7 +468,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-plugin_LTLIBRARIES = $(am__append_1) $(am__append_2)
+plugin_LTLIBRARIES = libgstgdkpixbuf.la
 libgstgdkpixbuf_la_SOURCES = gstgdkpixbuf.c gstgdkpixbufsink.c pixbufscale.c
 libgstgdkpixbuf_la_CFLAGS = \
 	$(GST_PLUGINS_BASE_CFLAGS) \
@@ -498,24 +482,11 @@ libgstgdkpixbuf_la_LIBADD = \
 
 libgstgdkpixbuf_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 libgstgdkpixbuf_la_LIBTOOLFLAGS = --tag=disable-static
-libgstgdkpixbuf3_la_SOURCES = gstgdkpixbuf.c gstgdkpixbufsink.c pixbufscale.c
-libgstgdkpixbuf3_la_CFLAGS = \
-	$(GST_PLUGINS_BASE_CFLAGS) \
-	$(GST_BASE_CFLAGS) \
-	$(GST_CFLAGS) $(GDK_PIXBUF3_CFLAGS) \
-	-DGDK_PIXBUF3=1
-
-libgstgdkpixbuf3_la_LIBADD = \
-	$(GST_PLUGINS_BASE_LIBS) -lgstvideo-$(GST_MAJORMINOR) \
-	$(GST_BASE_LIBS) \
-	$(GST_LIBS) $(GDK_PIXBUF3_LIBS)
-
-libgstgdkpixbuf3_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
-libgstgdkpixbuf3_la_LIBTOOLFLAGS = --tag=disable-static
 noinst_HEADERS = \
 	gstgdkpixbuf.h \
 	gstgdkpixbufsink.h \
-	pixbufscale.h
+	pixbufscale.h \
+	gstgdkanimation.h
 
 all: all-am
 
@@ -583,9 +554,7 @@ clean-pluginLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libgstgdkpixbuf.la: $(libgstgdkpixbuf_la_OBJECTS) $(libgstgdkpixbuf_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libgstgdkpixbuf_la_LINK) $(am_libgstgdkpixbuf_la_rpath) $(libgstgdkpixbuf_la_OBJECTS) $(libgstgdkpixbuf_la_LIBADD) $(LIBS)
-libgstgdkpixbuf3.la: $(libgstgdkpixbuf3_la_OBJECTS) $(libgstgdkpixbuf3_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(libgstgdkpixbuf3_la_LINK) $(am_libgstgdkpixbuf3_la_rpath) $(libgstgdkpixbuf3_la_OBJECTS) $(libgstgdkpixbuf3_la_LIBADD) $(LIBS)
+	$(AM_V_CCLD)$(libgstgdkpixbuf_la_LINK) -rpath $(plugindir) $(libgstgdkpixbuf_la_OBJECTS) $(libgstgdkpixbuf_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -593,9 +562,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstgdkpixbuf3_la-gstgdkpixbuf.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstgdkpixbuf3_la-gstgdkpixbufsink.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstgdkpixbuf3_la-pixbufscale.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstgdkpixbuf_la-gstgdkpixbuf.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstgdkpixbuf_la-gstgdkpixbufsink.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstgdkpixbuf_la-pixbufscale.Plo@am__quote@
@@ -647,30 +613,6 @@ libgstgdkpixbuf_la-pixbufscale.lo: pixbufscale.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pixbufscale.c' object='libgstgdkpixbuf_la-pixbufscale.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgdkpixbuf_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgdkpixbuf_la_CFLAGS) $(CFLAGS) -c -o libgstgdkpixbuf_la-pixbufscale.lo `test -f 'pixbufscale.c' || echo '$(srcdir)/'`pixbufscale.c
-
-libgstgdkpixbuf3_la-gstgdkpixbuf.lo: gstgdkpixbuf.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgdkpixbuf3_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgdkpixbuf3_la_CFLAGS) $(CFLAGS) -MT libgstgdkpixbuf3_la-gstgdkpixbuf.lo -MD -MP -MF $(DEPDIR)/libgstgdkpixbuf3_la-gstgdkpixbuf.Tpo -c -o libgstgdkpixbuf3_la-gstgdkpixbuf.lo `test -f 'gstgdkpixbuf.c' || echo '$(srcdir)/'`gstgdkpixbuf.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgdkpixbuf3_la-gstgdkpixbuf.Tpo $(DEPDIR)/libgstgdkpixbuf3_la-gstgdkpixbuf.Plo
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstgdkpixbuf.c' object='libgstgdkpixbuf3_la-gstgdkpixbuf.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgdkpixbuf3_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgdkpixbuf3_la_CFLAGS) $(CFLAGS) -c -o libgstgdkpixbuf3_la-gstgdkpixbuf.lo `test -f 'gstgdkpixbuf.c' || echo '$(srcdir)/'`gstgdkpixbuf.c
-
-libgstgdkpixbuf3_la-gstgdkpixbufsink.lo: gstgdkpixbufsink.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgdkpixbuf3_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgdkpixbuf3_la_CFLAGS) $(CFLAGS) -MT libgstgdkpixbuf3_la-gstgdkpixbufsink.lo -MD -MP -MF $(DEPDIR)/libgstgdkpixbuf3_la-gstgdkpixbufsink.Tpo -c -o libgstgdkpixbuf3_la-gstgdkpixbufsink.lo `test -f 'gstgdkpixbufsink.c' || echo '$(srcdir)/'`gstgdkpixbufsink.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgdkpixbuf3_la-gstgdkpixbufsink.Tpo $(DEPDIR)/libgstgdkpixbuf3_la-gstgdkpixbufsink.Plo
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstgdkpixbufsink.c' object='libgstgdkpixbuf3_la-gstgdkpixbufsink.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgdkpixbuf3_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgdkpixbuf3_la_CFLAGS) $(CFLAGS) -c -o libgstgdkpixbuf3_la-gstgdkpixbufsink.lo `test -f 'gstgdkpixbufsink.c' || echo '$(srcdir)/'`gstgdkpixbufsink.c
-
-libgstgdkpixbuf3_la-pixbufscale.lo: pixbufscale.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgdkpixbuf3_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgdkpixbuf3_la_CFLAGS) $(CFLAGS) -MT libgstgdkpixbuf3_la-pixbufscale.lo -MD -MP -MF $(DEPDIR)/libgstgdkpixbuf3_la-pixbufscale.Tpo -c -o libgstgdkpixbuf3_la-pixbufscale.lo `test -f 'pixbufscale.c' || echo '$(srcdir)/'`pixbufscale.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgdkpixbuf3_la-pixbufscale.Tpo $(DEPDIR)/libgstgdkpixbuf3_la-pixbufscale.Plo
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pixbufscale.c' object='libgstgdkpixbuf3_la-pixbufscale.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgdkpixbuf3_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgdkpixbuf3_la_CFLAGS) $(CFLAGS) -c -o libgstgdkpixbuf3_la-pixbufscale.lo `test -f 'pixbufscale.c' || echo '$(srcdir)/'`pixbufscale.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

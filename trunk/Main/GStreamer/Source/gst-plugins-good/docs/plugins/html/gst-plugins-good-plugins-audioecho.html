@@ -47,21 +47,21 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-audioecho.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseTransform.html">GstBaseTransform</a>
-                     +----<a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilter">GstAudioFilter</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseTransform.html">GstBaseTransform</a>
+                     +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilter">GstAudioFilter</a>
                            +----GstAudioEcho
 </pre>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-good-plugins-audioecho.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-good-plugins-audioecho.html#GstAudioEcho--delay" title='The "delay" property'>delay</a>"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-audioecho.html#GstAudioEcho--feedback" title='The "feedback" property'>feedback</a>"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-audioecho.html#GstAudioEcho--intensity" title='The "intensity" property'>intensity</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-audioecho.html#GstAudioEcho--max-delay" title='The "max-delay" property'>max-delay</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-audioecho.html#GstAudioEcho--delay" title='The "delay" property'>delay</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-audioecho.html#GstAudioEcho--feedback" title='The "feedback" property'>feedback</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-audioecho.html#GstAudioEcho--intensity" title='The "intensity" property'>intensity</a>"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-audioecho.html#GstAudioEcho--max-delay" title='The "max-delay" property'>max-delay</a>"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -81,7 +81,7 @@ will be used. This can only be set before going to the PAUSED or PLAYING
 state and will be set to the current delay by default.
 </p>
 <div class="refsect2" title="Example launch line">
-<a name="id532262"></a><h3>Example launch line</h3>
+<a name="id579510"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -110,7 +110,7 @@ gst<span class="symbol">-</span>launch filesrc location<span class="symbol">=</s
 <a name="gst-plugins-good-plugins-audioecho.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "delay" property'>
 <a name="GstAudioEcho--delay"></a><h3>The <code class="literal">"delay"</code> property</h3>
-<pre class="programlisting">  "delay"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
+<pre class="programlisting">  "delay"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
 <p>Delay of the echo in nanoseconds.</p>
 <p>Allowed values: &gt;= 1</p>
 <p>Default value: 1</p>
@@ -118,7 +118,7 @@ gst<span class="symbol">-</span>launch filesrc location<span class="symbol">=</s
 <hr>
 <div class="refsect2" title='The "feedback" property'>
 <a name="GstAudioEcho--feedback"></a><h3>The <code class="literal">"feedback"</code> property</h3>
-<pre class="programlisting">  "feedback"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
+<pre class="programlisting">  "feedback"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
 <p>Amount of feedback.</p>
 <p>Allowed values: [0,1]</p>
 <p>Default value: 0</p>
@@ -126,7 +126,7 @@ gst<span class="symbol">-</span>launch filesrc location<span class="symbol">=</s
 <hr>
 <div class="refsect2" title='The "intensity" property'>
 <a name="GstAudioEcho--intensity"></a><h3>The <code class="literal">"intensity"</code> property</h3>
-<pre class="programlisting">  "intensity"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
+<pre class="programlisting">  "intensity"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a>                : Read / Write</pre>
 <p>Intensity of the echo.</p>
 <p>Allowed values: [0,1]</p>
 <p>Default value: 0</p>
@@ -134,7 +134,7 @@ gst<span class="symbol">-</span>launch filesrc location<span class="symbol">=</s
 <hr>
 <div class="refsect2" title='The "max-delay" property'>
 <a name="GstAudioEcho--max-delay"></a><h3>The <code class="literal">"max-delay"</code> property</h3>
-<pre class="programlisting">  "max-delay"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
+<pre class="programlisting">  "max-delay"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
 <p>Maximum delay of the echo in nanoseconds (can't be changed in PLAYING or PAUSED state).</p>
 <p>Allowed values: &gt;= 1</p>
 <p>Default value: 1</p>

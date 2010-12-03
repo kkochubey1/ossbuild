@@ -49,9 +49,9 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-deinterlace.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
                +----GstDeinterlace
 </pre>
 </div>
@@ -59,7 +59,7 @@
 <a name="gst-plugins-good-plugins-deinterlace.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstDeinterlace implements
- <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstChildProxy.html">GstChildProxy</a>.</p>
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstChildProxy.html">GstChildProxy</a>.</p>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-good-plugins-deinterlace.properties"></a><h2>Properties</h2>
@@ -77,7 +77,7 @@ deinterlace deinterlaces interlaced video frames to progressive video frames.
 For this different algorithms can be selected which will be described later.
 </p>
 <div class="refsect2" title="Example launch line">
-<a name="id556692"></a><h3>Example launch line</h3>
+<a name="id555525"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -121,7 +121,7 @@ These provide different quality and CPU usage.
 </p>
 <p>
 Some methods provide parameters which can be set by getting
-the "method" child via the <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstChildProxy.html"><span class="type">GstChildProxy</span></a> interface and
+the "method" child via the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstChildProxy.html"><span class="type">GstChildProxy</span></a> interface and
 setting the appropiate properties on it.
 </p>
 <p>
@@ -149,7 +149,8 @@ Linear interpolation
 </p></li>
 <li class="listitem"><p>
 linearblend
-Linear interpolation in time domain
+Linear interpolation in time domain.  Any motion causes significant
+ghosting, so this method should not be used.
 </p></li>
 <li class="listitem"><p>
 scalerbob
@@ -157,15 +158,15 @@ Double lines
 </p></li>
 <li class="listitem"><p>
 weave
-Weave
+Weave.  Bad quality, do not use.
 </p></li>
 <li class="listitem"><p>
 weavetff
-Progressive: Top Field First
+Progressive: Top Field First.  Bad quality, do not use.
 </p></li>
 <li class="listitem"><p>
 weavebff
-Progressive: Bottom Field First
+Progressive: Bottom Field First.  Bad quality, do not use.
 </p></li>
 </ul></div>
 <p>

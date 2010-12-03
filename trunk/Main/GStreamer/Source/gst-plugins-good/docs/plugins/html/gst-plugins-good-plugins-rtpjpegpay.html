@@ -47,19 +47,19 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-rtpjpegpay.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstbasertppayload.html#GstBaseRTPPayload">GstBaseRTPPayload</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstbasertppayload.html#GstBaseRTPPayload">GstBaseRTPPayload</a>
                      +----GstRtpJPEGPay
 </pre>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-good-plugins-rtpjpegpay.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-good-plugins-rtpjpegpay.html#GstRtpJPEGPay--quality" title='The "quality" property'>quality</a>"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-rtpjpegpay.html#GstRtpJPEGPay--type" title='The "type" property'>type</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-rtpjpegpay.html#GstRtpJPEGPay--buffer-list" title='The "buffer-list" property'>buffer-list</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-rtpjpegpay.html#GstRtpJPEGPay--quality" title='The "quality" property'>quality</a>"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-rtpjpegpay.html#GstRtpJPEGPay--type" title='The "type" property'>type</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-rtpjpegpay.html#GstRtpJPEGPay--buffer-list" title='The "buffer-list" property'>buffer-list</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -90,7 +90,7 @@ The payloader assumes that correct width and height is found in the caps.
 <a name="gst-plugins-good-plugins-rtpjpegpay.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "quality" property'>
 <a name="GstRtpJPEGPay--quality"></a><h3>The <code class="literal">"quality"</code> property</h3>
-<pre class="programlisting">  "quality"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "quality"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Quality factor on JPEG data (unused).</p>
 <p>Allowed values: [0,255]</p>
 <p>Default value: 255</p>
@@ -98,7 +98,7 @@ The payloader assumes that correct width and height is found in the caps.
 <hr>
 <div class="refsect2" title='The "type" property'>
 <a name="GstRtpJPEGPay--type"></a><h3>The <code class="literal">"type"</code> property</h3>
-<pre class="programlisting">  "type"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "type"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Default JPEG Type, overwritten by SOF when present.</p>
 <p>Allowed values: [0,255]</p>
 <p>Default value: 1</p>
@@ -106,7 +106,7 @@ The payloader assumes that correct width and height is found in the caps.
 <hr>
 <div class="refsect2" title='The "buffer-list" property'>
 <a name="GstRtpJPEGPay--buffer-list"></a><h3>The <code class="literal">"buffer-list"</code> property</h3>
-<pre class="programlisting">  "buffer-list"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "buffer-list"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Use Buffer Lists.</p>
 <p>Default value: FALSE</p>
 </div>

@@ -47,20 +47,20 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-multifilesrc.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseSrc.html">GstBaseSrc</a>
-                     +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstPushSrc.html">GstPushSrc</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSrc.html">GstBaseSrc</a>
+                     +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstPushSrc.html">GstPushSrc</a>
                            +----GstMultiFileSrc
 </pre>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-good-plugins-multifilesrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-good-plugins-multifilesrc.html#GstMultiFileSrc--caps" title='The "caps" property'>caps</a>"                     <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-multifilesrc.html#GstMultiFileSrc--index" title='The "index" property'>index</a>"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-multifilesrc.html#GstMultiFileSrc--location" title='The "location" property'>location</a>"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-multifilesrc.html#GstMultiFileSrc--caps" title='The "caps" property'>caps</a>"                     <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-multifilesrc.html#GstMultiFileSrc--index" title='The "index" property'>index</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-multifilesrc.html#GstMultiFileSrc--location" title='The "location" property'>location</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -75,7 +75,7 @@ after the first picture.
 File names are created by replacing "%d" with the index using <code class="function">printf()</code>.
 </p>
 <div class="refsect2" title="Example launch line">
-<a name="id577436"></a><h3>Example launch line</h3>
+<a name="id608041"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -107,13 +107,13 @@ files named img.0000.png, img.0001.png, etc.
 <a name="gst-plugins-good-plugins-multifilesrc.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "caps" property'>
 <a name="GstMultiFileSrc--caps"></a><h3>The <code class="literal">"caps"</code> property</h3>
-<pre class="programlisting">  "caps"                     <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write</pre>
+<pre class="programlisting">  "caps"                     <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write</pre>
 <p>Caps describing the format of the data.</p>
 </div>
 <hr>
 <div class="refsect2" title='The "index" property'>
 <a name="GstMultiFileSrc--index"></a><h3>The <code class="literal">"index"</code> property</h3>
-<pre class="programlisting">  "index"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "index"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Index to use with location property to create file names.  The index is incremented by one for each buffer read.</p>
 <p>Allowed values: &gt;= 0</p>
 <p>Default value: 0</p>
@@ -121,14 +121,14 @@ files named img.0000.png, img.0001.png, etc.
 <hr>
 <div class="refsect2" title='The "location" property'>
 <a name="GstMultiFileSrc--location"></a><h3>The <code class="literal">"location"</code> property</h3>
-<pre class="programlisting">  "location"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<pre class="programlisting">  "location"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>Pattern to create file names of input files.  File names are created by calling sprintf() with the pattern and the current index.</p>
 <p>Default value: "%05d"</p>
 </div>
 </div>
 <div class="refsect1" title="See Also">
 <a name="gst-plugins-good-plugins-multifilesrc.see-also"></a><h2>See Also</h2>
-<a href="/usr/share/gtk-doc/html/gstreamer-plugins-0.10/gstreamer-plugins-filesrc.html#GstFileSrc"><span class="type">GstFileSrc</span></a>
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-plugins/html/gstreamer-plugins-filesrc.html#GstFileSrc"><span class="type">GstFileSrc</span></a>
 </div>
 </div>
 <div class="footer">

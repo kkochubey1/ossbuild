@@ -47,11 +47,11 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-radioactv.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseTransform.html">GstBaseTransform</a>
-                     +----<a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstvideofilter.html#GstVideoFilter">GstVideoFilter</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseTransform.html">GstBaseTransform</a>
+                     +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideofilter.html#GstVideoFilter">GstVideoFilter</a>
                            +----GstRadioacTV
 </pre>
 </div>
@@ -59,9 +59,9 @@
 <a name="gst-plugins-good-plugins-radioactv.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="gst-plugins-good-plugins-radioactv.html#GstRadioacTV--color" title='The "color" property'>color</a>"                    <span class="type">GstRadioacTVColor</span>     : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-radioactv.html#GstRadioacTV--interval" title='The "interval" property'>interval</a>"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-radioactv.html#GstRadioacTV--interval" title='The "interval" property'>interval</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
   "<a class="link" href="gst-plugins-good-plugins-radioactv.html#GstRadioacTV--mode" title='The "mode" property'>mode</a>"                     <span class="type">GstRadioacTVMode</span>      : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-radioactv.html#GstRadioacTV--trigger" title='The "trigger" property'>trigger</a>"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-radioactv.html#GstRadioacTV--trigger" title='The "trigger" property'>trigger</a>"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -72,7 +72,7 @@ from previous frame and blurs it.
 </p>
 <p>
 RadioacTV has 4 mode, normal, strobe1, strobe2 and trigger.
-In trigger mode, effect appears only when the trigger property is <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.
+In trigger mode, effect appears only when the trigger property is <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.
 </p>
 <p>
 strobe1 and strobe2 mode drops some frames. strobe1 mode uses the difference between
@@ -80,7 +80,7 @@ current frame and previous frame dropped, while strobe2 mode uses the difference
 previous frame displayed. The effect of strobe2 is stronger than strobe1.
 </p>
 <div class="refsect2" title="Example launch line">
-<a name="id608497"></a><h3>Example launch line</h3>
+<a name="id634220"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -114,7 +114,7 @@ previous frame displayed. The effect of strobe2 is stronger than strobe1.
 <hr>
 <div class="refsect2" title='The "interval" property'>
 <a name="GstRadioacTV--interval"></a><h3>The <code class="literal">"interval"</code> property</h3>
-<pre class="programlisting">  "interval"                 <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "interval"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>Snapshot interval (in strobe mode).</p>
 <p>Allowed values: &lt;= G_MAXINT</p>
 <p>Default value: 3</p>
@@ -129,7 +129,7 @@ previous frame displayed. The effect of strobe2 is stronger than strobe1.
 <hr>
 <div class="refsect2" title='The "trigger" property'>
 <a name="GstRadioacTV--trigger"></a><h3>The <code class="literal">"trigger"</code> property</h3>
-<pre class="programlisting">  "trigger"                  <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
+<pre class="programlisting">  "trigger"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Trigger (in trigger mode).</p>
 <p>Default value: FALSE</p>
 </div>

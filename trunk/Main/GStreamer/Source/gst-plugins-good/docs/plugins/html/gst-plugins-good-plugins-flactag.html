@@ -47,9 +47,9 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-flactag.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
                +----GstFlacTag
 </pre>
 </div>
@@ -57,7 +57,7 @@
 <a name="gst-plugins-good-plugins-flactag.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstFlacTag implements
- <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstTagSetter.html">GstTagSetter</a>.</p>
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTagSetter.html">GstTagSetter</a>.</p>
 </div>
 <div class="refsect1" title="Description">
 <a name="gst-plugins-good-plugins-flactag.description"></a><h2>Description</h2>
@@ -67,13 +67,13 @@ FLAC stream. Specifically, it modifies the comments header packet
 of the FLAC stream.
 </p>
 <p>
-Applications can set the tags to write using the <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstTagSetter.html"><span class="type">GstTagSetter</span></a> interface.
+Applications can set the tags to write using the <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTagSetter.html"><span class="type">GstTagSetter</span></a> interface.
 Tags contained withing the FLAC bitstream will be picked up
 automatically (and merged according to the merge mode set via the tag
 setter interface).
 </p>
 <div class="refsect2" title="Example pipelines">
-<a name="id551760"></a><h3>Example pipelines</h3>
+<a name="id571825"></a><h3>Example pipelines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -85,7 +85,7 @@ setter interface).
   </table>
 </div>
  This element is not useful with gst-launch, because it does not support
-setting the tags on a <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstTagSetter.html"><span class="type">GstTagSetter</span></a> interface. Conceptually, the element
+setting the tags on a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTagSetter.html"><span class="type">GstTagSetter</span></a> interface. Conceptually, the element
 will usually be used in this order though.
 </div>
 </div>
@@ -100,7 +100,7 @@ will usually be used in this order though.
 </div>
 <div class="refsect1" title="See Also">
 <a name="gst-plugins-good-plugins-flactag.see-also"></a><h2>See Also</h2>
-<span class="type">flacenc</span>, <span class="type">flacdec</span>, <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstTagSetter.html"><span class="type">GstTagSetter</span></a>
+<span class="type">flacenc</span>, <span class="type">flacdec</span>, <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTagSetter.html"><span class="type">GstTagSetter</span></a>
 </div>
 </div>
 <div class="footer">
