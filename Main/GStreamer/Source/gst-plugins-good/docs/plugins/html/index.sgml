@@ -749,6 +749,8 @@
 <ANCHOR id="GstRtpBin--ignore-pt" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--ignore-pt">
 <ANCHOR id="GstRtpBin--autoremove" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--autoremove">
 <ANCHOR id="GstRtpBin--buffer-mode" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--buffer-mode">
+<ANCHOR id="GstRtpBin--ntp-sync" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--ntp-sync">
+<ANCHOR id="GstRtpBin--use-pipeline-clock" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin--use-pipeline-clock">
 <ANCHOR id="gst-plugins-good-plugins-gstrtpbin.signal-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#gst-plugins-good-plugins-gstrtpbin.signal-details">
 <ANCHOR id="GstRtpBin-clear-pt-map" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin-clear-pt-map">
 <ANCHOR id="GstRtpBin-get-internal-session" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpbin.html#GstRtpBin-get-internal-session">
@@ -820,6 +822,7 @@
 <ANCHOR id="GstRtpSession--sdes" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession--sdes">
 <ANCHOR id="GstRtpSession--rtcp-rr-bandwidth" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession--rtcp-rr-bandwidth">
 <ANCHOR id="GstRtpSession--rtcp-rs-bandwidth" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession--rtcp-rs-bandwidth">
+<ANCHOR id="GstRtpSession--use-pipeline-clock" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession--use-pipeline-clock">
 <ANCHOR id="gst-plugins-good-plugins-gstrtpsession.signal-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpsession.html#gst-plugins-good-plugins-gstrtpsession.signal-details">
 <ANCHOR id="GstRtpSession-clear-pt-map" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession-clear-pt-map">
 <ANCHOR id="GstRtpSession-on-bye-ssrc" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-gstrtpsession.html#GstRtpSession-on-bye-ssrc">
@@ -1075,6 +1078,7 @@
 <ANCHOR id="GstMultiUDPSink--qos-dscp" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-multiudpsink.html#GstMultiUDPSink--qos-dscp">
 <ANCHOR id="GstMultiUDPSink--ttl" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-multiudpsink.html#GstMultiUDPSink--ttl">
 <ANCHOR id="GstMultiUDPSink--ttl-mc" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-multiudpsink.html#GstMultiUDPSink--ttl-mc">
+<ANCHOR id="GstMultiUDPSink--send-duplicates" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-multiudpsink.html#GstMultiUDPSink--send-duplicates">
 <ANCHOR id="gst-plugins-good-plugins-multiudpsink.signal-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-multiudpsink.html#gst-plugins-good-plugins-multiudpsink.signal-details">
 <ANCHOR id="GstMultiUDPSink-add" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-multiudpsink.html#GstMultiUDPSink-add">
 <ANCHOR id="GstMultiUDPSink-clear" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-multiudpsink.html#GstMultiUDPSink-clear">
@@ -1237,6 +1241,8 @@
 <ANCHOR id="GstPulseSink--device-name" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesink.html#GstPulseSink--device-name">
 <ANCHOR id="GstPulseSink--volume" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesink.html#GstPulseSink--volume">
 <ANCHOR id="GstPulseSink--mute" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesink.html#GstPulseSink--mute">
+<ANCHOR id="GstPulseSink--client" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesink.html#GstPulseSink--client">
+<ANCHOR id="GstPulseSink--stream-properties" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesink.html#GstPulseSink--stream-properties">
 <ANCHOR id="gst-plugins-good-plugins-pulsesink.see-also" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesink.html#gst-plugins-good-plugins-pulsesink.see-also">
 <ANCHOR id="gst-plugins-good-plugins-pulsesrc" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesrc.html">
 <ANCHOR id="gst-plugins-good-plugins-pulsesrc.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesrc.html#gst-plugins-good-plugins-pulsesrc.synopsis">
@@ -1251,6 +1257,7 @@
 <ANCHOR id="GstPulseSrc--device" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesrc.html#GstPulseSrc--device">
 <ANCHOR id="GstPulseSrc--server" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesrc.html#GstPulseSrc--server">
 <ANCHOR id="GstPulseSrc--device-name" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesrc.html#GstPulseSrc--device-name">
+<ANCHOR id="GstPulseSrc--stream-properties" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesrc.html#GstPulseSrc--stream-properties">
 <ANCHOR id="gst-plugins-good-plugins-pulsesrc.see-also" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsesrc.html#gst-plugins-good-plugins-pulsesrc.see-also">
 <ANCHOR id="gst-plugins-good-plugins-pulsemixer" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsemixer.html">
 <ANCHOR id="gst-plugins-good-plugins-pulsemixer.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-pulsemixer.html#gst-plugins-good-plugins-pulsemixer.synopsis">
@@ -1429,6 +1436,8 @@
 <ANCHOR id="GstRTSPSrc--user-id" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-rtspsrc.html#GstRTSPSrc--user-id">
 <ANCHOR id="GstRTSPSrc--user-pw" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-rtspsrc.html#GstRTSPSrc--user-pw">
 <ANCHOR id="GstRTSPSrc--buffer-mode" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-rtspsrc.html#GstRTSPSrc--buffer-mode">
+<ANCHOR id="GstRTSPSrc--port-range" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-rtspsrc.html#GstRTSPSrc--port-range">
+<ANCHOR id="GstRTSPSrc--udp-buffer-size" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-rtspsrc.html#GstRTSPSrc--udp-buffer-size">
 <ANCHOR id="gst-plugins-good-plugins-shagadelictv" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shagadelictv.html">
 <ANCHOR id="gst-plugins-good-plugins-shagadelictv.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shagadelictv.html#gst-plugins-good-plugins-shagadelictv.synopsis">
 <ANCHOR id="GstShagadelicTV" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-shagadelictv.html#GstShagadelicTV">
@@ -1613,6 +1622,7 @@
 <ANCHOR id="GstUDPSrc--sock" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-udpsrc.html#GstUDPSrc--sock">
 <ANCHOR id="GstUDPSrc--auto-multicast" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-udpsrc.html#GstUDPSrc--auto-multicast">
 <ANCHOR id="GstUDPSrc--multicast-iface" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-udpsrc.html#GstUDPSrc--multicast-iface">
+<ANCHOR id="GstUDPSrc--reuse" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-udpsrc.html#GstUDPSrc--reuse">
 <ANCHOR id="gst-plugins-good-plugins-udpsrc.see-also" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-udpsrc.html#gst-plugins-good-plugins-udpsrc.see-also">
 <ANCHOR id="gst-plugins-good-plugins-udpsink" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-udpsink.html">
 <ANCHOR id="gst-plugins-good-plugins-udpsink.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-udpsink.html#gst-plugins-good-plugins-udpsink.synopsis">
@@ -1643,6 +1653,11 @@
 <ANCHOR id="GstV4l2Src--queue-size" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2src.html#GstV4l2Src--queue-size">
 <ANCHOR id="GstV4l2Src--always-copy" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2src.html#GstV4l2Src--always-copy">
 <ANCHOR id="GstV4l2Src--device-fd" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2src.html#GstV4l2Src--device-fd">
+<ANCHOR id="GstV4l2Src--brightness" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2src.html#GstV4l2Src--brightness">
+<ANCHOR id="GstV4l2Src--contrast" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2src.html#GstV4l2Src--contrast">
+<ANCHOR id="GstV4l2Src--decimate" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2src.html#GstV4l2Src--decimate">
+<ANCHOR id="GstV4l2Src--hue" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2src.html#GstV4l2Src--hue">
+<ANCHOR id="GstV4l2Src--saturation" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2src.html#GstV4l2Src--saturation">
 <ANCHOR id="gst-plugins-good-plugins-v4l2sink" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2sink.html">
 <ANCHOR id="gst-plugins-good-plugins-v4l2sink.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2sink.html#gst-plugins-good-plugins-v4l2sink.synopsis">
 <ANCHOR id="GstV4l2Sink" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink">
@@ -1662,6 +1677,10 @@
 <ANCHOR id="GstV4l2Sink--overlay-top" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--overlay-top">
 <ANCHOR id="GstV4l2Sink--overlay-width" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--overlay-width">
 <ANCHOR id="GstV4l2Sink--queue-size" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--queue-size">
+<ANCHOR id="GstV4l2Sink--brightness" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--brightness">
+<ANCHOR id="GstV4l2Sink--contrast" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--contrast">
+<ANCHOR id="GstV4l2Sink--hue" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--hue">
+<ANCHOR id="GstV4l2Sink--saturation" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--saturation">
 <ANCHOR id="gst-plugins-good-plugins-vertigotv" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-vertigotv.html">
 <ANCHOR id="gst-plugins-good-plugins-vertigotv.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-vertigotv.html#gst-plugins-good-plugins-vertigotv.synopsis">
 <ANCHOR id="GstVertigoTV" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-vertigotv.html#GstVertigoTV">
@@ -1756,6 +1775,21 @@
 <ANCHOR id="VIDEO-MIXER-BACKGROUND-WHITE:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html#VIDEO-MIXER-BACKGROUND-WHITE:CAPS">
 <ANCHOR id="gst-plugins-good-plugins-videomixer.property-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html#gst-plugins-good-plugins-videomixer.property-details">
 <ANCHOR id="GstVideoMixer--background" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer.html#GstVideoMixer--background">
+<ANCHOR id="gst-plugins-good-plugins-videomixer2" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html">
+<ANCHOR id="gst-plugins-good-plugins-videomixer2.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#gst-plugins-good-plugins-videomixer2.synopsis">
+<ANCHOR id="GstVideoMixer2" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#GstVideoMixer2">
+<ANCHOR id="gst-plugins-good-plugins-videomixer2.object-hierarchy" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#gst-plugins-good-plugins-videomixer2.object-hierarchy">
+<ANCHOR id="gst-plugins-good-plugins-videomixer2.implemented-interfaces" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#gst-plugins-good-plugins-videomixer2.implemented-interfaces">
+<ANCHOR id="gst-plugins-good-plugins-videomixer2.properties" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#gst-plugins-good-plugins-videomixer2.properties">
+<ANCHOR id="gst-plugins-good-plugins-videomixer2.description" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#gst-plugins-good-plugins-videomixer2.description">
+<ANCHOR id="gst-plugins-good-plugins-videomixer2.details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#gst-plugins-good-plugins-videomixer2.details">
+<ANCHOR id="GstVideoMixer2-struct" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#GstVideoMixer2-struct">
+<ANCHOR id="GstVideoMixer2Background" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#GstVideoMixer2Background">
+<ANCHOR id="VIDEO-MIXER2-BACKGROUND-CHECKER:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#VIDEO-MIXER2-BACKGROUND-CHECKER:CAPS">
+<ANCHOR id="VIDEO-MIXER2-BACKGROUND-BLACK:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#VIDEO-MIXER2-BACKGROUND-BLACK:CAPS">
+<ANCHOR id="VIDEO-MIXER2-BACKGROUND-WHITE:CAPS" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#VIDEO-MIXER2-BACKGROUND-WHITE:CAPS">
+<ANCHOR id="gst-plugins-good-plugins-videomixer2.property-details" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#gst-plugins-good-plugins-videomixer2.property-details">
+<ANCHOR id="GstVideoMixer2--background" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-videomixer2.html#GstVideoMixer2--background">
 <ANCHOR id="gst-plugins-good-plugins-warptv" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-warptv.html">
 <ANCHOR id="gst-plugins-good-plugins-warptv.synopsis" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-warptv.html#gst-plugins-good-plugins-warptv.synopsis">
 <ANCHOR id="GstWarpTV" href="gst-plugins-good-plugins-0.10/gst-plugins-good-plugins-warptv.html#GstWarpTV">
@@ -2008,3 +2042,9 @@
 <ANCHOR id="GstVideoMixerPad--xpos" href="gst-plugins-good-plugins-0.10/GstVideoMixerPad.html#GstVideoMixerPad--xpos">
 <ANCHOR id="GstVideoMixerPad--ypos" href="gst-plugins-good-plugins-0.10/GstVideoMixerPad.html#GstVideoMixerPad--ypos">
 <ANCHOR id="GstVideoMixerPad--zorder" href="gst-plugins-good-plugins-0.10/GstVideoMixerPad.html#GstVideoMixerPad--zorder">
+<ANCHOR id="GstVideoMixer2Pad" href="gst-plugins-good-plugins-0.10/GstVideoMixer2Pad.html">
+<ANCHOR id="GstVideoMixer2Pad.synopsis" href="gst-plugins-good-plugins-0.10/GstVideoMixer2Pad.html#GstVideoMixer2Pad.synopsis">
+<ANCHOR id="GstVideoMixer2Pad.object-hierarchy" href="gst-plugins-good-plugins-0.10/GstVideoMixer2Pad.html#GstVideoMixer2Pad.object-hierarchy">
+<ANCHOR id="GstVideoMixer2Pad.description" href="gst-plugins-good-plugins-0.10/GstVideoMixer2Pad.html#GstVideoMixer2Pad.description">
+<ANCHOR id="GstVideoMixer2Pad.details" href="gst-plugins-good-plugins-0.10/GstVideoMixer2Pad.html#GstVideoMixer2Pad.details">
+<ANCHOR id="GstVideoMixer2Pad-struct" href="gst-plugins-good-plugins-0.10/GstVideoMixer2Pad.html#GstVideoMixer2Pad-struct">

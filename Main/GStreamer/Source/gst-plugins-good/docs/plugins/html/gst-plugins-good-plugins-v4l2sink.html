@@ -49,11 +49,11 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-v4l2sink.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseSink.html">GstBaseSink</a>
-                     +----<a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstvideosink.html#GstVideoSink">GstVideoSink</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSink.html">GstBaseSink</a>
+                     +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideosink.html#GstVideoSink">GstVideoSink</a>
                            +----GstV4l2Sink
 </pre>
 </div>
@@ -61,20 +61,24 @@
 <a name="gst-plugins-good-plugins-v4l2sink.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstV4l2Sink implements
- <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstImplementsInterface.html">GstImplementsInterface</a>,  <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstcolorbalance.html#GstColorBalance">GstColorBalance</a>,  <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation">GstVideoOrientation</a> and  <a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstpropertyprobe.html#GstPropertyProbe">GstPropertyProbe</a>.</p>
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstImplementsInterface.html">GstImplementsInterface</a>,  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstcolorbalance.html#GstColorBalance">GstColorBalance</a>,  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation">GstVideoOrientation</a> and  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstpropertyprobe.html#GstPropertyProbe">GstPropertyProbe</a>.</p>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-good-plugins-v4l2sink.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--device" title='The "device" property'>device</a>"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--device-fd" title='The "device-fd" property'>device-fd</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read
-  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--device-name" title='The "device-name" property'>device-name</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--device" title='The "device" property'>device</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--device-fd" title='The "device-fd" property'>device-fd</a>"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--device-name" title='The "device-name" property'>device-name</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read
   "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--flags" title='The "flags" property'>flags</a>"                    <span class="type">GstV4l2DeviceTypeFlags</span>  : Read
-  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--overlay-height" title='The "overlay-height" property'>overlay-height</a>"           <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--overlay-left" title='The "overlay-left" property'>overlay-left</a>"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--overlay-top" title='The "overlay-top" property'>overlay-top</a>"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--overlay-width" title='The "overlay-width" property'>overlay-width</a>"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--queue-size" title='The "queue-size" property'>queue-size</a>"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--overlay-height" title='The "overlay-height" property'>overlay-height</a>"           <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--overlay-left" title='The "overlay-left" property'>overlay-left</a>"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--overlay-top" title='The "overlay-top" property'>overlay-top</a>"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--overlay-width" title='The "overlay-width" property'>overlay-width</a>"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--queue-size" title='The "queue-size" property'>queue-size</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--brightness" title='The "brightness" property'>brightness</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--contrast" title='The "contrast" property'>contrast</a>"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--hue" title='The "hue" property'>hue</a>"                      <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-v4l2sink.html#GstV4l2Sink--saturation" title='The "saturation" property'>saturation</a>"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -84,7 +88,7 @@ v4l2sink can be used to display video to v4l2 devices (screen overlays
 provided by the graphics hardware, tv-out, etc)
 </p>
 <div class="refsect2" title="Example launch lines">
-<a name="id633062"></a><h3>Example launch lines</h3>
+<a name="id639106"></a><h3>Example launch lines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -111,14 +115,14 @@ provided by the graphics hardware, tv-out, etc)
 <a name="gst-plugins-good-plugins-v4l2sink.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "device" property'>
 <a name="GstV4l2Sink--device"></a><h3>The <code class="literal">"device"</code> property</h3>
-<pre class="programlisting">  "device"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<pre class="programlisting">  "device"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>Device location.</p>
 <p>Default value: "/dev/video1"</p>
 </div>
 <hr>
 <div class="refsect2" title='The "device-fd" property'>
 <a name="GstV4l2Sink--device-fd"></a><h3>The <code class="literal">"device-fd"</code> property</h3>
-<pre class="programlisting">  "device-fd"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read</pre>
+<pre class="programlisting">  "device-fd"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read</pre>
 <p>File descriptor of the device.</p>
 <p>Allowed values: &gt;= G_MAXULONG</p>
 <p>Default value: -1</p>
@@ -126,7 +130,7 @@ provided by the graphics hardware, tv-out, etc)
 <hr>
 <div class="refsect2" title='The "device-name" property'>
 <a name="GstV4l2Sink--device-name"></a><h3>The <code class="literal">"device-name"</code> property</h3>
-<pre class="programlisting">  "device-name"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read</pre>
+<pre class="programlisting">  "device-name"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read</pre>
 <p>Name of the device.</p>
 <p>Default value: NULL</p>
 </div>
@@ -139,38 +143,66 @@ provided by the graphics hardware, tv-out, etc)
 <hr>
 <div class="refsect2" title='The "overlay-height" property'>
 <a name="GstV4l2Sink--overlay-height"></a><h3>The <code class="literal">"overlay-height"</code> property</h3>
-<pre class="programlisting">  "overlay-height"           <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "overlay-height"           <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>The height of the video overlay; default is equal to negotiated image height.</p>
 <p>Default value: 0</p>
 </div>
 <hr>
 <div class="refsect2" title='The "overlay-left" property'>
 <a name="GstV4l2Sink--overlay-left"></a><h3>The <code class="literal">"overlay-left"</code> property</h3>
-<pre class="programlisting">  "overlay-left"             <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "overlay-left"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The leftmost (x) coordinate of the video overlay; top left corner of screen is 0,0.</p>
 <p>Default value: 0</p>
 </div>
 <hr>
 <div class="refsect2" title='The "overlay-top" property'>
 <a name="GstV4l2Sink--overlay-top"></a><h3>The <code class="literal">"overlay-top"</code> property</h3>
-<pre class="programlisting">  "overlay-top"              <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "overlay-top"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The topmost (y) coordinate of the video overlay; top left corner of screen is 0,0.</p>
 <p>Default value: 0</p>
 </div>
 <hr>
 <div class="refsect2" title='The "overlay-width" property'>
 <a name="GstV4l2Sink--overlay-width"></a><h3>The <code class="literal">"overlay-width"</code> property</h3>
-<pre class="programlisting">  "overlay-width"            <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "overlay-width"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>The width of the video overlay; default is equal to negotiated image width.</p>
 <p>Default value: 0</p>
 </div>
 <hr>
 <div class="refsect2" title='The "queue-size" property'>
 <a name="GstV4l2Sink--queue-size"></a><h3>The <code class="literal">"queue-size"</code> property</h3>
-<pre class="programlisting">  "queue-size"               <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "queue-size"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>Number of buffers to be enqueud in the driver in streaming mode.</p>
 <p>Allowed values: [1,16]</p>
 <p>Default value: 8</p>
+</div>
+<hr>
+<div class="refsect2" title='The "brightness" property'>
+<a name="GstV4l2Sink--brightness"></a><h3>The <code class="literal">"brightness"</code> property</h3>
+<pre class="programlisting">  "brightness"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<p>Picture brightness, or more precisely, the black level.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" title='The "contrast" property'>
+<a name="GstV4l2Sink--contrast"></a><h3>The <code class="literal">"contrast"</code> property</h3>
+<pre class="programlisting">  "contrast"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<p>Picture contrast or luma gain.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" title='The "hue" property'>
+<a name="GstV4l2Sink--hue"></a><h3>The <code class="literal">"hue"</code> property</h3>
+<pre class="programlisting">  "hue"                      <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<p>Hue or color balance.</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2" title='The "saturation" property'>
+<a name="GstV4l2Sink--saturation"></a><h3>The <code class="literal">"saturation"</code> property</h3>
+<pre class="programlisting">  "saturation"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<p>Picture color saturation or chroma gain.</p>
+<p>Default value: 0</p>
 </div>
 </div>
 </div>

@@ -85,6 +85,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-feature.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -417,21 +418,22 @@ generic_states_SOURCES = generic/states.c
 generic_states_OBJECTS = states.$(OBJEXT)
 generic_states_LDADD = $(LDADD)
 generic_states_DEPENDENCIES = $(am__DEPENDENCIES_1)
-orc_deinterlace_SOURCES = orc/deinterlace.c
-orc_deinterlace_OBJECTS = orc_deinterlace-deinterlace.$(OBJEXT)
+nodist_orc_deinterlace_OBJECTS =  \
+	orc_deinterlace-deinterlace.$(OBJEXT)
+orc_deinterlace_OBJECTS = $(nodist_orc_deinterlace_OBJECTS)
 orc_deinterlace_DEPENDENCIES = $(am__DEPENDENCIES_1)
 orc_deinterlace_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(orc_deinterlace_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-orc_videobox_SOURCES = orc/videobox.c
-orc_videobox_OBJECTS = orc_videobox-videobox.$(OBJEXT)
+nodist_orc_videobox_OBJECTS = orc_videobox-videobox.$(OBJEXT)
+orc_videobox_OBJECTS = $(nodist_orc_videobox_OBJECTS)
 orc_videobox_DEPENDENCIES = $(am__DEPENDENCIES_1)
 orc_videobox_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(orc_videobox_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-orc_videomixer_SOURCES = orc/videomixer.c
-orc_videomixer_OBJECTS = orc_videomixer-videomixer.$(OBJEXT)
+nodist_orc_videomixer_OBJECTS = orc_videomixer-videomixer.$(OBJEXT)
+orc_videomixer_OBJECTS = $(nodist_orc_videomixer_OBJECTS)
 orc_videomixer_DEPENDENCIES = $(am__DEPENDENCIES_1)
 orc_videomixer_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
@@ -507,9 +509,11 @@ SOURCES = elements/alphacolor.c elements/apev2mux.c \
 	elements/udpsink.c elements/videocrop.c elements/videofilter.c \
 	elements/wavpackdec.c elements/wavpackenc.c \
 	elements/wavpackparse.c elements/y4menc.c generic/states.c \
-	orc/deinterlace.c orc/videobox.c orc/videomixer.c \
-	pipelines/effectv.c pipelines/flacdec.c \
-	pipelines/simple-launch-lines.c pipelines/wavpack.c
+	$(nodist_orc_deinterlace_SOURCES) \
+	$(nodist_orc_videobox_SOURCES) \
+	$(nodist_orc_videomixer_SOURCES) pipelines/effectv.c \
+	pipelines/flacdec.c pipelines/simple-launch-lines.c \
+	pipelines/wavpack.c
 DIST_SOURCES = elements/alphacolor.c elements/apev2mux.c \
 	elements/aspectratiocrop.c elements/audioamplify.c \
 	elements/audiochebband.c elements/audiocheblimit.c \
@@ -533,7 +537,6 @@ DIST_SOURCES = elements/alphacolor.c elements/apev2mux.c \
 	elements/udpsink.c elements/videocrop.c elements/videofilter.c \
 	elements/wavpackdec.c elements/wavpackenc.c \
 	elements/wavpackparse.c elements/y4menc.c generic/states.c \
-	orc/deinterlace.c orc/videobox.c orc/videomixer.c \
 	pipelines/effectv.c pipelines/flacdec.c \
 	pipelines/simple-launch-lines.c pipelines/wavpack.c
 ETAGS = etags
@@ -610,8 +613,6 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
-GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
-GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -647,6 +648,7 @@ GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
@@ -718,6 +720,7 @@ OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -872,7 +875,7 @@ TESTS_ENVIRONMENT = \
 	GST_PLUGIN_SYSTEM_PATH=					\
 	GST_PLUGIN_PATH=$(top_builddir)/gst:$(top_builddir)/ext:$(top_builddir)/sys:$(GSTPB_PLUGINS_DIR):$(GST_PLUGINS_DIR)			\
 	GST_PLUGIN_LOADING_WHITELIST="gstreamer@$(GST_PLUGINS_DIR):gst-plugins-base@$(GSTPB_PLUGINS_DIR):gst-plugins-good@$(top_builddir)"	\
-	STATE_IGNORE_ELEMENTS="aasink autoaudiosrc autoaudiosink autovideosrc autovideosink \
+	GST_STATE_IGNORE_ELEMENTS="aasink autoaudiosrc autoaudiosink autovideosrc autovideosink \
 		cacasink cairotextoverlay gconfaudiosrc gconfvideosrc gconfaudiosink gconfvideosink \
 		halaudiosrc halaudiosink v4l2src osssrc osssink pulsesink pulsesrc pulsemixer \
 		osxaudiosink osxaudiosrc osxvideosrc osxvideosink"
@@ -996,10 +999,13 @@ pipelines_wavpack_LDADD = $(LDADD) $(GST_BASE_LIBS)
 pipelines_wavpack_CFLAGS = $(GST_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
 orc_deinterlace_CFLAGS = $(ORC_CFLAGS)
 orc_deinterlace_LDADD = $(ORC_LIBS) -lorc-test-0.4
+nodist_orc_deinterlace_SOURCES = orc/deinterlace.c
 orc_videomixer_CFLAGS = $(ORC_CFLAGS)
 orc_videomixer_LDADD = $(ORC_LIBS) -lorc-test-0.4
+nodist_orc_videomixer_SOURCES = orc/videomixer.c
 orc_videobox_CFLAGS = $(ORC_CFLAGS)
 orc_videobox_LDADD = $(ORC_LIBS) -lorc-test-0.4
+nodist_orc_videobox_SOURCES = orc/videobox.c
 EXTRA_DIST = gst-plugins-good.supp
 all: all-am
 

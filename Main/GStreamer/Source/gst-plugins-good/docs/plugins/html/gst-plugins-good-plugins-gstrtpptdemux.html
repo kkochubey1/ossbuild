@@ -47,9 +47,9 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-gstrtpptdemux.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
                +----GstRtpPtDemux
 </pre>
 </div>
@@ -81,7 +81,7 @@ outgoing buffers and pads based on the result of the
 <a class="link" href="gst-plugins-good-plugins-gstrtpptdemux.html#GstRtpPtDemux-request-pt-map" title='The "request-pt-map" signal'><span class="type">"request-pt-map"</span></a> signal.
 </p>
 <div class="refsect2" title="Example pipelines">
-<a name="id577058"></a><h3>Example pipelines</h3>
+<a name="id587553"></a><h3>Example pipelines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -113,7 +113,7 @@ Last reviewed on 2007-05-28 (0.10.5)
 <div class="refsect2" title='The "clear-pt-map" signal'>
 <a name="GstRtpPtDemux-clear-pt-map"></a><h3>The <code class="literal">"clear-pt-map"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="gst-plugins-good-plugins-gstrtpptdemux.html#GstRtpPtDemux"><span class="type">GstRtpPtDemux</span></a> *demux,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last / Action</pre>
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last / Action</pre>
 <p>
 The application can call this signal to instruct the element to discard the
 currently cached payload type map.
@@ -137,9 +137,9 @@ currently cached payload type map.
 <div class="refsect2" title='The "new-payload-type" signal'>
 <a name="GstRtpPtDemux-new-payload-type"></a><h3>The <code class="literal">"new-payload-type"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="gst-plugins-good-plugins-gstrtpptdemux.html#GstRtpPtDemux"><span class="type">GstRtpPtDemux</span></a> *demux,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>          pt,
-                                                        <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html"><span class="type">GstPad</span></a>        *pad,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last</pre>
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>          pt,
+                                                        <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a>        *pad,
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last</pre>
 <p>
 Emited when a new payload type pad has been created in <em class="parameter"><code>demux</code></em>.
 </p>
@@ -172,8 +172,8 @@ Emited when a new payload type pad has been created in <em class="parameter"><co
 <div class="refsect2" title='The "payload-type-change" signal'>
 <a name="GstRtpPtDemux-payload-type-change"></a><h3>The <code class="literal">"payload-type-change"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="gst-plugins-good-plugins-gstrtpptdemux.html#GstRtpPtDemux"><span class="type">GstRtpPtDemux</span></a> *demux,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>          pt,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last</pre>
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>          pt,
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last</pre>
 <p>
 Emited when the payload type changed.
 </p>
@@ -200,11 +200,11 @@ Emited when the payload type changed.
 <hr>
 <div class="refsect2" title='The "request-pt-map" signal'>
 <a name="GstRtpPtDemux-request-pt-map"></a><h3>The <code class="literal">"request-pt-map"</code> signal</h3>
-<pre class="programlisting"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a>*            user_function                      (<a class="link" href="gst-plugins-good-plugins-gstrtpptdemux.html#GstRtpPtDemux"><span class="type">GstRtpPtDemux</span></a> *demux,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>          pt,
-                                                        <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="returnvalue">GstCaps</span></a>*            user_function                      (<a class="link" href="gst-plugins-good-plugins-gstrtpptdemux.html#GstRtpPtDemux"><span class="type">GstRtpPtDemux</span></a> *demux,
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>          pt,
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>       user_data)      : Run Last</pre>
 <p>
-Request the payload type as <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> for <em class="parameter"><code>pt</code></em>.
+Request the payload type as <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> for <em class="parameter"><code>pt</code></em>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">

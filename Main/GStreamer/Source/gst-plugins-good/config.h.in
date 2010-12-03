@@ -43,6 +43,9 @@
 /* package origin */
 #undef GST_PACKAGE_ORIGIN
 
+/* GStreamer package release date/time for plugins as YYYY-MM-DD */
+#undef GST_PACKAGE_RELEASE_DATETIME
+
 /* struct v4l2_buffer missing */
 #undef GST_V4L2_MISSING_BUFDECL
 
@@ -169,9 +172,6 @@
 /* Define to enable GDK pixbuf (used by gdkpixbuf). */
 #undef HAVE_GDK_PIXBUF
 
-/* Define to enable GDK pixbuf (used by gdkpixbuf3). */
-#undef HAVE_GDK_PIXBUF3
-
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
@@ -252,6 +252,9 @@
 
 /* Define to enable OSX video (used by osxvideosink). */
 #undef HAVE_OSX_VIDEO
+
+/* Define to 1 if you have the <process.h> header file. */
+#undef HAVE_PROCESS_H
 
 /* Define to enable pulseaudio plug-in (used by pulseaudio). */
 #undef HAVE_PULSE

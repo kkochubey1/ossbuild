@@ -57,6 +57,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-feature.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -113,6 +114,7 @@ am_libgstgconfelements_la_OBJECTS =  \
 	libgstgconfelements_la-gstgconfvideosink.lo \
 	libgstgconfelements_la-gstgconfvideosrc.lo \
 	libgstgconfelements_la-gstswitchsink.lo \
+	libgstgconfelements_la-gstswitchsrc.lo \
 	libgstgconfelements_la-gstgconf.lo
 libgstgconfelements_la_OBJECTS = $(am_libgstgconfelements_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
@@ -223,8 +225,6 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
-GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
-GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -260,6 +260,7 @@ GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
@@ -331,6 +332,7 @@ OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -479,6 +481,7 @@ libgstgconfelements_la_SOURCES = \
 	gstgconfvideosink.c \
 	gstgconfvideosrc.c \
 	gstswitchsink.c \
+	gstswitchsrc.c \
 	gstgconf.c
 
 DIR_CFLAGS = -DGST_GCONF_DIR=\"/system/gstreamer/@GST_MAJORMINOR@\"
@@ -493,6 +496,7 @@ noinst_HEADERS = \
 	gstgconfvideosink.h \
 	gstgconfvideosrc.h \
 	gstswitchsink.h \
+	gstswitchsrc.h \
 	gstgconf.h
 
 all: all-am
@@ -576,6 +580,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstgconfelements_la-gstgconfvideosink.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstgconfelements_la-gstgconfvideosrc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstgconfelements_la-gstswitchsink.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstgconfelements_la-gstswitchsrc.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -648,6 +653,14 @@ libgstgconfelements_la-gstswitchsink.lo: gstswitchsink.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstswitchsink.c' object='libgstgconfelements_la-gstswitchsink.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgconfelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgconfelements_la_CFLAGS) $(CFLAGS) -c -o libgstgconfelements_la-gstswitchsink.lo `test -f 'gstswitchsink.c' || echo '$(srcdir)/'`gstswitchsink.c
+
+libgstgconfelements_la-gstswitchsrc.lo: gstswitchsrc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgconfelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgconfelements_la_CFLAGS) $(CFLAGS) -MT libgstgconfelements_la-gstswitchsrc.lo -MD -MP -MF $(DEPDIR)/libgstgconfelements_la-gstswitchsrc.Tpo -c -o libgstgconfelements_la-gstswitchsrc.lo `test -f 'gstswitchsrc.c' || echo '$(srcdir)/'`gstswitchsrc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstgconfelements_la-gstswitchsrc.Tpo $(DEPDIR)/libgstgconfelements_la-gstswitchsrc.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstswitchsrc.c' object='libgstgconfelements_la-gstswitchsrc.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgconfelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgconfelements_la_CFLAGS) $(CFLAGS) -c -o libgstgconfelements_la-gstswitchsrc.lo `test -f 'gstswitchsrc.c' || echo '$(srcdir)/'`gstswitchsrc.c
 
 libgstgconfelements_la-gstgconf.lo: gstgconf.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstgconfelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstgconfelements_la_CFLAGS) $(CFLAGS) -MT libgstgconfelements_la-gstgconf.lo -MD -MP -MF $(DEPDIR)/libgstgconfelements_la-gstgconf.Tpo -c -o libgstgconfelements_la-gstgconf.lo `test -f 'gstgconf.c' || echo '$(srcdir)/'`gstgconf.c

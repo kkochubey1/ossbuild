@@ -49,10 +49,10 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-udpsink.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseSink.html">GstBaseSink</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseSink.html">GstBaseSink</a>
                      +----<a class="link" href="gst-plugins-good-plugins-multiudpsink.html#GstMultiUDPSink">GstMultiUDPSink</a>
                            +----GstUDPSink
 </pre>
@@ -61,13 +61,13 @@
 <a name="gst-plugins-good-plugins-udpsink.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstUDPSink implements
- <a href="/usr/share/gtk-doc/html/gstreamer-0.10/gstreamer-GstUriHandler.html#GstURIHandler">GstURIHandler</a>.</p>
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstUriHandler.html#GstURIHandler">GstURIHandler</a>.</p>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-good-plugins-udpsink.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-good-plugins-udpsink.html#GstUDPSink--host" title='The "host" property'>host</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
-  "<a class="link" href="gst-plugins-good-plugins-udpsink.html#GstUDPSink--port" title='The "port" property'>port</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-udpsink.html#GstUDPSink--host" title='The "host" property'>host</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
+  "<a class="link" href="gst-plugins-good-plugins-udpsink.html#GstUDPSink--port" title='The "port" property'>port</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -77,7 +77,7 @@ udpsink is a network sink that sends UDP packets to the network.
 It can be combined with RTP payloaders to implement RTP streaming.
 </p>
 <div class="refsect2" title="Examples">
-<a name="id596139"></a><h3>Examples</h3>
+<a name="id652319"></a><h3>Examples</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -104,14 +104,14 @@ It can be combined with RTP payloaders to implement RTP streaming.
 <a name="gst-plugins-good-plugins-udpsink.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "host" property'>
 <a name="GstUDPSink--host"></a><h3>The <code class="literal">"host"</code> property</h3>
-<pre class="programlisting">  "host"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
+<pre class="programlisting">  "host"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>The host/IP/Multicast group to send the packets to.</p>
 <p>Default value: "localhost"</p>
 </div>
 <hr>
 <div class="refsect2" title='The "port" property'>
 <a name="GstUDPSink--port"></a><h3>The <code class="literal">"port"</code> property</h3>
-<pre class="programlisting">  "port"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "port"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>The port to send the packets to.</p>
 <p>Allowed values: [0,65535]</p>
 <p>Default value: 4951</p>

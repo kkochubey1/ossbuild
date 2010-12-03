@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gst-plugins-good 0.10.24\n"
+"Project-Id-Version: gst-plugins-good 0.10.26\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-07-15 01:34+0100\n"
+"POT-Creation-Date: 2010-12-01 18:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,80 +16,109 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ext/esd/esdsink.c:252 ext/esd/esdsink.c:357
+#: ext/esd/esdsink.c:253 ext/esd/esdsink.c:358
 msgid "Could not establish connection to sound server"
 msgstr ""
 
-#: ext/esd/esdsink.c:259
+#: ext/esd/esdsink.c:260
 msgid "Failed to query sound server capabilities"
 msgstr ""
 
 #. TRANSLATORS: 'song title' by 'artist name'
-#: ext/pulse/pulsesink.c:2457
+#: ext/pulse/pulsesink.c:2606
 #, c-format
 msgid "'%s' by '%s'"
 msgstr ""
 
-#: ext/flac/gstflacdec.c:1117 ext/libpng/gstpngdec.c:340
-#: ext/libpng/gstpngdec.c:350 ext/libpng/gstpngdec.c:549
-#: ext/wavpack/gstwavpackparse.c:1170 gst/avi/gstavidemux.c:5111
+#: ext/flac/gstflacdec.c:1117 ext/libpng/gstpngdec.c:342
+#: ext/libpng/gstpngdec.c:352 ext/libpng/gstpngdec.c:553
+#: ext/wavpack/gstwavpackparse.c:1170 gst/avi/gstavidemux.c:5142
 msgid "Internal data stream error."
 msgstr ""
 
-#: ext/jpeg/gstjpegdec.c:922 ext/jpeg/gstjpegdec.c:1441
+#: ext/jpeg/gstjpegdec.c:946 ext/jpeg/gstjpegdec.c:1466
 msgid "Failed to decode JPEG image"
 msgstr ""
 
-#: ext/shout2/gstshout2.c:576
+#: ext/shout2/gstshout2.c:578
 msgid "Could not connect to server"
+msgstr ""
+
+#: ext/soup/gstsouphttpsrc.c:868
+msgid "Server does not support seeking."
+msgstr ""
+
+#: ext/soup/gstsouphttpsrc.c:1075
+msgid "Could not resolve server name."
+msgstr ""
+
+#: ext/soup/gstsouphttpsrc.c:1081
+msgid "Could not establish connection to server."
+msgstr ""
+
+#: ext/soup/gstsouphttpsrc.c:1086
+msgid "Secure connection setup failed."
+msgstr ""
+
+#: ext/soup/gstsouphttpsrc.c:1091
+msgid ""
+"A network error occured, or the server closed the connection unexpectedly."
+msgstr ""
+
+#: ext/soup/gstsouphttpsrc.c:1097
+msgid "Server sent bad data."
+msgstr ""
+
+#: ext/soup/gstsouphttpsrc.c:1242
+msgid "No URL set."
 msgstr ""
 
 #: gst/avi/gstavimux.c:1781
 msgid "No or invalid input audio, AVI stream will be corrupt."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:513 gst/qtdemux/qtdemux.c:517
+#: gst/qtdemux/qtdemux.c:492 gst/qtdemux/qtdemux.c:496
 msgid "This file contains no playable streams."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:531 gst/qtdemux/qtdemux.c:1798
-#: gst/qtdemux/qtdemux.c:3106 gst/qtdemux/qtdemux.c:3163
+#: gst/qtdemux/qtdemux.c:510 gst/qtdemux/qtdemux.c:1850
+#: gst/qtdemux/qtdemux.c:3201 gst/qtdemux/qtdemux.c:3262
 msgid "This file is invalid and cannot be played."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:1855
+#: gst/qtdemux/qtdemux.c:1913
 msgid "This file is incomplete and cannot be played."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:3829 gst/qtdemux/qtdemux.c:3836
-#: gst/qtdemux/qtdemux.c:4304 gst/qtdemux/qtdemux.c:4706
-#: gst/qtdemux/qtdemux.c:4712 gst/qtdemux/qtdemux.c:6134
+#: gst/qtdemux/qtdemux.c:3936 gst/qtdemux/qtdemux.c:3943
+#: gst/qtdemux/qtdemux.c:4408 gst/qtdemux/qtdemux.c:4806
+#: gst/qtdemux/qtdemux.c:4813 gst/qtdemux/qtdemux.c:6187
 msgid "This file is corrupt and cannot be played."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:4017
+#: gst/qtdemux/qtdemux.c:4121
 msgid "The video in this file might not play correctly."
 msgstr ""
 
-#: gst/qtdemux/qtdemux.c:4108
+#: gst/qtdemux/qtdemux.c:4212
 #, c-format
 msgid "This file contains too many streams. Only playing first %d"
 msgstr ""
 
-#: gst/rtsp/gstrtspsrc.c:4953
+#: gst/rtsp/gstrtspsrc.c:5085
 msgid ""
 "No supported stream was found. You might need to install a GStreamer RTSP "
 "extension plugin for Real media streams."
 msgstr ""
 
-#: gst/rtsp/gstrtspsrc.c:4958
+#: gst/rtsp/gstrtspsrc.c:5090
 msgid ""
 "No supported stream was found. You might need to allow more transport "
 "protocols or may otherwise be missing the right GStreamer RTSP extension "
 "plugin."
 msgstr ""
 
-#: gst/wavparse/gstwavparse.c:2066
+#: gst/wavparse/gstwavparse.c:2070
 msgid "Internal data flow error."
 msgstr ""
 
@@ -195,32 +224,32 @@ msgstr ""
 msgid "Monitor"
 msgstr ""
 
-#: sys/oss/gstosssink.c:398 sys/oss4/oss4-sink.c:494
+#: sys/oss/gstosssink.c:399 sys/oss4/oss4-sink.c:494
 #: sys/oss4/oss4-source.c:365
 msgid ""
 "Could not open audio device for playback. Device is being used by another "
 "application."
 msgstr ""
 
-#: sys/oss/gstosssink.c:405 sys/oss4/oss4-sink.c:504
+#: sys/oss/gstosssink.c:406 sys/oss4/oss4-sink.c:504
 #: sys/oss4/oss4-source.c:375
 msgid ""
 "Could not open audio device for playback. You don't have permission to open "
 "the device."
 msgstr ""
 
-#: sys/oss/gstosssink.c:413 sys/oss4/oss4-sink.c:515
+#: sys/oss/gstosssink.c:414 sys/oss4/oss4-sink.c:515
 #: sys/oss4/oss4-source.c:386
 msgid "Could not open audio device for playback."
 msgstr ""
 
-#: sys/oss/gstosssrc.c:369
+#: sys/oss/gstosssrc.c:370
 msgid ""
 "Could not open audio device for recording. You don't have permission to open "
 "the device."
 msgstr ""
 
-#: sys/oss/gstosssrc.c:377
+#: sys/oss/gstosssrc.c:378
 msgid "Could not open audio device for recording."
 msgstr ""
 
@@ -654,17 +683,17 @@ msgstr ""
 msgid "Headphone"
 msgstr ""
 
-#: sys/v4l2/gstv4l2src.c:855
+#: sys/v4l2/gstv4l2src.c:883
 #, c-format
 msgid "Error reading %d bytes from device '%s'."
 msgstr ""
 
-#: sys/v4l2/gstv4l2src.c:881
+#: sys/v4l2/gstv4l2src.c:909
 #, c-format
 msgid "Got unexpected frame size of %u instead of %u."
 msgstr ""
 
-#: sys/v4l2/gstv4l2src.c:899
+#: sys/v4l2/gstv4l2src.c:927
 #, c-format
 msgid "Error reading %d bytes on device '%s'."
 msgstr ""
@@ -781,16 +810,16 @@ msgstr ""
 msgid "Could not get parameters on device '%s'"
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:268
+#: sys/v4l2/v4l2src_calls.c:266
 msgid "Video input device did not accept new frame rate setting."
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:340
+#: sys/v4l2/v4l2src_calls.c:338
 #, c-format
 msgid "Could not map buffers from device '%s'"
 msgstr ""
 
-#: sys/v4l2/v4l2src_calls.c:348
+#: sys/v4l2/v4l2src_calls.c:346
 #, c-format
 msgid "The driver of device '%s' does not support any known capture method."
 msgstr ""

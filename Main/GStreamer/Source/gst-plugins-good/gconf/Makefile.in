@@ -56,6 +56,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-feature.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -180,8 +181,6 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
-GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
-GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -217,6 +216,7 @@ GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
@@ -288,6 +288,7 @@ OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -429,8 +430,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 GST_SCHEMA_FILES = gstreamer-@GST_MAJORMINOR@.schemas
-schemadir = @GCONF_SCHEMA_FILE_DIR@
-schema_DATA = $(GST_SCHEMA_FILES)
+@USE_GCONF_TRUE@schemadir = @GCONF_SCHEMA_FILE_DIR@
+@USE_GCONF_TRUE@schema_DATA = $(GST_SCHEMA_FILES)
 CLEANFILES = $(GST_SCHEMA_FILES)
 EXTRA_DIST = $(GST_SCHEMA_FILES)
 all: all-am
@@ -564,6 +565,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+@USE_GCONF_FALSE@install-data-local:
 clean: clean-am
 
 clean-am: clean-generic clean-libtool mostlyclean-am
@@ -648,19 +650,19 @@ uninstall-am: uninstall-schemaDATA
 gstreamer-@GST_MAJORMINOR@.schemas: gstreamer.schemas
 	cp gstreamer.schemas gstreamer-@GST_MAJORMINOR@.schemas
 
-@GCONF_SCHEMAS_INSTALL_TRUE@install-data-local:
-@GCONF_SCHEMAS_INSTALL_TRUE@	@GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) \
-@GCONF_SCHEMAS_INSTALL_TRUE@		--makefile-install-rule $(builddir)/$(schema_DATA) || \
-@GCONF_SCHEMAS_INSTALL_TRUE@		(echo ;\
-@GCONF_SCHEMAS_INSTALL_TRUE@		echo "*****************************************************"; \
-@GCONF_SCHEMAS_INSTALL_TRUE@		echo "Installation of schemas failed, install them manually"; \
-@GCONF_SCHEMAS_INSTALL_TRUE@		echo "*****************************************************";) 
-@GCONF_SCHEMAS_INSTALL_TRUE@	@true
-@GCONF_SCHEMAS_INSTALL_FALSE@install-data-local:
-@GCONF_SCHEMAS_INSTALL_FALSE@	@echo "***************************************************************"
-@GCONF_SCHEMAS_INSTALL_FALSE@	@echo "Not installing schemas, disabled with --disable-schemas-install"
-@GCONF_SCHEMAS_INSTALL_FALSE@	@echo "***************************************************************"
-@GCONF_SCHEMAS_INSTALL_FALSE@	@true
+@GCONF_SCHEMAS_INSTALL_TRUE@@USE_GCONF_TRUE@install-data-local:
+@GCONF_SCHEMAS_INSTALL_TRUE@@USE_GCONF_TRUE@	@GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) \
+@GCONF_SCHEMAS_INSTALL_TRUE@@USE_GCONF_TRUE@		--makefile-install-rule $(builddir)/$(schema_DATA) || \
+@GCONF_SCHEMAS_INSTALL_TRUE@@USE_GCONF_TRUE@		(echo ;\
+@GCONF_SCHEMAS_INSTALL_TRUE@@USE_GCONF_TRUE@		echo "*****************************************************"; \
+@GCONF_SCHEMAS_INSTALL_TRUE@@USE_GCONF_TRUE@		echo "Installation of schemas failed, install them manually"; \
+@GCONF_SCHEMAS_INSTALL_TRUE@@USE_GCONF_TRUE@		echo "*****************************************************";) 
+@GCONF_SCHEMAS_INSTALL_TRUE@@USE_GCONF_TRUE@	@true
+@GCONF_SCHEMAS_INSTALL_FALSE@@USE_GCONF_TRUE@install-data-local:
+@GCONF_SCHEMAS_INSTALL_FALSE@@USE_GCONF_TRUE@	@echo "***************************************************************"
+@GCONF_SCHEMAS_INSTALL_FALSE@@USE_GCONF_TRUE@	@echo "Not installing schemas, disabled with --disable-schemas-install"
+@GCONF_SCHEMAS_INSTALL_FALSE@@USE_GCONF_TRUE@	@echo "***************************************************************"
+@GCONF_SCHEMAS_INSTALL_FALSE@@USE_GCONF_TRUE@	@true
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

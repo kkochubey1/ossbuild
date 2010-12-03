@@ -7,6 +7,7 @@
 <link rel="home" href="index.html" title="GStreamer Good Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="ch03.html" title="gst-plugins-good Base Classes">
 <link rel="prev" href="GstIirEqualizer.html" title="GstIirEqualizer">
+<link rel="next" href="GstVideoMixer2Pad.html" title="GstVideoMixer2Pad">
 <meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
@@ -17,7 +18,7 @@
 <td><a accesskey="u" href="ch03.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
 <th width="100%" align="center">GStreamer Good Plugins 0.10 Plugins Reference Manual</th>
-<td> </td>
+<td><a accesskey="n" href="GstVideoMixer2Pad.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#GstVideoMixerPad.synopsis" class="shortcut">Top</a>
@@ -46,19 +47,19 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="GstVideoMixerPad.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstPad.html">GstPad</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html">GstPad</a>
                +----GstVideoMixerPad
 </pre>
 </div>
 <div class="refsect1" title="Properties">
 <a name="GstVideoMixerPad.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="GstVideoMixerPad.html#GstVideoMixerPad--alpha" title='The "alpha" property'>alpha</a>"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write
-  "<a class="link" href="GstVideoMixerPad.html#GstVideoMixerPad--xpos" title='The "xpos" property'>xpos</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="GstVideoMixerPad.html#GstVideoMixerPad--ypos" title='The "ypos" property'>ypos</a>"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
-  "<a class="link" href="GstVideoMixerPad.html#GstVideoMixerPad--zorder" title='The "zorder" property'>zorder</a>"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
+  "<a class="link" href="GstVideoMixerPad.html#GstVideoMixerPad--alpha" title='The "alpha" property'>alpha</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write
+  "<a class="link" href="GstVideoMixerPad.html#GstVideoMixerPad--xpos" title='The "xpos" property'>xpos</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="GstVideoMixerPad.html#GstVideoMixerPad--ypos" title='The "ypos" property'>ypos</a>"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
+  "<a class="link" href="GstVideoMixerPad.html#GstVideoMixerPad--zorder" title='The "zorder" property'>zorder</a>"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -79,7 +80,7 @@
 <a name="GstVideoMixerPad.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "alpha" property'>
 <a name="GstVideoMixerPad--alpha"></a><h3>The <code class="literal">"alpha"</code> property</h3>
-<pre class="programlisting">  "alpha"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write</pre>
+<pre class="programlisting">  "alpha"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write</pre>
 <p>Alpha of the picture.</p>
 <p>Allowed values: [0,1]</p>
 <p>Default value: 1</p>
@@ -87,21 +88,21 @@
 <hr>
 <div class="refsect2" title='The "xpos" property'>
 <a name="GstVideoMixerPad--xpos"></a><h3>The <code class="literal">"xpos"</code> property</h3>
-<pre class="programlisting">  "xpos"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "xpos"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>X Position of the picture.</p>
 <p>Default value: 0</p>
 </div>
 <hr>
 <div class="refsect2" title='The "ypos" property'>
 <a name="GstVideoMixerPad--ypos"></a><h3>The <code class="literal">"ypos"</code> property</h3>
-<pre class="programlisting">  "ypos"                     <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
+<pre class="programlisting">  "ypos"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Y Position of the picture.</p>
 <p>Default value: 0</p>
 </div>
 <hr>
 <div class="refsect2" title='The "zorder" property'>
 <a name="GstVideoMixerPad--zorder"></a><h3>The <code class="literal">"zorder"</code> property</h3>
-<pre class="programlisting">  "zorder"                   <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
+<pre class="programlisting">  "zorder"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>Z Order of the picture.</p>
 <p>Allowed values: &lt;= 10000</p>
 <p>Default value: 0</p>

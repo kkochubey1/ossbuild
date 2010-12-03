@@ -49,11 +49,11 @@
 <div class="refsect1" title="Object Hierarchy">
 <a name="gst-plugins-good-plugins-equalizer-nbands.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
-   +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstObject.html">GstObject</a>
-         +----<a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElement.html">GstElement</a>
-               +----<a href="/usr/share/gtk-doc/html/gstreamer-libs-0.10/GstBaseTransform.html">GstBaseTransform</a>
-                     +----<a href="/usr/share/gtk-doc/html/gst-plugins-base-libs-0.10/gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilter">GstAudioFilter</a>
+  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstObject.html">GstObject</a>
+         +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>
+               +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-libs/html/GstBaseTransform.html">GstBaseTransform</a>
+                     +----<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gst-plugins-base-libs/html/gst-plugins-base-libs-gstaudiofilter.html#GstAudioFilter">GstAudioFilter</a>
                            +----<a class="link" href="GstIirEqualizer.html" title="GstIirEqualizer">GstIirEqualizer</a>
                                  +----GstIirEqualizerNBands
 </pre>
@@ -62,12 +62,12 @@
 <a name="gst-plugins-good-plugins-equalizer-nbands.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstIirEqualizerNBands implements
- <a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstChildProxy.html">GstChildProxy</a>.</p>
+ <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstChildProxy.html">GstChildProxy</a>.</p>
 </div>
 <div class="refsect1" title="Properties">
 <a name="gst-plugins-good-plugins-equalizer-nbands.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-good-plugins-equalizer-nbands.html#GstIirEqualizerNBands--num-bands" title='The "num-bands" property'>num-bands</a>"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct
+  "<a class="link" href="gst-plugins-good-plugins-equalizer-nbands.html#GstIirEqualizerNBands--num-bands" title='The "num-bands" property'>num-bands</a>"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -78,7 +78,7 @@ select between 1 and 64 bands and has properties on each band to change
 the center frequency, band width and gain.
 </p>
 <div class="refsect2" title="Example launch line">
-<a name="id564105"></a><h3>Example launch line</h3>
+<a name="id617728"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -93,7 +93,7 @@ the center frequency, band width and gain.
 </div>
 <hr>
 <div class="refsect2" title="Example code">
-<a name="id531037"></a><h3>Example code</h3>
+<a name="id586256"></a><h3>Example code</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -160,17 +160,17 @@ the center frequency, band width and gain.
 
 <span class="symbol">...</span>
 
-  equalizer <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="symbol">(</span><span class="string">&quot;equalizer-nbands&quot;</span><span class="symbol">,</span> <span class="string">&quot;equalizer&quot;</span><span class="symbol">);</span>
-  <span class="function"><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-set">g_object_set</a></span> <span class="symbol">(</span><span class="function"><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="symbol">(</span>equalizer<span class="symbol">),</span> <span class="string">&quot;num-bands&quot;</span><span class="symbol">,</span> <span class="number">5</span><span class="symbol">,</span> NULL<span class="symbol">);</span>
+  equalizer <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElementFactory.html#gst-element-factory-make">gst_element_factory_make</a></span> <span class="symbol">(</span><span class="string">&quot;equalizer-nbands&quot;</span><span class="symbol">,</span> <span class="string">&quot;equalizer&quot;</span><span class="symbol">);</span>
+  <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-set">g_object_set</a></span> <span class="symbol">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="symbol">(</span>equalizer<span class="symbol">),</span> <span class="string">&quot;num-bands&quot;</span><span class="symbol">,</span> <span class="number">5</span><span class="symbol">,</span> NULL<span class="symbol">);</span>
 
 <span class="symbol">...</span>
 
   <span class="keyword">for</span> <span class="symbol">(</span>i <span class="symbol">=</span> <span class="number">0</span><span class="symbol">;</span> i <span class="symbol">&lt;</span> <span class="number">5</span><span class="symbol">;</span> i<span class="symbol">++) {</span>
-    band <span class="symbol">=</span> <span class="function"><a href="/usr/share/gtk-doc/html/gstreamer-0.10/GstChildProxy.html#gst-child-proxy-get-child-by-index">gst_child_proxy_get_child_by_index</a></span> <span class="symbol">(</span><span class="function">GST_CHILD_PROXY</span> <span class="symbol">(</span>equalizer<span class="symbol">),</span> i<span class="symbol">);</span>
-    <span class="function"><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-set">g_object_set</a></span> <span class="symbol">(</span><span class="function"><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="symbol">(</span>band<span class="symbol">),</span> <span class="string">&quot;freq&quot;</span><span class="symbol">,</span> state<span class="symbol">[</span>i<span class="symbol">].</span>freq<span class="symbol">,</span>
+    band <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstChildProxy.html#gst-child-proxy-get-child-by-index">gst_child_proxy_get_child_by_index</a></span> <span class="symbol">(</span><span class="function">GST_CHILD_PROXY</span> <span class="symbol">(</span>equalizer<span class="symbol">),</span> i<span class="symbol">);</span>
+    <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-set">g_object_set</a></span> <span class="symbol">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="symbol">(</span>band<span class="symbol">),</span> <span class="string">&quot;freq&quot;</span><span class="symbol">,</span> state<span class="symbol">[</span>i<span class="symbol">].</span>freq<span class="symbol">,</span>
         <span class="string">&quot;bandwidth&quot;</span><span class="symbol">,</span> state<span class="symbol">[</span>i<span class="symbol">].</span>width<span class="symbol">,</span>
 	<span class="string">&quot;gain&quot;</span><span class="symbol">,</span> state<span class="symbol">[</span>i<span class="symbol">].</span>gain<span class="symbol">);</span>
-    <span class="function"><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="symbol">(</span><span class="function"><a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="symbol">(</span>band<span class="symbol">));</span>
+    <span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="symbol">(</span><span class="function"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="symbol">(</span>band<span class="symbol">));</span>
   <span class="symbol">}</span>
 
 <span class="symbol">...</span></pre></td>
@@ -194,7 +194,7 @@ the center frequency, band width and gain.
 <a name="gst-plugins-good-plugins-equalizer-nbands.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "num-bands" property'>
 <a name="GstIirEqualizerNBands--num-bands"></a><h3>The <code class="literal">"num-bands"</code> property</h3>
-<pre class="programlisting">  "num-bands"                <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct</pre>
+<pre class="programlisting">  "num-bands"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write / Construct</pre>
 <p>number of different bands to use.</p>
 <p>Allowed values: [1,64]</p>
 <p>Default value: 10</p>

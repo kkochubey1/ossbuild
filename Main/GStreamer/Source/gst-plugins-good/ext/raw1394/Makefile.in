@@ -36,7 +36,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = ext/raw1394
-DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
+DIST_COMMON = $(am__noinst_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
@@ -57,6 +57,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-feature.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -107,9 +108,12 @@ am__DEPENDENCIES_1 =
 libgst1394_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
+am__libgst1394_la_SOURCES_DIST = gst1394.c gst1394probe.c \
+	gstdv1394src.c gsthdv1394src.c gst1394clock.c
+@USE_LIBIEC61883_TRUE@am__objects_1 = libgst1394_la-gsthdv1394src.lo
 am_libgst1394_la_OBJECTS = libgst1394_la-gst1394.lo \
 	libgst1394_la-gst1394probe.lo libgst1394_la-gstdv1394src.lo \
-	libgst1394_la-gsthdv1394src.lo libgst1394_la-gst1394clock.lo
+	$(am__objects_1) libgst1394_la-gst1394clock.lo
 libgst1394_la_OBJECTS = $(am_libgst1394_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -145,7 +149,9 @@ AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgst1394_la_SOURCES)
-DIST_SOURCES = $(libgst1394_la_SOURCES)
+DIST_SOURCES = $(am__libgst1394_la_SOURCES_DIST)
+am__noinst_HEADERS_DIST = gstdv1394src.h gst1394probe.h \
+	gsthdv1394src.h gst1394clock.h
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -219,8 +225,6 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
-GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
-GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -256,6 +260,7 @@ GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
@@ -327,6 +332,7 @@ OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -468,8 +474,12 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 plugin_LTLIBRARIES = libgst1394.la
+@USE_LIBIEC61883_FALSE@hdvsource = 
+@USE_LIBIEC61883_TRUE@hdvsource = gsthdv1394src.c
+@USE_LIBIEC61883_FALSE@hdvheaders = 
+@USE_LIBIEC61883_TRUE@hdvheaders = gsthdv1394src.h
 libgst1394_la_SOURCES = \
-	gst1394.c gst1394probe.c gstdv1394src.c gsthdv1394src.c \
+	gst1394.c gst1394probe.c gstdv1394src.c $(hdvsource) \
 	gst1394clock.c
 
 libgst1394_la_CFLAGS = \
@@ -486,7 +496,7 @@ libgst1394_la_LIBADD = \
 
 libgst1394_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 libgst1394_la_LIBTOOLFLAGS = --tag=disable-static
-noinst_HEADERS = gstdv1394src.h gst1394probe.h gsthdv1394src.h \
+noinst_HEADERS = gstdv1394src.h gst1394probe.h $(hdvheaders) \
 	gst1394clock.h
 
 all: all-am

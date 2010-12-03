@@ -61,19 +61,19 @@
 #define PACKAGE_NAME "GStreamer Python Bindings"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GStreamer Python Bindings 0.10.19"
+#define PACKAGE_STRING "GStreamer Python Bindings 0.10.20"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gst-python"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.10.19"
+#define PACKAGE_VERSION "0.10.20"
 
 /* PyGst major version */
 #define PYGST_MAJOR_VERSION 0
 
 /* PyGst micro version */
-#define PYGST_MICRO_VERSION 19
+#define PYGST_MICRO_VERSION 20
 
 /* PyGst minor version */
 #define PYGST_MINOR_VERSION 10
@@ -85,4 +85,4 @@
 #undef STDC_HEADERS
 
 /* Version number of package */
-#define VERSION "0.10.19"
+#define VERSION "0.10.20"

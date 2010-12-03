@@ -34,7 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = probe$(EXEEXT)
+noinst_PROGRAMS = probe$(EXEEXT) camctrl$(EXEEXT)
 subdir = tests/examples/v4l2
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -56,6 +56,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-feature.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
+	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -80,14 +81,21 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-am_probe_OBJECTS = probe-probe.$(OBJEXT)
-probe_OBJECTS = $(am_probe_OBJECTS)
+am_camctrl_OBJECTS = camctrl-camctrl.$(OBJEXT)
+camctrl_OBJECTS = $(am_camctrl_OBJECTS)
 am__DEPENDENCIES_1 =
-probe_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+camctrl_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
+camctrl_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(camctrl_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_probe_OBJECTS = probe-probe.$(OBJEXT)
+probe_OBJECTS = $(am_probe_OBJECTS)
+probe_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 probe_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(probe_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -117,8 +125,8 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(probe_SOURCES)
-DIST_SOURCES = $(probe_SOURCES)
+SOURCES = $(camctrl_SOURCES) $(probe_SOURCES)
+DIST_SOURCES = $(camctrl_SOURCES) $(probe_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -191,8 +199,6 @@ GCONF_SCHEMA_FILE_DIR = @GCONF_SCHEMA_FILE_DIR@
 GCOV = @GCOV@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_LIBS = @GCOV_LIBS@
-GDK_PIXBUF3_CFLAGS = @GDK_PIXBUF3_CFLAGS@
-GDK_PIXBUF3_LIBS = @GDK_PIXBUF3_LIBS@
 GDK_PIXBUF_CFLAGS = @GDK_PIXBUF_CFLAGS@
 GDK_PIXBUF_LIBS = @GDK_PIXBUF_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
@@ -228,6 +234,7 @@ GST_PACKAGE_NAME = @GST_PACKAGE_NAME@
 GST_PACKAGE_ORIGIN = @GST_PACKAGE_ORIGIN@
 GST_PLUGINS_ALL = @GST_PLUGINS_ALL@
 GST_PLUGINS_BASE_CFLAGS = @GST_PLUGINS_BASE_CFLAGS@
+GST_PLUGINS_BASE_DIR = @GST_PLUGINS_BASE_DIR@
 GST_PLUGINS_BASE_LIBS = @GST_PLUGINS_BASE_LIBS@
 GST_PLUGINS_DIR = @GST_PLUGINS_DIR@
 GST_PLUGINS_SELECTED = @GST_PLUGINS_SELECTED@
@@ -299,6 +306,7 @@ OBJC_LDFLAGS = @OBJC_LDFLAGS@
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 ORCC = @ORCC@
+ORCC_FLAGS = @ORCC_FLAGS@
 ORC_CFLAGS = @ORC_CFLAGS@
 ORC_LIBS = @ORC_LIBS@
 OTOOL = @OTOOL@
@@ -439,6 +447,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+camctrl_SOURCES = camctrl.c
+camctrl_CFLAGS = $(GST_BASE_CFLAGS) $(GST_CONTROLLER_CFLAGS) $(GST_CFLAGS)
+camctrl_LDADD = $(GST_BASE_LIBS) $(GST_CONTROLLER_LIBS) $(GST_LIBS)
 probe_SOURCES = probe.c
 probe_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(GST_CFLAGS)
 probe_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstinterfaces-0.10 $(GST_BASE_LIBS) $(GST_LIBS)
@@ -485,6 +496,9 @@ clean-noinstPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+camctrl$(EXEEXT): $(camctrl_OBJECTS) $(camctrl_DEPENDENCIES) 
+	@rm -f camctrl$(EXEEXT)
+	$(AM_V_CCLD)$(camctrl_LINK) $(camctrl_OBJECTS) $(camctrl_LDADD) $(LIBS)
 probe$(EXEEXT): $(probe_OBJECTS) $(probe_DEPENDENCIES) 
 	@rm -f probe$(EXEEXT)
 	$(AM_V_CCLD)$(probe_LINK) $(probe_OBJECTS) $(probe_LDADD) $(LIBS)
@@ -495,6 +509,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/camctrl-camctrl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/probe-probe.Po@am__quote@
 
 .c.o:
@@ -520,6 +535,22 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+camctrl-camctrl.o: camctrl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(camctrl_CFLAGS) $(CFLAGS) -MT camctrl-camctrl.o -MD -MP -MF $(DEPDIR)/camctrl-camctrl.Tpo -c -o camctrl-camctrl.o `test -f 'camctrl.c' || echo '$(srcdir)/'`camctrl.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/camctrl-camctrl.Tpo $(DEPDIR)/camctrl-camctrl.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camctrl.c' object='camctrl-camctrl.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(camctrl_CFLAGS) $(CFLAGS) -c -o camctrl-camctrl.o `test -f 'camctrl.c' || echo '$(srcdir)/'`camctrl.c
+
+camctrl-camctrl.obj: camctrl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(camctrl_CFLAGS) $(CFLAGS) -MT camctrl-camctrl.obj -MD -MP -MF $(DEPDIR)/camctrl-camctrl.Tpo -c -o camctrl-camctrl.obj `if test -f 'camctrl.c'; then $(CYGPATH_W) 'camctrl.c'; else $(CYGPATH_W) '$(srcdir)/camctrl.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/camctrl-camctrl.Tpo $(DEPDIR)/camctrl-camctrl.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='camctrl.c' object='camctrl-camctrl.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(camctrl_CFLAGS) $(CFLAGS) -c -o camctrl-camctrl.obj `if test -f 'camctrl.c'; then $(CYGPATH_W) 'camctrl.c'; else $(CYGPATH_W) '$(srcdir)/camctrl.c'; fi`
 
 probe-probe.o: probe.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(probe_CFLAGS) $(CFLAGS) -MT probe-probe.o -MD -MP -MF $(DEPDIR)/probe-probe.Tpo -c -o probe-probe.o `test -f 'probe.c' || echo '$(srcdir)/'`probe.c
