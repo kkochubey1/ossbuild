@@ -644,6 +644,20 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstjpegformat", "Main\GStre
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gstgeometrictransform", "Main\GStreamer\Windows\Build\Plugins\Bad\gst\geometrictransform.vcproj", "{BBE23841-4387-4351-B747-B8DEF98CA700}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gnl", "Main\GStreamer\Windows\Build\Plugins\GNonLin\gnl\gnl.vcproj", "{4288EE5A-D59E-44AE-A1F6-001D58DD708A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_gst", "Main\GStreamer\Windows\Build\Bindings\Python\_gst2.7.vcproj", "{7CF83E29-C084-40FB-8E36-70A5E8BA0681}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "audio", "Main\GStreamer\Windows\Build\Bindings\Python\audio-2.7.vcproj", "{095A082F-8CE5-4459-B3CF-0C708684730D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "interfaces", "Main\GStreamer\Windows\Build\Bindings\Python\interfaces-2.7.vcproj", "{73D720F5-E4AE-4C73-9017-C57842223D47}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pbutils", "Main\GStreamer\Windows\Build\Bindings\Python\pbutils-2.7.vcproj", "{AFBF5F4C-570F-4B37-A867-005052AE565D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tag", "Main\GStreamer\Windows\Build\Bindings\Python\tag-2.7.vcproj", "{5D58F4D2-A942-4346-B562-FC0000000000}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "video", "Main\GStreamer\Windows\Build\Bindings\Python\video-2.7.vcproj", "{46018159-E5A0-4599-BBD1-35F20FE9CBA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release (All)|Win32 = Release (All)|Win32
@@ -1941,6 +1955,48 @@ Global
 		{BBE23841-4387-4351-B747-B8DEF98CA700}.Release (GPL)|Win32.Build.0 = Release|Win32
 		{BBE23841-4387-4351-B747-B8DEF98CA700}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
 		{BBE23841-4387-4351-B747-B8DEF98CA700}.Release (LGPL)|Win32.Build.0 = Release|Win32
+		{4288EE5A-D59E-44AE-A1F6-001D58DD708A}.Release (All)|Win32.ActiveCfg = Release|Win32
+		{4288EE5A-D59E-44AE-A1F6-001D58DD708A}.Release (All)|Win32.Build.0 = Release|Win32
+		{4288EE5A-D59E-44AE-A1F6-001D58DD708A}.Release (GPL)|Win32.ActiveCfg = Release|Win32
+		{4288EE5A-D59E-44AE-A1F6-001D58DD708A}.Release (GPL)|Win32.Build.0 = Release|Win32
+		{4288EE5A-D59E-44AE-A1F6-001D58DD708A}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
+		{4288EE5A-D59E-44AE-A1F6-001D58DD708A}.Release (LGPL)|Win32.Build.0 = Release|Win32
+		{7CF83E29-C084-40FB-8E36-70A5E8BA0681}.Release (All)|Win32.ActiveCfg = Release|Win32
+		{7CF83E29-C084-40FB-8E36-70A5E8BA0681}.Release (All)|Win32.Build.0 = Release|Win32
+		{7CF83E29-C084-40FB-8E36-70A5E8BA0681}.Release (GPL)|Win32.ActiveCfg = Release|Win32
+		{7CF83E29-C084-40FB-8E36-70A5E8BA0681}.Release (GPL)|Win32.Build.0 = Release|Win32
+		{7CF83E29-C084-40FB-8E36-70A5E8BA0681}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
+		{7CF83E29-C084-40FB-8E36-70A5E8BA0681}.Release (LGPL)|Win32.Build.0 = Release|Win32
+		{095A082F-8CE5-4459-B3CF-0C708684730D}.Release (All)|Win32.ActiveCfg = Release|Win32
+		{095A082F-8CE5-4459-B3CF-0C708684730D}.Release (All)|Win32.Build.0 = Release|Win32
+		{095A082F-8CE5-4459-B3CF-0C708684730D}.Release (GPL)|Win32.ActiveCfg = Release|Win32
+		{095A082F-8CE5-4459-B3CF-0C708684730D}.Release (GPL)|Win32.Build.0 = Release|Win32
+		{095A082F-8CE5-4459-B3CF-0C708684730D}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
+		{095A082F-8CE5-4459-B3CF-0C708684730D}.Release (LGPL)|Win32.Build.0 = Release|Win32
+		{73D720F5-E4AE-4C73-9017-C57842223D47}.Release (All)|Win32.ActiveCfg = Release|Win32
+		{73D720F5-E4AE-4C73-9017-C57842223D47}.Release (All)|Win32.Build.0 = Release|Win32
+		{73D720F5-E4AE-4C73-9017-C57842223D47}.Release (GPL)|Win32.ActiveCfg = Release|Win32
+		{73D720F5-E4AE-4C73-9017-C57842223D47}.Release (GPL)|Win32.Build.0 = Release|Win32
+		{73D720F5-E4AE-4C73-9017-C57842223D47}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
+		{73D720F5-E4AE-4C73-9017-C57842223D47}.Release (LGPL)|Win32.Build.0 = Release|Win32
+		{AFBF5F4C-570F-4B37-A867-005052AE565D}.Release (All)|Win32.ActiveCfg = Release|Win32
+		{AFBF5F4C-570F-4B37-A867-005052AE565D}.Release (All)|Win32.Build.0 = Release|Win32
+		{AFBF5F4C-570F-4B37-A867-005052AE565D}.Release (GPL)|Win32.ActiveCfg = Release|Win32
+		{AFBF5F4C-570F-4B37-A867-005052AE565D}.Release (GPL)|Win32.Build.0 = Release|Win32
+		{AFBF5F4C-570F-4B37-A867-005052AE565D}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
+		{AFBF5F4C-570F-4B37-A867-005052AE565D}.Release (LGPL)|Win32.Build.0 = Release|Win32
+		{5D58F4D2-A942-4346-B562-FC0000000000}.Release (All)|Win32.ActiveCfg = Release|Win32
+		{5D58F4D2-A942-4346-B562-FC0000000000}.Release (All)|Win32.Build.0 = Release|Win32
+		{5D58F4D2-A942-4346-B562-FC0000000000}.Release (GPL)|Win32.ActiveCfg = Release|Win32
+		{5D58F4D2-A942-4346-B562-FC0000000000}.Release (GPL)|Win32.Build.0 = Release|Win32
+		{5D58F4D2-A942-4346-B562-FC0000000000}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
+		{5D58F4D2-A942-4346-B562-FC0000000000}.Release (LGPL)|Win32.Build.0 = Release|Win32
+		{46018159-E5A0-4599-BBD1-35F20FE9CBA2}.Release (All)|Win32.ActiveCfg = Release|Win32
+		{46018159-E5A0-4599-BBD1-35F20FE9CBA2}.Release (All)|Win32.Build.0 = Release|Win32
+		{46018159-E5A0-4599-BBD1-35F20FE9CBA2}.Release (GPL)|Win32.ActiveCfg = Release|Win32
+		{46018159-E5A0-4599-BBD1-35F20FE9CBA2}.Release (GPL)|Win32.Build.0 = Release|Win32
+		{46018159-E5A0-4599-BBD1-35F20FE9CBA2}.Release (LGPL)|Win32.ActiveCfg = Release|Win32
+		{46018159-E5A0-4599-BBD1-35F20FE9CBA2}.Release (LGPL)|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
