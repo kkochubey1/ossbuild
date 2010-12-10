@@ -75,6 +75,7 @@ sqlite                  -       3.7.2           -       http://www.sqlite.org/sq
 libvdpau                -       0.4.0           -       http://cgit.freedesktop.org/~aplattner/libvdpau/snapshot/libvdpau-0.4.tar.bz2
 libsndfile              -       1.0.21          -       http://www.mega-nerd.com/libsndfile/files/libsndfile-1.0.21.tar.gz
 twolame                 -       0.3.12 (trunk)  -       http://twolame.svn.sourceforge.net/viewvc/twolame/trunk/?view=tar (Typically http://downloads.sourceforge.net/project/twolame/twolame/0.3.12/twolame-0.3.12.tar.gz?use_mirror=voxel)
+opencv			-	2.2.0		-	http://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.2/OpenCV-2.2.0-win.zip/download
 
 
 BSD Packages
