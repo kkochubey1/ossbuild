@@ -51,6 +51,8 @@ struct SimpleTestStream {
 
   GCallback handoff_handler;
 
+  gboolean got_candidates;
+
   gint flags;
 };
 
@@ -58,6 +60,13 @@ struct SimpleTestConference *setup_simple_conference (
     gint id,
     gchar *conference_elem,
     gchar *cname);
+
+struct SimpleTestConference *setup_simple_conference_full (
+    gint id,
+    gchar *conference_elem,
+    gchar *cname,
+    FsMediaType mediatype);
+
 
 struct SimpleTestStream *simple_conference_add_stream (
     struct SimpleTestConference *dat,
@@ -69,6 +78,8 @@ struct SimpleTestStream *simple_conference_add_stream (
 void setup_fakesrc (struct SimpleTestConference *dat);
 
 void cleanup_simple_conference (struct SimpleTestConference *dat);
+
+guint count_stream_pads (FsStream *stream);
 
 
 #endif /* __GENERIC_H__ */

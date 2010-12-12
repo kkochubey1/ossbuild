@@ -1,0 +1,68 @@
+diff --git a/sys/dshowvideosink/dshowvideosink.cpp b/sys/dshowvideosink/dshowvideosink.cpp
+index ab9aecd..5d60c7e 100644
+--- a/sys/dshowvideosink/dshowvideosink.cpp
++++ b/sys/dshowvideosink/dshowvideosink.cpp
+@@ -1301,13 +1301,7 @@ static gboolean
+ gst_dshowvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
+ {
+   GstDshowVideoSink *sink = GST_DSHOWVIDEOSINK (bsink);
+-
+-  if (sink->connected) {
+-    /* Look at the DShow APIs for dynamically modifying the pipeline and see
+-     * if we can make this work later... */
+-    GST_WARNING_OBJECT (sink, "Changing caps at runtime is not yet supported");
+-    return FALSE;
+-  }
++  VideoFakeSrcPin *pin = sink->fakesrc->GetOutputPin();
+ 
+   if (!gst_caps_to_directshow_media_type (caps, &sink->mediatype)) {
+     GST_WARNING_OBJECT (sink, "Cannot convert caps to AM_MEDIA_TYPE, rejecting");
+@@ -1318,9 +1312,47 @@ gst_dshowvideosink_set_caps (GstBaseSink * bsink, GstCaps * caps)
+   /* Now we have an AM_MEDIA_TYPE describing what we're going to send.
+    * We set this on our DirectShow fakesrc's output pin. 
+    */
+-  sink->fakesrc->GetOutputPin()->SetMediaType (&sink->mediatype);
++  pin->SetMediaType (&sink->mediatype);
+   GST_DEBUG_OBJECT (sink, "Configured output pin media type");
+ 
++  if (sink->connected) {
++    HRESULT hres;
++    int attempts = 0;
++    CMediaType cMediaType(sink->mediatype);
++
++    hres = pin->Flush();
++    if (FAILED (hres)) {
++      GST_WARNING_OBJECT (sink, "Flush failed: %x", hres);
++      return FALSE;
++    }
++
++    hres = pin->StartUsingOutputPin();
++    if (FAILED (hres)) {
++      GST_WARNING_OBJECT (sink, "StartUsingOutputPin failed: %x", hres);
++      return FALSE;
++    }
++
++    /* ChangeMediaType sometimes returns VFW_E_BUFFERS_OUTSTANDING,
++     * I couldn't find a better workaround for this. */
++    while (attempts++ < 5)
++    {
++      hres = pin->ChangeMediaType (&cMediaType);
++      if (SUCCEEDED (hres) || hres != VFW_E_BUFFERS_OUTSTANDING)
++      {
++        break;
++      }
++
++      Sleep(10);
++    }
++
++    pin->StopUsingOutputPin();
++
++    if (FAILED (hres)) {
++      GST_WARNING_OBJECT (sink, "ChangeMediaType failed: %x", hres);
++      return FALSE;
++    }
++  }
++
+   return TRUE;
+ }
+ 

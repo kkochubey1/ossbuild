@@ -1,0 +1,12 @@
+Index: ext/ffmpeg/gstffmpegdemux.c
+===================================================================
+--- ext/ffmpeg/gstffmpegdemux.c	(revision 683)
++++ ext/ffmpeg/gstffmpegdemux.c	(working copy)
+@@ -1960,6 +1960,7 @@
+         !strcmp (in_plugin->name, "aiff") ||
+         !strcmp (in_plugin->name, "4xm") ||
+         !strcmp (in_plugin->name, "yuv4mpegpipe") ||
++		!strcmp (in_plugin->name, "dv") ||
+         !strcmp (in_plugin->name, "mpc") || !strcmp (in_plugin->name, "gif"))
+       rank = GST_RANK_MARGINAL;
+     else

@@ -78,7 +78,7 @@ struct _FsRtpSpecialSourceClass
   /* Object methods */
 
   GstElement* (*build) (FsRtpSpecialSource *source,
-      GList *negotiated_codecs,
+      GList *negotiated_codec_associations,
       FsCodec *selected_codec);
 
    /* Class methods */
@@ -89,7 +89,7 @@ struct _FsRtpSpecialSourceClass
       GList *codec_associations);
 
   FsCodec* (*get_codec) (FsRtpSpecialSourceClass *klass,
-      GList *negotiated_codecs,
+      GList *negotiated_codec_associations,
       FsCodec *selected_codec);
 };
 
@@ -114,17 +114,17 @@ struct _FsRtpSpecialSource
 
 GType fs_rtp_special_source_get_type (void);
 
-void
+gboolean
 fs_rtp_special_sources_remove (
     GList **current_extra_sources,
-    GList **negotiated_codecs,
+    GList **negotiated_codec_associations,
     GMutex *mutex,
     FsCodec *send_codec);
 
-void
+gboolean
 fs_rtp_special_sources_create (
     GList **extra_sources,
-    GList **negotiated_codecs,
+    GList **negotiated_codec_associations,
     GMutex *mutex,
     FsCodec *send_codec,
     GstElement *bin,
@@ -148,6 +148,10 @@ fs_rtp_special_sources_stop_telephony_event (GList *current_extra_sources,
 
 GList *
 fs_rtp_special_sources_negotiation_filter (GList *codec_associations);
+
+GList *
+fs_rtp_special_sources_get_codecs_locked (GList *special_sources,
+    GList *codec_associations, FsCodec *main_codec);
 
 G_END_DECLS
 

@@ -28,21 +28,44 @@
 #include <gst/check/gstcheck.h>
 #include <gst/farsight/fs-conference-iface.h>
 
+
+static GstBusSyncReply
+default_sync_handler (GstBus *bus, GstMessage *message, gpointer data)
+{
+  struct SimpleTestConference *dat = data;
+  gboolean ready;
+
+  /* Get the codecs-ready property which takes the session lock to make sure
+   * it is not held across signal emissions
+   */
+  if (dat->session)
+    g_object_get (dat->session, "codecs-ready", &ready, NULL);
+
+  return GST_BUS_PASS;
+}
+
 struct SimpleTestConference *
-setup_simple_conference (
+setup_simple_conference_full (
     gint id,
     gchar *conference_elem,
-    gchar *cname)
+    gchar *cname,
+    FsMediaType mediatype)
 {
   struct SimpleTestConference *dat = g_new0 (struct SimpleTestConference, 1);
   GError *error = NULL;
   guint tos;
+  GstBus *bus;
 
   dat->id = id;
   dat->cname = g_strdup (cname);
 
   dat->pipeline = gst_pipeline_new ("pipeline");
   fail_if (dat->pipeline == NULL);
+
+  bus = gst_pipeline_get_bus (GST_PIPELINE (dat->pipeline));
+  fail_if (bus == NULL);
+  gst_bus_set_sync_handler (bus, default_sync_handler, dat);
+  gst_object_unref (bus);
 
   dat->conference = gst_element_factory_make (conference_elem, NULL);
   fail_if (dat->conference == NULL, "Could not build %s", conference_elem);
@@ -52,7 +75,7 @@ setup_simple_conference (
   g_object_set (dat->conference, "sdes-cname", cname, NULL);
 
   dat->session = fs_conference_new_session (FS_CONFERENCE (dat->conference),
-      FS_MEDIA_TYPE_AUDIO, &error);
+      mediatype, &error);
   if (error)
     fail ("Error while creating new session (%d): %s",
         error->code, error->message);
@@ -68,6 +91,16 @@ setup_simple_conference (
   return dat;
 }
 
+
+struct SimpleTestConference *
+setup_simple_conference (
+    gint id,
+    gchar *conference_elem,
+    gchar *cname)
+{
+  return setup_simple_conference_full (id, conference_elem, cname,
+      FS_MEDIA_TYPE_AUDIO);
+}
 
 struct SimpleTestStream *
 simple_conference_add_stream (
@@ -147,6 +180,7 @@ setup_fakesrc (struct SimpleTestConference *dat)
   g_object_set (dat->fakesrc,
       "blocksize", 10,
       "is-live", TRUE,
+      "volume", 0.3,
       NULL);
 
   srcpad = gst_element_get_static_pad (dat->fakesrc, "src");
@@ -159,4 +193,47 @@ setup_fakesrc (struct SimpleTestConference *dat)
 
   if (dat->started)
     gst_element_set_state (dat->pipeline, GST_STATE_PLAYING);
+}
+
+static gboolean
+pad_count_fold (gpointer pad, GValue *val, gpointer user_data)
+{
+  g_value_set_uint (val, g_value_get_uint (val) + 1);
+
+  gst_object_unref (pad);
+
+  return TRUE;
+}
+
+guint
+count_stream_pads (FsStream *stream)
+{
+  GstIterator *iter = fs_stream_get_src_pads_iterator (stream);
+  guint count = 0;
+
+  fail_if (iter == NULL);
+
+  for (;;)
+  {
+    GstIteratorResult res;
+    GValue val = {0};
+
+    g_value_init (&val, G_TYPE_UINT);
+
+    res = gst_iterator_fold (iter, pad_count_fold, &val, NULL);
+
+    fail_if (res == GST_ITERATOR_ERROR);
+
+    if (res != GST_ITERATOR_RESYNC)
+    {
+      count = g_value_get_uint (&val);
+      break;
+    }
+
+    gst_iterator_resync (iter);
+  }
+
+  gst_iterator_free (iter);
+
+  return count;
 }

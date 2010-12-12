@@ -3,19 +3,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>FsRtpParticipant</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.73.2">
-<link rel="start" href="index.html" title="Farsight2 Plugins Manual">
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="Farsight2 Plugins Manual">
 <link rel="up" href="ch01.html" title="Core interface classes">
 <link rel="prev" href="farsight2-plugins-FsRtpConference.html" title="FsRtpConference">
 <link rel="next" href="farsight2-plugins-FsRtpSession.html" title="FsRtpSession">
-<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.14 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="part" href="pt01.html" title="Part I. RTP Plugin">
-<link rel="chapter" href="ch01.html" title="Core interface classes">
-<link rel="chapter" href="ch02.html" title="Transmitters">
-<link rel="part" href="pt02.html" title="Part II. MSN plugins">
-<link rel="chapter" href="ch03.html" title="MSN Webcam plugin">
-<link rel="part" href="pt03.html" title="Part III. Utility elements">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -28,13 +22,13 @@
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#farsight2-plugins-FsRtpParticipant.synopsis" class="shortcut">Top</a>
-                 | 
-                <a href="#farsight2-plugins-FsRtpParticipant.description" class="shortcut">Description</a>
-                 | 
-                <a href="#farsight2-plugins-FsRtpParticipant.properties" class="shortcut">Properties</a>
+                   | 
+                  <a href="#farsight2-plugins-FsRtpParticipant.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#farsight2-plugins-FsRtpParticipant.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" lang="en">
+<div class="refentry" title="FsRtpParticipant">
 <a name="farsight2-plugins-FsRtpParticipant"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -43,49 +37,39 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv">
+<div class="refsynopsisdiv" title="Synopsis">
 <a name="farsight2-plugins-FsRtpParticipant.synopsis"></a><h2>Synopsis</h2>
-<pre class="synopsis">
-                    <a class="link" href="farsight2-plugins-FsRtpParticipant.html#FsRtpParticipant" title="FsRtpParticipant">FsRtpParticipant</a>;
+<pre class="synopsis">                    <a class="link" href="farsight2-plugins-FsRtpParticipant.html#FsRtpParticipant" title="FsRtpParticipant">FsRtpParticipant</a>;
 </pre>
 </div>
-<div class="refsect1" lang="en">
+<div class="refsect1" title="Properties">
 <a name="farsight2-plugins-FsRtpParticipant.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "<a class="link" href="farsight2-plugins-FsRtpParticipant.html#FsRtpParticipant--cname" title='The "cname" property'>cname</a>"                    <a
-href="../glib/glib-Basic-Types.html#gchar"
->gchar</a>*                : Read / Write
+  "<a class="link" href="farsight2-plugins-FsRtpParticipant.html#FsRtpParticipant--cname" title='The "cname" property'>cname</a>"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
 </pre>
 </div>
-<div class="refsect1" lang="en">
+<div class="refsect1" title="Description">
 <a name="farsight2-plugins-FsRtpParticipant.description"></a><h2>Description</h2>
 <p>
-This object represents one participant or person in a RTP conference</p>
-<p>
+This object represents one participant or person in a RTP conference
 </p>
 </div>
-<div class="refsect1" lang="en">
+<div class="refsect1" title="Details">
 <a name="farsight2-plugins-FsRtpParticipant.details"></a><h2>Details</h2>
-<div class="refsect2" lang="en">
+<div class="refsect2" title="FsRtpParticipant">
 <a name="FsRtpParticipant"></a><h3>FsRtpParticipant</h3>
 <pre class="programlisting">typedef struct {
   FsParticipant parent;
   FsRtpParticipantPrivate *priv;
 } FsRtpParticipant;
 </pre>
-<p>
-</p>
-<p>
-</p>
 </div>
 </div>
-<div class="refsect1" lang="en">
+<div class="refsect1" title="Property Details">
 <a name="farsight2-plugins-FsRtpParticipant.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" lang="en">
+<div class="refsect2" title='The "cname" property'>
 <a name="FsRtpParticipant--cname"></a><h3>The <code class="literal">"cname"</code> property</h3>
-<pre class="programlisting">  "cname"                    <a
-href="../glib/glib-Basic-Types.html#gchar"
->gchar</a>*                : Read / Write</pre>
+<pre class="programlisting">  "cname"                    <a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>A string of the cname of the participant.</p>
 <p>Default value: NULL</p>
 </div>
@@ -93,6 +77,6 @@ href="../glib/glib-Basic-Types.html#gchar"
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.11</div>
+          Generated by GTK-Doc V1.14</div>
 </body>
 </html>

@@ -27,12 +27,12 @@
 #include "config.h"
 #endif
 
+#include "fs-rtp-special-source.h"
+
 #include <gst/farsight/fs-base-conference.h>
 
 #include "fs-rtp-conference.h"
 #include "fs-rtp-codec-negotiation.h"
-
-#include "fs-rtp-special-source.h"
 
 #include "fs-rtp-dtmf-event-source.h"
 #include "fs-rtp-dtmf-sound-source.h"
@@ -88,15 +88,16 @@ static void fs_rtp_special_source_finalize (GObject *object);
 
 static FsRtpSpecialSource *
 fs_rtp_special_source_new (FsRtpSpecialSourceClass *klass,
-    GList **negotiated_codecs,
+    GList **negotiated_codec_associations,
     GMutex *mutex,
     FsCodec *selected_codec,
     GstElement *bin,
     GstElement *rtpmuxer);
 
 
-FsCodec* fs_rtp_special_source_class_get_codec (FsRtpSpecialSourceClass *klass,
-    GList *negotiated_codecs,
+static FsCodec* fs_rtp_special_source_class_get_codec (
+    FsRtpSpecialSourceClass *klass,
+    GList *negotiated_codec_associations,
     FsCodec *selected_codec);
 
 static gpointer
@@ -354,22 +355,25 @@ fs_rtp_special_sources_negotiation_filter (GList *codec_associations)
  * fs_rtp_special_sources_remove:
  * @extra_sources: A pointer to the #GList returned by previous calls to this
  *  function
- * @negotiated_codecs: A pointer to the #GList of current negotiated
+ * @negotiated_codec_associations: A pointer to the #GList of current negotiated
  * #CodecAssociation
  * @mutex: the mutex protecting the last two things
  * @send_codec: A pointer to the currently selected send codec
  *
  * This function removes any special source that are not compatible with the
  * currently selected send codec.
+ *
+ * Returns: %TRUE if a source was removed
  */
-void
+gboolean
 fs_rtp_special_sources_remove (
     GList **extra_sources,
-    GList **negotiated_codecs,
+    GList **negotiated_codec_associations,
     GMutex *mutex,
     FsCodec *send_codec)
 {
   GList *klass_item = NULL;
+  gboolean changed = FALSE;
 
   fs_rtp_special_sources_init ();
 
@@ -397,11 +401,12 @@ fs_rtp_special_sources_remove (
     if (obj_item)
     {
       FsCodec *telephony_codec =  fs_rtp_special_source_class_get_codec (klass,
-          *negotiated_codecs, send_codec);
+          *negotiated_codec_associations, send_codec);
 
       if (!telephony_codec || !fs_codec_are_equal (telephony_codec, obj->codec))
       {
         *extra_sources = g_list_remove (*extra_sources, obj);
+        changed = TRUE;
         g_mutex_unlock (mutex);
         g_object_unref (obj);
         goto restart;
@@ -410,6 +415,8 @@ fs_rtp_special_sources_remove (
 
     g_mutex_unlock (mutex);
   }
+
+  return changed;
 }
 
 static gboolean
@@ -425,7 +432,7 @@ _source_order_compare_func (gconstpointer item1,gconstpointer item2)
  * fs_rtp_special_sources_create:
  * @current_extra_sources: A pointer to the #GList returned by previous calls
  * to this function
- * @negotiated_codecs: A pointer to the #GList of current negotiated
+ * @negotiated_codec_associations: A pointer to the #GList of current negotiated
  * #CodecAssociation
  * @mutex: the mutex protecting the last two things
  * @send_codec: The currently selected send codec
@@ -433,17 +440,20 @@ _source_order_compare_func (gconstpointer item1,gconstpointer item2)
  * @rtpmuxer: The rtpmux element
  *
  * This function add special sources that don't already exist but are needed
+ *
+ * Returns: %TRUE if at least one source was added
  */
-void
+gboolean
 fs_rtp_special_sources_create (
     GList **extra_sources,
-    GList **negotiated_codecs,
+    GList **negotiated_codec_associations,
     GMutex *mutex,
     FsCodec *send_codec,
     GstElement *bin,
     GstElement *rtpmuxer)
 {
   GList *klass_item = NULL;
+  gboolean changed = FALSE;
 
   fs_rtp_special_sources_init ();
 
@@ -468,16 +478,16 @@ fs_rtp_special_sources_create (
     }
 
     if (!obj_item &&
-        fs_rtp_special_source_class_get_codec (klass, *negotiated_codecs,
-            send_codec))
+        fs_rtp_special_source_class_get_codec (klass,
+            *negotiated_codec_associations, send_codec))
     {
       g_mutex_unlock (mutex);
-      obj = fs_rtp_special_source_new (klass, negotiated_codecs, mutex,
-          send_codec, bin, rtpmuxer);
+      obj = fs_rtp_special_source_new (klass, negotiated_codec_associations,
+          mutex, send_codec, bin, rtpmuxer);
       if (!obj)
       {
         GST_WARNING ("Failed to make new special source");
-        return;
+        return changed;
       }
 
       g_mutex_lock (mutex);
@@ -498,16 +508,19 @@ fs_rtp_special_sources_create (
       {
         *extra_sources = g_list_insert_sorted (*extra_sources,
             obj, _source_order_compare_func);
+        changed = TRUE;
       }
     }
   }
 
   g_mutex_unlock (mutex);
+
+  return changed;
 }
 
 static FsRtpSpecialSource *
 fs_rtp_special_source_new (FsRtpSpecialSourceClass *klass,
-    GList **negotiated_codecs,
+    GList **negotiated_codec_associations,
     GMutex *mutex,
     FsCodec *selected_codec,
     GstElement *bin,
@@ -529,7 +542,8 @@ fs_rtp_special_source_new (FsRtpSpecialSourceClass *klass,
 
   source->priv->rtpmuxer = gst_object_ref (rtpmuxer);
   source->priv->outer_bin = gst_object_ref (bin);
-  source->priv->src = klass->build (source, *negotiated_codecs, selected_codec);
+  source->priv->src = klass->build (source, *negotiated_codec_associations,
+      selected_codec);
 
   g_mutex_unlock (mutex);
 
@@ -545,7 +559,10 @@ fs_rtp_special_source_new (FsRtpSpecialSourceClass *klass,
   }
 
   source->priv->muxer_request_pad = gst_element_get_request_pad (rtpmuxer,
-      "sink_%d");
+      "priority_sink_%d");
+  if (!source->priv->muxer_request_pad)
+    source->priv->muxer_request_pad = gst_element_get_request_pad (rtpmuxer,
+        "sink_%d");
 
   if (!source->priv->muxer_request_pad)
   {
@@ -752,13 +769,48 @@ fs_rtp_special_sources_destroy (GList *current_extra_sources)
  *
  * Returns: The codec or %NULL. This returns the codec, not a copy
  */
-FsCodec*
+static FsCodec*
 fs_rtp_special_source_class_get_codec (FsRtpSpecialSourceClass *klass,
-    GList *negotiated_codecs,
+    GList *negotiated_codec_associations,
     FsCodec *selected_codec)
 {
   if (klass->get_codec)
-    return klass->get_codec (klass, negotiated_codecs, selected_codec);
+    return klass->get_codec (klass, negotiated_codec_associations,
+        selected_codec);
 
   return NULL;
+}
+
+/**
+ * fs_rtp_special_sources_get_codecs_locked:
+ * @special_sources: The #GList of special sources
+ * @codec_associations: The #GList of current codec associations
+ *
+ * Gets the list of the codecs that are used by special sources, excluding
+ * the main codec
+ *
+ * Returns: a #GList of #FsCodec
+ */
+
+GList *
+fs_rtp_special_sources_get_codecs_locked (GList *special_sources,
+    GList *codec_associations, FsCodec *main_codec)
+{
+  GList *result = NULL;
+
+  for (; special_sources; special_sources = special_sources->next)
+  {
+    FsRtpSpecialSource *source = special_sources->data;
+
+    if (main_codec->id != source->codec->id)
+    {
+      CodecAssociation *ca =
+        lookup_codec_association_by_pt (codec_associations, source->codec->id);
+      result = g_list_prepend (result, fs_codec_copy (ca->codec));
+    }
+  }
+
+  result = g_list_reverse (result);
+
+  return result;
 }

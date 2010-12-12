@@ -1,9 +1,9 @@
 /*
  * Farsight2 - Farsight RTP DTMF Sound Source
  *
- * Copyright 2007 Collabora Ltd.
+ * Copyright 2007-2009 Collabora Ltd.
  *  @author: Olivier Crete <olivier.crete@collabora.co.uk>
- * Copyright 2007 Nokia Corp.
+ * Copyright 2007-2009 Nokia Corp.
  *
  * fs-rtp-dtmf-sound-source.c - A Farsight RTP Sound Source gobject
  *
@@ -27,13 +27,14 @@
 #include "config.h"
 #endif
 
+#include "fs-rtp-dtmf-sound-source.h"
+
 #include <gst/farsight/fs-base-conference.h>
 
 #include "fs-rtp-conference.h"
 #include "fs-rtp-discover-codecs.h"
 #include "fs-rtp-codec-negotiation.h"
-
-#include "fs-rtp-dtmf-sound-source.h"
+#include "fs-rtp-codec-specific.h"
 
 #define GST_CAT_DEFAULT fsrtpconference_debug
 
@@ -61,13 +62,13 @@ G_DEFINE_TYPE(FsRtpDtmfSoundSource, fs_rtp_dtmf_sound_source,
 
 static GstElement *
 fs_rtp_dtmf_sound_source_build (FsRtpSpecialSource *source,
-    GList *negotiated_codecs,
+    GList *negotiated_codec_associations,
     FsCodec *selected_codec);
 
 
 static FsCodec *fs_rtp_dtmf_sound_source_get_codec (
     FsRtpSpecialSourceClass *klass,
-    GList *negotiated_codecs,
+    GList *negotiated_codec_associations,
     FsCodec *selected_codec);
 
 
@@ -113,7 +114,8 @@ _is_law_codec (CodecAssociation *ca, gpointer user_data)
 static FsCodec *
 get_pcm_law_sound_codec (GList *codecs,
     gchar **encoder_name,
-    gchar **payloader_name)
+    gchar **payloader_name,
+    CodecAssociation **out_ca)
 {
   CodecAssociation *ca = NULL;
 
@@ -137,7 +139,10 @@ get_pcm_law_sound_codec (GList *codecs,
       *payloader_name = "rtppcmapay";
   }
 
-  return ca->codec;
+  if (out_ca)
+    *out_ca = ca;
+
+  return ca->send_codec;
 }
 
 static gboolean
@@ -154,40 +159,60 @@ _check_element_factory (gchar *name)
   return (fact != NULL);
 }
 
+static CodecAssociation *
+_get_main_codec_association (GList *codec_associations, FsCodec *codec)
+{
+  CodecAssociation *ca = lookup_codec_association_by_codec_for_sending (
+      codec_associations, codec);
+
+  if (ca && codec_association_is_valid_for_sending (ca, TRUE) &&
+      codec_blueprint_has_factory (ca->blueprint, TRUE))
+    return ca;
+  else
+    return NULL;
+}
+
 static FsCodec *
 fs_rtp_dtmf_sound_source_get_codec (FsRtpSpecialSourceClass *klass,
-    GList *negotiated_codecs,
+    GList *negotiated_codec_associations,
     FsCodec *selected_codec)
 {
   FsCodec *codec = NULL;
   gchar *encoder_name = NULL;
   gchar *payloader_name = NULL;
+  CodecAssociation *ca;
 
   if (selected_codec->media_type != FS_MEDIA_TYPE_AUDIO)
-    return NULL;
-
-  if (selected_codec->clock_rate != 8000)
-    return NULL;
-
-  codec = get_pcm_law_sound_codec (negotiated_codecs,
-      &encoder_name, &payloader_name);
-  if (!codec)
     return NULL;
 
   if (!_check_element_factory ("dtmfsrc"))
     return NULL;
 
-  if (!_check_element_factory (encoder_name))
-    return NULL;
-  if (!_check_element_factory (payloader_name))
-    return NULL;
+  if (selected_codec->clock_rate == 8000)
+  {
+    codec = get_pcm_law_sound_codec (negotiated_codec_associations,
+        &encoder_name, &payloader_name, NULL);
+    if (codec) {
+      if (!_check_element_factory (encoder_name))
+        return NULL;
+      if (!_check_element_factory (payloader_name))
+        return NULL;
+      return codec;
+    }
+  }
 
-  return codec;
+  ca = _get_main_codec_association (negotiated_codec_associations,
+      selected_codec);
+
+  if (ca)
+    return ca->send_codec;
+  else
+    return NULL;
 }
 
 static GstElement *
 fs_rtp_dtmf_sound_source_build (FsRtpSpecialSource *source,
-    GList *negotiated_codecs,
+    GList *negotiated_codec_associations,
     FsCodec *selected_codec)
 {
   FsCodec *telephony_codec = NULL;
@@ -201,9 +226,20 @@ fs_rtp_dtmf_sound_source_build (FsRtpSpecialSource *source,
   GstElement *payloader = NULL;
   gchar *encoder_name = NULL;
   gchar *payloader_name = NULL;
+  CodecAssociation *ca = NULL;
 
-  telephony_codec = get_pcm_law_sound_codec (negotiated_codecs,
-      &encoder_name, &payloader_name);
+
+  if (selected_codec->clock_rate == 8000)
+    telephony_codec = get_pcm_law_sound_codec (negotiated_codec_associations,
+        &encoder_name, &payloader_name, &ca);
+
+  if (!telephony_codec)
+  {
+    ca = _get_main_codec_association (negotiated_codec_associations,
+        selected_codec);
+    if (ca)
+      telephony_codec = ca->send_codec;
+  }
 
   g_return_val_if_fail (telephony_codec, NULL);
 
@@ -224,44 +260,6 @@ fs_rtp_dtmf_sound_source_build (FsRtpSpecialSource *source,
   {
     GST_ERROR ("Could not add rtpdtmfsrc to bin");
     gst_object_unref (dtmfsrc);
-    goto error;
-  }
-
-  encoder = gst_element_factory_make (encoder_name, NULL);
-  if (!encoder)
-  {
-    GST_ERROR ("Could not make %s", encoder_name);
-    goto error;
-  }
-  if (!gst_bin_add (GST_BIN (bin), encoder))
-  {
-    GST_ERROR ("Could not add %s to bin", encoder_name);
-    gst_object_unref (dtmfsrc);
-    goto error;
-  }
-
-  if (!gst_element_link_pads (dtmfsrc, "src", encoder, "sink"))
-  {
-    GST_ERROR ("Could not link the rtpdtmfsrc and %s", encoder_name);
-    goto error;
-  }
-
-  payloader = gst_element_factory_make (payloader_name, NULL);
-  if (!payloader)
-  {
-    GST_ERROR ("Could not make %s", payloader_name);
-    goto error;
-  }
-  if (!gst_bin_add (GST_BIN (bin), payloader))
-  {
-    GST_ERROR ("Could not add %s to bin", payloader_name);
-    gst_object_unref (dtmfsrc);
-    goto error;
-  }
-
-  if (!gst_element_link_pads (encoder, "src", payloader, "sink"))
-  {
-    GST_ERROR ("Could not link the %s and %s", encoder_name, payloader_name);
     goto error;
   }
 
@@ -287,12 +285,6 @@ fs_rtp_dtmf_sound_source_build (FsRtpSpecialSource *source,
   }
   gst_caps_unref (caps);
 
-  if (!gst_element_link_pads (payloader, "src", capsfilter, "sink"))
-  {
-    GST_ERROR ("Could not link the %s and its capsfilter", payloader_name);
-    goto error;
-  }
-
   pad = gst_element_get_static_pad (capsfilter, "src");
   if (!pad)
   {
@@ -313,6 +305,95 @@ fs_rtp_dtmf_sound_source_build (FsRtpSpecialSource *source,
     goto error;
   }
   gst_object_unref (pad);
+
+
+  if (ca)
+  {
+    gchar *codec_bin_name = g_strdup_printf ("dtmf_send_codecbin_%d",
+        telephony_codec->id);
+    GError *error = NULL;
+    GstElement *codecbin = create_codec_bin_from_blueprint (
+        telephony_codec, ca->blueprint, codec_bin_name, TRUE, &error);
+
+    if (!codecbin)
+    {
+      GST_ERROR ("Could not make %s: %s", codec_bin_name,
+          error ? error->message : "No error message!");
+      g_clear_error (&error);
+      g_free (codec_bin_name);
+      goto error;
+    }
+
+    if (!gst_bin_add (GST_BIN (bin), codecbin))
+    {
+      GST_ERROR ("Could not add %s to bin", codec_bin_name);
+      gst_object_unref (codecbin);
+      g_free (codec_bin_name);
+      goto error;
+    }
+
+    if (!gst_element_link_pads (dtmfsrc, "src", codecbin, "sink"))
+    {
+      GST_ERROR ("Could not link the rtpdtmfsrc and %s", codec_bin_name);
+      g_free (codec_bin_name);
+      goto error;
+    }
+
+    if (!gst_element_link_pads (codecbin, "src", capsfilter, "sink"))
+    {
+      GST_ERROR ("Could not link the %s and its capsfilter", codec_bin_name);
+      g_free (codec_bin_name);
+      goto error;
+    }
+
+    g_free (codec_bin_name);
+  }
+  else
+  {
+    encoder = gst_element_factory_make (encoder_name, NULL);
+    if (!encoder)
+    {
+      GST_ERROR ("Could not make %s", encoder_name);
+      goto error;
+    }
+    if (!gst_bin_add (GST_BIN (bin), encoder))
+    {
+      GST_ERROR ("Could not add %s to bin", encoder_name);
+      gst_object_unref (encoder);
+      goto error;
+    }
+
+    if (!gst_element_link_pads (dtmfsrc, "src", encoder, "sink"))
+    {
+      GST_ERROR ("Could not link the rtpdtmfsrc and %s", encoder_name);
+      goto error;
+    }
+
+    payloader = gst_element_factory_make (payloader_name, NULL);
+    if (!payloader)
+    {
+      GST_ERROR ("Could not make %s", payloader_name);
+      goto error;
+    }
+    if (!gst_bin_add (GST_BIN (bin), payloader))
+    {
+      GST_ERROR ("Could not add %s to bin", payloader_name);
+      gst_object_unref (payloader);
+      goto error;
+    }
+
+    if (!gst_element_link_pads (encoder, "src", payloader, "sink"))
+    {
+      GST_ERROR ("Could not link the %s and %s", encoder_name, payloader_name);
+      goto error;
+    }
+
+    if (!gst_element_link_pads (payloader, "src", capsfilter, "sink"))
+    {
+      GST_ERROR ("Could not link the %s and its capsfilter", payloader_name);
+      goto error;
+    }
+  }
 
   return bin;
 

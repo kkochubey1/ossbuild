@@ -102,16 +102,16 @@
 
 #include "fs-stream.h"
 
+#include <gst/gst.h>
+
 #include "fs-session.h"
 #include "fs-marshal.h"
 #include "fs-codec.h"
 #include "fs-candidate.h"
 #include "fs-stream-transmitter.h"
 #include "fs-conference-iface.h"
-#include "fs-enum-types.h"
+#include "fs-enumtypes.h"
 #include "fs-private.h"
-
-#include <gst/gst.h>
 
 /* Signals */
 enum
@@ -125,10 +125,6 @@ enum
 enum
 {
   PROP_0,
-#if 0
-  /* TODO Do we really need this? */
-  PROP_SOURCE_PADS,
-#endif
   PROP_REMOTE_CODECS,
   PROP_NEGOTIATED_CODECS,
   PROP_CURRENT_RECV_CODECS,
@@ -137,14 +133,17 @@ enum
   PROP_SESSION
 };
 
-/*
+
 struct _FsStreamPrivate
 {
+  GMutex *mutex;
+  GList *src_pads;
+  guint32 src_pads_cookie;
 };
 
 #define FS_STREAM_GET_PRIVATE(o)  \
    (G_TYPE_INSTANCE_GET_PRIVATE ((o), FS_TYPE_STREAM, FsStreamPrivate))
-*/
+
 
 G_DEFINE_ABSTRACT_TYPE(FsStream, fs_stream, G_TYPE_OBJECT);
 
@@ -156,8 +155,12 @@ static void fs_stream_set_property (GObject *object,
                                     guint prop_id,
                                     const GValue *value,
                                     GParamSpec *pspec);
+static void fs_stream_finalize (GObject *obj);
 
 static guint signals[LAST_SIGNAL] = { 0 };
+
+#define FS_STREAM_LOCK(self)   g_mutex_lock((self)->priv->mutex)
+#define FS_STREAM_UNLOCK(self) g_mutex_unlock((self)->priv->mutex)
 
 static void
 fs_stream_class_init (FsStreamClass *klass)
@@ -168,24 +171,7 @@ fs_stream_class_init (FsStreamClass *klass)
 
   gobject_class->set_property = fs_stream_set_property;
   gobject_class->get_property = fs_stream_get_property;
-
-#if 0
-  /**
-   * FsStream:source-pads:
-   *
-   * A #GList of #GstPad of source pads being used by this stream to receive the
-   * different codecs.
-   *
-   */
-  g_object_class_install_property (gobject_class,
-      PROP_SOURCE_PADS,
-      g_param_spec_object ("source-pads",
-        "A list of source pads being used in this stream",
-        "A GList of GstPads representing the source pads being used by this"
-        " stream for the different codecs",
-        ,
-        G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
-#endif
+  gobject_class->finalize = fs_stream_finalize;
 
   /**
    * FsStream:remote-codecs:
@@ -333,14 +319,26 @@ fs_stream_class_init (FsStreamClass *klass)
       _fs_marshal_VOID__BOXED_BOXED,
       G_TYPE_NONE, 2, GST_TYPE_PAD, FS_TYPE_CODEC);
 
-  // g_type_class_add_private (klass, sizeof (FsStreamPrivate));
+  g_type_class_add_private (klass, sizeof (FsStreamPrivate));
 }
 
 static void
 fs_stream_init (FsStream *self)
 {
   /* member init */
-  // self->priv = FS_STREAM_GET_PRIVATE (self);
+  self->priv = FS_STREAM_GET_PRIVATE (self);
+  self->priv->mutex = g_mutex_new ();
+}
+
+static void
+fs_stream_finalize (GObject *obj)
+{
+  FsStream *stream = FS_STREAM (obj);
+
+  g_list_free (stream->priv->src_pads);
+  g_mutex_free (stream->priv->mutex);
+
+  G_OBJECT_CLASS (fs_stream_parent_class)->finalize (obj);
 }
 
 static void
@@ -509,6 +507,17 @@ fs_stream_emit_error (FsStream *stream,
 }
 
 
+static void
+src_pad_parent_unset (GstObject *srcpad, GstObject *parent, gpointer user_data)
+{
+  FsStream *stream = FS_STREAM (user_data);
+
+  FS_STREAM_LOCK (stream);
+  stream->priv->src_pads = g_list_remove (stream->priv->src_pads, srcpad);
+  stream->priv->src_pads_cookie++;
+  FS_STREAM_UNLOCK (stream);
+}
+
 /**
  * fs_stream_emit_src_pad_added:
  * @stream: #FsStream on which to emit the src-pad-added signal
@@ -524,5 +533,40 @@ fs_stream_emit_src_pad_added (FsStream *stream,
     GstPad *pad,
     FsCodec *codec)
 {
+  FS_STREAM_LOCK (stream);
+  g_assert (!g_list_find (stream->priv->src_pads, pad));
+  stream->priv->src_pads = g_list_append (stream->priv->src_pads, pad);
+  stream->priv->src_pads_cookie++;
+  g_signal_connect_object (pad, "parent-unset",
+      G_CALLBACK (src_pad_parent_unset), stream, 0);
+  FS_STREAM_UNLOCK (stream);
+
   g_signal_emit (stream, signals[SRC_PAD_ADDED], 0, pad, codec);
+}
+
+static GstIteratorItem
+src_pad_iterator_item_func (GstIterator*iter, gpointer item)
+{
+  gst_object_ref (item);
+
+  return GST_ITERATOR_ITEM_PASS;
+}
+
+/**
+ * fs_stream_get_src_pads_iterator:
+ * @stream: a #FsStream
+ *
+ * Creates a #GstIterator that can be used to iterate the src pads of this
+ * stream. These are the pads that were announced by #FsStream:src-pad-added
+ * and are still valid.
+ *
+ * Returns: The #GstIterator
+ */
+
+GstIterator *
+fs_stream_get_src_pads_iterator (FsStream *stream)
+{
+  return gst_iterator_new_list (GST_TYPE_PAD, stream->priv->mutex,
+      &stream->priv->src_pads_cookie, &stream->priv->src_pads,
+      g_object_ref (stream), src_pad_iterator_item_func, g_object_unref);
 }

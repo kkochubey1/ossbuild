@@ -1,0 +1,59 @@
+--- a/sys/dshowvideosink/dshowvideosink.cpp	
++++ a/sys/dshowvideosink/dshowvideosink.cpp	
+@@ -41,6 +41,7 @@ GST_DEBUG_CATEGORY (dshowvideosink_debug);
+ 
+ static GstCaps * gst_directshow_media_type_to_caps (AM_MEDIA_TYPE *mediatype);
+ static gboolean gst_caps_to_directshow_media_type (GstCaps *caps, AM_MEDIA_TYPE *mediatype);
++static void gst_dshowvideosink_set_window_for_renderer (GstDshowVideoSink *sink);
+ 
+ /* TODO: Support RGB! */
+ static GstStaticPadTemplate sink_template = GST_STATIC_PAD_TEMPLATE ("sink",
+@@ -420,6 +421,7 @@ LRESULT APIENTRY WndProcHook (HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
+    * Then forward back to the original window.
+    */
+   GstDshowVideoSink *sink = (GstDshowVideoSink *)GetProp (hWnd, L"GstDShowVideoSink");
++  g_assert (sink != NULL);
+ 
+   switch (message) {
+     case WM_GRAPH_NOTIFY:
+@@ -636,6 +638,7 @@ failed:
+ static void gst_dshowvideosink_set_window_id (GstXOverlay * overlay, ULONG window_id)
+ {
+   GstDshowVideoSink *sink = GST_DSHOWVIDEOSINK (overlay);
++  HWND previous_window = sink->window_id;
+   HWND videowindow = (HWND)window_id;
+ 
+   if (videowindow == sink->window_id) {
+@@ -643,16 +646,29 @@ static void gst_dshowvideosink_set_window_id (GstXOverlay * overlay, ULONG windo
+     return;
+   }
+ 
+-  /* TODO: What if we already have a window? What if we're already playing? */
+   sink->window_id = videowindow;
++
++  /* Update window if we're already playing. */
++  if (sink->connected && sink->filter_media_event) {
++    HRESULT hres;
++
++    /* Return control of application window */
++    SetWindowLongPtr (previous_window, GWL_WNDPROC, (LONG)sink->prevWndProc);
++    SetWindowPos (previous_window, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
++
++    gst_dshowvideosink_set_window_for_renderer (sink);
++
++    hres = sink->filter_media_event->SetNotifyWindow ((OAHWND)sink->window_id, WM_GRAPH_NOTIFY, 0);
++    GST_DEBUG_OBJECT (sink, "SetNotifyWindow(%p) returned %x", sink->window_id, hres);
++  }
+ }
+ 
+-static void gst_dshowvideosink_set_window_for_renderer (GstDshowVideoSink *sink)
++void gst_dshowvideosink_set_window_for_renderer (GstDshowVideoSink *sink)
+ {
+   /* Application has requested a specific window ID */
++  SetProp (sink->window_id, L"GstDShowVideoSink", sink);
+   sink->prevWndProc = (WNDPROC) SetWindowLong (sink->window_id, GWL_WNDPROC, (LONG)WndProcHook);
+   GST_DEBUG_OBJECT (sink, "Set wndproc to %p from %p", WndProcHook, sink->prevWndProc);
+-  SetProp (sink->window_id, L"GstDShowVideoSink", sink);
+   /* This causes the new WNDPROC to become active */
+   SetWindowPos (sink->window_id, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+ 
