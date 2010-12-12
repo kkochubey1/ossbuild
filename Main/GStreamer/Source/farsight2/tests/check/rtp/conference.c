@@ -52,13 +52,21 @@ gboolean no_rtcp = FALSE;
 
 gint max_buffer_count = 20;
 
+guint max_src_pads = 1;
+
+GStaticMutex testlock = G_STATIC_MUTEX_INIT;
+
+#define TEST_LOCK()   g_static_mutex_lock (&testlock)
+#define TEST_UNLOCK() g_static_mutex_unlock (&testlock)
+
+
 GST_START_TEST (test_rtpconference_new)
 {
   struct SimpleTestConference *dat = NULL;
   struct SimpleTestStream *st = NULL;
   guint id = 999;
   GList *codecs = NULL;
-  FsMediaType *media_type;
+  FsMediaType media_type;
   GstPad *sinkpad = NULL;
   gchar *str = NULL;
   GstElement *conf = NULL;
@@ -119,6 +127,7 @@ GST_START_TEST (test_rtpconference_new)
   g_object_unref (sess);
   ts_fail_unless (dir == FS_DIRECTION_BOTH, "The direction is not both");
 
+  ts_fail_unless (count_stream_pads (st->stream) == 0);
   g_object_set (st->stream, "direction", FS_DIRECTION_NONE, NULL);
   g_object_get (st->stream, "direction", &dir, NULL);
   ts_fail_unless (dir == FS_DIRECTION_NONE, "The direction is not both");
@@ -141,6 +150,8 @@ _new_local_candidate (FsStream *stream, FsCandidate *candidate)
 
   if (candidate->component_id == FS_COMPONENT_RTCP && no_rtcp)
     return;
+
+  st->got_candidates = TRUE;
 
   GST_DEBUG ("%d:%d: Setting remote candidate for component %d",
       other_st->dat->id,
@@ -173,6 +184,20 @@ _current_send_codec_changed (FsSession *session, FsCodec *codec)
   str = fs_codec_to_string (codec);
   GST_DEBUG ("%d: New send codec: %s", dat->id, str);
   g_free (str);
+}
+
+static void
+_local_candidates_prepared (FsStream *stream)
+{
+  struct SimpleTestStream *st = g_object_get_data (G_OBJECT (stream),
+      "SimpleTestStream");
+
+  if (!st->got_candidates)
+  {
+    g_debug ("Skipping test because there are no candidates");
+    g_main_loop_quit (loop);
+  }
+
 }
 
 
@@ -296,7 +321,8 @@ _bus_callback (GstBus *bus, GstMessage *message, gpointer user_data)
           ts_fail_unless (
               gst_implements_interface_check (GST_MESSAGE_SRC (message),
                   FS_TYPE_CONFERENCE),
-              "Received farsight-error from non-farsight element");
+              "Received farsight-current-send-codec-change from non-farsight"
+              " element");
 
           ts_fail_unless (
               gst_structure_has_field_typed (s, "session", FS_TYPE_SESSION),
@@ -317,6 +343,28 @@ _bus_callback (GstBus *bus, GstMessage *message, gpointer user_data)
               session, codec);
 
           _current_send_codec_changed (session, codec);
+        }
+        else if (gst_structure_has_name (s,
+                "farsight-local-candidates-prepared"))
+        {
+          FsStream *stream;
+          const GValue *value;
+
+          ts_fail_unless (
+              gst_implements_interface_check (GST_MESSAGE_SRC (message),
+                  FS_TYPE_CONFERENCE),
+              "Received farsight-local-candidates-prepared from non-farsight"
+              " element");
+
+          ts_fail_unless (
+              gst_structure_has_field_typed (s, "stream", FS_TYPE_STREAM),
+              "farsight-local-candidates-prepared structure"
+              " has no stream field");
+
+          value = gst_structure_get_value (s, "stream");
+          stream = g_value_get_object (value);
+
+          _local_candidates_prepared (stream);
         }
 
        }
@@ -487,7 +535,8 @@ _handoff_handler (GstElement *element, GstBuffer *buffer, GstPad *pad,
 }
 
 static void
-_src_pad_added (FsStream *self, GstPad *pad, FsCodec *codec, gpointer user_data)
+_src_pad_added (FsStream *stream, GstPad *pad, FsCodec *codec,
+    gpointer user_data)
 {
   struct SimpleTestStream *st = user_data;
   GstElement *fakesink = gst_element_factory_make ("fakesink", NULL);
@@ -529,6 +578,11 @@ _src_pad_added (FsStream *self, GstPad *pad, FsCodec *codec, gpointer user_data)
   GST_DEBUG ("%d:%d: Added Fakesink for codec %s", st->dat->id, st->target->id,
            str);
   g_free (str);
+
+  if (max_src_pads > 1)
+    ts_fail_unless (count_stream_pads (stream) <= max_src_pads);
+  else
+    ts_fail_unless (count_stream_pads (stream) == 1);
 }
 
 
@@ -771,6 +825,8 @@ nway_test (int in_count, extra_init extrainit, const gchar *transmitter,
           G_CALLBACK (_negotiated_codecs_notify), dats[i]);
   }
 
+  TEST_LOCK ();
+
   for (i = 0; i < count; i++)
     for (j = 0; j < count; j++)
       if (i != j)
@@ -792,6 +848,8 @@ nway_test (int in_count, extra_init extrainit, const gchar *transmitter,
     struct SimpleTestStream *st = find_pointback_stream (dats[i], dats[0]);
     set_initial_codecs (dats[0], st);
   }
+
+  TEST_UNLOCK ();
 
   g_main_loop_run (loop);
 
@@ -867,8 +925,10 @@ GST_END_TEST;
 GST_START_TEST (test_rtpconference_select_send_codec)
 {
   select_last_codec = TRUE;
+  max_src_pads = 2;
   nway_test (2, NULL, "rawudp", 0, NULL);
   select_last_codec = FALSE;
+  max_src_pads = 1;
 }
 GST_END_TEST;
 
@@ -876,8 +936,10 @@ GST_END_TEST;
 GST_START_TEST (test_rtpconference_select_send_codec_while_running)
 {
   reset_to_last_codec = TRUE;
+  max_src_pads = 2;
   nway_test (2, NULL, "rawudp", 0, NULL);
   reset_to_last_codec = FALSE;
+  max_src_pads = 1;
 }
 GST_END_TEST;
 
@@ -1010,6 +1072,8 @@ GST_START_TEST (test_rtpconference_no_rtcp)
 }
 GST_END_TEST;
 
+/* Disabled because somehow broken */
+
 #if 0
 static void
 associate_cnames_init (void)
@@ -1031,8 +1095,6 @@ associate_cnames_init (void)
 GST_START_TEST (test_rtpconference_three_way_cname_assoc)
 {
   GParameter param = {0};
-
-  return;
 
   param.name = "associate-on-source";
   g_value_init (&param.value, G_TYPE_BOOLEAN);
@@ -1162,7 +1224,9 @@ _double_profile_init (void)
 
 GST_START_TEST (test_rtpconference_double_codec_profile)
 {
+  max_src_pads = 2;
   nway_test (2, _double_profile_init, "rawudp", 0, NULL);
+  max_src_pads = 1;
 }
 GST_END_TEST;
 
@@ -1348,7 +1412,9 @@ GST_START_TEST (test_rtpconference_multicast_three_way_ssrc_assoc)
   g_free (mcast_addr);
 
   mcast_confs = 3;
+  max_src_pads = 3;
   nway_test (mcast_confs, multicast_ssrc_init, "multicast", 0, NULL);
+  max_src_pads = 1;
 }
 GST_END_TEST;
 
@@ -1369,10 +1435,14 @@ min_timeout (TCase *tc_chain, guint min)
 static void unref_session_on_src_pad_added (FsStream *stream,
     GstPad *pad, FsCodec *codec, struct SimpleTestStream *st)
 {
+  TEST_LOCK ();
+
   g_object_unref (st->dat->session);
   st->dat->session = NULL;
   g_object_unref (st->stream);
   st->stream = NULL;
+
+  TEST_UNLOCK ();
 
   g_main_loop_quit (loop);
 }
@@ -1425,6 +1495,8 @@ unref_stream_sync_handler (GstBus *bus, GstMessage *message,
   ts_fail_unless (G_VALUE_HOLDS (v, FS_TYPE_STREAM));
   stream = g_value_get_object (v);
 
+  TEST_LOCK ();
+
   for (item = dat->streams; item; item = item->next)
   {
     struct SimpleTestStream *st = item->data;
@@ -1434,9 +1506,12 @@ unref_stream_sync_handler (GstBus *bus, GstMessage *message,
       st->stream = NULL;
       gst_message_unref (message);
       g_main_loop_quit (loop);
+      TEST_UNLOCK ();
       return GST_BUS_DROP;
     }
   }
+
+  TEST_UNLOCK ();
 
   gst_message_unref (message);
   return GST_BUS_DROP;
@@ -1450,6 +1525,7 @@ static void unref_stream_init (void)
   {
     GstBus *bus = gst_pipeline_get_bus (GST_PIPELINE (dats[i]->pipeline));
 
+    gst_bus_set_sync_handler (bus, NULL, NULL);
     gst_bus_set_sync_handler (bus, unref_stream_sync_handler, dats[i]);
     gst_object_unref (bus);
   }

@@ -38,15 +38,14 @@
 #include "config.h"
 #endif
 
-#include "fs-marshal.h"
 #include "fs-transmitter.h"
 
-#include "fs-plugin.h"
+#include <gst/gst.h>
 
+#include "fs-marshal.h"
+#include "fs-plugin.h"
 #include "fs-conference-iface.h"
 #include "fs-private.h"
-
-#include <gst/gst.h>
 
 /* Signals */
 enum
@@ -302,7 +301,7 @@ fs_transmitter_new (const gchar *type,
   FsTransmitter *self = NULL;
 
   g_return_val_if_fail (type != NULL, NULL);
-  g_return_val_if_fail (tos >= 0 && tos <= 255, NULL);
+  g_return_val_if_fail (tos <= 255, NULL);
 
   self = FS_TRANSMITTER (fs_plugin_create (type, "transmitter", error,
           "components", components,
@@ -335,11 +334,7 @@ fs_transmitter_new (const gchar *type,
 GType
 fs_transmitter_get_stream_transmitter_type (FsTransmitter *transmitter)
 {
-  FsTransmitterClass *klass;
-
-  g_return_val_if_fail (transmitter, 0);
-
-  klass = FS_TRANSMITTER_GET_CLASS (transmitter);
+  FsTransmitterClass *klass = FS_TRANSMITTER_GET_CLASS (transmitter);
 
   g_return_val_if_fail (klass, 0);
   g_return_val_if_fail (klass->get_stream_transmitter_type, 0);

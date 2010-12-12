@@ -5,7 +5,7 @@ dnl please read gstreamer/docs/random/autotools before changing this file
 dnl initialize autoconf
 dnl releases only do -Wall, cvs and prerelease does -Werror too
 dnl use a three digit version number for releases, and four for cvs/prerelease
-AC_INIT(Farsight2, 0.0.16,
+AC_INIT(Farsight2, 0.0.22,
     https://bugs.freedesktop.org/enter_bug.cgi?product=Farsight,
     farsight2)
 
@@ -29,6 +29,11 @@ AM_CONFIG_HEADER([config.h])
 dnl sets host_* variables
 AC_CANONICAL_HOST
 
+dnl use pretty build output with automake >= 1.11
+m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])],
+  [AM_DEFAULT_VERBOSITY=1
+   AC_SUBST(AM_DEFAULT_VERBOSITY)])
+
 dnl our libraries and install dirs use major.minor as a version
 FS2_MAJORMINOR=$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR
 AC_SUBST(FS2_MAJORMINOR)
@@ -45,7 +50,7 @@ dnl - interfaces added/removed/changed -> increment CURRENT, REVISION = 0
 dnl - interfaces added -> increment AGE
 dnl - interfaces removed -> AGE = 0
 dnl sets FS2_LT_LDFLAGS
-AS_LIBTOOL(FS2, 3, 1, 3)
+AS_LIBTOOL(FS2, 5, 2, 5)
 
 dnl FIXME: this macro doesn't actually work;
 dnl the generated libtool script has no support for the listed tags.
@@ -55,8 +60,8 @@ dnl AS_LIBTOOL_TAGS
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.23
-GSTPB_REQ=0.10.23
+GST_REQ=0.10.26
+GSTPB_REQ=0.10.26
 
 dnl *** autotools stuff ****
 
@@ -132,7 +137,8 @@ dnl these are all the transmitter plug-ins
 FS2_TRANSMITTER_PLUGINS_ALL=" \
 	rawudp \
 	multicast \
-	nice
+	nice \
+	shm
 	"
 AC_SUBST(FS2_TRANSMITTER_PLUGINS_ALL)
 
@@ -229,7 +235,11 @@ dnl *** checks for library functions ***
 dnl *** checks for dependency libraries ***
 
 dnl GLib is required
-AG_GST_GLIB_CHECK([2.14])
+AG_GST_GLIB_CHECK([2.16])
+
+PKG_CHECK_MODULES(GIO_UNIX, gio-unix-2.0 >= 2.16)
+AC_SUBST(GIO_UNIX_CFLAGS)
+AC_SUBST(GIO_UNIX_LIBS)
 
 dnl checks for gstreamer
 dnl uninstalled is selected preferentially -- see pkg-config(1)
@@ -282,7 +292,7 @@ fi
 AC_SUBST(PROFILE_CFLAGS)
 
 dnl every flag in FS2_OPTION_CFLAGS can be overridden at make time
-FS2_OPTION_CFLAGS="\$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS)"
+FS2_OPTION_CFLAGS="\$(WARNING_CFLAGS) \$(ERROR_CFLAGS) \$(DEBUG_CFLAGS) \$(PROFILE_CFLAGS) \$(GCOV_CFLAGS) \$(OPT_CFLAGS)"
 AC_SUBST(FS2_OPTION_CFLAGS)
 
 dnl our libraries need to be versioned correctly
@@ -339,9 +349,7 @@ if test "x$WANT_PYTHON" = "xyes"; then
 				   gst-python-0.10 >= 0.10.10] )
    PKG_CHECK_MODULES(PYCODEGEN, [ pygobject-2.0 >= 2.16.0 ],
      PYCODEGEN=pygobject-codegen-2.0,
-     PKG_CHECK_MODULES(PYCODEGEN, [ pygtk-2.0 >= 2.10 ],
-       PYCODEGEN=pygtk-codegen-2.0,
-       AC_MSG_ERROR([You need pygobject 2.16+ or pygtk for the codegen])))
+       AC_MSG_ERROR([You need pygobject 2.16+ for the codegen]))
 fi
 AC_SUBST(PYCODEGEN)
 AM_CONDITIONAL(WANT_PYTHON, test "x$WANT_PYTHON" = "xyes")
@@ -367,9 +375,11 @@ fi
 
 if test "x$HAVE_GUPNP" = "xyes"; then
    AC_DEFINE(HAVE_GUPNP,,[Have the GUPnP IGD library])
-fi
 
-SHAVE_INIT([common],[enable])
+   PKG_CHECK_MODULES(GUPNP_013, gupnp-1.0 >= 0.13,
+	 [AC_DEFINE([HAVE_GUPNP_013], [1], [Have GUPnP 0.13 or higher])],
+	 [true])
+fi
 
 dnl *** output files ***
 
@@ -379,8 +389,6 @@ farsight2.pc
 common/Makefile
 common/m4/Makefile
 common-modified/Makefile
-common/shave
-common/shave-libtool
 gst/Makefile
 gst/fsrtpconference/Makefile
 gst/fsmsnconference/Makefile
@@ -394,6 +402,7 @@ transmitters/Makefile
 transmitters/rawudp/Makefile
 transmitters/multicast/Makefile
 transmitters/nice/Makefile
+transmitters/shm/Makefile
 dnl pkgconfig/Makefile
 dnl pkgconfig/farsight2.pc
 dnl pkgconfig/farsight2-uninstalled.pc

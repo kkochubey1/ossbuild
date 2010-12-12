@@ -34,13 +34,15 @@
 
 #include "fs-rtp-discover-codecs.h"
 
+#include <string.h>
+
+#include <gst/farsight/fs-conference-iface.h>
+
 #include "fs-rtp-conference.h"
 #include "fs-rtp-codec-cache.h"
 #include "fs-rtp-special-source.h"
 
-#include <gst/farsight/fs-conference-iface.h>
 
-#include <string.h>
 
 #define GST_CAT_DEFAULT fsrtpconference_disco
 
@@ -1060,19 +1062,8 @@ compare_media_caps (gconstpointer a, gconstpointer b)
 {
   CodecCap *element = (CodecCap *)a;
   GstCaps *c_caps = (GstCaps *)b;
-  GstCaps *intersect = gst_caps_intersect (element->caps, c_caps);
-  if (!gst_caps_is_empty (intersect))
-  {
-    /* found */
-    gst_caps_unref (intersect);
-    return 0;
-  }
-  else
-  {
-    /* not found */
-    gst_caps_unref (intersect);
-    return 1;
-  }
+
+  return !gst_caps_can_intersect (element->caps, c_caps);
 }
 
 static gint
@@ -1080,19 +1071,8 @@ compare_rtp_caps (gconstpointer a, gconstpointer b)
 {
   CodecCap *element = (CodecCap *)a;
   GstCaps *c_caps = (GstCaps *)b;
-  GstCaps *intersect = gst_caps_intersect (element->rtp_caps, c_caps);
-  if (!gst_caps_is_empty (intersect))
-  {
-    /* found */
-    gst_caps_unref (intersect);
-    return 0;
-  }
-  else
-  {
-    /* not found */
-    gst_caps_unref (intersect);
-    return 1;
-  }
+
+  return !gst_caps_can_intersect (element->rtp_caps, c_caps);
 }
 
 
@@ -1106,7 +1086,7 @@ create_codec_cap_list (GstElementFactory *factory,
                        GList *list,
                        GstCaps *rtp_caps)
 {
-  const GList *pads = factory->staticpadtemplates;
+  const GList *pads = gst_element_factory_get_static_pad_templates (factory);
   gint i;
 
 
@@ -1122,11 +1102,11 @@ create_codec_cap_list (GstElementFactory *factory,
     if (padtemplate->direction != direction)
       continue;
 
-    if (GST_PAD_TEMPLATE_PRESENCE (padtemplate) != GST_PAD_ALWAYS) {
+    if (padtemplate->presence != GST_PAD_ALWAYS) {
       continue;
     }
 
-    caps = gst_static_caps_get (&padtemplate->static_caps);
+    caps = gst_static_pad_template_get_caps (padtemplate);
     /*
       DEBUG ("%s caps are %s", gst_plugin_feature_get_name (GST_PLUGIN_FEATURE
       (factory)), gst_caps_to_string (caps));
@@ -1155,8 +1135,8 @@ create_codec_cap_list (GstElementFactory *factory,
       const gchar *name = gst_structure_get_name (structure);
       if (g_ascii_strcasecmp (name, "application/x-rtp") == 0)
       {
-        GST_DEBUG ("skipping %s",
-            gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (factory)));
+        GST_DEBUG ("skipping %s : %s",
+            gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (factory)), name);
         continue;
       }
 
@@ -1260,9 +1240,7 @@ get_plugins_filtered_from_caps (FilterFunc filter,
                                 GstPadDirection direction)
 {
   GList *walk, *result;
-  GstElementFactory *factory;
   GList *list = NULL;
-  gboolean is_valid;
   GstCaps *matched_caps = NULL;
 
   result = gst_registry_get_feature_list (gst_registry_get_default (),
@@ -1270,60 +1248,34 @@ get_plugins_filtered_from_caps (FilterFunc filter,
 
   result = g_list_sort (result, (GCompareFunc) compare_ranks);
 
-  walk = result;
-  while (walk)
+  for (walk = result; walk; walk = walk->next)
   {
-    factory = GST_ELEMENT_FACTORY (walk->data);
-    is_valid = FALSE;
+    GstElementFactory *factory = GST_ELEMENT_FACTORY (walk->data);
 
     if (!filter (factory))
+      continue;
+    
+    if (caps && !check_caps_compatibility (factory, caps, &matched_caps))
+      continue;
+
+    if (!matched_caps)
     {
-      goto next;
+      list = create_codec_cap_list (factory, direction, list, NULL);
     }
-
-    if (caps)
+    else
     {
-      if (check_caps_compatibility (factory, caps, &matched_caps))
+      gint i;
+      for (i = 0; i < gst_caps_get_size (matched_caps); i++)
       {
-        is_valid = TRUE;
+        GstCaps *cur_caps =
+            gst_caps_copy_nth (matched_caps, i);
+
+        list = create_codec_cap_list (factory, direction, list, cur_caps);
+        gst_caps_unref (cur_caps);
       }
+      gst_caps_unref (matched_caps);
     }
-
-    if (is_valid || !caps)
-    {
-      if (!matched_caps)
-      {
-        list = create_codec_cap_list (factory, direction, list, NULL);
-      }
-      else
-      {
-        gint i;
-        for (i = 0; i < gst_caps_get_size (matched_caps); i++)
-        {
-          GstStructure *structure = gst_caps_get_structure (matched_caps, i);
-          GstCaps *cur_caps =
-            gst_caps_new_full (gst_structure_copy (structure), NULL);
-
-          list = create_codec_cap_list (factory, direction, list, cur_caps);
-          gst_caps_unref (cur_caps);
-        }
-        gst_caps_unref (matched_caps);
-      }
-    }
-
-next:
-    walk = g_list_next (walk);
   }
-
-  /*
-  walk = result;
-  while (walk)
-  {
-    factory = GST_ELEMENT_FACTORY (walk->data);
-    DEBUG ("new refcnt is %d", GST_OBJECT_REFCOUNT_VALUE (GST_OBJECT (factory)));
-    walk = g_list_next (walk);
-  }
-  */
 
   gst_plugin_feature_list_free (result);
 
@@ -1444,3 +1396,219 @@ extract_field_data (GQuark field_id,
   return TRUE;
 }
 
+
+gboolean
+codec_blueprint_has_factory (CodecBlueprint *blueprint,
+    gboolean is_send)
+{
+  if (is_send)
+    return (blueprint->send_pipeline_factory != NULL);
+  else
+    return (blueprint->receive_pipeline_factory != NULL);
+}
+
+
+static gboolean
+_g_object_has_property (GObject *object, const gchar *property)
+{
+ GObjectClass *klass;
+
+  klass = G_OBJECT_GET_CLASS (object);
+  return NULL != g_object_class_find_property (klass, property);
+}
+
+
+static gboolean
+_create_ghost_pad (GstElement *current_element, const gchar *padname, GstElement
+  *codec_bin, GError **error)
+{
+  GstPad *ghostpad;
+  GstPad *pad = gst_element_get_static_pad (current_element, padname);
+  gboolean ret = FALSE;
+
+  if (!pad)
+  {
+    g_set_error (error, FS_ERROR, FS_ERROR_CONSTRUCTION,
+      "Could not find the %s pad on the element", padname);
+      return FALSE;
+  }
+
+  ghostpad = gst_ghost_pad_new (padname, pad);
+  if (!ghostpad)
+  {
+    g_set_error (error, FS_ERROR, FS_ERROR_CONSTRUCTION,
+      "Could not create a ghost pad for pad %s", padname);
+    goto done;
+  }
+
+  if (!gst_pad_set_active (ghostpad, TRUE))
+  {
+    g_set_error (error, FS_ERROR, FS_ERROR_CONSTRUCTION,
+      "Could not active ghostpad %s", padname);
+    gst_object_unref (ghostpad);
+    goto done;
+  }
+
+  if (!gst_element_add_pad (codec_bin, ghostpad))
+    g_set_error (error, FS_ERROR, FS_ERROR_CONSTRUCTION,
+      "Could not add ghostpad %s to the codec bin", padname);
+
+  ret = TRUE;
+ done:
+  gst_object_unref (pad);
+
+  return ret;
+}
+
+
+/*
+ * Builds a codec bin in the specified direction for the specified codec
+ * using the specified blueprint
+ */
+
+GstElement *
+create_codec_bin_from_blueprint (const FsCodec *codec,
+    CodecBlueprint *blueprint, const gchar *name, gboolean is_send,
+    GError **error)
+{
+  GstElement *codec_bin = NULL;
+  gchar *direction_str = (is_send == TRUE) ? "send" : "receive";
+  GList *walk = NULL;
+  GstElement *current_element = NULL;
+  GstElement *previous_element = NULL;
+  GList *pipeline_factory = NULL;
+
+  if (is_send)
+    pipeline_factory = blueprint->send_pipeline_factory;
+  else
+    pipeline_factory = blueprint->receive_pipeline_factory;
+
+  if (!pipeline_factory)
+  {
+    g_set_error (error, FS_ERROR, FS_ERROR_UNKNOWN_CODEC,
+        "The %s codec %s does not have a pipeline,"
+        " its probably a special codec",
+        fs_media_type_to_string (codec->media_type),
+        codec->encoding_name);
+    return NULL;
+  }
+
+  GST_DEBUG ("creating %s codec bin for id %d, pipeline_factory %p",
+    direction_str, codec->id, pipeline_factory);
+  codec_bin = gst_bin_new (name);
+
+  for (walk = g_list_first (pipeline_factory); walk; walk = g_list_next (walk))
+  {
+    if (g_list_next (g_list_first (walk->data)))
+    {
+      /* We have to check some kind of configuration to see if we have a
+         favorite */
+      current_element = gst_element_factory_make ("autoconvert", NULL);
+
+      if (!current_element)
+      {
+        g_set_error (error, FS_ERROR, FS_ERROR_CONSTRUCTION,
+          "Could not create autoconvert element");
+        goto error;
+      }
+
+      g_object_set (current_element, "factories", walk->data, NULL);
+    } else {
+      current_element =
+        gst_element_factory_create (
+            GST_ELEMENT_FACTORY (g_list_first (walk->data)->data), NULL);
+      if (!current_element)
+      {
+        g_set_error (error, FS_ERROR, FS_ERROR_CONSTRUCTION,
+          "Could not create element for pt %d", codec->id);
+        goto error;
+      }
+    }
+
+    if (!gst_bin_add (GST_BIN (codec_bin), current_element))
+    {
+      g_set_error (error, FS_ERROR, FS_ERROR_CONSTRUCTION,
+        "Could not add new element to %s codec_bin for pt %d",
+        direction_str, codec->id);
+      goto error;
+    }
+
+    if (_g_object_has_property (G_OBJECT (current_element), "pt"))
+      g_object_set (current_element, "pt", codec->id,
+        NULL);
+
+    /* Lets create the ghost pads on the codec bin */
+
+    if (g_list_previous (walk) == NULL)
+      /* if its the first element of the codec bin */
+      if (!_create_ghost_pad (current_element,
+              is_send ? "src" : "sink", codec_bin, error))
+        goto error;
+
+    if (g_list_next (walk) == NULL)
+      /* if its the last element of the codec bin */
+      if (!_create_ghost_pad (current_element,
+              is_send ? "sink" : "src" , codec_bin, error))
+        goto error;
+
+
+    /* let's link them together using the specified media_caps if any
+     * this will ensure that multi-codec encoders/decoders will select the
+     * appropriate codec based on caps negotiation */
+    if (previous_element)
+    {
+      GstPad *sinkpad;
+      GstPad *srcpad;
+      GstPadLinkReturn ret;
+
+      if (is_send)
+        sinkpad = gst_element_get_static_pad (previous_element, "sink");
+      else
+        sinkpad = gst_element_get_static_pad (current_element, "sink");
+
+      if (!sinkpad)
+      {
+        g_set_error (error, FS_ERROR, FS_ERROR_CONSTRUCTION,
+          "Could not get the sink pad one of the elements in the %s codec bin"
+          " for pt %d", direction_str, codec->id);
+        goto error;
+      }
+
+
+      if (is_send)
+        srcpad = gst_element_get_static_pad (current_element, "src");
+      else
+        srcpad = gst_element_get_static_pad (previous_element, "src");
+
+      if (!srcpad)
+      {
+        g_set_error (error, FS_ERROR, FS_ERROR_CONSTRUCTION,
+          "Could not get the src pad one of the elements in the %s codec bin"
+          " for pt %d", direction_str, codec->id);
+        gst_object_unref (sinkpad);
+        goto error;
+      }
+
+      ret = gst_pad_link (srcpad, sinkpad);
+
+      gst_object_unref (srcpad);
+      gst_object_unref (sinkpad);
+
+      if (GST_PAD_LINK_FAILED (ret))
+      {
+        g_set_error (error, FS_ERROR, FS_ERROR_CONSTRUCTION,
+          "Could not link element inside the %s codec bin for pt %d",
+          direction_str, codec->id);
+        goto error;
+      }
+    }
+
+    previous_element = current_element;
+  }
+
+  return codec_bin;
+
+ error:
+  gst_object_unref (codec_bin);
+  return NULL;
+}

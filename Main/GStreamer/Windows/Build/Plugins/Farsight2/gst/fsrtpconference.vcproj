@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="fsrtpconference"
 	ProjectGUID="{3A2FF0CD-715B-43AC-BDF3-63D41A37CA12}"
 	RootNamespace="libgstfsrtpconference"
@@ -301,7 +301,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Farsight2\gst-libs\libgstfarsight.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstfarsight.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F10}"
@@ -310,7 +310,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstrtp.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstrtp.vcproj"
 		/>
 	</References>
 	<Files>
@@ -323,6 +323,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Source\farsight2\gst\fsrtpconference\fs-rtp-codec-negotiation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Source\farsight2\gst\fsrtpconference\fs-rtp-codec-specific.h"
 				>
 			</File>
 			<File
@@ -354,10 +358,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Source\farsight2\gst\fsrtpconference\fs-rtp-specific-nego.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\..\Source\farsight2\gst\fsrtpconference\fs-rtp-stream.h"
 				>
 			</File>
@@ -383,6 +383,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Source\farsight2\gst\fsrtpconference\fs-rtp-codec-negotiation.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Source\farsight2\gst\fsrtpconference\fs-rtp-codec-specific.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\Source\farsight2\gst\fsrtpconference\fs-rtp-conference-plugin.c"
 				>
 			</File>
 			<File
@@ -414,19 +422,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\Source\farsight2\gst\fsrtpconference\fs-rtp-specific-nego.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\..\Source\farsight2\gst\fsrtpconference\fs-rtp-stream.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\Source\farsight2\gst\fsrtpconference\fs-rtp-substream.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\..\Source\farsight2\gst\fsrtpconference\gstfsrtpconference.c"
 				>
 			</File>
 			<Filter

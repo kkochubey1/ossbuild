@@ -31,9 +31,9 @@
 
 #include "fs-codec.h"
 
-#include "fs-private.h"
-
 #include <string.h>
+
+#include "fs-private.h"
 
 #define GST_CAT_DEFAULT fs_base_conference_debug
 
@@ -158,6 +158,8 @@ fs_codec_copy (const FsCodec * codec)
   copy->media_type = codec->media_type;
   copy->clock_rate = codec->clock_rate;
   copy->channels = codec->channels;
+  copy->ABI.ABI.maxptime = codec->ABI.ABI.maxptime;
+  copy->ABI.ABI.ptime = codec->ABI.ABI.ptime;
 
   copy->encoding_name = g_strdup (codec->encoding_name);
 
@@ -356,6 +358,20 @@ fs_codec_list_from_keyfile (const gchar *filename, GError **error)
           goto keyerror;
         }
 
+      } else if (!g_ascii_strcasecmp ("maxptime", keys[j])) {
+        codec->ABI.ABI.maxptime = g_key_file_get_integer (keyfile, groups[i],
+            keys[j], &gerror);
+        if (gerror) {
+          codec->ABI.ABI.maxptime = 0;
+          goto keyerror;
+        }
+      } else if (!g_ascii_strcasecmp ("ptime", keys[j])) {
+        codec->ABI.ABI.ptime = g_key_file_get_integer (keyfile, groups[i],
+            keys[j], &gerror);
+        if (gerror) {
+          codec->ABI.ABI.ptime = 0;
+          goto keyerror;
+        }
       } else {
         FsCodecParameter *param = g_slice_new (FsCodecParameter);
 
@@ -450,6 +466,12 @@ fs_codec_to_string (const FsCodec *codec)
       codec->id, fs_media_type_to_string (codec->media_type),
       codec->encoding_name, codec->clock_rate, codec->channels);
 
+  if (codec->ABI.ABI.maxptime)
+    g_string_append_printf (string, " maxptime=%u", codec->ABI.ABI.maxptime);
+
+  if (codec->ABI.ABI.ptime)
+    g_string_append_printf (string, " ptime=%u", codec->ABI.ABI.ptime);
+
   for (item = codec->optional_params;
        item;
        item = g_list_next (item)) {
@@ -522,6 +544,8 @@ fs_codec_are_equal (const FsCodec *codec1, const FsCodec *codec2)
       codec1->media_type != codec2->media_type ||
       codec1->clock_rate != codec2->clock_rate ||
       codec1->channels != codec2->channels ||
+      codec1->ABI.ABI.maxptime != codec2->ABI.ABI.maxptime ||
+      codec1->ABI.ABI.ptime != codec2->ABI.ABI.ptime ||
       codec1->encoding_name == NULL ||
       codec2->encoding_name == NULL ||
       g_ascii_strcasecmp (codec1->encoding_name, codec2->encoding_name))
@@ -597,13 +621,20 @@ fs_codec_add_optional_parameter (FsCodec *codec,
  * @codec: a #FsCodec
  * @param: a pointer to the #FsCodecParameter to remove
  *
- * Removes an optional parameter from a codec
+ * Removes an optional parameter from a codec.
+ *
+ * NULL param will do nothing.
  */
 
 void
 fs_codec_remove_optional_parameter (FsCodec *codec,
     FsCodecParameter *param)
 {
+  g_return_if_fail (codec);
+
+  if (!param)
+    return;
+
   g_free (param->name);
   g_free (param->value);
   g_slice_free (FsCodecParameter, param);

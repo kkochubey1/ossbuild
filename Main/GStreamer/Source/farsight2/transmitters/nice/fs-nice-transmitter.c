@@ -796,13 +796,12 @@ fs_nice_transmitter_free_gst_stream (FsNiceTransmitter *self,
     if (ns->nicesrcs[c])
     {
       GstStateChangeReturn ret;
-      gst_element_set_locked_state (ns->nicesrcs[c], TRUE);
+      if (!gst_bin_remove (GST_BIN (self->priv->gst_src), ns->nicesrcs[c]))
+        GST_ERROR ("Could not remove nicesrc element from transmitter source");
       ret = gst_element_set_state (ns->nicesrcs[c], GST_STATE_NULL);
       if (ret != GST_STATE_CHANGE_SUCCESS)
         GST_ERROR ("Error changing state of nicesrc: %s",
             gst_element_state_change_return_get_name (ret));
-      if (!gst_bin_remove (GST_BIN (self->priv->gst_src), ns->nicesrcs[c]))
-        GST_ERROR ("Could not remove nicesrc element from transmitter source");
       gst_object_unref (ns->nicesrcs[c]);
     }
 
@@ -914,9 +913,7 @@ fs_nice_transmitter_set_sending (FsNiceTransmitter *self,
             GST_ERROR ("Could not link nicesink to its tee pad");
           gst_object_unref (elempad);
 
-          gst_element_send_event (ns->nicesinks[c],
-              gst_event_new_custom (GST_EVENT_CUSTOM_UPSTREAM,
-                  gst_structure_new ("GstForceKeyUnit", NULL)));
+          fs_nice_transmitter_request_keyunit (self, ns, c);
         }
       }
     }
@@ -931,4 +928,16 @@ fs_nice_transmitter_set_sending (FsNiceTransmitter *self,
 
   g_mutex_unlock (ns->mutex);
 
+}
+
+
+void
+fs_nice_transmitter_request_keyunit (FsNiceTransmitter *self,
+    NiceGstStream *ns, guint component)
+{
+  g_assert (component <= self->components);
+
+  gst_element_send_event (ns->nicesinks[component],
+      gst_event_new_custom (GST_EVENT_CUSTOM_UPSTREAM,
+          gst_structure_new ("GstForceKeyUnit", NULL)));
 }

@@ -27,13 +27,13 @@
 #include "config.h"
 #endif
 
+#include "fs-rtp-dtmf-event-source.h"
+
 #include <gst/farsight/fs-base-conference.h>
 
 #include "fs-rtp-conference.h"
 #include "fs-rtp-discover-codecs.h"
 #include "fs-rtp-codec-negotiation.h"
-
-#include "fs-rtp-dtmf-event-source.h"
 
 #define GST_CAT_DEFAULT fsrtpconference_debug
 
@@ -61,7 +61,7 @@ G_DEFINE_TYPE (FsRtpDtmfEventSource, fs_rtp_dtmf_event_source,
 
 static GstElement *
 fs_rtp_dtmf_event_source_build (FsRtpSpecialSource *source,
-    GList *negotiated_codecs,
+    GList *negotiated_codec_associations,
     FsCodec *selected_codec);
 
 
@@ -73,7 +73,7 @@ static GList *fs_rtp_dtmf_event_source_negotiation_filter (
     GList *codec_associations);
 static  FsCodec *fs_rtp_dtmf_event_source_get_codec (
     FsRtpSpecialSourceClass *klass,
-    GList *negotiated_codecs,
+    GList *negotiated_codec_associations,
     FsCodec *codec);
 
 static void
@@ -208,7 +208,8 @@ _is_telephony_codec (CodecAssociation *ca, gpointer user_data)
 
 /**
  * fs_rtp_dtmf_event_source_get_codec:
- * @negotiated_codecs: a #GList of currently negotiated #FsCodec
+ * @negotiated_codec_associations: a #GList of currently negotiated
+ *   #CodecAssociation
  * @selected_codec: The current #FsCodec
  *
  * Find the telephone-event codec with the proper clock rate in the list
@@ -218,25 +219,25 @@ _is_telephony_codec (CodecAssociation *ca, gpointer user_data)
  */
 static  FsCodec *
 fs_rtp_dtmf_event_source_get_codec (FsRtpSpecialSourceClass *klass,
-    GList *negotiated_codecs, FsCodec *selected_codec)
+    GList *negotiated_codec_associations, FsCodec *selected_codec)
 {
   CodecAssociation *ca = NULL;
 
   if (selected_codec->media_type != FS_MEDIA_TYPE_AUDIO)
     return NULL;
 
-  ca = lookup_codec_association_custom (negotiated_codecs, _is_telephony_codec,
-      GUINT_TO_POINTER (selected_codec->clock_rate));
+  ca = lookup_codec_association_custom (negotiated_codec_associations,
+      _is_telephony_codec, GUINT_TO_POINTER (selected_codec->clock_rate));
 
   if (ca)
-    return ca->codec;
+    return ca->send_codec;
   else
     return NULL;
 }
 
 static GstElement *
 fs_rtp_dtmf_event_source_build (FsRtpSpecialSource *source,
-    GList *negotiated_codecs,
+    GList *negotiated_codec_associations,
     FsCodec *selected_codec)
 {
   FsCodec *telephony_codec = NULL;
@@ -248,7 +249,7 @@ fs_rtp_dtmf_event_source_build (FsRtpSpecialSource *source,
   GstElement *bin = NULL;
 
   telephony_codec = fs_rtp_dtmf_event_source_get_codec (
-      FS_RTP_SPECIAL_SOURCE_GET_CLASS(source), negotiated_codecs,
+      FS_RTP_SPECIAL_SOURCE_GET_CLASS(source), negotiated_codec_associations,
       selected_codec);
 
   g_return_val_if_fail (telephony_codec, NULL);

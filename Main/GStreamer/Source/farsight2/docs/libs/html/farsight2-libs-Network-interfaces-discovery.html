@@ -8,16 +8,8 @@
 <link rel="up" href="ch03.html" title="Farsight Utility Functions and Objects">
 <link rel="prev" href="FsElementAddedNotifier.html" title="FsElementAddedNotifier">
 <link rel="next" href="pt02.html" title="Part II. Classes used to implement Farsight plugins">
-<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="part" href="pt01.html" title="Part I. User-oriented classes, interfaces and functions">
-<link rel="chapter" href="ch01.html" title="Farsight GStreamer Interfaces">
-<link rel="chapter" href="ch02.html" title="Farsight Core Library">
-<link rel="chapter" href="ch03.html" title="Farsight Utility Functions and Objects">
-<link rel="part" href="pt02.html" title="Part II. Classes used to implement Farsight plugins">
-<link rel="chapter" href="ch04.html" title="Farsight Classes Base Implementations">
-<link rel="chapter" href="ch05.html" title="Farsight Transmitter Classes">
-<link rel="chapter" href="ch06.html" title="Farsight Plugins Infrastructure">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -30,8 +22,8 @@
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#farsight2-libs-Network-interfaces-discovery.synopsis" class="shortcut">Top</a>
-                 | 
-                <a href="#farsight2-libs-Network-interfaces-discovery.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#farsight2-libs-Network-interfaces-discovery.description" class="shortcut">Description</a>
 </td></tr>
 </table>
 <div class="refentry" title="Network interfaces discovery">
@@ -46,22 +38,11 @@
 <div class="refsynopsisdiv" title="Synopsis">
 <a name="farsight2-libs-Network-interfaces-discovery.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
-
 #include &lt;gst/farsight/fs-interfaces.h&gt;
 
-<a
-href="../glib/glib-Basic-Types.html#gchar"
->gchar</a> *             <a class="link" href="farsight2-libs-Network-interfaces-discovery.html#fs-interfaces-get-ip-for-interface" title="fs_interfaces_get_ip_for_interface ()">fs_interfaces_get_ip_for_interface</a>  (<a
-href="../glib/glib-Basic-Types.html#gchar"
->gchar</a> *interface_name);
-<a
-href="../glib/glib-Doubly-Linked-Lists.html#GList"
->GList</a> *             <a class="link" href="farsight2-libs-Network-interfaces-discovery.html#fs-interfaces-get-local-interfaces" title="fs_interfaces_get_local_interfaces ()">fs_interfaces_get_local_interfaces</a>  (void);
-<a
-href="../glib/glib-Doubly-Linked-Lists.html#GList"
->GList</a> *             <a class="link" href="farsight2-libs-Network-interfaces-discovery.html#fs-interfaces-get-local-ips" title="fs_interfaces_get_local_ips ()">fs_interfaces_get_local_ips</a>         (<a
-href="../glib/glib-Basic-Types.html#gboolean"
->gboolean</a> include_loopback);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             <a class="link" href="farsight2-libs-Network-interfaces-discovery.html#fs-interfaces-get-ip-for-interface" title="fs_interfaces_get_ip_for_interface ()">fs_interfaces_get_ip_for_interface</a>  (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *interface_name</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             <a class="link" href="farsight2-libs-Network-interfaces-discovery.html#fs-interfaces-get-local-interfaces" title="fs_interfaces_get_local_interfaces ()">fs_interfaces_get_local_interfaces</a>  (<em class="parameter"><code><span class="type">void</span></code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             <a class="link" href="farsight2-libs-Network-interfaces-discovery.html#fs-interfaces-get-local-ips" title="fs_interfaces_get_local_ips ()">fs_interfaces_get_local_ips</a>         (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> include_loopback</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -69,29 +50,23 @@ href="../glib/glib-Basic-Types.html#gboolean"
 <p>
 These utility functions allow the discovery of local network interfaces
 in a portable manner, they also allow finding the local ip addresses or
-the address allocated to a network interface.</p>
-<p>
+the address allocated to a network interface.
 </p>
 </div>
 <div class="refsect1" title="Details">
 <a name="farsight2-libs-Network-interfaces-discovery.details"></a><h2>Details</h2>
 <div class="refsect2" title="fs_interfaces_get_ip_for_interface ()">
 <a name="fs-interfaces-get-ip-for-interface"></a><h3>fs_interfaces_get_ip_for_interface ()</h3>
-<pre class="programlisting"><a
-href="../glib/glib-Basic-Types.html#gchar"
->gchar</a> *             fs_interfaces_get_ip_for_interface  (<a
-href="../glib/glib-Basic-Types.html#gchar"
->gchar</a> *interface_name);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             fs_interfaces_get_ip_for_interface  (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *interface_name</code></em>);</pre>
 <p>
-Retreives the IPv4 address of an interface by its name</p>
-<p>
+Retreives the IPv4 address of an interface by its name
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>interface_name</code></em> :</span></p></td>
-<td> name of local interface
+<td>name of local interface
 </td>
 </tr>
 <tr>
@@ -105,20 +80,15 @@ Retreives the IPv4 address of an interface by its name</p>
 <hr>
 <div class="refsect2" title="fs_interfaces_get_local_interfaces ()">
 <a name="fs-interfaces-get-local-interfaces"></a><h3>fs_interfaces_get_local_interfaces ()</h3>
-<pre class="programlisting"><a
-href="../glib/glib-Doubly-Linked-Lists.html#GList"
->GList</a> *             fs_interfaces_get_local_interfaces  (void);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             fs_interfaces_get_local_interfaces  (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
-Get the list of local interfaces</p>
-<p>
+Get the list of local interfaces
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a newly-allocated <a
-href="../glib/glib-Doubly-Linked-Lists.html#GList"
-><span class="type">GList</span></a> of strings. The caller must free it.
+<td> a newly-allocated <a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of strings. The caller must free it.
 </td>
 </tr></tbody>
 </table></div>
@@ -126,28 +96,21 @@ href="../glib/glib-Doubly-Linked-Lists.html#GList"
 <hr>
 <div class="refsect2" title="fs_interfaces_get_local_ips ()">
 <a name="fs-interfaces-get-local-ips"></a><h3>fs_interfaces_get_local_ips ()</h3>
-<pre class="programlisting"><a
-href="../glib/glib-Doubly-Linked-Lists.html#GList"
->GList</a> *             fs_interfaces_get_local_ips         (<a
-href="../glib/glib-Basic-Types.html#gboolean"
->gboolean</a> include_loopback);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             fs_interfaces_get_local_ips         (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> include_loopback</code></em>);</pre>
 <p>
-Get a list of local ipv4 interface addresses</p>
-<p>
+Get a list of local ipv4 interface addresses
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>include_loopback</code></em> :</span></p></td>
-<td> Include any loopback devices
+<td>Include any loopback devices
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a newly-allocated <a
-href="../glib/glib-Doubly-Linked-Lists.html#GList"
-><span class="type">GList</span></a> of strings. The caller must free it.
+<td> a newly-allocated <a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of strings. The caller must free it.
 </td>
 </tr>
 </tbody>
@@ -157,6 +120,6 @@ href="../glib/glib-Doubly-Linked-Lists.html#GList"
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.11</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

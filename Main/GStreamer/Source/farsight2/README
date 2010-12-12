@@ -15,8 +15,8 @@ Requirements
 ============
 
 Build time:
- - gstreamer 0.10.23
- - gst-plugins-base 0.10.23
+ - gstreamer 0.10.26
+ - gst-plugins-base 0.10.26
  - glib 2.16
  - Python 2.4
  - libnice 0.0.9
@@ -25,17 +25,16 @@ For UPnP support:
  - GUPnP-IGD
 
 For the python module:
- - PyGObject 2.12
+ - PyGObject 2.16
  - gst-python 0.10.10
- - PyGObject 2.16 or PyGTK 2.10 
 
 Run time for the RTP plugin:
  All of the build time requirements (except gtk-doc) plus
- - gst-plugins-good 0.10.7
- - gst-plugins-bad 0.10.12
+ - gst-plugins-good 0.10.17
+ - gst-plugins-bad 0.10.20
 
 Run time for the MSN plugin:
- - gst-plugins-bad 0.10.14
+ - gst-plugins-bad 0.10.17
 
 For the GUI example:
  - PyGTK 2.10

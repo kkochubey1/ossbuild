@@ -65,7 +65,7 @@ VIDEO=True
 CLIENT=1
 SERVER=2
 
-TRANSMITTER="rawudp"
+TRANSMITTER="nice"
 
 mycname = "".join((pwd.getpwuid(os.getuid())[0],
                    "-" ,
@@ -244,6 +244,8 @@ class FsUIPipeline:
         convert1.set_state(gst.STATE_PLAYING)
 
     def element_added_cb(self, notifier, bin, element):
+        if not element.get_factory():
+            return
         if element.get_factory().get_name() == "x264enc":
             element.set_property("byte-stream", True)
             element.set_property("bitrate", 128)
@@ -483,6 +485,12 @@ class FsUIStream:
         self.connect.send_candidates_done(self.participant.id, self.id)
     def new_local_candidate(self, candidate):
         "Callback from FsStream"
+        if "." in candidate.ip:
+            print "IPv4 Candidate: " +candidate.ip
+        elif ":" in candidate.ip:
+            print "IPv6 Candidate: " +candidate.ip
+        else:
+            print "STRANGE Candidate: " +candidate.ip
         self.connect.send_candidate(self.participant.id, self.id, candidate)
     def __src_pad_added(self, stream, pad, codec):
         "Callback from FsStream"
