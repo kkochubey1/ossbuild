@@ -6,7 +6,7 @@
 
 G_BEGIN_DECLS
 
-/* POINTER:POINTER,POINTER,POINTER,POINTER (fs-rtp-marshal.list:1) */
+/* POINTER:POINTER,POINTER,POINTER,POINTER */
 extern void _fs_rtp_marshal_POINTER__POINTER_POINTER_POINTER_POINTER (GClosure     *closure,
                                                                       GValue       *return_value,
                                                                       guint         n_param_values,
@@ -14,7 +14,7 @@ extern void _fs_rtp_marshal_POINTER__POINTER_POINTER_POINTER_POINTER (GClosure  
                                                                       gpointer      invocation_hint,
                                                                       gpointer      marshal_data);
 
-/* VOID:BOXED,BOXED (fs-rtp-marshal.list:2) */
+/* VOID:BOXED,BOXED */
 extern void _fs_rtp_marshal_VOID__BOXED_BOXED (GClosure     *closure,
                                                GValue       *return_value,
                                                guint         n_param_values,
@@ -22,7 +22,7 @@ extern void _fs_rtp_marshal_VOID__BOXED_BOXED (GClosure     *closure,
                                                gpointer      invocation_hint,
                                                gpointer      marshal_data);
 
-/* VOID:INT,STRING,STRING (fs-rtp-marshal.list:3) */
+/* VOID:INT,STRING,STRING */
 extern void _fs_rtp_marshal_VOID__INT_STRING_STRING (GClosure     *closure,
                                                      GValue       *return_value,
                                                      guint         n_param_values,

@@ -1,4 +1,3 @@
-#include "fs-rtp-marshal.h"
 
 #include	<glib-object.h>
 
@@ -50,7 +49,7 @@
 #endif /* !G_ENABLE_DEBUG */
 
 
-/* POINTER:POINTER,POINTER,POINTER,POINTER (fs-rtp-marshal.list:1) */
+/* POINTER:POINTER,POINTER,POINTER,POINTER */
 void
 _fs_rtp_marshal_POINTER__POINTER_POINTER_POINTER_POINTER (GClosure     *closure,
                                                           GValue       *return_value G_GNUC_UNUSED,
@@ -95,7 +94,7 @@ _fs_rtp_marshal_POINTER__POINTER_POINTER_POINTER_POINTER (GClosure     *closure,
   g_value_set_pointer (return_value, v_return);
 }
 
-/* VOID:BOXED,BOXED (fs-rtp-marshal.list:2) */
+/* VOID:BOXED,BOXED */
 void
 _fs_rtp_marshal_VOID__BOXED_BOXED (GClosure     *closure,
                                    GValue       *return_value G_GNUC_UNUSED,
@@ -132,7 +131,7 @@ _fs_rtp_marshal_VOID__BOXED_BOXED (GClosure     *closure,
             data2);
 }
 
-/* VOID:INT,STRING,STRING (fs-rtp-marshal.list:3) */
+/* VOID:INT,STRING,STRING */
 void
 _fs_rtp_marshal_VOID__INT_STRING_STRING (GClosure     *closure,
                                          GValue       *return_value G_GNUC_UNUSED,

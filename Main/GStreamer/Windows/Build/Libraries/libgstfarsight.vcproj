@@ -200,7 +200,7 @@
 			<Tool
 				Name="Header Installer Tool"
 				ExecutionBucket="2"
-				ModuleName="gstreamer-$(ApiVersionString)\gst\interfaces"
+				ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 			/>
 			<Tool
 				Name="GObject Enum Generation Tool"
@@ -414,7 +414,7 @@
 				Name="Generated"
 				>
 				<File
-					RelativePath="..\..\Generated\farsight2\gst-libs\farsight\fs-enum-types.c"
+					RelativePath="..\..\Generated\farsight2\gst-libs\farsight\fs-enumtypes.c"
 					>
 				</File>
 				<File
@@ -437,7 +437,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -445,7 +444,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -457,7 +455,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -465,7 +462,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -477,7 +473,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -485,7 +480,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -497,7 +491,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -505,7 +498,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -517,7 +509,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -525,7 +516,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -537,7 +527,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -545,7 +534,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -557,7 +545,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -565,7 +552,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -577,7 +563,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -585,7 +570,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -597,7 +581,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -605,7 +588,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -617,7 +599,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -625,7 +606,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -637,7 +617,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -645,7 +624,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -657,7 +635,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -665,7 +642,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
@@ -677,7 +653,6 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -685,13 +660,12 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
 						/>
 					</FileConfiguration>
 				</File>
 			</Filter>
 			<Filter
-				Name="generated"
+				Name="Generated"
 				>
 				<File
 					RelativePath="..\..\Generated\farsight2\gst-libs\farsight\fs-enum-types.h"
@@ -708,7 +682,24 @@
 						>
 						<Tool
 							Name="Header Installer Tool"
-							ModuleName="gstreamer-$(ApiVersionString)\gst\farsight"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\Generated\farsight2\gst-libs\farsight\fs-enumtypes.h"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
 						/>
 					</FileConfiguration>
 				</File>

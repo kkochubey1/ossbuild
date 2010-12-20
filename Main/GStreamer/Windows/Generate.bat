@@ -139,6 +139,7 @@ rem farsight2/gst/fsrtpconference
 rem farsight2/gst-libs/farsight
 echo "%PLUGINS_FARSIGHT2_DIR%\gst-libs\farsight-mkenum.list.txt" 
 %MK_ENUMS_FS_PREFIX_BAT% FS "%SRC_FARSIGHT2_DIR%\gst-libs\gst\farsight" "%BUILDDIR%\Libraries\farsight-mkenum.list.txt" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-enumtypes.h" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-enumtypes.c"
+copy "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-enumtypes.h" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-enum-types.h"
 %GEN_MARSHAL_BAT% _fs_marshal "%BUILDDIR%\Libraries\fs-marshal.list" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-marshal.h" "%GEN_FARSIGHT2_DIR%\gst-libs\farsight\fs-marshal.c"
 
 

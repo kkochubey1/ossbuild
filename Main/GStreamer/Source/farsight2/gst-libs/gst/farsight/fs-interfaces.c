@@ -363,6 +363,8 @@ fs_interfaces_get_ip_for_interface (gchar *interface_name)
 #include <winsock2.h>
 #include <Iphlpapi.h>
 
+#include <gst/gst.h>
+
 static gboolean started_wsa_engine = FALSE;
 
 /*
