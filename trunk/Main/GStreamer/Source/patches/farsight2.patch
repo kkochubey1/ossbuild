@@ -1,7 +1,7 @@
-Index: fs-nice-stream-transmitter.c
+Index: transmitters/nice/fs-nice-stream-transmitter.c
 ===================================================================
---- fs-nice-stream-transmitter.c	(revision 566)
-+++ fs-nice-stream-transmitter.c	(working copy)
+--- transmitters/nice/fs-nice-stream-transmitter.c	(revision 566)
++++ transmitters/nice/fs-nice-stream-transmitter.c	(working copy)
 @@ -46,8 +46,6 @@
  #include <string.h>
  #include <sys/types.h>
@@ -11,3 +11,17 @@ Index: fs-nice-stream-transmitter.c
  #define GST_CAT_DEFAULT fs_nice_transmitter_debug
  
  /* Signals */
+
+Index: gst-libs/gst/farsight/fs-interfaces.c
+===================================================================
+--- gst-libs/gst/farsight/fs-interfaces.c	Mon Dec 20 14:31:38 2010
++++ gst-libs/gst/farsight/fs-interfaces.c	Mon Dec 20 14:25:54 2010
+@@ -363,6 +363,8 @@
+ #include <winsock2.h>
+ #include <Iphlpapi.h>
+ 
++#include <gst/gst.h>
++
+ static gboolean started_wsa_engine = FALSE;
+ 
+ /*
