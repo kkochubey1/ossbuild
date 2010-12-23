@@ -28,7 +28,7 @@
 
 #include <windows.h>
 #include <d3d9.h>
-#include <D3dx9tex.h>
+#include <d3dx9tex.h>
 
 #pragma warning( disable : 4090 4024)
 
