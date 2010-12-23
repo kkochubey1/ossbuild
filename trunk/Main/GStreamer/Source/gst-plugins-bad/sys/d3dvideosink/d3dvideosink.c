@@ -463,6 +463,7 @@ gst_d3dvideosink_shared_hidden_window_created (GstD3DVideoSink * sink)
 {
   /* Should only be called from the shared window thread. */
   ReleaseSemaphore (shared.hidden_window_created_signal, 1, NULL);
+  return TRUE;
 }
 
 static gboolean  
@@ -1872,7 +1873,9 @@ static gboolean
 gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink)
 {
   HRESULT hr;
+  DWORD d3dcreate;
   LPDIRECT3D9 d3d;
+  D3DCAPS9 d3dcaps;
   D3DDISPLAYMODE d3ddm;
   LPDIRECT3DDEVICE9 d3ddev;
   D3DPRESENT_PARAMETERS d3dpp;
@@ -1888,6 +1891,27 @@ gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink)
     IDirect3D9_Release(d3d);
     GST_WARNING ("Unable to request adapter display mode");
     goto error;
+  }
+
+  if (FAILED(IDirect3D9_GetDeviceCaps(d3d, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &d3dcaps))) {
+    /* Prevent memory leak */
+    IDirect3D9_Release(d3d);
+    GST_WARNING ("Unable to request device caps");
+    goto error;
+  }
+
+  /* Ask DirectX to please not clobber the FPU state when making DirectX API calls. */
+  /* This can cause libraries such as cairo to misbehave in certain scenarios. */
+  d3dcreate = 0 | D3DCREATE_FPU_PRESERVE;
+
+  /* Determine vertex processing capabilities. Some cards have issues using software vertex processing. */
+  /* Courtesy http://www.chadvernon.com/blog/resources/directx9/improved-direct3d-initialization/ */
+  if ((d3dcaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT) == D3DDEVCAPS_HWTRANSFORMANDLIGHT) {
+    d3dcreate |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
+    /* if ((d3dcaps.DevCaps & D3DDEVCAPS_PUREDEVICE) == D3DDEVCAPS_PUREDEVICE) */
+    /*  d3dcreate |= D3DCREATE_PUREDEVICE; */
+  } else {
+    d3dcreate |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
   }
   
   ZeroMemory(&d3dpp, sizeof(d3dpp));
@@ -1908,7 +1932,7 @@ gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink)
     D3DADAPTER_DEFAULT, 
     D3DDEVTYPE_HAL, 
     shared.hidden_window_handle, 
-    D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE, 
+    d3dcreate, 
     &d3dpp, 
     &d3ddev
   ))) {
