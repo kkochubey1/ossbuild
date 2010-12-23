@@ -1908,7 +1908,7 @@ gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink)
     D3DADAPTER_DEFAULT, 
     D3DDEVTYPE_HAL, 
     shared.hidden_window_handle, 
-    D3DCREATE_SOFTWARE_VERTEXPROCESSING, 
+    D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE, 
     &d3dpp, 
     &d3ddev
   ))) {
