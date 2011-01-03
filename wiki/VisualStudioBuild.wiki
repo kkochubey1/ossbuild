@@ -6,6 +6,7 @@
 
 = Instructions =
   * Open Windows explorer and move to the <OSSBuild Home> directory
+  * Read all the instructions in ReadMe.txt
   * Double-click the GStreamer.sln
   * Change the solution configuration to "Release (GPL)" or "Release (LGPL)" as per your needs
   * If the build fails due to errors in dependency order, build again and they should be resolved.
