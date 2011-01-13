@@ -475,7 +475,7 @@ gst_d3dvideosink_shared_hidden_window_thread (GstD3DVideoSink * sink)
 
   memset (&WndClass, 0, sizeof (WNDCLASS));
   WndClass.hInstance = GetModuleHandle(NULL);
-  WndClass.lpszClassName = L"GST-Shared-Hidden-D3DSink";
+  WndClass.lpszClassName = TEXT("GST-Shared-Hidden-D3DSink");
   WndClass.lpfnWndProc = SharedHiddenWndProc;
   if (!RegisterClass (&WndClass)) {
     GST_ERROR("Unable to register Direct3D hidden window class");
@@ -484,7 +484,7 @@ gst_d3dvideosink_shared_hidden_window_thread (GstD3DVideoSink * sink)
 
   hWnd = CreateWindowEx (
     0, WndClass.lpszClassName, 
-    L"GStreamer Direct3D hidden window",
+    TEXT("GStreamer Direct3D hidden window"),
     WS_POPUP, 
     0, 0, 1, 1, 
     HWND_MESSAGE, 
@@ -658,7 +658,7 @@ LRESULT APIENTRY WndProcHook (HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
   /* Handle certain actions specially on the window passed to us.
    * Then forward back to the original window.
    */
-  GstD3DVideoSink *sink = (GstD3DVideoSink *)GetProp (hWnd, L"GstD3DVideoSink");
+  GstD3DVideoSink *sink = (GstD3DVideoSink *)GetProp (hWnd, TEXT("GstD3DVideoSink"));
 
   switch (message) 
   {
@@ -780,7 +780,7 @@ gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM
       }
       {
         gunichar2 wcrep[128];
-        if (GetKeyNameTextW (lParam, (WCHAR*)wcrep, 128)) {
+        if (GetKeyNameTextW(lParam, (LPWSTR)wcrep, 128)) {
           gchar *utfrep = g_utf16_to_utf8 (wcrep, 128, NULL, NULL, NULL);
           if (utfrep) {
             if (message == WM_CHAR || message == WM_KEYDOWN)
@@ -874,7 +874,7 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
   memset (&WndClass, 0, sizeof(WNDCLASS));
   WndClass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
   WndClass.hInstance = GetModuleHandle(NULL);
-  WndClass.lpszClassName = L"GST-D3DSink";
+  WndClass.lpszClassName = TEXT("GST-D3DSink");
   WndClass.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
   WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
   WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
@@ -914,8 +914,8 @@ gst_d3dvideosink_window_thread (GstD3DVideoSink * sink)
   exstyle = 0;
 
   video_window = CreateWindowEx (
-    exstyle, L"GST-D3DSink",
-    L"GStreamer Direct3D sink default window",
+    exstyle, TEXT("GST-D3DSink"),
+    TEXT("GStreamer Direct3D sink default window"),
     style, 
     offx, 
     offy, 
@@ -1058,7 +1058,7 @@ static void gst_d3dvideosink_set_window_for_renderer (GstD3DVideoSink *sink)
     sink->prevWndProc = (WNDPROC)SetWindowLongPtr(sink->window_handle, GWL_WNDPROC, (LONG_PTR)WndProcHook);
 
   /* Allows us to pick up the video sink inside the msg handler */
-  SetProp(sink->window_handle, L"GstD3DVideoSink", sink);
+  SetProp(sink->window_handle, TEXT("GstD3DVideoSink"), sink);
 
   if (!(sink->prevWndProc)) {
     /* If we were unable to set the window procedure, it's possible we're attempting to render into the  */
@@ -1261,7 +1261,7 @@ static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink)
     GST_D3DVIDEOSINK_SHARED_D3D_HOOK_UNLOCK
 
     /* Remove the property associating our sink with the window */
-    RemoveProp (sink->window_handle, L"GstDShowVideoSink");
+    RemoveProp (sink->window_handle, TEXT("GstD3DVideoSink"));
   }
   //GST_D3DVIDEOSINK_SWAP_CHAIN_UNLOCK(sink);
   //GST_D3DVIDEOSINK_SHARED_D3D_UNLOCK
