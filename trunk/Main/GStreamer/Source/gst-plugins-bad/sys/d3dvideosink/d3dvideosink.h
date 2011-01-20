@@ -30,14 +30,18 @@
 #include <d3d9.h>
 #include <d3dx9tex.h>
 
+#include "directx/directx.h"
+
 #pragma warning( disable : 4090 4024)
 
 G_BEGIN_DECLS
 #define GST_TYPE_D3DVIDEOSINK                     (gst_d3dvideosink_get_type())
 #define GST_D3DVIDEOSINK(obj)                     (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_D3DVIDEOSINK,GstD3DVideoSink))
 #define GST_D3DVIDEOSINK_CLASS(klass)             (G_TYPE_CHECK_CLASS_CAST((klass),GST_TYPE_D3DVIDEOSINK,GstD3DVideoSinkClass))
+#define GST_D3DVIDEOSINK_GET_CLASS(obj)           (GST_D3DVIDEOSINK_CLASS(G_OBJECT_GET_CLASS(obj)))
 #define GST_IS_D3DVIDEOSINK(obj)                  (G_TYPE_CHECK_INSTANCE_TYPE((obj),GST_TYPE_D3DVIDEOSINK))
 #define GST_IS_D3DVIDEOSINK_CLASS(klass)          (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_D3DVIDEOSINK))
+
 typedef struct _GstD3DVideoSink GstD3DVideoSink;
 typedef struct _GstD3DVideoSinkClass GstD3DVideoSinkClass;
 
@@ -87,6 +91,10 @@ struct _GstD3DVideoSink
 struct _GstD3DVideoSinkClass
 {
   GstVideoSinkClass parent_class;
+
+  gboolean is_directx_supported;
+  gint directx_version;
+  DirectXAPI *directx_api;
 };
 
 GType gst_d3dvideosink_get_type (void);
