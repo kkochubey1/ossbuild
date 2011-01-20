@@ -26,11 +26,6 @@
 
 #define IPC_SET_WINDOW          1
 #define IDT_DEVICELOST          1
-#define WM_D3D_INIT_DEVICE      WM_USER + 1
-#define WM_D3D_INIT_DEVICELOST  WM_USER + 2
-#define WM_D3D_DEVICELOST       WM_USER + 3
-#define WM_D3D_END_DEVICELOST   WM_USER + 4
-#define WM_D3D_RESIZE           WM_USER + 5
 
 /* Provide access to data that will be shared among all instantiations of this element */
 #define GST_D3DVIDEOSINK_SHARED_D3D_LOCK	       g_static_mutex_lock (&shared_d3d_lock);
@@ -164,12 +159,21 @@ static gboolean gst_d3dvideosink_release_swap_chain (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_release_d3d_device (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_release_direct3d (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_window_size (GstD3DVideoSink *sink, gint *width, gint *height);
-static gboolean gst_d3dvideosink_direct3d_supported ();
+static gboolean gst_d3dvideosink_direct3d_supported (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_shared_hidden_window_thread (GstD3DVideoSink * sink);
 LRESULT APIENTRY SharedHiddenWndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void gst_d3dvideosink_hook_window_for_renderer (GstD3DVideoSink *sink);
 static void gst_d3dvideosink_unhook_window_for_renderer (GstD3DVideoSink *sink);
 static void gst_d3dvideosink_unhook_all_windows();
+static void gst_d3dvideosink_log_debug(const gchar* file, const gchar* function, gint line, const gchar* format, va_list args);
+static void gst_d3dvideosink_log_warning(const gchar* file, const gchar* function, gint line, const gchar* format, va_list args);
+static void gst_d3dvideosink_log_error(const gchar* file, const gchar* function, gint line, const gchar* format, va_list args);
+
+static DirectXInitParams directx_init_params = {
+    gst_d3dvideosink_log_debug
+  , gst_d3dvideosink_log_warning
+  , gst_d3dvideosink_log_error
+};
 
 /* TODO: event, preroll, buffer_alloc? 
  * buffer_alloc won't generally be all that useful because the renderers require a 
@@ -240,8 +244,7 @@ gst_d3dvideosink_init_interfaces (GType type)
     NULL,
   };
 
-  g_type_add_interface_static (type, GST_TYPE_IMPLEMENTS_INTERFACE,
-      &iface_info);
+  g_type_add_interface_static (type, GST_TYPE_IMPLEMENTS_INTERFACE, &iface_info);
   g_type_add_interface_static (type, GST_TYPE_X_OVERLAY, &xoverlay_info);
   g_type_add_interface_static (type, GST_TYPE_NAVIGATION, &navigation_info);
 
@@ -307,6 +310,18 @@ gst_d3dvideosink_class_init (GstD3DVideoSinkClass * klass)
           "When enabled, navigation events are sent upstream", TRUE,
           (GParamFlags)G_PARAM_READWRITE));
   
+  /* Initialize DirectX abstraction */
+  GST_DEBUG("Initializing DirectX abstraction layer");
+  directx_initialize(&directx_init_params);
+
+  /* Initialize DirectX API */
+  if (!directx_initialize_best_available_api())
+    GST_DEBUG("Unable to initialize DirectX");
+
+  /* Determine DirectX version */
+  klass->directx_api = directx_get_best_available_api();
+  klass->directx_version = (klass->directx_api != NULL ? klass->directx_api->version : DIRECTX_VERSION_UNKNOWN);
+  klass->is_directx_supported = directx_is_supported();
 }
 
 static void
@@ -504,7 +519,7 @@ gst_d3dvideosink_shared_hidden_window_thread (GstD3DVideoSink * sink)
   shared.device_lost_timer = 0;
 
   GST_DEBUG("Initializing Direct3D");
-  SendMessage(shared.hidden_window_handle, WM_D3D_INIT_DEVICE, 0, 0);
+  SendMessage(shared.hidden_window_handle, WM_DIRECTX_D3D_INIT_DEVICE, 0, 0);
   GST_DEBUG("Direct3D initialization complete");
 
   gst_d3dvideosink_shared_hidden_window_created(sink);
@@ -568,12 +583,12 @@ SharedHiddenWndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
   switch (message) 
   {
-    case WM_D3D_INIT_DEVICE: 
+    case WM_DIRECTX_D3D_INIT_DEVICE: 
       {
         gst_d3dvideosink_initialize_d3d_device(sink);
         break;
       }
-    case WM_D3D_INIT_DEVICELOST:
+    case WM_DIRECTX_D3D_INIT_DEVICELOST:
       {
         if (!shared.device_lost) {
           //GST_D3DVIDEOSINK_SHARED_D3D_DEV_LOCK
@@ -586,7 +601,7 @@ SharedHiddenWndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
           shared.device_lost_timer = SetTimer(hWnd, IDT_DEVICELOST, 500, NULL);
 
           /* Try it once immediately */
-          SendMessage(hWnd, WM_D3D_DEVICELOST, 0, 0);
+          SendMessage(hWnd, WM_DIRECTX_D3D_DEVICELOST, 0, 0);
         }
         break;
       }
@@ -595,17 +610,17 @@ SharedHiddenWndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         /* Did we receive a message to check if the device is available again? */
         if (wParam == IDT_DEVICELOST) {
           /* This will synchronously call SharedHiddenWndProc() because this thread is the one that created the window. */
-          SendMessage(hWnd, WM_D3D_DEVICELOST, 0, 0);
+          SendMessage(hWnd, WM_DIRECTX_D3D_DEVICELOST, 0, 0);
           return 0;
         }
         break;
       }
-    case WM_D3D_DEVICELOST:
+    case WM_DIRECTX_D3D_DEVICELOST:
       {
         gst_d3dvideosink_device_lost(sink);
         break;
       }
-    case WM_D3D_END_DEVICELOST:
+    case WM_DIRECTX_D3D_END_DEVICELOST:
       {
         if (shared.device_lost) {
           /* gst_d3dvideosink_notify_device_reset() sends this message. */
@@ -754,7 +769,7 @@ gst_d3dvideosink_wnd_proc(GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM
         break;
       }
     case WM_SIZE:
-    case WM_D3D_RESIZE: 
+    case WM_DIRECTX_D3D_RESIZE: 
       {
         gint width;
         gint height;
@@ -1328,7 +1343,7 @@ gst_d3dvideosink_start (GstBaseSink * bsink)
   GstD3DVideoSink *sink = GST_D3DVIDEOSINK (bsink);
 
   /* Determine if Direct 3D is supported */
-  return gst_d3dvideosink_direct3d_supported();
+  return gst_d3dvideosink_direct3d_supported(sink);
 }
 
 static gboolean
@@ -1879,8 +1894,23 @@ gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink)
   D3DDISPLAYMODE d3ddm;
   LPDIRECT3DDEVICE9 d3ddev;
   D3DPRESENT_PARAMETERS d3dpp;
+  GstD3DVideoSinkClass* klass;
+  DirectXAPI* api;
 
-  d3d = Direct3DCreate9(D3D_SDK_VERSION);
+  klass = GST_D3DVIDEOSINK_GET_CLASS(sink);
+  if (!klass) {
+    GST_WARNING("Unable to retrieve gobject class");
+    goto error;
+  }
+
+  api = klass->directx_api;
+  if (!api) {
+    GST_WARNING("Missing DirectX api");
+    goto error;
+  }
+
+  //d3d = Direct3DCreate9(D3D_SDK_VERSION);
+  d3d = (LPDIRECT3D9)DX9_D3D_COMPONENT_CALL_FUNC(DIRECTX_D3D(api), Direct3DCreate9, D3D_SDK_VERSION);
   if (!d3d) {
     GST_WARNING ("Unable to create Direct3D interface");
     goto error;
@@ -2188,7 +2218,7 @@ static gboolean gst_d3dvideosink_notify_device_lost (GstD3DVideoSink *sink)
   GST_D3DVIDEOSINK_SHARED_D3D_LOCK
   {
     /* Send notification asynchronously */
-    PostMessage(shared.hidden_window_handle, WM_D3D_INIT_DEVICELOST, 0, 0);
+    PostMessage(shared.hidden_window_handle, WM_DIRECTX_D3D_INIT_DEVICELOST, 0, 0);
   }
 /*success:*/
   GST_DEBUG("Successfully sent notification of device lost event for sink %d", sink);
@@ -2208,7 +2238,7 @@ static gboolean gst_d3dvideosink_notify_device_reset (GstD3DVideoSink *sink)
   GST_D3DVIDEOSINK_SHARED_D3D_LOCK
   {
     /* Send notification synchronously -- let's ensure the timer's been killed before returning */
-    SendMessage(shared.hidden_window_handle, WM_D3D_END_DEVICELOST, 0, 0);
+    SendMessage(shared.hidden_window_handle, WM_DIRECTX_D3D_END_DEVICELOST, 0, 0);
   }
 /*success:*/
   GST_DEBUG("Successfully sent notification of device reset event for sink %d", sink);
@@ -2429,56 +2459,33 @@ gst_d3dvideosink_navigation_send_event (GstNavigation * navigation, GstStructure
 }
 
 static gboolean
-gst_d3dvideosink_direct3d_supported ()
+gst_d3dvideosink_direct3d_supported (GstD3DVideoSink *sink)
 {
-  //HRESULT hr;
-  LPDIRECT3D9 d3d;
-  D3DDISPLAYMODE d3ddm;
-  //LPDIRECT3DDEVICE9 d3ddev;
-  //D3DPRESENT_PARAMETERS d3dpp;
-
-  d3d = Direct3DCreate9(D3D_SDK_VERSION);
-  if (!d3d) {
-    return FALSE;
-  }
+  GstD3DVideoSinkClass* klass = GST_D3DVIDEOSINK_GET_CLASS(sink);
   
-  if (FAILED(IDirect3D9_GetAdapterDisplayMode(d3d, D3DADAPTER_DEFAULT, &d3ddm))) {
-    /* Prevent memory leak */
-    IDirect3D9_Release(d3d);
-    return FALSE;
-  }
-
-  //ZeroMemory(&d3dpp, sizeof(d3dpp));
-  //d3dpp.Windowed = TRUE;
-  //d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-  //d3dpp.BackBufferCount = 1;
-  //d3dpp.BackBufferFormat = d3ddm.Format;
-  //d3dpp.BackBufferWidth = 1;
-  //d3dpp.BackBufferHeight = 1;
-  //d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
-  //d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT; //D3DPRESENT_INTERVAL_IMMEDIATE;
-  //
-  //if (FAILED(hr = IDirect3D9_CreateDevice(
-  //  d3d, 
-  //  D3DADAPTER_DEFAULT, 
-  //  D3DDEVTYPE_HAL, 
-  //  GetDesktopWindow(), 
-  //  D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE, 
-  //  &d3dpp, 
-  //  &d3ddev
-  //))) {
-  //  /* Prevent memory leak */
-  //  IDirect3D9_Release(d3d);
-  //  return FALSE;
-  //}
-  
-  /* Prevent memory leak */
-  //IDirect3DDevice9_Release(d3ddev);
-  IDirect3D9_Release(d3d);
-  
-  return TRUE;
+  return (klass != NULL && klass->is_directx_supported);
 }
 
+static void 
+gst_d3dvideosink_log_debug(const gchar* file, const gchar* function, gint line, const gchar* format, va_list args) 
+{
+  if (G_UNLIKELY(GST_LEVEL_DEBUG <= __gst_debug_min))
+    gst_debug_log_valist(GST_CAT_DEFAULT, GST_LEVEL_DEBUG, file, function, line, NULL, format, args);
+}
+
+static void 
+gst_d3dvideosink_log_warning(const gchar* file, const gchar* function, gint line, const gchar* format, va_list args) 
+{
+  if (G_UNLIKELY(GST_LEVEL_WARNING <= __gst_debug_min))
+    gst_debug_log_valist(GST_CAT_DEFAULT, GST_LEVEL_WARNING, file, function, line, NULL, format, args);
+}
+
+static void 
+gst_d3dvideosink_log_error(const gchar* file, const gchar* function, gint line, const gchar* format, va_list args) 
+{
+  if (G_UNLIKELY(GST_LEVEL_ERROR <= __gst_debug_min))
+    gst_debug_log_valist(GST_CAT_DEFAULT, GST_LEVEL_ERROR, file, function, line, NULL, format, args);
+}
 
 /* Plugin entry point */
 static gboolean
