@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 # This script compiles gstreamer on OSX using MacPorts.
-# Author: Andres Colubri (http://interfaze.info/), David Liu (http://archive.itee.uq.edu.au/~davel/)
+# Authors: Andres Colubri (http://interfaze.info/)
+#          David Liu (http://archive.itee.uq.edu.au/~davel/)
 # Part of the OSSBuild project:
 # http://code.google.com/p/ossbuild/
+
+# NOTES:
+# Currently there is an issue when compiling python27 using 10.5 as target. Enablig X11 support
+# has python27 as dependency.
+# https://trac.macports.org/ticket/27916
 
 import sys
 import os
@@ -26,16 +32,82 @@ def print_error(error):
     print error + '. Get some help by typing:'
     print 'build.py --help'     
     
-def run_cmd(cmd):
+def run_cmd(cmd, title):
+    print title + '...'
     proc = subprocess.Popen(cmd, shell=True)
     sts = os.waitpid(proc.pid, 0)[1]    
+    if sts:
+        print 'ERROR AT',title 
+    else:
+        print 'DONE.'
+    
+def download_macports(macports_str, macports_dir):
+    if os.path.exists(macports_dir):
+        os.chdir(macports_dir)
+        run_cmd('make clean', 'CLEANING-UP MACPORTS')
+    else:
+        run_cmd('curl -O http://distfiles.macports.org/MacPorts/' + macports_str + '.tar.bz2', 'DOWNLOADING MACPORTS')
+        run_cmd('tar xvfz MacPorts-1.9.2.tar.bz2', 'UNCOMPRESSING MACPORTS')
+        os.chdir(macports_dir)
+        
+def setup_macports(cpu_arch, install_dir):
+    run_cmd('./configure --build=' + cpu_arch + ' --prefix=' + install_dir, 'CONFIGURING MACPORTS')
+    run_cmd('make', 'COMPILING MACPORTS')
+    run_cmd('make install', 'INSTALLING MACPORTS')
+    run_cmd(install_dir + '/bin/port -v selfupdate', 'UPDATING MACPORTS')
 
-def compile_macports(cpu_arch, install_dir):
-    print 'COMPILING MACPORTS...'
-    run_cmd('./configure --build=' + cpu_arch + ' --prefix=' + install_dir)
-    run_cmd('make')
-    run_cmd('make install')
-    run_cmd(install_dir + '/bin/port -v selfupdate')
+def fix_ldflags(install_dir, target_os):
+    config_file = install_dir + '/share/macports/Tcl/port1.0/portconfigure.tcl'
+
+    orig_str = 'default configure.ldflags   {-L${prefix}/lib}'
+
+    if target_os < 6:
+        # When targeting versions of OSX older than Snow Leopard, some linker flags that ensure 
+        # compatibility with previous library loading mechanisms are needed. Discussed here:
+        # http://lists.apple.com/archives/xcode-users/2009/Oct/msg00514.html
+        osx_str = '10.' + str(target_os)        
+        new_str = 'default configure.ldflags   {"-L${prefix}/lib -Xlinker -headerpad_max_install_names -mmacosx-version-min=' + osx_str + ' -no_compact_linkedit"}'    
+    else:
+        # This additional linker flag allows to later  change the absolute dependency paths embedded 
+        # in the .dylib and .so files by relative paths.
+        new_str = 'default configure.ldflags   {"-L${prefix}/lib -Xlinker -headerpad_max_install_names"}'
+
+    run_cmd("sed -i -e 's|" + orig_str + "|" + new_str + "|' " + config_file, 'FIXING portconfigure.tcl')
+
+def fix_conf(install_dir, target_os):
+    if target_os < 6:
+        config_file = install_dir + '/etc/macports/macports.conf'
+        run_cmd('echo macosx_deployment_target 10.' + str(target_os) + ' >> ' + config_file, 'FIXING macports.conf')
+
+def delete_files():
+    files = ['/Library/LaunchAgents/org.freedesktop.dbus-session.plist',
+             '/Library/LaunchDaemons/org.freedesktop.dbus-system.plist']
+
+    print 'REMOVING LEFTOVER FILES...'
+    for fname in files:
+        if os.path.exists(fname):
+            os.remove(fname)
+    print 'DONE.'
+
+def build_gstreamer(use_x11):
+    if use_x11:
+        run_cmd('port install gstreamer', 'BUILDING gstreamer')
+        run_cmd('port install gst-plugins-base', 'BUILDING gst-plugins-base')
+        run_cmd('port install gst-plugins-good', 'BUILDING gst-plugins-good')
+        run_cmd('port install gst-plugins-bad', 'BUILDING gst-plugins-bad')
+        run_cmd('port install gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
+        run_cmd('port install gst-ffmpeg', 'BUILDING gst-ffmpeg')
+        run_cmd('port install gst-plugins-gl', 'BUILDING gst-plugins-gl')
+        run_cmd('port install gnonlin', 'BUILDING gnonlin')
+    else:
+        run_cmd('port install gstreamer', 'BUILDING gstreamer')
+        run_cmd('port install gst-plugins-base +no_x11 +no_gnome_vfs', 'BUILDING gst-plugins-base')
+        run_cmd('port install gst-plugins-good', 'BUILDING gst-plugins-good')
+        run_cmd('port install gst-plugins-bad +no_x11', 'BUILDING gst-plugins-bad')
+        run_cmd('port install gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
+        run_cmd('port install gst-ffmpeg', 'BUILDING gst-ffmpeg')
+        run_cmd('port install gst-plugins-gl', 'BUILDING gst-plugins-gl')
+        run_cmd('port install gnonlin', 'BUILDING gnonlin')
 
 def main():
     SUPP_ARCH = ['i386', 'x64']
@@ -103,20 +175,14 @@ def main():
     else:
         print_help()
         return
-
+    
     macports_str = 'MacPorts-' + macports_ver
     macports_dir = './' + macports_str
-    if os.path.exists(macports_dir):
-        os.chdir(macports_dir)
-        print 'CLEANING-UP MACPORTS...'        
-        run_cmd('make clean')
-    else:
-        print 'DOWNLOADING MACPORTS...'
-        run_cmd('curl -O http://distfiles.macports.org/MacPorts/' + macports_str + '.tar.bz2')
-        print 'UNCOMPRESSING MACPORTS...'
-        run_cmd('tar xvfz MacPorts-1.9.2.tar.bz2')
-        os.chdir(macports_dir)
-    
-    compile_macports(cpu_arch, install_dir)
-    
+        
+    download_macports(macports_str, macports_dir)
+    setup_macports(cpu_arch, install_dir)
+    fix_ldflags(install_dir, target_os)
+    fix_conf(install_dir, target_os)
+    delete_files()
+    build_gstreamer(use_x11)    
 main()
