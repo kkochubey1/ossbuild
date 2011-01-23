@@ -37,7 +37,7 @@ def run_cmd(cmd, title):
     proc = subprocess.Popen(cmd, shell=True)
     sts = os.waitpid(proc.pid, 0)[1]    
     if sts:
-        print 'ERROR AT',title 
+        sys.exit('ERROR AT ' + title)
     else:
         print 'DONE.'
     
@@ -85,7 +85,7 @@ def delete_files():
 
     print 'REMOVING LEFTOVER FILES...'
     for fname in files:
-        if os.path.exists(fname):
+        if os.path.lexists(fname):
             os.remove(fname)
     print 'DONE.'
 
