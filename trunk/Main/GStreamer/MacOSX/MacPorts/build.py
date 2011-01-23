@@ -89,25 +89,26 @@ def delete_files():
             os.remove(fname)
     print 'DONE.'
 
-def build_gstreamer(use_x11):
+def build_gstreamer(install_dir, use_x11):
+    port_str = install_dir + '/bin/port install '
     if use_x11:
-        run_cmd('port install gstreamer', 'BUILDING gstreamer')
-        run_cmd('port install gst-plugins-base', 'BUILDING gst-plugins-base')
-        run_cmd('port install gst-plugins-good', 'BUILDING gst-plugins-good')
-        run_cmd('port install gst-plugins-bad', 'BUILDING gst-plugins-bad')
-        run_cmd('port install gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
-        run_cmd('port install gst-ffmpeg', 'BUILDING gst-ffmpeg')
-        run_cmd('port install gst-plugins-gl', 'BUILDING gst-plugins-gl')
-        run_cmd('port install gnonlin', 'BUILDING gnonlin')
+        run_cmd(port_str + 'gstreamer', 'BUILDING gstreamer')
+        run_cmd(port_str + 'gst-plugins-base', 'BUILDING gst-plugins-base')
+        run_cmd(port_str + 'gst-plugins-good', 'BUILDING gst-plugins-good')
+        run_cmd(port_str + 'gst-plugins-bad', 'BUILDING gst-plugins-bad')
+        run_cmd(port_str + 'gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
+        run_cmd(port_str + 'gst-ffmpeg', 'BUILDING gst-ffmpeg')
+        run_cmd(port_str + 'gst-plugins-gl', 'BUILDING gst-plugins-gl')
+        run_cmd(port_str + 'gnonlin', 'BUILDING gnonlin')
     else:
-        run_cmd('port install gstreamer', 'BUILDING gstreamer')
-        run_cmd('port install gst-plugins-base +no_x11 +no_gnome_vfs', 'BUILDING gst-plugins-base')
-        run_cmd('port install gst-plugins-good', 'BUILDING gst-plugins-good')
-        run_cmd('port install gst-plugins-bad +no_x11', 'BUILDING gst-plugins-bad')
-        run_cmd('port install gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
-        run_cmd('port install gst-ffmpeg', 'BUILDING gst-ffmpeg')
-        run_cmd('port install gst-plugins-gl', 'BUILDING gst-plugins-gl')
-        run_cmd('port install gnonlin', 'BUILDING gnonlin')
+        run_cmd(port_str + 'gstreamer', 'BUILDING gstreamer')
+        run_cmd(port_str + 'gst-plugins-base +no_x11 +no_gnome_vfs', 'BUILDING gst-plugins-base')
+        run_cmd(port_str + 'gst-plugins-good', 'BUILDING gst-plugins-good')
+        run_cmd(port_str + 'gst-plugins-bad +no_x11', 'BUILDING gst-plugins-bad')
+        run_cmd(port_str + 'gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
+        run_cmd(port_str + 'gst-ffmpeg', 'BUILDING gst-ffmpeg')
+        run_cmd(port_str + 'gst-plugins-gl', 'BUILDING gst-plugins-gl')
+        run_cmd(port_str + 'gnonlin', 'BUILDING gnonlin')
 
 def main():
     SUPP_ARCH = ['i386', 'x64']
@@ -184,5 +185,5 @@ def main():
     fix_ldflags(install_dir, target_os)
     fix_conf(install_dir, target_os)
     delete_files()
-    build_gstreamer(use_x11)    
+    build_gstreamer(install_dir, use_x11)    
 main()
