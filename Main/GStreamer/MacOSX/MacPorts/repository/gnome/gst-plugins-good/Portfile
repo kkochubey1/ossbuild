@@ -4,7 +4,7 @@
 PortSystem  1.0
 
 name                gst-plugins-good
-version             0.10.23
+version             0.10.26
 description         \
     A set of good-quality plug-ins for GStreamer under GStreamer's preferred \
     license, LGPL.
@@ -13,17 +13,15 @@ long_description    \
     consider to have good quality code, correct functionality, and their \
     preferred license (LGPL for the plug-in code, LGPL or LGPL-compatible for \
     the supporting library). 
-maintainers         rmsfisher openmaintainer
+maintainers         rmstonecipher openmaintainer
 categories          gnome
 platforms           darwin
 homepage            http://gstreamer.freedesktop.org/modules/${name}.html
 master_sites        http://gstreamer.freedesktop.org/src/${name}/ gnome:sources/${name}/0.10/
 
-checksums           md5     9cddbb0e7e90677f0cc05c23feffef5c \
-                    sha1    d819a2690e5bfe83f1277c850b737a13f8f28c12 \
-                    rmd160  b19a61d796e0c384e074f61fc0515826fb6f6061
-
-patchfiles      patch-autogen.sh.diff
+checksums           md5     e1ed191adbf81edff04f348f8ce8e198 \
+                    sha1    a8b0a96dcfdae33c57702497179f931b238a1f79 \
+                    rmd160  4ead2eaa65463c46c70bb209e3480c2ae531f28b
 
 depends_lib	\
     port:gst-plugins-base \
@@ -35,30 +33,28 @@ depends_lib	\
     port:libdv \
     port:libshout2 \
     path:lib/libspeex.dylib:speex \
+    port:taglib \
     port:wavpack
-
-
       
 use_bzip2   yes
 
-# gst-plugins-base is not universal
-universal_variant   no
+# https://bugzilla.gnome.org/show_bug.cgi?id=636134
+patchfiles universal.patch
+patch.pre_args  -p1
 
 pre-configure {
     reinplace "s|OBJC = gcc|OBJC = @OBJC@|" ${worksrcpath}/sys/osxvideo/Makefile.in
     reinplace "s|-DGST_DISABLE_DEPRECATED||" ${worksrcpath}/configure
 }
 
-configure.cmd   ./autogen.sh
-configure.args   --disable-schemas-install \
-                 --with-default-videosink=ximagesink \
-                 --disable-gconf \
-                 --disable-gconftool \
-                 --disable-soup \
-                 --disable-taglib 
+use_autoreconf          yes
+autoreconf.args         -fvi
 
-platform darwin i386 {
-        configure.args-append --build=${build_arch}-apple-darwin${os.major}
+configure.args-append   --disable-gtk-doc --disable-schemas-install --with-default-videosink=ximagesink
+
+post-activate {
+        system "export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` && \
+             gconftool-2 --makefile-install-rule ${prefix}/etc/gconf/schemas/*.schemas"
 }
 
 livecheck.type  regex
