@@ -34,7 +34,6 @@ depends_lib port:gst-plugins-base \
             port:libdc1394 \
             port:libdca \
             port:libexif \
-            port:libmms \
             port:libmodplug \
             port:libmpcdec \
             port:libmusicbrainz2 \
