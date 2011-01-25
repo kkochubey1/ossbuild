@@ -1,5 +1,5 @@
 /* GStreamer
- * Copyright (C) 2010 David Hoyt <dhoyt@hoytsoft.org>
+ * Copyright (C) 2010-2011 David Hoyt <dhoyt@hoytsoft.org>
  * Copyright (C) 2010 Andoni Morales <ylatuya@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -81,8 +81,8 @@ struct _IPCData
   LONG_PTR wnd_proc;
 };
 /* Holds data that may be used to communicate across processes */
-static IPCData ipc_data;
-static COPYDATASTRUCT ipc_cds;
+/*static IPCData ipc_data;*/
+/*static COPYDATASTRUCT ipc_cds;*/
 
 GST_DEBUG_CATEGORY (d3dvideosink_debug);
 #define GST_CAT_DEFAULT d3dvideosink_debug
@@ -123,8 +123,6 @@ static GstStateChangeReturn gst_d3dvideosink_change_state (GstElement *element, 
 /* GstBaseSink methods */
 static gboolean gst_d3dvideosink_start (GstBaseSink *bsink);
 static gboolean gst_d3dvideosink_stop (GstBaseSink *bsink);
-static gboolean gst_d3dvideosink_unlock (GstBaseSink *bsink);
-static gboolean gst_d3dvideosink_unlock_stop (GstBaseSink *bsink);
 static gboolean gst_d3dvideosink_set_caps (GstBaseSink *bsink, GstCaps *caps);
 static GstCaps *gst_d3dvideosink_get_caps (GstBaseSink *bsink);
 static GstFlowReturn gst_d3dvideosink_show_frame (GstVideoSink *sink, GstBuffer *buffer);
@@ -137,7 +135,13 @@ static void gst_d3dvideosink_expose (GstXOverlay *overlay);
 static void gst_d3dvideosink_navigation_send_event (GstNavigation *navigation, GstStructure *structure);
 
 /* WndProc methods */
+LRESULT APIENTRY WndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT APIENTRY SharedHiddenWndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void gst_d3dvideosink_wnd_proc (GstD3DVideoSink *sink, HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+/* HookProc methods */
+LRESULT APIENTRY WndProcHook (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK gst_d3dvideosink_hook_proc (int nCode, WPARAM wParam, LPARAM lParam);
 
 /* Paint/update methods */
 static void gst_d3dvideosink_update (GstBaseSink *bsink);
@@ -147,6 +151,7 @@ static gboolean gst_d3dvideosink_refresh_all (GstD3DVideoSink *sink);
 static void gst_d3dvideosink_stretch (GstD3DVideoSink *sink, LPDIRECT3DSURFACE9 backBuffer);
 
 /* Misc methods */
+BOOL WINAPI DllMain(HINSTANCE hinstDll, DWORD fdwReason, PVOID fImpLoad);
 static void gst_d3dvideosink_remove_window_for_renderer (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_initialize_direct3d (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink);
@@ -161,10 +166,9 @@ static gboolean gst_d3dvideosink_release_direct3d (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_window_size (GstD3DVideoSink *sink, gint *width, gint *height);
 static gboolean gst_d3dvideosink_direct3d_supported (GstD3DVideoSink *sink);
 static gboolean gst_d3dvideosink_shared_hidden_window_thread (GstD3DVideoSink * sink);
-LRESULT APIENTRY SharedHiddenWndProc (HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 static void gst_d3dvideosink_hook_window_for_renderer (GstD3DVideoSink *sink);
 static void gst_d3dvideosink_unhook_window_for_renderer (GstD3DVideoSink *sink);
-static void gst_d3dvideosink_unhook_all_windows();
+static void gst_d3dvideosink_unhook_all_windows(void);
 static void gst_d3dvideosink_log_debug(const gchar* file, const gchar* function, gint line, const gchar* format, va_list args);
 static void gst_d3dvideosink_log_warning(const gchar* file, const gchar* function, gint line, const gchar* format, va_list args);
 static void gst_d3dvideosink_log_error(const gchar* file, const gchar* function, gint line, const gchar* format, va_list args);
@@ -288,8 +292,8 @@ gst_d3dvideosink_class_init (GstD3DVideoSinkClass * klass)
   gstbasesink_class->set_caps = GST_DEBUG_FUNCPTR (gst_d3dvideosink_set_caps);
   gstbasesink_class->start = GST_DEBUG_FUNCPTR (gst_d3dvideosink_start);
   gstbasesink_class->stop = GST_DEBUG_FUNCPTR (gst_d3dvideosink_stop);
-  //gstbasesink_class->unlock = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock);
-  //gstbasesink_class->unlock_stop = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock_stop);
+  /*gstbasesink_class->unlock = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock);*/
+  /*gstbasesink_class->unlock_stop = GST_DEBUG_FUNCPTR (gst_d3dvideosink_unlock_stop);*/
 
   gstvideosink_class->show_frame = GST_DEBUG_FUNCPTR (gst_d3dvideosink_show_frame);
 
@@ -1102,7 +1106,7 @@ static HHOOK gst_d3dvideosink_find_hook (DWORD pid, DWORD tid)
     return NULL;
 
   g_hash_table_iter_init(&iter, shared.hook_tbl);
-  while(g_hash_table_iter_next(&iter, (gpointer)&key, &value)) {
+  while(g_hash_table_iter_next(&iter, (gpointer)&key, (gpointer)&value)) {
     if (value && value->process_id == pid && value->thread_id == tid)
       return value->hook;
   }
@@ -1225,7 +1229,7 @@ static void gst_d3dvideosink_unhook_window_for_renderer (GstD3DVideoSink *sink)
   }
 }
 
-static void gst_d3dvideosink_unhook_all_windows() 
+static void gst_d3dvideosink_unhook_all_windows(void) 
 {
   /* Unhook all windows that may be currently hooked. This is mainly a precaution in case     */
   /* a wayward process doesn't properly set state back to NULL (which would remove the hook). */
@@ -1826,6 +1830,7 @@ gst_d3dvideosink_update(GstBaseSink * bsink)
 }
 
 /* TODO: How can we implement these? Figure that out... */
+/*
 static gboolean
 gst_d3dvideosink_unlock (GstBaseSink * bsink)
 {
@@ -1841,6 +1846,7 @@ gst_d3dvideosink_unlock_stop (GstBaseSink * bsink)
 
   return TRUE;
 }
+*/
 
 static gboolean
 gst_d3dvideosink_initialize_direct3d (GstD3DVideoSink *sink)
@@ -1896,6 +1902,11 @@ gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink)
   D3DPRESENT_PARAMETERS d3dpp;
   GstD3DVideoSinkClass* klass;
   DirectXAPI* api;
+
+  if (!sink) {
+    GST_WARNING("Missing gobject instance.");
+    goto error;
+  }
 
   klass = GST_D3DVIDEOSINK_GET_CLASS(sink);
   if (!klass) {
@@ -2288,7 +2299,7 @@ static gboolean gst_d3dvideosink_device_lost (GstD3DVideoSink *sink) {
         goto error;
 
       /* Recreate device */
-      if (!gst_d3dvideosink_initialize_d3d_device(NULL))
+      if (!gst_d3dvideosink_initialize_d3d_device(sink))
         goto error;
 
       /* Reinitialize all swap chains, surfaces, buffers, etc. */
