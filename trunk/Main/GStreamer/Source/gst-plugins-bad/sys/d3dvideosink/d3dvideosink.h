@@ -32,7 +32,9 @@
 
 #include "directx/directx.h"
 
+#ifdef _MSC_VER
 #pragma warning( disable : 4090 4024)
+#endif
 
 G_BEGIN_DECLS
 #define GST_TYPE_D3DVIDEOSINK                     (gst_d3dvideosink_get_type())
