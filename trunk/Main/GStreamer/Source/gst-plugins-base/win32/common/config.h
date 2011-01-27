@@ -20,7 +20,7 @@
 #undef CDPARANOIA_HEADERS_IN_DIR
 
 /* Default audio sink */
-#define DEFAULT_AUDIOSINK "directaudiosink"
+#define DEFAULT_AUDIOSINK "directsoundsink"
 
 /* Default audio source */
 #undef DEFAULT_AUDIOSRC
