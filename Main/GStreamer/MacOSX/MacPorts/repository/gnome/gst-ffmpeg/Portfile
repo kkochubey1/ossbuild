@@ -21,17 +21,8 @@ patchfiles      patch-gst-libs_ext_ffmpeg_libswscale_swscale.h.diff
 
 post-configure {
     if { $build_arch == "i386" } {
-        #reinplace "s|check_asm ebx_available|#check_asm ebx_available|g" \
-            ${worksrcpath}/gst-libs/ext/ffmpeg/configure
-            
-        #reinplace "s|HAVE_EBX_AVAILABLE 1|HAVE_EBX_AVAILABLE 0|g" \
-            ${worksrcpath}/gst-libs/ext/ffmpeg/config.h            
-
         reinplace "s|HAVE_EBX_AVAILABLE 1|HAVE_EBX_AVAILABLE 0|g" \
             ${worksrcpath}/gst-libs/ext/ffmpeg/config.h        
-        
-        file copy ${worksrcpath}/gst-libs/ext/ffmpeg/config.h \
-            ${worksrcpath}/gst-libs/ext/ffmpeg/lolololololololo
     }
 }
 
