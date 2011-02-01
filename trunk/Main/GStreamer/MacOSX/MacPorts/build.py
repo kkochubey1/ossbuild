@@ -54,7 +54,6 @@ def run_cmd(cmd, title):
     proc = subprocess.Popen(cmd, shell=True)
     sts = os.waitpid(proc.pid, 0)[1]    
     if sts:
-        session_file.write('step=' + str(session_step) + '\n')
         session_file.close()
         sys.exit('ERROR AT ' + title)
     else:
@@ -338,32 +337,37 @@ def main():
     if session_step < 1:
         download_macports(macports_str, macports_dir)
         session_step = 1
-        session_file.write('step=' + str(session_step) + '\n')
-        session_file.flush()     
+        
+    session_file.write('step=1\n')
+    session_file.flush()     
 
     if session_step < 2:
         setup_macports(cpu_arch, macports_dir, install_dir)
         session_step = 2
-        session_file.write('step=' + str(session_step) + '\n')
-        session_file.flush()        
+
+    session_file.write('step=2\n')
+    session_file.flush()     
 
     if session_step < 3:
         fix_ldflags(install_dir, target_os)
         session_step = 3
-        session_file.write('step=' + str(session_step) + '\n')
-        session_file.flush()        
+
+    session_file.write('step=3\n')
+    session_file.flush()
 
     if session_step < 4:    
         fix_conf(install_dir, target_os, cpu_arch)
         session_step = 4
-        session_file.write('step=' + str(session_step) + '\n')
-        session_file.flush()        
+
+    session_file.write('step=4\n')
+    session_file.flush()     
     
     if session_step < 5:
         delete_files()
         session_step = 5
-        session_file.write('step=' + str(session_step) + '\n')
-        session_file.flush()        
+
+    session_file.write('step=5\n')
+    session_file.flush()     
 
     # Always done to catch an update in the local repositories (new patches, portfiles, etc)        
     add_local_repos(install_dir, local_repos)
@@ -371,11 +375,9 @@ def main():
     if session_step < 6:
         build_gstreamer(install_dir, use_x11)
         session_step = 6
-        session_file.write('step=' + str(session_step) + '\n')
-        session_file.flush()
-    else:
-       session_file.write('step=6\n')
-       session_file.flush()
+
+    session_file.write('step=6\n')
+    session_file.flush()
 
     session_file.close()
 main()
