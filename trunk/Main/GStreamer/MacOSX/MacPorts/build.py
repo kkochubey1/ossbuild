@@ -165,7 +165,7 @@ def build_gstreamer(install_dir, use_x11):
     else:
         run_cmd(port_str + 'gstreamer', 'BUILDING gstreamer')
         run_cmd(port_str + 'gst-plugins-base +no_x11 +no_gnome_vfs', 'BUILDING gst-plugins-base')
-        run_cmd(port_str + 'gst-plugins-good', 'BUILDING gst-plugins-good')
+        run_cmd(port_str + 'gst-plugins-good +no_soup +no_keyring', 'BUILDING gst-plugins-good')
         run_cmd(port_str + 'gst-plugins-bad +no_x11', 'BUILDING gst-plugins-bad')
         run_cmd(port_str + 'libmpeg2 +no_x11 +no_sdl', 'BUILDING libmpeg2')
         run_cmd(port_str + 'gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
@@ -286,6 +286,8 @@ def main():
         ifile = open(resume_file)
         lines = ifile.readlines()
         for line in lines:
+            if line.strip() == '':
+              continue
             parts = line.split('=')
             if len(parts) < 2:
                 print_error('Broken session file')
