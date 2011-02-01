@@ -60,12 +60,12 @@ post-activate {
 }
 
 variant no_soup {
-        depends.lib-delete    libsoup
+        depends_lib-delete    port:libsoup
         configure.args-append --disable-soup
 }
 
 variant no_keyring {
-        depends.lib-delete    libgnome-keyring
+        depends_lib-delete    port:libgnome-keyring
 }
 
 livecheck.type  regex
