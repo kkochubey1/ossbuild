@@ -96,9 +96,10 @@ def fix_ldflags(install_dir, target_os):
 
     run_cmd("sed -i -e 's|" + orig_str + "|" + new_str + "|' " + config_file, 'FIXING portconfigure.tcl')
 
-def fix_conf(install_dir, target_os, cpu_arch):
-    if target_os < 6:
-        config_file = install_dir + '/etc/macports/macports.conf'
+def fix_conf(install_dir, target_os, cpu_arch):    
+    config_file = install_dir + '/etc/macports/macports.conf'
+    
+    if target_os < 6:        
         run_cmd('echo macosx_deployment_target 10.' + str(target_os) + ' >> ' + config_file, 'ADDING TARGET OS TO macports.conf')
         
     run_cmd('echo build_arch ' + cpu_arch + ' >> ' + config_file, 'ADDING CPU ARCH. TO macports.conf')
@@ -149,27 +150,37 @@ def delete_files():
             os.remove(fname)
     print 'DONE.'
 
-def build_gstreamer(install_dir, use_x11):
+def build_gstreamer(install_dir, cpu_arch, use_x11):
     port_str = install_dir + '/bin/port install '
+    
+    if cpu_arch == 'x86_64':        
+        apple_media = ' +apple_media'
+        build_gstgl = 1
+    else:
+        apple_media = ''
+        build_gstgl = 0
+        
     if use_x11:
         run_cmd(port_str + 'gstreamer', 'BUILDING gstreamer')
         run_cmd(port_str + 'gst-plugins-base', 'BUILDING gst-plugins-base')
         run_cmd(port_str + 'gst-plugins-good', 'BUILDING gst-plugins-good')
-        run_cmd(port_str + 'gst-plugins-bad', 'BUILDING gst-plugins-bad')
+        run_cmd(port_str + 'gst-plugins-bad' + apple_media, 'BUILDING gst-plugins-bad')
         run_cmd(port_str + 'libmpeg2 +no_sdl', 'BUILDING libmpeg2')        
         run_cmd(port_str + 'gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
         run_cmd(port_str + 'gst-ffmpeg', 'BUILDING gst-ffmpeg')
-        #run_cmd(port_str + 'gst-plugins-gl', 'BUILDING gst-plugins-gl')
+        if build_gstgl:
+            run_cmd(port_str + 'gst-plugins-gl', 'BUILDING gst-plugins-gl')
         run_cmd(port_str + 'gnonlin', 'BUILDING gnonlin')
     else:
         run_cmd(port_str + 'gstreamer', 'BUILDING gstreamer')
         run_cmd(port_str + 'gst-plugins-base +no_x11 +no_gnome_vfs', 'BUILDING gst-plugins-base')
-        run_cmd(port_str + 'gst-plugins-good +no_soup +no_keyring', 'BUILDING gst-plugins-good')
-        run_cmd(port_str + 'gst-plugins-bad +no_x11', 'BUILDING gst-plugins-bad')
+        run_cmd(port_str + 'gst-plugins-good +no_soup +no_keyring', 'BUILDING gst-plugins-good')        
+        run_cmd(port_str + 'gst-plugins-bad +no_x11 +no_glade +no_mms' + apple_media, 'BUILDING gst-plugins-bad')        
         run_cmd(port_str + 'libmpeg2 +no_x11 +no_sdl', 'BUILDING libmpeg2')
         run_cmd(port_str + 'gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
         run_cmd(port_str + 'gst-ffmpeg', 'BUILDING gst-ffmpeg')
-        #run_cmd(port_str + 'gst-plugins-gl', 'BUILDING gst-plugins-gl')
+        if build_gstgl:        
+            run_cmd(port_str + 'gst-plugins-gl', 'BUILDING gst-plugins-gl')
         run_cmd(port_str + 'gnonlin', 'BUILDING gnonlin')
 
 def write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos, use_x11):
@@ -373,7 +384,7 @@ def main():
     add_local_repos(install_dir, local_repos)
 
     if session_step < 6:
-        build_gstreamer(install_dir, use_x11)
+        build_gstreamer(install_dir, cpu_arch, use_x11)
         session_step = 6
 
     session_file.write('step=6\n')
