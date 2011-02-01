@@ -331,8 +331,6 @@ def main():
     global session_file
     session_file = open(resume_file, 'w')
     write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos, use_x11)    
-    session_file.write('step=' + str(session_step) + '\n')
-    session_file.flush()
     
     macports_str = 'MacPorts-' + macports_ver
     macports_dir = './' + macports_str
@@ -341,7 +339,7 @@ def main():
         download_macports(macports_str, macports_dir)
         session_step = 1
         session_file.write('step=' + str(session_step) + '\n')
-        session_file.flush()        
+        session_file.flush()     
 
     if session_step < 2:
         setup_macports(cpu_arch, macports_dir, install_dir)
@@ -375,6 +373,9 @@ def main():
         session_step = 6
         session_file.write('step=' + str(session_step) + '\n')
         session_file.flush()
+    else:
+       session_file.write('step=6\n')
+       session_file.flush()
 
     session_file.close()
 main()
