@@ -89,7 +89,7 @@ def process_lib(map, libname, fn, isdylib):
     pipe = subprocess.Popen('otool -L ' + fn, shell=True, stdout=subprocess.PIPE).stdout
     output = pipe.readlines()
 
-    # Since the dylib files have the first line of the otool -L result containing its own name,
+    # Since the dylib files have the first line of the otool -L result containing their own name,
     # and the so files don't, we do this to take into account this thing.
     if isdylib:
         i = 0
@@ -132,7 +132,11 @@ def process_lib(map, libname, fn, isdylib):
 
 def process_dir(args, dirname, filelist):
     for filename in filelist:
-        ext = os.path.splitext(filename)[1]
+        parts = os.path.splitext(filename)
+        if len(parts) < 2:
+            # No extension
+            continue
+        ext = parts[1]
         if ext == '.dylib' or ext == '.so':
             fn = os.path.join(dirname, filename)
             process_lib(args, filename, fn, ext == '.dylib')

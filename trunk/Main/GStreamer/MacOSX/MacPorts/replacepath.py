@@ -21,16 +21,38 @@ def print_error(error):
     print error + '. Get some help by typing:'
     print 'replacepath.py --help'
 
-def process_lib(old, new, name, fn):
+def process_lib(old, new, fullname, fn):
+    print 'Replacing dependencies in', fn
+    
+    ext = os.path.splitext(fn)[1]
+    
+    # Last occurrence of '-' (lib-test-0.10.dylib):
+    n0 = fullname.rfind('-')
+    # First occurrence of '.' (lib.1.2.dylib):
+    n1 = fullname.find('.')
+    if n0 == -1: n0 = 10000
+    if n1 == -1: n1 = 10000
+    n = min(n0, n1)
+    name = fullname[0:n]
+    
+    if os.path.islink(fn):
+        # Skipping symbolic links
+        print '  File is a symlink... skipping.'
+        return
+        
+    id_changed = 0     
+    
     pipe = subprocess.Popen('otool -L ' + fn, shell=True, stdout=subprocess.PIPE).stdout
     output = pipe.readlines()
 
-    for line in output[1:len(output)]:
+    for line in output[1:len(output)]:	
         line = line.strip()
-        dep_old = line.split()[0]
+        dep_old = line.split()[0]        
+        dep_ext = os.path.splitext(dep_old)[1]
         if -1 < dep_old.find(old):
-            dep_new = dep_old.replace(old, new)
-            if -1 < dep_old.find(name):
+            dep_new = dep_old.replace(old, new)            
+            if -1 < dep_old.find(name) and dep_ext == ext:
+                id_changed = 1
                 # Changing name of dylib.
                 proc = subprocess.Popen('install_name_tool -id ' + dep_new + ' ' + fn, shell=True)
                 sts = os.waitpid(proc.pid, 0)[1]
@@ -46,11 +68,18 @@ def process_lib(old, new, name, fn):
         line = line.strip()
         dep_old = line.split()[0]
         if -1 < dep_old.find(old):        
-           print "Replacement failed:", fn, dep_old
+           print "  Warning: replacement failed:", fn, dep_old
+    
+    if not id_changed and ext == '.dylib':
+        print "  Warning: Library id not changed:", fn, name
 
 def process_dir(args, dirname, filelist):
     for filename in filelist:
-        ext = os.path.splitext(filename)[1]
+        parts = os.path.splitext(filename)
+        if len(parts) < 2:
+            # No extension
+            continue
+        ext = parts[1]
         if ext == '.dylib' or ext == '.so':
             fn = os.path.join(dirname, filename)
             process_lib(args[0], args[1], filename, fn)
