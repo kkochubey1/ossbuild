@@ -40,6 +40,7 @@ def add_to_map(map, list):
 # This function returns a dictionary where the full name of the library files in the directory
 # dir are mapped to the shortest symlink name.
 def generate_link_map(dir):
+    print 'Creating map of library names to shortest names...'
     map = {}
 
     # The ls -l command will give a list in the following format:
@@ -73,19 +74,21 @@ def generate_link_map(dir):
                 name_list = []
             if line[0] == 'l':
                 # File is a link, deleting.
-                proc = subprocess.Popen('rm ' + dir + '/' + fullname, shell=True)
+                print 'Removing symlink', fullname            
+                proc = subprocess.Popen('rm ' + os.path.join(dir, fullname), shell=True)
                 sts = os.waitpid(proc.pid, 0)[1]             
             name_list = name_list + [fullname]
             
     add_to_map(map, name_list)
-
-    #for key in map:
-    #    print key, map[key]
+ 
+    print 'Map finished:'
+    for key in map:
+        print '  ', key, '->', map[key]
     
     return map
 
 def process_lib(map, libname, fn, isdylib):
-    #print 'processing',fn
+    print 'Replacing dependencies in', fn
     pipe = subprocess.Popen('otool -L ' + fn, shell=True, stdout=subprocess.PIPE).stdout
     output = pipe.readlines()
 
@@ -121,12 +124,13 @@ def process_lib(map, libname, fn, isdylib):
         fullname = line.split()[0]
         name = os.path.basename(fullname)      
         if name in map and map[name] != name:
-            print "Replacement failed:", fn, fullname
+            print '  Warning: replacement failed:', fn, fullname
 
-    # Now renaming library file to the name of the shortest link.
+    # Now renaming library file to the name of the shortest link.    
     name = os.path.basename(fn)      
     if name in map and map[name] != name:    
         fn_new = fn.replace(name, map[name])
+        print '  Renaming', name, 'to', map[name]
         proc = subprocess.Popen('mv ' + fn + ' ' + fn_new, shell=True)
         sts = os.waitpid(proc.pid, 0)[1]
 
@@ -169,8 +173,8 @@ def main():
         print_help()
         return
 
-    print 'Working...'
+    print 'WORKING...'
     link_map = generate_link_map(input_dir)
     os.path.walk(input_dir, process_dir, link_map)  
-    print 'Done.'
+    print 'DONE.'
 main()
