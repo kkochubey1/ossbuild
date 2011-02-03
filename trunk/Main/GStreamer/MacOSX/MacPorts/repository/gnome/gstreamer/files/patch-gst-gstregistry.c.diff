@@ -1,0 +1,15 @@
+--- gst/gstregistry.c.orig	2011-01-10 21:28:50.000000000 +0900
++++ gst/gstregistry.c	2011-02-03 09:44:01.000000000 +0900
+@@ -1035,11 +1035,8 @@
+   gboolean changed = FALSE;
+   GstPlugin *newplugin = NULL;
+ 
+-#ifdef G_OS_WIN32
+-  /* Disable external plugin loader on Windows until it is ported properly. */
++  /* Disable external plugin loader. */
+   context->helper_state = REGISTRY_SCAN_HELPER_DISABLED;
+-#endif
+-
+ 
+   /* Have a plugin to load - see if the scan-helper needs starting */
+   if (context->helper_state == REGISTRY_SCAN_HELPER_NOT_STARTED) {
