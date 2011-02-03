@@ -68,10 +68,10 @@ def process_lib(old, new, fullname, fn):
         line = line.strip()
         dep_old = line.split()[0]
         if -1 < dep_old.find(old):        
-           print "  Warning: replacement failed:", fn, dep_old
+           print '  Warning: replacement failed:', fn, dep_old
     
     if not id_changed and ext == '.dylib':
-        print "  Warning: Library id not changed:", fn, name
+        print '  Warning: library id not changed:', fn, name
 
 def process_dir(args, dirname, filelist):
     for filename in filelist:
@@ -142,11 +142,11 @@ def main():
     if input_dir == '':
         print_error('Input directory parameter is empty')
 
-    print 'Working...'
+    print 'WORKING...'
     if recursive:
         os.path.walk(input_dir, process_dir, [old_string, new_string])
     else:
         filelist = os.listdir(input_dir)
         process_dir([old_string, new_string], input_dir, filelist)
-    print 'Done.'
+    print 'DONE.'
 main()
