@@ -33,11 +33,14 @@ def print_help():
     print '   this setting.'
     print '3) If execution stops due to an error in some intermediate step, the next time the script'
     print '   is called it is possible to resume from the last step by adding the -resume switch.'
+    print '4) The switch -noregscan can be added to disable the use of the registry scanner helper.'
+    print '   In this case, gstreamer will use the old plugin scanning method that doesn`t require'
+    print '   an external helper binary.'
     print ' '
     print 'Examples:' 
     print '1) The following line would build gstreamer for 32 bits using MacPorts 1.9.2, targeted'
     print '   at OSX Leopard, put the files in /opt/local, and enable X11 support:'
-    print 'build.py --arch i386 --target 10.5 --folder /opt/local --macports 1.9.2 -X11'
+    print 'build.py --arch i386 --target 10.5 --dir /opt/local --macports 1.9.2 -X11'
     print '2) To try to resume execution from the last succesful step with the parameters used in'
     print '   the previous call:'
     print 'build.py -resume'
@@ -150,9 +153,14 @@ def delete_files():
             os.remove(fname)
     print 'DONE.'
 
-def build_gstreamer(install_dir, cpu_arch, use_x11):
+def build_gstreamer(install_dir, cpu_arch, use_x11, use_regscanner):
     port_str = install_dir + '/bin/port install '
     
+    if use_regscanner:
+        regscanner = ' +regscanner'
+    else:
+        regscanner = ''
+      
     if cpu_arch == 'x86_64':        
         apple_media = ' +apple_media'
         build_gstgl = 1
@@ -161,7 +169,7 @@ def build_gstreamer(install_dir, cpu_arch, use_x11):
         build_gstgl = 0
         
     if use_x11:
-        run_cmd(port_str + 'gstreamer', 'BUILDING gstreamer')
+        run_cmd(port_str + 'gstreamer' + regscanner, 'BUILDING gstreamer')
         run_cmd(port_str + 'gst-plugins-base', 'BUILDING gst-plugins-base')
         run_cmd(port_str + 'gst-plugins-good', 'BUILDING gst-plugins-good')
         run_cmd(port_str + 'gst-plugins-bad' + apple_media, 'BUILDING gst-plugins-bad')
@@ -172,7 +180,7 @@ def build_gstreamer(install_dir, cpu_arch, use_x11):
             run_cmd(port_str + 'gst-plugins-gl', 'BUILDING gst-plugins-gl')
         run_cmd(port_str + 'gnonlin', 'BUILDING gnonlin')
     else:
-        run_cmd(port_str + 'gstreamer', 'BUILDING gstreamer')
+        run_cmd(port_str + 'gstreamer' + regscanner, 'BUILDING gstreamer')
         run_cmd(port_str + 'gst-plugins-base +no_x11 +no_gnome_vfs', 'BUILDING gst-plugins-base')
         run_cmd(port_str + 'gst-plugins-good +no_soup +no_keyring', 'BUILDING gst-plugins-good')        
         run_cmd(port_str + 'gst-plugins-bad +no_x11 +no_glade +no_mms' + apple_media, 'BUILDING gst-plugins-bad')        
@@ -183,7 +191,7 @@ def build_gstreamer(install_dir, cpu_arch, use_x11):
             run_cmd(port_str + 'gst-plugins-gl', 'BUILDING gst-plugins-gl')
         run_cmd(port_str + 'gnonlin', 'BUILDING gnonlin')
 
-def write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos, use_x11):
+def write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos, use_x11, use_regscanner):
     global session_file
     
     session_file.write('arch=' + cpu_arch + '\n')
@@ -196,6 +204,10 @@ def write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos
         session_file.write('X11=yes\n')
     else:
         session_file.write('X11=no\n')
+    if use_regscanner:    
+        session_file.write('regscanner=yes\n')
+    else:
+        session_file.write('regscanner=no\n')
         
 def main():
     SUPP_ARCH = ['i386', 'x86_64']
@@ -208,6 +220,7 @@ def main():
     install_dir = '/opt/local'    
     macports_ver = '1.9.2'
     use_x11 = 0
+    use_regscanner = 1
 
     global session_step
     session_step = 0 
@@ -275,7 +288,9 @@ def main():
                     print_error('Missing argument value')
                     return                    
             elif arg == '-X11':
-                use_x11 = 1                        
+                use_x11 = 1                
+            elif arg == '-noregscan':                
+                use_regscanner = 0
             elif arg == '-resume':
                 if os.path.lexists(resume_file):
                     resume_mode = 1 
@@ -329,7 +344,15 @@ def main():
                     use_x11 = 0
                 else:          
                     print_error('Wrong argument value (' + val + ')')
-                    return    
+                    return
+            elif arg == 'regscanner':
+                if val == 'yes':
+                    use_regscanner = 1
+                elif val == 'no':
+                    use_regscanner = 0
+                else:          
+                    print_error('Wrong argument value (' + val + ')')
+                    return                    
             elif arg == 'step':
                 session_step = int(val)
             else:
@@ -340,7 +363,7 @@ def main():
     
     global session_file
     session_file = open(resume_file, 'w')
-    write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos, use_x11)    
+    write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos, use_x11, use_regscanner)    
     
     macports_str = 'MacPorts-' + macports_ver
     macports_dir = './' + macports_str
@@ -384,7 +407,7 @@ def main():
     add_local_repos(install_dir, local_repos)
 
     if session_step < 6:
-        build_gstreamer(install_dir, cpu_arch, use_x11)
+        build_gstreamer(install_dir, cpu_arch, use_x11, use_regscanner)
         session_step = 6
 
     session_file.write('step=6\n')
