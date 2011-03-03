@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?include $(var.InstallRoot)\Properties.wxi ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:OSSBuild="$(ossbuild.namespaceURI())">
+
+	<Module Id="Dependencies" Language="$(var.DEFAULT_LANGUAGE)" Version="$(var.OSSBUILD_VERSION)">
+
+		<Package Id="$(var.GUID_X86_MSM_SHARE_PYTHON_V2_7_PACKAGE)" Manufacturer="$(var.MANUFACTURER)" InstallerVersion="$(var.MINIMAL_INSTALLER_VERSION)" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="MergeRedirectFolder">
+				<Directory Id="GstPythonDir" Name="gst-python">
+					<Directory Id="GstPythonVersionDir" Name="$(var.GST_VERSION)">
+						<Directory Id="GstPythonVersionDefsDir" Name="defs">
+							<OSSBuild:FillDirectory Directory="$(var.GstPythonSrcDir)\gst">
+								<OSSBuild:Filter Include=".*\\[^\\]*.*\.defs" />
+							</OSSBuild:FillDirectory>
+						</Directory>
+						<Directory Id="GstPythonVersionExamplesDir" Name="examples">
+							<OSSBuild:FillDirectory Directory="$(var.GstPythonSrcDir)\examples">
+								<OSSBuild:Filter Include=".*\\[^\\]*.*\.py" />
+								<OSSBuild:Filter Include=".*\\[^\\]*.*gst-discover" />
+								<OSSBuild:Filter Include=".*\\[^\\]*.*pipeline-tester" />
+								<OSSBuild:Filter Exclude=".*\\[^\\]*.*maemogst\.py" />
+							</OSSBuild:FillDirectory>
+						</Directory>
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+
+	</Module>
+
+</Wix>

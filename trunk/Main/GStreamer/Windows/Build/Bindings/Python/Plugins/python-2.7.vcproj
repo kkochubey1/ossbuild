@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="tag"
-	ProjectGUID="{5D58F4D2-A942-4346-B562-FC0000000000}"
-	RootNamespace="tag"
+	Name="gstpython"
+	ProjectGUID="{D5B2B8BF-4F37-46D1-A204-0AE7E06B91A6}"
+	RootNamespace="libgstpython"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -15,14 +15,14 @@
 	</Platforms>
 	<ToolFiles>
 		<ToolFile
-			RelativePath="..\..\..\..\..\..\Common.rules"
+			RelativePath="..\..\..\..\..\..\..\Common.rules"
 		/>
 	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Debug.vsprops;..\..\..\Properties\gstreamer-python-2.7-bindings.vsprops"
+			InheritedPropertySheets="..\..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Debug.vsprops;..\..\..\..\Properties\gstreamer-python-2.7-plugins.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -101,13 +101,14 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories=""
+				AdditionalIncludeDirectories="&quot;..\..\..\..\..\Source\gst-python\gst&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4101;4005"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -120,10 +121,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="libgstaudio.lib Winmm.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				ModuleDefinitionFile="tag.def"
-				AddModuleNamesToAssembly=""
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -156,7 +156,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\Properties\gstreamer-python-2.7-bindings.vsprops"
+			InheritedPropertySheets="..\..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\..\Properties\gstreamer-python-2.7-plugins.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -235,11 +235,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="&quot;..\..\Source\gst-python\gst&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\..\..\..\Source\gst-python\gst&quot;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4101;4005"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -254,8 +255,6 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
-				ModuleDefinitionFile="tag.def"
-				AddModuleNamesToAssembly=""
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -299,53 +298,38 @@
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
 		/>
 		<ProjectReference
-			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F05}"
+			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E54}"
 			CopyLocal="false"
 			CopyLocalDependencies="false"
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgsttag.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstnet.vcproj"
 		/>
 		<ProjectReference
-			ReferencedProjectIdentifier="{7CF83E29-C084-40FB-8E36-70A5E8BA0681}"
+			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E52}"
 			CopyLocal="false"
 			CopyLocalDependencies="false"
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Bindings\Python\_gst-2.7.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstcontroller.vcproj"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E53}"
+			CopyLocal="false"
+			CopyLocalDependencies="false"
+			UseInBuild="false"
+			UseDependenciesInBuild="false"
+			CopyLocalSatelliteAssemblies="false"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstdataprotocol.vcproj"
 		/>
 	</References>
 	<Files>
-		<Filter
-			Name="Headers Files"
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-python\plugin\gstpythonplugin.c"
 			>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\common.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Sources Files"
-			>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\gst-argtypes.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\tagmodule.c"
-				>
-			</File>
-			<Filter
-				Name="Generated"
-				>
-				<File
-					RelativePath="..\..\..\Generated\gst-python\tag.c"
-					>
-				</File>
-			</Filter>
-		</Filter>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

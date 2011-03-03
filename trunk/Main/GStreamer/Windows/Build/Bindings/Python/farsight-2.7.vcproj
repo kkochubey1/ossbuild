@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="tag"
-	ProjectGUID="{5D58F4D2-A942-4346-B562-FC0000000000}"
-	RootNamespace="tag"
+	Name="farsight"
+	ProjectGUID="{ED929386-E597-4185-B02A-3F790E2255C9}"
+	RootNamespace="farsight"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -22,7 +22,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Debug.vsprops;..\..\..\Properties\gstreamer-python-2.7-bindings.vsprops"
+			InheritedPropertySheets="..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Debug.vsprops;..\..\..\Properties\farsight-python-2.7-bindings.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -120,10 +120,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="gstfarsight.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
-				ModuleDefinitionFile="tag.def"
-				AddModuleNamesToAssembly=""
+				ModuleDefinitionFile="farsight.def"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -156,7 +156,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\Properties\gstreamer-python-2.7-bindings.vsprops"
+			InheritedPropertySheets="..\..\..\..\..\..\Shared\MSVC\Properties\Platforms\x86-Release.vsprops;..\..\..\Properties\farsight-python-2.7-bindings.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -254,8 +254,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories=""
-				ModuleDefinitionFile="tag.def"
-				AddModuleNamesToAssembly=""
+				ModuleDefinitionFile="farsight.def"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -290,25 +289,25 @@
 	</Configurations>
 	<References>
 		<ProjectReference
-			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E50}"
+			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E49}"
 			CopyLocal="false"
 			CopyLocalDependencies="false"
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstbase.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstreamer.vcproj"
 		/>
 		<ProjectReference
-			ReferencedProjectIdentifier="{AB87873B-2B88-4B1B-B627-F70DF4F91F05}"
+			ReferencedProjectIdentifier="{EB5D7598-7014-42D3-886C-9B9EC38167C3}"
 			CopyLocal="false"
 			CopyLocalDependencies="false"
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgsttag.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstfarsight.vcproj"
 		/>
 		<ProjectReference
-			ReferencedProjectIdentifier="{7CF83E29-C084-40FB-8E36-70A5E8BA0681}"
+			ReferencedProjectIdentifier="{14A8C4C9-6B1E-4F8A-9FCB-FD010D06E4F4}"
 			CopyLocal="false"
 			CopyLocalDependencies="false"
 			UseInBuild="false"
@@ -319,33 +318,17 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Headers Files"
+			Name="Generated"
 			>
 			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\common.h"
+				RelativePath="..\..\..\Generated\farsight2\python\pyfarsight.c"
 				>
 			</File>
 		</Filter>
-		<Filter
-			Name="Sources Files"
+		<File
+			RelativePath="..\..\..\..\Source\farsight2\python\pyfarsightmodule.c"
 			>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\gst-argtypes.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\..\Source\gst-python\gst\tagmodule.c"
-				>
-			</File>
-			<Filter
-				Name="Generated"
-				>
-				<File
-					RelativePath="..\..\..\Generated\gst-python\tag.c"
-					>
-				</File>
-			</Filter>
-		</Filter>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

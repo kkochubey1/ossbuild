@@ -24,7 +24,7 @@
 	/>
 	<UserMacro
 		Name="PythonApiMinorVersion"
-		Value="6"
+		Value="7"
 	/>
 	<UserMacro
 		Name="PythonApiMicroVersion"

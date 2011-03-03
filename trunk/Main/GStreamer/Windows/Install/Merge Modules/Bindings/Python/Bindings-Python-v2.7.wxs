@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?include $(var.InstallRoot)\Properties.wxi ?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:OSSBuild="$(ossbuild.namespaceURI())">
+
+	<Module Id="Dependencies" Language="$(var.DEFAULT_LANGUAGE)" Version="$(var.OSSBUILD_VERSION)">
+
+		<Package Id="$(var.GUID_X86_MSM_BINDINGS_PYTHON_V2_7_PACKAGE)" Manufacturer="$(var.MANUFACTURER)" InstallerVersion="$(var.MINIMAL_INSTALLER_VERSION)" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="MergeRedirectFolder">
+				<Component Id="pygst.py" Guid="{14F77B30-2D8C-4f43-AB0D-EEFE73292FE2}">
+					<File Name="pygst.py" Source="$(var.GstPythonWindowsBindingsDir)\pygst.py" />
+				</Component>
+
+				<Directory Id="GstVersionDir" Name="gst-$(var.GST_VERSION)">
+					<Directory Id="GstDir" Name="gst">
+						<Component Id="__init__.py" Guid="{4153F37A-548B-434c-B12C-3420C7A14FC1}">
+							<File Name="__init__.py" Source="$(var.GstPythonSrcDir)\gst\__init__.py" />
+						</Component>
+
+						<OSSBuild:FillDirectory Directory="$(var.GstPythonBinDir_v2_7)">
+							<OSSBuild:Filter Include=".*\\[^\\]*.*_gst\.pyd" />
+							<OSSBuild:Filter Include=".*\\[^\\]*.*audio\.pyd" />
+							<OSSBuild:Filter Include=".*\\[^\\]*.*interfaces\.pyd" />
+							<OSSBuild:Filter Include=".*\\[^\\]*.*pbutils\.pyd" />
+							<OSSBuild:Filter Include=".*\\[^\\]*.*tag\.pyd" />
+							<OSSBuild:Filter Include=".*\\[^\\]*.*video\.pyd" />
+						</OSSBuild:FillDirectory>
+
+						<Directory Id="GstExtendDir" Name="extend">
+							<OSSBuild:FillDirectory Directory="$(var.GstPythonSrcDir)\gst\extend\">
+								<OSSBuild:Filter Include=".*\\[^\\]*.*\.py" />
+							</OSSBuild:FillDirectory>
+						</Directory>
+					</Directory>
+				</Directory>
+			</Directory>
+		</Directory>
+
+	</Module>
+
+</Wix>

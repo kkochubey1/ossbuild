@@ -75,6 +75,7 @@
 
 	<?define PythonBinDir_v2_5="$(var.OutputLibDir)\python2.5\site-packages" ?>
 	<?define PythonBinDir_v2_6="$(var.OutputLibDir)\python2.6\site-packages" ?>
+	<?define PythonBinDir_v2_7="$(var.OutputLibDir)\python2.7\site-packages" ?>
 	
 	<?define Farsight2TransmitterDir="$(var.OutputLibDir)\farsight2-$(var.FARSIGHT2_VERSION)" ?>
 	
@@ -88,6 +89,7 @@
 
 	<?define GstPythonBinDir_v2_5="$(var.PythonBinDir_v2_5)\gst-$(var.GST_VERSION)\gst" ?>
 	<?define GstPythonBinDir_v2_6="$(var.PythonBinDir_v2_6)\gst-$(var.GST_VERSION)\gst" ?>
+	<?define GstPythonBinDir_v2_7="$(var.PythonBinDir_v2_7)\gst-$(var.GST_VERSION)\gst" ?>
 
 	<?define GstPythonSrcDir="$(var.GstSrcDir)\gst-python" ?>
 	<?define GstPythonGeneratedDir="$(var.GstGeneratedDir)\gst-python" ?>
@@ -95,6 +97,7 @@
 
 	<?define FarsightPythonBinDir_v2_5="$(var.PythonBinDir_v2_5)\farsight" ?>
 	<?define FarsightPythonBinDir_v2_6="$(var.PythonBinDir_v2_6)\farsight" ?>
+	<?define FarsightPythonBinDir_v2_7="$(var.PythonBinDir_v2_7)\farsight" ?>
 	
 	<?define CustomResourceDir="$(var.InstallRoot)\Custom\Resources" ?>
 	

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="audio"
 	ProjectGUID="{095A082F-8CE5-4459-B3CF-0C708684730D}"
 	RootNamespace="audio"
@@ -309,13 +309,13 @@
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstaudio.vcproj"
 		/>
 		<ProjectReference
-			ReferencedProjectIdentifier="{14A8C4C9-6B1E-4F8A-9FCB-FD010D06E4F4}"
+			ReferencedProjectIdentifier="{7CF83E29-C084-40FB-8E36-70A5E8BA0681}"
 			CopyLocal="false"
 			CopyLocalDependencies="false"
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Bindings\Python\_gst-2.6.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Bindings\Python\_gst-2.7.vcproj"
 		/>
 	</References>
 	<Files>
