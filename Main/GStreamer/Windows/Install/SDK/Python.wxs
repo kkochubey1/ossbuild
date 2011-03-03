@@ -26,6 +26,16 @@
 			<ComponentRef Id="Python_v2_6GstPythonVersionExamples" />
 		</ComponentGroup>
 
+		<ComponentGroup Id="Local_Bindings_Python_v2_7">
+			<ComponentRef Id="Python_v2_7SitePackages" />
+			<ComponentRef Id="Python_v2_7Gst" />
+			<ComponentRef Id="Python_v2_7GstExtend" />
+			<ComponentRef Id="Python_v2_7Farsight" />
+			<ComponentRef Id="Python_v2_7GstPlugins" />
+			<ComponentRef Id="Python_v2_7GstPythonVersionDefs" />
+			<ComponentRef Id="Python_v2_7GstPythonVersionExamples" />
+		</ComponentGroup>
+
 		<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.5\ -->
 		<DirectoryRef Id="GstSDKBindingsPython_v2_5InstallDir">
 			<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.5\lib\ -->
@@ -227,6 +237,109 @@
 								<File Id="Python_v2_6_remuxer.py"          Source="$(var.GstPythonSrcDir)\examples\remuxer.py" />
 								<File Id="Python_v2_6_sinkelement.py"      Source="$(var.GstPythonSrcDir)\examples\sinkelement.py" />
 								<File Id="Python_v2_6_vumeter.py"          Source="$(var.GstPythonSrcDir)\examples\vumeter.py" />
+							</Component>
+						</Directory>
+					</Directory>
+				</Directory>
+			</Directory>
+		</DirectoryRef>
+
+		<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\ -->
+		<DirectoryRef Id="GstSDKBindingsPython_v2_7InstallDir">
+			<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\lib\ -->
+			<Directory Id="Python_v2_7Lib" Name="lib">
+				<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\lib\site-packages\ -->
+				<Directory Id="Python_v2_7SitePackages" Name="site-packages">
+					<Component Id="Python_v2_7SitePackages" Guid="{6C0CF080-83E1-4978-8A10-02D756676DFC}">
+						<File Id="Python_v2_7_pygst.py" Source="$(var.GstPythonWindowsBindingsDir)\pygst.py" />
+					</Component>
+
+					<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\lib\site-packages\gst-0.10\ -->
+					<Directory Id="Python_v2_7GstVersionDir" Name="gst-$(var.GST_VERSION)">
+						<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\lib\site-packages\gst-0.10\gst\ -->
+						<Directory Id="Python_v2_7GstDir" Name="gst">
+							<Component Id="Python_v2_7Gst" Guid="{D60CAAA8-54D1-4f8e-AD1B-ADF8CEADBCE4}">
+								<File Id="Python_v2_7_gst__init__.py"      Source="$(var.GstPythonSrcDir)\gst\__init__.py" />
+								<File Id="Python_v2_7__gst.pyd"            Source="$(var.GstPythonBinDir_v2_7)\_gst.pyd" />
+								<File Id="Python_v2_7_audio.pyd"           Source="$(var.GstPythonBinDir_v2_7)\audio.pyd" />
+								<File Id="Python_v2_7_interfaces.pyd"      Source="$(var.GstPythonBinDir_v2_7)\interfaces.pyd" />
+								<File Id="Python_v2_7_pbutils.pyd"         Source="$(var.GstPythonBinDir_v2_7)\pbutils.pyd" />
+								<File Id="Python_v2_7_tag.pyd"             Source="$(var.GstPythonBinDir_v2_7)\tag.pyd" />
+								<File Id="Python_v2_7_video.pyd"           Source="$(var.GstPythonBinDir_v2_7)\video.pyd" />
+							</Component>
+
+							<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\lib\site-packages\gst-0.10\gst\extend\ -->
+							<Directory Id="Python_v2_7GstExtendDir" Name="extend">
+								<Component Id="Python_v2_7GstExtend" Guid="{833C6181-60E5-4c71-A7A7-13F5D540A709}">
+									<File Id="Python_v2_7_discoverer.py"   Source="$(var.GstPythonSrcDir)\gst\extend\discoverer.py" />
+									<File Id="Python_v2_7_jukebox.py"      Source="$(var.GstPythonSrcDir)\gst\extend\jukebox.py" />
+									<File Id="Python_v2_7_leveller.py"     Source="$(var.GstPythonSrcDir)\gst\extend\leveller.py" />
+									<File Id="Python_v2_7_pygobject.py"    Source="$(var.GstPythonSrcDir)\gst\extend\pygobject.py" />
+									<File Id="Python_v2_7_sources.py"      Source="$(var.GstPythonSrcDir)\gst\extend\sources.py" />
+									<File Id="Python_v2_7_utils.py"        Source="$(var.GstPythonSrcDir)\gst\extend\utils.py" />
+									<File Id="Python_v2_7___init__.py"     Source="$(var.GstPythonSrcDir)\gst\extend\__init__.py" />
+								</Component>
+							</Directory>
+						</Directory>
+					</Directory>
+
+					<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\lib\site-packages\farsight\ -->
+					<Directory Id="Python_v2_7FarsightDir" Name="farsight">
+						<Component Id="Python_v2_7Farsight" Guid="{1710127C-3AF8-42e6-B7BD-E53253AF0CEC}">
+							<File Id="Python_v2_7_farsight.pyd"            Source="$(var.FarsightPythonBinDir_v2_7)\farsight.pyd" />
+						</Component>
+					</Directory>
+				</Directory>
+
+				<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\lib\gstreamer-0.10\ -->
+				<Directory Id="Python_v2_7GstPlugins" Name="gstreamer-$(var.GST_VERSION)">
+					<Component Id="Python_v2_7GstPlugins" Guid="{5B8C446C-C978-49a3-A573-881B4ED6F48E}">
+						<File Id="Python_v2_7_libgstpython_v2.7.dll"       Source="$(var.GstPluginDir)\libgstpython-v2.7.dll" />
+					</Component>
+				</Directory>
+			</Directory>
+			<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\share\ -->
+			<Directory Id="Python_v2_7Share" Name="share">
+				<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\share\gst-python\ -->
+				<Directory Id="Python_v2_7GstPythonDir" Name="gst-python">
+					<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\share\gst-python\0.10\ -->
+					<Directory Id="Python_v2_7GstPythonVersionDir" Name="$(var.GST_VERSION)">
+						<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\share\gst-python\0.10\defs\ -->
+						<Directory Id="Python_v2_7GstPythonVersionDefsDir" Name="defs">
+							<Component Id="Python_v2_7GstPythonVersionDefs" Guid="{90EC3DB1-1067-4825-AC34-27EE5E8CB93F}">
+								<File Id="Python_v2_7_audio.defs"          Source="$(var.GstPythonSrcDir)\gst\audio.defs" />
+								<File Id="Python_v2_7_base.defs"           Source="$(var.GstPythonSrcDir)\gst\base.defs" />
+								<File Id="Python_v2_7_gst_extrafuncs.defs" Source="$(var.GstPythonSrcDir)\gst\gst-extrafuncs.defs" />
+								<File Id="Python_v2_7_gst_types.defs"      Source="$(var.GstPythonSrcDir)\gst\gst-types.defs" />
+								<File Id="Python_v2_7_gst.defs"            Source="$(var.GstPythonSrcDir)\gst\gst.defs" />
+								<File Id="Python_v2_7_interfaces.defs"     Source="$(var.GstPythonSrcDir)\gst\interfaces.defs" />
+								<File Id="Python_v2_7_libs.defs"           Source="$(var.GstPythonSrcDir)\gst\libs.defs" />
+								<File Id="Python_v2_7_pbutils.defs"        Source="$(var.GstPythonSrcDir)\gst\pbutils.defs" />
+								<File Id="Python_v2_7_tag.defs"            Source="$(var.GstPythonSrcDir)\gst\tag.defs" />
+								<File Id="Python_v2_7_video.defs"          Source="$(var.GstPythonSrcDir)\gst\video.defs" />
+								<File Id="Python_v2_7_xoverlay.defs"       Source="$(var.GstPythonSrcDir)\gst\xoverlay.defs" />
+							</Component>
+						</Directory>
+						<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\share\gst-python\0.10\examples\ -->
+						<Directory Id="Python_v2_7GstPythonVersionExamplesDir" Name="examples">
+							<Component Id="Python_v2_7GstPythonVersionExamples" Guid="{47CD527D-5264-4f6f-87E4-D74953A0B1B8}">
+								<File Id="Python_v2_7_gst_discover"        Source="$(var.GstPythonSrcDir)\examples\gst-discover" />
+								<File Id="Python_v2_7_pipeline_tester"     Source="$(var.GstPythonSrcDir)\examples\pipeline-tester" />
+								<File Id="Python_v2_7_audio_controller.py" Source="$(var.GstPythonSrcDir)\examples\audio-controller.py" />
+								<File Id="Python_v2_7_audioconcat.py"      Source="$(var.GstPythonSrcDir)\examples\audioconcat.py" />
+								<File Id="Python_v2_7_bps.py"              Source="$(var.GstPythonSrcDir)\examples\bps.py" />
+								<File Id="Python_v2_7_cp.py"               Source="$(var.GstPythonSrcDir)\examples\cp.py" />
+								<File Id="Python_v2_7_debugslider.py"      Source="$(var.GstPythonSrcDir)\examples\debugslider.py" />
+								<File Id="Python_v2_7_decodebin.py"        Source="$(var.GstPythonSrcDir)\examples\decodebin.py" />
+								<File Id="Python_v2_7_f2f.py"              Source="$(var.GstPythonSrcDir)\examples\f2f.py" />
+								<File Id="Python_v2_7_filesrc.py"          Source="$(var.GstPythonSrcDir)\examples\filesrc.py" />
+								<File Id="Python_v2_7_fvumeter.py"         Source="$(var.GstPythonSrcDir)\examples\fvumeter.py" />
+								<File Id="Python_v2_7_gstfile.py"          Source="$(var.GstPythonSrcDir)\examples\gstfile.py" />
+								<File Id="Python_v2_7_mixer.py"            Source="$(var.GstPythonSrcDir)\examples\mixer.py" />
+								<File Id="Python_v2_7_play.py"             Source="$(var.GstPythonSrcDir)\examples\play.py" />
+								<File Id="Python_v2_7_remuxer.py"          Source="$(var.GstPythonSrcDir)\examples\remuxer.py" />
+								<File Id="Python_v2_7_sinkelement.py"      Source="$(var.GstPythonSrcDir)\examples\sinkelement.py" />
+								<File Id="Python_v2_7_vumeter.py"          Source="$(var.GstPythonSrcDir)\examples\vumeter.py" />
 							</Component>
 						</Directory>
 					</Directory>

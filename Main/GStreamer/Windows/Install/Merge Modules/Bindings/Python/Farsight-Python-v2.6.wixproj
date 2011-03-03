@@ -11,7 +11,7 @@
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <IncludeSearchPaths>
     </IncludeSearchPaths>
-    <Name>Farsight-Python-v2.5</Name>
+    <Name>Farsight-Python-v2.6</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>..\..\..\..\..\..\..\Deployment\GStreamer\Windows\x86\Merge Modules\</OutputPath>

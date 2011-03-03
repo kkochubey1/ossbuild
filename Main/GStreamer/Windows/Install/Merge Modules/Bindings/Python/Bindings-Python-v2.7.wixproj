@@ -1,17 +1,17 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>3.5</ProductVersion>
-    <ProjectGuid>{0e5fa0bb-99b7-4093-95c8-b24f9fcdeAE2}</ProjectGuid>
+    <ProjectGuid>{1DD5C3D6-1DBE-4d5c-9B4D-AF71C0E9C8AB}</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>x86-OSSBuild-GStreamer-Bindings-Python-v2.6</OutputName>
+    <OutputName>x86-OSSBuild-GStreamer-Bindings-Python-v2.7</OutputName>
     <OutputType>Module</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <IncludeSearchPaths>
     </IncludeSearchPaths>
-    <Name>Bindings-Python-v2.6</Name>
+    <Name>Bindings-Python-v2.7</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>..\..\..\..\..\..\..\Deployment\GStreamer\Windows\x86\Merge Modules\</OutputPath>
@@ -54,38 +54,56 @@
     </WixExtension>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bindings-Python-v2.6.wxs" />
+    <Compile Include="Bindings-Python-v2.7.wxs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\audio-2.6.vcproj">
-      <Name>audio _GStreamer\Bindings\Python\v2.6\audio_</Name>
-      <Project>{13797bda-bc5f-4232-ac76-30e56e3c6648}</Project>
+    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\audio-2.7.vcproj">
+      <Name>audio _GStreamer\Bindings\Python\v2.7\audio_</Name>
+      <Project>{095a082f-8ce5-4459-b3cf-0c708684730d}</Project>
       <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\interfaces-2.6.vcproj">
-      <Name>interfaces _GStreamer\Bindings\Python\v2.6\interfaces_</Name>
-      <Project>{81ca7f63-b184-4607-8582-b98d26ff710a}</Project>
+    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\interfaces-2.7.vcproj">
+      <Name>interfaces _GStreamer\Bindings\Python\v2.7\interfaces_</Name>
+      <Project>{73d720f5-e4ae-4c73-9017-c57842223d47}</Project>
       <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\pbutils-2.6.vcproj">
-      <Name>pbutils _GStreamer\Bindings\Python\v2.6\pbutils_</Name>
-      <Project>{f36454e4-1a83-4c58-9cd3-80a863fa67c2}</Project>
+    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\pbutils-2.7.vcproj">
+      <Name>pbutils _GStreamer\Bindings\Python\v2.7\pbutils_</Name>
+      <Project>{afbf5f4c-570f-4b37-a867-005052ae565d}</Project>
       <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\tag-2.6.vcproj">
-      <Name>tag _GStreamer\Bindings\Python\v2.6\tag_</Name>
-      <Project>{bc6669cc-428c-42c9-b2f0-73b4a27072b5}</Project>
+    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\tag-2.7.vcproj">
+      <Name>tag _GStreamer\Bindings\Python\v2.7\tag_</Name>
+      <Project>{5d58f4d2-a942-4346-b562-fc0000000000}</Project>
       <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\video-2.6.vcproj">
-      <Name>video _GStreamer\Bindings\Python\v2.6\video_</Name>
-      <Project>{38722a6e-1106-4b14-b507-7c1d95d67f46}</Project>
+    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\video-2.7.vcproj">
+      <Name>video _GStreamer\Bindings\Python\v2.7\video_</Name>
+      <Project>{46018159-e5a0-4599-bbd1-35f20fe9cba2}</Project>
       <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\_gst-2.6.vcproj">
-      <Name>_gst _GStreamer\Bindings\Python\v2.6\_gst_</Name>
-      <Project>{14a8c4c9-6b1e-4f8a-9fcb-fd010d06e4f4}</Project>
+    <ProjectReference Include="..\..\..\..\Build\Bindings\Python\_gst-2.7.vcproj">
+      <Name>_gst _GStreamer\Bindings\Python\v2.7\_gst_</Name>
+      <Project>{7cf83e29-c084-40fb-8e36-70a5e8ba0681}</Project>
       <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />

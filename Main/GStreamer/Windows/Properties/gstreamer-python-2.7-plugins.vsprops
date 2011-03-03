@@ -4,7 +4,7 @@
 	Version="8.00"
 	Name="GStreamer Python v2.7 Plugins"
 	IntermediateDirectory="$(SolutionDir)Build\Windows\$(PlatformName)\$(ConfigurationName)\obj\gstreamer\plugins\python-2.7-$(ProjectName)"
-	InheritedPropertySheets="..\..\..\..\Shared\MSVC\Properties\SDKs\Python26.vsprops;.\gstreamer-plugin.vsprops"
+	InheritedPropertySheets="..\..\..\..\Shared\MSVC\Properties\SDKs\Python27.vsprops;.\gstreamer-plugin.vsprops"
 	>
 	<Tool
 		Name="VCCLCompilerTool"

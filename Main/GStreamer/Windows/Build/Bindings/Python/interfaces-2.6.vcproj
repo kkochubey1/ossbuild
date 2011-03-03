@@ -309,13 +309,13 @@
 			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstinterfaces.vcproj"
 		/>
 		<ProjectReference
-			ReferencedProjectIdentifier="{A01C663D-CFBB-4444-A4C1-7D8F91E76F59}"
+			ReferencedProjectIdentifier="{14A8C4C9-6B1E-4F8A-9FCB-FD010D06E4F4}"
 			CopyLocal="false"
 			CopyLocalDependencies="false"
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Bindings\Python\_gst-2.5.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Bindings\Python\_gst-2.6.vcproj"
 		/>
 	</References>
 	<Files>

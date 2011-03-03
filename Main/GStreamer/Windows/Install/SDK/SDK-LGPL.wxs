@@ -43,6 +43,7 @@
 					<ComponentGroupRef Id="GstSDK_Bindings_Python" />
 					<ComponentGroupRef Id="Local_Bindings_Python_v2_5"/>
 					<ComponentGroupRef Id="Local_Bindings_Python_v2_6"/>
+					<ComponentGroupRef Id="Local_Bindings_Python_v2_7"/>
 				</Feature>
 			</Feature>
 			

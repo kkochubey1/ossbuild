@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -109,6 +109,14 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\Merge Modules\Bindings\Python\Bindings-Python-v2.7.wixproj">
+      <Name>Bindings-Python-v2.7</Name>
+      <Project>{1dd5c3d6-1dbe-4d5c-9b4d-af71c0e9c8ab}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\Merge Modules\Bindings\Python\Farsight-Python-v2.5.wixproj">
       <Name>Farsight-Python-v2.5</Name>
       <Project>{ad2f533e-1f31-4ae6-9c01-76bdfcf55962}</Project>
@@ -123,6 +131,14 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
+    <ProjectReference Include="..\Merge Modules\Bindings\Python\Farsight-Python-v2.7.wixproj">
+      <Name>Farsight-Python-v2.7</Name>
+      <Project>{5f6a821a-d9ef-465a-904a-b1ada4d96239}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
     <ProjectReference Include="..\Merge Modules\Bindings\Python\Plugins-Python-v2.5.wixproj">
       <Name>Plugins-Python-v2.5</Name>
       <Project>{1068ad6c-eea4-4cb4-baee-7d6977ee8d93}</Project>
@@ -134,6 +150,14 @@
       <Name>Plugins-Python-v2.6</Name>
       <Project>{109d5fe2-5553-4ea1-9a12-2e247848d1e2}</Project>
       <Private>True</Private>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\Merge Modules\Bindings\Python\Plugins-Python-v2.7.wixproj">
+      <Name>Plugins-Python-v2.7</Name>
+      <Project>{9f9b6b05-c240-4404-a5c6-1bc69ed02e8a}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>

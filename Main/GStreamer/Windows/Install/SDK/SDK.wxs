@@ -88,6 +88,8 @@
 			<ComponentRef Id="GstSDKBindingsPython_v2_5InstallDirCreate" />
 
 			<ComponentRef Id="GstSDKBindingsPython_v2_6InstallDirCreate" />
+
+			<ComponentRef Id="GstSDKBindingsPython_v2_7InstallDirCreate" />
 		</ComponentGroup>
 
 		<!-- Attempt to find where our normal install is located -->
@@ -355,6 +357,14 @@
 									<Component Id="GstSDKBindingsPython_v2_6InstallDirCreate" Guid="{733EB339-FCB4-4004-91EA-2B49D2246131}">
 										<CreateFolder />
 										<RemoveFolder Id="GstSDKBindingsPython_v2_6InstallDirRemove" On="uninstall" />
+									</Component>
+								</Directory>
+
+								<!-- C:\Program Files\OSSBuild\v<Version>\sdk\bindings\python\v2.7\ -->
+								<Directory Id="GstSDKBindingsPython_v2_7InstallDir" Name="v2.7">
+									<Component Id="GstSDKBindingsPython_v2_7InstallDirCreate" Guid="{793F1601-6B54-4b5e-BAA6-1A0D5589E77B}">
+										<CreateFolder />
+										<RemoveFolder Id="GstSDKBindingsPython_v2_7InstallDirRemove" On="uninstall" />
 									</Component>
 								</Directory>
 							</Directory>
