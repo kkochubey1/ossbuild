@@ -68,6 +68,11 @@ variant no_keyring {
         depends_lib-delete    port:libgnome-keyring
 }
 
+variant no_caca {
+        depends_lib-delete    port:libcaca
+        configure.args-append --disable-libcaca 
+}
+
 livecheck.type  regex
 livecheck.url   http://gstreamer.freedesktop.org/src/${name}/
 livecheck.regex "${name}-(\\d+(?:\\.\\d+)*)${extract.suffix}"
