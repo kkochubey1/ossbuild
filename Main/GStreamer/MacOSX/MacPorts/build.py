@@ -153,7 +153,7 @@ def delete_files():
             os.remove(fname)
     print 'DONE.'
 
-def build_gstreamer(install_dir, cpu_arch, use_x11, use_regscanner):
+def build_gstreamer(install_dir, cpu_arch, target_os, use_x11, use_regscanner):
     port_str = install_dir + '/bin/port install '
     
     if use_regscanner:
@@ -161,9 +161,13 @@ def build_gstreamer(install_dir, cpu_arch, use_x11, use_regscanner):
     else:
         regscanner = ''
       
-    if cpu_arch == 'x86_64':        
-        apple_media = ' +apple_media'
-        build_gstgl = 1
+    if cpu_arch == 'x86_64':   
+        if 6 <= target_os:
+            apple_media = ' +apple_media'
+            build_gstgl = 1
+        else: 
+            apple_media = ''
+            build_gstgl = 0        
     else:
         apple_media = ''
         build_gstgl = 0
@@ -182,7 +186,7 @@ def build_gstreamer(install_dir, cpu_arch, use_x11, use_regscanner):
     else:
         run_cmd(port_str + 'gstreamer' + regscanner, 'BUILDING gstreamer')
         run_cmd(port_str + 'gst-plugins-base +no_x11 +no_gnome_vfs', 'BUILDING gst-plugins-base')
-        run_cmd(port_str + 'gst-plugins-good +no_soup +no_keyring', 'BUILDING gst-plugins-good')        
+        run_cmd(port_str + 'gst-plugins-good +no_soup +no_keyring +no_caca', 'BUILDING gst-plugins-good')        
         run_cmd(port_str + 'gst-plugins-bad +no_x11 +no_glade +no_mms' + apple_media, 'BUILDING gst-plugins-bad')        
         run_cmd(port_str + 'libmpeg2 +no_x11 +no_sdl', 'BUILDING libmpeg2')
         run_cmd(port_str + 'gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
@@ -407,7 +411,7 @@ def main():
     add_local_repos(install_dir, local_repos)
 
     if session_step < 6:
-        build_gstreamer(install_dir, cpu_arch, use_x11, use_regscanner)
+        build_gstreamer(install_dir, cpu_arch, target_os, use_x11, use_regscanner)
         session_step = 6
 
     session_file.write('step=6\n')
