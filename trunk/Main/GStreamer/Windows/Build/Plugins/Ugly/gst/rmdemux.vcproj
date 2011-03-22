@@ -404,6 +404,22 @@
 			RelativePath="..\..\..\..\..\Source\gst-plugins-ugly\gst\realmedia\rtspreal.h"
 			>
 		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-ugly\gst\realmedia\realmedia.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-ugly\gst\realmedia\realmedia.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-ugly\gst\realmedia\pnmsrc.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-ugly\gst\realmedia\pnmsrc.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
