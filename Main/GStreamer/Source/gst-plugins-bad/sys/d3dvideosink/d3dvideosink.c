@@ -40,9 +40,11 @@ struct _GstD3DVideoSinkShared
   LPDIRECT3D9 d3d;
   LPDIRECT3DDEVICE9 d3ddev;
   D3DCAPS9 d3dcaps;
+  D3DFORMAT d3ddmformat;
   D3DFORMAT d3dformat;
   D3DFORMAT d3dfourcc;
   D3DFORMAT d3dstencilformat;
+  D3DTEXTUREFILTERTYPE d3dfiltertype;
   gboolean d3dEnableAutoDepthStencil;
 
   GList* element_list;
@@ -1810,9 +1812,9 @@ gst_d3dvideosink_stretch (GstD3DVideoSink *sink, LPDIRECT3DSURFACE9 backBuffer)
     r.right = result.x + result.w;
     r.bottom = result.y + result.h;
 
-    IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, &r, D3DTEXF_NONE);
+    IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, &r, sink->d3dfiltertype);
   } else {
-    IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, NULL, D3DTEXF_NONE);
+    IDirect3DDevice9_StretchRect(shared.d3ddev, sink->d3d_offscreen_surface, NULL, backBuffer, NULL, sink->d3dfiltertype);
   }
 }
 
@@ -1909,9 +1911,11 @@ gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink)
   DWORD d3dcreate;
   LPDIRECT3D9 d3d;
   D3DCAPS9 d3dcaps;
+  D3DFORMAT d3ddmformat;
   D3DDISPLAYMODE d3ddm;
   LPDIRECT3DDEVICE9 d3ddev;
   D3DPRESENT_PARAMETERS d3dpp;
+  D3DTEXTUREFILTERTYPE d3dfiltertype;
   GstD3DVideoSinkClass* klass;
   DirectXAPI* api;
 
@@ -1966,13 +1970,26 @@ gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink)
   } else {
     d3dcreate |= D3DCREATE_SOFTWARE_VERTEXPROCESSING;
   }
+
+  /* Check the filter type. */
+  if (
+       (d3dcaps.StretchRectFilterCaps & D3DPTFILTERCAPS_MINFLINEAR) == D3DPTFILTERCAPS_MINFLINEAR 
+    && (d3dcaps.StretchRectFilterCaps & D3DPTFILTERCAPS_MAGFLINEAR) == D3DPTFILTERCAPS_MAGFLINEAR 
+    ) {
+    d3dfiltertype = D3DTEXF_LINEAR;
+  } else {
+    d3dfiltertype = D3DTEXF_NONE;
+  }
+
+  /* Setup the display mode format. */
+  d3ddmformat = d3ddm.Format;
   
   ZeroMemory(&d3dpp, sizeof(d3dpp));
   //d3dpp.Flags = D3DPRESENTFLAG_VIDEO;
   d3dpp.Windowed = TRUE;
   d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
   d3dpp.BackBufferCount = 1;
-  d3dpp.BackBufferFormat = d3ddm.Format;
+  d3dpp.BackBufferFormat = d3ddmformat;
   d3dpp.BackBufferWidth = 1;
   d3dpp.BackBufferHeight = 1;
   d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
@@ -2007,6 +2024,8 @@ gst_d3dvideosink_initialize_d3d_device (GstD3DVideoSink *sink)
 
   shared.d3d = d3d;
   shared.d3ddev = d3ddev;
+  shared.d3ddmformat = d3ddmformat;
+  shared.d3dfiltertype = d3dfiltertype;
 
 /*success:*/
   return TRUE;
@@ -2029,6 +2048,7 @@ gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink)
     //D3DFORMAT d3dstencilformat;
     LPDIRECT3DSWAPCHAIN9 d3dswapchain;
     LPDIRECT3DSURFACE9 d3dsurface;
+    D3DTEXTUREFILTERTYPE d3dfiltertype;
     //gboolean d3dEnableAutoDepthStencil;
 
     /* This should always work since gst_d3dvideosink_initialize_direct3d() should have always been called previously */
@@ -2111,9 +2131,19 @@ gst_d3dvideosink_initialize_swap_chain (GstD3DVideoSink *sink)
       IDirect3DSwapChain9_Release(d3dswapchain);
       goto error;
     }
+    
+    /* Determine texture filtering support. If it's supported for this format, use the filter type determined when we created the dev and checked the dev caps. */
+    if (SUCCEEDED(IDirect3D9_CheckDeviceFormat(shared.d3d, D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, shared.d3ddmformat, D3DUSAGE_QUERY_FILTER, D3DRTYPE_TEXTURE, d3dformat))) {
+      d3dfiltertype = shared.d3dfiltertype;
+    } else {
+      d3dfiltertype = D3DTEXF_NONE;
+    }
+
+    GST_DEBUG("Direct3D stretch rect texture filter: %d", d3dfiltertype);
 
     sink->d3dformat = d3dformat;
     sink->d3dfourcc = d3dfourcc;
+    sink->d3dfiltertype = d3dfiltertype;
     sink->d3d_swap_chain = d3dswapchain;
     sink->d3d_offscreen_surface = d3dsurface;
   }

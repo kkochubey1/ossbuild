@@ -88,6 +88,7 @@ struct _GstD3DVideoSink
 
   D3DFORMAT d3dformat;
   D3DFORMAT d3dfourcc;
+  D3DTEXTUREFILTERTYPE d3dfiltertype;
 };
 
 struct _GstD3DVideoSinkClass
