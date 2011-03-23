@@ -109,11 +109,9 @@ typedef enum
     , &DIRECTX_ ## version ## _DIRECTWRITE_COMPONENT                                                                                              \
     , &DIRECTX_ ## version ## _DIRECT2D_COMPONENT                                                                                                 \
     , &DIRECTX_ ## version ## _DIRECTCOMPUTE_COMPONENT                                                                                            \
-    , NULL /*reserved[0]*/                                                                                                                        \
-    , NULL /*reserved[1]*/                                                                                                                        \
-    , NULL /*reserved[2]*/                                                                                                                        \
+    , {NULL, NULL, NULL} /*reserved*/                                                                                                             \
   };                                                                                                                                              \
-  static void init_directx_ ## version ## _supported_api() {                                                                                      \
+  static void init_directx_ ## version ## _supported_api(void) {                                                                                  \
     DirectXAPI* api;                                                                                                                              \
     api = &DIRECTX_ ## version ## _API;                                                                                                           \
     api->d3d->api      = api;                                                                                                                     \
@@ -197,10 +195,10 @@ struct _DirectXInitParams
 struct _DirectXAPI 
 {
   gint                          version;
-  gchar*                        module_test;
-  gchar*                        symbol_test;
-  gchar*                        i18n_key;
-  gchar*                        description;
+  const gchar*                  module_test;
+  const gchar*                  symbol_test;
+  const gchar*                  i18n_key;
+  const gchar*                  description;
   gboolean                      initialized;
   DirectXInitializationFunction initialize;
   DirectXAPIComponent*          d3d;
@@ -235,7 +233,7 @@ struct _DirectXAPIComponent
   DirectXComponentInitializeFunction initialize;
 
   GModule*                           module;
-  gchar*                             module_name;
+  const gchar*                       module_name;
 
   gpointer                           vtable;
 

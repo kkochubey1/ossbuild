@@ -28,7 +28,7 @@
 
 
 
-static void init_supported_apis() 
+static void init_supported_apis(void) 
 {
   /* Gather information we'll need about each version of DirectX. */
   /* Insert in reverse order of desired priority due to the g_list_prepend() call in directx_determine_best_available_api(). */
@@ -42,7 +42,7 @@ static void init_supported_apis()
 
 
 /* Function declarations */
-static DirectXAPI* directx_determine_best_available_api ();
+static DirectXAPI* directx_determine_best_available_api (void);
 
 /* Mutex macros */
 #define DIRECTX_LOCK	  g_static_rec_mutex_lock (&dx_lock);
