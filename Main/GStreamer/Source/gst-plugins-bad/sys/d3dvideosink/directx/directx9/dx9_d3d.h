@@ -50,7 +50,7 @@ static D3D9 dx9_d3d;
 
 /* Function declarations */
 
-void dx9_d3d_init(DirectXAPIComponent* component, DirectXAPIComponentD3D* d3d);
+void dx9_d3d_init(DirectXAPIComponent* component, gpointer data);
 DirectXD3D* dx9_d3d_create(const DirectXAPI* api);
 gboolean dx9_d3d_resize(const DirectXD3D* d3d);
 gboolean dx9_d3d_device_lost(const DirectXD3D* d3d);

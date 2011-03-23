@@ -26,7 +26,7 @@
 #include "dx10_d3d.h"
 
 void 
-dx10_d3d_init(DirectXAPIComponent* component, DirectXAPIComponentD3D* d3d) 
+dx10_d3d_init(DirectXAPIComponent* component, gpointer data) 
 {
   DIRECTX_DEBUG("Initializing Direct3D");
   DIRECTX_OPEN_COMPONENT_MODULE(component, "d3d10");

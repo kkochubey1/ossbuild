@@ -51,7 +51,7 @@ static D3D10 dx10_d3d;
 
 /* Function declarations */
 
-void dx10_d3d_init(DirectXAPIComponent* component, DirectXAPIComponentD3D* d3d);
+void dx10_d3d_init(DirectXAPIComponent* component, gpointer data);
 DirectXD3D* dx10_d3d_create(const DirectXAPI* api);
 gboolean dx10_d3d_resize(const DirectXD3D* d3d);
 gboolean dx10_d3d_device_lost(const DirectXD3D* d3d);

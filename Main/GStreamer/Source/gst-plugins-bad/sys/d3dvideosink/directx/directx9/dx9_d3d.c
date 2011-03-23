@@ -23,7 +23,7 @@
 #include "dx9_d3d.h"
 
 void 
-dx9_d3d_init(DirectXAPIComponent* component, DirectXAPIComponentD3D* d3d) 
+dx9_d3d_init(DirectXAPIComponent* component, gpointer data) 
 {
   DIRECTX_DEBUG("Initializing Direct3D");
   DIRECTX_OPEN_COMPONENT_MODULE(component, "d3d9");
