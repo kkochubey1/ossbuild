@@ -69,8 +69,9 @@ gtk_widget_get_allocation (GtkWidget * w, GtkAllocation * a)
 #endif
 
 #ifdef _WIN32
-#define VSINK "directdrawsink"
+//#define VSINK "directdrawsink"
 //#define VSINK "dshowvideosink"
+#define VSINK "autovideosink"
 #else
 #define VSINK "xvimagesink"
 //#define VSINK "ximagesink"
