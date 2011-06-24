@@ -1,427 +1,1521 @@
-diff -Naurp gst-plugins-good-0.10.25.orig/common/m4/gst-arch.m4 gst-plugins-good-0.10.25/common/m4/gst-arch.m4
---- gst-plugins-good-0.10.25.orig/common/m4/gst-arch.m4	2010-05-13 20:40:31.000000000 -0400
-+++ gst-plugins-good-0.10.25/common/m4/gst-arch.m4	2010-11-30 09:54:54.000000000 -0500
-@@ -1,105 +1,3 @@
--dnl AG_GST_ARCH
--dnl sets up defines and automake conditionals for host architecture
--dnl checks endianness
--dnl defines HOST_CPU
--
--AC_DEFUN([AG_GST_ARCH],
--[
--  AC_REQUIRE([AC_CANONICAL_HOST]) dnl we use host_ variables
--
--  dnl Determine CPU
--  case "x${host_cpu}" in
--    xi?86 | xk? | xi?86_64)
--      case $host_os in
--         solaris*)
--            AC_CHECK_DECL([__i386],	[I386_ABI="yes"], [I386_ABI="no"])
--            AC_CHECK_DECL([__amd64], [AMD64_ABI="yes"], [AMD64_ABI="no"])
--
--            if test "x$I386_ABI" = "xyes" ; then
--               HAVE_CPU_I386=yes
--               AC_DEFINE(HAVE_CPU_I386, 1, [Define if the host CPU is an x86])
--            fi
--            if test "x$AMD64_ABI" = "xyes" ; then
--                HAVE_CPU_X86_64=yes
--                AC_DEFINE(HAVE_CPU_X86_64, 1, [Define if the host CPU is a x86_64])
--            fi
--            ;;
--         *)
--            HAVE_CPU_I386=yes
--            AC_DEFINE(HAVE_CPU_I386, 1, [Define if the host CPU is an x86])
--
--            dnl FIXME could use some better detection
--            dnl (ie CPUID)
--            case "x${host_cpu}" in
--              xi386 | xi486) ;;
--            *)
--              AC_DEFINE(HAVE_RDTSC, 1, [Define if RDTSC is available]) ;;
--            esac
--            ;;
--      esac
--      ;;
--    xpowerpc)
--      HAVE_CPU_PPC=yes
--      AC_DEFINE(HAVE_CPU_PPC, 1, [Define if the host CPU is a PowerPC]) ;;
--    xpowerpc64)
--      HAVE_CPU_PPC64=yes
--      AC_DEFINE(HAVE_CPU_PPC64, 1, [Define if the host CPU is a 64 bit PowerPC]) ;;
--    xalpha*)
--      HAVE_CPU_ALPHA=yes
--      AC_DEFINE(HAVE_CPU_ALPHA, 1, [Define if the host CPU is an Alpha]) ;;
--    xarm*)
--      HAVE_CPU_ARM=yes
--      AC_DEFINE(HAVE_CPU_ARM, 1, [Define if the host CPU is an ARM]) ;;
--    xsparc*)
--      HAVE_CPU_SPARC=yes
--      AC_DEFINE(HAVE_CPU_SPARC, 1, [Define if the host CPU is a SPARC]) ;;
--    xmips*)
--      HAVE_CPU_MIPS=yes
--      AC_DEFINE(HAVE_CPU_MIPS, 1, [Define if the host CPU is a MIPS]) ;;
--    xhppa*)
--      HAVE_CPU_HPPA=yes
--      AC_DEFINE(HAVE_CPU_HPPA, 1, [Define if the host CPU is a HPPA]) ;;
--    xs390*)
--      HAVE_CPU_S390=yes
--      AC_DEFINE(HAVE_CPU_S390, 1, [Define if the host CPU is a S390]) ;;
--    xia64*)
--      HAVE_CPU_IA64=yes
--      AC_DEFINE(HAVE_CPU_IA64, 1, [Define if the host CPU is a IA64]) ;;
--    xm68k*)
--      HAVE_CPU_M68K=yes
--      AC_DEFINE(HAVE_CPU_M68K, 1, [Define if the host CPU is a M68K]) ;;
--    xx86_64)
--      HAVE_CPU_X86_64=yes
--      AC_DEFINE(HAVE_CPU_X86_64, 1, [Define if the host CPU is a x86_64]) ;;
--    xcris)
--      HAVE_CPU_CRIS=yes
--      AC_DEFINE(HAVE_CPU_CRIS, 1, [Define if the host CPU is a CRIS]) ;;
--    xcrisv32)
--      HAVE_CPU_CRISV32=yes
--      AC_DEFINE(HAVE_CPU_CRISV32, 1, [Define if the host CPU is a CRISv32]) ;;
--  esac
--
--  dnl Determine endianness
--  AC_C_BIGENDIAN
--
--  AM_CONDITIONAL(HAVE_CPU_I386,       test "x$HAVE_CPU_I386" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_PPC,        test "x$HAVE_CPU_PPC" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_PPC64,      test "x$HAVE_CPU_PPC64" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_ALPHA,      test "x$HAVE_CPU_ALPHA" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_ARM,        test "x$HAVE_CPU_ARM" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_SPARC,      test "x$HAVE_CPU_SPARC" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_HPPA,       test "x$HAVE_CPU_HPPA" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_MIPS,       test "x$HAVE_CPU_MIPS" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_S390,       test "x$HAVE_CPU_S390" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_IA64,       test "x$HAVE_CPU_IA64" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_M68K,       test "x$HAVE_CPU_M68K" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_X86_64,     test "x$HAVE_CPU_X86_64" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_CRIS,       test "x$HAVE_CPU_CRIS" = "xyes")
--  AM_CONDITIONAL(HAVE_CPU_CRISV32,    test "x$HAVE_CPU_CRISV32" = "xyes")
--
--  AC_DEFINE_UNQUOTED(HOST_CPU, "$host_cpu", [the host CPU])
--])
--
- dnl check if unaligned memory access works correctly
- AC_DEFUN([AG_GST_UNALIGNED_ACCESS], [
-   AC_MSG_CHECKING([if unaligned memory access works correctly])
-diff -Naurp gst-plugins-good-0.10.25.orig/configure.ac gst-plugins-good-0.10.25/configure.ac
---- gst-plugins-good-0.10.25.orig/configure.ac	2010-09-02 14:22:47.000000000 -0400
-+++ gst-plugins-good-0.10.25/configure.ac	2010-11-30 09:56:01.000000000 -0500
-@@ -92,10 +92,6 @@ dnl *** checks for platform ***
- 
- dnl * hardware/architecture *
- 
--dnl common/m4/gst-arch.m4
--dnl check CPU type
--AG_GST_ARCH
--
- dnl Determine endianness
- AC_C_BIGENDIAN
- 
-@@ -1187,8 +1183,7 @@ sed \
-     -e 's/.* GST_MAJORMINOR$/#define GST_MAJORMINOR "'$GST_MAJORMINOR'"/' \
-     -e "s,.* GST_PACKAGE_NAME$,#define GST_PACKAGE_NAME \"${GST_PACKAGE_NAME}\"," \
-     -e 's/.* GST_PACKAGE_ORIGIN$/#define GST_PACKAGE_ORIGIN "Unknown package origin"/' \
-     -e "s,.* GST_PACKAGE_RELEASE_DATETIME$,#define GST_PACKAGE_RELEASE_DATETIME \"${GST_PACKAGE_RELEASE_DATETIME}\"," \
--    -e 's/.* HAVE_CPU_I386$/#define HAVE_CPU_I386 1/' \
-     -e 's/.* HAVE_FGETPOS$/#define HAVE_FGETPOS 1/' \
-     -e 's/.* HAVE_FSETPOS$/#define HAVE_FSETPOS 1/' \
-     -e 's/.* HAVE_LIBXML2$/#define HAVE_LIBXML2 1/' \
-@@ -1198,7 +1193,6 @@ sed \
-     -e 's/.* HAVE_SYS_TYPES_H$/#define HAVE_SYS_TYPES_H 1/' \
-     -e 's/.* HAVE_WIN32$/#define HAVE_WIN32 1/' \
-     -e 's/.* HAVE_WINSOCK2_H$/#define HAVE_WINSOCK2_H 1/' \
--    -e 's/.* HOST_CPU$/#define HOST_CPU "i686"/' \
-     -e 's/.* LIBDIR$/#ifdef _DEBUG\n#  define LIBDIR PREFIX "\\\\debug\\\\lib"\n#else\n#  define LIBDIR PREFIX "\\\\lib"\n#endif/' \
-     -e 's/.* LOCALEDIR$/#define LOCALEDIR PREFIX "\\\\share\\\\locale"/' \
-     -e "s/.* PACKAGE$/#define PACKAGE \"$PACKAGE\"/" \
-diff -Naurp gst-plugins-good-0.10.25.orig/gst/deinterlace/gstdeinterlacemethod.h gst-plugins-good-0.10.25/gst/deinterlace/gstdeinterlacemethod.h
---- gst-plugins-good-0.10.25.orig/gst/deinterlace/gstdeinterlacemethod.h	2010-07-05 06:12:48.000000000 -0400
-+++ gst-plugins-good-0.10.25/gst/deinterlace/gstdeinterlacemethod.h	2010-11-30 09:57:18.000000000 -0500
-@@ -25,7 +25,7 @@
- #include <gst/video/video.h>
- 
- #if defined(HAVE_GCC_ASM) && defined(HAVE_ORC)
--#if defined(HAVE_CPU_I386) || defined(HAVE_CPU_X86_64)
-+#ifdef __i386__
- #define BUILD_X86_ASM
- #endif
- #endif
-diff -Naurp gst-plugins-good-0.10.25.orig/gst/deinterlace/tvtime/x86-64_macros.inc gst-plugins-good-0.10.25/gst/deinterlace/tvtime/x86-64_macros.inc
---- gst-plugins-good-0.10.25.orig/gst/deinterlace/tvtime/x86-64_macros.inc	2009-08-10 18:15:55.000000000 -0400
-+++ gst-plugins-good-0.10.25/gst/deinterlace/tvtime/x86-64_macros.inc	2010-11-30 09:58:55.000000000 -0500
-@@ -29,33 +29,9 @@
-  * Original author: Achim Schneider <batchall@mordor.ch>
-  */
- 
--#ifdef HAVE_CONFIG_H
--#include "config.h"
--#endif
--
- #ifndef XAX
- 
--#if defined (HAVE_CPU_I386) && !defined(HAVE_CPU_X86_64)
--
--#define XAX   "eax"
--#define XBX   "ebx"
--#define XCX   "ecx"
--#define XDX   "edx"
--#define XSI   "esi"
--#define XDI   "edi"
--#define XSP   "esp"
--#define MOVX  "movl"
--#define LEAX  "leal"
--#define DECX  "decl"
--#define PUSHX "pushl"
--#define POPX  "popl"
--#define CMPX  "cmpl"
--#define ADDX  "addl"
--#define SHLX  "shll"
--#define SHRX  "shrl"
--#define SUBX  "subl"
--
--#elif defined (HAVE_CPU_X86_64)
-+#if defined (__x86_64__)
- 
- #define XAX   "rax"
- #define XBX   "rbx"
-@@ -75,8 +51,28 @@
- #define SHRX  "shrq"
- #define SUBX  "subq"
- 
-+#elif defined(__i386__)
-+
-+#define XAX   "eax"
-+#define XBX   "ebx"
-+#define XCX   "ecx"
-+#define XDX   "edx"
-+#define XSI   "esi"
-+#define XDI   "edi"
-+#define XSP   "esp"
-+#define MOVX  "movl"
-+#define LEAX  "leal"
-+#define DECX  "decl"
-+#define PUSHX "pushl"
-+#define POPX  "popl"
-+#define CMPX  "cmpl"
-+#define ADDX  "addl"
-+#define SHLX  "shll"
-+#define SHRX  "shrl"
-+#define SUBX  "subl"
-+
- #else
--#error Undefined architecture. Define either ARCH_X86 or ARCH_X86_64.
-+#error Undefined architecture.  Neither __i386__ nor __x86_64__ defined.
- #endif
- 
- #endif
-diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/Makefile.am gst-plugins-good-0.10.25/gst/goom/Makefile.am
---- gst-plugins-good-0.10.25.orig/gst/goom/Makefile.am	2010-07-05 06:12:48.000000000 -0400
-+++ gst-plugins-good-0.10.25/gst/goom/Makefile.am	2010-11-30 10:00:46.000000000 -0500
-@@ -4,20 +4,9 @@ plugin_LTLIBRARIES = libgstgoom.la
- PPC_FILES=ppc_zoom_ultimate.s ppc_drawings.s ppc_drawings.h ppc_zoom_ultimate.h
- MMX_FILES=mmx.c xmmx.c mmx.h xmmx.h
- 
--if HAVE_CPU_PPC
- # disable until someone figures out how to build these correctly on ppc
--#ARCH_FILES = $(PPC_FILES)
--ARCH_FILES =
--endif
--if HAVE_CPU_PPC64
--# disable until someone figures out how to build these correctly on ppc
--#ARCH_FILES = $(PPC_FILES)
--ARCH_FILES =
--endif
--if HAVE_CPU_I386
--ARCH_FILES = $(MMX_FILES)
--ARCH_CFLAGS = -DBUILD_MMX
--endif
-+ARCH_FILES = $(MMX_FILES)
-+#ARCH_FILES += $(PPC_FILES)
- 				
- libgstgoom_la_SOURCES =						\
- 	gstgoom.c gstgoom.h					\
-diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/convolve_fx.c gst-plugins-good-0.10.25/gst/goom/convolve_fx.c
---- gst-plugins-good-0.10.25.orig/gst/goom/convolve_fx.c	2010-05-13 20:40:16.000000000 -0400
-+++ gst-plugins-good-0.10.25/gst/goom/convolve_fx.c	2010-11-30 10:03:49.000000000 -0500
-@@ -189,7 +189,7 @@ create_output_with_brightness (VisualFX 
-     ytex = yprime + yi + CONV_MOTIF_W * 0x10000 / 2;
-     yprime += c;
- 
--#ifdef HAVE_MMX
-+#ifdef __MMX__
-     __asm__ __volatile__ ("\n\t pxor  %%mm7,  %%mm7"    /* mm7 = 0   */
-         "\n\t movd %[xtex],  %%mm2" "\n\t movd %[ytex],  %%mm3" "\n\t punpckldq %%mm3, %%mm2"   /* mm2 = [ ytex | xtex ] */
-         "\n\t movd %[c],     %%mm4" "\n\t movd %[s],     %%mm6" "\n\t pxor  %%mm5,   %%mm5" "\n\t psubd %%mm6,   %%mm5" "\n\t punpckldq %%mm5, %%mm4"   /* mm4 = [ -s | c ]      */
-@@ -259,7 +259,7 @@ create_output_with_brightness (VisualFX 
-     }
- #endif
-   }
--#ifdef HAVE_MMX
-+#ifdef __MMX__
-   __asm__ __volatile__ ("\n\t emms");
- #endif
- 
-diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/goom_config.h gst-plugins-good-0.10.25/gst/goom/goom_config.h
---- gst-plugins-good-0.10.25.orig/gst/goom/goom_config.h	2010-05-13 20:40:16.000000000 -0400
-+++ gst-plugins-good-0.10.25/gst/goom/goom_config.h	2010-11-30 10:05:26.000000000 -0500
-@@ -38,8 +38,3 @@
-     #define ALPHA 0
- #endif
- 
--#if defined (BUILD_MMX) && defined (HAVE_GCC_ASM)
--
--#define HAVE_MMX
--#endif
--
-diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/ifs.c gst-plugins-good-0.10.25/gst/goom/ifs.c
---- gst-plugins-good-0.10.25.orig/gst/goom/ifs.c	2010-05-13 20:40:16.000000000 -0400
-+++ gst-plugins-good-0.10.25/gst/goom/ifs.c	2010-11-30 10:03:49.000000000 -0500
-@@ -37,7 +37,7 @@
- 
- #include "goom_config.h"
- 
--#ifdef HAVE_MMX
-+#ifdef __MMX__
- #include "mmx.h"
- #endif
- 
-@@ -509,7 +509,7 @@ ifs_update (PluginInfo * goomInfo, Pixel
-   points = draw_ifs (goomInfo, &nbpt, fx_data);
-   nbpt--;
- 
--#ifdef HAVE_MMX
-+#ifdef __MMX__
-   movd_m2r (couleursl, mm1);
-   punpckldq_r2r (mm1, mm1);
-   for (i = 0; i < nbpt; i += increment) {
-diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/mathtools.h gst-plugins-good-0.10.25/gst/goom/mathtools.h
---- gst-plugins-good-0.10.25.orig/gst/goom/mathtools.h	2010-05-13 20:40:16.000000000 -0400
-+++ gst-plugins-good-0.10.25/gst/goom/mathtools.h	2010-11-30 10:03:49.000000000 -0500
-@@ -38,7 +38,7 @@
- #endif /* BigEndian_ */
- 
- /* TODO: this optimization is very efficient: put it again when all works
--#ifdef HAVE_MMX
-+#ifdef __MMX__
- #define F2I(dbl,i) {double d = dbl + _double2fixmagic; i = ((int*)&d)[iman_] >> _shiftamt;}
- #else*/
- #define F2I(dbl,i) i=(int)dbl;
-diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/mmx.c gst-plugins-good-0.10.25/gst/goom/mmx.c
---- gst-plugins-good-0.10.25.orig/gst/goom/mmx.c	2010-01-26 21:07:25.000000000 -0500
-+++ gst-plugins-good-0.10.25/gst/goom/mmx.c	2010-11-30 10:03:49.000000000 -0500
-@@ -24,14 +24,14 @@
- 	  I'll undefine BROKEN_PAND by default.
- */
- 
-+#if defined(__MMX__) && !defined(__x86_64__)
-+
- #ifdef HAVE_CONFIG_H
- #include "config.h"
- #endif
- 
- #include "goom_config.h"
- 
--#ifdef HAVE_MMX
--
- #define BUFFPOINTNB 16
- #define BUFFPOINTMASK 0xffff
- #define BUFFINCR 0xff
-@@ -288,4 +288,4 @@ mmx_supported (void)
- {
-   return (0);
- }
--#endif /* HAVE_MMX */
-+#endif /* __MMX__ */
-diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/plugin_info.c gst-plugins-good-0.10.25/gst/goom/plugin_info.c
---- gst-plugins-good-0.10.25.orig/gst/goom/plugin_info.c	2010-07-05 06:12:48.000000000 -0400
-+++ gst-plugins-good-0.10.25/gst/goom/plugin_info.c	2010-11-30 10:09:16.000000000 -0500
-@@ -34,17 +34,17 @@
- #endif
- 
- 
--#if defined (HAVE_CPU_PPC64) || defined (HAVE_CPU_PPC)
-+#if defined (__ppc__) || defined(__ppc64__)
- #include <sys/types.h>
- #include <sys/sysctl.h>
- #include "ppc_zoom_ultimate.h"
- #include "ppc_drawings.h"
--#endif /* HAVE_CPU_PPC64 || HAVE_CPU_PPC */
-+#endif /* __ppc__ || __ppc64__ */
- 
- 
--#ifdef HAVE_MMX
-+#if defined(__MMX__) && !defined(__x86_64__)
- #include "mmx.h"
--#endif /* HAVE_MMX */
-+#endif /* __MMX__ */
- 
- #include <string.h>
- 
-@@ -68,9 +68,7 @@ setOptimizedMethods (PluginInfo * p)
- 
-   GST_INFO ("orc cpu flags: 0x%08x", cpuFlavour);
- 
--/* FIXME: what about HAVE_CPU_X86_64 ? */
--#ifdef HAVE_CPU_I386
--#ifdef HAVE_MMX
-+#if defined(__MMX__) && !defined(__x86_64__)
- #ifdef HAVE_ORC
-   GST_INFO ("have an x86");
-   if (cpuFlavour & ORC_TARGET_MMX_MMXEXT) {
-@@ -86,19 +84,18 @@ setOptimizedMethods (PluginInfo * p)
-   }
- #endif
- #endif
--#endif /* HAVE_CPU_I386 */
- 
- /* disable all PPC stuff until someone finds out what to use here instead of
-  * CPU_OPTION_64_BITS, and until someone fixes the assembly build for ppc */
- #if 0
--#ifdef HAVE_CPU_PPC64
-+#ifdef __pcc64__
-   if ((cpuFlavour & CPU_OPTION_64_BITS) != 0) {
- /*            p->methods.create_output_with_brightness = ppc_brightness_G5;        */
-     p->methods.zoom_filter = ppc_zoom_generic;
-   }
--#endif /* HAVE_CPU_PPC64 */
-+#endif /* __ppc64__ */
- 
--#ifdef HAVE_CPU_PPC
-+#ifdef __ALTIVEC__
-   if ((cpuFlavour & ORC_TARGET_ALTIVEC_ALTIVEC) != 0) {
- /*            p->methods.create_output_with_brightness = ppc_brightness_G4;        */
-     p->methods.zoom_filter = ppc_zoom_G4;
-@@ -106,7 +103,7 @@ setOptimizedMethods (PluginInfo * p)
- /*            p->methods.create_output_with_brightness = ppc_brightness_generic;*/
-     p->methods.zoom_filter = ppc_zoom_generic;
-   }
--#endif /* HAVE_CPU_PPC */
-+#endif /* __ALTIVEC__ */
- #endif
- 
-   cpuFlavour = 0;               /* trick compiler into thinking variable is used */
-diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/xmmx.c gst-plugins-good-0.10.25/gst/goom/xmmx.c
---- gst-plugins-good-0.10.25.orig/gst/goom/xmmx.c	2010-05-13 20:40:16.000000000 -0400
-+++ gst-plugins-good-0.10.25/gst/goom/xmmx.c	2010-11-30 10:03:49.000000000 -0500
-@@ -24,14 +24,15 @@
- 	It appears that the latest gas has the pand problem fixed, therefore
- 	  I'll undefine BROKEN_PAND by default.
- */
-+
-+#if defined(__MMX__) && !defined(__x86_64__)
-+
- #ifdef HAVE_CONFIG_H
- #include "config.h"
- #endif
- 
- #include "goom_config.h"
- 
--#ifdef HAVE_MMX
--
- /* a definir pour avoir exactement le meme resultat que la fonction C
-  * (un chouillat plus lent).. mais la difference est assez peu notable.
-  */
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      /trunk/dports/gnome/gst-plugins-good/files/universal.patch – MacPorts
+    </title>
+        <link rel="search" href="/search" />
+        <link rel="help" href="/wiki/TracGuide" />
+        <link rel="alternate" href="/browser/trunk/dports/gnome/gst-plugins-good/files/universal.patch?format=txt" type="text/plain" title="Plain Text" /><link rel="alternate" href="/export/79732/trunk/dports/gnome/gst-plugins-good/files/universal.patch" type="text/x-diff; charset=iso-8859-15" title="Original Format" />
+        <link rel="up" href="/browser/trunk/dports/gnome/gst-plugins-good/files" title="Parent directory" />
+        <link rel="start" href="/wiki" />
+        <link rel="stylesheet" href="/chrome/common/css/trac.css" type="text/css" /><link rel="stylesheet" href="/chrome/common/css/code.css" type="text/css" /><link rel="stylesheet" href="/chrome/common/css/diff.css" type="text/css" /><link rel="stylesheet" href="/chrome/common/css/browser.css" type="text/css" />
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+      <link type="application/opensearchdescription+xml" rel="search" href="/search/opensearch" title="Search MacPorts" />
+    <script type="text/javascript" src="/chrome/common/js/jquery.js"></script><script type="text/javascript" src="/chrome/common/js/trac.js"></script><script type="text/javascript" src="/chrome/common/js/search.js"></script><script type="text/javascript" src="/chrome/common/js/diff.js"></script>
+    <!--[if lt IE 7]>
+    <script type="text/javascript" src="/chrome/common/js/ie_pre7_hacks.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+      jQuery(document).ready(function($) {
+        $(".trac-toggledeleted").show().click(function() {
+                  $(this).siblings().find(".trac-deleted").toggle();
+                  return false;
+        }).click();
+        $("#jumploc input").hide();
+        $("#jumploc select").change(function () {
+          this.parentNode.parentNode.submit();
+        });
+      });
+    </script>
+  <link rel="stylesheet" type="text/css" href="/static/css/style_v4.css" />
+ </head>
+  <body>
+ <div id="forge-body">
+  <div id="forge-header">
+   <div id="forge-logo">
+     <a href="http://www.macosforge.org/"><img alt="macosforge logo" src="https://static2.macosforge.org/static/images/logo_v2.png" /></a>
+   </div>
+   <div id="forge-project">
+        <a id="forge-project-logo" href="http://www.macports.org/">
+         <img alt="project logo" src="http://static2.macosforge.org/files/logos/MacPorts.png" />
+	</a>
+   </div>
+   <div id="auth-nav">
+      <a href="/auth/register/">Register</a>
+      <a href="/auth/password/lost/">Lost Password</a>
+      <a href="/auth/login/">Login</a>
+   </div>
+  </div>
+  <div id="forge-outter">
+   <div id="left-nav">
+ <div class="project-nav">
+  <ul>
+    <li>
+   	<a href="http://www.macports.org/" class="navlink-item">Home</a>
+    </li>
+    <li>
+   	<a href="/news/" class="navlink-item">News</a>
+    </li>
+    <li>
+   	<a href="http://guide.macports.org/" class="navlink-item">Guide</a>
+    </li>
+    <li>
+   	<a href="http://trac.macports.org/wiki/MailingLists" class="navlink-item">Mailing Lists</a>
+    </li>
+    <li>
+   	<a href="/newticket" class="navlink-item">New Ticket</a>
+    </li>
+    <li>
+   	<a href="/report" class="navlink-item">Ticket Reports</a>
+    </li>
+    <li>
+   	<a href="http://trac.macports.org/search?portsummarysearch=on" class="navlink-item">Ticket Search</a>
+    </li>
+    <li>
+   	<a href="http://trac.macports.org/query?status=assigned&amp;status=new&amp;status=reopened&amp;port=&amp;summary=&amp;port_mode=~&amp;summary_mode=~" class="navlink-item">Ticket Query</a>
+    </li>
+  </ul>
+ </div>
+ <div class="heading" id="projects-list-heading">Projects</div>
+<div id="project-list" class="project-list">
+ <ul>
+   <li>
+    <a class="navlink-item" href="http://bridgesupport.macosforge.org/">BridgeSupport</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://calendarserver.org/">Calendar and Contacts Server</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://www.dcerpc.org/">DCERPC</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://dss.macosforge.org/">Darwin Streaming Server</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://darwinbuild.macosforge.org/">DarwinBuild</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://fstools.macosforge.org/">FS Tools</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://www.macports.org/">MacPorts</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://www.macruby.org/">MacRuby</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://smartcardservices.macosforge.org/">SmartCard Services</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://www.webkit.org/">WebKit</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://xquartz.macosforge.org/">XQuartz</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://launchd.macosforge.org/">launchd</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://libdispatch.macosforge.org/">libdispatch</a>
+   </li>
+ </ul>
+</div>
+     <div id="forge-footer">
+      <div id="footerlinks">
+	<a href="http://www.macosforge.org/contact/">Contact</a><br />
+	<a href="http://www.macosforge.org/terms/">Terms of Use</a><br />
+	<a href="http://www.apple.com/legal/privacy/">Privacy Policy</a><br />
+      </div>
+      <div id="footertext">
+       <br />
+       All user-submitted text and content on this website is licensed under a
+       <a href="http://creativecommons.org/licenses/by/2.5/">
+        Creative Commons Attribution 2.5 License
+       </a>
+       unless otherwise noted.
+       Copyright © 2010 Apple Inc.  All rights reserved.
+      </div>
+     </div>
+   </div>
+   <div id="forge-inner">
+    <div id="top-nav">
+   <a href="/newticket">New Ticket</a>
+       
+   <a href="/wiki">Wiki</a>
+       
+   <a href="/browser">Browse Source</a>
+       
+   <a href="/timeline">Timeline</a>
+       
+   <a href="/roadmap">Roadmap</a>
+       
+   <a href="/report">Ticket Reports</a>
+       
+   <a href="/search">Search</a>
+    </div>
+    <div id="forge-content">
+    <div id="banner">
+      <div id="header">
+        <a id="logo" href="https://trac.macports.org/"><img src="/chrome/common/trac_banner.png" alt="MacPorts" height="73" width="236" /></a>
+      </div>
+      <form id="search" action="/search" method="get">
+        <div>
+          <label for="proj-search">Search:</label>
+          <input type="text" id="proj-search" name="q" size="18" value="" />
+          <input type="submit" value="Search" />
+        </div>
+      </form>
+      <div id="metanav" class="nav">
+  </div>
+    </div>
+    <div id="main">
+      <div id="ctxtnav" class="nav">
+        <h2>Context Navigation</h2>
+          <ul>
+              <li class="first"><a href="/changeset/75127/trunk/dports/gnome/gst-plugins-good/files/universal.patch">Last Change</a></li><li><a href="/browser/trunk/dports/gnome/gst-plugins-good/files/universal.patch?annotate=blame&amp;rev=75127" title="Annotate each line with the last changed revision (this can be time consuming...)">Annotate</a></li><li class="last"><a href="/log/trunk/dports/gnome/gst-plugins-good/files/universal.patch">Revision Log</a></li>
+          </ul>
+        <hr />
+      </div>
+    <div id="content" class="browser">
+      <h1>
+    <a class="pathentry first" title="Go to root directory" href="/browser">root</a><span class="pathentry sep">/</span><a class="pathentry" title="View trunk" href="/browser/trunk">trunk</a><span class="pathentry sep">/</span><a class="pathentry" title="View dports" href="/browser/trunk/dports">dports</a><span class="pathentry sep">/</span><a class="pathentry" title="View gnome" href="/browser/trunk/dports/gnome">gnome</a><span class="pathentry sep">/</span><a class="pathentry" title="View gst-plugins-good" href="/browser/trunk/dports/gnome/gst-plugins-good">gst-plugins-good</a><span class="pathentry sep">/</span><a class="pathentry" title="View files" href="/browser/trunk/dports/gnome/gst-plugins-good/files">files</a><span class="pathentry sep">/</span><a class="pathentry" title="View universal.patch" href="/browser/trunk/dports/gnome/gst-plugins-good/files/universal.patch">universal.patch</a>
+    <br style="clear: both" />
+  </h1>
+      <div id="jumprev">
+        <form action="" method="get">
+          <div>
+            <label for="rev">
+              View revision:</label>
+            <input type="text" id="rev" name="rev" size="6" />
+          </div>
+        </form>
+      </div>
+      <div id="jumploc">
+        <form action="" method="get">
+          <div class="buttons">
+            <label for="preselected">Visit:</label>
+            <select id="preselected" name="preselected">
+              <option selected="selected"></option>
+              <optgroup label="branches">
+                <option value="/browser/trunk">trunk</option><option value="/browser/branches/APPLE">branches/APPLE</option><option value="/browser/branches/bigmove">branches/bigmove</option><option value="/browser/branches/dp2mp-move">branches/dp2mp-move</option><option value="/browser/branches/dp_light-olegb">branches/dp_light-olegb</option><option value="/browser/branches/gsoc08-framework">branches/gsoc08-framework</option><option value="/browser/branches/gsoc08-privileges">branches/gsoc08-privileges</option><option value="/browser/branches/gsoc09-gui">branches/gsoc09-gui</option><option value="/browser/branches/gsoc09-logging">branches/gsoc09-logging</option><option value="/browser/branches/gsoc10-configfiles">branches/gsoc10-configfiles</option><option value="/browser/branches/gsoc10-gui">branches/gsoc10-gui</option><option value="/browser/branches/gsoc10-mpwa">branches/gsoc10-mpwa</option><option value="/browser/branches/gsoc11-post-destroot">branches/gsoc11-post-destroot</option><option value="/browser/branches/gsoc11-rev-upgrade">branches/gsoc11-rev-upgrade</option><option value="/browser/branches/gsoc11-statistics">branches/gsoc11-statistics</option><option value="/browser/branches/images-and-archives">branches/images-and-archives</option><option value="/browser/branches/jberry-dropprivs">branches/jberry-dropprivs</option><option value="/browser/branches/jberry-preview13">branches/jberry-preview13</option><option value="/browser/branches/jkh-destrootification">branches/jkh-destrootification</option><option value="/browser/branches/kevin-target-api">branches/kevin-target-api</option><option value="/browser/branches/landonf-1_0">branches/landonf-1_0</option><option value="/browser/branches/launchdproto">branches/launchdproto</option><option value="/browser/branches/new-help-system">branches/new-help-system</option><option value="/browser/branches/release1">branches/release1</option><option value="/browser/branches/release_1_2">branches/release_1_2</option><option value="/browser/branches/release_1_3">branches/release_1_3</option><option value="/browser/branches/release_1_4">branches/release_1_4</option><option value="/browser/branches/release_1_5">branches/release_1_5</option><option value="/browser/branches/release_1_6">branches/release_1_6</option><option value="/browser/branches/release_1_7">branches/release_1_7</option><option value="/browser/branches/release_1_8">branches/release_1_8</option><option value="/browser/branches/release_1_9">branches/release_1_9</option><option value="/browser/branches/release_2_0">branches/release_2_0</option><option value="/browser/branches/rshaw-archivemode">branches/rshaw-archivemode</option><option value="/browser/branches/ssen-platform-1">branches/ssen-platform-1</option><option value="/browser/branches/ssen-platform-2">branches/ssen-platform-2</option><option value="/browser/branches/universal-sanity">branches/universal-sanity</option><option value="/browser/branches/wbb4-versionfoobage-1">branches/wbb4-versionfoobage-1</option><option value="/browser/branches/wbb4_versionfoobage_base">branches/wbb4_versionfoobage_base</option><option value="/browser/branches/xterm-titles">branches/xterm-titles</option>
+              </optgroup><optgroup label="tags">
+                <option value="/browser/tags/darwinports-1?rev=5">tags/darwinports-1</option><option value="/browser/tags/DPORTS-BASE_0_5?rev=2450">tags/DPORTS-BASE_0_5</option><option value="/browser/tags/gimp_1_3_15?rev=2927">tags/gimp_1_3_15</option><option value="/browser/tags/jberry-before-preview13-merge?rev=15692">tags/jberry-before-preview13-merge</option><option value="/browser/tags/jberry-dropprivs-bp?rev=18973">tags/jberry-dropprivs-bp</option><option value="/browser/tags/jberry-preview13-base?rev=14978">tags/jberry-preview13-base</option><option value="/browser/tags/jkh-destrootification-base?rev=3126">tags/jkh-destrootification-base</option><option value="/browser/tags/kevin-target-api-base?rev=2254">tags/kevin-target-api-base</option><option value="/browser/tags/PortImages-merge?rev=7476">tags/PortImages-merge</option><option value="/browser/tags/post-landon-trace?rev=114">tags/post-landon-trace</option><option value="/browser/tags/pre-chain-remove?rev=239">tags/pre-chain-remove</option><option value="/browser/tags/pre-landon-trace?rev=111">tags/pre-landon-trace</option><option value="/browser/tags/pre-wbb4-images?rev=7607">tags/pre-wbb4-images</option><option value="/browser/tags/PRE_DESTROOT_TARGET?rev=3171">tags/PRE_DESTROOT_TARGET</option><option value="/browser/tags/release_1_0?rev=12231">tags/release_1_0</option><option value="/browser/tags/release_1_2-bp?rev=15090">tags/release_1_2-bp</option><option value="/browser/tags/release_1_2_0?rev=15499">tags/release_1_2_0</option><option value="/browser/tags/release_1_2_0-archive?rev=15500">tags/release_1_2_0-archive</option><option value="/browser/tags/release_1_2_0-archive-rc1?rev=15140">tags/release_1_2_0-archive-rc1</option><option value="/browser/tags/release_1_2_0-rc1?rev=15118">tags/release_1_2_0-rc1</option><option value="/browser/tags/release_1_2_0-rc2?rev=15196">tags/release_1_2_0-rc2</option><option value="/browser/tags/release_1_2_0-rc2-archive?rev=15197">tags/release_1_2_0-rc2-archive</option><option value="/browser/tags/release_1_2_0-rc3?rev=15394">tags/release_1_2_0-rc3</option><option value="/browser/tags/release_1_2_0-rc3-archive?rev=15395">tags/release_1_2_0-rc3-archive</option><option value="/browser/tags/release_1_2_1?rev=17219">tags/release_1_2_1</option><option value="/browser/tags/release_1_2_1-archive?rev=17222">tags/release_1_2_1-archive</option><option value="/browser/tags/release_1_2_1-rc1?rev=17183">tags/release_1_2_1-rc1</option><option value="/browser/tags/release_1_2_1-rc1-archive?rev=17184">tags/release_1_2_1-rc1-archive</option><option value="/browser/tags/release_1_3-bp?rev=18750">tags/release_1_3-bp</option><option value="/browser/tags/release_1_3_0?rev=18754">tags/release_1_3_0</option><option value="/browser/tags/release_1_3_0-archive?rev=18758">tags/release_1_3_0-archive</option><option value="/browser/tags/release_1_3_1?rev=18821">tags/release_1_3_1</option><option value="/browser/tags/release_1_3_1-archive?rev=18949">tags/release_1_3_1-archive</option><option value="/browser/tags/release_1_3_2?rev=19070">tags/release_1_3_2</option><option value="/browser/tags/release_1_3_2-archive?rev=19071">tags/release_1_3_2-archive</option><option value="/browser/tags/release_1_4_0?rev=23203">tags/release_1_4_0</option><option value="/browser/tags/release_1_4_0-archive?rev=23641">tags/release_1_4_0-archive</option><option value="/browser/tags/release_1_4_0-rc1?rev=22651">tags/release_1_4_0-rc1</option><option value="/browser/tags/release_1_4_0-rc2?rev=22790">tags/release_1_4_0-rc2</option><option value="/browser/tags/release_1_4_1?rev=23974">tags/release_1_4_1</option><option value="/browser/tags/release_1_4_2?rev=24120">tags/release_1_4_2</option><option value="/browser/tags/release_1_4_3?rev=24156">tags/release_1_4_3</option><option value="/browser/tags/release_1_4_40?rev=24909">tags/release_1_4_40</option><option value="/browser/tags/release_1_4_41?rev=25266">tags/release_1_4_41</option><option value="/browser/tags/release_1_4_42?rev=25296">tags/release_1_4_42</option><option value="/browser/tags/release_1_5_0?rev=26818">tags/release_1_5_0</option><option value="/browser/tags/release_1_5_0-archive?rev=26819">tags/release_1_5_0-archive</option><option value="/browser/tags/release_1_5_0-rc1?rev=26762">tags/release_1_5_0-rc1</option><option value="/browser/tags/release_1_5_1?rev=27646">tags/release_1_5_1</option><option value="/browser/tags/release_1_5_2?rev=27897">tags/release_1_5_2</option><option value="/browser/tags/release_1_6_0?rev=39572">tags/release_1_6_0</option><option value="/browser/tags/release_1_6_0-archive?rev=32095">tags/release_1_6_0-archive</option><option value="/browser/tags/release_1_6_0-rc1?rev=31130">tags/release_1_6_0-rc1</option><option value="/browser/tags/release_1_6_0-rc2?rev=31198">tags/release_1_6_0-rc2</option><option value="/browser/tags/release_1_6_0-rc3?rev=31952">tags/release_1_6_0-rc3</option><option value="/browser/tags/release_1_7_0?rev=43709">tags/release_1_7_0</option><option value="/browser/tags/release_1_7_0-archive?rev=43712">tags/release_1_7_0-archive</option><option value="/browser/tags/release_1_7_0-beta1?rev=42675">tags/release_1_7_0-beta1</option><option value="/browser/tags/release_1_7_0-rc1?rev=43231">tags/release_1_7_0-rc1</option><option value="/browser/tags/release_1_7_1?rev=48785">tags/release_1_7_1</option><option value="/browser/tags/release_1_8_0?rev=56443">tags/release_1_8_0</option><option value="/browser/tags/release_1_8_0-archive?rev=56444">tags/release_1_8_0-archive</option><option value="/browser/tags/release_1_8_0-beta1?rev=55261">tags/release_1_8_0-beta1</option><option value="/browser/tags/release_1_8_0-rc1?rev=55936">tags/release_1_8_0-rc1</option><option value="/browser/tags/release_1_8_1?rev=58452">tags/release_1_8_1</option><option value="/browser/tags/release_1_8_2?rev=62222">tags/release_1_8_2</option><option value="/browser/tags/release_1_9_0?rev=68622">tags/release_1_9_0</option><option value="/browser/tags/release_1_9_0-archive?rev=68623">tags/release_1_9_0-archive</option><option value="/browser/tags/release_1_9_0-beta1?rev=67299">tags/release_1_9_0-beta1</option><option value="/browser/tags/release_1_9_0-beta2?rev=67843">tags/release_1_9_0-beta2</option><option value="/browser/tags/release_1_9_0-rc1?rev=68110">tags/release_1_9_0-rc1</option><option value="/browser/tags/release_1_9_0-rc2?rev=68431">tags/release_1_9_0-rc2</option><option value="/browser/tags/release_1_9_1?rev=68922">tags/release_1_9_1</option><option value="/browser/tags/release_1_9_2?rev=73234">tags/release_1_9_2</option><option value="/browser/tags/release_2_0_0-beta1?rev=79582">tags/release_2_0_0-beta1</option><option value="/browser/tags/rshaw-archivemode-base?rev=8263">tags/rshaw-archivemode-base</option><option value="/browser/tags/rshaw-archivemode-merged-from-head?rev=9435">tags/rshaw-archivemode-merged-from-head</option><option value="/browser/tags/ssen-platform-1-base?rev=2846">tags/ssen-platform-1-base</option><option value="/browser/tags/ssen-platform-2-base?rev=2944">tags/ssen-platform-2-base</option><option value="/browser/tags/wbb4-versionfoobage-1-base?rev=5270">tags/wbb4-versionfoobage-1-base</option>
+              </optgroup>
+            </select>
+            <input type="submit" value="Go!" title="Jump to the chosen preselected path" />
+          </div>
+        </form>
+      </div>
+      <table id="info" summary="Revision info">
+        <tr>
+          <th scope="col">
+            Revision <a href="/changeset/75127">75127</a>, <span title="15405 bytes">15.0 KB</span>
+            (checked in by rmstonecipher@…, <a class="timeline" href="/timeline?from=2011-01-15T16%3A03%3A48-0800&amp;precision=second" title="2011-01-15T16:03:48-0800 in Timeline">5 months</a> ago)
+          </th>
+        </tr>
+        <tr>
+          <td class="message searchable">
+              <p>
+gnome/gst-plugins-good upgraded version from 0.10.25 to 0.10.26, tweaked patch file due to upstream change<br />
+</p>
+          </td>
+        </tr>
+      </table>
+      <div id="preview" class="searchable">
+    <div class="diff">
+  <ul class="entries">
+      <li class="entry">
+        <h2>
+          <a>gst-plugins-good-0.10.25</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/common/m4/gst-arch.m4 gst-plugins-good-0.10.25/common/m4/gst-arch.m4</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/common/m4/gst-arch.m4 2010-05-13 20:40:31.000000000 -0400">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/common/m4/gst-arch.m4 2010-11-30 09:54:54.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="rem">
+                  <tr class="first">
+                          <th>1</th><th> </th><td class="l"><del>dnl AG_GST_ARCH</del> </td>
+                  </tr><tr>
+                          <th>2</th><th> </th><td class="l"><del>dnl sets up defines and automake conditionals for host architecture</del> </td>
+                  </tr><tr>
+                          <th>3</th><th> </th><td class="l"><del>dnl checks endianness</del> </td>
+                  </tr><tr>
+                          <th>4</th><th> </th><td class="l"><del>dnl defines HOST_CPU</del> </td>
+                  </tr><tr>
+                          <th>5</th><th> </th><td class="l"><del></del> </td>
+                  </tr><tr>
+                          <th>6</th><th> </th><td class="l"><del>AC_DEFUN([AG_GST_ARCH],</del> </td>
+                  </tr><tr>
+                          <th>7</th><th> </th><td class="l"><del>[</del> </td>
+                  </tr><tr>
+                          <th>8</th><th> </th><td class="l"><del>&nbsp; AC_REQUIRE([AC_CANONICAL_HOST]) dnl we use host_ variables</del> </td>
+                  </tr><tr>
+                          <th>9</th><th> </th><td class="l"><del></del> </td>
+                  </tr><tr>
+                          <th>10</th><th> </th><td class="l"><del>&nbsp; dnl Determine CPU</del> </td>
+                  </tr><tr>
+                          <th>11</th><th> </th><td class="l"><del>&nbsp; case "x${host_cpu}" in</del> </td>
+                  </tr><tr>
+                          <th>12</th><th> </th><td class="l"><del>&nbsp; &nbsp; xi?86 | xk? | xi?86_64)</del> </td>
+                  </tr><tr>
+                          <th>13</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; case $host_os in</del> </td>
+                  </tr><tr>
+                          <th>14</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;solaris*)</del> </td>
+                  </tr><tr>
+                          <th>15</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; AC_CHECK_DECL([__i386],&nbsp; &nbsp; &nbsp;[I386_ABI="yes"], [I386_ABI="no"])</del> </td>
+                  </tr><tr>
+                          <th>16</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; AC_CHECK_DECL([__amd64], [AMD64_ABI="yes"], [AMD64_ABI="no"])</del> </td>
+                  </tr><tr>
+                          <th>17</th><th> </th><td class="l"><del></del> </td>
+                  </tr><tr>
+                          <th>18</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if test "x$I386_ABI" = "xyes" ; then</del> </td>
+                  </tr><tr>
+                          <th>19</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;HAVE_CPU_I386=yes</del> </td>
+                  </tr><tr>
+                          <th>20</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;AC_DEFINE(HAVE_CPU_I386, 1, [Define if the host CPU is an x86])</del> </td>
+                  </tr><tr>
+                          <th>21</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; fi</del> </td>
+                  </tr><tr>
+                          <th>22</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if test "x$AMD64_ABI" = "xyes" ; then</del> </td>
+                  </tr><tr>
+                          <th>23</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; HAVE_CPU_X86_64=yes</del> </td>
+                  </tr><tr>
+                          <th>24</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_X86_64, 1, [Define if the host CPU is a x86_64])</del> </td>
+                  </tr><tr>
+                          <th>25</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; fi</del> </td>
+                  </tr><tr>
+                          <th>26</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;;</del> </td>
+                  </tr><tr>
+                          <th>27</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;*)</del> </td>
+                  </tr><tr>
+                          <th>28</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; HAVE_CPU_I386=yes</del> </td>
+                  </tr><tr>
+                          <th>29</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_I386, 1, [Define if the host CPU is an x86])</del> </td>
+                  </tr><tr>
+                          <th>30</th><th> </th><td class="l"><del></del> </td>
+                  </tr><tr>
+                          <th>31</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; dnl FIXME could use some better detection</del> </td>
+                  </tr><tr>
+                          <th>32</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; dnl (ie CPUID)</del> </td>
+                  </tr><tr>
+                          <th>33</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; case "x${host_cpu}" in</del> </td>
+                  </tr><tr>
+                          <th>34</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; xi386 | xi486) ;;</del> </td>
+                  </tr><tr>
+                          <th>35</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; *)</del> </td>
+                  </tr><tr>
+                          <th>36</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_RDTSC, 1, [Define if RDTSC is available]) ;;</del> </td>
+                  </tr><tr>
+                          <th>37</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; esac</del> </td>
+                  </tr><tr>
+                          <th>38</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ;;</del> </td>
+                  </tr><tr>
+                          <th>39</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; esac</del> </td>
+                  </tr><tr>
+                          <th>40</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; ;;</del> </td>
+                  </tr><tr>
+                          <th>41</th><th> </th><td class="l"><del>&nbsp; &nbsp; xpowerpc)</del> </td>
+                  </tr><tr>
+                          <th>42</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_PPC=yes</del> </td>
+                  </tr><tr>
+                          <th>43</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_PPC, 1, [Define if the host CPU is a PowerPC]) ;;</del> </td>
+                  </tr><tr>
+                          <th>44</th><th> </th><td class="l"><del>&nbsp; &nbsp; xpowerpc64)</del> </td>
+                  </tr><tr>
+                          <th>45</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_PPC64=yes</del> </td>
+                  </tr><tr>
+                          <th>46</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_PPC64, 1, [Define if the host CPU is a 64 bit PowerPC]) ;;</del> </td>
+                  </tr><tr>
+                          <th>47</th><th> </th><td class="l"><del>&nbsp; &nbsp; xalpha*)</del> </td>
+                  </tr><tr>
+                          <th>48</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_ALPHA=yes</del> </td>
+                  </tr><tr>
+                          <th>49</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_ALPHA, 1, [Define if the host CPU is an Alpha]) ;;</del> </td>
+                  </tr><tr>
+                          <th>50</th><th> </th><td class="l"><del>&nbsp; &nbsp; xarm*)</del> </td>
+                  </tr><tr>
+                          <th>51</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_ARM=yes</del> </td>
+                  </tr><tr>
+                          <th>52</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_ARM, 1, [Define if the host CPU is an ARM]) ;;</del> </td>
+                  </tr><tr>
+                          <th>53</th><th> </th><td class="l"><del>&nbsp; &nbsp; xsparc*)</del> </td>
+                  </tr><tr>
+                          <th>54</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_SPARC=yes</del> </td>
+                  </tr><tr>
+                          <th>55</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_SPARC, 1, [Define if the host CPU is a SPARC]) ;;</del> </td>
+                  </tr><tr>
+                          <th>56</th><th> </th><td class="l"><del>&nbsp; &nbsp; xmips*)</del> </td>
+                  </tr><tr>
+                          <th>57</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_MIPS=yes</del> </td>
+                  </tr><tr>
+                          <th>58</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_MIPS, 1, [Define if the host CPU is a MIPS]) ;;</del> </td>
+                  </tr><tr>
+                          <th>59</th><th> </th><td class="l"><del>&nbsp; &nbsp; xhppa*)</del> </td>
+                  </tr><tr>
+                          <th>60</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_HPPA=yes</del> </td>
+                  </tr><tr>
+                          <th>61</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_HPPA, 1, [Define if the host CPU is a HPPA]) ;;</del> </td>
+                  </tr><tr>
+                          <th>62</th><th> </th><td class="l"><del>&nbsp; &nbsp; xs390*)</del> </td>
+                  </tr><tr>
+                          <th>63</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_S390=yes</del> </td>
+                  </tr><tr>
+                          <th>64</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_S390, 1, [Define if the host CPU is a S390]) ;;</del> </td>
+                  </tr><tr>
+                          <th>65</th><th> </th><td class="l"><del>&nbsp; &nbsp; xia64*)</del> </td>
+                  </tr><tr>
+                          <th>66</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_IA64=yes</del> </td>
+                  </tr><tr>
+                          <th>67</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_IA64, 1, [Define if the host CPU is a IA64]) ;;</del> </td>
+                  </tr><tr>
+                          <th>68</th><th> </th><td class="l"><del>&nbsp; &nbsp; xm68k*)</del> </td>
+                  </tr><tr>
+                          <th>69</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_M68K=yes</del> </td>
+                  </tr><tr>
+                          <th>70</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_M68K, 1, [Define if the host CPU is a M68K]) ;;</del> </td>
+                  </tr><tr>
+                          <th>71</th><th> </th><td class="l"><del>&nbsp; &nbsp; xx86_64)</del> </td>
+                  </tr><tr>
+                          <th>72</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_X86_64=yes</del> </td>
+                  </tr><tr>
+                          <th>73</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_X86_64, 1, [Define if the host CPU is a x86_64]) ;;</del> </td>
+                  </tr><tr>
+                          <th>74</th><th> </th><td class="l"><del>&nbsp; &nbsp; xcris)</del> </td>
+                  </tr><tr>
+                          <th>75</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_CRIS=yes</del> </td>
+                  </tr><tr>
+                          <th>76</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_CRIS, 1, [Define if the host CPU is a CRIS]) ;;</del> </td>
+                  </tr><tr>
+                          <th>77</th><th> </th><td class="l"><del>&nbsp; &nbsp; xcrisv32)</del> </td>
+                  </tr><tr>
+                          <th>78</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; HAVE_CPU_CRISV32=yes</del> </td>
+                  </tr><tr>
+                          <th>79</th><th> </th><td class="l"><del>&nbsp; &nbsp; &nbsp; AC_DEFINE(HAVE_CPU_CRISV32, 1, [Define if the host CPU is a CRISv32]) ;;</del> </td>
+                  </tr><tr>
+                          <th>80</th><th> </th><td class="l"><del>&nbsp; esac</del> </td>
+                  </tr><tr>
+                          <th>81</th><th> </th><td class="l"><del></del> </td>
+                  </tr><tr>
+                          <th>82</th><th> </th><td class="l"><del>&nbsp; dnl Determine endianness</del> </td>
+                  </tr><tr>
+                          <th>83</th><th> </th><td class="l"><del>&nbsp; AC_C_BIGENDIAN</del> </td>
+                  </tr><tr>
+                          <th>84</th><th> </th><td class="l"><del></del> </td>
+                  </tr><tr>
+                          <th>85</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_I386,&nbsp; &nbsp; &nbsp; &nbsp;test "x$HAVE_CPU_I386" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>86</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_PPC,&nbsp; &nbsp; &nbsp; &nbsp; test "x$HAVE_CPU_PPC" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>87</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_PPC64,&nbsp; &nbsp; &nbsp; test "x$HAVE_CPU_PPC64" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>88</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_ALPHA,&nbsp; &nbsp; &nbsp; test "x$HAVE_CPU_ALPHA" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>89</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_ARM,&nbsp; &nbsp; &nbsp; &nbsp; test "x$HAVE_CPU_ARM" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>90</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_SPARC,&nbsp; &nbsp; &nbsp; test "x$HAVE_CPU_SPARC" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>91</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_HPPA,&nbsp; &nbsp; &nbsp; &nbsp;test "x$HAVE_CPU_HPPA" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>92</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_MIPS,&nbsp; &nbsp; &nbsp; &nbsp;test "x$HAVE_CPU_MIPS" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>93</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_S390,&nbsp; &nbsp; &nbsp; &nbsp;test "x$HAVE_CPU_S390" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>94</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_IA64,&nbsp; &nbsp; &nbsp; &nbsp;test "x$HAVE_CPU_IA64" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>95</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_M68K,&nbsp; &nbsp; &nbsp; &nbsp;test "x$HAVE_CPU_M68K" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>96</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_X86_64,&nbsp; &nbsp; &nbsp;test "x$HAVE_CPU_X86_64" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>97</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_CRIS,&nbsp; &nbsp; &nbsp; &nbsp;test "x$HAVE_CPU_CRIS" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>98</th><th> </th><td class="l"><del>&nbsp; AM_CONDITIONAL(HAVE_CPU_CRISV32,&nbsp; &nbsp; test "x$HAVE_CPU_CRISV32" = "xyes")</del> </td>
+                  </tr><tr>
+                          <th>99</th><th> </th><td class="l"><del></del> </td>
+                  </tr><tr>
+                          <th>100</th><th> </th><td class="l"><del>&nbsp; AC_DEFINE_UNQUOTED(HOST_CPU, "$host_cpu", [the host CPU])</del> </td>
+                  </tr><tr>
+                          <th>101</th><th> </th><td class="l"><del>])</del> </td>
+                  </tr><tr class="last">
+                          <th>102</th><th> </th><td class="l"><del></del> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>103</th><th>1</th><td class="l"><span>dnl check if unaligned memory access works correctly</span> </td>
+                  </tr><tr>
+                          <th>104</th><th>2</th><td class="l"><span>AC_DEFUN([AG_GST_UNALIGNED_ACCESS], [</span> </td>
+                  </tr><tr>
+                          <th>105</th><th>3</th><td class="l"><span>&nbsp; AC_MSG_CHECKING([if unaligned memory access works correctly])</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>gst-plugins-good-0.10.25</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/configure.ac gst-plugins-good-0.10.25/configure.ac</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/configure.ac 2010-09-02 14:22:47.000000000 -0400">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/configure.ac 2010-11-30 09:56:01.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>92</th><th>92</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>93</th><th>93</th><td class="l"><span>dnl * hardware/architecture *</span> </td>
+                  </tr><tr>
+                          <th>94</th><th>94</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="rem">
+                  <tr class="first">
+                          <th>95</th><th> </th><td class="l"><del>dnl common/m4/gst-arch.m4</del> </td>
+                  </tr><tr>
+                          <th>96</th><th> </th><td class="l"><del>dnl check CPU type</del> </td>
+                  </tr><tr>
+                          <th>97</th><th> </th><td class="l"><del>AG_GST_ARCH</del> </td>
+                  </tr><tr class="last">
+                          <th>98</th><th> </th><td class="l"><del></del> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>99</th><th>95</th><td class="l"><span>dnl Determine endianness</span> </td>
+                  </tr><tr>
+                          <th>100</th><th>96</th><td class="l"><span>AC_C_BIGENDIAN</span> </td>
+                  </tr><tr>
+                          <th>101</th><th>97</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody>
+              <tbody class="skipped">
+                <tr>
+                  <th><a href="#L1187">…</a></th>
+                  <th><a href="#L1183">…</a></th>
+                  <td> </td>
+                </tr>
+              </tbody>
+            <tbody class="unmod">
+                  <tr>
+                          <th>1187</th><th>1183</th><td class="l"><span>&nbsp; &nbsp; -e 's/.* GST_MAJORMINOR$/#define GST_MAJORMINOR "'$GST_MAJORMINOR'"/' \</span> </td>
+                  </tr><tr>
+                          <th>1188</th><th>1184</th><td class="l"><span>&nbsp; &nbsp; -e "s,.* GST_PACKAGE_NAME$,#define GST_PACKAGE_NAME \"${GST_PACKAGE_NAME}\"," \</span> </td>
+                  </tr><tr>
+                          <th>1189</th><th>1185</th><td class="l"><span>&nbsp; &nbsp; -e 's/.* GST_PACKAGE_ORIGIN$/#define GST_PACKAGE_ORIGIN "Unknown package origin"/' \</span> </td>
+                  </tr><tr>
+                          <th>1190</th><th>1186</th><td class="l"><span>&nbsp; &nbsp; -e "s,.* GST_PACKAGE_RELEASE_DATETIME$,#define GST_PACKAGE_RELEASE_DATETIME \"${GST_PACKAGE_RELEASE_DATETIME}\"," \</span> </td>
+                  </tr>
+            </tbody><tbody class="rem">
+                  <tr class="last first">
+                          <th>1191</th><th> </th><td class="l"><del>&nbsp; &nbsp; -e 's/.* HAVE_CPU_I386$/#define HAVE_CPU_I386 1/' \</del> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>1192</th><th>1187</th><td class="l"><span>&nbsp; &nbsp; -e 's/.* HAVE_FGETPOS$/#define HAVE_FGETPOS 1/' \</span> </td>
+                  </tr><tr>
+                          <th>1193</th><th>1188</th><td class="l"><span>&nbsp; &nbsp; -e 's/.* HAVE_FSETPOS$/#define HAVE_FSETPOS 1/' \</span> </td>
+                  </tr><tr>
+                          <th>1194</th><th>1189</th><td class="l"><span>&nbsp; &nbsp; -e 's/.* HAVE_LIBXML2$/#define HAVE_LIBXML2 1/' \</span> </td>
+                  </tr>
+            </tbody>
+              <tbody class="skipped">
+                <tr>
+                  <th><a href="#L1198">…</a></th>
+                  <th><a href="#L1193">…</a></th>
+                  <td> </td>
+                </tr>
+              </tbody>
+            <tbody class="unmod">
+                  <tr>
+                          <th>1198</th><th>1193</th><td class="l"><span>&nbsp; &nbsp; -e 's/.* HAVE_SYS_TYPES_H$/#define HAVE_SYS_TYPES_H 1/' \</span> </td>
+                  </tr><tr>
+                          <th>1199</th><th>1194</th><td class="l"><span>&nbsp; &nbsp; -e 's/.* HAVE_WIN32$/#define HAVE_WIN32 1/' \</span> </td>
+                  </tr><tr>
+                          <th>1200</th><th>1195</th><td class="l"><span>&nbsp; &nbsp; -e 's/.* HAVE_WINSOCK2_H$/#define HAVE_WINSOCK2_H 1/' \</span> </td>
+                  </tr>
+            </tbody><tbody class="rem">
+                  <tr class="last first">
+                          <th>1201</th><th> </th><td class="l"><del>&nbsp; &nbsp; -e 's/.* HOST_CPU$/#define HOST_CPU "i686"/' \</del> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>1202</th><th>1196</th><td class="l"><span>&nbsp; &nbsp; -e 's/.* LIBDIR$/#ifdef _DEBUG\n#&nbsp; define LIBDIR PREFIX "\\\\debug\\\\lib"\n#else\n#&nbsp; define LIBDIR PREFIX "\\\\lib"\n#endif/' \</span> </td>
+                  </tr><tr>
+                          <th>1203</th><th>1197</th><td class="l"><span>&nbsp; &nbsp; -e 's/.* LOCALEDIR$/#define LOCALEDIR PREFIX "\\\\share\\\\locale"/' \</span> </td>
+                  </tr><tr>
+                          <th>1204</th><th>1198</th><td class="l"><span>&nbsp; &nbsp; -e "s/.* PACKAGE$/#define PACKAGE \"$PACKAGE\"/" \</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>gst/deinterlace/gstdeinterlacemethod.h</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/gst/deinterlace/gstdeinterlacemethod.h gst-plugins-good-0.10.25/gst/deinterlace/gstdeinterlacemethod.h</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/gst/deinterlace/gstdeinterlacemethod.h 2010-07-05 06:12:48.000000000 -0400">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/gst/deinterlace/gstdeinterlacemethod.h 2010-11-30 09:57:18.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>25</th><th>25</th><td class="l"><span>#include &lt;gst/video/video.h&gt;</span> </td>
+                  </tr><tr>
+                          <th>26</th><th>26</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>27</th><th>27</th><td class="l"><span>#if defined(HAVE_GCC_ASM) &amp;&amp; defined(HAVE_ORC)</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>28</th><th> </th><td class="l"><span>#if<del>&nbsp;defined(HAVE_CPU_I386) || defined(HAVE_CPU_X86_64)</del></span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>28</th><td class="r"><span>#if<ins>def __i386__</ins></span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>29</th><th>29</th><td class="l"><span>#define BUILD_X86_ASM</span> </td>
+                  </tr><tr>
+                          <th>30</th><th>30</th><td class="l"><span>#endif</span> </td>
+                  </tr><tr>
+                          <th>31</th><th>31</th><td class="l"><span>#endif</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>gst/deinterlace/tvtime/x86-64_macros.inc</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/gst/deinterlace/tvtime/x86-64_macros.inc gst-plugins-good-0.10.25/gst/deinterlace/tvtime/x86-64_macros.inc</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/gst/deinterlace/tvtime/x86-64_macros.inc 2009-08-10 18:15:55.000000000 -0400">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/gst/deinterlace/tvtime/x86-64_macros.inc 2010-11-30 09:58:55.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>29</th><th>29</th><td class="l"><span>&nbsp;* Original author: Achim Schneider &lt;batchall@mordor.ch&gt;</span> </td>
+                  </tr><tr>
+                          <th>30</th><th>30</th><td class="l"><span>&nbsp;*/</span> </td>
+                  </tr><tr>
+                          <th>31</th><th>31</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="rem">
+                  <tr class="first">
+                          <th>32</th><th> </th><td class="l"><del>#ifdef HAVE_CONFIG_H</del> </td>
+                  </tr><tr>
+                          <th>33</th><th> </th><td class="l"><del>#include "config.h"</del> </td>
+                  </tr><tr>
+                          <th>34</th><th> </th><td class="l"><del>#endif</del> </td>
+                  </tr><tr class="last">
+                          <th>35</th><th> </th><td class="l"><del></del> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>36</th><th>32</th><td class="l"><span>#ifndef XAX</span> </td>
+                  </tr><tr>
+                          <th>37</th><th>33</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>38</th><th> </th><td class="l"><span>#if defined (HAVE_CPU_I386) &amp;&amp; !defined(HAVE_CPU_X86_64)</span> </td>
+                      </tr><tr>
+                        <th>39</th><th> </th><td class="l"><span></span> </td>
+                      </tr><tr>
+                        <th>40</th><th> </th><td class="l"><span>#define XAX&nbsp; &nbsp;"eax"</span> </td>
+                      </tr><tr>
+                        <th>41</th><th> </th><td class="l"><span>#define XBX&nbsp; &nbsp;"ebx"</span> </td>
+                      </tr><tr>
+                        <th>42</th><th> </th><td class="l"><span>#define XCX&nbsp; &nbsp;"ecx"</span> </td>
+                      </tr><tr>
+                        <th>43</th><th> </th><td class="l"><span>#define XDX&nbsp; &nbsp;"edx"</span> </td>
+                      </tr><tr>
+                        <th>44</th><th> </th><td class="l"><span>#define XSI&nbsp; &nbsp;"esi"</span> </td>
+                      </tr><tr>
+                        <th>45</th><th> </th><td class="l"><span>#define XDI&nbsp; &nbsp;"edi"</span> </td>
+                      </tr><tr>
+                        <th>46</th><th> </th><td class="l"><span>#define XSP&nbsp; &nbsp;"esp"</span> </td>
+                      </tr><tr>
+                        <th>47</th><th> </th><td class="l"><span>#define MOVX&nbsp; "movl"</span> </td>
+                      </tr><tr>
+                        <th>48</th><th> </th><td class="l"><span>#define LEAX&nbsp; "leal"</span> </td>
+                      </tr><tr>
+                        <th>49</th><th> </th><td class="l"><span>#define DECX&nbsp; "decl"</span> </td>
+                      </tr><tr>
+                        <th>50</th><th> </th><td class="l"><span>#define PUSHX "pushl"</span> </td>
+                      </tr><tr>
+                        <th>51</th><th> </th><td class="l"><span>#define POPX&nbsp; "popl"</span> </td>
+                      </tr><tr>
+                        <th>52</th><th> </th><td class="l"><span>#define CMPX&nbsp; "cmpl"</span> </td>
+                      </tr><tr>
+                        <th>53</th><th> </th><td class="l"><span>#define ADDX&nbsp; "addl"</span> </td>
+                      </tr><tr>
+                        <th>54</th><th> </th><td class="l"><span>#define SHLX&nbsp; "shll"</span> </td>
+                      </tr><tr>
+                        <th>55</th><th> </th><td class="l"><span>#define SHRX&nbsp; "shrl"</span> </td>
+                      </tr><tr>
+                        <th>56</th><th> </th><td class="l"><span>#define SUBX&nbsp; "subl"</span> </td>
+                      </tr><tr>
+                        <th>57</th><th> </th><td class="l"><span></span> </td>
+                      </tr><tr>
+                        <th>58</th><th> </th><td class="l"><span>#elif defined (HAVE_CPU_X86_64)</span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>34</th><td class="r"><span>#if defined (__x86_64__)</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>59</th><th>35</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>60</th><th>36</th><td class="l"><span>#define XAX&nbsp; &nbsp;"rax"</span> </td>
+                  </tr><tr>
+                          <th>61</th><th>37</th><td class="l"><span>#define XBX&nbsp; &nbsp;"rbx"</span> </td>
+                  </tr>
+            </tbody>
+              <tbody class="skipped">
+                <tr>
+                  <th><a href="#L75">…</a></th>
+                  <th><a href="#L51">…</a></th>
+                  <td> </td>
+                </tr>
+              </tbody>
+            <tbody class="unmod">
+                  <tr>
+                          <th>75</th><th>51</th><td class="l"><span>#define SHRX&nbsp; "shrq"</span> </td>
+                  </tr><tr>
+                          <th>76</th><th>52</th><td class="l"><span>#define SUBX&nbsp; "subq"</span> </td>
+                  </tr><tr>
+                          <th>77</th><th>53</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="add">
+                  <tr class="first">
+                          <th> </th><th>54</th><td class="r"><ins>#elif defined(__i386__)</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>55</th><td class="r"><ins></ins> </td>
+                  </tr><tr>
+                          <th> </th><th>56</th><td class="r"><ins>#define XAX&nbsp; &nbsp;"eax"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>57</th><td class="r"><ins>#define XBX&nbsp; &nbsp;"ebx"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>58</th><td class="r"><ins>#define XCX&nbsp; &nbsp;"ecx"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>59</th><td class="r"><ins>#define XDX&nbsp; &nbsp;"edx"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>60</th><td class="r"><ins>#define XSI&nbsp; &nbsp;"esi"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>61</th><td class="r"><ins>#define XDI&nbsp; &nbsp;"edi"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>62</th><td class="r"><ins>#define XSP&nbsp; &nbsp;"esp"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>63</th><td class="r"><ins>#define MOVX&nbsp; "movl"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>64</th><td class="r"><ins>#define LEAX&nbsp; "leal"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>65</th><td class="r"><ins>#define DECX&nbsp; "decl"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>66</th><td class="r"><ins>#define PUSHX "pushl"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>67</th><td class="r"><ins>#define POPX&nbsp; "popl"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>68</th><td class="r"><ins>#define CMPX&nbsp; "cmpl"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>69</th><td class="r"><ins>#define ADDX&nbsp; "addl"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>70</th><td class="r"><ins>#define SHLX&nbsp; "shll"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>71</th><td class="r"><ins>#define SHRX&nbsp; "shrl"</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>72</th><td class="r"><ins>#define SUBX&nbsp; "subl"</ins> </td>
+                  </tr><tr class="last">
+                          <th> </th><th>73</th><td class="r"><ins></ins> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>78</th><th>74</th><td class="l"><span>#else</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>79</th><th> </th><td class="l"><span>#error Undefined architecture. <del>Define either ARCH_X86 or ARCH_X86_64</del>.</span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>75</th><td class="r"><span>#error Undefined architecture. <ins>&nbsp;Neither __i386__ nor __x86_64__ defined</ins>.</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>80</th><th>76</th><td class="l"><span>#endif</span> </td>
+                  </tr><tr>
+                          <th>81</th><th>77</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>82</th><th>78</th><td class="l"><span>#endif</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>gst-plugins-good-0.10.25</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/Makefile.am gst-plugins-good-0.10.25/gst/goom/Makefile.am</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/gst/goom/Makefile.am 2010-07-05 06:12:48.000000000 -0400">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/gst/goom/Makefile.am 2010-11-30 10:00:46.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>4</th><th>4</th><td class="l"><span>PPC_FILES=ppc_zoom_ultimate.s ppc_drawings.s ppc_drawings.h ppc_zoom_ultimate.h</span> </td>
+                  </tr><tr>
+                          <th>5</th><th>5</th><td class="l"><span>MMX_FILES=mmx.c xmmx.c mmx.h xmmx.h</span> </td>
+                  </tr><tr>
+                          <th>6</th><th>6</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="rem">
+                  <tr class="last first">
+                          <th>7</th><th> </th><td class="l"><del>if HAVE_CPU_PPC</del> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>8</th><th>7</th><td class="l"><span># disable until someone figures out how to build these correctly on ppc</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>9</th><th> </th><td class="l"><span>#ARCH_FILES = $(PPC_FILES)</span> </td>
+                      </tr><tr>
+                        <th>10</th><th> </th><td class="l"><span>ARCH_FILES =</span> </td>
+                      </tr><tr>
+                        <th>11</th><th> </th><td class="l"><span>endif</span> </td>
+                      </tr><tr>
+                        <th>12</th><th> </th><td class="l"><span>if HAVE_CPU_PPC64</span> </td>
+                      </tr><tr>
+                        <th>13</th><th> </th><td class="l"><span># disable until someone figures out how to build these correctly on ppc</span> </td>
+                      </tr><tr>
+                        <th>14</th><th> </th><td class="l"><span>#ARCH_FILES = $(PPC_FILES)</span> </td>
+                      </tr><tr>
+                        <th>15</th><th> </th><td class="l"><span>ARCH_FILES =</span> </td>
+                      </tr><tr>
+                        <th>16</th><th> </th><td class="l"><span>endif</span> </td>
+                      </tr><tr>
+                        <th>17</th><th> </th><td class="l"><span>if HAVE_CPU_I386</span> </td>
+                      </tr><tr>
+                        <th>18</th><th> </th><td class="l"><span>ARCH_FILES = $(MMX_FILES)</span> </td>
+                      </tr><tr>
+                        <th>19</th><th> </th><td class="l"><span>ARCH_CFLAGS = -DBUILD_MMX</span> </td>
+                      </tr><tr>
+                        <th>20</th><th> </th><td class="l"><span>endif</span> </td>
+                      </tr>
+                      <tr>
+                        <th> </th><th>8</th><td class="r"><span>ARCH_FILES = $(MMX_FILES)</span> </td>
+                      </tr><tr class="last">
+                        <th> </th><th>9</th><td class="r"><span>#ARCH_FILES += $(PPC_FILES)</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>21</th><th>10</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> </td>
+                  </tr><tr>
+                          <th>22</th><th>11</th><td class="l"><span>libgstgoom_la_SOURCES =&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;\</span> </td>
+                  </tr><tr>
+                          <th>23</th><th>12</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; gstgoom.c gstgoom.h&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;\</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>gst-plugins-good-0.10.25</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/convolve_fx.c gst-plugins-good-0.10.25/gst/goom/convolve_fx.c</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/gst/goom/convolve_fx.c 2010-05-13 20:40:16.000000000 -0400">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/gst/goom/convolve_fx.c 2010-11-30 10:03:49.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>189</th><th>189</th><td class="l"><span>&nbsp; &nbsp; ytex = yprime + yi + CONV_MOTIF_W * 0x10000 / 2;</span> </td>
+                  </tr><tr>
+                          <th>190</th><th>190</th><td class="l"><span>&nbsp; &nbsp; yprime += c;</span> </td>
+                  </tr><tr>
+                          <th>191</th><th>191</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>192</th><th> </th><td class="l"><span>#ifdef <del>HAVE_MMX</del></span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>192</th><td class="r"><span>#ifdef <ins>__MMX__</ins></span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>193</th><th>193</th><td class="l"><span>&nbsp; &nbsp; __asm__ __volatile__ ("\n\t pxor&nbsp; %%mm7,&nbsp; %%mm7"&nbsp; &nbsp; /* mm7 = 0&nbsp; &nbsp;*/</span> </td>
+                  </tr><tr>
+                          <th>194</th><th>194</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; "\n\t movd %[xtex],&nbsp; %%mm2" "\n\t movd %[ytex],&nbsp; %%mm3" "\n\t punpckldq %%mm3, %%mm2"&nbsp; &nbsp;/* mm2 = [ ytex | xtex ] */</span> </td>
+                  </tr><tr>
+                          <th>195</th><th>195</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; "\n\t movd %[c],&nbsp; &nbsp; &nbsp;%%mm4" "\n\t movd %[s],&nbsp; &nbsp; &nbsp;%%mm6" "\n\t pxor&nbsp; %%mm5,&nbsp; &nbsp;%%mm5" "\n\t psubd %%mm6,&nbsp; &nbsp;%%mm5" "\n\t punpckldq %%mm5, %%mm4"&nbsp; &nbsp;/* mm4 = [ -s | c ]&nbsp; &nbsp; &nbsp; */</span> </td>
+                  </tr>
+            </tbody>
+              <tbody class="skipped">
+                <tr>
+                  <th><a href="#L259">…</a></th>
+                  <th><a href="#L259">…</a></th>
+                  <td> </td>
+                </tr>
+              </tbody>
+            <tbody class="unmod">
+                  <tr>
+                          <th>259</th><th>259</th><td class="l"><span>&nbsp; &nbsp; }</span> </td>
+                  </tr><tr>
+                          <th>260</th><th>260</th><td class="l"><span>#endif</span> </td>
+                  </tr><tr>
+                          <th>261</th><th>261</th><td class="l"><span>&nbsp; }</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>262</th><th> </th><td class="l"><span>#ifdef <del>HAVE_MMX</del></span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>262</th><td class="r"><span>#ifdef <ins>__MMX__</ins></span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>263</th><th>263</th><td class="l"><span>&nbsp; __asm__ __volatile__ ("\n\t emms");</span> </td>
+                  </tr><tr>
+                          <th>264</th><th>264</th><td class="l"><span>#endif</span> </td>
+                  </tr><tr>
+                          <th>265</th><th>265</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>gst-plugins-good-0.10.25</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/goom_config.h gst-plugins-good-0.10.25/gst/goom/goom_config.h</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/gst/goom/goom_config.h 2010-05-13 20:40:16.000000000 -0400">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/gst/goom/goom_config.h 2010-11-30 10:05:26.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>38</th><th>38</th><td class="l"><span>&nbsp; &nbsp; #define ALPHA 0</span> </td>
+                  </tr><tr>
+                          <th>39</th><th>39</th><td class="l"><span>#endif</span> </td>
+                  </tr><tr>
+                          <th>40</th><th>40</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="rem">
+                  <tr class="first">
+                          <th>41</th><th> </th><td class="l"><del>#if defined (BUILD_MMX) &amp;&amp; defined (HAVE_GCC_ASM)</del> </td>
+                  </tr><tr>
+                          <th>42</th><th> </th><td class="l"><del></del> </td>
+                  </tr><tr>
+                          <th>43</th><th> </th><td class="l"><del>#define HAVE_MMX</del> </td>
+                  </tr><tr>
+                          <th>44</th><th> </th><td class="l"><del>#endif</del> </td>
+                  </tr><tr class="last">
+                          <th>45</th><th> </th><td class="l"><del></del> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>gst-plugins-good-0.10.25</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/ifs.c gst-plugins-good-0.10.25/gst/goom/ifs.c</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/gst/goom/ifs.c 2010-05-13 20:40:16.000000000 -0400">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/gst/goom/ifs.c 2010-11-30 10:03:49.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>37</th><th>37</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>38</th><th>38</th><td class="l"><span>#include "goom_config.h"</span> </td>
+                  </tr><tr>
+                          <th>39</th><th>39</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>40</th><th> </th><td class="l"><span>#ifdef <del>HAVE_MMX</del></span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>40</th><td class="r"><span>#ifdef <ins>__MMX__</ins></span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>41</th><th>41</th><td class="l"><span>#include "mmx.h"</span> </td>
+                  </tr><tr>
+                          <th>42</th><th>42</th><td class="l"><span>#endif</span> </td>
+                  </tr><tr>
+                          <th>43</th><th>43</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody>
+              <tbody class="skipped">
+                <tr>
+                  <th><a href="#L509">…</a></th>
+                  <th><a href="#L509">…</a></th>
+                  <td> </td>
+                </tr>
+              </tbody>
+            <tbody class="unmod">
+                  <tr>
+                          <th>509</th><th>509</th><td class="l"><span>&nbsp; points = draw_ifs (goomInfo, &amp;nbpt, fx_data);</span> </td>
+                  </tr><tr>
+                          <th>510</th><th>510</th><td class="l"><span>&nbsp; nbpt--;</span> </td>
+                  </tr><tr>
+                          <th>511</th><th>511</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>512</th><th> </th><td class="l"><span>#ifdef <del>HAVE_MMX</del></span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>512</th><td class="r"><span>#ifdef <ins>__MMX__</ins></span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>513</th><th>513</th><td class="l"><span>&nbsp; movd_m2r (couleursl, mm1);</span> </td>
+                  </tr><tr>
+                          <th>514</th><th>514</th><td class="l"><span>&nbsp; punpckldq_r2r (mm1, mm1);</span> </td>
+                  </tr><tr>
+                          <th>515</th><th>515</th><td class="l"><span>&nbsp; for (i = 0; i &lt; nbpt; i += increment) {</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>gst-plugins-good-0.10.25</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/mathtools.h gst-plugins-good-0.10.25/gst/goom/mathtools.h</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/gst/goom/mathtools.h 2010-05-13 20:40:16.000000000 -0400">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/gst/goom/mathtools.h 2010-11-30 10:03:49.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>38</th><th>38</th><td class="l"><span>#endif /* BigEndian_ */</span> </td>
+                  </tr><tr>
+                          <th>39</th><th>39</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>40</th><th>40</th><td class="l"><span>/* TODO: this optimization is very efficient: put it again when all works</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>41</th><th> </th><td class="l"><span>#ifdef <del>HAVE_MMX</del></span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>41</th><td class="r"><span>#ifdef <ins>__MMX__</ins></span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>42</th><th>42</th><td class="l"><span>#define F2I(dbl,i) {double d = dbl + _double2fixmagic; i = ((int*)&amp;d)[iman_] &gt;&gt; _shiftamt;}</span> </td>
+                  </tr><tr>
+                          <th>43</th><th>43</th><td class="l"><span>#else*/</span> </td>
+                  </tr><tr>
+                          <th>44</th><th>44</th><td class="l"><span>#define F2I(dbl,i) i=(int)dbl;</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>gst-plugins-good-0.10.25</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/mmx.c gst-plugins-good-0.10.25/gst/goom/mmx.c</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/gst/goom/mmx.c 2010-01-26 21:07:25.000000000 -0500">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/gst/goom/mmx.c 2010-11-30 10:03:49.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>24</th><th>24</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; I'll undefine BROKEN_PAND by default.</span> </td>
+                  </tr><tr>
+                          <th>25</th><th>25</th><td class="l"><span>*/</span> </td>
+                  </tr><tr>
+                          <th>26</th><th>26</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="add">
+                  <tr class="first">
+                          <th> </th><th>27</th><td class="r"><ins>#if defined(__MMX__) &amp;&amp; !defined(__x86_64__)</ins> </td>
+                  </tr><tr class="last">
+                          <th> </th><th>28</th><td class="r"><ins></ins> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>27</th><th>29</th><td class="l"><span>#ifdef HAVE_CONFIG_H</span> </td>
+                  </tr><tr>
+                          <th>28</th><th>30</th><td class="l"><span>#include "config.h"</span> </td>
+                  </tr><tr>
+                          <th>29</th><th>31</th><td class="l"><span>#endif</span> </td>
+                  </tr><tr>
+                          <th>30</th><th>32</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>31</th><th>33</th><td class="l"><span>#include "goom_config.h"</span> </td>
+                  </tr><tr>
+                          <th>32</th><th>34</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="rem">
+                  <tr class="first">
+                          <th>33</th><th> </th><td class="l"><del>#ifdef HAVE_MMX</del> </td>
+                  </tr><tr class="last">
+                          <th>34</th><th> </th><td class="l"><del></del> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>35</th><th>35</th><td class="l"><span>#define BUFFPOINTNB 16</span> </td>
+                  </tr><tr>
+                          <th>36</th><th>36</th><td class="l"><span>#define BUFFPOINTMASK 0xffff</span> </td>
+                  </tr><tr>
+                          <th>37</th><th>37</th><td class="l"><span>#define BUFFINCR 0xff</span> </td>
+                  </tr>
+            </tbody>
+              <tbody class="skipped">
+                <tr>
+                  <th><a href="#L288">…</a></th>
+                  <th><a href="#L288">…</a></th>
+                  <td> </td>
+                </tr>
+              </tbody>
+            <tbody class="unmod">
+                  <tr>
+                          <th>288</th><th>288</th><td class="l"><span>{</span> </td>
+                  </tr><tr>
+                          <th>289</th><th>289</th><td class="l"><span>&nbsp; return (0);</span> </td>
+                  </tr><tr>
+                          <th>290</th><th>290</th><td class="l"><span>}</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>291</th><th> </th><td class="l"><span>#endif /* <del>HAVE_MMX</del> */</span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>291</th><td class="r"><span>#endif /* <ins>__MMX__</ins> */</span> </td>
+                      </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>gst-plugins-good-0.10.25</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/plugin_info.c gst-plugins-good-0.10.25/gst/goom/plugin_info.c</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/gst/goom/plugin_info.c 2010-07-05 06:12:48.000000000 -0400">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/gst/goom/plugin_info.c 2010-11-30 10:09:16.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>34</th><th>34</th><td class="l"><span>#endif</span> </td>
+                  </tr><tr>
+                          <th>35</th><th>35</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>36</th><th>36</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>37</th><th> </th><td class="l"><span>#if defined (<del>HAVE_CPU_PPC64) || defined (HAVE_CPU_PPC</del>)</span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>37</th><td class="r"><span>#if defined (<ins>__ppc__) || defined(__ppc64__</ins>)</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>38</th><th>38</th><td class="l"><span>#include &lt;sys/types.h&gt;</span> </td>
+                  </tr><tr>
+                          <th>39</th><th>39</th><td class="l"><span>#include &lt;sys/sysctl.h&gt;</span> </td>
+                  </tr><tr>
+                          <th>40</th><th>40</th><td class="l"><span>#include "ppc_zoom_ultimate.h"</span> </td>
+                  </tr><tr>
+                          <th>41</th><th>41</th><td class="l"><span>#include "ppc_drawings.h"</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>42</th><th> </th><td class="l"><span>#endif /* <del>HAVE_CPU_PPC64 || HAVE_CPU_PPC</del> */</span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>42</th><td class="r"><span>#endif /* <ins>__ppc__ || __ppc64__</ins> */</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>43</th><th>43</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>44</th><th>44</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>45</th><th> </th><td class="l"><span>#if<del>def HAVE_MMX</del></span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>45</th><td class="r"><span>#if<ins>&nbsp;defined(__MMX__) &amp;&amp; !defined(__x86_64__)</ins></span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>46</th><th>46</th><td class="l"><span>#include "mmx.h"</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>47</th><th> </th><td class="l"><span>#endif /* <del>HAVE_MMX</del> */</span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>47</th><td class="r"><span>#endif /* <ins>__MMX__</ins> */</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>48</th><th>48</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>49</th><th>49</th><td class="l"><span>#include &lt;string.h&gt;</span> </td>
+                  </tr><tr>
+                          <th>50</th><th>50</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody>
+              <tbody class="skipped">
+                <tr>
+                  <th><a href="#L68">…</a></th>
+                  <th><a href="#L68">…</a></th>
+                  <td> </td>
+                </tr>
+              </tbody>
+            <tbody class="unmod">
+                  <tr>
+                          <th>68</th><th>68</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>69</th><th>69</th><td class="l"><span>&nbsp; GST_INFO ("orc cpu flags: 0x%08x", cpuFlavour);</span> </td>
+                  </tr><tr>
+                          <th>70</th><th>70</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>71</th><th> </th><td class="l"><span>/* FIXME: what about HAVE_CPU_X86_64 ? */</span> </td>
+                      </tr><tr>
+                        <th>72</th><th> </th><td class="l"><span>#ifdef HAVE_CPU_I386</span> </td>
+                      </tr><tr>
+                        <th>73</th><th> </th><td class="l"><span>#ifdef HAVE_MMX</span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>71</th><td class="r"><span>#if defined(__MMX__) &amp;&amp; !defined(__x86_64__)</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>74</th><th>72</th><td class="l"><span>#ifdef HAVE_ORC</span> </td>
+                  </tr><tr>
+                          <th>75</th><th>73</th><td class="l"><span>&nbsp; GST_INFO ("have an x86");</span> </td>
+                  </tr><tr>
+                          <th>76</th><th>74</th><td class="l"><span>&nbsp; if (cpuFlavour &amp; ORC_TARGET_MMX_MMXEXT) {</span> </td>
+                  </tr>
+            </tbody>
+              <tbody class="skipped">
+                <tr>
+                  <th><a href="#L86">…</a></th>
+                  <th><a href="#L84">…</a></th>
+                  <td> </td>
+                </tr>
+              </tbody>
+            <tbody class="unmod">
+                  <tr>
+                          <th>86</th><th>84</th><td class="l"><span>&nbsp; }</span> </td>
+                  </tr><tr>
+                          <th>87</th><th>85</th><td class="l"><span>#endif</span> </td>
+                  </tr><tr>
+                          <th>88</th><th>86</th><td class="l"><span>#endif</span> </td>
+                  </tr>
+            </tbody><tbody class="rem">
+                  <tr class="last first">
+                          <th>89</th><th> </th><td class="l"><del>#endif /* HAVE_CPU_I386 */</del> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>90</th><th>87</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>91</th><th>88</th><td class="l"><span>/* disable all PPC stuff until someone finds out what to use here instead of</span> </td>
+                  </tr><tr>
+                          <th>92</th><th>89</th><td class="l"><span>&nbsp;* CPU_OPTION_64_BITS, and until someone fixes the assembly build for ppc */</span> </td>
+                  </tr><tr>
+                          <th>93</th><th>90</th><td class="l"><span>#if 0</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>94</th><th> </th><td class="l"><span>#ifdef <del>HAVE_CPU_PPC64</del></span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>91</th><td class="r"><span>#ifdef <ins>__pcc64__</ins></span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>95</th><th>92</th><td class="l"><span>&nbsp; if ((cpuFlavour &amp; CPU_OPTION_64_BITS) != 0) {</span> </td>
+                  </tr><tr>
+                          <th>96</th><th>93</th><td class="l"><span>/*&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; p-&gt;methods.create_output_with_brightness = ppc_brightness_G5;&nbsp; &nbsp; &nbsp; &nbsp; */</span> </td>
+                  </tr><tr>
+                          <th>97</th><th>94</th><td class="l"><span>&nbsp; &nbsp; p-&gt;methods.zoom_filter = ppc_zoom_generic;</span> </td>
+                  </tr><tr>
+                          <th>98</th><th>95</th><td class="l"><span>&nbsp; }</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>99</th><th> </th><td class="l"><span>#endif /* <del>HAVE_CPU_PPC64</del> */</span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>96</th><td class="r"><span>#endif /* <ins>__ppc64__</ins> */</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>100</th><th>97</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>101</th><th> </th><td class="l"><span>#ifdef <del>HAVE_CPU_PPC</del></span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>98</th><td class="r"><span>#ifdef <ins>__ALTIVEC__</ins></span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>102</th><th>99</th><td class="l"><span>&nbsp; if ((cpuFlavour &amp; ORC_TARGET_ALTIVEC_ALTIVEC) != 0) {</span> </td>
+                  </tr><tr>
+                          <th>103</th><th>100</th><td class="l"><span>/*&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; p-&gt;methods.create_output_with_brightness = ppc_brightness_G4;&nbsp; &nbsp; &nbsp; &nbsp; */</span> </td>
+                  </tr><tr>
+                          <th>104</th><th>101</th><td class="l"><span>&nbsp; &nbsp; p-&gt;methods.zoom_filter = ppc_zoom_G4;</span> </td>
+                  </tr>
+            </tbody>
+              <tbody class="skipped">
+                <tr>
+                  <th><a href="#L106">…</a></th>
+                  <th><a href="#L103">…</a></th>
+                  <td> </td>
+                </tr>
+              </tbody>
+            <tbody class="unmod">
+                  <tr>
+                          <th>106</th><th>103</th><td class="l"><span>/*&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; p-&gt;methods.create_output_with_brightness = ppc_brightness_generic;*/</span> </td>
+                  </tr><tr>
+                          <th>107</th><th>104</th><td class="l"><span>&nbsp; &nbsp; p-&gt;methods.zoom_filter = ppc_zoom_generic;</span> </td>
+                  </tr><tr>
+                          <th>108</th><th>105</th><td class="l"><span>&nbsp; }</span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>109</th><th> </th><td class="l"><span>#endif /* <del>HAVE_CPU_PPC</del> */</span> </td>
+                      </tr>
+                      <tr class="last">
+                        <th> </th><th>106</th><td class="r"><span>#endif /* <ins>__ALTIVEC__</ins> */</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>110</th><th>107</th><td class="l"><span>#endif</span> </td>
+                  </tr><tr>
+                          <th>111</th><th>108</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>112</th><th>109</th><td class="l"><span>&nbsp; cpuFlavour = 0;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;/* trick compiler into thinking variable is used */</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+      <li class="entry">
+        <h2>
+          <a>gst-plugins-good-0.10.25</a>
+        </h2>
+        <pre>diff -Naurp gst-plugins-good-0.10.25.orig/gst/goom/xmmx.c gst-plugins-good-0.10.25/gst/goom/xmmx.c</pre>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File gst-plugins-good-0.10.25.orig/gst/goom/xmmx.c 2010-05-13 20:40:16.000000000 -0400">
+                      old
+                  </th>
+                  <th title="File gst-plugins-good-0.10.25/gst/goom/xmmx.c 2010-11-30 10:03:49.000000000 -0500">
+                      new
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>24</th><th>24</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; It appears that the latest gas has the pand problem fixed, therefore</span> </td>
+                  </tr><tr>
+                          <th>25</th><th>25</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; I'll undefine BROKEN_PAND by default.</span> </td>
+                  </tr><tr>
+                          <th>26</th><th>26</th><td class="l"><span>*/</span> </td>
+                  </tr>
+            </tbody><tbody class="add">
+                  <tr class="first">
+                          <th> </th><th>27</th><td class="r"><ins></ins> </td>
+                  </tr><tr>
+                          <th> </th><th>28</th><td class="r"><ins>#if defined(__MMX__) &amp;&amp; !defined(__x86_64__)</ins> </td>
+                  </tr><tr class="last">
+                          <th> </th><th>29</th><td class="r"><ins></ins> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>27</th><th>30</th><td class="l"><span>#ifdef HAVE_CONFIG_H</span> </td>
+                  </tr><tr>
+                          <th>28</th><th>31</th><td class="l"><span>#include "config.h"</span> </td>
+                  </tr><tr>
+                          <th>29</th><th>32</th><td class="l"><span>#endif</span> </td>
+                  </tr><tr>
+                          <th>30</th><th>33</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>31</th><th>34</th><td class="l"><span>#include "goom_config.h"</span> </td>
+                  </tr><tr>
+                          <th>32</th><th>35</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="rem">
+                  <tr class="first">
+                          <th>33</th><th> </th><td class="l"><del>#ifdef HAVE_MMX</del> </td>
+                  </tr><tr class="last">
+                          <th>34</th><th> </th><td class="l"><del></del> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>35</th><th>36</th><td class="l"><span>/* a definir pour avoir exactement le meme resultat que la fonction C</span> </td>
+                  </tr><tr>
+                          <th>36</th><th>37</th><td class="l"><span>&nbsp;* (un chouillat plus lent).. mais la difference est assez peu notable.</span> </td>
+                  </tr><tr>
+                          <th>37</th><th>38</th><td class="l"><span>&nbsp;*/</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+  </ul>
+</div>
+      </div>
+      <div id="help">
+        <strong>Note:</strong> See <a href="/wiki/TracBrowser">TracBrowser</a>
+        for help on using the browser.
+      </div>
+      <div id="anydiff">
+        <form action="/diff" method="get">
+          <div class="buttons">
+            <input type="hidden" name="new_path" value="/trunk/dports/gnome/gst-plugins-good/files/universal.patch" />
+            <input type="hidden" name="old_path" value="/trunk/dports/gnome/gst-plugins-good/files/universal.patch" />
+            <input type="hidden" name="new_rev" />
+            <input type="hidden" name="old_rev" />
+            <input type="submit" value="View changes..." title="Select paths and revs for Diff" />
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="altlinks">
+      <h3>Download in other formats:</h3>
+      <ul>
+        <li class="first">
+          <a rel="nofollow" href="/browser/trunk/dports/gnome/gst-plugins-good/files/universal.patch?format=txt">Plain Text</a>
+        </li><li class="last">
+          <a rel="nofollow" href="/export/79732/trunk/dports/gnome/gst-plugins-good/files/universal.patch">Original Format</a>
+        </li>
+      </ul>
+    </div>
+    </div>
+    </div>
+  </div>
+ </div>
+    <script type="text/javascript" src="https://static2.macosforge.org/static/js/jquery.js"></script>
+    <script type="text/javascript" src="https://static2.macosforge.org/static/js/main.js"></script>
+ </div>
+ </body>
+</html>
