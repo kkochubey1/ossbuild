@@ -4,8 +4,7 @@
 PortSystem          1.0
 
 name                gstreamer
-version             0.10.32
-revision            1
+version             0.10.35
 description \
     GStreamer is a development framework for creating multimedia applications.
 long_description \
@@ -20,11 +19,9 @@ master_sites \
     gnome:sources/gstreamer/[join [lrange [split ${version} .] 0 1] .]/ \
     http://gstreamer.freedesktop.org/src/${name}/
 
-checksums           md5     442bc3d37b8511a73379143e7531d726 \
-                    sha1    95477044ed23cf94669e56ea43607de05c2a0cb3 \
-                    rmd160  447fa2b8b4c622a628763805cb65006d54919e54
-
-patchfiles      patch-gst-gstregistry.c.diff
+checksums           md5     4a0a00edad7a2c83de5211ca679dfaf9 \
+                    sha1    ad03b8aca7b2415929b6ecc4c140b178acef39de \
+                    rmd160  5a08c07cb5c99b5a031ca6be5a6ac1d576593d33
 
 depends_build   \
     port:gzip \
@@ -44,6 +41,12 @@ configure.env-append    PERL_PATH=${prefix}/bin/perl
 configure.cflags-append -funroll-loops -fstrict-aliasing -fno-common
 configure.args-append   --disable-introspection
 
+#if {${os.major} >= 9 && ${os.platform} == "darwin"} {
+#    patchfiles-append fat.patch
+#}
+
+patchfiles      patch-gst-gstregistry.c.diff
+
 pre-build	{
     if {[file exists ${prefix}/lib/libcheck.dylib]} {
         ui_msg "Gstreamer will fail to build because the 'check' port is active. Deactivate"
@@ -51,10 +54,6 @@ pre-build	{
         ui_msg "'check' after installing gstreamer by running 'port activate check'."
         return -code error "check is installed"
     }
-}
-
-variant regscanner {
-        patchfiles-delete    patch-gst-gstregistry.c.diff
 }
 
 livecheck.type      regex
