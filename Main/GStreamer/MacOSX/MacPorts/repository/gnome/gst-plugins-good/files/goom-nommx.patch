@@ -1,0 +1,353 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+  
+
+  
+
+
+  
+
+  <head>
+    <title>
+      /trunk/dports/gnome/gst-plugins-good/files/goom-nommx.patch – MacPorts
+    </title>
+        <link rel="search" href="/search" />
+        <link rel="help" href="/wiki/TracGuide" />
+        <link rel="alternate" href="/browser/trunk/dports/gnome/gst-plugins-good/files/goom-nommx.patch?format=txt" type="text/plain" title="Plain Text" /><link rel="alternate" href="/export/79732/trunk/dports/gnome/gst-plugins-good/files/goom-nommx.patch" type="text/x-diff; charset=iso-8859-15" title="Original Format" />
+        <link rel="up" href="/browser/trunk/dports/gnome/gst-plugins-good/files" title="Parent directory" />
+        <link rel="start" href="/wiki" />
+        <link rel="stylesheet" href="/chrome/common/css/trac.css" type="text/css" /><link rel="stylesheet" href="/chrome/common/css/code.css" type="text/css" /><link rel="stylesheet" href="/chrome/common/css/diff.css" type="text/css" /><link rel="stylesheet" href="/chrome/common/css/browser.css" type="text/css" />
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+      <link type="application/opensearchdescription+xml" rel="search" href="/search/opensearch" title="Search MacPorts" />
+    <script type="text/javascript" src="/chrome/common/js/jquery.js"></script><script type="text/javascript" src="/chrome/common/js/trac.js"></script><script type="text/javascript" src="/chrome/common/js/search.js"></script><script type="text/javascript" src="/chrome/common/js/diff.js"></script>
+    <!--[if lt IE 7]>
+    <script type="text/javascript" src="/chrome/common/js/ie_pre7_hacks.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+      jQuery(document).ready(function($) {
+        $(".trac-toggledeleted").show().click(function() {
+                  $(this).siblings().find(".trac-deleted").toggle();
+                  return false;
+        }).click();
+        $("#jumploc input").hide();
+        $("#jumploc select").change(function () {
+          this.parentNode.parentNode.submit();
+        });
+      });
+    </script>
+  <link rel="stylesheet" type="text/css" href="/static/css/style_v4.css" />
+ </head>
+  <body>
+ <div id="forge-body">
+  <div id="forge-header">
+   <div id="forge-logo">
+     <a href="http://www.macosforge.org/"><img alt="macosforge logo" src="https://static2.macosforge.org/static/images/logo_v2.png" /></a>
+   </div>
+   <div id="forge-project">
+        <a id="forge-project-logo" href="http://www.macports.org/">
+         <img alt="project logo" src="http://static2.macosforge.org/files/logos/MacPorts.png" />
+	</a>
+   </div>
+   <div id="auth-nav">
+      <a href="/auth/register/">Register</a>
+      <a href="/auth/password/lost/">Lost Password</a>
+      <a href="/auth/login/">Login</a>
+   </div>
+  </div>
+  <div id="forge-outter">
+   <div id="left-nav">
+ <div class="project-nav">
+  <ul>
+    <li>
+   	<a href="http://www.macports.org/" class="navlink-item">Home</a>
+    </li>
+    <li>
+   	<a href="/news/" class="navlink-item">News</a>
+    </li>
+    <li>
+   	<a href="http://guide.macports.org/" class="navlink-item">Guide</a>
+    </li>
+    <li>
+   	<a href="http://trac.macports.org/wiki/MailingLists" class="navlink-item">Mailing Lists</a>
+    </li>
+    <li>
+   	<a href="/newticket" class="navlink-item">New Ticket</a>
+    </li>
+    <li>
+   	<a href="/report" class="navlink-item">Ticket Reports</a>
+    </li>
+    <li>
+   	<a href="http://trac.macports.org/search?portsummarysearch=on" class="navlink-item">Ticket Search</a>
+    </li>
+    <li>
+   	<a href="http://trac.macports.org/query?status=assigned&amp;status=new&amp;status=reopened&amp;port=&amp;summary=&amp;port_mode=~&amp;summary_mode=~" class="navlink-item">Ticket Query</a>
+    </li>
+  </ul>
+ </div>
+ <div class="heading" id="projects-list-heading">Projects</div>
+<div id="project-list" class="project-list">
+ <ul>
+   <li>
+    <a class="navlink-item" href="http://bridgesupport.macosforge.org/">BridgeSupport</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://calendarserver.org/">Calendar and Contacts Server</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://www.dcerpc.org/">DCERPC</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://dss.macosforge.org/">Darwin Streaming Server</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://darwinbuild.macosforge.org/">DarwinBuild</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://fstools.macosforge.org/">FS Tools</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://www.macports.org/">MacPorts</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://www.macruby.org/">MacRuby</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://smartcardservices.macosforge.org/">SmartCard Services</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://www.webkit.org/">WebKit</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://xquartz.macosforge.org/">XQuartz</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://launchd.macosforge.org/">launchd</a>
+   </li>
+   <li>
+    <a class="navlink-item" href="http://libdispatch.macosforge.org/">libdispatch</a>
+   </li>
+ </ul>
+</div>
+     <div id="forge-footer">
+      <div id="footerlinks">
+	<a href="http://www.macosforge.org/contact/">Contact</a><br />
+	<a href="http://www.macosforge.org/terms/">Terms of Use</a><br />
+	<a href="http://www.apple.com/legal/privacy/">Privacy Policy</a><br />
+      </div>
+      <div id="footertext">
+       <br />
+       All user-submitted text and content on this website is licensed under a
+       <a href="http://creativecommons.org/licenses/by/2.5/">
+        Creative Commons Attribution 2.5 License
+       </a>
+       unless otherwise noted.
+       Copyright © 2010 Apple Inc.  All rights reserved.
+      </div>
+     </div>
+   </div>
+   <div id="forge-inner">
+    <div id="top-nav">
+   <a href="/newticket">New Ticket</a>
+       
+   <a href="/wiki">Wiki</a>
+       
+   <a href="/browser">Browse Source</a>
+       
+   <a href="/timeline">Timeline</a>
+       
+   <a href="/roadmap">Roadmap</a>
+       
+   <a href="/report">Ticket Reports</a>
+       
+   <a href="/search">Search</a>
+    </div>
+    <div id="forge-content">
+    <div id="banner">
+      <div id="header">
+        <a id="logo" href="https://trac.macports.org/"><img src="/chrome/common/trac_banner.png" alt="MacPorts" height="73" width="236" /></a>
+      </div>
+      <form id="search" action="/search" method="get">
+        <div>
+          <label for="proj-search">Search:</label>
+          <input type="text" id="proj-search" name="q" size="18" value="" />
+          <input type="submit" value="Search" />
+        </div>
+      </form>
+      <div id="metanav" class="nav">
+  </div>
+    </div>
+    <div id="main">
+      <div id="ctxtnav" class="nav">
+        <h2>Context Navigation</h2>
+          <ul>
+              <li class="first"><a href="/changeset/79398/trunk/dports/gnome/gst-plugins-good/files/goom-nommx.patch">Last Change</a></li><li><a href="/browser/trunk/dports/gnome/gst-plugins-good/files/goom-nommx.patch?annotate=blame&amp;rev=79398" title="Annotate each line with the last changed revision (this can be time consuming...)">Annotate</a></li><li class="last"><a href="/log/trunk/dports/gnome/gst-plugins-good/files/goom-nommx.patch">Revision Log</a></li>
+          </ul>
+        <hr />
+      </div>
+    <div id="content" class="browser">
+      <h1>
+    <a class="pathentry first" title="Go to root directory" href="/browser">root</a><span class="pathentry sep">/</span><a class="pathentry" title="View trunk" href="/browser/trunk">trunk</a><span class="pathentry sep">/</span><a class="pathentry" title="View dports" href="/browser/trunk/dports">dports</a><span class="pathentry sep">/</span><a class="pathentry" title="View gnome" href="/browser/trunk/dports/gnome">gnome</a><span class="pathentry sep">/</span><a class="pathentry" title="View gst-plugins-good" href="/browser/trunk/dports/gnome/gst-plugins-good">gst-plugins-good</a><span class="pathentry sep">/</span><a class="pathentry" title="View files" href="/browser/trunk/dports/gnome/gst-plugins-good/files">files</a><span class="pathentry sep">/</span><a class="pathentry" title="View goom-nommx.patch" href="/browser/trunk/dports/gnome/gst-plugins-good/files/goom-nommx.patch">goom-nommx.patch</a>
+    <br style="clear: both" />
+  </h1>
+      <div id="jumprev">
+        <form action="" method="get">
+          <div>
+            <label for="rev">
+              View revision:</label>
+            <input type="text" id="rev" name="rev" size="6" />
+          </div>
+        </form>
+      </div>
+      <div id="jumploc">
+        <form action="" method="get">
+          <div class="buttons">
+            <label for="preselected">Visit:</label>
+            <select id="preselected" name="preselected">
+              <option selected="selected"></option>
+              <optgroup label="branches">
+                <option value="/browser/trunk">trunk</option><option value="/browser/branches/APPLE">branches/APPLE</option><option value="/browser/branches/bigmove">branches/bigmove</option><option value="/browser/branches/dp2mp-move">branches/dp2mp-move</option><option value="/browser/branches/dp_light-olegb">branches/dp_light-olegb</option><option value="/browser/branches/gsoc08-framework">branches/gsoc08-framework</option><option value="/browser/branches/gsoc08-privileges">branches/gsoc08-privileges</option><option value="/browser/branches/gsoc09-gui">branches/gsoc09-gui</option><option value="/browser/branches/gsoc09-logging">branches/gsoc09-logging</option><option value="/browser/branches/gsoc10-configfiles">branches/gsoc10-configfiles</option><option value="/browser/branches/gsoc10-gui">branches/gsoc10-gui</option><option value="/browser/branches/gsoc10-mpwa">branches/gsoc10-mpwa</option><option value="/browser/branches/gsoc11-post-destroot">branches/gsoc11-post-destroot</option><option value="/browser/branches/gsoc11-rev-upgrade">branches/gsoc11-rev-upgrade</option><option value="/browser/branches/gsoc11-statistics">branches/gsoc11-statistics</option><option value="/browser/branches/images-and-archives">branches/images-and-archives</option><option value="/browser/branches/jberry-dropprivs">branches/jberry-dropprivs</option><option value="/browser/branches/jberry-preview13">branches/jberry-preview13</option><option value="/browser/branches/jkh-destrootification">branches/jkh-destrootification</option><option value="/browser/branches/kevin-target-api">branches/kevin-target-api</option><option value="/browser/branches/landonf-1_0">branches/landonf-1_0</option><option value="/browser/branches/launchdproto">branches/launchdproto</option><option value="/browser/branches/new-help-system">branches/new-help-system</option><option value="/browser/branches/release1">branches/release1</option><option value="/browser/branches/release_1_2">branches/release_1_2</option><option value="/browser/branches/release_1_3">branches/release_1_3</option><option value="/browser/branches/release_1_4">branches/release_1_4</option><option value="/browser/branches/release_1_5">branches/release_1_5</option><option value="/browser/branches/release_1_6">branches/release_1_6</option><option value="/browser/branches/release_1_7">branches/release_1_7</option><option value="/browser/branches/release_1_8">branches/release_1_8</option><option value="/browser/branches/release_1_9">branches/release_1_9</option><option value="/browser/branches/release_2_0">branches/release_2_0</option><option value="/browser/branches/rshaw-archivemode">branches/rshaw-archivemode</option><option value="/browser/branches/ssen-platform-1">branches/ssen-platform-1</option><option value="/browser/branches/ssen-platform-2">branches/ssen-platform-2</option><option value="/browser/branches/universal-sanity">branches/universal-sanity</option><option value="/browser/branches/wbb4-versionfoobage-1">branches/wbb4-versionfoobage-1</option><option value="/browser/branches/wbb4_versionfoobage_base">branches/wbb4_versionfoobage_base</option><option value="/browser/branches/xterm-titles">branches/xterm-titles</option>
+              </optgroup><optgroup label="tags">
+                <option value="/browser/tags/darwinports-1?rev=5">tags/darwinports-1</option><option value="/browser/tags/DPORTS-BASE_0_5?rev=2450">tags/DPORTS-BASE_0_5</option><option value="/browser/tags/gimp_1_3_15?rev=2927">tags/gimp_1_3_15</option><option value="/browser/tags/jberry-before-preview13-merge?rev=15692">tags/jberry-before-preview13-merge</option><option value="/browser/tags/jberry-dropprivs-bp?rev=18973">tags/jberry-dropprivs-bp</option><option value="/browser/tags/jberry-preview13-base?rev=14978">tags/jberry-preview13-base</option><option value="/browser/tags/jkh-destrootification-base?rev=3126">tags/jkh-destrootification-base</option><option value="/browser/tags/kevin-target-api-base?rev=2254">tags/kevin-target-api-base</option><option value="/browser/tags/PortImages-merge?rev=7476">tags/PortImages-merge</option><option value="/browser/tags/post-landon-trace?rev=114">tags/post-landon-trace</option><option value="/browser/tags/pre-chain-remove?rev=239">tags/pre-chain-remove</option><option value="/browser/tags/pre-landon-trace?rev=111">tags/pre-landon-trace</option><option value="/browser/tags/pre-wbb4-images?rev=7607">tags/pre-wbb4-images</option><option value="/browser/tags/PRE_DESTROOT_TARGET?rev=3171">tags/PRE_DESTROOT_TARGET</option><option value="/browser/tags/release_1_0?rev=12231">tags/release_1_0</option><option value="/browser/tags/release_1_2-bp?rev=15090">tags/release_1_2-bp</option><option value="/browser/tags/release_1_2_0?rev=15499">tags/release_1_2_0</option><option value="/browser/tags/release_1_2_0-archive?rev=15500">tags/release_1_2_0-archive</option><option value="/browser/tags/release_1_2_0-archive-rc1?rev=15140">tags/release_1_2_0-archive-rc1</option><option value="/browser/tags/release_1_2_0-rc1?rev=15118">tags/release_1_2_0-rc1</option><option value="/browser/tags/release_1_2_0-rc2?rev=15196">tags/release_1_2_0-rc2</option><option value="/browser/tags/release_1_2_0-rc2-archive?rev=15197">tags/release_1_2_0-rc2-archive</option><option value="/browser/tags/release_1_2_0-rc3?rev=15394">tags/release_1_2_0-rc3</option><option value="/browser/tags/release_1_2_0-rc3-archive?rev=15395">tags/release_1_2_0-rc3-archive</option><option value="/browser/tags/release_1_2_1?rev=17219">tags/release_1_2_1</option><option value="/browser/tags/release_1_2_1-archive?rev=17222">tags/release_1_2_1-archive</option><option value="/browser/tags/release_1_2_1-rc1?rev=17183">tags/release_1_2_1-rc1</option><option value="/browser/tags/release_1_2_1-rc1-archive?rev=17184">tags/release_1_2_1-rc1-archive</option><option value="/browser/tags/release_1_3-bp?rev=18750">tags/release_1_3-bp</option><option value="/browser/tags/release_1_3_0?rev=18754">tags/release_1_3_0</option><option value="/browser/tags/release_1_3_0-archive?rev=18758">tags/release_1_3_0-archive</option><option value="/browser/tags/release_1_3_1?rev=18821">tags/release_1_3_1</option><option value="/browser/tags/release_1_3_1-archive?rev=18949">tags/release_1_3_1-archive</option><option value="/browser/tags/release_1_3_2?rev=19070">tags/release_1_3_2</option><option value="/browser/tags/release_1_3_2-archive?rev=19071">tags/release_1_3_2-archive</option><option value="/browser/tags/release_1_4_0?rev=23203">tags/release_1_4_0</option><option value="/browser/tags/release_1_4_0-archive?rev=23641">tags/release_1_4_0-archive</option><option value="/browser/tags/release_1_4_0-rc1?rev=22651">tags/release_1_4_0-rc1</option><option value="/browser/tags/release_1_4_0-rc2?rev=22790">tags/release_1_4_0-rc2</option><option value="/browser/tags/release_1_4_1?rev=23974">tags/release_1_4_1</option><option value="/browser/tags/release_1_4_2?rev=24120">tags/release_1_4_2</option><option value="/browser/tags/release_1_4_3?rev=24156">tags/release_1_4_3</option><option value="/browser/tags/release_1_4_40?rev=24909">tags/release_1_4_40</option><option value="/browser/tags/release_1_4_41?rev=25266">tags/release_1_4_41</option><option value="/browser/tags/release_1_4_42?rev=25296">tags/release_1_4_42</option><option value="/browser/tags/release_1_5_0?rev=26818">tags/release_1_5_0</option><option value="/browser/tags/release_1_5_0-archive?rev=26819">tags/release_1_5_0-archive</option><option value="/browser/tags/release_1_5_0-rc1?rev=26762">tags/release_1_5_0-rc1</option><option value="/browser/tags/release_1_5_1?rev=27646">tags/release_1_5_1</option><option value="/browser/tags/release_1_5_2?rev=27897">tags/release_1_5_2</option><option value="/browser/tags/release_1_6_0?rev=39572">tags/release_1_6_0</option><option value="/browser/tags/release_1_6_0-archive?rev=32095">tags/release_1_6_0-archive</option><option value="/browser/tags/release_1_6_0-rc1?rev=31130">tags/release_1_6_0-rc1</option><option value="/browser/tags/release_1_6_0-rc2?rev=31198">tags/release_1_6_0-rc2</option><option value="/browser/tags/release_1_6_0-rc3?rev=31952">tags/release_1_6_0-rc3</option><option value="/browser/tags/release_1_7_0?rev=43709">tags/release_1_7_0</option><option value="/browser/tags/release_1_7_0-archive?rev=43712">tags/release_1_7_0-archive</option><option value="/browser/tags/release_1_7_0-beta1?rev=42675">tags/release_1_7_0-beta1</option><option value="/browser/tags/release_1_7_0-rc1?rev=43231">tags/release_1_7_0-rc1</option><option value="/browser/tags/release_1_7_1?rev=48785">tags/release_1_7_1</option><option value="/browser/tags/release_1_8_0?rev=56443">tags/release_1_8_0</option><option value="/browser/tags/release_1_8_0-archive?rev=56444">tags/release_1_8_0-archive</option><option value="/browser/tags/release_1_8_0-beta1?rev=55261">tags/release_1_8_0-beta1</option><option value="/browser/tags/release_1_8_0-rc1?rev=55936">tags/release_1_8_0-rc1</option><option value="/browser/tags/release_1_8_1?rev=58452">tags/release_1_8_1</option><option value="/browser/tags/release_1_8_2?rev=62222">tags/release_1_8_2</option><option value="/browser/tags/release_1_9_0?rev=68622">tags/release_1_9_0</option><option value="/browser/tags/release_1_9_0-archive?rev=68623">tags/release_1_9_0-archive</option><option value="/browser/tags/release_1_9_0-beta1?rev=67299">tags/release_1_9_0-beta1</option><option value="/browser/tags/release_1_9_0-beta2?rev=67843">tags/release_1_9_0-beta2</option><option value="/browser/tags/release_1_9_0-rc1?rev=68110">tags/release_1_9_0-rc1</option><option value="/browser/tags/release_1_9_0-rc2?rev=68431">tags/release_1_9_0-rc2</option><option value="/browser/tags/release_1_9_1?rev=68922">tags/release_1_9_1</option><option value="/browser/tags/release_1_9_2?rev=73234">tags/release_1_9_2</option><option value="/browser/tags/release_2_0_0-beta1?rev=79582">tags/release_2_0_0-beta1</option><option value="/browser/tags/rshaw-archivemode-base?rev=8263">tags/rshaw-archivemode-base</option><option value="/browser/tags/rshaw-archivemode-merged-from-head?rev=9435">tags/rshaw-archivemode-merged-from-head</option><option value="/browser/tags/ssen-platform-1-base?rev=2846">tags/ssen-platform-1-base</option><option value="/browser/tags/ssen-platform-2-base?rev=2944">tags/ssen-platform-2-base</option><option value="/browser/tags/wbb4-versionfoobage-1-base?rev=5270">tags/wbb4-versionfoobage-1-base</option>
+              </optgroup>
+            </select>
+            <input type="submit" value="Go!" title="Jump to the chosen preselected path" />
+          </div>
+        </form>
+      </div>
+      <table id="info" summary="Revision info">
+        <tr>
+          <th scope="col">
+            Revision <a href="/changeset/79398">79398</a>, <span title="879 bytes">0.9 KB</span>
+            (checked in by jeremyhu@…, <a class="timeline" href="/timeline?from=2011-06-12T15%3A49%3A45-0700&amp;precision=second" title="2011-06-12T15:49:45-0700 in Timeline">12 days</a> ago)
+          </th>
+        </tr>
+        <tr>
+          <td class="message searchable">
+              <p>
+gst-plugins-good: Disable mmx when building the goom plugin to fix a build failure<br />
+</p>
+          </td>
+        </tr>
+      </table>
+      <div id="preview" class="searchable">
+    <div class="diff">
+  <ul class="entries">
+      <li class="entry">
+        <h2>
+          <a>gst/goom/Makefile.am</a>
+        </h2>
+        <table class="inline" summary="Differences" cellspacing="0">
+              <colgroup><col class="lineno" /><col class="lineno" /><col class="content" /></colgroup>
+              <thead>
+                <tr>
+                  <th title="File a/gst/goom/Makefile.am 2011-06-12 15:35:19.000000000 -0700">
+                      a
+                  </th>
+                  <th title="File b/gst/goom/Makefile.am 2011-06-12 15:37:03.000000000 -0700">
+                      b
+                  </th>
+                  <th> </th>
+                </tr>
+              </thead>
+            <tbody class="unmod">
+                  <tr>
+                          <th>4</th><th>4</th><td class="l"><span>PPC_FILES=ppc_zoom_ultimate.s ppc_drawings.s ppc_drawings.h ppc_zoom_ultimate.h</span> </td>
+                  </tr><tr>
+                          <th>5</th><th>5</th><td class="l"><span>MMX_FILES=mmx.c xmmx.c mmx.h xmmx.h</span> </td>
+                  </tr><tr>
+                          <th>6</th><th>6</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="mod">
+                      <tr class="first">
+                        <th>7</th><th> </th><td class="l"><span># disable until someone figures out how to build these correctly on ppc<del></del></span> </td>
+                      </tr><tr>
+                        <th>8</th><th> </th><td class="l"><span><del></del>ARCH_FILES = $(MMX_FILES)</span> </td>
+                      </tr>
+                      <tr>
+                        <th> </th><th>7</th><td class="r"><span># disable until someone figures out how to build these correctly on ppc<ins>&nbsp;and x86_64</ins></span> </td>
+                      </tr><tr class="last">
+                        <th> </th><th>8</th><td class="r"><span><ins>#</ins>ARCH_FILES = $(MMX_FILES)</span> </td>
+                      </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>9</th><th>9</th><td class="l"><span>#ARCH_FILES += $(PPC_FILES)</span> </td>
+                  </tr><tr>
+                          <th>10</th><th>10</th><td class="l"><span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> </td>
+                  </tr><tr>
+                          <th>11</th><th>11</th><td class="l"><span>libgstgoom_la_SOURCES =&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;\</span> </td>
+                  </tr>
+            </tbody>
+              <tbody class="skipped">
+                <tr>
+                  <th><a href="#L31">…</a></th>
+                  <th><a href="#L31">…</a></th>
+                  <td> </td>
+                </tr>
+              </tbody>
+            <tbody class="unmod">
+                  <tr>
+                          <th>31</th><th>31</th><td class="l"><span>libgstgoom_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS)</span> </td>
+                  </tr><tr>
+                          <th>32</th><th>32</th><td class="l"><span>libgstgoom_la_LIBTOOLFLAGS = --tag=disable-static</span> </td>
+                  </tr><tr>
+                          <th>33</th><th>33</th><td class="l"><span></span> </td>
+                  </tr>
+            </tbody><tbody class="add">
+                  <tr class="first">
+                          <th> </th><th>34</th><td class="r"><ins># mmx code doesn't build on x86_64, so disable it</ins> </td>
+                  </tr><tr>
+                          <th> </th><th>35</th><td class="r"><ins>libgstgoom_la_CFLAGS += -mno-mmx</ins> </td>
+                  </tr><tr class="last">
+                          <th> </th><th>36</th><td class="r"><ins></ins> </td>
+                  </tr>
+            </tbody><tbody class="unmod">
+                  <tr>
+                          <th>34</th><th>37</th><td class="l"><span>EXTRA_DIST = $(PPC_FILES) $(MMX_FILES)</span> </td>
+                  </tr><tr>
+                          <th>35</th><th>38</th><td class="l"><span></span> </td>
+                  </tr><tr>
+                          <th>36</th><th>39</th><td class="l"><span>.NOTPARALLEL:</span> </td>
+                  </tr>
+            </tbody>
+        </table>
+      </li>
+  </ul>
+</div>
+      </div>
+      <div id="help">
+        <strong>Note:</strong> See <a href="/wiki/TracBrowser">TracBrowser</a>
+        for help on using the browser.
+      </div>
+      <div id="anydiff">
+        <form action="/diff" method="get">
+          <div class="buttons">
+            <input type="hidden" name="new_path" value="/trunk/dports/gnome/gst-plugins-good/files/goom-nommx.patch" />
+            <input type="hidden" name="old_path" value="/trunk/dports/gnome/gst-plugins-good/files/goom-nommx.patch" />
+            <input type="hidden" name="new_rev" />
+            <input type="hidden" name="old_rev" />
+            <input type="submit" value="View changes..." title="Select paths and revs for Diff" />
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="altlinks">
+      <h3>Download in other formats:</h3>
+      <ul>
+        <li class="first">
+          <a rel="nofollow" href="/browser/trunk/dports/gnome/gst-plugins-good/files/goom-nommx.patch?format=txt">Plain Text</a>
+        </li><li class="last">
+          <a rel="nofollow" href="/export/79732/trunk/dports/gnome/gst-plugins-good/files/goom-nommx.patch">Original Format</a>
+        </li>
+      </ul>
+    </div>
+    </div>
+    </div>
+  </div>
+ </div>
+    <script type="text/javascript" src="https://static2.macosforge.org/static/js/jquery.js"></script>
+    <script type="text/javascript" src="https://static2.macosforge.org/static/js/main.js"></script>
+ </div>
+ </body>
+</html>
