@@ -41,8 +41,8 @@ depends_lib	\
 use_bzip2   yes
 
 # https://bugzilla.gnome.org/show_bug.cgi?id=636134
-#patchfiles universal.patch goom-nommx.patch
-#patch.pre_args  -p1
+patchfiles universal.patch goom-nommx.patch
+patch.pre_args  -p1
 
 pre-configure {
     reinplace "s|OBJC = gcc|OBJC = @OBJC@|" ${worksrcpath}/sys/osxvideo/Makefile.in
@@ -53,6 +53,13 @@ use_autoreconf          yes
 autoreconf.args         -fvi
 
 configure.args-append   --disable-gtk-doc --disable-schemas-install --with-default-videosink=ximagesink
+
+# BUILD FIX TODO: clang
+# SSE register return with SSE disabled
+# <rdar://problem/9694837>
+if {${configure.compiler} == "clang"} {
+	configure.compiler llvm-gcc-4.2
+}
 
 post-activate {
         #system "export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source` && \
