@@ -2,7 +2,7 @@
 # This script compiles gstreamer on OSX using MacPorts.
 # Authors: Andres Colubri (http://interfaze.info/)
 #          David Liu (http://archive.itee.uq.edu.au/~davel/)
-# Version: 0.5 (2011-01-24)
+# Version: 0.9 (2011-10-02)
 # Part of the OSSBuild project:
 # http://code.google.com/p/ossbuild/
 
@@ -21,9 +21,9 @@ session_step = 0
 def print_help():
     print 'This script compiles gstreamer on OSX using MacPorts. It accepts the following arguments:'
     print '--arch architecture. Expected values: i386, x86_64. Default: x86_64'
-    print '--target target OS version. Expected values: 10.5, 10.6. Default: 10.6'
+    print '--target target OS version. Expected values: 10.5, 10.6, 10.7. Default: 10.6'
     print '--dir desired base location of the generated files. Default: /opt/local'
-    print '--macports MacPorts version. Default: 1.9.2'
+    print '--macports MacPorts version. Default: 2.0.3'
     print '--lrepo adds a local portfile repository. By default, no local repositories are used.'
     print ' '
     print 'Notes:' 
@@ -70,7 +70,7 @@ def download_macports(macports_str, macports_dir):
         os.chdir(dir0)
     else:
         run_cmd('curl -O http://distfiles.macports.org/MacPorts/' + macports_str + '.tar.bz2', 'DOWNLOADING MACPORTS')
-        run_cmd('tar xvfz MacPorts-1.9.2.tar.bz2', 'UNCOMPRESSING MACPORTS')
+        run_cmd('tar xvfj ' + macports_str +'.tar.bz2', 'UNCOMPRESSING MACPORTS')
         
 def setup_macports(cpu_arch, macports_dir, install_dir):
     dir0 = os.getcwd()
@@ -110,7 +110,7 @@ def fix_conf(install_dir, target_os, cpu_arch):
 def add_local_repos(install_dir, local_repos):
     if len(local_repos) == 0: return
 
-    def_repo_str = 'rsync://rsync.macports.org/release/ports/ [default]'    
+    def_repo_str = 'rsync://rsync.macports.org/release/tarballs/ports.tar [default]'        
     sources_fn = install_dir + '/etc/macports/sources.conf'
     portindex_str = install_dir + '/bin/portindex'
     
@@ -118,14 +118,16 @@ def add_local_repos(install_dir, local_repos):
     input = ifile.readlines()
     ifile.close()
     
+    print input
     index = next((i for i in xrange(len(input) - 1, -1, -1) if input[i].strip() == def_repo_str), None)
-    
+    print "index", index
     n = 0
     for lrepo in local_repos:
         lrepo_path = os.path.realpath(lrepo)
         lrepo_str = 'file://' + lrepo_path
+        print lrepo_str + '\n'
         index0 = next((i for i in xrange(len(input) - 1, -1, -1) if input[i].strip() == lrepo_str), None)        
-        if index0 == None:
+        if index0 == None:            
             input.insert(index + n, lrepo_str + '\n')
             n = n + 1
     
@@ -217,12 +219,12 @@ def main():
     SUPP_ARCH = ['i386', 'x86_64']
     cpu_arch = 'x86_64'
 
-    SUPP_TARGET = {'10.5':5, '10.6':6}
+    SUPP_TARGET = {'10.5':5, '10.6':6, '10.7':7}
     target_os = 6
     
     local_repos = []    
     install_dir = '/opt/local'    
-    macports_ver = '1.9.2'
+    macports_ver = '2.0.3'
     use_x11 = 0
     use_regscanner = 1
 
