@@ -5,6 +5,7 @@ PortSystem          1.0
 
 name		        gst-plugins-bad
 version		        0.10.22
+revision            1
 description         A set of plug-ins for GStreamer that need more quality.
 long_description    \
     GStreamer Bad Plug-ins is a set of plug-ins that aren't up to par compared \
@@ -23,6 +24,7 @@ checksums           md5     9a2acee1f386f71247003d0d7090fb1c \
                     sha1    66f4b9c40eb2ea43f093802e673effabee600a9b \
                     rmd160  a3cf707a42d49b4285a57adaa07dc87591f18403
 
+depends_build port:pkgconfig
 depends_lib port:gst-plugins-base \
             port:XviD \
             port:dirac \
