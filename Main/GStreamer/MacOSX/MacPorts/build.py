@@ -118,14 +118,12 @@ def add_local_repos(install_dir, local_repos):
     input = ifile.readlines()
     ifile.close()
     
-    print input
     index = next((i for i in xrange(len(input) - 1, -1, -1) if input[i].strip() == def_repo_str), None)
-    print "index", index
+
     n = 0
     for lrepo in local_repos:
         lrepo_path = os.path.realpath(lrepo)
         lrepo_str = 'file://' + lrepo_path
-        print lrepo_str + '\n'
         index0 = next((i for i in xrange(len(input) - 1, -1, -1) if input[i].strip() == lrepo_str), None)        
         if index0 == None:            
             input.insert(index + n, lrepo_str + '\n')
