@@ -15,13 +15,21 @@ Use the build.py script to generate gstreamer binaries for the desired cpu archi
 
 2) Cleaning-up step
 The folder with the required dylib and so files is <prefix>/lib. Inside lib you can delete all subfolders except gstreamer-0.10, which contains the plugins. All the files that are not either dylib and so can be deleted. Inside the plugins folder, all the files but the so can be deleted.
+When copying these files to another location for the post-processing steps, keep in mind that using the cp command from the terminal replaces the symbolic links by the files they point to. This doesn't happen when copying with Finder.
 
 3) Post-processing steps
+
+3.0) Make sure that you have write access to all the compiled files (it might not be the case if sudo was used with the build.py tool)
+> sudo chown -R <user name> <lib folder>
+> chmod -R +w <lib folder>
 
 3.1) If also needed, eliminate symbolic links using the removesymlinks.py tool:
 > ./removesymlinks.py --dir <lib folder>
 
-3.2) Replace absolute paths with relative paths using the replacepath.py tool.
+3.2) Remove dead dependencies (run twice to remove dependencies that were used only by dead dependencies).
+> ./removedeaddeps.py --dir ../0.10.35/i386/
+
+3.3) Replace absolute paths with relative paths using the replacepath.py tool.
 For base libs:
 
 > ./replacepath.py --old /opt/local/lib/ --new @loader_path/ --dir <lib folder>

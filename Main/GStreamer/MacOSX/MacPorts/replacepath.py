@@ -21,7 +21,7 @@ def print_error(error):
     print error + '. Get some help by typing:'
     print 'replacepath.py --help'
 
-def process_lib(old, new, fullname, fn):
+def process_file(old, new, fullname, fn):
     print 'Replacing dependencies in', fn
     
     ext = os.path.splitext(fn)[1]
@@ -76,13 +76,13 @@ def process_lib(old, new, fullname, fn):
 def process_dir(args, dirname, filelist):
     for filename in filelist:
         parts = os.path.splitext(filename)
-        if len(parts) < 2:
-            # No extension
-            continue
+        is_gst_tool = 0
+        if -1 < filename.find('gst-'):
+            is_gst_tool = 1
         ext = parts[1]
-        if ext == '.dylib' or ext == '.so':
+        if ext == '.dylib' or ext == '.so' or is_gst_tool:
             fn = os.path.join(dirname, filename)
-            process_lib(args[0], args[1], filename, fn)
+            process_file(args[0], args[1], filename, fn)
 
 def main():
     old_string = ''

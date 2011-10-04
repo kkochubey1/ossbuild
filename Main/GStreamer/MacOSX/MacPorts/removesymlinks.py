@@ -60,24 +60,26 @@ def generate_link_map(dir):
         parts = line.split()
         if 9 <= len(parts) and line[0] != 'd':
             fullname = parts[8]
-            # Last occurrence of '-' (lib-test-0.10.dylib):
-            n0 = fullname.rfind('-')
-            # First occurrence of '.' (lib.1.2.dylib):
-            n1 = fullname.find('.')
-            if n0 == -1: n0 = 10000
-            if n1 == -1: n1 = 10000
-            n = min(n0, n1)
-            name = fullname[0:n]             
-            if name != current_name:
-                add_to_map(map, name_list)
-                current_name = name
-                name_list = []
-            if line[0] == 'l':
-                # File is a link, deleting.
-                print 'Removing symlink', fullname            
-                proc = subprocess.Popen('rm ' + os.path.join(dir, fullname), shell=True)
-                sts = os.waitpid(proc.pid, 0)[1]             
-            name_list = name_list + [fullname]
+            ext = os.path.splitext(fullname)[1]
+            if ext == '.dylib':
+                # Last occurrence of '-' (lib-test-0.10.dylib):
+                n0 = fullname.rfind('-')
+                # First occurrence of '.' (lib.1.2.dylib):
+                n1 = fullname.find('.')
+                if n0 == -1: n0 = 10000
+                if n1 == -1: n1 = 10000
+                n = min(n0, n1)
+                name = fullname[0:n]             
+                if name != current_name:
+                    add_to_map(map, name_list)
+                    current_name = name
+                    name_list = []
+                if line[0] == 'l':
+                    # File is a link, deleting.
+                    print 'Removing symlink', fullname            
+                    proc = subprocess.Popen('rm ' + os.path.join(dir, fullname), shell=True)
+                    sts = os.waitpid(proc.pid, 0)[1]             
+                name_list = name_list + [fullname]
             
     add_to_map(map, name_list)
  
@@ -87,24 +89,25 @@ def generate_link_map(dir):
     
     return map
 
-def process_lib(map, libname, fn, isdylib):
+def process_file(links, libname, fn, isdylib):
     print 'Replacing dependencies in', fn
     pipe = subprocess.Popen('otool -L ' + fn, shell=True, stdout=subprocess.PIPE).stdout
     output = pipe.readlines()
 
     # Since the dylib files have the first line of the otool -L result containing their own name,
-    # and the so files don't, we do this to take into account this thing.
+    # and the .so (and executable) files don't, we do this to take into account this thing.
     if isdylib:
         i = 0
     else:
-       i = 1
+        i = 1
        
     for line in output[1:len(output)]:
         line = line.strip()
         fullname = line.split()[0]
         name = os.path.basename(fullname)
-        if name in map and map[name] != name:
-            fullname_new = fullname.replace(name, map[name])
+        if name in links and links[name] != name:
+            # libname depends on name        
+            fullname_new = fullname.replace(name, links[name])
             if i == 0:
                 # Changing name of dylib.
                 proc = subprocess.Popen('install_name_tool -id ' + fullname_new + ' ' + fn, shell=True)
@@ -119,31 +122,35 @@ def process_lib(map, libname, fn, isdylib):
     # Checking replacement succcess:
     pipe = subprocess.Popen('otool -L ' + fn, shell=True, stdout=subprocess.PIPE).stdout
     output = pipe.readlines()
+    res = 1
     for line in output[1:len(output)]:
         line = line.strip()
         fullname = line.split()[0]
         name = os.path.basename(fullname)      
-        if name in map and map[name] != name:
+        if name in links and links[name] != name:
+            res = 0
             print '  Warning: replacement failed:', fn, fullname
+    if res:
+        print '  Replacement of library names was OK' 
 
     # Now renaming library file to the name of the shortest link.    
     name = os.path.basename(fn)      
-    if name in map and map[name] != name:    
-        fn_new = fn.replace(name, map[name])
-        print '  Renaming', name, 'to', map[name]
+    if name in links and links[name] != name:    
+        fn_new = fn.replace(name, links[name])
+        print '  Renaming', name, 'to', links[name]
         proc = subprocess.Popen('mv ' + fn + ' ' + fn_new, shell=True)
         sts = os.waitpid(proc.pid, 0)[1]
 
 def process_dir(args, dirname, filelist):
     for filename in filelist:
         parts = os.path.splitext(filename)
-        if len(parts) < 2:
-            # No extension
-            continue
+        is_gst_tool = 0
+        if -1 < filename.find('gst-'):
+            is_gst_tool = 1
         ext = parts[1]
-        if ext == '.dylib' or ext == '.so':
+        if ext == '.dylib' or ext == '.so' or is_gst_tool:
             fn = os.path.join(dirname, filename)
-            process_lib(args, filename, fn, ext == '.dylib')
+            process_file(args, filename, fn, ext == '.dylib')
     
 def main():
     input_dir = ''
@@ -174,7 +181,7 @@ def main():
         return
 
     print 'WORKING...'
-    link_map = generate_link_map(input_dir)
-    os.path.walk(input_dir, process_dir, link_map)  
+    links_map = generate_link_map(input_dir)    
+    os.path.walk(input_dir, process_dir, links_map)
     print 'DONE.'
 main()
