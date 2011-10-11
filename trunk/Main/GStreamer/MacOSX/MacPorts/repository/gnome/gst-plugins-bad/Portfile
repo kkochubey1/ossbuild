@@ -79,7 +79,11 @@ configure.cppflags-append   "-L${prefix}/lib"
 configure.cflags-append     -funroll-loops -fstrict-aliasing
 configure.env-append        "HAVE_CXX=yes"
 
-patchfiles  modplug.patch
+patchfiles  modplug.patch \
+			patch-sys-applemedia-Makefile.in.diff \
+			patch-sys-applemedia-qtkitvideosrc.h.diff \
+			patch-sys-applemedia-qtkitvideosrc.m.diff
+			
 
 post-patch {
     reinplace "s|-flat_namespace -undefined suppress|-undefined define_a_way|g" \

@@ -2,7 +2,7 @@
 # This script compiles gstreamer on OSX using MacPorts.
 # Authors: Andres Colubri (http://interfaze.info/)
 #          David Liu (http://archive.itee.uq.edu.au/~davel/)
-# Version: 0.9 (2011-10-02)
+# Version: 1.0 (2011-10-09)
 # Part of the OSSBuild project:
 # http://code.google.com/p/ossbuild/
 
@@ -19,28 +19,34 @@ session_file = 0
 session_step = 0
 
 def print_help():
-    print 'This script compiles gstreamer on OSX using MacPorts. It accepts the following arguments:'
+    print 'This script compiles gstreamer on MacOSX using MacPorts.'
+    print ' '
+    print 'Arguments:'    
     print '--arch architecture. Expected values: i386, x86_64. Default: x86_64'
     print '--target target OS version. Expected values: 10.5, 10.6, 10.7. Default: 10.6'
     print '--dir desired base location of the generated files. Default: /opt/local'
     print '--macports MacPorts version. Default: 2.0.3'
-    print '--lrepo adds a local portfile repository. By default, no local repositories are used.'
+    print '--lrepo local portfile repository. By default, no local repositories are used.'
     print ' '
+    print 'Switches:'     
+    print '-X11    Enables X11 support.'
+    print '-good   Enables compilation of the good plugins.'
+    print '-bad    Enables compilation of the bad plugins.'
+    print '-ugly   Enables compilation of the ugly plugins.'
+    print '-ffmpeg Enables compilation of the ffmpeg plugins.'
+    print '-gnolin Enables compilation of the gnolin plugins.'
+    print '-gl     Enables compilation of the gl plugins.'
+    print '-resume Restarts execution from the last completed step.' 
+    print ' '    
     print 'Notes:' 
     print '1) If the base folder is set to be a folder that requires root access to be written to,'
-    print '   then this script should be run with sudo.'
-    print '2) By default, it doesn`t build gstreamer with X11 support. Add the -X11 switch to override'
-    print '   this setting.'
-    print '3) If execution stops due to an error in some intermediate step, the next time the script'
-    print '   is called it is possible to resume from the last step by adding the -resume switch.'
-    print '4) The switch -noregscan can be added to disable the use of the registry scanner helper.'
-    print '   In this case, gstreamer will use the old plugin scanning method that doesn`t require'
-    print '   an external helper binary.'
+    print '   then this script should be run with sudo.'    
     print ' '
     print 'Examples:' 
     print '1) The following line would build gstreamer for 32 bits using MacPorts 1.9.2, targeted'
-    print '   at OSX Leopard, put the files in /opt/local, and enable X11 support:'
-    print 'build.py --arch i386 --target 10.5 --dir /opt/local --macports 1.9.2 -X11'
+    print '   at OSX Snow Leopard, put the files in /opt/local, enable X11 support, and build'
+    print '   only the good and bad plugins:'        
+    print 'build.py --arch i386 --target 10.5 --dir /opt/local --macports 1.9.2 -X11 -good -bad'
     print '2) To try to resume execution from the last succesful step with the parameters used in'
     print '   the previous call:'
     print 'build.py -resume'
@@ -153,49 +159,56 @@ def delete_files():
             os.remove(fname)
     print 'DONE.'
 
-def build_gstreamer(install_dir, cpu_arch, target_os, use_x11, use_regscanner):
+def build_gstreamer(install_dir, cpu_arch, target_os, use_x11, use_regscanner,
+                    build_good, build_bad, build_ugly, build_ffmpeg, build_gnolin, build_gl):
     port_str = install_dir + '/bin/port install '
     
     if use_regscanner:
         regscanner = ' +regscanner'
     else:
         regscanner = ''
-      
-    if cpu_arch == 'x86_64':   
-        if 6 <= target_os:
-            apple_media = ' +apple_media'
-            build_gstgl = 1
-        else: 
-            apple_media = ''
-            build_gstgl = 0        
-    else:
+
+    if 6 <= target_os:
+        apple_media = ' +apple_media'
+    else: 
         apple_media = ''
-        build_gstgl = 0
+        build_gl = 0
         
     if use_x11:
         run_cmd(port_str + 'gstreamer' + regscanner, 'BUILDING gstreamer')
         run_cmd(port_str + 'gst-plugins-base', 'BUILDING gst-plugins-base')
-        run_cmd(port_str + 'gst-plugins-good', 'BUILDING gst-plugins-good')
-        run_cmd(port_str + 'gst-plugins-bad' + apple_media, 'BUILDING gst-plugins-bad')
-        run_cmd(port_str + 'libmpeg2 +no_sdl', 'BUILDING libmpeg2')        
-        run_cmd(port_str + 'gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
-        run_cmd(port_str + 'gst-ffmpeg', 'BUILDING gst-ffmpeg')
-        if build_gstgl:
+        if build_good:
+            run_cmd(port_str + 'gst-plugins-good', 'BUILDING gst-plugins-good')
+        if build_bad:
+            run_cmd(port_str + 'gst-plugins-bad' + apple_media, 'BUILDING gst-plugins-bad')
+        if build_ugly:            
+            run_cmd(port_str + 'libmpeg2 +no_sdl', 'BUILDING libmpeg2')        
+            run_cmd(port_str + 'gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
+        if build_ffmpeg:            
+            run_cmd(port_str + 'gst-ffmpeg', 'BUILDING gst-ffmpeg')            
+        if build_gl:
             run_cmd(port_str + 'gst-plugins-gl', 'BUILDING gst-plugins-gl')
-        run_cmd(port_str + 'gnonlin', 'BUILDING gnonlin')
+        if build_gnolin:            
+            run_cmd(port_str + 'gnonlin', 'BUILDING gnonlin')
     else:
         run_cmd(port_str + 'gstreamer' + regscanner, 'BUILDING gstreamer')
         run_cmd(port_str + 'gst-plugins-base +no_x11 +no_gnome_vfs', 'BUILDING gst-plugins-base')
-        run_cmd(port_str + 'gst-plugins-good +no_soup +no_keyring +no_caca', 'BUILDING gst-plugins-good')        
-        run_cmd(port_str + 'gst-plugins-bad +no_x11 +no_glade +no_mms' + apple_media, 'BUILDING gst-plugins-bad')        
-        run_cmd(port_str + 'libmpeg2 +no_x11 +no_sdl', 'BUILDING libmpeg2')
-        run_cmd(port_str + 'gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
-        run_cmd(port_str + 'gst-ffmpeg', 'BUILDING gst-ffmpeg')
-        if build_gstgl:        
+        if build_good:
+            run_cmd(port_str + 'gst-plugins-good +no_soup +no_keyring +no_caca', 'BUILDING gst-plugins-good')
+        if build_bad:
+            run_cmd(port_str + 'gst-plugins-bad +no_x11 +no_glade +no_mms' + apple_media, 'BUILDING gst-plugins-bad')        
+        if build_ugly:        
+            run_cmd(port_str + 'libmpeg2 +no_x11 +no_sdl', 'BUILDING libmpeg2')
+            run_cmd(port_str + 'gst-plugins-ugly', 'BUILDING gst-plugins-ugly')
+        if build_ffmpeg:                
+            run_cmd(port_str + 'gst-ffmpeg', 'BUILDING gst-ffmpeg')            
+        if build_gl:
             run_cmd(port_str + 'gst-plugins-gl', 'BUILDING gst-plugins-gl')
-        run_cmd(port_str + 'gnonlin', 'BUILDING gnonlin')
+        if build_gnolin:            
+            run_cmd(port_str + 'gnonlin', 'BUILDING gnonlin')
 
-def write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos, use_x11, use_regscanner):
+def write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos, use_x11, use_regscanner,
+                     build_good, build_bad, build_ugly, build_ffmpeg, build_gnolin, build_gl):
     global session_file
     
     session_file.write('arch=' + cpu_arch + '\n')
@@ -208,6 +221,30 @@ def write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos
         session_file.write('X11=yes\n')
     else:
         session_file.write('X11=no\n')
+    if build_good:
+        session_file.write('good=yes\n')
+    else:
+        session_file.write('good=no\n')
+    if build_bad:
+        session_file.write('bad=yes\n')
+    else:
+        session_file.write('bad=no\n')
+    if build_ugly:
+        session_file.write('ugly=yes\n')
+    else:
+        session_file.write('ugly=no\n')
+    if build_ffmpeg:
+        session_file.write('ffmpeg=yes\n')
+    else:
+        session_file.write('ffmpeg=no\n')
+    if build_gnolin:
+        session_file.write('gnolin=yes\n')
+    else:
+        session_file.write('gnolin=no\n')
+    if build_gl:
+        session_file.write('gl=yes\n')
+    else:
+        session_file.write('gl=no\n')        
     if use_regscanner:    
         session_file.write('regscanner=yes\n')
     else:
@@ -225,7 +262,14 @@ def main():
     macports_ver = '2.0.3'
     use_x11 = 0
     use_regscanner = 1
-
+    
+    build_good = 0;
+    build_bad = 0;    
+    build_ugly = 0;
+    build_ffmpeg = 0;
+    build_gnolin = 0;
+    build_gl = 0;
+    
     global session_step
     session_step = 0 
     
@@ -295,12 +339,24 @@ def main():
                 use_x11 = 1                
             elif arg == '-noregscan':                
                 use_regscanner = 0
+            elif arg == '-good':                
+                build_good = 1;                
+            elif arg == '-bad':                
+                build_bad = 1;
+            elif arg == '-ugly':                
+                build_ugly = 1;
+            elif arg == '-ffmpeg':                
+                build_ffmpeg = 1;
+            elif arg == '-gnolin':                
+                build_gnolin = 1;
+            elif arg == '-gl':                
+                build_gl = 1;
             elif arg == '-resume':
                 if os.path.lexists(resume_file):
                     resume_mode = 1 
                 else:
                     print_error('Missing session file')
-                    return     
+                    return    
             elif arg == '--help':
                 print_help()
                 return
@@ -356,7 +412,55 @@ def main():
                     use_regscanner = 0
                 else:          
                     print_error('Wrong argument value (' + val + ')')
-                    return                    
+                    return           
+            elif arg == 'good':
+                if val == 'yes':
+                    build_good = 1
+                elif val == 'no':
+                    build_good = 0
+                else:          
+                    print_error('Wrong argument value (' + val + ')')
+                    return
+            elif arg == 'bad':
+                if val == 'yes':
+                    build_bad = 1
+                elif val == 'no':
+                    build_bad = 0
+                else:          
+                    print_error('Wrong argument value (' + val + ')')
+                    return            
+            elif arg == 'ugly':
+                if val == 'yes':
+                    build_ugly = 1
+                elif val == 'no':
+                    build_ugly = 0
+                else:          
+                    print_error('Wrong argument value (' + val + ')')
+                    return           
+            elif arg == 'ffmpeg':
+                if val == 'yes':
+                    build_ffmpeg = 1
+                elif val == 'no':
+                    build_ffmpeg = 0
+                else:          
+                    print_error('Wrong argument value (' + val + ')')
+                    return       
+            elif arg == 'gnolin':
+                if val == 'yes':
+                    build_gnolin = 1
+                elif val == 'no':
+                    build_gnolin = 0
+                else:          
+                    print_error('Wrong argument value (' + val + ')')
+                    return        
+            elif arg == 'gl':
+                if val == 'yes':
+                    build_gl = 1
+                elif val == 'no':
+                    build_gl = 0
+                else:          
+                    print_error('Wrong argument value (' + val + ')')
+                    return            
             elif arg == 'step':
                 session_step = int(val)
             else:
@@ -367,7 +471,8 @@ def main():
     
     global session_file
     session_file = open(resume_file, 'w')
-    write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos, use_x11, use_regscanner)    
+    write_parameters(cpu_arch, target_os, install_dir, macports_ver, local_repos, use_x11, use_regscanner,
+                     build_good, build_bad, build_ugly, build_ffmpeg, build_gnolin, build_gl)    
     
     macports_str = 'MacPorts-' + macports_ver
     macports_dir = './' + macports_str
@@ -411,7 +516,8 @@ def main():
     add_local_repos(install_dir, local_repos)
 
     if session_step < 6:
-        build_gstreamer(install_dir, cpu_arch, target_os, use_x11, use_regscanner)
+        build_gstreamer(install_dir, cpu_arch, target_os, use_x11, use_regscanner,
+                        build_good, build_bad, build_ugly, build_ffmpeg, build_gnolin, build_gl)
         session_step = 6
 
     session_file.write('step=6\n')

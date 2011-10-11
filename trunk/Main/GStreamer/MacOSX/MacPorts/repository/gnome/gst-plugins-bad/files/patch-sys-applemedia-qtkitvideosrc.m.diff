@@ -1,0 +1,324 @@
+--- sys/applemedia/qtkitvideosrc.m.orig	2011-10-09 10:52:54.000000000 -0400
++++ sys/applemedia/qtkitvideosrc.m	2011-10-09 20:36:57.000000000 -0400
+@@ -1,5 +1,6 @@
+ /*
+  * Copyright (C) 2009 Ole André Vadla Ravnås <oravnas@cisco.com>
++ *               2011 Andrés Colubri <andres@fathom.com>
+  *
+  * This library is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU Library General Public
+@@ -24,6 +25,7 @@
+ #import <QTKit/QTKit.h>
+ 
+ #define DEFAULT_DEVICE_INDEX  -1
++#define DEFAULT_DEVICE_NAME   NULL
+ 
+ #define DEVICE_YUV_FOURCC     "UYVY"
+ #define DEVICE_FPS_N          30
+@@ -81,20 +83,24 @@
+     )
+ );
+ 
++static void gst_qtkit_video_src_init_interfaces (GType type);   
++
++GST_BOILERPLATE_FULL (GstQTKitVideoSrc, gst_qtkit_video_src, GstPushSrc,
++    GST_TYPE_PUSH_SRC, gst_qtkit_video_src_init_interfaces);
++
++
+ typedef enum _QueueState {
+   NO_FRAMES = 1,
+   HAS_FRAME_OR_STOP_REQUEST,
+ } QueueState;
+ 
+-GST_BOILERPLATE (GstQTKitVideoSrc, gst_qtkit_video_src, GstPushSrc,
+-    GST_TYPE_PUSH_SRC);
+-
+ @interface GstQTKitVideoSrcImpl : NSObject {
+   GstElement *element;
+   GstBaseSrc *baseSrc;
+   GstPushSrc *pushSrc;
+ 
+   int deviceIndex;
++  gchar *deviceName;
+ 
+   GstAMBufferFactory *bufferFactory;
+   QTCaptureSession *session;
+@@ -113,8 +119,10 @@
+ 
+ - (id)init;
+ - (id)initWithSrc:(GstPushSrc *)src;
++- (void)dealloc;
+ 
+ @property int deviceIndex;
++@property gchar *deviceName;
+ 
+ - (BOOL)openDevice;
+ - (void)closeDevice;
+@@ -149,7 +157,8 @@
+     pushSrc = src;
+ 
+     deviceIndex = DEFAULT_DEVICE_INDEX;
+-
++    deviceName = DEFAULT_DEVICE_NAME;
++    
+     device = nil;
+ 
+     gst_base_src_set_live (baseSrc, TRUE);
+@@ -159,7 +168,13 @@
+   return self;
+ }
+ 
++- (void)dealloc
++{
++  [super dealloc];
++}
++
+ @synthesize deviceIndex;
++@synthesize deviceName;
+ 
+ - (BOOL)openDevice
+ {
+@@ -174,23 +189,53 @@
+     g_clear_error (&gerror);
+     goto openFailed;
+   }
+-
+-  if (deviceIndex == -1) {
+-    device = [QTCaptureDevice defaultInputDeviceWithMediaType:mediaType];
+-    if (device == nil) {
++  
++  if (deviceName == nil) {
++    // Using index to select device
++    if (deviceIndex == -1) {
++      device = [QTCaptureDevice defaultInputDeviceWithMediaType:mediaType];
++      if (device == nil) {
++        GST_ELEMENT_ERROR (element, RESOURCE, NOT_FOUND,
++                           ("No video capture devices found"), (NULL));
++        goto openFailed;
++      }
++    } else {
++      NSArray *devices = [QTCaptureDevice inputDevicesWithMediaType:mediaType];
++      if (deviceIndex >= [devices count]) {
++        GST_ELEMENT_ERROR (element, RESOURCE, NOT_FOUND,
++                           ("Invalid video capture device index"), (NULL));
++        goto openFailed;
++      }
++      device = [devices objectAtIndex:deviceIndex];
++    }  
++  } else {
++    // Using name to select device 
++    NSArray *devices = [QTCaptureDevice inputDevicesWithMediaType:mediaType];
++  
++    if (devices == nil) {
+       GST_ELEMENT_ERROR (element, RESOURCE, NOT_FOUND,
+                          ("No video capture devices found"), (NULL));
+       goto openFailed;
+     }
+-  } else {
+-    NSArray *devices = [QTCaptureDevice inputDevicesWithMediaType:mediaType];
+-    if (deviceIndex >= [devices count]) {
++  
++    for (QTCaptureDevice *temp in devices) {
++      [temp retain];    
++      gchar * name = [[temp localizedDisplayName] UTF8String];
++      [temp release];
++      
++      if (g_strcmp0 (deviceName, name) == 0) {
++        device = temp;
++        break;
++      }
++    }
++    
++    if (device == nil) {
+       GST_ELEMENT_ERROR (element, RESOURCE, NOT_FOUND,
+-                         ("Invalid video capture device index"), (NULL));
++                         ("No video capture devices found"), (NULL));
+       goto openFailed;
+-    }
+-    device = [devices objectAtIndex:deviceIndex];
++    }    
+   }
++  
+   [device retain];
+ 
+   GST_INFO ("Opening '%s'", [[device localizedDisplayName] UTF8String]);
+@@ -464,7 +509,8 @@
+ enum
+ {
+   PROP_0,
+-  PROP_DEVICE_INDEX
++  PROP_DEVICE_INDEX,
++  PROP_DEVICE_NAME
+ };
+ 
+ static void gst_qtkit_video_src_finalize (GObject * obj);
+@@ -472,6 +518,14 @@
+     GValue * value, GParamSpec * pspec);
+ static void gst_qtkit_video_src_set_property (GObject * object, guint prop_id,
+     const GValue * value, GParamSpec * pspec);
++static void gst_qtkit_video_src_probe_interface_init (GstPropertyProbeInterface *
++    iface);
++static const GList *gst_qtkit_video_src_probe_get_properties (GstPropertyProbe *
++    probe);
++static GValueArray *gst_qtkit_video_src_probe_get_values (GstPropertyProbe * probe,
++    guint prop_id, const GParamSpec * pspec);    
++static GValueArray *gst_qtkit_video_src_get_device_name_values (GstQTKitVideoSrcImpl *
++    self);
+ static GstStateChangeReturn gst_qtkit_video_src_change_state (
+     GstElement * element, GstStateChange transition);
+ static gboolean gst_qtkit_video_src_set_caps (GstBaseSrc * basesrc,
+@@ -493,7 +547,8 @@
+   gst_element_class_set_details_simple (element_class,
+       "Video Source (QTKit)", "Source/Video",
+       "Reads frames from a Mac OS X QTKit device",
+-      "Ole André Vadla Ravnås <oravnas@cisco.com>");
++      "Ole André Vadla Ravnås <oravnas@cisco.com>\n"
++      "          	Andrés Colubri <andres@fathom.com>");
+ 
+   gst_element_class_add_pad_template (element_class,
+       gst_static_pad_template_get (&src_template));
+@@ -528,6 +583,11 @@
+           -1, G_MAXINT, DEFAULT_DEVICE_INDEX,
+           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+ 
++  g_object_class_install_property (gobject_class, PROP_DEVICE_NAME,
++      g_param_spec_string ("device-name", "Device Name",
++          "The human-readable device name", DEFAULT_DEVICE_NAME,
++          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
++
+   GST_DEBUG_CATEGORY_INIT (gst_qtkit_video_src_debug, "qtkitvideosrc",
+       0, "Mac OS X QTKit video source");
+ }
+@@ -551,7 +611,9 @@
+ gst_qtkit_video_src_finalize (GObject * obj)
+ {
+   OBJC_CALLOUT_BEGIN ();
+-  [GST_QTKIT_VIDEO_SRC_IMPL (obj) release];
++  GstQTKitVideoSrcImpl *impl = GST_QTKIT_VIDEO_SRC_IMPL (obj);
++  g_free (impl.deviceName);    
++  [impl release];
+   OBJC_CALLOUT_END ();
+ 
+   G_OBJECT_CLASS (parent_class)->finalize (obj);
+@@ -567,6 +629,9 @@
+     case PROP_DEVICE_INDEX:
+       g_value_set_int (value, impl.deviceIndex);
+       break;
++    case PROP_DEVICE_NAME:  
++      g_value_set_string (value, impl.deviceName);
++      break;      
+     default:
+       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+       break;
+@@ -583,12 +648,111 @@
+     case PROP_DEVICE_INDEX:
+       impl.deviceIndex = g_value_get_int (value);
+       break;
++    case PROP_DEVICE_NAME:    
++      {
++        const gchar *deviceName = g_value_get_string (value);
++        g_free (impl.deviceName);
++        impl.deviceName = NULL;
++        if (deviceName && strlen (deviceName) != 0)
++        impl.deviceName = g_strdup (deviceName);
++      }
++      break;      
+     default:
+       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+       break;
+   }
+ }
+ 
++static void
++gst_qtkit_video_src_init_interfaces (GType type)
++{
++  static const GInterfaceInfo qtkitvideosrc_info = {                         
++    (GInterfaceInitFunc) gst_qtkit_video_src_probe_interface_init,
++    NULL,
++    NULL,
++  };
++
++  g_type_add_interface_static (type, GST_TYPE_PROPERTY_PROBE, &qtkitvideosrc_info);
++}
++
++static void
++gst_qtkit_video_src_probe_interface_init (GstPropertyProbeInterface * iface)
++{
++  iface->get_properties = gst_qtkit_video_src_probe_get_properties;
++  iface->get_values = gst_qtkit_video_src_probe_get_values;
++}
++
++static const GList *
++gst_qtkit_video_src_probe_get_properties (GstPropertyProbe * probe)
++{
++  GObjectClass *klass = G_OBJECT_GET_CLASS (probe);
++  static GList *props = NULL;
++
++  if (!props) {
++    GParamSpec *pspec;
++
++    pspec = g_object_class_find_property (klass, "device-name");
++    props = g_list_append (props, pspec);
++  }
++
++  return props;
++}
++
++static GValueArray *
++gst_qtkit_video_src_probe_get_values (GstPropertyProbe * probe, guint prop_id,
++    const GParamSpec * pspec)
++{
++  GstQTKitVideoSrcImpl *src = GST_QTKIT_VIDEO_SRC_IMPL (probe);
++  GValueArray *array = NULL;
++
++  switch (prop_id) {
++    case PROP_DEVICE_NAME:
++      array = gst_qtkit_video_src_get_device_name_values (src);
++      break;
++    default:
++      G_OBJECT_WARN_INVALID_PROPERTY_ID (probe, prop_id, pspec);
++      break;
++  }
++
++  return array;
++}
++
++static GValueArray *
++gst_qtkit_video_src_get_device_name_values (GstQTKitVideoSrcImpl * self)
++{  
++  GValueArray *array = g_value_array_new (0);
++  
++  OBJC_CALLOUT_BEGIN ();
++  
++  NSString *mediaType = QTMediaTypeVideo;  
++  NSArray *devices = [QTCaptureDevice inputDevicesWithMediaType:mediaType];
++  
++  if (devices == nil)
++    return array;
++  
++  for (QTCaptureDevice *device in devices) {
++    [device retain];    
++    gchar * name = [[device localizedDisplayName] UTF8String];
++  
++    GValue value = { 0, };
++
++    g_value_init (&value, G_TYPE_STRING);
++    g_value_set_string (&value, name);
++    
++    // prepend instead of append because the default camera appears
++    // to be listed at the end.
++    g_value_array_prepend (array, &value);
++    
++    g_value_unset (&value);
++    
++    [device release];
++  }
++
++  OBJC_CALLOUT_END ();
++
++  return array;
++}
++
+ static GstStateChangeReturn
+ gst_qtkit_video_src_change_state (GstElement * element, GstStateChange transition)
+ {
