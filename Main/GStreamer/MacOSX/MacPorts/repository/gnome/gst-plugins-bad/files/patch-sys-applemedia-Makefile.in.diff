@@ -1,0 +1,10 @@
+--- sys/applemedia/Makefile.in.orig	2011-10-09 10:31:32.000000000 -0400
++++ sys/applemedia/Makefile.in	2011-10-09 10:26:04.000000000 -0400
+@@ -241,6 +241,7 @@
+ CELT_CFLAGS = @CELT_CFLAGS@
+ CELT_LIBS = @CELT_LIBS@
+ CFLAGS = @CFLAGS@
++OBJCFLAGS = @CFLAGS@
+ COG_CFLAGS = @COG_CFLAGS@
+ COG_LIBS = @COG_LIBS@
+ CPP = @CPP@

@@ -1,0 +1,10 @@
+--- sys/applemedia/qtkitvideosrc.h.orig	2011-10-09 10:53:50.000000000 -0400
++++ sys/applemedia/qtkitvideosrc.h	2011-10-09 10:54:39.000000000 -0400
+@@ -21,6 +21,7 @@
+ #define __GST_QTKIT_VIDEO_SRC_H__
+ 
+ #include <gst/base/gstpushsrc.h>
++#include <gst/interfaces/propertyprobe.h>
+ 
+ G_BEGIN_DECLS
+ 
