@@ -39,3 +39,12 @@ For plugins (note that here we use the relative path @loader_path/../ instead of
 > ./replacepath.py --old /opt/local/lib/ --new @loader_path/../ --dir <lib folder>/gstreamer-0.10
 
 Note that the /opt/local/lib/ path should be replaced by the install location specified in the build step.
+
+4) Strip debug symbols:
+
+4.1) OSX: 
+strip -x *.dylib
+strip -x *.so
+
+4.2) MinGW:
+strip -s *.dll
