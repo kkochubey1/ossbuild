@@ -248,6 +248,27 @@ struct _GstBaseTransformPrivate
   gboolean proxy_alloc;
   GstCaps *sink_alloc;
   GstCaps *src_alloc;
+
+  /*
+   * This flag controls if basetransform should explicitly
+   * do a pad alloc when it receives a buffer even if it operates on
+   * passthrough, this is needed to check for downstream caps suggestions
+   * and this newly alloc'ed buffer is discarded.
+   *
+   * Without this flag basetransform would try a pad alloc whenever it
+   * gets a new buffer and pipelines like:
+   * "src ! basetrans1 ! basetrans2 ! basetrans3 ! sink"
+   * Would have a 3 pad allocs for each buffer pushed downstream from the src.
+   *
+   * This flag is set to TRUE on start up, on setcaps and when a buffer is
+   * pushed downstream. It is set to FALSE after a pad alloc has been requested
+   * downstream.
+   * The rationale is that when a pad alloc flows through the pipeline, all
+   * basetransform elements on passthrough will avoid pad alloc'ing when they
+   * get the buffer.
+   */
+  gboolean force_alloc;
+
   /* upstream caps and size suggestions */
   GstCaps *sink_suggest;
   guint size_suggest;
@@ -456,6 +477,7 @@ gst_base_transform_init (GstBaseTransform * trans,
 
   trans->priv->processed = 0;
   trans->priv->dropped = 0;
+  trans->priv->force_alloc = TRUE;
 }
 
 /* given @caps on the src or sink pad (given by @direction)
@@ -664,7 +686,8 @@ gst_base_transform_getcaps (GstPad * pad)
     /* and filter against the template of this pad */
     templ = gst_pad_get_pad_template_caps (pad);
     GST_DEBUG_OBJECT (pad, "our template  %" GST_PTR_FORMAT, templ);
-    temp = gst_caps_intersect (caps, templ);
+    /* We keep the caps sorted like the returned caps */
+    temp = gst_caps_intersect_full (caps, templ, GST_CAPS_INTERSECT_FIRST);
     GST_DEBUG_OBJECT (pad, "intersected %" GST_PTR_FORMAT, temp);
     gst_caps_unref (caps);
     /* this is what we can do */
@@ -1167,6 +1190,8 @@ gst_base_transform_setcaps (GstPad * pad, GstCaps * caps)
   }
 
 done:
+  /* new caps, force alloc on next buffer on the chain */
+  trans->priv->force_alloc = TRUE;
   if (otherpeer)
     gst_object_unref (otherpeer);
   if (othercaps)
@@ -1200,8 +1225,13 @@ static gboolean
 gst_base_transform_query (GstPad * pad, GstQuery * query)
 {
   gboolean ret = FALSE;
-  GstBaseTransform *trans = GST_BASE_TRANSFORM (gst_pad_get_parent (pad));
-  GstPad *otherpad = (pad == trans->srcpad) ? trans->sinkpad : trans->srcpad;
+  GstBaseTransform *trans;
+  GstPad *otherpad;
+
+  trans = GST_BASE_TRANSFORM (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (trans == NULL))
+    return FALSE;
+  otherpad = (pad == trans->srcpad) ? trans->sinkpad : trans->srcpad;
 
   switch (GST_QUERY_TYPE (query)) {
     case GST_QUERY_POSITION:{
@@ -1383,12 +1413,18 @@ gst_base_transform_prepare_output_buffer (GstBaseTransform * trans,
     goto alloc_failed;
 
   if (*out_buf == NULL) {
-    GST_DEBUG_OBJECT (trans, "doing alloc with caps %" GST_PTR_FORMAT, oldcaps);
+    if (trans->passthrough && !trans->priv->force_alloc) {
+      GST_DEBUG_OBJECT (trans, "Avoiding pad alloc");
+      *out_buf = gst_buffer_ref (in_buf);
+    } else {
+      GST_DEBUG_OBJECT (trans, "doing alloc with caps %" GST_PTR_FORMAT,
+          oldcaps);
 
-    ret = gst_pad_alloc_buffer (trans->srcpad,
-        GST_BUFFER_OFFSET (in_buf), outsize, oldcaps, out_buf);
-    if (ret != GST_FLOW_OK)
-      goto alloc_failed;
+      ret = gst_pad_alloc_buffer (trans->srcpad,
+          GST_BUFFER_OFFSET (in_buf), outsize, oldcaps, out_buf);
+      if (ret != GST_FLOW_OK)
+        goto alloc_failed;
+    }
   }
 
   /* must always have a buffer by now */
@@ -1489,6 +1525,12 @@ gst_base_transform_prepare_output_buffer (GstBaseTransform * trans,
         gst_buffer_unref (*out_buf);
       *out_buf = NULL;
     }
+  } else if (outsize != newsize) {
+    GST_WARNING_OBJECT (trans, "Caps did not change but allocated size does "
+        "not match expected size (%d != %d)", newsize, outsize);
+    if (in_buf != *out_buf)
+      gst_buffer_unref (*out_buf);
+    *out_buf = NULL;
   }
 
   /* these are the final output caps */
@@ -1673,11 +1715,14 @@ gst_base_transform_buffer_alloc (GstPad * pad, guint64 offset, guint size,
   GstBaseTransformClass *klass;
   GstBaseTransformPrivate *priv;
   GstFlowReturn res;
+  gboolean alloced = FALSE;
   gboolean proxy, suggest, same_caps;
   GstCaps *sink_suggest = NULL;
   guint size_suggest;
 
   trans = GST_BASE_TRANSFORM (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (trans == NULL))
+    return GST_FLOW_WRONG_STATE;
   klass = GST_BASE_TRANSFORM_GET_CLASS (trans);
   priv = trans->priv;
 
@@ -1750,6 +1795,20 @@ gst_base_transform_buffer_alloc (GstPad * pad, guint64 offset, guint size,
 
         if (gst_caps_is_empty (sink_suggest))
           goto not_supported;
+
+        /* try the alloc caps if it is still not fixed */
+        if (!gst_caps_is_fixed (sink_suggest)) {
+          GstCaps *intersect;
+
+          GST_DEBUG_OBJECT (trans, "Checking if the input caps is compatible "
+              "with the non-fixed caps suggestion");
+          intersect = gst_caps_intersect (sink_suggest, caps);
+          if (!gst_caps_is_empty (intersect)) {
+            GST_DEBUG_OBJECT (trans, "It is, using it");
+            gst_caps_replace (&sink_suggest, caps);
+          }
+          gst_caps_unref (intersect);
+        }
 
         /* be safe and call default fixate */
         sink_suggest = gst_caps_make_writable (sink_suggest);
@@ -1863,6 +1922,7 @@ gst_base_transform_buffer_alloc (GstPad * pad, guint64 offset, guint size,
     res = gst_pad_alloc_buffer (trans->srcpad, offset, size, caps, buf);
     if (res != GST_FLOW_OK)
       goto alloc_failed;
+    alloced = TRUE;
 
     /* check if the caps changed */
     newcaps = GST_BUFFER_CAPS (*buf);
@@ -1905,10 +1965,17 @@ gst_base_transform_buffer_alloc (GstPad * pad, guint64 offset, guint size,
     sink_suggest = NULL;
   }
 
-  gst_object_unref (trans);
   if (sink_suggest)
     gst_caps_unref (sink_suggest);
 
+  if (res == GST_FLOW_OK && alloced) {
+    /* just alloc'ed a buffer, so we only want to do this again if we
+     * received a buffer */
+    GST_DEBUG_OBJECT (trans, "Cleaning force alloc");
+    trans->priv->force_alloc = FALSE;
+  }
+
+  gst_object_unref (trans);
   return res;
 
   /* ERRORS */
@@ -1939,6 +2006,10 @@ gst_base_transform_sink_event (GstPad * pad, GstEvent * event)
   gboolean forward = TRUE;
 
   trans = GST_BASE_TRANSFORM (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (trans == NULL)) {
+    gst_event_unref (event);
+    return FALSE;
+  }
   bclass = GST_BASE_TRANSFORM_GET_CLASS (trans);
 
   if (bclass->event)
@@ -2027,10 +2098,17 @@ gst_base_transform_src_event (GstPad * pad, GstEvent * event)
   gboolean ret = TRUE;
 
   trans = GST_BASE_TRANSFORM (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (trans == NULL)) {
+    gst_event_unref (event);
+    return FALSE;
+  }
+
   bclass = GST_BASE_TRANSFORM_GET_CLASS (trans);
 
   if (bclass->src_event)
     ret = bclass->src_event (trans, event);
+  else
+    gst_event_unref (event);
 
   gst_object_unref (trans);
 
@@ -2237,6 +2315,9 @@ skip:
   if (*outbuf != inbuf)
     gst_buffer_unref (inbuf);
 
+  /* pushed a buffer, we can now try an alloc */
+  GST_DEBUG_OBJECT (trans, "Pushed a buffer, setting force alloc to true");
+  trans->priv->force_alloc = TRUE;
   return ret;
 
   /* ERRORS */
@@ -2457,6 +2538,7 @@ gst_base_transform_activate (GstBaseTransform * trans, gboolean active)
     gst_caps_replace (&trans->priv->sink_suggest, NULL);
     trans->priv->processed = 0;
     trans->priv->dropped = 0;
+    trans->priv->force_alloc = TRUE;
 
     GST_OBJECT_UNLOCK (trans);
   } else {
@@ -2758,7 +2840,7 @@ gst_base_transform_set_gap_aware (GstBaseTransform * trans, gboolean gap_aware)
 /**
  * gst_base_transform_suggest:
  * @trans: a #GstBaseTransform
- * @caps: caps to suggest
+ * @caps: (transfer none): caps to suggest
  * @size: buffer size to suggest
  *
  * Instructs @trans to suggest new @caps upstream. A copy of @caps will be

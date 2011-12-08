@@ -45,13 +45,10 @@ static void gst_plugin_feature_finalize (GObject * object);
 /* static guint gst_plugin_feature_signals[LAST_SIGNAL] = { 0 }; */
 
 G_DEFINE_ABSTRACT_TYPE (GstPluginFeature, gst_plugin_feature, GST_TYPE_OBJECT);
-static GstObjectClass *parent_class = NULL;
 
 static void
 gst_plugin_feature_class_init (GstPluginFeatureClass * klass)
 {
-  parent_class = g_type_class_peek_parent (klass);
-
   G_OBJECT_CLASS (klass)->finalize = gst_plugin_feature_finalize;
 }
 
@@ -70,12 +67,17 @@ gst_plugin_feature_finalize (GObject * object)
       GST_PLUGIN_FEATURE_NAME (feature));
   g_free (feature->name);
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
+  if (feature->plugin != NULL) {
+    g_object_remove_weak_pointer ((GObject *) feature->plugin,
+        (gpointer *) & feature->plugin);
+  }
+
+  G_OBJECT_CLASS (gst_plugin_feature_parent_class)->finalize (object);
 }
 
 /**
  * gst_plugin_feature_load:
- * @feature: the plugin feature to check
+ * @feature: (transfer none): the plugin feature to check
  *
  * Loads the plugin containing @feature if it's not already loaded. @feature is
  * unaffected; use the return value instead.
@@ -90,7 +92,7 @@ gst_plugin_feature_finalize (GObject * object)
  * feature = loaded_feature;
  * ]|
  *
- * Returns: A reference to the loaded feature, or NULL on error.
+ * Returns: (transfer full): a reference to the loaded feature, or NULL on error
  */
 GstPluginFeature *
 gst_plugin_feature_load (GstPluginFeature * feature)
@@ -149,7 +151,7 @@ not_found:
 /**
  * gst_plugin_feature_type_name_filter:
  * @feature: the #GstPluginFeature
- * @data: the type and name to check against
+ * @data: (in): the type and name to check against
  *
  * Compares type and name of plugin feature. Can be used with gst_filter_run().
  *
@@ -198,7 +200,7 @@ gst_plugin_feature_set_name (GstPluginFeature * feature, const gchar * name)
  *
  * Returns: the name
  */
-G_CONST_RETURN gchar *
+const gchar *
 gst_plugin_feature_get_name (GstPluginFeature * feature)
 {
   g_return_val_if_fail (GST_IS_PLUGIN_FEATURE (feature), NULL);
@@ -241,7 +243,8 @@ gst_plugin_feature_get_rank (GstPluginFeature * feature)
 
 /**
  * gst_plugin_feature_list_free:
- * @list: list of #GstPluginFeature
+ * @list: (transfer full) (element-type Gst.PluginFeature): list
+ *     of #GstPluginFeature
  *
  * Unrefs each member of @list, then frees the list.
  */
@@ -260,12 +263,14 @@ gst_plugin_feature_list_free (GList * list)
 
 /**
  * gst_plugin_feature_list_copy:
- * @list: list of #GstPluginFeature
+ * @list: (transfer none) (element-type Gst.PluginFeature): list
+ *     of #GstPluginFeature
  *
  * Copies the list of features. Caller should call @gst_plugin_feature_list_free
  * when done with the list.
  *
- * Returns: a copy of @list, with each feature's reference count incremented.
+ * Returns: (transfer full) (element-type Gst.PluginFeature): a copy of @list,
+ *     with each feature's reference count incremented.
  *
  * Since: 0.10.26
  */
@@ -297,7 +302,8 @@ gst_plugin_feature_list_copy (GList * list)
 
 /**
  * gst_plugin_feature_list_debug:
- * @list: a #GList of plugin features
+ * @list: (transfer none) (element-type Gst.PluginFeature): a #GList of
+ *     plugin features
  *
  * Debug the plugin feature names in @list.
  *

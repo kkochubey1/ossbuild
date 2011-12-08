@@ -77,9 +77,6 @@
 #include <gobject/gvaluecollector.h>
 #include <string.h>
 
-GST_DEBUG_CATEGORY_STATIC (gst_tag_interface_debug);
-#define GST_CAT_DEFAULT tag_tag_interface_debug
-
 static GQuark gst_tag_key;
 
 typedef struct
@@ -107,9 +104,6 @@ gst_tag_setter_get_type (void)
       0,
       NULL
     };
-
-    GST_DEBUG_CATEGORY_INIT (gst_tag_interface_debug, "GstTagInterface", 0,
-        "interfaces for tagging");
 
     _type = g_type_register_static (G_TYPE_INTERFACE, "GstTagSetter",
         &tag_setter_info, 0);
@@ -368,10 +362,10 @@ gst_tag_setter_add_tag_value (GstTagSetter * setter,
  *
  * This function is not thread-safe.
  *
- * Returns: a current snapshot of the taglist used in the setter
- *          or NULL if none is used.
+ * Returns: (transfer none): a current snapshot of the taglist used in the
+ *          setter or NULL if none is used.
  */
-G_CONST_RETURN GstTagList *
+const GstTagList *
 gst_tag_setter_get_tag_list (GstTagSetter * setter)
 {
   g_return_val_if_fail (GST_IS_TAG_SETTER (setter), NULL);

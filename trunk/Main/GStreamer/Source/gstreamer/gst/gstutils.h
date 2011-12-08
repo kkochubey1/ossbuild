@@ -216,7 +216,7 @@ type_as_function ## _implements_interface_init (GstImplementsInterfaceClass *kla
 }                                                                       \
                                                                         \
 static void                                                             \
-type_as_function ## _init_interfaces (GType type)                       \
+type_as_function ## _init_interfaces (GType type_var)                   \
 {                                                                       \
   static const GInterfaceInfo implements_iface_info = {                 \
     (GInterfaceInitFunc) type_as_function ## _implements_interface_init,\
@@ -229,9 +229,9 @@ type_as_function ## _init_interfaces (GType type)                       \
     NULL,                                                               \
   };                                                                    \
                                                                         \
-  g_type_add_interface_static (type, GST_TYPE_IMPLEMENTS_INTERFACE,     \
+  g_type_add_interface_static (type_var, GST_TYPE_IMPLEMENTS_INTERFACE, \
       &implements_iface_info);                                          \
-  g_type_add_interface_static (type, interface_type_as_macro,		\
+  g_type_add_interface_static (type_var, interface_type_as_macro,	\
       &iface_info);							\
 }                                                                       \
                                                                         \
@@ -992,8 +992,9 @@ GST_WRITE_DOUBLE_BE(guint8 *data, gdouble num)
  */
 #define GST_ROUND_DOWN_64(num) ((num)&(~63))
 
-void			gst_object_default_error	(GstObject * source,
-							 GError * error, gchar * debug);
+void			gst_object_default_error	(GstObject    * source,
+							 const GError * error,
+							 const gchar  * debug);
 
 /* element functions */
 void                    gst_element_create_all_pads     (GstElement *element);
@@ -1002,8 +1003,8 @@ GstPad*                 gst_element_get_compatible_pad  (GstElement *element, Gs
 
 GstPadTemplate*         gst_element_get_compatible_pad_template (GstElement *element, GstPadTemplate *compattempl);
 
-G_CONST_RETURN gchar*   gst_element_state_get_name      (GstState state);
-G_CONST_RETURN gchar *  gst_element_state_change_return_get_name (GstStateChangeReturn state_ret);
+const gchar*            gst_element_state_get_name      (GstState state);
+const gchar *           gst_element_state_change_return_get_name (GstStateChangeReturn state_ret);
 
 gboolean		gst_element_link                (GstElement *src, GstElement *dest);
 gboolean		gst_element_link_many           (GstElement *element_1,
@@ -1033,8 +1034,14 @@ gboolean                gst_element_seek_simple         (GstElement   *element,
                                                          gint64        seek_pos);
 
 /* util elementfactory functions */
-gboolean		gst_element_factory_can_src_caps(GstElementFactory *factory, const GstCaps *caps);
-gboolean		gst_element_factory_can_sink_caps(GstElementFactory *factory, const GstCaps *caps);
+#ifndef GST_DISABLE_DEPRECATED
+gboolean		gst_element_factory_can_src_caps    (GstElementFactory *factory, const GstCaps *caps);
+gboolean		gst_element_factory_can_sink_caps   (GstElementFactory *factory, const GstCaps *caps);
+#endif /* GST_DISABLE_DEPRECATED */
+gboolean gst_element_factory_can_sink_all_caps (GstElementFactory *factory, const GstCaps *caps);
+gboolean gst_element_factory_can_src_all_caps  (GstElementFactory *factory, const GstCaps *caps);
+gboolean gst_element_factory_can_sink_any_caps (GstElementFactory *factory, const GstCaps *caps);
+gboolean gst_element_factory_can_src_any_caps  (GstElementFactory *factory, const GstCaps *caps);
 
 /* util query functions */
 gboolean                gst_element_query_position      (GstElement *element, GstFormat *format,

@@ -35,13 +35,15 @@ G_BEGIN_DECLS
 #define GST_BUFFER_LIST_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), GST_TYPE_BUFFER_LIST, GstBufferListClass))
 #define GST_BUFFER_LIST_CAST(obj) ((GstBufferList *)obj)
 
+#define GST_TYPE_BUFFER_LIST_ITERATOR (gst_buffer_list_iterator_get_type ())
+
 typedef struct _GstBufferList GstBufferList;
 typedef struct _GstBufferListClass GstBufferListClass;
 typedef struct _GstBufferListIterator GstBufferListIterator;
 
 /**
  * GstBufferListDoFunction:
- * @buffer: the #GstBuffer
+ * @buffer: (transfer full): the #GstBuffer
  * @user_data: user data
  *
  * A function for accessing the last buffer returned by
@@ -56,8 +58,8 @@ typedef struct _GstBufferListIterator GstBufferListIterator;
  * unreffed. If NULL is returned, the buffer will be removed from the list. The
  * list must be writable.
  *
- * Returns: the buffer to replace @buffer in the list, or NULL to remove @buffer
- * from the list
+ * Returns: (transfer full): the buffer to replace @buffer in the list, or NULL
+ *     to remove @buffer from the list
  *
  * Since: 0.10.24
  */
@@ -125,7 +127,7 @@ GstBufferList *gst_buffer_list_new (void);
  * additional references to GstBufferList instances can potentially increase
  * the number of memcpy operations in a pipeline.
  *
- * Returns: @list
+ * Returns: (transfer full): @list
  *
  * Since: 0.10.24
  */
@@ -142,7 +144,7 @@ gst_buffer_list_ref (GstBufferList * list)
 
 /**
  * gst_buffer_list_unref:
- * @list: a #GstBufferList
+ * @list: (transfer full): a #GstBufferList
  *
  * Decreases the refcount of the buffer list. If the refcount reaches 0, the
  * buffer list will be freed.
@@ -168,7 +170,7 @@ gst_buffer_list_unref (GstBufferList * list)
  * allocated copy of the source list with copies of buffer pointers. The
  * refcount of buffers pointed to will be increased by one.
  *
- * Returns: a new copy of @list.
+ * Returns: (transfer full): a new copy of @list.
  *
  * Since: 0.10.24
  */
@@ -194,11 +196,14 @@ gst_buffer_list_copy (const GstBufferList * list)
 
 /**
  * gst_buffer_list_make_writable:
- * @list: a #GstBufferList
+ * @list: (transfer full): a #GstBufferList
  *
  * Makes a writable buffer list from the given buffer list. If the source buffer
  * list is already writable, this will simply return the same buffer list. A
  * copy will otherwise be made using gst_buffer_list_copy().
+ *
+ * Returns: (transfer full): a writable list, which may or may not be the
+ *     same as @list
  *
  * Since: 0.10.24
  */
@@ -212,6 +217,7 @@ void                     gst_buffer_list_foreach               (GstBufferList *l
 GstBuffer *              gst_buffer_list_get                   (GstBufferList *list, guint group, guint idx);
 
 /* iterator */
+GType                    gst_buffer_list_iterator_get_type     (void);
 GstBufferListIterator *  gst_buffer_list_iterate               (GstBufferList *list);
 void                     gst_buffer_list_iterator_free         (GstBufferListIterator *it);
 

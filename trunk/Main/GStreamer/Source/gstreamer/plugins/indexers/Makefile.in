@@ -306,6 +306,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -363,6 +364,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -396,7 +398,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -773,6 +774,17 @@ uninstall-am: uninstall-pluginLTLIBRARIES
 	$(GCOV) -b -f -o $^ > $@.out
 
 gcov: $(libgstcoreindexers_la_SOURCES:=.gcov)
+
+Android.mk: Makefile.am
+	androgenizer -:PROJECT gstreamer -:SHARED libgstcoreindexers -:TAGS eng debug \
+	 -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstcoreindexers_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(libgstcoreindexers_la_CFLAGS) \
+	 -:LDFLAGS $(libgstcoreindexers_la_LDFLAGS) \
+	           $(libgstcoreindexers_la_LIBADD) \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+	               LOCAL_MODULE_PATH:=$$\(TARGET_OUT\)/lib/gstreamer-@GST_MAJORMINOR@ \
+	> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -26,6 +26,7 @@
 
 #include <glib-object.h>
 #include <gst/gstobject.h>
+#include <gst/gstplugin.h>
 
 G_BEGIN_DECLS
 
@@ -84,9 +85,10 @@ struct _GstPluginFeature {
   guint          rank;
 
   const gchar   *plugin_name;
+  GstPlugin     *plugin;      /* weak ref */
 
   /*< private >*/
-  gpointer _gst_reserved[GST_PADDING];
+  gpointer _gst_reserved[GST_PADDING - 1];
 };
 
 struct _GstPluginFeatureClass {
@@ -134,12 +136,21 @@ gboolean        gst_plugin_feature_type_name_filter     (GstPluginFeature *featu
 void            gst_plugin_feature_set_rank             (GstPluginFeature *feature, guint rank);
 void            gst_plugin_feature_set_name             (GstPluginFeature *feature, const gchar *name);
 guint           gst_plugin_feature_get_rank             (GstPluginFeature *feature);
-G_CONST_RETURN gchar *gst_plugin_feature_get_name       (GstPluginFeature *feature);
+const gchar    *gst_plugin_feature_get_name             (GstPluginFeature *feature);
 
 void            gst_plugin_feature_list_free            (GList *list);
 GList          *gst_plugin_feature_list_copy            (GList *list);
 void            gst_plugin_feature_list_debug           (GList *list);
 
+/**
+ * GST_PLUGIN_FEATURE_LIST_DEBUG:
+ * @list: (transfer none) (element-type Gst.PluginFeature): a #GList of
+ *     plugin features
+ *
+ * Debug the plugin feature names in @list.
+ *
+ * Since: 0.10.31
+ */
 #ifndef GST_DISABLE_GST_DEBUG
 #define GST_PLUGIN_FEATURE_LIST_DEBUG(list) gst_plugin_feature_list_debug(list)
 #else

@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer.html" title="GStreamer Overview">
 <link rel="prev" href="gst-building.html" title="Building GStreamer and GStreamer Applications">
 <link rel="next" href="libgstreamer.html" title="GStreamer Core Library">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -19,7 +19,7 @@
 <th width="100%" align="center">GStreamer 0.10 Core Reference Manual</th>
 <td><a accesskey="n" href="libgstreamer.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr></table>
-<div class="refentry" title="Running GStreamer Applications">
+<div class="refentry">
 <a name="gst-running"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -30,15 +30,15 @@ How to run and debug your GStreamer application
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsect1" title="Running and debugging GStreamer Applications">
-<a name="id489186"></a><h2>Running and debugging GStreamer Applications</h2>
-<div class="refsect2" title="Environment variables">
-<a name="id455436"></a><h3>Environment variables</h3>
+<div class="refsect1">
+<a name="idp5847152"></a><h2>Running and debugging GStreamer Applications</h2>
+<div class="refsect2">
+<a name="idp5796480"></a><h3>Environment variables</h3>
 <p> 
 GStreamer inspects a few of environment variables in addition to standard
 variables like <code class="envar">LANG</code>, <code class="envar">PATH</code> or <code class="envar">HOME</code>. 
 </p>
-<p title="GST_PLUGIN_SYSTEM_PATH"><a name="GST_PLUGIN_SYSTEM_PATH"></a><b><code class="envar">GST_PLUGIN_SYSTEM_PATH</code>. </b>
+<p><a name="GST_PLUGIN_SYSTEM_PATH"></a><b><code class="envar">GST_PLUGIN_SYSTEM_PATH</code>. </b>
 
 This environment variable can be set to a colon-separated list of paths.
 If this variable is not set, GStreamer will fill in this list for you
@@ -56,7 +56,7 @@ plug-ins installed system-wide.  On this system, they are stored in
 <code class="filename">/usr/local/lib/gstreamer-0.10</code>.
     </p></li>
 </ul></div>
-<p title="GST_PLUGIN_SYSTEM_PATH">
+<p>
    
 GStreamer will scan these paths for GStreamer plug-ins.  These plug-ins will
 be loaded after the plug-ins in the GST_PLUGIN_PATH variable below.
@@ -68,12 +68,12 @@ Setting this variable to an empty string will cause GStreamer not to scan any
 system paths at all for plug-ins.  This can be useful if you're running
 uninstalled (for development purposes) or while running testsuites.
    </p>
-<p title="GST_PLUGIN_PATH"><a name="GST_PLUGIN_PATH"></a><b><code class="envar">GST_PLUGIN_PATH</code>. </b>
+<p><a name="GST_PLUGIN_PATH"></a><b><code class="envar">GST_PLUGIN_PATH</code>. </b>
 This environment variable can be set to a colon-separated list of paths.
 GStreamer will scan these paths for GStreamer plug-ins.  These plug-ins will
 be loaded in addition to, and before, the plug-ins in the system paths.
   </p>
-<p title="GST_DEBUG"><a name="GST_DEBUG"></a><b><code class="envar">GST_DEBUG</code>. </b>
+<p><a name="GST_DEBUG"></a><b><code class="envar">GST_DEBUG</code>. </b>
 If GStreamer has been configured with <code class="option">--enable-gst-debug=yes</code>,
 this variable can be set to a list of debug options, which cause GStreamer
 to print out different types of debugging information to stderr.
@@ -126,7 +126,7 @@ these include streaming and steady-state conditions.
 </tr>
 </tbody>
 </table></div>
-<p title="GST_DEBUG">
+<p>
 
  The category_name can contain "<code class="option">*"</code> as a wildcard.
   
@@ -140,7 +140,7 @@ To get all possible debug output, set
 <code class="envar">GST_DEBUG</code>
 to <code class="option">*:5</code>
   </p>
-<p title="GST_DEBUG_NO_COLOR"><a name="GST_DEBUG_NO_COLOR"></a><b><code class="envar">GST_DEBUG_NO_COLOR</code>. </b>
+<p><a name="GST_DEBUG_NO_COLOR"></a><b><code class="envar">GST_DEBUG_NO_COLOR</code>. </b>
 Set this environment variable to any value ("1" typically) to switch off
 colouring in GST_DEBUG output. This has the same effect as specifying the
 <code class="option">--gst-debug-no-color</code> command line option to well-behaved
@@ -149,7 +149,7 @@ GStreamer).
 This is particularly useful to reduce the size of debug output and also allows
 for the output to be compressed much better than with colours turned on.
   </p>
-<p title="GST_DEBUG_OPTIONS"><a name="GST_DEBUG_OPTIONS"></a><b><code class="envar">GST_DEBUG_OPTIONS</code>. </b>
+<p><a name="GST_DEBUG_OPTIONS"></a><b><code class="envar">GST_DEBUG_OPTIONS</code>. </b>
 This environment variable can be used to tweak the behaviour of the debugging
 system. Currently the only options supported are "pretty-tags" and "full-tags".
 In "pretty-tags" mode (the default), taglists in the debug log will be
@@ -157,31 +157,32 @@ serialized so that only the first few and last few bytes of a buffer-type tag
 will be serialized into the log, to avoid dumping hundreds of lines of useless
 output into the log in case of large image tags and the like.
   </p>
-<p title="GST_DEBUG_DUMP_DOT_DIR"><a name="GST_DEBUG_DUMP_DOT_DIR"></a><b><code class="envar">GST_DEBUG_DUMP_DOT_DIR</code>. </b>
+<p><a name="GST_DEBUG_DUMP_DOT_DIR"></a><b><code class="envar">GST_DEBUG_DUMP_DOT_DIR</code>. </b>
 Set this environment variable to a path to turn on all
 #GST_DEBUG_BIN_TO_DOT_FILE or #GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS calls
 and have the dot files in that location.
   </p>
-<p title="GST_REGISTRY_FORK"><a name="GST_REGISTRY_FORK"></a><b><code class="envar">GST_REGISTRY_FORK</code>. </b>
+<p><a name="GST_REGISTRY_FORK"></a><b><code class="envar">GST_REGISTRY_FORK</code>. </b>
 Set this environment variable to "no" to prevent GStreamer from forking on
 startup in order to update the plugin registry. This is useful for debugging
 purposes, but should not be used under normal circumstances, since it means
 that plugins may be loaded into memory even if they are not needed by the
 application.
   </p>
-<p title="GST_REGISTRY_UPDATE"><a name="GST_REGISTRY_UPDATE"></a><b><code class="envar">GST_REGISTRY_UPDATE</code>. </b>
+<p><a name="GST_REGISTRY_UPDATE"></a><b><code class="envar">GST_REGISTRY_UPDATE</code>. </b>
 Set this environment variable to "no" to prevent GStreamer from updating the
 plugin registry. This is useful for embedded device which is not updating the
 plugins frequently, it will save time when doing gst_init().
   </p>
-<p title="ORC_CODE"><a name="ORC_CODE"></a><b><code class="envar">ORC_CODE</code>. </b>
+<p><a name="ORC_CODE"></a><b><code class="envar">ORC_CODE</code>. </b>
 Useful Orc environment variable. Set ORC_CODE=debug to enable debuggers
 such as gdb to create useful backtraces from Orc-generated code.  Set
 ORC_CODE=backup or ORC_CODE=emulate if you suspect Orc's SIMD code
-generator is producing incorrect code.  (Quite a few important
+generator is producing incorrect code (Quite a few important
 GStreamer plugins like videotestsrc, audioconvert or audioresample use Orc).
+One can also combine flags like ORC_CODE=backup,debug.
   </p>
-<p title="G_DEBUG"><a name="G_DEBUG"></a><b><code class="envar">G_DEBUG</code>. </b>
+<p><a name="G_DEBUG"></a><b><code class="envar">G_DEBUG</code>. </b>
 Useful GLib environment variable. Set G_DEBUG=fatal_warnings to make
 GStreamer programs abort when a critical warning such as an assertion failure
 occurs. This is useful if you want to find out which part of the code caused
@@ -189,7 +190,7 @@ that warning to be triggered and under what circumstances. Simply set G_DEBUG
 as mentioned above and run the program in gdb (or let it core dump). Then get
 a stack trace in the usual way.
   </p>
-<p title="G_SLICE"><a name="G_SLICE"></a><b><code class="envar">G_SLICE</code>. </b>
+<p><a name="G_SLICE"></a><b><code class="envar">G_SLICE</code>. </b>
 Useful GLib environment variable. Set G_SLICE=always-malloc when running
 GStreamer programs in valgrind, or debugging memory leaks with other tools.
 See the GLib API reference for more details.
@@ -199,6 +200,6 @@ See the GLib API reference for more details.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

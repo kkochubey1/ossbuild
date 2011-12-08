@@ -344,13 +344,13 @@ GST_START_TEST (test_uri_interface)
   g_free (location);
 
   location = (gchar *) gst_uri_handler_get_uri (GST_URI_HANDLER (src));
-  fail_unless_equals_string (location, "file://%2Fi%2Fdo%2Fnot%2Fexist");
+  fail_unless_equals_string (location, "file:///i/do/not/exist");
 
   /* should accept file:///foo/bar URIs */
   fail_unless (gst_uri_handler_set_uri (GST_URI_HANDLER (src),
           "file:///foo/bar"));
   location = (gchar *) gst_uri_handler_get_uri (GST_URI_HANDLER (src));
-  fail_unless_equals_string (location, "file://%2Ffoo%2Fbar");
+  fail_unless_equals_string (location, "file:///foo/bar");
   g_object_get (G_OBJECT (src), "location", &location, NULL);
   fail_unless_equals_string (location, "/foo/bar");
   g_free (location);
@@ -359,10 +359,18 @@ GST_START_TEST (test_uri_interface)
   fail_unless (gst_uri_handler_set_uri (GST_URI_HANDLER (src),
           "file://localhost/foo/baz"));
   location = (gchar *) gst_uri_handler_get_uri (GST_URI_HANDLER (src));
-  fail_unless_equals_string (location, "file://%2Ffoo%2Fbaz");
+  fail_unless_equals_string (location, "file:///foo/baz");
   g_object_get (G_OBJECT (src), "location", &location, NULL);
   fail_unless_equals_string (location, "/foo/baz");
   g_free (location);
+
+  /* should escape non-uri characters for the URI but not for the location */
+  g_object_set (G_OBJECT (src), "location", "/foo/b?r", NULL);
+  g_object_get (G_OBJECT (src), "location", &location, NULL);
+  fail_unless_equals_string (location, "/foo/b?r");
+  g_free (location);
+  location = (gchar *) gst_uri_handler_get_uri (GST_URI_HANDLER (src));
+  fail_unless_equals_string (location, "file:///foo/b%3Fr");
 
   /* should fail with other hostnames */
   fail_if (gst_uri_handler_set_uri (GST_URI_HANDLER (src),
@@ -371,6 +379,67 @@ GST_START_TEST (test_uri_interface)
   /* cleanup */
   gst_element_set_bus (src, NULL);
   gst_object_unref (GST_OBJECT (bus));
+  cleanup_filesrc (src);
+}
+
+GST_END_TEST;
+
+static void
+check_uri_for_location (GstElement * e, const gchar * location,
+    const gchar * uri)
+{
+  GstQuery *query;
+  gchar *query_uri = NULL;
+
+  g_object_set (e, "location", location, NULL);
+  query = gst_query_new_uri ();
+  fail_unless (gst_element_query (e, query));
+  gst_query_parse_uri (query, &query_uri);
+  gst_query_unref (query);
+
+  if (uri != NULL) {
+    fail_unless_equals_string (query_uri, uri);
+  } else {
+    gchar *fn;
+
+    fail_unless (gst_uri_is_valid (query_uri));
+    fn = g_filename_from_uri (query_uri, NULL, NULL);
+    fail_unless (g_path_is_absolute (fn));
+    fail_unless (fn != NULL);
+    g_free (fn);
+  }
+
+  g_free (query_uri);
+}
+
+GST_START_TEST (test_uri_query)
+{
+  GstElement *src;
+
+  src = setup_filesrc ();
+
+#ifdef G_OS_UNIX
+  {
+    GST_INFO ("*nix");
+    check_uri_for_location (src, "/i/do/not/exist", "file:///i/do/not/exist");
+    check_uri_for_location (src, "/i/do/not/../exist", "file:///i/do/exist");
+    check_uri_for_location (src, "/i/do/not/.././exist", "file:///i/do/exist");
+    check_uri_for_location (src, "/i/./do/not/../exist", "file:///i/do/exist");
+    check_uri_for_location (src, "/i/do/./not/../exist", "file:///i/do/exist");
+    check_uri_for_location (src, "/i/do/not/./../exist", "file:///i/do/exist");
+    check_uri_for_location (src, "/i/./do/./././././exist",
+        "file:///i/do/exist");
+    check_uri_for_location (src, "/i/do/not/../../exist", "file:///i/exist");
+    check_uri_for_location (src, "/i/../not/../exist", "file:///exist");
+    /* hard to test relative URIs, just make sure it returns an URI of sorts */
+    check_uri_for_location (src, "foo", NULL);
+    check_uri_for_location (src, "foo/../bar", NULL);
+    check_uri_for_location (src, "./foo", NULL);
+    check_uri_for_location (src, "../foo", NULL);
+    check_uri_for_location (src, "foo/./bar", NULL);
+  }
+#endif
+
   cleanup_filesrc (src);
 }
 
@@ -388,6 +457,7 @@ filesrc_suite (void)
   tcase_add_test (tc_chain, test_pull);
   tcase_add_test (tc_chain, test_coverage);
   tcase_add_test (tc_chain, test_uri_interface);
+  tcase_add_test (tc_chain, test_uri_query);
 
   return s;
 }

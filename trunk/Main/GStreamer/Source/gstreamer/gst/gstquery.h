@@ -181,7 +181,7 @@ gboolean        gst_query_types_contains       (const GstQueryType *types,
 
 /* query for query details */
 
-G_CONST_RETURN GstQueryTypeDefinition*
+const GstQueryTypeDefinition*
                 gst_query_type_get_details         (GstQueryType type);
 GstIterator*    gst_query_type_iterate_definitions (void);
 
@@ -228,7 +228,9 @@ gst_query_unref (GstQuery * q)
  *
  * Copies the given query using the copy function of the parent #GstStructure.
  *
- * Returns: a new copy of @q.
+ * Free-function: gst_query_unref
+ *
+ * Returns: (transfer full): a new copy of @q.
  */
 #ifdef _FOOL_GTK_DOC_
 G_INLINE_FUNC GstQuery * gst_query_copy (const GstQuery * q);
@@ -242,9 +244,11 @@ gst_query_copy (const GstQuery * q)
 
 /**
  * gst_query_make_writable:
- * @q: a #GstQuery to make writable
+ * @q: (transfer full): a #GstQuery to make writable
  *
  * Makes a writable query from the given query.
+ *
+ * Returns: (transfer full): a new writable query (possibly same as @q)
  */
 #define         gst_query_make_writable(q)      GST_QUERY_CAST (gst_mini_object_make_writable (GST_MINI_OBJECT_CAST (q)))
 
@@ -296,7 +300,7 @@ void            gst_query_parse_seeking         (GstQuery *query, GstFormat *for
 /* formats query */
 GstQuery*       gst_query_new_formats           (void);
 void            gst_query_set_formats           (GstQuery *query, gint n_formats, ...);
-void            gst_query_set_formatsv          (GstQuery *query, gint n_formats, GstFormat *formats);
+void            gst_query_set_formatsv          (GstQuery *query, gint n_formats, const GstFormat *formats);
 void            gst_query_parse_formats_length  (GstQuery *query, guint *n_formats);
 void            gst_query_parse_formats_nth     (GstQuery *query, guint nth, GstFormat *format);
 

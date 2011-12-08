@@ -105,27 +105,25 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(plugindir)"
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 am__DEPENDENCIES_1 =
-am__libgstcoreelements_la_SOURCES_DIST = gstcapsfilter.c gstelements.c \
-	gstfakesrc.c gstfakesink.c gstfdsrc.c gstfdsink.c \
-	gstfilesink.c gstfilesrc.c gstidentity.c gstqueue.c \
-	gstqueue2.c gsttee.c gsttypefindelement.c gstmultiqueue.c
-@HAVE_SYS_SOCKET_H_TRUE@am__objects_1 =  \
-@HAVE_SYS_SOCKET_H_TRUE@	libgstcoreelements_la-gstfdsrc.lo
-@HAVE_SYS_SOCKET_H_TRUE@am__objects_2 =  \
-@HAVE_SYS_SOCKET_H_TRUE@	libgstcoreelements_la-gstfdsink.lo
 am_libgstcoreelements_la_OBJECTS =  \
 	libgstcoreelements_la-gstcapsfilter.lo \
 	libgstcoreelements_la-gstelements.lo \
 	libgstcoreelements_la-gstfakesrc.lo \
-	libgstcoreelements_la-gstfakesink.lo $(am__objects_1) \
-	$(am__objects_2) libgstcoreelements_la-gstfilesink.lo \
+	libgstcoreelements_la-gstfakesink.lo \
+	libgstcoreelements_la-gstfdsrc.lo \
+	libgstcoreelements_la-gstfdsink.lo \
+	libgstcoreelements_la-gstfilesink.lo \
 	libgstcoreelements_la-gstfilesrc.lo \
+	libgstcoreelements_la-gstfunnel.lo \
 	libgstcoreelements_la-gstidentity.lo \
+	libgstcoreelements_la-gstinputselector.lo \
+	libgstcoreelements_la-gstoutputselector.lo \
+	libgstcoreelements_la-gstmultiqueue.lo \
 	libgstcoreelements_la-gstqueue.lo \
 	libgstcoreelements_la-gstqueue2.lo \
 	libgstcoreelements_la-gsttee.lo \
 	libgstcoreelements_la-gsttypefindelement.lo \
-	libgstcoreelements_la-gstmultiqueue.lo
+	libgstcoreelements_la-gstvalve.lo
 libgstcoreelements_la_OBJECTS = $(am_libgstcoreelements_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -161,7 +159,7 @@ AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstcoreelements_la_SOURCES)
-DIST_SOURCES = $(am__libgstcoreelements_la_SOURCES_DIST)
+DIST_SOURCES = $(libgstcoreelements_la_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -320,6 +318,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -377,6 +376,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -410,7 +410,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -432,26 +431,26 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 plugin_LTLIBRARIES = libgstcoreelements.la
-@HAVE_SYS_SOCKET_H_FALSE@GSTFDSRC = 
-@HAVE_SYS_SOCKET_H_TRUE@GSTFDSRC = gstfdsrc.c
-@HAVE_SYS_SOCKET_H_FALSE@GSTFDSINK = 
-@HAVE_SYS_SOCKET_H_TRUE@GSTFDSINK = gstfdsink.c
 libgstcoreelements_la_DEPENDENCIES = $(top_builddir)/gst/libgstreamer-@GST_MAJORMINOR@.la
 libgstcoreelements_la_SOURCES = \
 	gstcapsfilter.c		\
 	gstelements.c		\
 	gstfakesrc.c		\
 	gstfakesink.c		\
-	$(GSTFDSRC)		\
-	$(GSTFDSINK)		\
+	gstfdsrc.c		\
+	gstfdsink.c		\
 	gstfilesink.c		\
 	gstfilesrc.c		\
+	gstfunnel.c		\
 	gstidentity.c		\
+	gstinputselector.c	\
+	gstoutputselector.c	\
+	gstmultiqueue.c		\
 	gstqueue.c		\
 	gstqueue2.c		\
 	gsttee.c		\
 	gsttypefindelement.c	\
-	gstmultiqueue.c
+	gstvalve.c
 
 libgstcoreelements_la_CFLAGS = $(GST_OBJ_CFLAGS)
 libgstcoreelements_la_LIBADD = \
@@ -468,12 +467,16 @@ noinst_HEADERS = \
 	gstfdsink.h		\
 	gstfilesink.h		\
 	gstfilesrc.h		\
+	gstfunnel.h		\
 	gstidentity.h		\
+	gstinputselector.h	\
+	gstoutputselector.h	\
+	gstmultiqueue.h		\
 	gstqueue.h		\
 	gstqueue2.h		\
 	gsttee.h		\
 	gsttypefindelement.h	\
-	gstmultiqueue.h
+	gstvalve.h
 
 EXTRA_DIST = gstfdsrc.c \
 	     gstfdsink.c
@@ -561,12 +564,16 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gstfdsrc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gstfilesink.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gstfilesrc.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gstfunnel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gstidentity.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gstinputselector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gstmultiqueue.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gstoutputselector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gstqueue.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gstqueue2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gsttee.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gsttypefindelement.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstcoreelements_la-gstvalve.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -656,6 +663,14 @@ libgstcoreelements_la-gstfilesrc.lo: gstfilesrc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -c -o libgstcoreelements_la-gstfilesrc.lo `test -f 'gstfilesrc.c' || echo '$(srcdir)/'`gstfilesrc.c
 
+libgstcoreelements_la-gstfunnel.lo: gstfunnel.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -MT libgstcoreelements_la-gstfunnel.lo -MD -MP -MF $(DEPDIR)/libgstcoreelements_la-gstfunnel.Tpo -c -o libgstcoreelements_la-gstfunnel.lo `test -f 'gstfunnel.c' || echo '$(srcdir)/'`gstfunnel.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcoreelements_la-gstfunnel.Tpo $(DEPDIR)/libgstcoreelements_la-gstfunnel.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstfunnel.c' object='libgstcoreelements_la-gstfunnel.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -c -o libgstcoreelements_la-gstfunnel.lo `test -f 'gstfunnel.c' || echo '$(srcdir)/'`gstfunnel.c
+
 libgstcoreelements_la-gstidentity.lo: gstidentity.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -MT libgstcoreelements_la-gstidentity.lo -MD -MP -MF $(DEPDIR)/libgstcoreelements_la-gstidentity.Tpo -c -o libgstcoreelements_la-gstidentity.lo `test -f 'gstidentity.c' || echo '$(srcdir)/'`gstidentity.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcoreelements_la-gstidentity.Tpo $(DEPDIR)/libgstcoreelements_la-gstidentity.Plo
@@ -663,6 +678,30 @@ libgstcoreelements_la-gstidentity.lo: gstidentity.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstidentity.c' object='libgstcoreelements_la-gstidentity.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -c -o libgstcoreelements_la-gstidentity.lo `test -f 'gstidentity.c' || echo '$(srcdir)/'`gstidentity.c
+
+libgstcoreelements_la-gstinputselector.lo: gstinputselector.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -MT libgstcoreelements_la-gstinputselector.lo -MD -MP -MF $(DEPDIR)/libgstcoreelements_la-gstinputselector.Tpo -c -o libgstcoreelements_la-gstinputselector.lo `test -f 'gstinputselector.c' || echo '$(srcdir)/'`gstinputselector.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcoreelements_la-gstinputselector.Tpo $(DEPDIR)/libgstcoreelements_la-gstinputselector.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstinputselector.c' object='libgstcoreelements_la-gstinputselector.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -c -o libgstcoreelements_la-gstinputselector.lo `test -f 'gstinputselector.c' || echo '$(srcdir)/'`gstinputselector.c
+
+libgstcoreelements_la-gstoutputselector.lo: gstoutputselector.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -MT libgstcoreelements_la-gstoutputselector.lo -MD -MP -MF $(DEPDIR)/libgstcoreelements_la-gstoutputselector.Tpo -c -o libgstcoreelements_la-gstoutputselector.lo `test -f 'gstoutputselector.c' || echo '$(srcdir)/'`gstoutputselector.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcoreelements_la-gstoutputselector.Tpo $(DEPDIR)/libgstcoreelements_la-gstoutputselector.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstoutputselector.c' object='libgstcoreelements_la-gstoutputselector.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -c -o libgstcoreelements_la-gstoutputselector.lo `test -f 'gstoutputselector.c' || echo '$(srcdir)/'`gstoutputselector.c
+
+libgstcoreelements_la-gstmultiqueue.lo: gstmultiqueue.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -MT libgstcoreelements_la-gstmultiqueue.lo -MD -MP -MF $(DEPDIR)/libgstcoreelements_la-gstmultiqueue.Tpo -c -o libgstcoreelements_la-gstmultiqueue.lo `test -f 'gstmultiqueue.c' || echo '$(srcdir)/'`gstmultiqueue.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcoreelements_la-gstmultiqueue.Tpo $(DEPDIR)/libgstcoreelements_la-gstmultiqueue.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmultiqueue.c' object='libgstcoreelements_la-gstmultiqueue.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -c -o libgstcoreelements_la-gstmultiqueue.lo `test -f 'gstmultiqueue.c' || echo '$(srcdir)/'`gstmultiqueue.c
 
 libgstcoreelements_la-gstqueue.lo: gstqueue.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -MT libgstcoreelements_la-gstqueue.lo -MD -MP -MF $(DEPDIR)/libgstcoreelements_la-gstqueue.Tpo -c -o libgstcoreelements_la-gstqueue.lo `test -f 'gstqueue.c' || echo '$(srcdir)/'`gstqueue.c
@@ -696,13 +735,13 @@ libgstcoreelements_la-gsttypefindelement.lo: gsttypefindelement.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -c -o libgstcoreelements_la-gsttypefindelement.lo `test -f 'gsttypefindelement.c' || echo '$(srcdir)/'`gsttypefindelement.c
 
-libgstcoreelements_la-gstmultiqueue.lo: gstmultiqueue.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -MT libgstcoreelements_la-gstmultiqueue.lo -MD -MP -MF $(DEPDIR)/libgstcoreelements_la-gstmultiqueue.Tpo -c -o libgstcoreelements_la-gstmultiqueue.lo `test -f 'gstmultiqueue.c' || echo '$(srcdir)/'`gstmultiqueue.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcoreelements_la-gstmultiqueue.Tpo $(DEPDIR)/libgstcoreelements_la-gstmultiqueue.Plo
+libgstcoreelements_la-gstvalve.lo: gstvalve.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -MT libgstcoreelements_la-gstvalve.lo -MD -MP -MF $(DEPDIR)/libgstcoreelements_la-gstvalve.Tpo -c -o libgstcoreelements_la-gstvalve.lo `test -f 'gstvalve.c' || echo '$(srcdir)/'`gstvalve.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstcoreelements_la-gstvalve.Tpo $(DEPDIR)/libgstcoreelements_la-gstvalve.Plo
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstmultiqueue.c' object='libgstcoreelements_la-gstmultiqueue.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstvalve.c' object='libgstcoreelements_la-gstvalve.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -c -o libgstcoreelements_la-gstmultiqueue.lo `test -f 'gstmultiqueue.c' || echo '$(srcdir)/'`gstmultiqueue.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstcoreelements_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstcoreelements_la_CFLAGS) $(CFLAGS) -c -o libgstcoreelements_la-gstvalve.lo `test -f 'gstvalve.c' || echo '$(srcdir)/'`gstvalve.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -917,6 +956,17 @@ uninstall-am: uninstall-pluginLTLIBRARIES
 	$(GCOV) -b -f -o $^ > $@.out
 
 gcov: $(libgstcoreelements_la_SOURCES:=.gcov)
+
+Android.mk: Makefile.am
+	androgenizer -:PROJECT gstreamer -:SHARED libgstcoreelements -:TAGS eng debug \
+	 -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstcoreelements_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(libgstcoreelements_la_CFLAGS) \
+	 -:LDFLAGS $(libgstcoreelements_la_LDFLAGS) \
+	            $(libgstcoreelements_la_LIBADD) \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+	               LOCAL_MODULE_PATH:=$$\(TARGET_OUT\)/lib/gstreamer-@GST_MAJORMINOR@ \
+	> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gstreamer Elements">
 <link rel="prev" href="gstreamer-plugins-fdsink.html" title="fdsink">
 <link rel="next" href="gstreamer-plugins-filesrc.html" title="filesrc">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -32,7 +32,7 @@
                   <a href="#gstreamer-plugins-fdsrc.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="fdsrc">
+<div class="refentry">
 <a name="gstreamer-plugins-fdsrc"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -41,12 +41,12 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gstreamer-plugins-fdsrc.synopsis"></a><h2>Synopsis</h2>
-<a name="GstFdSrc"></a><pre class="synopsis">                    <a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc-struct" title="GstFdSrc">GstFdSrc</a>;
+<a name="GstFdSrc"></a><pre class="synopsis">struct              <a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc-struct" title="struct GstFdSrc">GstFdSrc</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gstreamer-plugins-fdsrc.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -57,20 +57,20 @@
                            +----GstFdSrc
 </pre>
 </div>
-<div class="refsect1" title="Implemented Interfaces">
+<div class="refsect1">
 <a name="gstreamer-plugins-fdsrc.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstFdSrc implements
  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstUriHandler.html#GstURIHandler">GstURIHandler</a>.</p>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gstreamer-plugins-fdsrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc--fd" title='The "fd" property'>fd</a>"                       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write
   "<a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc--timeout" title='The "timeout" property'>timeout</a>"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gstreamer-plugins-fdsrc.description"></a><h2>Description</h2>
 <p>
 Read data from a unix file descriptor.
@@ -93,14 +93,16 @@ The message's structure contains one field:
   </p></li></ul></div>
 <p>
 </p>
-<div class="refsect2" title="Example launch line">
-<a name="id545516"></a><h3>Example launch line</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp9094432"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">echo <span class="string">&quot;Hello GStreamer&quot;</span> <span class="symbol">|</span> gst<span class="symbol">-</span>launch <span class="symbol">-</span>v fdsrc <span class="symbol">!</span> fakesink dump<span class="symbol">=</span><span class="keyword">true</span></pre></td>
+        <td class="listing_code"><pre class="programlisting">echo <span class="string">&quot;Hello GStreamer&quot;</span> <span class="gtkdoc opt">|</span> gst<span class="gtkdoc opt">-</span>launch <span class="gtkdoc opt">-</span>v fdsrc <span class="gtkdoc opt">!</span> fakesink dump<span class="gtkdoc opt">=</span><span class="keyword">true</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -109,22 +111,76 @@ The message's structure contains one field:
 with a fakesink as hex ascii block.
 </div>
 <p>
+</p>
+<p>
 Last reviewed on 2008-06-20 (0.10.21)
 </p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp9738368"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gstreamer-plugins-plugin-coreelements.html#plugin-coreelements">coreelements</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Erik Walthinsen &lt;omega@cse.ogi.edu&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Source/File</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp9745776"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>ANY</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gstreamer-plugins-fdsrc.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstFdSrc">
-<a name="GstFdSrc-struct"></a><h3>GstFdSrc</h3>
-<pre class="programlisting">typedef struct _GstFdSrc GstFdSrc;</pre>
+<div class="refsect2">
+<a name="GstFdSrc-struct"></a><h3>struct GstFdSrc</h3>
+<pre class="programlisting">struct GstFdSrc;</pre>
 <p>
 Opaque <a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc"><span class="type">GstFdSrc</span></a> data structure.
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gstreamer-plugins-fdsrc.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "fd" property'>
+<div class="refsect2">
 <a name="GstFdSrc--fd"></a><h3>The <code class="literal">"fd"</code> property</h3>
 <pre class="programlisting">  "fd"                       <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>An open file descriptor to read from.</p>
@@ -132,7 +188,7 @@ Opaque <a class="link" href="gstreamer-plugins-fdsrc.html#GstFdSrc"><span class=
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "timeout" property'>
+<div class="refsect2">
 <a name="GstFdSrc--timeout"></a><h3>The <code class="literal">"timeout"</code> property</h3>
 <pre class="programlisting">  "timeout"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
 <p>
@@ -142,13 +198,13 @@ Post a message after timeout microseconds
 <p class="since">Since 0.10.21</p>
 </div>
 </div>
-<div class="refsect1" title="See Also">
+<div class="refsect1">
 <a name="gstreamer-plugins-fdsrc.see-also"></a><h2>See Also</h2>
 <a class="link" href="gstreamer-plugins-fdsink.html#GstFdSink"><span class="type">GstFdSink</span></a>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

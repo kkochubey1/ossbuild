@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="gstreamer-GstTypeFind.html" title="GstTypeFind">
 <link rel="next" href="gstreamer-GstUriHandler.html" title="GstUriHandler">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -28,7 +28,7 @@
                   <a href="#GstTypeFindFactory.object-hierarchy" class="shortcut">Object Hierarchy</a>
 </td></tr>
 </table>
-<div class="refentry" title="GstTypeFindFactory">
+<div class="refentry">
 <a name="GstTypeFindFactory"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -37,21 +37,21 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="GstTypeFindFactory.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/gst.h&gt;
 
-                    <a class="link" href="GstTypeFindFactory.html#GstTypeFindFactory-struct" title="GstTypeFindFactory">GstTypeFindFactory</a>;
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-get-list" title="gst_type_find_factory_get_list ()">gst_type_find_factory_get_list</a>      (<em class="parameter"><code><span class="type">void</span></code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **            <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-get-extensions" title="gst_type_find_factory_get_extensions ()">gst_type_find_factory_get_extensions</a>
+struct              <a class="link" href="GstTypeFindFactory.html#GstTypeFindFactory-struct" title="struct GstTypeFindFactory">GstTypeFindFactory</a>;
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *		           <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-get-list" title="gst_type_find_factory_get_list ()">gst_type_find_factory_get_list</a>      (<em class="parameter"><code><span class="type">void</span></code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **	           <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-get-extensions" title="gst_type_find_factory_get_extensions ()">gst_type_find_factory_get_extensions</a>
                                                         (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>);
-<a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="returnvalue">GstCaps</span></a> *           <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-get-caps" title="gst_type_find_factory_get_caps ()">gst_type_find_factory_get_caps</a>      (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>);
+<a class="link" href="gstreamer-GstCaps.html#GstCaps" title="struct GstCaps"><span class="returnvalue">GstCaps</span></a> *	          <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-get-caps" title="gst_type_find_factory_get_caps ()">gst_type_find_factory_get_caps</a>      (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstTypeFindFactory.html#gst-type-find-factory-call-function" title="gst_type_find_factory_call_function ()">gst_type_find_factory_call_function</a> (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="GstTypeFind"><span class="type">GstTypeFind</span></a> *find</code></em>);
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="struct GstTypeFind"><span class="type">GstTypeFind</span></a> *find</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="GstTypeFindFactory.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -60,7 +60,7 @@
                +----GstTypeFindFactory
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="GstTypeFindFactory.description"></a><h2>Description</h2>
 <p>
 These functions allow querying informations about registered typefind
@@ -71,7 +71,7 @@ the section <GTKDOCLINK HREF="gstreamer-Writing-typefind-functions">
 <p>
 </p>
 <div class="example">
-<a name="id541346"></a><p class="title"><b>Example 17. how to write a simple typefinder</b></p>
+<a name="idp34315136"></a><p class="title"><b>Example 17. how to write a simple typefinder</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
@@ -115,45 +115,45 @@ the section <GTKDOCLINK HREF="gstreamer-Writing-typefind-functions">
 37
 38
 39</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> <span class="symbol">{</span>
-  guint8 <span class="symbol">*</span>data<span class="symbol">;</span>
-  guint size<span class="symbol">;</span>
-  guint probability<span class="symbol">;</span>
-  GstCaps <span class="symbol">*</span>data<span class="symbol">;</span>
-<span class="symbol">}</span> MyTypeFind<span class="symbol">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> <span class="gtkdoc opt">{</span>
+  guint8 <span class="gtkdoc opt">*</span>data<span class="gtkdoc opt">;</span>
+  guint size<span class="gtkdoc opt">;</span>
+  guint probability<span class="gtkdoc opt">;</span>
+  GstCaps <span class="gtkdoc opt">*</span>data<span class="gtkdoc opt">;</span>
+<span class="gtkdoc opt">}</span> MyTypeFind<span class="gtkdoc opt">;</span>
 <span class="gtkdoc kwb">static void</span>
-<span class="function">my_peek</span> <span class="symbol">(</span>gpointer data<span class="symbol">,</span> gint64 offset<span class="symbol">,</span> guint size<span class="symbol">)</span>
-<span class="symbol">{</span>
-  MyTypeFind <span class="symbol">*</span>find <span class="symbol">= (</span>MyTypeFind <span class="symbol">*)</span> data<span class="symbol">;</span>
-  <span class="keyword">if</span> <span class="symbol">(</span>offset <span class="symbol">&gt;=</span> <span class="number">0</span> <span class="symbol">&amp;&amp;</span> offset <span class="symbol">+</span> size <span class="symbol">&lt;=</span> find<span class="symbol">-&gt;</span>size<span class="symbol">) {</span>
-    <span class="keyword">return</span> find<span class="symbol">-&gt;</span>data <span class="symbol">+</span> offset<span class="symbol">;</span>
-  <span class="symbol">}</span>
-  <span class="keyword">return</span> NULL<span class="symbol">;</span>
-<span class="symbol">}</span>
+<span class="function">my_peek</span> <span class="gtkdoc opt">(</span>gpointer data<span class="gtkdoc opt">,</span> gint64 offset<span class="gtkdoc opt">,</span> guint size<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  MyTypeFind <span class="gtkdoc opt">*</span>find <span class="gtkdoc opt">= (</span>MyTypeFind <span class="gtkdoc opt">*)</span> data<span class="gtkdoc opt">;</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>offset <span class="gtkdoc opt">&gt;=</span> <span class="number">0</span> <span class="gtkdoc opt">&amp;&amp;</span> offset <span class="gtkdoc opt">+</span> size <span class="gtkdoc opt">&lt;=</span> find<span class="gtkdoc opt">-&gt;</span>size<span class="gtkdoc opt">) {</span>
+    <span class="keyword">return</span> find<span class="gtkdoc opt">-&gt;</span>data <span class="gtkdoc opt">+</span> offset<span class="gtkdoc opt">;</span>
+  <span class="gtkdoc opt">}</span>
+  <span class="keyword">return</span> NULL<span class="gtkdoc opt">;</span>
+<span class="gtkdoc opt">}</span>
 <span class="gtkdoc kwb">static void</span>
-<span class="function">my_suggest</span> <span class="symbol">(</span>gpointer data<span class="symbol">,</span> guint probability<span class="symbol">,</span> GstCaps <span class="symbol">*</span>caps<span class="symbol">)</span>
-<span class="symbol">{</span>
-  MyTypeFind <span class="symbol">*</span>find <span class="symbol">= (</span>MyTypeFind <span class="symbol">*)</span> data<span class="symbol">;</span>
-  <span class="keyword">if</span> <span class="symbol">(</span>probability <span class="symbol">&gt;</span> find<span class="symbol">-&gt;</span>probability<span class="symbol">) {</span>
-    find<span class="symbol">-&gt;</span>probability <span class="symbol">=</span> probability<span class="symbol">;</span>
-    <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#gst-caps-replace">gst_caps_replace</a></span> <span class="symbol">(&amp;</span>find<span class="symbol">-&gt;</span>caps<span class="symbol">,</span> caps<span class="symbol">);</span>
-  <span class="symbol">}</span>
-<span class="symbol">}</span>
-<span class="gtkdoc kwb">static</span> GstCaps <span class="symbol">*</span>
-<span class="function">find_type</span> <span class="symbol">(</span>guint8 <span class="symbol">*</span>data<span class="symbol">,</span> guint size<span class="symbol">)</span>
-<span class="symbol">{</span>
-  GList <span class="symbol">*</span>walk<span class="symbol">, *</span>type_list<span class="symbol">;</span>
-  MyTypeFind find <span class="symbol">= {</span>data<span class="symbol">,</span> size<span class="symbol">,</span> <span class="number">0</span><span class="symbol">,</span> NULL<span class="symbol">};</span>
-  GstTypeFind gst_find <span class="symbol">= {</span>my_peek<span class="symbol">,</span> my_suggest<span class="symbol">, &amp;</span>find<span class="symbol">, };</span>
-  walk <span class="symbol">=</span> type_list <span class="symbol">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTypeFindFactory.html#gst-type-find-factory-get-list">gst_type_find_factory_get_list</a></span> <span class="symbol">();</span>
-  <span class="keyword">while</span> <span class="symbol">(</span>walk<span class="symbol">) {</span>
-    GstTypeFindFactory <span class="symbol">*</span>factory <span class="symbol">=</span> <span class="function">GST_TYPE_FIND_FACTORY</span> <span class="symbol">(</span>walk<span class="symbol">-&gt;</span>data<span class="symbol">);</span>
-    walk <span class="symbol">=</span> <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#g-list-next">g_list_next</a></span> <span class="symbol">(</span>walk<span class="symbol">)</span>
-    <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTypeFindFactory.html#gst-type-find-factory-call-function">gst_type_find_factory_call_function</a></span> <span class="symbol">(</span>factory<span class="symbol">, &amp;</span>gst_find<span class="symbol">);</span>
-  <span class="symbol">}</span>
-  <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#g-list-free">g_list_free</a></span> <span class="symbol">(</span>type_list<span class="symbol">);</span>
-  <span class="keyword">return</span> find<span class="symbol">.</span>caps<span class="symbol">;</span>
-<span class="symbol">};</span></pre></td>
+<span class="function">my_suggest</span> <span class="gtkdoc opt">(</span>gpointer data<span class="gtkdoc opt">,</span> guint probability<span class="gtkdoc opt">,</span> GstCaps <span class="gtkdoc opt">*</span>caps<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  MyTypeFind <span class="gtkdoc opt">*</span>find <span class="gtkdoc opt">= (</span>MyTypeFind <span class="gtkdoc opt">*)</span> data<span class="gtkdoc opt">;</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>probability <span class="gtkdoc opt">&gt;</span> find<span class="gtkdoc opt">-&gt;</span>probability<span class="gtkdoc opt">) {</span>
+    find<span class="gtkdoc opt">-&gt;</span>probability <span class="gtkdoc opt">=</span> probability<span class="gtkdoc opt">;</span>
+    <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#gst-caps-replace">gst_caps_replace</a></span> <span class="gtkdoc opt">(&amp;</span>find<span class="gtkdoc opt">-&gt;</span>caps<span class="gtkdoc opt">,</span> caps<span class="gtkdoc opt">);</span>
+  <span class="gtkdoc opt">}</span>
+<span class="gtkdoc opt">}</span>
+<span class="gtkdoc kwb">static</span> GstCaps <span class="gtkdoc opt">*</span>
+<span class="function">find_type</span> <span class="gtkdoc opt">(</span>guint8 <span class="gtkdoc opt">*</span>data<span class="gtkdoc opt">,</span> guint size<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  GList <span class="gtkdoc opt">*</span>walk<span class="gtkdoc opt">, *</span>type_list<span class="gtkdoc opt">;</span>
+  MyTypeFind find <span class="gtkdoc opt">= {</span>data<span class="gtkdoc opt">,</span> size<span class="gtkdoc opt">,</span> <span class="number">0</span><span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">};</span>
+  GstTypeFind gst_find <span class="gtkdoc opt">= {</span>my_peek<span class="gtkdoc opt">,</span> my_suggest<span class="gtkdoc opt">, &amp;</span>find<span class="gtkdoc opt">, };</span>
+  walk <span class="gtkdoc opt">=</span> type_list <span class="gtkdoc opt">=</span> <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTypeFindFactory.html#gst-type-find-factory-get-list">gst_type_find_factory_get_list</a></span> <span class="gtkdoc opt">();</span>
+  <span class="keyword">while</span> <span class="gtkdoc opt">(</span>walk<span class="gtkdoc opt">) {</span>
+    GstTypeFindFactory <span class="gtkdoc opt">*</span>factory <span class="gtkdoc opt">=</span> <span class="function">GST_TYPE_FIND_FACTORY</span> <span class="gtkdoc opt">(</span>walk<span class="gtkdoc opt">-&gt;</span>data<span class="gtkdoc opt">);</span>
+    walk <span class="gtkdoc opt">=</span> <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#g-list-next">g_list_next</a></span> <span class="gtkdoc opt">(</span>walk<span class="gtkdoc opt">)</span>
+    <span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstTypeFindFactory.html#gst-type-find-factory-call-function">gst_type_find_factory_call_function</a></span> <span class="gtkdoc opt">(</span>factory<span class="gtkdoc opt">, &amp;</span>gst_find<span class="gtkdoc opt">);</span>
+  <span class="gtkdoc opt">}</span>
+  <span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#g-list-free">g_list_free</a></span> <span class="gtkdoc opt">(</span>type_list<span class="gtkdoc opt">);</span>
+  <span class="keyword">return</span> find<span class="gtkdoc opt">.</span>caps<span class="gtkdoc opt">;</span>
+<span class="gtkdoc opt">};</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -171,40 +171,44 @@ that though.
 Last reviewed on 2005-11-09 (0.9.4)
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="GstTypeFindFactory.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstTypeFindFactory">
-<a name="GstTypeFindFactory-struct"></a><h3>GstTypeFindFactory</h3>
-<pre class="programlisting">typedef struct _GstTypeFindFactory GstTypeFindFactory;</pre>
+<div class="refsect2">
+<a name="GstTypeFindFactory-struct"></a><h3>struct GstTypeFindFactory</h3>
+<pre class="programlisting">struct GstTypeFindFactory;</pre>
 <p>
 Object that stores information about a typefind function.
 </p>
 </div>
 <hr>
-<div class="refsect2" title="gst_type_find_factory_get_list ()">
+<div class="refsect2">
 <a name="gst-type-find-factory-get-list"></a><h3>gst_type_find_factory_get_list ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             gst_type_find_factory_get_list      (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *		           gst_type_find_factory_get_list      (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 Gets the list of all registered typefind factories. You must free the
-list using gst_plugin_feature_list_free.
+list using <a class="link" href="GstPluginFeature.html#gst-plugin-feature-list-free" title="gst_plugin_feature_list_free ()"><code class="function">gst_plugin_feature_list_free()</code></a>.
 </p>
 <p>
 The returned factories are sorted by highest rank first, and then by
 factory name. (behaviour change since 0.10.26)
 </p>
+<p>
+Free-function: gst_plugin_feature_list_free
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the list of all registered <a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a>.
+<td>the list of all
+registered <a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a>. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> Gst.TypeFindFactory]</span>
 </td>
 </tr></tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_type_find_factory_get_extensions ()">
+<div class="refsect2">
 <a name="gst-type-find-factory-get-extensions"></a><h3>gst_type_find_factory_get_extensions ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **            gst_type_find_factory_get_extensions
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> **	           gst_type_find_factory_get_extensions
                                                         (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>);</pre>
 <p>
 Gets the extensions associated with a <a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a>. The returned
@@ -222,18 +226,19 @@ a 0-length list.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a NULL-terminated array of extensions associated with this factory
+<td>a
+NULL-terminated array of extensions associated with this factory. <span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> utf8]</span>
 </td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_type_find_factory_get_caps ()">
+<div class="refsect2">
 <a name="gst-type-find-factory-get-caps"></a><h3>gst_type_find_factory_get_caps ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="returnvalue">GstCaps</span></a> *           gst_type_find_factory_get_caps      (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-GstCaps.html#GstCaps" title="struct GstCaps"><span class="returnvalue">GstCaps</span></a> *	          gst_type_find_factory_get_caps      (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>);</pre>
 <p>
-Gets the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> associated with a typefind factory.
+Gets the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="struct GstCaps"><span class="type">GstCaps</span></a> associated with a typefind factory.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -245,17 +250,17 @@ Gets the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="GstCaps"><span class="type">GstCaps</span></a> associated with this factory
+<td>the <a class="link" href="gstreamer-GstCaps.html#GstCaps" title="struct GstCaps"><span class="type">GstCaps</span></a> associated with this factory. <span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_type_find_factory_call_function ()">
+<div class="refsect2">
 <a name="gst-type-find-factory-call-function"></a><h3>gst_type_find_factory_call_function ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_type_find_factory_call_function (<em class="parameter"><code><a class="link" href="GstTypeFindFactory.html" title="GstTypeFindFactory"><span class="type">GstTypeFindFactory</span></a> *factory</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="GstTypeFind"><span class="type">GstTypeFind</span></a> *find</code></em>);</pre>
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="struct GstTypeFind"><span class="type">GstTypeFind</span></a> *find</code></em>);</pre>
 <p>
 Calls the <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFindFunction" title="GstTypeFindFunction ()"><span class="type">GstTypeFindFunction</span></a> associated with this factory.
 </p>
@@ -269,8 +274,8 @@ Calls the <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFindFunction" 
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>find</code></em> :</span></p></td>
-<td>A properly setup <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="GstTypeFind"><span class="type">GstTypeFind</span></a> entry. The get_data and suggest_type
-       members must be set.
+<td>a properly setup <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFind" title="struct GstTypeFind"><span class="type">GstTypeFind</span></a> entry. The get_data
+and suggest_type members must be set. <span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -280,6 +285,6 @@ Calls the <a class="link" href="gstreamer-GstTypeFind.html#GstTypeFindFunction" 
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

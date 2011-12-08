@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gstreamer Elements">
 <link rel="prev" href="gstreamer-plugins-capsfilter.html" title="capsfilter">
 <link rel="next" href="gstreamer-plugins-fakesink.html" title="fakesink">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -32,7 +32,7 @@
                   <a href="#gstreamer-plugins-fakesrc.signals" class="shortcut">Signals</a>
 </td></tr>
 </table>
-<div class="refentry" title="fakesrc">
+<div class="refentry">
 <a name="gstreamer-plugins-fakesrc"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -41,16 +41,16 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gstreamer-plugins-fakesrc.synopsis"></a><h2>Synopsis</h2>
-<a name="GstFakeSrc"></a><pre class="synopsis">                    <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrc-struct" title="GstFakeSrc">GstFakeSrc</a>;
+<a name="GstFakeSrc"></a><pre class="synopsis">struct              <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrc-struct" title="struct GstFakeSrc">GstFakeSrc</a>;
 enum                <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrcDataType" title="enum GstFakeSrcDataType">GstFakeSrcDataType</a>;
 enum                <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrcFillType" title="enum GstFakeSrcFillType">GstFakeSrcFillType</a>;
 enum                <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrcOutputType" title="enum GstFakeSrcOutputType">GstFakeSrcOutputType</a>;
 enum                <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrcSizeType" title="enum GstFakeSrcSizeType">GstFakeSrcSizeType</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gstreamer-plugins-fakesrc.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -60,7 +60,7 @@ enum                <a class="link" href="gstreamer-plugins-fakesrc.html#GstFake
                      +----GstFakeSrc
 </pre>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gstreamer-plugins-fakesrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrc--can-activate-pull" title='The "can-activate-pull" property'>can-activate-pull</a>"        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct
@@ -82,13 +82,13 @@ enum                <a class="link" href="gstreamer-plugins-fakesrc.html#GstFake
   "<a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrc--format" title='The "format" property'>format</a>"                   <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstFormat.html#GstFormat"><span class="type">GstFormat</span></a>             : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Signals">
+<div class="refsect1">
 <a name="gstreamer-plugins-fakesrc.signals"></a><h2>Signals</h2>
 <pre class="synopsis">
-  "<a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrc-handoff" title='The "handoff" signal'>handoff</a>"                                        : Run Last
+  "<a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrc-handoff" title='The "handoff" signal'>handoff</a>"                                        : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-LAST:CAPS"><code class="literal">Run Last</code></a>
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gstreamer-plugins-fakesrc.description"></a><h2>Description</h2>
 <p>
 The fakesrc element is a multipurpose element that can generate
@@ -98,14 +98,16 @@ a wide range of buffers and can operate in various scheduling modes.
 It is mostly used as a testing element, one trivial example for testing
 basic <span class="application">GStreamer</span> core functionality is:
 </p>
-<div class="refsect2" title="Example launch line">
-<a name="id540707"></a><h3>Example launch line</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp8812912"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v fakesrc num<span class="symbol">-</span>buffers<span class="symbol">=</span><span class="number">5</span> <span class="symbol">!</span> fakesink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch <span class="gtkdoc opt">-</span>v fakesrc num<span class="gtkdoc opt">-</span>buffers<span class="gtkdoc opt">=</span><span class="number">5</span> <span class="gtkdoc opt">!</span> fakesink</pre></td>
       </tr>
     </tbody>
   </table>
@@ -114,20 +116,74 @@ basic <span class="application">GStreamer</span> core functionality is:
 sends an EOS.
 </div>
 <p>
+</p>
+<p>
 Last reviewed on 2008-06-20 (0.10.21)
 </p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp8816096"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gstreamer-plugins-plugin-coreelements.html#plugin-coreelements">coreelements</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Erik Walthinsen &lt;omega@cse.ogi.edu&gt;, Wim Taymans &lt;wim@fluendo.com&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Source</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp8823504"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>ANY</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gstreamer-plugins-fakesrc.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstFakeSrc">
-<a name="GstFakeSrc-struct"></a><h3>GstFakeSrc</h3>
-<pre class="programlisting">typedef struct _GstFakeSrc GstFakeSrc;</pre>
+<div class="refsect2">
+<a name="GstFakeSrc-struct"></a><h3>struct GstFakeSrc</h3>
+<pre class="programlisting">struct GstFakeSrc;</pre>
 <p>
 Opaque <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrc"><span class="type">GstFakeSrc</span></a> data structure.
 </p>
 </div>
 <hr>
-<div class="refsect2" title="enum GstFakeSrcDataType">
+<div class="refsect2">
 <a name="GstFakeSrcDataType"></a><h3>enum GstFakeSrcDataType</h3>
 <pre class="programlisting">typedef enum {
   FAKE_SRC_DATA_ALLOCATE = 1,
@@ -154,7 +210,7 @@ The different ways buffers are allocated.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="enum GstFakeSrcFillType">
+<div class="refsect2">
 <a name="GstFakeSrcFillType"></a><h3>enum GstFakeSrcFillType</h3>
 <pre class="programlisting">typedef enum {
   FAKE_SRC_FILLTYPE_NOTHING = 1,
@@ -199,7 +255,7 @@ The different ways of filling the buffers.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="enum GstFakeSrcOutputType">
+<div class="refsect2">
 <a name="GstFakeSrcOutputType"></a><h3>enum GstFakeSrcOutputType</h3>
 <pre class="programlisting">typedef enum {
   FAKE_SRC_FIRST_LAST_LOOP = 1,
@@ -262,7 +318,7 @@ The different output types. Unused currently.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="enum GstFakeSrcSizeType">
+<div class="refsect2">
 <a name="GstFakeSrcSizeType"></a><h3>enum GstFakeSrcSizeType</h3>
 <pre class="programlisting">typedef enum {
   FAKE_SRC_SIZETYPE_EMPTY = 1,
@@ -295,30 +351,30 @@ The different size of the allocated buffers.
 </table></div>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gstreamer-plugins-fakesrc.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "can-activate-pull" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--can-activate-pull"></a><h3>The <code class="literal">"can-activate-pull"</code> property</h3>
 <pre class="programlisting">  "can-activate-pull"        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct</pre>
 <p>Can activate in pull mode.</p>
 <p>Default value: TRUE</p>
 </div>
 <hr>
-<div class="refsect2" title='The "can-activate-push" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--can-activate-push"></a><h3>The <code class="literal">"can-activate-push"</code> property</h3>
 <pre class="programlisting">  "can-activate-push"        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct</pre>
 <p>Can activate in push mode.</p>
 <p>Default value: TRUE</p>
 </div>
 <hr>
-<div class="refsect2" title='The "data" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--data"></a><h3>The <code class="literal">"data"</code> property</h3>
 <pre class="programlisting">  "data"                     <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrcDataType" title="enum GstFakeSrcDataType"><span class="type">GstFakeSrcDataType</span></a>    : Read / Write</pre>
 <p>Data allocation method.</p>
 <p>Default value: Allocate data</p>
 </div>
 <hr>
-<div class="refsect2" title='The "datarate" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--datarate"></a><h3>The <code class="literal">"datarate"</code> property</h3>
 <pre class="programlisting">  "datarate"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Timestamps buffers with number of bytes per second (0 = none).</p>
@@ -326,35 +382,35 @@ The different size of the allocated buffers.
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "dump" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--dump"></a><h3>The <code class="literal">"dump"</code> property</h3>
 <pre class="programlisting">  "dump"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Dump buffer contents to stdout.</p>
 <p>Default value: FALSE</p>
 </div>
 <hr>
-<div class="refsect2" title='The "filltype" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--filltype"></a><h3>The <code class="literal">"filltype"</code> property</h3>
 <pre class="programlisting">  "filltype"                 <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrcFillType" title="enum GstFakeSrcFillType"><span class="type">GstFakeSrcFillType</span></a>    : Read / Write</pre>
 <p>How to fill the buffer, if at all.</p>
 <p>Default value: Fill buffers with zeros</p>
 </div>
 <hr>
-<div class="refsect2" title='The "is-live" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--is-live"></a><h3>The <code class="literal">"is-live"</code> property</h3>
 <pre class="programlisting">  "is-live"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write / Construct</pre>
 <p>True if the element cannot produce data in PAUSED.</p>
 <p>Default value: FALSE</p>
 </div>
 <hr>
-<div class="refsect2" title='The "last-message" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--last-message"></a><h3>The <code class="literal">"last-message"</code> property</h3>
 <pre class="programlisting">  "last-message"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read</pre>
 <p>The last status message.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
-<div class="refsect2" title='The "parentsize" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--parentsize"></a><h3>The <code class="literal">"parentsize"</code> property</h3>
 <pre class="programlisting">  "parentsize"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Size of parent buffer for sub-buffered allocation.</p>
@@ -362,28 +418,28 @@ The different size of the allocated buffers.
 <p>Default value: 40960</p>
 </div>
 <hr>
-<div class="refsect2" title='The "pattern" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--pattern"></a><h3>The <code class="literal">"pattern"</code> property</h3>
 <pre class="programlisting">  "pattern"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>pattern.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
-<div class="refsect2" title='The "signal-handoffs" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--signal-handoffs"></a><h3>The <code class="literal">"signal-handoffs"</code> property</h3>
 <pre class="programlisting">  "signal-handoffs"          <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Send a signal before pushing the buffer.</p>
 <p>Default value: FALSE</p>
 </div>
 <hr>
-<div class="refsect2" title='The "silent" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--silent"></a><h3>The <code class="literal">"silent"</code> property</h3>
 <pre class="programlisting">  "silent"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Don't produce last_message events.</p>
 <p>Default value: FALSE</p>
 </div>
 <hr>
-<div class="refsect2" title='The "sizemax" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--sizemax"></a><h3>The <code class="literal">"sizemax"</code> property</h3>
 <pre class="programlisting">  "sizemax"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Maximum buffer size.</p>
@@ -391,7 +447,7 @@ The different size of the allocated buffers.
 <p>Default value: 4096</p>
 </div>
 <hr>
-<div class="refsect2" title='The "sizemin" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--sizemin"></a><h3>The <code class="literal">"sizemin"</code> property</h3>
 <pre class="programlisting">  "sizemin"                  <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Minimum buffer size.</p>
@@ -399,21 +455,21 @@ The different size of the allocated buffers.
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "sizetype" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--sizetype"></a><h3>The <code class="literal">"sizetype"</code> property</h3>
 <pre class="programlisting">  "sizetype"                 <a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrcSizeType" title="enum GstFakeSrcSizeType"><span class="type">GstFakeSrcSizeType</span></a>    : Read / Write</pre>
 <p>How to determine buffer sizes.</p>
 <p>Default value: Send empty buffers</p>
 </div>
 <hr>
-<div class="refsect2" title='The "sync" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--sync"></a><h3>The <code class="literal">"sync"</code> property</h3>
 <pre class="programlisting">  "sync"                     <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Sync to the clock to the datarate.</p>
 <p>Default value: FALSE</p>
 </div>
 <hr>
-<div class="refsect2" title='The "format" property'>
+<div class="refsect2">
 <a name="GstFakeSrc--format"></a><h3>The <code class="literal">"format"</code> property</h3>
 <pre class="programlisting">  "format"                   <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstFormat.html#GstFormat"><span class="type">GstFormat</span></a>             : Read / Write</pre>
 <p>
@@ -423,14 +479,14 @@ Set the format of the newsegment events to produce.
 <p class="since">Since 0.10.20</p>
 </div>
 </div>
-<div class="refsect1" title="Signal Details">
+<div class="refsect1">
 <a name="gstreamer-plugins-fakesrc.signal-details"></a><h2>Signal Details</h2>
-<div class="refsect2" title='The "handoff" signal'>
+<div class="refsect2">
 <a name="GstFakeSrc-handoff"></a><h3>The <code class="literal">"handoff"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="gstreamer-plugins-fakesrc.html#GstFakeSrc"><span class="type">GstFakeSrc</span></a> *fakesrc,
                                                         <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a>  *buffer,
                                                         <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPad.html"><span class="type">GstPad</span></a>     *pad,
-                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)      : Run Last</pre>
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)      : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-LAST:CAPS"><code class="literal">Run Last</code></a></pre>
 <p>
 This signal gets emitted before sending the buffer.
 </p>
@@ -439,18 +495,15 @@ This signal gets emitted before sending the buffer.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fakesrc</code></em> :</span></p></td>
-<td>the fakesrc instance
-</td>
+<td>the fakesrc instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td>the buffer that will be pushed
-</td>
+<td>the buffer that will be pushed</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pad</code></em> :</span></p></td>
-<td>the pad that will sent it
-</td>
+<td>the pad that will sent it</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
@@ -460,13 +513,13 @@ This signal gets emitted before sending the buffer.
 </table></div>
 </div>
 </div>
-<div class="refsect1" title="See Also">
+<div class="refsect1">
 <a name="gstreamer-plugins-fakesrc.see-also"></a><h2>See Also</h2>
 <a class="link" href="gstreamer-plugins-fakesink.html#GstFakeSink"><span class="type">GstFakeSink</span></a>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

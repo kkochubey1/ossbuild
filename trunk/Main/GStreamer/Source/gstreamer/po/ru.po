@@ -4,13 +4,13 @@
 # Peter Astakhov <astakhovp@mail.ru>, 2005.
 # Артём Попов <artfwo@gmail.com>, 2009.
 # Pavel Maryanov <acid_jack@ukr.net>, 2009.
-# Yuri Kozlov <yuray@komyakino.ru>, 2010.
+# Yuri Kozlov <yuray@komyakino.ru>, 2010, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: gstreamer-0.10.30.3\n"
+"Project-Id-Version: gstreamer-0.10.32.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-11-30 16:56+0000\n"
-"PO-Revision-Date: 2010-10-25 14:54+0400\n"
+"POT-Creation-Date: 2011-06-15 14:17+0100\n"
+"PO-Revision-Date: 2011-04-26 20:25+0400\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <gnu@mx.ru>\n"
 "Language: ru\n"
@@ -405,6 +405,12 @@ msgstr "URI авторских прав"
 
 msgid "URI to the copyright notice of the data"
 msgstr "URI уведомления об авторских правах"
+
+msgid "encoded by"
+msgstr "Кодирование выполнено"
+
+msgid "name of the encoding person or organization"
+msgstr "Имя человека или название организации, выполнявшей кодировку"
 
 msgid "contact"
 msgstr "контакт"
@@ -1050,6 +1056,9 @@ msgstr "ОШИБКА: ошибка обработки аргумента ком�
 msgid "WARNING: element named '%s' not found.\n"
 msgstr "ПРЕДУПРЕЖДЕНИЕ: элемент с именем «%s» не найден.\n"
 
+msgid "Index statistics"
+msgstr "Индексная статистика"
+
 #, c-format
 msgid "Got message #%u from element \"%s\" (%s): "
 msgstr "Получено сообщение #%u от элемента «%s» (%s): "
@@ -1154,6 +1163,9 @@ msgstr "Вывести трассировку выделения памяти (�
 
 msgid "Force EOS on sources before shutting the pipeline down"
 msgstr "Выдать EOS в источники перед закрытием конвейера"
+
+msgid "Gather and print index statistics"
+msgstr "Собрать и вывести индексную статистику"
 
 #, c-format
 msgid "ERROR: pipeline could not be constructed: %s.\n"
@@ -1273,9 +1285,6 @@ msgstr "Освобождение конвейера...\n"
 
 #~ msgid "Added path   %s to %s \n"
 #~ msgstr "Добавлен путь   %s к %s \n"
-
-#~ msgid "Rebuilding %s (%s) ...\n"
-#~ msgstr "Перестариваю %s (%s) ...\n"
 
 #~ msgid "Trying to load %s ...\n"
 #~ msgstr "Пытаюсь загрузить %s ...\n"

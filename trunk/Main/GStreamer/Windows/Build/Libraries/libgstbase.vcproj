@@ -102,7 +102,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="..\..\..\Source\gstreamer\libs\gst\base;Source\"
+				AdditionalIncludeDirectories="..\..\..\Source\gstreamer;..\..\..\Source\gstreamer\libs\gst\base;Source\"
 				PreprocessorDefinitions="_DEBUG;LIBGSTBASE_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -237,7 +237,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\..\Source\gstreamer\libs\gst\base;Source\"
+				AdditionalIncludeDirectories="..\..\..\Source\gstreamer;..\..\..\Source\gstreamer\libs\gst\base;Source\"
 				PreprocessorDefinitions="NDEBUG;LIBGSTBASE_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -311,6 +311,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Source\gstreamer\libs\gst\base\gstbaseparse.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Source\gstreamer\libs\gst\base\gstbasesink.c"
 				>
 			</File>
@@ -373,6 +377,24 @@
 				>
 				<File
 					RelativePath="..\..\..\Source\gstreamer\libs\gst\base\gstadapter.h"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\gstreamer\libs\gst\base\gstbaseparse.h"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

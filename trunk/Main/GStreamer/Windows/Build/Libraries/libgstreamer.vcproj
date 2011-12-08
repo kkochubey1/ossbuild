@@ -126,7 +126,7 @@
 				ExecutionBucket="23"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="..\..\..\Source\gstreamer\gst\;..\..\..\Source\gstreamer\gst\parse\;&quot;$(OutDir)\include\gstreamer-$(ApiVersionString)\gst\&quot;"
+				AdditionalIncludeDirectories="..\..\..\Source\gstreamer\;..\..\..\Source\gstreamer\gst\;..\..\..\Source\gstreamer\gst\parse\;&quot;$(OutDir)\include\gstreamer-$(ApiVersionString)\gst\&quot;"
 				PreprocessorDefinitions="_DEBUG;LIBGSTREAMER_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="0"
@@ -295,7 +295,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="..\..\..\Source\gstreamer\gst\;..\..\..\Source\gstreamer\gst\parse\;&quot;$(OutDir)\include\gstreamer-$(ApiVersionString)\gst\&quot;"
+				AdditionalIncludeDirectories="..\..\..\Source\gstreamer\;..\..\..\Source\gstreamer\gst\;..\..\..\Source\gstreamer\gst\parse\;&quot;$(OutDir)\include\gstreamer-$(ApiVersionString)\gst\&quot;"
 				PreprocessorDefinitions="NDEBUG;LIBGSTREAMER_EXPORTS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -364,6 +364,10 @@
 			>
 			<File
 				RelativePath="..\..\..\Source\gstreamer\gst\gst.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\gst\gstatomicqueue.c"
 				>
 			</File>
 			<File
@@ -616,47 +620,141 @@
 				RelativePath="..\..\..\Source\gstreamer\gst\glib-compat-private.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\gst\gst-i18n-app.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\gst\gst-i18n-lib.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\gst\gst_private.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\gst\gstelementdetails.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\gst\gstpluginloader.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\gst\gstquark.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\gst\gstregistrybinary.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\gst\gstregistrychunks.h"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
 			<Filter
 				Name="Public"
 				>
 				<File
 					RelativePath="..\..\..\Source\gstreamer\gst\glib-compat.h"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\Source\gstreamer\gst\gst-i18n-app.h"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\Source\gstreamer\gst\gst-i18n-lib.h"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -692,7 +790,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\Source\gstreamer\gst\gst_private.h"
+					RelativePath="..\..\..\Source\gstreamer\gst\gstatomicqueue.h"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1304,24 +1402,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\Source\gstreamer\gst\gstpluginloader.h"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\..\..\Source\gstreamer\gst\gstpoll.h"
 					>
 					<FileConfiguration
@@ -1358,24 +1438,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\Source\gstreamer\gst\gstquark.h"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\..\..\Source\gstreamer\gst\gstquery.h"
 					>
 					<FileConfiguration
@@ -1395,42 +1457,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\Source\gstreamer\gst\gstregistry.h"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\Source\gstreamer\gst\gstregistrybinary.h"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\Source\gstreamer\gst\gstregistrychunks.h"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

@@ -367,10 +367,12 @@ gst_file_src_set_location (GstFileSrc * src, const gchar * location)
     src->filename = NULL;
     src->uri = NULL;
   } else {
-    /* we store the filename as received by the application. On Windoes this
+    /* we store the filename as received by the application. On Windows this
      * should be UTF8 */
     src->filename = g_strdup (location);
-    src->uri = gst_uri_construct ("file", src->filename);
+    src->uri = gst_filename_to_uri (location, NULL);
+    GST_INFO ("filename : %s", src->filename);
+    GST_INFO ("uri      : %s", src->uri);
   }
   g_object_notify (G_OBJECT (src), "location");
   gst_uri_handler_new_uri (GST_URI_HANDLER (src), src->uri);
@@ -761,11 +763,11 @@ gst_file_src_create_mmap (GstFileSrc * src, guint64 offset, guint length,
 
   /* if we need to touch the buffer (to bring it into memory), do so */
   if (src->touch) {
-    volatile guchar *p = GST_BUFFER_DATA (buf), c;
+    volatile guchar *p = GST_BUFFER_DATA (buf);
 
     /* read first byte of each page */
     for (i = 0; i < GST_BUFFER_SIZE (buf); i += src->pagesize)
-      c = p[i];
+      (void) p[i];
   }
 
   /* we're done, return the buffer */

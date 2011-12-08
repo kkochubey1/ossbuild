@@ -265,7 +265,7 @@ gst_bus_set_main_context (GstBus * bus, GMainContext * ctx)
  *
  * Creates a new #GstBus instance.
  *
- * Returns: a new #GstBus instance
+ * Returns: (transfer full): a new #GstBus instance
  */
 GstBus *
 gst_bus_new (void)
@@ -281,7 +281,7 @@ gst_bus_new (void)
 /**
  * gst_bus_post:
  * @bus: a #GstBus to post on
- * @message: The #GstMessage to post
+ * @message: (transfer full): the #GstMessage to post
  *
  * Post a message on the given bus. Ownership of the message
  * is taken by the bus.
@@ -468,10 +468,10 @@ gst_bus_set_flushing (GstBus * bus, gboolean flushing)
  * @timeout is #GST_CLOCK_TIME_NONE, this function will block forever until a
  * matching message was posted on the bus.
  *
- * Returns: a #GstMessage matching the filter in @types, or NULL if no matching
- * message was found on the bus until the timeout expired.
- * The message is taken from the bus and needs to be unreffed with
- * gst_message_unref() after usage.
+ * Returns: (transfer full): a #GstMessage matching the filter in @types,
+ *     or NULL if no matching message was found on the bus until the timeout
+ *     expired. The message is taken from the bus and needs to be unreffed
+ *     with gst_message_unref() after usage.
  *
  * MT safe.
  *
@@ -558,8 +558,8 @@ beach:
  * #GST_CLOCK_TIME_NONE, this function will block forever until a message was
  * posted on the bus.
  *
- * Returns: The #GstMessage that is on the bus after the specified timeout
- * or NULL if the bus is empty after the timeout expired.
+ * Returns: (transfer full): the #GstMessage that is on the bus after the
+ *     specified timeout or NULL if the bus is empty after the timeout expired.
  * The message is taken from the bus and needs to be unreffed with
  * gst_message_unref() after usage.
  *
@@ -585,10 +585,10 @@ gst_bus_timed_pop (GstBus * bus, GstClockTime timeout)
  * message that does match @type.  If there is no message matching @type on
  * the bus, all messages will be discarded.
  *
- * Returns: The next #GstMessage matching @type that is on the bus, or NULL if
- *     the bus is empty or there is no message matching @type.
- * The message is taken from the bus and needs to be unreffed with
- * gst_message_unref() after usage.
+ * Returns: (transfer full): the next #GstMessage matching @type that is on
+ *     the bus, or NULL if the bus is empty or there is no message matching
+ *     @type. The message is taken from the bus and needs to be unreffed with
+ *     gst_message_unref() after usage.
  *
  * MT safe.
  *
@@ -609,9 +609,9 @@ gst_bus_pop_filtered (GstBus * bus, GstMessageType types)
  *
  * Get a message from the bus.
  *
- * Returns: The #GstMessage that is on the bus, or NULL if the bus is empty.
- * The message is taken from the bus and needs to be unreffed with
- * gst_message_unref() after usage.
+ * Returns: (transfer full): the #GstMessage that is on the bus, or NULL if the
+ *     bus is empty. The message is taken from the bus and needs to be unreffed
+ *     with gst_message_unref() after usage.
  *
  * MT safe.
  */
@@ -631,7 +631,8 @@ gst_bus_pop (GstBus * bus)
  * on the bus' message queue. A reference is returned, and needs to be unreffed
  * by the caller.
  *
- * Returns: The #GstMessage that is on the bus, or NULL if the bus is empty.
+ * Returns: (transfer full): the #GstMessage that is on the bus, or NULL if the
+ *     bus is empty.
  *
  * MT safe.
  */
@@ -808,7 +809,7 @@ static GSourceFuncs gst_bus_source_funcs = {
  * a message is on the bus. After the GSource is dispatched, the
  * message is popped off the bus and unreffed.
  *
- * Returns: A #GSource that can be added to a mainloop.
+ * Returns: (transfer full): a #GSource that can be added to a mainloop.
  */
 GSource *
 gst_bus_create_watch (GstBus * bus)
@@ -830,6 +831,7 @@ static guint
 gst_bus_add_watch_full_unlocked (GstBus * bus, gint priority,
     GstBusFunc func, gpointer user_data, GDestroyNotify notify)
 {
+  GMainContext *ctx;
   guint id;
   GSource *source;
 
@@ -846,7 +848,8 @@ gst_bus_add_watch_full_unlocked (GstBus * bus, gint priority,
 
   g_source_set_callback (source, (GSourceFunc) func, user_data, notify);
 
-  id = g_source_attach (source, NULL);
+  ctx = g_main_context_get_thread_default ();
+  id = g_source_attach (source, ctx);
   g_source_unref (source);
 
   if (id) {
@@ -866,7 +869,11 @@ gst_bus_add_watch_full_unlocked (GstBus * bus, gint priority,
  * @notify: the function to call when the source is removed.
  *
  * Adds a bus watch to the default main context with the given @priority (e.g.
- * %G_PRIORITY_DEFAULT).
+ * %G_PRIORITY_DEFAULT). Since 0.10.33 it is also possible to use a non-default
+ * main context set up using g_main_context_push_thread_default() (before
+ * one had to create a bus watch source and attach it to the desired main
+ * context 'manually').
+ *
  * This function is used to receive asynchronous messages in the main loop.
  * There can only be a single bus watch per bus, you must remove it before you
  * can set a new one.
@@ -903,7 +910,11 @@ gst_bus_add_watch_full (GstBus * bus, gint priority,
  * @user_data: user data passed to @func.
  *
  * Adds a bus watch to the default main context with the default priority
- * (%G_PRIORITY_DEFAULT).
+ * (%G_PRIORITY_DEFAULT). Since 0.10.33 it is also possible to use a non-default
+ * main context set up using g_main_context_push_thread_default() (before
+ * one had to create a bus watch source and attach it to the desired main
+ * context 'manually').
+ *
  * This function is used to receive asynchronous messages in the main loop.
  * There can only be a single bus watch per bus, you must remove it before you
  * can set a new one.
@@ -1025,9 +1036,9 @@ poll_destroy_timeout (GstBusPollData * poll_data)
  * better handled by setting up an asynchronous bus watch and doing things
  * from there.
  *
- * Returns: The message that was received, or NULL if the poll timed out.
- * The message is taken from the bus and needs to be unreffed with
- * gst_message_unref() after usage.
+ * Returns: (transfer full): the message that was received, or NULL if the
+ *     poll timed out. The message is taken from the bus and needs to be
+ *     unreffed with gst_message_unref() after usage.
  */
 GstMessage *
 gst_bus_poll (GstBus * bus, GstMessageType events, GstClockTimeDiff timeout)
@@ -1194,7 +1205,11 @@ gst_bus_disable_sync_message_emission (GstBus * bus)
  * @priority: The priority of the watch.
  *
  * Adds a bus signal watch to the default main context with the given @priority
- * (e.g. %G_PRIORITY_DEFAULT).
+ * (e.g. %G_PRIORITY_DEFAULT). Since 0.10.33 it is also possible to use a
+ * non-default main context set up using g_main_context_push_thread_default()
+ * (before one had to create a bus watch source and attach it to the desired
+ * main context 'manually').
+ *
  * After calling this statement, the bus will emit the "message" signal for each
  * message posted on the bus when the main loop is running.
  *
@@ -1249,7 +1264,11 @@ add_failed:
  * @bus: a #GstBus on which you want to receive the "message" signal
  *
  * Adds a bus signal watch to the default main context with the default priority
- * (%G_PRIORITY_DEFAULT).
+ * (%G_PRIORITY_DEFAULT). Since 0.10.33 it is also possible to use a non-default
+ * main context set up using g_main_context_push_thread_default() (before
+ * one had to create a bus watch source and attach it to the desired main
+ * context 'manually').
+ *
  * After calling this statement, the bus will emit the "message" signal for each
  * message posted on the bus.
  *

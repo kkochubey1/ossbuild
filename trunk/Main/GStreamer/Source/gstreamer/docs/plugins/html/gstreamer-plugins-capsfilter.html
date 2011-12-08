@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gstreamer Elements">
 <link rel="prev" href="ch01.html" title="gstreamer Elements">
 <link rel="next" href="gstreamer-plugins-fakesrc.html" title="fakesrc">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -30,7 +30,7 @@
                   <a href="#gstreamer-plugins-capsfilter.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="capsfilter">
+<div class="refentry">
 <a name="gstreamer-plugins-capsfilter"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -39,12 +39,12 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gstreamer-plugins-capsfilter.synopsis"></a><h2>Synopsis</h2>
-<a name="GstCapsFilter"></a><pre class="synopsis">                    <a class="link" href="gstreamer-plugins-capsfilter.html#GstCapsFilter-struct" title="GstCapsFilter">GstCapsFilter</a>;
+<a name="GstCapsFilter"></a><pre class="synopsis">struct              <a class="link" href="gstreamer-plugins-capsfilter.html#GstCapsFilter-struct" title="struct GstCapsFilter">GstCapsFilter</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gstreamer-plugins-capsfilter.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -54,46 +54,123 @@
                      +----GstCapsFilter
 </pre>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gstreamer-plugins-capsfilter.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="gstreamer-plugins-capsfilter.html#GstCapsFilter--caps" title='The "caps" property'>caps</a>"                     <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gstreamer-plugins-capsfilter.description"></a><h2>Description</h2>
 <p>
 The element does not modify data as such, but can enforce limitations on the
 data format.
 </p>
-<div class="refsect2" title="Example launch line">
-<a name="id492972"></a><h3>Example launch line</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp5710512"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch videotestsrc <span class="symbol">!</span> video<span class="symbol">/</span>x<span class="symbol">-</span>raw<span class="symbol">-</span>gray <span class="symbol">!</span> ffmpegcolorspace <span class="symbol">!</span> autovideosink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch videotestsrc <span class="gtkdoc opt">!</span> video<span class="gtkdoc opt">/</span>x<span class="gtkdoc opt">-</span>raw<span class="gtkdoc opt">-</span>gray <span class="gtkdoc opt">!</span> ffmpegcolorspace <span class="gtkdoc opt">!</span> autovideosink</pre></td>
       </tr>
     </tbody>
   </table>
 </div>
  Limits acceptable video from videotestsrc to be grayscale.
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp7768528"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gstreamer-plugins-plugin-coreelements.html#plugin-coreelements">coreelements</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>David Schleef &lt;ds@schleef.org&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Generic</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp88720"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>ANY</td>
+</tr>
+</tbody>
+</table></div>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>ANY</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gstreamer-plugins-capsfilter.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstCapsFilter">
-<a name="GstCapsFilter-struct"></a><h3>GstCapsFilter</h3>
-<pre class="programlisting">typedef struct _GstCapsFilter GstCapsFilter;</pre>
+<div class="refsect2">
+<a name="GstCapsFilter-struct"></a><h3>struct GstCapsFilter</h3>
+<pre class="programlisting">struct GstCapsFilter;</pre>
 <p>
 The opaque <a class="link" href="gstreamer-plugins-capsfilter.html#GstCapsFilter"><span class="type">GstCapsFilter</span></a> data structure.
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gstreamer-plugins-capsfilter.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "caps" property'>
+<div class="refsect2">
 <a name="GstCapsFilter--caps"></a><h3>The <code class="literal">"caps"</code> property</h3>
 <pre class="programlisting">  "caps"                     <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write</pre>
 <p>Restrict the possible allowed capabilities (NULL means ANY). Setting this property takes a reference to the supplied GstCaps object.</p>
@@ -102,6 +179,6 @@ The opaque <a class="link" href="gstreamer-plugins-capsfilter.html#GstCapsFilter
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

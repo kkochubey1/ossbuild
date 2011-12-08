@@ -102,7 +102,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="..\..\..\Source\gstreamer\win32\common;..\..\..\Source\gstreamer\plugins\elements\;..\Libraries\Source\"
+				AdditionalIncludeDirectories="..\..\..\Source\gstreamer;..\..\..\Source\gstreamer\win32\common;..\..\..\Source\gstreamer\plugins\elements\;..\Libraries\Source\"
 				PreprocessorDefinitions="_DEBUG;LIBGSTBASE_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -236,7 +236,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\..\..\Source\gstreamer\win32\common;..\..\..\Source\gstreamer\plugins\elements\;..\Libraries\Source\"
+				AdditionalIncludeDirectories="..\..\..\Source\gstreamer;..\..\..\Source\gstreamer\win32\common;..\..\..\Source\gstreamer\plugins\elements\;..\Libraries\Source\"
 				PreprocessorDefinitions="LIBGSTELEMENTS_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -355,11 +355,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstfunnel.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstidentity.c"
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstinputselector.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstmultiqueue.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstoutputselector.c"
 				>
 			</File>
 			<File
@@ -376,6 +388,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gsttypefindelement.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstvalve.c"
 				>
 			</File>
 		</Filter>
@@ -413,11 +429,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstfunnel.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstidentity.h"
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstinputselector.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstmultiqueue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstoutputselector.h"
 				>
 			</File>
 			<File
@@ -434,6 +462,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gsttypefindelement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gstreamer\plugins\elements\gstvalve.h"
 				>
 			</File>
 		</Filter>

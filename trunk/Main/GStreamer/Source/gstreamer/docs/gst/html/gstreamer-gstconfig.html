@@ -7,8 +7,8 @@
 <link rel="home" href="index.html" title="GStreamer 0.10 Core Reference Manual">
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="GstClock.html" title="GstClock">
-<link rel="next" href="GstElement.html" title="GstElement">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<link rel="next" href="gstreamer-GstDateTime.html" title="GstDateTime">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -18,7 +18,7 @@
 <td><a accesskey="u" href="libgstreamer.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
 <th width="100%" align="center">GStreamer 0.10 Core Reference Manual</th>
-<td><a accesskey="n" href="GstElement.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+<td><a accesskey="n" href="gstreamer-GstDateTime.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#gstreamer-gstconfig.synopsis" class="shortcut">Top</a>
@@ -26,7 +26,7 @@
                   <a href="#gstreamer-gstconfig.description" class="shortcut">Description</a>
 </td></tr>
 </table>
-<div class="refentry" title="gstconfig">
+<div class="refentry">
 <a name="gstreamer-gstconfig"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -35,7 +35,7 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gstreamer-gstconfig.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/gst.h&gt;
@@ -50,7 +50,7 @@
 #define             <a class="link" href="gstreamer-gstconfig.html#GST-DISABLE-XML:CAPS" title="GST_DISABLE_XML">GST_DISABLE_XML</a>
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gstreamer-gstconfig.description"></a><h2>Description</h2>
 <p>
 This describes the configuration options for GStreamer. When building
@@ -78,9 +78,9 @@ If a subsystem is disabled in GStreamer, a value is defined in
         <td class="listing_lines" align="right"><pre>1
 2
 3</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="preproc">#ifndef GST_DISABLE_GST_DEBUG</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc ppc">#ifndef GST_DISABLE_GST_DEBUG</span>
 <span class="gtkdoc slc">// do stuff specific to the debugging subsystem</span>
-<span class="preproc">#endif</span> <span class="gtkdoc slc">// GST_DISABLE_GST_DEBUG</span><span class="preproc"></span></pre></td>
+<span class="gtkdoc ppc">#endif</span> <span class="gtkdoc slc">// GST_DISABLE_GST_DEBUG</span><span class="gtkdoc ppc"></span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -90,9 +90,9 @@ If a subsystem is disabled in GStreamer, a value is defined in
 <p><br class="example-break">
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gstreamer-gstconfig.details"></a><h2>Details</h2>
-<div class="refsect2" title="GST_DISABLE_GST_DEBUG">
+<div class="refsect2">
 <a name="GST-DISABLE-GST-DEBUG:CAPS"></a><h3>GST_DISABLE_GST_DEBUG</h3>
 <pre class="programlisting">#define GST_DISABLE_GST_DEBUG 1
 </pre>
@@ -101,7 +101,7 @@ Configures the inclusion of the debugging subsystem
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_DISABLE_LOADSAVE">
+<div class="refsect2">
 <a name="GST-DISABLE-LOADSAVE:CAPS"></a><h3>GST_DISABLE_LOADSAVE</h3>
 <pre class="programlisting">#define GST_DISABLE_LOADSAVE 1
 </pre>
@@ -111,7 +111,7 @@ Configures the inclusion of the plugin graph xml-serialisation
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_DISABLE_PARSE">
+<div class="refsect2">
 <a name="GST-DISABLE-PARSE:CAPS"></a><h3>GST_DISABLE_PARSE</h3>
 <pre class="programlisting">#define GST_DISABLE_PARSE 1
 </pre>
@@ -120,7 +120,7 @@ Configures the inclusion of the gst-lauch parser
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_DISABLE_TRACE">
+<div class="refsect2">
 <a name="GST-DISABLE-TRACE:CAPS"></a><h3>GST_DISABLE_TRACE</h3>
 <pre class="programlisting">#define GST_DISABLE_TRACE 1
 </pre>
@@ -130,7 +130,7 @@ Configures the inclusion of a resource tracing facillity
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_DISABLE_ALLOC_TRACE">
+<div class="refsect2">
 <a name="GST-DISABLE-ALLOC-TRACE:CAPS"></a><h3>GST_DISABLE_ALLOC_TRACE</h3>
 <pre class="programlisting">#define GST_DISABLE_ALLOC_TRACE 1
 </pre>
@@ -140,7 +140,7 @@ if TRACE is disabled, ALLOC_TRACE is disabled as well
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_DISABLE_REGISTRY">
+<div class="refsect2">
 <a name="GST-DISABLE-REGISTRY:CAPS"></a><h3>GST_DISABLE_REGISTRY</h3>
 <pre class="programlisting">#define GST_DISABLE_REGISTRY 1
 </pre>
@@ -151,15 +151,13 @@ manually
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_DISABLE_PLUGIN">
+<div class="refsect2">
 <a name="GST-DISABLE-PLUGIN:CAPS"></a><h3>GST_DISABLE_PLUGIN</h3>
 <pre class="programlisting">#define GST_DISABLE_PLUGIN 1
 </pre>
-<p>
-</p>
 </div>
 <hr>
-<div class="refsect2" title="GST_DISABLE_XML">
+<div class="refsect2">
 <a name="GST-DISABLE-XML:CAPS"></a><h3>GST_DISABLE_XML</h3>
 <pre class="programlisting">#define GST_DISABLE_XML 1
 </pre>
@@ -172,6 +170,6 @@ Configures the use libxml2. This setting is derived from the settings of
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

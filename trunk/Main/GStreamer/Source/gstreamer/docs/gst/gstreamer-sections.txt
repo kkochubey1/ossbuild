@@ -39,6 +39,22 @@ GstPluginLoaderFuncs
 </SECTION>
 
 <SECTION>
+<FILE>gstatomicqueue</FILE>
+<TITLE>GstAtomicQueue</TITLE>
+GstAtomicQueue
+gst_atomic_queue_new
+
+gst_atomic_queue_ref
+gst_atomic_queue_unref
+
+gst_atomic_queue_push
+gst_atomic_queue_peek
+gst_atomic_queue_pop
+
+gst_atomic_queue_length
+</SECTION>
+
+<SECTION>
 <FILE>gstbin</FILE>
 <TITLE>GstBin</TITLE>
 GstBin
@@ -238,6 +254,7 @@ gst_buffer_list_iterator_free
 gst_buffer_list_iterator_n_buffers
 gst_buffer_list_iterator_add
 gst_buffer_list_iterator_add_group
+gst_buffer_list_iterator_add_list
 gst_buffer_list_iterator_next
 gst_buffer_list_iterator_next_group
 gst_buffer_list_iterator_remove
@@ -255,8 +272,10 @@ GST_IS_BUFFER_LIST_CLASS
 GST_TYPE_BUFFER_LIST
 GST_BUFFER_LIST_CAST
 GST_TYPE_BUFFER_LIST_ITEM
+GST_TYPE_BUFFER_LIST_ITERATOR
 <SUBSECTION Private>
 gst_buffer_list_item_get_type
+gst_buffer_list_iterator_get_type
 gst_buffer_list_get_type
 </SECTION>
 
@@ -265,6 +284,7 @@ gst_buffer_list_get_type
 <TITLE>GstCaps</TITLE>
 GstCaps
 GstStaticCaps
+GstCapsIntersectMode
 
 GstCapsFlags
 GST_CAPS_ANY
@@ -305,6 +325,7 @@ gst_caps_is_always_compatible
 gst_caps_is_subset
 gst_caps_can_intersect
 gst_caps_intersect
+gst_caps_intersect_full
 gst_caps_union
 gst_caps_normalize
 gst_caps_do_simplify
@@ -323,9 +344,11 @@ GST_CAPS
 GST_IS_CAPS
 GST_TYPE_CAPS
 GST_TYPE_CAPS_FLAGS
+GST_TYPE_CAPS_INTERSECT_MODE
 <SUBSECTION Private>
 gst_caps_flags_get_type
 gst_caps_get_type
+gst_caps_intersect_mode_get_type
 </SECTION>
 
 <SECTION>
@@ -403,6 +426,8 @@ gst_clock_get_resolution
 gst_clock_get_time
 gst_clock_new_single_shot_id
 gst_clock_new_periodic_id
+gst_clock_single_shot_id_reinit
+gst_clock_periodic_id_reinit
 gst_clock_get_internal_time
 gst_clock_adjust_unlocked
 gst_clock_unadjust_unlocked
@@ -521,6 +546,7 @@ gst_element_get_compatible_pad
 gst_element_get_compatible_pad_template
 gst_element_get_request_pad
 gst_element_get_static_pad
+gst_element_request_pad
 gst_element_no_more_pads
 gst_element_release_request_pad
 gst_element_remove_pad
@@ -651,6 +677,10 @@ gst_element_factory_create
 gst_element_factory_make
 gst_element_factory_can_sink_caps
 gst_element_factory_can_src_caps
+gst_element_factory_can_sink_all_caps
+gst_element_factory_can_src_all_caps
+gst_element_factory_can_sink_any_caps
+gst_element_factory_can_src_any_caps
 gst_element_factory_get_static_pad_templates
 GstElementFactoryListType
 GST_ELEMENT_FACTORY_TYPE_ANY
@@ -688,6 +718,21 @@ GST_IS_ELEMENT_FACTORY_CLASS
 GST_TYPE_ELEMENT_FACTORY
 <SUBSECTION Private>
 gst_element_factory_get_type
+GST_ELEMENT_FACTORY_KLASS_DECODER
+GST_ELEMENT_FACTORY_KLASS_DEMUXER
+GST_ELEMENT_FACTORY_KLASS_DEPAYLOADER
+GST_ELEMENT_FACTORY_KLASS_ENCODER
+GST_ELEMENT_FACTORY_KLASS_FORMATTER
+GST_ELEMENT_FACTORY_KLASS_MEDIA_AUDIO
+GST_ELEMENT_FACTORY_KLASS_MEDIA_IMAGE
+GST_ELEMENT_FACTORY_KLASS_MEDIA_METADATA
+GST_ELEMENT_FACTORY_KLASS_MEDIA_SUBTITLE
+GST_ELEMENT_FACTORY_KLASS_MEDIA_VIDEO
+GST_ELEMENT_FACTORY_KLASS_MUXER
+GST_ELEMENT_FACTORY_KLASS_PARSER
+GST_ELEMENT_FACTORY_KLASS_PAYLOADER
+GST_ELEMENT_FACTORY_KLASS_SINK
+GST_ELEMENT_FACTORY_KLASS_SRC
 </SECTION>
 
 
@@ -777,8 +822,11 @@ gst_event_parse_tag
 gst_event_new_buffer_size
 gst_event_parse_buffer_size
 
+GstQOSType
 gst_event_new_qos
+gst_event_new_qos_full
 gst_event_parse_qos
+gst_event_parse_qos_full
 
 GstSeekType
 GstSeekFlags
@@ -807,6 +855,7 @@ GST_TYPE_EVENT
 GST_TYPE_EVENT_TYPE
 GST_TYPE_SEEK_TYPE
 GST_TYPE_SEEK_FLAGS
+GST_TYPE_QOS_TYPE
 GST_TYPE_EVENT_TYPE_FLAGS
 <SUBSECTION Private>
 GST_EVENT_TYPE_SHIFT
@@ -815,6 +864,7 @@ gst_event_get_type
 gst_event_type_get_type
 gst_seek_type_get_type
 gst_seek_flags_get_type
+gst_qos_type_get_type
 gst_event_type_flags_get_type
 </SECTION>
 
@@ -1224,6 +1274,10 @@ gst_message_parse_stream_status
 gst_message_set_stream_status_object
 gst_message_get_stream_status_object
 
+GstProgressType
+gst_message_new_progress
+gst_message_parse_progress
+
 <SUBSECTION Standard>
 GstMessageClass
 GST_MESSAGE
@@ -1236,11 +1290,13 @@ GST_MESSAGE_GET_CLASS
 GST_TYPE_MESSAGE_TYPE
 GST_TYPE_STRUCTURE_CHANGE_TYPE
 GST_TYPE_STREAM_STATUS_TYPE
+GST_TYPE_PROGRESS_TYPE
 <SUBSECTION Private>
 gst_message_get_type
 gst_message_type_get_type
 gst_structure_change_type_get_type
 gst_stream_status_type_get_type
+gst_progress_type_get_type
 GST_MESSAGE_COND
 GST_MESSAGE_GET_LOCK
 GST_MESSAGE_LOCK
@@ -1718,7 +1774,9 @@ gst_parse_context_get_missing_elements
 <SUBSECTION Standard>
 GST_TYPE_PARSE_ERROR
 GST_TYPE_PARSE_FLAGS
+GST_TYPE_PARSE_CONTEXT
 <SUBSECTION Private>
+gst_parse_context_get_type
 gst_parse_error_get_type
 gst_parse_flags_get_type
 </SECTION>
@@ -1843,7 +1901,7 @@ gst_plugin_feature_get_name
 gst_plugin_feature_load
 gst_plugin_feature_list_copy
 gst_plugin_feature_list_free
-gst_plugin_feature_list_debug
+GST_PLUGIN_FEATURE_LIST_DEBUG
 gst_plugin_feature_check_version
 gst_plugin_feature_rank_compare_func
 <SUBSECTION Standard>
@@ -1858,6 +1916,7 @@ GST_TYPE_PLUGIN_FEATURE
 GST_TYPE_RANK
 <SUBSECTION Private>
 gst_plugin_feature_get_type
+gst_plugin_feature_list_debug
 gst_rank_get_type
 </SECTION>
 
@@ -1880,6 +1939,7 @@ gst_poll_fd_init
 gst_poll_free
 gst_poll_new
 gst_poll_new_timer
+gst_poll_get_read_gpollfd
 gst_poll_remove_fd
 gst_poll_restart
 gst_poll_set_controllable
@@ -2201,6 +2261,7 @@ GST_TAG_ISRC
 GST_TAG_ORGANIZATION
 GST_TAG_COPYRIGHT
 GST_TAG_COPYRIGHT_URI
+GST_TAG_ENCODED_BY
 GST_TAG_COMPOSER
 GST_TAG_CONTACT
 GST_TAG_LICENSE
@@ -2520,6 +2581,7 @@ gst_uri_has_protocol
 gst_uri_get_protocol
 gst_uri_get_location
 gst_uri_construct
+gst_filename_to_uri
 gst_element_make_from_uri
 gst_uri_handler_get_uri_type
 gst_uri_handler_get_protocols
@@ -2645,7 +2707,8 @@ gst_date_time_get_time_zone_offset
 gst_date_time_get_second
 gst_date_time_get_year
 gst_date_time_new
-gst_date_time_new_from_unix_epoch
+gst_date_time_new_from_unix_epoch_local_time
+gst_date_time_new_from_unix_epoch_utc
 gst_date_time_new_local_time
 gst_date_time_new_now_local_time
 gst_date_time_new_now_utc
@@ -2696,6 +2759,7 @@ GST_TYPE_ARRAY
 gst_value_list_append_value
 gst_value_list_prepend_value
 gst_value_list_concat
+gst_value_list_merge
 gst_value_list_get_size
 gst_value_list_get_value
 

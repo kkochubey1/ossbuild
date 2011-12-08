@@ -154,7 +154,7 @@ gboolean gst_byte_writer_put_string_utf32 (GstByteWriter *writer, const guint32 
 /**
  * gst_byte_writer_put_string:
  * @writer: #GstByteWriter instance
- * @data: Null terminated string
+ * @data: (in) (array zero-terminated=1): Null terminated string
  *
  * Write a NUL-terminated string to @writer (including the terminator). The
  * string is assumed to be in an 8-bit encoding (e.g. ASCII,UTF-8 or
@@ -183,7 +183,7 @@ _gst_byte_writer_next_pow2 (guint n)
 static inline gboolean
 _gst_byte_writer_ensure_free_space_inline (GstByteWriter * writer, guint size)
 {
-  guint8 *data;
+  gpointer data;
 
   if (G_LIKELY (size <= writer->alloc_size - writer->parent.byte))
     return TRUE;
@@ -197,7 +197,7 @@ _gst_byte_writer_ensure_free_space_inline (GstByteWriter * writer, guint size)
   if (G_UNLIKELY (data == NULL))
     return FALSE;
 
-  writer->parent.data = data;
+  writer->parent.data = (guint8 *) data;
 
   return TRUE;
 }

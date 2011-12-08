@@ -459,7 +459,7 @@ G_STMT_START {                                                          \
  *
  * Utility function that elements can use in case they want to inform
  * the application of something noteworthy that is not an error.
- * The pipeline will post a warning message and the
+ * The pipeline will post a info message and the
  * application will be informed.
  *
  * Since: 0.10.12
@@ -601,6 +601,7 @@ struct _GstElement
  * @send_event: send a #GstEvent to the element
  * @get_query_types: get the supported #GstQueryType of this element
  * @query: perform a #GstQuery on the element
+ * @request_new_pad_full: called when a new pad is requested. Since: 0.10.32.
  *
  * GStreamer element class. Override the vmethods to implement the element
  * functionality.
@@ -662,7 +663,14 @@ struct _GstElementClass
   /* FIXME-0.11: move up and replace details */
   gpointer		meta_data;
 
-  gpointer _gst_reserved[GST_PADDING-1];
+  /*< public >*/
+  /* Virtual method for subclasses (additions) */
+  /* FIXME-0.11 Make this the default behaviour */
+  GstPad*		(*request_new_pad_full) (GstElement *element, GstPadTemplate *templ,
+						 const gchar* name, const GstCaps *caps);
+
+  /*< private >*/
+  gpointer _gst_reserved[GST_PADDING-2];
 };
 
 /* element class pad templates */
@@ -696,7 +704,7 @@ GType                   gst_element_get_type            (void);
  * For a nameless element, this returns NULL, which you can safely g_free()
  * as well.
  *
- * Returns: the name of @elem. g_free() after usage. MT safe. 
+ * Returns: (transfer full): the name of @elem. g_free() after usage. MT safe.
  *
  */
 #define                 gst_element_get_name(elem)      gst_object_get_name(GST_OBJECT_CAST(elem))
@@ -714,7 +722,9 @@ GType                   gst_element_get_type            (void);
  * gst_element_get_parent:
  * @elem: a #GstElement to get the parent of.
  *
- * Gets the parent of an element.
+ * Get the parent of an element.
+ *
+ * Returns: (transfer full): the parent of an element.
  */
 #define                 gst_element_get_parent(elem)    gst_object_get_parent(GST_OBJECT_CAST(elem))
 
@@ -757,6 +767,9 @@ GstPad*                 gst_element_get_pad             (GstElement *element, co
 #endif /* GST_DISABLE_DEPRECATED */
 GstPad*                 gst_element_get_static_pad      (GstElement *element, const gchar *name);
 GstPad*                 gst_element_get_request_pad     (GstElement *element, const gchar *name);
+GstPad*                 gst_element_request_pad         (GstElement *element,
+							 GstPadTemplate *templ,
+							 const gchar * name, const GstCaps *caps);
 void                    gst_element_release_request_pad (GstElement *element, GstPad *pad);
 
 GstIterator *           gst_element_iterate_pads        (GstElement * element);
@@ -769,8 +782,7 @@ gboolean                gst_element_seek                (GstElement *element, gd
                                                          GstFormat format, GstSeekFlags flags,
                                                          GstSeekType cur_type, gint64 cur,
                                                          GstSeekType stop_type, gint64 stop);
-G_CONST_RETURN GstQueryType*
-                        gst_element_get_query_types     (GstElement *element);
+const GstQueryType*     gst_element_get_query_types     (GstElement *element);
 gboolean                gst_element_query               (GstElement *element, GstQuery *query);
 
 /* messages */

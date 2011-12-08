@@ -9,6 +9,7 @@ gstcaps.h
 gstchildproxy.h
 gstclock.h
 gstcompat.h
+gstdatetime.h
 gstdebugutils.h
 gstelement.h
 gstelementfactory.h
@@ -22,6 +23,7 @@ gstindexfactory.h
 gstinfo.h
 gstinterface.h
 gstiterator.h
+gstatomicqueue.h
 gstmacros.h
 gstmessage.h
 gstminiobject.h

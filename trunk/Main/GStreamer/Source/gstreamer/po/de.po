@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the gstreamer package.
 #
 # Roland Illig <roland.illig@gmx.de>, 2004.
-# Christian Kirbach <christian.kirbach@googlemail.com>, 2009, 2010.
+# Christian Kirbach <christian.kirbach@googlemail.com>, 2009, 2010, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gstreamer 0.10.30.3\n"
+"Project-Id-Version: gstreamer 0.10.32.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2010-11-30 16:56+0000\n"
-"PO-Revision-Date: 2010-10-25 00:05+0200\n"
+"POT-Creation-Date: 2011-06-15 14:17+0100\n"
+"PO-Revision-Date: 2011-04-27 23:44+0200\n"
 "Last-Translator: Christian Kirbach <christian.kirbach@googlemail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -419,6 +419,12 @@ msgstr "Copyright-URI"
 
 msgid "URI to the copyright notice of the data"
 msgstr "URI zu der Copyrightangabe der Daten"
+
+msgid "encoded by"
+msgstr "codiert durch"
+
+msgid "name of the encoding person or organization"
+msgstr "Der Name der codierenden Person oder Organisation"
 
 msgid "contact"
 msgstr "Kontakt"
@@ -1068,6 +1074,9 @@ msgstr ""
 msgid "WARNING: element named '%s' not found.\n"
 msgstr "WARNUNG: Element namens »%s« nicht gefunden.\n"
 
+msgid "Index statistics"
+msgstr "Index-Statistiken"
+
 #, c-format
 msgid "Got message #%u from element \"%s\" (%s): "
 msgstr "Nachricht #%u wurde von Element »%s« (%s) erhalten: "
@@ -1176,6 +1185,9 @@ msgstr ""
 
 msgid "Force EOS on sources before shutting the pipeline down"
 msgstr "EOS auf Quelle vor dem Beenden der Leitung erzwingen"
+
+msgid "Gather and print index statistics"
+msgstr "Index-Statistiken sammeln und ausgeben"
 
 #, c-format
 msgid "ERROR: pipeline could not be constructed: %s.\n"

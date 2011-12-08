@@ -125,7 +125,7 @@ gst_element_factory_finalize (GObject * object)
  * Search for an element factory of the given name. Refs the returned
  * element factory; caller is responsible for unreffing.
  *
- * Returns: #GstElementFactory if found, NULL otherwise
+ * Returns: (transfer full): #GstElementFactory if found, NULL otherwise
  */
 GstElementFactory *
 gst_element_factory_find (const gchar * name)
@@ -163,8 +163,6 @@ gst_element_factory_cleanup (GstElementFactory * factory)
     GstStaticPadTemplate *templ = item->data;
     GstCaps *caps = (GstCaps *) & (templ->static_caps);
 
-    g_free ((gchar *) templ->static_caps.string);
-
     /* FIXME: this is not threadsafe */
     if (caps->refcount == 1) {
       GstStructure *structure;
@@ -189,15 +187,15 @@ gst_element_factory_cleanup (GstElementFactory * factory)
     factory->uri_protocols = NULL;
   }
 
-  g_list_foreach (factory->interfaces, (GFunc) g_free, NULL);
   g_list_free (factory->interfaces);
   factory->interfaces = NULL;
 }
 
 /**
  * gst_element_register:
- * @plugin: #GstPlugin to register the element with, or NULL for a static
- * element (note that passing NULL only works in GStreamer 0.10.13 and later)
+ * @plugin: (allow-none): #GstPlugin to register the element with, or NULL for
+ *     a static element (note that passing NULL only works in GStreamer 0.10.13
+ *     and later)
  * @name: name of elements of this type
  * @rank: rank of element (higher rank means more importance when autoplugging)
  * @type: GType of element to register
@@ -264,15 +262,18 @@ gst_element_register (GstPlugin * plugin, const gchar * name, guint rank,
   for (item = klass->padtemplates; item; item = item->next) {
     GstPadTemplate *templ = item->data;
     GstStaticPadTemplate *newt;
+    gchar *caps_string = gst_caps_to_string (templ->caps);
 
     newt = g_slice_new (GstStaticPadTemplate);
     newt->name_template = g_intern_string (templ->name_template);
     newt->direction = templ->direction;
     newt->presence = templ->presence;
     newt->static_caps.caps.refcount = 0;
-    newt->static_caps.string = gst_caps_to_string (templ->caps);
+    newt->static_caps.string = g_intern_string (caps_string);
     factory->staticpadtemplates =
         g_list_append (factory->staticpadtemplates, newt);
+
+    g_free (caps_string);
   }
   factory->numpadtemplates = klass->numpadtemplates;
 
@@ -306,8 +307,12 @@ gst_element_register (GstPlugin * plugin, const gchar * name, guint rank,
 
   if (plugin && plugin->desc.name) {
     GST_PLUGIN_FEATURE_CAST (factory)->plugin_name = plugin->desc.name;
+    GST_PLUGIN_FEATURE_CAST (factory)->plugin = plugin;
+    g_object_add_weak_pointer ((GObject *) plugin,
+        (gpointer *) & GST_PLUGIN_FEATURE_CAST (factory)->plugin);
   } else {
     GST_PLUGIN_FEATURE_CAST (factory)->plugin_name = "NULL";
+    GST_PLUGIN_FEATURE_CAST (factory)->plugin = NULL;
   }
   gst_plugin_feature_set_rank (GST_PLUGIN_FEATURE_CAST (factory), rank);
   GST_PLUGIN_FEATURE_CAST (factory)->loaded = TRUE;
@@ -342,7 +347,8 @@ detailserror:
  * It will be given the name supplied, since all elements require a name as
  * their first argument.
  *
- * Returns: new #GstElement or NULL if the element couldn't be created
+ * Returns: (transfer full): new #GstElement or NULL if the element couldn't
+ *     be created
  */
 GstElement *
 gst_element_factory_create (GstElementFactory * factory, const gchar * name)
@@ -388,8 +394,8 @@ gst_element_factory_create (GstElementFactory * factory, const gchar * name)
    * an element at the same moment
    */
   oclass = GST_ELEMENT_GET_CLASS (element);
-  if (!g_atomic_pointer_compare_and_exchange (
-          (gpointer) & oclass->elementfactory, NULL, factory))
+  if (!G_ATOMIC_POINTER_COMPARE_AND_EXCHANGE (&oclass->elementfactory, NULL,
+          factory))
     gst_object_unref (factory);
 
   GST_DEBUG ("created element \"%s\"", GST_PLUGIN_FEATURE_NAME (factory));
@@ -427,7 +433,7 @@ no_element:
  * consisting of the element factory name and a number.
  * If name is given, it will be given the name supplied.
  *
- * Returns: new #GstElement or NULL if unable to create element
+ * Returns: (transfer full): new #GstElement or NULL if unable to create element
  */
 GstElement *
 gst_element_factory_make (const gchar * factoryname, const gchar * name)
@@ -506,7 +512,7 @@ gst_element_factory_get_element_type (GstElementFactory * factory)
  *
  * Returns: the longname
  */
-G_CONST_RETURN gchar *
+const gchar *
 gst_element_factory_get_longname (GstElementFactory * factory)
 {
   g_return_val_if_fail (GST_IS_ELEMENT_FACTORY (factory), NULL);
@@ -522,7 +528,7 @@ gst_element_factory_get_longname (GstElementFactory * factory)
  *
  * Returns: the class
  */
-G_CONST_RETURN gchar *
+const gchar *
 gst_element_factory_get_klass (GstElementFactory * factory)
 {
   g_return_val_if_fail (GST_IS_ELEMENT_FACTORY (factory), NULL);
@@ -538,7 +544,7 @@ gst_element_factory_get_klass (GstElementFactory * factory)
  *
  * Returns: the description
  */
-G_CONST_RETURN gchar *
+const gchar *
 gst_element_factory_get_description (GstElementFactory * factory)
 {
   g_return_val_if_fail (GST_IS_ELEMENT_FACTORY (factory), NULL);
@@ -554,7 +560,7 @@ gst_element_factory_get_description (GstElementFactory * factory)
  *
  * Returns: the author
  */
-G_CONST_RETURN gchar *
+const gchar *
 gst_element_factory_get_author (GstElementFactory * factory)
 {
   g_return_val_if_fail (GST_IS_ELEMENT_FACTORY (factory), NULL);
@@ -562,10 +568,13 @@ gst_element_factory_get_author (GstElementFactory * factory)
   return factory->details.author;
 }
 
-static G_CONST_RETURN gchar *
+static const gchar *
 gst_element_factory_get_meta_data (GstElementFactory * factory,
     const gchar * key)
 {
+  if (!factory->meta_data)
+    return NULL;
+
   /* FIXME: do we want to support other types? */
   return gst_structure_get_string ((GstStructure *) factory->meta_data, key);
 }
@@ -580,7 +589,7 @@ gst_element_factory_get_meta_data (GstElementFactory * factory,
  *
  * Returns: the documentation uri
  */
-G_CONST_RETURN gchar *
+const gchar *
 gst_element_factory_get_documentation_uri (GstElementFactory * factory)
 {
   g_return_val_if_fail (GST_IS_ELEMENT_FACTORY (factory), NULL);
@@ -588,7 +597,7 @@ gst_element_factory_get_documentation_uri (GstElementFactory * factory)
 }
 
 /**
- * gst_element_factory_get_documentation_uri:
+ * gst_element_factory_get_icon_name:
  * @factory: a #GstElementFactory
  *
  * Gets icon name for this factory if set.
@@ -597,7 +606,7 @@ gst_element_factory_get_documentation_uri (GstElementFactory * factory)
  *
  * Returns: the icon name
  */
-G_CONST_RETURN gchar *
+const gchar *
 gst_element_factory_get_icon_name (GstElementFactory * factory)
 {
   g_return_val_if_fail (GST_IS_ELEMENT_FACTORY (factory), NULL);
@@ -637,7 +646,8 @@ __gst_element_factory_add_interface (GstElementFactory * elementfactory,
   g_return_if_fail (interfacename[0] != '\0');  /* no empty string */
 
   elementfactory->interfaces =
-      g_list_prepend (elementfactory->interfaces, g_strdup (interfacename));
+      g_list_prepend (elementfactory->interfaces,
+      (gpointer) g_intern_string (interfacename));
 }
 
 /**
@@ -646,9 +656,10 @@ __gst_element_factory_add_interface (GstElementFactory * elementfactory,
  *
  * Gets the #GList of #GstStaticPadTemplate for this factory.
  *
- * Returns: the padtemplates
+ * Returns: (transfer none) (element-type Gst.StaticPadTemplate): the
+ *     static pad templates
  */
-G_CONST_RETURN GList *
+const GList *
 gst_element_factory_get_static_pad_templates (GstElementFactory * factory)
 {
   g_return_val_if_fail (GST_IS_ELEMENT_FACTORY (factory), NULL);
@@ -681,7 +692,8 @@ gst_element_factory_get_uri_type (GstElementFactory * factory)
  * array, as it is still owned by the element factory. Use g_strdupv() to
  * make a copy of the protocol string array if you need to.
  *
- * Returns: the supported protocols or NULL
+ * Returns: (transfer none) (array zero-terminated=1): the supported protocols
+ *     or NULL
  */
 gchar **
 gst_element_factory_get_uri_protocols (GstElementFactory * factory)
@@ -822,8 +834,9 @@ element_filter (GstPluginFeature * feature, FilterData * data)
  * with a rank greater or equal to @minrank will be returned.
  * The list of factories is returned by decreasing rank.
  *
- * Returns: a #GList of #GstElementFactory elements. Use
- * gst_plugin_feature_list_free() after usage.
+ * Returns: (transfer full) (element-type Gst.ElementFactory): a #GList of
+ *     #GstElementFactory elements. Use gst_plugin_feature_list_free() after
+ *     usage.
  *
  * Since: 0.10.31
  */
@@ -850,7 +863,8 @@ gst_element_factory_list_get_elements (GstElementFactoryListType type,
 
 /**
  * gst_element_factory_list_filter:
- * @list: a #GList of #GstElementFactory to filter
+ * @list: (transfer none) (element-type Gst.ElementFactory): a #GList of
+ *     #GstElementFactory to filter
  * @caps: a #GstCaps
  * @direction: a #GstPadDirection to filter on
  * @subsetonly: whether to filter on caps subsets or not.
@@ -862,8 +876,9 @@ gst_element_factory_list_get_elements (GstElementFactoryListType type,
  * are a complete superset of @caps will be returned. Else any element
  * whose pad templates caps can intersect with @caps will be returned.
  *
- * Returns: a #GList of #GstElementFactory elements that match the
- * given requisits. Use #gst_plugin_feature_list_free after usage.
+ * Returns: (transfer full) (element-type Gst.ElementFactory): a #GList of
+ *     #GstElementFactory elements that match the given requisits.
+ *     Use #gst_plugin_feature_list_free after usage.
  *
  * Since: 0.10.31
  */

@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="GstPluginFeature.html" title="GstPluginFeature">
 <link rel="next" href="GstPreset.html" title="GstPreset">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -26,7 +26,7 @@
                   <a href="#gstreamer-GstPoll.description" class="shortcut">Description</a>
 </td></tr>
 </table>
-<div class="refentry" title="GstPoll">
+<div class="refentry">
 <a name="gstreamer-GstPoll"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -36,7 +36,7 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gstreamer-GstPoll.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/gst.h&gt;
@@ -64,8 +64,10 @@
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstPoll.html#gst-poll-fd-init" title="gst_poll_fd_init ()">gst_poll_fd_init</a>                    (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstPoll.html#gst-poll-free" title="gst_poll_free ()">gst_poll_free</a>                       (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>);
-<a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="returnvalue">GstPoll</span></a>*            <a class="link" href="gstreamer-GstPoll.html#gst-poll-new" title="gst_poll_new ()">gst_poll_new</a>                        (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> controllable</code></em>);
-<a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="returnvalue">GstPoll</span></a>*            <a class="link" href="gstreamer-GstPoll.html#gst-poll-new-timer" title="gst_poll_new_timer ()">gst_poll_new_timer</a>                  (<em class="parameter"><code><span class="type">void</span></code></em>);
+<a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="returnvalue">GstPoll</span></a> *           <a class="link" href="gstreamer-GstPoll.html#gst-poll-new" title="gst_poll_new ()">gst_poll_new</a>                        (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> controllable</code></em>);
+<a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="returnvalue">GstPoll</span></a> *           <a class="link" href="gstreamer-GstPoll.html#gst-poll-new-timer" title="gst_poll_new_timer ()">gst_poll_new_timer</a>                  (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstPoll.html#gst-poll-get-read-gpollfd" title="gst_poll_get_read_gpollfd ()">gst_poll_get_read_gpollfd</a>           (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#GPollFD"><span class="type">GPollFD</span></a> *fd</code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstPoll.html#gst-poll-remove-fd" title="gst_poll_remove_fd ()">gst_poll_remove_fd</a>                  (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gstreamer-GstPoll.html#gst-poll-restart" title="gst_poll_restart ()">gst_poll_restart</a>                    (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>);
@@ -79,7 +81,7 @@
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gstreamer-GstPoll.html#gst-poll-write-control" title="gst_poll_write_control ()">gst_poll_write_control</a>              (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gstreamer-GstPoll.description"></a><h2>Description</h2>
 <p>
 A <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> keeps track of file descriptors much like fd_set (used with
@@ -110,9 +112,9 @@ descriptor, and <a class="link" href="gstreamer-GstPoll.html#gst-poll-fd-can-wri
 write to it.
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gstreamer-GstPoll.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstPoll">
+<div class="refsect2">
 <a name="GstPoll"></a><h3>GstPoll</h3>
 <pre class="programlisting">typedef struct _GstPoll GstPoll;</pre>
 <p>
@@ -120,7 +122,7 @@ A set of file/network descriptors.
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GstPollFD">
+<div class="refsect2">
 <a name="GstPollFD"></a><h3>GstPollFD</h3>
 <pre class="programlisting">typedef struct {
   int fd;
@@ -133,13 +135,12 @@ A file descriptor object.
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><span class="type">int</span> <em class="structfield"><code><a name="GstPollFD.fd"></a>fd</code></em>;</span></p></td>
-<td>a file descriptor
-</td>
+<td>a file descriptor</td>
 </tr></tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="GST_POLL_FD_INIT">
+<div class="refsect2">
 <a name="GST-POLL-FD-INIT:CAPS"></a><h3>GST_POLL_FD_INIT</h3>
 <pre class="programlisting">#define GST_POLL_FD_INIT  { -1, -1 }
 </pre>
@@ -152,7 +153,7 @@ be assigned to a variable. In that case you have to use
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_add_fd ()">
+<div class="refsect2">
 <a name="gst-poll-add-fd"></a><h3>gst_poll_add_fd ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_poll_add_fd                     (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>);</pre>
@@ -164,26 +165,23 @@ Add a file descriptor to the file descriptor set.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a file descriptor set.
-</td>
+<td>a file descriptor set.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fd</code></em> :</span></p></td>
-<td>a file descriptor.
-</td>
+<td>a file descriptor.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the file descriptor was successfully added to the set.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the file descriptor was successfully added to the set.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_fd_can_read ()">
+<div class="refsect2">
 <a name="gst-poll-fd-can-read"></a><h3>gst_poll_fd_can_read ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_poll_fd_can_read                (<em class="parameter"><code>const <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>);</pre>
@@ -195,26 +193,23 @@ Check if <em class="parameter"><code>fd</code></em> in <em class="parameter"><co
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a file descriptor set.
-</td>
+<td>a file descriptor set.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fd</code></em> :</span></p></td>
-<td>a file descriptor.
-</td>
+<td>a file descriptor.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the descriptor has data to be read.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the descriptor has data to be read.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_fd_can_write ()">
+<div class="refsect2">
 <a name="gst-poll-fd-can-write"></a><h3>gst_poll_fd_can_write ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_poll_fd_can_write               (<em class="parameter"><code>const <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>);</pre>
@@ -226,26 +221,23 @@ Check if <em class="parameter"><code>fd</code></em> in <em class="parameter"><co
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a file descriptor set.
-</td>
+<td>a file descriptor set.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fd</code></em> :</span></p></td>
-<td>a file descriptor.
-</td>
+<td>a file descriptor.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the descriptor can be used for writing.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the descriptor can be used for writing.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_fd_ctl_read ()">
+<div class="refsect2">
 <a name="gst-poll-fd-ctl-read"></a><h3>gst_poll_fd_ctl_read ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_poll_fd_ctl_read                (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>,
@@ -259,31 +251,27 @@ readability.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a file descriptor set.
-</td>
+<td>a file descriptor set.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fd</code></em> :</span></p></td>
-<td>a file descriptor.
-</td>
+<td>a file descriptor.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>active</code></em> :</span></p></td>
-<td>a new status.
-</td>
+<td>a new status.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the descriptor was successfully updated.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the descriptor was successfully updated.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_fd_ctl_write ()">
+<div class="refsect2">
 <a name="gst-poll-fd-ctl-write"></a><h3>gst_poll_fd_ctl_write ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_poll_fd_ctl_write               (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>,
@@ -297,31 +285,27 @@ writability.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a file descriptor set.
-</td>
+<td>a file descriptor set.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fd</code></em> :</span></p></td>
-<td>a file descriptor.
-</td>
+<td>a file descriptor.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>active</code></em> :</span></p></td>
-<td>a new status.
-</td>
+<td>a new status.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the descriptor was successfully updated.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the descriptor was successfully updated.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_fd_has_closed ()">
+<div class="refsect2">
 <a name="gst-poll-fd-has-closed"></a><h3>gst_poll_fd_has_closed ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_poll_fd_has_closed              (<em class="parameter"><code>const <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>);</pre>
@@ -333,26 +317,23 @@ Check if <em class="parameter"><code>fd</code></em> in <em class="parameter"><co
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a file descriptor set.
-</td>
+<td>a file descriptor set.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fd</code></em> :</span></p></td>
-<td>a file descriptor.
-</td>
+<td>a file descriptor.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the connection was closed.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the connection was closed.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_fd_has_error ()">
+<div class="refsect2">
 <a name="gst-poll-fd-has-error"></a><h3>gst_poll_fd_has_error ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_poll_fd_has_error               (<em class="parameter"><code>const <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>);</pre>
@@ -364,26 +345,23 @@ Check if <em class="parameter"><code>fd</code></em> in <em class="parameter"><co
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a file descriptor set.
-</td>
+<td>a file descriptor set.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fd</code></em> :</span></p></td>
-<td>a file descriptor.
-</td>
+<td>a file descriptor.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the descriptor has an error.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the descriptor has an error.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_fd_ignored ()">
+<div class="refsect2">
 <a name="gst-poll-fd-ignored"></a><h3>gst_poll_fd_ignored ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_poll_fd_ignored                 (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>);</pre>
@@ -403,20 +381,18 @@ the re-enabling operations.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a file descriptor set.
-</td>
+<td>a file descriptor set.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fd</code></em> :</span></p></td>
-<td>a file descriptor.
-</td>
+<td>a file descriptor.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_fd_init ()">
+<div class="refsect2">
 <a name="gst-poll-fd-init"></a><h3>gst_poll_fd_init ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_poll_fd_init                    (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>);</pre>
 <p>
@@ -434,7 +410,7 @@ Initializes <em class="parameter"><code>fd</code></em>. Alternatively you can in
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_free ()">
+<div class="refsect2">
 <a name="gst-poll-free"></a><h3>gst_poll_free ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_poll_free                       (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>);</pre>
 <p>
@@ -444,34 +420,35 @@ Free a file descriptor set.
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a file descriptor set.
+<td>a file descriptor set. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr></tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_new ()">
+<div class="refsect2">
 <a name="gst-poll-new"></a><h3>gst_poll_new ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="returnvalue">GstPoll</span></a>*            gst_poll_new                        (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> controllable</code></em>);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="returnvalue">GstPoll</span></a> *           gst_poll_new                        (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> controllable</code></em>);</pre>
 <p>
 Create a new file descriptor set. If <em class="parameter"><code>controllable</code></em>, it
 is possible to restart or flush a call to <a class="link" href="gstreamer-GstPoll.html#gst-poll-wait" title="gst_poll_wait ()"><code class="function">gst_poll_wait()</code></a> with
 <a class="link" href="gstreamer-GstPoll.html#gst-poll-restart" title="gst_poll_restart ()"><code class="function">gst_poll_restart()</code></a> and <a class="link" href="gstreamer-GstPoll.html#gst-poll-set-flushing" title="gst_poll_set_flushing ()"><code class="function">gst_poll_set_flushing()</code></a> respectively.
+</p>
+<p>
+Free-function: gst_poll_free
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>controllable</code></em> :</span></p></td>
-<td>whether it should be possible to control a wait.
-</td>
+<td>whether it should be possible to control a wait.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a new <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> in case of an error. Free with
-<a class="link" href="gstreamer-GstPoll.html#gst-poll-free" title="gst_poll_free ()"><code class="function">gst_poll_free()</code></a>.
-
+<td>a new <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> in case of an error.
+Free with <a class="link" href="gstreamer-GstPoll.html#gst-poll-free" title="gst_poll_free ()"><code class="function">gst_poll_free()</code></a>. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -479,31 +456,59 @@ is possible to restart or flush a call to <a class="link" href="gstreamer-GstPol
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_new_timer ()">
+<div class="refsect2">
 <a name="gst-poll-new-timer"></a><h3>gst_poll_new_timer ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="returnvalue">GstPoll</span></a>*            gst_poll_new_timer                  (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="returnvalue">GstPoll</span></a> *           gst_poll_new_timer                  (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 Create a new poll object that can be used for scheduling cancellable
 timeouts.
 </p>
 <p>
 A timeout is performed with <a class="link" href="gstreamer-GstPoll.html#gst-poll-wait" title="gst_poll_wait ()"><code class="function">gst_poll_wait()</code></a>. Multiple timeouts can be
-performed from different threads.
+performed from different threads. 
+</p>
+<p>
+Free-function: gst_poll_free
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a new <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> in case of an error. Free with
-<a class="link" href="gstreamer-GstPoll.html#gst-poll-free" title="gst_poll_free ()"><code class="function">gst_poll_free()</code></a>.
-
+<td>a new <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>, or <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> in case of an error.
+Free with <a class="link" href="gstreamer-GstPoll.html#gst-poll-free" title="gst_poll_free ()"><code class="function">gst_poll_free()</code></a>. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr></tbody>
 </table></div>
 <p class="since">Since 0.10.23</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_remove_fd ()">
+<div class="refsect2">
+<a name="gst-poll-get-read-gpollfd"></a><h3>gst_poll_get_read_gpollfd ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_poll_get_read_gpollfd           (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
+                                                         <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#GPollFD"><span class="type">GPollFD</span></a> *fd</code></em>);</pre>
+<p>
+Get a GPollFD for the reading part of the control socket. This is useful when
+integrating with a GSource and GMainLoop.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
+<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>fd</code></em> :</span></p></td>
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#GPollFD"><span class="type">GPollFD</span></a>
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.32</p>
+</div>
+<hr>
+<div class="refsect2">
 <a name="gst-poll-remove-fd"></a><h3>gst_poll_remove_fd ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_poll_remove_fd                  (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> *fd</code></em>);</pre>
@@ -515,26 +520,23 @@ Remove a file descriptor from the file descriptor set.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a file descriptor set.
-</td>
+<td>a file descriptor set.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fd</code></em> :</span></p></td>
-<td>a file descriptor.
-</td>
+<td>a file descriptor.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the file descriptor was successfully removed from the set.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the file descriptor was successfully removed from the set.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_restart ()">
+<div class="refsect2">
 <a name="gst-poll-restart"></a><h3>gst_poll_restart ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_poll_restart                    (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>);</pre>
 <p>
@@ -548,14 +550,13 @@ If <em class="parameter"><code>set</code></em> is not controllable, then this ca
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.
-</td>
+<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.</td>
 </tr></tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_set_controllable ()">
+<div class="refsect2">
 <a name="gst-poll-set-controllable"></a><h3>gst_poll_set_controllable ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_poll_set_controllable           (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> controllable</code></em>);</pre>
@@ -569,26 +570,23 @@ When <em class="parameter"><code>controllable</code></em> is <a href="http://lib
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.
-</td>
+<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>controllable</code></em> :</span></p></td>
-<td>new controllable state.
-</td>
+<td>new controllable state.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the controllability of <em class="parameter"><code>set</code></em> could be updated.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the controllability of <em class="parameter"><code>set</code></em> could be updated.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_set_flushing ()">
+<div class="refsect2">
 <a name="gst-poll-set-flushing"></a><h3>gst_poll_set_flushing ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_poll_set_flushing               (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> flushing</code></em>);</pre>
@@ -604,20 +602,18 @@ Unsetting the flushing state will restore normal operation of <em class="paramet
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.
-</td>
+<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flushing</code></em> :</span></p></td>
-<td>new flushing state.
-</td>
+<td>new flushing state.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_wait ()">
+<div class="refsect2">
 <a name="gst-poll-wait"></a><h3>gst_poll_wait ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_poll_wait                       (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> timeout</code></em>);</pre>
@@ -640,28 +636,24 @@ simultaneously.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.
-</td>
+<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timeout</code></em> :</span></p></td>
-<td>a timeout in nanoseconds.
-</td>
+<td>a timeout in nanoseconds.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The number of <a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> in <em class="parameter"><code>set</code></em> that have activity or 0 when no
+<td>The number of <a class="link" href="gstreamer-GstPoll.html#GstPollFD" title="GstPollFD"><span class="type">GstPollFD</span></a> in <em class="parameter"><code>set</code></em> that have activity or 0 when no
 activity was detected after <em class="parameter"><code>timeout</code></em>. If an error occurs, -1 is returned
-and errno is set.
-
-</td>
+and errno is set.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_read_control ()">
+<div class="refsect2">
 <a name="gst-poll-read-control"></a><h3>gst_poll_read_control ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_poll_read_control               (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>);</pre>
 <p>
@@ -674,22 +666,20 @@ This function is mostly useful for timer <a class="link" href="gstreamer-GstPoll
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.
-</td>
+<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success. <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> when <em class="parameter"><code>set</code></em> is not controllable or when there
-was no byte to read.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success. <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> when <em class="parameter"><code>set</code></em> is not controllable or when there
+was no byte to read.</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.23</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_poll_write_control ()">
+<div class="refsect2">
 <a name="gst-poll-write-control"></a><h3>gst_poll_write_control ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_poll_write_control              (<em class="parameter"><code><a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a> *set</code></em>);</pre>
 <p>
@@ -708,15 +698,13 @@ block again until their timeout expired.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>set</code></em> :</span></p></td>
-<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.
-</td>
+<td>a <a class="link" href="gstreamer-GstPoll.html#GstPoll" title="GstPoll"><span class="type">GstPoll</span></a>.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success. <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> when <em class="parameter"><code>set</code></em> is not controllable or when the
-byte could not be written.
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success. <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> when <em class="parameter"><code>set</code></em> is not controllable or when the
+byte could not be written.</td>
 </tr>
 </tbody>
 </table></div>
@@ -726,6 +714,6 @@ byte could not be written.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

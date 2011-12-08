@@ -157,7 +157,7 @@ gst_caps_get_type (void)
  * #GstCaps contains no media formats.
  * Caller is responsible for unreffing the returned caps.
  *
- * Returns: the new #GstCaps
+ * Returns: (transfer full): the new #GstCaps
  */
 GstCaps *
 gst_caps_new_empty (void)
@@ -187,7 +187,7 @@ gst_caps_new_empty (void)
  * Creates a new #GstCaps that indicates that it is compatible with
  * any media format.
  *
- * Returns: the new #GstCaps
+ * Returns: (transfer full): the new #GstCaps
  */
 GstCaps *
 gst_caps_new_any (void)
@@ -210,7 +210,7 @@ gst_caps_new_any (void)
  * as gst_structure_new().
  * Caller is responsible for unreffing the returned caps.
  *
- * Returns: the new #GstCaps
+ * Returns: (transfer full): the new #GstCaps
  */
 GstCaps *
 gst_caps_new_simple (const char *media_type, const char *fieldname, ...)
@@ -225,7 +225,10 @@ gst_caps_new_simple (const char *media_type, const char *fieldname, ...)
   structure = gst_structure_new_valist (media_type, fieldname, var_args);
   va_end (var_args);
 
-  gst_caps_append_structure_unchecked (caps, structure);
+  if (structure)
+    gst_caps_append_structure_unchecked (caps, structure);
+  else
+    gst_caps_replace (&caps, NULL);
 
   return caps;
 }
@@ -239,7 +242,7 @@ gst_caps_new_simple (const char *media_type, const char *fieldname, ...)
  * arguments.  The list must be NULL-terminated.  The structures
  * are not copied; the returned #GstCaps owns the structures.
  *
- * Returns: the new #GstCaps
+ * Returns: (transfer full): the new #GstCaps
  */
 GstCaps *
 gst_caps_new_full (GstStructure * struct1, ...)
@@ -263,7 +266,7 @@ gst_caps_new_full (GstStructure * struct1, ...)
  * arguments.  The list must be NULL-terminated.  The structures
  * are not copied; the returned #GstCaps owns the structures.
  *
- * Returns: the new #GstCaps
+ * Returns: (transfer full): the new #GstCaps
  */
 GstCaps *
 gst_caps_new_full_valist (GstStructure * structure, va_list var_args)
@@ -293,7 +296,7 @@ gst_caps_new_full_valist (GstStructure * structure, va_list var_args)
  *
  * When you are finished with the caps, call gst_caps_unref() on it.
  *
- * Returns: the new #GstCaps
+ * Returns: (transfer full): the new #GstCaps
  */
 GstCaps *
 gst_caps_copy (const GstCaps * caps)
@@ -346,7 +349,7 @@ _gst_caps_free (GstCaps * caps)
 
 /**
  * gst_caps_make_writable:
- * @caps: the #GstCaps to make writable
+ * @caps: (transfer full): the #GstCaps to make writable
  *
  * Returns a writable copy of @caps.
  *
@@ -360,7 +363,7 @@ _gst_caps_free (GstCaps * caps)
  * that it returns. Don't access the argument after calling this function. See
  * also: gst_caps_ref().
  *
- * Returns: the same #GstCaps object.
+ * Returns: (transfer full): the same #GstCaps object.
  */
 GstCaps *
 gst_caps_make_writable (GstCaps * caps)
@@ -394,7 +397,7 @@ gst_caps_make_writable (GstCaps * caps)
  * implicitly by e.g. gst_caps_new_simple(), or via taking one explicitly with
  * this function.
  *
- * Returns: the same #GstCaps object.
+ * Returns: (transfer full): the same #GstCaps object.
  */
 GstCaps *
 gst_caps_ref (GstCaps * caps)
@@ -414,7 +417,7 @@ gst_caps_ref (GstCaps * caps)
 
 /**
  * gst_caps_unref:
- * @caps: the #GstCaps to unref
+ * @caps: (transfer full): the #GstCaps to unref
  *
  * Unref a #GstCaps and and free all its structures and the
  * structures' values when the refcount reaches 0.
@@ -454,9 +457,9 @@ gst_static_caps_get_type (void)
  *
  * Converts a #GstStaticCaps to a #GstCaps.
  *
- * Returns: A pointer to the #GstCaps. Unref after usage. Since the
- * core holds an additional ref to the returned caps,
- * use gst_caps_make_writable() on the returned caps to modify it.
+ * Returns: (transfer full): a pointer to the #GstCaps. Unref after usage.
+ *     Since the core holds an additional ref to the returned caps,
+ *     use gst_caps_make_writable() on the returned caps to modify it.
  */
 GstCaps *
 gst_static_caps_get (GstStaticCaps * static_caps)
@@ -545,7 +548,8 @@ gst_caps_remove_and_get_structure (GstCaps * caps, guint idx)
  * Retrieves the stucture with the given index from the list of structures
  * contained in @caps. The caller becomes the owner of the returned structure.
  *
- * Returns: a pointer to the #GstStructure corresponding to @index.
+ * Returns: (transfer full): a pointer to the #GstStructure corresponding
+ *     to @index.
  *
  * Since: 0.10.30
  */
@@ -640,7 +644,7 @@ gst_caps_structure_is_subset (const GstStructure * minuend,
 /**
  * gst_caps_append:
  * @caps1: the #GstCaps that will be appended to
- * @caps2: the #GstCaps to append
+ * @caps2: (transfer full): the #GstCaps to append
  *
  * Appends the structures contained in @caps2 to @caps1. The structures in
  * @caps2 are not copied -- they are transferred to @caps1, and then @caps2 is
@@ -679,7 +683,7 @@ gst_caps_append (GstCaps * caps1, GstCaps * caps2)
 /**
  * gst_caps_merge:
  * @caps1: the #GstCaps that will take the new entries
- * @caps2: the #GstCaps to merge in
+ * @caps2: (transfer full): the #GstCaps to merge in
  *
  * Appends the structures contained in @caps2 to @caps1 if they are not yet
  * expressed by @caps1. The structures in @caps2 are not copied -- they are
@@ -734,7 +738,7 @@ gst_caps_merge (GstCaps * caps1, GstCaps * caps2)
 /**
  * gst_caps_append_structure:
  * @caps: the #GstCaps that will be appended to
- * @structure: the #GstStructure to append
+ * @structure: (transfer full): the #GstStructure to append
  *
  * Appends @structure to @caps.  The structure is not copied; @caps
  * becomes the owner of @structure.
@@ -780,7 +784,7 @@ gst_caps_remove_structure (GstCaps * caps, guint idx)
 /**
  * gst_caps_merge_structure:
  * @caps: the #GstCaps that will the the new structure
- * @structure: the #GstStructure to merge
+ * @structure: (transfer full): the #GstStructure to merge
  *
  * Appends @structure to @caps if its not already expressed by @caps.  The
  * structure is not copied; @caps becomes the owner of @structure.
@@ -855,7 +859,8 @@ gst_caps_get_size (const GstCaps * caps)
  * You do not need to free or unref the structure returned, it
  * belongs to the #GstCaps.
  *
- * Returns: a pointer to the #GstStructure corresponding to @index
+ * Returns: (transfer none): a pointer to the #GstStructure corresponding
+ *     to @index
  */
 GstStructure *
 gst_caps_get_structure (const GstCaps * caps, guint index)
@@ -874,7 +879,7 @@ gst_caps_get_structure (const GstCaps * caps, guint index)
  * Creates a new #GstCaps and appends a copy of the nth structure
  * contained in @caps.
  *
- * Returns: the new #GstCaps
+ * Returns: (transfer full): the new #GstCaps
  */
 GstCaps *
 gst_caps_copy_nth (const GstCaps * caps, guint nth)
@@ -955,7 +960,7 @@ gst_caps_set_value (GstCaps * caps, const char *field, const GValue * value)
  * Sets fields in a #GstCaps.  The arguments must be passed in the same
  * manner as gst_structure_set(), and be NULL-terminated.
  * <note>Prior to GStreamer version 0.10.26, this function failed when
- * @caps was not simple. If your code needs to work with those versions 
+ * @caps was not simple. If your code needs to work with those versions
  * of GStreamer, you may only call this function when GST_CAPS_IS_SIMPLE()
  * is %TRUE for @caps.</note>
  */
@@ -1336,7 +1341,7 @@ gst_caps_structure_can_intersect (const GstStructure * struct1,
  * @caps1: a #GstCaps to intersect
  * @caps2: a #GstCaps to intersect
  *
- * Tries intersecting @caps1 and @caps2 and reports wheter the result would not
+ * Tries intersecting @caps1 and @caps2 and reports whether the result would not
  * be empty
  *
  * Returns: %TRUE if intersection would be not empty
@@ -1372,15 +1377,16 @@ gst_caps_can_intersect (const GstCaps * caps1, const GstCaps * caps2)
    * This algorithm zigzags over the caps structures as demonstrated in
    * the folowing matrix:
    *
-   *          caps1
-   *       +-------------
-   *       | 1  2  4  7
-   * caps2 | 3  5  8 10
-   *       | 6  9 11 12
+   *          caps1                              0  1  2  3
+   *       +-------------     total distance:  +-------------
+   *       | 1  2  4  7                      0 | 0  1  2  3
+   * caps2 | 3  5  8 10                      1 | 1  2  3  4
+   *       | 6  9 11 12                      2 | 2  3  4  5
    *
    * First we iterate over the caps1 structures (top line) intersecting
    * the structures diagonally down, then we iterate over the caps2
-   * structures.
+   * structures. The result is that the intersections are ordered based on the
+   * sum of the indexes in the list.
    */
   len1 = caps1->structs->len;
   len2 = caps2->structs->len;
@@ -1410,18 +1416,8 @@ gst_caps_can_intersect (const GstCaps * caps1, const GstCaps * caps2)
   return FALSE;
 }
 
-/**
- * gst_caps_intersect:
- * @caps1: a #GstCaps to intersect
- * @caps2: a #GstCaps to intersect
- *
- * Creates a new #GstCaps that contains all the formats that are common
- * to both @caps1 and @caps2.
- *
- * Returns: the new #GstCaps
- */
-GstCaps *
-gst_caps_intersect (const GstCaps * caps1, const GstCaps * caps2)
+static GstCaps *
+gst_caps_intersect_zig_zag (const GstCaps * caps1, const GstCaps * caps2)
 {
   guint64 i;                    /* index can be up to 2 * G_MAX_UINT */
   guint j, k, len1, len2;
@@ -1430,9 +1426,6 @@ gst_caps_intersect (const GstCaps * caps1, const GstCaps * caps2)
   GstStructure *struct2;
   GstCaps *dest;
   GstStructure *istruct;
-
-  g_return_val_if_fail (GST_IS_CAPS (caps1), NULL);
-  g_return_val_if_fail (GST_IS_CAPS (caps2), NULL);
 
   /* caps are exactly the same pointers, just copy one caps */
   if (G_UNLIKELY (caps1 == caps2))
@@ -1493,6 +1486,109 @@ gst_caps_intersect (const GstCaps * caps1, const GstCaps * caps2)
   }
   return dest;
 }
+
+/**
+ * gst_caps_intersect_first:
+ * @caps1: a #GstCaps to intersect
+ * @caps2: a #GstCaps to intersect
+ *
+ * Creates a new #GstCaps that contains all the formats that are common
+ * to both @caps1 and @caps2.
+ *
+ * Unlike @gst_caps_intersect, the returned caps will be ordered in a similar
+ * fashion as @caps1.
+ *
+ * Returns: the new #GstCaps
+ */
+static GstCaps *
+gst_caps_intersect_first (const GstCaps * caps1, const GstCaps * caps2)
+{
+  guint64 i;                    /* index can be up to 2 * G_MAX_UINT */
+  guint j, len1, len2;
+
+  GstStructure *struct1;
+  GstStructure *struct2;
+  GstCaps *dest;
+  GstStructure *istruct;
+
+  /* caps are exactly the same pointers, just copy one caps */
+  if (G_UNLIKELY (caps1 == caps2))
+    return gst_caps_copy (caps1);
+
+  /* empty caps on either side, return empty */
+  if (G_UNLIKELY (CAPS_IS_EMPTY (caps1) || CAPS_IS_EMPTY (caps2)))
+    return gst_caps_new_empty ();
+
+  /* one of the caps is any, just copy the other caps */
+  if (G_UNLIKELY (CAPS_IS_ANY (caps1)))
+    return gst_caps_copy (caps2);
+  if (G_UNLIKELY (CAPS_IS_ANY (caps2)))
+    return gst_caps_copy (caps1);
+
+  dest = gst_caps_new_empty ();
+
+  len1 = caps1->structs->len;
+  len2 = caps2->structs->len;
+  for (i = 0; i < len1; i++) {
+    struct1 = gst_caps_get_structure_unchecked (caps1, i);
+    for (j = 0; j < len2; j++) {
+      struct2 = gst_caps_get_structure_unchecked (caps2, j);
+      istruct = gst_caps_structure_intersect (struct1, struct2);
+      if (istruct)
+        gst_caps_append_structure (dest, istruct);
+    }
+  }
+
+  return dest;
+}
+
+/**
+ * gst_caps_intersect_full:
+ * @caps1: a #GstCaps to intersect
+ * @caps2: a #GstCaps to intersect
+ * @mode: The intersection algorithm/mode to use
+ *
+ * Creates a new #GstCaps that contains all the formats that are common
+ * to both @caps1 and @caps2, the order is defined by the #GstCapsIntersectMode
+ * used.
+ *
+ * Returns: the new #GstCaps
+ * Since: 0.10.33
+ */
+GstCaps *
+gst_caps_intersect_full (const GstCaps * caps1, const GstCaps * caps2,
+    GstCapsIntersectMode mode)
+{
+  g_return_val_if_fail (GST_IS_CAPS (caps1), NULL);
+  g_return_val_if_fail (GST_IS_CAPS (caps2), NULL);
+
+  switch (mode) {
+    case GST_CAPS_INTERSECT_FIRST:
+      return gst_caps_intersect_first (caps1, caps2);
+    default:
+      g_warning ("Unknown caps intersect mode: %d", mode);
+      /* fallthrough */
+    case GST_CAPS_INTERSECT_ZIG_ZAG:
+      return gst_caps_intersect_zig_zag (caps1, caps2);
+  }
+}
+
+/**
+ * gst_caps_intersect:
+ * @caps1: a #GstCaps to intersect
+ * @caps2: a #GstCaps to intersect
+ *
+ * Creates a new #GstCaps that contains all the formats that are common
+ * to both @caps1 and @caps2. Defaults to %GST_CAPS_INTERSECT_ZIG_ZAG mode.
+ *
+ * Returns: the new #GstCaps
+ */
+GstCaps *
+gst_caps_intersect (const GstCaps * caps1, const GstCaps * caps2)
+{
+  return gst_caps_intersect_full (caps1, caps2, GST_CAPS_INTERSECT_ZIG_ZAG);
+}
+
 
 /* subtract operation */
 
@@ -2004,7 +2100,7 @@ gst_caps_load_thyself (xmlNodePtr parent)
 
 /**
  * gst_caps_replace:
- * @caps: a pointer to #GstCaps
+ * @caps: (inout) (transfer full): a pointer to #GstCaps
  * @newcaps: a #GstCaps to replace *caps
  *
  * Replaces *caps with @newcaps.  Unrefs the #GstCaps in the location
@@ -2049,7 +2145,7 @@ gst_caps_replace (GstCaps ** caps, GstCaps * newcaps)
  * ]|
  * This prints the caps in human readble form.
  *
- * Returns: a newly allocated string representing @caps.
+ * Returns: (transfer full): a newly allocated string representing @caps.
  */
 gchar *
 gst_caps_to_string (const GstCaps * caps)
@@ -2145,7 +2241,7 @@ gst_caps_from_string_inplace (GstCaps * caps, const gchar * string)
  *
  * Converts @caps from a string representation.
  *
- * Returns: a newly allocated #GstCaps
+ * Returns: (transfer full): a newly allocated #GstCaps
  */
 GstCaps *
 gst_caps_from_string (const gchar * string)

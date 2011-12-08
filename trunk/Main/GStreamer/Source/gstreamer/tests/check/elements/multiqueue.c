@@ -93,7 +93,7 @@ setup_multiqueue (GstElement * pipe, GstElement * inputs[],
 
 GST_START_TEST (test_simple_pipeline)
 {
-  GstElement *pipe, *mq;
+  GstElement *pipe;
   GstElement *inputs[1];
   GstElement *outputs[1];
   GstMessage *msg;
@@ -107,7 +107,7 @@ GST_START_TEST (test_simple_pipeline)
   outputs[0] = gst_element_factory_make ("fakesink", NULL);
   fail_unless (outputs[0] != NULL, "failed to create 'fakesink' element");
 
-  mq = setup_multiqueue (pipe, inputs, outputs, 1);
+  setup_multiqueue (pipe, inputs, outputs, 1);
 
   gst_element_set_state (pipe, GST_STATE_PLAYING);
 
@@ -128,7 +128,7 @@ GST_END_TEST;
 
 GST_START_TEST (test_simple_shutdown_while_running)
 {
-  GstElement *pipe, *mq;
+  GstElement *pipe;
   GstElement *inputs[1];
   GstElement *outputs[1];
   GstMessage *msg;
@@ -141,7 +141,7 @@ GST_START_TEST (test_simple_shutdown_while_running)
   outputs[0] = gst_element_factory_make ("fakesink", NULL);
   fail_unless (outputs[0] != NULL, "failed to create 'fakesink' element");
 
-  mq = setup_multiqueue (pipe, inputs, outputs, 1);
+  setup_multiqueue (pipe, inputs, outputs, 1);
 
   gst_element_set_state (pipe, GST_STATE_PAUSED);
 
@@ -188,11 +188,8 @@ GST_END_TEST;
 
 GST_START_TEST (test_request_pads)
 {
-  gboolean change_state_before_cleanup = TRUE;
   GstElement *mq;
   GstPad *sink1, *sink2;
-
-again:
 
   mq = gst_element_factory_make ("multiqueue", NULL);
 
@@ -218,28 +215,10 @@ again:
 
   fail_unless (sink1 != sink2);
 
-  if (change_state_before_cleanup) {
-    /* FIXME: if we don't change state, it will deadlock forever when unref'ing
-     * the queue (waiting for pad tasks to join) */
-    GST_LOG ("Changing state to PLAYING");
-    gst_element_set_state (mq, GST_STATE_PLAYING);
-    g_usleep (G_USEC_PER_SEC);
-    GST_LOG ("Changing state to NULL");
-    gst_element_set_state (mq, GST_STATE_NULL);
-  }
-
   GST_LOG ("Cleaning up");
   gst_object_unref (sink1);
   gst_object_unref (sink2);
   gst_object_unref (mq);
-
-  /* FIXME: this should work without state change before cleanup as well,
-   * but currently doesn't, see above, so disable this for now */
-  if (change_state_before_cleanup && 0) {
-    change_state_before_cleanup = FALSE;
-    goto again;
-  }
-
 }
 
 GST_END_TEST;
@@ -263,6 +242,52 @@ mq_sinkpad_to_srcpad (GstElement * mq, GstPad * sink)
 
   return srcpad;
 }
+
+GST_START_TEST (test_request_pads_named)
+{
+  GstElement *mq;
+  GstPad *sink1, *sink2, *sink3, *sink4;
+
+  mq = gst_element_factory_make ("multiqueue", NULL);
+
+  sink1 = gst_element_get_request_pad (mq, "sink1");
+  fail_unless (sink1 != NULL);
+  fail_unless (GST_IS_PAD (sink1));
+  fail_unless (GST_PAD_IS_SINK (sink1));
+  fail_unless_equals_string (GST_PAD_NAME (sink1), "sink1");
+  GST_LOG ("Got pad %s:%s", GST_DEBUG_PAD_NAME (sink1));
+
+  sink3 = gst_element_get_request_pad (mq, "sink3");
+  fail_unless (sink3 != NULL);
+  fail_unless (GST_IS_PAD (sink3));
+  fail_unless (GST_PAD_IS_SINK (sink3));
+  fail_unless_equals_string (GST_PAD_NAME (sink3), "sink3");
+  GST_LOG ("Got pad %s:%s", GST_DEBUG_PAD_NAME (sink3));
+
+  sink2 = gst_element_get_request_pad (mq, "sink2");
+  fail_unless (sink2 != NULL);
+  fail_unless (GST_IS_PAD (sink2));
+  fail_unless (GST_PAD_IS_SINK (sink2));
+  fail_unless_equals_string (GST_PAD_NAME (sink2), "sink2");
+  GST_LOG ("Got pad %s:%s", GST_DEBUG_PAD_NAME (sink2));
+
+  /* This gets us the first unused id, sink0 */
+  sink4 = gst_element_get_request_pad (mq, "sink%d");
+  fail_unless (sink4 != NULL);
+  fail_unless (GST_IS_PAD (sink4));
+  fail_unless (GST_PAD_IS_SINK (sink4));
+  fail_unless_equals_string (GST_PAD_NAME (sink4), "sink0");
+  GST_LOG ("Got pad %s:%s", GST_DEBUG_PAD_NAME (sink4));
+
+  GST_LOG ("Cleaning up");
+  gst_object_unref (sink1);
+  gst_object_unref (sink2);
+  gst_object_unref (sink3);
+  gst_object_unref (sink4);
+  gst_object_unref (mq);
+}
+
+GST_END_TEST;
 
 static GstCaps *
 mq_dummypad_getcaps (GstPad * sinkpad)
@@ -672,8 +697,8 @@ multiqueue_suite (void)
   tcase_add_test (tc_chain, test_simple_pipeline);
   tcase_add_test (tc_chain, test_simple_shutdown_while_running);
 
-  /* FIXME: test_request_pads() needs some more fixes, see comments there */
   tcase_add_test (tc_chain, test_request_pads);
+  tcase_add_test (tc_chain, test_request_pads_named);
 
   tcase_add_test (tc_chain, test_output_order);
 

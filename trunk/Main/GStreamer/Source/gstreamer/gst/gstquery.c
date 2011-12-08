@@ -27,9 +27,11 @@
  *                     to create queries, and to set and parse values in them.
  * @see_also: #GstPad, #GstElement
  *
- * GstQuery functions are used to register a new query types to the gstreamer
- * core.
- * Query types can be used to perform queries on pads and elements.
+ * GstQuery functions are used to register new query types to the gstreamer
+ * core and use them.
+ * Queries can be performed on pads (gst_pad_query()) and elements
+ * (gst_element_query()). Please note that some queries might need a running
+ * pipeline to work.
  *
  * Queries can be created using the gst_query_new_*() functions.
  * Query values can be set using gst_query_set_*(), and parsed using
@@ -332,7 +334,9 @@ gst_query_type_get_details (GstQueryType type)
  * Get a #GstIterator of all the registered query types. The definitions
  * iterated over are read only.
  *
- * Returns: A #GstIterator of #GstQueryTypeDefinition.
+ * Free-function: gst_iterator_free
+ *
+ * Returns: (transfer full): a #GstIterator of #GstQueryTypeDefinition.
  */
 GstIterator *
 gst_query_type_iterate_definitions (void)
@@ -379,7 +383,9 @@ gst_query_new (GstQueryType type, GstStructure * structure)
  * when done with it. A position query is used to query the current position
  * of playback in the streams, in some format.
  *
- * Returns: A #GstQuery
+ * Free-function: gst_query_unref
+ *
+ * Returns: (transfer full): a new #GstQuery
  */
 GstQuery *
 gst_query_new_position (GstFormat format)
@@ -407,12 +413,9 @@ gst_query_new_position (GstFormat format)
 void
 gst_query_set_position (GstQuery * query, GstFormat format, gint64 cur)
 {
-  GstStructure *structure;
-
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_POSITION);
 
-  structure = gst_query_get_structure (query);
-  gst_structure_id_set (structure,
+  gst_structure_id_set (query->structure,
       GST_QUARK (FORMAT), GST_TYPE_FORMAT, format,
       GST_QUARK (CURRENT), G_TYPE_INT64, cur, NULL);
 }
@@ -420,8 +423,9 @@ gst_query_set_position (GstQuery * query, GstFormat format, gint64 cur)
 /**
  * gst_query_parse_position:
  * @query: a #GstQuery
- * @format: (out): the storage for the #GstFormat of the position values (may be NULL)
- * @cur: (out): the storage for the current position (may be NULL)
+ * @format: (out) (allow-none): the storage for the #GstFormat of the
+ *     position values (may be NULL)
+ * @cur: (out) (allow-none): the storage for the current position (may be NULL)
  *
  * Parse a position query, writing the format into @format, and the position
  * into @cur, if the respective parameters are non-NULL.
@@ -433,7 +437,7 @@ gst_query_parse_position (GstQuery * query, GstFormat * format, gint64 * cur)
 
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_POSITION);
 
-  structure = gst_query_get_structure (query);
+  structure = query->structure;
   if (format)
     *format = g_value_get_enum (gst_structure_id_get_value (structure,
             GST_QUARK (FORMAT)));
@@ -451,7 +455,9 @@ gst_query_parse_position (GstQuery * query, GstFormat * format, gint64 * cur)
  * Use gst_query_unref() when done with it. A duration query will give the
  * total length of the stream.
  *
- * Returns: A #GstQuery
+ * Free-function: gst_query_unref
+ *
+ * Returns: (transfer full): a new #GstQuery
  */
 GstQuery *
 gst_query_new_duration (GstFormat format)
@@ -479,12 +485,9 @@ gst_query_new_duration (GstFormat format)
 void
 gst_query_set_duration (GstQuery * query, GstFormat format, gint64 duration)
 {
-  GstStructure *structure;
-
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_DURATION);
 
-  structure = gst_query_get_structure (query);
-  gst_structure_id_set (structure,
+  gst_structure_id_set (query->structure,
       GST_QUARK (FORMAT), GST_TYPE_FORMAT, format,
       GST_QUARK (DURATION), G_TYPE_INT64, duration, NULL);
 }
@@ -492,8 +495,9 @@ gst_query_set_duration (GstQuery * query, GstFormat format, gint64 duration)
 /**
  * gst_query_parse_duration:
  * @query: a #GstQuery
- * @format: (out): the storage for the #GstFormat of the duration value, or NULL.
- * @duration: (out): the storage for the total duration, or NULL.
+ * @format: (out) (allow-none): the storage for the #GstFormat of the duration
+ *     value, or NULL.
+ * @duration: (out) (allow-none): the storage for the total duration, or NULL.
  *
  * Parse a duration query answer. Write the format of the duration into @format,
  * and the value into @duration, if the respective variables are non-NULL.
@@ -506,7 +510,7 @@ gst_query_parse_duration (GstQuery * query, GstFormat * format,
 
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_DURATION);
 
-  structure = gst_query_get_structure (query);
+  structure = query->structure;
   if (format)
     *format = g_value_get_enum (gst_structure_id_get_value (structure,
             GST_QUARK (FORMAT)));
@@ -523,7 +527,9 @@ gst_query_parse_duration (GstQuery * query, GstFormat * format,
  * by sinks to compensate for additional latency introduced by elements in the
  * pipeline.
  *
- * Returns: A #GstQuery
+ * Free-function: gst_query_unref
+ *
+ * Returns: (transfer full): a #GstQuery
  *
  * Since: 0.10.12
  */
@@ -558,12 +564,9 @@ void
 gst_query_set_latency (GstQuery * query, gboolean live,
     GstClockTime min_latency, GstClockTime max_latency)
 {
-  GstStructure *structure;
-
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_LATENCY);
 
-  structure = gst_query_get_structure (query);
-  gst_structure_id_set (structure,
+  gst_structure_id_set (query->structure,
       GST_QUARK (LIVE), G_TYPE_BOOLEAN, live,
       GST_QUARK (MIN_LATENCY), G_TYPE_UINT64, min_latency,
       GST_QUARK (MAX_LATENCY), G_TYPE_UINT64, max_latency, NULL);
@@ -572,9 +575,9 @@ gst_query_set_latency (GstQuery * query, gboolean live,
 /**
  * gst_query_parse_latency:
  * @query: a #GstQuery
- * @live: (out): storage for live or NULL
- * @min_latency: (out): the storage for the min latency or NULL
- * @max_latency: (out): the storage for the max latency or NULL
+ * @live: (out) (allow-none): storage for live or NULL
+ * @min_latency: (out) (allow-none): the storage for the min latency or NULL
+ * @max_latency: (out) (allow-none): the storage for the max latency or NULL
  *
  * Parse a latency query answer.
  *
@@ -588,7 +591,7 @@ gst_query_parse_latency (GstQuery * query, gboolean * live,
 
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_LATENCY);
 
-  structure = gst_query_get_structure (query);
+  structure = query->structure;
   if (live)
     *live =
         g_value_get_boolean (gst_structure_id_get_value (structure,
@@ -611,7 +614,9 @@ gst_query_parse_latency (GstQuery * query, gboolean * live,
  * when done with it. A convert query is used to ask for a conversion between
  * one format and another.
  *
- * Returns: A #GstQuery
+ * Free-function: gst_query_unref
+ *
+ * Returns: (transfer full): a #GstQuery
  */
 GstQuery *
 gst_query_new_convert (GstFormat src_format, gint64 value,
@@ -645,12 +650,9 @@ void
 gst_query_set_convert (GstQuery * query, GstFormat src_format, gint64 src_value,
     GstFormat dest_format, gint64 dest_value)
 {
-  GstStructure *structure;
-
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_CONVERT);
 
-  structure = gst_query_get_structure (query);
-  gst_structure_id_set (structure,
+  gst_structure_id_set (query->structure,
       GST_QUARK (SRC_FORMAT), GST_TYPE_FORMAT, src_format,
       GST_QUARK (SRC_VALUE), G_TYPE_INT64, src_value,
       GST_QUARK (DEST_FORMAT), GST_TYPE_FORMAT, dest_format,
@@ -660,10 +662,13 @@ gst_query_set_convert (GstQuery * query, GstFormat src_format, gint64 src_value,
 /**
  * gst_query_parse_convert:
  * @query: a #GstQuery
- * @src_format: (out): the storage for the #GstFormat of the source value, or NULL
- * @src_value: (out): the storage for the source value, or NULL
- * @dest_format: (out): the storage for the #GstFormat of the destination value, or NULL
- * @dest_value: (out): the storage for the destination value, or NULL
+ * @src_format: (out) (allow-none): the storage for the #GstFormat of the
+ *     source value, or NULL
+ * @src_value: (out) (allow-none): the storage for the source value, or NULL
+ * @dest_format: (out) (allow-none): the storage for the #GstFormat of the
+ *     destination value, or NULL
+ * @dest_value: (out) (allow-none): the storage for the destination value,
+ *     or NULL
  *
  * Parse a convert query answer. Any of @src_format, @src_value, @dest_format,
  * and @dest_value may be NULL, in which case that value is omitted.
@@ -676,7 +681,7 @@ gst_query_parse_convert (GstQuery * query, GstFormat * src_format,
 
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_CONVERT);
 
-  structure = gst_query_get_structure (query);
+  structure = query->structure;
   if (src_format)
     *src_format = g_value_get_enum (gst_structure_id_get_value (structure,
             GST_QUARK (SRC_FORMAT)));
@@ -699,7 +704,9 @@ gst_query_parse_convert (GstQuery * query, GstFormat * src_format,
  * when done with it. A segment query is used to discover information about the
  * currently configured segment for playback.
  *
- * Returns: a #GstQuery
+ * Free-function: gst_query_unref
+ *
+ * Returns: (transfer full): a new #GstQuery
  */
 GstQuery *
 gst_query_new_segment (GstFormat format)
@@ -742,12 +749,9 @@ void
 gst_query_set_segment (GstQuery * query, gdouble rate, GstFormat format,
     gint64 start_value, gint64 stop_value)
 {
-  GstStructure *structure;
-
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_SEGMENT);
 
-  structure = gst_query_get_structure (query);
-  gst_structure_id_set (structure,
+  gst_structure_id_set (query->structure,
       GST_QUARK (RATE), G_TYPE_DOUBLE, rate,
       GST_QUARK (FORMAT), GST_TYPE_FORMAT, format,
       GST_QUARK (START_VALUE), G_TYPE_INT64, start_value,
@@ -757,10 +761,11 @@ gst_query_set_segment (GstQuery * query, gdouble rate, GstFormat format,
 /**
  * gst_query_parse_segment:
  * @query: a #GstQuery
- * @rate: (out): the storage for the rate of the segment, or NULL
- * @format: (out): the storage for the #GstFormat of the values, or NULL
- * @start_value: (out): the storage for the start value, or NULL
- * @stop_value: (out): the storage for the stop value, or NULL
+ * @rate: (out) (allow-none): the storage for the rate of the segment, or NULL
+ * @format: (out) (allow-none): the storage for the #GstFormat of the values,
+ *     or NULL
+ * @start_value: (out) (allow-none): the storage for the start value, or NULL
+ * @stop_value: (out) (allow-none): the storage for the stop value, or NULL
  *
  * Parse a segment query answer. Any of @rate, @format, @start_value, and
  * @stop_value may be NULL, which will cause this value to be omitted.
@@ -775,7 +780,7 @@ gst_query_parse_segment (GstQuery * query, gdouble * rate, GstFormat * format,
 
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_SEGMENT);
 
-  structure = gst_query_get_structure (query);
+  structure = query->structure;
   if (rate)
     *rate = g_value_get_double (gst_structure_id_get_value (structure,
             GST_QUARK (RATE)));
@@ -798,7 +803,9 @@ gst_query_parse_segment (GstQuery * query, gdouble * rate, GstFormat * format,
  * Constructs a new custom application query object. Use gst_query_unref()
  * when done with it.
  *
- * Returns: a #GstQuery
+ * Free-function: gst_query_unref
+ *
+ * Returns: (transfer full): a new #GstQuery
  */
 GstQuery *
 gst_query_new_application (GstQueryType type, GstStructure * structure)
@@ -815,8 +822,9 @@ gst_query_new_application (GstQueryType type, GstStructure * structure)
  *
  * Get the structure of a query.
  *
- * Returns: The #GstStructure of the query. The structure is still owned
- * by the query and will therefore be freed when the query is unreffed.
+ * Returns: (transfer none): the #GstStructure of the query. The structure is
+ *     still owned by the query and will therefore be freed when the query
+ *     is unreffed.
  */
 GstStructure *
 gst_query_get_structure (GstQuery * query)
@@ -833,7 +841,9 @@ gst_query_get_structure (GstQuery * query)
  * Constructs a new query object for querying seeking properties of
  * the stream.
  *
- * Returns: A #GstQuery
+ * Free-function: gst_query_unref
+ *
+ * Returns: (transfer full): a new #GstQuery
  */
 GstQuery *
 gst_query_new_seeking (GstFormat format)
@@ -866,12 +876,9 @@ void
 gst_query_set_seeking (GstQuery * query, GstFormat format,
     gboolean seekable, gint64 segment_start, gint64 segment_end)
 {
-  GstStructure *structure;
-
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_SEEKING);
 
-  structure = gst_query_get_structure (query);
-  gst_structure_id_set (structure,
+  gst_structure_id_set (query->structure,
       GST_QUARK (FORMAT), GST_TYPE_FORMAT, format,
       GST_QUARK (SEEKABLE), G_TYPE_BOOLEAN, seekable,
       GST_QUARK (SEGMENT_START), G_TYPE_INT64, segment_start,
@@ -881,10 +888,11 @@ gst_query_set_seeking (GstQuery * query, GstFormat format,
 /**
  * gst_query_parse_seeking:
  * @query: a GST_QUERY_SEEKING type query #GstQuery
- * @format: (out): the format to set for the @segment_start and @segment_end values
- * @seekable: (out): the seekable flag to set
- * @segment_start: (out): the segment_start to set
- * @segment_end: (out): the segment_end to set
+ * @format: (out) (allow-none): the format to set for the @segment_start
+ *     and @segment_end values, or NULL
+ * @seekable: (out) (allow-none): the seekable flag to set, or NULL
+ * @segment_start: (out) (allow-none): the segment_start to set, or NULL
+ * @segment_end: (out) (allow-none): the segment_end to set, or NULL
  *
  * Parse a seeking query, writing the format into @format, and
  * other results into the passed parameters, if the respective parameters
@@ -898,7 +906,7 @@ gst_query_parse_seeking (GstQuery * query, GstFormat * format,
 
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_SEEKING);
 
-  structure = gst_query_get_structure (query);
+  structure = query->structure;
   if (format)
     *format = g_value_get_enum (gst_structure_id_get_value (structure,
             GST_QUARK (FORMAT)));
@@ -919,7 +927,9 @@ gst_query_parse_seeking (GstQuery * query, GstFormat * format,
  * Constructs a new query object for querying formats of
  * the stream.
  *
- * Returns: A #GstQuery
+ * Free-function: gst_query_unref
+ *
+ * Returns: (transfer full): a new #GstQuery
  *
  * Since: 0.10.4
  */
@@ -960,7 +970,6 @@ gst_query_set_formats (GstQuery * query, gint n_formats, ...)
 {
   va_list ap;
   GValue list = { 0, };
-  GstStructure *structure;
   gint i;
 
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_FORMATS);
@@ -973,8 +982,7 @@ gst_query_set_formats (GstQuery * query, gint n_formats, ...)
   }
   va_end (ap);
 
-  structure = gst_query_get_structure (query);
-  gst_structure_set_value (structure, "formats", &list);
+  gst_structure_set_value (query->structure, "formats", &list);
 
   g_value_unset (&list);
 
@@ -984,7 +992,8 @@ gst_query_set_formats (GstQuery * query, gint n_formats, ...)
  * gst_query_set_formatsv:
  * @query: a #GstQuery
  * @n_formats: the number of formats to set.
- * @formats: An array containing @n_formats @GstFormat values.
+ * @formats: (in) (array length=n_formats): an array containing @n_formats
+ *     @GstFormat values.
  *
  * Set the formats query result fields in @query. The number of formats passed
  * in the @formats array must be equal to @n_formats.
@@ -992,10 +1001,10 @@ gst_query_set_formats (GstQuery * query, gint n_formats, ...)
  * Since: 0.10.4
  */
 void
-gst_query_set_formatsv (GstQuery * query, gint n_formats, GstFormat * formats)
+gst_query_set_formatsv (GstQuery * query, gint n_formats,
+    const GstFormat * formats)
 {
   GValue list = { 0, };
-  GstStructure *structure;
   gint i;
 
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_FORMATS);
@@ -1004,8 +1013,7 @@ gst_query_set_formatsv (GstQuery * query, gint n_formats, GstFormat * formats)
   for (i = 0; i < n_formats; i++) {
     gst_query_list_add_format (&list, formats[i]);
   }
-  structure = gst_query_get_structure (query);
-  gst_structure_set_value (structure, "formats", &list);
+  gst_structure_set_value (query->structure, "formats", &list);
 
   g_value_unset (&list);
 }
@@ -1022,15 +1030,12 @@ gst_query_set_formatsv (GstQuery * query, gint n_formats, GstFormat * formats)
 void
 gst_query_parse_formats_length (GstQuery * query, guint * n_formats)
 {
-  GstStructure *structure;
-
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_FORMATS);
 
   if (n_formats) {
     const GValue *list;
 
-    structure = gst_query_get_structure (query);
-    list = gst_structure_get_value (structure, "formats");
+    list = gst_structure_get_value (query->structure, "formats");
     if (list == NULL)
       *n_formats = 0;
     else
@@ -1053,15 +1058,12 @@ gst_query_parse_formats_length (GstQuery * query, guint * n_formats)
 void
 gst_query_parse_formats_nth (GstQuery * query, guint nth, GstFormat * format)
 {
-  GstStructure *structure;
-
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_FORMATS);
 
   if (format) {
     const GValue *list;
 
-    structure = gst_query_get_structure (query);
-    list = gst_structure_get_value (structure, "formats");
+    list = gst_structure_get_value (query->structure, "formats");
     if (list == NULL) {
       *format = GST_FORMAT_UNDEFINED;
     } else {
@@ -1080,7 +1082,9 @@ gst_query_parse_formats_nth (GstQuery * query, guint nth, GstFormat * format)
  * Constructs a new query object for querying the buffering status of
  * a stream.
  *
- * Returns: A #GstQuery
+ * Free-function: gst_query_new
+ *
+ * Returns: (transfer full): a new #GstQuery
  *
  * Since: 0.10.20
  */
@@ -1134,8 +1138,8 @@ gst_query_set_buffering_percent (GstQuery * query, gboolean busy, gint percent)
 /**
  * gst_query_parse_buffering_percent
  * @query: A valid #GstQuery of type GST_QUERY_BUFFERING.
- * @busy: (out): if buffering is busy
- * @percent: (out): a buffering percent
+ * @busy: (out) (allow-none): if buffering is busy, or NULL
+ * @percent: (out) (allow-none): a buffering percent, or NULL
  *
  * Get the percentage of buffered data. This is a value between 0 and 100.
  * The @busy indicator is %TRUE when the buffering is in progress.
@@ -1184,10 +1188,10 @@ gst_query_set_buffering_stats (GstQuery * query, GstBufferingMode mode,
 /**
  * gst_query_parse_buffering_stats:
  * @query: A valid #GstQuery of type GST_QUERY_BUFFERING.
- * @mode: (out): a buffering mode
- * @avg_in: (out): the average input rate
- * @avg_out: (out): the average output rate
- * @buffering_left: (out): amount of buffering time left
+ * @mode: (out) (allow-none): a buffering mode, or NULL
+ * @avg_in: (out) (allow-none): the average input rate, or NULL
+ * @avg_out: (out) (allow-none): the average output rat, or NULLe
+ * @buffering_left: (out) (allow-none): amount of buffering time left, or NULL
  *
  * Extracts the buffering stats values from @query.
  *
@@ -1232,12 +1236,9 @@ void
 gst_query_set_buffering_range (GstQuery * query, GstFormat format,
     gint64 start, gint64 stop, gint64 estimated_total)
 {
-  GstStructure *structure;
-
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_BUFFERING);
 
-  structure = gst_query_get_structure (query);
-  gst_structure_id_set (structure,
+  gst_structure_id_set (query->structure,
       GST_QUARK (FORMAT), GST_TYPE_FORMAT, format,
       GST_QUARK (START_VALUE), G_TYPE_INT64, start,
       GST_QUARK (STOP_VALUE), G_TYPE_INT64, stop,
@@ -1247,10 +1248,12 @@ gst_query_set_buffering_range (GstQuery * query, GstFormat format,
 /**
  * gst_query_parse_buffering_range:
  * @query: a GST_QUERY_BUFFERING type query #GstQuery
- * @format: (out): the format to set for the @segment_start and @segment_end values
- * @start: (out): the start to set
- * @stop: (out): the stop to set
- * @estimated_total: (out): estimated total amount of download time
+ * @format: (out) (allow-none): the format to set for the @segment_start
+ *     and @segment_end values, or NULL
+ * @start: (out) (allow-none): the start to set, or NULL
+ * @stop: (out) (allow-none): the stop to set, or NULL
+ * @estimated_total: (out) (allow-none): estimated total amount of download
+ *     time, or NULL
  *
  * Parse an available query, writing the format into @format, and
  * other results into the passed parameters, if the respective parameters
@@ -1266,7 +1269,7 @@ gst_query_parse_buffering_range (GstQuery * query, GstFormat * format,
 
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_BUFFERING);
 
-  structure = gst_query_get_structure (query);
+  structure = query->structure;
   if (format)
     *format = g_value_get_enum (gst_structure_id_get_value (structure,
             GST_QUARK (FORMAT)));
@@ -1298,7 +1301,6 @@ gst_query_parse_buffering_range (GstQuery * query, GstFormat * format,
 gboolean
 gst_query_add_buffering_range (GstQuery * query, gint64 start, gint64 stop)
 {
-  GstStructure *structure;
   GValueArray *array;
   GValue *last_array_value;
   const GValue *value;
@@ -1309,8 +1311,9 @@ gst_query_add_buffering_range (GstQuery * query, gint64 start, gint64 stop)
   if (G_UNLIKELY (start >= stop))
     return FALSE;
 
-  structure = gst_query_get_structure (query);
-  value = gst_structure_id_get_value (structure, GST_QUARK (BUFFERING_RANGES));
+  value =
+      gst_structure_id_get_value (query->structure,
+      GST_QUARK (BUFFERING_RANGES));
   if (value) {
     array = (GValueArray *) g_value_get_boxed (value);
     last_array_value = g_value_array_get_nth (array, array->n_values - 1);
@@ -1326,7 +1329,7 @@ gst_query_add_buffering_range (GstQuery * query, gint64 start, gint64 stop)
 
     /* set the value array only once, so we then modify (append to) the
      * existing value array owned by the GstStructure / the field's GValue */
-    gst_structure_id_take_value (structure, GST_QUARK (BUFFERING_RANGES),
+    gst_structure_id_take_value (query->structure, GST_QUARK (BUFFERING_RANGES),
         &new_array_val);
   }
 
@@ -1352,15 +1355,15 @@ gst_query_add_buffering_range (GstQuery * query, gint64 start, gint64 stop)
 guint
 gst_query_get_n_buffering_ranges (GstQuery * query)
 {
-  GstStructure *structure;
   GValueArray *array;
   const GValue *value;
   guint size = 0;
 
   g_return_val_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_BUFFERING, 0);
 
-  structure = gst_query_get_structure (query);
-  value = gst_structure_id_get_value (structure, GST_QUARK (BUFFERING_RANGES));
+  value =
+      gst_structure_id_get_value (query->structure,
+      GST_QUARK (BUFFERING_RANGES));
   if (value) {
     array = (GValueArray *) g_value_get_boxed (value);
     size = array->n_values;
@@ -1373,8 +1376,8 @@ gst_query_get_n_buffering_ranges (GstQuery * query)
  * gst_query_parse_nth_buffering_range
  * @query: a GST_QUERY_BUFFERING type query #GstQuery
  * @index: position in the buffered-ranges array to read
- * @start: (out): the start position to set
- * @stop: (out): the stop position to set
+ * @start: (out) (allow-none): the start position to set, or NULL
+ * @stop: (out) (allow-none): the stop position to set, or NULL
  *
  * Parse an available query and get the start and stop values stored
  * at the @index of the buffered ranges array.
@@ -1387,7 +1390,6 @@ gboolean
 gst_query_parse_nth_buffering_range (GstQuery * query, guint index,
     gint64 * start, gint64 * stop)
 {
-  GstStructure *structure;
   const GValue *value;
   GValueArray *ranges;
   GValue *range_value;
@@ -1395,8 +1397,9 @@ gst_query_parse_nth_buffering_range (GstQuery * query, guint index,
 
   g_return_val_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_BUFFERING, ret);
 
-  structure = gst_query_get_structure (query);
-  value = gst_structure_id_get_value (structure, GST_QUARK (BUFFERING_RANGES));
+  value =
+      gst_structure_id_get_value (query->structure,
+      GST_QUARK (BUFFERING_RANGES));
   ranges = (GValueArray *) g_value_get_boxed (value);
   range_value = g_value_array_get_nth (ranges, index);
   if (range_value) {
@@ -1418,7 +1421,9 @@ gst_query_parse_nth_buffering_range (GstQuery * query, guint index,
  * when done with it. An URI query is used to query the current URI
  * that is used by the source or sink.
  *
- * Returns: A #GstQuery
+ * Free-function: gst_query_unref
+ *
+ * Returns: (transfer full): a new #GstQuery
  *
  * Since: 0.10.22
  */
@@ -1448,19 +1453,18 @@ gst_query_new_uri (void)
 void
 gst_query_set_uri (GstQuery * query, const gchar * uri)
 {
-  GstStructure *structure;
-
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_URI);
   g_return_if_fail (gst_uri_is_valid (uri));
 
-  structure = gst_query_get_structure (query);
-  gst_structure_id_set (structure, GST_QUARK (URI), G_TYPE_STRING, uri, NULL);
+  gst_structure_id_set (query->structure, GST_QUARK (URI), G_TYPE_STRING, uri,
+      NULL);
 }
 
 /**
  * gst_query_parse_uri:
  * @query: a #GstQuery
- * @uri: (out): the storage for the current URI (may be NULL)
+ * @uri: (out callee-allocates) (allow-none): the storage for the current URI
+ *     (may be NULL)
  *
  * Parse an URI query, writing the URI into @uri as a newly
  * allocated string, if the respective parameters are non-NULL.
@@ -1471,12 +1475,9 @@ gst_query_set_uri (GstQuery * query, const gchar * uri)
 void
 gst_query_parse_uri (GstQuery * query, gchar ** uri)
 {
-  GstStructure *structure;
-
   g_return_if_fail (GST_QUERY_TYPE (query) == GST_QUERY_URI);
 
-  structure = gst_query_get_structure (query);
   if (uri)
-    *uri = g_value_dup_string (gst_structure_id_get_value (structure,
+    *uri = g_value_dup_string (gst_structure_id_get_value (query->structure,
             GST_QUARK (URI)));
 }

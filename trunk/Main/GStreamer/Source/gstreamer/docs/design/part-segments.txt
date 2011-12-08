@@ -29,7 +29,7 @@ outside of the segment and that might therefore be discarded or clipped.
 
 
 Use case: FLUSHING seek
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
   ex.
 
@@ -80,7 +80,7 @@ Use case: FLUSHING seek
     synchronisation and position reporting.
 
     Since after a flushing seek the stream_time is reset to 0, the new buffer
-    will be rendered immediatly after the seek and the current_position will be
+    will be rendered immediately after the seek and the current_position will be
     the stream_time of the seek that was performed.
 
     The stop time is important when the video format contains B frames. The
@@ -95,13 +95,13 @@ Use case: FLUSHING seek
 
 
 Use case: live stream
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 
 
 
 Use case: segment looping
--------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Consider the case of a wav file with raw audio.
 

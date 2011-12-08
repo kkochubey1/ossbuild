@@ -132,7 +132,6 @@ static gconstpointer STOLEN = "";
 
 /**
  * GstBufferList:
- * @mini_object: the parent structure
  *
  * Opaque list of grouped buffers.
  *
@@ -142,7 +141,7 @@ struct _GstBufferList
 {
   GstMiniObject mini_object;
 
-  GList *buffers;
+  GQueue *buffers;
 };
 
 struct _GstBufferListClass
@@ -180,7 +179,7 @@ _gst_buffer_list_initialize (void)
 static void
 gst_buffer_list_init (GstBufferList * list)
 {
-  list->buffers = NULL;
+  list->buffers = g_queue_new ();
 
   GST_LOG ("init %p", list);
 }
@@ -194,14 +193,14 @@ gst_buffer_list_finalize (GstBufferList * list)
 
   GST_LOG ("finalize %p", list);
 
-  tmp = list->buffers;
+  tmp = list->buffers->head;
   while (tmp) {
     if (tmp->data != GROUP_START && tmp->data != STOLEN) {
       gst_buffer_unref (GST_BUFFER_CAST (tmp->data));
     }
     tmp = tmp->next;
   }
-  g_list_free (list->buffers);
+  g_queue_free (list->buffers);
 
 /* Not chaining up because GstMiniObject::finalize() does nothing
   GST_MINI_OBJECT_CLASS (gst_buffer_list_parent_class)->finalize
@@ -212,23 +211,26 @@ static GstBufferList *
 _gst_buffer_list_copy (GstBufferList * list)
 {
   GstBufferList *list_copy;
+  GQueue *buffers_copy;
   GList *tmp;
 
   g_return_val_if_fail (list != NULL, NULL);
 
-  list_copy = gst_buffer_list_new ();
-
   /* shallow copy of list and pointers */
-  list_copy->buffers = g_list_copy (list->buffers);
+  buffers_copy = g_queue_copy (list->buffers);
 
   /* ref all buffers in the list */
-  tmp = list_copy->buffers;
+  tmp = list->buffers->head;
   while (tmp) {
     if (tmp->data != GROUP_START && tmp->data != STOLEN) {
       tmp->data = gst_buffer_ref (GST_BUFFER_CAST (tmp->data));
     }
     tmp = g_list_next (tmp);
   }
+
+  list_copy = gst_buffer_list_new ();
+  g_queue_free (list_copy->buffers);
+  list_copy->buffers = buffers_copy;
 
   return list_copy;
 }
@@ -248,7 +250,10 @@ gst_buffer_list_class_init (GstBufferListClass * list_class)
  * Creates a new, empty #GstBufferList. The caller is responsible for unreffing
  * the returned #GstBufferList.
  *
- * Returns: the new #GstBufferList. gst_buffer_list_unref() after usage.
+ * Free-function: gst_buffer_list_unref
+ *
+ * Returns: (transfer full): the new #GstBufferList. gst_buffer_list_unref()
+ *     after usage.
  *
  * Since: 0.10.24
  */
@@ -282,7 +287,7 @@ gst_buffer_list_n_groups (GstBufferList * list)
 
   g_return_val_if_fail (list != NULL, 0);
 
-  tmp = list->buffers;
+  tmp = list->buffers->head;
   n = 0;
   while (tmp) {
     if (tmp->data == GROUP_START) {
@@ -297,8 +302,8 @@ gst_buffer_list_n_groups (GstBufferList * list)
 /**
  * gst_buffer_list_foreach:
  * @list: a #GstBufferList
- * @func: a #GstBufferListFunc to call
- * @user_data: user data passed to @func
+ * @func: (scope call): a #GstBufferListFunc to call
+ * @user_data: (closure): user data passed to @func
  *
  * Call @func with @data for each buffer in @list.
  *
@@ -319,7 +324,7 @@ gst_buffer_list_foreach (GstBufferList * list, GstBufferListFunc func,
   g_return_if_fail (list != NULL);
   g_return_if_fail (func != NULL);
 
-  next = list->buffers;
+  next = list->buffers->head;
   group = idx = 0;
   while (next) {
     GstBuffer *buffer;
@@ -345,7 +350,7 @@ gst_buffer_list_foreach (GstBufferList * list, GstBufferListFunc func,
       /* the function changed the buffer */
       if (buffer == NULL) {
         /* we were asked to remove the item */
-        list->buffers = g_list_delete_link (list->buffers, tmp);
+        g_queue_delete_link (list->buffers, tmp);
         idx--;
       } else {
         /* change the buffer */
@@ -377,8 +382,8 @@ gst_buffer_list_foreach (GstBufferList * list, GstBufferListFunc func,
  * Note that this function is not efficient for iterating over the entire list.
  * Use an iterator or gst_buffer_list_foreach() instead.
  *
- * Returns: the buffer at @idx in @group or NULL when there is no buffer. The
- * buffer remains valid as long as @list is valid.
+ * Returns: (transfer none): the buffer at @idx in @group or NULL when there
+ *     is no buffer. The buffer remains valid as long as @list is valid.
  *
  * Since: 0.10.24
  */
@@ -390,7 +395,7 @@ gst_buffer_list_get (GstBufferList * list, guint group, guint idx)
 
   g_return_val_if_fail (list != NULL, NULL);
 
-  tmp = list->buffers;
+  tmp = list->buffers->head;
   cgroup = 0;
   while (tmp) {
     if (tmp->data == GROUP_START) {
@@ -419,6 +424,33 @@ gst_buffer_list_get (GstBufferList * list, guint group, guint idx)
   return NULL;
 }
 
+static GstBufferListIterator *
+gst_buffer_list_iterator_copy (const GstBufferListIterator * it)
+{
+  GstBufferListIterator *ret;
+
+  ret = g_slice_new (GstBufferListIterator);
+  ret->list = it->list;
+  ret->next = it->next;
+  ret->last_returned = it->last_returned;
+
+  return ret;
+}
+
+GType
+gst_buffer_list_iterator_get_type (void)
+{
+  static GType type = 0;
+
+  if (G_UNLIKELY (type == 0)) {
+    type = g_boxed_type_register_static ("GstBufferListIterator",
+        (GBoxedCopyFunc) gst_buffer_list_iterator_copy,
+        (GBoxedFreeFunc) gst_buffer_list_iterator_free);
+  }
+
+  return type;
+}
+
 /**
  * gst_buffer_list_iterate:
  * @list: a #GstBufferList
@@ -426,8 +458,10 @@ gst_buffer_list_get (GstBufferList * list, guint group, guint idx)
  * Iterate the buffers in @list. The owner of the iterator must also be the
  * owner of a reference to @list while the returned iterator is in use.
  *
- * Returns: a new #GstBufferListIterator of the buffers in @list.
- * gst_buffer_list_iterator_free() after usage
+ * Free-function: gst_buffer_list_iterator_free
+ *
+ * Returns: (transfer full): a new #GstBufferListIterator of the buffers in
+ *     @list. gst_buffer_list_iterator_free() after usage
  *
  * Since: 0.10.24
  */
@@ -440,7 +474,7 @@ gst_buffer_list_iterate (GstBufferList * list)
 
   it = g_slice_new (GstBufferListIterator);
   it->list = list;
-  it->next = list->buffers;
+  it->next = list->buffers->head;
   it->last_returned = NULL;
 
   return it;
@@ -448,7 +482,7 @@ gst_buffer_list_iterate (GstBufferList * list)
 
 /**
  * gst_buffer_list_iterator_free:
- * @it: the #GstBufferListIterator to free
+ * @it: (transfer full): the #GstBufferListIterator to free
  *
  * Free the iterator.
  *
@@ -500,7 +534,7 @@ gst_buffer_list_iterator_n_buffers (const GstBufferListIterator * it)
 /**
  * gst_buffer_list_iterator_add:
  * @it: a #GstBufferListIterator
- * @buffer: a #GstBuffer
+ * @buffer: (transfer full): a #GstBuffer
  *
  * Inserts @buffer into the #GstBufferList iterated with @it. The buffer is
  * inserted into the current group, immediately before the buffer that would be
@@ -519,17 +553,20 @@ gst_buffer_list_iterator_add (GstBufferListIterator * it, GstBuffer * buffer)
   g_return_if_fail (buffer != NULL);
 
   /* adding before the first group start is not allowed */
-  g_return_if_fail (it->next != it->list->buffers);
+  g_return_if_fail (it->next != it->list->buffers->head);
 
-  /* cheap insert into the GList */
-  it->list->buffers = g_list_insert_before (it->list->buffers, it->next,
-      buffer);
+  /* cheap insert into the GQueue */
+  if (it->next != NULL) {
+    g_queue_insert_before (it->list->buffers, it->next, buffer);
+  } else {
+    g_queue_push_tail (it->list->buffers, buffer);
+  }
 }
 
 /**
  * gst_buffer_list_iterator_add_list:
  * @it: a #GstBufferListIterator
- * @list: a #GList
+ * @list: (transfer full) (element-type Gst.Buffer): a #GList of buffers
  *
  * Inserts @list of buffers into the #GstBufferList iterated with @it. The list is
  * inserted into the current group, immediately before the buffer that would be
@@ -545,31 +582,33 @@ void
 gst_buffer_list_iterator_add_list (GstBufferListIterator * it, GList * list)
 {
   GList *last;
+  guint len;
 
   g_return_if_fail (it != NULL);
-  g_return_if_fail (it->next != it->list->buffers);
+  g_return_if_fail (it->next != it->list->buffers->head);
 
   if (list == NULL)
     return;
 
-  if (it->next) {
-    last = list;
-    while (last->next)
-      last = last->next;
+  last = list;
+  len = 1;
+  while (last->next) {
+    last = last->next;
+    len++;
+  }
 
+  if (it->next) {
     last->next = it->next;
     list->prev = it->next->prev;
     it->next->prev = last;
     if (list->prev)
       list->prev->next = list;
   } else {
-    last = it->list->buffers;
-    while (last->next)
-      last = last->next;
-
-    last->next = list;
-    list->prev = last;
+    it->list->buffers->tail->next = list;
+    list->prev = it->list->buffers->tail;
+    it->list->buffers->tail = last;
   }
+  it->list->buffers->length += len;
 }
 
 /**
@@ -594,9 +633,12 @@ gst_buffer_list_iterator_add_group (GstBufferListIterator * it)
     it->next = g_list_next (it->next);
   }
 
-  /* cheap insert of a group start into the GList */
-  it->list->buffers = g_list_insert_before (it->list->buffers, it->next,
-      GROUP_START);
+  /* cheap insert of a group start into the GQueue */
+  if (it->next != NULL) {
+    g_queue_insert_before (it->list->buffers, it->next, GROUP_START);
+  } else {
+    g_queue_push_tail (it->list->buffers, GROUP_START);
+  }
 }
 
 /**
@@ -610,7 +652,8 @@ gst_buffer_list_iterator_add_group (GstBufferListIterator * it)
  * The caller will not get a new ref to the returned #GstBuffer and must not
  * unref it.
  *
- * Returns: the next buffer in the current group of the buffer list, or NULL
+ * Returns: (transfer none): the next buffer in the current group of the
+ *     buffer list, or NULL
  *
  * Since: 0.10.24
  */
@@ -700,14 +743,14 @@ gst_buffer_list_iterator_remove (GstBufferListIterator * it)
   if (it->last_returned->data != STOLEN) {
     gst_buffer_unref (it->last_returned->data);
   }
-  it->list->buffers = g_list_delete_link (it->list->buffers, it->last_returned);
+  g_queue_delete_link (it->list->buffers, it->last_returned);
   it->last_returned = NULL;
 }
 
 /**
  * gst_buffer_list_iterator_take:
  * @it: a #GstBufferListIterator
- * @buffer: a #GstBuffer
+ * @buffer: (transfer full): a #GstBuffer
  *
  * Replaces the last buffer returned by gst_buffer_list_iterator_next() with
  * @buffer in the #GstBufferList iterated with @it and takes ownership of
@@ -718,6 +761,8 @@ gst_buffer_list_iterator_remove (GstBufferListIterator * it)
  * This function unrefs the replaced buffer if it has not been stolen with
  * gst_buffer_list_iterator_steal() and takes ownership of @buffer (i.e. the
  * refcount of @buffer is not increased).
+ *
+ * FIXME 0.11: this conditional taking-ownership is not good for bindings
  *
  * Since: 0.10.24
  */
@@ -742,7 +787,8 @@ gst_buffer_list_iterator_take (GstBufferListIterator * it, GstBuffer * buffer)
  * Returns the last buffer returned by gst_buffer_list_iterator_next() without
  * modifying the refcount of the buffer.
  *
- * Returns: the last buffer returned by gst_buffer_list_iterator_next()
+ * Returns: (transfer none): the last buffer returned by
+ *     gst_buffer_list_iterator_next()
  *
  * Since: 0.10.24
  */
@@ -765,8 +811,8 @@ gst_buffer_list_iterator_steal (GstBufferListIterator * it)
 /**
  * gst_buffer_list_iterator_do:
  * @it: a #GstBufferListIterator
- * @do_func: the function to be called
- * @user_data: the gpointer to optional user data.
+ * @do_func: (scope call): the function to be called
+ * @user_data: (closure): the gpointer to optional user data.
  *
  * Calls the given function for the last buffer returned by
  * gst_buffer_list_iterator_next(). gst_buffer_list_iterator_next() must have
@@ -776,7 +822,7 @@ gst_buffer_list_iterator_steal (GstBufferListIterator * it)
  *
  * See #GstBufferListDoFunction for more details.
  *
- * Returns: the return value from @do_func
+ * Returns: (transfer none): the return value from @do_func
  *
  * Since: 0.10.24
  */
@@ -818,7 +864,8 @@ gst_buffer_list_iterator_do (GstBufferListIterator * it,
  * This function will not move the implicit cursor or in any other way affect
  * the state of the iterator @it or the list.
  *
- * Returns: a new #GstBuffer, gst_buffer_unref() after usage, or NULL
+ * Returns: (transfer full): a new #GstBuffer, gst_buffer_unref() after usage,
+ *     or NULL
  *
  * Since: 0.10.24
  */

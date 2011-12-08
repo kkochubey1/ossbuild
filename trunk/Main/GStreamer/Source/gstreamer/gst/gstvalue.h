@@ -352,7 +352,9 @@ typedef gint     (* GstValueCompareFunc)     (const GValue *value1,
  *
  * Used by gst_value_serialize() to obtain a non-binary form of the #GValue.
  *
- * Returns: the string representation of the value
+ * Free-function: g_free
+ *
+ * Returns: (transfer full): the string representation of the value
  */
 typedef gchar *  (* GstValueSerializeFunc)   (const GValue *value1);
 
@@ -385,7 +387,7 @@ typedef gboolean (* GstValueUnionFunc)       (GValue       *dest,
 
 /**
  * GstValueIntersectFunc:
- * @dest: a #GValue for the result
+ * @dest: (out caller-allocates): a #GValue for the result
  * @value1: a #GValue operand
  * @value2: a #GValue operand
  *
@@ -403,7 +405,7 @@ typedef gboolean (* GstValueIntersectFunc)   (GValue       *dest,
 
 /**
  * GstValueSubtractFunc:
- * @dest: a #GValue for the result
+ * @dest: (out caller-allocates): a #GValue for the result
  * @minuend: a #GValue operand
  * @subtrahend: a #GValue operand
  *
@@ -464,9 +466,11 @@ void		gst_value_list_prepend_value	(GValue		*value,
 void		gst_value_list_concat		(GValue		*dest,
 						 const GValue   *value1,
 						 const GValue	*value2);
+void		gst_value_list_merge		(GValue		*dest,
+						 const GValue   *value1,
+						 const GValue	*value2);
 guint		gst_value_list_get_size		(const GValue	*value);
-G_CONST_RETURN GValue *
-		gst_value_list_get_value	(const GValue	*value,
+const GValue *	gst_value_list_get_value	(const GValue	*value,
 						 guint		index);
 
 /* array */
@@ -475,8 +479,7 @@ void		gst_value_array_append_value	(GValue		*value,
 void		gst_value_array_prepend_value	(GValue		*value,
 						 const GValue	*prepend_value);
 guint		gst_value_array_get_size	(const GValue	*value);
-G_CONST_RETURN GValue *
-		gst_value_array_get_value	(const GValue	*value,
+const GValue *	gst_value_array_get_value	(const GValue	*value,
 						 guint		index);
 
 /* fourcc */
@@ -506,13 +509,12 @@ gdouble		gst_value_get_double_range_min	(const GValue	*value);
 gdouble		gst_value_get_double_range_max	(const GValue	*value);
 
 /* caps */
-G_CONST_RETURN GstCaps *
-		gst_value_get_caps		(const GValue	*value);
+const GstCaps *	gst_value_get_caps		(const GValue	*value);
 void		gst_value_set_caps		(GValue		*value,
 						 const GstCaps  *caps);
 
 /* structure */
-G_CONST_RETURN GstStructure *
+const GstStructure *
 		gst_value_get_structure		(const GValue	*value);
 void		gst_value_set_structure		(GValue		*value,
 						 const GstStructure  *structure);
@@ -543,8 +545,7 @@ const GValue 	*gst_value_get_fraction_range_min (const GValue	*value);
 const GValue 	*gst_value_get_fraction_range_max (const GValue	*value);
 
 /* date */
-G_CONST_RETURN GDate *
-		gst_value_get_date		(const GValue	*value);
+const GDate *	gst_value_get_date		(const GValue	*value);
 void		gst_value_set_date		(GValue		*value,
 						 const GDate    *date);
 

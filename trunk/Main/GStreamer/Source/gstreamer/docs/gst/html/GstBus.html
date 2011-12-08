@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="gstreamer-GstBufferList.html" title="GstBufferList">
 <link rel="next" href="gstreamer-GstCaps.html" title="GstCaps">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -30,7 +30,7 @@
                   <a href="#GstBus.signals" class="shortcut">Signals</a>
 </td></tr>
 </table>
-<div class="refentry" title="GstBus">
+<div class="refentry">
 <a name="GstBus"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -39,31 +39,31 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="GstBus.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/gst.h&gt;
 
-                    <a class="link" href="GstBus.html#GstBus-struct" title="GstBus">GstBus</a>;
+struct              <a class="link" href="GstBus.html#GstBus-struct" title="struct GstBus">GstBus</a>;
 enum                <a class="link" href="GstBus.html#GstBusFlags" title="enum GstBusFlags">GstBusFlags</a>;
 enum                <a class="link" href="GstBus.html#GstBusSyncReply" title="enum GstBusSyncReply">GstBusSyncReply</a>;
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            (<a class="link" href="GstBus.html#GstBusFunc" title="GstBusFunc ()">*GstBusFunc</a>)                       (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>);
 <a class="link" href="GstBus.html#GstBusSyncReply" title="enum GstBusSyncReply"><span class="returnvalue">GstBusSyncReply</span></a>     (<a class="link" href="GstBus.html#GstBusSyncHandler" title="GstBusSyncHandler ()">*GstBusSyncHandler</a>)                (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>);
-<a class="link" href="GstBus.html" title="GstBus"><span class="returnvalue">GstBus</span></a>*             <a class="link" href="GstBus.html#gst-bus-new" title="gst_bus_new ()">gst_bus_new</a>                         (<em class="parameter"><code><span class="type">void</span></code></em>);
+<a class="link" href="GstBus.html" title="GstBus"><span class="returnvalue">GstBus</span></a> *                  <a class="link" href="GstBus.html#gst-bus-new" title="gst_bus_new ()">gst_bus_new</a>                   (<em class="parameter"><code><span class="type">void</span></code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstBus.html#gst-bus-post" title="gst_bus_post ()">gst_bus_post</a>                        (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>);
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message</code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstBus.html#gst-bus-have-pending" title="gst_bus_have_pending ()">gst_bus_have_pending</a>                (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);
-<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a> *        <a class="link" href="GstBus.html#gst-bus-peek" title="gst_bus_peek ()">gst_bus_peek</a>                        (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);
-<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a> *        <a class="link" href="GstBus.html#gst-bus-pop" title="gst_bus_pop ()">gst_bus_pop</a>                         (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);
-<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a> *        <a class="link" href="GstBus.html#gst-bus-pop-filtered" title="gst_bus_pop_filtered ()">gst_bus_pop_filtered</a>                (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
+<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *             <a class="link" href="GstBus.html#gst-bus-peek" title="gst_bus_peek ()">gst_bus_peek</a>                   (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);
+<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *             <a class="link" href="GstBus.html#gst-bus-pop" title="gst_bus_pop ()">gst_bus_pop</a>                    (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);
+<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *             <a class="link" href="GstBus.html#gst-bus-pop-filtered" title="gst_bus_pop_filtered ()">gst_bus_pop_filtered</a>           (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessageType" title="enum GstMessageType"><span class="type">GstMessageType</span></a> types</code></em>);
-<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a> *        <a class="link" href="GstBus.html#gst-bus-timed-pop" title="gst_bus_timed_pop ()">gst_bus_timed_pop</a>                   (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
+<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *             <a class="link" href="GstBus.html#gst-bus-timed-pop" title="gst_bus_timed_pop ()">gst_bus_timed_pop</a>              (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> timeout</code></em>);
-<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a> *        <a class="link" href="GstBus.html#gst-bus-timed-pop-filtered" title="gst_bus_timed_pop_filtered ()">gst_bus_timed_pop_filtered</a>          (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
+<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *             <a class="link" href="GstBus.html#gst-bus-timed-pop-filtered" title="gst_bus_timed_pop_filtered ()">gst_bus_timed_pop_filtered</a>     (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> timeout</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessageType" title="enum GstMessageType"><span class="type">GstMessageType</span></a> types</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstBus.html#gst-bus-set-flushing" title="gst_bus_set_flushing ()">gst_bus_set_flushing</a>                (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
@@ -72,9 +72,9 @@ enum                <a class="link" href="GstBus.html#GstBusSyncReply" title="en
                                                          <em class="parameter"><code><a class="link" href="GstBus.html#GstBusSyncHandler" title="GstBusSyncHandler ()"><span class="type">GstBusSyncHandler</span></a> func</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>);
 <a class="link" href="GstBus.html#GstBusSyncReply" title="enum GstBusSyncReply"><span class="returnvalue">GstBusSyncReply</span></a>     <a class="link" href="GstBus.html#gst-bus-sync-signal-handler" title="gst_bus_sync_signal_handler ()">gst_bus_sync_signal_handler</a>         (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#GSource"><span class="returnvalue">GSource</span></a> *           <a class="link" href="GstBus.html#gst-bus-create-watch" title="gst_bus_create_watch ()">gst_bus_create_watch</a>                (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#GSource"><span class="returnvalue">GSource</span></a> *                <a class="link" href="GstBus.html#gst-bus-create-watch" title="gst_bus_create_watch ()">gst_bus_create_watch</a>           (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="GstBus.html#gst-bus-add-watch-full" title="gst_bus_add_watch_full ()">gst_bus_add_watch_full</a>              (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> priority</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstBus.html#GstBusFunc" title="GstBusFunc ()"><span class="type">GstBusFunc</span></a> func</code></em>,
@@ -88,18 +88,18 @@ enum                <a class="link" href="GstBus.html#GstBusSyncReply" title="en
 <span class="returnvalue">void</span>                <a class="link" href="GstBus.html#gst-bus-enable-sync-message-emission" title="gst_bus_enable_sync_message_emission ()">gst_bus_enable_sync_message_emission</a>
                                                         (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GstBus.html#gst-bus-async-signal-func" title="gst_bus_async_signal_func ()">gst_bus_async_signal_func</a>           (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstBus.html#gst-bus-add-signal-watch" title="gst_bus_add_signal_watch ()">gst_bus_add_signal_watch</a>            (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstBus.html#gst-bus-add-signal-watch-full" title="gst_bus_add_signal_watch_full ()">gst_bus_add_signal_watch_full</a>       (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> priority</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="GstBus.html#gst-bus-remove-signal-watch" title="gst_bus_remove_signal_watch ()">gst_bus_remove_signal_watch</a>         (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);
-<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a>*         <a class="link" href="GstBus.html#gst-bus-poll" title="gst_bus_poll ()">gst_bus_poll</a>                        (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
+<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *              <a class="link" href="GstBus.html#gst-bus-poll" title="gst_bus_poll ()">gst_bus_poll</a>                  (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessageType" title="enum GstMessageType"><span class="type">GstMessageType</span></a> events</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTimeDiff" title="GstClockTimeDiff"><span class="type">GstClockTimeDiff</span></a> timeout</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="GstBus.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -107,17 +107,17 @@ enum                <a class="link" href="GstBus.html#GstBusSyncReply" title="en
          +----GstBus
 </pre>
 </div>
-<div class="refsect1" title="Signals">
+<div class="refsect1">
 <a name="GstBus.signals"></a><h2>Signals</h2>
 <pre class="synopsis">
-  "<a class="link" href="GstBus.html#GstBus-message" title='The "message" signal'>message</a>"                                        : Run Last / Has Details
-  "<a class="link" href="GstBus.html#GstBus-sync-message" title='The "sync-message" signal'>sync-message</a>"                                   : Run Last / Has Details
+  "<a class="link" href="GstBus.html#GstBus-message" title='The "message" signal'>message</a>"                                        : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-DETAILED:CAPS"><code class="literal">Has Details</code></a>
+  "<a class="link" href="GstBus.html#GstBus-sync-message" title='The "sync-message" signal'>sync-message</a>"                                   : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-DETAILED:CAPS"><code class="literal">Has Details</code></a>
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="GstBus.description"></a><h2>Description</h2>
 <p>
-The <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> is an object responsible for delivering <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> packets in
+The <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> is an object responsible for delivering <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> packets in
 a first-in first-out way from the streaming threads (see <a class="link" href="GstTask.html" title="GstTask"><span class="type">GstTask</span></a>) to the
 application.
 </p>
@@ -169,17 +169,17 @@ from READY to NULL state.
 Last reviewed on 2006-03-12 (0.10.5)
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="GstBus.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstBus">
-<a name="GstBus-struct"></a><h3>GstBus</h3>
-<pre class="programlisting">typedef struct _GstBus GstBus;</pre>
+<div class="refsect2">
+<a name="GstBus-struct"></a><h3>struct GstBus</h3>
+<pre class="programlisting">struct GstBus;</pre>
 <p>
 The opaque <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> data structure.
 </p>
 </div>
 <hr>
-<div class="refsect2" title="enum GstBusFlags">
+<div class="refsect2">
 <a name="GstBusFlags"></a><h3>enum GstBusFlags</h3>
 <pre class="programlisting">typedef enum {
   GST_BUS_FLUSHING      = (GST_OBJECT_FLAG_LAST &lt;&lt; 0),
@@ -207,7 +207,7 @@ The standard flags that a bus may have.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="enum GstBusSyncReply">
+<div class="refsect2">
 <a name="GstBusSyncReply"></a><h3>enum GstBusSyncReply</h3>
 <pre class="programlisting">typedef enum
 {
@@ -241,10 +241,10 @@ The result values for a GstBusSyncHandler.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="GstBusFunc ()">
+<div class="refsect2">
 <a name="GstBusFunc"></a><h3>GstBusFunc ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            (*GstBusFunc)                       (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>);</pre>
 <p>
 Specifies the type of function passed to <a class="link" href="GstBus.html#gst-bus-add-watch" title="gst_bus_add_watch ()"><code class="function">gst_bus_add_watch()</code></a> or
@@ -264,32 +264,30 @@ FALSE will remove the GSource from the mainloop.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>the <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> that sent the message
-</td>
+<td>the <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> that sent the message</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>message</code></em> :</span></p></td>
-<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a>
+<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>user data that has been given, when registering the handler
-</td>
+<td>user data that has been given, when registering the handler</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the event source should be removed.
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the event source should be removed.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="GstBusSyncHandler ()">
+<div class="refsect2">
 <a name="GstBusSyncHandler"></a><h3>GstBusSyncHandler ()</h3>
 <pre class="programlisting"><a class="link" href="GstBus.html#GstBusSyncReply" title="enum GstBusSyncReply"><span class="returnvalue">GstBusSyncReply</span></a>     (*GstBusSyncHandler)                (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>);</pre>
 <p>
 Handler will be invoked synchronously, when a new message has been injected
@@ -305,31 +303,29 @@ message should not be unreffed by the sync handler.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>the <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> that sent the message
-</td>
+<td>the <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> that sent the message</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>message</code></em> :</span></p></td>
-<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a>
+<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>user data that has been given, when registering the handler
-</td>
+<td>user data that has been given, when registering the handler</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a class="link" href="GstBus.html#GstBusSyncReply" title="enum GstBusSyncReply"><span class="type">GstBusSyncReply</span></a> stating what to do with the message
-</td>
+<td>
+<a class="link" href="GstBus.html#GstBusSyncReply" title="enum GstBusSyncReply"><span class="type">GstBusSyncReply</span></a> stating what to do with the message</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_new ()">
+<div class="refsect2">
 <a name="gst-bus-new"></a><h3>gst_bus_new ()</h3>
-<pre class="programlisting"><a class="link" href="GstBus.html" title="GstBus"><span class="returnvalue">GstBus</span></a>*             gst_bus_new                         (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<pre class="programlisting"><a class="link" href="GstBus.html" title="GstBus"><span class="returnvalue">GstBus</span></a> *                  gst_bus_new                   (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 Creates a new <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> instance.
 </p>
@@ -337,16 +333,16 @@ Creates a new <a class="link" href="GstBus.html" title="GstBus"><span class="typ
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a new <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> instance
+<td>a new <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> instance. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr></tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_post ()">
+<div class="refsect2">
 <a name="gst-bus-post"></a><h3>gst_bus_post ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_bus_post                        (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>);</pre>
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message</code></em>);</pre>
 <p>
 Post a message on the given bus. Ownership of the message
 is taken by the bus.
@@ -356,26 +352,23 @@ is taken by the bus.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to post on
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to post on</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>message</code></em> :</span></p></td>
-<td>The <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> to post
+<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> to post. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> TRUE if the message could be posted, FALSE if the bus is flushing.
-
-MT safe.
-</td>
+<td>TRUE if the message could be posted, FALSE if the bus is flushing.
+MT safe.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_have_pending ()">
+<div class="refsect2">
 <a name="gst-bus-have-pending"></a><h3>gst_bus_have_pending ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_bus_have_pending                (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);</pre>
 <p>
@@ -387,24 +380,21 @@ should be handled.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to check
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to check</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> TRUE if there are messages on the bus to be handled, FALSE
+<td>TRUE if there are messages on the bus to be handled, FALSE
 otherwise.
-
-MT safe.
-</td>
+MT safe.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_peek ()">
+<div class="refsect2">
 <a name="gst-bus-peek"></a><h3>gst_bus_peek ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a> *        gst_bus_peek                        (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *             gst_bus_peek                   (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);</pre>
 <p>
 Peek the message on the top of the bus' queue. The message will remain
 on the bus' message queue. A reference is returned, and needs to be unreffed
@@ -420,18 +410,18 @@ by the caller.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> that is on the bus, or NULL if the bus is empty.
-
-MT safe.
+<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> that is on the bus, or NULL if the
+bus is empty.
+MT safe. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_pop ()">
+<div class="refsect2">
 <a name="gst-bus-pop"></a><h3>gst_bus_pop ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a> *        gst_bus_pop                         (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);</pre>
+<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *             gst_bus_pop                    (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);</pre>
 <p>
 Get a message from the bus.
 </p>
@@ -440,25 +430,23 @@ Get a message from the bus.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to pop
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to pop</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> that is on the bus, or NULL if the bus is empty.
-The message is taken from the bus and needs to be unreffed with
-<a class="link" href="gstreamer-GstMessage.html#gst-message-unref" title="gst_message_unref ()"><code class="function">gst_message_unref()</code></a> after usage.
-
-MT safe.
+<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> that is on the bus, or NULL if the
+bus is empty. The message is taken from the bus and needs to be unreffed
+with <a class="link" href="gstreamer-GstMessage.html#gst-message-unref" title="gst_message_unref ()"><code class="function">gst_message_unref()</code></a> after usage.
+MT safe. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_pop_filtered ()">
+<div class="refsect2">
 <a name="gst-bus-pop-filtered"></a><h3>gst_bus_pop_filtered ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a> *        gst_bus_pop_filtered                (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
+<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *             gst_bus_pop_filtered           (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessageType" title="enum GstMessageType"><span class="type">GstMessageType</span></a> types</code></em>);</pre>
 <p>
 Get a message matching <em class="parameter"><code>type</code></em> from the bus.  Will discard all messages on
@@ -471,23 +459,19 @@ the bus, all messages will be discarded.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to pop
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to pop</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>types</code></em> :</span></p></td>
-<td>message types to take into account
-</td>
+<td>message types to take into account</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The next <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> matching <em class="parameter"><code>type</code></em> that is on the bus, or NULL if
-    the bus is empty or there is no message matching <em class="parameter"><code>type</code></em>.
-The message is taken from the bus and needs to be unreffed with
+<td>the next <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> matching <em class="parameter"><code>type</code></em> that is on
+the bus, or NULL if the bus is empty or there is no message matching
+<em class="parameter"><code>type</code></em>. The message is taken from the bus and needs to be unreffed with
 <a class="link" href="gstreamer-GstMessage.html#gst-message-unref" title="gst_message_unref ()"><code class="function">gst_message_unref()</code></a> after usage.
-
-MT safe.
-
+MT safe. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -495,9 +479,9 @@ MT safe.
 <p class="since">Since 0.10.15</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_timed_pop ()">
+<div class="refsect2">
 <a name="gst-bus-timed-pop"></a><h3>gst_bus_timed_pop ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a> *        gst_bus_timed_pop                   (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
+<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *             gst_bus_timed_pop              (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> timeout</code></em>);</pre>
 <p>
 Get a message from the bus, waiting up to the specified timeout.
@@ -512,23 +496,19 @@ posted on the bus.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to pop
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to pop</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timeout</code></em> :</span></p></td>
-<td>a timeout
-</td>
+<td>a timeout</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> that is on the bus after the specified timeout
-or NULL if the bus is empty after the timeout expired.
+<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> that is on the bus after the
+specified timeout or NULL if the bus is empty after the timeout expired.
 The message is taken from the bus and needs to be unreffed with
 <a class="link" href="gstreamer-GstMessage.html#gst-message-unref" title="gst_message_unref ()"><code class="function">gst_message_unref()</code></a> after usage.
-
-MT safe.
-
+MT safe. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -536,9 +516,9 @@ MT safe.
 <p class="since">Since 0.10.12</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_timed_pop_filtered ()">
+<div class="refsect2">
 <a name="gst-bus-timed-pop-filtered"></a><h3>gst_bus_timed_pop_filtered ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a> *        gst_bus_timed_pop_filtered          (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
+<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *             gst_bus_timed_pop_filtered     (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTime" title="GstClockTime"><span class="type">GstClockTime</span></a> timeout</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessageType" title="enum GstMessageType"><span class="type">GstMessageType</span></a> types</code></em>);</pre>
 <p>
@@ -556,28 +536,23 @@ matching message was posted on the bus.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to pop from
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to pop from</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timeout</code></em> :</span></p></td>
-<td>a timeout in nanoseconds, or GST_CLOCK_TIME_NONE to wait forever
-</td>
+<td>a timeout in nanoseconds, or GST_CLOCK_TIME_NONE to wait forever</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>types</code></em> :</span></p></td>
-<td>message types to take into account, GST_MESSAGE_ANY for any type
-</td>
+<td>message types to take into account, GST_MESSAGE_ANY for any type</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> matching the filter in <em class="parameter"><code>types</code></em>, or NULL if no matching
-message was found on the bus until the timeout expired.
-The message is taken from the bus and needs to be unreffed with
-<a class="link" href="gstreamer-GstMessage.html#gst-message-unref" title="gst_message_unref ()"><code class="function">gst_message_unref()</code></a> after usage.
-
-MT safe.
-
+<td>a <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> matching the filter in <em class="parameter"><code>types</code></em>,
+or NULL if no matching message was found on the bus until the timeout
+expired. The message is taken from the bus and needs to be unreffed
+with <a class="link" href="gstreamer-GstMessage.html#gst-message-unref" title="gst_message_unref ()"><code class="function">gst_message_unref()</code></a> after usage.
+MT safe. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -585,7 +560,7 @@ MT safe.
 <p class="since">Since 0.10.15</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_set_flushing ()">
+<div class="refsect2">
 <a name="gst-bus-set-flushing"></a><h3>gst_bus_set_flushing ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_bus_set_flushing                (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> flushing</code></em>);</pre>
@@ -607,14 +582,13 @@ MT safe.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flushing</code></em> :</span></p></td>
-<td>whether or not to flush the bus
-</td>
+<td>whether or not to flush the bus</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_set_sync_handler ()">
+<div class="refsect2">
 <a name="gst-bus-set-sync-handler"></a><h3>gst_bus_set_sync_handler ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_bus_set_sync_handler            (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstBus.html#GstBusSyncHandler" title="GstBusSyncHandler ()"><span class="type">GstBusSyncHandler</span></a> func</code></em>,
@@ -636,27 +610,24 @@ function, which will clear the existing handler.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to install the handler on
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to install the handler on</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>func</code></em> :</span></p></td>
-<td>The handler function to install
-</td>
+<td>The handler function to install</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>User data that will be sent to the handler function.
-</td>
+<td>User data that will be sent to the handler function.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_sync_signal_handler ()">
+<div class="refsect2">
 <a name="gst-bus-sync-signal-handler"></a><h3>gst_bus_sync_signal_handler ()</h3>
 <pre class="programlisting"><a class="link" href="GstBus.html#GstBusSyncReply" title="enum GstBusSyncReply"><span class="returnvalue">GstBusSyncReply</span></a>     gst_bus_sync_signal_handler         (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>);</pre>
 <p>
 A helper GstBusSyncHandler that can be used to convert all synchronous
@@ -672,26 +643,23 @@ messages into signals.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>message</code></em> :</span></p></td>
-<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> received
-</td>
+<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> received</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>user data
-</td>
+<td>user data</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> GST_BUS_PASS
-</td>
+<td>GST_BUS_PASS</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_create_watch ()">
+<div class="refsect2">
 <a name="gst-bus-create-watch"></a><h3>gst_bus_create_watch ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#GSource"><span class="returnvalue">GSource</span></a> *           gst_bus_create_watch                (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#GSource"><span class="returnvalue">GSource</span></a> *                gst_bus_create_watch           (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);</pre>
 <p>
 Create watch for this bus. The GSource will be dispatched whenever
 a message is on the bus. After the GSource is dispatched, the
@@ -702,19 +670,18 @@ message is popped off the bus and unreffed.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to create the watch for
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to create the watch for</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> A <a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#GSource"><span class="type">GSource</span></a> that can be added to a mainloop.
+<td>a <a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#GSource"><span class="type">GSource</span></a> that can be added to a mainloop. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_add_watch_full ()">
+<div class="refsect2">
 <a name="gst-bus-add-watch-full"></a><h3>gst_bus_add_watch_full ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_bus_add_watch_full              (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> priority</code></em>,
@@ -723,7 +690,12 @@ message is popped off the bus and unreffed.
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> notify</code></em>);</pre>
 <p>
 Adds a bus watch to the default main context with the given <em class="parameter"><code>priority</code></em> (e.g.
-<a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#G-PRIORITY-DEFAULT:CAPS"><code class="literal">G_PRIORITY_DEFAULT</code></a>).
+<a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#G-PRIORITY-DEFAULT:CAPS"><code class="literal">G_PRIORITY_DEFAULT</code></a>). Since 0.10.33 it is also possible to use a non-default
+main context set up using <a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-context-push-thread-default"><code class="function">g_main_context_push_thread_default()</code></a> (before
+one had to create a bus watch source and attach it to the desired main
+context 'manually').
+</p>
+<p>
 This function is used to receive asynchronous messages in the main loop.
 There can only be a single bus watch per bus, you must remove it before you
 can set a new one.
@@ -741,48 +713,46 @@ from <em class="parameter"><code>func</code></em>.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to create the watch for.
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to create the watch for.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>priority</code></em> :</span></p></td>
-<td>The priority of the watch.
-</td>
+<td>The priority of the watch.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>func</code></em> :</span></p></td>
-<td>A function to call when a message is received.
-</td>
+<td>A function to call when a message is received.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
-<td>user data passed to <em class="parameter"><code>func</code></em>.
-</td>
+<td>user data passed to <em class="parameter"><code>func</code></em>.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>notify</code></em> :</span></p></td>
-<td>the function to call when the source is removed.
-</td>
+<td>the function to call when the source is removed.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The event source id.
-
-MT safe.
-</td>
+<td>The event source id.
+MT safe.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_add_watch ()">
+<div class="refsect2">
 <a name="gst-bus-add-watch"></a><h3>gst_bus_add_watch ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_bus_add_watch                   (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstBus.html#GstBusFunc" title="GstBusFunc ()"><span class="type">GstBusFunc</span></a> func</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>
 Adds a bus watch to the default main context with the default priority
-(<a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#G-PRIORITY-DEFAULT:CAPS"><code class="literal">G_PRIORITY_DEFAULT</code></a>).
+(<a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#G-PRIORITY-DEFAULT:CAPS"><code class="literal">G_PRIORITY_DEFAULT</code></a>). Since 0.10.33 it is also possible to use a non-default
+main context set up using <a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-context-push-thread-default"><code class="function">g_main_context_push_thread_default()</code></a> (before
+one had to create a bus watch source and attach it to the desired main
+context 'manually').
+</p>
+<p>
 This function is used to receive asynchronous messages in the main loop.
 There can only be a single bus watch per bus, you must remove it before you
 can set a new one.
@@ -796,31 +766,26 @@ from <em class="parameter"><code>func</code></em>.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to create the watch for
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> to create the watch for</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>func</code></em> :</span></p></td>
-<td>A function to call when a message is received.
-</td>
+<td>A function to call when a message is received.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
-<td>user data passed to <em class="parameter"><code>func</code></em>.
-</td>
+<td>user data passed to <em class="parameter"><code>func</code></em>.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The event source id.
-
-MT safe.
-</td>
+<td>The event source id.
+MT safe.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_disable_sync_message_emission ()">
+<div class="refsect2">
 <a name="gst-bus-disable-sync-message-emission"></a><h3>gst_bus_disable_sync_message_emission ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_bus_disable_sync_message_emission
                                                         (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);</pre>
@@ -850,7 +815,7 @@ MT safe.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_enable_sync_message_emission ()">
+<div class="refsect2">
 <a name="gst-bus-enable-sync-message-emission"></a><h3>gst_bus_enable_sync_message_emission ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_bus_enable_sync_message_emission
                                                         (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);</pre>
@@ -880,16 +845,15 @@ MT safe.
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> on which you want to receive the "sync-message" signal
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> on which you want to receive the "sync-message" signal</td>
 </tr></tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_async_signal_func ()">
+<div class="refsect2">
 <a name="gst-bus-async-signal-func"></a><h3>gst_bus_async_signal_func ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_bus_async_signal_func           (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
-                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> data</code></em>);</pre>
 <p>
 A helper <a class="link" href="GstBus.html#GstBusFunc" title="GstBusFunc ()"><span class="type">GstBusFunc</span></a> that can be used to convert all asynchronous messages
@@ -905,29 +869,31 @@ into signals.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>message</code></em> :</span></p></td>
-<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> received
-</td>
+<td>the <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> received</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>user data
-</td>
+<td>user data</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> TRUE
-</td>
+<td>TRUE</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_add_signal_watch ()">
+<div class="refsect2">
 <a name="gst-bus-add-signal-watch"></a><h3>gst_bus_add_signal_watch ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_bus_add_signal_watch            (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);</pre>
 <p>
 Adds a bus signal watch to the default main context with the default priority
-(<a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#G-PRIORITY-DEFAULT:CAPS"><code class="literal">G_PRIORITY_DEFAULT</code></a>).
+(<a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#G-PRIORITY-DEFAULT:CAPS"><code class="literal">G_PRIORITY_DEFAULT</code></a>). Since 0.10.33 it is also possible to use a non-default
+main context set up using <a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-context-push-thread-default"><code class="function">g_main_context_push_thread_default()</code></a> (before
+one had to create a bus watch source and attach it to the desired main
+context 'manually').
+</p>
+<p>
 After calling this statement, the bus will emit the "message" signal for each
 message posted on the bus.
 </p>
@@ -943,19 +909,23 @@ MT safe.
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> on which you want to receive the "message" signal
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> on which you want to receive the "message" signal</td>
 </tr></tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_add_signal_watch_full ()">
+<div class="refsect2">
 <a name="gst-bus-add-signal-watch-full"></a><h3>gst_bus_add_signal_watch_full ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_bus_add_signal_watch_full       (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> priority</code></em>);</pre>
 <p>
 Adds a bus signal watch to the default main context with the given <em class="parameter"><code>priority</code></em>
-(e.g. <a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#G-PRIORITY-DEFAULT:CAPS"><code class="literal">G_PRIORITY_DEFAULT</code></a>).
+(e.g. <a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#G-PRIORITY-DEFAULT:CAPS"><code class="literal">G_PRIORITY_DEFAULT</code></a>). Since 0.10.33 it is also possible to use a
+non-default main context set up using <a href="http://library.gnome.org/devel/glib/unstable/glib-The-Main-Event-Loop.html#g-main-context-push-thread-default"><code class="function">g_main_context_push_thread_default()</code></a>
+(before one had to create a bus watch source and attach it to the desired
+main context 'manually').
+</p>
+<p>
 After calling this statement, the bus will emit the "message" signal for each
 message posted on the bus when the main loop is running.
 </p>
@@ -976,19 +946,17 @@ MT safe.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> on which you want to receive the "message" signal
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> on which you want to receive the "message" signal</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>priority</code></em> :</span></p></td>
-<td>The priority of the watch.
-</td>
+<td>The priority of the watch.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_remove_signal_watch ()">
+<div class="refsect2">
 <a name="gst-bus-remove-signal-watch"></a><h3>gst_bus_remove_signal_watch ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_bus_remove_signal_watch         (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>);</pre>
 <p>
@@ -1001,15 +969,14 @@ MT safe.
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> you previously added a signal watch to
-</td>
+<td>a <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> you previously added a signal watch to</td>
 </tr></tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_bus_poll ()">
+<div class="refsect2">
 <a name="gst-bus-poll"></a><h3>gst_bus_poll ()</h3>
-<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="returnvalue">GstMessage</span></a>*         gst_bus_poll                        (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
+<pre class="programlisting"><a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="returnvalue">GstMessage</span></a> *              gst_bus_poll                  (<em class="parameter"><code><a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> *bus</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gstreamer-GstMessage.html#GstMessageType" title="enum GstMessageType"><span class="type">GstMessageType</span></a> events</code></em>,
                                                          <em class="parameter"><code><a class="link" href="GstClock.html#GstClockTimeDiff" title="GstClockTimeDiff"><span class="type">GstClockTimeDiff</span></a> timeout</code></em>);</pre>
 <p>
@@ -1061,33 +1028,31 @@ from there.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>events</code></em> :</span></p></td>
 <td>a mask of <a class="link" href="gstreamer-GstMessage.html#GstMessageType" title="enum GstMessageType"><span class="type">GstMessageType</span></a>, representing the set of message types to
-poll for.
-</td>
+poll for.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>timeout</code></em> :</span></p></td>
 <td>the poll timeout, as a <a class="link" href="GstClock.html#GstClockTimeDiff" title="GstClockTimeDiff"><span class="type">GstClockTimeDiff</span></a>, or -1 to poll
-indefinitely.
-</td>
+indefinitely.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The message that was received, or NULL if the poll timed out.
-The message is taken from the bus and needs to be unreffed with
-<a class="link" href="gstreamer-GstMessage.html#gst-message-unref" title="gst_message_unref ()"><code class="function">gst_message_unref()</code></a> after usage.
+<td>the message that was received, or NULL if the
+poll timed out. The message is taken from the bus and needs to be
+unreffed with <a class="link" href="gstreamer-GstMessage.html#gst-message-unref" title="gst_message_unref ()"><code class="function">gst_message_unref()</code></a> after usage. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
 </table></div>
 </div>
 </div>
-<div class="refsect1" title="Signal Details">
+<div class="refsect1">
 <a name="GstBus.signal-details"></a><h2>Signal Details</h2>
-<div class="refsect2" title='The "message" signal'>
+<div class="refsect2">
 <a name="GstBus-message"></a><h3>The <code class="literal">"message"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a>     *bus,
-                                                        <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message,
-                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)      : Run Last / Has Details</pre>
+                                                        <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message,
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)      : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-DETAILED:CAPS"><code class="literal">Has Details</code></a></pre>
 <p>
 A message has been posted on the bus. This signal is emitted from a
 GSource added to the mainloop. this signal will only be emitted when
@@ -1098,13 +1063,11 @@ there is a mainloop running.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>the object which received the signal
-</td>
+<td>the object which received the signal</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>message</code></em> :</span></p></td>
-<td>the message that has been posted asynchronously
-</td>
+<td>the message that has been posted asynchronously</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
@@ -1114,11 +1077,11 @@ there is a mainloop running.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title='The "sync-message" signal'>
+<div class="refsect2">
 <a name="GstBus-sync-message"></a><h3>The <code class="literal">"sync-message"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a>     *bus,
-                                                        <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> *message,
-                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)      : Run Last / Has Details</pre>
+                                                        <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> *message,
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>    user_data)      : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-DETAILED:CAPS"><code class="literal">Has Details</code></a></pre>
 <p>
 A message has been posted on the bus. This signal is emitted from the
 thread that posted the message so one has to be careful with locking.
@@ -1138,13 +1101,11 @@ gst_bus_set_sync_handler (bus, gst_bus_sync_signal_handler, yourdata);
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>bus</code></em> :</span></p></td>
-<td>the object which received the signal
-</td>
+<td>the object which received the signal</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>message</code></em> :</span></p></td>
-<td>the message that has been posted synchronously
-</td>
+<td>the message that has been posted synchronously</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
@@ -1154,13 +1115,13 @@ gst_bus_set_sync_handler (bus, gst_bus_sync_signal_handler, yourdata);
 </table></div>
 </div>
 </div>
-<div class="refsect1" title="See Also">
+<div class="refsect1">
 <a name="GstBus.see-also"></a><h2>See Also</h2>
-<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a>, <a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a>
+<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a>, <a class="link" href="GstElement.html" title="GstElement"><span class="type">GstElement</span></a>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>
