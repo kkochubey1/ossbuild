@@ -691,6 +691,8 @@ GST_START_TEST (test_added_async2)
 
   /* add source, don't add sink yet */
   gst_bin_add (GST_BIN (pipeline), src);
+  /* need to lock state here or the pipeline might go in error */
+  gst_element_set_locked_state (src, TRUE);
 
   ret = gst_element_set_state (pipeline, GST_STATE_PAUSED);
   fail_unless (ret == GST_STATE_CHANGE_SUCCESS, "no SUCCESS state return");
@@ -1141,7 +1143,7 @@ GST_START_TEST (test_async_done)
   gst_element_query_position (sink, &format, &position);
   GST_DEBUG ("last buffer position %" GST_TIME_FORMAT,
       GST_TIME_ARGS (position));
-  fail_unless (position == 210 * GST_SECOND, "position is wrong");
+  fail_unless (position == 310 * GST_SECOND, "position is wrong");
 
   gst_object_unref (sinkpad);
 
@@ -1243,6 +1245,152 @@ GST_START_TEST (test_async_done_eos)
 
 GST_END_TEST;
 
+static GMutex *preroll_lock;
+static GCond *preroll_cond;
+
+static void
+test_async_false_seek_preroll (GstElement * elem, GstBuffer * buf,
+    GstPad * pad, gpointer data)
+{
+  g_mutex_lock (preroll_lock);
+  GST_DEBUG ("Got preroll buffer %p", buf);
+  g_cond_signal (preroll_cond);
+  g_mutex_unlock (preroll_lock);
+}
+
+static void
+test_async_false_seek_handoff (GstElement * elem, GstBuffer * buf,
+    GstPad * pad, gpointer data)
+{
+  /* should never be reached, we never go to PLAYING */
+  GST_DEBUG ("Got handoff buffer %p", buf);
+  fail_unless (FALSE);
+}
+
+GST_START_TEST (test_async_false_seek)
+{
+  GstElement *pipeline, *source, *sink;
+
+  preroll_lock = g_mutex_new ();
+  preroll_cond = g_cond_new ();
+
+  /* Create gstreamer elements */
+  pipeline = gst_pipeline_new ("test-pipeline");
+  source = gst_element_factory_make ("fakesrc", "file-source");
+  sink = gst_element_factory_make ("fakesink", "audio-output");
+
+  g_object_set (G_OBJECT (sink), "async", FALSE, NULL);
+  g_object_set (G_OBJECT (sink), "num-buffers", 10, NULL);
+  g_object_set (G_OBJECT (sink), "signal-handoffs", TRUE, NULL);
+
+  g_signal_connect (sink, "handoff", G_CALLBACK (test_async_false_seek_handoff),
+      NULL);
+  g_signal_connect (sink, "preroll-handoff",
+      G_CALLBACK (test_async_false_seek_preroll), NULL);
+
+  /* we add all elements into the pipeline */
+  gst_bin_add_many (GST_BIN (pipeline), source, sink, NULL);
+
+  /* we link the elements together */
+  gst_element_link (source, sink);
+
+  GST_DEBUG ("Now pausing");
+  g_mutex_lock (preroll_lock);
+  gst_element_set_state (pipeline, GST_STATE_PAUSED);
+
+  /* wait for preroll */
+  GST_DEBUG ("wait for preroll");
+  g_cond_wait (preroll_cond, preroll_lock);
+  g_mutex_unlock (preroll_lock);
+
+  g_mutex_lock (preroll_lock);
+  GST_DEBUG ("Seeking");
+  fail_unless (gst_element_seek (pipeline, 1.0, GST_FORMAT_BYTES,
+          GST_SEEK_FLAG_FLUSH, GST_SEEK_TYPE_SET, 0, GST_SEEK_TYPE_SET, -1));
+
+  GST_DEBUG ("wait for new preroll");
+  /* this either prerolls or fails */
+  g_cond_wait (preroll_cond, preroll_lock);
+  g_mutex_unlock (preroll_lock);
+
+  GST_DEBUG ("bring pipe to state NULL");
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+
+  GST_DEBUG ("Deleting pipeline");
+  gst_object_unref (GST_OBJECT (pipeline));
+
+  g_mutex_free (preroll_lock);
+  g_cond_free (preroll_cond);
+}
+
+GST_END_TEST;
+
+static GMutex *handoff_lock;
+static GCond *handoff_cond;
+
+static void
+test_async_false_seek_in_playing_handoff (GstElement * elem, GstBuffer * buf,
+    GstPad * pad, gpointer data)
+{
+  g_mutex_lock (handoff_lock);
+  GST_DEBUG ("Got handoff buffer %p", buf);
+  g_cond_signal (handoff_cond);
+  g_mutex_unlock (handoff_lock);
+}
+
+GST_START_TEST (test_async_false_seek_in_playing)
+{
+  GstElement *pipeline, *source, *sink;
+
+  handoff_lock = g_mutex_new ();
+  handoff_cond = g_cond_new ();
+
+  /* Create gstreamer elements */
+  pipeline = gst_pipeline_new ("test-pipeline");
+  source = gst_element_factory_make ("fakesrc", "fake-source");
+  sink = gst_element_factory_make ("fakesink", "fake-output");
+
+  g_object_set (G_OBJECT (sink), "async", FALSE, NULL);
+  g_object_set (G_OBJECT (sink), "signal-handoffs", TRUE, NULL);
+
+  g_signal_connect (sink, "handoff",
+      G_CALLBACK (test_async_false_seek_in_playing_handoff), NULL);
+
+  /* we add all elements into the pipeline */
+  gst_bin_add_many (GST_BIN (pipeline), source, sink, NULL);
+
+  /* we link the elements together */
+  gst_element_link (source, sink);
+
+  GST_DEBUG ("Now playing");
+  gst_element_set_state (pipeline, GST_STATE_PLAYING);
+
+  g_mutex_lock (handoff_lock);
+  GST_DEBUG ("wait for handoff buffer");
+  g_cond_wait (handoff_cond, handoff_lock);
+  g_mutex_unlock (handoff_lock);
+
+  GST_DEBUG ("Seeking");
+  fail_unless (gst_element_seek (source, 1.0, GST_FORMAT_BYTES,
+          GST_SEEK_FLAG_FLUSH, GST_SEEK_TYPE_SET, 0, GST_SEEK_TYPE_SET, -1));
+
+  g_mutex_lock (handoff_lock);
+  GST_DEBUG ("wait for handoff buffer");
+  g_cond_wait (handoff_cond, handoff_lock);
+  g_mutex_unlock (handoff_lock);
+
+  GST_DEBUG ("bring pipe to state NULL");
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+
+  GST_DEBUG ("Deleting pipeline");
+  gst_object_unref (GST_OBJECT (pipeline));
+
+  g_mutex_free (handoff_lock);
+  g_cond_free (handoff_cond);
+}
+
+GST_END_TEST;
+
 /* test: try changing state of sinks */
 static Suite *
 gst_sinks_suite (void)
@@ -1276,6 +1424,8 @@ gst_sinks_suite (void)
   tcase_add_test (tc_chain, test_fake_eos);
   tcase_add_test (tc_chain, test_async_done);
   tcase_add_test (tc_chain, test_async_done_eos);
+  tcase_add_test (tc_chain, test_async_false_seek);
+  tcase_add_test (tc_chain, test_async_false_seek_in_playing);
 
   return s;
 }

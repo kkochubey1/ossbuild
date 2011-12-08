@@ -28,7 +28,7 @@
  * <itemizedlist>
  *   <listitem><para>
  *     Collectpads are created with gst_collect_pads_new(). A callback should then
- *     be installed with gst_collect_pads_set_function (). 
+ *     be installed with gst_collect_pads_set_function ().
  *   </para></listitem>
  *   <listitem><para>
  *     Pads are added to the collection with gst_collect_pads_add_pad()/
@@ -52,7 +52,7 @@
  *     event itself.
  *   </para></listitem>
  *   <listitem><para>
- *     Data can also be dequeued in byte units using the gst_collect_pads_available(), 
+ *     Data can also be dequeued in byte units using the gst_collect_pads_available(),
  *     gst_collect_pads_read() and gst_collect_pads_flush() calls.
  *   </para></listitem>
  *   <listitem><para>
@@ -166,9 +166,9 @@ gst_collect_pads_finalize (GObject * object)
  *
  * Create a new instance of #GstCollectPads.
  *
- * Returns: a new #GstCollectPads, or NULL in case of an error.
- *
  * MT safe.
+ *
+ * Returns: (transfer full): a new #GstCollectPads, or NULL in case of an error.
  */
 GstCollectPads *
 gst_collect_pads_new (void)
@@ -184,7 +184,7 @@ gst_collect_pads_new (void)
  * gst_collect_pads_set_function:
  * @pads: the collectspads to use
  * @func: the function to set
- * @user_data: user data passed to the function
+ * @user_data: (closure): user data passed to the function
  *
  * Set the callback function and user data that will be called when
  * all the pads added to the collection have buffers queued.
@@ -241,7 +241,7 @@ unref_data (GstCollectData * data)
 /**
  * gst_collect_pads_add_pad:
  * @pads: the collectspads to use
- * @pad: the pad to add
+ * @pad: (transfer none): the pad to add
  * @size: the size of the returned #GstCollectData structure
  *
  * Add a pad to the collection of collect pads. The pad has to be
@@ -262,10 +262,10 @@ unref_data (GstCollectData * data)
  * This function calls gst_collect_pads_add_pad_full() passing a value of NULL
  * for destroy_notify.
  *
+ * MT safe.
+ *
  * Returns: a new #GstCollectData to identify the new pad. Or NULL
  *   if wrong parameters are supplied.
- *
- * MT safe.
  */
 GstCollectData *
 gst_collect_pads_add_pad (GstCollectPads * pads, GstPad * pad, guint size)
@@ -276,7 +276,7 @@ gst_collect_pads_add_pad (GstCollectPads * pads, GstPad * pad, guint size)
 /**
  * gst_collect_pads_add_pad_full:
  * @pads: the collectspads to use
- * @pad: the pad to add
+ * @pad: (transfer none): the pad to add
  * @size: the size of the returned #GstCollectData structure
  * @destroy_notify: function to be called before the returned #GstCollectData
  * structure is freed
@@ -297,12 +297,12 @@ gst_collect_pads_add_pad (GstCollectPads * pads, GstPad * pad, guint size)
  * The pad will be automatically activated in push mode when @pads is
  * started.
  *
+ * MT safe.
+ *
  * Since: 0.10.12
  *
  * Returns: a new #GstCollectData to identify the new pad. Or NULL
  *   if wrong parameters are supplied.
- *
- * MT safe.
  */
 GstCollectData *
 gst_collect_pads_add_pad_full (GstCollectPads * pads, GstPad * pad, guint size,
@@ -362,10 +362,10 @@ find_pad (GstCollectData * data, GstPad * pad)
  * gst_collect_pads_set_clip_function:
  * @pads: the collectspads to use
  * @clipfunc: clip function to install
- * @user_data: user data to pass to @clip_func
+ * @user_data: (closure): user data to pass to @clip_func
  *
  * Install a clipping function that is called right after a buffer is received
- * on a pad managed by @pads. See #GstCollectDataClipFunction for more info.
+ * on a pad managed by @pads. See #GstCollectPadsClipFunction for more info.
  *
  * Since: 0.10.26
  */
@@ -387,17 +387,17 @@ gst_collect_pads_set_clip_function (GstCollectPads * pads,
 /**
  * gst_collect_pads_remove_pad:
  * @pads: the collectspads to use
- * @pad: the pad to remove
+ * @pad: (transfer none): the pad to remove
  *
  * Remove a pad from the collection of collect pads. This function will also
- * free the #GstCollectData and all the resources that were allocated with 
+ * free the #GstCollectData and all the resources that were allocated with
  * gst_collect_pads_add_pad().
  *
  * The pad will be deactivated automatically when @pads is stopped.
  *
- * Returns: %TRUE if the pad could be removed.
- *
  * MT safe.
+ *
+ * Returns: %TRUE if the pad could be removed.
  */
 gboolean
 gst_collect_pads_remove_pad (GstCollectPads * pads, GstPad * pad)
@@ -473,16 +473,16 @@ unknown_pad:
 
 /**
  * gst_collect_pads_is_active:
- * @pads: the collectspads to use
+ * @pads: (transfer none): the collectspads to use
  * @pad: the pad to check
  *
  * Check if a pad is active.
  *
  * This function is currently not implemented.
  *
- * Returns: %TRUE if the pad is active.
- *
  * MT safe.
+ *
+ * Returns: %TRUE if the pad is active.
  */
 gboolean
 gst_collect_pads_is_active (GstCollectPads * pads, GstPad * pad)
@@ -502,13 +502,13 @@ gst_collect_pads_is_active (GstCollectPads * pads, GstPad * pad)
  * @pads: the collectspads to use
  *
  * Collect data on all pads. This function is usually called
- * from a #GstTask function in an element. 
+ * from a #GstTask function in an element.
  *
  * This function is currently not implemented.
  *
- * Returns: #GstFlowReturn of the operation.
- *
  * MT safe.
+ *
+ * Returns: #GstFlowReturn of the operation.
  */
 GstFlowReturn
 gst_collect_pads_collect (GstCollectPads * pads)
@@ -528,13 +528,13 @@ gst_collect_pads_collect (GstCollectPads * pads)
  * @length: the length to collect
  *
  * Collect data with @offset and @length on all pads. This function
- * is typically called in the getrange function of an element. 
+ * is typically called in the getrange function of an element.
  *
  * This function is currently not implemented.
  *
- * Returns: #GstFlowReturn of the operation.
- *
  * MT safe.
+ *
+ * Returns: #GstFlowReturn of the operation.
  */
 GstFlowReturn
 gst_collect_pads_collect_range (GstCollectPads * pads, guint64 offset,
@@ -607,7 +607,7 @@ gst_collect_pads_set_flushing_unlocked (GstCollectPads * pads,
     }
   }
   /* Setting the pads to flushing means that we changed the values which
-   * are 'protected' by the cookie. We therefore update it to force a 
+   * are 'protected' by the cookie. We therefore update it to force a
    * recalculation of the current pad status. */
   pads->abidata.ABI.pad_cookie++;
 }
@@ -741,10 +741,10 @@ gst_collect_pads_stop (GstCollectPads * pads)
  * should be called with the @pads LOCK held, such as in the callback
  * handler.
  *
- * Returns: The buffer in @data or NULL if no buffer is queued.
- *  should unref the buffer after usage.
- *
  * MT safe.
+ *
+ * Returns: (transfer full): The buffer in @data or NULL if no buffer is queued.
+ *  should unref the buffer after usage.
  */
 GstBuffer *
 gst_collect_pads_peek (GstCollectPads * pads, GstCollectData * data)
@@ -773,10 +773,12 @@ gst_collect_pads_peek (GstCollectPads * pads, GstCollectData * data)
  * should be called with the @pads LOCK held, such as in the callback
  * handler.
  *
- * Returns: The buffer in @data or NULL if no buffer was queued.
- *   You should unref the buffer after usage.
+ * Free-function: gst_buffer_unref
  *
  * MT safe.
+ *
+ * Returns: (transfer full): The buffer in @data or NULL if no buffer was
+ *   queued. You should unref the buffer after usage.
  */
 GstBuffer *
 gst_collect_pads_pop (GstCollectPads * pads, GstCollectData * data)
@@ -824,10 +826,10 @@ gst_collect_pads_clear (GstCollectPads * pads, GstCollectData * data)
  * This function should be called with @pads LOCK held, such as
  * in the callback.
  *
+ * MT safe.
+ *
  * Returns: The maximum number of bytes queued on all pads. This function
  * returns 0 if a pad has no queued buffer.
- *
- * MT safe.
  */
 /* FIXME, we can do this in the _chain functions */
 guint
@@ -883,7 +885,7 @@ not_filled:
  * gst_collect_pads_read:
  * @pads: the collectspads to query
  * @data: the data to use
- * @bytes: a pointer to a byte array
+ * @bytes: (out) (transfer none) (array length=size): a pointer to a byte array
  * @size: the number of bytes to read
  *
  * Get a pointer in @bytes where @size bytes can be read from the
@@ -892,11 +894,11 @@ not_filled:
  * This function should be called with @pads LOCK held, such as
  * in the callback.
  *
+ * MT safe.
+ *
  * Returns: The number of bytes available for consumption in the
  * memory pointed to by @bytes. This can be less than @size and
  * is 0 if the pad is end-of-stream.
- *
- * MT safe.
  */
 guint
 gst_collect_pads_read (GstCollectPads * pads, GstCollectData * data,
@@ -931,13 +933,15 @@ gst_collect_pads_read (GstCollectPads * pads, GstCollectData * data,
  *
  * This function should be called with @pads LOCK held, such as in the callback.
  *
- * Since: 0.10.18
+ * Free-function: gst_buffer_unref
  *
- * Returns: A #GstBuffer. The size of the buffer can be less that requested.
- * A return of NULL signals that the pad is end-of-stream.
- * Unref the buffer after use.
+ * Returns: (transfer full): a #GstBuffer. The size of the buffer can be less
+ *     that requested. A return of NULL signals that the pad is end-of-stream.
+ *     Unref the buffer with gst_buffer_unref() after use.
  *
  * MT safe.
+ *
+ * Since: 0.10.18
  */
 GstBuffer *
 gst_collect_pads_read_buffer (GstCollectPads * pads, GstCollectData * data,
@@ -975,13 +979,15 @@ gst_collect_pads_read_buffer (GstCollectPads * pads, GstCollectData * data,
  *
  * This function should be called with @pads LOCK held, such as in the callback.
  *
- * Since: 0.10.18
- *
- * Returns: A #GstBuffer. The size of the buffer can be less that requested.
- * A return of NULL signals that the pad is end-of-stream.
- * Unref the buffer after use.
+ * Free-function: gst_buffer_unref
  *
  * MT safe.
+ *
+ * Returns: (transfer full): a #GstBuffer. The size of the buffer can be less
+ *     that requested. A return of NULL signals that the pad is end-of-stream.
+ *     Unref the buffer after use.
+ *
+ * Since: 0.10.18
  */
 GstBuffer *
 gst_collect_pads_take_buffer (GstCollectPads * pads, GstCollectData * data,
@@ -1006,10 +1012,10 @@ gst_collect_pads_take_buffer (GstCollectPads * pads, GstCollectData * data,
  * This function should be called with @pads LOCK held, such as
  * in the callback.
  *
+ * MT safe.
+ *
  * Returns: The number of bytes flushed. This can be less than @size and
  * is 0 if the pad was end-of-stream.
- *
- * MT safe.
  */
 guint
 gst_collect_pads_flush (GstCollectPads * pads, GstCollectData * data,
@@ -1180,7 +1186,7 @@ gst_collect_pads_event (GstPad * pad, GstEvent * event)
       gst_pad_event_default (pad, event);
 
       /* now unblock the chain function.
-       * no cond per pad, so they all unblock, 
+       * no cond per pad, so they all unblock,
        * non-flushing block again */
       GST_OBJECT_LOCK (pads);
       data->abidata.ABI.flushing = TRUE;
@@ -1254,7 +1260,7 @@ gst_collect_pads_event (GstPad * pad, GstEvent * event)
 
       data->abidata.ABI.new_segment = TRUE;
 
-      /* we must not forward this event since multiple segments will be 
+      /* we must not forward this event since multiple segments will be
        * accumulated and this is certainly not what we want. */
       gst_event_unref (event);
       /* FIXME: collect-pads based elements need to create their own newsegment
@@ -1296,7 +1302,7 @@ pad_removed:
  * and if so we call the collected function. When this is done we check if
  * data has been unqueued. If data is still queued we wait holding the stream
  * lock to make sure no EOS event can happen while we are ready to be
- * collected 
+ * collected
  */
 static GstFlowReturn
 gst_collect_pads_chain (GstPad * pad, GstBuffer * buffer)
@@ -1386,7 +1392,7 @@ gst_collect_pads_chain (GstPad * pad, GstBuffer * buffer)
     /* wait to be collected, this must happen from another thread triggered
      * by the _chain function of another pad. We release the lock so we
      * can get stopped or flushed as well. We can however not get EOS
-     * because we still hold the STREAM_LOCK. 
+     * because we still hold the STREAM_LOCK.
      */
     GST_COLLECT_PADS_WAIT (pads);
 

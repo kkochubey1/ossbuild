@@ -73,6 +73,7 @@ struct _GstProxyPadPrivate
 G_DEFINE_TYPE (GstProxyPad, gst_proxy_pad, GST_TYPE_PAD);
 
 static GstPad *gst_proxy_pad_get_target (GstPad * pad);
+static GstPad *gst_proxy_pad_get_internal (GstPad * pad);
 
 static void gst_proxy_pad_dispose (GObject * object);
 static void gst_proxy_pad_finalize (GObject * object);
@@ -107,9 +108,12 @@ static gboolean
 gst_proxy_pad_do_event (GstPad * pad, GstEvent * event)
 {
   gboolean res = FALSE;
-  GstPad *internal = GST_PROXY_PAD_INTERNAL (pad);
+  GstPad *internal = gst_proxy_pad_get_internal (pad);
 
-  res = gst_pad_push_event (internal, event);
+  if (internal) {
+    res = gst_pad_push_event (internal, event);
+    gst_object_unref (internal);
+  }
 
   return res;
 }
@@ -132,11 +136,12 @@ static GstIterator *
 gst_proxy_pad_do_iterate_internal_links (GstPad * pad)
 {
   GstIterator *res = NULL;
-  GstPad *target = gst_proxy_pad_get_target (pad);
+  GstPad *internal = GST_PROXY_PAD_INTERNAL (pad);
 
-  if (target) {
-    res = gst_pad_iterate_internal_links (target);
-    gst_object_unref (target);
+  if (internal) {
+    res =
+        gst_iterator_new_single (GST_TYPE_PAD, internal,
+        (GstCopyFunction) gst_object_ref, (GFreeFunc) gst_object_unref);
   }
 
   return res;
@@ -146,10 +151,13 @@ static GstFlowReturn
 gst_proxy_pad_do_bufferalloc (GstPad * pad, guint64 offset, guint size,
     GstCaps * caps, GstBuffer ** buf)
 {
-  GstFlowReturn result;
-  GstPad *internal = GST_PROXY_PAD_INTERNAL (pad);
+  GstFlowReturn result = GST_FLOW_WRONG_STATE;
+  GstPad *internal = gst_proxy_pad_get_internal (pad);
 
-  result = gst_pad_alloc_buffer (internal, offset, size, caps, buf);
+  if (internal) {
+    result = gst_pad_alloc_buffer (internal, offset, size, caps, buf);
+    gst_object_unref (internal);
+  }
 
   return result;
 }
@@ -354,6 +362,20 @@ gst_proxy_pad_get_target (GstPad * pad)
   GST_PROXY_UNLOCK (pad);
 
   return target;
+}
+
+static GstPad *
+gst_proxy_pad_get_internal (GstPad * pad)
+{
+  GstPad *internal;
+
+  GST_PROXY_LOCK (pad);
+  internal = GST_PROXY_PAD_INTERNAL (pad);
+  if (internal)
+    gst_object_ref (internal);
+  GST_PROXY_UNLOCK (pad);
+
+  return internal;
 }
 
 static void
@@ -1023,7 +1045,7 @@ construct_failed:
 
 /**
  * gst_ghost_pad_new_no_target:
- * @name: the name of the new pad, or NULL to assign a default name.
+ * @name: (allow-none): the name of the new pad, or NULL to assign a default name.
  * @dir: the direction of the ghostpad
  *
  * Create a new ghostpad without a target with the given direction.
@@ -1032,7 +1054,7 @@ construct_failed:
  *
  * The created ghostpad will not have a padtemplate.
  *
- * Returns: a new #GstPad, or NULL in case of an error.
+ * Returns: (transfer full): a new #GstPad, or NULL in case of an error.
  */
 GstPad *
 gst_ghost_pad_new_no_target (const gchar * name, GstPadDirection dir)
@@ -1050,15 +1072,15 @@ gst_ghost_pad_new_no_target (const gchar * name, GstPadDirection dir)
 
 /**
  * gst_ghost_pad_new:
- * @name: the name of the new pad, or NULL to assign a default name.
- * @target: the pad to ghost.
+ * @name: (allow-none): the name of the new pad, or NULL to assign a default name
+ * @target: (transfer none): the pad to ghost.
  *
  * Create a new ghostpad with @target as the target. The direction will be taken
  * from the target pad. @target must be unlinked.
  *
  * Will ref the target.
  *
- * Returns: a new #GstPad, or NULL in case of an error.
+ * Returns: (transfer full): a new #GstPad, or NULL in case of an error.
  */
 GstPad *
 gst_ghost_pad_new (const gchar * name, GstPad * target)
@@ -1089,16 +1111,16 @@ set_target_failed:
 
 /**
  * gst_ghost_pad_new_from_template:
- * @name: the name of the new pad, or NULL to assign a default name.
- * @target: the pad to ghost.
- * @templ: the #GstPadTemplate to use on the ghostpad.
+ * @name: (allow-none): the name of the new pad, or NULL to assign a default name.
+ * @target: (transfer none): the pad to ghost.
+ * @templ: (transfer none): the #GstPadTemplate to use on the ghostpad.
  *
  * Create a new ghostpad with @target as the target. The direction will be taken
  * from the target pad. The template used on the ghostpad will be @template.
  *
  * Will ref the target.
  *
- * Returns: a new #GstPad, or NULL in case of an error.
+ * Returns: (transfer full): a new #GstPad, or NULL in case of an error.
  *
  * Since: 0.10.10
  */
@@ -1136,13 +1158,13 @@ set_target_failed:
 
 /**
  * gst_ghost_pad_new_no_target_from_template:
- * @name: the name of the new pad, or NULL to assign a default name.
- * @templ: the #GstPadTemplate to create the ghostpad from.
+ * @name: (allow-none): the name of the new pad, or NULL to assign a default name
+ * @templ: (transfer none): the #GstPadTemplate to create the ghostpad from.
  *
  * Create a new ghostpad based on @templ, without setting a target. The
  * direction will be taken from the @templ.
  *
- * Returns: a new #GstPad, or NULL in case of an error.
+ * Returns: (transfer full): a new #GstPad, or NULL in case of an error.
  *
  * Since: 0.10.10
  */
@@ -1166,7 +1188,7 @@ gst_ghost_pad_new_no_target_from_template (const gchar * name,
  *
  * Get the target pad of @gpad. Unref target pad after usage.
  *
- * Returns: the target #GstPad, can be NULL if the ghostpad
+ * Returns: (transfer full): the target #GstPad, can be NULL if the ghostpad
  * has no target set. Unref target pad after usage.
  */
 GstPad *
@@ -1186,14 +1208,14 @@ gst_ghost_pad_get_target (GstGhostPad * gpad)
 /**
  * gst_ghost_pad_set_target:
  * @gpad: the #GstGhostPad
- * @newtarget: the new pad target
+ * @newtarget: (transfer none) (allow-none): the new pad target
  *
  * Set the new target of the ghostpad @gpad. Any existing target
  * is unlinked and links to the new target are established. if @newtarget is
  * NULL the target will be cleared.
  *
- * Returns: TRUE if the new target could be set. This function can return FALSE
- * when the internal pads could not be linked.
+ * Returns: (transfer full): TRUE if the new target could be set. This function
+ *     can return FALSE when the internal pads could not be linked.
  */
 gboolean
 gst_ghost_pad_set_target (GstGhostPad * gpad, GstPad * newtarget)

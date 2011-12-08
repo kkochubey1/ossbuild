@@ -111,6 +111,7 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 am_libgstbase_@GST_MAJORMINOR@_la_OBJECTS =  \
 	libgstbase_@GST_MAJORMINOR@_la-gstadapter.lo \
+	libgstbase_@GST_MAJORMINOR@_la-gstbaseparse.lo \
 	libgstbase_@GST_MAJORMINOR@_la-gstbasesink.lo \
 	libgstbase_@GST_MAJORMINOR@_la-gstbasesrc.lo \
 	libgstbase_@GST_MAJORMINOR@_la-gstbasetransform.lo \
@@ -318,6 +319,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -375,6 +377,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -408,7 +411,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -435,6 +437,7 @@ libgstbase_@GST_MAJORMINOR@_la_DEPENDENCIES = \
 
 libgstbase_@GST_MAJORMINOR@_la_SOURCES = \
 	gstadapter.c		\
+	gstbaseparse.c		\
 	gstbasesink.c		\
 	gstbasesrc.c		\
 	gstbasetransform.c	\
@@ -454,6 +457,7 @@ libgstbase_@GST_MAJORMINOR@includedir = \
 
 libgstbase_@GST_MAJORMINOR@include_HEADERS = \
 	gstadapter.h		\
+	gstbaseparse.h		\
 	gstbasesink.h		\
 	gstbasesrc.h		\
 	gstbasetransform.h	\
@@ -557,6 +561,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstbase_@GST_MAJORMINOR@_la-gstadapter.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstbase_@GST_MAJORMINOR@_la-gstbaseparse.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstbase_@GST_MAJORMINOR@_la-gstbasesink.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstbase_@GST_MAJORMINOR@_la-gstbasesrc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstbase_@GST_MAJORMINOR@_la-gstbasetransform.Plo@am__quote@
@@ -599,6 +604,14 @@ libgstbase_@GST_MAJORMINOR@_la-gstadapter.lo: gstadapter.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstadapter.c' object='libgstbase_@GST_MAJORMINOR@_la-gstadapter.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstbase_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstbase_@GST_MAJORMINOR@_la-gstadapter.lo `test -f 'gstadapter.c' || echo '$(srcdir)/'`gstadapter.c
+
+libgstbase_@GST_MAJORMINOR@_la-gstbaseparse.lo: gstbaseparse.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstbase_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstbase_@GST_MAJORMINOR@_la-gstbaseparse.lo -MD -MP -MF $(DEPDIR)/libgstbase_@GST_MAJORMINOR@_la-gstbaseparse.Tpo -c -o libgstbase_@GST_MAJORMINOR@_la-gstbaseparse.lo `test -f 'gstbaseparse.c' || echo '$(srcdir)/'`gstbaseparse.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstbase_@GST_MAJORMINOR@_la-gstbaseparse.Tpo $(DEPDIR)/libgstbase_@GST_MAJORMINOR@_la-gstbaseparse.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstbaseparse.c' object='libgstbase_@GST_MAJORMINOR@_la-gstbaseparse.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstbase_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstbase_@GST_MAJORMINOR@_la-gstbaseparse.lo `test -f 'gstbaseparse.c' || echo '$(srcdir)/'`gstbaseparse.c
 
 libgstbase_@GST_MAJORMINOR@_la-gstbasesink.lo: gstbasesink.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstbase_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstbase_@GST_MAJORMINOR@_la-gstbasesink.lo -MD -MP -MF $(DEPDIR)/libgstbase_@GST_MAJORMINOR@_la-gstbasesink.Tpo -c -o libgstbase_@GST_MAJORMINOR@_la-gstbasesink.lo `test -f 'gstbasesink.c' || echo '$(srcdir)/'`gstbasesink.c
@@ -963,19 +976,38 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 
 gcov: $(libgstbase_@GST_MAJORMINOR@_la_SOURCES:=.gcov)
 
+Android.mk: Makefile.am
+	androgenizer -:PROJECT gstreamer -:SHARED libgstbase-@GST_MAJORMINOR@ -:TAGS eng debug \
+	 -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstbase_@GST_MAJORMINOR@_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(libgstbase_@GST_MAJORMINOR@_la_CFLAGS) \
+	 -:LDFLAGS $(libgstbase_@GST_MAJORMINOR@_la_LDFLAGS) \
+	           $(libgstbase_@GST_MAJORMINOR@_la_LIBADD) \
+	 -:HEADER_TARGET gstreamer-@GST_MAJORMINOR@/gst/base \
+	 -:HEADERS $(libgstbase_@GST_MAJORMINOR@include_HEADERS) \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+	> $@
+
 @HAVE_INTROSPECTION_TRUE@GstBase-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstbase-@GST_MAJORMINOR@.la
 @HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+@HAVE_INTROSPECTION_TRUE@		GST_PLUGIN_SYSTEM_PATH="" GST_PLUGIN_PATH="" GST_REGISTRY_UPDATE=no \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstBase \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
 @HAVE_INTROSPECTION_TRUE@		-I$(top_srcdir) \
+@HAVE_INTROSPECTION_TRUE@		-I$(top_srcdir)/libs \
+@HAVE_INTROSPECTION_TRUE@		-I$(top_builddir) \
+@HAVE_INTROSPECTION_TRUE@		-I$(top_builddir)/libs \
 @HAVE_INTROSPECTION_TRUE@		$(gir_cincludes) \
 @HAVE_INTROSPECTION_TRUE@		--add-include-path=$(top_builddir)/gst \
+@HAVE_INTROSPECTION_TRUE@		--library-path=$(top_builddir)/gst \
+@HAVE_INTROSPECTION_TRUE@		--library=$(top_builddir)/gst/libgstreamer-0.10.la \
 @HAVE_INTROSPECTION_TRUE@		--library=libgstbase-0.10.la \
 @HAVE_INTROSPECTION_TRUE@		--include=Gst-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
 @HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--pkg-export gstreamer-base-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--add-init-section="gst_init(NULL,NULL);" \
 @HAVE_INTROSPECTION_TRUE@		--output $@ \
 @HAVE_INTROSPECTION_TRUE@		$(gir_headers) \
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)

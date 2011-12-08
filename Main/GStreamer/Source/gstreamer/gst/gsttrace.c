@@ -55,6 +55,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include <errno.h>
 
 #if defined (_MSC_VER) && _MSC_VER >= 1400
 # include <io.h>
@@ -86,7 +87,7 @@ read_tsc (gint64 * dst)
 
 /**
  * gst_trace_read_tsc:
- * @dst: pointer to hold the result.
+ * @dst: (out) pointer to hold the result.
  *
  * Read a platform independent timer value that can be used in
  * benchmarks.
@@ -105,10 +106,12 @@ gint _gst_trace_on = 1;
  * @filename: a filename
  * @size: the max size of the file
  *
- * Create a ringbuffer of @size in the file with @filename to 
+ * Create a ringbuffer of @size in the file with @filename to
  * store trace results in.
  *
- * Returns: a new #GstTrace.
+ * Free-function: gst_trace_destroy
+ *
+ * Returns: (transfer full): a new #GstTrace.
  */
 GstTrace *
 gst_trace_new (const gchar * filename, gint size)
@@ -138,7 +141,7 @@ gst_trace_new (const gchar * filename, gint size)
 
 /**
  * gst_trace_destroy:
- * @trace: the #GstTrace to destroy
+ * @trace: (in) (transfer full): the #GstTrace to destroy
  *
  * Flush an close the previously allocated @trace.
  */
@@ -166,14 +169,23 @@ gst_trace_destroy (GstTrace * trace)
 void
 gst_trace_flush (GstTrace * trace)
 {
+  int res, buf_len;
+
   if (!trace) {
     trace = _gst_trace_default;
     if (!trace)
       return;
   }
 
-  g_return_if_fail (write (trace->fd, trace->buf,
-          trace->bufoffset * sizeof (GstTraceEntry)) != -1);
+  buf_len = trace->bufoffset * sizeof (GstTraceEntry);
+  res = write (trace->fd, trace->buf, buf_len);
+  if (res < 0) {
+    g_warning ("Failed to write trace: %s", g_strerror (errno));
+    return;
+  } else if (res < buf_len) {
+    g_warning ("Failed to write trace: only wrote %d/%d bytes", res, buf_len);
+    return;
+  }
   trace->bufoffset = 0;
 }
 
@@ -181,7 +193,7 @@ gst_trace_flush (GstTrace * trace)
  * gst_trace_text_flush:
  * @trace: the #GstTrace to flush.
  *
- * Flush any pending trace entries in @trace to the trace file, 
+ * Flush any pending trace entries in @trace to the trace file,
  * formatted as a text line with timestamp and sequence numbers.
  * @trace can be NULL in which case the default #GstTrace will be
  * flushed.
@@ -204,7 +216,10 @@ gst_trace_text_flush (GstTrace * trace)
     g_snprintf (str, STRSIZE, "%20" G_GINT64_FORMAT " %10d %10d %s\n",
         trace->buf[i].timestamp,
         trace->buf[i].sequence, trace->buf[i].data, trace->buf[i].message);
-    g_return_if_fail (write (trace->fd, str, strlen (str)) != -1);
+    if (write (trace->fd, str, strlen (str)) < 0) {
+      g_warning ("Failed to write trace %d: %s", i, g_strerror (errno));
+      return;
+    }
   }
   trace->bufoffset = 0;
 #undef STRSIZE
@@ -239,6 +254,7 @@ _gst_trace_add_entry (GstTrace * trace, guint32 seq, guint32 data, gchar * msg)
   entry->sequence = seq;
   entry->data = data;
   strncpy (entry->message, msg, 112);
+  entry->message[111] = '\0';
   trace->bufoffset++;
 
   gst_trace_flush (trace);

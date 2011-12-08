@@ -338,6 +338,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -395,6 +396,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -428,7 +430,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -1269,8 +1270,9 @@ lcov:
 @GST_GCOV_ENABLED_TRUE@lcov-report:
 @GST_GCOV_ENABLED_TRUE@	mkdir lcov
 @GST_GCOV_ENABLED_TRUE@	lcov --compat-libtool --directory . --capture --output-file lcov/lcov.info
-@GST_GCOV_ENABLED_TRUE@	lcov -l lcov/lcov.info | grep -v "`cd $(top_srcdir) && pwd`" | cut -d: -f1 > lcov/remove
-@GST_GCOV_ENABLED_TRUE@	lcov -l lcov/lcov.info | grep "tests/check/" | cut -d: -f1 >> lcov/remove
+@GST_GCOV_ENABLED_TRUE@	lcov --list-full-path -l lcov/lcov.info | grep -v "`cd $(top_srcdir) && pwd`" | cut -d\| -f1 > lcov/remove
+@GST_GCOV_ENABLED_TRUE@	lcov --list-full-path -l lcov/lcov.info | grep "tests/check/" | cut -d\| -f1 >> lcov/remove
+@GST_GCOV_ENABLED_TRUE@	lcov --list-full-path -l lcov/lcov.info | grep "docs/plugins/" | cut -d\| -f1 >> lcov/remove
 @GST_GCOV_ENABLED_TRUE@	lcov -r lcov/lcov.info `cat lcov/remove` > lcov/lcov.cleaned.info
 @GST_GCOV_ENABLED_TRUE@	rm lcov/remove
 @GST_GCOV_ENABLED_TRUE@	mv lcov/lcov.cleaned.info lcov/lcov.info

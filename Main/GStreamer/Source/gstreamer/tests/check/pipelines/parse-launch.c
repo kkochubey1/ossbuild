@@ -99,6 +99,8 @@ static const gchar *test_lines[] = {
   "fakesrc !   video/raw,  format=(fourcc)YUY2; video/raw, format=(fourcc)YV12 ! fakesink silent=true",
   "fakesrc ! audio/x-raw-int, width=[16,  32], depth={16, 24, 32}, signed=TRUE ! fakesink silent=true",
   "fakesrc ! identity silent=true ! identity silent=true ! identity silent=true ! fakesink silent=true",
+  "fakesrc name=100 fakesink name=101 silent=true 100. ! 101.",
+  "fakesrc ! 1dentity ! fakesink silent=true",
   NULL
 };
 
@@ -106,6 +108,18 @@ GST_START_TEST (test_launch_lines)
 {
   GstElement *pipeline;
   const gchar **s;
+  GType type;
+  GstElementFactory *efac;
+
+  efac = gst_element_factory_find ("identity");
+  fail_unless (efac != NULL);
+  efac =
+      GST_ELEMENT_FACTORY (gst_plugin_feature_load (GST_PLUGIN_FEATURE (efac)));
+  fail_unless (efac != NULL);
+  type = gst_element_factory_get_element_type (efac);
+  fail_unless (type != 0);
+  g_object_unref (efac);
+  fail_unless (gst_element_register (NULL, "1dentity", GST_RANK_NONE, type));
 
   for (s = test_lines; *s != NULL; s++) {
     pipeline = setup_pipeline (*s);
@@ -632,6 +646,17 @@ GST_START_TEST (test_flags)
 
 GST_END_TEST;
 
+GST_START_TEST (test_parsing)
+{
+  GstElement *pipeline;
+
+  /* make sure we don't read beyond the end of the string */
+  pipeline = gst_parse_launch_full ("filesrc location=x\\", NULL, 0, NULL);
+  gst_object_unref (pipeline);
+}
+
+GST_END_TEST;
+
 static Suite *
 parse_suite (void)
 {
@@ -649,6 +674,7 @@ parse_suite (void)
   tcase_add_test (tc_chain, delayed_link);
   tcase_add_test (tc_chain, test_flags);
   tcase_add_test (tc_chain, test_missing_elements);
+  tcase_add_test (tc_chain, test_parsing);
   return s;
 }
 

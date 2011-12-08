@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-base.html" title="GStreamer Base and Utillity Classes">
 <link rel="prev" href="gstreamer-libs-GstByteReader.html" title="GstByteReader">
 <link rel="next" href="GstCollectPads.html" title="GstCollectPads">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -26,7 +26,7 @@
                   <a href="#gstreamer-libs-GstByteWriter.description" class="shortcut">Description</a>
 </td></tr>
 </table>
-<div class="refentry" title="GstByteWriter">
+<div class="refentry">
 <a name="gstreamer-libs-GstByteWriter"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -36,7 +36,7 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gstreamer-libs-GstByteWriter.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/base/gstbytewriter.h&gt;
@@ -205,7 +205,7 @@
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> size</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gstreamer-libs-GstByteWriter.description"></a><h2>Description</h2>
 <p>
 <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> provides a byte writer and reader that can write/read different
@@ -216,9 +216,9 @@ for writing/reading signed/unsigned, little/big endian integers of 8, 16, 24,
 in various character encodings.
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gstreamer-libs-GstByteWriter.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstByteWriter">
+<div class="refsect2">
 <a name="GstByteWriter"></a><h3>GstByteWriter</h3>
 <pre class="programlisting">typedef struct {
   GstByteReader parent;
@@ -238,47 +238,45 @@ A byte writer instance.
 <tr>
 <td><p><span class="term"><a class="link" href="gstreamer-libs-GstByteReader.html#GstByteReader" title="GstByteReader"><span class="type">GstByteReader</span></a> <em class="structfield"><code><a name="GstByteWriter.parent"></a>parent</code></em>;</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteReader.html#GstByteReader" title="GstByteReader"><span class="type">GstByteReader</span></a> parent
-</td>
+<a class="link" href="gstreamer-libs-GstByteReader.html#GstByteReader" title="GstByteReader"><span class="type">GstByteReader</span></a> parent</td>
 </tr>
 <tr>
 <td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="GstByteWriter.alloc-size"></a>alloc_size</code></em>;</span></p></td>
-<td>Allocation size of the data
-</td>
+<td>Allocation size of the data</td>
 </tr>
 <tr>
 <td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> <em class="structfield"><code><a name="GstByteWriter.fixed"></a>fixed</code></em>;</span></p></td>
-<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> no reallocations are allowed
-</td>
+<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> no reallocations are allowed</td>
 </tr>
 <tr>
 <td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> <em class="structfield"><code><a name="GstByteWriter.owned"></a>owned</code></em>;</span></p></td>
-<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> no reallocations are allowed and copies of data are returned
-</td>
+<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> no reallocations are allowed and copies of data are returned</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_new ()">
+<div class="refsect2">
 <a name="gst-byte-writer-new"></a><h3>gst_byte_writer_new ()</h3>
 <pre class="programlisting"><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="returnvalue">GstByteWriter</span></a> *     gst_byte_writer_new                 (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 Creates a new, empty <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
 </p>
+<p>
+Free-function: gst_byte_writer_free
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a new, empty <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-
+<td>a new, empty <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr></tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_new_with_buffer ()">
+<div class="refsect2">
 <a name="gst-byte-writer-new-with-buffer"></a><h3>gst_byte_writer_new_with_buffer ()</h3>
 <pre class="programlisting"><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="returnvalue">GstByteWriter</span></a> *     gst_byte_writer_new_with_buffer     (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> initialized</code></em>);</pre>
@@ -289,28 +287,28 @@ read the complete buffer from the <a class="link" href="gstreamer-libs-GstByteWr
 </p>
 <p>
 </p>
-<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Note</h3>
 <em class="parameter"><code>buffer</code></em> must be writable</div>
 <p>
+</p>
+<p>
+Free-function: gst_byte_writer_free
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td>Buffer used for writing
-</td>
+<td>Buffer used for writing</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>initialized</code></em> :</span></p></td>
-<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the complete data can be read from the beginning
-</td>
+<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the complete data can be read from the beginning</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a new <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-
+<td>a new <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -318,7 +316,7 @@ read the complete buffer from the <a class="link" href="gstreamer-libs-GstByteWr
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_new_with_data ()">
+<div class="refsect2">
 <a name="gst-byte-writer-new-with-data"></a><h3>gst_byte_writer_new_with_data ()</h3>
 <pre class="programlisting"><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="returnvalue">GstByteWriter</span></a> *     gst_byte_writer_new_with_data       (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> size</code></em>,
@@ -328,28 +326,27 @@ Creates a new <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWri
 memory area. If <em class="parameter"><code>initialized</code></em> is <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> it is possible to
 read <em class="parameter"><code>size</code></em> bytes from the <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> from the beginning.
 </p>
+<p>
+Free-function: gst_byte_writer_free
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>Memory area for writing
-</td>
+<td>Memory area for writing</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td>Size of <em class="parameter"><code>data</code></em> in bytes
-</td>
+<td>Size of <em class="parameter"><code>data</code></em> in bytes</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>initialized</code></em> :</span></p></td>
-<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the complete data can be read from the beginning
-</td>
+<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the complete data can be read from the beginning</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a new <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-
+<td>a new <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -357,7 +354,7 @@ read <em class="parameter"><code>size</code></em> bytes from the <a class="link"
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_new_with_size ()">
+<div class="refsect2">
 <a name="gst-byte-writer-new-with-size"></a><h3>gst_byte_writer_new_with_size ()</h3>
 <pre class="programlisting"><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="returnvalue">GstByteWriter</span></a> *     gst_byte_writer_new_with_size       (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> size</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> fixed</code></em>);</pre>
@@ -365,23 +362,23 @@ read <em class="parameter"><code>size</code></em> bytes from the <a class="link"
 Creates a new <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance with the given
 initial data size.
 </p>
+<p>
+Free-function: gst_byte_writer_free
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td>Initial size of data
-</td>
+<td>Initial size of data</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fixed</code></em> :</span></p></td>
-<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the data can't be reallocated
-</td>
+<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the data can't be reallocated</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a new <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-
+<td>a new <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -389,7 +386,7 @@ initial data size.
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_init ()">
+<div class="refsect2">
 <a name="gst-byte-writer-init"></a><h3>gst_byte_writer_init ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_init                (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>);</pre>
 <p>
@@ -400,14 +397,13 @@ Initializes <em class="parameter"><code>writer</code></em> to an empty instance
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr></tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_init_with_buffer ()">
+<div class="refsect2">
 <a name="gst-byte-writer-init-with-buffer"></a><h3>gst_byte_writer_init_with_buffer ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_init_with_buffer    (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>,
@@ -419,7 +415,7 @@ read the complete buffer from the <a class="link" href="gstreamer-libs-GstByteWr
 </p>
 <p>
 </p>
-<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Note</h3>
 <em class="parameter"><code>buffer</code></em> must be writable</div>
 <p>
@@ -430,25 +426,23 @@ read the complete buffer from the <a class="link" href="gstreamer-libs-GstByteWr
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td>Buffer used for writing
+<td>Buffer used for writing. <span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>initialized</code></em> :</span></p></td>
-<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the complete data can be read from the beginning
-</td>
+<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the complete data can be read from the beginning</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_init_with_data ()">
+<div class="refsect2">
 <a name="gst-byte-writer-init-with-data"></a><h3>gst_byte_writer_init_with_data ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_init_with_data      (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
@@ -465,30 +459,28 @@ read <em class="parameter"><code>size</code></em> bytes from the <a class="link"
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>Memory area for writing
+<td>Memory
+area for writing. <span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym> callee-allocated][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=size][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td>Size of <em class="parameter"><code>data</code></em> in bytes
-</td>
+<td>Size of <em class="parameter"><code>data</code></em> in bytes</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>initialized</code></em> :</span></p></td>
-<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the complete data can be read from the beginning
-</td>
+<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the complete data can be read from the beginning</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_init_with_size ()">
+<div class="refsect2">
 <a name="gst-byte-writer-init-with-size"></a><h3>gst_byte_writer_init_with_size ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_init_with_size      (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> size</code></em>,
@@ -502,25 +494,22 @@ Initializes <em class="parameter"><code>writer</code></em> with the given initia
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td>Initial size of data
-</td>
+<td>Initial size of data</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>fixed</code></em> :</span></p></td>
-<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the data can't be reallocated
-</td>
+<td>If <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> the data can't be reallocated</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_free ()">
+<div class="refsect2">
 <a name="gst-byte-writer-free"></a><h3>gst_byte_writer_free ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_free                (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>);</pre>
 <p>
@@ -531,46 +520,22 @@ Frees <em class="parameter"><code>writer</code></em> and all memory allocated by
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance. <span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr></tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_free_and_get_buffer ()">
+<div class="refsect2">
 <a name="gst-byte-writer-free-and-get-buffer"></a><h3>gst_byte_writer_free_and_get_buffer ()</h3>
 <pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         gst_byte_writer_free_and_get_buffer (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>);</pre>
 <p>
 Frees <em class="parameter"><code>writer</code></em> and all memory allocated by it except
 the current data, which is returned as <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a>.
 </p>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
-<td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
-</tr>
-<tr>
-<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the current data as buffer. <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#gst-buffer-unref"><code class="function">gst_buffer_unref()</code></a> after usage.
-
-</td>
-</tr>
-</tbody>
-</table></div>
-<p class="since">Since 0.10.26</p>
-</div>
-<hr>
-<div class="refsect2" title="gst_byte_writer_free_and_get_data ()">
-<a name="gst-byte-writer-free-and-get-data"></a><h3>gst_byte_writer_free_and_get_data ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a> *            gst_byte_writer_free_and_get_data   (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>);</pre>
 <p>
-Frees <em class="parameter"><code>writer</code></em> and all memory allocated by it except
-the current data, which is returned.
+Free-function: gst_buffer_unref
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -578,13 +543,13 @@ the current data, which is returned.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance. <span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the current data. <a href="http://library.gnome.org/devel/glib/unstable/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> after usage.
-
+<td>the current data as buffer. <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#gst-buffer-unref"><code class="function">gst_buffer_unref()</code></a>
+after usage. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -592,7 +557,36 @@ the current data, which is returned.
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_reset ()">
+<div class="refsect2">
+<a name="gst-byte-writer-free-and-get-data"></a><h3>gst_byte_writer_free_and_get_data ()</h3>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a> *            gst_byte_writer_free_and_get_data   (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>);</pre>
+<p>
+Frees <em class="parameter"><code>writer</code></em> and all memory allocated by it except
+the current data, which is returned.
+</p>
+<p>
+Free-function: g_free
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
+<td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance. <span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td>the current data. <a href="http://library.gnome.org/devel/glib/unstable/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> after usage. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+<p class="since">Since 0.10.26</p>
+</div>
+<hr>
+<div class="refsect2">
 <a name="gst-byte-writer-reset"></a><h3>gst_byte_writer_reset ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_reset               (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>);</pre>
 <p>
@@ -604,18 +598,20 @@ owned by <em class="parameter"><code>writer</code></em>.
 <tbody><tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr></tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_reset_and_get_data ()">
+<div class="refsect2">
 <a name="gst-byte-writer-reset-and-get-data"></a><h3>gst_byte_writer_reset_and_get_data ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="returnvalue">guint8</span></a> *            gst_byte_writer_reset_and_get_data  (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>);</pre>
 <p>
 Resets <em class="parameter"><code>writer</code></em> and returns the current data.
+</p>
+<p>
+Free-function: g_free
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -623,13 +619,11 @@ Resets <em class="parameter"><code>writer</code></em> and returns the current da
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the current data. <a href="http://library.gnome.org/devel/glib/unstable/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> after usage.
-
+<td>the current data. <a href="http://library.gnome.org/devel/glib/unstable/glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a> after usage. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -637,26 +631,28 @@ Resets <em class="parameter"><code>writer</code></em> and returns the current da
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_reset_and_get_buffer ()">
+<div class="refsect2">
 <a name="gst-byte-writer-reset-and-get-buffer"></a><h3>gst_byte_writer_reset_and_get_buffer ()</h3>
 <pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         gst_byte_writer_reset_and_get_buffer
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>);</pre>
 <p>
 Resets <em class="parameter"><code>writer</code></em> and returns the current data as buffer.
 </p>
+<p>
+Free-function: gst_buffer_unref
+</p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the current data as buffer. <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#gst-buffer-unref"><code class="function">gst_buffer_unref()</code></a> after usage.
-
+<td>the current data as buffer. <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#gst-buffer-unref"><code class="function">gst_buffer_unref()</code></a>
+after usage. <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
@@ -664,7 +660,7 @@ Resets <em class="parameter"><code>writer</code></em> and returns the current da
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_get_pos ()">
+<div class="refsect2">
 <a name="gst-byte-writer-get-pos"></a><h3>gst_byte_writer_get_pos ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_byte_writer_get_pos             (<em class="parameter"><code>const <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>);</pre>
 <div class="variablelist"><table border="0">
@@ -673,21 +669,18 @@ Resets <em class="parameter"><code>writer</code></em> and returns the current da
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The current position of the read/write cursor
-
-</td>
+<td>The current position of the read/write cursor</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_set_pos ()">
+<div class="refsect2">
 <a name="gst-byte-writer-set-pos"></a><h3>gst_byte_writer_set_pos ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_set_pos             (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> pos</code></em>);</pre>
@@ -701,26 +694,23 @@ can only be between 0 and the current size.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pos</code></em> :</span></p></td>
-<td>new position
-</td>
+<td>new position</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the new position could be set
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the new position could be set</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_get_remaining ()">
+<div class="refsect2">
 <a name="gst-byte-writer-get-remaining"></a><h3>gst_byte_writer_get_remaining ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_byte_writer_get_remaining       (<em class="parameter"><code>const <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>);</pre>
 <p>
@@ -733,21 +723,18 @@ Returns the remaining size of data that can still be written. If
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the remaining size of data that can still be written
-
-</td>
+<td>the remaining size of data that can still be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_get_size ()">
+<div class="refsect2">
 <a name="gst-byte-writer-get-size"></a><h3>gst_byte_writer_get_size ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_byte_writer_get_size            (<em class="parameter"><code>const <a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>);</pre>
 <div class="variablelist"><table border="0">
@@ -756,21 +743,18 @@ Returns the remaining size of data that can still be written. If
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The current, initialized size of the data
-
-</td>
+<td>The current, initialized size of the data</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_ensure_free_space ()">
+<div class="refsect2">
 <a name="gst-byte-writer-ensure-free-space"></a><h3>gst_byte_writer_ensure_free_space ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_ensure_free_space   (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> size</code></em>);</pre>
@@ -784,26 +768,23 @@ available and reallocates if necessary.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td>Number of bytes that should be available
-</td>
+<td>Number of bytes that should be available</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if at least <em class="parameter"><code>size</code></em> bytes are still available
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if at least <em class="parameter"><code>size</code></em> bytes are still available</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int8 ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int8"></a><h3>gst_byte_writer_put_int8 ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_int8            (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint8"><span class="type">gint8</span></a> val</code></em>);</pre>
@@ -816,26 +797,23 @@ Writes a signed 8 bit integer to <em class="parameter"><code>writer</code></em>.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int16_be ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int16-be"></a><h3>gst_byte_writer_put_int16_be ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_int16_be        (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint16"><span class="type">gint16</span></a> val</code></em>);</pre>
@@ -848,26 +826,23 @@ Writes a signed big endian 16 bit integer to <em class="parameter"><code>writer<
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int16_le ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int16-le"></a><h3>gst_byte_writer_put_int16_le ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_int16_le        (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint16"><span class="type">gint16</span></a> val</code></em>);</pre>
@@ -880,26 +855,23 @@ Writes a signed little endian 16 bit integer to <em class="parameter"><code>writ
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int24_be ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int24-be"></a><h3>gst_byte_writer_put_int24_be ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_int24_be        (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint32"><span class="type">gint32</span></a> val</code></em>);</pre>
@@ -912,26 +884,23 @@ Writes a signed big endian 24 bit integer to <em class="parameter"><code>writer<
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int24_le ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int24-le"></a><h3>gst_byte_writer_put_int24_le ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_int24_le        (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint32"><span class="type">gint32</span></a> val</code></em>);</pre>
@@ -944,26 +913,23 @@ Writes a signed little endian 24 bit integer to <em class="parameter"><code>writ
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int32_be ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int32-be"></a><h3>gst_byte_writer_put_int32_be ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_int32_be        (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint32"><span class="type">gint32</span></a> val</code></em>);</pre>
@@ -976,26 +942,23 @@ Writes a signed big endian 32 bit integer to <em class="parameter"><code>writer<
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int32_le ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int32-le"></a><h3>gst_byte_writer_put_int32_le ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_int32_le        (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint32"><span class="type">gint32</span></a> val</code></em>);</pre>
@@ -1008,26 +971,23 @@ Writes a signed little endian 32 bit integer to <em class="parameter"><code>writ
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int64_be ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int64-be"></a><h3>gst_byte_writer_put_int64_be ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_int64_be        (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> val</code></em>);</pre>
@@ -1040,26 +1000,23 @@ Writes a signed big endian 64 bit integer to <em class="parameter"><code>writer<
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int64_le ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int64-le"></a><h3>gst_byte_writer_put_int64_le ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_int64_le        (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint64"><span class="type">gint64</span></a> val</code></em>);</pre>
@@ -1072,26 +1029,23 @@ Writes a signed little endian 64 bit integer to <em class="parameter"><code>writ
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint8 ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint8"></a><h3>gst_byte_writer_put_uint8 ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_uint8           (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> val</code></em>);</pre>
@@ -1104,26 +1058,23 @@ Writes a unsigned 8 bit integer to <em class="parameter"><code>writer</code></em
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint16_be ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint16-be"></a><h3>gst_byte_writer_put_uint16_be ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_uint16_be       (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> val</code></em>);</pre>
@@ -1136,26 +1087,23 @@ Writes a unsigned big endian 16 bit integer to <em class="parameter"><code>write
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint16_le ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint16-le"></a><h3>gst_byte_writer_put_uint16_le ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_uint16_le       (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> val</code></em>);</pre>
@@ -1168,26 +1116,23 @@ Writes a unsigned little endian 16 bit integer to <em class="parameter"><code>wr
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint24_be ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint24-be"></a><h3>gst_byte_writer_put_uint24_be ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_uint24_be       (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> val</code></em>);</pre>
@@ -1200,26 +1145,23 @@ Writes a unsigned big endian 24 bit integer to <em class="parameter"><code>write
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint24_le ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint24-le"></a><h3>gst_byte_writer_put_uint24_le ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_uint24_le       (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> val</code></em>);</pre>
@@ -1232,26 +1174,23 @@ Writes a unsigned little endian 24 bit integer to <em class="parameter"><code>wr
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint32_be ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint32-be"></a><h3>gst_byte_writer_put_uint32_be ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_uint32_be       (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> val</code></em>);</pre>
@@ -1264,26 +1203,23 @@ Writes a unsigned big endian 32 bit integer to <em class="parameter"><code>write
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint32_le ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint32-le"></a><h3>gst_byte_writer_put_uint32_le ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_uint32_le       (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> val</code></em>);</pre>
@@ -1296,26 +1232,23 @@ Writes a unsigned little endian 32 bit integer to <em class="parameter"><code>wr
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint64_be ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint64-be"></a><h3>gst_byte_writer_put_uint64_be ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_uint64_be       (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> val</code></em>);</pre>
@@ -1328,26 +1261,23 @@ Writes a unsigned big endian 64 bit integer to <em class="parameter"><code>write
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint64_le ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint64-le"></a><h3>gst_byte_writer_put_uint64_le ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_uint64_le       (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> val</code></em>);</pre>
@@ -1360,26 +1290,23 @@ Writes a unsigned little endian 64 bit integer to <em class="parameter"><code>wr
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_float32_be ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-float32-be"></a><h3>gst_byte_writer_put_float32_be ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_float32_be      (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> val</code></em>);</pre>
@@ -1392,26 +1319,23 @@ Writes a big endian 32 bit float to <em class="parameter"><code>writer</code></e
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.27</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_float32_le ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-float32-le"></a><h3>gst_byte_writer_put_float32_le ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_float32_le      (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> val</code></em>);</pre>
@@ -1424,26 +1348,23 @@ Writes a little endian 32 bit float to <em class="parameter"><code>writer</code>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.27</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_float64_be ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-float64-be"></a><h3>gst_byte_writer_put_float64_be ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_float64_be      (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> val</code></em>);</pre>
@@ -1456,26 +1377,23 @@ Writes a big endian 64 bit float to <em class="parameter"><code>writer</code></e
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.27</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_float64_le ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-float64-le"></a><h3>gst_byte_writer_put_float64_le ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_float64_le      (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a> val</code></em>);</pre>
@@ -1488,26 +1406,23 @@ Writes a little endian 64 bit float to <em class="parameter"><code>writer</code>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.27</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_string()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-string"></a><h3>gst_byte_writer_put_string()</h3>
 <pre class="programlisting">#define             gst_byte_writer_put_string(writer, data)</pre>
 <p>
@@ -1521,26 +1436,24 @@ ISO-8859-1).
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>Null terminated string
+<td>Null terminated string. <span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the string could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the string could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_string_utf16 ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-string-utf16"></a><h3>gst_byte_writer_put_string_utf16 ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_string_utf16    (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> *data</code></em>);</pre>
@@ -1553,26 +1466,24 @@ Writes a NUL-terminated UTF16 string to <em class="parameter"><code>writer</code
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>UTF16 string to write
+<td>UTF16 string to write. <span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_string_utf32 ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-string-utf32"></a><h3>gst_byte_writer_put_string_utf32 ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_string_utf32    (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> *data</code></em>);</pre>
@@ -1585,26 +1496,24 @@ Writes a NUL-terminated UTF32 string to <em class="parameter"><code>writer</code
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>UTF32 string to write
+<td>UTF32 string to write. <span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_string_utf8 ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-string-utf8"></a><h3>gst_byte_writer_put_string_utf8 ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_string_utf8     (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *data</code></em>);</pre>
@@ -1617,26 +1526,25 @@ Writes a NUL-terminated UTF8 string to <em class="parameter"><code>writer</code>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>UTF8 string to write
+<td>UTF8 string to
+write. <span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Override the parsed C type with given type"><span class="acronym">type</span></acronym> utf8]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_data ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-data"></a><h3>gst_byte_writer_put_data ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_put_data            (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
@@ -1650,31 +1558,28 @@ Writes <em class="parameter"><code>size</code></em> bytes of <em class="paramete
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>Data to write
+<td>Data to write. <span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=size]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td>Size of <em class="parameter"><code>data</code></em> in bytes
-</td>
+<td>Size of <em class="parameter"><code>data</code></em> in bytes</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.26</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_fill ()">
+<div class="refsect2">
 <a name="gst-byte-writer-fill"></a><h3>gst_byte_writer_fill ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_byte_writer_fill                (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> value</code></em>,
@@ -1688,54 +1593,33 @@ Writes <em class="parameter"><code>size</code></em> bytes containing <em class="
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>value</code></em> :</span></p></td>
-<td>Value to be writen
-</td>
+<td>Value to be writen</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td>Number of bytes to be writen
-</td>
+<td>Number of bytes to be writen</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written
-
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the value could be written</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.27</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int8_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int8-unchecked"></a><h3>gst_byte_writer_put_int8_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_int8_unchecked  (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint8"><span class="type">gint8</span></a> val</code></em>);</pre>
-<p>
-</p>
-<div class="variablelist"><table border="0">
-<col align="left" valign="top">
-<tbody>
-<tr>
-<td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
-<td>
-</td>
-</tr>
-<tr>
-<td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>
-</td>
-</tr>
-</tbody>
-</table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int16_be_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int16-be-unchecked"></a><h3>gst_byte_writer_put_int16_be_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_int16_be_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -1750,20 +1634,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int16_le_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int16-le-unchecked"></a><h3>gst_byte_writer_put_int16_le_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_int16_le_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -1778,20 +1660,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int24_be_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int24-be-unchecked"></a><h3>gst_byte_writer_put_int24_be_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_int24_be_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -1806,20 +1686,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int24_le_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int24-le-unchecked"></a><h3>gst_byte_writer_put_int24_le_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_int24_le_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -1834,20 +1712,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int32_be_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int32-be-unchecked"></a><h3>gst_byte_writer_put_int32_be_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_int32_be_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -1862,20 +1738,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int32_le_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int32-le-unchecked"></a><h3>gst_byte_writer_put_int32_le_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_int32_le_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -1890,20 +1764,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int64_be_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int64-be-unchecked"></a><h3>gst_byte_writer_put_int64_be_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_int64_be_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -1918,20 +1790,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_int64_le_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-int64-le-unchecked"></a><h3>gst_byte_writer_put_int64_le_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_int64_le_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -1946,20 +1816,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint8_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint8-unchecked"></a><h3>gst_byte_writer_put_uint8_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_uint8_unchecked (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> val</code></em>);</pre>
@@ -1973,20 +1841,18 @@ is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint16_be_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint16-be-unchecked"></a><h3>gst_byte_writer_put_uint16_be_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_uint16_be_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2001,20 +1867,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint16_le_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint16-le-unchecked"></a><h3>gst_byte_writer_put_uint16_le_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_uint16_le_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2029,20 +1893,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint24_be_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint24-be-unchecked"></a><h3>gst_byte_writer_put_uint24_be_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_uint24_be_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2057,20 +1919,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint24_le_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint24-le-unchecked"></a><h3>gst_byte_writer_put_uint24_le_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_uint24_le_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2085,20 +1945,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint32_be_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint32-be-unchecked"></a><h3>gst_byte_writer_put_uint32_be_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_uint32_be_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2113,20 +1971,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint32_le_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint32-le-unchecked"></a><h3>gst_byte_writer_put_uint32_le_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_uint32_le_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2141,20 +1997,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint64_be_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint64-be-unchecked"></a><h3>gst_byte_writer_put_uint64_be_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_uint64_be_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2169,20 +2023,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_uint64_le_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-uint64-le-unchecked"></a><h3>gst_byte_writer_put_uint64_le_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_uint64_le_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2197,20 +2049,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_float32_be_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-float32-be-unchecked"></a><h3>gst_byte_writer_put_float32_be_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_float32_be_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2225,20 +2075,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_float32_le_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-float32-le-unchecked"></a><h3>gst_byte_writer_put_float32_le_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_float32_le_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2253,20 +2101,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_float64_be_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-float64-be-unchecked"></a><h3>gst_byte_writer_put_float64_be_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_float64_be_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2281,20 +2127,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_float64_le_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-float64-le-unchecked"></a><h3>gst_byte_writer_put_float64_le_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_float64_le_unchecked
                                                         (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
@@ -2309,20 +2153,18 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>val</code></em> :</span></p></td>
-<td>Value to write
-</td>
+<td>Value to write</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_put_data_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-put-data-unchecked"></a><h3>gst_byte_writer_put_data_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_put_data_unchecked  (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>,
@@ -2337,25 +2179,23 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>Data to write
+<td>Data to write. <span class="annotation">[<acronym title="Parameter for input. Default is transfer none."><span class="acronym">in</span></acronym>][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=size]</span>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td>Size of <em class="parameter"><code>data</code></em> in bytes
-</td>
+<td>Size of <em class="parameter"><code>data</code></em> in bytes</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.31</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_byte_writer_fill_unchecked ()">
+<div class="refsect2">
 <a name="gst-byte-writer-fill-unchecked"></a><h3>gst_byte_writer_fill_unchecked ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_byte_writer_fill_unchecked      (<em class="parameter"><code><a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> *writer</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> value</code></em>,
@@ -2370,18 +2210,15 @@ checking if there is enough free space available in the byte writer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>writer</code></em> :</span></p></td>
 <td>
-<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance
-</td>
+<a class="link" href="gstreamer-libs-GstByteWriter.html#GstByteWriter" title="GstByteWriter"><span class="type">GstByteWriter</span></a> instance</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>value</code></em> :</span></p></td>
-<td>Value to be writen
-</td>
+<td>Value to be writen</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>size</code></em> :</span></p></td>
-<td>Number of bytes to be writen
-</td>
+<td>Number of bytes to be writen</td>
 </tr>
 </tbody>
 </table></div>
@@ -2391,6 +2228,6 @@ checking if there is enough free space available in the byte writer.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

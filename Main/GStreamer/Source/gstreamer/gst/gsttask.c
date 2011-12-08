@@ -82,6 +82,9 @@
 GST_DEBUG_CATEGORY_STATIC (task_debug);
 #define GST_CAT_DEFAULT (task_debug)
 
+#define SET_TASK_STATE(t,s) (g_atomic_int_set (&GST_TASK_STATE(t), (s)))
+#define GET_TASK_STATE(t)   (g_atomic_int_get (&GST_TASK_STATE(t)))
+
 #define GST_TASK_GET_PRIVATE(obj)  \
    (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GST_TYPE_TASK, GstTaskPrivate))
 
@@ -102,6 +105,36 @@ struct _GstTaskPrivate
   gpointer id;
   GstTaskPool *pool_id;
 };
+
+#ifdef _MSC_VER
+#include <windows.h>
+
+struct _THREADNAME_INFO
+{
+  DWORD dwType;                 // must be 0x1000
+  LPCSTR szName;                // pointer to name (in user addr space)
+  DWORD dwThreadID;             // thread ID (-1=caller thread)
+  DWORD dwFlags;                // reserved for future use, must be zero
+};
+typedef struct _THREADNAME_INFO THREADNAME_INFO;
+
+void
+SetThreadName (DWORD dwThreadID, LPCSTR szThreadName)
+{
+  THREADNAME_INFO info;
+  info.dwType = 0x1000;
+  info.szName = szThreadName;
+  info.dwThreadID = dwThreadID;
+  info.dwFlags = 0;
+
+  __try {
+    RaiseException (0x406D1388, 0, sizeof (info) / sizeof (DWORD),
+        (DWORD *) & info);
+  }
+  __except (EXCEPTION_CONTINUE_EXECUTION) {
+  }
+}
+#endif
 
 static void gst_task_finalize (GObject * object);
 
@@ -155,7 +188,7 @@ gst_task_init (GstTask * task)
   task->abidata.ABI.thread = NULL;
   task->lock = NULL;
   task->cond = g_cond_new ();
-  task->state = GST_TASK_STOPPED;
+  SET_TASK_STATE (task, GST_TASK_STOPPED);
   task->priv->prio_set = FALSE;
 
   /* use the default klass pool for this task, users can
@@ -196,6 +229,7 @@ gst_task_configure_name (GstTask * task)
   const gchar *name;
   gchar thread_name[17] = { 0, };
 
+  GST_OBJECT_LOCK (task);
   name = GST_OBJECT_NAME (task);
 
   /* set the thread name to something easily identifiable */
@@ -206,6 +240,15 @@ gst_task_configure_name (GstTask * task)
     if (prctl (PR_SET_NAME, (unsigned long int) thread_name, 0, 0, 0))
       GST_DEBUG_OBJECT (task, "Failed to set thread name");
   }
+  GST_OBJECT_UNLOCK (task);
+#endif
+#ifdef _MSC_VER
+  const gchar *name;
+  name = GST_OBJECT_NAME (task);
+
+  /* set the thread name to something easily identifiable */
+  GST_DEBUG_OBJECT (task, "Setting thread name to '%s'", name);
+  SetThreadName (-1, name);
 #endif
 }
 
@@ -226,7 +269,7 @@ gst_task_func (GstTask * task)
    * mark our state running so that nobody can mess with
    * the mutex. */
   GST_OBJECT_LOCK (task);
-  if (task->state == GST_TASK_STOPPED)
+  if (GET_TASK_STATE (task) == GST_TASK_STOPPED)
     goto exit;
   lock = GST_TASK_GET_LOCK (task);
   if (G_UNLIKELY (lock == NULL))
@@ -243,37 +286,38 @@ gst_task_func (GstTask * task)
 
   /* locking order is TASK_LOCK, LOCK */
   g_static_rec_mutex_lock (lock);
-  GST_OBJECT_LOCK (task);
   /* configure the thread name now */
   gst_task_configure_name (task);
 
-  while (G_LIKELY (task->state != GST_TASK_STOPPED)) {
-    while (G_UNLIKELY (task->state == GST_TASK_PAUSED)) {
-      gint t;
-
-      t = g_static_rec_mutex_unlock_full (lock);
-      if (t <= 0) {
-        g_warning ("wrong STREAM_LOCK count %d", t);
-      }
-      GST_TASK_SIGNAL (task);
-      GST_TASK_WAIT (task);
-      GST_OBJECT_UNLOCK (task);
-      /* locking order.. */
-      if (t > 0)
-        g_static_rec_mutex_lock_full (lock, t);
-
+  while (G_LIKELY (GET_TASK_STATE (task) != GST_TASK_STOPPED)) {
+    if (G_UNLIKELY (GET_TASK_STATE (task) == GST_TASK_PAUSED)) {
       GST_OBJECT_LOCK (task);
-      if (G_UNLIKELY (task->state == GST_TASK_STOPPED))
-        goto done;
+      while (G_UNLIKELY (GST_TASK_STATE (task) == GST_TASK_PAUSED)) {
+        gint t;
+
+        t = g_static_rec_mutex_unlock_full (lock);
+        if (t <= 0) {
+          g_warning ("wrong STREAM_LOCK count %d", t);
+        }
+        GST_TASK_SIGNAL (task);
+        GST_TASK_WAIT (task);
+        GST_OBJECT_UNLOCK (task);
+        /* locking order.. */
+        if (t > 0)
+          g_static_rec_mutex_lock_full (lock, t);
+
+        GST_OBJECT_LOCK (task);
+        if (G_UNLIKELY (GET_TASK_STATE (task) == GST_TASK_STOPPED)) {
+          GST_OBJECT_UNLOCK (task);
+          goto done;
+        }
+      }
+      GST_OBJECT_UNLOCK (task);
     }
-    GST_OBJECT_UNLOCK (task);
 
     task->func (task->data);
-
-    GST_OBJECT_LOCK (task);
   }
 done:
-  GST_OBJECT_UNLOCK (task);
   g_static_rec_mutex_unlock (lock);
 
   GST_OBJECT_LOCK (task);
@@ -335,7 +379,7 @@ gst_task_cleanup_all (void)
 /**
  * gst_task_create:
  * @func: The #GstTaskFunction to use
- * @data: User data to pass to @func
+ * @data: (closure): User data to pass to @func
  *
  * Create a new Task that will repeatedly call the provided @func
  * with @data as a parameter. Typically the task will run in
@@ -351,7 +395,7 @@ gst_task_cleanup_all (void)
  * gst_task_set_lock() function. This lock will always be acquired while
  * @func is called.
  *
- * Returns: A new #GstTask.
+ * Returns: (transfer full): A new #GstTask.
  *
  * MT safe.
  */
@@ -445,7 +489,7 @@ gst_task_set_priority (GstTask * task, GThreadPriority priority)
  *
  * MT safe.
  *
- * Returns: the #GstTaskPool used by @task. gst_object_unref()
+ * Returns: (transfer full): the #GstTaskPool used by @task. gst_object_unref()
  * after usage.
  *
  * Since: 0.10.24
@@ -470,7 +514,7 @@ gst_task_get_pool (GstTask * task)
 /**
  * gst_task_set_pool:
  * @task: a #GstTask
- * @pool: a #GstTaskPool
+ * @pool: (transfer none): a #GstTaskPool
  *
  * Set @pool as the new GstTaskPool for @task. Any new streaming threads that
  * will be created by @task will now use @pool.
@@ -506,8 +550,8 @@ gst_task_set_pool (GstTask * task, GstTaskPool * pool)
 /**
  * gst_task_set_thread_callbacks:
  * @task: The #GstTask to use
- * @callbacks: a #GstTaskThreadCallbacks pointer
- * @user_data: user data passed to the callbacks
+ * @callbacks: (in): a #GstTaskThreadCallbacks pointer
+ * @user_data: (closure): user data passed to the callbacks
  * @notify: called when @user_data is no longer referenced
  *
  * Set callbacks which will be executed when a new thread is needed, the thread
@@ -572,9 +616,7 @@ gst_task_get_state (GstTask * task)
 
   g_return_val_if_fail (GST_IS_TASK (task), GST_TASK_STOPPED);
 
-  GST_OBJECT_LOCK (task);
-  result = task->state;
-  GST_OBJECT_UNLOCK (task);
+  result = GET_TASK_STATE (task);
 
   return result;
 }
@@ -646,9 +688,9 @@ gst_task_set_state (GstTask * task, GstTaskState state)
       goto no_lock;
 
   /* if the state changed, do our thing */
-  old = task->state;
+  old = GET_TASK_STATE (task);
   if (old != state) {
-    task->state = state;
+    SET_TASK_STATE (task, state);
     switch (old) {
       case GST_TASK_STOPPED:
         /* If the task already has a thread scheduled we don't have to do
@@ -772,7 +814,7 @@ gst_task_join (GstTask * task)
   GST_OBJECT_LOCK (task);
   if (G_UNLIKELY (tself == task->abidata.ABI.thread))
     goto joining_self;
-  task->state = GST_TASK_STOPPED;
+  SET_TASK_STATE (task, GST_TASK_STOPPED);
   /* signal the state change for when it was blocked in PAUSED. */
   GST_TASK_SIGNAL (task);
   /* we set the running flag when pushing the task on the thread pool.

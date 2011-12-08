@@ -4,6 +4,7 @@
   <chapters>
     <sub name="GStreamer Libraries" link="gstreamer-libs.html">
       <sub name="GStreamer Base and Utillity Classes" link="gstreamer-base.html">
+        <sub name="GstBaseParse" link="gstreamer-libs-GstBaseParse.html"/>
         <sub name="GstBaseSrc" link="GstBaseSrc.html"/>
         <sub name="GstBaseSink" link="GstBaseSink.html"/>
         <sub name="GstBaseTransform" link="GstBaseTransform.html"/>
@@ -40,11 +41,37 @@
     <sub name="Object Hierarchy" link="gstreamer-hierarchy.html"/>
     <sub name="API Index" link="api-index-full.html"/>
     <sub name="Index of deprecated API" link="api-index-deprecated.html"/>
+    <sub name="Annotation Glossary" link="annotation-glossary.html"/>
   </chapters>
   <functions>
-    <keyword type="" name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#id555724"/>
-    <keyword type="struct" name="GstBaseSrc" link="GstBaseSrc.html#GstBaseSrc-struct"/>
-    <keyword type="struct" name="GstBaseSrcClass" link="GstBaseSrc.html#GstBaseSrcClass"/>
+    <keyword type="struct" name="struct GstBaseParse" link="gstreamer-libs-GstBaseParse.html#GstBaseParse"/>
+    <keyword type="struct" name="struct GstBaseParseClass" link="gstreamer-libs-GstBaseParse.html#GstBaseParseClass"/>
+    <keyword type="function" name="gst_base_parse_set_duration ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-duration" since="0.10.33"/>
+    <keyword type="function" name="gst_base_parse_set_average_bitrate ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-average-bitrate" since="0.10.33"/>
+    <keyword type="function" name="gst_base_parse_set_min_frame_size ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-min-frame-size" since="0.10.33"/>
+    <keyword type="function" name="gst_base_parse_set_passthrough ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-passthrough" since="0.10.33"/>
+    <keyword type="function" name="gst_base_parse_set_syncable ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-syncable" since="0.10.33"/>
+    <keyword type="function" name="gst_base_parse_set_has_timing_info ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-has-timing-info" since="0.10.33"/>
+    <keyword type="function" name="gst_base_parse_set_frame_rate ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-frame-rate" since="0.10.33"/>
+    <keyword type="function" name="gst_base_parse_convert_default ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-convert-default" since="0.10.33"/>
+    <keyword type="function" name="gst_base_parse_add_index_entry ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-add-index-entry" since="0.10.33"/>
+    <keyword type="struct" name="GstBaseParseFrame" link="gstreamer-libs-GstBaseParse.html#GstBaseParseFrame" since="0.10.33"/>
+    <keyword type="enum" name="enum GstBaseParseFrameFlags" link="gstreamer-libs-GstBaseParse.html#GstBaseParseFrameFlags" since="0.10.33"/>
+    <keyword type="function" name="gst_base_parse_frame_new ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-frame-new" since="0.10.33"/>
+    <keyword type="function" name="gst_base_parse_frame_init ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-frame-init" since="0.10.33"/>
+    <keyword type="function" name="gst_base_parse_frame_free ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-frame-free"/>
+    <keyword type="function" name="gst_base_parse_push_frame ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-push-frame" since="0.10.33"/>
+    <keyword type="macro" name="GST_BASE_PARSE_DRAINING()" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-DRAINING:CAPS" since="0.10.33"/>
+    <keyword type="macro" name="GST_BASE_PARSE_FLAG_DRAINING" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-FLAG-DRAINING:CAPS"/>
+    <keyword type="macro" name="GST_BASE_PARSE_FLAG_LOST_SYNC" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-FLAG-LOST-SYNC:CAPS"/>
+    <keyword type="macro" name="GST_BASE_PARSE_FLOW_DROPPED" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-FLOW-DROPPED:CAPS" since="0.10.33"/>
+    <keyword type="macro" name="GST_BASE_PARSE_FLOW_QUEUED" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-FLOW-QUEUED:CAPS" since="0.10.33"/>
+    <keyword type="macro" name="GST_BASE_PARSE_LOST_SYNC()" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-LOST-SYNC:CAPS" since="0.10.33"/>
+    <keyword type="macro" name="GST_BASE_PARSE_SINK_PAD()" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-SINK-PAD:CAPS" since="0.10.33"/>
+    <keyword type="macro" name="GST_BASE_PARSE_SRC_PAD()" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-SRC-PAD:CAPS" since="0.10.33"/>
+    <keyword type="" name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#idp9283984"/>
+    <keyword type="struct" name="struct GstBaseSrc" link="GstBaseSrc.html#GstBaseSrc-struct"/>
+    <keyword type="struct" name="struct GstBaseSrcClass" link="GstBaseSrc.html#GstBaseSrcClass"/>
     <keyword type="enum" name="enum GstBaseSrcFlags" link="GstBaseSrc.html#GstBaseSrcFlags"/>
     <keyword type="function" name="gst_base_src_wait_playing ()" link="GstBaseSrc.html#gst-base-src-wait-playing" since="0.10.12"/>
     <keyword type="function" name="gst_base_src_is_live ()" link="GstBaseSrc.html#gst-base-src-is-live"/>
@@ -61,14 +88,14 @@
     <keyword type="property" name="The &quot;do-timestamp&quot; property" link="GstBaseSrc.html#GstBaseSrc--do-timestamp"/>
     <keyword type="property" name="The &quot;num-buffers&quot; property" link="GstBaseSrc.html#GstBaseSrc--num-buffers"/>
     <keyword type="property" name="The &quot;typefind&quot; property" link="GstBaseSrc.html#GstBaseSrc--typefind"/>
-    <keyword type="struct" name="GstBaseSink" link="GstBaseSink.html#GstBaseSink-struct"/>
-    <keyword type="struct" name="GstBaseSinkClass" link="GstBaseSink.html#GstBaseSinkClass"/>
+    <keyword type="struct" name="struct GstBaseSink" link="GstBaseSink.html#GstBaseSink-struct"/>
+    <keyword type="struct" name="struct GstBaseSinkClass" link="GstBaseSink.html#GstBaseSinkClass"/>
     <keyword type="function" name="gst_base_sink_query_latency ()" link="GstBaseSink.html#gst-base-sink-query-latency" since="0.10.12"/>
     <keyword type="function" name="gst_base_sink_get_latency ()" link="GstBaseSink.html#gst-base-sink-get-latency" since="0.10.12"/>
-    <keyword type="function" name="gst_base_sink_do_preroll ()" link="GstBaseSink.html#gst-base-sink-do-preroll"/>
+    <keyword type="function" name="gst_base_sink_do_preroll ()" link="GstBaseSink.html#gst-base-sink-do-preroll" since="0.10.22"/>
     <keyword type="function" name="gst_base_sink_wait_preroll ()" link="GstBaseSink.html#gst-base-sink-wait-preroll" since="0.10.11"/>
-    <keyword type="function" name="gst_base_sink_wait_clock ()" link="GstBaseSink.html#gst-base-sink-wait-clock"/>
-    <keyword type="function" name="gst_base_sink_wait_eos ()" link="GstBaseSink.html#gst-base-sink-wait-eos"/>
+    <keyword type="function" name="gst_base_sink_wait_clock ()" link="GstBaseSink.html#gst-base-sink-wait-clock" since="0.10.20"/>
+    <keyword type="function" name="gst_base_sink_wait_eos ()" link="GstBaseSink.html#gst-base-sink-wait-eos" since="0.10.15"/>
     <keyword type="function" name="gst_base_sink_set_sync ()" link="GstBaseSink.html#gst-base-sink-set-sync" since="0.10.4"/>
     <keyword type="function" name="gst_base_sink_get_sync ()" link="GstBaseSink.html#gst-base-sink-get-sync" since="0.10.4"/>
     <keyword type="function" name="gst_base_sink_set_max_lateness ()" link="GstBaseSink.html#gst-base-sink-set-max-lateness" since="0.10.4"/>
@@ -86,6 +113,8 @@
     <keyword type="function" name="gst_base_sink_get_last_buffer ()" link="GstBaseSink.html#gst-base-sink-get-last-buffer" since="0.10.15"/>
     <keyword type="function" name="gst_base_sink_set_blocksize ()" link="GstBaseSink.html#gst-base-sink-set-blocksize" since="0.10.22"/>
     <keyword type="function" name="gst_base_sink_get_blocksize ()" link="GstBaseSink.html#gst-base-sink-get-blocksize" since="0.10.22"/>
+    <keyword type="function" name="gst_base_sink_get_throttle_time ()" link="GstBaseSink.html#gst-base-sink-get-throttle-time" since="0.10.33"/>
+    <keyword type="function" name="gst_base_sink_set_throttle_time ()" link="GstBaseSink.html#gst-base-sink-set-throttle-time" since="0.10.33"/>
     <keyword type="macro" name="GST_BASE_SINK_PAD()" link="GstBaseSink.html#GST-BASE-SINK-PAD:CAPS"/>
     <keyword type="property" name="The &quot;async&quot; property" link="GstBaseSink.html#GstBaseSink--async"/>
     <keyword type="property" name="The &quot;blocksize&quot; property" link="GstBaseSink.html#GstBaseSink--blocksize"/>
@@ -96,11 +125,12 @@
     <keyword type="property" name="The &quot;qos&quot; property" link="GstBaseSink.html#GstBaseSink--qos"/>
     <keyword type="property" name="The &quot;render-delay&quot; property" link="GstBaseSink.html#GstBaseSink--render-delay"/>
     <keyword type="property" name="The &quot;sync&quot; property" link="GstBaseSink.html#GstBaseSink--sync"/>
+    <keyword type="property" name="The &quot;throttle-time&quot; property" link="GstBaseSink.html#GstBaseSink--throttle-time"/>
     <keyword type="property" name="The &quot;ts-offset&quot; property" link="GstBaseSink.html#GstBaseSink--ts-offset"/>
-    <keyword type="" name="Use Cases" link="GstBaseTransform.html#id625128"/>
-    <keyword type="" name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#id610488"/>
-    <keyword type="struct" name="GstBaseTransform" link="GstBaseTransform.html#GstBaseTransform-struct"/>
-    <keyword type="struct" name="GstBaseTransformClass" link="GstBaseTransform.html#GstBaseTransformClass"/>
+    <keyword type="" name="Use Cases" link="GstBaseTransform.html#idp6758832"/>
+    <keyword type="" name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#idp5025520"/>
+    <keyword type="struct" name="struct GstBaseTransform" link="GstBaseTransform.html#GstBaseTransform-struct"/>
+    <keyword type="struct" name="struct GstBaseTransformClass" link="GstBaseTransform.html#GstBaseTransformClass"/>
     <keyword type="function" name="gst_base_transform_is_passthrough ()" link="GstBaseTransform.html#gst-base-transform-is-passthrough"/>
     <keyword type="function" name="gst_base_transform_set_passthrough ()" link="GstBaseTransform.html#gst-base-transform-set-passthrough"/>
     <keyword type="function" name="gst_base_transform_is_in_place ()" link="GstBaseTransform.html#gst-base-transform-is-in-place"/>
@@ -119,8 +149,8 @@
     <keyword type="macro" name="GST_BASE_TRANSFORM_LOCK()" link="GstBaseTransform.html#GST-BASE-TRANSFORM-LOCK:CAPS" since="0.10.13"/>
     <keyword type="macro" name="GST_BASE_TRANSFORM_UNLOCK()" link="GstBaseTransform.html#GST-BASE-TRANSFORM-UNLOCK:CAPS" since="0.10.13"/>
     <keyword type="property" name="The &quot;qos&quot; property" link="GstBaseTransform.html#GstBaseTransform--qos"/>
-    <keyword type="struct" name="GstPushSrc" link="GstPushSrc.html#GstPushSrc-struct"/>
-    <keyword type="struct" name="GstAdapter" link="GstAdapter.html#GstAdapter-struct"/>
+    <keyword type="struct" name="struct GstPushSrc" link="GstPushSrc.html#GstPushSrc-struct"/>
+    <keyword type="struct" name="struct GstAdapter" link="GstAdapter.html#GstAdapter-struct"/>
     <keyword type="function" name="gst_adapter_new ()" link="GstAdapter.html#gst-adapter-new"/>
     <keyword type="function" name="gst_adapter_clear ()" link="GstAdapter.html#gst-adapter-clear"/>
     <keyword type="function" name="gst_adapter_push ()" link="GstAdapter.html#gst-adapter-push"/>
@@ -360,8 +390,8 @@
     <keyword type="function" name="gst_byte_writer_put_float64_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float64-le-unchecked" since="0.10.31"/>
     <keyword type="function" name="gst_byte_writer_put_data_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-data-unchecked" since="0.10.31"/>
     <keyword type="function" name="gst_byte_writer_fill_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-fill-unchecked" since="0.10.31"/>
-    <keyword type="struct" name="GstCollectData" link="GstCollectPads.html#GstCollectData"/>
-    <keyword type="struct" name="GstCollectPads" link="GstCollectPads.html#GstCollectPads-struct"/>
+    <keyword type="struct" name="struct GstCollectData" link="GstCollectPads.html#GstCollectData"/>
+    <keyword type="struct" name="struct GstCollectPads" link="GstCollectPads.html#GstCollectPads-struct"/>
     <keyword type="function" name="GstCollectPadsFunction ()" link="GstCollectPads.html#GstCollectPadsFunction"/>
     <keyword type="function" name="GstCollectPadsClipFunction ()" link="GstCollectPads.html#GstCollectPadsClipFunction" since="0.10.26"/>
     <keyword type="function" name="GstCollectDataDestroyNotify ()" link="GstCollectPads.html#GstCollectDataDestroyNotify" since="0.10.12"/>
@@ -390,10 +420,10 @@
     <keyword type="function" name="GstTypeFindHelperGetRangeFunction ()" link="gstreamer-libs-GstTypeFindHelper.html#GstTypeFindHelperGetRangeFunction"/>
     <keyword type="function" name="gst_type_find_helper_get_range ()" link="gstreamer-libs-GstTypeFindHelper.html#gst-type-find-helper-get-range"/>
     <keyword type="function" name="gst_type_find_helper_get_range_ext ()" link="gstreamer-libs-GstTypeFindHelper.html#gst-type-find-helper-get-range-ext" since="0.10.26"/>
-    <keyword type="struct" name="GstDataQueue" link="gstreamer-libs-GstDataQueue.html#GstDataQueue" since="0.10.11"/>
-    <keyword type="struct" name="GstDataQueueSize" link="gstreamer-libs-GstDataQueue.html#GstDataQueueSize" since="0.10.11"/>
+    <keyword type="struct" name="struct GstDataQueue" link="gstreamer-libs-GstDataQueue.html#GstDataQueue" since="0.10.11"/>
+    <keyword type="struct" name="struct GstDataQueueSize" link="gstreamer-libs-GstDataQueue.html#GstDataQueueSize" since="0.10.11"/>
     <keyword type="function" name="GstDataQueueCheckFullFunction ()" link="gstreamer-libs-GstDataQueue.html#GstDataQueueCheckFullFunction" since="0.10.11"/>
-    <keyword type="struct" name="GstDataQueueItem" link="gstreamer-libs-GstDataQueue.html#GstDataQueueItem" since="0.10.11"/>
+    <keyword type="struct" name="struct GstDataQueueItem" link="gstreamer-libs-GstDataQueue.html#GstDataQueueItem" since="0.10.11"/>
     <keyword type="function" name="GstDataQueueEmptyCallback ()" link="gstreamer-libs-GstDataQueue.html#GstDataQueueEmptyCallback"/>
     <keyword type="function" name="GstDataQueueFullCallback ()" link="gstreamer-libs-GstDataQueue.html#GstDataQueueFullCallback"/>
     <keyword type="function" name="gst_data_queue_new ()" link="gstreamer-libs-GstDataQueue.html#gst-data-queue-new"/>
@@ -407,7 +437,7 @@
     <keyword type="function" name="gst_data_queue_is_empty ()" link="gstreamer-libs-GstDataQueue.html#gst-data-queue-is-empty" since="0.10.11"/>
     <keyword type="function" name="gst_data_queue_get_level ()" link="gstreamer-libs-GstDataQueue.html#gst-data-queue-get-level" since="0.10.11"/>
     <keyword type="function" name="gst_data_queue_limits_changed ()" link="gstreamer-libs-GstDataQueue.html#gst-data-queue-limits-changed" since="0.10.11"/>
-    <keyword type="struct" name="GstController" link="GstController.html#GstController-struct"/>
+    <keyword type="struct" name="struct GstController" link="GstController.html#GstController-struct"/>
     <keyword type="function" name="gst_controller_init ()" link="GstController.html#gst-controller-init"/>
     <keyword type="function" name="gst_controller_new ()" link="GstController.html#gst-controller-new"/>
     <keyword type="function" name="gst_controller_new_list ()" link="GstController.html#gst-controller-new-list"/>
@@ -431,17 +461,17 @@
     <keyword type="function" name="gst_controller_get_all ()" link="GstController.html#gst-controller-get-all" deprecated=""/>
     <keyword type="function" name="gst_controller_set_interpolation_mode ()" link="GstController.html#gst-controller-set-interpolation-mode" deprecated=""/>
     <keyword type="property" name="The &quot;control-rate&quot; property" link="GstController.html#GstController--control-rate"/>
-    <keyword type="struct" name="GstControlSource" link="GstControlSource.html#GstControlSource-struct"/>
-    <keyword type="struct" name="GstControlSourceClass" link="GstControlSource.html#GstControlSourceClass"/>
+    <keyword type="struct" name="struct GstControlSource" link="GstControlSource.html#GstControlSource-struct"/>
+    <keyword type="struct" name="struct GstControlSourceClass" link="GstControlSource.html#GstControlSourceClass"/>
     <keyword type="function" name="GstControlSourceBind ()" link="GstControlSource.html#GstControlSourceBind"/>
     <keyword type="function" name="GstControlSourceGetValue ()" link="GstControlSource.html#GstControlSourceGetValue"/>
     <keyword type="function" name="GstControlSourceGetValueArray ()" link="GstControlSource.html#GstControlSourceGetValueArray"/>
-    <keyword type="struct" name="GstTimedValue" link="GstControlSource.html#GstTimedValue"/>
-    <keyword type="struct" name="GstValueArray" link="GstControlSource.html#GstValueArray"/>
+    <keyword type="struct" name="struct GstTimedValue" link="GstControlSource.html#GstTimedValue"/>
+    <keyword type="struct" name="struct GstValueArray" link="GstControlSource.html#GstValueArray"/>
     <keyword type="function" name="gst_control_source_bind ()" link="GstControlSource.html#gst-control-source-bind"/>
     <keyword type="function" name="gst_control_source_get_value ()" link="GstControlSource.html#gst-control-source-get-value"/>
     <keyword type="function" name="gst_control_source_get_value_array ()" link="GstControlSource.html#gst-control-source-get-value-array"/>
-    <keyword type="struct" name="GstInterpolationControlSource" link="GstInterpolationControlSource.html#GstInterpolationControlSource-struct"/>
+    <keyword type="struct" name="struct GstInterpolationControlSource" link="GstInterpolationControlSource.html#GstInterpolationControlSource-struct"/>
     <keyword type="enum" name="enum GstInterpolateMode" link="GstInterpolationControlSource.html#GstInterpolateMode"/>
     <keyword type="function" name="gst_interpolation_control_source_new ()" link="GstInterpolationControlSource.html#gst-interpolation-control-source-new"/>
     <keyword type="function" name="gst_interpolation_control_source_set ()" link="GstInterpolationControlSource.html#gst-interpolation-control-source-set"/>
@@ -451,7 +481,7 @@
     <keyword type="function" name="gst_interpolation_control_source_unset ()" link="GstInterpolationControlSource.html#gst-interpolation-control-source-unset"/>
     <keyword type="function" name="gst_interpolation_control_source_unset_all ()" link="GstInterpolationControlSource.html#gst-interpolation-control-source-unset-all"/>
     <keyword type="function" name="gst_interpolation_control_source_get_count ()" link="GstInterpolationControlSource.html#gst-interpolation-control-source-get-count"/>
-    <keyword type="struct" name="GstLFOControlSource" link="GstLFOControlSource.html#GstLFOControlSource-struct"/>
+    <keyword type="struct" name="struct GstLFOControlSource" link="GstLFOControlSource.html#GstLFOControlSource-struct"/>
     <keyword type="enum" name="enum GstLFOWaveform" link="GstLFOControlSource.html#GstLFOWaveform"/>
     <keyword type="function" name="gst_lfo_control_source_new ()" link="GstLFOControlSource.html#gst-lfo-control-source-new"/>
     <keyword type="property" name="The &quot;amplitude&quot; property" link="GstLFOControlSource.html#GstLFOControlSource--amplitude"/>
@@ -496,17 +526,17 @@
     <keyword type="function" name="gst_dp_validate_header ()" link="gstreamer-libs-gstdataprotocol.html#gst-dp-validate-header"/>
     <keyword type="function" name="gst_dp_validate_payload ()" link="gstreamer-libs-gstdataprotocol.html#gst-dp-validate-payload"/>
     <keyword type="function" name="gst_dp_validate_packet ()" link="gstreamer-libs-gstdataprotocol.html#gst-dp-validate-packet"/>
-    <keyword type="struct" name="GstNetClientClock" link="GstNetClientClock.html#GstNetClientClock-struct"/>
+    <keyword type="struct" name="struct GstNetClientClock" link="GstNetClientClock.html#GstNetClientClock-struct"/>
     <keyword type="function" name="gst_net_client_clock_new ()" link="GstNetClientClock.html#gst-net-client-clock-new"/>
     <keyword type="property" name="The &quot;address&quot; property" link="GstNetClientClock.html#GstNetClientClock--address"/>
     <keyword type="property" name="The &quot;port&quot; property" link="GstNetClientClock.html#GstNetClientClock--port"/>
-    <keyword type="struct" name="GstNetTimePacket" link="gstreamer-libs-GstNetTimePacket.html#GstNetTimePacket"/>
+    <keyword type="struct" name="struct GstNetTimePacket" link="gstreamer-libs-GstNetTimePacket.html#GstNetTimePacket"/>
     <keyword type="macro" name="GST_NET_TIME_PACKET_SIZE" link="gstreamer-libs-GstNetTimePacket.html#GST-NET-TIME-PACKET-SIZE:CAPS"/>
     <keyword type="function" name="gst_net_time_packet_new ()" link="gstreamer-libs-GstNetTimePacket.html#gst-net-time-packet-new"/>
     <keyword type="function" name="gst_net_time_packet_receive ()" link="gstreamer-libs-GstNetTimePacket.html#gst-net-time-packet-receive"/>
     <keyword type="function" name="gst_net_time_packet_send ()" link="gstreamer-libs-GstNetTimePacket.html#gst-net-time-packet-send"/>
     <keyword type="function" name="gst_net_time_packet_serialize ()" link="gstreamer-libs-GstNetTimePacket.html#gst-net-time-packet-serialize"/>
-    <keyword type="struct" name="GstNetTimeProvider" link="GstNetTimeProvider.html#GstNetTimeProvider-struct"/>
+    <keyword type="struct" name="struct GstNetTimeProvider" link="GstNetTimeProvider.html#GstNetTimeProvider-struct"/>
     <keyword type="function" name="gst_net_time_provider_new ()" link="GstNetTimeProvider.html#gst-net-time-provider-new"/>
     <keyword type="property" name="The &quot;active&quot; property" link="GstNetTimeProvider.html#GstNetTimeProvider--active"/>
     <keyword type="property" name="The &quot;address&quot; property" link="GstNetTimeProvider.html#GstNetTimeProvider--address"/>
@@ -555,6 +585,9 @@
     <keyword type="function" name="gst_consistency_checker_new ()" link="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-new" since="0.10.24"/>
     <keyword type="function" name="gst_consistency_checker_reset ()" link="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-reset" since="0.10.24"/>
     <keyword type="function" name="gst_consistency_checker_free ()" link="gstreamer-libs-GstStreamConsistency.html#gst-consistency-checker-free" since="0.10.24"/>
+    <keyword type="constant" name="GST_BASE_PARSE_FRAME_FLAG_NONE" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-FRAME-FLAG-NONE:CAPS"/>
+    <keyword type="constant" name="GST_BASE_PARSE_FRAME_FLAG_NO_FRAME" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-FRAME-FLAG-NO-FRAME:CAPS"/>
+    <keyword type="constant" name="GST_BASE_PARSE_FRAME_FLAG_CLIP" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-FRAME-FLAG-CLIP:CAPS"/>
     <keyword type="constant" name="GST_BASE_SRC_STARTED" link="GstBaseSrc.html#GST-BASE-SRC-STARTED:CAPS"/>
     <keyword type="constant" name="GST_BASE_SRC_FLAG_LAST" link="GstBaseSrc.html#GST-BASE-SRC-FLAG-LAST:CAPS"/>
     <keyword type="constant" name="GST_INTERPOLATE_NONE" link="GstInterpolationControlSource.html#GST-INTERPOLATE-NONE:CAPS"/>

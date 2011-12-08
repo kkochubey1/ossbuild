@@ -505,7 +505,7 @@ gst_registry_chunks_load_pad_template (GstElementFactory * factory, gchar ** in,
 
   /* unpack pad template strings */
   unpack_const_string (*in, template->name_template, end, fail);
-  unpack_string (*in, template->static_caps.string, end, fail);
+  unpack_const_string (*in, template->static_caps.string, end, fail);
 
   __gst_element_factory_add_static_pad_template (factory, template);
   GST_DEBUG ("Added pad_template %s", template->name_template);
@@ -527,14 +527,17 @@ fail:
  */
 static gboolean
 gst_registry_chunks_load_feature (GstRegistry * registry, gchar ** in,
-    gchar * end, const gchar * plugin_name)
+    gchar * end, GstPlugin * plugin)
 {
   GstRegistryChunkPluginFeature *pf = NULL;
   GstPluginFeature *feature = NULL;
   const gchar *const_str, *type_name;
+  const gchar *plugin_name;
   gchar *str, *feature_name;
   GType type;
   guint i;
+
+  plugin_name = plugin->desc.name;
 
   /* unpack plugin feature strings */
   unpack_string_nocopy (*in, type_name, end, fail);
@@ -656,9 +659,10 @@ gst_registry_chunks_load_feature (GstRegistry * registry, gchar ** in,
       GST_DEBUG ("Reading %d Typefind extensions at address %p",
           tff->nextensions, *in);
       factory->extensions = g_new0 (gchar *, tff->nextensions + 1);
-      for (i = 0; i < tff->nextensions; i++) {
+      /* unpack in reverse order to maintain the correct order */
+      for (i = tff->nextensions; i > 0; i--) {
         unpack_string (*in, str, end, fail);
-        factory->extensions[i] = str;
+        factory->extensions[i - 1] = str;
       }
     }
   } else if (GST_IS_INDEX_FACTORY (feature)) {
@@ -680,9 +684,13 @@ gst_registry_chunks_load_feature (GstRegistry * registry, gchar ** in,
   feature->rank = pf->rank;
 
   feature->plugin_name = plugin_name;
+  feature->plugin = plugin;
+  g_object_add_weak_pointer ((GObject *) plugin,
+      (gpointer *) & feature->plugin);
 
   gst_registry_add_feature (registry, feature);
-  GST_DEBUG ("Added feature %s", feature->name);
+  GST_DEBUG ("Added feature %s, plugin %p %s", feature->name, plugin,
+      plugin_name);
 
   return TRUE;
 
@@ -835,7 +843,7 @@ _priv_gst_registry_chunks_load_plugin (GstRegistry * registry, gchar ** in,
   /* Load plugin features */
   for (i = 0; i < n; i++) {
     if (G_UNLIKELY (!gst_registry_chunks_load_feature (registry, in, end,
-                plugin->desc.name))) {
+                plugin))) {
       GST_ERROR ("Error while loading binary feature for plugin '%s'",
           GST_STR_NULL (plugin->desc.name));
       gst_registry_remove_plugin (registry, plugin);

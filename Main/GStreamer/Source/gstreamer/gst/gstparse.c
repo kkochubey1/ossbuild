@@ -44,6 +44,42 @@
 #include "parse/types.h"
 #endif
 
+static void
+_prepend_missing_element (gchar * element, GList ** list)
+{
+  *list = g_list_prepend (*list, g_strdup (element));
+}
+
+static GstParseContext *
+gst_parse_context_copy (const GstParseContext * context)
+{
+  GstParseContext *ret = NULL;
+#ifndef GST_DISABLE_PARSE
+
+  ret = gst_parse_context_new ();
+  if (context) {
+    g_list_foreach (context->missing_elements, (GFunc) _prepend_missing_element,
+        &ret->missing_elements);
+    ret->missing_elements = g_list_reverse (ret->missing_elements);
+  }
+#endif
+  return ret;
+}
+
+GType
+gst_parse_context_get_type (void)
+{
+  static GType type = 0;
+
+  if (G_UNLIKELY (type == 0)) {
+    type = g_boxed_type_register_static ("GstParseContext",
+        (GBoxedCopyFunc) gst_parse_context_copy,
+        (GBoxedFreeFunc) gst_parse_context_free);
+  }
+
+  return type;
+}
+
 /**
  * gst_parse_error_quark:
  *
@@ -68,8 +104,10 @@ gst_parse_error_quark (void)
  * Allocates a parse context for use with gst_parse_launch_full() or
  * gst_parse_launchv_full().
  *
- * Returns: a newly-allocated parse context. Free with gst_parse_context_free()
- *     when no longer needed.
+ * Free-function: gst_parse_context_free
+ *
+ * Returns: (transfer full): a newly-allocated parse context. Free with
+ *     gst_parse_context_free() when no longer needed.
  *
  * Since: 0.10.20
  */
@@ -90,7 +128,7 @@ gst_parse_context_new (void)
 
 /**
  * gst_parse_context_free:
- * @context: a #GstParseContext
+ * @context: (transfer full): a #GstParseContext
  *
  * Frees a parse context previously allocated with gst_parse_context_new().
  *
@@ -116,8 +154,9 @@ gst_parse_context_free (GstParseContext * context)
  * or gst_parse_launchv_full(). Will only return results if an error code
  * of %GST_PARSE_ERROR_NO_SUCH_ELEMENT was returned.
  *
- * Returns: a NULL-terminated array of element factory name strings of
- *     missing elements. Free with g_strfreev() when no longer needed.
+ * Returns: (transfer full) (array zero-terminated=1) (element-type gchar*): a
+ *     NULL-terminated array of element factory name strings of missing
+ *     elements. Free with g_strfreev() when no longer needed.
  *
  * Since: 0.10.20
  */
@@ -172,14 +211,14 @@ _gst_parse_escape (const gchar * str)
 
 /**
  * gst_parse_launchv:
- * @argv: null-terminated array of arguments
+ * @argv: (in) (array zero-terminated=1): null-terminated array of arguments
  * @error: pointer to a #GError
  *
  * Create a new element based on command line syntax.
  * @error will contain an error message if an erroneuos pipeline is specified.
  * An error does not mean that the pipeline could not be constructed.
  *
- * Returns: a new element on success and %NULL on failure.
+ * Returns: (transfer full): a new element on success and %NULL on failure.
  */
 GstElement *
 gst_parse_launchv (const gchar ** argv, GError ** error)
@@ -189,8 +228,9 @@ gst_parse_launchv (const gchar ** argv, GError ** error)
 
 /**
  * gst_parse_launchv_full:
- * @argv: null-terminated array of arguments
- * @context: a parse context allocated with gst_parse_context_new(), or %NULL
+ * @argv: (in) (array zero-terminated=1): null-terminated array of arguments
+ * @context: (allow-none): a parse context allocated with
+ *     gst_parse_context_new(), or %NULL
  * @flags: parsing options, or #GST_PARSE_FLAG_NONE
  * @error: pointer to a #GError (which must be initialised to %NULL)
  *
@@ -198,10 +238,10 @@ gst_parse_launchv (const gchar ** argv, GError ** error)
  * @error will contain an error message if an erroneous pipeline is specified.
  * An error does not mean that the pipeline could not be constructed.
  *
- * Returns: a new element on success; on failure, either %NULL or a
- * partially-constructed bin or element will be returned and @error will be set
- * (unless you passed #GST_PARSE_FLAG_FATAL_ERRORS in @flags, then %NULL will
- * always be returned on failure)
+ * Returns: (transfer full): a new element on success; on failure, either %NULL
+ *   or a partially-constructed bin or element will be returned and @error will
+ *   be set (unless you passed #GST_PARSE_FLAG_FATAL_ERRORS in @flags, then
+ *   %NULL will always be returned on failure)
  *
  * Since: 0.10.20
  */
@@ -252,9 +292,9 @@ gst_parse_launchv_full (const gchar ** argv, GstParseContext * context,
  * the @error is set. In this case there was a recoverable parsing error and you
  * can try to play the pipeline.
  *
- * Returns: a new element on success, %NULL on failure. If more than one toplevel
- * element is specified by the @pipeline_description, all elements are put into
- * a #GstPipeline, which than is returned.
+ * Returns: (transfer full): a new element on success, %NULL on failure. If
+ *    more than one toplevel element is specified by the @pipeline_description,
+ *   all elements are put into a #GstPipeline, which than is returned.
  */
 GstElement *
 gst_parse_launch (const gchar * pipeline_description, GError ** error)
@@ -265,7 +305,8 @@ gst_parse_launch (const gchar * pipeline_description, GError ** error)
 /**
  * gst_parse_launch_full:
  * @pipeline_description: the command line describing the pipeline
- * @context: a parse context allocated with gst_parse_context_new(), or %NULL
+ * @context: (allow-none): a parse context allocated with
+ *      gst_parse_context_new(), or %NULL
  * @flags: parsing options, or #GST_PARSE_FLAG_NONE
  * @error: the error message in case of an erroneous pipeline.
  *
@@ -274,9 +315,9 @@ gst_parse_launch (const gchar * pipeline_description, GError ** error)
  * the @error is set. In this case there was a recoverable parsing error and you
  * can try to play the pipeline.
  *
- * Returns: a new element on success, %NULL on failure. If more than one toplevel
- * element is specified by the @pipeline_description, all elements are put into
- * a #GstPipeline, which then is returned.
+ * Returns: (transfer full): a new element on success, %NULL on failure. If
+ *    more than one toplevel element is specified by the @pipeline_description,
+ *    all elements are put into a #GstPipeline, which then is returned.
  *
  * Since: 0.10.20
  */

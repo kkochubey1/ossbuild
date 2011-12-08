@@ -203,8 +203,75 @@ gst_clock_entry_new (GstClock * clock, GstClockTime time,
   entry->func = NULL;
   entry->user_data = NULL;
   entry->destroy_data = NULL;
+  entry->unscheduled = FALSE;
+  entry->woken_up = FALSE;
 
   return (GstClockID) entry;
+}
+
+/* WARNING : Does not modify the refcount
+ * WARNING : Do not use if a pending clock operation is happening on that entry */
+static gboolean
+gst_clock_entry_reinit (GstClock * clock, GstClockEntry * entry,
+    GstClockTime time, GstClockTime interval, GstClockEntryType type)
+{
+  g_return_val_if_fail (entry->status != GST_CLOCK_BUSY, FALSE);
+  g_return_val_if_fail (entry->clock == clock, FALSE);
+
+  entry->type = type;
+  entry->time = time;
+  entry->interval = interval;
+  entry->status = GST_CLOCK_OK;
+  entry->unscheduled = FALSE;
+  entry->woken_up = FALSE;
+
+  return TRUE;
+}
+
+/**
+ * gst_clock_single_shot_id_reinit:
+ * @clock: a #GstClock
+ * @id: a #GstClockID
+ * @time: The requested time.
+ *
+ * Reinitializes the provided single shot @id to the provided time. Does not
+ * modify the reference count.
+ *
+ * Returns: %TRUE if the GstClockID could be reinitialized to the provided
+ * @time, else %FALSE.
+ *
+ * Since: 0.10.32
+ */
+gboolean
+gst_clock_single_shot_id_reinit (GstClock * clock, GstClockID id,
+    GstClockTime time)
+{
+  return gst_clock_entry_reinit (clock, (GstClockEntry *) id, time,
+      GST_CLOCK_TIME_NONE, GST_CLOCK_ENTRY_SINGLE);
+}
+
+/**
+ * gst_clock_periodic_id_reinit:
+ * @clock: a #GstClock
+ * @id: a #GstClockID
+ * @start_time: the requested start time
+ * @interval: the requested interval
+ *
+ * Reinitializes the provided periodic @id to the provided start time and
+ * interval. Does not modify the reference count.
+ *
+ * Returns: %TRUE if the GstClockID could be reinitialized to the provided
+ * @time, else %FALSE.
+ *
+ * Since: 0.10.33
+ *
+ */
+gboolean
+gst_clock_periodic_id_reinit (GstClock * clock, GstClockID id,
+    GstClockTime start_time, GstClockTime interval)
+{
+  return gst_clock_entry_reinit (clock, (GstClockEntry *) id, start_time,
+      interval, GST_CLOCK_ENTRY_PERIODIC);
 }
 
 /**
@@ -213,7 +280,7 @@ gst_clock_entry_new (GstClock * clock, GstClockTime time,
  *
  * Increase the refcount of given @id.
  *
- * Returns: The same #GstClockID with increased refcount.
+ * Returns: (transfer full): The same #GstClockID with increased refcount.
  *
  * MT safe.
  */
@@ -246,7 +313,7 @@ _gst_clock_id_free (GstClockID id)
 
 /**
  * gst_clock_id_unref:
- * @id: The #GstClockID to unref
+ * @id: (transfer full): The #GstClockID to unref
  *
  * Unref given @id. When the refcount reaches 0 the
  * #GstClockID will be freed.
@@ -268,7 +335,7 @@ gst_clock_id_unref (GstClockID id)
 }
 
 /**
- * gst_clock_new_single_shot_id
+ * gst_clock_new_single_shot_id:
  * @clock: The #GstClockID to get a single shot notification from
  * @time: the requested time
  *
@@ -276,7 +343,10 @@ gst_clock_id_unref (GstClockID id)
  * notification at the requested time. The single shot id should be
  * unreffed after usage.
  *
- * Returns: A #GstClockID that can be used to request the time notification.
+ * Free-function: gst_clock_id_unref
+ *
+ * Returns: (transfer full): a #GstClockID that can be used to request the
+ *     time notification.
  *
  * MT safe.
  */
@@ -290,7 +360,7 @@ gst_clock_new_single_shot_id (GstClock * clock, GstClockTime time)
 }
 
 /**
- * gst_clock_new_periodic_id
+ * gst_clock_new_periodic_id:
  * @clock: The #GstClockID to get a periodic notification id from
  * @start_time: the requested start time
  * @interval: the requested interval
@@ -300,7 +370,10 @@ gst_clock_new_single_shot_id (GstClock * clock, GstClockTime time)
  * will then be fired with the given @interval. @id should be unreffed
  * after usage.
  *
- * Returns: A #GstClockID that can be used to request the time notification.
+ * Free-function: gst_clock_id_unref
+ *
+ * Returns: (transfer full): a #GstClockID that can be used to request the
+ *     time notification.
  *
  * MT safe.
  */
@@ -367,7 +440,8 @@ gst_clock_id_get_time (GstClockID id)
 /**
  * gst_clock_id_wait
  * @id: The #GstClockID to wait on
- * @jitter: A pointer that will contain the jitter, can be %NULL.
+ * @jitter: (out) (allow-none): a pointer that will contain the jitter,
+ *     can be %NULL.
  *
  * Perform a blocking wait on @id. 
  * @id should have been created with gst_clock_new_single_shot_id()
@@ -986,10 +1060,10 @@ gst_clock_set_calibration (GstClock * clock, GstClockTime internal, GstClockTime
 /**
  * gst_clock_get_calibration
  * @clock: a #GstClock 
- * @internal: a location to store the internal time
- * @external: a location to store the external time
- * @rate_num: a location to store the rate numerator
- * @rate_denom: a location to store the rate denominator
+ * @internal: (out) (allow-none): a location to store the internal time
+ * @external: (out) (allow-none): a location to store the external time
+ * @rate_num: (out) (allow-none): a location to store the rate numerator
+ * @rate_denom: (out) (allow-none): a location to store the rate denominator
  *
  * Gets the internal rate and reference time of @clock. See
  * gst_clock_set_calibration() for more information.
@@ -1047,7 +1121,7 @@ gst_clock_slave_callback (GstClock * master, GstClockTime time,
 /**
  * gst_clock_set_master
  * @clock: a #GstClock 
- * @master: a master #GstClock 
+ * @master: (allow-none): a master #GstClock 
  *
  * Set @master as the master clock for @clock. @clock will be automatically
  * calibrated so that gst_clock_get_time() reports the same time as the
@@ -1119,14 +1193,14 @@ not_supported:
 }
 
 /**
- * gst_clock_get_master
+ * gst_clock_get_master:
  * @clock: a #GstClock 
  *
  * Get the master clock that @clock is slaved to or %NULL when the clock is
  * not slaved to any master clock.
  *
- * Returns: a master #GstClock or %NULL when this clock is not slaved to a
- * master clock. Unref after usage.
+ * Returns: (transfer full): a master #GstClock or %NULL when this clock is
+ *     not slaved to a master clock. Unref after usage.
  *
  * MT safe.
  */
@@ -1273,7 +1347,7 @@ invalid:
  * @clock: a #GstClock 
  * @slave: a time on the slave
  * @master: a time on the master
- * @r_squared: a pointer to hold the result
+ * @r_squared: (out): a pointer to hold the result
  *
  * The time @master of the master clock and the time @slave of the slave
  * clock are added to the list of observations. If enough observations

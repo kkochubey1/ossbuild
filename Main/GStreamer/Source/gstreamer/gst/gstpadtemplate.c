@@ -31,26 +31,26 @@
  * created (request or sometimes pads).
  *
  * Pad and PadTemplates have #GstCaps attached to it to describe the media type
- * they are capable of dealing with. gst_pad_template_get_caps() or 
- * GST_PAD_TEMPLATE_CAPS() are used to get the caps of a padtemplate. It's not 
+ * they are capable of dealing with. gst_pad_template_get_caps() or
+ * GST_PAD_TEMPLATE_CAPS() are used to get the caps of a padtemplate. It's not
  * possible to modify the caps of a padtemplate after creation.
  *
  * PadTemplates have a #GstPadPresence property which identifies the lifetime
- * of the pad and that can be retrieved with GST_PAD_TEMPLATE_PRESENCE(). Also 
- * the direction of the pad can be retrieved from the #GstPadTemplate with 
+ * of the pad and that can be retrieved with GST_PAD_TEMPLATE_PRESENCE(). Also
+ * the direction of the pad can be retrieved from the #GstPadTemplate with
  * GST_PAD_TEMPLATE_DIRECTION().
  *
  * The GST_PAD_TEMPLATE_NAME_TEMPLATE () is important for GST_PAD_REQUEST pads
  * because it has to be used as the name in the gst_element_get_request_pad()
  * call to instantiate a pad from this template.
  *
- * Padtemplates can be created with gst_pad_template_new() or with 
+ * Padtemplates can be created with gst_pad_template_new() or with
  * gst_static_pad_template_get (), which creates a #GstPadTemplate from a
  * #GstStaticPadTemplate that can be filled with the
- * convenient GST_STATIC_PAD_TEMPLATE() macro. 
+ * convenient GST_STATIC_PAD_TEMPLATE() macro.
  *
- * A padtemplate can be used to create a pad (see gst_pad_new_from_template() 
- * or gst_pad_new_from_static_template ()) or to add to an element class 
+ * A padtemplate can be used to create a pad (see gst_pad_new_from_template()
+ * or gst_pad_new_from_static_template ()) or to add to an element class
  * (see gst_element_class_add_pad_template ()).
  *
  * The following code example shows the code to create a pad from a padtemplate.
@@ -66,7 +66,7 @@
  *       "audio/x-raw-int, "
  *         "channels = (int) [ 1, 6 ]"
  *     )
- *   )
+ *   );
  *   void
  *   my_method (void)
  *   {
@@ -85,7 +85,7 @@
  *   my_element_base_init (gpointer g_class)
  *   {
  *     GstElementClass *gstelement_class = GST_ELEMENT_CLASS (g_class);
- *    
+ *
  *     gst_element_class_add_pad_template (gstelement_class,
  *         gst_static_pad_template_get (&amp;my_template));
  *   }
@@ -306,8 +306,9 @@ gst_static_pad_template_get_type (void)
  *
  * Converts a #GstStaticPadTemplate into a #GstPadTemplate.
  *
- * Returns: a new #GstPadTemplate.
+ * Returns: (transfer full): a new #GstPadTemplate.
  */
+/* FIXME0.11: rename to gst_pad_template_new_from_static_pad_template() */
 GstPadTemplate *
 gst_static_pad_template_get (GstStaticPadTemplate * pad_template)
 {
@@ -335,13 +336,14 @@ gst_static_pad_template_get (GstStaticPadTemplate * pad_template)
  * @name_template: the name template.
  * @direction: the #GstPadDirection of the template.
  * @presence: the #GstPadPresence of the pad.
- * @caps: a #GstCaps set for the template. The caps are taken ownership of.
+ * @caps: (transfer full): a #GstCaps set for the template. The caps are
+ *     taken ownership of.
  *
  * Creates a new pad template with a name according to the given template
  * and with the given arguments. This functions takes ownership of the provided
  * caps, so be sure to not use them afterwards.
  *
- * Returns: a new #GstPadTemplate.
+ * Returns: (transfer full): a new #GstPadTemplate.
  */
 GstPadTemplate *
 gst_pad_template_new (const gchar * name_template,
@@ -365,8 +367,7 @@ gst_pad_template_new (const gchar * name_template,
       "name", name_template, "name-template", name_template,
       "direction", direction, "presence", presence, "caps", caps, NULL);
 
-  if (caps)
-    gst_caps_unref (caps);
+  gst_caps_unref (caps);
 
   return new;
 }
@@ -377,7 +378,7 @@ gst_pad_template_new (const gchar * name_template,
  *
  * Gets the capabilities of the static pad template.
  *
- * Returns: the #GstCaps of the static pad template.
+ * Returns: (transfer full): the #GstCaps of the static pad template.
  * Unref after usage. Since the core holds an additional
  * ref to the returned caps, use gst_caps_make_writable()
  * on the returned caps to modify it.
@@ -396,8 +397,8 @@ gst_static_pad_template_get_caps (GstStaticPadTemplate * templ)
  *
  * Gets the capabilities of the pad template.
  *
- * Returns: the #GstCaps of the pad template. If you need to keep a reference to
- * the caps, take a ref (see gst_caps_ref ()).
+ * Returns: (transfer none): the #GstCaps of the pad template. If you need to
+ *     keep a reference to the caps, take a ref (see gst_caps_ref ()).
  */
 GstCaps *
 gst_pad_template_get_caps (GstPadTemplate * templ)

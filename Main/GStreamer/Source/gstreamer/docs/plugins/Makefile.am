@@ -52,7 +52,9 @@ SCAN_OPTIONS=
 MKDB_OPTIONS=--sgml-mode
 
 # Extra options to supply to gtkdoc-fixref.
-FIXXREF_OPTIONS=--extra-dir=$(GLIB_PREFIX)/share/gtk-doc/html \
+FIXXREF_OPTIONS=--extra-dir=$(top_builddir)/docs/gst/html \
+	--extra-dir=$(top_builddir)/docs/libs/html \
+	--extra-dir=$(GLIB_PREFIX)/share/gtk-doc/html \
 	--extra-dir=$(datadir)/gtk-doc/html
 
 # Used for dependencies.
@@ -86,11 +88,14 @@ EXTRA_HFILES = \
 	$(top_srcdir)/plugins/elements/gstfilesrc.h \
 	$(top_srcdir)/plugins/elements/gstfilesink.h \
 	$(top_srcdir)/plugins/elements/gstidentity.h \
+	$(top_srcdir)/plugins/elements/gstinputselector.h \
 	$(top_srcdir)/plugins/elements/gstmultiqueue.h \
+	$(top_srcdir)/plugins/elements/gstoutputselector.h \
 	$(top_srcdir)/plugins/elements/gstqueue.h \
 	$(top_srcdir)/plugins/elements/gstqueue2.h \
 	$(top_srcdir)/plugins/elements/gsttypefindelement.h \
-	$(top_srcdir)/plugins/elements/gsttee.h
+	$(top_srcdir)/plugins/elements/gsttee.h \
+	$(top_srcdir)/plugins/elements/gstvalve.h
 
 # Images to copy into HTML directory.
 HTML_IMAGES =

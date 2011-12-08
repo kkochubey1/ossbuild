@@ -311,6 +311,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -368,6 +369,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -401,7 +403,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -442,7 +443,7 @@ CLEANFILES = *.gcno *.gcda *.gcov $(am__append_1)
 @HAVE_INTROSPECTION_TRUE@BUILT_GIRSOURCES = GstNet-@GST_MAJORMINOR@.gir
 @HAVE_INTROSPECTION_TRUE@gir_headers = $(patsubst %,$(srcdir)/%, $(libgstnet_@GST_MAJORMINOR@_include_HEADERS))
 @HAVE_INTROSPECTION_TRUE@gir_sources = $(patsubst %,$(srcdir)/%, $(libgstnet_@GST_MAJORMINOR@_la_SOURCES))
-@HAVE_INTROSPECTION_TRUE@gir_cincludes = $(patsubst %,--c-include='gst/net/%',$(libgstbase_@GST_MAJORMINOR@_include_HEADERS))
+@HAVE_INTROSPECTION_TRUE@gir_cincludes = --c-include="gst/net/gstnet.h"
 
 # INTROSPECTION_GIRDIR/INTROSPECTION_TYPELIBDIR aren't the right place to
 # install anything - we need to install inside our prefix.
@@ -859,19 +860,38 @@ uninstall-am: uninstall-girDATA uninstall-libLTLIBRARIES \
 
 gcov: $(libgstnet_@GST_MAJORMINOR@_la_SOURCES:=.gcov)
 
+Android.mk: Makefile.am
+	androgenizer -:PROJECT gstreamer -:SHARED libgstnet-@GST_MAJORMINOR@ -:TAGS eng debug \
+	 -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstnet_@GST_MAJORMINOR@_la_SOURCES) \
+	 -:CFLAGS $(libgstnet_@GST_MAJORMINOR@_la_CFLAGS) \
+	 -:LDFLAGS $(libgstnet_@GST_MAJORMINOR@_la_LDFLAGS) \
+	           $(libgstnet_@GST_MAJORMINOR@_la_LIBADD) \
+	 -:HEADER_TARGET gstreamer-@GST_MAJORMINOR@/gst/net \
+	 -:HEADERS $(libgstnet_@GST_MAJORMINOR@_include_HEADERS) \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+	> $@
+
 @HAVE_INTROSPECTION_TRUE@GstNet-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstnet-@GST_MAJORMINOR@.la
 @HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+@HAVE_INTROSPECTION_TRUE@		GST_PLUGIN_SYSTEM_PATH="" GST_PLUGIN_PATH="" GST_REGISTRY_UPDATE=no \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstNet \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		-I$(top_srcdir) \
+@HAVE_INTROSPECTION_TRUE@		-I$(top_srcdir)/libs \
+@HAVE_INTROSPECTION_TRUE@		-I$(top_builddir) \
+@HAVE_INTROSPECTION_TRUE@		-I$(top_builddir)/libs \
 @HAVE_INTROSPECTION_TRUE@		$(gir_cincludes) \
 @HAVE_INTROSPECTION_TRUE@		--add-include-path=$(top_builddir)/gst \
+@HAVE_INTROSPECTION_TRUE@		--library-path=$(top_builddir)/gst \
+@HAVE_INTROSPECTION_TRUE@		--library=$(top_builddir)/gst/libgstreamer-0.10.la \
 @HAVE_INTROSPECTION_TRUE@		--library=libgstnet-0.10.la \
 @HAVE_INTROSPECTION_TRUE@		--include=Gst-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
 @HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
 @HAVE_INTROSPECTION_TRUE@		--pkg-export="gstreamer-net-0.10" \
+@HAVE_INTROSPECTION_TRUE@		--add-init-section="gst_init(NULL,NULL);" \
 @HAVE_INTROSPECTION_TRUE@		--output $@ \
 @HAVE_INTROSPECTION_TRUE@		$(gir_headers) \
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)

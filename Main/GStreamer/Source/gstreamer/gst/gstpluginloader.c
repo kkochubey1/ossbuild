@@ -37,6 +37,10 @@
 #include <io.h>
 #endif
 
+#ifdef HAVE_SYS_UTSNAME_H
+#include <sys/utsname.h>
+#endif
+
 #include <errno.h>
 
 #include <gst/gstconfig.h>
@@ -339,9 +343,9 @@ plugin_loader_create_blacklist_plugin (GstPluginLoader * l,
 
   plugin->basename = g_path_get_basename (plugin->filename);
   plugin->desc.name = g_intern_string (plugin->basename);
-  plugin->desc.description = g_strdup_printf ("Plugin for blacklisted file");
-  plugin->desc.version = g_intern_string ("0.0.0");
-  plugin->desc.license = g_intern_string ("BLACKLIST");
+  plugin->desc.description = "Plugin for blacklisted file";
+  plugin->desc.version = "0.0.0";
+  plugin->desc.license = "BLACKLIST";
   plugin->desc.source = plugin->desc.license;
   plugin->desc.package = plugin->desc.license;
   plugin->desc.origin = plugin->desc.license;
@@ -350,12 +354,75 @@ plugin_loader_create_blacklist_plugin (GstPluginLoader * l,
   gst_registry_add_plugin (l->registry, plugin);
 }
 
+#ifdef __APPLE__
+#if defined(__x86_64__)
+#define USR_BIN_ARCH_SWITCH "-x86_64"
+#elif defined(__i386__)
+#define USR_BIN_ARCH_SWITCH "-i386"
+#elif defined(__ppc__)
+#define USR_BIN_ARCH_SWITCH "-ppc"
+#elif defined(__ppc64__)
+#define USR_BIN_ARCH_SWITCH "-ppc64"
+#endif
+#endif
+
+#define YES_MULTIARCH 1
+#define NO_MULTIARCH  2
+
+#if defined (__APPLE__) && defined (USR_BIN_ARCH_SWITCH)
+static gboolean
+gst_plugin_loader_use_usr_bin_arch (void)
+{
+  static volatile gsize multiarch = 0;
+
+  if (g_once_init_enter (&multiarch)) {
+    gsize res = NO_MULTIARCH;
+
+#ifdef HAVE_SYS_UTSNAME_H
+    {
+      struct utsname uname_data;
+
+      if (uname (&uname_data) == 0) {
+        /* Check for OS X >= 10.5 (darwin kernel 9.0) */
+        GST_LOG ("%s %s", uname_data.sysname, uname_data.release);
+        if (g_ascii_strcasecmp (uname_data.sysname, "Darwin") == 0 &&
+            g_strtod (uname_data.release, NULL) >= 9.0) {
+          res = YES_MULTIARCH;
+        }
+      }
+    }
+#endif
+
+    GST_INFO ("multiarch: %s", (res == YES_MULTIARCH) ? "yes" : "no");
+    g_once_init_leave (&multiarch, res);
+  }
+  return (multiarch == YES_MULTIARCH);
+}
+#endif /* __APPLE__ && USR_BIN_ARCH_SWITCH */
+
 static gboolean
 gst_plugin_loader_try_helper (GstPluginLoader * loader, gchar * location)
 {
-  char *argv[] = { location, (char *) "-l", NULL };
+  char *argv[5] = { NULL, };
+  int c = 0;
 
-  GST_LOG ("Trying to spawn gst-plugin-scanner helper at %s", location);
+#if defined (__APPLE__) && defined (USR_BIN_ARCH_SWITCH)
+  if (gst_plugin_loader_use_usr_bin_arch ()) {
+    argv[c++] = (char *) "/usr/bin/arch";
+    argv[c++] = (char *) USR_BIN_ARCH_SWITCH;
+  }
+#endif
+  argv[c++] = location;
+  argv[c++] = (char *) "-l";
+  argv[c++] = NULL;
+
+  if (c > 3) {
+    GST_LOG ("Trying to spawn gst-plugin-scanner helper at %s with arch %s",
+        location, argv[1]);
+  } else {
+    GST_LOG ("Trying to spawn gst-plugin-scanner helper at %s", location);
+  }
+
   if (!g_spawn_async_with_pipes (NULL, argv, NULL,
           G_SPAWN_DO_NOT_REAP_CHILD /* | G_SPAWN_STDERR_TO_DEV_NULL */ ,
           NULL, NULL, &loader->child_pid, &loader->fd_w.fd, &loader->fd_r.fd,
@@ -725,11 +792,10 @@ handle_rx_packet (GstPluginLoader * l,
     case PACKET_EXIT:
       gst_poll_fd_ctl_read (l->fdset, &l->fd_r, FALSE);
       if (l->is_child) {
-        /* Respond, then we keep looping until the parent closes the fd */
+        /* Respond */
         put_packet (l, PACKET_EXIT, 0, NULL, 0);
-      } else {
-        l->rx_done = TRUE;      /* All done reading from child */
       }
+      l->rx_done = TRUE;
       return TRUE;
     case PACKET_LOAD_PLUGIN:{
       if (!l->is_child)

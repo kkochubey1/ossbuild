@@ -55,6 +55,7 @@ register_gst_buffer_flag (GType* id)
 {
   static const GFlagsValue values[] = {
     { C_FLAGS(GST_BUFFER_FLAG_READONLY), "GST_BUFFER_FLAG_READONLY", "readonly" },
+    { C_FLAGS(GST_BUFFER_FLAG_MEDIA4), "GST_BUFFER_FLAG_MEDIA4", "media4" },
     { C_FLAGS(GST_BUFFER_FLAG_PREROLL), "GST_BUFFER_FLAG_PREROLL", "preroll" },
     { C_FLAGS(GST_BUFFER_FLAG_DISCONT), "GST_BUFFER_FLAG_DISCONT", "discont" },
     { C_FLAGS(GST_BUFFER_FLAG_IN_CAPS), "GST_BUFFER_FLAG_IN_CAPS", "in-caps" },
@@ -180,6 +181,25 @@ gst_caps_flags_get_type (void)
   g_once (&once, (GThreadFunc)register_gst_caps_flags, &id);
   return id;
 }
+static void
+register_gst_caps_intersect_mode (GType* id)
+{
+  static const GEnumValue values[] = {
+    { C_ENUM(GST_CAPS_INTERSECT_ZIG_ZAG), "GST_CAPS_INTERSECT_ZIG_ZAG", "zig-zag" },
+    { C_ENUM(GST_CAPS_INTERSECT_FIRST), "GST_CAPS_INTERSECT_FIRST", "first" },
+    { 0, NULL, NULL }
+  };
+  *id = g_enum_register_static ("GstCapsIntersectMode", values);
+}
+GType
+gst_caps_intersect_mode_get_type (void)
+{
+  static GType id;
+  static GOnce once = G_ONCE_INIT;
+
+  g_once (&once, (GThreadFunc)register_gst_caps_intersect_mode, &id);
+  return id;
+}
 
 /* enumerations from "gstclock.h" */
 static void
@@ -193,6 +213,7 @@ register_gst_clock_return (GType* id)
     { C_ENUM(GST_CLOCK_BADTIME), "GST_CLOCK_BADTIME", "badtime" },
     { C_ENUM(GST_CLOCK_ERROR), "GST_CLOCK_ERROR", "error" },
     { C_ENUM(GST_CLOCK_UNSUPPORTED), "GST_CLOCK_UNSUPPORTED", "unsupported" },
+    { C_ENUM(GST_CLOCK_DONE), "GST_CLOCK_DONE", "done" },
     { 0, NULL, NULL }
   };
   *id = g_enum_register_static ("GstClockReturn", values);
@@ -585,6 +606,26 @@ gst_seek_flags_get_type (void)
   g_once (&once, (GThreadFunc)register_gst_seek_flags, &id);
   return id;
 }
+static void
+register_gst_qos_type (GType* id)
+{
+  static const GEnumValue values[] = {
+    { C_ENUM(GST_QOS_TYPE_OVERFLOW), "GST_QOS_TYPE_OVERFLOW", "overflow" },
+    { C_ENUM(GST_QOS_TYPE_UNDERFLOW), "GST_QOS_TYPE_UNDERFLOW", "underflow" },
+    { C_ENUM(GST_QOS_TYPE_THROTTLE), "GST_QOS_TYPE_THROTTLE", "throttle" },
+    { 0, NULL, NULL }
+  };
+  *id = g_enum_register_static ("GstQOSType", values);
+}
+GType
+gst_qos_type_get_type (void)
+{
+  static GType id;
+  static GOnce once = G_ONCE_INIT;
+
+  g_once (&once, (GThreadFunc)register_gst_qos_type, &id);
+  return id;
+}
 
 /* enumerations from "gstformat.h" */
 static void
@@ -873,6 +914,7 @@ register_gst_message_type (GType* id)
     { C_FLAGS(GST_MESSAGE_REQUEST_STATE), "GST_MESSAGE_REQUEST_STATE", "request-state" },
     { C_FLAGS(GST_MESSAGE_STEP_START), "GST_MESSAGE_STEP_START", "step-start" },
     { C_FLAGS(GST_MESSAGE_QOS), "GST_MESSAGE_QOS", "qos" },
+    { C_FLAGS(GST_MESSAGE_PROGRESS), "GST_MESSAGE_PROGRESS", "progress" },
     { C_FLAGS(GST_MESSAGE_ANY), "GST_MESSAGE_ANY", "any" },
     { 0, NULL, NULL }
   };
@@ -930,6 +972,28 @@ gst_stream_status_type_get_type (void)
   g_once (&once, (GThreadFunc)register_gst_stream_status_type, &id);
   return id;
 }
+static void
+register_gst_progress_type (GType* id)
+{
+  static const GEnumValue values[] = {
+    { C_ENUM(GST_PROGRESS_TYPE_START), "GST_PROGRESS_TYPE_START", "start" },
+    { C_ENUM(GST_PROGRESS_TYPE_CONTINUE), "GST_PROGRESS_TYPE_CONTINUE", "continue" },
+    { C_ENUM(GST_PROGRESS_TYPE_COMPLETE), "GST_PROGRESS_TYPE_COMPLETE", "complete" },
+    { C_ENUM(GST_PROGRESS_TYPE_CANCELED), "GST_PROGRESS_TYPE_CANCELED", "canceled" },
+    { C_ENUM(GST_PROGRESS_TYPE_ERROR), "GST_PROGRESS_TYPE_ERROR", "error" },
+    { 0, NULL, NULL }
+  };
+  *id = g_enum_register_static ("GstProgressType", values);
+}
+GType
+gst_progress_type_get_type (void)
+{
+  static GType id;
+  static GOnce once = G_ONCE_INIT;
+
+  g_once (&once, (GThreadFunc)register_gst_progress_type, &id);
+  return id;
+}
 
 /* enumerations from "gstminiobject.h" */
 static void
@@ -937,6 +1001,7 @@ register_gst_mini_object_flags (GType* id)
 {
   static const GFlagsValue values[] = {
     { C_FLAGS(GST_MINI_OBJECT_FLAG_READONLY), "GST_MINI_OBJECT_FLAG_READONLY", "readonly" },
+    { C_FLAGS(GST_MINI_OBJECT_FLAG_RESERVED1), "GST_MINI_OBJECT_FLAG_RESERVED1", "reserved1" },
     { C_FLAGS(GST_MINI_OBJECT_FLAG_LAST), "GST_MINI_OBJECT_FLAG_LAST", "last" },
     { 0, NULL, NULL }
   };

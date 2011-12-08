@@ -472,10 +472,14 @@ gst_queue_acceptcaps (GstPad * pad, GstCaps * caps)
   GstQueue *queue;
   GstPad *otherpad;
 
-  queue = GST_QUEUE (GST_PAD_PARENT (pad));
+  queue = GST_QUEUE (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (queue == NULL))
+    return FALSE;
 
   otherpad = (pad == queue->srcpad ? queue->sinkpad : queue->srcpad);
   result = gst_pad_peer_accept_caps (otherpad, caps);
+
+  gst_object_unref (queue);
 
   return result;
 }
@@ -487,12 +491,16 @@ gst_queue_getcaps (GstPad * pad)
   GstPad *otherpad;
   GstCaps *result;
 
-  queue = GST_QUEUE (GST_PAD_PARENT (pad));
+  queue = GST_QUEUE (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (queue == NULL))
+    return gst_caps_new_any ();
 
   otherpad = (pad == queue->srcpad ? queue->sinkpad : queue->srcpad);
   result = gst_pad_peer_get_caps (otherpad);
   if (result == NULL)
     result = gst_caps_new_any ();
+
+  gst_object_unref (queue);
 
   return result;
 }
@@ -541,11 +549,14 @@ gst_queue_bufferalloc (GstPad * pad, guint64 offset, guint size, GstCaps * caps,
   GstQueue *queue;
   GstFlowReturn result;
 
-  queue = GST_QUEUE (GST_PAD_PARENT (pad));
+  queue = GST_QUEUE (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (queue == NULL))
+    return GST_FLOW_WRONG_STATE;
 
   /* Forward to src pad, without setting caps on the src pad */
   result = gst_pad_alloc_buffer (queue->srcpad, offset, size, caps, buf);
 
+  gst_object_unref (queue);
   return result;
 }
 
@@ -800,7 +811,11 @@ gst_queue_handle_sink_event (GstPad * pad, GstEvent * event)
 {
   GstQueue *queue;
 
-  queue = GST_QUEUE (GST_OBJECT_PARENT (pad));
+  queue = GST_QUEUE (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (queue == NULL)) {
+    gst_event_unref (event);
+    return FALSE;
+  }
 
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_FLUSH_START:
@@ -861,6 +876,7 @@ gst_queue_handle_sink_event (GstPad * pad, GstEvent * event)
       break;
   }
 done:
+  gst_object_unref (queue);
   return TRUE;
 
   /* ERRORS */
@@ -869,6 +885,7 @@ out_flushing:
     GST_CAT_LOG_OBJECT (queue_dataflow, queue,
         "refusing event, we are flushing");
     GST_QUEUE_MUTEX_UNLOCK (queue);
+    gst_object_unref (queue);
     gst_event_unref (event);
     return FALSE;
   }
@@ -876,6 +893,7 @@ out_eos:
   {
     GST_CAT_LOG_OBJECT (queue_dataflow, queue, "refusing event, we are EOS");
     GST_QUEUE_MUTEX_UNLOCK (queue);
+    gst_object_unref (queue);
     gst_event_unref (event);
     return FALSE;
   }
@@ -963,14 +981,10 @@ gst_queue_chain (GstPad * pad, GstBuffer * buffer)
       GST_QUEUE_MUTEX_UNLOCK (queue);
       g_signal_emit (queue, gst_queue_signals[SIGNAL_OVERRUN], 0);
       GST_QUEUE_MUTEX_LOCK_CHECK (queue, out_flushing);
-    } else {
-      if (queue->srcresult != GST_FLOW_OK)
-        goto out_flushing;
+      /* we recheck, the signal could have changed the thresholds */
+      if (!gst_queue_is_filled (queue))
+        break;
     }
-
-    /* we recheck, the signal could have changed the thresholds */
-    if (!gst_queue_is_filled (queue))
-      break;
 
     /* how are we going to make space for this buffer? */
     switch (queue->leaky) {
@@ -1005,9 +1019,6 @@ gst_queue_chain (GstPad * pad, GstBuffer * buffer)
           GST_QUEUE_MUTEX_UNLOCK (queue);
           g_signal_emit (queue, gst_queue_signals[SIGNAL_RUNNING], 0);
           GST_QUEUE_MUTEX_LOCK_CHECK (queue, out_flushing);
-        } else {
-          if (queue->srcresult != GST_FLOW_OK)
-            goto out_flushing;
         }
         break;
       }
@@ -1228,15 +1239,11 @@ gst_queue_loop (GstPad * pad)
   GST_QUEUE_MUTEX_LOCK_CHECK (queue, out_flushing);
 
   while (gst_queue_is_empty (queue)) {
+    GST_CAT_DEBUG_OBJECT (queue_dataflow, queue, "queue is empty");
     if (!queue->silent) {
       GST_QUEUE_MUTEX_UNLOCK (queue);
       g_signal_emit (queue, gst_queue_signals[SIGNAL_UNDERRUN], 0);
-      GST_CAT_DEBUG_OBJECT (queue_dataflow, queue, "queue is empty");
       GST_QUEUE_MUTEX_LOCK_CHECK (queue, out_flushing);
-    } else {
-      GST_CAT_DEBUG_OBJECT (queue_dataflow, queue, "queue is empty");
-      if (queue->srcresult != GST_FLOW_OK)
-        goto out_flushing;
     }
 
     /* we recheck, the signal could have changed the thresholds */
@@ -1244,16 +1251,12 @@ gst_queue_loop (GstPad * pad)
       GST_QUEUE_WAIT_ADD_CHECK (queue, out_flushing);
     }
 
+    GST_CAT_DEBUG_OBJECT (queue_dataflow, queue, "queue is not empty");
     if (!queue->silent) {
       GST_QUEUE_MUTEX_UNLOCK (queue);
       g_signal_emit (queue, gst_queue_signals[SIGNAL_RUNNING], 0);
       g_signal_emit (queue, gst_queue_signals[SIGNAL_PUSHING], 0);
-      GST_CAT_DEBUG_OBJECT (queue_dataflow, queue, "queue is not empty");
       GST_QUEUE_MUTEX_LOCK_CHECK (queue, out_flushing);
-    } else {
-      GST_CAT_DEBUG_OBJECT (queue_dataflow, queue, "queue is not empty");
-      if (queue->srcresult != GST_FLOW_OK)
-        goto out_flushing;
     }
   }
 
@@ -1295,8 +1298,12 @@ static gboolean
 gst_queue_handle_src_event (GstPad * pad, GstEvent * event)
 {
   gboolean res = TRUE;
-  GstQueue *queue = GST_QUEUE (GST_PAD_PARENT (pad));
+  GstQueue *queue = GST_QUEUE (gst_pad_get_parent (pad));
 
+  if (G_UNLIKELY (queue == NULL)) {
+    gst_event_unref (event);
+    return FALSE;
+  }
 #ifndef GST_DISABLE_GST_DEBUG
   GST_CAT_DEBUG_OBJECT (queue_dataflow, queue, "got event %p (%d)",
       event, GST_EVENT_TYPE (event));
@@ -1304,23 +1311,31 @@ gst_queue_handle_src_event (GstPad * pad, GstEvent * event)
 
   res = gst_pad_push_event (queue->sinkpad, event);
 
+  gst_object_unref (queue);
   return res;
 }
 
 static gboolean
 gst_queue_handle_src_query (GstPad * pad, GstQuery * query)
 {
-  GstQueue *queue = GST_QUEUE (GST_PAD_PARENT (pad));
+  GstQueue *queue = GST_QUEUE (gst_pad_get_parent (pad));
   GstPad *peer;
   gboolean res;
 
-  if (!(peer = gst_pad_get_peer (queue->sinkpad)))
+  if (G_UNLIKELY (queue == NULL))
     return FALSE;
+
+  if (!(peer = gst_pad_get_peer (queue->sinkpad))) {
+    gst_object_unref (queue);
+    return FALSE;
+  }
 
   res = gst_pad_query (peer, query);
   gst_object_unref (peer);
-  if (!res)
+  if (!res) {
+    gst_object_unref (queue);
     return FALSE;
+  }
 
   switch (GST_QUERY_TYPE (query)) {
     case GST_QUERY_POSITION:
@@ -1376,6 +1391,7 @@ gst_queue_handle_src_query (GstPad * pad, GstQuery * query)
       break;
   }
 
+  gst_object_unref (queue);
   return TRUE;
 }
 

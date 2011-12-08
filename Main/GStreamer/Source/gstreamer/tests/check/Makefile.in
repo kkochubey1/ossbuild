@@ -99,7 +99,8 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 @GST_DISABLE_LOADSAVE_FALSE@@GST_DISABLE_REGISTRY_FALSE@@GST_DISABLE_TRACE_FALSE@am__EXEEXT_1 = gst/gstabi$(EXEEXT)
-@HAVE_CXX_TRUE@am__EXEEXT_2 = gst/gstcpp$(EXEEXT)
+@HAVE_CXX_TRUE@am__EXEEXT_2 = gst/gstcpp$(EXEEXT) \
+@HAVE_CXX_TRUE@	libs/gstlibscpp$(EXEEXT)
 @GST_DISABLE_PARSE_FALSE@am__EXEEXT_3 = pipelines/simple-launch-lines$(EXEEXT) \
 @GST_DISABLE_PARSE_FALSE@	pipelines/cleanup$(EXEEXT) \
 @GST_DISABLE_PARSE_FALSE@	pipelines/parse-launch$(EXEEXT)
@@ -109,6 +110,7 @@ CONFIG_CLEAN_VPATH_FILES =
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstbin$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstchildproxy$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstelement$(EXEEXT) \
+@GST_DISABLE_REGISTRY_FALSE@	gst/gstelementfactory$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstevent$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstghostpad$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstindex$(EXEEXT) \
@@ -126,10 +128,14 @@ CONFIG_CLEAN_VPATH_FILES =
 @GST_DISABLE_REGISTRY_FALSE@	elements/fdsrc$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	elements/filesink$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	elements/filesrc$(EXEEXT) \
+@GST_DISABLE_REGISTRY_FALSE@	elements/funnel$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	elements/identity$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	elements/multiqueue$(EXEEXT) \
+@GST_DISABLE_REGISTRY_FALSE@	elements/selector$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	elements/tee$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	elements/queue$(EXEEXT) \
+@GST_DISABLE_REGISTRY_FALSE@	elements/queue2$(EXEEXT) \
+@GST_DISABLE_REGISTRY_FALSE@	elements/valve$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	libs/basesrc$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	libs/basesink$(EXEEXT) \
 @GST_DISABLE_REGISTRY_FALSE@	libs/controller$(EXEEXT) \
@@ -186,6 +192,12 @@ elements_filesrc_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(elements_filesrc_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
+elements_funnel_SOURCES = elements/funnel.c
+elements_funnel_OBJECTS = funnel.$(OBJEXT)
+elements_funnel_LDADD = $(LDADD)
+elements_funnel_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
+	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1)
 elements_identity_SOURCES = elements/identity.c
 elements_identity_OBJECTS = identity.$(OBJEXT)
 elements_identity_LDADD = $(LDADD)
@@ -204,10 +216,28 @@ elements_queue_LDADD = $(LDADD)
 elements_queue_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
 	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
 	$(am__DEPENDENCIES_1)
+elements_queue2_SOURCES = elements/queue2.c
+elements_queue2_OBJECTS = queue2.$(OBJEXT)
+elements_queue2_LDADD = $(LDADD)
+elements_queue2_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
+	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1)
+elements_selector_SOURCES = elements/selector.c
+elements_selector_OBJECTS = selector.$(OBJEXT)
+elements_selector_LDADD = $(LDADD)
+elements_selector_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
+	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1)
 elements_tee_SOURCES = elements/tee.c
 elements_tee_OBJECTS = tee.$(OBJEXT)
 elements_tee_LDADD = $(LDADD)
 elements_tee_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
+	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1)
+elements_valve_SOURCES = elements/valve.c
+elements_valve_OBJECTS = valve.$(OBJEXT)
+elements_valve_LDADD = $(LDADD)
+elements_valve_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
 	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
 	$(am__DEPENDENCIES_1)
 generic_sinks_SOURCES = generic/sinks.c
@@ -292,6 +322,12 @@ gst_gstelement_SOURCES = gst/gstelement.c
 gst_gstelement_OBJECTS = gstelement.$(OBJEXT)
 gst_gstelement_LDADD = $(LDADD)
 gst_gstelement_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
+	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1)
+gst_gstelementfactory_SOURCES = gst/gstelementfactory.c
+gst_gstelementfactory_OBJECTS = gstelementfactory.$(OBJEXT)
+gst_gstelementfactory_LDADD = $(LDADD)
+gst_gstelementfactory_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
 	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
 	$(am__DEPENDENCIES_1)
 gst_gstevent_SOURCES = gst/gstevent.c
@@ -501,6 +537,12 @@ am_libs_gdp_OBJECTS = gdp.$(OBJEXT)
 libs_gdp_OBJECTS = $(am_libs_gdp_OBJECTS)
 libs_gdp_DEPENDENCIES = $(top_builddir)/libs/gst/dataprotocol/libgstdataprotocol-@GST_MAJORMINOR@.la \
 	$(am__DEPENDENCIES_2)
+am_libs_gstlibscpp_OBJECTS = gstlibscpp.$(OBJEXT)
+libs_gstlibscpp_OBJECTS = $(am_libs_gstlibscpp_OBJECTS)
+libs_gstlibscpp_LDADD = $(LDADD)
+libs_gstlibscpp_DEPENDENCIES = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
+	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
+	$(am__DEPENDENCIES_1)
 libs_gstnetclientclock_SOURCES = libs/gstnetclientclock.c
 libs_gstnetclientclock_OBJECTS = gstnetclientclock.$(OBJEXT)
 libs_gstnetclientclock_DEPENDENCIES =  \
@@ -610,11 +652,13 @@ am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = elements/capsfilter.c elements/fakesink.c elements/fakesrc.c \
 	elements/fdsrc.c elements/filesink.c elements/filesrc.c \
-	elements/identity.c elements/multiqueue.c elements/queue.c \
-	elements/tee.c generic/sinks.c generic/states.c gst/gst.c \
-	gst/gstabi.c gst/gstbin.c gst/gstbuffer.c gst/gstbufferlist.c \
-	gst/gstbus.c gst/gstcaps.c gst/gstchildproxy.c gst/gstclock.c \
-	$(gst_gstcpp_SOURCES) gst/gstdatetime.c gst/gstelement.c \
+	elements/funnel.c elements/identity.c elements/multiqueue.c \
+	elements/queue.c elements/queue2.c elements/selector.c \
+	elements/tee.c elements/valve.c generic/sinks.c \
+	generic/states.c gst/gst.c gst/gstabi.c gst/gstbin.c \
+	gst/gstbuffer.c gst/gstbufferlist.c gst/gstbus.c gst/gstcaps.c \
+	gst/gstchildproxy.c gst/gstclock.c $(gst_gstcpp_SOURCES) \
+	gst/gstdatetime.c gst/gstelement.c gst/gstelementfactory.c \
 	gst/gstevent.c gst/gstghostpad.c gst/gstindex.c gst/gstinfo.c \
 	gst/gstinterface.c gst/gstiterator.c gst/gstmessage.c \
 	gst/gstminiobject.c gst/gstobject.c gst/gstpad.c \
@@ -625,36 +669,38 @@ SOURCES = elements/capsfilter.c elements/fakesink.c elements/fakesrc.c \
 	gst/gstutils.c gst/gstvalue.c libs/adapter.c libs/basesink.c \
 	libs/basesrc.c libs/bitreader.c libs/bytereader.c \
 	libs/bytewriter.c libs/collectpads.c libs/controller.c \
-	$(libs_gdp_SOURCES) libs/gstnetclientclock.c \
-	libs/gstnettimeprovider.c libs/libsabi.c libs/transform1.c \
-	libs/typefindhelper.c pipelines/cleanup.c \
-	pipelines/parse-disabled.c pipelines/parse-launch.c \
-	pipelines/queue-error.c pipelines/simple-launch-lines.c \
-	pipelines/stress.c
+	$(libs_gdp_SOURCES) $(libs_gstlibscpp_SOURCES) \
+	libs/gstnetclientclock.c libs/gstnettimeprovider.c \
+	libs/libsabi.c libs/transform1.c libs/typefindhelper.c \
+	pipelines/cleanup.c pipelines/parse-disabled.c \
+	pipelines/parse-launch.c pipelines/queue-error.c \
+	pipelines/simple-launch-lines.c pipelines/stress.c
 DIST_SOURCES = elements/capsfilter.c elements/fakesink.c \
 	elements/fakesrc.c elements/fdsrc.c elements/filesink.c \
-	elements/filesrc.c elements/identity.c elements/multiqueue.c \
-	elements/queue.c elements/tee.c generic/sinks.c \
-	generic/states.c gst/gst.c gst/gstabi.c gst/gstbin.c \
-	gst/gstbuffer.c gst/gstbufferlist.c gst/gstbus.c gst/gstcaps.c \
-	gst/gstchildproxy.c gst/gstclock.c $(gst_gstcpp_SOURCES) \
-	gst/gstdatetime.c gst/gstelement.c gst/gstevent.c \
-	gst/gstghostpad.c gst/gstindex.c gst/gstinfo.c \
-	gst/gstinterface.c gst/gstiterator.c gst/gstmessage.c \
-	gst/gstminiobject.c gst/gstobject.c gst/gstpad.c \
-	gst/gstparamspecs.c gst/gstpipeline.c gst/gstplugin.c \
-	gst/gstpoll.c gst/gstpreset.c gst/gstquery.c gst/gstregistry.c \
+	elements/filesrc.c elements/funnel.c elements/identity.c \
+	elements/multiqueue.c elements/queue.c elements/queue2.c \
+	elements/selector.c elements/tee.c elements/valve.c \
+	generic/sinks.c generic/states.c gst/gst.c gst/gstabi.c \
+	gst/gstbin.c gst/gstbuffer.c gst/gstbufferlist.c gst/gstbus.c \
+	gst/gstcaps.c gst/gstchildproxy.c gst/gstclock.c \
+	$(gst_gstcpp_SOURCES) gst/gstdatetime.c gst/gstelement.c \
+	gst/gstelementfactory.c gst/gstevent.c gst/gstghostpad.c \
+	gst/gstindex.c gst/gstinfo.c gst/gstinterface.c \
+	gst/gstiterator.c gst/gstmessage.c gst/gstminiobject.c \
+	gst/gstobject.c gst/gstpad.c gst/gstparamspecs.c \
+	gst/gstpipeline.c gst/gstplugin.c gst/gstpoll.c \
+	gst/gstpreset.c gst/gstquery.c gst/gstregistry.c \
 	gst/gstsegment.c gst/gststructure.c gst/gstsystemclock.c \
 	gst/gsttag.c gst/gsttagsetter.c gst/gsttask.c gst/gsturi.c \
 	gst/gstutils.c gst/gstvalue.c libs/adapter.c libs/basesink.c \
 	libs/basesrc.c libs/bitreader.c libs/bytereader.c \
 	libs/bytewriter.c libs/collectpads.c libs/controller.c \
-	$(libs_gdp_SOURCES) libs/gstnetclientclock.c \
-	libs/gstnettimeprovider.c libs/libsabi.c libs/transform1.c \
-	libs/typefindhelper.c pipelines/cleanup.c \
-	pipelines/parse-disabled.c pipelines/parse-launch.c \
-	pipelines/queue-error.c pipelines/simple-launch-lines.c \
-	pipelines/stress.c
+	$(libs_gdp_SOURCES) $(libs_gstlibscpp_SOURCES) \
+	libs/gstnetclientclock.c libs/gstnettimeprovider.c \
+	libs/libsabi.c libs/transform1.c libs/typefindhelper.c \
+	pipelines/cleanup.c pipelines/parse-disabled.c \
+	pipelines/parse-launch.c pipelines/queue-error.c \
+	pipelines/simple-launch-lines.c pipelines/stress.c
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -815,6 +861,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -872,6 +919,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -905,7 +953,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -954,12 +1001,13 @@ SUPPRESSIONS = $(top_srcdir)/common/gst.supp
 # been used
 @GST_DISABLE_LOADSAVE_FALSE@@GST_DISABLE_REGISTRY_FALSE@@GST_DISABLE_TRACE_FALSE@ABI_CHECKS = gst/gstabi
 @HAVE_CXX_FALSE@CXX_CHECKS = 
-@HAVE_CXX_TRUE@CXX_CHECKS = gst/gstcpp
+@HAVE_CXX_TRUE@CXX_CHECKS = gst/gstcpp libs/gstlibscpp
 @GST_DISABLE_REGISTRY_FALSE@REGISTRY_CHECKS = \
 @GST_DISABLE_REGISTRY_FALSE@	gst/gst					\
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstbin				\
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstchildproxy			\
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstelement				\
+@GST_DISABLE_REGISTRY_FALSE@	gst/gstelementfactory			\
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstevent				\
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstghostpad				\
 @GST_DISABLE_REGISTRY_FALSE@	gst/gstindex				\
@@ -977,10 +1025,14 @@ SUPPRESSIONS = $(top_srcdir)/common/gst.supp
 @GST_DISABLE_REGISTRY_FALSE@	elements/fdsrc			  	\
 @GST_DISABLE_REGISTRY_FALSE@	elements/filesink			\
 @GST_DISABLE_REGISTRY_FALSE@	elements/filesrc			\
+@GST_DISABLE_REGISTRY_FALSE@	elements/funnel				\
 @GST_DISABLE_REGISTRY_FALSE@	elements/identity			\
 @GST_DISABLE_REGISTRY_FALSE@	elements/multiqueue			\
+@GST_DISABLE_REGISTRY_FALSE@	elements/selector			\
 @GST_DISABLE_REGISTRY_FALSE@	elements/tee			  	\
 @GST_DISABLE_REGISTRY_FALSE@	elements/queue                          \
+@GST_DISABLE_REGISTRY_FALSE@	elements/queue2                         \
+@GST_DISABLE_REGISTRY_FALSE@	elements/valve                          \
 @GST_DISABLE_REGISTRY_FALSE@	libs/basesrc				\
 @GST_DISABLE_REGISTRY_FALSE@	libs/basesink				\
 @GST_DISABLE_REGISTRY_FALSE@	libs/controller				\
@@ -998,12 +1050,14 @@ SUPPRESSIONS = $(top_srcdir)/common/gst.supp
 TESTS = $(check_PROGRAMS)
 noinst_HEADERS = \
 	gst/capslist.h \
+	gst/struct_arm.h \
 	gst/struct_i386.h \
 	gst/struct_hppa.h \
 	gst/struct_ppc32.h \
 	gst/struct_ppc64.h \
 	gst/struct_sparc.h \
 	gst/struct_x86_64.h \
+	libs/struct_arm.h \
 	libs/struct_i386.h \
 	libs/struct_hppa.h \
 	libs/struct_ppc32.h \
@@ -1014,13 +1068,14 @@ noinst_HEADERS = \
 EXTRA_DIST = \
 	libs/test_transform.c
 
-AM_CFLAGS = $(GST_OBJ_CFLAGS)
-AM_CXXFLAGS = $(GST_OBJ_CXXFLAGS)
+AM_CFLAGS = $(GST_OBJ_CFLAGS) -UG_DISABLE_ASSERT -UG_DISABLE_CAST_CHECKS
+AM_CXXFLAGS = $(GST_OBJ_CXXFLAGS) -UG_DISABLE_ASSERT -UG_DISABLE_CAST_CHECKS
 LDADD = $(top_builddir)/libs/gst/check/libgstcheck-@GST_MAJORMINOR@.la \
 	$(top_builddir)/libs/gst/base/libgstbase-@GST_MAJORMINOR@.la \
 	$(GST_OBJ_LIBS)
 
 gst_gstcpp_SOURCES = gst/gstcpp.cc
+libs_gstlibscpp_SOURCES = libs/gstlibscpp.cc
 gst_gstutils_LDADD = $(LDADD) $(GSL_LIBS) $(GMP_LIBS)
 libs_gdp_SOURCES = \
 	libs/gdp.c
@@ -1029,8 +1084,12 @@ libs_gdp_LDADD = \
 	$(top_builddir)/libs/gst/dataprotocol/libgstdataprotocol-@GST_MAJORMINOR@.la \
 	$(LDADD)
 
-elements_fdsrc_CFLAGS = $(GST_OBJ_CFLAGS) -DTESTFILE=\"$(top_srcdir)/configure.ac\"
-elements_filesrc_CFLAGS = $(GST_OBJ_CFLAGS) -DTESTFILE=\"$(top_srcdir)/configure.ac\"
+elements_fdsrc_CFLAGS = $(GST_OBJ_CFLAGS) $(AM_CFLAGS) \
+	-DTESTFILE=\"$(top_srcdir)/configure.ac\"
+
+elements_filesrc_CFLAGS = $(GST_OBJ_CFLAGS) $(AM_CFLAGS) \
+	-DTESTFILE=\"$(top_srcdir)/configure.ac\"
+
 libs_controller_LDADD = \
 	$(top_builddir)/libs/gst/controller/libgstcontroller-@GST_MAJORMINOR@.la \
 	$(LDADD)
@@ -1153,6 +1212,9 @@ elements/filesink$(EXEEXT): $(elements_filesink_OBJECTS) $(elements_filesink_DEP
 elements/filesrc$(EXEEXT): $(elements_filesrc_OBJECTS) $(elements_filesrc_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/filesrc$(EXEEXT)
 	$(AM_V_CCLD)$(elements_filesrc_LINK) $(elements_filesrc_OBJECTS) $(elements_filesrc_LDADD) $(LIBS)
+elements/funnel$(EXEEXT): $(elements_funnel_OBJECTS) $(elements_funnel_DEPENDENCIES) elements/$(am__dirstamp)
+	@rm -f elements/funnel$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(elements_funnel_OBJECTS) $(elements_funnel_LDADD) $(LIBS)
 elements/identity$(EXEEXT): $(elements_identity_OBJECTS) $(elements_identity_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/identity$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(elements_identity_OBJECTS) $(elements_identity_LDADD) $(LIBS)
@@ -1162,9 +1224,18 @@ elements/multiqueue$(EXEEXT): $(elements_multiqueue_OBJECTS) $(elements_multique
 elements/queue$(EXEEXT): $(elements_queue_OBJECTS) $(elements_queue_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/queue$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(elements_queue_OBJECTS) $(elements_queue_LDADD) $(LIBS)
+elements/queue2$(EXEEXT): $(elements_queue2_OBJECTS) $(elements_queue2_DEPENDENCIES) elements/$(am__dirstamp)
+	@rm -f elements/queue2$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(elements_queue2_OBJECTS) $(elements_queue2_LDADD) $(LIBS)
+elements/selector$(EXEEXT): $(elements_selector_OBJECTS) $(elements_selector_DEPENDENCIES) elements/$(am__dirstamp)
+	@rm -f elements/selector$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(elements_selector_OBJECTS) $(elements_selector_LDADD) $(LIBS)
 elements/tee$(EXEEXT): $(elements_tee_OBJECTS) $(elements_tee_DEPENDENCIES) elements/$(am__dirstamp)
 	@rm -f elements/tee$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(elements_tee_OBJECTS) $(elements_tee_LDADD) $(LIBS)
+elements/valve$(EXEEXT): $(elements_valve_OBJECTS) $(elements_valve_DEPENDENCIES) elements/$(am__dirstamp)
+	@rm -f elements/valve$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(elements_valve_OBJECTS) $(elements_valve_LDADD) $(LIBS)
 generic/$(am__dirstamp):
 	@$(MKDIR_P) generic
 	@: > generic/$(am__dirstamp)
@@ -1213,6 +1284,9 @@ gst/gstdatetime$(EXEEXT): $(gst_gstdatetime_OBJECTS) $(gst_gstdatetime_DEPENDENC
 gst/gstelement$(EXEEXT): $(gst_gstelement_OBJECTS) $(gst_gstelement_DEPENDENCIES) gst/$(am__dirstamp)
 	@rm -f gst/gstelement$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(gst_gstelement_OBJECTS) $(gst_gstelement_LDADD) $(LIBS)
+gst/gstelementfactory$(EXEEXT): $(gst_gstelementfactory_OBJECTS) $(gst_gstelementfactory_DEPENDENCIES) gst/$(am__dirstamp)
+	@rm -f gst/gstelementfactory$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(gst_gstelementfactory_OBJECTS) $(gst_gstelementfactory_LDADD) $(LIBS)
 gst/gstevent$(EXEEXT): $(gst_gstevent_OBJECTS) $(gst_gstevent_DEPENDENCIES) gst/$(am__dirstamp)
 	@rm -f gst/gstevent$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(gst_gstevent_OBJECTS) $(gst_gstevent_LDADD) $(LIBS)
@@ -1321,6 +1395,9 @@ libs/controller$(EXEEXT): $(libs_controller_OBJECTS) $(libs_controller_DEPENDENC
 libs/gdp$(EXEEXT): $(libs_gdp_OBJECTS) $(libs_gdp_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/gdp$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(libs_gdp_OBJECTS) $(libs_gdp_LDADD) $(LIBS)
+libs/gstlibscpp$(EXEEXT): $(libs_gstlibscpp_OBJECTS) $(libs_gstlibscpp_DEPENDENCIES) libs/$(am__dirstamp)
+	@rm -f libs/gstlibscpp$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(libs_gstlibscpp_OBJECTS) $(libs_gstlibscpp_LDADD) $(LIBS)
 libs/gstnetclientclock$(EXEEXT): $(libs_gstnetclientclock_OBJECTS) $(libs_gstnetclientclock_DEPENDENCIES) libs/$(am__dirstamp)
 	@rm -f libs/gstnetclientclock$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(libs_gstnetclientclock_OBJECTS) $(libs_gstnetclientclock_LDADD) $(LIBS)
@@ -1379,6 +1456,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fakesink.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fakesrc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/filesink.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/funnel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gst.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstabi.Po@am__quote@
@@ -1392,12 +1470,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstcpp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstdatetime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstelement.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstelementfactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstevent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstghostpad.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstindex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstinfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstinterface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstiterator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstlibscpp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstmessage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstminiobject.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gstnetclientclock.Po@am__quote@
@@ -1427,6 +1507,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse-launch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/queue-error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/queue.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/queue2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/selector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simple-launch-lines.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sinks.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/states.Po@am__quote@
@@ -1434,6 +1516,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tee.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/transform1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/typefindhelper.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/valve.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1555,6 +1638,22 @@ elements_filesrc-filesrc.obj: elements/filesrc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(elements_filesrc_CFLAGS) $(CFLAGS) -c -o elements_filesrc-filesrc.obj `if test -f 'elements/filesrc.c'; then $(CYGPATH_W) 'elements/filesrc.c'; else $(CYGPATH_W) '$(srcdir)/elements/filesrc.c'; fi`
 
+funnel.o: elements/funnel.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT funnel.o -MD -MP -MF $(DEPDIR)/funnel.Tpo -c -o funnel.o `test -f 'elements/funnel.c' || echo '$(srcdir)/'`elements/funnel.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/funnel.Tpo $(DEPDIR)/funnel.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/funnel.c' object='funnel.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o funnel.o `test -f 'elements/funnel.c' || echo '$(srcdir)/'`elements/funnel.c
+
+funnel.obj: elements/funnel.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT funnel.obj -MD -MP -MF $(DEPDIR)/funnel.Tpo -c -o funnel.obj `if test -f 'elements/funnel.c'; then $(CYGPATH_W) 'elements/funnel.c'; else $(CYGPATH_W) '$(srcdir)/elements/funnel.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/funnel.Tpo $(DEPDIR)/funnel.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/funnel.c' object='funnel.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o funnel.obj `if test -f 'elements/funnel.c'; then $(CYGPATH_W) 'elements/funnel.c'; else $(CYGPATH_W) '$(srcdir)/elements/funnel.c'; fi`
+
 identity.o: elements/identity.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT identity.o -MD -MP -MF $(DEPDIR)/identity.Tpo -c -o identity.o `test -f 'elements/identity.c' || echo '$(srcdir)/'`elements/identity.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/identity.Tpo $(DEPDIR)/identity.Po
@@ -1603,6 +1702,38 @@ queue.obj: elements/queue.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o queue.obj `if test -f 'elements/queue.c'; then $(CYGPATH_W) 'elements/queue.c'; else $(CYGPATH_W) '$(srcdir)/elements/queue.c'; fi`
 
+queue2.o: elements/queue2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT queue2.o -MD -MP -MF $(DEPDIR)/queue2.Tpo -c -o queue2.o `test -f 'elements/queue2.c' || echo '$(srcdir)/'`elements/queue2.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/queue2.Tpo $(DEPDIR)/queue2.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/queue2.c' object='queue2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o queue2.o `test -f 'elements/queue2.c' || echo '$(srcdir)/'`elements/queue2.c
+
+queue2.obj: elements/queue2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT queue2.obj -MD -MP -MF $(DEPDIR)/queue2.Tpo -c -o queue2.obj `if test -f 'elements/queue2.c'; then $(CYGPATH_W) 'elements/queue2.c'; else $(CYGPATH_W) '$(srcdir)/elements/queue2.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/queue2.Tpo $(DEPDIR)/queue2.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/queue2.c' object='queue2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o queue2.obj `if test -f 'elements/queue2.c'; then $(CYGPATH_W) 'elements/queue2.c'; else $(CYGPATH_W) '$(srcdir)/elements/queue2.c'; fi`
+
+selector.o: elements/selector.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT selector.o -MD -MP -MF $(DEPDIR)/selector.Tpo -c -o selector.o `test -f 'elements/selector.c' || echo '$(srcdir)/'`elements/selector.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/selector.Tpo $(DEPDIR)/selector.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/selector.c' object='selector.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o selector.o `test -f 'elements/selector.c' || echo '$(srcdir)/'`elements/selector.c
+
+selector.obj: elements/selector.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT selector.obj -MD -MP -MF $(DEPDIR)/selector.Tpo -c -o selector.obj `if test -f 'elements/selector.c'; then $(CYGPATH_W) 'elements/selector.c'; else $(CYGPATH_W) '$(srcdir)/elements/selector.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/selector.Tpo $(DEPDIR)/selector.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/selector.c' object='selector.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o selector.obj `if test -f 'elements/selector.c'; then $(CYGPATH_W) 'elements/selector.c'; else $(CYGPATH_W) '$(srcdir)/elements/selector.c'; fi`
+
 tee.o: elements/tee.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tee.o -MD -MP -MF $(DEPDIR)/tee.Tpo -c -o tee.o `test -f 'elements/tee.c' || echo '$(srcdir)/'`elements/tee.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tee.Tpo $(DEPDIR)/tee.Po
@@ -1618,6 +1749,22 @@ tee.obj: elements/tee.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/tee.c' object='tee.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tee.obj `if test -f 'elements/tee.c'; then $(CYGPATH_W) 'elements/tee.c'; else $(CYGPATH_W) '$(srcdir)/elements/tee.c'; fi`
+
+valve.o: elements/valve.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT valve.o -MD -MP -MF $(DEPDIR)/valve.Tpo -c -o valve.o `test -f 'elements/valve.c' || echo '$(srcdir)/'`elements/valve.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/valve.Tpo $(DEPDIR)/valve.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/valve.c' object='valve.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o valve.o `test -f 'elements/valve.c' || echo '$(srcdir)/'`elements/valve.c
+
+valve.obj: elements/valve.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT valve.obj -MD -MP -MF $(DEPDIR)/valve.Tpo -c -o valve.obj `if test -f 'elements/valve.c'; then $(CYGPATH_W) 'elements/valve.c'; else $(CYGPATH_W) '$(srcdir)/elements/valve.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/valve.Tpo $(DEPDIR)/valve.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='elements/valve.c' object='valve.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o valve.obj `if test -f 'elements/valve.c'; then $(CYGPATH_W) 'elements/valve.c'; else $(CYGPATH_W) '$(srcdir)/elements/valve.c'; fi`
 
 sinks.o: generic/sinks.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sinks.o -MD -MP -MF $(DEPDIR)/sinks.Tpo -c -o sinks.o `test -f 'generic/sinks.c' || echo '$(srcdir)/'`generic/sinks.c
@@ -1826,6 +1973,22 @@ gstelement.obj: gst/gstelement.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst/gstelement.c' object='gstelement.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gstelement.obj `if test -f 'gst/gstelement.c'; then $(CYGPATH_W) 'gst/gstelement.c'; else $(CYGPATH_W) '$(srcdir)/gst/gstelement.c'; fi`
+
+gstelementfactory.o: gst/gstelementfactory.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gstelementfactory.o -MD -MP -MF $(DEPDIR)/gstelementfactory.Tpo -c -o gstelementfactory.o `test -f 'gst/gstelementfactory.c' || echo '$(srcdir)/'`gst/gstelementfactory.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gstelementfactory.Tpo $(DEPDIR)/gstelementfactory.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst/gstelementfactory.c' object='gstelementfactory.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gstelementfactory.o `test -f 'gst/gstelementfactory.c' || echo '$(srcdir)/'`gst/gstelementfactory.c
+
+gstelementfactory.obj: gst/gstelementfactory.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gstelementfactory.obj -MD -MP -MF $(DEPDIR)/gstelementfactory.Tpo -c -o gstelementfactory.obj `if test -f 'gst/gstelementfactory.c'; then $(CYGPATH_W) 'gst/gstelementfactory.c'; else $(CYGPATH_W) '$(srcdir)/gst/gstelementfactory.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gstelementfactory.Tpo $(DEPDIR)/gstelementfactory.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gst/gstelementfactory.c' object='gstelementfactory.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gstelementfactory.obj `if test -f 'gst/gstelementfactory.c'; then $(CYGPATH_W) 'gst/gstelementfactory.c'; else $(CYGPATH_W) '$(srcdir)/gst/gstelementfactory.c'; fi`
 
 gstevent.o: gst/gstevent.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gstevent.o -MD -MP -MF $(DEPDIR)/gstevent.Tpo -c -o gstevent.o `test -f 'gst/gstevent.c' || echo '$(srcdir)/'`gst/gstevent.c
@@ -2602,6 +2765,22 @@ gstcpp.obj: gst/gstcpp.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gst/gstcpp.cc' object='gstcpp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gstcpp.obj `if test -f 'gst/gstcpp.cc'; then $(CYGPATH_W) 'gst/gstcpp.cc'; else $(CYGPATH_W) '$(srcdir)/gst/gstcpp.cc'; fi`
+
+gstlibscpp.o: libs/gstlibscpp.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gstlibscpp.o -MD -MP -MF $(DEPDIR)/gstlibscpp.Tpo -c -o gstlibscpp.o `test -f 'libs/gstlibscpp.cc' || echo '$(srcdir)/'`libs/gstlibscpp.cc
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gstlibscpp.Tpo $(DEPDIR)/gstlibscpp.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libs/gstlibscpp.cc' object='gstlibscpp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gstlibscpp.o `test -f 'libs/gstlibscpp.cc' || echo '$(srcdir)/'`libs/gstlibscpp.cc
+
+gstlibscpp.obj: libs/gstlibscpp.cc
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gstlibscpp.obj -MD -MP -MF $(DEPDIR)/gstlibscpp.Tpo -c -o gstlibscpp.obj `if test -f 'libs/gstlibscpp.cc'; then $(CYGPATH_W) 'libs/gstlibscpp.cc'; else $(CYGPATH_W) '$(srcdir)/libs/gstlibscpp.cc'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gstlibscpp.Tpo $(DEPDIR)/gstlibscpp.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='libs/gstlibscpp.cc' object='gstlibscpp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gstlibscpp.obj `if test -f 'libs/gstlibscpp.cc'; then $(CYGPATH_W) 'libs/gstlibscpp.cc'; else $(CYGPATH_W) '$(srcdir)/libs/gstlibscpp.cc'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

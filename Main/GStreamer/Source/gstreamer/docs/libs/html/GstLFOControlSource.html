@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-control.html" title="GStreamer Dynamic Parameter Control">
 <link rel="prev" href="GstInterpolationControlSource.html" title="GstInterpolationControlSource">
 <link rel="next" href="gstreamer-libs-GstControllerGObject.html" title="GstControllerGObject">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -30,7 +30,7 @@
                   <a href="#GstLFOControlSource.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="GstLFOControlSource">
+<div class="refentry">
 <a name="GstLFOControlSource"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -39,17 +39,17 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="GstLFOControlSource.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;libs/controller/gstlfocontrolsource.h&gt;
 
-                    <a class="link" href="GstLFOControlSource.html#GstLFOControlSource-struct" title="GstLFOControlSource">GstLFOControlSource</a>;
+struct              <a class="link" href="GstLFOControlSource.html#GstLFOControlSource-struct" title="struct GstLFOControlSource">GstLFOControlSource</a>;
 enum                <a class="link" href="GstLFOControlSource.html#GstLFOWaveform" title="enum GstLFOWaveform">GstLFOWaveform</a>;
 <a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="returnvalue">GstLFOControlSource</span></a> * <a class="link" href="GstLFOControlSource.html#gst-lfo-control-source-new" title="gst_lfo_control_source_new ()">gst_lfo_control_source_new</a>        (<em class="parameter"><code><span class="type">void</span></code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="GstLFOControlSource.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -57,7 +57,7 @@ enum                <a class="link" href="GstLFOControlSource.html#GstLFOWavefor
          +----GstLFOControlSource
 </pre>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="GstLFOControlSource.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="GstLFOControlSource.html#GstLFOControlSource--amplitude" title='The "amplitude" property'>amplitude</a>"                <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Generic-values.html#GValue"><span class="type">GValue</span></a>*               : Read / Write
@@ -67,7 +67,7 @@ enum                <a class="link" href="GstLFOControlSource.html#GstLFOWavefor
   "<a class="link" href="GstLFOControlSource.html#GstLFOControlSource--waveform" title='The "waveform" property'>waveform</a>"                 <a class="link" href="GstLFOControlSource.html#GstLFOWaveform" title="enum GstLFOWaveform"><span class="type">GstLFOWaveform</span></a>        : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="GstLFOControlSource.description"></a><h2>Description</h2>
 <p>
 <a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="type">GstLFOControlSource</span></a> is a <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a>, that provides several periodic waveforms
@@ -82,17 +82,17 @@ gst_lfo_control_source_set_waveform.
 All functions are MT-safe.
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="GstLFOControlSource.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstLFOControlSource">
-<a name="GstLFOControlSource-struct"></a><h3>GstLFOControlSource</h3>
-<pre class="programlisting">typedef struct _GstLFOControlSource GstLFOControlSource;</pre>
+<div class="refsect2">
+<a name="GstLFOControlSource-struct"></a><h3>struct GstLFOControlSource</h3>
+<pre class="programlisting">struct GstLFOControlSource;</pre>
 <p>
 The instance structure of <a class="link" href="GstControlSource.html" title="GstControlSource"><span class="type">GstControlSource</span></a>.
 </p>
 </div>
 <hr>
-<div class="refsect2" title="enum GstLFOWaveform">
+<div class="refsect2">
 <a name="GstLFOWaveform"></a><h3>enum GstLFOWaveform</h3>
 <pre class="programlisting">typedef enum
 {
@@ -138,7 +138,7 @@ The various waveform modes available.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_lfo_control_source_new ()">
+<div class="refsect2">
 <a name="gst-lfo-control-source-new"></a><h3>gst_lfo_control_source_new ()</h3>
 <pre class="programlisting"><a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="returnvalue">GstLFOControlSource</span></a> * gst_lfo_control_source_new        (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
@@ -148,15 +148,14 @@ This returns a new, unbound <a class="link" href="GstLFOControlSource.html" titl
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a new, unbound <a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="type">GstLFOControlSource</span></a>.
-</td>
+<td>a new, unbound <a class="link" href="GstLFOControlSource.html" title="GstLFOControlSource"><span class="type">GstLFOControlSource</span></a>.</td>
 </tr></tbody>
 </table></div>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="GstLFOControlSource.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "amplitude" property'>
+<div class="refsect2">
 <a name="GstLFOControlSource--amplitude"></a><h3>The <code class="literal">"amplitude"</code> property</h3>
 <pre class="programlisting">  "amplitude"                <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Generic-values.html#GValue"><span class="type">GValue</span></a>*               : Read / Write</pre>
 <p>
@@ -168,7 +167,7 @@ to the type of the bound property.
 </p>
 </div>
 <hr>
-<div class="refsect2" title='The "frequency" property'>
+<div class="refsect2">
 <a name="GstLFOControlSource--frequency"></a><h3>The <code class="literal">"frequency"</code> property</h3>
 <pre class="programlisting">  "frequency"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write</pre>
 <p>
@@ -180,7 +179,7 @@ so that the period is longer than one nanosecond.
 <p>Default value: 1</p>
 </div>
 <hr>
-<div class="refsect2" title='The "offset" property'>
+<div class="refsect2">
 <a name="GstLFOControlSource--offset"></a><h3>The <code class="literal">"offset"</code> property</h3>
 <pre class="programlisting">  "offset"                   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Generic-values.html#GValue"><span class="type">GValue</span></a>*               : Read / Write</pre>
 <p>
@@ -192,7 +191,7 @@ to the type of the bound property.
 </p>
 </div>
 <hr>
-<div class="refsect2" title='The "timeshift" property'>
+<div class="refsect2">
 <a name="GstLFOControlSource--timeshift"></a><h3>The <code class="literal">"timeshift"</code> property</h3>
 <pre class="programlisting">  "timeshift"                <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
 <p>
@@ -206,7 +205,7 @@ To get a n nanosecond shift to the left use
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "waveform" property'>
+<div class="refsect2">
 <a name="GstLFOControlSource--waveform"></a><h3>The <code class="literal">"waveform"</code> property</h3>
 <pre class="programlisting">  "waveform"                 <a class="link" href="GstLFOControlSource.html#GstLFOWaveform" title="enum GstLFOWaveform"><span class="type">GstLFOWaveform</span></a>        : Read / Write</pre>
 <p>
@@ -218,6 +217,6 @@ Specifies the waveform that should be used for this <a class="link" href="GstLFO
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

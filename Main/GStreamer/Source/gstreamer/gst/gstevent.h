@@ -93,9 +93,10 @@ typedef enum {
  * @GST_EVENT_SINK_MESSAGE: An event that sinks turn into a message. Used to
  *                          send messages that should be emitted in sync with
  *                          rendering.
+ *                          Since: 0.10.26
  * @GST_EVENT_QOS: A quality message. Used to indicate to upstream elements
- *                 that the downstream elements are being starved of or
- *                 flooded with data.
+ *                 that the downstream elements should adjust their processing
+ *                 rate.
  * @GST_EVENT_SEEK: A request for a new playback position and rate.
  * @GST_EVENT_NAVIGATION: Navigation events are usually used for communicating
  *                        user requests, such as mouse or keyboard movements,
@@ -224,9 +225,10 @@ typedef struct _GstEventClass GstEventClass;
 
 /**
  * gst_event_replace:
- * @old_event: pointer to a pointer to a #GstEvent to be replaced.
- * @new_event: pointer to a #GstEvent that will replace the event pointed to
- *        by @old_event.
+ * @old_event: (inout) (transfer full): pointer to a pointer to a #GstEvent
+ *     to be replaced.
+ * @new_event: (allow-none) (transfer none): pointer to a #GstEvent that will
+ *     replace the event pointed to by @old_event.
  *
  * Modifies a pointer to a #GstEvent to point to a different #GstEvent. The
  * modification is done atomically (so this is useful for ensuring thread safety
@@ -296,7 +298,11 @@ typedef enum {
  * When doing fast forward (rate > 1.0) or fast reverse (rate < -1.0) trickmode
  * playback, the @GST_SEEK_FLAG_SKIP flag can be used to instruct decoders
  * and demuxers to adjust the playback rate by skipping frames. This can improve
- * performance and decrease CPU usage because not all frames need to be decoded. 
+ * performance and decrease CPU usage because not all frames need to be decoded.
+ *
+ * Also see part-seeking.txt in the GStreamer design documentation for more
+ * details on the meaning of these flags and the behaviour expected of
+ * elements that handle them.
  */
 typedef enum {
   GST_SEEK_FLAG_NONE            = 0,
@@ -306,6 +312,29 @@ typedef enum {
   GST_SEEK_FLAG_SEGMENT         = (1 << 3),
   GST_SEEK_FLAG_SKIP            = (1 << 4)
 } GstSeekFlags;
+
+/**
+ * GstQOSType:
+ * @GST_QOS_TYPE_OVERFLOW: The QoS event type that is produced when downstream
+ *    elements are producing data too quickly and the element can't keep up
+ *    processing the data. Upstream should reduce their processing rate. This
+ *    type is also used when buffers arrive early or in time.
+ * @GST_QOS_TYPE_UNDERFLOW: The QoS event type that is produced when downstream
+ *    elements are producing data too slowly and need to speed up their processing
+ *    rate. 
+ * @GST_QOS_TYPE_THROTTLE: The QoS event type that is produced when the
+ *    application enabled throttling to limit the datarate.
+ *
+ * The different types of QoS events that can be given to the 
+ * gst_event_new_qos_full() method. 
+ *
+ * Since: 0.10.33
+ */
+typedef enum {
+  GST_QOS_TYPE_OVERFLOW        = 0,
+  GST_QOS_TYPE_UNDERFLOW       = 1,
+  GST_QOS_TYPE_THROTTLE        = 2
+} GstQOSType;
 
 /**
  * GstEvent:
@@ -356,7 +385,7 @@ GType           gst_event_get_type              (void);
  *
  * Increase the refcount of this event.
  *
- * Returns: @event (for convenience when doing assignments)
+ * Returns: (transfer full): @event (for convenience when doing assignments)
  */
 #ifdef _FOOL_GTK_DOC_
 G_INLINE_FUNC GstEvent * gst_event_ref (GstEvent * event);
@@ -370,7 +399,7 @@ gst_event_ref (GstEvent * event)
 
 /**
  * gst_event_unref:
- * @event: The event to refcount
+ * @event: (transfer full): the event to refcount
  *
  * Decrease the refcount of an event, freeing it if the refcount reaches 0.
  */
@@ -391,7 +420,7 @@ gst_event_unref (GstEvent * event)
  *
  * Copy the event using the event specific copy function.
  *
- * Returns: the new event
+ * Returns: (transfer full): the new event
  */
 #ifdef _FOOL_GTK_DOC_
 G_INLINE_FUNC GstEvent * gst_event_copy (const GstEvent * event);
@@ -460,7 +489,12 @@ void            gst_event_parse_buffer_size     (GstEvent *event, GstFormat *for
 /* QOS events */
 GstEvent*       gst_event_new_qos               (gdouble proportion, GstClockTimeDiff diff,
                                                  GstClockTime timestamp);
+GstEvent*       gst_event_new_qos_full          (GstQOSType type, gdouble proportion,
+                                                 GstClockTimeDiff diff, GstClockTime timestamp);
 void            gst_event_parse_qos             (GstEvent *event, gdouble *proportion, GstClockTimeDiff *diff,
+                                                 GstClockTime *timestamp);
+void            gst_event_parse_qos_full        (GstEvent *event, GstQOSType *type,
+                                                 gdouble *proportion, GstClockTimeDiff *diff,
                                                  GstClockTime *timestamp);
 /* seek event */
 GstEvent*       gst_event_new_seek              (gdouble rate, GstFormat format, GstSeekFlags flags,

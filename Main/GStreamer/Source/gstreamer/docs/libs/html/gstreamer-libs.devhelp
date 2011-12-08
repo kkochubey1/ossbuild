@@ -4,6 +4,7 @@
   <chapters>
     <sub name="GStreamer Libraries" link="gstreamer-libs.html">
       <sub name="GStreamer Base and Utillity Classes" link="gstreamer-base.html">
+        <sub name="GstBaseParse" link="gstreamer-libs-GstBaseParse.html"/>
         <sub name="GstBaseSrc" link="GstBaseSrc.html"/>
         <sub name="GstBaseSink" link="GstBaseSink.html"/>
         <sub name="GstBaseTransform" link="GstBaseTransform.html"/>
@@ -40,11 +41,37 @@
     <sub name="Object Hierarchy" link="gstreamer-hierarchy.html"/>
     <sub name="API Index" link="api-index-full.html"/>
     <sub name="Index of deprecated API" link="api-index-deprecated.html"/>
+    <sub name="Annotation Glossary" link="annotation-glossary.html"/>
   </chapters>
   <functions>
-    <function name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#id555724"/>
-    <function name="GstBaseSrc" link="GstBaseSrc.html#GstBaseSrc-struct"/>
-    <function name="GstBaseSrcClass" link="GstBaseSrc.html#GstBaseSrcClass"/>
+    <function name="struct GstBaseParse" link="gstreamer-libs-GstBaseParse.html#GstBaseParse"/>
+    <function name="struct GstBaseParseClass" link="gstreamer-libs-GstBaseParse.html#GstBaseParseClass"/>
+    <function name="gst_base_parse_set_duration ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-duration"/>
+    <function name="gst_base_parse_set_average_bitrate ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-average-bitrate"/>
+    <function name="gst_base_parse_set_min_frame_size ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-min-frame-size"/>
+    <function name="gst_base_parse_set_passthrough ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-passthrough"/>
+    <function name="gst_base_parse_set_syncable ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-syncable"/>
+    <function name="gst_base_parse_set_has_timing_info ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-has-timing-info"/>
+    <function name="gst_base_parse_set_frame_rate ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-set-frame-rate"/>
+    <function name="gst_base_parse_convert_default ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-convert-default"/>
+    <function name="gst_base_parse_add_index_entry ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-add-index-entry"/>
+    <function name="GstBaseParseFrame" link="gstreamer-libs-GstBaseParse.html#GstBaseParseFrame"/>
+    <function name="enum GstBaseParseFrameFlags" link="gstreamer-libs-GstBaseParse.html#GstBaseParseFrameFlags"/>
+    <function name="gst_base_parse_frame_new ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-frame-new"/>
+    <function name="gst_base_parse_frame_init ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-frame-init"/>
+    <function name="gst_base_parse_frame_free ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-frame-free"/>
+    <function name="gst_base_parse_push_frame ()" link="gstreamer-libs-GstBaseParse.html#gst-base-parse-push-frame"/>
+    <function name="GST_BASE_PARSE_DRAINING()" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-DRAINING:CAPS"/>
+    <function name="GST_BASE_PARSE_FLAG_DRAINING" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-FLAG-DRAINING:CAPS"/>
+    <function name="GST_BASE_PARSE_FLAG_LOST_SYNC" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-FLAG-LOST-SYNC:CAPS"/>
+    <function name="GST_BASE_PARSE_FLOW_DROPPED" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-FLOW-DROPPED:CAPS"/>
+    <function name="GST_BASE_PARSE_FLOW_QUEUED" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-FLOW-QUEUED:CAPS"/>
+    <function name="GST_BASE_PARSE_LOST_SYNC()" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-LOST-SYNC:CAPS"/>
+    <function name="GST_BASE_PARSE_SINK_PAD()" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-SINK-PAD:CAPS"/>
+    <function name="GST_BASE_PARSE_SRC_PAD()" link="gstreamer-libs-GstBaseParse.html#GST-BASE-PARSE-SRC-PAD:CAPS"/>
+    <function name="Controlled shutdown of live sources in applications" link="GstBaseSrc.html#idp9283984"/>
+    <function name="struct GstBaseSrc" link="GstBaseSrc.html#GstBaseSrc-struct"/>
+    <function name="struct GstBaseSrcClass" link="GstBaseSrc.html#GstBaseSrcClass"/>
     <function name="enum GstBaseSrcFlags" link="GstBaseSrc.html#GstBaseSrcFlags"/>
     <function name="gst_base_src_wait_playing ()" link="GstBaseSrc.html#gst-base-src-wait-playing"/>
     <function name="gst_base_src_is_live ()" link="GstBaseSrc.html#gst-base-src-is-live"/>
@@ -61,8 +88,8 @@
     <function name="The &quot;do-timestamp&quot; property" link="GstBaseSrc.html#GstBaseSrc--do-timestamp"/>
     <function name="The &quot;num-buffers&quot; property" link="GstBaseSrc.html#GstBaseSrc--num-buffers"/>
     <function name="The &quot;typefind&quot; property" link="GstBaseSrc.html#GstBaseSrc--typefind"/>
-    <function name="GstBaseSink" link="GstBaseSink.html#GstBaseSink-struct"/>
-    <function name="GstBaseSinkClass" link="GstBaseSink.html#GstBaseSinkClass"/>
+    <function name="struct GstBaseSink" link="GstBaseSink.html#GstBaseSink-struct"/>
+    <function name="struct GstBaseSinkClass" link="GstBaseSink.html#GstBaseSinkClass"/>
     <function name="gst_base_sink_query_latency ()" link="GstBaseSink.html#gst-base-sink-query-latency"/>
     <function name="gst_base_sink_get_latency ()" link="GstBaseSink.html#gst-base-sink-get-latency"/>
     <function name="gst_base_sink_do_preroll ()" link="GstBaseSink.html#gst-base-sink-do-preroll"/>
@@ -86,6 +113,8 @@
     <function name="gst_base_sink_get_last_buffer ()" link="GstBaseSink.html#gst-base-sink-get-last-buffer"/>
     <function name="gst_base_sink_set_blocksize ()" link="GstBaseSink.html#gst-base-sink-set-blocksize"/>
     <function name="gst_base_sink_get_blocksize ()" link="GstBaseSink.html#gst-base-sink-get-blocksize"/>
+    <function name="gst_base_sink_get_throttle_time ()" link="GstBaseSink.html#gst-base-sink-get-throttle-time"/>
+    <function name="gst_base_sink_set_throttle_time ()" link="GstBaseSink.html#gst-base-sink-set-throttle-time"/>
     <function name="GST_BASE_SINK_PAD()" link="GstBaseSink.html#GST-BASE-SINK-PAD:CAPS"/>
     <function name="The &quot;async&quot; property" link="GstBaseSink.html#GstBaseSink--async"/>
     <function name="The &quot;blocksize&quot; property" link="GstBaseSink.html#GstBaseSink--blocksize"/>
@@ -96,11 +125,12 @@
     <function name="The &quot;qos&quot; property" link="GstBaseSink.html#GstBaseSink--qos"/>
     <function name="The &quot;render-delay&quot; property" link="GstBaseSink.html#GstBaseSink--render-delay"/>
     <function name="The &quot;sync&quot; property" link="GstBaseSink.html#GstBaseSink--sync"/>
+    <function name="The &quot;throttle-time&quot; property" link="GstBaseSink.html#GstBaseSink--throttle-time"/>
     <function name="The &quot;ts-offset&quot; property" link="GstBaseSink.html#GstBaseSink--ts-offset"/>
-    <function name="Use Cases" link="GstBaseTransform.html#id625128"/>
-    <function name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#id610488"/>
-    <function name="GstBaseTransform" link="GstBaseTransform.html#GstBaseTransform-struct"/>
-    <function name="GstBaseTransformClass" link="GstBaseTransform.html#GstBaseTransformClass"/>
+    <function name="Use Cases" link="GstBaseTransform.html#idp6758832"/>
+    <function name="Sub-class settable flags on GstBaseTransform" link="GstBaseTransform.html#idp5025520"/>
+    <function name="struct GstBaseTransform" link="GstBaseTransform.html#GstBaseTransform-struct"/>
+    <function name="struct GstBaseTransformClass" link="GstBaseTransform.html#GstBaseTransformClass"/>
     <function name="gst_base_transform_is_passthrough ()" link="GstBaseTransform.html#gst-base-transform-is-passthrough"/>
     <function name="gst_base_transform_set_passthrough ()" link="GstBaseTransform.html#gst-base-transform-set-passthrough"/>
     <function name="gst_base_transform_is_in_place ()" link="GstBaseTransform.html#gst-base-transform-is-in-place"/>
@@ -119,8 +149,8 @@
     <function name="GST_BASE_TRANSFORM_LOCK()" link="GstBaseTransform.html#GST-BASE-TRANSFORM-LOCK:CAPS"/>
     <function name="GST_BASE_TRANSFORM_UNLOCK()" link="GstBaseTransform.html#GST-BASE-TRANSFORM-UNLOCK:CAPS"/>
     <function name="The &quot;qos&quot; property" link="GstBaseTransform.html#GstBaseTransform--qos"/>
-    <function name="GstPushSrc" link="GstPushSrc.html#GstPushSrc-struct"/>
-    <function name="GstAdapter" link="GstAdapter.html#GstAdapter-struct"/>
+    <function name="struct GstPushSrc" link="GstPushSrc.html#GstPushSrc-struct"/>
+    <function name="struct GstAdapter" link="GstAdapter.html#GstAdapter-struct"/>
     <function name="gst_adapter_new ()" link="GstAdapter.html#gst-adapter-new"/>
     <function name="gst_adapter_clear ()" link="GstAdapter.html#gst-adapter-clear"/>
     <function name="gst_adapter_push ()" link="GstAdapter.html#gst-adapter-push"/>
@@ -360,8 +390,8 @@
     <function name="gst_byte_writer_put_float64_le_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-float64-le-unchecked"/>
     <function name="gst_byte_writer_put_data_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-put-data-unchecked"/>
     <function name="gst_byte_writer_fill_unchecked ()" link="gstreamer-libs-GstByteWriter.html#gst-byte-writer-fill-unchecked"/>
-    <function name="GstCollectData" link="GstCollectPads.html#GstCollectData"/>
-    <function name="GstCollectPads" link="GstCollectPads.html#GstCollectPads-struct"/>
+    <function name="struct GstCollectData" link="GstCollectPads.html#GstCollectData"/>
+    <function name="struct GstCollectPads" link="GstCollectPads.html#GstCollectPads-struct"/>
     <function name="GstCollectPadsFunction ()" link="GstCollectPads.html#GstCollectPadsFunction"/>
     <function name="GstCollectPadsClipFunction ()" link="GstCollectPads.html#GstCollectPadsClipFunction"/>
     <function name="GstCollectDataDestroyNotify ()" link="GstCollectPads.html#GstCollectDataDestroyNotify"/>
@@ -390,10 +420,10 @@
     <function name="GstTypeFindHelperGetRangeFunction ()" link="gstreamer-libs-GstTypeFindHelper.html#GstTypeFindHelperGetRangeFunction"/>
     <function name="gst_type_find_helper_get_range ()" link="gstreamer-libs-GstTypeFindHelper.html#gst-type-find-helper-get-range"/>
     <function name="gst_type_find_helper_get_range_ext ()" link="gstreamer-libs-GstTypeFindHelper.html#gst-type-find-helper-get-range-ext"/>
-    <function name="GstDataQueue" link="gstreamer-libs-GstDataQueue.html#GstDataQueue"/>
-    <function name="GstDataQueueSize" link="gstreamer-libs-GstDataQueue.html#GstDataQueueSize"/>
+    <function name="struct GstDataQueue" link="gstreamer-libs-GstDataQueue.html#GstDataQueue"/>
+    <function name="struct GstDataQueueSize" link="gstreamer-libs-GstDataQueue.html#GstDataQueueSize"/>
     <function name="GstDataQueueCheckFullFunction ()" link="gstreamer-libs-GstDataQueue.html#GstDataQueueCheckFullFunction"/>
-    <function name="GstDataQueueItem" link="gstreamer-libs-GstDataQueue.html#GstDataQueueItem"/>
+    <function name="struct GstDataQueueItem" link="gstreamer-libs-GstDataQueue.html#GstDataQueueItem"/>
     <function name="GstDataQueueEmptyCallback ()" link="gstreamer-libs-GstDataQueue.html#GstDataQueueEmptyCallback"/>
     <function name="GstDataQueueFullCallback ()" link="gstreamer-libs-GstDataQueue.html#GstDataQueueFullCallback"/>
     <function name="gst_data_queue_new ()" link="gstreamer-libs-GstDataQueue.html#gst-data-queue-new"/>
@@ -407,7 +437,7 @@
     <function name="gst_data_queue_is_empty ()" link="gstreamer-libs-GstDataQueue.html#gst-data-queue-is-empty"/>
     <function name="gst_data_queue_get_level ()" link="gstreamer-libs-GstDataQueue.html#gst-data-queue-get-level"/>
     <function name="gst_data_queue_limits_changed ()" link="gstreamer-libs-GstDataQueue.html#gst-data-queue-limits-changed"/>
-    <function name="GstController" link="GstController.html#GstController-struct"/>
+    <function name="struct GstController" link="GstController.html#GstController-struct"/>
     <function name="gst_controller_init ()" link="GstController.html#gst-controller-init"/>
     <function name="gst_controller_new ()" link="GstController.html#gst-controller-new"/>
     <function name="gst_controller_new_list ()" link="GstController.html#gst-controller-new-list"/>
@@ -431,17 +461,17 @@
     <function name="gst_controller_get_all ()" link="GstController.html#gst-controller-get-all"/>
     <function name="gst_controller_set_interpolation_mode ()" link="GstController.html#gst-controller-set-interpolation-mode"/>
     <function name="The &quot;control-rate&quot; property" link="GstController.html#GstController--control-rate"/>
-    <function name="GstControlSource" link="GstControlSource.html#GstControlSource-struct"/>
-    <function name="GstControlSourceClass" link="GstControlSource.html#GstControlSourceClass"/>
+    <function name="struct GstControlSource" link="GstControlSource.html#GstControlSource-struct"/>
+    <function name="struct GstControlSourceClass" link="GstControlSource.html#GstControlSourceClass"/>
     <function name="GstControlSourceBind ()" link="GstControlSource.html#GstControlSourceBind"/>
     <function name="GstControlSourceGetValue ()" link="GstControlSource.html#GstControlSourceGetValue"/>
     <function name="GstControlSourceGetValueArray ()" link="GstControlSource.html#GstControlSourceGetValueArray"/>
-    <function name="GstTimedValue" link="GstControlSource.html#GstTimedValue"/>
-    <function name="GstValueArray" link="GstControlSource.html#GstValueArray"/>
+    <function name="struct GstTimedValue" link="GstControlSource.html#GstTimedValue"/>
+    <function name="struct GstValueArray" link="GstControlSource.html#GstValueArray"/>
     <function name="gst_control_source_bind ()" link="GstControlSource.html#gst-control-source-bind"/>
     <function name="gst_control_source_get_value ()" link="GstControlSource.html#gst-control-source-get-value"/>
     <function name="gst_control_source_get_value_array ()" link="GstControlSource.html#gst-control-source-get-value-array"/>
-    <function name="GstInterpolationControlSource" link="GstInterpolationControlSource.html#GstInterpolationControlSource-struct"/>
+    <function name="struct GstInterpolationControlSource" link="GstInterpolationControlSource.html#GstInterpolationControlSource-struct"/>
     <function name="enum GstInterpolateMode" link="GstInterpolationControlSource.html#GstInterpolateMode"/>
     <function name="gst_interpolation_control_source_new ()" link="GstInterpolationControlSource.html#gst-interpolation-control-source-new"/>
     <function name="gst_interpolation_control_source_set ()" link="GstInterpolationControlSource.html#gst-interpolation-control-source-set"/>
@@ -451,7 +481,7 @@
     <function name="gst_interpolation_control_source_unset ()" link="GstInterpolationControlSource.html#gst-interpolation-control-source-unset"/>
     <function name="gst_interpolation_control_source_unset_all ()" link="GstInterpolationControlSource.html#gst-interpolation-control-source-unset-all"/>
     <function name="gst_interpolation_control_source_get_count ()" link="GstInterpolationControlSource.html#gst-interpolation-control-source-get-count"/>
-    <function name="GstLFOControlSource" link="GstLFOControlSource.html#GstLFOControlSource-struct"/>
+    <function name="struct GstLFOControlSource" link="GstLFOControlSource.html#GstLFOControlSource-struct"/>
     <function name="enum GstLFOWaveform" link="GstLFOControlSource.html#GstLFOWaveform"/>
     <function name="gst_lfo_control_source_new ()" link="GstLFOControlSource.html#gst-lfo-control-source-new"/>
     <function name="The &quot;amplitude&quot; property" link="GstLFOControlSource.html#GstLFOControlSource--amplitude"/>
@@ -496,17 +526,17 @@
     <function name="gst_dp_validate_header ()" link="gstreamer-libs-gstdataprotocol.html#gst-dp-validate-header"/>
     <function name="gst_dp_validate_payload ()" link="gstreamer-libs-gstdataprotocol.html#gst-dp-validate-payload"/>
     <function name="gst_dp_validate_packet ()" link="gstreamer-libs-gstdataprotocol.html#gst-dp-validate-packet"/>
-    <function name="GstNetClientClock" link="GstNetClientClock.html#GstNetClientClock-struct"/>
+    <function name="struct GstNetClientClock" link="GstNetClientClock.html#GstNetClientClock-struct"/>
     <function name="gst_net_client_clock_new ()" link="GstNetClientClock.html#gst-net-client-clock-new"/>
     <function name="The &quot;address&quot; property" link="GstNetClientClock.html#GstNetClientClock--address"/>
     <function name="The &quot;port&quot; property" link="GstNetClientClock.html#GstNetClientClock--port"/>
-    <function name="GstNetTimePacket" link="gstreamer-libs-GstNetTimePacket.html#GstNetTimePacket"/>
+    <function name="struct GstNetTimePacket" link="gstreamer-libs-GstNetTimePacket.html#GstNetTimePacket"/>
     <function name="GST_NET_TIME_PACKET_SIZE" link="gstreamer-libs-GstNetTimePacket.html#GST-NET-TIME-PACKET-SIZE:CAPS"/>
     <function name="gst_net_time_packet_new ()" link="gstreamer-libs-GstNetTimePacket.html#gst-net-time-packet-new"/>
     <function name="gst_net_time_packet_receive ()" link="gstreamer-libs-GstNetTimePacket.html#gst-net-time-packet-receive"/>
     <function name="gst_net_time_packet_send ()" link="gstreamer-libs-GstNetTimePacket.html#gst-net-time-packet-send"/>
     <function name="gst_net_time_packet_serialize ()" link="gstreamer-libs-GstNetTimePacket.html#gst-net-time-packet-serialize"/>
-    <function name="GstNetTimeProvider" link="GstNetTimeProvider.html#GstNetTimeProvider-struct"/>
+    <function name="struct GstNetTimeProvider" link="GstNetTimeProvider.html#GstNetTimeProvider-struct"/>
     <function name="gst_net_time_provider_new ()" link="GstNetTimeProvider.html#gst-net-time-provider-new"/>
     <function name="The &quot;active&quot; property" link="GstNetTimeProvider.html#GstNetTimeProvider--active"/>
     <function name="The &quot;address&quot; property" link="GstNetTimeProvider.html#GstNetTimeProvider--address"/>

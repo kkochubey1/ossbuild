@@ -83,6 +83,11 @@ struct _GstQueue2
   GstSegment sink_segment;
   GstSegment src_segment;
 
+  /* Position of src/sink */
+  GstClockTime sinktime, srctime;
+  /* TRUE if either position needs to be recalculated */
+  gboolean sink_tainted, src_tainted;
+
   /* flowreturn when srcpad is paused */
   GstFlowReturn srcresult;
   GstFlowReturn sinkresult;
@@ -138,7 +143,6 @@ struct _GstQueue2
   gboolean segment_event_received;
   GstEvent *starting_segment;
 
-  gboolean use_ring_buffer;
   guint64 ring_buffer_max_size;
   guint8 * ring_buffer;
 };

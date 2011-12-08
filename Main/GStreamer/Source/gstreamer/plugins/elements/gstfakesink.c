@@ -39,6 +39,7 @@
 
 #include "gstfakesink.h"
 #include <gst/gstmarshal.h>
+#include <string.h>
 
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE ("sink",
     GST_PAD_SINK,
@@ -133,7 +134,7 @@ static gboolean gst_fake_sink_event (GstBaseSink * bsink, GstEvent * event);
 
 static guint gst_fake_sink_signals[LAST_SIGNAL] = { 0 };
 
-GParamSpec *pspec_last_message = NULL;
+static GParamSpec *pspec_last_message = NULL;
 
 static void
 marshal_VOID__MINIOBJECT_OBJECT (GClosure * closure, GValue * return_value,
@@ -402,14 +403,26 @@ gst_fake_sink_event (GstBaseSink * bsink, GstEvent * event)
     GST_OBJECT_LOCK (sink);
     g_free (sink->last_message);
 
-    if ((s = gst_event_get_structure (event)))
-      sstr = gst_structure_to_string (s);
-    else
-      sstr = g_strdup ("");
+    if (GST_EVENT_TYPE (event) == GST_EVENT_SINK_MESSAGE) {
+      GstMessage *msg;
 
-    sink->last_message =
-        g_strdup_printf ("event   ******* E (type: %d, %s) %p",
-        GST_EVENT_TYPE (event), sstr, event);
+      gst_event_parse_sink_message (event, &msg);
+      sstr = gst_structure_to_string (msg->structure);
+      sink->last_message =
+          g_strdup_printf ("message ******* M (type: %d, %s) %p",
+          GST_MESSAGE_TYPE (msg), sstr, msg);
+      gst_message_unref (msg);
+    } else {
+      if ((s = gst_event_get_structure (event))) {
+        sstr = gst_structure_to_string (s);
+      } else {
+        sstr = g_strdup ("");
+      }
+
+      sink->last_message =
+          g_strdup_printf ("event   ******* E (type: %d, %s) %p",
+          GST_EVENT_TYPE (event), sstr, event);
+    }
     g_free (sstr);
     GST_OBJECT_UNLOCK (sink);
 
@@ -468,6 +481,7 @@ gst_fake_sink_render (GstBaseSink * bsink, GstBuffer * buf)
 
   if (!sink->silent) {
     gchar ts_str[64], dur_str[64];
+    gchar flag_str[100];
 
     GST_OBJECT_LOCK (sink);
     g_free (sink->last_message);
@@ -486,12 +500,32 @@ gst_fake_sink_render (GstBaseSink * bsink, GstBuffer * buf)
       g_strlcpy (dur_str, "none", sizeof (dur_str));
     }
 
+    {
+      const char *flag_list[12] = {
+        "ro", "media4", "", "",
+        "preroll", "discont", "incaps", "gap",
+        "delta_unit", "media1", "media2", "media3"
+      };
+      int i;
+      char *end = flag_str;
+      end[0] = '\0';
+      for (i = 0; i < 12; i++) {
+        if (GST_MINI_OBJECT_CAST (buf)->flags & (1 << i)) {
+          strcpy (end, flag_list[i]);
+          end += strlen (end);
+          end[0] = ' ';
+          end[1] = '\0';
+          end++;
+        }
+      }
+    }
+
     sink->last_message =
         g_strdup_printf ("chain   ******* < (%5d bytes, timestamp: %s"
         ", duration: %s, offset: %" G_GINT64_FORMAT ", offset_end: %"
-        G_GINT64_FORMAT ", flags: %d) %p", GST_BUFFER_SIZE (buf), ts_str,
+        G_GINT64_FORMAT ", flags: %d %s) %p", GST_BUFFER_SIZE (buf), ts_str,
         dur_str, GST_BUFFER_OFFSET (buf), GST_BUFFER_OFFSET_END (buf),
-        GST_MINI_OBJECT_CAST (buf)->flags, buf);
+        GST_MINI_OBJECT_CAST (buf)->flags, flag_str, buf);
     GST_OBJECT_UNLOCK (sink);
 
     gst_fake_sink_notify_last_message (sink);

@@ -134,7 +134,14 @@ struct _GstDataQueue
                                  * of external flushing */
   GstDataQueueFullCallback fullcallback;
   GstDataQueueEmptyCallback emptycallback;
-  gpointer _gst_reserved[GST_PADDING - 2];
+
+  union {
+    struct {
+      gboolean waiting_add;
+      gboolean waiting_del;
+    } ABI;
+    gpointer _gst_reserved[GST_PADDING - 2];
+  } abidata;
 };
 
 struct _GstDataQueueClass

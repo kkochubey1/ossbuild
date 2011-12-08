@@ -3,7 +3,7 @@ AC_PREREQ(2.60)
 dnl initialize autoconf
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, git and prerelease does Werror too
-AC_INIT(GStreamer, 0.10.31,
+AC_INIT(GStreamer, 0.10.35,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gstreamer)
 AG_GST_INIT
@@ -48,7 +48,7 @@ dnl - interfaces added/removed/changed -> increment CURRENT, REVISION = 0
 dnl - interfaces added -> increment AGE
 dnl - interfaces removed -> AGE = 0
 dnl sets GST_LT_LDFLAGS
-AS_LIBTOOL(GST, 27, 0, 27)
+AS_LIBTOOL(GST, 29, 0, 29)
 
 dnl FIXME: this macro doesn't actually work;
 dnl the generated libtool script has no support for the listed tags.
@@ -236,7 +236,7 @@ AC_LANG_PUSH([C++])
 AC_TRY_COMPILE([ class Foo { int bar; };], , working_cxx=yes, working_cxx=no)
 AC_LANG_POP([C++])
 AC_MSG_NOTICE([working c++ compiler found: $working_cxx])
-AM_CONDITIONAL(HAVE_CXX, test "x$working_cxx" == "xyes")
+AM_CONDITIONAL(HAVE_CXX, test "x$working_cxx" = "xyes")
 
 dnl Perl is used in building documentation and in the version checks
 AC_PATH_PROG(PERL_PATH, perl, no)
@@ -535,7 +535,7 @@ LIBS="$save_libs"
 dnl *** checks for dependency libraries ***
 
 dnl GLib
-GLIB_REQ=2.20
+GLIB_REQ=2.22
 
 AG_GST_GLIB_CHECK([$GLIB_REQ])
 
@@ -600,6 +600,22 @@ AC_ARG_WITH([buffer-alignment],
     AC_DEFINE(BUFFER_ALIGNMENT_MALLOC, 1, [Buffer alignment by malloc default]) 
   ]
 )
+
+dnl Check for -Bsymbolic-functions linker flag used to avoid
+dnl intra-library PLT jumps, if available.
+AC_ARG_ENABLE(Bsymbolic,
+              [AC_HELP_STRING([--disable-Bsymbolic],
+                              [avoid linking with -Bsymbolic])],,
+              [SAVED_LDFLAGS="${LDFLAGS}"
+               AC_MSG_CHECKING([for -Bsymbolic-functions linker flag])
+               LDFLAGS=-Wl,-Bsymbolic-functions
+               AC_TRY_LINK([], [int main (void) { return 0; }],
+                           AC_MSG_RESULT(yes)
+                           enable_Bsymbolic=yes,
+                           AC_MSG_RESULT(no)
+                           enable_Bsymbolic=no)
+               LDFLAGS="${SAVED_LDFLAGS}"])
+
 
 dnl *** set variables based on configure arguments
 
@@ -680,6 +696,9 @@ GST_ALL_LIBS="$GLIB_LIBS $LTLIBINTL \$(GCOV_LIBS)"
 dnl LDFLAGS really should only contain flags, not libs - they get added before
 dnl whatevertarget_LIBS and -L flags here affect the rest of the linking
 GST_ALL_LDFLAGS="-no-undefined"
+if test "x${enable_Bsymbolic}" = "xyes"; then
+  GST_ALL_LDFLAGS="$GST_ALL_LDFLAGS -Wl,-Bsymbolic-functions"
+fi
 
 AC_SUBST(GST_ALL_CFLAGS)
 AC_SUBST(GST_ALL_CXXFLAGS)
@@ -704,7 +723,7 @@ AC_SUBST(GST_OBJ_LIBS)
 
 dnl GST_PLUGIN_LDFLAGS
 dnl LDFLAGS for plugins; includes GST_ALL_LDFLAGS
-GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^[_]*gst_plugin_desc\$\$' $GST_ALL_LDFLAGS"
+GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^[_]*gst_plugin_desc.*' $GST_ALL_LDFLAGS"
 AC_SUBST(GST_PLUGIN_LDFLAGS, "$GST_PLUGIN_LDFLAGS")
 
 dnl plugin scanner locations

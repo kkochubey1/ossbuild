@@ -59,7 +59,7 @@
  *     #GstBaseSrcClass.is_seekable() returns %TRUE.
  *   </para></listitem>
  *   <listitem><para>
- *     #GstBaseSrc:Class.query() can convert all supported seek formats to the
+ *     #GstBaseSrcClass.query() can convert all supported seek formats to the
  *     internal format as set with gst_base_src_set_format().
  *   </para></listitem>
  *   <listitem><para>
@@ -238,8 +238,10 @@ struct _GstBaseSrcPrivate
   /* stream sequence number */
   guint32 seqnum;
 
-  /* pending tags to be pushed in the data stream */
-  GList *pending_tags;
+  /* pending events (TAG, CUSTOM_BOTH, CUSTOM_DOWNSTREAM) to be
+   * pushed in the data stream */
+  GList *pending_events;
+  volatile gint have_events;
 
   /* QoS *//* with LOCK */
   gboolean qos_enabled;
@@ -345,6 +347,7 @@ gst_base_src_class_init (GstBaseSrcClass * klass)
   gobject_class->set_property = gst_base_src_set_property;
   gobject_class->get_property = gst_base_src_get_property;
 
+/* FIXME 0.11: blocksize property should be int, not ulong (min is >max here) */
   g_object_class_install_property (gobject_class, PROP_BLOCKSIZE,
       g_param_spec_ulong ("blocksize", "Block size",
           "Size in bytes to read per buffer (-1 = default)", 0, G_MAXULONG,
@@ -436,6 +439,7 @@ gst_base_src_init (GstBaseSrc * basesrc, gpointer g_class)
   gst_base_src_set_format (basesrc, GST_FORMAT_BYTES);
   basesrc->data.ABI.typefind = DEFAULT_TYPEFIND;
   basesrc->priv->do_timestamp = DEFAULT_DO_TIMESTAMP;
+  g_atomic_int_set (&basesrc->priv->have_events, FALSE);
 
   GST_OBJECT_FLAG_UNSET (basesrc, GST_BASE_SRC_STARTED);
   GST_OBJECT_FLAG_SET (basesrc, GST_ELEMENT_IS_SOURCE);
@@ -457,9 +461,10 @@ gst_base_src_finalize (GObject * object)
   event_p = &basesrc->data.ABI.pending_seek;
   gst_event_replace (event_p, NULL);
 
-  if (basesrc->priv->pending_tags) {
-    g_list_foreach (basesrc->priv->pending_tags, (GFunc) gst_event_unref, NULL);
-    g_list_free (basesrc->priv->pending_tags);
+  if (basesrc->priv->pending_events) {
+    g_list_foreach (basesrc->priv->pending_events, (GFunc) gst_event_unref,
+        NULL);
+    g_list_free (basesrc->priv->pending_events);
   }
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
@@ -488,12 +493,14 @@ gst_base_src_wait_playing (GstBaseSrc * src)
 {
   g_return_val_if_fail (GST_IS_BASE_SRC (src), GST_FLOW_ERROR);
 
-  /* block until the state changes, or we get a flush, or something */
-  GST_DEBUG_OBJECT (src, "live source waiting for running state");
-  GST_LIVE_WAIT (src);
-  if (src->priv->flushing)
-    goto flushing;
-  GST_DEBUG_OBJECT (src, "live source unlocked");
+  do {
+    /* block until the state changes, or we get a flush, or something */
+    GST_DEBUG_OBJECT (src, "live source waiting for running state");
+    GST_LIVE_WAIT (src);
+    GST_DEBUG_OBJECT (src, "live source unlocked");
+    if (src->priv->flushing)
+      goto flushing;
+  } while (G_UNLIKELY (!src->live_running));
 
   return GST_FLOW_OK;
 
@@ -560,7 +567,7 @@ gst_base_src_is_live (GstBaseSrc * src)
  * for sending NEW_SEGMENT events and for performing seeks.
  *
  * If a format of GST_FORMAT_BYTES is set, the element will be able to
- * operate in pull mode if the #GstBaseSrc.is_seekable() returns TRUE.
+ * operate in pull mode if the #GstBaseSrcClass.is_seekable() returns TRUE.
  *
  * This function must only be called in states < %GST_STATE_PAUSED.
  *
@@ -580,9 +587,9 @@ gst_base_src_set_format (GstBaseSrc * src, GstFormat format)
 /**
  * gst_base_src_query_latency:
  * @src: the source
- * @live: if the source is live
- * @min_latency: the min latency of the source
- * @max_latency: the max latency of the source
+ * @live: (out) (allow-none): if the source is live
+ * @min_latency: (out) (allow-none): the min latency of the source
+ * @max_latency: (out) (allow-none): the max latency of the source
  *
  * Query the source for the latency parameters. @live will be TRUE when @src is
  * configured as a live source. @min_latency will be set to the difference
@@ -638,6 +645,7 @@ gst_base_src_query_latency (GstBaseSrc * src, gboolean * live,
  *
  * Since: 0.10.22
  */
+/* FIXME 0.11: blocksize property should be int, not ulong */
 void
 gst_base_src_set_blocksize (GstBaseSrc * src, gulong blocksize)
 {
@@ -658,6 +666,7 @@ gst_base_src_set_blocksize (GstBaseSrc * src, gulong blocksize)
  *
  * Since: 0.10.22
  */
+/* FIXME 0.11: blocksize property should be int, not ulong */
 gulong
 gst_base_src_get_blocksize (GstBaseSrc * src)
 {
@@ -1103,6 +1112,8 @@ gst_base_src_query (GstPad * pad, GstQuery * query)
   gboolean result = FALSE;
 
   src = GST_BASE_SRC (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (src == NULL))
+    return FALSE;
 
   bclass = GST_BASE_SRC_GET_CLASS (src);
 
@@ -1579,9 +1590,13 @@ gst_base_src_send_event (GstElement * element, GstEvent * event)
       /* sending random NEWSEGMENT downstream can break sync. */
       break;
     case GST_EVENT_TAG:
-      /* Insert tag in the dataflow */
+    case GST_EVENT_CUSTOM_DOWNSTREAM:
+    case GST_EVENT_CUSTOM_BOTH:
+      /* Insert TAG, CUSTOM_DOWNSTREAM, CUSTOM_BOTH in the dataflow */
       GST_OBJECT_LOCK (src);
-      src->priv->pending_tags = g_list_append (src->priv->pending_tags, event);
+      src->priv->pending_events =
+          g_list_append (src->priv->pending_events, event);
+      g_atomic_int_set (&src->priv->have_events, TRUE);
       GST_OBJECT_UNLOCK (src);
       event = NULL;
       result = TRUE;
@@ -1635,10 +1650,6 @@ gst_base_src_send_event (GstElement * element, GstEvent * event)
       /* custom events */
     case GST_EVENT_CUSTOM_UPSTREAM:
       /* override send_event if you want this */
-      break;
-    case GST_EVENT_CUSTOM_DOWNSTREAM:
-    case GST_EVENT_CUSTOM_BOTH:
-      /* FIXME, insert event in the dataflow */
       break;
     case GST_EVENT_CUSTOM_DOWNSTREAM_OOB:
     case GST_EVENT_CUSTOM_BOTH_OOB:
@@ -1729,7 +1740,7 @@ gst_base_src_default_event (GstBaseSrc * src, GstEvent * event)
       break;
     }
     default:
-      result = TRUE;
+      result = FALSE;
       break;
   }
   return result;
@@ -1750,6 +1761,11 @@ gst_base_src_event_handler (GstPad * pad, GstEvent * event)
   gboolean result = FALSE;
 
   src = GST_BASE_SRC (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (src == NULL)) {
+    gst_event_unref (event);
+    return FALSE;
+  }
+
   bclass = GST_BASE_SRC_GET_CLASS (src);
 
   if (bclass->event) {
@@ -2093,7 +2109,7 @@ gst_base_src_get_range (GstBaseSrc * src, guint64 offset, guint length,
 
 again:
   if (src->is_live) {
-    while (G_UNLIKELY (!src->live_running)) {
+    if (G_UNLIKELY (!src->live_running)) {
       ret = gst_base_src_wait_playing (src);
       if (ret != GST_FLOW_OK)
         goto stopped;
@@ -2144,7 +2160,7 @@ again:
 
   /* no timestamp set and we are at offset 0, we can timestamp with 0 */
   if (offset == 0 && src->segment.time == 0
-      && GST_BUFFER_TIMESTAMP (*buf) == -1) {
+      && GST_BUFFER_TIMESTAMP (*buf) == -1 && !src->is_live) {
     *buf = gst_buffer_make_metadata_writable (*buf);
     GST_BUFFER_TIMESTAMP (*buf) = 0;
   }
@@ -2348,7 +2364,7 @@ gst_base_src_loop (GstPad * pad)
   gint64 position;
   gboolean eos;
   gulong blocksize;
-  GList *tags, *tmp;
+  GList *pending_events = NULL, *tmp;
 
   eos = FALSE;
 
@@ -2405,19 +2421,22 @@ gst_base_src_loop (GstPad * pad)
   }
   src->priv->newsegment_pending = FALSE;
 
-  GST_OBJECT_LOCK (src);
-  /* take the tags */
-  tags = src->priv->pending_tags;
-  src->priv->pending_tags = NULL;
-  GST_OBJECT_UNLOCK (src);
+  if (g_atomic_int_get (&src->priv->have_events)) {
+    GST_OBJECT_LOCK (src);
+    /* take the events */
+    pending_events = src->priv->pending_events;
+    src->priv->pending_events = NULL;
+    g_atomic_int_set (&src->priv->have_events, FALSE);
+    GST_OBJECT_UNLOCK (src);
+  }
 
-  /* Push out pending tags if any */
-  if (G_UNLIKELY (tags != NULL)) {
-    for (tmp = tags; tmp; tmp = g_list_next (tmp)) {
+  /* Push out pending events if any */
+  if (G_UNLIKELY (pending_events != NULL)) {
+    for (tmp = pending_events; tmp; tmp = g_list_next (tmp)) {
       GstEvent *ev = (GstEvent *) tmp->data;
       gst_pad_push_event (pad, ev);
     }
-    g_list_free (tags);
+    g_list_free (pending_events);
   }
 
   /* figure out the new position */
@@ -2603,7 +2622,8 @@ gst_base_src_default_negotiate (GstBaseSrc * basesrc)
   GST_DEBUG_OBJECT (basesrc, "caps of peer: %" GST_PTR_FORMAT, peercaps);
   if (peercaps) {
     /* get intersection */
-    caps = gst_caps_intersect (thiscaps, peercaps);
+    caps =
+        gst_caps_intersect_full (peercaps, thiscaps, GST_CAPS_INTERSECT_FIRST);
     GST_DEBUG_OBJECT (basesrc, "intersect: %" GST_PTR_FORMAT, caps);
     gst_caps_unref (peercaps);
   } else {
@@ -2841,6 +2861,19 @@ gst_base_src_set_flushing (GstBaseSrc * basesrc,
   } else {
     /* signal the live source that it can start playing */
     basesrc->live_running = live_play;
+
+    /* When unlocking drop all delayed events */
+    if (unlock) {
+      GST_OBJECT_LOCK (basesrc);
+      if (basesrc->priv->pending_events) {
+        g_list_foreach (basesrc->priv->pending_events, (GFunc) gst_event_unref,
+            NULL);
+        g_list_free (basesrc->priv->pending_events);
+        basesrc->priv->pending_events = NULL;
+        g_atomic_int_set (&basesrc->priv->have_events, FALSE);
+      }
+      GST_OBJECT_UNLOCK (basesrc);
+    }
   }
   GST_LIVE_SIGNAL (basesrc);
   GST_LIVE_UNLOCK (basesrc);

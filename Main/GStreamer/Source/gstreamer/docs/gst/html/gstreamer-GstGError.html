@@ -8,7 +8,7 @@
 <link rel="up" href="libgstreamer.html" title="GStreamer Core Library">
 <link rel="prev" href="GstElementFactory.html" title="GstElementFactory">
 <link rel="next" href="gstreamer-GstEvent.html" title="GstEvent">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -26,7 +26,7 @@
                   <a href="#gstreamer-GstGError.description" class="shortcut">Description</a>
 </td></tr>
 </table>
-<div class="refentry" title="GstGError">
+<div class="refentry">
 <a name="gstreamer-GstGError"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -35,7 +35,7 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gstreamer-GstGError.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/gst.h&gt;
@@ -53,7 +53,7 @@ enum                <a class="link" href="gstreamer-GstGError.html#GstStreamErro
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> code</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gstreamer-GstGError.description"></a><h2>Description</h2>
 <p>
 GStreamer elements can throw non-fatal warnings and fatal errors.
@@ -83,7 +83,7 @@ processing.  In short, an element doesn't know what it is being used for.
 <p>
 It is the application or compound element using the given element that
 has more context about the use of the element. Errors can be received by
-listening to the <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> of the element/pipeline for <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a> objects with
+listening to the <a class="link" href="GstBus.html" title="GstBus"><span class="type">GstBus</span></a> of the element/pipeline for <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a> objects with
 the type <a class="link" href="gstreamer-GstMessage.html#GST-MESSAGE-ERROR:CAPS"><code class="literal">GST_MESSAGE_ERROR</code></a> or <a class="link" href="gstreamer-GstMessage.html#GST-MESSAGE-WARNING:CAPS"><code class="literal">GST_MESSAGE_WARNING</code></a>. The thrown errors should
 be inspected, and filtered if appropriate.
 </p>
@@ -96,7 +96,7 @@ so the user can provide bug reporting information.
 <p>
 A compound element is expected to forward errors by default higher up
 the hierarchy; this is done by default in the same way as for other types
-of <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a>.
+of <a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a>.
 </p>
 <p>
 When applications or compound elements trigger errors that they can
@@ -111,15 +111,15 @@ Elements throw errors using the <a class="link" href="GstElement.html#GST-ELEMEN
 <p>
 </p>
 <div class="example">
-<a name="id520328"></a><p class="title"><b>Example 10. Throwing an error</b></p>
+<a name="idp5468240"></a><p class="title"><b>Example 10. Throwing an error</b></p>
 <div class="example-contents">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html#GST-ELEMENT-ERROR:CAPS">GST_ELEMENT_ERROR</a></span> <span class="symbol">(</span>src<span class="symbol">,</span> RESOURCE<span class="symbol">,</span> NOT_FOUND<span class="symbol">,</span>
-  <span class="symbol">(</span><span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-I18N.html#gettext-macro">_</a></span><span class="symbol">(</span><span class="string">&quot;No file name specified for reading.&quot;</span><span class="symbol">)), (</span>NULL<span class="symbol">));</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html#GST-ELEMENT-ERROR:CAPS">GST_ELEMENT_ERROR</a></span> <span class="gtkdoc opt">(</span>src<span class="gtkdoc opt">,</span> RESOURCE<span class="gtkdoc opt">,</span> NOT_FOUND<span class="gtkdoc opt">,</span>
+  <span class="gtkdoc opt">(</span><span class="function"><a href="http://library.gnome.org/devel/glib/unstable/glib-I18N.html#gettext-macro">_</a></span><span class="gtkdoc opt">(</span><span class="string">&quot;No file name specified for reading.&quot;</span><span class="gtkdoc opt">)), (</span>NULL<span class="gtkdoc opt">));</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -156,9 +156,9 @@ Things to keep in mind:
 Last reviewed on 2006-09-15 (0.10.10)
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gstreamer-GstGError.details"></a><h2>Details</h2>
-<div class="refsect2" title="enum GstCoreError">
+<div class="refsect2">
 <a name="GstCoreError"></a><h3>enum GstCoreError</h3>
 <pre class="programlisting">typedef enum
 {
@@ -268,7 +268,7 @@ this functionality yet.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="enum GstLibraryError">
+<div class="refsect2">
 <a name="GstLibraryError"></a><h3>enum GstLibraryError</h3>
 <pre class="programlisting">typedef enum
 {
@@ -329,7 +329,7 @@ deciding where to go while developing code.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="enum GstResourceError">
+<div class="refsect2">
 <a name="GstResourceError"></a><h3>enum GstResourceError</h3>
 <pre class="programlisting">typedef enum
 {
@@ -440,7 +440,7 @@ both reading and writing, or either (but unspecified which).
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="enum GstStreamError">
+<div class="refsect2">
 <a name="GstStreamError"></a><h3>enum GstStreamError</h3>
 <pre class="programlisting">typedef enum
 {
@@ -551,7 +551,7 @@ can't be decrypted because no suitable key is available. (Since: 0.10.20)
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="GST_CORE_ERROR">
+<div class="refsect2">
 <a name="GST-CORE-ERROR:CAPS"></a><h3>GST_CORE_ERROR</h3>
 <pre class="programlisting">#define GST_CORE_ERROR      gst_core_error_quark ()
 </pre>
@@ -562,7 +562,7 @@ See <a href="http://library.gnome.org/devel/glib/unstable/glib-Error-Reporting.h
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_LIBRARY_ERROR">
+<div class="refsect2">
 <a name="GST-LIBRARY-ERROR:CAPS"></a><h3>GST_LIBRARY_ERROR</h3>
 <pre class="programlisting">#define GST_LIBRARY_ERROR   gst_library_error_quark ()
 </pre>
@@ -573,7 +573,7 @@ See <a href="http://library.gnome.org/devel/glib/unstable/glib-Error-Reporting.h
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_RESOURCE_ERROR">
+<div class="refsect2">
 <a name="GST-RESOURCE-ERROR:CAPS"></a><h3>GST_RESOURCE_ERROR</h3>
 <pre class="programlisting">#define GST_RESOURCE_ERROR  gst_resource_error_quark ()
 </pre>
@@ -584,7 +584,7 @@ See <a href="http://library.gnome.org/devel/glib/unstable/glib-Error-Reporting.h
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_STREAM_ERROR">
+<div class="refsect2">
 <a name="GST-STREAM-ERROR:CAPS"></a><h3>GST_STREAM_ERROR</h3>
 <pre class="programlisting">#define GST_STREAM_ERROR    gst_stream_error_quark ()
 </pre>
@@ -595,7 +595,7 @@ See <a href="http://library.gnome.org/devel/glib/unstable/glib-Error-Reporting.h
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GST_ERROR_SYSTEM">
+<div class="refsect2">
 <a name="GST-ERROR-SYSTEM:CAPS"></a><h3>GST_ERROR_SYSTEM</h3>
 <pre class="programlisting">#define GST_ERROR_SYSTEM    ("system error: %s", g_strerror (errno))
 </pre>
@@ -605,7 +605,7 @@ call.  To be used as the debug argument in <a class="link" href="GstElement.html
 </p>
 </div>
 <hr>
-<div class="refsect2" title="gst_error_get_message ()">
+<div class="refsect2">
 <a name="gst-error-get-message"></a><h3>gst_error_get_message ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *             gst_error_get_message               (<em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Quarks.html#GQuark"><span class="type">GQuark</span></a> domain</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> code</code></em>);</pre>
@@ -617,31 +617,29 @@ Get a string describing the error message in the current locale.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>domain</code></em> :</span></p></td>
-<td>the GStreamer error domain this error belongs to.
-</td>
+<td>the GStreamer error domain this error belongs to.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>code</code></em> :</span></p></td>
-<td>the error code belonging to the domain.
-</td>
+<td>the error code belonging to the domain.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a newly allocated string describing the error message in the
-current locale.
+<td>a newly allocated string describing
+the error message (in UTF-8 encoding). <span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span>
 </td>
 </tr>
 </tbody>
 </table></div>
 </div>
 </div>
-<div class="refsect1" title="See Also">
+<div class="refsect1">
 <a name="gstreamer-GstGError.see-also"></a><h2>See Also</h2>
-<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="GstMessage"><span class="type">GstMessage</span></a>
+<a class="link" href="gstreamer-GstMessage.html#GstMessage" title="struct GstMessage"><span class="type">GstMessage</span></a>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

@@ -177,11 +177,19 @@ gst_registry_binary_cache_init (GstRegistry * registry, const char *location)
   cache->tmp_location = g_strconcat (location, ".tmpXXXXXX", NULL);
   cache->cache_fd = g_mkstemp (cache->tmp_location);
   if (cache->cache_fd == -1) {
+    int ret;
+    GStatBuf statbuf;
     gchar *dir;
 
     /* oops, I bet the directory doesn't exist */
     dir = g_path_get_dirname (location);
     g_mkdir_with_parents (dir, 0777);
+
+    ret = g_stat (dir, &statbuf);
+    if (ret != -1 && (statbuf.st_mode & 0700) != 0700) {
+      g_chmod (dir, 0700);
+    }
+
     g_free (dir);
 
     /* the previous g_mkstemp call overwrote the XXXXXX placeholder ... */
@@ -194,6 +202,11 @@ gst_registry_binary_cache_init (GstRegistry * registry, const char *location)
       g_free (cache->tmp_location);
       g_slice_free (BinaryRegistryCache, cache);
       return NULL;
+    }
+
+    ret = g_stat (cache->tmp_location, &statbuf);
+    if (ret != -1 && (statbuf.st_mode & 0600) != 0600) {
+      g_chmod (cache->tmp_location, 0600);
     }
   }
 
@@ -336,7 +349,7 @@ gst_registry_binary_initialize_magic (GstBinaryRegistryMagic * m)
  * @location: a filename
  *
  * Write the @registry to a cache to file at given @location.
- * 
+ *
  * Returns: %TRUE on success.
  */
 gboolean
@@ -604,18 +617,11 @@ done:
   /* TODO: once we re-use the pointers to registry contents, return here */
 
 Error:
-  if (err)
-    g_error_free (err);
-
 #ifndef GST_DISABLE_GST_DEBUG
   g_timer_destroy (timer);
 #endif
   if (mapped) {
-#if GLIB_CHECK_VERSION(2,21,3)
     g_mapped_file_unref (mapped);
-#else
-    g_mapped_file_free (mapped);
-#endif
   } else {
     g_free (contents);
   }
