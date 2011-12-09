@@ -48,9 +48,10 @@ SCAN_OPTIONS=
 MKDB_OPTIONS=--sgml-mode
 
 # Extra options to supply to gtkdoc-fixref.
-FIXXREF_OPTIONS=--extra-dir=$(GLIB_PREFIX)/share/gtk-doc/html \
+FIXXREF_OPTIONS=--extra-dir=$(top_builddir)/docs/libs/html \
+	--extra-dir=$(GLIB_PREFIX)/share/gtk-doc/html \
 	--extra-dir=$(GST_PREFIX)/share/gtk-doc/html \
-        	--extra-dir=$(datadir)/gtk-doc/html
+	--extra-dir=$(datadir)/gtk-doc/html
 
 # Used for dependencies.
 HFILE_GLOB=$(DOC_SOURCE_DIR)/*/*/*.h
@@ -102,6 +103,7 @@ EXTRA_HFILES = \
 	$(top_srcdir)/gst/audioconvert/audioconvert.h \
 	$(top_srcdir)/gst/audioconvert/gstaudioconvert.h \
 	$(top_srcdir)/gst/audiotestsrc/gstaudiotestsrc.h \
+	$(top_srcdir)/gst/encoding/gstencodebin.h \
 	$(top_srcdir)/gst/ffmpegcolorspace/gstffmpegcolorspace.h \
 	$(top_srcdir)/gst/gdp/gstgdpdepay.h \
 	$(top_srcdir)/gst/gdp/gstgdppay.h \

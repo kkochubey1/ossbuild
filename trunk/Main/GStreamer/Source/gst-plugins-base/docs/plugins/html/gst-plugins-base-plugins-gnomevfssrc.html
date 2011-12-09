@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gst-plugins-base Elements">
 <link rel="prev" href="gst-plugins-base-plugins-gnomevfssink.html" title="gnomevfssink">
 <link rel="next" href="gst-plugins-base-plugins-multifdsink.html" title="multifdsink">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -32,7 +32,7 @@
                   <a href="#gst-plugins-base-plugins-gnomevfssrc.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="gnomevfssrc">
+<div class="refentry">
 <a name="gst-plugins-base-plugins-gnomevfssrc"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -41,12 +41,12 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-base-plugins-gnomevfssrc.synopsis"></a><h2>Synopsis</h2>
-<a name="GstGnomeVFSSrc"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-base-plugins-gnomevfssrc.html#GstGnomeVFSSrc-struct" title="GstGnomeVFSSrc">GstGnomeVFSSrc</a>;
+<a name="GstGnomeVFSSrc"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-base-plugins-gnomevfssrc.html#GstGnomeVFSSrc-struct" title="struct GstGnomeVFSSrc">GstGnomeVFSSrc</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-base-plugins-gnomevfssrc.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -56,13 +56,13 @@
                      +----GstGnomeVFSSrc
 </pre>
 </div>
-<div class="refsect1" title="Implemented Interfaces">
+<div class="refsect1">
 <a name="gst-plugins-base-plugins-gnomevfssrc.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstGnomeVFSSrc implements
  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstUriHandler.html#GstURIHandler">GstURIHandler</a>.</p>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gst-plugins-base-plugins-gnomevfssrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="gst-plugins-base-plugins-gnomevfssrc.html#GstGnomeVFSSrc--handle" title='The "handle" property'>handle</a>"                   <span class="type">GnomeVFSHandle</span>*       : Read / Write
@@ -75,7 +75,7 @@ GstGnomeVFSSrc implements
   "<a class="link" href="gst-plugins-base-plugins-gnomevfssrc.html#GstGnomeVFSSrc--random-access" title='The "random-access" property'>random-access</a>"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-base-plugins-gnomevfssrc.description"></a><h2>Description</h2>
 <p>
 This plugin reads data from a local or remote location specified
@@ -93,14 +93,16 @@ data with a media type of application/x-icy, in which case you will
 need to use the <span class="type">GstICYDemux</span> element as follow-up element to extract
 the icecast meta data and to determine the underlying media type.
 </p>
-<div class="refsect2" title="Example launch lines">
-<a name="id485093"></a><h3>Example launch lines</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp11806096"></a><h3>Example launch lines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v gnomevfssrc location<span class="symbol">=</span>file<span class="symbol">:</span><span class="gtkdoc slc">///home/joe/foo.xyz ! fakesink</span></pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch <span class="gtkdoc opt">-</span>v gnomevfssrc location<span class="gtkdoc opt">=</span>file<span class="gtkdoc opt">:</span><span class="gtkdoc slc">///home/joe/foo.xyz ! fakesink</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -113,7 +115,7 @@ filesrc element here.
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v gnomevfssrc location<span class="symbol">=</span>smb<span class="symbol">:</span><span class="gtkdoc slc">//othercomputer/foo.xyz ! filesink location=/home/joe/foo.xyz</span></pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch <span class="gtkdoc opt">-</span>v gnomevfssrc location<span class="gtkdoc opt">=</span>smb<span class="gtkdoc opt">:</span><span class="gtkdoc slc">//othercomputer/foo.xyz ! filesink location=/home/joe/foo.xyz</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -125,7 +127,7 @@ system using the Samba protocol.
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v gnomevfssrc location<span class="symbol">=</span>http<span class="symbol">:</span><span class="gtkdoc slc">//music.foobar.com/demo.mp3 ! mad ! audioconvert ! audioresample ! alsasink</span></pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch <span class="gtkdoc opt">-</span>v gnomevfssrc location<span class="gtkdoc opt">=</span>http<span class="gtkdoc opt">:</span><span class="gtkdoc slc">//music.foobar.com/demo.mp3 ! mad ! audioconvert ! audioresample ! alsasink</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -133,81 +135,135 @@ system using the Samba protocol.
  The above pipeline will read and decode and play an mp3 file from a
 web server using the http protocol.
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp11810944"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-base-plugins-plugin-gnomevfs.html#plugin-gnomevfs">gnomevfs</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Bastien Nocera &lt;hadess@hadess.net&gt;, GStreamer maintainers &lt;gstreamer-devel@lists.sourceforge.net&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Source/File</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp11818464"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>ANY</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-base-plugins-gnomevfssrc.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstGnomeVFSSrc">
-<a name="GstGnomeVFSSrc-struct"></a><h3>GstGnomeVFSSrc</h3>
-<pre class="programlisting">typedef struct _GstGnomeVFSSrc GstGnomeVFSSrc;</pre>
+<div class="refsect2">
+<a name="GstGnomeVFSSrc-struct"></a><h3>struct GstGnomeVFSSrc</h3>
+<pre class="programlisting">struct GstGnomeVFSSrc;</pre>
 <p>
 Opaque data structure.
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gst-plugins-base-plugins-gnomevfssrc.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "handle" property'>
+<div class="refsect2">
 <a name="GstGnomeVFSSrc--handle"></a><h3>The <code class="literal">"handle"</code> property</h3>
 <pre class="programlisting">  "handle"                   <span class="type">GnomeVFSHandle</span>*       : Read / Write</pre>
 <p>Handle for GnomeVFS.</p>
 </div>
 <hr>
-<div class="refsect2" title='The "iradio-genre" property'>
+<div class="refsect2">
 <a name="GstGnomeVFSSrc--iradio-genre"></a><h3>The <code class="literal">"iradio-genre"</code> property</h3>
 <pre class="programlisting">  "iradio-genre"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read</pre>
 <p>Genre of the stream.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
-<div class="refsect2" title='The "iradio-mode" property'>
+<div class="refsect2">
 <a name="GstGnomeVFSSrc--iradio-mode"></a><h3>The <code class="literal">"iradio-mode"</code> property</h3>
 <pre class="programlisting">  "iradio-mode"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Enable internet radio mode (extraction of shoutcast/icecast metadata).</p>
 <p>Default value: FALSE</p>
 </div>
 <hr>
-<div class="refsect2" title='The "iradio-name" property'>
+<div class="refsect2">
 <a name="GstGnomeVFSSrc--iradio-name"></a><h3>The <code class="literal">"iradio-name"</code> property</h3>
 <pre class="programlisting">  "iradio-name"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read</pre>
 <p>Name of the stream.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
-<div class="refsect2" title='The "iradio-title" property'>
+<div class="refsect2">
 <a name="GstGnomeVFSSrc--iradio-title"></a><h3>The <code class="literal">"iradio-title"</code> property</h3>
 <pre class="programlisting">  "iradio-title"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read</pre>
 <p>Name of currently playing song.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
-<div class="refsect2" title='The "iradio-url" property'>
+<div class="refsect2">
 <a name="GstGnomeVFSSrc--iradio-url"></a><h3>The <code class="literal">"iradio-url"</code> property</h3>
 <pre class="programlisting">  "iradio-url"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read</pre>
 <p>Homepage URL for radio stream.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
-<div class="refsect2" title='The "location" property'>
+<div class="refsect2">
 <a name="GstGnomeVFSSrc--location"></a><h3>The <code class="literal">"location"</code> property</h3>
 <pre class="programlisting">  "location"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>Location of the file to read.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
-<div class="refsect2" title='The "random-access" property'>
+<div class="refsect2">
 <a name="GstGnomeVFSSrc--random-access"></a><h3>The <code class="literal">"random-access"</code> property</h3>
 <pre class="programlisting">  "random-access"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a>              : Read / Write</pre>
 <p>Enable random file access.</p>
 <p>Default value: FALSE</p>
 </div>
 </div>
-<div class="refsect1" title="See Also">
+<div class="refsect1">
 <a name="gst-plugins-base-plugins-gnomevfssrc.see-also"></a><h2>See Also</h2>
 <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer-plugins/html/gstreamer-plugins-filesrc.html#GstFileSrc"><span class="type">GstFileSrc</span></a>, <a class="link" href="gst-plugins-base-plugins-gnomevfssink.html#GstGnomeVFSSink"><span class="type">GstGnomeVFSSink</span></a>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

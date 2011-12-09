@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="gstrtp"
 	ProjectGUID="{AB87873B-2B88-4B1B-B627-F70DF4F91F10}"
 	RootNamespace="libgstrtp"
@@ -501,24 +501,6 @@
 						/>
 					</FileConfiguration>
 				</File>
-				<File
-					RelativePath="..\..\..\Source\gst-plugins-good\gst\rtp\gstrtpqcelpdepay.h"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -550,10 +532,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\rtp\gstrtppayloads.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Source\gst-plugins-good\gst\rtp\gstrtpqcelpdepay.c"
 				>
 			</File>
 		</Filter>

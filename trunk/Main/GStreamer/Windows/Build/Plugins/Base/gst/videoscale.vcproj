@@ -307,20 +307,24 @@
 		/>
 	</References>
 	<Files>
+		<Filter
+			Name="Generated"
+			>
+			<File
+				RelativePath="..\..\..\..\Generated\gst-plugins-base\gst\videoscale\gstvideoscaleorc.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\Generated\gst-plugins-base\gst\videoscale\gstvideoscaleorc.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\videoscale\gstvideoscale.c"
 			>
 		</File>
 		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\videoscale\gstvideoscale.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\Generated\gst-plugins-base\gst\videoscale\gstvideoscaleorc.c"
-			>
-		</File>
-		<File
-			RelativePath="..\..\..\..\Generated\gst-plugins-base\gst\videoscale\gstvideoscaleorc.h"
 			>
 		</File>
 		<File

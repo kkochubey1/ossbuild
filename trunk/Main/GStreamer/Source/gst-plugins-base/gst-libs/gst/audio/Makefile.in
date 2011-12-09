@@ -152,7 +152,9 @@ libgstaudio_@GST_MAJORMINOR@_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 PROGRAMS = $(noinst_PROGRAMS)
 am_testchannels_OBJECTS = testchannels-testchannels.$(OBJEXT)
 testchannels_OBJECTS = $(am_testchannels_OBJECTS)
-testchannels_DEPENDENCIES = $(am__DEPENDENCIES_1)
+testchannels_DEPENDENCIES =  \
+	$(builddir)/libgstaudio-$(GST_MAJORMINOR).la \
+	$(am__DEPENDENCIES_1)
 testchannels_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(testchannels_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -311,7 +313,6 @@ GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAVE_CDPARANOIA = @HAVE_CDPARANOIA@
-HAVE_CXX = @HAVE_CXX@
 HAVE_X = @HAVE_X@
 HAVE_XSHM = @HAVE_XSHM@
 HSTRERROR_LIBS = @HSTRERROR_LIBS@
@@ -348,6 +349,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -424,6 +426,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -457,7 +460,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -530,7 +532,7 @@ libgstaudio_@GST_MAJORMINOR@_la_LIBADD = $(GST_BASE_LIBS) $(GST_LIBS) \
 libgstaudio_@GST_MAJORMINOR@_la_LDFLAGS = $(GST_LIB_LDFLAGS) $(GST_ALL_LDFLAGS) $(GST_LT_LDFLAGS)
 testchannels_SOURCES = testchannels.c
 testchannels_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
-testchannels_LDADD = $(GST_LIBS)
+testchannels_LDADD = $(builddir)/libgstaudio-$(GST_MAJORMINOR).la $(GST_LIBS)
 enum_headers = $(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
 @HAVE_INTROSPECTION_TRUE@BUILT_GIRSOURCES = GstAudio-@GST_MAJORMINOR@.gir
 @HAVE_INTROSPECTION_TRUE@gir_headers = $(patsubst %,$(srcdir)/%, \
@@ -1123,6 +1125,7 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 
 @HAVE_INTROSPECTION_TRUE@GstAudio-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstaudio-@GST_MAJORMINOR@.la
 @HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+@HAVE_INTROSPECTION_TRUE@		GST_PLUGIN_SYSTEM_PATH="" GST_PLUGIN_PATH="" GST_REGISTRY_UPDATE=no \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstAudio \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
@@ -1130,29 +1133,47 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 @HAVE_INTROSPECTION_TRUE@		-I$(top_builddir)/gst-libs \
 @HAVE_INTROSPECTION_TRUE@		$(gir_cincludes) \
 @HAVE_INTROSPECTION_TRUE@		--add-include-path=$(builddir)/../interfaces \
-@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
-@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-base-0.10` \
-@HAVE_INTROSPECTION_TRUE@		--library=libgstaudio-0.10.la \
-@HAVE_INTROSPECTION_TRUE@		--include=Gst-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--include=GstBase-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--include=GstInterfaces-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-@GST_MAJORMINOR@` \
+@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-base-@GST_MAJORMINOR@` \
+@HAVE_INTROSPECTION_TRUE@		--library=libgstaudio-@GST_MAJORMINOR@.la \
+@HAVE_INTROSPECTION_TRUE@		--include=Gst-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--include=GstBase-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--include=GstInterfaces-@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
-@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-base-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-interfaces-0.10 \
-@HAVE_INTROSPECTION_TRUE@		--pkg-export gstreamer-audio-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-base-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-interfaces-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--pkg-export gstreamer-audio-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--add-init-section="gst_init(NULL,NULL);" \
 @HAVE_INTROSPECTION_TRUE@		--output $@ \
 @HAVE_INTROSPECTION_TRUE@		$(gir_headers) \
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)
 
 @HAVE_INTROSPECTION_TRUE@%.typelib: %.gir $(INTROSPECTION_COMPILER)
-@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)$(INTROSPECTION_COMPILER) \
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+@HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_COMPILER) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(srcdir) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir)/../interfaces \
-@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-base-0.10` \
-@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
+@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-base-@GST_MAJORMINOR@` \
+@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-@GST_MAJORMINOR@` \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+
+Android.mk: Makefile.am $(BUILT_SOURCES)
+	androgenizer -:PROJECT libgstaudio -:SHARED libgstaudio-@GST_MAJORMINOR@ \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstaudio_@GST_MAJORMINOR@_la_SOURCES) \
+	           $(nodist_libgstaudio_@GST_MAJORMINOR@_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstaudio_@GST_MAJORMINOR@_la_CFLAGS) \
+	 -:LDFLAGS $(libgstaudio_@GST_MAJORMINOR@_la_LDFLAGS) \
+	           $(libgstaudio_@GST_MAJORMINOR@_la_LIBADD) \
+	           -ldl \
+	 -:HEADER_TARGET gstreamer-@GST_MAJORMINOR@/gst/tag \
+	 -:HEADERS $(libgstaudio_@GST_MAJORMINOR@include_HEADERS) \
+	           $(nodist_libgstaudio_@GST_MAJORMINOR@include_HEADERS) \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+	> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

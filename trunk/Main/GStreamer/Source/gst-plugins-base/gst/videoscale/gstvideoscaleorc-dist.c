@@ -4,9 +4,6 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#ifndef DISABLE_ORC
-#include <orc/orc.h>
-#endif
 #include <glib.h>
 
 #ifndef _ORC_INTEGER_TYPEDEFS_
@@ -32,6 +29,7 @@ typedef unsigned __int16 orc_uint16;
 typedef unsigned __int32 orc_uint32;
 typedef unsigned __int64 orc_uint64;
 #define ORC_UINT64_C(x) (x##Ui64)
+#define inline __inline
 #else
 #include <limits.h>
 typedef signed char orc_int8;
@@ -71,30 +69,51 @@ typedef union
   orc_int16 x4[4];
 } orc_union64;
 #endif
+#ifndef ORC_RESTRICT
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#define ORC_RESTRICT restrict
+#elif defined(__GNUC__) && __GNUC__ >= 4
+#define ORC_RESTRICT __restrict__
+#else
+#define ORC_RESTRICT
+#endif
+#endif
 
-void orc_merge_linear_u8 (orc_uint8 * d1, const orc_uint8 * s1,
-    const orc_uint8 * s2, int p1, int n);
-void orc_merge_linear_u16 (orc_uint16 * d1, const orc_uint16 * s1,
-    const orc_uint16 * s2, int p1, int p2, int n);
-void orc_splat_u16 (orc_uint16 * d1, int p1, int n);
-void orc_splat_u32 (orc_uint32 * d1, int p1, int n);
-void orc_downsample_u8 (guint8 * d1, const guint8 * s1, int n);
-void orc_downsample_u16 (guint16 * d1, const guint16 * s1, int n);
-void gst_videoscale_orc_downsample_u32 (guint8 * d1, const guint8 * s1, int n);
-void gst_videoscale_orc_downsample_yuyv (guint8 * d1, const guint8 * s1, int n);
-void gst_videoscale_orc_resample_nearest_u8 (guint8 * d1, const guint8 * s1,
+#ifndef DISABLE_ORC
+#include <orc/orc.h>
+#endif
+void orc_merge_linear_u8 (orc_uint8 * ORC_RESTRICT d1,
+    const orc_uint8 * ORC_RESTRICT s1, const orc_uint8 * ORC_RESTRICT s2,
+    int p1, int n);
+void orc_merge_linear_u16 (orc_uint16 * ORC_RESTRICT d1,
+    const orc_uint16 * ORC_RESTRICT s1, const orc_uint16 * ORC_RESTRICT s2,
     int p1, int p2, int n);
-void gst_videoscale_orc_resample_bilinear_u8 (guint8 * d1, const guint8 * s1,
-    int p1, int p2, int n);
-void gst_videoscale_orc_resample_nearest_u32 (guint8 * d1, const guint8 * s1,
-    int p1, int p2, int n);
-void gst_videoscale_orc_resample_bilinear_u32 (guint8 * d1, const guint8 * s1,
-    int p1, int p2, int n);
-void gst_videoscale_orc_resample_merge_bilinear_u32 (guint8 * d1, guint8 * d2,
-    const guint8 * s1, const guint8 * s2, int p1, int p2, int p3, int n);
-void gst_videoscale_orc_merge_bicubic_u8 (guint8 * d1, const guint8 * s1,
-    const guint8 * s2, const guint8 * s3, const guint8 * s4, int p1, int p2,
-    int p3, int p4, int n);
+void orc_splat_u16 (orc_uint16 * ORC_RESTRICT d1, int p1, int n);
+void orc_splat_u32 (orc_uint32 * ORC_RESTRICT d1, int p1, int n);
+void orc_splat_u64 (orc_uint64 * ORC_RESTRICT d1, orc_int64 p1, int n);
+void orc_downsample_u8 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int n);
+void orc_downsample_u16 (guint16 * ORC_RESTRICT d1,
+    const guint16 * ORC_RESTRICT s1, int n);
+void gst_videoscale_orc_downsample_u32 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int n);
+void gst_videoscale_orc_downsample_yuyv (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int n);
+void gst_videoscale_orc_resample_nearest_u8 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n);
+void gst_videoscale_orc_resample_bilinear_u8 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n);
+void gst_videoscale_orc_resample_nearest_u32 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n);
+void gst_videoscale_orc_resample_bilinear_u32 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n);
+void gst_videoscale_orc_resample_merge_bilinear_u32 (guint8 * ORC_RESTRICT d1,
+    guint8 * ORC_RESTRICT d2, const guint8 * ORC_RESTRICT s1,
+    const guint8 * ORC_RESTRICT s2, int p1, int p2, int p3, int n);
+void gst_videoscale_orc_merge_bicubic_u8 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2,
+    const guint8 * ORC_RESTRICT s3, const guint8 * ORC_RESTRICT s4, int p1,
+    int p2, int p3, int p4, int n);
 
 void gst_videoscale_orc_init (void);
 
@@ -130,12 +149,14 @@ void gst_videoscale_orc_init (void);
 #define ORC_ISNAN(x) ((((x)&0x7f800000) == 0x7f800000) && (((x)&0x007fffff) != 0))
 #define ORC_DENORMAL_DOUBLE(x) ((x) & ((((x)&ORC_UINT64_C(0x7ff0000000000000)) == 0) ? ORC_UINT64_C(0xfff0000000000000) : ORC_UINT64_C(0xffffffffffffffff)))
 #define ORC_ISNAN_DOUBLE(x) ((((x)&ORC_UINT64_C(0x7ff0000000000000)) == ORC_UINT64_C(0x7ff0000000000000)) && (((x)&ORC_UINT64_C(0x000fffffffffffff)) != 0))
+#ifndef ORC_RESTRICT
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 #define ORC_RESTRICT restrict
 #elif defined(__GNUC__) && __GNUC__ >= 4
 #define ORC_RESTRICT __restrict__
 #else
 #define ORC_RESTRICT
+#endif
 #endif
 /* end Orc C target preamble */
 
@@ -144,7 +165,8 @@ void gst_videoscale_orc_init (void);
 /* orc_merge_linear_u8 */
 #ifdef DISABLE_ORC
 void
-orc_merge_linear_u8 (orc_uint8 * d1, const orc_uint8 * s1, const orc_uint8 * s2,
+orc_merge_linear_u8 (orc_uint8 * ORC_RESTRICT d1,
+    const orc_uint8 * ORC_RESTRICT s1, const orc_uint8 * ORC_RESTRICT s2,
     int p1, int n)
 {
   int i;
@@ -171,7 +193,7 @@ orc_merge_linear_u8 (orc_uint8 * d1, const orc_uint8 * s1, const orc_uint8 * s2,
   /* 6: loadpw */
   var38.i = p1;
   /* 8: loadpw */
-  var39.i = 0x00000080;         /* 128 or 6.32404e-322f */
+  var39.i = (int) 0x00000080;   /* 128 or 6.32404e-322f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -229,7 +251,7 @@ _backup_orc_merge_linear_u8 (OrcExecutor * ORC_RESTRICT ex)
   /* 6: loadpw */
   var38.i = ex->params[24];
   /* 8: loadpw */
-  var39.i = 0x00000080;         /* 128 or 6.32404e-322f */
+  var39.i = (int) 0x00000080;   /* 128 or 6.32404e-322f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -260,7 +282,8 @@ _backup_orc_merge_linear_u8 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_orc_merge_linear_u8;
 void
-orc_merge_linear_u8 (orc_uint8 * d1, const orc_uint8 * s1, const orc_uint8 * s2,
+orc_merge_linear_u8 (orc_uint8 * ORC_RESTRICT d1,
+    const orc_uint8 * ORC_RESTRICT s1, const orc_uint8 * ORC_RESTRICT s2,
     int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
@@ -284,8 +307,9 @@ orc_merge_linear_u8 (orc_uint8 * d1, const orc_uint8 * s1, const orc_uint8 * s2,
 /* orc_merge_linear_u16 */
 #ifdef DISABLE_ORC
 void
-orc_merge_linear_u16 (orc_uint16 * d1, const orc_uint16 * s1,
-    const orc_uint16 * s2, int p1, int p2, int n)
+orc_merge_linear_u16 (orc_uint16 * ORC_RESTRICT d1,
+    const orc_uint16 * ORC_RESTRICT s1, const orc_uint16 * ORC_RESTRICT s2,
+    int p1, int p2, int n)
 {
   int i;
   orc_union16 *ORC_RESTRICT ptr0;
@@ -382,8 +406,9 @@ _backup_orc_merge_linear_u16 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_orc_merge_linear_u16;
 void
-orc_merge_linear_u16 (orc_uint16 * d1, const orc_uint16 * s1,
-    const orc_uint16 * s2, int p1, int p2, int n)
+orc_merge_linear_u16 (orc_uint16 * ORC_RESTRICT d1,
+    const orc_uint16 * ORC_RESTRICT s1, const orc_uint16 * ORC_RESTRICT s2,
+    int p1, int p2, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_orc_merge_linear_u16;
@@ -407,7 +432,7 @@ orc_merge_linear_u16 (orc_uint16 * d1, const orc_uint16 * s1,
 /* orc_splat_u16 */
 #ifdef DISABLE_ORC
 void
-orc_splat_u16 (orc_uint16 * d1, int p1, int n)
+orc_splat_u16 (orc_uint16 * ORC_RESTRICT d1, int p1, int n)
 {
   int i;
   orc_union16 *ORC_RESTRICT ptr0;
@@ -454,7 +479,7 @@ _backup_orc_splat_u16 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_orc_splat_u16;
 void
-orc_splat_u16 (orc_uint16 * d1, int p1, int n)
+orc_splat_u16 (orc_uint16 * ORC_RESTRICT d1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_orc_splat_u16;
@@ -475,7 +500,7 @@ orc_splat_u16 (orc_uint16 * d1, int p1, int n)
 /* orc_splat_u32 */
 #ifdef DISABLE_ORC
 void
-orc_splat_u32 (orc_uint32 * d1, int p1, int n)
+orc_splat_u32 (orc_uint32 * ORC_RESTRICT d1, int p1, int n)
 {
   int i;
   orc_union32 *ORC_RESTRICT ptr0;
@@ -522,7 +547,7 @@ _backup_orc_splat_u32 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_orc_splat_u32;
 void
-orc_splat_u32 (orc_uint32 * d1, int p1, int n)
+orc_splat_u32 (orc_uint32 * ORC_RESTRICT d1, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_orc_splat_u32;
@@ -540,10 +565,86 @@ orc_splat_u32 (orc_uint32 * d1, int p1, int n)
 #endif
 
 
+/* orc_splat_u64 */
+#ifdef DISABLE_ORC
+void
+orc_splat_u64 (orc_uint64 * ORC_RESTRICT d1, orc_int64 p1, int n)
+{
+  int i;
+  orc_union64 *ORC_RESTRICT ptr0;
+  orc_union64 var32;
+  orc_union64 var33;
+
+  ptr0 = (orc_union64 *) d1;
+
+  /* 0: loadpq */
+  var32.i = p1;
+
+  for (i = 0; i < n; i++) {
+    /* 1: copyq */
+    var33.i = var32.i;
+    /* 2: storeq */
+    ptr0[i] = var33;
+  }
+
+}
+
+#else
+static void
+_backup_orc_splat_u64 (OrcExecutor * ORC_RESTRICT ex)
+{
+  int i;
+  int n = ex->n;
+  orc_union64 *ORC_RESTRICT ptr0;
+  orc_union64 var32;
+  orc_union64 var33;
+
+  ptr0 = (orc_union64 *) ex->arrays[0];
+
+  /* 0: loadpq */
+  var32.i =
+      (ex->params[24] & 0xffffffff) | ((orc_uint64) (ex->params[24 +
+              (ORC_VAR_T1 - ORC_VAR_P1)]) << 32);
+
+  for (i = 0; i < n; i++) {
+    /* 1: copyq */
+    var33.i = var32.i;
+    /* 2: storeq */
+    ptr0[i] = var33;
+  }
+
+}
+
+static OrcProgram *_orc_program_orc_splat_u64;
+void
+orc_splat_u64 (orc_uint64 * ORC_RESTRICT d1, orc_int64 p1, int n)
+{
+  OrcExecutor _ex, *ex = &_ex;
+  OrcProgram *p = _orc_program_orc_splat_u64;
+  void (*func) (OrcExecutor *);
+
+  ex->program = p;
+
+  ex->n = n;
+  ex->arrays[ORC_VAR_D1] = d1;
+  {
+    orc_union64 tmp;
+    tmp.i = p1;
+    ex->params[ORC_VAR_P1] = tmp.x2[0];
+    ex->params[ORC_VAR_T1] = tmp.x2[1];
+  }
+
+  func = p->code_exec;
+  func (ex);
+}
+#endif
+
+
 /* orc_downsample_u8 */
 #ifdef DISABLE_ORC
 void
-orc_downsample_u8 (guint8 * d1, const guint8 * s1, int n)
+orc_downsample_u8 (guint8 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1,
+    int n)
 {
   int i;
   orc_int8 *ORC_RESTRICT ptr0;
@@ -561,8 +662,12 @@ orc_downsample_u8 (guint8 * d1, const guint8 * s1, int n)
     /* 0: loadw */
     var34 = ptr4[i];
     /* 1: splitwb */
-    var36 = (var34.i >> 8) & 0xff;
-    var37 = var34.i & 0xff;
+    {
+      orc_union16 _src;
+      _src.i = var34.i;
+      var36 = _src.x2[1];
+      var37 = _src.x2[0];
+    }
     /* 2: avgub */
     var35 = ((orc_uint8) var36 + (orc_uint8) var37 + 1) >> 1;
     /* 3: storeb */
@@ -592,8 +697,12 @@ _backup_orc_downsample_u8 (OrcExecutor * ORC_RESTRICT ex)
     /* 0: loadw */
     var34 = ptr4[i];
     /* 1: splitwb */
-    var36 = (var34.i >> 8) & 0xff;
-    var37 = var34.i & 0xff;
+    {
+      orc_union16 _src;
+      _src.i = var34.i;
+      var36 = _src.x2[1];
+      var37 = _src.x2[0];
+    }
     /* 2: avgub */
     var35 = ((orc_uint8) var36 + (orc_uint8) var37 + 1) >> 1;
     /* 3: storeb */
@@ -604,7 +713,8 @@ _backup_orc_downsample_u8 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_orc_downsample_u8;
 void
-orc_downsample_u8 (guint8 * d1, const guint8 * s1, int n)
+orc_downsample_u8 (guint8 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1,
+    int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_orc_downsample_u8;
@@ -625,7 +735,8 @@ orc_downsample_u8 (guint8 * d1, const guint8 * s1, int n)
 /* orc_downsample_u16 */
 #ifdef DISABLE_ORC
 void
-orc_downsample_u16 (guint16 * d1, const guint16 * s1, int n)
+orc_downsample_u16 (guint16 * ORC_RESTRICT d1, const guint16 * ORC_RESTRICT s1,
+    int n)
 {
   int i;
   orc_union16 *ORC_RESTRICT ptr0;
@@ -643,8 +754,12 @@ orc_downsample_u16 (guint16 * d1, const guint16 * s1, int n)
     /* 0: loadl */
     var34 = ptr4[i];
     /* 1: splitlw */
-    var36.i = (var34.i >> 16) & 0xffff;
-    var37.i = var34.i & 0xffff;
+    {
+      orc_union32 _src;
+      _src.i = var34.i;
+      var36.i = _src.x2[1];
+      var37.i = _src.x2[0];
+    }
     /* 2: avguw */
     var35.i = ((orc_uint16) var36.i + (orc_uint16) var37.i + 1) >> 1;
     /* 3: storew */
@@ -674,8 +789,12 @@ _backup_orc_downsample_u16 (OrcExecutor * ORC_RESTRICT ex)
     /* 0: loadl */
     var34 = ptr4[i];
     /* 1: splitlw */
-    var36.i = (var34.i >> 16) & 0xffff;
-    var37.i = var34.i & 0xffff;
+    {
+      orc_union32 _src;
+      _src.i = var34.i;
+      var36.i = _src.x2[1];
+      var37.i = _src.x2[0];
+    }
     /* 2: avguw */
     var35.i = ((orc_uint16) var36.i + (orc_uint16) var37.i + 1) >> 1;
     /* 3: storew */
@@ -686,7 +805,8 @@ _backup_orc_downsample_u16 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_orc_downsample_u16;
 void
-orc_downsample_u16 (guint16 * d1, const guint16 * s1, int n)
+orc_downsample_u16 (guint16 * ORC_RESTRICT d1, const guint16 * ORC_RESTRICT s1,
+    int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_orc_downsample_u16;
@@ -707,7 +827,8 @@ orc_downsample_u16 (guint16 * d1, const guint16 * s1, int n)
 /* gst_videoscale_orc_downsample_u32 */
 #ifdef DISABLE_ORC
 void
-gst_videoscale_orc_downsample_u32 (guint8 * d1, const guint8 * s1, int n)
+gst_videoscale_orc_downsample_u32 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int n)
 {
   int i;
   orc_union32 *ORC_RESTRICT ptr0;
@@ -725,8 +846,12 @@ gst_videoscale_orc_downsample_u32 (guint8 * d1, const guint8 * s1, int n)
     /* 0: loadq */
     var34 = ptr4[i];
     /* 1: splitql */
-    var36.i = (var34.i >> 32) & 0xffffffff;
-    var37.i = var34.i & 0xffffffff;
+    {
+      orc_union64 _src;
+      _src.i = var34.i;
+      var36.i = _src.x2[1];
+      var37.i = _src.x2[0];
+    }
     /* 2: avgub */
     var35.x4[0] = ((orc_uint8) var36.x4[0] + (orc_uint8) var37.x4[0] + 1) >> 1;
     var35.x4[1] = ((orc_uint8) var36.x4[1] + (orc_uint8) var37.x4[1] + 1) >> 1;
@@ -759,8 +884,12 @@ _backup_gst_videoscale_orc_downsample_u32 (OrcExecutor * ORC_RESTRICT ex)
     /* 0: loadq */
     var34 = ptr4[i];
     /* 1: splitql */
-    var36.i = (var34.i >> 32) & 0xffffffff;
-    var37.i = var34.i & 0xffffffff;
+    {
+      orc_union64 _src;
+      _src.i = var34.i;
+      var36.i = _src.x2[1];
+      var37.i = _src.x2[0];
+    }
     /* 2: avgub */
     var35.x4[0] = ((orc_uint8) var36.x4[0] + (orc_uint8) var37.x4[0] + 1) >> 1;
     var35.x4[1] = ((orc_uint8) var36.x4[1] + (orc_uint8) var37.x4[1] + 1) >> 1;
@@ -774,7 +903,8 @@ _backup_gst_videoscale_orc_downsample_u32 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_gst_videoscale_orc_downsample_u32;
 void
-gst_videoscale_orc_downsample_u32 (guint8 * d1, const guint8 * s1, int n)
+gst_videoscale_orc_downsample_u32 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_gst_videoscale_orc_downsample_u32;
@@ -795,7 +925,8 @@ gst_videoscale_orc_downsample_u32 (guint8 * d1, const guint8 * s1, int n)
 /* gst_videoscale_orc_downsample_yuyv */
 #ifdef DISABLE_ORC
 void
-gst_videoscale_orc_downsample_yuyv (guint8 * d1, const guint8 * s1, int n)
+gst_videoscale_orc_downsample_yuyv (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int n)
 {
   int i;
   orc_union32 *ORC_RESTRICT ptr0;
@@ -819,33 +950,69 @@ gst_videoscale_orc_downsample_yuyv (guint8 * d1, const guint8 * s1, int n)
     /* 0: loadq */
     var38 = ptr4[i];
     /* 1: splitwb */
-    var40.x4[0] = (var38.x4[0] >> 8) & 0xff;
-    var41.x4[0] = var38.x4[0] & 0xff;
-    var40.x4[1] = (var38.x4[1] >> 8) & 0xff;
-    var41.x4[1] = var38.x4[1] & 0xff;
-    var40.x4[2] = (var38.x4[2] >> 8) & 0xff;
-    var41.x4[2] = var38.x4[2] & 0xff;
-    var40.x4[3] = (var38.x4[3] >> 8) & 0xff;
-    var41.x4[3] = var38.x4[3] & 0xff;
+    {
+      orc_union16 _src;
+      _src.i = var38.x4[0];
+      var40.x4[0] = _src.x2[1];
+      var41.x4[0] = _src.x2[0];
+    }
+    {
+      orc_union16 _src;
+      _src.i = var38.x4[1];
+      var40.x4[1] = _src.x2[1];
+      var41.x4[1] = _src.x2[0];
+    }
+    {
+      orc_union16 _src;
+      _src.i = var38.x4[2];
+      var40.x4[2] = _src.x2[1];
+      var41.x4[2] = _src.x2[0];
+    }
+    {
+      orc_union16 _src;
+      _src.i = var38.x4[3];
+      var40.x4[3] = _src.x2[1];
+      var41.x4[3] = _src.x2[0];
+    }
     /* 2: splitwb */
-    var42.x2[0] = (var40.x2[0] >> 8) & 0xff;
-    var43.x2[0] = var40.x2[0] & 0xff;
-    var42.x2[1] = (var40.x2[1] >> 8) & 0xff;
-    var43.x2[1] = var40.x2[1] & 0xff;
+    {
+      orc_union16 _src;
+      _src.i = var40.x2[0];
+      var42.x2[0] = _src.x2[1];
+      var43.x2[0] = _src.x2[0];
+    }
+    {
+      orc_union16 _src;
+      _src.i = var40.x2[1];
+      var42.x2[1] = _src.x2[1];
+      var43.x2[1] = _src.x2[0];
+    }
     /* 3: avgub */
     var44.x2[0] = ((orc_uint8) var42.x2[0] + (orc_uint8) var43.x2[0] + 1) >> 1;
     var44.x2[1] = ((orc_uint8) var42.x2[1] + (orc_uint8) var43.x2[1] + 1) >> 1;
     /* 4: splitlw */
-    var45.i = (var41.i >> 16) & 0xffff;
-    var46.i = var41.i & 0xffff;
+    {
+      orc_union32 _src;
+      _src.i = var41.i;
+      var45.i = _src.x2[1];
+      var46.i = _src.x2[0];
+    }
     /* 5: avgub */
     var47.x2[0] = ((orc_uint8) var45.x2[0] + (orc_uint8) var46.x2[0] + 1) >> 1;
     var47.x2[1] = ((orc_uint8) var45.x2[1] + (orc_uint8) var46.x2[1] + 1) >> 1;
     /* 6: mergebw */
-    var39.x2[0] =
-        ((orc_uint8) var44.x2[0] & 0x00ff) | ((orc_uint8) var47.x2[0] << 8);
-    var39.x2[1] =
-        ((orc_uint8) var44.x2[1] & 0x00ff) | ((orc_uint8) var47.x2[1] << 8);
+    {
+      orc_union16 _dest;
+      _dest.x2[0] = var44.x2[0];
+      _dest.x2[1] = var47.x2[0];
+      var39.x2[0] = _dest.i;
+    }
+    {
+      orc_union16 _dest;
+      _dest.x2[0] = var44.x2[1];
+      _dest.x2[1] = var47.x2[1];
+      var39.x2[1] = _dest.i;
+    }
     /* 7: storel */
     ptr0[i] = var39;
   }
@@ -879,33 +1046,69 @@ _backup_gst_videoscale_orc_downsample_yuyv (OrcExecutor * ORC_RESTRICT ex)
     /* 0: loadq */
     var38 = ptr4[i];
     /* 1: splitwb */
-    var40.x4[0] = (var38.x4[0] >> 8) & 0xff;
-    var41.x4[0] = var38.x4[0] & 0xff;
-    var40.x4[1] = (var38.x4[1] >> 8) & 0xff;
-    var41.x4[1] = var38.x4[1] & 0xff;
-    var40.x4[2] = (var38.x4[2] >> 8) & 0xff;
-    var41.x4[2] = var38.x4[2] & 0xff;
-    var40.x4[3] = (var38.x4[3] >> 8) & 0xff;
-    var41.x4[3] = var38.x4[3] & 0xff;
+    {
+      orc_union16 _src;
+      _src.i = var38.x4[0];
+      var40.x4[0] = _src.x2[1];
+      var41.x4[0] = _src.x2[0];
+    }
+    {
+      orc_union16 _src;
+      _src.i = var38.x4[1];
+      var40.x4[1] = _src.x2[1];
+      var41.x4[1] = _src.x2[0];
+    }
+    {
+      orc_union16 _src;
+      _src.i = var38.x4[2];
+      var40.x4[2] = _src.x2[1];
+      var41.x4[2] = _src.x2[0];
+    }
+    {
+      orc_union16 _src;
+      _src.i = var38.x4[3];
+      var40.x4[3] = _src.x2[1];
+      var41.x4[3] = _src.x2[0];
+    }
     /* 2: splitwb */
-    var42.x2[0] = (var40.x2[0] >> 8) & 0xff;
-    var43.x2[0] = var40.x2[0] & 0xff;
-    var42.x2[1] = (var40.x2[1] >> 8) & 0xff;
-    var43.x2[1] = var40.x2[1] & 0xff;
+    {
+      orc_union16 _src;
+      _src.i = var40.x2[0];
+      var42.x2[0] = _src.x2[1];
+      var43.x2[0] = _src.x2[0];
+    }
+    {
+      orc_union16 _src;
+      _src.i = var40.x2[1];
+      var42.x2[1] = _src.x2[1];
+      var43.x2[1] = _src.x2[0];
+    }
     /* 3: avgub */
     var44.x2[0] = ((orc_uint8) var42.x2[0] + (orc_uint8) var43.x2[0] + 1) >> 1;
     var44.x2[1] = ((orc_uint8) var42.x2[1] + (orc_uint8) var43.x2[1] + 1) >> 1;
     /* 4: splitlw */
-    var45.i = (var41.i >> 16) & 0xffff;
-    var46.i = var41.i & 0xffff;
+    {
+      orc_union32 _src;
+      _src.i = var41.i;
+      var45.i = _src.x2[1];
+      var46.i = _src.x2[0];
+    }
     /* 5: avgub */
     var47.x2[0] = ((orc_uint8) var45.x2[0] + (orc_uint8) var46.x2[0] + 1) >> 1;
     var47.x2[1] = ((orc_uint8) var45.x2[1] + (orc_uint8) var46.x2[1] + 1) >> 1;
     /* 6: mergebw */
-    var39.x2[0] =
-        ((orc_uint8) var44.x2[0] & 0x00ff) | ((orc_uint8) var47.x2[0] << 8);
-    var39.x2[1] =
-        ((orc_uint8) var44.x2[1] & 0x00ff) | ((orc_uint8) var47.x2[1] << 8);
+    {
+      orc_union16 _dest;
+      _dest.x2[0] = var44.x2[0];
+      _dest.x2[1] = var47.x2[0];
+      var39.x2[0] = _dest.i;
+    }
+    {
+      orc_union16 _dest;
+      _dest.x2[0] = var44.x2[1];
+      _dest.x2[1] = var47.x2[1];
+      var39.x2[1] = _dest.i;
+    }
     /* 7: storel */
     ptr0[i] = var39;
   }
@@ -914,7 +1117,8 @@ _backup_gst_videoscale_orc_downsample_yuyv (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_gst_videoscale_orc_downsample_yuyv;
 void
-gst_videoscale_orc_downsample_yuyv (guint8 * d1, const guint8 * s1, int n)
+gst_videoscale_orc_downsample_yuyv (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_gst_videoscale_orc_downsample_yuyv;
@@ -935,8 +1139,8 @@ gst_videoscale_orc_downsample_yuyv (guint8 * d1, const guint8 * s1, int n)
 /* gst_videoscale_orc_resample_nearest_u8 */
 #ifdef DISABLE_ORC
 void
-gst_videoscale_orc_resample_nearest_u8 (guint8 * d1, const guint8 * s1, int p1,
-    int p2, int n)
+gst_videoscale_orc_resample_nearest_u8 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n)
 {
   int i;
   orc_int8 *ORC_RESTRICT ptr0;
@@ -981,8 +1185,8 @@ _backup_gst_videoscale_orc_resample_nearest_u8 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_gst_videoscale_orc_resample_nearest_u8;
 void
-gst_videoscale_orc_resample_nearest_u8 (guint8 * d1, const guint8 * s1, int p1,
-    int p2, int n)
+gst_videoscale_orc_resample_nearest_u8 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_gst_videoscale_orc_resample_nearest_u8;
@@ -1005,8 +1209,8 @@ gst_videoscale_orc_resample_nearest_u8 (guint8 * d1, const guint8 * s1, int p1,
 /* gst_videoscale_orc_resample_bilinear_u8 */
 #ifdef DISABLE_ORC
 void
-gst_videoscale_orc_resample_bilinear_u8 (guint8 * d1, const guint8 * s1, int p1,
-    int p2, int n)
+gst_videoscale_orc_resample_bilinear_u8 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n)
 {
   int i;
   orc_int8 *ORC_RESTRICT ptr0;
@@ -1061,8 +1265,8 @@ _backup_gst_videoscale_orc_resample_bilinear_u8 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_gst_videoscale_orc_resample_bilinear_u8;
 void
-gst_videoscale_orc_resample_bilinear_u8 (guint8 * d1, const guint8 * s1, int p1,
-    int p2, int n)
+gst_videoscale_orc_resample_bilinear_u8 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_gst_videoscale_orc_resample_bilinear_u8;
@@ -1085,8 +1289,8 @@ gst_videoscale_orc_resample_bilinear_u8 (guint8 * d1, const guint8 * s1, int p1,
 /* gst_videoscale_orc_resample_nearest_u32 */
 #ifdef DISABLE_ORC
 void
-gst_videoscale_orc_resample_nearest_u32 (guint8 * d1, const guint8 * s1, int p1,
-    int p2, int n)
+gst_videoscale_orc_resample_nearest_u32 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n)
 {
   int i;
   orc_union32 *ORC_RESTRICT ptr0;
@@ -1131,8 +1335,8 @@ _backup_gst_videoscale_orc_resample_nearest_u32 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_gst_videoscale_orc_resample_nearest_u32;
 void
-gst_videoscale_orc_resample_nearest_u32 (guint8 * d1, const guint8 * s1, int p1,
-    int p2, int n)
+gst_videoscale_orc_resample_nearest_u32 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_gst_videoscale_orc_resample_nearest_u32;
@@ -1155,8 +1359,8 @@ gst_videoscale_orc_resample_nearest_u32 (guint8 * d1, const guint8 * s1, int p1,
 /* gst_videoscale_orc_resample_bilinear_u32 */
 #ifdef DISABLE_ORC
 void
-gst_videoscale_orc_resample_bilinear_u32 (guint8 * d1, const guint8 * s1,
-    int p1, int p2, int n)
+gst_videoscale_orc_resample_bilinear_u32 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n)
 {
   int i;
   orc_union32 *ORC_RESTRICT ptr0;
@@ -1233,8 +1437,8 @@ _backup_gst_videoscale_orc_resample_bilinear_u32 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_gst_videoscale_orc_resample_bilinear_u32;
 void
-gst_videoscale_orc_resample_bilinear_u32 (guint8 * d1, const guint8 * s1,
-    int p1, int p2, int n)
+gst_videoscale_orc_resample_bilinear_u32 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, int p1, int p2, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_gst_videoscale_orc_resample_bilinear_u32;
@@ -1257,8 +1461,9 @@ gst_videoscale_orc_resample_bilinear_u32 (guint8 * d1, const guint8 * s1,
 /* gst_videoscale_orc_resample_merge_bilinear_u32 */
 #ifdef DISABLE_ORC
 void
-gst_videoscale_orc_resample_merge_bilinear_u32 (guint8 * d1, guint8 * d2,
-    const guint8 * s1, const guint8 * s2, int p1, int p2, int p3, int n)
+gst_videoscale_orc_resample_merge_bilinear_u32 (guint8 * ORC_RESTRICT d1,
+    guint8 * ORC_RESTRICT d2, const guint8 * ORC_RESTRICT s1,
+    const guint8 * ORC_RESTRICT s2, int p1, int p2, int p3, int n)
 {
   int i;
   orc_union32 *ORC_RESTRICT ptr0;
@@ -1438,8 +1643,9 @@ _backup_gst_videoscale_orc_resample_merge_bilinear_u32 (OrcExecutor *
 
 static OrcProgram *_orc_program_gst_videoscale_orc_resample_merge_bilinear_u32;
 void
-gst_videoscale_orc_resample_merge_bilinear_u32 (guint8 * d1, guint8 * d2,
-    const guint8 * s1, const guint8 * s2, int p1, int p2, int p3, int n)
+gst_videoscale_orc_resample_merge_bilinear_u32 (guint8 * ORC_RESTRICT d1,
+    guint8 * ORC_RESTRICT d2, const guint8 * ORC_RESTRICT s1,
+    const guint8 * ORC_RESTRICT s2, int p1, int p2, int p3, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_gst_videoscale_orc_resample_merge_bilinear_u32;
@@ -1465,9 +1671,10 @@ gst_videoscale_orc_resample_merge_bilinear_u32 (guint8 * d1, guint8 * d2,
 /* gst_videoscale_orc_merge_bicubic_u8 */
 #ifdef DISABLE_ORC
 void
-gst_videoscale_orc_merge_bicubic_u8 (guint8 * d1, const guint8 * s1,
-    const guint8 * s2, const guint8 * s3, const guint8 * s4, int p1, int p2,
-    int p3, int p4, int n)
+gst_videoscale_orc_merge_bicubic_u8 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2,
+    const guint8 * ORC_RESTRICT s3, const guint8 * ORC_RESTRICT s4, int p1,
+    int p2, int p3, int p4, int n)
 {
   int i;
   orc_int8 *ORC_RESTRICT ptr0;
@@ -1510,7 +1717,7 @@ gst_videoscale_orc_merge_bicubic_u8 (guint8 * d1, const guint8 * s1,
   /* 12: loadpb */
   var41 = p4;
   /* 15: loadpw */
-  var42.i = 0x00000020;         /* 32 or 1.58101e-322f */
+  var42.i = (int) 0x00000020;   /* 32 or 1.58101e-322f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -1593,7 +1800,7 @@ _backup_gst_videoscale_orc_merge_bicubic_u8 (OrcExecutor * ORC_RESTRICT ex)
   /* 12: loadpb */
   var41 = ex->params[27];
   /* 15: loadpw */
-  var42.i = 0x00000020;         /* 32 or 1.58101e-322f */
+  var42.i = (int) 0x00000020;   /* 32 or 1.58101e-322f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -1632,9 +1839,10 @@ _backup_gst_videoscale_orc_merge_bicubic_u8 (OrcExecutor * ORC_RESTRICT ex)
 
 static OrcProgram *_orc_program_gst_videoscale_orc_merge_bicubic_u8;
 void
-gst_videoscale_orc_merge_bicubic_u8 (guint8 * d1, const guint8 * s1,
-    const guint8 * s2, const guint8 * s3, const guint8 * s4, int p1, int p2,
-    int p3, int p4, int n)
+gst_videoscale_orc_merge_bicubic_u8 (guint8 * ORC_RESTRICT d1,
+    const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2,
+    const guint8 * ORC_RESTRICT s3, const guint8 * ORC_RESTRICT s4, int p1,
+    int p2, int p3, int p4, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
   OrcProgram *p = _orc_program_gst_videoscale_orc_merge_bicubic_u8;
@@ -1666,7 +1874,6 @@ gst_videoscale_orc_init (void)
   {
     /* orc_merge_linear_u8 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "orc_merge_linear_u8");
@@ -1698,14 +1905,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "addb", 0, ORC_VAR_D1, ORC_VAR_T4, ORC_VAR_T3,
         ORC_VAR_D1);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_orc_merge_linear_u8 = p;
   }
   {
     /* orc_merge_linear_u16 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "orc_merge_linear_u16");
@@ -1730,14 +1936,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "convlw", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1,
         ORC_VAR_D1);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_orc_merge_linear_u16 = p;
   }
   {
     /* orc_splat_u16 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "orc_splat_u16");
@@ -1748,14 +1953,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "copyw", 0, ORC_VAR_D1, ORC_VAR_P1, ORC_VAR_D1,
         ORC_VAR_D1);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_orc_splat_u16 = p;
   }
   {
     /* orc_splat_u32 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "orc_splat_u32");
@@ -1766,14 +1970,30 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "copyl", 0, ORC_VAR_D1, ORC_VAR_P1, ORC_VAR_D1,
         ORC_VAR_D1);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_orc_splat_u32 = p;
   }
   {
+    /* orc_splat_u64 */
+    OrcProgram *p;
+
+    p = orc_program_new ();
+    orc_program_set_name (p, "orc_splat_u64");
+    orc_program_set_backup_function (p, _backup_orc_splat_u64);
+    orc_program_add_destination (p, 8, "d1");
+    orc_program_add_parameter_int64 (p, 8, "p1");
+
+    orc_program_append_2 (p, "copyq", 0, ORC_VAR_D1, ORC_VAR_P1, ORC_VAR_D1,
+        ORC_VAR_D1);
+
+    orc_program_compile (p);
+
+    _orc_program_orc_splat_u64 = p;
+  }
+  {
     /* orc_downsample_u8 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "orc_downsample_u8");
@@ -1788,14 +2008,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "avgub", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_T2,
         ORC_VAR_D1);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_orc_downsample_u8 = p;
   }
   {
     /* orc_downsample_u16 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "orc_downsample_u16");
@@ -1810,14 +2029,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "avguw", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_T2,
         ORC_VAR_D1);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_orc_downsample_u16 = p;
   }
   {
     /* gst_videoscale_orc_downsample_u32 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "gst_videoscale_orc_downsample_u32");
@@ -1833,14 +2051,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "avgub", 2, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_T2,
         ORC_VAR_D1);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_gst_videoscale_orc_downsample_u32 = p;
   }
   {
     /* gst_videoscale_orc_downsample_yuyv */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "gst_videoscale_orc_downsample_yuyv");
@@ -1868,14 +2085,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "mergebw", 1, ORC_VAR_D1, ORC_VAR_T5, ORC_VAR_T6,
         ORC_VAR_D1);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_gst_videoscale_orc_downsample_yuyv = p;
   }
   {
     /* gst_videoscale_orc_resample_nearest_u8 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "gst_videoscale_orc_resample_nearest_u8");
@@ -1889,14 +2105,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "ldresnearb", 0, ORC_VAR_D1, ORC_VAR_S1,
         ORC_VAR_P1, ORC_VAR_P2);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_gst_videoscale_orc_resample_nearest_u8 = p;
   }
   {
     /* gst_videoscale_orc_resample_bilinear_u8 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "gst_videoscale_orc_resample_bilinear_u8");
@@ -1910,14 +2125,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "ldreslinb", 0, ORC_VAR_D1, ORC_VAR_S1, ORC_VAR_P1,
         ORC_VAR_P2);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_gst_videoscale_orc_resample_bilinear_u8 = p;
   }
   {
     /* gst_videoscale_orc_resample_nearest_u32 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "gst_videoscale_orc_resample_nearest_u32");
@@ -1931,14 +2145,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "ldresnearl", 0, ORC_VAR_D1, ORC_VAR_S1,
         ORC_VAR_P1, ORC_VAR_P2);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_gst_videoscale_orc_resample_nearest_u32 = p;
   }
   {
     /* gst_videoscale_orc_resample_bilinear_u32 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "gst_videoscale_orc_resample_bilinear_u32");
@@ -1952,14 +2165,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "ldreslinl", 0, ORC_VAR_D1, ORC_VAR_S1, ORC_VAR_P1,
         ORC_VAR_P2);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_gst_videoscale_orc_resample_bilinear_u32 = p;
   }
   {
     /* gst_videoscale_orc_resample_merge_bilinear_u32 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "gst_videoscale_orc_resample_merge_bilinear_u32");
@@ -1997,14 +2209,13 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "addb", 2, ORC_VAR_D1, ORC_VAR_T3, ORC_VAR_T1,
         ORC_VAR_D1);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_gst_videoscale_orc_resample_merge_bilinear_u32 = p;
   }
   {
     /* gst_videoscale_orc_merge_bicubic_u8 */
     OrcProgram *p;
-    OrcCompileResult result;
 
     p = orc_program_new ();
     orc_program_set_name (p, "gst_videoscale_orc_merge_bicubic_u8");
@@ -2045,7 +2256,7 @@ gst_videoscale_orc_init (void)
     orc_program_append_2 (p, "convsuswb", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1,
         ORC_VAR_D1);
 
-    result = orc_program_compile (p);
+    orc_program_compile (p);
 
     _orc_program_gst_videoscale_orc_merge_bicubic_u8 = p;
   }

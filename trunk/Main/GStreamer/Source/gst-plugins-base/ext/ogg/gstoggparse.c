@@ -72,6 +72,8 @@ struct _GstOggParse
   ogg_sync_state sync;          /* Ogg page synchronisation */
 
   GstCaps *caps;                /* Our src caps */
+
+  GstOggStream *video_stream;   /* Stream used to construct delta_unit flags */
 };
 
 struct _GstOggParseClass
@@ -113,6 +115,7 @@ free_stream (GstOggStream * stream)
 {
   g_list_foreach (stream->headers, (GFunc) gst_mini_object_unref, NULL);
   g_list_foreach (stream->unknown_pages, (GFunc) gst_mini_object_unref, NULL);
+  g_list_foreach (stream->stored_buffers, (GFunc) gst_mini_object_unref, NULL);
 
   g_free (stream);
 }
@@ -155,6 +158,9 @@ gst_ogg_parse_new_stream (GstOggParse * parser, ogg_page * page)
   ret = ogg_stream_packetout (&stream->stream, &packet);
   if (ret == 1) {
     gst_ogg_stream_setup_map (stream, &packet);
+    if (stream->is_video) {
+      parser->video_stream = stream;
+    }
   }
 
   parser->oggstreams = g_slist_append (parser->oggstreams, stream);
@@ -276,29 +282,41 @@ gst_ogg_parse_dispose (GObject * object)
     G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
-/* submit the given buffer to the ogg sync.
- *
- * Returns the number of bytes submited.
- */
-static gint
+/* submit the given buffer to the ogg sync */
+static GstFlowReturn
 gst_ogg_parse_submit_buffer (GstOggParse * ogg, GstBuffer * buffer)
 {
   guint size;
   guint8 *data;
   gchar *oggbuffer;
+  GstFlowReturn ret = GST_FLOW_OK;
 
   size = GST_BUFFER_SIZE (buffer);
   data = GST_BUFFER_DATA (buffer);
 
-  /* We now have a buffer, submit it to the ogg sync layer */
-  oggbuffer = ogg_sync_buffer (&ogg->sync, size);
-  memcpy (oggbuffer, data, size);
-  ogg_sync_wrote (&ogg->sync, size);
+  GST_DEBUG_OBJECT (ogg, "submitting %u bytes", size);
+  if (G_UNLIKELY (size == 0))
+    goto done;
 
-  /* We've copied all the neccesary data, so we're done with the buffer */
+  oggbuffer = ogg_sync_buffer (&ogg->sync, size);
+  if (G_UNLIKELY (oggbuffer == NULL)) {
+    GST_ELEMENT_ERROR (ogg, STREAM, DECODE,
+        (NULL), ("failed to get ogg sync buffer"));
+    ret = GST_FLOW_ERROR;
+    goto done;
+  }
+
+  memcpy (oggbuffer, data, size);
+  if (G_UNLIKELY (ogg_sync_wrote (&ogg->sync, size) < 0)) {
+    GST_ELEMENT_ERROR (ogg, STREAM, DECODE,
+        (NULL), ("failed to write %d bytes to the sync buffer", size));
+    ret = GST_FLOW_ERROR;
+  }
+
+done:
   gst_buffer_unref (buffer);
 
-  return size;
+  return ret;
 }
 
 static void
@@ -345,7 +363,7 @@ gst_ogg_parse_is_header (GstOggParse * ogg, GstOggStream * stream,
 
 static GstBuffer *
 gst_ogg_parse_buffer_from_page (ogg_page * page,
-    guint64 offset, gboolean delta, GstClockTime timestamp)
+    guint64 offset, GstClockTime timestamp)
 {
   int size = page->header_len + page->body_len;
   GstBuffer *buf = gst_buffer_new_and_alloc (size);
@@ -402,6 +420,7 @@ gst_ogg_parse_chain (GstPad * pad, GstBuffer * buffer)
 #endif
       guint64 startoffset = ogg->offset;
       GstOggStream *stream;
+      gboolean keyframe;
 
       serialno = ogg_page_serialno (&page);
       stream = gst_ogg_parse_find_stream (ogg, serialno);
@@ -409,9 +428,23 @@ gst_ogg_parse_chain (GstPad * pad, GstBuffer * buffer)
       GST_LOG_OBJECT (ogg, "Timestamping outgoing buffer as %" GST_TIME_FORMAT,
           GST_TIME_ARGS (buffertimestamp));
 
-      buffertimestamp = gst_ogg_stream_get_end_time_for_granulepos (stream,
-          granule);
-      pagebuffer = gst_ogg_parse_buffer_from_page (&page, startoffset, FALSE,
+      if (stream) {
+        buffertimestamp = gst_ogg_stream_get_end_time_for_granulepos (stream,
+            granule);
+        if (ogg->video_stream) {
+          if (stream == ogg->video_stream) {
+            keyframe = gst_ogg_stream_granulepos_is_key_frame (stream, granule);
+          } else {
+            keyframe = FALSE;
+          }
+        } else {
+          keyframe = TRUE;
+        }
+      } else {
+        buffertimestamp = GST_CLOCK_TIME_NONE;
+        keyframe = TRUE;
+      }
+      pagebuffer = gst_ogg_parse_buffer_from_page (&page, startoffset,
           buffertimestamp);
 
       /* We read out 'ret' bytes, so we set the next offset appropriately */
@@ -420,9 +453,9 @@ gst_ogg_parse_chain (GstPad * pad, GstBuffer * buffer)
       GST_LOG_OBJECT (ogg,
           "processing ogg page (serial %08x, pageno %ld, "
           "granule pos %" G_GUINT64_FORMAT ", bos %d, offset %"
-          G_GUINT64_FORMAT "-%" G_GUINT64_FORMAT ")",
+          G_GUINT64_FORMAT "-%" G_GUINT64_FORMAT ") keyframe=%d",
           serialno, ogg_page_pageno (&page),
-          granule, bos, startoffset, ogg->offset);
+          granule, bos, startoffset, ogg->offset, keyframe);
 
       if (ogg_page_bos (&page)) {
         /* If we've seen this serialno before, this is technically an error,
@@ -539,11 +572,11 @@ gst_ogg_parse_chain (GstPad * pad, GstBuffer * buffer)
 
             for (l = ogg->oggstreams; l != NULL; l = l->next) {
               GstOggStream *stream = (GstOggStream *) l->data;
-              int j;
+              GList *j;
 
-              for (j = 1; j < g_list_length (stream->headers); j++) {
-                gst_ogg_parse_append_header (&array,
-                    GST_BUFFER (g_list_nth_data (stream->headers, j)));
+              /* already appended the first header, now do headers 2-N */
+              for (j = stream->headers->next; j != NULL; j = j->next) {
+                gst_ogg_parse_append_header (&array, GST_BUFFER (j->data));
                 count++;
               }
             }
@@ -570,6 +603,7 @@ gst_ogg_parse_chain (GstPad * pad, GstBuffer * buffer)
               GstOggStream *stream = (GstOggStream *) l->data;
               GstBuffer *buf = GST_BUFFER (stream->headers->data);
 
+              buf = gst_buffer_make_metadata_writable (buf);
               gst_buffer_set_caps (buf, caps);
 
               result = gst_pad_push (ogg->srcpad, buf);
@@ -578,11 +612,13 @@ gst_ogg_parse_chain (GstPad * pad, GstBuffer * buffer)
             }
             for (l = ogg->oggstreams; l != NULL; l = l->next) {
               GstOggStream *stream = (GstOggStream *) l->data;
-              int j;
+              GList *j;
 
-              for (j = 1; j < g_list_length (stream->headers); j++) {
-                GstBuffer *buf =
-                    GST_BUFFER (g_list_nth_data (stream->headers, j));
+              /* pushed the first one for each stream already, now do 2-N */
+              for (j = stream->headers->next; j != NULL; j = j->next) {
+                GstBuffer *buf = GST_BUFFER (j->data);
+
+                buf = gst_buffer_make_metadata_writable (buf);
                 gst_buffer_set_caps (buf, caps);
 
                 result = gst_pad_push (ogg->srcpad, buf);
@@ -613,7 +649,7 @@ gst_ogg_parse_chain (GstPad * pad, GstBuffer * buffer)
               for (k = stream->unknown_pages; k != NULL; k = k->next) {
                 GstBuffer *buf;
 
-                buf = GST_BUFFER (k->data);
+                buf = gst_buffer_make_metadata_writable (GST_BUFFER (k->data));
                 gst_buffer_set_caps (buf, caps);
                 result = gst_pad_push (ogg->srcpad, buf);
                 if (result != GST_FLOW_OK)
@@ -624,16 +660,42 @@ gst_ogg_parse_chain (GstPad * pad, GstBuffer * buffer)
               g_list_free (stream->unknown_pages);
               stream->unknown_pages = NULL;
             }
+          }
 
-            gst_buffer_set_caps (pagebuffer, caps);
-
-            result = gst_pad_push (ogg->srcpad, GST_BUFFER (pagebuffer));
-            if (result != GST_FLOW_OK)
-              return result;
+          if (granule == -1) {
+            stream->stored_buffers = g_list_append (stream->stored_buffers,
+                pagebuffer);
           } else {
-            /* Normal data page, submit buffer */
+            while (stream->stored_buffers) {
+              GstBuffer *buf = stream->stored_buffers->data;
+
+              buf = gst_buffer_make_metadata_writable (buf);
+              gst_buffer_set_caps (buf, ogg->caps);
+              GST_BUFFER_TIMESTAMP (buf) = buffertimestamp;
+              if (!keyframe) {
+                GST_BUFFER_FLAG_SET (buf, GST_BUFFER_FLAG_DELTA_UNIT);
+              } else {
+                keyframe = FALSE;
+              }
+
+              result = gst_pad_push (ogg->srcpad, buf);
+              if (result != GST_FLOW_OK)
+                return result;
+
+              stream->stored_buffers =
+                  g_list_delete_link (stream->stored_buffers,
+                  stream->stored_buffers);
+            }
+
+            pagebuffer = gst_buffer_make_metadata_writable (pagebuffer);
             gst_buffer_set_caps (pagebuffer, ogg->caps);
-            result = gst_pad_push (ogg->srcpad, GST_BUFFER (pagebuffer));
+            if (!keyframe) {
+              GST_BUFFER_FLAG_SET (pagebuffer, GST_BUFFER_FLAG_DELTA_UNIT);
+            } else {
+              keyframe = FALSE;
+            }
+
+            result = gst_pad_push (ogg->srcpad, pagebuffer);
             if (result != GST_FLOW_OK)
               return result;
           }

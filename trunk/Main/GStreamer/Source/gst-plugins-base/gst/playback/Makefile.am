@@ -6,8 +6,6 @@ glib_gen_basename = gstplay
 built_sources = gstplay-marshal.c
 built_headers = gstplay-marshal.h
 
-plugindir = $(libdir)/gstreamer-@GST_MAJORMINOR@
-
 plugin_LTLIBRARIES = libgstplaybin.la libgstdecodebin.la libgstdecodebin2.la
 
 libgstplaybin_la_SOURCES = \
@@ -17,7 +15,6 @@ libgstplaybin_la_SOURCES = \
 	gstplaysink.c \
 	gstplaybasebin.c \
 	gstplay-enum.c \
-	gstinputselector.c \
 	gststreaminfo.c \
 	gststreamselector.c \
 	gstsubtitleoverlay.c \
@@ -56,7 +53,6 @@ noinst_HEADERS = \
 	gstplaybasebin.h \
 	gstplaysink.h \
 	gststreaminfo.h \
-	gstinputselector.h \
 	gstplay-enum.h \
 	gststreamselector.h \
 	gstrawcaps.h \
@@ -71,3 +67,41 @@ CLEANFILES = $(BUILT_SOURCES)
 
 include $(top_srcdir)/common/gst-glib-gen.mak
 
+Android.mk: Makefile.am $(BUILT_SOURCES)
+	androgenizer \
+	-:PROJECT libgstdecodebin -:SHARED libgstdecodebin \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstdecodebin_la_SOURCES) \
+	           $(nodist_libgstdecodebin_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstdecodebin_la_CFLAGS) \
+	 -:LDFLAGS $(libgstdecodebin_la_LDFLAGS) \
+	           $(libgstdecodebin_la_LIBADD) \
+	           -ldl \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+		       LOCAL_MODULE_PATH:='$$(TARGET_OUT)/lib/gstreamer-0.10' \
+	 \
+	-:PROJECT libgstdecodebin2 -:SHARED libgstdecodebin2 \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstdecodebin2_la_SOURCES) \
+	           $(nodist_libgstdecodebin2_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstdecodebin2_la_CFLAGS) \
+	 -:LDFLAGS $(libgstdecodebin2_la_LDFLAGS) \
+	           $(libgstdecodebin2_la_LIBADD) \
+	           -ldl \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+		       LOCAL_MODULE_PATH:='$$(TARGET_OUT)/lib/gstreamer-0.10' \
+	 \
+	-:PROJECT libgstplaybin -:SHARED libgstplaybin \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstplaybin_la_SOURCES) \
+	           $(nodist_libgstplaybin_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstplaybin_la_CFLAGS) \
+	 -:LDFLAGS $(libgstplaybin_la_LDFLAGS) \
+	           $(libgstplaybin_la_LIBADD) \
+	           -ldl \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+		       LOCAL_MODULE_PATH:='$$(TARGET_OUT)/lib/gstreamer-0.10' \
+	> $@

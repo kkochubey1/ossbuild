@@ -156,6 +156,7 @@ static GstStateChangeReturn gst_tag_demux_change_state (GstElement * element,
 static gboolean gst_tag_demux_pad_query (GstPad * pad, GstQuery * query);
 static const GstQueryType *gst_tag_demux_get_query_types (GstPad * pad);
 static gboolean gst_tag_demux_get_upstream_size (GstTagDemux * tagdemux);
+static void gst_tag_demux_send_pending_events (GstTagDemux * tagdemux);
 static void gst_tag_demux_send_tag_event (GstTagDemux * tagdemux);
 static gboolean gst_tag_demux_send_new_segment (GstTagDemux * tagdemux);
 
@@ -668,8 +669,6 @@ gst_tag_demux_chain (GstPad * pad, GstBuffer * buf)
           return GST_FLOW_UNEXPECTED;
       }
       if (outbuf) {
-        GList *events;
-
         if (G_UNLIKELY (demux->priv->srcpad == NULL)) {
           gst_buffer_unref (outbuf);
           return GST_FLOW_ERROR;
@@ -685,17 +684,7 @@ gst_tag_demux_chain (GstPad * pad, GstBuffer * buf)
         }
 
         /* send any pending events we cached */
-        GST_OBJECT_LOCK (demux);
-        events = demux->priv->pending_events;
-        demux->priv->pending_events = NULL;
-        GST_OBJECT_UNLOCK (demux);
-
-        while (events != NULL) {
-          GST_DEBUG_OBJECT (demux->priv->srcpad, "sending cached %s event: %"
-              GST_PTR_FORMAT, GST_EVENT_TYPE_NAME (events->data), events->data);
-          gst_pad_push_event (demux->priv->srcpad, GST_EVENT (events->data));
-          events = g_list_delete_link (events, events);
-        }
+        gst_tag_demux_send_pending_events (demux);
 
         /* Send our own pending tag event */
         if (demux->priv->send_tag_event) {
@@ -1207,7 +1196,9 @@ gst_tag_demux_sink_activate (GstPad * sinkpad)
       demux->priv->strip_start + demux->priv->strip_end) {
     /* There was no data (probably due to a truncated file) */
     GST_DEBUG_OBJECT (demux, "No data in file");
-    return FALSE;
+    /* so we don't know about type either */
+    GST_ELEMENT_ERROR (demux, STREAM, TYPE_NOT_FOUND, (NULL), (NULL));
+    goto done_activate;
   }
 
   /* 3 - Do typefinding on data */
@@ -1333,6 +1324,13 @@ gst_tag_demux_src_getrange (GstPad * srcpad,
 {
   GstTagDemux *demux = GST_TAG_DEMUX (GST_PAD_PARENT (srcpad));
 
+  /* downstream in pull mode won't miss a newsegment event,
+   * but it likely appreciates other (tag) events */
+  if (demux->priv->need_newseg) {
+    gst_tag_demux_send_pending_events (demux);
+    demux->priv->need_newseg = FALSE;
+  }
+
   if (demux->priv->send_tag_event) {
     gst_tag_demux_send_tag_event (demux);
     demux->priv->send_tag_event = FALSE;
@@ -1416,6 +1414,25 @@ gst_tag_demux_get_query_types (GstPad * pad)
   };
 
   return types;
+}
+
+static void
+gst_tag_demux_send_pending_events (GstTagDemux * demux)
+{
+  GList *events;
+
+  /* send any pending events we cached */
+  GST_OBJECT_LOCK (demux);
+  events = demux->priv->pending_events;
+  demux->priv->pending_events = NULL;
+  GST_OBJECT_UNLOCK (demux);
+
+  while (events != NULL) {
+    GST_DEBUG_OBJECT (demux->priv->srcpad, "sending cached %s event: %"
+        GST_PTR_FORMAT, GST_EVENT_TYPE_NAME (events->data), events->data);
+    gst_pad_push_event (demux->priv->srcpad, GST_EVENT (events->data));
+    events = g_list_delete_link (events, events);
+  }
 }
 
 static void

@@ -269,7 +269,6 @@ GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAVE_CDPARANOIA = @HAVE_CDPARANOIA@
-HAVE_CXX = @HAVE_CXX@
 HAVE_X = @HAVE_X@
 HAVE_XSHM = @HAVE_XSHM@
 HSTRERROR_LIBS = @HSTRERROR_LIBS@
@@ -306,6 +305,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -382,6 +382,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -415,7 +416,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -876,6 +876,17 @@ all: all-am chmod
 
 chmod: $(bin_SCRIPTS)
 	@chmod +x $^
+
+Android.mk: Makefile.am
+	androgenizer -:PROJECT gst-discoverer \
+	 -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:EXECUTABLE gst-discoverer -:TAGS eng debug \
+	 -:SOURCES $(gst_discoverer_@GST_MAJORMINOR@_SOURCES) \
+	 -:CFLAGS $(DEFS) $(AM_CFLAGS) \
+	 -:LDFLAGS -lgstpbutils-@GST_MAJORMINOR@ -lgstvideo-@GST_MAJORMINOR@ \
+	 	   $(GST_BASE_LIBS) $(GST_LIBS) \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+	> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

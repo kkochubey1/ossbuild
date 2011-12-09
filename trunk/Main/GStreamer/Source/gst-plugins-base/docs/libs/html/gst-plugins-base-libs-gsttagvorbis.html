@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-tag.html" title="Tag Support Library">
 <link rel="prev" href="gst-plugins-base-libs-gsttag.html" title="gsttag">
 <link rel="next" href="gst-plugins-base-libs-gsttagid3.html" title="gsttagid3">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -26,7 +26,7 @@
                   <a href="#gst-plugins-base-libs-gsttagvorbis.description" class="shortcut">Description</a>
 </td></tr>
 </table>
-<div class="refentry" title="gsttagvorbis">
+<div class="refentry">
 <a name="gst-plugins-base-libs-gsttagvorbis"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -36,45 +36,49 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-base-libs-gsttagvorbis.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/tag/tag.h&gt;
 
-const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       <a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-tag-from-vorbis-tag" title="gst_tag_from_vorbis_tag ()">gst_tag_from_vorbis_tag</a>             (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *vorbis_tag</code></em>);
-const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       <a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-tag-to-vorbis-tag" title="gst_tag_to_vorbis_tag ()">gst_tag_to_vorbis_tag</a>               (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *gst_tag</code></em>);
+const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            <a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-tag-from-vorbis-tag" title="gst_tag_from_vorbis_tag ()">gst_tag_from_vorbis_tag</a>        (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *vorbis_tag</code></em>);
+const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            <a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-tag-to-vorbis-tag" title="gst_tag_to_vorbis_tag ()">gst_tag_to_vorbis_tag</a>          (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *gst_tag</code></em>);
 <span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-vorbis-tag-add" title="gst_vorbis_tag_add ()">gst_vorbis_tag_add</a>                  (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *value</code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             <a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-tag-to-vorbis-comments" title="gst_tag_to_vorbis_comments ()">gst_tag_to_vorbis_comments</a>          (<em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *                  <a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-tag-to-vorbis-comments" title="gst_tag_to_vorbis_comments ()">gst_tag_to_vorbis_comments</a>     (<em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>);
 
-<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="returnvalue">GstTagList</span></a> *        <a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-tag-list-from-vorbiscomment-buffer" title="gst_tag_list_from_vorbiscomment_buffer ()">gst_tag_list_from_vorbiscomment_buffer</a>
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="returnvalue">GstTagList</span></a> *             <a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-tag-list-from-vorbiscomment-buffer" title="gst_tag_list_from_vorbiscomment_buffer ()">gst_tag_list_from_vorbiscomment_buffer</a>
                                                         (<em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *id_data</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> id_data_length</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> **vendor_string</code></em>);
-<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         <a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-tag-list-to-vorbiscomment-buffer" title="gst_tag_list_to_vorbiscomment_buffer ()">gst_tag_list_to_vorbiscomment_buffer</a>
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *              <a class="link" href="gst-plugins-base-libs-gsttagvorbis.html#gst-tag-list-to-vorbiscomment-buffer" title="gst_tag_list_to_vorbiscomment_buffer ()">gst_tag_list_to_vorbiscomment_buffer</a>
                                                         (<em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *id_data</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> id_data_length</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *vendor_string</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gsttagvorbis.description"></a><h2>Description</h2>
+<p>
+</p>
 <div class="refsect2">
-<a name="id647975"></a><p>
+<a name="idp24832896"></a><p>
 Contains various utility functions for plugins to parse or create
 vorbiscomments and map them to and from <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a>s.
 </p>
 </div>
+<p>
+</p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gsttagvorbis.details"></a><h2>Details</h2>
-<div class="refsect2" title="gst_tag_from_vorbis_tag ()">
+<div class="refsect2">
 <a name="gst-tag-from-vorbis-tag"></a><h3>gst_tag_from_vorbis_tag ()</h3>
-<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       gst_tag_from_vorbis_tag             (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *vorbis_tag</code></em>);</pre>
+<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            gst_tag_from_vorbis_tag        (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *vorbis_tag</code></em>);</pre>
 <p>
 Looks up the GStreamer tag for a vorbiscomment tag.
 </p>
@@ -83,21 +87,19 @@ Looks up the GStreamer tag for a vorbiscomment tag.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>vorbis_tag</code></em> :</span></p></td>
-<td>vorbiscomment tag to convert to GStreamer tag
-</td>
+<td>vorbiscomment tag to convert to GStreamer tag</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The corresponding GStreamer tag or NULL if none exists.
-</td>
+<td>The corresponding GStreamer tag or NULL if none exists.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_tag_to_vorbis_tag ()">
+<div class="refsect2">
 <a name="gst-tag-to-vorbis-tag"></a><h3>gst_tag_to_vorbis_tag ()</h3>
-<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       gst_tag_to_vorbis_tag               (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *gst_tag</code></em>);</pre>
+<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            gst_tag_to_vorbis_tag          (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *gst_tag</code></em>);</pre>
 <p>
 Looks up the vorbiscomment tag for a GStreamer tag.
 </p>
@@ -106,19 +108,17 @@ Looks up the vorbiscomment tag for a GStreamer tag.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>gst_tag</code></em> :</span></p></td>
-<td>GStreamer tag to convert to vorbiscomment tag
-</td>
+<td>GStreamer tag to convert to vorbiscomment tag</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The corresponding vorbiscomment tag or NULL if none exists.
-</td>
+<td>The corresponding vorbiscomment tag or NULL if none exists.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_vorbis_tag_add ()">
+<div class="refsect2">
 <a name="gst-vorbis-tag-add"></a><h3>gst_vorbis_tag_add ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_vorbis_tag_add                  (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>,
@@ -142,21 +142,19 @@ of a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>tag</code></em> :</span></p></td>
-<td>a vorbiscomment tag string (key in key=value), must be valid UTF-8
-</td>
+<td>a vorbiscomment tag string (key in key=value), must be valid UTF-8</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>value</code></em> :</span></p></td>
-<td>a vorbiscomment value string (value in key=value), must be valid UTF-8
-</td>
+<td>a vorbiscomment value string (value in key=value), must be valid UTF-8</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_tag_to_vorbis_comments ()">
+<div class="refsect2">
 <a name="gst-tag-to-vorbis-comments"></a><h3>gst_tag_to_vorbis_comments ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *             gst_tag_to_vorbis_comments          (<em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="returnvalue">GList</span></a> *                  gst_tag_to_vorbis_comments     (<em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *tag</code></em>);</pre>
 <p>
 Creates a new tag list that contains the information parsed out of a
@@ -177,17 +175,16 @@ vorbiscomment packet.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> A <a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of newly-allowcated key=value strings. Free with
-         g_list_foreach (list, (GFunc) g_free, NULL) plus g_list_free (list)
-</td>
+<td>A <a href="http://library.gnome.org/devel/glib/unstable/glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of newly-allowcated key=value strings. Free with
+g_list_foreach (list, (GFunc) g_free, NULL) plus g_list_free (list)</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_tag_list_from_vorbiscomment_buffer ()">
+<div class="refsect2">
 <a name="gst-tag-list-from-vorbiscomment-buffer"></a><h3>gst_tag_list_from_vorbiscomment_buffer ()</h3>
-<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="returnvalue">GstTagList</span></a> *        gst_tag_list_from_vorbiscomment_buffer
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="returnvalue">GstTagList</span></a> *             gst_tag_list_from_vorbiscomment_buffer
                                                         (<em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> *buffer</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *id_data</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> id_data_length</code></em>,
@@ -201,38 +198,33 @@ vorbiscomment packet.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>buffer</code></em> :</span></p></td>
-<td>buffer to convert
-</td>
+<td>buffer to convert</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>id_data</code></em> :</span></p></td>
-<td>identification data at start of stream
-</td>
+<td>identification data at start of stream</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>id_data_length</code></em> :</span></p></td>
-<td>length of identification data
-</td>
+<td>length of identification data</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>vendor_string</code></em> :</span></p></td>
 <td>pointer to a string that should take the vendor string
-                of this vorbis comment or NULL if you don't need it.
-</td>
+of this vorbis comment or NULL if you don't need it.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> A new <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> with all tags that could be extracted from the
-         given vorbiscomment buffer or NULL on error.
-</td>
+<td>A new <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> with all tags that could be extracted from the
+given vorbiscomment buffer or NULL on error.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_tag_list_to_vorbiscomment_buffer ()">
+<div class="refsect2">
 <a name="gst-tag-list-to-vorbiscomment-buffer"></a><h3>gst_tag_list_to_vorbiscomment_buffer ()</h3>
-<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *         gst_tag_list_to_vorbiscomment_buffer
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="returnvalue">GstBuffer</span></a> *              gst_tag_list_to_vorbiscomment_buffer
                                                         (<em class="parameter"><code>const <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> *list</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *id_data</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> id_data_length</code></em>,
@@ -245,41 +237,36 @@ Creates a new vorbiscomment buffer from a tag list.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>list</code></em> :</span></p></td>
-<td>tag list to convert
-</td>
+<td>tag list to convert</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>id_data</code></em> :</span></p></td>
-<td>identification data at start of stream
-</td>
+<td>identification data at start of stream</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>id_data_length</code></em> :</span></p></td>
-<td>length of identification data, may be 0 if <em class="parameter"><code>id_data</code></em> is NULL
-</td>
+<td>length of identification data, may be 0 if <em class="parameter"><code>id_data</code></em> is NULL</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>vendor_string</code></em> :</span></p></td>
-<td>string that describes the vendor string or NULL
-</td>
+<td>string that describes the vendor string or NULL</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> A new <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> containing a vorbiscomment buffer with all tags
-         that could be converted from the given tag list.
-</td>
+<td>A new <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> containing a vorbiscomment buffer with all tags
+that could be converted from the given tag list.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 </div>
-<div class="refsect1" title="See Also">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gsttagvorbis.see-also"></a><h2>See Also</h2>
 <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

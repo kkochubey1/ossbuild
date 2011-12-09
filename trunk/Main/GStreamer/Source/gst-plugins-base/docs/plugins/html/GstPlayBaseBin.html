@@ -7,7 +7,7 @@
 <link rel="home" href="index.html" title="GStreamer Base Plugins 0.10 Plugins Reference Manual">
 <link rel="up" href="ch03.html" title="gst-plugins-base Classes">
 <link rel="prev" href="ch03.html" title="gst-plugins-base Classes">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -31,7 +31,7 @@
                   <a href="#GstPlayBaseBin.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="GstPlayBaseBin">
+<div class="refentry">
 <a name="GstPlayBaseBin"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -40,12 +40,12 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="GstPlayBaseBin.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">struct              <a class="link" href="GstPlayBaseBin.html#GstPlayBaseBin-struct" title="struct GstPlayBaseBin">GstPlayBaseBin</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="GstPlayBaseBin.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -57,13 +57,13 @@
                                  +----<a class="link" href="gst-plugins-base-plugins-playbin.html#GstPlayBin">GstPlayBin</a>
 </pre>
 </div>
-<div class="refsect1" title="Implemented Interfaces">
+<div class="refsect1">
 <a name="GstPlayBaseBin.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstPlayBaseBin implements
  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstChildProxy.html">GstChildProxy</a>.</p>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="GstPlayBaseBin.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="GstPlayBaseBin.html#GstPlayBaseBin--connection-speed" title='The "connection-speed" property'>connection-speed</a>"         <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write
@@ -82,29 +82,29 @@ GstPlayBaseBin implements
   "<a class="link" href="GstPlayBaseBin.html#GstPlayBaseBin--uri" title='The "uri" property'>uri</a>"                      <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="GstPlayBaseBin.description"></a><h2>Description</h2>
 <p>
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="GstPlayBaseBin.details"></a><h2>Details</h2>
-<div class="refsect2" title="struct GstPlayBaseBin">
+<div class="refsect2">
 <a name="GstPlayBaseBin-struct"></a><h3>struct GstPlayBaseBin</h3>
 <pre class="programlisting">struct GstPlayBaseBin;</pre>
 <p>
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="GstPlayBaseBin.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "connection-speed" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--connection-speed"></a><h3>The <code class="literal">"connection-speed"</code> property</h3>
 <pre class="programlisting">  "connection-speed"         <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a>                 : Read / Write</pre>
 <p>
 Network connection speed in kbps (0 = unknown)
 </p>
-<div class="note" title="Note" style="margin-left: 0.5in; margin-right: 0.5in;">
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
 <h3 class="title">Note</h3>
 <p>
 Since version 0.10.10 in <a class="link" href="gst-plugins-base-plugins-playbin.html#GstPlayBin"><span class="type">GstPlayBin</span></a>, at 0.10.15 moved to <a class="link" href="GstPlayBaseBin.html" title="GstPlayBaseBin"><span class="type">GstPlayBaseBin</span></a>
@@ -116,7 +116,7 @@ Since version 0.10.10 in <a class="link" href="gst-plugins-base-plugins-playbin.
 <p class="since">Since 0.10.10</p>
 </div>
 <hr>
-<div class="refsect2" title='The "current-audio" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--current-audio"></a><h3>The <code class="literal">"current-audio"</code> property</h3>
 <pre class="programlisting">  "current-audio"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Currently playing audio stream (-1 = none).</p>
@@ -124,7 +124,7 @@ Since version 0.10.10 in <a class="link" href="gst-plugins-base-plugins-playbin.
 <p>Default value: -1</p>
 </div>
 <hr>
-<div class="refsect2" title='The "current-text" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--current-text"></a><h3>The <code class="literal">"current-text"</code> property</h3>
 <pre class="programlisting">  "current-text"             <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Currently playing text stream (-1 = none).</p>
@@ -132,7 +132,7 @@ Since version 0.10.10 in <a class="link" href="gst-plugins-base-plugins-playbin.
 <p>Default value: -1</p>
 </div>
 <hr>
-<div class="refsect2" title='The "current-video" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--current-video"></a><h3>The <code class="literal">"current-video"</code> property</h3>
 <pre class="programlisting">  "current-video"            <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read / Write</pre>
 <p>Currently playing video stream (-1 = none).</p>
@@ -140,7 +140,7 @@ Since version 0.10.10 in <a class="link" href="gst-plugins-base-plugins-playbin.
 <p>Default value: -1</p>
 </div>
 <hr>
-<div class="refsect2" title='The "nstreams" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--nstreams"></a><h3>The <code class="literal">"nstreams"</code> property</h3>
 <pre class="programlisting">  "nstreams"                 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>                  : Read</pre>
 <p>number of streams.</p>
@@ -148,7 +148,7 @@ Since version 0.10.10 in <a class="link" href="gst-plugins-base-plugins-playbin.
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "queue-min-threshold" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--queue-min-threshold"></a><h3>The <code class="literal">"queue-min-threshold"</code> property</h3>
 <pre class="programlisting">  "queue-min-threshold"      <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
 <p>Buffering low threshold of internal queues in nanoseconds.</p>
@@ -156,7 +156,7 @@ Since version 0.10.10 in <a class="link" href="gst-plugins-base-plugins-playbin.
 <p>Default value: 900000000</p>
 </div>
 <hr>
-<div class="refsect2" title='The "queue-size" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--queue-size"></a><h3>The <code class="literal">"queue-size"</code> property</h3>
 <pre class="programlisting">  "queue-size"               <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
 <p>Size of internal queues in nanoseconds.</p>
@@ -164,7 +164,7 @@ Since version 0.10.10 in <a class="link" href="gst-plugins-base-plugins-playbin.
 <p>Default value: 3000000000</p>
 </div>
 <hr>
-<div class="refsect2" title='The "queue-threshold" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--queue-threshold"></a><h3>The <code class="literal">"queue-threshold"</code> property</h3>
 <pre class="programlisting">  "queue-threshold"          <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a>               : Read / Write</pre>
 <p>Buffering threshold of internal queues in nanoseconds.</p>
@@ -172,39 +172,39 @@ Since version 0.10.10 in <a class="link" href="gst-plugins-base-plugins-playbin.
 <p>Default value: 2850000000</p>
 </div>
 <hr>
-<div class="refsect2" title='The "source" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--source"></a><h3>The <code class="literal">"source"</code> property</h3>
 <pre class="programlisting">  "source"                   <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html"><span class="type">GstElement</span></a>*           : Read</pre>
 <p>Source element.</p>
 </div>
 <hr>
-<div class="refsect2" title='The "stream-info" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--stream-info"></a><h3>The <code class="literal">"stream-info"</code> property</h3>
 <pre class="programlisting">  "stream-info"              <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>              : Read</pre>
 <p>List of streaminfo.</p>
 </div>
 <hr>
-<div class="refsect2" title='The "stream-info-value-array" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--stream-info-value-array"></a><h3>The <code class="literal">"stream-info-value-array"</code> property</h3>
 <pre class="programlisting">  "stream-info-value-array"  <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Value-arrays.html#GValueArray"><span class="type">GValueArray</span></a>*          : Read</pre>
 <p>value array of streaminfo.</p>
 </div>
 <hr>
-<div class="refsect2" title='The "subtitle-encoding" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--subtitle-encoding"></a><h3>The <code class="literal">"subtitle-encoding"</code> property</h3>
 <pre class="programlisting">  "subtitle-encoding"        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>Encoding to assume if input subtitles are not in UTF-8 encoding. If not set, the GST_SUBTITLE_ENCODING environment variable will be checked for an encoding to use. If that is not set either, ISO-8859-15 will be assumed.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
-<div class="refsect2" title='The "suburi" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--suburi"></a><h3>The <code class="literal">"suburi"</code> property</h3>
 <pre class="programlisting">  "suburi"                   <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>Optional URI of a subtitle.</p>
 <p>Default value: NULL</p>
 </div>
 <hr>
-<div class="refsect2" title='The "uri" property'>
+<div class="refsect2">
 <a name="GstPlayBaseBin--uri"></a><h3>The <code class="literal">"uri"</code> property</h3>
 <pre class="programlisting">  "uri"                      <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a>*                : Read / Write</pre>
 <p>URI of the media to play.</p>
@@ -214,6 +214,6 @@ Since version 0.10.10 in <a class="link" href="gst-plugins-base-plugins-playbin.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

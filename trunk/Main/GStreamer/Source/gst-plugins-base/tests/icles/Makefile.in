@@ -86,7 +86,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 @HAVE_GTK_X11_TRUE@@USE_X_TRUE@am__EXEEXT_1 = test-colorkey$(EXEEXT) \
 @HAVE_GTK_X11_TRUE@@USE_X_TRUE@	test-xoverlay$(EXEEXT)
-@USE_X_TRUE@am__EXEEXT_2 = stress-xoverlay$(EXEEXT) $(am__EXEEXT_1)
+@USE_X_TRUE@am__EXEEXT_2 = stress-xoverlay$(EXEEXT) $(am__EXEEXT_1) \
+@USE_X_TRUE@	output-selector-test$(EXEEXT) \
+@USE_X_TRUE@	input-selector-test$(EXEEXT)
 @USE_PANGO_TRUE@am__EXEEXT_3 = test-textoverlay$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
 am_audio_trickplay_OBJECTS =  \
@@ -102,6 +104,23 @@ audio_trickplay_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(audio_trickplay_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
+am__input_selector_test_SOURCES_DIST = input-selector-test.c
+@USE_X_TRUE@am_input_selector_test_OBJECTS =  \
+@USE_X_TRUE@	input_selector_test-input-selector-test.$(OBJEXT)
+input_selector_test_OBJECTS = $(am_input_selector_test_OBJECTS)
+@USE_X_TRUE@input_selector_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
+input_selector_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(input_selector_test_CFLAGS) $(CFLAGS) \
+	$(input_selector_test_LDFLAGS) $(LDFLAGS) -o $@
+am__output_selector_test_SOURCES_DIST = output-selector-test.c
+@USE_X_TRUE@am_output_selector_test_OBJECTS = output_selector_test-output-selector-test.$(OBJEXT)
+output_selector_test_OBJECTS = $(am_output_selector_test_OBJECTS)
+@USE_X_TRUE@output_selector_test_DEPENDENCIES = $(am__DEPENDENCIES_1)
+output_selector_test_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(output_selector_test_CFLAGS) $(CFLAGS) \
+	$(output_selector_test_LDFLAGS) $(LDFLAGS) -o $@
 am_playbin_text_OBJECTS = playbin_text-playbin-text.$(OBJEXT)
 playbin_text_OBJECTS = $(am_playbin_text_OBJECTS)
 playbin_text_DEPENDENCIES = $(am__DEPENDENCIES_1) \
@@ -209,16 +228,19 @@ am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(audio_trickplay_SOURCES) $(playbin_text_SOURCES) \
+SOURCES = $(audio_trickplay_SOURCES) $(input_selector_test_SOURCES) \
+	$(output_selector_test_SOURCES) $(playbin_text_SOURCES) \
 	$(position_formats_SOURCES) $(stress_playbin_SOURCES) \
 	$(stress_xoverlay_SOURCES) $(test_box_SOURCES) \
 	$(test_colorkey_SOURCES) $(test_scale_SOURCES) \
 	$(test_textoverlay_SOURCES) $(test_xoverlay_SOURCES)
-DIST_SOURCES = $(audio_trickplay_SOURCES) $(playbin_text_SOURCES) \
-	$(position_formats_SOURCES) $(stress_playbin_SOURCES) \
-	$(am__stress_xoverlay_SOURCES_DIST) $(test_box_SOURCES) \
-	$(am__test_colorkey_SOURCES_DIST) $(test_scale_SOURCES) \
-	$(am__test_textoverlay_SOURCES_DIST) \
+DIST_SOURCES = $(audio_trickplay_SOURCES) \
+	$(am__input_selector_test_SOURCES_DIST) \
+	$(am__output_selector_test_SOURCES_DIST) \
+	$(playbin_text_SOURCES) $(position_formats_SOURCES) \
+	$(stress_playbin_SOURCES) $(am__stress_xoverlay_SOURCES_DIST) \
+	$(test_box_SOURCES) $(am__test_colorkey_SOURCES_DIST) \
+	$(test_scale_SOURCES) $(am__test_textoverlay_SOURCES_DIST) \
 	$(am__test_xoverlay_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
@@ -378,7 +400,6 @@ GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAVE_CDPARANOIA = @HAVE_CDPARANOIA@
-HAVE_CXX = @HAVE_CXX@
 HAVE_X = @HAVE_X@
 HAVE_XSHM = @HAVE_XSHM@
 HSTRERROR_LIBS = @HSTRERROR_LIBS@
@@ -415,6 +436,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -491,6 +513,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -524,7 +547,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -548,7 +570,8 @@ top_srcdir = @top_srcdir@
 SUBDIRS = playback
 DIST_SUBDIRS = playback
 @USE_X_FALSE@X_TESTS = 
-@USE_X_TRUE@X_TESTS = stress-xoverlay $(am__append_1)
+@USE_X_TRUE@X_TESTS = stress-xoverlay $(am__append_1) \
+@USE_X_TRUE@	output-selector-test input-selector-test
 @USE_X_TRUE@stress_xoverlay_SOURCES = stress-xoverlay.c
 @USE_X_TRUE@stress_xoverlay_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) \
 @USE_X_TRUE@	$(GST_BASE_CFLAGS) $(GST_CFLAGS) $(X_CFLAGS)
@@ -570,6 +593,14 @@ DIST_SUBDIRS = playback
 @HAVE_GTK_X11_TRUE@@USE_X_TRUE@test_xoverlay_LDADD = $(GST_LIBS) $(X_LIBS) $(LIBM) $(GTK_LIBS) \
 @HAVE_GTK_X11_TRUE@@USE_X_TRUE@	$(top_builddir)/gst-libs/gst/interfaces/libgstinterfaces-$(GST_MAJORMINOR).la
 
+@USE_X_TRUE@output_selector_test_SOURCES = output-selector-test.c
+@USE_X_TRUE@output_selector_test_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
+@USE_X_TRUE@output_selector_test_LDADD = $(GST_LIBS)
+@USE_X_TRUE@output_selector_test_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
+@USE_X_TRUE@input_selector_test_SOURCES = input-selector-test.c
+@USE_X_TRUE@input_selector_test_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS)
+@USE_X_TRUE@input_selector_test_LDADD = $(GST_LIBS)
+@USE_X_TRUE@input_selector_test_LDFLAGS = $(GST_PLUGIN_LDFLAGS)
 @USE_PANGO_FALSE@PANGO_TESTS = 
 @USE_PANGO_TRUE@PANGO_TESTS = test-textoverlay
 @USE_PANGO_TRUE@test_textoverlay_SOURCES = test-textoverlay.c
@@ -639,6 +670,12 @@ clean-noinstPROGRAMS:
 audio-trickplay$(EXEEXT): $(audio_trickplay_OBJECTS) $(audio_trickplay_DEPENDENCIES) 
 	@rm -f audio-trickplay$(EXEEXT)
 	$(AM_V_CCLD)$(audio_trickplay_LINK) $(audio_trickplay_OBJECTS) $(audio_trickplay_LDADD) $(LIBS)
+input-selector-test$(EXEEXT): $(input_selector_test_OBJECTS) $(input_selector_test_DEPENDENCIES) 
+	@rm -f input-selector-test$(EXEEXT)
+	$(AM_V_CCLD)$(input_selector_test_LINK) $(input_selector_test_OBJECTS) $(input_selector_test_LDADD) $(LIBS)
+output-selector-test$(EXEEXT): $(output_selector_test_OBJECTS) $(output_selector_test_DEPENDENCIES) 
+	@rm -f output-selector-test$(EXEEXT)
+	$(AM_V_CCLD)$(output_selector_test_LINK) $(output_selector_test_OBJECTS) $(output_selector_test_LDADD) $(LIBS)
 playbin-text$(EXEEXT): $(playbin_text_OBJECTS) $(playbin_text_DEPENDENCIES) 
 	@rm -f playbin-text$(EXEEXT)
 	$(AM_V_CCLD)$(playbin_text_LINK) $(playbin_text_OBJECTS) $(playbin_text_LDADD) $(LIBS)
@@ -674,6 +711,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/audio_trickplay-audio-trickplay.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/input_selector_test-input-selector-test.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/output_selector_test-output-selector-test.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/playbin_text-playbin-text.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/position_formats-position-formats.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stress_playbin-stress-playbin.Po@am__quote@
@@ -723,6 +762,38 @@ audio_trickplay-audio-trickplay.obj: audio-trickplay.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='audio-trickplay.c' object='audio_trickplay-audio-trickplay.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(audio_trickplay_CFLAGS) $(CFLAGS) -c -o audio_trickplay-audio-trickplay.obj `if test -f 'audio-trickplay.c'; then $(CYGPATH_W) 'audio-trickplay.c'; else $(CYGPATH_W) '$(srcdir)/audio-trickplay.c'; fi`
+
+input_selector_test-input-selector-test.o: input-selector-test.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(input_selector_test_CFLAGS) $(CFLAGS) -MT input_selector_test-input-selector-test.o -MD -MP -MF $(DEPDIR)/input_selector_test-input-selector-test.Tpo -c -o input_selector_test-input-selector-test.o `test -f 'input-selector-test.c' || echo '$(srcdir)/'`input-selector-test.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/input_selector_test-input-selector-test.Tpo $(DEPDIR)/input_selector_test-input-selector-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='input-selector-test.c' object='input_selector_test-input-selector-test.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(input_selector_test_CFLAGS) $(CFLAGS) -c -o input_selector_test-input-selector-test.o `test -f 'input-selector-test.c' || echo '$(srcdir)/'`input-selector-test.c
+
+input_selector_test-input-selector-test.obj: input-selector-test.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(input_selector_test_CFLAGS) $(CFLAGS) -MT input_selector_test-input-selector-test.obj -MD -MP -MF $(DEPDIR)/input_selector_test-input-selector-test.Tpo -c -o input_selector_test-input-selector-test.obj `if test -f 'input-selector-test.c'; then $(CYGPATH_W) 'input-selector-test.c'; else $(CYGPATH_W) '$(srcdir)/input-selector-test.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/input_selector_test-input-selector-test.Tpo $(DEPDIR)/input_selector_test-input-selector-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='input-selector-test.c' object='input_selector_test-input-selector-test.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(input_selector_test_CFLAGS) $(CFLAGS) -c -o input_selector_test-input-selector-test.obj `if test -f 'input-selector-test.c'; then $(CYGPATH_W) 'input-selector-test.c'; else $(CYGPATH_W) '$(srcdir)/input-selector-test.c'; fi`
+
+output_selector_test-output-selector-test.o: output-selector-test.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(output_selector_test_CFLAGS) $(CFLAGS) -MT output_selector_test-output-selector-test.o -MD -MP -MF $(DEPDIR)/output_selector_test-output-selector-test.Tpo -c -o output_selector_test-output-selector-test.o `test -f 'output-selector-test.c' || echo '$(srcdir)/'`output-selector-test.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/output_selector_test-output-selector-test.Tpo $(DEPDIR)/output_selector_test-output-selector-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-selector-test.c' object='output_selector_test-output-selector-test.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(output_selector_test_CFLAGS) $(CFLAGS) -c -o output_selector_test-output-selector-test.o `test -f 'output-selector-test.c' || echo '$(srcdir)/'`output-selector-test.c
+
+output_selector_test-output-selector-test.obj: output-selector-test.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(output_selector_test_CFLAGS) $(CFLAGS) -MT output_selector_test-output-selector-test.obj -MD -MP -MF $(DEPDIR)/output_selector_test-output-selector-test.Tpo -c -o output_selector_test-output-selector-test.obj `if test -f 'output-selector-test.c'; then $(CYGPATH_W) 'output-selector-test.c'; else $(CYGPATH_W) '$(srcdir)/output-selector-test.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/output_selector_test-output-selector-test.Tpo $(DEPDIR)/output_selector_test-output-selector-test.Po
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-selector-test.c' object='output_selector_test-output-selector-test.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(output_selector_test_CFLAGS) $(CFLAGS) -c -o output_selector_test-output-selector-test.obj `if test -f 'output-selector-test.c'; then $(CYGPATH_W) 'output-selector-test.c'; else $(CYGPATH_W) '$(srcdir)/output-selector-test.c'; fi`
 
 playbin_text-playbin-text.o: playbin-text.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(playbin_text_CFLAGS) $(CFLAGS) -MT playbin_text-playbin-text.o -MD -MP -MF $(DEPDIR)/playbin_text-playbin-text.Tpo -c -o playbin_text-playbin-text.o `test -f 'playbin-text.c' || echo '$(srcdir)/'`playbin-text.c

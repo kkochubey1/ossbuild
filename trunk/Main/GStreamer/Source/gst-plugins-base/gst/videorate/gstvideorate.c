@@ -290,6 +290,16 @@ gst_video_rate_setcaps (GstPad * pad, GstCaps * caps)
     goto no_framerate;
 
   if (pad == videorate->srcpad) {
+    /* out_frame_count is scaled by the frame rate caps when calculating next_ts.
+     * when the frame rate caps change, we must update base_ts and reset
+     * out_frame_count */
+    if (videorate->to_rate_numerator) {
+      videorate->base_ts +=
+          gst_util_uint64_scale (videorate->out_frame_count,
+          videorate->to_rate_denominator * GST_SECOND,
+          videorate->to_rate_numerator);
+    }
+    videorate->out_frame_count = 0;
     videorate->to_rate_numerator = rate_numerator;
     videorate->to_rate_denominator = rate_denominator;
     otherpad = videorate->sinkpad;
@@ -329,6 +339,12 @@ gst_video_rate_setcaps (GstPad * pad, GstCaps * caps)
       gst_caps_unref (transform);
 
       GST_DEBUG_OBJECT (videorate, "intersect %" GST_PTR_FORMAT, caps);
+
+      /* could turn up empty, due to e.g. colorspace etc */
+      if (gst_caps_get_size (caps) == 0) {
+        gst_caps_unref (caps);
+        goto no_transform;
+      }
 
       /* take first possibility */
       gst_caps_truncate (caps);
@@ -394,7 +410,8 @@ gst_video_rate_reset (GstVideoRate * videorate)
 
   videorate->in = 0;
   videorate->out = 0;
-  videorate->segment_out = 0;
+  videorate->base_ts = 0;
+  videorate->out_frame_count = 0;
   videorate->drop = 0;
   videorate->dup = 0;
   videorate->next_ts = GST_CLOCK_TIME_NONE;
@@ -473,11 +490,12 @@ gst_video_rate_flush_prev (GstVideoRate * videorate, gboolean duplicate)
   push_ts = videorate->next_ts;
 
   videorate->out++;
-  videorate->segment_out++;
+  videorate->out_frame_count++;
   if (videorate->to_rate_numerator) {
     /* interpolate next expected timestamp in the segment */
-    videorate->next_ts = videorate->segment.accum + videorate->segment.start +
-        gst_util_uint64_scale (videorate->segment_out,
+    videorate->next_ts =
+        videorate->segment.accum + videorate->segment.start +
+        videorate->base_ts + gst_util_uint64_scale (videorate->out_frame_count,
         videorate->to_rate_denominator * GST_SECOND,
         videorate->to_rate_numerator);
     GST_BUFFER_DURATION (outbuf) = videorate->next_ts - push_ts;
@@ -587,7 +605,8 @@ gst_video_rate_event (GstPad * pad, GstEvent * event)
             gst_video_rate_notify_drop (videorate);
         }
         /* clean up for the new one; _chain will resume from the new start */
-        videorate->segment_out = 0;
+        videorate->base_ts = 0;
+        videorate->out_frame_count = 0;
         gst_video_rate_swap_prev (videorate, NULL, 0);
         videorate->next_ts = GST_CLOCK_TIME_NONE;
       }
@@ -782,11 +801,9 @@ gst_video_rate_chain (GstPad * pad, GstBuffer * buffer)
       /* new buffer, we expect to output a buffer that matches the first
        * timestamp in the segment */
       if (videorate->skip_to_first) {
-        videorate->next_ts = in_ts;
-        videorate->segment_out = gst_util_uint64_scale (in_ts,
-            videorate->to_rate_numerator,
-            videorate->to_rate_denominator * GST_SECOND) -
-            (videorate->segment.accum + videorate->segment.start);
+        videorate->next_ts = intime;
+        videorate->base_ts = in_ts - videorate->segment.start;
+        videorate->out_frame_count = 0;
       } else {
         videorate->next_ts =
             videorate->segment.start + videorate->segment.accum;

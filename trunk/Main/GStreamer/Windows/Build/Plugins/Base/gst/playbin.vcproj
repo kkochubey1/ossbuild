@@ -314,10 +314,6 @@
 			Name="Header Files"
 			>
 			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstinputselector.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstplay-enum.h"
 				>
 			</File>
@@ -349,10 +345,6 @@
 		<Filter
 			Name="Source Files"
 			>
-			<File
-				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstinputselector.c"
-				>
-			</File>
 			<File
 				RelativePath="..\..\..\..\..\Source\gst-plugins-base\gst\playback\gstplay-enum.c"
 				>

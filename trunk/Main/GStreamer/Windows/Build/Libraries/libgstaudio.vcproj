@@ -386,7 +386,7 @@
 			UseInBuild="false"
 			UseDependenciesInBuild="false"
 			CopyLocalSatelliteAssemblies="false"
-			RelativePathToProject=".\Main\GStreamer\Windows\Build\Plugins\Base\gst-libs\libgstinterfaces.vcproj"
+			RelativePathToProject=".\Main\GStreamer\Windows\Build\Libraries\libgstinterfaces.vcproj"
 		/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{F987873B-2B88-4B1B-B627-F70DF4F91E49}"
@@ -406,24 +406,6 @@
 				>
 				<File
 					RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\audio\audio.h"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="Header Installer Tool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\floatcast\floatcast.h"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

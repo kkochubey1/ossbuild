@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-interfaces.html" title="Interfaces Library">
 <link rel="prev" href="gst-plugins-base-libs-gsttunernorm.html" title="gsttunernorm">
 <link rel="next" href="gst-plugins-base-libs-gstxoverlay.html" title="gstxoverlay">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -30,7 +30,7 @@
                   <a href="#gst-plugins-base-libs-gstvideoorientation.prerequisites" class="shortcut">Prerequisites</a>
 </td></tr>
 </table>
-<div class="refentry" title="gstvideoorientation">
+<div class="refentry">
 <a name="gst-plugins-base-libs-gstvideoorientation"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -40,13 +40,13 @@ controls</p>
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-base-libs-gstvideoorientation.synopsis"></a><h2>Synopsis</h2>
 <a name="GstVideoOrientation"></a><pre class="synopsis">
 #include &lt;gst/interfaces/videoorientation.h&gt;
 
                     <a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation-struct" title="GstVideoOrientation">GstVideoOrientation</a>;
-                    <a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientationInterface" title="GstVideoOrientationInterface">GstVideoOrientationInterface</a>;
+struct              <a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientationInterface" title="struct GstVideoOrientationInterface">GstVideoOrientationInterface</a>;
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#gst-video-orientation-get-hcenter" title="gst_video_orientation_get_hcenter ()">gst_video_orientation_get_hcenter</a>   (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation"><span class="type">GstVideoOrientation</span></a> *video_orientation</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *center</code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#gst-video-orientation-get-hflip" title="gst_video_orientation_get_hflip ()">gst_video_orientation_get_hflip</a>     (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation"><span class="type">GstVideoOrientation</span></a> *video_orientation</code></em>,
@@ -65,29 +65,29 @@ controls</p>
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> flip</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gstvideoorientation.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   GInterface
    +----GstVideoOrientation
 </pre>
 </div>
-<div class="refsect1" title="Prerequisites">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gstvideoorientation.prerequisites"></a><h2>Prerequisites</h2>
 <p>
 GstVideoOrientation requires
  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstImplementsInterface.html">GstImplementsInterface</a> and  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstElement.html">GstElement</a>.</p>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gstvideoorientation.description"></a><h2>Description</h2>
 <p>
 The interface allows unified access to control flipping and autocenter
 operation of video-sources or operators.
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gstvideoorientation.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstVideoOrientation">
+<div class="refsect2">
 <a name="GstVideoOrientation-struct"></a><h3>GstVideoOrientation</h3>
 <pre class="programlisting">typedef struct _GstVideoOrientation GstVideoOrientation;</pre>
 <p>
@@ -95,9 +95,9 @@ Opaque <a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstV
 </p>
 </div>
 <hr>
-<div class="refsect2" title="GstVideoOrientationInterface">
-<a name="GstVideoOrientationInterface"></a><h3>GstVideoOrientationInterface</h3>
-<pre class="programlisting">typedef struct {
+<div class="refsect2">
+<a name="GstVideoOrientationInterface"></a><h3>struct GstVideoOrientationInterface</h3>
+<pre class="programlisting">struct GstVideoOrientationInterface {
   GTypeInterface parent;
 
   /* virtual functions */
@@ -110,64 +110,55 @@ Opaque <a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstV
   gboolean (* set_vflip)   (GstVideoOrientation *video_orientation, gboolean flip);
   gboolean (* set_hcenter) (GstVideoOrientation *video_orientation, gint center);
   gboolean (* set_vcenter) (GstVideoOrientation *video_orientation, gint center);
-} GstVideoOrientationInterface;
+};
 </pre>
 <p>
-<a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientationInterface" title="GstVideoOrientationInterface"><span class="type">GstVideoOrientationInterface</span></a> interface.
+<a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientationInterface" title="struct GstVideoOrientationInterface"><span class="type">GstVideoOrientationInterface</span></a> interface.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><a href="http://library.gnome.org/devel/gobject/unstable/gobject-Type-Information.html#GTypeInterface"><span class="type">GTypeInterface</span></a> <em class="structfield"><code><a name="GstVideoOrientationInterface.parent"></a>parent</code></em>;</span></p></td>
-<td>parent interface type.
-</td>
+<td>parent interface type.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstVideoOrientationInterface.get-hflip"></a>get_hflip</code></em> ()</span></p></td>
-<td>virtual method to get horizontal flipping state
-</td>
+<td>virtual method to get horizontal flipping state</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstVideoOrientationInterface.get-vflip"></a>get_vflip</code></em> ()</span></p></td>
-<td>virtual method to get vertical flipping state
-</td>
+<td>virtual method to get vertical flipping state</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstVideoOrientationInterface.get-hcenter"></a>get_hcenter</code></em> ()</span></p></td>
-<td>virtual method to get horizontal centering state
-</td>
+<td>virtual method to get horizontal centering state</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstVideoOrientationInterface.get-vcenter"></a>get_vcenter</code></em> ()</span></p></td>
-<td>virtual method to get vertical centering state
-</td>
+<td>virtual method to get vertical centering state</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstVideoOrientationInterface.set-hflip"></a>set_hflip</code></em> ()</span></p></td>
-<td>virtual method to set horizontal flipping state
-</td>
+<td>virtual method to set horizontal flipping state</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstVideoOrientationInterface.set-vflip"></a>set_vflip</code></em> ()</span></p></td>
-<td>virtual method to set vertical flipping state
-</td>
+<td>virtual method to set vertical flipping state</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstVideoOrientationInterface.set-hcenter"></a>set_hcenter</code></em> ()</span></p></td>
-<td>virtual method to set horizontal centering state
-</td>
+<td>virtual method to set horizontal centering state</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="structfield"><code><a name="GstVideoOrientationInterface.set-vcenter"></a>set_vcenter</code></em> ()</span></p></td>
-<td>virtual method to set vertical centering state
-</td>
+<td>virtual method to set vertical centering state</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_video_orientation_get_hcenter ()">
+<div class="refsect2">
 <a name="gst-video-orientation-get-hcenter"></a><h3>gst_video_orientation_get_hcenter ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_video_orientation_get_hcenter   (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation"><span class="type">GstVideoOrientation</span></a> *video_orientation</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *center</code></em>);</pre>
@@ -185,20 +176,19 @@ Get the horizontal centering offset from the given object.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>center</code></em> :</span></p></td>
-<td>return location for the result
-</td>
+<td>return location for the result</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports centering
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports centering</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.11</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_video_orientation_get_hflip ()">
+<div class="refsect2">
 <a name="gst-video-orientation-get-hflip"></a><h3>gst_video_orientation_get_hflip ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_video_orientation_get_hflip     (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation"><span class="type">GstVideoOrientation</span></a> *video_orientation</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *flip</code></em>);</pre>
@@ -216,20 +206,19 @@ Get the horizontal flipping state (<a href="http://library.gnome.org/devel/glib/
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flip</code></em> :</span></p></td>
-<td>return location for the result
-</td>
+<td>return location for the result</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports flipping
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports flipping</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.11</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_video_orientation_get_vcenter ()">
+<div class="refsect2">
 <a name="gst-video-orientation-get-vcenter"></a><h3>gst_video_orientation_get_vcenter ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_video_orientation_get_vcenter   (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation"><span class="type">GstVideoOrientation</span></a> *video_orientation</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> *center</code></em>);</pre>
@@ -247,20 +236,19 @@ Get the vertical centering offset from the given object.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>center</code></em> :</span></p></td>
-<td>return location for the result
-</td>
+<td>return location for the result</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports centering
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports centering</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.11</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_video_orientation_get_vflip ()">
+<div class="refsect2">
 <a name="gst-video-orientation-get-vflip"></a><h3>gst_video_orientation_get_vflip ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_video_orientation_get_vflip     (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation"><span class="type">GstVideoOrientation</span></a> *video_orientation</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> *flip</code></em>);</pre>
@@ -278,20 +266,19 @@ Get the vertical flipping state (<a href="http://library.gnome.org/devel/glib/un
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flip</code></em> :</span></p></td>
-<td>return location for the result
-</td>
+<td>return location for the result</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports flipping
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports flipping</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.11</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_video_orientation_set_hcenter ()">
+<div class="refsect2">
 <a name="gst-video-orientation-set-hcenter"></a><h3>gst_video_orientation_set_hcenter ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_video_orientation_set_hcenter   (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation"><span class="type">GstVideoOrientation</span></a> *video_orientation</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> center</code></em>);</pre>
@@ -309,20 +296,19 @@ Set the horizontal centering offset for the given object.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>center</code></em> :</span></p></td>
-<td>centering offset
-</td>
+<td>centering offset</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports centering
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports centering</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.11</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_video_orientation_set_hflip ()">
+<div class="refsect2">
 <a name="gst-video-orientation-set-hflip"></a><h3>gst_video_orientation_set_hflip ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_video_orientation_set_hflip     (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation"><span class="type">GstVideoOrientation</span></a> *video_orientation</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> flip</code></em>);</pre>
@@ -340,20 +326,19 @@ Set the horizontal flipping state (<a href="http://library.gnome.org/devel/glib/
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flip</code></em> :</span></p></td>
-<td>use flipping
-</td>
+<td>use flipping</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports flipping
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports flipping</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.11</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_video_orientation_set_vcenter ()">
+<div class="refsect2">
 <a name="gst-video-orientation-set-vcenter"></a><h3>gst_video_orientation_set_vcenter ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_video_orientation_set_vcenter   (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation"><span class="type">GstVideoOrientation</span></a> *video_orientation</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> center</code></em>);</pre>
@@ -371,20 +356,19 @@ Set the vertical centering offset for the given object.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>center</code></em> :</span></p></td>
-<td>centering offset
-</td>
+<td>centering offset</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports centering
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports centering</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.11</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_video_orientation_set_vflip ()">
+<div class="refsect2">
 <a name="gst-video-orientation-set-vflip"></a><h3>gst_video_orientation_set_vflip ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_video_orientation_set_vflip     (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstvideoorientation.html#GstVideoOrientation"><span class="type">GstVideoOrientation</span></a> *video_orientation</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> flip</code></em>);</pre>
@@ -402,13 +386,12 @@ Set the vertical flipping state (<a href="http://library.gnome.org/devel/glib/un
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flip</code></em> :</span></p></td>
-<td>use flipping
-</td>
+<td>use flipping</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports flipping
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case the element supports flipping</td>
 </tr>
 </tbody>
 </table></div>
@@ -418,6 +401,6 @@ Set the vertical flipping state (<a href="http://library.gnome.org/devel/glib/un
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

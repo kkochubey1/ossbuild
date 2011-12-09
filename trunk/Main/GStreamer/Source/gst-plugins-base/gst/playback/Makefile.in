@@ -149,7 +149,6 @@ am_libgstplaybin_la_OBJECTS = libgstplaybin_la-gstplayback.lo \
 	libgstplaybin_la-gstplaysink.lo \
 	libgstplaybin_la-gstplaybasebin.lo \
 	libgstplaybin_la-gstplay-enum.lo \
-	libgstplaybin_la-gstinputselector.lo \
 	libgstplaybin_la-gststreaminfo.lo \
 	libgstplaybin_la-gststreamselector.lo \
 	libgstplaybin_la-gstsubtitleoverlay.lo \
@@ -317,7 +316,6 @@ GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAVE_CDPARANOIA = @HAVE_CDPARANOIA@
-HAVE_CXX = @HAVE_CXX@
 HAVE_X = @HAVE_X@
 HAVE_XSHM = @HAVE_XSHM@
 HSTRERROR_LIBS = @HSTRERROR_LIBS@
@@ -354,6 +352,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -430,6 +429,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -463,14 +463,13 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
 pkgpyexecdir = @pkgpyexecdir@
 pkgpythondir = @pkgpythondir@
-plugindir = $(libdir)/gstreamer-@GST_MAJORMINOR@
+plugindir = @plugindir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
@@ -499,7 +498,6 @@ libgstplaybin_la_SOURCES = \
 	gstplaysink.c \
 	gstplaybasebin.c \
 	gstplay-enum.c \
-	gstinputselector.c \
 	gststreaminfo.c \
 	gststreamselector.c \
 	gstsubtitleoverlay.c \
@@ -538,7 +536,6 @@ noinst_HEADERS = \
 	gstplaybasebin.h \
 	gstplaysink.h \
 	gststreaminfo.h \
-	gstinputselector.h \
 	gstplay-enum.h \
 	gststreamselector.h \
 	gstrawcaps.h \
@@ -634,7 +631,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdecodebin2_la-gsturidecodebin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdecodebin_la-gstdecodebin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstdecodebin_la-gstplay-marshal.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstinputselector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstplay-enum.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstplay-marshal.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstplaybin_la-gstplayback.Plo@am__quote@
@@ -766,14 +762,6 @@ libgstplaybin_la-gstplay-enum.lo: gstplay-enum.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstplay-enum.c' object='libgstplaybin_la-gstplay-enum.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -c -o libgstplaybin_la-gstplay-enum.lo `test -f 'gstplay-enum.c' || echo '$(srcdir)/'`gstplay-enum.c
-
-libgstplaybin_la-gstinputselector.lo: gstinputselector.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -MT libgstplaybin_la-gstinputselector.lo -MD -MP -MF $(DEPDIR)/libgstplaybin_la-gstinputselector.Tpo -c -o libgstplaybin_la-gstinputselector.lo `test -f 'gstinputselector.c' || echo '$(srcdir)/'`gstinputselector.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstplaybin_la-gstinputselector.Tpo $(DEPDIR)/libgstplaybin_la-gstinputselector.Plo
-@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstinputselector.c' object='libgstplaybin_la-gstinputselector.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -c -o libgstplaybin_la-gstinputselector.lo `test -f 'gstinputselector.c' || echo '$(srcdir)/'`gstinputselector.c
 
 libgstplaybin_la-gststreaminfo.lo: gststreaminfo.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstplaybin_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstplaybin_la_CFLAGS) $(CFLAGS) -MT libgstplaybin_la-gststreaminfo.lo -MD -MP -MF $(DEPDIR)/libgstplaybin_la-gststreaminfo.Tpo -c -o libgstplaybin_la-gststreaminfo.lo `test -f 'gststreaminfo.c' || echo '$(srcdir)/'`gststreaminfo.c
@@ -1062,6 +1050,45 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 
 .deps/%-enumtypes.Plo:
 	@touch $@
+
+Android.mk: Makefile.am $(BUILT_SOURCES)
+	androgenizer \
+	-:PROJECT libgstdecodebin -:SHARED libgstdecodebin \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstdecodebin_la_SOURCES) \
+	           $(nodist_libgstdecodebin_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstdecodebin_la_CFLAGS) \
+	 -:LDFLAGS $(libgstdecodebin_la_LDFLAGS) \
+	           $(libgstdecodebin_la_LIBADD) \
+	           -ldl \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+		       LOCAL_MODULE_PATH:='$$(TARGET_OUT)/lib/gstreamer-0.10' \
+	 \
+	-:PROJECT libgstdecodebin2 -:SHARED libgstdecodebin2 \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstdecodebin2_la_SOURCES) \
+	           $(nodist_libgstdecodebin2_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstdecodebin2_la_CFLAGS) \
+	 -:LDFLAGS $(libgstdecodebin2_la_LDFLAGS) \
+	           $(libgstdecodebin2_la_LIBADD) \
+	           -ldl \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+		       LOCAL_MODULE_PATH:='$$(TARGET_OUT)/lib/gstreamer-0.10' \
+	 \
+	-:PROJECT libgstplaybin -:SHARED libgstplaybin \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstplaybin_la_SOURCES) \
+	           $(nodist_libgstplaybin_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstplaybin_la_CFLAGS) \
+	 -:LDFLAGS $(libgstplaybin_la_LDFLAGS) \
+	           $(libgstplaybin_la_LIBADD) \
+	           -ldl \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+		       LOCAL_MODULE_PATH:='$$(TARGET_OUT)/lib/gstreamer-0.10' \
+	> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-interfaces.html" title="Interfaces Library">
 <link rel="prev" href="gst-plugins-base-libs-gsttuner.html" title="gsttuner">
 <link rel="next" href="gst-plugins-base-libs-gsttunernorm.html" title="gsttunernorm">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -30,7 +30,7 @@
                   <a href="#gst-plugins-base-libs-gsttunerchannel.signals" class="shortcut">Signals</a>
 </td></tr>
 </table>
-<div class="refentry" title="gsttunerchannel">
+<div class="refentry">
 <a name="gst-plugins-base-libs-gsttunerchannel"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -40,35 +40,37 @@ interface.</p>
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-base-libs-gsttunerchannel.synopsis"></a><h2>Synopsis</h2>
 <a name="GstTunerChannel"></a><pre class="synopsis">
 #include &lt;gst/interfaces/tuner.h&gt;
 
-                    <a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannel-struct" title="GstTunerChannel">GstTunerChannel</a>;
+struct              <a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannel-struct" title="struct GstTunerChannel">GstTunerChannel</a>;
 enum                <a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannelFlags" title="enum GstTunerChannelFlags">GstTunerChannelFlags</a>;
 #define             <a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GST-TUNER-CHANNEL-HAS-FLAG:CAPS" title="GST_TUNER_CHANNEL_HAS_FLAG()">GST_TUNER_CHANNEL_HAS_FLAG</a>          (channel,
                                                          flag)
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gsttunerchannel.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
    +----GstTunerChannel
 </pre>
 </div>
-<div class="refsect1" title="Signals">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gsttunerchannel.signals"></a><h2>Signals</h2>
 <pre class="synopsis">
-  "<a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannel-frequency-changed" title='The "frequency-changed" signal'>frequency-changed</a>"                              : Run Last
-  "<a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannel-signal-changed" title='The "signal-changed" signal'>signal-changed</a>"                                 : Run Last
+  "<a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannel-frequency-changed" title='The "frequency-changed" signal'>frequency-changed</a>"                              : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-LAST:CAPS"><code class="literal">Run Last</code></a>
+  "<a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannel-signal-changed" title='The "signal-changed" signal'>signal-changed</a>"                                 : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-LAST:CAPS"><code class="literal">Run Last</code></a>
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gsttunerchannel.description"></a><h2>Description</h2>
+<p>
+</p>
 <div class="refsect2">
-<a name="id567104"></a><p>The <a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannel"><span class="type">GstTunerChannel</span></a> object is provided by an element implementing
+<a name="idp10457584"></a><p>The <a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannel"><span class="type">GstTunerChannel</span></a> object is provided by an element implementing
 the <a class="link" href="gst-plugins-base-libs-gsttuner.html#GstTuner"><span class="type">GstTuner</span></a> interface.
 </p>
 <p>
@@ -78,12 +80,14 @@ set, then the channel also information about the minimum and maximum
 frequency, and range of the reported signal strength.
 </p>
 </div>
+<p>
+</p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gsttunerchannel.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstTunerChannel">
-<a name="GstTunerChannel-struct"></a><h3>GstTunerChannel</h3>
-<pre class="programlisting">typedef struct {
+<div class="refsect2">
+<a name="GstTunerChannel-struct"></a><h3>struct GstTunerChannel</h3>
+<pre class="programlisting">struct GstTunerChannel {
   gchar               *label;
   GstTunerChannelFlags flags;
   gfloat               freq_multiplicator;
@@ -91,51 +95,44 @@ frequency, and range of the reported signal strength.
   gulong               max_frequency;
   gint                 min_signal;
   gint                 max_signal;
-} GstTunerChannel;
+};
 </pre>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="GstTunerChannel-struct.label"></a>label</code></em>;</span></p></td>
-<td>A string containing a descriptive name for this channel
-</td>
+<td>A string containing a descriptive name for this channel</td>
 </tr>
 <tr>
 <td><p><span class="term"><a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannelFlags" title="enum GstTunerChannelFlags"><span class="type">GstTunerChannelFlags</span></a> <em class="structfield"><code><a name="GstTunerChannel-struct.flags"></a>flags</code></em>;</span></p></td>
-<td>A set of <a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannelFlags" title="enum GstTunerChannelFlags"><span class="type">GstTunerChannelFlags</span></a> for this channel
-</td>
+<td>A set of <a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannelFlags" title="enum GstTunerChannelFlags"><span class="type">GstTunerChannelFlags</span></a> for this channel</td>
 </tr>
 <tr>
 <td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gfloat"><span class="type">gfloat</span></a> <em class="structfield"><code><a name="GstTunerChannel-struct.freq-multiplicator"></a>freq_multiplicator</code></em>;</span></p></td>
-<td>The step size (in Hz) for the frequency setting.
-</td>
+<td>The step size (in Hz) for the frequency setting.</td>
 </tr>
 <tr>
 <td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gulong"><span class="type">gulong</span></a> <em class="structfield"><code><a name="GstTunerChannel-struct.min-frequency"></a>min_frequency</code></em>;</span></p></td>
-<td>Minimum valid frequency setting (in Hz).
-</td>
+<td>Minimum valid frequency setting (in Hz).</td>
 </tr>
 <tr>
 <td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gulong"><span class="type">gulong</span></a> <em class="structfield"><code><a name="GstTunerChannel-struct.max-frequency"></a>max_frequency</code></em>;</span></p></td>
-<td>Maximum valid frequency setting (in Hz).
-</td>
+<td>Maximum valid frequency setting (in Hz).</td>
 </tr>
 <tr>
 <td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstTunerChannel-struct.min-signal"></a>min_signal</code></em>;</span></p></td>
-<td>Minimum reported signal strength value.
-</td>
+<td>Minimum reported signal strength value.</td>
 </tr>
 <tr>
 <td><p><span class="term"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="GstTunerChannel-struct.max-signal"></a>max_signal</code></em>;</span></p></td>
-<td>Maximum reported signal strength value.
-</td>
+<td>Maximum reported signal strength value.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="enum GstTunerChannelFlags">
+<div class="refsect2">
 <a name="GstTunerChannelFlags"></a><h3>enum GstTunerChannelFlags</h3>
 <pre class="programlisting">typedef enum {
   GST_TUNER_CHANNEL_INPUT     = (1&lt;&lt;0),
@@ -176,7 +173,7 @@ of a <a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerCh
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="GST_TUNER_CHANNEL_HAS_FLAG()">
+<div class="refsect2">
 <a name="GST-TUNER-CHANNEL-HAS-FLAG:CAPS"></a><h3>GST_TUNER_CHANNEL_HAS_FLAG()</h3>
 <pre class="programlisting">#define             GST_TUNER_CHANNEL_HAS_FLAG(channel, flag)</pre>
 <p>
@@ -192,20 +189,19 @@ Macro to check if the given flag is set on a channel
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>flag</code></em> :</span></p></td>
-<td>The flag to check for
-</td>
+<td>The flag to check for</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 </div>
-<div class="refsect1" title="Signal Details">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gsttunerchannel.signal-details"></a><h2>Signal Details</h2>
-<div class="refsect2" title='The "frequency-changed" signal'>
+<div class="refsect2">
 <a name="GstTunerChannel-frequency-changed"></a><h3>The <code class="literal">"frequency-changed"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannel"><span class="type">GstTunerChannel</span></a> *tunerchannel,
                                                         <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gulong"><span class="type">gulong</span></a>           frequency,
-                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>         user_data)         : Run Last</pre>
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>         user_data)         : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-LAST:CAPS"><code class="literal">Run Last</code></a></pre>
 <p>
 Reports that the current frequency has changed.
 </p>
@@ -219,8 +215,7 @@ Reports that the current frequency has changed.
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>frequency</code></em> :</span></p></td>
-<td>The new frequency (an unsigned long)
-</td>
+<td>The new frequency (an unsigned long)</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
@@ -230,11 +225,11 @@ Reports that the current frequency has changed.
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title='The "signal-changed" signal'>
+<div class="refsect2">
 <a name="GstTunerChannel-signal-changed"></a><h3>The <code class="literal">"signal-changed"</code> signal</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                user_function                      (<a class="link" href="gst-plugins-base-libs-gsttunerchannel.html#GstTunerChannel"><span class="type">GstTunerChannel</span></a> *tunerchannel,
                                                         <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a>             signal,
-                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>         user_data)         : Run Last</pre>
+                                                        <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>         user_data)         : <a href="http://library.gnome.org/devel/gobject/unstable/gobject-Signals.html#G-SIGNAL-RUN-LAST:CAPS"><code class="literal">Run Last</code></a></pre>
 <p>
 Reports that the signal strength has changed.
 </p>
@@ -251,8 +246,7 @@ See Also: <a class="link" href="gst-plugins-base-libs-gsttuner.html#gst-tuner-si
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>signal</code></em> :</span></p></td>
-<td>The new signal strength (an integer)
-</td>
+<td>The new signal strength (an integer)</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>user_data</code></em> :</span></p></td>
@@ -265,6 +259,6 @@ See Also: <a class="link" href="gst-plugins-base-libs-gsttuner.html#gst-tuner-si
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

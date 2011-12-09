@@ -226,7 +226,6 @@ GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAVE_CDPARANOIA = @HAVE_CDPARANOIA@
-HAVE_CXX = @HAVE_CXX@
 HAVE_X = @HAVE_X@
 HAVE_XSHM = @HAVE_XSHM@
 HSTRERROR_LIBS = @HSTRERROR_LIBS@
@@ -263,6 +262,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -339,6 +339,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -372,7 +373,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -519,13 +519,13 @@ EXTRA_DIST = \
 	$(DOC_MODULE)-sections.txt
 
 DOC_STAMPS = \
+	setup-build.stamp		\
 	scan-build.stamp		\
-	tmpl-build.stamp		\
 	sgml-build.stamp		\
 	html-build.stamp		\
-	$(srcdir)/tmpl.stamp		\
-	$(srcdir)/sgml.stamp		\
-	$(srcdir)/html.stamp
+	setup.stamp		\
+	sgml.stamp		\
+	html.stamp
 
 SCANOBJ_FILES = \
 	$(DOC_MODULE).args		\
@@ -783,18 +783,32 @@ upload: $(FORMATS)
 
 @ENABLE_GTK_DOC_TRUE@all-local: html-build.stamp
 
+#### setup ####
+
+@ENABLE_GTK_DOC_TRUE@setup.stamp: $(content_files)
+@ENABLE_GTK_DOC_TRUE@	-@if test "$(abs_srcdir)" != "$(abs_builddir)" ; then \
+@ENABLE_GTK_DOC_TRUE@	   cp -p $(abs_srcdir)/$(DOC_MAIN_SGML_FILE) \
+@ENABLE_GTK_DOC_TRUE@	     $(abs_srcdir)/$(DOC_MODULE)-overrides.txt \
+@ENABLE_GTK_DOC_TRUE@	     $(abs_srcdir)/$(DOC_MODULE)-sections.txt \
+@ENABLE_GTK_DOC_TRUE@	     $(abs_srcdir)/$(DOC_MODULE).types \
+@ENABLE_GTK_DOC_TRUE@	     $(abs_builddir)/; \
+@ENABLE_GTK_DOC_TRUE@	   if test "x$(content_files)" != "x" ; then \
+@ENABLE_GTK_DOC_TRUE@	       for file in $(content_files) ; do \
+@ENABLE_GTK_DOC_TRUE@	           test -f $(abs_srcdir)/$$file || \
+@ENABLE_GTK_DOC_TRUE@	               cp -p $(abs_srcdir)/$$file $(abs_builddir)/; \
+@ENABLE_GTK_DOC_TRUE@	       done \
+@ENABLE_GTK_DOC_TRUE@	   fi \
+@ENABLE_GTK_DOC_TRUE@	fi
+@ENABLE_GTK_DOC_TRUE@	touch setup.stamp
+
 #### scan ####
 
 # in the case of non-srcdir builds, the built gst directory gets added
 # to gtk-doc scanning; but only then, to avoid duplicates
-@ENABLE_GTK_DOC_TRUE@scan-build.stamp: $(HFILE_GLOB) $(SCANOBJ_DEPS) $(basefiles)
+@ENABLE_GTK_DOC_TRUE@scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB)
 @ENABLE_GTK_DOC_TRUE@	@echo '*** Scanning header files ***'
-@ENABLE_GTK_DOC_TRUE@	if grep -l '^..*$$' $(srcdir)/$(DOC_MODULE).types > /dev/null;	\
+@ENABLE_GTK_DOC_TRUE@	if grep -l '^..*$$' $(DOC_MODULE).types > /dev/null;	\
 @ENABLE_GTK_DOC_TRUE@	then								\
-@ENABLE_GTK_DOC_TRUE@	    if test x"$(srcdir)" != x. ; then				\
-@ENABLE_GTK_DOC_TRUE@	        cp $(srcdir)/$(DOC_MODULE).types . ;			\
-@ENABLE_GTK_DOC_TRUE@	        chmod u+w $(DOC_MODULE).types ;				\
-@ENABLE_GTK_DOC_TRUE@	    fi ;							\
 @ENABLE_GTK_DOC_TRUE@	    GST_PLUGIN_SYSTEM_PATH=`cd $(top_builddir) && pwd`		\
 @ENABLE_GTK_DOC_TRUE@	    GST_PLUGIN_PATH=						\
 @ENABLE_GTK_DOC_TRUE@	    GST_REGISTRY=doc-registry.xml				\
@@ -805,7 +819,6 @@ upload: $(FORMATS)
 @ENABLE_GTK_DOC_TRUE@	    gtkdoc-scangobj --type-init-func="gst_init(NULL,NULL)"	\
 @ENABLE_GTK_DOC_TRUE@	        --module=$(DOC_MODULE) ;				\
 @ENABLE_GTK_DOC_TRUE@	else								\
-@ENABLE_GTK_DOC_TRUE@	    cd $(srcdir) ;						\
 @ENABLE_GTK_DOC_TRUE@	    for i in $(SCANOBJ_FILES) ; do				\
 @ENABLE_GTK_DOC_TRUE@	       test -f $$i || touch $$i ;				\
 @ENABLE_GTK_DOC_TRUE@	    done							\
@@ -822,36 +835,15 @@ upload: $(FORMATS)
 @ENABLE_GTK_DOC_TRUE@		--ignore-headers="$(IGNORE_HFILES)"
 @ENABLE_GTK_DOC_TRUE@	touch scan-build.stamp
 
-@ENABLE_GTK_DOC_TRUE@$(DOC_MODULE)-decl.txt $(SCANOBJ_FILES): scan-build.stamp
-@ENABLE_GTK_DOC_TRUE@	@true
-
-#### templates ####
-
-@ENABLE_GTK_DOC_TRUE@tmpl-build.stamp: $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_OVERRIDES)
-@ENABLE_GTK_DOC_TRUE@	@echo '*** Rebuilding template files ***'
-@ENABLE_GTK_DOC_TRUE@	if test x"$(srcdir)" != x. ; then \
-@ENABLE_GTK_DOC_TRUE@	    cp $(srcdir)/$(DOC_MODULE)-sections.txt . ; \
-@ENABLE_GTK_DOC_TRUE@	    touch $(DOC_MODULE)-decl.txt ; \
-@ENABLE_GTK_DOC_TRUE@	fi
-@ENABLE_GTK_DOC_TRUE@	gtkdoc-mktmpl --module=$(DOC_MODULE) | tee tmpl-build.log
-@ENABLE_GTK_DOC_TRUE@	@if test -s $(DOC_MODULE)-unused.txt; then \
-@ENABLE_GTK_DOC_TRUE@	  echo "============================================================"; \
-@ENABLE_GTK_DOC_TRUE@	  echo "Please add the following to $(DOC_MODULE)-sections.txt:     "; \
-@ENABLE_GTK_DOC_TRUE@	  cat $(DOC_MODULE)-unused.txt;                                        \
-@ENABLE_GTK_DOC_TRUE@	  echo "============================================================"; \
-@ENABLE_GTK_DOC_TRUE@	fi
-@ENABLE_GTK_DOC_TRUE@	rm -f tmpl-build.log
-@ENABLE_GTK_DOC_TRUE@	touch tmpl-build.stamp
-
-@ENABLE_GTK_DOC_TRUE@tmpl.stamp: tmpl-build.stamp
+@ENABLE_GTK_DOC_TRUE@$(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt: scan-build.stamp
 @ENABLE_GTK_DOC_TRUE@	@true
 
 #### xml ####
 
 ### FIXME: make this error out again when docs are complete
-@ENABLE_GTK_DOC_TRUE@sgml-build.stamp: tmpl.stamp $(CFILE_GLOB) $(expand_content_files)
+@ENABLE_GTK_DOC_TRUE@sgml-build.stamp: setup.stamp $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(expand_content_files)
 @ENABLE_GTK_DOC_TRUE@	@echo '*** Building XML ***'
-@ENABLE_GTK_DOC_TRUE@	gtkdoc-mkdb --module=$(DOC_MODULE) --source-dir=$(DOC_SOURCE_DIR)  --expand-content-files="$(expand_content_files)" --main-sgml-file=$(srcdir)/$(DOC_MAIN_SGML_FILE) --output-format=xml $(MKDB_OPTIONS) | tee sgml-build.log
+@ENABLE_GTK_DOC_TRUE@	gtkdoc-mkdb --module=$(DOC_MODULE) --source-dir=$(DOC_SOURCE_DIR)  --expand-content-files="$(expand_content_files)" --main-sgml-file=$(DOC_MAIN_SGML_FILE) --output-format=xml $(MKDB_OPTIONS) | tee sgml-build.log
 @ENABLE_GTK_DOC_TRUE@	@if grep "WARNING:" sgml-build.log > /dev/null; then true; fi # exit 1; fi
 @ENABLE_GTK_DOC_TRUE@	cp ../version.entities xml
 @ENABLE_GTK_DOC_TRUE@	rm sgml-build.log
@@ -864,21 +856,22 @@ upload: $(FORMATS)
 
 @ENABLE_GTK_DOC_TRUE@html-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
 @ENABLE_GTK_DOC_TRUE@	@echo '*** Building HTML ***'
-@ENABLE_GTK_DOC_TRUE@	if test -d html; then rm -rf html; fi
-@ENABLE_GTK_DOC_TRUE@	mkdir html
-@ENABLE_GTK_DOC_TRUE@	cp $(srcdir)/$(DOC_MAIN_SGML_FILE) html
-@ENABLE_GTK_DOC_TRUE@	@for f in $(content_files); do cp $(srcdir)/$$f html; done
+@ENABLE_GTK_DOC_TRUE@	@rm -rf html
+@ENABLE_GTK_DOC_TRUE@	@mkdir html
 @ENABLE_GTK_DOC_TRUE@	cp -pr xml html
-@ENABLE_GTK_DOC_TRUE@	cp ../version.entities html
-@ENABLE_GTK_DOC_TRUE@	cd html && gtkdoc-mkhtml $(DOC_MODULE) $(DOC_MAIN_SGML_FILE)
+@ENABLE_GTK_DOC_TRUE@	cp ../version.entities ./
+@ENABLE_GTK_DOC_TRUE@	@mkhtml_options=""; \
+@ENABLE_GTK_DOC_TRUE@	gtkdoc-mkhtml 2>&1 --help | grep  >/dev/null "\-\-path"; \
+@ENABLE_GTK_DOC_TRUE@	if test "$(?)" = "0"; then \
+@ENABLE_GTK_DOC_TRUE@	  mkhtml_options=--path="$(abs_srcdir)"; \
+@ENABLE_GTK_DOC_TRUE@	fi; \
+@ENABLE_GTK_DOC_TRUE@	cd html && gtkdoc-mkhtml $$mkhtml_options $(MKHTML_OPTIONS) $(DOC_MODULE) ../$(DOC_MAIN_SGML_FILE)
 @ENABLE_GTK_DOC_TRUE@	mv html/index.sgml html/index.sgml.bak
 @ENABLE_GTK_DOC_TRUE@	$(SED) "s/ href=\"$(DOC_MODULE)\// href=\"$(DOC_MODULE)-@GST_MAJORMINOR@\//g" html/index.sgml.bak >html/index.sgml
 @ENABLE_GTK_DOC_TRUE@	rm -f html/index.sgml.bak
-@ENABLE_GTK_DOC_TRUE@	rm -f html/$(DOC_MAIN_SGML_FILE)
 @ENABLE_GTK_DOC_TRUE@	rm -rf html/xml
-@ENABLE_GTK_DOC_TRUE@	rm -f html/version.entities
-@ENABLE_GTK_DOC_TRUE@	test "x$(HTML_IMAGES)" = "x" || for i in "" $(HTML_IMAGES) ; do \
-@ENABLE_GTK_DOC_TRUE@	    if test "$$i" != ""; then cp $(srcdir)/$$i html ; fi; done
+@ENABLE_GTK_DOC_TRUE@	rm -f version.entities
+@ENABLE_GTK_DOC_TRUE@	test "x$(HTML_IMAGES)" = "x" ||  ( cd $(srcdir) && cp $(HTML_IMAGES) $(abs_builddir)/html )
 @ENABLE_GTK_DOC_TRUE@	@echo '-- Fixing Crossreferences'
 @ENABLE_GTK_DOC_TRUE@	gtkdoc-fixxref --module=$(DOC_MODULE) --module-dir=html --html-dir=$(HTML_DIR) $(FIXXREF_OPTIONS)
 @ENABLE_GTK_DOC_TRUE@	touch html-build.stamp
@@ -896,16 +889,13 @@ clean-local: clean-local-gtkdoc
 	rm -f *~ *.bak
 	rm -rf .libs
 
-# company: don't delete .sgml and -sections.txt as they're in git
-# FIXME : thomas added all sgml files and some other things to make
-# make distcheck work
 distclean-local:
 	rm -f $(REPORT_FILES) \
 	        $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
 	rm -rf tmpl/*.sgml.bak
 	rm -f $(DOC_MODULE).hierarchy
 	rm -f *.stamp || true
-	if test x"$(srcdir)" != x. ; then \
+	if test "$(abs_srcdir)" != "$(abs_builddir)" ; then \
 	    rm -f $(DOC_MODULE)-docs.sgml ; \
 	    rm -f $(DOC_MODULE).types ; \
 	    rm -f $(DOC_MODULE).interfaces ; \
@@ -922,8 +912,8 @@ maintainer-clean-local: clean
 
 # thomas: make docs parallel installable; devhelp requires majorminor too
 install-data-local:
-	(installfiles=`echo $(srcdir)/html/*.sgml $(srcdir)/html/*.html $(srcdir)/html/*.png $(srcdir)/html/*.css`; \
-	if test "$$installfiles" = '$(srcdir)/html/*.sgml $(srcdir)/html/*.html $(srcdir)/html/*.png $(srcdir)/html/*.css'; \
+	(installfiles=`echo $(builddir)/html/*.sgml $(builddir)/html/*.html $(builddir)/html/*.png $(builddir)/html/*.css`; \
+	if test "$$installfiles" = '$(builddir)/html/*.sgml $(builddir)/html/*.html $(builddir)/html/*.png $(builddir)/html/*.css'; \
 	then echo '-- Nothing to install' ; \
 	else \
 	  $(mkinstalldirs) $(DESTDIR)$(TARGET_DIR); \
@@ -931,11 +921,11 @@ install-data-local:
 	    echo '-- Installing '$$i ; \
 	    $(INSTALL_DATA) $$i $(DESTDIR)$(TARGET_DIR); \
 	  done; \
-	  echo '-- Installing $(srcdir)/html/$(DOC_MODULE).devhelp' ; \
-	  $(INSTALL_DATA) $(srcdir)/html/$(DOC_MODULE).devhelp \
+	  echo '-- Installing $(builddir)/html/$(DOC_MODULE).devhelp' ; \
+	  $(INSTALL_DATA) $(builddir)/html/$(DOC_MODULE).devhelp \
 	    $(DESTDIR)$(TARGET_DIR)/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp; \
-	  if test -e $(srcdir)/html/$(DOC_MODULE).devhelp2; then \
-	            $(INSTALL_DATA) $(srcdir)/html/$(DOC_MODULE).devhelp2 \
+	  if test -e $(builddir)/html/$(DOC_MODULE).devhelp2; then \
+	            $(INSTALL_DATA) $(builddir)/html/$(DOC_MODULE).devhelp2 \
 	            $(DESTDIR)$(TARGET_DIR)/$(DOC_MODULE)-@GST_MAJORMINOR@.devhelp2; \
 	  fi; \
 	  (which gtkdoc-rebase >/dev/null && \
@@ -966,6 +956,9 @@ dist-hook: dist-check-gtkdoc dist-hook-local
 	-gtkdoc-rebase --online --relative --html-dir=$(distdir)/html
 
 .PHONY : dist-hook-local docs
+
+# avoid spurious build errors when distchecking with -jN
+.NOTPARALLEL:
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

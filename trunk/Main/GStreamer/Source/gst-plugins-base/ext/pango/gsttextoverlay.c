@@ -32,7 +32,7 @@
  * the text set via the "text" property will be rendered. If the text sink
  * pad is linked, text will be rendered as it is received on that pad,
  * honouring and matching the buffer timestamps of both input streams.
- * 
+ *
  * The text can contain newline characters and text wrapping is enabled by
  * default.
  *
@@ -41,7 +41,7 @@
  * |[
  * gst-launch -v videotestsrc ! textoverlay text="Room A" valign=top halign=left ! xvimagesink
  * ]| Here is a simple pipeline that displays a static text in the top left
- * corner of the video picture 
+ * corner of the video picture
  * |[
  * gst-launch -v filesrc location=subtitles.srt ! subparse ! txt.   videotestsrc ! timeoverlay ! textoverlay name=txt shaded-background=yes ! xvimagesink
  * ]| Here is another pipeline that displays subtitles from an .srt subtitle
@@ -54,12 +54,12 @@
  * 1
  * 00:00:03,000 --> 00:00:05,000
  * Hello? (3-5s)
- *  
+ *
  * 2
  * 00:00:08,000 --> 00:00:13,000
  * Yes, this is a subtitle. Don&apos;t
  * you like it? (8-13s)
- *  
+ *
  * 3
  * 00:00:18,826 --> 00:01:02,886
  * Uh? What are you talking about?
@@ -143,6 +143,13 @@ GST_DEBUG_CATEGORY (pango_debug);
 	ret = (v0 * alpha + v1 * (255 - alpha)) / 255; \
 }
 
+#define OVER(ret, alphaA, Ca, alphaB, Cb, alphaNew)	\
+{ \
+    gint _tmp; \
+    _tmp = (Ca * alphaA + Cb * alphaB * (255 - alphaA) / 255) / alphaNew; \
+    ret = CLAMP (_tmp, 0, 255); \
+}
+
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
 # define CAIRO_ARGB_A 3
 # define CAIRO_ARGB_R 2
@@ -186,7 +193,13 @@ static GstStaticPadTemplate src_template_factory =
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS (GST_VIDEO_CAPS_BGRx ";"
+        GST_VIDEO_CAPS_RGBx ";"
         GST_VIDEO_CAPS_xRGB ";"
+        GST_VIDEO_CAPS_xBGR ";"
+        GST_VIDEO_CAPS_RGBA ";"
+        GST_VIDEO_CAPS_BGRA ";"
+        GST_VIDEO_CAPS_ARGB ";"
+        GST_VIDEO_CAPS_ABGR ";"
         GST_VIDEO_CAPS_YUV ("{AYUV, I420, UYVY, NV12, NV21}"))
     );
 
@@ -195,7 +208,13 @@ static GstStaticPadTemplate video_sink_template_factory =
     GST_PAD_SINK,
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS (GST_VIDEO_CAPS_BGRx ";"
+        GST_VIDEO_CAPS_RGBx ";"
         GST_VIDEO_CAPS_xRGB ";"
+        GST_VIDEO_CAPS_xBGR ";"
+        GST_VIDEO_CAPS_RGBA ";"
+        GST_VIDEO_CAPS_BGRA ";"
+        GST_VIDEO_CAPS_ARGB ";"
+        GST_VIDEO_CAPS_ABGR ";"
         GST_VIDEO_CAPS_YUV ("{AYUV, I420, UYVY, NV12, NV21}"))
     );
 
@@ -216,6 +235,7 @@ gst_text_overlay_valign_get_type (void)
     {GST_TEXT_OVERLAY_VALIGN_BOTTOM, "bottom", "bottom"},
     {GST_TEXT_OVERLAY_VALIGN_TOP, "top", "top"},
     {GST_TEXT_OVERLAY_VALIGN_POS, "position", "position"},
+    {GST_TEXT_OVERLAY_VALIGN_CENTER, "center", "center"},
     {0, NULL, NULL},
   };
 
@@ -332,6 +352,8 @@ static void
 gst_text_overlay_base_init (gpointer g_class)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
+  GstTextOverlayClass *klass = GST_TEXT_OVERLAY_CLASS (g_class);
+  PangoFontMap *fontmap;
 
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&src_template_factory));
@@ -349,6 +371,17 @@ gst_text_overlay_base_init (gpointer g_class)
       "Filter/Editor/Video",
       "Adds text strings on top of a video buffer",
       "David Schleef <ds@schleef.org>, " "Zeeshan Ali <zeeshan.ali@nokia.com>");
+
+  /* Only lock for the subclasses here, the base class
+   * doesn't have this mutex yet and it's not necessary
+   * here */
+  if (klass->pango_lock)
+    g_mutex_lock (klass->pango_lock);
+  fontmap = pango_cairo_font_map_get_default ();
+  klass->pango_context =
+      pango_cairo_font_map_create_context (PANGO_CAIRO_FONT_MAP (fontmap));
+  if (klass->pango_lock)
+    g_mutex_unlock (klass->pango_lock);
 }
 
 static gchar *
@@ -362,7 +395,6 @@ gst_text_overlay_class_init (GstTextOverlayClass * klass)
 {
   GObjectClass *gobject_class;
   GstElementClass *gstelement_class;
-  PangoFontMap *fontmap;
 
   gobject_class = (GObjectClass *) klass;
   gstelement_class = (GstElementClass *) klass;
@@ -374,15 +406,14 @@ gst_text_overlay_class_init (GstTextOverlayClass * klass)
   gstelement_class->change_state =
       GST_DEBUG_FUNCPTR (gst_text_overlay_change_state);
 
+  klass->pango_lock = g_mutex_new ();
+
   klass->get_text = gst_text_overlay_get_text;
-  fontmap = pango_cairo_font_map_get_default ();
-  klass->pango_context =
-      pango_cairo_font_map_create_context (PANGO_CAIRO_FONT_MAP (fontmap));
 
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_TEXT,
       g_param_spec_string ("text", "text",
           "Text to be display.", DEFAULT_PROP_TEXT,
-          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+          G_PARAM_READWRITE | GST_PARAM_CONTROLLABLE | G_PARAM_STATIC_STRINGS));
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_SHADING,
       g_param_spec_boolean ("shaded-background", "shaded background",
           "Whether to shade the background under the text area",
@@ -430,7 +461,8 @@ gst_text_overlay_class_init (GstTextOverlayClass * klass)
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_XPOS,
       g_param_spec_double ("xpos", "horizontal position",
           "Horizontal position when using position alignment", 0, 1.0,
-          DEFAULT_PROP_XPOS, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+          DEFAULT_PROP_XPOS,
+          G_PARAM_READWRITE | GST_PARAM_CONTROLLABLE | G_PARAM_STATIC_STRINGS));
   /**
    * GstTextOverlay:ypos
    *
@@ -441,7 +473,8 @@ gst_text_overlay_class_init (GstTextOverlayClass * klass)
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_YPOS,
       g_param_spec_double ("ypos", "vertical position",
           "Vertical position when using position alignment", 0, 1.0,
-          DEFAULT_PROP_YPOS, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+          DEFAULT_PROP_YPOS,
+          G_PARAM_READWRITE | GST_PARAM_CONTROLLABLE | G_PARAM_STATIC_STRINGS));
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_WRAP_MODE,
       g_param_spec_enum ("wrap-mode", "wrap mode",
           "Whether to wrap the text and if so how.",
@@ -463,7 +496,8 @@ gst_text_overlay_class_init (GstTextOverlayClass * klass)
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_COLOR,
       g_param_spec_uint ("color", "Color",
           "Color to use for text (big-endian ARGB).", 0, G_MAXUINT32,
-          DEFAULT_PROP_COLOR, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+          DEFAULT_PROP_COLOR,
+          G_PARAM_READWRITE | GST_PARAM_CONTROLLABLE | G_PARAM_STATIC_STRINGS));
 
   /**
    * GstTextOverlay:line-alignment
@@ -489,7 +523,8 @@ gst_text_overlay_class_init (GstTextOverlayClass * klass)
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_SILENT,
       g_param_spec_boolean ("silent", "silent",
           "Whether to render the text string",
-          DEFAULT_PROP_SILENT, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+          DEFAULT_PROP_SILENT,
+          G_PARAM_READWRITE | GST_PARAM_CONTROLLABLE | G_PARAM_STATIC_STRINGS));
   /**
    * GstTextOverlay:wait-text
    *
@@ -599,6 +634,7 @@ gst_text_overlay_init (GstTextOverlay * overlay, GstTextOverlayClass * klass)
   gst_element_add_pad (GST_ELEMENT (overlay), overlay->srcpad);
 
   overlay->line_align = DEFAULT_PROP_LINE_ALIGNMENT;
+  g_mutex_lock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
   overlay->layout =
       pango_layout_new (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_context);
   desc =
@@ -637,6 +673,7 @@ gst_text_overlay_init (GstTextOverlay * overlay, GstTextOverlayClass * klass)
   overlay->text_linked = FALSE;
   overlay->cond = g_cond_new ();
   gst_segment_init (&overlay->segment, GST_FORMAT_TIME);
+  g_mutex_unlock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
 }
 
 static void
@@ -734,7 +771,9 @@ gst_text_overlay_setcaps (GstPad * pad, GstCaps * caps)
 
   if (ret) {
     GST_OBJECT_LOCK (overlay);
+    g_mutex_lock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
     gst_text_overlay_update_wrap_mode (overlay);
+    g_mutex_unlock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
     GST_OBJECT_UNLOCK (overlay);
   }
 
@@ -813,7 +852,9 @@ gst_text_overlay_set_property (GObject * object, guint prop_id,
       break;
     case PROP_WRAP_MODE:
       overlay->wrap_mode = g_value_get_enum (value);
+      g_mutex_lock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
       gst_text_overlay_update_wrap_mode (overlay);
+      g_mutex_unlock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
       break;
     case PROP_FONT_DESC:
     {
@@ -821,6 +862,7 @@ gst_text_overlay_set_property (GObject * object, guint prop_id,
       const gchar *fontdesc_str;
 
       fontdesc_str = g_value_get_string (value);
+      g_mutex_lock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
       desc = pango_font_description_from_string (fontdesc_str);
       if (desc) {
         GST_LOG_OBJECT (overlay, "font description set: %s", fontdesc_str);
@@ -831,6 +873,7 @@ gst_text_overlay_set_property (GObject * object, guint prop_id,
         GST_WARNING_OBJECT (overlay, "font description parse failed: %s",
             fontdesc_str);
       }
+      g_mutex_unlock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
       break;
     }
     case PROP_COLOR:
@@ -841,20 +884,23 @@ gst_text_overlay_set_property (GObject * object, guint prop_id,
       break;
     case PROP_LINE_ALIGNMENT:
       overlay->line_align = g_value_get_enum (value);
+      g_mutex_lock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
       pango_layout_set_alignment (overlay->layout,
           (PangoAlignment) overlay->line_align);
+      g_mutex_unlock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
       break;
     case PROP_WAIT_TEXT:
       overlay->wait_text = g_value_get_boolean (value);
       break;
     case PROP_AUTO_ADJUST_SIZE:
-    {
       overlay->auto_adjust_size = g_value_get_boolean (value);
       overlay->need_render = TRUE;
-    }
+      break;
     case PROP_VERTICAL_RENDER:
       overlay->use_vertical_render = g_value_get_boolean (value);
+      g_mutex_lock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
       gst_text_overlay_update_render_mode (overlay);
+      g_mutex_unlock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
       overlay->need_render = TRUE;
       break;
     default:
@@ -1231,6 +1277,8 @@ gst_text_overlay_render_pangocairo (GstTextOverlay * overlay,
   double scalef = 1.0;
   double a, r, g, b;
 
+  g_mutex_lock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
+
   if (overlay->auto_adjust_size) {
     /* 640 pixel is default */
     scalef = (double) (overlay->width) / DEFAULT_SCALE_BASIS;
@@ -1246,8 +1294,8 @@ gst_text_overlay_render_pangocairo (GstTextOverlay * overlay,
 
   if (width + overlay->deltax >
       (overlay->use_vertical_render ? overlay->height : overlay->width)) {
-    /* 
-     * subtitle image width is larger then overlay width 
+    /*
+     * subtitle image width is larger then overlay width
      * so rearrange overlay wrap mode.
      */
     gst_text_overlay_update_wrap_mode (overlay);
@@ -1356,6 +1404,8 @@ gst_text_overlay_render_pangocairo (GstTextOverlay * overlay,
   overlay->image_width = width;
   overlay->image_height = height;
   overlay->baseline_y = ink_rect.y;
+
+  g_mutex_unlock (GST_TEXT_OVERLAY_GET_CLASS (overlay)->pango_lock);
 }
 
 #define BOX_XPAD         6
@@ -1429,6 +1479,8 @@ gst_text_overlay_shade_packed_Y (GstTextOverlay * overlay, guchar * dest,
 }
 
 #define gst_text_overlay_shade_BGRx gst_text_overlay_shade_xRGB
+#define gst_text_overlay_shade_RGBx gst_text_overlay_shade_xRGB
+#define gst_text_overlay_shade_xBGR gst_text_overlay_shade_xRGB
 static inline void
 gst_text_overlay_shade_xRGB (GstTextOverlay * overlay, guchar * dest,
     gint x0, gint x1, gint y0, gint y1)
@@ -1453,6 +1505,36 @@ gst_text_overlay_shade_xRGB (GstTextOverlay * overlay, guchar * dest,
     }
   }
 }
+
+#define ARGB_SHADE_FUNCTION(name, OFFSET)	\
+static inline void \
+gst_text_overlay_shade_##name (GstTextOverlay * overlay, guchar * dest, \
+gint x0, gint x1, gint y0, gint y1) \
+{ \
+  gint i, j;\
+  \
+  x0 = CLAMP (x0 - BOX_XPAD, 0, overlay->width);\
+  x1 = CLAMP (x1 + BOX_XPAD, 0, overlay->width);\
+  \
+  y0 = CLAMP (y0 - BOX_YPAD, 0, overlay->height);\
+  y1 = CLAMP (y1 + BOX_YPAD, 0, overlay->height);\
+  \
+  for (i = y0; i < y1; i++) {\
+    for (j = x0; j < x1; j++) {\
+      gint y, y_pos, k;\
+      y_pos = (i * 4 * overlay->width) + j * 4;\
+      for (k = OFFSET; k < 3+OFFSET; k++) {\
+        y = dest[y_pos + k] + overlay->shading_value;\
+        dest[y_pos + k] = CLAMP (y, 0, 255);\
+      }\
+    }\
+  }\
+}
+ARGB_SHADE_FUNCTION (ARGB, 1);
+ARGB_SHADE_FUNCTION (ABGR, 1);
+ARGB_SHADE_FUNCTION (RGBA, 0);
+ARGB_SHADE_FUNCTION (BGRA, 0);
+
 
 /* FIXME:
  *  - use proper strides and offset for I420
@@ -1607,7 +1689,7 @@ static inline void
 gst_text_overlay_blit_AYUV (GstTextOverlay * overlay,
     guint8 * rgb_pixels, gint xpos, gint ypos)
 {
-  int a, r, g, b;
+  int a, r, g, b, a1;
   int y, u, v;
   int i, j;
   int h, w;
@@ -1639,14 +1721,17 @@ gst_text_overlay_blit_AYUV (GstTextOverlay * overlay,
 
       CAIRO_UNPREMULTIPLY (a, r, g, b);
 
+      // convert background to yuv
       COMP_Y (y, r, g, b);
       COMP_U (u, r, g, b);
       COMP_V (v, r, g, b);
 
-      a = (a * dest[0] + 128) >> 8;
-      BLEND (dest[1], a, y, dest[1]);
-      BLEND (dest[2], a, u, dest[2]);
-      BLEND (dest[3], a, v, dest[3]);
+      // preform text "OVER" background alpha compositing
+      a1 = a + (dest[0] * (255 - a)) / 255 + 1; // add 1 to prevent divide by 0
+      OVER (dest[1], a, y, dest[0], dest[1], a1);
+      OVER (dest[2], a, u, dest[0], dest[2], a1);
+      OVER (dest[3], a, v, dest[0], dest[3], a1);
+      dest[0] = a1 - 1;         // remove the temporary 1 we added
 
       pimage += 4;
       dest += 4;
@@ -1702,6 +1787,57 @@ gst_text_overlay_blit_##name (GstTextOverlay * overlay, \
 }
 xRGB_BLIT_FUNCTION (xRGB, 1, 2, 3);
 xRGB_BLIT_FUNCTION (BGRx, 2, 1, 0);
+xRGB_BLIT_FUNCTION (xBGR, 3, 2, 1);
+xRGB_BLIT_FUNCTION (RGBx, 0, 1, 2);
+
+#define ARGB_BLIT_FUNCTION(name, A, R, G, B)	\
+static inline void \
+gst_text_overlay_blit_##name (GstTextOverlay * overlay, \
+    guint8 * rgb_pixels, gint xpos, gint ypos) \
+{ \
+  int a, r, g, b, a1;				\
+  int i, j; \
+  int h, w; \
+  guchar *pimage, *dest; \
+  \
+  w = overlay->image_width; \
+  h = overlay->image_height; \
+  \
+  if (xpos < 0) { \
+    xpos = 0; \
+  } \
+  \
+  if (xpos + w > overlay->width) { \
+    w = overlay->width - xpos; \
+  } \
+  \
+  if (ypos + h > overlay->height) { \
+    h = overlay->height - ypos; \
+  } \
+  \
+  for (i = 0; i < h; i++) { \
+    pimage = overlay->text_image + i * overlay->image_width * 4; \
+    dest = rgb_pixels + (i + ypos) * 4 * overlay->width + xpos * 4; \
+    for (j = 0; j < w; j++) { \
+      a = pimage[CAIRO_ARGB_A]; \
+      b = pimage[CAIRO_ARGB_B]; \
+      g = pimage[CAIRO_ARGB_G]; \
+      r = pimage[CAIRO_ARGB_R]; \
+      CAIRO_UNPREMULTIPLY (a, r, g, b); \
+      a1 = a + (dest[A] * (255 - a)) / 255 + 1; \
+      OVER (dest[R], a, r, dest[0], dest[R], a1); \
+      OVER (dest[G], a, g, dest[0], dest[G], a1); \
+      OVER (dest[B], a, b, dest[0], dest[B], a1); \
+      dest[A] = a1 - 1; \
+      pimage += 4; \
+      dest += 4; \
+    } \
+  } \
+}
+ARGB_BLIT_FUNCTION (RGBA, 3, 0, 1, 2);
+ARGB_BLIT_FUNCTION (BGRA, 3, 2, 1, 0);
+ARGB_BLIT_FUNCTION (ARGB, 0, 1, 2, 3);
+ARGB_BLIT_FUNCTION (ABGR, 0, 3, 2, 1);
 
 static void
 gst_text_overlay_render_text (GstTextOverlay * overlay,
@@ -1795,6 +1931,9 @@ gst_text_overlay_push_frame (GstTextOverlay * overlay, GstBuffer * video_frame)
       ypos = (gint) (overlay->height * overlay->ypos) - height / 2;
       ypos = CLAMP (ypos, 0, overlay->height - height);
       break;
+    case GST_TEXT_OVERLAY_VALIGN_CENTER:
+      ypos = (overlay->height - height) / 2;
+      break;
     default:
       ypos = overlay->ypad;
       break;
@@ -1822,8 +1961,38 @@ gst_text_overlay_push_frame (GstTextOverlay * overlay, GstBuffer * video_frame)
             GST_BUFFER_DATA (video_frame), xpos, xpos + overlay->image_width,
             ypos, ypos + overlay->image_height);
         break;
+      case GST_VIDEO_FORMAT_xBGR:
+        gst_text_overlay_shade_xBGR (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, xpos + overlay->image_width,
+            ypos, ypos + overlay->image_height);
+        break;
       case GST_VIDEO_FORMAT_BGRx:
         gst_text_overlay_shade_BGRx (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, xpos + overlay->image_width,
+            ypos, ypos + overlay->image_height);
+        break;
+      case GST_VIDEO_FORMAT_RGBx:
+        gst_text_overlay_shade_RGBx (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, xpos + overlay->image_width,
+            ypos, ypos + overlay->image_height);
+        break;
+      case GST_VIDEO_FORMAT_ARGB:
+        gst_text_overlay_shade_ARGB (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, xpos + overlay->image_width,
+            ypos, ypos + overlay->image_height);
+        break;
+      case GST_VIDEO_FORMAT_ABGR:
+        gst_text_overlay_shade_ABGR (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, xpos + overlay->image_width,
+            ypos, ypos + overlay->image_height);
+        break;
+      case GST_VIDEO_FORMAT_RGBA:
+        gst_text_overlay_shade_RGBA (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, xpos + overlay->image_width,
+            ypos, ypos + overlay->image_height);
+        break;
+      case GST_VIDEO_FORMAT_BGRA:
+        gst_text_overlay_shade_BGRA (overlay,
             GST_BUFFER_DATA (video_frame), xpos, xpos + overlay->image_width,
             ypos, ypos + overlay->image_height);
         break;
@@ -1860,6 +2029,30 @@ gst_text_overlay_push_frame (GstTextOverlay * overlay, GstBuffer * video_frame)
         break;
       case GST_VIDEO_FORMAT_xRGB:
         gst_text_overlay_blit_xRGB (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, ypos);
+        break;
+      case GST_VIDEO_FORMAT_RGBx:
+        gst_text_overlay_blit_RGBx (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, ypos);
+        break;
+      case GST_VIDEO_FORMAT_xBGR:
+        gst_text_overlay_blit_xBGR (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, ypos);
+        break;
+      case GST_VIDEO_FORMAT_ARGB:
+        gst_text_overlay_blit_ARGB (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, ypos);
+        break;
+      case GST_VIDEO_FORMAT_ABGR:
+        gst_text_overlay_blit_ABGR (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, ypos);
+        break;
+      case GST_VIDEO_FORMAT_RGBA:
+        gst_text_overlay_blit_RGBA (overlay,
+            GST_BUFFER_DATA (video_frame), xpos, ypos);
+        break;
+      case GST_VIDEO_FORMAT_BGRA:
+        gst_text_overlay_blit_BGRA (overlay,
             GST_BUFFER_DATA (video_frame), xpos, ypos);
         break;
       default:
@@ -2248,6 +2441,8 @@ gst_text_overlay_video_chain (GstPad * pad, GstBuffer * buffer)
     }
   }
 
+  gst_object_sync_values (G_OBJECT (overlay), GST_BUFFER_TIMESTAMP (buffer));
+
 wait_for_text_buf:
 
   GST_OBJECT_LOCK (overlay);
@@ -2532,6 +2727,8 @@ gst_text_overlay_change_state (GstElement * element, GstStateChange transition)
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
+  gst_controller_init (NULL, NULL);
+
   if (!gst_element_register (plugin, "textoverlay", GST_RANK_NONE,
           GST_TYPE_TEXT_OVERLAY) ||
       !gst_element_register (plugin, "timeoverlay", GST_RANK_NONE,

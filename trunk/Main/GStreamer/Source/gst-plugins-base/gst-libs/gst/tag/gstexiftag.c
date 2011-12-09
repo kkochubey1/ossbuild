@@ -41,7 +41,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
+#include <gst/math-compat.h>
 
 /* Some useful constants */
 #define TIFF_LITTLE_ENDIAN  0x4949
@@ -301,6 +301,7 @@ EXIF_DESERIALIZATION_FUNC (add_to_pending_tags);
 #define EXIF_TAG_DATE_TIME_DIGITIZED 0x9004
 #define EXIF_TAG_SHUTTER_SPEED_VALUE 0x9201
 #define EXIF_TAG_APERTURE_VALUE 0x9202
+#define EXIF_TAG_EXPOSURE_BIAS 0x9204
 #define EXIF_TAG_METERING_MODE 0x9207
 #define EXIF_TAG_FLASH 0x9209
 #define EXIF_TAG_FOCAL_LENGTH 0x920A
@@ -388,6 +389,8 @@ static const GstExifTagMatch tag_map_exif[] = {
   {GST_TAG_CAPTURING_FOCAL_RATIO, EXIF_TAG_APERTURE_VALUE, EXIF_TYPE_RATIONAL,
         0,
       serialize_aperture_value, deserialize_aperture_value},
+  {GST_TAG_CAPTURING_EXPOSURE_COMPENSATION, EXIF_TAG_EXPOSURE_BIAS,
+      EXIF_TYPE_SRATIONAL, 0, NULL, NULL},
   {GST_TAG_CAPTURING_METERING_MODE, EXIF_TAG_METERING_MODE, EXIF_TYPE_SHORT, 0,
       serialize_metering_mode, deserialize_metering_mode},
   {GST_TAG_CAPTURING_FLASH_FIRED, EXIF_TAG_FLASH, EXIF_TYPE_SHORT, 0,
@@ -453,6 +456,8 @@ static void
 gst_exif_reader_init (GstExifReader * reader, gint byte_order,
     const GstBuffer * buf, guint32 base_offset)
 {
+  ensure_exif_tags ();
+
   reader->taglist = gst_tag_list_new ();
   reader->buffer = buf;
   reader->base_offset = base_offset;
@@ -521,6 +526,8 @@ gst_exif_reader_reset (GstExifReader * reader, gboolean return_taglist)
 static void
 gst_exif_writer_init (GstExifWriter * writer, gint byte_order)
 {
+  ensure_exif_tags ();
+
   gst_byte_writer_init (&writer->tagwriter);
   gst_byte_writer_init (&writer->datawriter);
 
@@ -752,7 +759,7 @@ static void
 write_exif_undefined_tag (GstExifWriter * writer, guint16 tag,
     const guint8 * data, gint size)
 {
-  guint32 offset;
+  guint32 offset = 0;
 
   if (size > 4) {
     /* we only use the data offset here, later we add up the
@@ -773,7 +780,7 @@ static void
 write_exif_ascii_tag (GstExifWriter * writer, guint16 tag, const gchar * str)
 {
   gint size;
-  guint32 offset;
+  guint32 offset = 0;
 
   size = strlen (str) + 1;
 
@@ -921,6 +928,41 @@ write_exif_rational_tag_from_taglist (GstExifWriter * writer,
 }
 
 static void
+write_exif_signed_rational_tag_from_taglist (GstExifWriter * writer,
+    const GstTagList * taglist, const GstExifTagMatch * exiftag)
+{
+  const GValue *value;
+  gdouble num = 0;
+  gint tag_size = gst_tag_list_get_tag_size (taglist, exiftag->gst_tag);
+
+  if (tag_size != 1) {
+    GST_WARNING ("Only the first item in the taglist will be serialized");
+    return;
+  }
+
+  value = gst_tag_list_get_value_index (taglist, exiftag->gst_tag, 0);
+
+  /* do some conversion if needed */
+  switch (G_VALUE_TYPE (value)) {
+    case G_TYPE_DOUBLE:
+      num = g_value_get_double (value);
+      gst_exif_writer_write_signed_rational_tag_from_double (writer,
+          exiftag->exif_tag, num);
+      break;
+    default:
+      if (G_VALUE_TYPE (value) == GST_TYPE_FRACTION) {
+        gst_exif_writer_write_signed_rational_tag (writer, exiftag->exif_tag,
+            gst_value_get_fraction_numerator (value),
+            gst_value_get_fraction_denominator (value));
+      } else {
+        GST_WARNING ("Conversion from %s to signed rational not supported",
+            G_VALUE_TYPE_NAME (value));
+      }
+      break;
+  }
+}
+
+static void
 write_exif_integer_tag_from_taglist (GstExifWriter * writer,
     const GstTagList * taglist, const GstExifTagMatch * exiftag)
 {
@@ -979,6 +1021,9 @@ write_exif_tag_from_taglist (GstExifWriter * writer, const GstTagList * taglist,
       break;
     case EXIF_TYPE_RATIONAL:
       write_exif_rational_tag_from_taglist (writer, taglist, exiftag);
+      break;
+    case EXIF_TYPE_SRATIONAL:
+      write_exif_signed_rational_tag_from_taglist (writer, taglist, exiftag);
       break;
     case EXIF_TYPE_LONG:
     case EXIF_TYPE_SHORT:
@@ -1560,6 +1605,10 @@ parse_exif_ifd (GstExifReader * exif_reader, gint buf_offset,
       case EXIF_TYPE_RATIONAL:
         parse_exif_rational_tag (exif_reader, tag_map[map_index].gst_tag,
             tagdata.count, tagdata.offset, 1, FALSE);
+        break;
+      case EXIF_TYPE_SRATIONAL:
+        parse_exif_rational_tag (exif_reader, tag_map[map_index].gst_tag,
+            tagdata.count, tagdata.offset, 1, TRUE);
         break;
       case EXIF_TYPE_UNDEFINED:
         parse_exif_undefined_tag (exif_reader, &tag_map[map_index],

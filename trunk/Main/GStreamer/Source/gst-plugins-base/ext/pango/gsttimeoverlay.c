@@ -116,21 +116,14 @@ static void
 gst_time_overlay_class_init (GstTimeOverlayClass * klass)
 {
   GstTextOverlayClass *gsttextoverlay_class;
+  PangoContext *context;
+  PangoFontDescription *font_description;
 
   gsttextoverlay_class = (GstTextOverlayClass *) klass;
 
   gsttextoverlay_class->get_text = gst_time_overlay_get_text;
-}
 
-static void
-gst_time_overlay_init (GstTimeOverlay * overlay, GstTimeOverlayClass * klass)
-{
-  PangoFontDescription *font_description;
-  GstTextOverlay *textoverlay;
-  PangoContext *context;
-
-  textoverlay = GST_TEXT_OVERLAY (overlay);
-
+  g_mutex_lock (GST_TEXT_OVERLAY_CLASS (klass)->pango_lock);
   context = GST_TEXT_OVERLAY_CLASS (klass)->pango_context;
 
   pango_context_set_language (context, pango_language_from_string ("en_US"));
@@ -145,6 +138,15 @@ gst_time_overlay_init (GstTimeOverlay * overlay, GstTimeOverlayClass * klass)
   pango_font_description_set_size (font_description, 18 * PANGO_SCALE);
   pango_context_set_font_description (context, font_description);
   pango_font_description_free (font_description);
+  g_mutex_unlock (GST_TEXT_OVERLAY_CLASS (klass)->pango_lock);
+}
+
+static void
+gst_time_overlay_init (GstTimeOverlay * overlay, GstTimeOverlayClass * klass)
+{
+  GstTextOverlay *textoverlay;
+
+  textoverlay = GST_TEXT_OVERLAY (overlay);
 
   textoverlay->valign = GST_TEXT_OVERLAY_VALIGN_TOP;
   textoverlay->halign = GST_TEXT_OVERLAY_HALIGN_LEFT;

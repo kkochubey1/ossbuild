@@ -1,13 +1,13 @@
 prefix=@SHARED_BUILD_DIR@
 exec_prefix=${prefix}
-libdir=@SHARED_BUILD_DIR@/lib
-includedir=@SHARED_BUILD_DIR@/include/orc-0.4
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/orc-0.4
 toolsdir=${exec_prefix}/bin
 
 
 Name: orc-0.4
 Description: Library of Optimized Inner Loops Runtime Compiler
-Version: 0.4.11
+Version: 0.4.16
 Libs: -L${libdir} -lorc-0.4
 Libs.private: -lm 
 Cflags: -I${includedir}

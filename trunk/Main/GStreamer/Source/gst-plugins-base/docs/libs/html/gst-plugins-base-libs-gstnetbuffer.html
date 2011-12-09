@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-netbuffer.html" title="Network Buffer Library">
 <link rel="prev" href="gstreamer-netbuffer.html" title="Network Buffer Library">
 <link rel="next" href="gstreamer-riff.html" title="Riff Media Library">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -26,7 +26,7 @@
                   <a href="#gst-plugins-base-libs-gstnetbuffer.description" class="shortcut">Description</a>
 </td></tr>
 </table>
-<div class="refentry" title="gstnetbuffer">
+<div class="refentry">
 <a name="gst-plugins-base-libs-gstnetbuffer"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -35,48 +35,48 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-base-libs-gstnetbuffer.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/netbuffer/gstnetbuffer.h&gt;
 
-                    <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="GstNetBuffer">GstNetBuffer</a>;
+struct              <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="struct GstNetBuffer">GstNetBuffer</a>;
 enum                <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetType" title="enum GstNetType">GstNetType</a>;
 #define             <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GST-NETADDRESS-MAX-LEN:CAPS" title="GST_NETADDRESS_MAX_LEN">GST_NETADDRESS_MAX_LEN</a>
-                    <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress">GstNetAddress</a>;
-<a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="GstNetBuffer"><span class="returnvalue">GstNetBuffer</span></a>*       <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netbuffer-new" title="gst_netbuffer_new ()">gst_netbuffer_new</a>                   (<em class="parameter"><code><span class="type">void</span></code></em>);
-<a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetType" title="enum GstNetType"><span class="returnvalue">GstNetType</span></a>          <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-get-net-type" title="gst_netaddress_get_net_type ()">gst_netaddress_get_net_type</a>         (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-set-ip4-address" title="gst_netaddress_set_ip4_address ()">gst_netaddress_set_ip4_address</a>      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+struct              <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress">GstNetAddress</a>;
+<a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="struct GstNetBuffer"><span class="returnvalue">GstNetBuffer</span></a> *      <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netbuffer-new" title="gst_netbuffer_new ()">gst_netbuffer_new</a>                   (<em class="parameter"><code><span class="type">void</span></code></em>);
+<a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetType" title="enum GstNetType"><span class="returnvalue">GstNetType</span></a>          <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-get-net-type" title="gst_netaddress_get_net_type ()">gst_netaddress_get_net_type</a>         (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-set-ip4-address" title="gst_netaddress_set_ip4_address ()">gst_netaddress_set_ip4_address</a>      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> address</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> port</code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-get-ip4-address" title="gst_netaddress_get_ip4_address ()">gst_netaddress_get_ip4_address</a>      (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-get-ip4-address" title="gst_netaddress_get_ip4_address ()">gst_netaddress_get_ip4_address</a>      (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> *address</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> *port</code></em>);
-<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-set-ip6-address" title="gst_netaddress_set_ip6_address ()">gst_netaddress_set_ip6_address</a>      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<span class="returnvalue">void</span>                <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-set-ip6-address" title="gst_netaddress_set_ip6_address ()">gst_netaddress_set_ip6_address</a>      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> address[16]</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> port</code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-get-ip6-address" title="gst_netaddress_get_ip6_address ()">gst_netaddress_get_ip6_address</a>      (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-get-ip6-address" title="gst_netaddress_get_ip6_address ()">gst_netaddress_get_ip6_address</a>      (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> address[16]</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> *port</code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-get-address-bytes" title="gst_netaddress_get_address_bytes ()">gst_netaddress_get_address_bytes</a>    (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-get-address-bytes" title="gst_netaddress_get_address_bytes ()">gst_netaddress_get_address_bytes</a>    (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> address[16]</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> *port</code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-set-address-bytes" title="gst_netaddress_set_address_bytes ()">gst_netaddress_set_address_bytes</a>    (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-set-address-bytes" title="gst_netaddress_set_address_bytes ()">gst_netaddress_set_address_bytes</a>    (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetType" title="enum GstNetType"><span class="type">GstNetType</span></a> type</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> address[16]</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> port</code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-equal" title="gst_netaddress_equal ()">gst_netaddress_equal</a>                (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr1</code></em>,
-                                                         <em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr2</code></em>);
-<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-to-string" title="gst_netaddress_to_string ()">gst_netaddress_to_string</a>            (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-equal" title="gst_netaddress_equal ()">gst_netaddress_equal</a>                (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr1</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr2</code></em>);
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-to-string" title="gst_netaddress_to_string ()">gst_netaddress_to_string</a>            (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *dest</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gulong"><span class="type">gulong</span></a> len</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gstnetbuffer.description"></a><h2>Description</h2>
 <p>
-<a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="GstNetBuffer"><span class="type">GstNetBuffer</span></a> is a subclass of a normal <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> that contains two
-additional metadata fields of type <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> named 'to' and 'from'. The
+<a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="struct GstNetBuffer"><span class="type">GstNetBuffer</span></a> is a subclass of a normal <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstBuffer.html#GstBuffer"><span class="type">GstBuffer</span></a> that contains two
+additional metadata fields of type <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> named 'to' and 'from'. The
 buffer can be used to store additional information about the origin of the
 buffer data and is used in various network elements to track the to and from
 addresses.
@@ -85,16 +85,16 @@ addresses.
 Last reviewed on 2006-08-21 (0.10.10)
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gstnetbuffer.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstNetBuffer">
-<a name="GstNetBuffer"></a><h3>GstNetBuffer</h3>
-<pre class="programlisting">typedef struct {
+<div class="refsect2">
+<a name="GstNetBuffer"></a><h3>struct GstNetBuffer</h3>
+<pre class="programlisting">struct GstNetBuffer {
   GstBuffer buffer;
 
   GstNetAddress from;
   GstNetAddress to;
-} GstNetBuffer;
+};
 </pre>
 <p>
 buffer for use in network sources and sinks.
@@ -109,20 +109,18 @@ It contains the source or destination address of the buffer.
 </td>
 </tr>
 <tr>
-<td><p><span class="term"><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> <em class="structfield"><code><a name="GstNetBuffer.from"></a>from</code></em>;</span></p></td>
-<td>the address where this buffer came from.
-</td>
+<td><p><span class="term"><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> <em class="structfield"><code><a name="GstNetBuffer.from"></a>from</code></em>;</span></p></td>
+<td>the address where this buffer came from.</td>
 </tr>
 <tr>
-<td><p><span class="term"><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> <em class="structfield"><code><a name="GstNetBuffer.to"></a>to</code></em>;</span></p></td>
-<td>the address where this buffer should go to.
-</td>
+<td><p><span class="term"><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> <em class="structfield"><code><a name="GstNetBuffer.to"></a>to</code></em>;</span></p></td>
+<td>the address where this buffer should go to.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="enum GstNetType">
+<div class="refsect2">
 <a name="GstNetType"></a><h3>enum GstNetType</h3>
 <pre class="programlisting">typedef enum {
   GST_NET_TYPE_UNKNOWN,
@@ -131,7 +129,7 @@ It contains the source or destination address of the buffer.
 } GstNetType;
 </pre>
 <p>
-The Address type used in <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a>.
+The Address type used in <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a>.
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
@@ -155,7 +153,7 @@ The Address type used in <a class="link" href="gst-plugins-base-libs-gstnetbuffe
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="GST_NETADDRESS_MAX_LEN">
+<div class="refsect2">
 <a name="GST-NETADDRESS-MAX-LEN:CAPS"></a><h3>GST_NETADDRESS_MAX_LEN</h3>
 <pre class="programlisting">#define GST_NETADDRESS_MAX_LEN 64
 </pre>
@@ -166,19 +164,19 @@ by <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#gst-netaddress-
 <p class="since">Since 0.10.24</p>
 </div>
 <hr>
-<div class="refsect2" title="GstNetAddress">
-<a name="GstNetAddress"></a><h3>GstNetAddress</h3>
-<pre class="programlisting">typedef struct {
-} GstNetAddress;
+<div class="refsect2">
+<a name="GstNetAddress"></a><h3>struct GstNetAddress</h3>
+<pre class="programlisting">struct GstNetAddress {
+};
 </pre>
 <p>
-An opaque network address as used in <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="GstNetBuffer"><span class="type">GstNetBuffer</span></a>.
+An opaque network address as used in <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="struct GstNetBuffer"><span class="type">GstNetBuffer</span></a>.
 </p>
 </div>
 <hr>
-<div class="refsect2" title="gst_netbuffer_new ()">
+<div class="refsect2">
 <a name="gst-netbuffer-new"></a><h3>gst_netbuffer_new ()</h3>
-<pre class="programlisting"><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="GstNetBuffer"><span class="returnvalue">GstNetBuffer</span></a>*       gst_netbuffer_new                   (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<pre class="programlisting"><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="struct GstNetBuffer"><span class="returnvalue">GstNetBuffer</span></a> *      gst_netbuffer_new                   (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
 Create a new network buffer.
 </p>
@@ -186,15 +184,14 @@ Create a new network buffer.
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a new <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="GstNetBuffer"><span class="type">GstNetBuffer</span></a>.
-</td>
+<td>a new <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetBuffer" title="struct GstNetBuffer"><span class="type">GstNetBuffer</span></a>.</td>
 </tr></tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_netaddress_get_net_type ()">
+<div class="refsect2">
 <a name="gst-netaddress-get-net-type"></a><h3>gst_netaddress_get_net_type ()</h3>
-<pre class="programlisting"><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetType" title="enum GstNetType"><span class="returnvalue">GstNetType</span></a>          gst_netaddress_get_net_type         (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>);</pre>
+<pre class="programlisting"><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetType" title="enum GstNetType"><span class="returnvalue">GstNetType</span></a>          gst_netaddress_get_net_type         (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>);</pre>
 <p>
 Get the type of address stored in <em class="parameter"><code>naddr</code></em>.
 </p>
@@ -203,21 +200,19 @@ Get the type of address stored in <em class="parameter"><code>naddr</code></em>.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>naddr</code></em> :</span></p></td>
-<td>a network address
-</td>
+<td>a network address</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the network type stored in <em class="parameter"><code>naddr</code></em>.
-</td>
+<td>the network type stored in <em class="parameter"><code>naddr</code></em>.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_netaddress_set_ip4_address ()">
+<div class="refsect2">
 <a name="gst-netaddress-set-ip4-address"></a><h3>gst_netaddress_set_ip4_address ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_netaddress_set_ip4_address      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_netaddress_set_ip4_address      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> address</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> port</code></em>);</pre>
 <p>
@@ -232,26 +227,23 @@ use <a href="http://library.gnome.org/devel/glib/unstable/glib-Byte-Order-Macros
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>naddr</code></em> :</span></p></td>
-<td>a network address
-</td>
+<td>a network address</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>address</code></em> :</span></p></td>
-<td>an IPv4 network address.
-</td>
+<td>an IPv4 network address.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>port</code></em> :</span></p></td>
-<td>a port number to set.
-</td>
+<td>a port number to set.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_netaddress_get_ip4_address ()">
+<div class="refsect2">
 <a name="gst-netaddress-get-ip4-address"></a><h3>gst_netaddress_get_ip4_address ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_netaddress_get_ip4_address      (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_netaddress_get_ip4_address      (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> *address</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> *port</code></em>);</pre>
 <p>
@@ -267,31 +259,27 @@ Note that <em class="parameter"><code>port</code></em> and <em class="parameter"
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>naddr</code></em> :</span></p></td>
-<td>a network address
-</td>
+<td>a network address</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>address</code></em> :</span></p></td>
-<td>a location to store the address.
-</td>
+<td>a location to store the address.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>port</code></em> :</span></p></td>
-<td>a location to store the port.
-</td>
+<td>a location to store the port.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> TRUE if the address could be retrieved.
-</td>
+<td>TRUE if the address could be retrieved.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_netaddress_set_ip6_address ()">
+<div class="refsect2">
 <a name="gst-netaddress-set-ip6-address"></a><h3>gst_netaddress_set_ip6_address ()</h3>
-<pre class="programlisting"><span class="returnvalue">void</span>                gst_netaddress_set_ip6_address      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<pre class="programlisting"><span class="returnvalue">void</span>                gst_netaddress_set_ip6_address      (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> address[16]</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> port</code></em>);</pre>
 <p>
@@ -306,26 +294,23 @@ it to network byte order.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>naddr</code></em> :</span></p></td>
-<td>a network address
-</td>
+<td>a network address</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>address</code></em> :</span></p></td>
-<td>an IPv6 network address.
-</td>
+<td>an IPv6 network address.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>port</code></em> :</span></p></td>
-<td>a port number to set.
-</td>
+<td>a port number to set.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_netaddress_get_ip6_address ()">
+<div class="refsect2">
 <a name="gst-netaddress-get-ip6-address"></a><h3>gst_netaddress_get_ip6_address ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_netaddress_get_ip6_address      (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_netaddress_get_ip6_address      (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> address[16]</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> *port</code></em>);</pre>
 <p>
@@ -344,31 +329,27 @@ it to host order.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>naddr</code></em> :</span></p></td>
-<td>a network address
-</td>
+<td>a network address</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>address</code></em> :</span></p></td>
-<td>a location to store the result.
-</td>
+<td>a location to store the result.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>port</code></em> :</span></p></td>
-<td>a location to store the port.
-</td>
+<td>a location to store the port.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> TRUE if the address could be retrieved.
-</td>
+<td>TRUE if the address could be retrieved.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_netaddress_get_address_bytes ()">
+<div class="refsect2">
 <a name="gst-netaddress-get-address-bytes"></a><h3>gst_netaddress_get_address_bytes ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_netaddress_get_address_bytes    (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_netaddress_get_address_bytes    (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> address[16]</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> *port</code></em>);</pre>
 <p>
@@ -383,33 +364,28 @@ it to host order. IP4 addresses are also stored in network byte order.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>naddr</code></em> :</span></p></td>
-<td>a network address
-</td>
+<td>a network address</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>address</code></em> :</span></p></td>
-<td>a location to store the result.
-</td>
+<td>a location to store the result.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>port</code></em> :</span></p></td>
-<td>a location to store the port.
-</td>
+<td>a location to store the port.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> number of bytes actually copied
-
-</td>
+<td>number of bytes actually copied</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_netaddress_set_address_bytes ()">
+<div class="refsect2">
 <a name="gst-netaddress-set-address-bytes"></a><h3>gst_netaddress_set_address_bytes ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_netaddress_set_address_bytes    (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_netaddress_set_address_bytes    (<em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetType" title="enum GstNetType"><span class="type">GstNetType</span></a> type</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> address[16]</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> port</code></em>);</pre>
@@ -426,69 +402,61 @@ stored in network byte order.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>naddr</code></em> :</span></p></td>
-<td>a network address
-</td>
+<td>a network address</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>type</code></em> :</span></p></td>
-<td>the address type (IPv4 or IPV6)
-</td>
+<td>the address type (IPv4 or IPV6)</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>address</code></em> :</span></p></td>
-<td>a location to store the result.
-</td>
+<td>a location to store the result.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>port</code></em> :</span></p></td>
-<td>a location to store the port.
-</td>
+<td>a location to store the port.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> number of bytes actually copied
-
-</td>
+<td>number of bytes actually copied</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.22</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_netaddress_equal ()">
+<div class="refsect2">
 <a name="gst-netaddress-equal"></a><h3>gst_netaddress_equal ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_netaddress_equal                (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr1</code></em>,
-                                                         <em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr2</code></em>);</pre>
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_netaddress_equal                (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr1</code></em>,
+                                                         <em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr2</code></em>);</pre>
 <p>
-Compare two <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> structures
+Compare two <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> structures
 </p>
 <div class="variablelist"><table border="0">
 <col align="left" valign="top">
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>naddr1</code></em> :</span></p></td>
-<td>The first <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a>
+<td>The first <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>naddr2</code></em> :</span></p></td>
-<td>The second <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a>
+<td>The second <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> TRUE if they are identical, FALSE otherwise
-
-</td>
+<td>TRUE if they are identical, FALSE otherwise</td>
 </tr>
 </tbody>
 </table></div>
 <p class="since">Since 0.10.18</p>
 </div>
 <hr>
-<div class="refsect2" title="gst_netaddress_to_string ()">
+<div class="refsect2">
 <a name="gst-netaddress-to-string"></a><h3>gst_netaddress_to_string ()</h3>
-<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_netaddress_to_string            (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
+<pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>                gst_netaddress_to_string            (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a> *naddr</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *dest</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gulong"><span class="type">gulong</span></a> len</code></em>);</pre>
 <p>
@@ -500,13 +468,12 @@ copied.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>naddr</code></em> :</span></p></td>
-<td>a <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="GstNetAddress"><span class="type">GstNetAddress</span></a>
+<td>a <a class="link" href="gst-plugins-base-libs-gstnetbuffer.html#GstNetAddress" title="struct GstNetAddress"><span class="type">GstNetAddress</span></a>
 </td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>dest</code></em> :</span></p></td>
-<td>destination
-</td>
+<td>destination</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>len</code></em> :</span></p></td>
@@ -515,10 +482,8 @@ copied.
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the number of bytes which would be produced if the buffer was large
-enough
-
-</td>
+<td>the number of bytes which would be produced if the buffer was large
+enough</td>
 </tr>
 </tbody>
 </table></div>
@@ -528,6 +493,6 @@ enough
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

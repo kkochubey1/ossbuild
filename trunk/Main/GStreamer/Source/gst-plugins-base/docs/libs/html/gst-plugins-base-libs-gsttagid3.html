@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-tag.html" title="Tag Support Library">
 <link rel="prev" href="gst-plugins-base-libs-gsttagvorbis.html" title="gsttagvorbis">
 <link rel="next" href="gst-plugins-base-libs-gsttagxmp.html" title="gsttagxmp">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -26,7 +26,7 @@
                   <a href="#gst-plugins-base-libs-gsttagid3.description" class="shortcut">Description</a>
 </td></tr>
 </table>
-<div class="refentry" title="gsttagid3">
+<div class="refentry">
 <a name="gst-plugins-base-libs-gsttagid3"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -36,36 +36,40 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-base-libs-gsttagid3.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/tag/tag.h&gt;
 
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-id3-genre-count" title="gst_tag_id3_genre_count ()">gst_tag_id3_genre_count</a>             (<em class="parameter"><code><span class="type">void</span></code></em>);
-const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-id3-genre-get" title="gst_tag_id3_genre_get ()">gst_tag_id3_genre_get</a>               (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> id</code></em>);
-<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="returnvalue">GstTagList</span></a> *        <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-list-new-from-id3v1" title="gst_tag_list_new_from_id3v1 ()">gst_tag_list_new_from_id3v1</a>         (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>);
-const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-from-id3-tag" title="gst_tag_from_id3_tag ()">gst_tag_from_id3_tag</a>                (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *id3_tag</code></em>);
-const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-from-id3-user-tag" title="gst_tag_from_id3_user_tag ()">gst_tag_from_id3_user_tag</a>           (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *type</code></em>,
+const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-id3-genre-get" title="gst_tag_id3_genre_get ()">gst_tag_id3_genre_get</a>          (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> id</code></em>);
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="returnvalue">GstTagList</span></a> *             <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-list-new-from-id3v1" title="gst_tag_list_new_from_id3v1 ()">gst_tag_list_new_from_id3v1</a>    (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>);
+const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-from-id3-tag" title="gst_tag_from_id3_tag ()">gst_tag_from_id3_tag</a>           (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *id3_tag</code></em>);
+const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-from-id3-user-tag" title="gst_tag_from_id3_user_tag ()">gst_tag_from_id3_user_tag</a>      (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *type</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *id3_user_tag</code></em>);
-const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-to-id3-tag" title="gst_tag_to_id3_tag ()">gst_tag_to_id3_tag</a>                  (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *gst_tag</code></em>);
+const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-to-id3-tag" title="gst_tag_to_id3_tag ()">gst_tag_to_id3_tag</a>             (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *gst_tag</code></em>);
 <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="gst-plugins-base-libs-gsttagid3.html#gst-tag-list-add-id3-image" title="gst_tag_list_add_id3_image ()">gst_tag_list_add_id3_image</a>          (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> *tag_list</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *image_data</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> image_data_len</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> id3_picture_type</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gsttagid3.description"></a><h2>Description</h2>
+<p>
+</p>
 <div class="refsect2">
-<a name="id614418"></a><p>
+<a name="idp25099152"></a><p>
 Contains various utility functions for plugins to parse or create
 ID3 tags and map ID3v2 identifiers to and from GStreamer identifiers.
 </p>
 </div>
+<p>
+</p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gsttagid3.details"></a><h2>Details</h2>
-<div class="refsect2" title="gst_tag_id3_genre_count ()">
+<div class="refsect2">
 <a name="gst-tag-id3-genre-count"></a><h3>gst_tag_id3_genre_count ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>               gst_tag_id3_genre_count             (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>
@@ -76,15 +80,14 @@ included.
 <col align="left" valign="top">
 <tbody><tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the number of ID3v1 genres that can be identified
-</td>
+<td>the number of ID3v1 genres that can be identified</td>
 </tr></tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_tag_id3_genre_get ()">
+<div class="refsect2">
 <a name="gst-tag-id3-genre-get"></a><h3>gst_tag_id3_genre_get ()</h3>
-<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       gst_tag_id3_genre_get               (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> id</code></em>);</pre>
+<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            gst_tag_id3_genre_get          (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> id</code></em>);</pre>
 <p>
 Gets the ID3v1 genre name for a given ID.
 </p>
@@ -93,21 +96,19 @@ Gets the ID3v1 genre name for a given ID.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>id</code></em> :</span></p></td>
-<td>ID of genre to query
-</td>
+<td>ID of genre to query</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> the genre or NULL if no genre is associated with that ID.
-</td>
+<td>the genre or NULL if no genre is associated with that ID.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_tag_list_new_from_id3v1 ()">
+<div class="refsect2">
 <a name="gst-tag-list-new-from-id3v1"></a><h3>gst_tag_list_new_from_id3v1 ()</h3>
-<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="returnvalue">GstTagList</span></a> *        gst_tag_list_new_from_id3v1         (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>);</pre>
+<pre class="programlisting"><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="returnvalue">GstTagList</span></a> *             gst_tag_list_new_from_id3v1    (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *data</code></em>);</pre>
 <p>
 Parses the data containing an ID3v1 tag and returns a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> from the
 parsed data.
@@ -117,21 +118,19 @@ parsed data.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>data</code></em> :</span></p></td>
-<td>128 bytes of data containing the ID3v1 tag
-</td>
+<td>128 bytes of data containing the ID3v1 tag</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> A new tag list or NULL if the data was not an ID3v1 tag.
-</td>
+<td>A new tag list or NULL if the data was not an ID3v1 tag.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_tag_from_id3_tag ()">
+<div class="refsect2">
 <a name="gst-tag-from-id3-tag"></a><h3>gst_tag_from_id3_tag ()</h3>
-<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       gst_tag_from_id3_tag                (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *id3_tag</code></em>);</pre>
+<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            gst_tag_from_id3_tag           (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *id3_tag</code></em>);</pre>
 <p>
 Looks up the GStreamer tag for a ID3v2 tag.
 </p>
@@ -140,21 +139,19 @@ Looks up the GStreamer tag for a ID3v2 tag.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>id3_tag</code></em> :</span></p></td>
-<td>ID3v2 tag to convert to GStreamer tag
-</td>
+<td>ID3v2 tag to convert to GStreamer tag</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The corresponding GStreamer tag or NULL if none exists.
-</td>
+<td>The corresponding GStreamer tag or NULL if none exists.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_tag_from_id3_user_tag ()">
+<div class="refsect2">
 <a name="gst-tag-from-id3-user-tag"></a><h3>gst_tag_from_id3_user_tag ()</h3>
-<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       gst_tag_from_id3_user_tag           (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *type</code></em>,
+<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            gst_tag_from_id3_user_tag      (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *type</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *id3_user_tag</code></em>);</pre>
 <p>
 Looks up the GStreamer tag for an ID3v2 user tag (e.g. description in
@@ -165,26 +162,23 @@ TXXX frame or owner in UFID frame).
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>type</code></em> :</span></p></td>
-<td>the type of ID3v2 user tag (e.g. "TXXX" or "UDIF")
-</td>
+<td>the type of ID3v2 user tag (e.g. "TXXX" or "UDIF")</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>id3_user_tag</code></em> :</span></p></td>
-<td>ID3v2 user tag to convert to GStreamer tag
-</td>
+<td>ID3v2 user tag to convert to GStreamer tag</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The corresponding GStreamer tag or NULL if none exists.
-</td>
+<td>The corresponding GStreamer tag or NULL if none exists.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_tag_to_id3_tag ()">
+<div class="refsect2">
 <a name="gst-tag-to-id3-tag"></a><h3>gst_tag_to_id3_tag ()</h3>
-<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *       gst_tag_to_id3_tag                  (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *gst_tag</code></em>);</pre>
+<pre class="programlisting">const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *            gst_tag_to_id3_tag             (<em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *gst_tag</code></em>);</pre>
 <p>
 Looks up the ID3v2 tag for a GStreamer tag.
 </p>
@@ -193,19 +187,17 @@ Looks up the ID3v2 tag for a GStreamer tag.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>gst_tag</code></em> :</span></p></td>
-<td>GStreamer tag to convert to vorbiscomment tag
-</td>
+<td>GStreamer tag to convert to vorbiscomment tag</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> The corresponding ID3v2 tag or NULL if none exists.
-</td>
+<td>The corresponding ID3v2 tag or NULL if none exists.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_tag_list_add_id3_image ()">
+<div class="refsect2">
 <a name="gst-tag-list-add-id3-image"></a><h3>gst_tag_list_add_id3_image ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_tag_list_add_id3_image          (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a> *tag_list</code></em>,
                                                          <em class="parameter"><code>const <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint8"><span class="type">guint8</span></a> *image_data</code></em>,
@@ -221,13 +213,11 @@ more information on image tags in GStreamer.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>tag_list</code></em> :</span></p></td>
-<td>a tag list
-</td>
+<td>a tag list</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>image_data</code></em> :</span></p></td>
-<td>the (encoded) image
-</td>
+<td>the (encoded) image</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>image_data_len</code></em> :</span></p></td>
@@ -237,13 +227,12 @@ more information on image tags in GStreamer.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>id3_picture_type</code></em> :</span></p></td>
 <td>picture type as per the ID3 (v2.4.0) specification for
-   the APIC frame (0 = unknown/other)
-</td>
+the APIC frame (0 = unknown/other)</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the image was processed, otherwise <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a>
-
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the image was processed, otherwise <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a>
 </td>
 </tr>
 </tbody>
@@ -251,13 +240,13 @@ more information on image tags in GStreamer.
 <p class="since">Since 0.10.20</p>
 </div>
 </div>
-<div class="refsect1" title="See Also">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gsttagid3.see-also"></a><h2>See Also</h2>
 <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstTagList.html#GstTagList"><span class="type">GstTagList</span></a>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

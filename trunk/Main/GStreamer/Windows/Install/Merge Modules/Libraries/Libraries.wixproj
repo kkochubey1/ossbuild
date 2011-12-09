@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -71,6 +71,14 @@
       <Name>gstdataprotocol</Name>
       <Project>{f987873b-2b88-4b1b-b627-f70df4f91e53}</Project>
       <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Build\Libraries\libgstfloatcast.vcproj">
+      <Name>gstfloatcast</Name>
+      <Project>{387a86ea-96c5-4599-ad66-89236e0f2400}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLLOCATION</RefTargetDir>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Build\Libraries\libgstnet.vcproj">
       <Name>gstnet</Name>

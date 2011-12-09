@@ -133,6 +133,10 @@ gst_tag_register_tags_internal (gpointer unused)
       G_TYPE_STRING, _("capturing exposure mode"),
       _("The exposure mode used when capturing an image"), NULL);
 
+  gst_tag_register (GST_TAG_CAPTURING_EXPOSURE_COMPENSATION, GST_TAG_FLAG_META,
+      G_TYPE_DOUBLE, _("capturing exposure compensation"),
+      _("The exposure compensation used when capturing an image"), NULL);
+
   gst_tag_register (GST_TAG_CAPTURING_SCENE_CAPTURE_TYPE, GST_TAG_FLAG_META,
       G_TYPE_STRING, _("capturing scene capture type"),
       _("The scene capture mode used when capturing an image"), NULL);
@@ -188,7 +192,11 @@ gst_tag_register_tags_internal (gpointer unused)
   return NULL;
 }
 
-/* FIXME 0.11: rename this to gst_tag_init() or gst_tag_register_tags() */
+/* FIXME 0.11: rename this to gst_tag_init() or gst_tag_register_tags() or
+ * even better: make tags auto-register themselves, either by defining them
+ * to a wrapper func that does the initing, or by adding tag factories so
+ * that the core can load+register tags automatically when needed. */
+
 /**
  * gst_tag_register_musicbrainz_tags
  *

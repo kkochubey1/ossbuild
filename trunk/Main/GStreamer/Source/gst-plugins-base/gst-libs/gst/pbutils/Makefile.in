@@ -127,6 +127,8 @@ am_libgstpbutils_@GST_MAJORMINOR@_la_OBJECTS =  \
 	libgstpbutils_@GST_MAJORMINOR@_la-pbutils.lo \
 	libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.lo \
 	libgstpbutils_@GST_MAJORMINOR@_la-descriptions.lo \
+	libgstpbutils_@GST_MAJORMINOR@_la-encoding-profile.lo \
+	libgstpbutils_@GST_MAJORMINOR@_la-encoding-target.lo \
 	libgstpbutils_@GST_MAJORMINOR@_la-install-plugins.lo \
 	libgstpbutils_@GST_MAJORMINOR@_la-missing-plugins.lo \
 	libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.lo \
@@ -298,7 +300,6 @@ GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAVE_CDPARANOIA = @HAVE_CDPARANOIA@
-HAVE_CXX = @HAVE_CXX@
 HAVE_X = @HAVE_X@
 HAVE_XSHM = @HAVE_XSHM@
 HSTRERROR_LIBS = @HSTRERROR_LIBS@
@@ -335,6 +336,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -411,6 +413,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -444,7 +447,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -470,6 +472,8 @@ headers_pbutils = \
 	pbutils.h         \
 	codec-utils.h     \
 	descriptions.h    \
+	encoding-profile.h	\
+	encoding-target.h	\
 	install-plugins.h \
 	missing-plugins.h \
 	gstdiscoverer.h
@@ -488,6 +492,8 @@ libgstpbutils_@GST_MAJORMINOR@_la_SOURCES = \
 	pbutils.c         \
 	codec-utils.c     \
 	descriptions.c    \
+	encoding-profile.c	\
+	encoding-target.c	\
 	install-plugins.c \
 	missing-plugins.c \
 	gstdiscoverer.c   \
@@ -625,6 +631,8 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-codec-utils.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-descriptions.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-encoding-profile.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-encoding-target.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer-types.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstdiscoverer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-gstpluginsbaseversion.Plo@am__quote@
@@ -689,6 +697,22 @@ libgstpbutils_@GST_MAJORMINOR@_la-descriptions.lo: descriptions.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='descriptions.c' object='libgstpbutils_@GST_MAJORMINOR@_la-descriptions.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstpbutils_@GST_MAJORMINOR@_la-descriptions.lo `test -f 'descriptions.c' || echo '$(srcdir)/'`descriptions.c
+
+libgstpbutils_@GST_MAJORMINOR@_la-encoding-profile.lo: encoding-profile.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstpbutils_@GST_MAJORMINOR@_la-encoding-profile.lo -MD -MP -MF $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-encoding-profile.Tpo -c -o libgstpbutils_@GST_MAJORMINOR@_la-encoding-profile.lo `test -f 'encoding-profile.c' || echo '$(srcdir)/'`encoding-profile.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-encoding-profile.Tpo $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-encoding-profile.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='encoding-profile.c' object='libgstpbutils_@GST_MAJORMINOR@_la-encoding-profile.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstpbutils_@GST_MAJORMINOR@_la-encoding-profile.lo `test -f 'encoding-profile.c' || echo '$(srcdir)/'`encoding-profile.c
+
+libgstpbutils_@GST_MAJORMINOR@_la-encoding-target.lo: encoding-target.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstpbutils_@GST_MAJORMINOR@_la-encoding-target.lo -MD -MP -MF $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-encoding-target.Tpo -c -o libgstpbutils_@GST_MAJORMINOR@_la-encoding-target.lo `test -f 'encoding-target.c' || echo '$(srcdir)/'`encoding-target.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-encoding-target.Tpo $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-encoding-target.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='encoding-target.c' object='libgstpbutils_@GST_MAJORMINOR@_la-encoding-target.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -c -o libgstpbutils_@GST_MAJORMINOR@_la-encoding-target.lo `test -f 'encoding-target.c' || echo '$(srcdir)/'`encoding-target.c
 
 libgstpbutils_@GST_MAJORMINOR@_la-install-plugins.lo: install-plugins.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) $(CFLAGS) -MT libgstpbutils_@GST_MAJORMINOR@_la-install-plugins.lo -MD -MP -MF $(DEPDIR)/libgstpbutils_@GST_MAJORMINOR@_la-install-plugins.Tpo -c -o libgstpbutils_@GST_MAJORMINOR@_la-install-plugins.lo `test -f 'install-plugins.c' || echo '$(srcdir)/'`install-plugins.c
@@ -1083,6 +1107,7 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 
 @HAVE_INTROSPECTION_TRUE@GstPbutils-@GST_MAJORMINOR@.gir: $(INTROSPECTION_SCANNER) libgstpbutils-@GST_MAJORMINOR@.la
 @HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+@HAVE_INTROSPECTION_TRUE@		GST_PLUGIN_SYSTEM_PATH="" GST_PLUGIN_PATH="" GST_REGISTRY_UPDATE=no \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_SCANNER) -v --namespace GstPbutils \
 @HAVE_INTROSPECTION_TRUE@		--nsversion=@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--strip-prefix=Gst \
@@ -1090,24 +1115,44 @@ $(glib_gen_basename)-enumtypes.c: $(glib_enum_headers)
 @HAVE_INTROSPECTION_TRUE@		-I$(top_srcdir)/gst-libs \
 @HAVE_INTROSPECTION_TRUE@		-I$(top_builddir)/gst-libs \
 @HAVE_INTROSPECTION_TRUE@		--add-include-path=$(srcdir)/../video \
-@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
-@HAVE_INTROSPECTION_TRUE@		--library=libgstpbutils-0.10.la \
-@HAVE_INTROSPECTION_TRUE@		--include=Gst-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-@GST_MAJORMINOR@` \
+@HAVE_INTROSPECTION_TRUE@		--library=libgstpbutils-@GST_MAJORMINOR@.la \
+@HAVE_INTROSPECTION_TRUE@		--library-path=`$(PKG_CONFIG) --variable=libdir gstreamer-@GST_MAJORMINOR@` \
+@HAVE_INTROSPECTION_TRUE@		--library=gstreamer-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--include=Gst-@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--libtool="$(top_builddir)/libtool" \
-@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-0.10 \
+@HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--pkg gstreamer-video-@GST_MAJORMINOR@ \
 @HAVE_INTROSPECTION_TRUE@		--pkg-export gstreamer-pbutils-@GST_MAJORMINOR@ \
+@HAVE_INTROSPECTION_TRUE@		--add-init-section="gst_init(NULL,NULL);" \
 @HAVE_INTROSPECTION_TRUE@		--output $@ \
 @HAVE_INTROSPECTION_TRUE@		$(gir_headers) \
 @HAVE_INTROSPECTION_TRUE@		$(gir_sources)
 
 @HAVE_INTROSPECTION_TRUE@%.typelib: %.gir $(INTROSPECTION_COMPILER)
-@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)$(INTROSPECTION_COMPILER) \
+@HAVE_INTROSPECTION_TRUE@	$(AM_V_GEN)PKG_CONFIG_PATH="$(GST_PKG_CONFIG_PATH)" \
+@HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_COMPILER) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(srcdir) \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(srcdir)/../video \
 @HAVE_INTROSPECTION_TRUE@		--includedir=$(builddir) \
-@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-0.10` \
+@HAVE_INTROSPECTION_TRUE@		--includedir=`$(PKG_CONFIG) --variable=girdir gstreamer-@GST_MAJORMINOR@` \
 @HAVE_INTROSPECTION_TRUE@		$(INTROSPECTION_COMPILER_OPTS) $< -o $(@F)
+
+Android.mk: Makefile.am $(BUILT_SOURCES)
+	androgenizer -:PROJECT libgstpbutils -:SHARED libgstpbutils-@GST_MAJORMINOR@ \
+	 -:TAGS eng debug \
+         -:REL_TOP $(top_srcdir) -:ABS_TOP $(abs_top_srcdir) \
+	 -:SOURCES $(libgstpbutils_@GST_MAJORMINOR@_la_SOURCES) \
+	           $(nodist_libgstpbutils_@GST_MAJORMINOR@_la_SOURCES) \
+	 -:CFLAGS $(DEFS) $(DEFAULT_INCLUDES) $(libgstpbutils_@GST_MAJORMINOR@_la_CFLAGS) \
+	 -:LDFLAGS $(libgstpbutils_@GST_MAJORMINOR@_la_LDFLAGS) \
+	           $(libgstpbutils_@GST_MAJORMINOR@_la_LIBADD) \
+	           -ldl \
+	 -:HEADER_TARGET gstreamer-@GST_MAJORMINOR@/gst/pbutils \
+	 -:HEADERS $(libgstpbutils_@GST_MAJORMINOR@include_HEADERS) \
+	           $(nodist_libgstpbutils_@GST_MAJORMINOR@include_HEADERS) \
+	 -:PASSTHROUGH LOCAL_ARM_MODE:=arm \
+	> $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

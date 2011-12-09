@@ -453,6 +453,42 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\encoding-profile.h"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\encoding-target.h"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="Header Installer Tool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\gstdiscoverer.h"
 					>
 					<FileConfiguration
@@ -593,6 +629,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\descriptions.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\encoding-profile.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Source\gst-plugins-base\gst-libs\gst\pbutils\encoding-target.c"
 				>
 			</File>
 			<File

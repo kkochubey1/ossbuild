@@ -191,6 +191,8 @@ gst_base_audio_sink_set_provide_clock
 gst_base_audio_sink_get_provide_clock
 gst_base_audio_sink_set_slave_method
 gst_base_audio_sink_get_slave_method
+gst_base_audio_sink_get_drift_tolerance
+gst_base_audio_sink_set_drift_tolerance
 <SUBSECTION Standard>
 GST_BASE_AUDIO_SINK
 GST_IS_BASE_AUDIO_SINK
@@ -545,10 +547,12 @@ GST_MIXER_GET_CLASS
 GST_MIXER_TYPE
 GST_IS_MIXER
 GST_IS_MIXER_CLASS
+GST_TYPE_STREAM_VOLUME_FORMAT
 gst_mixer_get_type
 gst_mixer_type_get_type
 gst_mixer_flags_get_type
 gst_mixer_message_type_get_type
+gst_stream_volume_format_get_type
 </SECTION>
 
 <SECTION>
@@ -789,6 +793,8 @@ GstXOverlay
 GstXOverlayClass
 gst_x_overlay_set_xwindow_id
 gst_x_overlay_got_xwindow_id
+gst_x_overlay_got_window_handle
+gst_x_overlay_set_window_handle
 gst_x_overlay_prepare_xwindow_id
 gst_x_overlay_expose
 gst_x_overlay_handle_events
@@ -1093,6 +1099,7 @@ GST_BASE_RTP_DEPAYLOAD_SRCPAD
 
 gst_base_rtp_depayload_push
 gst_base_rtp_depayload_push_ts
+gst_base_rtp_depayload_push_list
 
 <SUBSECTION Standard>
 GstBaseRTPDepayloadPrivate
@@ -1392,10 +1399,32 @@ gst_rtsp_strresult
 gst_rtsp_method_as_text
 gst_rtsp_version_as_text
 gst_rtsp_header_as_text
+gst_rtsp_header_allow_multiple
 gst_rtsp_status_as_text
 gst_rtsp_options_as_text
 gst_rtsp_find_header_field
 gst_rtsp_find_method
+<SUBSECTION Standard>
+GST_TYPE_RTSP_AUTH_METHOD
+GST_TYPE_RTSP_EVENT
+GST_TYPE_RTSP_FAMILY
+GST_TYPE_RTSP_HEADER_FIELD
+GST_TYPE_RTSP_LOWER_TRANS
+GST_TYPE_RTSP_METHOD
+GST_TYPE_RTSP_RESULT
+GST_TYPE_RTSP_STATE
+GST_TYPE_RTSP_STATUS_CODE
+GST_TYPE_RTSP_URL
+GST_TYPE_RTSP_VERSION
+gst_rtsp_event_get_type
+gst_rtsp_auth_method_get_type
+gst_rtsp_family_get_type
+gst_rtsp_method_get_type
+gst_rtsp_result_get_type
+gst_rtsp_state_get_type
+gst_rtsp_status_code_get_type
+gst_rtsp_version_get_type
+gst_rtsp_header_field_get_type
 </SECTION>
 
 <SECTION>
@@ -1413,6 +1442,8 @@ gst_rtsp_transport_as_text
 gst_rtsp_transport_get_mime
 gst_rtsp_transport_get_manager
 gst_rtsp_transport_free
+<SUBSECTION Standard>
+gst_rtsp_lower_trans_get_type
 </SECTION>
 
 <SECTION>
@@ -1427,6 +1458,7 @@ gst_rtsp_base64_decode_ip
 <INCLUDE>gst/rtsp/gstrtspconnection.h</INCLUDE>
 GstRTSPConnection
 gst_rtsp_connection_create
+gst_rtsp_connection_create_from_fd
 gst_rtsp_connection_accept
 gst_rtsp_connection_connect
 gst_rtsp_connection_close
@@ -1461,6 +1493,11 @@ gst_rtsp_connection_is_tunneled
 gst_rtsp_connection_get_tunnelid
 gst_rtsp_connection_do_tunnel
 
+gst_rtsp_connection_get_readfd
+gst_rtsp_connection_get_writefd
+gst_rtsp_connection_set_http_mode
+gst_rtsp_connection_set_proxy
+
 GstRTSPWatch
 GstRTSPWatchFuncs
 gst_rtsp_watch_new
@@ -1468,13 +1505,31 @@ gst_rtsp_watch_unref
 gst_rtsp_watch_attach
 gst_rtsp_watch_reset
 gst_rtsp_watch_queue_message
+gst_rtsp_watch_queue_data
+gst_rtsp_watch_send_message
+gst_rtsp_watch_write_data
 </SECTION>
 
 <SECTION>
 <FILE>gstrtspextension</FILE>
 <INCLUDE>gst/rtsp/gstrtspextension.h</INCLUDE>
+GstRTSPExtension
 GstRTSPExtensionInterface
 <SUBSECTION Standard>
+GST_IS_RTSP_EXTENSION
+GST_RTSP_EXTENSION
+GST_RTSP_EXTENSION_GET_IFACE
+GST_TYPE_RTSP_EXTENSION
+gst_rtsp_extension_after_send
+gst_rtsp_extension_before_send
+gst_rtsp_extension_configure_stream
+gst_rtsp_extension_detect_server
+gst_rtsp_extension_get_transports
+gst_rtsp_extension_parse_sdp
+gst_rtsp_extension_receive_request
+gst_rtsp_extension_send
+gst_rtsp_extension_setup_media
+gst_rtsp_extension_stream_select
 gst_rtsp_extension_get_type
 </SECTION>
 
@@ -1520,6 +1575,7 @@ gst_rtsp_url_free
 gst_rtsp_url_get_request_uri
 gst_rtsp_url_set_port
 gst_rtsp_url_get_port
+gst_rtsp_url_decode_path_components
 <SUBSECTION Standard>
 gst_rtsp_url_get_type
 </SECTION>
@@ -1546,6 +1602,9 @@ GstSDPConnection
 GST_SDP_BWTYPE_CT
 GST_SDP_BWTYPE_AS
 GST_SDP_BWTYPE_EXT_PREFIX
+GST_SDP_BWTYPE_RR
+GST_SDP_BWTYPE_RS
+GST_SDP_BWTYPE_TIAS
 GstSDPBandwidth
 GstSDPTime
 GstSDPZone
@@ -1563,6 +1622,8 @@ gst_sdp_message_as_text
 
 gst_sdp_message_parse_uri
 gst_sdp_message_as_uri
+
+gst_sdp_address_is_multicast
 
 gst_sdp_message_get_version
 gst_sdp_message_set_version
@@ -1854,6 +1915,95 @@ gst_codec_utils_mpeg4video_get_level
 gst_codec_utils_mpeg4video_caps_set_level_and_profile
 </SECTION>
 
+<SECTION>
+<FILE>encoding-profile</FILE>
+<INCLUDE>gst/pbutils/encoding-profile.h</INCLUDE>
+GstEncodingProfile
+gst_encoding_profile_unref
+gst_encoding_profile_ref
+gst_encoding_profile_find
+gst_encoding_profile_get_name
+gst_encoding_profile_get_description
+gst_encoding_profile_get_format
+gst_encoding_profile_get_preset
+gst_encoding_profile_get_presence
+gst_encoding_profile_get_restriction
+gst_encoding_profile_set_name
+gst_encoding_profile_set_description
+gst_encoding_profile_set_format
+gst_encoding_profile_set_preset
+gst_encoding_profile_set_restriction
+gst_encoding_profile_set_presence
+gst_encoding_profile_is_equal
+gst_encoding_profile_get_input_caps
+gst_encoding_profile_get_type_nick
+<SUBSECTION container>
+GstEncodingContainerProfile
+gst_encoding_container_profile_new
+gst_encoding_container_profile_add_profile
+gst_encoding_container_profile_contains_profile
+gst_encoding_container_profile_get_profiles
+<SUBSECTION audio>
+GstEncodingAudioProfile
+gst_encoding_audio_profile_new
+<SUBSECTION video>
+GstEncodingVideoProfile
+gst_encoding_video_profile_new
+gst_encoding_video_profile_get_pass
+gst_encoding_video_profile_get_variableframerate
+gst_encoding_video_profile_set_pass
+gst_encoding_video_profile_set_variableframerate
+<SUBSECTION targets>
+GST_ENCODING_CATEGORY_DEVICE
+GST_ENCODING_CATEGORY_ONLINE_SERVICE
+GST_ENCODING_CATEGORY_STORAGE_EDITING
+GST_ENCODING_CATEGORY_CAPTURE
+GstEncodingTarget
+gst_encoding_target_unref
+gst_encoding_target_ref
+gst_encoding_target_new
+gst_encoding_target_get_name
+gst_encoding_target_get_category
+gst_encoding_target_get_description
+gst_encoding_target_get_profiles
+gst_encoding_target_get_profile
+gst_encoding_target_add_profile
+gst_encoding_target_save
+gst_encoding_target_save_to_file
+gst_encoding_target_load
+gst_encoding_target_load_from_file
+gst_encoding_list_all_targets
+gst_encoding_list_available_categories
+<SUBSECTION Standard>
+GST_ENCODING_PROFILE
+GST_IS_ENCODING_PROFILE
+GST_TYPE_ENCODING_PROFILE
+gst_encoding_profile_get_type
+GST_ENCODING_TARGET
+GST_IS_ENCODING_TARGET
+GST_TYPE_ENCODING_TARGET
+gst_encoding_target_get_type
+GstEncodingProfileClass
+GST_TYPE_ENCODING_CONTAINER_PROFILE
+GST_ENCODING_CONTAINER_PROFILE
+gst_encoding_container_profile_get_type
+GST_TYPE_ENCODING_VIDEO_PROFILE
+GST_ENCODING_VIDEO_PROFILE
+GST_IS_ENCODING_VIDEO_PROFILE
+GstEncodingVideoProfileClass
+gst_encoding_video_profile_get_type
+GST_TYPE_ENCODING_AUDIO_PROFILE
+GST_ENCODING_AUDIO_PROFILE
+GST_IS_ENCODING_AUDIO_PROFILE
+GstEncodingAudioProfileClass
+gst_encoding_audio_profile_get_type
+GST_IS_ENCODING_CONTAINER_PROFILE
+GstEncodingContainerProfileClass
+GstEncodingTargetClass
+</SECTION>
+
+
+
 # video
 
 <SECTION>
@@ -1892,6 +2042,9 @@ GST_VIDEO_CAPS_YUV
 GST_VIDEO_CAPS_xBGR
 GST_VIDEO_CAPS_xRGB
 GST_VIDEO_CAPS_xRGB_HOST_ENDIAN
+GST_VIDEO_CAPS_BGR_15
+GST_VIDEO_CAPS_BGR_16
+GST_VIDEO_CAPS_RGB8_PALETTED
 GST_VIDEO_CAPS_GRAY8
 GST_VIDEO_CAPS_GRAY16
 GST_VIDEO_FPS_RANGE
@@ -1932,8 +2085,15 @@ gst_video_parse_caps_framerate
 gst_video_parse_caps_pixel_aspect_ratio
 gst_video_parse_caps_color_matrix
 gst_video_parse_caps_chroma_site
+gst_video_parse_caps_palette
+GstVideoConvertFrameCallback
 gst_video_convert_frame
 gst_video_convert_frame_async
+gst_video_event_new_still_frame
+gst_video_event_parse_still_frame
+<SUBSECTION Standard>
+gst_video_format_get_type
+GST_TYPE_VIDEO_FORMAT
 </SECTION>
 
 <SECTION>
@@ -1993,6 +2153,8 @@ gst_discoverer_info_get_stream_info
 gst_discoverer_info_get_stream_list
 gst_discoverer_info_get_tags
 gst_discoverer_info_get_uri
+gst_discoverer_info_get_seekable
+gst_discoverer_info_ref
 gst_discoverer_info_unref
 <SUBSECTION>
 GstDiscovererStreamInfo
@@ -2008,8 +2170,6 @@ gst_discoverer_stream_info_ref
 gst_discoverer_stream_info_unref
 gst_discoverer_stream_info_list_free
 gst_discoverer_stream_info_get_stream_type_nick
-gst_discoverer_info_copy
-gst_discoverer_info_ref
 gst_discoverer_info_get_audio_streams
 gst_discoverer_info_get_container_streams
 gst_discoverer_info_get_streams
@@ -2064,6 +2224,7 @@ gst_discoverer_audio_info_get_type
 gst_discoverer_container_info_get_type
 gst_discoverer_get_type
 gst_discoverer_info_get_type
+gst_discoverer_info_copy
 gst_discoverer_result_get_type
 gst_discoverer_stream_info_get_type
 gst_discoverer_video_info_get_type

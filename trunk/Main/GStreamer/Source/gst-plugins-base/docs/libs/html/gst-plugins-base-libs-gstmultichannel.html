@@ -8,7 +8,7 @@
 <link rel="up" href="gstreamer-audio.html" title="Audio Library">
 <link rel="prev" href="gst-plugins-base-libs-gstbaseaudiosrc.html" title="gstbaseaudiosrc">
 <link rel="next" href="gst-plugins-base-libs-gstringbuffer.html" title="gstringbuffer">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -26,7 +26,7 @@
                   <a href="#gst-plugins-base-libs-gstmultichannel.description" class="shortcut">Description</a>
 </td></tr>
 </table>
-<div class="refentry" title="gstmultichannel">
+<div class="refentry">
 <a name="gst-plugins-base-libs-gstmultichannel"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -35,7 +35,7 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-base-libs-gstmultichannel.synopsis"></a><h2>Synopsis</h2>
 <pre class="synopsis">
 #include &lt;gst/audio/multichannel.h&gt;
@@ -59,16 +59,16 @@ enum                <a class="link" href="gst-plugins-base-libs-gstmultichannel.
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> channels</code></em>);
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gstmultichannel.description"></a><h2>Description</h2>
 <p>
 This module contains some helper functions and a enum to work with
 multichannel audio.
 </p>
 </div>
-<div class="refsect1" title="Details">
+<div class="refsect1">
 <a name="gst-plugins-base-libs-gstmultichannel.details"></a><h2>Details</h2>
-<div class="refsect2" title="enum GstAudioChannelPosition">
+<div class="refsect2">
 <a name="GstAudioChannelPosition"></a><h3>enum GstAudioChannelPosition</h3>
 <pre class="programlisting">typedef enum {
   GST_AUDIO_CHANNEL_POSITION_INVALID = -1,
@@ -110,8 +110,7 @@ multichannel audio.
 <tbody>
 <tr>
 <td><p><a name="GST-AUDIO-CHANNEL-POSITION-INVALID:CAPS"></a><span class="term"><code class="literal">GST_AUDIO_CHANNEL_POSITION_INVALID</code></span></p></td>
-<td>
-</td>
+<td></td>
 </tr>
 <tr>
 <td><p><a name="GST-AUDIO-CHANNEL-POSITION-FRONT-MONO:CAPS"></a><span class="term"><code class="literal">GST_AUDIO_CHANNEL_POSITION_FRONT_MONO</code></span></p></td>
@@ -182,14 +181,13 @@ multichannel audio.
 </tr>
 <tr>
 <td><p><a name="GST-AUDIO-CHANNEL-POSITION-NUM:CAPS"></a><span class="term"><code class="literal">GST_AUDIO_CHANNEL_POSITION_NUM</code></span></p></td>
-<td>
-</td>
+<td></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_fixate_channel_positions ()">
+<div class="refsect2">
 <a name="gst-audio-fixate-channel-positions"></a><h3>gst_audio_fixate_channel_positions ()</h3>
 <pre class="programlisting"><a class="link" href="gst-plugins-base-libs-gstmultichannel.html#GstAudioChannelPosition" title="enum GstAudioChannelPosition"><span class="returnvalue">GstAudioChannelPosition</span></a> * gst_audio_fixate_channel_positions
                                                         (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a> *str</code></em>);</pre>
@@ -209,20 +207,18 @@ have no way to add default fixation functions for new GTypes.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>str</code></em> :</span></p></td>
 <td>a <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a> containing a (possibly unfixed)
-      "channel-positions" field.
-</td>
+"channel-positions" field.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> fixed values that the caller could use as a fixed
-set of <a class="link" href="gst-plugins-base-libs-gstmultichannel.html#GstAudioChannelPosition" title="enum GstAudioChannelPosition"><span class="type">GstAudioChannelPosition</span></a> values.
-</td>
+<td>fixed values that the caller could use as a fixed
+set of <a class="link" href="gst-plugins-base-libs-gstmultichannel.html#GstAudioChannelPosition" title="enum GstAudioChannelPosition"><span class="type">GstAudioChannelPosition</span></a> values.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_get_channel_positions ()">
+<div class="refsect2">
 <a name="gst-audio-get-channel-positions"></a><h3>gst_audio_get_channel_positions ()</h3>
 <pre class="programlisting"><a class="link" href="gst-plugins-base-libs-gstmultichannel.html#GstAudioChannelPosition" title="enum GstAudioChannelPosition"><span class="returnvalue">GstAudioChannelPosition</span></a> * gst_audio_get_channel_positions
                                                         (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a> *str</code></em>);</pre>
@@ -238,21 +234,19 @@ indeed "fixed" before calling this function.
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>str</code></em> :</span></p></td>
-<td>A <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a> to retrieve channel positions from.
-</td>
+<td>A <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a> to retrieve channel positions from.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> a newly allocated array containing the channel
+<td>a newly allocated array containing the channel
 positions as provided in the given <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a>. Returns
-NULL on error.
-</td>
+NULL on error.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_set_caps_channel_positions_list ()">
+<div class="refsect2">
 <a name="gst-audio-set-caps-channel-positions-list"></a><h3>gst_audio_set_caps_channel_positions_list ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_audio_set_caps_channel_positions_list
                                                         (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> *caps</code></em>,
@@ -275,26 +269,23 @@ The input caps is not required to have this.
 <tr>
 <td><p><span class="term"><em class="parameter"><code>caps</code></em> :</span></p></td>
 <td>
-<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> to set the list of channel positions on.
-</td>
+<a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a> to set the list of channel positions on.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pos</code></em> :</span></p></td>
 <td>the array containing one or more possible audio
-      channel positions that we should add in each value
-      of the array in the given structure.
-</td>
+channel positions that we should add in each value
+of the array in the given structure.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>num_positions</code></em> :</span></p></td>
-<td>the number of values in pos.
-</td>
+<td>the number of values in pos.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_set_channel_positions ()">
+<div class="refsect2">
 <a name="gst-audio-set-channel-positions"></a><h3>gst_audio_set_channel_positions ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_audio_set_channel_positions     (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a> *str</code></em>,
                                                          <em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstmultichannel.html#GstAudioChannelPosition" title="enum GstAudioChannelPosition"><span class="type">GstAudioChannelPosition</span></a> *pos</code></em>);</pre>
@@ -308,21 +299,19 @@ provided <a class="link" href="gst-plugins-base-libs-gstmultichannel.html#GstAud
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>str</code></em> :</span></p></td>
-<td>A <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a> to set channel positions on.
-</td>
+<td>A <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a> to set channel positions on.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pos</code></em> :</span></p></td>
 <td>an array of channel positions. The number of members
-      in this array should be equal to the (fixed!) number
-      of the "channels" field in the given <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a>.
-</td>
+in this array should be equal to the (fixed!) number
+of the "channels" field in the given <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a>.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_set_structure_channel_positions_list ()">
+<div class="refsect2">
 <a name="gst-audio-set-structure-channel-positions-list"></a><h3>gst_audio_set_structure_channel_positions_list ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>                gst_audio_set_structure_channel_positions_list
                                                         (<em class="parameter"><code><a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a> *str</code></em>,
@@ -345,26 +334,23 @@ contain each of the values given in the pos array.
 <td><p><span class="term"><em class="parameter"><code>str</code></em> :</span></p></td>
 <td>
 <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstStructure.html#GstStructure"><span class="type">GstStructure</span></a> to set the list of channel positions
-      on.
-</td>
+on.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pos</code></em> :</span></p></td>
 <td>the array containing one or more possible audio
-      channel positions that we should add in each value
-      of the array in the given structure.
-</td>
+channel positions that we should add in each value
+of the array in the given structure.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>num_positions</code></em> :</span></p></td>
-<td>the number of values in pos.
-</td>
+<td>the number of values in pos.</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <hr>
-<div class="refsect2" title="gst_audio_check_channel_positions ()">
+<div class="refsect2">
 <a name="gst-audio-check-channel-positions"></a><h3>gst_audio_check_channel_positions ()</h3>
 <pre class="programlisting"><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gst_audio_check_channel_positions   (<em class="parameter"><code>const <a class="link" href="gst-plugins-base-libs-gstmultichannel.html#GstAudioChannelPosition" title="enum GstAudioChannelPosition"><span class="type">GstAudioChannelPosition</span></a> *pos</code></em>,
                                                          <em class="parameter"><code><a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> channels</code></em>);</pre>
@@ -387,19 +373,17 @@ positions are valid if:
 <tbody>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>pos</code></em> :</span></p></td>
-<td>An array of <a class="link" href="gst-plugins-base-libs-gstmultichannel.html#GstAudioChannelPosition" title="enum GstAudioChannelPosition"><span class="type">GstAudioChannelPosition</span></a>.
-</td>
+<td>An array of <a class="link" href="gst-plugins-base-libs-gstmultichannel.html#GstAudioChannelPosition" title="enum GstAudioChannelPosition"><span class="type">GstAudioChannelPosition</span></a>.</td>
 </tr>
 <tr>
 <td><p><span class="term"><em class="parameter"><code>channels</code></em> :</span></p></td>
-<td>The number of elements in <em class="parameter"><code>pos</code></em>.
-</td>
+<td>The number of elements in <em class="parameter"><code>pos</code></em>.</td>
 </tr>
 <tr>
 <td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
-<td> <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the given channel positions are valid
-and <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.
-</td>
+<td>
+<a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the given channel positions are valid
+and <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</td>
 </tr>
 </tbody>
 </table></div>
@@ -409,6 +393,6 @@ and <a href="http://library.gnome.org/devel/glib/unstable/glib-Standard-Macros.h
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

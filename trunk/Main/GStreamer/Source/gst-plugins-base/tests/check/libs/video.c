@@ -301,30 +301,25 @@ paint_setup_IMC4 (paintinfo * p, unsigned char *dest)
 static void
 paint_setup_YVU9 (paintinfo * p, unsigned char *dest)
 {
-  int h = GST_ROUND_UP_4 (p->height);
-
   p->yp = dest;
   p->ystride = GST_ROUND_UP_4 (p->width);
-  p->vp = p->yp + p->ystride * GST_ROUND_UP_4 (p->height);
+  p->vp = p->yp + p->ystride * p->height;
   p->vstride = GST_ROUND_UP_4 (p->ystride / 4);
-  p->up = p->vp + p->vstride * GST_ROUND_UP_4 (h / 4);
+  p->up = p->vp + p->vstride * (GST_ROUND_UP_4 (p->height) / 4);
   p->ustride = GST_ROUND_UP_4 (p->ystride / 4);
-  p->endptr = p->up + p->ustride * GST_ROUND_UP_4 (h / 4);
+  p->endptr = p->up + p->ustride * (GST_ROUND_UP_4 (p->height) / 4);
 }
 
 static void
 paint_setup_YUV9 (paintinfo * p, unsigned char *dest)
 {
-  /* untested */
-  int h = GST_ROUND_UP_4 (p->height);
-
   p->yp = dest;
   p->ystride = GST_ROUND_UP_4 (p->width);
-  p->up = p->yp + p->ystride * h;
+  p->up = p->yp + p->ystride * p->height;
   p->ustride = GST_ROUND_UP_4 (p->ystride / 4);
-  p->vp = p->up + p->ustride * GST_ROUND_UP_4 (h / 4);
+  p->vp = p->up + p->ustride * (GST_ROUND_UP_4 (p->height) / 4);
   p->vstride = GST_ROUND_UP_4 (p->ystride / 4);
-  p->endptr = p->vp + p->vstride * GST_ROUND_UP_4 (h / 4);
+  p->endptr = p->vp + p->vstride * (GST_ROUND_UP_4 (p->height) / 4);
 }
 
 #define gst_video_format_is_packed video_format_is_packed
@@ -337,7 +332,10 @@ video_format_is_packed (GstVideoFormat fmt)
     case GST_VIDEO_FORMAT_Y41B:
     case GST_VIDEO_FORMAT_Y42B:
     case GST_VIDEO_FORMAT_Y800:
+    case GST_VIDEO_FORMAT_YUV9:
+    case GST_VIDEO_FORMAT_YVU9:
       return FALSE;
+    case GST_VIDEO_FORMAT_IYU1:
     case GST_VIDEO_FORMAT_YUY2:
     case GST_VIDEO_FORMAT_YVYU:
     case GST_VIDEO_FORMAT_UYVY:
@@ -352,6 +350,7 @@ video_format_is_packed (GstVideoFormat fmt)
     case GST_VIDEO_FORMAT_ABGR:
     case GST_VIDEO_FORMAT_RGB:
     case GST_VIDEO_FORMAT_BGR:
+    case GST_VIDEO_FORMAT_RGB8_PALETTED:
       return TRUE;
     default:
       g_return_val_if_reached (FALSE);
@@ -416,13 +415,13 @@ GST_START_TEST (test_video_formats)
         }
 
         size = gst_video_format_get_size (fmt, w, h);
-        fail_unless_equals_int (size, (unsigned long) paintinfo.endptr);
-
         off0 = gst_video_format_get_component_offset (fmt, 0, w, h);
-        fail_unless_equals_int (off0, (unsigned long) paintinfo.yp);
         off1 = gst_video_format_get_component_offset (fmt, 1, w, h);
-        fail_unless_equals_int (off1, (unsigned long) paintinfo.up);
         off2 = gst_video_format_get_component_offset (fmt, 2, w, h);
+
+        fail_unless_equals_int (size, (unsigned long) paintinfo.endptr);
+        fail_unless_equals_int (off0, (unsigned long) paintinfo.yp);
+        fail_unless_equals_int (off1, (unsigned long) paintinfo.up);
         fail_unless_equals_int (off2, (unsigned long) paintinfo.vp);
 
         /* should be 0 if there's no alpha component */
@@ -476,6 +475,43 @@ GST_START_TEST (test_video_formats)
 }
 
 GST_END_TEST;
+
+GST_START_TEST (test_video_formats_rgb)
+{
+  gint width, height, framerate_n, framerate_d, par_n, par_d;
+  GstCaps *caps =
+      gst_video_format_new_caps (GST_VIDEO_FORMAT_RGB, 800, 600, 0, 1, 1, 1);
+  GstStructure *structure;
+
+  structure = gst_caps_get_structure (caps, 0);
+
+  fail_unless (gst_structure_get_int (structure, "width", &width));
+  fail_unless (gst_structure_get_int (structure, "height", &height));
+  fail_unless (gst_structure_get_fraction (structure, "framerate", &framerate_n,
+          &framerate_d));
+  fail_unless (gst_structure_get_fraction (structure, "pixel-aspect-ratio",
+          &par_n, &par_d));
+
+  fail_unless (width == 800);
+  fail_unless (height == 600);
+  fail_unless (framerate_n == 0);
+  fail_unless (framerate_d == 1);
+  fail_unless (par_n == 1);
+  fail_unless (par_d == 1);
+
+  gst_caps_unref (caps);
+}
+
+GST_END_TEST;
+
+GST_START_TEST (test_video_template_caps)
+{
+  GstCaps *caps = gst_video_format_new_template_caps (GST_VIDEO_FORMAT_RGB);
+  gst_caps_unref (caps);
+}
+
+GST_END_TEST;
+
 
 GST_START_TEST (test_dar_calc)
 {
@@ -720,6 +756,8 @@ video_suite (void)
 
   suite_add_tcase (s, tc_chain);
   tcase_add_test (tc_chain, test_video_formats);
+  tcase_add_test (tc_chain, test_video_formats_rgb);
+  tcase_add_test (tc_chain, test_video_template_caps);
   tcase_add_test (tc_chain, test_dar_calc);
   tcase_add_test (tc_chain, test_parse_caps_rgb);
   tcase_add_test (tc_chain, test_events);
