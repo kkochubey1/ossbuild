@@ -131,7 +131,7 @@ rem audioconvert/gstaudioconvertorc
 
 rem volume/volumeorc
 %GEN_ORC_BAT% gstvolumeorc  %SRC_GST_PLUGINS_BASE_DIR%\gst\volume %GEN_GST_PLUGINS_BASE_DIR%\gst\volume
-goto exit
+
 
 rem gst-plugins-good/gst/udp
 %MK_ENUMS_BAT% UDP "%SRC_GST_PLUGINS_GOOD_DIR%\gst\udp" "%BUILDDIR%\Plugins\Good\gst\udp.mkenum.lst.txt" "%GEN_GST_PLUGINS_GOOD_DIR%\gst\udp\gstudp-enumtypes.h" "%GEN_GST_PLUGINS_GOOD_DIR%\gst\udp\gstudp-enumtypes.c"
@@ -139,6 +139,19 @@ rem gst-plugins-good/gst/udp
 
 rem gst-plugins-good/gst/rtpmanager
 %GEN_MARSHAL_BAT% gst_rtp_bin_marshal "%SRC_GST_PLUGINS_GOOD_DIR%\gst\rtpmanager\gstrtpbin-marshal.list" "%GEN_GST_PLUGINS_GOOD_DIR%\gst\rtpmanager\gstrtpbin-marshal.h" "%GEN_GST_PLUGINS_GOOD_DIR%\gst\rtpmanager\gstrtpbin-marshal.c"
+
+rem gst-plugins-good/ext/cairo
+%GEN_MARSHAL_BAT% gst_cairo_marshal "%SRC_GST_PLUGINS_GOOD_DIR%\ext\cairo\gstcairo-marshal.list" "%GEN_GST_PLUGINS_GOOD_DIR%\ext\cairo\gstcairo-marshal.h" "%GEN_GST_PLUGINS_GOOD_DIR%\ext\cairo\gstcairo-marshal.c"
+
+rem deinterlace/tvtime
+%GEN_ORC_BAT% tvtime  %SRC_GST_PLUGINS_GOOD_DIR%\gst\deinterlace %GEN_GST_PLUGINS_GOOD_DIR%\gst\deinterlace
+
+rem videobox/gstvideoboxorc
+%GEN_ORC_BAT% gstvideoboxorc  %SRC_GST_PLUGINS_GOOD_DIR%\gst\videobox %GEN_GST_PLUGINS_GOOD_DIR%\gst\videobox
+
+rem videomixer/blendorc
+%GEN_ORC_BAT% blendorc  %SRC_GST_PLUGINS_GOOD_DIR%\gst\videomixer %GEN_GST_PLUGINS_GOOD_DIR%\gst\videomixer
+
 
 rem gst-plugins-bad/gst-libs/gst/interfaces
 %MK_ENUMS_BAT% PHOTOGRAPHY "%SRC_GST_PLUGINS_BAD_DIR%\gst-libs\gst\interfaces" "%BUILDDIR%\Libraries\photography.mkenum.lst.txt" "%GEN_GST_PLUGINS_BAD_DIR%\gst-libs\gst\interfaces\photography-enumtypes.h" "%GEN_GST_PLUGINS_BAD_DIR%\gst-libs\gst\interfaces\photography-enumtypes.c"
@@ -195,15 +208,6 @@ rem gst-python/gst/gst
 
 rem farsight2/python
 %GEN_PYTHON_FS_BAT% "%SRC_GST_PYTHON_DIR%" "%GEN_FS_PYTHON_DIR%"
-
-rem deinterlace/tvtime
-%GEN_ORC_BAT% tvtime  %SRC_GST_PLUGINS_GOOD_DIR%\gst\deinterlace %GEN_GST_PLUGINS_GOOD_DIR%\gst\deinterlace
-
-rem videobox/gstvideoboxorc
-%GEN_ORC_BAT% gstvideoboxorc  %SRC_GST_PLUGINS_GOOD_DIR%\gst\videobox %GEN_GST_PLUGINS_GOOD_DIR%\gst\videobox
-
-rem videomixer/blendorc
-%GEN_ORC_BAT% blendorc  %SRC_GST_PLUGINS_GOOD_DIR%\gst\videomixer %GEN_GST_PLUGINS_GOOD_DIR%\gst\videomixer
 
 
 goto exit

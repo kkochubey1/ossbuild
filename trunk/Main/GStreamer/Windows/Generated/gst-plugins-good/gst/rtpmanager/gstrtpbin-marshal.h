@@ -74,6 +74,14 @@ extern void gst_rtp_bin_marshal_UINT64__BOOLEAN_UINT64 (GClosure     *closure,
                                                         gpointer      marshal_data);
 #define gst_rtp_bin_marshal_UINT64__BOOL_UINT64	gst_rtp_bin_marshal_UINT64__BOOLEAN_UINT64
 
+/* VOID:UINT64 */
+extern void gst_rtp_bin_marshal_VOID__UINT64 (GClosure     *closure,
+                                              GValue       *return_value,
+                                              guint         n_param_values,
+                                              const GValue *param_values,
+                                              gpointer      invocation_hint,
+                                              gpointer      marshal_data);
+
 G_END_DECLS
 
 #endif /* __gst_rtp_bin_marshal_MARSHAL_H__ */

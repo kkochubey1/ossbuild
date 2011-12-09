@@ -1156,6 +1156,8 @@ gst_waveparse_ignore_chunk (GstWavParse * wav, GstBuffer * buf, guint32 tag,
   return TRUE;
 }
 
+#define MAX_BUFFER_SIZE 4096
+
 static GstFlowReturn
 gst_wavparse_stream_headers (GstWavParse * wav)
 {
@@ -1578,6 +1580,19 @@ gst_wavparse_stream_headers (GstWavParse * wav)
 
   wav->state = GST_WAVPARSE_DATA;
 
+  /* determine reasonable max buffer size,
+   * that is, buffers not too small either size or time wise
+   * so we do not end up with too many of them */
+  /* var abuse */
+  upstream_size = 0;
+  gst_wavparse_time_to_bytepos (wav, 40 * GST_MSECOND, &upstream_size);
+  wav->max_buf_size = upstream_size;
+  wav->max_buf_size = MAX (wav->max_buf_size, MAX_BUFFER_SIZE);
+  if (wav->blockalign > 0)
+    wav->max_buf_size -= (wav->max_buf_size % wav->blockalign);
+
+  GST_DEBUG_OBJECT (wav, "max buffer size %d", wav->max_buf_size);
+
   return GST_FLOW_OK;
 
   /* ERROR */
@@ -1723,6 +1738,27 @@ gst_wavparse_send_event (GstElement * element, GstEvent * event)
   return res;
 }
 
+static gboolean
+gst_wavparse_have_dts_caps (const GstCaps * caps, GstTypeFindProbability prob)
+{
+  GstStructure *s;
+
+  s = gst_caps_get_structure (caps, 0);
+  if (!gst_structure_has_name (s, "audio/x-dts"))
+    return FALSE;
+  if (prob >= GST_TYPE_FIND_LIKELY)
+    return TRUE;
+  /* DTS at non-0 offsets and without second sync may yield POSSIBLE .. */
+  if (prob < GST_TYPE_FIND_POSSIBLE)
+    return FALSE;
+  /* .. in which case we want at least a valid-looking rate and channels */
+  if (!gst_structure_has_field (s, "channels"))
+    return FALSE;
+  /* and for extra assurance we could also check the rate from the DTS frame
+   * against the one in the wav header, but for now let's not do that */
+  return gst_structure_has_field (s, "rate");
+}
+
 static void
 gst_wavparse_add_src_pad (GstWavParse * wav, GstBuffer * buf)
 {
@@ -1738,9 +1774,8 @@ gst_wavparse_add_src_pad (GstWavParse * wav, GstBuffer * buf)
 
       tf_caps = gst_type_find_helper_for_buffer (GST_OBJECT (wav), buf, &prob);
       if (tf_caps != NULL) {
-        s = gst_caps_get_structure (tf_caps, 0);
-        if (gst_structure_has_name (s, "audio/x-dts")
-            && prob >= GST_TYPE_FIND_LIKELY) {
+        GST_LOG ("typefind caps = %" GST_PTR_FORMAT ", P=%d", tf_caps, prob);
+        if (gst_wavparse_have_dts_caps (tf_caps, prob)) {
           GST_INFO_OBJECT (wav, "Found DTS marker in file marked as raw PCM");
           gst_caps_unref (wav->caps);
           wav->caps = tf_caps;
@@ -1782,8 +1817,6 @@ gst_wavparse_add_src_pad (GstWavParse * wav, GstBuffer * buf)
   }
 }
 
-#define MAX_BUFFER_SIZE 4096
-
 static GstFlowReturn
 gst_wavparse_stream_data (GstWavParse * wav)
 {
@@ -1806,7 +1839,7 @@ iterate_adapter:
    * amounts of data regardless of the playback rate */
   desired =
       MIN (gst_guint64_to_gdouble (wav->dataleft),
-      MAX_BUFFER_SIZE * wav->segment.abs_rate);
+      wav->max_buf_size * wav->segment.abs_rate);
 
   if (desired >= wav->blockalign && wav->blockalign > 0)
     desired -= (desired % wav->blockalign);

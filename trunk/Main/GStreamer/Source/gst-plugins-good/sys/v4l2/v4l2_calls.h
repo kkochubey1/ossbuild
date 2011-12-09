@@ -30,7 +30,6 @@
 #  include <libv4l2.h>
 #else
 #  include <sys/ioctl.h>
-#  include <linux/videodev.h>
 #  include <linux/videodev2.h>
 #  define v4l2_fd_open(fd, flags) (fd)
 #  define v4l2_close    close
@@ -111,12 +110,10 @@ gboolean        gst_v4l2_get_input              (GstV4l2Object * v4l2object,
                                                  gint * input);
 gboolean        gst_v4l2_set_input              (GstV4l2Object * v4l2object,
                                                  gint input);
-#if 0 /* output not handled by now */
 gboolean	gst_v4l2_get_output		(GstV4l2Object *v4l2object,
 						 gint           *output);
 gboolean	gst_v4l2_set_output		(GstV4l2Object *v4l2object,
 						 gint            output);
-#endif /* #if 0 - output not handled by now */
 
 /* frequency control */
 gboolean	gst_v4l2_get_frequency		(GstV4l2Object *v4l2object,

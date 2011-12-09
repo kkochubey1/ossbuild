@@ -5,7 +5,7 @@ dnl please read gstreamer/docs/random/autotools before changing this file
 dnl initialize autoconf
 dnl releases only do -Wall, git and prerelease does -Werror too
 dnl use a three digit version number for releases, and four for git/pre
-AC_INIT(GStreamer Good Plug-ins, 0.10.26,
+AC_INIT(GStreamer Good Plug-ins, 0.10.30,
     http://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer,
     gst-plugins-good)
 
@@ -43,6 +43,8 @@ dnl we override it here if we need to for the release candidate of new series
 GST_MAJORMINOR=0.10
 AC_SUBST(GST_MAJORMINOR)
 
+AG_GST_LIBTOOL_PREPARE
+
 dnl FIXME: this macro doesn't actually work;
 dnl the generated libtool script has no support for the listed tags.
 dnl So this needs to be fixed first if we want to use this
@@ -52,8 +54,8 @@ AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 
 dnl *** required versions of GStreamer stuff ***
-GST_REQ=0.10.31
-GSTPB_REQ=0.10.31
+GST_REQ=0.10.33
+GSTPB_REQ=0.10.33
 
 dnl *** autotools stuff ****
 
@@ -205,7 +207,7 @@ AC_CHECK_TYPE([struct ip_mreqn], [
 dnl *** checks for dependency libraries ***
 
 dnl GLib is required
-AG_GST_GLIB_CHECK([2.18])
+AG_GST_GLIB_CHECK([2.20])
 
 dnl Orc
 ORC_CHECK([0.4.11])
@@ -256,10 +258,13 @@ if test "x$BUILD_EXAMPLES" = "xyes"; then
      GTK_REQ=$GTK2_REQ])
   AC_MSG_RESULT([$with_gtk (>= $GTK_REQ)])
   PKG_CHECK_MODULES(GTK, gtk+-$with_gtk >= $GTK_REQ, HAVE_GTK=yes, HAVE_GTK=no)
+  dnl some examples need gtk+-x11
+  PKG_CHECK_MODULES(GTK_X11, gtk+-x11-$with_gtk >= $GTK_REQ, HAVE_GTK_X11=yes, HAVE_GTK_X11=no)
   AC_SUBST(GTK_LIBS)
   AC_SUBST(GTK_CFLAGS)
 fi
 AM_CONDITIONAL(HAVE_GTK, test "x$HAVE_GTK" = "xyes")
+AM_CONDITIONAL(HAVE_GTK_X11, test "x$HAVE_GTK_X11" = "xyes")
 
 dnl should we install schemas ?
 translit(dnm, m, l) AM_CONDITIONAL(USE_GCONFTOOL, true)
@@ -291,12 +296,22 @@ AG_GST_SET_PACKAGE_RELEASE_DATETIME_WITH_NANO([$PACKAGE_VERSION_NANO],
 
 dnl define an ERROR_CFLAGS Makefile variable
 dnl -Wundef: too many broken headers
-dnl -Waggregate-return: causes problems with ObjC code like in osxvideosink
-AG_GST_SET_ERROR_CFLAGS($GST_GIT, [
+if test "x$HAVE_OSX_VIDEO" != "xyes"; then
+  AG_GST_SET_ERROR_CFLAGS($GST_GIT, [
         -Wmissing-declarations -Wmissing-prototypes -Wredundant-decls
-        -Wwrite-strings -Wold-style-definition
+        -Wwrite-strings -Wold-style-definition -Waggregate-return
         -Winit-self -Wmissing-include-dirs -Waddress -Wno-multichar
         -Wnested-externs ])
+else
+  dnl work-around for us passing GST_CFLAGS to the ObjC-compiler, which
+  dnl doesn't understand all warning flags that the C compiler knows about
+  dnl (e.g. -Waddress) or causes problems with some flags (-Waggregate-return)
+  AG_GST_SET_ERROR_CFLAGS($GST_GIT, [
+        -Wmissing-declarations -Wmissing-prototypes -Wredundant-decls
+        -Wwrite-strings -Wold-style-definition
+        -Winit-self -Wmissing-include-dirs -Wno-multichar
+        -Wnested-externs ])
+fi
 
 dnl define an ERROR_CXXFLAGS Makefile variable
 AG_GST_SET_ERROR_CXXFLAGS($GST_GIT, [
@@ -318,6 +333,7 @@ AG_GST_CHECK_PLUGIN(videofilter)
 AG_GST_CHECK_PLUGIN(alpha)
 AG_GST_CHECK_PLUGIN(apetag)
 AG_GST_CHECK_PLUGIN(audiofx)
+AG_GST_CHECK_PLUGIN(audioparsers)
 AG_GST_CHECK_PLUGIN(auparse)
 AG_GST_CHECK_PLUGIN(autodetect)
 AG_GST_CHECK_PLUGIN(avi)
@@ -334,13 +350,13 @@ AG_GST_CHECK_PLUGIN(flx)
 AG_GST_CHECK_PLUGIN(goom)
 AG_GST_CHECK_PLUGIN(goom2k1)
 AG_GST_CHECK_PLUGIN(imagefreeze)
+AG_GST_CHECK_PLUGIN(isomp4)
 AG_GST_CHECK_PLUGIN(law)
 AG_GST_CHECK_PLUGIN(level)
 AG_GST_CHECK_PLUGIN(matroska)
 AG_GST_CHECK_PLUGIN(monoscope)
 AG_GST_CHECK_PLUGIN(multifile)
 AG_GST_CHECK_PLUGIN(multipart)
-AG_GST_CHECK_PLUGIN(qtdemux)
 AG_GST_CHECK_PLUGIN(replaygain)
 AG_GST_CHECK_PLUGIN(rtp)
 AG_GST_CHECK_PLUGIN(rtpmanager)
@@ -713,6 +729,13 @@ AG_GST_CHECK_FEATURE(CAIRO, [Cairo graphics rendering], cairo, [
   AG_GST_PKG_CHECK_MODULES(CAIRO, cairo >= 1.0.0)
 ])
 
+dnl *** cairo-gobject ***
+translit(dnm, m, l) AM_CONDITIONAL(USE_CAIRO_GOBJECT, true)
+AG_GST_CHECK_FEATURE(CAIRO_GOBJECT, 
+  [Cairo graphics rendering gobject bindings], cairooverlay, [
+  AG_GST_PKG_CHECK_MODULES(CAIRO_GOBJECT, cairo-gobject >= 1.10.0)
+])
+
 dnl **** ESound ****
 translit(dnm, m, l) AM_CONDITIONAL(USE_ESD, true)
 AG_GST_CHECK_FEATURE(ESD, [ESounD sound daemon], esdsink, [
@@ -746,6 +769,24 @@ dnl *** HAL ***
 translit(dnm, m, l) AM_CONDITIONAL(USE_HAL, true)
 AG_GST_CHECK_FEATURE(HAL, [HAL libraries], halelements, [
   AG_GST_PKG_CHECK_MODULES(HAL, [hal >= 0.5.6, dbus-1 >= 0.32])
+])
+
+dnl *** Jack ***
+translit(dnm, m, l) AM_CONDITIONAL(USE_JACK, true)
+AG_GST_CHECK_FEATURE(JACK, Jack, jack, [
+  PKG_CHECK_MODULES(JACK, jack >= 0.99.10, HAVE_JACK="yes", HAVE_JACK="no")
+  AC_SUBST(JACK_CFLAGS)
+  AC_SUBST(JACK_LIBS)
+
+  AG_GST_PKG_CHECK_MODULES(JACK_0_120_1, jack >= 0.120.1 jack < 1.0)
+  if test x$HAVE_JACK_0_120_1 = xyes; then
+    AC_DEFINE(HAVE_JACK_0_120_1, 1, [defined if jack >= 0.120.1 is available])
+  fi
+  AG_GST_PKG_CHECK_MODULES(JACK_1_9_7, jack >= 1.9.7)
+  if test x$HAVE_JACK_1_9_7 = xyes; then
+    AC_DEFINE(HAVE_JACK_1_9_7, 1, [defined if jack >= 1.9.7 is available])
+  fi
+
 ])
 
 dnl *** jpeg ***
@@ -901,7 +942,6 @@ AG_GST_CHECK_FEATURE(SOUP, [soup http client plugin (2.4)], souphttpsrc, [
   ],[
     PKG_CHECK_MODULES(SOUP, libsoup-2.4 >= 2.26, HAVE_SOUP="yes", [
       HAVE_SOUP="no"
-      AC_MSG_RESULT(no)
     ])
   ])
   AC_SUBST(SOUP_CFLAGS)
@@ -978,7 +1018,6 @@ AG_GST_CHECK_FEATURE(WAVPACK, [wavpack plug-in], wavpack, [
       AC_DEFINE(WAVPACK_OLD_API, 1, [old wavpack API])
     ],[
       HAVE_WAVPACK=no
-      AC_MSG_RESULT(no)
     ])
   ])
   AC_SUBST(WAVPACK_CFLAGS)
@@ -1011,6 +1050,7 @@ AM_CONDITIONAL(USE_AALIB, false)
 AM_CONDITIONAL(USE_ANNODEX, false)
 AM_CONDITIONAL(USE_BZ2, false)
 AM_CONDITIONAL(USE_CAIRO, false)
+AM_CONDITIONAL(USE_CAIRO_GOBJECT, false)
 AM_CONDITIONAL(USE_DIRECTSOUND, false)
 AM_CONDITIONAL(USE_DV1394, false)
 AM_CONDITIONAL(USE_ESD, false)
@@ -1020,6 +1060,7 @@ AM_CONDITIONAL(USE_GCONFTOOL, false)
 AM_CONDITIONAL(USE_GDK_PIXBUF, false)
 AM_CONDITIONAL(USE_GST_V4L2, false)
 AM_CONDITIONAL(USE_HAL, false)
+AM_CONDITIONAL(USE_JACK, false)
 AM_CONDITIONAL(USE_JPEG, false)
 AM_CONDITIONAL(USE_LIBCACA, false)
 AM_CONDITIONAL(USE_LIBDV, false)
@@ -1094,7 +1135,7 @@ AC_SUBST(GST_ALL_LDFLAGS)
 
 dnl this really should only contain flags, not libs - they get added before
 dnl whatevertarget_LIBS and -L flags here affect the rest of the linking
-GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^[_]*gst_plugin_desc\$\$' $GST_ALL_LDFLAGS"
+GST_PLUGIN_LDFLAGS="-module -avoid-version -export-symbols-regex '^[_]*gst_plugin_desc.*' $GST_ALL_LDFLAGS"
 AC_SUBST(GST_PLUGIN_LDFLAGS)
 
 dnl *** output files ***
@@ -1106,6 +1147,7 @@ gst/Makefile
 gst/alpha/Makefile
 gst/apetag/Makefile
 gst/audiofx/Makefile
+gst/audioparsers/Makefile
 gst/auparse/Makefile
 gst/autodetect/Makefile
 gst/avi/Makefile
@@ -1115,19 +1157,19 @@ gst/debugutils/Makefile
 gst/effectv/Makefile
 gst/equalizer/Makefile
 gst/flv/Makefile
+gst/goom/Makefile
+gst/goom2k1/Makefile
 gst/id3demux/Makefile
 gst/icydemux/Makefile
 gst/imagefreeze/Makefile
 gst/interleave/Makefile
-gst/goom/Makefile
-gst/goom2k1/Makefile
+gst/isomp4/Makefile
 gst/law/Makefile
 gst/level/Makefile
 gst/matroska/Makefile
 gst/monoscope/Makefile
 gst/multifile/Makefile
 gst/multipart/Makefile
-gst/qtdemux/Makefile
 gst/replaygain/Makefile
 gst/rtp/Makefile
 gst/rtpmanager/Makefile
@@ -1144,7 +1186,6 @@ gst/wavenc/Makefile
 gst/wavparse/Makefile
 gst/flx/Makefile
 gst/y4m/Makefile
-ext/jpeg/Makefile
 ext/Makefile
 ext/aalib/Makefile
 ext/annodex/Makefile
@@ -1155,6 +1196,8 @@ ext/flac/Makefile
 ext/gconf/Makefile
 ext/gdk_pixbuf/Makefile
 ext/hal/Makefile
+ext/jack/Makefile
+ext/jpeg/Makefile
 ext/libcaca/Makefile
 ext/libpng/Makefile
 ext/pulse/Makefile
@@ -1179,7 +1222,9 @@ tests/Makefile
 tests/check/Makefile
 tests/examples/Makefile
 tests/examples/audiofx/Makefile
+tests/examples/cairo/Makefile
 tests/examples/equalizer/Makefile
+tests/examples/jack/Makefile
 tests/examples/level/Makefile
 tests/examples/pulse/Makefile
 tests/examples/rtp/Makefile
@@ -1236,7 +1281,7 @@ sed \
     -e 's/.* PLUGINDIR$/#ifdef _DEBUG\n#  define PLUGINDIR PREFIX "\\\\debug\\\\lib\\\\gstreamer-0.10"\n#else\n#  define PLUGINDIR PREFIX "\\\\lib\\\\gstreamer-0.10"\n#endif/' \
     -e 's/.* USE_BINARY_REGISTRY$/#define USE_BINARY_REGISTRY/' \
     -e 's/.* VERSION$/#define VERSION "'$VERSION'"/' \
-    -e "s/.* DEFAULT_AUDIOSINK$/#define DEFAULT_AUDIOSINK \"directaudiosink\"/" \
+    -e "s/.* DEFAULT_AUDIOSINK$/#define DEFAULT_AUDIOSINK \"directsoundsink\"/" \
     -e "s/.* DEFAULT_AUDIOSRC$/#define DEFAULT_AUDIOSRC \"audiotestsrc\"/" \
     -e "s/.* DEFAULT_VIDEOSRC$/#define DEFAULT_VIDEOSRC \"videotestsrc\"/" \
     -e "s/.* DEFAULT_VISUALIZER$/#define DEFAULT_VISUALIZER \"goom\"/" \

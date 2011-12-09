@@ -109,6 +109,7 @@ struct _GstFlvDemux
   gboolean got_par;
   GstBuffer * video_codec_data;
   GstClockTime video_start;
+  gdouble framerate;
 
   gboolean random_access;
   gboolean need_header;
@@ -123,6 +124,7 @@ struct _GstFlvDemux
   gboolean seeking;
   gboolean building_index;
   gboolean indexed; /* TRUE if index is completely built */
+  gboolean upstream_seekable; /* TRUE if upstream is seekable */
   gint64 file_size;
   GstEvent *seek_event;
   gint64 seek_time;

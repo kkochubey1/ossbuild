@@ -67,7 +67,7 @@ gst_rtp_bv_depay_base_init (gpointer klass)
   gst_element_class_add_pad_template (element_class,
       gst_static_pad_template_get (&gst_rtp_bv_depay_sink_template));
   gst_element_class_set_details_simple (element_class,
-      "RTP BroadcomVoice depayloader", "Codec/Depayloader/Network",
+      "RTP BroadcomVoice depayloader", "Codec/Depayloader/Network/RTP",
       "Extracts BroadcomVoice audio from RTP packets (RFC 4298)",
       "Wim Taymans <wim.taymans@collabora.co.uk>");
 }
@@ -75,10 +75,8 @@ gst_rtp_bv_depay_base_init (gpointer klass)
 static void
 gst_rtp_bv_depay_class_init (GstRTPBVDepayClass * klass)
 {
-  GObjectClass *gobject_class;
   GstBaseRTPDepayloadClass *gstbasertpdepayload_class;
 
-  gobject_class = (GObjectClass *) klass;
   gstbasertpdepayload_class = (GstBaseRTPDepayloadClass *) klass;
 
   gstbasertpdepayload_class->process = gst_rtp_bv_depay_process;
@@ -167,7 +165,7 @@ gst_rtp_bv_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
 
   outbuf = gst_rtp_buffer_get_payload_buffer (buf);
 
-  if (marker) {
+  if (marker && outbuf) {
     /* mark start of talkspurt with DISCONT */
     GST_BUFFER_FLAG_SET (outbuf, GST_BUFFER_FLAG_DISCONT);
   }
@@ -179,5 +177,5 @@ gboolean
 gst_rtp_bv_depay_plugin_init (GstPlugin * plugin)
 {
   return gst_element_register (plugin, "rtpbvdepay",
-      GST_RANK_MARGINAL, GST_TYPE_RTP_BV_DEPAY);
+      GST_RANK_SECONDARY, GST_TYPE_RTP_BV_DEPAY);
 }

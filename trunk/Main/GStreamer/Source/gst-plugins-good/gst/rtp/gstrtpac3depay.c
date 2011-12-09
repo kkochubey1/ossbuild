@@ -66,7 +66,7 @@ gst_rtp_ac3_depay_base_init (gpointer klass)
       gst_static_pad_template_get (&gst_rtp_ac3_depay_sink_template));
 
   gst_element_class_set_details_simple (element_class, "RTP AC3 depayloader",
-      "Codec/Depayloader/Network",
+      "Codec/Depayloader/Network/RTP",
       "Extracts AC3 audio from RTP packets (RFC 4184)",
       "Wim Taymans <wim.taymans@gmail.com>");
 }
@@ -82,7 +82,7 @@ gst_rtp_ac3_depay_class_init (GstRtpAC3DepayClass * klass)
   gstbasertpdepayload_class->process = gst_rtp_ac3_depay_process;
 
   GST_DEBUG_CATEGORY_INIT (rtpac3depay_debug, "rtpac3depay", 0,
-      "MPEG Audio RTP Depayloader");
+      "AC3 Audio RTP Depayloader");
 }
 
 static void
@@ -193,8 +193,9 @@ gst_rtp_ac3_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
     /* We don't bother with fragmented packets yet */
     outbuf = gst_rtp_buffer_get_payload_subbuffer (buf, 2, -1);
 
-    GST_DEBUG_OBJECT (rtpac3depay, "pushing buffer of size %d",
-        GST_BUFFER_SIZE (outbuf));
+    if (outbuf)
+        GST_DEBUG_OBJECT (rtpac3depay, "pushing buffer of size %d",
+            GST_BUFFER_SIZE (outbuf));
 
     return outbuf;
   }
@@ -214,5 +215,5 @@ gboolean
 gst_rtp_ac3_depay_plugin_init (GstPlugin * plugin)
 {
   return gst_element_register (plugin, "rtpac3depay",
-      GST_RANK_MARGINAL, GST_TYPE_RTP_AC3_DEPAY);
+      GST_RANK_SECONDARY, GST_TYPE_RTP_AC3_DEPAY);
 }

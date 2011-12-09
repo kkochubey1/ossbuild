@@ -32,7 +32,6 @@ bus_handler (GstBus * bus, GstMessage * message, gpointer data)
     case GST_MESSAGE_WARNING:
     case GST_MESSAGE_ERROR:{
       GError *gerror;
-
       gchar *debug;
 
       gst_message_parse_error (message, &gerror, &debug);
@@ -90,16 +89,13 @@ fakesink_handoff (GstElement * object, GstBuffer * buffer, GstPad * pad,
 GST_START_TEST (test_encode_decode)
 {
   GstElement *pipeline;
-
   GstElement *audiotestsrc, *identity1, *wavpackenc, *identity2, *wavpackdec,
       *identity3, *fakesink;
   GstAdapter *srcadapter, *sinkadapter;
-
   GstBus *bus;
-
   GMainLoop *loop;
-
   GstBuffer *in, *out;
+  guint bus_watch = 0;
 
   srcadapter = gst_adapter_new ();
   fail_unless (srcadapter != NULL);
@@ -153,7 +149,7 @@ GST_START_TEST (test_encode_decode)
 
   bus = gst_element_get_bus (pipeline);
   fail_unless (bus != NULL);
-  gst_bus_add_watch (bus, bus_handler, loop);
+  bus_watch = gst_bus_add_watch (bus, bus_handler, loop);
   gst_object_unref (bus);
 
   had_first_buffer = FALSE;
@@ -184,6 +180,7 @@ GST_START_TEST (test_encode_decode)
   g_main_loop_unref (loop);
   g_object_unref (srcadapter);
   g_object_unref (sinkadapter);
+  g_source_remove (bus_watch);
 }
 
 GST_END_TEST;
@@ -192,7 +189,6 @@ static Suite *
 wavpack_suite (void)
 {
   Suite *s = suite_create ("Wavpack");
-
   TCase *tc_chain = tcase_create ("linear");
 
   /* time out after 60s, not the default 3 */
@@ -208,9 +204,7 @@ int
 main (int argc, char **argv)
 {
   int nf;
-
   Suite *s = wavpack_suite ();
-
   SRunner *sr = srunner_create (s);
 
   gst_check_init (&argc, &argv);

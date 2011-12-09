@@ -49,7 +49,7 @@
 #define GST_PACKAGE_ORIGIN "http://code.google.com/p/ossbuild/"
 
 /* GStreamer package release date/time for plugins as YYYY-MM-DD */
-#define GST_PACKAGE_RELEASE_DATETIME "2010-12-01"
+#define GST_PACKAGE_RELEASE_DATETIME "2011-06-15"
 
 /* struct v4l2_buffer missing */
 #undef GST_V4L2_MISSING_BUFDECL
@@ -71,6 +71,10 @@
 
 /* Define to enable Cairo graphics rendering (used by cairo). */
 #undef HAVE_CAIRO
+
+/* Define to enable Cairo graphics rendering gobject bindings (used by
+   cairooverlay). */
+#undef HAVE_CAIRO_GOBJECT
 
 /* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
    CoreFoundation framework. */
@@ -203,6 +207,15 @@
 
 /* Define to 1 if you have the `isinf' function. */
 #undef HAVE_ISINF
+
+/* Define to enable Jack (used by jack). */
+#undef HAVE_JACK
+
+/* defined if jack >= 0.120.1 is available */
+#undef HAVE_JACK_0_120_1
+
+/* defined if jack >= 1.9.7 is available */
+#undef HAVE_JACK_1_9_7
 
 /* Define to enable jpeg library (used by jpeg). */
 #undef HAVE_JPEG
@@ -383,7 +396,7 @@
 #define PACKAGE_NAME "GStreamer Good Plug-ins"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "GStreamer Good Plug-ins 0.10.26"
+#define PACKAGE_STRING "GStreamer Good Plug-ins 0.10.30"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "gst-plugins-good"
@@ -392,7 +405,7 @@
 #undef PACKAGE_URL
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.10.26"
+#define PACKAGE_VERSION "0.10.30"
 
 /* directory where plugins are located */
 #ifdef _DEBUG
@@ -423,7 +436,7 @@
 #undef STDC_HEADERS
 
 /* Version number of package */
-#define VERSION "0.10.26"
+#define VERSION "0.10.30"
 
 /* old wavpack API */
 #undef WAVPACK_OLD_API

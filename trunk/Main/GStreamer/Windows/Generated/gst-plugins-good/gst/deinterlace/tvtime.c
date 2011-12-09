@@ -4,9 +4,6 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#ifndef DISABLE_ORC
-#include <orc/orc.h>
-#endif
 #include <glib.h>
 
 #ifndef _ORC_INTEGER_TYPEDEFS_
@@ -32,6 +29,7 @@ typedef unsigned __int16 orc_uint16;
 typedef unsigned __int32 orc_uint32;
 typedef unsigned __int64 orc_uint64;
 #define ORC_UINT64_C(x) (x##Ui64)
+#define inline __inline
 #else
 #include <limits.h>
 typedef signed char orc_int8;
@@ -54,11 +52,23 @@ typedef union { orc_int16 i; orc_int8 x2[2]; } orc_union16;
 typedef union { orc_int32 i; float f; orc_int16 x2[2]; orc_int8 x4[4]; } orc_union32;
 typedef union { orc_int64 i; double f; orc_int32 x2[2]; float x2f[2]; orc_int16 x4[4]; } orc_union64;
 #endif
+#ifndef ORC_RESTRICT
+#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#define ORC_RESTRICT restrict
+#elif defined(__GNUC__) && __GNUC__ >= 4
+#define ORC_RESTRICT __restrict__
+#else
+#define ORC_RESTRICT
+#endif
+#endif
 
-void deinterlace_line_vfir (guint8 * d1, const guint8 * s1, const guint8 * s2, const guint8 * s3, const guint8 * s4, const guint8 * s5, int n);
-void deinterlace_line_linear (guint8 * d1, const guint8 * s1, const guint8 * s2, int n);
-void deinterlace_line_linear_blend (guint8 * d1, const guint8 * s1, const guint8 * s2, const guint8 * s3, int n);
-void deinterlace_line_greedy (orc_uint8 * d1, const orc_uint8 * s1, const orc_uint8 * s2, const orc_uint8 * s3, const orc_uint8 * s4, int p1, int n);
+#ifndef DISABLE_ORC
+#include <orc/orc.h>
+#endif
+void deinterlace_line_vfir (guint8 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2, const guint8 * ORC_RESTRICT s3, const guint8 * ORC_RESTRICT s4, const guint8 * ORC_RESTRICT s5, int n);
+void deinterlace_line_linear (guint8 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2, int n);
+void deinterlace_line_linear_blend (guint8 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2, const guint8 * ORC_RESTRICT s3, int n);
+void deinterlace_line_greedy (orc_uint8 * ORC_RESTRICT d1, const orc_uint8 * ORC_RESTRICT s1, const orc_uint8 * ORC_RESTRICT s2, const orc_uint8 * ORC_RESTRICT s3, const orc_uint8 * ORC_RESTRICT s4, int p1, int n);
 
 
 /* begin Orc C target preamble */
@@ -92,12 +102,14 @@ void deinterlace_line_greedy (orc_uint8 * d1, const orc_uint8 * s1, const orc_ui
 #define ORC_ISNAN(x) ((((x)&0x7f800000) == 0x7f800000) && (((x)&0x007fffff) != 0))
 #define ORC_DENORMAL_DOUBLE(x) ((x) & ((((x)&ORC_UINT64_C(0x7ff0000000000000)) == 0) ? ORC_UINT64_C(0xfff0000000000000) : ORC_UINT64_C(0xffffffffffffffff)))
 #define ORC_ISNAN_DOUBLE(x) ((((x)&ORC_UINT64_C(0x7ff0000000000000)) == ORC_UINT64_C(0x7ff0000000000000)) && (((x)&ORC_UINT64_C(0x000fffffffffffff)) != 0))
+#ifndef ORC_RESTRICT
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 #define ORC_RESTRICT restrict
 #elif defined(__GNUC__) && __GNUC__ >= 4
 #define ORC_RESTRICT __restrict__
 #else
 #define ORC_RESTRICT
+#endif
 #endif
 /* end Orc C target preamble */
 
@@ -106,7 +118,7 @@ void deinterlace_line_greedy (orc_uint8 * d1, const orc_uint8 * s1, const orc_ui
 /* deinterlace_line_vfir */
 #ifdef DISABLE_ORC
 void
-deinterlace_line_vfir (guint8 * d1, const guint8 * s1, const guint8 * s2, const guint8 * s3, const guint8 * s4, const guint8 * s5, int n){
+deinterlace_line_vfir (guint8 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2, const guint8 * ORC_RESTRICT s3, const guint8 * ORC_RESTRICT s4, const guint8 * ORC_RESTRICT s5, int n){
   int i;
   orc_int8 * ORC_RESTRICT ptr0;
   const orc_int8 * ORC_RESTRICT ptr4;
@@ -143,7 +155,7 @@ deinterlace_line_vfir (guint8 * d1, const guint8 * s1, const guint8 * s2, const 
   ptr8 = (orc_int8 *)s5;
 
     /* 16: loadpw */
-    var40.i = 0x00000004; /* 4 or 1.97626e-323f */
+    var40.i = (int)0x00000004; /* 4 or 1.97626e-323f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -231,7 +243,7 @@ _backup_deinterlace_line_vfir (OrcExecutor * ORC_RESTRICT ex)
   ptr8 = (orc_int8 *)ex->arrays[8];
 
     /* 16: loadpw */
-    var40.i = 0x00000004; /* 4 or 1.97626e-323f */
+    var40.i = (int)0x00000004; /* 4 or 1.97626e-323f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -279,17 +291,17 @@ _backup_deinterlace_line_vfir (OrcExecutor * ORC_RESTRICT ex)
 }
 
 void
-deinterlace_line_vfir (guint8 * d1, const guint8 * s1, const guint8 * s2, const guint8 * s3, const guint8 * s4, const guint8 * s5, int n)
+deinterlace_line_vfir (guint8 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2, const guint8 * ORC_RESTRICT s3, const guint8 * ORC_RESTRICT s4, const guint8 * ORC_RESTRICT s5, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  static int p_inited = 0;
-  static OrcProgram *p = 0;
+  static volatile int p_inited = 0;
+  static OrcCode *c = 0;
   void (*func) (OrcExecutor *);
 
   if (!p_inited) {
     orc_once_mutex_lock ();
     if (!p_inited) {
-      OrcCompileResult result;
+      OrcProgram *p;
 
       p = orc_program_new ();
       orc_program_set_name (p, "deinterlace_line_vfir");
@@ -323,12 +335,15 @@ deinterlace_line_vfir (guint8 * d1, const guint8 * s1, const guint8 * s2, const 
       orc_program_append_2 (p, "shrsw", 0, ORC_VAR_T2, ORC_VAR_T2, ORC_VAR_C4, ORC_VAR_D1);
       orc_program_append_2 (p, "convsuswb", 0, ORC_VAR_D1, ORC_VAR_T2, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+      orc_program_compile (p);
+      c = orc_program_take_code (p);
+      orc_program_free (p);
     }
     p_inited = TRUE;
     orc_once_mutex_unlock ();
   }
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
@@ -338,7 +353,7 @@ deinterlace_line_vfir (guint8 * d1, const guint8 * s1, const guint8 * s2, const 
   ex->arrays[ORC_VAR_S4] = (void *)s4;
   ex->arrays[ORC_VAR_S5] = (void *)s5;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -347,7 +362,7 @@ deinterlace_line_vfir (guint8 * d1, const guint8 * s1, const guint8 * s2, const 
 /* deinterlace_line_linear */
 #ifdef DISABLE_ORC
 void
-deinterlace_line_linear (guint8 * d1, const guint8 * s1, const guint8 * s2, int n){
+deinterlace_line_linear (guint8 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2, int n){
   int i;
   orc_int8 * ORC_RESTRICT ptr0;
   const orc_int8 * ORC_RESTRICT ptr4;
@@ -406,17 +421,17 @@ _backup_deinterlace_line_linear (OrcExecutor * ORC_RESTRICT ex)
 }
 
 void
-deinterlace_line_linear (guint8 * d1, const guint8 * s1, const guint8 * s2, int n)
+deinterlace_line_linear (guint8 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  static int p_inited = 0;
-  static OrcProgram *p = 0;
+  static volatile int p_inited = 0;
+  static OrcCode *c = 0;
   void (*func) (OrcExecutor *);
 
   if (!p_inited) {
     orc_once_mutex_lock ();
     if (!p_inited) {
-      OrcCompileResult result;
+      OrcProgram *p;
 
       p = orc_program_new ();
       orc_program_set_name (p, "deinterlace_line_linear");
@@ -427,19 +442,22 @@ deinterlace_line_linear (guint8 * d1, const guint8 * s1, const guint8 * s2, int 
 
       orc_program_append_2 (p, "avgub", 0, ORC_VAR_D1, ORC_VAR_S1, ORC_VAR_S2, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+      orc_program_compile (p);
+      c = orc_program_take_code (p);
+      orc_program_free (p);
     }
     p_inited = TRUE;
     orc_once_mutex_unlock ();
   }
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
   ex->arrays[ORC_VAR_S1] = (void *)s1;
   ex->arrays[ORC_VAR_S2] = (void *)s2;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -448,7 +466,7 @@ deinterlace_line_linear (guint8 * d1, const guint8 * s1, const guint8 * s2, int 
 /* deinterlace_line_linear_blend */
 #ifdef DISABLE_ORC
 void
-deinterlace_line_linear_blend (guint8 * d1, const guint8 * s1, const guint8 * s2, const guint8 * s3, int n){
+deinterlace_line_linear_blend (guint8 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2, const guint8 * ORC_RESTRICT s3, int n){
   int i;
   orc_int8 * ORC_RESTRICT ptr0;
   const orc_int8 * ORC_RESTRICT ptr4;
@@ -474,7 +492,7 @@ deinterlace_line_linear_blend (guint8 * d1, const guint8 * s1, const guint8 * s2
   ptr6 = (orc_int8 *)s3;
 
     /* 9: loadpw */
-    var38.i = 0x00000002; /* 2 or 9.88131e-324f */
+    var38.i = (int)0x00000002; /* 2 or 9.88131e-324f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -537,7 +555,7 @@ _backup_deinterlace_line_linear_blend (OrcExecutor * ORC_RESTRICT ex)
   ptr6 = (orc_int8 *)ex->arrays[6];
 
     /* 9: loadpw */
-    var38.i = 0x00000002; /* 2 or 9.88131e-324f */
+    var38.i = (int)0x00000002; /* 2 or 9.88131e-324f */
 
   for (i = 0; i < n; i++) {
     /* 0: loadb */
@@ -571,17 +589,17 @@ _backup_deinterlace_line_linear_blend (OrcExecutor * ORC_RESTRICT ex)
 }
 
 void
-deinterlace_line_linear_blend (guint8 * d1, const guint8 * s1, const guint8 * s2, const guint8 * s3, int n)
+deinterlace_line_linear_blend (guint8 * ORC_RESTRICT d1, const guint8 * ORC_RESTRICT s1, const guint8 * ORC_RESTRICT s2, const guint8 * ORC_RESTRICT s3, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  static int p_inited = 0;
-  static OrcProgram *p = 0;
+  static volatile int p_inited = 0;
+  static OrcCode *c = 0;
   void (*func) (OrcExecutor *);
 
   if (!p_inited) {
     orc_once_mutex_lock ();
     if (!p_inited) {
-      OrcCompileResult result;
+      OrcProgram *p;
 
       p = orc_program_new ();
       orc_program_set_name (p, "deinterlace_line_linear_blend");
@@ -605,12 +623,15 @@ deinterlace_line_linear_blend (guint8 * d1, const guint8 * s1, const guint8 * s2
       orc_program_append_2 (p, "shrsw", 0, ORC_VAR_T1, ORC_VAR_T1, ORC_VAR_C1, ORC_VAR_D1);
       orc_program_append_2 (p, "convsuswb", 0, ORC_VAR_D1, ORC_VAR_T1, ORC_VAR_D1, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+      orc_program_compile (p);
+      c = orc_program_take_code (p);
+      orc_program_free (p);
     }
     p_inited = TRUE;
     orc_once_mutex_unlock ();
   }
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
@@ -618,7 +639,7 @@ deinterlace_line_linear_blend (guint8 * d1, const guint8 * s1, const guint8 * s2
   ex->arrays[ORC_VAR_S2] = (void *)s2;
   ex->arrays[ORC_VAR_S3] = (void *)s3;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif
@@ -627,7 +648,7 @@ deinterlace_line_linear_blend (guint8 * d1, const guint8 * s1, const guint8 * s2
 /* deinterlace_line_greedy */
 #ifdef DISABLE_ORC
 void
-deinterlace_line_greedy (orc_uint8 * d1, const orc_uint8 * s1, const orc_uint8 * s2, const orc_uint8 * s3, const orc_uint8 * s4, int p1, int n){
+deinterlace_line_greedy (orc_uint8 * ORC_RESTRICT d1, const orc_uint8 * ORC_RESTRICT s1, const orc_uint8 * ORC_RESTRICT s2, const orc_uint8 * ORC_RESTRICT s3, const orc_uint8 * ORC_RESTRICT s4, int p1, int n){
   int i;
   orc_int8 * ORC_RESTRICT ptr0;
   const orc_int8 * ORC_RESTRICT ptr4;
@@ -669,9 +690,9 @@ deinterlace_line_greedy (orc_uint8 * d1, const orc_uint8 * s1, const orc_uint8 *
   ptr7 = (orc_int8 *)s4;
 
     /* 11: loadpb */
-    var44 = 0x00000080; /* 128 or 6.32404e-322f */
+    var44 = (int)0x00000080; /* 128 or 6.32404e-322f */
     /* 13: loadpb */
-    var45 = 0x00000080; /* 128 or 6.32404e-322f */
+    var45 = (int)0x00000080; /* 128 or 6.32404e-322f */
     /* 21: loadpb */
     var46 = p1;
     /* 23: loadpb */
@@ -776,9 +797,9 @@ _backup_deinterlace_line_greedy (OrcExecutor * ORC_RESTRICT ex)
   ptr7 = (orc_int8 *)ex->arrays[7];
 
     /* 11: loadpb */
-    var44 = 0x00000080; /* 128 or 6.32404e-322f */
+    var44 = (int)0x00000080; /* 128 or 6.32404e-322f */
     /* 13: loadpb */
-    var45 = 0x00000080; /* 128 or 6.32404e-322f */
+    var45 = (int)0x00000080; /* 128 or 6.32404e-322f */
     /* 21: loadpb */
     var46 = ex->params[24];
     /* 23: loadpb */
@@ -838,17 +859,17 @@ _backup_deinterlace_line_greedy (OrcExecutor * ORC_RESTRICT ex)
 }
 
 void
-deinterlace_line_greedy (orc_uint8 * d1, const orc_uint8 * s1, const orc_uint8 * s2, const orc_uint8 * s3, const orc_uint8 * s4, int p1, int n)
+deinterlace_line_greedy (orc_uint8 * ORC_RESTRICT d1, const orc_uint8 * ORC_RESTRICT s1, const orc_uint8 * ORC_RESTRICT s2, const orc_uint8 * ORC_RESTRICT s3, const orc_uint8 * ORC_RESTRICT s4, int p1, int n)
 {
   OrcExecutor _ex, *ex = &_ex;
-  static int p_inited = 0;
-  static OrcProgram *p = 0;
+  static volatile int p_inited = 0;
+  static OrcCode *c = 0;
   void (*func) (OrcExecutor *);
 
   if (!p_inited) {
     orc_once_mutex_lock ();
     if (!p_inited) {
-      OrcCompileResult result;
+      OrcProgram *p;
 
       p = orc_program_new ();
       orc_program_set_name (p, "deinterlace_line_greedy");
@@ -897,12 +918,15 @@ deinterlace_line_greedy (orc_uint8 * d1, const orc_uint8 * s1, const orc_uint8 *
       orc_program_append_2 (p, "minub", 0, ORC_VAR_T10, ORC_VAR_T10, ORC_VAR_T12, ORC_VAR_D1);
       orc_program_append_2 (p, "maxub", 0, ORC_VAR_D1, ORC_VAR_T10, ORC_VAR_T11, ORC_VAR_D1);
 
-      result = orc_program_compile (p);
+      orc_program_compile (p);
+      c = orc_program_take_code (p);
+      orc_program_free (p);
     }
     p_inited = TRUE;
     orc_once_mutex_unlock ();
   }
-  ex->program = p;
+  ex->arrays[ORC_VAR_A2] = c;
+  ex->program = 0;
 
   ex->n = n;
   ex->arrays[ORC_VAR_D1] = d1;
@@ -912,7 +936,7 @@ deinterlace_line_greedy (orc_uint8 * d1, const orc_uint8 * s1, const orc_uint8 *
   ex->arrays[ORC_VAR_S4] = (void *)s4;
   ex->params[ORC_VAR_P1] = p1;
 
-  func = p->code_exec;
+  func = c->exec;
   func (ex);
 }
 #endif

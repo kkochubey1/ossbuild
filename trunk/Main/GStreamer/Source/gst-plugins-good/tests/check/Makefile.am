@@ -13,8 +13,9 @@ TESTS_ENVIRONMENT = \
 	GST_PLUGIN_LOADING_WHITELIST="gstreamer@$(GST_PLUGINS_DIR):gst-plugins-base@$(GSTPB_PLUGINS_DIR):gst-plugins-good@$(top_builddir)"	\
 	GST_STATE_IGNORE_ELEMENTS="aasink autoaudiosrc autoaudiosink autovideosrc autovideosink \
 		cacasink cairotextoverlay gconfaudiosrc gconfvideosrc gconfaudiosink gconfvideosink \
-		halaudiosrc halaudiosink v4l2src osssrc osssink pulsesink pulsesrc pulsemixer \
-		osxaudiosink osxaudiosrc osxvideosrc osxvideosink"
+		halaudiosrc halaudiosink jackaudiosrc jackaudiosink \
+		osssrc osssink osxaudiosink osxaudiosrc osxvideosrc osxvideosink \
+		pulsesink pulsesrc pulsemixer v4l2src"
 
 # fake device drivers: we could run hardware element tests against dummy drivers
 # v4l2: vivo (part of normal kernel)
@@ -39,7 +40,7 @@ check_annodex = \
 	elements/cmmldec \
 	elements/cmmlenc
 else
-check_annodex = 
+check_annodex =
 endif
 
 if USE_FLAC
@@ -51,7 +52,7 @@ endif
 if USE_GDK_PIXBUF
 check_gdkpixbuf = elements/gdkpixbufsink
 else
-check_gdkpixbuf = 
+check_gdkpixbuf =
 endif
 
 if USE_JPEG
@@ -69,7 +70,7 @@ endif
 if USE_SUNAUDIO
 check_sunaudio = elements/sunaudio
 else
-check_sunaudio = 
+check_sunaudio =
 endif
 
 if USE_TAGLIB
@@ -98,7 +99,11 @@ endif
 
 
 check_PROGRAMS = \
+	generic/index \
 	generic/states \
+	elements/aacparse \
+	elements/ac3parse \
+	elements/amrparse \
 	$(check_annodex) \
 	elements/alphacolor \
 	elements/aspectratiocrop \
@@ -119,6 +124,7 @@ check_PROGRAMS = \
 	elements/deinterlace \
 	elements/deinterleave \
 	elements/equalizer \
+	elements/flacparse \
 	elements/flvdemux \
 	elements/flvmux \
 	elements/icydemux \
@@ -127,7 +133,9 @@ check_PROGRAMS = \
 	elements/interleave \
 	elements/level \
 	elements/matroskamux \
+	elements/mpegaudioparse \
 	elements/multifile \
+	elements/qtmux \
 	elements/rganalysis \
 	elements/rglimiter \
 	elements/rgvolume \
@@ -143,9 +151,11 @@ check_PROGRAMS = \
 	elements/y4menc \
 	pipelines/simple-launch-lines \
 	pipelines/effectv \
+	pipelines/tagschecking \
+	pipelines/wavenc \
 	$(check_flac) \
 	$(check_gdkpixbuf) \
-        $(check_jpeg) \
+	$(check_jpeg) \
 	$(check_soup) \
 	$(check_sunaudio) \
 	$(check_taglib) \
@@ -163,7 +173,8 @@ noinst_PROGRAMS = \
 	elements/autodetect
 
 AM_CFLAGS = $(GST_OBJ_CFLAGS) $(GST_CHECK_CFLAGS) $(CHECK_CFLAGS) \
-	$(GST_OPTION_CFLAGS) -DGST_TEST_FILES_PATH="\"$(TEST_FILES_DIRECTORY)\""
+	$(GST_OPTION_CFLAGS) -DGST_TEST_FILES_PATH="\"$(TEST_FILES_DIRECTORY)\"" \
+	-UG_DISABLE_ASSERT -UG_DISABLE_CAST_CHECKS
 LDADD = $(GST_OBJ_LIBS) $(GST_CHECK_LIBS) $(CHECK_LIBS)
 
 # valgrind testing
@@ -173,6 +184,23 @@ VALGRIND_TESTS_DISABLE = \
 	$(VALGRIND_TO_FIX)
 
 SUPPRESSIONS = $(top_srcdir)/common/gst.supp $(srcdir)/gst-plugins-good.supp
+
+# parser unit test convenience lib
+noinst_LTLIBRARIES = libparser.la
+libparser_la_SOURCES = elements/parser.c elements/parser.h
+libparser_la_CFLAGS = \
+	-I$(top_srcdir)/tests/check \
+	$(GST_CHECK_CFLAGS) $(GST_OPTION_CFLAGS)
+
+elements_aacparse_LDADD = libparser.la $(LDADD)
+
+elements_ac3parse_LDADD = libparser.la $(LDADD)
+
+elements_amrparse_LDADD = libparser.la $(LDADD)
+
+elements_flacparse_LDADD = libparser.la $(LDADD)
+
+elements_mpegaudioparse_LDADD = libparser.la $(LDADD)
 
 elements_aspectratiocrop_LDADD = $(LDADD)
 elements_aspectratiocrop_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
@@ -199,17 +227,24 @@ elements_interleave_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
 elements_interleave_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstaudio-$(GST_MAJORMINOR) $(LDADD)
 
 elements_imagefreeze_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(AM_CFLAGS)
-elements_imagefreeze_LDADD = $(GST_BASE_LIBS) $(LDADD) -lgstvideo-0.10
+elements_imagefreeze_LDADD = $(GST_BASE_LIBS) $(LDADD) -lgstvideo-$(GST_MAJORMINOR)
+
+elements_jpegenc_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_BASE_CFLAGS) $(AM_CFLAGS)
+elements_jpegenc_LDADD = $(GST_BASE_LIBS) $(LDADD) -lgstapp-0.10
 
 elements_level_LDADD = $(LDADD) $(LIBM)
 
 elements_matroskamux_LDADD = $(GST_BASE_LIBS) $(LDADD) $(LIBM)
 
+elements_qtmux_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) $(AM_CFLAGS)
+elements_qtmux_LDADD = $(GST_PLUGINS_BASE_LIBS) -lgstpbutils-@GST_MAJORMINOR@ \
+             $(GST_BASE_LIBS) $(GST_LIBS) $(GST_CHECK_LIBS)
+
 elements_rtpbin_buffer_list_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(GST_CFLAGS) \
-	$(WARNING_CFLAGS) $(ERROR_CFLAGS) $(GST_CHECK_CFLAGS)
+	$(WARNING_CFLAGS) $(ERROR_CFLAGS) $(GST_CHECK_CFLAGS) $(AM_CFLAGS)
 elements_rtpbin_buffer_list_LDADD = $(GST_PLUGINS_BASE_LIBS) \
              -lgstnetbuffer-@GST_MAJORMINOR@ -lgstrtp-@GST_MAJORMINOR@ \
-             $(GST_BASE_LIBS) $(GST_LIBS_LIBS) $(GST_CHECK_LIBS)
+             $(GST_BASE_LIBS) $(GST_LIBS) $(GST_CHECK_LIBS)
 elements_rtpbin_buffer_list_SOURCES = elements/rtpbin_buffer_list.c
 
 elements_souphttpsrc_CFLAGS = $(SOUP_CFLAGS) $(AM_CFLAGS)
@@ -235,6 +270,9 @@ elements_gdkpixbufsink_CFLAGS = \
 elements_gdkpixbufsink_LDADD = \
 	$(LDADD) $(GDK_PIXBUF_LIBS)
 
+
+pipelines_wavenc_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)
+pipelines_wavenc_LDADD  = $(GST_PLUGINS_BASE_LIBS) -lgstaudio-$(GST_MAJORMINOR) $(LDADD)
 
 pipelines_wavpack_LDADD = $(LDADD) $(GST_BASE_LIBS)
 pipelines_wavpack_CFLAGS = $(GST_BASE_CFLAGS) $(CFLAGS) $(AM_CFLAGS)

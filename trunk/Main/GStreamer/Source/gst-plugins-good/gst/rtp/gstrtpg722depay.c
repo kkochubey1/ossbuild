@@ -81,7 +81,7 @@ gst_rtp_g722_depay_base_init (gpointer klass)
       gst_static_pad_template_get (&gst_rtp_g722_depay_sink_template));
 
   gst_element_class_set_details_simple (element_class, "RTP audio depayloader",
-      "Codec/Depayloader/Network",
+      "Codec/Depayloader/Network/RTP",
       "Extracts G722 audio from RTP packets",
       "Wim Taymans <wim.taymans@gmail.com>");
 }
@@ -236,7 +236,7 @@ gst_rtp_g722_depay_process (GstBaseRTPDepayload * depayload, GstBuffer * buf)
   outbuf = gst_rtp_buffer_get_payload_buffer (buf);
   marker = gst_rtp_buffer_get_marker (buf);
 
-  if (marker) {
+  if (marker && outbuf) {
     /* mark talk spurt with DISCONT */
     GST_BUFFER_FLAG_SET (outbuf, GST_BUFFER_FLAG_DISCONT);
   }
@@ -256,5 +256,5 @@ gboolean
 gst_rtp_g722_depay_plugin_init (GstPlugin * plugin)
 {
   return gst_element_register (plugin, "rtpg722depay",
-      GST_RANK_MARGINAL, GST_TYPE_RTP_G722_DEPAY);
+      GST_RANK_SECONDARY, GST_TYPE_RTP_G722_DEPAY);
 }

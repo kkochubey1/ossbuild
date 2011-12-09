@@ -208,6 +208,7 @@ create_demux_pad_for_ssrc (GstRtpSsrcDemux * demux, guint32 ssrc,
       gst_rtp_ssrc_demux_iterate_internal_links);
   gst_pad_set_active (rtp_pad, TRUE);
 
+  gst_pad_set_event_function (rtcp_pad, gst_rtp_ssrc_demux_src_event);
   gst_pad_set_iterate_internal_links_function (rtcp_pad,
       gst_rtp_ssrc_demux_iterate_internal_links);
   gst_pad_set_active (rtcp_pad, TRUE);
@@ -382,8 +383,10 @@ gst_rtp_ssrc_demux_clear_ssrc (GstRtpSsrcDemux * demux, guint32 ssrc)
 
   GST_PAD_LOCK (demux);
   dpad = find_demux_pad_for_ssrc (demux, ssrc);
-  if (dpad == NULL)
+  if (dpad == NULL) {
+    GST_PAD_UNLOCK (demux);
     goto unknown_pad;
+  }
 
   GST_DEBUG_OBJECT (demux, "clearing pad for SSRC %08x", ssrc);
 
@@ -407,7 +410,7 @@ gst_rtp_ssrc_demux_clear_ssrc (GstRtpSsrcDemux * demux, guint32 ssrc)
   /* ERRORS */
 unknown_pad:
   {
-    g_warning ("unknown SSRC %08x", ssrc);
+    GST_WARNING_OBJECT (demux, "unknown SSRC %08x", ssrc);
     return;
   }
 }
@@ -419,6 +422,10 @@ gst_rtp_ssrc_demux_sink_event (GstPad * pad, GstEvent * event)
   gboolean res = FALSE;
 
   demux = GST_RTP_SSRC_DEMUX (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (demux == NULL)) {
+    gst_event_unref (event);
+    return FALSE;
+  }
 
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_FLUSH_STOP:
@@ -427,16 +434,28 @@ gst_rtp_ssrc_demux_sink_event (GstPad * pad, GstEvent * event)
     default:
     {
       GSList *walk;
+      GSList *pads = NULL;
 
       res = TRUE;
+      /* need local snapshot of pads;
+       * should not push downstream while holding lock as that might deadlock
+       * with stuff traveling upstream tyring to get this lock while holding
+       * other (stream)lock */
       GST_PAD_LOCK (demux);
       for (walk = demux->srcpads; walk; walk = g_slist_next (walk)) {
         GstRtpSsrcDemuxPad *pad = (GstRtpSsrcDemuxPad *) walk->data;
 
-        gst_event_ref (event);
-        res &= gst_pad_push_event (pad->rtp_pad, event);
+        pads = g_slist_prepend (pads, gst_object_ref (pad->rtp_pad));
       }
       GST_PAD_UNLOCK (demux);
+      for (walk = pads; walk; walk = g_slist_next (walk)) {
+        GstPad *pad = (GstPad *) walk->data;
+
+        gst_event_ref (event);
+        res &= gst_pad_push_event (pad, event);
+        gst_object_unref (pad);
+      }
+      g_slist_free (pads);
       gst_event_unref (event);
       break;
     }
@@ -459,16 +478,24 @@ gst_rtp_ssrc_demux_rtcp_sink_event (GstPad * pad, GstEvent * event)
     default:
     {
       GSList *walk;
+      GSList *pads = NULL;
 
       res = TRUE;
       GST_PAD_LOCK (demux);
       for (walk = demux->srcpads; walk; walk = g_slist_next (walk)) {
         GstRtpSsrcDemuxPad *pad = (GstRtpSsrcDemuxPad *) walk->data;
 
-        gst_event_ref (event);
-        res &= gst_pad_push_event (pad->rtcp_pad, event);
+        pads = g_slist_prepend (pads, gst_object_ref (pad->rtcp_pad));
       }
       GST_PAD_UNLOCK (demux);
+      for (walk = pads; walk; walk = g_slist_next (walk)) {
+        GstPad *pad = (GstPad *) walk->data;
+
+        gst_event_ref (event);
+        res &= gst_pad_push_event (pad, event);
+        gst_object_unref (pad);
+      }
+      g_slist_free (pads);
       gst_event_unref (event);
       break;
     }
@@ -601,18 +628,39 @@ static gboolean
 gst_rtp_ssrc_demux_src_event (GstPad * pad, GstEvent * event)
 {
   GstRtpSsrcDemux *demux;
-  gboolean res = FALSE;
+  const GstStructure *s;
 
   demux = GST_RTP_SSRC_DEMUX (gst_pad_get_parent (pad));
 
   switch (GST_EVENT_TYPE (event)) {
-    case GST_EVENT_SEEK:
+    case GST_EVENT_CUSTOM_UPSTREAM:
+    case GST_EVENT_CUSTOM_BOTH:
+    case GST_EVENT_CUSTOM_BOTH_OOB:
+      s = gst_event_get_structure (event);
+      if (s && !gst_structure_has_field (s, "ssrc")) {
+        GSList *walk;
+
+        for (walk = demux->srcpads; walk; walk = g_slist_next (walk)) {
+          GstRtpSsrcDemuxPad *dpad = (GstRtpSsrcDemuxPad *) walk->data;
+
+          if (dpad->rtp_pad == pad || dpad->rtcp_pad == pad) {
+            event =
+                GST_EVENT_CAST (gst_mini_object_make_writable
+                (GST_MINI_OBJECT_CAST (event)));
+            gst_structure_set (event->structure, "ssrc", G_TYPE_UINT,
+                dpad->ssrc, NULL);
+            break;
+          }
+        }
+      }
+      break;
     default:
-      res = gst_pad_event_default (pad, event);
       break;
   }
+
   gst_object_unref (demux);
-  return res;
+
+  return gst_pad_event_default (pad, event);
 }
 
 static GstIterator *
@@ -657,6 +705,8 @@ gst_rtp_ssrc_demux_src_query (GstPad * pad, GstQuery * query)
   gboolean res = FALSE;
 
   demux = GST_RTP_SSRC_DEMUX (gst_pad_get_parent (pad));
+  if (G_UNLIKELY (demux == NULL))
+    return FALSE;
 
   switch (GST_QUERY_TYPE (query)) {
     case GST_QUERY_LATENCY:

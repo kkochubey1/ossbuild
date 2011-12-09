@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-dicetv.html" title="dicetv">
 <link rel="next" href="gst-plugins-good-plugins-dv1394src.html" title="dv1394src">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -26,7 +26,7 @@
                   <a href="#gst-plugins-good-plugins-directsoundsink.description" class="shortcut">Description</a>
 </td></tr>
 </table>
-<div class="refentry" title="directsoundsink">
+<div class="refentry">
 <a name="gst-plugins-good-plugins-directsoundsink"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -35,12 +35,12 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-good-plugins-directsoundsink.synopsis"></a><h2>Synopsis</h2>
-<pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-directsoundsink.html#GstDirectSoundSink" title="GstDirectSoundSink">GstDirectSoundSink</a>;
+<pre class="synopsis">struct              <a class="link" href="gst-plugins-good-plugins-directsoundsink.html#GstDirectSoundSink" title="struct GstDirectSoundSink">GstDirectSoundSink</a>;
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-directsoundsink.description"></a><h2>Description</h2>
 <p>
 This element lets you output sound using the DirectSound API.
@@ -51,14 +51,16 @@ like audioconvert and audioresample in front of an audiosink to make sure
 your pipeline works under all circumstances (those conversion elements will
 act in passthrough-mode if no conversion is necessary).
 </p>
-<div class="refsect2" title="Example pipelines">
-<a name="id556172"></a><h3>Example pipelines</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp10170464"></a><h3>Example pipelines</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v audiotestsrc <span class="symbol">!</span> audioconvert <span class="symbol">!</span> volume volume<span class="symbol">=</span><span class="number">0.1</span> <span class="symbol">!</span> directsoundsink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch <span class="gtkdoc opt">-</span>v audiotestsrc <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> volume volume<span class="gtkdoc opt">=</span><span class="number">0.1</span> <span class="gtkdoc opt">!</span> directsoundsink</pre></td>
       </tr>
     </tbody>
   </table>
@@ -70,19 +72,52 @@ a very low volume as precaution).
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v filesrc location<span class="symbol">=</span>music<span class="symbol">.</span>ogg <span class="symbol">!</span> decodebin <span class="symbol">!</span> audioconvert <span class="symbol">!</span> audioresample <span class="symbol">!</span> directsoundsink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch <span class="gtkdoc opt">-</span>v filesrc location<span class="gtkdoc opt">=</span>music<span class="gtkdoc opt">.</span>ogg <span class="gtkdoc opt">!</span> decodebin <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> audioresample <span class="gtkdoc opt">!</span> directsoundsink</pre></td>
       </tr>
     </tbody>
   </table>
 </div>
  will play an Ogg/Vorbis audio file and output it.
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp7249488"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-good-plugins-plugin-directsound.html#plugin-directsound">directsound</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Sebastien Moutte &lt;sebastien@moutte.net&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Sink/Audio</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp9806608"></a><h3>Element Pads</h3>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-directsoundsink.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstDirectSoundSink">
-<a name="GstDirectSoundSink"></a><h3>GstDirectSoundSink</h3>
-<pre class="programlisting">typedef struct {
+<div class="refsect2">
+<a name="GstDirectSoundSink"></a><h3>struct GstDirectSoundSink</h3>
+<pre class="programlisting">struct GstDirectSoundSink {
   GstAudioSink sink;
 
   /* directsound object interface pointer */
@@ -113,7 +148,7 @@ a very low volume as precaution).
   gboolean first_buffer_after_reset;
 
   GstBufferFormat buffer_format;
-} GstDirectSoundSink;
+};
 </pre>
 <p>
 </p>
@@ -122,6 +157,6 @@ a very low volume as precaution).
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

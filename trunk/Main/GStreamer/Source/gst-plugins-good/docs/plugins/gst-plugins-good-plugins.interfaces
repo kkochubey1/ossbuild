@@ -1,5 +1,6 @@
 GstBin GstChildProxy
 GstPipeline GstChildProxy
+GstQTMoovRecover GstChildProxy
 GstSwitchSink GstChildProxy
 GstGConfVideoSink GstChildProxy
 GstGConfAudioSink GstChildProxy
@@ -19,7 +20,6 @@ GstRgVolume GstChildProxy
 GstAspectRatioCrop GstChildProxy
 GstPulseSink GstStreamVolume GstImplementsInterface GstPropertyProbe
 GstOss4Sink GstStreamVolume GstPropertyProbe
-GstV4l2Sink GstImplementsInterface GstColorBalance GstVideoOrientation GstPropertyProbe
 GstShout2send GstTagSetter
 GstUDPSink GstURIHandler
 GstDV1394Src GstURIHandler GstPropertyProbe
@@ -44,12 +44,19 @@ GstIirEqualizer10Bands GstChildProxy GstPreset
 GstPulseMixer GstImplementsInterface GstMixer GstPropertyProbe
 GstSpeexEnc GstTagSetter GstPreset
 GstOssMixerElement GstImplementsInterface GstMixer
+GstV4l2Radio GstURIHandler GstImplementsInterface GstTuner GstPropertyProbe
 GstOss4Mixer GstImplementsInterface GstMixer GstPropertyProbe
 GstAviMux GstTagSetter
 GstMatroskaMux GstTagSetter
 GstWebMMux GstTagSetter
 GstDeinterlace GstChildProxy
 GstFlvMux GstTagSetter
+GstQTMux GstTagSetter GstTagXmpWriter
+GstMP4Mux GstTagSetter GstTagXmpWriter
+GstISMLMux GstTagSetter GstTagXmpWriter
+Gst3GPPMux GstTagSetter GstTagXmpWriter
+GstGPPMux GstTagSetter GstTagXmpWriter
+GstMJ2Mux GstTagSetter GstTagXmpWriter
 GstVideoMixer GstChildProxy
 GstVideoMixer2 GstChildProxy
 GdkPixbuf GIcon

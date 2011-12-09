@@ -4,7 +4,7 @@
 %define gst_minver   0.10.0
 
 Name: 		%{gstreamer}-plugins-good
-Version: 	0.10.26
+Version: 	0.10.30
 Release: 	1.gst
 Summary: 	GStreamer plug-ins with good code and licensing
 
@@ -98,7 +98,7 @@ gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/gstreamer-%{maj
 %{_libdir}/gstreamer-%{majorminor}/libgstlevel.so
 %{_libdir}/gstreamer-%{majorminor}/libgstefence.so
 %{_libdir}/gstreamer-%{majorminor}/libgstmulaw.so
-%{_libdir}/gstreamer-%{majorminor}/libgstqtdemux.so
+%{_libdir}/gstreamer-%{majorminor}/libgstisomp4.so
 %{_libdir}/gstreamer-%{majorminor}/libgstrtp.so
 %{_libdir}/gstreamer-%{majorminor}/libgstrtpmanager.so
 %{_libdir}/gstreamer-%{majorminor}/libgstrtsp.so
@@ -139,6 +139,7 @@ gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/gstreamer-%{maj
 %{_libdir}/gstreamer-%{majorminor}/libgstimagefreeze.so
 %{_libdir}/gstreamer-%{majorminor}/libgstshapewipe.so
 %{_libdir}/gstreamer-%{majorminor}/libgstvideofilter.so
+%{_libdir}/gstreamer-%{majorminor}/libgstaudioparsers.so
 
 # sys plugins
 %{_libdir}/gstreamer-%{majorminor}/libgstvideo4linux2.so
@@ -147,6 +148,7 @@ gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/gstreamer-%{maj
 %{_libdir}/gstreamer-%{majorminor}/libgstcacasink.so
 %{_libdir}/gstreamer-%{majorminor}/libgstesd.so
 %{_libdir}/gstreamer-%{majorminor}/libgstflac.so
+%{_libdir}/gstreamer-%{majorminor}/libgstjack.so
 %{_libdir}/gstreamer-%{majorminor}/libgstjpeg.so
 %{_libdir}/gstreamer-%{majorminor}/libgstpng.so
 %{_libdir}/gstreamer-%{majorminor}/libgstossaudio.so

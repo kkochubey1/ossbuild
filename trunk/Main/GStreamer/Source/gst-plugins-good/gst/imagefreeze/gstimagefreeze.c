@@ -553,15 +553,13 @@ gst_image_freeze_sink_event (GstPad * pad, GstEvent * event)
 
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_EOS:
-      if (self->buffer) {
-        GST_DEBUG_OBJECT (pad, "Dropping event");
-        gst_event_unref (event);
-        ret = TRUE;
-      } else {
+      if (!self->buffer) {
         /* if we receive EOS before a buffer arrives, then let it pass */
+        GST_DEBUG_OBJECT (self, "EOS without input buffer, passing on");
         ret = gst_pad_push_event (self->srcpad, event);
+        break;
       }
-      break;
+      /* fall-through */
     case GST_EVENT_NEWSEGMENT:
       GST_DEBUG_OBJECT (pad, "Dropping event");
       gst_event_unref (event);
@@ -746,7 +744,7 @@ gst_image_freeze_src_loop (GstPad * pad)
   GstImageFreeze *self = GST_IMAGE_FREEZE (GST_PAD_PARENT (pad));
   GstBuffer *buffer;
   guint64 offset;
-  GstClockTime timestamp, timestamp_end, duration;
+  GstClockTime timestamp, timestamp_end;
   gint64 cstart, cstop;
   gboolean in_seg, eos;
 
@@ -802,11 +800,9 @@ gst_image_freeze_src_loop (GstPad * pad)
     timestamp_end =
         gst_util_uint64_scale (offset + 1, self->fps_d * GST_SECOND,
         self->fps_n);
-    duration = timestamp_end - timestamp;
   } else {
     timestamp = self->segment.start;
     timestamp_end = GST_CLOCK_TIME_NONE;
-    duration = GST_CLOCK_TIME_NONE;
   }
 
   eos = (self->fps_n == 0 && offset > 0) ||

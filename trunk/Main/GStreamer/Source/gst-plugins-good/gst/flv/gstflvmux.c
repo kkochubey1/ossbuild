@@ -63,7 +63,8 @@ static GstStaticPadTemplate videosink_templ = GST_STATIC_PAD_TEMPLATE ("video",
     GST_PAD_REQUEST,
     GST_STATIC_CAPS ("video/x-flash-video; "
         "video/x-flash-screen; "
-        "video/x-vp6-flash; " "video/x-vp6-alpha; " "video/x-h264;")
+        "video/x-vp6-flash; " "video/x-vp6-alpha; "
+        "video/x-h264, stream-format=avc;")
     );
 
 static GstStaticPadTemplate audiosink_templ = GST_STATIC_PAD_TEMPLATE ("audio",
@@ -377,6 +378,8 @@ gst_flv_mux_audio_pad_setcaps (GstPad * pad, GstCaps * caps)
         cpad->audio_codec = 4;
       else if (channels == 1 && rate == 8000)
         cpad->audio_codec = 5;
+      else
+        cpad->audio_codec = 6;
     } else {
       cpad->audio_codec = 6;
     }
@@ -683,9 +686,11 @@ gst_flv_mux_create_metadata (GstFlvMux * mux)
 
   /* Some players expect the 'duration' to be always set. Fill it out later,
      after querying the pads or after getting EOS */
-  tmp = gst_flv_mux_create_number_script_value ("duration", 0);
-  script_tag = gst_buffer_join (script_tag, tmp);
-  tags_written++;
+  if (!mux->streamable) {
+    tmp = gst_flv_mux_create_number_script_value ("duration", 86400);
+    script_tag = gst_buffer_join (script_tag, tmp);
+    tags_written++;
+  }
 
   /* Sometimes the information about the total file size is useful for the
      player. It will be filled later, after getting EOS */
@@ -761,7 +766,7 @@ gst_flv_mux_create_metadata (GstFlvMux * mux)
     }
   }
 
-  if (mux->duration != GST_CLOCK_TIME_NONE) {
+  if (!mux->streamable && mux->duration != GST_CLOCK_TIME_NONE) {
     gdouble d;
     d = gst_guint64_to_gdouble (mux->duration);
     d /= (gdouble) GST_SECOND;
@@ -1195,6 +1200,12 @@ gst_flv_mux_write_buffer (GstFlvMux * mux, GstFlvPad * cpad)
       gst_collect_pads_pop (mux->collect, (GstCollectData *) cpad);
   GstFlowReturn ret;
 
+  /* arrange downstream running time */
+  buffer = gst_buffer_make_metadata_writable (buffer);
+  GST_BUFFER_TIMESTAMP (buffer) =
+      gst_segment_to_running_time (&cpad->collect.segment,
+      GST_FORMAT_TIME, GST_BUFFER_TIMESTAMP (buffer));
+
   if (!mux->streamable)
     gst_flv_mux_update_index (mux, buffer, cpad);
 
@@ -1433,6 +1444,15 @@ gst_flv_mux_collected (GstCollectPads * pads, gpointer user_data)
       break;
     }
 
+    time = gst_segment_to_running_time (&cpad->collect.segment,
+        GST_FORMAT_TIME, time);
+    if (G_UNLIKELY (!GST_CLOCK_TIME_IS_VALID (time))) {
+      GST_DEBUG_OBJECT (mux, "clipping buffer on pad %s outside segment",
+          GST_PAD_NAME (cpad->collect.pad));
+      buffer = gst_collect_pads_pop (pads, (GstCollectData *) cpad);
+      gst_buffer_unref (buffer);
+      return GST_FLOW_OK;
+    }
 
     if (best == NULL || (GST_CLOCK_TIME_IS_VALID (best_time)
             && time < best_time)) {

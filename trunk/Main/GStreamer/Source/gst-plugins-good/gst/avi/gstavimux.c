@@ -41,7 +41,7 @@
  * ! 'audio/x-raw-int,rate=44100,channels=2' ! queue ! mux. \
  * avimux name=mux ! filesink location=test.avi
  * ]| This will create an .AVI file containing an uncompressed video stream
- * with a test picture and an uncompressed audio stream containing a 
+ * with a test picture and an uncompressed audio stream containing a
  * test sound.
  * |[
  * gst-launch videotestsrc num-buffers=250 \
@@ -61,6 +61,7 @@
 #endif
 
 #include "gst/gst-i18n-plugin.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -128,6 +129,8 @@ static GstStaticPadTemplate video_sink_factory =
         "height = (int) [ 16, 4096 ], "
         "framerate = (fraction) [ 0, MAX ]; "
         "video/x-h264, "
+        "stream-format = (string) byte-stream, "
+        "alignment = (string) au, "
         "width = (int) [ 16, 4096 ], "
         "height = (int) [ 16, 4096 ], "
         "framerate = (fraction) [ 0, MAX ]; "
@@ -964,6 +967,10 @@ gst_avi_mux_request_new_pad (GstElement * element,
   GstPad *newpad;
   GstAviPad *avipad;
   GstElementClass *klass;
+  gchar *name = NULL;
+  const gchar *pad_name = NULL;
+  GstPadSetCapsFunction setcapsfunc = NULL;
+  gint pad_id;
 
   g_return_val_if_fail (templ != NULL, NULL);
 
@@ -978,22 +985,23 @@ gst_avi_mux_request_new_pad (GstElement * element,
 
   klass = GST_ELEMENT_GET_CLASS (element);
 
-  if (templ == gst_element_class_get_pad_template (klass, "audio_%d")) {
-    gchar *name;
+  /* FIXME-0.11: use %d instead of %02d for pad_names */
 
-    /* setup pad */
-    name = g_strdup_printf ("audio_%02d", avimux->audio_pads);
-    GST_DEBUG_OBJECT (avimux, "adding new pad: %s", name);
-    newpad = gst_pad_new_from_template (templ, name);
-    g_free (name);
-    gst_pad_set_setcaps_function (newpad,
-        GST_DEBUG_FUNCPTR (gst_avi_mux_audsink_set_caps));
+  if (templ == gst_element_class_get_pad_template (klass, "audio_%d")) {
+    /* don't mix named and unnamed pads, if the pad already exists we fail when
+     * trying to add it */
+    if (req_name != NULL && sscanf (req_name, "audio_%02d", &pad_id) == 1) {
+      pad_name = req_name;
+    } else {
+      name = g_strdup_printf ("audio_%02d", avimux->audio_pads++);
+      pad_name = name;
+    }
+    setcapsfunc = GST_DEBUG_FUNCPTR (gst_avi_mux_audsink_set_caps);
 
     /* init pad specific data */
     avipad = g_malloc0 (sizeof (GstAviAudioPad));
     avipad->is_video = FALSE;
     avipad->hdr.type = GST_MAKE_FOURCC ('a', 'u', 'd', 's');
-    avimux->audio_pads++;
     /* audio goes last */
     avimux->sinkpads = g_slist_append (avimux->sinkpads, avipad);
   } else if (templ == gst_element_class_get_pad_template (klass, "video_%d")) {
@@ -1001,22 +1009,26 @@ gst_avi_mux_request_new_pad (GstElement * element,
      * some video info goes in a single avi header -and therefore mux struct-
      * so video restricted to one stream */
     if (avimux->video_pads > 0)
-      return NULL;
+      goto too_many_video_pads;
+
     /* setup pad */
-    GST_DEBUG_OBJECT (avimux, "adding new pad: video_00");
-    newpad = gst_pad_new_from_template (templ, "video_00");
-    gst_pad_set_setcaps_function (newpad,
-        GST_DEBUG_FUNCPTR (gst_avi_mux_vidsink_set_caps));
-    avipad = g_malloc0 (sizeof (GstAviVideoPad));
+    pad_name = "video_00";
+    avimux->video_pads++;
+    setcapsfunc = GST_DEBUG_FUNCPTR (gst_avi_mux_vidsink_set_caps);
 
     /* init pad specific data */
+    avipad = g_malloc0 (sizeof (GstAviVideoPad));
     avipad->is_video = TRUE;
     avipad->hdr.type = GST_MAKE_FOURCC ('v', 'i', 'd', 's');
-    avimux->video_pads++;
     /* video goes first */
     avimux->sinkpads = g_slist_prepend (avimux->sinkpads, avipad);
   } else
     goto wrong_template;
+
+  newpad = gst_pad_new_from_template (templ, pad_name);
+  gst_pad_set_setcaps_function (newpad, setcapsfunc);
+
+  g_free (name);
 
   avipad->collect = gst_collect_pads_add_pad (avimux->collect,
       newpad, sizeof (GstAviCollectData));
@@ -1028,7 +1040,10 @@ gst_avi_mux_request_new_pad (GstElement * element,
   gst_pad_set_event_function (newpad,
       GST_DEBUG_FUNCPTR (gst_avi_mux_handle_event));
 
-  gst_element_add_pad (element, newpad);
+  if (!gst_element_add_pad (element, newpad))
+    goto pad_add_failed;
+
+  GST_DEBUG_OBJECT (newpad, "Added new request pad");
 
   return newpad;
 
@@ -1046,6 +1061,17 @@ too_late:
 wrong_template:
   {
     g_warning ("avimux: this is not our template!\n");
+    return NULL;
+  }
+too_many_video_pads:
+  {
+    GST_WARNING_OBJECT (avimux, "Can only have one video stream");
+    return NULL;
+  }
+pad_add_failed:
+  {
+    GST_WARNING_OBJECT (avimux, "Adding the new pad '%s' failed", pad_name);
+    gst_object_unref (newpad);
     return NULL;
   }
 }
@@ -1673,6 +1699,7 @@ gst_avi_mux_start_file (GstAviMux * avimux)
   GstFlowReturn res;
   GstBuffer *header;
   GSList *node;
+  GstCaps *caps;
 
   avimux->total_data = 0;
   avimux->total_frames = 0;
@@ -1714,6 +1741,10 @@ gst_avi_mux_start_file (GstAviMux * avimux)
       avipad->idx_tag = g_strdup_printf ("ix%02u", avimux->video_pads++);
     }
   }
+
+  caps = gst_caps_copy (gst_pad_get_pad_template_caps (avimux->srcpad));
+  gst_pad_set_caps (avimux->srcpad, caps);
+  gst_caps_unref (caps);
 
   /* let downstream know we think in BYTES and expect to do seeking later on */
   gst_pad_push_event (avimux->srcpad,
@@ -1887,6 +1918,11 @@ gst_avi_mux_do_buffer (GstAviMux * avimux, GstAviPad * avipad)
   guint flags;
 
   data = gst_collect_pads_pop (avimux->collect, avipad->collect);
+  /* arrange downstream running time */
+  data = gst_buffer_make_metadata_writable (data);
+  GST_BUFFER_TIMESTAMP (data) =
+      gst_segment_to_running_time (&avipad->collect->segment,
+      GST_FORMAT_TIME, GST_BUFFER_TIMESTAMP (data));
 
   /* Prepend a special buffer to the first one for some formats */
   if (avipad->is_video) {
@@ -2012,6 +2048,19 @@ gst_avi_mux_do_one_buffer (GstAviMux * avimux)
       continue;
     time = GST_BUFFER_TIMESTAMP (buffer);
     gst_buffer_unref (buffer);
+
+    /* invalid should pass */
+    if (G_LIKELY (GST_CLOCK_TIME_IS_VALID (time))) {
+      time = gst_segment_to_running_time (&avipad->collect->segment,
+          GST_FORMAT_TIME, time);
+      if (G_UNLIKELY (!GST_CLOCK_TIME_IS_VALID (time))) {
+        GST_DEBUG_OBJECT (avimux, "clipping buffer on pad %s outside segment",
+            GST_PAD_NAME (avipad->collect->pad));
+        buffer = gst_collect_pads_pop (avimux->collect, avipad->collect);
+        gst_buffer_unref (buffer);
+        return GST_FLOW_OK;
+      }
+    }
 
     delay = avipad->is_video ? GST_SECOND / 2 : 0;
 

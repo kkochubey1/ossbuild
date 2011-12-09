@@ -44,20 +44,13 @@
 #include "config.h"
 #endif
 
+#include <gst/math-compat.h>
+
 #include "gstvideobalance.h"
 #include <string.h>
-#include <math.h>
 
 #include <gst/controller/gstcontroller.h>
 #include <gst/interfaces/colorbalance.h>
-
-#ifndef M_PI
-#define M_PI  3.14159265358979323846
-#endif
-
-#ifdef WIN32
-#define rint(x) (floor((x)+0.5))
-#endif
 
 GST_DEBUG_CATEGORY_STATIC (videobalance_debug);
 #define GST_CAT_DEFAULT videobalance_debug
@@ -170,8 +163,8 @@ gst_video_balance_update_tables (GstVideoBalance * vb)
     vb->tabley[i] = rint (y);
   }
 
-  hue_cos = cos (M_PI * vb->hue);
-  hue_sin = sin (M_PI * vb->hue);
+  hue_cos = cos (G_PI * vb->hue);
+  hue_sin = sin (G_PI * vb->hue);
 
   /* U/V lookup tables are 2D, since we need both U/V for each table
    * separately. */
@@ -240,8 +233,8 @@ gst_video_balance_planar_yuv (GstVideoBalance * videobalance, guint8 * data)
 
     yptr = ydata + y * ystride;
     for (x = 0; x < width; x++) {
-      *ydata = tabley[*ydata];
-      ydata++;
+      *yptr = tabley[*yptr];
+      yptr++;
     }
   }
 
@@ -301,8 +294,8 @@ gst_video_balance_packed_yuv (GstVideoBalance * videobalance, guint8 * data)
 
     yptr = ydata + y * ystride;
     for (x = 0; x < width; x++) {
-      *ydata = tabley[*ydata];
-      ydata += yoff;
+      *yptr = tabley[*yptr];
+      yptr += yoff;
     }
   }
 
@@ -675,7 +668,7 @@ gst_video_balance_colorbalance_set_value (GstColorBalance * balance,
 {
   GstVideoBalance *vb = GST_VIDEO_BALANCE (balance);
   gdouble new_val;
-  gboolean changed;
+  gboolean changed = FALSE;
 
   g_return_if_fail (vb != NULL);
   g_return_if_fail (GST_IS_VIDEO_BALANCE (vb));
@@ -702,12 +695,15 @@ gst_video_balance_colorbalance_set_value (GstColorBalance * balance,
     vb->contrast = new_val;
   }
 
-  gst_video_balance_update_properties (vb);
+  if (changed)
+    gst_video_balance_update_properties (vb);
   GST_OBJECT_UNLOCK (vb);
   GST_BASE_TRANSFORM_UNLOCK (vb);
 
-  gst_color_balance_value_changed (balance, channel,
-      gst_color_balance_get_value (balance, channel));
+  if (changed) {
+    gst_color_balance_value_changed (balance, channel,
+        gst_color_balance_get_value (balance, channel));
+  }
 }
 
 static gint

@@ -41,7 +41,6 @@ GST_END_TEST;
 GST_START_TEST (test_request_pads)
 {
   GstElement *interleave;
-
   GstPad *pad1, *pad2;
 
   interleave = gst_element_factory_make ("interleave", NULL);
@@ -67,13 +66,9 @@ GST_START_TEST (test_request_pads)
 GST_END_TEST;
 
 static GstPad **mysrcpads, *mysinkpad;
-
 static GstBus *bus;
-
 static GstElement *interleave;
-
 static gint have_data;
-
 static gfloat input[2];
 
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE ("sink",
@@ -103,7 +98,6 @@ static GstFlowReturn
 interleave_chain_func (GstPad * pad, GstBuffer * buffer)
 {
   gfloat *outdata;
-
   gint i;
 
   fail_unless (GST_IS_BUFFER (buffer));
@@ -128,15 +122,10 @@ interleave_chain_func (GstPad * pad, GstBuffer * buffer)
 GST_START_TEST (test_interleave_2ch)
 {
   GstElement *queue;
-
   GstPad *sink0, *sink1, *src, *tmp;
-
   GstCaps *caps;
-
   gint i;
-
   GstBuffer *inbuf;
-
   gfloat *indata;
 
   mysrcpads = g_new0 (GstPad *, 2);
@@ -229,6 +218,9 @@ GST_START_TEST (test_interleave_2ch)
 
   fail_unless (have_data == 2);
 
+  gst_element_set_state (interleave, GST_STATE_NULL);
+  gst_element_set_state (queue, GST_STATE_NULL);
+
   gst_object_unref (mysrcpads[0]);
   gst_object_unref (mysrcpads[1]);
   gst_object_unref (mysinkpad);
@@ -238,8 +230,6 @@ GST_START_TEST (test_interleave_2ch)
   gst_element_release_request_pad (interleave, sink1);
   gst_object_unref (sink1);
 
-  gst_element_set_state (interleave, GST_STATE_NULL);
-  gst_element_set_state (queue, GST_STATE_NULL);
   gst_object_unref (interleave);
   gst_object_unref (queue);
   gst_object_unref (bus);
@@ -253,15 +243,10 @@ GST_END_TEST;
 GST_START_TEST (test_interleave_2ch_1eos)
 {
   GstElement *queue;
-
   GstPad *sink0, *sink1, *src, *tmp;
-
   GstCaps *caps;
-
   gint i;
-
   GstBuffer *inbuf;
-
   gfloat *indata;
 
   mysrcpads = g_new0 (GstPad *, 2);
@@ -351,6 +336,9 @@ GST_START_TEST (test_interleave_2ch_1eos)
 
   fail_unless (have_data == 2);
 
+  gst_element_set_state (interleave, GST_STATE_NULL);
+  gst_element_set_state (queue, GST_STATE_NULL);
+
   gst_object_unref (mysrcpads[0]);
   gst_object_unref (mysrcpads[1]);
   gst_object_unref (mysinkpad);
@@ -360,8 +348,6 @@ GST_START_TEST (test_interleave_2ch_1eos)
   gst_element_release_request_pad (interleave, sink1);
   gst_object_unref (sink1);
 
-  gst_element_set_state (interleave, GST_STATE_NULL);
-  gst_element_set_state (queue, GST_STATE_NULL);
   gst_object_unref (interleave);
   gst_object_unref (queue);
   gst_object_unref (bus);
@@ -468,9 +454,7 @@ sink_handoff_float32 (GstElement * element, GstBuffer * buffer, GstPad * pad,
 GST_START_TEST (test_interleave_2ch_pipeline)
 {
   GstElement *pipeline, *queue, *src1, *src2, *interleave, *sink;
-
   GstPad *sinkpad0, *sinkpad1, *tmp, *tmp2;
-
   GstMessage *msg;
 
   have_data = 0;
@@ -552,9 +536,7 @@ GST_END_TEST;
 GST_START_TEST (test_interleave_2ch_pipeline_input_chanpos)
 {
   GstElement *pipeline, *queue, *src1, *src2, *interleave, *sink;
-
   GstPad *sinkpad0, *sinkpad1, *tmp, *tmp2;
-
   GstMessage *msg;
 
   have_data = 0;
@@ -637,11 +619,8 @@ GST_END_TEST;
 GST_START_TEST (test_interleave_2ch_pipeline_custom_chanpos)
 {
   GstElement *pipeline, *queue, *src1, *src2, *interleave, *sink;
-
   GstPad *sinkpad0, *sinkpad1, *tmp, *tmp2;
-
   GstMessage *msg;
-
   GValueArray *arr;
   GValue val = { 0, };
 
@@ -736,7 +715,6 @@ static Suite *
 interleave_suite (void)
 {
   Suite *s = suite_create ("interleave");
-
   TCase *tc_chain = tcase_create ("general");
 
   suite_add_tcase (s, tc_chain);

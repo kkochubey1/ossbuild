@@ -35,6 +35,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@BUILD_EXPERIMENTAL_TRUE@am__append_1 = gstv4l2sink.c
 subdir = sys/v4l2
 DIST_COMMON = README $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -58,6 +59,7 @@ am__aclocal_m4_deps = $(top_srcdir)/common/m4/as-ac-expand.m4 \
 	$(top_srcdir)/common/m4/gst-gettext.m4 \
 	$(top_srcdir)/common/m4/gst-glib2.m4 \
 	$(top_srcdir)/common/m4/gst-package-release-datetime.m4 \
+	$(top_srcdir)/common/m4/gst-platform.m4 \
 	$(top_srcdir)/common/m4/gst-plugin-docs.m4 \
 	$(top_srcdir)/common/m4/gst-plugindir.m4 \
 	$(top_srcdir)/common/m4/gst-x11.m4 \
@@ -105,20 +107,32 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(plugindir)"
 LTLIBRARIES = $(plugin_LTLIBRARIES)
 am__DEPENDENCIES_1 =
+@USE_XVIDEO_TRUE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) \
+@USE_XVIDEO_TRUE@	$(am__DEPENDENCIES_1)
 libgstvideo4linux2_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+am__libgstvideo4linux2_la_SOURCES_DIST = gstv4l2.c \
+	gstv4l2colorbalance.c gstv4l2object.c gstv4l2bufferpool.c \
+	gstv4l2src.c gstv4l2radio.c gstv4l2tuner.c gstv4l2vidorient.c \
+	v4l2_calls.c v4l2src_calls.c gstv4l2xoverlay.c gstv4l2sink.c
+@USE_XVIDEO_TRUE@am__objects_1 =  \
+@USE_XVIDEO_TRUE@	libgstvideo4linux2_la-gstv4l2xoverlay.lo
+@BUILD_EXPERIMENTAL_TRUE@am__objects_2 =  \
+@BUILD_EXPERIMENTAL_TRUE@	libgstvideo4linux2_la-gstv4l2sink.lo
 am_libgstvideo4linux2_la_OBJECTS = libgstvideo4linux2_la-gstv4l2.lo \
 	libgstvideo4linux2_la-gstv4l2colorbalance.lo \
 	libgstvideo4linux2_la-gstv4l2object.lo \
 	libgstvideo4linux2_la-gstv4l2bufferpool.lo \
 	libgstvideo4linux2_la-gstv4l2src.lo \
-	libgstvideo4linux2_la-gstv4l2sink.lo \
+	libgstvideo4linux2_la-gstv4l2radio.lo \
 	libgstvideo4linux2_la-gstv4l2tuner.lo \
 	libgstvideo4linux2_la-gstv4l2vidorient.lo \
 	libgstvideo4linux2_la-v4l2_calls.lo \
-	libgstvideo4linux2_la-v4l2src_calls.lo
+	libgstvideo4linux2_la-v4l2src_calls.lo $(am__objects_1) \
+	$(am__objects_2)
 libgstvideo4linux2_la_OBJECTS = $(am_libgstvideo4linux2_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -154,7 +168,7 @@ AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(libgstvideo4linux2_la_SOURCES)
-DIST_SOURCES = $(libgstvideo4linux2_la_SOURCES)
+DIST_SOURCES = $(am__libgstvideo4linux2_la_SOURCES_DIST)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -176,6 +190,8 @@ AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BZ2_LIBS = @BZ2_LIBS@
 CAIRO_CFLAGS = @CAIRO_CFLAGS@
+CAIRO_GOBJECT_CFLAGS = @CAIRO_GOBJECT_CFLAGS@
+CAIRO_GOBJECT_LIBS = @CAIRO_GOBJECT_LIBS@
 CAIRO_LIBS = @CAIRO_LIBS@
 CC = @CC@
 CCAS = @CCAS@
@@ -273,6 +289,8 @@ GST_TOOLS_DIR = @GST_TOOLS_DIR@
 GTKDOC_CHECK = @GTKDOC_CHECK@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
+GTK_X11_CFLAGS = @GTK_X11_CFLAGS@
+GTK_X11_LIBS = @GTK_X11_LIBS@
 GUDEV_CFLAGS = @GUDEV_CFLAGS@
 GUDEV_LIBS = @GUDEV_LIBS@
 HAL_CFLAGS = @HAL_CFLAGS@
@@ -295,6 +313,12 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
+JACK_0_120_1_CFLAGS = @JACK_0_120_1_CFLAGS@
+JACK_0_120_1_LIBS = @JACK_0_120_1_LIBS@
+JACK_1_9_7_CFLAGS = @JACK_1_9_7_CFLAGS@
+JACK_1_9_7_LIBS = @JACK_1_9_7_LIBS@
+JACK_CFLAGS = @JACK_CFLAGS@
+JACK_LIBS = @JACK_LIBS@
 JPEG_LIBS = @JPEG_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
@@ -323,6 +347,7 @@ LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
 MSGFMT = @MSGFMT@
 MSGFMT_015 = @MSGFMT_015@
@@ -421,6 +446,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
@@ -455,7 +481,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -477,27 +502,14 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 plugin_LTLIBRARIES = libgstvideo4linux2.la
-
-# overlay is still not supported in current implementation
-# if USE_XVIDEO
-#xv_source = gstv4l2xoverlay.c
-#xv_libs = $(X_LIBS) $(XVIDEO_LIBS)
-#else
-#xv_source =
-#xv_libs =
-#endif
-libgstvideo4linux2_la_SOURCES = gstv4l2.c \
-				gstv4l2colorbalance.c \
-				gstv4l2object.c \
-				gstv4l2bufferpool.c \
-				gstv4l2src.c \
-				gstv4l2sink.c \
-				gstv4l2tuner.c \
-				gstv4l2vidorient.c \
-				v4l2_calls.c \
-				v4l2src_calls.c \
-				$(xv_source)
-
+@USE_XVIDEO_FALSE@xv_source = 
+@USE_XVIDEO_TRUE@xv_source = gstv4l2xoverlay.c
+@USE_XVIDEO_FALSE@xv_libs = 
+@USE_XVIDEO_TRUE@xv_libs = $(X_LIBS) $(XVIDEO_LIBS)
+libgstvideo4linux2_la_SOURCES = gstv4l2.c gstv4l2colorbalance.c \
+	gstv4l2object.c gstv4l2bufferpool.c gstv4l2src.c \
+	gstv4l2radio.c gstv4l2tuner.c gstv4l2vidorient.c v4l2_calls.c \
+	v4l2src_calls.c $(xv_source) $(am__append_1)
 libgstvideo4linux2_la_CFLAGS = $(GST_PLUGINS_BASE_CFLAGS) \
 				 $(GST_BASE_CFLAGS) \
 				 $(GST_CONTROLLER_CFLAGS) \
@@ -525,6 +537,7 @@ noinst_HEADERS = \
 	gstv4l2object.h \
 	gstv4l2sink.h \
 	gstv4l2src.h \
+	gstv4l2radio.h \
 	gstv4l2tuner.h \
 	gstv4l2vidorient.h \
 	gstv4l2xoverlay.h \
@@ -609,10 +622,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo4linux2_la-gstv4l2bufferpool.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo4linux2_la-gstv4l2colorbalance.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo4linux2_la-gstv4l2object.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo4linux2_la-gstv4l2radio.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo4linux2_la-gstv4l2sink.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo4linux2_la-gstv4l2src.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo4linux2_la-gstv4l2tuner.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo4linux2_la-gstv4l2vidorient.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo4linux2_la-gstv4l2xoverlay.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo4linux2_la-v4l2_calls.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgstvideo4linux2_la-v4l2src_calls.Plo@am__quote@
 
@@ -680,13 +695,13 @@ libgstvideo4linux2_la-gstv4l2src.lo: gstv4l2src.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -c -o libgstvideo4linux2_la-gstv4l2src.lo `test -f 'gstv4l2src.c' || echo '$(srcdir)/'`gstv4l2src.c
 
-libgstvideo4linux2_la-gstv4l2sink.lo: gstv4l2sink.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -MT libgstvideo4linux2_la-gstv4l2sink.lo -MD -MP -MF $(DEPDIR)/libgstvideo4linux2_la-gstv4l2sink.Tpo -c -o libgstvideo4linux2_la-gstv4l2sink.lo `test -f 'gstv4l2sink.c' || echo '$(srcdir)/'`gstv4l2sink.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvideo4linux2_la-gstv4l2sink.Tpo $(DEPDIR)/libgstvideo4linux2_la-gstv4l2sink.Plo
+libgstvideo4linux2_la-gstv4l2radio.lo: gstv4l2radio.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -MT libgstvideo4linux2_la-gstv4l2radio.lo -MD -MP -MF $(DEPDIR)/libgstvideo4linux2_la-gstv4l2radio.Tpo -c -o libgstvideo4linux2_la-gstv4l2radio.lo `test -f 'gstv4l2radio.c' || echo '$(srcdir)/'`gstv4l2radio.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvideo4linux2_la-gstv4l2radio.Tpo $(DEPDIR)/libgstvideo4linux2_la-gstv4l2radio.Plo
 @am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstv4l2sink.c' object='libgstvideo4linux2_la-gstv4l2sink.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstv4l2radio.c' object='libgstvideo4linux2_la-gstv4l2radio.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -c -o libgstvideo4linux2_la-gstv4l2sink.lo `test -f 'gstv4l2sink.c' || echo '$(srcdir)/'`gstv4l2sink.c
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -c -o libgstvideo4linux2_la-gstv4l2radio.lo `test -f 'gstv4l2radio.c' || echo '$(srcdir)/'`gstv4l2radio.c
 
 libgstvideo4linux2_la-gstv4l2tuner.lo: gstv4l2tuner.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -MT libgstvideo4linux2_la-gstv4l2tuner.lo -MD -MP -MF $(DEPDIR)/libgstvideo4linux2_la-gstv4l2tuner.Tpo -c -o libgstvideo4linux2_la-gstv4l2tuner.lo `test -f 'gstv4l2tuner.c' || echo '$(srcdir)/'`gstv4l2tuner.c
@@ -719,6 +734,22 @@ libgstvideo4linux2_la-v4l2src_calls.lo: v4l2src_calls.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='v4l2src_calls.c' object='libgstvideo4linux2_la-v4l2src_calls.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -c -o libgstvideo4linux2_la-v4l2src_calls.lo `test -f 'v4l2src_calls.c' || echo '$(srcdir)/'`v4l2src_calls.c
+
+libgstvideo4linux2_la-gstv4l2xoverlay.lo: gstv4l2xoverlay.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -MT libgstvideo4linux2_la-gstv4l2xoverlay.lo -MD -MP -MF $(DEPDIR)/libgstvideo4linux2_la-gstv4l2xoverlay.Tpo -c -o libgstvideo4linux2_la-gstv4l2xoverlay.lo `test -f 'gstv4l2xoverlay.c' || echo '$(srcdir)/'`gstv4l2xoverlay.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvideo4linux2_la-gstv4l2xoverlay.Tpo $(DEPDIR)/libgstvideo4linux2_la-gstv4l2xoverlay.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstv4l2xoverlay.c' object='libgstvideo4linux2_la-gstv4l2xoverlay.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -c -o libgstvideo4linux2_la-gstv4l2xoverlay.lo `test -f 'gstv4l2xoverlay.c' || echo '$(srcdir)/'`gstv4l2xoverlay.c
+
+libgstvideo4linux2_la-gstv4l2sink.lo: gstv4l2sink.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -MT libgstvideo4linux2_la-gstv4l2sink.lo -MD -MP -MF $(DEPDIR)/libgstvideo4linux2_la-gstv4l2sink.Tpo -c -o libgstvideo4linux2_la-gstv4l2sink.lo `test -f 'gstv4l2sink.c' || echo '$(srcdir)/'`gstv4l2sink.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgstvideo4linux2_la-gstv4l2sink.Tpo $(DEPDIR)/libgstvideo4linux2_la-gstv4l2sink.Plo
+@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='gstv4l2sink.c' object='libgstvideo4linux2_la-gstv4l2sink.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgstvideo4linux2_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libgstvideo4linux2_la_CFLAGS) $(CFLAGS) -c -o libgstvideo4linux2_la-gstv4l2sink.lo `test -f 'gstv4l2sink.c' || echo '$(srcdir)/'`gstv4l2sink.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

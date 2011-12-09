@@ -378,6 +378,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\matroska\matroska-parse.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\matroska\matroska-parse.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\..\..\..\Source\gst-plugins-good\gst\matroska\matroska.c"
 			>
 		</File>

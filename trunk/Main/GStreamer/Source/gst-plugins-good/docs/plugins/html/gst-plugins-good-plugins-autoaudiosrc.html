@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-autoaudiosink.html" title="autoaudiosink">
 <link rel="next" href="gst-plugins-good-plugins-autovideosink.html" title="autovideosink">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -32,7 +32,7 @@
                   <a href="#gst-plugins-good-plugins-autoaudiosrc.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="autoaudiosrc">
+<div class="refentry">
 <a name="gst-plugins-good-plugins-autoaudiosrc"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -41,12 +41,12 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-good-plugins-autoaudiosrc.synopsis"></a><h2>Synopsis</h2>
 <a name="GstAutoAudioSrc"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-autoaudiosrc.html#GstAutoAudioSrc-struct" title="GstAutoAudioSrc">GstAutoAudioSrc</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-autoaudiosrc.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -56,19 +56,19 @@
                      +----GstAutoAudioSrc
 </pre>
 </div>
-<div class="refsect1" title="Implemented Interfaces">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-autoaudiosrc.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstAutoAudioSrc implements
  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstChildProxy.html">GstChildProxy</a>.</p>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-autoaudiosrc.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="gst-plugins-good-plugins-autoaudiosrc.html#GstAutoAudioSrc--filter-caps" title='The "filter-caps" property'>filter-caps</a>"              <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-autoaudiosrc.description"></a><h2>Description</h2>
 <p>
 autoaudiosrc is an audio source that automatically detects an appropriate
@@ -76,33 +76,89 @@ audio source to use.  It does so by scanning the registry for all elements
 that have <span class="quote">“<span class="quote">Source</span>”</span> and <span class="quote">“<span class="quote">Audio</span>”</span> in the class field
 of their element information, and also have a non-zero autoplugging rank.
 </p>
-<div class="refsect2" title="Example launch line">
-<a name="id560372"></a><h3>Example launch line</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp11673168"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch <span class="symbol">-</span>v <span class="symbol">-</span>m autoaudiosrc <span class="symbol">!</span> audioconvert <span class="symbol">!</span> audioresample <span class="symbol">!</span> autoaudiosink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch <span class="gtkdoc opt">-</span>v <span class="gtkdoc opt">-</span>m autoaudiosrc <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> audioresample <span class="gtkdoc opt">!</span> autoaudiosink</pre></td>
       </tr>
     </tbody>
   </table>
 </div>
 
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp8086560"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-good-plugins-plugin-autodetect.html#plugin-autodetect">autodetect</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Jan Schmidt &lt;thaytan@noraisin.net&gt;, Stefan Kost &lt;ensonic@users.sf.net&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Source/Audio</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp10545984"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>ANY</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-autoaudiosrc.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstAutoAudioSrc">
+<div class="refsect2">
 <a name="GstAutoAudioSrc-struct"></a><h3>GstAutoAudioSrc</h3>
 <pre class="programlisting">typedef struct _GstAutoAudioSrc GstAutoAudioSrc;</pre>
 <p>
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-autoaudiosrc.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "filter-caps" property'>
+<div class="refsect2">
 <a name="GstAutoAudioSrc--filter-caps"></a><h3>The <code class="literal">"filter-caps"</code> property</h3>
 <pre class="programlisting">  "filter-caps"              <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/gstreamer-GstCaps.html#GstCaps"><span class="type">GstCaps</span></a>*              : Read / Write</pre>
 <p>
@@ -116,13 +172,13 @@ This property can only be set before the element goes to the READY state.
 <p class="since">Since 0.10.14</p>
 </div>
 </div>
-<div class="refsect1" title="See Also">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-autoaudiosrc.see-also"></a><h2>See Also</h2>
 autovideosrc, alsasrc, osssrc
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>

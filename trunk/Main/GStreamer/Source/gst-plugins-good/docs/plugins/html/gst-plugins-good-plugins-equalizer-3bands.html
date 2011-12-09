@@ -8,7 +8,7 @@
 <link rel="up" href="ch01.html" title="gst-plugins-good Elements">
 <link rel="prev" href="gst-plugins-good-plugins-equalizer-10bands.html" title="equalizer-10bands">
 <link rel="next" href="gst-plugins-good-plugins-equalizer-nbands.html" title="equalizer-nbands">
-<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.17 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -32,7 +32,7 @@
                   <a href="#gst-plugins-good-plugins-equalizer-3bands.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
-<div class="refentry" title="equalizer-3bands">
+<div class="refentry">
 <a name="gst-plugins-good-plugins-equalizer-3bands"></a><div class="titlepage"></div>
 <div class="refnamediv"><table width="100%"><tr>
 <td valign="top">
@@ -41,12 +41,12 @@
 </td>
 <td valign="top" align="right"></td>
 </tr></table></div>
-<div class="refsynopsisdiv" title="Synopsis">
+<div class="refsynopsisdiv">
 <a name="gst-plugins-good-plugins-equalizer-3bands.synopsis"></a><h2>Synopsis</h2>
-<a name="GstIirEqualizer3Bands"></a><pre class="synopsis">                    <a class="link" href="gst-plugins-good-plugins-equalizer-3bands.html#GstIirEqualizer3Bands-struct" title="GstIirEqualizer3Bands">GstIirEqualizer3Bands</a>;
+<a name="GstIirEqualizer3Bands"></a><pre class="synopsis">struct              <a class="link" href="gst-plugins-good-plugins-equalizer-3bands.html#GstIirEqualizer3Bands-struct" title="struct GstIirEqualizer3Bands">GstIirEqualizer3Bands</a>;
 </pre>
 </div>
-<div class="refsect1" title="Object Hierarchy">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-equalizer-3bands.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
   <a href="http://library.gnome.org/devel/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
@@ -58,13 +58,13 @@
                                  +----GstIirEqualizer3Bands
 </pre>
 </div>
-<div class="refsect1" title="Implemented Interfaces">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-equalizer-3bands.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GstIirEqualizer3Bands implements
  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstChildProxy.html">GstChildProxy</a> and  <a href="http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstPreset.html">GstPreset</a>.</p>
 </div>
-<div class="refsect1" title="Properties">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-equalizer-3bands.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
   "<a class="link" href="gst-plugins-good-plugins-equalizer-3bands.html#GstIirEqualizer3Bands--band0" title='The "band0" property'>band0</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write
@@ -72,39 +72,124 @@ GstIirEqualizer3Bands implements
   "<a class="link" href="gst-plugins-good-plugins-equalizer-3bands.html#GstIirEqualizer3Bands--band2" title='The "band2" property'>band2</a>"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write
 </pre>
 </div>
-<div class="refsect1" title="Description">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-equalizer-3bands.description"></a><h2>Description</h2>
 <p>
 The 3-band equalizer element allows to change the gain of a low frequency,
 medium frequency and high frequency band.
 </p>
-<div class="refsect2" title="Example launch line">
-<a name="id594945"></a><h3>Example launch line</h3>
+<p>
+</p>
+<div class="refsect2">
+<a name="idp8783312"></a><h3>Example launch line</h3>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting">gst<span class="symbol">-</span>launch filesrc location<span class="symbol">=</span>song<span class="symbol">.</span>ogg <span class="symbol">!</span> oggdemux <span class="symbol">!</span> vorbisdec <span class="symbol">!</span> audioconvert <span class="symbol">!</span> equalizer<span class="symbol">-</span><span class="number">3</span>bands band1<span class="symbol">=</span><span class="number">6.0</span> <span class="symbol">!</span> alsasink</pre></td>
+        <td class="listing_code"><pre class="programlisting">gst<span class="gtkdoc opt">-</span>launch filesrc location<span class="gtkdoc opt">=</span>song<span class="gtkdoc opt">.</span>ogg <span class="gtkdoc opt">!</span> oggdemux <span class="gtkdoc opt">!</span> vorbisdec <span class="gtkdoc opt">!</span> audioconvert <span class="gtkdoc opt">!</span> equalizer<span class="gtkdoc opt">-</span><span class="number">3</span>bands band1<span class="gtkdoc opt">=</span><span class="number">6.0</span> <span class="gtkdoc opt">!</span> alsasink</pre></td>
       </tr>
     </tbody>
   </table>
 </div>
  This raises the volume of the 2nd band, which is at 1110 Hz, by 6 db.
 </div>
+<p>
+</p>
+<div class="refsynopsisdiv">
+<h2>Synopsis</h2>
+<div class="refsect2">
+<a name="idp11987264"></a><h3>Element Information</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">plugin</span></p></td>
+<td>
+            <a class="link" href="gst-plugins-good-plugins-plugin-equalizer.html#plugin-equalizer">equalizer</a>
+          </td>
+</tr>
+<tr>
+<td><p><span class="term">author</span></p></td>
+<td>Stefan Kost &lt;ensonic@users.sf.net&gt;</td>
+</tr>
+<tr>
+<td><p><span class="term">class</span></p></td>
+<td>Filter/Effect/Audio</td>
+</tr>
+</tbody>
+</table></div>
 </div>
-<div class="refsect1" title="Details">
+<hr>
+<div class="refsect2">
+<a name="idp11500848"></a><h3>Element Pads</h3>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>sink</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>audio/x-raw-int, depth=(int)16, width=(int)16, endianness=(int)1234, signed=(boolean)true, rate=(int)[ 1000, 2147483647 ], channels=(int)[ 1, 2147483647 ]</td>
+</tr>
+<tr>
+<td><p><span class="term"></span></p></td>
+<td> audio/x-raw-float, width=(int){ 32, 64 }, endianness=(int)1234, rate=(int)[ 1000, 2147483647 ], channels=(int)[ 1, 2147483647 ]</td>
+</tr>
+</tbody>
+</table></div>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term">name</span></p></td>
+<td>src</td>
+</tr>
+<tr>
+<td><p><span class="term">direction</span></p></td>
+<td>source</td>
+</tr>
+<tr>
+<td><p><span class="term">presence</span></p></td>
+<td>always</td>
+</tr>
+<tr>
+<td><p><span class="term">details</span></p></td>
+<td>audio/x-raw-int, depth=(int)16, width=(int)16, endianness=(int)1234, signed=(boolean)true, rate=(int)[ 1000, 2147483647 ], channels=(int)[ 1, 2147483647 ]</td>
+</tr>
+<tr>
+<td><p><span class="term"></span></p></td>
+<td> audio/x-raw-float, width=(int){ 32, 64 }, endianness=(int)1234, rate=(int)[ 1000, 2147483647 ], channels=(int)[ 1, 2147483647 ]</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<p>
+</p>
+</div>
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-equalizer-3bands.details"></a><h2>Details</h2>
-<div class="refsect2" title="GstIirEqualizer3Bands">
-<a name="GstIirEqualizer3Bands-struct"></a><h3>GstIirEqualizer3Bands</h3>
-<pre class="programlisting">typedef struct _GstIirEqualizer3Bands GstIirEqualizer3Bands;</pre>
+<div class="refsect2">
+<a name="GstIirEqualizer3Bands-struct"></a><h3>struct GstIirEqualizer3Bands</h3>
+<pre class="programlisting">struct GstIirEqualizer3Bands;</pre>
 <p>
 </p>
 </div>
 </div>
-<div class="refsect1" title="Property Details">
+<div class="refsect1">
 <a name="gst-plugins-good-plugins-equalizer-3bands.property-details"></a><h2>Property Details</h2>
-<div class="refsect2" title='The "band0" property'>
+<div class="refsect2">
 <a name="GstIirEqualizer3Bands--band0"></a><h3>The <code class="literal">"band0"</code> property</h3>
 <pre class="programlisting">  "band0"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write</pre>
 <p>gain for the frequency band 100 Hz, ranging from -24.0 to +12.0.</p>
@@ -112,7 +197,7 @@ medium frequency and high frequency band.
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "band1" property'>
+<div class="refsect2">
 <a name="GstIirEqualizer3Bands--band1"></a><h3>The <code class="literal">"band1"</code> property</h3>
 <pre class="programlisting">  "band1"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write</pre>
 <p>gain for the frequency band 1100 Hz, ranging from -24.0 to +12.0.</p>
@@ -120,7 +205,7 @@ medium frequency and high frequency band.
 <p>Default value: 0</p>
 </div>
 <hr>
-<div class="refsect2" title='The "band2" property'>
+<div class="refsect2">
 <a name="GstIirEqualizer3Bands--band2"></a><h3>The <code class="literal">"band2"</code> property</h3>
 <pre class="programlisting">  "band2"                    <a href="http://library.gnome.org/devel/glib/unstable/glib-Basic-Types.html#gdouble"><span class="type">gdouble</span></a>               : Read / Write</pre>
 <p>gain for the frequency band 11 kHz, ranging from -24.0 to +12.0.</p>
@@ -131,6 +216,6 @@ medium frequency and high frequency band.
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.15</div>
+          Generated by GTK-Doc V1.17</div>
 </body>
 </html>
